@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-26 00:45+0200\n"
-"PO-Revision-Date: 2021-08-25 22:45+0000\n"
+"POT-Creation-Date: 2021-09-03 00:45+0200\n"
+"PO-Revision-Date: 2021-09-02 22:45+0000\n"
 "Last-Translator: Xfce Bot <transifex@xfce.org>\n"
 "Language-Team: Romanian (http://www.transifex.com/xfce/thunar/language/ro/)\n"
 "MIME-Version: 1.0\n"
@@ -291,7 +291,7 @@ msgstr "Utilizează _implicit pentru acest tip de fișiere"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1280
-#: ../thunar/thunar-properties-dialog.c:893 ../thunar/thunar-window.c:3729
+#: ../thunar/thunar-properties-dialog.c:893 ../thunar/thunar-window.c:3739
 #: ../plugins/thunar-uca/thunar-uca-editor.c:144
 #: ../plugins/thunar-uca/thunar-uca-editor.c:437
 msgid "_OK"
@@ -1647,7 +1647,7 @@ msgstr "Dimensiuni:"
 msgid "Selection: %s"
 msgstr ""
 
-#: ../thunar/thunar-location-entry.c:193 ../thunar/thunar-window.c:467
+#: ../thunar/thunar-location-entry.c:193
 msgid "Search for files"
 msgstr ""
 
@@ -2794,7 +2794,7 @@ msgid "Loading folder contents..."
 msgstr "Se încarcă conținutul dosarului…"
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2143 ../thunar/thunar-window.c:3552
+#: ../thunar/thunar-standard-view.c:2143 ../thunar/thunar-window.c:3562
 msgid "Failed to open the home folder"
 msgstr "Nu s-a putut deschide dosarul Acasă"
 
@@ -2830,7 +2830,7 @@ msgstr "Nume incorect de fișier de la sursa XDS (X Direct Save)"
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Nu s-a putut crea un link pentru URL-ul „%s”"
 
-#: ../thunar/thunar-standard-view.c:3199 ../thunar/thunar-window.c:3645
+#: ../thunar/thunar-standard-view.c:3199 ../thunar/thunar-window.c:3655
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Nu s-a putut deschide directorul „%s”"
@@ -3295,7 +3295,11 @@ msgid "Switch to Next Tab"
 msgstr ""
 
 #: ../thunar/thunar-window.c:467
-msgid "Search for a specific file in the current folder and recent:///"
+msgid "_Search for Files..."
+msgstr ""
+
+#: ../thunar/thunar-window.c:467
+msgid "Search for a specific file in the current folder and Recent"
 msgstr ""
 
 #: ../thunar/thunar-window.c:468
@@ -3307,76 +3311,76 @@ msgstr ""
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr ""
 
-#: ../thunar/thunar-window.c:2316
+#: ../thunar/thunar-window.c:2326
 msgid "Close tab"
 msgstr "Închide tabul"
 
-#: ../thunar/thunar-window.c:2744
+#: ../thunar/thunar-window.c:2754
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Deschide adresa „%s”"
 
-#: ../thunar/thunar-window.c:3501
+#: ../thunar/thunar-window.c:3511
 msgid "Failed to open parent folder"
 msgstr "Nu s-a putut deschide dosarul părinte"
 
-#: ../thunar/thunar-window.c:3620
+#: ../thunar/thunar-window.c:3630
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Directorul „%s” nu există. Doriți să-l creați?"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3687
+#: ../thunar/thunar-window.c:3697
 msgid "Failed to browse the computer"
 msgstr ""
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:3727
+#: ../thunar/thunar-window.c:3737
 msgid "About Templates"
 msgstr "Despre șabloane"
 
-#: ../thunar/thunar-window.c:3749
+#: ../thunar/thunar-window.c:3759
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Toate fișierele din acest dosar vor apărea în meniul „Creați un document”."
 
-#: ../thunar/thunar-window.c:3756
+#: ../thunar/thunar-window.c:3766
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "În cazul în care creați frecvent un anumit tip de document, copiați un exemplar în acest dosar. În Thunar se va adăuga o intrare pentru acest document în meniul „Creați un document”.\n\nApoi, prin selectarea noii intrări din meniul „Creați un document”, veți copia un exemplar al șablonului în dosarul curent."
 
-#: ../thunar/thunar-window.c:3768
+#: ../thunar/thunar-window.c:3778
 msgid "Do _not display this message again"
 msgstr "_Nu arăta din nou acest mesaj"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3799
+#: ../thunar/thunar-window.c:3809
 msgid "Failed to open the file system root folder"
 msgstr "Nu s-a putut deschide dosarul rădăcină al sistemului"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3832
+#: ../thunar/thunar-window.c:3842
 msgid "Failed to display `Recent`"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3865
+#: ../thunar/thunar-window.c:3875
 msgid "Failed to display the contents of the trash can"
 msgstr "Nu s-a putut afișa conținutul coșului"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3898
+#: ../thunar/thunar-window.c:3908
 msgid "Failed to browse the network"
 msgstr "Nu s-a putut naviga în rețea"
 
-#: ../thunar/thunar-window.c:3987
+#: ../thunar/thunar-window.c:3997
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Acesta este un manager de fișiere rapid și\nușor de utilizat pentru mediul desktop Xfce."
 
-#: ../thunar/thunar-window.c:4988
+#: ../thunar/thunar-window.c:4998
 msgid "Failed to launch search with Catfish"
 msgstr ""
 
