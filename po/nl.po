@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-26 00:45+0200\n"
-"PO-Revision-Date: 2021-08-26 18:19+0000\n"
+"POT-Creation-Date: 2021-09-03 00:45+0200\n"
+"PO-Revision-Date: 2021-09-03 08:35+0000\n"
 "Last-Translator: Pjotr <pjotrvertaalt@gmail.com>\n"
 "Language-Team: Dutch (http://www.transifex.com/xfce/thunar/language/nl/)\n"
 "MIME-Version: 1.0\n"
@@ -289,7 +289,7 @@ msgstr "Gebruik als _standaard voor dit bestandtype"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1280
-#: ../thunar/thunar-properties-dialog.c:893 ../thunar/thunar-window.c:3729
+#: ../thunar/thunar-properties-dialog.c:893 ../thunar/thunar-window.c:3739
 #: ../plugins/thunar-uca/thunar-uca-editor.c:144
 #: ../plugins/thunar-uca/thunar-uca-editor.c:437
 msgid "_OK"
@@ -1618,7 +1618,7 @@ msgstr "Afbeeldingsgrootte:"
 msgid "Selection: %s"
 msgstr "Selectie: %s"
 
-#: ../thunar/thunar-location-entry.c:193 ../thunar/thunar-window.c:467
+#: ../thunar/thunar-location-entry.c:193
 msgid "Search for files"
 msgstr "Zoeken naar bestanden"
 
@@ -2761,7 +2761,7 @@ msgid "Loading folder contents..."
 msgstr "Mapinhoud laden..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2143 ../thunar/thunar-window.c:3552
+#: ../thunar/thunar-standard-view.c:2143 ../thunar/thunar-window.c:3562
 msgid "Failed to open the home folder"
 msgstr "Kon persoonlijke map niet openen"
 
@@ -2797,7 +2797,7 @@ msgstr "Ongeldige bestandnaam verkregen van XDS-sleepbron"
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Kon geen koppeling voor het webadres '%s' maken"
 
-#: ../thunar/thunar-standard-view.c:3199 ../thunar/thunar-window.c:3645
+#: ../thunar/thunar-standard-view.c:3199 ../thunar/thunar-window.c:3655
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Kon map '%s' niet openen"
@@ -3259,8 +3259,12 @@ msgid "Switch to Next Tab"
 msgstr "Overschakelen naar volgende tabblad"
 
 #: ../thunar/thunar-window.c:467
-msgid "Search for a specific file in the current folder and recent:///"
-msgstr "Zoek naar een bepaald bestand in de huidige map en recent:///"
+msgid "_Search for Files..."
+msgstr "_Zoeken naar bestanden..."
+
+#: ../thunar/thunar-window.c:467
+msgid "Search for a specific file in the current folder and Recent"
+msgstr "Zoek naar een specifiek bestand in de huidige map en in Recent"
 
 #: ../thunar/thunar-window.c:468
 msgid "Cancel search for files"
@@ -3271,76 +3275,76 @@ msgstr "Zoeken naar bestanden afbreken"
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "Waarschuwing: u gebruikt het rootaccount. U zou uw systeem kunnen beschadigen."
 
-#: ../thunar/thunar-window.c:2316
+#: ../thunar/thunar-window.c:2326
 msgid "Close tab"
 msgstr "Tabblad sluiten"
 
-#: ../thunar/thunar-window.c:2744
+#: ../thunar/thunar-window.c:2754
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Open de locatie '%s'"
 
-#: ../thunar/thunar-window.c:3501
+#: ../thunar/thunar-window.c:3511
 msgid "Failed to open parent folder"
 msgstr "Kon bovenliggende map niet openen"
 
-#: ../thunar/thunar-window.c:3620
+#: ../thunar/thunar-window.c:3630
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "De map '%s' bestaat niet. Wilt u hem maken?"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3687
+#: ../thunar/thunar-window.c:3697
 msgid "Failed to browse the computer"
 msgstr "Kon de computer niet verkennen"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:3727
+#: ../thunar/thunar-window.c:3737
 msgid "About Templates"
 msgstr "Over sjablonen"
 
-#: ../thunar/thunar-window.c:3749
+#: ../thunar/thunar-window.c:3759
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Alle bestanden in deze map zullen in het 'Document maken'-menu verschijnen."
 
-#: ../thunar/thunar-window.c:3756
+#: ../thunar/thunar-window.c:3766
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Als u regelmatig bepaalde documenttypen maakt, maak er dan van één een kopie en zet die in deze map. Thunar zal dan dit documenttype aan het 'Document maken' menu toevoegen.\n\nU kunt vervolgens dit type kiezen uit het 'Document maken'-menu, waarna er een kopie van dit document zal worden gemaakt in de map die u op dat ogenblik bekijkt."
 
-#: ../thunar/thunar-window.c:3768
+#: ../thunar/thunar-window.c:3778
 msgid "Do _not display this message again"
 msgstr "Geef dit bericht _niet meer weer"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3799
+#: ../thunar/thunar-window.c:3809
 msgid "Failed to open the file system root folder"
 msgstr "Kon de rootmap van het bestandssysteem niet openen"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3832
+#: ../thunar/thunar-window.c:3842
 msgid "Failed to display `Recent`"
 msgstr "Kon 'Recent' niet tonen"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3865
+#: ../thunar/thunar-window.c:3875
 msgid "Failed to display the contents of the trash can"
 msgstr "Kon de inhoud van de prullenbak niet weergeven"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3898
+#: ../thunar/thunar-window.c:3908
 msgid "Failed to browse the network"
 msgstr "Kon het netwerk niet verkennen"
 
-#: ../thunar/thunar-window.c:3987
+#: ../thunar/thunar-window.c:3997
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar is een snelle en gemakkelijk te gebruiken\nbestandbeheerder voor de Xfce-werkomgeving."
 
-#: ../thunar/thunar-window.c:4988
+#: ../thunar/thunar-window.c:4998
 msgid "Failed to launch search with Catfish"
 msgstr "Kon geen doorzoeking starten met Catfish"
 
