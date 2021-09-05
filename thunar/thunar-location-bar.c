@@ -78,6 +78,8 @@ static void         thunar_location_bar_set_current_directory      (ThunarNaviga
 static GtkWidget   *thunar_location_bar_install_widget             (ThunarLocationBar    *bar,
                                                                     GType                 type);
 static void         thunar_location_bar_settings_changed           (ThunarLocationBar    *bar);
+static void         thunar_location_bar_on_enry_edit_done_idle     (ThunarLocationEntry  *entry,
+                                                                    ThunarLocationBar    *bar);
 static void         thunar_location_bar_on_enry_edit_done          (ThunarLocationEntry  *entry,
                                                                     ThunarLocationBar    *bar);
 
@@ -299,13 +301,31 @@ thunar_location_bar_settings_changed_cb (gpointer user_data)
 
 
 static void
-thunar_location_bar_on_enry_edit_done (ThunarLocationEntry *entry,
-                                       ThunarLocationBar   *bar)
+thunar_location_bar_on_enry_edit_done_idle (ThunarLocationEntry *entry,
+                                            ThunarLocationBar   *bar)
 {
-  g_signal_handlers_disconnect_by_func (entry, thunar_location_bar_on_enry_edit_done, bar);
+  g_signal_handlers_disconnect_by_func (entry, thunar_location_bar_on_enry_edit_done_idle, bar);
 
   g_object_ref (bar);
   g_idle_add_full (G_PRIORITY_HIGH_IDLE, thunar_location_bar_settings_changed_cb, bar, g_object_unref);
+
+  g_signal_emit_by_name (bar, "entry-done");
+}
+
+
+/**
+ * thunar_location_bar_on_enry_edit_done
+ *
+ * Alternative to thunar_location_bar_on_enry_edit_done_idle. Used to switch between search mode and location edit
+ * mode.
+ */
+static void
+thunar_location_bar_on_enry_edit_done (ThunarLocationEntry *entry,
+                                       ThunarLocationBar   *bar)
+{
+  g_signal_handlers_disconnect_by_func (entry, thunar_location_bar_on_enry_edit_done_idle, bar);
+
+  thunar_location_bar_settings_changed_cb  (bar);
 
   g_signal_emit_by_name (bar, "entry-done");
 }
@@ -345,7 +365,7 @@ thunar_location_bar_request_entry (ThunarLocationBar *bar,
       thunar_location_entry_accept_focus (THUNAR_LOCATION_ENTRY (child), initial_text);
     }
 
-  g_signal_connect (child, "edit-done", G_CALLBACK (thunar_location_bar_on_enry_edit_done), bar);
+  g_signal_connect (child, "edit-done", G_CALLBACK (thunar_location_bar_on_enry_edit_done_idle), bar);
 }
 
 
@@ -383,7 +403,13 @@ void
 thunar_location_bar_cancel_search (ThunarLocationBar *bar)
 {
   if (bar->locationEntry != NULL)
-    thunar_location_entry_cancel_search (THUNAR_LOCATION_ENTRY (bar->locationEntry));
+    {
+      thunar_location_entry_cancel_search (THUNAR_LOCATION_ENTRY (bar->locationEntry));
+
+      /* don't use the "emit-done" signal because when cancelling search to initiate a location edit the signal
+       * might cancel the location entry */
+      thunar_location_bar_on_enry_edit_done (THUNAR_LOCATION_ENTRY (bar->locationEntry), bar);
+    }
 }
 
 
