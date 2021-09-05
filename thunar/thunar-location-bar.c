@@ -304,9 +304,7 @@ thunar_location_bar_on_enry_edit_done (ThunarLocationEntry *entry,
 {
   g_signal_handlers_disconnect_by_func (entry, thunar_location_bar_on_enry_edit_done, bar);
 
-  g_object_ref (bar);
-  g_idle_add_full (G_PRIORITY_HIGH_IDLE, thunar_location_bar_settings_changed_cb, bar, g_object_unref);
-
+  thunar_location_bar_settings_changed_cb (bar);
   g_signal_emit_by_name (bar, "entry-done");
 }
 
