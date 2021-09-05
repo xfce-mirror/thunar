@@ -479,10 +479,6 @@ thunar_location_entry_emit_edit_done (ThunarLocationEntry *entry)
 void
 thunar_location_entry_cancel_search (ThunarLocationEntry *entry)
 {
-  ThunarFolder *folder = thunar_folder_get_for_file (thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (entry)));
-  thunar_folder_reload (folder, TRUE);
-  g_object_unref (folder);
-
   entry->is_searching = FALSE;
   entry->right_click_occurred = FALSE;
   thunar_location_entry_emit_edit_done (entry);
