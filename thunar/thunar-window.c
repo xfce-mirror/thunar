@@ -365,6 +365,7 @@ struct _ThunarWindow
   /* search */
   GtkWidget              *catfish_search_button;
   gchar                  *search_query;
+  gboolean                is_searching;
 
   GType                   view_type;
   GSList                 *view_bindings;
@@ -2892,6 +2893,7 @@ thunar_window_start_open_location (ThunarWindow *window,
   if (initial_text != NULL && thunar_util_is_a_search_query (initial_text) == TRUE)
     {
       thunar_window_update_search (window);
+      window->is_searching = TRUE;
       thunar_launcher_set_searching (window->launcher, TRUE);
       if (THUNAR_IS_DETAILS_VIEW (window->view))
         thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), TRUE);
@@ -2919,6 +2921,9 @@ thunar_window_action_cancel_search (ThunarWindow *window)
 {
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BAR (window->location_bar));
 
+  if (window->is_searching == FALSE)
+    return;
+
   thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), NULL);
   thunar_launcher_set_searching (window->launcher, FALSE);
@@ -2927,6 +2932,8 @@ thunar_window_action_cancel_search (ThunarWindow *window)
 
   if (THUNAR_IS_DETAILS_VIEW (window->view))
     thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), FALSE);
+
+  window->is_searching = FALSE;
 }
 
 
