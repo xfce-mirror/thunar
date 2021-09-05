@@ -1969,6 +1969,7 @@ thunar_file_accepts_drop (ThunarFile     *file,
   GdkDragAction actions;
   ThunarFile   *ofile;
   GFile        *parent_file;
+  ThunarFile   *parent_thunar_file;
   GList        *lp;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), 0);
@@ -2044,19 +2045,24 @@ thunar_file_accepts_drop (ThunarFile     *file,
               if (ofile == NULL)
                 ofile = thunar_file_get (lp->data, NULL);
 
-              /* we have only move if we know the source and both the source and the target
-               * are on the same disk, and the source file is owned by the current user.
+              /* we only can 'move' if we know the source folder is writable (i.e. the file can be deleted)
+               * and both the source and the target are on the same disk.
                */
-              if (ofile == NULL
-                  || !thunar_file_same_filesystem (file, ofile)
-                  || (ofile->info != NULL
-                      && g_file_info_get_attribute_uint32 (ofile->info,
-                                                           G_FILE_ATTRIBUTE_UNIX_UID) != effective_user_id))
+              if (ofile == NULL) 
                 {
-                  /* default to copy and get outa here */
                   suggested_action = GDK_ACTION_COPY;
                   break;
                 }
+              parent_thunar_file = thunar_file_get_parent (ofile, NULL);
+              if (parent_thunar_file == NULL || !thunar_file_is_writable (parent_thunar_file) || !thunar_file_same_filesystem (file, ofile))
+                {
+                  /* default to copy and get outta here */
+                  suggested_action = GDK_ACTION_COPY;
+                  g_object_unref (parent_thunar_file);
+                  break;
+                }
+              if (parent_thunar_file != NULL)
+                g_object_unref (parent_thunar_file);
 
               if (ofile != NULL)
                 g_object_unref (ofile);
