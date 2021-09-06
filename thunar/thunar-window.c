@@ -2885,18 +2885,26 @@ thunar_window_start_open_location (ThunarWindow *window,
 {
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  /* temporary show the location toolbar, even if it is normally hidden */
-  gtk_widget_show (window->location_toolbar);
-  thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
-
   /* setup a search if required */
   if (initial_text != NULL && thunar_util_is_a_search_query (initial_text) == TRUE)
     {
+      /* temporary show the location toolbar, even if it is normally hidden */
+      gtk_widget_show (window->location_toolbar);
+      thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
+
       thunar_window_update_search (window);
       window->is_searching = TRUE;
       thunar_launcher_set_searching (window->launcher, TRUE);
       if (THUNAR_IS_DETAILS_VIEW (window->view))
         thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), TRUE);
+    }
+  else /* location edit */
+    {
+      thunar_window_action_cancel_search (window);
+
+      /* temporary show the location toolbar, even if it is normally hidden */
+      gtk_widget_show (window->location_toolbar);
+      thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
     }
 }
 
