@@ -288,15 +288,6 @@ thunar_location_bar_install_widget (ThunarLocationBar    *bar,
 }
 
 
-static gboolean
-thunar_location_bar_settings_changed_cb (gpointer user_data)
-{
-  ThunarLocationBar *bar = user_data;
-
-  thunar_location_bar_settings_changed (bar);
-  return FALSE;
-}
-
 
 static void
 thunar_location_bar_on_enry_edit_done (ThunarLocationEntry *entry,
@@ -304,9 +295,7 @@ thunar_location_bar_on_enry_edit_done (ThunarLocationEntry *entry,
 {
   g_signal_handlers_disconnect_by_func (entry, thunar_location_bar_on_enry_edit_done, bar);
 
-  g_object_ref (bar);
-  g_idle_add_full (G_PRIORITY_HIGH_IDLE, thunar_location_bar_settings_changed_cb, bar, g_object_unref);
-
+  thunar_location_bar_settings_changed (bar);
   g_signal_emit_by_name (bar, "entry-done");
 }
 
