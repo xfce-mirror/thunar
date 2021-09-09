@@ -158,10 +158,6 @@ recursive_call (gchar *path)
       GFileInfo *info = g_file_query_info (file, "*", G_FILE_QUERY_INFO_NONE, NULL, NULL);
       GFileType type = g_file_info_get_file_type (info);
 
-//      for (int i = 0; i < tabs; i++)
-//        printf("\t");
-//      printf ("%s is a directory -> %d\n", new_path, type);
-
       if (type == G_FILE_TYPE_DIRECTORY)
         {
           printf("Dir path: %s\n", new_path);
@@ -174,10 +170,35 @@ recursive_call (gchar *path)
         {
           gchar *uri = g_file_get_uri (file);
           gchar *normal_path = xfce_get_local_thumbnail_path (uri, "normal");
+          if (normal_path == NULL)
+            {
+              printf("File doesn't exist\n");
+              GString *command = g_string_new ("dbus-send --session --print-reply --dest=org.freedesktop.thumbnails.Thumbnailer1 /org/freedesktop/thumbnails/Thumbnailer1 org.freedesktop.thumbnails.Thumbnailer1.Queue array:string:\"");
+              g_string_append (command, uri);
+              g_string_append (command, "\" array:string:\"image/png\" string:\"normal\" string:\"default\" uint32:0");
+              printf ("%s\n", command->str);
+              g_spawn_command_line_sync (command->str, NULL, NULL, NULL, NULL);
+              g_string_free (command, TRUE);
+              while ((normal_path = xfce_get_local_thumbnail_path (uri, "normal")) == NULL)
+                ;
+            }
           gchar *large_path = xfce_get_local_thumbnail_path (uri, "large");
+          if (large_path == NULL)
+            {
+              printf("File doesn't exist\n");
+              GString *command = g_string_new ("dbus-send --session --print-reply --dest=org.freedesktop.thumbnails.Thumbnailer1 /org/freedesktop/thumbnails/Thumbnailer1 org.freedesktop.thumbnails.Thumbnailer1.Queue array:string:\"");
+              g_string_append (command, uri);
+              g_string_append (command, "\" array:string:\"image/png\" string:\"normal\" string:\"default\" uint32:0");
+              printf ("%s\n", command->str);
+              g_spawn_command_line_sync (command->str, NULL, NULL, NULL, NULL);
+              g_string_free (command, TRUE);
+              while ((large_path = xfce_get_local_thumbnail_path (uri, "large")) == NULL)
+                ;
+            }
           gchar *normal_shared_path = xfce_create_shared_thumbnail_path (uri, "normal");
           gchar *large_shared_path = xfce_create_shared_thumbnail_path (uri, "large");
 
+          printf("Regular file\n");
 
           if (normal_path)
             {
