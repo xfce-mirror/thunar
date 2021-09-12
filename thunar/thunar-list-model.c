@@ -220,7 +220,7 @@ static gint               thunar_list_model_get_num_files         (ThunarListMod
 static gboolean           thunar_list_model_get_folders_first     (ThunarListModel        *store);
 static GList*             search_folder (ThunarJob *job, gchar *path,
                                          int depth,
-                                         gchar *search_query_c);
+                                         gchar *search_query_c, GList *files, ThunarListModel *model);
 static SearchInfo*        search_info_create                      (ThunarListModel        *store,
                                                                    gchar                  *search_query_c,
                                                                    int                     depth);
@@ -2075,7 +2075,7 @@ _thunar_jobs_search_directory (ThunarJob  *job,
   depth = g_value_get_int (&g_array_index (param_values, GValue, 2));
   directory = g_value_get_object (&g_array_index (param_values, GValue, 3));
 
-  search_folder (job, g_file_get_path(thunar_file_get_file (directory)), depth, search_query_c);
+  list = search_folder (job, g_file_get_path(thunar_file_get_file (directory)), depth, search_query_c, list, model);
 
   return TRUE;
 }
@@ -2111,15 +2111,34 @@ void search_finished (ThunarJob *job)
 
 
 
+typedef struct {
+    ThunarListModel *model;
+    ThunarFile *file;
+} SearchStruct;
+
+
+
+static gboolean
+add_search_file (gpointer user_data)
+{
+  SearchStruct *data = user_data;
+
+  thunar_list_model_files_added (data->model->folder, g_list_append (NULL, data->file), data->model);
+  return FALSE;
+}
+
+
+
 static GList*
 search_folder (ThunarJob *job,
                gchar *path,
                int depth,
-               gchar *search_query_c)
+               gchar *search_query_c,
+               GList *files,
+               ThunarListModel *model)
 {
   const gchar  *display_name;
   gchar        *display_name_c; /* converted to ignore case */
-//  GList *files_found;
   GDir *dir;
   const gchar *filename;
 
@@ -2138,7 +2157,7 @@ search_folder (ThunarJob *job,
       /* handle directories */
       if (type == G_FILE_TYPE_DIRECTORY && depth > 0)
         {
-          search_folder (job, new_path, depth - 1, search_query_c);
+          files = search_folder (job, new_path, depth - 1, search_query_c, files, model);
           g_free (new_path);
           /* continue; don't add non-leaf directories in the results */
         }
@@ -2151,7 +2170,13 @@ search_folder (ThunarJob *job,
       if (g_strrstr (display_name_c, search_query_c) != NULL)
         {
           printf("Found match: %s\n", display_name_c);
-//          files_found = g_list_prepend (files_found, thunar_file_get (file, NULL));
+
+          SearchStruct *s = g_malloc (sizeof (SearchStruct));
+          s->model = model;
+          s->file = thunar_file_get (file, NULL);
+          g_idle_add (add_search_file, s);
+
+//          files = g_list_prepend (files, thunar_file_get (file, NULL));
         }
 
       /* free memory */
