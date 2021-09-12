@@ -21,12 +21,6 @@ bin_SCRIPTS =								\
 bin_PROGRAMS =								\
 	thunar
 
-noinst_LIBRARIES = thunar.a
-thunar_a_SOURCES =
-thunar_a_LIBADD = 							\
-	$(wildcard $(top_builddir)/thunar/*.o)				\
-	$(wildcard $(top_builddir)/thunarx/.libs/*.o)
-
 thunar_built_sources =							\
 	thunar-marshal.c							\
 	thunar-marshal.h							\
@@ -208,6 +202,12 @@ thunar_SOURCES =							\
 	thunar-view.h							\
 	thunar-window.c							\
 	thunar-window.h
+
+noinst_LIBRARIES = thunar.a
+thunar_a_SOURCES =
+thunar_a_LIBADD = 							\
+	$(filter %.o, $(thunar_SOURCES:%.c=thunar-%.o))			\
+	$(wildcard $(top_builddir)/thunarx/.libs/*.o)
 
 thunar_CFLAGS =								\
 	$(EXO_CFLAGS)							\
