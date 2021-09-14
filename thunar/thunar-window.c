@@ -2943,22 +2943,20 @@ thunar_window_resume_search (ThunarWindow *window,
 {
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
+  /* when setting up the location entry do not resent the search query to the standard view, there is a search ongoing */
   window->ignore_next_update = TRUE;
 
   /* temporary show the location toolbar, even if it is normally hidden */
   gtk_widget_show (window->location_toolbar);
   thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
 
-  /* setup a search if required */
-  if (initial_text != NULL && thunar_util_is_a_search_query (initial_text) == TRUE)
-    {
-      g_free (window->search_query);
-      window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
-      gtk_widget_show (window->catfish_search_button);
-      thunar_launcher_set_searching (window->launcher, TRUE);
-      if (THUNAR_IS_DETAILS_VIEW (window->view))
-        thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), TRUE);
-    }
+  /* change to search UI and options */
+  g_free (window->search_query);
+  window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
+  gtk_widget_show (window->catfish_search_button);
+  thunar_launcher_set_searching (window->launcher, TRUE);
+  if (THUNAR_IS_DETAILS_VIEW (window->view))
+    thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), TRUE);
 }
 
 
