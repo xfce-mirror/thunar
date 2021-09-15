@@ -2047,7 +2047,7 @@ _thunar_jobs_search_directory (ThunarJob  *job,
   depth = g_value_get_int (&g_array_index (param_values, GValue, 2));
   directory = g_value_get_object (&g_array_index (param_values, GValue, 3));
 
-  search_folder (model, job, g_file_get_path(thunar_file_get_file (directory)), search_query_c, depth);
+  search_folder (model, job, thunar_file_dup_uri (directory), search_query_c, depth);
 
   return TRUE;
 }
@@ -2104,50 +2104,43 @@ add_search_files (gpointer user_data)
 static void
 search_folder (ThunarListModel  *model,
                ThunarJob        *job,
-               gchar            *path,
+               gchar            *uri,
                gchar            *search_query_c,
                int               depth)
 {
-  GDir         *dir;
-  GList        *files_found = NULL; /* contains the matching files in this folder only */
-  const gchar  *filename;
-  const gchar  *display_name;
-  gchar        *display_name_c; /* converted to ignore case */
+  GFileEnumerator *enumerator;
+  GFile           *directory;
+  GList           *files_found = NULL; /* contains the matching files in this folder only */
+  const gchar     *namespace;
+  const gchar     *filename;
+  const gchar     *display_name;
+  gchar           *display_name_c; /* converted to ignore case */
 
-  dir = g_dir_open(path, 0, NULL);
-  if (!dir)
-    return;
+  directory = g_file_new_for_uri (uri);
+  namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE ","
+              G_FILE_ATTRIBUTE_STANDARD_NAME ", recent::*";
+  enumerator = g_file_enumerate_children (directory, namespace, G_FILE_QUERY_INFO_NONE, NULL, NULL);
 
   /* go through every file in the folder and check if it matches */
-  while ((filename = g_dir_read_name(dir)) && exo_job_is_cancelled (EXO_JOB (job)) == FALSE)
+  while (exo_job_is_cancelled (EXO_JOB (job)) == FALSE)
     {
-      gchar     *new_path;
-      GFile     *file;
-      GFileInfo *info;
-      GFileType  type;
+      GFileInfo *info = g_file_enumerator_next_file (enumerator, NULL, NULL);
 
-      /* collect required information */
-      new_path = g_build_path ("/", path, filename, NULL);
-      file = g_file_new_for_path (new_path);
-      info = g_file_query_info (file, "*", G_FILE_QUERY_INFO_NONE, NULL, NULL);
-      if (info == NULL)
-        {
-          g_free (new_path);
-          g_object_unref (file);
-          continue;
-        }
-      type = g_file_info_get_file_type (info);
+      if (G_UNLIKELY (info == NULL))
+        break;
+
+      GFile     *file = g_file_get_child (directory, g_file_info_get_name (info));
+      GFileType  type = g_file_info_get_file_type (info);
 
       /* handle directories */
       if (type == G_FILE_TYPE_DIRECTORY && depth > 0)
         {
-          search_folder (model, job, new_path, search_query_c, depth - 1);
-          g_free (new_path);
+          search_folder (model, job, g_file_get_uri (file), search_query_c, depth - 1);
           /* continue; don't add non-leaf directories in the results */
         }
 
       /* prepare entry display name */
-      display_name = g_file_info_get_display_name (info);
+      display_name = g_file_info_get_name (info); // TODO: display crashes???
       display_name_c = g_utf8_casefold (display_name, strlen (display_name));
 
       /* search for substring */
@@ -2159,8 +2152,6 @@ search_folder (ThunarListModel  *model,
       g_object_unref (file);
       g_object_unref (info);
     }
-
-  g_dir_close (dir);
 
   g_mutex_lock (&model->m);
   model->files_to_add = g_list_concat (model->files_to_add, files_found);
