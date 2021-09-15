@@ -2109,21 +2109,35 @@ search_folder (ThunarListModel  *model,
 
   directory = g_file_new_for_uri (uri);
   namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE ","
+              G_FILE_ATTRIBUTE_STANDARD_TARGET_URI ","
+              G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
               G_FILE_ATTRIBUTE_STANDARD_NAME ", recent::*";
   enumerator = g_file_enumerate_children (directory, namespace, G_FILE_QUERY_INFO_NONE, NULL, NULL);
+  if (enumerator == NULL)
+    return;
 
   /* go through every file in the folder and check if it matches */
   while (exo_job_is_cancelled (EXO_JOB (job)) == FALSE)
     {
-      GFileInfo *info = g_file_enumerator_next_file (enumerator, NULL, NULL);
+      GFile     *file;
+      GFileInfo *info;
+      GFileType  type;
 
+      /* get GFile and GFileInfo */
+      info = g_file_enumerator_next_file (enumerator, NULL, NULL);
       if (G_UNLIKELY (info == NULL))
         break;
 
-      GFile     *file = g_file_get_child (directory, g_file_info_get_name (info));
-      GFileType  type = g_file_info_get_file_type (info);
+      if (g_file_has_uri_scheme (directory, "recent"))
+        {
+          file = g_file_new_for_uri (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI));
+          info = g_file_query_info (file, namespace, G_FILE_QUERY_INFO_NONE, NULL, NULL);
+        }
+      else
+        file = g_file_get_child (directory, g_file_info_get_name (info));
 
       /* handle directories */
+      type = g_file_info_get_file_type (info);
       if (type == G_FILE_TYPE_DIRECTORY && depth > 0)
         {
           search_folder (model, job, g_file_get_uri (file), search_query_c, depth - 1);
@@ -2131,7 +2145,7 @@ search_folder (ThunarListModel  *model,
         }
 
       /* prepare entry display name */
-      display_name = g_file_info_get_name (info); // TODO: display crashes???
+      display_name = g_file_info_get_display_name (info);
       display_name_c = g_utf8_casefold (display_name, strlen (display_name));
 
       /* search for substring */
@@ -2143,6 +2157,9 @@ search_folder (ThunarListModel  *model,
       g_object_unref (file);
       g_object_unref (info);
     }
+
+  g_object_unref (enumerator);
+  g_object_unref (directory);
 
   g_mutex_lock (&model->m);
   model->files_to_add = g_list_concat (model->files_to_add, files_found);
