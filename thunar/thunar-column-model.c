@@ -562,7 +562,7 @@ thunar_column_model_load_column_widths (ThunarColumnModel *column_model)
   column_model->width[THUNAR_COLUMN_NAME] = 200;
 
   /* parse the widths from the preferences */
-  for (n = 0; column_widths[n] != NULL; ++n)
+  for (n = 0; (n < THUNAR_N_VISIBLE_COLUMNS) && (column_widths[n] != NULL); ++n)
     {
       width = strtol (column_widths[n], NULL, 10);
       if (G_LIKELY (width >= 0))
