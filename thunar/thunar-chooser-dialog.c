@@ -97,6 +97,9 @@ static gboolean    thunar_chooser_dialog_get_open            (ThunarChooserDialo
 static void        thunar_chooser_dialog_set_open            (ThunarChooserDialog *dialog,
                                                               gboolean             open);
 
+static gboolean    thunar_chooser_dialog_packagekit_available (void);
+static void        thunar_chooser_dialog_install_handlers    (ThunarChooserDialog *dialog,
+                                                              const gchar         *mime_type);
 
 struct _ThunarChooserDialogClass
 {
@@ -117,6 +120,7 @@ struct _ThunarChooserDialog
   GtkWidget   *custom_entry;
   GtkWidget   *custom_button;
   GtkWidget   *default_button;
+  GtkWidget   *install_button;
   GtkWidget   *cancel_button;
   GtkWidget   *accept_button;
 };
@@ -289,6 +293,11 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
   gtk_box_pack_start (GTK_BOX (box), dialog->default_button, FALSE, FALSE, 0);
   gtk_widget_show (dialog->default_button);
 
+  /* add the "Install" button */
+  if (thunar_chooser_dialog_packagekit_available ()) {
+    dialog->install_button = gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Install more apps..."), THUNAR_CHOOSER_DIALOG_RESPONSE_INSTALL);
+  }
+
   /* add the "Cancel" button */
   dialog->cancel_button = gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Cancel"), GTK_RESPONSE_CANCEL);
 
@@ -404,9 +413,20 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   GdkScreen           *screen;
   GAppInfo            *default_app = NULL;
 
-  /* no special processing for non-accept responses */
-  if (G_UNLIKELY (response != GTK_RESPONSE_ACCEPT))
+  if (G_UNLIKELY (response == THUNAR_CHOOSER_DIALOG_RESPONSE_INSTALL)) {
+    /* determine the content type for the file */
+    content_type = thunar_file_get_content_type (dialog->file);
+
+    /* suggests installing new software that handles this type of content */
+    thunar_chooser_dialog_install_handlers (dialog, content_type);
     return;
+  }
+
+  /* no special processing for non-accept responses */
+  if (G_UNLIKELY (response != GTK_RESPONSE_ACCEPT)) {
+    gtk_widget_destroy(GTK_WIDGET(dialog));
+    return;
+  }
 
   /* determine the content type for the file */
   content_type = thunar_file_get_content_type (dialog->file);
@@ -541,6 +561,9 @@ thunar_chooser_dialog_response (GtkDialog *widget,
 
   /* cleanup */
   g_object_unref (app_info);
+
+  /* Close the dialog.. */
+  gtk_widget_destroy(GTK_WIDGET(dialog));
 }
 
 
@@ -1358,9 +1381,6 @@ thunar_show_chooser_dialog (gpointer    parent,
       gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
     }
 
-  /* destroy the dialog after a user interaction */
-  g_signal_connect_after (G_OBJECT (dialog), "response", G_CALLBACK (gtk_widget_destroy), NULL);
-
   /* let the application handle the dialog */
   application = thunar_application_get ();
   thunar_application_take_window (application, GTK_WINDOW (dialog));
@@ -1371,5 +1391,163 @@ thunar_show_chooser_dialog (gpointer    parent,
 }
 
 
+/**
+ * thunar_chooser_dialog_packagekit_available:
+ *
+ * Check if there is a PackageKit service available to install resources
+ *
+ * Return value: %TRUE if there are any service.
+ **/
+static gboolean
+thunar_chooser_dialog_packagekit_available (void)
+{
+  GDBusProxy *proxy;
+  GVariant *result;
+  GVariantIter *iter;
+  GError *error = NULL;
+  gchar *activable;
+  gboolean available = FALSE;
 
+  proxy = g_dbus_proxy_new_for_bus_sync (G_BUS_TYPE_SESSION,
+                                         G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES,
+                                         NULL,
+                                         "org.freedesktop.DBus",
+                                         "/org/freedesktop/DBus",
+                                         "org.freedesktop.DBus",
+                                         NULL,
+                                         &error);
+
+  if (error != NULL) {
+    g_warning ("Could not ask org.freedesktop.DBus if PackageKit is available: %s",
+               error->message);
+    g_error_free (error);
+    return FALSE;
+  }
+
+  result = g_dbus_proxy_call_sync (proxy, "ListActivatableNames",
+                                   NULL,
+                                   G_DBUS_CALL_FLAGS_NONE,
+                                   -1,
+                                   NULL,
+                                   &error);
+
+  if (error != NULL) {
+    g_warning ("Could not ask org.freedesktop.DBus if PackageKit is available: %s",
+               error->message);
+    g_error_free (error);
+    g_object_unref (proxy);
+    return FALSE;
+  }
+
+  g_variant_get (result, "(as)", &iter);
+  while (g_variant_iter_loop (iter, "s", &activable)) {
+    if (g_strcmp0(activable, "org.freedesktop.PackageKit") == 0) {
+      available = TRUE;
+      break;
+    }
+  }
+  g_variant_iter_free (iter);
+  g_variant_unref (result);
+
+  g_object_unref (proxy);
+
+  return available;
+}
+
+
+static void
+thunar_chooser_dialog_install_handlers_ready_cb (GObject      *source_object,
+                                                 GAsyncResult *res,
+                                                 gpointer      user_data)
+{
+  GDBusProxy *proxy;
+	GVariant   *variant;
+	GError     *error = NULL;
+
+  ThunarChooserDialog *dialog = THUNAR_CHOOSER_DIALOG(user_data);
+
+	proxy = G_DBUS_PROXY (source_object);
+	variant = g_dbus_proxy_call_finish (proxy, res, &error);
+
+  if (error != NULL) {
+    /* display an error to the user */
+    thunar_dialogs_show_error (GTK_WIDGET(dialog), error, _("There was an error searching for new applications"));
+
+    /* release the error */
+    g_error_free (error);
+    return;
+  }
+
+  /* Refresh the dialog... */
+  thunar_chooser_dialog_set_file (dialog,
+    thunar_chooser_dialog_get_file(dialog));
+  g_variant_unref (variant);
+}
+
+
+/**
+ * thunar_chooser_dialog_install_handlers:
+ * @dialog : a #ThunarChooserDialog.
+ * @content_type: An string with the mime_type to handle.
+ *
+ * Launch the PackageKit service available to install the applications according
+ * to content_type.
+ *
+ **/
+static void
+thunar_chooser_dialog_install_handlers (ThunarChooserDialog *dialog,
+                                        const gchar         *content_type)
+{
+  GDBusConnection *connection;
+  GDBusProxy *proxy;
+  GError* error = NULL;
+  GVariantBuilder *mime_types;
+
+  connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
+
+  if (error != NULL) {
+    g_warning ("Could not get session bus: %s", error->message);
+    g_error_free (error);
+    return;
+  }
+
+  proxy = g_dbus_proxy_new_sync (connection,
+                                 G_DBUS_PROXY_FLAGS_NONE,
+                                 NULL,
+                                 "org.freedesktop.PackageKit",
+                                 "/org/freedesktop/PackageKit",
+                                 "org.freedesktop.PackageKit.Modify",
+                                 NULL,
+                                 &error);
+
+  if (error != NULL) {
+    /* display an error to the user */
+    thunar_dialogs_show_error (GTK_WIDGET(dialog), error, _("There was an error searching for new applications"));
+
+    /* release the error */
+    g_error_free (error);
+
+    g_object_unref (connection);
+    return;
+  }
+
+  mime_types = g_variant_builder_new (G_VARIANT_TYPE ("as"));
+  g_variant_builder_add (mime_types, "s", content_type);
+
+  g_dbus_proxy_call (proxy, "InstallMimeTypes",
+                     g_variant_new ("(uass)",
+                                    0, /* xid */
+                                    mime_types,
+                                    "hide-finished,show-warnings"
+                     ),
+                     G_DBUS_CALL_FLAGS_NONE,
+                     G_MAXINT,
+                     NULL,
+                     thunar_chooser_dialog_install_handlers_ready_cb,
+                     dialog);
+
+  g_variant_builder_unref (mime_types);
+  g_object_unref(proxy);
+  g_object_unref (connection);
+}
 
