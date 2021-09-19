@@ -37,7 +37,6 @@
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-user.h>
-#include <thunar/thunar-job.h>
 #include <thunar/thunar-simple-job.h>
 
 
@@ -491,7 +490,7 @@ thunar_list_model_dispose (GObject *object)
 {
   /* unlink from the folder (if any) */
   thunar_list_model_set_folder (THUNAR_LIST_MODEL (object), NULL, NULL);
-
+  printf("Dispose\n");
   (*G_OBJECT_CLASS (thunar_list_model_parent_class)->dispose) (object);
 }
 
@@ -501,6 +500,22 @@ static void
 thunar_list_model_finalize (GObject *object)
 {
   ThunarListModel *store = THUNAR_LIST_MODEL (object);
+  printf("Finalize\n");
+  if (store->job)
+    {
+      exo_job_cancel (EXO_JOB (store->job));
+
+      g_signal_handlers_disconnect_matched (store->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
+      g_object_unref (store->job);
+      store->job = NULL;
+    }
+  if (store->timeout_id > 0)
+    {
+      g_source_remove (store->timeout_id);
+      store->timeout_id = 0;
+    }
+  thunar_g_list_free_full (store->files_to_add);
+  store->files_to_add = NULL;
 
   g_sequence_free (store->rows);
   g_mutex_clear (&store->m);
@@ -2029,6 +2044,23 @@ thunar_list_model_set_date_custom_style (ThunarListModel *store,
 
 
 
+ThunarJob*
+thunar_list_model_get_job (ThunarListModel  *store)
+{
+  return store->job;
+}
+
+
+
+void
+thunar_list_model_set_job (ThunarListModel  *store,
+                           ThunarJob        *job)
+{
+  store->job = job;
+}
+
+
+
 static gboolean
 _thunar_jobs_search_directory (ThunarJob  *job,
                                GArray     *param_values,
@@ -2076,9 +2108,26 @@ void search_error (ThunarJob *job)
 
 
 
-void search_finished (ThunarJob *job)
+void search_finished (ThunarJob       *job,
+                      ThunarListModel *store)
 {
   printf("Finished!\n");
+
+  if (store->job)
+    {
+      g_signal_handlers_disconnect_matched (store->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
+      g_object_unref (store->job);
+      store->job = NULL;
+    }
+
+  if (store->timeout_id > 0)
+    {
+      g_source_remove (store->timeout_id);
+      store->timeout_id = 0;
+    }
+
+  thunar_g_list_free_full (store->files_to_add);
+  store->files_to_add = NULL;
 }
 
 
@@ -2108,6 +2157,7 @@ search_folder (ThunarListModel  *model,
                gchar            *search_query_c,
                int               depth)
 {
+  GCancellable    *cancellable;
   GFileEnumerator *enumerator;
   GFile           *directory;
   GList           *files_found = NULL; /* contains the matching files in this folder only */
@@ -2116,12 +2166,13 @@ search_folder (ThunarListModel  *model,
   const gchar     *display_name;
   gchar           *display_name_c; /* converted to ignore case */
 
+  cancellable = exo_job_get_cancellable (EXO_JOB (job));
   directory = g_file_new_for_uri (uri);
   namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE ","
               G_FILE_ATTRIBUTE_STANDARD_TARGET_URI ","
               G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
               G_FILE_ATTRIBUTE_STANDARD_NAME ", recent::*";
-  enumerator = g_file_enumerate_children (directory, namespace, G_FILE_QUERY_INFO_NONE, NULL, NULL);
+  enumerator = g_file_enumerate_children (directory, namespace, G_FILE_QUERY_INFO_NONE, cancellable, NULL);
   if (enumerator == NULL)
     return;
 
@@ -2132,15 +2183,17 @@ search_folder (ThunarListModel  *model,
       GFileInfo *info;
       GFileType  type;
 
+//      printf("Not cancelled\n");
+
       /* get GFile and GFileInfo */
-      info = g_file_enumerator_next_file (enumerator, NULL, NULL);
+      info = g_file_enumerator_next_file (enumerator, cancellable, NULL);
       if (G_UNLIKELY (info == NULL))
         break;
 
       if (g_file_has_uri_scheme (directory, "recent"))
         {
           file = g_file_new_for_uri (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI));
-          info = g_file_query_info (file, namespace, G_FILE_QUERY_INFO_NONE, NULL, NULL);
+          info = g_file_query_info (file, namespace, G_FILE_QUERY_INFO_NONE, cancellable, NULL);
         }
       else
         file = g_file_get_child (directory, g_file_info_get_name (info));
@@ -2169,6 +2222,10 @@ search_folder (ThunarListModel  *model,
 
   g_object_unref (enumerator);
   g_object_unref (directory);
+
+  if (exo_job_is_cancelled (EXO_JOB (job))) {
+    return;
+  }
 
   g_mutex_lock (&model->m);
   model->files_to_add = g_list_concat (model->files_to_add, files_found);
@@ -2225,6 +2282,9 @@ thunar_list_model_set_folder (ThunarListModel *store,
       if (store->job)
         {
           exo_job_cancel (EXO_JOB (store->job));
+
+          g_signal_handlers_disconnect_matched (store->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
+          g_object_unref (store->job);
           store->job = NULL;
         }
       if (store->timeout_id > 0)
@@ -2309,7 +2369,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
           exo_job_launch (EXO_JOB (store->job));
 
           g_signal_connect (store->job, "error", G_CALLBACK (search_error), NULL);
-          g_signal_connect (store->job, "finished", G_CALLBACK (search_finished), NULL);
+          g_signal_connect (store->job, "finished", G_CALLBACK (search_finished), store);
 
           /* add new results to the model every X ms */
           store->timeout_id = g_timeout_add (500, add_search_files, store);
