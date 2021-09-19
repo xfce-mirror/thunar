@@ -42,6 +42,7 @@
 enum
 {
   PROP_0,
+  PROP_LABEL_TYPE,
   PROP_FILES,
   PROP_FILE_SIZE_BINARY
 };
@@ -95,6 +96,9 @@ struct _ThunarSizeLabel
 
   GtkWidget          *label;
   GtkWidget          *spinner;
+
+  /* detailed type of the thunar size label */
+  ThunarSizeLabelType type;
 };
 
 
@@ -112,6 +116,20 @@ thunar_size_label_class_init (ThunarSizeLabelClass *klass)
   gobject_class->finalize = thunar_size_label_finalize;
   gobject_class->get_property = thunar_size_label_get_property;
   gobject_class->set_property = thunar_size_label_set_property;
+
+  /**
+   * ThunarSizeLabel:label-type:
+   *
+   * The #ThunarSizeLabelType of this #ThunarSizeLabel.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LABEL_TYPE,
+                                   g_param_spec_int ("label-type",
+                                                     "label-type",
+                                                     "label-type",
+                                                     0, N_THUNAR_SIZE_LABEL - 1, 0, // min, max, default
+                                                     G_PARAM_WRITABLE
+                                                     | G_PARAM_CONSTRUCT_ONLY));
 
   /**
    * ThunarSizeLabel:file:
@@ -246,6 +264,10 @@ thunar_size_label_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_LABEL_TYPE:
+      size_label->type = g_value_get_int (value);
+      break;
+
     case PROP_FILES:
       thunar_size_label_set_files (size_label, g_value_get_boxed (value));
       break;
@@ -397,6 +419,8 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
                                  ThunarSizeLabel    *size_label)
 {
   gchar             *size_string;
+  gchar             *folder_size_string;
+  gchar             *file_size_string;
   gchar             *text;
   guint              n;
   gchar             *unreable_text;
@@ -410,10 +434,23 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
 
   if (G_LIKELY (n > unreadable_directory_count))
     {
-      /* update the label */
-      size_string = g_format_size_full (total_size, G_FORMAT_SIZE_LONG_FORMAT | (size_label->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT));
-      text = g_strdup_printf (ngettext ("%u item, totalling %s", "%u items, totalling %s", n), n, size_string);
-      g_free (size_string);
+      if (size_label->type == THUNAR_SIZE_LABEL_SIZE)
+        {
+          size_string = g_format_size_full (total_size, G_FORMAT_SIZE_LONG_FORMAT | (size_label->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT));
+          text = g_strdup_printf ("%s", size_string);
+
+          gtk_label_set_text (GTK_LABEL (size_label->label), text);
+          g_free (size_string);
+        }
+      else /* if (size_label->type == THUNAR_SIZE_LABEL_CONTENT) */
+        {
+          folder_size_string = g_strdup_printf (ngettext ("%d folder", "%d folders", directory_count - 1), directory_count - 1);
+          file_size_string = g_strdup_printf (ngettext ("%d file", "%d files", file_count), file_count);
+          text = g_strdup_printf (ngettext ("%u item (%s, %s)", "%u items (%s, %s)", n), n, file_size_string, folder_size_string);
+
+          g_free (folder_size_string);
+          g_free (file_size_string);
+        }
 
       if (unreadable_directory_count > 0)
         {
@@ -507,6 +544,20 @@ thunar_size_label_set_files (ThunarSizeLabel *size_label,
 GtkWidget*
 thunar_size_label_new (void)
 {
-  return g_object_new (THUNAR_TYPE_SIZE_LABEL, NULL);
+  return g_object_new (THUNAR_TYPE_SIZE_LABEL, "label-type", THUNAR_SIZE_LABEL_SIZE, NULL);
 }
 
+
+
+/**
+ * thunar_content_label_new:
+ *
+ * Allocates a new #ThunarSizeLabel instance.
+ *
+ * Return value: the newly allocated #ThunarSizeLabel.
+ **/
+GtkWidget*
+thunar_content_label_new (void)
+{
+  return g_object_new (THUNAR_TYPE_SIZE_LABEL, "label-type", THUNAR_SIZE_LABEL_CONTENT, NULL);
+}
