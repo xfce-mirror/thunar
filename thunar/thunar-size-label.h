@@ -34,9 +34,18 @@ typedef struct _ThunarSizeLabel      ThunarSizeLabel;
 #define THUNAR_IS_SIZE_LABEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_SIZE_LABEL))
 #define THUNAR_SIZE_LABEL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SIZE_LABEL, ThunarSizeLabelClass))
 
+typedef enum
+{
+    THUNAR_SIZE_LABEL_SIZE,
+    THUNAR_SIZE_LABEL_CONTENT,
+    N_THUNAR_SIZE_LABEL
+} ThunarSizeLabelType;
+
+
 GType       thunar_size_label_get_type  (void) G_GNUC_CONST;
 
 GtkWidget  *thunar_size_label_new       (void) G_GNUC_MALLOC;
+GtkWidget  *thunar_content_label_new    (void) G_GNUC_MALLOC;
 
 G_END_DECLS;
 
