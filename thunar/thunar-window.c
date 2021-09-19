@@ -3442,6 +3442,7 @@ thunar_window_replace_view (ThunarWindow *window,
   ThunarFile     *current_directory = NULL;
   GtkWidget      *new_view;
   ThunarHistory  *history = NULL;
+  ThunarJob      *job = NULL;
   GList          *selected_thunar_files = NULL;
   gint            page_num;
   gboolean        is_current_view;
@@ -3482,7 +3483,10 @@ thunar_window_replace_view (ThunarWindow *window,
       /* save the history of the current view */
       history = NULL;
       if (THUNAR_IS_STANDARD_VIEW (view))
-        history = thunar_standard_view_copy_history (THUNAR_STANDARD_VIEW (view));
+        {
+          history = thunar_standard_view_copy_history (THUNAR_STANDARD_VIEW (view));
+          job = thunar_list_model_get_job (THUNAR_STANDARD_VIEW (view)->model);
+        }
     }
 
   if (is_current_view)
@@ -3545,6 +3549,8 @@ thunar_window_replace_view (ThunarWindow *window,
                                                                             G_CALLBACK (thunar_window_history_changed),
                                                                             window);
     }
+
+  thunar_list_model_set_job (THUNAR_STANDARD_VIEW (new_view)->model, job);
 }
 
 
