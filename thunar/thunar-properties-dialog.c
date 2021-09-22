@@ -148,6 +148,8 @@ struct _ThunarPropertiesDialog
   GtkWidget              *volume_image;
   GtkWidget              *volume_label;
   GtkWidget              *permissions_chooser;
+  GtkWidget              *content_label;
+  GtkWidget              *content_value_label;
 };
 
 
@@ -551,6 +553,24 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_set_hexpand (label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), label, 1, row, 1, 1);
   gtk_widget_show (label);
+
+  ++row;
+
+  label = gtk_label_new (_("Content:"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
+  gtk_widget_show (label);
+  dialog->content_label = label;
+
+  label = thunar_content_label_new ();
+  g_object_bind_property (G_OBJECT (dialog), "files",
+                          G_OBJECT (label), "files",
+                          G_BINDING_SYNC_CREATE);
+  gtk_widget_set_hexpand (label, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), label, 1, row, 1, 1);
+  gtk_widget_show (label);
+  dialog->content_value_label = label;
 
   ++row;
 
@@ -1444,6 +1464,17 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 
       /* update the properties for a dialog showing multiple files */
       thunar_properties_dialog_update_multiple (dialog);
+    }
+
+  if (g_list_length (dialog->files) == 1 && thunar_file_is_directory (dialog->files->data) == FALSE)
+    {
+      gtk_widget_hide (dialog->content_label);
+      gtk_widget_hide (dialog->content_value_label);
+    }
+  else
+    {
+      gtk_widget_show (dialog->content_label);
+      gtk_widget_show (dialog->content_value_label);
     }
 }
 
