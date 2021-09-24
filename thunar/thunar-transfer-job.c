@@ -883,19 +883,19 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
           base_name = g_file_get_basename (target_file);
           g_clear_object (&target_file);
 
-          /* replace invalid chars */
+          /* replace character which are invalid for FAT filenames */
           g_strdelimit (g_strchomp (base_name),
                         "/:*?\"<>\\|",
                         '_');
 
-          /* character 0~31 is invalid */
+          /* ASCII characters 0~31 are as well invalid for FAT filenames */
           for (int i = 0; base_name[i] != '\0'; i++)
             {
-              if (base_name[i] < 32)
+              if (base_name[i] >= 0 && base_name[i] < 32)
                 base_name[i] = '_';
             }
 
-          /* avoid reserved names */
+          /* avoid FAT reserved names */
           if (g_regex_match (windows_reserved_name, base_name, 0, NULL))
             {
               gchar *tmp = base_name;
