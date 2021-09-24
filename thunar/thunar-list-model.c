@@ -1359,11 +1359,11 @@ thunar_list_model_folder_error (ThunarFolder    *folder,
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (error != NULL);
 
-  /* forward the error signal */
-  g_signal_emit (G_OBJECT (store), list_model_signals[ERROR], 0, error);
-
   /* reset the current folder */
   thunar_list_model_set_folder (store, NULL, NULL);
+
+  /* forward the error signal */
+  g_signal_emit (G_OBJECT (store), list_model_signals[ERROR], 0, error);
 }
 
 
