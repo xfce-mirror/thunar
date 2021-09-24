@@ -125,8 +125,7 @@ thunar_gtk_menu_thunarx_menu_item_new (GObject      *thunarx_menu_item,
   g_free (accel_path);
   g_free (label_text);
   g_free (tooltip_text);
-  if (icon_name != NULL)
-    g_free (icon_name);
+  g_free (icon_name);
   if (icon != NULL)
     g_object_unref (icon);
 

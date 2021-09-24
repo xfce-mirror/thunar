@@ -238,10 +238,8 @@ thunar_transfer_job_finalize (GObject *object)
 
   g_list_free_full (job->source_node_list, thunar_transfer_node_free);
 
-  if (job->source_device_fs_id != NULL)
-    g_free (job->source_device_fs_id);
-  if (job->target_device_fs_id != NULL)
-    g_free (job->target_device_fs_id);
+  g_free (job->source_device_fs_id);
+  g_free (job->target_device_fs_id);
 
   thunar_g_list_free_full (job->target_file_list);
 
