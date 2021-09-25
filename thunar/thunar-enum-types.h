@@ -127,8 +127,8 @@ typedef enum
 
 GType        thunar_column_get_type          (void)                      G_GNUC_CONST;
 const gchar* thunar_column_string_from_value (ThunarColumn  value);
-gboolean     thunar_column_value_from_string (const gchar  *value_string,
-                                              gint         *value);
+gboolean     thunar_column_value_from_string (const gchar   *value_string,
+                                              ThunarColumn  *value);
 
 
 #define THUNAR_TYPE_ICON_SIZE (thunar_icon_size_get_type ())
