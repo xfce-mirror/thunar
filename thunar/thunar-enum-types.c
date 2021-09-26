@@ -146,8 +146,8 @@ thunar_column_string_from_value (ThunarColumn value)
 
 
 gboolean
-thunar_column_value_from_string (const gchar *value_string,
-                                 gint        *value)
+thunar_column_value_from_string (const gchar  *value_string,
+                                 ThunarColumn *value)
 {
   GEnumClass *enum_class;
   GEnumValue *enum_value;
