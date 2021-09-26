@@ -729,7 +729,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
   ThunarFile  *file;
   GFile       *g_file;
   gchar       *str;
-  gchar       *uri;
+  gchar       *path;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
   _thunar_return_if_fail (iter->stamp == (THUNAR_LIST_MODEL (model))->stamp);
@@ -771,10 +771,10 @@ thunar_list_model_get_value (GtkTreeModel *model,
 
     case THUNAR_COLUMN_LOCATION:
       g_value_init (value, G_TYPE_STRING);
-      uri = thunar_file_dup_uri (file);
-      str = g_path_get_dirname (uri);
+      path = g_file_get_path (thunar_file_get_file (file));
+      str = g_path_get_dirname (path);
       g_value_take_string (value, str);
-      g_free (uri);
+      g_free (path);
       break;
 
     case THUNAR_COLUMN_GROUP:
