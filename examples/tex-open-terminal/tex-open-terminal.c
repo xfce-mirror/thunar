@@ -29,8 +29,10 @@
 #include <string.h>
 #endif
 
+#include <libxfce4util/libxfce4util.h>
 #include <libxfce4ui/libxfce4ui.h>
 #include <tex-open-terminal/tex-open-terminal.h>
+#include <sys/stat.h>
 
 
 
@@ -127,7 +129,7 @@ tex_open_terminal_get_folder_menu_items (ThunarxMenuProvider *provider,
       /* check if we have a valid path here */
       if (G_LIKELY (path != NULL))
         {
-          item = thunarx_menu_item_new ("TexOpenTerminal::open-terminal-here", "Open Terminal Here", "Open Terminal in this folder", "utilities-terminal");
+          item = thunarx_menu_item_new ("TexOpenTerminal::open-terminal-here", "Create shared thumbnail repository", "Create shared thumbnail repositories in this folder and its subfolders", "utilities-terminal");
           g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (tex_open_terminal_activated), window);
           g_object_set_data_full (G_OBJECT (item), "open-terminal-here-path", path, g_free);
         }
@@ -140,29 +142,95 @@ tex_open_terminal_get_folder_menu_items (ThunarxMenuProvider *provider,
 
 
 static void
+recursive_call (gchar *path)
+{
+  static int tabs = 0;
+
+  GDir *dir;
+  GError *error;
+  const gchar *filename;
+
+  dir = g_dir_open(path, 0, &error);
+  while ((filename = g_dir_read_name(dir)))
+    {
+      gchar *new_path = g_build_path ("/", path, filename, NULL);
+      GFile *file = g_file_new_for_path (new_path);
+      GFileInfo *info = g_file_query_info (file, "*", G_FILE_QUERY_INFO_NONE, NULL, NULL);
+      GFileType type = g_file_info_get_file_type (info);
+
+      if (type == G_FILE_TYPE_DIRECTORY)
+        {
+          printf("Dir path: %s\n", new_path);
+          tabs++;
+          if (strcmp (filename, ".sh_thumbnails") != 0)
+            recursive_call (new_path);
+          tabs--;
+        }
+      else if (type == G_FILE_TYPE_REGULAR)
+        {
+          gchar *uri = g_file_get_uri (file);
+          gchar *normal_path = xfce_get_local_thumbnail_path (uri, "normal");
+          if (normal_path == NULL)
+            {
+              printf("File doesn't exist\n");
+              GString *command = g_string_new ("dbus-send --session --print-reply --dest=org.freedesktop.thumbnails.Thumbnailer1 /org/freedesktop/thumbnails/Thumbnailer1 org.freedesktop.thumbnails.Thumbnailer1.Queue array:string:\"");
+              g_string_append (command, uri);
+              g_string_append (command, "\" array:string:\"image/png\" string:\"normal\" string:\"default\" uint32:0");
+              printf ("%s\n", command->str);
+              g_spawn_command_line_sync (command->str, NULL, NULL, NULL, NULL);
+              g_string_free (command, TRUE);
+              while ((normal_path = xfce_get_local_thumbnail_path (uri, "normal")) == NULL)
+                ;
+            }
+          gchar *large_path = xfce_get_local_thumbnail_path (uri, "large");
+          if (large_path == NULL)
+            {
+              printf("File doesn't exist\n");
+              GString *command = g_string_new ("dbus-send --session --print-reply --dest=org.freedesktop.thumbnails.Thumbnailer1 /org/freedesktop/thumbnails/Thumbnailer1 org.freedesktop.thumbnails.Thumbnailer1.Queue array:string:\"");
+              g_string_append (command, uri);
+              g_string_append (command, "\" array:string:\"image/png\" string:\"normal\" string:\"default\" uint32:0");
+              printf ("%s\n", command->str);
+              g_spawn_command_line_sync (command->str, NULL, NULL, NULL, NULL);
+              g_string_free (command, TRUE);
+              while ((large_path = xfce_get_local_thumbnail_path (uri, "large")) == NULL)
+                ;
+            }
+          gchar *normal_shared_path = xfce_create_shared_thumbnail_path (uri, "normal");
+          gchar *large_shared_path = xfce_create_shared_thumbnail_path (uri, "large");
+
+          printf("Regular file\n");
+
+          if (normal_path)
+            {
+              for (int i = 0; i < tabs; i++)
+                printf("\t");
+              printf ("Normal thumbnail path: %s\n", normal_path);
+              printf ("Shared normal thumbnail path: %s\n", normal_shared_path);
+              xfce_mkdirhier (g_path_get_dirname (normal_shared_path), S_IRWXU | S_IRWXG | S_IRWXO, NULL);
+              printf ("Success: %d\n", g_file_copy (g_file_new_for_path (normal_path), g_file_new_for_path (normal_shared_path), G_FILE_COPY_ALL_METADATA, NULL, NULL, NULL, NULL));
+            }
+          if (large_path)
+            {
+              for (int i = 0; i < tabs; i++)
+                printf("\t");
+              printf ("Large thumbnail path: %s\n", large_path);
+              xfce_mkdirhier (g_path_get_dirname (large_shared_path), S_IRWXU | S_IRWXG | S_IRWXO, NULL);
+              printf ("Success: %d\n", g_file_copy (g_file_new_for_path (large_path), g_file_new_for_path (large_shared_path), G_FILE_COPY_ALL_METADATA, NULL, NULL, NULL, NULL));
+            }
+        }
+    }
+}
+
+
+
+static void
 tex_open_terminal_activated (ThunarxMenuItem *item,
                              GtkWidget       *window)
 {
-  const gchar *path;
-  GError      *error = NULL;
-  gchar       *command;
+  gchar *path;
 
   /* determine the folder path */
   path = g_object_get_data (G_OBJECT (item), "open-terminal-here-path");
-  if (G_UNLIKELY (path == NULL))
-    return;
 
-  /* build up the command line for the terminal */
-  command = g_strdup_printf ("exo-open --launch TerminalEmulator --working-directory \"%s\"", path);
-
-  /* try to run the terminal command */
-  if (!xfce_spawn_command_line_on_screen (gtk_widget_get_screen (window), command, FALSE, FALSE, &error))
-    {
-      /* display an error dialog */
-      xfce_dialog_show_error (GTK_WINDOW (window), error, "Failed to open terminal in folder %s.", path);
-      g_error_free (error);
-    }
-
-  /* cleanup */
-  g_free (command);
+  recursive_call (path);
 }
