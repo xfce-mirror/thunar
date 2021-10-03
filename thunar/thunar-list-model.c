@@ -773,6 +773,15 @@ thunar_list_model_get_value (GtkTreeModel *model,
       g_value_init (value, G_TYPE_STRING);
       uri = thunar_file_dup_uri (file);
       str = g_path_get_dirname (uri);
+
+      /* remove the uri prefix for normal, local files */
+      if (strncmp ("file://", str, 7) == 0)
+        {
+          gchar *old = str;
+          str = g_strdup (str + 7);
+          g_free (old);
+        }
+
       g_value_take_string (value, str);
       g_free (uri);
       break;
