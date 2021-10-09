@@ -215,6 +215,9 @@ struct _ThunarTreeModelItem
   /* list of children of this node that are
    * not visible in the treeview */
   GSList          *invisible_children;
+
+  /* used to avoid loading the contents of the folder */
+  gboolean         do_not_load;
 };
 
 typedef struct
@@ -354,6 +357,10 @@ thunar_tree_model_init (ThunarTreeModel *model)
           /* create and append the new node */
           item = thunar_tree_model_item_new_with_file (model, file);
           node = g_node_append_data (model->root, item);
+
+          /* do not load the contents of `recent://` when opening the view */
+          if (thunar_file_is_recent (file))
+            item->do_not_load = TRUE;
 
           /* store reference to the "File System" node */
           if (thunar_file_has_uri_scheme (file, "file") && thunar_file_is_root (file))
@@ -804,6 +811,9 @@ thunar_tree_model_ref_node (GtkTreeModel *tree_model,
     }
   else
     {
+      if (item->do_not_load == TRUE)
+        return;
+
       /* schedule a reload of the folder if it is cleaned earlier */
       if (G_UNLIKELY (item->ref_count == 0))
         thunar_tree_model_item_load_folder (item);
@@ -1167,6 +1177,7 @@ thunar_tree_model_item_new_with_file (ThunarTreeModel *model,
   item = g_slice_new0 (ThunarTreeModelItem);
   item->file = THUNAR_FILE (g_object_ref (G_OBJECT (file)));
   item->model = model;
+  item->do_not_load = FALSE;
 
   return item;
 }
