@@ -804,6 +804,10 @@ thunar_tree_model_ref_node (GtkTreeModel *tree_model,
     }
   else
     {
+      /* do not load `Recent` to avoid slowing down the view */
+      if (item->file != NULL && thunar_file_is_recent (item->file))
+        return;
+
       /* schedule a reload of the folder if it is cleaned earlier */
       if (G_UNLIKELY (item->ref_count == 0))
         thunar_tree_model_item_load_folder (item);
