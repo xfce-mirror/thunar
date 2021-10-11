@@ -804,6 +804,9 @@ thunar_tree_model_ref_node (GtkTreeModel *tree_model,
     }
   else
     {
+      if (item->file != NULL && thunar_file_is_recent (item->file))
+        return;
+
       /* schedule a reload of the folder if it is cleaned earlier */
       if (G_UNLIKELY (item->ref_count == 0))
         thunar_tree_model_item_load_folder (item);
@@ -1167,6 +1170,7 @@ thunar_tree_model_item_new_with_file (ThunarTreeModel *model,
   item = g_slice_new0 (ThunarTreeModelItem);
   item->file = THUNAR_FILE (g_object_ref (G_OBJECT (file)));
   item->model = model;
+  item->do_not_load = FALSE;
 
   return item;
 }
