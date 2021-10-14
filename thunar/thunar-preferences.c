@@ -105,6 +105,10 @@ enum
   PROP_MISC_THUMBNAIL_MAX_FILE_SIZE,
   PROP_MISC_FILE_SIZE_BINARY,
   PROP_MISC_CONFIRM_CLOSE_MULTIPLE_TABS,
+  PROP_MISC_STATUS_BAR_SHOW_SIZE,
+  PROP_MISC_STATUS_BAR_SHOW_SIZE_IN_BYTES,
+  PROP_MISC_STATUS_BAR_SHOW_FILETYPE,
+  PROP_MISC_STATUS_BAR_SHOW_DISPLAY_NAME,
   PROP_MISC_PARALLEL_COPY_MODE,
   PROP_MISC_WINDOW_ICON,
   PROP_MISC_TRANSFER_USE_PARTIAL,
@@ -936,6 +940,58 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   preferences_props[PROP_MISC_CONFIRM_CLOSE_MULTIPLE_TABS] =
       g_param_spec_boolean ("misc-confirm-close-multiple-tabs",
                             "ConfirmCloseMultipleTabs",
+                            NULL,
+                            TRUE,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-confirm-close-multiple-tabs:
+   *
+   * Ask the user for confirmation before closing a window with
+   * multiple tabs.
+   **/
+  preferences_props[PROP_MISC_STATUS_BAR_SHOW_SIZE] =
+      g_param_spec_boolean ("misc-status-bar-show-size",
+                            "MiscStatusBarShowSize",
+                            NULL,
+                            TRUE,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-confirm-close-multiple-tabs:
+   *
+   * Ask the user for confirmation before closing a window with
+   * multiple tabs.
+   **/
+  preferences_props[PROP_MISC_STATUS_BAR_SHOW_SIZE_IN_BYTES] =
+      g_param_spec_boolean ("misc-status-bar-show-size-in-bytes",
+                            "MiscStatusBarShowSizeInBytes",
+                            NULL,
+                            TRUE,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-confirm-close-multiple-tabs:
+   *
+   * Ask the user for confirmation before closing a window with
+   * multiple tabs.
+   **/
+  preferences_props[PROP_MISC_STATUS_BAR_SHOW_FILETYPE] =
+      g_param_spec_boolean ("misc-status-bar-show-filetype",
+                            "MiscStatusBarShowFiletype",
+                            NULL,
+                            TRUE,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-confirm-close-multiple-tabs:
+   *
+   * Ask the user for confirmation before closing a window with
+   * multiple tabs.
+   **/
+  preferences_props[PROP_MISC_STATUS_BAR_SHOW_DISPLAY_NAME] =
+      g_param_spec_boolean ("misc-status-bar-show-display-name",
+                            "MiscStatusBarShowDisplayName",
                             NULL,
                             TRUE,
                             EXO_PARAM_READWRITE);
