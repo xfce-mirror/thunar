@@ -34,9 +34,22 @@ typedef struct _ThunarStatusbar      ThunarStatusbar;
 #define THUNAR_IS_STATUSBAR_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_STATUSBAR))
 #define THUNAR_STATUSBAR_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_STATUSBAR, ThunarStatusbarClass))
 
+/* #XfceGtkActionEntrys provided by this widget */
+typedef enum
+{
+    THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE,
+    THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE_IN_BYTES,
+    THUNAR_STATUS_BAR_ACTION_TOGGLE_FILETYPE,
+    THUNAR_STATUS_BAR_ACTION_TOGGLE_DISPLAY_NAME,
+
+
+} ThunarStatusBarAction;
+
 GType      thunar_statusbar_get_type    (void) G_GNUC_CONST;
 
 GtkWidget *thunar_statusbar_new         (void);
+
+void       thunar_statusbar_setup_event (ThunarStatusbar *status_bar, GtkWidget *event_box);
 
 G_END_DECLS;
 
