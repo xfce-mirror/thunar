@@ -571,3 +571,12 @@ thunar_verify_file_get_type (void)
 
   return type;
 }
+
+
+
+guint
+thunar_status_bar_info_switch (guint               active,
+                               ThunarStatusBarInfo info)
+{
+  return active ^ info;
+}
