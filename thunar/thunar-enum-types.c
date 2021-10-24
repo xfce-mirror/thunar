@@ -571,3 +571,38 @@ thunar_verify_file_get_type (void)
 
   return type;
 }
+
+
+
+/**
+ * thunar_status_bar_info_toggle_bit:
+ * @info   : a #guint.
+ * @mask   : a #ThunarStatusBarInfo (can be a combination using |)
+ *
+ * Flips the bits of @info when there is a matching info bit in @mask.
+ * Used to enable/disable information in the statusbar.
+ *
+ * Return value: @info XOR @mask.
+ **/
+guint
+thunar_status_bar_info_toggle_bit (guint               info,
+                                   ThunarStatusBarInfo mask)
+{
+  return info ^ mask;
+}
+
+
+
+/**
+ * thunar_status_bar_info_check_active:
+ * @info   : a #guint.
+ * @mask   : a #ThunarStatusBarInfo (can be a combination using |)
+ *
+ * Return value: TRUE if the fields specified in @mask are active, otherwise FALSE.
+ **/
+gboolean
+thunar_status_bar_info_check_active (guint               info,
+                                     ThunarStatusBarInfo mask)
+{
+  return (info & mask) > 0 ? TRUE : FALSE;
+}

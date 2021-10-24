@@ -182,6 +182,8 @@ void           thunar_standard_view_set_searching         (ThunarStandardView   
                                                            gchar                    *search_query);
 gchar         *thunar_standard_view_get_search_query      (ThunarStandardView       *standard_view);
 
+void           thunar_standard_view_update_statusbar_text (ThunarStandardView       *standard_view);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_STANDARD_VIEW_H__ */
