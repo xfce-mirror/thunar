@@ -382,6 +382,21 @@ typedef enum
     THUNAR_NEW_TAB_BEHAVIOR_STAY
 } ThunarNewTabBehavior;
 
+
+
+typedef enum
+{
+    THUNAR_STATUS_BAR_INFO_SIZE           = 1 << 0,
+    THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES  = 1 << 1,
+    THUNAR_STATUS_BAR_INFO_FILETYPE       = 1 << 2,
+    THUNAR_STATUS_BAR_INFO_DISPLAY_NAME   = 1 << 3,
+} ThunarStatusBarInfo;
+
+guint    thunar_status_bar_info_toggle_bit    (guint               info,
+                                               ThunarStatusBarInfo mask);
+gboolean thunar_status_bar_info_check_active  (guint               info,
+                                               ThunarStatusBarInfo mask);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_ENUM_TYPES_H__ */

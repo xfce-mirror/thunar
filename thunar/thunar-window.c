@@ -674,6 +674,7 @@ thunar_window_init (ThunarWindow *window)
   GtkWidget       *infobar;
   GtkWidget       *item;
   GtkWidget       *button;
+  GtkWidget       *event_box;
   gboolean         last_menubar_visible;
   gchar           *last_location_bar;
   gchar           *last_side_pane;
@@ -926,12 +927,16 @@ thunar_window_init (ThunarWindow *window)
   gtk_widget_hide (window->catfish_search_button);
 
   /* setup a new statusbar */
+  event_box = gtk_event_box_new ();
   window->statusbar = thunar_statusbar_new ();
   gtk_widget_set_hexpand (window->statusbar, TRUE);
-  gtk_grid_attach (GTK_GRID (window->view_box), window->statusbar, 0, 4, 1, 1);
+  gtk_container_add (GTK_CONTAINER (event_box), window->statusbar);
+  gtk_grid_attach (GTK_GRID (window->view_box), event_box, 0, 4, 1, 1);
   if (last_statusbar_visible)
     gtk_widget_show (window->statusbar);
+  gtk_widget_show (event_box);
 
+  thunar_statusbar_setup_event (THUNAR_STATUSBAR (window->statusbar), event_box);
   if (G_LIKELY (window->view != NULL))
     thunar_window_binding_create (window, window->view, "statusbar-text", window->statusbar, "text", G_BINDING_SYNC_CREATE);
 
@@ -5015,4 +5020,12 @@ thunar_window_catfish_dialog_configure (GtkWidget *entry)
     }
 
   g_free (display);
+}
+
+
+
+void
+thunar_window_update_statusbar (ThunarWindow *window)
+{
+  thunar_standard_view_update_statusbar_text (THUNAR_STANDARD_VIEW (window->view));
 }

@@ -158,7 +158,6 @@ static ThunarFile          *thunar_standard_view_get_drop_file              (Thu
                                                                              gint                      x,
                                                                              gint                      y,
                                                                              GtkTreePath             **path_return);
-static void                 thunar_standard_view_update_statusbar_text      (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_current_directory_destroy  (ThunarFile               *current_directory,
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_current_directory_changed  (ThunarFile               *current_directory,
@@ -2046,7 +2045,7 @@ THUNAR_THREADS_LEAVE
 
 
 
-static void
+void
 thunar_standard_view_update_statusbar_text (ThunarStandardView *standard_view)
 {
   /* stop pending timeout */

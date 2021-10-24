@@ -2606,14 +2606,23 @@ static gchar*
 thunar_list_model_get_statusbar_text_for_files (GList    *files,
                                                 gboolean  show_file_size_binary_format)
 {
-  guint64  size_summary = 0;
-  gint     folder_count = 0;
-  gint     non_folder_count = 0;
-  GList   *lp;
-  gchar   *size_string;
-  gchar   *text;
-  gchar   *folder_text = NULL;
-  gchar   *non_folder_text = NULL;
+  guint64            size_summary     = 0;
+  gint               folder_count     = 0;
+  gint               non_folder_count = 0;
+  GList             *lp;
+  gchar             *size_string      = NULL;
+  gchar             *text             = "";
+  gchar             *folder_text      = NULL;
+  gchar             *non_folder_text  = NULL;
+  ThunarPreferences *preferences;
+  guint              active;
+  gboolean           show_size, show_size_in_bytes;
+
+  preferences = thunar_preferences_get ();
+  g_object_get (G_OBJECT (preferences), "misc-status-bar-active-info", &active, NULL);
+  show_size = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE);
+  show_size_in_bytes = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES);
+  g_object_unref (preferences);
 
   /* analyze files */
   for (lp = files; lp != NULL; lp = lp->next)
@@ -2632,11 +2641,27 @@ thunar_list_model_get_statusbar_text_for_files (GList    *files,
 
   if (non_folder_count > 0)
     {
-      size_string = g_format_size_full (size_summary, G_FORMAT_SIZE_LONG_FORMAT | (show_file_size_binary_format ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT));
-      non_folder_text = g_strdup_printf (ngettext ("%d file: %s",
-                                                   "%d files: %s",
-                                                   non_folder_count), non_folder_count, size_string);
-      g_free (size_string);
+      if (show_size == TRUE)
+        {
+          if (show_size_in_bytes == TRUE)
+            {
+              size_string = g_format_size_full (size_summary, G_FORMAT_SIZE_LONG_FORMAT
+                                                              | (show_file_size_binary_format ? G_FORMAT_SIZE_IEC_UNITS
+                                                                                              : G_FORMAT_SIZE_DEFAULT));
+            }
+          else
+            {
+              size_string = g_format_size_full (size_summary, show_file_size_binary_format ? G_FORMAT_SIZE_IEC_UNITS
+                                                                                           : G_FORMAT_SIZE_DEFAULT);
+            }
+          non_folder_text = g_strdup_printf (ngettext ("%d file: %s",
+                                                       "%d files: %s",
+                                                       non_folder_count), non_folder_count, size_string);
+          g_free (size_string);
+        }
+      else
+        non_folder_text = g_strdup_printf (ngettext ("%d file", "%d files", non_folder_count), non_folder_count);
+
     }
 
   if (folder_count > 0)
@@ -2699,8 +2724,9 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
   GList             *lp;
   gchar             *absolute_path;
   gchar             *fspace_string;
-  gchar             *display_name;
+  gchar             *display_name = "";
   gchar             *size_string;
+  gchar             *filetype_string = "";
   gchar             *text;
   gchar             *s;
   gint               height;
@@ -2712,10 +2738,19 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
   gboolean           show_image_size;
   gboolean           show_file_size_binary_format;
   GList             *relevant_files = NULL;
+  guint              active;
+  gboolean           show_size, show_size_in_bytes, show_filetype, show_display_name;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
 
   show_file_size_binary_format = thunar_list_model_get_file_size_binary(store);
+
+  preferences = thunar_preferences_get ();
+  g_object_get (G_OBJECT (preferences), "misc-status-bar-active-info", &active, NULL);
+  show_size = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE);
+  show_size_in_bytes = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES);
+  show_filetype = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_FILETYPE);
+  show_display_name = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_DISPLAY_NAME);
 
   if (selected_items == NULL) /* nothing selected */
     {
@@ -2738,7 +2773,10 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
           /* humanize the free space */
           fspace_string = g_format_size_full (size, show_file_size_binary_format ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
 
-          text = g_strdup_printf (_("%s, Free space: %s"), size_string, fspace_string);
+          if (size_string[0] != '\0')
+            text = g_strdup_printf (_("%s, Free space: %s"), size_string, fspace_string);
+          else
+            text = g_strdup_printf (_("Free space: %s"), fspace_string);
 
           /* cleanup */
           g_free (size_string);
@@ -2761,42 +2799,50 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       /* determine the content type of the file */
       content_type = thunar_file_get_content_type (file);
 
-      if (G_UNLIKELY (content_type != NULL && g_str_equal (content_type, "inode/symlink")))
+      if (show_filetype == TRUE)
         {
-          text = g_strdup_printf (_("\"%s\": broken link"), thunar_file_get_display_name (file));
+          if (G_UNLIKELY (content_type != NULL && g_str_equal (content_type, "inode/symlink")))
+            filetype_string = g_strdup ("broken link");
+          else if (G_UNLIKELY (thunar_file_is_symlink (file)))
+            filetype_string = g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (file));
+          else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_SHORTCUT))
+            filetype_string = g_strdup ("shortcut");
+          else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_MOUNTABLE))
+            filetype_string = g_strdup ("mountable");
+          else
+            filetype_string = g_strdup_printf (_("%s"), g_content_type_get_description (content_type));
         }
-      else if (G_UNLIKELY (thunar_file_is_symlink (file)))
+
+      if (show_display_name == TRUE)
+        display_name = g_strdup_printf (_("\"%s\":"), thunar_file_get_display_name (file));
+
+      if (thunar_file_is_regular (file) || G_UNLIKELY (thunar_file_is_symlink (file)))
         {
-          size_string = thunar_file_get_size_string_long (file, show_file_size_binary_format);
-          text = g_strdup_printf (_("\"%s\": %s link to %s"), thunar_file_get_display_name (file),
-                                  size_string, thunar_file_get_symlink_target (file));
-          g_free (size_string);
-        }
-      else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_SHORTCUT))
-        {
-          text = g_strdup_printf (_("\"%s\": shortcut"), thunar_file_get_display_name (file));
-        }
-      else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_MOUNTABLE))
-        {
-          text = g_strdup_printf (_("\"%s\": mountable"), thunar_file_get_display_name (file));
-        }
-      else if (thunar_file_is_regular (file))
-        {
-          description = g_content_type_get_description (content_type);
-          size_string = thunar_file_get_size_string_long (file, show_file_size_binary_format);
-          /* I18N, first %s is the display name of the file, 2nd the file size, 3rd the content type */
-          text = g_strdup_printf (_("\"%s\": %s %s"), thunar_file_get_display_name (file),
-                                  size_string, description);
-          g_free (description);
-          g_free (size_string);
+          if (show_size == TRUE)
+            {
+              if (show_size_in_bytes == TRUE)
+                size_string = thunar_file_get_size_string_long (file, show_file_size_binary_format);
+              else
+                size_string = thunar_file_get_size_string_formatted (file, show_file_size_binary_format);
+
+              /* I18N, first %s is the display name of the file, 2nd the file size, 3rd the content type */
+              text = g_strdup_printf (_("%s %s %s"), display_name, size_string, filetype_string);
+              g_free (size_string);
+            }
+          else
+            text = g_strdup_printf (_("%s %s"), display_name, filetype_string);
         }
       else
         {
-          description = g_content_type_get_description (content_type);
           /* I18N, first %s is the display name of the file, second the content type */
-          text = g_strdup_printf (_("\"%s\": %s"), thunar_file_get_display_name (file), description);
-          g_free (description);
+          text = g_strdup_printf (_("%s %s"), display_name, filetype_string);
         }
+
+      if (show_display_name == TRUE)
+        g_free (display_name);
+
+      if (show_filetype == TRUE)
+        g_free (filetype_string);
 
       /* append the original path (if any) */
       original_path = thunar_file_get_original_path (file);
@@ -2815,9 +2861,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
         {
           /* check if the size should be visible in the statusbar, disabled by
            * default to avoid high i/o  */
-          preferences = thunar_preferences_get ();
           g_object_get (preferences, "misc-image-size-in-statusbar", &show_image_size, NULL);
-          g_object_unref (preferences);
 
           if (show_image_size)
             {
@@ -2844,11 +2888,16 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
           relevant_files = g_list_append (relevant_files, g_sequence_get (iter.user_data));
         }
 
-      size_string = thunar_list_model_get_statusbar_text_for_files (relevant_files, show_file_size_binary_format);
-      text = g_strdup_printf (_("Selection: %s"), size_string);
-      g_free (size_string);
+      s = thunar_list_model_get_statusbar_text_for_files (relevant_files, show_file_size_binary_format);
+      if (s[0] != '\0')
+        text = g_strdup_printf (_("Selection: %s"), s);
+      else
+        text = g_strdup ("");
+      g_free (s);
       g_list_free (relevant_files);
     }
+
+  g_object_unref (preferences);
 
   return text;
 }
