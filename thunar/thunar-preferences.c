@@ -105,6 +105,7 @@ enum
   PROP_MISC_THUMBNAIL_MAX_FILE_SIZE,
   PROP_MISC_FILE_SIZE_BINARY,
   PROP_MISC_CONFIRM_CLOSE_MULTIPLE_TABS,
+  PROP_MISC_STATUS_BAR_ACTIVE_INFO,
   PROP_MISC_PARALLEL_COPY_MODE,
   PROP_MISC_WINDOW_ICON,
   PROP_MISC_TRANSFER_USE_PARTIAL,
@@ -939,6 +940,20 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             NULL,
                             TRUE,
                             EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-status-bar-active-info:
+   *
+   * What kind of info is presented in the statusbar..
+   **/
+  preferences_props[PROP_MISC_STATUS_BAR_ACTIVE_INFO] =
+      g_param_spec_uint ("misc-status-bar-active-info",
+                         "MiscStatusBarActiveInfo",
+                         NULL,
+                         0, G_MAXUINT,
+                         THUNAR_STATUS_BAR_INFO_DISPLAY_NAME | THUNAR_STATUS_BAR_INFO_FILETYPE | THUNAR_STATUS_BAR_INFO_SIZE
+                         | THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES,
+                         EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:shortcuts-icon-emblems:
