@@ -74,6 +74,8 @@ enum
   PROP_ZOOM_LEVEL,
   PROP_DIRECTORY_SPECIFIC_SETTINGS,
   PROP_THUMBNAIL_DRAW_FRAMES,
+  PROP_SORT_COLUMN,
+  PROP_SORT_ORDER,
   PROP_ACCEL_GROUP,
   N_PROPERTIES
 };
@@ -273,7 +275,9 @@ static void                 thunar_standard_view_action_sort_by_size            
 static void                 thunar_standard_view_action_sort_ascending             (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_sort_descending            (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_set_sort_column                   (ThunarStandardView       *standard_view,
-                                                                                    ThunarColumn column);
+                                                                                    ThunarColumn              column);
+static void                 thunar_standard_view_set_sort_order                    (ThunarStandardView       *standard_view,
+                                                                                    GtkSortType               order);
 static void                 thunar_standard_view_toggle_sort_order                 (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_store_sort_column                 (ThunarStandardView       *standard_view);
 
@@ -429,6 +433,20 @@ thunar_standard_view_set_sort_column (ThunarStandardView *standard_view, ThunarC
 }
 
 
+
+static void
+thunar_standard_view_set_sort_order (ThunarStandardView *standard_view,
+                                     GtkSortType         order)
+{
+  if (standard_view->priv->sort_order == order)
+    return;
+
+  standard_view->priv->sort_order = order;
+  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), standard_view->priv->sort_column, order);
+}
+
+
+
 static void
 thunar_standard_view_action_sort_by_name (ThunarStandardView *standard_view)
 {
@@ -553,6 +571,32 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                             "thumbnail-draw-frames",
                             FALSE,
                             EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarStandardView:sort-column:
+   *
+   * The sort column currently used for this view.
+   **/
+  standard_view_props[PROP_SORT_COLUMN] =
+      g_param_spec_enum ("sort-column",
+                         "SortColumn",
+                         NULL,
+                         THUNAR_TYPE_COLUMN,
+                         THUNAR_COLUMN_NAME,
+                         EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarStandardView:sort-order:
+   *
+   * The sort order currently used for this view.
+   **/
+  standard_view_props[PROP_SORT_ORDER] =
+      g_param_spec_enum ("sort-order",
+                         "SortOrder",
+                         NULL,
+                         GTK_TYPE_SORT_TYPE,
+                         GTK_SORT_ASCENDING,
+                         EXO_PARAM_READWRITE);
 
   /* override ThunarComponent's properties */
   g_iface = g_type_default_interface_peek (THUNAR_TYPE_COMPONENT);
@@ -1008,6 +1052,14 @@ thunar_standard_view_get_property (GObject    *object,
       g_value_set_boolean (value, thumbnail_draw_frames);
       break;
 
+    case PROP_SORT_COLUMN:
+      g_value_set_enum (value, THUNAR_STANDARD_VIEW (object)->priv->sort_column);
+      break;
+
+    case PROP_SORT_ORDER:
+      g_value_set_enum (value, THUNAR_STANDARD_VIEW (object)->priv->sort_order);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -1053,6 +1105,14 @@ thunar_standard_view_set_property (GObject      *object,
     case PROP_THUMBNAIL_DRAW_FRAMES:
       g_object_set (G_OBJECT (standard_view->icon_factory), "thumbnail-draw-frames", g_value_get_boolean (value), NULL);
       thunar_standard_view_reload(THUNAR_VIEW (object), TRUE);
+      break;
+
+    case PROP_SORT_COLUMN:
+      thunar_standard_view_set_sort_column (standard_view, g_value_get_enum (value));
+      break;
+
+    case PROP_SORT_ORDER:
+      thunar_standard_view_set_sort_order (standard_view, g_value_get_enum (value));
       break;
 
     case PROP_ACCEL_GROUP:

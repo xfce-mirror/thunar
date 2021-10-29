@@ -2287,6 +2287,8 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   GtkWidget      *label_box;
   GtkWidget      *button;
   GtkWidget      *icon;
+  ThunarColumn    sort_column;
+  GtkSortType     sort_order;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), NULL);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (directory), NULL);
@@ -2296,6 +2298,14 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   /* allocate and setup a new view */
   view = g_object_new (view_type, "current-directory", directory, NULL);
   thunar_view_set_show_hidden (THUNAR_VIEW (view), window->show_hidden);
+
+  /* inherit sort settings from current view */
+  if (window->view != NULL)
+    {
+      g_object_get (window->view, "sort-column", &sort_column, "sort-order", &sort_order, NULL);
+      g_object_set (view, "sort-column", sort_column, "sort-order", sort_order, NULL);
+    }
+
   gtk_widget_show (view);
 
   /* set the history of the view if a history is provided */
