@@ -414,6 +414,8 @@ thunar_standard_view_action_sort_ascending (ThunarStandardView *standard_view)
     thunar_standard_view_set_sort_column (standard_view, standard_view->priv->sort_column);
 }
 
+
+
 static void
 thunar_standard_view_action_sort_descending (ThunarStandardView *standard_view)
 {
@@ -421,8 +423,11 @@ thunar_standard_view_action_sort_descending (ThunarStandardView *standard_view)
     thunar_standard_view_set_sort_column (standard_view, standard_view->priv->sort_column);
 }
 
+
+
 static void
-thunar_standard_view_set_sort_column (ThunarStandardView *standard_view, ThunarColumn column)
+thunar_standard_view_set_sort_column (ThunarStandardView *standard_view,
+                                      ThunarColumn        column)
 {
   GtkSortType order = standard_view->priv->sort_order;
 
@@ -453,11 +458,15 @@ thunar_standard_view_action_sort_by_name (ThunarStandardView *standard_view)
   thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_NAME);
 }
 
+
+
 static void
 thunar_standard_view_action_sort_by_size (ThunarStandardView *standard_view)
 {
   thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_SIZE);
 }
+
+
 
 static void
 thunar_standard_view_action_sort_by_type (ThunarStandardView *standard_view)
@@ -465,11 +474,15 @@ thunar_standard_view_action_sort_by_type (ThunarStandardView *standard_view)
   thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_TYPE);
 }
 
+
+
 static void
 thunar_standard_view_action_sort_by_date (ThunarStandardView *standard_view)
 {
   thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_DATE_MODIFIED);
 }
+
+
 
 static void
 thunar_standard_view_action_sort_by_date_deleted (ThunarStandardView *standard_view)
@@ -477,11 +490,15 @@ thunar_standard_view_action_sort_by_date_deleted (ThunarStandardView *standard_v
   thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_DATE_DELETED);
 }
 
+
+
 static void
 thunar_standard_view_toggle_sort_order (ThunarStandardView *standard_view)
 {
   thunar_standard_view_set_sort_column (standard_view, standard_view->priv->sort_column);
 }
+
+
 
 static void
 thunar_standard_view_class_init (ThunarStandardViewClass *klass)
