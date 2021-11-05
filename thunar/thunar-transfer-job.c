@@ -833,12 +833,12 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
     {
       fs_type = g_file_info_get_attribute_string (fs_info, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE);
       use_fat_name_scheme =
-        !strcmp (fs_type, "fat")   ||
-        !strcmp (fs_type, "vfat")  ||
-        !strcmp (fs_type, "fuse")  ||
-        !strcmp (fs_type, "ntfs")  ||
-        !strcmp (fs_type, "msdos") ||
-        !strcmp (fs_type, "msdosfs");
+        !g_strcmp0 (fs_type, "fat")   ||
+        !g_strcmp0 (fs_type, "vfat")  ||
+        !g_strcmp0 (fs_type, "fuse")  ||
+        !g_strcmp0 (fs_type, "ntfs")  ||
+        !g_strcmp0 (fs_type, "msdos") ||
+        !g_strcmp0 (fs_type, "msdosfs");
     }
   else
     {
