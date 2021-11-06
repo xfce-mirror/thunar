@@ -99,6 +99,7 @@ typedef enum
   THUNAR_WINDOW_ACTION_SEARCH,
   THUNAR_WINDOW_ACTION_CANCEL_SEARCH,
 
+  THUNAR_WINDOW_ACTION_N
 } ThunarWindowAction;
 
 GType                     thunar_window_get_type                            (void) G_GNUC_CONST;
