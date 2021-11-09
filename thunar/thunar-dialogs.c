@@ -46,8 +46,7 @@
 
 
 
-static void          thunar_dialogs_select_filename      (GtkWidget  *entry,
-                                                          ThunarFile *file);
+static void          thunar_dialogs_select_filename      (GtkWidget *entry);
 
 
 
@@ -151,6 +150,9 @@ thunar_dialogs_show_create (gpointer     parent,
 
   /* ensure that the sensitivity of the Create button is set correctly */
   xfce_filename_input_check (filename_input);
+
+  /* select the filename without the extension */
+  thunar_dialogs_select_filename (GTK_WIDGET (xfce_filename_input_get_entry (filename_input)));
 
   if (screen != NULL)
     gtk_window_set_screen (GTK_WINDOW (dialog), screen);
@@ -295,8 +297,11 @@ thunar_dialogs_show_rename_file (gpointer    parent,
   /* ensure that the sensitivity of the Create button is set correctly */
   xfce_filename_input_check (filename_input);
 
-  /* select the filename without the extension */
-  thunar_dialogs_select_filename (GTK_WIDGET (xfce_filename_input_get_entry (filename_input)), file);
+  /* If it is no directory, select the filename without the extension */
+  if (thunar_file_is_directory (file))
+    gtk_editable_select_region (GTK_EDITABLE (xfce_filename_input_get_entry (filename_input)), 0, -1);
+  else
+    thunar_dialogs_select_filename (GTK_WIDGET (xfce_filename_input_get_entry (filename_input)));
 
   /* get the size the entry requires to render the full text */
   layout = gtk_entry_get_layout (xfce_filename_input_get_entry (filename_input));
@@ -1119,21 +1124,15 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
 
 
 
-static void thunar_dialogs_select_filename (GtkWidget  *entry,
-                                            ThunarFile *file)
+static void thunar_dialogs_select_filename (GtkWidget *entry)
 {
-  const gchar *filename;
-  const gchar *ext;
-  glong        offset;
+  const gchar    *filename;
+  const gchar    *ext;
+  glong           offset;
+  GtkEntryBuffer* buffer;
 
-  /* check if we have a directory here */
-  if (thunar_file_is_directory (file))
-    {
-      gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
-      return;
-    }
-
-  filename = thunar_file_get_display_name (file);
+  buffer = gtk_entry_get_buffer (GTK_ENTRY (entry));
+  filename = gtk_entry_buffer_get_text (buffer);
 
   /* check if the filename contains an extension */
   ext = thunar_util_str_get_extension (filename);
