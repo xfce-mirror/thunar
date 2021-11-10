@@ -63,15 +63,6 @@ enum
   TARGET_TEXT_URI_LIST,
 };
 
-typedef enum
-{
-  THUNAR_RENAMER_ACTION_ADD_FILES,
-  THUNAR_RENAMER_ACTION_REMOVE_FILES,
-  THUNAR_RENAMER_ACTION_CLEAR,
-  THUNAR_RENAMER_ACTION_ABOUT,
-
-} ThunarRenamerAction;
-
 
 
 static void        thunar_renamer_dialog_dispose               (GObject                  *object);
@@ -1909,5 +1900,14 @@ thunar_show_renamer_dialog (gpointer     parent,
   /* display the dialog */
   gtk_widget_show (dialog);
 }
+
+
+
+XfceGtkActionEntry*
+thunar_renamer_get_action_entries ()
+{
+  return thunar_renamer_action_entries;
+}
+
 
 

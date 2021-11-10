@@ -34,6 +34,16 @@ typedef struct _ThunarRenamerDialog      ThunarRenamerDialog;
 #define THUNAR_IS_RENAMER_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_RENAMER_DIALOG))
 #define THUNAR_RENAMER_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_RENAMER_DIALOG, ThunarRenamerDialogClass))
 
+typedef enum
+{
+    THUNAR_RENAMER_ACTION_ADD_FILES,
+    THUNAR_RENAMER_ACTION_REMOVE_FILES,
+    THUNAR_RENAMER_ACTION_CLEAR,
+    THUNAR_RENAMER_ACTION_ABOUT,
+
+    THUNAR_RENAMER_ACTION_N
+} ThunarRenamerAction;
+
 GType       thunar_renamer_dialog_get_type              (void) G_GNUC_CONST;
 
 void        thunar_show_renamer_dialog                  (gpointer             parent,
@@ -41,6 +51,8 @@ void        thunar_show_renamer_dialog                  (gpointer             pa
                                                          GList               *files,
                                                          gboolean             standalone,
                                                          const gchar         *startup_id);
+
+XfceGtkActionEntry *thunar_renamer_get_action_entries   ();
 
 G_END_DECLS;
 

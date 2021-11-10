@@ -34,6 +34,15 @@ typedef struct _ThunarShortcutsView      ThunarShortcutsView;
 #define THUNAR_IS_SHORTCUTS_VIEW_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_SHORTCUTS_VIEW))
 #define THUNAR_SHORTCUTS_VIEW_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SHORTCUTS_VIEW, ThunarShortcutsViewClass))
 
+/* #XfceGtkActionEntrys provided by this widget */
+typedef enum
+{
+    THUNAR_SHORTCUTS_VIEW_ACTION_RENAME_BOOKMARK,
+    THUNAR_SHORTCUTS_VIEW_ACTION_REMOVE_BOOKMARK,
+
+    THUNAR_SHORTCUTS_VIEW_ACTION_N
+} ThunarShortcutsViewAction;
+
 GType      thunar_shortcuts_view_get_type        (void) G_GNUC_CONST;
 
 GtkWidget *thunar_shortcuts_view_new             (void) G_GNUC_MALLOC;
@@ -43,6 +52,8 @@ void       thunar_shortcuts_view_select_by_file  (ThunarShortcutsView *view,
 
 void       thunar_shortcuts_view_toggle_padding  (ThunarShortcutsView *view,
                                                   gboolean             enable);
+
+XfceGtkActionEntry *thunar_shortcuts_view_get_action_entries ();
 
 G_END_DECLS;
 
