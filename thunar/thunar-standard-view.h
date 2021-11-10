@@ -29,6 +29,9 @@
 
 G_BEGIN_DECLS;
 
+/* avoid including libxfce4ui.h */
+typedef struct _XfceGtkActionEntry  XfceGtkActionEntry;
+
 typedef struct _ThunarStandardViewPrivate ThunarStandardViewPrivate;
 typedef struct _ThunarStandardViewClass   ThunarStandardViewClass;
 typedef struct _ThunarStandardView        ThunarStandardView;
@@ -56,7 +59,8 @@ typedef enum
   THUNAR_STANDARD_VIEW_ACTION_SORT_ASCENDING,
   THUNAR_STANDARD_VIEW_ACTION_SORT_DESCENDING,
   THUNAR_STANDARD_VIEW_ACTION_SORT_ORDER_TOGGLE,
-  
+
+  THUNAR_STANDARD_VIEW_ACTION_N
 } ThunarStandardViewAction;
 
 struct _ThunarStandardViewClass
@@ -183,6 +187,9 @@ void           thunar_standard_view_set_searching         (ThunarStandardView   
 gchar         *thunar_standard_view_get_search_query      (ThunarStandardView       *standard_view);
 
 void           thunar_standard_view_update_statusbar_text (ThunarStandardView       *standard_view);
+
+XfceGtkActionEntry *thunar_standard_view_get_action_entries (void);
+
 
 G_END_DECLS;
 
