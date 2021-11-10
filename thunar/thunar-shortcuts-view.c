@@ -1889,7 +1889,7 @@ thunar_shortcuts_view_new_files_created (ThunarShortcutsView *view,
 
 
 XfceGtkActionEntry*
-thunar_shortcuts_view_get_action_entries ()
+thunar_shortcuts_view_get_action_entries (void)
 {
   return thunar_shortcuts_view_action_entries;
 }

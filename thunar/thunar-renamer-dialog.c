@@ -1904,7 +1904,7 @@ thunar_show_renamer_dialog (gpointer     parent,
 
 
 XfceGtkActionEntry*
-thunar_renamer_get_action_entries ()
+thunar_renamer_get_action_entries (void)
 {
   return thunar_renamer_action_entries;
 }

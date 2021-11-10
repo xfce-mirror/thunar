@@ -24,6 +24,9 @@
 
 G_BEGIN_DECLS;
 
+/* avoid including libxfce4ui.h */
+typedef struct _XfceGtkActionEntry       XfceGtkActionEntry;
+
 typedef struct _ThunarShortcutsViewClass ThunarShortcutsViewClass;
 typedef struct _ThunarShortcutsView      ThunarShortcutsView;
 
@@ -53,7 +56,7 @@ void       thunar_shortcuts_view_select_by_file  (ThunarShortcutsView *view,
 void       thunar_shortcuts_view_toggle_padding  (ThunarShortcutsView *view,
                                                   gboolean             enable);
 
-XfceGtkActionEntry *thunar_shortcuts_view_get_action_entries ();
+XfceGtkActionEntry *thunar_shortcuts_view_get_action_entries (void);
 
 G_END_DECLS;
 

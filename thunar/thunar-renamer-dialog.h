@@ -52,7 +52,7 @@ void        thunar_show_renamer_dialog                  (gpointer             pa
                                                          gboolean             standalone,
                                                          const gchar         *startup_id);
 
-XfceGtkActionEntry *thunar_renamer_get_action_entries   ();
+XfceGtkActionEntry *thunar_renamer_get_action_entries   (void);
 
 G_END_DECLS;
 

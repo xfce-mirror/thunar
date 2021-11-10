@@ -40,6 +40,7 @@
 #include <thunar/thunar-window.h>
 #include <thunar/thunar-shortcuts-view.h>
 #include <thunar/thunar-renamer-dialog.h>
+#include <thunar/thunar-statusbar.h>
 
 
 
@@ -1261,16 +1262,17 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_show (label);
   gtk_widget_show (vbox);
 
-  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
+  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_IN, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
 
-  grid = xfce_shortcuts_editor_new (16,
+  grid = xfce_shortcuts_editor_new (19,
                                     "Window", thunar_window_get_action_entries (), THUNAR_WINDOW_ACTION_N,
                                     "View", thunar_standard_view_get_action_entries(), THUNAR_STANDARD_VIEW_ACTION_N,
                                     "Launcher", thunar_launcher_get_action_entries(), THUNAR_LAUNCHER_ACTION_N,
                                     "Shortcuts View", thunar_shortcuts_view_get_action_entries (), THUNAR_SHORTCUTS_VIEW_ACTION_N,
-                                    "Renamer", thunar_renamer_get_action_entries (), THUNAR_RENAMER_ACTION_N
+                                    "Renamer", thunar_renamer_get_action_entries (), THUNAR_RENAMER_ACTION_N,
+                                    "Status Bar", thunar_statusbar_get_action_entries (), THUNAR_STATUS_BAR_ACTION_N
                                     );
   gtk_container_add (GTK_CONTAINER (frame), grid);
   gtk_widget_show (grid);
