@@ -333,3 +333,11 @@ thunar_statusbar_new (void)
 {
   return g_object_new (THUNAR_TYPE_STATUSBAR, NULL);
 }
+
+
+
+XfceGtkActionEntry*
+thunar_statusbar_get_action_entries (void)
+{
+  return thunar_status_bar_action_entries;
+}
