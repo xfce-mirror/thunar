@@ -5039,3 +5039,12 @@ thunar_window_update_statusbar (ThunarWindow *window)
 {
   thunar_standard_view_update_statusbar_text (THUNAR_STANDARD_VIEW (window->view));
 }
+
+
+
+XfceGtkActionEntry*
+thunar_window_get_action_entries (void)
+{
+  return thunar_window_action_entries;
+}
+
