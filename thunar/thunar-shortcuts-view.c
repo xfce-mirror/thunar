@@ -213,13 +213,6 @@ static const GtkTargetEntry drop_targets[] = {
   { "text/uri-list", 0, TEXT_URI_LIST },
 };
 
-/* #XfceGtkActionEntrys provided by this widget */
-typedef enum
-{
-  THUNAR_SHORTCUTS_VIEW_ACTION_RENAME_BOOKMARK,
-  THUNAR_SHORTCUTS_VIEW_ACTION_REMOVE_BOOKMARK,
-} ThunarShortcutsViewAction;
-
 static XfceGtkActionEntry thunar_shortcuts_view_action_entries[] =
 {
     { THUNAR_SHORTCUTS_VIEW_ACTION_RENAME_BOOKMARK, "<Actions>/ThunarShortcutsView/rename-bookmark", "", XFCE_GTK_MENU_ITEM,       N_("Re_name Shortcut"), NULL, "",            G_CALLBACK (thunar_shortcuts_view_rename_activated), },
@@ -1891,4 +1884,12 @@ thunar_shortcuts_view_new_files_created (ThunarShortcutsView *view,
         thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file);
       g_object_unref (file);
     }
+}
+
+
+
+XfceGtkActionEntry*
+thunar_shortcuts_view_get_action_entries (void)
+{
+  return thunar_shortcuts_view_action_entries;
 }
