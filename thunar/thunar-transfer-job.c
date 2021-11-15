@@ -460,7 +460,6 @@ ttj_copy_file (ThunarTransferJob *job,
                GFile             *source_file,
                GFile             *target_file,
                GFileCopyFlags     copy_flags,
-               gboolean           merge_directories,
                GError           **error)
 {
   GFileInfo *info;
@@ -585,9 +584,8 @@ ttj_copy_file (ThunarTransferJob *job,
               && target_type == G_FILE_TYPE_DIRECTORY))
         {
           /* we tried to overwrite a directory with a directory. this normally results
-           * in a merge. ignore the error if we actually *want* to merge */
-          if (merge_directories)
-            g_clear_error (&err);
+           * in a merge. ignore that error, since we actually *want* to merge */
+          g_clear_error (&err);
         }
       else if (err->code == G_IO_ERROR_WOULD_RECURSE)
         {
@@ -709,7 +707,7 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
       if (err == NULL)
         {
           /* try to copy the file from source file to the duplicate file */
-          if (ttj_copy_file (job, source_file, target, copy_flags, FALSE, &err))
+          if (ttj_copy_file (job, source_file, target, copy_flags, &err))
             return target;
           else /* go to error case */
             g_object_unref (target);
