@@ -569,12 +569,19 @@ thunar_application_command_line (GApplication            *gapp,
           g_object_get (G_OBJECT (application->preferences), "last-tabs-left", &tabs_left, "last-focused-tab-left", &last_focused_tab, NULL);
           if (tabs_left != NULL && g_strv_length (tabs_left) > 0)
             {
+              gint n_tabs = 0;
               for (guint i = 0; i < g_strv_length (tabs_left); i++)
                 {
                   ThunarFile *directory = thunar_file_get_for_uri (tabs_left[i], NULL);
-                  thunar_window_notebook_add_new_tab (window, directory, TRUE);
+                  if (G_LIKELY (directory != NULL) && thunar_file_is_directory (directory))
+                    {
+                      thunar_window_notebook_add_new_tab (window, directory, TRUE);
+                      n_tabs++;
+                    }
                 }
-              thunar_window_notebook_remove_tab (window, 0); /* remove automatically opened tab */
+
+              if (n_tabs > 0)
+                thunar_window_notebook_remove_tab (window, 0); /* remove automatically opened tab */
               thunar_window_notebook_set_current_tab (window, last_focused_tab);
               has_left_tabs = TRUE;
             }
@@ -584,14 +591,22 @@ thunar_application_command_line (GApplication            *gapp,
           g_object_get (G_OBJECT (application->preferences), "last-tabs-right", &tabs_right, "last-focused-tab-right", &last_focused_tab, NULL);
           if (tabs_right != NULL && g_strv_length (tabs_right) > 0)
             {
+              gint n_tabs = 0;
+
               if (has_left_tabs)
                 thunar_window_notebook_toggle_split_view (window); /* enabling the split view selects the new notebook */
               for (guint i = 0; i < g_strv_length (tabs_right); i++)
                 {
                   ThunarFile *directory = thunar_file_get_for_uri (tabs_right[i], NULL);
-                  thunar_window_notebook_add_new_tab (window, directory, TRUE);
+                  if (G_LIKELY (directory != NULL) && thunar_file_is_directory (directory))
+                    {
+                      thunar_window_notebook_add_new_tab (window, directory, TRUE);
+                      n_tabs++;
+                    }
                 }
-              thunar_window_notebook_remove_tab (window, 0); /* remove automatically opened tab */
+
+              if (n_tabs > 0)
+                thunar_window_notebook_remove_tab (window, 0); /* remove automatically opened tab */
               thunar_window_notebook_set_current_tab (window, last_focused_tab);
             }
 
