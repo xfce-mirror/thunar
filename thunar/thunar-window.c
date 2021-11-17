@@ -2504,6 +2504,14 @@ thunar_window_notebook_add_new_tab (ThunarWindow        *window,
   GType          view_type;
   gboolean       switch_to_new_tab;
 
+  if (thunar_file_is_directory (directory) == FALSE)
+    {
+      char *uri = thunar_file_dup_uri (directory);
+      g_warning ("Skipping to add tab. The passed URI is not a directory: %s", uri);
+      g_free (uri);
+      return;
+    }
+
   /* save the history of the current view */
   if (THUNAR_IS_STANDARD_VIEW (window->view))
     {
@@ -4560,13 +4568,13 @@ thunar_window_scroll_to_file (ThunarWindow *window,
 
 
 
-gchar **
+GList*
 thunar_window_get_directories (ThunarWindow *window,
                                gint         *active_page)
 {
   gint         n;
   gint         n_pages;
-  gchar      **uris;
+  GList       *uris = NULL;
   GtkWidget   *view;
   ThunarFile  *directory;
 
@@ -4576,20 +4584,19 @@ thunar_window_get_directories (ThunarWindow *window,
   if (G_UNLIKELY (n_pages == 0))
     return NULL;
 
-  /* create array of uris */
-  uris = g_new0 (gchar *, n_pages + 1);
   for (n = 0; n < n_pages; n++)
     {
       /* get the view */
       view = gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), n);
-      _thunar_return_val_if_fail (THUNAR_IS_NAVIGATOR (view), FALSE);
+      if (THUNAR_IS_NAVIGATOR (view) == FALSE)
+        continue;
 
       /* get the directory of the view */
       directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (view));
-      _thunar_return_val_if_fail (THUNAR_IS_FILE (directory), FALSE);
+      if (THUNAR_IS_FILE (directory) == FALSE)
+        continue;
 
-      /* add to array */
-      uris[n] = thunar_file_dup_uri (directory);
+      uris = g_list_append (uris, thunar_file_dup_uri (directory));
     }
 
   /* selected tab */

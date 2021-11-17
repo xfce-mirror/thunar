@@ -357,10 +357,9 @@ thunar_session_client_save_yourself (SmcConn              connection,
 {
   ThunarApplication *application;
   const gchar       *role;
-  gchar            **uris;
+  GList             *uri, *uris; // list of uri strings
   GList             *windows;
   GList             *lp;
-  guint              n;
   FILE              *fp;
   gint               active_page;
 
@@ -396,16 +395,17 @@ thunar_session_client_save_yourself (SmcConn              connection,
                   fprintf (fp, "[%s]\n", role);
                   fprintf (fp, "PAGE=%d\n", active_page);
                   fprintf (fp, "URI=");
-                  for (n = 0; uris[n] != NULL; n++)
+                  for (uri = uris; uri != NULL; uri = uri->next)
                     {
-                      fprintf (fp, "%s", uris[n]);
-                      if (G_LIKELY (uris[n + 1] != NULL))
+                      gchar* uri_string = uri->data;
+                      fprintf (fp, "%s", uri_string);
+                      if (G_LIKELY (uri->next != NULL))
                         fprintf (fp, ";");
                     }
                   fprintf (fp, "\n\n");
 
                   /* cleanup */
-                  g_strfreev (uris);
+                  g_list_free_full (uris, g_free);
                 }
 
               /* cleanup */

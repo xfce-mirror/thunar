@@ -111,7 +111,7 @@ void                      thunar_window_scroll_to_file                      (Thu
                                                                              gboolean             use_align,
                                                                              gfloat               row_align,
                                                                              gfloat               col_align);
-gchar                   **thunar_window_get_directories                     (ThunarWindow        *window,
+GList                    *thunar_window_get_directories                     (ThunarWindow        *window,
                                                                              gint                *active_page);
 gboolean                  thunar_window_set_directories                     (ThunarWindow        *window,
                                                                              gchar              **uris,
