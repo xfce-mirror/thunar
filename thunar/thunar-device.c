@@ -692,10 +692,18 @@ thunar_device_sort (const ThunarDevice *device1,
       continue;
     }
 
+<<<<<<< Updated upstream
     return ( name1[i] > name2[i] ? 1 : -1 );
   }
   // though code will not reach return 0, but while compiling it was giving warning " control reached end of non-void function "
   return 0;
+=======
+  gchar* name1 = thunar_device_get_name(device1);
+  gchar* name2 = thunar_device_get_name(device2);
+  
+  /* code which arranges devices in ASCII order */
+  return g_strcmp0(name1, name2);
+>>>>>>> Stashed changes
 }
 
 
