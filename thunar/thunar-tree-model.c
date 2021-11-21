@@ -1084,11 +1084,7 @@ thunar_tree_model_device_added (ThunarDeviceMonitor *device_monitor,
                                 ThunarTreeModel     *model)
 {
   // added item1 to point to next node data
-<<<<<<< Updated upstream
-  ThunarTreeModelItem *item , *item1;
-=======
   ThunarTreeModelItem *item, *next_item;
->>>>>>> Stashed changes
   GtkTreePath         *path;
   GtkTreeIter          iter;
   GNode               *node;
@@ -1112,22 +1108,6 @@ thunar_tree_model_device_added (ThunarDeviceMonitor *device_monitor,
   for (; node->next != NULL; node = node->next)
     {
       item = THUNAR_TREE_MODEL_ITEM (node->next->data);
-<<<<<<< Updated upstream
-      /* item1 points to next node data */
-      item1 = THUNAR_TREE_MODEL_ITEM ((node->next)->next->data);
-      if (item->device == NULL || item1->device == NULL)
-        break;
-      
-
-      // OLD CODE
-      // /* sort devices by timestamp */
-      // if (thunar_device_sort (item->device, device) > 0)
-      //   break;
-
-      // NEW CODE
-      /* sort devices by ASCII order */
-      if (thunar_device_sort ( item->device , item1->device ) > 0)
-=======
       /* next_item points to next node data */
       next_item = THUNAR_TREE_MODEL_ITEM ((node->next)->next->data);
 
@@ -1136,7 +1116,6 @@ thunar_tree_model_device_added (ThunarDeviceMonitor *device_monitor,
       
       /* sort devices by ASCII order */
       if (thunar_device_sort (item->device, next_item->device) > 0)
->>>>>>> Stashed changes
         break;
     }
 
