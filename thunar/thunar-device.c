@@ -673,9 +673,29 @@ thunar_device_sort (const ThunarDevice *device1,
   /* sort mounts above volumes */
   if (G_OBJECT_TYPE (device1->device) != G_OBJECT_TYPE (device2->device))
     return G_IS_MOUNT (device1->device) ? 1 : -1;
+  
+  // OLD CODE
+  // /* sort by detect stamp */
+  // return device1->stamp > device2->stamp ? 1 : -1;
 
-  /* sort by detect stamp */
-  return device1->stamp > device2->stamp ? 1 : -1;
+
+  // NEW CODE
+  // name1 and name2 are pointer which stores data of type gchar ( gtk char )
+  // name1 and name2 stores names of device1 and device2 respectively
+  // thunar_device_get_name function is used to assign device names to name1 and name2
+  gchar * name1 = thunar_device_get_name(device1);
+  gchar * name2 = thunar_device_get_name(device2);
+  
+  // code which arranges devices in ASCII order
+  for ( long unsigned int i = 0 ; i < ( strlen(name1) > strlen(name2) ? strlen(name1) : strlen(name2) ) ; i++ ) {
+    if ( name1[i] == name2[i] ) {
+      continue;
+    }
+
+    return ( name1[i] > name2[i] ? 1 : -1 );
+  }
+  // though code will not reach return 0, but while compiling it was giving warning " control reached end of non-void function "
+  return 0;
 }
 
 
