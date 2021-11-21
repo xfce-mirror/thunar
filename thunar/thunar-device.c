@@ -667,6 +667,9 @@ gint
 thunar_device_sort (const ThunarDevice *device1,
                     const ThunarDevice *device2)
 {
+  gchar* name1;
+  gchar* name2;
+  
   _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device1), 0);
   _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device2), 0);
 
@@ -674,11 +677,11 @@ thunar_device_sort (const ThunarDevice *device1,
   if (G_OBJECT_TYPE (device1->device) != G_OBJECT_TYPE (device2->device))
     return G_IS_MOUNT (device1->device) ? 1 : -1;
   
-  gchar* name1 = thunar_device_get_name (device1);
-  gchar* name2 = thunar_device_get_name (device2);
+  name1 = thunar_device_get_name (device1);
+  name2 = thunar_device_get_name (device2);
   
   /* code which arranges devices in ASCII order */
-  return g_strcmp0(name1, name2);
+  return g_strcmp0 (name1, name2);
 }
 
 
