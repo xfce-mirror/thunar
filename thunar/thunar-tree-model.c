@@ -1083,7 +1083,7 @@ thunar_tree_model_device_added (ThunarDeviceMonitor *device_monitor,
                                 ThunarDevice        *device,
                                 ThunarTreeModel     *model)
 {
-  ThunarTreeModelItem *item;
+  ThunarTreeModelItem *item, *next_item;
   GtkTreePath         *path;
   GtkTreeIter          iter;
   GNode               *node;
@@ -1107,11 +1107,15 @@ thunar_tree_model_device_added (ThunarDeviceMonitor *device_monitor,
   for (; node->next != NULL; node = node->next)
     {
       item = THUNAR_TREE_MODEL_ITEM (node->next->data);
+      
       if (item->device == NULL)
         break;
 
-      /* sort devices by timestamp */
-      if (thunar_device_sort (item->device, device) > 0)
+      /* next_item points to next node data iff item->device != NULL */
+      next_item = THUNAR_TREE_MODEL_ITEM ((node->next)->next->data);
+      
+      /* sort devices by ASCII order */
+      if (thunar_device_sort (item->device, next_item->device) > 0)
         break;
     }
 
