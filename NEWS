@@ -1,3 +1,29 @@
+4.17.7
+======
+- Use GList over gchar** for getting an uri list (Issue #684)
+- Prevent crash when restoring non-existing URI (Issue #684)
+- Regression: Can't copy and replace a directory any more (Issue #682)
+- 'New file' dialog: Dont highlight extension for templates (Issue #676)
+- Use g_strcmp0 over strcmp to prevent crash (Issue #679)
+- Inherit sort column/order of new tabs from current tab (Issue #678)
+- Feature: Statusbar customization (Issue #666)
+- Add link to thunar doc. to uca chooser dialog (Issue #245)
+- Dont replace ACSII characters < 0 for FAT filesystems (Issue #655)
+- Fix: Side pane tree view loading time increased (Issue #659)
+- Remove the `file://` prefix in the location column
+- Support '.' in themed desktop-file names
+- Translation Updates:
+  Albanian, Arabic, Armenian, Armenian (Armenia), Asturian, Basque,
+  Bengali, Catalan, Chinese (China), Chinese (Hong Kong), Chinese
+  (Taiwan), Czech, Danish, Dutch, Eastern Armenian, English
+  (Australia), English (United Kingdom), Esperanto, Estonian, Finnish,
+  French, Galician, German, Greek, Hebrew, Hungarian, Icelandic,
+  Indonesian, Interlingue, Japanese, Kazakh, Korean, Latvian, Malay,
+  Norwegian Bokmål, Norwegian Nynorsk, Occitan (post 1500), Panjabi
+  (Punjabi), Persian (Iran), Polish, Portuguese, Portuguese (Brazil),
+  Romanian, Serbian, Slovak, Spanish, Swedish, Telugu, Thai, Turkish,
+  Urdu, Urdu (Pakistan), Uyghur, Vietnamese
+
 4.17.6
 ======
 - Reset sort_column if it exceeds THUNAR_N_VISIBLE_COLUMNS
