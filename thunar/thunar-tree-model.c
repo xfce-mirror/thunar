@@ -1107,10 +1107,11 @@ thunar_tree_model_device_added (ThunarDeviceMonitor *device_monitor,
   for (; node->next != NULL; node = node->next)
     {
       item = THUNAR_TREE_MODEL_ITEM (node->next->data);
+      
       if (item->device == NULL)
         break;
-
-      /* sort devices by timestamp */
+      
+      /* sort devices by ASCII order */
       if (thunar_device_sort (item->device, device) > 0)
         break;
     }
