@@ -1229,7 +1229,7 @@ thunar_shortcuts_model_sort_func (gconstpointer shortcut_a,
 
   /* properly sort devices by timestamp */
   if (a->device != NULL && b->device != NULL)
-    return thunar_device_sort (a->device, b->device);
+    return thunar_device_compare_by_name (a->device, b->device);
 
   return g_strcmp0 (a->name, b->name);
 }
