@@ -327,7 +327,20 @@ thunar_device_emit_pre_unmount (ThunarDevice *device,
 }
 
 
-
+/**
+ * thunar_device_get_name:
+ * @device     : a #ThunarDevice instance.
+ *
+ * Returns the name of the @device if the @device
+ * is mounted. Otherwise %NULL will be
+ * returned.
+ *
+ * The caller is responsible to free the returned string
+ * using g_free() when no longer needed.
+ *
+ * Return value: the name of @device if @device is mounted
+ *               , %NULL otherwise.
+ **/
 gchar *
 thunar_device_get_name (const ThunarDevice *device)
 {
@@ -664,7 +677,7 @@ thunar_device_get_root (const ThunarDevice *device)
 
 
 gint
-thunar_device_sort (const ThunarDevice *device1,
+thunar_device_compare_by_name (const ThunarDevice *device1,
                     const ThunarDevice *device2)
 {
   gchar* name1;
@@ -682,6 +695,9 @@ thunar_device_sort (const ThunarDevice *device1,
   
   /* code which arranges devices in ASCII order */
   return g_strcmp0 (name1, name2);
+
+  g_free (name1);
+  g_free (name2);
 }
 
 
