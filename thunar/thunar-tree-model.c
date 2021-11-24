@@ -1111,7 +1111,8 @@ thunar_tree_model_device_added (ThunarDeviceMonitor *device_monitor,
       if (item->device == NULL)
         break;
       
-      if (thunar_device_compare_by_name (item->device, device) > 0)
+      /* sort devices by ASCII order */
+      if (thunar_device_sort (item->device, device) > 0)
         break;
     }
 
