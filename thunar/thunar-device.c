@@ -327,6 +327,7 @@ thunar_device_emit_pre_unmount (ThunarDevice *device,
 }
 
 
+
 /**
  * thunar_device_get_name:
  * @device     : a #ThunarDevice instance.
@@ -339,8 +340,6 @@ thunar_device_emit_pre_unmount (ThunarDevice *device,
  *
  * Return value: the name of @device if @device is mounted
  **/
-
-
 gchar *
 thunar_device_get_name (const ThunarDevice *device)
 {
