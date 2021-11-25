@@ -326,7 +326,6 @@ thunar_device_emit_pre_unmount (ThunarDevice *device,
     }
 }
 
-
 /**
  * thunar_device_get_name:
  * @device     : a #ThunarDevice instance.
