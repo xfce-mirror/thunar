@@ -22,6 +22,8 @@
 #endif
 
 #include <libxfce4ui/libxfce4ui.h>
+#include <libxfce4kbd-private-3/libxfce4kbd-private/xfce-shortcuts-editor.h>
+#include <libxfce4kbd-private-3/libxfce4kbd-private/xfce-shortcuts-editor-dialog.h>
 
 #include <thunar/thunar-compact-view.h>
 #include <thunar/thunar-details-view.h>
@@ -35,6 +37,10 @@
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
+#include <thunar/thunar-window.h>
+#include <thunar/thunar-shortcuts-view.h>
+#include <thunar/thunar-renamer-dialog.h>
+#include <thunar/thunar-statusbar.h>
 
 
 
@@ -1246,6 +1252,28 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
       gtk_widget_show (infobar);
       gtk_container_add (GTK_CONTAINER (frame), infobar);
     }
+
+  /*
+   Behavior
+ */
+  label = gtk_label_new (_("Shortcuts"));
+  vbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "border-width", 12, "spacing", 18, NULL);
+  gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
+  gtk_widget_show (label);
+  gtk_widget_show (vbox);
+
+  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_IN, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
+  gtk_widget_show (frame);
+
+  grid = xfce_shortcuts_editor_new (TRUE, 14,
+                                    "Window", thunar_window_get_action_entries (), THUNAR_WINDOW_ACTION_N,
+                                    "View", thunar_standard_view_get_action_entries(), THUNAR_STANDARD_VIEW_ACTION_N,
+                                    "Launcher", thunar_launcher_get_action_entries(), THUNAR_LAUNCHER_ACTION_N,
+                                    "Status Bar", thunar_statusbar_get_action_entries (), THUNAR_STATUS_BAR_ACTION_N
+                                    );
+  gtk_container_add (GTK_CONTAINER (frame), grid);
+  gtk_widget_show (grid);
 
   /* cleanup */
   g_free (path);
