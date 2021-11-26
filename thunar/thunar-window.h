@@ -63,6 +63,7 @@ typedef enum
   THUNAR_WINDOW_ACTION_TOGGLE_SIDE_PANE,
   THUNAR_WINDOW_ACTION_VIEW_STATUSBAR,
   THUNAR_WINDOW_ACTION_VIEW_MENUBAR,
+  THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR,
   THUNAR_WINDOW_ACTION_SHOW_HIDDEN,
   THUNAR_WINDOW_ACTION_ZOOM_IN,
   THUNAR_WINDOW_ACTION_ZOOM_IN_ALT_1,
@@ -147,6 +148,11 @@ void                      thunar_window_update_search                       (Thu
 void                      thunar_window_action_cancel_search                (ThunarWindow        *window);
 void                      thunar_window_action_search                       (ThunarWindow        *window);
 void                      thunar_window_update_statusbar                    (ThunarWindow        *window);
+void                      thunar_window_toolbar_toggle_item                 (ThunarWindow        *window,
+                                                                             gint                 index);
+void                      thunar_window_toolbar_exchange_items              (ThunarWindow        *window,
+                                                                             gint                 indexA,
+                                                                             gint                 indexB);
 
 
 G_END_DECLS;
