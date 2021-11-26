@@ -142,6 +142,12 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
                      1, "Home",
                      -1);
 
+  gtk_list_store_append (toolbar_editor->toolbar_model, &iter);
+  gtk_list_store_set (toolbar_editor->toolbar_model, &iter,
+                      0, TRUE,
+                      1, "Location Bar",
+                      -1);
+
 
   /* setup the dialog */
   gtk_dialog_add_button (GTK_DIALOG (toolbar_editor), _("_Close"), GTK_RESPONSE_CLOSE);
@@ -390,7 +396,10 @@ thunar_toolbar_editor_move_down (GtkWidget          *button,
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (toolbar_editor->tree_view));
   gtk_tree_selection_get_selected (selection, &model, &iter1);
   iter2 = iter1;
-  gtk_tree_model_iter_next (model, &iter2);
+  if (gtk_tree_model_iter_next (model, &iter2) == FALSE)
+    return;
+
+  gtk_list_store_swap (GTK_LIST_STORE (model), &iter1, &iter2);
 
   path1 = gtk_tree_model_get_path (model, &iter1);
   path2 = gtk_tree_model_get_path (model, &iter2);
@@ -412,34 +421,38 @@ static void
 thunar_toolbar_editor_move_up (GtkWidget          *button,
                               ThunarToolbarEditor *toolbar_editor)
 {
-//  GtkTreeSelection *selection;
-//  GtkTreeModel     *model;
-//  GtkTreePath      *path;
-//  GtkTreeIter       iter1;
-//  GtkTreeIter       iter2;
-//
-//  _thunar_return_if_fail (THUNAR_IS_TOOLBAR_EDITOR (toolbar_editor));
-//  _thunar_return_if_fail (GTK_IS_BUTTON (button));
-//
-//  /* determine the selected tree iterator */
-//  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (toolbar_editor->tree_view));
-//  if (gtk_tree_selection_get_selected (selection, &model, &iter1))
-//    {
-//      /* determine the path for the iterator */
-//      path = gtk_tree_model_get_path (model, &iter1);
-//      if (G_LIKELY (path != NULL))
-//        {
-//          /* advance to the prev path */
-//          if (gtk_tree_path_prev (path) && gtk_tree_model_get_iter (model, &iter2, path))
-//            {
-//              /* exchange the rows */
-//              thunar_toolbar_model_exchange (THUNAR_TOOLBAR_MODEL (model), &iter1, &iter2);
-//            }
-//
-//          /* release the path */
-//          gtk_tree_path_free (path);
-//        }
-//    }
+  GList            *windows;
+  GtkTreeSelection *selection;
+  GtkTreeModel     *model;
+  GtkTreeIter       iter1;
+  GtkTreeIter       iter2;
+  GtkTreePath      *path1;
+  GtkTreePath      *path2;
+
+  _thunar_return_if_fail (THUNAR_IS_TOOLBAR_EDITOR (toolbar_editor));
+  _thunar_return_if_fail (GTK_IS_BUTTON (button));
+
+  /* determine the selected tree iterator */
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (toolbar_editor->tree_view));
+  gtk_tree_selection_get_selected (selection, &model, &iter1);
+  iter2 = iter1;
+  if (gtk_tree_model_iter_previous (model, &iter2) == FALSE)
+    return;
+
+  gtk_list_store_swap (GTK_LIST_STORE (model), &iter1, &iter2);
+
+  path1 = gtk_tree_model_get_path (model, &iter1);
+  path2 = gtk_tree_model_get_path (model, &iter2);
+
+  windows = thunar_application_get_windows (thunar_application_get ());
+  for (GList *lp = windows; lp != NULL; lp = lp->next)
+    {
+      ThunarWindow *window = lp->data;
+      thunar_window_toolbar_exchange_items (window, gtk_tree_path_get_indices (path1)[0], gtk_tree_path_get_indices (path2)[0]);
+    }
+
+  gtk_tree_path_free (path1);
+  gtk_tree_path_free (path2);
 }
 
 
