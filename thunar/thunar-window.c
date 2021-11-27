@@ -733,6 +733,9 @@ thunar_window_check_activate_uca (UCAActivation *data)
                             "menu", &thunarx_menu,
                             NULL);
 
+              if (strncmp("uca-action", name, 10) != 0)
+                break;
+
               if (g_strcmp0 (action_name, name) == 0)
                 thunarx_menu_item_activate (lp_item->data);
             }
@@ -1049,7 +1052,17 @@ thunar_window_init (ThunarWindow *window)
 //          thunarx_menu_items = thunarx_menu_provider_get_file_menu_items (lp_provider->data, GTK_WIDGET (window), NULL);
 
           for (lp_item = thunarx_menu_items; lp_item != NULL; lp_item = lp_item->next)
-            thunar_gtk_toolbar_thunarx_toolbar_item_new (lp_item->data, window);
+            {
+              gchar *name;
+
+              g_object_get (G_OBJECT (lp_item->data),
+                            "name", &name,
+                            NULL);
+              if (strncmp("uca-action", name, 10) != 0)
+                break;
+
+              thunar_gtk_toolbar_thunarx_toolbar_item_new (lp_item->data, window);
+            }
 
           g_list_free (thunarx_menu_items);
         }

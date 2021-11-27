@@ -179,6 +179,9 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
                             "icon", &icon_name,
                             NULL);
 
+              if (strncmp("uca-action", name, 10) != 0)
+                break;
+
               gtk_list_store_append (toolbar_editor->toolbar_model, &iter);
               gtk_list_store_set (toolbar_editor->toolbar_model, &iter,
                                   0, TRUE,
