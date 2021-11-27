@@ -148,6 +148,49 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
                       1, "Location Bar",
                       -1);
 
+  /* Add custom actions */
+  ThunarWindow           *window = thunar_application_get_windows (thunar_application_get ())->data;
+  ThunarxProviderFactory *provider_factory;
+  GList                  *providers;
+  GList                  *thunarx_menu_items = NULL;
+  GList                  *lp_provider;
+  GList                  *lp_item;
+
+  /* load the menu providers from the provider factory */
+  provider_factory = thunarx_provider_factory_get_default ();
+  providers = thunarx_provider_factory_list_providers (provider_factory, THUNARX_TYPE_MENU_PROVIDER);
+  g_object_unref (provider_factory);
+
+  if (G_UNLIKELY (providers != NULL))
+    {
+      /* load the menu items offered by the menu providers */
+      for (lp_provider = providers; lp_provider != NULL; lp_provider = lp_provider->next)
+        {
+          thunarx_menu_items = thunarx_menu_provider_get_folder_menu_items (lp_provider->data, GTK_WIDGET (window), THUNARX_FILE_INFO (thunar_window_get_current_directory (window)));
+
+          for (lp_item = thunarx_menu_items; lp_item != NULL; lp_item = lp_item->next)
+            {
+              gchar        *name, *label_text, *tooltip_text, *icon_name;
+
+              g_object_get (G_OBJECT (lp_item->data),
+                            "name", &name,
+                            "label", &label_text,
+                            "tooltip", &tooltip_text,
+                            "icon", &icon_name,
+                            NULL);
+
+              gtk_list_store_append (toolbar_editor->toolbar_model, &iter);
+              gtk_list_store_set (toolbar_editor->toolbar_model, &iter,
+                                  0, TRUE,
+                                  1, label_text,
+                                  -1);
+            }
+
+          g_list_free (thunarx_menu_items);
+        }
+      g_list_free_full (providers, g_object_unref);
+    }
+
 
   /* setup the dialog */
   gtk_dialog_add_button (GTK_DIALOG (toolbar_editor), _("_Close"), GTK_RESPONSE_CLOSE);
