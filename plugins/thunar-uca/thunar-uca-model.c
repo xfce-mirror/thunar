@@ -1145,6 +1145,8 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
   GList              *lp;
   gint                n_files;
   gint                i, m, n;
+  gint                upper, lower;
+  gchar             **limits;
   gchar              *path_test;
 
   g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), NULL);
@@ -1189,7 +1191,20 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
     {
       /* check if we can just ignore this item */
       item = (ThunarUcaModelItem *) lp->data;
-      if (!item->multiple_selection && n_files > 1)
+      upper = n_files;
+      lower = n_files;
+      limits = item->range == NULL ? g_strsplit ("*", "-", 2) : g_strsplit (item->range, "-", 2);
+      if (limits[0] != NULL)
+        {
+          if (limits[1] != NULL)
+            {
+              lower = g_strtod (limits[0], NULL);
+              upper = g_strtod (limits[1], NULL);
+            }
+        }
+      g_strfreev(limits);
+
+      if (((!item->multiple_selection) && (n_files > 1)) || (n_files > upper) || (n_files < lower))
         continue;
 
       /* match the specified files */
