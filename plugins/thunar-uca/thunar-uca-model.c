@@ -80,6 +80,7 @@ typedef enum
   PARSER_COMMAND,
   PARSER_STARTUP_NOTIFY,
   PARSER_PATTERNS,
+  PARSER_RANGE,
   PARSER_DESCRIPTION,
   PARSER_DIRECTORIES,
   PARSER_AUDIO_FILES,
@@ -170,6 +171,7 @@ struct _ThunarUcaModelItem
   gchar         *command;
   guint          startup_notify : 1;
   gchar        **patterns;
+  gchar         *range;
   ThunarUcaTypes types;
 
   /* derived attributes */
@@ -192,6 +194,7 @@ typedef struct
   GString        *command;
   GString        *patterns;
   GString        *description;
+  GString        *range;
   gboolean        startup_notify;
   gboolean        description_use;
   guint           description_match;
@@ -339,6 +342,9 @@ thunar_uca_model_get_column_type (GtkTreeModel *tree_model,
     case THUNAR_UCA_MODEL_COLUMN_PATTERNS:
       return G_TYPE_STRING;
 
+    case THUNAR_UCA_MODEL_COLUMN_RANGE:
+      return G_TYPE_STRING;
+
     case THUNAR_UCA_MODEL_COLUMN_TYPES:
       return G_TYPE_UINT;
 
@@ -450,6 +456,10 @@ thunar_uca_model_get_value (GtkTreeModel *tree_model,
     case THUNAR_UCA_MODEL_COLUMN_PATTERNS:
       str = g_strjoinv (";", item->patterns);
       g_value_take_string (value, str);
+      break;
+
+    case THUNAR_UCA_MODEL_COLUMN_RANGE:
+      g_value_set_static_string (value, item->range);
       break;
 
     case THUNAR_UCA_MODEL_COLUMN_TYPES:
@@ -585,6 +595,7 @@ thunar_uca_model_load_from_file (ThunarUcaModel *uca_model,
   parser.icon_name = g_string_new (NULL);
   parser.command = g_string_new (NULL);
   parser.patterns = g_string_new (NULL);
+  parser.range = g_string_new (NULL);
   parser.description = g_string_new (NULL);
   parser.startup_notify = FALSE;
   parser.unique_id_generated = FALSE;
@@ -599,6 +610,7 @@ thunar_uca_model_load_from_file (ThunarUcaModel *uca_model,
   g_markup_parse_context_free (context);
   g_string_free (parser.description, TRUE);
   g_string_free (parser.patterns, TRUE);
+  g_string_free (parser.range, TRUE);
   g_string_free (parser.command, TRUE);
   g_string_free (parser.icon_name, TRUE);
   g_string_free (parser.unique_id, TRUE);
@@ -623,6 +635,7 @@ thunar_uca_model_item_reset (ThunarUcaModelItem *item)
 {
   /* release the previous values... */
   g_strfreev (item->patterns);
+  g_free (item->range);
   g_free (item->description);
   g_free (item->command);
   g_free (item->name);
@@ -682,6 +695,7 @@ start_element_handler (GMarkupParseContext *context,
           g_string_truncate (parser->unique_id, 0);
           g_string_truncate (parser->command, 0);
           g_string_truncate (parser->patterns, 0);
+          g_string_truncate (parser->range, 0);
           g_string_truncate (parser->description, 0);
           xfce_stack_push (parser->stack, PARSER_ACTION);
         }
@@ -743,6 +757,11 @@ start_element_handler (GMarkupParseContext *context,
         {
           g_string_truncate (parser->patterns, 0);
           xfce_stack_push (parser->stack, PARSER_PATTERNS);
+        }
+      else if (strcmp (element_name, "range") == 0)
+        {
+          g_string_truncate (parser->range, 0);
+          xfce_stack_push (parser->stack, PARSER_RANGE);
         }
       else if (strcmp (element_name, "description") == 0)
         {
@@ -853,6 +872,7 @@ end_element_handler (GMarkupParseContext *context,
                                    parser->command->str,
                                    parser->startup_notify,
                                    parser->patterns->str,
+                                   parser->range->str,
                                    parser->types,
                                    0, 0);
 
@@ -891,6 +911,11 @@ end_element_handler (GMarkupParseContext *context,
 
     case PARSER_PATTERNS:
       if (strcmp (element_name, "patterns") != 0)
+        goto unknown_element;
+      break;
+
+    case PARSER_RANGE:
+      if (strcmp (element_name, "range") != 0)
         goto unknown_element;
       break;
 
@@ -986,6 +1011,10 @@ text_handler (GMarkupParseContext *context,
 
     case PARSER_PATTERNS:
       g_string_append_len (parser->patterns, text, text_len);
+      break;
+
+    case PARSER_RANGE:
+      g_string_append_len (parser->range, text, text_len);
       break;
 
     case PARSER_DESCRIPTION:
@@ -1352,6 +1381,7 @@ thunar_uca_model_update (ThunarUcaModel *uca_model,
                          const gchar    *command,
                          gboolean        startup_notify,
                          const gchar    *patterns,
+                         const gchar    *range,
                          ThunarUcaTypes  types,
                          guint           accel_key,
                          GdkModifierType accel_mods)
@@ -1377,6 +1407,8 @@ thunar_uca_model_update (ThunarUcaModel *uca_model,
     item->icon_name = g_strdup (icon);
   if (G_LIKELY (command != NULL && *command != '\0'))
     item->command = g_strdup (command);
+  if (G_LIKELY (range != NULL && *range != '\0'))
+    item->range = g_strdup (range);
   if (G_LIKELY (description != NULL && *description != '\0'))
     item->description = g_strdup (description);
   item->types = types;
@@ -1486,6 +1518,7 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
                                          "\t<unique-id>%s</unique-id>\n"
                                          "\t<command>%s</command>\n"
                                          "\t<description>%s</description>\n"
+                                         "\t<range>%s</range>\n"
                                          "\t<patterns>%s</patterns>\n",
                                          (item->icon_name != NULL) ? item->icon_name : "",
                                          (item->name != NULL) ? item->name : "",
@@ -1493,6 +1526,7 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
                                          (item->unique_id != NULL) ? item->unique_id : "",
                                          (item->command != NULL) ? item->command : "",
                                          (item->description != NULL) ? item->description : "",
+                                         (item->range != NULL) ? item->range : "",
                                          patterns);
       fprintf (fp, "%s", escaped);
       g_free (patterns);
