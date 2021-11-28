@@ -38,17 +38,17 @@
 
 static void thunar_toolbar_editor_finalize           (GObject                  *object);
 static void thunar_toolbar_editor_help_clicked       (GtkWidget                *button,
-                                                     ThunarToolbarEditor       *toolbar_editor);
+                                                      ThunarToolbarEditor      *toolbar_editor);
 static void thunar_toolbar_editor_move_down          (GtkWidget                *button,
-                                                     ThunarToolbarEditor       *toolbar_editor);
+                                                      ThunarToolbarEditor      *toolbar_editor);
 static void thunar_toolbar_editor_move_up            (GtkWidget                *button,
-                                                     ThunarToolbarEditor       *toolbar_editor);
+                                                      ThunarToolbarEditor      *toolbar_editor);
 static void thunar_toolbar_editor_toggled            (GtkCellRendererToggle    *cell_renderer,
-                                                     const gchar              *path_string,
-                                                     ThunarToolbarEditor       *toolbar_editor);
-static void thunar_toolbar_editor_update_buttons     (ThunarToolbarEditor       *toolbar_editor);
+                                                      const gchar              *path_string,
+                                                      ThunarToolbarEditor      *toolbar_editor);
+static void thunar_toolbar_editor_update_buttons     (ThunarToolbarEditor      *toolbar_editor);
 static void thunar_toolbar_editor_use_defaults       (GtkWidget                *button,
-                                                     ThunarToolbarEditor       *toolbar_editor);
+                                                      ThunarToolbarEditor      *toolbar_editor);
 
 
 
