@@ -115,36 +115,41 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   toolbar_editor->preferences = thunar_preferences_get ();
 
   /* grab a reference on the shared toolbar model */
-  toolbar_editor->toolbar_model = gtk_list_store_new (2, G_TYPE_BOOLEAN, G_TYPE_STRING);
+  toolbar_editor->toolbar_model = gtk_list_store_new (3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING);
 
   gtk_list_store_append (toolbar_editor->toolbar_model, &iter);
   gtk_list_store_set (toolbar_editor->toolbar_model, &iter,
                       0, TRUE,
-                      1, "Previous",
+                      1, "go-previous-symbolic",
+                      2, "Previous",
                       -1);
 
   gtk_list_store_append (toolbar_editor->toolbar_model, &iter);
   gtk_list_store_set (toolbar_editor->toolbar_model, &iter,
                       0, TRUE,
-                      1, "Next",
+                      1, "go-next-symbolic",
+                      2, "Next",
                       -1);
 
   gtk_list_store_append (toolbar_editor->toolbar_model, &iter);
   gtk_list_store_set (toolbar_editor->toolbar_model, &iter,
                       0, TRUE,
-                      1, "Up",
+                      1, "go-up-symbolic",
+                      2, "Up",
                       -1);
 
   gtk_list_store_append (toolbar_editor->toolbar_model, &iter);
   gtk_list_store_set (toolbar_editor->toolbar_model, &iter,
                      0, TRUE,
-                     1, "Home",
+                     1, "go-home-symbolic",
+                     2, "Home",
                      -1);
 
   gtk_list_store_append (toolbar_editor->toolbar_model, &iter);
   gtk_list_store_set (toolbar_editor->toolbar_model, &iter,
                       0, TRUE,
-                      1, "Location Bar",
+                      1, "",
+                      2, "Location Bar",
                       -1);
 
   /* Add Custom Actions */
@@ -185,7 +190,8 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
               gtk_list_store_append (toolbar_editor->toolbar_model, &iter);
               gtk_list_store_set (toolbar_editor->toolbar_model, &iter,
                                   0, TRUE,
-                                  1, label_text,
+                                  1, icon_name,
+                                  2, label_text,
                                   -1);
 
               g_free (name);
@@ -269,13 +275,22 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
                                                "active", 0,
                                                NULL);
 
+  /* append the icon toolbar */
+  renderer = gtk_cell_renderer_pixbuf_new ();
+  gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (toolbar_editor->tree_view),
+                                               -1,
+                                               "Icon",
+                                               renderer,
+                                               "icon-name", 1,
+                                               NULL);
+
   /* append the name toolbar */
   renderer = gtk_cell_renderer_text_new ();
   gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (toolbar_editor->tree_view),
                                                -1,
                                                "Name",
                                                renderer,
-                                               "text", 1,
+                                               "text", 2,
                                                NULL);
 
   /* create the "Move Up" button */
