@@ -686,15 +686,24 @@ typedef struct {
 
 
 static void
+uca_activation_callback_free (gpointer  data,
+                              GClosure *closure)
+{
+  g_free (((UCAActivation*) data)->action_name);
+  g_free (data);
+}
+
+
+
+static void
 thunar_window_check_activate_uca (UCAActivation *data)
 {
-  /* Add custom actions */
-  ThunarWindow *window = data->window;
-  gchar        *action_name = data->action_name;
+  ThunarWindow           *window              = data->window;
+  gchar                  *action_name         = data->action_name;
   GtkWidget              *gtk_menu_item;
   ThunarxProviderFactory *provider_factory;
   GList                  *providers;
-  GList                  *thunarx_menu_items = NULL;
+  GList                  *thunarx_menu_items  = NULL;
   GList                  *lp_provider;
   GList                  *lp_item;
 
@@ -703,47 +712,29 @@ thunar_window_check_activate_uca (UCAActivation *data)
   providers = thunarx_provider_factory_list_providers (provider_factory, THUNARX_TYPE_MENU_PROVIDER);
   g_object_unref (provider_factory);
 
-  if (G_UNLIKELY (providers != NULL))
+  if (G_UNLIKELY (providers == NULL))
+    return;
+
+  /* load the menu items offered by the menu providers */
+  for (lp_provider = providers; lp_provider != NULL; lp_provider = lp_provider->next)
     {
-      /* load the menu items offered by the menu providers */
-      for (lp_provider = providers; lp_provider != NULL; lp_provider = lp_provider->next)
+      thunarx_menu_items = thunarx_menu_provider_get_folder_menu_items (lp_provider->data, GTK_WIDGET (window), THUNARX_FILE_INFO (window->current_directory));
+
+      for (lp_item = thunarx_menu_items; lp_item != NULL; lp_item = lp_item->next)
         {
-          thunarx_menu_items = thunarx_menu_provider_get_folder_menu_items (lp_provider->data, GTK_WIDGET (window), THUNARX_FILE_INFO (window->current_directory));
-//          thunarx_menu_items = thunarx_menu_provider_get_file_menu_items (lp_provider->data, GTK_WIDGET (window), NULL);
+          gchar *name;
 
-          for (lp_item = thunarx_menu_items; lp_item != NULL; lp_item = lp_item->next)
-            {
-              gchar        *name, *label_text, *tooltip_text, *icon_name, *accel_path;
-              gboolean      sensitive;
-              GtkWidget    *gtk_menu_item;
-              ThunarxMenu  *thunarx_menu;
-              GList        *children;
-              GList        *lp;
-              GtkWidget    *submenu;
-              GtkWidget    *image = NULL;
-              GIcon        *icon = NULL;
-              GtkToolItem  *tool_item;
+          g_object_get (G_OBJECT (lp_item->data), "name", &name, NULL);
+          if (strncmp("uca-action", name, 10) != 0)
+            break;
 
-              g_object_get (G_OBJECT (lp_item->data),
-                            "name", &name,
-                            "label", &label_text,
-                            "tooltip", &tooltip_text,
-                            "icon", &icon_name,
-                            "sensitive", &sensitive,
-                            "menu", &thunarx_menu,
-                            NULL);
-
-              if (strncmp("uca-action", name, 10) != 0)
-                break;
-
-              if (g_strcmp0 (action_name, name) == 0)
-                thunarx_menu_item_activate (lp_item->data);
-            }
-
-          g_list_free (thunarx_menu_items);
+          if (g_strcmp0 (action_name, name) == 0)
+            thunarx_menu_item_activate (lp_item->data);
         }
-      g_list_free_full (providers, g_object_unref);
+
+      g_list_free (thunarx_menu_items);
     }
+  g_list_free_full (providers, g_object_unref);
 }
 
 
@@ -752,16 +743,13 @@ GtkWidget*
 thunar_gtk_toolbar_thunarx_toolbar_item_new (GObject      *thunarx_menu_item,
                                              ThunarWindow *window)
 {
-  gchar        *name, *label_text, *tooltip_text, *icon_name, *accel_path;
-  gboolean      sensitive;
-  GtkWidget    *gtk_menu_item;
-  ThunarxMenu  *thunarx_menu;
-  GList        *children;
-  GList        *lp;
-  GtkWidget    *submenu;
-  GtkWidget    *image = NULL;
-  GIcon        *icon = NULL;
-  GtkToolItem  *tool_item;
+  gchar         *name, *label_text, *tooltip_text, *icon_name;
+  GtkWidget     *gtk_menu_item;
+  GList         *children;
+  GtkWidget     *image = NULL;
+  GIcon         *icon = NULL;
+  GtkToolItem   *tool_item;
+  UCAActivation *data;
 
   g_return_val_if_fail (THUNARX_IS_MENU_ITEM (thunarx_menu_item), NULL);
 
@@ -770,11 +758,8 @@ thunar_gtk_toolbar_thunarx_toolbar_item_new (GObject      *thunarx_menu_item,
                 "label", &label_text,
                 "tooltip", &tooltip_text,
                 "icon", &icon_name,
-                "sensitive", &sensitive,
-                "menu", &thunarx_menu,
                 NULL);
 
-  accel_path = g_strconcat ("<Actions>/ThunarActions/", name, NULL);
   if (icon_name != NULL)
     icon = g_icon_new_for_string (icon_name, NULL);
   if (icon != NULL)
@@ -782,15 +767,16 @@ thunar_gtk_toolbar_thunarx_toolbar_item_new (GObject      *thunarx_menu_item,
 
   image = gtk_image_new_from_icon_name (icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
   tool_item = gtk_tool_button_new (image, label_text);
-  UCAActivation *data = malloc (sizeof (UCAActivation));
+  gtk_widget_set_tooltip_text (GTK_WIDGET (tool_item), tooltip_text);
+
+  data = malloc (sizeof (UCAActivation));
   data->action_name = g_strdup (name);
   data->window = window;
-  g_signal_connect_swapped (G_OBJECT (tool_item), "clicked", G_CALLBACK (thunar_window_check_activate_uca), data);
-  gtk_widget_set_tooltip_text (GTK_WIDGET (tool_item), tooltip_text);
+  g_signal_connect_data (G_OBJECT (tool_item), "clicked", G_CALLBACK (thunar_window_check_activate_uca), data, uca_activation_callback_free, G_CONNECT_SWAPPED);
+
   gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), tool_item, -1);
 
   g_free (name);
-  g_free (accel_path);
   g_free (label_text);
   g_free (tooltip_text);
   g_free (icon_name);
@@ -1049,17 +1035,18 @@ thunar_window_init (ThunarWindow *window)
       for (lp_provider = providers; lp_provider != NULL; lp_provider = lp_provider->next)
         {
           thunarx_menu_items = thunarx_menu_provider_get_folder_menu_items (lp_provider->data, GTK_WIDGET (window), THUNARX_FILE_INFO (thunar_file_get (thunar_g_file_new_for_home (), NULL)));
-//          thunarx_menu_items = thunarx_menu_provider_get_file_menu_items (lp_provider->data, GTK_WIDGET (window), NULL);
 
           for (lp_item = thunarx_menu_items; lp_item != NULL; lp_item = lp_item->next)
             {
               gchar *name;
 
-              g_object_get (G_OBJECT (lp_item->data),
-                            "name", &name,
-                            NULL);
+              g_object_get (G_OBJECT (lp_item->data), "name", &name, NULL);
               if (strncmp("uca-action", name, 10) != 0)
-                break;
+                {
+                  g_free (name);
+                  break;
+                }
+              g_free (name);
 
               thunar_gtk_toolbar_thunarx_toolbar_item_new (lp_item->data, window);
             }
