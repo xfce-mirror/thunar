@@ -1,6 +1,6 @@
 /* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
- * Copyright (c) 2006-2007 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2021 Sergios - Anestis Kefalidis <sergioskefalidis@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
