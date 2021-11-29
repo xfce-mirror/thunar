@@ -99,6 +99,7 @@ typedef enum
   THUNAR_WINDOW_ACTION_SEARCH,
   THUNAR_WINDOW_ACTION_CANCEL_SEARCH,
 
+  THUNAR_WINDOW_N_ACTIONS
 } ThunarWindowAction;
 
 GType                     thunar_window_get_type                            (void) G_GNUC_CONST;
@@ -147,6 +148,8 @@ void                      thunar_window_update_search                       (Thu
 void                      thunar_window_action_cancel_search                (ThunarWindow        *window);
 void                      thunar_window_action_search                       (ThunarWindow        *window);
 void                      thunar_window_update_statusbar                    (ThunarWindow        *window);
+
+XfceGtkActionEntry*       thunar_window_get_action_entries                  (void);
 
 
 G_END_DECLS;
