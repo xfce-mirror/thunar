@@ -1280,12 +1280,16 @@ thunar_window_update_view_menu (ThunarWindow *window,
       xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
     }
 
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_ICONS),
+  item = xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_ICONS),
                                                  G_OBJECT (window), window->view_type == THUNAR_TYPE_ICON_VIEW, GTK_MENU_SHELL (menu));
+  if (window->is_searching == TRUE)
+    gtk_widget_set_sensitive (item, FALSE);
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST),
-                                                 G_OBJECT (window), window->view_type == THUNAR_TYPE_DETAILS_VIEW, GTK_MENU_SHELL (menu));
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST),
-                                                 G_OBJECT (window), window->view_type == THUNAR_TYPE_COMPACT_VIEW, GTK_MENU_SHELL (menu));
+                                                   G_OBJECT (window), window->view_type == THUNAR_TYPE_DETAILS_VIEW, GTK_MENU_SHELL (menu));
+  item = xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST),
+                                                          G_OBJECT (window), window->view_type == THUNAR_TYPE_COMPACT_VIEW, GTK_MENU_SHELL (menu));
+  if (window->is_searching == TRUE)
+    gtk_widget_set_sensitive (item, FALSE);
 
   gtk_widget_show_all (GTK_WIDGET (menu));
 
@@ -2915,6 +2919,12 @@ thunar_window_start_open_location (ThunarWindow *window,
   /* setup a search if required */
   if (initial_text != NULL && thunar_util_is_a_search_query (initial_text) == TRUE)
     {
+      GType view_type;
+      /* workaround the slowness of ExoIconView */
+      view_type = window->view_type;
+      thunar_window_action_detailed_view (window);
+      thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), view_type); /* save it in the new view */
+
       /* temporary show the location toolbar, even if it is normally hidden */
       gtk_widget_show (window->location_toolbar);
       thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
@@ -2922,6 +2932,8 @@ thunar_window_start_open_location (ThunarWindow *window,
       thunar_window_update_search (window);
       window->is_searching = TRUE;
       thunar_launcher_set_searching (window->launcher, TRUE);
+
+      /* the check is useless as long as the workaround is in place */
       if (THUNAR_IS_DETAILS_VIEW (window->view))
         thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), TRUE);
     }
@@ -2941,6 +2953,8 @@ static void
 thunar_window_resume_search (ThunarWindow *window,
                              const gchar  *initial_text)
 {
+  GType view_type;
+
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* when setting up the location entry do not resent the search query to the standard view, there is a search ongoing */
@@ -2958,6 +2972,8 @@ thunar_window_resume_search (ThunarWindow *window,
   window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
   gtk_widget_show (window->catfish_search_button);
   thunar_launcher_set_searching (window->launcher, TRUE);
+
+  /* the check is useless as long as the workaround is in place */
   if (THUNAR_IS_DETAILS_VIEW (window->view))
     thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), TRUE);
 }
@@ -3002,6 +3018,15 @@ thunar_window_action_cancel_search (ThunarWindow *window)
     thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), FALSE);
 
   window->is_searching = FALSE;
+
+  /* null check for the same reason as thunar_standard_view_set_searching */
+  if (window->view != NULL)
+    {
+      if (thunar_standard_view_get_saved_view_type (THUNAR_STANDARD_VIEW (window->view)) != 0)
+        thunar_window_action_view_changed (window, thunar_standard_view_get_saved_view_type (THUNAR_STANDARD_VIEW (window->view)));
+
+      thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), 0);
+    }
 }
 
 
@@ -3424,7 +3449,8 @@ thunar_window_action_detailed_view (ThunarWindow *window)
 static void
 thunar_window_action_icon_view (ThunarWindow *window)
 {
-  thunar_window_action_view_changed (window, THUNAR_TYPE_ICON_VIEW);
+  if (window->is_searching == FALSE)
+    thunar_window_action_view_changed (window, THUNAR_TYPE_ICON_VIEW);
 }
 
 
@@ -3432,7 +3458,8 @@ thunar_window_action_icon_view (ThunarWindow *window)
 static void
 thunar_window_action_compact_view (ThunarWindow *window)
 {
-  thunar_window_action_view_changed (window, THUNAR_TYPE_COMPACT_VIEW);
+  if (window->is_searching == FALSE)
+    thunar_window_action_view_changed (window, THUNAR_TYPE_COMPACT_VIEW);
 }
 
 
