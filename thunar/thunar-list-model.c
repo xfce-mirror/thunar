@@ -490,7 +490,6 @@ thunar_list_model_dispose (GObject *object)
 {
   /* unlink from the folder (if any) */
   thunar_list_model_set_folder (THUNAR_LIST_MODEL (object), NULL, NULL);
-  printf("Dispose\n");
   (*G_OBJECT_CLASS (thunar_list_model_parent_class)->dispose) (object);
 }
 
@@ -500,7 +499,7 @@ static void
 thunar_list_model_finalize (GObject *object)
 {
   ThunarListModel *store = THUNAR_LIST_MODEL (object);
-  printf("Finalize\n");
+
   if (store->job)
     {
       exo_job_cancel (EXO_JOB (store->job));
@@ -2062,6 +2061,24 @@ thunar_list_model_set_job (ThunarListModel  *store,
 
 
 static gboolean
+add_search_files (gpointer user_data)
+{
+  ThunarListModel *model = user_data;
+
+  g_mutex_lock (&model->m);
+
+  thunar_list_model_files_added (model->folder, model->files_to_add, model);
+  g_list_free (model->files_to_add);
+  model->files_to_add = NULL;
+
+  g_mutex_unlock (&model->m);
+
+  return TRUE;
+}
+
+
+
+static gboolean
 _thunar_jobs_search_directory (ThunarJob  *job,
                                GArray     *param_values,
                                GError    **error)
@@ -2120,30 +2137,13 @@ void search_finished (ThunarJob       *job,
 
   if (store->timeout_id > 0)
     {
+      add_search_files (store);
       g_source_remove (store->timeout_id);
       store->timeout_id = 0;
     }
 
   thunar_g_list_free_full (store->files_to_add);
   store->files_to_add = NULL;
-}
-
-
-
-static gboolean
-add_search_files (gpointer user_data)
-{
-  ThunarListModel *model = user_data;
-
-  g_mutex_lock (&model->m);
-
-  thunar_list_model_files_added (model->folder, model->files_to_add, model);
-  g_list_free (model->files_to_add);
-  model->files_to_add = NULL;
-
-  g_mutex_unlock (&model->m);
-
-  return TRUE;
 }
 
 
