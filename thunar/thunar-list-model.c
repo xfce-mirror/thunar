@@ -276,6 +276,7 @@ struct _ThunarListModel
 
 static guint       list_model_signals[LAST_SIGNAL];
 static GParamSpec *list_model_props[N_PROPERTIES] = { NULL, };
+static const gint  SEARCH_DEPTH = 20;
 
 
 
@@ -2362,7 +2363,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
 
           /* search the current folder
            * start a new job */
-          store->job = thunar_list_model_job_search_directory (store, search_query_c, 20, thunar_folder_get_corresponding_file (folder));
+          store->job = thunar_list_model_job_search_directory (store, search_query_c, SEARCH_DEPTH, thunar_folder_get_corresponding_file (folder));
           exo_job_launch (EXO_JOB (store->job));
 
           g_signal_connect (store->job, "error", G_CALLBACK (search_error), NULL);
