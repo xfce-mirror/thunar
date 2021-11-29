@@ -357,6 +357,9 @@ struct _ThunarStandardViewPrivate
 
   /* current search query, used to allow switching between views with different (or NULL) search queries */
   gchar                  *search_query;
+
+  /* used to restore the view type after a search is completed */
+  GType                   type;
 };
 
 static XfceGtkActionEntry thunar_standard_view_action_entries[] =
@@ -791,6 +794,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->accel_group = NULL;
 
   standard_view->priv->search_query = NULL;
+  standard_view->priv->type = 0;
 }
 
 static void thunar_standard_view_store_sort_column  (ThunarStandardView *standard_view)
@@ -4192,4 +4196,21 @@ gchar*
 thunar_standard_view_get_search_query (ThunarStandardView *standard_view)
 {
   return standard_view->priv->search_query;
+}
+
+
+
+void
+thunar_standard_view_save_view_type (ThunarStandardView *standard_view,
+                                     GType               type)
+{
+  standard_view->priv->type = type;
+}
+
+
+
+GType
+thunar_standard_view_get_saved_view_type (ThunarStandardView *standard_view)
+{
+  return standard_view->priv->type;
 }
