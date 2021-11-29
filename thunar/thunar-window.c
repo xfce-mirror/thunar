@@ -2945,6 +2945,9 @@ thunar_window_resume_search (ThunarWindow *window,
   /* when setting up the location entry do not resent the search query to the standard view, there is a search ongoing */
   window->ignore_next_update = TRUE;
 
+  /* continue searching */
+  window->is_searching = TRUE;
+
   /* temporary show the location toolbar, even if it is normally hidden */
   gtk_widget_show (window->location_toolbar);
   thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
