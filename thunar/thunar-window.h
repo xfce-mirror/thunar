@@ -151,6 +151,8 @@ void                      thunar_window_update_statusbar                    (Thu
 
 XfceGtkActionEntry*       thunar_window_get_action_entries                  (void);
 
+void                      thunar_window_reconnect_accelerators              (ThunarWindow        *window);
+
 
 G_END_DECLS;
 

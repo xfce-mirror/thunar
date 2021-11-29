@@ -5056,3 +5056,42 @@ thunar_window_get_action_entries (void)
   return thunar_window_action_entries;
 }
 
+
+
+/**
+ * thunar_window_reconnect_accelerators:
+ * @window      : a #ThunarWindow instance.
+ *
+ * Used to recreate the accelerator group when the accelerator map changes. This way the open windows can use the
+ * updated shortcuts.
+ **/
+void
+thunar_window_reconnect_accelerators (ThunarWindow *window)
+{
+  /* the window has not been properly initialized yet */
+  if (window->accel_group == NULL)
+    return;
+
+  /* delete previous accel_group */
+  gtk_accel_group_disconnect (window->accel_group, NULL);
+  gtk_window_remove_accel_group (GTK_WINDOW (window), window->accel_group);
+  g_object_unref (window->accel_group);
+  window->accel_group = NULL;
+
+  /* create new accel_group */
+  window->accel_group = gtk_accel_group_new ();
+  xfce_gtk_accel_map_add_entries (thunar_window_action_entries, G_N_ELEMENTS (thunar_window_action_entries));
+  xfce_gtk_accel_group_connect_action_entries (window->accel_group,
+                                               thunar_window_action_entries,
+                                               G_N_ELEMENTS (thunar_window_action_entries),
+                                               window);
+  thunar_launcher_append_accelerators (window->launcher, window->accel_group);
+  thunar_statusbar_append_accelerators (THUNAR_STATUSBAR (window->statusbar), window->accel_group);
+
+  gtk_window_add_accel_group (GTK_WINDOW (window), window->accel_group);
+
+  /* update page accelarators */
+  if (window->view != NULL)
+    g_object_set (G_OBJECT (window->view), "accel-group", window->accel_group, NULL);
+}
+
