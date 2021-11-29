@@ -2111,8 +2111,6 @@ void search_error (ThunarJob *job)
 void search_finished (ThunarJob       *job,
                       ThunarListModel *store)
 {
-  printf("Finished!\n");
-
   if (store->job)
     {
       g_signal_handlers_disconnect_matched (store->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
@@ -2182,8 +2180,6 @@ search_folder (ThunarListModel  *model,
       GFile     *file;
       GFileInfo *info;
       GFileType  type;
-
-//      printf("Not cancelled\n");
 
       /* get GFile and GFileInfo */
       info = g_file_enumerator_next_file (enumerator, cancellable, NULL);
@@ -2277,7 +2273,6 @@ thunar_list_model_set_folder (ThunarListModel *store,
   /* unlink from the previously active folder (if any) */
   if (G_LIKELY (store->folder != NULL))
     {
-      printf ("Cancel!\n");
       /* cancel the ongoing search if there is one */
       if (store->job)
         {
@@ -2353,13 +2348,11 @@ thunar_list_model_set_folder (ThunarListModel *store,
         }
       else
         {
-          GList       *recent_infos;
           GList       *lp;
           gchar       *search_query_c; /* converted to ignore case */
           const gchar *display_name;
           gchar       *display_name_c; /* converted to ignore case */
 
-          recent_infos   = gtk_recent_manager_get_items (gtk_recent_manager_get_default ());
           search_query_c = g_utf8_casefold (search_query, strlen (search_query));
           files = NULL;
 
@@ -2374,26 +2367,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
           /* add new results to the model every X ms */
           store->timeout_id = g_timeout_add (500, add_search_files, store);
 
-          /* search GtkRecent */
-//          for (lp = recent_infos; lp != NULL; lp = lp->next)
-//            {
-//              if (!gtk_recent_info_exists (lp->data))
-//                continue;
-//
-//              /* prepare entry display name */
-//              display_name = gtk_recent_info_get_display_name (lp->data);
-//              display_name_c = g_utf8_casefold (display_name, strlen (display_name));
-//
-//              /* search substring */
-//              if (g_strrstr (display_name_c, search_query_c) != NULL)
-//                files = g_list_prepend (files, thunar_file_get_for_uri (gtk_recent_info_get_uri (lp->data), NULL));
-//
-//              /* free memory */
-//              g_free (display_name_c);
-//            }
-
           search_files = files;
-          g_list_free_full (recent_infos, (void (*) (void*)) gtk_recent_info_unref);
           g_free (search_query_c);
         }
 
