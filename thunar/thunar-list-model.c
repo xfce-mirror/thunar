@@ -2186,6 +2186,10 @@ search_folder (ThunarListModel  *model,
       if (G_UNLIKELY (info == NULL))
         break;
 
+      /* ignore symlinks */
+      if (g_file_info_get_is_symlink (info))
+        continue;
+
       if (g_file_has_uri_scheme (directory, "recent"))
         {
           file = g_file_new_for_uri (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI));
