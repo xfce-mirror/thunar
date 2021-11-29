@@ -3244,3 +3244,11 @@ thunar_launcher_new_files_created (ThunarLauncher *launcher,
 
   g_signal_emit (launcher, launcher_signals[NEW_FILES_CREATED], 0, new_thunar_files);
 }
+
+
+
+XfceGtkActionEntry*
+thunar_launcher_get_action_entries (void)
+{
+  return thunar_launcher_action_entries;
+}

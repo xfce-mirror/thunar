@@ -929,6 +929,7 @@ thunar_window_init (ThunarWindow *window)
   /* setup a new statusbar */
   event_box = gtk_event_box_new ();
   window->statusbar = thunar_statusbar_new ();
+  thunar_statusbar_append_accelerators (THUNAR_STATUSBAR (window->statusbar), window->accel_group);
   gtk_widget_set_hexpand (window->statusbar, TRUE);
   gtk_container_add (GTK_CONTAINER (event_box), window->statusbar);
   gtk_grid_attach (GTK_GRID (window->view_box), event_box, 0, 4, 1, 1);
@@ -5046,3 +5047,12 @@ thunar_window_update_statusbar (ThunarWindow *window)
 {
   thunar_standard_view_update_statusbar_text (THUNAR_STANDARD_VIEW (window->view));
 }
+
+
+
+XfceGtkActionEntry*
+thunar_window_get_action_entries (void)
+{
+  return thunar_window_action_entries;
+}
+
