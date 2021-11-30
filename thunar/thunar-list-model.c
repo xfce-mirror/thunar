@@ -2129,7 +2129,7 @@ search_error (ThunarJob *job)
 
 static void
 search_finished (ThunarJob       *job,
-                      ThunarListModel *store)
+                 ThunarListModel *store)
 {
   if (store->job)
     {
