@@ -2172,7 +2172,7 @@ thunar_list_model_search_folder (ThunarListModel  *model,
               G_FILE_ATTRIBUTE_STANDARD_TARGET_URI ","
               G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
               G_FILE_ATTRIBUTE_STANDARD_NAME ", recent::*";
-  enumerator = g_file_enumerate_children (directory, namespace, G_FILE_QUERY_INFO_NONE, cancellable, NULL);
+  enumerator = g_file_enumerate_children (directory, namespace, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, cancellable, NULL);
   if (enumerator == NULL)
     return;
 
@@ -2188,20 +2188,25 @@ thunar_list_model_search_folder (ThunarListModel  *model,
       if (G_UNLIKELY (info == NULL))
         break;
 
-      /* ignore symlinks */
-      if (g_file_info_get_is_symlink (info))
-        continue;
-
       if (g_file_has_uri_scheme (directory, "recent"))
         {
           file = g_file_new_for_uri (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI));
-          info = g_file_query_info (file, namespace, G_FILE_QUERY_INFO_NONE, cancellable, NULL);
+          info = g_file_query_info (file, namespace, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, cancellable, NULL);
         }
       else
         file = g_file_get_child (directory, g_file_info_get_name (info));
 
-      /* handle directories */
       type = g_file_info_get_file_type (info);
+
+      /* ignore symlinks */
+      if (type == G_FILE_TYPE_SYMBOLIC_LINK)
+        {
+          g_object_unref (file);
+          g_object_unref (info);
+          continue;
+        }
+
+      /* handle directories */
       if (type == G_FILE_TYPE_DIRECTORY && depth > 0)
         {
           thunar_list_model_search_folder (model, job, g_file_get_uri (file), search_query_c, depth - 1);
