@@ -209,13 +209,13 @@ static void               thunar_list_model_set_date_custom_style (ThunarListMod
 static gint               thunar_list_model_get_num_files         (ThunarListModel        *store);
 static gboolean           thunar_list_model_get_folders_first     (ThunarListModel        *store);
 static ThunarJob*         thunar_list_model_job_search_directory  (ThunarListModel        *model,
-                                                                   gchar                  *search_query_c,
+                                                                   const gchar            *search_query_c,
                                                                    int                     depth,
                                                                    ThunarFile             *directory);
-static void               search_folder                           (ThunarListModel        *model,
+static void               thunar_list_model_search_folder         (ThunarListModel        *model,
                                                                    ThunarJob              *job,
                                                                    gchar                  *path,
-                                                                   gchar                  *search_query_c,
+                                                                   const gchar            *search_query_c,
                                                                    int                     depth);
 
 
@@ -2086,7 +2086,7 @@ _thunar_jobs_search_directory (ThunarJob  *job,
 {
   ThunarListModel *model;
   ThunarFile      *directory;
-  gchar           *search_query_c;
+  const char      *search_query_c;
   int              depth;
 
   if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
@@ -2097,7 +2097,7 @@ _thunar_jobs_search_directory (ThunarJob  *job,
   depth = g_value_get_int (&g_array_index (param_values, GValue, 2));
   directory = g_value_get_object (&g_array_index (param_values, GValue, 3));
 
-  search_folder (model, job, thunar_file_dup_uri (directory), search_query_c, depth);
+  thunar_list_model_search_folder (model, job, thunar_file_dup_uri (directory), search_query_c, depth);
 
   return TRUE;
 }
@@ -2106,7 +2106,7 @@ _thunar_jobs_search_directory (ThunarJob  *job,
 
 static ThunarJob*
 thunar_list_model_job_search_directory (ThunarListModel *model,
-                                        gchar           *search_query_c,
+                                        const gchar     *search_query_c,
                                         int              depth,
                                         ThunarFile      *directory)
 {
@@ -2119,14 +2119,16 @@ thunar_list_model_job_search_directory (ThunarListModel *model,
 
 
 
-void search_error (ThunarJob *job)
+static void
+search_error (ThunarJob *job)
 {
   printf("Error!\n");
 }
 
 
 
-void search_finished (ThunarJob       *job,
+static void
+search_finished (ThunarJob       *job,
                       ThunarListModel *store)
 {
   if (store->job)
@@ -2150,23 +2152,22 @@ void search_finished (ThunarJob       *job,
 
 
 static void
-search_folder (ThunarListModel  *model,
-               ThunarJob        *job,
-               gchar            *uri,
-               gchar            *search_query_c,
-               int               depth)
+thunar_list_model_search_folder (ThunarListModel  *model,
+                                 ThunarJob        *job,
+                                 gchar            *path,
+                                 const gchar      *search_query_c,
+                                 int               depth)
 {
   GCancellable    *cancellable;
   GFileEnumerator *enumerator;
   GFile           *directory;
   GList           *files_found = NULL; /* contains the matching files in this folder only */
   const gchar     *namespace;
-  const gchar     *filename;
   const gchar     *display_name;
   gchar           *display_name_c; /* converted to ignore case */
 
   cancellable = exo_job_get_cancellable (EXO_JOB (job));
-  directory = g_file_new_for_uri (uri);
+  directory = g_file_new_for_uri (path);
   namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE ","
               G_FILE_ATTRIBUTE_STANDARD_TARGET_URI ","
               G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
@@ -2203,7 +2204,7 @@ search_folder (ThunarListModel  *model,
       type = g_file_info_get_file_type (info);
       if (type == G_FILE_TYPE_DIRECTORY && depth > 0)
         {
-          search_folder (model, job, g_file_get_uri (file), search_query_c, depth - 1);
+          thunar_list_model_search_folder (model, job, g_file_get_uri (file), search_query_c, depth - 1);
           /* continue; don't add non-leaf directories in the results */
         }
 
@@ -2353,10 +2354,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
         }
       else
         {
-          GList       *lp;
           gchar       *search_query_c; /* converted to ignore case */
-          const gchar *display_name;
-          gchar       *display_name_c; /* converted to ignore case */
 
           search_query_c = g_utf8_casefold (search_query, strlen (search_query));
           files = NULL;

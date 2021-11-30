@@ -2952,8 +2952,6 @@ static void
 thunar_window_resume_search (ThunarWindow *window,
                              const gchar  *initial_text)
 {
-  GType view_type;
-
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* when setting up the location entry do not resent the search query to the standard view, there is a search ongoing */
