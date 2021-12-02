@@ -266,10 +266,17 @@ struct _ThunarListModel
   gint           sort_sign;   /* 1 = ascending, -1 descending */
   ThunarSortFunc sort_func;
 
-  ThunarJob     *job;
+  /* searching runs in a sepaarate which incrementally inserts results (files)
+   * in the files_to_add list.
+   * periodically, the main thread takes all the files in the files_to_add list
+   * and adds them in the model. The list is then emptied.
+   */
+  ThunarJob     *recursive_search_job;
   GList         *files_to_add;
-  GMutex         m;
-  guint          timeout_id;
+  GMutex         mutex_files_to_add;
+
+  /* used to stop the periodic call to add_search_files when the search is finished/canceled */
+  guint          update_search_results_timeout_id;
 };
 
 
@@ -332,7 +339,7 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
       g_param_spec_string ("date-custom-style",
                            "DateCustomStyle",
                            NULL,
-                           "%Y-%m-%d %H:%M:%S",
+                           "%Y-%mutex_files_to_add-%d %H:%M:%S",
                            EXO_PARAM_READWRITE);
 
   /**
@@ -474,7 +481,7 @@ thunar_list_model_init (ThunarListModel *store)
   store->sort_sign = 1;
   store->sort_func = thunar_file_compare_by_name;
   store->rows = g_sequence_new (g_object_unref);
-  g_mutex_init (&store->m);
+  g_mutex_init (&store->mutex_files_to_add);
 
   /* connect to the shared ThunarFileMonitor, so we don't need to
    * connect "changed" to every single ThunarFile we own.
@@ -491,6 +498,7 @@ thunar_list_model_dispose (GObject *object)
 {
   /* unlink from the folder (if any) */
   thunar_list_model_set_folder (THUNAR_LIST_MODEL (object), NULL, NULL);
+
   (*G_OBJECT_CLASS (thunar_list_model_parent_class)->dispose) (object);
 }
 
@@ -501,24 +509,24 @@ thunar_list_model_finalize (GObject *object)
 {
   ThunarListModel *store = THUNAR_LIST_MODEL (object);
 
-  if (store->job)
+  if (store->recursive_search_job)
     {
-      exo_job_cancel (EXO_JOB (store->job));
+      exo_job_cancel (EXO_JOB (store->recursive_search_job));
 
-      g_signal_handlers_disconnect_matched (store->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
-      g_object_unref (store->job);
-      store->job = NULL;
+      g_signal_handlers_disconnect_matched (store->recursive_search_job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
+      g_object_unref (store->recursive_search_job);
+      store->recursive_search_job = NULL;
     }
-  if (store->timeout_id > 0)
+  if (store->update_search_results_timeout_id > 0)
     {
-      g_source_remove (store->timeout_id);
-      store->timeout_id = 0;
+      g_source_remove (store->update_search_results_timeout_id);
+      store->update_search_results_timeout_id = 0;
     }
   thunar_g_list_free_full (store->files_to_add);
   store->files_to_add = NULL;
 
   g_sequence_free (store->rows);
-  g_mutex_clear (&store->m);
+  g_mutex_clear (&store->mutex_files_to_add);
 
   /* disconnect from the file monitor */
   g_signal_handlers_disconnect_by_func (G_OBJECT (store->file_monitor), thunar_list_model_file_changed, store);
@@ -2047,7 +2055,7 @@ thunar_list_model_set_date_custom_style (ThunarListModel *store,
 ThunarJob*
 thunar_list_model_get_job (ThunarListModel  *store)
 {
-  return store->job;
+  return store->recursive_search_job;
 }
 
 
@@ -2056,7 +2064,7 @@ void
 thunar_list_model_set_job (ThunarListModel  *store,
                            ThunarJob        *job)
 {
-  store->job = job;
+  store->recursive_search_job = job;
 }
 
 
@@ -2066,13 +2074,13 @@ add_search_files (gpointer user_data)
 {
   ThunarListModel *model = user_data;
 
-  g_mutex_lock (&model->m);
+  g_mutex_lock (&model->mutex_files_to_add);
 
   thunar_list_model_files_added (model->folder, model->files_to_add, model);
   g_list_free (model->files_to_add);
   model->files_to_add = NULL;
 
-  g_mutex_unlock (&model->m);
+  g_mutex_unlock (&model->mutex_files_to_add);
 
   return TRUE;
 }
@@ -2080,7 +2088,7 @@ add_search_files (gpointer user_data)
 
 
 static gboolean
-_thunar_jobs_search_directory (ThunarJob  *job,
+_thunar_job_search_directory (ThunarJob  *job,
                                GArray     *param_values,
                                GError    **error)
 {
@@ -2110,7 +2118,7 @@ thunar_list_model_job_search_directory (ThunarListModel *model,
                                         int              depth,
                                         ThunarFile      *directory)
 {
-  return thunar_simple_job_new (_thunar_jobs_search_directory, 4,
+  return thunar_simple_job_new (_thunar_job_search_directory, 4,
                                 THUNAR_TYPE_LIST_MODEL, model,
                                 G_TYPE_STRING,          search_query_c,
                                 G_TYPE_INT,             depth,
@@ -2131,18 +2139,18 @@ static void
 search_finished (ThunarJob       *job,
                  ThunarListModel *store)
 {
-  if (store->job)
+  if (store->recursive_search_job)
     {
-      g_signal_handlers_disconnect_matched (store->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
-      g_object_unref (store->job);
-      store->job = NULL;
+      g_signal_handlers_disconnect_matched (store->recursive_search_job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
+      g_object_unref (store->recursive_search_job);
+      store->recursive_search_job = NULL;
     }
 
-  if (store->timeout_id > 0)
+  if (store->update_search_results_timeout_id > 0)
     {
       add_search_files (store);
-      g_source_remove (store->timeout_id);
-      store->timeout_id = 0;
+      g_source_remove (store->update_search_results_timeout_id);
+      store->update_search_results_timeout_id = 0;
     }
 
   thunar_g_list_free_full (store->files_to_add);
@@ -2154,7 +2162,7 @@ search_finished (ThunarJob       *job,
 static void
 thunar_list_model_search_folder (ThunarListModel  *model,
                                  ThunarJob        *job,
-                                 gchar            *path,
+                                 gchar            *uri,
                                  const gchar      *search_query_c,
                                  int               depth)
 {
@@ -2167,7 +2175,8 @@ thunar_list_model_search_folder (ThunarListModel  *model,
   gchar           *display_name_c; /* converted to ignore case */
 
   cancellable = exo_job_get_cancellable (EXO_JOB (job));
-  directory = g_file_new_for_uri (path);
+  directory = g_file_new_for_uri (uri);
+  g_free (uri);
   namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE ","
               G_FILE_ATTRIBUTE_STANDARD_TARGET_URI ","
               G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
@@ -2191,6 +2200,7 @@ thunar_list_model_search_folder (ThunarListModel  *model,
       if (g_file_has_uri_scheme (directory, "recent"))
         {
           file = g_file_new_for_uri (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI));
+          g_object_unref (info);
           info = g_file_query_info (file, namespace, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, cancellable, NULL);
         }
       else
@@ -2230,13 +2240,12 @@ thunar_list_model_search_folder (ThunarListModel  *model,
   g_object_unref (enumerator);
   g_object_unref (directory);
 
-  if (exo_job_is_cancelled (EXO_JOB (job))) {
+  if (exo_job_is_cancelled (EXO_JOB (job)))
     return;
-  }
 
-  g_mutex_lock (&model->m);
+  g_mutex_lock (&model->mutex_files_to_add);
   model->files_to_add = g_list_concat (model->files_to_add, files_found);
-  g_mutex_unlock (&model->m);
+  g_mutex_unlock (&model->mutex_files_to_add);
 }
 
 
@@ -2271,7 +2280,6 @@ thunar_list_model_set_folder (ThunarListModel *store,
   GtkTreePath   *path;
   gboolean       has_handler;
   GList         *files;
-  GList         *search_files; /* used to free results of a search */
   GSequenceIter *row;
   GSequenceIter *end;
   GSequenceIter *next;
@@ -2279,24 +2287,22 @@ thunar_list_model_set_folder (ThunarListModel *store,
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
   _thunar_return_if_fail (folder == NULL || THUNAR_IS_FOLDER (folder));
 
-  search_files = NULL;
-
   /* unlink from the previously active folder (if any) */
   if (G_LIKELY (store->folder != NULL))
     {
       /* cancel the ongoing search if there is one */
-      if (store->job)
+      if (store->recursive_search_job)
         {
-          exo_job_cancel (EXO_JOB (store->job));
+          exo_job_cancel (EXO_JOB (store->recursive_search_job));
 
-          g_signal_handlers_disconnect_matched (store->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
-          g_object_unref (store->job);
-          store->job = NULL;
+          g_signal_handlers_disconnect_matched (store->recursive_search_job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
+          g_object_unref (store->recursive_search_job);
+          store->recursive_search_job = NULL;
         }
-      if (store->timeout_id > 0)
+      if (store->update_search_results_timeout_id > 0)
         {
-          g_source_remove (store->timeout_id);
-          store->timeout_id = 0;
+          g_source_remove (store->update_search_results_timeout_id);
+          store->update_search_results_timeout_id = 0;
         }
       thunar_g_list_free_full (store->files_to_add);
       store->files_to_add = NULL;
@@ -2359,36 +2365,28 @@ thunar_list_model_set_folder (ThunarListModel *store,
         }
       else
         {
-          gchar       *search_query_c; /* converted to ignore case */
+          gchar *search_query_c; /* converted to ignore case */
 
           search_query_c = g_utf8_casefold (search_query, strlen (search_query));
           files = NULL;
 
           /* search the current folder
-           * start a new job */
-          store->job = thunar_list_model_job_search_directory (store, search_query_c, SEARCH_DEPTH, thunar_folder_get_corresponding_file (folder));
-          exo_job_launch (EXO_JOB (store->job));
+           * start a new recursive_search_job */
+          store->recursive_search_job = thunar_list_model_job_search_directory (store, search_query_c, SEARCH_DEPTH, thunar_folder_get_corresponding_file (folder));
+          exo_job_launch (EXO_JOB (store->recursive_search_job));
 
-          g_signal_connect (store->job, "error", G_CALLBACK (search_error), NULL);
-          g_signal_connect (store->job, "finished", G_CALLBACK (search_finished), store);
+          g_signal_connect (store->recursive_search_job, "error", G_CALLBACK (search_error), NULL);
+          g_signal_connect (store->recursive_search_job, "finished", G_CALLBACK (search_finished), store);
 
           /* add new results to the model every X ms */
-          store->timeout_id = g_timeout_add (500, add_search_files, store);
+          store->update_search_results_timeout_id = g_timeout_add (500, add_search_files, store);
 
-          search_files = files;
           g_free (search_query_c);
         }
 
       /* insert the files */
       if (files != NULL)
         thunar_list_model_files_added (folder, files, store);
-
-      /* free search files, thunar_list_model_files_added has added its own references */
-      if (search_files != NULL)
-        {
-          thunar_g_list_free_full (search_files);
-          search_files = NULL;
-        }
 
       /* connect signals to the new folder */
       g_signal_connect (G_OBJECT (store->folder), "destroy", G_CALLBACK (thunar_list_model_folder_destroy), store);
