@@ -333,3 +333,32 @@ thunar_statusbar_new (void)
 {
   return g_object_new (THUNAR_TYPE_STATUSBAR, NULL);
 }
+
+
+
+XfceGtkActionEntry*
+thunar_statusbar_get_action_entries (void)
+{
+  return thunar_status_bar_action_entries;
+}
+
+
+
+/**
+ * thunar_statusbar_append_accelerators:
+ * @statusbar    : a #ThunarStatusbar.
+ * @accel_group : a #GtkAccelGroup to be used used for new menu items
+ *
+ * Connects all accelerators and corresponding default keys of this widget to the global accelerator list
+ **/
+void thunar_statusbar_append_accelerators (ThunarStatusbar *statusbar,
+                                           GtkAccelGroup   *accel_group)
+{
+  _thunar_return_if_fail (THUNAR_IS_STATUSBAR (statusbar));
+
+  xfce_gtk_accel_map_add_entries (thunar_status_bar_action_entries, G_N_ELEMENTS (thunar_status_bar_action_entries));
+  xfce_gtk_accel_group_connect_action_entries (accel_group,
+                                               thunar_status_bar_action_entries,
+                                               G_N_ELEMENTS (thunar_status_bar_action_entries),
+                                               statusbar);
+}

@@ -198,6 +198,7 @@ struct _ThunarApplication
 
   guint                           accel_map_save_id;
   GtkAccelMap                    *accel_map;
+  GList                          *user_disabled_shortcuts;
 
   guint                           show_dialogs_timer_id;
 
@@ -346,6 +347,63 @@ thunar_application_dbus_init (ThunarApplication *application)
 
 
 static void
+mark_user_disabled_accelerators_as_changed (gpointer        data,
+                                            const gchar    *accel_path,
+                                            guint           accel_key,
+                                            GdkModifierType accel_mods,
+                                            gboolean        changed)
+{
+  for (GList *lp = data; lp != NULL; lp = lp->next)
+    {
+      gchar *path = lp->data;
+      if (g_strcmp0 (accel_path, path) == 0)
+        {
+          if (accel_key == 0 && accel_mods == 0 && changed == FALSE)
+            {
+              gtk_accel_map_add_entry (accel_path, 1, 1);
+              gtk_accel_map_change_entry (accel_path, 0, 0, FALSE);
+            }
+        }
+    }
+}
+
+
+
+void
+xfce_gtk_accel_map_save (gchar *path,
+                         GList *user_disabled_shortcuts)
+{
+  gtk_accel_map_foreach_unfiltered (user_disabled_shortcuts, mark_user_disabled_accelerators_as_changed);
+  gtk_accel_map_save (path);
+}
+
+
+
+static void
+store_user_disabled_accelerators  (gpointer        data,
+                                   const gchar    *accel_path,
+                                   guint           accel_key,
+                                   GdkModifierType accel_mods,
+                                   gboolean        changed)
+{
+  GList *list = data;
+  if (accel_key == 0 && accel_mods == 0 && changed == FALSE)
+    list = g_list_append (list, g_strdup (accel_path));
+}
+
+
+
+void
+xfce_gtk_accel_map_load (gchar *path,
+                         GList *user_disabled_shortcuts)
+{
+  gtk_accel_map_load (path);
+  gtk_accel_map_foreach_unfiltered (user_disabled_shortcuts, store_user_disabled_accelerators);
+}
+
+
+
+static void
 thunar_application_startup (GApplication *gapp)
 {
   ThunarApplication *application = THUNAR_APPLICATION (gapp);
@@ -380,7 +438,9 @@ thunar_application_startup (GApplication *gapp)
   if (G_LIKELY (path != NULL))
     {
       /* load the accel map */
-      gtk_accel_map_load (path);
+      application->user_disabled_shortcuts = g_list_prepend (application->user_disabled_shortcuts, NULL);
+      xfce_gtk_accel_map_load (path, application->user_disabled_shortcuts);
+      printf ("%d\n", g_list_length (application->user_disabled_shortcuts));
       g_free (path);
     }
 
@@ -744,7 +804,7 @@ thunar_application_accel_map_save (gpointer user_data)
   if (G_LIKELY (path != NULL))
     {
       /* save the accel map */
-      gtk_accel_map_save (path);
+      xfce_gtk_accel_map_save (path, application->user_disabled_shortcuts);
       g_free (path);
     }
 
@@ -756,6 +816,8 @@ thunar_application_accel_map_save (gpointer user_data)
 static void
 thunar_application_accel_map_changed (ThunarApplication *application)
 {
+  GList *windows;
+
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   /* stop pending save */
@@ -768,6 +830,15 @@ thunar_application_accel_map_changed (ThunarApplication *application)
   /* schedule new save */
   application->accel_map_save_id =
       g_timeout_add_seconds (10, thunar_application_accel_map_save, application);
+
+  /* update the accelerators for each window */
+  windows = thunar_application_get_windows (application);
+  for (GList *lp = windows; lp != NULL; lp = lp->next)
+    {
+      ThunarWindow *window = lp->data;
+      thunar_window_reconnect_accelerators (window);
+    }
+  g_list_free (windows);
 }
 
 

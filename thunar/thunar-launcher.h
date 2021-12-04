@@ -26,6 +26,9 @@
 
 G_BEGIN_DECLS;
 
+/* avoid including libxfce4ui.h */
+typedef struct _XfceGtkActionEntry  XfceGtkActionEntry;
+
 typedef struct _ThunarLauncherClass ThunarLauncherClass;
 typedef struct _ThunarLauncher      ThunarLauncher;
 
@@ -69,6 +72,8 @@ typedef enum
   THUNAR_LAUNCHER_ACTION_MOUNT,
   THUNAR_LAUNCHER_ACTION_UNMOUNT,
   THUNAR_LAUNCHER_ACTION_EJECT,
+
+  THUNAR_LAUNCHER_N_ACTIONS
 } ThunarLauncherAction;
 
 typedef enum
@@ -115,7 +120,7 @@ void            thunar_launcher_action_restore                       (ThunarLaun
 void            thunar_launcher_action_restore_and_show              (ThunarLauncher                 *launcher);
 void            thunar_launcher_set_searching                        (ThunarLauncher                 *launcher,
                                                                       gboolean                        b);
-
+XfceGtkActionEntry *thunar_launcher_get_action_entries               (void);
 
 G_END_DECLS;
 
