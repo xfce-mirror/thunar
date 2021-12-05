@@ -3992,6 +3992,33 @@ thunar_window_propagate_key_event (GtkWindow* window,
   if (focused_widget != NULL && GTK_IS_EDITABLE (focused_widget))
     return gtk_window_propagate_key_event (window, (GdkEventKey *) key_event);
 
+  ThunarWindow *thunar_window = THUNAR_WINDOW (window);
+  GdkEventKey  *key_event_real = (GdkEventKey *) key_event;
+  const guint   modifiers = key_event_real->state & gtk_accelerator_get_default_mod_mask ();
+
+  /* support shortcuts that contain the Tab key
+     Tab sometimes becomes ISO_Left_Tab (e.g. in Ctrl+Shift+Tab) so check both here */
+  if (G_UNLIKELY (key_event_real->keyval == GDK_KEY_Tab || key_event_real->keyval == GDK_KEY_ISO_Left_Tab) && key_event->type == GDK_KEY_PRESS)
+    {
+      GSList *lp;
+      /* todo: unref */
+      for (lp = thunar_application_tab_accelerators (thunar_application_get ()); lp != NULL; lp = lp->next)
+        {
+          ThunarAccel *accel = lp->data;
+          if (accel->mods == modifiers)
+            {
+              for (size_t i = 0; i <= THUNAR_WINDOW_ACTION_CANCEL_SEARCH; i++)
+                {
+                  if (g_strcmp0 (accel->path, thunar_window_action_entries[i].accel_path) == 0)
+                    {
+                      ((void (*) (ThunarWindow *)) thunar_window_action_entries[i].callback) (thunar_window);
+                      return TRUE;
+                    }
+                }
+            }
+        }
+    }
+
   return GDK_EVENT_PROPAGATE;
 }
 

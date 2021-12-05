@@ -132,6 +132,12 @@ static gboolean       thunar_application_dbus_register          (GApplication   
                                                                  const gchar            *object_path,
                                                                  GError                **error);
 static void           thunar_application_load_css               (void);
+static void           thunar_application_update_tab_key_accels  (gpointer                data,
+                                                                 const gchar            *accel_path,
+                                                                 guint                   accel_key,
+                                                                 GdkModifierType         accel_mods,
+                                                                 gboolean                changed);
+static void           thunar_application_update_windows_accels  (gpointer                user_data);
 static void           thunar_application_accel_map_changed      (ThunarApplication      *application);
 static gboolean       thunar_application_accel_map_save         (gpointer                user_data);
 static gboolean       thunar_application_accel_map_load         (gpointer                user_data);
@@ -200,6 +206,7 @@ struct _ThunarApplication
   guint                           accel_map_load_id;
   guint                           accel_map_save_id;
   GtkAccelMap                    *accel_map;
+  GSList                         *tab_key_accels;
 
   guint                           show_dialogs_timer_id;
 
@@ -764,11 +771,43 @@ thunar_application_accel_map_load (gpointer user_data)
       /* load the accel map */
       gtk_accel_map_load (path);
       g_free (path);
+
+      /* store the accelerators that include the `Tab` key */
+      gtk_accel_map_foreach (application, thunar_application_update_tab_key_accels);
     }
 
   application->accel_map_load_id = 0;
 
   return FALSE;
+}
+
+
+
+static void
+thunar_application_update_tab_key_accels (gpointer         data,
+                                          const gchar     *accel_path,
+                                          guint            accel_key,
+                                          GdkModifierType  accel_mods,
+                                          gboolean         changed)
+{
+  if (accel_key == GDK_KEY_Tab || accel_key == GDK_KEY_ISO_Left_Tab)
+    {
+      ThunarApplication *app = THUNAR_APPLICATION (data);
+      ThunarAccel *accel = g_new0 (ThunarAccel, 1);
+
+      accel->path = g_strdup (accel_path);
+      accel->mods = accel_mods & gtk_accelerator_get_default_mod_mask ();
+
+      app->tab_key_accels = g_slist_prepend (app->tab_key_accels, accel);
+    }
+}
+
+
+
+GSList*
+thunar_application_tab_accelerators (ThunarApplication *application)
+{
+  return application->tab_key_accels;
 }
 
 
@@ -799,6 +838,12 @@ thunar_application_accel_map_changed (ThunarApplication *application)
       thunar_window_reconnect_accelerators (window);
     }
   g_list_free (windows);
+
+  /* update tab accelerators list */
+  g_slist_free_full (application->tab_key_accels, g_free);
+  application->tab_key_accels = NULL;
+
+  gtk_accel_map_foreach (application, thunar_application_update_tab_key_accels);
 }
 
 
