@@ -34,7 +34,7 @@ From source:
     % cd thunar
     % ./autogen.sh
     % make
-    % sudo make install
+    # make install
 
 From release tarball:
 
@@ -42,13 +42,13 @@ From release tarball:
     % cd thunar-<version>
     % ./configure
     % make
-    % sudo make install
+    # make install
 
  Both autogen.sh and configure will list missing dependencies. 
  If your distribution provides development versions of the related packages, 
  install them. Otherwise you will need to build and install the missing dependencies from source.
 
-For additional build & debug hints, check the [Thunar Wiki pages](https://wiki.xfce.org/thunar/dev) and the README.md of missing dependencies you want to build.
+For additional build & debug hints, check the [Thunar wiki pages](https://wiki.xfce.org/thunar/dev) and the [detailed building wiki manual](https://docs.xfce.org/xfce/building).
 
 ### Reporting Bugs
 
