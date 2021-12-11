@@ -24,6 +24,9 @@
 
 G_BEGIN_DECLS;
 
+/* avoid including libxfce4ui.h */
+typedef struct _XfceGtkActionEntry   XfceGtkActionEntry;
+
 typedef struct _ThunarStatusbarClass ThunarStatusbarClass;
 typedef struct _ThunarStatusbar      ThunarStatusbar;
 
@@ -41,14 +44,21 @@ typedef enum
     THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE_IN_BYTES,
     THUNAR_STATUS_BAR_ACTION_TOGGLE_FILETYPE,
     THUNAR_STATUS_BAR_ACTION_TOGGLE_DISPLAY_NAME,
+
+    THUNAR_STATUS_BAR_N_ACTIONS
 } ThunarStatusBarAction;
 
-GType      thunar_statusbar_get_type    (void) G_GNUC_CONST;
+GType               thunar_statusbar_get_type            (void) G_GNUC_CONST;
 
-GtkWidget *thunar_statusbar_new         (void);
+GtkWidget          *thunar_statusbar_new                 (void);
 
-void       thunar_statusbar_setup_event (ThunarStatusbar *statusbar,
-                                         GtkWidget       *event_box);
+void                thunar_statusbar_setup_event         (ThunarStatusbar *statusbar,
+                                                          GtkWidget       *event_box);
+
+void                thunar_statusbar_append_accelerators (ThunarStatusbar *statusbar,
+                                                          GtkAccelGroup   *accel_group);
+
+XfceGtkActionEntry *thunar_statusbar_get_action_entries  (void);
 
 G_END_DECLS;
 

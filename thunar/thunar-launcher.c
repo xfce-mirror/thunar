@@ -263,10 +263,10 @@ static GParamSpec *launcher_props[N_PROPERTIES] = { NULL, };
 
 static XfceGtkActionEntry thunar_launcher_action_entries[] =
 {
-    { THUNAR_LAUNCHER_ACTION_OPEN,             "<Actions>/ThunarLauncher/open",                    "<Primary>O",        XFCE_GTK_IMAGE_MENU_ITEM, NULL,                                   NULL,                                                                                            "document-open",        G_CALLBACK (thunar_launcher_action_open),                },
-    { THUNAR_LAUNCHER_ACTION_EXECUTE,          "<Actions>/ThunarLauncher/execute",                 "",                  XFCE_GTK_IMAGE_MENU_ITEM, NULL,                                   NULL,                                                                                            "system-run",           G_CALLBACK (thunar_launcher_action_open),                },
-    { THUNAR_LAUNCHER_ACTION_OPEN_IN_TAB,      "<Actions>/ThunarLauncher/open-in-new-tab",         "<Primary><shift>P", XFCE_GTK_MENU_ITEM,       NULL,                                   NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_open_in_new_tabs),    },
-    { THUNAR_LAUNCHER_ACTION_OPEN_IN_WINDOW,   "<Actions>/ThunarLauncher/open-in-new-window",      "<Primary><shift>O", XFCE_GTK_MENU_ITEM,       NULL,                                   NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_open_in_new_windows), },
+    { THUNAR_LAUNCHER_ACTION_OPEN,             "<Actions>/ThunarLauncher/open",                    "<Primary>O",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Open"),                            NULL,                                                                                            "document-open",        G_CALLBACK (thunar_launcher_action_open),                },
+    { THUNAR_LAUNCHER_ACTION_EXECUTE,          "<Actions>/ThunarLauncher/execute",                 "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("E_xecute"),                        NULL,                                                                                            "system-run",           G_CALLBACK (thunar_launcher_action_open),                },
+    { THUNAR_LAUNCHER_ACTION_OPEN_IN_TAB,      "<Actions>/ThunarLauncher/open-in-new-tab",         "<Primary><shift>P", XFCE_GTK_MENU_ITEM,       N_ ("Open in new _Tab"),                NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_open_in_new_tabs),    },
+    { THUNAR_LAUNCHER_ACTION_OPEN_IN_WINDOW,   "<Actions>/ThunarLauncher/open-in-new-window",      "<Primary><shift>O", XFCE_GTK_MENU_ITEM,       N_ ("Open in new _Window"),             NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_open_in_new_windows), },
     { THUNAR_LAUNCHER_ACTION_OPEN_LOCATION,    "<Actions>/ThunarLauncher/open-location",           "",                  XFCE_GTK_MENU_ITEM,       N_ ("Open Item Location"),              NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_open_location),       },
     { THUNAR_LAUNCHER_ACTION_OPEN_WITH_OTHER,  "<Actions>/ThunarLauncher/open-with-other",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Open With Other _Application..."), N_ ("Choose another application with which to open the selected file"),                          NULL,                   G_CALLBACK (thunar_launcher_action_open_with_other),     },
     { THUNAR_LAUNCHER_ACTION_SET_DEFAULT_APP,  "<Actions>/ThunarStandardView/set-default-app",     "",                  XFCE_GTK_MENU_ITEM,       N_ ("Set _Default Application..."),     N_ ("Choose an application which should be used by default to open the selected file"),          NULL,                   G_CALLBACK (thunar_launcher_action_set_default_app),     },
@@ -275,7 +275,7 @@ static XfceGtkActionEntry thunar_launcher_action_entries[] =
     /* Waiting for https://gitlab.gnome.org/GNOME/gtk/issues/2375 to be able to fix that */
     {THUNAR_LAUNCHER_ACTION_SENDTO_MENU,        "<Actions>/ThunarWindow/sendto-menu",             "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Send To"),            NULL,                                             NULL,                                                                                         NULL,                                                    },
     {THUNAR_LAUNCHER_ACTION_SENDTO_SHORTCUTS,   "<Actions>/ThunarShortcutsPane/sendto-shortcuts", "<Primary>D",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Add Bookmark"),       N_ ("Create bookmarks for all selected folders in the sidepane. If nothing is selected, the current directory is bookmarked."), "bookmark-new", G_CALLBACK (thunar_launcher_action_add_shortcuts), },
-    {THUNAR_LAUNCHER_ACTION_SENDTO_DESKTOP,     "<Actions>/ThunarLauncher/sendto-desktop",        "",                  XFCE_GTK_MENU_ITEM,       NULL,                       NULL,                                                                                            "user-desktop",                                G_CALLBACK (thunar_launcher_action_sendto_desktop),      },
+    {THUNAR_LAUNCHER_ACTION_SENDTO_DESKTOP,     "<Actions>/ThunarLauncher/sendto-desktop",        "",                  XFCE_GTK_MENU_ITEM,       N_ ("Send to _Desktop"),    NULL,                                                                                            "user-desktop",                                G_CALLBACK (thunar_launcher_action_sendto_desktop),      },
     {THUNAR_LAUNCHER_ACTION_PROPERTIES,         "<Actions>/ThunarStandardView/properties",        "<Alt>Return",       XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Properties..."),      N_ ("View the properties of the selected file"),                                                 "document-properties",                         G_CALLBACK (thunar_launcher_action_properties),          },
     {THUNAR_LAUNCHER_ACTION_MAKE_LINK,          "<Actions>/ThunarStandardView/make-link",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Ma_ke Link"),          NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_launcher_action_make_link),           },
     {THUNAR_LAUNCHER_ACTION_DUPLICATE,          "<Actions>/ThunarStandardView/duplicate",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Du_plicate"),          NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_launcher_action_duplicate),           },
@@ -3243,4 +3243,12 @@ thunar_launcher_new_files_created (ThunarLauncher *launcher,
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   g_signal_emit (launcher, launcher_signals[NEW_FILES_CREATED], 0, new_thunar_files);
+}
+
+
+
+XfceGtkActionEntry*
+thunar_launcher_get_action_entries (void)
+{
+  return thunar_launcher_action_entries;
 }
