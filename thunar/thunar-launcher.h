@@ -84,43 +84,43 @@ typedef enum
   THUNAR_LAUNCHER_NO_ACTION,
 } ThunarLauncherFolderOpenAction;
 
-GType           thunar_launcher_get_type                             (void) G_GNUC_CONST;
-void            thunar_launcher_activate_selected_files              (ThunarLauncher                 *launcher,
-                                                                      ThunarLauncherFolderOpenAction  action,
-                                                                      GAppInfo                       *app_info);
-void            thunar_launcher_open_selected_folders                (ThunarLauncher                 *launcher,
-                                                                      gboolean                        open_in_tabs);
-void            thunar_launcher_set_widget                           (ThunarLauncher                 *launcher,
-                                                                      GtkWidget                      *widget);
-GtkWidget      *thunar_launcher_get_widget                           (ThunarLauncher                 *launcher);
-void            thunar_launcher_append_accelerators                  (ThunarLauncher                 *launcher,
-                                                                      GtkAccelGroup                  *accel_group);
-GtkWidget      *thunar_launcher_append_menu_item                     (ThunarLauncher                 *launcher,
-                                                                      GtkMenuShell                   *menu,
-                                                                      ThunarLauncherAction            action,
-                                                                      gboolean                        force);
-gboolean        thunar_launcher_append_open_section                  (ThunarLauncher                 *launcher,
-                                                                      GtkMenuShell                   *menu,
-                                                                      gboolean                        support_tabs,
-                                                                      gboolean                        support_change_directory,
-                                                                      gboolean                        force);
-gboolean        thunar_launcher_append_custom_actions                (ThunarLauncher                 *launcher,
-                                                                      GtkMenuShell                   *menu);
-gboolean        thunar_launcher_check_uca_key_activation             (ThunarLauncher                 *launcher,
-                                                                      GdkEventKey                    *key_event);
-void            thunar_launcher_action_mount                         (ThunarLauncher                 *launcher);
-void            thunar_launcher_action_unmount                       (ThunarLauncher                 *launcher);
-void            thunar_launcher_action_eject                         (ThunarLauncher                 *launcher);
-void            thunar_launcher_set_selection                        (ThunarLauncher                 *launcher,
-                                                                      GList                          *selected_thunar_files,
-                                                                      ThunarDevice                   *selected_device,
-                                                                      GFile                          *selected_location);
-void            thunar_launcher_action_empty_trash                   (ThunarLauncher                 *launcher);
-void            thunar_launcher_action_restore                       (ThunarLauncher                 *launcher);
-void            thunar_launcher_action_restore_and_show              (ThunarLauncher                 *launcher);
-void            thunar_launcher_set_searching                        (ThunarLauncher                 *launcher,
-                                                                      gboolean                        b);
-XfceGtkActionEntry *thunar_launcher_get_action_entries               (void);
+GType               thunar_launcher_get_type                             (void) G_GNUC_CONST;
+void                thunar_launcher_activate_selected_files              (ThunarLauncher                 *launcher,
+                                                                          ThunarLauncherFolderOpenAction  action,
+                                                                          GAppInfo                       *app_info);
+void                thunar_launcher_open_selected_folders                (ThunarLauncher                 *launcher,
+                                                                          gboolean                        open_in_tabs);
+void                thunar_launcher_set_widget                           (ThunarLauncher                 *launcher,
+                                                                          GtkWidget                      *widget);
+GtkWidget          *thunar_launcher_get_widget                           (ThunarLauncher                 *launcher);
+void                thunar_launcher_append_accelerators                  (ThunarLauncher                 *launcher,
+                                                                          GtkAccelGroup                  *accel_group);
+GtkWidget          *thunar_launcher_append_menu_item                     (ThunarLauncher                 *launcher,
+                                                                          GtkMenuShell                   *menu,
+                                                                          ThunarLauncherAction            action,
+                                                                          gboolean                        force);
+gboolean            thunar_launcher_append_open_section                  (ThunarLauncher                 *launcher,
+                                                                          GtkMenuShell                   *menu,
+                                                                          gboolean                        support_tabs,
+                                                                          gboolean                        support_change_directory,
+                                                                          gboolean                        force);
+gboolean            thunar_launcher_append_custom_actions                (ThunarLauncher                 *launcher,
+                                                                          GtkMenuShell                   *menu);
+gboolean            thunar_launcher_check_uca_key_activation             (ThunarLauncher                 *launcher,
+                                                                          GdkEventKey                    *key_event);
+void                thunar_launcher_action_mount                         (ThunarLauncher                 *launcher);
+void                thunar_launcher_action_unmount                       (ThunarLauncher                 *launcher);
+void                thunar_launcher_action_eject                         (ThunarLauncher                 *launcher);
+void                thunar_launcher_set_selection                        (ThunarLauncher                 *launcher,
+                                                                          GList                          *selected_thunar_files,
+                                                                          ThunarDevice                   *selected_device,
+                                                                          GFile                          *selected_location);
+void                thunar_launcher_action_empty_trash                   (ThunarLauncher                 *launcher);
+void                thunar_launcher_action_restore                       (ThunarLauncher                 *launcher);
+void                thunar_launcher_action_restore_and_show              (ThunarLauncher                 *launcher);
+void                thunar_launcher_set_searching                        (ThunarLauncher                 *launcher,
+                                                                          gboolean                        b);
+XfceGtkActionEntry *thunar_launcher_get_action_entries                   (void);
 
 G_END_DECLS;
 

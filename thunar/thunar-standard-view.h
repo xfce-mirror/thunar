@@ -162,31 +162,31 @@ struct _ThunarStandardView
   ThunarStandardViewPrivate *priv;
 };
 
-GType          thunar_standard_view_get_type              (void) G_GNUC_CONST;
+GType               thunar_standard_view_get_type              (void) G_GNUC_CONST;
 
-void           thunar_standard_view_context_menu          (ThunarStandardView       *standard_view);
-void           thunar_standard_view_queue_popup           (ThunarStandardView       *standard_view,
-                                                           GdkEventButton           *event);
-void           thunar_standard_view_selection_changed     (ThunarStandardView       *standard_view);
-void           thunar_standard_view_set_history           (ThunarStandardView       *standard_view,
-                                                           ThunarHistory            *history);
-ThunarHistory *thunar_standard_view_get_history           (ThunarStandardView       *standard_view);
-ThunarHistory *thunar_standard_view_copy_history          (ThunarStandardView       *standard_view);
-void           thunar_standard_view_append_menu_items     (ThunarStandardView       *standard_view,
-                                                           GtkMenu                  *menu,
-                                                           GtkAccelGroup            *accel_group);
-GtkWidget     *thunar_standard_view_append_menu_item      (ThunarStandardView       *standard_view,
-                                                           GtkMenu                  *menu,
-                                                           ThunarStandardViewAction  action);
-void           _thunar_standard_view_open_on_middle_click (ThunarStandardView       *standard_view,
-                                                           GtkTreePath              *tree_path,
-                                                           guint                     event_state);
+void                thunar_standard_view_context_menu          (ThunarStandardView       *standard_view);
+void                thunar_standard_view_queue_popup           (ThunarStandardView       *standard_view,
+                                                                GdkEventButton           *event);
+void                thunar_standard_view_selection_changed     (ThunarStandardView       *standard_view);
+void                thunar_standard_view_set_history           (ThunarStandardView       *standard_view,
+                                                                ThunarHistory            *history);
+ThunarHistory      *thunar_standard_view_get_history           (ThunarStandardView       *standard_view);
+ThunarHistory      *thunar_standard_view_copy_history          (ThunarStandardView       *standard_view);
+void                thunar_standard_view_append_menu_items     (ThunarStandardView       *standard_view,
+                                                                GtkMenu                  *menu,
+                                                               GtkAccelGroup            *accel_group);
+GtkWidget          *thunar_standard_view_append_menu_item      (ThunarStandardView       *standard_view,
+                                                                GtkMenu                  *menu,
+                                                                ThunarStandardViewAction  action);
+void                _thunar_standard_view_open_on_middle_click (ThunarStandardView       *standard_view,
+                                                                GtkTreePath              *tree_path,
+                                                                guint                     event_state);
 
-void           thunar_standard_view_set_searching         (ThunarStandardView       *standard_view,
-                                                           gchar                    *search_query);
-gchar         *thunar_standard_view_get_search_query      (ThunarStandardView       *standard_view);
+void                thunar_standard_view_set_searching         (ThunarStandardView       *standard_view,
+                                                                gchar                    *search_query);
+gchar              *thunar_standard_view_get_search_query      (ThunarStandardView       *standard_view);
 
-void           thunar_standard_view_update_statusbar_text (ThunarStandardView       *standard_view);
+void                thunar_standard_view_update_statusbar_text (ThunarStandardView       *standard_view);
 
 XfceGtkActionEntry *thunar_standard_view_get_action_entries (void);
 
