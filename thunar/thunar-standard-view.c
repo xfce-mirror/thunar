@@ -4185,3 +4185,11 @@ thunar_standard_view_get_search_query (ThunarStandardView *standard_view)
 {
   return standard_view->priv->search_query;
 }
+
+
+
+XfceGtkActionEntry*
+thunar_standard_view_get_action_entries (void)
+{
+  return thunar_standard_view_action_entries;
+}
