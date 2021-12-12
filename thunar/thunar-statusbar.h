@@ -48,17 +48,17 @@ typedef enum
     THUNAR_STATUS_BAR_N_ACTIONS
 } ThunarStatusBarAction;
 
-GType      thunar_statusbar_get_type    (void) G_GNUC_CONST;
+GType               thunar_statusbar_get_type            (void) G_GNUC_CONST;
 
-GtkWidget *thunar_statusbar_new         (void);
+GtkWidget          *thunar_statusbar_new                 (void);
 
-void       thunar_statusbar_setup_event (ThunarStatusbar *statusbar,
-                                         GtkWidget       *event_box);
+void                thunar_statusbar_setup_event         (ThunarStatusbar *statusbar,
+                                                          GtkWidget       *event_box);
 
-void       thunar_statusbar_append_accelerators (ThunarStatusbar *statusbar,
-                                                 GtkAccelGroup   *accel_group);
+void                thunar_statusbar_append_accelerators (ThunarStatusbar *statusbar,
+                                                          GtkAccelGroup   *accel_group);
 
-XfceGtkActionEntry *thunar_statusbar_get_action_entries (void);
+XfceGtkActionEntry *thunar_statusbar_get_action_entries  (void);
 
 G_END_DECLS;
 
