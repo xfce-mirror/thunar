@@ -756,6 +756,8 @@ thunar_application_accel_map_save (gpointer user_data)
 static void
 thunar_application_accel_map_changed (ThunarApplication *application)
 {
+  GList *windows;
+
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   /* stop pending save */
@@ -768,6 +770,15 @@ thunar_application_accel_map_changed (ThunarApplication *application)
   /* schedule new save */
   application->accel_map_save_id =
       g_timeout_add_seconds (10, thunar_application_accel_map_save, application);
+
+  /* update the accelerators for each window */
+  windows = thunar_application_get_windows (application);
+  for (GList *lp = windows; lp != NULL; lp = lp->next)
+    {
+      ThunarWindow *window = lp->data;
+      thunar_window_reconnect_accelerators (window);
+    }
+  g_list_free (windows);
 }
 
 
