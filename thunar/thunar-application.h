@@ -44,6 +44,12 @@ typedef enum
 #define THUNAR_IS_APPLICATION_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_APPLICATION))
 #define THUNAR_APPLICATION_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_APPLICATION, ThunarApplicationClass))
 
+typedef struct
+{
+    gchar *path;
+    guint  mods;
+} ThunarAccel;
+
 GType                 thunar_application_get_type                   (void) G_GNUC_CONST;
 
 ThunarApplication    *thunar_application_get                        (void);
@@ -149,6 +155,8 @@ void                  thunar_application_restore_files             (ThunarApplic
                                                                     gpointer           parent,
                                                                     GList             *trash_file_list,
                                                                     GClosure          *new_files_closure);
+
+GSList               *thunar_application_tab_accelerators          (ThunarApplication *application);
 
 ThunarThumbnailCache *thunar_application_get_thumbnail_cache       (ThunarApplication *application);
 
