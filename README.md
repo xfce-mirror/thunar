@@ -29,10 +29,12 @@ See [NEWS](https://gitlab.xfce.org/xfce/thunar/-/blob/master/NEWS) for details o
 
 From source: 
 
+    % git clone https://gitlab.xfce.org/xfce/thunar
+    % git checkout <branch|tag>  #optional step. Per default master is checked out
     % cd thunar
     % ./autogen.sh
     % make
-    % make install
+    # make install
 
 From release tarball:
 
@@ -40,13 +42,13 @@ From release tarball:
     % cd thunar-<version>
     % ./configure
     % make
-    % make install
+    # make install
 
  Both autogen.sh and configure will list missing dependencies. 
  If your distribution provides development versions of the related packages, 
  install them. Otherwise you will need to build and install the missing dependencies from source.
 
-For some additional build & debug hints, as well check the [Thunar Wiki pages](https://wiki.xfce.org/thunar/dev).
+For additional build & debug hints, check the [Thunar wiki pages](https://wiki.xfce.org/thunar/dev) and the [detailed building wiki manual](https://docs.xfce.org/xfce/building).
 
 ### Reporting Bugs
 
