@@ -3977,7 +3977,10 @@ thunar_window_propagate_key_event (GtkWindow* window,
                                    GdkEvent  *key_event,
                                    gpointer   user_data)
 {
-  GtkWidget* focused_widget;
+  GtkWidget    *focused_widget;
+  ThunarWindow *thunar_window = THUNAR_WINDOW (window);
+  GdkEventKey  *key_event_real = (GdkEventKey *) key_event;
+  const guint   modifiers = key_event_real->state & gtk_accelerator_get_default_mod_mask ();
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), GDK_EVENT_PROPAGATE);
 
@@ -3991,6 +3994,32 @@ thunar_window_propagate_key_event (GtkWindow* window,
    * fix the right-ahead problem. */
   if (focused_widget != NULL && GTK_IS_EDITABLE (focused_widget))
     return gtk_window_propagate_key_event (window, (GdkEventKey *) key_event);
+
+  /* support shortcuts that contain the Tab key
+     Tab sometimes becomes ISO_Left_Tab (e.g. in Ctrl+Shift+Tab) so check both here */
+  if (G_UNLIKELY (key_event_real->keyval == GDK_KEY_Tab || key_event_real->keyval == GDK_KEY_ISO_Left_Tab) && key_event->type == GDK_KEY_PRESS)
+    {
+      GSList            *lp;
+      ThunarApplication *app = thunar_application_get ();
+
+      for (lp = thunar_application_tab_accelerators (app); lp != NULL; lp = lp->next)
+        {
+          ThunarAccel *accel = lp->data;
+          if (accel->mods == modifiers)
+            {
+              for (size_t i = 0; i < THUNAR_WINDOW_N_ACTIONS; i++)
+                {
+                  if (g_strcmp0 (accel->path, thunar_window_action_entries[i].accel_path) == 0)
+                    {
+                      ((void (*) (ThunarWindow *)) thunar_window_action_entries[i].callback) (thunar_window);
+                      return TRUE;
+                    }
+                }
+            }
+        }
+
+      g_object_unref (app);
+    }
 
   return GDK_EVENT_PROPAGATE;
 }
