@@ -174,6 +174,7 @@ struct _ThunarFile
   gchar                *display_name;
   gchar                *basename;
   const gchar          *device_type;
+  /* URI of the thumbnail */
   gchar                *thumbnail_path;
 
   /* sorting */
@@ -3602,11 +3603,12 @@ thunar_file_is_desktop (const ThunarFile *file)
 
 
 const gchar *
-thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_size)
+thunar_file_get_thumbnail_uri (ThunarFile *file, ThunarThumbnailSize thumbnail_size)
 {
   GChecksum *checksum;
   gchar     *filename;
   gchar     *uri;
+  gchar     *path_before_uri = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
@@ -3634,39 +3636,42 @@ thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_
            */
 
           /* build and check if the thumbnail is in the new location */
-          file->thumbnail_path = g_build_path ("/", g_get_user_cache_dir(),
+          path_before_uri = g_build_path ("/", g_get_user_cache_dir(),
                                                "thumbnails", thunar_thumbnail_size_get_nick (thumbnail_size),
                                                filename, NULL);
 
-          if (!g_file_test(file->thumbnail_path, G_FILE_TEST_EXISTS))
+          if (!g_file_test(path_before_uri, G_FILE_TEST_EXISTS))
             {
               /* Fallback to old version */
-              g_free(file->thumbnail_path);
+              g_free(path_before_uri);
 
-              file->thumbnail_path = g_build_filename (xfce_get_homedir (),
+              path_before_uri = g_build_filename (xfce_get_homedir (),
                                                        ".thumbnails", thunar_thumbnail_size_get_nick (thumbnail_size),
                                                        filename, NULL);
 
-              if(!g_file_test(file->thumbnail_path, G_FILE_TEST_EXISTS))
+              if(!g_file_test(path_before_uri, G_FILE_TEST_EXISTS))
                 {
-                  g_free(file->thumbnail_path);
-                  file->thumbnail_path = NULL;
+                  g_free(path_before_uri);
+                  path_before_uri = NULL;
 
                   if (thunar_file_is_directory (file) == FALSE)
                     {
                       /* Thumbnail doesn't exist in either spot, look for shared repository */
                       uri = thunar_file_dup_uri (file);
-                      file->thumbnail_path = xfce_create_shared_thumbnail_path (uri, thunar_thumbnail_size_get_nick (thumbnail_size));
+                      file->thumbnail_path = xfce_create_shared_thumbnail_uri (uri, thunar_thumbnail_size_get_nick (thumbnail_size));
                       g_free (uri);
 
-                      if (file->thumbnail_path != NULL && !g_file_test (file->thumbnail_path, G_FILE_TEST_EXISTS))
-                        {
-                          /* Thumbnail doesn't exist */
-                          g_free (file->thumbnail_path);
-                          file->thumbnail_path = NULL;
-                        }
+                      /* A shared thumbnail URI is returned without checking
+                       * for existence; the check is later done implicitly when
+                       * loading is attempted. */
                     }
                 }
+            }
+
+          if (path_before_uri != NULL)
+            {
+              file->thumbnail_path = g_filename_to_uri(path_before_uri, NULL, NULL);
+              g_free (path_before_uri);
             }
 
           g_free (filename);
