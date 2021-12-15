@@ -3977,7 +3977,10 @@ thunar_window_propagate_key_event (GtkWindow* window,
                                    GdkEvent  *key_event,
                                    gpointer   user_data)
 {
-  GtkWidget* focused_widget;
+  GtkWidget    *focused_widget;
+  ThunarWindow *thunar_window = THUNAR_WINDOW (window);
+  GdkEventKey  *key_event_real = (GdkEventKey *) key_event;
+  const guint   modifiers = key_event_real->state & gtk_accelerator_get_default_mod_mask ();
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), GDK_EVENT_PROPAGATE);
 
@@ -3991,6 +3994,34 @@ thunar_window_propagate_key_event (GtkWindow* window,
    * fix the right-ahead problem. */
   if (focused_widget != NULL && GTK_IS_EDITABLE (focused_widget))
     return gtk_window_propagate_key_event (window, (GdkEventKey *) key_event);
+
+  /* The Tab key is used to navigate the interface by GTK+ so we need to handle shortcuts with the Tab accelerator manually.
+   * Tab sometimes becomes ISO_Left_Tab (e.g. in Ctrl+Shift+Tab) so check both here */
+  if (G_UNLIKELY (key_event_real->keyval == GDK_KEY_Tab || key_event_real->keyval == GDK_KEY_ISO_Left_Tab) && key_event->type == GDK_KEY_PRESS)
+    {
+      GtkAccelGroupEntry  *group_entries;
+      guint                group_entries_count;
+
+      group_entries = gtk_accel_group_query (thunar_window->accel_group, key_event_real->keyval, modifiers, &group_entries_count);
+      if (group_entries_count > 1)
+        {
+          g_error ("Found multiple shortcuts that include the Tab key and the same modifiers.");
+          return GDK_EVENT_STOP;
+        }
+      else if (group_entries_count == 1)
+        {
+          const gchar *path = g_quark_to_string (group_entries[0].accel_path_quark);
+
+          for (size_t i = 0; i < THUNAR_WINDOW_N_ACTIONS; i++)
+            {
+              if (g_strcmp0 (path, thunar_window_action_entries[i].accel_path) == 0)
+                {
+                  ((void (*) (ThunarWindow *)) thunar_window_action_entries[i].callback) (thunar_window);
+                  return GDK_EVENT_STOP;
+                }
+            }
+        }
+    }
 
   return GDK_EVENT_PROPAGATE;
 }
