@@ -1201,7 +1201,7 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
               lower = g_strtod (limits[0], NULL);
               upper = g_strtod (limits[1], NULL);
             }
-          g_strfreev(limits);
+          g_strfreev (limits);
         }
 
       if ((n_files > upper) || (n_files < lower))
