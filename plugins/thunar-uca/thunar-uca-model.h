@@ -46,6 +46,7 @@ typedef enum
   THUNAR_UCA_MODEL_COLUMN_COMMAND,
   THUNAR_UCA_MODEL_COLUMN_STARTUP_NOTIFY,
   THUNAR_UCA_MODEL_COLUMN_PATTERNS,
+  THUNAR_UCA_MODEL_COLUMN_RANGE,
   THUNAR_UCA_MODEL_COLUMN_TYPES,
   THUNAR_UCA_MODEL_COLUMN_STOCK_LABEL,
   THUNAR_UCA_MODEL_N_COLUMNS,
@@ -98,6 +99,7 @@ void            thunar_uca_model_update         (ThunarUcaModel         *uca_mod
                                                  const gchar            *command,
                                                  gboolean                startup_notify,
                                                  const gchar            *patterns,
+                                                 const gchar            *range,
                                                  ThunarUcaTypes          types,
                                                  guint                   accel_key,
                                                  GdkModifierType         accel_mods);
