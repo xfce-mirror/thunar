@@ -626,13 +626,44 @@
                   <object class="GtkLabel" id="label17">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">_Range (min-max):</property>
+                    <property name="use_underline">True</property>
+                    <property name="mnemonic_widget">range_entry</property>
+                    <property name="xalign">0</property>
+                    <accessibility>
+                      <relation type="label-for" target="range_entry"/>
+                    </accessibility>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="range_entry">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="tooltip_text" translatable="yes">If the command should operate on say two or three files, enter the numerical range 2-3. If there are no limits, this string should be empty.</property>
+                    <property name="hexpand">True</property>
+                    <property name="activates_default">True</property>
+                    <property name="text" translatable="yes">*</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="label18">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Appears if selection contains:</property>
                     <property name="ellipsize">middle</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">1</property>
+                    <property name="top_attach">2</property>
                     <property name="width">2</property>
                   </packing>
                 </child>
@@ -732,7 +763,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">2</property>
+                    <property name="top_attach">3</property>
                     <property name="width">2</property>
                   </packing>
                 </child>
@@ -758,7 +789,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="label18">
+                      <object class="GtkLabel" id="label19">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">This page lists the conditions under which the action will appear in the file managers context menus. The file patterns are specified as a list of simple file patterns separated by semicolons (e.g. *.txt;*.doc). For an action to appear in the context menu of a file or folder, at least one of these patterns must match the name of the file or folder. Additionally, you can specify that the action should only appear for certain kinds of files.</property>
@@ -775,7 +806,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">4</property>
+                    <property name="top_attach">5</property>
                     <property name="width">2</property>
                   </packing>
                 </child>
@@ -793,7 +824,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">3</property>
+                    <property name="top_attach">4</property>
                     <property name="width">2</property>
                   </packing>
                 </child>
