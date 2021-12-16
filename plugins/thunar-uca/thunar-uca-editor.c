@@ -70,6 +70,7 @@ struct _ThunarUcaEditor
   GtkWidget   *shortcut_button;
   GtkWidget   *sn_button;
   GtkWidget   *patterns_entry;
+  GtkWidget   *range_entry;
   GtkWidget   *directories_button;
   GtkWidget   *audio_files_button;
   GtkWidget   *image_files_button;
@@ -118,6 +119,7 @@ thunar_uca_editor_class_init (ThunarUcaEditorClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ThunarUcaEditor, shortcut_button);
   gtk_widget_class_bind_template_child (widget_class, ThunarUcaEditor, sn_button);
   gtk_widget_class_bind_template_child (widget_class, ThunarUcaEditor, patterns_entry);
+  gtk_widget_class_bind_template_child (widget_class, ThunarUcaEditor, range_entry);
   gtk_widget_class_bind_template_child (widget_class, ThunarUcaEditor, directories_button);
   gtk_widget_class_bind_template_child (widget_class, ThunarUcaEditor, audio_files_button);
   gtk_widget_class_bind_template_child (widget_class, ThunarUcaEditor, image_files_button);
@@ -572,6 +574,7 @@ thunar_uca_editor_load (ThunarUcaEditor *uca_editor,
   ThunarUcaTypes types;
   gchar         *description;
   gchar         *patterns;
+  gchar         *range;
   gchar         *command;
   gchar         *icon_name;
   gchar         *name;
@@ -589,6 +592,7 @@ thunar_uca_editor_load (ThunarUcaEditor *uca_editor,
   gtk_tree_model_get (GTK_TREE_MODEL (uca_model), iter,
                       THUNAR_UCA_MODEL_COLUMN_DESCRIPTION, &description,
                       THUNAR_UCA_MODEL_COLUMN_PATTERNS, &patterns,
+                      THUNAR_UCA_MODEL_COLUMN_RANGE, &range,
                       THUNAR_UCA_MODEL_COLUMN_COMMAND, &command,
                       THUNAR_UCA_MODEL_COLUMN_TYPES, &types,
                       THUNAR_UCA_MODEL_COLUMN_ICON_NAME, &icon_name,
@@ -618,12 +622,14 @@ thunar_uca_editor_load (ThunarUcaEditor *uca_editor,
   gtk_entry_set_text (GTK_ENTRY (uca_editor->patterns_entry), (patterns != NULL) ? patterns : "");
   gtk_entry_set_text (GTK_ENTRY (uca_editor->command_entry), (command != NULL) ? command : "");
   gtk_entry_set_text (GTK_ENTRY (uca_editor->name_entry), (name != NULL) ? name : "");
+  gtk_entry_set_text (GTK_ENTRY (uca_editor->range_entry), (range != NULL) ? range : "");
   gtk_entry_set_text (GTK_ENTRY (uca_editor->sub_menu_entry), (submenu != NULL) ? submenu : "");
   gtk_button_set_label (GTK_BUTTON (uca_editor->shortcut_button), (accel_label != NULL) ? accel_label : _("None"));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (uca_editor->sn_button), startup_notify);
 
   /* cleanup */
   g_free (description);
+  g_free (range);
   g_free (patterns);
   g_free (command);
   g_free (icon_name);
@@ -673,6 +679,7 @@ thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
                            gtk_entry_get_text (GTK_ENTRY (uca_editor->command_entry)),
                            gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (uca_editor->sn_button)),
                            gtk_entry_get_text (GTK_ENTRY (uca_editor->patterns_entry)),
+                           gtk_entry_get_text (GTK_ENTRY (uca_editor->range_entry)),
                            thunar_uca_editor_get_types (uca_editor),
                            uca_editor->accel_key,
                            uca_editor->accel_mods);
