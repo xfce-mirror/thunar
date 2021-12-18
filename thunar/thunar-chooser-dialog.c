@@ -791,6 +791,7 @@ thunar_chooser_dialog_action_forget (ThunarChooserDialog *dialog)
   const gchar      *name;
   GtkWidget        *message;
   GAppInfo         *app_info;
+  const gchar      *content_type;
   GError           *error = NULL;
   gint              response;
 
@@ -831,6 +832,11 @@ thunar_chooser_dialog_action_forget (ThunarChooserDialog *dialog)
       /* check if the user confirmed */
       if (G_LIKELY (response == GTK_RESPONSE_YES))
         {
+
+          /* Dont support this mime-type any more with that application */
+          content_type = thunar_file_get_content_type (dialog->file);
+          g_app_info_remove_supports_type (app_info, content_type, NULL);
+
           /* try to delete the application from the model */
           if (!thunar_chooser_model_remove (THUNAR_CHOOSER_MODEL (model), &iter, FALSE, &error))
             {

@@ -873,7 +873,7 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
       else
         {
           /* display a chooser dialog for the file and stop */
-          thunar_show_chooser_dialog (launcher->widget, lp->data, TRUE, FALSE);
+          thunar_show_chooser_dialog (launcher->widget, lp->data, TRUE, TRUE);
           break;
         }
     }
