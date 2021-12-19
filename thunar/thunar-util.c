@@ -397,6 +397,7 @@ thunar_util_humanize_file_time (guint64          file_time,
                                 const gchar     *date_custom_style)
 {
   const gchar *date_format;
+  struct tm   *temp_tfile;
   struct tm    tfile;
   time_t       ftime;
   GDate        dfile;
@@ -410,7 +411,10 @@ thunar_util_humanize_file_time (guint64          file_time,
   ftime = (time_t) file_time;
 
   /* take a copy of the local file time */
-  tfile = *localtime (&ftime);
+  temp_tfile = localtime (&ftime);
+  if (temp_tfile == NULL)
+    return g_strdup (_("Unknown"));
+  memcpy (&tfile, temp_tfile, sizeof (tfile));
 
   /* check which style to use to format the time */
   if (date_style == THUNAR_DATE_STYLE_SIMPLE || date_style == THUNAR_DATE_STYLE_SHORT || date_style == THUNAR_DATE_STYLE_CUSTOM_SIMPLE)
