@@ -368,7 +368,7 @@ struct _ThunarWindow
   GtkWidget              *catfish_search_button;
   gchar                  *search_query;
   gboolean                is_searching;
-  gboolean                ignore_next_update;
+  gboolean                ignore_next_search_update;
 
   GType                   view_type;
   GSList                 *view_bindings;
@@ -2956,7 +2956,7 @@ thunar_window_resume_search (ThunarWindow *window,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* when setting up the location entry do not resent the search query to the standard view, there is a search ongoing */
-  window->ignore_next_update = TRUE;
+  window->ignore_next_search_update = TRUE;
 
   /* continue searching */
   window->is_searching = TRUE;
@@ -2981,9 +2981,9 @@ thunar_window_resume_search (ThunarWindow *window,
 void
 thunar_window_update_search (ThunarWindow *window)
 {
-  if (window->ignore_next_update == TRUE)
+  if (window->ignore_next_search_update == TRUE)
     {
-      window->ignore_next_update = FALSE;
+      window->ignore_next_search_update = FALSE;
       return;
     }
     
@@ -3514,6 +3514,8 @@ thunar_window_replace_view (ThunarWindow *window,
       if (THUNAR_IS_STANDARD_VIEW (view))
         {
           history = thunar_standard_view_copy_history (THUNAR_STANDARD_VIEW (view));
+
+          /* Transfer ownership of the search-job to the new view. It is the new view's responsibility to cancel the search. */
           job = thunar_list_model_get_job (THUNAR_STANDARD_VIEW (view)->model);
         }
     }

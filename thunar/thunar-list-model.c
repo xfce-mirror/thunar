@@ -217,6 +217,7 @@ static void               thunar_list_model_search_folder         (ThunarListMod
                                                                    gchar                  *path,
                                                                    const gchar            *search_query_c,
                                                                    int                     depth);
+static void               thunar_list_model_cancel_search_job     (ThunarListModel        *model);
 
 
 
@@ -266,9 +267,9 @@ struct _ThunarListModel
   gint           sort_sign;   /* 1 = ascending, -1 descending */
   ThunarSortFunc sort_func;
 
-  /* searching runs in a sepaarate which incrementally inserts results (files)
+  /* searching runs in a separate thread which incrementally inserts results (files)
    * in the files_to_add list.
-   * periodically, the main thread takes all the files in the files_to_add list
+   * Periodically the main thread takes all the files in the files_to_add list
    * and adds them in the model. The list is then emptied.
    */
   ThunarJob     *recursive_search_job;
@@ -509,14 +510,8 @@ thunar_list_model_finalize (GObject *object)
 {
   ThunarListModel *store = THUNAR_LIST_MODEL (object);
 
-  if (store->recursive_search_job)
-    {
-      exo_job_cancel (EXO_JOB (store->recursive_search_job));
+  thunar_list_model_cancel_search_job (store);
 
-      g_signal_handlers_disconnect_matched (store->recursive_search_job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
-      g_object_unref (store->recursive_search_job);
-      store->recursive_search_job = NULL;
-    }
   if (store->update_search_results_timeout_id > 0)
     {
       g_source_remove (store->update_search_results_timeout_id);
@@ -2128,9 +2123,25 @@ thunar_list_model_job_search_directory (ThunarListModel *model,
 
 
 static void
+thunar_list_model_cancel_search_job (ThunarListModel *model)
+{
+  /* cancel the ongoing search if there is one */
+  if (model->recursive_search_job)
+    {
+      exo_job_cancel (EXO_JOB (model->recursive_search_job));
+
+      g_signal_handlers_disconnect_matched (model->recursive_search_job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, model);
+      g_object_unref (model->recursive_search_job);
+      model->recursive_search_job = NULL;
+    }
+}
+
+
+
+static void
 search_error (ThunarJob *job)
 {
-  printf("Error!\n");
+  g_error ("Error while searching recursively");
 }
 
 
@@ -2290,15 +2301,8 @@ thunar_list_model_set_folder (ThunarListModel *store,
   /* unlink from the previously active folder (if any) */
   if (G_LIKELY (store->folder != NULL))
     {
-      /* cancel the ongoing search if there is one */
-      if (store->recursive_search_job)
-        {
-          exo_job_cancel (EXO_JOB (store->recursive_search_job));
+      thunar_list_model_cancel_search_job (store);
 
-          g_signal_handlers_disconnect_matched (store->recursive_search_job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
-          g_object_unref (store->recursive_search_job);
-          store->recursive_search_job = NULL;
-        }
       if (store->update_search_results_timeout_id > 0)
         {
           g_source_remove (store->update_search_results_timeout_id);
