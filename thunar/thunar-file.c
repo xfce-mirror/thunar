@@ -4642,16 +4642,20 @@ thunar_file_set_metadata_setting_finish (GObject      *source_object,
                                          GAsyncResult *result,
                                          gpointer      user_data)
 {
-  ThunarFile *file = THUNAR_FILE (user_data);
+  ThunarFile *file = NULL;
   GError     *error = NULL;
+
+  if (THUNAR_IS_FILE (user_data))
+    file = THUNAR_FILE (user_data);
 
   if (!g_file_set_attributes_finish (G_FILE (source_object), result, NULL, &error))
     {
       g_warning ("Failed to set metadata: %s", error->message);
       g_error_free (error);
     }
-    
-  thunar_file_changed (file);
+
+  if (file != NULL)
+    thunar_file_changed (file);
 }
 
 
