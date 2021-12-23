@@ -188,6 +188,10 @@ gchar              *thunar_standard_view_get_search_query      (ThunarStandardVi
 
 void                thunar_standard_view_update_statusbar_text (ThunarStandardView       *standard_view);
 
+void                thunar_standard_view_save_view_type        (ThunarStandardView       *standard_view,
+                                                                GType                     type);
+GType               thunar_standard_view_get_saved_view_type   (ThunarStandardView       *standard_view);
+
 XfceGtkActionEntry *thunar_standard_view_get_action_entries (void);
 
 
