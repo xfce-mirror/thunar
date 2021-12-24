@@ -2633,6 +2633,9 @@ thunar_standard_view_key_press_event (GtkWidget          *view,
       return TRUE;
     }
 
+  if (thunar_util_handle_tab_accels (event, standard_view->accel_group, standard_view, thunar_standard_view_action_entries, THUNAR_STANDARD_VIEW_N_ACTIONS) == TRUE)
+    return TRUE;
+
   return FALSE;
 }
 

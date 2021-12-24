@@ -45,6 +45,10 @@ typedef enum
 } ThunarNextFileNameMode;
 
 
+/* avoid including libxfce4ui.h */
+typedef struct _XfceGtkActionEntry  XfceGtkActionEntry;
+
+
 typedef void (*ThunarBookmarksFunc) (GFile       *file,
                                      const gchar *name,
                                      gint         row_num,
@@ -78,6 +82,17 @@ gchar*     thunar_util_next_new_file_name       (ThunarFile            *dir,
                                                  const gchar           *file_name,
                                                  ThunarNextFileNameMode name_mode);
 gboolean   thunar_util_is_a_search_query        (const gchar    *string);
+
+gboolean   thunar_util_handle_tab_accels        (GdkEventKey        *key_event,
+                                                 GtkAccelGroup      *accel_group,
+                                                 gpointer            data,
+                                                 XfceGtkActionEntry *entries,
+                                                 size_t              entry_count);
+
+gboolean   thunar_util_execute_tab_accel        (const gchar        *accel_path,
+                                                 gpointer            data,
+                                                 XfceGtkActionEntry *entries,
+                                                 size_t              entry_count);
 
 extern const char *SEARCH_PREFIX;
 
