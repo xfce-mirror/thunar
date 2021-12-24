@@ -4048,7 +4048,9 @@ thunar_window_propagate_key_event (GtkWindow* window,
                                    GdkEvent  *key_event,
                                    gpointer   user_data)
 {
-  GtkWidget* focused_widget;
+  GtkWidget    *focused_widget;
+  ThunarWindow *thunar_window = THUNAR_WINDOW (window);
+  GdkEventKey  *key_event_real = (GdkEventKey *) key_event;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), GDK_EVENT_PROPAGATE);
 
@@ -4062,6 +4064,39 @@ thunar_window_propagate_key_event (GtkWindow* window,
    * fix the right-ahead problem. */
   if (focused_widget != NULL && GTK_IS_EDITABLE (focused_widget))
     return gtk_window_propagate_key_event (window, (GdkEventKey *) key_event);
+
+  if (thunar_util_handle_tab_accels ((GdkEventKey *) key_event, thunar_window->accel_group, thunar_window, thunar_window_action_entries, THUNAR_WINDOW_N_ACTIONS) == TRUE)
+    return TRUE;
+
+  if (thunar_util_handle_tab_accels ((GdkEventKey *) key_event, thunar_window->accel_group, thunar_window->launcher, thunar_launcher_get_action_entries (), THUNAR_LAUNCHER_N_ACTIONS) == TRUE)
+    return TRUE;
+
+  if (thunar_util_handle_tab_accels ((GdkEventKey *) key_event, thunar_window->accel_group, thunar_window->statusbar, thunar_statusbar_get_action_entries (), THUNAR_STATUS_BAR_N_ACTIONS) == TRUE)
+    return TRUE;
+
+//  if (G_UNLIKELY (key_event_real->keyval == GDK_KEY_Tab || key_event_real->keyval == GDK_KEY_ISO_Left_Tab) && key_event->type == GDK_KEY_PRESS)
+//    {
+//      GtkAccelGroupEntry  *group_entries;
+//      guint                group_entries_count;
+//
+//      group_entries = gtk_accel_group_query (thunar_window->accel_group, key_event_real->keyval, modifiers, &group_entries_count);
+//      if (group_entries_count > 1)
+//        {
+//          g_error ("Found multiple shortcuts that include the Tab key and the same modifiers.");
+//          return GDK_EVENT_STOP;
+//        }
+//      else if (group_entries_count == 1)
+//        {
+//          const gchar *path = g_quark_to_string (group_entries[0].accel_path_quark);
+//
+//          if (thunar_util_execute_tab_accel (path, thunar_window, thunar_window_action_entries, THUNAR_WINDOW_N_ACTIONS) == TRUE)
+//            return GDK_EVENT_STOP;
+//          if (thunar_util_execute_tab_accel (path, thunar_window->launcher, thunar_launcher_get_action_entries (), THUNAR_LAUNCHER_N_ACTIONS) == TRUE)
+//            return GDK_EVENT_STOP;
+//          if (thunar_util_execute_tab_accel (path, thunar_window->statusbar, thunar_statusbar_get_action_entries (), THUNAR_STATUS_BAR_N_ACTIONS) == TRUE)
+//            return GDK_EVENT_STOP;
+//        }
+//    }
 
   return GDK_EVENT_PROPAGATE;
 }
