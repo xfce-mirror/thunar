@@ -4048,7 +4048,9 @@ thunar_window_propagate_key_event (GtkWindow* window,
                                    GdkEvent  *key_event,
                                    gpointer   user_data)
 {
-  GtkWidget* focused_widget;
+  GtkWidget    *focused_widget;
+  ThunarWindow *thunar_window = THUNAR_WINDOW (window);
+  GdkEventKey  *key_event_real = (GdkEventKey *) key_event;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), GDK_EVENT_PROPAGATE);
 
@@ -4062,6 +4064,15 @@ thunar_window_propagate_key_event (GtkWindow* window,
    * fix the right-ahead problem. */
   if (focused_widget != NULL && GTK_IS_EDITABLE (focused_widget))
     return gtk_window_propagate_key_event (window, (GdkEventKey *) key_event);
+
+  if (xfce_gtk_handle_tab_accels ((GdkEventKey *) key_event, thunar_window->accel_group, thunar_window, thunar_window_action_entries, THUNAR_WINDOW_N_ACTIONS) == TRUE)
+    return TRUE;
+
+  if (xfce_gtk_handle_tab_accels ((GdkEventKey *) key_event, thunar_window->accel_group, thunar_window->launcher, thunar_launcher_get_action_entries (), THUNAR_LAUNCHER_N_ACTIONS) == TRUE)
+    return TRUE;
+
+  if (xfce_gtk_handle_tab_accels ((GdkEventKey *) key_event, thunar_window->accel_group, thunar_window->statusbar, thunar_statusbar_get_action_entries (), THUNAR_STATUS_BAR_N_ACTIONS) == TRUE)
+    return TRUE;
 
   return GDK_EVENT_PROPAGATE;
 }
