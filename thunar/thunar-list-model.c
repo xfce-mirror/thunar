@@ -337,7 +337,7 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
       g_param_spec_string ("date-custom-style",
                            "DateCustomStyle",
                            NULL,
-                           "%Y-%mutex_files_to_add-%d %H:%M:%S",
+                           "%Y-%m-%d %H:%M:%S",
                            EXO_PARAM_READWRITE);
 
   /**
