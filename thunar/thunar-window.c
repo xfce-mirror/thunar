@@ -2354,6 +2354,7 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   GtkWidget      *label;
   GtkWidget      *label_box;
   GtkWidget      *button;
+  GtkWidget      *spinner;
   GtkWidget      *icon;
   ThunarColumn    sort_column;
   GtkSortType     sort_order;
@@ -2407,6 +2408,10 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   gtk_label_set_single_line_mode (GTK_LABEL (label), TRUE);
   gtk_box_pack_start (GTK_BOX (label_box), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
+
+  spinner = gtk_spinner_new ();
+  gtk_box_pack_start (GTK_BOX (label_box), spinner, FALSE, FALSE, 0);
+  gtk_widget_show (spinner);
 
   button = gtk_button_new ();
   gtk_box_pack_start (GTK_BOX (label_box), button, FALSE, FALSE, 0);
@@ -3086,6 +3091,14 @@ gboolean
 thunar_window_action_cancel_search (ThunarWindow *window)
 {
   _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BAR (window->location_bar), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  GtkWidget   *label_box;
+  GList       *label_widgets;
+  GtkSpinner  *spinner;
+  GtkNotebook *selected_notebook;
+
+  selected_notebook = GTK_NOTEBOOK (window->notebook_selected);
 
   if (window->is_searching == FALSE)
     return TRUE;
@@ -3111,6 +3124,13 @@ thunar_window_action_cancel_search (ThunarWindow *window)
 
       thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), 0);
     }
+
+  /* stop spinner */
+  label_box = gtk_notebook_get_tab_label (selected_notebook, gtk_notebook_get_nth_page (selected_notebook, gtk_notebook_get_current_page (selected_notebook)));
+  label_widgets = gtk_container_get_children (GTK_CONTAINER (label_box));
+  spinner = label_widgets->next->data;
+  gtk_spinner_stop (spinner);
+  g_list_free (label_widgets);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -4331,6 +4351,23 @@ thunar_window_action_show_hidden (ThunarWindow *window)
 gboolean
 thunar_window_action_search (ThunarWindow *window)
 {
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  GtkWidget   *label_box;
+  GList       *label_widgets;
+  GtkSpinner  *spinner;
+  GtkNotebook *selected_notebook;
+
+  selected_notebook = GTK_NOTEBOOK (window->notebook_selected);
+
+  /* show spinner */
+  label_box = gtk_notebook_get_tab_label (selected_notebook, gtk_notebook_get_nth_page (selected_notebook, gtk_notebook_get_current_page (selected_notebook)));
+  label_widgets = gtk_container_get_children (GTK_CONTAINER (label_box));
+  spinner = label_widgets->next->data;
+  gtk_spinner_start (spinner);
+  g_list_free (label_widgets);
+
+  /* initiate search */
   thunar_window_start_open_location (window, SEARCH_PREFIX);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
