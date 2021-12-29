@@ -653,6 +653,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("160px"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("192px"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("256px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("512px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("1024px"));
   g_object_bind_property_full (G_OBJECT (dialog->preferences),
                                "shortcuts-icon-size",
                                G_OBJECT (combo),
@@ -717,6 +719,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("160px"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("192px"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("256px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("512px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("1024px"));
   g_object_bind_property_full (G_OBJECT (dialog->preferences),
                                "tree-icon-size",
                                G_OBJECT (combo),

@@ -139,16 +139,18 @@ gboolean     thunar_column_value_from_string (const gchar   *value_string,
  **/
 typedef enum
 {
-  THUNAR_ICON_SIZE_16   =  16,
-  THUNAR_ICON_SIZE_24   =  24,
-  THUNAR_ICON_SIZE_32   =  32,
-  THUNAR_ICON_SIZE_48   =  48,
-  THUNAR_ICON_SIZE_64   =  64,
-  THUNAR_ICON_SIZE_96   =  96,
-  THUNAR_ICON_SIZE_128  = 128,
-  THUNAR_ICON_SIZE_160  = 160,
-  THUNAR_ICON_SIZE_192  = 192,
-  THUNAR_ICON_SIZE_256  = 256,
+  THUNAR_ICON_SIZE_16    =   16,
+  THUNAR_ICON_SIZE_24    =   24,
+  THUNAR_ICON_SIZE_32    =   32,
+  THUNAR_ICON_SIZE_48    =   48,
+  THUNAR_ICON_SIZE_64    =   64,
+  THUNAR_ICON_SIZE_96    =   96,
+  THUNAR_ICON_SIZE_128   =  128,
+  THUNAR_ICON_SIZE_160   =  160,
+  THUNAR_ICON_SIZE_192   =  192,
+  THUNAR_ICON_SIZE_256   =  256,
+  THUNAR_ICON_SIZE_512   =  512,
+  THUNAR_ICON_SIZE_1024  = 1024,
 } ThunarIconSize;
 
 GType thunar_icon_size_get_type (void) G_GNUC_CONST;
@@ -178,11 +180,15 @@ GType thunar_thumbnail_mode_get_type (void) G_GNUC_CONST;
  * ThunarThumbnailSize:
  * @THUNAR_THUMBNAIL_NORMAL      : max 128px x 128px
  * @THUNAR_THUMBNAIL_LARGE       : max 256px x 256px
+ * @THUNAR_THUMBNAIL_X_LARGE     : max 512px x 512px
+ * @THUNAR_THUMBNAIL_XX_LARGE    : max 1024px x 1024px
  **/
 typedef enum
 {
   THUNAR_THUMBNAIL_SIZE_NORMAL,
-  THUNAR_THUMBNAIL_SIZE_LARGE
+  THUNAR_THUMBNAIL_SIZE_LARGE,
+  THUNAR_THUMBNAIL_SIZE_X_LARGE,
+  THUNAR_THUMBNAIL_SIZE_XX_LARGE
 } ThunarThumbnailSize;
 
 GType       thunar_thumbnail_size_get_type (void)                               G_GNUC_CONST;
@@ -248,6 +254,8 @@ typedef enum
   THUNAR_ZOOM_LEVEL_250_PERCENT,
   THUNAR_ZOOM_LEVEL_300_PERCENT,
   THUNAR_ZOOM_LEVEL_400_PERCENT,
+  THUNAR_ZOOM_LEVEL_800_PERCENT,
+  THUNAR_ZOOM_LEVEL_1600_PERCENT,
 
   /*< private >*/
   THUNAR_ZOOM_N_LEVELS,

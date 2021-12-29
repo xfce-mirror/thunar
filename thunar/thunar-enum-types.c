@@ -185,6 +185,8 @@ thunar_icon_size_get_type (void)
         { THUNAR_ICON_SIZE_160,  "THUNAR_ICON_SIZE_160",       "160px",  },
         { THUNAR_ICON_SIZE_192,  "THUNAR_ICON_SIZE_192",       "192px",  },
         { THUNAR_ICON_SIZE_256,  "THUNAR_ICON_SIZE_256",       "256px",  },
+        { THUNAR_ICON_SIZE_512,  "THUNAR_ICON_SIZE_512",       "512px",  },
+        { THUNAR_ICON_SIZE_1024, "THUNAR_ICON_SIZE_1024",      "1024px", },
         /* Support of old type-strings for two thunar stable releases. Old strings will be transformed to new ones on write*/
         { THUNAR_ICON_SIZE_16,   "THUNAR_ICON_SIZE_SMALLEST",  "16px",   },
         { THUNAR_ICON_SIZE_24,   "THUNAR_ICON_SIZE_SMALLER",   "24px",   },
@@ -242,28 +244,30 @@ thunar_zoom_level_get_type (void)
     {
       static const GEnumValue values[] =
       {
-        { THUNAR_ZOOM_LEVEL_25_PERCENT,  "THUNAR_ZOOM_LEVEL_25_PERCENT",    "25%",  },
-        { THUNAR_ZOOM_LEVEL_38_PERCENT,  "THUNAR_ZOOM_LEVEL_38_PERCENT",    "38%",  },
-        { THUNAR_ZOOM_LEVEL_50_PERCENT,  "THUNAR_ZOOM_LEVEL_50_PERCENT",    "50%",  },
-        { THUNAR_ZOOM_LEVEL_75_PERCENT,  "THUNAR_ZOOM_LEVEL_75_PERCENT",    "75%",  },
-        { THUNAR_ZOOM_LEVEL_100_PERCENT, "THUNAR_ZOOM_LEVEL_100_PERCENT",   "100%", },
-        { THUNAR_ZOOM_LEVEL_150_PERCENT, "THUNAR_ZOOM_LEVEL_150_PERCENT",   "150%", },
-        { THUNAR_ZOOM_LEVEL_200_PERCENT, "THUNAR_ZOOM_LEVEL_200_PERCENT",   "200%", },
-        { THUNAR_ZOOM_LEVEL_250_PERCENT, "THUNAR_ZOOM_LEVEL_250_PERCENT",   "250%", },
-        { THUNAR_ZOOM_LEVEL_300_PERCENT, "THUNAR_ZOOM_LEVEL_300_PERCENT",   "300%", },
-        { THUNAR_ZOOM_LEVEL_400_PERCENT, "THUNAR_ZOOM_LEVEL_400_PERCENT",   "400%", },
+        { THUNAR_ZOOM_LEVEL_25_PERCENT,   "THUNAR_ZOOM_LEVEL_25_PERCENT",    "25%",  },
+        { THUNAR_ZOOM_LEVEL_38_PERCENT,   "THUNAR_ZOOM_LEVEL_38_PERCENT",    "38%",  },
+        { THUNAR_ZOOM_LEVEL_50_PERCENT,   "THUNAR_ZOOM_LEVEL_50_PERCENT",    "50%",  },
+        { THUNAR_ZOOM_LEVEL_75_PERCENT,   "THUNAR_ZOOM_LEVEL_75_PERCENT",    "75%",  },
+        { THUNAR_ZOOM_LEVEL_100_PERCENT,  "THUNAR_ZOOM_LEVEL_100_PERCENT",   "100%", },
+        { THUNAR_ZOOM_LEVEL_150_PERCENT,  "THUNAR_ZOOM_LEVEL_150_PERCENT",   "150%", },
+        { THUNAR_ZOOM_LEVEL_200_PERCENT,  "THUNAR_ZOOM_LEVEL_200_PERCENT",   "200%", },
+        { THUNAR_ZOOM_LEVEL_250_PERCENT,  "THUNAR_ZOOM_LEVEL_250_PERCENT",   "250%", },
+        { THUNAR_ZOOM_LEVEL_300_PERCENT,  "THUNAR_ZOOM_LEVEL_300_PERCENT",   "300%", },
+        { THUNAR_ZOOM_LEVEL_400_PERCENT,  "THUNAR_ZOOM_LEVEL_400_PERCENT",   "400%", },
+        { THUNAR_ZOOM_LEVEL_800_PERCENT,  "THUNAR_ZOOM_LEVEL_800_PERCENT",   "800%", },
+        { THUNAR_ZOOM_LEVEL_1600_PERCENT, "THUNAR_ZOOM_LEVEL_1600_PERCENT",  "1600%",},
         /* Support of old type-strings for two thunar stable releases. Old strings will be transformed to new ones on write*/
-        { THUNAR_ZOOM_LEVEL_25_PERCENT,  "THUNAR_ZOOM_LEVEL_SMALLEST",      "25%",  },
-        { THUNAR_ZOOM_LEVEL_38_PERCENT,  "THUNAR_ZOOM_LEVEL_SMALLER",       "38%",  },
-        { THUNAR_ZOOM_LEVEL_50_PERCENT,  "THUNAR_ZOOM_LEVEL_SMALL",         "50%",  },
-        { THUNAR_ZOOM_LEVEL_75_PERCENT,  "THUNAR_ZOOM_LEVEL_NORMAL",        "75%",  },
-        { THUNAR_ZOOM_LEVEL_100_PERCENT, "THUNAR_ZOOM_LEVEL_LARGE",         "100%", },
-        { THUNAR_ZOOM_LEVEL_150_PERCENT, "THUNAR_ZOOM_LEVEL_LARGER",        "150%", },
-        { THUNAR_ZOOM_LEVEL_200_PERCENT, "THUNAR_ZOOM_LEVEL_LARGEST",       "200%", },
+        { THUNAR_ZOOM_LEVEL_25_PERCENT,   "THUNAR_ZOOM_LEVEL_SMALLEST",      "25%",  },
+        { THUNAR_ZOOM_LEVEL_38_PERCENT,   "THUNAR_ZOOM_LEVEL_SMALLER",       "38%",  },
+        { THUNAR_ZOOM_LEVEL_50_PERCENT,   "THUNAR_ZOOM_LEVEL_SMALL",         "50%",  },
+        { THUNAR_ZOOM_LEVEL_75_PERCENT,   "THUNAR_ZOOM_LEVEL_NORMAL",        "75%",  },
+        { THUNAR_ZOOM_LEVEL_100_PERCENT,  "THUNAR_ZOOM_LEVEL_LARGE",         "100%", },
+        { THUNAR_ZOOM_LEVEL_150_PERCENT,  "THUNAR_ZOOM_LEVEL_LARGER",        "150%", },
+        { THUNAR_ZOOM_LEVEL_200_PERCENT,  "THUNAR_ZOOM_LEVEL_LARGEST",       "200%", },
         /* g_value_transform will pick the last value if nothing else matches. So we put the default there */
         /* this is required here, because the names of the enum values have changed since the previous thunar-version*/
-        { THUNAR_ZOOM_LEVEL_100_PERCENT, "*",                               "*",    },
-        { 0,                             NULL,                              NULL,   },
+        { THUNAR_ZOOM_LEVEL_100_PERCENT,  "*",                               "*",    },
+        { 0,                              NULL,                              NULL,   },
       };
 
       type = g_enum_register_static (I_("ThunarZoomLevel"), values);
@@ -358,8 +362,10 @@ thunar_thumbnail_size_get_type (void)
     {
       static const GEnumValue values[] =
       {
-        { THUNAR_THUMBNAIL_SIZE_NORMAL,  "THUNAR_THUMBNAIL_SIZE_NORMAL", "normal", },
-        { THUNAR_THUMBNAIL_SIZE_LARGE,   "THUNAR_THUMBNAIL_SIZE_LARGE",  "large",  },
+        { THUNAR_THUMBNAIL_SIZE_NORMAL,     "THUNAR_THUMBNAIL_SIZE_NORMAL",   "normal",   },
+        { THUNAR_THUMBNAIL_SIZE_LARGE,      "THUNAR_THUMBNAIL_SIZE_LARGE",    "large",    },
+        { THUNAR_THUMBNAIL_SIZE_X_LARGE,    "THUNAR_THUMBNAIL_SIZE_X_LARGE",  "x-large",  },
+        { THUNAR_THUMBNAIL_SIZE_XX_LARGE,   "THUNAR_THUMBNAIL_SIZE_XX_LARGE", "xx-large", },
         { 0,                             NULL,                           NULL,     },
       };
 
@@ -416,17 +422,19 @@ thunar_zoom_level_to_icon_size (ThunarZoomLevel zoom_level)
 {
   switch (zoom_level)
     {
-    case THUNAR_ZOOM_LEVEL_25_PERCENT:  return THUNAR_ICON_SIZE_16;
-    case THUNAR_ZOOM_LEVEL_38_PERCENT:  return THUNAR_ICON_SIZE_24;
-    case THUNAR_ZOOM_LEVEL_50_PERCENT:  return THUNAR_ICON_SIZE_32;
-    case THUNAR_ZOOM_LEVEL_75_PERCENT:  return THUNAR_ICON_SIZE_48;
-    case THUNAR_ZOOM_LEVEL_100_PERCENT: return THUNAR_ICON_SIZE_64;
-    case THUNAR_ZOOM_LEVEL_150_PERCENT: return THUNAR_ICON_SIZE_96;
-    case THUNAR_ZOOM_LEVEL_200_PERCENT: return THUNAR_ICON_SIZE_128;
-    case THUNAR_ZOOM_LEVEL_250_PERCENT: return THUNAR_ICON_SIZE_160;
-    case THUNAR_ZOOM_LEVEL_300_PERCENT: return THUNAR_ICON_SIZE_192;
-    case THUNAR_ZOOM_LEVEL_400_PERCENT: return THUNAR_ICON_SIZE_256;
-    default:                            return THUNAR_ICON_SIZE_64; // default = 100 %zoom
+    case THUNAR_ZOOM_LEVEL_25_PERCENT:   return THUNAR_ICON_SIZE_16;
+    case THUNAR_ZOOM_LEVEL_38_PERCENT:   return THUNAR_ICON_SIZE_24;
+    case THUNAR_ZOOM_LEVEL_50_PERCENT:   return THUNAR_ICON_SIZE_32;
+    case THUNAR_ZOOM_LEVEL_75_PERCENT:   return THUNAR_ICON_SIZE_48;
+    case THUNAR_ZOOM_LEVEL_100_PERCENT:  return THUNAR_ICON_SIZE_64;
+    case THUNAR_ZOOM_LEVEL_150_PERCENT:  return THUNAR_ICON_SIZE_96;
+    case THUNAR_ZOOM_LEVEL_200_PERCENT:  return THUNAR_ICON_SIZE_128;
+    case THUNAR_ZOOM_LEVEL_250_PERCENT:  return THUNAR_ICON_SIZE_160;
+    case THUNAR_ZOOM_LEVEL_300_PERCENT:  return THUNAR_ICON_SIZE_192;
+    case THUNAR_ZOOM_LEVEL_400_PERCENT:  return THUNAR_ICON_SIZE_256;
+    case THUNAR_ZOOM_LEVEL_800_PERCENT:  return THUNAR_ICON_SIZE_512;
+    case THUNAR_ZOOM_LEVEL_1600_PERCENT: return THUNAR_ICON_SIZE_1024;
+    default:                             return THUNAR_ICON_SIZE_64; // default = 100 %zoom
     }
 }
 
@@ -435,7 +443,13 @@ thunar_zoom_level_to_icon_size (ThunarZoomLevel zoom_level)
 static ThunarThumbnailSize
 thunar_icon_size_to_thumbnail_size (ThunarIconSize icon_size)
 {
-  if (icon_size > THUNAR_ICON_SIZE_128)
+  if (icon_size >= THUNAR_ICON_SIZE_1024)
+    return THUNAR_THUMBNAIL_SIZE_XX_LARGE;
+
+  if (icon_size >= THUNAR_ICON_SIZE_512)
+    return THUNAR_THUMBNAIL_SIZE_X_LARGE;
+
+  if (icon_size >= THUNAR_ICON_SIZE_128)
     return THUNAR_THUMBNAIL_SIZE_LARGE;
 
   return THUNAR_THUMBNAIL_SIZE_NORMAL;
