@@ -171,7 +171,7 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
 
           for (lp_item = thunarx_menu_items; lp_item != NULL; lp_item = lp_item->next)
             {
-              gchar        *name, *label_text, *icon_name;
+              gchar *name, *label_text, *icon_name;
 
               g_object_get (G_OBJECT (lp_item->data),
                             "name", &name,
@@ -179,7 +179,7 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
                             "icon", &icon_name,
                             NULL);
 
-              if (strncmp("uca-action", name, 10) != 0)
+              if (strncmp ("uca-action", name, 10) != 0)
                 {
                   g_free (name);
                   g_free (label_text);
@@ -339,8 +339,11 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
 
-  /* select the first item */
+  /* set up the tree selection */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (toolbar_editor->tree_view));
+  g_signal_connect_swapped (G_OBJECT (selection), "changed", G_CALLBACK (thunar_toolbar_editor_update_buttons), toolbar_editor);
+
+  /* select the first item */
   if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (toolbar_editor->model), &iter))
     gtk_tree_selection_select_iter (selection, &iter);
 
