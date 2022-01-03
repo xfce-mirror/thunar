@@ -178,8 +178,8 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
                             "label", &label_text,
                             "icon", &icon_name,
                             NULL);
-
-              if (strncmp ("uca-action", name, 10) != 0)
+              
+              if (g_str_has_prefix (name, "uca-action") == FALSE)
                 {
                   g_free (name);
                   g_free (label_text);
