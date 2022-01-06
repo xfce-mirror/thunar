@@ -145,8 +145,8 @@ void                      thunar_window_open_files_in_location              (Thu
 void                      thunar_window_show_and_select_files               (ThunarWindow        *window,
                                                                              GList               *files_to_select);
 void                      thunar_window_update_search                       (ThunarWindow        *window);
-void                      thunar_window_action_cancel_search                (ThunarWindow        *window);
-void                      thunar_window_action_search                       (ThunarWindow        *window);
+gboolean                  thunar_window_action_cancel_search                (ThunarWindow        *window);
+gboolean                  thunar_window_action_search                       (ThunarWindow        *window);
 void                      thunar_window_update_statusbar                    (ThunarWindow        *window);
 
 XfceGtkActionEntry*       thunar_window_get_action_entries                  (void);
