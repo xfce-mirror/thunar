@@ -55,10 +55,10 @@ static GtkWidget*   thunar_statusbar_context_menu             (ThunarStatusbar  
 static gboolean     thunar_statusbar_button_press_event       (GtkWidget            *widget,
                                                                GdkEventButton       *event,
                                                                ThunarStatusbar      *statusbar);
-static void         thunar_statusbar_action_show_size         (ThunarStatusbar      *statusbar);
-static void         thunar_statusbar_action_show_size_bytes   (ThunarStatusbar      *statusbar);
-static void         thunar_statusbar_action_show_filetype     (ThunarStatusbar      *statusbar);
-static void         thunar_statusbar_action_show_display_name (ThunarStatusbar      *statusbar);
+static gboolean     thunar_statusbar_action_show_size         (ThunarStatusbar      *statusbar);
+static gboolean     thunar_statusbar_action_show_size_bytes   (ThunarStatusbar      *statusbar);
+static gboolean     thunar_statusbar_action_show_filetype     (ThunarStatusbar      *statusbar);
+static gboolean     thunar_statusbar_action_show_display_name (ThunarStatusbar      *statusbar);
 static void         thunar_statusbar_update_all               (void);
 
 
@@ -256,7 +256,7 @@ thunar_statusbar_context_menu (ThunarStatusbar *statusbar)
 
 
 
-static void
+static gboolean
 thunar_statusbar_action_show_size (ThunarStatusbar *statusbar)
 {
   guint active;
@@ -264,11 +264,12 @@ thunar_statusbar_action_show_size (ThunarStatusbar *statusbar)
   g_object_get (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", &active, NULL);
   g_object_set (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", thunar_status_bar_info_toggle_bit (active, THUNAR_STATUS_BAR_INFO_SIZE), NULL);
   thunar_statusbar_update_all ();
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_statusbar_action_show_size_bytes (ThunarStatusbar *statusbar)
 {
   guint active;
@@ -276,11 +277,12 @@ thunar_statusbar_action_show_size_bytes (ThunarStatusbar *statusbar)
   g_object_get (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", &active, NULL);
   g_object_set (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", thunar_status_bar_info_toggle_bit (active, THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES), NULL);
   thunar_statusbar_update_all ();
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_statusbar_action_show_filetype (ThunarStatusbar *statusbar)
 {
   guint active;
@@ -288,11 +290,12 @@ thunar_statusbar_action_show_filetype (ThunarStatusbar *statusbar)
   g_object_get (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", &active, NULL);
   g_object_set (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", thunar_status_bar_info_toggle_bit (active, THUNAR_STATUS_BAR_INFO_FILETYPE), NULL);
   thunar_statusbar_update_all ();
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_statusbar_action_show_display_name (ThunarStatusbar *statusbar)
 {
   guint active;
@@ -300,6 +303,7 @@ thunar_statusbar_action_show_display_name (ThunarStatusbar *statusbar)
   g_object_get (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", &active, NULL);
   g_object_set (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", thunar_status_bar_info_toggle_bit (active, THUNAR_STATUS_BAR_INFO_DISPLAY_NAME), NULL);
   thunar_statusbar_update_all ();
+  return TRUE;
 }
 
 
