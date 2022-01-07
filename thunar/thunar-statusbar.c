@@ -264,6 +264,8 @@ thunar_statusbar_action_show_size (ThunarStatusbar *statusbar)
   g_object_get (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", &active, NULL);
   g_object_set (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", thunar_status_bar_info_toggle_bit (active, THUNAR_STATUS_BAR_INFO_SIZE), NULL);
   thunar_statusbar_update_all ();
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -277,6 +279,8 @@ thunar_statusbar_action_show_size_bytes (ThunarStatusbar *statusbar)
   g_object_get (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", &active, NULL);
   g_object_set (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", thunar_status_bar_info_toggle_bit (active, THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES), NULL);
   thunar_statusbar_update_all ();
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -290,6 +294,8 @@ thunar_statusbar_action_show_filetype (ThunarStatusbar *statusbar)
   g_object_get (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", &active, NULL);
   g_object_set (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", thunar_status_bar_info_toggle_bit (active, THUNAR_STATUS_BAR_INFO_FILETYPE), NULL);
   thunar_statusbar_update_all ();
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -303,6 +309,8 @@ thunar_statusbar_action_show_display_name (ThunarStatusbar *statusbar)
   g_object_get (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", &active, NULL);
   g_object_set (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", thunar_status_bar_info_toggle_bit (active, THUNAR_STATUS_BAR_INFO_DISPLAY_NAME), NULL);
   thunar_statusbar_update_all ();
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 

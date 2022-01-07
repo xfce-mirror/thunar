@@ -1340,6 +1340,7 @@ thunar_shortcuts_view_remove_activated (ThunarShortcutsView *view,
       gtk_tree_path_free (child_path);
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -1392,6 +1393,7 @@ thunar_shortcuts_view_rename_activated (ThunarShortcutsView *view,
       g_list_free (renderers);
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 

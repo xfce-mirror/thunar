@@ -2282,6 +2282,7 @@ thunar_standard_view_select_all_files (ThunarView *view)
   /* select all files in the real view */
   (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->select_all) (standard_view);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2385,6 +2386,7 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
 
   gtk_widget_destroy (dialog);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2403,6 +2405,7 @@ thunar_standard_view_selection_invert (ThunarView *view)
   /* invert all files in the real view */
   (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->selection_invert) (standard_view);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2421,6 +2424,7 @@ thunar_standard_view_unselect_all_files (ThunarView *view)
   /* unselect all files in the real view */
   (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unselect_all) (standard_view);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 

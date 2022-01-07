@@ -610,6 +610,7 @@ thunar_show_column_editor (gpointer parent)
   /* destroy the dialog */
   gtk_widget_destroy (dialog);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
