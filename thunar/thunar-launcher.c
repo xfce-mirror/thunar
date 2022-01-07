@@ -184,9 +184,9 @@ static void                    thunar_launcher_action_move_to_trash       (Thuna
 static gboolean                thunar_launcher_action_delete              (ThunarLauncher                 *launcher);
 static gboolean                thunar_launcher_action_trash_delete        (ThunarLauncher                 *launcher);
 static gboolean                thunar_launcher_action_remove_from_recent  (ThunarLauncher                 *launcher);
-static gboolean                thunar_launcher_action_cut           (ThunarLauncher                 *launcher);
-static gboolean                thunar_launcher_action_copy          (ThunarLauncher                 *launcher);
-static gboolean                thunar_launcher_action_paste         (ThunarLauncher                 *launcher);
+static gboolean                thunar_launcher_action_cut                 (ThunarLauncher                 *launcher);
+static gboolean                thunar_launcher_action_copy                (ThunarLauncher                 *launcher);
+static gboolean                thunar_launcher_action_paste               (ThunarLauncher                 *launcher);
 static gboolean                thunar_launcher_action_paste_into_folder   (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_sendto_device              (ThunarLauncher                 *launcher,
                                                                            ThunarDevice                   *device);
