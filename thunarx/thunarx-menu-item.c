@@ -341,10 +341,11 @@ thunarx_menu_item_new (const gchar *name,
  *
  * Emits the activate signal.
  */
-void
+gboolean
 thunarx_menu_item_activate (ThunarxMenuItem *item)
 {
   g_signal_emit (item, signals[ACTIVATE], 0);
+  return TRUE;
 }
 
 

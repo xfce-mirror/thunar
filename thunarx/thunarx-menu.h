@@ -102,7 +102,7 @@ ThunarxMenuItem  *thunarx_menu_item_new           (const gchar     *name,
                                                    const gchar     *tooltip,
                                                    const gchar     *icon) G_GNUC_MALLOC;
 
-void              thunarx_menu_item_activate      (ThunarxMenuItem *item);
+gboolean          thunarx_menu_item_activate      (ThunarxMenuItem *item);
 
 gboolean          thunarx_menu_item_get_sensitive (ThunarxMenuItem *item);
 void              thunarx_menu_item_set_sensitive (ThunarxMenuItem *item,
