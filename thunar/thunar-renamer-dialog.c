@@ -91,10 +91,10 @@ static void        thunar_renamer_dialog_response              (GtkDialog       
 static void        thunar_renamer_dialog_context_menu          (ThunarRenamerDialog      *renamer_dialog);
 static void        thunar_renamer_dialog_help                  (ThunarRenamerDialog      *renamer_dialog);
 static void        thunar_renamer_dialog_save                  (ThunarRenamerDialog      *renamer_dialog);
-static void        thunar_renamer_dialog_action_add_files      (ThunarRenamerDialog      *renamer_dialog);
-static void        thunar_renamer_dialog_action_remove_files   (ThunarRenamerDialog      *renamer_dialog);
-static void        thunar_renamer_dialog_action_clear          (ThunarRenamerDialog      *renamer_dialog);
-static void        thunar_renamer_dialog_action_about          (ThunarRenamerDialog      *renamer_dialog);
+static gboolean    thunar_renamer_dialog_action_add_files      (ThunarRenamerDialog      *renamer_dialog);
+static gboolean    thunar_renamer_dialog_action_remove_files   (ThunarRenamerDialog      *renamer_dialog);
+static gboolean    thunar_renamer_dialog_action_clear          (ThunarRenamerDialog      *renamer_dialog);
+static gboolean    thunar_renamer_dialog_action_about          (ThunarRenamerDialog      *renamer_dialog);
 static void        thunar_renamer_dialog_name_column_clicked   (GtkTreeViewColumn        *column,
                                                                 ThunarRenamerDialog      *renamer_dialog);
 static gboolean    thunar_renamer_dialog_button_press_event    (GtkWidget                *tree_view,
@@ -1055,7 +1055,7 @@ trd_video_filter_func (const GtkFileFilterInfo *info,
 
 
 
-static void
+static gboolean
 thunar_renamer_dialog_action_add_files (ThunarRenamerDialog *renamer_dialog)
 {
   GtkFileFilter *filter;
@@ -1065,7 +1065,7 @@ thunar_renamer_dialog_action_add_files (ThunarRenamerDialog *renamer_dialog)
   GSList        *lp;
   gchar         *uri;
 
-  _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
+  _thunar_return_val_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog), FALSE);
 
   /* allocate the file chooser */
   chooser = gtk_file_chooser_dialog_new (_("Select files to rename"),
@@ -1155,11 +1155,14 @@ thunar_renamer_dialog_action_add_files (ThunarRenamerDialog *renamer_dialog)
 
   /* cleanup */
   gtk_widget_destroy (chooser);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_renamer_dialog_action_remove_files (ThunarRenamerDialog *renamer_dialog)
 {
   GtkTreeRowReference *row;
@@ -1169,7 +1172,7 @@ thunar_renamer_dialog_action_remove_files (ThunarRenamerDialog *renamer_dialog)
   GList               *rows;
   GList               *lp;
 
-  _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
+  _thunar_return_val_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog), FALSE);
 
   /* determine the selected rows in the view */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (renamer_dialog->tree_view));
@@ -1200,30 +1203,39 @@ thunar_renamer_dialog_action_remove_files (ThunarRenamerDialog *renamer_dialog)
 
   /* cleanup */
   g_list_free (rows);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_renamer_dialog_action_clear (ThunarRenamerDialog *renamer_dialog)
 {
-  _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
+  _thunar_return_val_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog), FALSE);
 
   /* just clear the list of files in the model */
   thunar_renamer_model_clear (renamer_dialog->model);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_renamer_dialog_action_about (ThunarRenamerDialog *renamer_dialog)
 {
-  _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
+  _thunar_return_val_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog), FALSE);
 
   /* just popup the about dialog */
   thunar_dialogs_show_about (GTK_WINDOW (renamer_dialog), _("Bulk Rename"),
                              _("Thunar Bulk Rename is a powerful and extensible\n"
                                "tool to rename multiple files at once."));
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 

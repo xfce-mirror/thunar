@@ -109,15 +109,15 @@ gboolean            thunar_launcher_append_custom_actions                (Thunar
 gboolean            thunar_launcher_check_uca_key_activation             (ThunarLauncher                 *launcher,
                                                                           GdkEventKey                    *key_event);
 void                thunar_launcher_action_mount                         (ThunarLauncher                 *launcher);
-void                thunar_launcher_action_unmount                       (ThunarLauncher                 *launcher);
-void                thunar_launcher_action_eject                         (ThunarLauncher                 *launcher);
+gboolean            thunar_launcher_action_unmount                       (ThunarLauncher                 *launcher);
+gboolean            thunar_launcher_action_eject                         (ThunarLauncher                 *launcher);
 void                thunar_launcher_set_selection                        (ThunarLauncher                 *launcher,
                                                                           GList                          *selected_thunar_files,
                                                                           ThunarDevice                   *selected_device,
                                                                           GFile                          *selected_location);
-void                thunar_launcher_action_empty_trash                   (ThunarLauncher                 *launcher);
-void                thunar_launcher_action_restore                       (ThunarLauncher                 *launcher);
-void                thunar_launcher_action_restore_and_show              (ThunarLauncher                 *launcher);
+gboolean            thunar_launcher_action_empty_trash                   (ThunarLauncher                 *launcher);
+gboolean            thunar_launcher_action_restore                       (ThunarLauncher                 *launcher);
+gboolean            thunar_launcher_action_restore_and_show              (ThunarLauncher                 *launcher);
 void                thunar_launcher_set_searching                        (ThunarLauncher                 *launcher,
                                                                           gboolean                        b);
 XfceGtkActionEntry *thunar_launcher_get_action_entries                   (void);

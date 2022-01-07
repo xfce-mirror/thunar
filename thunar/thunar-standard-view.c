@@ -167,10 +167,10 @@ static void                 thunar_standard_view_current_directory_changed  (Thu
 static GList               *thunar_standard_view_get_selected_files_view    (ThunarView               *view);
 static void                 thunar_standard_view_set_selected_files_view    (ThunarView               *view,
                                                                              GList                    *selected_files);
-static void                 thunar_standard_view_select_all_files           (ThunarView               *view);
-static void                 thunar_standard_view_select_by_pattern          (ThunarView               *view);
-static void                 thunar_standard_view_selection_invert           (ThunarView               *view);
-static void                 thunar_standard_view_unselect_all_files         (ThunarView               *view);
+static gboolean             thunar_standard_view_select_all_files           (ThunarView               *view);
+static gboolean             thunar_standard_view_select_by_pattern          (ThunarView               *view);
+static gboolean             thunar_standard_view_selection_invert           (ThunarView               *view);
+static gboolean             thunar_standard_view_unselect_all_files         (ThunarView               *view);
 static GClosure            *thunar_standard_view_new_files_closure          (ThunarStandardView       *standard_view,
                                                                              GtkWidget                *source_view);
 static void                 thunar_standard_view_new_files                  (ThunarStandardView       *standard_view,
@@ -267,18 +267,18 @@ static void                 thunar_standard_view_size_allocate              (Thu
 static void                 thunar_standard_view_connect_accelerators       (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_disconnect_accelerators    (ThunarStandardView       *standard_view);
 
-static void                 thunar_standard_view_action_sort_by_name               (ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_action_sort_by_type               (ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_action_sort_by_date               (ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_action_sort_by_date_deleted       (ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_action_sort_by_size               (ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_action_sort_ascending             (ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_action_sort_descending            (ThunarStandardView       *standard_view);
+static gboolean             thunar_standard_view_action_sort_by_name               (ThunarStandardView       *standard_view);
+static gboolean             thunar_standard_view_action_sort_by_type               (ThunarStandardView       *standard_view);
+static gboolean             thunar_standard_view_action_sort_by_date               (ThunarStandardView       *standard_view);
+static gboolean             thunar_standard_view_action_sort_by_date_deleted       (ThunarStandardView       *standard_view);
+static gboolean             thunar_standard_view_action_sort_by_size               (ThunarStandardView       *standard_view);
+static gboolean             thunar_standard_view_action_sort_ascending             (ThunarStandardView       *standard_view);
+static gboolean             thunar_standard_view_action_sort_descending            (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_set_sort_column                   (ThunarStandardView       *standard_view,
                                                                                     ThunarColumn              column);
 static void                 thunar_standard_view_set_sort_order                    (ThunarStandardView       *standard_view,
                                                                                     GtkSortType               order);
-static void                 thunar_standard_view_toggle_sort_order                 (ThunarStandardView       *standard_view);
+static gboolean             thunar_standard_view_toggle_sort_order                 (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_store_sort_column                 (ThunarStandardView       *standard_view);
 
 struct _ThunarStandardViewPrivate
@@ -409,21 +409,23 @@ G_DEFINE_ABSTRACT_TYPE_WITH_CODE (ThunarStandardView, thunar_standard_view, GTK_
     G_ADD_PRIVATE (ThunarStandardView))
 
 
-static void
+static gboolean
 thunar_standard_view_action_sort_ascending (ThunarStandardView *standard_view)
 {
 
   if (standard_view->priv->sort_order == GTK_SORT_DESCENDING)
     thunar_standard_view_set_sort_column (standard_view, standard_view->priv->sort_column);
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_standard_view_action_sort_descending (ThunarStandardView *standard_view)
 {
   if (standard_view->priv->sort_order == GTK_SORT_ASCENDING)
     thunar_standard_view_set_sort_column (standard_view, standard_view->priv->sort_column);
+  return TRUE;
 }
 
 
@@ -455,50 +457,56 @@ thunar_standard_view_set_sort_order (ThunarStandardView *standard_view,
 
 
 
-static void
+static gboolean
 thunar_standard_view_action_sort_by_name (ThunarStandardView *standard_view)
 {
   thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_NAME);
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_standard_view_action_sort_by_size (ThunarStandardView *standard_view)
 {
   thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_SIZE);
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_standard_view_action_sort_by_type (ThunarStandardView *standard_view)
 {
   thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_TYPE);
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_standard_view_action_sort_by_date (ThunarStandardView *standard_view)
 {
   thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_DATE_MODIFIED);
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_standard_view_action_sort_by_date_deleted (ThunarStandardView *standard_view)
 {
   thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_DATE_DELETED);
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_standard_view_toggle_sort_order (ThunarStandardView *standard_view)
 {
   thunar_standard_view_set_sort_column (standard_view, standard_view->priv->sort_column);
+  return TRUE;
 }
 
 
@@ -2261,23 +2269,26 @@ thunar_standard_view_current_directory_changed (ThunarFile         *current_dire
 
 
 
-static void
+static gboolean
 thunar_standard_view_select_all_files (ThunarView *view)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
 
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
   /* grab the focus to the view */
   gtk_widget_grab_focus (GTK_WIDGET (standard_view));
 
   /* select all files in the real view */
   (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->select_all) (standard_view);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_standard_view_select_by_pattern (ThunarView *view)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
@@ -2297,7 +2308,7 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   gboolean            case_sensitive;
   gint                row = 0;
 
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
   window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
   dialog = gtk_dialog_new_with_buttons (_("Select by Pattern"),
@@ -2374,38 +2385,47 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
     }
 
   gtk_widget_destroy (dialog);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_standard_view_selection_invert (ThunarView *view)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
 
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
   /* grab the focus to the view */
   gtk_widget_grab_focus (GTK_WIDGET (standard_view));
 
   /* invert all files in the real view */
   (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->selection_invert) (standard_view);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_standard_view_unselect_all_files (ThunarView *view)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
 
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
   /* grab the focus to the view */
   gtk_widget_grab_focus (GTK_WIDGET (standard_view));
 
   /* unselect all files in the real view */
   (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unselect_all) (standard_view);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
