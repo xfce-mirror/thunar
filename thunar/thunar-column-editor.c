@@ -561,14 +561,14 @@ thunar_column_editor_use_defaults (GtkWidget          *button,
  * @parent is %NULL the default screen is used), the dialog won't
  * be modal and it will simply popup on the specified screen.
  **/
-void
+gboolean
 thunar_show_column_editor (gpointer parent)
 {
   GtkWidget *window = NULL;
   GtkWidget *dialog;
   GdkScreen *screen = NULL;
 
-  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+  _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), FALSE);
 
   /* determine the screen for the dialog */
   if (G_UNLIKELY (parent == NULL))
@@ -609,5 +609,8 @@ thunar_show_column_editor (gpointer parent)
 
   /* destroy the dialog */
   gtk_widget_destroy (dialog);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 

@@ -123,11 +123,11 @@ static void           thunar_shortcuts_view_context_menu                 (Thunar
                                                                           GdkEventButton           *event,
                                                                           GtkTreeModel             *model,
                                                                           GtkTreeIter              *iter);
-static void           thunar_shortcuts_view_remove_activated             (ThunarShortcutsView      *view,
+static gboolean       thunar_shortcuts_view_remove_activated             (ThunarShortcutsView      *view,
                                                                           GtkWidget                *item);
 static void           thunar_shortcuts_view_editing_canceled             (GtkCellRenderer          *renderer,
                                                                           ThunarShortcutsView      *view);
-static void           thunar_shortcuts_view_rename_activated             (ThunarShortcutsView      *view,
+static gboolean       thunar_shortcuts_view_rename_activated             (ThunarShortcutsView      *view,
                                                                           GtkWidget                *item);
 static void           thunar_shortcuts_view_renamed                      (GtkCellRenderer          *renderer,
                                                                           const gchar              *path_string,
@@ -1319,7 +1319,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
 
 
 
-static void
+static gboolean
 thunar_shortcuts_view_remove_activated (ThunarShortcutsView *view,
                                         GtkWidget           *item)
 {
@@ -1339,6 +1339,9 @@ thunar_shortcuts_view_remove_activated (ThunarShortcutsView *view,
       thunar_shortcuts_model_remove (THUNAR_SHORTCUTS_MODEL (child_model), child_path);
       gtk_tree_path_free (child_path);
     }
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
@@ -1356,7 +1359,7 @@ thunar_shortcuts_view_editing_canceled (GtkCellRenderer     *renderer,
 
 
 
-static void
+static gboolean
 thunar_shortcuts_view_rename_activated (ThunarShortcutsView *view,
                                         GtkWidget           *item)
 {
@@ -1389,6 +1392,9 @@ thunar_shortcuts_view_rename_activated (ThunarShortcutsView *view,
       gtk_tree_path_free (path);
       g_list_free (renderers);
     }
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
