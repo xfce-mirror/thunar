@@ -744,6 +744,7 @@ thunar_launcher_menu_item_activated (ThunarLauncher *launcher,
   app_info = g_object_get_qdata (G_OBJECT (menu_item), thunar_launcher_appinfo_quark);
   thunar_launcher_activate_selected_files (launcher, THUNAR_LAUNCHER_CHANGE_DIRECTORY, app_info);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -1350,6 +1351,8 @@ thunar_launcher_action_open (ThunarLauncher *launcher)
     return TRUE;
 
   thunar_launcher_activate_selected_files (launcher, THUNAR_LAUNCHER_CHANGE_DIRECTORY, NULL);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -1370,6 +1373,8 @@ thunar_launcher_action_open_in_new_tabs (ThunarLauncher *launcher)
     return TRUE;
 
   thunar_launcher_open_selected_folders (launcher, TRUE);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -1384,6 +1389,8 @@ thunar_launcher_action_open_in_new_windows (ThunarLauncher *launcher)
     return TRUE;
 
   thunar_launcher_open_selected_folders (launcher, FALSE);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -1415,6 +1422,8 @@ thunar_launcher_action_open_location (ThunarLauncher *launcher)
   thunar_window_open_files_in_location (THUNAR_WINDOW (launcher->widget), gfiles);
 
   g_list_free (gfiles);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -1427,6 +1436,8 @@ thunar_launcher_action_open_with_other (ThunarLauncher *launcher)
 
   if (launcher->n_files_to_process == 1)
     thunar_show_chooser_dialog (launcher->widget, launcher->files_to_process->data, TRUE, FALSE);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -1445,6 +1456,8 @@ thunar_launcher_action_set_default_app (ThunarLauncher *launcher)
 
   if (launcher->n_files_to_process == 1)
     thunar_show_chooser_dialog (launcher->widget, launcher->files_to_process->data, TRUE, TRUE);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -1849,6 +1862,7 @@ thunar_launcher_action_sendto_desktop (ThunarLauncher *launcher)
   g_object_unref (desktop_file);
   thunar_g_list_free_full (files);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -1951,6 +1965,7 @@ thunar_launcher_action_sendto_device (ThunarLauncher *launcher,
       thunar_launcher_sendto_device (launcher, device);
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -1978,6 +1993,7 @@ thunar_launcher_action_add_shortcuts (ThunarLauncher *launcher)
         thunar_shortcuts_pane_add_shortcut (THUNAR_SHORTCUTS_PANE (sidepane), lp->data);
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2150,6 +2166,7 @@ thunar_launcher_action_properties (ThunarLauncher *launcher)
       gtk_widget_show (dialog);
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2182,6 +2199,7 @@ thunar_launcher_action_make_link (ThunarLauncher *launcher)
   g_object_unref (G_OBJECT (application));
   g_list_free (g_files);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2216,6 +2234,7 @@ thunar_launcher_action_duplicate (ThunarLauncher *launcher)
       thunar_g_list_free_full (files_to_process);
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2412,6 +2431,7 @@ thunar_launcher_action_rename (ThunarLauncher *launcher)
       thunar_show_renamer_dialog (GTK_WIDGET (window), launcher->current_directory, launcher->files_to_process, FALSE, NULL);
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2432,6 +2452,7 @@ thunar_launcher_action_restore (ThunarLauncher *launcher)
   thunar_application_restore_files (application, launcher->widget, launcher->files_to_process, NULL);
   g_object_unref (G_OBJECT (application));
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2452,6 +2473,7 @@ thunar_launcher_action_restore_and_show (ThunarLauncher *launcher)
   thunar_application_restore_files (application, launcher->widget, launcher->files_to_process, launcher->new_files_created_closure);
   g_object_unref (G_OBJECT (application));
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2488,6 +2510,7 @@ thunar_launcher_action_delete (ThunarLauncher *launcher)
   thunar_application_unlink_files (application, launcher->widget, launcher->files_to_process, TRUE);
   g_object_unref (G_OBJECT (application));
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2508,6 +2531,7 @@ thunar_launcher_action_trash_delete (ThunarLauncher *launcher)
   else
     thunar_launcher_action_delete (launcher);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2533,6 +2557,7 @@ thunar_launcher_action_remove_from_recent (ThunarLauncher *launcher)
       g_free(uri);
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2549,6 +2574,7 @@ thunar_launcher_action_empty_trash (ThunarLauncher *launcher)
   thunar_application_empty_trash (application, launcher->widget, NULL);
   g_object_unref (G_OBJECT (application));
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2596,6 +2622,7 @@ thunar_launcher_action_create_folder (ThunarLauncher *launcher)
       g_free (name);
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2672,6 +2699,7 @@ thunar_launcher_action_create_document (ThunarLauncher *launcher,
       g_free (name);
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2882,6 +2910,7 @@ thunar_launcher_action_cut (ThunarLauncher *launcher)
   thunar_clipboard_manager_cut_files (clipboard, launcher->files_to_process);
   g_object_unref (G_OBJECT (clipboard));
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2901,6 +2930,7 @@ thunar_launcher_action_copy (ThunarLauncher *launcher)
   thunar_clipboard_manager_copy_files (clipboard, launcher->files_to_process);
   g_object_unref (G_OBJECT (clipboard));
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2917,6 +2947,7 @@ thunar_launcher_action_paste (ThunarLauncher *launcher)
   thunar_clipboard_manager_paste_files (clipboard, thunar_file_get_file (launcher->current_directory), launcher->widget, launcher->new_files_created_closure);
   g_object_unref (G_OBJECT (clipboard));
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -2936,6 +2967,7 @@ thunar_launcher_action_paste_into_folder (ThunarLauncher *launcher)
   thunar_clipboard_manager_paste_files (clipboard, thunar_file_get_file (launcher->single_folder), launcher->widget, launcher->new_files_created_closure);
   g_object_unref (G_OBJECT (clipboard));
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3010,6 +3042,7 @@ thunar_launcher_action_eject (ThunarLauncher *launcher)
       g_object_unref (mount_operation);
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3072,6 +3105,7 @@ thunar_launcher_action_unmount (ThunarLauncher *launcher)
       g_object_unref (mount_operation);
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 

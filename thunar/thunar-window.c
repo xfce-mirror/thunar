@@ -1710,6 +1710,7 @@ thunar_window_zoom_in (ThunarWindow *window)
       return TRUE;
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -1727,6 +1728,7 @@ thunar_window_zoom_out (ThunarWindow *window)
       return TRUE;
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3030,6 +3032,7 @@ thunar_window_action_cancel_search (ThunarWindow *window)
       thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), 0);
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3041,6 +3044,8 @@ thunar_window_action_open_new_tab (ThunarWindow *window,
 {
   /* open new tab with current directory as default */
   thunar_window_notebook_add_new_tab (window, thunar_window_get_current_directory (window), THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3086,6 +3091,7 @@ thunar_window_action_open_new_window (ThunarWindow *window,
       g_object_unref (G_OBJECT (start_file));
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3130,6 +3136,7 @@ thunar_window_action_detach_tab (ThunarWindow *window,
   g_object_unref (label);
   g_object_unref (view);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3150,6 +3157,7 @@ thunar_window_action_close_all_windows (ThunarWindow *window,
   /* destroy all open windows */
   g_list_free_full (windows, (GDestroyNotify) gtk_widget_destroy);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3172,6 +3180,7 @@ thunar_window_action_close_tab (ThunarWindow *window,
         gtk_widget_destroy (window->view);
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3187,6 +3196,7 @@ thunar_window_action_close_window (ThunarWindow *window,
   if (response == FALSE)
     gtk_widget_destroy (GTK_WIDGET (window));
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3210,6 +3220,7 @@ thunar_window_action_preferences (ThunarWindow *window,
   thunar_application_take_window (application, GTK_WINDOW (dialog));
   g_object_unref (G_OBJECT (application));
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3230,6 +3241,7 @@ thunar_window_action_reload (ThunarWindow *window,
   if (window->location_bar != NULL)
     g_object_notify (G_OBJECT (window->location_bar), "current-directory");
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3297,6 +3309,7 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
       g_signal_connect_swapped (window->paned, "button-release-event", G_CALLBACK (thunar_window_save_paned_notebooks), window);
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3319,6 +3332,7 @@ thunar_window_action_pathbar_changed (ThunarWindow *window)
   else
     g_object_set (window->preferences, "last-location-bar", g_type_name (THUNAR_TYPE_LOCATION_ENTRY), NULL);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3341,6 +3355,7 @@ thunar_window_action_toolbar_changed (ThunarWindow *window)
   else
     g_object_set (window->preferences, "last-location-bar", g_type_name (THUNAR_TYPE_LOCATION_BUTTONS), NULL);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3366,6 +3381,7 @@ thunar_window_action_shortcuts_changed (ThunarWindow *window)
 
   thunar_window_install_sidepane (window, type);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3391,6 +3407,7 @@ thunar_window_action_tree_changed (ThunarWindow *window)
 
   thunar_window_install_sidepane (window, type);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3409,6 +3426,7 @@ thunar_window_action_statusbar_changed (ThunarWindow *window)
 
   g_object_set (G_OBJECT (window->preferences), "last-statusbar-visible", !last_statusbar_visible, NULL);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3441,6 +3459,7 @@ thunar_window_action_menubar_changed (ThunarWindow *window)
 
   g_object_set (G_OBJECT (window->preferences), "last-menubar-visible", !last_menubar_visible, NULL);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3464,6 +3483,7 @@ thunar_window_action_clear_directory_specific_settings (ThunarWindow *window)
   /* replace the active view with a new one of the correct type */
   thunar_window_replace_view (window, window->view, view_type);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3477,6 +3497,8 @@ thunar_window_action_detailed_view (ThunarWindow *window)
                                                        thunar_file_is_trash (window->current_directory));
   thunar_details_view_set_recency_column_visible (THUNAR_DETAILS_VIEW (window->view),
                                                   thunar_file_is_recent (window->current_directory));
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3487,6 +3509,8 @@ thunar_window_action_icon_view (ThunarWindow *window)
 {
   if (window->is_searching == FALSE)
     thunar_window_action_view_changed (window, THUNAR_TYPE_ICON_VIEW);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3497,6 +3521,8 @@ thunar_window_action_compact_view (ThunarWindow *window)
 {
   if (window->is_searching == FALSE)
     thunar_window_action_view_changed (window, THUNAR_TYPE_COMPACT_VIEW);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3661,6 +3687,7 @@ thunar_window_action_go_up (ThunarWindow *window)
       g_error_free (error);
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3676,6 +3703,7 @@ thunar_window_action_back (ThunarWindow *window)
   history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (window->view));
   thunar_history_action_back (history);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3691,6 +3719,7 @@ thunar_window_action_forward (ThunarWindow *window)
   history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (window->view));
   thunar_history_action_forward (history);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3726,6 +3755,7 @@ thunar_window_action_open_home (ThunarWindow *window)
   /* release our reference on the home path */
   g_object_unref (home);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3830,6 +3860,7 @@ thunar_window_action_open_desktop (ThunarWindow *window)
 
   thunar_window_open_user_folder (window, G_USER_DIRECTORY_DESKTOP, "Desktop");
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3865,6 +3896,7 @@ thunar_window_action_open_computer (ThunarWindow *window)
   /* release our reference on the location itself */
   g_object_unref (computer);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3946,6 +3978,7 @@ thunar_window_action_open_templates (ThunarWindow *window)
       gtk_widget_destroy (dialog);
     }
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -3981,6 +4014,7 @@ thunar_window_action_open_file_system (ThunarWindow *window)
   /* release our reference on the home path */
   g_object_unref (root);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -4016,6 +4050,7 @@ thunar_window_action_open_recent (ThunarWindow *window)
   /* release our reference on the `Recent` path */
   g_object_unref (recent);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -4051,6 +4086,7 @@ thunar_window_action_open_trash (ThunarWindow *window)
   /* release our reference on the trash bin path */
   g_object_unref (trash_bin);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -4086,6 +4122,7 @@ thunar_window_action_open_network (ThunarWindow *window)
   /* release our reference on the location itself */
   g_object_unref (network);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -4159,6 +4196,8 @@ thunar_window_action_open_location (ThunarWindow *window)
 {
   /* just use the "start-open-location" callback */
   thunar_window_start_open_location (window, NULL);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -4169,6 +4208,8 @@ thunar_window_action_contents (ThunarWindow *window)
 {
   /* display the documentation index */
   xfce_dialog_show_help (GTK_WINDOW (window), "thunar", NULL, NULL);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -4181,6 +4222,8 @@ thunar_window_action_about (ThunarWindow *window)
   thunar_dialogs_show_about (GTK_WINDOW (window), PACKAGE_NAME,
                              _("Thunar is a fast and easy to use file manager\n"
                                "for the Xfce Desktop Environment."));
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -4199,6 +4242,7 @@ thunar_window_action_show_hidden (ThunarWindow *window)
 
   g_object_set (G_OBJECT (window->preferences), "last-show-hidden", window->show_hidden, NULL);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -4208,6 +4252,8 @@ gboolean
 thunar_window_action_search (ThunarWindow *window)
 {
   thunar_window_start_open_location (window, SEARCH_PREFIX);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -4229,6 +4275,7 @@ thunar_window_action_open_file_menu (ThunarWindow *window)
   g_list_free (children);
   gtk_menu_shell_select_first (GTK_MENU_SHELL (window->menubar), TRUE);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 

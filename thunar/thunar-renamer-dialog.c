@@ -1156,6 +1156,7 @@ thunar_renamer_dialog_action_add_files (ThunarRenamerDialog *renamer_dialog)
   /* cleanup */
   gtk_widget_destroy (chooser);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -1203,6 +1204,7 @@ thunar_renamer_dialog_action_remove_files (ThunarRenamerDialog *renamer_dialog)
   /* cleanup */
   g_list_free (rows);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -1216,6 +1218,7 @@ thunar_renamer_dialog_action_clear (ThunarRenamerDialog *renamer_dialog)
   /* just clear the list of files in the model */
   thunar_renamer_model_clear (renamer_dialog->model);
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
@@ -1231,6 +1234,7 @@ thunar_renamer_dialog_action_about (ThunarRenamerDialog *renamer_dialog)
                              _("Thunar Bulk Rename is a powerful and extensible\n"
                                "tool to rename multiple files at once."));
 
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
 
