@@ -175,60 +175,60 @@ static void      thunar_window_start_open_location        (ThunarWindow         
                                                            const gchar            *initial_text);
 static void      thunar_window_resume_search              (ThunarWindow           *window,
                                                            const gchar            *initial_text);
-static void      thunar_window_action_open_new_tab        (ThunarWindow           *window,
+static gboolean  thunar_window_action_open_new_tab        (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
-static void      thunar_window_action_open_new_window     (ThunarWindow           *window,
+static gboolean  thunar_window_action_open_new_window     (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
-static void      thunar_window_action_detach_tab          (ThunarWindow           *window,
+static gboolean  thunar_window_action_detach_tab          (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
-static void      thunar_window_action_close_all_windows   (ThunarWindow           *window,
+static gboolean  thunar_window_action_close_all_windows   (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
-static void      thunar_window_action_close_tab           (ThunarWindow           *window,
+static gboolean  thunar_window_action_close_tab           (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
-static void      thunar_window_action_close_window        (ThunarWindow           *window,
+static gboolean  thunar_window_action_close_window        (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
-static void      thunar_window_action_preferences         (ThunarWindow           *window,
+static gboolean  thunar_window_action_preferences         (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
-static void      thunar_window_action_reload              (ThunarWindow           *window,
+static gboolean  thunar_window_action_reload              (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
-static void      thunar_window_action_toggle_split_view   (ThunarWindow           *window);
-static void      thunar_window_action_switch_next_tab     (ThunarWindow           *window);
-static void      thunar_window_action_switch_previous_tab (ThunarWindow           *window);
-static void      thunar_window_action_pathbar_changed     (ThunarWindow           *window);
-static void      thunar_window_action_toolbar_changed     (ThunarWindow           *window);
-static void      thunar_window_action_shortcuts_changed   (ThunarWindow           *window);
-static void      thunar_window_action_tree_changed        (ThunarWindow           *window);
-static void      thunar_window_action_statusbar_changed   (ThunarWindow           *window);
+static gboolean  thunar_window_action_toggle_split_view   (ThunarWindow           *window);
+static gboolean  thunar_window_action_switch_next_tab     (ThunarWindow           *window);
+static gboolean  thunar_window_action_switch_previous_tab (ThunarWindow           *window);
+static gboolean  thunar_window_action_pathbar_changed     (ThunarWindow           *window);
+static gboolean  thunar_window_action_toolbar_changed     (ThunarWindow           *window);
+static gboolean  thunar_window_action_shortcuts_changed   (ThunarWindow           *window);
+static gboolean  thunar_window_action_tree_changed        (ThunarWindow           *window);
+static gboolean  thunar_window_action_statusbar_changed   (ThunarWindow           *window);
 static void      thunar_window_action_menubar_update      (ThunarWindow           *window);
-static void      thunar_window_action_menubar_changed     (ThunarWindow           *window);
-static void      thunar_window_action_detailed_view       (ThunarWindow           *window);
-static void      thunar_window_action_icon_view           (ThunarWindow           *window);
-static void      thunar_window_action_compact_view        (ThunarWindow           *window);
+static gboolean  thunar_window_action_menubar_changed     (ThunarWindow           *window);
+static gboolean  thunar_window_action_detailed_view       (ThunarWindow           *window);
+static gboolean  thunar_window_action_icon_view           (ThunarWindow           *window);
+static gboolean  thunar_window_action_compact_view        (ThunarWindow           *window);
 static void      thunar_window_replace_view               (ThunarWindow           *window,
                                                            GtkWidget              *view,
                                                            GType                   view_type);
 static void      thunar_window_action_view_changed        (ThunarWindow           *window,
                                                            GType                   view_type);
-static void      thunar_window_action_go_up               (ThunarWindow           *window);
-static void      thunar_window_action_back                (ThunarWindow           *window);
-static void      thunar_window_action_forward             (ThunarWindow           *window);
-static void      thunar_window_action_open_home           (ThunarWindow           *window);
-static void      thunar_window_action_open_desktop        (ThunarWindow           *window);
-static void      thunar_window_action_open_computer       (ThunarWindow           *window);
-static void      thunar_window_action_open_templates      (ThunarWindow           *window);
-static void      thunar_window_action_open_file_system    (ThunarWindow           *window);
-static void      thunar_window_action_open_recent         (ThunarWindow           *window);
-static void      thunar_window_action_open_trash          (ThunarWindow           *window);
-static void      thunar_window_action_open_network        (ThunarWindow           *window);
+static gboolean  thunar_window_action_go_up               (ThunarWindow           *window);
+static gboolean  thunar_window_action_back                (ThunarWindow           *window);
+static gboolean  thunar_window_action_forward             (ThunarWindow           *window);
+static gboolean  thunar_window_action_open_home           (ThunarWindow           *window);
+static gboolean  thunar_window_action_open_desktop        (ThunarWindow           *window);
+static gboolean  thunar_window_action_open_computer       (ThunarWindow           *window);
+static gboolean  thunar_window_action_open_templates      (ThunarWindow           *window);
+static gboolean  thunar_window_action_open_file_system    (ThunarWindow           *window);
+static gboolean  thunar_window_action_open_recent         (ThunarWindow           *window);
+static gboolean  thunar_window_action_open_trash          (ThunarWindow           *window);
+static gboolean  thunar_window_action_open_network        (ThunarWindow           *window);
 static void      thunar_window_action_open_bookmark       (GFile                  *g_file);
-static void      thunar_window_action_open_location       (ThunarWindow           *window);
-static void      thunar_window_action_contents            (ThunarWindow           *window);
-static void      thunar_window_action_about               (ThunarWindow           *window);
-static void      thunar_window_action_show_hidden         (ThunarWindow           *window);
+static gboolean  thunar_window_action_open_location       (ThunarWindow           *window);
+static gboolean  thunar_window_action_contents            (ThunarWindow           *window);
+static gboolean  thunar_window_action_about               (ThunarWindow           *window);
+static gboolean  thunar_window_action_show_hidden         (ThunarWindow           *window);
 static gboolean  thunar_window_propagate_key_event        (GtkWindow              *window,
                                                            GdkEvent               *key_event,
                                                            gpointer                user_data);
-static void      thunar_window_action_open_file_menu      (ThunarWindow           *window);
+static gboolean  thunar_window_action_open_file_menu      (ThunarWindow           *window);
 static void      thunar_window_current_directory_changed  (ThunarFile             *current_directory,
                                                            ThunarWindow           *window);
 static void      thunar_window_menu_item_selected         (ThunarWindow           *window,
@@ -299,7 +299,7 @@ static void      thunar_window_set_directory_specific_settings (ThunarWindow    
                                                                 gboolean           directory_specific_settings);
 static GType     thunar_window_view_type_for_directory         (ThunarWindow      *window,
                                                                 ThunarFile        *directory);
-static void      thunar_window_action_clear_directory_specific_settings (ThunarWindow  *window);
+static gboolean  thunar_window_action_clear_directory_specific_settings (ThunarWindow  *window);
 static void      thunar_window_trash_infobar_clicked           (GtkInfoBar             *info_bar,
                                                                 gint                    response_id,
                                                                 ThunarWindow           *window);
@@ -1710,7 +1710,8 @@ thunar_window_zoom_in (ThunarWindow *window)
       return TRUE;
     }
 
-  return FALSE;
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
@@ -1727,7 +1728,8 @@ thunar_window_zoom_out (ThunarWindow *window)
       return TRUE;
     }
 
-  return FALSE;
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
@@ -1744,7 +1746,7 @@ thunar_window_zoom_reset (ThunarWindow *window)
       return TRUE;
     }
 
-  return FALSE;
+  return TRUE;
 }
 
 
@@ -1763,38 +1765,42 @@ thunar_window_tab_change (ThunarWindow *window,
 
 
 
-static void
+static gboolean
 thunar_window_action_switch_next_tab (ThunarWindow *window)
 {
   gint current_page;
   gint new_page;
   gint pages;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   current_page = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
   pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_selected));
   new_page = (current_page + 1) % pages;
 
   thunar_window_notebook_set_current_tab (window, new_page);
+
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_switch_previous_tab (ThunarWindow *window)
 {
   gint current_page;
   gint new_page;
   gint pages;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   current_page = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
   pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_selected));
   new_page = (current_page - 1) % pages;
 
   thunar_window_notebook_set_current_tab (window, new_page);
+
+  return TRUE;
 }
 
 
@@ -2998,13 +3004,13 @@ thunar_window_update_search (ThunarWindow *window)
 
 
 
-void
+gboolean
 thunar_window_action_cancel_search (ThunarWindow *window)
 {
-  _thunar_return_if_fail (THUNAR_IS_LOCATION_BAR (window->location_bar));
+  _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BAR (window->location_bar), FALSE);
 
   if (window->is_searching == FALSE)
-    return;
+    return TRUE;
 
   thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), NULL);
@@ -3025,21 +3031,27 @@ thunar_window_action_cancel_search (ThunarWindow *window)
 
       thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), 0);
     }
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_open_new_tab (ThunarWindow *window,
                                    GtkWidget    *menu_item)
 {
   /* open new tab with current directory as default */
   thunar_window_notebook_add_new_tab (window, thunar_window_get_current_directory (window), THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_open_new_window (ThunarWindow *window,
                                       GtkWidget    *menu_item)
 {
@@ -3056,7 +3068,7 @@ thunar_window_action_open_new_window (ThunarWindow *window,
 
   /* if we have no origin view we are done */
   if (window->view == NULL)
-    return;
+    return TRUE;
 
   /* let the view of the new window inherit the history of the origin view */
   history = thunar_standard_view_copy_history (THUNAR_STANDARD_VIEW (window->view));
@@ -3078,11 +3090,14 @@ thunar_window_action_open_new_window (ThunarWindow *window,
       /* release the file reference */
       g_object_unref (G_OBJECT (start_file));
     }
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_detach_tab (ThunarWindow *window,
                                  GtkWidget    *menu_item)
 {
@@ -3090,17 +3105,17 @@ thunar_window_action_detach_tab (ThunarWindow *window,
   GtkWidget *label;
   GtkWidget *view = window->view;
 
-  _thunar_return_if_fail (THUNAR_IS_VIEW (view));
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_VIEW (view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* create a new window */
   notebook = thunar_window_notebook_create_window (window->notebook_selected, view, -1, -1, window);
   if (notebook == NULL)
-    return;
+    return TRUE;
 
   /* get the current label */
   label = gtk_notebook_get_tab_label (GTK_NOTEBOOK (window->notebook_selected), view);
-  _thunar_return_if_fail (GTK_IS_WIDGET (label));
+  _thunar_return_val_if_fail (GTK_IS_WIDGET (label), FALSE);
 
   /* ref object so they don't destroy when removed from the container */
   g_object_ref (label);
@@ -3120,11 +3135,14 @@ thunar_window_action_detach_tab (ThunarWindow *window,
   /* release */
   g_object_unref (label);
   g_object_unref (view);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_close_all_windows (ThunarWindow *window,
                                         GtkWidget    *menu_item)
 {
@@ -3138,11 +3156,14 @@ thunar_window_action_close_all_windows (ThunarWindow *window,
 
   /* destroy all open windows */
   g_list_free_full (windows, (GDestroyNotify) gtk_widget_destroy);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_close_tab (ThunarWindow *window,
                                 GtkWidget    *menu_item)
 {
@@ -3158,11 +3179,14 @@ thunar_window_action_close_tab (ThunarWindow *window,
       else if (window->view != NULL)
         gtk_widget_destroy (window->view);
     }
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_close_window (ThunarWindow *window,
                                    GtkWidget    *menu_item)
 {
@@ -3171,18 +3195,21 @@ thunar_window_action_close_window (ThunarWindow *window,
   response = thunar_window_delete (GTK_WIDGET (window), NULL, NULL);
   if (response == FALSE)
     gtk_widget_destroy (GTK_WIDGET (window));
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_preferences (ThunarWindow *window,
                                   GtkWidget    *menu_item)
 {
   GtkWidget         *dialog;
   ThunarApplication *application;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* allocate and display a preferences dialog */;
   dialog = thunar_preferences_dialog_new (GTK_WINDOW (window));
@@ -3192,17 +3219,20 @@ thunar_window_action_preferences (ThunarWindow *window,
   application = thunar_application_get ();
   thunar_application_take_window (application, GTK_WINDOW (dialog));
   g_object_unref (G_OBJECT (application));
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_reload (ThunarWindow *window,
                              GtkWidget    *menu_item)
 {
   gboolean result;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* force the view to reload */
   g_signal_emit (G_OBJECT (window), window_signals[RELOAD], 0, TRUE, &result);
@@ -3210,11 +3240,14 @@ thunar_window_action_reload (ThunarWindow *window,
   /* update the location bar to show the current directory */
   if (window->location_bar != NULL)
     g_object_notify (G_OBJECT (window->location_bar), "current-directory");
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_toggle_split_view (ThunarWindow *window)
 {
 
@@ -3224,8 +3257,8 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
   GType          view_type;
   GtkAllocation  allocation;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
-  _thunar_return_if_fail (window->view_type != G_TYPE_NONE);
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+  _thunar_return_val_if_fail (window->view_type != G_TYPE_NONE, FALSE);
 
   if (thunar_window_split_view_is_active (window))
     {
@@ -3275,17 +3308,20 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
       g_signal_connect_swapped (window->paned, "accept-position", G_CALLBACK (thunar_window_save_paned_notebooks), window);
       g_signal_connect_swapped (window->paned, "button-release-event", G_CALLBACK (thunar_window_save_paned_notebooks), window);
     }
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_pathbar_changed (ThunarWindow *window)
 {
   gchar    *last_location_bar;
   gboolean  pathbar_checked;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   g_object_get (window->preferences, "last-location-bar", &last_location_bar, NULL);
   pathbar_checked = exo_str_is_equal (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_ENTRY));
@@ -3295,17 +3331,20 @@ thunar_window_action_pathbar_changed (ThunarWindow *window)
     g_object_set (window->preferences, "last-location-bar", g_type_name (G_TYPE_NONE), NULL);
   else
     g_object_set (window->preferences, "last-location-bar", g_type_name (THUNAR_TYPE_LOCATION_ENTRY), NULL);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_toolbar_changed (ThunarWindow *window)
 {
   gchar    *last_location_bar;
   gboolean  toolbar_checked;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   g_object_get (window->preferences, "last-location-bar", &last_location_bar, NULL);
   toolbar_checked = exo_str_is_equal (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS));
@@ -3315,18 +3354,21 @@ thunar_window_action_toolbar_changed (ThunarWindow *window)
     g_object_set (window->preferences, "last-location-bar", g_type_name (G_TYPE_NONE), NULL);
   else
     g_object_set (window->preferences, "last-location-bar", g_type_name (THUNAR_TYPE_LOCATION_BUTTONS), NULL);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_shortcuts_changed (ThunarWindow *window)
 {
   gchar    *last_side_pane;
   gboolean  shortcuts_checked;
   GType     type = G_TYPE_NONE;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   g_object_get (window->preferences, "last-side-pane", &last_side_pane, NULL);
   shortcuts_checked = exo_str_is_equal (last_side_pane, g_type_name (THUNAR_TYPE_SHORTCUTS_PANE));
@@ -3338,18 +3380,21 @@ thunar_window_action_shortcuts_changed (ThunarWindow *window)
     type = THUNAR_TYPE_SHORTCUTS_PANE;
 
   thunar_window_install_sidepane (window, type);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_tree_changed (ThunarWindow *window)
 {
   gchar    *last_side_pane;
   gboolean  tree_view_checked;
   GType     type = G_TYPE_NONE;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   g_object_get (window->preferences, "last-side-pane", &last_side_pane, NULL);
   tree_view_checked = exo_str_is_equal (last_side_pane, g_type_name (THUNAR_TYPE_TREE_PANE));
@@ -3361,22 +3406,28 @@ thunar_window_action_tree_changed (ThunarWindow *window)
     type = THUNAR_TYPE_TREE_PANE;
 
   thunar_window_install_sidepane (window, type);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_statusbar_changed (ThunarWindow *window)
 {
   gboolean last_statusbar_visible;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   g_object_get (window->preferences, "last-statusbar-visible", &last_statusbar_visible, NULL);
 
   gtk_widget_set_visible (window->statusbar, !last_statusbar_visible);
 
   g_object_set (G_OBJECT (window->preferences), "last-statusbar-visible", !last_statusbar_visible, NULL);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
@@ -3395,23 +3446,26 @@ thunar_window_action_menubar_update (ThunarWindow *window)
 
 
 
-static void
+static gboolean
 thunar_window_action_menubar_changed (ThunarWindow *window)
 {
   gboolean last_menubar_visible;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   g_object_get (window->preferences, "last-menubar-visible", &last_menubar_visible, NULL);
 
   gtk_widget_set_visible (window->menubar, !last_menubar_visible);
 
   g_object_set (G_OBJECT (window->preferences), "last-menubar-visible", !last_menubar_visible, NULL);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_clear_directory_specific_settings (ThunarWindow *window)
 {
   GType       view_type;
@@ -3428,11 +3482,14 @@ thunar_window_action_clear_directory_specific_settings (ThunarWindow *window)
 
   /* replace the active view with a new one of the correct type */
   thunar_window_replace_view (window, window->view, view_type);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_detailed_view (ThunarWindow *window)
 {
   thunar_window_action_view_changed (window, THUNAR_TYPE_DETAILS_VIEW);
@@ -3440,24 +3497,33 @@ thunar_window_action_detailed_view (ThunarWindow *window)
                                                        thunar_file_is_trash (window->current_directory));
   thunar_details_view_set_recency_column_visible (THUNAR_DETAILS_VIEW (window->view),
                                                   thunar_file_is_recent (window->current_directory));
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_icon_view (ThunarWindow *window)
 {
   if (window->is_searching == FALSE)
     thunar_window_action_view_changed (window, THUNAR_TYPE_ICON_VIEW);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_compact_view (ThunarWindow *window)
 {
   if (window->is_searching == FALSE)
     thunar_window_action_view_changed (window, THUNAR_TYPE_COMPACT_VIEW);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
@@ -3599,7 +3665,7 @@ thunar_window_action_view_changed (ThunarWindow *window,
 
 
 
-static void
+static gboolean
 thunar_window_action_go_up (ThunarWindow *window)
 {
   ThunarFile *parent;
@@ -3620,44 +3686,53 @@ thunar_window_action_go_up (ThunarWindow *window)
         }
       g_error_free (error);
     }
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_back (ThunarWindow *window)
 {
   ThunarHistory *history;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (window->view));
   thunar_history_action_back (history);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_forward (ThunarWindow *window)
 {
   ThunarHistory *history;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (window->view));
   thunar_history_action_forward (history);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_open_home (ThunarWindow *window)
 {
   GFile         *home;
   ThunarFile    *home_file;
   GError        *error = NULL;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* determine the path to the home directory */
   home = thunar_g_file_new_for_home ();
@@ -3679,6 +3754,9 @@ thunar_window_action_open_home (ThunarWindow *window)
 
   /* release our reference on the home path */
   g_object_unref (home);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
@@ -3775,24 +3853,27 @@ thunar_window_open_user_folder (ThunarWindow   *window,
 
 
 
-static void
+static gboolean
 thunar_window_action_open_desktop (ThunarWindow *window)
 {
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   thunar_window_open_user_folder (window, G_USER_DIRECTORY_DESKTOP, "Desktop");
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_open_computer (ThunarWindow *window)
 {
   GFile         *computer;
   ThunarFile    *computer_file;
   GError        *error = NULL;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* determine the computer location */
   computer = thunar_g_file_new_for_computer();
@@ -3814,11 +3895,14 @@ thunar_window_action_open_computer (ThunarWindow *window)
 
   /* release our reference on the location itself */
   g_object_unref (computer);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_open_templates (ThunarWindow *window)
 {
   GtkWidget     *dialog;
@@ -3830,7 +3914,7 @@ thunar_window_action_open_templates (ThunarWindow *window)
   gboolean       show_about_templates;
   gboolean       success;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   success = thunar_window_open_user_folder (window, G_USER_DIRECTORY_TEMPLATES, "Templates");
 
@@ -3893,18 +3977,21 @@ thunar_window_action_open_templates (ThunarWindow *window)
       gtk_dialog_run (GTK_DIALOG (dialog));
       gtk_widget_destroy (dialog);
     }
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_open_file_system (ThunarWindow *window)
 {
   GFile         *root;
   ThunarFile    *root_file;
   GError        *error = NULL;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* determine the path to the root directory */
   root = thunar_g_file_new_for_root ();
@@ -3926,18 +4013,21 @@ thunar_window_action_open_file_system (ThunarWindow *window)
 
   /* release our reference on the home path */
   g_object_unref (root);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_open_recent (ThunarWindow *window)
 {
   GFile      *recent;
   ThunarFile *recent_file;
   GError     *error = NULL;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* determine the path to `Recent` */
   recent = thunar_g_file_new_for_recent ();
@@ -3959,18 +4049,21 @@ thunar_window_action_open_recent (ThunarWindow *window)
 
   /* release our reference on the `Recent` path */
   g_object_unref (recent);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_open_trash (ThunarWindow *window)
 {
   GFile      *trash_bin;
   ThunarFile *trash_bin_file;
   GError     *error = NULL;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* determine the path to the trash bin */
   trash_bin = thunar_g_file_new_for_trash ();
@@ -3992,18 +4085,21 @@ thunar_window_action_open_trash (ThunarWindow *window)
 
   /* release our reference on the trash bin path */
   g_object_unref (trash_bin);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_open_network (ThunarWindow *window)
 {
   ThunarFile *network_file;
   GError     *error = NULL;
   GFile      *network;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* determine the network root location */
   network = thunar_g_file_new_for_network();
@@ -4025,6 +4121,9 @@ thunar_window_action_open_network (ThunarWindow *window)
 
   /* release our reference on the location itself */
   g_object_unref (network);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
@@ -4092,39 +4191,48 @@ thunar_window_action_open_bookmark (GFile *g_file)
 
 
 
-static void
+static gboolean
 thunar_window_action_open_location (ThunarWindow *window)
 {
   /* just use the "start-open-location" callback */
   thunar_window_start_open_location (window, NULL);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_contents (ThunarWindow *window)
 {
   /* display the documentation index */
   xfce_dialog_show_help (GTK_WINDOW (window), "thunar", NULL, NULL);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_about (ThunarWindow *window)
 {
   /* just popup the about dialog */
   thunar_dialogs_show_about (GTK_WINDOW (window), PACKAGE_NAME,
                              _("Thunar is a fast and easy to use file manager\n"
                                "for the Xfce Desktop Environment."));
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_show_hidden (ThunarWindow *window)
 {
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   window->show_hidden = !window->show_hidden;
   gtk_container_foreach (GTK_CONTAINER (window->notebook_selected), (GtkCallback) (void (*)(void)) thunar_view_set_show_hidden, GINT_TO_POINTER (window->show_hidden));
@@ -4133,25 +4241,31 @@ thunar_window_action_show_hidden (ThunarWindow *window)
     thunar_side_pane_set_show_hidden (THUNAR_SIDE_PANE (window->sidepane), window->show_hidden);
 
   g_object_set (G_OBJECT (window->preferences), "last-show-hidden", window->show_hidden, NULL);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-void
+gboolean
 thunar_window_action_search (ThunarWindow *window)
 {
   thunar_window_start_open_location (window, SEARCH_PREFIX);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
 
-static void
+static gboolean
 thunar_window_action_open_file_menu (ThunarWindow *window)
 {
   gboolean  ret;
   GList    *children;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* In case the menubar is hidden, we make it visible (e.g. when F10 is pressed) */
   gtk_widget_set_visible (window->menubar, TRUE);
@@ -4160,6 +4274,9 @@ thunar_window_action_open_file_menu (ThunarWindow *window)
   g_signal_emit_by_name (children->data, "button-press-event", NULL, &ret);
   g_list_free (children);
   gtk_menu_shell_select_first (GTK_MENU_SHELL (window->menubar), TRUE);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
