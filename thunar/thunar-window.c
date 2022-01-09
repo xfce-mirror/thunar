@@ -924,7 +924,7 @@ thunar_window_init (ThunarWindow *window)
   g_object_bind_property (G_OBJECT (window->preferences), "misc-directory-specific-settings", G_OBJECT (window), "directory-specific-settings", G_BINDING_SYNC_CREATE);
 
   /* setup the `Show More...` button that appears at the bottom of the view after a search is completed */
-  window->catfish_search_button = gtk_button_new_with_label ("Show More...");
+  window->catfish_search_button = gtk_button_new_with_label ("Search with Catfish...");
   gtk_grid_attach (GTK_GRID (window->view_box), window->catfish_search_button, 0, 3, 1, 1);
   g_signal_connect_swapped (window->catfish_search_button, "clicked", G_CALLBACK (thunar_window_catfish_dialog_configure), window);
   gtk_widget_hide (window->catfish_search_button);
