@@ -22,6 +22,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#ifdef HAVE_TIME_H
+#include <time.h>
+#endif
 
 #include <gdk/gdkkeysyms.h>
 
@@ -153,8 +156,8 @@ static gboolean                 thunar_tree_view_selection_func               (G
                                                                                GtkTreePath             *path,
                                                                                gboolean                 path_currently_selected,
                                                                                gpointer                 user_data);
-static gboolean                 thunar_tree_view_cursor_idle                  (gpointer                 user_data);
-static void                     thunar_tree_view_cursor_idle_destroy          (gpointer                 user_data);
+static gboolean                 thunar_tree_view_set_cursor                   (gpointer                 user_data);
+static void                     set_cursor_event_source_destroy               (gpointer                 user_data);
 static gboolean                 thunar_tree_view_drag_scroll_timer            (gpointer                 user_data);
 static void                     thunar_tree_view_drag_scroll_timer_destroy    (gpointer                 user_data);
 static gboolean                 thunar_tree_view_expand_timer                 (gpointer                 user_data);
@@ -219,7 +222,8 @@ struct _ThunarTreeView
   gulong                  queue_resize_signal_id;
 
   /* set cursor to current directory idle source */
-  guint                   cursor_idle_id;
+  guint                   set_cursor_event_source_id;
+  time_t                  set_cursor_start_timestamp;
 
   /* autoscroll during drag timer source */
   guint                   drag_scroll_timer_id;
@@ -436,8 +440,8 @@ thunar_tree_view_finalize (GObject *object)
   g_signal_handler_disconnect (G_OBJECT (view->preferences), view->queue_resize_signal_id);
 
   /* be sure to cancel the cursor idle source */
-  if (G_UNLIKELY (view->cursor_idle_id != 0))
-    g_source_remove (view->cursor_idle_id);
+  if (G_UNLIKELY (view->set_cursor_event_source_id != 0))
+    g_source_remove (view->set_cursor_event_source_id);
 
   /* cancel any running autoscroll timer */
   if (G_LIKELY (view->drag_scroll_timer_id != 0))
@@ -614,9 +618,13 @@ thunar_tree_view_set_current_directory (ThunarNavigator *navigator,
             }
         }
 
-      /* schedule an idle source to set the cursor to the current directory */
-      if (G_LIKELY (view->cursor_idle_id == 0))
-        view->cursor_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_tree_view_cursor_idle, view, thunar_tree_view_cursor_idle_destroy);
+      /* set the cursor to the current directory, and unfold the tree accordingly */
+      /* Multiple iterations might be needed here. We throttle the call to prevent CPU spikes in certain cases */
+      /* If we fail to set the cursor in 5 seconds, the operation is aborted. */
+      view->set_cursor_start_timestamp = time (NULL);
+      if (G_LIKELY (view->set_cursor_event_source_id == 0))
+        view->set_cursor_event_source_id = g_timeout_add_full (G_PRIORITY_LOW, 10, thunar_tree_view_set_cursor,
+                                                               view, set_cursor_event_source_destroy);
     }
 
   /* refilter the model if necessary */
@@ -1174,8 +1182,8 @@ thunar_tree_view_test_expand_row (GtkTreeView *tree_view,
     }
 
   /* cancel the cursor idle source if not expandable */
-  if (!expandable && view->cursor_idle_id != 0)
-    g_source_remove (view->cursor_idle_id);
+  if (!expandable && view->set_cursor_event_source_id != 0)
+    g_source_remove (view->set_cursor_event_source_id);
 
   return !expandable;
 }
@@ -1631,7 +1639,7 @@ thunar_tree_view_selection_func (GtkTreeSelection *selection,
 
 
 static gboolean
-thunar_tree_view_cursor_idle (gpointer user_data)
+thunar_tree_view_set_cursor (gpointer user_data)
 {
   ThunarTreeView *view = THUNAR_TREE_VIEW (user_data);
   GtkTreePath    *path;
@@ -1644,6 +1652,13 @@ thunar_tree_view_cursor_idle (gpointer user_data)
   gboolean        done = FALSE;
   GList          *lp;
   GList          *path_as_list = NULL;
+
+  /* Stop attempt to set the cursor if we fail to do so after 5 seconds */
+  if (time (NULL) > view->set_cursor_start_timestamp + 5)
+    {
+      g_warning ("Failed to set the tree-view cursor in less than 5 seconds. Aborting the operation.");
+      return FALSE;
+    }
 
 THUNAR_THREADS_ENTER
 
@@ -1744,7 +1759,7 @@ THUNAR_THREADS_ENTER
                 }
             }
           break; /* we dont have a valid child_iter by now, so we cannot continue.                         */
-                 /* Since done is FALSE, the next iteration on thunar_tree_view_cursor_idle will go deeper */
+                 /* Since done is FALSE, the next iteration on thunar_tree_view_set_cursor will go deeper */
         }
 
       /* expand path up to the current tree level */
@@ -1772,9 +1787,9 @@ THUNAR_THREADS_LEAVE
 
 
 static void
-thunar_tree_view_cursor_idle_destroy (gpointer user_data)
+set_cursor_event_source_destroy (gpointer user_data)
 {
-  THUNAR_TREE_VIEW (user_data)->cursor_idle_id = 0;
+  THUNAR_TREE_VIEW (user_data)->set_cursor_event_source_id = 0;
 }
 
 
