@@ -312,6 +312,8 @@ static void      thunar_window_recent_reload                   (GtkRecentManager
                                                                 ThunarWindow           *window);
 static void      thunar_window_catfish_dialog_configure        (GtkWidget              *entry);
 static gboolean  thunar_window_paned_notebooks_update_orientation (ThunarWindow *window);
+static void      thunar_window_location_toolbar_add_ucas       (ThunarWindow           *window);
+static void      thunar_window_location_toolbar_load_last_order(ThunarWindow           *window);
 
 
 
@@ -790,6 +792,121 @@ thunar_gtk_toolbar_thunarx_toolbar_item_new (GObject      *thunarx_menu_item,
 
 
 static void
+thunar_window_location_toolbar_add_ucas (ThunarWindow *window)
+{
+  GtkWidget              *gtk_menu_item;
+  ThunarxProviderFactory *provider_factory;
+  GList                  *providers;
+  GList                  *thunarx_menu_items = NULL;
+  GList                  *lp_provider;
+  GList                  *lp_item;
+
+  /* load the menu providers from the provider factory */
+  provider_factory = thunarx_provider_factory_get_default ();
+  providers = thunarx_provider_factory_list_providers (provider_factory, THUNARX_TYPE_MENU_PROVIDER);
+  g_object_unref (provider_factory);
+
+  if (G_UNLIKELY (providers != NULL))
+    {
+      /* load the menu items offered by the menu providers */
+      for (lp_provider = providers; lp_provider != NULL; lp_provider = lp_provider->next)
+        {
+          thunarx_menu_items = thunarx_menu_provider_get_folder_menu_items (lp_provider->data, GTK_WIDGET (window), THUNARX_FILE_INFO (thunar_file_get (thunar_g_file_new_for_home (), NULL)));
+
+          for (lp_item = thunarx_menu_items; lp_item != NULL; lp_item = lp_item->next)
+            {
+              gchar *name;
+
+              g_object_get (G_OBJECT (lp_item->data), "name", &name, NULL);
+              if (strncmp("uca-action", name, 10) != 0)
+                {
+                  g_free (name);
+                  break;
+                }
+              g_free (name);
+
+              thunar_gtk_toolbar_thunarx_toolbar_item_new (lp_item->data, window);
+            }
+
+          g_list_free (thunarx_menu_items);
+        }
+      g_list_free_full (providers, g_object_unref);
+    }
+}
+
+
+
+/**
+ * thunar_window_location_toolbar_load_last_order:
+ * @window            : a #ThunarWindow instance.
+ *
+ * Load the order of toolbar items stored in `last-toolbar-button-order`.
+ **/
+ /* NOTE TO ALEX: A large part of this is duplicated in thunar_toolbar_editor_load_model_state, any ideas? */
+static void
+thunar_window_location_toolbar_load_last_order (ThunarWindow *window)
+{
+  gchar      **item_order;
+  guint        item_order_length;
+  gchar       *tmp;
+  guint        item_count = thunar_window_toolbar_item_count (window);
+  guint        target_order[item_count];  /* item_order converted to guint and without invalid entries (i.e. entries >= item_count */
+  guint        current_order[item_count]; /* NOTE TO ALEX: this could be moved to ThunarWindow */
+
+  /* determine the column order from the preferences */
+  g_object_get (G_OBJECT (window->preferences), "last-toolbar-item-order", &tmp, NULL);
+  item_order = g_strsplit (tmp, ",", -1);
+  item_order_length = g_strv_length (item_order);
+  g_free (tmp);
+
+  /* for this to work the toolbar must be in the default order */
+  for (guint i = 0; i < item_count; i++)
+    current_order[i] = i;
+
+  for (guint i = 0; i < item_count; i++)
+    target_order[i] = i;
+
+  /* convert strings to guints for convenience */
+  for (guint i = 0, j = 0; i < item_order_length; i++)
+    {
+      guint n;
+
+      if (g_ascii_string_to_unsigned (item_order[i], 10, 0, UINT_MAX, &n, NULL) == FALSE)
+        g_error ("Invalid entry in \"last-toolbar-button-order\"");
+
+      /* the entry is invalid, it is likely that a custom action was removed and the preference hasn't been updated */
+      if (n >= item_count)
+        continue;
+
+      target_order[j] = n;
+      j++;
+    }
+
+  /* now rearrange the toolbar items, the goal is to make the current_order like the target_order */
+  for (guint i = 0; i < item_count; i++)
+    {
+      guint x = target_order[i];
+      for (guint j = 0; j < item_count; j++)
+        {
+          guint y = current_order[j];
+          if (x == y && i != j)
+            {
+              /* swap the positions of the toolbar items */
+              thunar_window_toolbar_exchange_items (window, i, j);
+              current_order[i] = target_order[i];
+              current_order[j] = target_order[j];
+              break;
+            }
+        }
+    }
+
+  /* release the column order */
+  g_strfreev (item_order);
+}
+
+
+
+static void
 thunar_window_init (ThunarWindow *window)
 {
   GtkWidget       *label;
@@ -1020,50 +1137,17 @@ thunar_window_init (ThunarWindow *window)
   /* add the location bar itself */
   gtk_container_add (GTK_CONTAINER (tool_item), window->location_bar);
 
-  /* Add custom actions */
-  GtkWidget              *gtk_menu_item;
-  ThunarxProviderFactory *provider_factory;
-  GList                  *providers;
-  GList                  *thunarx_menu_items = NULL;
-  GList                  *lp_provider;
-  GList                  *lp_item;
+  /* add custom actions to the toolbar */
+  thunar_window_location_toolbar_add_ucas (window);
 
-  /* load the menu providers from the provider factory */
-  provider_factory = thunarx_provider_factory_get_default ();
-  providers = thunarx_provider_factory_list_providers (provider_factory, THUNARX_TYPE_MENU_PROVIDER);
-  g_object_unref (provider_factory);
-
-  if (G_UNLIKELY (providers != NULL))
-    {
-      /* load the menu items offered by the menu providers */
-      for (lp_provider = providers; lp_provider != NULL; lp_provider = lp_provider->next)
-        {
-          thunarx_menu_items = thunarx_menu_provider_get_folder_menu_items (lp_provider->data, GTK_WIDGET (window), THUNARX_FILE_INFO (thunar_file_get (thunar_g_file_new_for_home (), NULL)));
-
-          for (lp_item = thunarx_menu_items; lp_item != NULL; lp_item = lp_item->next)
-            {
-              gchar *name;
-
-              g_object_get (G_OBJECT (lp_item->data), "name", &name, NULL);
-              if (strncmp("uca-action", name, 10) != 0)
-                {
-                  g_free (name);
-                  break;
-                }
-              g_free (name);
-
-              thunar_gtk_toolbar_thunarx_toolbar_item_new (lp_item->data, window);
-            }
-
-          g_list_free (thunarx_menu_items);
-        }
-      g_list_free_full (providers, g_object_unref);
-    }
+  /* load the correct order of items in the toolbar */
+  thunar_window_location_toolbar_load_last_order (window);
 
   /* display the toolbar */
   gtk_widget_show_all (window->location_toolbar);
 
-  g_free (last_location_bar);
+  // FIXME: segfault for some reason, also is this used anywhere?
+//  g_free (last_location_bar);
 
   /* setup setting the location bar visibility on-demand */
   g_signal_connect_object (G_OBJECT (window->preferences), "notify::last-location-bar", G_CALLBACK (thunar_window_update_location_bar_visible), window, G_CONNECT_SWAPPED);
@@ -5577,7 +5661,9 @@ thunar_window_toolbar_exchange_items (ThunarWindow *window,
                                       gint          index_a,
                                       gint          index_b)
 {
-  GList *toolbar_items, *lp;
+  GList     *toolbar_items, *lp;
+  GtkWidget *item_a;
+  GtkWidget *item_b;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (index_a >= 0);
@@ -5591,15 +5677,41 @@ thunar_window_toolbar_exchange_items (ThunarWindow *window,
 
   for (gint i = 0; lp != NULL; lp = lp->next, i++)
     {
-      GtkWidget *item = lp->data;
       if (index_a == i)
-        {
-          g_object_ref (item);
-          gtk_container_remove (GTK_CONTAINER (window->location_toolbar), item);
-          gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), GTK_TOOL_ITEM (item), index_b);
-          break;
-        }
+        item_a = lp->data;
+      if (index_b == i)
+        item_b = lp->data;
     }
 
+  g_object_ref (item_a);
+  gtk_container_remove (GTK_CONTAINER (window->location_toolbar), item_a);
+  gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), GTK_TOOL_ITEM (item_a), index_b);
+  g_object_unref (item_a);
+
+  g_object_ref (item_b);
+  gtk_container_remove (GTK_CONTAINER (window->location_toolbar), item_b);
+  gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), GTK_TOOL_ITEM (item_b), index_a);
+  g_object_unref (item_b);
+
   g_list_free (toolbar_items);
+}
+
+
+
+guint
+thunar_window_toolbar_item_count (ThunarWindow *window)
+{
+  GList *toolbar_items;
+  guint  count = 0;
+
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), count);
+
+  if (window->location_toolbar == NULL)
+    return count;
+
+  toolbar_items = gtk_container_get_children (GTK_CONTAINER (window->location_toolbar));
+  count = g_list_length (toolbar_items);
+  g_list_free (toolbar_items);
+
+  return count;
 }
