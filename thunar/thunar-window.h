@@ -154,6 +154,7 @@ void                      thunar_window_toolbar_toggle_item                 (Thu
 void                      thunar_window_toolbar_exchange_items              (ThunarWindow        *window,
                                                                              gint                 index_a,
                                                                              gint                 index_b);
+guint                     thunar_window_toolbar_item_count                  (ThunarWindow        *window);
 
 XfceGtkActionEntry*       thunar_window_get_action_entries                  (void);
 

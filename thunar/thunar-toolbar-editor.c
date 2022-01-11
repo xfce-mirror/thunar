@@ -49,6 +49,8 @@ static void thunar_toolbar_editor_toggled            (GtkCellRendererToggle    *
 static void thunar_toolbar_editor_update_buttons     (ThunarToolbarEditor      *toolbar_editor);
 static void thunar_toolbar_editor_use_defaults       (GtkWidget                *button,
                                                       ThunarToolbarEditor      *toolbar_editor);
+static void thunar_toolbar_editor_save_model         (ThunarToolbarEditor      *toolbar_editor);
+static void thunar_toolbar_editor_load_model_state   (ThunarToolbarEditor      *toolbar_editor);
 
 
 
@@ -102,6 +104,7 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   GtkWidget              *vbox;
   GtkWidget              *swin;
   gint                    row = 0;
+  gint                    item_order = 0;
   /* Add custom actions */
   GList                  *windows;
   ThunarWindow           *window;
@@ -115,13 +118,14 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   toolbar_editor->preferences = thunar_preferences_get ();
 
   /* grab a reference on the shared toolbar model */
-  toolbar_editor->model = gtk_list_store_new (3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING);
+  toolbar_editor->model = gtk_list_store_new (4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
 
   gtk_list_store_append (toolbar_editor->model, &iter);
   gtk_list_store_set (toolbar_editor->model, &iter,
                       0, TRUE,
                       1, "go-previous-symbolic",
                       2, "Previous",
+                      3, item_order++,
                       -1);
 
   gtk_list_store_append (toolbar_editor->model, &iter);
@@ -129,6 +133,7 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
                       0, TRUE,
                       1, "go-next-symbolic",
                       2, "Next",
+                      3, item_order++,
                       -1);
 
   gtk_list_store_append (toolbar_editor->model, &iter);
@@ -136,6 +141,7 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
                       0, TRUE,
                       1, "go-up-symbolic",
                       2, "Up",
+                      3, item_order++,
                       -1);
 
   gtk_list_store_append (toolbar_editor->model, &iter);
@@ -143,6 +149,7 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
                       0, TRUE,
                       1, "go-home-symbolic",
                       2, "Home",
+                      3, item_order++,
                       -1);
 
   gtk_list_store_append (toolbar_editor->model, &iter);
@@ -150,6 +157,7 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
                       0, TRUE,
                       1, "",
                       2, "Location Bar",
+                      3, item_order++,
                       -1);
 
   /* Add Custom Actions */
@@ -192,6 +200,7 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
                                   0, TRUE,
                                   1, icon_name,
                                   2, label_text,
+                                  3, item_order++,
                                   -1);
 
               g_free (name);
@@ -203,6 +212,9 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
         }
       g_list_free_full (providers, g_object_unref);
     }
+
+  /* load previous state */
+  thunar_toolbar_editor_load_model_state (toolbar_editor);
 
   /* connect after model has been fully initialized */
   g_signal_connect_data (G_OBJECT (toolbar_editor->model), "row-changed", G_CALLBACK (thunar_toolbar_editor_update_buttons),
@@ -358,6 +370,8 @@ thunar_toolbar_editor_finalize (GObject *object)
 {
   ThunarToolbarEditor *toolbar_editor = THUNAR_TOOLBAR_EDITOR (object);
 
+  thunar_toolbar_editor_save_model (toolbar_editor);
+
   /* release our reference on the shared toolbar model */
   g_signal_handlers_disconnect_matched (G_OBJECT (toolbar_editor->model), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, toolbar_editor);
   g_object_unref (G_OBJECT (toolbar_editor->model));
@@ -494,6 +508,8 @@ thunar_toolbar_editor_toggled (GtkCellRendererToggle *cell_renderer,
       ThunarWindow *window = lp->data;
       thunar_window_toolbar_toggle_item (window, gtk_tree_path_get_indices (path)[0]);
     }
+
+  g_list_free (windows);
   gtk_tree_path_free (path);
 }
 
@@ -539,30 +555,139 @@ static void
 thunar_toolbar_editor_use_defaults (GtkWidget          *button,
                                    ThunarToolbarEditor *toolbar_editor)
 {
-  static const gchar *PROPERTY_NAMES[] =
-  {
-    "last-details-view-toolbar-order",
-    "last-details-view-visible-toolbars",
-  };
+  GString    *item_order;
+  guint       item_count;
 
-  GtkTreeSelection *selection;
-  GParamSpec       *pspec;
-  GValue            value = { 0, };
-  guint             n;
+  /* allocate a string for the column order */
+  item_order = g_string_new ("0,1,2,3,4");
 
-  /* reset the given properties to its default values */
-  for (n = 0; n < G_N_ELEMENTS (PROPERTY_NAMES); ++n)
+  /* save the list of visible columns */
+  g_object_set (G_OBJECT (toolbar_editor->preferences), "last-toolbar-item-order", item_order->str, NULL);
+  /* TODO: reset model */
+  /* TODO: tell windows to reload the toolbar */
+
+  /* release the string */
+  g_string_free (item_order, TRUE);
+}
+
+
+
+static void
+thunar_toolbar_editor_save_model (ThunarToolbarEditor *toolbar_editor)
+{
+  GString    *item_order;
+  guint       item_count;
+
+  /* allocate a string for the column order */
+  item_order = g_string_sized_new (256);
+
+  item_count = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (toolbar_editor->model), NULL);
+
+  /* transform the internal visible column list */
+  for (guint i = 0; i < item_count; i++)
     {
-      pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (toolbar_editor->preferences), PROPERTY_NAMES[n]);
-      g_value_init (&value, pspec->value_type);
-      g_param_value_set_default (pspec, &value);
-      g_object_set_property (G_OBJECT (toolbar_editor->preferences), PROPERTY_NAMES[n], &value);
-      g_value_unset (&value);
+      GtkTreeIter iter;
+      gchar      *path;
+      gint        order;
+      gchar      *order_str;
+
+      /* append a comma if not empty */
+      if (*item_order->str != '\0')
+        g_string_append_c (item_order, ',');
+
+      /* get iterator for the ith item */
+      path = g_strdup_printf("%i", i);
+      gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (toolbar_editor->model), &iter, path);
+      g_free (path);
+
+      /* get the order value of the entry and store it */
+      gtk_tree_model_get (GTK_TREE_MODEL (toolbar_editor->model), &iter, 3, &order, -1);
+      order_str = g_strdup_printf("%i", order);
+      g_string_append (item_order, order_str);
+      g_free (order_str);
     }
 
-  /* reset the tree view selection */
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (toolbar_editor->tree_view));
-  gtk_tree_selection_unselect_all (selection);
+  /* save the list of visible columns */
+  g_object_set (G_OBJECT (toolbar_editor->preferences), "last-toolbar-item-order", item_order->str, NULL);
+
+  /* release the string */
+  g_string_free (item_order, TRUE);
+}
+
+
+
+static void
+thunar_toolbar_editor_load_model_state (ThunarToolbarEditor *toolbar_editor)
+{
+  gchar      **item_order;
+  guint        item_order_length;
+  gchar       *tmp;
+  guint        item_count = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (toolbar_editor->model), NULL);
+  guint        target_order[item_count]; /* item_order converted to guint and without invalid entries (i.e. entries >= item_count */
+  guint        current_order[item_count];
+
+  /* determine the column order from the preferences */
+  g_object_get (G_OBJECT (toolbar_editor->preferences), "last-toolbar-item-order", &tmp, NULL);
+  item_order = g_strsplit (tmp, ",", -1);
+  item_order_length = g_strv_length (item_order);
+  g_free (tmp);
+
+  /* for this to work the toolbar must be in the default order */
+  for (guint i = 0; i < item_count; i++)
+    current_order[i] = i;
+
+  for (guint i = 0; i < item_count; i++)
+    target_order[i] = i;
+
+  /* convert strings to guints for convenience */
+  for (guint i = 0, j = 0; i < item_order_length; i++)
+    {
+      guint n;
+
+      if (g_ascii_string_to_unsigned (item_order[i], 10, 0, UINT_MAX, &n, NULL) == FALSE)
+        g_error ("Invalid entry in \"last-toolbar-button-order\"");
+
+      /* the entry is invalid, it is likely that a custom action was removed and the preference hasn't been updated */
+      if (n >= item_count)
+        continue;
+
+      target_order[j] = n;
+      j++;
+    }
+
+  /* now rearrange the toolbar items, the goal is to make the current_order like the target_order */
+  for (guint i = 0; i < item_count; i++)
+    {
+      guint x = target_order[i];
+      for (guint j = 0; j < item_count; j++)
+        {
+          guint y = current_order[j];
+          if (x == y && i != j)
+            {
+              GtkTreeIter iter_i;
+              GtkTreeIter iter_j;
+              gchar      *path_i;
+              gchar      *path_j;
+
+              path_i = g_strdup_printf("%i", i);
+              path_j = g_strdup_printf("%i", j);
+
+              /* swap the positions of the toolbar items */
+              gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (toolbar_editor->model), &iter_i, path_i);
+              gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (toolbar_editor->model), &iter_j, path_j);
+              gtk_list_store_swap (GTK_LIST_STORE (toolbar_editor->model), &iter_i, &iter_j);
+              current_order[i] = target_order[i];
+              current_order[j] = target_order[j];
+
+              g_free (path_i);
+              g_free (path_j);
+              break;
+            }
+        }
+    }
+
+  /* release the column order */
+  g_strfreev (item_order);
 }
 
 
