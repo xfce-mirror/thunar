@@ -699,7 +699,6 @@ thunar_window_check_activate_uca (UCAActivation *data)
 {
   ThunarWindow           *window              = data->window;
   gchar                  *action_name         = data->action_name;
-  GtkWidget              *gtk_menu_item;
   ThunarxProviderFactory *provider_factory;
   GList                  *providers;
   GList                  *thunarx_menu_items  = NULL;
@@ -743,7 +742,6 @@ thunar_gtk_toolbar_thunarx_toolbar_item_new (GObject      *thunarx_menu_item,
                                              ThunarWindow *window)
 {
   gchar         *name, *label_text, *tooltip_text, *icon_name;
-  GList         *children;
   GtkWidget     *image = NULL;
   GIcon         *icon = NULL;
   GtkToolItem   *tool_item;
@@ -790,7 +788,6 @@ thunar_gtk_toolbar_thunarx_toolbar_item_new (GObject      *thunarx_menu_item,
 static void
 thunar_window_location_toolbar_add_ucas (ThunarWindow *window)
 {
-  GtkWidget              *gtk_menu_item;
   ThunarxProviderFactory *provider_factory;
   GList                  *providers;
   GList                  *thunarx_menu_items = NULL;
@@ -883,7 +880,7 @@ thunar_window_location_toolbar_load_last_order (ThunarWindow *window)
   /* convert strings to guints for convenience */
   for (guint i = 0, j = 0; i < item_order_length; i++)
     {
-      guint n;
+      guint64 n;
 
       if (g_ascii_string_to_unsigned (item_order[i], 10, 0, UINT_MAX, &n, NULL) == FALSE)
         g_error ("Invalid entry in \"last-toolbar-button-order\"");
@@ -927,7 +924,6 @@ thunar_window_init (ThunarWindow *window)
   GtkWidget       *label;
   GtkWidget       *infobar;
   GtkWidget       *item;
-  GtkWidget       *button;
   GtkWidget       *event_box;
   gboolean         last_menubar_visible;
   gchar           *last_location_bar;
@@ -3758,6 +3754,7 @@ static gboolean
 thunar_window_action_show_toolbar_editor (ThunarWindow *window)
 {
   thunar_show_toolbar_editor (GTK_WIDGET (window), window->location_toolbar);
+  return TRUE;
 }
 
 
