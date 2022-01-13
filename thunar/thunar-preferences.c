@@ -78,6 +78,8 @@ enum
   PROP_LAST_WINDOW_HEIGHT,
   PROP_LAST_WINDOW_WIDTH,
   PROP_LAST_WINDOW_FULLSCREEN,
+  PROP_LAST_TOOLBAR_VISIBLE_BUTTONS,
+  PROP_LAST_TOOLBAR_BUTTON_ORDER,
   PROP_MISC_DIRECTORY_SPECIFIC_SETTINGS,
   PROP_MISC_ALWAYS_SHOW_TABS,
   PROP_MISC_VOLUME_MANAGEMENT,
@@ -433,6 +435,32 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             NULL,
                             FALSE,
                             EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-toolbar-button-order:
+   *
+   * The comma separated list of columns that specifies the order of the
+   * columns in the #ThunarDetailsView.
+   **/
+    preferences_props[PROP_LAST_TOOLBAR_VISIBLE_BUTTONS] =
+        g_param_spec_string ("last-toolbar-visible-buttons",
+                             "LastToolbarVisibleButtons",
+                             NULL,
+                             "0,1,2,3,4",
+                             EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-toolbar-button-order:
+   *
+   * The space separated list of columns that specifies the order of the
+   * columns in the #ThunarDetailsView.
+   **/
+    preferences_props[PROP_LAST_TOOLBAR_BUTTON_ORDER] =
+        g_param_spec_string ("last-toolbar-item-order",
+                             "LastToolbarButtonOrder",
+                             NULL,
+                             "0,1,2,3,4", /* NOTE TO ALEX: if you change this you must also change the string in thunar_toolbar_editor_use_defaults, any better ideas? */
+                             EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-directory-specific-settings:
