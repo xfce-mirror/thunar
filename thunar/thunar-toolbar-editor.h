@@ -34,7 +34,8 @@ typedef struct _ThunarToolbarEditor      ThunarToolbarEditor;
 
 GType      thunar_toolbar_editor_get_type (void) G_GNUC_CONST;
 
-void       thunar_show_toolbar_editor     (gpointer parent);
+void       thunar_show_toolbar_editor     (GtkWidget *window,
+                                           GtkWidget *window_toolbar);
 
 G_END_DECLS;
 
