@@ -1567,12 +1567,12 @@ thunar_shortcuts_model_device_added (ThunarDeviceMonitor  *device_monitor,
   shortcut = g_slice_new0 (ThunarShortcut);
   shortcut->device = g_object_ref (device);
   shortcut->hidden = thunar_device_get_hidden (device);
-  
+
   mount_point = thunar_device_get_root (device);
   if (mount_point != NULL)
     {
-	   shortcut->file = thunar_file_get (mount_point, NULL);
-	   g_object_unref (mount_point);
+      shortcut->file = thunar_file_get (mount_point, NULL);
+	    g_object_unref (mount_point);
     }
 
   switch (thunar_device_get_kind (device))
