@@ -112,7 +112,8 @@ thunar_io_scan_directory (ThunarJob          *job,
       /* query info of the child */
       info = g_file_enumerator_next_file (enumerator, cancellable, &err);
 
-      if (G_UNLIKELY (info == NULL))
+      /* break when end of enumerator is reached */
+      if (G_UNLIKELY (info == NULL && err == NULL))
         break;
 
       is_mounted = TRUE;
@@ -125,8 +126,23 @@ thunar_io_scan_directory (ThunarJob          *job,
             }
           else
             {
-              /* break on errors */
-              break;
+              if (info != NULL)
+                g_warning ("Error while scanning file: %s : %s", g_file_info_get_display_name (info), err->message);
+              else
+                g_warning ("Error while scanning directory: %s : %s", g_file_get_uri (file), err->message);
+
+              if (g_error_matches(err, G_IO_ERROR, G_IO_ERROR_FAILED))
+                {
+                  /* ignore any other IO error and continue processing the
+                   * remaining files */
+                  g_clear_error(&err);
+                  continue;
+                }
+              else
+                {
+                  /* break on other errors */
+                  break;
+                }
             }
         }
 
