@@ -857,7 +857,6 @@ thunar_window_location_toolbar_add_ucas (ThunarWindow *window)
  *
  * Load the order of toolbar items stored in `last-toolbar-button-order`.
  **/
- /* NOTE TO ALEX: A large part of this is duplicated in thunar_toolbar_editor_load_model_state, any ideas? */
 static void
 thunar_window_location_toolbar_load_last_order (ThunarWindow *window)
 {
@@ -866,7 +865,7 @@ thunar_window_location_toolbar_load_last_order (ThunarWindow *window)
   gchar       *tmp;
   guint        item_count = thunar_window_toolbar_item_count (window);
   guint        target_order[item_count];  /* item_order converted to guint and without invalid entries (i.e. entries >= item_count */
-  guint        current_order[item_count]; /* NOTE TO ALEX: this could be moved to ThunarWindow */
+  guint        current_order[item_count];
 
   /* determine the column order from the preferences */
   g_object_get (G_OBJECT (window->preferences), "last-toolbar-item-order", &tmp, NULL);
