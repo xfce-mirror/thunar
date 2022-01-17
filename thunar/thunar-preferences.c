@@ -459,7 +459,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
         g_param_spec_string ("last-toolbar-item-order",
                              "LastToolbarButtonOrder",
                              NULL,
-                             "0,1,2,3,4", /* NOTE TO ALEX: if you change this you must also change the string in thunar_toolbar_editor_use_defaults, any better ideas? */
+                             "0,1,2,3,4",
                              EXO_PARAM_READWRITE);
 
   /**
