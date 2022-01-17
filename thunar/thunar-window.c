@@ -843,7 +843,7 @@ thunar_window_location_toolbar_add_ucas (ThunarWindow *window)
               g_free (name);
             }
 
-          g_list_free (thunarx_menu_items);
+          g_list_free_full (thunarx_menu_items, g_object_unref);
         }
       g_list_free_full (providers, g_object_unref);
     }
