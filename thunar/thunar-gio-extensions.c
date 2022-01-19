@@ -466,7 +466,7 @@ thunar_g_file_get_display_name_remote (GFile *mount_point)
       scheme = g_file_get_uri_scheme (mount_point);
       parse_name = g_file_get_parse_name (mount_point);
 
-      if (g_str_has_prefix (parse_name, scheme))
+      if (scheme != NULL && g_str_has_prefix (parse_name, scheme))
         {
           /* extract the hostname */
           p = parse_name + strlen (scheme);
@@ -511,7 +511,8 @@ thunar_g_file_get_display_name_remote (GFile *mount_point)
           g_free (hostname);
         }
 
-      g_free (scheme);
+      if (scheme != NULL)
+        g_free (scheme);
       g_free (parse_name);
     }
 
