@@ -1005,7 +1005,7 @@ thunar_file_info_reload (ThunarFile   *file,
   _thunar_assert (file->basename != NULL);
 
   /* problematic files with content type reading */
-  if (strcmp (file->basename, "kmsg") == 0
+  if (g_strcmp0 (file->basename, "kmsg") == 0
       && g_file_is_native (file->gfile))
     {
       path = g_file_get_path (file->gfile);
