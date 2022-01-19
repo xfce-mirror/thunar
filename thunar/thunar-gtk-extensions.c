@@ -225,7 +225,7 @@ thunar_gtk_menu_run_at_event (GtkMenu *menu, GdkEvent *event)
  * @...    : additional arguments for @format.
  *
  * Sets the tooltip for the @widget to a string generated
- * from the @format and the additional arguments in @...<!--->.
+ * from the @format and the additional arguments in @...<!---->.
  **/
 void
 thunar_gtk_widget_set_tooltip (GtkWidget   *widget,
