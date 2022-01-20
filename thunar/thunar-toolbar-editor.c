@@ -493,10 +493,11 @@ static void
 thunar_toolbar_editor_save_model (ThunarToolbarEditor *toolbar_editor)
 {
   GString    *item_order;
+  GString    *item_visibility;
   guint       item_count;
 
-  /* allocate a string for the column order */
   item_order = g_string_sized_new (256);
+  item_visibility = g_string_sized_new (256);
 
   item_count = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (toolbar_editor->model), NULL);
 
@@ -505,12 +506,17 @@ thunar_toolbar_editor_save_model (ThunarToolbarEditor *toolbar_editor)
     {
       GtkTreeIter iter;
       gchar      *path;
-      gint       order;
+      gint        order;
       gchar      *order_str;
+      gboolean    visible;
+      gchar      *visible_str;
 
       /* append a comma if not empty */
       if (*item_order->str != '\0')
         g_string_append_c (item_order, ',');
+
+      if (*item_visibility->str != '\0')
+        g_string_append_c (item_visibility, ',');
 
       /* get iterator for the ith item */
       path = g_strdup_printf("%i", i);
@@ -522,13 +528,21 @@ thunar_toolbar_editor_save_model (ThunarToolbarEditor *toolbar_editor)
       order_str = g_strdup_printf("%i", order);
       g_string_append (item_order, order_str);
       g_free (order_str);
+
+      /* get the visibility value of the entry and store it */
+      gtk_tree_model_get (GTK_TREE_MODEL (toolbar_editor->model), &iter, 0, &visible, -1);
+      visible_str = g_strdup_printf("%i", visible);
+      g_string_append (item_visibility, visible_str);
+      g_free (visible_str);
     }
 
-  /* save the list of visible columns */
+  /* save the order and visibility lists */
   g_object_set (G_OBJECT (toolbar_editor->preferences), "last-toolbar-item-order", item_order->str, NULL);
+  g_object_set (G_OBJECT (toolbar_editor->preferences), "last-toolbar-visible-buttons", item_visibility->str, NULL);
 
-  /* release the string */
+  /* release the strings */
   g_string_free (item_order, TRUE);
+  g_string_free (item_visibility, TRUE);
 }
 
 
@@ -555,7 +569,7 @@ thunar_toolbar_editor_populate_model (ThunarToolbarEditor *toolbar_editor)
 
       gtk_list_store_append (toolbar_editor->model, &iter);
       gtk_list_store_set (toolbar_editor->model, &iter,
-                          0, TRUE,
+                          0, gtk_widget_is_visible (item),
                           1, icon,
                           2, label,
                           3, *order,
