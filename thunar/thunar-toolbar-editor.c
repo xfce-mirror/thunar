@@ -235,7 +235,7 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   row++;
 
   /* create the "Use Default" button */
-  button = gtk_button_new_with_mnemonic (_("Use De_fault"));
+  button = gtk_button_new_with_mnemonic (_("De_fault Order"));
   g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (thunar_toolbar_editor_use_defaults), toolbar_editor);
   gtk_grid_attach (GTK_GRID (grid), button, 1, row, 1, 1);
   gtk_widget_show (button);
