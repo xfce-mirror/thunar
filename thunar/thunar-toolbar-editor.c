@@ -476,8 +476,10 @@ thunar_toolbar_editor_use_defaults (GtkWidget           *button,
               gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (toolbar_editor->model), &iter_j, path_j);
               gtk_list_store_swap (GTK_LIST_STORE (toolbar_editor->model), &iter_i, &iter_j);
               thunar_toolbar_editor_swap_for_windows (toolbar_editor, &iter_i, &iter_j);
+
+              y = current_order[i];
               current_order[i] = target_order[i];
-              current_order[j] = target_order[j];
+              current_order[j] = y;
 
               g_free (path_i);
               g_free (path_j);
