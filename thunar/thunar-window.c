@@ -321,6 +321,7 @@ static void      thunar_window_update_location_toolbar         (GFileMonitor    
                                                                 ThunarWindow           *window);
 static void      thunar_window_location_toolbar_add_ucas       (ThunarWindow           *window);
 static void      thunar_window_location_toolbar_load_last_order(ThunarWindow           *window);
+static gboolean  thunar_window_location_toolbar_load_visibility(ThunarWindow           *window);
 
 
 
@@ -882,6 +883,9 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
 
   /* display the toolbar */
   gtk_widget_show_all (window->location_toolbar);
+
+  /* run as idle because otherwise it would be called before the window is initialized */
+  g_idle_add ((void*) thunar_window_location_toolbar_load_visibility, window);
 }
 
 
@@ -1028,6 +1032,65 @@ thunar_window_location_toolbar_load_last_order (ThunarWindow *window)
 
   /* release the column order */
   g_strfreev (item_order);
+}
+
+
+
+/**
+ * thunar_window_location_toolbar_load_visibility:
+ * @window            : a #ThunarWindow instance.
+ *
+ * Load the visibility of toolbar items. This should run after thunar_window_location_toolbar_load_last_order because
+ * it depends on the the saved order instead of the default.
+ *
+ * returns FALSE so it can be used as an idle function
+ **/
+static gboolean
+thunar_window_location_toolbar_load_visibility (ThunarWindow *window)
+{
+  gchar      **item_visibility;
+  guint        item_visibility_length;
+  gchar       *tmp;
+  guint        item_count = thunar_window_toolbar_item_count (window);
+  guint        target_order[item_count];
+
+  /* determine the column order from the preferences */
+  g_object_get (G_OBJECT (window->preferences), "last-toolbar-visible-buttons", &tmp, NULL);
+  printf ("%s\n", tmp);
+  item_visibility = g_strsplit (tmp, ",", -1);
+  item_visibility_length = g_strv_length (item_visibility);
+  g_free (tmp);
+
+  for (guint i = 0; i < item_count; i++)
+    target_order[i] = 1; /* default to visible */
+
+  /* convert strings to guints for convenience */
+  for (guint i = 0, j = 0; i < item_visibility_length; i++)
+    {
+      guint64 n;
+
+      if (g_ascii_string_to_unsigned (item_visibility[i], 10, 0, UINT_MAX, &n, NULL) == FALSE)
+        g_error ("Invalid entry in \"last-toolbar-visible-buttons\"");
+
+      target_order[j] = n;
+      j++;
+    }
+
+  for (guint i = 0; i < item_count; i++)
+    {
+      guint visible = target_order[i];
+
+      if (visible == 0)
+        {
+          printf ("toggle\n");
+          thunar_window_toolbar_toggle_item (window, i);
+        }
+    }
+
+  /* release the column order */
+  g_strfreev (item_visibility);
+
+  return FALSE;
 }
 
 

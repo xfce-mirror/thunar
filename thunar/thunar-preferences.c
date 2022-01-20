@@ -448,7 +448,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
         g_param_spec_string ("last-toolbar-visible-buttons",
                              "LastToolbarVisibleButtons",
                              NULL,
-                             "0,1,2,3,4",
+                             "1,1,1,1,1",
                              EXO_PARAM_READWRITE);
 
   /**
