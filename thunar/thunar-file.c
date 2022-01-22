@@ -3665,6 +3665,12 @@ thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_
                           g_free (file->thumbnail_path);
                           file->thumbnail_path = NULL;
                         }
+                      else
+                        {
+                          // FIXME Actually no good spot to set somthing(inside a getter nmethod)
+                          // To be checked where this flag is set for other thumbnails (or are other thumbnails requested over and over again ?)
+                          FLAG_SET_THUMB_STATE (file, THUNAR_FILE_THUMB_STATE_READY);
+                        }
                     }
                 }
             }
