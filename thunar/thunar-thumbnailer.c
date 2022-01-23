@@ -190,8 +190,6 @@ struct _ThunarThumbnailerJob
   /* if this job is cancelled */
   guint              cancelled : 1;
 
-  guint              lazy_checks : 1;
-
   /* data is saved here in case the queueing is delayed */
   /* If this is NULL, the request has been sent off. */
   GList             *files; /* element type: ThunarFile */
@@ -438,14 +436,10 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
       /* get the current thumb state */
       thumb_state = thunar_file_get_thumb_state (lp->data);
 
-      if (job->lazy_checks)
-        {
-          /* in lazy mode, don't both for files that have already
-           * been loaded or are not supported */
-          if (thumb_state == THUNAR_FILE_THUMB_STATE_NONE
-              || thumb_state == THUNAR_FILE_THUMB_STATE_READY)
-            continue;
-        }
+      /* Don't bother for files that have already been loaded or are not supported */
+      if (thumb_state == THUNAR_FILE_THUMB_STATE_NONE
+       || thumb_state == THUNAR_FILE_THUMB_STATE_READY)
+        continue;
 
       /* check if the file is supported, assume it is when the state was ready previously */
       if (thumb_state == THUNAR_FILE_THUMB_STATE_READY
@@ -468,9 +462,13 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
 
           /* test if a thumbnail can be found */
           if (thumbnail_path != NULL && g_file_test (thumbnail_path, G_FILE_TEST_EXISTS))
-            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_READY);
-          else
-            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
+            {
+              /* If the thumbnail is already available, no need to request it again */
+              thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_READY);
+              continue;
+            }
+
+          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
         }
     }
 
@@ -1099,20 +1097,20 @@ thunar_thumbnailer_queue_file (ThunarThumbnailer *thumbnailer,
   _thunar_return_val_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
+  printf("thunar_thumbnailer_queue_file\n");
   /* fake a file list */
   files.data = file;
   files.next = NULL;
   files.prev = NULL;
 
   /* queue a thumbnail request for the file */
-  return thunar_thumbnailer_queue_files (thumbnailer, FALSE, &files, request);
+  return thunar_thumbnailer_queue_files (thumbnailer, &files, request);
 }
 
 
 
 gboolean
 thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
-                                gboolean           lazy_checks,
                                 GList             *files,
                                 guint             *request)
 {
@@ -1129,7 +1127,6 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
   job = g_slice_new0 (ThunarThumbnailerJob);
   job->thumbnailer = thumbnailer;
   job->files = g_list_copy_deep (files, (GCopyFunc) (void (*)(void)) g_object_ref, NULL);
-  job->lazy_checks = lazy_checks ? 1 : 0;
 
   success = thunar_thumbnailer_begin_job (thumbnailer, job);
   if (success)
