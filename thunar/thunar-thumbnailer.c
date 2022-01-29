@@ -190,7 +190,7 @@ struct _ThunarThumbnailerJob
   /* if this job is cancelled */
   guint              cancelled : 1;
 
-  guint              lazy_checks : 1;
+  guint              force_thumbnail_update : 1;
 
   /* data is saved here in case the queueing is delayed */
   /* If this is NULL, the request has been sent off. */
@@ -438,9 +438,9 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
       /* get the current thumb state */
       thumb_state = thunar_file_get_thumb_state (lp->data);
 
-      if (job->lazy_checks)
+      if (!job->force_thumbnail_update)
         {
-          /* in lazy mode, don't both for files that have already
+          /* if not forced, don't bother for files that have already
            * been loaded or are not supported */
           if (thumb_state == THUNAR_FILE_THUMB_STATE_NONE
               || thumb_state == THUNAR_FILE_THUMB_STATE_READY)
@@ -1112,7 +1112,7 @@ thunar_thumbnailer_queue_file (ThunarThumbnailer *thumbnailer,
 
 gboolean
 thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
-                                gboolean           lazy_checks,
+                                gboolean           force_thumbnail_update,
                                 GList             *files,
                                 guint             *request)
 {
@@ -1129,7 +1129,7 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
   job = g_slice_new0 (ThunarThumbnailerJob);
   job->thumbnailer = thumbnailer;
   job->files = g_list_copy_deep (files, (GCopyFunc) (void (*)(void)) g_object_ref, NULL);
-  job->lazy_checks = lazy_checks ? 1 : 0;
+  job->force_thumbnail_update = force_thumbnail_update ? 1 : 0;
 
   success = thunar_thumbnailer_begin_job (thumbnailer, job);
   if (success)

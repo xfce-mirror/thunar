@@ -256,7 +256,7 @@ static void                 thunar_standard_view_cancel_thumbnailing        (Thu
 static void                 thunar_standard_view_schedule_thumbnail_timeout (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_schedule_thumbnail_idle    (ThunarStandardView       *standard_view);
 static gboolean             thunar_standard_view_request_thumbnails         (gpointer                  data);
-static gboolean             thunar_standard_view_request_thumbnails_lazy    (gpointer                  data);
+static gboolean             thunar_standard_view_force_request_thumbnails   (gpointer                  data);
 static void                 thunar_standard_view_thumbnail_mode_toggled     (ThunarStandardView       *standard_view,
                                                                              GParamSpec               *pspec,
                                                                              ThunarIconFactory        *icon_factory);
@@ -3555,7 +3555,7 @@ thunar_standard_view_schedule_thumbnail_timeout (ThunarStandardView *standard_vi
   /* schedule the timeout handler */
   g_assert (standard_view->priv->thumbnail_source_id == 0);
   standard_view->priv->thumbnail_source_id =
-    g_timeout_add_full (G_PRIORITY_DEFAULT, 175, thunar_standard_view_request_thumbnails_lazy,
+    g_timeout_add_full (G_PRIORITY_DEFAULT, 175, thunar_standard_view_force_request_thumbnails,
                         standard_view, thunar_standard_view_thumbnailing_destroyed);
 }
 
@@ -3590,7 +3590,7 @@ thunar_standard_view_schedule_thumbnail_idle (ThunarStandardView *standard_view)
 
 static gboolean
 thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
-                                              gboolean            lazy_request)
+                                              gboolean            force_thumbnail_update)
 {
   GtkTreePath *start_path;
   GtkTreePath *end_path;
@@ -3647,7 +3647,7 @@ thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
 
       /* queue a thumbnail request */
       thunar_thumbnailer_queue_files (standard_view->priv->thumbnailer,
-                                      lazy_request, visible_files,
+                                      force_thumbnail_update, visible_files,
                                       &standard_view->priv->thumbnail_request);
 
       /* release the file list */
@@ -3672,7 +3672,7 @@ thunar_standard_view_request_thumbnails (gpointer data)
 
 
 static gboolean
-thunar_standard_view_request_thumbnails_lazy (gpointer data)
+thunar_standard_view_force_request_thumbnails (gpointer data)
 {
   return thunar_standard_view_request_thumbnails_real (data, TRUE);
 }
