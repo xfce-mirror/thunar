@@ -3555,7 +3555,7 @@ thunar_standard_view_schedule_thumbnail_timeout (ThunarStandardView *standard_vi
   /* schedule the timeout handler */
   g_assert (standard_view->priv->thumbnail_source_id == 0);
   standard_view->priv->thumbnail_source_id =
-    g_timeout_add_full (G_PRIORITY_DEFAULT, 175, thunar_standard_view_force_request_thumbnails,
+    g_timeout_add_full (G_PRIORITY_DEFAULT, 175, thunar_standard_view_request_thumbnails,
                         standard_view, thunar_standard_view_thumbnailing_destroyed);
 }
 
