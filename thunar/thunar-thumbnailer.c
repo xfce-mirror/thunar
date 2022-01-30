@@ -435,21 +435,31 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
           continue;
         }
 
+      /* a new thumbnail is forced for this file */
+      if (job->force_thumbnail_update)
+        {
+          supported_files = g_list_prepend (supported_files, lp->data);
+          n_items++;
+          continue;
+        }
+
       /* get the current thumb state */
       thumb_state = thunar_file_get_thumb_state (lp->data);
 
-      if (!job->force_thumbnail_update)
+      /* Thumbnail is already available or not supported */
+      if(thumb_state == THUNAR_FILE_THUMB_STATE_READY || thumb_state == THUNAR_FILE_THUMB_STATE_NONE)
+        continue;
+
+      /* Check if a thumbnail already was generated */
+      thumbnail_path = thunar_file_get_thumbnail_path (lp->data, thumbnailer->thumbnail_size);
+      if (thumbnail_path != NULL && g_file_test (thumbnail_path, G_FILE_TEST_EXISTS))
         {
-          /* if not forced, don't bother for files that have already
-           * been loaded or are not supported */
-          if (thumb_state == THUNAR_FILE_THUMB_STATE_NONE
-              || thumb_state == THUNAR_FILE_THUMB_STATE_READY)
-            continue;
+          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_READY);
+          continue;
         }
 
-      /* check if the file is supported, assume it is when the state was ready previously */
-      if (thumb_state == THUNAR_FILE_THUMB_STATE_READY
-          || thunar_thumbnailer_file_is_supported (thumbnailer, lp->data))
+      /* check if the file is supported */
+      if (thunar_thumbnailer_file_is_supported (thumbnailer, lp->data))
         {
           guint max_size = thumbnailer->thumbnail_max_file_size;
 
@@ -462,15 +472,7 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
         }
       else
         {
-          /* still a regular file, but the type is now known to tumbler but
-           * maybe the application created a thumbnail */
-          thumbnail_path = thunar_file_get_thumbnail_path (lp->data, thumbnailer->thumbnail_size);
-
-          /* test if a thumbnail can be found */
-          if (thumbnail_path != NULL && g_file_test (thumbnail_path, G_FILE_TEST_EXISTS))
-            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_READY);
-          else
-            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
+          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
         }
     }
 
