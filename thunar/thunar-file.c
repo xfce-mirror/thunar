@@ -172,6 +172,7 @@ struct _ThunarFile
   gchar                *basename;
   const gchar          *device_type;
   gchar                *thumbnail_path;
+  gboolean              has_shared_thumbnail;
 
   /* sorting */
   gchar                *collate_key;
@@ -380,6 +381,7 @@ thunar_file_class_init (ThunarFileClass *klass)
 static void
 thunar_file_init (ThunarFile *file)
 {
+  file->has_shared_thumbnail = FALSE;
 }
 
 
@@ -3600,7 +3602,8 @@ thunar_file_is_desktop (const ThunarFile *file)
 
 
 const gchar *
-thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_size)
+thunar_file_get_thumbnail_path (ThunarFile          *file,
+                                ThunarThumbnailSize  thumbnail_size)
 {
   GChecksum *checksum;
   gchar     *filename;
@@ -3614,6 +3617,8 @@ thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_
 
   if (G_UNLIKELY (file->thumbnail_path == NULL))
     {
+      file->has_shared_thumbnail = FALSE;
+
       checksum = g_checksum_new (G_CHECKSUM_MD5);
       if (G_LIKELY (checksum != NULL))
         {
@@ -3662,6 +3667,10 @@ thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_
                           /* Thumbnail doesn't exist */
                           g_free (file->thumbnail_path);
                           file->thumbnail_path = NULL;
+                        }
+                      else
+                        {
+                          file->has_shared_thumbnail = TRUE;
                         }
                     }
                 }
@@ -3718,7 +3727,7 @@ thunar_file_set_thumb_state (ThunarFile          *file,
   file->thumbnail_state = state;
 
   /* remove path if the type is not supported */
-  if (state == THUNAR_FILE_THUMB_STATE_NONE
+  if ((state == THUNAR_FILE_THUMB_STATE_NONE || state == THUNAR_FILE_THUMB_STATE_UNKNOWN)
       && file->thumbnail_path != NULL)
     {
       g_free (file->thumbnail_path);
@@ -4772,4 +4781,11 @@ thunar_file_has_directory_specific_settings (ThunarFile *file)
     return TRUE;
 
   return FALSE;
+}
+
+gboolean
+thunar_file_has_shared_thumbnail (ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return file->has_shared_thumbnail;
 }
