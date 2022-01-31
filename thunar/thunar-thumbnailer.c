@@ -190,7 +190,7 @@ struct _ThunarThumbnailerJob
   /* if this job is cancelled */
   guint              cancelled : 1;
 
-  guint              lazy_checks : 1;
+  guint              force_thumbnail_update : 1;
 
   /* data is saved here in case the queueing is delayed */
   /* If this is NULL, the request has been sent off. */
@@ -435,43 +435,55 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
           continue;
         }
 
+      /* a new thumbnail is forced for this file, so reset the thumbnail state */
+      if (job->force_thumbnail_update == TRUE)
+        {
+          /* Reset the thumbnail state of the file */
+          if (thumb_state == THUNAR_FILE_THUMB_STATE_READY || thumb_state == THUNAR_FILE_THUMB_STATE_NONE)
+            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_UNKNOWN);
+        }
+
       /* get the current thumb state */
       thumb_state = thunar_file_get_thumb_state (lp->data);
 
-      if (job->lazy_checks)
+      /* Thumbnail is already loaded, or not supported at all */
+      if ((thumb_state == THUNAR_FILE_THUMB_STATE_READY || thumb_state == THUNAR_FILE_THUMB_STATE_NONE))
+        continue;
+
+      thumbnail_path = thunar_file_get_thumbnail_path (lp->data, thumbnailer->thumbnail_size);
+
+      /* Dont generate new thumbnails if shared thumbnails are available, not even when forced */
+      if (thunar_file_has_shared_thumbnail (lp->data) == TRUE)
         {
-          /* in lazy mode, don't both for files that have already
-           * been loaded or are not supported */
-          if (thumb_state == THUNAR_FILE_THUMB_STATE_NONE
-              || thumb_state == THUNAR_FILE_THUMB_STATE_READY)
-            continue;
+          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_READY);
+          continue;
         }
 
-      /* check if the file is supported, assume it is when the state was ready previously */
-      if (thumb_state == THUNAR_FILE_THUMB_STATE_READY
-          || thunar_thumbnailer_file_is_supported (thumbnailer, lp->data))
+      /* Use existing thumbnails when available, if not forced to regenerate them */
+      if ((thumbnail_path != NULL && g_file_test (thumbnail_path, G_FILE_TEST_EXISTS)) && job->force_thumbnail_update == FALSE)
         {
-          guint max_size = thumbnailer->thumbnail_max_file_size;
-
-          /* skip large files */
-          if (max_size > 0 && thunar_file_get_size (lp->data) > max_size)
-            continue;
-
-          supported_files = g_list_prepend (supported_files, lp->data);
-          n_items++;
+          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_READY);
+          continue;
         }
-      else
+
+      /* Skip file-types which are not supported */
+      if (thunar_thumbnailer_file_is_supported (thumbnailer, lp->data) == FALSE)
         {
-          /* still a regular file, but the type is now known to tumbler but
-           * maybe the application created a thumbnail */
-          thumbnail_path = thunar_file_get_thumbnail_path (lp->data, thumbnailer->thumbnail_size);
-
-          /* test if a thumbnail can be found */
-          if (thumbnail_path != NULL && g_file_test (thumbnail_path, G_FILE_TEST_EXISTS))
-            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_READY);
-          else
-            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
+          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
+          continue;
         }
+
+      /* Skip files which are too large */
+      guint max_size = thumbnailer->thumbnail_max_file_size;
+      if (max_size > 0 && thunar_file_get_size (lp->data) > max_size)
+        {
+          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
+          continue;
+        }
+
+      /* All checks passed ? Than finally add the file to the list */
+      supported_files = g_list_prepend (supported_files, lp->data);
+      n_items++;
     }
 
   /* check if we have any supported files */
@@ -1112,7 +1124,7 @@ thunar_thumbnailer_queue_file (ThunarThumbnailer *thumbnailer,
 
 gboolean
 thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
-                                gboolean           lazy_checks,
+                                gboolean           force_thumbnail_update,
                                 GList             *files,
                                 guint             *request)
 {
@@ -1129,7 +1141,7 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
   job = g_slice_new0 (ThunarThumbnailerJob);
   job->thumbnailer = thumbnailer;
   job->files = g_list_copy_deep (files, (GCopyFunc) (void (*)(void)) g_object_ref, NULL);
-  job->lazy_checks = lazy_checks ? 1 : 0;
+  job->force_thumbnail_update = force_thumbnail_update ? 1 : 0;
 
   success = thunar_thumbnailer_begin_job (thumbnailer, job);
   if (success)
