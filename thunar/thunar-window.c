@@ -2665,7 +2665,8 @@ thunar_window_update_location_bar_visible (ThunarWindow *window)
   if (exo_str_is_equal (last_location_bar, g_type_name (G_TYPE_NONE)))
     {
       gtk_widget_hide (window->location_toolbar);
-      gtk_widget_grab_focus (window->view);
+      if (window->view != NULL)
+        gtk_widget_grab_focus (window->view);
     }
   else
     gtk_widget_show (window->location_toolbar);
