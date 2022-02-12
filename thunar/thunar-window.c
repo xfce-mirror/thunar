@@ -2304,8 +2304,6 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   ThunarColumn    sort_column;
   GtkSortType     sort_order;
   gboolean        show_full_path;
-  gchar          *tab_title;
-  gint            ellipsize_type;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), NULL);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (directory), NULL);
@@ -2341,16 +2339,18 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
 
   /* set tab title according to window preferences */
   g_object_get (G_OBJECT (window->preferences), "misc-full-path-in-tab-title", &show_full_path, NULL);
-  if (G_UNLIKELY (show_full_path)) {
-    tab_title = g_strdup("full-parsed-path");
-    ellipsize_type = PANGO_ELLIPSIZE_START;
+  if (G_UNLIKELY (show_full_path))
+  {
+    g_object_bind_property (G_OBJECT (view), "full-parsed-path", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
+    gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_START);
   }
-  else {
-    tab_title = g_strdup("display-name");
-    ellipsize_type = PANGO_ELLIPSIZE_END;
+  else
+  {
+  g_object_bind_property (G_OBJECT (view), "display-name", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
+    gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
   }
 
-  g_object_bind_property (G_OBJECT (view), tab_title, G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
+  g_signal_connect (window->preferences, "notify::misc-full-path-in-tab-title", G_CALLBACK(thunar_window_notebook_update_title), label);
   g_object_bind_property (G_OBJECT (view), "full-parsed-path", G_OBJECT (label), "tooltip-text", G_BINDING_SYNC_CREATE);
   gtk_widget_set_has_tooltip (label, TRUE);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
@@ -2358,11 +2358,9 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   gtk_widget_set_margin_end (GTK_WIDGET(label), 3);
   gtk_widget_set_margin_top (GTK_WIDGET(label), 3);
   gtk_widget_set_margin_bottom (GTK_WIDGET(label), 3);
-  gtk_label_set_ellipsize (GTK_LABEL (label), ellipsize_type);
   gtk_label_set_single_line_mode (GTK_LABEL (label), TRUE);
   gtk_box_pack_start (GTK_BOX (label_box), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
-  g_free (tab_title);
 
   button = gtk_button_new ();
   gtk_box_pack_start (GTK_BOX (label_box), button, FALSE, FALSE, 0);
@@ -2391,6 +2389,22 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   return view;
 }
 
+static void
+thunar_window_notebook_update_title (GtkWidget *label)
+{
+  /* set tab title according to window preferences */
+  g_object_get (G_OBJECT (window->preferences), "misc-full-path-in-tab-title", &show_full_path, NULL);
+  if (G_UNLIKELY (show_full_path))
+  {
+    g_object_bind_property (G_OBJECT (view), "full-parsed-path", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
+    gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_START);
+  }
+  else
+  {
+    g_object_bind_property (G_OBJECT (view), "display-name", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
+    gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
+  }
+}
 
 
 static void
