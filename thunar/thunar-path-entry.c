@@ -1340,7 +1340,7 @@ thunar_path_entry_set_working_directory (ThunarPathEntry *path_entry,
  * thunar_path_entry_get_search_query:
  * @path_entry        : a #ThunarPathEntry.
  *
- * Returns a copy of the search query in the text field of the @path_entry or NULL if the path_entry doesn't contain
+ * Returns a copy of the search query in the text field of the @path_entry or "" if the path_entry doesn't contain
  * a search query.
  *
  * It's the responsibility of the caller to free the returned string using `g_free`.
@@ -1355,7 +1355,7 @@ thunar_path_entry_get_search_query (ThunarPathEntry *path_entry)
   _thunar_return_val_if_fail (THUNAR_IS_PATH_ENTRY (path_entry), NULL);
   _thunar_return_val_if_fail (strncmp (text, SEARCH_PREFIX, search_prefix_length) == 0, NULL);
 
-  return strlen(text) > search_prefix_length ? g_strdup (&text[search_prefix_length]) : NULL;
+  return strlen(text) > search_prefix_length ? g_strdup (&text[search_prefix_length]) : g_strdup ("");
 }
 
 
