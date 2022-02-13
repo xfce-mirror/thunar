@@ -1810,7 +1810,11 @@ thunar_window_clipboard_manager_changed (GtkWidget *widget)
 {
   ThunarWindow *window = THUNAR_WINDOW (widget);
 
-  thunar_window_reload (window, FALSE);
+  /* check if the content actually can be pasted into thunar,
+   * in order to do not trigger if just some text is copied.
+   */
+  if (thunar_clipboard_manager_get_can_paste (window->clipboard))
+    thunar_window_reload (window, FALSE);
 }
 
 
