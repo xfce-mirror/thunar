@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-30 00:45+0100\n"
-"PO-Revision-Date: 2021-12-29 23:45+0000\n"
+"POT-Creation-Date: 2022-02-14 00:45+0100\n"
+"PO-Revision-Date: 2022-02-13 23:46+0000\n"
 "Last-Translator: Xfce Bot <transifex@xfce.org>\n"
 "Language-Team: Thai (http://www.transifex.com/xfce/thunar/language/th/)\n"
 "MIME-Version: 1.0\n"
@@ -79,7 +79,7 @@ msgstr "เรียกทำงานการกระทำไม่สำเ
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1607 ../thunar/thunar-application.c:1767
-#: ../thunar/thunar-launcher.c:1111 ../thunar/thunar-location-entry.c:368
+#: ../thunar/thunar-launcher.c:1114 ../thunar/thunar-location-entry.c:368
 #: ../thunar/thunar-location-entry.c:396
 #, c-format
 msgid "Failed to open \"%s\""
@@ -91,18 +91,18 @@ msgid "Failed to open \"%s\": %s"
 msgstr "เปิด \"%s\" ไม่สำเร็จ: %s"
 
 #. display an error message
-#: ../thunar/thunar-application.c:1829 ../thunar/thunar-launcher.c:2343
+#: ../thunar/thunar-application.c:1829 ../thunar/thunar-launcher.c:2381
 #: ../thunar/thunar-properties-dialog.c:823
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "เปลี่ยนชื่อ \"%s\" ไม่สำเร็จ"
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-application.c:1931 ../thunar/thunar-launcher.c:2538
+#: ../thunar/thunar-application.c:1931 ../thunar/thunar-launcher.c:2597
 msgid "New Folder"
 msgstr "โฟลเดอร์ใหม่"
 
-#: ../thunar/thunar-application.c:1932 ../thunar/thunar-launcher.c:2542
+#: ../thunar/thunar-application.c:1932 ../thunar/thunar-launcher.c:2601
 msgid "Create New Folder"
 msgstr "สร้างโฟลเดอร์ใหม่"
 
@@ -115,7 +115,7 @@ msgid "Create New File"
 msgstr "สร้างแฟ้มใหม่"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-application.c:1994 ../thunar/thunar-launcher.c:2590
+#: ../thunar/thunar-application.c:1994 ../thunar/thunar-launcher.c:2652
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "สร้างเอกสารจากเทมเพลต \"%s\""
@@ -166,14 +166,14 @@ msgstr[0] "คุณแน่ใจหรือไม่ว่าต้องก
 #: ../thunar/thunar-dialogs.c:98 ../thunar/thunar-dialogs.c:240
 #: ../thunar/thunar-dialogs.c:663 ../thunar/thunar-dialogs.c:777
 #: ../thunar/thunar-dialogs.c:1061 ../thunar/thunar-dnd.c:169
-#: ../thunar/thunar-launcher.c:976 ../thunar/thunar-permissions-chooser.c:559
+#: ../thunar/thunar-launcher.c:979 ../thunar/thunar-permissions-chooser.c:559
 #: ../thunar/thunar-permissions-chooser.c:1169
 #: ../thunar/thunar-properties-dialog.c:912
 #: ../thunar/thunar-renamer-dialog.c:359
 #: ../thunar/thunar-renamer-dialog.c:1074
 #: ../thunar/thunar-renamer-progress.c:198
 #: ../thunar/thunar-renamer-progress.c:208
-#: ../thunar/thunar-standard-view.c:2307
+#: ../thunar/thunar-standard-view.c:2318
 #: ../plugins/thunar-sendto-email/main.c:219
 #: ../plugins/thunar-sendto-email/main.c:238
 #: ../plugins/thunar-sendto-email/main.c:302
@@ -264,7 +264,7 @@ msgstr "ไม่ได้เลือกแอปพลิเคชันใด
 msgid "Other Application..."
 msgstr "แอปพลิเคชันอื่น..."
 
-#: ../thunar/thunar-chooser-dialog.c:187 ../thunar/thunar-launcher.c:3158
+#: ../thunar/thunar-chooser-dialog.c:187 ../thunar/thunar-launcher.c:3241
 msgid "Open With"
 msgstr "เปิดด้วย"
 
@@ -292,7 +292,7 @@ msgstr "ใช้เป็นค่า_ปริยายสำหรับแ�
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1286
-#: ../thunar/thunar-properties-dialog.c:913 ../thunar/thunar-window.c:3847
+#: ../thunar/thunar-properties-dialog.c:913 ../thunar/thunar-window.c:3936
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -390,7 +390,7 @@ msgstr "เลือกแอปพลิเคชัน"
 #. change the accept button label text
 #. aka "activate"
 #: ../thunar/thunar-chooser-dialog.c:875
-#: ../thunar/thunar-chooser-dialog.c:1286 ../thunar/thunar-launcher.c:1519
+#: ../thunar/thunar-chooser-dialog.c:1286 ../thunar/thunar-launcher.c:1540
 #: ../thunar/thunar-renamer-dialog.c:1075
 #: ../plugins/thunar-uca/thunar-uca-editor.c:181
 msgid "_Open"
@@ -798,7 +798,7 @@ msgstr "เ_ชื่อมโยงมาที่นี่"
 
 #. display an error to the user
 #. display an error message to the user
-#: ../thunar/thunar-dnd.c:250 ../thunar/thunar-launcher.c:790
+#: ../thunar/thunar-dnd.c:250 ../thunar/thunar-launcher.c:793
 #, c-format
 msgid "Failed to execute file \"%s\""
 msgstr "เรียกทำงานแฟ้ม \"%s\" ไม่สำเร็จ"
@@ -1020,7 +1020,7 @@ msgid "%s on %s"
 msgstr "%s ที่ %s"
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:619
+#: ../thunar/thunar-gio-extensions.c:620
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr "%s จาก %s ว่างอยู่ (ใช้ไป %d%%)"
@@ -1159,7 +1159,7 @@ msgstr ""
 msgid "Open With Other _Application..."
 msgstr "เปิดด้วยแ_อปพลิเคชันอื่น..."
 
-#: ../thunar/thunar-launcher.c:271 ../thunar/thunar-launcher.c:3159
+#: ../thunar/thunar-launcher.c:271 ../thunar/thunar-launcher.c:3242
 msgid "Choose another application with which to open the selected file"
 msgstr "เลือกแอปพลิเคชันอื่นเพื่อใช้เปิดแฟ้มที่เลือก"
 
@@ -1203,7 +1203,7 @@ msgstr "คุณ_สมบัติ..."
 msgid "View the properties of the selected file"
 msgstr "ดูคุณสมบัติของแฟ้มที่เลือก"
 
-#: ../thunar/thunar-launcher.c:280 ../thunar/thunar-launcher.c:1577
+#: ../thunar/thunar-launcher.c:280 ../thunar/thunar-launcher.c:1598
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "สร้างลิ_งก์"
@@ -1314,93 +1314,93 @@ msgstr "เลิกเมานท์อุปกรณ์ที่เลือ
 msgid "Eject the selected device"
 msgstr "ดันสื่อในอุปกรณ์ที่เลือกออก"
 
-#: ../thunar/thunar-launcher.c:925
+#: ../thunar/thunar-launcher.c:928
 #, c-format
 msgid "Failed to open file \"%s\""
 msgstr "เปิดแฟ้ม \"%s\" ไม่สำเร็จ"
 
 #. we can just tell that n files failed to open
-#: ../thunar/thunar-launcher.c:931
+#: ../thunar/thunar-launcher.c:934
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
 msgstr[0] "เปิดแฟ้ม %d แฟ้มไม่สำเร็จ"
 
-#: ../thunar/thunar-launcher.c:970
+#: ../thunar/thunar-launcher.c:973
 msgid "Are you sure you want to open all folders?"
 msgstr "คุณแน่ใจหรือไม่ว่าต้องการเปิดโฟลเดอร์ทั้งหมด?"
 
-#: ../thunar/thunar-launcher.c:972
+#: ../thunar/thunar-launcher.c:975
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
 msgstr[0] "การเปิดนี้จะเป็นการเปิดหน้าต่างโปรแกรมจัดการแฟ้มแยกกัน %d หน้าต่าง"
 
-#: ../thunar/thunar-launcher.c:975
+#: ../thunar/thunar-launcher.c:978
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
 msgstr[0] "เปิดหน้าต่างใหม่ %d บาน"
 
-#: ../thunar/thunar-launcher.c:1063 ../thunar/thunar-launcher.c:1899
+#: ../thunar/thunar-launcher.c:1066 ../thunar/thunar-launcher.c:1923
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "เมานท์ \"%s\" ไม่สำเร็จ"
 
-#: ../thunar/thunar-launcher.c:1519
+#: ../thunar/thunar-launcher.c:1540
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "เปิดแฟ้มที่เลือก"
 
-#: ../thunar/thunar-launcher.c:1523
+#: ../thunar/thunar-launcher.c:1544
 msgid "_Execute"
 msgstr "เรียก_ทำงาน"
 
-#: ../thunar/thunar-launcher.c:1523
+#: ../thunar/thunar-launcher.c:1544
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "เรียกทำงานแฟ้มที่เลือก"
 
-#: ../thunar/thunar-launcher.c:1528
+#: ../thunar/thunar-launcher.c:1549
 #, c-format
 msgid "Open in New _Tab"
 msgid_plural "Open in %d New _Tabs"
 msgstr[0] "เปิดในแ_ท็บใหม่ %d แท็บ"
 
-#: ../thunar/thunar-launcher.c:1529
+#: ../thunar/thunar-launcher.c:1550
 #, c-format
 msgid "Open the selected directory in new tab"
 msgid_plural "Open the selected directories in %d new tabs"
 msgstr[0] "เปิดไดเรกทอรีที่เลือกในแท็บใหม่ %d แท็บ"
 
-#: ../thunar/thunar-launcher.c:1538
+#: ../thunar/thunar-launcher.c:1559
 #, c-format
 msgid "Open in New _Window"
 msgid_plural "Open in %d New _Windows"
 msgstr[0] "เปิดใน_หน้าต่างใหม่ %d บาน"
 
-#: ../thunar/thunar-launcher.c:1539
+#: ../thunar/thunar-launcher.c:1560
 #, c-format
 msgid "Open the selected directory in new window"
 msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "เปิดไดเรกทอรีที่เลือกในหน้าต่างใหม่ %d บาน"
 
-#: ../thunar/thunar-launcher.c:1578
+#: ../thunar/thunar-launcher.c:1599
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "สร้างลิงก์สัญลักษณ์สำหรับแฟ้มที่เลือก"
 
-#: ../thunar/thunar-launcher.c:1602
+#: ../thunar/thunar-launcher.c:1623
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "เปลี่ยนชื่อแฟ้มที่เลือก"
 
-#: ../thunar/thunar-launcher.c:1612
+#: ../thunar/thunar-launcher.c:1633
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
 msgstr[0] "กู้คืนแฟ้มที่เลือกไปยังตำแหน่งเดิม"
 
-#: ../thunar/thunar-launcher.c:1624
+#: ../thunar/thunar-launcher.c:1645
 msgid ""
 "Restore the selected file to its original location and open the location in "
 "a new window/tab"
@@ -1409,115 +1409,115 @@ msgid_plural ""
 "locations in a new window/tab"
 msgstr[0] ""
 
-#: ../thunar/thunar-launcher.c:1641
+#: ../thunar/thunar-launcher.c:1662
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "ย้ายแฟ้มที่เลือกไปลงถังขยะ"
 
-#: ../thunar/thunar-launcher.c:1658
+#: ../thunar/thunar-launcher.c:1679
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "ลบแฟ้มที่เลือกทิ้งอย่างถาวร"
 
-#: ../thunar/thunar-launcher.c:1717
+#: ../thunar/thunar-launcher.c:1738
 msgid "Cut the selection"
 msgstr "ตัดรายการที่เลือก"
 
-#: ../thunar/thunar-launcher.c:1727
+#: ../thunar/thunar-launcher.c:1748
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "เตรียมพร้อมแฟ้มที่เลือกเพื่อย้ายด้วยคำสั่ง \"แปะ\""
 
-#: ../thunar/thunar-launcher.c:1741
+#: ../thunar/thunar-launcher.c:1762
 msgid "Copy the selection"
 msgstr "คัดลอกรายการที่เลือก"
 
-#: ../thunar/thunar-launcher.c:1751
+#: ../thunar/thunar-launcher.c:1772
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "เตรียมพร้อมแฟ้มที่เลือกเพื่อคัดลอกด้วยคำสั่ง \"แปะ\""
 
-#: ../thunar/thunar-launcher.c:1774
+#: ../thunar/thunar-launcher.c:1795
 msgid "Paste the clipboard"
 msgstr "แปะเนื้อหาจากคลิปบอร์ด"
 
-#: ../thunar/thunar-launcher.c:2005
+#: ../thunar/thunar-launcher.c:2034
 msgid "Side Pane (Add Bookmark)"
 msgid_plural "Side Pane (Add Bookmarks)"
 msgstr[0] "ช่องข้าง (เพิ่มที่คั่น)"
 
-#: ../thunar/thunar-launcher.c:2006
+#: ../thunar/thunar-launcher.c:2035
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "เพิ่มโฟลเดอร์ที่เลือกลงในช่องจุดลัดด้านข้าง"
 
-#: ../thunar/thunar-launcher.c:2025
+#: ../thunar/thunar-launcher.c:2054
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "พื้นโต๊ะ (สร้างจุดเชื่อม)"
 
-#: ../thunar/thunar-launcher.c:2026
+#: ../thunar/thunar-launcher.c:2055
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "สร้างจุดเชื่อมบนพื้นโต๊ะเพื่อเชื่อมมายังแฟ้มที่เลือก"
 
-#: ../thunar/thunar-launcher.c:2047 ../thunar/thunar-launcher.c:2085
+#: ../thunar/thunar-launcher.c:2076 ../thunar/thunar-launcher.c:2114
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "ส่งแฟ้มที่เลือกไปยัง \"%s\""
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-launcher.c:2605
+#: ../thunar/thunar-launcher.c:2667
 msgid "New Empty File"
 msgstr "แฟ้มเปล่าใหม่"
 
-#: ../thunar/thunar-launcher.c:2609
+#: ../thunar/thunar-launcher.c:2671
 msgid "New Empty File..."
 msgstr "แฟ้มเปล่าใหม่..."
 
-#: ../thunar/thunar-launcher.c:2809
+#: ../thunar/thunar-launcher.c:2874
 #, c-format
 msgid "No templates installed in \"%s\""
 msgstr "ไม่มีเทมเพลตติดตั้งไว้ที่ \"%s\""
 
-#: ../thunar/thunar-launcher.c:2822
+#: ../thunar/thunar-launcher.c:2887
 msgid "_Empty File"
 msgstr "แฟ้มเ_ปล่า"
 
-#: ../thunar/thunar-launcher.c:2928
+#: ../thunar/thunar-launcher.c:3005
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "ดันสื่อใน \"%s\" ออกไม่สำเร็จ"
 
-#: ../thunar/thunar-launcher.c:2987
+#: ../thunar/thunar-launcher.c:3067
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "เลิกเมานท์ \"%s\" ไม่สำเร็จ"
 
-#: ../thunar/thunar-launcher.c:3048
+#: ../thunar/thunar-launcher.c:3131
 #, c-format
 msgid "Open With \"%s\""
 msgstr "เปิดด้วย \"%s\""
 
-#: ../thunar/thunar-launcher.c:3049 ../thunar/thunar-launcher.c:3118
+#: ../thunar/thunar-launcher.c:3132 ../thunar/thunar-launcher.c:3201
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "ใช้ \"%s\" เพื่อเปิดแฟ้มที่เลือก"
 
-#: ../thunar/thunar-launcher.c:3117
+#: ../thunar/thunar-launcher.c:3200
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "_เปิดด้วย \"%s\""
 
 #. we can only show a generic "Open" action
-#: ../thunar/thunar-launcher.c:3137
+#: ../thunar/thunar-launcher.c:3220
 #, c-format
 msgid "_Open With Default Applications"
 msgstr "_เปิดด้วยแอปพลิเคชันปริยาย"
 
-#: ../thunar/thunar-launcher.c:3138
+#: ../thunar/thunar-launcher.c:3221
 #, c-format
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
@@ -1924,8 +1924,8 @@ msgid ""
 msgstr "เลือกตัวเลือกนี้หากต้องการวางคำบรรยายไอคอนไว้ข้างไอคอน แทนที่จะวางใต้ไอคอน"
 
 #: ../thunar/thunar-preferences-dialog.c:521
-msgid "Window icon"
-msgstr "ไอคอนหน้าต่าง"
+msgid "Window Icon"
+msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:534
 msgid "Use current folder icon"
@@ -2167,8 +2167,8 @@ msgid "Advanced"
 msgstr "ขั้นสูง"
 
 #: ../thunar/thunar-preferences-dialog.c:984
-msgid "File transfer"
-msgstr "การถ่ายโอนแฟ้ม"
+msgid "File Transfer"
+msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:1000
 msgid "Transfer files in parallel:"
@@ -2448,7 +2448,7 @@ msgid "Display information about Thunar Bulk Rename"
 msgstr "แสดงข้อมูลเกี่ยวกับโปรแกรมเปลี่ยนชื่อกลุ่มแฟ้มของ Thunar"
 
 #: ../thunar/thunar-renamer-dialog.c:356
-#: ../thunar/thunar-renamer-dialog.c:1796
+#: ../thunar/thunar-renamer-dialog.c:1808
 #: ../thunar-bulk-rename.desktop.in.in.h:2
 msgid "Rename Multiple Files"
 msgstr "เปลี่ยนชื่อแฟ้มทีละหลายแฟ้ม"
@@ -2528,19 +2528,19 @@ msgid "Video Files"
 msgstr "แฟ้มวีดิทัศน์"
 
 #. just popup the about dialog
-#: ../thunar/thunar-renamer-dialog.c:1224
+#: ../thunar/thunar-renamer-dialog.c:1233
 #: ../thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
 msgstr "เปลี่ยนชื่อกลุ่มแฟ้ม"
 
-#: ../thunar/thunar-renamer-dialog.c:1225
+#: ../thunar/thunar-renamer-dialog.c:1234
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
 msgstr "โปรแกรมเปลี่ยนชื่อกลุ่มแฟ้มของ Thunar เป็นเครื่องมือที่ทรงพลัง\nและปรับขยายได้สำหรับเปลี่ยนชื่อแฟ้มทีละหลายแฟ้มพร้อมกัน"
 
 #. change title to reflect the standalone status
-#: ../thunar/thunar-renamer-dialog.c:1796
+#: ../thunar/thunar-renamer-dialog.c:1808
 msgid "Bulk Rename - Rename Multiple Files"
 msgstr "เปลี่ยนชื่อกลุ่มแฟ้ม - เปลี่ยนชื่อแฟ้มทีละหลายแฟ้ม"
 
@@ -2644,13 +2644,13 @@ msgstr "เ_ปลี่ยนชื่อจุดลัด"
 msgid "_Remove Shortcut"
 msgstr "_ลบจุดลัด"
 
-#: ../thunar/thunar-shortcuts-view.c:1629
+#: ../thunar/thunar-shortcuts-view.c:1635
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "พาธ \"%s\" ไม่ใช่ไดเรกทอรี"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1649
+#: ../thunar/thunar-shortcuts-view.c:1655
 msgid "Failed to add new shortcut"
 msgstr "เพิ่มจุดลัดใหม่ไม่สำเร็จ"
 
@@ -2786,48 +2786,48 @@ msgstr "_หลังมาหน้า"
 msgid "Sort items in descending order"
 msgstr "เรียงลำดับรายการจากหลังมาหน้า"
 
-#: ../thunar/thunar-standard-view.c:1671
+#: ../thunar/thunar-standard-view.c:1679
 msgid "Loading folder contents..."
 msgstr "กำลังโหลดเนื้อหาโฟลเดอร์..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2229 ../thunar/thunar-window.c:3670
+#: ../thunar/thunar-standard-view.c:2237 ../thunar/thunar-window.c:3750
 msgid "Failed to open the home folder"
 msgstr "เปิดโฟลเดอร์บ้านไม่สำเร็จ"
 
-#: ../thunar/thunar-standard-view.c:2303
+#: ../thunar/thunar-standard-view.c:2314
 msgid "Select by Pattern"
 msgstr "เลือกด้วยแพตเทิร์น"
 
-#: ../thunar/thunar-standard-view.c:2308
+#: ../thunar/thunar-standard-view.c:2319
 msgid "_Select"
 msgstr "เ_ลือก"
 
-#: ../thunar/thunar-standard-view.c:2321
+#: ../thunar/thunar-standard-view.c:2332
 msgid "_Pattern:"
 msgstr "แ_พตเทิร์น:"
 
-#: ../thunar/thunar-standard-view.c:2328
+#: ../thunar/thunar-standard-view.c:2339
 msgid "Examples:"
 msgstr "ตัวอย่าง:"
 
-#: ../thunar/thunar-standard-view.c:2337
+#: ../thunar/thunar-standard-view.c:2348
 msgid "C_ase sensitive"
 msgstr "ตัว_พิมพ์ใหญ่-เล็กตรงกัน"
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: ../thunar/thunar-standard-view.c:2709
+#: ../thunar/thunar-standard-view.c:2729
 msgid "Invalid filename provided by XDS drag site"
 msgstr "ชื่อแฟ้มจากแหล่ง XDS ที่ลากมาไม่ถูกต้อง"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:2899
+#: ../thunar/thunar-standard-view.c:2919
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "สร้างลิงก์สำหรับ URL \"%s\" ไม่สำเร็จ"
 
-#: ../thunar/thunar-standard-view.c:3288 ../thunar/thunar-window.c:3763
+#: ../thunar/thunar-standard-view.c:3308 ../thunar/thunar-window.c:3846
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "เปิดไดเรกทอรี \"%s\" ไม่สำเร็จ"
@@ -3330,76 +3330,76 @@ msgstr ""
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "คำเตือน: คุณกำลังใช้บัญชี root ซึ่งมีโอกาสทำให้ระบบเสียหายได้"
 
-#: ../thunar/thunar-window.c:2350
+#: ../thunar/thunar-window.c:2360
 msgid "Close tab"
 msgstr "ปิดแท็บ"
 
-#: ../thunar/thunar-window.c:2786
+#: ../thunar/thunar-window.c:2797
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "เปิดตำแหน่ง \"%s\""
 
-#: ../thunar/thunar-window.c:3619
+#: ../thunar/thunar-window.c:3690
 msgid "Failed to open parent folder"
 msgstr "เปิดโฟลเดอร์แม่ไม่สำเร็จ"
 
-#: ../thunar/thunar-window.c:3738
+#: ../thunar/thunar-window.c:3821
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "ไดเรกทอรี \"%s\" ไม่มีอยู่ คุณต้องการสร้างไดเรกทอรีนี้หรือไม่?"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3805
+#: ../thunar/thunar-window.c:3891
 msgid "Failed to browse the computer"
 msgstr "ท่องดูคอมพิวเตอร์ไม่สำเร็จ"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:3845
+#: ../thunar/thunar-window.c:3934
 msgid "About Templates"
 msgstr "เกี่ยวกับเทมเพลต"
 
-#: ../thunar/thunar-window.c:3867
+#: ../thunar/thunar-window.c:3956
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "แฟ้มทั้งหมดในโฟลเดอร์นี้จะปรากฏในเมนู \"สร้างเอกสาร\""
 
-#: ../thunar/thunar-window.c:3874
+#: ../thunar/thunar-window.c:3963
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "ถ้าคุณสร้างเอกสารบางชนิดบ่อยๆ คุณสามารถเก็บเอกสารตัวอย่างไว้ในโฟลเดอร์นี้ได้ Thunar จะเพิ่มรายการสำหรับเอกสารดังกล่าวเข้าในเมนู \"สร้างเอกสาร\"\n\nจากนั้น คุณจะสามารถเลือกรายการดังกล่าวจากเมนู \"สร้างเอกสาร\" และ Thunar จะสร้างสำเนาของเอกสารดังกล่าวลงในไดเรกทอรีที่คุณกำลังดูอยู่"
 
-#: ../thunar/thunar-window.c:3886
+#: ../thunar/thunar-window.c:3975
 msgid "Do _not display this message again"
 msgstr "ไ_ม่ต้องแสดงข้อความนี้อีก"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3917
+#: ../thunar/thunar-window.c:4009
 msgid "Failed to open the file system root folder"
 msgstr "เปิดโฟลเดอร์รากของระบบแฟ้มไม่สำเร็จ"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3950
+#: ../thunar/thunar-window.c:4045
 msgid "Failed to display `Recent`"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3983
+#: ../thunar/thunar-window.c:4081
 msgid "Failed to display the contents of the trash can"
 msgstr "แสดงเนื้อหาในถังขยะไม่สำเร็จ"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4016
+#: ../thunar/thunar-window.c:4117
 msgid "Failed to browse the network"
 msgstr "ท่องแสดงเครือข่ายไม่สำเร็จ"
 
-#: ../thunar/thunar-window.c:4118
+#: ../thunar/thunar-window.c:4228
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar คือโปรแกรมจัดการแฟ้มที่ทำงานรวดเร็วและใช้ง่าย\nสำหรับเดสก์ท็อป Xfce"
 
-#: ../thunar/thunar-window.c:5118
+#: ../thunar/thunar-window.c:5240
 msgid "Failed to launch search with Catfish"
 msgstr ""
 
