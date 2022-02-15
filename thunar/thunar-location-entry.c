@@ -493,7 +493,8 @@ thunar_location_entry_cancel_search (ThunarLocationEntry *entry)
  * thunar_location_entry_get_search_query:
  * @entry        : a #ThunarLocationEntry.
  *
- * Returns a copy of the search query in the text field of the path_entry of @entry or NULL if there is no search query.
+ * Returns a copy of the search query in the text field of the path_entry of @entry "" if the path_entry doesn't contain
+ * a search query.
  *
  * It's the responsibility of the caller to free the returned string using `g_free`.
  **/
