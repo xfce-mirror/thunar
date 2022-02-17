@@ -598,7 +598,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                         "%H hour\n"
                                         "%M minute\n"
                                         "%S second\n\n"
-                                        "For a complete list, check the man pages of 'strftime'"));
+                                        "For a complete list, search 'Glib.DateTime.format'."));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "misc-date-custom-style",
                           G_OBJECT (entry),
