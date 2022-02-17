@@ -95,7 +95,12 @@ enum
   TARGET_NETSCAPE_URL,
 };
 
-
+typedef enum
+{
+  IDLE_THUMBNAILS_NOT_SCHEDULED,
+  IDLE_THUMBNAILS_SCHEDULED,
+  IDLE_THUMBNAILS_SCHEDULED_WITH_FORCE,
+} ThumbnailSchedulType;
 
 static void                 thunar_standard_view_component_init             (ThunarComponentIface     *iface);
 static void                 thunar_standard_view_navigator_init             (ThunarNavigatorIface     *iface);
@@ -254,9 +259,10 @@ static void                 thunar_standard_view_finished_thumbnailing      (Thu
 static void                 thunar_standard_view_thumbnailing_destroyed     (gpointer                  data);
 static void                 thunar_standard_view_cancel_thumbnailing        (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_schedule_thumbnail_timeout (ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_schedule_thumbnail_idle    (ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_schedule_thumbnail_idle    (ThunarStandardView       *standard_view,
+                                                                             gboolean                  force_thumbnail_update);
 static gboolean             thunar_standard_view_request_thumbnails         (gpointer                  data);
-static gboolean             thunar_standard_view_request_thumbnails_lazy    (gpointer                  data);
+static gboolean             thunar_standard_view_force_request_thumbnails   (gpointer                  data);
 static void                 thunar_standard_view_thumbnail_mode_toggled     (ThunarStandardView       *standard_view,
                                                                              GParamSpec               *pspec,
                                                                              ThunarIconFactory        *icon_factory);
@@ -344,7 +350,7 @@ struct _ThunarStandardViewPrivate
   ThunarThumbnailer      *thumbnailer;
   guint                   thumbnail_request;
   guint                   thumbnail_source_id;
-  gboolean                thumbnailing_scheduled;
+  ThumbnailSchedulType    thumbnailing_scheduled;
 
   /* file insert signal */
   gulong                  row_changed_id;
@@ -736,7 +742,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* create a thumbnailer */
   standard_view->priv->thumbnailer = thunar_thumbnailer_get ();
   g_signal_connect (G_OBJECT (standard_view->priv->thumbnailer), "request-finished", G_CALLBACK (thunar_standard_view_finished_thumbnailing), standard_view);
-  standard_view->priv->thumbnailing_scheduled = FALSE;
+  standard_view->priv->thumbnailing_scheduled = IDLE_THUMBNAILS_NOT_SCHEDULED;
 
   /* initialize the scrolled window */
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (standard_view),
@@ -1639,14 +1645,17 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
     }
 
   /* check if we're done loading and a thumbnail timeout or idle was requested */
-  if (!loading && standard_view->priv->thumbnailing_scheduled)
+  if (!loading && standard_view->priv->thumbnailing_scheduled != IDLE_THUMBNAILS_NOT_SCHEDULED)
     {
       /* We've just finished loading. It will probably take the user some time to
        * understand the contents of the folder before he will start interacting
        * with the view. So here we can safely schedule an idle function instead
        * of a timeout. */
-      thunar_standard_view_schedule_thumbnail_idle (standard_view);
-      standard_view->priv->thumbnailing_scheduled = FALSE;
+      if (standard_view->priv->thumbnailing_scheduled == IDLE_THUMBNAILS_SCHEDULED_WITH_FORCE)
+        thunar_standard_view_schedule_thumbnail_idle (standard_view, TRUE);
+      else
+        thunar_standard_view_schedule_thumbnail_idle (standard_view, FALSE);
+      standard_view->priv->thumbnailing_scheduled = IDLE_THUMBNAILS_NOT_SCHEDULED;
     }
 
   /* notify listeners */
@@ -1891,9 +1900,9 @@ thunar_standard_view_reload (ThunarView *view,
   if (standard_view->priv->directory_specific_settings)
     thunar_standard_view_apply_directory_specific_settings (standard_view, standard_view->priv->current_directory);
 
-  /* schedule thumbnail reload update */
-  if (!standard_view->priv->thumbnailing_scheduled)
-    thunar_standard_view_schedule_thumbnail_idle (standard_view);
+  /* schedule a thumbnail reload */
+  if (standard_view->priv->thumbnailing_scheduled == IDLE_THUMBNAILS_NOT_SCHEDULED)
+      thunar_standard_view_schedule_thumbnail_idle (standard_view, TRUE);
 }
 
 
@@ -3539,13 +3548,17 @@ thunar_standard_view_schedule_thumbnail_timeout (ThunarStandardView *standard_vi
 {
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
+  /* Dont request timeout thumbnails if idle thumbnails already got scheduled */
+  if (standard_view->priv->thumbnailing_scheduled != IDLE_THUMBNAILS_NOT_SCHEDULED)
+    return;
+
   /* delay creating the idle until the view has finished loading.
    * this is done because we only can tell the visible range reliably after
    * all items have been added and we've perhaps scrolled to the file remember
    * the last time */
   if (thunar_view_get_loading (THUNAR_VIEW (standard_view)))
     {
-      standard_view->priv->thumbnailing_scheduled = TRUE;
+      standard_view->priv->thumbnailing_scheduled = IDLE_THUMBNAILS_SCHEDULED;
       return;
     }
 
@@ -3555,14 +3568,15 @@ thunar_standard_view_schedule_thumbnail_timeout (ThunarStandardView *standard_vi
   /* schedule the timeout handler */
   g_assert (standard_view->priv->thumbnail_source_id == 0);
   standard_view->priv->thumbnail_source_id =
-    g_timeout_add_full (G_PRIORITY_DEFAULT, 175, thunar_standard_view_request_thumbnails_lazy,
+    g_timeout_add_full (G_PRIORITY_DEFAULT, 175, thunar_standard_view_request_thumbnails,
                         standard_view, thunar_standard_view_thumbnailing_destroyed);
 }
 
 
 
 static void
-thunar_standard_view_schedule_thumbnail_idle (ThunarStandardView *standard_view)
+thunar_standard_view_schedule_thumbnail_idle (ThunarStandardView *standard_view,
+                                              gboolean            force_thumbnail_update)
 {
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
@@ -3572,7 +3586,12 @@ thunar_standard_view_schedule_thumbnail_idle (ThunarStandardView *standard_view)
    * scrolled to the file remembered the last time */
   if (thunar_view_get_loading (THUNAR_VIEW (standard_view)))
     {
-      standard_view->priv->thumbnailing_scheduled = TRUE;
+      if(force_thumbnail_update)
+        {
+        standard_view->priv->thumbnailing_scheduled = IDLE_THUMBNAILS_SCHEDULED_WITH_FORCE;
+        }
+      else
+        standard_view->priv->thumbnailing_scheduled = IDLE_THUMBNAILS_SCHEDULED;
       return;
     }
 
@@ -3581,16 +3600,25 @@ thunar_standard_view_schedule_thumbnail_idle (ThunarStandardView *standard_view)
 
   /* schedule the timeout or idle handler */
   g_assert (standard_view->priv->thumbnail_source_id == 0);
-  standard_view->priv->thumbnail_source_id =
-    g_idle_add_full (G_PRIORITY_DEFAULT_IDLE, thunar_standard_view_request_thumbnails,
-                     standard_view, thunar_standard_view_thumbnailing_destroyed);
+  if(force_thumbnail_update == TRUE)
+    {
+      standard_view->priv->thumbnail_source_id =
+        g_idle_add_full (G_PRIORITY_DEFAULT_IDLE, thunar_standard_view_force_request_thumbnails,
+                         standard_view, thunar_standard_view_thumbnailing_destroyed);
+    }
+  else
+    {
+      standard_view->priv->thumbnail_source_id =
+        g_idle_add_full (G_PRIORITY_DEFAULT_IDLE, thunar_standard_view_request_thumbnails,
+                         standard_view, thunar_standard_view_thumbnailing_destroyed);
+    }
 }
 
 
 
 static gboolean
 thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
-                                              gboolean            lazy_request)
+                                              gboolean            force_thumbnail_update)
 {
   GtkTreePath *start_path;
   GtkTreePath *end_path;
@@ -3647,7 +3675,7 @@ thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
 
       /* queue a thumbnail request */
       thunar_thumbnailer_queue_files (standard_view->priv->thumbnailer,
-                                      lazy_request, visible_files,
+                                      force_thumbnail_update, visible_files,
                                       &standard_view->priv->thumbnail_request);
 
       /* release the file list */
@@ -3672,7 +3700,7 @@ thunar_standard_view_request_thumbnails (gpointer data)
 
 
 static gboolean
-thunar_standard_view_request_thumbnails_lazy (gpointer data)
+thunar_standard_view_force_request_thumbnails (gpointer data)
 {
   return thunar_standard_view_request_thumbnails_real (data, TRUE);
 }
