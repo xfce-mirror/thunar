@@ -32,7 +32,7 @@
 
 #include <glib/gstdio.h>
 
-#include <exo/exo.h>
+#include <libxfce4util/libxfce4util.h>
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-chooser-dialog.h>
@@ -1185,7 +1185,7 @@ thunar_dbus_service_transfer_files (ThunarDBusTransferMode transfer_mode,
   if (screen != NULL)
     {
       /* change the working directory if necessary */
-      if (!exo_str_is_empty (working_directory))
+      if (!xfce_str_is_empty (working_directory))
         old_working_dir = thunar_util_change_working_directory (working_directory);
 
       /* transform the source filenames into GFile objects */
@@ -1215,7 +1215,7 @@ thunar_dbus_service_transfer_files (ThunarDBusTransferMode transfer_mode,
         }
 
       /* switch back to the previous working directory */
-      if (!exo_str_is_empty (working_directory))
+      if (!xfce_str_is_empty (working_directory))
         {
           new_working_dir = thunar_util_change_working_directory (old_working_dir);
           g_free (old_working_dir);
@@ -1425,7 +1425,7 @@ thunar_dbus_service_unlink_files (ThunarDBusFileManager  *object,
   if (screen != NULL)
     {
       /* change the working directory if necessary */
-      if (!exo_str_is_empty (working_directory))
+      if (!xfce_str_is_empty (working_directory))
         old_working_dir = thunar_util_change_working_directory (working_directory);
 
       /* try to parse the specified filenames */
@@ -1450,7 +1450,7 @@ thunar_dbus_service_unlink_files (ThunarDBusFileManager  *object,
         }
 
       /* switch back to the previous working directory */
-      if (!exo_str_is_empty (working_directory))
+      if (!xfce_str_is_empty (working_directory))
         {
           new_working_dir = thunar_util_change_working_directory (old_working_dir);
           g_free (old_working_dir);

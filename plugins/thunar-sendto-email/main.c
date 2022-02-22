@@ -62,6 +62,8 @@
 
 #include <exo/exo.h>
 
+#include <libxfce4util/libxfce4util.h>
+
 
 
 typedef struct _TseData TseData;

@@ -53,6 +53,7 @@ libthunarx_3_la_CFLAGS =						\
 	$(GIO_CFLAGS)							\
 	$(GTK_CFLAGS)							\
 	$(GMODULE_CFLAGS)						\
+	$(LIBXFCE4UTIL_CFLAGS)						\
 	$(PLATFORM_CFLAGS)
 
 libthunarx_3_la_LDFLAGS =						\
@@ -66,7 +67,8 @@ libthunarx_3_la_LIBADD =						\
 	$(GLIB_LIBS)							\
 	$(GMODULE_LIBS)							\
 	$(GIO_LIBS)							\
-	$(GTK_LIBS)
+	$(GTK_LIBS)							\
+	$(LIBXFCE4UTIL_LIBS)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = thunarx-3.pc

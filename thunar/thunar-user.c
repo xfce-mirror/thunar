@@ -50,6 +50,8 @@
 
 #include <exo/exo.h>
 
+#include <libxfce4util/libxfce4util.h>
+
 #include <thunar/thunar-user.h>
 #include <thunar/thunar-util.h>
 
@@ -290,7 +292,7 @@ thunar_user_load (ThunarUser *user)
           name[0] = g_ascii_toupper (name[0]);
 
           /* replace all occurances of '&' */
-          t = exo_str_replace (user->real_name, "&", name);
+          t = xfce_str_replace (user->real_name, "&", name);
           g_free (user->real_name);
           user->real_name = t;
 
