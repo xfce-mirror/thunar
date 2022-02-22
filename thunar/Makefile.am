@@ -337,3 +337,5 @@ EXTRA_DIST =								\
 	thunar-settings							\
 	thunar.gresource.xml					\
 	$(desktop_in_files)
+
+dist-hook: all
