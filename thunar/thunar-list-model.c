@@ -30,6 +30,8 @@
 #include <string.h>
 #endif
 
+#include <libxfce4util/libxfce4util.h>
+
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gobject-extensions.h>

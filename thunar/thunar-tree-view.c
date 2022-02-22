@@ -28,6 +28,8 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include <libxfce4util/libxfce4util.h>
+
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-device.h>

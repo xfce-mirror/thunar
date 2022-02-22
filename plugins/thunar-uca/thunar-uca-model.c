@@ -49,8 +49,6 @@
 
 #include <gtk/gtk.h>
 
-#include <exo/exo.h>
-
 #include <libxfce4util/libxfce4util.h>
 
 #include <thunar-uca/thunar-uca-model.h>
@@ -877,7 +875,7 @@ end_element_handler (GMarkupParseContext *context,
                                    0, 0);
 
           /* check if a new id should've been generated */
-          if (exo_str_is_empty (parser->unique_id->str))
+          if (xfce_str_is_empty (parser->unique_id->str))
             parser->unique_id_generated = TRUE;
         }
       else

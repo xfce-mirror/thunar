@@ -25,6 +25,8 @@
 #include <stdlib.h>
 #endif
 
+#include <libxfce4util/libxfce4util.h>
+
 #include <thunar/thunar-column-model.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>

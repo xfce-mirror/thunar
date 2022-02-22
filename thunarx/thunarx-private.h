@@ -39,8 +39,6 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
 G_BEGIN_DECLS
 
-#define I_(string) (g_intern_static_string ((string)))
-
 G_GNUC_INTERNAL
 void   thunarx_object_list_take_reference (GList      *object_list,
                                            gpointer    target);
