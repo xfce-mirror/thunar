@@ -56,6 +56,7 @@ GTKDOC_CFLAGS =	 							\
 	$(LIBNOTIFY_CFLAGS)						\
 	$(LIBSM_CFLAGS)							\
 	$(LIBXFCE4UI_CFLAGS)						\
+	$(LIBXFCE4KBD_PRIVATE_CFLAGS) 					\
 	$(XFCONF_CFLAGS)						\
 	$(PANGO_CFLAGS)							\
 	$(PLATFORM_CFLAGS)
@@ -72,6 +73,7 @@ GTKDOC_LIBS =  								\
 	$(LIBNOTIFY_LIBS)						\
 	$(LIBSM_LIBS)							\
 	$(LIBXFCE4UI_LIBS)						\
+	$(LIBXFCE4KBD_PRIVATE_LIBS)					\
 	$(XFCONF_LIBS)							\
 	$(PANGO_LIBS)
 
