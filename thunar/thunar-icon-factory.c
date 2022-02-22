@@ -869,7 +869,7 @@ thunar_icon_factory_load_icon (ThunarIconFactory        *factory,
   /* cannot happen unless there's no XSETTINGS manager
    * for the default screen, but just in case...
    */
-  if (G_UNLIKELY (exo_str_is_empty (name)))
+  if (G_UNLIKELY (xfce_str_is_empty (name)))
     {
       /* check if the caller will happly accept the fallback icon */
       if (G_LIKELY (wants_default))
