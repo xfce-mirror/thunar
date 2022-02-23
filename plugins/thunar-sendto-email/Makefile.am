@@ -18,10 +18,12 @@ thunar_sendto_email_SOURCES =						\
 
 thunar_sendto_email_CFLAGS =						\
 	$(EXO_CFLAGS)							\
+	$(LIBXFCE4UTIL_CFLAGS)						\
 	$(PLATFORM_CFLAGS)
 
 thunar_sendto_email_LDADD =						\
 	$(EXO_LIBS)							\
+	$(LIBXFCE4UTIL_LIBS)						\
 	$(PLATFORM_LDFLAGS)
 
 desktopdir = $(datadir)/Thunar/sendto

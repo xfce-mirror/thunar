@@ -33,6 +33,8 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include <libxfce4util/libxfce4util.h>
+
 #include <thunar/thunar-navigator.h>
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-browser.h>

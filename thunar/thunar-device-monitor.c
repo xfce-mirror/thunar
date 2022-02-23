@@ -27,6 +27,8 @@
 #include <gio/gunixmounts.h>
 #endif
 
+#include <libxfce4util/libxfce4util.h>
+
 #include <thunar/thunar-device-monitor.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-marshal.h>

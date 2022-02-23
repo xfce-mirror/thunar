@@ -29,6 +29,8 @@
 #include <string.h>
 #endif
 
+#include <libxfce4util/libxfce4util.h>
+
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dnd.h>
 #include <thunar/thunar-gio-extensions.h>
