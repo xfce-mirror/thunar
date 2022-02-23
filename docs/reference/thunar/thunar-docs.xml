@@ -100,85 +100,169 @@
     </copyright>
   </bookinfo>
 
-  <part id="thunar-general">
-    <title>Unsorted</title>
-    <xi:include href="xml/thunar-notify.xml"/>
-    <xi:include href="xml/thunar-menu.xml"/>
-    <xi:include href="xml/thunar-dbus-service.xml"/>
-    <xi:include href="xml/thunar-renamer-progress.xml"/>
-    <xi:include href="xml/thunar-gio-extensions.xml"/>
-    <xi:include href="xml/thunar-properties-dialog.xml"/>
-    <xi:include href="xml/thunar-shortcuts-model.xml"/>
-    <xi:include href="xml/thunar-icon-renderer.xml"/>
-    <xi:include href="xml/thunar-io-scan-directory.xml"/>
-    <xi:include href="xml/thunar-shortcuts-icon-renderer.xml"/>
-    <xi:include href="xml/thunar-preferences-dialog.xml"/>
-    <xi:include href="xml/thunar-tree-pane.xml"/>
-    <xi:include href="xml/thunar-application.xml"/>
-    <xi:include href="xml/thunar-renamer-pair.xml"/>
-    <xi:include href="xml/thunar-shortcuts-view.xml"/>
-    <xi:include href="xml/thunar-location-buttons.xml"/>
-    <xi:include href="xml/thunar-browser.xml"/>
-    <xi:include href="xml/thunar-sendto-model.xml"/>
-    <xi:include href="xml/thunar-util.xml"/>
-    <xi:include href="xml/thunar-preferences.xml"/>
-    <xi:include href="xml/thunar-standard-view.xml"/>
-    <xi:include href="xml/thunar-history.xml"/>
-    <xi:include href="xml/thunar-side-pane.xml"/>
-    <xi:include href="xml/thunar-enum-types.xml"/>
+  <part id="glib-gtk-extensions">
+    <title>Glib/GTK Extensions</title>
     <xi:include href="xml/thunar-gobject-extensions.xml"/>
-    <xi:include href="xml/thunar-file-monitor.xml"/>
-    <xi:include href="xml/thunar-details-view.xml"/>
-    <xi:include href="xml/thunar-dialogs.xml"/>
-    <xi:include href="xml/thunar-image.xml"/>
-    <xi:include href="xml/thunar-user.xml"/>
-    <xi:include href="xml/thunar-location-button.xml"/>
-    <xi:include href="xml/thunar-renamer-model.xml"/>
-    <xi:include href="xml/thunar-size-label.xml"/>
-    <xi:include href="xml/thunar-clipboard-manager.xml"/>
-    <xi:include href="xml/thunar-abstract-dialog.xml"/>
-    <xi:include href="xml/thunar-abstract-icon-view.xml"/>
-    <xi:include href="xml/thunar-device-monitor.xml"/>
-    <xi:include href="xml/thunar-io-jobs.xml"/>
-    <xi:include href="xml/thunar-deep-count-job.xml"/>
-    <xi:include href="xml/thunar-icon-view.xml"/>
-    <xi:include href="xml/thunar-chooser-button.xml"/>
-    <xi:include href="xml/thunar-permissions-chooser.xml"/>
-    <xi:include href="xml/thunar-folder.xml"/>
-    <xi:include href="xml/thunar-io-jobs-util.xml"/>
-    <xi:include href="xml/thunar-renamer-dialog.xml"/>
+    <xi:include href="xml/thunar-gio-extensions.xml"/>
     <xi:include href="xml/thunar-gtk-extensions.xml"/>
-    <xi:include href="xml/thunar-location-entry.xml"/>
-    <xi:include href="xml/thunar-dnd.xml"/>
-    <xi:include href="xml/thunar-launcher.xml"/>
-    <xi:include href="xml/thunar-emblem-chooser.xml"/>
-    <xi:include href="xml/thunar-session-client.xml"/>
-    <xi:include href="xml/thunar-shortcuts-pane.xml"/>
-    <xi:include href="xml/thunar-job.xml"/>
-    <xi:include href="xml/thunar-pango-extensions.xml"/>
-    <xi:include href="xml/thunar-statusbar.xml"/>
-    <xi:include href="xml/thunar-location-bar.xml"/>
-    <xi:include href="xml/thunar-column-editor.xml"/>
-    <xi:include href="xml/thunar-list-model.xml"/>
-    <xi:include href="xml/thunar-ice.xml"/>
-    <xi:include href="xml/thunar-window.xml"/>
-    <xi:include href="xml/thunar-file.xml"/>
-    <xi:include href="xml/thunar-icon-factory.xml"/>
-    <xi:include href="xml/thunar-path-entry.xml"/>
-    <xi:include href="xml/thunar-simple-job.xml"/>
-    <xi:include href="xml/thunar-chooser-dialog.xml"/>
-    <xi:include href="xml/thunar-component.xml"/>
-    <xi:include href="xml/thunar-transfer-job.xml"/>
-    <xi:include href="xml/thunar-tree-view.xml"/>
-    <xi:include href="xml/thunar-device.xml"/>
-    <xi:include href="xml/thunar-view.xml"/>
-    <xi:include href="xml/thunar-chooser-model.xml"/>
-    <xi:include href="xml/thunar-navigator.xml"/>
-    <xi:include href="xml/thunar-compact-view.xml"/>
-    <xi:include href="xml/thunar-column-model.xml"/>
-    <xi:include href="xml/thunar-tree-model.xml"/>
-    <xi:include href="xml/thunar-progress-dialog.xml"/>
     <xi:include href="xml/thunar-gdk-extensions.xml"/>
-    <xi:include href="xml/thunar-progress-view.xml"/>
+    <xi:include href="xml/thunar-pango-extensions.xml"/>
+  </part>
+  <part id="thunar-objects">
+    <title>Thunar Backend Objects</title>
+
+    <chapter>
+      <title>File Manipluation</title>
+      <xi:include href="xml/thunar-file.xml"/>
+      <xi:include href="xml/thunar-file-monitor.xml"/>
+      <xi:include href="xml/thunar-folder.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>Device Management</title>
+      <xi:include href="xml/thunar-device.xml"/>
+      <xi:include href="xml/thunar-device-monitor.xml"/>
+      <xi:include href="xml/thunar-notify.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>Parallel Tasks</title>
+      <xi:include href="xml/thunar-job.xml"/>
+      <xi:include href="xml/thunar-simple-job.xml"/>
+      <xi:include href="xml/thunar-io-jobs.xml"/>
+      <xi:include href="xml/thunar-io-jobs-util.xml"/>
+      <xi:include href="xml/thunar-io-scan-directory.xml"/>
+      <xi:include href="xml/thunar-deep-count-job.xml"/>
+      <xi:include href="xml/thunar-transfer-job.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>X Session / DBus Management</title>
+      <xi:include href="xml/thunar-session-client.xml"/>
+      <xi:include href="xml/thunar-ice.xml"/>
+      <xi:include href="xml/thunar-dbus-service.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>Miscellaneous</title>
+      <xi:include href="xml/thunar-util.xml"/>
+      <xi:include href="xml/thunar-enum-types.xml"/>
+      <xi:include href="xml/thunar-preferences.xml"/>
+      <xi:include href="xml/thunar-user.xml"/>
+    </chapter>
+  </part>
+
+  <part id="thunar-view">
+    <title>Main Screen UI Widgets</title>
+    <chapter>
+      <title>Navigation Control</title>
+      <xi:include href="xml/thunar-window.xml"/>
+      <xi:include href="xml/thunar-navigator.xml"/>
+      <xi:include href="xml/thunar-browser.xml"/>
+      <xi:include href="xml/thunar-history.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>Main View</title>
+      <xi:include href="xml/thunar-standard-view.xml"/>
+      <xi:include href="xml/thunar-shortcuts-view.xml"/>
+      <xi:include href="xml/thunar-details-view.xml"/>
+      <xi:include href="xml/thunar-abstract-icon-view.xml"/>
+      <xi:include href="xml/thunar-icon-view.xml"/>
+      <xi:include href="xml/thunar-tree-view.xml"/>
+      <xi:include href="xml/thunar-view.xml"/>
+      <xi:include href="xml/thunar-compact-view.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>Side Pane</title>
+      <xi:include href="xml/thunar-side-pane.xml"/>
+      <xi:include href="xml/thunar-shortcuts-pane.xml"/>
+      <xi:include href="xml/thunar-tree-pane.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>Location Bar</title>
+      <xi:include href="xml/thunar-location-bar.xml"/>
+      <xi:include href="xml/thunar-location-buttons.xml"/>
+      <xi:include href="xml/thunar-location-button.xml"/>
+      <xi:include href="xml/thunar-location-entry.xml"/>
+      <xi:include href="xml/thunar-path-entry.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>Status Bar</title>
+      <xi:include href="xml/thunar-statusbar.xml"/>
+    </chapter>
+  </part>
+
+  <part id="thunar-widgets">
+    <title>Other Thunar UI Widgets</title>
+    <chapter>
+      <title>Chooser</title>
+      <xi:include href="xml/thunar-emblem-chooser.xml"/>
+      <xi:include href="xml/thunar-chooser-dialog.xml"/>
+      <xi:include href="xml/thunar-permissions-chooser.xml"/>
+      <xi:include href="xml/thunar-chooser-button.xml"/>
+      <xi:include href="xml/thunar-chooser-model.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>Dialog</title>
+      <xi:include href="xml/thunar-dialogs.xml"/>
+      <xi:include href="xml/thunar-abstract-dialog.xml"/>
+      <xi:include href="xml/thunar-column-editor.xml"/>
+      <xi:include href="xml/thunar-preferences-dialog.xml"/>
+      <xi:include href="xml/thunar-progress-dialog.xml"/> <!-- Duplicated on purpose -->
+      <xi:include href="xml/thunar-properties-dialog.xml"/>
+      <xi:include href="xml/thunar-renamer-dialog.xml"/> <!-- Duplicated on purpose -->
+      <xi:include href="xml/thunar-size-label.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>Entry Model</title>
+      <xi:include href="xml/thunar-column-model.xml"/>
+      <xi:include href="xml/thunar-list-model.xml"/>
+      <xi:include href="xml/thunar-renamer-model.xml"/> <!-- Duplicated on purpose -->
+      <xi:include href="xml/thunar-shortcuts-model.xml"/>
+      <xi:include href="xml/thunar-sendto-model.xml"/>
+      <xi:include href="xml/thunar-tree-model.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>File Selection</title>
+      <xi:include href="xml/thunar-clipboard-manager.xml"/>
+      <xi:include href="xml/thunar-dnd.xml"/>
+      <xi:include href="xml/thunar-component.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>File/Applicaton Launcher</title>
+      <xi:include href="xml/thunar-menu.xml"/>
+      <xi:include href="xml/thunar-application.xml"/>
+      <xi:include href="xml/thunar-launcher.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>Image/Icon</title>
+      <xi:include href="xml/thunar-image.xml"/>
+      <xi:include href="xml/thunar-icon-factory.xml"/>
+      <xi:include href="xml/thunar-icon-renderer.xml"/>
+      <xi:include href="xml/thunar-shortcuts-icon-renderer.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>Progress</title>
+      <xi:include href="xml/thunar-progress-view.xml"/>
+      <xi:include href="xml/thunar-progress-dialog.xml"/> <!-- Duplicated on purpose -->
+    </chapter>
+
+    <chapter>
+      <title>Renamer</title>
+      <xi:include href="xml/thunar-renamer-progress.xml"/>
+      <xi:include href="xml/thunar-renamer-model.xml"/> <!-- Duplicated on purpose -->
+      <xi:include href="xml/thunar-renamer-dialog.xml"/> <!-- Duplicated on purpose -->
+      <xi:include href="xml/thunar-renamer-pair.xml"/>
+    </chapter>
   </part>
 </book>
