@@ -1648,7 +1648,7 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
                     goto error;
 
                   dirname = g_path_get_dirname (path);
-                  xfce_append_quoted (command_line, dirname);
+                  xfce_g_string_append_quoted (command_line, dirname);
                   g_free (dirname);
                   g_free (path);
                 }
@@ -1668,7 +1668,7 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
                     goto error;
 
                   dirname = g_path_get_dirname (path);
-                  xfce_append_quoted (command_line, dirname);
+                  xfce_g_string_append_quoted (command_line, dirname);
                   g_free (dirname);
                   g_free (path);
                 }
@@ -1678,7 +1678,7 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
               if (G_LIKELY (file_infos != NULL))
                 {
                   path = thunarx_file_info_get_name (file_infos->data);
-                  xfce_append_quoted (command_line, path);
+                  xfce_g_string_append_quoted (command_line, path);
                   g_free (path);
                 }
               break;
@@ -1690,7 +1690,7 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
                     g_string_append_c (command_line, ' ');
 
                   path = thunarx_file_info_get_name (lp->data);
-                  xfce_append_quoted (command_line, path);
+                  xfce_g_string_append_quoted (command_line, path);
                   g_free (path);
                 }
               break;
