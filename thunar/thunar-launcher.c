@@ -54,6 +54,7 @@
 #include <thunar/thunar-window.h>
 
 #include <libxfce4ui/libxfce4ui.h>
+#include <libxfce4util/libxfce4util.h>
 
 
 

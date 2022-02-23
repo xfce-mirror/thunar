@@ -52,6 +52,7 @@
 
 #include <gio/gio.h>
 #include <libxfce4ui/libxfce4ui.h>
+#include <libxfce4util/libxfce4util.h>
 
 #include <thunarx/thunarx.h>
 
@@ -1039,7 +1040,7 @@ thunar_file_info_reload (ThunarFile   *file,
                                                           G_KEY_FILE_DESKTOP_KEY_ICON,
                                                           NULL);
 
-          if (G_UNLIKELY (exo_str_is_empty (file->custom_icon_name)))
+          if (G_UNLIKELY (xfce_str_is_empty (file->custom_icon_name)))
             {
               /* make sure we set null if the string is empty else the assertion in
                * thunar_icon_factory_lookup_icon() will fail */
@@ -3809,7 +3810,7 @@ static const gchar *
 thunar_file_get_icon_name_for_state (const gchar         *icon_name,
                                      ThunarFileIconState  icon_state)
 {
-  if (exo_str_is_empty (icon_name))
+  if (xfce_str_is_empty (icon_name))
     return NULL;
 
   /* check if we have an accept icon for the icon we found */

@@ -22,6 +22,8 @@
 #include <config.h>
 #endif
 
+#include <libxfce4util/libxfce4util.h>
+
 #include <thunarx/thunarx-private.h>
 #include <thunarx/thunarx-property-page-provider.h>
 

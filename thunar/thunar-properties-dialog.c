@@ -35,6 +35,7 @@
 
 #include <exo/exo.h>
 #include <libxfce4ui/libxfce4ui.h>
+#include <libxfce4util/libxfce4util.h>
 
 #include <thunar/thunar-abstract-dialog.h>
 #include <thunar/thunar-application.h>
