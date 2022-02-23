@@ -24,6 +24,8 @@
 
 #include <glib/gi18n-lib.h>
 
+#include <libxfce4util/libxfce4util.h>
+
 #include <thunarx/thunarx-renamer.h>
 #include <thunarx/thunarx-private.h>
 

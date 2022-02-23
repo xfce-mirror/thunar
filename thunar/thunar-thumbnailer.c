@@ -23,6 +23,8 @@
 #include <config.h>
 #endif
 
+#include <libxfce4util/libxfce4util.h>
+
 #include <thunar/thunar-thumbnailer-proxy.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-preferences.h>

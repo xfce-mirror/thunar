@@ -31,6 +31,8 @@
 
 #include <exo/exo.h>
 
+#include <libxfce4util/libxfce4util.h>
+
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-marshal.h>

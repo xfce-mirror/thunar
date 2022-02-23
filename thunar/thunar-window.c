@@ -32,6 +32,8 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include <libxfce4util/libxfce4util.h>
+
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-browser.h>
 #include <thunar/thunar-clipboard-manager.h>

@@ -28,6 +28,8 @@
 #include <string.h>
 #endif
 
+#include <libxfce4util/libxfce4util.h>
+
 #include <thunar/thunar-emblem-chooser.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-private.h>
