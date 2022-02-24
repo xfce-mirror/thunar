@@ -1440,6 +1440,10 @@ thunar_window_finalize (GObject *object)
 {
   ThunarWindow *window = THUNAR_WINDOW (object);
 
+  thunar_window_free_bookmarks (window);
+  g_list_free_full (window->thunarx_preferences_providers, g_object_unref);
+  g_free (window->search_query);
+
   /* disconnect from the volume monitor */
   g_signal_handlers_disconnect_matched (window->device_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
   g_object_unref (window->device_monitor);
@@ -2866,6 +2870,7 @@ thunar_window_free_bookmarks (ThunarWindow *window)
       g_free (bookmark->name);
       g_slice_free (ThunarBookmark, lp->data);
     }
+  g_list_free (window->bookmarks);
   window->bookmarks = NULL;
 }
 
@@ -3023,6 +3028,8 @@ thunar_window_action_cancel_search (ThunarWindow *window)
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), NULL);
   thunar_launcher_set_searching (window->launcher, FALSE);
   gtk_widget_hide (window->catfish_search_button);
+
+  g_free (window->search_query);
   window->search_query = NULL;
 
   if (THUNAR_IS_DETAILS_VIEW (window->view))
