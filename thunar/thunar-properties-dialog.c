@@ -1262,6 +1262,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
 
   /* cleanup */
   g_object_unref (G_OBJECT (icon_factory));
+  g_free (date_custom_style);
 }
 
 

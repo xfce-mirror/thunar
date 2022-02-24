@@ -3000,7 +3000,11 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
           else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_MOUNTABLE))
             filetype_string = g_strdup ("mountable");
           else
-            filetype_string = g_strdup_printf (_("%s"), g_content_type_get_description (content_type));
+            {
+              gchar *description = g_content_type_get_description (content_type);
+              filetype_string = g_strdup_printf (_("%s"), description);
+              g_free (description);
+            }
         }
 
       if (show_display_name == TRUE)
