@@ -1147,7 +1147,9 @@ thunar_launcher_poke_files_finish (ThunarBrowser *browser,
     {
       /* add opened file to `recent:///` */
       GFile *gfile = thunar_file_get_file (target_file);
-      gtk_recent_manager_add_item (gtk_recent_manager_get_default(), g_file_get_uri (gfile));
+      gchar *uri = g_file_get_uri (gfile);
+      gtk_recent_manager_add_item (gtk_recent_manager_get_default (), uri);
+      g_free (uri);
 
       /* add the resolved file to the list of file to be opened/executed later */
       poke_data->files_poked = g_list_prepend (poke_data->files_poked,g_object_ref (target_file));
