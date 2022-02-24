@@ -1045,7 +1045,7 @@ thunar_window_open_files_in_location (ThunarWindow *window,
 {
   ThunarApplication *application;
   GHashTable        *restore_show_table; /* <string, GList<GFile*>> */
-  const gchar       *original_uri;
+  gchar             *original_uri;
   GFile             *original_dir_file;
   gchar             *original_dir_path;
 
@@ -1070,6 +1070,7 @@ thunar_window_open_files_in_location (ThunarWindow *window,
           list = g_list_append (list, g_file_new_for_commandline_arg (original_uri));
         }
 
+      g_free (original_uri);
       g_object_unref (original_dir_file);
     }
   /* open tabs and show files */
