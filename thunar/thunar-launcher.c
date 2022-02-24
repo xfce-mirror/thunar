@@ -2650,12 +2650,14 @@ thunar_launcher_action_create_document (ThunarLauncher *launcher,
 
   if (template_file != NULL)
     {
+      gchar *basename = g_file_get_basename (thunar_file_get_file (template_file));
       /* generate a title for the create dialog */
       title = g_strdup_printf (_("Create Document from template \"%s\""),
                                thunar_file_get_display_name (template_file));
 
       /* ask the user to enter a name for the new document */
-      generated_name = thunar_util_next_new_file_name (launcher->current_directory, g_file_get_basename (thunar_file_get_file (template_file)), THUNAR_NEXT_FILE_NAME_MODE_NEW);
+      generated_name = thunar_util_next_new_file_name (launcher->current_directory, basename, THUNAR_NEXT_FILE_NAME_MODE_NEW);
+      g_free (basename);
       name = thunar_dialogs_show_create (launcher->widget,
                                          thunar_file_get_content_type (THUNAR_FILE (template_file)),
                                          generated_name,

@@ -524,6 +524,8 @@ thunar_list_model_finalize (GObject *object)
   g_signal_handlers_disconnect_by_func (G_OBJECT (store->file_monitor), thunar_list_model_file_changed, store);
   g_object_unref (G_OBJECT (store->file_monitor));
 
+  g_free (store->date_custom_style);
+
   (*G_OBJECT_CLASS (thunar_list_model_parent_class)->finalize) (object);
 }
 
@@ -2030,6 +2032,7 @@ thunar_list_model_set_date_custom_style (ThunarListModel *store,
   if (g_strcmp0 (store->date_custom_style, date_custom_style) != 0)
     {
       /* apply the new setting */
+      g_free (store->date_custom_style);
       store->date_custom_style = g_strdup (date_custom_style);
 
       /* notify listeners */
