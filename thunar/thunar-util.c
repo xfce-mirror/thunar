@@ -715,13 +715,15 @@ thunar_util_next_new_file_name (ThunarFile            *dir,
       for (GList *files = thunar_folder_get_files (folder); files != NULL; files = files->next)
         {
           ThunarFile  *file = files->data;
-          const gchar *name = g_file_get_basename (thunar_file_get_file (file));
+          gchar       *name = g_file_get_basename (thunar_file_get_file (file));
 
           if (g_strcmp0 (new_name, name) == 0)
             {
               found_duplicate = TRUE;
+              g_free (name);
               break;
             }
+          g_free (name);
         }
 
       if (!found_duplicate)
