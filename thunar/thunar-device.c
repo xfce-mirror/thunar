@@ -681,6 +681,7 @@ thunar_device_compare_by_name (const ThunarDevice *device1,
 {
   gchar* name1;
   gchar* name2;
+  gint   result;
 
   _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device1), 0);
   _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device2), 0);
@@ -692,11 +693,12 @@ thunar_device_compare_by_name (const ThunarDevice *device1,
   name1 = thunar_device_get_name (device1);
   name2 = thunar_device_get_name (device2);
 
-  /* code which compares device names */
-  return g_strcmp0 (name1, name2);
+  result = g_strcmp0 (name1, name2);
 
   g_free (name1);
   g_free (name2);
+
+  return result;
 }
 
 
