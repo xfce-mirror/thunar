@@ -903,6 +903,7 @@ thunar_application_launch_finished (ThunarJob  *job,
       /* Unref all containing_folders (refs obtained by g_file_get_parent in thunar_g_file_list_get_parents ) */
       g_object_unref (lp->data);
     }
+  g_list_free (containing_folders);
 }
 
 
@@ -1414,15 +1415,22 @@ thunar_application_open_window (ThunarApplication *application,
       list = thunar_application_get_windows (application);
       if (list != NULL)  
         {
+          GList     *lp = list;
+          GtkWidget *data;
+
           /* this will be the topmost Window */
           list = g_list_last (list);
+          data = list->data;
 
           if (directory != NULL)
-              thunar_window_notebook_add_new_tab (THUNAR_WINDOW (list->data), directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
+              thunar_window_notebook_add_new_tab (THUNAR_WINDOW (data), directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
           
           /* bring the window to front */
-          gtk_window_present (list->data);
-          return list->data;
+          gtk_window_present (GTK_WINDOW (data));
+
+          g_list_free (lp);
+
+          return data;
         }
     }
 
