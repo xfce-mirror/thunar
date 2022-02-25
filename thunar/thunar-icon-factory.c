@@ -77,7 +77,7 @@ static gboolean   thunar_icon_factory_changed               (GSignalInvocationHi
 static gboolean   thunar_icon_factory_sweep_timer           (gpointer                  user_data);
 static void       thunar_icon_factory_sweep_timer_destroy   (gpointer                  user_data);
 static GdkPixbuf *thunar_icon_factory_load_from_file        (ThunarIconFactory        *factory,
-                                                             const gchar              *path,
+                                                             const gchar              *uri,
                                                              gint                      size);
 static GdkPixbuf *thunar_icon_factory_lookup_icon           (ThunarIconFactory        *factory,
                                                              const gchar              *name,
@@ -503,7 +503,7 @@ thunar_icon_factory_get_thumbnail_frame (void)
 
 static GdkPixbuf*
 thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
-                                    const gchar       *path,
+                                    const gchar       *uri,
                                     gint               size)
 {
   GdkPixbuf *pixbuf;
@@ -514,11 +514,21 @@ thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
   gint       max_height;
   gint       width;
   gint       height;
+  GFile     *file;
+  GFileInputStream *filestream;
 
   _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
 
+  file = g_file_new_for_uri(uri);
+  filestream = g_file_read(file, NULL, NULL);
+  if (G_UNLIKELY (filestream == NULL))
+    {
+      g_object_unref(file);
+      return NULL;
+    }
+
   /* try to load the image from the file */
-  pixbuf = gdk_pixbuf_new_from_file (path, NULL);
+  pixbuf = gdk_pixbuf_new_from_stream ((void*)filestream, NULL, NULL);
   if (G_LIKELY (pixbuf != NULL))
     {
       /* determine the dimensions of the pixbuf */
@@ -529,9 +539,11 @@ thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
       if (factory->thumbnail_draw_frames)
         {
           /* check if we want to add a frame to the image (we really don't
-           * want to do this for icons displayed in the details view).
+           * want to do this for icons displayed in the details view);
+           * "thumbnails/" catches "~/.cache/thumbnails", "~/.thumbnails" and
+           * ".sh_thumbnails/".
            * */
-          needs_frame = (strstr (path, G_DIR_SEPARATOR_S ".cache/thumbnails" G_DIR_SEPARATOR_S) != NULL)
+          needs_frame = (strstr (uri, "thumbnails/") != NULL)
                 && (size >= 32) && thumbnail_needs_frame (pixbuf, width, height, size);
         }
 
@@ -567,6 +579,9 @@ thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
         }
     }
 
+  g_object_unref(filestream);
+  g_object_unref(file);
+
   return pixbuf;
 }
 
@@ -597,8 +612,13 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
       /* check if we have to load a file instead of a themed icon */
       if (G_UNLIKELY (g_path_is_absolute (name)))
         {
-          /* load the file directly */
-          pixbuf = thunar_icon_factory_load_from_file (factory, name, size);
+          gchar *uri = g_filename_to_uri (name, NULL, NULL);
+          if (uri != NULL)
+            {
+              /* load the file directly */
+              pixbuf = thunar_icon_factory_load_from_file (factory, uri, size);
+              g_free (uri);
+            }
         }
       else
         {
@@ -991,7 +1011,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
             {
               /* we have no preview icon but the thumbnail should be ready. determine
                * the filename of the thumbnail */
-              thumbnail_path = thunar_file_get_thumbnail_path (file, factory->thumbnail_size);
+              thumbnail_path = thunar_file_get_thumbnail_uri (file, factory->thumbnail_size);
 
               /* check if we have a valid path */
               if (thumbnail_path != NULL)
