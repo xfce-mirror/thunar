@@ -2290,40 +2290,33 @@ thunar_window_notebook_create_window (GtkWidget    *notebook,
 
 
 static gboolean
-thunar_window_notebook_update_title (ThunarWindow *window)
+thunar_window_notebook_update_title (GtkWidget *label)
 {
-  GtkWidget   *label;
-  GtkWidget   *view = window->view;
-  gboolean     show_full_path;
+  ThunarWindow  *window;
+  GBinding      *binding;
+  gboolean       show_full_path;
 
-  _thunar_return_val_if_fail (THUNAR_IS_VIEW (view), FALSE);
+  window = g_object_get_data (G_OBJECT (label), "window");
+  binding = g_object_get_data (G_OBJECT (label), "binding");
+
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
-
-  /* get the current label */
-  label = gtk_notebook_get_tab_label (GTK_NOTEBOOK (window->notebook_selected), view);
-  _thunar_return_val_if_fail (GTK_IS_WIDGET (label), FALSE);
-
-  /* ref object so they don't destroy when removed from the container */
-  g_object_ref (label);
-  g_object_ref (view);
 
   /* set tab title according to window preferences */
   g_object_get (G_OBJECT (window->preferences), "misc-full-path-in-tab-title", &show_full_path, NULL);
+  g_binding_unbind (binding);
 
   if (show_full_path)
   {
-    g_object_bind_property (G_OBJECT (view), "full-parsed-path", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
+    binding = g_object_bind_property (G_OBJECT (window->view), "full-parsed-path", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
     gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_START);
   }
   else
   {
-    g_object_bind_property (G_OBJECT (view), "display-name", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
+    binding = g_object_bind_property (G_OBJECT (window->view), "display-name", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
     gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
   }
 
-  /* release */
-  g_object_unref (label);
-  g_object_unref (view);
+  g_object_set_data (G_OBJECT (label), "binding", binding);
 
   return TRUE;
 }
@@ -2340,6 +2333,7 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   GtkWidget      *label_box;
   GtkWidget      *button;
   GtkWidget      *icon;
+  GBinding       *binding;
   ThunarColumn    sort_column;
   GtkSortType     sort_order;
   gboolean        show_full_path;
@@ -2381,17 +2375,19 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
 
   if (show_full_path)
   {
-    g_object_bind_property (G_OBJECT (view), "full-parsed-path", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
+    binding = g_object_bind_property (G_OBJECT (view), "full-parsed-path", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
     gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_START);
   }
   else
   {
-    g_object_bind_property (G_OBJECT (view), "display-name", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
+    binding = g_object_bind_property (G_OBJECT (view), "display-name", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
     gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
   }
 
+  g_object_set_data (G_OBJECT (label), "window", window);
+  g_object_set_data (G_OBJECT (label), "binding", binding);
   // TODO: Disconnect this signal on tab deletion
-  g_signal_connect_swapped (window->preferences, "notify::misc-full-path-in-tab-title", G_CALLBACK(thunar_window_notebook_update_title), window);
+  g_signal_connect_swapped (window->preferences, "notify::misc-full-path-in-tab-title", G_CALLBACK(thunar_window_notebook_update_title), label);
 
   g_object_bind_property (G_OBJECT (view), "full-parsed-path", G_OBJECT (label), "tooltip-text", G_BINDING_SYNC_CREATE);
   gtk_widget_set_has_tooltip (label, TRUE);
