@@ -2293,10 +2293,12 @@ static gboolean
 thunar_window_notebook_update_title (GtkWidget *label)
 {
   ThunarWindow  *window;
+  GtkWidget     *view;
   GBinding      *binding;
   gboolean       show_full_path;
 
   window = g_object_get_data (G_OBJECT (label), "window");
+  view = g_object_get_data (G_OBJECT (label), "view");
   binding = g_object_get_data (G_OBJECT (label), "binding");
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
@@ -2307,12 +2309,12 @@ thunar_window_notebook_update_title (GtkWidget *label)
 
   if (show_full_path)
   {
-    binding = g_object_bind_property (G_OBJECT (window->view), "full-parsed-path", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
+    binding = g_object_bind_property (G_OBJECT (view), "full-parsed-path", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
     gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_START);
   }
   else
   {
-    binding = g_object_bind_property (G_OBJECT (window->view), "display-name", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
+    binding = g_object_bind_property (G_OBJECT (view), "display-name", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
     gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
   }
 
@@ -2385,6 +2387,7 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   }
 
   g_object_set_data (G_OBJECT (label), "window", window);
+  g_object_set_data (G_OBJECT (label), "view", view);
   g_object_set_data (G_OBJECT (label), "binding", binding);
   // TODO: Disconnect this signal on tab deletion
   g_signal_connect_swapped (window->preferences, "notify::misc-full-path-in-tab-title", G_CALLBACK(thunar_window_notebook_update_title), label);
