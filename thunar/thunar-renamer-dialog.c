@@ -915,12 +915,12 @@ thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog)
           for(lp = items; lp != NULL; lp = lp->next)
               thunar_gtk_menu_thunarx_menu_item_new (lp->data, GTK_MENU_SHELL (menu));
           g_list_free (items);
-          xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+          xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
         }
     }
   thunar_renamer_dialog_append_menu_item (renamer_dialog, GTK_MENU_SHELL (menu), THUNAR_RENAMER_ACTION_ADD_FILES);
   thunar_renamer_dialog_append_menu_item (renamer_dialog, GTK_MENU_SHELL (menu), THUNAR_RENAMER_ACTION_REMOVE_FILES);
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
   thunar_menu_add_sections (menu, THUNAR_MENU_SECTION_PROPERTIES);
   thunar_menu_hide_accel_labels (menu);
   gtk_widget_show_all (GTK_WIDGET (menu));

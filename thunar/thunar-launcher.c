@@ -2888,7 +2888,7 @@ thunar_launcher_create_document_submenu_new (ThunarLauncher *launcher)
       thunar_g_list_free_full (files);
     }
 
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
+  xfce_gtk_menu_append_separator (GTK_MENU_SHELL (submenu));
   xfce_gtk_image_menu_item_new_from_icon_name (_("_Empty File"), NULL, NULL, G_CALLBACK (thunar_launcher_action_create_document),
                                                G_OBJECT (launcher), "text-x-generic", GTK_MENU_SHELL (submenu));
 
@@ -3146,9 +3146,9 @@ thunar_launcher_build_application_submenu (ThunarLauncher *launcher,
 
   if (launcher->n_files_to_process == 1)
     {
-      xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
+      xfce_gtk_menu_append_separator (GTK_MENU_SHELL (submenu));
       thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (submenu), THUNAR_LAUNCHER_ACTION_OPEN_WITH_OTHER, FALSE);
-      xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
+      xfce_gtk_menu_append_separator (GTK_MENU_SHELL (submenu));
       thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (submenu), THUNAR_LAUNCHER_ACTION_SET_DEFAULT_APP, FALSE);
     }
 
@@ -3254,7 +3254,7 @@ thunar_launcher_append_open_section (ThunarLauncher *launcher,
       if (launcher->n_files_to_process == 1)
       {
         thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_OPEN_WITH_OTHER, FALSE);
-        xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+        xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
         thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_SET_DEFAULT_APP, FALSE);
       }
     }

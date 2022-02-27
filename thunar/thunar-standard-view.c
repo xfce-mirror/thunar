@@ -3795,7 +3795,7 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view)
                                             | THUNAR_MENU_SECTION_EMPTY_TRASH
                                             | THUNAR_MENU_SECTION_CUSTOM_ACTIONS);
       thunar_standard_view_append_menu_items (standard_view, GTK_MENU (context_menu), NULL);
-      xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (context_menu));
+      xfce_gtk_menu_append_separator (GTK_MENU_SHELL (context_menu));
       thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_ZOOM
                                             | THUNAR_MENU_SECTION_PROPERTIES);
     }
@@ -4024,12 +4024,12 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
   if (thunar_file_is_trash (standard_view->priv->current_directory))
     xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_BY_DTIME), G_OBJECT (standard_view),
                                                      standard_view->priv->sort_column == THUNAR_COLUMN_DATE_DELETED, GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
+  xfce_gtk_menu_append_separator (GTK_MENU_SHELL (submenu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_ASCENDING), G_OBJECT (standard_view),
                                                    standard_view->priv->sort_order == GTK_SORT_ASCENDING, GTK_MENU_SHELL (submenu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_DESCENDING), G_OBJECT (standard_view),
                                                    standard_view->priv->sort_order == GTK_SORT_DESCENDING, GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
+  xfce_gtk_menu_append_separator (GTK_MENU_SHELL (submenu));
   xfce_gtk_menu_item_new_from_action_entry        (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_ORDER_TOGGLE), G_OBJECT (standard_view),
                                                    GTK_MENU_SHELL (submenu));
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (submenu));

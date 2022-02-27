@@ -1253,7 +1253,7 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
           thunar_launcher_append_menu_item (view->launcher, GTK_MENU_SHELL (context_menu), THUNAR_LAUNCHER_ACTION_OPEN, TRUE);
           thunar_launcher_append_menu_item (view->launcher, GTK_MENU_SHELL (context_menu), THUNAR_LAUNCHER_ACTION_OPEN_IN_TAB, TRUE);
           thunar_launcher_append_menu_item (view->launcher, GTK_MENU_SHELL (context_menu), THUNAR_LAUNCHER_ACTION_OPEN_IN_WINDOW, TRUE);
-          xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (context_menu));
+          xfce_gtk_menu_append_separator (GTK_MENU_SHELL (context_menu));
           thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_EMPTY_TRASH);
         }
       else
@@ -1277,7 +1277,7 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
       thunar_launcher_append_menu_item (view->launcher, GTK_MENU_SHELL (context_menu), THUNAR_LAUNCHER_ACTION_OPEN, TRUE);
       thunar_launcher_append_menu_item (view->launcher, GTK_MENU_SHELL (context_menu), THUNAR_LAUNCHER_ACTION_OPEN_IN_TAB, TRUE);
       thunar_launcher_append_menu_item (view->launcher, GTK_MENU_SHELL (context_menu), THUNAR_LAUNCHER_ACTION_OPEN_IN_WINDOW, TRUE);
-      xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (context_menu));
+      xfce_gtk_menu_append_separator (GTK_MENU_SHELL (context_menu));
       thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_MOUNTABLE);
       if (thunar_device_is_mounted (device))
         thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_PROPERTIES);
