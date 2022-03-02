@@ -86,7 +86,8 @@ enum
   PROP_MISC_DATE_CUSTOM_STYLE,
   PROP_EXEC_SHELL_SCRIPTS_BY_DEFAULT,
   PROP_MISC_FOLDERS_FIRST,
-  PROP_MISC_FULL_PATH_IN_TITLE,
+  PROP_MISC_FULL_PATH_IN_TAB_TITLE,
+  PROP_MISC_FULL_PATH_IN_WINDOW_TITLE,
   PROP_MISC_HORIZONTAL_WHEEL_NAVIGATES,
   PROP_MISC_IMAGE_SIZE_IN_STATUSBAR,
   PROP_MISC_MIDDLE_CLICK_IN_TAB,
@@ -640,14 +641,27 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:misc-full-path-in-title:
+   * ThunarPreferences:misc-full-path-in-tab-title:
+   *
+   * Show the full directory path in the tab title, instead of
+   * only the directory name.
+   **/
+  preferences_props[PROP_MISC_FULL_PATH_IN_TAB_TITLE] =
+      g_param_spec_boolean ("misc-full-path-in-tab-title",
+                            "MiscFullPathInTabTitle",
+                            NULL,
+                            FALSE,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-full-path-in-window-title:
    *
    * Show the full directory path in the window title, instead of
    * only the directory name.
    **/
-  preferences_props[PROP_MISC_FULL_PATH_IN_TITLE] =
-      g_param_spec_boolean ("misc-full-path-in-title",
-                            "MiscFullPathInTitle",
+  preferences_props[PROP_MISC_FULL_PATH_IN_WINDOW_TITLE] =
+      g_param_spec_boolean ("misc-full-path-in-window-title",
+                            "MiscFullPathInWindowTitle",
                             NULL,
                             FALSE,
                             EXO_PARAM_READWRITE);
