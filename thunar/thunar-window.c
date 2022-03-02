@@ -154,6 +154,7 @@ static gpointer  thunar_window_notebook_create_window     (GtkWidget            
                                                            gint                    x,
                                                            gint                    y,
                                                            ThunarWindow           *window);
+static gboolean thunar_window_notebook_update_title       (GtkWidget *label);
 static GtkWidget*thunar_window_notebook_insert_page       (ThunarWindow           *window,
                                                            ThunarFile             *directory,
                                                            GType                   view_type,
@@ -2300,6 +2301,40 @@ thunar_window_notebook_create_window (GtkWidget    *notebook,
 
 
 
+static gboolean
+thunar_window_notebook_update_title (GtkWidget *label)
+{
+  ThunarWindow  *window;
+  GtkWidget     *view;
+  GBinding      *binding;
+  gboolean       show_full_path;
+
+  window = g_object_get_data (G_OBJECT (label), "window");
+  view = g_object_get_data (G_OBJECT (label), "view");
+  binding = g_object_get_data (G_OBJECT (label), "binding");
+
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  /* set tab title according to window preferences */
+  g_object_get (G_OBJECT (window->preferences), "misc-full-path-in-tab-title", &show_full_path, NULL);
+  g_binding_unbind (binding);
+
+  if (show_full_path)
+  {
+    binding = g_object_bind_property (G_OBJECT (view), "full-parsed-path", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
+    gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_START);
+  }
+  else
+  {
+    binding = g_object_bind_property (G_OBJECT (view), "display-name", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
+    gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
+  }
+
+  g_object_set_data (G_OBJECT (label), "binding", binding);
+
+  return TRUE;
+}
+
 static GtkWidget*
 thunar_window_notebook_insert_page (ThunarWindow  *window,
                                     ThunarFile    *directory,
@@ -2312,6 +2347,7 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   GtkWidget      *label_box;
   GtkWidget      *button;
   GtkWidget      *icon;
+  GBinding       *binding;
   ThunarColumn    sort_column;
   GtkSortType     sort_order;
 
@@ -2346,15 +2382,25 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   label_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
   label = gtk_label_new (NULL);
-  g_object_bind_property (G_OBJECT (view), "display-name", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
-  g_object_bind_property (G_OBJECT (view), "tooltip-text", G_OBJECT (label), "tooltip-text", G_BINDING_SYNC_CREATE);
+
+  /* set a default binding, which will be overriden according to preferences later */
+    binding = g_object_bind_property (G_OBJECT (view), "full-parsed-path", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
+
+  g_object_set_data (G_OBJECT (label), "window", window);
+  g_object_set_data (G_OBJECT (label), "view", view);
+  g_object_set_data (G_OBJECT (label), "binding", binding);
+  thunar_window_notebook_update_title (label);
+
+  // TODO: Disconnect this signal on tab deletion
+  g_signal_connect_swapped (window->preferences, "notify::misc-full-path-in-tab-title", G_CALLBACK(thunar_window_notebook_update_title), label);
+
+  g_object_bind_property (G_OBJECT (view), "full-parsed-path", G_OBJECT (label), "tooltip-text", G_BINDING_SYNC_CREATE);
   gtk_widget_set_has_tooltip (label, TRUE);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_widget_set_margin_start (GTK_WIDGET(label), 3);
   gtk_widget_set_margin_end (GTK_WIDGET(label), 3);
   gtk_widget_set_margin_top (GTK_WIDGET(label), 3);
   gtk_widget_set_margin_bottom (GTK_WIDGET(label), 3);
-  gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
   gtk_label_set_single_line_mode (GTK_LABEL (label), TRUE);
   gtk_box_pack_start (GTK_BOX (label_box), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
@@ -4310,7 +4356,7 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
   _thunar_return_if_fail (window->current_directory == current_directory);
 
   /* get name of directory or full path */
-  g_object_get (G_OBJECT (window->preferences), "misc-full-path-in-title", &show_full_path, NULL);
+  g_object_get (G_OBJECT (window->preferences), "misc-full-path-in-window-title", &show_full_path, NULL);
   if (G_UNLIKELY (show_full_path))
     name = parse_name = g_file_get_parse_name (thunar_file_get_file (current_directory));
   else
