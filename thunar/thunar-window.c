@@ -1458,6 +1458,8 @@ thunar_window_finalize (GObject *object)
   /* release our reference on the provider factory */
   g_object_unref (window->provider_factory);
 
+  g_signal_handlers_disconnect_matched (window->preferences, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, thunar_window_notebook_update_title, NULL);
+
   /* release the preferences reference */
   g_object_unref (window->preferences);
 
