@@ -2391,7 +2391,7 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   g_object_set_data (G_OBJECT (label), "binding", NULL);
   thunar_window_notebook_update_title (label);
 
-  g_signal_connect_swapped (window->preferences, "notify::misc-full-path-in-tab-title", G_CALLBACK(thunar_window_notebook_update_title), label);
+  g_signal_connect_swapped (window->preferences, "notify::misc-full-path-in-tab-title", G_CALLBACK (thunar_window_notebook_update_title), label);
 
   g_object_bind_property (G_OBJECT (view), "full-parsed-path", G_OBJECT (label), "tooltip-text", G_BINDING_SYNC_CREATE);
   gtk_widget_set_has_tooltip (label, TRUE);
