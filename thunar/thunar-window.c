@@ -152,7 +152,7 @@ static gpointer  thunar_window_notebook_create_window     (GtkWidget            
                                                            gint                    x,
                                                            gint                    y,
                                                            ThunarWindow           *window);
-static gboolean thunar_window_notebook_update_title       (GtkWidget *label);
+static gboolean thunar_window_notebook_update_title       (GtkWidget              *label);
 static GtkWidget*thunar_window_notebook_insert_page       (ThunarWindow           *window,
                                                            ThunarFile             *directory,
                                                            GType                   view_type,
