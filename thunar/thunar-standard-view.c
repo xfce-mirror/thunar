@@ -69,7 +69,7 @@ enum
   PROP_CURRENT_DIRECTORY,
   PROP_LOADING,
   PROP_DISPLAY_NAME,
-  PROP_TOOLTIP_TEXT,
+  PROP_FULL_PARSED_PATH,
   PROP_SELECTED_FILES,
   PROP_SHOW_HIDDEN,
   PROP_STATUSBAR_TEXT,
@@ -565,14 +565,14 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                            EXO_PARAM_READABLE);
 
   /**
-   * ThunarStandardView:parse-name:
+   * ThunarStandardView:full-parsed-path
    *
-   * Full parsed name of the current directory, for label tooltip
+   * Full parsed path of the current directory, for label tooltip
    **/
-  standard_view_props[PROP_TOOLTIP_TEXT] =
-      g_param_spec_string ("tooltip-text",
-                           "tooltip-text",
-                           "tooltip-text",
+  standard_view_props[PROP_FULL_PARSED_PATH] =
+      g_param_spec_string ("full-parsed-path",
+                           "full-parsed-path",
+                           "full-parsed-path",
                            NULL,
                            EXO_PARAM_READABLE);
 
@@ -1056,7 +1056,7 @@ thunar_standard_view_get_property (GObject    *object,
         }
       break;
 
-    case PROP_TOOLTIP_TEXT:
+    case PROP_FULL_PARSED_PATH:
       current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (object));
       if (current_directory != NULL)
         g_value_take_string (value, g_file_get_parse_name (thunar_file_get_file (current_directory)));
@@ -1528,7 +1528,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 
   /* update tab label and tooltip */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
-  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_TOOLTIP_TEXT]);
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_FULL_PARSED_PATH]);
 
   /* restore the selection from the history */
   thunar_standard_view_restore_selection_from_history (standard_view);
@@ -2263,7 +2263,7 @@ thunar_standard_view_current_directory_changed (ThunarFile         *current_dire
 
   /* update tab label and tooltip */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
-  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_TOOLTIP_TEXT]);
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_FULL_PARSED_PATH]);
 
   /* directory is possibly moved, schedule a thumbnail update */
   thunar_standard_view_schedule_thumbnail_timeout (standard_view);
