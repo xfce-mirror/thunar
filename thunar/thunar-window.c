@@ -2308,7 +2308,9 @@ thunar_window_notebook_update_title (GtkWidget *label)
 
   /* set tab title according to window preferences */
   g_object_get (G_OBJECT (window->preferences), "misc-full-path-in-tab-title", &show_full_path, NULL);
-  g_binding_unbind (binding);
+
+  if (binding != NULL)
+    g_binding_unbind (binding);
 
   if (show_full_path)
   {
@@ -2338,7 +2340,6 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   GtkWidget      *label_box;
   GtkWidget      *button;
   GtkWidget      *icon;
-  GBinding       *binding;
   ThunarColumn    sort_column;
   GtkSortType     sort_order;
 
@@ -2374,15 +2375,11 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
 
   label = gtk_label_new (NULL);
 
-  /* set a default binding, which will be overriden according to preferences later */
-    binding = g_object_bind_property (G_OBJECT (view), "full-parsed-path", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
-
   g_object_set_data (G_OBJECT (label), "window", window);
   g_object_set_data (G_OBJECT (label), "view", view);
-  g_object_set_data (G_OBJECT (label), "binding", binding);
+  g_object_set_data (G_OBJECT (label), "binding", NULL);
   thunar_window_notebook_update_title (label);
 
-  // TODO: Disconnect this signal on tab deletion
   g_signal_connect_swapped (window->preferences, "notify::misc-full-path-in-tab-title", G_CALLBACK(thunar_window_notebook_update_title), label);
 
   g_object_bind_property (G_OBJECT (view), "full-parsed-path", G_OBJECT (label), "tooltip-text", G_BINDING_SYNC_CREATE);
