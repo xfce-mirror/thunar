@@ -381,14 +381,15 @@ thunar_location_bar_cancel_search (ThunarLocationBar *bar)
  * thunar_location_bar_get_search_query:
  * @entry        : a #ThunarLocationBar.
  *
- * Returns a copy of the search query in the text field of @entry or NULL if there is no search query.
+ * Returns a copy of the search query in the text field of @entry or "" if the path_entry doesn't contain
+ * a search query.
  *
  * It's the responsibility of the caller to free the returned string using `g_free`.
  **/
 gchar*
 thunar_location_bar_get_search_query (ThunarLocationBar *entry)
 {
-  return (entry->locationEntry != NULL) ? thunar_location_entry_get_search_query (THUNAR_LOCATION_ENTRY (entry->locationEntry)) : "";
+  return (entry->locationEntry != NULL) ? thunar_location_entry_get_search_query (THUNAR_LOCATION_ENTRY (entry->locationEntry)) : g_strdup ("");
 }
 
 
