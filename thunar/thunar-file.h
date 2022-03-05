@@ -245,6 +245,7 @@ gboolean          thunar_file_set_custom_icon            (ThunarFile            
 
 const gchar     *thunar_file_get_thumbnail_path          (ThunarFile              *file,
                                                           ThunarThumbnailSize      thumbnail_size);
+gboolean         thunar_file_has_shared_thumbnail        (ThunarFile              *file);
 ThunarFileThumbState thunar_file_get_thumb_state         (const ThunarFile        *file);
 void             thunar_file_set_thumb_state             (ThunarFile              *file,
                                                           ThunarFileThumbState     state);
