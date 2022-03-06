@@ -60,6 +60,20 @@ typedef struct _ThunarIconKey ThunarIconKey;
 
 
 
+typedef struct
+{
+  ThunarIconFactory  *factory;
+  ThunarFile         *file;
+  ThunarFileIconState icon_state;
+  gint                icon_size;
+  GCancellable       *cancellable;
+  GAsyncReadyCallback callback;
+  gpointer            user_data;
+}
+LoadFileArgs;
+
+
+
 static void       thunar_icon_factory_dispose               (GObject                  *object);
 static void       thunar_icon_factory_finalize              (GObject                  *object);
 static void       thunar_icon_factory_get_property          (GObject                  *object,
@@ -89,6 +103,29 @@ static gboolean   thunar_icon_key_equal                     (gconstpointer      
 static void       thunar_icon_key_free                      (gpointer                  data);
 static GdkPixbuf *thunar_icon_factory_load_fallback         (ThunarIconFactory        *factory,
                                                              gint                      size);
+static void       load_file_icon_async_init                 (GFile                    *g_file,
+                                                             GAsyncResult             *result,
+                                                             LoadFileArgs             *args);
+static void       load_file_icon_loadable_icon_1            (GLoadableIcon            *icon,
+                                                             GAsyncResult             *result,
+                                                             LoadFileArgs             *args);
+static void       load_file_icon_loadable_icon_2            (GInputStream             *stream,
+                                                             GAsyncResult             *result,
+                                                             LoadFileArgs             *args);
+static void       load_file_icon_fallback                   (ThunarFile               *file,
+                                                             GAsyncResult             *result,
+                                                             LoadFileArgs             *args);
+static void       load_file_icon_success                    (GdkPixbuf                *icon,
+                                                             LoadFileArgs             *args);
+static void       set_icon_store                            (GdkPixbuf                *icon,
+                                                             LoadFileArgs             *args);
+
+/* todo : move to .h */
+static gboolean
+get_show_thumbnail (const ThunarIconFactory *factory,
+                    const ThunarFile        *file,
+                    GFilesystemPreviewType   preview);
+
 
 
 
@@ -195,7 +232,7 @@ thunar_icon_factory_class_init (ThunarIconFactoryClass *klass)
 
   /**
    * ThunarIconFactory:thumbnail-draw-frames:
-   * 
+   *
    * Whether to draw black frames around thumbnails.
    * This looks neat, but will delay the first draw a bit.
    * May have an impact on older systems, on folders with many pictures.
@@ -839,6 +876,36 @@ thunar_icon_factory_get_show_thumbnail (const ThunarIconFactory *factory,
 
 
 
+static gboolean
+get_show_thumbnail (const ThunarIconFactory *factory,
+                    const ThunarFile        *file,
+                    GFilesystemPreviewType   preview)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), THUNAR_THUMBNAIL_MODE_NEVER);
+  _thunar_return_val_if_fail (file == NULL || THUNAR_IS_FILE (file), THUNAR_THUMBNAIL_MODE_NEVER);
+
+  if (file == NULL
+      || factory->thumbnail_mode == THUNAR_THUMBNAIL_MODE_NEVER)
+    return FALSE;
+
+  /* always create thumbs for local files */
+  if (thunar_file_is_local (file))
+    return TRUE;
+
+  /* file system says to never thumbnail anything */
+  if (preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER)
+    return FALSE;
+
+  /* only if the setting is local and the fs reports to be local */
+  if (factory->thumbnail_mode == THUNAR_THUMBNAIL_MODE_ONLY_LOCAL)
+    return preview == G_FILESYSTEM_PREVIEW_TYPE_IF_LOCAL;
+
+  /* THUNAR_THUMBNAIL_MODE_ALWAYS */
+  return TRUE;
+}
+
+
+
 /**
  * thunar_icon_factory_load_icon:
  * @factory       : a #ThunarIconFactory instance.
@@ -1024,6 +1091,273 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
     }
 
   return icon;
+}
+
+
+
+/**
+ * thunar_icon_factory_load_file_icon_async
+ * @factory     : a #ThunarIconFactory instance.
+ * @file        : a #ThunarFile.
+ * @icon_state  : the desired icon state.
+ * @icon_size   : the desired icon size.
+ * cancellable  : (nullable)
+ * callback     : a #GAsyncReadyCallback.
+ *
+ * An asynchronous wrapper for the non-async version.
+ * Unlike other async operations, it has an early return:
+ * If an icon is cached, then it returns one and the callback
+ * is never used. But if it isn't, it returns a filler icon.
+ *
+ * Call g_object_unref() on the returned pixbuf when you are
+ * done with it.
+ *
+ * Return value: (transfer full):
+ */
+GdkPixbuf*
+thunar_icon_factory_load_file_icon_async (ThunarIconFactory  *factory,
+                                          ThunarFile         *file,
+                                          ThunarFileIconState icon_state,
+                                          gint                icon_size,
+                                          GCancellable       *cancellable,
+                                          GAsyncReadyCallback callback,
+                                          gpointer            user_data)
+{
+  LoadFileArgs    *args;
+  GdkPixbuf       *icon = NULL;
+  GdkPixbuf       *filler_icon;
+  ThunarIconStore *store;
+  const gchar     *custom_icon;
+
+  _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (icon_size > 0, NULL);
+
+    /* check if we have a stored icon on the file and it is still valid */
+  store = g_object_get_qdata (G_OBJECT (file), thunar_icon_factory_store_quark);
+  if (store != NULL
+      && store->icon_state == icon_state
+      && store->icon_size == icon_size
+      && store->stamp == factory->theme_stamp
+      && store->thumb_state == thunar_file_get_thumb_state (file))
+    {
+      return g_object_ref (store->icon);
+    }
+
+  /* check if we have a custom icon for this file */
+  custom_icon = thunar_file_get_custom_icon (file);
+  if (custom_icon != NULL)
+    {
+      /* try to load the icon */
+      icon = thunar_icon_factory_lookup_icon (factory, custom_icon, icon_size, FALSE);
+    }
+
+  if (G_LIKELY (icon != NULL))
+    {
+      return icon;
+    }
+
+  args = g_new0 (LoadFileArgs, 1);
+  *args = (LoadFileArgs) {factory, g_object_ref (file), icon_state, icon_size, cancellable, callback, user_data};
+  filler_icon = thunar_icon_factory_load_icon (factory, "view-refresh", icon_size, TRUE);
+  /* saving filler icon first prevents async operation spamming */
+  set_icon_store (filler_icon, args);
+  thunar_file_get_preview_type_async (file,
+                                      (GAsyncReadyCallback) load_file_icon_async_init, args);
+  return filler_icon;
+}
+
+static void
+load_file_icon_async_init (GFile        *g_file,
+                           GAsyncResult *result,
+                           LoadFileArgs *args)
+{
+  GFilesystemPreviewType preview;
+  gboolean         show_thumbnail;
+  GtkIconInfo     *icon_info;
+  const gchar     *thumbnail_path;
+  GdkPixbuf       *icon = NULL;
+  GIcon           *gicon;
+
+  preview = thunar_file_get_preview_type_finish (g_file, result, NULL);
+  show_thumbnail = get_show_thumbnail (args->factory, args->file, preview);
+  /* check if thumbnails are enabled and we can display a thumbnail for the item */
+  if (show_thumbnail && (thunar_file_is_regular (args->file) || thunar_file_is_directory (args->file)))
+    gicon = thunar_file_get_preview_icon (args->file);
+  else
+    {
+      thunar_file_get_icon_name_async (args->file, args->icon_state, args->factory->icon_theme,
+                                       G_PRIORITY_HIGH_IDLE - 10, args->cancellable,
+                                       (GAsyncReadyCallback) load_file_icon_fallback, args);
+      return;
+    }
+
+  /* check if we have a preview icon */
+  if (gicon != NULL)
+    {
+      if (G_IS_THEMED_ICON (gicon))
+        {
+          /* we have a themed preview icon, look it up using the icon theme */
+          icon_info =
+            gtk_icon_theme_lookup_by_gicon (args->factory->icon_theme,
+                                            gicon, args->icon_size,
+                                            GTK_ICON_LOOKUP_USE_BUILTIN
+                                            | GTK_ICON_LOOKUP_FORCE_SIZE);//
+
+          /* check if the lookup succeeded */
+          if (icon_info != NULL)
+            {
+              /* try to load the pixbuf from the icon info */
+              icon = gtk_icon_info_load_icon (icon_info, NULL); // maybe?
+
+              g_object_unref (icon_info);
+
+              /* return the icon if we have one */
+              if (icon != NULL)
+                {
+                  load_file_icon_success (icon, args);
+                  return;
+                }
+            }
+        }
+      else if (G_IS_LOADABLE_ICON (gicon))
+        {
+          /* we have a loadable icon, try to open it for reading */
+          g_loadable_icon_load_async (G_LOADABLE_ICON (gicon), args->icon_size,
+                                      args->cancellable,
+                                      (GAsyncReadyCallback) load_file_icon_loadable_icon_1, args);
+          return;
+        }
+    }
+  else
+    {
+      /* we have no preview icon but the thumbnail should be ready. determine
+       * the filename of the thumbnail */
+      thumbnail_path = thunar_file_get_thumbnail_path (args->file, args->factory->thumbnail_size);
+
+      /* check if we have a valid path */
+      if (thumbnail_path != NULL)
+        {
+          /* try to load the thumbnail */
+          icon = thunar_icon_factory_load_from_file (args->factory, thumbnail_path, args->icon_size); //maybe?
+        }
+    }
+
+  if (icon != NULL)
+    {
+      load_file_icon_success (icon, args);
+      return;
+    }
+  else
+    {
+      thunar_file_get_icon_name_async (args->file, args->icon_state, args->factory->icon_theme,
+                                       G_PRIORITY_HIGH_IDLE - 10, args->cancellable,
+                                       (GAsyncReadyCallback) load_file_icon_fallback, args);
+      return;
+    }
+}
+
+static void
+load_file_icon_loadable_icon_1 (GLoadableIcon *icon,
+                                GAsyncResult  *result,
+                                LoadFileArgs  *args)
+{
+  GInputStream * stream;
+
+  stream = g_loadable_icon_load_finish (icon, result, NULL, NULL);
+  /* check if we have a valid input stream */
+  if (stream != NULL)
+    {
+      /* load the pixbuf from the stream */
+      gdk_pixbuf_new_from_stream_at_scale_async (stream, args->icon_size, args->icon_size, TRUE,
+                                                 args->cancellable,
+                                                 (GAsyncReadyCallback) load_file_icon_loadable_icon_2, args);
+
+      /* destroy the stream */
+      g_object_unref (stream);
+    }
+  else
+    {
+      thunar_file_get_icon_name_async (args->file, args->icon_state, args->factory->icon_theme,
+                                       G_PRIORITY_HIGH_IDLE - 10, args->cancellable,
+                                       (GAsyncReadyCallback) load_file_icon_fallback, args);
+    }
+}
+
+static void
+load_file_icon_loadable_icon_2 (GInputStream *stream,
+                                GAsyncResult *result,
+                                LoadFileArgs *args)
+{
+  GdkPixbuf *icon = NULL;
+
+  icon = gdk_pixbuf_new_from_stream_finish (result, NULL);
+  if (icon != NULL)
+    {
+      load_file_icon_success (icon, args);
+      return;
+    }
+
+  thunar_file_get_icon_name_async (args->file, args->icon_state, args->factory->icon_theme,
+                                   G_PRIORITY_HIGH_IDLE - 10, args->cancellable,
+                                   (GAsyncReadyCallback) load_file_icon_fallback, args);
+}
+
+static void
+load_file_icon_fallback (ThunarFile   *file,
+                         GAsyncResult *result,
+                         LoadFileArgs *args)
+{
+  GdkPixbuf       *icon = NULL;
+  const gchar     *icon_name;
+
+  /* lookup the icon name for the icon in the given state and load the icon */
+  icon_name = thunar_file_get_icon_name_finish (file, result, NULL);
+  icon = thunar_icon_factory_load_icon (args->factory, icon_name, args->icon_size, TRUE);
+
+  load_file_icon_success (icon, args);
+}
+
+static void
+load_file_icon_success (GdkPixbuf    *icon,
+                        LoadFileArgs *args)
+{
+  _thunar_return_if_fail (GDK_IS_PIXBUF (icon));
+
+  set_icon_store (icon, args);
+  g_object_unref (args->file);
+  thunar_g_task_return_pointer_to_callback (G_OBJECT (args->factory), icon, args->callback, args->user_data, g_object_unref);
+}
+
+static void
+set_icon_store (GdkPixbuf    *icon,
+                LoadFileArgs *args)
+{
+  ThunarIconStore *store;
+
+  store = g_slice_new (ThunarIconStore);
+  store->icon_size = args->icon_size;
+  store->icon_state = args->icon_state;
+  store->stamp = args->factory->theme_stamp;
+  store->thumb_state = thunar_file_get_thumb_state (args->file);
+  store->icon = g_object_ref (icon);
+
+  g_object_set_qdata_full (G_OBJECT (args->file), thunar_icon_factory_store_quark,
+                           store, thunar_icon_store_free);
+}
+
+
+
+/* thunar_icon_factory_load_file_icon_finish
+ * (transfer full) */
+GdkPixbuf *
+thunar_icon_factory_load_file_icon_finish (ThunarIconFactory *factory,
+                                           GAsyncResult      *res,
+                                           GError           **error)
+{
+  _thunar_return_val_if_fail (g_task_is_valid (res, factory), NULL);
+
+  return g_task_propagate_pointer (G_TASK (res), error);
 }
 
 
