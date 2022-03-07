@@ -133,8 +133,6 @@ static guint              file_signals[LAST_SIGNAL];
 
 
 
-#define FLAG_SET_THUMB_STATE(file,new_state) G_STMT_START{ (file)->flags = ((file)->flags & ~THUNAR_FILE_FLAG_THUMB_MASK) | (new_state); }G_STMT_END
-#define FLAG_GET_THUMB_STATE(file)           ((file)->flags & THUNAR_FILE_FLAG_THUMB_MASK)
 #define FLAG_SET(file,flag)                  G_STMT_START{ ((file)->flags |= (flag)); }G_STMT_END
 #define FLAG_UNSET(file,flag)                G_STMT_START{ ((file)->flags &= ~(flag)); }G_STMT_END
 #define FLAG_IS_SET(file,flag)               (((file)->flags & (flag)) != 0)
@@ -145,7 +143,6 @@ static guint              file_signals[LAST_SIGNAL];
 
 typedef enum
 {
-  THUNAR_FILE_FLAG_THUMB_MASK     = 0x03,   /* storage for ThunarFileThumbState */
   THUNAR_FILE_FLAG_IN_DESTRUCTION = 1 << 2, /* for avoiding recursion during destroy */
   THUNAR_FILE_FLAG_IS_MOUNTED     = 1 << 3, /* whether this file is mounted */
 }
@@ -176,13 +173,16 @@ struct _ThunarFile
   gchar                *basename;
   const gchar          *device_type;
   gchar                *thumbnail_path;
+  gboolean              has_shared_thumbnail;
 
   /* sorting */
   gchar                *collate_key;
   gchar                *collate_key_nocase;
 
-  /* flags for thumbnail state etc */
+  /* some flags  */
   ThunarFileFlags       flags;
+
+  int                   thumbnail_state;
 
   /* tells whether the file watch is not set */
   gboolean              no_file_watch;
@@ -382,6 +382,7 @@ thunar_file_class_init (ThunarFileClass *klass)
 static void
 thunar_file_init (ThunarFile *file)
 {
+  file->has_shared_thumbnail = FALSE;
 }
 
 
@@ -589,9 +590,8 @@ thunar_file_info_changed (ThunarxFileInfo *file_info)
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file_info));
 
-  /* set the new thumbnail state manually, so we only emit file
-   * changed once */
-  FLAG_SET_THUMB_STATE (file, THUNAR_FILE_THUMB_STATE_UNKNOWN);
+  /* set the new thumbnail state manually, so we only emit file changed once */
+  file->thumbnail_state = THUNAR_FILE_THUMB_STATE_UNKNOWN;
 
   /* tell the file monitor that this file changed */
   thunar_file_monitor_file_changed (file);
@@ -975,7 +975,7 @@ thunar_file_info_clear (ThunarFile *file)
   FLAG_SET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
 
   /* set thumb state to unknown */
-  FLAG_SET_THUMB_STATE (file, THUNAR_FILE_THUMB_STATE_UNKNOWN);
+  file->thumbnail_state = THUNAR_FILE_THUMB_STATE_UNKNOWN;
 }
 
 
@@ -3603,7 +3603,8 @@ thunar_file_is_desktop (const ThunarFile *file)
 
 
 const gchar *
-thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_size)
+thunar_file_get_thumbnail_path (ThunarFile          *file,
+                                ThunarThumbnailSize  thumbnail_size)
 {
   GChecksum *checksum;
   gchar     *filename;
@@ -3617,6 +3618,8 @@ thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_
 
   if (G_UNLIKELY (file->thumbnail_path == NULL))
     {
+      file->has_shared_thumbnail = FALSE;
+
       checksum = g_checksum_new (G_CHECKSUM_MD5);
       if (G_LIKELY (checksum != NULL))
         {
@@ -3666,6 +3669,10 @@ thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_
                           g_free (file->thumbnail_path);
                           file->thumbnail_path = NULL;
                         }
+                      else
+                        {
+                          file->has_shared_thumbnail = TRUE;
+                        }
                     }
                 }
             }
@@ -3693,7 +3700,7 @@ ThunarFileThumbState
 thunar_file_get_thumb_state (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), THUNAR_FILE_THUMB_STATE_UNKNOWN);
-  return FLAG_GET_THUMB_STATE (file);
+  return file->thumbnail_state;
 }
 
 
@@ -3718,10 +3725,10 @@ thunar_file_set_thumb_state (ThunarFile          *file,
     return;
 
   /* set the new thumbnail state */
-  FLAG_SET_THUMB_STATE (file, state);
+  file->thumbnail_state = state;
 
   /* remove path if the type is not supported */
-  if (state == THUNAR_FILE_THUMB_STATE_NONE
+  if ((state == THUNAR_FILE_THUMB_STATE_NONE || state == THUNAR_FILE_THUMB_STATE_UNKNOWN)
       && file->thumbnail_path != NULL)
     {
       g_free (file->thumbnail_path);
@@ -4775,4 +4782,11 @@ thunar_file_has_directory_specific_settings (ThunarFile *file)
     return TRUE;
 
   return FALSE;
+}
+
+gboolean
+thunar_file_has_shared_thumbnail (ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return file->has_shared_thumbnail;
 }
