@@ -307,7 +307,7 @@ thunar_tree_model_init (ThunarTreeModel *model)
   /* allocate the "virtual root node" */
   model->root = g_node_new (NULL);
 
-  /* inititalize references to certain toplevel nodes */
+  /* initialize references to certain toplevel nodes */
   model->file_system = NULL;
   model->network = NULL;
 
