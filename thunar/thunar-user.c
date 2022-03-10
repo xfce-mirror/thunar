@@ -219,7 +219,7 @@ thunar_user_class_init (ThunarUserClass *klass)
 
   /* determine the current process' effective user id, we do
    * this only once to avoid the syscall overhead on every
-   * is_me() invokation.
+   * is_me() invocation.
    */
   thunar_user_effective_uid = geteuid ();
 
