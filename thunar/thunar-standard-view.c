@@ -86,6 +86,7 @@ enum
 enum
 {
   START_OPEN_LOCATION,
+  SEARCH_DONE,
   LAST_SIGNAL,
 };
 
@@ -242,6 +243,8 @@ static void                 thunar_standard_view_rows_reordered             (Thu
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_error                      (ThunarListModel          *model,
                                                                              const GError             *error,
+                                                                             ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_search_done                (ThunarListModel          *model,
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_sort_column_changed        (GtkTreeSortable          *tree_sortable,
                                                                              ThunarStandardView       *standard_view);
@@ -683,6 +686,20 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                   NULL, NULL,
                   g_cclosure_marshal_VOID__STRING,
                   G_TYPE_NONE, 1, G_TYPE_STRING);
+
+  /**
+   * ThunarStandardView::search-done:
+   *
+   * Emitted by @standard_view, whenever an active search is finishes.
+   **/
+  standard_view_signals[SEARCH_DONE] =
+      g_signal_new (I_("search-done"),
+                    G_TYPE_FROM_CLASS (klass),
+                    G_SIGNAL_RUN_LAST,
+                    G_STRUCT_OFFSET (ThunarStandardViewClass, search_done),
+                    NULL, NULL,
+                    NULL,
+                    G_TYPE_NONE, 0);
 }
 
 
@@ -758,6 +775,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->row_changed_id = g_signal_connect (G_OBJECT (standard_view->model), "row-changed", G_CALLBACK (thunar_standard_view_row_changed), standard_view);
   g_signal_connect (G_OBJECT (standard_view->model), "rows-reordered", G_CALLBACK (thunar_standard_view_rows_reordered), standard_view);
   g_signal_connect (G_OBJECT (standard_view->model), "error", G_CALLBACK (thunar_standard_view_error), standard_view);
+  g_signal_connect (G_OBJECT (standard_view->model), "search-done", G_CALLBACK (thunar_standard_view_search_done), standard_view);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-case-sensitive", G_OBJECT (standard_view->model), "case-sensitive", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-style", G_OBJECT (standard_view->model), "date-style", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-custom-style", G_OBJECT (standard_view->model), "date-custom-style", G_BINDING_SYNC_CREATE);
@@ -3309,6 +3327,21 @@ thunar_standard_view_error (ThunarListModel    *model,
   thunar_dialogs_show_error (GTK_WIDGET (standard_view), error,
                              _("Failed to open directory \"%s\""),
                              thunar_file_get_display_name (file));
+}
+
+
+
+static void
+thunar_standard_view_search_done (ThunarListModel    *model,
+                                  ThunarStandardView *standard_view)
+{
+  ThunarFile *file;
+
+  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (standard_view->model == model);
+
+  g_signal_emit_by_name (G_OBJECT (standard_view), "search-done");
 }
 
 
