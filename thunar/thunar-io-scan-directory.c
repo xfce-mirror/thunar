@@ -155,6 +155,10 @@ thunar_io_scan_directory (ThunarJob          *job,
           /* create new file info using Gfile*/
           recent_info = info;
           info = g_file_query_info (child_file, namespace, flags, cancellable, &err);
+
+          if (G_UNLIKELY (info == NULL))
+            g_object_unref (recent_info);
+            break;
         }
       else
         {
