@@ -4378,7 +4378,7 @@ thunar_window_menu_item_selected (ThunarWindow *window,
                                   GtkWidget    *menu_item)
 {
   gchar *tooltip;
-  gint   id;
+  guint  id;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
@@ -4402,7 +4402,7 @@ static void
 thunar_window_menu_item_deselected (ThunarWindow *window,
                                     GtkWidget    *menu_item)
 {
-  gint id;
+  guint id;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
