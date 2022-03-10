@@ -62,6 +62,7 @@ enum
 enum
 {
   ERROR,
+  SEARCH_DONE,
   LAST_SIGNAL,
 };
 
@@ -228,6 +229,7 @@ struct _ThunarListModelClass
   /* signals */
   void (*error) (ThunarListModel *store,
                  const GError    *error);
+  void (*search_done) (void);
 };
 
 struct _ThunarListModel
@@ -421,6 +423,22 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
                   NULL, NULL,
                   g_cclosure_marshal_VOID__POINTER,
                   G_TYPE_NONE, 1, G_TYPE_POINTER);
+
+  /**
+   * ThunarListModel::search-done:
+   * @store : a #ThunarListModel.
+   * @error : a #GError that describes the problem.
+   *
+   * Emitted when a recursive search finishes.
+   **/
+  list_model_signals[SEARCH_DONE] =
+      g_signal_new (I_("search-done"),
+                    G_TYPE_FROM_CLASS (klass),
+                    G_SIGNAL_RUN_LAST,
+                    G_STRUCT_OFFSET (ThunarListModelClass, search_done),
+                    NULL, NULL,
+                    NULL,
+                    G_TYPE_NONE, 0);
 }
 
 
@@ -2164,6 +2182,8 @@ search_finished (ThunarJob       *job,
 
   thunar_g_list_free_full (store->files_to_add);
   store->files_to_add = NULL;
+
+  g_signal_emit_by_name (store, "search-done");
 }
 
 
