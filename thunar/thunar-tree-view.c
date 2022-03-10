@@ -1478,7 +1478,7 @@ thunar_tree_view_action_open (ThunarTreeView *view)
   device = thunar_tree_view_get_selected_device (view);
   file = thunar_tree_view_get_selected_file (view);
 
- if (device != NULL)
+  if (device != NULL)
     {
       if (thunar_device_is_mounted (device))
         thunar_tree_view_open_selection (view);
