@@ -178,6 +178,9 @@ static void      thunar_window_start_open_location        (ThunarWindow         
                                                            const gchar            *initial_text);
 static void      thunar_window_resume_search              (ThunarWindow           *window,
                                                            const gchar            *initial_text);
+static void      thunar_window_spinner_start              (ThunarWindow           *window);
+static void      thunar_window_spinner_stop               (ThunarStandardView     *view,
+                                                           ThunarWindow           *window);
 static gboolean  thunar_window_action_open_new_tab        (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
 static gboolean  thunar_window_action_open_new_window     (ThunarWindow           *window,
@@ -2105,6 +2108,7 @@ thunar_window_notebook_page_added (GtkWidget    *notebook,
   /* connect signals */
   g_signal_connect (G_OBJECT (page), "notify::loading", G_CALLBACK (thunar_window_notify_loading), window);
   g_signal_connect_swapped (G_OBJECT (page), "start-open-location", G_CALLBACK (thunar_window_start_open_location), window);
+  g_signal_connect (G_OBJECT (page), "search-done", G_CALLBACK (thunar_window_spinner_stop), window);
   g_signal_connect_swapped (G_OBJECT (page), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
   g_signal_connect_swapped (G_OBJECT (page), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
 
@@ -3010,10 +3014,59 @@ thunar_window_start_open_location (ThunarWindow *window,
     {
       thunar_window_action_cancel_search (window);
 
+      /* stop spinner */
+      thunar_window_spinner_stop (THUNAR_STANDARD_VIEW (window->view), window);
+
       /* temporary show the location toolbar, even if it is normally hidden */
       gtk_widget_show (window->location_toolbar);
       thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
     }
+}
+
+
+
+static void
+thunar_window_spinner_start (ThunarWindow *window)
+{
+  GtkWidget   *label_box;
+  GList       *label_widgets;
+  GtkSpinner  *spinner;
+  GtkNotebook *selected_notebook;
+
+  selected_notebook = GTK_NOTEBOOK (window->notebook_selected);
+
+  /* show spinner */
+  label_box = gtk_notebook_get_tab_label (selected_notebook, gtk_notebook_get_nth_page (selected_notebook, gtk_notebook_get_current_page (selected_notebook)));
+  label_widgets = gtk_container_get_children (GTK_CONTAINER (label_box));
+  spinner = label_widgets->next->data;
+  gtk_spinner_start (spinner);
+  g_list_free (label_widgets);
+}
+
+
+
+static void
+thunar_window_spinner_stop (ThunarStandardView *view,
+                            ThunarWindow       *window)
+{
+  GtkWidget   *label_box;
+  GList       *label_widgets;
+  GtkSpinner  *spinner;
+  GtkNotebook *selected_notebook;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  if (gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_left), GTK_WIDGET(view)) != -1)
+    selected_notebook = GTK_NOTEBOOK (window->notebook_left);
+  else
+    selected_notebook = GTK_NOTEBOOK (window->notebook_right);
+
+  /* stop spinner */
+  label_box = gtk_notebook_get_tab_label (selected_notebook, gtk_notebook_get_nth_page (selected_notebook, gtk_notebook_page_num (selected_notebook, GTK_WIDGET (view))));
+  label_widgets = gtk_container_get_children (GTK_CONTAINER (label_box));
+  spinner = label_widgets->next->data;
+  gtk_spinner_stop (spinner);
+  g_list_free (label_widgets);
 }
 
 
@@ -3055,6 +3108,8 @@ thunar_window_update_search (ThunarWindow *window)
       window->ignore_next_search_update = FALSE;
       return;
     }
+
+  thunar_window_spinner_start (window);
     
   g_free (window->search_query);
   window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
@@ -3072,13 +3127,6 @@ thunar_window_action_cancel_search (ThunarWindow *window)
 {
   _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BAR (window->location_bar), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
-
-  GtkWidget   *label_box;
-  GList       *label_widgets;
-  GtkSpinner  *spinner;
-  GtkNotebook *selected_notebook;
-
-  selected_notebook = GTK_NOTEBOOK (window->notebook_selected);
 
   if (window->is_searching == FALSE)
     return TRUE;
@@ -3104,13 +3152,6 @@ thunar_window_action_cancel_search (ThunarWindow *window)
 
       thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), 0);
     }
-
-  /* stop spinner */
-  label_box = gtk_notebook_get_tab_label (selected_notebook, gtk_notebook_get_nth_page (selected_notebook, gtk_notebook_get_current_page (selected_notebook)));
-  label_widgets = gtk_container_get_children (GTK_CONTAINER (label_box));
-  spinner = label_widgets->next->data;
-  gtk_spinner_stop (spinner);
-  g_list_free (label_widgets);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -4333,19 +4374,7 @@ thunar_window_action_search (ThunarWindow *window)
 {
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  GtkWidget   *label_box;
-  GList       *label_widgets;
-  GtkSpinner  *spinner;
-  GtkNotebook *selected_notebook;
-
-  selected_notebook = GTK_NOTEBOOK (window->notebook_selected);
-
-  /* show spinner */
-  label_box = gtk_notebook_get_tab_label (selected_notebook, gtk_notebook_get_nth_page (selected_notebook, gtk_notebook_get_current_page (selected_notebook)));
-  label_widgets = gtk_container_get_children (GTK_CONTAINER (label_box));
-  spinner = label_widgets->next->data;
-  gtk_spinner_start (spinner);
-  g_list_free (label_widgets);
+  thunar_window_spinner_start (window);
 
   /* initiate search */
   thunar_window_start_open_location (window, SEARCH_PREFIX);
