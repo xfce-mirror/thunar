@@ -2205,6 +2205,8 @@ thunar_list_model_search_folder (ThunarListModel  *model,
           file = g_file_new_for_uri (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI));
           g_object_unref (info);
           info = g_file_query_info (file, namespace, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, cancellable, NULL);
+          if (G_UNLIKELY (info == NULL))
+            break;
         }
       else
         file = g_file_get_child (directory, g_file_info_get_name (info));
