@@ -280,13 +280,13 @@ static void      thunar_window_binding_create             (ThunarWindow         
                                                            GBindingFlags           flags);
 static gboolean  thunar_window_history_clicked            (GtkWidget              *button,
                                                            GdkEventButton         *event,
-                                                           GtkWidget              *window);
+                                                           ThunarWindow           *window);
 static gboolean  thunar_window_open_parent_clicked        (GtkWidget              *button,
                                                            GdkEventButton         *event,
-                                                           GtkWidget              *window);
+                                                           ThunarWindow           *window);
 static gboolean  thunar_window_open_home_clicked          (GtkWidget              *button,
                                                            GdkEventButton         *event,
-                                                           GtkWidget              *window);
+                                                           ThunarWindow           *window);
 static gboolean  thunar_window_button_press_event         (GtkWidget              *view,
                                                            GdkEventButton         *event,
                                                            ThunarWindow           *window);
@@ -5047,16 +5047,14 @@ thunar_window_button_press_event (GtkWidget      *view,
 static gboolean
 thunar_window_history_clicked (GtkWidget      *button,
                                GdkEventButton *event,
-                               GtkWidget      *data)
+                               ThunarWindow   *window)
 {
   ThunarHistory *history    = NULL;
-  ThunarWindow  *window     = NULL;
   ThunarFile    *directory  = NULL;
   gboolean       open_in_tab;
 
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (data), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  window = THUNAR_WINDOW (data);
   history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (window->view));
   if (event->button == 3)
     {
@@ -5098,15 +5096,13 @@ thunar_window_history_clicked (GtkWidget      *button,
 static gboolean
 thunar_window_open_parent_clicked (GtkWidget      *button,
                                    GdkEventButton *event,
-                                   GtkWidget      *data)
+                                   ThunarWindow   *window)
 {
-  ThunarWindow  *window     = NULL;
   ThunarFile    *directory  = NULL;
   gboolean       open_in_tab;
 
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (data), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  window = THUNAR_WINDOW (data);
   g_object_get (window->preferences, "misc-middle-click-in-tab", &open_in_tab, NULL);
 
   if (event->button == 2)
@@ -5135,16 +5131,14 @@ thunar_window_open_parent_clicked (GtkWidget      *button,
 static gboolean
 thunar_window_open_home_clicked   (GtkWidget      *button,
                                    GdkEventButton *event,
-                                   GtkWidget      *data)
+                                   ThunarWindow   *window)
 {
-  ThunarWindow  *window     = NULL;
   ThunarFile    *directory  = NULL;
   gint           page_num;
   gboolean       open_in_tab;
 
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (data), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  window = THUNAR_WINDOW (data);
   g_object_get (window->preferences, "misc-middle-click-in-tab", &open_in_tab, NULL);
 
   if (event->button == 2)
