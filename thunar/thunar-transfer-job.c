@@ -557,7 +557,7 @@ ttj_copy_file (ThunarTransferJob *job,
 
   /**
    * MR !127 notes:
-   * (Discusssion: https://gitlab.xfce.org/xfce/thunar/-/merge_requests/127)
+   * (Discussion: https://gitlab.xfce.org/xfce/thunar/-/merge_requests/127)
    *
    * Proper solution for copying lost metadata requires
    * `g_file_build_attribute_list_for_copy`, which is
