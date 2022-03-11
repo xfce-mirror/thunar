@@ -287,7 +287,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
 
           /* add some spacing between the icon and the name */
           gtk_tree_view_column_set_spacing (details_view->columns[column], 2);
-          gtk_tree_view_column_set_expand (details_view->columns[column], TRUE);
         }
       else
         {
@@ -326,9 +325,12 @@ thunar_details_view_init (ThunarDetailsView *details_view)
       for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; ++column)
         gtk_tree_view_column_set_fixed_width (details_view->columns[column], thunar_column_model_get_column_width (details_view->column_model, column));
     }
-
-  /* The name column always auto-expands */
-  gtk_tree_view_column_set_fixed_width (details_view->columns[THUNAR_COLUMN_NAME],-1);
+  else
+    {
+      /* Make sure the name column auto-expands */
+      gtk_tree_view_column_set_fixed_width (details_view->columns[THUNAR_COLUMN_NAME],-1);
+      gtk_tree_view_column_set_expand (details_view->columns[THUNAR_COLUMN_NAME], TRUE);
+    }
 
   /* release the shared text renderers */
   g_object_unref (G_OBJECT (right_aligned_renderer));
@@ -633,8 +635,8 @@ thunar_details_view_notify_width (GtkTreeViewColumn *tree_view_column,
   _thunar_return_if_fail (GTK_IS_TREE_VIEW_COLUMN (tree_view_column));
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
-  /* for some reason gtk forgets about auto-expand of the name column */
-  gtk_tree_view_column_set_expand (details_view->columns[THUNAR_COLUMN_NAME], TRUE);
+  /* for some reason gtk forgets the auto-expand state of the name column */
+  gtk_tree_view_column_set_expand (details_view->columns[THUNAR_COLUMN_NAME], !details_view->fixed_columns);
 
   /* lookup the column no for the given tree view column */
   for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; ++column)
@@ -1075,9 +1077,15 @@ thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
       if (fixed_columns)
         gtk_tree_view_set_fixed_height_mode (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (details_view))), TRUE);
 
-      /* The name column always auto-expands */
-      gtk_tree_view_column_set_fixed_width (details_view->columns[THUNAR_COLUMN_NAME],-1);
- 
+      if (fixed_columns == FALSE)
+        {
+          /* Make sure the name column auto-expands */
+          gtk_tree_view_column_set_fixed_width (details_view->columns[THUNAR_COLUMN_NAME],-1);
+          gtk_tree_view_column_set_expand (details_view->columns[THUNAR_COLUMN_NAME], TRUE);
+        }
+
+      gtk_tree_view_column_queue_resize (details_view->columns[THUNAR_COLUMN_NAME]);
+
       /* notify listeners */
       g_object_notify (G_OBJECT (details_view), "fixed-columns");
     }
