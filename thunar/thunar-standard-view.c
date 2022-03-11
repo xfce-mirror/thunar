@@ -87,7 +87,6 @@ enum
 enum
 {
   START_OPEN_LOCATION,
-  SEARCH_DONE,
   LAST_SIGNAL,
 };
 
@@ -706,20 +705,6 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                   NULL, NULL,
                   g_cclosure_marshal_VOID__STRING,
                   G_TYPE_NONE, 1, G_TYPE_STRING);
-
-  /**
-   * ThunarStandardView::search-done:
-   *
-   * Emitted by @standard_view, whenever an active search is finishes.
-   **/
-  standard_view_signals[SEARCH_DONE] =
-      g_signal_new (I_("search-done"),
-                    G_TYPE_FROM_CLASS (klass),
-                    G_SIGNAL_RUN_LAST,
-                    G_STRUCT_OFFSET (ThunarStandardViewClass, search_done),
-                    NULL, NULL,
-                    NULL,
-                    G_TYPE_NONE, 0);
 }
 
 
@@ -3379,7 +3364,6 @@ thunar_standard_view_search_done (ThunarListModel    *model,
   _thunar_return_if_fail (standard_view->model == model);
 
   standard_view->priv->active_search = FALSE;
-  g_signal_emit_by_name (G_OBJECT (standard_view), "search-done");
 
   /* notify listeners */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_SEARCHING]);
@@ -4268,6 +4252,9 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
   if (standard_view == NULL)
     return;
 
+  if (standard_view->priv->search_query != NULL && search_query == NULL)
+    thunar_standard_view_search_done (standard_view->model, standard_view);
+
   /* save the new query (used for switching between views) */
   g_free (standard_view->priv->search_query);
   standard_view->priv->search_query = g_strdup (search_query);
@@ -4291,6 +4278,8 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
 
   if (search_query != NULL && g_strcmp0 (search_query, "") != 0)
     standard_view->priv->active_search = TRUE;
+  else
+    standard_view->priv->active_search = FALSE;
 
   /* notify listeners */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_SEARCHING]);
