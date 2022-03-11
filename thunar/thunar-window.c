@@ -3638,8 +3638,6 @@ thunar_window_replace_view (ThunarWindow *window,
 
   _thunar_return_if_fail (view_type != G_TYPE_NONE);
 
-  printf("replacing view\n");
-
   /* if the view already has the correct type then just return */
   if (view != NULL && G_TYPE_FROM_INSTANCE (view) == view_type)
     return;
