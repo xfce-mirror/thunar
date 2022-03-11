@@ -68,6 +68,7 @@ enum
   PROP_0,
   PROP_CURRENT_DIRECTORY,
   PROP_LOADING,
+  PROP_SEARCHING,
   PROP_DISPLAY_NAME,
   PROP_FULL_PARSED_PATH,
   PROP_SELECTED_FILES,
@@ -130,6 +131,7 @@ static void                 thunar_standard_view_set_current_directory      (Thu
 static gboolean             thunar_standard_view_get_loading                (ThunarView               *view);
 static void                 thunar_standard_view_set_loading                (ThunarStandardView       *standard_view,
                                                                              gboolean                  loading);
+static gboolean             thunar_standard_view_get_searching              (ThunarView               *view);
 static const gchar         *thunar_standard_view_get_statusbar_text         (ThunarView               *view);
 static gboolean             thunar_standard_view_get_show_hidden            (ThunarView               *view);
 static void                 thunar_standard_view_set_show_hidden            (ThunarView               *view,
@@ -362,6 +364,7 @@ struct _ThunarStandardViewPrivate
 
   /* current search query, used to allow switching between views with different (or NULL) search queries */
   gchar                  *search_query;
+  gboolean                active_search;
 
   /* used to restore the view type after a search is completed */
   GType                   type;
@@ -552,6 +555,23 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                              g_param_spec_boolean ("loading",
                                                    "loading",
                                                    "loading",
+                                                   FALSE,
+                                                   EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarStandardView:searching:
+   *
+   * Whether the folder associated with this view is
+   * currently being loaded from the underlying media.
+   *
+   * Override property to set the property as writable
+   * for the binding.
+   **/
+  standard_view_props[PROP_SEARCHING] =
+      g_param_spec_override ("searching",
+                             g_param_spec_boolean ("searching",
+                                                   "searching",
+                                                   "searching",
                                                    FALSE,
                                                    EXO_PARAM_READWRITE));
 
@@ -822,6 +842,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->accel_group = NULL;
 
   standard_view->priv->search_query = NULL;
+  standard_view->priv->active_search = FALSE;
   standard_view->priv->type = 0;
 }
 
@@ -1060,6 +1081,10 @@ thunar_standard_view_get_property (GObject    *object,
       g_value_set_boolean (value, thunar_view_get_loading (THUNAR_VIEW (object)));
       break;
 
+    case PROP_SEARCHING:
+      g_value_set_boolean (value, thunar_standard_view_get_searching (THUNAR_VIEW (object)));
+      break;
+
     case PROP_DISPLAY_NAME:
       current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (object));
       if (THUNAR_STANDARD_VIEW (object)->priv->search_query != NULL)
@@ -1133,6 +1158,10 @@ thunar_standard_view_set_property (GObject      *object,
 
     case PROP_LOADING:
       thunar_standard_view_set_loading (standard_view, g_value_get_boolean (value));
+      break;
+
+    case PROP_SEARCHING:
+      /* FIXME */
       break;
 
     case PROP_SELECTED_FILES:
@@ -1558,6 +1587,14 @@ static gboolean
 thunar_standard_view_get_loading (ThunarView *view)
 {
   return THUNAR_STANDARD_VIEW (view)->loading;
+}
+
+
+
+static gboolean
+thunar_standard_view_get_searching (ThunarView *view)
+{
+  return THUNAR_STANDARD_VIEW (view)->priv->active_search;
 }
 
 
@@ -3341,7 +3378,11 @@ thunar_standard_view_search_done (ThunarListModel    *model,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (standard_view->model == model);
 
+  standard_view->priv->active_search = FALSE;
   g_signal_emit_by_name (G_OBJECT (standard_view), "search-done");
+
+  /* notify listeners */
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_SEARCHING]);
 }
 
 
@@ -4246,6 +4287,13 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
 
   /* change the display name in the tab */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
+
+
+  if (search_query != NULL && g_strcmp0 (search_query, "") != 0)
+    standard_view->priv->active_search = TRUE;
+
+  /* notify listeners */
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_SEARCHING]);
 }
 
 
