@@ -123,6 +123,7 @@ struct _ThunarStandardViewClass
   /* external signals */
   void         (*start_open_location)   (ThunarStandardView *standard_view,
                                          const gchar        *initial_text);
+  void         (*search_done)           (void);
 
   /* Appends view-specific menu items to the given menu */
   void        (*append_menu_items)      (ThunarStandardView *standard_view, GtkMenu *menu, GtkAccelGroup *accel_group);
