@@ -135,7 +135,7 @@ struct _ThunarDetailsView
   /* whether the most recent item activation used a mouse button press */
   gboolean           button_pressed;
 
-  /* event source id for thunar_details_view_zoom_level_changed_reload_fixed_columns */
+  /* event source id for thunar_details_view_zoom_level_changed_reload_fixed_height */
   guint idle_id;
 
 };
@@ -888,12 +888,13 @@ thunar_details_view_columns_changed (ThunarColumnModel *column_model,
 
 
 static gboolean
-thunar_details_view_zoom_level_changed_reload_fixed_columns (gpointer data)
+thunar_details_view_zoom_level_changed_reload_fixed_height (gpointer data)
 {
   ThunarDetailsView *details_view = data;
   _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
 
-  thunar_details_view_set_fixed_columns (details_view, TRUE);
+  gtk_tree_view_set_fixed_height_mode (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (details_view))), TRUE);
+
   details_view->idle_id = 0;
   return FALSE;
 }
@@ -904,16 +905,14 @@ static void
 thunar_details_view_zoom_level_changed (ThunarDetailsView *details_view)
 {
   ThunarColumn column;
-  gboolean     fixed_columns_used = FALSE;
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
   if (details_view->fixed_columns == TRUE)
-    fixed_columns_used = TRUE;
-
-  /* Disable fixed column mode during resize, since it can generate graphical glitches */
-  if (fixed_columns_used)
-      thunar_details_view_set_fixed_columns (details_view, FALSE);
+    {
+      /* disable fixed_height_mode during resize, otherwise graphical glitches can appear*/
+      gtk_tree_view_set_fixed_height_mode (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (details_view))), FALSE);
+    }
 
   /* determine the list of tree view columns */
   for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; ++column)
@@ -922,10 +921,10 @@ thunar_details_view_zoom_level_changed (ThunarDetailsView *details_view)
       gtk_tree_view_column_queue_resize (details_view->columns[column]);
     }
 
-  if (fixed_columns_used)
+  if (details_view->fixed_columns == TRUE)
     {
       /* Call when idle to ensure that gtk_tree_view_column_queue_resize got finished */
-      details_view->idle_id = gdk_threads_add_idle (thunar_details_view_zoom_level_changed_reload_fixed_columns, details_view);
+      details_view->idle_id = gdk_threads_add_idle (thunar_details_view_zoom_level_changed_reload_fixed_height, details_view);
     }
 }
 
