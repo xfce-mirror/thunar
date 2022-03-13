@@ -692,6 +692,7 @@ thunar_window_init (ThunarWindow *window)
   gboolean         last_statusbar_visible;
   GtkToolItem     *tool_item;
   gboolean         small_icons;
+  gboolean         vertical_split_panes;
   GtkStyleContext *context;
 
   /* unset the view type */
@@ -848,7 +849,13 @@ thunar_window_init (ThunarWindow *window)
   gtk_container_set_border_width (GTK_CONTAINER (gtk_info_bar_get_action_area (GTK_INFO_BAR (window->trash_infobar))), 0);
 
   /* split view: Create panes where the two notebooks */
-  window->paned_notebooks = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
+  g_object_get (G_OBJECT (window->preferences), "misc-vertical-split-pane", &vertical_split_panes, NULL);
+
+  if (vertical_split_panes)
+    window->paned_notebooks = gtk_paned_new (GTK_ORIENTATION_VERTICAL);
+  else
+    window->paned_notebooks = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
+
   gtk_paned_add2 (GTK_PANED (window->paned), window->view_box);
   gtk_widget_add_events (window->paned_notebooks, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK | GDK_BUTTON_PRESS_MASK);
   gtk_grid_attach (GTK_GRID (window->view_box), window->paned_notebooks, 0, 1, 1, 2);
