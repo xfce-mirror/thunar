@@ -116,6 +116,7 @@ enum
   PROP_TREE_ICON_EMBLEMS,
   PROP_TREE_ICON_SIZE,
   PROP_MISC_SWITCH_TO_NEW_TAB,
+  PROP_MISC_VERTICAL_SPLIT_PANE,
   N_PROPERTIES,
 };
 
@@ -1034,6 +1035,21 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             NULL,
                             TRUE,
                             EXO_PARAM_READWRITE);
+
+
+
+  /**
+   * ThunarPreferences:misc-vertical-split-pane
+   *
+   * If true, split the thunar window vertically instead of horizonatally
+   * when splitting the thunar window into two panes.
+   **/
+  preferences_props[PROP_MISC_VERTICAL_SPLIT_PANE] =
+    g_param_spec_boolean ("misc-vertical-split-pane",
+                          "MiscVerticalSplitPane",
+                          NULL,
+                          FALSE,
+                          EXO_PARAM_READWRITE);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
