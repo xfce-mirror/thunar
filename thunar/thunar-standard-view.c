@@ -363,6 +363,9 @@ struct _ThunarStandardViewPrivate
 
   /* current search query, used to allow switching between views with different (or NULL) search queries */
   gchar                  *search_query;
+
+  /* if you are wondering why we don't check if search_query is NULL instead of adding a new variable,
+   * we don't want to show the spinner when the search query is empty (i.e. "") */
   gboolean                active_search;
 
   /* used to restore the view type after a search is completed */
