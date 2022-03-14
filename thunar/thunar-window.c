@@ -1985,6 +1985,7 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   /* add stock bindings */
   thunar_window_binding_create (window, window, "current-directory", page, "current-directory", G_BINDING_DEFAULT);
   thunar_window_binding_create (window, page, "loading", window->spinner, "active", G_BINDING_SYNC_CREATE);
+  thunar_window_binding_create (window, page, "searching", window->spinner, "active", G_BINDING_SYNC_CREATE);
   thunar_window_binding_create (window, page, "selected-files", window->launcher, "selected-files", G_BINDING_SYNC_CREATE);
   thunar_window_binding_create (window, page, "zoom-level", window, "zoom-level", G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
 
@@ -2354,6 +2355,7 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   GtkWidget      *label;
   GtkWidget      *label_box;
   GtkWidget      *button;
+  GtkWidget      *spinner;
   GtkWidget      *icon;
   ThunarColumn    sort_column;
   GtkSortType     sort_order;
@@ -2407,6 +2409,17 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   gtk_label_set_single_line_mode (GTK_LABEL (label), TRUE);
   gtk_box_pack_start (GTK_BOX (label_box), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
+
+  spinner = gtk_spinner_new ();
+  gtk_box_pack_start (GTK_BOX (label_box), spinner, FALSE, FALSE, 0);
+  gtk_widget_show (spinner);
+
+  g_object_bind_property (G_OBJECT (spinner), "active",
+                          G_OBJECT (spinner), "visible",
+                          G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (view), "searching",
+                          G_OBJECT (spinner), "active",
+                          G_BINDING_SYNC_CREATE);
 
   button = gtk_button_new ();
   gtk_box_pack_start (GTK_BOX (label_box), button, FALSE, FALSE, 0);
@@ -3086,6 +3099,7 @@ gboolean
 thunar_window_action_cancel_search (ThunarWindow *window)
 {
   _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BAR (window->location_bar), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   if (window->is_searching == FALSE)
     return TRUE;
@@ -4331,6 +4345,9 @@ thunar_window_action_show_hidden (ThunarWindow *window)
 gboolean
 thunar_window_action_search (ThunarWindow *window)
 {
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  /* initiate search */
   thunar_window_start_open_location (window, SEARCH_PREFIX);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
