@@ -3353,8 +3353,6 @@ static void
 thunar_standard_view_search_done (ThunarListModel    *model,
                                   ThunarStandardView *standard_view)
 {
-  ThunarFile *file;
-
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (standard_view->model == model);
