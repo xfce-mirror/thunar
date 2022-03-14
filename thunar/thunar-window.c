@@ -310,6 +310,7 @@ static void      thunar_window_trash_selection_updated         (ThunarWindow    
 static void      thunar_window_recent_reload                   (GtkRecentManager       *recent_manager,
                                                                 ThunarWindow           *window);
 static void      thunar_window_catfish_dialog_configure        (GtkWidget              *entry);
+static gboolean  thunar_window_paned_notebooks_update_orientation (ThunarWindow *window);
 
 
 
@@ -849,6 +850,9 @@ thunar_window_init (ThunarWindow *window)
 
   /* split view: Create panes where the two notebooks */
   window->paned_notebooks = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
+  g_signal_connect_swapped (window->preferences, "notify::misc-vertical-split-pane", G_CALLBACK (thunar_window_paned_notebooks_update_orientation), window);
+  thunar_window_paned_notebooks_update_orientation (window);
+
   gtk_paned_add2 (GTK_PANED (window->paned), window->view_box);
   gtk_widget_add_events (window->paned_notebooks, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK | GDK_BUTTON_PRESS_MASK);
   gtk_grid_attach (GTK_GRID (window->view_box), window->paned_notebooks, 0, 1, 1, 2);
@@ -2561,6 +2565,22 @@ thunar_window_split_view_is_active (ThunarWindow *window)
   return (window->notebook_left && window->notebook_right);
 }
 
+static gboolean
+thunar_window_paned_notebooks_update_orientation (ThunarWindow *window)
+{
+  gboolean vertical_split_panes;
+
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  g_object_get (G_OBJECT (window->preferences), "misc-vertical-split-pane", &vertical_split_panes, NULL);
+
+  if (vertical_split_panes)
+    gtk_orientable_set_orientation (GTK_ORIENTABLE (window->paned_notebooks), GTK_ORIENTATION_VERTICAL);
+  else
+    gtk_orientable_set_orientation (GTK_ORIENTABLE (window->paned_notebooks), GTK_ORIENTATION_HORIZONTAL);
+
+  return TRUE;
+}
 
 
 void

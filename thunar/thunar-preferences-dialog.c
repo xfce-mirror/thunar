@@ -918,6 +918,19 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /* next row */
   row++;
 
+  button = gtk_check_button_new_with_mnemonic (_("Split panes vertically instead of horizontally"));
+  g_object_bind_property (G_OBJECT (dialog->preferences),
+                          "misc-vertical-split-pane",
+                          G_OBJECT (button),
+                          "active",
+                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  gtk_widget_set_tooltip_text (button, _("Select this option to split panes vertically instead of horizontally."));
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
+  gtk_widget_show (button);
+
+  /* next row */
+  row++;
+
   button = gtk_check_button_new_with_mnemonic (_("Open new thunar instances as tabs"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "misc-open-new-window-as-tab",
