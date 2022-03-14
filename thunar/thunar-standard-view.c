@@ -561,10 +561,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
    * ThunarStandardView:searching:
    *
    * Whether the folder associated with this view is
-   * currently being loaded from the underlying media.
-   *
-   * Override property to set the property as writable
-   * for the binding.
+   * currently being searched.
    **/
   standard_view_props[PROP_SEARCHING] =
       g_param_spec_override ("searching",
@@ -572,7 +569,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                                                    "searching",
                                                    "searching",
                                                    FALSE,
-                                                   EXO_PARAM_READWRITE));
+                                                   EXO_PARAM_READABLE));
 
   /**
    * ThunarStandardView:display-name:
@@ -1143,10 +1140,6 @@ thunar_standard_view_set_property (GObject      *object,
 
     case PROP_LOADING:
       thunar_standard_view_set_loading (standard_view, g_value_get_boolean (value));
-      break;
-
-    case PROP_SEARCHING:
-      /* FIXME */
       break;
 
     case PROP_SELECTED_FILES:
