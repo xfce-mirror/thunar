@@ -3268,6 +3268,10 @@ thunar_standard_view_rows_reordered (ThunarListModel    *model,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (standard_view->model == model);
 
+  /* ignore while searching */
+  if (standard_view->priv->active_search == TRUE)
+    return;
+
   /* the order of the paths might have changed, but the selection
    * stayed the same, so restore the selection of the proper files
    * after letting row changes accumulate a bit */
@@ -3290,6 +3294,10 @@ thunar_standard_view_row_changed (ThunarListModel    *model,
   _thunar_return_if_fail (path != NULL);
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (standard_view->model == model);
+
+  /* ignore while searching */
+  if (standard_view->priv->active_search == TRUE)
+    return;
 
   if (standard_view->priv->thumbnail_request != 0)
     return;
@@ -3319,6 +3327,10 @@ thunar_standard_view_select_after_row_deleted (ThunarListModel    *model,
 {
   _thunar_return_if_fail (path != NULL);
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  /* ignore while searching */
+  if (standard_view->priv->active_search == TRUE)
+    return;
 
   (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->set_cursor) (standard_view, path, FALSE);
 }
@@ -3947,6 +3959,10 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
+  /* ignore while searching */
+  if (standard_view->priv->active_search == TRUE)
+    return;
+
   /* drop any existing "new-files" closure */
   if (G_UNLIKELY (standard_view->priv->new_files_closure != NULL))
     {
@@ -4253,18 +4269,10 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
   g_free (standard_view->priv->search_query);
   standard_view->priv->search_query = g_strdup (search_query);
 
-  /* disable set cursor to avoid slowdown and memory leak */
-  if (search_query != NULL)
-    g_signal_handlers_disconnect_by_func (G_OBJECT (standard_view->model), thunar_standard_view_select_after_row_deleted, standard_view);
-
   /* initiate the search */
   g_object_ref (G_OBJECT (thunar_list_model_get_folder (standard_view->model))); /* temporarily hold a reference so the folder doesn't get deleted */
   thunar_list_model_set_folder (standard_view->model, thunar_list_model_get_folder (standard_view->model), search_query);
   g_object_unref (G_OBJECT (thunar_list_model_get_folder (standard_view->model))); /* reference no longer needed */
-
-  /* enable set cursor after finishing the search */
-  if (search_query == NULL)
-    g_signal_connect_after (G_OBJECT (standard_view->model), "row-deleted", G_CALLBACK (thunar_standard_view_select_after_row_deleted), standard_view);
 
   /* change the display name in the tab */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
