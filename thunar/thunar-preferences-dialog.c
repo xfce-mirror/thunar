@@ -915,7 +915,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
 
-
   /* next row */
   row++;
 

@@ -1041,7 +1041,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   /**
    * ThunarPreferences:misc-vertical-split-pane
    *
-   * If true, split the thunar window vertically instead of horizonatally
+   * If true, split the thunar window vertically instead of horizontally
    * when splitting the thunar window into two panes.
    **/
   preferences_props[PROP_MISC_VERTICAL_SPLIT_PANE] =
