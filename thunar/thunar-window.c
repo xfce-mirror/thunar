@@ -5496,6 +5496,14 @@ thunar_window_location_toolbar_add_uca (ThunarWindow *window,
 static void
 thunar_window_location_toolbar_create (ThunarWindow *window)
 {
+  /* used to save information about the label, icon and item order in the toolbar item */
+#define SAVE_DATA_TO_ITEM(ITEM, ACTION_ENTRY, ITEM_ORDER) \
+  g_object_set_data_full (G_OBJECT ((ITEM)), "label", g_strdup (get_action_entry ((ACTION_ENTRY))->menu_item_label_text), g_free); \
+  g_object_set_data_full (G_OBJECT ((ITEM)), "icon", g_strdup (get_action_entry ((ACTION_ENTRY))->menu_item_icon_name), g_free); \
+  item_order = g_malloc (sizeof (gint)); \
+  *item_order = (ITEM_ORDER); \
+  g_object_set_data_full (G_OBJECT ((ITEM)), "default-order", item_order, g_free);
+
   GtkToolItem     *tool_item;
   guint           *item_order;
   gboolean         small_icons;
@@ -5518,33 +5526,16 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 1, 1);
 
   window->location_toolbar_item_back = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_BACK), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_back), "label", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_BACK)->menu_item_label_text), g_free);
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_back), "icon", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_BACK)->menu_item_icon_name), g_free);
-  item_order = g_malloc (sizeof (gint));
-  *item_order = 0;
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_back), "default-order", item_order, g_free);
-  item_order = g_object_get_data (G_OBJECT (window->location_toolbar_item_back), "default-order");
+  SAVE_DATA_TO_ITEM (window->location_toolbar_item_back, THUNAR_WINDOW_ACTION_BACK, 0);
 
   window->location_toolbar_item_forward = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_FORWARD), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
-  g_object_set_data_full(G_OBJECT (window->location_toolbar_item_forward), "label", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_FORWARD)->menu_item_label_text), g_free);
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_forward), "icon", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_FORWARD)->menu_item_icon_name), g_free);
-  item_order = g_malloc (sizeof (gint));
-  *item_order = 1;
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_forward), "default-order", item_order, g_free);
+  SAVE_DATA_TO_ITEM (window->location_toolbar_item_forward, THUNAR_WINDOW_ACTION_FORWARD, 1);
 
   window->location_toolbar_item_parent = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_PARENT), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_parent), "label", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_PARENT)->menu_item_label_text), g_free);
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_parent), "icon", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_PARENT)->menu_item_icon_name), g_free);
-  item_order = g_malloc (sizeof (gint));
-  *item_order = 2;
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_parent), "default-order", item_order, g_free);
+  SAVE_DATA_TO_ITEM (window->location_toolbar_item_parent, THUNAR_WINDOW_ACTION_OPEN_PARENT, 2);
 
   window->location_toolbar_item_home = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_HOME), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_home), "label", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_HOME)->menu_item_label_text), g_free);
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_home), "icon", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_HOME)->menu_item_icon_name), g_free);
-  item_order = g_malloc (sizeof (gint));
-  *item_order = 3;
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_home), "default-order", item_order, g_free);
+  SAVE_DATA_TO_ITEM (window->location_toolbar_item_home, THUNAR_WINDOW_ACTION_OPEN_HOME, 3);
 
   g_signal_connect (G_OBJECT (window->location_toolbar_item_back), "button-press-event", G_CALLBACK (thunar_window_history_clicked), G_OBJECT (window));
   g_signal_connect (G_OBJECT (window->location_toolbar_item_forward), "button-press-event", G_CALLBACK (thunar_window_history_clicked), G_OBJECT (window));
@@ -5581,6 +5572,8 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
 
   /* run as idle because otherwise it would be called before the window is initialized */
   g_idle_add ((void*) thunar_window_location_toolbar_load_visibility, window);
+
+#undef SAVE_DATA_TO_ITEM
 }
 
 
