@@ -439,10 +439,9 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:last-toolbar-button-order:
+   * ThunarPreferences:last-toolbar-visible-buttons:
    *
-   * The comma separated list of columns that specifies the order of the
-   * columns in the #ThunarDetailsView.
+   * The comma separated list that specifies the visibility of toolbar items.
    **/
     preferences_props[PROP_LAST_TOOLBAR_VISIBLE_BUTTONS] =
         g_param_spec_string ("last-toolbar-visible-buttons",
@@ -454,8 +453,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   /**
    * ThunarPreferences:last-toolbar-button-order:
    *
-   * The space separated list of columns that specifies the order of the
-   * columns in the #ThunarDetailsView.
+   * The comma separated list that specifies the order of toolbar items.
    **/
     preferences_props[PROP_LAST_TOOLBAR_BUTTON_ORDER] =
         g_param_spec_string ("last-toolbar-item-order",

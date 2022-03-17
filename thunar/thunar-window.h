@@ -149,12 +149,11 @@ void                      thunar_window_update_search                       (Thu
 gboolean                  thunar_window_action_cancel_search                (ThunarWindow        *window);
 gboolean                  thunar_window_action_search                       (ThunarWindow        *window);
 void                      thunar_window_update_statusbar                    (ThunarWindow        *window);
-void                      thunar_window_toolbar_toggle_item                 (ThunarWindow        *window,
+void                      thunar_window_toolbar_toggle_item_visibility      (ThunarWindow        *window,
                                                                              gint                 index);
-void                      thunar_window_toolbar_exchange_items              (ThunarWindow        *window,
+void                      thunar_window_toolbar_swap_items                  (ThunarWindow        *window,
                                                                              gint                 index_a,
                                                                              gint                 index_b);
-guint                     thunar_window_toolbar_item_count                  (ThunarWindow        *window);
 
 XfceGtkActionEntry*       thunar_window_get_action_entries                  (void);
 
