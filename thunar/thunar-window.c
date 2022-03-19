@@ -5508,6 +5508,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   g_signal_connect_swapped (G_OBJECT (window->location_bar), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
   g_signal_connect_swapped (G_OBJECT (window->location_bar), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
   g_signal_connect_swapped (G_OBJECT (window->location_bar), "entry-done", G_CALLBACK (thunar_window_update_location_bar_visible), window);
+  gtk_widget_show (window->location_bar);
 
   /* setup the toolbar for the location bar */
   window->location_toolbar = gtk_toolbar_new ();
@@ -5567,17 +5568,17 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   *item_order = 4;
   g_object_set_data_full (G_OBJECT (tool_item), "default-order", item_order, g_free);
 
-  /* add the location bar itself */
-  gtk_container_add (GTK_CONTAINER (tool_item), window->location_bar);
-
   /* add custom actions to the toolbar */
   thunar_window_location_toolbar_add_ucas (window);
 
-  /* load the correct order of items in the toolbar */
-  thunar_window_location_toolbar_load_last_order (window);
-
   /* display the toolbar */
   gtk_widget_show_all (window->location_toolbar);
+
+  /* add the location bar itself after gtk_widget_show_all to not mess with the visibility of the location buttons */
+  gtk_container_add (GTK_CONTAINER (tool_item), window->location_bar);
+
+  /* load the correct order of items in the toolbar */
+  thunar_window_location_toolbar_load_last_order (window);
 
   /* run as idle because otherwise it would be called before the window is initialized */
   g_idle_add ((void*) thunar_window_location_toolbar_load_visibility, window);
