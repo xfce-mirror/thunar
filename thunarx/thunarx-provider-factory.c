@@ -154,54 +154,68 @@ thunarx_provider_factory_load_modules (ThunarxProviderFactory *factory)
   GList                 *modules = NULL;
   GList                 *lp;
   GDir                  *dp;
+  gchar                 *dirs_string;
+  gchar                 **dirs;
+  int                   i;
 
-  dp = g_dir_open (THUNARX_DIRECTORY, 0, NULL);
-  if (G_LIKELY (dp != NULL))
+  dirs_string = (gchar *) g_getenv ("THUNARX_DIRS");
+  if (!dirs_string)
+    dirs_string = THUNARX_DIRECTORY;
+  dirs = g_strsplit (dirs_string, G_SEARCHPATH_SEPARATOR_S, 0);
+
+  for (i = 0; dirs[i] != NULL; i++)
     {
-      /* determine the types for all existing plugins */
-      for (;;)
+
+      dp = g_dir_open (dirs[i], 0, NULL);
+
+      if (G_LIKELY (dp != NULL))
         {
-          /* read the next entry from the directory */
-          name = g_dir_read_name (dp);
-          if (G_UNLIKELY (name == NULL))
-            break;
-
-          /* check if this is a valid plugin file */
-          if (g_str_has_suffix (name, "." G_MODULE_SUFFIX))
+          /* determine the types for all existing plugins */
+          for (;;)
             {
-              /* check if we already have that module */
-              for (lp = thunarx_provider_modules; lp != NULL; lp = lp->next)
-                if (g_str_equal (G_TYPE_MODULE (lp->data)->name, name))
-                  break;
+              /* read the next entry from the directory */
+              name = g_dir_read_name (dp);
+              if (G_UNLIKELY (name == NULL))
+                break;
 
-              /* use or allocate a new module for the file */
-              if (G_UNLIKELY (lp != NULL))
+              /* check if this is a valid plugin file */
+              if (g_str_has_suffix (name, "." G_MODULE_SUFFIX))
                 {
-                  /* just use the existing module */
-                  module = THUNARX_PROVIDER_MODULE (lp->data);
-                }
-              else
-                {
-                  /* allocate the new module and add it to our list */
-                  module = thunarx_provider_module_new (name);
-                  thunarx_provider_modules = g_list_prepend (thunarx_provider_modules, module);
-                }
+                  /* check if we already have that module */
+                  for (lp = thunarx_provider_modules; lp != NULL; lp = lp->next)
+                    if (g_str_equal (G_TYPE_MODULE (lp->data)->name, name))
+                      break;
 
-              /* try to load the module */
-              if (g_type_module_use (G_TYPE_MODULE (module)))
-                {
-                  /* add the types provided by the module */
-                  thunarx_provider_factory_add (factory, module);
+                  /* use or allocate a new module for the file */
+                  if (G_UNLIKELY (lp != NULL))
+                    {
+                      /* just use the existing module */
+                      module = THUNARX_PROVIDER_MODULE (lp->data);
+                    }
+                  else
+                    {
+                      /* allocate the new module and add it to our list */
+                      module = thunarx_provider_module_new (name);
+                      thunarx_provider_modules = g_list_prepend (thunarx_provider_modules, module);
+                    }
 
-                  /* add the module to our list */
-                  modules = g_list_prepend (modules, module);
+                  /* try to load the module */
+                  if (g_type_module_use (G_TYPE_MODULE (module)))
+                    {
+                      /* add the types provided by the module */
+                      thunarx_provider_factory_add (factory, module);
+
+                      /* add the module to our list */
+                      modules = g_list_prepend (modules, module);
+                    }
                 }
             }
-        }
 
-      g_dir_close (dp);
+          g_dir_close (dp);
+        }
     }
 
+  g_strfreev(dirs);
   return modules;
 }
 
