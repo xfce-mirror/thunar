@@ -46,9 +46,9 @@ static void thunar_toolbar_editor_move_down                          (ThunarTool
                                                                       GtkWidget                *button);
 static void thunar_toolbar_editor_move_up                            (ThunarToolbarEditor      *toolbar_editor,
                                                                       GtkWidget                *button);
-static void thunar_toolbar_editor_toggle_visibility                  (ThunarToolbarEditor      *toolbar_editor,
-                                                                      GtkCellRendererToggle    *cell_renderer,
-                                                                      const gchar              *path_string);
+static void thunar_toolbar_editor_toggle_visibility                  (GtkCellRendererToggle    *cell_renderer,
+                                                                      const gchar              *path_string,
+                                                                      ThunarToolbarEditor      *toolbar_editor);
 static void thunar_toolbar_editor_update_buttons                     (ThunarToolbarEditor      *toolbar_editor);
 static void thunar_toolbar_editor_use_defaults                       (ThunarToolbarEditor      *toolbar_editor,
                                                                       GtkWidget                *button);
@@ -172,7 +172,7 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
 
   /* append the toggle toolbar */
   renderer = gtk_cell_renderer_toggle_new ();
-  g_signal_connect_swapped (G_OBJECT (renderer), "toggled", G_CALLBACK (thunar_toolbar_editor_toggle_visibility), toolbar_editor);
+  g_signal_connect (G_OBJECT (renderer), "toggled", G_CALLBACK (thunar_toolbar_editor_toggle_visibility), toolbar_editor);
   gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (toolbar_editor->tree_view),
                                                -1,
                                                "Active",
@@ -362,9 +362,9 @@ thunar_toolbar_editor_move_up (ThunarToolbarEditor *toolbar_editor,
 
 
 static void
-thunar_toolbar_editor_toggle_visibility (ThunarToolbarEditor    *toolbar_editor,
-                                         GtkCellRendererToggle *cell_renderer,
-                                         const gchar            *path_string)
+thunar_toolbar_editor_toggle_visibility (GtkCellRendererToggle  *cell_renderer,
+                                         const gchar            *path_string,
+                                         ThunarToolbarEditor    *toolbar_editor)
 {
   GtkTreePath *path;
   GtkTreeIter  iter;
