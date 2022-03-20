@@ -199,8 +199,10 @@ thunarx_provider_factory_load_modules (ThunarxProviderFactory *factory)
                       thunarx_provider_modules = g_list_prepend (thunarx_provider_modules, module);
                     }
 
-                  /* try to load the module */
-                  if (g_type_module_use (G_TYPE_MODULE (module)))
+                  /* try to load the module, if a module exists in
+                     multiple directories, only the first one will be
+                     added. */
+                  if (g_type_module_use (G_TYPE_MODULE (module)) && g_list_index(modules, module) == -1)
                     {
                       /* add the types provided by the module */
                       thunarx_provider_factory_add (factory, module);
