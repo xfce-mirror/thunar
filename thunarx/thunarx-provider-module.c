@@ -176,9 +176,8 @@ thunarx_provider_module_load (GTypeModule *type_module)
   ThunarxProviderModule *module = THUNARX_PROVIDER_MODULE (type_module);
   gchar                 *path;
   gchar                 *dirs_string;
-  gchar                 **dirs;
-  gboolean              found;
-  int                   i;
+  gchar                **dirs;
+  gboolean               found;
 
   dirs_string = (gchar *) g_getenv ("THUNARX_DIRS");
   if (!dirs_string)
@@ -187,7 +186,7 @@ thunarx_provider_module_load (GTypeModule *type_module)
 
   found = FALSE;
 
-  for (i = 0; !found && dirs[i] != NULL; i++)
+  for (int i = 0; !found && dirs[i] != NULL; i++)
     {
       /* load the module using the runtime link editor */
       path = g_build_filename (dirs[i], type_module->name, NULL);
@@ -221,7 +220,7 @@ thunarx_provider_module_load (GTypeModule *type_module)
 
       found = TRUE;
     }
-  g_strfreev(dirs);
+  g_strfreev (dirs);
   return found;
 }
 

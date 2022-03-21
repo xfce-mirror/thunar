@@ -155,15 +155,14 @@ thunarx_provider_factory_load_modules (ThunarxProviderFactory *factory)
   GList                 *lp;
   GDir                  *dp;
   gchar                 *dirs_string;
-  gchar                 **dirs;
-  int                   i;
+  gchar                **dirs;
 
   dirs_string = (gchar *) g_getenv ("THUNARX_DIRS");
   if (!dirs_string)
     dirs_string = THUNARX_DIRECTORY;
   dirs = g_strsplit (dirs_string, G_SEARCHPATH_SEPARATOR_S, 0);
 
-  for (i = 0; dirs[i] != NULL; i++)
+  for (int i = 0; dirs[i] != NULL; i++)
     {
 
       dp = g_dir_open (dirs[i], 0, NULL);
@@ -189,8 +188,7 @@ thunarx_provider_factory_load_modules (ThunarxProviderFactory *factory)
                   /* use or allocate a new module for the file */
                   if (G_UNLIKELY (lp != NULL))
                     {
-                      /* just use the existing module */
-                      module = THUNARX_PROVIDER_MODULE (lp->data);
+                      continue;
                     }
                   else
                     {
@@ -199,10 +197,8 @@ thunarx_provider_factory_load_modules (ThunarxProviderFactory *factory)
                       thunarx_provider_modules = g_list_prepend (thunarx_provider_modules, module);
                     }
 
-                  /* try to load the module, if a module exists in
-                     multiple directories, only the first one will be
-                     added. */
-                  if (g_type_module_use (G_TYPE_MODULE (module)) && g_list_index(modules, module) == -1)
+                  /* try to load the module */
+                  if (g_type_module_use (G_TYPE_MODULE (module)))
                     {
                       /* add the types provided by the module */
                       thunarx_provider_factory_add (factory, module);
@@ -217,7 +213,7 @@ thunarx_provider_factory_load_modules (ThunarxProviderFactory *factory)
         }
     }
 
-  g_strfreev(dirs);
+  g_strfreev (dirs);
   return modules;
 }
 
