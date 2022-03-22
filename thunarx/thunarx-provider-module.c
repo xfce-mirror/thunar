@@ -175,37 +175,53 @@ thunarx_provider_module_load (GTypeModule *type_module)
 {
   ThunarxProviderModule *module = THUNARX_PROVIDER_MODULE (type_module);
   gchar                 *path;
+  gchar                 *dirs_string;
+  gchar                **dirs;
+  gboolean               found;
 
-  /* load the module using the runtime link editor */
-  path = g_build_filename (THUNARX_DIRECTORY, type_module->name, NULL);
-  module->library = g_module_open (path, G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
-  g_free (path);
+  dirs_string = (gchar *) g_getenv ("THUNARX_DIRS");
+  if (!dirs_string)
+    dirs_string = THUNARX_DIRECTORY;
+  dirs = g_strsplit (dirs_string, G_SEARCHPATH_SEPARATOR_S, 0);
 
-  /* check if the load operation was successfull */
-  if (G_UNLIKELY (module->library == NULL))
+  found = FALSE;
+
+  for (int i = 0; !found && dirs[i] != NULL; i++)
     {
-      g_printerr ("Thunar :Failed to load plugin `%s': %s\n", type_module->name, g_module_error ());
-      return FALSE;
+      /* load the module using the runtime link editor */
+      path = g_build_filename (dirs[i], type_module->name, NULL);
+
+      module->library = g_module_open (path, G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
+      g_free (path);
+
+      /* check if the load operation was successfull */
+      if (G_UNLIKELY (module->library == NULL))
+        {
+          g_printerr ("Thunar :Failed to load plugin `%s' from `%s': %s\n", type_module->name, path, g_module_error ());
+          continue;
+        }
+
+      /* verify that all required public symbols are present in the plugin's symbol table */
+      if (!g_module_symbol (module->library, "thunar_extension_shutdown", (gpointer) &module->shutdown)
+          || !g_module_symbol (module->library, "thunar_extension_initialize", (gpointer) &module->initialize)
+          || !g_module_symbol (module->library, "thunar_extension_list_types", (gpointer) &module->list_types))
+        {
+          g_printerr ("Thunar :Plugin `%s' in `%s' lacks required symbols.\n", type_module->name, path);
+          g_module_close (module->library);
+          continue;
+        }
+
+      /* initialize the plugin */
+      (*module->initialize) (module);
+
+      /* ensure that the module will never be unloaded if it requests to be kept in memory */
+      if (G_UNLIKELY (module->resident))
+        g_module_make_resident (module->library);
+
+      found = TRUE;
     }
-
-  /* verify that all required public symbols are present in the plugin's symbol table */
-  if (!g_module_symbol (module->library, "thunar_extension_shutdown", (gpointer) &module->shutdown)
-      || !g_module_symbol (module->library, "thunar_extension_initialize", (gpointer) &module->initialize)
-      || !g_module_symbol (module->library, "thunar_extension_list_types", (gpointer) &module->list_types))
-    {
-      g_printerr ("Thunar :Plugin `%s' lacks required symbols.\n", type_module->name);
-      g_module_close (module->library);
-      return FALSE;
-    }
-
-  /* initialize the plugin */
-  (*module->initialize) (module);
-
-  /* ensure that the module will never be unloaded if it requests to be kept in memory */
-  if (G_UNLIKELY (module->resident))
-    g_module_make_resident (module->library);
-
-  return TRUE;
+  g_strfreev (dirs);
+  return found;
 }
 
 
