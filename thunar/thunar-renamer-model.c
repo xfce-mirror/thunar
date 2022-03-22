@@ -824,7 +824,7 @@ thunar_renamer_model_process_item (ThunarRenamerModel     *renamer_model,
   dot = thunar_util_str_get_extension (display_name);
 
   /* if we don't have a dot, then no "Suffix only" rename can take place */
-  if (G_LIKELY (dot != NULL || renamer_model->mode != THUNAR_RENAMER_MODE_SUFFIX))
+  if (G_LIKELY (dot != NULL || renamer_model->mode != THUNAR_RENAMER_MODE_EXTENSION))
     {
       /* now, for "Name only", we need a dot, otherwise treat everything as name */
       if (renamer_model->mode == THUNAR_RENAMER_MODE_NAME && dot == NULL)
@@ -850,7 +850,7 @@ thunar_renamer_model_process_item (ThunarRenamerModel     *renamer_model,
           g_free (text);
           break;
 
-        case THUNAR_RENAMER_MODE_SUFFIX:
+        case THUNAR_RENAMER_MODE_EXTENSION:
           /* determine the new suffix */
           suffix = thunarx_renamer_process (renamer_model->renamer, THUNARX_FILE_INFO (item->file), dot + 1, idx);
 
