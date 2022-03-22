@@ -29,16 +29,16 @@ G_BEGIN_DECLS;
 
 /**
  * ThunarRenamerMode:
- * @THUNAR_RENAMER_MODE_NAME   : only the name should be renamed.
- * @THUNAR_RENAMER_MODE_SUFFIX : only the suffix should be renamed.
- * @THUNAR_RENAMER_MODE_BOTH   : the name and the suffix should be renamed.
+ * @THUNAR_RENAMER_MODE_NAME      : only the name should be renamed.
+ * @THUNAR_RENAMER_MODE_EXTENSION : only the extension should be renamed.
+ * @THUNAR_RENAMER_MODE_BOTH      : the name and the extension should be renamed.
  *
  * The rename mode for a #ThunarRenamerModel instance.
  **/
 typedef enum
 {
   THUNAR_RENAMER_MODE_NAME,
-  THUNAR_RENAMER_MODE_SUFFIX,
+  THUNAR_RENAMER_MODE_EXTENSION,
   THUNAR_RENAMER_MODE_BOTH,
 } ThunarRenamerMode;
 

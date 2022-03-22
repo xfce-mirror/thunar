@@ -47,8 +47,8 @@ thunar_renamer_mode_get_type (void)
       static const GEnumValue values[] =
       {
         { THUNAR_RENAMER_MODE_NAME,   "THUNAR_RENAMER_MODE_NAME",   N_ ("Name only"),       },
-        { THUNAR_RENAMER_MODE_SUFFIX, "THUNAR_RENAMER_MODE_SUFFIX", N_ ("Suffix only"),     },
-        { THUNAR_RENAMER_MODE_BOTH,   "THUNAR_RENAMER_MODE_BOTH",   N_ ("Name and Suffix"), },
+        { THUNAR_RENAMER_MODE_EXTENSION, "THUNAR_RENAMER_MODE_EXTENSION", N_ ("Extension only"),     },
+        { THUNAR_RENAMER_MODE_BOTH,   "THUNAR_RENAMER_MODE_BOTH",   N_ ("Name and Extension"), },
         { 0,                          NULL,                         NULL,                   },
       };
 
