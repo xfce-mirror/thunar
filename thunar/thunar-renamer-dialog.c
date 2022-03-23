@@ -518,7 +518,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
       gtk_container_add (GTK_CONTAINER (button), image);
       gtk_widget_show (image);
 
-      /* create the name/suffix/both combo box */
+      /* create the name/extension/both combo box */
       mcombo = gtk_combo_box_text_new ();
       klass = g_type_class_ref (THUNAR_TYPE_RENAMER_MODE);
       active_str = xfce_rc_read_entry_untranslated (rc, "LastActiveMode", "");
