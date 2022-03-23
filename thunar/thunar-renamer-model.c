@@ -810,7 +810,7 @@ thunar_renamer_model_process_item (ThunarRenamerModel     *renamer_model,
   const gchar      *dot;
   gchar            *name = NULL;
   gchar            *prefix;
-  gchar            *suffix;
+  gchar            *extension;
   gchar            *text;
 
   /* no new name if no renamer is set */
@@ -823,8 +823,8 @@ thunar_renamer_model_process_item (ThunarRenamerModel     *renamer_model,
   /* determine the extension in the filename */
   dot = thunar_util_str_get_extension (display_name);
 
-  /* if we don't have a dot, then no "Suffix only" rename can take place */
-  if (G_LIKELY (dot != NULL || renamer_model->mode != THUNAR_RENAMER_MODE_SUFFIX))
+  /* if we don't have a dot, then no "Extension only" rename can take place */
+  if (G_LIKELY (dot != NULL || renamer_model->mode != THUNAR_RENAMER_MODE_EXTENSION))
     {
       /* now, for "Name only", we need a dot, otherwise treat everything as name */
       if (renamer_model->mode == THUNAR_RENAMER_MODE_NAME && dot == NULL)
@@ -850,16 +850,16 @@ thunar_renamer_model_process_item (ThunarRenamerModel     *renamer_model,
           g_free (text);
           break;
 
-        case THUNAR_RENAMER_MODE_SUFFIX:
-          /* determine the new suffix */
-          suffix = thunarx_renamer_process (renamer_model->renamer, THUNARX_FILE_INFO (item->file), dot + 1, idx);
+        case THUNAR_RENAMER_MODE_EXTENSION:
+          /* determine the new extension */
+          extension = thunarx_renamer_process (renamer_model->renamer, THUNARX_FILE_INFO (item->file), dot + 1, idx);
 
           prefix = g_strndup (display_name, (dot - display_name) + 1);
-          name = g_strconcat (prefix, suffix, NULL);
+          name = g_strconcat (prefix, extension, NULL);
           g_free (prefix);
 
-          /* release the suffix */
-          g_free (suffix);
+          /* release the extension */
+          g_free (extension);
           break;
 
         case THUNAR_RENAMER_MODE_BOTH:
