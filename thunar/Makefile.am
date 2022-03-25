@@ -182,6 +182,8 @@ thunar_SOURCES =							\
 	thunar-standard-view.h						\
 	thunar-statusbar.c						\
 	thunar-statusbar.h						\
+	thunar-toolbar-editor.c						\
+    thunar-toolbar-editor.h						\
 	thunar-thumbnail-cache.c					\
 	thunar-thumbnail-cache.h					\
 	thunar-thumbnailer.c						\
