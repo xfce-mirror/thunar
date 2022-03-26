@@ -408,6 +408,8 @@ struct _ThunarWindow
   GtkWidget              *location_toolbar_item_forward;
   GtkWidget              *location_toolbar_item_parent;
   GtkWidget              *location_toolbar_item_home;
+  GtkWidget              *location_toolbar_item_zoom_in;
+  GtkWidget              *location_toolbar_item_zoom_out;
 
   ThunarLauncher         *launcher;
 
@@ -1715,10 +1717,7 @@ thunar_window_zoom_in (ThunarWindow *window)
 
   /* check if we can still zoom in */
   if (G_LIKELY (window->zoom_level < THUNAR_ZOOM_N_LEVELS - 1))
-    {
-      thunar_window_set_zoom_level (window, window->zoom_level + 1);
-      return TRUE;
-    }
+    thunar_window_set_zoom_level (window, window->zoom_level + 1);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -1733,10 +1732,7 @@ thunar_window_zoom_out (ThunarWindow *window)
 
   /* check if we can still zoom out */
   if (G_LIKELY (window->zoom_level > 0))
-    {
-      thunar_window_set_zoom_level (window, window->zoom_level - 1);
-      return TRUE;
-    }
+    thunar_window_set_zoom_level (window, window->zoom_level - 1);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -4648,6 +4644,11 @@ thunar_window_set_zoom_level (ThunarWindow   *window,
       /* notify listeners */
       g_object_notify (G_OBJECT (window), "zoom-level");
     }
+
+  /* check if we can still zoom in and set the sensitivity of the button */
+  gtk_widget_set_sensitive (window->location_toolbar_item_zoom_in, (window->zoom_level < THUNAR_ZOOM_N_LEVELS - 1));
+  /* check if we can still zoom out and set the sensitivity of the button */
+  gtk_widget_set_sensitive (window->location_toolbar_item_zoom_out, (window->zoom_level > 0));
 }
 
 
@@ -5497,7 +5498,8 @@ static void
 thunar_window_location_toolbar_create (ThunarWindow *window)
 {
   GtkToolItem     *tool_item;
-  guint           *item_order;
+  guint           *item_order_ptr;
+  guint            item_order;
   gboolean         small_icons;
 
   g_object_get (G_OBJECT (window->preferences), "misc-small-toolbar-icons", &small_icons, NULL);
@@ -5518,39 +5520,61 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   gtk_widget_set_hexpand (window->location_toolbar, TRUE);
   gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 1, 1);
 
+  item_order = 0;
   window->location_toolbar_item_back = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_BACK), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_back), "label", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_BACK)->menu_item_label_text), g_free);
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_back), "icon", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_BACK)->menu_item_icon_name), g_free);
-  item_order = g_malloc (sizeof (gint));
-  *item_order = 0;
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_back), "default-order", item_order, g_free);
-  item_order = g_object_get_data (G_OBJECT (window->location_toolbar_item_back), "default-order");
+  item_order_ptr = g_malloc (sizeof (gint));
+  *item_order_ptr = item_order;
+  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_back), "default-order", item_order_ptr, g_free);
+  item_order_ptr = g_object_get_data (G_OBJECT (window->location_toolbar_item_back), "default-order");
 
+  item_order++;
   window->location_toolbar_item_forward = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_FORWARD), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
   g_object_set_data_full(G_OBJECT (window->location_toolbar_item_forward), "label", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_FORWARD)->menu_item_label_text), g_free);
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_forward), "icon", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_FORWARD)->menu_item_icon_name), g_free);
-  item_order = g_malloc (sizeof (gint));
-  *item_order = 1;
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_forward), "default-order", item_order, g_free);
+  item_order_ptr = g_malloc (sizeof (gint));
+  *item_order_ptr = item_order;
+  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_forward), "default-order", item_order_ptr, g_free);
 
+  item_order++;
   window->location_toolbar_item_parent = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_PARENT), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_parent), "label", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_PARENT)->menu_item_label_text), g_free);
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_parent), "icon", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_PARENT)->menu_item_icon_name), g_free);
-  item_order = g_malloc (sizeof (gint));
-  *item_order = 2;
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_parent), "default-order", item_order, g_free);
+  item_order_ptr = g_malloc (sizeof (gint));
+  *item_order_ptr = item_order;
+  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_parent), "default-order", item_order_ptr, g_free);
 
+  item_order++;
   window->location_toolbar_item_home = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_HOME), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_home), "label", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_HOME)->menu_item_label_text), g_free);
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_home), "icon", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_HOME)->menu_item_icon_name), g_free);
-  item_order = g_malloc (sizeof (gint));
-  *item_order = 3;
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_home), "default-order", item_order, g_free);
+  item_order_ptr = g_malloc (sizeof (gint));
+  *item_order_ptr = item_order;
+  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_home), "default-order", item_order_ptr, g_free);
+
+  item_order++;
+  window->location_toolbar_item_zoom_in = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_ZOOM_IN), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
+  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_zoom_in), "label", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_ZOOM_IN)->menu_item_label_text), g_free);
+  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_zoom_in), "icon", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_ZOOM_IN)->menu_item_icon_name), g_free);
+  item_order_ptr = g_malloc (sizeof (gint));
+  *item_order_ptr = item_order;
+  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_zoom_in), "default-order", item_order_ptr, g_free);
+
+  item_order++;
+  window->location_toolbar_item_zoom_out = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_ZOOM_OUT), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
+  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_zoom_out), "label", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_ZOOM_OUT)->menu_item_label_text), g_free);
+  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_zoom_out), "icon", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_ZOOM_OUT)->menu_item_icon_name), g_free);
+  item_order_ptr = g_malloc (sizeof (gint));
+  *item_order_ptr = item_order;
+  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_zoom_out), "default-order", item_order_ptr, g_free);
 
   g_signal_connect (G_OBJECT (window->location_toolbar_item_back), "button-press-event", G_CALLBACK (thunar_window_history_clicked), G_OBJECT (window));
   g_signal_connect (G_OBJECT (window->location_toolbar_item_forward), "button-press-event", G_CALLBACK (thunar_window_history_clicked), G_OBJECT (window));
   g_signal_connect (G_OBJECT (window->location_toolbar_item_parent), "button-press-event", G_CALLBACK (thunar_window_open_parent_clicked), G_OBJECT (window));
   g_signal_connect (G_OBJECT (window->location_toolbar_item_home), "button-press-event", G_CALLBACK (thunar_window_open_home_clicked), G_OBJECT (window));
+  g_signal_connect (G_OBJECT (window->location_toolbar_item_zoom_in), "button-press-event", G_CALLBACK (thunar_window_zoom_in), G_OBJECT (window));
+  g_signal_connect (G_OBJECT (window->location_toolbar_item_zoom_out), "button-press-event", G_CALLBACK (thunar_window_zoom_out), G_OBJECT (window));
   g_signal_connect (G_OBJECT (window), "button-press-event", G_CALLBACK (thunar_window_button_press_event), G_OBJECT (window));
   window->signal_handler_id_history_changed = 0;
 
@@ -5558,15 +5582,16 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   g_signal_connect (window, "key-press-event", G_CALLBACK (thunar_window_check_uca_key_activation), NULL);
 
   /* add the location bar to the toolbar */
+  item_order++;
   tool_item = gtk_tool_item_new ();
   gtk_tool_item_set_expand (tool_item, TRUE);
   gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), tool_item, -1);
   gtk_toolbar_set_show_arrow (GTK_TOOLBAR (window->location_toolbar), FALSE);
   g_object_set_data_full (G_OBJECT (tool_item), "label", g_strdup ("Location Bar"), g_free);
   g_object_set_data_full (G_OBJECT (tool_item), "icon", g_strdup(""), g_free);
-  item_order = g_malloc (sizeof (gint));
-  *item_order = 4;
-  g_object_set_data_full (G_OBJECT (tool_item), "default-order", item_order, g_free);
+  item_order_ptr = g_malloc (sizeof (gint));
+  *item_order_ptr = item_order;
+  g_object_set_data_full (G_OBJECT (tool_item), "default-order", item_order_ptr, g_free);
 
   /* add custom actions to the toolbar */
   thunar_window_location_toolbar_add_ucas (window);
