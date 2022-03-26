@@ -5497,6 +5497,7 @@ thunar_window_location_toolbar_add_uca (ThunarWindow *window,
 static void
 thunar_window_location_toolbar_create (ThunarWindow *window)
 {
+  GtkWidget       *button;
   GtkToolItem     *tool_item;
   guint           *item_order_ptr;
   guint            item_order;
@@ -5592,6 +5593,16 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   item_order_ptr = g_malloc (sizeof (gint));
   *item_order_ptr = item_order;
   g_object_set_data_full (G_OBJECT (tool_item), "default-order", item_order_ptr, g_free);
+
+  item_order++;
+  button = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_RELOAD), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
+  g_object_set_data_full (G_OBJECT (button), "label", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_RELOAD)->menu_item_label_text), g_free);
+  g_object_set_data_full (G_OBJECT (button), "icon", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_RELOAD)->menu_item_icon_name), g_free);
+  item_order_ptr = g_malloc (sizeof (gint));
+  *item_order_ptr = item_order;
+  g_object_set_data_full (G_OBJECT (button), "default-order", item_order_ptr, g_free);
+
+  g_signal_connect_swapped (G_OBJECT (button), "button-press-event", G_CALLBACK (thunar_window_action_reload), G_OBJECT (window));
 
   /* add custom actions to the toolbar */
   thunar_window_location_toolbar_add_ucas (window);
