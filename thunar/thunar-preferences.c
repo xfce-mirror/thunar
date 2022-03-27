@@ -78,6 +78,8 @@ enum
   PROP_LAST_WINDOW_HEIGHT,
   PROP_LAST_WINDOW_WIDTH,
   PROP_LAST_WINDOW_FULLSCREEN,
+  PROP_LAST_TOOLBAR_VISIBLE_BUTTONS,
+  PROP_LAST_TOOLBAR_BUTTON_ORDER,
   PROP_MISC_DIRECTORY_SPECIFIC_SETTINGS,
   PROP_MISC_ALWAYS_SHOW_TABS,
   PROP_MISC_VOLUME_MANAGEMENT,
@@ -435,6 +437,30 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             NULL,
                             FALSE,
                             EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-toolbar-visible-buttons:
+   *
+   * The comma separated list that specifies the visibility of toolbar items.
+   **/
+    preferences_props[PROP_LAST_TOOLBAR_VISIBLE_BUTTONS] =
+        g_param_spec_string ("last-toolbar-visible-buttons",
+                             "LastToolbarVisibleButtons",
+                             NULL,
+                             "1,1,1,1,0,0,1,0",
+                             EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-toolbar-button-order:
+   *
+   * The comma separated list that specifies the order of toolbar items.
+   **/
+    preferences_props[PROP_LAST_TOOLBAR_BUTTON_ORDER] =
+        g_param_spec_string ("last-toolbar-item-order",
+                             "LastToolbarButtonOrder",
+                             NULL,
+                             "0,1,2,3,4,5,6,7",
+                             EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-directory-specific-settings:
