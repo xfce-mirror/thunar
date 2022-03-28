@@ -563,21 +563,26 @@ thunar_toolbar_editor_populate_model (ThunarToolbarEditor *toolbar_editor)
   for (GList *lp = toolbar_items; lp != NULL; lp = lp->next)
     {
       GtkWidget *item = lp->data;
-      gchar     *label = NULL;
+      GtkWidget *widget = NULL; /* used to remove mnemonics */
+      gchar     *label_with_mnemonic = NULL;
       gchar     *icon = NULL;
       gint      *order = NULL;
 
-      label = g_object_get_data (G_OBJECT (item), "label");
+      label_with_mnemonic = g_object_get_data (G_OBJECT (item), "label");
       icon = g_object_get_data (G_OBJECT (item), "icon");
       order = g_object_get_data (G_OBJECT (item), "default-order");
+
+      widget = gtk_label_new_with_mnemonic (label_with_mnemonic);
 
       gtk_list_store_append (toolbar_editor->model, &iter);
       gtk_list_store_set (toolbar_editor->model, &iter,
                           0, gtk_widget_is_visible (item),
                           1, icon,
-                          2, label,
+                          2, gtk_label_get_text (GTK_LABEL (widget)),
                           3, *order,
                           -1);
+
+      gtk_widget_destroy (widget);
     }
 
   /* connect after model has been fully initialized */
