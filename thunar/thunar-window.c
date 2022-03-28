@@ -289,6 +289,9 @@ static void      thunar_window_binding_create             (ThunarWindow         
 static gboolean  thunar_window_history_clicked            (GtkWidget              *button,
                                                            GdkEventButton         *event,
                                                            ThunarWindow           *window);
+static gboolean  thunar_window_toolbar_button_clicked     (GtkWidget              *button,
+                                                           GdkEventButton         *event,
+                                                           ThunarWindow           *window);
 static gboolean  thunar_window_open_parent_clicked        (GtkWidget              *button,
                                                            GdkEventButton         *event,
                                                            ThunarWindow           *window);
@@ -5153,6 +5156,28 @@ thunar_window_history_clicked (GtkWidget      *button,
 
 
 static gboolean
+thunar_window_toolbar_button_clicked (GtkWidget      *button,
+                                      GdkEventButton *event,
+                                      ThunarWindow   *window)
+{
+  GtkWidget *menu;
+
+  if (event->button == 3)
+    {
+      menu = gtk_menu_new ();
+      xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR), G_OBJECT (window), GTK_MENU_SHELL (menu));
+      gtk_widget_show_all (menu);
+
+      /* run the menu (takes over the floating of menu) */
+      thunar_gtk_menu_run (GTK_MENU (menu));
+    }
+
+  return TRUE;
+}
+
+
+
+static gboolean
 thunar_window_open_parent_clicked (GtkWidget      *button,
                                    GdkEventButton *event,
                                    ThunarWindow   *window)
@@ -5181,6 +5206,8 @@ thunar_window_open_parent_clicked (GtkWidget      *button,
         }
       g_object_unref (directory);
     }
+
+  thunar_window_toolbar_button_clicked (button, event, window);
 
   return FALSE;
 }
@@ -5218,6 +5245,8 @@ thunar_window_open_home_clicked   (GtkWidget      *button,
           g_object_unref (G_OBJECT (application));
         }
    }
+
+  thunar_window_toolbar_button_clicked (button, event, window);
 
  return FALSE;
 }
@@ -5577,6 +5606,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   item_order_ptr = g_malloc (sizeof (gint));
   *item_order_ptr = item_order;
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_zoom_out), "default-order", item_order_ptr, g_free);
+  g_signal_connect (G_OBJECT (window->location_toolbar_item_zoom_out), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
 
   item_order++;
   window->location_toolbar_item_zoom_in = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_ZOOM_IN), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
@@ -5585,6 +5615,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   item_order_ptr = g_malloc (sizeof (gint));
   *item_order_ptr = item_order;
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_zoom_in), "default-order", item_order_ptr, g_free);
+  g_signal_connect (G_OBJECT (window->location_toolbar_item_zoom_in), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
 
   item_order++;
   button = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_ZOOM_RESET), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
@@ -5593,6 +5624,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   item_order_ptr = g_malloc (sizeof (gint));
   *item_order_ptr = item_order;
   g_object_set_data_full (G_OBJECT (button), "default-order", item_order_ptr, g_free);
+  g_signal_connect (G_OBJECT (button), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
 
   g_signal_connect (G_OBJECT (window->location_toolbar_item_back), "button-press-event", G_CALLBACK (thunar_window_history_clicked), G_OBJECT (window));
   g_signal_connect (G_OBJECT (window->location_toolbar_item_forward), "button-press-event", G_CALLBACK (thunar_window_history_clicked), G_OBJECT (window));
@@ -5623,6 +5655,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   item_order_ptr = g_malloc (sizeof (gint));
   *item_order_ptr = item_order;
   g_object_set_data_full (G_OBJECT (button), "default-order", item_order_ptr, g_free);
+  g_signal_connect (G_OBJECT (button), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
 
   item_order++;
   window->location_toolbar_item_search = xfce_gtk_toggle_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_SEARCH), G_OBJECT (window), window->is_searching, GTK_TOOLBAR (window->location_toolbar));
@@ -5631,6 +5664,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   item_order_ptr = g_malloc (sizeof (gint));
   *item_order_ptr = item_order;
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_search), "default-order", item_order_ptr, g_free);
+  g_signal_connect (G_OBJECT (window->location_toolbar_item_search), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
 
   /* add custom actions to the toolbar */
   thunar_window_location_toolbar_add_ucas (window);
@@ -5713,6 +5747,7 @@ thunar_window_location_toolbar_add_ucas (ThunarWindow *window)
                   item_order = g_malloc (sizeof (gint));
                   *item_order = item_count++;
                   g_object_set_data_full (G_OBJECT (toolbar_item), "default-order", item_order, g_free);
+                  g_signal_connect (G_OBJECT (toolbar_item), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
                 }
 
               g_free (name);
