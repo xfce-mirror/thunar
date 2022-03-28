@@ -5586,6 +5586,14 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   *item_order_ptr = item_order;
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_zoom_in), "default-order", item_order_ptr, g_free);
 
+  item_order++;
+  button = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_ZOOM_RESET), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
+  g_object_set_data_full (G_OBJECT (button), "label", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_ZOOM_RESET)->menu_item_label_text), g_free);
+  g_object_set_data_full (G_OBJECT (button), "icon", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_ZOOM_RESET)->menu_item_icon_name), g_free);
+  item_order_ptr = g_malloc (sizeof (gint));
+  *item_order_ptr = item_order;
+  g_object_set_data_full (G_OBJECT (button), "default-order", item_order_ptr, g_free);
+
   g_signal_connect (G_OBJECT (window->location_toolbar_item_back), "button-press-event", G_CALLBACK (thunar_window_history_clicked), G_OBJECT (window));
   g_signal_connect (G_OBJECT (window->location_toolbar_item_forward), "button-press-event", G_CALLBACK (thunar_window_history_clicked), G_OBJECT (window));
   g_signal_connect (G_OBJECT (window->location_toolbar_item_parent), "button-press-event", G_CALLBACK (thunar_window_open_parent_clicked), G_OBJECT (window));
