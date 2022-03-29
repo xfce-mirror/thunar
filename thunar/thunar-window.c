@@ -5664,7 +5664,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   item_order_ptr = g_malloc (sizeof (gint));
   *item_order_ptr = item_order;
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_search), "default-order", item_order_ptr, g_free);
-  g_signal_connect (G_OBJECT (button), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
+  g_signal_connect (G_OBJECT (window->location_toolbar_item_search), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
 
   /* add custom actions to the toolbar */
   thunar_window_location_toolbar_add_ucas (window);
