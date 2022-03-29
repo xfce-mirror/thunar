@@ -280,7 +280,7 @@ thunar_toolbar_editor_help_clicked (ThunarToolbarEditor *toolbar_editor,
   xfce_dialog_show_help (GTK_WINDOW (gtk_widget_get_toplevel (button)),
                          "thunar",
                          "the-file-manager-window",
-                         "customizing_the_appearance");
+                         "toolbar_customization");
 }
 
 
