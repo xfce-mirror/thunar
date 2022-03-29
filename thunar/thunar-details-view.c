@@ -80,6 +80,8 @@ static void         thunar_details_view_notify_model            (GtkTreeView    
 static void         thunar_details_view_notify_width            (GtkTreeViewColumn      *tree_view_column,
                                                                  GParamSpec             *pspec,
                                                                  ThunarDetailsView      *details_view);
+static gboolean     thunar_details_view_column_header_clicked   (ThunarDetailsView      *details_view,
+                                                                 GdkEventButton         *event);
 static gboolean     thunar_details_view_button_press_event      (GtkTreeView            *tree_view,
                                                                  GdkEventButton         *event,
                                                                  ThunarDetailsView      *details_view);
@@ -651,6 +653,28 @@ thunar_details_view_notify_width (GtkTreeViewColumn *tree_view_column,
 
 
 static gboolean
+thunar_details_view_column_header_clicked (ThunarDetailsView *details_view,
+                                           GdkEventButton    *event)
+{
+  GtkWidget *menu;
+
+  if (event->button == 3)
+    {
+      menu = gtk_menu_new ();
+      xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS), G_OBJECT (details_view), GTK_MENU_SHELL (menu));
+      gtk_widget_show_all (menu);
+
+      /* run the menu (takes over the floating of menu) */
+      thunar_gtk_menu_run (GTK_MENU (menu));
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
+
+
+static gboolean
 thunar_details_view_button_press_event (GtkTreeView       *tree_view,
                                         GdkEventButton    *event,
                                         ThunarDetailsView *details_view)
@@ -662,7 +686,7 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
 
   /* check if the event is for the bin window */
   if (G_UNLIKELY (event->window != gtk_tree_view_get_bin_window (tree_view)))
-    return FALSE;
+    return thunar_details_view_column_header_clicked (details_view, event);
 
   /* get the current selection */
   selection = gtk_tree_view_get_selection (tree_view);
