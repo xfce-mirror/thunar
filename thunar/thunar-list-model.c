@@ -2381,8 +2381,10 @@ thunar_list_model_set_folder (ThunarListModel *store,
     {
       g_object_ref (G_OBJECT (folder));
 
-      /* get the already loaded files or search for files matching the search_query */
-      if (search_query == NULL)
+      /* get the already loaded files or search for files matching the search_query
+       * don't start searching if the query is empty, that would be a waste of resources
+       */
+      if (search_query == NULL || strlen (search_query) == 0)
         {
           files = thunar_folder_get_files (folder);
         }
