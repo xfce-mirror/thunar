@@ -63,6 +63,7 @@ typedef enum
   THUNAR_WINDOW_ACTION_TOGGLE_SIDE_PANE,
   THUNAR_WINDOW_ACTION_VIEW_STATUSBAR,
   THUNAR_WINDOW_ACTION_VIEW_MENUBAR,
+  THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR,
   THUNAR_WINDOW_ACTION_SHOW_HIDDEN,
   THUNAR_WINDOW_ACTION_ZOOM_IN,
   THUNAR_WINDOW_ACTION_ZOOM_IN_ALT_1,
@@ -148,6 +149,11 @@ void                      thunar_window_update_search                       (Thu
 gboolean                  thunar_window_action_cancel_search                (ThunarWindow        *window);
 gboolean                  thunar_window_action_search                       (ThunarWindow        *window);
 void                      thunar_window_update_statusbar                    (ThunarWindow        *window);
+void                      thunar_window_toolbar_toggle_item_visibility      (ThunarWindow        *window,
+                                                                             gint                 index);
+void                      thunar_window_toolbar_swap_items                  (ThunarWindow        *window,
+                                                                             gint                 index_a,
+                                                                             gint                 index_b);
 
 XfceGtkActionEntry*       thunar_window_get_action_entries                  (void);
 
