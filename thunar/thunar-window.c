@@ -3102,7 +3102,7 @@ thunar_window_action_cancel_search (ThunarWindow *window)
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   if (window->is_searching == FALSE)
-    return TRUE;
+    return FALSE;
 
   thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), NULL);
