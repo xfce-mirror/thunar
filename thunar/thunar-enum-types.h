@@ -398,6 +398,7 @@ typedef enum
     THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES  = 1 << 1,
     THUNAR_STATUS_BAR_INFO_FILETYPE       = 1 << 2,
     THUNAR_STATUS_BAR_INFO_DISPLAY_NAME   = 1 << 3,
+    THUNAR_STATUS_BAR_INFO_LAST_MODIFIED  = 1 << 4,
 } ThunarStatusBarInfo;
 
 guint    thunar_status_bar_info_toggle_bit    (guint               info,
