@@ -204,6 +204,7 @@ static gboolean  thunar_window_action_tree_changed        (ThunarWindow         
 static gboolean  thunar_window_action_statusbar_changed   (ThunarWindow           *window);
 static void      thunar_window_action_menubar_update      (ThunarWindow           *window);
 static gboolean  thunar_window_action_menubar_changed     (ThunarWindow           *window);
+static gboolean  thunar_window_action_menubar_temp        (ThunarWindow           *window);
 static gboolean  thunar_window_action_detailed_view       (ThunarWindow           *window);
 static gboolean  thunar_window_action_icon_view           (ThunarWindow           *window);
 static gboolean  thunar_window_action_compact_view        (ThunarWindow           *window);
@@ -229,7 +230,7 @@ static gboolean  thunar_window_action_contents            (ThunarWindow         
 static gboolean  thunar_window_action_about               (ThunarWindow           *window);
 static gboolean  thunar_window_action_show_hidden         (ThunarWindow           *window);
 static gboolean  thunar_window_propagate_key_event        (GtkWindow              *window,
-                                                           GdkEvent               *key_event,
+                                                           GdkEvent               *event,
                                                            gpointer                user_data);
 static gboolean  thunar_window_action_open_file_menu      (ThunarWindow           *window);
 static void      thunar_window_current_directory_changed  (ThunarFile             *current_directory,
@@ -351,6 +352,8 @@ struct _ThunarWindow
 
   GtkWidget              *grid;
   GtkWidget              *menubar;
+  gboolean                menubar_temporarily_visible;
+  gboolean                ignore_next_alt_release;
   GtkWidget              *spinner;
   GtkWidget              *paned;
   GtkWidget              *sidepane;
@@ -786,6 +789,9 @@ thunar_window_init (ThunarWindow *window)
     gtk_widget_hide (window->menubar);
   gtk_widget_set_hexpand (window->menubar, TRUE);
   gtk_grid_attach (GTK_GRID (window->grid), window->menubar, 0, 0, 1, 1);
+
+  window->menubar_temporarily_visible = FALSE;
+  window->ignore_next_alt_release = FALSE;
 
   /* append the menu item for the spinner */
   item = gtk_menu_item_new ();
@@ -3550,8 +3556,34 @@ thunar_window_action_menubar_changed (ThunarWindow *window)
   g_object_get (window->preferences, "last-menubar-visible", &last_menubar_visible, NULL);
 
   gtk_widget_set_visible (window->menubar, !last_menubar_visible);
+  window->menubar_temporarily_visible = FALSE;
 
   g_object_set (G_OBJECT (window->preferences), "last-menubar-visible", !last_menubar_visible, NULL);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_window_action_menubar_temp (ThunarWindow *window)
+{
+  gboolean is_visible;
+
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  is_visible = gtk_widget_get_visible (window->menubar);
+  if (is_visible == FALSE)
+    {
+      gtk_widget_set_visible (window->menubar, TRUE);
+      window->menubar_temporarily_visible = TRUE;
+    }
+  else if (window->menubar_temporarily_visible == TRUE)
+    {
+      gtk_widget_set_visible (window->menubar, FALSE);
+      window->menubar_temporarily_visible = FALSE;
+    }
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -4236,10 +4268,11 @@ thunar_window_check_uca_key_activation (ThunarWindow *window,
 
 static gboolean
 thunar_window_propagate_key_event (GtkWindow* window,
-                                   GdkEvent  *key_event,
+                                   GdkEvent  *event,
                                    gpointer   user_data)
 {
   GtkWidget    *focused_widget;
+  GdkEventKey  *key_event     = (GdkEventKey *) event;
   ThunarWindow *thunar_window = THUNAR_WINDOW (window);
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), GDK_EVENT_PROPAGATE);
@@ -4253,18 +4286,49 @@ thunar_window_propagate_key_event (GtkWindow* window,
    * only priorize GtkEditable, because that is the easiest way to
    * fix the right-ahead problem. */
   if (focused_widget != NULL && GTK_IS_EDITABLE (focused_widget))
-    return gtk_window_propagate_key_event (window, (GdkEventKey *) key_event);
+    return gtk_window_propagate_key_event (window, key_event);
+
+  /* Use <Alt> to temporarily show the menubar if it is hidden */
+  if (event->type == GDK_KEY_RELEASE)
+    {
+      if (key_event->is_modifier == TRUE && (key_event->state & gtk_accelerator_get_default_mod_mask ()) == GDK_MOD1_MASK)
+        {
+          if (thunar_window->ignore_next_alt_release == TRUE) /* ignored because the <Alt> was used as part of a combination */
+            thunar_window->ignore_next_alt_release = FALSE;
+          else
+            {
+              thunar_window_action_menubar_temp (thunar_window);
+              return TRUE;
+            }
+        }
+      else if (thunar_window->menubar_temporarily_visible == TRUE) /* hide the menubar when the users releases keys (e.g. uses a shortcut) */
+        {
+          gtk_widget_set_visible (thunar_window->menubar, FALSE);
+          thunar_window->menubar_temporarily_visible = FALSE;
+        }
+    }
+
+  /* If the <Alt> key was used in an accelerator do not show the menubar when the key is released.
+   * Key combinations like <Ctrl><Alt><1> in which the user can release the <Alt> key while another modifier is active could lead
+   * to leaving the  flag set incorrectly. For that reason we reset the flag for each input sequence.
+   */
+  if (event->type == GDK_KEY_PRESS)
+    {
+      thunar_window->ignore_next_alt_release = FALSE; /* reset the flag, this might be a new input sequence */
+      if ((key_event->state & GDK_MOD1_MASK) == GDK_MOD1_MASK)
+        thunar_window->ignore_next_alt_release = TRUE;
+    }
 
   /* GTK ignores the Tab accelerator by default, handle it manually */
-  if (xfce_gtk_handle_tab_accels ((GdkEventKey *) key_event, thunar_window->accel_group, thunar_window, thunar_window_action_entries, THUNAR_WINDOW_N_ACTIONS) == TRUE)
+  if (xfce_gtk_handle_tab_accels (key_event, thunar_window->accel_group, thunar_window, thunar_window_action_entries, THUNAR_WINDOW_N_ACTIONS) == TRUE)
     return TRUE;
 
   /* ThunarLauncher doesn't handle it own shortcuts, so ThunarWindow will handle any Tab-accelerated actions */
-  if (xfce_gtk_handle_tab_accels ((GdkEventKey *) key_event, thunar_window->accel_group, thunar_window->launcher, thunar_launcher_get_action_entries (), THUNAR_LAUNCHER_N_ACTIONS) == TRUE)
+  if (xfce_gtk_handle_tab_accels (key_event, thunar_window->accel_group, thunar_window->launcher, thunar_launcher_get_action_entries (), THUNAR_LAUNCHER_N_ACTIONS) == TRUE)
     return TRUE;
 
   /* ThunarStatusbar doesn't handle it own shortcuts, so ThunarWindow will handle any Tab-accelerated actions */
-  if (xfce_gtk_handle_tab_accels ((GdkEventKey *) key_event, thunar_window->accel_group, thunar_window->statusbar, thunar_statusbar_get_action_entries (), THUNAR_STATUS_BAR_N_ACTIONS) == TRUE)
+  if (xfce_gtk_handle_tab_accels (key_event, thunar_window->accel_group, thunar_window->statusbar, thunar_statusbar_get_action_entries (), THUNAR_STATUS_BAR_N_ACTIONS) == TRUE)
     return TRUE;
 
   return GDK_EVENT_PROPAGATE;
@@ -5074,6 +5138,13 @@ thunar_window_button_press_event (GtkWidget      *view,
           ((void(*)(GtkWindow*))action_entry->callback)(GTK_WINDOW (window));
           return GDK_EVENT_STOP;
         }
+    }
+
+  /* activates on double-click if a child is consuming the button press event */
+  if (window->menubar_temporarily_visible == TRUE)
+    {
+      gtk_widget_set_visible (window->menubar, FALSE);
+      window->menubar_temporarily_visible = FALSE;
     }
 
   return GDK_EVENT_PROPAGATE;
