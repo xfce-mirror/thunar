@@ -1,3 +1,48 @@
+4.17.8
+======
+
+- Show `Configure Toolbar...` option on right-clicking toolbar items.
+- Add built-in buttons for toolbar customization:
+    Search, Toggle,Reload, Zoom
+- Allow to customize toolbar by using custom actions (Issues #607 #621)
+- Location bar: Make sure to show the correct root button (Issue #725)
+- Recursive search: Do not search when the search query is empty.
+- Fix: Escape does not unselect files.
+- Column headers: Configure columns popup on right-click
+- Bulk renamer: Use wording "Extension" over "Suffix" (Issue #729)
+- Look for thunar plugins at $THUNARX_DIRS (Issue #748)
+- Speedup search by disabling row-related callbacks while searching
+- Add spinner element to each tab to display search status
+- Add option for vertical split panes (#722)
+- List view name column improvements (#736)
+- Option to show full path in tabs (Issue #627)
+- Generate documentation for internal functions (Issue #617)
+- Fix of various memory leaks
+- Dont reload the view when text is copied (Issue #706)
+- Use 'g_timeout_add_full' to set tree-view cursor (Issue #351)
+- NULL checks to prevent crash on malformed bookmark URI (Issue #716)
+- Skip files with IO errors during directory scan (Issue #696)
+- Shortcuts View: Allow devices a drag and drop target (Issue #708)
+- Support for thumbnail size x-large and xx-large (Issue #606)
+- Add support for accelerators that include the `Tab` key (Issue #580)
+- Add Recursive Search (!146)
+- Use save way to copy a "struct tm" to prevent crash (Issue #700)
+- Add UCA parameter to specify a number of files (Issue #26)
+- Fix: User disabled accelerators are re-enabled on 2nd restart (!177)
+- Add a GUI shortcuts editor (Issue #279)
+- Use alphabetical sorting for devices in the side-pane (Issue #610)
+- Translation Updates:
+  Albanian, Arabic, Armenian, Armenian (Armenia), Asturian, Basque,
+  Bengali, Catalan, Chinese (China), Chinese (Hong Kong), Chinese
+  (Taiwan), Czech, Danish, Dutch, Eastern Armenian, English
+  (Australia), English (United Kingdom), Esperanto, Estonian, Finnish,
+  French, Galician, German, Greek, Hebrew, Hungarian, Icelandic,
+  Indonesian, Interlingue, Japanese, Kazakh, Korean, Latvian, Malay,
+  Norwegian Bokmål, Norwegian Nynorsk, Occitan (post 1500), Persian
+  (Iran), Polish, Portuguese, Romanian, Serbian, Slovak, Spanish,
+  Swedish, Telugu, Thai, Turkish, Urdu, Urdu (Pakistan), Uyghur,
+  Vietnamese
+
 4.17.7
 ======
 - Use GList over gchar** for getting an uri list (Issue #684)
