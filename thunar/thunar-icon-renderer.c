@@ -42,6 +42,14 @@ enum
 
 
 
+typedef struct
+{
+  ThunarIconRenderer *renderer;
+  GtkWidget          *widget;
+} IconContext;
+
+
+
 static void thunar_icon_renderer_finalize      (GObject                 *object);
 static void thunar_icon_renderer_get_property  (GObject                 *object,
                                                 guint                    prop_id,
@@ -59,6 +67,9 @@ static void thunar_icon_renderer_get_preferred_height (GtkCellRenderer  *rendere
                                                 GtkWidget               *widget,
                                                 gint                    *minimum,
                                                 gint                    *natural);
+static void renderer_update_icon               (ThunarIconFactory       *factory,
+                                                GAsyncResult            *result,
+                                                IconContext             *context);
 static void thunar_icon_renderer_render        (GtkCellRenderer         *renderer,
                                                 cairo_t                 *cr,
                                                 GtkWidget               *widget,
@@ -369,6 +380,25 @@ thunar_icon_renderer_color_lighten (cairo_t   *cr,
 
 
 static void
+renderer_update_icon (ThunarIconFactory *factory,
+                      GAsyncResult *result,
+                      IconContext *context)
+{
+  GError *error;
+
+  _thunar_return_if_fail (THUNAR_IS_ICON_FACTORY (factory));
+
+    g_object_unref (thunar_icon_factory_load_file_icon_finish (factory, result, &error));
+
+    gtk_widget_queue_draw (context->widget);
+    g_object_unref (context->renderer);
+    g_object_unref (context->widget);
+    /* TODO : handle GError */
+}
+
+
+
+static void
 thunar_icon_renderer_render (GtkCellRenderer     *renderer,
                              cairo_t             *cr,
                              GtkWidget           *widget,
@@ -376,6 +406,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
                              const GdkRectangle  *cell_area,
                              GtkCellRendererState flags)
 {
+  IconContext            *context;
   ThunarClipboardManager *clipboard;
   ThunarFileIconState     icon_state;
   ThunarIconRenderer     *icon_renderer = THUNAR_ICON_RENDERER (renderer);
@@ -415,12 +446,15 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   /* load the main icon */
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-  icon = thunar_icon_factory_load_file_icon (icon_factory, icon_renderer->file, icon_state, icon_renderer->size);
-  if (G_UNLIKELY (icon == NULL))
-    {
-      g_object_unref (G_OBJECT (icon_factory));
-      return;
-    }
+  /* TODO : thread safety */
+  context = g_new (IconContext, 1);
+  g_object_ref (icon_renderer);
+  g_object_ref (widget);
+  *context = (IconContext) {icon_renderer, widget};
+  icon = thunar_icon_factory_load_file_icon_async
+    (icon_factory, icon_renderer->file, icon_state, icon_renderer->size,
+     NULL, (GAsyncReadyCallback) renderer_update_icon, context);
+  /* todo : context should be freed here */
 
   /* pre-light the item if we're dragging about it */
   if (G_UNLIKELY (icon_state == THUNAR_FILE_ICON_STATE_DROP))
