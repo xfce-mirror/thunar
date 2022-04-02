@@ -413,7 +413,7 @@ thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
   /* check if we already have a visible button for that directory */
   for (lp = buttons->list; lp != NULL; lp = lp->next)
     {
-      if (thunar_location_button_get_file (lp->data) == current_directory && gtk_widget_get_child_visible(GTK_WIDGET(lp->data)))
+      if (thunar_location_button_get_file (lp->data) == current_directory && gtk_widget_get_child_visible (GTK_WIDGET (lp->data)))
         {
           /* fake a "clicked" event for that button */
           gtk_button_clicked (GTK_BUTTON (lp->data));
