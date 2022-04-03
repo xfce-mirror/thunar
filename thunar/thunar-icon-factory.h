@@ -54,6 +54,17 @@ GdkPixbuf             *thunar_icon_factory_load_file_icon     (ThunarIconFactory
                                                                ThunarFileIconState       icon_state,
                                                                gint                      icon_size);
 
+GdkPixbuf             *thunar_icon_factory_load_file_icon_async (ThunarIconFactory   *factory,
+                                                                 ThunarFile          *file,
+                                                                 ThunarFileIconState  icon_state,
+                                                                 gint                 icon_size,
+                                                                 GCancellable        *cancellable,
+                                                                 GAsyncReadyCallback  callback,
+                                                                 gpointer             user_data);
+GdkPixbuf             *thunar_icon_factory_load_file_icon_finish (ThunarIconFactory *factory,
+                                                                  GAsyncResult      *res,
+                                                                  GError           **error);
+
 void                   thunar_icon_factory_clear_pixmap_cache (ThunarFile               *file);
 
 G_END_DECLS;
