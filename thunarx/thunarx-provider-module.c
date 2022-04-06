@@ -192,12 +192,11 @@ thunarx_provider_module_load (GTypeModule *type_module)
       path = g_build_filename (dirs[i], type_module->name, NULL);
 
       module->library = g_module_open (path, G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
-      g_free (path);
 
       /* check if the load operation was successfull */
       if (G_UNLIKELY (module->library == NULL))
         {
-          g_printerr ("Thunar :Failed to load plugin `%s' from `%s': %s\n", type_module->name, path, g_module_error ());
+          g_printerr ("Thunar :Failed to load plugin file `%s': %s\n", path, g_module_error ());
           continue;
         }
 
@@ -206,10 +205,12 @@ thunarx_provider_module_load (GTypeModule *type_module)
           || !g_module_symbol (module->library, "thunar_extension_initialize", (gpointer) &module->initialize)
           || !g_module_symbol (module->library, "thunar_extension_list_types", (gpointer) &module->list_types))
         {
-          g_printerr ("Thunar :Plugin `%s' in `%s' lacks required symbols.\n", type_module->name, path);
+          g_printerr ("Thunar :Plugin `%s' lacks required symbols.\n", path);
           g_module_close (module->library);
           continue;
         }
+
+      g_free (path);
 
       /* initialize the plugin */
       (*module->initialize) (module);
