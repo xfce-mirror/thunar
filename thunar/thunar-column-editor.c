@@ -90,11 +90,31 @@ thunar_column_editor_class_init (ThunarColumnEditorClass *klass)
 
 
 
+static gboolean 
+thunar_column_visible_func (GtkTreeModel *model,
+                            GtkTreeIter  *iter,
+                            gpointer     data)
+{
+  // visible if not "Date Deleted"
+  gchar *str;
+  gboolean visible = TRUE;
+
+  gtk_tree_model_get (model, iter, 0, &str, -1);
+  if (str && strcmp (str, "Date Deleted") == 0)
+    visible = FALSE;
+  g_free (str);
+
+  return visible;
+}
+
+
+
 static void
 thunar_column_editor_init (ThunarColumnEditor *column_editor)
 {
   GtkTreeViewColumn *column;
   GtkTreeSelection  *selection;
+  GtkTreeModel      *filter;
   GtkCellRenderer   *renderer;
   GtkTreeIter        iter;
   GtkWidget         *separator;
@@ -116,6 +136,17 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
                          column_editor, NULL, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
   g_signal_connect_data (G_OBJECT (column_editor->column_model), "rows-reordered", G_CALLBACK (thunar_column_editor_update_buttons),
                          column_editor, NULL, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
+
+  filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (column_editor->column_model),
+                                      NULL);
+  gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (filter),
+                                          (GtkTreeModelFilterVisibleFunc) thunar_column_visible_func,
+                                          NULL, NULL);
+  g_signal_connect_data (G_OBJECT (column_editor->column_model), "row-changed", G_CALLBACK (thunar_column_editor_update_buttons),
+                         column_editor, NULL, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
+  g_signal_connect_data (G_OBJECT (column_editor->column_model), "rows-reordered", G_CALLBACK (thunar_column_editor_update_buttons),
+                         column_editor, NULL, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
+
 
   /* setup the dialog */
   gtk_dialog_add_button (GTK_DIALOG (column_editor), _("_Close"), GTK_RESPONSE_CLOSE);
@@ -171,9 +202,8 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_widget_show (swin);
 
   /* create the tree view */
-  column_editor->tree_view = gtk_tree_view_new ();
+  column_editor->tree_view = gtk_tree_view_new_with_model (filter);
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (column_editor->tree_view), FALSE);
-  gtk_tree_view_set_model (GTK_TREE_VIEW (column_editor->tree_view), GTK_TREE_MODEL (column_editor->column_model));
   gtk_container_add (GTK_CONTAINER (swin), column_editor->tree_view);
   gtk_widget_show (column_editor->tree_view);
 
