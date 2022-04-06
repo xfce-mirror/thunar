@@ -102,6 +102,7 @@ typedef enum
   THUNAR_COLUMN_DATE_CREATED,
   THUNAR_COLUMN_DATE_ACCESSED,
   THUNAR_COLUMN_DATE_MODIFIED,
+  THUNAR_COLUMN_DATE_DELETED,
   THUNAR_COLUMN_RECENCY,
   THUNAR_COLUMN_LOCATION,
   THUNAR_COLUMN_GROUP,
@@ -114,7 +115,6 @@ typedef enum
   THUNAR_COLUMN_TYPE,
 
   /* special internal columns */
-  THUNAR_COLUMN_DATE_DELETED,
   THUNAR_COLUMN_FILE,
   THUNAR_COLUMN_FILE_NAME,
 
@@ -122,7 +122,7 @@ typedef enum
   THUNAR_N_COLUMNS,
 
   /* number of visible columns */
-  THUNAR_N_VISIBLE_COLUMNS = THUNAR_COLUMN_DATE_DELETED,
+  THUNAR_N_VISIBLE_COLUMNS = THUNAR_COLUMN_FILE,
 } ThunarColumn;
 
 GType        thunar_column_get_type          (void)                      G_GNUC_CONST;
