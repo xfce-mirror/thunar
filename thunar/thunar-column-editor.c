@@ -95,14 +95,22 @@ thunar_column_visible_func (GtkTreeModel *model,
                             GtkTreeIter  *iter,
                             gpointer     data)
 {
-  // visible if not "Date Deleted"
-  gchar *str;
+  gchar *col_name;
+  const gchar *del_date_col_name;
   gboolean visible = TRUE;
 
-  gtk_tree_model_get (model, iter, 0, &str, -1);
-  if (str && strcmp (str, "Date Deleted") == 0)
+  /* fetching Date Deleted column name */
+  del_date_col_name = thunar_column_model_get_column_name (THUNAR_COLUMN_MODEL (model),
+                                                           THUNAR_COLUMN_DATE_DELETED);
+
+  /* fetching iter column name */
+  gtk_tree_model_get (model, iter, THUNAR_COLUMN_MODEL_COLUMN_NAME, &col_name, -1);
+
+  /* matching iter column name & Date Deleted column name */
+  if (del_date_col_name && col_name && g_strcmp0 (col_name, del_date_col_name) == 0)
     visible = FALSE;
-  g_free (str);
+    
+  g_free (col_name);
 
   return visible;
 }
@@ -139,8 +147,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
                          column_editor, NULL, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 
   /* create a filter from the shared column model */
-  filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (column_editor->column_model),
-                                      NULL);
+  filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (column_editor->column_model), NULL);
   gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (filter),
                                           (GtkTreeModelFilterVisibleFunc) thunar_column_visible_func,
                                           NULL, NULL);
@@ -333,13 +340,12 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
 
   /* select the first item */
   if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (column_editor->column_model), &childIter))
-  {
-    /* tree_view is created from filter */
-    /* column_model is the child of filter */
-    /* hence, child Iter needs to be converted to parent Iter */
-    gtk_tree_model_filter_convert_child_iter_to_iter (GTK_TREE_MODEL_FILTER (filter), &iter, &childIter);
-    gtk_tree_selection_select_iter (selection, &iter);
-  }
+    {
+      /* tree_view is created from filter & column_model is the child of filter
+       * hence, child Iter needs to be converted to parent Iter */
+      gtk_tree_model_filter_convert_child_iter_to_iter (GTK_TREE_MODEL_FILTER (filter), &iter, &childIter);
+      gtk_tree_selection_select_iter (selection, &iter);
+    }
 
   /* grab focus to the tree view */
   gtk_widget_grab_focus (column_editor->tree_view);
@@ -404,15 +410,14 @@ thunar_column_editor_move_down (GtkWidget          *button,
 
       /* determine the next iterator and exchange the rows */
       if (gtk_tree_model_iter_next (model, &iter2))
-      {
-        /* tree view's model is made from GTK_TREE_MODEL_FILTER,
-           hence fetching child model and child iter's */
-        gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (model), &childIter1, &iter1);
-        gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (model), &childIter2, &iter2);
-        childModel = gtk_tree_model_filter_get_model(GTK_TREE_MODEL_FILTER (model));
+        {
+          /* tree view's model is made from GTK_TREE_MODEL_FILTER, hence fetching child model and child iter's */
+          gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (model), &childIter1, &iter1);
+          gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (model), &childIter2, &iter2);
+          childModel = gtk_tree_model_filter_get_model(GTK_TREE_MODEL_FILTER (model));
 
-        thunar_column_model_exchange (THUNAR_COLUMN_MODEL (childModel), &childIter1, &childIter2);
-      }
+          thunar_column_model_exchange (THUNAR_COLUMN_MODEL (childModel), &childIter1, &childIter2);
+        }
     }
 }
 
@@ -445,8 +450,7 @@ thunar_column_editor_move_up (GtkWidget          *button,
           /* advance to the prev path */
           if (gtk_tree_path_prev (path) && gtk_tree_model_get_iter (model, &iter2, path))
             {
-              /* tree view's model is made from GTK_TREE_MODEL_FILTER,
-                 hence fetching child model and child iter's */
+              /* tree view's model is made from GTK_TREE_MODEL_FILTER, hence fetching child model and child iter's */
               gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (model), &childIter1, &iter1);
               gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (model), &childIter2, &iter2);
               childModel = gtk_tree_model_filter_get_model(GTK_TREE_MODEL_FILTER (model));
@@ -513,8 +517,7 @@ thunar_column_editor_toggle_visibility (GtkWidget          *button,
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (column_editor->tree_view));
   if (gtk_tree_selection_get_selected (selection, &model, &iter))
     {
-      /* tree view's model is made from GTK_TREE_MODEL_FILTER,
-         hence fetching child iter */
+      /* tree view's model is made from GTK_TREE_MODEL_FILTER, hence fetching child iter */
       gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (model), &childIter, &iter);
       
       /* determine the column for the iterator... */
@@ -548,8 +551,7 @@ thunar_column_editor_update_buttons (ThunarColumnEditor *column_editor)
       /* determine the tree path for the iter */
       path = gtk_tree_model_get_path (model, &iter);
 
-      /* tree view's model is made from GTK_TREE_MODEL_FILTER,
-         hence fetching child path */
+      /* tree view's model is made from GTK_TREE_MODEL_FILTER, hence fetching child path */
       path = gtk_tree_model_filter_convert_path_to_child_path (GTK_TREE_MODEL_FILTER (model), path);
       
       if (G_UNLIKELY (path == NULL))
