@@ -90,7 +90,7 @@ thunar_column_editor_class_init (ThunarColumnEditorClass *klass)
 
 
 
-static gboolean 
+static gboolean
 thunar_column_visible_func (GtkTreeModel *model,
                             GtkTreeIter  *iter,
                             gpointer     data)
@@ -109,7 +109,7 @@ thunar_column_visible_func (GtkTreeModel *model,
   /* matching iter column name & Date Deleted column name */
   if (del_date_col_name && col_name && g_strcmp0 (col_name, del_date_col_name) == 0)
     visible = FALSE;
-    
+
   g_free (col_name);
 
   return visible;
@@ -519,7 +519,7 @@ thunar_column_editor_toggle_visibility (GtkWidget          *button,
     {
       /* tree view's model is made from GTK_TREE_MODEL_FILTER, hence fetching child iter */
       gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (model), &childIter, &iter);
-      
+
       /* determine the column for the iterator... */
       column = thunar_column_model_get_column_for_iter (column_editor->column_model, &childIter);
 
@@ -553,7 +553,7 @@ thunar_column_editor_update_buttons (ThunarColumnEditor *column_editor)
 
       /* tree view's model is made from GTK_TREE_MODEL_FILTER, hence fetching child path */
       path = gtk_tree_model_filter_convert_path_to_child_path (GTK_TREE_MODEL_FILTER (model), path);
-      
+
       if (G_UNLIKELY (path == NULL))
         return;
 
