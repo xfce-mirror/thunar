@@ -107,7 +107,7 @@ thunar_column_visible_func (GtkTreeModel *model,
   gtk_tree_model_get (model, iter, THUNAR_COLUMN_MODEL_COLUMN_NAME, &col_name, -1);
 
   /* matching iter column name & Date Deleted column name */
-  if (del_date_col_name && col_name && g_strcmp0 (col_name, del_date_col_name) == 0)
+  if (g_strcmp0 (col_name, del_date_col_name) == 0)
     visible = FALSE;
 
   g_free (col_name);
