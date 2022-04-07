@@ -863,18 +863,6 @@ thunar_window_init (ThunarWindow *window)
   gtk_paned_pack2 (GTK_PANED (window->paned), window->view_box, TRUE, FALSE);
   gtk_widget_show (window->view_box);
 
-  window->trash_infobar = gtk_info_bar_new ();
-  gtk_grid_attach (GTK_GRID (window->view_box), window->trash_infobar, 0, 0, 1, 1);
-  window->trash_infobar_restore_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Restore Selected Items", RESTORE);
-  window->trash_infobar_empty_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Empty Trash", EMPTY);
-  g_signal_connect (window->trash_infobar,
-                    "response",
-                    G_CALLBACK (thunar_window_trash_infobar_clicked),
-                    G_OBJECT (window));
-
-  /* remove border */
-  gtk_container_set_border_width (GTK_CONTAINER (gtk_info_bar_get_action_area (GTK_INFO_BAR (window->trash_infobar))), 0);
-
   /* split view: Create panes where the two notebooks */
   window->paned_notebooks = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
   g_signal_connect_swapped (window->preferences, "notify::misc-vertical-split-pane", G_CALLBACK (thunar_window_paned_notebooks_update_orientation), window);
@@ -882,7 +870,7 @@ thunar_window_init (ThunarWindow *window)
 
   gtk_paned_add2 (GTK_PANED (window->paned), window->view_box);
   gtk_widget_add_events (window->paned_notebooks, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK | GDK_BUTTON_PRESS_MASK);
-  gtk_grid_attach (GTK_GRID (window->view_box), window->paned_notebooks, 0, 1, 1, 2);
+  gtk_grid_attach (GTK_GRID (window->view_box), window->paned_notebooks, 0, 0, 1, 1);
   gtk_widget_show (window->paned_notebooks);
 
   /** close notebooks on window-remove signal because later on window property
@@ -925,9 +913,22 @@ thunar_window_init (ThunarWindow *window)
 
   /* setup the `Show More...` button that appears at the bottom of the view after a search is completed */
   window->catfish_search_button = gtk_button_new_with_label ("Search with Catfish...");
-  gtk_grid_attach (GTK_GRID (window->view_box), window->catfish_search_button, 0, 3, 1, 1);
+  gtk_grid_attach (GTK_GRID (window->view_box), window->catfish_search_button, 0, 1, 1, 1);
   g_signal_connect_swapped (window->catfish_search_button, "clicked", G_CALLBACK (thunar_window_catfish_dialog_configure), window);
   gtk_widget_hide (window->catfish_search_button);
+
+  window->trash_infobar = gtk_info_bar_new ();
+  gtk_grid_attach (GTK_GRID (window->view_box), window->trash_infobar, 0, 2, 1, 1);
+  window->trash_infobar_restore_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Restore Selected Items", RESTORE);
+  window->trash_infobar_empty_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Empty Trash", EMPTY);
+  g_signal_connect (window->trash_infobar,
+                    "response",
+                    G_CALLBACK (thunar_window_trash_infobar_clicked),
+                    G_OBJECT (window));
+
+  /* remove border */
+  gtk_container_set_border_width (GTK_CONTAINER (gtk_info_bar_get_action_area (GTK_INFO_BAR (window->trash_infobar))), 0);
+
 
   /* setup a new statusbar */
   event_box = gtk_event_box_new ();
@@ -935,7 +936,7 @@ thunar_window_init (ThunarWindow *window)
   thunar_statusbar_append_accelerators (THUNAR_STATUSBAR (window->statusbar), window->accel_group);
   gtk_widget_set_hexpand (window->statusbar, TRUE);
   gtk_container_add (GTK_CONTAINER (event_box), window->statusbar);
-  gtk_grid_attach (GTK_GRID (window->view_box), event_box, 0, 4, 1, 1);
+  gtk_grid_attach (GTK_GRID (window->view_box), event_box, 0, 3, 1, 1);
   if (last_statusbar_visible)
     gtk_widget_show (window->statusbar);
   gtk_widget_show (event_box);
