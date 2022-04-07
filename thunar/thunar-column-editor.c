@@ -116,6 +116,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   GtkTreeSelection  *selection;
   GtkTreeModel      *filter;
   GtkCellRenderer   *renderer;
+  GtkTreeIter        childIter;
   GtkTreeIter        iter;
   GtkWidget         *separator;
   GtkWidget         *button;
@@ -331,8 +332,14 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   g_signal_connect_swapped (G_OBJECT (selection), "changed", G_CALLBACK (thunar_column_editor_update_buttons), column_editor);
 
   /* select the first item */
-  if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (column_editor->column_model), &iter))
+  if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (column_editor->column_model), &childIter))
+  {
+    /* tree_view is created from filter */
+    /* column_model is the child of filter */
+    /* hence, child Iter needs to be converted to parent Iter */
+    gtk_tree_model_filter_convert_child_iter_to_iter (GTK_TREE_MODEL_FILTER (filter), &iter, &childIter);
     gtk_tree_selection_select_iter (selection, &iter);
+  }
 
   /* grab focus to the tree view */
   gtk_widget_grab_focus (column_editor->tree_view);
