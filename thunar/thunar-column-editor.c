@@ -95,9 +95,9 @@ thunar_column_visible_func (GtkTreeModel *model,
                             GtkTreeIter  *iter,
                             gpointer     data)
 {
-  gchar *col_name;
+  gchar       *col_name;
   const gchar *del_date_col_name;
-  gboolean visible = TRUE;
+  gboolean     visible = TRUE;
 
   /* fetching Date Deleted column name */
   del_date_col_name = thunar_column_model_get_column_name (THUNAR_COLUMN_MODEL (model),
