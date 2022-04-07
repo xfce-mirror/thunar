@@ -95,6 +95,7 @@ enum
   PROP_MISC_MIDDLE_CLICK_IN_TAB,
   PROP_MISC_OPEN_NEW_WINDOW_AS_TAB,
   PROP_MISC_RECURSIVE_PERMISSIONS,
+  PROP_MISC_RECURSIVE_SEARCH,
   PROP_MISC_REMEMBER_GEOMETRY,
   PROP_MISC_SHOW_ABOUT_TEMPLATES,
   PROP_MISC_SHOW_DELETE_ACTION,
@@ -758,6 +759,20 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          THUNAR_TYPE_RECURSIVE_PERMISSIONS,
                          THUNAR_RECURSIVE_PERMISSIONS_ASK,
                          EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-recursive-search:
+   *
+   * Whether to include results inside SubDirectories in
+   * Search Results.
+  **/
+  preferences_props[PROP_MISC_RECURSIVE_SEARCH] =
+       g_param_spec_enum ("misc-recursive-search",
+                            "MiscRecursiveSearch",
+                            NULL,
+                       THUNAR_TYPE_RECURSIVE_SEARCH,
+                     THUNAR_RECURSIVE_SEARCH_ALWAYS,
+                            EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-remember-geometry:
