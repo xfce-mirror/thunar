@@ -249,10 +249,26 @@ ThunarFileThumbState thunar_file_get_thumb_state         (const ThunarFile      
 void             thunar_file_set_thumb_state             (ThunarFile              *file,
                                                           ThunarFileThumbState     state);
 GIcon            *thunar_file_get_preview_icon           (const ThunarFile        *file);
-GFilesystemPreviewType thunar_file_get_preview_type      (const ThunarFile *file);
+GFilesystemPreviewType thunar_file_get_preview_type      (const ThunarFile        *file);
+void              thunar_file_get_preview_type_async     (const ThunarFile        *file,
+                                                          GAsyncReadyCallback      callback,
+                                                          gpointer                 user_data);
+GFilesystemPreviewType thunar_file_get_preview_type_finish (GFile                 *g_file,
+                                                          GAsyncResult            *result,
+                                                          GError                 **error);
 const gchar      *thunar_file_get_icon_name              (ThunarFile              *file,
                                                           ThunarFileIconState      icon_state,
                                                           GtkIconTheme            *icon_theme);
+void              thunar_file_get_icon_name_async        (ThunarFile              *file,
+                                                          ThunarFileIconState      icon_state,
+                                                          GtkIconTheme            *icon_theme,
+                                                          gint                     io_priority,
+                                                          GCancellable            *cancellable,
+                                                          GAsyncReadyCallback      callback,
+                                                          gpointer                 user_data);
+const gchar      *thunar_file_get_icon_name_finish        (ThunarFile             *file,
+                                                           GAsyncResult           *res,
+                                                           GError                **error);
 const gchar      *thunar_file_get_device_type            (ThunarFile              *file);
 
 void              thunar_file_watch                      (ThunarFile              *file);
