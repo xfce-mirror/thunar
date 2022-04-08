@@ -247,9 +247,9 @@ GType thunar_recursive_permissions_get_type (void) G_GNUC_CONST;
  **/
 typedef enum
 {
-    THUNAR_RECURSIVE_SEARCH_ONLY_LOCAL,
-    THUNAR_RECURSIVE_SEARCH_ALWAYS,
-    THUNAR_RECURSIVE_SEARCH_NEVER,
+  THUNAR_RECURSIVE_SEARCH_ONLY_LOCAL,
+  THUNAR_RECURSIVE_SEARCH_ALWAYS,
+  THUNAR_RECURSIVE_SEARCH_NEVER,
 } ThunarRecursiveSearchMode;
 
 GType thunar_recursive_search_get_type (void) G_GNUC_CONST;

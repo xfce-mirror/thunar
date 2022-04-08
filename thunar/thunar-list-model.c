@@ -2194,8 +2194,6 @@ thunar_list_model_search_folder (ThunarListModel  *model,
                                  gchar            *uri,
                                  const gchar      *search_query_c)
 {
-  ThunarRecursiveSearchMode  mode;
-  ThunarPreferences          *preferences;
   GCancellable               *cancellable;
   gboolean                   is_source_device_local;
   GFileEnumerator            *enumerator;
@@ -2204,14 +2202,16 @@ thunar_list_model_search_folder (ThunarListModel  *model,
   const gchar                *namespace;
   const gchar                *display_name;
   gchar                      *display_name_c; /* converted to ignore case */
+  ThunarRecursiveSearchMode  mode;
+  ThunarPreferences          *preferences;
 
-    /* grab a reference on the preferences */
-    preferences = thunar_preferences_get ();
+  /* grab a reference on the preferences */
+  preferences = thunar_preferences_get ();
 
-    /* determine the current recursive search mode */
-    g_object_get (G_OBJECT (preferences), "misc-recursive-search", &mode, NULL);
+  /* determine the current recursive search mode */
+  g_object_get (G_OBJECT (preferences), "misc-recursive-search", &mode, NULL);
 
-    cancellable = exo_job_get_cancellable (EXO_JOB (job));
+  cancellable = exo_job_get_cancellable (EXO_JOB (job));
   directory = g_file_new_for_uri (uri);
   g_free (uri);
   namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE ","
@@ -2262,7 +2262,7 @@ thunar_list_model_search_folder (ThunarListModel  *model,
       if (type == G_FILE_TYPE_DIRECTORY&&G_UNLIKELY(mode==THUNAR_RECURSIVE_SEARCH_ALWAYS))
         {
             thunar_list_model_search_folder (model, job, g_file_get_uri (file), search_query_c);
-          /* continue; don't add non-leaf directories in the results */
+            /* continue; don't add non-leaf directories in the results */
         }
 
       /* prepare entry display name */
