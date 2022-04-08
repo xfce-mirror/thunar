@@ -2264,7 +2264,7 @@ thunar_list_model_search_folder (ThunarListModel  *model,
       if (type == G_FILE_TYPE_DIRECTORY)
         {
           is_source_device_local = thunar_util_is_file_on_local_device(file);
-          if(mode == THUNAR_RECURSIVE_SEARCH_ALWAYS|| (mode == THUNAR_RECURSIVE_SEARCH_LOCAL && is_source_device_local))
+          if (mode == THUNAR_RECURSIVE_SEARCH_ALWAYS || (mode == THUNAR_RECURSIVE_SEARCH_LOCAL && is_source_device_local))
             {
               thunar_list_model_search_folder (model, job, g_file_get_uri (file), search_query_c);
               /* continue; don't add non-leaf directories in the results */

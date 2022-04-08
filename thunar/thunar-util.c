@@ -786,7 +786,7 @@ thunar_util_is_a_search_query (const gchar *string)
  * Return value: %TRUE if #GFile @file is on a so-called local device.
  **/
 gboolean
-thunar_util_is_file_on_local_device (GFile      *file)
+thunar_util_is_file_on_local_device (GFile *file)
 {
     gboolean  is_local;
     GFile    *target_file;
