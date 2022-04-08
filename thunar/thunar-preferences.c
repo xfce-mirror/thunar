@@ -768,11 +768,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   **/
   preferences_props[PROP_MISC_RECURSIVE_SEARCH] =
        g_param_spec_enum ("misc-recursive-search",
-                            "MiscRecursiveSearch",
-                            NULL,
-                       THUNAR_TYPE_RECURSIVE_SEARCH,
-                     THUNAR_RECURSIVE_SEARCH_ALWAYS,
-                            EXO_PARAM_READWRITE);
+                          "MiscRecursiveSearch",
+                          NULL,
+                          THUNAR_TYPE_RECURSIVE_SEARCH,
+                          THUNAR_RECURSIVE_SEARCH_ALWAYS,
+                          EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-remember-geometry:
