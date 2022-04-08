@@ -234,6 +234,28 @@ thunar_recursive_permissions_get_type (void)
 }
 
 
+GType
+thunar_recursive_search_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+
+  {
+    static const GEnumValue values[] =
+    {
+      { THUNAR_RECURSIVE_SEARCH_ONLY_LOCAL,   "THUNAR_RECURSIVE_SEARCH_ONLY_LOCAL",    "ask",   },
+      { THUNAR_RECURSIVE_SEARCH_ALWAYS,       "THUNAR_RECURSIVE_SEARCH_ALWAYS",        "always",},
+      { THUNAR_RECURSIVE_SEARCH_NEVER,        "THUNAR_RECURSIVE_SEARCH_NEVER",         "never", },
+      { 0,                                    NULL,                                    NULL,    },
+    };
+
+    type = g_enum_register_static (I_("ThunarRecursiveSearch"), values);
+  }
+
+  return type;
+}
+
 
 GType
 thunar_zoom_level_get_type (void)
