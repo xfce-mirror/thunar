@@ -2131,7 +2131,7 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
   _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
   _thunar_return_if_fail (THUNAR_IS_VIEW (page));
   _thunar_return_if_fail (window->notebook_left == notebook || window->notebook_right == notebook);
-  
+
   /* drop connected signals */
   g_signal_handlers_disconnect_matched (page, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
 
@@ -2867,7 +2867,7 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
   const gchar    *name;
   gchar          *remote_name;
   GtkIconTheme   *icon_theme;
-  const gchar    *icon_name;
+  const gchar    *icon_name = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
@@ -2881,23 +2881,16 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
 
       if (g_file_has_uri_scheme (bookmark->g_file, "file"))
         {
-          /* try to open the file corresponding to the uri */
+          /* try to open the file corresponding to the uri but continue even if fail */
           thunar_file = thunar_file_get (bookmark->g_file, NULL);
-          if (G_LIKELY (thunar_file != NULL))
-            {
-              /* make sure the file refers to a directory */
-              if (G_UNLIKELY (thunar_file_is_directory (thunar_file)))
-                {
-                  name = bookmark->name;
-                  if (bookmark->name == NULL)
-                    name = thunar_file_get_display_name (thunar_file);
+          name = bookmark->name;
+          if (bookmark->name == NULL)
+            name = thunar_file_get_display_name (thunar_file);
 
-                  icon_theme = gtk_icon_theme_get_for_screen (gtk_window_get_screen (GTK_WINDOW (window)));
-                  icon_name = thunar_file_get_icon_name (thunar_file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_theme);
-                  xfce_gtk_image_menu_item_new_from_icon_name (name, tooltip, accel_path, G_CALLBACK (thunar_window_action_open_bookmark), G_OBJECT (bookmark->g_file), icon_name, view_menu);
-               }
-            g_object_unref (thunar_file);
-          }
+          icon_theme = gtk_icon_theme_get_for_screen (gtk_window_get_screen (GTK_WINDOW (window)));
+          if (thunar_file != NULL)
+            icon_name = thunar_file_get_icon_name (thunar_file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_theme);
+          xfce_gtk_image_menu_item_new_from_icon_name (name, tooltip, accel_path, G_CALLBACK (thunar_window_action_open_bookmark), G_OBJECT (bookmark->g_file), icon_name, view_menu);
         }
       else
         {
@@ -2968,7 +2961,7 @@ thunar_window_update_bookmark (GFile       *g_file,
 
   /* Add the bookmark to our internal list of bookmarks */
   thunar_window_bookmark_add (window, g_file, name);
-  
+
   /* Add ref to window to each g_file, will be needed in callback */
   g_object_set_data_full (G_OBJECT (g_file), I_("thunar-window"), window, NULL);
 
@@ -3084,7 +3077,7 @@ thunar_window_update_search (ThunarWindow *window)
       window->ignore_next_search_update = FALSE;
       return;
     }
-    
+
   g_free (window->search_query);
   window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), window->search_query);
