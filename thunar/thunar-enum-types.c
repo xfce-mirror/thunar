@@ -243,12 +243,13 @@ thunar_recursive_search_get_type (void)
 
   {
     static const GEnumValue values[] =
-    {
-      { THUNAR_RECURSIVE_SEARCH_ONLY_LOCAL,   "THUNAR_RECURSIVE_SEARCH_ONLY_LOCAL",    "ask",   },
-      { THUNAR_RECURSIVE_SEARCH_ALWAYS,       "THUNAR_RECURSIVE_SEARCH_ALWAYS",        "always",},
-      { THUNAR_RECURSIVE_SEARCH_NEVER,        "THUNAR_RECURSIVE_SEARCH_NEVER",         "never", },
-      { 0,                                    NULL,                                    NULL,    },
-    };
+
+      {
+        { THUNAR_RECURSIVE_SEARCH_LOCAL,    "THUNAR_RECURSIVE_SEARCH_LOCAL",        "local",    },
+        { THUNAR_RECURSIVE_SEARCH_ALWAYS,   "THUNAR_RECURSIVE_SEARCH_ALWAYS",       "always",   },
+        { THUNAR_RECURSIVE_SEARCH_NEVER,    "THUNAR_RECURSIVE_SEARCH_NEVER",        "never",    },
+        { 0,                                NULL,                                    NULL,      },
+      };
 
     type = g_enum_register_static (I_("ThunarRecursiveSearch"), values);
   }
