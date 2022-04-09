@@ -2860,7 +2860,7 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
 {
   GList          *lp;
   ThunarBookmark *bookmark;
-  ThunarFile     *thunar_file = NULL;
+  ThunarFile     *thunar_file;
   gchar          *parse_name;
   gchar          *accel_path;
   gchar          *tooltip;
