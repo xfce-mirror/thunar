@@ -2960,7 +2960,7 @@ thunar_window_update_bookmark (GFile       *g_file,
 
   /* Add the bookmark to our internal list of bookmarks */
   thunar_window_bookmark_add (window, g_file, name);
-
+  
   /* Add ref to window to each g_file, will be needed in callback */
   g_object_set_data_full (G_OBJECT (g_file), I_("thunar-window"), window, NULL);
 
@@ -3076,7 +3076,7 @@ thunar_window_update_search (ThunarWindow *window)
       window->ignore_next_search_update = FALSE;
       return;
     }
-
+    
   g_free (window->search_query);
   window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), window->search_query);
