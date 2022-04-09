@@ -2865,7 +2865,7 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
   gchar          *accel_path;
   gchar          *tooltip;
   const gchar    *name;
-  gchar          *name_dup = NULL;
+  gchar          *basename = NULL;
   gchar          *remote_name;
   GtkIconTheme   *icon_theme;
   const gchar    *icon_name;
@@ -2894,7 +2894,7 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
                   /* result of g_file_get_basename needs to be freed so to not mess with thunar_file name,
                    * name_dup holds the ref and only name_dup is freed*/
                   name = g_file_get_basename (bookmark->g_file);
-                  name_dup = (gchar *) name;
+                  basename = (gchar *) name;
                 }
             }
 
@@ -2918,8 +2918,8 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
       g_free (tooltip);
       g_free (accel_path);
 
-      if (name_dup != NULL)
-        g_free (name_dup);
+      if (basename != NULL)
+        g_free (basename);
     }
 }
 
