@@ -2890,6 +2890,9 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
           icon_theme = gtk_icon_theme_get_for_screen (gtk_window_get_screen (GTK_WINDOW (window)));
           icon_name = thunar_file == NULL ? "folder" : thunar_file_get_icon_name (thunar_file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_theme);
           xfce_gtk_image_menu_item_new_from_icon_name (name, tooltip, accel_path, G_CALLBACK (thunar_window_action_open_bookmark), G_OBJECT (bookmark->g_file), icon_name, view_menu);
+
+          if (thunar_file != NULL)
+            g_object_unref (thunar_file);
         }
       else
         {
