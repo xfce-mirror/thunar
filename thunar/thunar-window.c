@@ -2864,8 +2864,7 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
   gchar          *parse_name;
   gchar          *accel_path;
   gchar          *tooltip;
-  const gchar    *name;
-  gchar          *basename = NULL;
+  const gchar    *name = NULL;
   gchar          *remote_name;
   GtkIconTheme   *icon_theme;
   const gchar    *icon_name;
@@ -2884,23 +2883,21 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
         {
           /* try to open the file corresponding to the uri but continue even if fail */
           thunar_file = thunar_file_get (bookmark->g_file, NULL);
-          name = bookmark->name;
+          name = g_strdup (bookmark->name);
           if (bookmark->name == NULL)
             {
               if (thunar_file != NULL)
-                name = thunar_file_get_display_name (thunar_file);
+                name = g_strdup (thunar_file_get_display_name (thunar_file));
               else
-                {
-                  /* result of g_file_get_basename needs to be freed so to not mess with thunar_file name,
-                   * name_dup holds the ref and only name_dup is freed*/
-                  name = g_file_get_basename (bookmark->g_file);
-                  basename = (gchar *) name;
-                }
+                name = g_file_get_basename (bookmark->g_file);
             }
 
           icon_theme = gtk_icon_theme_get_for_screen (gtk_window_get_screen (GTK_WINDOW (window)));
           icon_name = thunar_file == NULL ? "folder" : thunar_file_get_icon_name (thunar_file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_theme);
           xfce_gtk_image_menu_item_new_from_icon_name (name, tooltip, accel_path, G_CALLBACK (thunar_window_action_open_bookmark), G_OBJECT (bookmark->g_file), icon_name, view_menu);
+
+          if (name != NULL)
+            g_free ((gchar *) name);
 
           if (thunar_file != NULL)
             g_object_unref (thunar_file);
@@ -2917,9 +2914,6 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
 
       g_free (tooltip);
       g_free (accel_path);
-
-      if (basename != NULL)
-        g_free (basename);
     }
 }
 
