@@ -2864,7 +2864,7 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
   gchar          *parse_name;
   gchar          *accel_path;
   gchar          *tooltip;
-  const gchar    *name = NULL;
+  gchar          *name;
   GtkIconTheme   *icon_theme;
   const gchar    *icon_name;
 
@@ -2907,7 +2907,7 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
 
       xfce_gtk_image_menu_item_new_from_icon_name (name, tooltip, accel_path, G_CALLBACK (thunar_window_action_open_bookmark), G_OBJECT (bookmark->g_file), icon_name, view_menu);
 
-      g_free ((gchar *) name);
+      g_free (name);
       g_free (tooltip);
       g_free (accel_path);
     }
