@@ -2873,6 +2873,7 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
   for (lp = window->bookmarks; lp != NULL; lp = lp->next)
     {
       bookmark = lp->data;
+      name = g_strdup (bookmark->name);
       accel_path = thunar_window_bookmark_get_accel_path (bookmark->g_file);
       parse_name = g_file_get_parse_name (bookmark->g_file);
       tooltip = g_strdup_printf (_("Open the location \"%s\""), parse_name);
@@ -2881,8 +2882,8 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
       if (g_file_has_uri_scheme (bookmark->g_file, "file"))
         {
           thunar_file = thunar_file_get (bookmark->g_file, NULL);
-          name = g_strdup (bookmark->name);
-          if (bookmark->name == NULL)
+
+          if (name == NULL)
             {
               if (thunar_file != NULL)
                 name = g_strdup (thunar_file_get_display_name (thunar_file));
@@ -2892,24 +2893,21 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
 
           icon_theme = gtk_icon_theme_get_for_screen (gtk_window_get_screen (GTK_WINDOW (window)));
           icon_name = thunar_file == NULL ? "folder" : thunar_file_get_icon_name (thunar_file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_theme);
+
+          if (thunar_file != NULL)
+            g_object_unref (thunar_file);
         }
       else
         {
-          if (bookmark->name == NULL)
+          if (name == NULL)
             name = thunar_g_file_get_display_name_remote (bookmark->g_file);
-          else
-            name = g_strdup (bookmark->name);
+
           icon_name = "folder-remote";
         }
 
       xfce_gtk_image_menu_item_new_from_icon_name (name, tooltip, accel_path, G_CALLBACK (thunar_window_action_open_bookmark), G_OBJECT (bookmark->g_file), icon_name, view_menu);
 
-      if (thunar_file != NULL)
-        g_object_unref (thunar_file);
-
-      if (name != NULL)
-        g_free ((gchar *) name);
-
+      g_free ((gchar *) name);
       g_free (tooltip);
       g_free (accel_path);
     }
