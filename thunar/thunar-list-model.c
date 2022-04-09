@@ -40,7 +40,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-user.h>
 #include <thunar/thunar-simple-job.h>
-
+#include <thunar/thunar-util.h>
 
 
 /* Property identifiers */
@@ -2194,13 +2194,24 @@ thunar_list_model_search_folder (ThunarListModel  *model,
                                  gchar            *uri,
                                  const gchar      *search_query_c)
 {
-  GCancellable    *cancellable;
-  GFileEnumerator *enumerator;
-  GFile           *directory;
-  GList           *files_found = NULL; /* contains the matching files in this folder only */
-  const gchar     *namespace;
-  const gchar     *display_name;
-  gchar           *display_name_c; /* converted to ignore case */
+  GCancellable               *cancellable;
+  GFileEnumerator            *enumerator;
+  GFile                      *directory;
+  GList                      *files_found = NULL; /* contains the matching files in this folder only */
+  const gchar                *namespace;
+  const gchar                *display_name;
+  gchar                      *display_name_c; /* converted to ignore case */
+  ThunarPreferences          *preferences;
+  gboolean                    is_source_device_local;
+  ThunarRecursiveSearchMode   mode;
+
+  /* grab a reference on the preferences */
+  preferences = thunar_preferences_get ();
+
+  /* determine the current recursive search mode */
+  g_object_get (G_OBJECT (preferences), "misc-recursive-search", &mode, NULL);
+
+  g_object_unref(preferences);
 
   cancellable = exo_job_get_cancellable (EXO_JOB (job));
   directory = g_file_new_for_uri (uri);
@@ -2247,10 +2258,17 @@ thunar_list_model_search_folder (ThunarListModel  *model,
         }
 
       /* handle directories */
+      /* go inside if it is directory and*/
+      /* mode=Always or */
+
       if (type == G_FILE_TYPE_DIRECTORY)
         {
-          thunar_list_model_search_folder (model, job, g_file_get_uri (file), search_query_c);
-          /* continue; don't add non-leaf directories in the results */
+          is_source_device_local = thunar_util_is_file_on_local_device(file);
+          if (mode == THUNAR_RECURSIVE_SEARCH_ALWAYS || (mode == THUNAR_RECURSIVE_SEARCH_LOCAL && is_source_device_local))
+            {
+              thunar_list_model_search_folder (model, job, g_file_get_uri (file), search_query_c);
+              /* continue; don't add non-leaf directories in the results */
+            }
         }
 
       /* prepare entry display name */

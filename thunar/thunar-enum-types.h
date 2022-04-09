@@ -235,6 +235,26 @@ typedef enum
 GType thunar_recursive_permissions_get_type (void) G_GNUC_CONST;
 
 
+#define THUNAR_TYPE_RECURSIVE_SEARCH (thunar_recursive_search_get_type ())
+
+/**
+ * ThunarRecursiveSearchMode:
+ * @THUNAR_RECURSIVE_SEARCH_LOCAL       : do recursive search only locally.
+ * @THUNAR_RECURSIVE_SEARCH_ALWAYS      : always do recursive search.
+ * @THUNAR_RECURSIVE_SEARCH_NEVER       : never do recursive search.
+ *
+ * Modus operandi when changing permissions.
+ **/
+typedef enum
+{
+  THUNAR_RECURSIVE_SEARCH_LOCAL,
+  THUNAR_RECURSIVE_SEARCH_ALWAYS,
+  THUNAR_RECURSIVE_SEARCH_NEVER,
+} ThunarRecursiveSearchMode;
+
+GType thunar_recursive_search_get_type (void) G_GNUC_CONST;
+
+
 #define THUNAR_TYPE_ZOOM_LEVEL (thunar_zoom_level_get_type ())
 
 /**
