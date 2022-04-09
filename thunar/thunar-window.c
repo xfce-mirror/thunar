@@ -2867,7 +2867,7 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
   const gchar    *name;
   gchar          *remote_name;
   GtkIconTheme   *icon_theme;
-  const gchar    *icon_name = NULL;
+  const gchar    *icon_name;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
