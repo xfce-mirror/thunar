@@ -238,21 +238,19 @@ GType
 thunar_recursive_search_get_type (void)
 {
   static GType type = G_TYPE_INVALID;
-
   if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GEnumValue values[] =
 
-  {
-    static const GEnumValue values[] =
+        {
+          { THUNAR_RECURSIVE_SEARCH_LOCAL,    "THUNAR_RECURSIVE_SEARCH_LOCAL",        "local",    },
+          { THUNAR_RECURSIVE_SEARCH_ALWAYS,   "THUNAR_RECURSIVE_SEARCH_ALWAYS",       "always",   },
+          { THUNAR_RECURSIVE_SEARCH_NEVER,    "THUNAR_RECURSIVE_SEARCH_NEVER",        "never",    },
+          { 0,                                NULL,                                    NULL,      },
+        };
 
-      {
-        { THUNAR_RECURSIVE_SEARCH_LOCAL,    "THUNAR_RECURSIVE_SEARCH_LOCAL",        "local",    },
-        { THUNAR_RECURSIVE_SEARCH_ALWAYS,   "THUNAR_RECURSIVE_SEARCH_ALWAYS",       "always",   },
-        { THUNAR_RECURSIVE_SEARCH_NEVER,    "THUNAR_RECURSIVE_SEARCH_NEVER",        "never",    },
-        { 0,                                NULL,                                    NULL,      },
-      };
-
-    type = g_enum_register_static (I_("ThunarRecursiveSearch"), values);
-  }
+      type = g_enum_register_static (I_("ThunarRecursiveSearch"), values);
+    }
 
   return type;
 }

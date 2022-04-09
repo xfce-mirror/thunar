@@ -43,6 +43,7 @@
 #include <thunar/thunar-util.h>
 
 
+
 /* Property identifiers */
 enum
 {
@@ -2258,8 +2259,6 @@ thunar_list_model_search_folder (ThunarListModel  *model,
         }
 
       /* handle directories */
-      /* go inside if it is directory and*/
-      /* mode=Always or */
 
       if (type == G_FILE_TYPE_DIRECTORY)
         {

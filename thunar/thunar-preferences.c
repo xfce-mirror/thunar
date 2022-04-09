@@ -763,8 +763,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   /**
    * ThunarPreferences:misc-recursive-search:
    *
-   * Whether to include results inside SubDirectories in
-   * Search Results.
+   * Whether to search only in the current folder or recursively
   **/
   preferences_props[PROP_MISC_RECURSIVE_SEARCH] =
        g_param_spec_enum ("misc-recursive-search",

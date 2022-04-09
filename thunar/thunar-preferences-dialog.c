@@ -1142,7 +1142,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_container_add (GTK_CONTAINER (frame), grid);
   gtk_widget_show (grid);
 
-  label = gtk_label_new_with_mnemonic (_("Include Results from Sub-Folders"));
+  label = gtk_label_new_with_mnemonic (_("Include subfolders"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);

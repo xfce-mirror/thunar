@@ -767,6 +767,8 @@ thunar_util_is_a_search_query (const gchar *string)
   return strncmp (string, SEARCH_PREFIX, strlen (SEARCH_PREFIX)) == 0;
 }
 
+
+
 /**
  * thunar_util_is_file_on_local_device:
  * @file : the source or target #GFile to test.

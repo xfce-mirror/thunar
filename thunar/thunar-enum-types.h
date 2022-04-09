@@ -243,7 +243,6 @@ GType thunar_recursive_permissions_get_type (void) G_GNUC_CONST;
  * @THUNAR_RECURSIVE_SEARCH_ALWAYS      : always do recursive search.
  * @THUNAR_RECURSIVE_SEARCH_NEVER       : never do recursive search.
  *
- * Modus operandi when changing permissions.
  **/
 typedef enum
 {
