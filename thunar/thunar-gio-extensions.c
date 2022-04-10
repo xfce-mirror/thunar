@@ -1142,7 +1142,6 @@ thunar_g_file_is_on_local_device (GFile *file)
   _thunar_return_val_if_fail(G_IS_FILE (file), TRUE);
   if (g_file_has_uri_scheme (file, "file") == FALSE)
     return FALSE;
-  target_file = g_object_ref (file); /* start with file */
   is_local = FALSE;
   for (target_file  = g_object_ref (file);
        target_file != NULL;

@@ -1157,6 +1157,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (combo, TRUE);
+  gtk_widget_set_margin_start (combo, 75);
   gtk_grid_attach (GTK_GRID (grid), combo, 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
