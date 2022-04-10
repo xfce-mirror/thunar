@@ -40,7 +40,6 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-user.h>
 #include <thunar/thunar-simple-job.h>
-#include <thunar/thunar-util.h>
 
 
 
@@ -2133,7 +2132,7 @@ _thunar_job_search_directory (ThunarJob  *job,
   search_query_c = g_value_get_string (&g_array_index (param_values, GValue, 1));
   directory = g_value_get_object (&g_array_index (param_values, GValue, 2));
 
-  is_source_device_local = thunar_util_is_file_on_local_device ( thunar_file_get_file (directory) );
+  is_source_device_local = thunar_g_file_is_on_local_device ( thunar_file_get_file (directory));
   if (mode == THUNAR_RECURSIVE_SEARCH_ALWAYS || (mode == THUNAR_RECURSIVE_SEARCH_LOCAL && is_source_device_local))
     search_type = THUNAR_LIST_MODEL_SEARCH_RECURSIVE;
 

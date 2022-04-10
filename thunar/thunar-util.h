@@ -78,7 +78,6 @@ gchar*     thunar_util_next_new_file_name       (ThunarFile            *dir,
                                                  const gchar           *file_name,
                                                  ThunarNextFileNameMode name_mode);
 gboolean   thunar_util_is_a_search_query        (const gchar    *string);
-gboolean   thunar_util_is_file_on_local_device  (GFile          *file);
 
 extern const char *SEARCH_PREFIX;
 

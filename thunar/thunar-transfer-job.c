@@ -1391,7 +1391,7 @@ thunar_transfer_job_fill_source_device_info (ThunarTransferJob *transfer_job,
       transfer_job->source_device_fs_id = g_strdup (g_file_info_get_attribute_string (file_info, G_FILE_ATTRIBUTE_ID_FILESYSTEM));
       g_object_unref (file_info);
     }
-  transfer_job->is_source_device_local = thunar_util_is_file_on_local_device (file);
+  transfer_job->is_source_device_local = thunar_g_file_is_on_local_device (file);
 }
 
 
@@ -1431,7 +1431,7 @@ thunar_transfer_job_fill_target_device_info (ThunarTransferJob *transfer_job,
         }
     }
   g_object_unref (target_file);
-  transfer_job->is_target_device_local = thunar_util_is_file_on_local_device (file);
+  transfer_job->is_target_device_local = thunar_g_file_is_on_local_device (file);
 }
 
 
