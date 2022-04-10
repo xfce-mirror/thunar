@@ -573,6 +573,7 @@ thunar_toolbar_editor_populate_model (ThunarToolbarEditor *toolbar_editor)
       order = g_object_get_data (G_OBJECT (item), "default-order");
 
       widget = gtk_label_new_with_mnemonic (label_with_mnemonic);
+      g_object_ref_sink (widget);
 
       gtk_list_store_append (toolbar_editor->model, &iter);
       gtk_list_store_set (toolbar_editor->model, &iter,
@@ -582,7 +583,7 @@ thunar_toolbar_editor_populate_model (ThunarToolbarEditor *toolbar_editor)
                           3, *order,
                           -1);
 
-      gtk_widget_destroy (widget);
+      g_object_unref (widget);
     }
 
   /* connect after model has been fully initialized */
