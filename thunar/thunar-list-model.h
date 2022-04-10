@@ -28,6 +28,12 @@ G_BEGIN_DECLS;
 typedef struct _ThunarListModelClass ThunarListModelClass;
 typedef struct _ThunarListModel      ThunarListModel;
 
+enum ThunarListModelSearch
+{
+    THUNAR_LIST_MODEL_SEARCH_RECURSIVE,
+    THUNAR_LIST_MODEL_SEARCH_NON_RECURSIVE,
+};
+
 #define THUNAR_TYPE_LIST_MODEL            (thunar_list_model_get_type ())
 #define THUNAR_LIST_MODEL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_LIST_MODEL, ThunarListModel))
 #define THUNAR_LIST_MODEL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_LIST_MODEL, ThunarListModelClass))
