@@ -241,7 +241,6 @@ thunar_recursive_search_get_type (void)
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
       static const GEnumValue values[] =
-
         {
           { THUNAR_RECURSIVE_SEARCH_LOCAL,    "THUNAR_RECURSIVE_SEARCH_LOCAL",        "local",    },
           { THUNAR_RECURSIVE_SEARCH_ALWAYS,   "THUNAR_RECURSIVE_SEARCH_ALWAYS",       "always",   },

@@ -28,7 +28,8 @@ G_BEGIN_DECLS;
 typedef struct _ThunarListModelClass ThunarListModelClass;
 typedef struct _ThunarListModel      ThunarListModel;
 
-enum ThunarListModelSearch {
+enum ThunarListModelSearch
+{
     THUNAR_LIST_MODEL_SEARCH_RECURSIVE,
     THUNAR_LIST_MODEL_SEARCH_NON_RECURSIVE,
 };
