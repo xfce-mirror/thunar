@@ -34,7 +34,6 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-thumbnail-cache.h>
 #include <thunar/thunar-transfer-job.h>
-#include <thunar/thunar-util.h>
 
 
 

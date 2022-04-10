@@ -1146,7 +1146,7 @@ thunar_g_file_is_on_local_device (GFile *file)
   is_local = FALSE;
   for (target_file  = g_object_ref (file);
        target_file != NULL;
-       target_file  = target_parent) // Multiple statements via comma is possible but bleh.
+       target_file  = target_parent)
     {
       if (g_file_query_exists (target_file, NULL))
         break;
