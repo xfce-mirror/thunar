@@ -34,6 +34,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-thumbnail-cache.h>
 #include <thunar/thunar-transfer-job.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -1373,67 +1374,6 @@ thunar_transfer_job_device_id_in_job_list (const char *device_fs_id,
 }
 
 
-/**
- * thunar_transfer_job_is_file_on_local_device:
- * @file : the source or target #GFile to test.
- *
- * Tries to find if the @file is on a local device or not.
- * Local device if (all conditions should match):
- * - the file has a 'file' uri scheme.
- * - the file is located on devices not handled by the #GVolumeMonitor (GVFS).
- * - the device is handled by #GVolumeMonitor (GVFS) and cannot be unmounted
- *   (USB key/disk, fuse mounts, Samba shares, PTP devices).
- *
- * The target @file may not exist yet when this function is used, so recurse
- * the parent directory, possibly reaching the root mountpoint.
- *
- * This should be enough to determine if a @file is on a local device or not.
- *
- * Return value: %TRUE if #GFile @file is on a so-called local device.
- **/
-static gboolean
-thunar_transfer_job_is_file_on_local_device (GFile *file)
-{
-  gboolean  is_local;
-  GFile    *target_file;
-  GFile    *target_parent;
-  GMount   *file_mount;
-
-  _thunar_return_val_if_fail (file != NULL, TRUE);
-  if (g_file_has_uri_scheme (file, "file") == FALSE)
-    return FALSE;
-  target_file = g_object_ref (file); /* start with file */
-  is_local = FALSE;
-  while (target_file != NULL)
-    {
-      if (g_file_query_exists (target_file, NULL))
-        {
-          /* file_mount will be NULL for local files on local partitions/devices */
-          file_mount = g_file_find_enclosing_mount (target_file, NULL, NULL);
-          if (file_mount == NULL)
-            is_local = TRUE;
-          else
-            {
-              /* mountpoints which cannot be unmounted are local devices.
-               * attached devices like USB key/disk, fuse mounts, Samba shares,
-               * PTP devices can always be unmounted and are considered remote/slow. */
-              is_local = ! g_mount_can_unmount (file_mount);
-              g_object_unref (file_mount);
-            }
-          break;
-        }
-      else /* file or parent directory does not exist (yet) */
-        {
-          /* query the parent directory */
-          target_parent = g_file_get_parent (target_file);
-          g_object_unref (target_file);
-          target_file = target_parent;
-        }
-    }
-  g_object_unref (target_file);
-  return is_local;
-}
-
 
 static void
 thunar_transfer_job_fill_source_device_info (ThunarTransferJob *transfer_job,
@@ -1451,7 +1391,7 @@ thunar_transfer_job_fill_source_device_info (ThunarTransferJob *transfer_job,
       transfer_job->source_device_fs_id = g_strdup (g_file_info_get_attribute_string (file_info, G_FILE_ATTRIBUTE_ID_FILESYSTEM));
       g_object_unref (file_info);
     }
-  transfer_job->is_source_device_local = thunar_transfer_job_is_file_on_local_device (file);
+  transfer_job->is_source_device_local = thunar_util_is_file_on_local_device (file);
 }
 
 
@@ -1491,7 +1431,7 @@ thunar_transfer_job_fill_target_device_info (ThunarTransferJob *transfer_job,
         }
     }
   g_object_unref (target_file);
-  transfer_job->is_target_device_local = thunar_transfer_job_is_file_on_local_device (file);
+  transfer_job->is_target_device_local = thunar_util_is_file_on_local_device (file);
 }
 
 

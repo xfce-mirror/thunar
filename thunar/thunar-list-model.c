@@ -40,6 +40,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-user.h>
 #include <thunar/thunar-simple-job.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -217,7 +218,8 @@ static ThunarJob*         thunar_list_model_job_search_directory  (ThunarListMod
 static void               thunar_list_model_search_folder         (ThunarListModel        *model,
                                                                    ThunarJob              *job,
                                                                    gchar                  *uri,
-                                                                   const gchar            *search_query_c);
+                                                                   const gchar            *search_query_c,
+                                                                   enum ThunarListModelSearch   search_type);
 static void               thunar_list_model_cancel_search_job     (ThunarListModel        *model);
 
 
@@ -2110,6 +2112,19 @@ _thunar_job_search_directory (ThunarJob  *job,
   ThunarListModel *model;
   ThunarFile      *directory;
   const char      *search_query_c;
+  ThunarPreferences          *preferences;
+  gboolean                    is_source_device_local;
+  ThunarRecursiveSearchMode   mode;
+  enum ThunarListModelSearch  search_type;
+
+  search_type = THUNAR_LIST_MODEL_SEARCH_NON_RECURSIVE;
+  /* grab a reference on the preferences */
+  preferences = thunar_preferences_get ();
+
+  /* determine the current recursive search mode */
+  g_object_get (G_OBJECT (preferences), "misc-recursive-search", &mode, NULL);
+
+  g_object_unref (preferences);
 
   if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return FALSE;
@@ -2118,7 +2133,13 @@ _thunar_job_search_directory (ThunarJob  *job,
   search_query_c = g_value_get_string (&g_array_index (param_values, GValue, 1));
   directory = g_value_get_object (&g_array_index (param_values, GValue, 2));
 
-  thunar_list_model_search_folder (model, job, thunar_file_dup_uri (directory), search_query_c);
+  is_source_device_local = thunar_util_is_file_on_local_device ( thunar_file_get_file (directory) );
+  if (mode == THUNAR_RECURSIVE_SEARCH_ALWAYS || (mode == THUNAR_RECURSIVE_SEARCH_LOCAL && is_source_device_local))
+    {
+        search_type = THUNAR_LIST_MODEL_SEARCH_RECURSIVE;
+    }
+
+  thunar_list_model_search_folder (model, job, thunar_file_dup_uri (directory), search_query_c, search_type);
 
   return TRUE;
 }
@@ -2192,7 +2213,8 @@ static void
 thunar_list_model_search_folder (ThunarListModel  *model,
                                  ThunarJob        *job,
                                  gchar            *uri,
-                                 const gchar      *search_query_c)
+                                 const gchar      *search_query_c,
+                                 enum ThunarListModelSearch search_type)
 {
   GCancellable    *cancellable;
   GFileEnumerator *enumerator;
@@ -2239,7 +2261,7 @@ thunar_list_model_search_folder (ThunarListModel  *model,
       type = g_file_info_get_file_type (info);
 
       /* ignore symlinks */
-      if (type == G_FILE_TYPE_SYMBOLIC_LINK)
+      if (type == G_FILE_TYPE_SYMBOLIC_LINK && search_type == THUNAR_LIST_MODEL_SEARCH_RECURSIVE)
         {
           g_object_unref (file);
           g_object_unref (info);
@@ -2247,9 +2269,10 @@ thunar_list_model_search_folder (ThunarListModel  *model,
         }
 
       /* handle directories */
-      if (type == G_FILE_TYPE_DIRECTORY)
+
+      if (type == G_FILE_TYPE_DIRECTORY && search_type == THUNAR_LIST_MODEL_SEARCH_RECURSIVE)
         {
-          thunar_list_model_search_folder (model, job, g_file_get_uri (file), search_query_c);
+          thunar_list_model_search_folder (model, job, g_file_get_uri (file), search_query_c, search_type);
           /* continue; don't add non-leaf directories in the results */
         }
 
