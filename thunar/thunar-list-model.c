@@ -72,8 +72,6 @@ typedef gint (*ThunarSortFunc) (const ThunarFile *a,
                                 const ThunarFile *b,
                                 gboolean          case_sensitive);
 
-    
-    
 static void               thunar_list_model_tree_model_init       (GtkTreeModelIface           *iface);
 static void               thunar_list_model_drag_dest_init        (GtkTreeDragDestIface        *iface);
 static void               thunar_list_model_sortable_init         (GtkTreeSortableIface        *iface);
@@ -2133,7 +2131,7 @@ _thunar_job_search_directory (ThunarJob  *job,
   search_query_c = g_value_get_string (&g_array_index (param_values, GValue, 1));
   directory = g_value_get_object (&g_array_index (param_values, GValue, 2));
 
-  is_source_device_local = thunar_g_file_is_on_local_device ( thunar_file_get_file (directory));
+  is_source_device_local = thunar_g_file_is_on_local_device (thunar_file_get_file (directory));
   if (mode == THUNAR_RECURSIVE_SEARCH_ALWAYS || (mode == THUNAR_RECURSIVE_SEARCH_LOCAL && is_source_device_local))
     search_type = THUNAR_LIST_MODEL_SEARCH_RECURSIVE;
 
