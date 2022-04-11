@@ -73,6 +73,8 @@ thunar_compact_view_class_init (ThunarCompactViewClass *klass)
 static void
 thunar_compact_view_init (ThunarCompactView *compact_view)
 {
+  gboolean homogenous_columns;
+
  /* initialize the icon view properties */
   exo_icon_view_set_margin (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (compact_view))), 3);
   exo_icon_view_set_layout_mode (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (compact_view))), EXO_ICON_VIEW_LAYOUT_COLS);
@@ -83,13 +85,30 @@ thunar_compact_view_init (ThunarCompactView *compact_view)
                 "ypad", 2u,
                 NULL);
 
-  /* setup the name renderer (wrap only very long names) */
+  g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (compact_view)->preferences), "misc-compact-view-homogenous-columns", &homogenous_columns, NULL);
+
+  /* setup the name renderer */
   g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (compact_view)->name_renderer),
-                "wrap-mode", PANGO_WRAP_WORD_CHAR,
-                "wrap-width", 1280,
                 "xalign", 0.0f,
                 "yalign", 0.5f,
                 NULL);
+
+  if (homogenous_columns == FALSE)
+    {
+      /* wrap only very long names */
+      g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (compact_view)->name_renderer),
+                    "wrap-mode", PANGO_WRAP_WORD_CHAR,
+                    "wrap-width", 1280,
+                    NULL);
+    }
+  else
+    {
+      g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (compact_view)->name_renderer),
+                    "ellipsize", PANGO_ELLIPSIZE_MIDDLE,
+                    "width-chars", 50,
+                    NULL);
+      gtk_cell_renderer_set_fixed_size (GTK_CELL_RENDERER (THUNAR_STANDARD_VIEW (compact_view)->name_renderer), 150, -1);
+    }
 }
 
 
