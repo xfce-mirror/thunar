@@ -5570,6 +5570,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   gtk_widget_set_hexpand (window->location_toolbar, TRUE);
   gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 1, 1);
 
+  /* The item with order 0 is always THUNAR_WINDOW_ACTION_VIEW_MENUBAR which we hide by default */
   item_order = 0;
   window->location_toolbar_item_view_menubar = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_MENUBAR), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_view_menubar), "label", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_MENUBAR)->menu_item_label_text), g_free);
