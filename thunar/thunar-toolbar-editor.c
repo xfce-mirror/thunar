@@ -412,6 +412,7 @@ thunar_toolbar_editor_toggle_visibility (ThunarToolbarEditor    *toolbar_editor,
                                          GtkCellRendererToggle  *cell_renderer)
 {
   GtkTreePath *path;
+  GtkTreePath *child_path;
   GtkTreeIter  iter;
   gboolean     visible;
   GList       *windows;
@@ -423,10 +424,15 @@ thunar_toolbar_editor_toggle_visibility (ThunarToolbarEditor    *toolbar_editor,
   /* determine the tree path for the string */
   path = gtk_tree_path_new_from_string (path_string);
 
-  /* path is incorrect, since the first element THUNAR_WINDOW_ACTION_VIEW_MENUBAR is invisible */
-  gtk_tree_path_next (path);
+  child_path = gtk_tree_model_filter_convert_path_to_child_path (GTK_TREE_MODEL_FILTER (toolbar_editor->filter), path);
 
-  if (gtk_tree_model_get_iter (GTK_TREE_MODEL (toolbar_editor->model), &iter, path))
+  if (child_path == NULL)
+    {
+      gtk_tree_path_free (path);
+      return;
+    }
+
+  if (gtk_tree_model_get_iter (GTK_TREE_MODEL (toolbar_editor->model), &iter, child_path))
     {
       gtk_tree_model_get (GTK_TREE_MODEL (toolbar_editor->model), &iter, 0, &visible, -1);
       gtk_list_store_set (toolbar_editor->model, &iter, 0, !visible, -1);
@@ -436,11 +442,12 @@ thunar_toolbar_editor_toggle_visibility (ThunarToolbarEditor    *toolbar_editor,
   for (GList *lp = windows; lp != NULL; lp = lp->next)
     {
       ThunarWindow *window = lp->data;
-      thunar_window_toolbar_toggle_item_visibility (window, gtk_tree_path_get_indices (path)[0]);
+      thunar_window_toolbar_toggle_item_visibility (window, gtk_tree_path_get_indices (child_path)[0]);
     }
 
   g_list_free (windows);
   gtk_tree_path_free (path);
+  gtk_tree_path_free (child_path);
 }
 
 
