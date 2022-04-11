@@ -167,6 +167,7 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   toolbar_editor->tree_view = gtk_tree_view_new ();
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (toolbar_editor->tree_view), FALSE);
   gtk_tree_view_set_model (GTK_TREE_VIEW (toolbar_editor->tree_view), GTK_TREE_MODEL (toolbar_editor->model));
+  gtk_tree_view_set_search_column (GTK_TREE_VIEW (toolbar_editor->tree_view), 2);
   gtk_container_add (GTK_CONTAINER (swin), toolbar_editor->tree_view);
   gtk_widget_show (toolbar_editor->tree_view);
 
