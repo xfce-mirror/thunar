@@ -650,16 +650,8 @@ thunar_toolbar_editor_populate_model (ThunarToolbarEditor *toolbar_editor)
   g_signal_connect_swapped (G_OBJECT (selection), "changed", G_CALLBACK (thunar_toolbar_editor_update_buttons), toolbar_editor);
 
   /* select the first item */
-  if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (toolbar_editor->model), &childIter))
-    {
-      /* path is incorrect, since the first element THUNAR_WINDOW_ACTION_VIEW_MENUBAR is invisible */
-      gtk_tree_model_iter_next (GTK_TREE_MODEL (toolbar_editor->model), &childIter);
-
-      /* tree_view is created from filter & column_model is the child of filter
-       * hence, child Iter needs to be converted to parent Iter */
-      gtk_tree_model_filter_convert_child_iter_to_iter (GTK_TREE_MODEL_FILTER (toolbar_editor->filter), &iter, &childIter);
-      gtk_tree_selection_select_iter (selection, &iter);
-    }
+  if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (toolbar_editor->filter), &iter))
+    gtk_tree_selection_select_iter (selection, &iter);
 
   g_list_free (toolbar_items);
 }
