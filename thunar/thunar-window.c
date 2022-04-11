@@ -5856,7 +5856,7 @@ thunar_window_location_toolbar_load_visibility (ThunarWindow *window)
   g_free (item_visibility_string);
 
   for (guint i = 0; i < item_count; i++)
-    target_order[i] = 1; /* default to visible */
+    target_order[i] = 0; /* default to invisible */
 
   /* convert strings to guints for convenience */
   for (guint i = 0, j = 0; i < item_visibility_length; i++)
