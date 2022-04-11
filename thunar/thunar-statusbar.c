@@ -318,6 +318,8 @@ thunar_statusbar_action_show_display_name (ThunarStatusbar *statusbar)
   return TRUE;
 }
 
+
+
 static gboolean
 thunar_statusbar_action_last_modified (ThunarStatusbar *statusbar)
 {
