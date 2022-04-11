@@ -140,6 +140,7 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 6);
   gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_grid_set_row_homogeneous (GTK_GRID (grid), TRUE);
   gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
   gtk_container_add (GTK_CONTAINER (frame), grid);
   gtk_widget_show (grid);
@@ -167,6 +168,7 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   toolbar_editor->tree_view = gtk_tree_view_new ();
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (toolbar_editor->tree_view), FALSE);
   gtk_tree_view_set_model (GTK_TREE_VIEW (toolbar_editor->tree_view), GTK_TREE_MODEL (toolbar_editor->model));
+  gtk_tree_view_set_search_column (GTK_TREE_VIEW (toolbar_editor->tree_view), 2);
   gtk_container_add (GTK_CONTAINER (swin), toolbar_editor->tree_view);
   gtk_widget_show (toolbar_editor->tree_view);
 
@@ -222,14 +224,6 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   gtk_button_set_always_show_image (GTK_BUTTON (toolbar_editor->down_button), TRUE);
   gtk_button_set_image (GTK_BUTTON (toolbar_editor->down_button), image);
   gtk_widget_show (image);
-
-  /* next row */
-  row++;
-
-  /* create the horiz separator */
-  separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
-  gtk_grid_attach (GTK_GRID (grid), separator, 1, row, 1, 1);
-  gtk_widget_show (separator);
 
   /* next row */
   row++;
