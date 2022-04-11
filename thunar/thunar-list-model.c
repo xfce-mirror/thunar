@@ -2117,6 +2117,7 @@ _thunar_job_search_directory (ThunarJob  *job,
   enum ThunarListModelSearch  search_type;
 
   search_type = THUNAR_LIST_MODEL_SEARCH_NON_RECURSIVE;
+
   /* grab a reference on the preferences */
   preferences = thunar_preferences_get ();
 
@@ -2266,7 +2267,6 @@ thunar_list_model_search_folder (ThunarListModel           *model,
         }
 
       /* handle directories */
-
       if (type == G_FILE_TYPE_DIRECTORY && search_type == THUNAR_LIST_MODEL_SEARCH_RECURSIVE)
         {
           thunar_list_model_search_folder (model, job, g_file_get_uri (file), search_query_c, search_type);
