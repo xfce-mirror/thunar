@@ -5579,7 +5579,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_view_menubar), "default-order", item_order_ptr, g_free);
   g_signal_connect (G_OBJECT (window->location_toolbar_item_view_menubar), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
 
-  item_order ++;
+  item_order++;
   window->location_toolbar_item_back = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_BACK), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_back), "label", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_BACK)->menu_item_label_text), g_free);
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_back), "icon", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_BACK)->menu_item_icon_name), g_free);
