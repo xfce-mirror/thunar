@@ -451,6 +451,7 @@ thunar_toolbar_editor_update_buttons (ThunarToolbarEditor *toolbar_editor)
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
   GtkTreePath      *path;
+  GtkTreePath      *child_path;
   GtkTreeIter       iter;
   gint              idx;
 
@@ -462,18 +463,22 @@ thunar_toolbar_editor_update_buttons (ThunarToolbarEditor *toolbar_editor)
       path = gtk_tree_model_get_path (model, &iter);
 
       /* tree view's model is made from GTK_TREE_MODEL_FILTER, hence fetching child path */
-      path = gtk_tree_model_filter_convert_path_to_child_path (GTK_TREE_MODEL_FILTER (model), path);
+      child_path = gtk_tree_model_filter_convert_path_to_child_path (GTK_TREE_MODEL_FILTER (model), path);
 
-      if (G_UNLIKELY (path == NULL))
-        return;
+      if (G_UNLIKELY (child_path == NULL))
+        {
+          gtk_tree_path_free (path);
+          return;
+        }
 
       /* update the "Move Up"/"Move Down" buttons */
-      idx = gtk_tree_path_get_indices (path)[0];
+      idx = gtk_tree_path_get_indices (child_path)[0];
       gtk_widget_set_sensitive (toolbar_editor->up_button, (idx > 0));
       gtk_widget_set_sensitive (toolbar_editor->down_button, (idx + 1 < gtk_tree_model_iter_n_children (model, NULL)));
 
-      /* release the path */
+      /* release the paths */
       gtk_tree_path_free (path);
+      gtk_tree_path_free (child_path);
     }
   else
     {
