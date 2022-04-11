@@ -1109,3 +1109,66 @@ thunar_g_vfs_metadata_is_supported (void)
 
   return metadata_is_supported;
 }
+
+
+
+/**
+ * thunar_g_file_is_file_on_local_device:
+ * @file : the source or target #GFile to test.
+ *
+ * Tries to find if the @file is on a local device or not.
+ * Local device if (all conditions should match):
+ * - the file has a 'file' uri scheme.
+ * - the file is located on devices not handled by the #GVolumeMonitor (GVFS).
+ * - the device is handled by #GVolumeMonitor (GVFS) and cannot be unmounted
+ *   (USB key/disk, fuse mounts, Samba shares, PTP devices).
+ *
+ * The target @file may not exist yet when this function is used, so recurse
+ * the parent directory, possibly reaching the root mountpoint.
+ *
+ * This should be enough to determine if a @file is on a local device or not.
+ *
+ * Return value: %TRUE if #GFile @file is on a so-called local device.
+ **/
+gboolean
+thunar_g_file_is_on_local_device (GFile *file)
+{
+  gboolean  is_local;
+  GFile    *target_file;
+  GFile    *target_parent;
+  GMount   *file_mount;
+
+  _thunar_return_val_if_fail (file != NULL, TRUE);
+  _thunar_return_val_if_fail(G_IS_FILE (file), TRUE);
+  if (g_file_has_uri_scheme (file, "file") == FALSE)
+    return FALSE;
+  is_local = FALSE;
+  for (target_file  = g_object_ref (file);
+       target_file != NULL;
+       target_file  = target_parent)
+    {
+      if (g_file_query_exists (target_file, NULL))
+        break;
+
+      target_parent = g_file_get_parent (target_file);
+      g_object_unref (target_file);
+    }
+
+  if (target_file == NULL)
+    return FALSE;
+
+  file_mount = g_file_find_enclosing_mount (target_file, NULL, NULL);
+  if (file_mount == NULL)
+    is_local = TRUE;
+  else
+  {
+    /* mountpoints which cannot be unmounted are local devices.
+     * attached devices like USB key/disk, fuse mounts, Samba shares,
+     * PTP devices can always be unmounted and are considered remote/slow. */
+    is_local = ! g_mount_can_unmount (file_mount);
+    g_object_unref (file_mount);
+  }
+
+  return is_local;
+}
+
