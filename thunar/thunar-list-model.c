@@ -219,8 +219,7 @@ static void               thunar_list_model_search_folder         (ThunarListMod
                                                                    gchar                  *uri,
                                                                    const gchar            *search_query_c);
 static void               thunar_list_model_cancel_search_job     (ThunarListModel        *model);
-
-gchar *thunar_list_model_generate_statusbar_text (GList *values);
+static gchar*             thunar_list_model_add_seperator         (GList                  *values);
 
 
 struct _ThunarListModelClass
@@ -2806,16 +2805,19 @@ thunar_list_model_get_paths_for_pattern (ThunarListModel *store,
   return paths;
 }
 
-gchar *thunar_list_model_generate_statusbar_text (GList *values)
+static gchar*
+thunar_list_model_add_seperator (GList *values)
 {
-  gchar *text = g_strdup("");
-  if (values==NULL)
+  GList *lp;
+  gchar *text = g_strdup ("");
+  if (values == NULL)
     return text;
-  text =  values->data;
-  for (values=values->next; values!=NULL; values=values->next)
-    text = g_strdup_printf(_("%s | %s"), text, (gchar *) values->data);
+  text = values->data;
+  for (lp = values->next; lp != NULL; lp = lp->next)
+    text = g_strdup_printf (_("%s | %s"), text, (gchar *) lp->data);
   return text;
 }
+
 
 
 
@@ -2832,34 +2834,33 @@ gchar *thunar_list_model_generate_statusbar_text (GList *values)
  * Return value: the statusbar text for @store with the given @files.
  **/
 static gchar*
-thunar_list_model_get_statusbar_text_for_files (GList    *files,
+thunar_list_model_get_statusbar_text_for_files (ThunarListModel *store,
+                                                GList    *files,
                                                 gboolean  show_file_size_binary_format)
 {
-  guint64            size_summary     = 0;
-  gint               folder_count     = 0;
-  gint               non_folder_count = 0;
+  guint64            size_summary       = 0;
+  gint               folder_count       = 0;
+  gint               non_folder_count   = 0;
   GList             *lp;
-  GList             *text_list = NULL;
+  GList             *text_list          = NULL;
   ThunarFile        *last_modified_file = NULL;
-  gchar             *size_string      = NULL;
-  gchar             *text             = "";
-  gchar             *folder_text      = NULL;
-  gchar             *non_folder_text  = NULL;
+  gchar             *size_string        = NULL;
+  gchar             *text               = "";
+  gchar             *folder_text        = NULL;
+  gchar             *non_folder_text    = NULL;
   ThunarPreferences *preferences;
-  ThunarDateStyle    date_style;
-  gchar             *date_custom_style;
   guint              active, temp_last_modified_date;
   guint              last_modified_date = 0;
-  gboolean           show_size, show_size_in_bytes, show_last_modified;
+  gboolean           show_last_modified;
+  gboolean           show_size, show_size_in_bytes;
 
+  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
+  
   preferences = thunar_preferences_get ();
   g_object_get (G_OBJECT (preferences), "misc-status-bar-active-info", &active, NULL);
   show_size = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE);
   show_size_in_bytes = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES);
   show_last_modified = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_LAST_MODIFIED);
-  g_object_get (G_OBJECT (preferences), "misc-date-style", &date_style, NULL);
-  g_object_get (G_OBJECT (preferences), "misc-date-custom-style", &date_custom_style, NULL);
-  g_object_unref (preferences);
 
   /* analyze files */
   for (lp = files; lp != NULL; lp = lp->next)
@@ -2874,7 +2875,7 @@ thunar_list_model_get_statusbar_text_for_files (GList    *files,
           if (thunar_file_is_regular (lp->data))
             size_summary += thunar_file_get_size (lp->data);
         }
-      temp_last_modified_date = thunar_file_get_date(lp->data, THUNAR_FILE_DATE_MODIFIED);
+      temp_last_modified_date = thunar_file_get_date (lp->data, THUNAR_FILE_DATE_MODIFIED);
       if (last_modified_date < temp_last_modified_date)
         {
           last_modified_date = temp_last_modified_date;
@@ -2927,21 +2928,19 @@ thunar_list_model_get_statusbar_text_for_files (GList    *files,
        * is between the message about the number of folders
        * and the number of items in the selection */
       /* TRANSLATORS: string moved from line 2573 to here  */
-      text_list = g_list_append(text_list, g_strdup(folder_text));
-      text_list = g_list_append(text_list, g_strdup(non_folder_text));
-      text = thunar_list_model_generate_statusbar_text(text_list);
-      g_list_free_full(text_list, g_free);
-      text_list = NULL;
+      text_list = g_list_append (text_list, g_strdup(folder_text));
+      text_list = g_list_append (text_list, g_strdup(non_folder_text));
+      text = thunar_list_model_add_seperator (text_list);
       g_free (folder_text);
       g_free (non_folder_text);
     }
-  if (show_last_modified && (last_modified_file!=NULL))
+  if (show_last_modified && (last_modified_file != NULL))
     {
-      text_list = g_list_append(text_list, g_strdup(text));
-      text = g_strdup_printf(_("Last Modified: %s"), thunar_file_get_date_string (last_modified_file, THUNAR_FILE_DATE_MODIFIED, date_style, date_custom_style));
-      text_list = g_list_append(text_list, g_strdup(text));
-      text = thunar_list_model_generate_statusbar_text(text_list);
+      text = g_strdup_printf (_("Last Modified: %s"), thunar_file_get_date_string (last_modified_file, THUNAR_FILE_DATE_MODIFIED, store->date_style, store->date_custom_style));
+      text_list = g_list_append (text_list, g_strdup (text));
+      text = thunar_list_model_add_seperator (text_list);
     }
+  g_list_free(text_list);
   return text;
 }
 
@@ -2990,8 +2989,6 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
   GSequenceIter     *row;
   GSequenceIter     *end;
   ThunarPreferences *preferences;
-  ThunarDateStyle    date_style;
-  gchar             *date_custom_style;
   gboolean           show_image_size;
   gboolean           show_file_size_binary_format;
   GList             *relevant_files = NULL;
@@ -3009,8 +3006,6 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
   show_filetype = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_FILETYPE);
   show_display_name = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_DISPLAY_NAME);
   show_last_modified = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_LAST_MODIFIED);
-  g_object_get (G_OBJECT (preferences), "misc-date-style", &date_style, NULL);
-  g_object_get (G_OBJECT (preferences), "misc-date-custom-style", &date_custom_style, NULL);
 
   if (selected_items == NULL) /* nothing selected */
     {
@@ -3028,7 +3023,9 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       if (G_LIKELY (file != NULL
           && thunar_g_file_get_free_space (thunar_file_get_file (file), &size, NULL)))
         {
-          size_string = thunar_list_model_get_statusbar_text_for_files (relevant_files, show_file_size_binary_format);
+          size_string = thunar_list_model_get_statusbar_text_for_files (store, relevant_files, show_file_size_binary_format);
+          if (size_string[0] != '\0')
+            text_list = g_list_append (text_list, g_strdup (size_string));
 
           /* humanize the free space */
           fspace_string = g_format_size_full (size, show_file_size_binary_format ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
@@ -3043,7 +3040,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
         }
       else
         {
-          text = thunar_list_model_get_statusbar_text_for_files (relevant_files, show_file_size_binary_format);
+          text = thunar_list_model_get_statusbar_text_for_files (store, relevant_files, show_file_size_binary_format);
           text_list = g_list_append(text_list, g_strdup(text));
           // g_free(text);
         }
@@ -3063,13 +3060,13 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       if (show_filetype == TRUE)
         {
           if (G_UNLIKELY (content_type != NULL && g_str_equal (content_type, "inode/symlink")))
-            filetype_string = g_strdup ("Type: broken link");
+            filetype_string = g_strdup ("broken link");
           else if (G_UNLIKELY (thunar_file_is_symlink (file)))
-            filetype_string = g_strdup_printf (_("Type: link to %s"), thunar_file_get_symlink_target (file));
+            filetype_string = g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (file));
           else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_SHORTCUT))
-            filetype_string = g_strdup ("Type: shortcut");
+            filetype_string = g_strdup ("shortcut");
           else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_MOUNTABLE))
-            filetype_string = g_strdup ("Type: mountable");
+            filetype_string = g_strdup ("mountable");
           else
             {
               gchar *description = g_content_type_get_description (content_type);
@@ -3080,9 +3077,9 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
 
       if (show_display_name == TRUE)
         {
-          display_name = g_strdup_printf (_("Name: \"%s\""), thunar_file_get_display_name (file));
-          text_list = g_list_append(text_list, g_strdup(display_name));
-          g_free(display_name);
+          display_name = g_strdup_printf (_("\"%s\""), thunar_file_get_display_name (file));
+          text_list = g_list_append (text_list, g_strdup (display_name));
+          g_free (display_name);
         }
       
       if (show_size == TRUE)
@@ -3091,35 +3088,35 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
             size_string = thunar_file_get_size_string_long (file, show_file_size_binary_format);
           else
             size_string = thunar_file_get_size_string_formatted (file, show_file_size_binary_format);
-          text_list = g_list_append(text_list, g_strdup_printf("Size: %s",size_string));
-          g_free(size_string);
+          text_list = g_list_append (text_list, g_strdup_printf ("%s",size_string));
+          g_free (size_string);
         }
       
       if (show_filetype == TRUE)
         {
           if (G_UNLIKELY (content_type != NULL && g_str_equal (content_type, "inode/symlink")))
-            filetype_string = g_strdup ("Type: broken link");
+            filetype_string = g_strdup ("broken link");
           else if (G_UNLIKELY (thunar_file_is_symlink (file)))
-            filetype_string = g_strdup_printf (_("Type: link to %s"), thunar_file_get_symlink_target (file));
+            filetype_string = g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (file));
           else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_SHORTCUT))
-            filetype_string = g_strdup ("Type: shortcut");
+            filetype_string = g_strdup ("shortcut");
           else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_MOUNTABLE))
-            filetype_string = g_strdup ("Type: mountable");
+            filetype_string = g_strdup ("mountable");
           else
             {
               gchar *description = g_content_type_get_description (content_type);
-              filetype_string = g_strdup_printf (_("Type: %s"), description);
+              filetype_string = g_strdup_printf (_("%s"), description);
               g_free (description);
             }
-          text_list = g_list_append(text_list, g_strdup(filetype_string));
+          text_list = g_list_append (text_list, g_strdup(filetype_string));
           g_free(filetype_string);
         }
        
       if (show_last_modified == TRUE)
         {
-          last_modified_string = thunar_file_get_date_string (file, THUNAR_FILE_DATE_MODIFIED, date_style, date_custom_style);
-          text_list = g_list_append(text_list, g_strdup_printf(_("Last Modified: %s "), last_modified_string));
-          g_free(last_modified_string);
+          last_modified_string = thunar_file_get_date_string (file, THUNAR_FILE_DATE_MODIFIED, store->date_style, store->date_custom_style);
+          text_list = g_list_append (text_list, g_strdup_printf (_("Last Modified: %s "), last_modified_string));
+          g_free (last_modified_string);
         }
 
       /* append the original path (if any) */
@@ -3130,8 +3127,8 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
           display_name = g_filename_display_name (original_path);
           s = g_strdup_printf ("%s %s", _("Original Path:"), display_name);
           g_free (display_name);
-          text_list = g_list_append(text_list, g_strdup(s));
-          g_free(s);
+          text_list = g_list_append (text_list, g_strdup (s));
+          g_free (s);
         }
       else if (thunar_file_is_local (file)
                && thunar_file_is_regular (file)
@@ -3166,7 +3163,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
           relevant_files = g_list_append (relevant_files, g_sequence_get (iter.user_data));
         }
 
-      s = thunar_list_model_get_statusbar_text_for_files (relevant_files, show_file_size_binary_format);
+      s = thunar_list_model_get_statusbar_text_for_files (store, relevant_files, show_file_size_binary_format);
       if (s[0] != '\0')
         text = g_strdup_printf (_("Selection: %s"), s);
       else
@@ -3177,6 +3174,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
     }
 
   g_object_unref (preferences);
-
-  return thunar_list_model_generate_statusbar_text(text_list);
+  text = thunar_list_model_add_seperator (text_list);
+  g_list_free (text_list);
+  return text;
 }
