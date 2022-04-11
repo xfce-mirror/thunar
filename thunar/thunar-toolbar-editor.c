@@ -621,7 +621,6 @@ thunar_toolbar_editor_populate_model (ThunarToolbarEditor *toolbar_editor)
 {
   GtkTreeSelection *selection;
   GtkTreeIter       iter;
-  GtkTreeIter       childIter;
   GList            *toolbar_items;
 
   toolbar_items = gtk_container_get_children (GTK_CONTAINER (toolbar_editor->toolbar));
