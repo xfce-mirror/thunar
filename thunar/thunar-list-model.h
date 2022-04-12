@@ -31,8 +31,8 @@ typedef struct _ThunarListModel      ThunarListModel;
 typedef enum ThunarListModelSearch
 {
     THUNAR_LIST_MODEL_SEARCH_RECURSIVE,
-    THUNAR_LIST_MODEL_SEARCH_NON_RECURSIVE,
-};
+    THUNAR_LIST_MODEL_SEARCH_NON_RECURSIVE
+}  ThunarListModelSearch;
 
 #define THUNAR_TYPE_LIST_MODEL            (thunar_list_model_get_type ())
 #define THUNAR_LIST_MODEL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_LIST_MODEL, ThunarListModel))
