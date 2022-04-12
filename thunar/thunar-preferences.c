@@ -119,6 +119,7 @@ enum
   PROP_TREE_ICON_SIZE,
   PROP_MISC_SWITCH_TO_NEW_TAB,
   PROP_MISC_VERTICAL_SPLIT_PANE,
+  PROP_MISC_COMPACT_VIEW_HOMOGENOUS_COLUMNS,
   N_PROPERTIES,
 };
 
@@ -1073,6 +1074,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   preferences_props[PROP_MISC_VERTICAL_SPLIT_PANE] =
     g_param_spec_boolean ("misc-vertical-split-pane",
                           "MiscVerticalSplitPane",
+                          NULL,
+                          FALSE,
+                          EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-vertical-split-pane
+   *
+   * If true, every column in the compact view has the same width.
+   * This is achieved through ellipsization.
+   **/
+  preferences_props[PROP_MISC_COMPACT_VIEW_HOMOGENOUS_COLUMNS] =
+    g_param_spec_boolean ("misc-compact-view-homogenous-columns",
+                          "MiscCompactViewHomogenousColumns",
                           NULL,
                           FALSE,
                           EXO_PARAM_READWRITE);
