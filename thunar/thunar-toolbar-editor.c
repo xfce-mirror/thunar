@@ -103,7 +103,6 @@ static void
 thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
 {
   GtkCellRenderer        *renderer;
-  GtkWidget              *separator;
   GtkWidget              *button;
   GtkWidget              *frame;
   GtkWidget              *image;
