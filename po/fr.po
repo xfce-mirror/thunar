@@ -33,7 +33,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-03 00:46+0200\n"
+"POT-Creation-Date: 2022-04-12 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: jc1 <jc1.quebecos@gmail.com>, 2013,2020-2022\n"
 "Language-Team: French (http://www.transifex.com/xfce/thunar/language/fr/)\n"
@@ -482,7 +482,7 @@ msgstr "Il n’y a rien à coller dans le presse-papiers"
 #. add the "Close" button
 #. setup the dialog
 #. add a regular close button, the header bar already provides one
-#: ../thunar/thunar-column-editor.c:121 ../thunar/thunar-dialogs.c:1006
+#: ../thunar/thunar-column-editor.c:156 ../thunar/thunar-dialogs.c:1006
 #: ../thunar/thunar-preferences-dialog.c:298
 #: ../thunar/thunar-properties-dialog.c:260
 #: ../thunar/thunar-renamer-dialog.c:360
@@ -492,60 +492,60 @@ msgstr "Il n’y a rien à coller dans le presse-papiers"
 msgid "_Close"
 msgstr "_Fermer"
 
-#: ../thunar/thunar-column-editor.c:124
+#: ../thunar/thunar-column-editor.c:159
 msgid "Configure Columns in the Detailed List View"
 msgstr "Configurer les colonnes dans la vue en liste détaillée"
 
 #. add the "Help" button
-#: ../thunar/thunar-column-editor.c:127
+#: ../thunar/thunar-column-editor.c:162
 #: ../thunar/thunar-preferences-dialog.c:306
 #: ../thunar/thunar-properties-dialog.c:259
 #: ../thunar/thunar-toolbar-editor.c:125 ../thunar/thunar-window.c:497
 msgid "_Help"
 msgstr "Aid_e"
 
-#: ../thunar/thunar-column-editor.c:142
+#: ../thunar/thunar-column-editor.c:177
 msgid "Visible Columns"
 msgstr "Colonnes visibles"
 
 #. create the top label for the column editor dialog
-#: ../thunar/thunar-column-editor.c:155
+#: ../thunar/thunar-column-editor.c:190
 msgid ""
 "Choose the order of information to appear in the\n"
 "detailed list view."
 msgstr "Choisir l’ordre des informations qui doivent apparaître dans\nla vue en liste détaillée."
 
 #. create the "Move Up" button
-#: ../thunar/thunar-column-editor.c:202 ../thunar/thunar-toolbar-editor.c:202
+#: ../thunar/thunar-column-editor.c:236 ../thunar/thunar-toolbar-editor.c:204
 msgid "Move _Up"
 msgstr "_Monter"
 
 #. create the "Move Down" button
-#: ../thunar/thunar-column-editor.c:216 ../thunar/thunar-toolbar-editor.c:216
+#: ../thunar/thunar-column-editor.c:250 ../thunar/thunar-toolbar-editor.c:218
 msgid "Move Dow_n"
 msgstr "_Descendre"
 
 #. create the "Show" button
-#: ../thunar/thunar-column-editor.c:230
+#: ../thunar/thunar-column-editor.c:264
 msgid "_Show"
 msgstr "Affic_her"
 
 #. create the "Hide" button
-#: ../thunar/thunar-column-editor.c:239
+#: ../thunar/thunar-column-editor.c:273
 msgid "Hi_de"
 msgstr "_Cacher"
 
 #. create the "Use Default" button
-#: ../thunar/thunar-column-editor.c:256
+#: ../thunar/thunar-column-editor.c:290
 msgid "Use De_fault"
 msgstr "_Valeurs par défaut"
 
-#: ../thunar/thunar-column-editor.c:265
+#: ../thunar/thunar-column-editor.c:299
 msgid "Column Sizing"
 msgstr "Dimensionnement des colonnes"
 
 #. create the label that explains the column sizing option
-#: ../thunar/thunar-column-editor.c:281
+#: ../thunar/thunar-column-editor.c:315
 msgid ""
 "By default columns will be automatically expanded if\n"
 "needed to ensure the text is fully visible. If you dis-\n"
@@ -554,7 +554,7 @@ msgid ""
 msgstr "Par défaut, les colonnes sont automatiquement élargies pour que la totalité du texte soit visible. Décochez la case pour que les colonnes conservent toujours les largeurs définies par l’utilisateur."
 
 #. create the "Automatically expand columns as needed" button
-#: ../thunar/thunar-column-editor.c:293
+#: ../thunar/thunar-column-editor.c:327
 msgid "Automatically _expand columns as needed"
 msgstr "Élargir _automatiquement les colonnes si nécessaire"
 
@@ -909,7 +909,7 @@ msgstr "Nom du fichier"
 
 #: ../thunar/thunar-enum-types.c:554 ../thunar/thunar-enum-types.c:577
 #: ../thunar/thunar-preferences-dialog.c:375
-#: ../thunar/thunar-preferences-dialog.c:1042
+#: ../thunar/thunar-preferences-dialog.c:1029
 msgid "Never"
 msgstr "Jamais"
 
@@ -919,7 +919,7 @@ msgstr "Uniquement pour l’emplacement distant"
 
 #: ../thunar/thunar-enum-types.c:556 ../thunar/thunar-enum-types.c:579
 #: ../thunar/thunar-preferences-dialog.c:377
-#: ../thunar/thunar-preferences-dialog.c:1039
+#: ../thunar/thunar-preferences-dialog.c:1026
 msgid "Always"
 msgstr "Toujours"
 
@@ -1749,7 +1749,7 @@ msgid "Allow this file to _run as a program"
 msgstr "Autoriser ce fichier à être _exécuté comme un programme"
 
 #: ../thunar/thunar-permissions-chooser.c:388
-#: ../thunar/thunar-preferences-dialog.c:1204
+#: ../thunar/thunar-preferences-dialog.c:1191
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "Autoriser l’exécution de programmes non approuvés présente un risque de sécurité pour votre système."
@@ -1889,7 +1889,7 @@ msgid "Show thumbnails:"
 msgstr "Afficher les miniatures :"
 
 #: ../thunar/thunar-preferences-dialog.c:376
-#: ../thunar/thunar-preferences-dialog.c:1040
+#: ../thunar/thunar-preferences-dialog.c:1027
 msgid "Local Files Only"
 msgstr "Fichiers locaux seulement"
 
@@ -2192,59 +2192,51 @@ msgid ""
 msgstr "Sélectionnez cette option pour afficher le chemin d'accès complet au répertoire dans le titre de l'onglet au lieu du seul nom du répertoire"
 
 #: ../thunar/thunar-preferences-dialog.c:921
-msgid "Split panes vertically instead of horizontally"
-msgstr "Fractionner les volets verticalement au lieu d'horizontalement"
-
-#: ../thunar/thunar-preferences-dialog.c:927
-msgid "Select this option to split panes vertically instead of horizontally."
-msgstr "Sélectionnez cette option pour diviser les volets verticalement au lieu d'horizontalement."
-
-#: ../thunar/thunar-preferences-dialog.c:934
 msgid "Open new thunar instances as tabs"
 msgstr "Ouvrir les nouvelles instances de thunar en tant qu’onglets"
 
-#: ../thunar/thunar-preferences-dialog.c:940
+#: ../thunar/thunar-preferences-dialog.c:927
 msgid ""
 "Select this option to open new thunar instances as tabs in an existing "
 "thunar window"
 msgstr "Sélectionner cette option pour ouvrir de nouvelles instances de thunar en tant qu’onglets dans une fenêtre de thunar existante"
 
-#: ../thunar/thunar-preferences-dialog.c:948
+#: ../thunar/thunar-preferences-dialog.c:935
 msgid "Restore tabs on startup"
 msgstr "Restaurer les onglets au démarrage"
 
-#: ../thunar/thunar-preferences-dialog.c:954
+#: ../thunar/thunar-preferences-dialog.c:941
 msgid ""
 "Select this option to restore your tabs as they were last time you used "
 "Thunar"
 msgstr "Sélectionnez cette option pour restaurer vos onglets car ils étaient là la dernière fois que vous avez utilisé Thunar"
 
-#: ../thunar/thunar-preferences-dialog.c:972
+#: ../thunar/thunar-preferences-dialog.c:959
 msgid "Context Menu"
 msgstr "Menu contextuel"
 
-#: ../thunar/thunar-preferences-dialog.c:984
+#: ../thunar/thunar-preferences-dialog.c:971
 msgid "Show action to permanently delete files and folders"
 msgstr "Afficher l’action permettant de supprimer définitivement des fichiers et des dossiers"
 
-#: ../thunar/thunar-preferences-dialog.c:990
+#: ../thunar/thunar-preferences-dialog.c:977
 msgid "Select this option to show the 'Delete' action in the context menu"
 msgstr "Sélectionner cette option pour afficher l’action « Supprimer » dans le menu contextuel"
 
 #. Advanced
-#: ../thunar/thunar-preferences-dialog.c:1000
+#: ../thunar/thunar-preferences-dialog.c:987
 msgid "Advanced"
 msgstr "Avancé"
 
-#: ../thunar/thunar-preferences-dialog.c:1010
+#: ../thunar/thunar-preferences-dialog.c:997
 msgid "File Transfer"
 msgstr "Transfert de fichier"
 
-#: ../thunar/thunar-preferences-dialog.c:1026
+#: ../thunar/thunar-preferences-dialog.c:1013
 msgid "Transfer files in parallel:"
 msgstr "Transférer des fichiers en parallèle :"
 
-#: ../thunar/thunar-preferences-dialog.c:1028
+#: ../thunar/thunar-preferences-dialog.c:1015
 msgid ""
 "Indicates the behavior during multiple copies:\n"
 "- Always: all copies are done simultaneously\n"
@@ -2253,82 +2245,82 @@ msgid ""
 "- Never: all copies are done sequentially"
 msgstr "Indique le comportement lors de copies multiples :\n- Toujours : toutes les copies sont effectuées simultanément\n- Fichiers locaux uniquement : copies simultanées pour les fichiers locaux (non distants, non attachés)\n- Fichiers locaux sur les mêmes périphériques uniquement : si les fichiers sont locaux mais sur des périphériques différents (disques, points de montage), les copies sont séquentielles\n- Jamais : toutes les copies sont effectuées séquentiellement"
 
-#: ../thunar/thunar-preferences-dialog.c:1041
+#: ../thunar/thunar-preferences-dialog.c:1028
 msgid "Local Files On Same Devices Only"
 msgstr "Fichiers locaux sur les mêmes périphériques uniquement"
 
-#: ../thunar/thunar-preferences-dialog.c:1060
+#: ../thunar/thunar-preferences-dialog.c:1047
 msgid "Use intermediate file on copy"
 msgstr "Utiliser le fichier intermédiaire pour la copie"
 
-#: ../thunar/thunar-preferences-dialog.c:1064
+#: ../thunar/thunar-preferences-dialog.c:1051
 msgid ""
 "Use intermediate file '*.partial~' to copy files. This will prevent "
 "fragmented files. The new file will only be shown after the copy was "
 "successfully finished."
 msgstr "Utiliser le fichier intermédiaire « *.partial~ » pour copier des fichiers. Cela empêchera les fichiers fragmentés. Le nouveau fichier ne sera affiché qu’une fois la copie terminée avec succès."
 
-#: ../thunar/thunar-preferences-dialog.c:1094
+#: ../thunar/thunar-preferences-dialog.c:1081
 msgid "Verify file checksum on copy"
 msgstr "Vérifier la somme de contrôle du fichier lors d’une copie"
 
-#: ../thunar/thunar-preferences-dialog.c:1098
+#: ../thunar/thunar-preferences-dialog.c:1085
 msgid ""
 "Compare original file and copy with checksum. This will prevent corrupted "
 "files. Enabling this option will largely increase copy time."
 msgstr "Comparer le fichier d’origine et la copie avec la somme de contrôle. Cela empêchera les fichiers corrompus. Activer cette option augmentera considérablement le temps de copie."
 
-#: ../thunar/thunar-preferences-dialog.c:1129
+#: ../thunar/thunar-preferences-dialog.c:1116
 msgid "Folder Permissions"
 msgstr "Permissions du dossier"
 
-#: ../thunar/thunar-preferences-dialog.c:1145
+#: ../thunar/thunar-preferences-dialog.c:1132
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "Lorsque vous changez les permissions d’un dossier,\nvous pouvez appliquer ces changements au contenu\nde celui-ci. Sélectionnez le comportement par défaut :"
 
-#: ../thunar/thunar-preferences-dialog.c:1157
+#: ../thunar/thunar-preferences-dialog.c:1144
 msgid "Ask every time"
 msgstr "Toujours demander"
 
-#: ../thunar/thunar-preferences-dialog.c:1158
+#: ../thunar/thunar-preferences-dialog.c:1145
 msgid "Apply to Folder and Contents"
 msgstr "Appliquer au dossier et à son contenu"
 
-#: ../thunar/thunar-preferences-dialog.c:1159
+#: ../thunar/thunar-preferences-dialog.c:1146
 msgid "Apply to Folder Only"
 msgstr "Appliquer au dossier uniquement"
 
-#: ../thunar/thunar-preferences-dialog.c:1174
+#: ../thunar/thunar-preferences-dialog.c:1161
 msgid "Security"
 msgstr "Sécurité"
 
-#: ../thunar/thunar-preferences-dialog.c:1194
+#: ../thunar/thunar-preferences-dialog.c:1181
 msgid "Execute shell scripts"
 msgstr "Exécuter des scripts shell"
 
-#: ../thunar/thunar-preferences-dialog.c:1212
+#: ../thunar/thunar-preferences-dialog.c:1199
 msgid "Volume Management"
 msgstr "Gestionnaire de volume"
 
 #. add check button to enable/disable auto mounting
-#: ../thunar/thunar-preferences-dialog.c:1232
+#: ../thunar/thunar-preferences-dialog.c:1219
 msgid "Enable _Volume Management"
 msgstr "Activer le _gestionnaire de volume"
 
-#: ../thunar/thunar-preferences-dialog.c:1251
+#: ../thunar/thunar-preferences-dialog.c:1238
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">Configurer</a> la gestion des disques,\npériphériques et médias amovibles."
 
-#: ../thunar/thunar-preferences-dialog.c:1266
+#: ../thunar/thunar-preferences-dialog.c:1253
 msgid "Missing dependencies"
 msgstr "Dépendances manquantes"
 
-#: ../thunar/thunar-preferences-dialog.c:1274
+#: ../thunar/thunar-preferences-dialog.c:1261
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2337,30 +2329,30 @@ msgid ""
 msgstr "Il semble que <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> n’est pas disponible.\nDes fonctionnalités importantes, telles que la prise en charge de la corbeille,\nla lecture de médias amovibles et d’emplacements distants\nne fonctionneront pas. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[En savoir plus]</a>"
 
 #. Shortcuts
-#: ../thunar/thunar-preferences-dialog.c:1289
+#: ../thunar/thunar-preferences-dialog.c:1276
 msgid "Shortcuts"
 msgstr "Raccourcis"
 
-#: ../thunar/thunar-preferences-dialog.c:1300
+#: ../thunar/thunar-preferences-dialog.c:1287
 msgid "Window"
 msgstr "Fenêtre"
 
-#: ../thunar/thunar-preferences-dialog.c:1301
+#: ../thunar/thunar-preferences-dialog.c:1288
 msgid "View"
 msgstr "Vue"
 
-#: ../thunar/thunar-preferences-dialog.c:1302
+#: ../thunar/thunar-preferences-dialog.c:1289
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:534
 msgid "Launcher"
 msgstr "Lanceur"
 
-#: ../thunar/thunar-preferences-dialog.c:1303
+#: ../thunar/thunar-preferences-dialog.c:1290
 msgid "Status Bar"
 msgstr "Barre d'état"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: ../thunar/thunar-preferences-dialog.c:1370
+#: ../thunar/thunar-preferences-dialog.c:1357
 msgid "Failed to display the volume management settings"
 msgstr "Impossible d’afficher les paramètres de gestion de volume"
 
@@ -2939,12 +2931,12 @@ msgid "Configure the Toolbar"
 msgstr "Configurer la barre d'outils"
 
 #. create the top label for the toolbar editor dialog
-#: ../thunar/thunar-toolbar-editor.c:148
+#: ../thunar/thunar-toolbar-editor.c:149
 msgid "Configure the order and visibility of toolbar items."
 msgstr "Configurez l'ordre et la visibilité des éléments de la barre d'outils."
 
 #. create the "Use Default" button
-#: ../thunar/thunar-toolbar-editor.c:238
+#: ../thunar/thunar-toolbar-editor.c:232
 msgid "De_fault Order"
 msgstr "Ordre par dé_faut"
 
@@ -3429,11 +3421,11 @@ msgstr "Annuler la recherche de fichiers"
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "Attention : vous utilisez le compte administrateur. Vous risquez d’endommager votre système."
 
-#: ../thunar/thunar-window.c:2425
+#: ../thunar/thunar-window.c:2426
 msgid "Close tab"
 msgstr "Fermer l’onglet"
 
-#: ../thunar/thunar-window.c:2878
+#: ../thunar/thunar-window.c:2879
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Ouvrir l’emplacement « %s »"
