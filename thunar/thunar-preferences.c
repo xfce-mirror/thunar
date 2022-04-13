@@ -119,6 +119,7 @@ enum
   PROP_TREE_ICON_SIZE,
   PROP_MISC_SWITCH_TO_NEW_TAB,
   PROP_MISC_VERTICAL_SPLIT_PANE,
+  PROP_MISC_COMPACT_VIEW_MAX_CHARS,
   N_PROPERTIES,
 };
 
@@ -1076,6 +1077,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                           NULL,
                           FALSE,
                           EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:compact-view-max-chars
+   *
+   * The ellipsization threshold for compact view. Negative values disable ellipsization.
+   **/
+  preferences_props[PROP_MISC_COMPACT_VIEW_MAX_CHARS] =
+      g_param_spec_int ("misc-compact-view-max-chars",
+                        "MiscCompactViewMaxChars",
+                        NULL,
+                        G_MININT, G_MAXINT,
+                        50,
+                        EXO_PARAM_READWRITE);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
