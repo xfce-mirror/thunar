@@ -5427,6 +5427,7 @@ thunar_window_reconnect_accelerators (ThunarWindow *window)
                                                window);
   thunar_launcher_append_accelerators (window->launcher, window->accel_group);
   thunar_statusbar_append_accelerators (THUNAR_STATUSBAR (window->statusbar), window->accel_group);
+  thunar_window_update_bookmarks (window);
 
   gtk_window_add_accel_group (GTK_WINDOW (window), window->accel_group);
 
