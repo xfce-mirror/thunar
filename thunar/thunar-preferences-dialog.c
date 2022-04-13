@@ -1021,6 +1021,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
   gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
   gtk_container_add (GTK_CONTAINER (frame), grid);
+  gtk_grid_set_column_homogeneous (GTK_GRID(grid), TRUE);
   gtk_widget_show (grid);
 
   label = gtk_label_new_with_mnemonic (_("Transfer files in parallel:"));
@@ -1140,13 +1141,13 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
   gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
   gtk_container_add (GTK_CONTAINER (frame), grid);
+  gtk_grid_set_column_homogeneous (GTK_GRID(grid), TRUE);
   gtk_widget_show (grid);
 
   label = gtk_label_new_with_mnemonic (_("Include subfolders"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
-  gtk_grid_set_column_homogeneous(GTK_GRID(grid), TRUE);
 
   combo = gtk_combo_box_text_new ();
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Local Files Only"));
