@@ -1021,7 +1021,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
   gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
   gtk_container_add (GTK_CONTAINER (frame), grid);
-  gtk_grid_set_column_homogeneous (GTK_GRID(grid), TRUE);
+  gtk_grid_set_column_homogeneous (GTK_GRID (grid), TRUE);
   gtk_widget_show (grid);
 
   label = gtk_label_new_with_mnemonic (_("Transfer files in parallel:"));
@@ -1141,7 +1141,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
   gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
   gtk_container_add (GTK_CONTAINER (frame), grid);
-  gtk_grid_set_column_homogeneous (GTK_GRID(grid), TRUE);
+  gtk_grid_set_column_homogeneous (GTK_GRID (grid), TRUE);
   gtk_widget_show (grid);
 
   label = gtk_label_new_with_mnemonic (_("Include subfolders"));
@@ -1217,8 +1217,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
-
-
 
   /* new grid */
   row = 0;
