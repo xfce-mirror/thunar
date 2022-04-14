@@ -1095,12 +1095,16 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
 }
 
-
+#define XFCONF_GUARANTEE(PREF, VAR) \
+g_object_get (preferences, (PREF), &(VAR), NULL); \
+g_object_set (preferences, (PREF), (VAR), NULL);
 
 static void
 thunar_preferences_init (ThunarPreferences *preferences)
 {
   const gchar check_prop[] = "/last-view";
+  gboolean  BOOL;
+  gint      INTEGER;
 
   /* don't set a channel if xfconf init failed */
   if (no_xfconf)
@@ -1123,7 +1127,25 @@ thunar_preferences_init (ThunarPreferences *preferences)
   preferences->property_changed_id =
     g_signal_connect (G_OBJECT (preferences->channel), "property-changed",
                       G_CALLBACK (thunar_preferences_prop_changed), preferences);
+
+  /* Make sure that the preferences that appear in the XfceSettingsEditor exist in xfconf */
+  XFCONF_GUARANTEE ("misc-always-show-tabs", BOOL);
+  XFCONF_GUARANTEE ("misc-case-sensitive", BOOL);
+  XFCONF_GUARANTEE ("misc-full-path-in-tab-title", BOOL);
+  XFCONF_GUARANTEE ("misc-full-path-in-window-title", BOOL);
+  XFCONF_GUARANTEE ("misc-horizontal-wheel-navigates", BOOL);
+  XFCONF_GUARANTEE ("misc-image-size-in-statusbar", BOOL);
+  XFCONF_GUARANTEE ("misc-remember-geometry", BOOL);
+  XFCONF_GUARANTEE ("misc-small-toolbar-icons", BOOL);
+  XFCONF_GUARANTEE ("misc-tab-close-middle-click", BOOL);
+  XFCONF_GUARANTEE ("misc-exec-shell-scripts-by-default", BOOL);
+  XFCONF_GUARANTEE ("misc-switch-to-new-tab", BOOL);
+  XFCONF_GUARANTEE ("misc-vertical-split-pane", BOOL);
+  XFCONF_GUARANTEE ("misc-compact-view-max-chars", INTEGER);
+  XFCONF_GUARANTEE ("misc-confirm-close-multiple-tabs", BOOL);
 }
+
+#undef XFCONF_GUARANTEE
 
 
 
