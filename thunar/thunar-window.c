@@ -414,6 +414,7 @@ struct _ThunarWindow
   GtkWidget              *location_toolbar_item_zoom_in;
   GtkWidget              *location_toolbar_item_zoom_out;
   GtkWidget              *location_toolbar_item_search;
+  GtkWidget              *location_toolbar_item_view_menubar;
 
   ThunarLauncher         *launcher;
 
@@ -465,7 +466,7 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_TREE,            "<Actions>/ThunarWindow/view-side-pane-tree",             "<Primary>e",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Tree"),                  N_ ("Toggles the visibility of the tree pane"),                                      NULL,                      G_CALLBACK (thunar_window_action_tree_changed),       },
     { THUNAR_WINDOW_ACTION_TOGGLE_SIDE_PANE,               "<Actions>/ThunarWindow/toggle-side-pane",                "F9",                   XFCE_GTK_MENU_ITEM,       NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_toggle_sidepane),           },
     { THUNAR_WINDOW_ACTION_VIEW_STATUSBAR,                 "<Actions>/ThunarWindow/view-statusbar",                  "",                     XFCE_GTK_CHECK_MENU_ITEM, N_ ("St_atusbar"),             N_ ("Change the visibility of this window's statusbar"),                             NULL,                      G_CALLBACK (thunar_window_action_statusbar_changed),  },
-    { THUNAR_WINDOW_ACTION_VIEW_MENUBAR,                   "<Actions>/ThunarWindow/view-menubar",                    "<Primary>m",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Menubar"),               N_ ("Change the visibility of this window's menubar"),                               NULL,                      G_CALLBACK (thunar_window_action_menubar_changed),    },
+    { THUNAR_WINDOW_ACTION_VIEW_MENUBAR,                   "<Actions>/ThunarWindow/view-menubar",                    "<Primary>m",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Menubar"),               N_ ("Change the visibility of this window's menubar"),                               "open-menu-symbolic",      G_CALLBACK (thunar_window_action_menubar_changed),    },
     { THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR,              "<Actions>/ThunarWindow/view-configure-toolbar",          "",                     XFCE_GTK_MENU_ITEM ,      N_ ("Configure _Toolbar..."),  N_ ("Configure the toolbar"),                                                        NULL,                      G_CALLBACK (thunar_window_action_show_toolbar_editor),},
     { THUNAR_WINDOW_ACTION_SHOW_HIDDEN,                    "<Actions>/ThunarWindow/show-hidden",                     "<Primary>h",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("Show _Hidden Files"),     N_ ("Toggles the display of hidden files in the current window"),                    NULL,                      G_CALLBACK (thunar_window_action_show_hidden),        },
     { THUNAR_WINDOW_ACTION_ZOOM_IN,                        "<Actions>/ThunarWindow/zoom-in",                         "<Primary>KP_Add",      XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Zoom I_n"),               N_ ("Show the contents in more detail"),                                             "zoom-in-symbolic",        G_CALLBACK (thunar_window_zoom_in),                   },
@@ -863,18 +864,6 @@ thunar_window_init (ThunarWindow *window)
   gtk_paned_pack2 (GTK_PANED (window->paned), window->view_box, TRUE, FALSE);
   gtk_widget_show (window->view_box);
 
-  window->trash_infobar = gtk_info_bar_new ();
-  gtk_grid_attach (GTK_GRID (window->view_box), window->trash_infobar, 0, 0, 1, 1);
-  window->trash_infobar_restore_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Restore Selected Items", RESTORE);
-  window->trash_infobar_empty_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Empty Trash", EMPTY);
-  g_signal_connect (window->trash_infobar,
-                    "response",
-                    G_CALLBACK (thunar_window_trash_infobar_clicked),
-                    G_OBJECT (window));
-
-  /* remove border */
-  gtk_container_set_border_width (GTK_CONTAINER (gtk_info_bar_get_action_area (GTK_INFO_BAR (window->trash_infobar))), 0);
-
   /* split view: Create panes where the two notebooks */
   window->paned_notebooks = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
   g_signal_connect_swapped (window->preferences, "notify::misc-vertical-split-pane", G_CALLBACK (thunar_window_paned_notebooks_update_orientation), window);
@@ -882,7 +871,7 @@ thunar_window_init (ThunarWindow *window)
 
   gtk_paned_add2 (GTK_PANED (window->paned), window->view_box);
   gtk_widget_add_events (window->paned_notebooks, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK | GDK_BUTTON_PRESS_MASK);
-  gtk_grid_attach (GTK_GRID (window->view_box), window->paned_notebooks, 0, 1, 1, 2);
+  gtk_grid_attach (GTK_GRID (window->view_box), window->paned_notebooks, 0, 0, 1, 1);
   gtk_widget_show (window->paned_notebooks);
 
   /** close notebooks on window-remove signal because later on window property
@@ -925,9 +914,22 @@ thunar_window_init (ThunarWindow *window)
 
   /* setup the `Show More...` button that appears at the bottom of the view after a search is completed */
   window->catfish_search_button = gtk_button_new_with_label ("Search with Catfish...");
-  gtk_grid_attach (GTK_GRID (window->view_box), window->catfish_search_button, 0, 3, 1, 1);
+  gtk_grid_attach (GTK_GRID (window->view_box), window->catfish_search_button, 0, 1, 1, 1);
   g_signal_connect_swapped (window->catfish_search_button, "clicked", G_CALLBACK (thunar_window_catfish_dialog_configure), window);
   gtk_widget_hide (window->catfish_search_button);
+
+  window->trash_infobar = gtk_info_bar_new ();
+  gtk_grid_attach (GTK_GRID (window->view_box), window->trash_infobar, 0, 2, 1, 1);
+  window->trash_infobar_restore_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Restore Selected Items", RESTORE);
+  window->trash_infobar_empty_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Empty Trash", EMPTY);
+  g_signal_connect (window->trash_infobar,
+                    "response",
+                    G_CALLBACK (thunar_window_trash_infobar_clicked),
+                    G_OBJECT (window));
+
+  /* remove border */
+  gtk_container_set_border_width (GTK_CONTAINER (gtk_info_bar_get_action_area (GTK_INFO_BAR (window->trash_infobar))), 0);
+
 
   /* setup a new statusbar */
   event_box = gtk_event_box_new ();
@@ -935,7 +937,7 @@ thunar_window_init (ThunarWindow *window)
   thunar_statusbar_append_accelerators (THUNAR_STATUSBAR (window->statusbar), window->accel_group);
   gtk_widget_set_hexpand (window->statusbar, TRUE);
   gtk_container_add (GTK_CONTAINER (event_box), window->statusbar);
-  gtk_grid_attach (GTK_GRID (window->view_box), event_box, 0, 4, 1, 1);
+  gtk_grid_attach (GTK_GRID (window->view_box), event_box, 0, 3, 1, 1);
   if (last_statusbar_visible)
     gtk_widget_show (window->statusbar);
   gtk_widget_show (event_box);
@@ -2863,8 +2865,7 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
   gchar          *parse_name;
   gchar          *accel_path;
   gchar          *tooltip;
-  const gchar    *name;
-  gchar          *remote_name;
+  gchar          *name;
   GtkIconTheme   *icon_theme;
   const gchar    *icon_name;
 
@@ -2873,6 +2874,7 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
   for (lp = window->bookmarks; lp != NULL; lp = lp->next)
     {
       bookmark = lp->data;
+      name = g_strdup (bookmark->name);
       accel_path = thunar_window_bookmark_get_accel_path (bookmark->g_file);
       parse_name = g_file_get_parse_name (bookmark->g_file);
       tooltip = g_strdup_printf (_("Open the location \"%s\""), parse_name);
@@ -2880,34 +2882,33 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
 
       if (g_file_has_uri_scheme (bookmark->g_file, "file"))
         {
-          /* try to open the file corresponding to the uri */
           thunar_file = thunar_file_get (bookmark->g_file, NULL);
-          if (G_LIKELY (thunar_file != NULL))
-            {
-              /* make sure the file refers to a directory */
-              if (G_UNLIKELY (thunar_file_is_directory (thunar_file)))
-                {
-                  name = bookmark->name;
-                  if (bookmark->name == NULL)
-                    name = thunar_file_get_display_name (thunar_file);
 
-                  icon_theme = gtk_icon_theme_get_for_screen (gtk_window_get_screen (GTK_WINDOW (window)));
-                  icon_name = thunar_file_get_icon_name (thunar_file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_theme);
-                  xfce_gtk_image_menu_item_new_from_icon_name (name, tooltip, accel_path, G_CALLBACK (thunar_window_action_open_bookmark), G_OBJECT (bookmark->g_file), icon_name, view_menu);
-               }
+          if (name == NULL)
+            {
+              if (thunar_file != NULL)
+                name = g_strdup (thunar_file_get_display_name (thunar_file));
+              else
+                name = g_file_get_basename (bookmark->g_file);
+            }
+
+          icon_theme = gtk_icon_theme_get_for_screen (gtk_window_get_screen (GTK_WINDOW (window)));
+          icon_name = thunar_file == NULL ? "folder" : thunar_file_get_icon_name (thunar_file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_theme);
+
+          if (thunar_file != NULL)
             g_object_unref (thunar_file);
-          }
         }
       else
         {
-          if (bookmark->name == NULL)
-            remote_name = thunar_g_file_get_display_name_remote (bookmark->g_file);
-          else
-            remote_name = g_strdup (bookmark->name);
-          xfce_gtk_image_menu_item_new_from_icon_name (remote_name, tooltip, accel_path, G_CALLBACK (thunar_window_action_open_bookmark),  G_OBJECT (bookmark->g_file), "folder-remote", view_menu);
-          g_free (remote_name);
+          if (name == NULL)
+            name = thunar_g_file_get_display_name_remote (bookmark->g_file);
+
+          icon_name = "folder-remote";
         }
 
+      xfce_gtk_image_menu_item_new_from_icon_name (name, tooltip, accel_path, G_CALLBACK (thunar_window_action_open_bookmark), G_OBJECT (bookmark->g_file), icon_name, view_menu);
+
+      g_free (name);
       g_free (tooltip);
       g_free (accel_path);
     }
@@ -3553,6 +3554,7 @@ thunar_window_action_menubar_changed (ThunarWindow *window)
   g_object_get (window->preferences, "last-menubar-visible", &last_menubar_visible, NULL);
 
   gtk_widget_set_visible (window->menubar, !last_menubar_visible);
+  gtk_widget_set_visible (window->location_toolbar_item_view_menubar, last_menubar_visible);
 
   g_object_set (G_OBJECT (window->preferences), "last-menubar-visible", !last_menubar_visible, NULL);
 
@@ -5427,6 +5429,7 @@ thunar_window_reconnect_accelerators (ThunarWindow *window)
                                                window);
   thunar_launcher_append_accelerators (window->launcher, window->accel_group);
   thunar_statusbar_append_accelerators (THUNAR_STATUSBAR (window->statusbar), window->accel_group);
+  thunar_window_update_bookmarks (window);
 
   gtk_window_add_accel_group (GTK_WINDOW (window), window->accel_group);
 
@@ -5547,8 +5550,10 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   guint           *item_order_ptr;
   guint            item_order;
   gboolean         small_icons;
+  gboolean         last_menubar_visible;
 
-  g_object_get (G_OBJECT (window->preferences), "misc-small-toolbar-icons", &small_icons, NULL);
+  g_object_get (G_OBJECT (window->preferences), "misc-small-toolbar-icons", &small_icons,
+                                                "last-menubar-visible", &last_menubar_visible, NULL);
 
   /* allocate the new location bar widget */
   window->location_bar = thunar_location_bar_new ();
@@ -5566,7 +5571,17 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   gtk_widget_set_hexpand (window->location_toolbar, TRUE);
   gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 1, 1);
 
+  /* The item with order 0 is always THUNAR_WINDOW_ACTION_VIEW_MENUBAR which we hide by default */
   item_order = 0;
+  window->location_toolbar_item_view_menubar = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_MENUBAR), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
+  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_view_menubar), "label", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_MENUBAR)->menu_item_label_text), g_free);
+  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_view_menubar), "icon", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_MENUBAR)->menu_item_icon_name), g_free);
+  item_order_ptr = g_malloc (sizeof (gint));
+  *item_order_ptr = item_order;
+  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_view_menubar), "default-order", item_order_ptr, g_free);
+  g_signal_connect (G_OBJECT (window->location_toolbar_item_view_menubar), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
+
+  item_order++;
   window->location_toolbar_item_back = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_BACK), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_back), "label", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_BACK)->menu_item_label_text), g_free);
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_back), "icon", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_BACK)->menu_item_icon_name), g_free);
@@ -5671,6 +5686,9 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
 
   /* display the toolbar */
   gtk_widget_show_all (window->location_toolbar);
+
+  /* view_menubar is only visible when the menu is hidden */
+  gtk_widget_set_visible (window->location_toolbar_item_view_menubar, last_menubar_visible);
 
   /* add the location bar itself after gtk_widget_show_all to not mess with the visibility of the location buttons */
   gtk_container_add (GTK_CONTAINER (tool_item), window->location_bar);
@@ -5856,7 +5874,7 @@ thunar_window_location_toolbar_load_visibility (ThunarWindow *window)
   g_free (item_visibility_string);
 
   for (guint i = 0; i < item_count; i++)
-    target_order[i] = 1; /* default to visible */
+    target_order[i] = 0; /* default to invisible */
 
   /* convert strings to guints for convenience */
   for (guint i = 0, j = 0; i < item_visibility_length; i++)

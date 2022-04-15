@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-03 00:46+0200\n"
+"POT-Creation-Date: 2022-04-12 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>, 2012-2014,2017-2019,2021\n"
 "Language-Team: Serbian (http://www.transifex.com/xfce/thunar/language/sr/)\n"
@@ -467,7 +467,7 @@ msgstr "Нема ништа међу исечцима за убацивање"
 #. add the "Close" button
 #. setup the dialog
 #. add a regular close button, the header bar already provides one
-#: ../thunar/thunar-column-editor.c:121 ../thunar/thunar-dialogs.c:1006
+#: ../thunar/thunar-column-editor.c:156 ../thunar/thunar-dialogs.c:1006
 #: ../thunar/thunar-preferences-dialog.c:298
 #: ../thunar/thunar-properties-dialog.c:260
 #: ../thunar/thunar-renamer-dialog.c:360
@@ -477,60 +477,60 @@ msgstr "Нема ништа међу исечцима за убацивање"
 msgid "_Close"
 msgstr "_Затвори"
 
-#: ../thunar/thunar-column-editor.c:124
+#: ../thunar/thunar-column-editor.c:159
 msgid "Configure Columns in the Detailed List View"
 msgstr "Подесите ступце у прегледу списка са појединостима"
 
 #. add the "Help" button
-#: ../thunar/thunar-column-editor.c:127
+#: ../thunar/thunar-column-editor.c:162
 #: ../thunar/thunar-preferences-dialog.c:306
 #: ../thunar/thunar-properties-dialog.c:259
 #: ../thunar/thunar-toolbar-editor.c:125 ../thunar/thunar-window.c:497
 msgid "_Help"
 msgstr "_Помоћ"
 
-#: ../thunar/thunar-column-editor.c:142
+#: ../thunar/thunar-column-editor.c:177
 msgid "Visible Columns"
 msgstr "Видљиви ступци"
 
 #. create the top label for the column editor dialog
-#: ../thunar/thunar-column-editor.c:155
+#: ../thunar/thunar-column-editor.c:190
 msgid ""
 "Choose the order of information to appear in the\n"
 "detailed list view."
 msgstr "Изаберите редослед података у приказу списка са појединостима."
 
 #. create the "Move Up" button
-#: ../thunar/thunar-column-editor.c:202 ../thunar/thunar-toolbar-editor.c:202
+#: ../thunar/thunar-column-editor.c:236 ../thunar/thunar-toolbar-editor.c:204
 msgid "Move _Up"
 msgstr "Помери _горе"
 
 #. create the "Move Down" button
-#: ../thunar/thunar-column-editor.c:216 ../thunar/thunar-toolbar-editor.c:216
+#: ../thunar/thunar-column-editor.c:250 ../thunar/thunar-toolbar-editor.c:218
 msgid "Move Dow_n"
 msgstr "Помери _доле"
 
 #. create the "Show" button
-#: ../thunar/thunar-column-editor.c:230
+#: ../thunar/thunar-column-editor.c:264
 msgid "_Show"
 msgstr "_Прикажи"
 
 #. create the "Hide" button
-#: ../thunar/thunar-column-editor.c:239
+#: ../thunar/thunar-column-editor.c:273
 msgid "Hi_de"
 msgstr "_Сакриј"
 
 #. create the "Use Default" button
-#: ../thunar/thunar-column-editor.c:256
+#: ../thunar/thunar-column-editor.c:290
 msgid "Use De_fault"
 msgstr "_Користи подразумевано"
 
-#: ../thunar/thunar-column-editor.c:265
+#: ../thunar/thunar-column-editor.c:299
 msgid "Column Sizing"
 msgstr "Величина стубаца"
 
 #. create the label that explains the column sizing option
-#: ../thunar/thunar-column-editor.c:281
+#: ../thunar/thunar-column-editor.c:315
 msgid ""
 "By default columns will be automatically expanded if\n"
 "needed to ensure the text is fully visible. If you dis-\n"
@@ -539,7 +539,7 @@ msgid ""
 msgstr "Ступци ће подразумевано бивати самостално проширени тако\nда писмо буде потпуно видљиво. Уколико онемогућите ово,\nуправник датотека ће користити ступце задате ширине."
 
 #. create the "Automatically expand columns as needed" button
-#: ../thunar/thunar-column-editor.c:293
+#: ../thunar/thunar-column-editor.c:327
 msgid "Automatically _expand columns as needed"
 msgstr "Про_шири ступце уколико је потребно"
 
@@ -894,7 +894,7 @@ msgstr "Име датотеке"
 
 #: ../thunar/thunar-enum-types.c:554 ../thunar/thunar-enum-types.c:577
 #: ../thunar/thunar-preferences-dialog.c:375
-#: ../thunar/thunar-preferences-dialog.c:1042
+#: ../thunar/thunar-preferences-dialog.c:1029
 msgid "Never"
 msgstr "никад"
 
@@ -904,7 +904,7 @@ msgstr "Само за удаљена места"
 
 #: ../thunar/thunar-enum-types.c:556 ../thunar/thunar-enum-types.c:579
 #: ../thunar/thunar-preferences-dialog.c:377
-#: ../thunar/thunar-preferences-dialog.c:1039
+#: ../thunar/thunar-preferences-dialog.c:1026
 msgid "Always"
 msgstr "увек"
 
@@ -1762,7 +1762,7 @@ msgid "Allow this file to _run as a program"
 msgstr "До_зволи покретање датотеке као програма"
 
 #: ../thunar/thunar-permissions-chooser.c:388
-#: ../thunar/thunar-preferences-dialog.c:1204
+#: ../thunar/thunar-preferences-dialog.c:1191
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "Дозволити извршавање непровереним програмима је безбедоносни ризик за систем."
@@ -1902,7 +1902,7 @@ msgid "Show thumbnails:"
 msgstr "Приказуј умањене сличице датотека:"
 
 #: ../thunar/thunar-preferences-dialog.c:376
-#: ../thunar/thunar-preferences-dialog.c:1040
+#: ../thunar/thunar-preferences-dialog.c:1027
 msgid "Local Files Only"
 msgstr "само местних датотека"
 
@@ -2205,59 +2205,51 @@ msgid ""
 msgstr "Изабери ову могућност ради приказа потпуне путање у насловима листова уместо самог имена фасцикле"
 
 #: ../thunar/thunar-preferences-dialog.c:921
-msgid "Split panes vertically instead of horizontally"
-msgstr "Подели површ уздужно уместо водоравно"
-
-#: ../thunar/thunar-preferences-dialog.c:927
-msgid "Select this option to split panes vertically instead of horizontally."
-msgstr "Означите ову могућност да поделите површ усправно уместо водоравно."
-
-#: ../thunar/thunar-preferences-dialog.c:934
 msgid "Open new thunar instances as tabs"
 msgstr "Отвори нови примерак Тунара као нови лист"
 
-#: ../thunar/thunar-preferences-dialog.c:940
+#: ../thunar/thunar-preferences-dialog.c:927
 msgid ""
 "Select this option to open new thunar instances as tabs in an existing "
 "thunar window"
 msgstr "Изаберите ову могућност за отварање новог примерка тунара као листа у постојећем прозору тунара"
 
-#: ../thunar/thunar-preferences-dialog.c:948
+#: ../thunar/thunar-preferences-dialog.c:935
 msgid "Restore tabs on startup"
 msgstr "Поврати листове при покретању"
 
-#: ../thunar/thunar-preferences-dialog.c:954
+#: ../thunar/thunar-preferences-dialog.c:941
 msgid ""
 "Select this option to restore your tabs as they were last time you used "
 "Thunar"
 msgstr "Означите ову могућност за повратак листова у стање у каквом су били при последњој употреби Тунара"
 
-#: ../thunar/thunar-preferences-dialog.c:972
+#: ../thunar/thunar-preferences-dialog.c:959
 msgid "Context Menu"
 msgstr "Приручни изборник"
 
-#: ../thunar/thunar-preferences-dialog.c:984
+#: ../thunar/thunar-preferences-dialog.c:971
 msgid "Show action to permanently delete files and folders"
 msgstr "Прикажи радњу за трајно брисање датотека и фасцикли"
 
-#: ../thunar/thunar-preferences-dialog.c:990
+#: ../thunar/thunar-preferences-dialog.c:977
 msgid "Select this option to show the 'Delete' action in the context menu"
 msgstr "Изаберите ову могућност за приказ радње „Бриши“ у приручном изборнику"
 
 #. Advanced
-#: ../thunar/thunar-preferences-dialog.c:1000
+#: ../thunar/thunar-preferences-dialog.c:987
 msgid "Advanced"
 msgstr "Напредно"
 
-#: ../thunar/thunar-preferences-dialog.c:1010
+#: ../thunar/thunar-preferences-dialog.c:997
 msgid "File Transfer"
 msgstr "Пренос датотека"
 
-#: ../thunar/thunar-preferences-dialog.c:1026
+#: ../thunar/thunar-preferences-dialog.c:1013
 msgid "Transfer files in parallel:"
 msgstr "Пренеси датотеке упоредо:"
 
-#: ../thunar/thunar-preferences-dialog.c:1028
+#: ../thunar/thunar-preferences-dialog.c:1015
 msgid ""
 "Indicates the behavior during multiple copies:\n"
 "- Always: all copies are done simultaneously\n"
@@ -2266,82 +2258,82 @@ msgid ""
 "- Never: all copies are done sequentially"
 msgstr "Указује на понашање приликом вишеструких умножавања:\n- Увек: сви умношци се раде упоредо\n- Само местне датотеке: упоредно умножавање местних (не и удаљених, не и прикачених) датотека\n- Само местне датотеке на истим уређајима: ако ли су све датотеке местне, али на различитим уређајима (дискови, тачке качења), умножавање ће бити засебно\n- Никада: сви умношци се раде засебно"
 
-#: ../thunar/thunar-preferences-dialog.c:1041
+#: ../thunar/thunar-preferences-dialog.c:1028
 msgid "Local Files On Same Devices Only"
 msgstr "Само местне датотеке на истом уређају"
 
-#: ../thunar/thunar-preferences-dialog.c:1060
+#: ../thunar/thunar-preferences-dialog.c:1047
 msgid "Use intermediate file on copy"
 msgstr "Користи прелазну датотеку при умножавању"
 
-#: ../thunar/thunar-preferences-dialog.c:1064
+#: ../thunar/thunar-preferences-dialog.c:1051
 msgid ""
 "Use intermediate file '*.partial~' to copy files. This will prevent "
 "fragmented files. The new file will only be shown after the copy was "
 "successfully finished."
 msgstr "Користи посредну датотеку „*.partial~“ за умножавање датотека. Ово ће спречити парчање датотека. Нова датотека ће бити приказана након што се умножавање успешно заврши."
 
-#: ../thunar/thunar-preferences-dialog.c:1094
+#: ../thunar/thunar-preferences-dialog.c:1081
 msgid "Verify file checksum on copy"
 msgstr "Употреби збирну проверу при умножавању"
 
-#: ../thunar/thunar-preferences-dialog.c:1098
+#: ../thunar/thunar-preferences-dialog.c:1085
 msgid ""
 "Compare original file and copy with checksum. This will prevent corrupted "
 "files. Enabling this option will largely increase copy time."
 msgstr "Упореди изворну датотеку и умножак збирном провером. Она спречава кварење датотека. Омогућавање овог ће увећати време умножавања."
 
-#: ../thunar/thunar-preferences-dialog.c:1129
+#: ../thunar/thunar-preferences-dialog.c:1116
 msgid "Folder Permissions"
 msgstr "Овлашћења за фасциклу"
 
-#: ../thunar/thunar-preferences-dialog.c:1145
+#: ../thunar/thunar-preferences-dialog.c:1132
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "Када мењате овлашћења за фасциклу, можете их\nприменити на целокупан садржај фасцикле.\nОзначите подразумевани избор:"
 
-#: ../thunar/thunar-preferences-dialog.c:1157
+#: ../thunar/thunar-preferences-dialog.c:1144
 msgid "Ask every time"
 msgstr "сваки пут питај"
 
-#: ../thunar/thunar-preferences-dialog.c:1158
+#: ../thunar/thunar-preferences-dialog.c:1145
 msgid "Apply to Folder and Contents"
 msgstr "примени на фасциклу и садржај"
 
-#: ../thunar/thunar-preferences-dialog.c:1159
+#: ../thunar/thunar-preferences-dialog.c:1146
 msgid "Apply to Folder Only"
 msgstr "примени само на фасциклу"
 
-#: ../thunar/thunar-preferences-dialog.c:1174
+#: ../thunar/thunar-preferences-dialog.c:1161
 msgid "Security"
 msgstr "Безбедност"
 
-#: ../thunar/thunar-preferences-dialog.c:1194
+#: ../thunar/thunar-preferences-dialog.c:1181
 msgid "Execute shell scripts"
 msgstr "Изврши скрипта љуске"
 
-#: ../thunar/thunar-preferences-dialog.c:1212
+#: ../thunar/thunar-preferences-dialog.c:1199
 msgid "Volume Management"
 msgstr "Управљање уклоњивим уређајима"
 
 #. add check button to enable/disable auto mounting
-#: ../thunar/thunar-preferences-dialog.c:1232
+#: ../thunar/thunar-preferences-dialog.c:1219
 msgid "Enable _Volume Management"
 msgstr "_Омогући управљање уклоњивим уређајима"
 
-#: ../thunar/thunar-preferences-dialog.c:1251
+#: ../thunar/thunar-preferences-dialog.c:1238
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">Подесите</a> управљање уклоњивим уређајима и\nмедијумима."
 
-#: ../thunar/thunar-preferences-dialog.c:1266
+#: ../thunar/thunar-preferences-dialog.c:1253
 msgid "Missing dependencies"
 msgstr "Недостајуће зависности"
 
-#: ../thunar/thunar-preferences-dialog.c:1274
+#: ../thunar/thunar-preferences-dialog.c:1261
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2350,30 +2342,30 @@ msgid ""
 msgstr "Изгледа да <a href=\"https://wiki.gnome.org/Projects/gvfs\">гвфс</a> је недоступан.\nВажне могућности укључујући подршку за смеће,\nуклоњиве медије и преглед удаљених места\nнеће радити. a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Прочитајте више]</a>"
 
 #. Shortcuts
-#: ../thunar/thunar-preferences-dialog.c:1289
+#: ../thunar/thunar-preferences-dialog.c:1276
 msgid "Shortcuts"
 msgstr "Пречице"
 
-#: ../thunar/thunar-preferences-dialog.c:1300
+#: ../thunar/thunar-preferences-dialog.c:1287
 msgid "Window"
 msgstr "Прозор"
 
-#: ../thunar/thunar-preferences-dialog.c:1301
+#: ../thunar/thunar-preferences-dialog.c:1288
 msgid "View"
 msgstr "Преглед"
 
-#: ../thunar/thunar-preferences-dialog.c:1302
+#: ../thunar/thunar-preferences-dialog.c:1289
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:534
 msgid "Launcher"
 msgstr "Покретач"
 
-#: ../thunar/thunar-preferences-dialog.c:1303
+#: ../thunar/thunar-preferences-dialog.c:1290
 msgid "Status Bar"
 msgstr "Трака стања"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: ../thunar/thunar-preferences-dialog.c:1370
+#: ../thunar/thunar-preferences-dialog.c:1357
 msgid "Failed to display the volume management settings"
 msgstr "Нисам успео да прикажем подешавања за управљање уклоњивим уређајима"
 
@@ -2956,12 +2948,12 @@ msgid "Configure the Toolbar"
 msgstr "Подесите траку прибора"
 
 #. create the top label for the toolbar editor dialog
-#: ../thunar/thunar-toolbar-editor.c:148
+#: ../thunar/thunar-toolbar-editor.c:149
 msgid "Configure the order and visibility of toolbar items."
 msgstr "Подесите редослед и видљивост ставки траке прибора."
 
 #. create the "Use Default" button
-#: ../thunar/thunar-toolbar-editor.c:238
+#: ../thunar/thunar-toolbar-editor.c:232
 msgid "De_fault Order"
 msgstr "По_дразумевани распоред"
 
@@ -3449,11 +3441,11 @@ msgstr "Откажи претрагу датотека"
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "Упозорење: користите налог кореног руковаоца. Можете оштетити систем."
 
-#: ../thunar/thunar-window.c:2425
+#: ../thunar/thunar-window.c:2426
 msgid "Close tab"
 msgstr "Затвори лист"
 
-#: ../thunar/thunar-window.c:2878
+#: ../thunar/thunar-window.c:2879
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Отвори место „%s“"
