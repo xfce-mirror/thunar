@@ -59,6 +59,7 @@ static gboolean     thunar_statusbar_action_show_size         (ThunarStatusbar  
 static gboolean     thunar_statusbar_action_show_size_bytes   (ThunarStatusbar      *statusbar);
 static gboolean     thunar_statusbar_action_show_filetype     (ThunarStatusbar      *statusbar);
 static gboolean     thunar_statusbar_action_show_display_name (ThunarStatusbar      *statusbar);
+static gboolean     thunar_statusbar_action_last_modified     (ThunarStatusbar      *statusbar);
 static void         thunar_statusbar_update_all               (void);
 
 
@@ -77,10 +78,11 @@ struct _ThunarStatusbar
 
 static XfceGtkActionEntry thunar_status_bar_action_entries[] =
     {
-        { THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE,           "<Actions>/ThunarStatusBar/toggle-size",            "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Size"),          N_ ("Show size"),               NULL, G_CALLBACK (thunar_statusbar_action_show_size),            },
-        { THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE_IN_BYTES,  "<Actions>/ThunarStatusBar/toggle-size-in-bytes",   "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Size in bytes"), N_ ("Show size in bytes"),      NULL, G_CALLBACK (thunar_statusbar_action_show_size_bytes),      },
-        { THUNAR_STATUS_BAR_ACTION_TOGGLE_FILETYPE,       "<Actions>/ThunarStatusBar/toggle-filetype",        "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Filetype"),      N_ ("Show filetype"),           NULL, G_CALLBACK (thunar_statusbar_action_show_filetype),        },
-        { THUNAR_STATUS_BAR_ACTION_TOGGLE_DISPLAY_NAME,   "<Actions>/ThunarStatusBar/toggle-display-name",    "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Display Name"),  N_ ("Show display name"),       NULL, G_CALLBACK (thunar_statusbar_action_show_display_name),    },
+        { THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE,           "<Actions>/ThunarStatusBar/toggle-size",            "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Size"),                N_ ("Show size"),                     NULL, G_CALLBACK (thunar_statusbar_action_show_size),            },
+        { THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE_IN_BYTES,  "<Actions>/ThunarStatusBar/toggle-size-in-bytes",   "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Size in bytes"),       N_ ("Show size in bytes"),            NULL, G_CALLBACK (thunar_statusbar_action_show_size_bytes),      },
+        { THUNAR_STATUS_BAR_ACTION_TOGGLE_FILETYPE,       "<Actions>/ThunarStatusBar/toggle-filetype",        "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Filetype"),            N_ ("Show filetype"),                 NULL, G_CALLBACK (thunar_statusbar_action_show_filetype),        },
+        { THUNAR_STATUS_BAR_ACTION_TOGGLE_DISPLAY_NAME,   "<Actions>/ThunarStatusBar/toggle-display-name",    "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Display Name"),        N_ ("Show display name"),             NULL, G_CALLBACK (thunar_statusbar_action_show_display_name),    },
+        { THUNAR_STATUS_BAR_ACTION_TOGGLE_LAST_MODIFIED,  "<Actions>/ThunarStatusBar/toggle-last-modified",   "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Last Modified Date"),  N_ ("Show last modified date"),       NULL, G_CALLBACK (thunar_statusbar_action_last_modified),        },
     };
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id (thunar_status_bar_action_entries, G_N_ELEMENTS (thunar_status_bar_action_entries) ,id)
@@ -234,13 +236,14 @@ thunar_statusbar_context_menu (ThunarStatusbar *statusbar)
   GtkWidget *context_menu = gtk_menu_new();
   GtkWidget *widget;
   guint      active;
-  gboolean   show_size, show_size_in_bytes, show_filetype, show_display_name;
+  gboolean   show_size, show_size_in_bytes, show_filetype, show_display_name, show_last_modified;
 
   g_object_get (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", &active, NULL);
   show_size = active & THUNAR_STATUS_BAR_INFO_SIZE;
   show_size_in_bytes = active & THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES;
   show_filetype = active & THUNAR_STATUS_BAR_INFO_FILETYPE;
   show_display_name = active & THUNAR_STATUS_BAR_INFO_DISPLAY_NAME;
+  show_last_modified = active & THUNAR_STATUS_BAR_INFO_LAST_MODIFIED;
 
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE), G_OBJECT (statusbar), show_size, GTK_MENU_SHELL (context_menu));
   widget = xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE_IN_BYTES), G_OBJECT (statusbar), show_size_in_bytes, GTK_MENU_SHELL (context_menu));
@@ -248,6 +251,7 @@ thunar_statusbar_context_menu (ThunarStatusbar *statusbar)
     gtk_widget_set_sensitive (widget, FALSE);
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STATUS_BAR_ACTION_TOGGLE_FILETYPE), G_OBJECT (statusbar), show_filetype, GTK_MENU_SHELL (context_menu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STATUS_BAR_ACTION_TOGGLE_DISPLAY_NAME), G_OBJECT (statusbar), show_display_name, GTK_MENU_SHELL (context_menu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STATUS_BAR_ACTION_TOGGLE_LAST_MODIFIED), G_OBJECT (statusbar), show_last_modified, GTK_MENU_SHELL (context_menu));
 
   gtk_widget_show_all (GTK_WIDGET (context_menu));
 
@@ -308,6 +312,21 @@ thunar_statusbar_action_show_display_name (ThunarStatusbar *statusbar)
 
   g_object_get (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", &active, NULL);
   g_object_set (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", thunar_status_bar_info_toggle_bit (active, THUNAR_STATUS_BAR_INFO_DISPLAY_NAME), NULL);
+  thunar_statusbar_update_all ();
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_statusbar_action_last_modified (ThunarStatusbar *statusbar)
+{
+  guint active;
+
+  g_object_get (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", &active, NULL);
+  g_object_set (G_OBJECT (statusbar->preferences), "misc-status-bar-active-info", thunar_status_bar_info_toggle_bit (active, THUNAR_STATUS_BAR_INFO_LAST_MODIFIED), NULL);
   thunar_statusbar_update_all ();
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
