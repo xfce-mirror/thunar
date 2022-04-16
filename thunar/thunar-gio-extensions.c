@@ -1139,6 +1139,8 @@ thunar_g_file_is_on_local_device (GFile *file)
   GMount   *file_mount;
 
   _thunar_return_val_if_fail (file != NULL, TRUE);
+  _thunar_return_val_if_fail (G_IS_FILE (file), TRUE);
+
   if (g_file_has_uri_scheme (file, "file") == FALSE)
     return FALSE;
   is_local = FALSE;
