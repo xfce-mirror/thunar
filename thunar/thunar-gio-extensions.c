@@ -1139,37 +1139,38 @@ thunar_g_file_is_on_local_device (GFile *file)
   GMount   *file_mount;
 
   _thunar_return_val_if_fail (file != NULL, TRUE);
+  _thunar_return_val_if_fail (G_IS_FILE (file), TRUE);
+
   if (g_file_has_uri_scheme (file, "file") == FALSE)
     return FALSE;
-  target_file = g_object_ref (file); /* start with file */
   is_local = FALSE;
-  while (target_file != NULL)
+  for (target_file  = g_object_ref (file);
+       target_file != NULL;
+       target_file  = target_parent)
     {
       if (g_file_query_exists (target_file, NULL))
-        {
-          /* file_mount will be NULL for local files on local partitions/devices */
-          file_mount = g_file_find_enclosing_mount (target_file, NULL, NULL);
-          if (file_mount == NULL)
-            is_local = TRUE;
-          else
-            {
-              /* mountpoints which cannot be unmounted are local devices.
-               * attached devices like USB key/disk, fuse mounts, Samba shares,
-               * PTP devices can always be unmounted and are considered remote/slow. */
-              is_local = ! g_mount_can_unmount (file_mount);
-              g_object_unref (file_mount);
-            }
-          break;
-        }
-      else /* file or parent directory does not exist (yet) */
-        {
-          /* query the parent directory */
-          target_parent = g_file_get_parent (target_file);
-          g_object_unref (target_file);
-          target_file = target_parent;
-        }
+        break;
+      /* file or parent directory does not exist (yet)
+       * query the parent directory */
+      target_parent = g_file_get_parent (target_file);
+      g_object_unref (target_file);
     }
-  g_object_unref (target_file);
+
+  if (target_file == NULL)
+    return FALSE;
+  /* file_mount will be NULL for local files on local partitions/devices */
+  file_mount = g_file_find_enclosing_mount (target_file, NULL, NULL);
+  if (file_mount == NULL)
+    is_local = TRUE;
+  else
+    {
+      /* mountpoints which cannot be unmounted are local devices.
+       * attached devices like USB key/disk, fuse mounts, Samba shares,
+       * PTP devices can always be unmounted and are considered remote/slow. */
+      is_local = ! g_mount_can_unmount (file_mount);
+      g_object_unref (file_mount);
+    }
+
   return is_local;
 }
 
