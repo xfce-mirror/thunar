@@ -1160,6 +1160,7 @@ thunar_g_file_is_on_local_device (GFile *file)
     return FALSE;
   /* file_mount will be NULL for local files on local partitions/devices */
   file_mount = g_file_find_enclosing_mount (target_file, NULL, NULL);
+  g_object_unref (target_file);
   if (file_mount == NULL)
     is_local = TRUE;
   else
