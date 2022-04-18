@@ -172,13 +172,8 @@ thunarx_provider_factory_create_modules (ThunarxProviderFactory *factory)
       if (G_LIKELY (dp != NULL))
         {
           /* determine the types for all existing plugins */
-          for (;;)
+          for (name = g_dir_read_name (dp); name != NULL; name = g_dir_read_name (dp))
             {
-              /* read the next entry from the directory */
-              name = g_dir_read_name (dp);
-              if (G_UNLIKELY (name == NULL))
-                break;
-
               /* check if this is a valid plugin file */
               if (g_str_has_suffix (name, "." G_MODULE_SUFFIX))
                 {
