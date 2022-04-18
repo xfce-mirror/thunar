@@ -39,7 +39,7 @@
 static void     thunarx_provider_factory_finalize       (GObject                     *object);
 static void     thunarx_provider_factory_add            (ThunarxProviderFactory      *factory,
                                                          ThunarxProviderModule       *module);
-static GList   *thunarx_provider_factory_load_modules   (ThunarxProviderFactory      *factory);
+static void     thunarx_provider_factory_create_modules (ThunarxProviderFactory      *factory);
 static gboolean thunarx_provider_factory_timer          (gpointer                     user_data);
 static void     thunarx_provider_factory_timer_destroy  (gpointer                     user_data);
 
@@ -73,12 +73,15 @@ struct _ThunarxProviderFactory
   gint                 n_infos;   /* number of items in the infos array */
 
   guint                timer_id;  /* GSource timer to cleanup cached providers */
+
+  gint                 initialized;
+
 };
 
-
-
-static GList *thunarx_provider_modules = NULL; /* list of active provider modules */
-
+static gboolean thunarx_provider_modules_created = FALSE;
+static GList *thunarx_provider_modules            = NULL; /* list of all active provider modules */
+static GList *thunarx_persistent_provider_modules = NULL; /* list of active persistent provider modules */
+static GList *thunarx_volatile_provider_modules   = NULL; /* list of active volatile provider modules */
 
 
 G_DEFINE_TYPE (ThunarxProviderFactory, thunarx_provider_factory, G_TYPE_OBJECT)
@@ -99,6 +102,7 @@ thunarx_provider_factory_class_init (ThunarxProviderFactoryClass *klass)
 static void
 thunarx_provider_factory_init (ThunarxProviderFactory *factory)
 {
+  factory->initialized = FALSE;
 }
 
 
@@ -146,12 +150,11 @@ thunarx_provider_factory_add (ThunarxProviderFactory *factory,
 
 
 
-static GList*
-thunarx_provider_factory_load_modules (ThunarxProviderFactory *factory)
+static void
+thunarx_provider_factory_create_modules (ThunarxProviderFactory *factory)
 {
   ThunarxProviderModule *module;
   const gchar           *name;
-  GList                 *modules = NULL;
   GList                 *lp;
   GDir                  *dp;
   gchar                 *dirs_string;
@@ -170,42 +173,33 @@ thunarx_provider_factory_load_modules (ThunarxProviderFactory *factory)
       if (G_LIKELY (dp != NULL))
         {
           /* determine the types for all existing plugins */
-          for (;;)
+          for (name = g_dir_read_name (dp); name != NULL; name = g_dir_read_name (dp))
             {
-              /* read the next entry from the directory */
-              name = g_dir_read_name (dp);
-              if (G_UNLIKELY (name == NULL))
-                break;
-
               /* check if this is a valid plugin file */
               if (g_str_has_suffix (name, "." G_MODULE_SUFFIX))
                 {
+                  gboolean module_already_loaded = FALSE;
+
                   /* check if we already have that module */
                   for (lp = thunarx_provider_modules; lp != NULL; lp = lp->next)
-                    if (g_str_equal (G_TYPE_MODULE (lp->data)->name, name))
-                      break;
-
-                  /* use or allocate a new module for the file */
-                  if (G_UNLIKELY (lp != NULL))
                     {
-                      continue;
+                      if (g_str_equal (G_TYPE_MODULE (lp->data)->name, name))
+                        {
+                          module_already_loaded = TRUE;
+                          break;
+                        }
                     }
+
+                  if (G_UNLIKELY (module_already_loaded == TRUE))
+                    continue;
+
+                  /* allocate the new module and add it to our lists */
+                  module = thunarx_provider_module_new (name);
+                  thunarx_provider_modules = g_list_prepend (thunarx_provider_modules, module);
+                  if (thunarx_provider_plugin_get_resident (THUNARX_PROVIDER_PLUGIN (module)))
+                      thunarx_persistent_provider_modules = g_list_prepend (thunarx_persistent_provider_modules, module);
                   else
-                    {
-                      /* allocate the new module and add it to our list */
-                      module = thunarx_provider_module_new (name);
-                      thunarx_provider_modules = g_list_prepend (thunarx_provider_modules, module);
-                    }
-
-                  /* try to load the module */
-                  if (g_type_module_use (G_TYPE_MODULE (module)))
-                    {
-                      /* add the types provided by the module */
-                      thunarx_provider_factory_add (factory, module);
-
-                      /* add the module to our list */
-                      modules = g_list_prepend (modules, module);
-                    }
+                      thunarx_volatile_provider_modules = g_list_prepend (thunarx_volatile_provider_modules, module);
                 }
             }
 
@@ -214,7 +208,6 @@ thunarx_provider_factory_load_modules (ThunarxProviderFactory *factory)
     }
 
   g_strfreev (dirs);
-  return modules;
 }
 
 
@@ -309,20 +302,38 @@ thunarx_provider_factory_list_providers (ThunarxProviderFactory *factory,
 {
   ThunarxProviderInfo *info;
   GList               *providers = NULL;
-  GList               *modules = NULL;
   GList               *lp;
   gint                 n;
 
-  /* check if the cleanup timer is running (and thereby the factory is initialized) */
-  if (G_UNLIKELY (factory->timer_id == 0))
+  /* create all available modules */
+  if (thunarx_provider_modules_created == FALSE)
     {
-      /* load all available modules (and thereby initialize the factory) */
-      modules = thunarx_provider_factory_load_modules (factory);
+      thunarx_provider_factory_create_modules (factory);
 
-      /* start the "provider cache" cleanup timer */
-      factory->timer_id = g_timeout_add_seconds_full (G_PRIORITY_LOW, THUNARX_PROVIDER_FACTORY_INTERVAL,
-                                                      thunarx_provider_factory_timer, factory,
-                                                      thunarx_provider_factory_timer_destroy);
+      /* Persistent modules are loaded only once */
+      for (lp = thunarx_persistent_provider_modules; lp != NULL; lp = lp->next)
+        g_type_module_use (G_TYPE_MODULE (lp->data));
+
+      thunarx_provider_modules_created = TRUE;
+    }
+
+  /* volatile modules are reloaded on each call */
+  for (lp = thunarx_volatile_provider_modules; lp != NULL; lp = lp->next)
+    g_type_module_use (G_TYPE_MODULE (lp->data));
+
+  if (factory->initialized == FALSE)
+    {
+      for (lp = thunarx_provider_modules; lp != NULL; lp = lp->next)
+        thunarx_provider_factory_add (factory, THUNARX_PROVIDER_MODULE (lp->data));
+
+      if (G_UNLIKELY (factory->timer_id == 0))
+        {
+          /* start the "provider cache" cleanup timer */
+          factory->timer_id = g_timeout_add_seconds_full (G_PRIORITY_LOW, THUNARX_PROVIDER_FACTORY_INTERVAL,
+                                                          thunarx_provider_factory_timer, factory,
+                                                          thunarx_provider_factory_timer_destroy);
+        }
+      factory->initialized = TRUE;
     }
 
   /* determine all available providers for the type */
@@ -344,16 +355,9 @@ thunarx_provider_factory_list_providers (ThunarxProviderFactory *factory,
         providers = g_list_append (providers, info->provider);
       }
 
-  /* check if we were initialized by this method invocation */
-  if (G_UNLIKELY (modules != NULL))
-    {
-      /* unload all non-persistent modules */
-      for (lp = modules; lp != NULL; lp = lp->next)
-        if (!thunarx_provider_plugin_get_resident (lp->data))
-          g_type_module_unuse (G_TYPE_MODULE (lp->data));
-
-      g_list_free (modules);
-    }
+  /* unload all volatile modules */
+  for (lp = thunarx_volatile_provider_modules; lp != NULL; lp = lp->next)
+    g_type_module_unuse (G_TYPE_MODULE (lp->data));
 
   return providers;
 }
