@@ -79,6 +79,7 @@ struct _ThunarxProviderFactory
 };
 
 static gboolean thunarx_provider_modules_created = FALSE;
+static GList *thunarx_provider_modules            = NULL; /* list of all active provider modules */
 static GList *thunarx_persistent_provider_modules = NULL; /* list of active persistent provider modules */
 static GList *thunarx_volatile_provider_modules   = NULL; /* list of active volatile provider modules */
 
@@ -180,15 +181,7 @@ thunarx_provider_factory_create_modules (ThunarxProviderFactory *factory)
                   gboolean module_already_loaded = FALSE;
 
                   /* check if we already have that module */
-                  for (lp = thunarx_persistent_provider_modules; lp != NULL; lp = lp->next)
-                    {
-                      if (g_str_equal (G_TYPE_MODULE (lp->data)->name, name))
-                        {
-                          module_already_loaded = TRUE;
-                          break;
-                        }
-                    }
-                  for (lp = thunarx_volatile_provider_modules; lp != NULL; lp = lp->next)
+                  for (lp = thunarx_provider_modules; lp != NULL; lp = lp->next)
                     {
                       if (g_str_equal (G_TYPE_MODULE (lp->data)->name, name))
                         {
@@ -202,6 +195,7 @@ thunarx_provider_factory_create_modules (ThunarxProviderFactory *factory)
 
                   /* allocate the new module and add it to our lists */
                   module = thunarx_provider_module_new (name);
+                  thunarx_provider_modules = g_list_prepend (thunarx_provider_modules, module);
                   if (thunarx_provider_plugin_get_resident (THUNARX_PROVIDER_PLUGIN (module)))
                       thunarx_persistent_provider_modules = g_list_prepend (thunarx_persistent_provider_modules, module);
                   else
@@ -329,9 +323,7 @@ thunarx_provider_factory_list_providers (ThunarxProviderFactory *factory,
 
   if (factory->initialized == FALSE)
     {
-      for (lp = thunarx_persistent_provider_modules; lp != NULL; lp = lp->next)
-        thunarx_provider_factory_add (factory, THUNARX_PROVIDER_MODULE (lp->data));
-      for (lp = thunarx_volatile_provider_modules; lp != NULL; lp = lp->next)
+      for (lp = thunarx_provider_modules; lp != NULL; lp = lp->next)
         thunarx_provider_factory_add (factory, THUNARX_PROVIDER_MODULE (lp->data));
 
       if (G_UNLIKELY (factory->timer_id == 0))
