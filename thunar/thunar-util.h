@@ -78,6 +78,8 @@ gchar*     thunar_util_next_new_file_name       (ThunarFile            *dir,
                                                  const gchar           *file_name,
                                                  ThunarNextFileNameMode name_mode);
 gboolean   thunar_util_is_a_search_query        (const gchar    *string);
+gchar*     thunar_util_add_seperator            (GList *data,
+                                                 gchar *seperator);
 
 extern const char *SEARCH_PREFIX;
 
