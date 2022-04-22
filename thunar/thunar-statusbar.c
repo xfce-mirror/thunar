@@ -78,11 +78,11 @@ struct _ThunarStatusbar
 
 static XfceGtkActionEntry thunar_status_bar_action_entries[] =
     {
-        { THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE,           "<Actions>/ThunarStatusBar/toggle-size",            "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Size"),          N_ ("Show size"),               NULL, G_CALLBACK (thunar_statusbar_action_show_size),            },
-        { THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE_IN_BYTES,  "<Actions>/ThunarStatusBar/toggle-size-in-bytes",   "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Size in bytes"), N_ ("Show size in bytes"),      NULL, G_CALLBACK (thunar_statusbar_action_show_size_bytes),      },
-        { THUNAR_STATUS_BAR_ACTION_TOGGLE_FILETYPE,       "<Actions>/ThunarStatusBar/toggle-filetype",        "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Filetype"),      N_ ("Show filetype"),           NULL, G_CALLBACK (thunar_statusbar_action_show_filetype),        },
-        { THUNAR_STATUS_BAR_ACTION_TOGGLE_DISPLAY_NAME,   "<Actions>/ThunarStatusBar/toggle-display-name",    "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Display Name"),  N_ ("Show display name"),       NULL, G_CALLBACK (thunar_statusbar_action_show_display_name),    },
-        { THUNAR_STATUS_BAR_ACTION_TOGGLE_LAST_MODIFIED,   "<Actions>/ThunarStatusBar/toggle-last-modified",  "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Last Modified"), N_ ("Show last modified"),      NULL, G_CALLBACK (thunar_statusbar_action_show_last_modified),   },
+        { THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE,           "<Actions>/ThunarStatusBar/toggle-size",             "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Size"),          N_ ("Show size"),               NULL, G_CALLBACK (thunar_statusbar_action_show_size),            },
+        { THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE_IN_BYTES,  "<Actions>/ThunarStatusBar/toggle-size-in-bytes",    "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Size in bytes"), N_ ("Show size in bytes"),      NULL, G_CALLBACK (thunar_statusbar_action_show_size_bytes),      },
+        { THUNAR_STATUS_BAR_ACTION_TOGGLE_FILETYPE,       "<Actions>/ThunarStatusBar/toggle-filetype",         "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Filetype"),      N_ ("Show filetype"),           NULL, G_CALLBACK (thunar_statusbar_action_show_filetype),        },
+        { THUNAR_STATUS_BAR_ACTION_TOGGLE_DISPLAY_NAME,   "<Actions>/ThunarStatusBar/toggle-display-name",     "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Display Name"),  N_ ("Show display name"),       NULL, G_CALLBACK (thunar_statusbar_action_show_display_name),    },
+        { THUNAR_STATUS_BAR_ACTION_TOGGLE_LAST_MODIFIED,   "<Actions>/ThunarStatusBar/toggle-last-modified",   "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Last Modified"), N_ ("Show last modified"),      NULL, G_CALLBACK (thunar_statusbar_action_show_last_modified),   },
     };
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id (thunar_status_bar_action_entries, G_N_ELEMENTS (thunar_status_bar_action_entries) ,id)
@@ -317,6 +317,7 @@ thunar_statusbar_action_show_display_name (ThunarStatusbar *statusbar)
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
+
 
 
 static gboolean
