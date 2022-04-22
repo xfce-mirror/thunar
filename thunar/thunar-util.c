@@ -770,37 +770,39 @@ thunar_util_is_a_search_query (const gchar *string)
 
 
 /** 
- * thunar_util_add_seperator:
+ * thunar_util_strjoin_list:
  * @data      : list of strings which needs to be appended.
- * @seperator : text which needs to be added as a seperator
+ * @separator : text which needs to be added as a seperator
  * 
- * Generates a string consisting of all the non empty strings present in the list, seperated 
- * by the seperator text. 
+ * Joins a number of strings from the given list together to form one long string, with the separator
+ * inserted between each of them. 
+ * Similar to g_strjoin
  * 
- * The function frees the list, but the caller is responsible to free the returned text using
- * g_free() when it is no longer needed
+ * The caller is responsible to free the returned text using g_free() when it is no longer needed
  * 
  * Return value: the concatenated string
  **/
 gchar*
-thunar_util_add_seperator (GList *data,
-                           gchar *seperator)
+thunar_util_strjoin_list (GList       *data,
+                          const gchar *separator)
 {
   GList *lp;
-  gchar *text;
+  gchar *text = g_strdup ("");
+  gchar *s = "";
   
-  for (lp = data; lp != NULL && g_strcmp0 (lp->data, "") ==0; lp = lp->next);
-  if (lp == NULL)
-    text = g_strdup("");
-  else
+  for (lp = data; lp != NULL && lp->data == NULL; lp = lp->next);
+  if (lp != NULL)
     {
       text = g_strdup (lp->data);
       for (lp = lp->next; lp != NULL; lp = lp->next)
         {
-          if (g_strcmp0 (lp->data, "") != 0)
-            text = g_strconcat (text, seperator, lp->data, NULL);
+          if (lp->data != NULL)
+            {
+              s = g_strjoin (separator, text, lp->data, NULL);
+              g_free (text);
+              text = s;
+            }
         }
     }
-  g_list_free_full (data, g_free);
   return text;
 }
