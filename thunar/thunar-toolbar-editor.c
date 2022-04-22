@@ -121,7 +121,8 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   /* setup the dialog */
   gtk_dialog_add_button (GTK_DIALOG (toolbar_editor), _("_Close"), GTK_RESPONSE_CLOSE);
   gtk_dialog_set_default_response (GTK_DIALOG (toolbar_editor), GTK_RESPONSE_CLOSE);
-  gtk_window_set_resizable (GTK_WINDOW (toolbar_editor), FALSE);
+  gtk_window_set_default_size (GTK_WINDOW (toolbar_editor), 510, 490);
+  gtk_window_set_resizable (GTK_WINDOW (toolbar_editor), TRUE);
   gtk_window_set_title (GTK_WINDOW (toolbar_editor), _("Configure the Toolbar"));
 
   /* add the "Help" button */
