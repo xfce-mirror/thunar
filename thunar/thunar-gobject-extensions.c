@@ -190,3 +190,25 @@ thunar_g_app_info_equal (gpointer appinfo1,
   return g_utf8_collate (g_app_info_get_name (appinfo1),
                          g_app_info_get_name (appinfo2)) == 0;
 }
+
+/**
+ * thunar_g_object_set_guint_data
+ * @object  : The #GObject to set
+ * @key     : key for which the data should be set
+ * @data    : guint value to set as data
+ *
+ * Since it is not possible to set a plain uint to a G_OBJECT, we need to use a pointer
+ * This helper method encapsulates the process of doing so
+ **/
+void
+thunar_g_object_set_guint_data (GObject     *object,
+                                const gchar *key,
+                                guint        data)
+{
+  guint *data_ptr;
+
+  /* Not possible to set a plain guint to a G_OBJECT, we need to use a pointer */
+  data_ptr = g_malloc (sizeof (gint));
+  *data_ptr = data;
+  g_object_set_data_full (object, key, data_ptr, g_free);
+}

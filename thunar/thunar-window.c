@@ -5541,20 +5541,6 @@ thunar_window_location_toolbar_add_uca (ThunarWindow *window,
 
 
 
-static void
-toolbar_item_set_order (GtkWidget *toolbar_item,
-                        guint      item_order)
-{
-  guint *item_order_ptr;
-
-  /* Not possible to set a plain guint to a G_OBJECT, we need to use a pointer */
-  item_order_ptr = g_malloc (sizeof (gint));
-  *item_order_ptr = item_order;
-  g_object_set_data_full (G_OBJECT (toolbar_item), "default-order", item_order_ptr, g_free);
-}
-
-
-
 static GtkWidget*
 thunar_window_create_toolbar_item_from_action (ThunarWindow       *window,
                                                ThunarWindowAction  action,
@@ -5567,7 +5553,7 @@ thunar_window_create_toolbar_item_from_action (ThunarWindow       *window,
   g_object_set_data_full (G_OBJECT (toolbar_item), "icon", g_strdup (get_action_entry (action)->menu_item_icon_name), g_free);
   g_signal_connect_after (G_OBJECT (toolbar_item), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
 
-  toolbar_item_set_order (toolbar_item, item_order);
+  thunar_g_object_set_guint_data (G_OBJECT (toolbar_item), "default-order", item_order);
 
   return toolbar_item;
 }
@@ -5628,7 +5614,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   gtk_toolbar_set_show_arrow (GTK_TOOLBAR (window->location_toolbar), FALSE);
   g_object_set_data_full (G_OBJECT (tool_item), "label", g_strdup ("Location Bar"), g_free);
   g_object_set_data_full (G_OBJECT (tool_item), "icon", g_strdup(""), g_free);
-  toolbar_item_set_order (GTK_WIDGET (tool_item), item_order++);
+  thunar_g_object_set_guint_data (G_OBJECT (tool_item), "default-order", item_order++);
 
   thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_RELOAD, item_order++);
 
@@ -5636,7 +5622,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_search), "label", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_SEARCH)->menu_item_label_text), g_free);
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_search), "icon", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_SEARCH)->menu_item_icon_name), g_free);
   g_signal_connect (G_OBJECT (window->location_toolbar_item_search), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
-  toolbar_item_set_order (window->location_toolbar_item_search, item_order++);
+  thunar_g_object_set_guint_data (G_OBJECT (window->location_toolbar_item_search), "default-order", item_order++);
 
   /* add custom actions to the toolbar */
   thunar_window_location_toolbar_add_ucas (window);
