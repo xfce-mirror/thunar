@@ -207,7 +207,6 @@ thunar_g_object_set_guint_data (GObject     *object,
 {
   guint *data_ptr;
 
-  /* Not possible to set a plain guint to a G_OBJECT, we need to use a pointer */
   data_ptr = g_malloc (sizeof (gint));
   *data_ptr = data;
   g_object_set_data_full (object, key, data_ptr, g_free);
