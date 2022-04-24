@@ -39,8 +39,12 @@ G_BEGIN_DECLS;
 
 void     thunar_g_initialize_transformations (void);
 gchar*   thunar_g_strescape                  (const gchar *source);
-gboolean thunar_g_app_info_equal             (gpointer appinfo1,
-                                              gpointer appinfo2);
+gboolean thunar_g_app_info_equal             (gpointer     appinfo1,
+                                              gpointer     appinfo2);
+void     thunar_g_object_set_guint_data      (GObject     *object,
+                                              const gchar *key,
+                                              guint        data);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_GOBJECT_EXTENSIONS_H__ */
