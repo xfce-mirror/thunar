@@ -104,13 +104,12 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
 {
   GtkCellRenderer        *renderer;
   GtkWidget              *button;
-  GtkWidget              *frame;
   GtkWidget              *image;
   GtkWidget              *label;
-  GtkWidget              *grid;
   GtkWidget              *vbox;
-  GtkWidget              *swin;
+  GtkWidget              *hbox;
   GtkWidget              *vbox_buttons;
+  GtkWidget              *swin;
 
   /* grab a reference on the preferences */
   toolbar_editor->preferences = thunar_preferences_get ();
@@ -137,24 +136,21 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (toolbar_editor))), vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
-  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
-  gtk_box_pack_start (GTK_BOX (vbox), frame, TRUE, TRUE, 0);
-  gtk_widget_show (frame);
-
-  grid = gtk_grid_new ();
-  gtk_grid_set_column_spacing (GTK_GRID (grid), 6);
-  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
-  gtk_grid_set_row_homogeneous (GTK_GRID (grid), FALSE);
-  gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
-  gtk_container_add (GTK_CONTAINER (frame), grid);
-  gtk_widget_show (grid);
+  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
+  gtk_widget_show (hbox);
 
   /* create the top label for the toolbar editor dialog */
   label = gtk_label_new (_("Configure the order and visibility of toolbar items."));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_widget_set_hexpand (label, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 2, 1);
+  gtk_widget_set_vexpand (label, FALSE);
+  gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
+
+  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+  gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 6);
+  gtk_widget_show (hbox);
 
   /* create the scrolled window for the tree view */
   swin = gtk_scrolled_window_new (NULL, NULL);
@@ -162,7 +158,7 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (swin), GTK_SHADOW_IN);
   gtk_widget_set_hexpand (swin, TRUE);
   gtk_widget_set_vexpand (swin, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), swin, 0, 1, 1, 6);
+  gtk_box_pack_start (GTK_BOX (hbox), swin, TRUE, TRUE, 0);
   gtk_widget_show (swin);
 
   /* create a filter from the shared column model */
@@ -208,8 +204,7 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
 
   /* Create the buttons vbox container */
   vbox_buttons = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox), 0);
-  gtk_grid_attach (GTK_GRID (grid), vbox_buttons, 1, 1, 1, 6);
+  gtk_box_pack_start (GTK_BOX (hbox), vbox_buttons, FALSE, FALSE, 0);
   gtk_widget_set_vexpand(vbox_buttons, FALSE);
   gtk_widget_show (vbox_buttons);
 
@@ -241,10 +236,6 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   g_signal_connect_swapped (G_OBJECT (button), "clicked", G_CALLBACK (thunar_toolbar_editor_use_defaults), toolbar_editor);
   gtk_box_pack_start (GTK_BOX (vbox_buttons), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
-
-  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
-  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
-  gtk_widget_show (frame);
 
   /* grab focus to the tree view */
   gtk_widget_grab_focus (toolbar_editor->tree_view);
