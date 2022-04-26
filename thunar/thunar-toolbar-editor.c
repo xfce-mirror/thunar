@@ -132,20 +132,16 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   gtk_widget_show (button);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox), 6);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox), 10);
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (toolbar_editor))), vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
-
-  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
-  gtk_widget_show (hbox);
 
   /* create the top label for the toolbar editor dialog */
   label = gtk_label_new (_("Configure the order and visibility of toolbar items."));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_widget_set_hexpand (label, TRUE);
   gtk_widget_set_vexpand (label, FALSE);
-  gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
@@ -205,7 +201,7 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   /* Create the buttons vbox container */
   vbox_buttons = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   gtk_box_pack_start (GTK_BOX (hbox), vbox_buttons, FALSE, FALSE, 0);
-  gtk_widget_set_vexpand(vbox_buttons, FALSE);
+  gtk_widget_set_vexpand (vbox_buttons, FALSE);
   gtk_widget_show (vbox_buttons);
 
   /* create the "Move Up" button */
@@ -213,7 +209,6 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   g_signal_connect_swapped (G_OBJECT (toolbar_editor->up_button), "clicked", G_CALLBACK (thunar_toolbar_editor_move_up), toolbar_editor);
   gtk_box_pack_start (GTK_BOX (vbox_buttons), toolbar_editor->up_button, FALSE, FALSE, 0);
   gtk_widget_show (toolbar_editor->up_button);
-
 
   image = gtk_image_new_from_icon_name ("go-up-symbolic", GTK_ICON_SIZE_BUTTON);
   gtk_button_set_always_show_image (GTK_BUTTON (toolbar_editor->up_button), TRUE);
