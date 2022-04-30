@@ -2837,22 +2837,17 @@ thunar_window_install_sidepane (ThunarWindow *window,
 static gchar*
 thunar_window_bookmark_get_accel_path (GFile *bookmark_file)
 {
-  GChecksum    *checksum;
   gchar        *uri;
   gchar        *accel_path;
   const gchar  *unique_name;
 
   _thunar_return_val_if_fail (G_IS_FILE (bookmark_file), NULL);
 
-  /* create unique id based on the uri */
+  /* create accel path based on the uri */
   uri = g_file_get_uri (bookmark_file);
-  checksum = g_checksum_new (G_CHECKSUM_MD5);
-  g_checksum_update (checksum, (const guchar *) uri, strlen (uri));
-  unique_name = g_checksum_get_string (checksum);
-  accel_path = g_strconcat("<Actions>/ThunarBookmarks/", unique_name, NULL);
+  accel_path = g_strconcat("<Actions>/ThunarBookmarks/", uri, NULL);
 
   g_free (uri);
-  g_checksum_free (checksum);
   return accel_path;
 }
 
