@@ -357,7 +357,7 @@ thunar_menu_add_sections (ThunarMenu         *menu,
 
   if (menu_sections & THUNAR_MENU_SECTION_PROPERTIES)
     {
-      thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_CHOOSE_HL_COLOR, FALSE);
+      thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_CHOOSE_TAG_COLOR, FALSE);
       thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_PROPERTIES, FALSE);
     }
 
