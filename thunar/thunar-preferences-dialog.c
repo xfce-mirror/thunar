@@ -1334,6 +1334,38 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_container_add (GTK_CONTAINER (frame), grid);
   gtk_widget_show (grid);
 
+  /*
+   Misc
+  */
+  label = gtk_label_new (_("Misc"));
+  vbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "border-width", 12, "spacing", 18, NULL);
+  gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
+  gtk_widget_show (label);
+  gtk_widget_show (vbox);
+
+  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_IN, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
+  gtk_widget_show (frame);
+
+  grid = xfce_settings_editor_new ("thunar", 14,
+                                   "/misc-always-show-tabs",
+                                   "/misc-case-sensitive",
+                                   "/misc-full-path-in-tab-title",
+                                   "/misc-full-path-in-window-title",
+                                   "/misc-horizontal-wheel-navigates",
+                                   "/misc-image-size-in-statusbar",
+                                   "/misc-remember-geometry",
+                                   "/misc-small-toolbar-icons",
+                                   "/misc-tab-close-middle-click",
+                                   "/misc-exec-shell-scripts-by-default",
+                                   "/misc-switch-to-new-tab",
+                                   "/misc-vertical-split-pane",
+                                   "/misc-compact-view-max-chars",
+                                   "/misc-confirm-close-multiple-tabs"
+  );
+  gtk_container_add (GTK_CONTAINER (frame), grid);
+  gtk_widget_show (grid);
+
   /* cleanup */
   g_free (path);
 }
