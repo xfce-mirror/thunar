@@ -364,7 +364,10 @@ thunar_menu_add_sections (ThunarMenu         *menu,
     }
 
   if (menu_sections & THUNAR_MENU_SECTION_PROPERTIES)
+    {
       thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_PROPERTIES, FALSE);
+      thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_HLCOLOR, FALSE);
+    }
 
   return TRUE;
 }
