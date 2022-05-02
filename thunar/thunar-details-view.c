@@ -112,6 +112,13 @@ static void         thunar_details_view_disconnect_accelerators (ThunarStandardV
 static void         thunar_details_view_append_menu_items       (ThunarStandardView     *standard_view,
                                                                  GtkMenu                *menu,
                                                                  GtkAccelGroup          *accel_group);
+static void         thunar_details_view_cell_layout_data_func   (GtkCellLayout          *layout,
+                                                                 GtkCellRenderer        *cell,
+                                                                 GtkTreeModel           *model,
+                                                                 GtkTreeIter            *iter,
+                                                                 gpointer                data);
+static void         thunar_details_view_highlight_option_changed(ThunarDetailsView      *details_view);
+
 
 
 struct _ThunarDetailsViewClass
@@ -140,6 +147,7 @@ struct _ThunarDetailsView
   /* event source id for thunar_details_view_zoom_level_changed_reload_fixed_height */
   guint idle_id;
 
+  gulong             highlight_option_signal;
 };
 
 
@@ -334,6 +342,11 @@ thunar_details_view_init (ThunarDetailsView *details_view)
       gtk_tree_view_column_set_expand (details_view->columns[THUNAR_COLUMN_NAME], TRUE);
     }
 
+  details_view->highlight_option_signal =
+    g_signal_connect_swapped (THUNAR_STANDARD_VIEW (details_view)->preferences, "notify::misc-highlighting-enabled",
+                              G_CALLBACK (thunar_details_view_highlight_option_changed), details_view);
+  thunar_details_view_highlight_option_changed (details_view);
+
   /* release the shared text renderers */
   g_object_unref (G_OBJECT (right_aligned_renderer));
   g_object_unref (G_OBJECT (left_aligned_renderer));
@@ -401,6 +414,9 @@ thunar_details_view_finalize (GObject *object)
 
   if (details_view->idle_id)
     g_source_remove (details_view->idle_id);
+
+  if (details_view->highlight_option_signal != 0)
+    g_signal_handler_disconnect (THUNAR_STANDARD_VIEW (details_view)->preferences, details_view->highlight_option_signal);
 
   (*G_OBJECT_CLASS (thunar_details_view_parent_class)->finalize) (object);
 }
@@ -1148,3 +1164,39 @@ thunar_details_view_set_location_column_visible     (ThunarDetailsView *details_
   thunar_column_model_set_column_visible (details_view->column_model, THUNAR_COLUMN_LOCATION, visible);
 }
 
+
+
+static void
+thunar_details_view_cell_layout_data_func (GtkCellLayout   *layout,
+                                           GtkCellRenderer *cell,
+                                           GtkTreeModel    *model,
+                                           GtkTreeIter     *iter,
+                                           gpointer         data)
+{
+  ThunarFile  *file ;
+  const gchar *color = NULL;
+
+  file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
+  color = thunar_file_get_metadata_setting (file, "highlight-color");
+  g_object_set (G_OBJECT (cell), "cell-background", color, NULL);
+  g_object_unref (file);
+}
+
+
+
+static void
+thunar_details_view_highlight_option_changed (ThunarDetailsView *details_view)
+{
+  gboolean            show_highlight;
+  GtkTreeCellDataFunc function = NULL;
+
+  g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences), "misc-highlighting-enabled", &show_highlight, NULL);
+
+  if (show_highlight)
+    function = (GtkTreeCellDataFunc) thunar_details_view_cell_layout_data_func;
+
+  /* set the data functions for the respective renderers */
+  gtk_tree_view_column_set_cell_data_func (GTK_TREE_VIEW_COLUMN (details_view->columns[THUNAR_COLUMN_NAME]),
+                                           THUNAR_STANDARD_VIEW (details_view)->name_renderer,
+                                           function, NULL, NULL);
+}
