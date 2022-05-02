@@ -25,7 +25,7 @@
 
 
 
-static AtkObject   *thunar_compact_view_get_accessible (GtkWidget               *widget);
+static AtkObject   *thunar_compact_view_get_accessible (GtkWidget       *widget);
 
 
 
