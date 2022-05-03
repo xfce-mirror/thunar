@@ -2474,8 +2474,14 @@ thunar_file_get_content_type (ThunarFile *file)
               gfile = g_file_new_for_path (thunar_file_get_symlink_target (file));
               if (!g_file_query_exists (gfile, NULL))
                 {
-                  file->content_type = g_strdup ("inode/symlink");
-                  goto bailout;
+                  /* the symlink might be relative, so constructing it with the symlink's path */
+                  gfile = g_file_new_build_filename (g_file_get_path (g_file_get_parent (file->gfile)), "/", g_file_get_basename (gfile), NULL);
+
+                  if (!g_file_query_exists (gfile, NULL))
+                    {
+                      file->content_type = g_strdup ("inode/symlink");
+                      goto bailout;
+                    }
                 }
             }
           else
