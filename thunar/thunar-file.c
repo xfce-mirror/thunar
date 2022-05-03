@@ -2533,12 +2533,50 @@ thunar_file_load_content_type (ThunarFile *file)
 const gchar *
 thunar_file_get_symlink_target (const ThunarFile *file)
 {
+  const gchar *path;
+  GFile       *parent;
+  GFile       *symlink;
+  GFile       *relative_symlink;
+
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
   if (file->info == NULL)
     return NULL;
 
-  return g_file_info_get_symlink_target (file->info);
+  path = g_file_info_get_symlink_target (file->info);
+
+  if (path == NULL)
+    return NULL;
+    
+  symlink = g_file_new_for_path (path);
+
+  /* check if target exists */
+  if (g_file_query_exists (symlink, NULL))
+    {
+      g_object_unref (symlink);
+      return path;
+    }
+
+  /* Maybe the symlink is relative */
+  parent = g_file_get_parent (file->gfile);
+  relative_symlink = g_file_new_build_filename (g_file_get_path (parent), "/", g_file_get_basename (symlink), NULL);
+  path = g_file_get_path (relative_symlink);
+
+  if (g_file_query_exists (relative_symlink, NULL))
+    {
+      g_object_unref (relative_symlink);
+
+      /* save this relative target (?) */
+      g_file_info_set_symlink_target (file->info, path);
+
+      return path;
+    }
+
+  /* caching broken symlink status (?) further get_symlink_target should return NULL which is handled at line 2548*/
+  g_file_info_set_symlink_target (file->info, NULL);
+
+  /* broken symlink */
+  return NULL;
 }
 
 
