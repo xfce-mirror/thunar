@@ -935,7 +935,10 @@ thunar_list_model_get_value (GtkTreeModel *model,
 
       if (G_UNLIKELY (thunar_file_is_symlink (file)))
         {
-          g_value_take_string (value, g_strdup_printf (_("link to %s"), content_type_desc));
+          if (G_UNLIKELY (g_str_equal (content_type, "inode/symlink")))
+            g_value_take_string (value, g_strdup ("broken link"));
+          else
+            g_value_take_string (value, g_strdup_printf (_("link to %s"), content_type_desc));
           g_free (content_type_desc);
         }
       else
