@@ -2533,50 +2533,12 @@ thunar_file_load_content_type (ThunarFile *file)
 const gchar *
 thunar_file_get_symlink_target (const ThunarFile *file)
 {
-  const gchar *target_path;
-  GFile       *file_parent_gfile;
-  GFile       *target_gfile;
-  GFile       *relative_symlink;
-
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-
+  
   if (file->info == NULL)
     return NULL;
 
-  target_path = g_file_info_get_symlink_target (file->info);
-
-  if (target_path == NULL)
-    return NULL;
-    
-  target_gfile = g_file_new_for_path (target_path);
-
-  /* check if target exists */
-  if (g_file_query_exists (target_gfile, NULL))
-    {
-      g_object_unref (target_gfile);
-      return target_path;
-    }
-
-  /* Maybe the symlink is relative */
-  file_parent_gfile = g_file_get_parent (file->gfile);
-  relative_symlink = g_file_new_build_filename (g_file_get_path (file_parent_gfile), "/", g_file_get_basename (target_gfile), NULL);
-  target_path = g_file_get_path (relative_symlink);
-
-  if (g_file_query_exists (relative_symlink, NULL))
-    {
-      g_object_unref (relative_symlink);
-
-      /* save this relative target (?) */
-      g_file_info_set_symlink_target (file->info, target_path);
-
-      return target_path;
-    }
-
-  /* caching broken symlink status (?) further get_symlink_target should return NULL which is handled at line 2548*/
-  g_file_info_set_symlink_target (file->info, NULL);
-
-  /* broken symlink */
-  return NULL;
+  return g_file_info_get_symlink_target (file->info);
 }
 
 
