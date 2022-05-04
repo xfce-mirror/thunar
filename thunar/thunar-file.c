@@ -2534,7 +2534,7 @@ const gchar *
 thunar_file_get_symlink_target (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-
+  
   if (file->info == NULL)
     return NULL;
 
