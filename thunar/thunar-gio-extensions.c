@@ -148,6 +148,38 @@ thunar_g_file_new_for_bookmarks (void)
 
 
 
+GFile *
+thunar_g_file_new_for_symlink_target (GFile *file)
+{
+  GFileInfo   *info;
+  GFile       *target_gfile;
+  const gchar *target_path;
+  GError      *error = NULL;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+
+  /* Intialise the GFileInfo for querying symlink target */
+  info = g_file_query_info (file,
+                            G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET,
+                            G_FILE_QUERY_INFO_NONE,
+                            NULL, &error);
+
+  if (info == NULL)
+    return NULL;
+
+  target_path = g_file_info_get_symlink_target (info);
+
+  /* if target_path is an absolute path, the target_gfile is created using only the target_path 
+  ** else if target_path is relative then it is resolved with respect to the parent of the symlink (file) */
+  target_gfile = g_file_resolve_relative_path (g_file_get_parent (file), target_path);
+
+  g_object_unref (info);
+  
+  return target_gfile;
+}
+
+
+
 gboolean
 thunar_g_file_is_root (GFile *file)
 {
