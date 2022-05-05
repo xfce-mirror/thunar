@@ -147,12 +147,21 @@ thunar_g_file_new_for_bookmarks (void)
 }
 
 
-
+/**
+ * thunar_g_file_new_for_symlink_target:
+ * @file : a #GFile.
+ *
+ * Returns the symlink target of @file as a GFile.
+ *
+ * Return value: A GFile on success and %NULL on failure.
+ *   The caller of the method takes ownership of the GFile, and is responsible for freeing it using g_object_unref.
+ **/
 GFile *
 thunar_g_file_new_for_symlink_target (GFile *file)
 {
   GFileInfo   *info;
   GFile       *target_gfile;
+  GFile       *file_parent;
   const gchar *target_path;
   GError      *error = NULL;
 
@@ -166,19 +175,29 @@ thunar_g_file_new_for_symlink_target (GFile *file)
 
   if (info == NULL)
     {
-      if (error != NULL)
-        g_error_free (error);
+      g_warning ("Symlink target loading failed for %s: %s",
+                 g_file_get_path (file),
+                 error->message);
+      g_error_free (error);
       return NULL;
     }
 
   target_path = g_file_info_get_symlink_target (info);
 
-  /* if target_path is an absolute path, the target_gfile is created using only the target_path 
-  ** else if target_path is relative then it is resolved with respect to the parent of the symlink (file) */
-  target_gfile = g_file_resolve_relative_path (g_file_get_parent (file), target_path);
+  if (target_path == NULL)
+    return NULL;
 
+  file_parent = g_file_get_parent (file);
+
+  /* if target_path is an absolute path, the target_gfile is created using only the target_path
+  ** else if target_path is relative then it is resolved with respect to the parent of the symlink (@file) */
+  target_gfile = g_file_resolve_relative_path (file_parent, target_path);
+
+  /* free allocated resources */
+  if (file_parent != NULL)
+    g_object_unref (file_parent);
   g_object_unref (info);
-  
+
   return target_gfile;
 }
 
