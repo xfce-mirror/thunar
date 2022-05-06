@@ -2470,20 +2470,7 @@ thunar_file_get_content_type (ThunarFile *file)
           is_symlink = thunar_file_is_symlink (file);
 
           if (G_UNLIKELY (is_symlink))
-            {
-              gfile = g_file_new_for_path (thunar_file_get_symlink_target (file));
-              if (!g_file_query_exists (gfile, NULL))
-                {
-                  /* the symlink might be relative, so constructing it with the symlink's path */
-                  gfile = g_file_new_build_filename (g_file_get_path (g_file_get_parent (file->gfile)), "/", g_file_get_basename (gfile), NULL);
-
-                  if (!g_file_query_exists (gfile, NULL))
-                    {
-                      file->content_type = g_strdup ("inode/symlink");
-                      goto bailout;
-                    }
-                }
-            }
+            gfile = thunar_g_file_new_for_symlink_target (thunar_file_get_file (file));
           else
             gfile = file->gfile;
 
@@ -2510,6 +2497,8 @@ thunar_file_get_content_type (ThunarFile *file)
             }
           else
             {
+              if (is_symlink)
+                file->content_type = strdup ("inode/symlink");
               g_warning ("Content type loading failed for %s: %s",
                          thunar_file_get_display_name (file),
                          err->message);
