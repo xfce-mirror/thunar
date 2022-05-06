@@ -2440,6 +2440,8 @@ thunar_file_get_user (const ThunarFile *file)
 const gchar *
 thunar_file_get_content_type (ThunarFile *file)
 {
+  gboolean     is_symlink;
+  GFile       *gfile;
   GFileInfo   *info;
   GError      *err = NULL;
   const gchar *content_type = NULL;
@@ -2465,12 +2467,22 @@ thunar_file_get_content_type (ThunarFile *file)
         }
       else
         {
+          is_symlink = thunar_file_is_symlink (file);
+
+          if (G_UNLIKELY (is_symlink))
+            gfile = thunar_g_file_new_for_symlink_target (thunar_file_get_file (file));
+          else
+            gfile = file->gfile;
+
           /* async load the content-type */
-          info = g_file_query_info (file->gfile,
+          info = g_file_query_info (gfile,
                                     G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
                                     G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
                                     G_FILE_QUERY_INFO_NONE,
                                     NULL, &err);
+
+          if (G_UNLIKELY (is_symlink))
+            g_object_unref (gfile);
 
           if (G_LIKELY (info != NULL))
             {
@@ -2485,6 +2497,8 @@ thunar_file_get_content_type (ThunarFile *file)
             }
           else
             {
+              if (is_symlink)
+                file->content_type = strdup ("inode/symlink");
               g_warning ("Content type loading failed for %s: %s",
                          thunar_file_get_display_name (file),
                          err->message);
