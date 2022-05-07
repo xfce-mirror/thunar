@@ -103,6 +103,7 @@ typedef enum /*< flags >*/
 #define THUNAR_FILE_EMBLEM_NAME_CANT_WRITE    "emblem-nowrite"
 #define THUNAR_FILE_EMBLEM_NAME_DESKTOP       "emblem-desktop"
 
+#define DEFAULT_CONTENT_TYPE "application/octet-stream"
 
 
 /**
