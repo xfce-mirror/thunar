@@ -3022,6 +3022,11 @@ thunar_window_start_open_location (ThunarWindow *window,
       thunar_window_action_detailed_view (window);
       thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), view_type); /* save it in the new view */
 
+      /* if directory specific settings are enabled, save the view type for this directory */
+      if (window->directory_specific_settings)
+        thunar_file_set_metadata_setting (window->current_directory, "view-type", g_type_name (view_type), TRUE);
+      /* end of workaround */
+
       /* temporary show the location toolbar, even if it is normally hidden */
       gtk_widget_show (window->location_toolbar);
       thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
