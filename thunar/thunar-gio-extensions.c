@@ -148,6 +148,62 @@ thunar_g_file_new_for_bookmarks (void)
 
 
 
+/**
+ * thunar_g_file_new_for_symlink_target:
+ * @file : a #GFile.
+ *
+ * Returns the symlink target of @file as a GFile.
+ *
+ * Return value: A GFile on success and %NULL on failure.
+ *   The caller of the method takes ownership of the GFile, and is responsible for freeing it using g_object_unref.
+ **/
+GFile *
+thunar_g_file_new_for_symlink_target (GFile *file)
+{
+  const gchar *target_path;
+  const gchar *file_path;
+  GFile       *file_parent = NULL;
+  GFile       *target_gfile = NULL;
+  GFileInfo   *info = NULL;
+  GError      *error = NULL;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+
+  /* Intialise the GFileInfo for querying symlink target */
+  info = g_file_query_info (file,
+                            G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET,
+                            G_FILE_QUERY_INFO_NONE,
+                            NULL, &error);
+
+  if (info == NULL)
+    {
+      file_path = g_file_get_path (file);
+      g_warning ("Symlink target loading failed for %s: %s",
+                 file_path,
+                 error->message);
+      g_free ((void *) file_path);
+      g_error_free (error);
+      return NULL;
+    }
+
+  target_path = g_file_info_get_symlink_target (info);
+  file_parent = g_file_get_parent (file);
+
+  /* if target_path is an absolute path, the target_gfile is created using only the target_path
+  ** else if target_path is relative then it is resolved with respect to the parent of the symlink (@file) */
+  if (G_LIKELY (target_path != NULL && file_parent != NULL))
+    target_gfile = g_file_resolve_relative_path (file_parent, target_path);
+
+  /* free allocated resources */
+  if (G_LIKELY (file_parent != NULL))
+    g_object_unref (file_parent);
+  g_object_unref (info);
+
+  return target_gfile;
+}
+
+
+
 gboolean
 thunar_g_file_is_root (GFile *file)
 {
