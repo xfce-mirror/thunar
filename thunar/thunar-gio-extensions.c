@@ -154,8 +154,7 @@ thunar_g_file_new_for_bookmarks (void)
  *
  * Returns the symlink target of @file as a GFile.
  *
- * Return value: A GFile on success and %NULL on failure.
- *   The caller of the method takes ownership of the GFile, and is responsible for freeing it using g_object_unref.
+ * Return value: (nullable) (transfer full): A #GFile on success and %NULL on failure.
  **/
 GFile *
 thunar_g_file_new_for_symlink_target (GFile *file)
@@ -189,20 +188,15 @@ thunar_g_file_new_for_symlink_target (GFile *file)
   target_path = g_file_info_get_symlink_target (info);
   file_parent = g_file_get_parent (file);
 
-  if (target_path == NULL || file_parent == NULL)
-    goto bailout;
-
   /* if target_path is an absolute path, the target_gfile is created using only the target_path
   ** else if target_path is relative then it is resolved with respect to the parent of the symlink (@file) */
-  target_gfile = g_file_resolve_relative_path (file_parent, target_path);
-
-  bailout:
+  if (G_LIKELY (target_path != NULL && file_parent != NULL))
+    target_gfile = g_file_resolve_relative_path (file_parent, target_path);
 
   /* free allocated resources */
-  if (file_parent != NULL)
+  if (G_LIKELY (file_parent != NULL))
     g_object_unref (file_parent);
-  if (info != NULL)
-    g_object_unref (info);
+  g_object_unref (info);
 
   return target_gfile;
 }

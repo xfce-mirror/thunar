@@ -781,8 +781,8 @@ thunar_list_model_get_value (GtkTreeModel *model,
   const gchar *real_name;
   ThunarUser  *user;
   ThunarFile  *file;
-  gchar       *content_type_desc;
   GFile       *g_file;
+  gchar       *content_type_desc;
   gchar       *str;
   gchar       *uri;
 
@@ -918,31 +918,26 @@ thunar_list_model_get_value (GtkTreeModel *model,
 
     case THUNAR_COLUMN_TYPE:
       g_value_init (value, G_TYPE_STRING);
-
       device_type = thunar_file_get_device_type (file);
       if (device_type != NULL)
         {
           g_value_take_string (value, g_strdup (device_type));
           break;
         }
-
       content_type = thunar_file_get_content_type (file);
-
-      if (content_type == NULL)
-        break;
-
-      content_type_desc = g_content_type_get_description (content_type);
-
-      if (G_UNLIKELY (thunar_file_is_symlink (file)))
+      if (content_type != NULL)
         {
-          if (G_UNLIKELY (g_str_equal (content_type, "inode/symlink")))
-            g_value_take_string (value, g_strdup ("broken link"));
+          content_type_desc = g_content_type_get_description (content_type);
+          /* if file is symlink, then append " (link)" to the description */
+          if (G_UNLIKELY (thunar_file_is_symlink (file)))
+            {
+              g_value_take_string (value, g_strdup_printf (_("%s (link)"), content_type_desc));
+              g_free (content_type_desc);
+            }
           else
-            g_value_take_string (value, g_strdup_printf (_("link to %s"), content_type_desc));
-          g_free (content_type_desc);
+            g_value_take_string (value, content_type_desc);
+          break;
         }
-      else
-        g_value_take_string (value, content_type_desc);
       break;
 
     case THUNAR_COLUMN_FILE:
@@ -1857,23 +1852,28 @@ sort_by_type (const ThunarFile *a,
   gint         result;
 
   /* we alter the description of symlinks here because they are
-   * displayed as "link to ..." in the detailed list view as well */
+   * displayed as "... (link)" in the detailed list view as well */
 
+  /* fetch the content types */
   content_type_a = thunar_file_get_content_type (THUNAR_FILE (a));
+  content_type_b = thunar_file_get_content_type (THUNAR_FILE (b));
+    
+  /* fetch the descriptions */
   description_a = g_content_type_get_description (content_type_a);
-  if (thunar_file_is_symlink (a))
+  description_b = g_content_type_get_description (content_type_b);
+
+  /* if files are symlinks, append " (link)" to their descriptions */
+  if (thunar_file_is_symlink (THUNAR_FILE (a)))
     {
       temp = description_a;
-      description_a = g_strdup_printf (_("link to %s"), description_a);
+      description_a = g_strdup_printf ("%s (link)", description_a);
       g_free (temp);
     }
 
-  content_type_b = thunar_file_get_content_type (THUNAR_FILE (b));
-  description_b = g_content_type_get_description (content_type_b);
-  if (thunar_file_is_symlink (b))
+  if (thunar_file_is_symlink (THUNAR_FILE (b)))
     {
       temp = description_b;
-      description_b = g_strdup_printf (_("link to %s"), description_b);
+      description_b = g_strdup_printf ("%s (link)", description_b);
       g_free (temp);
     }
 
