@@ -943,15 +943,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
 
-  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
-  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
-  gtk_widget_show (frame);
-
   if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
     {
-      /* new grid */
-      row = 0;
-
       frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
       gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
       gtk_widget_show (frame);
@@ -960,6 +953,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
       gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
       gtk_frame_set_label_widget (GTK_FRAME (frame), label);
       gtk_widget_show (label);
+
+      /* new grid */
+      row = 0;
 
       grid = gtk_grid_new ();
       gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
