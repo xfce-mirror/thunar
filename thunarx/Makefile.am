@@ -3,6 +3,7 @@ AM_CPPFLAGS =								\
 	-DG_LOG_DOMAIN=\"thunarx\"					\
 	-DTHUNARX_COMPILATION						\
 	-DTHUNARX_DIRECTORY=\"$(libdir)/thunarx-$(THUNARX_VERSION_API)\"	\
+	-DTHUNARX_ENABLE_CUSTOM_DIRS=\"$(CUSTOM_THUNARX_DIRS_ENABLED)\"	\
 	$(PLATFORM_CPPFLAGS)
 
 libthunarx_headers =							\
