@@ -142,7 +142,6 @@ static guint              file_signals[LAST_SIGNAL];
 #define DEFAULT_CONTENT_TYPE "application/octet-stream"
 
 
-
 typedef enum
 {
   THUNAR_FILE_FLAG_THUMB_MASK     = 0x03,   /* storage for ThunarFileThumbState */
@@ -2442,7 +2441,7 @@ thunar_file_get_content_type (ThunarFile *file)
 {
   gboolean     is_symlink;
   GFile       *gfile;
-  GFileInfo   *info;
+  GFileInfo   *info = NULL;
   GError      *err = NULL;
   const gchar *content_type = NULL;
 
@@ -2472,17 +2471,18 @@ thunar_file_get_content_type (ThunarFile *file)
           if (G_UNLIKELY (is_symlink))
             gfile = thunar_g_file_new_for_symlink_target (thunar_file_get_file (file));
           else
-            gfile = file->gfile;
+            gfile = g_object_ref (file->gfile);
 
           /* async load the content-type */
-          info = g_file_query_info (gfile,
-                                    G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
-                                    G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
-                                    G_FILE_QUERY_INFO_NONE,
-                                    NULL, &err);
-
-          if (G_UNLIKELY (is_symlink))
-            g_object_unref (gfile);
+          if (G_LIKELY (gfile != NULL))
+            {
+              info = g_file_query_info (gfile,
+                                        G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
+                                        G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+                                        G_FILE_QUERY_INFO_NONE,
+                                        NULL, &err);
+              g_object_unref (gfile);
+            }
 
           if (G_LIKELY (info != NULL))
             {
@@ -2497,8 +2497,6 @@ thunar_file_get_content_type (ThunarFile *file)
             }
           else
             {
-              if (is_symlink)
-                file->content_type = strdup ("inode/symlink");
               g_warning ("Content type loading failed for %s: %s",
                          thunar_file_get_display_name (file),
                          err->message);

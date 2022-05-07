@@ -1091,20 +1091,18 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   content_type = thunar_file_get_content_type (file);
   if (content_type != NULL)
     {
-      if (G_UNLIKELY (g_content_type_equals (content_type, "inode/symlink")))
-        str = g_strdup (_("broken link"));
-      else
-        str = content_type_desc = g_content_type_get_description (content_type);
-
-      if (G_UNLIKELY (thunar_file_is_symlink (file)) && content_type_desc)
+      content_type_desc = g_content_type_get_description (content_type);
+      /* if file is symlink, then append " (link)" */
+      if (thunar_file_is_symlink (file))
         {
-          str = g_strdup_printf (_("link to %s"), content_type_desc);
-          g_free (content_type_desc);
+          str = content_type_desc;
+          /* "... (link)" instead of "link to ..." for consistency with list-view */
+          content_type_desc = g_strdup_printf (_("%s (link)"), content_type_desc);
+          g_free (str);
         }
-
       gtk_widget_set_tooltip_text (dialog->kind_ebox, content_type);
-      gtk_label_set_text (GTK_LABEL (dialog->kind_label), str);
-      g_free (str);
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), content_type_desc);
+      g_free (content_type_desc);
     }
   else
     {
