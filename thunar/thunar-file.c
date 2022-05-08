@@ -2498,6 +2498,8 @@ thunar_file_get_content_type (ThunarFile *file)
             }
           else
             {
+              if (G_UNLIKELY (err != NULL && err->code == G_IO_ERROR_NOT_FOUND))
+                file->content_type = g_strdup ("inode/symlink");
               g_warning ("Content type loading failed for %s: %s",
                          thunar_file_get_display_name (file),
                          err->message);
