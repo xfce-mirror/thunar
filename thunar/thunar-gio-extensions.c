@@ -160,7 +160,7 @@ GFile *
 thunar_g_file_new_for_symlink_target (GFile *file)
 {
   const gchar *target_path;
-  const gchar *file_path;
+  gchar       *file_path;
   GFile       *file_parent = NULL;
   GFile       *target_gfile = NULL;
   GFileInfo   *info = NULL;
@@ -180,7 +180,7 @@ thunar_g_file_new_for_symlink_target (GFile *file)
       g_warning ("Symlink target loading failed for %s: %s",
                  file_path,
                  error->message);
-      g_free ((void *) file_path);
+      g_free (file_path);
       g_error_free (error);
       return NULL;
     }
