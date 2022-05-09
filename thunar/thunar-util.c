@@ -766,3 +766,49 @@ thunar_util_is_a_search_query (const gchar *string)
 {
   return strncmp (string, SEARCH_PREFIX, strlen (SEARCH_PREFIX)) == 0;
 }
+
+
+
+/**
+ * thunar_util_strjoin_list:
+ * @data      : list of strings which needs to be appended.
+ * @separator : text which needs to be added as a seperator
+ *
+ * Joins a number of strings together to form one long string, with the optional separator
+ * inserted between each of them. It skips all the NULL values passed in the list. The returned
+ * string should be freed with g_free().
+ * Similar to g_strjoin().
+ *
+ * The caller is responsible to free the returned text using g_free() when it is no longer needed
+ *
+ * Return value: the concatenated string
+ **/
+gchar*
+thunar_util_strjoin_list (GList       *string_list,
+                          const gchar *separator)
+{
+  GList *lp;
+  gchar *joined_string = NULL;
+  gchar *temp_string;
+
+  for (lp = string_list; lp != NULL; lp = lp->next)
+    {
+      if (xfce_str_is_empty ((gchar *) lp->data))
+        continue;
+
+      if (joined_string == NULL)
+        {
+          joined_string = g_strdup (lp->data);
+        }
+      else
+        {
+          temp_string = g_strjoin (separator, joined_string, lp->data, NULL);
+          g_free (joined_string);
+          joined_string = temp_string;
+        }
+    }
+  if (joined_string == NULL)
+    return g_strdup ("");
+  else
+    return joined_string;
+}
