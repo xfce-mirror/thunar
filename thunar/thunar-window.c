@@ -3022,6 +3022,11 @@ thunar_window_start_open_location (ThunarWindow *window,
       thunar_window_action_detailed_view (window);
       thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), view_type); /* save it in the new view */
 
+      /* if directory specific settings are enabled, save the view type for this directory */
+      if (window->directory_specific_settings)
+        thunar_file_set_metadata_setting (window->current_directory, "view-type", g_type_name (view_type), TRUE);
+      /* end of workaround */
+
       /* temporary show the location toolbar, even if it is normally hidden */
       gtk_widget_show (window->location_toolbar);
       thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
@@ -3099,6 +3104,22 @@ thunar_window_update_search (ThunarWindow *window)
 
 
 
+static gboolean
+thunar_window_revert_view_type_idle (ThunarWindow *window)
+{/* null check for the same reason as thunar_standard_view_set_searching */
+  if (window->view != NULL)
+    {
+      if (thunar_standard_view_get_saved_view_type (THUNAR_STANDARD_VIEW (window->view)) != 0)
+        thunar_window_action_view_changed (window, thunar_standard_view_get_saved_view_type (THUNAR_STANDARD_VIEW (window->view)));
+
+      thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), 0);
+    }
+
+  return G_SOURCE_REMOVE;
+}
+
+
+
 gboolean
 thunar_window_action_cancel_search (ThunarWindow *window)
 {
@@ -3121,14 +3142,7 @@ thunar_window_action_cancel_search (ThunarWindow *window)
 
   window->is_searching = FALSE;
 
-  /* null check for the same reason as thunar_standard_view_set_searching */
-  if (window->view != NULL)
-    {
-      if (thunar_standard_view_get_saved_view_type (THUNAR_STANDARD_VIEW (window->view)) != 0)
-        thunar_window_action_view_changed (window, thunar_standard_view_get_saved_view_type (THUNAR_STANDARD_VIEW (window->view)));
-
-      thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), 0);
-    }
+  g_idle_add (thunar_window_revert_view_type_idle, window);
 
   g_signal_handlers_block_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_search), FALSE);
