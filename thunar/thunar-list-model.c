@@ -2843,15 +2843,15 @@ thunar_list_model_get_statusbar_text_for_files (ThunarListModel *store,
                                                 GList           *files,
                                                 gboolean         show_file_size_binary_format)
 {
-  guint64            size_summary = 0;
-  gint               folder_count = 0;
-  gint               non_folder_count = 0;
+  guint64            size_summary       = 0;
+  gint               folder_count       = 0;
+  gint               non_folder_count   = 0;
   GList             *lp;
-  GList             *text_list = NULL;
-  gchar             *size_string = NULL;
-  gchar             *temp_string = NULL;
-  gchar             *folder_text = NULL;
-  gchar             *non_folder_text = NULL;
+  GList             *text_list          = NULL;
+  gchar             *size_string        = NULL;
+  gchar             *temp_string        = NULL;
+  gchar             *folder_text        = NULL;
+  gchar             *non_folder_text    = NULL;
   ThunarPreferences *preferences;
   guint              active;
   guint64            last_modified_date = 0;
@@ -2971,9 +2971,9 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
   ThunarFile        *file;
   guint64            size;
   GList             *lp;
-  GList             *text_list = NULL;
-  gchar             *temp_string = NULL;
-  gchar             *text = "";
+  GList             *text_list      = NULL;
+  gchar             *temp_string    = NULL;
+  gchar             *text           = "";
   gint               height;
   gint               width;
   GSequenceIter     *row;
