@@ -1007,6 +1007,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   gchar             *display_name;
   gchar             *fs_string;
   gchar             *str;
+  gchar             *content_type_desc = NULL;
   gchar             *volume_name;
   gchar             *volume_id;
   gchar             *volume_label;
@@ -1090,15 +1091,10 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   content_type = thunar_file_get_content_type (file);
   if (content_type != NULL)
     {
-      if (G_UNLIKELY (g_content_type_equals (content_type, "inode/symlink")))
-        str = g_strdup (_("broken link"));
-      else if (G_UNLIKELY (thunar_file_is_symlink (file)))
-        str = g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (file));
-      else
-        str = g_content_type_get_description (content_type);
+      content_type_desc = thunar_file_get_content_type_desc (file);
       gtk_widget_set_tooltip_text (dialog->kind_ebox, content_type);
-      gtk_label_set_text (GTK_LABEL (dialog->kind_label), str);
-      g_free (str);
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), content_type_desc);
+      g_free (content_type_desc);
     }
   else
     {

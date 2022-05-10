@@ -2440,7 +2440,9 @@ thunar_file_get_user (const ThunarFile *file)
 const gchar *
 thunar_file_get_content_type (ThunarFile *file)
 {
-  GFileInfo   *info;
+  gboolean     is_symlink;
+  GFile       *gfile;
+  GFileInfo   *info = NULL;
   GError      *err = NULL;
   const gchar *content_type = NULL;
 
@@ -2465,12 +2467,23 @@ thunar_file_get_content_type (ThunarFile *file)
         }
       else
         {
+          is_symlink = thunar_file_is_symlink (file);
+
+          if (G_UNLIKELY (is_symlink))
+            gfile = thunar_g_file_new_for_symlink_target (thunar_file_get_file (file));
+          else
+            gfile = g_object_ref (file->gfile);
+
           /* async load the content-type */
-          info = g_file_query_info (file->gfile,
-                                    G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
-                                    G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
-                                    G_FILE_QUERY_INFO_NONE,
-                                    NULL, &err);
+          if (G_LIKELY (gfile != NULL))
+            {
+              info = g_file_query_info (gfile,
+                                        G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
+                                        G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+                                        G_FILE_QUERY_INFO_NONE,
+                                        NULL, &err);
+              g_object_unref (gfile);
+            }
 
           if (G_LIKELY (info != NULL))
             {
@@ -2485,10 +2498,21 @@ thunar_file_get_content_type (ThunarFile *file)
             }
           else
             {
-              g_warning ("Content type loading failed for %s: %s",
-                         thunar_file_get_display_name (file),
-                         err->message);
-              g_error_free (err);
+              /* If gfile retrieved above is NULL, then g_file_query_info won't be called, thus keeping info NULL.
+               * In this case, err will also be NULL. So it will fallback to "unknown" mime-type */
+              if (G_LIKELY (err != NULL))
+                {
+                  /* The mime-type 'inode/symlink' is  only used for broken links.
+                   * When the link is functional, the mime-type of the link target will be used */
+                  if (G_LIKELY (is_symlink && err->code == G_IO_ERROR_NOT_FOUND))
+                    file->content_type = g_strdup ("inode/symlink");
+                  else
+                    g_warning ("Content type loading failed for %s: %s",
+                              thunar_file_get_display_name (file),
+                              err->message);
+
+                  g_error_free (err);
+                }
             }
 
           /* always provide a fallback */
@@ -2502,6 +2526,41 @@ thunar_file_get_content_type (ThunarFile *file)
     }
 
   return file->content_type;
+}
+
+
+
+/**
+ * thunar_file_get_content_type_description:
+ * @file : a #ThunarFile.
+ *
+ * Returns the content type description of @file.
+ *
+ * Return value: (non-nullable) (transfer full): content type description of @file.
+ *               Free the returned string with g_free().
+ **/
+gchar *
+thunar_file_get_content_type_desc (ThunarFile *file)
+{
+  const gchar *content_type;
+  gchar       *description;
+  gchar       *temp;
+
+  /* thunar_file_get_content_type always provides fallback, hence no NULL check needed */
+  content_type = thunar_file_get_content_type (file);
+
+  if (G_LIKELY (!thunar_file_is_symlink (file)))
+    return g_content_type_get_description (content_type);
+
+  /* handle broken symlink */
+  if (G_UNLIKELY (g_content_type_equals (content_type, "inode/symlink")))
+    return g_strdup ("broken link");
+
+  /* append " (link)" to description if link is not broken */
+  temp = g_content_type_get_description (content_type);
+  description = g_strdup_printf ("%s (link)", temp);
+  g_free (temp);
+  return description;
 }
 
 
