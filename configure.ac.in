@@ -106,6 +106,16 @@ AC_ARG_WITH([helper-path-prefix],
             [HELPER_PATH_PREFIX="$libdir"])
 AC_SUBST([HELPER_PATH_PREFIX])
 
+dnl ***************************************
+dnl *** Set default thunarx directories ***
+dnl ***************************************
+AC_ARG_WITH([thunarx-dirs],
+            [AS_HELP_STRING([--with-thunarx-dirs=PATH],
+                            [Used to set different default paths (separated by colon) for thunarx plugin lookup])],
+            [DEFAULT_THUNARX_DIRS="$withval"],
+            [DEFAULT_THUNARX_DIRS="$libdir/thunarx-$THUNARX_VERSION_API"])
+AC_SUBST([DEFAULT_THUNARX_DIRS])
+
 dnl *******************************************************
 dnl *** Optional support for custom thunarx directories ***
 dnl *******************************************************
