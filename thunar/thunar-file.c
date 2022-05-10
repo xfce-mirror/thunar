@@ -2502,6 +2502,8 @@ thunar_file_get_content_type (ThunarFile *file)
                * In this case, err will also be NULL. So it will fallback to "unknown" mime-type */
               if (G_LIKELY (err != NULL))
                 {
+                  /* The mime-type 'inode/symlink' is  only used for broken links.
+                   * When the link is functional, the mime-type of the link target will be used */
                   if (G_LIKELY (is_symlink && err->code == G_IO_ERROR_NOT_FOUND))
                     file->content_type = g_strdup ("inode/symlink");
                   else
@@ -2535,20 +2537,19 @@ thunar_file_get_content_type (ThunarFile *file)
  * Returns the content type description of @file.
  *
  * Return value: (non-nullable) (transfer full): content type description of @file.
+ *               Free the returned string with g_free().
  **/
 gchar *
 thunar_file_get_content_type_desc (ThunarFile *file)
 {
-  gboolean     is_symlink;
   const gchar *content_type;
   gchar       *description;
   gchar       *temp;
 
   /* thunar_file_get_content_type always provides fallback, hence no NULL check needed */
   content_type = thunar_file_get_content_type (file);
-  is_symlink = thunar_file_is_symlink (file);
 
-  if (G_LIKELY (!is_symlink))
+  if (G_LIKELY (!thunar_file_is_symlink (file)))
     return g_content_type_get_description (content_type);
 
   /* handle broken symlink */
