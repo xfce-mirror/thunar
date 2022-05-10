@@ -187,6 +187,7 @@ ThunarGroup      *thunar_file_get_group                  (const ThunarFile      
 ThunarUser       *thunar_file_get_user                   (const ThunarFile       *file);
 
 const gchar      *thunar_file_get_content_type           (ThunarFile             *file);
+gchar            *thunar_file_get_content_type_desc      (ThunarFile             *file);
 gboolean          thunar_file_load_content_type          (ThunarFile             *file);
 const gchar      *thunar_file_get_symlink_target         (const ThunarFile       *file);
 const gchar      *thunar_file_get_basename               (const ThunarFile       *file) G_GNUC_CONST;
