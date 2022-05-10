@@ -2994,6 +2994,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, selected_items->data);
       /* get the file for the given iter */
       file = g_sequence_get (iter.user_data);
+
       /* determine the content type of the file */
       content_type = thunar_file_get_content_type (file);
 
