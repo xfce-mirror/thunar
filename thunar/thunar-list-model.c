@@ -3042,7 +3042,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
         {
           /* append the original path to the statusbar text */
           gchar *original_path_string = g_filename_display_name (original_path);
-          temp_string = g_strdup_printf (_("%s %s"), "Original Path:", original_path_string);
+          temp_string = g_strdup_printf ("%s %s", _("Original Path:"), original_path_string);
           text_list = g_list_append (text_list, temp_string);
           g_free (original_path_string);
         }
