@@ -175,13 +175,16 @@ thunarx_provider_module_load (GTypeModule *type_module)
 {
   ThunarxProviderModule *module = THUNARX_PROVIDER_MODULE (type_module);
   gchar                 *path;
-  gchar                 *dirs_string;
+  gchar                 *dirs_string = NULL;
   gchar                **dirs;
   gboolean               found;
 
-  dirs_string = (gchar *) g_getenv ("THUNARX_DIRS");
-  if (!dirs_string)
+  if (g_strcmp0 (THUNARX_ENABLE_CUSTOM_DIRS, "TRUE") == 0)
+    dirs_string = (gchar *) g_getenv ("THUNARX_DIRS");
+
+  if (dirs_string == NULL)
     dirs_string = THUNARX_DIRECTORY;
+
   dirs = g_strsplit (dirs_string, G_SEARCHPATH_SEPARATOR_S, 0);
 
   found = FALSE;
