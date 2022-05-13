@@ -3020,13 +3020,13 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       if (show_filetype == TRUE)
         {
           if (G_UNLIKELY (content_type != NULL && g_str_equal (content_type, "inode/symlink")))
-            temp_string = g_strdup ("broken link");
+            temp_string = g_strdup (_("broken link"));
           else if (G_UNLIKELY (thunar_file_is_symlink (file)))
             temp_string = g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (file));
           else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_SHORTCUT))
-            temp_string = g_strdup ("shortcut");
+            temp_string = g_strdup (_("shortcut"));
           else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_MOUNTABLE))
-            temp_string = g_strdup ("mountable");
+            temp_string = g_strdup (_("mountable"));
           else
             {
               gchar *description = g_content_type_get_description (content_type);
