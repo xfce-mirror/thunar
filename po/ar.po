@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-11 00:46+0200\n"
+"POT-Creation-Date: 2022-05-13 00:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: 7f91df02564a1feba5fdc4d7b990b7f2_5fb95ff, 2021\n"
 "Language-Team: Arabic (http://www.transifex.com/xfce/thunar/language/ar/)\n"
@@ -551,8 +551,8 @@ msgstr "تمديد الأعمدة _تلقائيا عند الحاجة"
 
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:876 ../thunar/thunar-list-model.c:852
-#: ../thunar/thunar-list-model.c:888
+#: ../thunar/thunar-column-model.c:876 ../thunar/thunar-list-model.c:853
+#: ../thunar/thunar-list-model.c:889
 #: ../thunar/thunar-permissions-chooser.c:232 ../thunar/thunar-util.c:408
 #: ../thunar/thunar-util.c:411
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:710
@@ -878,7 +878,7 @@ msgstr "المالك"
 msgid "Permissions"
 msgstr "الصلاحيات"
 
-#: ../thunar/thunar-enum-types.c:113 ../thunar/thunar-statusbar.c:80
+#: ../thunar/thunar-enum-types.c:113 ../thunar/thunar-statusbar.c:81
 msgid "Size"
 msgstr "الحجم"
 
@@ -1665,7 +1665,7 @@ msgstr[3] "افتح الملفات المحددة بالتطبيقات الاف�
 msgstr[4] "افتح الملفات المحددة بالتطبيقات الافتراضي"
 msgstr[5] "افتح الملفات المحددة بالتطبيقات الافتراضي"
 
-#: ../thunar/thunar-list-model.c:2861
+#: ../thunar/thunar-list-model.c:2874
 #, c-format
 msgid "%d file: %s"
 msgid_plural "%d files: %s"
@@ -1676,7 +1676,7 @@ msgstr[3] "%d ملفات: %s"
 msgstr[4] "%d ملفات: %s"
 msgstr[5] "%d ملفات: %s"
 
-#: ../thunar/thunar-list-model.c:2867 ../thunar/thunar-size-label.c:449
+#: ../thunar/thunar-list-model.c:2880 ../thunar/thunar-size-label.c:449
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -1687,7 +1687,7 @@ msgstr[3] ""
 msgstr[4] ""
 msgstr[5] ""
 
-#: ../thunar/thunar-list-model.c:2873 ../thunar/thunar-size-label.c:448
+#: ../thunar/thunar-list-model.c:2885 ../thunar/thunar-size-label.c:448
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -1698,57 +1698,34 @@ msgstr[3] ""
 msgstr[4] ""
 msgstr[5] ""
 
-#: ../thunar/thunar-list-model.c:2879
+#: ../thunar/thunar-list-model.c:2891
 #, c-format
 msgid "0 items"
 msgstr "لا يوجد عناصر"
 
-#. This is marked for translation in case a localizer
-#. * needs to change ", " to something else. The comma
-#. * is between the message about the number of folders
-#. * and the number of items in the selection
-#. TRANSLATORS: string moved from line 2573 to here
-#: ../thunar/thunar-list-model.c:2891
+#: ../thunar/thunar-list-model.c:2900 ../thunar/thunar-list-model.c:3073
 #, c-format
-msgid "%s, %s"
-msgstr "%s, %s"
+msgid "Last Modified: %s"
+msgstr ""
 
-#: ../thunar/thunar-list-model.c:2980
-#, c-format
-msgid "%s, Free space: %s"
-msgstr "%sمساحة فارغة%s"
-
-#: ../thunar/thunar-list-model.c:2982
+#: ../thunar/thunar-list-model.c:2984
 #, c-format
 msgid "Free space: %s"
 msgstr ""
 
-#: ../thunar/thunar-list-model.c:3010
+#: ../thunar/thunar-list-model.c:3004
+#, c-format
+msgid "\"%s\""
+msgstr ""
+
+#: ../thunar/thunar-list-model.c:3025
 #, c-format
 msgid "link to %s"
 msgstr "وصلة إلى %s"
 
-#: ../thunar/thunar-list-model.c:3018
+#: ../thunar/thunar-list-model.c:3033
 #, c-format
 msgid "%s"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3024
-#, c-format
-msgid "\"%s\":"
-msgstr ""
-
-#. I18N, first %s is the display name of the file, 2nd the file size, 3rd the
-#. content type
-#: ../thunar/thunar-list-model.c:3036
-#, c-format
-msgid "%s %s %s"
-msgstr ""
-
-#. I18N, first %s is the display name of the file, second the content type
-#: ../thunar/thunar-list-model.c:3040 ../thunar/thunar-list-model.c:3045
-#, c-format
-msgid "%s %s"
 msgstr ""
 
 #. TRANSLATORS: Try to come up with a short translation of "Original Path"
@@ -1756,17 +1733,17 @@ msgstr ""
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: ../thunar/thunar-list-model.c:3060 ../thunar/thunar-properties-dialog.c:418
+#: ../thunar/thunar-list-model.c:3045 ../thunar/thunar-properties-dialog.c:418
 msgid "Original Path:"
 msgstr "المسار الأصلي:"
 
 #. append the image dimensions to the statusbar text
-#: ../thunar/thunar-list-model.c:3081
+#: ../thunar/thunar-list-model.c:3063
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:153
 msgid "Image Size:"
 msgstr "حجم الصورة:"
 
-#: ../thunar/thunar-list-model.c:3100
+#: ../thunar/thunar-list-model.c:3088
 #, c-format
 msgid "Selection: %s"
 msgstr ""
@@ -3022,32 +2999,40 @@ msgstr "فشل إنشاء وصلة العنوان التالي\"%s\""
 msgid "Failed to open directory \"%s\""
 msgstr "فشل في فتح المجلد \"%s\""
 
-#: ../thunar/thunar-statusbar.c:80
+#: ../thunar/thunar-statusbar.c:81
 msgid "Show size"
 msgstr ""
 
-#: ../thunar/thunar-statusbar.c:81
+#: ../thunar/thunar-statusbar.c:82
 msgid "Size in bytes"
 msgstr ""
 
-#: ../thunar/thunar-statusbar.c:81
+#: ../thunar/thunar-statusbar.c:82
 msgid "Show size in bytes"
 msgstr ""
 
-#: ../thunar/thunar-statusbar.c:82
+#: ../thunar/thunar-statusbar.c:83
 msgid "Filetype"
 msgstr ""
 
-#: ../thunar/thunar-statusbar.c:82
+#: ../thunar/thunar-statusbar.c:83
 msgid "Show filetype"
 msgstr ""
 
-#: ../thunar/thunar-statusbar.c:83
+#: ../thunar/thunar-statusbar.c:84
 msgid "Display Name"
 msgstr ""
 
-#: ../thunar/thunar-statusbar.c:83
+#: ../thunar/thunar-statusbar.c:84
 msgid "Show display name"
+msgstr ""
+
+#: ../thunar/thunar-statusbar.c:85
+msgid "Last Modified"
+msgstr ""
+
+#: ../thunar/thunar-statusbar.c:85
+msgid "Show last modified"
 msgstr ""
 
 #: ../thunar/thunar-toolbar-editor.c:125
