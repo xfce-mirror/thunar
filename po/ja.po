@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-11 00:46+0200\n"
+"POT-Creation-Date: 2022-05-13 00:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: UTUMI Hirosi <utuhiro78@yahoo.co.jp>, 2019-2022\n"
 "Language-Team: Japanese (http://www.transifex.com/xfce/thunar/language/ja/)\n"
@@ -536,8 +536,8 @@ msgstr "必要に応じてカラムを自動的に拡げる(_E)"
 
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:876 ../thunar/thunar-list-model.c:852
-#: ../thunar/thunar-list-model.c:888
+#: ../thunar/thunar-column-model.c:876 ../thunar/thunar-list-model.c:853
+#: ../thunar/thunar-list-model.c:889
 #: ../thunar/thunar-permissions-chooser.c:232 ../thunar/thunar-util.c:408
 #: ../thunar/thunar-util.c:411
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:710
@@ -863,7 +863,7 @@ msgstr "ファイル所有者"
 msgid "Permissions"
 msgstr "アクセス権"
 
-#: ../thunar/thunar-enum-types.c:113 ../thunar/thunar-statusbar.c:80
+#: ../thunar/thunar-enum-types.c:113 ../thunar/thunar-statusbar.c:81
 msgid "Size"
 msgstr "サイズ"
 
@@ -1525,93 +1525,70 @@ msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "デフォルトのアプリケーションを使用して選択したファイルを開きます。"
 
-#: ../thunar/thunar-list-model.c:2861
+#: ../thunar/thunar-list-model.c:2874
 #, c-format
 msgid "%d file: %s"
 msgid_plural "%d files: %s"
 msgstr[0] "%d ファイル: %s"
 
-#: ../thunar/thunar-list-model.c:2867 ../thunar/thunar-size-label.c:449
+#: ../thunar/thunar-list-model.c:2880 ../thunar/thunar-size-label.c:449
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
 msgstr[0] "%d ファイル"
 
-#: ../thunar/thunar-list-model.c:2873 ../thunar/thunar-size-label.c:448
+#: ../thunar/thunar-list-model.c:2885 ../thunar/thunar-size-label.c:448
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
 msgstr[0] "%d フォルダー"
 
-#: ../thunar/thunar-list-model.c:2879
+#: ../thunar/thunar-list-model.c:2891
 #, c-format
 msgid "0 items"
 msgstr "0 アイテム"
 
-#. This is marked for translation in case a localizer
-#. * needs to change ", " to something else. The comma
-#. * is between the message about the number of folders
-#. * and the number of items in the selection
-#. TRANSLATORS: string moved from line 2573 to here
-#: ../thunar/thunar-list-model.c:2891
+#: ../thunar/thunar-list-model.c:2900 ../thunar/thunar-list-model.c:3073
 #, c-format
-msgid "%s, %s"
-msgstr "%s %s"
+msgid "Last Modified: %s"
+msgstr ""
 
-#: ../thunar/thunar-list-model.c:2980
-#, c-format
-msgid "%s, Free space: %s"
-msgstr "%s, 空き容量: %s"
-
-#: ../thunar/thunar-list-model.c:2982
+#: ../thunar/thunar-list-model.c:2984
 #, c-format
 msgid "Free space: %s"
 msgstr "空き容量: %s"
 
-#: ../thunar/thunar-list-model.c:3010
+#: ../thunar/thunar-list-model.c:3004
+#, c-format
+msgid "\"%s\""
+msgstr ""
+
+#: ../thunar/thunar-list-model.c:3025
 #, c-format
 msgid "link to %s"
 msgstr "%s へのリンク"
 
-#: ../thunar/thunar-list-model.c:3018
+#: ../thunar/thunar-list-model.c:3033
 #, c-format
 msgid "%s"
 msgstr "%s"
-
-#: ../thunar/thunar-list-model.c:3024
-#, c-format
-msgid "\"%s\":"
-msgstr "\"%s\":"
-
-#. I18N, first %s is the display name of the file, 2nd the file size, 3rd the
-#. content type
-#: ../thunar/thunar-list-model.c:3036
-#, c-format
-msgid "%s %s %s"
-msgstr "%s %s %s"
-
-#. I18N, first %s is the display name of the file, second the content type
-#: ../thunar/thunar-list-model.c:3040 ../thunar/thunar-list-model.c:3045
-#, c-format
-msgid "%s %s"
-msgstr "%s %s"
 
 #. TRANSLATORS: Try to come up with a short translation of "Original Path"
 #. (which is the path
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: ../thunar/thunar-list-model.c:3060 ../thunar/thunar-properties-dialog.c:418
+#: ../thunar/thunar-list-model.c:3045 ../thunar/thunar-properties-dialog.c:418
 msgid "Original Path:"
 msgstr "元のパス:"
 
 #. append the image dimensions to the statusbar text
-#: ../thunar/thunar-list-model.c:3081
+#: ../thunar/thunar-list-model.c:3063
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:153
 msgid "Image Size:"
 msgstr "画像サイズ:"
 
-#: ../thunar/thunar-list-model.c:3100
+#: ../thunar/thunar-list-model.c:3088
 #, c-format
 msgid "Selection: %s"
 msgstr "選択: %s"
@@ -2847,33 +2824,41 @@ msgstr "URL \"%s\" のリンク作成に失敗しました"
 msgid "Failed to open directory \"%s\""
 msgstr "フォルダー \"%s\" を開けませんでした"
 
-#: ../thunar/thunar-statusbar.c:80
+#: ../thunar/thunar-statusbar.c:81
 msgid "Show size"
 msgstr "サイズを表示"
 
-#: ../thunar/thunar-statusbar.c:81
+#: ../thunar/thunar-statusbar.c:82
 msgid "Size in bytes"
 msgstr "バイト単位のサイズ"
 
-#: ../thunar/thunar-statusbar.c:81
+#: ../thunar/thunar-statusbar.c:82
 msgid "Show size in bytes"
 msgstr "サイズをバイト単位で表示"
 
-#: ../thunar/thunar-statusbar.c:82
+#: ../thunar/thunar-statusbar.c:83
 msgid "Filetype"
 msgstr "ファイルの種類"
 
-#: ../thunar/thunar-statusbar.c:82
+#: ../thunar/thunar-statusbar.c:83
 msgid "Show filetype"
 msgstr "ファイルの種類を表示"
 
-#: ../thunar/thunar-statusbar.c:83
+#: ../thunar/thunar-statusbar.c:84
 msgid "Display Name"
 msgstr "ディスプレイ名"
 
-#: ../thunar/thunar-statusbar.c:83
+#: ../thunar/thunar-statusbar.c:84
 msgid "Show display name"
 msgstr "ディスプレイ名を表示"
+
+#: ../thunar/thunar-statusbar.c:85
+msgid "Last Modified"
+msgstr ""
+
+#: ../thunar/thunar-statusbar.c:85
+msgid "Show last modified"
+msgstr ""
 
 #: ../thunar/thunar-toolbar-editor.c:125
 msgid "Configure the Toolbar"
