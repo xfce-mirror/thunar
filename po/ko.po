@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-11 00:46+0200\n"
+"POT-Creation-Date: 2022-05-13 00:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Kim, Jeongu, 2022\n"
 "Language-Team: Korean (http://www.transifex.com/xfce/thunar/language/ko/)\n"
@@ -541,8 +541,8 @@ msgstr "필요시 자동으로 항목 확장(_E)"
 
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:876 ../thunar/thunar-list-model.c:852
-#: ../thunar/thunar-list-model.c:888
+#: ../thunar/thunar-column-model.c:876 ../thunar/thunar-list-model.c:853
+#: ../thunar/thunar-list-model.c:889
 #: ../thunar/thunar-permissions-chooser.c:232 ../thunar/thunar-util.c:408
 #: ../thunar/thunar-util.c:411
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:710
@@ -868,7 +868,7 @@ msgstr "소유자"
 msgid "Permissions"
 msgstr "소유권"
 
-#: ../thunar/thunar-enum-types.c:113 ../thunar/thunar-statusbar.c:80
+#: ../thunar/thunar-enum-types.c:113 ../thunar/thunar-statusbar.c:81
 msgid "Size"
 msgstr "크기"
 
@@ -1530,75 +1530,52 @@ msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "선택한 파일을 기본 프로그램으로 엽니다"
 
-#: ../thunar/thunar-list-model.c:2861
+#: ../thunar/thunar-list-model.c:2874
 #, c-format
 msgid "%d file: %s"
 msgid_plural "%d files: %s"
 msgstr[0] "파일 %d개: %s"
 
-#: ../thunar/thunar-list-model.c:2867 ../thunar/thunar-size-label.c:449
+#: ../thunar/thunar-list-model.c:2880 ../thunar/thunar-size-label.c:449
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
 msgstr[0] ""
 
-#: ../thunar/thunar-list-model.c:2873 ../thunar/thunar-size-label.c:448
+#: ../thunar/thunar-list-model.c:2885 ../thunar/thunar-size-label.c:448
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
 msgstr[0] "폴더 %d개"
 
-#: ../thunar/thunar-list-model.c:2879
+#: ../thunar/thunar-list-model.c:2891
 #, c-format
 msgid "0 items"
 msgstr "항목 없음"
 
-#. This is marked for translation in case a localizer
-#. * needs to change ", " to something else. The comma
-#. * is between the message about the number of folders
-#. * and the number of items in the selection
-#. TRANSLATORS: string moved from line 2573 to here
-#: ../thunar/thunar-list-model.c:2891
+#: ../thunar/thunar-list-model.c:2900 ../thunar/thunar-list-model.c:3073
 #, c-format
-msgid "%s, %s"
-msgstr "%s, %s"
+msgid "Last Modified: %s"
+msgstr ""
 
-#: ../thunar/thunar-list-model.c:2980
-#, c-format
-msgid "%s, Free space: %s"
-msgstr "%s, 남은 공간: %s"
-
-#: ../thunar/thunar-list-model.c:2982
+#: ../thunar/thunar-list-model.c:2984
 #, c-format
 msgid "Free space: %s"
 msgstr ""
 
-#: ../thunar/thunar-list-model.c:3010
+#: ../thunar/thunar-list-model.c:3004
+#, c-format
+msgid "\"%s\""
+msgstr ""
+
+#: ../thunar/thunar-list-model.c:3025
 #, c-format
 msgid "link to %s"
 msgstr "%s의 링크"
 
-#: ../thunar/thunar-list-model.c:3018
+#: ../thunar/thunar-list-model.c:3033
 #, c-format
 msgid "%s"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3024
-#, c-format
-msgid "\"%s\":"
-msgstr ""
-
-#. I18N, first %s is the display name of the file, 2nd the file size, 3rd the
-#. content type
-#: ../thunar/thunar-list-model.c:3036
-#, c-format
-msgid "%s %s %s"
-msgstr ""
-
-#. I18N, first %s is the display name of the file, second the content type
-#: ../thunar/thunar-list-model.c:3040 ../thunar/thunar-list-model.c:3045
-#, c-format
-msgid "%s %s"
 msgstr ""
 
 #. TRANSLATORS: Try to come up with a short translation of "Original Path"
@@ -1606,17 +1583,17 @@ msgstr ""
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: ../thunar/thunar-list-model.c:3060 ../thunar/thunar-properties-dialog.c:418
+#: ../thunar/thunar-list-model.c:3045 ../thunar/thunar-properties-dialog.c:418
 msgid "Original Path:"
 msgstr "기존 경로:"
 
 #. append the image dimensions to the statusbar text
-#: ../thunar/thunar-list-model.c:3081
+#: ../thunar/thunar-list-model.c:3063
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:153
 msgid "Image Size:"
 msgstr "그림 크기:"
 
-#: ../thunar/thunar-list-model.c:3100
+#: ../thunar/thunar-list-model.c:3088
 #, c-format
 msgid "Selection: %s"
 msgstr "선택: %s"
@@ -2852,32 +2829,40 @@ msgstr "\"%s\" URL 링크 만들기에 실패했습니다"
 msgid "Failed to open directory \"%s\""
 msgstr "\"%s\" 디렉터리 열기에 실패했습니다"
 
-#: ../thunar/thunar-statusbar.c:80
+#: ../thunar/thunar-statusbar.c:81
 msgid "Show size"
 msgstr ""
 
-#: ../thunar/thunar-statusbar.c:81
+#: ../thunar/thunar-statusbar.c:82
 msgid "Size in bytes"
 msgstr ""
 
-#: ../thunar/thunar-statusbar.c:81
+#: ../thunar/thunar-statusbar.c:82
 msgid "Show size in bytes"
 msgstr ""
 
-#: ../thunar/thunar-statusbar.c:82
+#: ../thunar/thunar-statusbar.c:83
 msgid "Filetype"
 msgstr ""
 
-#: ../thunar/thunar-statusbar.c:82
+#: ../thunar/thunar-statusbar.c:83
 msgid "Show filetype"
 msgstr ""
 
-#: ../thunar/thunar-statusbar.c:83
+#: ../thunar/thunar-statusbar.c:84
 msgid "Display Name"
 msgstr ""
 
-#: ../thunar/thunar-statusbar.c:83
+#: ../thunar/thunar-statusbar.c:84
 msgid "Show display name"
+msgstr ""
+
+#: ../thunar/thunar-statusbar.c:85
+msgid "Last Modified"
+msgstr ""
+
+#: ../thunar/thunar-statusbar.c:85
+msgid "Show last modified"
 msgstr ""
 
 #: ../thunar/thunar-toolbar-editor.c:125
