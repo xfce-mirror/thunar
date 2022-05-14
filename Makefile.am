@@ -108,9 +108,10 @@ DISTCLEANFILES =							\
 	$(desktop_in_files)						\
 	$(desktop_DATA)							\
 	$(service_DATA)							\
-	$(systemd_user_DATA)						\
+	$(systemd_user_DATA)					\
 	$(polkit_in_files)						\
-	$(polkit_policy_DATA)
+	$(polkit_policy_DATA)					\
+	po/.intltool-merge-cache.lock
 
 DISTCHECK_CONFIGURE_FLAGS =						\
 	--enable-gtk-doc							\
