@@ -1041,7 +1041,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /* next row */
   row++;
 
-  label = gtk_label_new_with_mnemonic (_("Use intermediate file on copy"));
+  label = gtk_label_new_with_mnemonic (_("Use intermediate file on copy:"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
@@ -1075,7 +1075,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /* next row */
   row++;
 
-  label = gtk_label_new_with_mnemonic (_("Verify file checksum on copy"));
+  label = gtk_label_new_with_mnemonic (_("Verify file checksum on copy:"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
@@ -1127,7 +1127,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_grid_set_column_homogeneous (GTK_GRID (grid), TRUE);
   gtk_widget_show (grid);
 
-  label = gtk_label_new_with_mnemonic (_("Include subfolders"));
+  label = gtk_label_new_with_mnemonic (_("Include subfolders:"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
