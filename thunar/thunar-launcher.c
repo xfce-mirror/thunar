@@ -203,6 +203,7 @@ static gboolean                thunar_launcher_action_create_document     (Thuna
 static GtkWidget              *thunar_launcher_create_document_submenu_new(ThunarLauncher                 *launcher);
 static void                    thunar_launcher_new_files_created          (ThunarLauncher                 *launcher,
                                                                            GList                          *new_thunar_files);
+static gboolean                thunar_launcher_action_choose_tag_color    (ThunarLauncher                 *launcher);
 
 
 
@@ -271,6 +272,7 @@ static XfceGtkActionEntry thunar_launcher_action_entries[] =
     { THUNAR_LAUNCHER_ACTION_OPEN_LOCATION,    "<Actions>/ThunarLauncher/open-location",           "",                  XFCE_GTK_MENU_ITEM,       N_ ("Open Item Location"),              NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_open_location),       },
     { THUNAR_LAUNCHER_ACTION_OPEN_WITH_OTHER,  "<Actions>/ThunarLauncher/open-with-other",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Open With Other _Application..."), N_ ("Choose another application with which to open the selected file"),                          NULL,                   G_CALLBACK (thunar_launcher_action_open_with_other),     },
     { THUNAR_LAUNCHER_ACTION_SET_DEFAULT_APP,  "<Actions>/ThunarStandardView/set-default-app",     "",                  XFCE_GTK_MENU_ITEM,       N_ ("Set _Default Application..."),     N_ ("Choose an application which should be used by default to open the selected file"),          NULL,                   G_CALLBACK (thunar_launcher_action_set_default_app),     },
+    { THUNAR_LAUNCHER_ACTION_CHOOSE_TAG_COLOR, "<Actions>/ThunarStandardView/choose-tag-color",    "",                  XFCE_GTK_MENU_ITEM,       N_ ("Choose Tag Color..."),             N_ ("Choose the tag color for this file/folder"),                                                NULL,                   G_CALLBACK (thunar_launcher_action_choose_tag_color),    },
 
     /* For backward compatibility the old accel paths are re-used. Currently not possible to automatically migrate to new accel paths. */
     /* Waiting for https://gitlab.gnome.org/GNOME/gtk/issues/2375 to be able to fix that */
@@ -1830,6 +1832,12 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
         gtk_menu_item_set_label (GTK_MENU_ITEM (item), eject_label);
         return item;
 
+      case THUNAR_LAUNCHER_ACTION_CHOOSE_TAG_COLOR:
+        g_object_get (G_OBJECT (launcher->preferences), "misc-color-tags", &show_item, NULL);
+        if (show_item)
+          return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
+        return NULL;
+
       default:
         return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
     }
@@ -3339,4 +3347,25 @@ XfceGtkActionEntry*
 thunar_launcher_get_action_entries (void)
 {
   return thunar_launcher_action_entries;
+}
+
+
+
+static gboolean
+thunar_launcher_action_choose_tag_color (ThunarLauncher *launcher)
+{
+  GtkWidget *toplevel;
+  GtkWidget *dialog;
+
+  _thunar_return_val_if_fail (THUNAR_IS_LAUNCHER (launcher), FALSE);
+
+  toplevel = gtk_widget_get_toplevel (launcher->widget);
+  if (G_LIKELY (toplevel != NULL))
+    {
+      dialog = gtk_color_chooser_dialog_new ("Choose Tag Color", GTK_WINDOW (toplevel));
+
+      gtk_widget_show (dialog);
+    }
+
+  return TRUE;
 }
