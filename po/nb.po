@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-13 00:46+0200\n"
+"POT-Creation-Date: 2022-05-16 12:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: heskjestad <cato@heskjestad.xyz>, 2021-2022\n"
 "Language-Team: Norwegian Bokmål (http://www.transifex.com/xfce/thunar/language/nb/)\n"
@@ -1585,7 +1585,7 @@ msgstr "0 elementer"
 #: ../thunar/thunar-list-model.c:2900 ../thunar/thunar-list-model.c:3073
 #, c-format
 msgid "Last Modified: %s"
-msgstr ""
+msgstr "Sist endret: %s"
 
 #: ../thunar/thunar-list-model.c:2984
 #, c-format
@@ -1595,12 +1595,24 @@ msgstr "Ledig plass:%s"
 #: ../thunar/thunar-list-model.c:3004
 #, c-format
 msgid "\"%s\""
-msgstr ""
+msgstr "«%s»"
+
+#: ../thunar/thunar-list-model.c:3023
+msgid "broken link"
+msgstr "ugyldig lenke"
 
 #: ../thunar/thunar-list-model.c:3025
 #, c-format
 msgid "link to %s"
 msgstr "lenke til %s"
+
+#: ../thunar/thunar-list-model.c:3027
+msgid "shortcut"
+msgstr "snarvei"
+
+#: ../thunar/thunar-list-model.c:3029
+msgid "mountable"
+msgstr "kan monteres"
 
 #: ../thunar/thunar-list-model.c:3033
 #, c-format
@@ -2210,8 +2222,8 @@ msgid "Local Files On Same Devices Only"
 msgstr "Kun lokale filer på samme enhet"
 
 #: ../thunar/thunar-preferences-dialog.c:1044
-msgid "Use intermediate file on copy"
-msgstr "Bruk midlertidig fil ved kopiering"
+msgid "Use intermediate file on copy:"
+msgstr "Bruk midlertidig fil ved kopiering:"
 
 #: ../thunar/thunar-preferences-dialog.c:1048
 msgid ""
@@ -2221,8 +2233,8 @@ msgid ""
 msgstr "Bruk midlertidig fil «*.partial~» ved kopiering av filer. Dette vil forhindre fragmentering av filer. Den nye fila vil kun vises etter vellykket kopiering."
 
 #: ../thunar/thunar-preferences-dialog.c:1078
-msgid "Verify file checksum on copy"
-msgstr "Verifiser filens sjekksum ved kopiering"
+msgid "Verify file checksum on copy:"
+msgstr "Verifiser filens sjekksum ved kopiering:"
 
 #: ../thunar/thunar-preferences-dialog.c:1082
 msgid ""
@@ -2235,8 +2247,8 @@ msgid "Search"
 msgstr "Søk"
 
 #: ../thunar/thunar-preferences-dialog.c:1130
-msgid "Include subfolders"
-msgstr "Ta med undermapper"
+msgid "Include subfolders:"
+msgstr "Ta med undermapper:"
 
 #: ../thunar/thunar-preferences-dialog.c:1154
 msgid "Folder Permissions"
@@ -2892,11 +2904,11 @@ msgstr "Vis presentasjonsnavn"
 
 #: ../thunar/thunar-statusbar.c:85
 msgid "Last Modified"
-msgstr ""
+msgstr "Sist endret"
 
 #: ../thunar/thunar-statusbar.c:85
 msgid "Show last modified"
-msgstr ""
+msgstr "Vis sist endret"
 
 #: ../thunar/thunar-toolbar-editor.c:125
 msgid "Configure the Toolbar"
