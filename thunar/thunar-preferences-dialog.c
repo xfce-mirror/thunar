@@ -482,6 +482,20 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 2, 1);
   gtk_widget_show (button);
 
+  /* next row */
+  row++;
+
+  button = gtk_check_button_new_with_mnemonic (_("Show color labels"));
+  g_object_bind_property (G_OBJECT (dialog->preferences),
+                          "misc-color-tags",
+                          G_OBJECT (button),
+                          "active",
+                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  gtk_widget_set_tooltip_text (button, _("Select this option to show file size in binary format instead of decimal."));
+  gtk_widget_set_hexpand (button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 2, 1);
+  gtk_widget_show (button);
+
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
