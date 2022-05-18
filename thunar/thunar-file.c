@@ -1632,7 +1632,7 @@ thunar_file_execute (ThunarFile  *file,
         }
 
       type = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_TYPE, NULL);
-      if (G_LIKELY (exo_str_is_equal (type, "Application")))
+      if (G_LIKELY (g_strcmp0 (type, "Application") == 0))
         {
           exec = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_EXEC, NULL);
           if (G_LIKELY (exec != NULL))
@@ -1669,7 +1669,7 @@ thunar_file_execute (ThunarFile  *file,
                            _("No Exec field specified"));
             }
         }
-      else if (exo_str_is_equal (type, "Link"))
+      else if (g_strcmp0 (type, "Link") == 0)
         {
           url = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_URL, NULL);
           if (G_LIKELY (url != NULL))
@@ -4425,7 +4425,7 @@ thunar_file_same_filesystem (const ThunarFile *file_a,
                                                       G_FILE_ATTRIBUTE_ID_FILESYSTEM);
 
   /* compare the filesystem IDs */
-  return exo_str_is_equal (filesystem_id_a, filesystem_id_b);
+  return (g_strcmp0 (filesystem_id_a, filesystem_id_b) == 0);
 }
 
 
