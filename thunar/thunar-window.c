@@ -3117,7 +3117,12 @@ thunar_window_action_cancel_search (ThunarWindow *window)
   window->search_query = NULL;
 
   if (THUNAR_IS_DETAILS_VIEW (window->view))
-    thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), FALSE);
+    {
+      gboolean is_recent = thunar_file_is_recent (window->current_directory);
+
+      thunar_details_view_set_recency_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
+      thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
+    }
 
   window->is_searching = FALSE;
 
