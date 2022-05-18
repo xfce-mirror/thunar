@@ -34,9 +34,11 @@
 #include <stdio.h>
 #endif
 
-#include <exo/exo.h>
-
 #include <thunar-sbr/thunar-sbr-date-renamer.h>
+
+#include <libxfce4util/libxfce4util.h>
+
+
 
 #ifdef HAVE_EXIF
 #include <libexif/exif-data.h>
@@ -673,7 +675,7 @@ thunar_sbr_date_renamer_set_format (ThunarSbrDateRenamer *date_renamer,
   g_return_if_fail (THUNAR_SBR_IS_DATE_RENAMER (date_renamer));
 
   /* check if we have a new format */
-  if (G_LIKELY (!exo_str_is_equal (date_renamer->format, format)))
+  if (G_LIKELY (g_strcmp0 (date_renamer->format, format) != 0))
     {
       /* apply the new format */
       g_free (date_renamer->format);
