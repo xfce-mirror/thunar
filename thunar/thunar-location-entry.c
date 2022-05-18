@@ -72,10 +72,6 @@ static gboolean    thunar_location_entry_button_press_event       (GtkWidget    
                                                                    ThunarLocationEntry      *location_entry);
 static gboolean    thunar_location_entry_reset                    (ThunarLocationEntry      *location_entry);
 static void        thunar_location_entry_emit_edit_done           (ThunarLocationEntry      *entry);
-static void        thunar_location_entry_search                   (GtkEntry                 *entry,
-                                                                   GtkEntryIconPosition      icon_pos,
-                                                                   GdkEvent                 *event,
-                                                                   ThunarLocationEntry      *location_entry);
 
 
 
@@ -187,14 +183,6 @@ thunar_location_entry_init (ThunarLocationEntry *location_entry)
   g_signal_connect_after (G_OBJECT (location_entry->path_entry), "activate", G_CALLBACK (thunar_location_entry_activate), location_entry);
   gtk_box_pack_start (GTK_BOX (location_entry), location_entry->path_entry, TRUE, TRUE, 0);
   gtk_widget_show (location_entry->path_entry);
-
-  /* put the search button at the end of the entry */
-  gtk_entry_set_icon_from_icon_name (GTK_ENTRY (location_entry->path_entry),
-                                     GTK_ENTRY_ICON_SECONDARY, "system-search-symbolic");
-  gtk_entry_set_icon_tooltip_text (GTK_ENTRY (location_entry->path_entry),
-                                   GTK_ENTRY_ICON_SECONDARY, _("Search for files"));
-  g_signal_connect (G_OBJECT (location_entry->path_entry), "icon-release",
-                    G_CALLBACK (thunar_location_entry_search), location_entry);
 
   /* ...except if it is grabbed by the context menu */
   location_entry->right_click_occurred = FALSE;
@@ -504,23 +492,6 @@ gchar*
 thunar_location_entry_get_search_query (ThunarLocationEntry *entry)
 {
   return thunar_path_entry_get_search_query (THUNAR_PATH_ENTRY (entry->path_entry));
-}
-
-
-
-static void
-thunar_location_entry_search (GtkEntry            *entry,
-                              GtkEntryIconPosition icon_pos,
-                              GdkEvent            *event,
-                              ThunarLocationEntry *location_entry)
-{
-  _thunar_return_if_fail (THUNAR_IS_LOCATION_ENTRY (location_entry));
-
-  if (icon_pos == GTK_ENTRY_ICON_SECONDARY)
-    {
-      GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (location_entry));
-      thunar_window_action_search (THUNAR_WINDOW (window));
-    }
 }
 
 
