@@ -539,7 +539,7 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
 
       /* update the "Description" entry */
       value = g_key_file_get_locale_string (key_file, G_KEY_FILE_DESKTOP_GROUP, "GenericName", NULL, NULL);
-      if (!exo_str_is_equal (value, desktop_page->description_text))
+      if (g_strcmp0 (value, desktop_page->description_text) != 0)
         {
           /* update the entry */
           gtk_entry_set_text (GTK_ENTRY (desktop_page->description_entry), (value != NULL) ? value : "");
@@ -555,7 +555,7 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
 
       /* update the "Comment" entry */
       value = g_key_file_get_locale_string (key_file, G_KEY_FILE_DESKTOP_GROUP, "Comment", NULL, NULL);
-      if (!exo_str_is_equal (value, desktop_page->comment_text))
+      if (g_strcmp0 (value, desktop_page->comment_text) != 0)
         {
           /* update the entry */
           gtk_entry_set_text (GTK_ENTRY (desktop_page->comment_entry), (value != NULL) ? value : "");
@@ -574,7 +574,7 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
         {
           /* update the "Command" entry */
           value = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP, "Exec", NULL);
-          if (!exo_str_is_equal (value, desktop_page->command_text))
+          if (g_strcmp0 (value, desktop_page->command_text) != 0)
             {
               /* update the entry */
               gtk_entry_set_text (GTK_ENTRY (desktop_page->command_entry), (value != NULL) ? value : "");
@@ -590,7 +590,7 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
 
           /* update the "Path" entry */
           value = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP, "Path", NULL);
-          if (!exo_str_is_equal (value, desktop_page->path_text))
+          if (g_strcmp0 (value, desktop_page->path_text) != 0)
             {
               /* update the entry */
               gtk_entry_set_text (GTK_ENTRY (desktop_page->path_entry), (value != NULL) ? value : "");
@@ -629,7 +629,7 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
         {
           /* update the "URL" entry */
           value = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP, "URL", NULL);
-          if (!exo_str_is_equal (value, desktop_page->url_text))
+          if (g_strcmp0 (value, desktop_page->url_text) != 0)
             {
               /* update the entry */
               gtk_entry_set_text (GTK_ENTRY (desktop_page->url_entry), (value != NULL) ? value : "");

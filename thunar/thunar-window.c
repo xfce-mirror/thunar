@@ -903,9 +903,9 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect_object (G_OBJECT (window->preferences), "notify::misc-change-window-icon", G_CALLBACK (thunar_window_update_window_icon), window, G_CONNECT_SWAPPED);
 
   /* determine the selected side pane */
-  if (exo_str_is_equal (last_side_pane, g_type_name (THUNAR_TYPE_SHORTCUTS_PANE)))
+  if (g_strcmp0 (last_side_pane, g_type_name (THUNAR_TYPE_SHORTCUTS_PANE)) == 0)
     type = THUNAR_TYPE_SHORTCUTS_PANE;
-  else if (exo_str_is_equal (last_side_pane, g_type_name (THUNAR_TYPE_TREE_PANE)))
+  else if (g_strcmp0 (last_side_pane, g_type_name (THUNAR_TYPE_TREE_PANE)) == 0)
     type = THUNAR_TYPE_TREE_PANE;
   else
     type = G_TYPE_NONE;
@@ -1247,9 +1247,9 @@ thunar_window_update_view_menu (ThunarWindow *window,
   gtk_menu_set_accel_group (GTK_MENU (sub_items), window->accel_group);
   g_object_get (window->preferences, "last-location-bar", &last_location_bar, NULL);
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_PATHBAR), G_OBJECT (window),
-                                                   exo_str_is_equal (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_ENTRY)), GTK_MENU_SHELL (sub_items));
+                                                   (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_ENTRY)), GTK_MENU_SHELL (sub_items) == 0));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_TOOLBAR), G_OBJECT (window),
-                                                   exo_str_is_equal (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)), GTK_MENU_SHELL (sub_items));
+                                                   (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)), GTK_MENU_SHELL (sub_items) == 0));
   g_free (last_location_bar);
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (sub_items));
   item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_MENU), G_OBJECT (window), GTK_MENU_SHELL (menu));
@@ -1257,9 +1257,9 @@ thunar_window_update_view_menu (ThunarWindow *window,
   gtk_menu_set_accel_group (GTK_MENU (sub_items), window->accel_group);
   g_object_get (window->preferences, "last-side-pane", &last_side_pane, NULL);
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_SHORTCUTS), G_OBJECT (window),
-                                                   exo_str_is_equal (last_side_pane, g_type_name (THUNAR_TYPE_SHORTCUTS_PANE)), GTK_MENU_SHELL (sub_items));
+                                                   (g_strcmp0 (last_side_pane, g_type_name (THUNAR_TYPE_SHORTCUTS_PANE)), GTK_MENU_SHELL (sub_items) == 0));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_TREE), G_OBJECT (window),
-                                                   exo_str_is_equal (last_side_pane, g_type_name (THUNAR_TYPE_TREE_PANE)), GTK_MENU_SHELL (sub_items));
+                                                   (g_strcmp0 (last_side_pane, g_type_name (THUNAR_TYPE_TREE_PANE)), GTK_MENU_SHELL (sub_items) == 0));
   g_free (last_side_pane);
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (sub_items));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_STATUSBAR), G_OBJECT (window),
@@ -2752,7 +2752,7 @@ thunar_window_update_location_bar_visible (ThunarWindow *window)
 
   g_object_get (window->preferences, "last-location-bar", &last_location_bar, NULL);
 
-  if (exo_str_is_equal (last_location_bar, g_type_name (G_TYPE_NONE)))
+  if (g_strcmp0 (last_location_bar, g_type_name (G_TYPE_NONE)) == 0)
     {
       gtk_widget_hide (window->location_toolbar);
       if (window->view != NULL)
@@ -3425,7 +3425,7 @@ thunar_window_action_pathbar_changed (ThunarWindow *window)
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   g_object_get (window->preferences, "last-location-bar", &last_location_bar, NULL);
-  pathbar_checked = exo_str_is_equal (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_ENTRY));
+  pathbar_checked = (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_ENTRY)) == 0);
   g_free (last_location_bar);
 
   if (pathbar_checked)
@@ -3448,7 +3448,7 @@ thunar_window_action_toolbar_changed (ThunarWindow *window)
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   g_object_get (window->preferences, "last-location-bar", &last_location_bar, NULL);
-  toolbar_checked = exo_str_is_equal (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS));
+  toolbar_checked = (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)) == 0);
   g_free (last_location_bar);
 
   if (toolbar_checked)
@@ -3472,7 +3472,7 @@ thunar_window_action_shortcuts_changed (ThunarWindow *window)
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   g_object_get (window->preferences, "last-side-pane", &last_side_pane, NULL);
-  shortcuts_checked = exo_str_is_equal (last_side_pane, g_type_name (THUNAR_TYPE_SHORTCUTS_PANE));
+  shortcuts_checked = (g_strcmp0 (last_side_pane, g_type_name (THUNAR_TYPE_SHORTCUTS_PANE)) == 0);
   g_free (last_side_pane);
 
   if (shortcuts_checked)
@@ -3498,7 +3498,7 @@ thunar_window_action_tree_changed (ThunarWindow *window)
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   g_object_get (window->preferences, "last-side-pane", &last_side_pane, NULL);
-  tree_view_checked = exo_str_is_equal (last_side_pane, g_type_name (THUNAR_TYPE_TREE_PANE));
+  tree_view_checked = (g_strcmp0 (last_side_pane, g_type_name (THUNAR_TYPE_TREE_PANE)) == 0);
   g_free (last_side_pane);
 
   if (tree_view_checked)
@@ -4949,7 +4949,7 @@ thunar_window_set_directories (ThunarWindow   *window,
   for (n = 0; uris[n] != NULL; n++)
     {
       /* check if the string looks like an uri */
-      if (!exo_str_looks_like_an_uri (uris[n]))
+      if (!g_uri_is_valid (uris[n], G_URI_FLAGS_NONE, NULL))
         continue;
 
       /* get the file for the uri */

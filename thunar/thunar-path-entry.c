@@ -36,6 +36,7 @@
 #include <string.h>
 #endif
 
+#include <glib.h>
 #include <gdk/gdkkeysyms.h>
 
 #include <thunar/thunar-gobject-extensions.h>
@@ -590,7 +591,7 @@ thunar_path_entry_changed (GtkEditable *editable)
           thunar_window_action_cancel_search (THUNAR_WINDOW (window));
         }
       /* location/folder-path code */
-      if (G_UNLIKELY (exo_str_looks_like_an_uri (text)))
+      if (G_UNLIKELY (g_uri_is_valid (text, G_URI_FLAGS_NONE, NULL)))
         {
           /* try to parse the URI text */
           escaped_text = g_uri_escape_string (text, G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, TRUE);
