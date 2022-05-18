@@ -679,7 +679,7 @@ thunar_icon_key_equal (gconstpointer a,
     return FALSE;
 
   /* do a full string comparison on the names */
-  return exo_str_is_equal (a_key->name, b_key->name);
+  return (g_strcmp0 (a_key->name, b_key->name) == 0);
 }
 
 
