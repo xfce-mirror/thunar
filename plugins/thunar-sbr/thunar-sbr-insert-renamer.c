@@ -558,7 +558,7 @@ thunar_sbr_insert_renamer_set_text (ThunarSbrInsertRenamer *insert_renamer,
   g_return_if_fail (THUNAR_SBR_IS_INSERT_RENAMER (insert_renamer));
 
   /* check if we have a new text */
-  if (G_LIKELY (!exo_str_is_equal (insert_renamer->text, text)))
+  if (G_LIKELY (g_strcmp0 (insert_renamer->text, text) != 0))
     {
       /* apply the new text */
       g_free (insert_renamer->text);
