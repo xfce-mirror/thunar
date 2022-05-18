@@ -726,7 +726,7 @@ thunar_progress_view_set_icon_name (ThunarProgressView *view,
 {
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_VIEW (view));
 
-  if (exo_str_is_equal (view->icon_name, icon_name))
+  if (g_strcmp0 (view->icon_name, icon_name) == 0)
     return;
 
   g_free (view->icon_name);
@@ -743,7 +743,7 @@ thunar_progress_view_set_title (ThunarProgressView *view,
 {
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_VIEW (view));
 
-  if (exo_str_is_equal (view->title, title))
+  if (g_strcmp0 (view->title, title) == 0)
     return;
 
   g_free (view->title);
