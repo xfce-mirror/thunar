@@ -4871,6 +4871,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
     return;
   thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), is_trash);
   thunar_details_view_set_recency_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
+  thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
 }
 
 
