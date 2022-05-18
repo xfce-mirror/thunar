@@ -719,6 +719,7 @@ thunar_window_init (ThunarWindow *window)
   gchar           *last_location_bar;
   gchar           *last_side_pane;
   gchar           *uca_path;
+  gchar           *catfish_path;
   GType            type;
   gint             last_separator_position;
   gint             last_window_width;
@@ -916,10 +917,17 @@ thunar_window_init (ThunarWindow *window)
   g_object_bind_property (G_OBJECT (window->preferences), "misc-directory-specific-settings", G_OBJECT (window), "directory-specific-settings", G_BINDING_SYNC_CREATE);
 
   /* setup the `Show More...` button that appears at the bottom of the view after a search is completed */
-  window->catfish_search_button = gtk_button_new_with_label ("Search with Catfish...");
-  gtk_grid_attach (GTK_GRID (window->view_box), window->catfish_search_button, 0, 1, 1, 1);
-  g_signal_connect_swapped (window->catfish_search_button, "clicked", G_CALLBACK (thunar_window_catfish_dialog_configure), window);
-  gtk_widget_hide (window->catfish_search_button);
+  catfish_path =  g_find_program_in_path ("catfish");
+  if (catfish_path != NULL)
+    {
+      window->catfish_search_button = gtk_button_new_with_label ("Search with Catfish...");
+      gtk_grid_attach (GTK_GRID (window->view_box), window->catfish_search_button, 0, 1, 1, 1);
+      g_signal_connect_swapped (window->catfish_search_button, "clicked", G_CALLBACK (thunar_window_catfish_dialog_configure), window);
+      gtk_widget_hide (window->catfish_search_button);
+      g_free (catfish_path);
+    }
+  else
+    window->catfish_search_button = NULL;
 
   window->trash_infobar = gtk_info_bar_new ();
   gtk_grid_attach (GTK_GRID (window->view_box), window->trash_infobar, 0, 2, 1, 1);
@@ -3065,7 +3073,8 @@ thunar_window_resume_search (ThunarWindow *window,
   /* change to search UI and options */
   g_free (window->search_query);
   window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
-  gtk_widget_show (window->catfish_search_button);
+  if (window->catfish_search_button != NULL)
+    gtk_widget_show (window->catfish_search_button);
   thunar_launcher_set_searching (window->launcher, TRUE);
 
   /* the check is useless as long as the workaround is in place */
@@ -3091,9 +3100,9 @@ thunar_window_update_search (ThunarWindow *window)
   g_free (window->search_query);
   window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), window->search_query);
-  if (window->search_query != NULL && g_strcmp0 (window->search_query, "") != 0)
+  if (window->search_query != NULL && g_strcmp0 (window->search_query, "") != 0 && window->catfish_search_button != NULL)
     gtk_widget_show (window->catfish_search_button);
-  else
+  else if (window->catfish_search_button != NULL)
     gtk_widget_hide (window->catfish_search_button);
 }
 
@@ -3111,7 +3120,8 @@ thunar_window_action_cancel_search (ThunarWindow *window)
   thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), NULL);
   thunar_launcher_set_searching (window->launcher, FALSE);
-  gtk_widget_hide (window->catfish_search_button);
+  if (window->catfish_search_button != NULL)
+    gtk_widget_hide (window->catfish_search_button);
 
   g_free (window->search_query);
   window->search_query = NULL;
