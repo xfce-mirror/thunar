@@ -65,6 +65,7 @@ struct _ThunarColumnEditor
   ThunarPreferences *preferences;
 
   ThunarColumnModel *column_model;
+  GtkTreeModelFilter *filter;
 
   GtkWidget         *tree_view;
   GtkWidget         *up_button;
@@ -122,7 +123,6 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
 {
   GtkTreeViewColumn *column;
   GtkTreeSelection  *selection;
-  GtkTreeModel      *filter;
   GtkCellRenderer   *renderer;
   GtkTreeIter        childIter;
   GtkTreeIter        iter;
@@ -147,8 +147,8 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
                          column_editor, NULL, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 
   /* create a filter from the shared column model */
-  filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (column_editor->column_model), NULL);
-  gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (filter),
+  column_editor->filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (column_editor->column_model), NULL);
+  gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (column_editor->filter),
                                           (GtkTreeModelFilterVisibleFunc) thunar_column_visible_func,
                                           NULL, NULL);
 
@@ -206,7 +206,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_widget_show (swin);
 
   /* create the tree view */
-  column_editor->tree_view = gtk_tree_view_new_with_model (filter);
+  column_editor->tree_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL (column_editor->filter));
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (column_editor->tree_view), FALSE);
   gtk_container_add (GTK_CONTAINER (swin), column_editor->tree_view);
   gtk_widget_show (column_editor->tree_view);
@@ -343,7 +343,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
     {
       /* tree_view is created from filter & column_model is the child of filter
        * hence, child Iter needs to be converted to parent Iter */
-      gtk_tree_model_filter_convert_child_iter_to_iter (GTK_TREE_MODEL_FILTER (filter), &iter, &childIter);
+      gtk_tree_model_filter_convert_child_iter_to_iter (column_editor->filter, &iter, &childIter);
       gtk_tree_selection_select_iter (selection, &iter);
     }
 
@@ -475,6 +475,7 @@ thunar_column_editor_toggled (ThunarColumnEditor    *column_editor,
   ThunarColumn column;
   GtkTreePath *path;
   GtkTreeIter  iter;
+  GtkTreeIter  child_iter;
   gboolean     visible;
 
   _thunar_return_if_fail (GTK_IS_CELL_RENDERER_TOGGLE (cell_renderer));
@@ -483,10 +484,12 @@ thunar_column_editor_toggled (ThunarColumnEditor    *column_editor,
 
   /* determine the tree path for the string */
   path = gtk_tree_path_new_from_string (path_string);
-  if (gtk_tree_model_get_iter (GTK_TREE_MODEL (column_editor->column_model), &iter, path))
+  if (gtk_tree_model_get_iter (GTK_TREE_MODEL (column_editor->filter), &iter, path))
     {
+      gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (column_editor->filter), &child_iter, &iter);
+
       /* determine the column for the iterator... */
-      column = thunar_column_model_get_column_for_iter (column_editor->column_model, &iter);
+      column = thunar_column_model_get_column_for_iter (column_editor->column_model, &child_iter);
 
       /* ...determine the existing visbility setting... */
       visible = thunar_column_model_get_column_visible (column_editor->column_model, column);
@@ -550,9 +553,6 @@ thunar_column_editor_update_buttons (ThunarColumnEditor *column_editor)
     {
       /* determine the tree path for the iter */
       path = gtk_tree_model_get_path (model, &iter);
-
-      /* tree view's model is made from GTK_TREE_MODEL_FILTER, hence fetching child path */
-      path = gtk_tree_model_filter_convert_path_to_child_path (GTK_TREE_MODEL_FILTER (model), path);
 
       if (G_UNLIKELY (path == NULL))
         return;
