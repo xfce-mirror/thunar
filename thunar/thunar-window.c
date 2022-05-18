@@ -3113,6 +3113,25 @@ thunar_window_update_search (ThunarWindow *window)
 
 
 
+static gint
+thunar_window_reset_view_type_idle (gpointer window_ptr)
+{
+  ThunarWindow *window = window_ptr;
+  
+  /* null check for the same reason as thunar_standard_view_set_searching */
+  if (window->view != NULL)
+    {
+      if (thunar_standard_view_get_saved_view_type (THUNAR_STANDARD_VIEW (window->view)) != 0)
+        thunar_window_action_view_changed (window, thunar_standard_view_get_saved_view_type (THUNAR_STANDARD_VIEW (window->view)));
+
+      thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), 0);
+    }
+
+  return G_SOURCE_REMOVE;
+}
+
+
+
 gboolean
 thunar_window_action_cancel_search (ThunarWindow *window)
 {
@@ -3136,14 +3155,7 @@ thunar_window_action_cancel_search (ThunarWindow *window)
 
   window->is_searching = FALSE;
 
-  /* null check for the same reason as thunar_standard_view_set_searching */
-  if (window->view != NULL)
-    {
-      if (thunar_standard_view_get_saved_view_type (THUNAR_STANDARD_VIEW (window->view)) != 0)
-        thunar_window_action_view_changed (window, thunar_standard_view_get_saved_view_type (THUNAR_STANDARD_VIEW (window->view)));
-
-      thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), 0);
-    }
+  g_idle_add (thunar_window_reset_view_type_idle, window);
 
   g_signal_handlers_block_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_search), FALSE);
