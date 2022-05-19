@@ -874,7 +874,7 @@ thunar_renamer_model_process_item (ThunarRenamerModel     *renamer_model,
     }
 
   /* check if the new name is equal to the old one */
-  if (exo_str_is_equal (name, display_name))
+  if (g_strcmp0 (name, display_name) == 0)
     {
       /* just return NULL then */
       g_free (name);
@@ -921,7 +921,7 @@ THUNAR_THREADS_ENTER
 
           /* determine the new name for the item */
           name = thunar_renamer_model_process_item (renamer_model, item, idx);
-          if (!exo_str_is_equal (item->name, name))
+          if (g_strcmp0 (item->name, name) != 0)
             {
               /* apply new name */
               g_free (item->name);

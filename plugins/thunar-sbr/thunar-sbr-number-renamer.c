@@ -32,9 +32,9 @@
 #include <string.h>
 #endif
 
-#include <exo/exo.h>
-
 #include <thunar-sbr/thunar-sbr-number-renamer.h>
+
+#include <libxfce4util/libxfce4util.h>
 
 
 
@@ -598,7 +598,7 @@ thunar_sbr_number_renamer_set_start (ThunarSbrNumberRenamer *number_renamer,
   g_return_if_fail (THUNAR_SBR_IS_NUMBER_RENAMER (number_renamer));
 
   /* check if we have a new start */
-  if (!exo_str_is_equal (number_renamer->start, start))
+  if (g_strcmp0 (number_renamer->start, start) != 0)
     {
       /* apply the new start */
       g_free (number_renamer->start);
@@ -645,7 +645,7 @@ thunar_sbr_number_renamer_set_text (ThunarSbrNumberRenamer *number_renamer,
   g_return_if_fail (THUNAR_SBR_IS_NUMBER_RENAMER (number_renamer));
 
   /* check if we have a new text */
-  if (G_LIKELY (!exo_str_is_equal (number_renamer->text, text)))
+  if (G_LIKELY (g_strcmp0 (number_renamer->text, text) != 0))
     {
       /* apply the new text */
       g_free (number_renamer->text);

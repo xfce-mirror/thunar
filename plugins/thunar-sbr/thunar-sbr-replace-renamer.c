@@ -33,9 +33,9 @@
 #include <pcre.h>
 #endif
 
-#include <exo/exo.h>
-
 #include <thunar-sbr/thunar-sbr-replace-renamer.h>
+
+#include <libxfce4util/libxfce4util.h>
 
 
 
@@ -742,7 +742,7 @@ thunar_sbr_replace_renamer_set_pattern (ThunarSbrReplaceRenamer *replace_renamer
   g_return_if_fail (g_utf8_validate (pattern, -1, NULL));
 
   /* check if we have a new pattern */
-  if (!exo_str_is_equal (replace_renamer->pattern, pattern))
+  if (g_strcmp0 (replace_renamer->pattern, pattern) != 0)
     {
       /* apply the new value */
       g_free (replace_renamer->pattern);
@@ -851,7 +851,7 @@ thunar_sbr_replace_renamer_set_replacement (ThunarSbrReplaceRenamer *replace_ren
   g_return_if_fail (g_utf8_validate (replacement, -1, NULL));
 
   /* check if we have a new replacement */
-  if (!exo_str_is_equal (replace_renamer->replacement, replacement))
+  if (g_strcmp0 (replace_renamer->replacement, replacement) != 0)
     {
       /* apply the setting */
       g_free (replace_renamer->replacement);
