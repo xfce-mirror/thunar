@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-16 12:46+0200\n"
+"POT-Creation-Date: 2022-05-19 00:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: abuyop <abuyop@gmail.com>, 2013-2015,2017-2022\n"
 "Language-Team: Malay (http://www.transifex.com/xfce/thunar/language/ms/)\n"
@@ -74,8 +74,8 @@ msgstr "Gagal lancarkan operasi"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1615 ../thunar/thunar-application.c:1775
-#: ../thunar/thunar-launcher.c:1115 ../thunar/thunar-location-entry.c:370
-#: ../thunar/thunar-location-entry.c:398
+#: ../thunar/thunar-launcher.c:1115 ../thunar/thunar-location-entry.c:358
+#: ../thunar/thunar-location-entry.c:386
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Gagal membuka \"%s\""
@@ -287,7 +287,7 @@ msgstr "Guna sebagai _lalai untuk jenis fail ini"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1286
-#: ../thunar/thunar-properties-dialog.c:914 ../thunar/thunar-window.c:4042
+#: ../thunar/thunar-properties-dialog.c:914 ../thunar/thunar-window.c:4052
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -1603,11 +1603,7 @@ msgstr "Saiz Imej:"
 msgid "Selection: %s"
 msgstr "Pemilihan: %s"
 
-#: ../thunar/thunar-location-entry.c:195
-msgid "Search for files"
-msgstr "Gelintar fail"
-
-#: ../thunar/thunar-location-entry.c:363
+#: ../thunar/thunar-location-entry.c:351
 #, c-format
 msgid "File does not exist"
 msgstr "Fail tidak wujud"
@@ -2118,24 +2114,24 @@ msgid ""
 msgstr "Pilih pilihan ini untuk membuka tab baharu jika mengklik tengah selain dari membuka tetingkap baharu"
 
 #: ../thunar/thunar-preferences-dialog.c:908
-msgid "Show full directory paths in tab titles"
-msgstr "Tunjuk laluan direktori lengkap dalam tajuk tab"
-
-#: ../thunar/thunar-preferences-dialog.c:914
-msgid ""
-"Select this option to show the full directory path in the tab title instead "
-"of only the directory name"
-msgstr "Pilih pilihan ini untuk menunjukkan laluan direktori lengkap dalam tajuk tab selain dari nama direktori"
-
-#: ../thunar/thunar-preferences-dialog.c:921
 msgid "Open new thunar instances as tabs"
 msgstr "Buka kejadian thunar baharu sebagai tab"
 
-#: ../thunar/thunar-preferences-dialog.c:927
+#: ../thunar/thunar-preferences-dialog.c:914
 msgid ""
 "Select this option to open new thunar instances as tabs in an existing "
 "thunar window"
 msgstr "Pilih pilihan ini untuk membuka kejadian thunar baharu selain sebagai tab dalam tetingkap thunar sedia ada"
+
+#: ../thunar/thunar-preferences-dialog.c:922
+msgid "Show full directory paths in tab titles"
+msgstr "Tunjuk laluan direktori lengkap dalam tajuk tab"
+
+#: ../thunar/thunar-preferences-dialog.c:928
+msgid ""
+"Select this option to show the full directory path in the tab title instead "
+"of only the directory name"
+msgstr "Pilih pilihan ini untuk menunjukkan laluan direktori lengkap dalam tajuk tab selain dari nama direktori"
 
 #: ../thunar/thunar-preferences-dialog.c:935
 msgid "Restore tabs on startup"
@@ -2793,7 +2789,7 @@ msgid "Loading folder contents..."
 msgstr "Memuatkan kandungan folder..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2275 ../thunar/thunar-window.c:3856
+#: ../thunar/thunar-standard-view.c:2275 ../thunar/thunar-window.c:3866
 msgid "Failed to open the home folder"
 msgstr "Gagal membuka folder rumah"
 
@@ -2829,7 +2825,7 @@ msgstr "Nama fail tidak sah disedia oleh laman seret XDS"
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Gagal mencipta pautan untuk URL \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3358 ../thunar/thunar-window.c:3952
+#: ../thunar/thunar-standard-view.c:3358 ../thunar/thunar-window.c:3962
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Gagal membuka direktori \"%s\""
@@ -3358,80 +3354,80 @@ msgid "Cancel search for files"
 msgstr "Batal gelintar fail"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:849
+#: ../thunar/thunar-window.c:850
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "Amaran, anda menggunakan akaun root. Tindakan ini boleh merosakkan sistem anda."
 
-#: ../thunar/thunar-window.c:2430
+#: ../thunar/thunar-window.c:2438
 msgid "Close tab"
 msgstr "Tutup tab"
 
-#: ../thunar/thunar-window.c:2883
+#: ../thunar/thunar-window.c:2891
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Buka lokasi \"%s\""
 
-#: ../thunar/thunar-window.c:3796
+#: ../thunar/thunar-window.c:3806
 msgid "Failed to open parent folder"
 msgstr "Gagal buka folder induk"
 
-#: ../thunar/thunar-window.c:3927
+#: ../thunar/thunar-window.c:3937
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Direktori \"%s\" tidak wujud. Anda mahu cipta ia?"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3997
+#: ../thunar/thunar-window.c:4007
 msgid "Failed to browse the computer"
 msgstr "Gagal melayari komputer"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4040
+#: ../thunar/thunar-window.c:4050
 msgid "About Templates"
 msgstr "Perihal Templat"
 
-#: ../thunar/thunar-window.c:4062
+#: ../thunar/thunar-window.c:4072
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Semua fail dalam folder ini akan muncul dalam menu \"Cipta Dokumen\"."
 
-#: ../thunar/thunar-window.c:4069
+#: ../thunar/thunar-window.c:4079
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Jika anda kerap mencipta beberapa jenis dokumen, buat satu salinan dan letak ia di dalam folder ini. Thunar akan menambah satu masukan untuk dokumen ini di dalam menu \"Cipta Dokumen\".\n\nKemudian, anda boleh memilih masukan dari menu \"Cipta Dokumen\" dan salinan dokumen akan dicipta di dalam direktori yang sedang dibuka."
 
-#: ../thunar/thunar-window.c:4081
+#: ../thunar/thunar-window.c:4091
 msgid "Do _not display this message again"
 msgstr "_Jangan papar mesej ini lagi"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4115
+#: ../thunar/thunar-window.c:4125
 msgid "Failed to open the file system root folder"
 msgstr "Gagal membuka folder root sistem fail"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4151
+#: ../thunar/thunar-window.c:4161
 msgid "Failed to display `Recent`"
 msgstr "Gagal memaparkan 'Baru-baru ini'"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4187
+#: ../thunar/thunar-window.c:4197
 msgid "Failed to display the contents of the trash can"
 msgstr "Gagal memapar kandungan tong sampah"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4223
+#: ../thunar/thunar-window.c:4233
 msgid "Failed to browse the network"
 msgstr "Gagal melayar rangkaian"
 
-#: ../thunar/thunar-window.c:4334
+#: ../thunar/thunar-window.c:4344
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar merupakan pengurus fail yang pantas\ndan mudah diguna untuk Persekitaran\nDesktop Xfce."
 
-#: ../thunar/thunar-window.c:5378
+#: ../thunar/thunar-window.c:5389
 msgid "Failed to launch search with Catfish"
 msgstr "Gagal melancarkan gelintar dengan Catfish"
 
