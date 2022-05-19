@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-16 12:46+0200\n"
+"POT-Creation-Date: 2022-05-19 00:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Daniel Muñiz Fontoira <dani@damufo.eu>, 2021\n"
 "Language-Team: Galician (http://www.transifex.com/xfce/thunar/language/gl/)\n"
@@ -79,8 +79,8 @@ msgstr "Non se puido iniciar a operación"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1615 ../thunar/thunar-application.c:1775
-#: ../thunar/thunar-launcher.c:1115 ../thunar/thunar-location-entry.c:370
-#: ../thunar/thunar-location-entry.c:398
+#: ../thunar/thunar-launcher.c:1115 ../thunar/thunar-location-entry.c:358
+#: ../thunar/thunar-location-entry.c:386
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Non se puido abrir «%s»"
@@ -293,7 +293,7 @@ msgstr "Usar de xeito predeterminado para este tipo de ficheiro"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1286
-#: ../thunar/thunar-properties-dialog.c:914 ../thunar/thunar-window.c:4042
+#: ../thunar/thunar-properties-dialog.c:914 ../thunar/thunar-window.c:4052
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -1637,11 +1637,7 @@ msgstr "Tamaño de imaxe:"
 msgid "Selection: %s"
 msgstr "Selección: %s"
 
-#: ../thunar/thunar-location-entry.c:195
-msgid "Search for files"
-msgstr "Buscar ficheiros"
-
-#: ../thunar/thunar-location-entry.c:363
+#: ../thunar/thunar-location-entry.c:351
 #, c-format
 msgid "File does not exist"
 msgstr "O ficheiro non existe"
@@ -2152,24 +2148,24 @@ msgid ""
 msgstr "Seleccione esta opción para abrir unha nova lapela no canto dunha nova xanela ao premer o botón do medio"
 
 #: ../thunar/thunar-preferences-dialog.c:908
-msgid "Show full directory paths in tab titles"
-msgstr ""
-
-#: ../thunar/thunar-preferences-dialog.c:914
-msgid ""
-"Select this option to show the full directory path in the tab title instead "
-"of only the directory name"
-msgstr ""
-
-#: ../thunar/thunar-preferences-dialog.c:921
 msgid "Open new thunar instances as tabs"
 msgstr "Abrir as novas instancias de Thunar como lapelas"
 
-#: ../thunar/thunar-preferences-dialog.c:927
+#: ../thunar/thunar-preferences-dialog.c:914
 msgid ""
 "Select this option to open new thunar instances as tabs in an existing "
 "thunar window"
 msgstr "Seleccione esta opción para abrir novas instancias de Thunar como lapelas nunha xanela de Thunar existente"
+
+#: ../thunar/thunar-preferences-dialog.c:922
+msgid "Show full directory paths in tab titles"
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:928
+msgid ""
+"Select this option to show the full directory path in the tab title instead "
+"of only the directory name"
+msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:935
 msgid "Restore tabs on startup"
@@ -2831,7 +2827,7 @@ msgid "Loading folder contents..."
 msgstr "Cargando o contido do cartafol..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2275 ../thunar/thunar-window.c:3856
+#: ../thunar/thunar-standard-view.c:2275 ../thunar/thunar-window.c:3866
 msgid "Failed to open the home folder"
 msgstr "Non se puido abrir o cartafol persoal"
 
@@ -2867,7 +2863,7 @@ msgstr "O nome do ficheiro proporcionado polo sitio XDS é incorrecto"
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Non se puido crear unha ligazón ao URL «%s»"
 
-#: ../thunar/thunar-standard-view.c:3358 ../thunar/thunar-window.c:3952
+#: ../thunar/thunar-standard-view.c:3358 ../thunar/thunar-window.c:3962
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Non se puido abrir o directorio «%s»"
@@ -3399,80 +3395,80 @@ msgid "Cancel search for files"
 msgstr "Cancelar a busca de ficheiros"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:849
+#: ../thunar/thunar-window.c:850
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "Aviso: está a usar a conta root. Pode prexudicar o seu sistema"
 
-#: ../thunar/thunar-window.c:2430
+#: ../thunar/thunar-window.c:2438
 msgid "Close tab"
 msgstr "Pechar a lapela"
 
-#: ../thunar/thunar-window.c:2883
+#: ../thunar/thunar-window.c:2891
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Abrir a localización «%s»"
 
-#: ../thunar/thunar-window.c:3796
+#: ../thunar/thunar-window.c:3806
 msgid "Failed to open parent folder"
 msgstr "Non se puido abrir o cartafol superior"
 
-#: ../thunar/thunar-window.c:3927
+#: ../thunar/thunar-window.c:3937
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Non existe o cartafol «%s». Desexa crealo? "
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3997
+#: ../thunar/thunar-window.c:4007
 msgid "Failed to browse the computer"
 msgstr "Produciuse un fallo ao explorar o computador"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4040
+#: ../thunar/thunar-window.c:4050
 msgid "About Templates"
 msgstr "Sobre os modelos"
 
-#: ../thunar/thunar-window.c:4062
+#: ../thunar/thunar-window.c:4072
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Todos os ficheiros deste cartafol aparecerán no menú «Crear documento»."
 
-#: ../thunar/thunar-window.c:4069
+#: ../thunar/thunar-window.c:4079
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Se crea frecuentemente certo tipo de documentos, faga unha copia dalgún e póñaa neste cartafol. Thunar engadirá unha entrada para ese documento no menú «Crear documento».\n\nLogo pode seleccionar a entrada no menú «Crear documento» e crearase unha copia do documento no directorio no que estea situado."
 
-#: ../thunar/thunar-window.c:4081
+#: ../thunar/thunar-window.c:4091
 msgid "Do _not display this message again"
 msgstr "_Non amosar esta mensaxe de novo"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4115
+#: ../thunar/thunar-window.c:4125
 msgid "Failed to open the file system root folder"
 msgstr "Produciuse un fallo ao abrir o cartafol raíz do sistema de ficheiros"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4151
+#: ../thunar/thunar-window.c:4161
 msgid "Failed to display `Recent`"
 msgstr "Non se puido amosar «recente»"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4187
+#: ../thunar/thunar-window.c:4197
 msgid "Failed to display the contents of the trash can"
 msgstr "Non se puido amosar o contido da papeleira"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4223
+#: ../thunar/thunar-window.c:4233
 msgid "Failed to browse the network"
 msgstr "Produciuse un fallo ao explorar a rede"
 
-#: ../thunar/thunar-window.c:4334
+#: ../thunar/thunar-window.c:4344
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "O Thunar é un xestor de ficheiros rápido e doado\nde usar para o contorno de escritorio Xfce."
 
-#: ../thunar/thunar-window.c:5378
+#: ../thunar/thunar-window.c:5389
 msgid "Failed to launch search with Catfish"
 msgstr "Produciuse un fallo ao iniciar a busca co Catfish"
 
