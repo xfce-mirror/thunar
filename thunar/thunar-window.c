@@ -3108,7 +3108,6 @@ static gint
 thunar_window_reset_view_type_idle (gpointer window_ptr)
 {
   ThunarWindow *window = window_ptr;
-  
   /* null check for the same reason as thunar_standard_view_set_searching */
   if (window->view != NULL)
     {
