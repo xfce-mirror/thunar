@@ -335,7 +335,7 @@ thunar_dialogs_show_rename_file (gpointer    parent,
       text = xfce_filename_input_get_text (filename_input);
 
       /* check if we have a new name here */
-      if (G_LIKELY (!exo_str_is_equal (filename, text)))
+      if (G_LIKELY (g_strcmp0 (filename, text)) != 0)
         {
           /* try to rename the file */
           job = thunar_io_jobs_rename_file (file, text);
@@ -1043,7 +1043,7 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
                                        "this program, click Cancel."),
                                        thunar_file_get_display_name (file));
   g_string_append (secondary, "\n\n");
-  if (exo_str_looks_like_an_uri (command))
+  if (g_uri_is_valid (command, G_URI_FLAGS_NONE, NULL))
     g_string_append_printf (secondary, G_KEY_FILE_DESKTOP_KEY_URL"=%s", command);
   else
     g_string_append_printf (secondary, G_KEY_FILE_DESKTOP_KEY_EXEC"=%s", command);

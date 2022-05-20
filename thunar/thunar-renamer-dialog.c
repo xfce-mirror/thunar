@@ -524,7 +524,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
       active_str = xfce_rc_read_entry_untranslated (rc, "LastActiveMode", "");
       for (active = 0, n = 0; n < klass->n_values; ++n)
         {
-          if (exo_str_is_equal (active_str, klass->values[n].value_name))
+          if (g_strcmp0 (active_str, klass->values[n].value_name) == 0)
             active = n;
           gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (mcombo), _(klass->values[n].value_nick));
         }
@@ -553,7 +553,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
           gtk_notebook_append_page (GTK_NOTEBOOK (notebook), lp->data, NULL);
 
           /* check if this page should be active by default */
-          if (exo_str_is_equal (G_OBJECT_TYPE_NAME (lp->data), active_str))
+          if (g_strcmp0 (G_OBJECT_TYPE_NAME (lp->data), active_str) == 0)
             active = g_list_position (renamers, lp);
 
           /* try to load the settings for the renamer */
