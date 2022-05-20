@@ -216,7 +216,7 @@ static ThunarJob*         thunar_list_model_job_search_directory  (ThunarListMod
 static void               thunar_list_model_search_folder         (ThunarListModel             *model,
                                                                    ThunarJob                   *job,
                                                                    gchar                       *uri,
-                                                                   const gchar                 *search_query_c,
+                                                                   gchar                      **search_query_c_terms,
                                                                    enum ThunarListModelSearch   search_type);
 static void               thunar_list_model_cancel_search_job     (ThunarListModel             *model);
 
@@ -2079,6 +2079,8 @@ _thunar_job_search_directory (ThunarJob  *job,
   ThunarListModel            *model;
   ThunarFile                 *directory;
   const char                 *search_query_c;
+  gchar                     **search_query_c_terms;
+  GRegex                     *whitespace_regex;
   ThunarPreferences          *preferences;
   gboolean                    is_source_device_local;
   ThunarRecursiveSearchMode   mode;
@@ -2101,12 +2103,20 @@ _thunar_job_search_directory (ThunarJob  *job,
   search_query_c = g_value_get_string (&g_array_index (param_values, GValue, 1));
   directory = g_value_get_object (&g_array_index (param_values, GValue, 2));
 
+  whitespace_regex = g_regex_new ("\\s+", 0, 0, error);
+  if (!whitespace_regex)
+    return FALSE;
+  search_query_c_terms = g_regex_split (whitespace_regex, search_query_c, 0);
+  g_regex_unref (whitespace_regex);
+
   is_source_device_local = thunar_g_file_is_on_local_device (thunar_file_get_file (directory));
   if (mode == THUNAR_RECURSIVE_SEARCH_ALWAYS || (mode == THUNAR_RECURSIVE_SEARCH_LOCAL && is_source_device_local))
     search_type = THUNAR_LIST_MODEL_SEARCH_RECURSIVE;
 
-  thunar_list_model_search_folder (model, job, thunar_file_dup_uri (directory), search_query_c, search_type);
+  thunar_list_model_search_folder (model, job, thunar_file_dup_uri (directory), search_query_c_terms, search_type);
 
+  g_strfreev (search_query_c_terms);
+  
   return TRUE;
 }
 
@@ -2179,7 +2189,7 @@ static void
 thunar_list_model_search_folder (ThunarListModel           *model,
                                  ThunarJob                 *job,
                                  gchar                     *uri,
-                                 const gchar               *search_query_c,
+                                 gchar                    **search_query_c_terms,
                                  enum ThunarListModelSearch search_type)
 {
   GCancellable    *cancellable;
@@ -2189,6 +2199,8 @@ thunar_list_model_search_folder (ThunarListModel           *model,
   const gchar     *namespace;
   const gchar     *display_name;
   gchar           *display_name_c; /* converted to ignore case */
+  gint             i;
+  gboolean         matched;
 
   cancellable = exo_job_get_cancellable (EXO_JOB (job));
   directory = g_file_new_for_uri (uri);
@@ -2237,16 +2249,28 @@ thunar_list_model_search_folder (ThunarListModel           *model,
       /* handle directories */
       if (type == G_FILE_TYPE_DIRECTORY && search_type == THUNAR_LIST_MODEL_SEARCH_RECURSIVE)
         {
-          thunar_list_model_search_folder (model, job, g_file_get_uri (file), search_query_c, search_type);
+          thunar_list_model_search_folder (model, job, g_file_get_uri (file), search_query_c_terms, search_type);
           /* continue; don't add non-leaf directories in the results */
         }
 
       /* prepare entry display name */
       display_name = g_file_info_get_display_name (info);
       display_name_c = g_utf8_casefold (display_name, strlen (display_name));
+      /* TODO: normalize as well as fold case. Maybe prepare and test
+       * ascii alternatives like g_str_match_string() and
+       * g_str_normalize_and_fold() */
 
-      /* search for substring */
-      if (g_strrstr (display_name_c, search_query_c) != NULL)
+      /* search for all substrings */
+      matched = TRUE;
+      for (i = 0; search_query_c_terms[i]; i++)
+        {
+          if (g_strrstr (display_name_c, search_query_c_terms[i]) == NULL)
+            {
+              matched = FALSE;
+              break;
+            }
+        }
+      if (matched)
         files_found = g_list_prepend (files_found, thunar_file_get (file, NULL));
 
       /* free memory */
