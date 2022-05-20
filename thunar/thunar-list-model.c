@@ -2256,9 +2256,6 @@ thunar_list_model_search_folder (ThunarListModel           *model,
       /* prepare entry display name */
       display_name = g_file_info_get_display_name (info);
       display_name_c = g_utf8_casefold (display_name, strlen (display_name));
-      /* TODO: normalize as well as fold case. Maybe prepare and test
-       * ascii alternatives like g_str_match_string() and
-       * g_str_normalize_and_fold() */
 
       /* search for all substrings */
       matched = TRUE;
