@@ -117,15 +117,16 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   GtkTreeViewColumn *column;
   GtkCellRenderer   *renderer;
   ThunarUcaModel    *uca_model;
-  gboolean           have_header_bar;
+  gboolean           use_header_bar = FALSE;
 
   /* Initialize the template for this instance */
   gtk_widget_init_template (GTK_WIDGET (uca_chooser));
 
   /* configure the dialog window */
-  g_object_get (uca_chooser, "use-header-bar", &have_header_bar, NULL);
+  g_object_get (gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (uca_chooser))),
+                "gtk-dialogs-use-header", &use_header_bar, NULL);
 
-  if (!have_header_bar)
+  if (!use_header_bar)
     {
       /* add a regular close button, the header bar already provides one */
       gtk_dialog_add_button (GTK_DIALOG (uca_chooser), _("_Close"), GTK_RESPONSE_CLOSE);
