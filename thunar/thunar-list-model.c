@@ -217,7 +217,8 @@ static void               thunar_list_model_search_folder         (ThunarListMod
                                                                    ThunarJob                   *job,
                                                                    gchar                       *uri,
                                                                    gchar                      **search_query_c_terms,
-                                                                   enum ThunarListModelSearch   search_type);
+                                                                   enum ThunarListModelSearch   search_type,
+                                                                   gboolean                     show_hidden);
 static void               thunar_list_model_cancel_search_job     (ThunarListModel             *model);
 
 
@@ -2085,6 +2086,7 @@ _thunar_job_search_directory (ThunarJob  *job,
   gboolean                    is_source_device_local;
   ThunarRecursiveSearchMode   mode;
   enum ThunarListModelSearch  search_type;
+  gboolean                    show_hidden;
 
   search_type = THUNAR_LIST_MODEL_SEARCH_NON_RECURSIVE;
 
@@ -2093,6 +2095,7 @@ _thunar_job_search_directory (ThunarJob  *job,
 
   /* determine the current recursive search mode */
   g_object_get (G_OBJECT (preferences), "misc-recursive-search", &mode, NULL);
+  g_object_get (G_OBJECT (preferences), "last-show-hidden", &show_hidden, NULL);
 
   g_object_unref (preferences);
 
@@ -2113,7 +2116,7 @@ _thunar_job_search_directory (ThunarJob  *job,
   if (mode == THUNAR_RECURSIVE_SEARCH_ALWAYS || (mode == THUNAR_RECURSIVE_SEARCH_LOCAL && is_source_device_local))
     search_type = THUNAR_LIST_MODEL_SEARCH_RECURSIVE;
 
-  thunar_list_model_search_folder (model, job, thunar_file_dup_uri (directory), search_query_c_terms, search_type);
+  thunar_list_model_search_folder (model, job, thunar_file_dup_uri (directory), search_query_c_terms, search_type, show_hidden);
 
   g_strfreev (search_query_c_terms);
 
@@ -2190,7 +2193,8 @@ thunar_list_model_search_folder (ThunarListModel           *model,
                                  ThunarJob                 *job,
                                  gchar                     *uri,
                                  gchar                    **search_query_c_terms,
-                                 enum ThunarListModelSearch search_type)
+                                 enum ThunarListModelSearch search_type,
+                                 gboolean                   show_hidden)
 {
   GCancellable    *cancellable;
   GFileEnumerator *enumerator;
@@ -2207,6 +2211,8 @@ thunar_list_model_search_folder (ThunarListModel           *model,
   namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE ","
               G_FILE_ATTRIBUTE_STANDARD_TARGET_URI ","
               G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
+              G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP ","
+              G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN ","
               G_FILE_ATTRIBUTE_STANDARD_NAME ", recent::*";
   enumerator = g_file_enumerate_children (directory, namespace, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, cancellable, NULL);
   if (enumerator == NULL)
@@ -2235,6 +2241,18 @@ thunar_list_model_search_folder (ThunarListModel           *model,
       else
         file = g_file_get_child (directory, g_file_info_get_name (info));
 
+      /* respect last-show-hidden */
+      if (show_hidden == FALSE)
+        {
+          /* same logic as thunar_file_is_hidden() */
+          if (g_file_info_get_is_hidden (info) || g_file_info_get_is_backup (info))
+            {
+              g_object_unref (file);
+              g_object_unref (info);
+              continue;
+            }
+        }
+
       type = g_file_info_get_file_type (info);
 
       /* ignore symlinks */
@@ -2248,7 +2266,7 @@ thunar_list_model_search_folder (ThunarListModel           *model,
       /* handle directories */
       if (type == G_FILE_TYPE_DIRECTORY && search_type == THUNAR_LIST_MODEL_SEARCH_RECURSIVE)
         {
-          thunar_list_model_search_folder (model, job, g_file_get_uri (file), search_query_c_terms, search_type);
+          thunar_list_model_search_folder (model, job, g_file_get_uri (file), search_query_c_terms, search_type, show_hidden);
           /* continue; don't add non-leaf directories in the results */
         }
 

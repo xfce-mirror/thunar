@@ -4384,6 +4384,10 @@ thunar_window_action_show_hidden (ThunarWindow *window)
 
   g_object_set (G_OBJECT (window->preferences), "last-show-hidden", window->show_hidden, NULL);
 
+  /* restart any active search */
+  if (G_UNLIKELY (window->is_searching))
+    thunar_window_update_search (window);
+
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
