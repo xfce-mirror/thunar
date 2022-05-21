@@ -121,6 +121,7 @@ enum
   PROP_MISC_SWITCH_TO_NEW_TAB,
   PROP_MISC_VERTICAL_SPLIT_PANE,
   PROP_MISC_COMPACT_VIEW_MAX_CHARS,
+  PROP_MISC_COLOR_TAGS,
   N_PROPERTIES,
 };
 
@@ -1103,6 +1104,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         NULL,
                         G_MININT, G_MAXINT,
                         50,
+                        EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:color-tags
+   *
+   * If true, allows color-tags.
+   **/
+  preferences_props[PROP_MISC_COLOR_TAGS] =
+      g_param_spec_boolean ("misc-color-tags",
+                        "MiscColorTags",
+                        NULL,
+                        TRUE,
                         EXO_PARAM_READWRITE);
 
   /* install all properties */
