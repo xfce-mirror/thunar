@@ -147,8 +147,8 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
                          column_editor, NULL, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 
   /* create a filter from the shared column model */
-  column_editor->filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (column_editor->column_model), NULL);
-  gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (column_editor->filter),
+  column_editor->filter = GTK_TREE_MODEL_FILTER (gtk_tree_model_filter_new (GTK_TREE_MODEL (column_editor->column_model), NULL));
+  gtk_tree_model_filter_set_visible_func (column_editor->filter,
                                           (GtkTreeModelFilterVisibleFunc) thunar_column_visible_func,
                                           NULL, NULL);
 
@@ -486,7 +486,7 @@ thunar_column_editor_toggled (ThunarColumnEditor    *column_editor,
   path = gtk_tree_path_new_from_string (path_string);
   if (gtk_tree_model_get_iter (GTK_TREE_MODEL (column_editor->filter), &iter, path))
     {
-      gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (column_editor->filter), &child_iter, &iter);
+      gtk_tree_model_filter_convert_iter_to_child_iter (column_editor->filter, &child_iter, &iter);
 
       /* determine the column for the iterator... */
       column = thunar_column_model_get_column_for_iter (column_editor->column_model, &child_iter);
