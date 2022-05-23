@@ -402,6 +402,7 @@ struct _ThunarWindow
 
   GType                   view_type;
   GSList                 *view_bindings;
+  guint                   reset_view_type_idle_id;
 
   /* support for two different styles of location bars */
   GtkWidget              *location_bar;
@@ -976,6 +977,7 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect (G_OBJECT (gtk_recent_manager_get_default()), "changed", G_CALLBACK (thunar_window_recent_reload), window);
 
   window->search_query = NULL;
+  window->reset_view_type_idle_id = 0;
 }
 
 
@@ -1452,6 +1454,9 @@ static void
 thunar_window_finalize (GObject *object)
 {
   ThunarWindow *window = THUNAR_WINDOW (object);
+
+  if (window->reset_view_type_idle_id != 0)
+    g_source_remove (window->reset_view_type_idle_id);
 
   thunar_window_free_bookmarks (window);
   g_list_free_full (window->thunarx_preferences_providers, g_object_unref);
@@ -3131,6 +3136,17 @@ thunar_window_reset_view_type_idle (gpointer window_ptr)
 
 
 
+static void
+thunar_window_reset_view_type_idle_destroyed (gpointer data)
+{
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (data));
+
+  THUNAR_WINDOW (data)->reset_view_type_idle_id = 0;
+}
+
+
+
+
 gboolean
 thunar_window_action_cancel_search (ThunarWindow *window)
 {
@@ -3159,7 +3175,11 @@ thunar_window_action_cancel_search (ThunarWindow *window)
 
   window->is_searching = FALSE;
 
-  g_idle_add (thunar_window_reset_view_type_idle, window);
+  if (window->reset_view_type_idle_id == 0)
+    {
+      window->reset_view_type_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_window_reset_view_type_idle, window,
+                                                         thunar_window_reset_view_type_idle_destroyed);
+    }
 
   g_signal_handlers_block_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_search), FALSE);
