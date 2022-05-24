@@ -2218,17 +2218,13 @@ normalize_search_string (const gchar  *str,
       normalized = g_string_free (stripped, FALSE);
     }
 
-  /* remove case distinctions (not locale aware) */
   if (case_sensitive)
-    {
-      return normalized;
-    }
-  else
-    {
-      folded = g_utf8_casefold (normalized, strlen (normalized));
-      g_free (normalized);
-      return folded;
-    }
+    return normalized;
+
+  /* remove case distinctions (not locale aware) */
+  folded = g_utf8_casefold (normalized, strlen (normalized));
+  g_free (normalized);
+  return folded;
 }
 
 
