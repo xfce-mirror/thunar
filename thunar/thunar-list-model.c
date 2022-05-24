@@ -2190,13 +2190,35 @@ search_finished (ThunarJob       *job,
 
 static gchar*
 normalize_search_string (const gchar  *str,
+                         gboolean      strip_diacritics,
                          gboolean      case_sensitive)
 {
   gchar *normalized;
   gchar *folded;
 
+  _thunar_return_val_if_fail (g_utf8_validate (str, -1, NULL), NULL);
+
+  /* convert to Normalization Form KD (decomposed) */
   normalized = g_utf8_normalize (str, strlen (str), G_NORMALIZE_NFKD);
 
+  /* remove combining characters (cheat diacritic stripping) */
+  if (strip_diacritics == TRUE)
+    {
+      GString *stripped = g_string_sized_new (strlen (normalized));
+      gunichar c;
+      for (gchar *t = normalized; *t != '\0'; t = g_utf8_next_char (t))
+        {
+          c = g_utf8_get_char (t);
+          if (G_LIKELY (g_unichar_combining_class (c) == 0))
+            {
+              g_string_append_unichar (stripped, c);
+            }
+        }
+      g_free (normalized);
+      normalized = g_string_free (stripped, FALSE);
+    }
+
+  /* remove case distinctions (not locale aware) */
   if (case_sensitive)
     {
       return normalized;
@@ -2295,7 +2317,7 @@ thunar_list_model_search_folder (ThunarListModel           *model,
 
       /* prepare entry display name */
       display_name = g_file_info_get_display_name (info);
-      display_name_c = normalize_search_string (display_name, FALSE);
+      display_name_c = normalize_search_string (display_name, TRUE, FALSE);
 
       /* search for all substrings */
       matched = TRUE;
@@ -2441,7 +2463,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
         {
           gchar *search_query_c;  /* normalized */
 
-          search_query_c = normalize_search_string (search_query, FALSE);
+          search_query_c = normalize_search_string (search_query, TRUE, FALSE);
           files = NULL;
 
           /* search the current folder
@@ -2811,7 +2833,7 @@ thunar_list_model_get_paths_for_pattern (ThunarListModel *store,
   _thunar_return_val_if_fail (g_utf8_validate (pattern, -1, NULL), NULL);
 
   /* compile the pattern */
-  normalized_pattern = normalize_search_string (pattern, case_sensitive);
+  normalized_pattern = normalize_search_string (pattern, TRUE, case_sensitive);
   pspec = g_pattern_spec_new (normalized_pattern);
   g_free (normalized_pattern);
 
@@ -2824,7 +2846,7 @@ thunar_list_model_get_paths_for_pattern (ThunarListModel *store,
       file = g_sequence_get (row);
       display_name = thunar_file_get_display_name (file);
 
-      normalized_display_name = normalize_search_string (display_name, case_sensitive);
+      normalized_display_name = normalize_search_string (display_name, TRUE, case_sensitive);
       name_matched = g_pattern_match_string (pspec, normalized_display_name);
       g_free (normalized_display_name);
 
