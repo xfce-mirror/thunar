@@ -939,10 +939,6 @@ thunar_window_init (ThunarWindow *window)
                     G_CALLBACK (thunar_window_trash_infobar_clicked),
                     G_OBJECT (window));
 
-  /* remove border */
-  gtk_container_set_border_width (GTK_CONTAINER (gtk_info_bar_get_action_area (GTK_INFO_BAR (window->trash_infobar))), 0);
-
-
   /* setup a new statusbar */
   event_box = gtk_event_box_new ();
   window->statusbar = thunar_statusbar_new ();
