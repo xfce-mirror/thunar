@@ -39,6 +39,9 @@ G_BEGIN_DECLS;
 
 void     thunar_g_initialize_transformations (void);
 gchar*   thunar_g_strescape                  (const gchar *source);
+gchar*   thunar_g_utf8_normalize_for_search  (const gchar *str,
+                                              gboolean     strip_diacritics,
+                                              gboolean     casefold);
 gboolean thunar_g_app_info_equal             (gpointer     appinfo1,
                                               gpointer     appinfo2);
 void     thunar_g_object_set_guint_data      (GObject     *object,
