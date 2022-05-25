@@ -1,0 +1,135 @@
+diff --git a/thunar/thunar-launcher.c b/thunar/thunar-launcher.c
+index 3c7caa25..42e6265f 100644
+--- a/thunar/thunar-launcher.c
++++ b/thunar/thunar-launcher.c
+@@ -189,6 +189,7 @@ static gboolean                thunar_launcher_action_cut                 (Thuna
+ static gboolean                thunar_launcher_action_copy                (ThunarLauncher                 *launcher);
+ static gboolean                thunar_launcher_action_paste               (ThunarLauncher                 *launcher);
+ static gboolean                thunar_launcher_action_paste_into_folder   (ThunarLauncher                 *launcher);
++static void                    thunar_launcher_action_edit_launcher       (ThunarLauncher                 *launcher);
+ static void                    thunar_launcher_sendto_device              (ThunarLauncher                 *launcher,
+                                                                            ThunarDevice                   *device);
+ static void                    thunar_launcher_sendto_mount_finish        (ThunarDevice                   *device,
+@@ -302,6 +303,7 @@ static XfceGtkActionEntry thunar_launcher_action_entries[] =
+     { THUNAR_LAUNCHER_ACTION_MOUNT,            NULL,                                               "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Mount"),                          N_ ("Mount the selected device"),                                                                NULL,                   G_CALLBACK (thunar_launcher_action_open),                },
+     { THUNAR_LAUNCHER_ACTION_UNMOUNT,          NULL,                                               "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Unmount"),                        N_ ("Unmount the selected device"),                                                              NULL,                   G_CALLBACK (thunar_launcher_action_unmount),             },
+     { THUNAR_LAUNCHER_ACTION_EJECT,            NULL,                                               "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Eject"),                          N_ ("Eject the selected device"),                                                                NULL,                   G_CALLBACK (thunar_launcher_action_eject),               },
++    { THUNAR_LAUNCHER_ACTION_EDIT_LAUNCHER,    NULL,                                               "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Edit Launcher"),                  N_ ("Edit the launcher"),                                                                        "gtk-edit",             G_CALLBACK (thunar_launcher_action_edit_launcher),       },
+ };
+ 
+ #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_launcher_action_entries,G_N_ELEMENTS(thunar_launcher_action_entries),id)
+@@ -1576,6 +1578,12 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
+           return NULL;
+         return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
+ 
++      case THUNAR_LAUNCHER_ACTION_EDIT_LAUNCHER:
++        if (launcher->n_files_to_process == 1 && g_str_has_suffix (thunar_file_get_basename (launcher->files_to_process->data), ".desktop"))
++          return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
++        else
++          return NULL;
++
+       case THUNAR_LAUNCHER_ACTION_SENDTO_MENU:
+         if (launcher->files_are_selected == FALSE)
+           return NULL;
+@@ -2976,6 +2984,27 @@ thunar_launcher_action_paste_into_folder (ThunarLauncher *launcher)
+   return TRUE;
+ }
+ 
++static void
++thunar_launcher_action_edit_launcher (ThunarLauncher *launcher)
++{
++  gchar *cmd = NULL, *uri = NULL, *display_name;
++  GError *error = NULL;
++
++  uri = thunar_file_dup_uri (launcher->files_to_process->data);
++  display_name = g_strdup (gdk_display_get_name (gdk_screen_get_display (gtk_widget_get_screen (launcher->widget))));
++  cmd = g_strdup_printf ("exo-desktop-item-edit \"--display=%s\" \"%s\"", display_name, uri);
++  
++  if(!xfce_spawn_command_line_on_screen (NULL, cmd, FALSE, FALSE, &error)) {
++    xfce_message_dialog ((GtkWindow *) launcher->widget, _("Launch Error"), "dialog-error",
++                         _("Unable to launch \"exo-desktop-item-edit\", which is required to edit launchers and links within Thunar."),
++                         error->message, XFCE_BUTTON_TYPE_MIXED, "window-close", _("_Close"), GTK_RESPONSE_ACCEPT, NULL);
++  }
++
++  g_free (display_name);
++  g_free (uri);
++  g_free (cmd);
++  g_clear_error (&error);
++}
+ 
+ /**
+  * thunar_launcher_action_mount:
+@@ -3339,4 +3368,4 @@ XfceGtkActionEntry*
+ thunar_launcher_get_action_entries (void)
+ {
+   return thunar_launcher_action_entries;
+-}
++}
+\ No newline at end of file
+diff --git a/thunar/thunar-launcher.h b/thunar/thunar-launcher.h
+index 5ec895c1..fda44d50 100644
+--- a/thunar/thunar-launcher.h
++++ b/thunar/thunar-launcher.h
+@@ -72,6 +72,7 @@ typedef enum
+   THUNAR_LAUNCHER_ACTION_MOUNT,
+   THUNAR_LAUNCHER_ACTION_UNMOUNT,
+   THUNAR_LAUNCHER_ACTION_EJECT,
++  THUNAR_LAUNCHER_ACTION_EDIT_LAUNCHER,
+ 
+   THUNAR_LAUNCHER_N_ACTIONS
+ } ThunarLauncherAction;
+diff --git a/thunar/thunar-menu.c b/thunar/thunar-menu.c
+index 8afe568f..71149e33 100644
+--- a/thunar/thunar-menu.c
++++ b/thunar/thunar-menu.c
+@@ -270,6 +270,14 @@ thunar_menu_add_sections (ThunarMenu         *menu,
+          xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
+     }
+ 
++  if (menu_sections & THUNAR_MENU_SECTION_EDIT_LAUNCHER)
++  {
++    item_added = FALSE;
++    item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_EDIT_LAUNCHER, force) != NULL);
++    if (item_added)
++      xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
++  }
++
+   if (menu_sections & THUNAR_MENU_SECTION_SENDTO)
+     {
+       if (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_SENDTO_MENU, FALSE) != NULL)
+diff --git a/thunar/thunar-menu.h b/thunar/thunar-menu.h
+index d31ee4fd..44c25d5c 100644
+--- a/thunar/thunar-menu.h
++++ b/thunar/thunar-menu.h
+@@ -65,6 +65,7 @@ typedef enum
+   THUNAR_MENU_SECTION_PROPERTIES          = 1 << 13,
+   THUNAR_MENU_SECTION_MOUNTABLE           = 1 << 14,
+   THUNAR_MENU_SECTION_REMOVE_FROM_RECENT  = 1 << 15,
++  THUNAR_MENU_SECTION_EDIT_LAUNCHER       = 1 << 16,
+ 
+ } ThunarMenuSections;
+ 
+diff --git a/thunar/thunar-standard-view.c b/thunar/thunar-standard-view.c
+index 3abb135a..990608a8 100644
+--- a/thunar/thunar-standard-view.c
++++ b/thunar/thunar-standard-view.c
+@@ -3841,6 +3841,7 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view)
+   if (selected_items != NULL)
+     {
+       thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_OPEN
++                                            | THUNAR_MENU_SECTION_EDIT_LAUNCHER
+                                             | THUNAR_MENU_SECTION_SENDTO
+                                             | THUNAR_MENU_SECTION_CUT
+                                             | THUNAR_MENU_SECTION_COPY_PASTE
+diff --git a/thunar/thunar-window.c b/thunar/thunar-window.c
+index 7f5de5c3..e50823a8 100644
+--- a/thunar/thunar-window.c
++++ b/thunar/thunar-window.c
+@@ -1157,6 +1157,7 @@ thunar_window_update_file_menu (ThunarWindow *window,
+   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_NEW_WINDOW), G_OBJECT (window), GTK_MENU_SHELL (menu));
+   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
+   thunar_menu_add_sections (THUNAR_MENU (menu), THUNAR_MENU_SECTION_OPEN
++                                              | THUNAR_MENU_SECTION_EDIT_LAUNCHER
+                                               | THUNAR_MENU_SECTION_SENDTO
+                                               | THUNAR_MENU_SECTION_CREATE_NEW_FILES
+                                               | THUNAR_MENU_SECTION_EMPTY_TRASH

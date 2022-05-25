@@ -3841,6 +3841,7 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view)
   if (selected_items != NULL)
     {
       thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_OPEN
+                                            | THUNAR_MENU_SECTION_EDIT_LAUNCHER
                                             | THUNAR_MENU_SECTION_SENDTO
                                             | THUNAR_MENU_SECTION_CUT
                                             | THUNAR_MENU_SECTION_COPY_PASTE
