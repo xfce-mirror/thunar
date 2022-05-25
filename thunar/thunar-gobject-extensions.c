@@ -173,6 +173,82 @@ thunar_g_strescape (const gchar *source)
 
 
 /**
+ * thunar_g_utf8_normalize_for_search
+ * @str               : The string to normalize
+ * @strip_diacritics  : Remove diacritics, leaving only base characters
+ * @casefold          : Fold case, to ignore letter case distinctions
+ *
+ * Canonicalize a UTF-8 string into a form suitable for substring
+ * matching against other strings passed through this function. The
+ * strings produced by this function cannot be transformed back into the
+ * original string.
+ *
+ * The implementation is currently not locale-aware, and relies only on
+ * what GLib can do. It may change, so these strings should not be
+ * persisted to disk and reused later.
+ *
+ * Do not use these strings for sorting. Use g_utf8_collate_key()
+ * instead.
+ *
+ * Like g_utf8_normalize(), this returns NULL if the string is not valid
+ * UTF-8.
+ *
+ * Return value: (transfer full): The normalized string, or NULL. Free non-NULL values with g_free() after use.
+ **/
+
+gchar*
+thunar_g_utf8_normalize_for_search (const gchar *str,
+                                    gboolean     strip_diacritics,
+                                    gboolean     casefold)
+{
+  gchar *normalized;
+  gchar *folded;
+
+  /* g_utf8_normalize() and g_utf8_next_char() both require valid UTF-8 */
+  if (g_utf8_validate (str, -1, NULL) == FALSE)
+    return NULL;
+
+  /* Expand composed characters to base + combining(s), and also fold
+   * certain codepoints according to their compatibility-equivalent
+   * forms. See https://www.unicode.org/reports/tr15/#Introduction */
+  normalized = g_utf8_normalize (str, -1, G_NORMALIZE_ALL);
+
+  /* Remove combining characters as a blunt way of doing diacritic
+   * stripping. We can limit by Unicode block if this is too aggressive
+   * and makes searches work wrongly for particular scripts */
+  if (strip_diacritics == TRUE)
+    {
+      /* Append the non-combining (base) unichars onto a temporary
+       * GString, since that struct knows where its end is */
+      GString *stripped = g_string_sized_new (strlen (normalized));
+      gunichar c;
+      for (gchar *i = normalized; *i != '\0'; i = g_utf8_next_char (i))
+        {
+          c = g_utf8_get_char (i);
+          if (G_LIKELY (g_unichar_combining_class (c) == 0))
+            {
+              g_string_append_unichar (stripped, c);
+            }
+        }
+      g_free (normalized);
+
+      /* The FALSE below transfers ownership of stripped's buffer
+       * member instead of feeeing it */
+      normalized = g_string_free (stripped, FALSE);
+    }
+
+  if (casefold == FALSE)
+    return normalized;
+
+  /* remove case distinctions (not locale aware) */
+  folded = g_utf8_casefold (normalized, strlen (normalized));
+  g_free (normalized);
+  return folded;
+}
+
+
+
+/**
  * thunar_g_app_info_equal
  * @appinfo1  : The first g_app_info object
  * @appinfo2  : The second g_app_info object
