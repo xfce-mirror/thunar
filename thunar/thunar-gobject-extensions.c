@@ -174,14 +174,16 @@ thunar_g_strescape (const gchar *source)
 
 /**
  * thunar_g_utf8_normalize_for_search
- * @str               : The string to normalize
- * @strip_diacritics  : Remove diacritics, leaving only base characters
- * @casefold          : Fold case, to ignore letter case distinctions
+ * @str               : The string to normalize, zero-terminated.
+ * @strip_diacritics  : Remove diacritics, leaving only base characters.
+ * @casefold          : Fold case, to ignore letter case distinctions.
  *
  * Canonicalize a UTF-8 string into a form suitable for substring
- * matching against other strings passed through this function. The
- * strings produced by this function cannot be transformed back into the
- * original string.
+ * matching against other strings passed through this function with the
+ * same options. The strings produced by this function cannot be
+ * transformed back into the original string. They can however be
+ * matched against each other with functions like g_strrstr() that
+ * aren't Unicode-aware.
  *
  * The implementation is currently not locale-aware, and relies only on
  * what GLib can do. It may change, so these strings should not be
@@ -208,35 +210,49 @@ thunar_g_utf8_normalize_for_search (const gchar *str,
   if (g_utf8_validate (str, -1, NULL) == FALSE)
     return NULL;
 
-  /* Expand composed characters to base + combining(s), and also fold
-   * certain codepoints according to their compatibility-equivalent
-   * forms. See https://www.unicode.org/reports/tr15/#Introduction */
-  normalized = g_utf8_normalize (str, -1, G_NORMALIZE_ALL);
-
-  /* Remove combining characters as a blunt way of doing diacritic
-   * stripping. We can limit by Unicode block if this is too aggressive
-   * and makes searches work wrongly for particular scripts */
+  /* Optionally remove combining characters as a crude way of doing diacritic stripping */
   if (strip_diacritics == TRUE)
     {
-      /* Append the non-combining (base) unichars onto a temporary
-       * GString, since that struct knows where its end is */
-      GString *stripped = g_string_sized_new (strlen (normalized));
+      /* decompose composed characters to <base-char + combining-marks> */
+      gchar *tmp = g_utf8_normalize (str, -1, G_NORMALIZE_DEFAULT);
+
+      /* Discard the combining characters/marks/accents */
+      /* GStrings keep track of where their ends are, so it's efficient */
+      GString *stripped = g_string_sized_new (strlen (tmp));
       gunichar c;
-      for (gchar *i = normalized; *i != '\0'; i = g_utf8_next_char (i))
+      for (gchar *i = tmp; *i != '\0'; i = g_utf8_next_char (i))
         {
           c = g_utf8_get_char (i);
           if (G_LIKELY (g_unichar_combining_class (c) == 0))
-            {
-              g_string_append_unichar (stripped, c);
-            }
+            g_string_append_unichar (stripped, c);
+          /* We can limit it by Unicode block here if this turns out to be
+           * too aggressive and makes searches work badly for particular
+           * scripts */
         }
-      g_free (normalized);
+      g_free (tmp);
 
-      /* The FALSE below transfers ownership of stripped's buffer
-       * member instead of feeeing it */
-      normalized = g_string_free (stripped, FALSE);
+      tmp = g_string_free (stripped, FALSE); /* transfers buffer ownership */
+      normalized = g_utf8_normalize (tmp, -1, G_NORMALIZE_ALL_COMPOSE);
+      g_free (tmp);
+    }
+  else  /* strip_diacritics == FALSE */
+    {
+      normalized = g_utf8_normalize (str, -1, G_NORMALIZE_ALL_COMPOSE);
     }
 
+  /* String representation is now normalized the way we want it:
+   *
+   * 1. Combining chars have been stripped off if requested.
+   *
+   * 2. Compatibility chars like SUPERSCRIPT THREE are collapsed to
+   *    their standard representations (DIGIT THREE, in this case).
+   *
+   * 3. If any combining chars are left, they are now composed back onto
+   *    their base char. Otherwise a single LATIN LETTER A in a pattern
+   *    wpould match LATIN LETTER A followed by COMBINING GRAVE ACCENT.
+   */
+
+  /* permit case-insensitive matching, if required */
   if (casefold == FALSE)
     return normalized;
 
