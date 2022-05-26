@@ -2756,7 +2756,8 @@ thunar_list_model_get_paths_for_files (ThunarListModel *store,
  * thunar_list_model_get_paths_for_pattern:
  * @store          : a #ThunarListModel instance.
  * @pattern        : the pattern to match.
- * @case_sensitive : %TRUE to use case sensitive search.
+ * @case_sensitive    : %TRUE to use case sensitive search.
+ * @match_diacritics : %TRUE to use case sensitive search.
  *
  * Looks up all rows in the @store that match @pattern and returns
  * a list of #GtkTreePath<!---->s corresponding to the rows.
@@ -2771,7 +2772,8 @@ thunar_list_model_get_paths_for_files (ThunarListModel *store,
 GList*
 thunar_list_model_get_paths_for_pattern (ThunarListModel *store,
                                          const gchar     *pattern,
-                                         gboolean         case_sensitive)
+                                         gboolean         case_sensitive,
+                                         gboolean         match_diacritics)
 {
   GPatternSpec  *pspec;
   gchar         *normalized_pattern;
@@ -2788,7 +2790,7 @@ thunar_list_model_get_paths_for_pattern (ThunarListModel *store,
   _thunar_return_val_if_fail (g_utf8_validate (pattern, -1, NULL), NULL);
 
   /* compile the pattern */
-  normalized_pattern = thunar_g_utf8_normalize_for_search (pattern, TRUE, !case_sensitive);
+  normalized_pattern = thunar_g_utf8_normalize_for_search (pattern, !match_diacritics, !case_sensitive);
   pspec = g_pattern_spec_new (normalized_pattern);
   g_free (normalized_pattern);
 
@@ -2801,7 +2803,7 @@ thunar_list_model_get_paths_for_pattern (ThunarListModel *store,
       file = g_sequence_get (row);
       display_name = thunar_file_get_display_name (file);
 
-      normalized_display_name = thunar_g_utf8_normalize_for_search (display_name, TRUE, !case_sensitive);
+      normalized_display_name = thunar_g_utf8_normalize_for_search (display_name, !match_diacritics, !case_sensitive);
       name_matched = g_pattern_match_string (pspec, normalized_display_name);
       g_free (normalized_display_name);
 
