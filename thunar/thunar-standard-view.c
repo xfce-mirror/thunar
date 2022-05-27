@@ -2344,7 +2344,7 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   const gchar        *pattern;
   gchar              *pattern_extended = NULL;
   gboolean            case_sensitive;
-  boolean            match_diacritics;
+  gboolean            match_diacritics;
   gint                row = 0;
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
