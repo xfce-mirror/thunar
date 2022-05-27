@@ -2341,22 +2341,25 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   GList              *paths;
   GList              *lp;
   gint                response;
-  gchar              *example_pattern;
   const gchar        *pattern;
   gchar              *pattern_extended = NULL;
   gboolean            case_sensitive;
-  gboolean            match_diacritics;
+  boolean            match_diacritics;
   gint                row = 0;
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
   window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
-  dialog = gtk_dialog_new_with_buttons (_("Select by Pattern"),
+  /* TRANSLATORS: Dialog allowing selection by wildcard ("*.c", etc.) */
+  dialog = gtk_dialog_new_with_buttons (C_("Select by Pattern dialog: title",
+                                           "Select by Pattern"),
                                         GTK_WINDOW (window),
                                         GTK_DIALOG_MODAL
                                         | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                        _("_Cancel"), GTK_RESPONSE_CANCEL,
-                                        _("_Select"), GTK_RESPONSE_OK,
+                                        C_("Select by Pattern dialog: buttons",
+                                           "_Cancel"), GTK_RESPONSE_CANCEL,
+                                        C_("Select by Pattern dialog: buttons",
+                                           "_Select"), GTK_RESPONSE_OK,
                                         NULL);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
   gtk_window_set_default_size (GTK_WINDOW (dialog), 290, -1);
@@ -2369,28 +2372,33 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   gtk_box_pack_start (content_area, GTK_WIDGET (grid), TRUE, TRUE, 10);
   gtk_widget_show (GTK_WIDGET (grid));
 
-  label = gtk_label_new_with_mnemonic (_("_Pattern:"));
+  label = gtk_label_new_with_mnemonic (C_("Select by Pattern dialog: labels: pattern entry textbox", "_Pattern:"));
+  gtk_widget_set_tooltip_text (GTK_WIDGET (label), C_("Select by Pattern dialog: tooltips on label for pattern entry checkbox", "Files whose name matches the wildcard pattern you enter will be selected in the main window."));
   gtk_grid_attach (grid, label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   entry = gtk_entry_new ();
   gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
-  example_pattern = g_strdup_printf ("%s %s",
-                                     _("Examples:"),
-                                     "*.png, file\?\?.txt, pict*.\?\?\?");
-  gtk_widget_set_tooltip_text (entry, example_pattern);
-  g_free (example_pattern);
+  /* TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols, and they must not be localized. */
+  gtk_widget_set_tooltip_text (GTK_WIDGET (entry), C_("Select by Pattern dialog: tooltips: pattern entry checkbox", "? matches exactly one character,\n* matches any number of characters, including zero.\n\nFor example: *.txt, file??.png, pict\n\nWithout any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."));
   gtk_grid_attach_next_to (grid, entry, label, GTK_POS_RIGHT, 1, 1);
   gtk_widget_set_hexpand (entry, TRUE);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
   gtk_widget_show (entry);
 
-  case_sensitive_button = gtk_check_button_new_with_mnemonic (_("C_ase sensitive"));
+  case_sensitive_button = gtk_check_button_new_with_mnemonic (C_("Select by Pattern dialog: labels: case sensitive checkbox", "C_ase sensitive"));
+  /* TRANSLATORS: we currently use the Unicode "full" casefolding algorithm, with compatibility character folding (³→3 etc.)
+     This is currently broken for Turkish I→ı and İ→i mappings. We're working on a fix. */
+  gtk_widget_set_tooltip_text (GTK_WIDGET (case_sensitive_button), C_("Select by Pattern dialog: tooltips: case sensitive checkbox", "If enabled, letter case must match the pattern.\nExamp* would match Example.txt and not example.txt"));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (case_sensitive_button), FALSE);
   gtk_grid_attach_next_to (grid, case_sensitive_button, entry, GTK_POS_BOTTOM, 1, 1);
   gtk_widget_show (case_sensitive_button);
-
-  match_diacritics_button = gtk_check_button_new_with_mnemonic (_("_Match diacritics"));
+ 
+  match_diacritics_button = gtk_check_button_new_with_mnemonic (C_("Select by Pattern dialog: labels: match diacritics checkbox", "_Match diacritics"));
+  /* TRANSLATORS: please send in your opinions about diacritic aware matching when you have a chance to try a Thunar build with this
+     string in it. If this setting should default to ON for your language, please let us know! Turkish translators should be aware
+     that this doesn't make dotless/dotted “I” casefolding work correctly. */
+  gtk_widget_set_tooltip_text (GTK_WIDGET (match_diacritics_button), C_("Select by Pattern dialog: tooltips: match diacritics checkbox", "If enabled, require accents to match the pattern.\nRés* would match Résumé.txt and not Resume.txt"));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (match_diacritics_button), FALSE);
   gtk_grid_attach_next_to (grid, match_diacritics_button, case_sensitive_button, GTK_POS_BOTTOM, 1, 1);
   gtk_widget_show (match_diacritics_button);
