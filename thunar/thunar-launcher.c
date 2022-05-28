@@ -2998,7 +2998,7 @@ thunar_launcher_action_edit_launcher (ThunarLauncher *launcher)
   display_name = gdk_display_get_name (gdk_screen_get_display (gtk_widget_get_screen (launcher->widget)));
   cmd = g_strdup_printf ("exo-desktop-item-edit \"--display=%s\" \"%s\"", display_name, uri);
   
-  if(!xfce_spawn_command_line (NULL, cmd, FALSE, FALSE, FALSE, &error))
+  if (xfce_spawn_command_line (NULL, cmd, FALSE, FALSE, FALSE, &error) == FALSE)
     thunar_dialogs_show_error (launcher->widget, error, _("Failed to edit launcher via command \"%s\""), cmd);
 
   g_free (cmd);
