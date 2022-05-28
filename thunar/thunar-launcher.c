@@ -189,6 +189,7 @@ static gboolean                thunar_launcher_action_cut                 (Thuna
 static gboolean                thunar_launcher_action_copy                (ThunarLauncher                 *launcher);
 static gboolean                thunar_launcher_action_paste               (ThunarLauncher                 *launcher);
 static gboolean                thunar_launcher_action_paste_into_folder   (ThunarLauncher                 *launcher);
+static void                    thunar_launcher_action_edit_launcher       (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_sendto_device              (ThunarLauncher                 *launcher,
                                                                            ThunarDevice                   *device);
 static void                    thunar_launcher_sendto_mount_finish        (ThunarDevice                   *device,
@@ -302,6 +303,7 @@ static XfceGtkActionEntry thunar_launcher_action_entries[] =
     { THUNAR_LAUNCHER_ACTION_MOUNT,            NULL,                                               "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Mount"),                          N_ ("Mount the selected device"),                                                                NULL,                   G_CALLBACK (thunar_launcher_action_open),                },
     { THUNAR_LAUNCHER_ACTION_UNMOUNT,          NULL,                                               "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Unmount"),                        N_ ("Unmount the selected device"),                                                              NULL,                   G_CALLBACK (thunar_launcher_action_unmount),             },
     { THUNAR_LAUNCHER_ACTION_EJECT,            NULL,                                               "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Eject"),                          N_ ("Eject the selected device"),                                                                NULL,                   G_CALLBACK (thunar_launcher_action_eject),               },
+    { THUNAR_LAUNCHER_ACTION_EDIT_LAUNCHER,    NULL,                                               "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Edit Launcher"),                  N_ ("Edit the selected launcher"),                                                               "gtk-edit",             G_CALLBACK (thunar_launcher_action_edit_launcher),       },
 };
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_launcher_action_entries,G_N_ELEMENTS(thunar_launcher_action_entries),id)
@@ -1575,6 +1577,12 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
         if (launcher->n_files_to_process != 1)
           return NULL;
         return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
+
+      case THUNAR_LAUNCHER_ACTION_EDIT_LAUNCHER:
+        if (launcher->n_files_to_process == 1 && thunar_file_is_desktop_file (launcher->files_to_process->data, NULL))
+          return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
+        else
+          return NULL;
 
       case THUNAR_LAUNCHER_ACTION_SENDTO_MENU:
         if (launcher->files_are_selected == FALSE)
@@ -2975,6 +2983,29 @@ thunar_launcher_action_paste_into_folder (ThunarLauncher *launcher)
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
+
+
+
+static void
+thunar_launcher_action_edit_launcher (ThunarLauncher *launcher)
+{
+  const gchar *display_name;
+  gchar       *cmd   = NULL,
+              *uri   = NULL;
+  GError      *error = NULL;
+  
+  uri = thunar_file_dup_uri (launcher->files_to_process->data);
+  display_name = gdk_display_get_name (gdk_screen_get_display (gtk_widget_get_screen (launcher->widget)));
+  cmd = g_strdup_printf ("exo-desktop-item-edit \"--display=%s\" \"%s\"", display_name, uri);
+  
+  if(!xfce_spawn_command_line (NULL, cmd, FALSE, FALSE, FALSE, &error))
+    thunar_dialogs_show_error (launcher->widget, error, _("Failed to edit launcher via command \"%s\""), cmd);
+
+  g_free (cmd);
+  g_free (uri);
+  g_clear_error (&error);
+}
+
 
 
 /**
