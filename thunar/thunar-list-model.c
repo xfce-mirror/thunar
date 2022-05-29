@@ -225,6 +225,7 @@ static void               thunar_list_model_search_folder               (ThunarL
                                                                          enum ThunarListModelSearch    search_type,
                                                                          gboolean                      show_hidden);
 static void               thunar_list_model_cancel_search_job           (ThunarListModel              *model);
+static gchar**            split_search_query                            (const gchar                  *search_query);
 
 static gint               thunar_list_model_get_folder_item_count       (ThunarListModel              *store);
 static void               thunar_list_model_set_folder_item_count       (ThunarListModel              *store,
@@ -263,6 +264,12 @@ struct _ThunarListModel
   gboolean                 file_size_binary : 1;
   ThunarDateStyle          date_style;
   char                    *date_custom_style;
+
+  /* Normalized current search terms.
+   * NULL if not presenting a search's results.
+   * Search job may have finished even if this is non-NULL.
+   */
+  gchar **search_terms;
 
   /* Use the shared ThunarFileMonitor instance, so we
    * do not need to connect "changed" handler to every
@@ -570,6 +577,8 @@ thunar_list_model_finalize (GObject *object)
   g_object_unref (G_OBJECT (store->file_monitor));
 
   g_free (store->date_custom_style);
+
+  g_strfreev (store->search_terms);
 
   (*G_OBJECT_CLASS (thunar_list_model_parent_class)->finalize) (object);
 }
@@ -2194,6 +2203,22 @@ add_search_files (gpointer user_data)
 
 
 
+static gchar **
+split_search_query (const gchar *search_query)
+{
+  GRegex *whitespace_regex;
+  gchar **search_terms;
+
+  whitespace_regex = g_regex_new ("\\s+", 0, 0, NULL);
+  if (whitespace_regex == NULL)
+    return NULL;
+  search_terms = g_regex_split (whitespace_regex, search_query, 0);
+  g_regex_unref (whitespace_regex);
+  return search_terms;
+}
+
+
+
 static gboolean
 _thunar_job_search_directory (ThunarJob  *job,
                                GArray     *param_values,
@@ -2203,7 +2228,6 @@ _thunar_job_search_directory (ThunarJob  *job,
   ThunarFile                 *directory;
   const char                 *search_query_c;
   gchar                     **search_query_c_terms;
-  GRegex                     *whitespace_regex;
   ThunarPreferences          *preferences;
   gboolean                    is_source_device_local;
   ThunarRecursiveSearchMode   mode;
@@ -2228,11 +2252,7 @@ _thunar_job_search_directory (ThunarJob  *job,
   search_query_c = g_value_get_string (&g_array_index (param_values, GValue, 1));
   directory = g_value_get_object (&g_array_index (param_values, GValue, 2));
 
-  whitespace_regex = g_regex_new ("\\s+", 0, 0, error);
-  if (whitespace_regex == NULL)
-    return FALSE;
-  search_query_c_terms = g_regex_split (whitespace_regex, search_query_c, 0);
-  g_regex_unref (whitespace_regex);
+  search_query_c_terms = split_search_query (search_query_c);
 
   is_source_device_local = thunar_g_file_is_on_local_device (thunar_file_get_file (directory));
   if (mode == THUNAR_RECURSIVE_SEARCH_ALWAYS || (mode == THUNAR_RECURSIVE_SEARCH_LOCAL && is_source_device_local))
@@ -2533,12 +2553,21 @@ thunar_list_model_set_folder (ThunarListModel *store,
       if (search_query == NULL || strlen (search_query) == 0)
         {
           files = thunar_folder_get_files (folder);
+
+          if (store->search_terms != NULL)
+            {
+              g_strfreev (store->search_terms);
+              store->search_terms = NULL;
+            }
         }
       else
         {
           gchar *search_query_c;  /* normalized */
 
           search_query_c = thunar_g_utf8_normalize_for_search (search_query, TRUE, TRUE);
+          g_strfreev (store->search_terms);
+          store->search_terms = split_search_query(search_query_c);
+
           files = NULL;
 
           /* search the current folder
@@ -2552,7 +2581,6 @@ thunar_list_model_set_folder (ThunarListModel *store,
           /* add new results to the model every X ms */
           store->update_search_results_timeout_id = g_timeout_add (500, add_search_files, store);
 
-          g_free (search_query_c);
         }
 
       /* insert the files */
