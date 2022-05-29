@@ -185,6 +185,7 @@ static void      thunar_window_start_open_location        (ThunarWindow         
                                                            const gchar            *initial_text);
 static void      thunar_window_resume_search              (ThunarWindow           *window,
                                                            const gchar            *initial_text);
+static gint      thunar_window_reset_view_type_idle       (gpointer                window_ptr);
 static gboolean  thunar_window_action_open_new_tab        (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
 static gboolean  thunar_window_action_open_new_window     (ThunarWindow           *window,
@@ -1452,9 +1453,6 @@ thunar_window_finalize (GObject *object)
 {
   ThunarWindow *window = THUNAR_WINDOW (object);
 
-  if (window->reset_view_type_idle_id != 0)
-    g_source_remove (window->reset_view_type_idle_id);
-
   thunar_window_free_bookmarks (window);
   g_list_free_full (window->thunarx_preferences_providers, g_object_unref);
   g_free (window->search_query);
@@ -1511,6 +1509,15 @@ static gboolean thunar_window_delete (GtkWidget *widget,
   gchar       **tab_uris_right;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (widget),FALSE);
+
+  if (window->is_searching == TRUE)
+    thunar_window_action_cancel_search (window);
+
+  if (window->reset_view_type_idle_id != 0)
+    {
+      thunar_window_reset_view_type_idle (window);
+      g_source_remove (window->reset_view_type_idle_id);
+    }
 
   if (window->notebook_left)
     n_tabsl = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_left));
