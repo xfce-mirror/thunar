@@ -226,6 +226,8 @@ static void               thunar_list_model_search_folder               (ThunarL
                                                                          gboolean                      show_hidden);
 static void               thunar_list_model_cancel_search_job           (ThunarListModel              *model);
 static gchar**            split_search_query                            (const gchar                  *search_query);
+static gboolean           search_terms_match                            (gchar                      **terms,
+                                                                         gchar                       *str);
 
 static gint               thunar_list_model_get_folder_item_count       (ThunarListModel              *store);
 static void               thunar_list_model_set_folder_item_count       (ThunarListModel              *store,
@@ -2220,6 +2222,18 @@ split_search_query (const gchar *search_query)
 
 
 static gboolean
+search_terms_match (gchar **terms, gchar *str)
+{
+  /* All args must be normalized (thunar_g_utf8_normalize_for_search) */
+  for (gint i = 0; terms[i] != NULL; i++)
+    if (g_strrstr (str, terms[i]) == NULL)
+      return FALSE;
+  return TRUE;
+}
+
+
+
+static gboolean
 _thunar_job_search_directory (ThunarJob  *job,
                                GArray     *param_values,
                                GError    **error)
@@ -2345,7 +2359,6 @@ thunar_list_model_search_folder (ThunarListModel           *model,
   const gchar     *namespace;
   const gchar     *display_name;
   gchar           *display_name_c; /* converted to ignore case */
-  gboolean         matched;
 
   cancellable = exo_job_get_cancellable (EXO_JOB (job));
   directory = g_file_new_for_uri (uri);
@@ -2415,16 +2428,7 @@ thunar_list_model_search_folder (ThunarListModel           *model,
       display_name_c = thunar_g_utf8_normalize_for_search (display_name, TRUE, TRUE);
 
       /* search for all substrings */
-      matched = TRUE;
-      for (gint i = 0; search_query_c_terms[i]; i++)
-        {
-          if (g_strrstr (display_name_c, search_query_c_terms[i]) == NULL)
-            {
-              matched = FALSE;
-              break;
-            }
-        }
-      if (matched)
+      if (search_terms_match (search_query_c_terms, display_name_c))
         files_found = g_list_prepend (files_found, thunar_file_get (file, NULL));
 
       /* free memory */
