@@ -478,7 +478,7 @@ thunar_path_entry_key_press_event (GtkWidget   *widget,
   ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
 
   /* check if we have a tab key press here and control is not pressed */
-  if (G_UNLIKELY (event->keyval == GDK_KEY_Tab && (event->state & GDK_CONTROL_MASK) == 0))
+  if (G_UNLIKELY (event->keyval == GDK_KEY_Tab && (event->state & GDK_CONTROL_MASK) == 0) && path_entry->search_mode == FALSE)
     {
       /* if we don't have a completion and the cursor is at the end of the line, we just insert the common prefix */
       if (!path_entry->has_completion && gtk_editable_get_position (GTK_EDITABLE (path_entry)) == gtk_entry_get_text_length (GTK_ENTRY (path_entry)))
