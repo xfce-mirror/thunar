@@ -1717,7 +1717,7 @@ thunar_file_execute (ThunarFile  *file,
   if (G_LIKELY (result && argv != NULL))
     {
       /* use other directory if the Path from the desktop file was not set */
-      if (G_LIKELY (directory == NULL))
+      if (xfce_str_is_empty (directory))
         {
           /* determine the working directory */
           if (G_LIKELY (working_directory != NULL))
