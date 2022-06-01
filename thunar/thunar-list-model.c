@@ -2251,6 +2251,18 @@ thunar_list_model_add_search_files (gpointer user_data)
 }
 
 
+/**
+ * thunar_list_model_split_search_query:
+ * @search_query: The search query to split.
+ * @error: Return location for regex compilation errors.
+ *
+ * Search terms are split on whitespace. Search queries must be
+ * normalized before passing to this function.
+ *
+ * See also: thunar_g_utf8_normalize_for_search().
+ *
+ * Return value: a list of search terms which must be freed with g_strfreev()
+ **/
 
 static gchar **
 thunar_list_model_split_search_query (const gchar  *search_query,
@@ -2269,11 +2281,24 @@ thunar_list_model_split_search_query (const gchar  *search_query,
 
 
 
+/**
+ * thunar_list_model_search_terms_match:
+ * @terms: The search terms to look for, prepared with thunar_list_model_split_search_query().
+ * @str: The string which the search terms might be found in.
+ *
+ * All search terms must match. Thunar uses simple substring matching
+ * for the broadest multilingual support. @str must be normalized before
+ * passing to this function.
+ *
+ * See also: thunar_g_utf8_normalize_for_search().
+ *
+ * Return value: TRUE if all terms matched, FALSE otherwise.
+ **/
+
 static gboolean
 thunar_list_model_search_terms_match (gchar **terms,
                                       gchar  *str)
 {
-  /* All args must be normalized (thunar_g_utf8_normalize_for_search) */
   for (gint i = 0; terms[i] != NULL; i++)
     if (g_strrstr (str, terms[i]) == NULL)
       return FALSE;
