@@ -224,8 +224,8 @@ static void               thunar_list_model_search_folder         (ThunarListMod
                                                                    enum ThunarListModelSearch   search_type,
                                                                    gboolean                     show_hidden);
 static void               thunar_list_model_cancel_search_job     (ThunarListModel             *model);
-static gchar**            split_search_query                      (const gchar                 *search_query);
-static gboolean           search_terms_match                      (gchar                      **terms,
+static gchar**            thunar_list_model_split_search_query    (const gchar                 *search_query);
+static gboolean           thunar_list_model_search_terms_match    (gchar                      **terms,
                                                                    gchar                       *str);
 
 
@@ -1486,7 +1486,7 @@ thunar_list_model_files_added (ThunarFolder    *folder,
           gchar *name_n = (gchar *)thunar_file_get_display_name (file);
           name_n = thunar_g_utf8_normalize_for_search (name_n, TRUE, TRUE);
 
-          if (! search_terms_match (store->search_terms, name_n))
+          if (! thunar_list_model_search_terms_match (store->search_terms, name_n))
             {
               g_object_unref (file);
               g_free (name_n);
@@ -2124,7 +2124,7 @@ add_search_files (gpointer user_data)
 
 
 static gchar **
-split_search_query (const gchar *search_query)
+thunar_list_model_split_search_query (const gchar *search_query)
 {
   GRegex *whitespace_regex;
   gchar **search_terms;
@@ -2140,7 +2140,7 @@ split_search_query (const gchar *search_query)
 
 
 static gboolean
-search_terms_match (gchar **terms, gchar *str)
+thunar_list_model_search_terms_match (gchar **terms, gchar *str)
 {
   /* All args must be normalized (thunar_g_utf8_normalize_for_search) */
   for (gint i = 0; terms[i] != NULL; i++)
@@ -2184,7 +2184,7 @@ _thunar_job_search_directory (ThunarJob  *job,
   search_query_c = g_value_get_string (&g_array_index (param_values, GValue, 1));
   directory = g_value_get_object (&g_array_index (param_values, GValue, 2));
 
-  search_query_c_terms = split_search_query (search_query_c);
+  search_query_c_terms = thunar_list_model_split_search_query (search_query_c);
 
   is_source_device_local = thunar_g_file_is_on_local_device (thunar_file_get_file (directory));
   if (mode == THUNAR_RECURSIVE_SEARCH_ALWAYS || (mode == THUNAR_RECURSIVE_SEARCH_LOCAL && is_source_device_local))
@@ -2348,7 +2348,7 @@ thunar_list_model_search_folder (ThunarListModel           *model,
       display_name_c = thunar_g_utf8_normalize_for_search (display_name, TRUE, TRUE);
 
       /* search for all substrings */
-      if (search_terms_match (search_query_c_terms, display_name_c))
+      if (thunar_list_model_search_terms_match (search_query_c_terms, display_name_c))
         files_found = g_list_prepend (files_found, thunar_file_get (file, NULL));
 
       /* free memory */
@@ -2490,7 +2490,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
 
           search_query_c = thunar_g_utf8_normalize_for_search (search_query, TRUE, TRUE);
           g_strfreev (store->search_terms);
-          store->search_terms = split_search_query(search_query_c);
+          store->search_terms = thunar_list_model_split_search_query(search_query_c);
 
           files = NULL;
 
