@@ -2235,7 +2235,7 @@ thunar_list_model_set_job (ThunarListModel  *store,
 static gboolean
 thunar_list_model_add_search_files (gpointer user_data)
 {
-  ThunarListModel *model = user_data;
+  ThunarListModel *model = THUNAR_LIST_MODEL (user_data);
 
   g_mutex_lock (&model->mutex_files_to_add);
 
