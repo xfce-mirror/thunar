@@ -2268,7 +2268,8 @@ thunar_list_model_split_search_query (const gchar *search_query)
 
 
 static gboolean
-thunar_list_model_search_terms_match (gchar **terms, gchar *str)
+thunar_list_model_search_terms_match (gchar **terms,
+                                      gchar  *str)
 {
   /* All args must be normalized (thunar_g_utf8_normalize_for_search) */
   for (gint i = 0; terms[i] != NULL; i++)
