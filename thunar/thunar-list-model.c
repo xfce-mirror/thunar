@@ -1496,7 +1496,7 @@ thunar_list_model_files_added (ThunarFolder    *folder,
   GSequenceIter *row;
   GList         *lp;
   gboolean       has_handler;
-  gboolean       presenting_search;
+  gboolean       search_mode;
 
   /* we use a simple trick here to avoid allocating
    * GtkTreePath's again and again, by simply accessing
@@ -1510,7 +1510,7 @@ thunar_list_model_files_added (ThunarFolder    *folder,
   has_handler = g_signal_has_handler_pending (G_OBJECT (store), store->row_inserted_id, 0, FALSE);
 
   /* process all added files */
-  presenting_search = (store->search_terms != NULL);
+  search_mode = (store->search_terms != NULL);
   for (lp = files; lp != NULL; lp = lp->next)
     {
       /* take a reference on that file */
@@ -1519,7 +1519,7 @@ thunar_list_model_files_added (ThunarFolder    *folder,
 
       /* filter out files that don't match the current search terms.
        * Skip this check if the search process itself did it, however. */
-      if (presenting_search && !prefiltered)
+      if ((search_mode == TRUE) && (prefiltered == FALSE))
         {
           gchar *name_n = (gchar *)thunar_file_get_display_name (file);
           name_n = thunar_g_utf8_normalize_for_search (name_n, TRUE, TRUE);
@@ -1536,7 +1536,7 @@ thunar_list_model_files_added (ThunarFolder    *folder,
       /* check if the file should be stashed in the hidden list */
       if (!store->show_hidden && thunar_file_is_hidden (file))
         {
-          if (!presenting_search)
+          if (search_mode == FALSE)
             store->hidden = g_slist_prepend (store->hidden, file);
           else
             g_object_unref (file);
@@ -1578,10 +1578,10 @@ thunar_list_model_files_removed_cb (ThunarFolder    *folder,
   GSequenceIter *next;
   GtkTreePath   *path;
   gboolean       found;
-  gboolean       presenting_search;
+  gboolean       search_mode;
 
   /* drop all the referenced files from the model */
-  presenting_search = (store->search_terms != NULL);
+  search_mode = (store->search_terms != NULL);
   for (lp = files; lp != NULL; lp = lp->next)
     {
       row = g_sequence_get_begin_iter (store->rows);
@@ -1617,7 +1617,7 @@ thunar_list_model_files_removed_cb (ThunarFolder    *folder,
       /* check if the file was found */
       if (!found)
         {
-          if (!presenting_search)
+          if (search_mode == FALSE)
             {
               /* file is hidden */
               _thunar_assert (g_slist_find (store->hidden, lp->data) != NULL);
