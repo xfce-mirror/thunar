@@ -223,6 +223,11 @@ static void               thunar_list_model_search_folder         (ThunarListMod
                                                                    gchar                      **search_query_c_terms,
                                                                    enum ThunarListModelSearch   search_type,
                                                                    gboolean                     show_hidden);
+
+static void               thunar_list_model_search_error          (ThunarJob                   *job);
+static void               thunar_list_model_search_finished       (ThunarJob                   *job,
+                                                                   ThunarListModel             *store);
+static gboolean           thunar_list_model_add_search_files      (gpointer user_data);
 static void               thunar_list_model_cancel_search_job     (ThunarListModel             *model);
 static gchar**            thunar_list_model_split_search_query    (const gchar                 *search_query);
 static gboolean           thunar_list_model_search_terms_match    (gchar                      **terms,
@@ -291,7 +296,7 @@ struct _ThunarListModel
   GList         *files_to_add;
   GMutex         mutex_files_to_add;
 
-  /* used to stop the periodic call to add_search_files when the search is finished/canceled */
+  /* used to stop the periodic call to thunar_list_model_add_search_files when the search is finished/canceled */
   guint          update_search_results_timeout_id;
 };
 
@@ -2137,7 +2142,7 @@ thunar_list_model_set_job (ThunarListModel  *store,
 
 
 static gboolean
-add_search_files (gpointer user_data)
+thunar_list_model_add_search_files (gpointer user_data)
 {
   ThunarListModel *model = user_data;
 
@@ -2261,7 +2266,7 @@ thunar_list_model_cancel_search_job (ThunarListModel *model)
 
 
 static void
-search_error (ThunarJob *job)
+thunar_list_model_search_error (ThunarJob *job)
 {
   g_error ("Error while searching recursively");
 }
@@ -2269,8 +2274,8 @@ search_error (ThunarJob *job)
 
 
 static void
-search_finished (ThunarJob       *job,
-                 ThunarListModel *store)
+thunar_list_model_search_finished (ThunarJob       *job,
+                                   ThunarListModel *store)
 {
   if (store->recursive_search_job)
     {
@@ -2281,7 +2286,7 @@ search_finished (ThunarJob       *job,
 
   if (store->update_search_results_timeout_id > 0)
     {
-      add_search_files (store);
+      thunar_list_model_add_search_files (store);
       g_source_remove (store->update_search_results_timeout_id);
       store->update_search_results_timeout_id = 0;
     }
@@ -2529,11 +2534,11 @@ thunar_list_model_set_folder (ThunarListModel *store,
           store->recursive_search_job = thunar_list_model_job_search_directory (store, search_query_c, thunar_folder_get_corresponding_file (folder));
           exo_job_launch (EXO_JOB (store->recursive_search_job));
 
-          g_signal_connect (store->recursive_search_job, "error", G_CALLBACK (search_error), NULL);
-          g_signal_connect (store->recursive_search_job, "finished", G_CALLBACK (search_finished), store);
+          g_signal_connect (store->recursive_search_job, "error", G_CALLBACK (thunar_list_model_search_error), NULL);
+          g_signal_connect (store->recursive_search_job, "finished", G_CALLBACK (thunar_list_model_search_finished), store);
 
           /* add new results to the model every X ms */
-          store->update_search_results_timeout_id = g_timeout_add (500, add_search_files, store);
+          store->update_search_results_timeout_id = g_timeout_add (500, thunar_list_model_add_search_files, store);
 
           g_free (search_query_c);
         }
