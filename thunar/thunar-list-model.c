@@ -783,8 +783,8 @@ thunar_list_model_get_value (GtkTreeModel *model,
   ThunarUser  *user;
   ThunarFile  *file;
   GFile       *g_file;
+  GFile       *g_file_parent;
   gchar       *str;
-  gchar       *uri;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
   _thunar_return_if_fail (iter->stamp == (THUNAR_LIST_MODEL (model))->stamp);
@@ -825,20 +825,37 @@ thunar_list_model_get_value (GtkTreeModel *model,
       break;
 
     case THUNAR_COLUMN_LOCATION:
-      g_value_init (value, G_TYPE_STRING);
-      uri = thunar_file_dup_uri (file);
-      str = g_path_get_dirname (uri);
+      ThunarFolder *folder;
 
-      /* remove the uri prefix for normal, local files */
-      if (strncmp ("file://", str, 7) == 0)
+      g_value_init (value, G_TYPE_STRING);
+      g_file_parent = g_file_get_parent (thunar_file_get_file (file));
+      str = NULL;
+
+      if (G_LIKELY (g_file_parent != NULL))
         {
-          gchar *old = str;
-          str = g_strdup (str + 7);
-          g_free (old);
+          /* NULL only occurs if the search returned the root directory somehow */
+          folder = THUNAR_LIST_MODEL (model)->folder;
+          if (G_LIKELY (folder != NULL))
+            {
+              GFile *g_folder = thunar_file_get_file (thunar_folder_get_corresponding_file (folder));
+              if (g_file_equal (g_folder, g_file_parent))  /* commonest non-prefix case */
+                str = g_strdup (".");
+              else
+                str = g_file_get_relative_path (g_folder, g_file_parent);
+                /* can still be NULL if g_folder is not a prefix of g_file_parent */
+            }
+
+          if (G_UNLIKELY (str == NULL))
+            {
+              /* show a prettified URI or local path to the file's
+               * parent folder for corner cases */
+              str = g_file_get_parse_name (g_file_parent);
+            }
+
+          g_object_unref (g_file_parent);
         }
 
       g_value_take_string (value, str);
-      g_free (uri);
       break;
 
     case THUNAR_COLUMN_GROUP:
