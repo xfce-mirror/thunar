@@ -2505,6 +2505,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
           /* add new results to the model every X ms */
           store->update_search_results_timeout_id = g_timeout_add (500, add_search_files, store);
 
+          g_free (search_query_c);
         }
 
       /* insert the files */
