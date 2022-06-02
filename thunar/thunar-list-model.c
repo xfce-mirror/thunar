@@ -834,6 +834,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
       if (G_LIKELY (g_file_parent != NULL))
         {
           /* NULL only occurs if the search returned the root directory somehow */
+
           folder = THUNAR_LIST_MODEL (model)->folder;
           if (G_LIKELY (folder != NULL))
             {
@@ -845,10 +846,10 @@ thunar_list_model_get_value (GtkTreeModel *model,
                 /* can still be NULL if g_folder is not a prefix of g_file_parent */
             }
 
-          if (G_UNLIKELY (str == NULL))
-            {
-              /* show a prettified URI or local path to the file's
-               * parent folder for corner cases */
+          if (str == NULL) {
+            /* catchall for when model->folder is not an ancestor of the
+             * parent (e.g. when searching recent:///). In this case, show a
+             * prettified absolute URI or local path. */
               str = g_file_get_parse_name (g_file_parent);
             }
 
