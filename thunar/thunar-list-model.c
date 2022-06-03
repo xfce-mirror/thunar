@@ -776,15 +776,16 @@ thunar_list_model_get_value (GtkTreeModel *model,
                              gint          column,
                              GValue       *value)
 {
-  ThunarGroup *group;
-  const gchar *device_type;
-  const gchar *name;
-  const gchar *real_name;
-  ThunarUser  *user;
-  ThunarFile  *file;
-  GFile       *g_file;
-  GFile       *g_file_parent;
-  gchar       *str;
+  ThunarGroup  *group;
+  const gchar  *device_type;
+  const gchar  *name;
+  const gchar  *real_name;
+  ThunarUser   *user;
+  ThunarFile   *file;
+  ThunarFolder *folder;
+  GFile        *g_file;
+  GFile        *g_file_parent;
+  gchar        *str;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
   _thunar_return_if_fail (iter->stamp == (THUNAR_LIST_MODEL (model))->stamp);
@@ -825,8 +826,6 @@ thunar_list_model_get_value (GtkTreeModel *model,
       break;
 
     case THUNAR_COLUMN_LOCATION:
-      ThunarFolder *folder;
-
       g_value_init (value, G_TYPE_STRING);
       g_file_parent = g_file_get_parent (thunar_file_get_file (file));
       str = NULL;
