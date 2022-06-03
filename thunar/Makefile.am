@@ -117,8 +117,8 @@ thunar_SOURCES =							\
 	thunar-io-scan-directory.h					\
 	thunar-job.c							\
 	thunar-job.h							\
-	thunar-launcher.c						\
-	thunar-launcher.h						\
+	thunar-action-manager.c						\
+	thunar-action-manager.h						\
 	thunar-list-model.c						\
 	thunar-list-model.h						\
 	thunar-location-bar.c						\

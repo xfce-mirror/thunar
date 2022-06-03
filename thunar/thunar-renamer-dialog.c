@@ -36,8 +36,8 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-icon-renderer.h>
-#include <thunar/thunar-launcher.h>
-#include <thunar/thunar-launcher.h>
+#include <thunar/thunar-action-manager.h>
+#include <thunar/thunar-action-manager.h>
 #include <thunar/thunar-menu.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
@@ -162,7 +162,7 @@ struct _ThunarRenamerDialog
 
   ThunarRenamerModel  *model;
 
-  ThunarLauncher      *launcher;
+  ThunarActionManager *action_mgr;
 
   GtkWidget           *cancel_button;
   GtkWidget           *close_button;
@@ -376,10 +376,10 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   gtk_dialog_set_default_response (GTK_DIALOG (renamer_dialog), GTK_RESPONSE_APPLY);
   gtk_widget_set_tooltip_text (button, _("Click here to actually rename the files listed above to their new names and keep the window open."));
 
-  /* setup the launcher support for this dialog */
-  renamer_dialog->launcher = g_object_new (THUNAR_TYPE_LAUNCHER, "widget", GTK_WIDGET (renamer_dialog), NULL);
-  g_object_bind_property (G_OBJECT (renamer_dialog), "selected-files", G_OBJECT (renamer_dialog->launcher), "selected-files", G_BINDING_SYNC_CREATE);
-  g_object_bind_property (G_OBJECT (renamer_dialog), "current-directory", G_OBJECT (renamer_dialog->launcher), "current-directory", G_BINDING_SYNC_CREATE);
+  /* setup the action manager support for this dialog */
+  renamer_dialog->action_mgr = g_object_new (THUNAR_TYPE_ACTION_MANAGER, "widget", GTK_WIDGET (renamer_dialog), NULL);
+  g_object_bind_property (G_OBJECT (renamer_dialog), "selected-files", G_OBJECT (renamer_dialog->action_mgr), "selected-files", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (renamer_dialog), "current-directory", G_OBJECT (renamer_dialog->action_mgr), "current-directory", G_BINDING_SYNC_CREATE);
 
   /* add the toolbar to the dialog */
   toolbar = gtk_toolbar_new ();
@@ -653,8 +653,8 @@ thunar_renamer_dialog_finalize (GObject *object)
 {
   ThunarRenamerDialog *renamer_dialog = THUNAR_RENAMER_DIALOG (object);
 
-  /* release the launcher support */
-  g_object_unref (G_OBJECT (renamer_dialog->launcher));
+  /* release the action manager support */
+  g_object_unref (G_OBJECT (renamer_dialog->action_mgr));
 
   /* release our bulk rename model */
   g_object_unref (G_OBJECT (renamer_dialog->model));
@@ -899,7 +899,7 @@ thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog)
   g_object_ref (G_OBJECT (renamer_dialog));
 
   menu = g_object_new (THUNAR_TYPE_MENU, "menu-type", THUNAR_MENU_TYPE_CONTEXT_RENAMER,
-                                         "launcher", renamer_dialog->launcher,
+                                         "action_mgr", renamer_dialog->action_mgr,
                                          "tab-support-disabled", TRUE,
                                          "change_directory-support-disabled", TRUE, NULL);
   thunar_menu_add_sections (menu, THUNAR_MENU_SECTION_OPEN | THUNAR_MENU_SECTION_SENDTO);
@@ -1638,7 +1638,7 @@ thunar_renamer_dialog_row_activated (GtkTreeView         *tree_view,
 {
   _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
 
-  thunar_launcher_activate_selected_files (renamer_dialog->launcher, THUNAR_LAUNCHER_OPEN_AS_NEW_WINDOW, NULL);
+  thunar_action_mgr_activate_selected_files (renamer_dialog->action_mgr, THUNAR_ACTION_MANAGER_OPEN_AS_NEW_WINDOW, NULL);
 }
 
 

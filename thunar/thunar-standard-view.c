@@ -44,7 +44,7 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-history.h>
 #include <thunar/thunar-icon-renderer.h>
-#include <thunar/thunar-launcher.h>
+#include <thunar/thunar-action-manager.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-private.h>
@@ -3850,7 +3850,7 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view)
   window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
 
   context_menu = g_object_new (THUNAR_TYPE_MENU, "menu-type", THUNAR_MENU_TYPE_CONTEXT_STANDARD_VIEW,
-                                                 "launcher", thunar_window_get_launcher (THUNAR_WINDOW (window)), NULL);
+                                                 "action_mgr", thunar_window_get_action_mgr (THUNAR_WINDOW (window)), NULL);
   if (selected_items != NULL)
     {
       thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_OPEN
@@ -4226,11 +4226,11 @@ _thunar_standard_view_open_on_middle_click (ThunarStandardView *standard_view,
                                             GtkTreePath        *tree_path,
                                             guint               event_state)
 {
-  GtkTreeIter     iter;
-  ThunarFile     *file;
-  gboolean        in_tab;
-  GtkWidget      *window;
-  ThunarLauncher *launcher;
+  GtkTreeIter          iter;
+  ThunarFile          *file;
+  gboolean             in_tab;
+  GtkWidget           *window;
+  ThunarActionManager *action_mgr;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
@@ -4248,9 +4248,9 @@ _thunar_standard_view_open_on_middle_click (ThunarStandardView *standard_view,
           if ((event_state & GDK_CONTROL_MASK) != 0)
               in_tab = !in_tab;
 
-          window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
-          launcher = thunar_window_get_launcher (THUNAR_WINDOW (window));
-          thunar_launcher_open_selected_folders (launcher, in_tab);
+          window     = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
+          action_mgr = thunar_window_get_action_mgr (THUNAR_WINDOW (window));
+          thunar_action_mgr_open_selected_folders (action_mgr, in_tab);
         }
       /* release the file reference */
       g_object_unref (G_OBJECT (file));

@@ -22,7 +22,7 @@
 #include <thunar/thunar-menu.h>
 
 #include <thunar/thunar-gtk-extensions.h>
-#include <thunar/thunar-launcher.h>
+#include <thunar/thunar-action-manager.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-window.h>
 
@@ -36,7 +36,7 @@
  * #ThunarMenu is a #GtkMenu which provides a unified menu-creation service for different thunar widgets.
  *
  * Based on the passed flags and selected sections, it fills itself with the requested menu-items
- * by creating them with #ThunarLauncher.
+ * by creating them with #ThunarActionManager.
  */
 
 
@@ -46,7 +46,7 @@ enum
 {
   PROP_0,
   PROP_MENU_TYPE,
-  PROP_LAUNCHER,
+  PROP_ACTION_MANAGER,
   PROP_FORCE_SECTION_OPEN,
   PROP_TAB_SUPPORT_DISABLED,
   PROP_CHANGE_DIRECTORY_SUPPORT_DISABLED,
@@ -69,20 +69,20 @@ struct _ThunarMenuClass
 
 struct _ThunarMenu
 {
-  GtkMenu __parent__;
-  ThunarLauncher  *launcher;
+  GtkMenu              __parent__;
+  ThunarActionManager *action_mgr;
 
   /* true, if the 'open' section should be forced */
-  gboolean         force_section_open;
+  gboolean             force_section_open;
 
   /* true, if 'open as new tab' should not be shown */
-  gboolean         tab_support_disabled;
+  gboolean             tab_support_disabled;
 
   /* true, if 'open' for folders, which would result in changing the directory, should not be shown */
-  gboolean         change_directory_support_disabled;
+  gboolean             change_directory_support_disabled;
 
   /* detailed type of the thunar menu */
-  ThunarMenuType   type;
+  ThunarMenuType       type;
 };
 
 
@@ -117,11 +117,11 @@ thunar_menu_class_init (ThunarMenuClass *klass)
                                                      | G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (gobject_class,
-                                   PROP_LAUNCHER,
-                                   g_param_spec_object ("launcher",
-                                                        "launcher",
-                                                        "launcher",
-                                                        THUNAR_TYPE_LAUNCHER,
+                                   PROP_ACTION_MANAGER,
+                                   g_param_spec_object ("action_mgr",
+                                                        "action_mgr",
+                                                        "action_mgr",
+                                                        THUNAR_TYPE_ACTION_MANAGER,
                                                           G_PARAM_WRITABLE
                                                         | G_PARAM_CONSTRUCT_ONLY));
 
@@ -171,7 +171,7 @@ thunar_menu_finalize (GObject *object)
 {
   ThunarMenu *menu = THUNAR_MENU (object);
 
-  g_object_unref (menu->launcher);
+  g_object_unref (menu->action_mgr);
 
   (*G_OBJECT_CLASS (thunar_menu_parent_class)->finalize) (object);
 }
@@ -208,8 +208,8 @@ thunar_menu_set_property (GObject      *object,
       menu->type = g_value_get_int (value);
       break;
 
-    case PROP_LAUNCHER:
-      menu->launcher = g_value_dup_object (value);
+    case PROP_ACTION_MANAGER:
+      menu->action_mgr = g_value_dup_object (value);
      break;
 
     case PROP_FORCE_SECTION_OPEN:
@@ -255,45 +255,45 @@ thunar_menu_add_sections (ThunarMenu         *menu,
   if (menu_sections & THUNAR_MENU_SECTION_CREATE_NEW_FILES)
     {
       item_added = FALSE;
-      item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_CREATE_FOLDER, force) != NULL);
+      item_added |= (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_CREATE_FOLDER, force) != NULL);
 
       /* No document creation for side pane views */
       if (menu->type != THUNAR_MENU_TYPE_CONTEXT_TREE_VIEW && menu->type != THUNAR_MENU_TYPE_CONTEXT_SHORTCUTS_VIEW)
-        item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_CREATE_DOCUMENT, force) != NULL);
+        item_added |= (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_CREATE_DOCUMENT, force) != NULL);
       if (item_added)
          xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
     }
 
   if (menu_sections & THUNAR_MENU_SECTION_OPEN)
     {
-      if (thunar_launcher_append_open_section (menu->launcher, GTK_MENU_SHELL (menu), !menu->tab_support_disabled, !menu->change_directory_support_disabled, menu->force_section_open))
+      if (thunar_action_mgr_append_open_section (menu->action_mgr, GTK_MENU_SHELL (menu), !menu->tab_support_disabled, !menu->change_directory_support_disabled, menu->force_section_open))
          xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
     }
 
   if (menu_sections & THUNAR_MENU_SECTION_EDIT_LAUNCHER)
   {
     item_added = FALSE;
-    item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_EDIT_LAUNCHER, force) != NULL);
+    item_added |= (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_EDIT_LAUNCHER, force) != NULL);
     if (item_added)
       xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
   }
 
   if (menu_sections & THUNAR_MENU_SECTION_SENDTO)
     {
-      if (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_SENDTO_MENU, FALSE) != NULL)
+      if (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_SENDTO_MENU, FALSE) != NULL)
          xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
     }
 
   item_added = FALSE;
   if (menu_sections & THUNAR_MENU_SECTION_CUT)
-    item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_CUT, force) != NULL);
+    item_added |= (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_CUT, force) != NULL);
   if (menu_sections & THUNAR_MENU_SECTION_COPY_PASTE)
     {
-      item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_COPY, force) != NULL);
+      item_added |= (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_COPY, force) != NULL);
       if (menu->type == THUNAR_MENU_TYPE_CONTEXT_LOCATION_BUTTONS)
-        item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_PASTE_INTO_FOLDER, force) != NULL);
+        item_added |= (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_PASTE_INTO_FOLDER, force) != NULL);
       else
-        item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_PASTE, force) != NULL);
+        item_added |= (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_PASTE, force) != NULL);
     }
   if (item_added)
      xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
@@ -301,59 +301,59 @@ thunar_menu_add_sections (ThunarMenu         *menu,
   if (menu_sections & THUNAR_MENU_SECTION_TRASH_DELETE)
     {
       item_added = FALSE;
-      item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_MOVE_TO_TRASH, force) != NULL);
-      item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_DELETE, force) != NULL);
+      item_added |= (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_MOVE_TO_TRASH, force) != NULL);
+      item_added |= (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_DELETE, force) != NULL);
       if (item_added)
          xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
     }
   if (menu_sections & THUNAR_MENU_SECTION_EMPTY_TRASH)
     {
-      if (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_EMPTY_TRASH, FALSE) != NULL )
+      if (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_EMPTY_TRASH, FALSE) != NULL )
          xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
     }
   if (menu_sections & THUNAR_MENU_SECTION_RESTORE)
     {
       item_added = FALSE;
-      item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_RESTORE, FALSE) != NULL);
-      item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_RESTORE_SHOW, FALSE) != NULL);
+      item_added |= (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_RESTORE, FALSE) != NULL);
+      item_added |= (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_RESTORE_SHOW, FALSE) != NULL);
       if (item_added)
         xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
     }
   if (menu_sections & THUNAR_MENU_SECTION_REMOVE_FROM_RECENT)
     {
-      if (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_REMOVE_FROM_RECENT, FALSE) != NULL)
+      if (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_REMOVE_FROM_RECENT, FALSE) != NULL)
         xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
     }
 
   item_added = FALSE;
   if (menu_sections & THUNAR_MENU_SECTION_DUPLICATE)
-    item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_DUPLICATE, force) != NULL);
+    item_added |= (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_DUPLICATE, force) != NULL);
   if (menu_sections & THUNAR_MENU_SECTION_MAKELINK)
-    item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_MAKE_LINK, force) != NULL);
+    item_added |= (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_MAKE_LINK, force) != NULL);
   if (menu_sections & THUNAR_MENU_SECTION_RENAME)
-    item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_RENAME, force) != NULL);
+    item_added |= (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_RENAME, force) != NULL);
   if (item_added)
      xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
 
   if (menu_sections & THUNAR_MENU_SECTION_CUSTOM_ACTIONS)
     {
-      if (thunar_launcher_append_custom_actions (menu->launcher, GTK_MENU_SHELL (menu)))
+      if (thunar_action_mgr_append_custom_actions (menu->action_mgr, GTK_MENU_SHELL (menu)))
          xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
     }
 
   if (menu_sections & THUNAR_MENU_SECTION_MOUNTABLE)
     {
       item_added = FALSE;
-      item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_MOUNT, FALSE) != NULL);
-      item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_UNMOUNT, FALSE) != NULL);
-      item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_EJECT, FALSE) != NULL);
+      item_added |= (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_MOUNT, FALSE) != NULL);
+      item_added |= (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_UNMOUNT, FALSE) != NULL);
+      item_added |= (thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_EJECT, FALSE) != NULL);
       if (item_added)
          xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
     }
 
   if (menu_sections & THUNAR_MENU_SECTION_ZOOM)
     {
-      window = thunar_launcher_get_widget (menu->launcher);
+      window = thunar_action_mgr_get_widget (menu->action_mgr);
       if (THUNAR_IS_WINDOW (window))
         {
           thunar_window_append_menu_item (THUNAR_WINDOW (window), GTK_MENU_SHELL (menu), THUNAR_WINDOW_ACTION_ZOOM_IN);
@@ -364,7 +364,7 @@ thunar_menu_add_sections (ThunarMenu         *menu,
     }
 
   if (menu_sections & THUNAR_MENU_SECTION_PROPERTIES)
-      thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_PROPERTIES, FALSE);
+      thunar_action_mgr_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_PROPERTIES, FALSE);
 
   return TRUE;
 }
@@ -372,16 +372,16 @@ thunar_menu_add_sections (ThunarMenu         *menu,
 
 
 /**
- * thunar_menu_get_launcher:
+ * thunar_menu_get_action_mgr:
  * @menu : a #ThunarMenu instance
  *
- * Return value: (transfer none): The launcher of this #ThunarMenu instance
+ * Return value: (transfer none): The action manager of this #ThunarMenu instance
  **/
 GtkWidget*
-thunar_menu_get_launcher (ThunarMenu *menu)
+thunar_menu_get_action_mgr (ThunarMenu *menu)
 {
   _thunar_return_val_if_fail (THUNAR_IS_MENU (menu), NULL);
-  return GTK_WIDGET (menu->launcher);
+  return GTK_WIDGET (menu->action_mgr);
 }
 
 
