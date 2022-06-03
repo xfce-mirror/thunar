@@ -219,6 +219,33 @@ thunar_gtk_menu_run_at_event (GtkMenu *menu, GdkEvent *event)
 
 
 /**
+ * thunar_gtk_menu_hide_accel_labels:
+ * @menu : a #GtkMenu instance
+ *
+ * Will hide the accel_labels of all menu items of this menu and its submenus
+ **/
+void
+thunar_gtk_menu_hide_accel_labels (GtkMenu *menu)
+{
+  GList     *children, *lp;
+  GtkWidget *submenu;
+
+  _thunar_return_if_fail (GTK_IS_MENU (menu));
+
+  children = gtk_container_get_children (GTK_CONTAINER (menu));
+  for (lp = children; lp != NULL; lp = lp->next)
+    {
+      xfce_gtk_menu_item_set_accel_label (lp->data, NULL);
+      submenu = gtk_menu_item_get_submenu (lp->data);
+      if (submenu != NULL)
+        thunar_gtk_menu_hide_accel_labels (GTK_MENU (submenu));
+    }
+  g_list_free (children);
+}
+
+
+
+/**
  * thunar_gtk_widget_set_tooltip:
  * @widget : a #GtkWidget for which to set the tooltip.
  * @format : a printf(3)-style format string.

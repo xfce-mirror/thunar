@@ -922,7 +922,7 @@ thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog)
   thunar_renamer_dialog_append_menu_item (renamer_dialog, GTK_MENU_SHELL (menu), THUNAR_RENAMER_ACTION_REMOVE_FILES);
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
   thunar_menu_add_sections (menu, THUNAR_MENU_SECTION_PROPERTIES);
-  thunar_menu_hide_accel_labels (menu);
+  thunar_gtk_menu_hide_accel_labels (GTK_MENU (menu));
   gtk_widget_show_all (GTK_WIDGET (menu));
 
   thunar_gtk_menu_run (GTK_MENU (menu));

@@ -1302,7 +1302,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
                               (GDestroyNotify) gtk_tree_row_reference_free);
   }
 
-  thunar_menu_hide_accel_labels (context_menu);
+  thunar_gtk_menu_hide_accel_labels (GTK_MENU (context_menu));
   gtk_widget_show_all (GTK_WIDGET (context_menu));
   window = gtk_widget_get_toplevel (GTK_WIDGET (view));
   thunar_window_redirect_menu_tooltips_to_statusbar (THUNAR_WINDOW (window), GTK_MENU (context_menu));

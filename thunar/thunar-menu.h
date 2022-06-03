@@ -75,7 +75,6 @@ GType      thunar_menu_get_type          (void) G_GNUC_CONST;
 gboolean   thunar_menu_add_sections      (ThunarMenu         *menu,
                                           ThunarMenuSections  menu_sections);
 GtkWidget* thunar_menu_get_launcher      (ThunarMenu         *menu);
-void       thunar_menu_hide_accel_labels (ThunarMenu         *menu);
 
 G_END_DECLS;
 
