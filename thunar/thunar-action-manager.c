@@ -112,98 +112,98 @@ enum
 
 
 
-static void                    thunar_action_mgr_component_init             (ThunarComponentIface           *iface);
-static void                    thunar_action_mgr_navigator_init             (ThunarNavigatorIface           *iface);
-static void                    thunar_action_mgr_dispose                    (GObject                        *object);
-static void                    thunar_action_mgr_finalize                   (GObject                        *object);
-static void                    thunar_action_mgr_get_property               (GObject                        *object,
-                                                                             guint                           prop_id,
-                                                                             GValue                         *value,
-                                                                             GParamSpec                     *pspec);
-static void                    thunar_action_mgr_set_property               (GObject                        *object,
-                                                                             guint                           prop_id,
-                                                                             const GValue                   *value,
-                                                                             GParamSpec                     *pspec);
-static ThunarFile             *thunar_action_mgr_get_current_directory      (ThunarNavigator                *navigator);
-static void                    thunar_action_mgr_set_current_directory      (ThunarNavigator                *navigator,
-                                                                             ThunarFile                     *current_directory);
-static void                    thunar_action_mgr_set_selected_files         (ThunarComponent                *component,
-                                                                             GList                          *selected_files);
-static void                    thunar_action_mgr_execute_files              (ThunarActionManager            *action_mgr,
-                                                                             GList                          *files);
-static void                    thunar_action_mgr_open_files                 (ThunarActionManager            *action_mgr,
-                                                                             GList                          *files,
-                                                                             GAppInfo                       *application_to_use);
-static void                    thunar_action_mgr_open_paths                 (GAppInfo                       *app_info,
-                                                                             GList                          *file_list,
-                                                                             ThunarActionManager            *action_mgr);
-static void                    thunar_action_mgr_open_windows               (ThunarActionManager            *action_mgr,
-                                                                             GList                          *directories);
-static void                    thunar_action_mgr_poke                       (ThunarActionManager            *action_mgr,
-                                                                             GAppInfo                       *application_to_use,
-                                                                             ThunarActionManagerFolderOpenAction  folder_open_action);
-static void                    thunar_action_mgr_poke_device_finish         (ThunarBrowser                  *browser,
-                                                                             ThunarDevice                   *volume,
-                                                                             ThunarFile                     *mount_point,
-                                                                             GError                         *error,
-                                                                             gpointer                        user_data,
-                                                                             gboolean                        cancelled);
-static void                    thunar_action_mgr_poke_location_finish       (ThunarBrowser                  *browser,
-                                                                             GFile                          *location,
-                                                                             ThunarFile                     *file,
-                                                                             ThunarFile                     *target_file,
-                                                                             GError                         *error,
-                                                                             gpointer                        user_data);
-static void                    thunar_action_mgr_poke_files_finish          (ThunarBrowser                  *browser,
-                                                                             ThunarFile                     *file,
-                                                                             ThunarFile                     *target_file,
-                                                                             GError                         *error,
-                                                                             gpointer                        user_data);
-static ThunarActionManagerPokeData *thunar_action_mgr_poke_data_new         (GList                          *files_to_poke,
-                                                                             GAppInfo                       *application_to_use,
-                                                                             ThunarActionManagerFolderOpenAction  folder_open_action,
-                                                                             GFile                          *location_to_poke,
-                                                                             ThunarDevice                   *device_to_poke);
-static void                    thunar_action_mgr_poke_data_free             (ThunarActionManagerPokeData    *data);
-static void                    thunar_action_mgr_widget_destroyed           (ThunarActionManager            *action_mgr,
-                                                                             GtkWidget                      *widget);
-static gboolean                thunar_action_mgr_action_open                (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_open_in_new_tabs    (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_open_in_new_windows (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_open_location       (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_open_with_other     (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_set_default_app     (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_sendto_desktop      (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_properties          (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_sendto_device       (ThunarActionManager            *action_mgr,
-                                                                             GObject                        *object);
-static gboolean                thunar_action_mgr_action_add_shortcuts       (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_make_link           (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_duplicate           (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_rename              (ThunarActionManager            *action_mgr);
-static void                    thunar_action_mgr_action_move_to_trash       (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_delete              (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_trash_delete        (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_remove_from_recent  (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_cut                 (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_copy                (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_paste               (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_paste_into_folder   (ThunarActionManager            *action_mgr);
-static void                    thunar_action_mgr_action_edit_action_mgr     (ThunarActionManager            *action_mgr);
-static void                    thunar_action_mgr_sendto_device              (ThunarActionManager            *action_mgr,
-                                                                             ThunarDevice                   *device);
-static void                    thunar_action_mgr_sendto_mount_finish        (ThunarDevice                   *device,
-                                                                             const GError                   *error,
-                                                                             gpointer                        user_data);
-static GtkWidget              *thunar_action_mgr_build_sendto_submenu       (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_menu_item_activated        (ThunarActionManager            *action_mgr,
-                                                                             GtkWidget                      *menu_item);
-static gboolean                thunar_action_mgr_action_create_folder       (ThunarActionManager            *action_mgr);
-static gboolean                thunar_action_mgr_action_create_document     (ThunarActionManager            *action_mgr,
-                                                                             GtkWidget                      *menu_item);
-static GtkWidget              *thunar_action_mgr_create_document_submenu_new(ThunarActionManager            *action_mgr);
-static void                    thunar_action_mgr_new_files_created          (ThunarActionManager            *action_mgr,
-                                                                             GList                          *new_thunar_files);
+static void                    thunar_action_manager_component_init             (ThunarComponentIface           *iface);
+static void                    thunar_action_manager_navigator_init             (ThunarNavigatorIface           *iface);
+static void                    thunar_action_manager_dispose                    (GObject                        *object);
+static void                    thunar_action_manager_finalize                   (GObject                        *object);
+static void                    thunar_action_manager_get_property               (GObject                        *object,
+                                                                                 guint                           prop_id,
+                                                                                 GValue                         *value,
+                                                                                 GParamSpec                     *pspec);
+static void                    thunar_action_manager_set_property               (GObject                        *object,
+                                                                                 guint                           prop_id,
+                                                                                 const GValue                   *value,
+                                                                                 GParamSpec                     *pspec);
+static ThunarFile             *thunar_action_manager_get_current_directory      (ThunarNavigator                *navigator);
+static void                    thunar_action_manager_set_current_directory      (ThunarNavigator                *navigator,
+                                                                                 ThunarFile                     *current_directory);
+static void                    thunar_action_manager_set_selected_files         (ThunarComponent                *component,
+                                                                                 GList                          *selected_files);
+static void                    thunar_action_manager_execute_files              (ThunarActionManager            *action_mgr,
+                                                                                 GList                          *files);
+static void                    thunar_action_manager_open_files                 (ThunarActionManager            *action_mgr,
+                                                                                 GList                          *files,
+                                                                                 GAppInfo                       *application_to_use);
+static void                    thunar_action_manager_open_paths                 (GAppInfo                       *app_info,
+                                                                                 GList                          *file_list,
+                                                                                 ThunarActionManager            *action_mgr);
+static void                    thunar_action_manager_open_windows               (ThunarActionManager            *action_mgr,
+                                                                                 GList                          *directories);
+static void                    thunar_action_manager_poke                       (ThunarActionManager            *action_mgr,
+                                                                                 GAppInfo                       *application_to_use,
+                                                                                 ThunarActionManagerFolderOpenAction  folder_open_action);
+static void                    thunar_action_manager_poke_device_finish         (ThunarBrowser                  *browser,
+                                                                                 ThunarDevice                   *volume,
+                                                                                 ThunarFile                     *mount_point,
+                                                                                 GError                         *error,
+                                                                                 gpointer                        user_data,
+                                                                                 gboolean                        cancelled);
+static void                    thunar_action_manager_poke_location_finish       (ThunarBrowser                  *browser,
+                                                                                 GFile                          *location,
+                                                                                 ThunarFile                     *file,
+                                                                                 ThunarFile                     *target_file,
+                                                                                 GError                         *error,
+                                                                                 gpointer                        user_data);
+static void                    thunar_action_manager_poke_files_finish          (ThunarBrowser                  *browser,
+                                                                                 ThunarFile                     *file,
+                                                                                 ThunarFile                     *target_file,
+                                                                                 GError                         *error,
+                                                                                 gpointer                        user_data);
+static ThunarActionManagerPokeData *thunar_action_manager_poke_data_new         (GList                          *files_to_poke,
+                                                                                 GAppInfo                       *application_to_use,
+                                                                                 ThunarActionManagerFolderOpenAction  folder_open_action,
+                                                                                 GFile                          *location_to_poke,
+                                                                                 ThunarDevice                   *device_to_poke);
+static void                    thunar_action_manager_poke_data_free             (ThunarActionManagerPokeData    *data);
+static void                    thunar_action_manager_widget_destroyed           (ThunarActionManager            *action_mgr,
+                                                                                 GtkWidget                      *widget);
+static gboolean                thunar_action_manager_action_open                (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_open_in_new_tabs    (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_open_in_new_windows (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_open_location       (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_open_with_other     (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_set_default_app     (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_sendto_desktop      (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_properties          (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_sendto_device       (ThunarActionManager            *action_mgr,
+                                                                                 GObject                        *object);
+static gboolean                thunar_action_manager_action_add_shortcuts       (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_make_link           (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_duplicate           (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_rename              (ThunarActionManager            *action_mgr);
+static void                    thunar_action_manager_action_move_to_trash       (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_delete              (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_trash_delete        (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_remove_from_recent  (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_cut                 (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_copy                (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_paste               (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_paste_into_folder   (ThunarActionManager            *action_mgr);
+static void                    thunar_action_manager_action_edit_launcher       (ThunarActionManager            *action_mgr);
+static void                    thunar_action_manager_sendto_device              (ThunarActionManager            *action_mgr,
+                                                                                 ThunarDevice                   *device);
+static void                    thunar_action_manager_sendto_mount_finish        (ThunarDevice                   *device,
+                                                                                 const GError                   *error,
+                                                                                 gpointer                        user_data);
+static GtkWidget              *thunar_action_manager_build_sendto_submenu       (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_menu_item_activated        (ThunarActionManager            *action_mgr,
+                                                                                 GtkWidget                      *menu_item);
+static gboolean                thunar_action_manager_action_create_folder       (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_create_document     (ThunarActionManager            *action_mgr,
+                                                                                 GtkWidget                      *menu_item);
+static GtkWidget              *thunar_action_manager_create_document_submenu_new(ThunarActionManager            *action_mgr);
+static void                    thunar_action_manager_new_files_created          (ThunarActionManager            *action_mgr,
+                                                                                 GList                          *new_thunar_files);
 
 
 
@@ -245,11 +245,11 @@ struct _ThunarActionManager
   gboolean                is_searching;
 };
 
-static GQuark thunar_action_mgr_appinfo_quark;
-static GQuark thunar_action_mgr_device_quark;
-static GQuark thunar_action_mgr_file_quark;
+static GQuark thunar_action_manager_appinfo_quark;
+static GQuark thunar_action_manager_device_quark;
+static GQuark thunar_action_manager_file_quark;
 
-static guint action_mgr_signals[LAST_SIGNAL];
+static guint action_manager_signals[LAST_SIGNAL];
 
 struct _ThunarActionManagerPokeData
 {
@@ -261,79 +261,79 @@ struct _ThunarActionManagerPokeData
   ThunarActionManagerFolderOpenAction  folder_open_action;
 };
 
-static GParamSpec *action_mgr_props[N_PROPERTIES] = { NULL, };
+static GParamSpec *action_manager_props[N_PROPERTIES] = { NULL, };
 
-static XfceGtkActionEntry thunar_action_mgr_action_entries[] =
+static XfceGtkActionEntry thunar_action_manager_action_entries[] =
 {
-    { THUNAR_ACTION_MANAGER_ACTION_OPEN,             "<Actions>/ThunarActionManager/open",                    "<Primary>O",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Open"),                            NULL,                                                                                            "document-open",        G_CALLBACK (thunar_action_mgr_action_open),                },
-    { THUNAR_ACTION_MANAGER_ACTION_EXECUTE,          "<Actions>/ThunarActionManager/execute",                 "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("E_xecute"),                        NULL,                                                                                            "system-run",           G_CALLBACK (thunar_action_mgr_action_open),                },
-    { THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB,      "<Actions>/ThunarActionManager/open-in-new-tab",         "<Primary><shift>P", XFCE_GTK_MENU_ITEM,       N_ ("Open in new _Tab"),                NULL,                                                                                            NULL,                   G_CALLBACK (thunar_action_mgr_action_open_in_new_tabs),    },
-    { THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW,   "<Actions>/ThunarActionManager/open-in-new-window",      "<Primary><shift>O", XFCE_GTK_MENU_ITEM,       N_ ("Open in new _Window"),             NULL,                                                                                            NULL,                   G_CALLBACK (thunar_action_mgr_action_open_in_new_windows), },
-    { THUNAR_ACTION_MANAGER_ACTION_OPEN_LOCATION,    "<Actions>/ThunarActionManager/open-location",           "",                  XFCE_GTK_MENU_ITEM,       N_ ("Open Item Location"),              NULL,                                                                                            NULL,                   G_CALLBACK (thunar_action_mgr_action_open_location),       },
-    { THUNAR_ACTION_MANAGER_ACTION_OPEN_WITH_OTHER,  "<Actions>/ThunarActionManager/open-with-other",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Open With Other _Application..."), N_ ("Choose another application with which to open the selected file"),                          NULL,                   G_CALLBACK (thunar_action_mgr_action_open_with_other),     },
-    { THUNAR_ACTION_MANAGER_ACTION_SET_DEFAULT_APP,  "<Actions>/ThunarStandardView/set-default-app",          "",                  XFCE_GTK_MENU_ITEM,       N_ ("Set _Default Application..."),     N_ ("Choose an application which should be used by default to open the selected file"),          NULL,                   G_CALLBACK (thunar_action_mgr_action_set_default_app),     },
+    { THUNAR_ACTION_MANAGER_ACTION_OPEN,             "<Actions>/ThunarActionManager/open",                    "<Primary>O",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Open"),                            NULL,                                                                                            "document-open",        G_CALLBACK (thunar_action_manager_action_open),                },
+    { THUNAR_ACTION_MANAGER_ACTION_EXECUTE,          "<Actions>/ThunarActionManager/execute",                 "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("E_xecute"),                        NULL,                                                                                            "system-run",           G_CALLBACK (thunar_action_manager_action_open),                },
+    { THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB,      "<Actions>/ThunarActionManager/open-in-new-tab",         "<Primary><shift>P", XFCE_GTK_MENU_ITEM,       N_ ("Open in new _Tab"),                NULL,                                                                                            NULL,                   G_CALLBACK (thunar_action_manager_action_open_in_new_tabs),    },
+    { THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW,   "<Actions>/ThunarActionManager/open-in-new-window",      "<Primary><shift>O", XFCE_GTK_MENU_ITEM,       N_ ("Open in new _Window"),             NULL,                                                                                            NULL,                   G_CALLBACK (thunar_action_manager_action_open_in_new_windows), },
+    { THUNAR_ACTION_MANAGER_ACTION_OPEN_LOCATION,    "<Actions>/ThunarActionManager/open-location",           "",                  XFCE_GTK_MENU_ITEM,       N_ ("Open Item Location"),              NULL,                                                                                            NULL,                   G_CALLBACK (thunar_action_manager_action_open_location),       },
+    { THUNAR_ACTION_MANAGER_ACTION_OPEN_WITH_OTHER,  "<Actions>/ThunarActionManager/open-with-other",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Open With Other _Application..."), N_ ("Choose another application with which to open the selected file"),                          NULL,                   G_CALLBACK (thunar_action_manager_action_open_with_other),     },
+    { THUNAR_ACTION_MANAGER_ACTION_SET_DEFAULT_APP,  "<Actions>/ThunarStandardView/set-default-app",          "",                  XFCE_GTK_MENU_ITEM,       N_ ("Set _Default Application..."),     N_ ("Choose an application which should be used by default to open the selected file"),          NULL,                   G_CALLBACK (thunar_action_manager_action_set_default_app),     },
 
     /* For backward compatibility the old accel paths are re-used. Currently not possible to automatically migrate to new accel paths. */
     /* Waiting for https://gitlab.gnome.org/GNOME/gtk/issues/2375 to be able to fix that */
-    {THUNAR_ACTION_MANAGER_ACTION_SENDTO_MENU,        "<Actions>/ThunarWindow/sendto-menu",             "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Send To"),            NULL,                                             NULL,                                                                                         NULL,                                                      },
-    {THUNAR_ACTION_MANAGER_ACTION_SENDTO_SHORTCUTS,   "<Actions>/ThunarShortcutsPane/sendto-shortcuts", "<Primary>D",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Add Bookmark"),       N_ ("Create bookmarks for all selected folders in the sidepane. If nothing is selected, the current directory is bookmarked."), "bookmark-new", G_CALLBACK (thunar_action_mgr_action_add_shortcuts),       },
-    {THUNAR_ACTION_MANAGER_ACTION_SENDTO_DESKTOP,     "<Actions>/ThunarActionManager/sendto-desktop",   "",                  XFCE_GTK_MENU_ITEM,       N_ ("Send to _Desktop"),    NULL,                                                                                            "user-desktop",                                G_CALLBACK (thunar_action_mgr_action_sendto_desktop),      },
-    {THUNAR_ACTION_MANAGER_ACTION_PROPERTIES,         "<Actions>/ThunarStandardView/properties",        "<Alt>Return",       XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Properties..."),      N_ ("View the properties of the selected file"),                                                 "document-properties",                         G_CALLBACK (thunar_action_mgr_action_properties),          },
-    {THUNAR_ACTION_MANAGER_ACTION_MAKE_LINK,          "<Actions>/ThunarStandardView/make-link",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Ma_ke Link"),          NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_mgr_action_make_link),           },
-    {THUNAR_ACTION_MANAGER_ACTION_DUPLICATE,          "<Actions>/ThunarStandardView/duplicate",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Du_plicate"),          NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_mgr_action_duplicate),           },
-    {THUNAR_ACTION_MANAGER_ACTION_RENAME,             "<Actions>/ThunarStandardView/rename",            "F2",                XFCE_GTK_MENU_ITEM,       N_ ("_Rename..."),          NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_mgr_action_rename),              },
-    {THUNAR_ACTION_MANAGER_ACTION_EMPTY_TRASH,        "<Actions>/ThunarWindow/empty-trash",             "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Empty Trash"),        N_ ("Delete all files and folders in the Trash"), NULL,                                                                                         G_CALLBACK (thunar_action_mgr_action_empty_trash),         },
-    {THUNAR_ACTION_MANAGER_ACTION_REMOVE_FROM_RECENT, "<Actions>/ThunarWindow/remove-from-recent",      "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Remove from recent"), N_ ("Remove the selected files from Recent"),     NULL,                                                                                         G_CALLBACK (thunar_action_mgr_action_remove_from_recent),  },
-    {THUNAR_ACTION_MANAGER_ACTION_CREATE_FOLDER,      "<Actions>/ThunarStandardView/create-folder",     "<Primary><shift>N", XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Create _Folder..."),   N_ ("Create an empty folder within the current folder"),                                         "folder-new",                                  G_CALLBACK (thunar_action_mgr_action_create_folder),       },
-    {THUNAR_ACTION_MANAGER_ACTION_CREATE_DOCUMENT,    "<Actions>/ThunarStandardView/create-document",   "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Create _Document"),    N_ ("Create a new document from a template"),                                                    "document-new",                                G_CALLBACK (NULL),                                         },
+    {THUNAR_ACTION_MANAGER_ACTION_SENDTO_MENU,        "<Actions>/ThunarWindow/sendto-menu",             "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Send To"),            NULL,                                             NULL,                                                                                         NULL,                                                          },
+    {THUNAR_ACTION_MANAGER_ACTION_SENDTO_SHORTCUTS,   "<Actions>/ThunarShortcutsPane/sendto-shortcuts", "<Primary>D",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Add Bookmark"),       N_ ("Create bookmarks for all selected folders in the sidepane. If nothing is selected, the current directory is bookmarked."), "bookmark-new", G_CALLBACK (thunar_action_manager_action_add_shortcuts),       },
+    {THUNAR_ACTION_MANAGER_ACTION_SENDTO_DESKTOP,     "<Actions>/ThunarActionManager/sendto-desktop",   "",                  XFCE_GTK_MENU_ITEM,       N_ ("Send to _Desktop"),    NULL,                                                                                            "user-desktop",                                G_CALLBACK (thunar_action_manager_action_sendto_desktop),      },
+    {THUNAR_ACTION_MANAGER_ACTION_PROPERTIES,         "<Actions>/ThunarStandardView/properties",        "<Alt>Return",       XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Properties..."),      N_ ("View the properties of the selected file"),                                                 "document-properties",                         G_CALLBACK (thunar_action_manager_action_properties),          },
+    {THUNAR_ACTION_MANAGER_ACTION_MAKE_LINK,          "<Actions>/ThunarStandardView/make-link",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Ma_ke Link"),          NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_make_link),           },
+    {THUNAR_ACTION_MANAGER_ACTION_DUPLICATE,          "<Actions>/ThunarStandardView/duplicate",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Du_plicate"),          NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_duplicate),           },
+    {THUNAR_ACTION_MANAGER_ACTION_RENAME,             "<Actions>/ThunarStandardView/rename",            "F2",                XFCE_GTK_MENU_ITEM,       N_ ("_Rename..."),          NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_rename),              },
+    {THUNAR_ACTION_MANAGER_ACTION_EMPTY_TRASH,        "<Actions>/ThunarWindow/empty-trash",             "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Empty Trash"),        N_ ("Delete all files and folders in the Trash"), NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_empty_trash),         },
+    {THUNAR_ACTION_MANAGER_ACTION_REMOVE_FROM_RECENT, "<Actions>/ThunarWindow/remove-from-recent",      "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Remove from recent"), N_ ("Remove the selected files from Recent"),     NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_remove_from_recent),  },
+    {THUNAR_ACTION_MANAGER_ACTION_CREATE_FOLDER,      "<Actions>/ThunarStandardView/create-folder",     "<Primary><shift>N", XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Create _Folder..."),   N_ ("Create an empty folder within the current folder"),                                         "folder-new",                                  G_CALLBACK (thunar_action_manager_action_create_folder),       },
+    {THUNAR_ACTION_MANAGER_ACTION_CREATE_DOCUMENT,    "<Actions>/ThunarStandardView/create-document",   "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Create _Document"),    N_ ("Create a new document from a template"),                                                    "document-new",                                G_CALLBACK (NULL),                                             },
 
-    {THUNAR_ACTION_MANAGER_ACTION_RESTORE,            "<Actions>/ThunarActionManager/restore",               "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Restore"),            NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_mgr_action_restore),             },
-    { THUNAR_ACTION_MANAGER_ACTION_RESTORE_SHOW,      "<Actions>/ThunarActionManager/restore-show",          "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Restore and Show"),   N_ ("_Restore and show the file(s)"),             NULL,                                                                                         G_CALLBACK (thunar_action_mgr_action_restore_and_show),    },
-    {THUNAR_ACTION_MANAGER_ACTION_MOVE_TO_TRASH,      "<Actions>/ThunarActionManager/move-to-trash",         "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Mo_ve to Trash"),      NULL,                                                                                            "user-trash",                                  G_CALLBACK (thunar_action_mgr_action_trash_delete),        },
-    {THUNAR_ACTION_MANAGER_ACTION_DELETE,             "<Actions>/ThunarActionManager/delete",                "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Delete"),             NULL,                                                                                            "edit-delete",                                 G_CALLBACK (thunar_action_mgr_action_delete),              },
-    {THUNAR_ACTION_MANAGER_ACTION_DELETE,             "<Actions>/ThunarActionManager/delete-2",              "<Shift>Delete",     XFCE_GTK_IMAGE_MENU_ITEM, NULL,                       NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_mgr_action_delete),              },
-    {THUNAR_ACTION_MANAGER_ACTION_DELETE,             "<Actions>/ThunarActionManager/delete-3",              "<Shift>KP_Delete",  XFCE_GTK_IMAGE_MENU_ITEM, NULL,                       NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_mgr_action_delete),              },
-    {THUNAR_ACTION_MANAGER_ACTION_TRASH_DELETE,       "<Actions>/ThunarActionManager/trash-delete",          "Delete",            XFCE_GTK_IMAGE_MENU_ITEM, NULL,                       NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_mgr_action_trash_delete),        },
-    {THUNAR_ACTION_MANAGER_ACTION_TRASH_DELETE,       "<Actions>/ThunarActionManager/trash-delete-2",        "KP_Delete",         XFCE_GTK_IMAGE_MENU_ITEM, NULL,                       NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_mgr_action_trash_delete),        },
-    { THUNAR_ACTION_MANAGER_ACTION_PASTE,            "<Actions>/ThunarActionManager/paste",                  "<Primary>V",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Paste"),                          N_ ("Move or copy files previously selected by a Cut or Copy command"),                          "edit-paste",           G_CALLBACK (thunar_action_mgr_action_paste),               },
-    { THUNAR_ACTION_MANAGER_ACTION_PASTE_INTO_FOLDER,NULL,                                                   "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Paste Into Folder"),              N_ ("Move or copy files previously selected by a Cut or Copy command into the selected folder"), "edit-paste",           G_CALLBACK (thunar_action_mgr_action_paste_into_folder),   },
-    { THUNAR_ACTION_MANAGER_ACTION_COPY,             "<Actions>/ThunarActionManager/copy",                   "<Primary>C",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Copy"),                           N_ ("Prepare the selected files to be copied with a Paste command"),                             "edit-copy",            G_CALLBACK (thunar_action_mgr_action_copy),                },
-    { THUNAR_ACTION_MANAGER_ACTION_CUT,              "<Actions>/ThunarActionManager/cut",                    "<Primary>X",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Cu_t"),                            N_ ("Prepare the selected files to be moved with a Paste command"),                              "edit-cut",             G_CALLBACK (thunar_action_mgr_action_cut),                 },
+    {THUNAR_ACTION_MANAGER_ACTION_RESTORE,            "<Actions>/ThunarActionManager/restore",               "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Restore"),            NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_restore),             },
+    { THUNAR_ACTION_MANAGER_ACTION_RESTORE_SHOW,      "<Actions>/ThunarActionManager/restore-show",          "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Restore and Show"),   N_ ("_Restore and show the file(s)"),             NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_restore_and_show),    },
+    {THUNAR_ACTION_MANAGER_ACTION_MOVE_TO_TRASH,      "<Actions>/ThunarActionManager/move-to-trash",         "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Mo_ve to Trash"),      NULL,                                                                                            "user-trash",                                  G_CALLBACK (thunar_action_manager_action_trash_delete),        },
+    {THUNAR_ACTION_MANAGER_ACTION_DELETE,             "<Actions>/ThunarActionManager/delete",                "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Delete"),             NULL,                                                                                            "edit-delete",                                 G_CALLBACK (thunar_action_manager_action_delete),              },
+    {THUNAR_ACTION_MANAGER_ACTION_DELETE,             "<Actions>/ThunarActionManager/delete-2",              "<Shift>Delete",     XFCE_GTK_IMAGE_MENU_ITEM, NULL,                       NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_delete),              },
+    {THUNAR_ACTION_MANAGER_ACTION_DELETE,             "<Actions>/ThunarActionManager/delete-3",              "<Shift>KP_Delete",  XFCE_GTK_IMAGE_MENU_ITEM, NULL,                       NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_delete),              },
+    {THUNAR_ACTION_MANAGER_ACTION_TRASH_DELETE,       "<Actions>/ThunarActionManager/trash-delete",          "Delete",            XFCE_GTK_IMAGE_MENU_ITEM, NULL,                       NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_trash_delete),        },
+    {THUNAR_ACTION_MANAGER_ACTION_TRASH_DELETE,       "<Actions>/ThunarActionManager/trash-delete-2",        "KP_Delete",         XFCE_GTK_IMAGE_MENU_ITEM, NULL,                       NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_trash_delete),        },
+    { THUNAR_ACTION_MANAGER_ACTION_PASTE,             "<Actions>/ThunarActionManager/paste",                  "<Primary>V",       XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Paste"),                          N_ ("Move or copy files previously selected by a Cut or Copy command"),                          "edit-paste",           G_CALLBACK (thunar_action_manager_action_paste),               },
+    { THUNAR_ACTION_MANAGER_ACTION_PASTE_INTO_FOLDER,NULL,                                                   "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Paste Into Folder"),              N_ ("Move or copy files previously selected by a Cut or Copy command into the selected folder"), "edit-paste",           G_CALLBACK (thunar_action_manager_action_paste_into_folder),   },
+    { THUNAR_ACTION_MANAGER_ACTION_COPY,              "<Actions>/ThunarActionManager/copy",                  "<Primary>C",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Copy"),                           N_ ("Prepare the selected files to be copied with a Paste command"),                             "edit-copy",            G_CALLBACK (thunar_action_manager_action_copy),                },
+    { THUNAR_ACTION_MANAGER_ACTION_CUT,               "<Actions>/ThunarActionManager/cut",                   "<Primary>X",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Cu_t"),                            N_ ("Prepare the selected files to be moved with a Paste command"),                              "edit-cut",             G_CALLBACK (thunar_action_manager_action_cut),                 },
 
-    { THUNAR_ACTION_MANAGER_ACTION_MOUNT,            NULL,                                                   "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Mount"),                          N_ ("Mount the selected device"),                                                                NULL,                   G_CALLBACK (thunar_action_mgr_action_open),                },
-    { THUNAR_ACTION_MANAGER_ACTION_UNMOUNT,          NULL,                                                   "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Unmount"),                        N_ ("Unmount the selected device"),                                                              NULL,                   G_CALLBACK (thunar_action_mgr_action_unmount),             },
-    { THUNAR_ACTION_MANAGER_ACTION_EJECT,            NULL,                                                   "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Eject"),                          N_ ("Eject the selected device"),                                                                NULL,                   G_CALLBACK (thunar_action_mgr_action_eject),               },
-    { THUNAR_ACTION_MANAGER_ACTION_EDIT_LAUNCHER,    NULL,                                                   "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Edit Launcher"),                  N_ ("Edit the selected action_mgr"),                                                             "gtk-edit",             G_CALLBACK (thunar_action_mgr_action_edit_action_mgr),     },
+    { THUNAR_ACTION_MANAGER_ACTION_MOUNT,            NULL,                                                   "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Mount"),                          N_ ("Mount the selected device"),                                                                NULL,                   G_CALLBACK (thunar_action_manager_action_open),                },
+    { THUNAR_ACTION_MANAGER_ACTION_UNMOUNT,          NULL,                                                   "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Unmount"),                        N_ ("Unmount the selected device"),                                                              NULL,                   G_CALLBACK (thunar_action_manager_action_unmount),             },
+    { THUNAR_ACTION_MANAGER_ACTION_EJECT,            NULL,                                                   "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Eject"),                          N_ ("Eject the selected device"),                                                                NULL,                   G_CALLBACK (thunar_action_manager_action_eject),               },
+    { THUNAR_ACTION_MANAGER_ACTION_EDIT_LAUNCHER,    NULL,                                                   "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Edit Launcher"),                  N_ ("Edit the selected action_mgr"),                                                             "gtk-edit",             G_CALLBACK (thunar_action_manager_action_edit_launcher),       },
 };
 
-#define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_action_mgr_action_entries,G_N_ELEMENTS(thunar_action_mgr_action_entries),id)
+#define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_action_manager_action_entries,G_N_ELEMENTS(thunar_action_manager_action_entries),id)
 
 
-G_DEFINE_TYPE_WITH_CODE (ThunarActionManager, thunar_action_mgr, G_TYPE_OBJECT,
+G_DEFINE_TYPE_WITH_CODE (ThunarActionManager, thunar_action_manager, G_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (THUNAR_TYPE_BROWSER, NULL)
-                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR, thunar_action_mgr_navigator_init)
-                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_COMPONENT, thunar_action_mgr_component_init))
+                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR, thunar_action_manager_navigator_init)
+                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_COMPONENT, thunar_action_manager_component_init))
 
 
 
 static void
-thunar_action_mgr_class_init (ThunarActionManagerClass *klass)
+thunar_action_manager_class_init (ThunarActionManagerClass *klass)
 {
   GObjectClass *gobject_class;
   gpointer      g_iface;
 
   /* determine all used quarks */
-  thunar_action_mgr_appinfo_quark = g_quark_from_static_string ("thunar-action-manager-appinfo");
-  thunar_action_mgr_device_quark  = g_quark_from_static_string ("thunar-action-manager-device");
-  thunar_action_mgr_file_quark    = g_quark_from_static_string ("thunar-action-manager-file");
+  thunar_action_manager_appinfo_quark = g_quark_from_static_string ("thunar-action-manager-appinfo");
+  thunar_action_manager_device_quark  = g_quark_from_static_string ("thunar-action-manager-device");
+  thunar_action_manager_file_quark    = g_quark_from_static_string ("thunar-action-manager-file");
 
-  xfce_gtk_translate_action_entries (thunar_action_mgr_action_entries, G_N_ELEMENTS (thunar_action_mgr_action_entries));
+  xfce_gtk_translate_action_entries (thunar_action_manager_action_entries, G_N_ELEMENTS (thunar_action_manager_action_entries));
 
   gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->dispose      = thunar_action_mgr_dispose;
-  gobject_class->finalize     = thunar_action_mgr_finalize;
-  gobject_class->get_property = thunar_action_mgr_get_property;
-  gobject_class->set_property = thunar_action_mgr_set_property;
+  gobject_class->dispose      = thunar_action_manager_dispose;
+  gobject_class->finalize     = thunar_action_manager_finalize;
+  gobject_class->get_property = thunar_action_manager_get_property;
+  gobject_class->set_property = thunar_action_manager_set_property;
 
   /**
    * ThunarActionManager::device-operation-started:
@@ -342,7 +342,7 @@ thunar_action_mgr_class_init (ThunarActionManagerClass *klass)
    *
    * This signal is emitted by the @action_mgr right after the device operation (mount/unmount/eject) is started
    **/
-  action_mgr_signals[DEVICE_OPERATION_STARTED] =
+  action_manager_signals[DEVICE_OPERATION_STARTED] =
     g_signal_new (I_("device-operation-started"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_NO_HOOKS, 0,
@@ -357,7 +357,7 @@ thunar_action_mgr_class_init (ThunarActionManagerClass *klass)
    *
    * This signal is emitted by the @action_mgr right after the device operation (mount/unmount/eject) is finished
    **/
-  action_mgr_signals[DEVICE_OPERATION_FINISHED] =
+  action_manager_signals[DEVICE_OPERATION_FINISHED] =
     g_signal_new (I_("device-operation-finished"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_NO_HOOKS, 0,
@@ -372,7 +372,7 @@ thunar_action_mgr_class_init (ThunarActionManagerClass *klass)
    *
    * This signal is emitted by the @action_mgr whenever new files were created (e.g. via "rename", "create" or "paste")
    **/
-  action_mgr_signals[NEW_FILES_CREATED] =
+  action_manager_signals[NEW_FILES_CREATED] =
     g_signal_new (I_("new-files-created"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_NO_HOOKS, 0,
@@ -385,7 +385,7 @@ thunar_action_mgr_class_init (ThunarActionManagerClass *klass)
    *
    * The #GtkWidget with which this action manager is associated.
    **/
-  action_mgr_props[PROP_WIDGET] =
+  action_manager_props[PROP_WIDGET] =
       g_param_spec_object ("widget",
                            "widget",
                            "widget",
@@ -397,7 +397,7 @@ thunar_action_mgr_class_init (ThunarActionManagerClass *klass)
    *
    * The #ThunarDevice which currently is selected (or NULL if no #ThunarDevice is selected)
    **/
-  action_mgr_props[PROP_SELECTED_DEVICE] =
+  action_manager_props[PROP_SELECTED_DEVICE] =
      g_param_spec_pointer ("selected-device",
                            "selected-device",
                            "selected-device",
@@ -408,7 +408,7 @@ thunar_action_mgr_class_init (ThunarActionManagerClass *klass)
    *
    * The #GFile which currently is selected (or NULL if no #GFile is selected)
    **/
-  action_mgr_props[PROP_SELECTED_LOCATION] =
+  action_manager_props[PROP_SELECTED_LOCATION] =
      g_param_spec_pointer ("selected-location",
                            "selected-location",
                            "selected-location",
@@ -416,42 +416,42 @@ thunar_action_mgr_class_init (ThunarActionManagerClass *klass)
 
   /* Override ThunarNavigator's properties */
   g_iface = g_type_default_interface_peek (THUNAR_TYPE_NAVIGATOR);
-  action_mgr_props[PROP_CURRENT_DIRECTORY] =
+  action_manager_props[PROP_CURRENT_DIRECTORY] =
       g_param_spec_override ("current-directory",
                              g_object_interface_find_property (g_iface, "current-directory"));
 
   /* Override ThunarComponent's properties */
   g_iface = g_type_default_interface_peek (THUNAR_TYPE_COMPONENT);
-  action_mgr_props[PROP_SELECTED_FILES] =
+  action_manager_props[PROP_SELECTED_FILES] =
       g_param_spec_override ("selected-files",
                              g_object_interface_find_property (g_iface, "selected-files"));
 
   /* install properties */
-  g_object_class_install_properties (gobject_class, N_PROPERTIES, action_mgr_props);
+  g_object_class_install_properties (gobject_class, N_PROPERTIES, action_manager_props);
 }
 
 
 
 static void
-thunar_action_mgr_component_init (ThunarComponentIface *iface)
+thunar_action_manager_component_init (ThunarComponentIface *iface)
 {
   iface->get_selected_files = (gpointer) exo_noop_null;
-  iface->set_selected_files = thunar_action_mgr_set_selected_files;
+  iface->set_selected_files = thunar_action_manager_set_selected_files;
 }
 
 
 
 static void
-thunar_action_mgr_navigator_init (ThunarNavigatorIface *iface)
+thunar_action_manager_navigator_init (ThunarNavigatorIface *iface)
 {
-  iface->get_current_directory = thunar_action_mgr_get_current_directory;
-  iface->set_current_directory = thunar_action_mgr_set_current_directory;
+  iface->get_current_directory = thunar_action_manager_get_current_directory;
+  iface->set_current_directory = thunar_action_manager_set_current_directory;
 }
 
 
 
 static void
-thunar_action_mgr_init (ThunarActionManager *action_mgr)
+thunar_action_manager_init (ThunarActionManager *action_mgr)
 {
   action_mgr->files_to_process    = NULL;
   action_mgr->device_to_process   = NULL;
@@ -462,7 +462,7 @@ thunar_action_mgr_init (ThunarActionManager *action_mgr)
   action_mgr->preferences = thunar_preferences_get ();
 
   /* initialize the new_files_created_closure */
-  action_mgr->new_files_created_closure = g_cclosure_new_swap (G_CALLBACK (thunar_action_mgr_new_files_created), action_mgr, NULL);
+  action_mgr->new_files_created_closure = g_cclosure_new_swap (G_CALLBACK (thunar_action_manager_new_files_created), action_mgr, NULL);
   g_closure_ref (action_mgr->new_files_created_closure);
   g_closure_sink (action_mgr->new_files_created_closure);
 
@@ -472,13 +472,13 @@ thunar_action_mgr_init (ThunarActionManager *action_mgr)
 
 
 static void
-thunar_action_mgr_dispose (GObject *object)
+thunar_action_manager_dispose (GObject *object)
 {
   ThunarActionManager *action_mgr = THUNAR_ACTION_MANAGER (object);
 
   /* reset our properties */
   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (action_mgr), NULL);
-  thunar_action_mgr_set_widget (THUNAR_ACTION_MANAGER (action_mgr), NULL);
+  thunar_action_manager_set_widget (THUNAR_ACTION_MANAGER (action_mgr), NULL);
 
   /* unref all members */
   if (action_mgr->files_to_process != NULL)
@@ -497,13 +497,13 @@ thunar_action_mgr_dispose (GObject *object)
       g_object_unref (action_mgr->parent_folder);
   action_mgr->parent_folder = NULL;
 
-  (*G_OBJECT_CLASS (thunar_action_mgr_parent_class)->dispose) (object);
+  (*G_OBJECT_CLASS (thunar_action_manager_parent_class)->dispose) (object);
 }
 
 
 
 static void
-thunar_action_mgr_finalize (GObject *object)
+thunar_action_manager_finalize (GObject *object)
 {
   ThunarActionManager *action_mgr = THUNAR_ACTION_MANAGER (object);
 
@@ -513,16 +513,16 @@ thunar_action_mgr_finalize (GObject *object)
   /* release the preferences reference */
   g_object_unref (action_mgr->preferences);
 
-  (*G_OBJECT_CLASS (thunar_action_mgr_parent_class)->finalize) (object);
+  (*G_OBJECT_CLASS (thunar_action_manager_parent_class)->finalize) (object);
 }
 
 
 
 static void
-thunar_action_mgr_get_property (GObject    *object,
-                                guint       prop_id,
-                                GValue     *value,
-                                GParamSpec *pspec)
+thunar_action_manager_get_property (GObject    *object,
+                                    guint       prop_id,
+                                    GValue     *value,
+                                    GParamSpec *pspec)
 {
   switch (prop_id)
     {
@@ -543,10 +543,10 @@ thunar_action_mgr_get_property (GObject    *object,
 
 
 static void
-thunar_action_mgr_set_property (GObject      *object,
-                                guint         prop_id,
-                                const GValue *value,
-                                GParamSpec   *pspec)
+thunar_action_manager_set_property (GObject      *object,
+                                    guint         prop_id,
+                                    const GValue *value,
+                                    GParamSpec   *pspec)
 {
   ThunarActionManager *action_mgr = THUNAR_ACTION_MANAGER (object);
 
@@ -557,19 +557,19 @@ thunar_action_mgr_set_property (GObject      *object,
       break;
 
     case PROP_SELECTED_FILES:
-      thunar_action_mgr_set_selection (action_mgr, g_value_get_boxed (value), NULL, NULL);
+      thunar_action_manager_set_selection (action_mgr, g_value_get_boxed (value), NULL, NULL);
       break;
 
     case PROP_WIDGET:
-      thunar_action_mgr_set_widget (action_mgr, g_value_get_object (value));
+      thunar_action_manager_set_widget (action_mgr, g_value_get_object (value));
       break;
 
     case PROP_SELECTED_DEVICE:
-      thunar_action_mgr_set_selection (action_mgr, NULL, g_value_get_pointer (value), NULL);
+      thunar_action_manager_set_selection (action_mgr, NULL, g_value_get_pointer (value), NULL);
       break;
 
     case PROP_SELECTED_LOCATION:
-      thunar_action_mgr_set_selection (action_mgr, NULL, NULL, g_value_get_pointer (value));
+      thunar_action_manager_set_selection (action_mgr, NULL, NULL, g_value_get_pointer (value));
      break;
 
     default:
@@ -581,7 +581,7 @@ thunar_action_mgr_set_property (GObject      *object,
 
 
 static ThunarFile*
-thunar_action_mgr_get_current_directory (ThunarNavigator *navigator)
+thunar_action_manager_get_current_directory (ThunarNavigator *navigator)
 {
   return THUNAR_ACTION_MANAGER (navigator)->current_directory;
 }
@@ -589,8 +589,8 @@ thunar_action_mgr_get_current_directory (ThunarNavigator *navigator)
 
 
 static void
-thunar_action_mgr_set_current_directory (ThunarNavigator *navigator,
-                                         ThunarFile      *current_directory)
+thunar_action_manager_set_current_directory (ThunarNavigator *navigator,
+                                             ThunarFile      *current_directory)
 {
   ThunarActionManager *action_mgr = THUNAR_ACTION_MANAGER (navigator);
 
@@ -608,21 +608,21 @@ thunar_action_mgr_set_current_directory (ThunarNavigator *navigator,
 
       /* update files_to_process if not initialized yet */
       if (action_mgr->files_to_process == NULL)
-        thunar_action_mgr_set_selected_files (THUNAR_COMPONENT (navigator), NULL);
+        thunar_action_manager_set_selected_files (THUNAR_COMPONENT (navigator), NULL);
     }
 
   /* notify listeners */
-  g_object_notify_by_pspec (G_OBJECT (action_mgr), action_mgr_props[PROP_CURRENT_DIRECTORY]);
+  g_object_notify_by_pspec (G_OBJECT (action_mgr), action_manager_props[PROP_CURRENT_DIRECTORY]);
 }
 
 
 
 static void
-thunar_action_mgr_set_selected_files (ThunarComponent *component,
-                                      GList           *selected_files)
+thunar_action_manager_set_selected_files (ThunarComponent *component,
+                                          GList           *selected_files)
 {
   ThunarActionManager *action_mgr = THUNAR_ACTION_MANAGER (component);
-  GList          *lp;
+  GList               *lp;
 
   /* That happens at startup for some reason */
   if (action_mgr->current_directory == NULL)
@@ -634,7 +634,7 @@ thunar_action_mgr_set_selected_files (ThunarComponent *component,
   action_mgr->files_to_process = NULL;
 
   /* notify listeners */
-  g_object_notify_by_pspec (G_OBJECT (action_mgr), action_mgr_props[PROP_SELECTED_FILES]);
+  g_object_notify_by_pspec (G_OBJECT (action_mgr), action_manager_props[PROP_SELECTED_FILES]);
 
   /* unref previous parent, if any */
   if (action_mgr->parent_folder != NULL)
@@ -697,15 +697,15 @@ thunar_action_mgr_set_selected_files (ThunarComponent *component,
 
 
  /**
- * thunar_action_mgr_set_widget:
+ * thunar_action_manager_set_widget:
  * @action_mgr : a #ThunarActionManager.
  * @widget     : a #GtkWidget or %NULL.
  *
  * Associates @action_mgr with @widget.
  **/
 void
-thunar_action_mgr_set_widget (ThunarActionManager *action_mgr,
-                              GtkWidget           *widget)
+thunar_action_manager_set_widget (ThunarActionManager *action_mgr,
+                                  GtkWidget           *widget)
 {
   _thunar_return_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr));
   _thunar_return_if_fail (widget == NULL || GTK_IS_WIDGET (widget));
@@ -713,7 +713,7 @@ thunar_action_mgr_set_widget (ThunarActionManager *action_mgr,
   /* disconnect from the previous widget */
   if (G_UNLIKELY (action_mgr->widget != NULL))
     {
-      g_signal_handlers_disconnect_by_func (G_OBJECT (action_mgr->widget), thunar_action_mgr_widget_destroyed, action_mgr);
+      g_signal_handlers_disconnect_by_func (G_OBJECT (action_mgr->widget), thunar_action_manager_widget_destroyed, action_mgr);
       g_object_unref (G_OBJECT (action_mgr->widget));
     }
 
@@ -723,18 +723,18 @@ thunar_action_mgr_set_widget (ThunarActionManager *action_mgr,
   if (G_LIKELY (widget != NULL))
     {
       g_object_ref (G_OBJECT (widget));
-      g_signal_connect_swapped (G_OBJECT (widget), "destroy", G_CALLBACK (thunar_action_mgr_widget_destroyed), action_mgr);
+      g_signal_connect_swapped (G_OBJECT (widget), "destroy", G_CALLBACK (thunar_action_manager_widget_destroyed), action_mgr);
     }
 
   /* notify listeners */
-  g_object_notify_by_pspec (G_OBJECT (action_mgr), action_mgr_props[PROP_WIDGET]);
+  g_object_notify_by_pspec (G_OBJECT (action_mgr), action_manager_props[PROP_WIDGET]);
 }
 
 
 
 static gboolean
-thunar_action_mgr_menu_item_activated (ThunarActionManager *action_mgr,
-                                       GtkWidget      *menu_item)
+thunar_action_manager_menu_item_activated (ThunarActionManager *action_mgr,
+                                           GtkWidget           *menu_item)
 {
   GAppInfo *app_info;
 
@@ -744,8 +744,8 @@ thunar_action_mgr_menu_item_activated (ThunarActionManager *action_mgr,
     return TRUE;
 
   /* if we have a mime handler associated with the menu_item, we pass it to the action_mgr (g_object_get_qdata will return NULL otherwise)*/
-  app_info = g_object_get_qdata (G_OBJECT (menu_item), thunar_action_mgr_appinfo_quark);
-  thunar_action_mgr_activate_selected_files (action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, app_info);
+  app_info = g_object_get_qdata (G_OBJECT (menu_item), thunar_action_manager_appinfo_quark);
+  thunar_action_manager_activate_selected_files (action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, app_info);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -754,7 +754,7 @@ thunar_action_mgr_menu_item_activated (ThunarActionManager *action_mgr,
 
 
 /**
- * thunar_action_mgr_activate_selected_files:
+ * thunar_action_manager_activate_selected_files:
  * @action_mgr : a #ThunarActionManager instance
  * @action     : the #ThunarActionManagerFolderOpenAction to use, if there are folders among the selected files
  * @app_info   : a #GAppInfo instance
@@ -762,20 +762,20 @@ thunar_action_mgr_menu_item_activated (ThunarActionManager *action_mgr,
  * Will try to open all selected files with the provided #GAppInfo
  **/
 void
-thunar_action_mgr_activate_selected_files (ThunarActionManager                 *action_mgr,
-                                           ThunarActionManagerFolderOpenAction  action,
-                                           GAppInfo                            *app_info)
+thunar_action_manager_activate_selected_files (ThunarActionManager                 *action_mgr,
+                                               ThunarActionManagerFolderOpenAction  action,
+                                               GAppInfo                            *app_info)
 {
   _thunar_return_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr));
 
-  thunar_action_mgr_poke (action_mgr, app_info, action);
+  thunar_action_manager_poke (action_mgr, app_info, action);
 }
 
 
 
 static void
-thunar_action_mgr_execute_files (ThunarActionManager *action_mgr,
-                                 GList               *files)
+thunar_action_manager_execute_files (ThunarActionManager *action_mgr,
+                                     GList               *files)
 {
   GError *error = NULL;
   GFile  *working_directory;
@@ -803,7 +803,7 @@ thunar_action_mgr_execute_files (ThunarActionManager *action_mgr,
 
 
 static guint
-thunar_action_mgr_g_app_info_hash (gconstpointer app_info)
+thunar_action_manager_g_app_info_hash (gconstpointer app_info)
 {
   return 0;
 }
@@ -811,9 +811,9 @@ thunar_action_mgr_g_app_info_hash (gconstpointer app_info)
 
 
 static void
-thunar_action_mgr_open_files (ThunarActionManager *action_mgr,
-                              GList               *files,
-                              GAppInfo            *application_to_use)
+thunar_action_manager_open_files (ThunarActionManager *action_mgr,
+                                  GList               *files,
+                                  GAppInfo            *application_to_use)
 {
   GHashTable *applications;
   GAppInfo   *app_info;
@@ -824,7 +824,7 @@ thunar_action_mgr_open_files (ThunarActionManager *action_mgr,
    * new GAppInfo objects every time, g_direct_hash does not work. we therefore use
    * a fake hash function to always hit the collision list of the hash table and
    * avoid storing multiple equal GAppInfos by means of g_app_info_equal(). */
-  applications = g_hash_table_new_full (thunar_action_mgr_g_app_info_hash,
+  applications = g_hash_table_new_full (thunar_action_manager_g_app_info_hash,
                                         (GEqualFunc) g_app_info_equal,
                                         (GDestroyNotify) g_object_unref,
                                         (GDestroyNotify) thunar_g_list_free_full);
@@ -885,7 +885,7 @@ thunar_action_mgr_open_files (ThunarActionManager *action_mgr,
     }
 
   /* run all collected applications */
-  g_hash_table_foreach (applications, (GHFunc) thunar_action_mgr_open_paths, action_mgr);
+  g_hash_table_foreach (applications, (GHFunc) thunar_action_manager_open_paths, action_mgr);
 
   /* drop the applications hash table */
   g_hash_table_destroy (applications);
@@ -894,9 +894,9 @@ thunar_action_mgr_open_files (ThunarActionManager *action_mgr,
 
 
 static void
-thunar_action_mgr_open_paths (GAppInfo            *app_info,
-                              GList               *path_list,
-                              ThunarActionManager *action_mgr)
+thunar_action_manager_open_paths (GAppInfo            *app_info,
+                                  GList               *path_list,
+                                  ThunarActionManager *action_mgr)
 {
   GdkAppLaunchContext *context;
   GdkScreen           *screen;
@@ -950,8 +950,8 @@ thunar_action_mgr_open_paths (GAppInfo            *app_info,
 
 
 static void
-thunar_action_mgr_open_windows (ThunarActionManager *action_mgr,
-                                GList               *directories)
+thunar_action_manager_open_windows (ThunarActionManager *action_mgr,
+                                    GList               *directories)
 {
   ThunarApplication *application;
   GtkWidget         *dialog;
@@ -1008,9 +1008,9 @@ thunar_action_mgr_open_windows (ThunarActionManager *action_mgr,
 
 
 static void
-thunar_action_mgr_poke (ThunarActionManager                 *action_mgr,
-                        GAppInfo                            *application_to_use,
-                        ThunarActionManagerFolderOpenAction  folder_open_action)
+thunar_action_manager_poke (ThunarActionManager                 *action_mgr,
+                            GAppInfo                            *application_to_use,
+                            ThunarActionManagerFolderOpenAction  folder_open_action)
 {
   ThunarActionManagerPokeData *poke_data;
 
@@ -1018,11 +1018,11 @@ thunar_action_mgr_poke (ThunarActionManager                 *action_mgr,
 
    if (action_mgr->files_to_process == NULL)
      {
-       g_warning("No files to process. thunar_action_mgr_poke aborted.");
+       g_warning("No files to process. thunar_action_manager_poke aborted.");
        return;
      }
 
-   poke_data = thunar_action_mgr_poke_data_new (action_mgr->files_to_process,
+   poke_data = thunar_action_manager_poke_data_new (action_mgr->files_to_process,
                                                 application_to_use,
                                                 folder_open_action,
                                                 action_mgr->location_to_process,
@@ -1030,15 +1030,15 @@ thunar_action_mgr_poke (ThunarActionManager                 *action_mgr,
 
    if (action_mgr->device_to_process != NULL)
      {
-       g_signal_emit (action_mgr, action_mgr_signals[DEVICE_OPERATION_STARTED], 0, action_mgr->device_to_process);
+       g_signal_emit (action_mgr, action_manager_signals[DEVICE_OPERATION_STARTED], 0, action_mgr->device_to_process);
        thunar_browser_poke_device (THUNAR_BROWSER (action_mgr), action_mgr->device_to_process,
-                                   action_mgr->widget, thunar_action_mgr_poke_device_finish,
+                                   action_mgr->widget, thunar_action_manager_poke_device_finish,
                                    poke_data);
      }
    else if (action_mgr->location_to_process != NULL)
      {
        thunar_browser_poke_location (THUNAR_BROWSER (action_mgr), poke_data->location_to_poke,
-                                     action_mgr->widget, thunar_action_mgr_poke_location_finish,
+                                     action_mgr->widget, thunar_action_manager_poke_location_finish,
                                      poke_data);
      }
    else
@@ -1046,19 +1046,19 @@ thunar_action_mgr_poke (ThunarActionManager                 *action_mgr,
       // We will only poke one file at a time, in order to dont use all available CPU's
       // TODO: Check if that could cause slowness
       thunar_browser_poke_file (THUNAR_BROWSER (action_mgr), poke_data->files_to_poke->data,
-                                action_mgr->widget, thunar_action_mgr_poke_files_finish,
+                                action_mgr->widget, thunar_action_manager_poke_files_finish,
                                 poke_data);
      }
 }
 
 
 
-static void thunar_action_mgr_poke_device_finish (ThunarBrowser *browser,
-                                                  ThunarDevice  *volume,
-                                                  ThunarFile    *mount_point,
-                                                  GError        *error,
-                                                  gpointer       user_data,
-                                                  gboolean       cancelled)
+static void thunar_action_manager_poke_device_finish (ThunarBrowser *browser,
+                                                      ThunarDevice  *volume,
+                                                      ThunarFile    *mount_point,
+                                                      GError        *error,
+                                                      gpointer       user_data,
+                                                      gboolean       cancelled)
 {
   ThunarActionManagerPokeData *poke_data = user_data;
   gchar                       *device_name;
@@ -1072,8 +1072,8 @@ static void thunar_action_mgr_poke_device_finish (ThunarBrowser *browser,
 
   if (cancelled == TRUE || error != NULL || mount_point == NULL)
     {
-      g_signal_emit (browser, action_mgr_signals[DEVICE_OPERATION_FINISHED], 0, volume);
-      thunar_action_mgr_poke_data_free (poke_data);
+      g_signal_emit (browser, action_manager_signals[DEVICE_OPERATION_FINISHED], 0, volume);
+      thunar_action_manager_poke_data_free (poke_data);
       return;
     }
 
@@ -1085,7 +1085,7 @@ static void thunar_action_mgr_poke_device_finish (ThunarBrowser *browser,
     {
       GList *directories = NULL;
       directories = g_list_append (directories, mount_point);
-      thunar_action_mgr_open_windows (THUNAR_ACTION_MANAGER (browser), directories);
+      thunar_action_manager_open_windows (THUNAR_ACTION_MANAGER (browser), directories);
       g_list_free (directories);
     }
   else if (poke_data->folder_open_action == THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY)
@@ -1093,19 +1093,19 @@ static void thunar_action_mgr_poke_device_finish (ThunarBrowser *browser,
       thunar_navigator_change_directory (THUNAR_NAVIGATOR (browser), mount_point);
     }
 
-  g_signal_emit (browser, action_mgr_signals[DEVICE_OPERATION_FINISHED], 0, volume);
-  thunar_action_mgr_poke_data_free (poke_data);
+  g_signal_emit (browser, action_manager_signals[DEVICE_OPERATION_FINISHED], 0, volume);
+  thunar_action_manager_poke_data_free (poke_data);
 }
 
 
 
 static void
-thunar_action_mgr_poke_location_finish (ThunarBrowser *browser,
-                                        GFile         *location,
-                                        ThunarFile    *file,
-                                        ThunarFile    *target_file,
-                                        GError        *error,
-                                        gpointer       user_data)
+thunar_action_manager_poke_location_finish (ThunarBrowser *browser,
+                                            GFile         *location,
+                                            ThunarFile    *file,
+                                            ThunarFile    *target_file,
+                                            GError        *error,
+                                            gpointer       user_data)
 {
   ThunarActionManagerPokeData *poke_data = user_data;
   _thunar_return_if_fail (THUNAR_IS_BROWSER (browser));
@@ -1116,21 +1116,21 @@ thunar_action_mgr_poke_location_finish (ThunarBrowser *browser,
       thunar_dialogs_show_error (GTK_WIDGET (THUNAR_ACTION_MANAGER (browser)->widget), error,
                                  _("Failed to open \"%s\""), path);
       g_free (path);
-      thunar_action_mgr_poke_data_free (poke_data);
+      thunar_action_manager_poke_data_free (poke_data);
       return;
     }
 
-  thunar_action_mgr_poke_files_finish (browser, file, target_file, error, user_data);
+  thunar_action_manager_poke_files_finish (browser, file, target_file, error, user_data);
 }
 
 
 
 static void
-thunar_action_mgr_poke_files_finish (ThunarBrowser *browser,
-                                     ThunarFile    *file,
-                                     ThunarFile    *target_file,
-                                     GError        *error,
-                                     gpointer       user_data)
+thunar_action_manager_poke_files_finish (ThunarBrowser *browser,
+                                         ThunarFile    *file,
+                                         ThunarFile    *target_file,
+                                         GError        *error,
+                                         gpointer       user_data)
 {
   ThunarActionManagerPokeData *poke_data = user_data;
   gboolean                     executable = TRUE;
@@ -1186,7 +1186,7 @@ thunar_action_mgr_poke_files_finish (ThunarBrowser *browser,
         {
           if (poke_data->application_to_use != NULL)
             {
-              thunar_action_mgr_open_files (THUNAR_ACTION_MANAGER (browser), directories, poke_data->application_to_use);
+              thunar_action_manager_open_files (THUNAR_ACTION_MANAGER (browser), directories, poke_data->application_to_use);
             }
           else if (poke_data->folder_open_action == THUNAR_ACTION_MANAGER_OPEN_AS_NEW_TAB)
             {
@@ -1195,7 +1195,7 @@ thunar_action_mgr_poke_files_finish (ThunarBrowser *browser,
             }
           else if (poke_data->folder_open_action == THUNAR_ACTION_MANAGER_OPEN_AS_NEW_WINDOW)
             {
-              thunar_action_mgr_open_windows (THUNAR_ACTION_MANAGER (browser), directories);
+              thunar_action_manager_open_windows (THUNAR_ACTION_MANAGER (browser), directories);
             }
           else if (poke_data->folder_open_action == THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY)
             {
@@ -1211,7 +1211,7 @@ thunar_action_mgr_poke_files_finish (ThunarBrowser *browser,
                         thunar_navigator_open_new_tab (THUNAR_NAVIGATOR (browser), lp->data);
                     }
                   else
-                    thunar_action_mgr_open_windows (THUNAR_ACTION_MANAGER (browser), directories);
+                    thunar_action_manager_open_windows (THUNAR_ACTION_MANAGER (browser), directories);
                 }
             }
           else if (poke_data->folder_open_action == THUNAR_ACTION_MANAGER_NO_ACTION)
@@ -1230,12 +1230,12 @@ thunar_action_mgr_poke_files_finish (ThunarBrowser *browser,
           if (G_UNLIKELY (executable) && poke_data->application_to_use == NULL)
             {
               /* try to execute all given files */
-              thunar_action_mgr_execute_files (THUNAR_ACTION_MANAGER (browser), files);
+              thunar_action_manager_execute_files (THUNAR_ACTION_MANAGER (browser), files);
             }
           else
             {
               /* try to open all files */
-              thunar_action_mgr_open_files (THUNAR_ACTION_MANAGER (browser), files, poke_data->application_to_use);
+              thunar_action_manager_open_files (THUNAR_ACTION_MANAGER (browser), files, poke_data->application_to_use);
             }
 
           /* cleanup */
@@ -1243,7 +1243,7 @@ thunar_action_mgr_poke_files_finish (ThunarBrowser *browser,
         }
 
       /* free the poke data */
-      thunar_action_mgr_poke_data_free (poke_data);
+      thunar_action_manager_poke_data_free (poke_data);
     }
   else
     {
@@ -1251,18 +1251,18 @@ thunar_action_mgr_poke_files_finish (ThunarBrowser *browser,
       // We will only poke one file at a time, in order to dont use all available CPU's
       // TODO: Check if that could cause slowness
       thunar_browser_poke_file (browser, poke_data->files_to_poke->data,
-                                (THUNAR_ACTION_MANAGER (browser))->widget, thunar_action_mgr_poke_files_finish, poke_data);
+                                (THUNAR_ACTION_MANAGER (browser))->widget, thunar_action_manager_poke_files_finish, poke_data);
     }
 }
 
 
 
 static ThunarActionManagerPokeData *
-thunar_action_mgr_poke_data_new (GList                               *files_to_poke,
-                                 GAppInfo                            *application_to_use,
-                                 ThunarActionManagerFolderOpenAction  folder_open_action,
-                                 GFile                               *location_to_poke,
-                                 ThunarDevice                        *device_to_poke)
+thunar_action_manager_poke_data_new (GList                               *files_to_poke,
+                                     GAppInfo                            *application_to_use,
+                                     ThunarActionManagerFolderOpenAction  folder_open_action,
+                                     GFile                               *location_to_poke,
+                                     ThunarDevice                        *device_to_poke)
 {
   ThunarActionManagerPokeData *data;
 
@@ -1288,7 +1288,7 @@ thunar_action_mgr_poke_data_new (GList                               *files_to_p
 
 
 static void
-thunar_action_mgr_poke_data_free (ThunarActionManagerPokeData *data)
+thunar_action_manager_poke_data_free (ThunarActionManagerPokeData *data)
 {
   _thunar_return_if_fail (data != NULL);
 
@@ -1309,28 +1309,28 @@ thunar_action_mgr_poke_data_free (ThunarActionManagerPokeData *data)
 
 
 static void
-thunar_action_mgr_widget_destroyed (ThunarActionManager *action_mgr,
-                                    GtkWidget           *widget)
+thunar_action_manager_widget_destroyed (ThunarActionManager *action_mgr,
+                                        GtkWidget           *widget)
 {
   _thunar_return_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr));
   _thunar_return_if_fail (action_mgr->widget == widget);
   _thunar_return_if_fail (GTK_IS_WIDGET (widget));
 
   /* just reset the widget property for the action_mgr */
-  thunar_action_mgr_set_widget (action_mgr, NULL);
+  thunar_action_manager_set_widget (action_mgr, NULL);
 }
 
 
 
 /**
- * thunar_action_mgr_open_selected_folders:
+ * thunar_action_manager_open_selected_folders:
  * @action_mgr   : a #ThunarActionManager instance
  * @open_in_tabs : TRUE to open each folder in a new tab, FALSE to open each folder in a new window
  *
  * Will open each selected folder in a new tab/window
  **/
-void thunar_action_mgr_open_selected_folders (ThunarActionManager *action_mgr,
-                                              gboolean             open_in_tabs)
+void thunar_action_manager_open_selected_folders (ThunarActionManager *action_mgr,
+                                                  gboolean             open_in_tabs)
 {
   GList *lp;
 
@@ -1340,22 +1340,22 @@ void thunar_action_mgr_open_selected_folders (ThunarActionManager *action_mgr,
     _thunar_return_if_fail (thunar_file_is_directory (THUNAR_FILE (lp->data)));
 
   if (open_in_tabs)
-    thunar_action_mgr_poke (action_mgr, NULL, THUNAR_ACTION_MANAGER_OPEN_AS_NEW_TAB);
+    thunar_action_manager_poke (action_mgr, NULL, THUNAR_ACTION_MANAGER_OPEN_AS_NEW_TAB);
   else
-    thunar_action_mgr_poke (action_mgr, NULL, THUNAR_ACTION_MANAGER_OPEN_AS_NEW_WINDOW);
+    thunar_action_manager_poke (action_mgr, NULL, THUNAR_ACTION_MANAGER_OPEN_AS_NEW_WINDOW);
 }
 
 
 
 static gboolean
-thunar_action_mgr_action_open (ThunarActionManager *action_mgr)
+thunar_action_manager_action_open (ThunarActionManager *action_mgr)
 {
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
   if (G_UNLIKELY (action_mgr->files_to_process == NULL))
     return TRUE;
 
-  thunar_action_mgr_activate_selected_files (action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL);
+  thunar_action_manager_activate_selected_files (action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -1364,20 +1364,20 @@ thunar_action_mgr_action_open (ThunarActionManager *action_mgr)
 
 
 /**
- * thunar_action_mgr_action_open_in_new_tabs:
+ * thunar_action_manager_action_open_in_new_tabs:
  * @action_mgr : a #ThunarActionManager instance
  *
  * Will open each selected folder in a new tab
  **/
 static gboolean
-thunar_action_mgr_action_open_in_new_tabs (ThunarActionManager *action_mgr)
+thunar_action_manager_action_open_in_new_tabs (ThunarActionManager *action_mgr)
 {
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
   if (G_UNLIKELY (action_mgr->files_to_process == NULL))
     return TRUE;
 
-  thunar_action_mgr_open_selected_folders (action_mgr, TRUE);
+  thunar_action_manager_open_selected_folders (action_mgr, TRUE);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -1386,14 +1386,14 @@ thunar_action_mgr_action_open_in_new_tabs (ThunarActionManager *action_mgr)
 
 
 static gboolean
-thunar_action_mgr_action_open_in_new_windows (ThunarActionManager *action_mgr)
+thunar_action_manager_action_open_in_new_windows (ThunarActionManager *action_mgr)
 {
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
   if (G_UNLIKELY (action_mgr->files_to_process == NULL))
     return TRUE;
 
-  thunar_action_mgr_open_selected_folders (action_mgr, FALSE);
+  thunar_action_manager_open_selected_folders (action_mgr, FALSE);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -1402,8 +1402,8 @@ thunar_action_mgr_action_open_in_new_windows (ThunarActionManager *action_mgr)
 
 
 void
-thunar_action_mgr_set_searching (ThunarActionManager *action_mgr,
-                                 gboolean        b)
+thunar_action_manager_set_searching (ThunarActionManager *action_mgr,
+                                     gboolean        b)
 {
   action_mgr->is_searching = b;
 }
@@ -1411,7 +1411,7 @@ thunar_action_mgr_set_searching (ThunarActionManager *action_mgr,
 
 
 static gboolean
-thunar_action_mgr_action_open_location (ThunarActionManager *action_mgr)
+thunar_action_manager_action_open_location (ThunarActionManager *action_mgr)
 {
   GList *lp;
   GList *gfiles = NULL;
@@ -1435,7 +1435,7 @@ thunar_action_mgr_action_open_location (ThunarActionManager *action_mgr)
 
 
 static gboolean
-thunar_action_mgr_action_open_with_other (ThunarActionManager *action_mgr)
+thunar_action_manager_action_open_with_other (ThunarActionManager *action_mgr)
 {
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
@@ -1449,13 +1449,13 @@ thunar_action_mgr_action_open_with_other (ThunarActionManager *action_mgr)
 
 
 /**
- * thunar_action_mgr_action_set_default_app:
+ * thunar_action_manager_action_set_default_app:
  * @action_mgr : a #ThunarActionManager instance
  *
  * Choose an application which should be used by default to open the selected file
  **/
 static gboolean
-thunar_action_mgr_action_set_default_app (ThunarActionManager *action_mgr)
+thunar_action_manager_action_set_default_app (ThunarActionManager *action_mgr)
 {
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
@@ -1469,28 +1469,28 @@ thunar_action_mgr_action_set_default_app (ThunarActionManager *action_mgr)
 
 
 /**
- * thunar_action_mgr_append_accelerators:
+ * thunar_action_manager_append_accelerators:
  * @action_mgr : a #ThunarActionManager.
  * @accel_group: a #GtkAccelGroup to be used used for new menu items
  *
  * Connects all accelerators and corresponding default keys of this widget to the global accelerator list
  **/
-void thunar_action_mgr_append_accelerators (ThunarActionManager *action_mgr,
-                                            GtkAccelGroup       *accel_group)
+void thunar_action_manager_append_accelerators (ThunarActionManager *action_mgr,
+                                                GtkAccelGroup       *accel_group)
 {
   _thunar_return_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr));
 
-  xfce_gtk_accel_map_add_entries (thunar_action_mgr_action_entries, G_N_ELEMENTS (thunar_action_mgr_action_entries));
+  xfce_gtk_accel_map_add_entries (thunar_action_manager_action_entries, G_N_ELEMENTS (thunar_action_manager_action_entries));
   xfce_gtk_accel_group_connect_action_entries (accel_group,
-                                               thunar_action_mgr_action_entries,
-                                               G_N_ELEMENTS (thunar_action_mgr_action_entries),
+                                               thunar_action_manager_action_entries,
+                                               G_N_ELEMENTS (thunar_action_manager_action_entries),
                                                action_mgr);
 }
 
 
 
 static gboolean
-thunar_action_mgr_show_trash (ThunarActionManager *action_mgr)
+thunar_action_manager_show_trash (ThunarActionManager *action_mgr)
 {
   if (action_mgr->parent_folder == NULL)
     return FALSE;
@@ -1503,7 +1503,7 @@ thunar_action_mgr_show_trash (ThunarActionManager *action_mgr)
 
 
 /**
- * thunar_action_mgr_append_menu_item:
+ * thunar_action_manager_append_menu_item:
  * @action_mgr: Instance of a  #ThunarActionManager
  * @menu      : #GtkMenuShell to which the item should be added
  * @action    : #ThunarActionManagerAction to select which item should be added
@@ -1514,10 +1514,10 @@ thunar_action_mgr_show_trash (ThunarActionManager *action_mgr)
  * Return value: (transfer none): The added #GtkMenuItem
  **/
 GtkWidget*
-thunar_action_mgr_append_menu_item (ThunarActionManager       *action_mgr,
-                                    GtkMenuShell              *menu,
-                                    ThunarActionManagerAction  action,
-                                    gboolean                   force)
+thunar_action_manager_append_menu_item (ThunarActionManager       *action_mgr,
+                                        GtkMenuShell              *menu,
+                                        ThunarActionManagerAction  action,
+                                        gboolean                   force)
 {
   GtkWidget                *item = NULL;
   GtkWidget                *submenu;
@@ -1588,7 +1588,7 @@ thunar_action_mgr_append_menu_item (ThunarActionManager       *action_mgr,
         if (action_mgr->files_are_selected == FALSE)
           return NULL;
         item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
-        submenu = thunar_action_mgr_build_sendto_submenu (action_mgr);
+        submenu = thunar_action_manager_build_sendto_submenu (action_mgr);
         gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
         return item;
 
@@ -1663,7 +1663,7 @@ thunar_action_mgr_append_menu_item (ThunarActionManager       *action_mgr,
       return NULL;
 
       case THUNAR_ACTION_MANAGER_ACTION_MOVE_TO_TRASH:
-        if (!thunar_action_mgr_show_trash (action_mgr))
+        if (!thunar_action_manager_show_trash (action_mgr))
           return NULL;
 
         show_item = action_mgr->files_are_selected;
@@ -1680,7 +1680,7 @@ thunar_action_mgr_append_menu_item (ThunarActionManager       *action_mgr,
 
       case THUNAR_ACTION_MANAGER_ACTION_DELETE:
         g_object_get (G_OBJECT (action_mgr->preferences), "misc-show-delete-action", &show_delete_item, NULL);
-        if (thunar_action_mgr_show_trash (action_mgr) && !show_delete_item)
+        if (thunar_action_manager_show_trash (action_mgr) && !show_delete_item)
           return NULL;
 
         show_item = action_mgr->files_are_selected;
@@ -1735,7 +1735,7 @@ thunar_action_mgr_append_menu_item (ThunarActionManager       *action_mgr,
         if (thunar_file_is_trash (parent))
           return NULL;
         item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
-        submenu = thunar_action_mgr_create_document_submenu_new (action_mgr);
+        submenu = thunar_action_manager_create_document_submenu_new (action_mgr);
         gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
         gtk_widget_set_sensitive (item, thunar_file_is_writable (parent));
         return item;
@@ -1811,7 +1811,7 @@ thunar_action_mgr_append_menu_item (ThunarActionManager       *action_mgr,
         else
           {
             if (action_mgr->single_directory_to_process && action_mgr->files_are_selected)
-                return thunar_action_mgr_append_menu_item (action_mgr, menu, THUNAR_ACTION_MANAGER_ACTION_PASTE_INTO_FOLDER, force);
+                return thunar_action_manager_append_menu_item (action_mgr, menu, THUNAR_ACTION_MANAGER_ACTION_PASTE_INTO_FOLDER, force);
             clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (action_mgr->widget));
             item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
             gtk_widget_set_sensitive (item, thunar_clipboard_manager_get_can_paste (clipboard) && thunar_file_is_writable (action_mgr->current_directory));
@@ -1848,7 +1848,7 @@ thunar_action_mgr_append_menu_item (ThunarActionManager       *action_mgr,
 
 
 static gboolean
-thunar_action_mgr_action_sendto_desktop (ThunarActionManager *action_mgr)
+thunar_action_manager_action_sendto_desktop (ThunarActionManager *action_mgr)
 {
   ThunarApplication *application;
   GFile             *desktop_file;
@@ -1880,8 +1880,8 @@ thunar_action_mgr_action_sendto_desktop (ThunarActionManager *action_mgr)
 
 
 static void
-thunar_action_mgr_sendto_device (ThunarActionManager *action_mgr,
-                                 ThunarDevice        *device)
+thunar_action_manager_sendto_device (ThunarActionManager *action_mgr,
+                                     ThunarDevice        *device)
 {
   ThunarApplication *application;
   GFile             *mount_point;
@@ -1915,9 +1915,9 @@ thunar_action_mgr_sendto_device (ThunarActionManager *action_mgr,
 
 
 static void
-thunar_action_mgr_sendto_mount_finish (ThunarDevice *device,
-                                       const GError *error,
-                                       gpointer      user_data)
+thunar_action_manager_sendto_mount_finish (ThunarDevice *device,
+                                           const GError *error,
+                                           gpointer      user_data)
 {
   ThunarActionManager *action_mgr = user_data;
   gchar               *device_name;
@@ -1936,15 +1936,15 @@ thunar_action_mgr_sendto_mount_finish (ThunarDevice *device,
     }
   else
     {
-      thunar_action_mgr_sendto_device (action_mgr, device);
+      thunar_action_manager_sendto_device (action_mgr, device);
     }
 }
 
 
 
 static gboolean
-thunar_action_mgr_action_sendto_device (ThunarActionManager *action_mgr,
-                                        GObject             *object)
+thunar_action_manager_action_sendto_device (ThunarActionManager *action_mgr,
+                                            GObject             *object)
 {
   GMountOperation *mount_operation;
   ThunarDevice    *device;
@@ -1952,7 +1952,7 @@ thunar_action_mgr_action_sendto_device (ThunarActionManager *action_mgr,
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
   /* determine the device to which to send */
-  device = g_object_get_qdata (G_OBJECT (object), thunar_action_mgr_device_quark);
+  device = g_object_get_qdata (G_OBJECT (object), thunar_action_manager_device_quark);
   if (G_UNLIKELY (device == NULL))
     return TRUE;
 
@@ -1966,14 +1966,14 @@ thunar_action_mgr_action_sendto_device (ThunarActionManager *action_mgr,
       thunar_device_mount (device,
                            mount_operation,
                            NULL,
-                           thunar_action_mgr_sendto_mount_finish,
+                           thunar_action_manager_sendto_mount_finish,
                            action_mgr);
 
       g_object_unref (mount_operation);
     }
   else
     {
-      thunar_action_mgr_sendto_device (action_mgr, device);
+      thunar_action_manager_sendto_device (action_mgr, device);
     }
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
@@ -1982,7 +1982,7 @@ thunar_action_mgr_action_sendto_device (ThunarActionManager *action_mgr,
 
 
 static gboolean
-thunar_action_mgr_action_add_shortcuts (ThunarActionManager *action_mgr)
+thunar_action_manager_action_add_shortcuts (ThunarActionManager *action_mgr)
 {
   GList           *lp;
   GtkWidget       *window;
@@ -2011,7 +2011,7 @@ thunar_action_mgr_action_add_shortcuts (ThunarActionManager *action_mgr)
 
 
 static GtkWidget*
-thunar_action_mgr_build_sendto_submenu (ThunarActionManager *action_mgr)
+thunar_action_manager_build_sendto_submenu (ThunarActionManager *action_mgr)
 {
   GList                    *lp;
   gboolean                  linkable = TRUE;
@@ -2093,9 +2093,9 @@ thunar_action_mgr_build_sendto_submenu (ThunarActionManager *action_mgr)
           image = gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_MENU);
           g_object_unref (icon);
         }
-      item = xfce_gtk_image_menu_item_new (label_text, tooltip_text, NULL, G_CALLBACK (thunar_action_mgr_action_sendto_device),
+      item = xfce_gtk_image_menu_item_new (label_text, tooltip_text, NULL, G_CALLBACK (thunar_action_manager_action_sendto_device),
                                            G_OBJECT (action_mgr), image, GTK_MENU_SHELL (submenu));
-      g_object_set_qdata_full (G_OBJECT (item), thunar_action_mgr_device_quark, lp->data, g_object_unref);
+      g_object_set_qdata_full (G_OBJECT (item), thunar_action_manager_device_quark, lp->data, g_object_unref);
       g_object_set_data (G_OBJECT (lp->data), "skip-app-info-update", GUINT_TO_POINTER (1));
 
       /* cleanup */
@@ -2130,9 +2130,9 @@ thunar_action_mgr_build_sendto_submenu (ThunarActionManager *action_mgr)
           if (G_LIKELY (icon != NULL))
               image = gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_MENU);
 
-          item = xfce_gtk_image_menu_item_new (label_text, tooltip_text, NULL, G_CALLBACK (thunar_action_mgr_menu_item_activated),
+          item = xfce_gtk_image_menu_item_new (label_text, tooltip_text, NULL, G_CALLBACK (thunar_action_manager_menu_item_activated),
                                                G_OBJECT (action_mgr), image, GTK_MENU_SHELL (submenu));
-          g_object_set_qdata_full (G_OBJECT (item), thunar_action_mgr_appinfo_quark, g_object_ref (lp->data), g_object_unref);
+          g_object_set_qdata_full (G_OBJECT (item), thunar_action_manager_appinfo_quark, g_object_ref (lp->data), g_object_unref);
           g_object_set_data (G_OBJECT (lp->data), "skip-app-info-update", GUINT_TO_POINTER (1));
 
           /* cleanup */
@@ -2150,7 +2150,7 @@ thunar_action_mgr_build_sendto_submenu (ThunarActionManager *action_mgr)
 
 
 static gboolean
-thunar_action_mgr_action_properties (ThunarActionManager *action_mgr)
+thunar_action_manager_action_properties (ThunarActionManager *action_mgr)
 {
   GtkWidget *toplevel;
   GtkWidget *dialog;
@@ -2184,7 +2184,7 @@ thunar_action_mgr_action_properties (ThunarActionManager *action_mgr)
 
 
 static gboolean
-thunar_action_mgr_action_make_link (ThunarActionManager *action_mgr)
+thunar_action_manager_action_make_link (ThunarActionManager *action_mgr)
 {
   ThunarApplication *application;
   GList             *g_files = NULL;
@@ -2217,7 +2217,7 @@ thunar_action_mgr_action_make_link (ThunarActionManager *action_mgr)
 
 
 static gboolean
-thunar_action_mgr_action_duplicate (ThunarActionManager *action_mgr)
+thunar_action_manager_action_duplicate (ThunarActionManager *action_mgr)
 {
   ThunarApplication *application;
   GList             *files_to_process;
@@ -2252,7 +2252,7 @@ thunar_action_mgr_action_duplicate (ThunarActionManager *action_mgr)
 
 
 /**
- * thunar_action_mgr_append_custom_actions:
+ * thunar_action_manager_append_custom_actions:
  * @action_mgr: a #ThunarActionManager instance
  * @menu      : #GtkMenuShell on which the custom actions should be appended
  *
@@ -2261,8 +2261,8 @@ thunar_action_mgr_action_duplicate (ThunarActionManager *action_mgr)
  * Return value: TRUE if any custom action was added
  **/
 gboolean
-thunar_action_mgr_append_custom_actions (ThunarActionManager *action_mgr,
-                                         GtkMenuShell        *menu)
+thunar_action_manager_append_custom_actions (ThunarActionManager *action_mgr,
+                                             GtkMenuShell        *menu)
 {
   gboolean                uca_added = FALSE;
   GtkWidget              *window;
@@ -2316,8 +2316,8 @@ thunar_action_mgr_append_custom_actions (ThunarActionManager *action_mgr,
 
 
 gboolean
-thunar_action_mgr_check_uca_key_activation (ThunarActionManager *action_mgr,
-                                            GdkEventKey         *key_event)
+thunar_action_manager_check_uca_key_activation (ThunarActionManager *action_mgr,
+                                                GdkEventKey         *key_event)
 {
   GtkWidget              *window;
   ThunarxProviderFactory *provider_factory;
@@ -2375,9 +2375,9 @@ thunar_action_mgr_check_uca_key_activation (ThunarActionManager *action_mgr,
 
 
 static void
-thunar_action_mgr_rename_error (ExoJob    *job,
-                                GError    *error,
-                                GtkWidget *widget)
+thunar_action_manager_rename_error (ExoJob    *job,
+                                    GError    *error,
+                                    GtkWidget *widget)
 {
   GArray     *param_values;
   ThunarFile *file;
@@ -2397,8 +2397,8 @@ thunar_action_mgr_rename_error (ExoJob    *job,
 
 
 static void
-thunar_action_mgr_rename_finished (ExoJob    *job,
-                                   GtkWidget *widget)
+thunar_action_manager_rename_finished (ExoJob    *job,
+                                       GtkWidget *widget)
 {
   _thunar_return_if_fail (EXO_IS_JOB (job));
 
@@ -2410,7 +2410,7 @@ thunar_action_mgr_rename_finished (ExoJob    *job,
 
 
 static gboolean
-thunar_action_mgr_action_rename (ThunarActionManager *action_mgr)
+thunar_action_manager_action_rename (ThunarActionManager *action_mgr)
 {
   ThunarJob *job;
   GtkWidget *window;
@@ -2432,8 +2432,8 @@ thunar_action_mgr_action_rename (ThunarActionManager *action_mgr)
       job = thunar_dialogs_show_rename_file (GTK_WINDOW (window), THUNAR_FILE (action_mgr->files_to_process->data));
       if (G_LIKELY (job != NULL))
         {
-          g_signal_connect (job, "error", G_CALLBACK (thunar_action_mgr_rename_error), action_mgr->widget);
-          g_signal_connect (job, "finished", G_CALLBACK (thunar_action_mgr_rename_finished), action_mgr->widget);
+          g_signal_connect (job, "error", G_CALLBACK (thunar_action_manager_rename_error), action_mgr->widget);
+          g_signal_connect (job, "finished", G_CALLBACK (thunar_action_manager_rename_finished), action_mgr->widget);
         }
     }
   else
@@ -2449,7 +2449,7 @@ thunar_action_mgr_action_rename (ThunarActionManager *action_mgr)
 
 
 gboolean
-thunar_action_mgr_action_restore (ThunarActionManager *action_mgr)
+thunar_action_manager_action_restore (ThunarActionManager *action_mgr)
 {
   ThunarApplication *application;
 
@@ -2470,7 +2470,7 @@ thunar_action_mgr_action_restore (ThunarActionManager *action_mgr)
 
 
 gboolean
-thunar_action_mgr_action_restore_and_show (ThunarActionManager *action_mgr)
+thunar_action_manager_action_restore_and_show (ThunarActionManager *action_mgr)
 {
   ThunarApplication *application;
 
@@ -2491,7 +2491,7 @@ thunar_action_mgr_action_restore_and_show (ThunarActionManager *action_mgr)
 
 
 static void
-thunar_action_mgr_action_move_to_trash (ThunarActionManager *action_mgr)
+thunar_action_manager_action_move_to_trash (ThunarActionManager *action_mgr)
 {
   ThunarApplication *application;
 
@@ -2508,7 +2508,7 @@ thunar_action_mgr_action_move_to_trash (ThunarActionManager *action_mgr)
 
 
 static gboolean
-thunar_action_mgr_action_delete (ThunarActionManager *action_mgr)
+thunar_action_manager_action_delete (ThunarActionManager *action_mgr)
 {
   ThunarApplication *application;
 
@@ -2528,7 +2528,7 @@ thunar_action_mgr_action_delete (ThunarActionManager *action_mgr)
 
 
 static gboolean
-thunar_action_mgr_action_trash_delete (ThunarActionManager *action_mgr)
+thunar_action_manager_action_trash_delete (ThunarActionManager *action_mgr)
 {
   GdkModifierType event_state;
 
@@ -2536,11 +2536,11 @@ thunar_action_mgr_action_trash_delete (ThunarActionManager *action_mgr)
 
   /* when shift modifier is pressed, we delete (as well via context menu) */
   if (gtk_get_current_event_state (&event_state) && (event_state & GDK_SHIFT_MASK) != 0)
-    thunar_action_mgr_action_delete (action_mgr);
+    thunar_action_manager_action_delete (action_mgr);
   else if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
-    thunar_action_mgr_action_move_to_trash (action_mgr);
+    thunar_action_manager_action_move_to_trash (action_mgr);
   else
-    thunar_action_mgr_action_delete (action_mgr);
+    thunar_action_manager_action_delete (action_mgr);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -2549,7 +2549,7 @@ thunar_action_mgr_action_trash_delete (ThunarActionManager *action_mgr)
 
 
 static gboolean
-thunar_action_mgr_action_remove_from_recent (ThunarActionManager *action_mgr)
+thunar_action_manager_action_remove_from_recent (ThunarActionManager *action_mgr)
 {
   GtkRecentManager  *recent_manager = gtk_recent_manager_get_default();
   GList             *lp;
@@ -2575,7 +2575,7 @@ thunar_action_mgr_action_remove_from_recent (ThunarActionManager *action_mgr)
 
 
 gboolean
-thunar_action_mgr_action_empty_trash (ThunarActionManager *action_mgr)
+thunar_action_manager_action_empty_trash (ThunarActionManager *action_mgr)
 {
   ThunarApplication *application;
 
@@ -2592,7 +2592,7 @@ thunar_action_mgr_action_empty_trash (ThunarActionManager *action_mgr)
 
 
 static gboolean
-thunar_action_mgr_action_create_folder (ThunarActionManager *action_mgr)
+thunar_action_manager_action_create_folder (ThunarActionManager *action_mgr)
 {
   ThunarApplication *application;
   GList              path_list;
@@ -2640,8 +2640,8 @@ thunar_action_mgr_action_create_folder (ThunarActionManager *action_mgr)
 
 
 static gboolean
-thunar_action_mgr_action_create_document (ThunarActionManager *action_mgr,
-                                          GtkWidget           *menu_item)
+thunar_action_manager_action_create_document (ThunarActionManager *action_mgr,
+                                              GtkWidget           *menu_item)
 {
   ThunarApplication *application;
   GList              target_path_list;
@@ -2655,7 +2655,7 @@ thunar_action_mgr_action_create_document (ThunarActionManager *action_mgr,
   if (thunar_file_is_trash (action_mgr->current_directory))
     return TRUE;
 
-  template_file = g_object_get_qdata (G_OBJECT (menu_item), thunar_action_mgr_file_quark);
+  template_file = g_object_get_qdata (G_OBJECT (menu_item), thunar_action_manager_file_quark);
 
   if (template_file != NULL)
     {
@@ -2720,9 +2720,9 @@ thunar_action_mgr_action_create_document (ThunarActionManager *action_mgr,
 
 /* helper method in order to find the parent menu for a menu item */
 static GtkWidget *
-thunar_action_mgr_create_document_submenu_templates_find_parent_menu (ThunarFile *file,
-                                                                      GList      *dirs,
-                                                                      GList      *items)
+thunar_action_manager_create_document_submenu_templates_find_parent_menu (ThunarFile *file,
+                                                                          GList      *dirs,
+                                                                          GList      *items)
 {
   GtkWidget *parent_menu = NULL;
   GFile     *parent;
@@ -2759,9 +2759,9 @@ thunar_action_mgr_create_document_submenu_templates_find_parent_menu (ThunarFile
 
 /* recursive helper method in order to create menu items for all available templates */
 static gboolean
-thunar_action_mgr_create_document_submenu_templates (ThunarActionManager *action_mgr,
-                                                     GtkWidget           *create_file_submenu,
-                                                     GList               *files)
+thunar_action_manager_create_document_submenu_templates (ThunarActionManager *action_mgr,
+                                                         GtkWidget           *create_file_submenu,
+                                                         GList               *files)
 {
   ThunarIconFactory *icon_factory;
   ThunarFile        *file;
@@ -2792,7 +2792,7 @@ thunar_action_mgr_create_document_submenu_templates (ThunarActionManager *action
       file = lp->data;
 
       /* determine the parent menu for this file/directory */
-      parent_menu = thunar_action_mgr_create_document_submenu_templates_find_parent_menu (file, dirs, items);
+      parent_menu = thunar_action_manager_create_document_submenu_templates_find_parent_menu (file, dirs, items);
       if (parent_menu == NULL)
         parent_menu = create_file_submenu;
 
@@ -2818,8 +2818,8 @@ thunar_action_mgr_create_document_submenu_templates (ThunarActionManager *action
         }
       else
         {
-          g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_action_mgr_action_create_document), action_mgr);
-          g_object_set_qdata_full (G_OBJECT (item), thunar_action_mgr_file_quark, g_object_ref (file), g_object_unref);
+          g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_action_manager_action_create_document), action_mgr);
+          g_object_set_qdata_full (G_OBJECT (item), thunar_action_manager_file_quark, g_object_ref (file), g_object_unref);
         }
       /* release the icon reference */
       g_object_unref (icon);
@@ -2839,7 +2839,7 @@ thunar_action_mgr_create_document_submenu_templates (ThunarActionManager *action
 
 
 /**
- * thunar_action_mgr_create_document_submenu_new:
+ * thunar_action_manager_create_document_submenu_new:
  * @action_mgr : a #ThunarActionManager instance
  *
  * Will create a complete 'create_document* #GtkMenu and return it
@@ -2847,7 +2847,7 @@ thunar_action_mgr_create_document_submenu_templates (ThunarActionManager *action
  * Return value: (transfer full): the created #GtkMenu
  **/
 static GtkWidget*
-thunar_action_mgr_create_document_submenu_new (ThunarActionManager *action_mgr)
+thunar_action_manager_create_document_submenu_new (ThunarActionManager *action_mgr)
 {
   GList           *files = NULL;
   GFile           *home_dir;
@@ -2892,12 +2892,12 @@ thunar_action_mgr_create_document_submenu_new (ThunarActionManager *action_mgr)
     }
   else
     {
-      thunar_action_mgr_create_document_submenu_templates (action_mgr, submenu, files);
+      thunar_action_manager_create_document_submenu_templates (action_mgr, submenu, files);
       thunar_g_list_free_full (files);
     }
 
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (submenu));
-  xfce_gtk_image_menu_item_new_from_icon_name (_("_Empty File"), NULL, NULL, G_CALLBACK (thunar_action_mgr_action_create_document),
+  xfce_gtk_image_menu_item_new_from_icon_name (_("_Empty File"), NULL, NULL, G_CALLBACK (thunar_action_manager_action_create_document),
                                                G_OBJECT (action_mgr), "text-x-generic", GTK_MENU_SHELL (submenu));
 
 
@@ -2910,7 +2910,7 @@ thunar_action_mgr_create_document_submenu_new (ThunarActionManager *action_mgr)
 
 
 static gboolean
-thunar_action_mgr_action_cut (ThunarActionManager *action_mgr)
+thunar_action_manager_action_cut (ThunarActionManager *action_mgr)
 {
   ThunarClipboardManager *clipboard;
 
@@ -2930,7 +2930,7 @@ thunar_action_mgr_action_cut (ThunarActionManager *action_mgr)
 
 
 static gboolean
-thunar_action_mgr_action_copy (ThunarActionManager *action_mgr)
+thunar_action_manager_action_copy (ThunarActionManager *action_mgr)
 {
   ThunarClipboardManager *clipboard;
 
@@ -2950,7 +2950,7 @@ thunar_action_mgr_action_copy (ThunarActionManager *action_mgr)
 
 
 static gboolean
-thunar_action_mgr_action_paste (ThunarActionManager *action_mgr)
+thunar_action_manager_action_paste (ThunarActionManager *action_mgr)
 {
   ThunarClipboardManager *clipboard;
 
@@ -2967,7 +2967,7 @@ thunar_action_mgr_action_paste (ThunarActionManager *action_mgr)
 
 
 static gboolean
-thunar_action_mgr_action_paste_into_folder (ThunarActionManager *action_mgr)
+thunar_action_manager_action_paste_into_folder (ThunarActionManager *action_mgr)
 {
   ThunarClipboardManager *clipboard;
 
@@ -2987,7 +2987,7 @@ thunar_action_mgr_action_paste_into_folder (ThunarActionManager *action_mgr)
 
 
 static void
-thunar_action_mgr_action_edit_action_mgr (ThunarActionManager *action_mgr)
+thunar_action_manager_action_edit_launcher (ThunarActionManager *action_mgr)
 {
   const gchar *display_name;
   gchar       *cmd   = NULL,
@@ -2999,7 +2999,7 @@ thunar_action_mgr_action_edit_action_mgr (ThunarActionManager *action_mgr)
   cmd = g_strdup_printf ("exo-desktop-item-edit \"--display=%s\" \"%s\"", display_name, uri);
   
   if (xfce_spawn_command_line (NULL, cmd, FALSE, FALSE, FALSE, &error) == FALSE)
-    thunar_dialogs_show_error (action_mgr->widget, error, _("Failed to edit action_mgr via command \"%s\""), cmd);
+    thunar_dialogs_show_error (action_mgr->widget, error, _("Failed to edit launcher via command \"%s\""), cmd);
 
   g_free (cmd);
   g_free (uri);
@@ -3009,23 +3009,23 @@ thunar_action_mgr_action_edit_action_mgr (ThunarActionManager *action_mgr)
 
 
 /**
- * thunar_action_mgr_action_mount:
+ * thunar_action_manager_action_mount:
  * @action_mgr : a #ThunarActionManager instance
 *
  * Will mount the selected device, if any. The related folder will not be opened.
  **/
 void
-thunar_action_mgr_action_mount (ThunarActionManager *action_mgr)
+thunar_action_manager_action_mount (ThunarActionManager *action_mgr)
 {
-  thunar_action_mgr_poke (action_mgr, NULL,THUNAR_ACTION_MANAGER_NO_ACTION);
+  thunar_action_manager_poke (action_mgr, NULL,THUNAR_ACTION_MANAGER_NO_ACTION);
 }
 
 
 
 static void
-thunar_action_mgr_action_eject_finish (ThunarDevice *device,
-                                       const GError *error,
-                                       gpointer      user_data)
+thunar_action_manager_action_eject_finish (ThunarDevice *device,
+                                           const GError *error,
+                                           gpointer      user_data)
 {
   ThunarActionManager *action_mgr = THUNAR_ACTION_MANAGER (user_data);
   gchar               *device_name;
@@ -3043,19 +3043,19 @@ thunar_action_mgr_action_eject_finish (ThunarDevice *device,
     }
 
   g_object_unref (action_mgr);
-  g_signal_emit (action_mgr, action_mgr_signals[DEVICE_OPERATION_FINISHED], 0, device);
+  g_signal_emit (action_mgr, action_manager_signals[DEVICE_OPERATION_FINISHED], 0, device);
 }
 
 
 
 /**
- * thunar_action_mgr_action_eject:
+ * thunar_action_manager_action_eject:
  * @action_mgr : a #ThunarActionManager instance
 *
  * Will eject the selected device, if any
  **/
 gboolean
-thunar_action_mgr_action_eject (ThunarActionManager *action_mgr)
+thunar_action_manager_action_eject (ThunarActionManager *action_mgr)
 {
   GMountOperation *mount_operation;
 
@@ -3066,13 +3066,13 @@ thunar_action_mgr_action_eject (ThunarActionManager *action_mgr)
       /* prepare a mount operation */
       mount_operation = thunar_gtk_mount_operation_new (GTK_WIDGET (action_mgr->widget));
 
-      g_signal_emit (action_mgr, action_mgr_signals[DEVICE_OPERATION_STARTED], 0, action_mgr->device_to_process);
+      g_signal_emit (action_mgr, action_manager_signals[DEVICE_OPERATION_STARTED], 0, action_mgr->device_to_process);
 
       /* eject */
       thunar_device_eject (action_mgr->device_to_process,
                            mount_operation,
                            NULL,
-                           thunar_action_mgr_action_eject_finish,
+                           thunar_action_manager_action_eject_finish,
                            g_object_ref (action_mgr));
 
       g_object_unref (mount_operation);
@@ -3085,9 +3085,9 @@ thunar_action_mgr_action_eject (ThunarActionManager *action_mgr)
 
 
 static void
-thunar_action_mgr_action_unmount_finish (ThunarDevice *device,
-                                         const GError *error,
-                                         gpointer      user_data)
+thunar_action_manager_action_unmount_finish (ThunarDevice *device,
+                                             const GError *error,
+                                             gpointer      user_data)
 {
   ThunarActionManager *action_mgr = THUNAR_ACTION_MANAGER (user_data);
   gchar               *device_name;
@@ -3105,19 +3105,19 @@ thunar_action_mgr_action_unmount_finish (ThunarDevice *device,
     }
 
   g_object_unref (action_mgr);
-  g_signal_emit (action_mgr, action_mgr_signals[DEVICE_OPERATION_FINISHED], 0, device);
+  g_signal_emit (action_mgr, action_manager_signals[DEVICE_OPERATION_FINISHED], 0, device);
 }
 
 
 
 /**
- * thunar_action_mgr_action_eject:
+ * thunar_action_manager_action_eject:
  * @action_mgr : a #ThunarActionManager instance
 *
  * Will unmount the selected device, if any
  **/
 gboolean
-thunar_action_mgr_action_unmount (ThunarActionManager *action_mgr)
+thunar_action_manager_action_unmount (ThunarActionManager *action_mgr)
 {
   GMountOperation *mount_operation;
 
@@ -3128,13 +3128,13 @@ thunar_action_mgr_action_unmount (ThunarActionManager *action_mgr)
       /* prepare a mount operation */
       mount_operation = thunar_gtk_mount_operation_new (GTK_WIDGET (action_mgr->widget));
 
-      g_signal_emit (action_mgr, action_mgr_signals[DEVICE_OPERATION_STARTED], 0, action_mgr->device_to_process);
+      g_signal_emit (action_mgr, action_manager_signals[DEVICE_OPERATION_STARTED], 0, action_mgr->device_to_process);
 
       /* eject */
       thunar_device_unmount (action_mgr->device_to_process,
                              mount_operation,
                              NULL,
-                             thunar_action_mgr_action_unmount_finish,
+                             thunar_action_manager_action_unmount_finish,
                              g_object_ref (action_mgr));
 
       /* release the device */
@@ -3148,8 +3148,8 @@ thunar_action_mgr_action_unmount (ThunarActionManager *action_mgr)
 
 
 static GtkWidget*
-thunar_action_mgr_build_application_submenu (ThunarActionManager *action_mgr,
-                                             GList               *applications)
+thunar_action_manager_build_application_submenu (ThunarActionManager *action_mgr,
+                                                 GList               *applications)
 {
   GList     *lp;
   GtkWidget *submenu;
@@ -3169,8 +3169,8 @@ thunar_action_mgr_build_application_submenu (ThunarActionManager *action_mgr,
                                                 "Use \"%s\" to open the selected files",
                                                 action_mgr->n_files_to_process), g_app_info_get_name (lp->data));
       image = gtk_image_new_from_gicon (g_app_info_get_icon (lp->data), GTK_ICON_SIZE_MENU);
-      item  = xfce_gtk_image_menu_item_new (label_text, tooltip_text, NULL, G_CALLBACK (thunar_action_mgr_menu_item_activated), G_OBJECT (action_mgr), image, GTK_MENU_SHELL (submenu));
-      g_object_set_qdata_full (G_OBJECT (item), thunar_action_mgr_appinfo_quark, g_object_ref (lp->data), g_object_unref);
+      item  = xfce_gtk_image_menu_item_new (label_text, tooltip_text, NULL, G_CALLBACK (thunar_action_manager_menu_item_activated), G_OBJECT (action_mgr), image, GTK_MENU_SHELL (submenu));
+      g_object_set_qdata_full (G_OBJECT (item), thunar_action_manager_appinfo_quark, g_object_ref (lp->data), g_object_unref);
       g_free (tooltip_text);
       g_free (label_text);
     }
@@ -3178,9 +3178,9 @@ thunar_action_mgr_build_application_submenu (ThunarActionManager *action_mgr,
   if (action_mgr->n_files_to_process == 1)
     {
       xfce_gtk_menu_append_separator (GTK_MENU_SHELL (submenu));
-      thunar_action_mgr_append_menu_item (action_mgr, GTK_MENU_SHELL (submenu), THUNAR_ACTION_MANAGER_ACTION_OPEN_WITH_OTHER, FALSE);
+      thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (submenu), THUNAR_ACTION_MANAGER_ACTION_OPEN_WITH_OTHER, FALSE);
       xfce_gtk_menu_append_separator (GTK_MENU_SHELL (submenu));
-      thunar_action_mgr_append_menu_item (action_mgr, GTK_MENU_SHELL (submenu), THUNAR_ACTION_MANAGER_ACTION_SET_DEFAULT_APP, FALSE);
+      thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (submenu), THUNAR_ACTION_MANAGER_ACTION_SET_DEFAULT_APP, FALSE);
     }
 
   return submenu;
@@ -3189,7 +3189,7 @@ thunar_action_mgr_build_application_submenu (ThunarActionManager *action_mgr,
 
 
 /**
- * thunar_action_mgr_append_open_section:
+ * thunar_action_manager_append_open_section:
  * @action_mgr               : a #ThunarActionManager instance
  * @menu                     : #GtkMenuShell on which the open section should be appended
  * @support_tabs             : Set to TRUE if 'open in new tab' should be shown
@@ -3201,11 +3201,11 @@ thunar_action_mgr_build_application_submenu (ThunarActionManager *action_mgr,
  * Return value: TRUE if the section was added
  **/
 gboolean
-thunar_action_mgr_append_open_section (ThunarActionManager *action_mgr,
-                                       GtkMenuShell        *menu,
-                                       gboolean             support_tabs,
-                                       gboolean             support_change_directory,
-                                       gboolean             force)
+thunar_action_manager_append_open_section (ThunarActionManager *action_mgr,
+                                           GtkMenuShell        *menu,
+                                           gboolean             support_tabs,
+                                           gboolean             support_change_directory,
+                                           gboolean             force)
 {
   GList     *applications;
   gchar     *label_text;
@@ -3225,11 +3225,11 @@ thunar_action_mgr_append_open_section (ThunarActionManager *action_mgr,
 
   /* Execute OR Open OR OpenWith */
   if (G_UNLIKELY (action_mgr->files_are_all_executable))
-    thunar_action_mgr_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_EXECUTE, FALSE);
+    thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_EXECUTE, FALSE);
   else if (G_LIKELY (action_mgr->n_directories_to_process >= 1))
     {
       if (support_change_directory)
-        thunar_action_mgr_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_OPEN, FALSE);
+        thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_OPEN, FALSE);
     }
   else if (G_LIKELY (applications != NULL))
     {
@@ -3239,11 +3239,11 @@ thunar_action_mgr_append_open_section (ThunarActionManager *action_mgr,
                                                 action_mgr->n_files_to_process), g_app_info_get_name (applications->data));
 
       image     = gtk_image_new_from_gicon (g_app_info_get_icon (applications->data), GTK_ICON_SIZE_MENU);
-      menu_item = xfce_gtk_image_menu_item_new (label_text, tooltip_text, NULL, G_CALLBACK (thunar_action_mgr_menu_item_activated),
+      menu_item = xfce_gtk_image_menu_item_new (label_text, tooltip_text, NULL, G_CALLBACK (thunar_action_manager_menu_item_activated),
                                                 G_OBJECT (action_mgr), image, menu);
 
       /* remember the default application for the "Open" action as quark */
-      g_object_set_qdata_full (G_OBJECT (menu_item), thunar_action_mgr_appinfo_quark, applications->data, g_object_unref);
+      g_object_set_qdata_full (G_OBJECT (menu_item), thunar_action_manager_appinfo_quark, applications->data, g_object_unref);
       g_free (tooltip_text);
       g_free (label_text);
 
@@ -3256,7 +3256,7 @@ thunar_action_mgr_append_open_section (ThunarActionManager *action_mgr,
       label_text   = g_strdup_printf (_("_Open With Default Applications"));
       tooltip_text = g_strdup_printf (ngettext ("Open the selected file with the default application",
                                                 "Open the selected files with the default applications", action_mgr->n_files_to_process));
-      xfce_gtk_menu_item_new (label_text, tooltip_text, NULL, G_CALLBACK (thunar_action_mgr_menu_item_activated), G_OBJECT (action_mgr), menu);
+      xfce_gtk_menu_item_new (label_text, tooltip_text, NULL, G_CALLBACK (thunar_action_manager_menu_item_activated), G_OBJECT (action_mgr), menu);
       g_free (tooltip_text);
       g_free (label_text);
     }
@@ -3264,29 +3264,29 @@ thunar_action_mgr_append_open_section (ThunarActionManager *action_mgr,
   if (action_mgr->n_files_to_process == action_mgr->n_directories_to_process && action_mgr->n_directories_to_process >= 1)
     {
       if (support_tabs)
-        thunar_action_mgr_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB, FALSE);
-      thunar_action_mgr_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW, FALSE);
+        thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB, FALSE);
+      thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW, FALSE);
     }
 
   /* active while searching and while in 'recent:///' */
   if (action_mgr->n_files_to_process > 0 && (action_mgr->is_searching || thunar_file_is_recent (action_mgr->current_directory)))
-    thunar_action_mgr_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_LOCATION, FALSE);
+    thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_LOCATION, FALSE);
 
   if (G_LIKELY (applications != NULL))
     {
       menu_item = xfce_gtk_menu_item_new (_("Open With"),
                                           _("Choose another application with which to open the selected file"),
                                           NULL, NULL, NULL, menu);
-      submenu = thunar_action_mgr_build_application_submenu (action_mgr, applications);
+      submenu = thunar_action_manager_build_application_submenu (action_mgr, applications);
       gtk_menu_item_set_submenu (GTK_MENU_ITEM (menu_item), submenu);
     }
   else
     {
       if (action_mgr->n_files_to_process == 1)
       {
-        thunar_action_mgr_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_WITH_OTHER, FALSE);
+        thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_WITH_OTHER, FALSE);
         xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
-        thunar_action_mgr_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_SET_DEFAULT_APP, FALSE);
+        thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_SET_DEFAULT_APP, FALSE);
       }
     }
 
@@ -3297,7 +3297,7 @@ thunar_action_mgr_append_open_section (ThunarActionManager *action_mgr,
 
 
 /**
- * thunar_action_mgr_get_widget:
+ * thunar_action_manager_get_widget:
  * @action_mgr : a #ThunarActionManager instance
  *
  * Will return the parent widget of this #ThunarActionManager
@@ -3305,7 +3305,7 @@ thunar_action_mgr_append_open_section (ThunarActionManager *action_mgr,
  * Return value: (transfer none): the parent widget of this #ThunarActionManager
  **/
 GtkWidget*
-thunar_action_mgr_get_widget (ThunarActionManager *action_mgr)
+thunar_action_manager_get_widget (ThunarActionManager *action_mgr)
 {
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), NULL);
   return action_mgr->widget;
@@ -3314,7 +3314,7 @@ thunar_action_mgr_get_widget (ThunarActionManager *action_mgr)
 
 
 /**
- * thunar_action_mgr_set_selection:
+ * thunar_action_manager_set_selection:
  * @action_mgr:            a #ThunarActionManager instance
  * @selected_thunar_files: #GList of selected #ThunarFile instances, or NULL
  * @selected_device:       selected #ThunarDevice or NULL
@@ -3324,10 +3324,10 @@ thunar_action_mgr_get_widget (ThunarActionManager *action_mgr)
  * Note that always only one of the 3 "selected" arguments should be set.
  **/
 void
-thunar_action_mgr_set_selection (ThunarActionManager *action_mgr,
-                                 GList               *selected_thunar_files,
-                                 ThunarDevice        *selected_device,
-                                 GFile               *selected_location)
+thunar_action_manager_set_selection (ThunarActionManager *action_mgr,
+                                     GList               *selected_thunar_files,
+                                     ThunarDevice        *selected_device,
+                                     GFile               *selected_location)
 {
   _thunar_return_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr));
 
@@ -3350,24 +3350,24 @@ thunar_action_mgr_set_selection (ThunarActionManager *action_mgr,
     action_mgr->location_to_process = g_object_ref (selected_location);
 
   /* for selected files things are a bit more conmplicated */
-  thunar_action_mgr_set_selected_files (THUNAR_COMPONENT (action_mgr), selected_thunar_files);
+  thunar_action_manager_set_selected_files (THUNAR_COMPONENT (action_mgr), selected_thunar_files);
 }
 
 
 
 static void
-thunar_action_mgr_new_files_created (ThunarActionManager *action_mgr,
-                                     GList               *new_thunar_files)
+thunar_action_manager_new_files_created (ThunarActionManager *action_mgr,
+                                         GList               *new_thunar_files)
 {
   _thunar_return_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr));
 
-  g_signal_emit (action_mgr, action_mgr_signals[NEW_FILES_CREATED], 0, new_thunar_files);
+  g_signal_emit (action_mgr, action_manager_signals[NEW_FILES_CREATED], 0, new_thunar_files);
 }
 
 
 
 XfceGtkActionEntry*
-thunar_action_mgr_get_action_entries (void)
+thunar_action_manager_get_action_entries (void)
 {
-  return thunar_action_mgr_action_entries;
+  return thunar_action_manager_action_entries;
 }

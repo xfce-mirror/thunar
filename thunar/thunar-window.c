@@ -789,7 +789,7 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect_swapped (G_OBJECT (window->action_mgr), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
   g_signal_connect_swapped (G_OBJECT (window->action_mgr), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
   g_signal_connect_swapped (G_OBJECT (window->action_mgr), "new-files-created", G_CALLBACK (thunar_window_show_and_select_files), window);
-  thunar_action_mgr_append_accelerators (window->action_mgr, window->accel_group);
+  thunar_action_manager_append_accelerators (window->action_mgr, window->accel_group);
 
   /* determine the default window size from the preferences */
   gtk_window_set_default_size (GTK_WINDOW (window), last_window_width, last_window_height);
@@ -1392,7 +1392,7 @@ thunar_window_update_bookmarks_menu (ThunarWindow *window,
 
   thunar_gtk_menu_clean (GTK_MENU (menu));
 
-  thunar_action_mgr_append_menu_item (window->action_mgr, GTK_MENU_SHELL (menu),THUNAR_ACTION_MANAGER_ACTION_SENDTO_SHORTCUTS, FALSE);
+  thunar_action_manager_append_menu_item (window->action_mgr, GTK_MENU_SHELL (menu),THUNAR_ACTION_MANAGER_ACTION_SENDTO_SHORTCUTS, FALSE);
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
   thunar_window_menu_add_bookmarks (window, GTK_MENU_SHELL (menu));
 
@@ -3050,7 +3050,7 @@ thunar_window_start_open_location (ThunarWindow *window,
 
       thunar_window_update_search (window);
       window->is_searching = TRUE;
-      thunar_action_mgr_set_searching (window->action_mgr, TRUE);
+      thunar_action_manager_set_searching (window->action_mgr, TRUE);
 
       /* the check is useless as long as the workaround is in place */
       if (THUNAR_IS_DETAILS_VIEW (window->view))
@@ -3089,7 +3089,7 @@ thunar_window_resume_search (ThunarWindow *window,
   window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
   if (window->catfish_search_button != NULL)
     gtk_widget_show (window->catfish_search_button);
-  thunar_action_mgr_set_searching (window->action_mgr, TRUE);
+  thunar_action_manager_set_searching (window->action_mgr, TRUE);
 
   /* the check is useless as long as the workaround is in place */
   if (THUNAR_IS_DETAILS_VIEW (window->view))
@@ -3162,7 +3162,7 @@ thunar_window_action_cancel_search (ThunarWindow *window)
 
   thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), NULL);
-  thunar_action_mgr_set_searching (window->action_mgr, FALSE);
+  thunar_action_manager_set_searching (window->action_mgr, FALSE);
   if (window->catfish_search_button != NULL)
     gtk_widget_hide (window->catfish_search_button);
 
@@ -4299,7 +4299,7 @@ thunar_window_check_uca_key_activation (ThunarWindow *window,
                                         GdkEventKey  *key_event,
                                         gpointer      user_data)
 {
-  if (thunar_action_mgr_check_uca_key_activation (window->action_mgr, key_event))
+  if (thunar_action_manager_check_uca_key_activation (window->action_mgr, key_event))
     return GDK_EVENT_STOP;
   return GDK_EVENT_PROPAGATE;
 }
@@ -4332,7 +4332,7 @@ thunar_window_propagate_key_event (GtkWindow* window,
     return TRUE;
 
   /* ThunarActionManager doesn't handle it own shortcuts, so ThunarWindow will handle any Tab-accelerated actions */
-  if (xfce_gtk_handle_tab_accels ((GdkEventKey *) key_event, thunar_window->accel_group, thunar_window->action_mgr, thunar_action_mgr_get_action_entries (), THUNAR_ACTION_MANAGER_N_ACTIONS) == TRUE)
+  if (xfce_gtk_handle_tab_accels ((GdkEventKey *) key_event, thunar_window->accel_group, thunar_window->action_mgr, thunar_action_manager_get_action_entries (), THUNAR_ACTION_MANAGER_N_ACTIONS) == TRUE)
     return TRUE;
 
   /* ThunarStatusbar doesn't handle it own shortcuts, so ThunarWindow will handle any Tab-accelerated actions */
@@ -4352,7 +4352,7 @@ thunar_window_action_open_bookmark (GFile *g_file)
   window = g_object_get_data (G_OBJECT (g_file), I_("thunar-window"));
 
   g_object_set (G_OBJECT (window->action_mgr), "selected-location", g_file, NULL);
-  thunar_action_mgr_activate_selected_files (window->action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL);
+  thunar_action_manager_activate_selected_files (window->action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL);
 }
 
 
@@ -5084,13 +5084,13 @@ thunar_window_append_menu_item (ThunarWindow       *window,
 
 
 /**
- * thunar_window_get_action_mgr:
+ * thunar_window_get_action_manager:
  * @window : a #ThunarWindow instance.
  *
  * Return value: (transfer none): The single #ThunarActionManager of this #ThunarWindow
  **/
 ThunarActionManager*
-thunar_window_get_action_mgr (ThunarWindow *window)
+thunar_window_get_action_manager (ThunarWindow *window)
 {
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), NULL);
 
@@ -5369,10 +5369,10 @@ thunar_window_trash_infobar_clicked (GtkInfoBar   *info_bar,
   switch (response_id)
     {
       case EMPTY:
-        thunar_action_mgr_action_empty_trash (window->action_mgr);
+        thunar_action_manager_action_empty_trash (window->action_mgr);
         break;
       case RESTORE:
-        thunar_action_mgr_action_restore (window->action_mgr);
+        thunar_action_manager_action_restore (window->action_mgr);
         break;
       default:
         g_return_if_reached();
@@ -5486,7 +5486,7 @@ thunar_window_reconnect_accelerators (ThunarWindow *window)
                                                thunar_window_action_entries,
                                                G_N_ELEMENTS (thunar_window_action_entries),
                                                window);
-  thunar_action_mgr_append_accelerators (window->action_mgr, window->accel_group);
+  thunar_action_manager_append_accelerators (window->action_mgr, window->accel_group);
   thunar_statusbar_append_accelerators (THUNAR_STATUSBAR (window->statusbar), window->accel_group);
   thunar_window_update_bookmarks (window);
 
