@@ -1638,7 +1638,7 @@ thunar_renamer_dialog_row_activated (GtkTreeView         *tree_view,
 {
   _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
 
-  thunar_action_mgr_activate_selected_files (renamer_dialog->action_mgr, THUNAR_ACTION_MANAGER_OPEN_AS_NEW_WINDOW, NULL);
+  thunar_action_manager_activate_selected_files (renamer_dialog->action_mgr, THUNAR_ACTION_MANAGER_OPEN_AS_NEW_WINDOW, NULL);
 }
 
 

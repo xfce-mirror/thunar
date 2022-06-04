@@ -136,7 +136,7 @@ GtkWidget*                thunar_window_get_sidepane                        (Thu
 void                      thunar_window_append_menu_item                    (ThunarWindow        *window,
                                                                              GtkMenuShell        *menu,
                                                                              ThunarWindowAction   action);
-ThunarActionManager*      thunar_window_get_action_mgr                      (ThunarWindow        *window);
+ThunarActionManager*      thunar_window_get_action_manager                  (ThunarWindow        *window);
 void                      thunar_window_redirect_menu_tooltips_to_statusbar (ThunarWindow        *window,
                                                                              GtkMenu             *menu);
 const XfceGtkActionEntry* thunar_window_get_action_entry                    (ThunarWindow        *window,

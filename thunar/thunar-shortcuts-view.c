@@ -1244,15 +1244,15 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
     {
       files = g_list_append (NULL, file);
       g_object_set (G_OBJECT (view->action_mgr), "current-directory", file, NULL);
-      thunar_action_mgr_set_selection (view->action_mgr, files, device, NULL);
+      thunar_action_manager_set_selection (view->action_mgr, files, device, NULL);
       g_list_free (files);
       if (thunar_g_file_is_trash    (thunar_file_get_file (file)) ||
           thunar_g_file_is_computer (thunar_file_get_file (file)) ||
           thunar_g_file_is_network  (thunar_file_get_file (file)))
         {
-          thunar_action_mgr_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN, TRUE);
-          thunar_action_mgr_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB, TRUE);
-          thunar_action_mgr_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW, TRUE);
+          thunar_action_manager_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN, TRUE);
+          thunar_action_manager_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB, TRUE);
+          thunar_action_manager_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW, TRUE);
           xfce_gtk_menu_append_separator (GTK_MENU_SHELL (context_menu));
           thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_EMPTY_TRASH);
         }
@@ -1271,16 +1271,16 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   else if (location != NULL)
     {
       g_object_set (G_OBJECT (view->action_mgr), "selected-location", location, NULL);
-      thunar_action_mgr_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN, TRUE);
-      thunar_action_mgr_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB, TRUE);
-      thunar_action_mgr_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW, TRUE);
+      thunar_action_manager_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN, TRUE);
+      thunar_action_manager_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB, TRUE);
+      thunar_action_manager_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW, TRUE);
     }
   else if (device != NULL)
     {
       g_object_set (G_OBJECT (view->action_mgr), "selected-device", device, NULL);
-      thunar_action_mgr_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN, TRUE);
-      thunar_action_mgr_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB, TRUE);
-      thunar_action_mgr_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW, TRUE);
+      thunar_action_manager_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN, TRUE);
+      thunar_action_manager_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB, TRUE);
+      thunar_action_manager_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW, TRUE);
       xfce_gtk_menu_append_separator (GTK_MENU_SHELL (context_menu));
       thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_MOUNTABLE);
       if (thunar_device_is_mounted (device))
@@ -1700,7 +1700,7 @@ thunar_shortcuts_view_open (ThunarShortcutsView                 *view,
        else if (file != NULL)
          {
            files = g_list_append (NULL, file);
-           thunar_action_mgr_set_selection (view->action_mgr, files, device, NULL);
+           thunar_action_manager_set_selection (view->action_mgr, files, device, NULL);
            g_list_free (files);
          }
        else if (location != 0)
@@ -1708,7 +1708,7 @@ thunar_shortcuts_view_open (ThunarShortcutsView                 *view,
            g_object_set (G_OBJECT (view->action_mgr), "selected-location", location, NULL);
          }
 
-      thunar_action_mgr_activate_selected_files (view->action_mgr, (ThunarActionManagerFolderOpenAction) open_in, NULL);
+      thunar_action_manager_activate_selected_files (view->action_mgr, (ThunarActionManagerFolderOpenAction) open_in, NULL);
 
       /* return the focus to the current folder, unless the folder changed */
       if (open_in != THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY)
@@ -1786,7 +1786,7 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
       if (G_LIKELY (THUNAR_IS_DEVICE (device)))
         {
           g_object_set (G_OBJECT (view->action_mgr), "selected-device", device, NULL);
-          thunar_action_mgr_action_eject (view->action_mgr);
+          thunar_action_manager_action_eject (view->action_mgr);
           g_object_unref (G_OBJECT (device));
         }
     }

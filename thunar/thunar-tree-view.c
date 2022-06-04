@@ -777,8 +777,8 @@ thunar_tree_view_button_release_event (GtkWidget      *widget,
             in_tab = !in_tab;
 
           files = g_list_append (files, file);
-          thunar_action_mgr_set_selection (view->action_mgr, files, NULL, NULL);
-          thunar_action_mgr_open_selected_folders (view->action_mgr, in_tab);
+          thunar_action_manager_set_selection (view->action_mgr, files, NULL, NULL);
+          thunar_action_manager_open_selected_folders (view->action_mgr, in_tab);
           g_list_free (files);
 
           /* set the cursor back to the previously selected item */
@@ -856,7 +856,7 @@ thunar_tree_view_key_press_event(GtkWidget   *widget,
                   /* mark this path for selection after unmounting */
                   view->select_path = gtk_tree_path_copy(path);
                   g_object_set (G_OBJECT (view->action_mgr), "selected-device", device, NULL);
-                  thunar_action_mgr_action_unmount (view->action_mgr);
+                  thunar_action_manager_action_unmount (view->action_mgr);
                   g_object_unref (G_OBJECT (device));
                 }
           }
@@ -874,7 +874,7 @@ thunar_tree_view_key_press_event(GtkWidget   *widget,
      if (device != NULL && thunar_device_is_mounted (device) == FALSE)
        {
          g_object_set (G_OBJECT (view->action_mgr), "selected-device", device, NULL);
-         thunar_action_mgr_action_mount (view->action_mgr);
+         thunar_action_manager_action_mount (view->action_mgr);
        }
      else
        {
@@ -1157,7 +1157,7 @@ thunar_tree_view_test_expand_row (GtkTreeView *tree_view,
           expandable = FALSE;
           g_object_set (G_OBJECT (view->action_mgr), "selected-device", device, NULL);
           /* The closure will expand the row after the mount operation finished */
-          thunar_action_mgr_action_mount (view->action_mgr);
+          thunar_action_manager_action_mount (view->action_mgr);
         }
 
       /* release the device */
@@ -1243,16 +1243,16 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
     {
       files = g_list_append (NULL, file);
       g_object_set (G_OBJECT (view->action_mgr), "current-directory", view->current_directory, NULL);
-      thunar_action_mgr_set_selection (view->action_mgr, files, device, NULL);
+      thunar_action_manager_set_selection (view->action_mgr, files, device, NULL);
       g_list_free (files);
 
       if(thunar_g_file_is_trash    (thunar_file_get_file (file)) ||
          thunar_g_file_is_computer (thunar_file_get_file (file)) ||
          thunar_g_file_is_network  (thunar_file_get_file (file)))
         {
-          thunar_action_mgr_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN, TRUE);
-          thunar_action_mgr_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB, TRUE);
-          thunar_action_mgr_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW, TRUE);
+          thunar_action_manager_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN, TRUE);
+          thunar_action_manager_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB, TRUE);
+          thunar_action_manager_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW, TRUE);
           xfce_gtk_menu_append_separator (GTK_MENU_SHELL (context_menu));
           thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_EMPTY_TRASH);
         }
@@ -1274,9 +1274,9 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   else
     {
       g_object_set (G_OBJECT (view->action_mgr), "selected-device", device, NULL);
-      thunar_action_mgr_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN, TRUE);
-      thunar_action_mgr_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB, TRUE);
-      thunar_action_mgr_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW, TRUE);
+      thunar_action_manager_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN, TRUE);
+      thunar_action_manager_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB, TRUE);
+      thunar_action_manager_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW, TRUE);
       xfce_gtk_menu_append_separator (GTK_MENU_SHELL (context_menu));
       thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_MOUNTABLE);
       if (thunar_device_is_mounted (device))
@@ -1485,7 +1485,7 @@ thunar_tree_view_action_open (ThunarTreeView *view)
       else
       {
         g_object_set (G_OBJECT (view->action_mgr), "selected-device", device, NULL);
-        thunar_action_mgr_action_mount (view->action_mgr);
+        thunar_action_manager_action_mount (view->action_mgr);
       }
     }
   else if (file != NULL)

@@ -3850,7 +3850,7 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view)
   window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
 
   context_menu = g_object_new (THUNAR_TYPE_MENU, "menu-type", THUNAR_MENU_TYPE_CONTEXT_STANDARD_VIEW,
-                                                 "action_mgr", thunar_window_get_action_mgr (THUNAR_WINDOW (window)), NULL);
+                                                 "action_mgr", thunar_window_get_action_manager (THUNAR_WINDOW (window)), NULL);
   if (selected_items != NULL)
     {
       thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_OPEN
@@ -4249,8 +4249,8 @@ _thunar_standard_view_open_on_middle_click (ThunarStandardView *standard_view,
               in_tab = !in_tab;
 
           window     = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
-          action_mgr = thunar_window_get_action_mgr (THUNAR_WINDOW (window));
-          thunar_action_mgr_open_selected_folders (action_mgr, in_tab);
+          action_mgr = thunar_window_get_action_manager (THUNAR_WINDOW (window));
+          thunar_action_manager_open_selected_folders (action_mgr, in_tab);
         }
       /* release the file reference */
       g_object_unref (G_OBJECT (file));
