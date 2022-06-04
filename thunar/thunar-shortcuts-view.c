@@ -408,7 +408,7 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   g_signal_connect_swapped (G_OBJECT (view->action_mgr), "device-operation-started", G_CALLBACK (thunar_shortcuts_view_start_spinner), view);
   g_signal_connect_swapped (G_OBJECT (view->action_mgr), "device-operation-finished", G_CALLBACK (thunar_shortcuts_view_stop_spinner), view);
   g_signal_connect_swapped (G_OBJECT (view->action_mgr), "new-files-created", G_CALLBACK (thunar_shortcuts_view_new_files_created), view);
-  g_object_bind_property   (G_OBJECT (view), "current-directory", G_OBJECT (view->action_mgr), "current-directory", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (view), "current-directory", G_OBJECT (view->action_mgr), "current-directory", G_BINDING_SYNC_CREATE);
 }
 
 
