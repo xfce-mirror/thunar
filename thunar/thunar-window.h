@@ -22,7 +22,7 @@
 
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-folder.h>
-#include <thunar/thunar-launcher.h>
+#include <thunar/thunar-action-manager.h>
 
 #include <libxfce4ui/libxfce4ui.h>
 
@@ -136,7 +136,7 @@ GtkWidget*                thunar_window_get_sidepane                        (Thu
 void                      thunar_window_append_menu_item                    (ThunarWindow        *window,
                                                                              GtkMenuShell        *menu,
                                                                              ThunarWindowAction   action);
-ThunarLauncher*           thunar_window_get_launcher                        (ThunarWindow        *window);
+ThunarActionManager*      thunar_window_get_action_manager                  (ThunarWindow        *window);
 void                      thunar_window_redirect_menu_tooltips_to_statusbar (ThunarWindow        *window,
                                                                              GtkMenu             *menu);
 const XfceGtkActionEntry* thunar_window_get_action_entry                    (ThunarWindow        *window,
