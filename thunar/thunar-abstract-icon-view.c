@@ -26,7 +26,7 @@
 #include <thunar/thunar-abstract-icon-view.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
-#include <thunar/thunar-launcher.h>
+#include <thunar/thunar-action-manager.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-window.h>
@@ -631,7 +631,7 @@ thunar_abstract_icon_view_item_activated (ExoIconView            *view,
     }
 
   window = gtk_widget_get_toplevel (GTK_WIDGET (abstract_icon_view));
-  thunar_launcher_activate_selected_files (thunar_window_get_launcher (THUNAR_WINDOW (window)), THUNAR_LAUNCHER_CHANGE_DIRECTORY, NULL);
+  thunar_action_manager_activate_selected_files (thunar_window_get_action_manager (THUNAR_WINDOW (window)), THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL);
 }
 
 

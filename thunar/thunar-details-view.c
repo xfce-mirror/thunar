@@ -25,7 +25,7 @@
 
 #include <thunar/thunar-column-editor.h>
 #include <thunar/thunar-details-view.h>
-#include <thunar/thunar-launcher.h>
+#include <thunar/thunar-action-manager.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-preferences.h>
@@ -824,9 +824,9 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
                                    GtkTreeViewColumn *column,
                                    ThunarDetailsView *details_view)
 {
-  GtkTreeSelection *selection;
-  ThunarLauncher   *launcher;
-  GtkWidget        *window;
+  GtkTreeSelection    *selection;
+  ThunarActionManager *action_mgr;
+  GtkWidget           *window;
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
@@ -839,8 +839,8 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
     }
 
   window = gtk_widget_get_toplevel (GTK_WIDGET (details_view));
-  launcher = thunar_window_get_launcher (THUNAR_WINDOW (window));
-  thunar_launcher_activate_selected_files (launcher, THUNAR_LAUNCHER_CHANGE_DIRECTORY, NULL);
+  action_mgr = thunar_window_get_action_manager (THUNAR_WINDOW (window));
+  thunar_action_manager_activate_selected_files (action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL);
 }
 
 
@@ -858,16 +858,16 @@ thunar_details_view_select_cursor_row (GtkTreeView            *tree_view,
    * default gtk signal handler there.
    */
 
-  ThunarLauncher *launcher;
-  GtkWidget      *window;
+  ThunarActionManager *action_mgr;
+  GtkWidget           *window;
 
   _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
 
   g_signal_stop_emission_by_name(tree_view,"select-cursor-row");
 
   window = gtk_widget_get_toplevel (GTK_WIDGET (details_view));
-  launcher = thunar_window_get_launcher (THUNAR_WINDOW (window));
-  thunar_launcher_activate_selected_files (launcher, THUNAR_LAUNCHER_CHANGE_DIRECTORY, NULL);
+  action_mgr = thunar_window_get_action_manager (THUNAR_WINDOW (window));
+  thunar_action_manager_activate_selected_files (action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL);
 
   return TRUE;
 }
