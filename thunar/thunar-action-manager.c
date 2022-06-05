@@ -696,7 +696,7 @@ thunar_action_manager_set_selected_files (ThunarComponent *component,
 
 
 
- /**
+/**
  * thunar_action_manager_set_widget:
  * @action_mgr : a #ThunarActionManager.
  * @widget     : a #GtkWidget or %NULL.
@@ -3011,7 +3011,7 @@ thunar_action_manager_action_edit_launcher (ThunarActionManager *action_mgr)
 /**
  * thunar_action_manager_action_mount:
  * @action_mgr : a #ThunarActionManager instance
-*
+ *
  * Will mount the selected device, if any. The related folder will not be opened.
  **/
 void
@@ -3051,7 +3051,7 @@ thunar_action_manager_action_eject_finish (ThunarDevice *device,
 /**
  * thunar_action_manager_action_eject:
  * @action_mgr : a #ThunarActionManager instance
-*
+ *
  * Will eject the selected device, if any
  **/
 gboolean
@@ -3113,7 +3113,7 @@ thunar_action_manager_action_unmount_finish (ThunarDevice *device,
 /**
  * thunar_action_manager_action_eject:
  * @action_mgr : a #ThunarActionManager instance
-*
+ *
  * Will unmount the selected device, if any
  **/
 gboolean
