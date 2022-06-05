@@ -466,7 +466,7 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
         {
           /* still a regular file, but the type is now known to tumbler but
            * maybe the application created a thumbnail */
-          thumbnail_path = thunar_file_get_thumbnail_path (lp->data, thumbnailer->thumbnail_size);
+          thumbnail_path = thunar_file_get_thumbnail_uri (lp->data, thumbnailer->thumbnail_size);
 
           /* test if a thumbnail can be found */
           if (thumbnail_path != NULL && g_file_test (thumbnail_path, G_FILE_TEST_EXISTS))
