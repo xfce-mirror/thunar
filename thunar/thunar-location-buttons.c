@@ -137,22 +137,22 @@ struct _ThunarLocationButtons
 {
   GtkContainer __parent__;
 
-  GtkWidget         *left_slider;
-  GtkWidget         *right_slider;
-  GtkWidget         *filler_widget;
+  GtkWidget           *left_slider;
+  GtkWidget           *right_slider;
+  GtkWidget           *filler_widget;
 
-  ThunarFile        *current_directory;
+  ThunarFile          *current_directory;
 
-  gint               slider_width;
-  gboolean           ignore_click : 1;
+  gint                 slider_width;
+  gboolean             ignore_click : 1;
 
-  ThunarLauncher    *launcher;
-  GList             *list;
-  GList             *fake_root_button;
-  GList             *first_visible_button;
-  GList             *last_visible_button;
+  ThunarActionManager *action_mgr;
+  GList               *list;
+  GList               *fake_root_button;
+  GList               *first_visible_button;
+  GList               *last_visible_button;
 
-  guint              scroll_timeout_id;
+  guint                scroll_timeout_id;
 };
 
 
@@ -286,9 +286,9 @@ thunar_location_buttons_init (ThunarLocationButtons *buttons)
   gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (buttons->filler_widget)),
                                "path-bar-button");
 
-  buttons->launcher =  g_object_new (THUNAR_TYPE_LAUNCHER, "widget", GTK_WIDGET (buttons), NULL);
-  g_signal_connect_swapped (G_OBJECT (buttons->launcher), "change-directory", G_CALLBACK (thunar_location_buttons_set_current_directory), buttons);
-  g_signal_connect_swapped (G_OBJECT (buttons->launcher), "open-new-tab", G_CALLBACK (thunar_navigator_open_new_tab), buttons);
+  buttons->action_mgr =  g_object_new (THUNAR_TYPE_ACTION_MANAGER, "widget", GTK_WIDGET (buttons), NULL);
+  g_signal_connect_swapped (G_OBJECT (buttons->action_mgr), "change-directory", G_CALLBACK (thunar_location_buttons_set_current_directory), buttons);
+  g_signal_connect_swapped (G_OBJECT (buttons->action_mgr), "open-new-tab", G_CALLBACK (thunar_navigator_open_new_tab), buttons);
 }
 
 
@@ -1202,12 +1202,12 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
     return FALSE;
 
   files = g_list_append (NULL, file);
-  g_object_set (G_OBJECT (buttons->launcher), "current-directory", file, NULL);
-  g_object_set (G_OBJECT (buttons->launcher), "selected-files", files, NULL);
+  g_object_set (G_OBJECT (buttons->action_mgr), "current-directory", file, NULL);
+  g_object_set (G_OBJECT (buttons->action_mgr), "selected-files", files, NULL);
   g_list_free (files);
   is_current_directory = g_file_equal (thunar_file_get_file (file), thunar_file_get_file (buttons->current_directory));
   context_menu = g_object_new (THUNAR_TYPE_MENU, "menu-type", THUNAR_MENU_TYPE_CONTEXT_LOCATION_BUTTONS,
-                                                 "launcher", buttons->launcher,
+                                                 "action_mgr", buttons->action_mgr,
                                                  "force-section-open", TRUE,
                                                  "change_directory-support-disabled", is_current_directory, NULL);
   if (is_current_directory)
