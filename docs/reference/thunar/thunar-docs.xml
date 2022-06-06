@@ -50,7 +50,7 @@
   <!ENTITY ThunarGtkExtensions SYSTEM "xml/thunar-gtk-extensions.xml">
   <!ENTITY ThunarLocationEntry SYSTEM "xml/thunar-location-entry.xml">
   <!ENTITY ThunarDnd SYSTEM "xml/thunar-dnd.xml">
-  <!ENTITY ThunarLauncher SYSTEM "xml/thunar-launcher.xml">
+  <!ENTITY ThunarActionManager SYSTEM "xml/thunar-action-manager.xml">
   <!ENTITY ThunarEmblemChooser SYSTEM "xml/thunar-emblem-chooser.xml">
   <!ENTITY ThunarSessionClient SYSTEM "xml/thunar-session-client.xml">
   <!ENTITY ThunarShortcutsPane SYSTEM "xml/thunar-shortcuts-pane.xml">
@@ -237,10 +237,14 @@
     </chapter>
 
     <chapter>
-      <title>File/Applicaton Launcher</title>
-      <xi:include href="xml/thunar-menu.xml"/>
+      <title>Applicaton</title>
       <xi:include href="xml/thunar-application.xml"/>
-      <xi:include href="xml/thunar-launcher.xml"/>
+    </chapter>
+
+    <chapter>
+      <title>Menu Entries</title>
+      <xi:include href="xml/thunar-menu.xml"/>
+      <xi:include href="xml/thunar-action-manager.xml"/>
     </chapter>
 
     <chapter>
