@@ -2249,7 +2249,7 @@ thunar_list_model_search_folder (ThunarListModel           *model,
 
   /* The directory enumerator MUST NOT follow symlinks itself, meaning that any symlinks that
    * g_file_enumerator_next_file() emits are the actual symlink entries. This prevents one
-   * possible source of infinitely deep recusion */
+   * possible source of infinitely deep recursion */
   enumerator = g_file_enumerate_children (directory, namespace, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, cancellable, NULL);
   if (enumerator == NULL)
     return;
