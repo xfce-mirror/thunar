@@ -2246,9 +2246,15 @@ thunar_list_model_search_folder (ThunarListModel           *model,
               G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP ","
               G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN ","
               G_FILE_ATTRIBUTE_STANDARD_NAME ", recent::*";
+
+  /* The directory enumerator MUST NOT follow symlinks itself, meaning that any symlinks that
+   * g_file_enumerator_next_file() emits are the actual symlink entries. This prevents one
+   * possible source of infinitely deep recursion */
   enumerator = g_file_enumerate_children (directory, namespace, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, cancellable, NULL);
   if (enumerator == NULL)
     return;
+  /* There is otherwise no special handling of entries in the folder which are symlinks,
+   * which allows them to appear in the search results. */
 
   /* go through every file in the folder and check if it matches */
   while (exo_job_is_cancelled (EXO_JOB (job)) == FALSE)
@@ -2287,13 +2293,9 @@ thunar_list_model_search_folder (ThunarListModel           *model,
 
       type = g_file_info_get_file_type (info);
 
-      /* ignore symlinks */
-      if (type == G_FILE_TYPE_SYMBOLIC_LINK)
-        {
-          g_object_unref (file);
-          g_object_unref (info);
-          continue;
-        }
+      /* symlinks that might otherwise lead to an infinite recurse below if there were a symlink loop
+       * are (type == G_FILE_TYPE_SYMBOLIC_LINK), due to the G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS
+       * enumerator flag above. Don't change that flag. */
 
       /* handle directories */
       if (type == G_FILE_TYPE_DIRECTORY && search_type == THUNAR_LIST_MODEL_SEARCH_RECURSIVE)
