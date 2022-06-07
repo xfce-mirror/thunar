@@ -538,6 +538,8 @@ thunar_list_model_init (ThunarListModel *store)
   store->row_inserted_id = g_signal_lookup ("row-inserted", GTK_TYPE_TREE_MODEL);
   store->row_deleted_id = g_signal_lookup ("row-deleted", GTK_TYPE_TREE_MODEL);
 
+  store->search_terms = NULL;
+
   store->sort_case_sensitive = TRUE;
   store->sort_folders_first = TRUE;
   store->sort_sign = 1;
