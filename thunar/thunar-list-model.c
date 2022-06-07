@@ -1601,6 +1601,9 @@ thunar_list_model_files_added (ThunarFolder    *folder,
         }
 
       /* check if the file should be stashed in the hidden list */
+      /* The ->hidden list is an optimization used by the model when
+       * it is not being used to store search results. In the search
+       * case, we simply restart the search, */
       if (!store->show_hidden && thunar_file_is_hidden (file))
         {
           if (search_mode == FALSE)
@@ -1687,6 +1690,7 @@ thunar_list_model_files_removed_cb (ThunarFolder    *folder,
           if (search_mode == FALSE)
             {
               /* file is hidden */
+              /* this only makes sense when not storing search results */
               _thunar_assert (g_slist_find (store->hidden, lp->data) != NULL);
               store->hidden = g_slist_remove (store->hidden, lp->data);
               g_object_unref (G_OBJECT (lp->data));
