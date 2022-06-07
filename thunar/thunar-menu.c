@@ -21,8 +21,8 @@
 
 #include <thunar/thunar-menu.h>
 
-#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-action-manager.h>
+#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-window.h>
 
