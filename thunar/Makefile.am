@@ -45,6 +45,8 @@ thunar_SOURCES =							\
 	thunar-abstract-dialog.h					\
 	thunar-abstract-icon-view.c					\
 	thunar-abstract-icon-view.h					\
+	thunar-action-manager.c						\
+	thunar-action-manager.h						\
 	thunar-application.c						\
 	thunar-application.h						\
 	thunar-browser.c						\
@@ -117,8 +119,6 @@ thunar_SOURCES =							\
 	thunar-io-scan-directory.h					\
 	thunar-job.c							\
 	thunar-job.h							\
-	thunar-action-manager.c						\
-	thunar-action-manager.h						\
 	thunar-list-model.c						\
 	thunar-list-model.h						\
 	thunar-location-bar.c						\
