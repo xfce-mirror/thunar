@@ -30,6 +30,7 @@
 #include <string.h>
 #endif
 
+#include <thunar/thunar-action-manager.h>
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-browser.h>
 #include <thunar/thunar-chooser-dialog.h>
@@ -40,7 +41,6 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-io-scan-directory.h>
-#include <thunar/thunar-action-manager.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
