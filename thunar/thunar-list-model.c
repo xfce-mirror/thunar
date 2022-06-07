@@ -2246,6 +2246,13 @@ thunar_list_model_search_folder (ThunarListModel           *model,
               G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP ","
               G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN ","
               G_FILE_ATTRIBUTE_STANDARD_NAME ", recent::*";
+
+  /* The directory enumerator MUST NOT follow symlinks itself, meaning that any symlinks that
+   * g_file_enumerator_next_file() emits are the actual symlink entries. This prevents one
+   * possible source of infinitely deep recursion.
+   *
+   * There is otherwise no special handling of entries in the folder which are symlinks,
+   * which allows them to appear in the search results. */
   enumerator = g_file_enumerate_children (directory, namespace, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, cancellable, NULL);
   if (enumerator == NULL)
     return;
@@ -2287,19 +2294,10 @@ thunar_list_model_search_folder (ThunarListModel           *model,
 
       type = g_file_info_get_file_type (info);
 
-      /* ignore symlinks */
-      if (type == G_FILE_TYPE_SYMBOLIC_LINK)
-        {
-          g_object_unref (file);
-          g_object_unref (info);
-          continue;
-        }
-
       /* handle directories */
       if (type == G_FILE_TYPE_DIRECTORY && search_type == THUNAR_LIST_MODEL_SEARCH_RECURSIVE)
         {
           thunar_list_model_search_folder (model, job, g_file_get_uri (file), search_query_c_terms, search_type, show_hidden);
-          /* continue; don't add non-leaf directories in the results */
         }
 
       /* prepare entry display name */
