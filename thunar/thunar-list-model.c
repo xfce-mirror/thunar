@@ -152,15 +152,13 @@ static void               thunar_list_model_folder_error                (ThunarF
                                                                          const GError                 *error,
                                                                          ThunarListModel              *store);
 static void               thunar_list_model_files_added                 (ThunarFolder                 *folder,
-                                                                         GList                        *files,
-                                                                         ThunarListModel              *store,
-                                                                         gboolean                     prefiltered);
-static void               thunar_list_model_files_added_cb              (ThunarFolder                *folder,
                                                                          GList                       *files,
                                                                          ThunarListModel             *store);
-static void               thunar_list_model_files_removed_cb            (ThunarFolder                 *folder,
+static void               thunar_list_model_files_removed               (ThunarFolder                 *folder,
                                                                          GList                        *files,
                                                                          ThunarListModel              *store);
+static void               thunar_list_model_insert_files                (ThunarListModel             *store,
+                                                                         GList                       *files);
 static gint               sort_by_date                                  (const ThunarFile             *a,
                                                                          const ThunarFile             *b,
                                                                          gboolean                      case_sensitive,
@@ -1541,20 +1539,49 @@ thunar_list_model_folder_error (ThunarFolder    *folder,
 
 
 static void
-thunar_list_model_files_added_cb (ThunarFolder    *folder,
-                                  GList           *files,
-                                  ThunarListModel *store)
+thunar_list_model_files_added (ThunarFolder    *folder,
+                               GList           *files,
+                               ThunarListModel *store)
 {
-  /* callback form: reacting to changes, so prefiltered=FALSE */
-  thunar_list_model_files_added (folder, files, store, FALSE);
+  GList       *filtered;
+  GList       *lp;
+  ThunarFile  *file;
+  gboolean     matched;
+  gchar       *name_n;
+
+  /* pass the list directly if not currently showing search results */
+  if (store->search_terms == NULL)
+    {
+      thunar_list_model_insert_files (store, files);
+      return;
+    }
+
+  /* otherwise, filter out files that don't match the current search terms */
+  filtered = NULL;
+  for (lp = files; lp != NULL; lp = lp->next)
+    {
+      /* take a reference on that file */
+      file = THUNAR_FILE (g_object_ref (G_OBJECT (lp->data)));
+      _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+      name_n = (gchar *)thunar_file_get_display_name (file);
+      name_n = thunar_g_utf8_normalize_for_search (name_n, TRUE, TRUE);
+      matched = thunar_list_model_search_terms_match (store->search_terms, name_n);
+      g_free (name_n);
+
+      if (! matched)
+        g_object_unref (file);
+      else
+        filtered = g_list_append (filtered, file);
+    }
+  thunar_list_model_insert_files (store, filtered);
+  thunar_g_list_free_full (filtered);
 }
 
 
 static void
-thunar_list_model_files_added (ThunarFolder    *folder,
-                               GList           *files,
-                               ThunarListModel *store,
-                               gboolean         prefiltered)
+thunar_list_model_insert_files (ThunarListModel *store,
+                                GList           *files)
 {
   GtkTreePath   *path;
   GtkTreeIter    iter;
@@ -1583,22 +1610,6 @@ thunar_list_model_files_added (ThunarFolder    *folder,
       /* take a reference on that file */
       file = THUNAR_FILE (g_object_ref (G_OBJECT (lp->data)));
       _thunar_return_if_fail (THUNAR_IS_FILE (file));
-
-      /* filter out files that don't match the current search terms.
-       * Skip this check if the search process itself did it, however. */
-      if ((search_mode == TRUE) && (prefiltered == FALSE))
-        {
-          gchar *name_n = (gchar *)thunar_file_get_display_name (file);
-          name_n = thunar_g_utf8_normalize_for_search (name_n, TRUE, TRUE);
-
-          if (! thunar_list_model_search_terms_match (store->search_terms, name_n))
-            {
-              g_object_unref (file);
-              g_free (name_n);
-              continue;
-            }
-          g_free (name_n);
-        }
 
       /* check if the file should be stashed in the hidden list */
       /* The ->hidden list is an optimization used by the model when
@@ -1638,9 +1649,9 @@ thunar_list_model_files_added (ThunarFolder    *folder,
 
 
 static void
-thunar_list_model_files_removed_cb (ThunarFolder    *folder,
-                                    GList           *files,
-                                    ThunarListModel *store)
+thunar_list_model_files_removed (ThunarFolder    *folder,
+                                 GList           *files,
+                                 ThunarListModel *store)
 {
   GList         *lp;
   GSequenceIter *row;
@@ -2246,8 +2257,7 @@ thunar_list_model_add_search_files (gpointer user_data)
 
   g_mutex_lock (&model->mutex_files_to_add);
 
-  /* the search filter has already been applied, so prefiltered=TRUE */
-  thunar_list_model_files_added (model->folder, model->files_to_add, model, TRUE);
+  thunar_list_model_insert_files (model, model->files_to_add);
   g_list_free (model->files_to_add);
   model->files_to_add = NULL;
 
@@ -2672,13 +2682,13 @@ thunar_list_model_set_folder (ThunarListModel *store,
 
       /* insert the files */
       if (files != NULL)
-        thunar_list_model_files_added (folder, files, store, TRUE);
+        thunar_list_model_insert_files (store, files);
 
       /* connect signals to the new folder */
       g_signal_connect (G_OBJECT (store->folder), "destroy", G_CALLBACK (thunar_list_model_folder_destroy), store);
       g_signal_connect (G_OBJECT (store->folder), "error", G_CALLBACK (thunar_list_model_folder_error), store);
-      g_signal_connect (G_OBJECT (store->folder), "files-added", G_CALLBACK (thunar_list_model_files_added_cb), store);
-      g_signal_connect (G_OBJECT (store->folder), "files-removed", G_CALLBACK (thunar_list_model_files_removed_cb), store);
+      g_signal_connect (G_OBJECT (store->folder), "files-added", G_CALLBACK (thunar_list_model_files_added), store);
+      g_signal_connect (G_OBJECT (store->folder), "files-removed", G_CALLBACK (thunar_list_model_files_removed), store);
     }
 
   /* notify listeners that we have a new folder */
