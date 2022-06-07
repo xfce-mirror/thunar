@@ -570,8 +570,8 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
       /* update the type dependant entries */
       if (strcmp (type, "Application") == 0)
         {
-          /* update the "Command" entry */
-          value = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP, "Exec", NULL);
+          /* update the "Command" entry but but ignore escape sequences */
+          value = g_key_file_get_value (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_EXEC, NULL);
           if (g_strcmp0 (value, desktop_page->command_text) != 0)
             {
               /* update the entry */
@@ -838,17 +838,23 @@ thunar_apr_desktop_page_set_string (GKeyFile    *key_file,
                                     const gchar *key,
                                     const gchar *value)
 {
-  if (value != NULL && *value != '\0')
+  if (xfce_str_is_empty (value))
     {
-      g_key_file_set_string (key_file,
+      g_key_file_remove_key (key_file,
                              G_KEY_FILE_DESKTOP_GROUP,
-                             key, value);
+                             key, NULL);
     }
   else
     {
-      g_key_file_remove_key  (key_file,
+      /* escape special characters but not for the "Exec" property */
+      if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_EXEC) == 0)
+        g_key_file_set_value (key_file,
                               G_KEY_FILE_DESKTOP_GROUP,
-                              key, NULL);
+                              key, value);
+      else
+        g_key_file_set_string (key_file,
+                               G_KEY_FILE_DESKTOP_GROUP,
+                               key, value);
     }
 }
 
