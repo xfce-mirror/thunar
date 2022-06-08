@@ -161,7 +161,7 @@ static gpointer  thunar_window_notebook_create_window     (GtkWidget            
                                                            gint                    x,
                                                            gint                    y,
                                                            ThunarWindow           *window);
-static gboolean thunar_window_notebook_update_title       (GtkWidget              *label);
+static void      thunar_window_notebook_update_title       (GtkWidget              *label);
 static GtkWidget*thunar_window_notebook_insert_page       (ThunarWindow           *window,
                                                            ThunarFile             *directory,
                                                            GType                   view_type,
@@ -2324,7 +2324,7 @@ thunar_window_notebook_create_window (GtkWidget    *notebook,
 
 
 
-static gboolean
+static void
 thunar_window_notebook_update_title (GtkWidget *label)
 {
   ThunarWindow  *window;
@@ -2336,7 +2336,7 @@ thunar_window_notebook_update_title (GtkWidget *label)
   view = g_object_get_data (G_OBJECT (label), "view");
   binding = g_object_get_data (G_OBJECT (label), "binding");
 
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* set tab title according to window preferences */
   g_object_get (G_OBJECT (window->preferences), "misc-full-path-in-tab-title", &show_full_path, NULL);
@@ -2357,8 +2357,10 @@ thunar_window_notebook_update_title (GtkWidget *label)
 
   g_object_set_data (G_OBJECT (label), "binding", binding);
 
-  return TRUE;
+  return;
 }
+
+
 
 static GtkWidget*
 thunar_window_notebook_insert_page (ThunarWindow  *window,
