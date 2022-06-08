@@ -20,9 +20,9 @@
 #ifndef __THUNAR_WINDOW_H__
 #define __THUNAR_WINDOW_H__
 
+#include <thunar/thunar-action-manager.h>
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-folder.h>
-#include <thunar/thunar-action-manager.h>
 
 #include <libxfce4ui/libxfce4ui.h>
 

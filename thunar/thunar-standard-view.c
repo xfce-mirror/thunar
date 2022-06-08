@@ -34,6 +34,7 @@
 
 #include <libxfce4util/libxfce4util.h>
 
+#include <thunar/thunar-action-manager.h>
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-menu.h>
 #include <thunar/thunar-dialogs.h>
@@ -44,7 +45,6 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-history.h>
 #include <thunar/thunar-icon-renderer.h>
-#include <thunar/thunar-action-manager.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-private.h>
