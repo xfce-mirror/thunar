@@ -23,9 +23,9 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include <thunar/thunar-action-manager.h>
 #include <thunar/thunar-column-editor.h>
 #include <thunar/thunar-details-view.h>
-#include <thunar/thunar-action-manager.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-preferences.h>
