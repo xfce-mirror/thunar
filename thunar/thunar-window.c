@@ -1484,8 +1484,6 @@ thunar_window_finalize (GObject *object)
   /* release our reference on the provider factory */
   g_object_unref (window->provider_factory);
 
-  g_signal_handlers_disconnect_matched (window->preferences, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, thunar_window_notebook_update_title, NULL);
-
   /* release the preferences reference */
   g_object_unref (window->preferences);
 
@@ -2415,7 +2413,7 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   g_object_set_data (G_OBJECT (label), "binding", NULL);
   thunar_window_notebook_update_title (label);
 
-  g_signal_connect_swapped (window->preferences, "notify::misc-full-path-in-tab-title", G_CALLBACK (thunar_window_notebook_update_title), label);
+  g_signal_connect_object (window->preferences, "notify::misc-full-path-in-tab-title", G_CALLBACK (thunar_window_notebook_update_title), label, G_CONNECT_SWAPPED);
 
   g_object_bind_property (G_OBJECT (view), "full-parsed-path", G_OBJECT (label), "tooltip-text", G_BINDING_SYNC_CREATE);
   gtk_widget_set_has_tooltip (label, TRUE);
