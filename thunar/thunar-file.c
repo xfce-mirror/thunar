@@ -1634,6 +1634,7 @@ thunar_file_execute (ThunarFile  *file,
       type = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_TYPE, NULL);
       if (G_LIKELY (g_strcmp0 (type, "Application") == 0))
         {
+          /* load exec property but ignore escape sequences */
           exec = g_key_file_get_value (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_EXEC, NULL);
           if (G_LIKELY (exec != NULL))
             {
