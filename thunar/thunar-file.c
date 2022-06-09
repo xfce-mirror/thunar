@@ -112,7 +112,7 @@ static void               thunar_file_monitor                  (GFileMonitor    
 static void               thunar_file_watch_reconnect          (ThunarFile             *file);
 static gboolean           thunar_file_load_unguarded           (ThunarFile             *file,
                                                                 GCancellable           *cancellable,
-                                                                GError                **error)
+                                                                GError                **error);
 static gboolean           thunar_file_load                     (ThunarFile             *file,
                                                                 GCancellable           *cancellable,
                                                                 GError                **error);
