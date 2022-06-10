@@ -1309,8 +1309,9 @@ thunar_file_get (GFile   *gfile,
       /* load and cache the file, using the current lock */
       if (thunar_file_load_unguarded (file, NULL, error))
         {
-          /* just check that it's been cached like we expect */
-          _thunar_assert (g_hash_table_contains (file_cache, file->gfile) == TRUE);
+          /* just check that it's been cached, if appropriate */
+          if ((file != NULL) && (file->kind != G_FILE_TYPE_UNKNOWN))
+            _thunar_assert (g_hash_table_contains (file_cache, file->gfile) == TRUE);
         }
       else
         {
