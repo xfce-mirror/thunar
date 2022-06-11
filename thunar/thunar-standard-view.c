@@ -2374,7 +2374,7 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   gtk_widget_show (GTK_WIDGET (grid));
 
   label = gtk_label_new_with_mnemonic (C_("Select by Pattern dialog: labels: pattern entry textbox", "_Pattern:"));
-  gtk_widget_set_tooltip_text (GTK_WIDGET (label), C_("Select by Pattern dialog: tooltips on label for pattern entry checkbox", "Files whose name matches the wildcard pattern you enter will be selected in the main window."));
+  gtk_widget_set_tooltip_text (GTK_WIDGET (label), C_("Select by Pattern dialog: tooltips on label for pattern entry textbox", "Files whose name matches the wildcard pattern you enter will be selected in the main window."));
   gtk_grid_attach (grid, label, 0, row, 1, 1);
   gtk_widget_show (label);
 
@@ -2388,7 +2388,7 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
 
   info_image = gtk_image_new_from_icon_name ("dialog-information", GTK_ICON_SIZE_MENU);
   /* TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols, and they must not be localized. */
-  gtk_widget_set_tooltip_text (GTK_WIDGET (info_image), C_("Select by Pattern dialog: tooltips: pattern entry checkbox", "? matches exactly one character,\n* matches any number of characters, including zero.\n\nFor example: *.txt, file??.png, pict\n\nWithout any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."));
+  gtk_widget_set_tooltip_text (GTK_WIDGET (info_image), C_("Select by Pattern dialog: tooltips: pattern entry text box", "? matches exactly one character,\n* matches any number of characters, including zero.\n\nFor example: *.txt, file??.png, pict\n\nWithout any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."));
   gtk_grid_attach_next_to (grid, info_image, entry, GTK_POS_RIGHT, 1, 1);
   gtk_widget_show (info_image);
 
