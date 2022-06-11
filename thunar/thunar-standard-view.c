@@ -2336,6 +2336,7 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   GtkGrid            *grid;
   GtkWidget          *label;
   GtkWidget          *entry;
+  GtkWidget          *info_image;
   GtkWidget          *case_sensitive_button;
   GtkWidget          *match_diacritics_button;
   GList              *paths;
@@ -2379,12 +2380,16 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
 
   entry = gtk_entry_new ();
   gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
-  /* TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols, and they must not be localized. */
-  gtk_widget_set_tooltip_text (GTK_WIDGET (entry), C_("Select by Pattern dialog: tooltips: pattern entry checkbox", "? matches exactly one character,\n* matches any number of characters, including zero.\n\nFor example: *.txt, file??.png, pict\n\nWithout any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."));
   gtk_grid_attach_next_to (grid, entry, label, GTK_POS_RIGHT, 1, 1);
   gtk_widget_set_hexpand (entry, TRUE);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
   gtk_widget_show (entry);
+
+  info_image = gtk_image_new_from_icon_name ("dialog-information", GTK_ICON_SIZE_MENU);
+  /* TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols, and they must not be localized. */
+  gtk_widget_set_tooltip_text (GTK_WIDGET (info_image), C_("Select by Pattern dialog: tooltips: pattern entry checkbox", "? matches exactly one character,\n* matches any number of characters, including zero.\n\nFor example: *.txt, file??.png, pict\n\nWithout any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."));
+  gtk_grid_attach_next_to (grid, info_image, entry, GTK_POS_RIGHT, 1, 1);
+  gtk_widget_show (info_image);
 
   case_sensitive_button = gtk_check_button_new_with_mnemonic (C_("Select by Pattern dialog: labels: case sensitive checkbox", "C_ase sensitive"));
   gtk_widget_set_tooltip_text (GTK_WIDGET (case_sensitive_button), C_("Select by Pattern dialog: tooltips: case sensitive checkbox", "If enabled, letter case must match the pattern.\nExamp* would match Example.txt and not example.txt"));
