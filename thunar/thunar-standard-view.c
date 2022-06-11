@@ -2380,6 +2380,7 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
 
   entry = gtk_entry_new ();
   gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
+  gtk_entry_set_width_chars (GTK_ENTRY (entry), 25);
   gtk_grid_attach_next_to (grid, entry, label, GTK_POS_RIGHT, 1, 1);
   gtk_widget_set_hexpand (entry, TRUE);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
