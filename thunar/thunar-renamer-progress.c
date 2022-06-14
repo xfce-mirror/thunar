@@ -55,9 +55,12 @@ struct _ThunarRenamerProgress
 
   GList       *pairs_done;
   guint        n_pairs_done;
+  GList       *pairs_failed;
+  guint        n_pairs_failed;
   GList       *pairs_todo;
   guint        n_pairs_todo;
   gboolean     pairs_undo;  /* whether we're undoing previous changes */
+  gboolean     last_run;    /* whether we're in the last run of renaming failed pairs */
 
   /* internal main loop for the _rename() method */
   guint        next_idle_id;
@@ -159,7 +162,7 @@ THUNAR_THREADS_ENTER
       _thunar_assert (g_list_length (renamer_progress->pairs_todo) == renamer_progress->n_pairs_todo);
 
       /* determine the done/todo items */
-      n_done = renamer_progress->n_pairs_done + 1;
+      n_done = renamer_progress->n_pairs_done + renamer_progress->n_pairs_failed + 1;
       n_total = n_done + renamer_progress->n_pairs_todo;
 
       /* update the progress bar text */
@@ -175,78 +178,91 @@ THUNAR_THREADS_ENTER
       /* try to rename the file */
       if (!thunar_file_rename (pair->file, pair->name, NULL, FALSE, &error))
         {
-          /* determine the toplevel widget */
-          toplevel = (GtkWindow *) gtk_widget_get_toplevel (GTK_WIDGET (renamer_progress));
-
-          /* tell the user that we failed */
-          message = gtk_message_dialog_new (toplevel,
-                                            GTK_DIALOG_DESTROY_WITH_PARENT
-                                            | GTK_DIALOG_MODAL,
-                                            GTK_MESSAGE_ERROR,
-                                            GTK_BUTTONS_NONE,
-                                            _("Failed to rename \"%s\" to \"%s\"."),
-                                            oldname, pair->name);
-
-          /* check if we should provide undo */
-          if (!renamer_progress->pairs_undo && renamer_progress->pairs_done != NULL)
+          /* Check if it is the last run */
+          if (renamer_progress->last_run)
             {
-              gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message),
-                                                        _("You can either choose to skip this file and continue to rename the "
-                                                          "remaining files, or revert the previously renamed files to their "
-                                                          "previous names, or cancel the operation without reverting previous "
-                                                          "changes."));
-              gtk_dialog_add_button (GTK_DIALOG (message), _("_Cancel"), GTK_RESPONSE_CANCEL);
-              gtk_dialog_add_button (GTK_DIALOG (message), _("_Revert Changes"), GTK_RESPONSE_REJECT);
-              gtk_dialog_add_button (GTK_DIALOG (message), _("_Skip This File"), GTK_RESPONSE_ACCEPT);
-              gtk_dialog_set_default_response (GTK_DIALOG (message), GTK_RESPONSE_ACCEPT);
-            }
-          else if (renamer_progress->pairs_todo != NULL)
-            {
-              gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message),
-                                                        _("Do you want to skip this file and continue to rename the "
-                                                          "remaining files?"));
-              gtk_dialog_add_button (GTK_DIALOG (message), _("_Cancel"), GTK_RESPONSE_CANCEL);
-              gtk_dialog_add_button (GTK_DIALOG (message), _("_Skip This File"), GTK_RESPONSE_ACCEPT);
-              gtk_dialog_set_default_response (GTK_DIALOG (message), GTK_RESPONSE_ACCEPT);
+              /* determine the toplevel widget */
+              toplevel = (GtkWindow *) gtk_widget_get_toplevel (GTK_WIDGET (renamer_progress));
+
+              /* tell the user that we failed */
+              message = gtk_message_dialog_new (toplevel,
+                                                GTK_DIALOG_DESTROY_WITH_PARENT
+                                                | GTK_DIALOG_MODAL,
+                                                GTK_MESSAGE_ERROR,
+                                                GTK_BUTTONS_NONE,
+                                                _("Failed to rename \"%s\" to \"%s\"."),
+                                                oldname, pair->name);
+
+              /* check if we should provide undo */
+              if (!renamer_progress->pairs_undo && renamer_progress->pairs_done != NULL)
+                {
+                  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message),
+                                                            _("You can either choose to skip this file and continue to rename the "
+                                                              "remaining files, or revert the previously renamed files to their "
+                                                              "previous names, or cancel the operation without reverting previous "
+                                                              "changes."));
+                  gtk_dialog_add_button (GTK_DIALOG (message), _("_Cancel"), GTK_RESPONSE_CANCEL);
+                  gtk_dialog_add_button (GTK_DIALOG (message), _("_Revert Changes"), GTK_RESPONSE_REJECT);
+                  gtk_dialog_add_button (GTK_DIALOG (message), _("_Skip This File"), GTK_RESPONSE_ACCEPT);
+                  gtk_dialog_set_default_response (GTK_DIALOG (message), GTK_RESPONSE_ACCEPT);
+                }
+              else if (renamer_progress->pairs_todo != NULL)
+                {
+                  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message),
+                                                            _("Do you want to skip this file and continue to rename the "
+                                                              "remaining files?"));
+                  gtk_dialog_add_button (GTK_DIALOG (message), _("_Cancel"), GTK_RESPONSE_CANCEL);
+                  gtk_dialog_add_button (GTK_DIALOG (message), _("_Skip This File"), GTK_RESPONSE_ACCEPT);
+                  gtk_dialog_set_default_response (GTK_DIALOG (message), GTK_RESPONSE_ACCEPT);
+                }
+              else
+                {
+                  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s.", error->message);
+                  gtk_dialog_add_button (GTK_DIALOG (message), _("_Close"), GTK_RESPONSE_CANCEL);
+                }
+
+              /* run the dialog */
+              response = gtk_dialog_run (GTK_DIALOG (message));
+              if (response == GTK_RESPONSE_REJECT)
+                {
+                  /* undo previous changes */
+                  renamer_progress->pairs_undo = TRUE;
+
+                  /* release the todo pairs and use the done as todo */
+                  thunar_renamer_pair_list_free (renamer_progress->pairs_todo);
+                  renamer_progress->pairs_todo = renamer_progress->pairs_done;
+                  renamer_progress->pairs_done = NULL;
+
+                  renamer_progress->n_pairs_done = 0;
+                  renamer_progress->n_pairs_todo = g_list_length (renamer_progress->pairs_todo);
+                }
+              else if (response != GTK_RESPONSE_ACCEPT)
+                {
+                  /* canceled, just exit the main loop */
+                  g_main_loop_quit (renamer_progress->next_idle_loop);
+                }
+
+              /* release the pair */
+              thunar_renamer_pair_free (pair);
+
+              /* destroy the dialog */
+              gtk_widget_destroy (message);
+
+              /* clear the error */
+              g_clear_error (&error);
+
+              /* release old name */
+              g_free (oldname);
             }
           else
             {
-              gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s.", error->message);
-              gtk_dialog_add_button (GTK_DIALOG (message), _("_Close"), GTK_RESPONSE_CANCEL);
+              /* add pair to the list of failed pairs */
+              renamer_progress->pairs_failed = g_list_prepend (renamer_progress->pairs_failed, pair);
+
+              /* update counter */
+              renamer_progress->n_pairs_failed++;
+              _thunar_assert (g_list_length (renamer_progress->pairs_failed) == renamer_progress->n_pairs_failed);
             }
-
-          /* run the dialog */
-          response = gtk_dialog_run (GTK_DIALOG (message));
-          if (response == GTK_RESPONSE_REJECT)
-            {
-              /* undo previous changes */
-              renamer_progress->pairs_undo = TRUE;
-
-              /* release the todo pairs and use the done as todo */
-              thunar_renamer_pair_list_free (renamer_progress->pairs_todo);
-              renamer_progress->pairs_todo = renamer_progress->pairs_done;
-              renamer_progress->pairs_done = NULL;
-
-              renamer_progress->n_pairs_done = 0;
-              renamer_progress->n_pairs_todo = g_list_length (renamer_progress->pairs_todo);
-            }
-          else if (response != GTK_RESPONSE_ACCEPT)
-            {
-              /* canceled, just exit the main loop */
-              g_main_loop_quit (renamer_progress->next_idle_loop);
-            }
-
-          /* release the pair */
-          thunar_renamer_pair_free (pair);
-
-          /* destroy the dialog */
-          gtk_widget_destroy (message);
-
-          /* clear the error */
-          g_clear_error (&error);
-
-          /* release old name */
-          g_free (oldname);
         }
       else
         {
@@ -262,6 +278,7 @@ THUNAR_THREADS_ENTER
           _thunar_assert (g_list_length (renamer_progress->pairs_done) == renamer_progress->n_pairs_done);
         }
     }
+    g_print("Left: %u :: Done: %u :: Failed: %u=%u\n", renamer_progress->n_pairs_todo, renamer_progress->n_pairs_done, renamer_progress->n_pairs_failed, g_list_length (renamer_progress->pairs_failed));
 
   /* be sure to cancel the internal loop once we're done */
   if (G_UNLIKELY (renamer_progress->pairs_todo == NULL))
@@ -348,6 +365,7 @@ void
 thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
                              GList                 *pairs)
 {
+  GList *temp_pairs;
   _thunar_return_if_fail (THUNAR_IS_RENAMER_PROGRESS (renamer_progress));
 
   /* make sure we're not already renaming */
@@ -359,16 +377,29 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
   g_object_ref (G_OBJECT (renamer_progress));
 
   /* make sure to release the list of completed items first */
+  g_print("Free Done\n");
   thunar_renamer_pair_list_free (renamer_progress->pairs_done);
   renamer_progress->pairs_done = NULL;
   renamer_progress->n_pairs_done = 0;
 
+  /* make sure to release the list of failed items first */
+  g_print("Free Failed\n");
+  thunar_renamer_pair_list_free (renamer_progress->pairs_failed);
+  renamer_progress->pairs_failed = NULL;
+  renamer_progress->n_pairs_failed = 0;
+
+  /* initialize the first run on all given pairs */
+  if (renamer_progress->last_run != TRUE)
+    renamer_progress->last_run = FALSE;
+
   /* set the pairs on the todo list */
+  g_print("Copy Todo\n");
   thunar_renamer_pair_list_free (renamer_progress->pairs_todo);
   renamer_progress->pairs_todo = thunar_renamer_pair_list_copy (pairs);
   renamer_progress->n_pairs_todo = g_list_length (renamer_progress->pairs_todo);
 
   /* schedule the idle source */
+  g_print("Run renamer\n");
   renamer_progress->next_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_renamer_progress_next_idle,
                                                     renamer_progress, thunar_renamer_progress_next_idle_destroy);
 
@@ -389,6 +420,15 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
   /* release the list of todo items */
   thunar_renamer_pair_list_free (renamer_progress->pairs_todo);
   renamer_progress->pairs_todo = NULL;
+
+  /* rename the failed pairs after sorting */
+  if (renamer_progress->n_pairs_failed != 0)
+    {
+      temp_pairs = thunar_renamer_pair_list_copy (renamer_progress->pairs_failed);
+      temp_pairs = g_list_sort (temp_pairs, thunar_renamer_pair_comparator_asc);
+      renamer_progress->last_run = TRUE;
+      thunar_renamer_progress_run (renamer_progress, temp_pairs);
+    }
 
   /* release the additional reference on the progress */
   g_object_unref (G_OBJECT (renamer_progress));
