@@ -55,9 +55,12 @@ struct _ThunarRenamerProgress
 
   GList       *pairs_done;
   guint        n_pairs_done;
+  GList       *pairs_failed;
+  guint        n_pairs_failed;
   GList       *pairs_todo;
   guint        n_pairs_todo;
   gboolean     pairs_undo;  /* whether we're undoing previous changes */
+  gboolean     last_run;    /* whether we're in the last run of renaming failed pairs */
 
   /* internal main loop for the _rename() method */
   guint        next_idle_id;
