@@ -43,6 +43,7 @@ void               thunar_renamer_pair_free       (gpointer           data);
 
 GList             *thunar_renamer_pair_list_copy  (GList             *renamer_pair_list) G_GNUC_MALLOC;
 void               thunar_renamer_pair_list_free  (GList             *renamer_pair_list);
+int                thunar_renamer_pair_comparator_asc (const void *pair_a, const void *pair_b);
 
 G_END_DECLS;
 
