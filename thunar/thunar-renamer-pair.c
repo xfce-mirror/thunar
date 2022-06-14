@@ -161,3 +161,21 @@ thunar_renamer_pair_list_free (GList *renamer_pair_list)
 }
 
 
+
+/**
+ * thunar_renamer_pair_comparator_asc
+ * @pair_a : first pair
+ * @pair_b : second apir
+ * 
+ * Based on GCompareFunc
+ * This function can be used as a comparator to sort a #Glist of
+ * #ThunarRenamerPair in ascending order of their name.
+ **/
+int
+thunar_renamer_pair_comparator_asc (const void *pair_a, const void *pair_b)
+{
+  ThunarRenamerPair *a, *b;
+  a = (ThunarRenamerPair *) pair_a;
+  b = (ThunarRenamerPair *) pair_b; 
+  return g_strcmp0 (a->name, b->name);
+}
