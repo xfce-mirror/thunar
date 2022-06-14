@@ -928,6 +928,29 @@ thunar_application_launch (ThunarApplication *application,
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
 
+#ifndef NDEBUG
+  g_print ("DEBUG\n"
+           "-----\n");
+
+  g_print ("Source files\n"
+           "------------\n");
+  GList *source_ptr = source_file_list;
+  while (source_ptr)
+    {
+      g_print ("\t%s\n", g_file_get_uri ((GFile *) source_ptr->data));
+      source_ptr = source_ptr->next;
+    }
+
+  g_print ("Target files\n"
+           "------------\n");
+  GList *target_ptr = target_file_list;
+  while (target_ptr)
+    {
+      g_print ("\t%s\n", g_file_get_uri ((GFile *) target_ptr->data));
+      target_ptr = target_ptr->next;
+    }
+#endif
+
   /* parse the parent pointer */
   screen = thunar_util_parse_parent (parent, NULL);
 
