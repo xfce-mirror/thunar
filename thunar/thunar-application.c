@@ -933,23 +933,22 @@ thunar_application_launch (ThunarApplication *application,
   g_print ("DEBUG\n"
            "-----\n");
 
-  g_print ("Source files\n"
-           "------------\n");
-  GList *source_ptr = source_file_list;
-  while (source_ptr)
-    {
-      g_print ("\t%s\n", g_file_get_uri ((GFile *) source_ptr->data));
-      source_ptr = source_ptr->next;
-    }
+  ThunarJobOperation *op =
+    g_object_new (THUNAR_TYPE_JOB_OPERATION,
+                  "operation-type", "dummy",
+                  "source-file-list", source_file_list,
+                  "target-file-list", target_file_list,
+                  NULL);
 
-  g_print ("Target files\n"
-           "------------\n");
-  GList *target_ptr = target_file_list;
-  while (target_ptr)
-    {
-      g_print ("\t%s\n", g_file_get_uri ((GFile *) target_ptr->data));
-      target_ptr = target_ptr->next;
-    }
+  g_print("ThunarJobOperation object initialized\n"
+          "-------------------------------------\n");
+
+  GValue val = G_VALUE_INIT;
+  g_value_init (&val, G_TYPE_STRING);
+  g_object_get_property (G_OBJECT (op), "operation-type", &val);
+  g_print("operation-type: %s\n", g_value_get_string (&val));
+
+  g_free (op);
 #endif
 
   /* parse the parent pointer */
