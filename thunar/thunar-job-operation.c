@@ -35,4 +35,7 @@ thunar_job_operation_class_init (ThunarJobOperationClass *klass)
 static void
 thunar_job_operation_init (ThunarJobOperation *self)
 {
+  self->type = NONE;
+  self->source_file_list = NULL;
+  self->target_file_list = NULL;
 }

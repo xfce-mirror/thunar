@@ -29,6 +29,7 @@ G_END_DECLS
 typedef enum _ThunarJobType ThunarJobType;
 enum _ThunarJobType
 {
+  NONE,
   COPY,
   MOVE,
   RENAME,
