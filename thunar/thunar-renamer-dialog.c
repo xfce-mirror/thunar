@@ -757,7 +757,7 @@ static void
 thunar_renamer_dialog_response (GtkDialog *dialog,
                                 gint       response)
 {
-  ThunarRenamerDialog *renamer_dialog = THUNAR_RENAMER_DIALOG (dialog);
+  ThunarRenamerDialog *renamer_dialog = THUNAR_RENAMER_DIALOG (dialog);         
   GtkTreeIter          iter;
   ThunarFile          *file;
   GList               *pair_list = NULL;
@@ -803,6 +803,7 @@ thunar_renamer_dialog_response (GtkDialog *dialog,
         }
 
       /* perform the rename (returns when done) */
+      g_print("\n\n\n");
       thunar_renamer_progress_run (THUNAR_RENAMER_PROGRESS (renamer_dialog->progress), pair_list);
 
       /* hide the rename progress bar */
