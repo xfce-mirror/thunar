@@ -26,15 +26,4 @@ G_DECLARE_FINAL_TYPE (ThunarJobOperation, thunar_job_operation, THUNAR, JOB_OPER
 
 G_END_DECLS
 
-typedef enum _ThunarJobType ThunarJobType;
-enum _ThunarJobType
-{
-  NONE,
-  COPY,
-  MOVE,
-  RENAME,
-  RESTORE,
-  TRASH
-};
-
 #endif /* __THUNAR_JOB_OPERATION_H__ */

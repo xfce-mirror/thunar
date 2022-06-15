@@ -16,26 +16,59 @@
 
 #include <thunar/thunar-job-operation.h>
 
+/* Job operation properties */
+enum
+{
+  PROP_0,
+  PROP_OPERATION_TYPE,
+  N_PROPERTIES,
+};
+
 struct _ThunarJobOperation
 {
   GObject __parent__;
 
-  ThunarJobType  type;
+  /* DOUBT:
+   * Should these also be object properties instead of internal members? */
   GList         *source_file_list;
   GList         *target_file_list;
 };
 
 G_DEFINE_TYPE (ThunarJobOperation, thunar_job_operation, G_TYPE_OBJECT)
 
+static GParamSpec *job_operation_props[N_PROPERTIES] = { NULL, };
+
 static void
 thunar_job_operation_class_init (ThunarJobOperationClass *klass)
 {
+  GObjectClass *gobject_class;
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  /* gobject_class->get_property = thunar_job_operation_get_property; */
+  /* gobject_class->set_property = thunar_job_operation_get_property; */
+
+  /**
+   * ThunarJobOperation:operation-type:
+   *
+   * The type of the operation performed.
+   */
+  job_operation_props[PROP_OPERATION_TYPE] =
+    g_param_spec_string ("operation-type",
+                         "Operation type",
+                         "The type of the operation performed.",
+                         NULL,
+                         G_PARAM_CONSTRUCT_ONLY | G_PARAM_READABLE);
+  /* DOUBT:
+   * Ahould this be an enum instead of a string? Since we want it to be limited
+   * to a specific set of values.
+   * Raises question about where to put the enum definition, and what it should be named.
+   * */
+
 }
 
 static void
 thunar_job_operation_init (ThunarJobOperation *self)
 {
-  self->type = NONE;
   self->source_file_list = NULL;
   self->target_file_list = NULL;
 }
