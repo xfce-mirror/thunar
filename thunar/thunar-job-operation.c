@@ -21,6 +21,8 @@ enum
 {
   PROP_0,
   PROP_OPERATION_TYPE,
+  PROP_SOURCE_FILE_LIST,
+  PROP_TARGET_FILE_LIST,
   N_PROPERTIES,
 };
 
@@ -74,6 +76,28 @@ thunar_job_operation_class_init (ThunarJobOperationClass *klass)
    * Raises question about where to put the enum definition, and what it should be named.
    * */
 
+  /**
+   * ThunarJobOperation:source-file-list:
+   *
+   * Pointer to the GList containing the source files involved in the operation.
+   */
+  job_operation_props[PROP_SOURCE_FILE_LIST] =
+    g_param_spec_pointer ("source-file-list",
+                          "Source file list",
+                          "Pointer to the GList containing the source files involved in the operation.",
+                          G_PARAM_CONSTRUCT_ONLY | G_PARAM_READABLE);
+
+  /**
+   * ThunarJobOperation:target-file-list:
+   *
+   * Pointer to the GList containing the target files involved in the operation.
+   */
+  job_operation_props[PROP_TARGET_FILE_LIST] =
+    g_param_spec_pointer ("target-file-list",
+                          "Target file list",
+                          "Pointer to the GList containing the target files involved in the operation.",
+                          G_PARAM_CONSTRUCT_ONLY | G_PARAM_READABLE);
+
   g_object_class_install_properties (gobject_class, N_PROPERTIES, job_operation_props);
 }
 
@@ -104,6 +128,14 @@ thunar_job_operation_get_property (GObject    *object,
       g_value_set_string (value, self->operation_type);
       break;
 
+    case PROP_SOURCE_FILE_LIST:
+      g_value_set_pointer (value, self->source_file_list);
+      break;
+
+    case PROP_TARGET_FILE_LIST:
+      g_value_set_pointer (value, self->target_file_list);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -123,6 +155,16 @@ thunar_job_operation_set_property  (GObject      *object,
       case PROP_OPERATION_TYPE:
         g_free (self->operation_type);
         self->operation_type = g_value_dup_string (value);
+        break;
+
+      case PROP_SOURCE_FILE_LIST:
+        g_free (self->source_file_list);
+        self->source_file_list = g_value_get_pointer (value);
+        break;
+
+      case PROP_TARGET_FILE_LIST:
+        g_free (self->target_file_list);
+        self->target_file_list = g_value_get_pointer (value);
         break;
   
       default:
