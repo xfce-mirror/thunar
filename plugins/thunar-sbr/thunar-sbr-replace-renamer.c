@@ -454,9 +454,9 @@ thunar_sbr_replace_renamer_pcre_exec (ThunarSbrReplaceRenamer *replace_renamer,
   gint        *ovec;
   gint         olen;
   gint         rc;
+  gint         index_match;
   gint         offset = 0;
   gint         first_index_after_match = 0;
-  gint         index_match;
 
   /* guess an initial ovec size */
   olen = (replace_renamer->pcre_capture_count + 10) * 3;
