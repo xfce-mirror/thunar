@@ -456,6 +456,7 @@ thunar_sbr_replace_renamer_pcre_exec (ThunarSbrReplaceRenamer *replace_renamer,
   gint         rc;
   gint         offset = 0;
   gint         first_index_after_match = 0;
+  gint         index_match;
 
   /* guess an initial ovec size */
   olen = (replace_renamer->pcre_capture_count + 10) * 3;
@@ -465,18 +466,19 @@ thunar_sbr_replace_renamer_pcre_exec (ThunarSbrReplaceRenamer *replace_renamer,
   result = g_string_sized_new (32);
 
   /* go through string */
-  while ((size_t)offset < strlen (subject))
+  while ((size_t) offset < strlen (subject))
   {
     /* if rc <= 0 we dont have more match */
-    rc = pcre_exec(replace_renamer->pcre_pattern, NULL, subject, strlen (subject), offset, PCRE_NOTEMPTY, ovec, olen);
+    rc = pcre_exec (replace_renamer->pcre_pattern, NULL, subject, strlen (subject), offset, PCRE_NOTEMPTY, ovec, olen);
     if (rc <= 0)
-	    break;
+      break;
 
-    /* append text between match, ovec[0] is first match index */
-    for (gint j = first_index_after_match; j < ovec[0]; j++)
+    index_match = ovec[0];
+
+    /* append text between match */
+    for (gint j = first_index_after_match; j < index_match; j++)
 	  {
-	    gchar w[2] = {subject[j], 0};
-	    g_string_append (result, w);
+      g_string_append_c (result, subject[j]);
 	  }
 
     /* over[1] first index after match */
@@ -549,14 +551,13 @@ thunar_sbr_replace_renamer_pcre_exec (ThunarSbrReplaceRenamer *replace_renamer,
 	      g_string_append_unichar (result, g_utf8_get_char (r));
 	    }
 	  }
-      offset = ovec[1];
+      offset = first_index_after_match;
   }
 
   /* append rest of subject string */
   for (size_t i = first_index_after_match; i < strlen (subject); i++)
     {
-      gchar w[2] = {subject[i], 0};
-      g_string_append (result, w);
+      g_string_append_c (result, subject[i]);
     }
 
   /* release the output vector */
