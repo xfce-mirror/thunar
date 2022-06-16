@@ -929,7 +929,7 @@ thunar_application_launch (ThunarApplication *application,
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
 
-#ifndef NDEBUG
+#if 0
   g_print ("DEBUG\n"
            "-----\n");
 
@@ -947,8 +947,6 @@ thunar_application_launch (ThunarApplication *application,
   g_value_init (&val, G_TYPE_STRING);
   g_object_get_property (G_OBJECT (op), "operation-type", &val);
   g_print("operation-type: %s\n", g_value_get_string (&val));
-
-  g_free (op);
 #endif
 
   /* parse the parent pointer */
