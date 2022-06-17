@@ -5726,12 +5726,21 @@ static void
 thunar_window_location_toolbar_add_ucas (ThunarWindow *window)
 {
   ThunarxProviderFactory *provider_factory;
+  ThunarFile             *home_folder;
+  GFile                  *home_gfile;
   GList                  *providers;
   GList                  *thunarx_menu_items = NULL;
   GList                  *lp_provider;
   GList                  *lp_item;
   GList                  *toolbar_container_children;
   guint                   item_count;
+
+  /* determine the file for the home directory */
+  home_gfile = thunar_g_file_new_for_home ();
+  home_folder = thunar_file_get (home_gfile, NULL);
+  g_object_unref (home_gfile);
+  if (home_folder == NULL)
+    return;
 
   /* get number of items in the toolbar */
   toolbar_container_children = gtk_container_get_children (GTK_CONTAINER (window->location_toolbar));
@@ -5748,7 +5757,8 @@ thunar_window_location_toolbar_add_ucas (ThunarWindow *window)
       /* load the menu items offered by the menu providers */
       for (lp_provider = providers; lp_provider != NULL; lp_provider = lp_provider->next)
         {
-          thunarx_menu_items = thunarx_menu_provider_get_folder_menu_items (lp_provider->data, GTK_WIDGET (window), THUNARX_FILE_INFO (thunar_file_get (thunar_g_file_new_for_home (), NULL)));
+          thunarx_menu_items = thunarx_menu_provider_get_folder_menu_items (lp_provider->data, GTK_WIDGET (window),
+                                                                            THUNARX_FILE_INFO (home_folder));
 
           for (lp_item = thunarx_menu_items; lp_item != NULL; lp_item = lp_item->next)
             {
@@ -5779,8 +5789,11 @@ thunar_window_location_toolbar_add_ucas (ThunarWindow *window)
 
           g_list_free_full (thunarx_menu_items, g_object_unref);
         }
+
       g_list_free_full (providers, g_object_unref);
     }
+
+  g_object_unref (home_folder);
 }
 
 
