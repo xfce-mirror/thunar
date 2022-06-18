@@ -51,6 +51,7 @@
 #include <thunar/thunar-gdk-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-io-jobs.h>
+#include <thunar/thunar-job-operation.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-progress-dialog.h>
@@ -927,6 +928,26 @@ thunar_application_launch (ThunarApplication *application,
   gboolean   has_jobs;
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+
+#if 0
+  g_print ("DEBUG\n"
+           "-----\n");
+
+  ThunarJobOperation *op =
+    g_object_new (THUNAR_TYPE_JOB_OPERATION,
+                  "operation-type", "dummy",
+                  "source-file-list", source_file_list,
+                  "target-file-list", target_file_list,
+                  NULL);
+
+  g_print("ThunarJobOperation object initialized\n"
+          "-------------------------------------\n");
+
+  GValue val = G_VALUE_INIT;
+  g_value_init (&val, G_TYPE_STRING);
+  g_object_get_property (G_OBJECT (op), "operation-type", &val);
+  g_print("operation-type: %s\n", g_value_get_string (&val));
+#endif
 
   /* parse the parent pointer */
   screen = thunar_util_parse_parent (parent, NULL);

@@ -36,6 +36,7 @@
 #include <thunar/thunar-io-jobs.h>
 #include <thunar/thunar-io-jobs-util.h>
 #include <thunar/thunar-job.h>
+#include <thunar/thunar-job-operation.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-simple-job.h>
 #include <thunar/thunar-thumbnail-cache.h>
@@ -287,6 +288,54 @@ ThunarJob *
 thunar_io_jobs_create_files (GList *file_list,
                              GFile *template_file)
 {
+
+#ifndef NDEBUG
+  g_print ("DEBUG\n"
+           "-----\n");
+
+  ThunarJobOperation *op =
+    g_object_new (THUNAR_TYPE_JOB_OPERATION,
+                  "operation-type", "create",
+                  "source-file-list", NULL,
+                  "target-file-list", file_list,
+                  NULL);
+
+  g_print("ThunarJobOperation object initialized\n"
+          "-------------------------------------\n");
+
+  GValue val = G_VALUE_INIT;
+  g_value_init (&val, G_TYPE_STRING);
+  g_object_get_property (G_OBJECT (op), "operation-type", &val);
+  g_print("operation-type: %s\n", g_value_get_string (&val));
+
+  GFile *cur_file;
+  int n;
+
+  GValue valp = G_VALUE_INIT;
+  g_value_init (&valp, G_TYPE_POINTER);
+  g_object_get_property (G_OBJECT (op), "source-file-list", &valp);
+  GList *source_file_list = g_value_get_pointer (&valp);
+  n = g_list_length (source_file_list);
+
+  for (int i = 0; i < n; i++)
+    {
+      cur_file = source_file_list->data;
+      g_print ("source %d: %s\n", i, g_file_get_uri (cur_file));
+      source_file_list = source_file_list->next;
+    }
+
+  g_object_get_property (G_OBJECT (op), "target-file-list", &valp);
+  GList *target_file_list = g_value_get_pointer (&valp);
+  n = g_list_length (target_file_list);
+
+  for (int i = 0; i < n; i++)
+    {
+      cur_file = target_file_list->data;
+      g_print ("target %d: %s\n", i, g_file_get_uri (cur_file));
+      target_file_list = target_file_list->next;
+    }
+#endif
+
   return thunar_simple_job_new (_thunar_io_jobs_create, 2,
                                 THUNAR_TYPE_G_FILE_LIST, file_list,
                                 G_TYPE_FILE, template_file);
@@ -425,6 +474,54 @@ _thunar_io_jobs_mkdir (ThunarJob  *job,
 ThunarJob *
 thunar_io_jobs_make_directories (GList *file_list)
 {
+
+#ifndef NDEBUG
+  g_print ("DEBUG\n"
+           "-----\n");
+
+  ThunarJobOperation *op =
+    g_object_new (THUNAR_TYPE_JOB_OPERATION,
+                  "operation-type", "create",
+                  "source-file-list", NULL,
+                  "target-file-list", file_list,
+                  NULL);
+
+  g_print("ThunarJobOperation object initialized\n"
+          "-------------------------------------\n");
+
+  GValue val = G_VALUE_INIT;
+  g_value_init (&val, G_TYPE_STRING);
+  g_object_get_property (G_OBJECT (op), "operation-type", &val);
+  g_print("operation-type: %s\n", g_value_get_string (&val));
+
+  GFile *cur_file;
+  int n;
+
+  GValue valp = G_VALUE_INIT;
+  g_value_init (&valp, G_TYPE_POINTER);
+  g_object_get_property (G_OBJECT (op), "source-file-list", &valp);
+  GList *source_file_list = g_value_get_pointer (&valp);
+  n = g_list_length (source_file_list);
+
+  for (int i = 0; i < n; i++)
+    {
+      cur_file = source_file_list->data;
+      g_print ("source %d: %s\n", i, g_file_get_uri (cur_file));
+      source_file_list = source_file_list->next;
+    }
+
+  g_object_get_property (G_OBJECT (op), "target-file-list", &valp);
+  GList *target_file_list = g_value_get_pointer (&valp);
+  n = g_list_length (target_file_list);
+
+  for (int i = 0; i < n; i++)
+    {
+      cur_file = target_file_list->data;
+      g_print ("target %d: %s\n", i, g_file_get_uri (cur_file));
+      target_file_list = target_file_list->next;
+    }
+#endif
+
   return thunar_simple_job_new (_thunar_io_jobs_mkdir, 1,
                                 THUNAR_TYPE_G_FILE_LIST, file_list);
 }
@@ -574,6 +671,54 @@ ThunarJob *
 thunar_io_jobs_move_files (GList *source_file_list,
                            GList *target_file_list)
 {
+
+#ifndef NDEBUG
+  g_print ("DEBUG\n"
+           "-----\n");
+
+  ThunarJobOperation *op =
+    g_object_new (THUNAR_TYPE_JOB_OPERATION,
+                  "operation-type", "move",
+                  "source-file-list", source_file_list,
+                  "target-file-list", target_file_list,
+                  NULL);
+
+  g_print("ThunarJobOperation object initialized\n"
+          "-------------------------------------\n");
+
+  GValue val = G_VALUE_INIT;
+  g_value_init (&val, G_TYPE_STRING);
+  g_object_get_property (G_OBJECT (op), "operation-type", &val);
+  g_print("operation-type: %s\n", g_value_get_string (&val));
+
+  GFile *cur_file;
+  int n;
+
+  GValue valp = G_VALUE_INIT;
+  g_value_init (&valp, G_TYPE_POINTER);
+  g_object_get_property (G_OBJECT (op), "source-file-list", &valp);
+  GList *sfl = g_value_get_pointer (&valp);
+  n = g_list_length (sfl);
+
+  for (int i = 0; i < n; i++)
+    {
+      cur_file = sfl->data;
+      g_print ("source %d: %s\n", i, g_file_get_uri (cur_file));
+      sfl = sfl->next;
+    }
+
+  g_object_get_property (G_OBJECT (op), "target-file-list", &valp);
+  GList *tfl = g_value_get_pointer (&valp);
+  n = g_list_length (tfl);
+
+  for (int i = 0; i < n; i++)
+    {
+      cur_file = tfl->data;
+      g_print ("target %d: %s\n", i, g_file_get_uri (cur_file));
+      tfl = tfl->next;
+    }
+#endif
+
   ThunarJob *job;
 
   _thunar_return_val_if_fail (source_file_list != NULL, NULL);
@@ -593,6 +738,54 @@ ThunarJob *
 thunar_io_jobs_copy_files (GList *source_file_list,
                            GList *target_file_list)
 {
+
+#ifndef NDEBUG
+  g_print ("DEBUG\n"
+           "-----\n");
+
+  ThunarJobOperation *op =
+    g_object_new (THUNAR_TYPE_JOB_OPERATION,
+                  "operation-type", "copy",
+                  "source-file-list", source_file_list,
+                  "target-file-list", target_file_list,
+                  NULL);
+
+  g_print("ThunarJobOperation object initialized\n"
+          "-------------------------------------\n");
+
+  GValue val = G_VALUE_INIT;
+  g_value_init (&val, G_TYPE_STRING);
+  g_object_get_property (G_OBJECT (op), "operation-type", &val);
+  g_print("operation-type: %s\n", g_value_get_string (&val));
+
+  GFile *cur_file;
+  int n;
+
+  GValue valp = G_VALUE_INIT;
+  g_value_init (&valp, G_TYPE_POINTER);
+  g_object_get_property (G_OBJECT (op), "source-file-list", &valp);
+  GList *sfl = g_value_get_pointer (&valp);
+  n = g_list_length (sfl);
+
+  for (int i = 0; i < n; i++)
+    {
+      cur_file = sfl->data;
+      g_print ("source %d: %s\n", i, g_file_get_uri (cur_file));
+      sfl = sfl->next;
+    }
+
+  g_object_get_property (G_OBJECT (op), "target-file-list", &valp);
+  GList *tfl = g_value_get_pointer (&valp);
+  n = g_list_length (tfl);
+
+  for (int i = 0; i < n; i++)
+    {
+      cur_file = tfl->data;
+      g_print ("target %d: %s\n", i, g_file_get_uri (cur_file));
+      tfl = tfl->next;
+    }
+#endif
+
   ThunarJob *job;
 
   _thunar_return_val_if_fail (source_file_list != NULL, NULL);
@@ -877,6 +1070,53 @@ _thunar_io_jobs_trash (ThunarJob  *job,
 ThunarJob *
 thunar_io_jobs_trash_files (GList *file_list)
 {
+
+#ifndef NDEBUG
+g_print ("DEBUG\n"
+         "-----\n");
+
+ThunarJobOperation *op =
+  g_object_new (THUNAR_TYPE_JOB_OPERATION,
+                "operation-type", "trash",
+                "source-file-list", file_list,
+                "target-file-list", NULL,
+                NULL);
+
+g_print("ThunarJobOperation object initialized\n"
+        "-------------------------------------\n");
+
+GValue val = G_VALUE_INIT;
+g_value_init (&val, G_TYPE_STRING);
+g_object_get_property (G_OBJECT (op), "operation-type", &val);
+g_print("operation-type: %s\n", g_value_get_string (&val));
+
+GFile *cur_file;
+int n;
+
+GValue valp = G_VALUE_INIT;
+g_value_init (&valp, G_TYPE_POINTER);
+g_object_get_property (G_OBJECT (op), "source-file-list", &valp);
+GList *source_file_list = g_value_get_pointer (&valp);
+n = g_list_length (source_file_list);
+
+for (int i = 0; i < n; i++)
+  {
+    cur_file = source_file_list->data;
+    g_print ("source %d: %s\n", i, g_file_get_uri (cur_file));
+    source_file_list = source_file_list->next;
+  }
+
+g_object_get_property (G_OBJECT (op), "target-file-list", &valp);
+GList *target_file_list = g_value_get_pointer (&valp);
+n = g_list_length (target_file_list);
+
+for (int i = 0; i < n; i++)
+  {
+    cur_file = target_file_list->data;
+    g_print ("target %d: %s\n", i, g_file_get_uri (cur_file));
+    target_file_list = target_file_list->next;
+  }
+#endif
   _thunar_return_val_if_fail (file_list != NULL, NULL);
 
   return thunar_simple_job_new (_thunar_io_jobs_trash, 1,
@@ -889,6 +1129,54 @@ ThunarJob *
 thunar_io_jobs_restore_files (GList *source_file_list,
                               GList *target_file_list)
 {
+
+#ifndef NDEBUG
+  g_print ("DEBUG\n"
+           "-----\n");
+
+  ThunarJobOperation *op =
+    g_object_new (THUNAR_TYPE_JOB_OPERATION,
+                  "operation-type", "restore",
+                  "source-file-list", source_file_list,
+                  "target-file-list", target_file_list,
+                  NULL);
+
+  g_print("ThunarJobOperation object initialized\n"
+          "-------------------------------------\n");
+
+  GValue val = G_VALUE_INIT;
+  g_value_init (&val, G_TYPE_STRING);
+  g_object_get_property (G_OBJECT (op), "operation-type", &val);
+  g_print("operation-type: %s\n", g_value_get_string (&val));
+
+  GFile *cur_file;
+  int n;
+
+  GValue valp = G_VALUE_INIT;
+  g_value_init (&valp, G_TYPE_POINTER);
+  g_object_get_property (G_OBJECT (op), "source-file-list", &valp);
+  GList *sfl = g_value_get_pointer (&valp);
+  n = g_list_length (sfl);
+
+  for (int i = 0; i < n; i++)
+    {
+      cur_file = sfl->data;
+      g_print ("source %d: %s\n", i, g_file_get_uri (cur_file));
+      sfl = sfl->next;
+    }
+
+  g_object_get_property (G_OBJECT (op), "target-file-list", &valp);
+  GList *tfl = g_value_get_pointer (&valp);
+  n = g_list_length (tfl);
+
+  for (int i = 0; i < n; i++)
+    {
+      cur_file = tfl->data;
+      g_print ("target %d: %s\n", i, g_file_get_uri (cur_file));
+      tfl = tfl->next;
+    }
+#endif
+
   ThunarJob *job;
 
   _thunar_return_val_if_fail (source_file_list != NULL, NULL);
@@ -1339,6 +1627,13 @@ ThunarJob *
 thunar_io_jobs_rename_file (ThunarFile  *file,
                             const gchar *display_name)
 {
+
+#ifndef NDEBUG
+  /* TODO
+   * Figure out what to do for this function since it does not align with all
+   * the other functions in the system. */
+#endif
+
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (g_utf8_validate (display_name, -1, NULL), NULL);
 
