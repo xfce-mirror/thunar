@@ -24,6 +24,12 @@ G_BEGIN_DECLS
 #define THUNAR_TYPE_JOB_OPERATION (thunar_job_operation_get_type ())
 G_DECLARE_FINAL_TYPE (ThunarJobOperation, thunar_job_operation, THUNAR, JOB_OPERATION, GObject)
 
+void           thunar_job_operation_register          (const gchar *operation_type,
+                                                       GList *source_file_list,
+                                                       GList *target_file_list);
+
+GList         *thunar_job_operation_get_current_list  ();
+
 G_END_DECLS
 
 #endif /* __THUNAR_JOB_OPERATION_H__ */
