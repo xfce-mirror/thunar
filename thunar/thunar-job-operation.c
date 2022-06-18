@@ -14,6 +14,7 @@
  * this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <thunar/thunar-application.h>
 #include <thunar/thunar-job-operation.h>
 
 /* Job operation properties */
@@ -26,15 +27,15 @@ enum
   N_PROPERTIES,
 };
 
-static void     thunar_job_operation_finalize           (GObject          *object);
-static void     thunar_job_operation_get_property       (GObject          *object,
-                                                         guint             prop_id,
-                                                         GValue           *value,
-                                                         GParamSpec       *pspec);
-static void     thunar_job_operation_set_property       (GObject          *object,
-                                                         guint             prop_id,
-                                                         const GValue     *value,
-                                                         GParamSpec       *pspec);
+static void             thunar_job_operation_finalize           (GObject          *object);
+static void             thunar_job_operation_get_property       (GObject          *object,
+                                                                 guint             prop_id,
+                                                                 GValue           *value,
+                                                                 GParamSpec       *pspec);
+static void             thunar_job_operation_set_property       (GObject          *object,
+                                                                 guint             prop_id,
+                                                                 const GValue     *value,
+                                                                 GParamSpec       *pspec);
 
 struct _ThunarJobOperation
 {
@@ -70,10 +71,8 @@ thunar_job_operation_class_init (ThunarJobOperationClass *klass)
                          "The type of the operation performed.",
                          NULL,
                          G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
-  /* DOUBT:
-   * Should this be an enum instead of a string? Since we want it to be limited
-   * to a specific set of values.
-   * Raises question about where to put the enum definition, and what it should be named.
+  /* TODO:
+   * Change to enum from string
    * */
 
   /**
@@ -173,3 +172,45 @@ thunar_job_operation_set_property  (GObject      *object,
         break;
       }
   }
+
+void
+thunar_job_operation_register (const gchar *operation_type,
+                               GList       *source_file_list,
+                               GList       *target_file_list)
+{
+  ThunarApplication     *application;
+  ThunarJobOperation    *operation;
+  GList                 *operation_list;
+
+  for (GList *elem = source_file_list; elem; elem = elem->next)
+    g_assert (G_IS_FILE (elem->data));
+
+  for (GList *elem = target_file_list; elem; elem = elem->next)
+    g_assert (G_IS_FILE (elem->data));
+
+  application = thunar_application_get ();
+
+  operation = g_object_new (THUNAR_TYPE_JOB_OPERATION,
+                            "operation-type", operation_type,
+                            "source-file-list", source_file_list,
+                            "target-file-list", target_file_list,
+                            NULL);
+
+  /* Returns NULL for an unkown key , which is itself a valid empty list. */
+  operation_list = g_object_get_data (G_OBJECT (application), "thunar-job-operation-list");
+  operation_list = g_list_prepend (operation_list, operation);
+
+  g_object_set_data (G_OBJECT (application), "thunar-job-operation-list", operation_list);
+}
+
+GList *
+thunar_job_operation_get_current_list ()
+{
+  ThunarApplication     *application;
+  GList                 *operation_list;
+
+  application = thunar_application_get ();
+  operation_list = g_object_get_data (G_OBJECT (application), "thunar-job-operation-list");
+
+  return operation_list;
+}
