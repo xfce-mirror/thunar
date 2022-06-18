@@ -2090,18 +2090,25 @@ thunar_application_copy_into (ThunarApplication *application,
                               GFile             *target_file,
                               GClosure          *new_files_closure)
 {
-  GVolume *volume         = NULL;
-  gchar   *display_name   = NULL;
-  gchar   *title          = NULL;
-  gchar   *volume_name    = NULL;
-  gchar   *volume_uuid    = NULL;
-  gboolean use_display_name;
+  ThunarFile *target_folder;
+  GVolume    *volume         = NULL;
+  gchar      *display_name   = NULL;
+  gchar      *title          = NULL;
+  gchar      *volume_name    = NULL;
+  gchar      *volume_uuid    = NULL;
+  gboolean    use_display_name;
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   _thunar_return_if_fail (G_IS_FILE (target_file));
 
-  volume = thunar_file_get_volume (thunar_file_get_for_uri (g_file_get_uri (target_file), NULL));
+  target_folder = thunar_file_get (target_file , NULL);
+  if (target_folder != NULL)
+    {
+      volume = thunar_file_get_volume (target_folder);
+      g_object_unref (target_folder);
+    }
+
   if (volume != NULL)
     {
       volume_name = g_volume_get_name (volume);
