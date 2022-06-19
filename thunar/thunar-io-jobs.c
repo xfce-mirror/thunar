@@ -613,9 +613,9 @@ thunar_io_jobs_copy_files (GList *source_file_list,
 
       GValue val = G_VALUE_INIT;
       g_value_init (&val, G_TYPE_STRING);
-      g_object_get_property (G_OBJECT (op), "operation-type", &val);
+      g_object_get_property (G_OBJECT (op), "operation-kind", &val);
 
-      g_print ("%d - operation type: %s\n", index, g_value_get_string (&val));
+      g_print ("%d - operation kind: %s\n", index, g_value_get_string (&val));
 
       GValue vals = G_VALUE_INIT;
       g_value_init (&vals, G_TYPE_POINTER);
