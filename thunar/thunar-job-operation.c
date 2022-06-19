@@ -21,7 +21,7 @@
 enum
 {
   PROP_0,
-  PROP_OPERATION_TYPE,
+  PROP_OPERATION_KIND,
   PROP_SOURCE_FILE_LIST,
   PROP_TARGET_FILE_LIST,
   N_PROPERTIES,
@@ -41,7 +41,7 @@ struct _ThunarJobOperation
 {
   GObject __parent__;
 
-  gchar *operation_type;
+  gchar *operation_kind;
   GList *source_file_list;
   GList *target_file_list;
 };
@@ -61,14 +61,14 @@ thunar_job_operation_class_init (ThunarJobOperationClass *klass)
   gobject_class->set_property = thunar_job_operation_set_property;
 
   /**
-   * ThunarJobOperation:operation-type:
+   * ThunarJobOperation:operation-kind:
    *
-   * The type of the operation performed.
+   * The kind of the operation performed.
    */
-  job_operation_props[PROP_OPERATION_TYPE] =
-    g_param_spec_string ("operation-type",
-                         "Operation type",
-                         "The type of the operation performed.",
+  job_operation_props[PROP_OPERATION_KIND] =
+    g_param_spec_string ("operation-kind",
+                         "Operation kind",
+                         "The kind of the operation performed.",
                          NULL,
                          G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
   /* TODO:
@@ -103,7 +103,7 @@ thunar_job_operation_class_init (ThunarJobOperationClass *klass)
 static void
 thunar_job_operation_init (ThunarJobOperation *self)
 {
-  self->operation_type = NULL;
+  self->operation_kind = NULL;
   self->source_file_list = NULL;
   self->target_file_list = NULL;
 }
@@ -124,8 +124,8 @@ thunar_job_operation_get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_OPERATION_TYPE:
-      g_value_set_string (value, self->operation_type);
+    case PROP_OPERATION_KIND:
+      g_value_set_string (value, self->operation_kind);
       break;
 
     case PROP_SOURCE_FILE_LIST:
@@ -152,9 +152,9 @@ thunar_job_operation_set_property  (GObject      *object,
   
     switch (prop_id)
       {
-      case PROP_OPERATION_TYPE:
-        g_free (self->operation_type);
-        self->operation_type = g_value_dup_string (value);
+      case PROP_OPERATION_KIND:
+        g_free (self->operation_kind);
+        self->operation_kind = g_value_dup_string (value);
         break;
 
       case PROP_SOURCE_FILE_LIST:
@@ -174,7 +174,7 @@ thunar_job_operation_set_property  (GObject      *object,
   }
 
 void
-thunar_job_operation_register (const gchar *operation_type,
+thunar_job_operation_register (const gchar *operation_kind,
                                GList       *source_file_list,
                                GList       *target_file_list)
 {
@@ -191,7 +191,7 @@ thunar_job_operation_register (const gchar *operation_type,
   application = thunar_application_get ();
 
   operation = g_object_new (THUNAR_TYPE_JOB_OPERATION,
-                            "operation-type", operation_type,
+                            "operation-kind", operation_kind,
                             "source-file-list", source_file_list,
                             "target-file-list", target_file_list,
                             NULL);
