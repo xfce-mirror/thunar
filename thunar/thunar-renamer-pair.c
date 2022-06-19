@@ -172,7 +172,7 @@ thunar_renamer_pair_list_free (GList *renamer_pair_list)
  * #ThunarRenamerPair in ascending order of their name.
  **/
 int
-thunar_renamer_pair_comparator_asc (const void *pair_a, const void *pair_b)
+thunar_renamer_pair_comparator_ascending (const void *pair_a, const void *pair_b)
 {
   ThunarRenamerPair *a, *b;
   ThunarFile *file_a, *file_b;
@@ -195,7 +195,7 @@ thunar_renamer_pair_comparator_asc (const void *pair_a, const void *pair_b)
  * #ThunarRenamerPair in descending order of their name.
  **/
 int
-thunar_renamer_pair_comparator_desc (const void *pair_a, const void *pair_b)
+thunar_renamer_pair_comparator_descending (const void *pair_a, const void *pair_b)
 {
   ThunarRenamerPair *a, *b;
   ThunarFile *file_a, *file_b;
