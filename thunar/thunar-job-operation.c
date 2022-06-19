@@ -41,7 +41,7 @@ struct _ThunarJobOperation
 {
   GObject __parent__;
 
-  gchar *operation_kind;
+  ThunarJobOperationKind operation_kind;
   GList *source_file_list;
   GList *target_file_list;
 };
@@ -66,11 +66,12 @@ thunar_job_operation_class_init (ThunarJobOperationClass *klass)
    * The kind of the operation performed.
    */
   job_operation_props[PROP_OPERATION_KIND] =
-    g_param_spec_string ("operation-kind",
-                         "Operation kind",
-                         "The kind of the operation performed.",
-                         NULL,
-                         G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
+    g_param_spec_enum ("operation-kind",
+                       "Operation kind",
+                       "The kind of the operation performed.",
+                       THUNAR_TYPE_JOB_OPERATION_KIND,
+                       THUNAR_JOB_OPERATION_KIND_COPY,
+                       G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
   /* TODO:
    * Change to enum from string
    * */
@@ -103,7 +104,7 @@ thunar_job_operation_class_init (ThunarJobOperationClass *klass)
 static void
 thunar_job_operation_init (ThunarJobOperation *self)
 {
-  self->operation_kind = NULL;
+  self->operation_kind = THUNAR_JOB_OPERATION_KIND_COPY;
   self->source_file_list = NULL;
   self->target_file_list = NULL;
 }
@@ -125,7 +126,7 @@ thunar_job_operation_get_property (GObject    *object,
   switch (prop_id)
     {
     case PROP_OPERATION_KIND:
-      g_value_set_string (value, self->operation_kind);
+      g_value_set_enum (value, self->operation_kind);
       break;
 
     case PROP_SOURCE_FILE_LIST:
@@ -153,8 +154,7 @@ thunar_job_operation_set_property  (GObject      *object,
     switch (prop_id)
       {
       case PROP_OPERATION_KIND:
-        g_free (self->operation_kind);
-        self->operation_kind = g_value_dup_string (value);
+        self->operation_kind = g_value_get_enum (value);
         break;
 
       case PROP_SOURCE_FILE_LIST:
@@ -174,9 +174,9 @@ thunar_job_operation_set_property  (GObject      *object,
   }
 
 void
-thunar_job_operation_register (const gchar *operation_kind,
-                               GList       *source_file_list,
-                               GList       *target_file_list)
+thunar_job_operation_register (ThunarJobOperationKind operation_kind,
+                               GList                 *source_file_list,
+                               GList                 *target_file_list)
 {
   ThunarApplication     *application;
   ThunarJobOperation    *operation;

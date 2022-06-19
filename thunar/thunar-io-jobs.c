@@ -597,7 +597,7 @@ thunar_io_jobs_copy_files (GList *source_file_list,
 {
 
 #ifndef NDEBUG /* temporary testing code */
-  thunar_job_operation_register ("copy", source_file_list, target_file_list);
+  thunar_job_operation_register (THUNAR_JOB_OPERATION_KIND_COPY, source_file_list, target_file_list);
   g_print ("Registered thunar operation.\n");
 
   GList *list;
@@ -612,10 +612,10 @@ thunar_io_jobs_copy_files (GList *source_file_list,
       g_assert (THUNAR_IS_JOB_OPERATION (op));
 
       GValue val = G_VALUE_INIT;
-      g_value_init (&val, G_TYPE_STRING);
+      g_value_init (&val, G_TYPE_ENUM);
       g_object_get_property (G_OBJECT (op), "operation-kind", &val);
 
-      g_print ("%d - operation kind: %s\n", index, g_value_get_string (&val));
+      g_print ("%d - operation kind: %s\n", index, g_enum_to_string (THUNAR_TYPE_JOB_OPERATION_KIND, g_value_get_enum (&val)));
 
       GValue vals = G_VALUE_INIT;
       g_value_init (&vals, G_TYPE_POINTER);
