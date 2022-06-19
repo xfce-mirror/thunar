@@ -43,7 +43,7 @@ static void     thunar_renamer_progress_next_idle_destroy (gpointer             
 static void     thunar_renamer_progress_run_helper        (ThunarRenamerProgress *renamer_progress,
                                                            GList                 *pairs);
 static void     thunar_renamer_progress_run_error_dialog  (ThunarRenamerProgress *renamer_progress,
-                                                           ThunarRenamerPair     *pair)
+                                                           ThunarRenamerPair     *pair);
 
 
 
@@ -272,15 +272,12 @@ THUNAR_THREADS_ENTER
             {
               thunar_renamer_progress_run_error_dialog (renamer_progress, pair);
             }
-          else
-            {
-              /* add pair to the list of failed pairs */
-              renamer_progress->pairs_failed = g_list_prepend (renamer_progress->pairs_failed, pair);
+            /* add pair to the list of failed pairs */
+            renamer_progress->pairs_failed = g_list_prepend (renamer_progress->pairs_failed, pair);
 
-              /* update counter */
-              renamer_progress->n_pairs_failed++;
-              _thunar_assert (g_list_length (renamer_progress->pairs_failed) == renamer_progress->n_pairs_failed);
-            }
+            /* update counter */
+            renamer_progress->n_pairs_failed++;
+            _thunar_assert (g_list_length (renamer_progress->pairs_failed) == renamer_progress->n_pairs_failed);
         }
       else
         {
