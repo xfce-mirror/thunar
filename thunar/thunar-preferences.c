@@ -1113,10 +1113,10 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    **/
   preferences_props[PROP_MISC_COLOR_TAGS] =
       g_param_spec_boolean ("misc-color-tags",
-                        "MiscColorTags",
-                        NULL,
-                        TRUE,
-                        EXO_PARAM_READWRITE);
+                            "MiscColorTags",
+                            NULL,
+                            TRUE,
+                            EXO_PARAM_READWRITE);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);

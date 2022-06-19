@@ -3354,17 +3354,38 @@ thunar_launcher_get_action_entries (void)
 static gboolean
 thunar_launcher_action_choose_tag_color (ThunarLauncher *launcher)
 {
-  GtkWidget *toplevel;
-  GtkWidget *dialog;
+  GtkWidget   *toplevel;
+  GtkWidget   *dialog;
+  gint         result;
+  GdkRGBA      rgba;
+  gchar       *color;
+  const gchar *def_color = thunar_file_get_metadata_setting (THUNAR_FILE (launcher->files_to_process->data), "highlight-color");
 
   _thunar_return_val_if_fail (THUNAR_IS_LAUNCHER (launcher), FALSE);
 
   toplevel = gtk_widget_get_toplevel (launcher->widget);
   if (G_LIKELY (toplevel != NULL))
     {
-      dialog = gtk_color_chooser_dialog_new ("Choose Tag Color", GTK_WINDOW (toplevel));
-
-      gtk_widget_show (dialog);
+      dialog = gtk_color_chooser_dialog_new ("Choose Highlight Color", GTK_WINDOW (toplevel));
+      gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+      if (G_UNLIKELY (def_color != NULL))
+        {
+          gdk_rgba_parse (&rgba, def_color);
+          gtk_color_chooser_set_rgba (GTK_COLOR_CHOOSER (dialog), &rgba);
+        }
+      result = gtk_dialog_run (GTK_DIALOG (dialog));
+      switch (result)
+        {
+        case GTK_RESPONSE_CANCEL:
+          break;
+        default:
+          gtk_color_chooser_get_rgba (GTK_COLOR_CHOOSER (dialog), &rgba);
+          color = gdk_rgba_to_string (&rgba);
+          thunar_file_set_metadata_setting (THUNAR_FILE (launcher->files_to_process->data), "tagcolor", color, TRUE);
+          g_free (color);
+          break;
+        }
+      gtk_widget_destroy (GTK_WIDGET (dialog));
     }
 
   return TRUE;
