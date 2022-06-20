@@ -3388,9 +3388,11 @@ thunar_action_manager_action_set_hlcolor (ThunarActionManager *action_mgr)
   hlcolor = thunar_file_get_metadata_setting (THUNAR_FILE (action_mgr->files_to_process->data), "highlight-color");
 
   dialog = gtk_color_chooser_dialog_new ("Select Highlight Color", GTK_WINDOW (action_mgr->widget));
-  gdk_rgba_parse (&rgba, hlcolor);
-  gtk_color_chooser_set_rgba (GTK_COLOR_CHOOSER (dialog), &rgba);
   gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+  if (G_UNLIKELY (hlcolor != NULL)) {
+      gdk_rgba_parse (&rgba, hlcolor);
+      gtk_color_chooser_set_rgba (GTK_COLOR_CHOOSER (dialog), &rgba);
+    }
 
   result = gtk_dialog_run (GTK_DIALOG (dialog));
   switch (result)
