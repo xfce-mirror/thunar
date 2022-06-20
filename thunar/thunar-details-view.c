@@ -1168,8 +1168,19 @@ thunar_tree_view_cell_layout_data_func (GtkCellLayout          *layout,
 {
   ThunarFile  *file ;
   const gchar *color;
+  GFileInfo   *info;
+  GError      *error;
 
   file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
-  color = thunar_file_get_metadata_setting (file, "highlight-color");
+  /* HACK: */
+  /* seems to me that refreshing the view clears the info,
+   * hence get_metadata_setting returns at the no null check for info */
+  // color = thunar_file_get_metadata_setting (file, "highlight-color");
+  info = g_file_query_info (thunar_file_get_file (file),
+                            "metadata::*",
+                             G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                             NULL, &error);
+  color = g_file_info_get_attribute_string (info, "metadata::thunar-highlight-color");
   g_object_set (G_OBJECT (cell), "background", color, NULL);
+  g_object_unref (file);
 }
