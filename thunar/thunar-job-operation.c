@@ -173,6 +173,13 @@ thunar_job_operation_set_property  (GObject      *object,
       }
   }
 
+static gpointer
+file_list_deep_copy (gconstpointer src,
+                     gpointer data)
+{
+  return (gpointer) g_file_dup (G_FILE (src));
+}
+
 void
 thunar_job_operation_register (ThunarJobOperationKind operation_kind,
                                GList                 *source_file_list,
@@ -181,33 +188,23 @@ thunar_job_operation_register (ThunarJobOperationKind operation_kind,
   ThunarApplication     *application;
   ThunarJobOperation    *operation;
   GList                 *operation_list;
+  GList                 *source_file_list_copy;
+  GList                 *target_file_list_copy;
 
-#ifndef NDEBUG /*temporary testing code */
-  g_print ("thunar_job_operation_register\n"
-           "-----------------------------\n");
-  /* g_print ("source_file_list base glist pointer address: %p\n", source_file_list); */
   for (GList *elem = source_file_list; elem; elem = elem->next)
-  {
     g_assert (G_IS_FILE (elem->data));
-    g_print ("source file pointer address: %p\n", elem->data);
-  }
 
-  /* g_print ("target_file_list base glist pointer address: %p\n", target_file_list); */
   for (GList *elem = target_file_list; elem; elem = elem->next)
-  {
     g_assert (G_IS_FILE (elem->data));
-    g_print ("target file pointer address: %p\n", elem->data);
-  }
-
-  g_print ("------------------------------\n");
-#endif
 
   application = thunar_application_get ();
+  source_file_list_copy = g_list_copy_deep (source_file_list, file_list_deep_copy, NULL);
+  target_file_list_copy = g_list_copy_deep (target_file_list, file_list_deep_copy, NULL);
 
   operation = g_object_new (THUNAR_TYPE_JOB_OPERATION,
                             "operation-kind", operation_kind,
-                            "source-file-list", source_file_list,
-                            "target-file-list", target_file_list,
+                            "source-file-list", source_file_list_copy,
+                            "target-file-list", target_file_list_copy,
                             NULL);
 
   /* Returns NULL for an unknown key , which is itself a valid empty list. */

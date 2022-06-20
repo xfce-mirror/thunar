@@ -627,13 +627,11 @@ thunar_io_jobs_copy_files (GList *source_file_list,
       g_value_init (&vals, G_TYPE_POINTER);
       g_object_get_property (G_OBJECT (op), "source-file-list", &vals);
       GList *sfi = g_value_get_pointer (&vals);
-      /* g_print("sfi base glist pointer address: %p\n", sfi); */
 
       gint i = 0;
       for (GList *elem_i = sfi; elem_i; elem_i = elem_i->next) 
       {
         g_assert (elem_i->data != NULL);
-        g_print ("sfi pointer address: %p\n", elem_i->data);
         g_assert (G_IS_FILE (elem_i->data));
         g_print ("\tsource file %d: %s\n", i++, g_file_get_uri (elem_i->data));
       }
@@ -642,13 +640,11 @@ thunar_io_jobs_copy_files (GList *source_file_list,
       g_value_init (&valt, G_TYPE_POINTER);
       g_object_get_property (G_OBJECT (op), "target-file-list", &valt);
       GList *tfi = g_value_get_pointer (&valt);
-      /* g_print("tfi base glist pointer address: %p\n", tfi); */
 
       gint j = 0;
       for (GList *elem_j = tfi; elem_j; elem_j = elem_j->next)
       {
         g_assert (elem_j->data != NULL);
-        g_print ("tfi pointer address: %p\n", elem_j->data);
         g_assert (G_IS_FILE (elem_j->data));
         g_print ("\ttarget file %d: %s\n", j++, g_file_get_uri (elem_j->data));
       }
