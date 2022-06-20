@@ -182,11 +182,25 @@ thunar_job_operation_register (ThunarJobOperationKind operation_kind,
   ThunarJobOperation    *operation;
   GList                 *operation_list;
 
+#ifndef NDEBUG /*temporary testing code */
+  g_print ("thunar_job_operation_register\n"
+           "-----------------------------\n");
+  /* g_print ("source_file_list base glist pointer address: %p\n", source_file_list); */
   for (GList *elem = source_file_list; elem; elem = elem->next)
+  {
     g_assert (G_IS_FILE (elem->data));
+    g_print ("source file pointer address: %p\n", elem->data);
+  }
 
+  /* g_print ("target_file_list base glist pointer address: %p\n", target_file_list); */
   for (GList *elem = target_file_list; elem; elem = elem->next)
+  {
     g_assert (G_IS_FILE (elem->data));
+    g_print ("target file pointer address: %p\n", elem->data);
+  }
+
+  g_print ("------------------------------\n");
+#endif
 
   application = thunar_application_get ();
 
@@ -196,7 +210,7 @@ thunar_job_operation_register (ThunarJobOperationKind operation_kind,
                             "target-file-list", target_file_list,
                             NULL);
 
-  /* Returns NULL for an unkown key , which is itself a valid empty list. */
+  /* Returns NULL for an unknown key , which is itself a valid empty list. */
   operation_list = g_object_get_data (G_OBJECT (application), "thunar-job-operation-list");
   operation_list = g_list_prepend (operation_list, operation);
 
