@@ -680,4 +680,5 @@ thunar_abstract_icon_view_cell_layout_data_func (GtkCellLayout   *layout,
   color = g_file_info_get_attribute_string (info, "metadata::thunar-highlight-color");
   g_object_set (G_OBJECT (cell), "background", color, NULL);
   g_object_unref (file);
+  g_object_unref (info);
 }
