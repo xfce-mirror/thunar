@@ -597,6 +597,12 @@ thunar_io_jobs_copy_files (GList *source_file_list,
 {
 
 #ifndef NDEBUG /* temporary testing code */
+  for (GList *elem = source_file_list; elem; elem = elem->next) 
+      g_assert (G_IS_FILE (elem->data));
+
+  for (GList *elem = target_file_list; elem; elem = elem->next) 
+      g_assert (G_IS_FILE (elem->data));
+
   thunar_job_operation_register (THUNAR_JOB_OPERATION_KIND_COPY, source_file_list, target_file_list);
   g_print ("Registered thunar operation.\n");
 
@@ -615,16 +621,19 @@ thunar_io_jobs_copy_files (GList *source_file_list,
       g_value_init (&val, G_TYPE_ENUM);
       g_object_get_property (G_OBJECT (op), "operation-kind", &val);
 
-      g_print ("%d - operation kind: %s\n", index, g_enum_to_string (THUNAR_TYPE_JOB_OPERATION_KIND, g_value_get_enum (&val)));
+      g_print ("%d - operation kind: %s\n", index++, g_enum_to_string (THUNAR_TYPE_JOB_OPERATION_KIND, g_value_get_enum (&val)));
 
       GValue vals = G_VALUE_INIT;
       g_value_init (&vals, G_TYPE_POINTER);
       g_object_get_property (G_OBJECT (op), "source-file-list", &vals);
       GList *sfi = g_value_get_pointer (&vals);
+      /* g_print("sfi base glist pointer address: %p\n", sfi); */
 
       gint i = 0;
       for (GList *elem_i = sfi; elem_i; elem_i = elem_i->next) 
       {
+        g_assert (elem_i->data != NULL);
+        g_print ("sfi pointer address: %p\n", elem_i->data);
         g_assert (G_IS_FILE (elem_i->data));
         g_print ("\tsource file %d: %s\n", i++, g_file_get_uri (elem_i->data));
       }
@@ -633,10 +642,13 @@ thunar_io_jobs_copy_files (GList *source_file_list,
       g_value_init (&valt, G_TYPE_POINTER);
       g_object_get_property (G_OBJECT (op), "target-file-list", &valt);
       GList *tfi = g_value_get_pointer (&valt);
+      /* g_print("tfi base glist pointer address: %p\n", tfi); */
 
       gint j = 0;
       for (GList *elem_j = tfi; elem_j; elem_j = elem_j->next)
       {
+        g_assert (elem_j->data != NULL);
+        g_print ("tfi pointer address: %p\n", elem_j->data);
         g_assert (G_IS_FILE (elem_j->data));
         g_print ("\ttarget file %d: %s\n", j++, g_file_get_uri (elem_j->data));
       }
