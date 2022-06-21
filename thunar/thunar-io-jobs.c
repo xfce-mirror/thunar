@@ -36,6 +36,7 @@
 #include <thunar/thunar-io-jobs.h>
 #include <thunar/thunar-io-jobs-util.h>
 #include <thunar/thunar-job.h>
+#include <thunar/thunar-job-operation.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-simple-job.h>
 #include <thunar/thunar-thumbnail-cache.h>
@@ -287,6 +288,7 @@ ThunarJob *
 thunar_io_jobs_create_files (GList *file_list,
                              GFile *template_file)
 {
+
   return thunar_simple_job_new (_thunar_io_jobs_create, 2,
                                 THUNAR_TYPE_G_FILE_LIST, file_list,
                                 G_TYPE_FILE, template_file);
@@ -593,6 +595,63 @@ ThunarJob *
 thunar_io_jobs_copy_files (GList *source_file_list,
                            GList *target_file_list)
 {
+
+#ifndef NDEBUG /* temporary testing code */
+  for (GList *elem = source_file_list; elem; elem = elem->next) 
+      g_assert (G_IS_FILE (elem->data));
+
+  for (GList *elem = target_file_list; elem; elem = elem->next) 
+      g_assert (G_IS_FILE (elem->data));
+
+  thunar_job_operation_register (THUNAR_JOB_OPERATION_KIND_COPY, source_file_list, target_file_list);
+  g_print ("Registered thunar operation.\n");
+
+  GList *list;
+  list = thunar_job_operation_get_current_list ();
+
+  g_print ("Current history list (length %d):\n", g_list_length (list));
+
+  gint index = 0;
+  for (GList *elem = list; elem; elem = elem->next)
+    {
+      ThunarJobOperation *op = elem->data;
+      g_assert (THUNAR_IS_JOB_OPERATION (op));
+
+      GValue val = G_VALUE_INIT;
+      g_value_init (&val, G_TYPE_ENUM);
+      g_object_get_property (G_OBJECT (op), "operation-kind", &val);
+
+      g_print ("%d - operation kind: %s\n", index++, g_enum_to_string (THUNAR_TYPE_JOB_OPERATION_KIND, g_value_get_enum (&val)));
+
+      GValue vals = G_VALUE_INIT;
+      g_value_init (&vals, G_TYPE_POINTER);
+      g_object_get_property (G_OBJECT (op), "source-file-list", &vals);
+      GList *sfi = g_value_get_pointer (&vals);
+
+      gint i = 0;
+      for (GList *elem_i = sfi; elem_i; elem_i = elem_i->next) 
+      {
+        g_assert (elem_i->data != NULL);
+        g_assert (G_IS_FILE (elem_i->data));
+        g_print ("\tsource file %d: %s\n", i++, g_file_get_uri (elem_i->data));
+      }
+
+      GValue valt = G_VALUE_INIT;
+      g_value_init (&valt, G_TYPE_POINTER);
+      g_object_get_property (G_OBJECT (op), "target-file-list", &valt);
+      GList *tfi = g_value_get_pointer (&valt);
+
+      gint j = 0;
+      for (GList *elem_j = tfi; elem_j; elem_j = elem_j->next)
+      {
+        g_assert (elem_j->data != NULL);
+        g_assert (G_IS_FILE (elem_j->data));
+        g_print ("\ttarget file %d: %s\n", j++, g_file_get_uri (elem_j->data));
+      }
+    }
+
+#endif
+
   ThunarJob *job;
 
   _thunar_return_val_if_fail (source_file_list != NULL, NULL);
