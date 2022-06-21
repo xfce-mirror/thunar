@@ -770,16 +770,20 @@ thunar_tree_view_button_release_event (GtkWidget      *widget,
           ThunarFile *file  = thunar_tree_view_get_selected_file (view);
           GList      *files = NULL;
 
-          g_object_get (view->preferences, "misc-middle-click-in-tab", &in_tab, NULL);
+          if (file != NULL)
+            {
+              g_object_get (view->preferences, "misc-middle-click-in-tab", &in_tab, NULL);
 
-          /* holding ctrl inverts the action */
-          if ((event->state & GDK_CONTROL_MASK) != 0)
-            in_tab = !in_tab;
+              /* holding ctrl inverts the action */
+              if ((event->state & GDK_CONTROL_MASK) != 0)
+                in_tab = !in_tab;
 
-          files = g_list_append (files, file);
-          thunar_action_manager_set_selection (view->action_mgr, files, NULL, NULL);
-          thunar_action_manager_open_selected_folders (view->action_mgr, in_tab);
-          g_list_free (files);
+              files = g_list_append (files, file);
+              thunar_action_manager_set_selection (view->action_mgr, files, NULL, NULL);
+              thunar_action_manager_open_selected_folders (view->action_mgr, in_tab);
+              g_list_free (files);
+              g_object_unref (file);
+            }
 
           /* set the cursor back to the previously selected item */
           if (view->select_path != NULL)
@@ -1377,6 +1381,15 @@ thunar_tree_view_get_dest_actions (ThunarTreeView *view,
 
 
 
+/**
+ * thunar_tree_view_get_selected_file:
+ * @view : a #ThunarTreeView instance.
+ *
+ * Returns the selected #ThunarFile, or %NULL if no valid selection was found.
+ * The caller is responsible to call g_object_unref() on the #ThunarFile after usage.
+ *
+ * Return value: (nullable) (transfer full): The selected #ThunarFile or %NULL.
+ **/
 static ThunarFile*
 thunar_tree_view_get_selected_file (ThunarTreeView *view)
 {
