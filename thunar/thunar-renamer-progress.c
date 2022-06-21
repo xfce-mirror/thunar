@@ -468,6 +468,7 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
 
   /* Try to rename all the files for the first time */
   thunar_renamer_progress_run_helper (renamer_progress, pairs);
+  pairs = NULL;
 
   /* While renaming a file, the new name can match with an existing files name, which is yet to be renamed */
   /* By sorting them in ascending and descending sort, files causing such conflicts will be renamed first, and thus renamer can work */
