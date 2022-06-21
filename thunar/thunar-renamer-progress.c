@@ -24,6 +24,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-renamer-progress.h>
 #include <thunar/thunar-util.h>
+#include <unistd.h>
 
 
 
@@ -63,8 +64,11 @@ struct _ThunarRenamerProgress
   guint        n_pairs_failed;
   GList       *pairs_todo;
   guint        n_pairs_todo;
-  gboolean     show_dialog_on_error;  /* whether we should the dialog box on error */
+  gboolean     show_dialog_on_error;
   gboolean     pairs_undo;  /* whether we're undoing previous changes */
+
+  /* It is possible that a user cancels renamer while there are still some failed pairs and some runs remaining */
+  gboolean     cancel_all_remaining_runs;
 
   /* internal main loop for the _rename() method */
   guint        next_idle_id;
@@ -209,9 +213,6 @@ thunar_renamer_progress_run_error_dialog (ThunarRenamerProgress *renamer_progres
       g_main_loop_quit (renamer_progress->next_idle_loop);
     }
 
-  /* release the pair */
-  thunar_renamer_pair_free (pair);
-
   /* destroy the dialog */
   gtk_widget_destroy (message);
 
@@ -267,24 +268,22 @@ THUNAR_THREADS_ENTER
       /* try to rename the file */
       if (!thunar_file_rename (pair->file, pair->name, NULL, FALSE, &error))
         {
+          /* add pair to the list of failed pairs */
+          renamer_progress->pairs_failed = g_list_prepend (renamer_progress->pairs_failed, pair);
+
+          /* update counter */
+          renamer_progress->n_pairs_failed++;
+          _thunar_assert (g_list_length (renamer_progress->pairs_failed) == renamer_progress->n_pairs_failed);
           /* Check if error dialog box is to de displayed*/
           if (renamer_progress->show_dialog_on_error)
             {
               thunar_renamer_progress_run_error_dialog (renamer_progress, pair);
             }
-          else
-            {
-            /* add pair to the list of failed pairs */
-            renamer_progress->pairs_failed = g_list_prepend (renamer_progress->pairs_failed, pair);
-
-            /* update counter */
-            renamer_progress->n_pairs_failed++;
-            _thunar_assert (g_list_length (renamer_progress->pairs_failed) == renamer_progress->n_pairs_failed);
-            }
         }
       else
         {
           /* replace the newname with the oldname for the pair (-> undo) */
+
           g_free (pair->name);
           pair->name = oldname;
 
@@ -347,6 +346,8 @@ thunar_renamer_progress_cancel (ThunarRenamerProgress *renamer_progress)
   /* exit the internal main loop (if any) */
   if (G_UNLIKELY (renamer_progress->next_idle_loop != NULL))
     g_main_loop_quit (renamer_progress->next_idle_loop);
+
+  renamer_progress->cancel_all_remaining_runs = TRUE;
 }
 
 
@@ -451,6 +452,7 @@ thunar_renamer_progress_run_helper (ThunarRenamerProgress *renamer_progress,
  * ascending order and again tries to rename them. If still some pairs
  * are left then it sorts them in descending order and then tries to
  * rename them.
+ * Two tries on failed pairs are done so that the
  **/
 void
 thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
@@ -469,23 +471,26 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
   /* make sure to not show the error dialog box initially */
   renamer_progress->show_dialog_on_error = FALSE;
 
+  /* make sure that all runs will work */
+  renamer_progress->cancel_all_remaining_runs = FALSE;
+
   /* Try to rename all the files for the first time */
   g_print ("1st Run\n");
   thunar_renamer_progress_run_helper (renamer_progress, pairs);
 
-  /* Try to rename all the failed files  */
-  if (renamer_progress->n_pairs_failed != 0)
+  /* Try to rename all the failed files */
+  if (!renamer_progress->cancel_all_remaining_runs && renamer_progress->n_pairs_failed != 0)
     {
       GList *temp_pairs;
 
       g_print ("2nd Run\n");
       temp_pairs = thunar_renamer_pair_list_copy (renamer_progress->pairs_failed);
-      temp_pairs = g_list_sort (temp_pairs, thunar_renamer_pair_comparator_ascending);
+      temp_pairs = g_list_sort (temp_pairs, thunar_renamer_pair_compare_ascending);
       thunar_renamer_progress_run_helper (renamer_progress, temp_pairs);
     }
 
   /* Try to rename all the failed files */
-  if (renamer_progress->n_pairs_failed != 0)
+  if (!renamer_progress->cancel_all_remaining_runs && renamer_progress->n_pairs_failed != 0)
     {
       GList *temp_pairs;
 
@@ -493,9 +498,13 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
       renamer_progress->show_dialog_on_error = TRUE;
       g_print ("3rd Run\n");
       temp_pairs = thunar_renamer_pair_list_copy (renamer_progress->pairs_failed);
-      temp_pairs = g_list_sort (temp_pairs, thunar_renamer_pair_comparator_descending);
+      temp_pairs = g_list_sort (temp_pairs, thunar_renamer_pair_compare_descending);
       thunar_renamer_progress_run_helper (renamer_progress, temp_pairs);
     }
+
+  /* release the list of completed items */
+  thunar_renamer_pair_list_free (renamer_progress->pairs_failed);
+  renamer_progress->pairs_failed = NULL;
 
   /* release the additional reference on the progress */
   g_object_unref (G_OBJECT (renamer_progress));
