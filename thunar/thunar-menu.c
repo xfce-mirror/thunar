@@ -25,6 +25,7 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-window.h>
+#include <thunar/thunar-preferences.h>
 
 
 
@@ -246,9 +247,11 @@ gboolean
 thunar_menu_add_sections (ThunarMenu         *menu,
                           ThunarMenuSections  menu_sections)
 {
-  GtkWidget *window;
-  gboolean   item_added;
-  gboolean   force = menu->type == THUNAR_MENU_TYPE_WINDOW || menu->type == THUNAR_MENU_TYPE_CONTEXT_TREE_VIEW || menu->type == THUNAR_MENU_TYPE_CONTEXT_SHORTCUTS_VIEW;
+  ThunarPreferences *preferences;
+  GtkWidget         *window;
+  gboolean           item_added;
+  gboolean           show_hlcolor;
+  gboolean           force = menu->type == THUNAR_MENU_TYPE_WINDOW || menu->type == THUNAR_MENU_TYPE_CONTEXT_TREE_VIEW || menu->type == THUNAR_MENU_TYPE_CONTEXT_SHORTCUTS_VIEW;
 
   _thunar_return_val_if_fail (THUNAR_IS_MENU (menu), FALSE);
 
@@ -364,7 +367,14 @@ thunar_menu_add_sections (ThunarMenu         *menu,
     }
 
   if (menu_sections & THUNAR_MENU_SECTION_PROPERTIES)
+    {
       thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_PROPERTIES, FALSE);
+      preferences = thunar_preferences_get ();
+      g_object_get (G_OBJECT (preferences), "misc-highlight-color", &show_hlcolor, NULL);
+      if (show_hlcolor)
+        thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_HIGHLIGHT_COLOR, FALSE);
+      g_object_unref (preferences);
+    }
 
   return TRUE;
 }

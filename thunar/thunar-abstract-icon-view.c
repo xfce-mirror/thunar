@@ -79,6 +79,11 @@ static void         thunar_abstract_icon_view_item_activated          (ExoIconVi
                                                                        GtkTreePath                  *path,
                                                                        ThunarAbstractIconView       *abstract_icon_view);
 static void         thunar_abstract_icon_view_zoom_level_changed      (ThunarAbstractIconView       *abstract_icon_view);
+static void         thunar_abstract_icon_view_cell_layout_data_func   (GtkCellLayout                *layout,
+                                                                       GtkCellRenderer              *cell,
+                                                                       GtkTreeModel                 *model,
+                                                                       GtkTreeIter                  *iter,
+                                                                       gpointer                      data);
 
 
 
@@ -188,6 +193,9 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer, TRUE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer,
                                  "text", THUNAR_COLUMN_NAME);
+  gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer,
+                                      (GtkCellLayoutDataFunc) thunar_abstract_icon_view_cell_layout_data_func,
+                                      THUNAR_STANDARD_VIEW (abstract_icon_view)->preferences, NULL);
 
   /* update the icon view on size-allocate events */
   /* TODO: issue not reproducible anymore as of gtk 3.24.18
@@ -645,4 +653,26 @@ thunar_abstract_icon_view_zoom_level_changed (ThunarAbstractIconView *abstract_i
   gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (gtk_bin_get_child (GTK_BIN (abstract_icon_view))),
                                       THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer,
                                       NULL, NULL, NULL);
+}
+
+
+
+static void
+thunar_abstract_icon_view_cell_layout_data_func (GtkCellLayout   *layout,
+                                                 GtkCellRenderer *cell,
+                                                 GtkTreeModel    *model,
+                                                 GtkTreeIter     *iter,
+                                                 gpointer         data)
+{
+  ThunarFile  *file ;
+  const gchar *color = NULL;
+  gboolean     show_hlcolor;
+
+  g_object_get (G_OBJECT (data), "misc-highlight-color", &show_hlcolor, NULL);
+
+  file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
+  if (show_hlcolor)
+    color = thunar_file_get_metadata_setting (file, "highlight-color");
+  g_object_set (G_OBJECT (cell), "background", color, NULL);
+  g_object_unref (file);
 }
