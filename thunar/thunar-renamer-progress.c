@@ -295,7 +295,6 @@ THUNAR_THREADS_ENTER
           _thunar_assert (g_list_length (renamer_progress->pairs_renamed) == renamer_progress->n_pairs_renamed);
         }
     }
-    g_print("Left: %u :: Done: %u :: Failed: %u=%u\n", renamer_progress->n_pairs_todo, renamer_progress->n_pairs_renamed, renamer_progress->n_pairs_failed, g_list_length (renamer_progress->pairs_failed));
 
   /* be sure to cancel the internal loop once we're done */
   if (G_UNLIKELY (renamer_progress->pairs_todo == NULL))
@@ -393,25 +392,19 @@ thunar_renamer_progress_run_helper (ThunarRenamerProgress *renamer_progress,
     return;
 
   /* make sure to release the list of completed items first */
-  g_print("Free Done\n");
   thunar_renamer_pair_list_free (renamer_progress->pairs_renamed);
   renamer_progress->pairs_renamed = NULL;
   renamer_progress->n_pairs_renamed = 0;
 
   /* make sure to release the list of failed items first */
-  g_print("Free Failed\n");
   thunar_renamer_pair_list_free (renamer_progress->pairs_failed);
   renamer_progress->pairs_failed = NULL;
   renamer_progress->n_pairs_failed = 0;
 
   /* set the pairs on the todo list */
-  g_print("Copy Todo 1\n");
   thunar_renamer_pair_list_free (renamer_progress->pairs_todo);
-  g_print("Copy Todo 2: \n%d\n", g_list_length (pairs));
   renamer_progress->pairs_todo = thunar_renamer_pair_list_copy (pairs);
-  g_print("Copy Todo 3\n");
   renamer_progress->n_pairs_todo = g_list_length (renamer_progress->pairs_todo);
-  g_print("Copy Todo 4\n");
 
   /* schedule the idle source */
   renamer_progress->next_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_renamer_progress_next_idle,
@@ -474,7 +467,6 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
   renamer_progress->cancel_all_remaining_runs = FALSE;
 
   /* Try to rename all the files for the first time */
-  g_print ("1st Run\n");
   thunar_renamer_progress_run_helper (renamer_progress, pairs);
 
   /* While renaming a file, the new name can match with an existing files name, which is yet to be renamed */
@@ -483,8 +475,6 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
   if (!renamer_progress->cancel_all_remaining_runs && renamer_progress->n_pairs_failed != 0)
     {
       GList *temp_pairs;
-
-      g_print ("2nd Run\n");
       temp_pairs = thunar_renamer_pair_list_copy (renamer_progress->pairs_failed);
       temp_pairs = g_list_sort (temp_pairs, thunar_renamer_pair_compare_ascending);
       thunar_renamer_progress_run_helper (renamer_progress, temp_pairs);
@@ -494,10 +484,8 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
   if (!renamer_progress->cancel_all_remaining_runs && renamer_progress->n_pairs_failed != 0)
     {
       GList *temp_pairs;
-
       /* make sure to show the error dialog box */
       renamer_progress->show_dialog_on_error = TRUE;
-      g_print ("3rd Run\n");
       temp_pairs = thunar_renamer_pair_list_copy (renamer_progress->pairs_failed);
       temp_pairs = g_list_sort (temp_pairs, thunar_renamer_pair_compare_descending);
       thunar_renamer_progress_run_helper (renamer_progress, temp_pairs);

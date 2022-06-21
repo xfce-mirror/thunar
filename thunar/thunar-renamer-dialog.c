@@ -803,7 +803,6 @@ thunar_renamer_dialog_response (GtkDialog *dialog,
         }
 
       /* perform the rename (returns when done) */
-      g_print("\n\n\n");
       thunar_renamer_progress_run (THUNAR_RENAMER_PROGRESS (renamer_dialog->progress), pair_list);
 
       /* hide the rename progress bar */
