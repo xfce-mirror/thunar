@@ -99,6 +99,7 @@ enum
   TARGET_TEXT_URI_LIST,
   TARGET_XDND_DIRECT_SAVE0,
   TARGET_NETSCAPE_URL,
+  TARGET_APPLICATION_OCTET_STREAM,
 };
 
 
@@ -414,6 +415,7 @@ static const GtkTargetEntry drag_targets[] =
 static const GtkTargetEntry drop_targets[] =
 {
   { "text/uri-list", 0, TARGET_TEXT_URI_LIST, },
+  { "application/octet-stream", 0, TARGET_APPLICATION_OCTET_STREAM, },
   { "XdndDirectSave0", 0, TARGET_XDND_DIRECT_SAVE0, },
   { "_NETSCAPE_URL", 0, TARGET_NETSCAPE_URL, },
 };
@@ -3059,6 +3061,64 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
               g_strfreev (bits);
             }
         }
+      else if (info == TARGET_APPLICATION_OCTET_STREAM)
+        {
+          gchar *filename;
+          gchar *filepath = NULL;
+          const gchar *content;
+          gint length;
+          GFile *dest;
+          GFileOutputStream *out;
+
+          /* determine filename */
+          if (gdk_property_get (gdk_drag_context_get_source_window (context),
+                                gdk_atom_intern ("XdndDirectSave0", FALSE),
+                                gdk_atom_intern ("text/plain", FALSE), 0, 1024,
+                                FALSE, NULL, NULL, &length,
+                                (guchar **) &filename) && length > 0)
+            {
+              filename = g_realloc (filename, length + 1);
+              filename[length] = '\0';
+            }
+          else
+              filename = g_strdup (_("Untitled document"));
+
+          /* determine filepath */
+          file = thunar_standard_view_get_drop_file (standard_view, x, y, NULL);
+          if (G_LIKELY (file != NULL))
+            {
+              if (thunar_file_is_directory (file))
+               {
+                  gchar* folder_path = g_file_get_path (thunar_file_get_file (file));
+                  filepath = g_build_filename (folder_path, filename, NULL);
+                  g_free (folder_path);
+               }
+
+              g_object_unref (G_OBJECT (file));
+            }
+
+          if (G_LIKELY (filepath != NULL))
+            {
+              dest = g_file_new_for_path (filepath);
+              out = g_file_create (dest, G_FILE_CREATE_NONE, NULL, NULL);
+
+              if (out)
+                {
+                  content = (const gchar *) gtk_selection_data_get_data (selection_data);
+                  length = gtk_selection_data_get_length (selection_data);
+
+                  if (g_output_stream_write_all (G_OUTPUT_STREAM (out), content, length, NULL, NULL, NULL))
+                    g_output_stream_close (G_OUTPUT_STREAM (out), NULL, NULL);
+
+                  g_object_unref(out);
+                }
+
+              g_object_unref (dest);
+            }
+
+          g_free (filename);
+          g_free (filepath);
+        }
       else if (G_LIKELY (info == TARGET_TEXT_URI_LIST))
         {
           /* determine the drop position */
@@ -3157,7 +3217,9 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
       /* check if we can handle that drag data (yet?) */
       target = gtk_drag_dest_find_target (view, context, NULL);
 
-      if ((target == gdk_atom_intern_static_string ("XdndDirectSave0")) || (target == gdk_atom_intern_static_string ("_NETSCAPE_URL")))
+      if (target == gdk_atom_intern_static_string ("XdndDirectSave0") ||
+          target == gdk_atom_intern_static_string ("_NETSCAPE_URL") ||
+          target == gdk_atom_intern_static_string ("application/octet-stream"))
         {
           /* determine the file for the given coordinates */
           file = thunar_standard_view_get_drop_file (standard_view, x, y, &path);
