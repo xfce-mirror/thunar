@@ -290,7 +290,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                         "xalign", 0.0, "ellipsize", PANGO_ELLIPSIZE_END, "width-chars", 60, NULL);
           gtk_tree_view_column_set_cell_data_func (GTK_TREE_VIEW_COLUMN (details_view->columns[column]), THUNAR_STANDARD_VIEW (details_view)->name_renderer,
                                                    (GtkTreeCellDataFunc) thunar_tree_view_cell_layout_data_func,
-                                                   NULL, NULL);
+                                                   THUNAR_STANDARD_VIEW (details_view)->preferences, NULL);
           gtk_tree_view_column_pack_start (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->name_renderer, TRUE);
           gtk_tree_view_column_set_attributes (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->name_renderer,
                                                "text", THUNAR_COLUMN_NAME,
@@ -1167,10 +1167,14 @@ thunar_tree_view_cell_layout_data_func (GtkCellLayout          *layout,
                                         gpointer                data)
 {
   ThunarFile  *file ;
-  const gchar *color;
+  const gchar *color = NULL;
+  gboolean     show_hlcolor;
+
+  g_object_get (G_OBJECT (data), "misc-highlight-color", &show_hlcolor, NULL);
 
   file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
-  color = thunar_file_get_metadata_setting (file, "highlight-color");
+  if (show_hlcolor)
+    color = thunar_file_get_metadata_setting (file, "highlight-color");
   g_object_set (G_OBJECT (cell), "background", color, NULL);
   g_object_unref (file);
 }

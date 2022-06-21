@@ -110,6 +110,11 @@ enum
   N_PROPERTIES
 };
 
+enum
+{
+  GTK_RESPONSE_RESET,
+};
+
 
 
 static void                    thunar_action_manager_component_init             (ThunarComponentIface           *iface);
@@ -3404,6 +3409,7 @@ thunar_action_manager_action_set_highlight_color (ThunarActionManager *action_mg
   /* initialize the dialog */
   dialog = gtk_color_chooser_dialog_new (_("Select Highlight Color"), GTK_WINDOW (action_mgr->widget));
   gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+  gtk_dialog_add_button (GTK_DIALOG (dialog), "Reset", GTK_RESPONSE_RESET);
 
   /* set the default color of the dialog iff all the selected files are of the same color */
   if (G_UNLIKELY (hlcolor != NULL))
@@ -3417,6 +3423,10 @@ thunar_action_manager_action_set_highlight_color (ThunarActionManager *action_mg
   switch (result)
     {
     case GTK_RESPONSE_CANCEL:
+      break;
+    case GTK_RESPONSE_RESET:
+      for (lp = action_mgr->files_to_process; lp != NULL; lp = lp->next)
+        thunar_file_remove_metadata_setting (THUNAR_FILE (lp->data), "highlight-color");
       break;
     default:
       gtk_color_chooser_get_rgba (GTK_COLOR_CHOOSER (dialog), &rgba);

@@ -195,7 +195,7 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
                                  "text", THUNAR_COLUMN_NAME);
   gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer,
                                       (GtkCellLayoutDataFunc) thunar_abstract_icon_view_cell_layout_data_func,
-                                      NULL, NULL);
+                                      THUNAR_STANDARD_VIEW (abstract_icon_view)->preferences, NULL);
 
   /* update the icon view on size-allocate events */
   /* TODO: issue not reproducible anymore as of gtk 3.24.18
@@ -665,10 +665,14 @@ thunar_abstract_icon_view_cell_layout_data_func (GtkCellLayout   *layout,
                                                  gpointer         data)
 {
   ThunarFile  *file ;
-  const gchar *color;
+  const gchar *color = NULL;
+  gboolean     show_hlcolor;
+
+  g_object_get (G_OBJECT (data), "misc-highlight-color", &show_hlcolor, NULL);
 
   file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
-  color = thunar_file_get_metadata_setting (file, "highlight-color");
+  if (show_hlcolor)
+    color = thunar_file_get_metadata_setting (file, "highlight-color");
   g_object_set (G_OBJECT (cell), "background", color, NULL);
   g_object_unref (file);
 }

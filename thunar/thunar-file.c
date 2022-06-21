@@ -4836,3 +4836,31 @@ thunar_file_has_directory_specific_settings (ThunarFile *file)
 
   return FALSE;
 }
+
+
+
+void
+thunar_file_remove_metadata_setting (ThunarFile  *file,
+                                     const gchar *setting_name)
+{
+  gchar     *attr_name;
+
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  if (file->info == NULL)
+    return;
+
+  /* convert the setting name to an attribute name */
+  attr_name = g_strdup_printf ("metadata::thunar-%s", setting_name);
+
+  if (!g_file_info_has_attribute (file->info, attr_name))
+    {
+      g_free (attr_name);
+      return;
+    }
+
+  g_file_info_remove_attribute (file->info, attr_name);
+  g_file_set_attribute (file->gfile, attr_name, G_FILE_ATTRIBUTE_TYPE_INVALID,
+                        NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
+  g_free (attr_name);
+}
