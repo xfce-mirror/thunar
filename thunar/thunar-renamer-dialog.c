@@ -757,7 +757,7 @@ static void
 thunar_renamer_dialog_response (GtkDialog *dialog,
                                 gint       response)
 {
-  ThunarRenamerDialog *renamer_dialog = THUNAR_RENAMER_DIALOG (dialog);         
+  ThunarRenamerDialog *renamer_dialog = THUNAR_RENAMER_DIALOG (dialog);
   GtkTreeIter          iter;
   ThunarFile          *file;
   GList               *pair_list = NULL;
