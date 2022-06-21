@@ -452,7 +452,6 @@ thunar_renamer_progress_run_helper (ThunarRenamerProgress *renamer_progress,
  * ascending order and again tries to rename them. If still some pairs
  * are left then it sorts them in descending order and then tries to
  * rename them.
- * Two tries on failed pairs are done so that the
  **/
 void
 thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
@@ -478,7 +477,9 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
   g_print ("1st Run\n");
   thunar_renamer_progress_run_helper (renamer_progress, pairs);
 
-  /* Try to rename all the failed files */
+  /* While renaming a file, the new name can match with an existing files name, which is yet to be renamed */
+  /* By sorting them in ascending and descending sort, files causing such conflicts will be renamed first, and thus renamer can work */
+  /* Try to rename all the failed files after sorting them in ascending order */
   if (!renamer_progress->cancel_all_remaining_runs && renamer_progress->n_pairs_failed != 0)
     {
       GList *temp_pairs;
@@ -489,7 +490,7 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
       thunar_renamer_progress_run_helper (renamer_progress, temp_pairs);
     }
 
-  /* Try to rename all the failed files */
+  /* Try to rename all the failed files after sorting them in descending order */
   if (!renamer_progress->cancel_all_remaining_runs && renamer_progress->n_pairs_failed != 0)
     {
       GList *temp_pairs;
