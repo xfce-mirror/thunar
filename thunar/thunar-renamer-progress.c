@@ -44,7 +44,8 @@ static void     thunar_renamer_progress_next_idle_destroy (gpointer             
 static void     thunar_renamer_progress_run_helper        (ThunarRenamerProgress *renamer_progress,
                                                            GList                 *pairs);
 static void     thunar_renamer_progress_run_error_dialog  (ThunarRenamerProgress *renamer_progress,
-                                                           ThunarRenamerPair     *pair);
+                                                           ThunarRenamerPair     *pair,
+                                                           GError                *error);
 
 
 
@@ -142,10 +143,10 @@ thunar_renamer_progress_destroy (GtkWidget *object)
 
 static void
 thunar_renamer_progress_run_error_dialog (ThunarRenamerProgress *renamer_progress,
-                                          ThunarRenamerPair     *pair)
+                                          ThunarRenamerPair     *pair,
+                                          GError                *error)
 {
   gchar     *oldname;
-  GError    *error = NULL;
   GtkWindow *toplevel;
   GtkWidget *message;
   gint       response;
@@ -277,13 +278,12 @@ THUNAR_THREADS_ENTER
           /* Check if error dialog box is to de displayed*/
           if (renamer_progress->show_dialog_on_error)
             {
-              thunar_renamer_progress_run_error_dialog (renamer_progress, pair);
+              thunar_renamer_progress_run_error_dialog (renamer_progress, pair, error);
             }
         }
       else
         {
           /* replace the newname with the oldname for the pair (-> undo) */
-
           g_free (pair->name);
           pair->name = oldname;
 
@@ -415,7 +415,7 @@ thunar_renamer_progress_run_helper (ThunarRenamerProgress *renamer_progress,
   g_main_loop_run (renamer_progress->next_idle_loop);
   g_main_loop_unref (renamer_progress->next_idle_loop);
   renamer_progress->next_idle_loop = NULL;
-
+\
   /* be sure to cancel any pending idle source */
   if (G_UNLIKELY (renamer_progress->next_idle_id != 0))
     g_source_remove (renamer_progress->next_idle_id);
