@@ -4777,6 +4777,41 @@ thunar_file_set_metadata_setting (ThunarFile  *file,
 
 
 /**
+ * thunar_file_clear_metadata_setting:
+ * @file          : a #ThunarFile instance.
+ * @setting_name  : the name of the setting to clear
+ *
+ * Clear the metadata setting @setting_name of @file
+ **/
+void
+thunar_file_clear_metadata_setting (ThunarFile  *file,
+                                     const gchar *setting_name)
+{
+  gchar     *attr_name;
+
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  if (file->info == NULL)
+    return;
+
+  /* convert the setting name to an attribute name */
+  attr_name = g_strdup_printf ("metadata::thunar-%s", setting_name);
+
+  if (!g_file_info_has_attribute (file->info, attr_name))
+    {
+      g_free (attr_name);
+      return;
+    }
+
+  g_file_info_remove_attribute (file->info, attr_name);
+  g_file_set_attribute (file->gfile, attr_name, G_FILE_ATTRIBUTE_TYPE_INVALID,
+                        NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
+  g_free (attr_name);
+}
+
+
+
+/**
  * thunar_file_clear_directory_specific_settings:
  * @file : a #ThunarFile instance.
  *
