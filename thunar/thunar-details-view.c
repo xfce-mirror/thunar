@@ -112,6 +112,12 @@ static void         thunar_details_view_disconnect_accelerators (ThunarStandardV
 static void         thunar_details_view_append_menu_items       (ThunarStandardView     *standard_view,
                                                                  GtkMenu                *menu,
                                                                  GtkAccelGroup          *accel_group);
+static void         thunar_tree_view_cell_layout_data_func      (GtkCellLayout          *layout,
+                                                                 GtkCellRenderer        *cell,
+                                                                 GtkTreeModel           *model,
+                                                                 GtkTreeIter            *iter,
+                                                                 gpointer                data);
+
 
 
 struct _ThunarDetailsViewClass
@@ -282,6 +288,9 @@ thunar_details_view_init (ThunarDetailsView *details_view)
           /* add the name renderer */
           g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->name_renderer),
                         "xalign", 0.0, "ellipsize", PANGO_ELLIPSIZE_END, "width-chars", 60, NULL);
+          gtk_tree_view_column_set_cell_data_func (GTK_TREE_VIEW_COLUMN (details_view->columns[column]), THUNAR_STANDARD_VIEW (details_view)->name_renderer,
+                                                   (GtkTreeCellDataFunc) thunar_tree_view_cell_layout_data_func,
+                                                   THUNAR_STANDARD_VIEW (details_view)->preferences, NULL);
           gtk_tree_view_column_pack_start (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->name_renderer, TRUE);
           gtk_tree_view_column_set_attributes (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->name_renderer,
                                                "text", THUNAR_COLUMN_NAME,
@@ -1148,3 +1157,24 @@ thunar_details_view_set_location_column_visible     (ThunarDetailsView *details_
   thunar_column_model_set_column_visible (details_view->column_model, THUNAR_COLUMN_LOCATION, visible);
 }
 
+
+
+static void
+thunar_tree_view_cell_layout_data_func (GtkCellLayout          *layout,
+                                        GtkCellRenderer        *cell,
+                                        GtkTreeModel           *model,
+                                        GtkTreeIter            *iter,
+                                        gpointer                data)
+{
+  ThunarFile  *file ;
+  const gchar *color = NULL;
+  gboolean     show_hlcolor;
+
+  g_object_get (G_OBJECT (data), "misc-highlight-color", &show_hlcolor, NULL);
+
+  file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
+  if (show_hlcolor)
+    color = thunar_file_get_metadata_setting (file, "highlight-color");
+  g_object_set (G_OBJECT (cell), "background", color, NULL);
+  g_object_unref (file);
+}
