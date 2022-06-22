@@ -466,7 +466,7 @@ thunar_sbr_replace_renamer_pcre_exec (ThunarSbrReplaceRenamer *replace_renamer,
   result = g_string_sized_new (32);
 
   /* go through string */
-  while ((size_t) offset < strlen (subject))
+  while ((size_t) first_index_after_match < strlen (subject))
   {
     /* if rc <= 0 we dont have more match */
     rc = pcre_exec (replace_renamer->pcre_pattern, NULL, subject, strlen (subject), offset, PCRE_NOTEMPTY, ovec, olen);
@@ -477,81 +477,80 @@ thunar_sbr_replace_renamer_pcre_exec (ThunarSbrReplaceRenamer *replace_renamer,
 
     /* append text between match */
     for (gint j = first_index_after_match; j < index_match; j++)
-	  {
+    {
       g_string_append_c (result, subject[j]);
-	  }
+    }
 
     /* over[1] first index after match */
     first_index_after_match = ovec[1];
 
     for (r = replace_renamer->replacement; *r != '\0'; r = g_utf8_next_char (r))
-	  {
-	    if (G_UNLIKELY ((r[0] == '\\' || r[0] == '$') && r[1] != '\0'))
-	    {
-	      /* skip the first char ($ or \) */
-	      r += 1;
+    {
+      if (G_UNLIKELY ((r[0] == '\\' || r[0] == '$') && r[1] != '\0'))
+      {
+        /* skip the first char ($ or \) */
+        r += 1;
 
-	      /* default to no subst */
-	      first = 0;
-	      second = 0;
+        /* default to no subst */
+        first = 0;
+        second = 0;
 
-	      /* check the char after the \ or $ */
-	      if (r[0] == '+' && rc > 1)
-		    {
-		      /* \+ and $+ is replaced with the last subpattern */
-		      first = ovec[(rc - 1) * 2];
-		      second = ovec[(rc - 1) * 2 + 1];
-		    }
-	      else if (r[0] == '&')
-		    {
-		      /* \& and $& is replaced with the first subpattern (the whole match) */
-		      first = ovec[0];
-		      second = ovec[1];
-		    }
-	      else if (r[0] == '`')
-		    {
-		      /* \` and $` is replaced with the text before the whole match */
-		      first = 0;
-		      second = ovec[0];
-		    }
-	      else if (r[0] == '\'')
-		    {
-		      /* \' and $' is replaced with the text after the whole match */
-		      first = ovec[1];
-		      second = strlen (subject) - 1;
-		    }
-	      else if (g_ascii_isdigit (r[0]))
-		    {
-		      /* \<num> and $<num> is replaced with the <num>th subpattern */
-		      idx = (r[0] - '0');
-		      if (G_LIKELY (idx >= 0 && idx < rc))
-		      {
-		        first = ovec[2 * idx];
-		        second = ovec[2 * idx + 1];
-		      }
-		    }
-	      else if (r[-1] == r[0])
-		    {
-		      /* just add the $ or \ char */
-		      g_string_append_c (result, r[0]);
-		      continue;
-		    }
-	      else
-		    {
-		      /* just ignore the $ or \ char */
-		      continue;
-		    }
+        /* check the char after the \ or $ */
+        if (r[0] == '+' && rc > 1)
+        {
+          /* \+ and $+ is replaced with the last subpattern */
+          first = ovec[(rc - 1) * 2];
+          second = ovec[(rc - 1) * 2 + 1];
+        }
+        else if (r[0] == '&')
+        {
+          /* \& and $& is replaced with the first subpattern (the whole match) */
+          first = ovec[0];
+          second = ovec[1];
+        }
+        else if (r[0] == '`')
+        {
+          /* \` and $` is replaced with the text before the whole match */
+          first = 0;
+          second = ovec[0];
+        }
+        else if (r[0] == '\'')
+        {
+          /* \' and $' is replaced with the text after the whole match */
+          first = ovec[1];
+          second = strlen (subject) - 1;
+        }
+        else if (g_ascii_isdigit (r[0]))
+        {
+          /* \<num> and $<num> is replaced with the <num>th subpattern */
+          idx = (r[0] - '0');
+          if (G_LIKELY (idx >= 0 && idx < rc))
+          {
+            first = ovec[2 * idx];
+            second = ovec[2 * idx + 1];
+          }
+        }
+        else if (r[-1] == r[0])
+        {
+          /* just add the $ or \ char */
+          g_string_append_c (result, r[0]);
+          continue;
+        }
+        else
+        {
+          /* just ignore the $ or \ char */
+          continue;
+        }
 
-	      /* substitute the string */
-	      g_string_append_len (result, subject + first, second - first);
-	    }
-	    else
-	    {
-	      /* just append the unichar */
-	      g_string_append_unichar (result, g_utf8_get_char (r));
-	    }
-	  }
-      offset = first_index_after_match;
+        /* substitute the string */
+        g_string_append_len (result, subject + first, second - first);
+      }
+      else
+      {
+        /* just append the unichar */
+        g_string_append_unichar (result, g_utf8_get_char (r));
+      }
+    }
   }
 
   /* append rest of subject string */
