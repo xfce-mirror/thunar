@@ -986,7 +986,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button, _("Select this option to show a conext menu entry for file highlighting. "
-                                         "If enabled it is possible to colorize the name label of specific files."));
+  gtk_widget_set_tooltip_text (button, _("Select this option enable file highlighting. "
+                                         "If enabled a context menu entry can be used to colorize the name label of specific files."));
   gtk_widget_set_hexpand (button, TRUE);
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 2, 1);
   gtk_widget_show (button);

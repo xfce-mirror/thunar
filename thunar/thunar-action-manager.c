@@ -3409,9 +3409,9 @@ thunar_action_manager_action_set_highlight_color (ThunarActionManager *action_mg
   /* initialize the dialog */
   dialog = gtk_color_chooser_dialog_new (_("Select Highlight Color"), GTK_WINDOW (action_mgr->widget));
   gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
-  gtk_dialog_add_button (GTK_DIALOG (dialog), "Reset", GTK_RESPONSE_RESET);
+  gtk_dialog_add_button (GTK_DIALOG (dialog), _("Reset"), GTK_RESPONSE_RESET);
 
-  /* set the default color of the dialog iff all the selected files are of the same color */
+  /* only set a default color if all selected files share the same color */
   if (G_UNLIKELY (hlcolor != NULL))
     {
       gdk_rgba_parse (&rgba, hlcolor);
