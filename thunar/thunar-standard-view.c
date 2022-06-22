@@ -2998,11 +2998,11 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
         }
       else if (info == TARGET_APPLICATION_OCTET_STREAM)
         {
-          gchar *filename;
-          gchar *filepath = NULL;
-          const gchar *content;
-          gint length;
-          GFile *dest;
+          gchar             *filename;
+          gchar             *filepath = NULL;
+          const gchar       *content;
+          gint               length;
+          GFile             *dest;
           GFileOutputStream *out;
 
           /* determine filename */
