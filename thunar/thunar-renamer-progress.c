@@ -59,14 +59,16 @@ struct _ThunarRenamerProgress
   GtkAlignment __parent__;
   GtkWidget   *bar;
 
-  GList       *pairs_renamed;
+  GList       *pairs_renamed;       /* List of pairs renamed in a given run */
   guint        n_pairs_renamed;
+  GList       *pairs_total_renamed; /* List of pairs renamed across all runs */
+  guint        n_pairs_total_renamed;
   GList       *pairs_failed;
   guint        n_pairs_failed;
   GList       *pairs_todo;
   guint        n_pairs_todo;
   gboolean     show_dialog_on_error;
-  gboolean     pairs_undo;  /* whether we're undoing previous changes */
+  gboolean     pairs_undo;          /* whether we're undoing previous changes */
 
   /* It is possible that a user cancels renamer while there are still some failed pairs and some runs remaining */
   gboolean     cancel_all_remaining_runs;
@@ -166,7 +168,7 @@ thunar_renamer_progress_run_error_dialog (ThunarRenamerProgress *renamer_progres
                                     oldname, pair->name);
 
   /* check if we should provide undo */
-  if (!renamer_progress->pairs_undo && renamer_progress->pairs_renamed != NULL)
+  if (!renamer_progress->pairs_undo && renamer_progress->pairs_total_renamed != NULL)
     {
       gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message),
                                                 _("You can either choose to skip this file and continue to rename the "
@@ -202,10 +204,9 @@ thunar_renamer_progress_run_error_dialog (ThunarRenamerProgress *renamer_progres
 
       /* release the todo pairs and use the done as todo */
       thunar_renamer_pair_list_free (renamer_progress->pairs_todo);
-      renamer_progress->pairs_todo = renamer_progress->pairs_renamed;
-      renamer_progress->pairs_renamed = NULL;
-
-      renamer_progress->n_pairs_renamed = 0;
+      renamer_progress->pairs_todo = renamer_progress->pairs_total_renamed;
+      renamer_progress->pairs_total_renamed = NULL;
+      renamer_progress->n_pairs_total_renamed = 0;
       renamer_progress->n_pairs_todo = g_list_length (renamer_progress->pairs_todo);
     }
   else if (response != GTK_RESPONSE_ACCEPT)
@@ -271,10 +272,10 @@ THUNAR_THREADS_ENTER
         {
           /* add pair to the list of failed pairs */
           renamer_progress->pairs_failed = g_list_prepend (renamer_progress->pairs_failed, pair);
-
           /* update counter */
           renamer_progress->n_pairs_failed++;
           _thunar_assert (g_list_length (renamer_progress->pairs_failed) == renamer_progress->n_pairs_failed);
+
           /* Check if error dialog box is to de displayed*/
           if (renamer_progress->show_dialog_on_error)
             {
@@ -289,10 +290,13 @@ THUNAR_THREADS_ENTER
 
           /* move the pair to the list of completed pairs */
           renamer_progress->pairs_renamed = g_list_prepend (renamer_progress->pairs_renamed, pair);
+          renamer_progress->pairs_total_renamed = g_list_prepend (renamer_progress->pairs_total_renamed, thunar_renamer_pair_copy (pair));
 
-          /* update counter */
+          /* update counters */
           renamer_progress->n_pairs_renamed++;
+          renamer_progress->n_pairs_total_renamed++;
           _thunar_assert (g_list_length (renamer_progress->pairs_renamed) == renamer_progress->n_pairs_renamed);
+          _thunar_assert (g_list_length (renamer_progress->pairs_total_renamed) == renamer_progress->n_pairs_total_renamed);
         }
     }
 
@@ -415,7 +419,7 @@ thunar_renamer_progress_run_helper (ThunarRenamerProgress *renamer_progress,
   g_main_loop_run (renamer_progress->next_idle_loop);
   g_main_loop_unref (renamer_progress->next_idle_loop);
   renamer_progress->next_idle_loop = NULL;
-\
+
   /* be sure to cancel any pending idle source */
   if (G_UNLIKELY (renamer_progress->next_idle_id != 0))
     g_source_remove (renamer_progress->next_idle_id);
@@ -460,11 +464,15 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
   /* take an additional reference on the progress */
   g_object_ref (G_OBJECT (renamer_progress));
 
-  /* make sure to not show the error dialog box initially */
+  /* Initialize all the boolean variables to false */
   renamer_progress->show_dialog_on_error = FALSE;
-
-  /* make sure that all runs will work */
   renamer_progress->cancel_all_remaining_runs = FALSE;
+  renamer_progress->pairs_undo = FALSE;
+
+  /* make sure to release the list of total renamed items first */
+  thunar_renamer_pair_list_free (renamer_progress->pairs_total_renamed);
+  renamer_progress->pairs_total_renamed = NULL;
+  renamer_progress->n_pairs_total_renamed = 0;
 
   /* Try to rename all the files for the first time */
   thunar_renamer_progress_run_helper (renamer_progress, pairs);
