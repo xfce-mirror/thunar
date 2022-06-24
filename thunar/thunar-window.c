@@ -371,8 +371,6 @@ struct _ThunarWindow
 
   ThunarPreferences      *preferences;
 
-  ThunarIconFactory      *icon_factory;
-
   /* to be able to change folder on "device-pre-unmount" if required */
   ThunarDeviceMonitor    *device_monitor;
 
@@ -776,8 +774,6 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect (window->device_monitor, "device-pre-unmount", G_CALLBACK (thunar_window_device_pre_unmount), window);
   g_signal_connect (window->device_monitor, "device-removed", G_CALLBACK (thunar_window_device_changed), window);
   g_signal_connect (window->device_monitor, "device-changed", G_CALLBACK (thunar_window_device_changed), window);
-
-  window->icon_factory = thunar_icon_factory_get_default ();
 
   /* Catch key events before accelerators get processed */
   g_signal_connect (window, "key-press-event", G_CALLBACK (thunar_window_propagate_key_event), NULL);
@@ -1461,7 +1457,6 @@ thunar_window_finalize (GObject *object)
   g_signal_handlers_disconnect_matched (window->device_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
   g_object_unref (window->device_monitor);
 
-  g_object_unref (window->icon_factory);
   g_object_unref (window->action_mgr);
 
   if (window->bookmark_file != NULL)

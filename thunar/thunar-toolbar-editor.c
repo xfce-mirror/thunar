@@ -297,19 +297,22 @@ thunar_toolbar_editor_swap_toolbar_items_for_all_windows (GtkListStore *model,
                                                           GtkTreeIter  *item1,
                                                           GtkTreeIter  *item2)
 {
-  GList            *windows;
-  GtkTreePath      *path1;
-  GtkTreePath      *path2;
+  ThunarApplication *application;
+  GList             *windows;
+  GtkTreePath       *path1;
+  GtkTreePath       *path2;
 
   path1 = gtk_tree_model_get_path (GTK_TREE_MODEL (model), item1);
   path2 = gtk_tree_model_get_path (GTK_TREE_MODEL (model), item2);
 
-  windows = thunar_application_get_windows (thunar_application_get ());
+  application = thunar_application_get ();
+  windows = thunar_application_get_windows (application);
   for (GList *lp = windows; lp != NULL; lp = lp->next)
     {
       ThunarWindow *window = lp->data;
       thunar_window_toolbar_swap_items (window, gtk_tree_path_get_indices (path1)[0], gtk_tree_path_get_indices (path2)[0]);
     }
+  g_object_unref (application);
   g_list_free (windows);
 
   gtk_tree_path_free (path1);
@@ -389,11 +392,12 @@ thunar_toolbar_editor_toggle_visibility (ThunarToolbarEditor    *toolbar_editor,
                                          const gchar            *path_string,
                                          GtkCellRendererToggle  *cell_renderer)
 {
-  GtkTreePath *path;
-  GtkTreePath *child_path;
-  GtkTreeIter  iter;
-  gboolean     visible;
-  GList       *windows;
+  ThunarApplication *application;
+  GList             *windows;
+  GtkTreePath       *path;
+  GtkTreePath       *child_path;
+  GtkTreeIter        iter;
+  gboolean           visible;
 
   _thunar_return_if_fail (GTK_IS_CELL_RENDERER_TOGGLE (cell_renderer));
   _thunar_return_if_fail (THUNAR_IS_TOOLBAR_EDITOR (toolbar_editor));
@@ -416,14 +420,16 @@ thunar_toolbar_editor_toggle_visibility (ThunarToolbarEditor    *toolbar_editor,
       gtk_list_store_set (toolbar_editor->model, &iter, 0, !visible, -1);
     }
 
-  windows = thunar_application_get_windows (thunar_application_get ());
+  application = thunar_application_get ();
+  windows = thunar_application_get_windows (application);
   for (GList *lp = windows; lp != NULL; lp = lp->next)
     {
       ThunarWindow *window = lp->data;
       thunar_window_toolbar_toggle_item_visibility (window, gtk_tree_path_get_indices (child_path)[0]);
     }
-
+  g_object_unref (application);
   g_list_free (windows);
+
   gtk_tree_path_free (path);
   gtk_tree_path_free (child_path);
 }

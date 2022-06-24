@@ -45,6 +45,8 @@ struct _ThunarLocationBar
 {
   GtkBin __parent__;
 
+  ThunarPreferences *preferences;
+
   ThunarFile *current_directory;
 
   GtkWidget  *locationEntry;
@@ -133,7 +135,7 @@ thunar_location_bar_class_init (ThunarLocationBarClass *klass)
 static void
 thunar_location_bar_init (ThunarLocationBar *bar)
 {
-  ThunarPreferences *preferences = thunar_preferences_get ();
+  bar->preferences = thunar_preferences_get ();
 
   bar->current_directory = NULL;
   bar->locationEntry = NULL;
@@ -141,7 +143,7 @@ thunar_location_bar_init (ThunarLocationBar *bar)
 
   thunar_location_bar_settings_changed (bar);
 
-  g_signal_connect_object (preferences, "notify::last-location-bar", G_CALLBACK (thunar_location_bar_settings_changed), bar, G_CONNECT_SWAPPED);
+  g_signal_connect_swapped (bar->preferences, "notify::last-location-bar", G_CALLBACK (thunar_location_bar_settings_changed), bar);
 }
 
 
@@ -152,6 +154,10 @@ thunar_location_bar_finalize (GObject *object)
   ThunarLocationBar *bar = THUNAR_LOCATION_BAR (object);
 
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BAR (bar));
+
+  /* disconnect from the preferences */
+  g_signal_handlers_disconnect_by_func (bar->preferences, thunar_location_bar_settings_changed, bar);
+  g_object_unref (bar->preferences);
 
   if (bar->locationEntry)
     g_object_unref (bar->locationEntry);
@@ -345,7 +351,7 @@ thunar_location_bar_settings_changed (ThunarLocationBar *bar)
   gchar *last_location_bar;
   GType  type;
 
-  g_object_get (thunar_preferences_get(), "last-location-bar", &last_location_bar, NULL);
+  g_object_get (bar->preferences, "last-location-bar", &last_location_bar, NULL);
 
   /* validate it */
   if (!strcmp (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)))

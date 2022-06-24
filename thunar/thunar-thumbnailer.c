@@ -164,6 +164,8 @@ struct _ThunarThumbnailer
   ThunarThumbnailerDBus      *thumbnailer_proxy;
   ThunarThumbnailerProxyState proxy_state;
 
+  ThunarPreferences *preferences;
+
   /* running jobs */
   GSList     *jobs;
 
@@ -550,7 +552,10 @@ thunar_thumbnailer_init (ThunarThumbnailer *thumbnailer)
   /* initialize the proxies */
   thunar_thumbnailer_init_thumbnailer_proxy (thumbnailer);
 
-  g_object_bind_property (G_OBJECT (thunar_preferences_get ()),
+  /* grab a reference on the preferences */
+  thumbnailer->preferences = thunar_preferences_get ();
+
+  g_object_bind_property (G_OBJECT (thumbnailer->preferences),
                           "misc-thumbnail-max-file-size",
                           G_OBJECT (thumbnailer),
                           "thumbnail-max-file-size",
@@ -599,8 +604,11 @@ thunar_thumbnailer_finalize (GObject *object)
   /* release the thumbnailer lock */
   _thumbnailer_unlock (thumbnailer);
 
-/* release the mutex */
+  /* release the mutex */
   g_mutex_clear (&thumbnailer->lock);
+
+  /* release our reference on the preferences */
+  g_object_unref (thumbnailer->preferences);
 
   (*G_OBJECT_CLASS (thunar_thumbnailer_parent_class)->finalize) (object);
 }
