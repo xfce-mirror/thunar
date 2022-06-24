@@ -555,7 +555,7 @@ thunar_thumbnailer_init (ThunarThumbnailer *thumbnailer)
   /* grab a reference on the preferences */
   thumbnailer->preferences = thunar_preferences_get ();
 
-  g_object_bind_property (G_OBJECT (thunar_preferences_get ()),
+  g_object_bind_property (G_OBJECT (thumbnailer->preferences),
                           "misc-thumbnail-max-file-size",
                           G_OBJECT (thumbnailer),
                           "thumbnail-max-file-size",
