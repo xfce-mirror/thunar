@@ -25,12 +25,16 @@ G_BEGIN_DECLS
 #define THUNAR_TYPE_JOB_OPERATION (thunar_job_operation_get_type ())
 G_DECLARE_FINAL_TYPE (ThunarJobOperation, thunar_job_operation, THUNAR, JOB_OPERATION, GObject)
 
-void           thunar_job_operation_register          (ThunarJobOperationKind operation_kind,
-                                                       GList *source_file_list,
-                                                       GList *target_file_list);
-
-GList         *thunar_job_operation_get_current_list  ();
-
 G_END_DECLS
+
+ThunarJobOperation    *thunar_job_operation_register     (ThunarJobOperationKind kind);
+void                   thunar_job_operation_append       (ThunarJobOperation *job_operation,
+                                                          GFile              *source,
+                                                          GFile              *target);
+void                   thunar_job_operation_finish       (ThunarJobOperation *job_operation);
+
+#ifndef NDEBUG /* temporary debugging code */
+void                   thunar_job_operation_debug_print  ();
+#endif /* NDEBUG */
 
 #endif /* __THUNAR_JOB_OPERATION_H__ */
