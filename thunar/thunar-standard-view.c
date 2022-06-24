@@ -3011,6 +3011,9 @@ thunar_standard_view_receive_application_octet_stream (GdkDragContext     *conte
   GFile             *dest;
   GFileOutputStream *out;
 
+  if (gtk_selection_data_get_length (selection_data) <= 0)
+    return FALSE;
+
   /* determine filename */
   if (gdk_property_get (gdk_drag_context_get_source_window (context),
                         gdk_atom_intern ("XdndDirectSave0", FALSE),
