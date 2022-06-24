@@ -2913,11 +2913,16 @@ thunar_standard_view_receive_xdnd_direct_save (GdkDragContext     *context,
                                                GtkSelectionData   *selection_data,
                                                ThunarStandardView *standard_view)
 {
+  gint         format;
+  gint         length;
   ThunarFolder *folder;
   ThunarFile   *file = NULL;
 
+  format = gtk_selection_data_get_format (selection_data);
+  length = gtk_selection_data_get_length (selection_data);
+
   /* we don't handle XdndDirectSave stage (3), result "F" yet */
-  if (G_UNLIKELY (gtk_selection_data_get_format (selection_data) == 8 && gtk_selection_data_get_length (selection_data) == 1 && gtk_selection_data_get_data (selection_data)[0] == 'F'))
+  if (G_UNLIKELY (format == 8 && length == 1 && gtk_selection_data_get_data (selection_data)[0] == 'F'))
     {
       /* indicate that we don't provide "F" fallback */
       gdk_property_change (gdk_drag_context_get_source_window (context),
@@ -2925,7 +2930,7 @@ thunar_standard_view_receive_xdnd_direct_save (GdkDragContext     *context,
                             gdk_atom_intern_static_string ("text/plain"), 8,
                             GDK_PROP_MODE_REPLACE, (const guchar *) "", 0);
     }
-  else if (G_LIKELY (gtk_selection_data_get_format (selection_data) == 8 && gtk_selection_data_get_length (selection_data) == 1 && gtk_selection_data_get_data (selection_data)[0] == 'S'))
+  else if (G_LIKELY (format == 8 && length == 1 && gtk_selection_data_get_data (selection_data)[0] == 'S'))
     {
       /* XDS was successfull, so determine the file for the drop position */
       file = thunar_standard_view_get_drop_file (standard_view, x, y, NULL);
@@ -2959,6 +2964,8 @@ thunar_standard_view_receive_netscape_url (GtkWidget          *view,
                                            GtkSelectionData   *selection_data,
                                            ThunarStandardView *standard_view)
 {
+  gint         format;
+  gint         length;
   gchar      **bits;
   ThunarFile  *file = NULL;
   gchar       *working_directory;
@@ -2971,79 +2978,83 @@ thunar_standard_view_receive_netscape_url (GtkWidget          *view,
   char        *display = NULL;
   gboolean     succeed = FALSE;
 
+  format = gtk_selection_data_get_format (selection_data);
+  length = gtk_selection_data_get_length (selection_data);
+
   /* check if the format is valid and we have any data */
-  if (G_LIKELY (gtk_selection_data_get_format (selection_data) == 8 && gtk_selection_data_get_length (selection_data) > 0))
+  if (G_UNLIKELY (format != 8 || length <= 0))
+    return succeed;
+
+  /* _NETSCAPE_URL looks like this: "$URL\n$TITLE" */
+  bits = g_strsplit ((const gchar *) gtk_selection_data_get_data (selection_data), "\n", -1);
+  if (G_UNLIKELY (g_strv_length (bits) != 2))
     {
-      /* _NETSCAPE_URL looks like this: "$URL\n$TITLE" */
-      bits = g_strsplit ((const gchar *) gtk_selection_data_get_data (selection_data), "\n", -1);
-      if (G_LIKELY (g_strv_length (bits) == 2))
-        {
-          /* determine the file for the drop position */
-          file = thunar_standard_view_get_drop_file (standard_view, x, y, NULL);
-          if (G_LIKELY (file != NULL))
-            {
-              /* determine the absolute path to the target directory */
-              working_directory = g_file_get_path (thunar_file_get_file (file));
-              if (G_LIKELY (working_directory != NULL))
-                {
-                  /* prepare the basic part of the command */
-                  argv[n++] = "exo-desktop-item-edit";
-                  argv[n++] = "--type=Link";
-                  argv[n++] = "--url";
-                  argv[n++] = bits[0];
-                  argv[n++] = "--name";
-                  argv[n++] = bits[1];
-
-                  /* determine the toplevel window */
-                  toplevel = gtk_widget_get_toplevel (view);
-                  if (toplevel != NULL && gtk_widget_is_toplevel (toplevel))
-                    {
-#if defined(GDK_WINDOWING_X11)
-                      /* on X11, we can supply the parent window id here */
-                      argv[n++] = "--xid";
-                      argv[n++] = g_newa (gchar, 32);
-                      g_snprintf (argv[n - 1], 32, "%ld", (glong) GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (toplevel))));
-#endif
-                    }
-
-                  /* terminate the parameter list */
-                  argv[n++] = "--create-new";
-                  argv[n++] = working_directory;
-                  argv[n++] = NULL;
-
-                  screen = gtk_widget_get_screen (GTK_WIDGET (view));
-
-                  if (screen != NULL)
-                    display = g_strdup (gdk_display_get_name (gdk_screen_get_display (screen)));
-
-                  /* try to run exo-desktop-item-edit */
-                  succeed = g_spawn_async (working_directory, argv, NULL,
-                                            G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
-                                            thunar_setup_display_cb, display, &pid, &error);
-
-                  if (G_UNLIKELY (!succeed))
-                    {
-                      /* display an error dialog to the user */
-                      thunar_dialogs_show_error (standard_view, error, _("Failed to create a link for the URL \"%s\""), bits[0]);
-                      g_free (working_directory);
-                      g_error_free (error);
-                    }
-                  else
-                    {
-                      /* reload the directory when the command terminates */
-                      g_child_watch_add_full (G_PRIORITY_LOW, pid, tsv_reload_directory, working_directory, g_free);
-                    }
-
-                  /* cleanup */
-                  g_free (display);
-                }
-              g_object_unref (G_OBJECT (file));
-            }
-        }
-
-      /* cleanup */
       g_strfreev (bits);
+      return succeed;
     }
+
+  /* determine the file for the drop position */
+  file = thunar_standard_view_get_drop_file (standard_view, x, y, NULL);
+  if (G_LIKELY (file != NULL))
+    {
+      /* determine the absolute path to the target directory */
+      working_directory = g_file_get_path (thunar_file_get_file (file));
+      if (G_LIKELY (working_directory != NULL))
+        {
+          /* prepare the basic part of the command */
+          argv[n++] = "exo-desktop-item-edit";
+          argv[n++] = "--type=Link";
+          argv[n++] = "--url";
+          argv[n++] = bits[0];
+          argv[n++] = "--name";
+          argv[n++] = bits[1];
+
+          /* determine the toplevel window */
+          toplevel = gtk_widget_get_toplevel (view);
+          if (toplevel != NULL && gtk_widget_is_toplevel (toplevel))
+            {
+#if defined(GDK_WINDOWING_X11)
+              /* on X11, we can supply the parent window id here */
+              argv[n++] = "--xid";
+              argv[n++] = g_newa (gchar, 32);
+              g_snprintf (argv[n - 1], 32, "%ld", (glong) GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (toplevel))));
+#endif
+            }
+
+          /* terminate the parameter list */
+          argv[n++] = "--create-new";
+          argv[n++] = working_directory;
+          argv[n++] = NULL;
+
+          screen = gtk_widget_get_screen (GTK_WIDGET (view));
+
+          if (screen != NULL)
+            display = g_strdup (gdk_display_get_name (gdk_screen_get_display (screen)));
+
+          /* try to run exo-desktop-item-edit */
+          succeed = g_spawn_async (working_directory, argv, NULL,
+                                    G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
+                                    thunar_setup_display_cb, display, &pid, &error);
+
+          if (G_LIKELY (succeed))
+            {
+              /* reload the directory when the command terminates */
+              g_child_watch_add_full (G_PRIORITY_LOW, pid, tsv_reload_directory, working_directory, g_free);
+            }
+          else
+            {
+              /* display an error dialog to the user */
+              thunar_dialogs_show_error (standard_view, error, _("Failed to create a link for the URL \"%s\""), bits[0]);
+              g_free (working_directory);
+              g_error_free (error);
+            }
+
+          g_free (display);
+        }
+      g_object_unref (G_OBJECT (file));
+    }
+
+  g_strfreev (bits);
 
   return succeed;
 }
