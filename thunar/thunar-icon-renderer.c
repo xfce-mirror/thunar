@@ -27,6 +27,7 @@
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-preferences.h>
 
 
 
@@ -376,6 +377,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
                              const GdkRectangle  *cell_area,
                              GtkCellRendererState flags)
 {
+  ThunarPreferences      *preferences;
   ThunarClipboardManager *clipboard;
   ThunarFileIconState     icon_state;
   ThunarIconRenderer     *icon_renderer = THUNAR_ICON_RENDERER (renderer);
@@ -396,6 +398,11 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   gboolean                color_selected;
   gboolean                color_lighten;
   gboolean                is_expanded;
+  gboolean                paint_background;
+  const gchar            *background_color;
+  GdkRGBA                 background_color_rgba;
+
+  preferences = thunar_preferences_get ();
 
   if (G_UNLIKELY (icon_renderer->file == NULL))
     return;
@@ -404,6 +411,22 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
     return;
 
   g_object_get (renderer, "is-expanded", &is_expanded, NULL);
+  g_object_get (G_OBJECT (preferences), "misc-highlighting-enabled", &paint_background, NULL);
+
+  if (G_UNLIKELY (paint_background))
+    {
+      background_color = thunar_file_get_metadata_setting (icon_renderer->file, "highlight-color");
+      if (G_UNLIKELY (background_color != NULL))
+        {
+          gdk_rgba_parse (&background_color_rgba, background_color);
+          cairo_set_source_rgba (cr,
+              background_color_rgba.red,
+              background_color_rgba.green,
+              background_color_rgba.blue,
+              background_color_rgba.alpha);
+          cairo_paint (cr);
+        }
+    }
 
   /* determine the icon state */
   icon_state = (icon_renderer->drop_file != icon_renderer->file)
