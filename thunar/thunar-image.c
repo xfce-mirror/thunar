@@ -194,6 +194,7 @@ thunar_image_update (ThunarImage *image)
       gtk_image_set_from_pixbuf (GTK_IMAGE (image), icon);
 
       g_object_unref (icon_factory);
+      g_object_unref (icon);
     }
 }
 
