@@ -3216,7 +3216,7 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
         succeed = thunar_standard_view_receive_xdnd_direct_save (context, x, y, selection_data, standard_view);
       else if (G_UNLIKELY (info == TARGET_NETSCAPE_URL))
         succeed = thunar_standard_view_receive_netscape_url (view, context, x, y, selection_data, standard_view);
-      else if (info == TARGET_APPLICATION_OCTET_STREAM)
+      else if (G_UNLIKELY (info == TARGET_APPLICATION_OCTET_STREAM))
         succeed = thunar_standard_view_receive_application_octet_stream (context, x, y, selection_data, standard_view);
       else if (G_LIKELY (info == TARGET_TEXT_URI_LIST))
         succeed = thunar_standard_view_receive_text_uri_list (context, x, y, selection_data, timestamp, standard_view);
