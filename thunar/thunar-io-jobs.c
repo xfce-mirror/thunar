@@ -36,6 +36,7 @@
 #include <thunar/thunar-io-jobs.h>
 #include <thunar/thunar-io-jobs-util.h>
 #include <thunar/thunar-job.h>
+#include <thunar/thunar-job-operation.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-simple-job.h>
 #include <thunar/thunar-thumbnail-cache.h>
@@ -287,6 +288,7 @@ ThunarJob *
 thunar_io_jobs_create_files (GList *file_list,
                              GFile *template_file)
 {
+
   return thunar_simple_job_new (_thunar_io_jobs_create, 2,
                                 THUNAR_TYPE_G_FILE_LIST, file_list,
                                 G_TYPE_FILE, template_file);

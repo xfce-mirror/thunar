@@ -119,6 +119,8 @@ thunar_SOURCES =							\
 	thunar-io-scan-directory.h					\
 	thunar-job.c							\
 	thunar-job.h							\
+	thunar-job-operation.c						\
+	thunar-job-operation.h						\
 	thunar-list-model.c						\
 	thunar-list-model.h						\
 	thunar-location-bar.c						\
