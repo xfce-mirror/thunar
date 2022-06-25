@@ -468,20 +468,20 @@ thunar_sbr_replace_renamer_pcre_exec (ThunarSbrReplaceRenamer *replace_renamer,
   /* go through string */
   while ((size_t) first_index_after_match < strlen (subject))
   {
-    /* if rc <= 0 we dont have more match */
+    /* if rc <= 0 we have no match any more */
     rc = pcre_exec (replace_renamer->pcre_pattern, NULL, subject, strlen (subject), offset, PCRE_NOTEMPTY, ovec, olen);
     if (rc <= 0)
       break;
 
     index_match = ovec[0];
 
-    /* append text between match */
+    /*append the subject text between the matches */
     for (gint j = first_index_after_match; j < index_match; j++)
     {
       g_string_append_c (result, subject[j]);
     }
 
-    /* over[1] first index after match */
+    /* over[1] is the first index after a match */
     first_index_after_match = ovec[1];
 
     for (r = replace_renamer->replacement; *r != '\0'; r = g_utf8_next_char (r))
