@@ -112,12 +112,12 @@ static void         thunar_details_view_disconnect_accelerators      (ThunarStan
 static void         thunar_details_view_append_menu_items            (ThunarStandardView     *standard_view,
                                                                       GtkMenu                *menu,
                                                                       GtkAccelGroup          *accel_group);
-static void         thunar_details_view_cell_layout_data_func        (GtkCellLayout          *layout,
+static void         thunar_details_view_tree_cell_data_func        (GtkCellLayout          *layout,
                                                                       GtkCellRenderer        *cell,
                                                                       GtkTreeModel           *model,
                                                                       GtkTreeIter            *iter,
                                                                       gpointer                data);
-static void         thunar_details_view_update_cell_layout_data_func (ThunarDetailsView     *details_view);
+static void         thunar_details_view_update_tree_cell_data_func (ThunarDetailsView     *details_view);
 
 
 
@@ -296,8 +296,8 @@ thunar_details_view_init (ThunarDetailsView *details_view)
           g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->name_renderer),
                         "xalign", 0.0, "ellipsize", PANGO_ELLIPSIZE_END, "width-chars", 60, NULL);
           g_signal_connect_swapped (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences), "notify::misc-highlighting-enabled",
-              G_CALLBACK (thunar_details_view_update_cell_layout_data_func), details_view->columns[column]);
-          thunar_details_view_update_cell_layout_data_func (details_view);
+              G_CALLBACK (thunar_details_view_update_tree_cell_data_func), details_view->columns[column]);
+          thunar_details_view_update_tree_cell_data_func (details_view);
           gtk_tree_view_column_pack_start (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->name_renderer, TRUE);
           gtk_tree_view_column_set_attributes (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->name_renderer,
                                                "text", THUNAR_COLUMN_NAME,
@@ -1170,7 +1170,7 @@ thunar_details_view_set_location_column_visible     (ThunarDetailsView *details_
 
 
 static void
-thunar_details_view_cell_layout_data_func (GtkCellLayout   *layout,
+thunar_details_view_tree_cell_data_func (GtkCellLayout   *layout,
                                            GtkCellRenderer *cell,
                                            GtkTreeModel    *model,
                                            GtkTreeIter     *iter,
@@ -1188,17 +1188,21 @@ thunar_details_view_cell_layout_data_func (GtkCellLayout   *layout,
 
 
 static void
-thunar_details_view_update_cell_layout_data_func (ThunarDetailsView *details_view)
+thunar_details_view_update_tree_cell_data_func (ThunarDetailsView *details_view)
 {
   GtkTreeCellDataFunc function = NULL;
   gboolean            show_highlight;
 
+#ifndef G_ENABLE_DEBUG
+  /* probably too expensive to do the instance check every time
+   * this function is called, so only for debugging builds. */
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+#endif
 
   g_object_get (G_OBJECT (details_view->preferences), "misc-highlighting-enabled", &show_highlight, NULL);
 
   if (show_highlight)
-      function = (GtkTreeCellDataFunc) thunar_details_view_cell_layout_data_func;
+      function = (GtkTreeCellDataFunc) thunar_details_view_tree_cell_data_func;
 
   gtk_tree_view_column_set_cell_data_func (GTK_TREE_VIEW_COLUMN (details_view->columns[THUNAR_COLUMN_NAME]),
                                            THUNAR_STANDARD_VIEW (details_view)->name_renderer,

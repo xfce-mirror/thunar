@@ -121,7 +121,7 @@ enum
   PROP_MISC_SWITCH_TO_NEW_TAB,
   PROP_MISC_VERTICAL_SPLIT_PANE,
   PROP_MISC_COMPACT_VIEW_MAX_CHARS,
-  PROP_MISC_HIGHLIGHT_COLOR,
+  PROP_MISC_HIGHLIGHT_ENABLED,
   N_PROPERTIES,
 };
 
@@ -1111,7 +1111,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    *
    * If true, displays the 'highlight' context menu option and show colorized filenames.
    **/
-  preferences_props[PROP_MISC_HIGHLIGHT_COLOR] =
+  preferences_props[PROP_MISC_HIGHLIGHT_ENABLED] =
       g_param_spec_boolean ("misc-highlighting-enabled",
                             "MiscHighlightingEnabled",
                             NULL,

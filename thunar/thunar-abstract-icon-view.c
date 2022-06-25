@@ -710,7 +710,11 @@ thunar_abstract_icon_view_update_cell_layout_data_func (ThunarAbstractIconView *
   GtkCellLayoutDataFunc function = NULL;
   gboolean              show_highlight;
 
+#ifdef G_ENABLE_DEBUG
+  /* probably too expensive to do the instance check every time
+   * this function is called, so only for debugging builds. */
   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
+#endif
 
   g_object_get (G_OBJECT (abstract_icon_view->preferences), "misc-highlighting-enabled", &show_highlight, NULL);
 
