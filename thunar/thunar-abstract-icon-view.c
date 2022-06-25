@@ -693,9 +693,6 @@ thunar_abstract_icon_view_cell_layout_data_func (GtkCellLayout   *layout,
   ThunarFile  *file ;
   const gchar *color = NULL;
 
-  _thunar_return_if_fail (GTK_IS_CELL_RENDERER (cell));
-  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
-
   file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
   color = thunar_file_get_metadata_setting (file, "highlight-color");
   g_object_set (G_OBJECT (cell), "cell-background", color, NULL);
