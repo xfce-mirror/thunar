@@ -198,6 +198,9 @@ static gint               sort_by_size_in_bytes                   (const ThunarF
 static gint               sort_by_type                            (const ThunarFile            *a,
                                                                    const ThunarFile            *b,
                                                                    gboolean                     case_sensitive);
+static gint               sort_by_highlight_color                 (const ThunarFile            *a,
+                                                                   const ThunarFile            *b,
+                                                                   gboolean                     case_sensitive);
 
 static gboolean           thunar_list_model_get_case_sensitive    (ThunarListModel             *store);
 static void               thunar_list_model_set_case_sensitive    (ThunarListModel             *store,
@@ -1102,6 +1105,8 @@ thunar_list_model_get_sort_column_id (GtkTreeSortable *sortable,
     *sort_column_id = THUNAR_COLUMN_MIME_TYPE;
   else if (store->sort_func == thunar_file_compare_by_name)
     *sort_column_id = THUNAR_COLUMN_NAME;
+  else if (store->sort_func == sort_by_highlight_color)
+    *sort_column_id = THUNAR_COLUMN_NAME;
   else if (store->sort_func == sort_by_permissions)
     *sort_column_id = THUNAR_COLUMN_PERMISSIONS;
   else if (store->sort_func == sort_by_size)
@@ -1147,7 +1152,9 @@ thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
                                       gint             sort_column_id,
                                       GtkSortType      order)
 {
-  ThunarListModel *store = THUNAR_LIST_MODEL (sortable);
+  ThunarListModel   *store = THUNAR_LIST_MODEL (sortable);
+  ThunarPreferences *preferences;
+  gboolean           show_highlight;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
 
@@ -1187,7 +1194,13 @@ thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
 
     case THUNAR_COLUMN_FILE_NAME:
     case THUNAR_COLUMN_NAME:
-      store->sort_func = thunar_file_compare_by_name;
+      preferences = thunar_preferences_get ();
+      g_object_get (G_OBJECT (preferences), "misc-highlighting-enabled", &show_highlight, NULL);
+      if (show_highlight)
+        store->sort_func = sort_by_highlight_color;
+      else
+        store->sort_func = thunar_file_compare_by_name;
+      g_object_unref (preferences);
       break;
 
     case THUNAR_COLUMN_OWNER:
@@ -1895,6 +1908,38 @@ sort_by_type (const ThunarFile *a,
     return thunar_file_compare_by_name (a, b, case_sensitive);
   else
     return result;
+}
+
+
+
+static gint
+sort_by_highlight_color (const ThunarFile *a,
+                         const ThunarFile *b,
+                         gboolean          case_sensitive)
+{
+  const gchar *color_a = NULL;
+  const gchar *color_b = NULL;
+  gint         result;
+
+  color_a = thunar_file_get_metadata_setting (THUNAR_FILE (a), "highlight-color");
+  color_b = thunar_file_get_metadata_setting (THUNAR_FILE (b), "highlight-color");
+
+  /* avoid calling strcasecmp with NULL parameters */
+  if (color_a != NULL && color_b != NULL)
+    {
+      result = g_strcmp0 (color_a, color_b);
+      if (result < 0)
+        return -1;
+      if (result > 0)
+        return 1;
+    }
+
+  if (color_a == NULL && color_b != NULL)
+      return 1;
+  if (color_a != NULL && color_b == NULL)
+      return -1;
+
+  return thunar_file_compare_by_name (a, b, case_sensitive);
 }
 
 
