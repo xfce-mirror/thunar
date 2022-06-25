@@ -51,7 +51,8 @@ G_BEGIN_DECLS
   "metadata::emblems," \
   "metadata::thunar-view-type," \
   "metadata::thunar-sort-column,metadata::thunar-sort-order," \
-  "metadata::thunar-zoom-level"
+  "metadata::thunar-zoom-level," \
+  "metadata::thunar-highlight-color"
 
 
 /*
