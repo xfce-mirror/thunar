@@ -136,8 +136,8 @@ thunar_shortcuts_pane_navigator_init (ThunarNavigatorIface *iface)
 static void
 thunar_shortcuts_pane_side_pane_init (ThunarSidePaneIface *iface)
 {
-  iface->get_show_hidden = (gpointer) exo_noop_false;
-  iface->set_show_hidden = (gpointer) exo_noop;
+  iface->get_show_hidden = NULL;
+  iface->set_show_hidden = NULL;
 }
 
 
