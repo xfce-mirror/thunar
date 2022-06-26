@@ -59,13 +59,9 @@ struct _ThunarRenamerProgress
   GtkWidget   *bar;
 
   GList       *pairs_renamed;       /* list of pairs renamed in a given run */
-  guint        n_pairs_renamed;
   GList       *pairs_total_renamed; /* list of pairs renamed across all runs */
-  guint        n_pairs_total_renamed;
   GList       *pairs_failed;
-  guint        n_pairs_failed;
   GList       *pairs_todo;
-  guint        n_pairs_todo;
   gboolean     show_dialog_on_error;
   gboolean     pairs_undo;          /* whether we're undoing previous changes */
 
@@ -205,8 +201,6 @@ thunar_renamer_progress_run_error_dialog (ThunarRenamerProgress *renamer_progres
       thunar_renamer_pair_list_free (renamer_progress->pairs_todo);
       renamer_progress->pairs_todo = renamer_progress->pairs_total_renamed;
       renamer_progress->pairs_total_renamed = NULL;
-      renamer_progress->n_pairs_total_renamed = 0;
-      renamer_progress->n_pairs_todo = g_list_length (renamer_progress->pairs_todo);
     }
   else if (response != GTK_RESPONSE_ACCEPT)
     {
@@ -245,13 +239,9 @@ THUNAR_THREADS_ENTER
       pair = first->data;
       renamer_progress->pairs_todo = g_list_delete_link (renamer_progress->pairs_todo, first);
 
-      /* update item count */
-      renamer_progress->n_pairs_todo--;
-      _thunar_assert (g_list_length (renamer_progress->pairs_todo) == renamer_progress->n_pairs_todo);
-
       /* determine the done/todo items */
-      n_pairs_processed = renamer_progress->n_pairs_renamed + renamer_progress->n_pairs_failed + 1;
-      n_total = n_pairs_processed + renamer_progress->n_pairs_todo;
+      n_pairs_processed = g_list_length (renamer_progress->pairs_renamed) + g_list_length (renamer_progress->pairs_failed) + 1;
+      n_total = n_pairs_processed + g_list_length (renamer_progress->pairs_todo);
 
       /* update the progress bar text */
       g_snprintf (text, sizeof (text), "%d/%d", n_pairs_processed, n_total);
@@ -269,10 +259,6 @@ THUNAR_THREADS_ENTER
           /* add pair to the list of failed pairs */
           renamer_progress->pairs_failed = g_list_prepend (renamer_progress->pairs_failed, pair);
 
-          /* update counter */
-          renamer_progress->n_pairs_failed++;
-          _thunar_assert (g_list_length (renamer_progress->pairs_failed) == renamer_progress->n_pairs_failed);
-
           /* check if error dialog box is to de displayed*/
           if (renamer_progress->show_dialog_on_error)
             thunar_renamer_progress_run_error_dialog (renamer_progress, pair, error);
@@ -289,12 +275,6 @@ THUNAR_THREADS_ENTER
           /* move the pair to the list of completed pairs */
           renamer_progress->pairs_renamed = g_list_prepend (renamer_progress->pairs_renamed, pair);
           renamer_progress->pairs_total_renamed = g_list_prepend (renamer_progress->pairs_total_renamed, thunar_renamer_pair_copy (pair));
-
-          /* update counters */
-          renamer_progress->n_pairs_renamed++;
-          renamer_progress->n_pairs_total_renamed++;
-          _thunar_assert (g_list_length (renamer_progress->pairs_renamed) == renamer_progress->n_pairs_renamed);
-          _thunar_assert (g_list_length (renamer_progress->pairs_total_renamed) == renamer_progress->n_pairs_total_renamed);
         }
     }
 
@@ -396,17 +376,14 @@ thunar_renamer_progress_run_helper (ThunarRenamerProgress *renamer_progress,
   /* make sure to release the list of completed items first */
   thunar_renamer_pair_list_free (renamer_progress->pairs_renamed);
   renamer_progress->pairs_renamed = NULL;
-  renamer_progress->n_pairs_renamed = 0;
 
   /* make sure to release the list of failed items first */
   thunar_renamer_pair_list_free (renamer_progress->pairs_failed);
   renamer_progress->pairs_failed = NULL;
-  renamer_progress->n_pairs_failed = 0;
 
   /* set the pairs on the todo list */
   thunar_renamer_pair_list_free (renamer_progress->pairs_todo);
   renamer_progress->pairs_todo = thunar_renamer_pair_list_copy (pairs);
-  renamer_progress->n_pairs_todo = g_list_length (renamer_progress->pairs_todo);
 
   /* schedule the idle source */
   renamer_progress->next_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_renamer_progress_next_idle,
@@ -470,7 +447,6 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
   /* make sure to release the list of total renamed items first */
   thunar_renamer_pair_list_free (renamer_progress->pairs_total_renamed);
   renamer_progress->pairs_total_renamed = NULL;
-  renamer_progress->n_pairs_total_renamed = 0;
 
   /* try to rename all the files for the first time */
   thunar_renamer_progress_run_helper (renamer_progress, pairs);
@@ -481,7 +457,7 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
    * by sorting them in ascending and descending sort, files causing such conflicts will be renamed first, and thus renamer can work.
    * try to rename all the failed files after sorting them in ascending order.
   **/
-  if (!renamer_progress->cancel_all_remaining_runs && renamer_progress->n_pairs_failed != 0)
+  if (!renamer_progress->cancel_all_remaining_runs && renamer_progress->pairs_failed != NULL)
     {
       GList *temp_pairs;
       temp_pairs = thunar_renamer_pair_list_copy (renamer_progress->pairs_failed);
@@ -490,7 +466,7 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
     }
 
   /* try to rename all the failed files after sorting them in descending order */
-  if (!renamer_progress->cancel_all_remaining_runs && renamer_progress->n_pairs_failed != 0)
+  if (!renamer_progress->cancel_all_remaining_runs && renamer_progress->pairs_failed != NULL)
     {
       GList *temp_pairs;
 
