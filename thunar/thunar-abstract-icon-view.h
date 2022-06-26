@@ -44,6 +44,8 @@ struct _ThunarAbstractIconView
 {
   ThunarStandardView             __parent__;
   ThunarAbstractIconViewPrivate *priv;
+
+  ThunarPreferences             *preferences;
 };
 
 GType thunar_abstract_icon_view_get_type (void) G_GNUC_CONST;
