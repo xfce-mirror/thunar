@@ -106,8 +106,8 @@ thunar_tree_pane_class_init (ThunarTreePaneClass *klass)
 static void
 thunar_tree_pane_component_init (ThunarComponentIface *iface)
 {
-  iface->get_selected_files = (gpointer) exo_noop_null;
-  iface->set_selected_files = (gpointer) exo_noop;
+  iface->get_selected_files = NULL;
+  iface->set_selected_files = NULL;
 }
 
 

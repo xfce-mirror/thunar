@@ -435,7 +435,7 @@ thunar_action_manager_class_init (ThunarActionManagerClass *klass)
 static void
 thunar_action_manager_component_init (ThunarComponentIface *iface)
 {
-  iface->get_selected_files = (gpointer) exo_noop_null;
+  iface->get_selected_files = NULL;
   iface->set_selected_files = thunar_action_manager_set_selected_files;
 }
 
