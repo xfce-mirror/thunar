@@ -283,6 +283,16 @@ thunar_job_operation_append (ThunarJobOperation *job_operation,
 void
 thunar_job_operation_finish (ThunarJobOperation *job_operation)
 {
+  GList *source_file_list;
+  GList *target_file_list;;
+
+  source_file_list = get_source_file_list (job_operation);
+  target_file_list = get_target_file_list (job_operation);
+
+  /* do not register an 'empty' job operation */
+  if (source_file_list == NULL && target_file_list == NULL)
+    return;
+
   job_operation_list = g_list_append (NULL, job_operation);
 }
 
