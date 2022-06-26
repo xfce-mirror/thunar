@@ -288,7 +288,7 @@ thunar_job_operation_finish (ThunarJobOperation *job_operation)
 
 #ifndef NDEBUG /* temporary debugging code */
 void
-thunar_job_operation_debug_print ()
+thunar_job_operation_debug_print (void)
 {
   ThunarJobOperation *op;
   GValue val = G_VALUE_INIT;
