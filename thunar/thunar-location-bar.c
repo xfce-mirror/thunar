@@ -38,7 +38,7 @@ struct _ThunarLocationBarClass
 
   /* signals */
   void (*entry_done) (void);
-  void (*reload_requested) (void);
+  void (*reload_requested) (void); /* UNUSED */
 };
 
 struct _ThunarLocationBar
@@ -107,7 +107,7 @@ thunar_location_bar_class_init (ThunarLocationBarClass *klass)
   gobject_class->set_property = thunar_location_bar_set_property;
   gobject_class->finalize = thunar_location_bar_finalize;
 
-  klass->reload_requested = exo_noop;
+  klass->reload_requested = NULL;
 
   /* Override ThunarNavigator's properties */
   g_object_class_override_property (gobject_class, PROP_CURRENT_DIRECTORY, "current-directory");

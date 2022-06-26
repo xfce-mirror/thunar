@@ -102,7 +102,10 @@ GList*
 thunar_component_get_selected_files (ThunarComponent *component)
 {
   _thunar_return_val_if_fail (THUNAR_IS_COMPONENT (component), NULL);
-  return (*THUNAR_COMPONENT_GET_IFACE (component)->get_selected_files) (component);
+  if (THUNAR_COMPONENT_GET_IFACE (component)->get_selected_files != NULL)
+    return (*THUNAR_COMPONENT_GET_IFACE (component)->get_selected_files) (component);
+  else
+    return NULL;
 }
 
 
@@ -121,7 +124,8 @@ thunar_component_set_selected_files (ThunarComponent *component,
                                      GList           *selected_files)
 {
   _thunar_return_if_fail (THUNAR_IS_COMPONENT (component));
-  (*THUNAR_COMPONENT_GET_IFACE (component)->set_selected_files) (component, selected_files);
+  if (THUNAR_COMPONENT_GET_IFACE (component)->set_selected_files != NULL)
+    (*THUNAR_COMPONENT_GET_IFACE (component)->set_selected_files) (component, selected_files);
 }
 
 
