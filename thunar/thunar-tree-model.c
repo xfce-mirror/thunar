@@ -166,6 +166,9 @@ static gboolean             thunar_tree_model_node_traverse_visible   (GNode    
 static gboolean             thunar_tree_model_get_case_sensitive      (ThunarTreeModel        *model);
 static void                 thunar_tree_model_set_case_sensitive      (ThunarTreeModel        *model,
                                                                        gboolean                case_sensitive);
+static gboolean             thunar_tree_model_default_visiblity       (ThunarTreeModel *model,
+                                                                       ThunarFile      *file,
+                                                                       gpointer         data);
 
 
 
@@ -296,7 +299,7 @@ thunar_tree_model_init (ThunarTreeModel *model)
 
   /* initialize the model data */
   model->sort_case_sensitive = TRUE;
-  model->visible_func = (ThunarTreeModelVisibleFunc) (void (*)(void)) exo_noop_true;
+  model->visible_func = thunar_tree_model_default_visiblity;
   model->visible_data = NULL;
   model->cleanup_idle_id = 0;
 
@@ -1971,4 +1974,14 @@ thunar_tree_model_add_child (ThunarTreeModel *model,
 
   /* add a dummy to the new child */
   thunar_tree_model_node_insert_dummy (child_node, model);
+}
+
+
+
+static gboolean
+thunar_tree_model_default_visiblity (ThunarTreeModel *model,
+                                     ThunarFile      *file,
+                                     gpointer         data)
+{
+  return TRUE;
 }
