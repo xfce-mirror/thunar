@@ -27,7 +27,7 @@ G_DECLARE_FINAL_TYPE (ThunarJobOperation, thunar_job_operation, THUNAR, JOB_OPER
 
 G_END_DECLS
 
-ThunarJobOperation    *thunar_job_operation_register     (ThunarJobOperationKind kind);
+ThunarJobOperation    *thunar_job_operation_new     (ThunarJobOperationKind kind);
 void                   thunar_job_operation_append       (ThunarJobOperation *job_operation,
                                                           GFile              *source,
                                                           GFile              *target);
