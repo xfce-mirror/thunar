@@ -157,7 +157,7 @@ thunar_job_operation_set_property  (GObject      *object,
                                     GParamSpec   *pspec)
   {
     ThunarJobOperation *self = THUNAR_JOB_OPERATION (object);
-  
+
     switch (prop_id)
       {
       case PROP_OPERATION_KIND:
@@ -165,12 +165,10 @@ thunar_job_operation_set_property  (GObject      *object,
         break;
 
       case PROP_SOURCE_FILE_LIST:
-        g_free (self->source_file_list);
         self->source_file_list = g_value_get_pointer (value);
         break;
 
       case PROP_TARGET_FILE_LIST:
-        g_free (self->target_file_list);
         self->target_file_list = g_value_get_pointer (value);
         break;
   
