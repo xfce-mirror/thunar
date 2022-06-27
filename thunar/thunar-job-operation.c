@@ -254,7 +254,6 @@ thunar_job_operation_register (ThunarJobOperationKind kind)
   operation = g_object_new (THUNAR_TYPE_JOB_OPERATION,
                             "operation-kind", kind,
                             NULL);
-  g_object_ref (operation);
 
   return operation;
 }
@@ -293,7 +292,7 @@ thunar_job_operation_finish (ThunarJobOperation *job_operation)
   if (source_file_list == NULL && target_file_list == NULL)
     return;
 
-  job_operation_list = g_list_append (NULL, job_operation);
+  job_operation_list = g_list_append (NULL, g_object_ref (job_operation));
 }
 
 #ifndef NDEBUG /* temporary debugging code */
