@@ -30,6 +30,7 @@
 #include <thunar/thunar-io-scan-directory.h>
 #include <thunar/thunar-io-jobs-util.h>
 #include <thunar/thunar-job.h>
+#include <thunar/thunar-job-operation.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-thumbnail-cache.h>
@@ -670,12 +671,13 @@ ttj_copy_file (ThunarTransferJob *job,
  *               on error or cancellation.
  **/
 static GFile *
-thunar_transfer_job_copy_file (ThunarTransferJob *job,
-                               GFile             *source_file,
-                               GFile             *target_file,
-                               gboolean           replace_confirmed,
-                               gboolean           rename_confirmed,
-                               GError           **error)
+thunar_transfer_job_copy_file (ThunarTransferJob     *job,
+                               ThunarJobOperation    *operation,
+                               GFile                 *source_file,
+                               GFile                 *target_file,
+                               gboolean               replace_confirmed,
+                               gboolean               rename_confirmed,
+                               GError               **error)
 {
   ThunarJobResponse response;
   GFile            *dest_file = target_file;
@@ -708,7 +710,15 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
         {
           /* try to copy the file from source file to the duplicate file */
           if (ttj_copy_file (job, source_file, target, copy_flags, &err))
-            return target;
+            {
+              /* only register in case of rename, not replace or skip.
+               * rename_confirmed is not set in the case of copying into the same location
+               * so we need to seperately check for it. */
+              if (rename_confirmed || g_file_equal (source_file, dest_file))
+                thunar_job_operation_append (operation, source_file, target);
+
+              return target;
+            }
           else /* go to error case */
             g_object_unref (target);
         }
@@ -773,6 +783,7 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
 
 static void
 thunar_transfer_job_copy_node (ThunarTransferJob  *job,
+                               ThunarJobOperation *operation,
                                ThunarTransferNode *node,
                                GFile              *target_file,
                                GFile              *target_parent_file,
@@ -920,7 +931,8 @@ retry_copy:
       thunar_transfer_job_check_pause (job);
 
       /* copy the item specified by this node (not recursively) */
-      real_target_file = thunar_transfer_job_copy_file (job, node->source_file,
+      real_target_file = thunar_transfer_job_copy_file (job, operation,
+                                                        node->source_file,
                                                         target_file,
                                                         node->replace_confirmed,
                                                         node->rename_confirmed,
@@ -939,7 +951,7 @@ retry_copy:
               if (node->children != NULL)
                 {
                   /* copy all children of this node */
-                  thunar_transfer_job_copy_node (job, node->children, NULL, real_target_file, NULL, &err);
+                  thunar_transfer_job_copy_node (job, operation, node->children, NULL, real_target_file, NULL, &err);
 
                   /* free resources allocted for the children */
                   thunar_transfer_node_free (node->children);
@@ -1549,6 +1561,7 @@ thunar_transfer_job_execute (ExoJob  *job,
   ThunarTransferNode   *node;
   ThunarApplication    *application;
   ThunarTransferJob    *transfer_job = THUNAR_TRANSFER_JOB (job);
+  ThunarJobOperation   *operation;
   GFileInfo            *info;
   GError               *err = NULL;
   GList                *new_files_list = NULL;
@@ -1642,13 +1655,14 @@ thunar_transfer_job_execute (ExoJob  *job,
 
       /* transfer starts now */
       transfer_job->start_time = g_get_real_time ();
+      operation = thunar_job_operation_register (THUNAR_JOB_OPERATION_KIND_COPY);
 
       /* perform the copy recursively for all source transfer nodes */
       for (sp = transfer_job->source_node_list, tp = transfer_job->target_file_list;
            sp != NULL && tp != NULL && err == NULL;
            sp = sp->next, tp = tp->next)
         {
-          thunar_transfer_job_copy_node (transfer_job, sp->data, tp->data, NULL,
+          thunar_transfer_job_copy_node (transfer_job, operation, sp->data, tp->data, NULL,
                                          &new_files_list, &err);
         }
     }
@@ -1663,6 +1677,14 @@ thunar_transfer_job_execute (ExoJob  *job,
     {
       thunar_job_new_files (THUNAR_JOB (job), new_files_list);
       thunar_g_list_free_full (new_files_list);
+
+      thunar_job_operation_finish (operation);
+      g_object_unref (operation);
+
+#ifndef NDEBUG /* temoporary debugging code */
+      thunar_job_operation_debug_print ();
+#endif
+
       return TRUE;
     }
 }
