@@ -245,7 +245,7 @@ set_target_file_list (ThunarJobOperation *job_operation,
 }
 
 ThunarJobOperation *
-thunar_job_operation_register (ThunarJobOperationKind kind)
+thunar_job_operation_new (ThunarJobOperationKind kind)
 {
   ThunarJobOperation *operation;
 
