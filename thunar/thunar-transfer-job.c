@@ -711,8 +711,10 @@ thunar_transfer_job_copy_file (ThunarTransferJob     *job,
           /* try to copy the file from source file to the duplicate file */
           if (ttj_copy_file (job, source_file, target, copy_flags, &err))
             {
-              /* only register in case of rename, not replace or skip */
-              if (rename_confirmed)
+              /* only register in case of rename, not replace or skip.
+               * rename_confirmed is not set in the case of copying into the same location
+               * so we need to seperately check for it. */
+              if (rename_confirmed || g_file_equal (source_file, dest_file))
                 thunar_job_operation_append (operation, source_file, target);
 
               return target;
