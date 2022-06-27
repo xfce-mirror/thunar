@@ -1655,7 +1655,7 @@ thunar_transfer_job_execute (ExoJob  *job,
 
       /* transfer starts now */
       transfer_job->start_time = g_get_real_time ();
-      operation = thunar_job_operation_register (THUNAR_JOB_OPERATION_KIND_COPY);
+      operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_COPY);
 
       /* perform the copy recursively for all source transfer nodes */
       for (sp = transfer_job->source_node_list, tp = transfer_job->target_file_list;
