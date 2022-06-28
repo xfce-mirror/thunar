@@ -1656,10 +1656,6 @@ thunar_transfer_job_execute (ExoJob  *job,
       transfer_job->start_time = g_get_real_time ();
       operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_COPY);
 
-#ifndef NDEBUG /* temporary debugging code */
-      g_print ("new thunar job operation's address: %p\n", operation);
-#endif
-
       /* perform the copy recursively for all source transfer nodes */
       for (sp = transfer_job->source_node_list, tp = transfer_job->target_file_list;
            sp != NULL && tp != NULL && err == NULL;
