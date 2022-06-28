@@ -119,6 +119,12 @@ thunar_job_operation_init (ThunarJobOperation *self)
 static void
 thunar_job_operation_finalize (GObject *object)
 {
+
+#ifndef NDEBUG /* temporary debugging code */
+  g_print ("THUNAR JOB OPERATION FINALIZED!\n");
+  g_print ("Operation which is finalized: %p\n", object);
+#endif
+
   (*G_OBJECT_CLASS (thunar_job_operation_parent_class)->finalize) (object);
 }
 
@@ -303,6 +309,9 @@ thunar_job_operation_debug_print (void)
   GList *target_file_list;
   gint index;
 
+  g_print ("Thunar Job Operation Debug\n"
+           "--------------------------\n");
+
   /* print the last debug operation, if there is any */
   if (job_operation_list == NULL)
   {
@@ -313,24 +322,31 @@ thunar_job_operation_debug_print (void)
   op = job_operation_list->data;
   g_assert (THUNAR_IS_JOB_OPERATION (op));
 
+  g_print ("job_operation memory address: %p\n", op);
+
   g_value_init (&val, G_TYPE_ENUM);
   g_object_get_property (G_OBJECT (op), "operation-kind", &val);
   g_print ("operation-kind: %s\n", g_enum_to_string (THUNAR_TYPE_JOB_OPERATION_KIND, g_value_get_enum (&val)));
 
   source_file_list = get_source_file_list (op);
+  g_print ("source_file_list memory address: %p\n", source_file_list);
   index = 0;
+
   for (GList *elem = source_file_list; elem != NULL; index++, elem = elem->next)
     {
       GFile *file = elem->data;
+      g_print ("source file %d's memory address: %p\n", index, file);
       g_assert (G_IS_FILE (file));
       g_print ("source file %d: %s\n", index, g_file_get_uri (file));
     }
 
   target_file_list = get_target_file_list (op);
+  g_print ("target_file_list memory address: %p\n", target_file_list);
   index = 0;
   for (GList *elem = target_file_list; elem != NULL; index++, elem = elem->next)
     {
       GFile *file = elem->data;
+      g_print ("target file %d's memory address: %p\n", index, file);
       g_assert (G_IS_FILE (file));
       g_print ("target file %d: %s\n", index, g_file_get_uri (file));
     }
