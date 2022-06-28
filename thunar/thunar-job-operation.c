@@ -275,11 +275,11 @@ thunar_job_operation_append (ThunarJobOperation *job_operation,
   g_assert (G_IS_FILE (target));
 
   source_file_list = get_source_file_list (job_operation);
-  source_file_list = g_list_append (source_file_list, source);
+  source_file_list = g_list_append (source_file_list, g_object_ref (source));
   set_source_file_list (job_operation, source_file_list);
 
   target_file_list = get_target_file_list (job_operation);
-  target_file_list = g_list_append (target_file_list, target);
+  target_file_list = g_list_append (target_file_list, g_object_ref (target));
   set_target_file_list (job_operation, target_file_list);
 }
 
