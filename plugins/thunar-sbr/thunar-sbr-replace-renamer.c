@@ -474,7 +474,7 @@ thunar_sbr_replace_renamer_pcre_exec (ThunarSbrReplaceRenamer *replace_renamer,
 
     index_match = ovec[0];
 
-    /*append the subject text between the matches */
+    /* append the subject text between the matches */
     for (gint j = first_index_after_match; j < index_match; j++)
     {
       g_string_append_c (result, subject[j]);
