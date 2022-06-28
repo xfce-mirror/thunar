@@ -640,3 +640,30 @@ thunar_status_bar_info_check_active (guint               info,
 {
   return (info & mask) > 0 ? TRUE : FALSE;
 }
+
+GType
+thunar_job_operation_kind_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GEnumValue values[] =
+      {
+        { THUNAR_JOB_OPERATION_KIND_COPY,       "THUNAR_JOB_OPERATION_KIND_COPY",     N_("Copy"),  },
+        { THUNAR_JOB_OPERATION_KIND_MOVE,       "THUNAR_JOB_OPERATION_KIND_MOVE",     N_("Move") },
+        { THUNAR_JOB_OPERATION_KIND_RENAME,     "THUNAR_JOB_OPERATION_KIND_RENAME",   N_("Rename") },
+        { THUNAR_JOB_OPERATION_KIND_CREATE,     "THUNAR_JOB_OPERATION_KIND_CREATE",   N_("Create") },
+        { THUNAR_JOB_OPERATION_KIND_DELETE,     "THUNAR_JOB_OPERATION_KIND_DELETE",   N_("Delete (opposite of create)") },
+        { THUNAR_JOB_OPERATION_KIND_TRASH,      "THUNAR_JOB_OPERATION_KIND_TRASH",    N_("Trash") },
+        { THUNAR_JOB_OPERATION_KIND_RESTORE,    "THUNAR_JOB_OPERATION_KIND_RESTORE",  N_("Restore (opposite of trash)") },
+        { THUNAR_JOB_OPERATION_KIND_LINK,       "THUNAR_JOB_OPERATION_KIND_LINK",     N_("Link") },
+        { THUNAR_JOB_OPERATION_KIND_UNLINK,     "THUNAR_JOB_OPERATION_KIND_UNLINK",   N_("Unlink") },
+        { 0, NULL, NULL }
+      };
+
+      type = g_enum_register_static ("ThunarJobOperationKind", values);
+    }
+
+  return type;
+}
