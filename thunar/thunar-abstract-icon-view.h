@@ -44,6 +44,8 @@ struct _ThunarAbstractIconView
 {
   ThunarStandardView             __parent__;
   ThunarAbstractIconViewPrivate *priv;
+
+  gulong                         highlight_option_signal;
 };
 
 GType thunar_abstract_icon_view_get_type (void) G_GNUC_CONST;
