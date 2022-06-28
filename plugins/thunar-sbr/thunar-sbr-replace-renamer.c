@@ -455,7 +455,6 @@ thunar_sbr_replace_renamer_pcre_exec (ThunarSbrReplaceRenamer *replace_renamer,
   gint         olen;
   gint         rc;
   gint         index_match;
-  gint         offset = 0;
   gint         first_index_after_match = 0;
 
   /* guess an initial ovec size */
@@ -469,7 +468,7 @@ thunar_sbr_replace_renamer_pcre_exec (ThunarSbrReplaceRenamer *replace_renamer,
   while ((size_t) first_index_after_match < strlen (subject))
   {
     /* if rc <= 0 we have no match any more */
-    rc = pcre_exec (replace_renamer->pcre_pattern, NULL, subject, strlen (subject), offset, PCRE_NOTEMPTY, ovec, olen);
+    rc = pcre_exec (replace_renamer->pcre_pattern, NULL, subject, strlen (subject), first_index_after_match, PCRE_NOTEMPTY, ovec, olen);
     if (rc <= 0)
       break;
 
