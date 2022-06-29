@@ -201,5 +201,5 @@ thunar_renamer_pair_compare_descending (const void *pair_a,
   b = (ThunarRenamerPair *) pair_b;
   file_a = a->file;
   file_b = b->file;
-  return -1*thunar_file_compare_by_name (file_a, file_b, TRUE);
+  return -1 * thunar_file_compare_by_name (file_a, file_b, TRUE);
 }
