@@ -148,6 +148,8 @@ struct _ThunarDetailsView
   guint idle_id;
 
   gulong             highlight_option_signal;
+
+  GtkCellRenderer   *renderers[THUNAR_N_VISIBLE_COLUMNS];
 };
 
 
@@ -302,6 +304,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
         {
           /* size is right aligned, everything else is left aligned */
           renderer = (column == THUNAR_COLUMN_SIZE || column == THUNAR_COLUMN_SIZE_IN_BYTES) ? right_aligned_renderer : left_aligned_renderer;
+          details_view->renderers[column] = renderer;
 
           /* add the renderer */
           gtk_tree_view_column_pack_start (details_view->columns[column], renderer, TRUE);
@@ -1187,8 +1190,9 @@ thunar_details_view_cell_layout_data_func (GtkCellLayout   *layout,
 static void
 thunar_details_view_highlight_option_changed (ThunarDetailsView *details_view)
 {
-  gboolean            show_highlight;
   GtkTreeCellDataFunc function = NULL;
+  gboolean            show_highlight;
+  gint                column;
 
   g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences), "misc-highlighting-enabled", &show_highlight, NULL);
 
@@ -1199,4 +1203,23 @@ thunar_details_view_highlight_option_changed (ThunarDetailsView *details_view)
   gtk_tree_view_column_set_cell_data_func (GTK_TREE_VIEW_COLUMN (details_view->columns[THUNAR_COLUMN_NAME]),
                                            THUNAR_STANDARD_VIEW (details_view)->name_renderer,
                                            function, NULL, NULL);
+  for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; column++)
+    {
+      if (column == THUNAR_COLUMN_NAME)
+        {
+          gtk_tree_view_column_set_cell_data_func (GTK_TREE_VIEW_COLUMN (details_view->columns[column]),
+              THUNAR_STANDARD_VIEW (details_view)->name_renderer,
+              function, NULL, NULL);
+
+          gtk_tree_view_column_set_cell_data_func (GTK_TREE_VIEW_COLUMN (details_view->columns[column]),
+              THUNAR_STANDARD_VIEW (details_view)->icon_renderer,
+              function, NULL, NULL);
+        }
+      else
+        {
+          gtk_tree_view_column_set_cell_data_func (GTK_TREE_VIEW_COLUMN (details_view->columns[column]),
+              details_view->renderers[column],
+              function, NULL, NULL);
+        }
+    }
 }
