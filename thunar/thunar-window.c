@@ -237,6 +237,7 @@ static gboolean  thunar_window_action_open_location       (ThunarWindow         
 static gboolean  thunar_window_action_contents            (ThunarWindow           *window);
 static gboolean  thunar_window_action_about               (ThunarWindow           *window);
 static gboolean  thunar_window_action_show_hidden         (ThunarWindow           *window);
+static gboolean  thunar_window_action_show_highlight      (ThunarWindow           *window);
 static gboolean  thunar_window_propagate_key_event        (GtkWindow              *window,
                                                            GdkEvent               *key_event,
                                                            gpointer                user_data);
@@ -431,6 +432,8 @@ struct _ThunarWindow
 
   gboolean                show_hidden;
 
+  gboolean                show_highlight;
+
   gboolean                directory_specific_settings;
 
   /* support to remember window geometry */
@@ -472,6 +475,7 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_VIEW_MENUBAR,                   "<Actions>/ThunarWindow/view-menubar",                    "<Primary>m",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Menubar"),               N_ ("Change the visibility of this window's menubar"),                               "open-menu-symbolic",      G_CALLBACK (thunar_window_action_menubar_changed),    },
     { THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR,              "<Actions>/ThunarWindow/view-configure-toolbar",          "",                     XFCE_GTK_MENU_ITEM ,      N_ ("Configure _Toolbar..."),  N_ ("Configure the toolbar"),                                                        NULL,                      G_CALLBACK (thunar_window_action_show_toolbar_editor),},
     { THUNAR_WINDOW_ACTION_SHOW_HIDDEN,                    "<Actions>/ThunarWindow/show-hidden",                     "<Primary>h",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("Show _Hidden Files"),     N_ ("Toggles the display of hidden files in the current window"),                    NULL,                      G_CALLBACK (thunar_window_action_show_hidden),        },
+    { THUNAR_WINDOW_ACTION_SHOW_HIGHLIGHT,                 "<Actions>/ThunarWindow/show-highlight",                  "",                     XFCE_GTK_CHECK_MENU_ITEM, N_ ("Show File Highlight"),    N_ ("Toggles the display of file highlight"),                                        NULL,                      G_CALLBACK (thunar_window_action_show_highlight),     },
     { THUNAR_WINDOW_ACTION_ZOOM_IN,                        "<Actions>/ThunarWindow/zoom-in",                         "<Primary>KP_Add",      XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Zoom I_n"),               N_ ("Show the contents in more detail"),                                             "zoom-in-symbolic",        G_CALLBACK (thunar_window_zoom_in),                   },
     { THUNAR_WINDOW_ACTION_ZOOM_IN_ALT_1,                  "<Actions>/ThunarWindow/zoom-in-alt1",                    "<Primary>plus",        XFCE_GTK_IMAGE_MENU_ITEM, NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_zoom_in),                   },
     { THUNAR_WINDOW_ACTION_ZOOM_IN_ALT_2,                  "<Actions>/ThunarWindow/zoom-in-alt2",                    "<Primary>equal",       XFCE_GTK_IMAGE_MENU_ITEM, NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_zoom_in),                   },
@@ -758,6 +762,7 @@ thunar_window_init (ThunarWindow *window)
                 "last-location-bar", &last_location_bar,
                 "last-side-pane", &last_side_pane,
                 "last-statusbar-visible", &last_statusbar_visible,
+                "misc-highlighting-enabled", &window->show_highlight,
                 NULL);
 
   /* update the visual on screen_changed events */
@@ -1274,6 +1279,8 @@ thunar_window_update_view_menu (ThunarWindow *window,
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_SHOW_HIDDEN), G_OBJECT (window),
                                                    window->show_hidden, GTK_MENU_SHELL (menu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_SHOW_HIGHLIGHT), G_OBJECT (window),
+                                                   window->show_highlight, GTK_MENU_SHELL (menu));
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
   if (window->view != NULL)
     thunar_standard_view_append_menu_items (THUNAR_STANDARD_VIEW (window->view), GTK_MENU (menu), window->accel_group);
@@ -4408,6 +4415,22 @@ thunar_window_action_show_hidden (ThunarWindow *window)
     thunar_window_update_search (window);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_window_action_show_highlight (ThunarWindow *window)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  window->show_highlight = !window->show_highlight;
+  g_object_set (G_OBJECT (window->preferences), "misc-highlighting-enabled", window->show_highlight, NULL);
+
+  /* refresh the view to refresh the cell renderer drawings */
+  thunar_window_action_reload (window, NULL);
+
   return TRUE;
 }
 
