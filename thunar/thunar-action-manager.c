@@ -110,6 +110,11 @@ enum
   N_PROPERTIES
 };
 
+enum
+{
+  THUNAR_RESPONSE_RESET,
+};
+
 
 
 static void                    thunar_action_manager_component_init             (ThunarComponentIface           *iface);
@@ -204,6 +209,7 @@ static gboolean                thunar_action_manager_action_create_document     
 static GtkWidget              *thunar_action_manager_create_document_submenu_new(ThunarActionManager            *action_mgr);
 static void                    thunar_action_manager_new_files_created          (ThunarActionManager            *action_mgr,
                                                                                  GList                          *new_thunar_files);
+static void                    thunar_action_manager_action_set_highlight_color (ThunarActionManager            *action_mgr);
 
 
 
@@ -279,6 +285,7 @@ static XfceGtkActionEntry thunar_action_manager_action_entries[] =
     {THUNAR_ACTION_MANAGER_ACTION_SENDTO_SHORTCUTS,   "<Actions>/ThunarShortcutsPane/sendto-shortcuts", "<Primary>D",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Add Bookmark"),       N_ ("Create bookmarks for all selected folders in the sidepane. If nothing is selected, the current directory is bookmarked."), "bookmark-new", G_CALLBACK (thunar_action_manager_action_add_shortcuts),       },
     {THUNAR_ACTION_MANAGER_ACTION_SENDTO_DESKTOP,     "<Actions>/ThunarActionManager/sendto-desktop",   "",                  XFCE_GTK_MENU_ITEM,       N_ ("Send to _Desktop"),    NULL,                                                                                            "user-desktop",                                G_CALLBACK (thunar_action_manager_action_sendto_desktop),      },
     {THUNAR_ACTION_MANAGER_ACTION_PROPERTIES,         "<Actions>/ThunarStandardView/properties",        "<Alt>Return",       XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Properties..."),      N_ ("View the properties of the selected file"),                                                 "document-properties",                         G_CALLBACK (thunar_action_manager_action_properties),          },
+    {THUNAR_ACTION_MANAGER_ACTION_HIGHLIGHT_COLOR,    "<Actions>/ThunarStandardView/highlight-color",   "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Highlight"),          N_ ("Set a highlight color for the selected files"),   NULL,                                                                                    G_CALLBACK (thunar_action_manager_action_set_highlight_color), },
     {THUNAR_ACTION_MANAGER_ACTION_MAKE_LINK,          "<Actions>/ThunarStandardView/make-link",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Ma_ke Link"),          NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_make_link),           },
     {THUNAR_ACTION_MANAGER_ACTION_DUPLICATE,          "<Actions>/ThunarStandardView/duplicate",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Du_plicate"),          NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_duplicate),           },
     {THUNAR_ACTION_MANAGER_ACTION_RENAME,             "<Actions>/ThunarStandardView/rename",            "F2",                XFCE_GTK_MENU_ITEM,       N_ ("_Rename..."),          NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_rename),              },
@@ -3370,4 +3377,64 @@ XfceGtkActionEntry*
 thunar_action_manager_get_action_entries (void)
 {
   return thunar_action_manager_action_entries;
+}
+
+
+
+static void
+thunar_action_manager_action_set_highlight_color (ThunarActionManager *action_mgr)
+{
+  GtkWidget   *dialog;
+  const gchar *hlcolor = NULL;
+  const gchar *prev_color;
+  gchar       *color;
+  gint         result;
+  GdkRGBA      rgba;
+  GList       *lp;
+
+  /* find the highlight color of the selected file(s) */
+  for (lp = action_mgr->files_to_process; lp != NULL; lp = lp->next)
+    {
+      prev_color = hlcolor;
+      hlcolor = thunar_file_get_metadata_setting (THUNAR_FILE (lp->data), "highlight-color");
+      if (prev_color != NULL && g_strcmp0 (hlcolor, prev_color) != 0)
+        {
+          /* if all the selected file(s) are not of same color
+           * then no need to set a default color in the dialog */
+          hlcolor = NULL;
+          break;
+        }
+    }
+
+  /* initialize the dialog */
+  dialog = gtk_color_chooser_dialog_new (_("Select Highlight Color"), GTK_WINDOW (action_mgr->widget));
+  gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+  gtk_dialog_add_button (GTK_DIALOG (dialog), _("Reset"), THUNAR_RESPONSE_RESET);
+
+  /* only set a default color if all selected files share the same color */
+  if (G_UNLIKELY (hlcolor != NULL))
+    {
+      gdk_rgba_parse (&rgba, hlcolor);
+      gtk_color_chooser_set_rgba (GTK_COLOR_CHOOSER (dialog), &rgba);
+    }
+
+  /* run the dialog */
+  result = gtk_dialog_run (GTK_DIALOG (dialog));
+  switch (result)
+    {
+    case GTK_RESPONSE_CANCEL:
+      break;
+    case THUNAR_RESPONSE_RESET:
+      for (lp = action_mgr->files_to_process; lp != NULL; lp = lp->next)
+        thunar_file_clear_metadata_setting (THUNAR_FILE (lp->data), "highlight-color");
+      break;
+    default:
+      gtk_color_chooser_get_rgba (GTK_COLOR_CHOOSER (dialog), &rgba);
+      color = gdk_rgba_to_string (&rgba);
+      for (lp = action_mgr->files_to_process; lp != NULL; lp = lp->next)
+        thunar_file_set_metadata_setting (THUNAR_FILE (lp->data), "highlight-color", color, TRUE);
+      g_free (color);
+    }
+
+  gtk_widget_destroy (dialog);
 }
