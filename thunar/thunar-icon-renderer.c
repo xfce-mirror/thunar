@@ -38,6 +38,8 @@ enum
   PROP_EMBLEMS,
   PROP_FOLLOW_STATE,
   PROP_SIZE,
+  PROP_HIGHLIGHT,
+  PROP_HIGHLIGHT_SET,
 };
 
 
@@ -154,6 +156,34 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                                       THUNAR_TYPE_ICON_SIZE,
                                                       THUNAR_ICON_SIZE_32,
                                                       G_PARAM_CONSTRUCT | EXO_PARAM_READWRITE));
+
+
+
+  /**
+   * ThunarIconRenderer:highlight:
+   *
+   * The color with which the file should be highlighted
+   * #ThunarIconRenderer instance.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_HIGHLIGHT,
+                                   g_param_spec_string ("highlight", "highlight", "highlight",
+                                                        NULL,
+                                                        EXO_PARAM_READWRITE));
+
+
+
+  /**
+   * ThunarIconRenderer:highlight-set:
+   *
+   * TRUE if highlight color has been set
+   * #ThunarIconRenderer instance.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_HIGHLIGHT_SET,
+                                   g_param_spec_boolean ("highlight-set", "highlight-set", "highlight-set",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 }
 
 
@@ -177,6 +207,8 @@ thunar_icon_renderer_finalize (GObject *object)
     g_object_unref (G_OBJECT (icon_renderer->drop_file));
   if (G_LIKELY (icon_renderer->file != NULL))
     g_object_unref (G_OBJECT (icon_renderer->file));
+  if (G_LIKELY (icon_renderer->highlight != NULL))
+    g_free (icon_renderer->highlight);
 
   (*G_OBJECT_CLASS (thunar_icon_renderer_parent_class)->finalize) (object);
 }
@@ -211,6 +243,14 @@ thunar_icon_renderer_get_property (GObject    *object,
 
     case PROP_SIZE:
       g_value_set_enum (value, icon_renderer->size);
+      break;
+
+    case PROP_HIGHLIGHT:
+      g_value_set_string (value, icon_renderer->highlight);
+      break;
+
+    case PROP_HIGHLIGHT_SET:
+      g_value_set_boolean (value, icon_renderer->highlight_set);
       break;
 
     default:
@@ -253,6 +293,16 @@ thunar_icon_renderer_set_property (GObject      *object,
 
     case PROP_SIZE:
       icon_renderer->size = g_value_get_enum (value);
+      break;
+
+    case PROP_HIGHLIGHT:
+      if (G_UNLIKELY (icon_renderer->highlight != NULL))
+        g_free (icon_renderer->highlight);
+      icon_renderer->highlight = g_value_dup_string (value);
+      break;
+
+    case PROP_HIGHLIGHT_SET:
+      icon_renderer->highlight_set = g_value_get_boolean (value);
       break;
 
     default:
@@ -396,6 +446,11 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   gboolean                color_selected;
   gboolean                color_lighten;
   gboolean                is_expanded;
+  gboolean                cell_background_set;
+  const gchar            *cell_background;
+  GdkRGBA                 cell_background_rgba;
+  gdouble                 corner_radius = cell_area->height / 10.0;
+  gdouble                 degrees = G_PI / 180.0;
 
   if (G_UNLIKELY (icon_renderer->file == NULL))
     return;
@@ -404,6 +459,21 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
     return;
 
   g_object_get (renderer, "is-expanded", &is_expanded, NULL);
+  cell_background_set = icon_renderer->highlight_set;
+  cell_background = icon_renderer->highlight;
+
+  if (G_UNLIKELY (cell_background_set))
+    {
+      cairo_new_sub_path (cr);
+      cairo_arc (cr, background_area->x + background_area->width - corner_radius, background_area->y + corner_radius, corner_radius, -90 * degrees, 0 * degrees);
+      cairo_arc (cr, background_area->x + background_area->width - 0, background_area->y + background_area->height - 0, 0, 0 * degrees, 90 * degrees);
+      cairo_arc (cr, background_area->x + 0, background_area->y + background_area->height - 0, 0, 90 * degrees, 180 * degrees);
+      cairo_arc (cr, background_area->x + corner_radius, background_area->y + corner_radius, corner_radius, 180 * degrees, 270 * degrees);
+      cairo_close_path (cr);
+      gdk_rgba_parse (&cell_background_rgba, cell_background);
+      gdk_cairo_set_source_rgba (cr, &cell_background_rgba);
+      cairo_clip (cr);
+    }
 
   /* determine the icon state */
   icon_state = (icon_renderer->drop_file != icon_renderer->file)
@@ -470,6 +540,13 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
           alpha = 1.00;
         }
       g_object_unref (G_OBJECT (clipboard));
+
+      /* HACK: set the background color again, it seems the click event resets the color */
+      if (G_UNLIKELY (cell_background_set))
+        {
+          gdk_cairo_set_source_rgba (cr, &cell_background_rgba);
+          cairo_paint (cr);
+        }
 
       /* render the invalid parts of the icon */
       thunar_gdk_cairo_set_source_pixbuf (cr, icon, icon_area.x, icon_area.y);
