@@ -167,8 +167,8 @@ thunar_abstract_icon_view_finalize (GObject *object)
 {
   ThunarAbstractIconView *abstract_icon_view = THUNAR_ABSTRACT_ICON_VIEW (object);
 
-  if (abstract_icon_view->highlight_option_signal != 0)
-    g_signal_handler_disconnect (THUNAR_STANDARD_VIEW (abstract_icon_view)->preferences, abstract_icon_view->highlight_option_signal);
+  g_signal_handlers_disconnect_by_func (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_icon_view)->preferences),
+                                        thunar_abstract_icon_view_highlight_option_changed, abstract_icon_view);
 
   (*G_OBJECT_CLASS (thunar_abstract_icon_view_parent_class)->finalize) (object);
 }
@@ -213,9 +213,8 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer,
                                  "text", THUNAR_COLUMN_NAME);
 
-  abstract_icon_view->highlight_option_signal =
-    g_signal_connect_swapped (THUNAR_STANDARD_VIEW (abstract_icon_view)->preferences, "notify::misc-highlighting-enabled",
-                              G_CALLBACK (thunar_abstract_icon_view_highlight_option_changed), abstract_icon_view);
+  g_signal_connect_swapped (THUNAR_STANDARD_VIEW (abstract_icon_view)->preferences, "notify::misc-highlighting-enabled",
+                            G_CALLBACK (thunar_abstract_icon_view_highlight_option_changed), abstract_icon_view);
   thunar_abstract_icon_view_highlight_option_changed (abstract_icon_view);
 
   /* update the icon view on size-allocate events */
@@ -692,20 +691,16 @@ thunar_abstract_icon_view_cell_layout_data_func (GtkCellLayout   *layout,
   const gchar *foreground = NULL;
 
   file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
-  background = thunar_file_get_metadata_setting (file, "highlight-background");
-  foreground = thunar_file_get_metadata_setting (file, "highlight-foreground");
-
-  /* common for both renderers */
-  g_object_set (G_OBJECT (cell), "cell-background", background, NULL);
+  background = thunar_file_get_metadata_setting (file, "highlight-color-background");
+  foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
 
   /* since this function is being used for both icon & name renderers;
-   * we need to make sure foreground is applied to only the name renderer */
+   * we need to make sure the right properties are applied to the right renderers */
+  /* TODO: is such a multi-purpose function good ? */
   if (GTK_IS_CELL_RENDERER_TEXT (cell))
-    g_object_set (G_OBJECT (cell), "foreground", foreground, NULL);
-
-  /* required for; HACK: in icon-renderer; to not redraw the background-color when item is selected */
-  if (background != NULL)
-      g_object_set (G_OBJECT (cell), "cell-background-set", TRUE, NULL);
+      g_object_set (G_OBJECT (cell), "foreground", foreground, "cell-background", background, NULL);
+  else
+      g_object_set (G_OBJECT (cell), "highlight", background, "highlight-set", background != NULL ? TRUE : FALSE, NULL);
 
   g_object_unref (file);
 }
