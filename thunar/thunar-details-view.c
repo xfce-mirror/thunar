@@ -1178,10 +1178,13 @@ thunar_details_view_cell_layout_data_func (GtkCellLayout   *layout,
 {
   ThunarFile  *file ;
   const gchar *color = NULL;
+  const gchar *foreground = NULL;
 
   file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
-  color = thunar_file_get_metadata_setting (file, "highlight-color");
-  g_object_set (G_OBJECT (cell), "cell-background", color, NULL);
+  color = thunar_file_get_metadata_setting (file, "highlight-background");
+  foreground = thunar_file_get_metadata_setting (file, "highlight-foreground");
+  /* all renderers using this function are GtkCellRendererText; hence both properties are common in all */
+  g_object_set (G_OBJECT (cell), "cell-background", color, "foreground", foreground, NULL);
   g_object_unref (file);
 }
 
@@ -1200,19 +1203,12 @@ thunar_details_view_highlight_option_changed (ThunarDetailsView *details_view)
     function = (GtkTreeCellDataFunc) thunar_details_view_cell_layout_data_func;
 
   /* set the data functions for the respective renderers */
-  gtk_tree_view_column_set_cell_data_func (GTK_TREE_VIEW_COLUMN (details_view->columns[THUNAR_COLUMN_NAME]),
-                                           THUNAR_STANDARD_VIEW (details_view)->name_renderer,
-                                           function, NULL, NULL);
   for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; column++)
     {
       if (column == THUNAR_COLUMN_NAME)
         {
           gtk_tree_view_column_set_cell_data_func (GTK_TREE_VIEW_COLUMN (details_view->columns[column]),
               THUNAR_STANDARD_VIEW (details_view)->name_renderer,
-              function, NULL, NULL);
-
-          gtk_tree_view_column_set_cell_data_func (GTK_TREE_VIEW_COLUMN (details_view->columns[column]),
-              THUNAR_STANDARD_VIEW (details_view)->icon_renderer,
               function, NULL, NULL);
         }
       else

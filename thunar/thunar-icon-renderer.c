@@ -478,7 +478,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       /* HACK: set the background color again, it seems the click event resets the color */
       if (cell_background_set)
         {
-          cell_background = thunar_file_get_metadata_setting (icon_renderer->file, "highlight-color");
+          cell_background = thunar_file_get_metadata_setting (icon_renderer->file, "highlight-background");
           gdk_rgba_parse (&cell_background_rgba, cell_background);
           gdk_cairo_set_source_rgba (cr, &cell_background_rgba);
           cairo_paint (cr);
