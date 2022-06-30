@@ -695,17 +695,13 @@ thunar_abstract_icon_view_cell_layout_data_func (GtkCellLayout   *layout,
   background = thunar_file_get_metadata_setting (file, "highlight-background");
   foreground = thunar_file_get_metadata_setting (file, "highlight-foreground");
 
-  /* common for both renderers */
-  g_object_set (G_OBJECT (cell), "cell-background", background, NULL);
-
   /* since this function is being used for both icon & name renderers;
-   * we need to make sure foreground is applied to only the name renderer */
+   * we need to make sure the right properties are applied to the right renderers */
+  /* TODO: is such a multi-purpose function good ? */
   if (GTK_IS_CELL_RENDERER_TEXT (cell))
-    g_object_set (G_OBJECT (cell), "foreground", foreground, NULL);
-
-  /* required for; HACK: in icon-renderer; to not redraw the background-color when item is selected */
-  if (background != NULL)
-      g_object_set (G_OBJECT (cell), "cell-background-set", TRUE, NULL);
+      g_object_set (G_OBJECT (cell), "foreground", foreground, "cell-background", background, NULL);
+  else
+      g_object_set (G_OBJECT (cell), "highlight", background, "highlight-set", background != NULL ? TRUE : FALSE, NULL);
 
   g_object_unref (file);
 }
