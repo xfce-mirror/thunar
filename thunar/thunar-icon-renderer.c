@@ -396,6 +396,9 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   gboolean                color_selected;
   gboolean                color_lighten;
   gboolean                is_expanded;
+  gboolean                cell_background_set;
+  const gchar            *cell_background;
+  GdkRGBA                 cell_background_rgba;
 
   if (G_UNLIKELY (icon_renderer->file == NULL))
     return;
@@ -404,6 +407,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
     return;
 
   g_object_get (renderer, "is-expanded", &is_expanded, NULL);
+  g_object_get (renderer, "cell-background-set", &cell_background_set, NULL);
 
   /* determine the icon state */
   icon_state = (icon_renderer->drop_file != icon_renderer->file)
@@ -470,6 +474,15 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
           alpha = 1.00;
         }
       g_object_unref (G_OBJECT (clipboard));
+
+      /* HACK: set the background color again, it seems the click event resets the color */
+      if (cell_background_set)
+        {
+          cell_background = thunar_file_get_metadata_setting (icon_renderer->file, "highlight-background");
+          gdk_rgba_parse (&cell_background_rgba, cell_background);
+          gdk_cairo_set_source_rgba (cr, &cell_background_rgba);
+          cairo_paint (cr);
+        }
 
       /* render the invalid parts of the icon */
       thunar_gdk_cairo_set_source_pixbuf (cr, icon, icon_area.x, icon_area.y);
