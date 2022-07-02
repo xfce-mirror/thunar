@@ -147,8 +147,6 @@ struct _ThunarDetailsView
   /* event source id for thunar_details_view_zoom_level_changed_reload_fixed_height */
   guint idle_id;
 
-  gulong             highlight_option_signal;
-
   GtkCellRenderer   *renderers[THUNAR_N_VISIBLE_COLUMNS];
 };
 
@@ -345,9 +343,8 @@ thunar_details_view_init (ThunarDetailsView *details_view)
       gtk_tree_view_column_set_expand (details_view->columns[THUNAR_COLUMN_NAME], TRUE);
     }
 
-  details_view->highlight_option_signal =
-    g_signal_connect_swapped (THUNAR_STANDARD_VIEW (details_view)->preferences, "notify::misc-highlighting-enabled",
-                              G_CALLBACK (thunar_details_view_highlight_option_changed), details_view);
+  g_signal_connect_swapped (THUNAR_STANDARD_VIEW (details_view)->preferences, "notify::misc-highlighting-enabled",
+                            G_CALLBACK (thunar_details_view_highlight_option_changed), details_view);
   thunar_details_view_highlight_option_changed (details_view);
 
   /* release the shared text renderers */
@@ -418,8 +415,8 @@ thunar_details_view_finalize (GObject *object)
   if (details_view->idle_id)
     g_source_remove (details_view->idle_id);
 
-  if (details_view->highlight_option_signal != 0)
-    g_signal_handler_disconnect (THUNAR_STANDARD_VIEW (details_view)->preferences, details_view->highlight_option_signal);
+  g_signal_handlers_disconnect_by_func (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences),
+                                        thunar_details_view_highlight_option_changed, details_view);
 
   (*G_OBJECT_CLASS (thunar_details_view_parent_class)->finalize) (object);
 }
@@ -1176,15 +1173,16 @@ thunar_details_view_cell_layout_data_func (GtkCellLayout   *layout,
                                            GtkTreeIter     *iter,
                                            gpointer         data)
 {
-  ThunarFile  *file ;
-  const gchar *color = NULL;
+  ThunarFile  *file;
+  const gchar *background = NULL;
   const gchar *foreground = NULL;
 
   file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
-  color = thunar_file_get_metadata_setting (file, "highlight-background");
-  foreground = thunar_file_get_metadata_setting (file, "highlight-foreground");
+  background = thunar_file_get_metadata_setting (file, "highlight-color-background");
+  foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
+
   /* all renderers using this function are GtkCellRendererText; hence both properties are common in all */
-  g_object_set (G_OBJECT (cell), "cell-background", color, "foreground", foreground, NULL);
+  g_object_set (G_OBJECT (cell), "cell-background", background, "foreground", foreground, NULL);
   g_object_unref (file);
 }
 

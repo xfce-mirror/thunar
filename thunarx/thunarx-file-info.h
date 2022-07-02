@@ -52,7 +52,7 @@ G_BEGIN_DECLS
   "metadata::thunar-view-type," \
   "metadata::thunar-sort-column,metadata::thunar-sort-order," \
   "metadata::thunar-zoom-level," \
-  "metadata::thunar-highlight-background,metadata::thunar-highlight-foreground" \
+  "metadata::thunar-highlight-color-background,metadata::thunar-highlight-color-foreground" \
 
 
 /*

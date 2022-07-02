@@ -244,10 +244,6 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   GtkWidget *button;
   GtkWidget *infobar;
   GtkWidget *frame;
-  GdkRGBA    color;
-  GList     *lp;
-  const gchar *hlcolor = NULL;
-  const gchar *prev_color;
 
   /* acquire a reference on the preferences and monitor the
      "misc-date-style" and "misc-file-size-binary" settings */
@@ -679,9 +675,6 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
      Highlight Color Chooser
    */
   grid = gtk_grid_new ();
-  g_object_bind_property (G_OBJECT (dialog->preferences), "misc-highlighting-enabled",
-                          G_OBJECT (grid), "sensitive",
-                          G_BINDING_SYNC_CREATE);
   label = gtk_label_new (_("Highlight"));
   gtk_widget_set_halign (grid, GTK_ALIGN_CENTER);
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
@@ -693,42 +686,19 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   row = 0;
 
-  /* find the highlight color of the selected file(s) */
-  for (lp = dialog->files; lp != NULL; lp = lp->next)
-    {
-      prev_color = hlcolor;
-      hlcolor = thunar_file_get_metadata_setting (THUNAR_FILE (lp->data), "highlight-background");
-      if (prev_color != NULL && g_strcmp0 (hlcolor, prev_color) != 0)
-        {
-          /* if all the selected file(s) are not of same color
-           * then no need to set a default color in the dialog */
-          hlcolor = NULL;
-          break;
-        }
-    }
-
   chooser = gtk_color_chooser_widget_new ();
-  g_object_bind_property (G_OBJECT (dialog->preferences), "misc-highlighting-enabled",
-                          G_OBJECT (chooser), "sensitive",
-                          G_BINDING_SYNC_CREATE);
   dialog->color_chooser = chooser;
-  if (G_UNLIKELY (hlcolor != NULL))
-    {
-      gdk_rgba_parse (&color, hlcolor);
-      gtk_color_chooser_set_rgba (GTK_COLOR_CHOOSER (chooser), &color);
-    }
   gtk_grid_attach (GTK_GRID (grid), chooser, 0, row, 1, 1);
   gtk_widget_show (chooser);
 
   row++;
 
-  /* check the most important gvfs-backends, and inform if they are missing */
-  if (!thunar_g_vfs_is_uri_scheme_supported ("trash")    ||
-      !thunar_g_vfs_is_uri_scheme_supported ("computer") || /* support for removable media */
-      !thunar_g_vfs_is_uri_scheme_supported ("sftp") )
+  /* check if gvfs metadata is supported */
+  if (G_UNLIKELY (!thunar_g_vfs_metadata_is_supported ()))
     {
       frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
       gtk_grid_attach (GTK_GRID (grid), frame, 0, row, 1, 1);
+      gtk_widget_set_sensitive (grid, FALSE);
       gtk_widget_show (frame);
 
       label = gtk_label_new (_("Missing dependencies"));
@@ -760,9 +730,6 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (box);
 
   button = gtk_button_new_with_mnemonic (_("_Reset"));
-  g_object_bind_property (G_OBJECT (dialog->preferences), "misc-highlighting-enabled",
-                          G_OBJECT (button), "sensitive",
-                          G_BINDING_SYNC_CREATE);
   g_signal_connect_swapped (G_OBJECT (button), "clicked",
                             G_CALLBACK (thunar_properties_dialog_reset_highlight), dialog);
   gtk_widget_set_valign (button, GTK_ALIGN_END);
@@ -770,9 +737,6 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (button);
 
   button = gtk_button_new_with_mnemonic (_("Set _Background"));
-  g_object_bind_property (G_OBJECT (dialog->preferences), "misc-highlighting-enabled",
-                          G_OBJECT (button), "sensitive",
-                          G_BINDING_SYNC_CREATE);
   g_signal_connect_swapped (G_OBJECT (button), "clicked",
                             G_CALLBACK (thunar_properties_dialog_set_background), dialog);
   gtk_widget_set_valign (button, GTK_ALIGN_END);
@@ -780,9 +744,6 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (button);
 
   button = gtk_button_new_with_mnemonic (_("Set _Foreground"));
-  g_object_bind_property (G_OBJECT (dialog->preferences), "misc-highlighting-enabled",
-                          G_OBJECT (button), "sensitive",
-                          G_BINDING_SYNC_CREATE);
   g_signal_connect_swapped (G_OBJECT (button), "clicked",
                             G_CALLBACK (thunar_properties_dialog_set_foreground), dialog);
   gtk_widget_set_valign (button, GTK_ALIGN_END);
@@ -1142,8 +1103,6 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   guint64            fs_free;
   guint64            fs_size;
   gdouble            fs_fraction = 0.0;
-  const gchar       *hlcolor;
-  GdkRGBA            color;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) == 1);
@@ -1384,13 +1343,6 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
       gtk_widget_hide (dialog->volume_label);
     }
 
-  hlcolor = thunar_file_get_metadata_setting (file, "highlight-background");
-  if (hlcolor != NULL)
-    {
-      gdk_rgba_parse (&color, hlcolor);
-      gtk_color_chooser_set_rgba (GTK_COLOR_CHOOSER (dialog->color_chooser), &color);
-    }
-
   /* cleanup */
   g_object_unref (G_OBJECT (icon_factory));
   g_free (date_custom_style);
@@ -1418,9 +1370,6 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
   ThunarFile  *parent_file = NULL;
   ThunarFile  *tmp_parent;
   gboolean     has_trashed_files = FALSE;
-  const gchar *prev_color;
-  const gchar *hlcolor = NULL;
-  GdkRGBA      color;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) > 1);
@@ -1506,16 +1455,6 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
         has_trashed_files = TRUE;
 
       first_file = FALSE;
-
-      prev_color = hlcolor;
-      hlcolor = thunar_file_get_metadata_setting (THUNAR_FILE (lp->data), "highlight-background");
-      if (prev_color != NULL && g_strcmp0 (hlcolor, prev_color) != 0)
-        {
-          /* if all the selected file(s) are not of same color
-           * then no need to set a default color in the dialog */
-          hlcolor = NULL;
-          break;
-        }
     }
 
   /* set the labels string */
@@ -1576,12 +1515,6 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
   else
     {
       gtk_widget_hide (dialog->volume_label);
-    }
-
-  if (G_UNLIKELY (hlcolor != NULL))
-    {
-      gdk_rgba_parse (&color, hlcolor);
-      gtk_color_chooser_set_rgba (GTK_COLOR_CHOOSER (dialog->color_chooser), &color);
     }
 }
 
@@ -1786,9 +1719,11 @@ thunar_properties_dialog_reset_highlight (ThunarPropertiesDialog *dialog)
 
   for (lp = dialog->files; lp != NULL; lp = lp->next)
     {
-      thunar_file_clear_metadata_setting (lp->data, "highlight-background");
-      thunar_file_clear_metadata_setting (lp->data, "highlight-foreground");
+      thunar_file_clear_metadata_setting (lp->data, "highlight-color-background");
+      thunar_file_clear_metadata_setting (lp->data, "highlight-color-foreground");
     }
+
+  thunar_properties_dialog_reload (dialog);
 }
 
 
@@ -1796,17 +1731,25 @@ thunar_properties_dialog_reset_highlight (ThunarPropertiesDialog *dialog)
 static void
 thunar_properties_dialog_set_foreground (ThunarPropertiesDialog *dialog)
 {
-  GdkRGBA  color;
-  GList   *lp;
-  gchar   *color_str;
+  GdkRGBA   color;
+  GList    *lp;
+  gchar    *color_str;
+  gboolean  highlighting_enabled;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
+
+  /* if feature is disabled then enable the feature */
+  g_object_get (G_OBJECT (dialog->preferences), "misc-highlighting-enabled", &highlighting_enabled, NULL);
+  if (!highlighting_enabled)
+    g_object_set (G_OBJECT (dialog->preferences), "misc-highlighting-enabled", TRUE, NULL);
 
   gtk_color_chooser_get_rgba (GTK_COLOR_CHOOSER (dialog->color_chooser), &color);
   color_str = gdk_rgba_to_string (&color);
   for (lp = dialog->files; lp != NULL; lp = lp->next)
-    thunar_file_set_metadata_setting (lp->data, "highlight-foreground", color_str, FALSE);
+    thunar_file_set_metadata_setting (lp->data, "highlight-color-foreground", color_str, FALSE);
   g_free (color_str);
+
+  thunar_properties_dialog_reload (dialog);
 }
 
 
@@ -1814,15 +1757,23 @@ thunar_properties_dialog_set_foreground (ThunarPropertiesDialog *dialog)
 static void
 thunar_properties_dialog_set_background (ThunarPropertiesDialog *dialog)
 {
-  GdkRGBA  color;
-  GList   *lp;
-  gchar   *color_str;
+  GdkRGBA   color;
+  GList    *lp;
+  gchar    *color_str;
+  gboolean  highlighting_enabled;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
+
+  /* if feature is disabled then enable the feature */
+  g_object_get (G_OBJECT (dialog->preferences), "misc-highlighting-enabled", &highlighting_enabled, NULL);
+  if (!highlighting_enabled)
+    g_object_set (G_OBJECT (dialog->preferences), "misc-highlighting-enabled", TRUE, NULL);
 
   gtk_color_chooser_get_rgba (GTK_COLOR_CHOOSER (dialog->color_chooser), &color);
   color_str = gdk_rgba_to_string (&color);
   for (lp = dialog->files; lp != NULL; lp = lp->next)
-    thunar_file_set_metadata_setting (lp->data, "highlight-background", color_str, FALSE);
+    thunar_file_set_metadata_setting (lp->data, "highlight-color-background", color_str, FALSE);
   g_free (color_str);
+
+  thunar_properties_dialog_reload (dialog);
 }

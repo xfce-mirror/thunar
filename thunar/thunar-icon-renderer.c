@@ -473,6 +473,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       gdk_rgba_parse (&cell_background_rgba, cell_background);
       gdk_cairo_set_source_rgba (cr, &cell_background_rgba);
       cairo_clip (cr);
+      cairo_paint (cr);
     }
 
   /* determine the icon state */
@@ -540,13 +541,6 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
           alpha = 1.00;
         }
       g_object_unref (G_OBJECT (clipboard));
-
-      /* HACK: set the background color again, it seems the click event resets the color */
-      if (G_UNLIKELY (cell_background_set))
-        {
-          gdk_cairo_set_source_rgba (cr, &cell_background_rgba);
-          cairo_paint (cr);
-        }
 
       /* render the invalid parts of the icon */
       thunar_gdk_cairo_set_source_pixbuf (cr, icon, icon_area.x, icon_area.y);
