@@ -1251,9 +1251,9 @@ thunar_window_update_view_menu (ThunarWindow *window,
   gtk_menu_set_accel_group (GTK_MENU (sub_items), window->accel_group);
   g_object_get (window->preferences, "last-location-bar", &last_location_bar, NULL);
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_PATHBAR), G_OBJECT (window),
-                                                   (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_ENTRY)) == 0), GTK_MENU_SHELL (sub_items));
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_TOOLBAR), G_OBJECT (window),
                                                    (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)) == 0), GTK_MENU_SHELL (sub_items));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_TOOLBAR), G_OBJECT (window),
+                                                   (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_ENTRY)) == 0), GTK_MENU_SHELL (sub_items));
   g_free (last_location_bar);
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (sub_items));
   item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_MENU), G_OBJECT (window), GTK_MENU_SHELL (menu));
@@ -3475,13 +3475,13 @@ thunar_window_action_pathbar_changed (ThunarWindow *window)
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   g_object_get (window->preferences, "last-location-bar", &last_location_bar, NULL);
-  pathbar_checked = (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_ENTRY)) == 0);
+  pathbar_checked = (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)) == 0);
   g_free (last_location_bar);
 
   if (pathbar_checked)
     g_object_set (window->preferences, "last-location-bar", g_type_name (G_TYPE_NONE), NULL);
   else
-    g_object_set (window->preferences, "last-location-bar", g_type_name (THUNAR_TYPE_LOCATION_ENTRY), NULL);
+    g_object_set (window->preferences, "last-location-bar", g_type_name (THUNAR_TYPE_LOCATION_BUTTONS), NULL);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -3498,13 +3498,13 @@ thunar_window_action_toolbar_changed (ThunarWindow *window)
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   g_object_get (window->preferences, "last-location-bar", &last_location_bar, NULL);
-  toolbar_checked = (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)) == 0);
+  toolbar_checked = (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_ENTRY)) == 0);
   g_free (last_location_bar);
 
   if (toolbar_checked)
     g_object_set (window->preferences, "last-location-bar", g_type_name (G_TYPE_NONE), NULL);
   else
-    g_object_set (window->preferences, "last-location-bar", g_type_name (THUNAR_TYPE_LOCATION_BUTTONS), NULL);
+    g_object_set (window->preferences, "last-location-bar", g_type_name (THUNAR_TYPE_LOCATION_ENTRY), NULL);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
