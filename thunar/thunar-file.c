@@ -3694,66 +3694,81 @@ thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_
     return NULL;
 
   if (G_UNLIKELY (file->thumbnail_path == NULL))
+    file->thumbnail_path = thunar_file_get_thumbnail_path_forced (file, thumbnail_size);
+
+  return file->thumbnail_path;
+}
+
+
+
+gchar *
+thunar_file_get_thumbnail_path_forced (ThunarFile *file, ThunarThumbnailSize thumbnail_size)
+{
+  GChecksum *checksum;
+  gchar     *filename;
+  gchar     *uri;
+  gchar     *thumbnail_path;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  checksum = g_checksum_new (G_CHECKSUM_MD5);
+  if (G_LIKELY (checksum != NULL))
     {
-      checksum = g_checksum_new (G_CHECKSUM_MD5);
-      if (G_LIKELY (checksum != NULL))
+      uri = thunar_file_dup_uri (file);
+      g_checksum_update (checksum, (const guchar *) uri, strlen (uri));
+      g_free (uri);
+
+      filename = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
+
+      /* The thumbnail is in the format/location
+       * $XDG_CACHE_HOME/thumbnails/(nromal|large)/MD5_Hash_Of_URI.png
+       * for version 0.8.0 if XDG_CACHE_HOME is defined, otherwise
+       * /homedir/.thumbnails/(normal|large)/MD5_Hash_Of_URI.png
+       * will be used, which is also always used for versions prior
+       * to 0.7.0.
+       */
+
+      /* build and check if the thumbnail is in the new location */
+      thumbnail_path = g_build_path ("/", g_get_user_cache_dir(),
+                                           "thumbnails", thunar_thumbnail_size_get_nick (thumbnail_size),
+                                           filename, NULL);
+
+      if (!g_file_test(thumbnail_path, G_FILE_TEST_EXISTS))
         {
-          uri = thunar_file_dup_uri (file);
-          g_checksum_update (checksum, (const guchar *) uri, strlen (uri));
-          g_free (uri);
+          /* Fallback to old version */
+          g_free(thumbnail_path);
 
-          filename = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
+          thumbnail_path = g_build_filename (xfce_get_homedir (),
+                                                   ".thumbnails", thunar_thumbnail_size_get_nick (thumbnail_size),
+                                                   filename, NULL);
 
-          /* The thumbnail is in the format/location
-           * $XDG_CACHE_HOME/thumbnails/(nromal|large)/MD5_Hash_Of_URI.png
-           * for version 0.8.0 if XDG_CACHE_HOME is defined, otherwise
-           * /homedir/.thumbnails/(normal|large)/MD5_Hash_Of_URI.png
-           * will be used, which is also always used for versions prior
-           * to 0.7.0.
-           */
-
-          /* build and check if the thumbnail is in the new location */
-          file->thumbnail_path = g_build_path ("/", g_get_user_cache_dir(),
-                                               "thumbnails", thunar_thumbnail_size_get_nick (thumbnail_size),
-                                               filename, NULL);
-
-          if (!g_file_test(file->thumbnail_path, G_FILE_TEST_EXISTS))
+          if(!g_file_test(thumbnail_path, G_FILE_TEST_EXISTS))
             {
-              /* Fallback to old version */
-              g_free(file->thumbnail_path);
+              g_free(thumbnail_path);
+              thumbnail_path = NULL;
 
-              file->thumbnail_path = g_build_filename (xfce_get_homedir (),
-                                                       ".thumbnails", thunar_thumbnail_size_get_nick (thumbnail_size),
-                                                       filename, NULL);
-
-              if(!g_file_test(file->thumbnail_path, G_FILE_TEST_EXISTS))
+              if (thunar_file_is_directory (file) == FALSE)
                 {
-                  g_free(file->thumbnail_path);
-                  file->thumbnail_path = NULL;
+                  /* Thumbnail doesn't exist in either spot, look for shared repository */
+                  uri = thunar_file_dup_uri (file);
+                  thumbnail_path = xfce_create_shared_thumbnail_path (uri, thunar_thumbnail_size_get_nick (thumbnail_size));
+                  g_free (uri);
 
-                  if (thunar_file_is_directory (file) == FALSE)
+                  if (thumbnail_path != NULL && !g_file_test (thumbnail_path, G_FILE_TEST_EXISTS))
                     {
-                      /* Thumbnail doesn't exist in either spot, look for shared repository */
-                      uri = thunar_file_dup_uri (file);
-                      file->thumbnail_path = xfce_create_shared_thumbnail_path (uri, thunar_thumbnail_size_get_nick (thumbnail_size));
-                      g_free (uri);
-
-                      if (file->thumbnail_path != NULL && !g_file_test (file->thumbnail_path, G_FILE_TEST_EXISTS))
-                        {
-                          /* Thumbnail doesn't exist */
-                          g_free (file->thumbnail_path);
-                          file->thumbnail_path = NULL;
-                        }
+                      /* Thumbnail doesn't exist */
+                      g_free (thumbnail_path);
+                      thumbnail_path = NULL;
                     }
                 }
             }
-
-          g_free (filename);
-          g_checksum_free (checksum);
         }
+
+      g_free (filename);
+      g_checksum_free (checksum);
     }
 
-  return file->thumbnail_path;
+  return thumbnail_path;
 }
 
 
