@@ -159,9 +159,9 @@ thunar_renamer_pair_list_free (GList *renamer_pair_list)
 
 
 /**
- * thunar_renamer_pair_compare_asc
+ * thunar_renamer_pair_compare_ascending
  * @pair_a : first pair
- * @pair_b : second apir
+ * @pair_b : second pair
  *
  * Based on GCompareFunc
  * This function can be used as a comparator to sort a #Glist of
@@ -183,9 +183,9 @@ thunar_renamer_pair_compare_ascending (const void *pair_a,
 
 
 /**
- * thunar_renamer_pair_compare_desc
+ * thunar_renamer_pair_compare_descending
  * @pair_a : first pair
- * @pair_b : second apir
+ * @pair_b : second pair
  *
  * Based on GCompareFunc
  * This function can be used as a comparator to sort a #Glist of
