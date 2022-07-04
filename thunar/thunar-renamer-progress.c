@@ -162,6 +162,9 @@ thunar_renamer_progress_run_error_dialog (ThunarRenamerProgress *renamer_progres
                                     _("Failed to rename \"%s\" to \"%s\"."),
                                     oldname, pair->name);
 
+  /* release old name */
+  g_free (oldname);
+
   /* check if we should provide undo */
   if (!renamer_progress->pairs_undo && renamer_progress->pairs_renamed_all_runs != NULL)
     {
@@ -189,9 +192,6 @@ thunar_renamer_progress_run_error_dialog (ThunarRenamerProgress *renamer_progres
       gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s.", error->message);
       gtk_dialog_add_button (GTK_DIALOG (message), _("_Close"), GTK_RESPONSE_CANCEL);
     }
-
-  /* release old name */
-  g_free (oldname);
 
   /* run the dialog */
   response = gtk_dialog_run (GTK_DIALOG (message));
