@@ -27,14 +27,17 @@ G_DECLARE_FINAL_TYPE (ThunarJobOperation, thunar_job_operation, THUNAR, JOB_OPER
 
 G_END_DECLS
 
-ThunarJobOperation    *thunar_job_operation_new     (ThunarJobOperationKind kind);
+ThunarJobOperation    *thunar_job_operation_new          (ThunarJobOperationKind kind);
 void                   thunar_job_operation_append       (ThunarJobOperation *job_operation,
                                                           GFile              *source,
                                                           GFile              *target);
 void                   thunar_job_operation_finish       (ThunarJobOperation *job_operation);
+ThunarJobOperation    *thunar_job_operation_invert       (ThunarJobOperation *job_operation);
+ThunarJobOperation    *thunar_job_operation_get_head     (void);
+void                   thunar_job_operation_execute      (ThunarJobOperation *job_operation);
 
 #ifndef NDEBUG /* temporary debugging code */
-void                   thunar_job_operation_debug_print  ();
+void                   thunar_job_operation_debug_print  (void);
 #endif /* NDEBUG */
 
 #endif /* __THUNAR_JOB_OPERATION_H__ */

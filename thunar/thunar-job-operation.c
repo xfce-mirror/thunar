@@ -14,8 +14,9 @@
  * this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <thunar/thunar-job-operation.h>
+#include <thunar/thunar-application.h>
 #include <thunar/thunar-enum-types.h>
+#include <thunar/thunar-job-operation.h>
 
 /* Job operation properties */
 enum
@@ -298,6 +299,59 @@ thunar_job_operation_finish (ThunarJobOperation *job_operation)
     return;
 
   job_operation_list = g_list_append (NULL, g_object_ref (job_operation));
+}
+
+ThunarJobOperation *
+thunar_job_operation_invert (ThunarJobOperation *job_operation)
+{
+  ThunarJobOperation *inverted_operation;
+
+  g_assert (THUNAR_IS_JOB_OPERATION (job_operation));
+
+  switch (job_operation->operation_kind)
+    {
+      case THUNAR_JOB_OPERATION_KIND_COPY:
+        inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION,
+                                           "operation-kind", THUNAR_JOB_OPERATION_KIND_DELETE,
+                                           NULL);
+        inverted_operation->source_file_list = g_list_copy_deep (job_operation->target_file_list, g_file_dup, NULL);
+        break;
+
+      default:
+        g_assert_not_reached ();
+        break;
+    }
+
+  return inverted_operation;
+}
+
+ThunarJobOperation *
+thunar_job_operation_get_head (void)
+{
+  return job_operation_list->data;
+}
+
+void
+thunar_job_operation_execute (ThunarJobOperation *job_operation)
+{
+  ThunarApplication *application;
+
+  g_assert (THUNAR_IS_JOB_OPERATION (job_operation));
+
+  application = thunar_application_get ();
+
+  switch (job_operation->operation_kind)
+    {
+      case THUNAR_JOB_OPERATION_KIND_DELETE:
+        thunar_application_trash (application, NULL, job_operation->source_file_list);
+        break;
+
+      default:
+        g_assert_not_reached ();
+        break;
+    }
+
+  g_object_unref (application);
 }
 
 #ifndef NDEBUG /* temporary debugging code */
