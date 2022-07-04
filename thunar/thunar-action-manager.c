@@ -41,6 +41,7 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-io-scan-directory.h>
+#include <thunar/thunar-job-operation.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
@@ -3368,11 +3369,25 @@ thunar_action_manager_new_files_created (ThunarActionManager *action_mgr,
 static gboolean
 thunar_action_manager_action_undo (ThunarActionManager *action_mgr)
 {
+  ThunarJobOperation *latest_operation;
+  ThunarJobOperation *inverted_operation;
+
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
 #ifndef NDEBUG /* temporary code */
-  g_print ("Called function thuanr_action_manager_action_undo\n");
+  g_print ("Called function thunar_action_manager_action_undo\n");
 #endif
+
+  latest_operation = thunar_job_operation_get_head ();
+  g_object_ref (latest_operation);
+
+  inverted_operation = thunar_job_operation_invert (latest_operation);
+  g_object_ref (inverted_operation);
+
+  thunar_job_operation_execute (inverted_operation);
+
+  g_object_unref (latest_operation);
+  g_object_unref (inverted_operation);
 
   return TRUE;
 }
