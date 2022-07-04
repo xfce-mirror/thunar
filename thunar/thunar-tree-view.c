@@ -351,7 +351,7 @@ thunar_tree_view_init (ThunarTreeView *view)
   view->model = g_object_new (THUNAR_TYPE_TREE_MODEL, NULL);
 
   /* synchronize the the global "misc-case-sensitive" preference */
-  g_object_set_data_full (G_OBJECT (view->model), I_("thunar-preferences"), view->preferences, g_object_unref);
+  g_object_set_data (G_OBJECT (view->model), I_("thunar-preferences"), view->preferences);
   g_object_bind_property (G_OBJECT (view->preferences), "misc-case-sensitive", G_OBJECT (view->model), "case-sensitive", G_BINDING_SYNC_CREATE);
 
   thunar_tree_model_set_visible_func (view->model, thunar_tree_view_visible_func, view);
