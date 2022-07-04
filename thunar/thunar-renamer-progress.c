@@ -190,6 +190,9 @@ thunar_renamer_progress_run_error_dialog (ThunarRenamerProgress *renamer_progres
       gtk_dialog_add_button (GTK_DIALOG (message), _("_Close"), GTK_RESPONSE_CANCEL);
     }
 
+  /* release old name */
+  g_free (oldname);
+
   /* run the dialog */
   response = gtk_dialog_run (GTK_DIALOG (message));
   if (response == GTK_RESPONSE_REJECT)
@@ -207,9 +210,6 @@ thunar_renamer_progress_run_error_dialog (ThunarRenamerProgress *renamer_progres
       /* canceled, just exit the main loop */
       g_main_loop_quit (renamer_progress->next_idle_loop);
     }
-
-  /* release old name */
-  g_free (oldname);
 
   /* destroy the dialog */
   gtk_widget_destroy (message);
