@@ -58,12 +58,12 @@ struct _ThunarRenamerProgress
   GtkAlignment __parent__;
   GtkWidget   *bar;
 
-  GList       *pairs_renamed_current_run;       /* list of pairs renamed in a given run */
-  GList       *pairs_renamed_all_runs;   /* list of pairs renamed across all runs */
+  GList       *pairs_renamed_current_run; /* list of pairs renamed in a given run */
+  GList       *pairs_renamed_all_runs;    /* list of pairs renamed across all runs */
   GList       *pairs_failed_current_run;
   GList       *pairs_pending_current_run;
   gboolean     show_dialog_on_error;
-  gboolean     pairs_undo;          /* whether we're undoing previous changes */
+  gboolean     pairs_undo;                /* whether we're undoing previous changes */
 
   /* the user may cancel the renaming operation while there are still failed pairs and runs remaining */
   gboolean     cancel_all_remaining_runs;
