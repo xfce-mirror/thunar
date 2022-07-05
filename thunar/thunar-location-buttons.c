@@ -279,6 +279,13 @@ thunar_location_buttons_init (ThunarLocationButtons *buttons)
                                "path-bar");
 
   /* add sub-buttons to css class which matches all buttons in the path-bar */
+  /* keep as well the old name 'path-bar-button'. It might be used by themes */
+  gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (buttons->left_slider)),
+                               "location-button");
+  gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (buttons->right_slider)),
+                               "location-button");
+  gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (buttons->filler_widget)),
+                               "location-button");
   gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (buttons->left_slider)),
                                "path-bar-button");
   gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (buttons->right_slider)),
@@ -1225,7 +1232,7 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
     }
   else
     {
-      /* context menu on some other pathbar element */
+      /* context menu on some other location button */
       thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_OPEN
                                             | THUNAR_MENU_SECTION_SENDTO
                                             | THUNAR_MENU_SECTION_COPY_PASTE
