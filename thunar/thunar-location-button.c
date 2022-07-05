@@ -267,6 +267,8 @@ thunar_location_button_init (ThunarLocationButton *button)
   /* but don't show it, as it is only a fake to retrieve the bold size */
 
   /* add widget to css class which matches all buttons in the path-bar */
+  /* keep as well the old name 'path-bar-button'. It might be used by themes */
+  gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (button)), "location-button");
   gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (button)), "path-bar-button");
 }
 
