@@ -288,7 +288,6 @@ ThunarJob *
 thunar_io_jobs_create_files (GList *file_list,
                              GFile *template_file)
 {
-
   return thunar_simple_job_new (_thunar_io_jobs_create, 2,
                                 THUNAR_TYPE_G_FILE_LIST, file_list,
                                 G_TYPE_FILE, template_file);
