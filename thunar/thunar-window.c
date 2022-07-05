@@ -1184,7 +1184,8 @@ thunar_window_update_edit_menu (ThunarWindow *window,
   thunar_gtk_menu_clean (GTK_MENU (menu));
   thunar_menu_add_sections (THUNAR_MENU (menu), THUNAR_MENU_SECTION_CUT
                                               | THUNAR_MENU_SECTION_COPY_PASTE
-                                              | THUNAR_MENU_SECTION_TRASH_DELETE);
+                                              | THUNAR_MENU_SECTION_TRASH_DELETE
+                                              | THUNAR_MENU_SECTION_UNDO);
   if (window->view != NULL)
     {
       thunar_standard_view_append_menu_item (THUNAR_STANDARD_VIEW (window->view),
