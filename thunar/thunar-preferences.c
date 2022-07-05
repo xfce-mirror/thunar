@@ -74,6 +74,7 @@ enum
   PROP_LAST_SORT_COLUMN,
   PROP_LAST_SORT_ORDER,
   PROP_LAST_STATUSBAR_VISIBLE,
+  PROP_LAST_IMAGE_PREVIEW_VISIBLE,
   PROP_LAST_VIEW,
   PROP_LAST_WINDOW_HEIGHT,
   PROP_LAST_WINDOW_WIDTH,
@@ -525,6 +526,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             "LastStatusbarVisible",
                             NULL,
                             TRUE,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-image-preview-visible:
+   *
+   * Whether to display a statusbar in new windows by default.
+   **/
+  preferences_props[PROP_LAST_IMAGE_PREVIEW_VISIBLE] =
+      g_param_spec_boolean ("last-image-preview-visible",
+                            "LastImagePreviewVisible",
+                            NULL,
+                            FALSE,
                             EXO_PARAM_READWRITE);
 
   /**
