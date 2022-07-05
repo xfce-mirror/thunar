@@ -3871,7 +3871,6 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view)
       thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_CREATE_NEW_FILES
                                             | THUNAR_MENU_SECTION_COPY_PASTE
                                             | THUNAR_MENU_SECTION_EMPTY_TRASH
-                                            | THUNAR_MENU_SECTION_UNDO
                                             | THUNAR_MENU_SECTION_CUSTOM_ACTIONS);
       thunar_standard_view_append_menu_items (standard_view, GTK_MENU (context_menu), NULL);
       xfce_gtk_menu_append_separator (GTK_MENU_SHELL (context_menu));
