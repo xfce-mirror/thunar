@@ -653,9 +653,7 @@ thunar_application_load_css (void)
 
   gtk_css_provider_load_from_data (css_provider,
     /* for the location-buttons any margin looks ugly */
-    /* keep as well the old name 'path-bar-button'. It might be used by themes */
     ".location-button { margin-right: 0; }"
-    ".path-bar-button { margin-right: 0; }"
     /* remove extra border between side pane and view */
     ".shortcuts-pane { border-right-width: 0px; }"
     /* add missing top border to side pane */
