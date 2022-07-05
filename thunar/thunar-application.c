@@ -652,8 +652,8 @@ thunar_application_load_css (void)
   css_provider = gtk_css_provider_new ();
 
   gtk_css_provider_load_from_data (css_provider,
-    /* for the pathbar-buttons any margin looks ugly*/
-    ".path-bar-button { margin-right: 0; }"
+    /* for the location-buttons any margin looks ugly */
+    ".location-button { margin-right: 0; }"
     /* remove extra border between side pane and view */
     ".shortcuts-pane { border-right-width: 0px; }"
     /* add missing top border to side pane */
