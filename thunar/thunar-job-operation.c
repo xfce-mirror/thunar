@@ -37,6 +37,8 @@ static void             thunar_job_operation_set_property       (GObject        
                                                                  guint             prop_id,
                                                                  const GValue     *value,
                                                                  GParamSpec       *pspec);
+static gint             is_ancestor                             (gconstpointer descendant,
+                                                                 gconstpointer ancestor);
 
 struct _ThunarJobOperation
 {
@@ -203,6 +205,11 @@ thunar_job_operation_append (ThunarJobOperation *job_operation,
   g_assert (G_IS_FILE (source));
   g_assert (G_IS_FILE (target));
 
+  /* If the current file is a descendant of any of the already given files,
+   * don't register it.
+   * Note that source will be the second argument to is_ancestor */
+  if (g_list_find_custom (job_operation->source_file_list, source, is_ancestor) != NULL)
+    return;
 
   job_operation->source_file_list = g_list_append (job_operation->source_file_list, g_object_ref (source));
   job_operation->target_file_list = g_list_append (job_operation->target_file_list, g_object_ref (target));
@@ -271,6 +278,16 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
     }
 
   g_object_unref (application);
+}
+
+static gint
+is_ancestor (gconstpointer ancestor,
+             gconstpointer descendant)
+{
+  if (thunar_g_file_is_descendant (G_FILE (descendant), G_FILE (ancestor)))
+    return 0;
+  else
+    return 1;
 }
 
 #ifndef NDEBUG /* temporary debugging code */

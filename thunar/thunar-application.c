@@ -2289,14 +2289,15 @@ thunar_application_unlink_files (ThunarApplication *application,
                                  gboolean           permanently,
                                  gboolean           has_gfiles)
 {
-  GtkWidget *dialog;
-  GtkWindow *window;
-  GdkScreen *screen;
-  GList     *path_list = NULL;
-  GList     *lp;
-  gchar     *message;
-  guint      n_path_list = 0;
-  gint       response;
+  GtkWidget    *dialog;
+  GtkWindow    *window;
+  GdkScreen    *screen;
+  GList        *path_list = NULL;
+  GList        *lp;
+  gchar        *message;
+  guint         n_path_list = 0;
+  gint          response;
+  const gchar  *display_name;
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
@@ -2331,8 +2332,12 @@ thunar_application_unlink_files (ThunarApplication *application,
       /* generate the question to confirm the delete operation */
       if (G_LIKELY (n_path_list == 1))
         {
-          message = g_strdup_printf (_("Are you sure that you want to\npermanently delete \"%s\"?"),
-                                     thunar_file_get_display_name (THUNAR_FILE (file_list->data)));
+          if (has_gfiles)
+            display_name = thunar_g_file_get_display_name (G_FILE (file_list->data));
+          else
+            display_name = thunar_file_get_display_name (THUNAR_FILE (file_list->data));
+
+          message = g_strdup_printf (_("Are you sure that you want to\npermanently delete \"%s\"?"), display_name);
         }
       else
         {
