@@ -343,7 +343,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
   switch (job_operation->operation_kind)
     {
       case THUNAR_JOB_OPERATION_KIND_DELETE:
-        thunar_application_trash (application, NULL, job_operation->source_file_list);
+        thunar_application_unlink_files (application, NULL, job_operation->source_file_list, TRUE, TRUE);
         break;
 
       default:
