@@ -207,8 +207,10 @@ static gboolean  thunar_window_action_switch_next_tab     (ThunarWindow         
 static gboolean  thunar_window_action_switch_previous_tab (ThunarWindow           *window);
 static gboolean  thunar_window_action_locationbar_entry   (ThunarWindow           *window);
 static gboolean  thunar_window_action_locationbar_buttons (ThunarWindow           *window);
-static gboolean  thunar_window_action_shortcuts_changed   (ThunarWindow           *window);
-static gboolean  thunar_window_action_tree_changed        (ThunarWindow           *window);
+static gboolean  thunar_window_action_shortcuts_changed   (ThunarWindow           *window,
+                                                           GtkWidget              *menu_item);
+static gboolean  thunar_window_action_tree_changed        (ThunarWindow           *window,
+                                                           GtkWidget              *menu_item);
 static gboolean  thunar_window_action_statusbar_changed   (ThunarWindow           *window);
 static void      thunar_window_action_menubar_update      (ThunarWindow           *window);
 static gboolean  thunar_window_action_menubar_changed     (ThunarWindow           *window);
@@ -1237,7 +1239,6 @@ thunar_window_update_view_menu (ThunarWindow *window,
   GtkWidget  *item;
   GtkWidget  *sub_items;
   gchar      *last_location_bar;
-  gchar      *last_side_pane;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
@@ -1259,12 +1260,10 @@ thunar_window_update_view_menu (ThunarWindow *window,
   item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_MENU), G_OBJECT (window), GTK_MENU_SHELL (menu));
   sub_items =  gtk_menu_new();
   gtk_menu_set_accel_group (GTK_MENU (sub_items), window->accel_group);
-  g_object_get (window->preferences, "last-side-pane", &last_side_pane, NULL);
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_SHORTCUTS), G_OBJECT (window),
-                                                   (g_strcmp0 (last_side_pane, g_type_name (THUNAR_TYPE_SHORTCUTS_PANE)) == 0), GTK_MENU_SHELL (sub_items));
+                                                   thunar_window_has_shortcut_sidepane (window), GTK_MENU_SHELL (sub_items));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_TREE), G_OBJECT (window),
-                                                   (g_strcmp0 (last_side_pane, g_type_name (THUNAR_TYPE_TREE_PANE)) == 0), GTK_MENU_SHELL (sub_items));
-  g_free (last_side_pane);
+                                                   thunar_window_has_tree_view_sidepane (window), GTK_MENU_SHELL (sub_items));
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (sub_items));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_STATUSBAR), G_OBJECT (window),
                                                    gtk_widget_get_visible (window->statusbar), GTK_MENU_SHELL (menu));
@@ -1680,9 +1679,26 @@ thunar_window_has_shortcut_sidepane (ThunarWindow *window)
 
   /* check if a side pane is currently active */
   if (G_LIKELY (window->sidepane != NULL))
-    {
-      return G_OBJECT_TYPE (window->sidepane) == THUNAR_TYPE_SHORTCUTS_PANE;
-    }
+    return G_OBJECT_TYPE (window->sidepane) == THUNAR_TYPE_SHORTCUTS_PANE;
+  return FALSE;
+}
+
+
+
+/**
+ * thunar_window_has_tree_view_sidepane:
+ * @window : a #ThunarWindow instance.
+ *
+ * Return value: True, if this window is running a tree_view sidepane
+ **/
+gboolean
+thunar_window_has_tree_view_sidepane (ThunarWindow *window)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  /* check if a side pane is currently active */
+  if (G_LIKELY (window->sidepane != NULL))
+    return G_OBJECT_TYPE (window->sidepane) == THUNAR_TYPE_TREE_PANE;
   return FALSE;
 }
 
@@ -3510,22 +3526,18 @@ thunar_window_action_locationbar_buttons (ThunarWindow *window)
 
 
 static gboolean
-thunar_window_action_shortcuts_changed (ThunarWindow *window)
+thunar_window_action_shortcuts_changed (ThunarWindow *window,
+                                        GtkWidget    *menu_item)
 {
-  gchar    *last_side_pane;
-  gboolean  shortcuts_checked;
-  GType     type = G_TYPE_NONE;
+  GType type = G_TYPE_NONE;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+  _thunar_return_val_if_fail (GTK_IS_CHECK_MENU_ITEM (menu_item), FALSE);
 
-  g_object_get (window->preferences, "last-side-pane", &last_side_pane, NULL);
-  shortcuts_checked = (g_strcmp0 (last_side_pane, g_type_name (THUNAR_TYPE_SHORTCUTS_PANE)) == 0);
-  g_free (last_side_pane);
-
-  if (shortcuts_checked)
-    type = G_TYPE_NONE;
-  else
+  if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menu_item)))
     type = THUNAR_TYPE_SHORTCUTS_PANE;
+  else
+    type = G_TYPE_NONE;
 
   thunar_window_install_sidepane (window, type);
 
@@ -3536,22 +3548,18 @@ thunar_window_action_shortcuts_changed (ThunarWindow *window)
 
 
 static gboolean
-thunar_window_action_tree_changed (ThunarWindow *window)
+thunar_window_action_tree_changed (ThunarWindow *window,
+                                   GtkWidget    *menu_item)
 {
-  gchar    *last_side_pane;
-  gboolean  tree_view_checked;
-  GType     type = G_TYPE_NONE;
+  GType type = G_TYPE_NONE;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+  _thunar_return_val_if_fail (GTK_IS_CHECK_MENU_ITEM (menu_item), FALSE);
 
-  g_object_get (window->preferences, "last-side-pane", &last_side_pane, NULL);
-  tree_view_checked = (g_strcmp0 (last_side_pane, g_type_name (THUNAR_TYPE_TREE_PANE)) == 0);
-  g_free (last_side_pane);
-
-  if (tree_view_checked)
-    type = G_TYPE_NONE;
-  else
+  if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menu_item)))
     type = THUNAR_TYPE_TREE_PANE;
+  else
+    type = G_TYPE_NONE;
 
   thunar_window_install_sidepane (window, type);
 
