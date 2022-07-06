@@ -36,6 +36,7 @@
 #include <thunar/thunar-io-jobs.h>
 #include <thunar/thunar-io-jobs-util.h>
 #include <thunar/thunar-job.h>
+#include <thunar/thunar-job-operation.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-simple-job.h>
 #include <thunar/thunar-thumbnail-cache.h>
