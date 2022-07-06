@@ -37,12 +37,6 @@ static void             thunar_job_operation_set_property       (GObject        
                                                                  guint             prop_id,
                                                                  const GValue     *value,
                                                                  GParamSpec       *pspec);
-static GList           *get_source_file_list                    (ThunarJobOperation *job_operation);
-static void             set_source_file_list                    (ThunarJobOperation *job_operation,
-                                                                 GList              *source_file_list);
-static GList           *get_target_file_list                    (ThunarJobOperation *job_operation);
-static void             set_target_file_list                    (ThunarJobOperation *job_operation,
-                                                                 GList              *target_file_list);
 
 struct _ThunarJobOperation
 {
@@ -186,71 +180,6 @@ thunar_job_operation_set_property  (GObject      *object,
       }
   }
 
-static GList *
-get_source_file_list (ThunarJobOperation *job_operation)
-{
-  GList *source_file_list;
-  GValue val = G_VALUE_INIT;
-
-  g_assert (THUNAR_IS_JOB_OPERATION (job_operation));
-
-  g_value_init (&val, G_TYPE_POINTER);
-
-  g_object_get_property (G_OBJECT (job_operation), "source-file-list", &val);
-  source_file_list = g_value_get_pointer (&val);
-
-  return source_file_list;
-}
-
-static void
-set_source_file_list (ThunarJobOperation *job_operation,
-                      GList              *source_file_list)
-{
-  GValue val = G_VALUE_INIT;
-
-  g_assert (THUNAR_IS_JOB_OPERATION (job_operation));
-
-  for (GList *elem = source_file_list; elem != NULL; elem = elem->next)
-    g_assert (G_IS_FILE (elem->data));
-
-  g_value_init (&val, G_TYPE_POINTER);
-  g_value_set_pointer (&val, source_file_list);
-
-  g_object_set_property (G_OBJECT (job_operation), "source-file-list", &val);
-}
-
-static GList *
-get_target_file_list (ThunarJobOperation *job_operation)
-{
-  GList *target_file_list;
-  GValue val = G_VALUE_INIT;
-
-  g_assert (THUNAR_IS_JOB_OPERATION (job_operation));
-
-  g_value_init (&val, G_TYPE_POINTER);
-
-  g_object_get_property (G_OBJECT (job_operation), "target-file-list", &val);
-  target_file_list = g_value_get_pointer (&val);
-
-  return target_file_list;
-}
-
-static void
-set_target_file_list (ThunarJobOperation *job_operation,
-                      GList              *target_file_list)
-{
-  GValue val = G_VALUE_INIT;
-
-  g_assert (THUNAR_IS_JOB_OPERATION (job_operation));
-
-  for (GList *elem = target_file_list; elem != NULL; elem = elem->next)
-    g_assert (G_IS_FILE (elem->data));
-
-  g_value_init (&val, G_TYPE_POINTER);
-  g_value_set_pointer (&val, target_file_list);
-
-  g_object_set_property (G_OBJECT (job_operation), "target-file-list", &val);
-}
 
 ThunarJobOperation *
 thunar_job_operation_new (ThunarJobOperationKind kind)
@@ -269,33 +198,23 @@ thunar_job_operation_append (ThunarJobOperation *job_operation,
                              GFile              *source,
                              GFile              *target)
 {
-  GList *source_file_list;
-  GList *target_file_list;
 
   g_assert (THUNAR_IS_JOB_OPERATION (job_operation));
   g_assert (G_IS_FILE (source));
   g_assert (G_IS_FILE (target));
 
-  source_file_list = get_source_file_list (job_operation);
-  source_file_list = g_list_append (source_file_list, g_object_ref (source));
-  set_source_file_list (job_operation, source_file_list);
 
-  target_file_list = get_target_file_list (job_operation);
-  target_file_list = g_list_append (target_file_list, g_object_ref (target));
-  set_target_file_list (job_operation, target_file_list);
+  job_operation->source_file_list = g_list_append (job_operation->source_file_list, g_object_ref (source));
+  job_operation->target_file_list = g_list_append (job_operation->target_file_list, g_object_ref (target));
 }
 
 void
 thunar_job_operation_finish (ThunarJobOperation *job_operation)
 {
-  GList *source_file_list;
-  GList *target_file_list;;
-
-  source_file_list = get_source_file_list (job_operation);
-  target_file_list = get_target_file_list (job_operation);
+  g_assert (THUNAR_IS_JOB_OPERATION (job_operation));
 
   /* do not register an 'empty' job operation */
-  if (source_file_list == NULL && target_file_list == NULL)
+  if (job_operation->source_file_list == NULL && job_operation->target_file_list == NULL)
     return;
 
   job_operation_list = g_list_append (NULL, g_object_ref (job_operation));
@@ -360,8 +279,6 @@ thunar_job_operation_debug_print (void)
 {
   ThunarJobOperation *op;
   GValue val = G_VALUE_INIT;
-  GList *source_file_list;
-  GList *target_file_list;
   gint index;
 
   g_print ("Thunar Job Operation Debug\n"
@@ -381,19 +298,16 @@ thunar_job_operation_debug_print (void)
   g_object_get_property (G_OBJECT (op), "operation-kind", &val);
   g_print ("operation-kind: %s\n", g_enum_to_string (THUNAR_TYPE_JOB_OPERATION_KIND, g_value_get_enum (&val)));
 
-  source_file_list = get_source_file_list (op);
   index = 0;
-
-  for (GList *elem = source_file_list; elem != NULL; index++, elem = elem->next)
+  for (GList *elem = op->source_file_list; elem != NULL; index++, elem = elem->next)
     {
       GFile *file = elem->data;
       g_assert (G_IS_FILE (file));
       g_print ("source file %d: %s\n", index, g_file_get_uri (file));
     }
 
-  target_file_list = get_target_file_list (op);
   index = 0;
-  for (GList *elem = target_file_list; elem != NULL; index++, elem = elem->next)
+  for (GList *elem = op->target_file_list; elem != NULL; index++, elem = elem->next)
     {
       GFile *file = elem->data;
       g_assert (G_IS_FILE (file));
