@@ -37,6 +37,8 @@ static void                   thunar_job_operation_set_property       (GObject  
                                                                        guint             prop_id,
                                                                        const GValue     *value,
                                                                        GParamSpec       *pspec);
+static ThunarJobOperation    *thunar_job_operation_invert             (ThunarJobOperation *job_operation);
+static void                   thunar_job_operation_execute            (ThunarJobOperation *job_operation);
 static gint                   is_ancestor                             (gconstpointer descendant,
                                                                        gconstpointer ancestor);
 
