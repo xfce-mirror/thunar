@@ -376,6 +376,7 @@ struct _ThunarWindow
 
   GtkWidget              *grid;
   GtkWidget              *menubar;
+  gboolean                menubar_visible;
   GtkWidget              *spinner;
   GtkWidget              *paned;
   GtkWidget              *sidepane;
@@ -812,6 +813,7 @@ thunar_window_init (ThunarWindow *window)
   thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_HELP_MENU, G_CALLBACK (thunar_window_update_help_menu));
   gtk_widget_show_all (window->menubar);
 
+  window->menubar_visible = last_menubar_visible;
   if (last_menubar_visible == FALSE)
     gtk_widget_hide (window->menubar);
   gtk_widget_set_hexpand (window->menubar, TRUE);
@@ -1266,7 +1268,7 @@ thunar_window_update_view_menu (ThunarWindow *window,
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_STATUSBAR), G_OBJECT (window),
                                                    gtk_widget_get_visible (window->statusbar), GTK_MENU_SHELL (menu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_MENUBAR), G_OBJECT (window),
-                                                   gtk_widget_get_visible (window->menubar), GTK_MENU_SHELL (menu));
+                                                   window->menubar_visible, GTK_MENU_SHELL (menu));
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR), G_OBJECT (window), GTK_MENU_SHELL (menu));
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
   if (window->directory_specific_settings)
@@ -3581,13 +3583,9 @@ thunar_window_action_statusbar_changed (ThunarWindow *window)
 static void
 thunar_window_action_menubar_update (ThunarWindow *window)
 {
-  gboolean last_menubar_visible;
-
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  g_object_get (window->preferences, "last-menubar-visible", &last_menubar_visible, NULL);
-
-  gtk_widget_set_visible (window->menubar, last_menubar_visible);
+  gtk_widget_set_visible (window->menubar, window->menubar_visible);
 }
 
 
@@ -3595,16 +3593,15 @@ thunar_window_action_menubar_update (ThunarWindow *window)
 static gboolean
 thunar_window_action_menubar_changed (ThunarWindow *window)
 {
-  gboolean last_menubar_visible;
-
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  g_object_get (window->preferences, "last-menubar-visible", &last_menubar_visible, NULL);
+  /* Dont rely on 'gtk_widget_set_visible', it will be wrong when the menubar is accessed via F10  */
+  window->menubar_visible = !window->menubar_visible;
 
-  gtk_widget_set_visible (window->menubar, !last_menubar_visible);
-  gtk_widget_set_visible (window->location_toolbar_item_view_menubar, last_menubar_visible);
+  gtk_widget_set_visible (window->menubar, window->menubar_visible);
+  gtk_widget_set_visible (window->location_toolbar_item_view_menubar, !window->menubar_visible);
 
-  g_object_set (G_OBJECT (window->preferences), "last-menubar-visible", !last_menubar_visible, NULL);
+  g_object_set (G_OBJECT (window->preferences), "last-menubar-visible", window->menubar_visible, NULL);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
