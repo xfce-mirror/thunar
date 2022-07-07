@@ -28,17 +28,17 @@ enum
   N_PROPERTIES,
 };
 
-static void             thunar_job_operation_finalize           (GObject          *object);
-static void             thunar_job_operation_get_property       (GObject          *object,
-                                                                 guint             prop_id,
-                                                                 GValue           *value,
-                                                                 GParamSpec       *pspec);
-static void             thunar_job_operation_set_property       (GObject          *object,
-                                                                 guint             prop_id,
-                                                                 const GValue     *value,
-                                                                 GParamSpec       *pspec);
-static gint             is_ancestor                             (gconstpointer descendant,
-                                                                 gconstpointer ancestor);
+static void                   thunar_job_operation_finalize           (GObject          *object);
+static void                   thunar_job_operation_get_property       (GObject          *object,
+                                                                       guint             prop_id,
+                                                                       GValue           *value,
+                                                                       GParamSpec       *pspec);
+static void                   thunar_job_operation_set_property       (GObject          *object,
+                                                                       guint             prop_id,
+                                                                       const GValue     *value,
+                                                                       GParamSpec       *pspec);
+static gint                   is_ancestor                             (gconstpointer descendant,
+                                                                       gconstpointer ancestor);
 
 struct _ThunarJobOperation
 {
@@ -227,6 +227,32 @@ thunar_job_operation_finish (ThunarJobOperation *job_operation)
   job_operation_list = g_list_append (NULL, g_object_ref (job_operation));
 }
 
+void
+thunar_job_operation_undo (void)
+{
+  ThunarJobOperation *operation_marker;
+  ThunarJobOperation *inverted_operation;
+
+  /* do nothing in case there is no job operation to undo */
+  if (job_operation_list == NULL)
+    return;
+
+  /* the 'marked' operation */
+  operation_marker = job_operation_list->data;
+
+
+  inverted_operation = thunar_job_operation_invert (operation_marker);
+  g_object_ref (inverted_operation);
+
+  thunar_job_operation_execute (inverted_operation);
+
+  g_object_unref (operation_marker);
+  g_object_unref (inverted_operation);
+
+  /* set the marked operation to null to now remove the last operation. */
+  job_operation_list = NULL;
+}
+
 ThunarJobOperation *
 thunar_job_operation_invert (ThunarJobOperation *job_operation)
 {
@@ -249,12 +275,6 @@ thunar_job_operation_invert (ThunarJobOperation *job_operation)
     }
 
   return inverted_operation;
-}
-
-ThunarJobOperation *
-thunar_job_operation_get_head (void)
-{
-  return job_operation_list->data;
 }
 
 void
