@@ -240,7 +240,7 @@ thunar_job_operation_invert (ThunarJobOperation *job_operation)
         inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION,
                                            "operation-kind", THUNAR_JOB_OPERATION_KIND_DELETE,
                                            NULL);
-        inverted_operation->source_file_list = g_list_copy_deep (job_operation->target_file_list, g_file_dup, NULL);
+        inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
         break;
 
       default:
@@ -261,6 +261,9 @@ void
 thunar_job_operation_execute (ThunarJobOperation *job_operation)
 {
   ThunarApplication *application;
+  GList             *thunar_file_list = NULL;
+  GError            *error            = NULL;
+  ThunarFile        *thunar_file;
 
   g_assert (THUNAR_IS_JOB_OPERATION (job_operation));
 
@@ -269,7 +272,25 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
   switch (job_operation->operation_kind)
     {
       case THUNAR_JOB_OPERATION_KIND_DELETE:
-        thunar_application_trash (application, NULL, job_operation->source_file_list);
+        for (GList *elem = job_operation->source_file_list; elem != NULL; elem = elem->next)
+          {
+            g_assert (G_IS_FILE (elem->data));
+
+            thunar_file = thunar_file_get (elem->data, &error);
+            g_assert (THUNAR_IS_FILE (thunar_file));
+
+            thunar_file_list = g_list_append (thunar_file_list, thunar_file);
+
+            if (error != NULL)
+              {
+                g_warning ("Failed to convert GFile to ThunarFile: %s", error->message);
+                g_clear_error (&error);
+              }
+          }
+
+        thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE);
+
+        thunar_g_list_free_full (thunar_file_list);
         break;
 
       default:
