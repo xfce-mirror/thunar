@@ -209,6 +209,7 @@ static gboolean  thunar_window_action_locationbar_entry   (ThunarWindow         
 static gboolean  thunar_window_action_locationbar_buttons (ThunarWindow           *window);
 static gboolean  thunar_window_action_shortcuts_changed   (ThunarWindow           *window);
 static gboolean  thunar_window_action_tree_changed        (ThunarWindow           *window);
+static gboolean  thunar_window_action_image_preview       (ThunarWindow           *window);
 static gboolean  thunar_window_action_statusbar_changed   (ThunarWindow           *window);
 static void      thunar_window_action_menubar_update      (ThunarWindow           *window);
 static gboolean  thunar_window_action_menubar_changed     (ThunarWindow           *window);
@@ -318,7 +319,7 @@ static gboolean   thunar_window_action_clear_directory_specific_settings (Thunar
 static void       thunar_window_trash_infobar_clicked                    (GtkInfoBar             *info_bar,
                                                                           gint                    response_id,
                                                                           ThunarWindow           *window);
-static void       thunar_window_trash_selection_updated                  (ThunarWindow           *window);
+static void       thunar_window_selection_changed                        (ThunarWindow           *window);
 static void       thunar_window_recent_reload                            (GtkRecentManager       *recent_manager,
                                                                           ThunarWindow           *window);
 static void       thunar_window_catfish_dialog_configure                 (GtkWidget              *entry);
@@ -378,7 +379,10 @@ struct _ThunarWindow
   GtkWidget              *menubar;
   GtkWidget              *spinner;
   GtkWidget              *paned;
+  GtkWidget              *sidepane_box;
   GtkWidget              *sidepane;
+  GtkWidget              *sidepane_preview;
+  GtkWidget              *sidepane_preview_image;
   GtkWidget              *view_box;
   GtkWidget              *trash_infobar;
   GtkWidget              *trash_infobar_restore_button;
@@ -468,6 +472,7 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_SHORTCUTS,       "<Actions>/ThunarWindow/view-side-pane-shortcuts",        "<Primary>b",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Shortcuts"),             N_ ("Toggles the visibility of the shortcuts pane"),                                 NULL,                      G_CALLBACK (thunar_window_action_shortcuts_changed),  },
     { THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_TREE,            "<Actions>/ThunarWindow/view-side-pane-tree",             "<Primary>e",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Tree"),                  N_ ("Toggles the visibility of the tree pane"),                                      NULL,                      G_CALLBACK (thunar_window_action_tree_changed),       },
     { THUNAR_WINDOW_ACTION_TOGGLE_SIDE_PANE,               "<Actions>/ThunarWindow/toggle-side-pane",                "F9",                   XFCE_GTK_MENU_ITEM,       NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_toggle_sidepane),           },
+    { THUNAR_WINDOW_ACTION_TOGGLE_IMAGE_PREVIEW,           "<Actions>/ThunarWindow/toggle-image-preview",            "",                     XFCE_GTK_CHECK_MENU_ITEM, N_ ("Image Preview"),          N_ ("Change the visibility of this window's image preview"),                         NULL,                      G_CALLBACK (thunar_window_action_image_preview),  },
     { THUNAR_WINDOW_ACTION_VIEW_STATUSBAR,                 "<Actions>/ThunarWindow/view-statusbar",                  "",                     XFCE_GTK_CHECK_MENU_ITEM, N_ ("St_atusbar"),             N_ ("Change the visibility of this window's statusbar"),                             NULL,                      G_CALLBACK (thunar_window_action_statusbar_changed),  },
     { THUNAR_WINDOW_ACTION_VIEW_MENUBAR,                   "<Actions>/ThunarWindow/view-menubar",                    "<Primary>m",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Menubar"),               N_ ("Change the visibility of this window's menubar"),                               "open-menu-symbolic",      G_CALLBACK (thunar_window_action_menubar_changed),    },
     { THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR,              "<Actions>/ThunarWindow/view-configure-toolbar",          "",                     XFCE_GTK_MENU_ITEM ,      N_ ("Configure _Toolbar..."),  N_ ("Configure the toolbar"),                                                        NULL,                      G_CALLBACK (thunar_window_action_show_toolbar_editor),},
@@ -726,6 +731,7 @@ thunar_window_init (ThunarWindow *window)
   gint             last_window_height;
   gboolean         last_window_maximized;
   gboolean         last_statusbar_visible;
+  gboolean         last_image_preview_visible;
   GtkStyleContext *context;
 
   /* unset the view type */
@@ -758,6 +764,7 @@ thunar_window_init (ThunarWindow *window)
                 "last-location-bar", &last_location_bar,
                 "last-side-pane", &last_side_pane,
                 "last-statusbar-visible", &last_statusbar_visible,
+                "last-image-preview-visible", &last_image_preview_visible,
                 NULL);
 
   /* update the visual on screen_changed events */
@@ -856,6 +863,20 @@ thunar_window_init (ThunarWindow *window)
   gtk_widget_set_vexpand (window->paned, TRUE);
   gtk_grid_attach (GTK_GRID (window->grid), window->paned, 0, 4, 1, 1);
   gtk_widget_show (window->paned);
+
+  window->sidepane_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+  gtk_paned_pack1 (GTK_PANED (window->paned), window->sidepane_box, FALSE, FALSE);
+  gtk_widget_show (window->sidepane_box);
+
+  window->sidepane_preview = gtk_frame_new (_("Preview"));
+  gtk_container_set_border_width (GTK_CONTAINER (window->sidepane_preview), 3);
+  gtk_box_pack_end (GTK_BOX (window->sidepane_box), window->sidepane_preview, FALSE, TRUE, 0);
+  if (last_image_preview_visible == TRUE)
+    gtk_widget_show (window->sidepane_preview);
+
+  window->sidepane_preview_image = gtk_image_new_from_file ("");
+  gtk_widget_show (window->sidepane_preview_image);
+  gtk_container_add (GTK_CONTAINER (window->sidepane_preview), window->sidepane_preview_image);
 
   /* determine the last separator position and apply it to the paned view */
   gtk_paned_set_position (GTK_PANED (window->paned), last_separator_position);
@@ -1238,6 +1259,7 @@ thunar_window_update_view_menu (ThunarWindow *window,
   GtkWidget  *sub_items;
   gchar      *last_location_bar;
   gchar      *last_side_pane;
+  gboolean    last_visible_image_preview;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
@@ -1259,12 +1281,13 @@ thunar_window_update_view_menu (ThunarWindow *window,
   item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_MENU), G_OBJECT (window), GTK_MENU_SHELL (menu));
   sub_items =  gtk_menu_new();
   gtk_menu_set_accel_group (GTK_MENU (sub_items), window->accel_group);
-  g_object_get (window->preferences, "last-side-pane", &last_side_pane, NULL);
+  g_object_get (window->preferences, "last-side-pane", &last_side_pane, "last-image-preview-visible", &last_visible_image_preview, NULL);
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_SHORTCUTS), G_OBJECT (window),
                                                    (g_strcmp0 (last_side_pane, g_type_name (THUNAR_TYPE_SHORTCUTS_PANE)) == 0), GTK_MENU_SHELL (sub_items));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_TREE), G_OBJECT (window),
                                                    (g_strcmp0 (last_side_pane, g_type_name (THUNAR_TYPE_TREE_PANE)) == 0), GTK_MENU_SHELL (sub_items));
   g_free (last_side_pane);
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_TOGGLE_IMAGE_PREVIEW), G_OBJECT (window), last_visible_image_preview, GTK_MENU_SHELL (sub_items));
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (sub_items));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_STATUSBAR), G_OBJECT (window),
                                                    gtk_widget_get_visible (window->statusbar), GTK_MENU_SHELL (menu));
@@ -2014,14 +2037,14 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
     }
 
   if (window->view != NULL)
-    g_signal_handlers_disconnect_by_func (window->view, thunar_window_trash_selection_updated, window);
+    g_signal_handlers_disconnect_by_func (window->view, thunar_window_selection_changed, window);
 
   /* activate new view */
   window->view = page;
   window->view_type = G_TYPE_FROM_INSTANCE (page);
 
   g_signal_connect_swapped (G_OBJECT (window->view), "notify::selected-files",
-                            G_CALLBACK (thunar_window_trash_selection_updated), window);
+                            G_CALLBACK (thunar_window_selection_changed), window);
 
   /* remember the last view type if directory specific settings are not enabled */
   if (!window->directory_specific_settings && window->view_type != G_TYPE_NONE)
@@ -2824,8 +2847,9 @@ thunar_window_install_sidepane (ThunarWindow *window,
       g_signal_connect_swapped (G_OBJECT (window->sidepane), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
       context = gtk_widget_get_style_context (window->sidepane);
       gtk_style_context_add_class (context, "sidebar");
-      gtk_paned_pack1 (GTK_PANED (window->paned), window->sidepane, FALSE, FALSE);
+      gtk_box_pack_start (GTK_BOX (window->sidepane_box), window->sidepane, TRUE, TRUE, 0);
       gtk_widget_show (window->sidepane);
+      gtk_widget_show (window->sidepane_box);
 
       /* connect the side pane widget to the view (if any) */
       if (G_LIKELY (window->view != NULL))
@@ -2835,6 +2859,8 @@ thunar_window_install_sidepane (ThunarWindow *window,
       if (type == THUNAR_TYPE_TREE_PANE)
         thunar_side_pane_set_show_hidden (THUNAR_SIDE_PANE (window->sidepane), window->show_hidden);
     }
+  else
+    gtk_widget_hide (window->sidepane_box);
 
   /* remember the setting */
   if (gtk_widget_get_visible (GTK_WIDGET (window)))
@@ -3554,6 +3580,25 @@ thunar_window_action_tree_changed (ThunarWindow *window)
     type = THUNAR_TYPE_TREE_PANE;
 
   thunar_window_install_sidepane (window, type);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_window_action_image_preview (ThunarWindow *window)
+{
+  gboolean last_image_preview_visible;
+
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  g_object_get (window->preferences, "last-image-preview-visible", &last_image_preview_visible, NULL);
+
+  gtk_widget_set_visible (window->sidepane_preview, !last_image_preview_visible);
+
+  g_object_set (G_OBJECT (window->preferences), "last-image-preview-visible", !last_image_preview_visible, NULL);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -5374,13 +5419,13 @@ thunar_window_trash_infobar_clicked (GtkInfoBar   *info_bar,
 
 
 /**
- * thunar_window_trash_selection_updated:
+ * thunar_window_selection_changed:
  * @window      : a #ThunarWindow instance.
  *
  * Used to set the `sensitive` value of the `Restore` button in the trash infobar.
  **/
 static void
-thunar_window_trash_selection_updated (ThunarWindow *window)
+thunar_window_selection_changed (ThunarWindow *window)
 {
   GList* selected_files = thunar_view_get_selected_files (THUNAR_VIEW (window->view));
 
@@ -5388,6 +5433,15 @@ thunar_window_trash_selection_updated (ThunarWindow *window)
     gtk_widget_set_sensitive (window->trash_infobar_restore_button, TRUE);
   else
     gtk_widget_set_sensitive (window->trash_infobar_restore_button, FALSE);
+
+  if (g_list_length (selected_files) == 1)
+    {
+      gchar *path = thunar_file_get_thumbnail_path_forced (selected_files->data, THUNAR_THUMBNAIL_SIZE_LARGE);
+      gtk_image_set_from_file (GTK_IMAGE (window->sidepane_preview_image), path != NULL ? thunar_file_get_thumbnail_path_forced (selected_files->data, THUNAR_THUMBNAIL_SIZE_LARGE) : "");
+      g_free (path);
+    }
+  else
+    gtk_image_set_from_file (GTK_IMAGE (window->sidepane_preview_image), "");
 }
 
 
