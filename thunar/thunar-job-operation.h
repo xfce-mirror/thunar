@@ -33,8 +33,8 @@ void                   thunar_job_operation_append       (ThunarJobOperation *jo
                                                           GFile              *target);
 void                   thunar_job_operation_finish       (ThunarJobOperation *job_operation);
 ThunarJobOperation    *thunar_job_operation_invert       (ThunarJobOperation *job_operation);
-ThunarJobOperation    *thunar_job_operation_get_head     (void);
 void                   thunar_job_operation_execute      (ThunarJobOperation *job_operation);
+void                   thunar_job_operation_undo         (void);
 
 #ifndef NDEBUG /* temporary debugging code */
 void                   thunar_job_operation_debug_print  (void);
