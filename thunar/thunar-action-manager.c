@@ -3369,25 +3369,9 @@ thunar_action_manager_new_files_created (ThunarActionManager *action_mgr,
 static gboolean
 thunar_action_manager_action_undo (ThunarActionManager *action_mgr)
 {
-  ThunarJobOperation *latest_operation;
-  ThunarJobOperation *inverted_operation;
-
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
-#ifndef NDEBUG /* temporary code */
-  g_print ("Called function thunar_action_manager_action_undo\n");
-#endif
-
-  latest_operation = thunar_job_operation_get_head ();
-  g_object_ref (latest_operation);
-
-  inverted_operation = thunar_job_operation_invert (latest_operation);
-  g_object_ref (inverted_operation);
-
-  thunar_job_operation_execute (inverted_operation);
-
-  g_object_unref (latest_operation);
-  g_object_unref (inverted_operation);
+  thunar_job_operation_undo ();
 
   return TRUE;
 }
