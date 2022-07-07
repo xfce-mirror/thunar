@@ -2267,7 +2267,6 @@ unlink_stub (GList *source_path_list,
  * @parent      : a #GdkScreen, a #GtkWidget or %NULL.
  * @file_list   : the list of #ThunarFile<!---->s that should be deleted.
  * @permanently : whether to unlink the files permanently.
- * @has_gfiles  : if true, consider @file_list to be a list of #GFile<!---->s instead.
  *
  * Deletes all files in the @file_list and takes care of all user interaction.
  *
@@ -2279,8 +2278,7 @@ void
 thunar_application_unlink_files (ThunarApplication *application,
                                  gpointer           parent,
                                  GList             *file_list,
-                                 gboolean           permanently,
-                                 gboolean           has_gfiles)
+                                 gboolean           permanently)
 {
   GtkWidget    *dialog;
   GtkWindow    *window;
@@ -2296,12 +2294,7 @@ thunar_application_unlink_files (ThunarApplication *application,
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   /* determine the paths for the files */
-  if (has_gfiles)
-    {
-      path_list = file_list;
-      n_path_list = g_list_length (path_list);
-    }
-  else for (lp = g_list_last (file_list); lp != NULL; lp = lp->prev, ++n_path_list)
+  for (lp = g_list_last (file_list); lp != NULL; lp = lp->prev, ++n_path_list)
     {
       /* prepend the path to the path list */
       path_list = thunar_g_list_prepend_deep (path_list, thunar_file_get_file (lp->data));

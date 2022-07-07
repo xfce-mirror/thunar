@@ -1462,7 +1462,7 @@ thunar_dbus_service_unlink_files (ThunarDBusFileManager  *object,
         {
           /* tell the application to move the specified files to the trash */
           application = thunar_application_get ();
-          thunar_application_unlink_files (application, screen, file_list, TRUE, FALSE);
+          thunar_application_unlink_files (application, screen, file_list, TRUE);
           g_object_unref (application);
         }
 
