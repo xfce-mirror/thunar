@@ -3572,15 +3572,15 @@ thunar_window_action_tree_changed (ThunarWindow *window,
 static gboolean
 thunar_window_action_statusbar_changed (ThunarWindow *window)
 {
-  gboolean last_statusbar_visible;
+  gboolean statusbar_visible;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  g_object_get (window->preferences, "last-statusbar-visible", &last_statusbar_visible, NULL);
+  statusbar_visible = gtk_widget_get_visible (window->statusbar);
 
-  gtk_widget_set_visible (window->statusbar, !last_statusbar_visible);
+  gtk_widget_set_visible (window->statusbar, !statusbar_visible);
 
-  g_object_set (G_OBJECT (window->preferences), "last-statusbar-visible", !last_statusbar_visible, NULL);
+  g_object_set (G_OBJECT (window->preferences), "last-statusbar-visible", !statusbar_visible, NULL);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
