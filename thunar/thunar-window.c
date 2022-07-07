@@ -207,10 +207,8 @@ static gboolean  thunar_window_action_switch_next_tab     (ThunarWindow         
 static gboolean  thunar_window_action_switch_previous_tab (ThunarWindow           *window);
 static gboolean  thunar_window_action_locationbar_entry   (ThunarWindow           *window);
 static gboolean  thunar_window_action_locationbar_buttons (ThunarWindow           *window);
-static gboolean  thunar_window_action_shortcuts_changed   (ThunarWindow           *window,
-                                                           GtkWidget              *menu_item);
-static gboolean  thunar_window_action_tree_changed        (ThunarWindow           *window,
-                                                           GtkWidget              *menu_item);
+static gboolean  thunar_window_action_shortcuts_changed   (ThunarWindow           *window);
+static gboolean  thunar_window_action_tree_changed        (ThunarWindow           *window);
 static gboolean  thunar_window_action_statusbar_changed   (ThunarWindow           *window);
 static void      thunar_window_action_menubar_update      (ThunarWindow           *window);
 static gboolean  thunar_window_action_menubar_changed     (ThunarWindow           *window);
@@ -3526,18 +3524,14 @@ thunar_window_action_locationbar_buttons (ThunarWindow *window)
 
 
 static gboolean
-thunar_window_action_shortcuts_changed (ThunarWindow *window,
-                                        GtkWidget    *menu_item)
+thunar_window_action_shortcuts_changed (ThunarWindow *window)
 {
   GType type = G_TYPE_NONE;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
-  _thunar_return_val_if_fail (GTK_IS_CHECK_MENU_ITEM (menu_item), FALSE);
 
-  if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menu_item)))
+  if (thunar_window_has_shortcut_sidepane (window) == FALSE)
     type = THUNAR_TYPE_SHORTCUTS_PANE;
-  else
-    type = G_TYPE_NONE;
 
   thunar_window_install_sidepane (window, type);
 
@@ -3548,18 +3542,14 @@ thunar_window_action_shortcuts_changed (ThunarWindow *window,
 
 
 static gboolean
-thunar_window_action_tree_changed (ThunarWindow *window,
-                                   GtkWidget    *menu_item)
+thunar_window_action_tree_changed (ThunarWindow *window)
 {
   GType type = G_TYPE_NONE;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
-  _thunar_return_val_if_fail (GTK_IS_CHECK_MENU_ITEM (menu_item), FALSE);
 
-  if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menu_item)))
+  if (thunar_window_has_tree_view_sidepane (window) == FALSE)
     type = THUNAR_TYPE_TREE_PANE;
-  else
-    type = G_TYPE_NONE;
 
   thunar_window_install_sidepane (window, type);
 
