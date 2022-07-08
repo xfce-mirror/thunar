@@ -659,7 +659,7 @@ thunar_job_operation_kind_get_type (void)
         { THUNAR_JOB_OPERATION_KIND_RESTORE,    "THUNAR_JOB_OPERATION_KIND_RESTORE",  N_("Restore (opposite of trash)") },
         { THUNAR_JOB_OPERATION_KIND_LINK,       "THUNAR_JOB_OPERATION_KIND_LINK",     N_("Link") },
         { THUNAR_JOB_OPERATION_KIND_UNLINK,     "THUNAR_JOB_OPERATION_KIND_UNLINK",   N_("Unlink") },
-        { 0, NULL, NULL }
+        { 0,                                    NULL,                                 NULL }
       };
 
       type = g_enum_register_static ("ThunarJobOperationKind", values);
