@@ -61,6 +61,7 @@
 #include <thunar/thunar-window.h>
 #include <thunar/thunar-device-monitor.h>
 #include <thunar/thunar-toolbar-editor.h>
+#include <thunar/thunar-thumbnailer.h>
 
 #include <glib.h>
 
@@ -321,6 +322,9 @@ static void       thunar_window_trash_infobar_clicked                    (GtkInf
                                                                           gint                    response_id,
                                                                           ThunarWindow           *window);
 static void       thunar_window_selection_changed                        (ThunarWindow           *window);
+static void       thunar_window_finished_thumbnailing                    (ThunarWindow           *window,
+                                                                          guint                   request,
+                                                                          ThunarThumbnailer      *thumbnailer);
 static void       thunar_window_recent_reload                            (GtkRecentManager       *recent_manager,
                                                                           ThunarWindow           *window);
 static void       thunar_window_catfish_dialog_configure                 (GtkWidget              *entry);
@@ -446,6 +450,10 @@ struct _ThunarWindow
    * see the toggle_sidepane() function.
    */
   GType                   toggle_sidepane_type;
+
+  /* Image Preview thumbnail generation */
+  ThunarThumbnailer      *thumbnailer;
+  guint                   thumbnail_request;
 };
 
 
@@ -746,6 +754,9 @@ thunar_window_init (ThunarWindow *window)
 
   /* grab a reference on the preferences */
   window->preferences = thunar_preferences_get ();
+
+  window->thumbnailer = thunar_thumbnailer_get ();
+  g_signal_connect_swapped (G_OBJECT (window->thumbnailer), "request-finished", G_CALLBACK (thunar_window_finished_thumbnailing), window);
 
   window->accel_group = gtk_accel_group_new ();
   xfce_gtk_accel_map_add_entries (thunar_window_action_entries, G_N_ELEMENTS (thunar_window_action_entries));
@@ -1513,6 +1524,8 @@ thunar_window_finalize (GObject *object)
 
   /* release the preferences reference */
   g_object_unref (window->preferences);
+
+  g_object_unref (window->thumbnailer);
 
   /* disconnect signal from GtkRecentManager */
   g_signal_handlers_disconnect_by_data (G_OBJECT (gtk_recent_manager_get_default()), window);
@@ -5456,15 +5469,56 @@ thunar_window_selection_changed (ThunarWindow *window)
 {
   GList* selected_files = thunar_view_get_selected_files (THUNAR_VIEW (window->view));
 
+  /* butttons specific to the Trash location */
   if (g_list_length (selected_files) > 0)
     gtk_widget_set_sensitive (window->trash_infobar_restore_button, TRUE);
   else
     gtk_widget_set_sensitive (window->trash_infobar_restore_button, FALSE);
 
+  /* image preview sidepane */
+  /* check if we have a pending thumbnail request (for the image preview) */
+  if (window->thumbnail_request > 0)
+    {
+      /* cancel the request */
+      thunar_thumbnailer_dequeue (window->thumbnailer, window->thumbnail_request);
+      window->thumbnail_request = 0;
+    }
+
   if (g_list_length (selected_files) == 1)
     {
       gchar *path = thunar_file_get_thumbnail_path_forced (selected_files->data, THUNAR_THUMBNAIL_SIZE_LARGE);
-      gtk_image_set_from_file (GTK_IMAGE (window->sidepane_preview_image), path != NULL ? thunar_file_get_thumbnail_path_forced (selected_files->data, THUNAR_THUMBNAIL_SIZE_LARGE) : "");
+      if (path == NULL) /* request the creation of the thumbnail if it doesn't exist */
+        thunar_thumbnailer_queue_file (window->thumbnailer, selected_files->data, &window->thumbnail_request);
+      else /* display the thumbnail */
+        {
+          gtk_image_set_from_file (GTK_IMAGE (window->sidepane_preview_image), path);
+          g_free (path);
+        }
+    }
+  else
+    gtk_image_set_from_file (GTK_IMAGE (window->sidepane_preview_image), "");
+}
+
+
+
+static void
+thunar_window_finished_thumbnailing (ThunarWindow       *window,
+                                     guint               request,
+                                     ThunarThumbnailer  *thumbnailer)
+{
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  if (window->thumbnail_request != request)
+    return;
+
+  window->thumbnail_request = 0;
+
+  GList* selected_files = thunar_view_get_selected_files (THUNAR_VIEW (window->view));
+  if (g_list_length (selected_files) == 1)
+    {
+      /* there is no guarantee that the thumbnail will exist, the type of the selected file might be unsupported by the thumbnailer */
+      gchar *path = thunar_file_get_thumbnail_path_forced (selected_files->data, THUNAR_THUMBNAIL_SIZE_LARGE);
+      gtk_image_set_from_file (GTK_IMAGE (window->sidepane_preview_image), path != NULL ? path : "");
       g_free (path);
     }
   else
