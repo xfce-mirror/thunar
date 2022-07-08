@@ -112,6 +112,13 @@ static void         thunar_details_view_disconnect_accelerators (ThunarStandardV
 static void         thunar_details_view_append_menu_items       (ThunarStandardView     *standard_view,
                                                                  GtkMenu                *menu,
                                                                  GtkAccelGroup          *accel_group);
+static void         thunar_details_view_cell_layout_data_func   (GtkCellLayout          *layout,
+                                                                 GtkCellRenderer        *cell,
+                                                                 GtkTreeModel           *model,
+                                                                 GtkTreeIter            *iter,
+                                                                 gpointer                data);
+static void         thunar_details_view_highlight_option_changed(ThunarDetailsView      *details_view);
+
 
 
 struct _ThunarDetailsViewClass
@@ -140,6 +147,7 @@ struct _ThunarDetailsView
   /* event source id for thunar_details_view_zoom_level_changed_reload_fixed_height */
   guint idle_id;
 
+  GtkCellRenderer   *renderers[THUNAR_N_VISIBLE_COLUMNS];
 };
 
 
@@ -294,6 +302,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
         {
           /* size is right aligned, everything else is left aligned */
           renderer = (column == THUNAR_COLUMN_SIZE || column == THUNAR_COLUMN_SIZE_IN_BYTES) ? right_aligned_renderer : left_aligned_renderer;
+          details_view->renderers[column] = renderer;
 
           /* add the renderer */
           gtk_tree_view_column_pack_start (details_view->columns[column], renderer, TRUE);
@@ -333,6 +342,10 @@ thunar_details_view_init (ThunarDetailsView *details_view)
       gtk_tree_view_column_set_fixed_width (details_view->columns[THUNAR_COLUMN_NAME],-1);
       gtk_tree_view_column_set_expand (details_view->columns[THUNAR_COLUMN_NAME], TRUE);
     }
+
+  g_signal_connect_swapped (THUNAR_STANDARD_VIEW (details_view)->preferences, "notify::misc-highlighting-enabled",
+                            G_CALLBACK (thunar_details_view_highlight_option_changed), details_view);
+  thunar_details_view_highlight_option_changed (details_view);
 
   /* release the shared text renderers */
   g_object_unref (G_OBJECT (right_aligned_renderer));
@@ -401,6 +414,9 @@ thunar_details_view_finalize (GObject *object)
 
   if (details_view->idle_id)
     g_source_remove (details_view->idle_id);
+
+  g_signal_handlers_disconnect_by_func (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences),
+                                        thunar_details_view_highlight_option_changed, details_view);
 
   (*G_OBJECT_CLASS (thunar_details_view_parent_class)->finalize) (object);
 }
@@ -1148,3 +1164,56 @@ thunar_details_view_set_location_column_visible     (ThunarDetailsView *details_
   thunar_column_model_set_column_visible (details_view->column_model, THUNAR_COLUMN_LOCATION, visible);
 }
 
+
+
+static void
+thunar_details_view_cell_layout_data_func (GtkCellLayout   *layout,
+                                           GtkCellRenderer *cell,
+                                           GtkTreeModel    *model,
+                                           GtkTreeIter     *iter,
+                                           gpointer         data)
+{
+  ThunarFile  *file;
+  const gchar *background = NULL;
+  const gchar *foreground = NULL;
+
+  file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
+  background = thunar_file_get_metadata_setting (file, "highlight-color-background");
+  foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
+
+  /* all renderers using this function are GtkCellRendererText; hence both properties are common in all */
+  g_object_set (G_OBJECT (cell), "cell-background", background, "foreground", foreground, NULL);
+  g_object_unref (file);
+}
+
+
+
+static void
+thunar_details_view_highlight_option_changed (ThunarDetailsView *details_view)
+{
+  GtkTreeCellDataFunc function = NULL;
+  gboolean            show_highlight;
+  gint                column;
+
+  g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences), "misc-highlighting-enabled", &show_highlight, NULL);
+
+  if (show_highlight)
+    function = (GtkTreeCellDataFunc) thunar_details_view_cell_layout_data_func;
+
+  /* set the data functions for the respective renderers */
+  for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; column++)
+    {
+      if (column == THUNAR_COLUMN_NAME)
+        {
+          gtk_tree_view_column_set_cell_data_func (GTK_TREE_VIEW_COLUMN (details_view->columns[column]),
+              THUNAR_STANDARD_VIEW (details_view)->name_renderer,
+              function, NULL, NULL);
+        }
+      else
+        {
+          gtk_tree_view_column_set_cell_data_func (GTK_TREE_VIEW_COLUMN (details_view->columns[column]),
+              details_view->renderers[column],
+              function, NULL, NULL);
+        }
+    }
+}

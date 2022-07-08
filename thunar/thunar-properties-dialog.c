@@ -101,6 +101,9 @@ static void     thunar_properties_dialog_icon_button_clicked  (GtkWidget        
 static void     thunar_properties_dialog_update               (ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_update_providers     (ThunarPropertiesDialog      *dialog);
 static GList   *thunar_properties_dialog_get_files            (ThunarPropertiesDialog      *dialog);
+static void     thunar_properties_dialog_reset_highlight      (ThunarPropertiesDialog      *dialog);
+static void     thunar_properties_dialog_set_foreground       (ThunarPropertiesDialog      *dialog);
+static void     thunar_properties_dialog_set_background       (ThunarPropertiesDialog      *dialog);
 
 
 struct _ThunarPropertiesDialogClass
@@ -151,6 +154,7 @@ struct _ThunarPropertiesDialog
   GtkWidget              *permissions_chooser;
   GtkWidget              *content_label;
   GtkWidget              *content_value_label;
+  GtkWidget              *color_chooser;
 };
 
 
@@ -237,6 +241,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   GtkWidget *spacer;
   guint      row = 0;
   GtkWidget *image;
+  GtkWidget *button;
+  GtkWidget *infobar;
+  GtkWidget *frame;
 
   /* acquire a reference on the preferences and monitor the
      "misc-date-style" and "misc-file-size-binary" settings */
@@ -663,6 +670,85 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), dialog->permissions_chooser, label);
   gtk_widget_show (dialog->permissions_chooser);
   gtk_widget_show (label);
+
+  /*
+     Highlight Color Chooser
+   */
+  grid = gtk_grid_new ();
+  label = gtk_label_new (_("Highlight"));
+  gtk_widget_set_halign (grid, GTK_ALIGN_CENTER);
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
+  gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), grid, label);
+  gtk_widget_show (label);
+  gtk_widget_show (grid);
+
+  row = 0;
+
+  chooser = gtk_color_chooser_widget_new ();
+  dialog->color_chooser = chooser;
+  gtk_grid_attach (GTK_GRID (grid), chooser, 0, row, 1, 1);
+  gtk_widget_show (chooser);
+
+  row++;
+
+  /* check if gvfs metadata is supported */
+  if (G_UNLIKELY (!thunar_g_vfs_metadata_is_supported ()))
+    {
+      frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
+      gtk_grid_attach (GTK_GRID (grid), frame, 0, row, 1, 1);
+      gtk_widget_set_sensitive (grid, FALSE);
+      gtk_widget_show (frame);
+
+      label = gtk_label_new (_("Missing dependencies"));
+      gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+      gtk_frame_set_label_widget (GTK_FRAME (frame), label);
+      gtk_widget_show (label);
+
+      infobar = gtk_info_bar_new ();
+      gtk_container_set_border_width (GTK_CONTAINER (infobar), 12);
+      label = gtk_label_new (NULL);
+      gtk_label_set_markup (GTK_LABEL (label), _("It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
+                                                 "Alongside this feature, important features including trash support,\n"
+                                                 "removable media and remote location browsing\n"
+                                                 "will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"));
+      box = gtk_info_bar_get_content_area (GTK_INFO_BAR (infobar));
+      gtk_container_add (GTK_CONTAINER (box), label);
+      gtk_info_bar_set_message_type (GTK_INFO_BAR (infobar), GTK_MESSAGE_WARNING);
+      gtk_widget_show (label);
+      gtk_widget_show (infobar);
+      gtk_container_add (GTK_CONTAINER (frame), infobar);
+
+      row++;
+    }
+
+  box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+  gtk_widget_set_vexpand (box, TRUE);
+  gtk_widget_set_hexpand (box, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), box, 0, row, 1, 1);
+  gtk_widget_show (box);
+
+  button = gtk_button_new_with_mnemonic (_("_Reset"));
+  g_signal_connect_swapped (G_OBJECT (button), "clicked",
+                            G_CALLBACK (thunar_properties_dialog_reset_highlight), dialog);
+  gtk_widget_set_valign (button, GTK_ALIGN_END);
+  gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
+  gtk_widget_show (button);
+
+  button = gtk_button_new_with_mnemonic (_("Set _Background"));
+  g_signal_connect_swapped (G_OBJECT (button), "clicked",
+                            G_CALLBACK (thunar_properties_dialog_set_background), dialog);
+  gtk_widget_set_valign (button, GTK_ALIGN_END);
+  gtk_box_pack_end (GTK_BOX (box), button, FALSE, FALSE, 0);
+  gtk_widget_show (button);
+
+  button = gtk_button_new_with_mnemonic (_("Set _Foreground"));
+  g_signal_connect_swapped (G_OBJECT (button), "clicked",
+                            G_CALLBACK (thunar_properties_dialog_set_foreground), dialog);
+  gtk_widget_set_valign (button, GTK_ALIGN_END);
+  gtk_box_pack_end (GTK_BOX (box), button, FALSE, FALSE, 0);
+  gtk_widget_show (button);
 }
 
 
@@ -1620,4 +1706,74 @@ thunar_properties_dialog_set_file (ThunarPropertiesDialog *dialog,
 
       thunar_properties_dialog_set_files (dialog, &foo);
     }
+}
+
+
+
+static void
+thunar_properties_dialog_reset_highlight (ThunarPropertiesDialog *dialog)
+{
+  GList   *lp;
+
+  _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
+
+  for (lp = dialog->files; lp != NULL; lp = lp->next)
+    {
+      thunar_file_clear_metadata_setting (lp->data, "highlight-color-background");
+      thunar_file_clear_metadata_setting (lp->data, "highlight-color-foreground");
+    }
+
+  thunar_properties_dialog_reload (dialog);
+}
+
+
+
+static void
+thunar_properties_dialog_set_foreground (ThunarPropertiesDialog *dialog)
+{
+  GdkRGBA   color;
+  GList    *lp;
+  gchar    *color_str;
+  gboolean  highlighting_enabled;
+
+  _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
+
+  /* if feature is disabled then enable the feature */
+  g_object_get (G_OBJECT (dialog->preferences), "misc-highlighting-enabled", &highlighting_enabled, NULL);
+  if (!highlighting_enabled)
+    g_object_set (G_OBJECT (dialog->preferences), "misc-highlighting-enabled", TRUE, NULL);
+
+  gtk_color_chooser_get_rgba (GTK_COLOR_CHOOSER (dialog->color_chooser), &color);
+  color_str = gdk_rgba_to_string (&color);
+  for (lp = dialog->files; lp != NULL; lp = lp->next)
+    thunar_file_set_metadata_setting (lp->data, "highlight-color-foreground", color_str, FALSE);
+  g_free (color_str);
+
+  thunar_properties_dialog_reload (dialog);
+}
+
+
+
+static void
+thunar_properties_dialog_set_background (ThunarPropertiesDialog *dialog)
+{
+  GdkRGBA   color;
+  GList    *lp;
+  gchar    *color_str;
+  gboolean  highlighting_enabled;
+
+  _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
+
+  /* if feature is disabled then enable the feature */
+  g_object_get (G_OBJECT (dialog->preferences), "misc-highlighting-enabled", &highlighting_enabled, NULL);
+  if (!highlighting_enabled)
+    g_object_set (G_OBJECT (dialog->preferences), "misc-highlighting-enabled", TRUE, NULL);
+
+  gtk_color_chooser_get_rgba (GTK_COLOR_CHOOSER (dialog->color_chooser), &color);
+  color_str = gdk_rgba_to_string (&color);
+  for (lp = dialog->files; lp != NULL; lp = lp->next)
+    thunar_file_set_metadata_setting (lp->data, "highlight-color-background", color_str, FALSE);
+  g_free (color_str);
+
+  thunar_properties_dialog_reload (dialog);
 }
