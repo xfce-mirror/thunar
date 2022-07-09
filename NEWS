@@ -1,3 +1,69 @@
+4.17.9
+======
+- Dont rely on xfconf value for menubar toggle (Issue #777)
+- Dont rely on xfconf value for statusbar toggle (Issue #777)
+- Dont rely on xfconf value for sidepane menu items (Issue #777)
+- Bulk renamer: Rename in multiple iterations (Issue #108)
+- meaningful naming for Location Selector (Issue #826)
+- Prevent GLib-GObject-CRITICAL when using tree-view (Issue #827)
+- Bulk Renamer: Allow multiple matches when using regex (Issue #230)
+- Fix various memory leaks (Issue #573)
+- Ignore escape sequences when executing launchers
+- Fix crash when changing tab titles preferences (#808)
+- Don't modify the 'exe' line in .desktop files unintentionally
+- Search: show symlinks in results (Issue #809)
+- Rename ThunarLauncher class to ThunarActionManager
+- Enable to switch from search entry to other UI elements (Issue #792)
+- Hide accel labels in launcher submenus (Issue #779)
+- Fix broken build with gcc7 : “declaration is not a statement”
+- List View: Show relative paths for column 'location'
+- Check for empty path property in .desktop files
+- Add tooltips for select by pattern dialog
+- Restore view-type before exiting while search is active (Issue #794)
+- Add menu item 'edit launcher' for '.desktop' files
+- Search string normalization and diacritic stripping (Issue #793)
+- Add border around infobar in trash (Issue #795)
+- Fix segfault when closing Thunar during search (Issue #789)
+- Respect last-show-hidden during search (Issue #785)
+- Allow searching for multiple search terms (Issue #783)
+- Handle special columns properly when ending a search (Issue #782)
+- Replace exo_str_* () with GLib functions
+- Bump up Glib dependency to 2.66.0
+- Fixed folder activation during search in some cases (Issue #774)
+- ExoIconView search workaround: do not save the temporary view type
+- Fix column editor model filter logic
+- Show the `Location` column in `recent:\`.
+- Show the `Search with Catfish...` button only if catfish is installed
+- Tweak order of tab settings in preferences dialog
+- build: Fix intltool lock file problem during make distcheck
+- Add option to show last modified date in the statusbar (Issue #641)
+- Usage of glist to concatinate statusbar strings
+- Add configure option to set thunarx default dirs
+- Add configure option to enable thunarx custom dirs (Issue #771)
+- Sort symlinks like regular files when sorting by type (Issue #71)
+- Make thunar toolbar editor resizable and set a default size
+- Refactor thunarx module loading (Issue #755)
+- Add preference to disable recursive search (Issue #751)
+- Compact View: Optional ellipsization instead of word wrap (Issue #595)
+- Add toolbar button to show menubar when hidden (Issue #174)
+- Bookmark accels not working (Issue #762)
+- Toolbar Editor: Default to a bigger dialog size (Issue #758)
+- Toolbar: Make custom actions invisible by default (Issue #757)
+- Dont show a checkbox for "vertical split pane" in the settings
+- Show as well invalid bookmarks in the bookmarks menu (Issue #582)
+- Remove 'Date Deleted' from 'Configure Column' List (Issue #750)
+- Move trash infobar to the bottom (Issue #605)
+- Translation Updates:
+  Albanian, Arabic, Armenian, Armenian (Armenia), Asturian, Basque,
+  Bengali, Catalan, Chinese (China), Chinese (Hong Kong), Chinese
+  (Taiwan), Czech, Danish, Dutch, Eastern Armenian, English
+  (Australia), English (United Kingdom), Esperanto, Estonian, Finnish,
+  French, Galician, German, Greek, Hebrew, Hungarian, Icelandic,
+  Indonesian, Interlingue, Japanese, Kazakh, Korean, Latvian, Malay,
+  Norwegian Bokmål, Norwegian Nynorsk, Occitan (post 1500), Persian
+  (Iran), Polish, Portuguese, Romanian, Serbian, Slovak, Spanish,
+  Swedish, Telugu, Thai, Urdu, Urdu (Pakistan), Uyghur, Vietnamese
+
 4.17.8
 ======
 
