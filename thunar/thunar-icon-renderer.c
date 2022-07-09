@@ -485,7 +485,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
         gdk_cairo_set_source_rgba (cr, &cell_background_rgba);
       gdk_rgba_free (color);
       cairo_fill_preserve (cr);
-      gdk_cairo_set_source_rgba (cr, &cell_background_rgba);
+      if (G_UNLIKELY (cell_background_set &&  color_selected))
+        gdk_cairo_set_source_rgba (cr, &cell_background_rgba);
       cairo_set_line_width (cr, 2.0);
       cairo_stroke (cr);
     }
@@ -569,8 +570,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
         thunar_icon_renderer_color_lighten (cr, widget);
 
       /* paint the selected mask */
-      // if (color_selected)
-      //   thunar_icon_renderer_color_selected (cr, widget);
+      if (color_selected)
+        thunar_icon_renderer_color_selected (cr, widget);
     }
 
   /* release the file's icon */
