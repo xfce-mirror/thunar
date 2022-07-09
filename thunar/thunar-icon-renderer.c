@@ -449,8 +449,14 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   gboolean                cell_background_set;
   const gchar            *cell_background;
   GdkRGBA                 cell_background_rgba;
-  gdouble                 corner_radius = cell_area->height / 10.0;
+  gdouble                 corner_radius = cell_area->width / 10.0;
   gdouble                 degrees = G_PI / 180.0;
+  GtkStateFlags    state;
+  GdkRGBA          *color;
+  GtkStyleContext *context = gtk_widget_get_style_context (widget);
+
+  state = gtk_widget_has_focus (widget) ? GTK_STATE_FLAG_SELECTED : GTK_STATE_FLAG_ACTIVE;
+  gtk_style_context_get (context, state, GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &color, NULL);
 
   if (G_UNLIKELY (icon_renderer->file == NULL))
     return;
@@ -462,7 +468,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   cell_background_set = icon_renderer->highlight_set;
   cell_background = icon_renderer->highlight;
 
-  if (G_UNLIKELY (cell_background_set))
+  color_selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0 && icon_renderer->follow_state;
+  if (G_UNLIKELY (cell_background_set || color_selected))
     {
       cairo_new_sub_path (cr);
       cairo_arc (cr, background_area->x + background_area->width - corner_radius, background_area->y + corner_radius, corner_radius, -90 * degrees, 0 * degrees);
@@ -470,8 +477,13 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       cairo_arc (cr, background_area->x + 0, background_area->y + background_area->height - 0, 0, 90 * degrees, 180 * degrees);
       cairo_arc (cr, background_area->x + corner_radius, background_area->y + corner_radius, corner_radius, 180 * degrees, 270 * degrees);
       cairo_close_path (cr);
-      gdk_rgba_parse (&cell_background_rgba, cell_background);
-      gdk_cairo_set_source_rgba (cr, &cell_background_rgba);
+      if (cell_background != NULL)
+        gdk_rgba_parse (&cell_background_rgba, cell_background);
+      if (color_selected)
+        gdk_cairo_set_source_rgba (cr, color);
+      else
+        gdk_cairo_set_source_rgba (cr, &cell_background_rgba);
+      gdk_rgba_free (color);
       cairo_clip (cr);
       cairo_paint (cr);
     }
@@ -555,8 +567,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
         thunar_icon_renderer_color_lighten (cr, widget);
 
       /* paint the selected mask */
-      if (color_selected)
-        thunar_icon_renderer_color_selected (cr, widget);
+      // if (color_selected)
+      //   thunar_icon_renderer_color_selected (cr, widget);
     }
 
   /* release the file's icon */
