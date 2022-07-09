@@ -41,6 +41,7 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-io-scan-directory.h>
+#include <thunar/thunar-job-operation.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
@@ -204,7 +205,7 @@ static gboolean                thunar_action_manager_action_create_document     
 static GtkWidget              *thunar_action_manager_create_document_submenu_new(ThunarActionManager            *action_mgr);
 static void                    thunar_action_manager_new_files_created          (ThunarActionManager            *action_mgr,
                                                                                  GList                          *new_thunar_files);
-
+static gboolean                thunar_action_manager_action_undo                (ThunarActionManager            *action_mgr);
 
 
 struct _ThunarActionManagerClass
@@ -303,6 +304,7 @@ static XfceGtkActionEntry thunar_action_manager_action_entries[] =
     { THUNAR_ACTION_MANAGER_ACTION_MOUNT,            NULL,                                                   "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Mount"),                          N_ ("Mount the selected device"),                                                                NULL,                   G_CALLBACK (thunar_action_manager_action_open),                },
     { THUNAR_ACTION_MANAGER_ACTION_UNMOUNT,          NULL,                                                   "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Unmount"),                        N_ ("Unmount the selected device"),                                                              NULL,                   G_CALLBACK (thunar_action_manager_action_unmount),             },
     { THUNAR_ACTION_MANAGER_ACTION_EJECT,            NULL,                                                   "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Eject"),                          N_ ("Eject the selected device"),                                                                NULL,                   G_CALLBACK (thunar_action_manager_action_eject),               },
+    { THUNAR_ACTION_MANAGER_ACTION_UNDO,             "<Actions>/ThunarActionManager/undo",                   "<Primary>Z",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Undo"),                           N_ ("Undo the latest operation"),                                                               "edit-undo-symbolic",    G_CALLBACK (thunar_action_manager_action_undo),                },
     { THUNAR_ACTION_MANAGER_ACTION_EDIT_LAUNCHER,    NULL,                                                   "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Edit Launcher"),                  N_ ("Edit the selected action_mgr"),                                                             "gtk-edit",             G_CALLBACK (thunar_action_manager_action_edit_launcher),       },
 };
 
@@ -3364,6 +3366,15 @@ thunar_action_manager_new_files_created (ThunarActionManager *action_mgr,
   g_signal_emit (action_mgr, action_manager_signals[NEW_FILES_CREATED], 0, new_thunar_files);
 }
 
+static gboolean
+thunar_action_manager_action_undo (ThunarActionManager *action_mgr)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
+
+  thunar_job_operation_undo ();
+
+  return TRUE;
+}
 
 
 XfceGtkActionEntry*
