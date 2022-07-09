@@ -28,10 +28,10 @@ G_DECLARE_FINAL_TYPE (ThunarJobOperation, thunar_job_operation, THUNAR, JOB_OPER
 G_END_DECLS
 
 ThunarJobOperation    *thunar_job_operation_new          (ThunarJobOperationKind kind);
-void                   thunar_job_operation_append       (ThunarJobOperation *job_operation,
+void                   thunar_job_operation_add          (ThunarJobOperation *job_operation,
                                                           GFile              *source,
                                                           GFile              *target);
-void                   thunar_job_operation_finish       (ThunarJobOperation *job_operation);
+void                   thunar_job_operation_commit       (ThunarJobOperation *job_operation);
 void                   thunar_job_operation_undo         (void);
 
 #ifndef NDEBUG /* temporary debugging code */

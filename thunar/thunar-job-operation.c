@@ -37,7 +37,7 @@ static void                   thunar_job_operation_set_property       (GObject  
                                                                        guint             prop_id,
                                                                        const GValue     *value,
                                                                        GParamSpec       *pspec);
-static ThunarJobOperation    *thunar_job_operation_invert             (ThunarJobOperation *job_operation);
+static ThunarJobOperation    *thunar_job_operation_new_invert         (ThunarJobOperation *job_operation);
 static void                   thunar_job_operation_execute            (ThunarJobOperation *job_operation);
 static gint                   is_ancestor                             (gconstpointer descendant,
                                                                        gconstpointer ancestor);
@@ -198,9 +198,9 @@ thunar_job_operation_new (ThunarJobOperationKind kind)
 }
 
 void
-thunar_job_operation_append (ThunarJobOperation *job_operation,
-                             GFile              *source,
-                             GFile              *target)
+thunar_job_operation_add (ThunarJobOperation *job_operation,
+                          GFile              *source,
+                          GFile              *target)
 {
 
   g_assert (THUNAR_IS_JOB_OPERATION (job_operation));
@@ -218,7 +218,7 @@ thunar_job_operation_append (ThunarJobOperation *job_operation,
 }
 
 void
-thunar_job_operation_finish (ThunarJobOperation *job_operation)
+thunar_job_operation_commit (ThunarJobOperation *job_operation)
 {
   g_assert (THUNAR_IS_JOB_OPERATION (job_operation));
 
@@ -243,7 +243,7 @@ thunar_job_operation_undo (void)
   operation_marker = job_operation_list->data;
 
 
-  inverted_operation = thunar_job_operation_invert (operation_marker);
+  inverted_operation = thunar_job_operation_new_invert (operation_marker);
   g_object_ref (inverted_operation);
 
   thunar_job_operation_execute (inverted_operation);
@@ -256,7 +256,7 @@ thunar_job_operation_undo (void)
 }
 
 ThunarJobOperation *
-thunar_job_operation_invert (ThunarJobOperation *job_operation)
+thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
 {
   ThunarJobOperation *inverted_operation;
 

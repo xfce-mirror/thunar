@@ -713,7 +713,7 @@ thunar_transfer_job_copy_file (ThunarTransferJob     *job,
             {
               /* do not register in case of replace */
               if (!replace_confirmed)
-                thunar_job_operation_append (operation, source_file, target);
+                thunar_job_operation_add (operation, source_file, target);
 
               return target;
             }
@@ -1677,7 +1677,7 @@ thunar_transfer_job_execute (ExoJob  *job,
       thunar_job_new_files (THUNAR_JOB (job), new_files_list);
       thunar_g_list_free_full (new_files_list);
 
-      thunar_job_operation_finish (operation);
+      thunar_job_operation_commit (operation);
       g_object_unref (operation);
 
 #ifndef NDEBUG /* temoporary debugging code */
