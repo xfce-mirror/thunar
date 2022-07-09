@@ -698,7 +698,7 @@ thunar_abstract_icon_view_cell_layout_data_func (GtkCellLayout   *layout,
   /* since this function is being used for both icon & name renderers;
    * we need to make sure the right properties are applied to the right renderers */
   /* TODO: is such a multi-purpose function good ? */
-  if (THUNAR_IS_TEXT_RENDERER (cell))
+  if (THUNAR_IS_TEXT_RENDERER (cell) || GTK_IS_CELL_RENDERER_TEXT (cell))
     g_object_set (G_OBJECT (cell), "foreground", foreground, NULL);
   g_object_set (G_OBJECT (cell), "highlight", background, "highlight-set", background != NULL ? TRUE : FALSE, NULL);
 
