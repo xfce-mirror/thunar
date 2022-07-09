@@ -107,6 +107,8 @@ thunar_SOURCES =							\
 	thunar-icon-factory.h						\
 	thunar-icon-renderer.c						\
 	thunar-icon-renderer.h						\
+	thunar-text-renderer.c						\
+	thunar-text-renderer.h						\
 	thunar-icon-view.c						\
 	thunar-icon-view.h						\
 	thunar-image.c							\
