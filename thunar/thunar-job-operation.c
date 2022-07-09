@@ -28,6 +28,7 @@ enum
   N_PROPERTIES,
 };
 
+static void                   thunar_job_operation_dispose            (GObject          *object);
 static void                   thunar_job_operation_finalize           (GObject          *object);
 static void                   thunar_job_operation_get_property       (GObject          *object,
                                                                        guint             prop_id,
@@ -62,6 +63,7 @@ thunar_job_operation_class_init (ThunarJobOperationClass *klass)
   GObjectClass *gobject_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->dispose = thunar_job_operation_dispose;
   gobject_class->finalize = thunar_job_operation_finalize;
   gobject_class->get_property = thunar_job_operation_get_property;
   gobject_class->set_property = thunar_job_operation_set_property;
@@ -116,7 +118,7 @@ thunar_job_operation_init (ThunarJobOperation *self)
 }
 
 static void
-thunar_job_operation_finalize (GObject *object)
+thunar_job_operation_dispose (GObject *object)
 {
   ThunarJobOperation *op;
 
@@ -125,6 +127,12 @@ thunar_job_operation_finalize (GObject *object)
   g_list_free_full (op->source_file_list, g_object_unref);
   g_list_free_full (op->target_file_list, g_object_unref);
 
+  (*G_OBJECT_CLASS (thunar_job_operation_parent_class)->dispose) (object);
+}
+
+static void
+thunar_job_operation_finalize (GObject *object)
+{
   (*G_OBJECT_CLASS (thunar_job_operation_parent_class)->finalize) (object);
 }
 
