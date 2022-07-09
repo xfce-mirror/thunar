@@ -77,7 +77,7 @@ thunar_job_operation_class_init (ThunarJobOperationClass *klass)
                        "The kind of the operation performed.",
                        THUNAR_TYPE_JOB_OPERATION_KIND,
                        THUNAR_JOB_OPERATION_KIND_COPY,
-                       G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
+                       G_PARAM_CONSTRUCT_ONLY | G_PARAM_READABLE);
   /* TODO:
    * Change to enum from string
    * */
