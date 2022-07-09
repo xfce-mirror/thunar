@@ -18,6 +18,20 @@
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-job-operation.h>
 
+/**
+ * SECTION:thunar-job-operation
+ * @Short_description: Manages the logging of job operations (copy, move etc.) and undoing and redoing them
+ * @Title: ThunarJobOperation
+ *
+ * The #ThunarJobOperation class represents a single 'job operation', a file operation like copying, moving
+ * etc. that can be logged centrally and undone.
+ *
+ * The @job_operation_list is a #GList of such job operations. It is not necessary that @job_operation_list
+ * points to the head of the list; it points to the 'marked operation', the operation that reflects
+ * the latest state of the operation history.
+ * Usually, this will be the latest performed operation, which hasn't been undone yet.
+ */
+
 /* Job operation properties */
 enum
 {
@@ -190,6 +204,14 @@ thunar_job_operation_set_property  (GObject      *object,
   }
 
 
+/**
+ * thunar_job_operation_new:
+ * @kind: The kind of operation being created.
+ *
+ * Creates a new #ThunarJobOperation of the given kind. Should be unref'd by the caller after use.
+ *
+ * Return value: the newly created #ThunarJobOperation
+ **/
 ThunarJobOperation *
 thunar_job_operation_new (ThunarJobOperationKind kind)
 {
@@ -202,6 +224,14 @@ thunar_job_operation_new (ThunarJobOperationKind kind)
   return operation;
 }
 
+/**
+ * thunar_job_operation_add:
+ * @job_operation: a #ThunarJobOperation
+ * @source:        a #GFile representing the source file
+ * @target:        a #GFile representing the target file
+ *
+ * Adds the specified @source-@target pair to the given job operation.
+ **/
 void
 thunar_job_operation_add (ThunarJobOperation *job_operation,
                           GFile              *source,
@@ -222,6 +252,13 @@ thunar_job_operation_add (ThunarJobOperation *job_operation,
   job_operation->target_file_list = g_list_append (job_operation->target_file_list, g_object_ref (target));
 }
 
+/**
+ * thunar_job_operation_commit:
+ * @job_operation: a #ThunarJobOperation
+ *
+ * Commits, or registers, the given thunar_job_operation, adding the job operation
+ * to the job operation list.
+ **/
 void
 thunar_job_operation_commit (ThunarJobOperation *job_operation)
 {
@@ -234,6 +271,13 @@ thunar_job_operation_commit (ThunarJobOperation *job_operation)
   job_operation_list = g_list_append (NULL, g_object_ref (job_operation));
 }
 
+/**
+ * thunar_job_operation_undo:
+ *
+ * Undoes the job operation marked by the job operation list. First the marked job operation
+ * is retreived, then its inverse operation is calculated, and finally this inverse operation
+ * is executed.
+ **/
 void
 thunar_job_operation_undo (void)
 {
@@ -260,6 +304,13 @@ thunar_job_operation_undo (void)
   job_operation_list = NULL;
 }
 
+/* thunar_job_operation_new_invert:
+ * @job_operation: a #ThunarJobOperation
+ *
+ * Creates a new job operation which is the inverse of @job_operation.
+ *
+ * Return value: a newly created #ThunarJobOperation which is the inverse of @job_operation
+ **/
 ThunarJobOperation *
 thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
 {
@@ -284,6 +335,11 @@ thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
   return inverted_operation;
 }
 
+/* thunar_job_operation_execute:
+ * @job_operation: a #ThunarJobOperation
+ *
+ * Executes the given @job_operation, depending on what kind of an operation it is.
+ **/
 void
 thunar_job_operation_execute (ThunarJobOperation *job_operation)
 {
@@ -328,6 +384,15 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
   g_object_unref (application);
 }
 
+/* is_ancestor:
+ * @ancestor:     potential ancestor of @descendant. A #GFile
+ * @descendant:   potential descendant of @ancestor. A #GFile
+ *
+ * Helper function for #g_list_find_custom.
+ *
+ * Return value: %0 if @ancestor is actually the ancestor of @descendant,
+ *               %1 otherwise
+ **/
 static gint
 is_ancestor (gconstpointer ancestor,
              gconstpointer descendant)
