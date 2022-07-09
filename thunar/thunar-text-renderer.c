@@ -67,6 +67,7 @@ enum
   PROP_WRAP_MODE,
   PROP_HIGHLIGHT,
   PROP_BORDER_RADIUS,
+  PROP_BORDER_RADIUS_SET,
   
   /* Whether-a-style-arg-is-set args */
   PROP_BACKGROUND_SET,
@@ -171,6 +172,7 @@ struct _ThunarTextRenderer
   guint markup_set        : 1;
   guint ellipsize_set     : 1;
   guint align_set         : 1;
+  guint border_radius_set : 1;
 };
 
 
@@ -595,20 +597,6 @@ G_GNUC_END_IGNORE_DEPRECATIONS
                                                         NULL,
                                                         EXO_PARAM_READWRITE));
 
-
-
-  /**
-   * ThunarIconRenderer:highlight-set:
-   *
-   * TRUE if highlight color has been set
-   * #ThunarIconRenderer instance.
-   **/
-  g_object_class_install_property (object_class,
-                                   PROP_HIGHLIGHT_SET,
-                                   g_param_spec_boolean ("highlight-set", "highlight-set", "highlight-set",
-                                                         FALSE,
-                                                         EXO_PARAM_READWRITE));
-
   g_object_class_install_property (object_class,
                                    PROP_BORDER_RADIUS,
                                    g_param_spec_string ("border-radius", "border-radius", "border-radius",
@@ -683,6 +671,14 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   ADD_SET_PROP ("align-set", PROP_ALIGN_SET,
                 ("Align set"),
                 ("Whether this tag affects the alignment mode"));
+
+  ADD_SET_PROP ("highlight-set", PROP_HIGHLIGHT_SET,
+                ("Highlight set"),
+                ("Whether this tag affects the highlight mode"));
+
+  ADD_SET_PROP ("border-radius-set", PROP_BORDER_RADIUS_SET,
+                ("Border-radius set"),
+                ("Whether this tag affects the border-radius mode"));
 }
 
 
@@ -810,7 +806,7 @@ thunar_text_renderer_get_property (GObject    *object,
       break;
 
     case PROP_FONT:
-        g_value_take_string (value, pango_font_description_to_string (celltext->font));
+      g_value_take_string (value, pango_font_description_to_string (celltext->font));
       break;
       
     case PROP_FONT_DESC:
@@ -960,6 +956,10 @@ thunar_text_renderer_get_property (GObject    *object,
 
     case PROP_BORDER_RADIUS:
       g_value_set_string (value, celltext->border_radius);
+      break;
+
+    case PROP_BORDER_RADIUS_SET:
+      g_value_set_boolean (value, celltext->border_radius_set);
       break;
 
     case PROP_BACKGROUND:
@@ -1192,12 +1192,9 @@ thunar_text_renderer_set_property (GObject      *object,
 
 	str = g_value_get_string (value);
 	if (str && !pango_parse_markup (str,
-					-1,
-					0,
-					&attrs,
-					&text,
-					NULL,
-					&error))
+					-1, 0,
+					&attrs, &text,
+					NULL, &error))
 	  {
 	    g_warning ("Failed to set text from markup due to error parsing markup: %s",
 		       error->message);
@@ -1444,7 +1441,7 @@ thunar_text_renderer_set_property (GObject      *object,
       break;
       
     case PROP_WRAP_MODE:
-      if (celltext->wrap_mode != g_value_get_enum (value))
+      if (celltext->wrap_mode != (PangoWrapMode) g_value_get_enum (value))
         {
           celltext->wrap_mode = g_value_get_enum (value);
           g_object_notify_by_pspec (object, pspec);
@@ -1476,7 +1473,7 @@ thunar_text_renderer_set_property (GObject      *object,
       break;  
 
     case PROP_ALIGN:
-      if (celltext->align != g_value_get_enum (value))
+      if (celltext->align != (PangoAlignment) g_value_get_enum (value))
         {
           celltext->align = g_value_get_enum (value);
           g_object_notify (object, "alignment");
@@ -1565,6 +1562,10 @@ thunar_text_renderer_set_property (GObject      *object,
       if (G_UNLIKELY (celltext->border_radius != NULL))
         g_free (celltext->border_radius);
       celltext->border_radius = g_value_dup_string (value);
+      break;
+
+    case PROP_BORDER_RADIUS_SET:
+      celltext->border_radius_set = g_value_get_boolean (value);
       break;
 
     default:
@@ -1874,12 +1875,11 @@ get_size (ThunarTextRenderer *cell,
 
 static void
 thunar_text_renderer_render (GtkCellRenderer      *cell,
-			                         cairo_t              *cr,
-			                         GtkWidget            *widget,
-			                         const GdkRectangle   *background_area,
-			                         const GdkRectangle   *cell_area,
-			                         GtkCellRendererState  flags)
-
+			                       cairo_t              *cr,
+			                       GtkWidget            *widget,
+			                       const GdkRectangle   *background_area,
+			                       const GdkRectangle   *cell_area,
+			                       GtkCellRendererState  flags)
 {
   ThunarTextRenderer *celltext = THUNAR_TEXT_RENDERER (cell);
   GtkStyleContext    *context;
@@ -1893,6 +1893,7 @@ thunar_text_renderer_render (GtkCellRenderer      *cell,
   gdouble             degrees = G_PI / 180.0;
   GdkRGBA            *color = NULL;
   GdkRGBA             highlight_color;
+  gboolean            color_selected;
 
   layout = get_layout (celltext, widget, cell_area, flags);
   get_size (celltext, widget, cell_area, layout, &x_offset, &y_offset, NULL, NULL);
@@ -1900,18 +1901,20 @@ thunar_text_renderer_render (GtkCellRenderer      *cell,
 
   /* clip the background_area to rounded corners */
   cairo_new_sub_path (cr);
-  cairo_arc (cr, background_area->x + background_area->width - 0, background_area->y + 0, 0, -90 * degrees, 0 * degrees);
-  cairo_arc (cr, background_area->x + background_area->width - corner_radius, background_area->y + background_area->height - corner_radius, corner_radius, 0 * degrees, 90 * degrees);
-  cairo_arc (cr, background_area->x + corner_radius, background_area->y + background_area->height - corner_radius, corner_radius, 90 * degrees, 180 * degrees);
-  cairo_arc (cr, background_area->x + 0, background_area->y + 0, 0, 180 * degrees, 270 * degrees);
+  cairo_arc (cr, background_area->x - 2.0 + background_area->width - 0, background_area->y - 2.0 + 0, 0, -90 * degrees, 0 * degrees);
+  cairo_arc (cr, background_area->x - 2.0 + background_area->width - corner_radius, background_area->y - 2.0 + background_area->height - corner_radius, corner_radius, 0 * degrees, 90 * degrees);
+  cairo_arc (cr, background_area->x + 2.0 + corner_radius, background_area->y - 2.0 + background_area->height - corner_radius, corner_radius, 90 * degrees, 180 * degrees);
+  cairo_arc (cr, background_area->x + 2.0 + 0, background_area->y - 2.0 + 0, 0, 180 * degrees, 270 * degrees);
   cairo_close_path (cr);
+  // cairo_clip (cr);
+  color_selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0;
 
   if (celltext->highlight_set)
     {
       gdk_rgba_parse (&highlight_color, celltext->highlight);
       color = gdk_rgba_copy (&highlight_color);
     }
-  if ((flags & GTK_CELL_RENDERER_SELECTED) != 0)
+  if (color_selected)
     {
       state = gtk_widget_has_focus (widget) ? GTK_STATE_FLAG_SELECTED : GTK_STATE_FLAG_ACTIVE;
       gtk_style_context_get (context, state, GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &color, NULL);
@@ -1921,8 +1924,11 @@ thunar_text_renderer_render (GtkCellRenderer      *cell,
     {
       gdk_cairo_set_source_rgba (cr, color);
       gdk_rgba_free (color);
-      cairo_clip (cr);
-      cairo_paint (cr);
+      cairo_fill_preserve (cr);
+      if (celltext->highlight_set && color_selected)
+        gdk_cairo_set_source_rgba (cr, &highlight_color);
+      cairo_set_line_width (cr, 2.0);
+      cairo_stroke (cr);
     }
 
   gtk_cell_renderer_get_padding (cell, &xpad, &ypad);
