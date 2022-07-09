@@ -710,9 +710,8 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
       gtk_container_set_border_width (GTK_CONTAINER (infobar), 12);
       label = gtk_label_new (NULL);
       gtk_label_set_markup (GTK_LABEL (label), _("It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
-                                                 "Alongside this feature, important features including trash support,\n"
-                                                 "removable media and remote location browsing\n"
-                                                 "will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"));
+                                                 "This feature will not work. "
+                                                 "<a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"));
       box = gtk_info_bar_get_content_area (GTK_INFO_BAR (infobar));
       gtk_container_add (GTK_CONTAINER (box), label);
       gtk_info_bar_set_message_type (GTK_INFO_BAR (infobar), GTK_MESSAGE_WARNING);
