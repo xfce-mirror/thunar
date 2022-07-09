@@ -611,9 +611,9 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
   g_object_class_install_property (object_class,
                                    PROP_BORDER_RADIUS,
-                                   g_param_spec_boolean ("border-radius", "border-radius", "border-radius",
-                                                         FALSE,
-                                                         EXO_PARAM_READWRITE));
+                                   g_param_spec_string ("border-radius", "border-radius", "border-radius",
+                                                        NULL,
+                                                        EXO_PARAM_READWRITE));
 
 
   /* Style props are set or not */
@@ -1575,48 +1575,6 @@ thunar_text_renderer_set_property (GObject      *object,
 
 
 
-// static void
-// thunar_text_renderer_render (GtkCellRenderer     *renderer,
-//                              cairo_t             *cr,
-//                              GtkWidget           *widget,
-//                              const GdkRectangle  *background_area,
-//                              const GdkRectangle  *cell_area,
-//                              GtkCellRendererState flags)
-// {
-//   ThunarTextRenderer *text_renderer = THUNAR_TEXT_RENDERER (renderer);
-//   PangoContext       *context;
-//   PangoLayout        *layout;
-//   GdkRectangle        clip_area;
-//   gboolean            cell_background_set;
-//   const gchar        *cell_background;
-//   GdkRGBA             cell_background_rgba;
-//   gdouble             corner_radius = cell_area->height / 10.0;
-//   gdouble             degrees = G_PI / 180.0;
-
-//   if (G_UNLIKELY (!gdk_cairo_get_clip_rectangle (cr, &clip_area)))
-//     return;
-
-//   cell_background_set = text_renderer->highlight_set;
-//   cell_background = text_renderer->highlight;
-
-
-//   if (G_UNLIKELY (cell_background_set))
-//     {
-//       cairo_new_sub_path (cr);
-//       cairo_arc (cr, background_area->x + background_area->width - 0, background_area->y + 0, 0, -90 * degrees, 0 * degrees);
-//       cairo_arc (cr, background_area->x + background_area->width - corner_radius, background_area->y + background_area->height - corner_radius, corner_radius, 0 * degrees, 90 * degrees);
-//       cairo_arc (cr, background_area->x + corner_radius, background_area->y + background_area->height - corner_radius, corner_radius, 90 * degrees, 180 * degrees);
-//       cairo_arc (cr, background_area->x + 0, background_area->y + 0, 0, 180 * degrees, 270 * degrees);
-//       cairo_close_path (cr);
-//       gdk_rgba_parse (&cell_background_rgba, cell_background);
-//       gdk_cairo_set_source_rgba (cr, &cell_background_rgba);
-//       cairo_clip (cr);
-//       cairo_paint (cr);
-//     }
-// }
-
-
-
 /**
  * thunar_text_renderer_new:
  *
@@ -1924,44 +1882,45 @@ thunar_text_renderer_render (GtkCellRenderer      *cell,
 
 {
   ThunarTextRenderer *celltext = THUNAR_TEXT_RENDERER (cell);
-  GtkStyleContext *context;
-  PangoLayout *layout;
-  gint x_offset = 0;
-  gint y_offset = 0;
-  gint xpad, ypad;
-  PangoRectangle rect;
-  gboolean                cell_background_set;
-  const gchar            *cell_background;
-  GdkRGBA                 cell_background_rgba;
-  gdouble                 corner_radius = cell_area->width / 10.0;
-  gdouble                 degrees = G_PI / 180.0;
-  gboolean color_selected;
-  GtkStateFlags    state;
-  GdkRGBA          *color;
+  GtkStyleContext    *context;
+  GtkStateFlags       state;
+  PangoLayout        *layout;
+  PangoRectangle      rect;
+  gint                x_offset = 0;
+  gint                y_offset = 0;
+  gint                xpad, ypad;
+  gdouble             corner_radius = cell_area->width / 10.0;
+  gdouble             degrees = G_PI / 180.0;
+  GdkRGBA            *color = NULL;
+  GdkRGBA             highlight_color;
 
   layout = get_layout (celltext, widget, cell_area, flags);
   get_size (celltext, widget, cell_area, layout, &x_offset, &y_offset, NULL, NULL);
   context = gtk_widget_get_style_context (widget);
-  cell_background_set = celltext->highlight_set;
-  cell_background = celltext->highlight;
 
-  state = gtk_widget_has_focus (widget) ? GTK_STATE_FLAG_SELECTED : GTK_STATE_FLAG_ACTIVE;
-  gtk_style_context_get (context, state, GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &color, NULL);
+  /* clip the background_area to rounded corners */
+  cairo_new_sub_path (cr);
+  cairo_arc (cr, background_area->x + background_area->width - 0, background_area->y + 0, 0, -90 * degrees, 0 * degrees);
+  cairo_arc (cr, background_area->x + background_area->width - corner_radius, background_area->y + background_area->height - corner_radius, corner_radius, 0 * degrees, 90 * degrees);
+  cairo_arc (cr, background_area->x + corner_radius, background_area->y + background_area->height - corner_radius, corner_radius, 90 * degrees, 180 * degrees);
+  cairo_arc (cr, background_area->x + 0, background_area->y + 0, 0, 180 * degrees, 270 * degrees);
+  cairo_close_path (cr);
 
-  color_selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0;
-  if (G_UNLIKELY (cell_background_set))
+  if (celltext->highlight_set)
     {
-      cairo_new_sub_path (cr);
-      cairo_arc (cr, background_area->x + background_area->width - 0, background_area->y + 0, 0, -90 * degrees, 0 * degrees);
-      cairo_arc (cr, background_area->x + background_area->width - corner_radius, background_area->y + background_area->height - corner_radius, corner_radius, 0 * degrees, 90 * degrees);
-      cairo_arc (cr, background_area->x + corner_radius, background_area->y + background_area->height - corner_radius, corner_radius, 90 * degrees, 180 * degrees);
-      cairo_arc (cr, background_area->x + 0, background_area->y + 0, 0, 180 * degrees, 270 * degrees);
-      cairo_close_path (cr);
-      gdk_rgba_parse (&cell_background_rgba, cell_background);
-      if (color_selected)
-        gdk_cairo_set_source_rgba (cr, color);
-      else
-        gdk_cairo_set_source_rgba (cr, &cell_background_rgba);
+      gdk_rgba_parse (&highlight_color, celltext->highlight);
+      color = gdk_rgba_copy (&highlight_color);
+    }
+  if ((flags & GTK_CELL_RENDERER_SELECTED) != 0)
+    {
+      state = gtk_widget_has_focus (widget) ? GTK_STATE_FLAG_SELECTED : GTK_STATE_FLAG_ACTIVE;
+      gtk_style_context_get (context, state, GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &color, NULL);
+    }
+
+  if (color != NULL)
+    {
+      gdk_cairo_set_source_rgba (cr, color);
+      gdk_rgba_free (color);
       cairo_clip (cr);
       cairo_paint (cr);
     }
@@ -1969,8 +1928,7 @@ thunar_text_renderer_render (GtkCellRenderer      *cell,
   gtk_cell_renderer_get_padding (cell, &xpad, &ypad);
 
   if (celltext->ellipsize_set && celltext->ellipsize != PANGO_ELLIPSIZE_NONE)
-    pango_layout_set_width (layout,
-			    (cell_area->width - x_offset - 2 * xpad) * PANGO_SCALE);
+    pango_layout_set_width (layout, (cell_area->width - x_offset - 2 * xpad) * PANGO_SCALE);
   else if (celltext->wrap_width == -1)
     pango_layout_set_width (layout, -1);
 

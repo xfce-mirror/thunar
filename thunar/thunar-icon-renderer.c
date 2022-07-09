@@ -469,7 +469,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   cell_background = icon_renderer->highlight;
 
   color_selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0 && icon_renderer->follow_state;
-  if (G_UNLIKELY (cell_background_set))
+  if (G_UNLIKELY (cell_background_set || color_selected))
     {
       cairo_new_sub_path (cr);
       cairo_arc (cr, background_area->x + background_area->width - corner_radius, background_area->y + corner_radius, corner_radius, -90 * degrees, 0 * degrees);
@@ -477,7 +477,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       cairo_arc (cr, background_area->x + 0, background_area->y + background_area->height - 0, 0, 90 * degrees, 180 * degrees);
       cairo_arc (cr, background_area->x + corner_radius, background_area->y + corner_radius, corner_radius, 180 * degrees, 270 * degrees);
       cairo_close_path (cr);
-      gdk_rgba_parse (&cell_background_rgba, cell_background);
+      if (cell_background != NULL)
+        gdk_rgba_parse (&cell_background_rgba, cell_background);
       if (color_selected)
         gdk_cairo_set_source_rgba (cr, color);
       else
@@ -566,8 +567,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
         thunar_icon_renderer_color_lighten (cr, widget);
 
       /* paint the selected mask */
-      if (color_selected)
-        thunar_icon_renderer_color_selected (cr, widget);
+      // if (color_selected)
+      //   thunar_icon_renderer_color_selected (cr, widget);
     }
 
   /* release the file's icon */
