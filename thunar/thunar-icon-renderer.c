@@ -449,7 +449,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   gboolean                cell_background_set;
   const gchar            *cell_background;
   GdkRGBA                 cell_background_rgba;
-  gdouble                 corner_radius = cell_area->height / 10.0;
+  gdouble                 corner_radius = cell_area->width / 10.0;
   gdouble                 degrees = G_PI / 180.0;
 
   if (G_UNLIKELY (icon_renderer->file == NULL))

@@ -30,6 +30,7 @@
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-window.h>
+#include <thunar/thunar-text-renderer.h>
 
 
 
@@ -697,10 +698,9 @@ thunar_abstract_icon_view_cell_layout_data_func (GtkCellLayout   *layout,
   /* since this function is being used for both icon & name renderers;
    * we need to make sure the right properties are applied to the right renderers */
   /* TODO: is such a multi-purpose function good ? */
-  if (GTK_IS_CELL_RENDERER_TEXT (cell))
-      g_object_set (G_OBJECT (cell), "foreground", foreground, "cell-background", background, NULL);
-  else
-      g_object_set (G_OBJECT (cell), "highlight", background, "highlight-set", background != NULL ? TRUE : FALSE, NULL);
+  if (THUNAR_IS_TEXT_RENDERER (cell))
+    g_object_set (G_OBJECT (cell), "foreground", foreground, NULL);
+  g_object_set (G_OBJECT (cell), "highlight", background, "highlight-set", background != NULL ? TRUE : FALSE, NULL);
 
   g_object_unref (file);
 }
