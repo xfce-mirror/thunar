@@ -472,10 +472,10 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   if (G_UNLIKELY (cell_background_set || color_selected))
     {
       cairo_new_sub_path (cr);
-      cairo_arc (cr, background_area->x + background_area->width - corner_radius, background_area->y + corner_radius, corner_radius, -90 * degrees, 0 * degrees);
-      cairo_arc (cr, background_area->x + background_area->width - 0, background_area->y + background_area->height - 0, 0, 0 * degrees, 90 * degrees);
-      cairo_arc (cr, background_area->x + 0, background_area->y + background_area->height - 0, 0, 90 * degrees, 180 * degrees);
-      cairo_arc (cr, background_area->x + corner_radius, background_area->y + corner_radius, corner_radius, 180 * degrees, 270 * degrees);
+      cairo_arc (cr, background_area->x - 2.0 + background_area->width - corner_radius, background_area->y + 2.0 + corner_radius, corner_radius, -90 * degrees, 0 * degrees);
+      cairo_arc (cr, background_area->x - 2.0 + background_area->width, background_area->y + 2.0 + background_area->height - 0, 0, 0 * degrees, 90 * degrees);
+      cairo_arc (cr, background_area->x + 2.0 + 0, background_area->y + 2.0 + background_area->height - 0, 0, 90 * degrees, 180 * degrees);
+      cairo_arc (cr, background_area->x + 2.0 + corner_radius, background_area->y + 2.0 + corner_radius, corner_radius, 180 * degrees, 270 * degrees);
       cairo_close_path (cr);
       if (cell_background != NULL)
         gdk_rgba_parse (&cell_background_rgba, cell_background);
@@ -484,8 +484,11 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       else
         gdk_cairo_set_source_rgba (cr, &cell_background_rgba);
       gdk_rgba_free (color);
-      cairo_clip (cr);
-      cairo_paint (cr);
+      cairo_fill_preserve (cr);
+      if (G_UNLIKELY (cell_background_set &&  color_selected))
+        gdk_cairo_set_source_rgba (cr, &cell_background_rgba);
+      cairo_set_line_width (cr, 2.0);
+      cairo_stroke (cr);
     }
 
   /* determine the icon state */
@@ -567,8 +570,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
         thunar_icon_renderer_color_lighten (cr, widget);
 
       /* paint the selected mask */
-      // if (color_selected)
-      //   thunar_icon_renderer_color_selected (cr, widget);
+      if (color_selected)
+        thunar_icon_renderer_color_selected (cr, widget);
     }
 
   /* release the file's icon */
