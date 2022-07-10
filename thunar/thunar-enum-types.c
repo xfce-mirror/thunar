@@ -667,3 +667,23 @@ thunar_job_operation_kind_get_type (void)
 
   return type;
 }
+
+GType
+thunar_job_operation_strategy_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+  {
+    static const GEnumValue values[] =
+    {
+      { THUNAR_JOB_OPERATION_STRATEGY_PREFER_ANCESTOR,      "THUNAR_JOB_OPERATION_STRATEGY_PREFER_ANCESTOR",    N_("Prefer the ancestor when resolving conflicts"),   },
+      { THUNAR_JOB_OPERATION_STRATEGY_PREFER_DESCENDANT,    "THUNAR_JOB_OPERATION_STRATEGY_PREFER_DESCENDANT",  N_("Prefer the descendant when resolving conflicts")  },
+      { 0,                                                  NULL,                                               NULL }
+    };
+
+    type = g_enum_register_static (I_("ThunarJobOperationStrategy"), values);
+  }
+
+  return type;
+}
