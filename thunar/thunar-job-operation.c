@@ -39,6 +39,7 @@ enum
   PROP_OPERATION_KIND,
   PROP_SOURCE_FILE_LIST,
   PROP_TARGET_FILE_LIST,
+  PROP_STRATEGY,
   N_PROPERTIES,
 };
 
@@ -64,6 +65,7 @@ struct _ThunarJobOperation
   ThunarJobOperationKind operation_kind;
   GList *source_file_list;
   GList *target_file_list;
+  ThunarJobOperationStrategy strategy;
 };
 
 G_DEFINE_TYPE (ThunarJobOperation, thunar_job_operation, G_TYPE_OBJECT)
@@ -93,7 +95,7 @@ thunar_job_operation_class_init (ThunarJobOperationClass *klass)
                        "The kind of the operation performed.",
                        THUNAR_TYPE_JOB_OPERATION_KIND,
                        THUNAR_JOB_OPERATION_KIND_COPY,
-                       G_PARAM_READWRITE);
+                       EXO_PARAM_READWRITE);
 
   /**
    * ThunarJobOperation:source-file-list:
@@ -104,7 +106,7 @@ thunar_job_operation_class_init (ThunarJobOperationClass *klass)
     g_param_spec_pointer ("source-file-list",
                           "Source file list",
                           "Pointer to the GList containing the source files involved in the operation.",
-                          G_PARAM_READWRITE);
+                          EXO_PARAM_READWRITE);
 
   /**
    * ThunarJobOperation:target-file-list:
@@ -115,7 +117,19 @@ thunar_job_operation_class_init (ThunarJobOperationClass *klass)
     g_param_spec_pointer ("target-file-list",
                           "Target file list",
                           "Pointer to the GList containing the target files involved in the operation.",
-                          G_PARAM_READWRITE);
+                          EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarJobOperation:strategy:
+   *
+   * Whether it should be preferred to register the ancestor or the descendant, when there are two
+   * files in the file list that have an ancestor-descendant relationship. Only once should be registered.
+   */
+  job_operation_props[PROP_STRATEGY] =
+    g_param_spec_pointer ("strategy",
+                          "Strategy",
+                          "Whether to prefer registering the ancestor or the descendant in the file list in case of conflict.",
+                          EXO_PARAM_READWRITE);
 
   g_object_class_install_properties (gobject_class, N_PROPERTIES, job_operation_props);
 }
@@ -126,6 +140,7 @@ thunar_job_operation_init (ThunarJobOperation *self)
   self->operation_kind = THUNAR_JOB_OPERATION_KIND_COPY;
   self->source_file_list = NULL;
   self->target_file_list = NULL;
+  self->strategy = THUNAR_JOB_OPERATION_STRATEGY_PREFER_ANCESTOR;
 }
 
 static void
@@ -169,6 +184,10 @@ thunar_job_operation_get_property (GObject    *object,
       g_value_set_pointer (value, self->target_file_list);
       break;
 
+    case PROP_STRATEGY:
+      g_value_set_enum (value, self->strategy);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -195,6 +214,10 @@ thunar_job_operation_set_property  (GObject      *object,
 
       case PROP_TARGET_FILE_LIST:
         self->target_file_list = g_value_get_pointer (value);
+        break;
+
+      case PROP_STRATEGY:
+        self->strategy = g_value_get_enum (value);
         break;
   
       default:
@@ -225,6 +248,18 @@ thunar_job_operation_new (ThunarJobOperationKind kind)
 }
 
 /**
+ * thunar_job_operation_set_strategy:
+ * @job_operation: a #ThunarJobOperation
+ * @strategy:      the strategy to set for the given operation, a #ThunarJobOperationStrategy
+ **/
+void
+thunar_job_operation_set_strategy (ThunarJobOperation        *job_operation,
+                                   ThunarJobOperationStrategy strategy)
+{
+  job_operation->strategy = strategy;
+}
+
+/**
  * thunar_job_operation_add:
  * @job_operation: a #ThunarJobOperation
  * @source:        a #GFile representing the source file
@@ -237,16 +272,45 @@ thunar_job_operation_add (ThunarJobOperation *job_operation,
                           GFile              *source,
                           GFile              *target)
 {
+  GList *elem_found;
+  guint   position;
 
   g_assert (THUNAR_IS_JOB_OPERATION (job_operation));
   g_assert (G_IS_FILE (source));
   g_assert (G_IS_FILE (target));
 
-  /* If the current file is a descendant of any of the already given files,
-   * don't register it.
-   * Note that source will be the second argument to is_ancestor */
-  if (g_list_find_custom (job_operation->source_file_list, source, is_ancestor) != NULL)
-    return;
+  /* Since the recursion proceeds in a top-down manner while performing the file operation
+   * we know that the files in the file list might (and can only) be ancestors of the file
+   * we are trying to add to the operation.
+   * We don't want to register ancestor-descendant pairs, since when a file operation is executed
+   * on a list containing them, it'll try to happen multiple times due to the recursion. */
+  
+  if ((elem_found = g_list_find_custom (job_operation->source_file_list, source, is_ancestor)) != NULL)
+  {
+    switch (job_operation->strategy)
+    {
+      /* We don't have to do anything if we prefer ancestors,
+       * we simply don't register the new file */
+      case THUNAR_JOB_OPERATION_STRATEGY_PREFER_ANCESTOR:
+        return;
+
+      /* If we prefer descendants however, we have to remove the ancestor,
+       * the descendant will be added later */
+      case THUNAR_JOB_OPERATION_STRATEGY_PREFER_DESCENDANT:
+        position = g_list_position (job_operation->source_file_list, elem_found);
+        job_operation->source_file_list = g_list_remove_link (job_operation->source_file_list, elem_found);
+
+        /* also remove the corresponding target file list item */
+        elem_found = g_list_nth (job_operation->target_file_list, position);
+        job_operation->target_file_list = g_list_remove_link (job_operation->target_file_list, elem_found);
+
+        break;
+
+      default:
+        g_assert_not_reached ();
+        break;
+    }
+  }
 
   job_operation->source_file_list = g_list_append (job_operation->source_file_list, g_object_ref (source));
   job_operation->target_file_list = g_list_append (job_operation->target_file_list, g_object_ref (target));
