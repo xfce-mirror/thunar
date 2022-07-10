@@ -425,6 +425,33 @@ guint    thunar_status_bar_info_toggle_bit    (guint               info,
 gboolean thunar_status_bar_info_check_active  (guint               info,
                                                ThunarStatusBarInfo mask);
 
+#define THUNAR_TYPE_JOB_OPERATION_KIND (thunar_job_operation_kind_get_type ())
+
+typedef enum
+{
+  THUNAR_JOB_OPERATION_KIND_COPY,
+  THUNAR_JOB_OPERATION_KIND_MOVE,
+  THUNAR_JOB_OPERATION_KIND_RENAME,
+  THUNAR_JOB_OPERATION_KIND_CREATE,
+  THUNAR_JOB_OPERATION_KIND_DELETE,
+  THUNAR_JOB_OPERATION_KIND_TRASH,
+  THUNAR_JOB_OPERATION_KIND_RESTORE,
+  THUNAR_JOB_OPERATION_KIND_LINK,
+  THUNAR_JOB_OPERATION_KIND_UNLINK
+} ThunarJobOperationKind;
+
+GType thunar_job_operation_kind_get_type (void) G_GNUC_CONST;
+
+#define THUNAR_TYPE_JOB_OPERATION_STRATEGY (thunar_job_operation_strategy_get_type ())
+
+typedef enum
+{
+  THUNAR_JOB_OPERATION_STRATEGY_PREFER_ANCESTOR,
+  THUNAR_JOB_OPERATION_STRATEGY_PREFER_DESCENDANT
+} ThunarJobOperationStrategy;
+
+GType thunar_job_operation_strategy_get_type (void) G_GNUC_CONST;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_ENUM_TYPES_H__ */
