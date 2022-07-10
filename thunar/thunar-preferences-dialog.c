@@ -366,6 +366,72 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /* next row */
   row++;
 
+  button = gtk_check_button_new_with_mnemonic (_("_Remember view settings for each folder"));
+  g_object_bind_property (G_OBJECT (dialog->preferences),
+                          "misc-directory-specific-settings",
+                          G_OBJECT (button),
+                          "active",
+                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  gtk_widget_set_tooltip_text (button,
+                               _("Select this option to remember view type, zoom level, sort column, and sort order individually for each folder"));
+  gtk_widget_set_hexpand (button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
+  gtk_widget_show (button);
+  if (!thunar_g_vfs_metadata_is_supported ())
+    {
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), FALSE);
+      gtk_widget_set_sensitive (button, FALSE);
+      gtk_widget_set_tooltip_text (button, _("gvfs metadata support is required"));
+    }
+
+  /* next row */
+  row++;
+
+  button = gtk_check_button_new_with_mnemonic (_("Sort _folders before files"));
+  g_object_bind_property (G_OBJECT (dialog->preferences),
+                          "misc-folders-first",
+                          G_OBJECT (button),
+                          "active",
+                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  gtk_widget_set_tooltip_text (button, _("Select this option to list folders before files when you sort a folder."));
+  gtk_widget_set_hexpand (button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
+  gtk_widget_show (button);
+
+  /* next row */
+  row++;
+
+  button = gtk_check_button_new_with_mnemonic (_("Show file size in binary format"));
+  g_object_bind_property (G_OBJECT (dialog->preferences),
+                          "misc-file-size-binary",
+                          G_OBJECT (button),
+                          "active",
+                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  gtk_widget_set_tooltip_text (button, _("Select this option to show file size in binary format instead of decimal."));
+  gtk_widget_set_hexpand (button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
+  gtk_widget_show (button);
+
+  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
+  gtk_widget_show (frame);
+
+  label = gtk_label_new (_("Thumbnails"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
+  gtk_widget_show (label);
+
+  /* new grid */
+  row = 0;
+
+  grid = gtk_grid_new ();
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
+  gtk_container_add (GTK_CONTAINER (frame), grid);
+  gtk_widget_show (grid);
+
   label = gtk_label_new_with_mnemonic (_("Show thumbnails:"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
@@ -422,27 +488,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /* next row */
   row++;
 
-  button = gtk_check_button_new_with_mnemonic (_("_Remember view settings for each folder"));
-  g_object_bind_property (G_OBJECT (dialog->preferences),
-                          "misc-directory-specific-settings",
-                          G_OBJECT (button),
-                          "active",
-                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
-  gtk_widget_set_tooltip_text (button,
-                               _("Select this option to remember view type, zoom level, sort column, and sort order individually for each folder"));
-  gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
-  gtk_widget_show (button);
-  if (!thunar_g_vfs_metadata_is_supported ())
-    {
-      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), FALSE);
-      gtk_widget_set_sensitive (button, FALSE);
-      gtk_widget_set_tooltip_text (button, _("gvfs metadata support is required"));
-    }
-
-  /* next row */
-  row++;
-
   button = gtk_check_button_new_with_mnemonic (_("Draw frames around thumbnails"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "misc-thumbnail-draw-frames",
@@ -451,35 +496,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button, _("Select this option to draw black frames around thumbnails."));
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 2, 1);
-  gtk_widget_show (button);
-
-  /* next row */
-  row++;
-
-  button = gtk_check_button_new_with_mnemonic (_("Sort _folders before files"));
-  g_object_bind_property (G_OBJECT (dialog->preferences),
-                          "misc-folders-first",
-                          G_OBJECT (button),
-                          "active",
-                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
-  gtk_widget_set_tooltip_text (button, _("Select this option to list folders before files when you sort a folder."));
-  gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 2, 1);
-  gtk_widget_show (button);
-
-  /* next row */
-  row++;
-
-  button = gtk_check_button_new_with_mnemonic (_("Show file size in binary format"));
-  g_object_bind_property (G_OBJECT (dialog->preferences),
-                          "misc-file-size-binary",
-                          G_OBJECT (button),
-                          "active",
-                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
-  gtk_widget_set_tooltip_text (button, _("Select this option to show file size in binary format instead of decimal."));
-  gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
