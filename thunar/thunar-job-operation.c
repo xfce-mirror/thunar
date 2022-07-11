@@ -32,26 +32,8 @@
  * Usually, this will be the latest performed operation, which hasn't been undone yet.
  */
 
-/* Job operation properties */
-enum
-{
-  PROP_0,
-  PROP_OPERATION_KIND,
-  PROP_SOURCE_FILE_LIST,
-  PROP_TARGET_FILE_LIST,
-  N_PROPERTIES,
-};
-
 static void                   thunar_job_operation_dispose            (GObject          *object);
 static void                   thunar_job_operation_finalize           (GObject          *object);
-static void                   thunar_job_operation_get_property       (GObject          *object,
-                                                                       guint             prop_id,
-                                                                       GValue           *value,
-                                                                       GParamSpec       *pspec);
-static void                   thunar_job_operation_set_property       (GObject          *object,
-                                                                       guint             prop_id,
-                                                                       const GValue     *value,
-                                                                       GParamSpec       *pspec);
 static ThunarJobOperation    *thunar_job_operation_new_invert         (ThunarJobOperation *job_operation);
 static void                   thunar_job_operation_execute            (ThunarJobOperation *job_operation);
 static gint                   is_ancestor                             (gconstpointer descendant,
@@ -71,7 +53,6 @@ struct _ThunarJobOperation
 G_DEFINE_TYPE (ThunarJobOperation, thunar_job_operation, G_TYPE_OBJECT)
 
 static GList *job_operation_list = NULL;
-static GParamSpec *job_operation_props[N_PROPERTIES] = { NULL, };
 
 
 
@@ -83,45 +64,6 @@ thunar_job_operation_class_init (ThunarJobOperationClass *klass)
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_job_operation_dispose;
   gobject_class->finalize = thunar_job_operation_finalize;
-  gobject_class->get_property = thunar_job_operation_get_property;
-  gobject_class->set_property = thunar_job_operation_set_property;
-
-  /**
-   * ThunarJobOperation:operation-kind:
-   *
-   * The kind of the operation performed.
-   */
-  job_operation_props[PROP_OPERATION_KIND] =
-    g_param_spec_enum ("operation-kind",
-                       "Operation kind",
-                       "The kind of the operation performed.",
-                       THUNAR_TYPE_JOB_OPERATION_KIND,
-                       THUNAR_JOB_OPERATION_KIND_COPY,
-                       EXO_PARAM_READWRITE);
-
-  /**
-   * ThunarJobOperation:source-file-list:
-   *
-   * Pointer to the GList containing the source files involved in the operation.
-   */
-  job_operation_props[PROP_SOURCE_FILE_LIST] =
-    g_param_spec_pointer ("source-file-list",
-                          "Source file list",
-                          "Pointer to the GList containing the source files involved in the operation.",
-                          EXO_PARAM_READWRITE);
-
-  /**
-   * ThunarJobOperation:target-file-list:
-   *
-   * Pointer to the GList containing the target files involved in the operation.
-   */
-  job_operation_props[PROP_TARGET_FILE_LIST] =
-    g_param_spec_pointer ("target-file-list",
-                          "Target file list",
-                          "Pointer to the GList containing the target files involved in the operation.",
-                          EXO_PARAM_READWRITE);
-
-  g_object_class_install_properties (gobject_class, N_PROPERTIES, job_operation_props);
 }
 
 
@@ -159,64 +101,6 @@ thunar_job_operation_finalize (GObject *object)
 
 
 
-static void
-thunar_job_operation_get_property (GObject    *object,
-                                   guint       prop_id,
-                                   GValue     *value,
-                                   GParamSpec *pspec)
-{
-  ThunarJobOperation *self = THUNAR_JOB_OPERATION (object);
-
-  switch (prop_id)
-    {
-    case PROP_OPERATION_KIND:
-      g_value_set_enum (value, self->operation_kind);
-      break;
-
-    case PROP_SOURCE_FILE_LIST:
-      g_value_set_pointer (value, self->source_file_list);
-      break;
-
-    case PROP_TARGET_FILE_LIST:
-      g_value_set_pointer (value, self->target_file_list);
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-      break;
-    }
-}
-
-static void
-thunar_job_operation_set_property  (GObject      *object,
-                                    guint         prop_id,
-                                    const GValue *value,
-                                    GParamSpec   *pspec)
-  {
-    ThunarJobOperation *self = THUNAR_JOB_OPERATION (object);
-
-    switch (prop_id)
-      {
-      case PROP_OPERATION_KIND:
-        self->operation_kind = g_value_get_enum (value);
-        break;
-
-      case PROP_SOURCE_FILE_LIST:
-        self->source_file_list = g_value_get_pointer (value);
-        break;
-
-      case PROP_TARGET_FILE_LIST:
-        self->target_file_list = g_value_get_pointer (value);
-        break;
-  
-      default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-        break;
-      }
-  }
-
-
-
 /**
  * thunar_job_operation_new:
  * @kind: The kind of operation being created.
@@ -230,9 +114,8 @@ thunar_job_operation_new (ThunarJobOperationKind kind)
 {
   ThunarJobOperation *operation;
 
-  operation = g_object_new (THUNAR_TYPE_JOB_OPERATION,
-                            "operation-kind", kind,
-                            NULL);
+  operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
+  operation->operation_kind = kind;
 
   return operation;
 }
@@ -342,9 +225,8 @@ thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
   switch (job_operation->operation_kind)
     {
       case THUNAR_JOB_OPERATION_KIND_COPY:
-        inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION,
-                                           "operation-kind", THUNAR_JOB_OPERATION_KIND_DELETE,
-                                           NULL);
+        inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
+        inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_DELETE;
         inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
         break;
 
