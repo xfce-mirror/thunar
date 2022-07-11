@@ -34,8 +34,4 @@ void                   thunar_job_operation_add          (ThunarJobOperation *jo
 void                   thunar_job_operation_commit       (ThunarJobOperation *job_operation);
 void                   thunar_job_operation_undo         (void);
 
-#ifndef NDEBUG /* temporary debugging code */
-void                   thunar_job_operation_debug_print  (void);
-#endif /* NDEBUG */
-
 #endif /* __THUNAR_JOB_OPERATION_H__ */
