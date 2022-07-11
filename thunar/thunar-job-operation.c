@@ -93,7 +93,7 @@ thunar_job_operation_class_init (ThunarJobOperationClass *klass)
                        "The kind of the operation performed.",
                        THUNAR_TYPE_JOB_OPERATION_KIND,
                        THUNAR_JOB_OPERATION_KIND_COPY,
-                       G_PARAM_READWRITE);
+                       EXO_PARAM_READWRITE);
 
   /**
    * ThunarJobOperation:source-file-list:
@@ -104,7 +104,7 @@ thunar_job_operation_class_init (ThunarJobOperationClass *klass)
     g_param_spec_pointer ("source-file-list",
                           "Source file list",
                           "Pointer to the GList containing the source files involved in the operation.",
-                          G_PARAM_READWRITE);
+                          EXO_PARAM_READWRITE);
 
   /**
    * ThunarJobOperation:target-file-list:
@@ -115,7 +115,7 @@ thunar_job_operation_class_init (ThunarJobOperationClass *klass)
     g_param_spec_pointer ("target-file-list",
                           "Target file list",
                           "Pointer to the GList containing the target files involved in the operation.",
-                          G_PARAM_READWRITE);
+                          EXO_PARAM_READWRITE);
 
   g_object_class_install_properties (gobject_class, N_PROPERTIES, job_operation_props);
 }
