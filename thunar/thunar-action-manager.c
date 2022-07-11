@@ -208,6 +208,7 @@ static void                    thunar_action_manager_new_files_created          
 static gboolean                thunar_action_manager_action_undo                (ThunarActionManager            *action_mgr);
 
 
+
 struct _ThunarActionManagerClass
 {
   GObjectClass __parent__;
