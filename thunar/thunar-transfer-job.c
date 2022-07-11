@@ -1690,10 +1690,6 @@ thunar_transfer_job_execute (ExoJob  *job,
       thunar_job_operation_commit (operation);
       g_object_unref (operation);
 
-#ifndef NDEBUG /* temoporary debugging code */
-      thunar_job_operation_debug_print ();
-#endif
-
       return TRUE;
     }
 }
