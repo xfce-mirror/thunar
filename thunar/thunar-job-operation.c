@@ -57,6 +57,8 @@ static void                   thunar_job_operation_execute            (ThunarJob
 static gint                   is_ancestor                             (gconstpointer descendant,
                                                                        gconstpointer ancestor);
 
+
+
 struct _ThunarJobOperation
 {
   GObject __parent__;
@@ -70,6 +72,8 @@ G_DEFINE_TYPE (ThunarJobOperation, thunar_job_operation, G_TYPE_OBJECT)
 
 static GList *job_operation_list = NULL;
 static GParamSpec *job_operation_props[N_PROPERTIES] = { NULL, };
+
+
 
 static void
 thunar_job_operation_class_init (ThunarJobOperationClass *klass)
@@ -120,6 +124,8 @@ thunar_job_operation_class_init (ThunarJobOperationClass *klass)
   g_object_class_install_properties (gobject_class, N_PROPERTIES, job_operation_props);
 }
 
+
+
 static void
 thunar_job_operation_init (ThunarJobOperation *self)
 {
@@ -127,6 +133,8 @@ thunar_job_operation_init (ThunarJobOperation *self)
   self->source_file_list = NULL;
   self->target_file_list = NULL;
 }
+
+
 
 static void
 thunar_job_operation_dispose (GObject *object)
@@ -141,11 +149,15 @@ thunar_job_operation_dispose (GObject *object)
   (*G_OBJECT_CLASS (thunar_job_operation_parent_class)->dispose) (object);
 }
 
+
+
 static void
 thunar_job_operation_finalize (GObject *object)
 {
   (*G_OBJECT_CLASS (thunar_job_operation_parent_class)->finalize) (object);
 }
+
+
 
 static void
 thunar_job_operation_get_property (GObject    *object,
@@ -204,6 +216,7 @@ thunar_job_operation_set_property  (GObject      *object,
   }
 
 
+
 /**
  * thunar_job_operation_new:
  * @kind: The kind of operation being created.
@@ -223,6 +236,8 @@ thunar_job_operation_new (ThunarJobOperationKind kind)
 
   return operation;
 }
+
+
 
 /**
  * thunar_job_operation_add:
@@ -252,6 +267,8 @@ thunar_job_operation_add (ThunarJobOperation *job_operation,
   job_operation->target_file_list = g_list_append (job_operation->target_file_list, g_object_ref (target_file));
 }
 
+
+
 /**
  * thunar_job_operation_commit:
  * @job_operation: a #ThunarJobOperation
@@ -270,6 +287,8 @@ thunar_job_operation_commit (ThunarJobOperation *job_operation)
 
   job_operation_list = g_list_append (NULL, g_object_ref (job_operation));
 }
+
+
 
 /**
  * thunar_job_operation_undo:
@@ -304,6 +323,8 @@ thunar_job_operation_undo (void)
   job_operation_list = NULL;
 }
 
+
+
 /* thunar_job_operation_new_invert:
  * @job_operation: a #ThunarJobOperation
  *
@@ -334,6 +355,8 @@ thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
 
   return inverted_operation;
 }
+
+
 
 /* thunar_job_operation_execute:
  * @job_operation: a #ThunarJobOperation
@@ -384,6 +407,8 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
   g_object_unref (application);
 }
 
+
+
 /* is_ancestor:
  * @ancestor:     potential ancestor of @descendant. A #GFile
  * @descendant:   potential descendant of @ancestor. A #GFile
@@ -402,6 +427,8 @@ is_ancestor (gconstpointer ancestor,
   else
     return 1;
 }
+
+
 
 #ifndef NDEBUG /* temporary debugging code */
 void
