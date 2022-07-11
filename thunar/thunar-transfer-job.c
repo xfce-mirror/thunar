@@ -626,6 +626,7 @@ ttj_copy_file (ThunarTransferJob  *job,
               if (target_exists)
                 {
                   /* the target still exists and thus is not a directory. try to remove it */
+                  add_to_operation = TRUE;
                   g_file_delete (target_file,
                                  exo_job_get_cancellable (EXO_JOB (job)),
                                  &err);
