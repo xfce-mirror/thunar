@@ -29,8 +29,8 @@ G_END_DECLS
 
 ThunarJobOperation    *thunar_job_operation_new          (ThunarJobOperationKind kind);
 void                   thunar_job_operation_add          (ThunarJobOperation *job_operation,
-                                                          GFile              *source,
-                                                          GFile              *target);
+                                                          GFile              *source_file,
+                                                          GFile              *target_file);
 void                   thunar_job_operation_commit       (ThunarJobOperation *job_operation);
 void                   thunar_job_operation_undo         (void);
 
