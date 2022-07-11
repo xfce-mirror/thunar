@@ -227,29 +227,29 @@ thunar_job_operation_new (ThunarJobOperationKind kind)
 /**
  * thunar_job_operation_add:
  * @job_operation: a #ThunarJobOperation
- * @source:        a #GFile representing the source file
- * @target:        a #GFile representing the target file
+ * @source_file:   a #GFile representing the source file
+ * @target_file:   a #GFile representing the target file
  *
- * Adds the specified @source-@target pair to the given job operation.
+ * Adds the specified @source_file-@target_file pair to the given job operation.
  **/
 void
 thunar_job_operation_add (ThunarJobOperation *job_operation,
-                          GFile              *source,
-                          GFile              *target)
+                          GFile              *source_file,
+                          GFile              *target_file)
 {
 
   g_assert (THUNAR_IS_JOB_OPERATION (job_operation));
-  g_assert (G_IS_FILE (source));
-  g_assert (G_IS_FILE (target));
+  g_assert (G_IS_FILE (source_file));
+  g_assert (G_IS_FILE (target_file));
 
   /* If the current file is a descendant of any of the already given files,
    * don't register it.
    * Note that source will be the second argument to is_ancestor */
-  if (g_list_find_custom (job_operation->source_file_list, source, is_ancestor) != NULL)
+  if (g_list_find_custom (job_operation->source_file_list, source_file, is_ancestor) != NULL)
     return;
 
-  job_operation->source_file_list = g_list_append (job_operation->source_file_list, g_object_ref (source));
-  job_operation->target_file_list = g_list_append (job_operation->target_file_list, g_object_ref (target));
+  job_operation->source_file_list = g_list_append (job_operation->source_file_list, g_object_ref (source_file));
+  job_operation->target_file_list = g_list_append (job_operation->target_file_list, g_object_ref (target_file));
 }
 
 /**
