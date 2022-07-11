@@ -457,11 +457,12 @@ thunar_transfer_job_collect_node (ThunarTransferJob  *job,
 
 
 static gboolean
-ttj_copy_file (ThunarTransferJob *job,
-               GFile             *source_file,
-               GFile             *target_file,
-               GFileCopyFlags     copy_flags,
-               GError           **error)
+ttj_copy_file (ThunarTransferJob  *job,
+               ThunarJobOperation *operation,
+               GFile              *source_file,
+               GFile              *target_file,
+               GFileCopyFlags      copy_flags,
+               GError            **error)
 {
   GFileInfo *info;
   GFileType  source_type;
@@ -469,6 +470,7 @@ ttj_copy_file (ThunarTransferJob *job,
   gboolean   target_exists;
   gboolean   use_partial;
   gboolean   verify_file;
+  gboolean   add_to_operation;
   GError    *err = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), FALSE);
@@ -524,6 +526,12 @@ ttj_copy_file (ThunarTransferJob *job,
   thunar_g_file_copy (source_file, target_file, copy_flags, use_partial,
                       exo_job_get_cancellable (EXO_JOB (job)),
                       thunar_transfer_job_progress, job, &err);
+
+  /* unless the copy involved an overwrite, register the operation*/
+  if (copy_flags & G_FILE_COPY_OVERWRITE)
+    add_to_operation = FALSE;
+  else
+    add_to_operation = TRUE;
 
   switch (job->transfer_verify_file)
     {
@@ -587,6 +595,10 @@ ttj_copy_file (ThunarTransferJob *job,
           /* we tried to overwrite a directory with a directory. this normally results
            * in a merge. ignore that error, since we actually *want* to merge */
           g_clear_error (&err);
+
+          /* in case of a merge, do not register the directory, its descendants
+           * will be registered because of the recursion either way */
+          add_to_operation = FALSE;
         }
       else if (err->code == G_IO_ERROR_WOULD_RECURSE)
         {
@@ -638,6 +650,8 @@ ttj_copy_file (ThunarTransferJob *job,
     }
   else
     {
+      if (add_to_operation)
+        thunar_job_operation_add (operation, source_file, target_file);
       return TRUE;
     }
 }
@@ -709,14 +723,9 @@ thunar_transfer_job_copy_file (ThunarTransferJob     *job,
       if (err == NULL)
         {
           /* try to copy the file from source file to the duplicate file */
-          if (ttj_copy_file (job, source_file, target, copy_flags, &err))
-            {
-              /* do not register in case of replace */
-              if (!replace_confirmed)
-                thunar_job_operation_add (operation, source_file, target);
-
+          if (ttj_copy_file (job, operation, source_file, target, copy_flags, &err))
               return target;
-            }
+
           else /* go to error case */
             g_object_unref (target);
         }
