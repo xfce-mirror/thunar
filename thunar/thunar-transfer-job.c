@@ -457,12 +457,11 @@ thunar_transfer_job_collect_node (ThunarTransferJob  *job,
 
 
 static gboolean
-ttj_copy_file (ThunarTransferJob  *job,
-               ThunarJobOperation *operation,
-               GFile              *source_file,
-               GFile              *target_file,
-               GFileCopyFlags      copy_flags,
-               GError            **error)
+ttj_copy_file (ThunarTransferJob *job,
+               GFile             *source_file,
+               GFile             *target_file,
+               GFileCopyFlags     copy_flags,
+               GError           **error)
 {
   GFileInfo *info;
   GFileType  source_type;
@@ -586,11 +585,7 @@ ttj_copy_file (ThunarTransferJob  *job,
               && target_type == G_FILE_TYPE_DIRECTORY))
         {
           /* we tried to overwrite a directory with a directory. this normally results
-           * in a merge. ignore that error, since we actually *want* to merge.
-           * a merge is a special case where we only want the new files (i.e. descendants)
-           * that were created to be added to the job operation,*/
-          thunar_job_operation_set_strategy (operation, THUNAR_JOB_OPERATION_STRATEGY_PREFER_DESCENDANT);
-
+           * in a merge. ignore that error, since we actually *want* to merge */
           g_clear_error (&err);
         }
       else if (err->code == G_IO_ERROR_WOULD_RECURSE)
@@ -714,7 +709,7 @@ thunar_transfer_job_copy_file (ThunarTransferJob     *job,
       if (err == NULL)
         {
           /* try to copy the file from source file to the duplicate file */
-          if (ttj_copy_file (job, operation, source_file, target, copy_flags, &err))
+          if (ttj_copy_file (job, source_file, target, copy_flags, &err))
             {
               /* do not register in case of replace */
               if (!replace_confirmed)

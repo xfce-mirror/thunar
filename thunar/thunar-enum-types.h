@@ -442,16 +442,6 @@ typedef enum
 
 GType thunar_job_operation_kind_get_type (void) G_GNUC_CONST;
 
-#define THUNAR_TYPE_JOB_OPERATION_STRATEGY (thunar_job_operation_strategy_get_type ())
-
-typedef enum
-{
-  THUNAR_JOB_OPERATION_STRATEGY_PREFER_ANCESTOR,
-  THUNAR_JOB_OPERATION_STRATEGY_PREFER_DESCENDANT
-} ThunarJobOperationStrategy;
-
-GType thunar_job_operation_strategy_get_type (void) G_GNUC_CONST;
-
 G_END_DECLS;
 
 #endif /* !__THUNAR_ENUM_TYPES_H__ */
