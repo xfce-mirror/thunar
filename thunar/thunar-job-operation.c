@@ -19,6 +19,7 @@
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-job-operation.h>
+#include <thunar/thunar-private.h>
 
 /**
  * SECTION:thunar-job-operation
@@ -138,9 +139,9 @@ thunar_job_operation_add (ThunarJobOperation *job_operation,
                           GFile              *target_file)
 {
 
-  g_assert (THUNAR_IS_JOB_OPERATION (job_operation));
-  g_assert (G_IS_FILE (source_file));
-  g_assert (G_IS_FILE (target_file));
+  _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
+  _thunar_return_if_fail (G_IS_FILE (source_file));
+  _thunar_return_if_fail (G_IS_FILE (target_file));
 
   /* When a directory has a file operation applied to it (for e.g. deletion),
    * the operation will also automatically get applied to its descendants.
@@ -168,7 +169,7 @@ thunar_job_operation_add (ThunarJobOperation *job_operation,
 void
 thunar_job_operation_commit (ThunarJobOperation *job_operation)
 {
-  g_assert (THUNAR_IS_JOB_OPERATION (job_operation));
+  _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
   /* do not register an 'empty' job operation */
   if (job_operation->source_file_list == NULL && job_operation->target_file_list == NULL)
@@ -226,7 +227,7 @@ thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
 {
   ThunarJobOperation *inverted_operation;
 
-  g_assert (THUNAR_IS_JOB_OPERATION (job_operation));
+  _thunar_return_val_if_fail (THUNAR_IS_JOB_OPERATION (job_operation), NULL);
 
   switch (job_operation->operation_kind)
     {
@@ -259,7 +260,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
   GError            *error            = NULL;
   ThunarFile        *thunar_file;
 
-  g_assert (THUNAR_IS_JOB_OPERATION (job_operation));
+  _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
   application = thunar_application_get ();
 
@@ -288,7 +289,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
         break;
 
       default:
-        g_assert_not_reached ();
+        _thunar_assert_not_reached ();
         break;
     }
 
