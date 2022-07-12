@@ -1267,9 +1267,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_container_add (GTK_CONTAINER (frame), grid);
   gtk_widget_show (grid);
 
-  /* check if "thunar-volman" is found */
-  path = g_find_program_in_path ("thunar-volman");
-
   /* add check button to enable/disable auto mounting */
   button = gtk_check_button_new_with_mnemonic (_("Enable _Volume Management"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
@@ -1346,9 +1343,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                     );
   gtk_container_add (GTK_CONTAINER (frame), grid);
   gtk_widget_show (grid);
-
-  /* cleanup */
-  g_free (path);
 }
 
 
