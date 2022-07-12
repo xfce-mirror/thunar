@@ -2325,8 +2325,8 @@ thunar_application_unlink_files (ThunarApplication *application,
       /* generate the question to confirm the delete operation */
       if (G_LIKELY (n_path_list == 1))
         {
-          display_name = thunar_file_get_display_name (THUNAR_FILE (file_list->data));
-          message = g_strdup_printf (_("Are you sure that you want to\npermanently delete \"%s\"?"), display_name);
+          message = g_strdup_printf (_("Are you sure that you want to\npermanently delete \"%s\"?"),
+                                     thunar_file_get_display_name (THUNAR_FILE (file_list->data)));
         }
       else
         {
