@@ -142,9 +142,13 @@ thunar_job_operation_add (ThunarJobOperation *job_operation,
   g_assert (G_IS_FILE (source_file));
   g_assert (G_IS_FILE (target_file));
 
-  /* If the current file is a descendant of any of the already given files,
-   * don't register it.
-   * Note that source will be the second argument to is_ancestor */
+  /* When a directory has a file operation applied to it (for e.g. deletion),
+   * the operation will also automatically get applied to its descendants.
+   * If the descendant of a that directory is then found, it will try to apply the operation
+   * to it again then, meaning the operation is attempted multiple times on the same file.
+   *
+   * So to avoid such issues on executing a job operation, if the source file is
+   * a descendant of an existing file, do not add it to the job operation. */
   if (g_list_find_custom (job_operation->source_file_list, source_file, is_ancestor) != NULL)
     return;
 
