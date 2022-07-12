@@ -1,5 +1,7 @@
 /* vi:set et ai sw=2 sts=2 ts=2: */
-/*
+/*-
+ * Copyright (c) 2022 Pratyaksh Gautam <pratyakshgautam11@gmail.com>
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
