@@ -51,7 +51,6 @@
 #include <thunar/thunar-gdk-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-io-jobs.h>
-#include <thunar/thunar-job-operation.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-progress-dialog.h>
@@ -2287,15 +2286,14 @@ thunar_application_unlink_files (ThunarApplication *application,
                                  GList             *file_list,
                                  gboolean           permanently)
 {
-  GtkWidget    *dialog;
-  GtkWindow    *window;
-  GdkScreen    *screen;
-  GList        *path_list = NULL;
-  GList        *lp;
-  gchar        *message;
-  guint         n_path_list = 0;
-  gint          response;
-  const gchar  *display_name;
+  GtkWidget *dialog;
+  GtkWindow *window;
+  GdkScreen *screen;
+  GList     *path_list = NULL;
+  GList     *lp;
+  gchar     *message;
+  guint      n_path_list = 0;
+  gint       response;
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
