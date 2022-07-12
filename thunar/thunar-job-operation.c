@@ -34,22 +34,22 @@
  * Usually, this will be the latest performed operation, which hasn't been undone yet.
  */
 
-static void                   thunar_job_operation_dispose            (GObject          *object);
-static void                   thunar_job_operation_finalize           (GObject          *object);
+static void                   thunar_job_operation_dispose            (GObject            *object);
+static void                   thunar_job_operation_finalize           (GObject            *object);
 static ThunarJobOperation    *thunar_job_operation_new_invert         (ThunarJobOperation *job_operation);
 static void                   thunar_job_operation_execute            (ThunarJobOperation *job_operation);
-static gint                   is_ancestor                             (gconstpointer descendant,
-                                                                       gconstpointer ancestor);
+static gint                   is_ancestor                             (gconstpointer       descendant,
+                                                                       gconstpointer       ancestor);
 
 
 
 struct _ThunarJobOperation
 {
-  GObject __parent__;
+  GObject                 __parent__;
 
-  ThunarJobOperationKind operation_kind;
-  GList *source_file_list;
-  GList *target_file_list;
+  ThunarJobOperationKind  operation_kind;
+  GList                  *source_file_list;
+  GList                  *target_file_list;
 };
 
 G_DEFINE_TYPE (ThunarJobOperation, thunar_job_operation, G_TYPE_OBJECT)
