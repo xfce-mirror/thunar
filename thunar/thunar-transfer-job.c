@@ -726,7 +726,6 @@ thunar_transfer_job_copy_file (ThunarTransferJob     *job,
           /* try to copy the file from source file to the duplicate file */
           if (ttj_copy_file (job, operation, source_file, target, copy_flags, &err))
             return target;
-
           else /* go to error case */
             g_object_unref (target);
         }
