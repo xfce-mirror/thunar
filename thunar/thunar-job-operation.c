@@ -110,7 +110,7 @@ thunar_job_operation_finalize (GObject *object)
  *
  * Creates a new #ThunarJobOperation of the given kind. Should be unref'd by the caller after use.
  *
- * Return value: the newly created #ThunarJobOperation
+ * Return value: (transfer full): the newly created #ThunarJobOperation
  **/
 ThunarJobOperation *
 thunar_job_operation_new (ThunarJobOperationKind kind)
@@ -217,8 +217,9 @@ thunar_job_operation_undo (void)
  * @job_operation: a #ThunarJobOperation
  *
  * Creates a new job operation which is the inverse of @job_operation.
+ * Should be unref'd by the caller after use.
  *
- * Return value: a newly created #ThunarJobOperation which is the inverse of @job_operation
+ * Return value: (transfer full): a newly created #ThunarJobOperation which is the inverse of @job_operation
  **/
 ThunarJobOperation *
 thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
