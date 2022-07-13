@@ -280,7 +280,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   GtkWidget      *vbox;
   GtkWidget      *infobar;
   GEnumClass     *type;
-  gchar          *path;
   gchar          *date;
   gint            row = 0;
 
