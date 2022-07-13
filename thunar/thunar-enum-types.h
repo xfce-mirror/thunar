@@ -424,6 +424,9 @@ guint    thunar_status_bar_info_toggle_bit    (guint               info,
                                                ThunarStatusBarInfo mask);
 gboolean thunar_status_bar_info_check_active  (guint               info,
                                                ThunarStatusBarInfo mask);
+
+
+
 #define THUNAR_TYPE_JOB_OPERATION_KIND (thunar_job_operation_kind_get_type ())
 
 typedef enum
