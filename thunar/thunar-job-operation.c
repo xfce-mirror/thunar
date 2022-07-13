@@ -271,10 +271,19 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
       case THUNAR_JOB_OPERATION_KIND_DELETE:
         for (GList *lp = job_operation->source_file_list; lp != NULL; lp = lp->next)
           {
-            g_assert (G_IS_FILE (lp->data));
+            if (!G_IS_FILE (lp->data))
+              {
+                g_warning ("One of the files in the job operation list was not a valid GFile");
+                continue;
+              }
 
             thunar_file = thunar_file_get (lp->data, &error);
-            g_assert (THUNAR_IS_FILE (thunar_file));
+
+            if (!THUNAR_IS_FILE (thunar_file))
+              {
+                g_error ("One of the files in the job operation list did not convert to a valid ThunarFile");
+                continue;
+              }
 
             thunar_file_list = g_list_append (thunar_file_list, thunar_file);
 
