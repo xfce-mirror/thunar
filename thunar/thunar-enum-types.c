@@ -641,6 +641,8 @@ thunar_status_bar_info_check_active (guint               info,
   return (info & mask) > 0 ? TRUE : FALSE;
 }
 
+
+
 GType
 thunar_job_operation_kind_get_type (void)
 {
