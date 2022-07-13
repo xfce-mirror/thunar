@@ -175,6 +175,9 @@ thunar_job_operation_commit (ThunarJobOperation *job_operation)
   if (job_operation->source_file_list == NULL && job_operation->target_file_list == NULL)
     return;
 
+  /* We only keep one job operation commited in the job operation list, so we have to free the
+   * memory for the job operation in the list, if any, stored in before we commit the new one. */
+  thunar_g_list_free_full (job_operation_list);
   job_operation_list = g_list_append (NULL, g_object_ref (job_operation));
 }
 
