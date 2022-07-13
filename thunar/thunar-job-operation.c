@@ -200,16 +200,14 @@ thunar_job_operation_undo (void)
   /* the 'marked' operation */
   operation_marker = job_operation_list->data;
 
-
   inverted_operation = thunar_job_operation_new_invert (operation_marker);
-  g_object_ref (inverted_operation);
-
   thunar_job_operation_execute (inverted_operation);
-
-  g_object_unref (operation_marker);
   g_object_unref (inverted_operation);
 
-  /* set the marked operation to null to now remove the last operation. */
+  /* Completely clear the job operation list on undo, this is because we only store the single
+   * most recent operation, and we do not want it to be available to undo *again* after it has
+   * already been undone once. */
+  thunar_g_list_free_full (job_operation_list);
   job_operation_list = NULL;
 }
 
