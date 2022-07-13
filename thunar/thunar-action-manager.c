@@ -3367,6 +3367,8 @@ thunar_action_manager_new_files_created (ThunarActionManager *action_mgr,
   g_signal_emit (action_mgr, action_manager_signals[NEW_FILES_CREATED], 0, new_thunar_files);
 }
 
+
+
 static gboolean
 thunar_action_manager_action_undo (ThunarActionManager *action_mgr)
 {
@@ -3376,6 +3378,7 @@ thunar_action_manager_action_undo (ThunarActionManager *action_mgr)
 
   return TRUE;
 }
+
 
 
 XfceGtkActionEntry*
