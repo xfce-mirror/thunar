@@ -279,6 +279,12 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
 
             thunar_file = thunar_file_get (lp->data, &error);
 
+            if (error != NULL)
+              {
+                g_warning ("Failed to convert GFile to ThunarFile: %s", error->message);
+                g_clear_error (&error);
+              }
+
             if (!THUNAR_IS_FILE (thunar_file))
               {
                 g_error ("One of the files in the job operation list did not convert to a valid ThunarFile");
@@ -286,12 +292,6 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
               }
 
             thunar_file_list = g_list_append (thunar_file_list, thunar_file);
-
-            if (error != NULL)
-              {
-                g_warning ("Failed to convert GFile to ThunarFile: %s", error->message);
-                g_clear_error (&error);
-              }
           }
 
         thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE);
