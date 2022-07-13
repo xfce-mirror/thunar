@@ -266,11 +266,11 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
   switch (job_operation->operation_kind)
     {
       case THUNAR_JOB_OPERATION_KIND_DELETE:
-        for (GList *elem = job_operation->source_file_list; elem != NULL; elem = elem->next)
+        for (GList *lp = job_operation->source_file_list; lp != NULL; lp = lp->next)
           {
-            g_assert (G_IS_FILE (elem->data));
+            g_assert (G_IS_FILE (lp->data));
 
-            thunar_file = thunar_file_get (elem->data, &error);
+            thunar_file = thunar_file_get (lp->data, &error);
             g_assert (THUNAR_IS_FILE (thunar_file));
 
             thunar_file_list = g_list_append (thunar_file_list, thunar_file);
