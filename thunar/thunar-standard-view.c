@@ -798,11 +798,11 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->name_renderer = thunar_text_renderer_new ();
   g_object_set (standard_view->name_renderer,
 #if PANGO_VERSION_CHECK (1, 44, 0)
-                                               "attributes", thunar_pango_attr_disable_hyphens (),
+                "attributes", thunar_pango_attr_disable_hyphens (),
 #endif
-                                               "alignment", PANGO_ALIGN_CENTER,
-                                               "xalign", 0.5,
-                                               NULL);
+                "alignment", PANGO_ALIGN_CENTER,
+                "xalign", 0.5,
+                NULL);
   g_object_ref_sink (G_OBJECT (standard_view->name_renderer));
 
   /* TODO: prelit underline
