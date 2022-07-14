@@ -433,8 +433,6 @@ struct _ThunarWindow
 
   gboolean                show_hidden;
 
-  gboolean                show_highlight;
-
   gboolean                directory_specific_settings;
 
   /* support to remember window geometry */
@@ -763,7 +761,6 @@ thunar_window_init (ThunarWindow *window)
                 "last-location-bar", &last_location_bar,
                 "last-side-pane", &last_side_pane,
                 "last-statusbar-visible", &last_statusbar_visible,
-                "misc-highlighting-enabled", &window->show_highlight,
                 NULL);
 
   /* update the visual on screen_changed events */
@@ -1244,6 +1241,7 @@ thunar_window_update_view_menu (ThunarWindow *window,
   GtkWidget  *item;
   GtkWidget  *sub_items;
   gchar      *last_location_bar;
+  gboolean    show_highlight;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
@@ -1287,8 +1285,9 @@ thunar_window_update_view_menu (ThunarWindow *window,
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
   if (thunar_g_vfs_metadata_is_supported ())
     {
+      g_object_get (G_OBJECT (window->preferences), "misc-highlighting-enabled", &show_highlight, NULL);
       xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_SHOW_HIGHLIGHT), G_OBJECT (window),
-                                                       window->show_highlight, GTK_MENU_SHELL (menu));
+                                                       show_highlight, GTK_MENU_SHELL (menu));
       xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
     }
   if (window->view != NULL)
@@ -4419,10 +4418,12 @@ thunar_window_action_show_hidden (ThunarWindow *window)
 static gboolean
 thunar_window_action_show_highlight (ThunarWindow *window)
 {
+  gboolean show_highlight;
+
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  window->show_highlight = !window->show_highlight;
-  g_object_set (G_OBJECT (window->preferences), "misc-highlighting-enabled", window->show_highlight, NULL);
+  g_object_get (G_OBJECT (window->preferences), "misc-highlighting-enabled", &show_highlight, NULL);
+  g_object_set (G_OBJECT (window->preferences), "misc-highlighting-enabled", !show_highlight, NULL);
 
   /* refresh the view to refresh the cell renderer drawings */
   thunar_window_action_reload (window, NULL);
