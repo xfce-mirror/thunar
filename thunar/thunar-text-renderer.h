@@ -21,7 +21,6 @@
 #define __THUNAR_TEXT_RENDERER_H__
 
 #include <thunar/thunar-enum-types.h>
-#include <thunar/thunar-file.h>
 
 G_BEGIN_DECLS;
 

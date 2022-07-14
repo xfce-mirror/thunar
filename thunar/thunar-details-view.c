@@ -30,6 +30,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-window.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -124,6 +125,12 @@ static void         thunar_details_view_highlight_option_changed(ThunarDetailsVi
 struct _ThunarDetailsViewClass
 {
   ThunarStandardViewClass __parent__;
+
+  void (*cell_layout_data_func) (GtkCellLayout   *layout,
+                                 GtkCellRenderer *cell,
+                                 GtkTreeModel    *model,
+                                 GtkTreeIter     *iter,
+                                 gpointer         data);
 };
 
 
@@ -169,6 +176,7 @@ static void
 thunar_details_view_class_init (ThunarDetailsViewClass *klass)
 {
   ThunarStandardViewClass *thunarstandard_view_class;
+  ThunarDetailsViewClass  *thunar_details_view_class;
   GtkWidgetClass          *gtkwidget_class;
   GObjectClass            *gobject_class;
 
@@ -179,6 +187,9 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->get_accessible = thunar_details_view_get_accessible;
+
+  thunar_details_view_class = THUNAR_DETAILS_VIEW_CLASS (klass);
+  thunar_details_view_class->cell_layout_data_func = thunar_details_view_cell_layout_data_func;
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
   thunarstandard_view_class->get_selected_items = thunar_details_view_get_selected_items;
@@ -297,6 +308,8 @@ thunar_details_view_init (ThunarDetailsView *details_view)
 
           /* add some spacing between the icon and the name */
           gtk_tree_view_column_set_spacing (details_view->columns[column], 2);
+
+          details_view->renderers[column] = THUNAR_STANDARD_VIEW (details_view)->name_renderer;
         }
       else
         {
@@ -1173,17 +1186,7 @@ thunar_details_view_cell_layout_data_func (GtkCellLayout   *layout,
                                            GtkTreeIter     *iter,
                                            gpointer         data)
 {
-  ThunarFile  *file;
-  const gchar *background = NULL;
-  const gchar *foreground = NULL;
-
-  file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
-  background = thunar_file_get_metadata_setting (file, "highlight-color-background");
-  foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
-
-  /* all renderers using this function are GtkCellRendererText; hence both properties are common in all */
-  g_object_set (G_OBJECT (cell), "cell-background", background, "foreground", foreground, NULL);
-  g_object_unref (file);
+  thunar_util_cell_layout_data_function(cell, model, iter, NULL, NULL);
 }
 
 
@@ -1198,22 +1201,13 @@ thunar_details_view_highlight_option_changed (ThunarDetailsView *details_view)
   g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences), "misc-highlighting-enabled", &show_highlight, NULL);
 
   if (show_highlight)
-    function = (GtkTreeCellDataFunc) thunar_details_view_cell_layout_data_func;
+    function = (GtkTreeCellDataFunc) THUNAR_DETAILS_VIEW_GET_CLASS (details_view)->cell_layout_data_func;
 
   /* set the data functions for the respective renderers */
   for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; column++)
     {
-      if (column == THUNAR_COLUMN_NAME)
-        {
-          gtk_tree_view_column_set_cell_data_func (GTK_TREE_VIEW_COLUMN (details_view->columns[column]),
-              THUNAR_STANDARD_VIEW (details_view)->name_renderer,
-              function, NULL, NULL);
-        }
-      else
-        {
-          gtk_tree_view_column_set_cell_data_func (GTK_TREE_VIEW_COLUMN (details_view->columns[column]),
-              details_view->renderers[column],
-              function, NULL, NULL);
-        }
+      gtk_tree_view_column_set_cell_data_func (GTK_TREE_VIEW_COLUMN (details_view->columns[column]),
+                                               GTK_CELL_RENDERER (details_view->renderers[column]),
+                                               function, NULL, NULL);
     }
 }
