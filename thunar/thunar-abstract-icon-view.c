@@ -30,7 +30,7 @@
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-window.h>
-#include <thunar/thunar-text-renderer.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -112,15 +112,19 @@ G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ThunarAbstractIconView, thunar_abstract_ico
 static void
 thunar_abstract_icon_view_class_init (ThunarAbstractIconViewClass *klass)
 {
-  ThunarStandardViewClass *thunarstandard_view_class;
-  GtkWidgetClass          *gtkwidget_class;
-  GObjectClass            *gobject_class;
+  ThunarStandardViewClass     *thunarstandard_view_class;
+  ThunarAbstractIconViewClass *thunar_abstract_icon_view_class;
+  GtkWidgetClass              *gtkwidget_class;
+  GObjectClass                *gobject_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_abstract_icon_view_finalize;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->style_set = thunar_abstract_icon_view_style_set;
+
+  thunar_abstract_icon_view_class = THUNAR_ABSTRACT_ICON_VIEW_CLASS (klass);
+  thunar_abstract_icon_view_class->cell_layout_data_func = thunar_abstract_icon_view_cell_layout_data_func;
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
   thunarstandard_view_class->get_selected_items = thunar_abstract_icon_view_get_selected_items;
@@ -687,22 +691,7 @@ thunar_abstract_icon_view_cell_layout_data_func (GtkCellLayout   *layout,
                                                  GtkTreeIter     *iter,
                                                  gpointer         data)
 {
-  ThunarFile  *file;
-  const gchar *background = NULL;
-  const gchar *foreground = NULL;
-
-  file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
-  background = thunar_file_get_metadata_setting (file, "highlight-color-background");
-  foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
-
-  /* since this function is being used for both icon & name renderers;
-   * we need to make sure the right properties are applied to the right renderers */
-  /* TODO: is such a multi-purpose function good ? */
-  if (THUNAR_IS_TEXT_RENDERER (cell) || GTK_IS_CELL_RENDERER_TEXT (cell))
-    g_object_set (G_OBJECT (cell), "foreground", foreground, NULL);
-  g_object_set (G_OBJECT (cell), "highlight", background, "highlight-set", background != NULL ? TRUE : FALSE, NULL);
-
-  g_object_unref (file);
+  thunar_util_cell_layout_data_function(cell, model, iter, "0;10;10;0;1", "10;0;0;10;1");
 }
 
 
@@ -716,7 +705,7 @@ thunar_abstract_icon_view_highlight_option_changed (ThunarAbstractIconView *abst
   g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_icon_view)->preferences), "misc-highlighting-enabled", &show_highlight, NULL);
 
   if (show_highlight)
-    function = (GtkCellLayoutDataFunc) thunar_abstract_icon_view_cell_layout_data_func;
+    function = (GtkCellLayoutDataFunc) THUNAR_ABSTRACT_ICON_VIEW_GET_CLASS (abstract_icon_view)->cell_layout_data_func;
 
   /* set the data functions for the respective renderers */
   gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (gtk_bin_get_child (GTK_BIN (abstract_icon_view))),
