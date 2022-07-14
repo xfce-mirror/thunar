@@ -27,6 +27,7 @@
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -40,6 +41,8 @@ enum
   PROP_SIZE,
   PROP_HIGHLIGHT,
   PROP_HIGHLIGHT_SET,
+  PROP_BORDER_RADIUS,
+  PROP_BORDER_RADIUS_SET
 };
 
 
@@ -184,6 +187,22 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                    g_param_spec_boolean ("highlight-set", "highlight-set", "highlight-set",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
+
+
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_BORDER_RADIUS,
+                                   g_param_spec_string ("border-radius", "border-radius", "border-radius",
+                                                        NULL,
+                                                        EXO_PARAM_READWRITE));
+
+
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_BORDER_RADIUS_SET,
+                                   g_param_spec_boolean ("border-radius-set", "border-radius-set", "border-radius-set",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 }
 
 
@@ -207,8 +226,8 @@ thunar_icon_renderer_finalize (GObject *object)
     g_object_unref (G_OBJECT (icon_renderer->drop_file));
   if (G_LIKELY (icon_renderer->file != NULL))
     g_object_unref (G_OBJECT (icon_renderer->file));
-  if (G_LIKELY (icon_renderer->highlight != NULL))
-    g_free (icon_renderer->highlight);
+  g_free (icon_renderer->highlight);
+  g_free (icon_renderer->border_radius);
 
   (*G_OBJECT_CLASS (thunar_icon_renderer_parent_class)->finalize) (object);
 }
@@ -251,6 +270,14 @@ thunar_icon_renderer_get_property (GObject    *object,
 
     case PROP_HIGHLIGHT_SET:
       g_value_set_boolean (value, icon_renderer->highlight_set);
+      break;
+
+    case PROP_BORDER_RADIUS:
+      g_value_set_string (value, icon_renderer->border_radius);
+      break;
+
+    case PROP_BORDER_RADIUS_SET:
+      g_value_set_boolean (value, icon_renderer->border_radius_set);
       break;
 
     default:
@@ -303,6 +330,16 @@ thunar_icon_renderer_set_property (GObject      *object,
 
     case PROP_HIGHLIGHT_SET:
       icon_renderer->highlight_set = g_value_get_boolean (value);
+      break;
+
+    case PROP_BORDER_RADIUS:
+      if (G_UNLIKELY (icon_renderer->border_radius != NULL))
+        g_free (icon_renderer->border_radius);
+      icon_renderer->border_radius = g_value_dup_string (value);
+      break;
+
+    case PROP_BORDER_RADIUS_SET:
+      icon_renderer->border_radius_set = g_value_get_boolean (value);
       break;
 
     default:
@@ -446,17 +483,6 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   gboolean                color_selected;
   gboolean                color_lighten;
   gboolean                is_expanded;
-  gboolean                cell_background_set;
-  const gchar            *cell_background;
-  GdkRGBA                 cell_background_rgba;
-  gdouble                 corner_radius = cell_area->width / 10.0;
-  gdouble                 degrees = G_PI / 180.0;
-  GtkStateFlags    state;
-  GdkRGBA          *color;
-  GtkStyleContext *context = gtk_widget_get_style_context (widget);
-
-  state = gtk_widget_has_focus (widget) ? GTK_STATE_FLAG_SELECTED : GTK_STATE_FLAG_ACTIVE;
-  gtk_style_context_get (context, state, GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &color, NULL);
 
   if (G_UNLIKELY (icon_renderer->file == NULL))
     return;
@@ -465,31 +491,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
     return;
 
   g_object_get (renderer, "is-expanded", &is_expanded, NULL);
-  cell_background_set = icon_renderer->highlight_set;
-  cell_background = icon_renderer->highlight;
 
-  color_selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0 && icon_renderer->follow_state;
-  if (G_UNLIKELY (cell_background_set || color_selected))
-    {
-      cairo_new_sub_path (cr);
-      cairo_arc (cr, background_area->x - 2.0 + background_area->width - corner_radius, background_area->y + 2.0 + corner_radius, corner_radius, -90 * degrees, 0 * degrees);
-      cairo_arc (cr, background_area->x - 2.0 + background_area->width, background_area->y + 2.0 + background_area->height - 0, 0, 0 * degrees, 90 * degrees);
-      cairo_arc (cr, background_area->x + 2.0 + 0, background_area->y + 2.0 + background_area->height - 0, 0, 90 * degrees, 180 * degrees);
-      cairo_arc (cr, background_area->x + 2.0 + corner_radius, background_area->y + 2.0 + corner_radius, corner_radius, 180 * degrees, 270 * degrees);
-      cairo_close_path (cr);
-      if (cell_background != NULL)
-        gdk_rgba_parse (&cell_background_rgba, cell_background);
-      if (color_selected)
-        gdk_cairo_set_source_rgba (cr, color);
-      else
-        gdk_cairo_set_source_rgba (cr, &cell_background_rgba);
-      gdk_rgba_free (color);
-      cairo_fill_preserve (cr);
-      if (G_UNLIKELY (cell_background_set &&  color_selected))
-        gdk_cairo_set_source_rgba (cr, &cell_background_rgba);
-      cairo_set_line_width (cr, 2.0);
-      cairo_stroke (cr);
-    }
+  thunar_util_clip_view_background (renderer, cr, background_area, widget, flags);
 
   /* determine the icon state */
   icon_state = (icon_renderer->drop_file != icon_renderer->file)
