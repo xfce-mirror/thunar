@@ -30,9 +30,11 @@
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-window.h>
+#include <thunar/thunar-util.h>
 
 
 
+static void         thunar_abstract_icon_view_finalize                (GObject                      *object);
 static void         thunar_abstract_icon_view_style_set               (GtkWidget                    *widget,
                                                                        GtkStyle                     *previous_style);
 static GList       *thunar_abstract_icon_view_get_selected_items      (ThunarStandardView           *standard_view);
@@ -79,6 +81,12 @@ static void         thunar_abstract_icon_view_item_activated          (ExoIconVi
                                                                        GtkTreePath                  *path,
                                                                        ThunarAbstractIconView       *abstract_icon_view);
 static void         thunar_abstract_icon_view_zoom_level_changed      (ThunarAbstractIconView       *abstract_icon_view);
+static void         thunar_abstract_icon_view_cell_layout_data_func   (GtkCellLayout                *layout,
+                                                                       GtkCellRenderer              *cell,
+                                                                       GtkTreeModel                 *model,
+                                                                       GtkTreeIter                  *iter,
+                                                                       gpointer                      data);
+static void         thunar_abstract_icon_view_highlight_option_changed(ThunarAbstractIconView       *abstract_icon_view);
 
 
 
@@ -104,11 +112,19 @@ G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ThunarAbstractIconView, thunar_abstract_ico
 static void
 thunar_abstract_icon_view_class_init (ThunarAbstractIconViewClass *klass)
 {
-  ThunarStandardViewClass *thunarstandard_view_class;
-  GtkWidgetClass          *gtkwidget_class;
+  ThunarStandardViewClass     *thunarstandard_view_class;
+  ThunarAbstractIconViewClass *thunar_abstract_icon_view_class;
+  GtkWidgetClass              *gtkwidget_class;
+  GObjectClass                *gobject_class;
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunar_abstract_icon_view_finalize;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->style_set = thunar_abstract_icon_view_style_set;
+
+  thunar_abstract_icon_view_class = THUNAR_ABSTRACT_ICON_VIEW_CLASS (klass);
+  thunar_abstract_icon_view_class->cell_layout_data_func = thunar_abstract_icon_view_cell_layout_data_func;
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
   thunarstandard_view_class->get_selected_items = thunar_abstract_icon_view_get_selected_items;
@@ -152,6 +168,19 @@ thunar_abstract_icon_view_class_init (ThunarAbstractIconViewClass *klass)
 
 
 static void
+thunar_abstract_icon_view_finalize (GObject *object)
+{
+  ThunarAbstractIconView *abstract_icon_view = THUNAR_ABSTRACT_ICON_VIEW (object);
+
+  g_signal_handlers_disconnect_by_func (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_icon_view)->preferences),
+                                        thunar_abstract_icon_view_highlight_option_changed, abstract_icon_view);
+
+  (*G_OBJECT_CLASS (thunar_abstract_icon_view_parent_class)->finalize) (object);
+}
+
+
+
+static void
 thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
 {
   GtkWidget *view;
@@ -188,6 +217,10 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer, TRUE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer,
                                  "text", THUNAR_COLUMN_NAME);
+
+  g_signal_connect_swapped (THUNAR_STANDARD_VIEW (abstract_icon_view)->preferences, "notify::misc-highlighting-enabled",
+                            G_CALLBACK (thunar_abstract_icon_view_highlight_option_changed), abstract_icon_view);
+  thunar_abstract_icon_view_highlight_option_changed (abstract_icon_view);
 
   /* update the icon view on size-allocate events */
   /* TODO: issue not reproducible anymore as of gtk 3.24.18
@@ -645,4 +678,40 @@ thunar_abstract_icon_view_zoom_level_changed (ThunarAbstractIconView *abstract_i
   gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (gtk_bin_get_child (GTK_BIN (abstract_icon_view))),
                                       THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer,
                                       NULL, NULL, NULL);
+
+  thunar_abstract_icon_view_highlight_option_changed (abstract_icon_view);
+}
+
+
+
+static void
+thunar_abstract_icon_view_cell_layout_data_func (GtkCellLayout   *layout,
+                                                 GtkCellRenderer *cell,
+                                                 GtkTreeModel    *model,
+                                                 GtkTreeIter     *iter,
+                                                 gpointer         data)
+{
+  thunar_util_cell_layout_data_function(cell, model, iter, "0;10;10;0;1", "10;0;0;10;1");
+}
+
+
+
+static void
+thunar_abstract_icon_view_highlight_option_changed (ThunarAbstractIconView *abstract_icon_view)
+{
+  gboolean              show_highlight;
+  GtkCellLayoutDataFunc function = NULL;
+
+  g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_icon_view)->preferences), "misc-highlighting-enabled", &show_highlight, NULL);
+
+  if (show_highlight)
+    function = (GtkCellLayoutDataFunc) THUNAR_ABSTRACT_ICON_VIEW_GET_CLASS (abstract_icon_view)->cell_layout_data_func;
+
+  /* set the data functions for the respective renderers */
+  gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (gtk_bin_get_child (GTK_BIN (abstract_icon_view))),
+                                      THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer,
+                                      function, NULL, NULL);
+  gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (gtk_bin_get_child (GTK_BIN (abstract_icon_view))),
+                                      THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer,
+                                      function, NULL, NULL);
 }
