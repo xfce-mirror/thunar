@@ -24,6 +24,11 @@
 
 G_BEGIN_DECLS;
 
+typedef enum
+{
+  THUNAR_CHOOSER_DIALOG_RESPONSE_INSTALL = 0,
+} ThunarChooserDialogResponseType;
+
 typedef struct _ThunarChooserDialogClass ThunarChooserDialogClass;
 typedef struct _ThunarChooserDialog      ThunarChooserDialog;
 
