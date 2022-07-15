@@ -55,6 +55,7 @@
 #include <thunar/thunar-thumbnailer.h>
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-details-view.h>
+#include <thunar/thunar-text-renderer.h>
 
 #if defined(GDK_WINDOWING_X11)
 #include <gdk/gdkx.h>
@@ -794,13 +795,14 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   g_object_bind_property (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->priv->thumbnailer), "thumbnail-size", G_BINDING_SYNC_CREATE);
 
   /* setup the name renderer */
-  standard_view->name_renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
+  standard_view->name_renderer = thunar_text_renderer_new ();
+  g_object_set (standard_view->name_renderer,
 #if PANGO_VERSION_CHECK (1, 44, 0)
-                                               "attributes", thunar_pango_attr_disable_hyphens (),
+                "attributes", thunar_pango_attr_disable_hyphens (),
 #endif
-                                               "alignment", PANGO_ALIGN_CENTER,
-                                               "xalign", 0.5,
-                                               NULL);
+                "alignment", PANGO_ALIGN_CENTER,
+                "xalign", 0.5,
+                NULL);
   g_object_ref_sink (G_OBJECT (standard_view->name_renderer));
 
   /* TODO: prelit underline

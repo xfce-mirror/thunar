@@ -27,6 +27,7 @@
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -38,6 +39,10 @@ enum
   PROP_EMBLEMS,
   PROP_FOLLOW_STATE,
   PROP_SIZE,
+  PROP_HIGHLIGHT,
+  PROP_HIGHLIGHT_SET,
+  PROP_BORDER_RADIUS,
+  PROP_BORDER_RADIUS_SET
 };
 
 
@@ -154,6 +159,50 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                                       THUNAR_TYPE_ICON_SIZE,
                                                       THUNAR_ICON_SIZE_32,
                                                       G_PARAM_CONSTRUCT | EXO_PARAM_READWRITE));
+
+
+
+  /**
+   * ThunarIconRenderer:highlight:
+   *
+   * The color with which the file should be highlighted
+   * #ThunarIconRenderer instance.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_HIGHLIGHT,
+                                   g_param_spec_string ("highlight", "highlight", "highlight",
+                                                        NULL,
+                                                        EXO_PARAM_READWRITE));
+
+
+
+  /**
+   * ThunarIconRenderer:highlight-set:
+   *
+   * TRUE if highlight color has been set
+   * #ThunarIconRenderer instance.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_HIGHLIGHT_SET,
+                                   g_param_spec_boolean ("highlight-set", "highlight-set", "highlight-set",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
+
+
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_BORDER_RADIUS,
+                                   g_param_spec_string ("border-radius", "border-radius", "border-radius",
+                                                        NULL,
+                                                        EXO_PARAM_READWRITE));
+
+
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_BORDER_RADIUS_SET,
+                                   g_param_spec_boolean ("border-radius-set", "border-radius-set", "border-radius-set",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 }
 
 
@@ -177,6 +226,8 @@ thunar_icon_renderer_finalize (GObject *object)
     g_object_unref (G_OBJECT (icon_renderer->drop_file));
   if (G_LIKELY (icon_renderer->file != NULL))
     g_object_unref (G_OBJECT (icon_renderer->file));
+  g_free (icon_renderer->highlight);
+  g_free (icon_renderer->border_radius);
 
   (*G_OBJECT_CLASS (thunar_icon_renderer_parent_class)->finalize) (object);
 }
@@ -211,6 +262,22 @@ thunar_icon_renderer_get_property (GObject    *object,
 
     case PROP_SIZE:
       g_value_set_enum (value, icon_renderer->size);
+      break;
+
+    case PROP_HIGHLIGHT:
+      g_value_set_string (value, icon_renderer->highlight);
+      break;
+
+    case PROP_HIGHLIGHT_SET:
+      g_value_set_boolean (value, icon_renderer->highlight_set);
+      break;
+
+    case PROP_BORDER_RADIUS:
+      g_value_set_string (value, icon_renderer->border_radius);
+      break;
+
+    case PROP_BORDER_RADIUS_SET:
+      g_value_set_boolean (value, icon_renderer->border_radius_set);
       break;
 
     default:
@@ -253,6 +320,26 @@ thunar_icon_renderer_set_property (GObject      *object,
 
     case PROP_SIZE:
       icon_renderer->size = g_value_get_enum (value);
+      break;
+
+    case PROP_HIGHLIGHT:
+      if (G_UNLIKELY (icon_renderer->highlight != NULL))
+        g_free (icon_renderer->highlight);
+      icon_renderer->highlight = g_value_dup_string (value);
+      break;
+
+    case PROP_HIGHLIGHT_SET:
+      icon_renderer->highlight_set = g_value_get_boolean (value);
+      break;
+
+    case PROP_BORDER_RADIUS:
+      if (G_UNLIKELY (icon_renderer->border_radius != NULL))
+        g_free (icon_renderer->border_radius);
+      icon_renderer->border_radius = g_value_dup_string (value);
+      break;
+
+    case PROP_BORDER_RADIUS_SET:
+      icon_renderer->border_radius_set = g_value_get_boolean (value);
       break;
 
     default:
@@ -404,6 +491,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
     return;
 
   g_object_get (renderer, "is-expanded", &is_expanded, NULL);
+
+  thunar_util_clip_view_background (renderer, cr, background_area, widget, flags);
 
   /* determine the icon state */
   icon_state = (icon_renderer->drop_file != icon_renderer->file)
