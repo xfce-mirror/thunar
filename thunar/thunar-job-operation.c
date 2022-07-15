@@ -239,6 +239,13 @@ thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
         inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
         break;
 
+      case THUNAR_JOB_OPERATION_KIND_MOVE:
+        inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
+        inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_MOVE;
+        inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
+        inverted_operation->target_file_list = thunar_g_list_copy_deep (job_operation->source_file_list);
+        break;
+
       default:
         g_assert_not_reached ();
         break;
@@ -261,6 +268,8 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
   GList             *thunar_file_list = NULL;
   GError            *error            = NULL;
   ThunarFile        *thunar_file;
+  GList             *source_file_list;
+  GFile             *target_parent;
 
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
@@ -297,6 +306,30 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
         thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE);
 
         thunar_g_list_free_full (thunar_file_list);
+        break;
+
+      case THUNAR_JOB_OPERATION_KIND_MOVE:
+        for (GList *slp = job_operation->source_file_list, *tlp = job_operation->target_file_list;
+             slp != NULL && tlp != NULL;
+             slp = slp->next, tlp = tlp->next)
+          {
+            if (!G_IS_FILE (slp->data))
+              {
+                g_warning ("One of the files in the job operation list was not a valid GFile");
+                continue;
+              }
+
+            /* thunar_application_move_into expects a single directory to move the given files
+             * into, so get the parent for each pair and use that. */
+            target_parent = g_file_get_parent (tlp->data);
+
+            /* Use a singleton list for the source */
+            source_file_list = g_list_append (NULL, slp->data);
+
+            thunar_application_move_into (application, NULL, source_file_list, target_parent, NULL);
+
+            g_list_free (source_file_list);
+          }
         break;
 
       default:
