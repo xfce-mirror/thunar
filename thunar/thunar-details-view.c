@@ -1210,4 +1210,9 @@ thunar_details_view_highlight_option_changed (ThunarDetailsView *details_view)
                                                GTK_CELL_RENDERER (details_view->renderers[column]),
                                                function, NULL, NULL);
     }
+
+  /* for icons */
+  gtk_tree_view_column_set_cell_data_func (GTK_TREE_VIEW_COLUMN (details_view->columns[THUNAR_COLUMN_NAME]),
+                                           THUNAR_STANDARD_VIEW (details_view)->icon_renderer,
+                                           function, NULL, NULL);
 }
