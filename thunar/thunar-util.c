@@ -884,7 +884,7 @@ thunar_util_clip_view_background (GtkCellRenderer      *cell,
       gdk_rgba_parse (&highlight_color, highlight);
       color = gdk_rgba_copy (&highlight_color);
     }
-  if (G_UNLIKELY (color_selected))
+  if (G_UNLIKELY (color_selected && !(THUNAR_IS_ICON_RENDERER (cell) && highlight_set)))
     {
       context = gtk_widget_get_style_context (widget);
       gtk_style_context_get (context, GTK_STATE_FLAG_SELECTED, GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &color, NULL);
@@ -895,14 +895,6 @@ thunar_util_clip_view_background (GtkCellRenderer      *cell,
       gdk_cairo_set_source_rgba (cr, color);
       gdk_rgba_free (color);
       cairo_paint (cr);
-      if (highlight_set && color_selected && THUNAR_IS_ICON_RENDERER (cell))
-        {
-          cairo_translate (cr, background_area->x + background_area->width / 2.0, background_area->y + background_area->height / 2.0);
-          cairo_arc (cr, 0, 0, MIN (background_area->height, background_area->width) / 2.0, 0, 2 * G_PI);
-          cairo_clip (cr);
-          gdk_cairo_set_source_rgba (cr, &highlight_color);
-          cairo_paint (cr);
-        }
     }
   cairo_restore (cr);
 }
