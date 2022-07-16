@@ -57,6 +57,9 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-folder.h>
+#include <thunar/thunar-list-model.h>
+#include <thunar/thunar-text-renderer.h>
+#include <thunar/thunar-icon-renderer.h>
 
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -812,4 +815,147 @@ thunar_util_strjoin_list (GList       *string_list,
     return g_strdup ("");
   else
     return joined_string;
+}
+
+
+
+void
+thunar_util_clip_view_background (GtkCellRenderer      *cell,
+                                  cairo_t              *cr,
+                                  const GdkRectangle   *background_area,
+                                  GtkWidget            *widget,
+                                  GtkCellRendererState  flags)
+{
+  GtkStyleContext  *context;
+  gdouble           corner_radius[5] = { 0, 0, 0, 0, 0 };
+  gchar           **corner_radii;
+  gdouble           degrees = G_PI / 180.0;
+  GdkRGBA          *color = NULL;
+  GdkRGBA           highlight_color;
+  gboolean          highlight_set;
+  gchar            *highlight;
+  gboolean          border_radius_set;
+  gchar            *border_radius;
+  gboolean          color_selected;
+  gint              prop;
+
+  g_object_get (G_OBJECT (cell), 
+                "highlight-set", &highlight_set,
+                "highlight", &highlight,
+                "border-radius-set", &border_radius_set,
+                "border-radius", &border_radius, NULL);
+
+  /* parse the border-radius for the 4 corners proportional to either width or height (as passed into the string) */
+  if (G_LIKELY (border_radius_set))
+    {
+      corner_radii = g_strsplit (border_radius, ";", -1);
+      prop = g_ascii_strtod (corner_radii[4], NULL) == 1 ? background_area->width : background_area->height;
+      for (gint i = 0; i < 4; i++)
+        corner_radius[i] = prop * (g_ascii_strtod (corner_radii[i], NULL) / 100.0);
+      g_strfreev (corner_radii);
+    }
+
+  /* clip the background_area to rounded corners */
+  cairo_save (cr);
+  cairo_new_sub_path (cr);
+  cairo_arc (cr,
+             background_area->x + background_area->width - corner_radius[0], /* cairo x coord */
+             background_area->y + corner_radius[0],                          /* cairo y coord */
+             corner_radius[0], -90 * degrees, 0 * degrees);                  /* radius, angle1, angle2 resp. */
+  cairo_arc (cr,
+             background_area->x + background_area->width - corner_radius[1],
+             background_area->y + background_area->height - corner_radius[1],
+             corner_radius[1], 0 * degrees, 90 * degrees);
+  cairo_arc (cr,
+             background_area->x + corner_radius[2],
+             background_area->y + background_area->height - corner_radius[2],
+             corner_radius[2], 90 * degrees, 180 * degrees);
+  cairo_arc (cr,
+             background_area->x + corner_radius[3],
+             background_area->y + corner_radius[3],
+             corner_radius[3], 180 * degrees, 270 * degrees);
+  cairo_close_path (cr);
+  cairo_clip (cr);
+
+  color_selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0;
+
+  if (G_UNLIKELY (highlight_set))
+    {
+      gdk_rgba_parse (&highlight_color, highlight);
+      color = gdk_rgba_copy (&highlight_color);
+    }
+  if (G_UNLIKELY (color_selected))
+    {
+      context = gtk_widget_get_style_context (widget);
+      gtk_style_context_get (context, GTK_STATE_FLAG_SELECTED, GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &color, NULL);
+    }
+
+  if (G_LIKELY (color != NULL))
+    {
+      gdk_cairo_set_source_rgba (cr, color);
+      gdk_rgba_free (color);
+      cairo_paint (cr);
+      if (highlight_set && color_selected && THUNAR_IS_ICON_RENDERER (cell))
+        {
+          cairo_translate (cr, background_area->x + background_area->width / 2.0, background_area->y + background_area->height / 2.0);
+          cairo_arc (cr, 0, 0, MIN (background_area->height, background_area->width) / 2.0, 0, 2 * G_PI);
+          cairo_clip (cr);
+          gdk_cairo_set_source_rgba (cr, &highlight_color);
+          cairo_paint (cr);
+        }
+    }
+  cairo_restore (cr);
+}
+
+
+
+void
+thunar_util_cell_layout_data_function (GtkCellRenderer *cell,
+                                       GtkTreeModel    *model,
+                                       GtkTreeIter     *iter,
+                                       gchar           *border_radius_text,
+                                       gchar           *border_radius_icon)
+{
+  ThunarFile  *file;
+  const gchar *background = NULL;
+  const gchar *foreground = NULL;
+
+  file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
+  background = thunar_file_get_metadata_setting (file, "highlight-color-background");
+  foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
+
+  /* since this function is being used for both icon & name renderers;
+   * we need to make sure the right properties are applied to the right renderers */
+  if (THUNAR_IS_TEXT_RENDERER (cell))
+    g_object_set (G_OBJECT (cell),
+                  "foreground", foreground,
+                  "border-radius", border_radius_text,
+                  "border-radius-set", border_radius_text != NULL ? TRUE : FALSE,
+                  "highlight", background,
+                  "highlight-set", background != NULL ? TRUE : FALSE,
+                  NULL);
+
+  else if (THUNAR_IS_ICON_RENDERER (cell))
+    g_object_set (G_OBJECT (cell),
+                  "border-radius", border_radius_icon,
+                  "border-radius-set", border_radius_icon != NULL ? TRUE : FALSE,
+                  "highlight", background,
+                  "highlight-set", background != NULL ? TRUE : FALSE,
+                  NULL);
+
+  else if (GTK_IS_CELL_RENDERER_TEXT (cell))
+    g_object_set (G_OBJECT (cell),
+                  "foreground", foreground,
+                  "background", background,
+                  NULL);
+
+  else if (GTK_IS_CELL_RENDERER (cell))
+    g_object_set (G_OBJECT (cell),
+                  "cell-background", background,
+                  NULL);
+
+  else
+    g_warn_if_reached ();
+
+  g_object_unref (file);
 }
