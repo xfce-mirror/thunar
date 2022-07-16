@@ -1,6 +1,6 @@
 /* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2022 Amrit Borah <elessar1802@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -29,10 +29,9 @@
 enum
 {
   PROP_0,
-  PROP_HIGHLIGHT,
-  PROP_HIGHLIGHT_SET,
-  PROP_BORDER_RADIUS,
-  PROP_BORDER_RADIUS_SET
+  PROP_HIGHLIGHT_COLOR,
+  PROP_ROUNDED_CORNERS,
+  PROP_HIGHLIGHTING_ENABLED,
 };
 
 
@@ -59,22 +58,21 @@ struct _ThunarTextRendererClass
 {
   GtkCellRendererTextClass __parent__;
 
-  void (*render_func) (GtkCellRenderer      *cell,
-                       cairo_t              *cr,
-                       GtkWidget            *widget,
-                       const GdkRectangle   *background_area,
-                       const GdkRectangle   *cell_area,
-                       GtkCellRendererState  flags);
+  void (*default_render_function) (GtkCellRenderer      *cell,
+                                   cairo_t              *cr,
+                                   GtkWidget            *widget,
+                                   const GdkRectangle   *background_area,
+                                   const GdkRectangle   *cell_area,
+                                   GtkCellRendererState  flags);
 };
 
 struct _ThunarTextRenderer
 {
   GtkCellRendererText  __parent__;
 
-  gchar               *highlight;
-  gboolean             highlight_set;
-  gchar               *border_radius;
-  gboolean             border_radius_set;
+  gchar               *highlight_color;
+  gboolean             rounded_corners;
+  gboolean             highlighting_enabled;
 };
 
 
@@ -94,30 +92,47 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
   object_class->get_property = thunar_text_renderer_get_property;
   object_class->set_property = thunar_text_renderer_set_property;
 
-  klass->render_func = cell_class->render;
+  klass->default_render_function = cell_class->render;
   cell_class->render = thunar_text_renderer_render;
 
+  /**
+   * ThunarTextRenderer:highlight-color:
+   *
+   * The color with which the cell should be highlighted.
+   * #ThunarTextRenderer instance.
+   **/
   g_object_class_install_property (object_class,
-                                   PROP_HIGHLIGHT,
-                                   g_param_spec_string ("highlight", "highlight", "highlight",
+                                   PROP_HIGHLIGHT_COLOR,
+                                   g_param_spec_string ("highlight-color", "highlight-color", "highlight-color",
                                                         NULL,
                                                         EXO_PARAM_READWRITE));
 
+
+
+  /**
+   * ThunarTextRenderer:rounded-corners:
+   *
+   * Determines if the cell should be clipped to rounded-corners.
+   * Useful when highlighting is enabled & a highlight color is set.
+   * #ThunarTextRenderer instance.
+   **/
   g_object_class_install_property (object_class,
-                                   PROP_HIGHLIGHT_SET,
-                                   g_param_spec_boolean ("highlight-set", "highlight-set", "highlight-set",
+                                   PROP_ROUNDED_CORNERS,
+                                   g_param_spec_boolean ("rounded-corners", "rounded-corners", "rounded-corners",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
 
-  g_object_class_install_property (object_class,
-                                   PROP_BORDER_RADIUS,
-                                   g_param_spec_string ("border-radius", "border-radius", "border-radius",
-                                                        NULL,
-                                                        EXO_PARAM_READWRITE));
 
+
+  /**
+   * ThunarTextRenderer:highlighting-enabled:
+   *
+   * Determines if the cell background should be drawn with highlight-color.
+   * #ThunarTextRenderer instance.
+   **/
   g_object_class_install_property (object_class,
-                                   PROP_BORDER_RADIUS_SET,
-                                   g_param_spec_boolean ("border-radius-set", "border-radius-set", "border-radius-set",
+                                   PROP_HIGHLIGHTING_ENABLED,
+                                   g_param_spec_boolean ("highlighting-enabled", "highlighting-enabled", "highlighting-enabled",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
 }
@@ -127,7 +142,7 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
 static void
 thunar_text_renderer_init (ThunarTextRenderer *text_renderer)
 {
-  /* nothing to init */
+  text_renderer->highlight_color = NULL;
 }
 
 
@@ -135,10 +150,9 @@ thunar_text_renderer_init (ThunarTextRenderer *text_renderer)
 static void
 thunar_text_renderer_finalize (GObject *object)
 {
-  ThunarTextRenderer *celltext = THUNAR_TEXT_RENDERER (object);
+  ThunarTextRenderer *text_renderer = THUNAR_TEXT_RENDERER (object);
 
-  g_free (celltext->highlight);
-  g_free (celltext->border_radius);
+  g_free (text_renderer->highlight_color);
 
   G_OBJECT_CLASS (thunar_text_renderer_parent_class)->finalize (object);
 }
@@ -151,24 +165,20 @@ thunar_text_renderer_get_property (GObject    *object,
                                    GValue     *value,
                                    GParamSpec *pspec)
 {
-  ThunarTextRenderer *celltext = THUNAR_TEXT_RENDERER (object);
+  ThunarTextRenderer *text_renderer = THUNAR_TEXT_RENDERER (object);
 
   switch (prop_id)
     {
-    case PROP_HIGHLIGHT:
-      g_value_set_string (value, celltext->highlight);
+    case PROP_HIGHLIGHT_COLOR:
+      g_value_set_string (value, text_renderer->highlight_color);
       break;
 
-    case PROP_HIGHLIGHT_SET:
-      g_value_set_boolean (value, celltext->highlight_set);
+    case PROP_ROUNDED_CORNERS:
+      g_value_set_boolean (value, text_renderer->rounded_corners);
       break;
 
-    case PROP_BORDER_RADIUS:
-      g_value_set_string (value, celltext->border_radius);
-      break;
-
-    case PROP_BORDER_RADIUS_SET:
-      g_value_set_boolean (value, celltext->border_radius_set);
+    case PROP_HIGHLIGHTING_ENABLED:
+      g_value_set_boolean (value, text_renderer->highlighting_enabled);
       break;
 
     default:
@@ -185,28 +195,22 @@ thunar_text_renderer_set_property (GObject      *object,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
-  ThunarTextRenderer *celltext = THUNAR_TEXT_RENDERER (object);
+  ThunarTextRenderer *text_renderer = THUNAR_TEXT_RENDERER (object);
 
   switch (prop_id)
     {
-    case PROP_HIGHLIGHT:
-      if (G_UNLIKELY (celltext->highlight != NULL))
-        g_free (celltext->highlight);
-      celltext->highlight = g_value_dup_string (value);
+    case PROP_HIGHLIGHT_COLOR:
+      if (G_UNLIKELY (text_renderer->highlight_color != NULL))
+        g_free (text_renderer->highlight_color);
+      text_renderer->highlight_color = g_value_dup_string (value);
       break;
 
-    case PROP_HIGHLIGHT_SET:
-      celltext->highlight_set = g_value_get_boolean (value);
+    case PROP_ROUNDED_CORNERS:
+      text_renderer->rounded_corners = g_value_get_boolean (value);
       break;
 
-    case PROP_BORDER_RADIUS:
-      if (G_UNLIKELY (celltext->border_radius != NULL))
-        g_free (celltext->border_radius);
-      celltext->border_radius = g_value_dup_string (value);
-      break;
-
-    case PROP_BORDER_RADIUS_SET:
-      celltext->border_radius_set = g_value_get_boolean (value);
+    case PROP_HIGHLIGHTING_ENABLED:
+      text_renderer->highlighting_enabled = g_value_get_boolean (value);
       break;
 
     default:
@@ -225,7 +229,7 @@ thunar_text_renderer_set_property (GObject      *object,
  * set globally with #g_object_set. Also, with #GtkTreeViewColumn,
  * you can bind a property to a value in a #GtkTreeModel.
  *
- * Return value: the newly allocated #ThunarTextRenderer.
+ * Return value: (transfer full) The newly allocated #ThunarTextRenderer.
  **/
 GtkCellRenderer*
 thunar_text_renderer_new (void)
@@ -243,10 +247,11 @@ thunar_text_renderer_render (GtkCellRenderer      *cell,
                              const GdkRectangle   *cell_area,
                              GtkCellRendererState  flags)
 {
-  thunar_util_clip_view_background (cell, cr, background_area, widget, flags);
+  if (THUNAR_TEXT_RENDERER (cell)->highlighting_enabled)
+    thunar_util_clip_view_background (cell, cr, background_area, widget, flags);
 
   /* we only needed to manipulate the background_area, otherwise everything remains the same.
      Hence, we are simply running the original render function now */
   THUNAR_TEXT_RENDERER_GET_CLASS (THUNAR_TEXT_RENDERER (cell))
-    ->render_func (cell, cr, widget, background_area, cell_area, flags);
+    ->default_render_function (cell, cr, widget, background_area, cell_area, flags);
 }

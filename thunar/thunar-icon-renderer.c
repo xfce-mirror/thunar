@@ -39,10 +39,9 @@ enum
   PROP_EMBLEMS,
   PROP_FOLLOW_STATE,
   PROP_SIZE,
-  PROP_HIGHLIGHT,
-  PROP_HIGHLIGHT_SET,
-  PROP_BORDER_RADIUS,
-  PROP_BORDER_RADIUS_SET
+  PROP_HIGHLIGHT_COLOR,
+  PROP_ROUNDED_CORNERS,
+  PROP_HIGHLIGHTING_ENABLED,
 };
 
 
@@ -163,44 +162,43 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
 
 
   /**
-   * ThunarIconRenderer:highlight:
+   * ThunarTextRenderer:highlight-color:
    *
-   * The color with which the file should be highlighted
-   * #ThunarIconRenderer instance.
+   * The color with which the cell should be highlighted.
+   * #ThunarTextRenderer instance.
    **/
   g_object_class_install_property (gobject_class,
-                                   PROP_HIGHLIGHT,
-                                   g_param_spec_string ("highlight", "highlight", "highlight",
+                                   PROP_HIGHLIGHT_COLOR,
+                                   g_param_spec_string ("highlight-color", "highlight-color", "highlight-color",
                                                         NULL,
                                                         EXO_PARAM_READWRITE));
 
 
 
   /**
-   * ThunarIconRenderer:highlight-set:
+   * ThunarTextRenderer:rounded-corners:
    *
-   * TRUE if highlight color has been set
-   * #ThunarIconRenderer instance.
+   * Determines if the cell should be clipped to rounded-corners.
+   * Useful when highlighting is enabled & a highlight color is set.
+   * #ThunarTextRenderer instance.
    **/
   g_object_class_install_property (gobject_class,
-                                   PROP_HIGHLIGHT_SET,
-                                   g_param_spec_boolean ("highlight-set", "highlight-set", "highlight-set",
+                                   PROP_ROUNDED_CORNERS,
+                                   g_param_spec_boolean ("rounded-corners", "rounded-corners", "rounded-corners",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
 
 
 
+  /**
+   * ThunarTextRenderer:highlighting-enabled:
+   *
+   * Determines if the cell background should be drawn with highlight-color.
+   * #ThunarTextRenderer instance.
+   **/
   g_object_class_install_property (gobject_class,
-                                   PROP_BORDER_RADIUS,
-                                   g_param_spec_string ("border-radius", "border-radius", "border-radius",
-                                                        NULL,
-                                                        EXO_PARAM_READWRITE));
-
-
-
-  g_object_class_install_property (gobject_class,
-                                   PROP_BORDER_RADIUS_SET,
-                                   g_param_spec_boolean ("border-radius-set", "border-radius-set", "border-radius-set",
+                                   PROP_HIGHLIGHTING_ENABLED,
+                                   g_param_spec_boolean ("highlighting-enabled", "highlighting-enabled", "highlighting-enabled",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
 }
@@ -226,8 +224,7 @@ thunar_icon_renderer_finalize (GObject *object)
     g_object_unref (G_OBJECT (icon_renderer->drop_file));
   if (G_LIKELY (icon_renderer->file != NULL))
     g_object_unref (G_OBJECT (icon_renderer->file));
-  g_free (icon_renderer->highlight);
-  g_free (icon_renderer->border_radius);
+  g_free (icon_renderer->highlight_color);
 
   (*G_OBJECT_CLASS (thunar_icon_renderer_parent_class)->finalize) (object);
 }
@@ -264,20 +261,16 @@ thunar_icon_renderer_get_property (GObject    *object,
       g_value_set_enum (value, icon_renderer->size);
       break;
 
-    case PROP_HIGHLIGHT:
-      g_value_set_string (value, icon_renderer->highlight);
+    case PROP_HIGHLIGHT_COLOR:
+      g_value_set_string (value, icon_renderer->highlight_color);
       break;
 
-    case PROP_HIGHLIGHT_SET:
-      g_value_set_boolean (value, icon_renderer->highlight_set);
+    case PROP_ROUNDED_CORNERS:
+      g_value_set_boolean (value, icon_renderer->rounded_corners);
       break;
 
-    case PROP_BORDER_RADIUS:
-      g_value_set_string (value, icon_renderer->border_radius);
-      break;
-
-    case PROP_BORDER_RADIUS_SET:
-      g_value_set_boolean (value, icon_renderer->border_radius_set);
+    case PROP_HIGHLIGHTING_ENABLED:
+      g_value_set_boolean (value, icon_renderer->highlighting_enabled);
       break;
 
     default:
@@ -322,24 +315,18 @@ thunar_icon_renderer_set_property (GObject      *object,
       icon_renderer->size = g_value_get_enum (value);
       break;
 
-    case PROP_HIGHLIGHT:
-      if (G_UNLIKELY (icon_renderer->highlight != NULL))
-        g_free (icon_renderer->highlight);
-      icon_renderer->highlight = g_value_dup_string (value);
+    case PROP_HIGHLIGHT_COLOR:
+      if (G_UNLIKELY (icon_renderer->highlight_color != NULL))
+        g_free (icon_renderer->highlight_color);
+      icon_renderer->highlight_color = g_value_dup_string (value);
       break;
 
-    case PROP_HIGHLIGHT_SET:
-      icon_renderer->highlight_set = g_value_get_boolean (value);
+    case PROP_ROUNDED_CORNERS:
+      icon_renderer->rounded_corners = g_value_get_boolean (value);
       break;
 
-    case PROP_BORDER_RADIUS:
-      if (G_UNLIKELY (icon_renderer->border_radius != NULL))
-        g_free (icon_renderer->border_radius);
-      icon_renderer->border_radius = g_value_dup_string (value);
-      break;
-
-    case PROP_BORDER_RADIUS_SET:
-      icon_renderer->border_radius_set = g_value_get_boolean (value);
+    case PROP_HIGHLIGHTING_ENABLED:
+      icon_renderer->highlighting_enabled = g_value_get_boolean (value);
       break;
 
     default:
@@ -492,7 +479,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
 
   g_object_get (renderer, "is-expanded", &is_expanded, NULL);
 
-  thunar_util_clip_view_background (renderer, cr, background_area, widget, flags);
+  if (THUNAR_ICON_RENDERER (renderer)->highlighting_enabled)
+    thunar_util_clip_view_background (renderer, cr, background_area, widget, flags);
 
   /* determine the icon state */
   icon_state = (icon_renderer->drop_file != icon_renderer->file)

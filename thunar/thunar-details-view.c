@@ -125,12 +125,6 @@ static void         thunar_details_view_highlight_option_changed(ThunarDetailsVi
 struct _ThunarDetailsViewClass
 {
   ThunarStandardViewClass __parent__;
-
-  void (*cell_layout_data_func) (GtkCellLayout   *layout,
-                                 GtkCellRenderer *cell,
-                                 GtkTreeModel    *model,
-                                 GtkTreeIter     *iter,
-                                 gpointer         data);
 };
 
 
@@ -176,7 +170,6 @@ static void
 thunar_details_view_class_init (ThunarDetailsViewClass *klass)
 {
   ThunarStandardViewClass *thunarstandard_view_class;
-  ThunarDetailsViewClass  *thunar_details_view_class;
   GtkWidgetClass          *gtkwidget_class;
   GObjectClass            *gobject_class;
 
@@ -187,9 +180,6 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->get_accessible = thunar_details_view_get_accessible;
-
-  thunar_details_view_class = THUNAR_DETAILS_VIEW_CLASS (klass);
-  thunar_details_view_class->cell_layout_data_func = thunar_details_view_cell_layout_data_func;
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
   thunarstandard_view_class->get_selected_items = thunar_details_view_get_selected_items;
@@ -206,6 +196,7 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
   thunarstandard_view_class->connect_accelerators = thunar_details_view_connect_accelerators;
   thunarstandard_view_class->disconnect_accelerators = thunar_details_view_disconnect_accelerators;
   thunarstandard_view_class->zoom_level_property_name = "last-details-view-zoom-level";
+  thunarstandard_view_class->cell_layout_data_func = thunar_details_view_cell_layout_data_func;
 
   xfce_gtk_translate_action_entries (thunar_details_view_action_entries, G_N_ELEMENTS (thunar_details_view_action_entries));
 
@@ -1186,7 +1177,9 @@ thunar_details_view_cell_layout_data_func (GtkCellLayout   *layout,
                                            GtkTreeIter     *iter,
                                            gpointer         data)
 {
-  thunar_util_cell_layout_data_function(cell, model, iter, NULL, NULL);
+  ThunarFile *file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
+
+  thunar_util_set_custom_cell_style (cell, file);
 }
 
 
@@ -1201,7 +1194,7 @@ thunar_details_view_highlight_option_changed (ThunarDetailsView *details_view)
   g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences), "misc-highlighting-enabled", &show_highlight, NULL);
 
   if (show_highlight)
-    function = (GtkTreeCellDataFunc) THUNAR_DETAILS_VIEW_GET_CLASS (details_view)->cell_layout_data_func;
+    function = (GtkTreeCellDataFunc) THUNAR_STANDARD_VIEW_GET_CLASS (details_view)->cell_layout_data_func;
 
   /* set the data functions for the respective renderers */
   for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; column++)
@@ -1210,4 +1203,9 @@ thunar_details_view_highlight_option_changed (ThunarDetailsView *details_view)
                                                GTK_CELL_RENDERER (details_view->renderers[column]),
                                                function, NULL, NULL);
     }
+
+  /* for icons */
+  gtk_tree_view_column_set_cell_data_func (GTK_TREE_VIEW_COLUMN (details_view->columns[THUNAR_COLUMN_NAME]),
+                                           THUNAR_STANDARD_VIEW (details_view)->icon_renderer,
+                                           function, NULL, NULL);
 }
