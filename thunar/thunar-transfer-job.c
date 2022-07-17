@@ -1270,6 +1270,7 @@ thunar_transfer_job_move_file_with_rename (ExoJob             *job,
 
 static gboolean
 thunar_transfer_job_move_file (ExoJob                *job,
+                               ThunarJobOperation    *operation,
                                GFileInfo             *info,
                                GList                 *sp,
                                ThunarTransferNode    *node,
@@ -1339,6 +1340,8 @@ thunar_transfer_job_move_file (ExoJob                *job,
 
           /* add the target file to the new files list */
           *new_files_list_p = thunar_g_list_prepend_deep (*new_files_list_p, tp->data);
+
+          thunar_job_operation_add (operation, node->source_file, tp->data);
         }
 
       /* release source and target files */
@@ -1591,6 +1594,9 @@ thunar_transfer_job_execute (ExoJob  *job,
   thumbnail_cache = thunar_application_get_thumbnail_cache (application);
   g_object_unref (application);
 
+  if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE)
+    operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_MOVE);
+
   for (sp = transfer_job->source_node_list, tp = transfer_job->target_file_list;
        sp != NULL && tp != NULL && err == NULL;
        sp = snext, tp = tnext)
@@ -1619,14 +1625,14 @@ thunar_transfer_job_execute (ExoJob  *job,
         {
           if (!thunar_transfer_job_prepare_untrash_file (job, info, tp->data, &err))
             break;
-          if (!thunar_transfer_job_move_file (job, info, sp, node, tp,
+          if (!thunar_transfer_job_move_file (job, operation, info, sp, node, tp,
                                               G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA,
                                               thumbnail_cache, &new_files_list, &err))
             break;
         }
       else if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE)
         {
-          if (!thunar_transfer_job_move_file (job, info, sp, node, tp,
+          if (!thunar_transfer_job_move_file (job, operation, info, sp, node, tp,
                                               G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_NO_FALLBACK_FOR_MOVE | G_FILE_COPY_ALL_METADATA,
                                               thumbnail_cache, &new_files_list, &err))
             break;
@@ -1638,6 +1644,13 @@ thunar_transfer_job_execute (ExoJob  *job,
         }
 
       g_object_unref (info);
+    }
+
+  if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE)
+    {
+      thunar_job_operation_commit (operation);
+      g_object_unref (operation);
+      operation = NULL;
     }
 
   /* release the thumbnail cache */
@@ -1663,6 +1676,7 @@ thunar_transfer_job_execute (ExoJob  *job,
 
       /* transfer starts now */
       transfer_job->start_time = g_get_real_time ();
+
       operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_COPY);
 
       /* perform the copy recursively for all source transfer nodes */
