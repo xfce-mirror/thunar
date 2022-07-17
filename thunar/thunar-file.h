@@ -287,6 +287,8 @@ void              thunar_file_set_metadata_setting       (ThunarFile            
                                                           const gchar            *setting_name,
                                                           const gchar            *setting_value,
                                                           gboolean                async);
+void              thunar_file_clear_metadata_setting     (ThunarFile             *file,
+                                                          const gchar            *setting_name);
 void              thunar_file_clear_directory_specific_settings (ThunarFile      *file);
 gboolean          thunar_file_has_directory_specific_settings   (ThunarFile      *file);
 
