@@ -326,7 +326,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
             /* Use a singleton list for the source */
             source_file_list = g_list_append (NULL, slp->data);
 
-            thunar_application_move_into (application, NULL, source_file_list, target_parent, NULL);
+            thunar_application_move_into (application, NULL, source_file_list, target_parent, THUNAR_OPERATION_LOG_NONE, NULL);
 
             g_list_free (source_file_list);
           }

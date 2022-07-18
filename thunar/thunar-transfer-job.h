@@ -23,6 +23,8 @@
 
 #include <glib-object.h>
 
+#include <thunar/thunar-job-operation.h>
+
 G_BEGIN_DECLS
 
 /**
@@ -59,6 +61,8 @@ gchar     *thunar_transfer_job_get_status (ThunarTransferJob    *job);
 
 gboolean   thunar_transfer_job_can_start  (ThunarTransferJob *transfer_job,
                                            GList             *running_job_list);
+void       thunar_transfer_job_set_log    (ThunarTransferJob *job,
+                                           ThunarOperationLogFlag flag);
 
 G_END_DECLS
 

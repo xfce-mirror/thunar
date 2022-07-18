@@ -107,6 +107,7 @@ struct _ThunarTransferJob
   ThunarParallelCopyMode  parallel_copy_mode;
   ThunarUsePartialMode    transfer_use_partial;
   ThunarVerifyFileMode    transfer_verify_file;
+  gboolean                log_operation_for_undo;
 };
 
 struct _ThunarTransferNode
@@ -1341,7 +1342,8 @@ thunar_transfer_job_move_file (ExoJob                *job,
           /* add the target file to the new files list */
           *new_files_list_p = thunar_g_list_prepend_deep (*new_files_list_p, tp->data);
 
-          thunar_job_operation_add (operation, node->source_file, tp->data);
+          if (transfer_job->log_operation_for_undo)
+            thunar_job_operation_add (operation, node->source_file, tp->data);
         }
 
       /* release source and target files */
@@ -1572,7 +1574,7 @@ thunar_transfer_job_execute (ExoJob  *job,
   ThunarTransferNode   *node;
   ThunarApplication    *application;
   ThunarTransferJob    *transfer_job = THUNAR_TRANSFER_JOB (job);
-  ThunarJobOperation   *operation;
+  ThunarJobOperation   *operation = NULL;
   GFileInfo            *info;
   GError               *err = NULL;
   GList                *new_files_list = NULL;
@@ -1594,7 +1596,7 @@ thunar_transfer_job_execute (ExoJob  *job,
   thumbnail_cache = thunar_application_get_thumbnail_cache (application);
   g_object_unref (application);
 
-  if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE)
+  if (transfer_job->log_operation_for_undo && transfer_job->type == THUNAR_TRANSFER_JOB_MOVE)
     operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_MOVE);
 
   for (sp = transfer_job->source_node_list, tp = transfer_job->target_file_list;
@@ -1646,7 +1648,7 @@ thunar_transfer_job_execute (ExoJob  *job,
       g_object_unref (info);
     }
 
-  if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE)
+  if (transfer_job->log_operation_for_undo && transfer_job->type == THUNAR_TRANSFER_JOB_MOVE)
     {
       thunar_job_operation_commit (operation);
       g_object_unref (operation);
@@ -1848,4 +1850,23 @@ thunar_transfer_job_get_status (ThunarTransferJob *job)
     }
 
   return g_string_free (status, FALSE);
+}
+
+void
+thunar_transfer_job_set_log (ThunarTransferJob *job,
+                             ThunarOperationLogFlag flag)
+{
+  switch (flag)
+    {
+      case THUNAR_OPERATION_LOG_FOR_UNDO:
+        job->log_operation_for_undo = TRUE;
+        break;
+
+      case THUNAR_OPERATION_LOG_NONE:
+        job->log_operation_for_undo = FALSE;
+        break;
+
+      default:
+        _thunar_assert_not_reached ();
+    }
 }

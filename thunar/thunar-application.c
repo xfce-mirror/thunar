@@ -57,6 +57,7 @@
 #include <thunar/thunar-renamer-dialog.h>
 #include <thunar/thunar-thumbnail-cache.h>
 #include <thunar/thunar-thumbnailer.h>
+#include <thunar/thunar-transfer-job.h>
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-view.h>
 #include <thunar/thunar-session-client.h>
@@ -144,6 +145,7 @@ static void           thunar_application_collect_and_launch     (ThunarApplicati
                                                                  GFile                  *target_file,
                                                                  gboolean                update_source_folders,
                                                                  gboolean                update_target_folders,
+                                                                 ThunarOperationLogFlag  operation_log_flag,
                                                                  GClosure               *new_files_closure);
 static void           thunar_application_launch_finished        (ThunarJob              *job,
                                                                  GList                  *containing_folders);
@@ -156,6 +158,7 @@ static void           thunar_application_launch                 (ThunarApplicati
                                                                  GList                  *target_path_list,
                                                                  gboolean                update_source_folders,
                                                                  gboolean                update_target_folders,
+                                                                 ThunarOperationLogFlag  operation_log_flag,
                                                                  GClosure               *new_files_closure);
 #ifdef HAVE_GUDEV
 static void           thunar_application_uevent                 (GUdevClient            *client,
@@ -806,16 +809,17 @@ thunar_application_accel_map_changed (ThunarApplication *application)
 
 
 static void
-thunar_application_collect_and_launch (ThunarApplication *application,
-                                       gpointer           parent,
-                                       const gchar       *icon_name,
-                                       const gchar       *title,
-                                       Launcher           launcher,
-                                       GList             *source_file_list,
-                                       GFile             *target_file,
-                                       gboolean           update_source_folders,
-                                       gboolean           update_target_folders,
-                                       GClosure          *new_files_closure)
+thunar_application_collect_and_launch (ThunarApplication      *application,
+                                       gpointer                parent,
+                                       const gchar            *icon_name,
+                                       const gchar            *title,
+                                       Launcher                launcher,
+                                       GList                  *source_file_list,
+                                       GFile                  *target_file,
+                                       gboolean                update_source_folders,
+                                       gboolean                update_target_folders,
+                                       ThunarOperationLogFlag  operation_log_flag,
+                                       GClosure               *new_files_closure)
 {
   GFile  *file;
   GError *err = NULL;
@@ -861,7 +865,7 @@ thunar_application_collect_and_launch (ThunarApplication *application,
     {
       /* launch the operation */
       thunar_application_launch (application, parent, icon_name, title, launcher,
-                                 source_file_list, target_file_list, update_source_folders, update_target_folders, new_files_closure);
+                                 source_file_list, target_file_list, update_source_folders, update_target_folders, operation_log_flag, new_files_closure);
     }
 
   /* release the target path list */
@@ -911,16 +915,17 @@ thunar_application_launch_finished (ThunarJob  *job,
 
 
 static void
-thunar_application_launch (ThunarApplication *application,
-                           gpointer           parent,
-                           const gchar       *icon_name,
-                           const gchar       *title,
-                           Launcher           launcher,
-                           GList             *source_file_list,
-                           GList             *target_file_list,
-                           gboolean           update_source_folders,
-                           gboolean           update_target_folders,
-                           GClosure          *new_files_closure)
+thunar_application_launch (ThunarApplication     *application,
+                           gpointer               parent,
+                           const gchar           *icon_name,
+                           const gchar           *title,
+                           Launcher               launcher,
+                           GList                 *source_file_list,
+                           GList                 *target_file_list,
+                           gboolean               update_source_folders,
+                           gboolean               update_target_folders,
+                           ThunarOperationLogFlag operation_log_flag,
+                           GClosure              *new_files_closure)
 {
   GtkWidget *dialog;
   GdkScreen *screen;
@@ -940,6 +945,9 @@ thunar_application_launch (ThunarApplication *application,
     parent_folder_list = g_list_concat (parent_folder_list, thunar_g_file_list_get_parents (source_file_list));
   if (update_target_folders)
     parent_folder_list = g_list_concat (parent_folder_list, thunar_g_file_list_get_parents (target_file_list));
+
+  if (THUNAR_IS_TRANSFER_JOB (job))
+    thunar_transfer_job_set_log (THUNAR_TRANSFER_JOB (job), operation_log_flag);
 
   /* connect a callback to instantly refresh the parent folders after the operation finished */
   g_signal_connect (G_OBJECT (job), "finished",
@@ -2066,7 +2074,8 @@ thunar_application_copy_to (ThunarApplication *application,
   /* launch the operation */
   thunar_application_launch (application, parent, "edit-copy",
                              _("Copying files..."), thunar_io_jobs_copy_files,
-                             source_file_list, target_file_list, FALSE, TRUE, new_files_closure);
+                             /* TODO: add parameter for thunar operation log file along with undo-ing it */
+                             source_file_list, target_file_list, FALSE, TRUE, THUNAR_OPERATION_LOG_FOR_UNDO, new_files_closure);
 }
 
 
@@ -2131,6 +2140,7 @@ thunar_application_copy_into (ThunarApplication *application,
                                          title, thunar_io_jobs_copy_files,
                                          source_file_list, target_file,
                                          FALSE, TRUE,
+                                         THUNAR_OPERATION_LOG_FOR_UNDO, /* FIXME update to add argument to take in log flag instead*/
                                          new_files_closure);
 
   /* free */
@@ -2184,6 +2194,7 @@ thunar_application_link_into (ThunarApplication *application,
                                          title, thunar_io_jobs_link_files,
                                          source_file_list, target_file,
                                          FALSE, TRUE,
+                                         THUNAR_OPERATION_LOG_FOR_UNDO, /* FIXME update to add argument to take in log flag instead*/
                                          new_files_closure);
 
   /* free the title */
@@ -2208,11 +2219,12 @@ thunar_application_link_into (ThunarApplication *application,
  * interaction.
  **/
 void
-thunar_application_move_into (ThunarApplication *application,
-                              gpointer           parent,
-                              GList             *source_file_list,
-                              GFile             *target_file,
-                              GClosure          *new_files_closure)
+thunar_application_move_into (ThunarApplication      *application,
+                              gpointer                parent,
+                              GList                  *source_file_list,
+                              GFile                  *target_file,
+                              ThunarOperationLogFlag  operation_log_flag,
+                              GClosure               *new_files_closure)
 {
   gchar *display_name;
   gchar *title;
@@ -2251,6 +2263,7 @@ thunar_application_move_into (ThunarApplication *application,
                                              thunar_io_jobs_move_files,
                                              source_file_list, target_file,
                                              TRUE, TRUE,
+                                             operation_log_flag,
                                              new_files_closure);
 
       /* free the title */
@@ -2361,7 +2374,8 @@ thunar_application_unlink_files (ThunarApplication *application,
           /* launch the "Delete" operation */
           thunar_application_launch (application, parent, "edit-delete",
                                      _("Deleting files..."), unlink_stub,
-                                     path_list, path_list, TRUE, FALSE, NULL);
+                                     /* TODO: add parameter for thunar operation log file along with undo-ing it */
+                                     path_list, path_list, TRUE, FALSE, THUNAR_OPERATION_LOG_FOR_UNDO, NULL);
         }
     }
   else
@@ -2396,7 +2410,8 @@ thunar_application_trash (ThunarApplication *application,
 
   thunar_application_launch (application, parent, "user-trash-full",
                              _("Moving files into the trash..."), trash_stub,
-                             file_list, NULL, TRUE, FALSE, NULL);
+                             /* TODO: add parameter for thunar operation log file along with undo-ing it */
+                             file_list, NULL, TRUE, FALSE, THUNAR_OPERATION_LOG_FOR_UNDO, NULL);
 }
 
 
@@ -2442,7 +2457,8 @@ thunar_application_creat (ThunarApplication *application,
   /* launch the operation */
   thunar_application_launch (application, parent, "document-new",
                              _("Creating files..."), creat_stub,
-                             &template_list, file_list, FALSE, TRUE, new_files_closure);
+                             /* TODO: add parameter for thunar operation log file along with undo-ing it */
+                             &template_list, file_list, FALSE, TRUE, THUNAR_OPERATION_LOG_FOR_UNDO, new_files_closure);
 }
 
 
@@ -2481,7 +2497,8 @@ thunar_application_mkdir (ThunarApplication *application,
   /* launch the operation */
   thunar_application_launch (application, parent, "folder-new",
                              _("Creating directories..."), mkdir_stub,
-                             file_list, file_list, TRUE, FALSE, new_files_closure);
+                             /* TODO: add parameter for thunar operation log file along with undo-ing it */
+                             file_list, file_list, TRUE, FALSE, THUNAR_OPERATION_LOG_FOR_UNDO, new_files_closure);
 }
 
 
@@ -2547,7 +2564,8 @@ thunar_application_empty_trash (ThunarApplication *application,
       /* launch the operation */
       thunar_application_launch (application, parent, "user-trash",
                                  _("Emptying the Trash..."),
-                                 unlink_stub, &file_list, NULL, TRUE, FALSE, NULL);
+                                 /* TODO: add parameter for thunar operation log file along with undo-ing it */
+                                 unlink_stub, &file_list, NULL, TRUE, FALSE, THUNAR_OPERATION_LOG_FOR_UNDO, NULL);
 
       /* cleanup */
       g_object_unref (file_list.data);
@@ -2618,7 +2636,8 @@ thunar_application_restore_files (ThunarApplication *application,
       /* launch the operation */
       thunar_application_launch (application, parent, "stock_folder-move",
                                  _("Restoring files..."), thunar_io_jobs_restore_files,
-                                 source_path_list, target_path_list, TRUE, TRUE, new_files_closure);
+                                 /* TODO: add parameter for thunar operation log file along with undo-ing it */
+                                 source_path_list, target_path_list, TRUE, TRUE, THUNAR_OPERATION_LOG_FOR_UNDO, new_files_closure);
     }
 
   /* free path lists */
