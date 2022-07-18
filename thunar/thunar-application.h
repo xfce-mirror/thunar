@@ -23,6 +23,7 @@
 #ifndef __THUNAR_APPLICATION_H__
 #define __THUNAR_APPLICATION_H__
 
+#include <thunar/thunar-job-operation.h>
 #include <thunar/thunar-window.h>
 #include <thunar/thunar-thumbnail-cache.h>
 
@@ -115,11 +116,12 @@ void                  thunar_application_link_into                 (ThunarApplic
                                                                     GFile             *target_file,
                                                                     GClosure          *new_files_closure);
 
-void                  thunar_application_move_into                 (ThunarApplication *application,
-                                                                    gpointer           parent,
-                                                                    GList             *source_file_list,
-                                                                    GFile             *target_file,
-                                                                    GClosure          *new_files_closure);
+void                  thunar_application_move_into                 (ThunarApplication      *application,
+                                                                    gpointer                parent,
+                                                                    GList                  *source_file_list,
+                                                                    GFile                  *target_file,
+                                                                    ThunarOperationLogFlag  operation_log_flag,
+                                                                    GClosure               *new_files_closure);
 
 void                  thunar_application_unlink_files              (ThunarApplication *application,
                                                                     gpointer           parent,
