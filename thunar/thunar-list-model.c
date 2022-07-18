@@ -2961,7 +2961,7 @@ thunar_list_model_get_statusbar_text_for_files (ThunarListModel *store,
       g_free (temp_string);
     }
 
-  temp_string = thunar_util_strjoin_list (text_list, " | ");
+  temp_string = thunar_util_strjoin_list (text_list, "  |  ");
   g_list_free_full (text_list, g_free);
   return temp_string;
 }
@@ -3151,7 +3151,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       g_free (selected_string);
     }
 
-  text = thunar_util_strjoin_list (text_list, " | ");
+  text = thunar_util_strjoin_list (text_list, "  |  ");
   g_list_free_full (text_list, g_free);
   g_object_unref (preferences);
   return text;
