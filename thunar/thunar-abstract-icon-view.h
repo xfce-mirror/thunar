@@ -38,12 +38,6 @@ typedef struct _ThunarAbstractIconView        ThunarAbstractIconView;
 struct _ThunarAbstractIconViewClass
 {
   ThunarStandardViewClass __parent__;
-
-  void (*cell_layout_data_func) (GtkCellLayout   *layout,
-                                 GtkCellRenderer *cell,
-                                 GtkTreeModel    *model,
-                                 GtkTreeIter     *iter,
-                                 gpointer         data);
 };
 
 struct _ThunarAbstractIconView

@@ -287,6 +287,7 @@ static void                 thunar_standard_view_set_sort_order                 
                                                                                     GtkSortType               order);
 static gboolean             thunar_standard_view_toggle_sort_order                 (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_store_sort_column                 (ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_highlight_option_changed          (ThunarStandardView       *standard_view);
 
 struct _ThunarStandardViewPrivate
 {
@@ -793,6 +794,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   g_object_ref_sink (G_OBJECT (standard_view->icon_renderer));
   g_object_bind_property (G_OBJECT (standard_view), "zoom-level", G_OBJECT (standard_view->icon_renderer), "size", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->priv->thumbnailer), "thumbnail-size", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-highlighting-enabled", G_OBJECT (standard_view->icon_renderer), "highlighting-enabled", G_BINDING_SYNC_CREATE);
 
   /* setup the name renderer */
   standard_view->name_renderer = thunar_text_renderer_new ();
@@ -804,6 +806,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
                 "xalign", 0.5,
                 NULL);
   g_object_ref_sink (G_OBJECT (standard_view->name_renderer));
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-highlighting-enabled", G_OBJECT (standard_view->name_renderer), "highlighting-enabled", G_BINDING_SYNC_CREATE);
 
   /* TODO: prelit underline
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (standard_view->name_renderer), "follow-prelit", G_BINDING_SYNC_CREATE);*/
@@ -818,6 +821,10 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
 
   /* be sure to update the statusbar text whenever the file-size-binary property changes */
   g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::file-size-binary", G_CALLBACK (thunar_standard_view_update_statusbar_text), standard_view);
+
+  g_signal_connect_swapped (standard_view->preferences, "notify::misc-highlighting-enabled",
+                            G_CALLBACK (thunar_standard_view_highlight_option_changed), standard_view);
+  thunar_standard_view_highlight_option_changed (standard_view);
 
   /* connect to size allocation signals for generating thumbnail requests */
   g_signal_connect_after (G_OBJECT (standard_view), "size-allocate",
@@ -1043,6 +1050,8 @@ thunar_standard_view_finalize (GObject *object)
 
   /* release the scroll_to_files hash table */
   g_hash_table_destroy (standard_view->priv->scroll_to_files);
+
+  g_signal_handlers_disconnect_by_func (standard_view->preferences, thunar_standard_view_highlight_option_changed, standard_view);
 
   (*G_OBJECT_CLASS (thunar_standard_view_parent_class)->finalize) (object);
 }
@@ -1934,6 +1943,8 @@ thunar_standard_view_reload (ThunarView *view,
   /* schedule thumbnail reload update */
   if (!standard_view->priv->thumbnailing_scheduled)
     thunar_standard_view_schedule_thumbnail_idle (standard_view);
+
+  thunar_standard_view_highlight_option_changed (standard_view);
 }
 
 
@@ -4340,4 +4351,36 @@ XfceGtkActionEntry*
 thunar_standard_view_get_action_entries (void)
 {
   return thunar_standard_view_action_entries;
+}
+
+
+
+static void
+thunar_standard_view_highlight_option_changed (ThunarStandardView *standard_view)
+{
+  GtkWidget             *view = gtk_bin_get_child (GTK_BIN (standard_view));
+  GtkCellLayout         *layout = NULL;
+  GtkCellLayoutDataFunc  function = NULL;
+  gboolean               show_highlight;
+
+  /* Details view can't be handled here since it has additional local cell renderers */
+  if (GTK_IS_TREE_VIEW (view))
+    return;
+
+  g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (standard_view)->preferences), "misc-highlighting-enabled", &show_highlight, NULL);
+
+  if (show_highlight)
+    function = (GtkCellLayoutDataFunc) THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->cell_layout_data_func;
+
+  layout = GTK_CELL_LAYOUT (view);
+
+  if (!GTK_IS_CELL_LAYOUT (layout))
+    return;
+
+  gtk_cell_layout_set_cell_data_func (layout,
+                                      standard_view->icon_renderer,
+                                      function, NULL, NULL);
+  gtk_cell_layout_set_cell_data_func (layout,
+                                      standard_view->name_renderer,
+                                      function, NULL, NULL);
 }
