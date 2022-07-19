@@ -22,10 +22,16 @@
 #endif
 
 #include <thunar/thunar-compact-view.h>
+#include <thunar/thunar-util.h>
 
 
 
-static AtkObject   *thunar_compact_view_get_accessible (GtkWidget               *widget);
+static AtkObject   *thunar_compact_view_get_accessible         (GtkWidget       *widget);
+static void         thunar_compact_view_cell_layout_data_func  (GtkCellLayout   *layout,
+                                                                GtkCellRenderer *cell,
+                                                                GtkTreeModel    *model,
+                                                                GtkTreeIter     *iter,
+                                                                gpointer         data);
 
 
 
@@ -48,14 +54,16 @@ G_DEFINE_TYPE (ThunarCompactView, thunar_compact_view, THUNAR_TYPE_ABSTRACT_ICON
 static void
 thunar_compact_view_class_init (ThunarCompactViewClass *klass)
 {
-  ThunarStandardViewClass *thunarstandard_view_class;
-  GtkWidgetClass          *gtkwidget_class;
+  ThunarStandardViewClass     *thunarstandard_view_class;
+  GtkWidgetClass              *gtkwidget_class;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->get_accessible = thunar_compact_view_get_accessible;
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
   thunarstandard_view_class->zoom_level_property_name = "last-compact-view-zoom-level";
+
+  thunarstandard_view_class->cell_layout_data_func = thunar_compact_view_cell_layout_data_func;
 
   /* override ThunarAbstractIconView default row spacing */
   gtk_widget_class_install_style_property(gtkwidget_class, g_param_spec_int (
@@ -124,3 +132,14 @@ thunar_compact_view_get_accessible (GtkWidget *widget)
 
 
 
+static void
+thunar_compact_view_cell_layout_data_func (GtkCellLayout   *layout,
+                                           GtkCellRenderer *cell,
+                                           GtkTreeModel    *model,
+                                           GtkTreeIter     *iter,
+                                           gpointer         data)
+{
+  ThunarFile *file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
+
+  thunar_util_set_custom_cell_style (cell, file);
+}
