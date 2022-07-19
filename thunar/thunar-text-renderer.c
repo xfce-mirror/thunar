@@ -229,7 +229,7 @@ thunar_text_renderer_set_property (GObject      *object,
  * set globally with #g_object_set. Also, with #GtkTreeViewColumn,
  * you can bind a property to a value in a #GtkTreeModel.
  *
- * Return value: the newly allocated #ThunarTextRenderer.
+ * Return value: (transfer full) The newly allocated #ThunarTextRenderer.
  **/
 GtkCellRenderer*
 thunar_text_renderer_new (void)
