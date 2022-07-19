@@ -28,6 +28,7 @@
 
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-file.h>
+#include <thunar/thunar-job-operation.h>
 
 G_BEGIN_DECLS
 
@@ -104,6 +105,10 @@ gboolean          thunar_job_files_ready            (ThunarJob       *job,
                                                      GList           *file_list);
 void              thunar_job_new_files              (ThunarJob       *job,
                                                      const GList     *file_list);
+
+void                    thunar_job_set_log_mode     (ThunarJob              *job,
+                                                     ThunarOperationLogMode  log_mode);
+ThunarOperationLogMode  thunar_job_get_log_mode     (ThunarJob *job);
 G_END_DECLS
 
 #endif /* !__THUNAR_JOB_H__ */

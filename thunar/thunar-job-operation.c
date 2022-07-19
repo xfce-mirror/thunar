@@ -268,8 +268,6 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
   GList             *thunar_file_list = NULL;
   GError            *error            = NULL;
   ThunarFile        *thunar_file;
-  GList             *source_file_list;
-  GFile             *target_parent;
 
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
@@ -309,27 +307,9 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
         break;
 
       case THUNAR_JOB_OPERATION_KIND_MOVE:
-        for (GList *slp = job_operation->source_file_list, *tlp = job_operation->target_file_list;
-             slp != NULL && tlp != NULL;
-             slp = slp->next, tlp = tlp->next)
-          {
-            if (!G_IS_FILE (slp->data))
-              {
-                g_warning ("One of the files in the job operation list was not a valid GFile");
-                continue;
-              }
-
-            /* thunar_application_move_into expects a single directory to move the given files
-             * into, so get the parent for each pair and use that. */
-            target_parent = g_file_get_parent (tlp->data);
-
-            /* Use a singleton list for the source */
-            source_file_list = g_list_append (NULL, slp->data);
-
-            thunar_application_move_into (application, NULL, source_file_list, target_parent, THUNAR_OPERATION_LOG_NONE, NULL);
-
-            g_list_free (source_file_list);
-          }
+        thunar_application_move_files (application, NULL,
+                                       job_operation->source_file_list, job_operation->target_file_list,
+                                       THUNAR_OPERATION_LOG_NO_OPERATIONS, NULL);
         break;
 
       default:

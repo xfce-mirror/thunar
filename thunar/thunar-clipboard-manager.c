@@ -332,7 +332,7 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
       if (G_LIKELY (path_copy))
         thunar_application_copy_into (application, request->widget, file_list, request->target_file, request->new_files_closure);
       else
-        thunar_application_move_into (application, request->widget, file_list, request->target_file, THUNAR_OPERATION_LOG_FOR_UNDO, request->new_files_closure);
+        thunar_application_move_into (application, request->widget, file_list, request->target_file, THUNAR_OPERATION_LOG_OPERATIONS, request->new_files_closure);
       g_object_unref (G_OBJECT (application));
       thunar_g_list_free_full (file_list);
 
