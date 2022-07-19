@@ -66,15 +66,16 @@ static ThunarJobResponse thunar_job_real_ask_replace    (ThunarJob          *job
 
 struct _ThunarJobPrivate
 {
-  ThunarJobResponse earlier_ask_create_response;
-  ThunarJobResponse earlier_ask_overwrite_response;
-  ThunarJobResponse earlier_ask_delete_response;
-  ThunarJobResponse earlier_ask_skip_response;
-  GList            *total_files;
-  guint             n_total_files;
-  gboolean          pausable;
-  gboolean          paused; /* the job has been manually paused using the UI */
-  gboolean          frozen; /* the job has been automaticaly paused regarding some parallel copy behavior */
+  ThunarJobResponse         earlier_ask_create_response;
+  ThunarJobResponse         earlier_ask_overwrite_response;
+  ThunarJobResponse         earlier_ask_delete_response;
+  ThunarJobResponse         earlier_ask_skip_response;
+  GList                    *total_files;
+  guint                     n_total_files;
+  gboolean                  pausable;
+  gboolean                  paused; /* the job has been manually paused using the UI */
+  gboolean                  frozen; /* the job has been automaticaly paused regarding some parallel copy behavior */
+  ThunarOperationLogMode    log_mode;
 };
 
 
@@ -803,4 +804,19 @@ thunar_job_processing_file (ThunarJob *job,
   /* verify that we have total files set */
   if (G_LIKELY (job->priv->n_total_files > 0))
     exo_job_percent (EXO_JOB (job), (n_processed * 100.0) / job->priv->n_total_files);
+}
+
+
+
+void
+thunar_job_set_log_mode (ThunarJob             *job,
+                         ThunarOperationLogMode log_mode)
+{
+  job->priv->log_mode = log_mode;
+}
+
+ThunarOperationLogMode
+thunar_job_get_log_mode (ThunarJob *job)
+{
+  return job->priv->log_mode;
 }
