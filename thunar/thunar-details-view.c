@@ -1186,7 +1186,9 @@ thunar_details_view_cell_layout_data_func (GtkCellLayout   *layout,
                                            GtkTreeIter     *iter,
                                            gpointer         data)
 {
-  thunar_util_cell_layout_data_function(cell, model, iter, NULL, NULL);
+  ThunarFile *file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
+
+  thunar_util_set_custom_cell_style (cell, file);
 }
 
 
@@ -1201,7 +1203,7 @@ thunar_details_view_highlight_option_changed (ThunarDetailsView *details_view)
   g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences), "misc-highlighting-enabled", &show_highlight, NULL);
 
   if (show_highlight)
-    function = (GtkTreeCellDataFunc) THUNAR_DETAILS_VIEW_GET_CLASS (details_view)->cell_layout_data_func;
+    function = (GtkTreeCellDataFunc) THUNAR_STANDARD_VIEW_GET_CLASS (details_view)->cell_layout_data_func;
 
   /* set the data functions for the respective renderers */
   for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; column++)
