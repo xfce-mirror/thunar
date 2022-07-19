@@ -57,6 +57,9 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-folder.h>
+#include <thunar/thunar-list-model.h>
+#include <thunar/thunar-text-renderer.h>
+#include <thunar/thunar-icon-renderer.h>
 
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -812,4 +815,116 @@ thunar_util_strjoin_list (GList       *string_list,
     return g_strdup ("");
   else
     return joined_string;
+}
+
+
+
+void
+thunar_util_clip_view_background (GtkCellRenderer      *cell,
+                                  cairo_t              *cr,
+                                  const GdkRectangle   *background_area,
+                                  GtkWidget            *widget,
+                                  GtkCellRendererState  flags)
+{
+  GtkStyleContext  *context;
+  GdkRGBA          *color = NULL;
+  GdkRGBA           highlight_color_rgba;
+  gdouble           corner_radius[4] = { 5, 5, 5, 5 };
+  gdouble           degrees = G_PI / 180.0;
+  gboolean          color_selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0;
+  gboolean          rounded_corners;
+  gchar            *highlight_color;
+
+  g_object_get (G_OBJECT (cell), 
+                "highlight-color", &highlight_color,
+                "rounded-corners", &rounded_corners,
+                NULL);
+
+  cairo_save (cr);
+
+  if (G_LIKELY (rounded_corners))
+    {
+      cairo_new_sub_path (cr);
+      cairo_arc (cr,
+                 background_area->x + background_area->width - corner_radius[0], /* cairo x coord */
+                 background_area->y + corner_radius[0],                          /* cairo y coord */
+                 corner_radius[0], -90 * degrees, 0 * degrees);                  /* radius, angle1, angle2 resp. */
+      cairo_arc (cr,
+                 background_area->x + background_area->width - corner_radius[1],
+                 background_area->y + background_area->height - corner_radius[1],
+                 corner_radius[1], 0 * degrees, 90 * degrees);
+      cairo_arc (cr,
+                 background_area->x + corner_radius[2],
+                 background_area->y + background_area->height - corner_radius[2],
+                 corner_radius[2], 90 * degrees, 180 * degrees);
+      cairo_arc (cr,
+                 background_area->x + corner_radius[3],
+                 background_area->y + corner_radius[3],
+                 corner_radius[3], 180 * degrees, 270 * degrees);
+      cairo_close_path (cr);
+      cairo_clip (cr);
+    }
+
+  if (G_UNLIKELY (highlight_color != NULL))
+    {
+      gdk_rgba_parse (&highlight_color_rgba, highlight_color);
+      color = gdk_rgba_copy (&highlight_color_rgba);
+    }
+
+  if (G_UNLIKELY (color_selected && !(THUNAR_IS_ICON_RENDERER (cell) && highlight_color != NULL)))
+    {
+      context = gtk_widget_get_style_context (widget);
+      gtk_style_context_get (context, GTK_STATE_FLAG_SELECTED, GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &color, NULL);
+    }
+
+  if (G_LIKELY (color != NULL))
+    {
+      gdk_cairo_set_source_rgba (cr, color);
+      gdk_rgba_free (color);
+      cairo_paint (cr);
+    }
+
+  cairo_restore (cr);
+}
+
+
+
+void
+thunar_util_set_custom_cell_style (GtkCellRenderer *cell,
+                                   ThunarFile      *file)
+{
+  const gchar *background = NULL;
+  const gchar *foreground = NULL;
+
+  background = thunar_file_get_metadata_setting (file, "highlight-color-background");
+  foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
+
+  /* since this function is being used for both icon & name renderers;
+   * we need to make sure the right properties are applied to the right renderers */
+  if (THUNAR_IS_TEXT_RENDERER (cell))
+    g_object_set (G_OBJECT (cell),
+                  "foreground", foreground,
+                  "highlight-color", background,
+                  NULL);
+
+  else if (THUNAR_IS_ICON_RENDERER (cell))
+    g_object_set (G_OBJECT (cell),
+                  "highlight-color", background,
+                  NULL);
+
+  else if (GTK_IS_CELL_RENDERER_TEXT (cell))
+    g_object_set (G_OBJECT (cell),
+                  "foreground", foreground,
+                  "background", background,
+                  NULL);
+
+  else if (GTK_IS_CELL_RENDERER (cell))
+    g_object_set (G_OBJECT (cell),
+                  "cell-background", background,
+                  NULL);
+
+  else
+    g_warn_if_reached ();
+
+  g_object_unref (file);
 }
