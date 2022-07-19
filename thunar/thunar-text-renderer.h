@@ -37,8 +37,6 @@ typedef struct _ThunarTextRenderer      ThunarTextRenderer;
 GType            thunar_text_renderer_get_type (void) G_GNUC_CONST;
 
 GtkCellRenderer *thunar_text_renderer_new      (void) G_GNUC_MALLOC;
-void             thunar_text_renderer_set_fixed_height_from_font (ThunarTextRenderer  *renderer,
-						                                                      gint                 number_of_rows)
 
 G_END_DECLS;
 

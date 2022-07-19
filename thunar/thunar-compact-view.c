@@ -55,7 +55,6 @@ static void
 thunar_compact_view_class_init (ThunarCompactViewClass *klass)
 {
   ThunarStandardViewClass     *thunarstandard_view_class;
-  ThunarAbstractIconViewClass *thunar_abstract_icon_view_class;
   GtkWidgetClass              *gtkwidget_class;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
@@ -64,8 +63,7 @@ thunar_compact_view_class_init (ThunarCompactViewClass *klass)
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
   thunarstandard_view_class->zoom_level_property_name = "last-compact-view-zoom-level";
 
-  thunar_abstract_icon_view_class = THUNAR_ABSTRACT_ICON_VIEW_CLASS (klass);
-  thunar_abstract_icon_view_class->cell_layout_data_func = thunar_compact_view_cell_layout_data_func;
+  thunarstandard_view_class->cell_layout_data_func = thunar_compact_view_cell_layout_data_func;
 
   /* override ThunarAbstractIconView default row spacing */
   gtk_widget_class_install_style_property(gtkwidget_class, g_param_spec_int (
@@ -141,5 +139,7 @@ thunar_compact_view_cell_layout_data_func (GtkCellLayout   *layout,
                                            GtkTreeIter     *iter,
                                            gpointer         data)
 {
-  thunar_util_cell_layout_data_function(cell, model, iter, "10;10;0;0;0", "0;0;10;10;0");
+  ThunarFile *file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
+
+  thunar_util_set_custom_cell_style (cell, file);
 }
