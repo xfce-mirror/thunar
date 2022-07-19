@@ -1109,7 +1109,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   /**
    * ThunarPreferences:misc-highlighting-enabled
    *
-   * If true, displays the 'highlight' context menu option and show colorized filenames.
+   * If true file highlighting feature across the various views.
    **/
   preferences_props[PROP_MISC_HIGHLIGHT_COLOR] =
       g_param_spec_boolean ("misc-highlighting-enabled",

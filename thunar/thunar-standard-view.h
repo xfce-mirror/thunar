@@ -137,11 +137,13 @@ struct _ThunarStandardViewClass
   gboolean     (*delete_selected_files) (ThunarStandardView *standard_view);
 
   /* Set the CellLayoutDataFunc to be used */
-  void        (*cell_layout_data_func)   (GtkCellLayout     *layout,
-                                          GtkCellRenderer   *cell,
-                                          GtkTreeModel      *model,
-                                          GtkTreeIter       *iter,
-                                          gpointer           data);
+  void        (*cell_layout_data_func)    (GtkCellLayout     *layout,
+                                           GtkCellRenderer   *cell,
+                                           GtkTreeModel      *model,
+                                           GtkTreeIter       *iter,
+                                           gpointer           data);
+
+  void        (*highlight_option_changed) (ThunarView        *view);
 
   /* The name of the property in ThunarPreferences, that determines
    * the last (and default) zoom-level for the view classes (i.e. in
