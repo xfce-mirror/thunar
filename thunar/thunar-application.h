@@ -120,8 +120,15 @@ void                  thunar_application_move_into                 (ThunarApplic
                                                                     gpointer                parent,
                                                                     GList                  *source_file_list,
                                                                     GFile                  *target_file,
-                                                                    ThunarOperationLogFlag  operation_log_flag,
+                                                                    ThunarOperationLogMode  log_mode,
                                                                     GClosure               *new_files_closure);
+
+void                  thunar_application_move_files                (ThunarApplication       *application,
+                                                                    gpointer                 parent,
+                                                                    GList                   *source_file_list,
+                                                                    GList                   *target_file_list,
+                                                                    ThunarOperationLogMode   log_mode,
+                                                                    GClosure                *new_files_closure);
 
 void                  thunar_application_unlink_files              (ThunarApplication *application,
                                                                     gpointer           parent,

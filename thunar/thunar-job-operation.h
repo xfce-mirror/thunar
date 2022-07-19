@@ -28,15 +28,15 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (ThunarJobOperation, thunar_job_operation, THUNAR, JOB_OPERATION, GObject)
 
 /**
- * ThunarOperationLogFlag:
+ * ThunarOperationLogMode:
  *
- * Flags to control logging for operations.
+ * Specify control logging for operations.
  **/
 typedef enum
 {
-  THUNAR_OPERATION_LOG_NONE,
-  THUNAR_OPERATION_LOG_FOR_UNDO,
-} ThunarOperationLogFlag;
+  THUNAR_OPERATION_LOG_NO_OPERATIONS,
+  THUNAR_OPERATION_LOG_OPERATIONS,
+} ThunarOperationLogMode;
 
 ThunarJobOperation    *thunar_job_operation_new          (ThunarJobOperationKind kind);
 void                   thunar_job_operation_add          (ThunarJobOperation    *job_operation,
