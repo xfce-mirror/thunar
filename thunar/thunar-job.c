@@ -815,6 +815,8 @@ thunar_job_set_log_mode (ThunarJob             *job,
   job->priv->log_mode = log_mode;
 }
 
+
+
 ThunarOperationLogMode
 thunar_job_get_log_mode (ThunarJob *job)
 {
