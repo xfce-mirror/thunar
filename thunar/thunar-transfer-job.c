@@ -1589,6 +1589,7 @@ thunar_transfer_job_execute (ExoJob  *job,
   GList                *sp;
   GList                *tnext;
   GList                *tp;
+  gboolean              log_operations;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -1603,11 +1604,14 @@ thunar_transfer_job_execute (ExoJob  *job,
   thumbnail_cache = thunar_application_get_thumbnail_cache (application);
   g_object_unref (application);
 
-  if (thunar_job_get_log_mode (THUNAR_JOB (transfer_job)) == THUNAR_OPERATION_LOG_OPERATIONS
-      && transfer_job->type == THUNAR_TRANSFER_JOB_MOVE)
-    {
-      operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_MOVE);
-    }
+  /* whether or not we want to log operations to the undo list */
+  if (thunar_job_get_log_mode (THUNAR_JOB (transfer_job)) == THUNAR_OPERATION_LOG_OPERATIONS)
+    log_operations = TRUE;
+  else
+    log_operations = FALSE;
+
+  if (log_operations && transfer_job->type == THUNAR_TRANSFER_JOB_MOVE)
+    operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_MOVE);
 
   for (sp = transfer_job->source_node_list, tp = transfer_job->target_file_list;
        sp != NULL && tp != NULL && err == NULL;
@@ -1658,19 +1662,11 @@ thunar_transfer_job_execute (ExoJob  *job,
       g_object_unref (info);
     }
 
-  if (thunar_job_get_log_mode (THUNAR_JOB (transfer_job)) == THUNAR_OPERATION_LOG_OPERATIONS
-      && transfer_job->type == THUNAR_TRANSFER_JOB_MOVE)
-    {
-      thunar_job_operation_commit (operation);
-      g_object_unref (operation);
-      operation = NULL;
-    }
-
   /* release the thumbnail cache */
   g_object_unref (thumbnail_cache);
 
   /* continue if there were no errors yet */
-  if (G_LIKELY (err == NULL))
+  if (G_LIKELY (err == NULL) && transfer_job->type == THUNAR_TRANSFER_JOB_COPY)
     {
       /* check destination */
       if (!thunar_transfer_job_verify_destination (transfer_job, &err))
@@ -1690,7 +1686,8 @@ thunar_transfer_job_execute (ExoJob  *job,
       /* transfer starts now */
       transfer_job->start_time = g_get_real_time ();
 
-      operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_COPY);
+      if (log_operations)
+        operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_COPY);
 
       /* perform the copy recursively for all source transfer nodes */
       for (sp = transfer_job->source_node_list, tp = transfer_job->target_file_list;
@@ -1713,8 +1710,13 @@ thunar_transfer_job_execute (ExoJob  *job,
       thunar_job_new_files (THUNAR_JOB (job), new_files_list);
       thunar_g_list_free_full (new_files_list);
 
-      thunar_job_operation_commit (operation);
-      g_object_unref (operation);
+      /* Note that we only created a new thunar job operation of the appropriate kind (move or copy)
+       * in a mutually exclusive way, so we know that only one operation was created. */
+      if (log_operations)
+        {
+          thunar_job_operation_commit (operation);
+          g_object_unref (operation);
+        }
 
       return TRUE;
     }
