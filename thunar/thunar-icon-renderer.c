@@ -149,8 +149,7 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
   /**
    * ThunarIconRenderer:size:
    *
-   * The size at which icons should be rendered by this
-   * #ThunarIconRenderer instance.
+   * The size at which icons should be rendered by this.
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_SIZE,
@@ -162,10 +161,9 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
 
 
   /**
-   * ThunarTextRenderer:highlight-color:
+   * ThunarIconRenderer:highlight-color:
    *
    * The color with which the cell should be highlighted.
-   * #ThunarTextRenderer instance.
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_HIGHLIGHT_COLOR,
@@ -176,11 +174,10 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
 
 
   /**
-   * ThunarTextRenderer:rounded-corners:
+   * ThunarIconRenderer:rounded-corners:
    *
    * Determines if the cell should be clipped to rounded-corners.
    * Useful when highlighting is enabled & a highlight color is set.
-   * #ThunarTextRenderer instance.
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_ROUNDED_CORNERS,
@@ -191,10 +188,9 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
 
 
   /**
-   * ThunarTextRenderer:highlighting-enabled:
+   * ThunarIconRenderer:highlighting-enabled:
    *
-   * Determines if the cell background should be drawn with highlight-color.
-   * #ThunarTextRenderer instance.
+   * Determines if the cell background should be drawn with highlight color.
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_HIGHLIGHTING_ENABLED,
