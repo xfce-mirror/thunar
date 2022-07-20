@@ -104,6 +104,9 @@ static GList   *thunar_properties_dialog_get_files            (ThunarPropertiesD
 static void     thunar_properties_dialog_reset_highlight      (ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_set_foreground       (ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_set_background       (ThunarPropertiesDialog      *dialog);
+static void     thunar_properties_dialog_colorize_example_box (ThunarPropertiesDialog      *dialog,
+                                                               const gchar                 *background,
+                                                               const gchar                 *foreground);
 
 
 struct _ThunarPropertiesDialogClass
@@ -155,6 +158,7 @@ struct _ThunarPropertiesDialog
   GtkWidget              *content_label;
   GtkWidget              *content_value_label;
   GtkWidget              *color_chooser;
+  GtkWidget              *example_box;
 };
 
 
@@ -721,9 +725,31 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
       row++;
     }
+  else
+    {
+      dialog->example_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+      gtk_widget_set_name (dialog->example_box, "example");
+      gtk_widget_set_hexpand (dialog->example_box, TRUE);
+      gtk_widget_set_margin_top (dialog->example_box, 10);
+      gtk_widget_set_margin_bottom (dialog->example_box, 10);
+      gtk_grid_attach (GTK_GRID (grid), dialog->example_box, 0, row, 1, 1);
+      gtk_widget_show (dialog->example_box);
+
+      image = gtk_image_new_from_icon_name ("text-x-generic", GTK_ICON_SIZE_DIALOG);
+      gtk_box_pack_start (GTK_BOX (dialog->example_box), image, FALSE, FALSE, 5);
+      gtk_widget_set_margin_top (image, 5);
+      gtk_widget_set_margin_bottom (image, 5);
+      gtk_widget_show (image);
+
+      label = gtk_label_new_with_mnemonic (_("Example.txt"));
+      gtk_box_pack_start (GTK_BOX (dialog->example_box), label, TRUE, TRUE, 0);
+      gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
+      gtk_widget_show (label);
+
+      row++;
+    }
 
   box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
-  gtk_widget_set_vexpand (box, TRUE);
   gtk_widget_set_hexpand (box, TRUE);
   gtk_grid_attach (GTK_GRID (grid), box, 0, row, 1, 1);
   gtk_widget_show (box);
@@ -731,21 +757,18 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   button = gtk_button_new_with_mnemonic (_("_Reset"));
   g_signal_connect_swapped (G_OBJECT (button), "clicked",
                             G_CALLBACK (thunar_properties_dialog_reset_highlight), dialog);
-  gtk_widget_set_valign (button, GTK_ALIGN_END);
   gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   button = gtk_button_new_with_mnemonic (_("Set _Background"));
   g_signal_connect_swapped (G_OBJECT (button), "clicked",
                             G_CALLBACK (thunar_properties_dialog_set_background), dialog);
-  gtk_widget_set_valign (button, GTK_ALIGN_END);
   gtk_box_pack_end (GTK_BOX (box), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   button = gtk_button_new_with_mnemonic (_("Set _Foreground"));
   g_signal_connect_swapped (G_OBJECT (button), "clicked",
                             G_CALLBACK (thunar_properties_dialog_set_foreground), dialog);
-  gtk_widget_set_valign (button, GTK_ALIGN_END);
   gtk_box_pack_end (GTK_BOX (box), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 }
@@ -1102,6 +1125,8 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   guint64            fs_free;
   guint64            fs_size;
   gdouble            fs_fraction = 0.0;
+  const gchar       *background;
+  const gchar       *foreground;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) == 1);
@@ -1341,6 +1366,10 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     {
       gtk_widget_hide (dialog->volume_label);
     }
+
+  background = thunar_file_get_metadata_setting (file, "highlight-color-background");
+  foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
+  thunar_properties_dialog_colorize_example_box (dialog, background, foreground);
 
   /* cleanup */
   g_object_unref (G_OBJECT (icon_factory));
@@ -1746,6 +1775,7 @@ thunar_properties_dialog_set_foreground (ThunarPropertiesDialog *dialog)
   color_str = gdk_rgba_to_string (&color);
   for (lp = dialog->files; lp != NULL; lp = lp->next)
     thunar_file_set_metadata_setting (lp->data, "highlight-color-foreground", color_str, FALSE);
+  thunar_properties_dialog_colorize_example_box (dialog, NULL, color_str);
   g_free (color_str);
 
   thunar_properties_dialog_reload (dialog);
@@ -1772,7 +1802,34 @@ thunar_properties_dialog_set_background (ThunarPropertiesDialog *dialog)
   color_str = gdk_rgba_to_string (&color);
   for (lp = dialog->files; lp != NULL; lp = lp->next)
     thunar_file_set_metadata_setting (lp->data, "highlight-color-background", color_str, FALSE);
+  thunar_properties_dialog_colorize_example_box (dialog, color_str, NULL);
   g_free (color_str);
 
   thunar_properties_dialog_reload (dialog);
+}
+
+
+
+static void
+thunar_properties_dialog_colorize_example_box (ThunarPropertiesDialog *dialog,
+                                               const gchar            *background,
+                                               const gchar            *foreground)
+{
+  GtkCssProvider *provider = gtk_css_provider_new ();
+  gchar          *css_data = NULL;
+
+  _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
+
+  if (background != NULL && foreground != NULL)
+    css_data = g_strdup_printf ("#example { background-color: %s; color: %s; }", background, foreground);
+  else if (background != NULL)
+    css_data = g_strdup_printf ("#example { background-color: %s; }", background);
+  else if (foreground != NULL)
+    css_data = g_strdup_printf ("#example { color: %s; }", foreground);
+
+  if (css_data == NULL)
+    return;
+
+  gtk_css_provider_load_from_data (provider, css_data, -1, NULL);
+  gtk_style_context_add_provider (gtk_widget_get_style_context (dialog->example_box), GTK_STYLE_PROVIDER (provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 }
