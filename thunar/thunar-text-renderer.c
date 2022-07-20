@@ -99,7 +99,6 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
    * ThunarTextRenderer:highlight-color:
    *
    * The color with which the cell should be highlighted.
-   * #ThunarTextRenderer instance.
    **/
   g_object_class_install_property (object_class,
                                    PROP_HIGHLIGHT_COLOR,
@@ -112,9 +111,8 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
   /**
    * ThunarTextRenderer:rounded-corners:
    *
-   * Determines if the cell should be clipped to rounded-corners.
+   * Determines if the cell should be clipped to rounded corners.
    * Useful when highlighting is enabled & a highlight color is set.
-   * #ThunarTextRenderer instance.
    **/
   g_object_class_install_property (object_class,
                                    PROP_ROUNDED_CORNERS,
@@ -127,8 +125,7 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
   /**
    * ThunarTextRenderer:highlighting-enabled:
    *
-   * Determines if the cell background should be drawn with highlight-color.
-   * #ThunarTextRenderer instance.
+   * Determines if the cell background should be drawn with highlight color.
    **/
   g_object_class_install_property (object_class,
                                    PROP_HIGHLIGHTING_ENABLED,

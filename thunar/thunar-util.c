@@ -64,6 +64,7 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 
+#define BORDER_RADIUS 10
 
 
 const char *SEARCH_PREFIX = "Search: ";
@@ -829,7 +830,16 @@ thunar_util_clip_view_background (GtkCellRenderer      *cell,
   GtkStyleContext  *context;
   GdkRGBA          *color = NULL;
   GdkRGBA           highlight_color_rgba;
-  gdouble           corner_radius[4] = { 5, 5, 5, 5 };
+  gdouble          *corner_radius;
+  gdouble           radius = EXO_IS_ICON_VIEW (widget) ?
+                             exo_icon_view_get_orientation (EXO_ICON_VIEW (widget)) == GTK_ORIENTATION_HORIZONTAL ?
+                               background_area->height * (BORDER_RADIUS / 100.0) : background_area->width * (BORDER_RADIUS / 100.0) :
+                             0;
+  gdouble           draw_round_corners_on_left[4]      = { 0,      0,      radius, radius };
+  gdouble           draw_round_corners_on_right[4]     = { radius, radius, 0,      0      };
+  gdouble           draw_round_corners_on_top[4]       = { radius, 0,      0,      radius };
+  gdouble           draw_round_corners_on_bottom[4]    = { 0,      radius, radius, 0      };
+  gdouble           draw_round_corners_on_all_sides[4] = { radius, radius, radius, radius };
   gdouble           degrees = G_PI / 180.0;
   gboolean          color_selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0;
   gboolean          rounded_corners;
@@ -844,6 +854,21 @@ thunar_util_clip_view_background (GtkCellRenderer      *cell,
 
   if (G_LIKELY (rounded_corners))
     {
+      /* decide on which side the rounded corners will be drawn */
+      if (G_UNLIKELY (!EXO_IS_ICON_VIEW (widget)))
+        corner_radius = draw_round_corners_on_all_sides;
+      else
+        {
+          if (exo_icon_view_get_orientation (EXO_ICON_VIEW (widget)) == GTK_ORIENTATION_HORIZONTAL) /* Text beside Icon */
+            corner_radius = gtk_widget_get_direction (widget) == GTK_TEXT_DIR_LTR ?
+                              GTK_IS_CELL_RENDERER_TEXT (cell) ?
+                                draw_round_corners_on_right : draw_round_corners_on_left
+                              : GTK_IS_CELL_RENDERER_TEXT (cell) ?
+                                draw_round_corners_on_left : draw_round_corners_on_right;
+          else /* ExoIconView */
+            corner_radius = GTK_IS_CELL_RENDERER_TEXT (cell) ? draw_round_corners_on_bottom : draw_round_corners_on_top;
+        }
+
       cairo_new_sub_path (cr);
       cairo_arc (cr,
                  background_area->x + background_area->width - corner_radius[0], /* cairo x coord */
@@ -885,46 +910,4 @@ thunar_util_clip_view_background (GtkCellRenderer      *cell,
     }
 
   cairo_restore (cr);
-}
-
-
-
-void
-thunar_util_set_custom_cell_style (GtkCellRenderer *cell,
-                                   ThunarFile      *file)
-{
-  const gchar *background = NULL;
-  const gchar *foreground = NULL;
-
-  background = thunar_file_get_metadata_setting (file, "highlight-color-background");
-  foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
-
-  /* since this function is being used for both icon & name renderers;
-   * we need to make sure the right properties are applied to the right renderers */
-  if (THUNAR_IS_TEXT_RENDERER (cell))
-    g_object_set (G_OBJECT (cell),
-                  "foreground", foreground,
-                  "highlight-color", background,
-                  NULL);
-
-  else if (THUNAR_IS_ICON_RENDERER (cell))
-    g_object_set (G_OBJECT (cell),
-                  "highlight-color", background,
-                  NULL);
-
-  else if (GTK_IS_CELL_RENDERER_TEXT (cell))
-    g_object_set (G_OBJECT (cell),
-                  "foreground", foreground,
-                  "background", background,
-                  NULL);
-
-  else if (GTK_IS_CELL_RENDERER (cell))
-    g_object_set (G_OBJECT (cell),
-                  "cell-background", background,
-                  NULL);
-
-  else
-    g_warn_if_reached ();
-
-  g_object_unref (file);
 }

@@ -42,11 +42,6 @@ static void         thunar_icon_view_set_property           (GObject            
                                                              GParamSpec          *pspec);
 static AtkObject   *thunar_icon_view_get_accessible         (GtkWidget           *widget);
 static void         thunar_icon_view_zoom_level_changed     (ThunarStandardView  *standard_view);
-static void         thunar_icon_view_cell_layout_data_func  (GtkCellLayout       *layout,
-                                                             GtkCellRenderer     *cell,
-                                                             GtkTreeModel        *model,
-                                                             GtkTreeIter         *iter,
-                                                             gpointer             data);
 
 
 
@@ -81,8 +76,6 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
   thunarstandard_view_class->zoom_level_property_name = "last-icon-view-zoom-level";
-
-  thunarstandard_view_class->cell_layout_data_func = thunar_icon_view_cell_layout_data_func;
 
   /**
    * ThunarIconView::text-beside-icons:
@@ -216,18 +209,4 @@ thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view)
 
   /* set the new "wrap-width" for the text renderer */
   g_object_set (G_OBJECT (standard_view->name_renderer), "wrap-width", wrap_width, NULL);
-}
-
-
-
-static void
-thunar_icon_view_cell_layout_data_func (GtkCellLayout   *layout,
-                                        GtkCellRenderer *cell,
-                                        GtkTreeModel    *model,
-                                        GtkTreeIter     *iter,
-                                        gpointer         data)
-{
-  ThunarFile *file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter);
-
-  thunar_util_set_custom_cell_style (cell, file);
 }

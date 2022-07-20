@@ -85,8 +85,6 @@ void       thunar_util_clip_view_background      (GtkCellRenderer      *cell,
                                                   const GdkRectangle   *background_area,
                                                   GtkWidget            *widget,
                                                   GtkCellRendererState  flags);
-void       thunar_util_set_custom_cell_style     (GtkCellRenderer      *cell,
-                                                  ThunarFile           *file);
 
 extern const char *SEARCH_PREFIX;
 

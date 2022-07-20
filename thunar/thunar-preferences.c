@@ -121,7 +121,7 @@ enum
   PROP_MISC_SWITCH_TO_NEW_TAB,
   PROP_MISC_VERTICAL_SPLIT_PANE,
   PROP_MISC_COMPACT_VIEW_MAX_CHARS,
-  PROP_MISC_HIGHLIGHT_COLOR,
+  PROP_MISC_HIGHLIGHTING_ENABLED,
   N_PROPERTIES,
 };
 
@@ -1109,9 +1109,10 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   /**
    * ThunarPreferences:misc-highlighting-enabled
    *
-   * If true file highlighting feature across the various views.
+   * If true file highlighting feature across the various views is enabled.
+   * Can be toggled using the View > Show File Highlight.
    **/
-  preferences_props[PROP_MISC_HIGHLIGHT_COLOR] =
+  preferences_props[PROP_MISC_HIGHLIGHTING_ENABLED] =
       g_param_spec_boolean ("misc-highlighting-enabled",
                             "MiscHighlightingEnabled",
                             NULL,
