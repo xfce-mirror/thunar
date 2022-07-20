@@ -49,6 +49,9 @@ struct _ThunarIconRenderer
   gboolean       emblems;
   gboolean       follow_state;
   ThunarIconSize size;
+  gchar         *highlight_color;
+  gboolean       rounded_corners;
+  gboolean       highlighting_enabled;
 };
 
 GType            thunar_icon_renderer_get_type (void) G_GNUC_CONST;
