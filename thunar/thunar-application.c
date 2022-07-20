@@ -2299,7 +2299,7 @@ thunar_application_move_files (ThunarApplication       *application,
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
  
   thunar_application_launch (application, parent,
-                             "stock_folder-move", "Moving files ...",
+                             "stock_folder-move", _("Moving files ..."),
                              thunar_io_jobs_move_files,
                              source_file_list, target_file_list,
                              TRUE, TRUE,
