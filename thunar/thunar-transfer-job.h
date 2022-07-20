@@ -23,8 +23,6 @@
 
 #include <glib-object.h>
 
-#include <thunar/thunar-job-operation.h>
-
 G_BEGIN_DECLS
 
 /**
