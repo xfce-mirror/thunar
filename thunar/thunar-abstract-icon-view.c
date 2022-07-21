@@ -118,32 +118,6 @@ thunar_abstract_icon_view_class_init (ThunarAbstractIconViewClass *klass)
   thunarstandard_view_class->get_path_at_pos = thunar_abstract_icon_view_get_path_at_pos;
   thunarstandard_view_class->get_visible_range = thunar_abstract_icon_view_get_visible_range;
   thunarstandard_view_class->highlight_path = thunar_abstract_icon_view_highlight_path;
-
-  /**
-   * ThunarAbstractIconView:column-spacing:
-   *
-   * The additional space inserted between columns in the
-   * icon views.
-   **/
-  gtk_widget_class_install_style_property (gtkwidget_class,
-                                           g_param_spec_int ("column-spacing",
-                                                             "column-spacing",
-                                                             "column-spacing",
-                                                             0, G_MAXINT, 6,
-                                                             EXO_PARAM_READABLE));
-
-  /**
-   * ThunarAbstractIconView:row-spacing:
-   *
-   * The additional space inserted between rows in the
-   * icon views.
-   **/
-  gtk_widget_class_install_style_property (gtkwidget_class,
-                                           g_param_spec_int ("row-spacing",
-                                                             "row-spacing",
-                                                             "row-spacing",
-                                                             0, G_MAXINT, 6,
-                                                             EXO_PARAM_READABLE));
 }
 
 
