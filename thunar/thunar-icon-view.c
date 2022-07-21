@@ -23,6 +23,7 @@
 
 #include <thunar/thunar-icon-view.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -63,9 +64,9 @@ G_DEFINE_TYPE (ThunarIconView, thunar_icon_view, THUNAR_TYPE_ABSTRACT_ICON_VIEW)
 static void
 thunar_icon_view_class_init (ThunarIconViewClass *klass)
 {
-  ThunarStandardViewClass *thunarstandard_view_class;
-  GtkWidgetClass          *gtkwidget_class;
-  GObjectClass            *gobject_class;
+  ThunarStandardViewClass     *thunarstandard_view_class;
+  GtkWidgetClass              *gtkwidget_class;
+  GObjectClass                *gobject_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->set_property = thunar_icon_view_set_property;
@@ -209,7 +210,3 @@ thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view)
   /* set the new "wrap-width" for the text renderer */
   g_object_set (G_OBJECT (standard_view->name_renderer), "wrap-width", wrap_width, NULL);
 }
-
-
-
-

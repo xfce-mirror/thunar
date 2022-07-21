@@ -50,36 +50,41 @@ typedef void (*ThunarBookmarksFunc) (GFile       *file,
                                      gint         row_num,
                                      gpointer     user_data);
 
-gchar     *thunar_util_str_get_extension        (const gchar *name) G_GNUC_WARN_UNUSED_RESULT;
+gchar     *thunar_util_str_get_extension         (const gchar *name) G_GNUC_WARN_UNUSED_RESULT;
 
-void       thunar_util_load_bookmarks           (GFile               *bookmarks_file,
-                                                 ThunarBookmarksFunc  foreach_func,
-                                                 gpointer             user_data);
+void       thunar_util_load_bookmarks            (GFile               *bookmarks_file,
+                                                  ThunarBookmarksFunc  foreach_func,
+                                                  gpointer             user_data);
 
-gboolean   thunar_util_looks_like_an_uri        (const gchar    *string) G_GNUC_WARN_UNUSED_RESULT;
+gboolean   thunar_util_looks_like_an_uri         (const gchar    *string) G_GNUC_WARN_UNUSED_RESULT;
 
-gchar     *thunar_util_expand_filename          (const gchar    *filename,
-                                                 GFile          *working_directory,
-                                                 GError        **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+gchar     *thunar_util_expand_filename           (const gchar    *filename,
+                                                  GFile          *working_directory,
+                                                  GError        **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-gchar     *thunar_util_humanize_file_time       (guint64         file_time,
-                                                 ThunarDateStyle date_style,
-                                                 const gchar    *date_custom_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+gchar     *thunar_util_humanize_file_time        (guint64         file_time,
+                                                  ThunarDateStyle date_style,
+                                                  const gchar    *date_custom_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-GdkScreen *thunar_util_parse_parent             (gpointer        parent,
-                                                 GtkWindow     **window_return) G_GNUC_WARN_UNUSED_RESULT;
+GdkScreen *thunar_util_parse_parent              (gpointer        parent,
+                                                  GtkWindow     **window_return) G_GNUC_WARN_UNUSED_RESULT;
 
-time_t     thunar_util_time_from_rfc3339        (const gchar    *date_string) G_GNUC_WARN_UNUSED_RESULT;
+time_t     thunar_util_time_from_rfc3339         (const gchar    *date_string) G_GNUC_WARN_UNUSED_RESULT;
 
-gchar     *thunar_util_change_working_directory (const gchar    *new_directory) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+gchar     *thunar_util_change_working_directory  (const gchar    *new_directory) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-void       thunar_setup_display_cb              (gpointer        data);
-gchar*     thunar_util_next_new_file_name       (ThunarFile            *dir,
-                                                 const gchar           *file_name,
-                                                 ThunarNextFileNameMode name_mode);
-gboolean   thunar_util_is_a_search_query        (const gchar    *string);
-gchar*     thunar_util_strjoin_list             (GList       *string_list,
-                                                 const gchar *separator);
+void       thunar_setup_display_cb               (gpointer        data);
+gchar*     thunar_util_next_new_file_name        (ThunarFile            *dir,
+                                                  const gchar           *file_name,
+                                                  ThunarNextFileNameMode name_mode);
+gboolean   thunar_util_is_a_search_query         (const gchar    *string);
+gchar*     thunar_util_strjoin_list              (GList       *string_list,
+                                                  const gchar *separator);
+void       thunar_util_clip_view_background      (GtkCellRenderer      *cell,
+                                                  cairo_t              *cr,
+                                                  const GdkRectangle   *background_area,
+                                                  GtkWidget            *widget,
+                                                  GtkCellRendererState  flags);
 
 extern const char *SEARCH_PREFIX;
 
