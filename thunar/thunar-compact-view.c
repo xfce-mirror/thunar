@@ -22,10 +22,11 @@
 #endif
 
 #include <thunar/thunar-compact-view.h>
+#include <thunar/thunar-util.h>
 
 
 
-static AtkObject   *thunar_compact_view_get_accessible (GtkWidget               *widget);
+static AtkObject   *thunar_compact_view_get_accessible         (GtkWidget       *widget);
 
 
 
@@ -48,8 +49,8 @@ G_DEFINE_TYPE (ThunarCompactView, thunar_compact_view, THUNAR_TYPE_ABSTRACT_ICON
 static void
 thunar_compact_view_class_init (ThunarCompactViewClass *klass)
 {
-  ThunarStandardViewClass *thunarstandard_view_class;
-  GtkWidgetClass          *gtkwidget_class;
+  ThunarStandardViewClass     *thunarstandard_view_class;
+  GtkWidgetClass              *gtkwidget_class;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->get_accessible = thunar_compact_view_get_accessible;
@@ -121,6 +122,3 @@ thunar_compact_view_get_accessible (GtkWidget *widget)
 
   return object;
 }
-
-
-
