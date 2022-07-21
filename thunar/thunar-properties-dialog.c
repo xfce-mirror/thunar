@@ -1751,6 +1751,8 @@ thunar_properties_dialog_reset_highlight (ThunarPropertiesDialog *dialog)
       thunar_file_clear_metadata_setting (lp->data, "highlight-color-foreground");
     }
 
+  thunar_properties_dialog_colorize_example_box (dialog, NULL, NULL);
+
   thunar_properties_dialog_reload (dialog);
 }
 
@@ -1826,6 +1828,8 @@ thunar_properties_dialog_colorize_example_box (ThunarPropertiesDialog *dialog,
     css_data = g_strdup_printf ("#example { background-color: %s; }", background);
   else if (foreground != NULL)
     css_data = g_strdup_printf ("#example { color: %s; }", foreground);
+  else
+    css_data = g_strdup_printf ("#example { color: inherit; background-color: inherit; }");
 
   if (css_data == NULL)
     return;

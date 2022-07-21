@@ -288,6 +288,11 @@ static void                 thunar_standard_view_set_sort_order                 
 static gboolean             thunar_standard_view_toggle_sort_order                 (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_store_sort_column                 (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_highlight_option_changed          (ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_cell_layout_data_func             (GtkCellLayout            *layout,
+                                                                                    GtkCellRenderer          *cell,
+                                                                                    GtkTreeModel             *model,
+                                                                                    GtkTreeIter              *iter,
+                                                                                    gpointer                  data);
 
 struct _ThunarStandardViewPrivate
 {
@@ -542,6 +547,8 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   gtkwidget_class->unrealize = thunar_standard_view_unrealize;
   gtkwidget_class->grab_focus = thunar_standard_view_grab_focus;
   gtkwidget_class->draw = thunar_standard_view_draw;
+
+  klass->cell_layout_data_func = thunar_standard_view_cell_layout_data_func;
 
   xfce_gtk_translate_action_entries (thunar_standard_view_action_entries, G_N_ELEMENTS (thunar_standard_view_action_entries));
 
@@ -4383,4 +4390,51 @@ thunar_standard_view_highlight_option_changed (ThunarStandardView *standard_view
   gtk_cell_layout_set_cell_data_func (layout,
                                       standard_view->name_renderer,
                                       function, NULL, NULL);
+}
+
+
+
+static void
+thunar_standard_view_cell_layout_data_func (GtkCellLayout   *layout,
+                                            GtkCellRenderer *cell,
+                                            GtkTreeModel    *model,
+                                            GtkTreeIter     *iter,
+                                            gpointer         data)
+{
+  ThunarFile  *file = THUNAR_FILE (thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter));
+  const gchar *background = NULL;
+  const gchar *foreground = NULL;
+
+  background = thunar_file_get_metadata_setting (file, "highlight-color-background");
+  foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
+
+  /* since this function is being used for both icon & name renderers;
+   * we need to make sure the right properties are applied to the right renderers */
+  if (THUNAR_IS_TEXT_RENDERER (cell))
+    g_object_set (G_OBJECT (cell),
+                  "foreground", foreground,
+                  "highlight-color", background,
+                  NULL);
+
+  else if (THUNAR_IS_ICON_RENDERER (cell))
+    g_object_set (G_OBJECT (cell),
+                  "highlight-color", background,
+                  NULL);
+
+  else if (GTK_IS_CELL_RENDERER_TEXT (cell))
+    g_object_set (G_OBJECT (cell),
+                  "foreground", foreground,
+                  "background", background,
+                  NULL);
+
+  else if (GTK_IS_CELL_RENDERER (cell))
+    g_object_set (G_OBJECT (cell),
+                  "cell-background", background,
+                  NULL);
+
+  else
+    g_warn_if_reached ();
+
+  g_object_unref (file);
+
 }
