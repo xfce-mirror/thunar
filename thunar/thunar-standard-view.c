@@ -863,10 +863,6 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* be sure to update the statusbar text whenever the file-size-binary property changes */
   g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::file-size-binary", G_CALLBACK (thunar_standard_view_update_statusbar_text), standard_view);
 
-  g_signal_connect_swapped (standard_view->preferences, "notify::misc-highlighting-enabled",
-                            G_CALLBACK (thunar_standard_view_highlight_option_changed), standard_view);
-  thunar_standard_view_highlight_option_changed (standard_view);
-
   /* connect to size allocation signals for generating thumbnail requests */
   g_signal_connect_after (G_OBJECT (standard_view), "size-allocate",
                           G_CALLBACK (thunar_standard_view_size_allocate), NULL);
@@ -1092,8 +1088,6 @@ thunar_standard_view_finalize (GObject *object)
   /* release the scroll_to_files hash table */
   g_hash_table_destroy (standard_view->priv->scroll_to_files);
 
-  g_signal_handlers_disconnect_by_func (standard_view->preferences, thunar_standard_view_highlight_option_changed, standard_view);
-
   (*G_OBJECT_CLASS (thunar_standard_view_parent_class)->finalize) (object);
 }
 
@@ -1271,6 +1265,11 @@ thunar_standard_view_realize (GtkWidget *widget)
   /* apply the thumbnail frame preferences after icon_factory got initialized */
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-thumbnail-draw-frames", G_OBJECT (standard_view), "thumbnail-draw-frames", G_BINDING_SYNC_CREATE);
 
+  /* apply/unapply the highlights to name & icon renderers whenever the property changes */
+  g_signal_connect_swapped (standard_view->preferences, "notify::misc-highlighting-enabled",
+                            G_CALLBACK (thunar_standard_view_highlight_option_changed), standard_view);
+  thunar_standard_view_highlight_option_changed (standard_view);
+
   /* store sort information to keep indicators in menu in sync */
   thunar_standard_view_store_sort_column (standard_view);
 }
@@ -1284,6 +1283,7 @@ thunar_standard_view_unrealize (GtkWidget *widget)
 
   /* drop the reference on the icon factory */
   g_signal_handlers_disconnect_by_func (G_OBJECT (standard_view->icon_factory), gtk_widget_queue_draw, standard_view);
+  g_signal_handlers_disconnect_by_func (standard_view->preferences, thunar_standard_view_highlight_option_changed, standard_view);
   g_object_unref (G_OBJECT (standard_view->icon_factory));
   standard_view->icon_factory = NULL;
 
@@ -1994,8 +1994,6 @@ thunar_standard_view_reload (ThunarView *view,
   /* schedule thumbnail reload update */
   if (!standard_view->priv->thumbnailing_scheduled)
     thunar_standard_view_schedule_thumbnail_idle (standard_view);
-
-  thunar_standard_view_highlight_option_changed (standard_view);
 }
 
 
@@ -4414,11 +4412,6 @@ thunar_standard_view_highlight_option_changed (ThunarStandardView *standard_view
   GtkCellLayoutDataFunc  function = NULL;
   gboolean               show_highlight;
 
-  g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (standard_view)->preferences), "misc-highlighting-enabled", &show_highlight, NULL);
-
-  if (show_highlight)
-    function = (GtkCellLayoutDataFunc) THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->cell_layout_data_func;
-
   if (GTK_IS_TREE_VIEW (view))
     layout = GTK_CELL_LAYOUT (gtk_tree_view_get_column (GTK_TREE_VIEW (view), THUNAR_COLUMN_NAME));
   else
@@ -4426,6 +4419,11 @@ thunar_standard_view_highlight_option_changed (ThunarStandardView *standard_view
 
   if (!GTK_IS_CELL_LAYOUT (layout))
     return;
+
+  g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (standard_view)->preferences), "misc-highlighting-enabled", &show_highlight, NULL);
+
+  if (show_highlight)
+    function = (GtkCellLayoutDataFunc) THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->cell_layout_data_func;
 
   gtk_cell_layout_set_cell_data_func (layout,
                                       standard_view->icon_renderer,
@@ -4479,5 +4477,4 @@ thunar_standard_view_cell_layout_data_func (GtkCellLayout   *layout,
     g_warn_if_reached ();
 
   g_object_unref (file);
-
 }

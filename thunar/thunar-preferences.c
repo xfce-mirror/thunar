@@ -1116,7 +1116,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
       g_param_spec_boolean ("misc-highlighting-enabled",
                             "MiscHighlightingEnabled",
                             NULL,
-                            TRUE,
+                            thunar_g_vfs_metadata_is_supported (),
                             EXO_PARAM_READWRITE);
 
   /* install all properties */
