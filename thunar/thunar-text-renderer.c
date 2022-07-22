@@ -197,8 +197,7 @@ thunar_text_renderer_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_HIGHLIGHT_COLOR:
-      if (G_UNLIKELY (text_renderer->highlight_color != NULL))
-        g_free (text_renderer->highlight_color);
+      g_free (text_renderer->highlight_color);
       text_renderer->highlight_color = g_value_dup_string (value);
       break;
 

@@ -702,7 +702,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
     {
       frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
       gtk_grid_attach (GTK_GRID (grid), frame, 0, row, 1, 1);
-      gtk_widget_set_sensitive (grid, FALSE);
+      gtk_widget_set_sensitive (dialog->color_chooser, FALSE);
       gtk_widget_show (frame);
 
       label = gtk_label_new (_("Missing dependencies"));
@@ -752,6 +752,8 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
   gtk_widget_set_hexpand (box, TRUE);
   gtk_grid_attach (GTK_GRID (grid), box, 0, row, 1, 1);
+  if (G_UNLIKELY (!thunar_g_vfs_metadata_is_supported ()))
+    gtk_widget_set_sensitive (box, FALSE);
   gtk_widget_show (box);
 
   button = gtk_button_new_with_mnemonic (_("_Reset"));
@@ -1367,9 +1369,12 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
       gtk_widget_hide (dialog->volume_label);
     }
 
-  background = thunar_file_get_metadata_setting (file, "highlight-color-background");
-  foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
-  thunar_properties_dialog_colorize_example_box (dialog, background, foreground);
+  if (G_LIKELY (thunar_g_vfs_metadata_is_supported ()))
+    {
+      background = thunar_file_get_metadata_setting (file, "highlight-color-background");
+      foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
+      thunar_properties_dialog_colorize_example_box (dialog, background, foreground);
+    }
 
   /* cleanup */
   g_object_unref (G_OBJECT (icon_factory));
