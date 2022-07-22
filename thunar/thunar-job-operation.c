@@ -17,6 +17,7 @@
  */
 
 #include <thunar/thunar-application.h>
+#include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-job-operation.h>
 #include <thunar/thunar-private.h>
@@ -171,10 +172,6 @@ thunar_job_operation_commit (ThunarJobOperation *job_operation)
 {
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
-  /* do not register an 'empty' job operation */
-  if (job_operation->source_file_list == NULL && job_operation->target_file_list == NULL)
-    return;
-
   /* We only keep one job operation commited in the job operation list, so we have to free the
    * memory for the job operation in the list, if any, stored in before we commit the new one. */
   thunar_g_list_free_full (job_operation_list);
@@ -203,9 +200,21 @@ thunar_job_operation_undo (void)
   /* the 'marked' operation */
   operation_marker = job_operation_list->data;
 
-  inverted_operation = thunar_job_operation_new_invert (operation_marker);
-  thunar_job_operation_execute (inverted_operation);
-  g_object_unref (inverted_operation);
+  /* warn the user if the previous operation is empty, since then there is nothing to undo */
+  if (operation_marker->source_file_list == NULL && operation_marker->target_file_list == NULL)
+    {
+      thunar_dialogs_show_warning (NULL,
+                                   _("The operation cannot be undone"),
+                                   _("The operation you are trying to undo does not have any files "
+                                     "associated with it, and thus cannot be undone. "
+                                     "This is most likely because it involved the overwriting of files."));
+    }
+  else
+    {
+      inverted_operation = thunar_job_operation_new_invert (operation_marker);
+      thunar_job_operation_execute (inverted_operation);
+      g_object_unref (inverted_operation);
+    }
 
   /* Completely clear the job operation list on undo, this is because we only store the single
    * most recent operation, and we do not want it to be available to undo *again* after it has
@@ -294,7 +303,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
 
             if (!THUNAR_IS_FILE (thunar_file))
               {
-                g_error ("One of the files in the job operation list did not convert to a valid ThunarFile");
+                g_warning ("One of the files in the job operation list did not convert to a valid ThunarFile");
                 continue;
               }
 
