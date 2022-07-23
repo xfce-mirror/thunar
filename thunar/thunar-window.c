@@ -2392,16 +2392,21 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   _thunar_return_val_if_fail (view_type != G_TYPE_NONE, NULL);
   _thunar_return_val_if_fail (history == NULL || THUNAR_IS_HISTORY (history), NULL);
 
+  /* Figure out which sort settings to use */
+  if (window->view == NULL)
+    g_object_get (G_OBJECT (window->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
+  else
+    g_object_get (window->view, "sort-column", &sort_column, "sort-order", &sort_order, NULL);
+
   /* allocate and setup a new view */
-  view = g_object_new (view_type, "current-directory", directory, NULL);
+  view = g_object_new (view_type, "current-directory", directory,
+                                  "sort-column-default", sort_column,
+                                  "sort-order-default", sort_order, NULL);
   thunar_view_set_show_hidden (THUNAR_VIEW (view), window->show_hidden);
 
-  /* inherit sort settings from current view */
-  if (window->view != NULL)
-    {
-      g_object_get (window->view, "sort-column", &sort_column, "sort-order", &sort_order, NULL);
-      g_object_set (view, "sort-column", sort_column, "sort-order", sort_order, NULL);
-    }
+  /* If directory specific settings are disabled, directly use the sort settings of the current view for it */
+  if (!window->directory_specific_settings)
+    g_object_set (view, "sort-column", sort_column, "sort-order", sort_order, NULL);
 
   gtk_widget_show (view);
 
