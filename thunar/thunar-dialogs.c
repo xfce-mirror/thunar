@@ -509,6 +509,78 @@ thunar_dialogs_show_error (gpointer      parent,
 
 
 /**
+ * thunar_dialogs_show_warning:
+ * @parent   : a #GtkWidget on which the warning dialog should be shown, or a #GdkScreen
+ *             if no #GtkWidget is known. May also be %NULL, in which case the default
+ *             #GdkScreen will be used.
+ * @title    : A string containing the title for the warning dialog.
+ * @format   : An optional printf()-style formatted text for the secondary text.
+ *             Can be an empty string if secondary test is not desired.
+ * @...      : argument list for the @format.
+ *
+ * Displays an warning dialog on @parent using the @title as primary message and optionally
+ * displaying the secondary text.
+ **/
+void
+thunar_dialogs_show_warning (GtkWindow   *parent,
+                             const gchar *title,
+                             const gchar *format,
+                             ...)
+{
+  GtkWidget *dialog;
+  GtkWindow *window;
+  GdkScreen *screen;
+  va_list    args;
+  gchar     *secondary_text;
+  GList     *children;
+  GList     *lp;
+
+  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+
+  /* parse the parent */
+  screen = thunar_util_parse_parent (parent, &window);
+
+  /* determine the secondary text */
+  va_start (args, format);
+  secondary_text = g_strdup_vprintf (format, args);
+  va_end (args);
+
+  /* actually allocate the dialog */
+  dialog = gtk_message_dialog_new (window,
+                                   GTK_DIALOG_DESTROY_WITH_PARENT
+                                   | GTK_DIALOG_MODAL,
+                                   GTK_MESSAGE_ERROR,
+                                   GTK_BUTTONS_CLOSE,
+                                   "%s.", title);
+
+  /* move the dialog to the appropriate screen */
+  if (G_UNLIKELY (window == NULL && screen != NULL))
+    gtk_window_set_screen (GTK_WINDOW (dialog), screen);
+
+  /* set the secondary text if it is not empty */
+  if (G_LIKELY (g_strcmp0 (secondary_text, "") != 0))
+    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", secondary_text);
+
+  children = gtk_container_get_children (
+    GTK_CONTAINER (gtk_message_dialog_get_message_area (GTK_MESSAGE_DIALOG (dialog))));
+
+  /* enable wrap for labels */
+  for (lp = children; lp != NULL; lp = lp->next)
+    if (GTK_IS_LABEL (lp->data))
+      gtk_label_set_line_wrap_mode (GTK_LABEL (lp->data), PANGO_WRAP_WORD_CHAR);
+
+  /* display the dialog */
+  gtk_dialog_run (GTK_DIALOG (dialog));
+
+  /* cleanup */
+  gtk_widget_destroy (dialog);
+  g_free (secondary_text);
+  g_list_free (children);
+}
+
+
+
+/**
  * thunar_dialogs_show_job_ask:
  * @parent   : the parent #GtkWindow or %NULL.
  * @question : the question text.
