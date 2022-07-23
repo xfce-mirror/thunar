@@ -78,7 +78,9 @@ enum
   PROP_DIRECTORY_SPECIFIC_SETTINGS,
   PROP_THUMBNAIL_DRAW_FRAMES,
   PROP_SORT_COLUMN,
+  PROP_SORT_COLUMN_DEFAULT,
   PROP_SORT_ORDER,
+  PROP_SORT_ORDER_DEFAULT,
   PROP_ACCEL_GROUP,
   N_PROPERTIES
 };
@@ -355,11 +357,15 @@ struct _ThunarStandardViewPrivate
   /* file insert signal */
   gulong                  row_changed_id;
 
-  /* current sort column ID */
+  /* current sort column ID and it's fallback
+   * the default is only relevant for directory specific settings */
   ThunarColumn            sort_column;
+  ThunarColumn            sort_column_default;
 
-  /* current sort_order (GTK_SORT_ASCENDING || GTK_SORT_DESCENDING) */
+  /* current sort_order (GTK_SORT_ASCENDING || GTK_SORT_DESCENDING)
+   * the default is only relevant for directory specific settings */
   GtkSortType             sort_order;
+  GtkSortType             sort_order_default;
 
   /* current search query, used to allow switching between views with different (or NULL) search queries */
   gchar                  *search_query;
@@ -638,6 +644,20 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                          EXO_PARAM_READWRITE);
 
   /**
+   * ThunarStandardView:sort-column-default:
+   *
+   * Only relevant for directory specific settings
+   * The sort column to use if no directory specific settings are found for a directory
+   **/
+  standard_view_props[PROP_SORT_COLUMN_DEFAULT] =
+      g_param_spec_enum ("sort-column-default",
+                         "SortColumnDefault",
+                         NULL,
+                         THUNAR_TYPE_COLUMN,
+                         THUNAR_COLUMN_NAME,
+                         EXO_PARAM_WRITABLE);
+
+  /**
    * ThunarStandardView:sort-order:
    *
    * The sort order currently used for this view.
@@ -649,6 +669,20 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                          GTK_TYPE_SORT_TYPE,
                          GTK_SORT_ASCENDING,
                          EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarStandardView:sort-order-default:
+   *
+   * Only relevant for directory specific settings
+   * The sort order to use if no directory specific settings are found for a directory
+   **/
+  standard_view_props[PROP_SORT_ORDER_DEFAULT] =
+      g_param_spec_enum ("sort-order-default",
+                         "SortOrderDefault",
+                         NULL,
+                         GTK_TYPE_SORT_TYPE,
+                         GTK_SORT_ASCENDING,
+                         EXO_PARAM_WRITABLE);
 
   /* override ThunarComponent's properties */
   g_iface = g_type_default_interface_peek (THUNAR_TYPE_COMPONENT);
@@ -1170,8 +1204,16 @@ thunar_standard_view_set_property (GObject      *object,
       thunar_standard_view_set_sort_column (standard_view, g_value_get_enum (value));
       break;
 
+    case PROP_SORT_COLUMN_DEFAULT:
+      standard_view->priv->sort_column_default = g_value_get_enum (value);
+      break;
+
     case PROP_SORT_ORDER:
       thunar_standard_view_set_sort_order (standard_view, g_value_get_enum (value));
+      break;
+
+    case PROP_SORT_ORDER_DEFAULT:
+      standard_view->priv->sort_order_default = g_value_get_enum (value);
       break;
 
     case PROP_ACCEL_GROUP:
@@ -1829,17 +1871,19 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
   if (sort_column_name != NULL)
     thunar_column_value_from_string (sort_column_name, &sort_column);
 
-  /* Out of range ? --> Fallback to sort by NAME column. */
+  /* Out of range ? Use the default value */
   if (sort_column >= THUNAR_N_VISIBLE_COLUMNS)
-    sort_column = THUNAR_COLUMN_NAME;
+    sort_column = standard_view->priv->sort_column_default;
 
   /* convert the sort order name to a value */
   if (sort_order_name != NULL)
     {
       if (g_strcmp0 (sort_order_name, "GTK_SORT_DESCENDING") == 0)
         sort_order = GTK_SORT_DESCENDING;
-      else
+      else if (g_strcmp0 (sort_order_name, "GTK_SORT_ASCENDING") == 0)
         sort_order = GTK_SORT_ASCENDING;
+      else
+        sort_order = standard_view->priv->sort_order_default;
     }
 
   /* convert the zoom level name to a value */
