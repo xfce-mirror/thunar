@@ -192,6 +192,7 @@ thunar_job_operation_undo (void)
 {
   ThunarJobOperation *operation_marker;
   ThunarJobOperation *inverted_operation;
+  GString            *op_type;
 
   /* do nothing in case there is no job operation to undo */
   if (job_operation_list == NULL)
@@ -203,11 +204,29 @@ thunar_job_operation_undo (void)
   /* warn the user if the previous operation is empty, since then there is nothing to undo */
   if (operation_marker->source_file_list == NULL && operation_marker->target_file_list == NULL)
     {
-      thunar_dialogs_show_warning (NULL,
-                                   _("The operation cannot be undone"),
-                                   _("The operation you are trying to undo does not have any files "
-                                     "associated with it, and thus cannot be undone. "
-                                     "This is most likely because it involved the overwriting of files."));
+
+      switch (operation_marker->operation_kind)
+      {
+        case THUNAR_JOB_OPERATION_KIND_COPY:
+          op_type = g_string_new (_("Copy"));
+          break;
+
+        case THUNAR_JOB_OPERATION_KIND_MOVE:
+          op_type = g_string_new (_("Move"));
+          break;
+
+        default:
+          _thunar_assert_not_reached ();
+          break;
+      }
+
+      xfce_dialog_show_warning (NULL,
+                                _("The operation you are trying to undo does not have any files "
+                                  "associated with it, and thus cannot be undone. "
+                                  "This is most likely because it involved the overwriting of files."),
+                                _("%s operation cannot be undone"), op_type->str);
+
+      g_string_free (op_type, TRUE);
     }
   else
     {
