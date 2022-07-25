@@ -102,11 +102,15 @@ static void     thunar_properties_dialog_update               (ThunarPropertiesD
 static void     thunar_properties_dialog_update_providers     (ThunarPropertiesDialog      *dialog);
 static GList   *thunar_properties_dialog_get_files            (ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_reset_highlight      (ThunarPropertiesDialog      *dialog);
+static void     thunar_properties_dialog_apply_highlight      (ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_set_foreground       (ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_set_background       (ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_colorize_example_box (ThunarPropertiesDialog      *dialog,
                                                                const gchar                 *background,
                                                                const gchar                 *foreground);
+static void     thunar_properties_dialog_color_editor_changed (ThunarPropertiesDialog      *dialog);
+static void     thunar_properties_dialog_color_editor_close   (ThunarPropertiesDialog      *dialog);
+static void     thunar_properties_dialog_color_editor_select  (ThunarPropertiesDialog      *dialog);
 
 
 struct _ThunarPropertiesDialogClass
@@ -159,6 +163,11 @@ struct _ThunarPropertiesDialog
   GtkWidget              *content_value_label;
   GtkWidget              *color_chooser;
   GtkWidget              *example_box;
+  GtkWidget              *highlight_buttons;
+  GtkWidget              *editor_buttons;
+
+  gchar                  *foreground_color;
+  gchar                  *background_color;
 };
 
 
@@ -690,9 +699,19 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   row = 0;
 
+  label = gtk_label_new_with_mnemonic (_("This feature can be toggled using View > Show File Highlight."));
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
+  gtk_widget_show (label);
+
+  row++;
+
   chooser = gtk_color_chooser_widget_new ();
   dialog->color_chooser = chooser;
+  g_signal_connect_swapped (G_OBJECT (chooser), "notify::show-editor",
+                            G_CALLBACK (thunar_properties_dialog_color_editor_changed), dialog);
   gtk_grid_attach (GTK_GRID (grid), chooser, 0, row, 1, 1);
+  gtk_widget_set_vexpand (chooser, TRUE);
   gtk_widget_show (chooser);
 
   row++;
@@ -750,7 +769,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
     }
 
   box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+  dialog->highlight_buttons = box;
   gtk_widget_set_hexpand (box, TRUE);
+  gtk_widget_set_vexpand (box, TRUE);
   gtk_grid_attach (GTK_GRID (grid), box, 0, row, 1, 1);
   if (G_UNLIKELY (!thunar_g_vfs_metadata_is_supported ()))
     gtk_widget_set_sensitive (box, FALSE);
@@ -760,18 +781,49 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   g_signal_connect_swapped (G_OBJECT (button), "clicked",
                             G_CALLBACK (thunar_properties_dialog_reset_highlight), dialog);
   gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
+  gtk_widget_set_vexpand (button, FALSE);
+  gtk_widget_set_valign (button, GTK_ALIGN_END);
+  gtk_widget_show (button);
+
+  button = gtk_button_new_with_mnemonic (_("_Apply"));
+  g_signal_connect_swapped (G_OBJECT (button), "clicked",
+                            G_CALLBACK (thunar_properties_dialog_apply_highlight), dialog);
+  gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
+  gtk_widget_set_vexpand (button, FALSE);
+  gtk_widget_set_valign (button, GTK_ALIGN_END);
   gtk_widget_show (button);
 
   button = gtk_button_new_with_mnemonic (_("Set _Background"));
   g_signal_connect_swapped (G_OBJECT (button), "clicked",
                             G_CALLBACK (thunar_properties_dialog_set_background), dialog);
   gtk_box_pack_end (GTK_BOX (box), button, FALSE, FALSE, 0);
+  gtk_widget_set_vexpand (button, FALSE);
+  gtk_widget_set_valign (button, GTK_ALIGN_END);
   gtk_widget_show (button);
 
   button = gtk_button_new_with_mnemonic (_("Set _Foreground"));
   g_signal_connect_swapped (G_OBJECT (button), "clicked",
                             G_CALLBACK (thunar_properties_dialog_set_foreground), dialog);
   gtk_box_pack_end (GTK_BOX (box), button, FALSE, FALSE, 0);
+  gtk_widget_set_vexpand (button, FALSE);
+  gtk_widget_set_valign (button, GTK_ALIGN_END);
+  gtk_widget_show (button);
+
+  box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+  dialog->editor_buttons = box;
+  gtk_widget_set_hexpand (box, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), box, 0, row, 1, 1);
+
+  button = gtk_button_new_from_icon_name ("go-previous", GTK_ICON_SIZE_BUTTON);
+  g_signal_connect_swapped (G_OBJECT (button), "clicked",
+                            G_CALLBACK (thunar_properties_dialog_color_editor_close), dialog);
+  gtk_box_pack_start (GTK_BOX (box), button, TRUE, TRUE, 0);
+  gtk_widget_show (button);
+
+  button = gtk_button_new_from_icon_name ("go-next", GTK_ICON_SIZE_BUTTON);
+  g_signal_connect_swapped (G_OBJECT (button), "clicked",
+                            G_CALLBACK (thunar_properties_dialog_color_editor_select), dialog);
+  gtk_box_pack_start (GTK_BOX (box), button, TRUE, TRUE, 0);
   gtk_widget_show (button);
 }
 
@@ -1764,10 +1816,27 @@ thunar_properties_dialog_reset_highlight (ThunarPropertiesDialog *dialog)
 
 
 static void
+thunar_properties_dialog_apply_highlight (ThunarPropertiesDialog *dialog)
+{
+  GList *lp;
+
+  for (lp = dialog->files; lp != NULL; lp = lp->next)
+    {
+      if (dialog->foreground_color != NULL)
+        thunar_file_set_metadata_setting (lp->data, "highlight-color-foreground", dialog->foreground_color, FALSE);
+      if (dialog->background_color != NULL)
+        thunar_file_set_metadata_setting (lp->data, "highlight-color-background", dialog->background_color, FALSE);
+    }
+
+  thunar_properties_dialog_reload (dialog);
+}
+
+
+
+static void
 thunar_properties_dialog_set_foreground (ThunarPropertiesDialog *dialog)
 {
   GdkRGBA   color;
-  GList    *lp;
   gchar    *color_str;
   gboolean  highlighting_enabled;
 
@@ -1780,12 +1849,10 @@ thunar_properties_dialog_set_foreground (ThunarPropertiesDialog *dialog)
 
   gtk_color_chooser_get_rgba (GTK_COLOR_CHOOSER (dialog->color_chooser), &color);
   color_str = gdk_rgba_to_string (&color);
-  for (lp = dialog->files; lp != NULL; lp = lp->next)
-    thunar_file_set_metadata_setting (lp->data, "highlight-color-foreground", color_str, FALSE);
   thunar_properties_dialog_colorize_example_box (dialog, NULL, color_str);
-  g_free (color_str);
-
-  thunar_properties_dialog_reload (dialog);
+  g_free (dialog->foreground_color);
+  dialog->foreground_color = NULL;
+  dialog->foreground_color = color_str;
 }
 
 
@@ -1794,7 +1861,6 @@ static void
 thunar_properties_dialog_set_background (ThunarPropertiesDialog *dialog)
 {
   GdkRGBA   color;
-  GList    *lp;
   gchar    *color_str;
   gboolean  highlighting_enabled;
 
@@ -1807,12 +1873,10 @@ thunar_properties_dialog_set_background (ThunarPropertiesDialog *dialog)
 
   gtk_color_chooser_get_rgba (GTK_COLOR_CHOOSER (dialog->color_chooser), &color);
   color_str = gdk_rgba_to_string (&color);
-  for (lp = dialog->files; lp != NULL; lp = lp->next)
-    thunar_file_set_metadata_setting (lp->data, "highlight-color-background", color_str, FALSE);
   thunar_properties_dialog_colorize_example_box (dialog, color_str, NULL);
-  g_free (color_str);
-
-  thunar_properties_dialog_reload (dialog);
+  g_free (dialog->background_color);
+  dialog->background_color = NULL;
+  dialog->background_color = color_str;
 }
 
 
@@ -1826,6 +1890,8 @@ thunar_properties_dialog_colorize_example_box (ThunarPropertiesDialog *dialog,
   gchar          *css_data = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
+
+  gtk_widget_reset_style (dialog->example_box);
 
   if (background != NULL && foreground != NULL)
     css_data = g_strdup_printf ("#example { background-color: %s; color: %s; }", background, foreground);
@@ -1841,4 +1907,52 @@ thunar_properties_dialog_colorize_example_box (ThunarPropertiesDialog *dialog,
 
   gtk_css_provider_load_from_data (provider, css_data, -1, NULL);
   gtk_style_context_add_provider (gtk_widget_get_style_context (dialog->example_box), GTK_STYLE_PROVIDER (provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+  gtk_widget_show (dialog->example_box);
+}
+
+
+
+static void
+thunar_properties_dialog_color_editor_changed (ThunarPropertiesDialog *dialog)
+{
+  gboolean show_editor;
+
+  _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
+
+  g_object_get (dialog->color_chooser, "show-editor", &show_editor, NULL);
+  
+  if (show_editor)
+    {
+      gtk_widget_show (dialog->editor_buttons);
+      gtk_widget_hide (dialog->example_box);
+      gtk_widget_hide (dialog->highlight_buttons);
+    }
+  else
+    {
+      gtk_widget_hide (dialog->editor_buttons);
+      gtk_widget_show (dialog->example_box);
+      gtk_widget_show (dialog->highlight_buttons);
+    }
+}
+
+
+
+static void
+thunar_properties_dialog_color_editor_close (ThunarPropertiesDialog *dialog)
+{
+  g_object_set (G_OBJECT (dialog->color_chooser), "show-editor", FALSE, NULL);
+}
+
+
+
+static void
+thunar_properties_dialog_color_editor_select (ThunarPropertiesDialog *dialog)
+{
+  GdkRGBA color;
+
+  gtk_color_chooser_get_rgba (GTK_COLOR_CHOOSER (dialog->color_chooser), &color);
+  gtk_color_chooser_set_rgba (GTK_COLOR_CHOOSER (dialog->color_chooser), &color);
+
+  thunar_properties_dialog_color_editor_close (dialog);
 }
