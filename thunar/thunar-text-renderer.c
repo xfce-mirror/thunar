@@ -236,6 +236,22 @@ thunar_text_renderer_new (void)
 
 
 static void
+thunar_text_renderer_clear_background (cairo_t   *cr,
+                                                GtkWidget *widget)
+{
+  GtkStyleContext *context;
+  GdkRGBA         *color;
+
+  context = gtk_widget_get_style_context (widget);
+  gtk_style_context_get (context, GTK_STATE_FLAG_NORMAL, GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &color, NULL);
+  gdk_cairo_set_source_rgba (cr, color);
+
+  cairo_paint (cr);
+}
+
+
+
+static void
 thunar_text_renderer_render (GtkCellRenderer      *cell,
                              cairo_t              *cr,
                              GtkWidget            *widget,
@@ -243,6 +259,10 @@ thunar_text_renderer_render (GtkCellRenderer      *cell,
                              const GdkRectangle   *cell_area,
                              GtkCellRendererState  flags)
 {
+  /* This should paint on top of the current surface. This should hide the highlight
+     that is drawn by the default render function of GtkCellRendererText */
+  thunar_text_renderer_clear_background (cr, widget);
+
   if (THUNAR_TEXT_RENDERER (cell)->highlighting_enabled)
     thunar_util_clip_view_background (cell, cr, background_area, widget, flags);
 
