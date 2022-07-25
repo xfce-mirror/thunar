@@ -52,10 +52,6 @@ gboolean           thunar_dialogs_show_insecure_program (gpointer              p
                                                          const gchar          *title,
                                                          ThunarFile           *file,
                                                          const gchar          *command);
-void              thunar_dialogs_show_warning           (GtkWindow            *parent,
-                                                         const gchar          *title,
-                                                         const gchar          *format,
-                                                         ...) G_GNUC_PRINTF (3, 4);
 
 G_END_DECLS;
 
