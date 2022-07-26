@@ -177,7 +177,7 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   exo_icon_view_set_selection_mode (EXO_ICON_VIEW (view), GTK_SELECTION_MULTIPLE);
 
   /* add the abstract icon renderer */
-  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer), "follow-state", TRUE, NULL);
+  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer), "follow-state", TRUE, "rounded-corners", TRUE, NULL);
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer, FALSE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer,
                                  "file", THUNAR_COLUMN_FILE);
@@ -185,6 +185,7 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   /* add the name renderer */
   /*FIXME text prelit*/
   /*g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer), "follow-state", TRUE, NULL);*/
+  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer), "rounded-corners", TRUE, NULL);
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer, TRUE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer,
                                  "text", THUNAR_COLUMN_NAME);
@@ -641,8 +642,6 @@ thunar_abstract_icon_view_zoom_level_changed (ThunarAbstractIconView *abstract_i
 {
   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
 
-  /* we use the same trick as with ThunarDetailsView here, simply because its simple :-) */
-  gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (gtk_bin_get_child (GTK_BIN (abstract_icon_view))),
-                                      THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer,
-                                      NULL, NULL, NULL);
+  /* this should reload the window without unsetting the cell_layout_data_funcs (needed for highlighting) */
+  thunar_view_reload (THUNAR_VIEW (abstract_icon_view), TRUE);
 }

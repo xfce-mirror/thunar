@@ -57,11 +57,31 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-folder.h>
+#include <thunar/thunar-list-model.h>
+#include <thunar/thunar-text-renderer.h>
+#include <thunar/thunar-icon-renderer.h>
 
 #include <glib.h>
 #include <glib/gstdio.h>
 
+#define BORDER_RADIUS 8
 
+enum
+{
+  THUNAR_CELL_TOP_RIGHT,
+  THUNAR_CELL_BOTTOM_RIGHT,
+  THUNAR_CELL_TOP_LEFT,
+  THUNAR_CELL_BOTTOM_LEFT,
+};
+
+enum
+{
+  DRAW_ON_LEFT,
+  DRAW_ON_RIGHT,
+  DRAW_ON_BOTTOM,
+  DRAW_ON_TOP,
+  DRAW_ON_ALL_SIDES,
+} DrawOnSide;
 
 const char *SEARCH_PREFIX = "Search: ";
 
@@ -812,4 +832,168 @@ thunar_util_strjoin_list (GList       *string_list,
     return g_strdup ("");
   else
     return joined_string;
+}
+
+
+
+static void
+thunar_util_determine_corner_properties (GtkWidget       *widget,
+                                         GtkCellRenderer *cell,
+                                         gint             cell_height,
+                                         gint             cell_width,
+                                         gdouble         *radius,
+                                         gboolean        *side)
+{
+  GtkTextDirection text_direction;
+
+  /* only have rounded corners for icon view. */
+  if (G_LIKELY (EXO_IS_ICON_VIEW (widget)))
+    {
+      if (exo_icon_view_get_orientation (EXO_ICON_VIEW (widget)) == GTK_ORIENTATION_HORIZONTAL)
+        {
+          /* Compact View */
+          /* determine the radius proportional to either height or width (depens on the view) */
+          *radius = cell_height * (BORDER_RADIUS / 100.0);
+
+          text_direction = gtk_widget_get_direction (widget);
+          /* decide which side to draw the rounded corners */
+          if (THUNAR_IS_TEXT_RENDERER (cell))
+            *side = text_direction == GTK_TEXT_DIR_LTR ? DRAW_ON_RIGHT : DRAW_ON_LEFT;
+          else
+            *side = text_direction == GTK_TEXT_DIR_LTR ? DRAW_ON_LEFT : DRAW_ON_RIGHT;
+        }
+      else
+        {
+          /* Icon View */
+          *radius = cell_width * (BORDER_RADIUS / 100.0);
+
+          /* text direction has no effect on this view */
+          /* decide which side to draw the rounded corners */
+          if (THUNAR_IS_TEXT_RENDERER (cell))
+            *side = DRAW_ON_BOTTOM;
+          else
+            *side = DRAW_ON_TOP;
+        }
+    }
+}
+
+
+
+static void
+thunar_util_draw_rounded_corners (cairo_t            *cr,
+                                  const GdkRectangle *background_area,
+                                  gdouble             radius,
+                                  gint                side)
+{
+  gdouble *corner_radius;
+  gdouble  draw_round_corners_on_left[4]      = { 0,      0,      radius, radius };
+  gdouble  draw_round_corners_on_right[4]     = { radius, radius, 0,      0      };
+  gdouble  draw_round_corners_on_top[4]       = { radius, 0,      0,      radius };
+  gdouble  draw_round_corners_on_bottom[4]    = { 0,      radius, radius, 0      };
+  gdouble  draw_round_corners_on_all_sides[4] = { radius, radius, radius, radius };
+  gdouble  degrees = G_PI / 180.0;
+
+  switch (side)
+    {
+    case DRAW_ON_LEFT:
+      corner_radius = draw_round_corners_on_left;
+      break;
+    case DRAW_ON_RIGHT:
+      corner_radius = draw_round_corners_on_right;
+      break;
+    case DRAW_ON_BOTTOM:
+      corner_radius = draw_round_corners_on_bottom;
+      break;
+    case DRAW_ON_TOP:
+      corner_radius = draw_round_corners_on_top;
+      break;
+    case DRAW_ON_ALL_SIDES:
+      corner_radius = draw_round_corners_on_all_sides;
+      break;
+    default:
+      corner_radius = draw_round_corners_on_all_sides;
+      g_warn_if_reached ();
+    }
+
+  cairo_new_sub_path (cr);
+  cairo_arc (cr,
+             background_area->x + background_area->width - corner_radius[THUNAR_CELL_TOP_RIGHT], /* cairo x coord */
+             background_area->y + corner_radius[THUNAR_CELL_TOP_RIGHT],                          /* cairo y coord */
+             corner_radius[THUNAR_CELL_TOP_RIGHT], -90 * degrees, 0 * degrees);                  /* radius, angle1, angle2 resp. */
+  cairo_arc (cr,
+             background_area->x + background_area->width - corner_radius[THUNAR_CELL_BOTTOM_RIGHT],
+             background_area->y + background_area->height - corner_radius[THUNAR_CELL_BOTTOM_RIGHT],
+             corner_radius[THUNAR_CELL_BOTTOM_RIGHT], 0 * degrees, 90 * degrees);
+  cairo_arc (cr,
+             background_area->x + corner_radius[THUNAR_CELL_TOP_LEFT],
+             background_area->y + background_area->height - corner_radius[THUNAR_CELL_TOP_LEFT],
+             corner_radius[THUNAR_CELL_TOP_LEFT], 90 * degrees, 180 * degrees);
+  cairo_arc (cr,
+             background_area->x + corner_radius[THUNAR_CELL_BOTTOM_LEFT],
+             background_area->y + corner_radius[THUNAR_CELL_BOTTOM_LEFT],
+             corner_radius[THUNAR_CELL_BOTTOM_LEFT], 180 * degrees, 270 * degrees);
+  cairo_close_path (cr);
+  cairo_clip (cr);
+}
+
+
+
+void
+thunar_util_clip_view_background (GtkCellRenderer      *cell,
+                                  cairo_t              *cr,
+                                  const GdkRectangle   *background_area,
+                                  GtkWidget            *widget,
+                                  GtkCellRendererState  flags)
+{
+  GtkStyleContext  *context;
+  GdkRGBA          *color = NULL;
+  GdkRGBA           highlight_color_rgba;
+  gboolean          color_selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0;
+  gboolean          rounded_corners;
+  gchar            *highlight_color;
+  gdouble           radius = 0.0;
+  gint              side = DRAW_ON_ALL_SIDES;
+
+  g_object_get (G_OBJECT (cell), 
+                "highlight-color", &highlight_color,
+                "rounded-corners", &rounded_corners,
+                NULL);
+
+  cairo_save (cr);
+
+  if (G_LIKELY (rounded_corners))
+    {
+      /* determine radius & the side to draw the rounded corners */
+      thunar_util_determine_corner_properties (widget, cell,
+                                               background_area->height, background_area->width,
+                                               &radius, &side);
+
+      thunar_util_draw_rounded_corners (cr, background_area, radius, side);
+    }
+
+  if (G_UNLIKELY (highlight_color != NULL))
+    {
+      gdk_rgba_parse (&highlight_color_rgba, highlight_color);
+      color = gdk_rgba_copy (&highlight_color_rgba);
+    }
+
+  /**
+   * If the item is selected then paint the background area with the theme's selected item's color.
+   * To distinguish between highlighted & non highlighted files, the background area of icon renderer
+   * is left untouched if it already has a highlight color
+   **/
+  if (G_UNLIKELY (color_selected && !(THUNAR_IS_ICON_RENDERER (cell) && highlight_color != NULL)))
+    {
+      context = gtk_widget_get_style_context (widget);
+      gtk_style_context_get (context, GTK_STATE_FLAG_SELECTED, GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &color, NULL);
+    }
+
+  if (G_LIKELY (color != NULL))
+    {
+      gdk_cairo_set_source_rgba (cr, color);
+      gdk_rgba_free (color);
+      cairo_paint (cr);
+    }
+
+  cairo_restore (cr);
 }
