@@ -110,7 +110,6 @@ static void     thunar_properties_dialog_colorize_example_box (ThunarPropertiesD
                                                                const gchar                 *foreground);
 static void     thunar_properties_dialog_color_editor_changed (ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_color_editor_close   (ThunarPropertiesDialog      *dialog);
-static void     thunar_properties_dialog_color_editor_select  (ThunarPropertiesDialog      *dialog);
 
 
 struct _ThunarPropertiesDialogClass
@@ -802,20 +801,13 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_set_valign (button, GTK_ALIGN_END);
   gtk_widget_show (button);
 
-  box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+  box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
   dialog->editor_buttons = box;
-  gtk_widget_set_hexpand (box, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), box, 0, row, 1, 1);
+  gtk_grid_attach_next_to(GTK_GRID (grid), box, chooser, GTK_POS_LEFT, 1, 1);
 
   button = gtk_button_new_from_icon_name ("go-previous", GTK_ICON_SIZE_BUTTON);
   g_signal_connect_swapped (G_OBJECT (button), "clicked",
                             G_CALLBACK (thunar_properties_dialog_color_editor_close), dialog);
-  gtk_box_pack_start (GTK_BOX (box), button, TRUE, TRUE, 0);
-  gtk_widget_show (button);
-
-  button = gtk_button_new_from_icon_name ("go-next", GTK_ICON_SIZE_BUTTON);
-  g_signal_connect_swapped (G_OBJECT (button), "clicked",
-                            G_CALLBACK (thunar_properties_dialog_color_editor_select), dialog);
   gtk_box_pack_start (GTK_BOX (box), button, TRUE, TRUE, 0);
   gtk_widget_show (button);
 }
@@ -1934,18 +1926,10 @@ thunar_properties_dialog_color_editor_changed (ThunarPropertiesDialog *dialog)
 static void
 thunar_properties_dialog_color_editor_close (ThunarPropertiesDialog *dialog)
 {
-  g_object_set (G_OBJECT (dialog->color_chooser), "show-editor", FALSE, NULL);
-}
-
-
-
-static void
-thunar_properties_dialog_color_editor_select (ThunarPropertiesDialog *dialog)
-{
   GdkRGBA color;
 
   gtk_color_chooser_get_rgba (GTK_COLOR_CHOOSER (dialog->color_chooser), &color);
   gtk_color_chooser_set_rgba (GTK_COLOR_CHOOSER (dialog->color_chooser), &color);
 
-  thunar_properties_dialog_color_editor_close (dialog);
+  g_object_set (G_OBJECT (dialog->color_chooser), "show-editor", FALSE, NULL);
 }
