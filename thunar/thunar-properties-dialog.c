@@ -699,13 +699,6 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   row = 0;
 
-  label = gtk_label_new_with_mnemonic (_("This feature can be toggled using View > Show File Highlight."));
-  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
-  gtk_widget_show (label);
-
-  row++;
-
   chooser = gtk_color_chooser_widget_new ();
   dialog->color_chooser = chooser;
   g_signal_connect_swapped (G_OBJECT (chooser), "notify::show-editor",
