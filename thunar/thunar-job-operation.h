@@ -42,6 +42,8 @@ ThunarJobOperation    *thunar_job_operation_new          (ThunarJobOperationKind
 void                   thunar_job_operation_add          (ThunarJobOperation    *job_operation,
                                                           GFile                 *source_file,
                                                           GFile                 *target_file);
+void                   thunar_job_operation_overwrite    (ThunarJobOperation    *job_operation,
+                                                          GFile                 *overwritten_file);
 void                   thunar_job_operation_commit       (ThunarJobOperation    *job_operation);
 void                   thunar_job_operation_undo         (void);
 
