@@ -52,6 +52,7 @@ struct _ThunarJobOperation
   ThunarJobOperationKind  operation_kind;
   GList                  *source_file_list;
   GList                  *target_file_list;
+  GList                  *overwritten_file_list;
 };
 
 G_DEFINE_TYPE (ThunarJobOperation, thunar_job_operation, G_TYPE_OBJECT)
@@ -78,6 +79,7 @@ thunar_job_operation_init (ThunarJobOperation *self)
   self->operation_kind = THUNAR_JOB_OPERATION_KIND_COPY;
   self->source_file_list = NULL;
   self->target_file_list = NULL;
+  self->overwritten_file_list = NULL;
 }
 
 
@@ -91,6 +93,7 @@ thunar_job_operation_dispose (GObject *object)
 
   g_list_free_full (op->source_file_list, g_object_unref);
   g_list_free_full (op->target_file_list, g_object_unref);
+  g_list_free_full (op->overwritten_file_list, g_object_unref);
 
   (*G_OBJECT_CLASS (thunar_job_operation_parent_class)->dispose) (object);
 }
@@ -160,6 +163,24 @@ thunar_job_operation_add (ThunarJobOperation *job_operation,
 
 
 
+/***
+ * thunar_job_operation_overwrite:
+ * @job_operation:    a #ThunarJobOperation
+ * @overwritten_file: a #GFile representing the file that has been overwritten
+ *
+ * Logs a file overwritten as a part of an operation.
+ **/
+void
+thunar_job_operation_overwrite (ThunarJobOperation *job_operation,
+                                GFile              *overwritten_file)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
+
+  job_operation->overwritten_file_list = thunar_g_list_append_deep (job_operation->overwritten_file_list, overwritten_file);
+}
+
+
+
 /**
  * thunar_job_operation_commit:
  * @job_operation: a #ThunarJobOperation
@@ -192,7 +213,8 @@ thunar_job_operation_undo (void)
 {
   ThunarJobOperation *operation_marker;
   ThunarJobOperation *inverted_operation;
-  GString            *op_type;
+  GString            *op_kind;
+  GString            *warning_body;
 
   /* do nothing in case there is no job operation to undo */
   if (job_operation_list == NULL)
@@ -201,35 +223,53 @@ thunar_job_operation_undo (void)
   /* the 'marked' operation */
   operation_marker = job_operation_list->data;
 
+  /* store the operation kind as a string */
+  switch (operation_marker->operation_kind)
+  {
+    case THUNAR_JOB_OPERATION_KIND_COPY:
+      op_kind = g_string_new (_("Copy"));
+      break;
+
+    case THUNAR_JOB_OPERATION_KIND_MOVE:
+      op_kind = g_string_new (_("Move"));
+      break;
+
+    default:
+      _thunar_assert_not_reached ();
+      break;
+  }
+
   /* warn the user if the previous operation is empty, since then there is nothing to undo */
   if (operation_marker->source_file_list == NULL && operation_marker->target_file_list == NULL)
     {
-
-      switch (operation_marker->operation_kind)
-      {
-        case THUNAR_JOB_OPERATION_KIND_COPY:
-          op_type = g_string_new (_("Copy"));
-          break;
-
-        case THUNAR_JOB_OPERATION_KIND_MOVE:
-          op_type = g_string_new (_("Move"));
-          break;
-
-        default:
-          _thunar_assert_not_reached ();
-          break;
-      }
 
       xfce_dialog_show_warning (NULL,
                                 _("The operation you are trying to undo does not have any files "
                                   "associated with it, and thus cannot be undone. "
                                   "This is most likely because it involved the overwriting of files."),
-                                _("%s operation cannot be undone"), op_type->str);
-
-      g_string_free (op_type, TRUE);
+                                _("%s operation cannot be undone"), op_kind->str);
     }
   else
     {
+      /* if there were files overwritten in the operation, warn about them */
+      if (operation_marker->overwritten_file_list != NULL)
+        {
+          gint index;
+
+          index = 1; /* one indexed for the dialog */
+          warning_body = g_string_new (_("The following files were overwritten in the operation "
+                                         "you are trying to undo and cannot be restored:\n"));
+
+          for (GList *lp = operation_marker->overwritten_file_list; lp != NULL; lp = lp->next, index++)
+              g_string_append_printf (warning_body, "%d. %s\n", index, g_file_get_uri (lp->data));
+
+          xfce_dialog_show_warning (NULL,
+                                    warning_body->str,
+                                    _("%s operation can only be partially undone"), op_kind->str);
+
+          g_string_free (warning_body, TRUE);
+        }
+
       inverted_operation = thunar_job_operation_new_invert (operation_marker);
       thunar_job_operation_execute (inverted_operation);
       g_object_unref (inverted_operation);
@@ -240,6 +280,8 @@ thunar_job_operation_undo (void)
    * already been undone once. */
   thunar_g_list_free_full (job_operation_list);
   job_operation_list = NULL;
+
+  g_string_free (op_kind, TRUE);
 }
 
 

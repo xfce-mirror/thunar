@@ -470,7 +470,7 @@ ttj_copy_file (ThunarTransferJob  *job,
   gboolean   target_exists;
   gboolean   use_partial;
   gboolean   verify_file;
-  gboolean   add_to_operation;
+  gboolean   add_to_operation = TRUE;
   GError    *err = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), FALSE);
@@ -526,12 +526,6 @@ ttj_copy_file (ThunarTransferJob  *job,
   thunar_g_file_copy (source_file, target_file, copy_flags, use_partial,
                       exo_job_get_cancellable (EXO_JOB (job)),
                       thunar_transfer_job_progress, job, &err);
-
-  /* unless the copy involved an overwrite, register the operation*/
-  if (copy_flags & G_FILE_COPY_OVERWRITE)
-    add_to_operation = FALSE;
-  else
-    add_to_operation = TRUE;
 
   switch (job->transfer_verify_file)
     {
@@ -652,7 +646,12 @@ ttj_copy_file (ThunarTransferJob  *job,
   else
     {
       if (add_to_operation)
-        thunar_job_operation_add (operation, source_file, target_file);
+        {
+          if (copy_flags & G_FILE_COPY_OVERWRITE)
+            thunar_job_operation_overwrite (operation, target_file);
+
+          thunar_job_operation_add (operation, source_file, target_file);
+        }
       return TRUE;
     }
 }
@@ -1313,6 +1312,13 @@ thunar_transfer_job_move_file (ExoJob                *job,
                                          move_flags | G_FILE_COPY_OVERWRITE,
                                          exo_job_get_cancellable (job),
                                          NULL, NULL, error);
+
+          if (move_successful && thunar_job_get_log_mode (THUNAR_JOB (job)) == THUNAR_OPERATION_LOG_OPERATIONS)
+            {
+              thunar_job_operation_overwrite (operation, tp->data);
+              thunar_job_operation_add (operation, node->source_file, tp->data);
+            }
+
         }
       /* if the user chose to rename then try to do so */
       else if (response == THUNAR_JOB_RESPONSE_RENAME)
