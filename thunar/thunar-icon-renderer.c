@@ -149,7 +149,8 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
   /**
    * ThunarIconRenderer:size:
    *
-   * The size at which icons should be rendered by this.
+   * The size at which icons should be rendered by this
+   * #ThunarIconRenderer instance.
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_SIZE,
