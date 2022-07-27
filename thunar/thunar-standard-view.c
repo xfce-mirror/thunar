@@ -848,6 +848,8 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
                 NULL);
   g_object_ref_sink (G_OBJECT (standard_view->name_renderer));
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-highlighting-enabled", G_OBJECT (standard_view->name_renderer), "highlighting-enabled", G_BINDING_SYNC_CREATE);
+  /* this is required in order to disable foreground & background colors on the text renderers when the feature is disabled */
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-highlighting-enabled", G_OBJECT (standard_view->name_renderer), "foreground-set", G_BINDING_SYNC_CREATE);
 
   /* TODO: prelit underline
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (standard_view->name_renderer), "follow-prelit", G_BINDING_SYNC_CREATE);*/
@@ -4416,9 +4418,6 @@ thunar_standard_view_highlight_option_changed (ThunarStandardView *standard_view
     layout = GTK_CELL_LAYOUT (gtk_tree_view_get_column (GTK_TREE_VIEW (view), THUNAR_COLUMN_NAME));
   else
     layout = GTK_CELL_LAYOUT (view);
-
-  if (!GTK_IS_CELL_LAYOUT (layout))
-    return;
 
   g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (standard_view)->preferences), "misc-highlighting-enabled", &show_highlight, NULL);
 
