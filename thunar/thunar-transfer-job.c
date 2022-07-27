@@ -1672,7 +1672,7 @@ thunar_transfer_job_execute (ExoJob  *job,
   g_object_unref (thumbnail_cache);
 
   /* continue if there were no errors yet */
-  if (G_LIKELY (err == NULL) && transfer_job->type == THUNAR_TRANSFER_JOB_COPY)
+  if (G_LIKELY (err == NULL))
     {
       /* check destination */
       if (!thunar_transfer_job_verify_destination (transfer_job, &err))
@@ -1692,7 +1692,7 @@ thunar_transfer_job_execute (ExoJob  *job,
       /* transfer starts now */
       transfer_job->start_time = g_get_real_time ();
 
-      if (log_operations)
+      if (log_operations && transfer_job->type == THUNAR_TRANSFER_JOB_COPY)
         operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_COPY);
 
       /* perform the copy recursively for all source transfer nodes */
