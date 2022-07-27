@@ -253,10 +253,24 @@ thunar_details_view_init (ThunarDetailsView *details_view)
 
   /* allocate the shared right-aligned text renderer */
   right_aligned_renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT, "xalign", 1.0f, NULL);
+  /* this is required in order to disable foreground & background colors on text renderers when the feature is disabled */
+  g_object_bind_property (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences), "misc-highlighting-enabled",
+                          G_OBJECT (right_aligned_renderer), "foreground-set",
+                          G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences), "misc-highlighting-enabled",
+                          G_OBJECT (right_aligned_renderer), "background-set",
+                          G_BINDING_SYNC_CREATE);
   g_object_ref_sink (G_OBJECT (right_aligned_renderer));
 
   /* allocate the shared left-aligned text renderer */
   left_aligned_renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT, "xalign", 0.0f, NULL);
+  /* this is required in order to disable foreground & background colors on text renderers when the feature is disabled */
+  g_object_bind_property (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences), "misc-highlighting-enabled",
+                          G_OBJECT (left_aligned_renderer), "foreground-set",
+                          G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences), "misc-highlighting-enabled",
+                          G_OBJECT (left_aligned_renderer), "background-set",
+                          G_BINDING_SYNC_CREATE);
   g_object_ref_sink (G_OBJECT (left_aligned_renderer));
 
   /* allocate the tree view columns */
