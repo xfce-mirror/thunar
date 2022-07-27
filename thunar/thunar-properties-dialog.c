@@ -163,7 +163,7 @@ struct _ThunarPropertiesDialog
   GtkWidget              *color_chooser;
   GtkWidget              *example_box;
   GtkWidget              *highlight_buttons;
-  GtkWidget              *editor_buttons;
+  GtkWidget              *editor_button;
 
   gchar                  *foreground_color;
   gchar                  *background_color;
@@ -802,8 +802,8 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (button);
 
   box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-  dialog->editor_buttons = box;
-  gtk_grid_attach_next_to(GTK_GRID (grid), box, chooser, GTK_POS_LEFT, 1, 1);
+  dialog->editor_button = box;
+  gtk_grid_attach (GTK_GRID (grid), box, 0, row, 1, 1);
 
   button = gtk_button_new_from_icon_name ("go-previous", GTK_ICON_SIZE_BUTTON);
   g_signal_connect_swapped (G_OBJECT (button), "clicked",
@@ -1909,13 +1909,13 @@ thunar_properties_dialog_color_editor_changed (ThunarPropertiesDialog *dialog)
   
   if (show_editor)
     {
-      gtk_widget_show (dialog->editor_buttons);
+      gtk_widget_show (dialog->editor_button);
       gtk_widget_hide (dialog->example_box);
       gtk_widget_hide (dialog->highlight_buttons);
     }
   else
     {
-      gtk_widget_hide (dialog->editor_buttons);
+      gtk_widget_hide (dialog->editor_button);
       gtk_widget_show (dialog->example_box);
       gtk_widget_show (dialog->highlight_buttons);
     }
