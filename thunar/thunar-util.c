@@ -57,7 +57,6 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-folder.h>
-#include <thunar/thunar-list-model.h>
 #include <thunar/thunar-text-renderer.h>
 #include <thunar/thunar-icon-renderer.h>
 
