@@ -80,6 +80,11 @@ gchar*     thunar_util_next_new_file_name       (ThunarFile            *dir,
 gboolean   thunar_util_is_a_search_query        (const gchar    *string);
 gchar*     thunar_util_strjoin_list             (GList       *string_list,
                                                  const gchar *separator);
+void       thunar_util_clip_view_background     (GtkCellRenderer      *cell,
+                                                 cairo_t              *cr,
+                                                 const GdkRectangle   *background_area,
+                                                 GtkWidget            *widget,
+                                                 GtkCellRendererState  flags);
 
 extern const char *SEARCH_PREFIX;
 
