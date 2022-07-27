@@ -433,8 +433,6 @@ struct _ThunarWindow
 
   gboolean                show_hidden;
 
-  gboolean                highlight_enabled;
-
   gboolean                directory_specific_settings;
 
   /* support to remember window geometry */
@@ -763,7 +761,6 @@ thunar_window_init (ThunarWindow *window)
                 "last-location-bar", &last_location_bar,
                 "last-side-pane", &last_side_pane,
                 "last-statusbar-visible", &last_statusbar_visible,
-                "misc-highlighting-enabled", &window->highlight_enabled,
                 NULL);
 
   /* update the visual on screen_changed events */
