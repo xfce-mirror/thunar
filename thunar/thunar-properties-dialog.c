@@ -1793,6 +1793,12 @@ thunar_properties_dialog_reset_highlight (ThunarPropertiesDialog *dialog)
       thunar_file_clear_metadata_setting (lp->data, "highlight-color-foreground");
     }
 
+  /* clear previouly set colors */
+  g_free (dialog->foreground_color);
+  dialog->foreground_color = NULL;
+  g_free (dialog->background_color);
+  dialog->background_color = NULL;
+
   thunar_properties_dialog_colorize_example_box (dialog, NULL, NULL);
 
   thunar_properties_dialog_reload (dialog);
@@ -1803,7 +1809,16 @@ thunar_properties_dialog_reset_highlight (ThunarPropertiesDialog *dialog)
 static void
 thunar_properties_dialog_apply_highlight (ThunarPropertiesDialog *dialog)
 {
-  GList *lp;
+  GList    *lp;
+  gboolean  highlighting_enabled;
+
+  /* if this feature is disabled, then enable the feature */
+  if (dialog->foreground_color != NULL || dialog->background_color != NULL)
+    {
+      g_object_get (G_OBJECT (dialog->preferences), "misc-highlighting-enabled", &highlighting_enabled, NULL);
+      if (!highlighting_enabled)
+        g_object_set (G_OBJECT (dialog->preferences), "misc-highlighting-enabled", TRUE, NULL);
+    }
 
   for (lp = dialog->files; lp != NULL; lp = lp->next)
     {
@@ -1823,14 +1838,8 @@ thunar_properties_dialog_set_foreground (ThunarPropertiesDialog *dialog)
 {
   GdkRGBA   color;
   gchar    *color_str;
-  gboolean  highlighting_enabled;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
-
-  /* if feature is disabled then enable the feature */
-  g_object_get (G_OBJECT (dialog->preferences), "misc-highlighting-enabled", &highlighting_enabled, NULL);
-  if (!highlighting_enabled)
-    g_object_set (G_OBJECT (dialog->preferences), "misc-highlighting-enabled", TRUE, NULL);
 
   gtk_color_chooser_get_rgba (GTK_COLOR_CHOOSER (dialog->color_chooser), &color);
   color_str = gdk_rgba_to_string (&color);
@@ -1847,14 +1856,8 @@ thunar_properties_dialog_set_background (ThunarPropertiesDialog *dialog)
 {
   GdkRGBA   color;
   gchar    *color_str;
-  gboolean  highlighting_enabled;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
-
-  /* if feature is disabled then enable the feature */
-  g_object_get (G_OBJECT (dialog->preferences), "misc-highlighting-enabled", &highlighting_enabled, NULL);
-  if (!highlighting_enabled)
-    g_object_set (G_OBJECT (dialog->preferences), "misc-highlighting-enabled", TRUE, NULL);
 
   gtk_color_chooser_get_rgba (GTK_COLOR_CHOOSER (dialog->color_chooser), &color);
   color_str = gdk_rgba_to_string (&color);
