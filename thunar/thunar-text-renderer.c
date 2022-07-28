@@ -246,6 +246,7 @@ thunar_text_renderer_clear_background (cairo_t   *cr,
   gtk_style_context_get (context, GTK_STATE_FLAG_NORMAL, GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &color, NULL);
   gdk_cairo_set_source_rgba (cr, color);
 
+  gdk_rgba_free (color);
   cairo_paint (cr);
 }
 
