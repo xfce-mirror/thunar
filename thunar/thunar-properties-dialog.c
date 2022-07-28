@@ -1894,6 +1894,7 @@ thunar_properties_dialog_colorize_example_box (ThunarPropertiesDialog *dialog,
   gtk_style_context_add_provider (gtk_widget_get_style_context (dialog->example_box), GTK_STYLE_PROVIDER (provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
   gtk_widget_show (dialog->example_box);
+  g_free (css_data);
 }
 
 

@@ -848,6 +848,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
                 NULL);
   g_object_ref_sink (G_OBJECT (standard_view->name_renderer));
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-highlighting-enabled", G_OBJECT (standard_view->name_renderer), "highlighting-enabled", G_BINDING_SYNC_CREATE);
+
   /* this is required in order to disable foreground & background colors on the text renderers when the feature is disabled */
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-highlighting-enabled", G_OBJECT (standard_view->name_renderer), "foreground-set", G_BINDING_SYNC_CREATE);
 
