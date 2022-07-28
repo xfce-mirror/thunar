@@ -237,7 +237,7 @@ thunar_text_renderer_new (void)
 
 static void
 thunar_text_renderer_clear_background (cairo_t   *cr,
-                                                GtkWidget *widget)
+                                       GtkWidget *widget)
 {
   GtkStyleContext *context;
   GdkRGBA         *color;

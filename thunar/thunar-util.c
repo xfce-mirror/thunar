@@ -855,6 +855,7 @@ thunar_util_determine_corner_properties (GtkWidget       *widget,
           *radius = cell_height * (BORDER_RADIUS / 100.0);
 
           text_direction = gtk_widget_get_direction (widget);
+
           /* decide which side to draw the rounded corners */
           if (THUNAR_IS_TEXT_RENDERER (cell))
             *side = text_direction == GTK_TEXT_DIR_LTR ? DRAW_ON_RIGHT : DRAW_ON_LEFT;
@@ -994,5 +995,6 @@ thunar_util_clip_view_background (GtkCellRenderer      *cell,
       cairo_paint (cr);
     }
 
+  g_free (highlight_color);
   cairo_restore (cr);
 }
