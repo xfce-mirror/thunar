@@ -33,8 +33,6 @@
 
 
 
-static void         thunar_abstract_icon_view_style_set               (GtkWidget                    *widget,
-                                                                       GtkStyle                     *previous_style);
 static GList       *thunar_abstract_icon_view_get_selected_items      (ThunarStandardView           *standard_view);
 static void         thunar_abstract_icon_view_select_all              (ThunarStandardView           *standard_view);
 static void         thunar_abstract_icon_view_unselect_all            (ThunarStandardView           *standard_view);
@@ -108,7 +106,6 @@ thunar_abstract_icon_view_class_init (ThunarAbstractIconViewClass *klass)
   GtkWidgetClass          *gtkwidget_class;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
-  gtkwidget_class->style_set = thunar_abstract_icon_view_style_set;
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
   thunarstandard_view_class->get_selected_items = thunar_abstract_icon_view_get_selected_items;
@@ -121,32 +118,6 @@ thunar_abstract_icon_view_class_init (ThunarAbstractIconViewClass *klass)
   thunarstandard_view_class->get_path_at_pos = thunar_abstract_icon_view_get_path_at_pos;
   thunarstandard_view_class->get_visible_range = thunar_abstract_icon_view_get_visible_range;
   thunarstandard_view_class->highlight_path = thunar_abstract_icon_view_highlight_path;
-
-  /**
-   * ThunarAbstractIconView:column-spacing:
-   *
-   * The additional space inserted between columns in the
-   * icon views.
-   **/
-  gtk_widget_class_install_style_property (gtkwidget_class,
-                                           g_param_spec_int ("column-spacing",
-                                                             "column-spacing",
-                                                             "column-spacing",
-                                                             0, G_MAXINT, 6,
-                                                             EXO_PARAM_READABLE));
-
-  /**
-   * ThunarAbstractIconView:row-spacing:
-   *
-   * The additional space inserted between rows in the
-   * icon views.
-   **/
-  gtk_widget_class_install_style_property (gtkwidget_class,
-                                           g_param_spec_int ("row-spacing",
-                                                             "row-spacing",
-                                                             "row-spacing",
-                                                             0, G_MAXINT, 6,
-                                                             EXO_PARAM_READABLE));
 }
 
 
@@ -194,26 +165,6 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
    * we can probably remove this in the future. */
   g_signal_connect_swapped (G_OBJECT (abstract_icon_view), "size-allocate",
                             G_CALLBACK (gtk_widget_queue_resize), view);
-}
-
-
-
-static void
-thunar_abstract_icon_view_style_set (GtkWidget *widget,
-                                     GtkStyle  *previous_style)
-{
-  gint column_spacing;
-  gint row_spacing;
-
-  /* determine the column/row spacing from the style */
-  gtk_widget_style_get (widget, "column-spacing", &column_spacing, "row-spacing", &row_spacing, NULL);
-
-  /* apply the column/row spacing to the icon view */
-  exo_icon_view_set_column_spacing (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (widget))), column_spacing);
-  exo_icon_view_set_row_spacing (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (widget))), row_spacing);
-
-  /* call the parent handler */
-  (*GTK_WIDGET_CLASS (thunar_abstract_icon_view_parent_class)->style_set) (widget, previous_style);
 }
 
 
@@ -639,7 +590,19 @@ thunar_abstract_icon_view_item_activated (ExoIconView            *view,
 static void
 thunar_abstract_icon_view_zoom_level_changed (ThunarAbstractIconView *abstract_icon_view)
 {
+  ThunarZoomLevel  zoom_level;
+  ExoIconView     *view;
+
   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
+
+  view = EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (abstract_icon_view)));
+  g_object_get (abstract_icon_view, "zoom-level",&zoom_level, NULL);
+
+  /* Like that rubber band selection can be done properly on high zoom levels */
+  /* Without margin/spacing adjustment it would be almost impossible to start the selection on the left or between cells */
+  exo_icon_view_set_margin (view, thunar_zoom_level_to_view_margin (zoom_level));
+  exo_icon_view_set_row_spacing (view, thunar_zoom_level_to_view_margin (zoom_level));
+  exo_icon_view_set_column_spacing (view, thunar_zoom_level_to_view_margin (zoom_level));
 
   /* we use the same trick as with ThunarDetailsView here, simply because its simple :-) */
   gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (gtk_bin_get_child (GTK_BIN (abstract_icon_view))),
