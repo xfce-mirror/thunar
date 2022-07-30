@@ -338,6 +338,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
   GList             *thunar_file_list = NULL;
   GError            *error            = NULL;
   ThunarFile        *thunar_file;
+  GFile             *parent_dir;
 
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
@@ -377,6 +378,32 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
         break;
 
       case THUNAR_JOB_OPERATION_KIND_MOVE:
+
+        /* ensure that all the targets have parent directories which exist */
+        for (GList *lp = job_operation->target_file_list; lp != NULL; lp = lp->next)
+          {
+            parent_dir = g_file_get_parent (lp->data);
+            g_file_make_directory_with_parents (parent_dir, NULL, &error);
+
+            if (error != NULL)
+            {
+              /* there is no issue if the target directory already exists */
+              if (error->code == G_IO_ERROR_EXISTS)
+                {
+                  g_clear_error (&error);
+                  continue;
+                }
+
+              /* output the error message to console otherwise and abort */
+              g_warning (_("Error while moving files: %s\n"
+                           "Aborting operation\n"),
+                         error->message);
+              g_clear_error (&error);
+              g_object_unref (application);
+              return;
+            }
+          }
+
         thunar_application_move_files (application, NULL,
                                        job_operation->source_file_list, job_operation->target_file_list,
                                        THUNAR_OPERATION_LOG_NO_OPERATIONS, NULL);
