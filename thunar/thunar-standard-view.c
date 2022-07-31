@@ -2095,7 +2095,7 @@ thunar_standard_view_get_dest_actions (ThunarStandardView *standard_view,
   file = thunar_standard_view_get_drop_file (standard_view, x, y, &path);
 
   /* check if we can drop there */
-  if (G_LIKELY (file != NULL))
+  if (G_LIKELY (file != NULL) && G_LIKELY (standard_view->priv->search_query == NULL))
     {
       /* determine the possible drop actions for the file (and the suggested action if any) */
       actions = thunar_file_accepts_drop (file, standard_view->priv->drop_file_list, context, &action);
