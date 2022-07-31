@@ -98,6 +98,7 @@ enum
   TARGET_TEXT_URI_LIST,
   TARGET_XDND_DIRECT_SAVE0,
   TARGET_NETSCAPE_URL,
+  TARGET_APPLICATION_OCTET_STREAM,
 };
 
 
@@ -407,6 +408,7 @@ static const GtkTargetEntry drag_targets[] =
 static const GtkTargetEntry drop_targets[] =
 {
   { "text/uri-list", 0, TARGET_TEXT_URI_LIST, },
+  { "application/octet-stream", 0, TARGET_APPLICATION_OCTET_STREAM, },
   { "XdndDirectSave0", 0, TARGET_XDND_DIRECT_SAVE0, },
   { "_NETSCAPE_URL", 0, TARGET_NETSCAPE_URL, },
 };
@@ -2883,6 +2885,292 @@ tsv_reload_directory (GPid     pid,
 
 
 
+static gboolean
+thunar_standard_view_receive_xdnd_direct_save (GdkDragContext     *context,
+                                               gint                x,
+                                               gint                y,
+                                               GtkSelectionData   *selection_data,
+                                               ThunarStandardView *standard_view)
+{
+  gint         format;
+  gint         length;
+  ThunarFolder *folder;
+  ThunarFile   *file = NULL;
+
+  format = gtk_selection_data_get_format (selection_data);
+  length = gtk_selection_data_get_length (selection_data);
+
+  /* we don't handle XdndDirectSave stage (3), result "F" yet */
+  if (G_UNLIKELY (format == 8 && length == 1 && gtk_selection_data_get_data (selection_data)[0] == 'F'))
+    {
+      /* indicate that we don't provide "F" fallback */
+      gdk_property_change (gdk_drag_context_get_source_window (context),
+                            gdk_atom_intern_static_string ("XdndDirectSave0"),
+                            gdk_atom_intern_static_string ("text/plain"), 8,
+                            GDK_PROP_MODE_REPLACE, (const guchar *) "", 0);
+    }
+  else if (G_LIKELY (format == 8 && length == 1 && gtk_selection_data_get_data (selection_data)[0] == 'S'))
+    {
+      /* XDS was successfull, so determine the file for the drop position */
+      file = thunar_standard_view_get_drop_file (standard_view, x, y, NULL);
+      if (G_LIKELY (file != NULL))
+        {
+          /* verify that we have a directory here */
+          if (thunar_file_is_directory (file))
+            {
+              /* reload the folder corresponding to the file */
+              folder = thunar_folder_get_for_file (file);
+              thunar_folder_reload (folder, FALSE);
+              g_object_unref (G_OBJECT (folder));
+            }
+
+          /* cleanup */
+          g_object_unref (G_OBJECT (file));
+        }
+    }
+
+    /* in either case, we succeed! */
+    return TRUE;
+}
+
+
+
+static gboolean
+thunar_standard_view_receive_netscape_url (GtkWidget          *view,
+                                           GdkDragContext     *context,
+                                           gint                x,
+                                           gint                y,
+                                           GtkSelectionData   *selection_data,
+                                           ThunarStandardView *standard_view)
+{
+  gint         format;
+  gint         length;
+  gchar      **bits;
+  ThunarFile  *file = NULL;
+  gchar       *working_directory;
+  gchar       *argv[11];
+  gint         pid;
+  gint         n = 0;
+  GError      *error = NULL;
+  GtkWidget   *toplevel;
+  GdkScreen   *screen;
+  char        *display = NULL;
+  gboolean     succeed = FALSE;
+
+  format = gtk_selection_data_get_format (selection_data);
+  length = gtk_selection_data_get_length (selection_data);
+
+  /* check if the format is valid and we have any data */
+  if (G_UNLIKELY (format != 8 || length <= 0))
+    return succeed;
+
+  /* _NETSCAPE_URL looks like this: "$URL\n$TITLE" */
+  bits = g_strsplit ((const gchar *) gtk_selection_data_get_data (selection_data), "\n", -1);
+  if (G_UNLIKELY (g_strv_length (bits) != 2))
+    {
+      g_strfreev (bits);
+      return succeed;
+    }
+
+  /* determine the file for the drop position */
+  file = thunar_standard_view_get_drop_file (standard_view, x, y, NULL);
+  if (G_LIKELY (file != NULL))
+    {
+      /* determine the absolute path to the target directory */
+      working_directory = g_file_get_path (thunar_file_get_file (file));
+      if (G_LIKELY (working_directory != NULL))
+        {
+          /* prepare the basic part of the command */
+          argv[n++] = "exo-desktop-item-edit";
+          argv[n++] = "--type=Link";
+          argv[n++] = "--url";
+          argv[n++] = bits[0];
+          argv[n++] = "--name";
+          argv[n++] = bits[1];
+
+          /* determine the toplevel window */
+          toplevel = gtk_widget_get_toplevel (view);
+          if (toplevel != NULL && gtk_widget_is_toplevel (toplevel))
+            {
+#if defined(GDK_WINDOWING_X11)
+              /* on X11, we can supply the parent window id here */
+              argv[n++] = "--xid";
+              argv[n++] = g_newa (gchar, 32);
+              g_snprintf (argv[n - 1], 32, "%ld", (glong) GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (toplevel))));
+#endif
+            }
+
+          /* terminate the parameter list */
+          argv[n++] = "--create-new";
+          argv[n++] = working_directory;
+          argv[n++] = NULL;
+
+          screen = gtk_widget_get_screen (GTK_WIDGET (view));
+
+          if (screen != NULL)
+            display = g_strdup (gdk_display_get_name (gdk_screen_get_display (screen)));
+
+          /* try to run exo-desktop-item-edit */
+          succeed = g_spawn_async (working_directory, argv, NULL,
+                                    G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
+                                    thunar_setup_display_cb, display, &pid, &error);
+
+          if (G_LIKELY (succeed))
+            {
+              /* reload the directory when the command terminates */
+              g_child_watch_add_full (G_PRIORITY_LOW, pid, tsv_reload_directory, working_directory, g_free);
+            }
+          else
+            {
+              /* display an error dialog to the user */
+              thunar_dialogs_show_error (standard_view, error, _("Failed to create a link for the URL \"%s\""), bits[0]);
+              g_free (working_directory);
+              g_error_free (error);
+            }
+
+          g_free (display);
+        }
+      g_object_unref (G_OBJECT (file));
+    }
+
+  g_strfreev (bits);
+
+  return succeed;
+}
+
+
+
+static gboolean
+thunar_standard_view_receive_application_octet_stream (GdkDragContext     *context,
+                                                       gint                x,
+                                                       gint                y,
+                                                       GtkSelectionData   *selection_data,
+                                                       ThunarStandardView *standard_view)
+{
+  ThunarFile        *file = NULL;
+  gchar             *filename;
+  gchar             *filepath = NULL;
+  const gchar       *content;
+  gint               length;
+  GFile             *dest;
+  GFileOutputStream *out;
+
+  if (gtk_selection_data_get_length (selection_data) <= 0)
+    return FALSE;
+
+  /* determine filename */
+  if (gdk_property_get (gdk_drag_context_get_source_window (context),
+                        gdk_atom_intern ("XdndDirectSave0", FALSE),
+                        gdk_atom_intern ("text/plain", FALSE), 0, 1024,
+                        FALSE, NULL, NULL, &length,
+                        (guchar **) &filename) && length > 0)
+    {
+      filename = g_realloc (filename, length + 1);
+      filename[length] = '\0';
+    }
+  else
+      filename = g_strdup (_("Untitled document"));
+
+  /* determine filepath */
+  file = thunar_standard_view_get_drop_file (standard_view, x, y, NULL);
+  if (G_LIKELY (file != NULL))
+    {
+      if (thunar_file_is_directory (file))
+        {
+          gchar* filename_temp;
+          gchar* folder_path;
+
+          folder_path = g_file_get_path (thunar_file_get_file (file));
+          filename_temp = thunar_util_next_new_file_name (file, filename, THUNAR_NEXT_FILE_NAME_MODE_COPY);
+          g_free (filename);
+          filename = filename_temp;
+          filepath = g_build_filename (folder_path, filename, NULL);
+
+          g_free (folder_path);
+        }
+
+      g_object_unref (G_OBJECT (file));
+    }
+
+  if (G_LIKELY (filepath != NULL))
+    {
+      dest = g_file_new_for_path (filepath);
+      out = g_file_create (dest, G_FILE_CREATE_NONE, NULL, NULL);
+
+      if (out)
+        {
+          content = (const gchar *) gtk_selection_data_get_data (selection_data);
+          length = gtk_selection_data_get_length (selection_data);
+
+          if (g_output_stream_write_all (G_OUTPUT_STREAM (out), content, length, NULL, NULL, NULL))
+            g_output_stream_close (G_OUTPUT_STREAM (out), NULL, NULL);
+
+          g_object_unref(out);
+        }
+
+      g_object_unref (dest);
+    }
+
+  g_free (filename);
+  g_free (filepath);
+
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_standard_view_receive_text_uri_list (GdkDragContext     *context,
+                                            gint                x,
+                                            gint                y,
+                                            GtkSelectionData   *selection_data,
+                                            guint               timestamp,
+                                            ThunarStandardView *standard_view)
+{
+  GdkDragAction actions;
+  GdkDragAction action;
+  ThunarFile   *file = NULL;
+  gboolean      succeed = FALSE;
+  GtkWidget    *source_widget;
+  GtkWidget    *source_view = NULL;
+
+  /* determine the drop position */
+  actions = thunar_standard_view_get_dest_actions (standard_view, context, x, y, timestamp, &file);
+  if (G_LIKELY ((actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK)) != 0))
+    {
+      /* ask the user what to do with the drop data */
+      action = (gdk_drag_context_get_selected_action (context) == GDK_ACTION_ASK)
+              ? thunar_dnd_ask (GTK_WIDGET (standard_view), file, standard_view->priv->drop_file_list, actions)
+              : gdk_drag_context_get_selected_action (context);
+
+      /* perform the requested action */
+      if (G_LIKELY (action != 0))
+        {
+          /* look if we can find the drag source widget */
+          source_widget = gtk_drag_get_source_widget (context);
+          if (source_widget != NULL)
+            {
+              /* if this is a source view, attach it to the view receiving
+                * the data, see thunar_standard_view_new_files */
+              source_view = gtk_widget_get_parent (source_widget);
+              if (!THUNAR_IS_VIEW (source_view))
+                source_view = NULL;
+            }
+
+          succeed = thunar_dnd_perform (GTK_WIDGET (standard_view), file, standard_view->priv->drop_file_list,
+                                        action, thunar_standard_view_new_files_closure (standard_view, source_view));
+        }
+    }
+
+  /* release the file reference */
+  if (G_LIKELY (file != NULL))
+    g_object_unref (G_OBJECT (file));
+
+  return succeed;
+}
+
+
+
 static void
 thunar_standard_view_drag_data_received (GtkWidget          *view,
                                          GdkDragContext     *context,
@@ -2893,22 +3181,7 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
                                          guint               timestamp,
                                          ThunarStandardView *standard_view)
 {
-  GdkDragAction actions;
-  GdkDragAction action;
-  ThunarFolder *folder;
-  ThunarFile   *file = NULL;
-  GtkWidget    *toplevel;
-  gboolean      succeed = FALSE;
-  GError       *error = NULL;
-  gchar        *working_directory;
-  gchar        *argv[11];
-  gchar       **bits;
-  gint          pid;
-  gint          n = 0;
-  GtkWidget    *source_widget;
-  GtkWidget    *source_view = NULL;
-  GdkScreen    *screen;
-  char         *display = NULL;
+  gboolean succeed = FALSE;
 
   /* check if we don't already know the drop data */
   if (G_LIKELY (!standard_view->priv->drop_data_ready))
@@ -2929,149 +3202,13 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
 
       /* check if we're doing XdndDirectSave */
       if (G_UNLIKELY (info == TARGET_XDND_DIRECT_SAVE0))
-        {
-          /* we don't handle XdndDirectSave stage (3), result "F" yet */
-          if (G_UNLIKELY (gtk_selection_data_get_format (selection_data) == 8 && gtk_selection_data_get_length (selection_data) == 1 && gtk_selection_data_get_data (selection_data)[0] == 'F'))
-            {
-              /* indicate that we don't provide "F" fallback */
-              gdk_property_change (gdk_drag_context_get_source_window (context),
-                                   gdk_atom_intern_static_string ("XdndDirectSave0"),
-                                   gdk_atom_intern_static_string ("text/plain"), 8,
-                                   GDK_PROP_MODE_REPLACE, (const guchar *) "", 0);
-            }
-          else if (G_LIKELY (gtk_selection_data_get_format (selection_data) == 8 && gtk_selection_data_get_length (selection_data) == 1 && gtk_selection_data_get_data (selection_data)[0] == 'S'))
-            {
-              /* XDS was successfull, so determine the file for the drop position */
-              file = thunar_standard_view_get_drop_file (standard_view, x, y, NULL);
-              if (G_LIKELY (file != NULL))
-                {
-                  /* verify that we have a directory here */
-                  if (thunar_file_is_directory (file))
-                    {
-                      /* reload the folder corresponding to the file */
-                      folder = thunar_folder_get_for_file (file);
-                      thunar_folder_reload (folder, FALSE);
-                      g_object_unref (G_OBJECT (folder));
-                    }
-
-                  /* cleanup */
-                  g_object_unref (G_OBJECT (file));
-                }
-            }
-
-          /* in either case, we succeed! */
-          succeed = TRUE;
-        }
+        succeed = thunar_standard_view_receive_xdnd_direct_save (context, x, y, selection_data, standard_view);
       else if (G_UNLIKELY (info == TARGET_NETSCAPE_URL))
-        {
-          /* check if the format is valid and we have any data */
-          if (G_LIKELY (gtk_selection_data_get_format (selection_data) == 8 && gtk_selection_data_get_length (selection_data) > 0))
-            {
-              /* _NETSCAPE_URL looks like this: "$URL\n$TITLE" */
-              bits = g_strsplit ((const gchar *) gtk_selection_data_get_data (selection_data), "\n", -1);
-              if (G_LIKELY (g_strv_length (bits) == 2))
-                {
-                  /* determine the file for the drop position */
-                  file = thunar_standard_view_get_drop_file (standard_view, x, y, NULL);
-                  if (G_LIKELY (file != NULL))
-                    {
-                      /* determine the absolute path to the target directory */
-                      working_directory = g_file_get_path (thunar_file_get_file (file));
-                      if (G_LIKELY (working_directory != NULL))
-                        {
-                          /* prepare the basic part of the command */
-                          argv[n++] = "exo-desktop-item-edit";
-                          argv[n++] = "--type=Link";
-                          argv[n++] = "--url";
-                          argv[n++] = bits[0];
-                          argv[n++] = "--name";
-                          argv[n++] = bits[1];
-
-                          /* determine the toplevel window */
-                          toplevel = gtk_widget_get_toplevel (view);
-                          if (toplevel != NULL && gtk_widget_is_toplevel (toplevel))
-                            {
-#if defined(GDK_WINDOWING_X11)
-                              /* on X11, we can supply the parent window id here */
-                              argv[n++] = "--xid";
-                              argv[n++] = g_newa (gchar, 32);
-                              g_snprintf (argv[n - 1], 32, "%ld", (glong) GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (toplevel))));
-#endif
-                            }
-
-                          /* terminate the parameter list */
-                          argv[n++] = "--create-new";
-                          argv[n++] = working_directory;
-                          argv[n++] = NULL;
-
-                          screen = gtk_widget_get_screen (GTK_WIDGET (view));
-
-                          if (screen != NULL)
-                            display = g_strdup (gdk_display_get_name (gdk_screen_get_display (screen)));
-
-                          /* try to run exo-desktop-item-edit */
-                          succeed = g_spawn_async (working_directory, argv, NULL,
-                                                   G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
-                                                   thunar_setup_display_cb, display, &pid, &error);
-
-                          if (G_UNLIKELY (!succeed))
-                            {
-                              /* display an error dialog to the user */
-                              thunar_dialogs_show_error (standard_view, error, _("Failed to create a link for the URL \"%s\""), bits[0]);
-                              g_free (working_directory);
-                              g_error_free (error);
-                            }
-                          else
-                            {
-                              /* reload the directory when the command terminates */
-                              g_child_watch_add_full (G_PRIORITY_LOW, pid, tsv_reload_directory, working_directory, g_free);
-                            }
-
-                          /* cleanup */
-                          g_free (display);
-                        }
-                      g_object_unref (G_OBJECT (file));
-                    }
-                }
-
-              /* cleanup */
-              g_strfreev (bits);
-            }
-        }
+        succeed = thunar_standard_view_receive_netscape_url (view, context, x, y, selection_data, standard_view);
+      else if (G_UNLIKELY (info == TARGET_APPLICATION_OCTET_STREAM))
+        succeed = thunar_standard_view_receive_application_octet_stream (context, x, y, selection_data, standard_view);
       else if (G_LIKELY (info == TARGET_TEXT_URI_LIST))
-        {
-          /* determine the drop position */
-          actions = thunar_standard_view_get_dest_actions (standard_view, context, x, y, timestamp, &file);
-          if (G_LIKELY ((actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK)) != 0))
-            {
-              /* ask the user what to do with the drop data */
-              action = (gdk_drag_context_get_selected_action (context) == GDK_ACTION_ASK)
-                     ? thunar_dnd_ask (GTK_WIDGET (standard_view), file, standard_view->priv->drop_file_list, actions)
-                     : gdk_drag_context_get_selected_action (context);
-
-              /* perform the requested action */
-              if (G_LIKELY (action != 0))
-                {
-                  /* look if we can find the drag source widget */
-                  source_widget = gtk_drag_get_source_widget (context);
-                  if (source_widget != NULL)
-                    {
-                      /* if this is a source view, attach it to the view receiving
-                       * the data, see thunar_standard_view_new_files */
-                      source_view = gtk_widget_get_parent (source_widget);
-                      if (!THUNAR_IS_VIEW (source_view))
-                        source_view = NULL;
-                    }
-
-                  succeed = thunar_dnd_perform (GTK_WIDGET (standard_view), file, standard_view->priv->drop_file_list,
-                                                action, thunar_standard_view_new_files_closure (standard_view, source_view));
-                }
-            }
-
-          /* release the file reference */
-          if (G_LIKELY (file != NULL))
-            g_object_unref (G_OBJECT (file));
-        }
+        succeed = thunar_standard_view_receive_text_uri_list (context, x, y, selection_data, timestamp, standard_view);
 
       /* tell the peer that we handled the drop */
       gtk_drag_finish (context, succeed, FALSE, timestamp);
@@ -3136,7 +3273,9 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
       /* check if we can handle that drag data (yet?) */
       target = gtk_drag_dest_find_target (view, context, NULL);
 
-      if ((target == gdk_atom_intern_static_string ("XdndDirectSave0")) || (target == gdk_atom_intern_static_string ("_NETSCAPE_URL")))
+      if (target == gdk_atom_intern_static_string ("XdndDirectSave0") ||
+          target == gdk_atom_intern_static_string ("_NETSCAPE_URL") ||
+          target == gdk_atom_intern_static_string ("application/octet-stream"))
         {
           /* determine the file for the given coordinates */
           file = thunar_standard_view_get_drop_file (standard_view, x, y, &path);
