@@ -76,6 +76,15 @@ enum
   LAST_SIGNAL,
 };
 
+/* Notebook Pages */
+enum
+{
+  NOTEBOOK_PAGE_GENERAL,
+  NOTEBOOK_PAGE_EMBLEMS,
+  NOTEBOOK_PAGE_PERMISSIONS,
+  NOTEBOOK_PAGE_HIGHLIGHT
+};
+
 
 
 static void     thunar_properties_dialog_dispose              (GObject                     *object);
@@ -111,6 +120,7 @@ static void     thunar_properties_dialog_colorize_example_box (ThunarPropertiesD
                                                                const gchar                 *foreground);
 static void     thunar_properties_dialog_color_editor_changed (ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_color_editor_close   (ThunarPropertiesDialog      *dialog);
+static void     thunar_properties_dialog_notebook_page_changed(ThunarPropertiesDialog      *dialog);
 
 
 struct _ThunarPropertiesDialogClass
@@ -704,6 +714,8 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   dialog->color_chooser = chooser;
   g_signal_connect_swapped (G_OBJECT (chooser), "notify::show-editor",
                             G_CALLBACK (thunar_properties_dialog_color_editor_changed), dialog);
+  g_signal_connect_swapped (G_OBJECT (dialog->notebook), "switch-page",
+                            G_CALLBACK (thunar_properties_dialog_notebook_page_changed), dialog);
   gtk_grid_attach (GTK_GRID (grid), chooser, 0, row, 1, 1);
   gtk_widget_set_vexpand (chooser, TRUE);
   gtk_widget_show (chooser);
@@ -1971,4 +1983,14 @@ thunar_properties_dialog_color_editor_close (ThunarPropertiesDialog *dialog)
   gtk_color_chooser_set_rgba (GTK_COLOR_CHOOSER (dialog->color_chooser), &color);
 
   g_object_set (G_OBJECT (dialog->color_chooser), "show-editor", FALSE, NULL);
+}
+
+
+
+static void
+thunar_properties_dialog_notebook_page_changed (ThunarPropertiesDialog *dialog)
+{
+  /* if the highlight tab is not active then the color editor should be switched off */
+  if (gtk_notebook_get_current_page (GTK_NOTEBOOK (dialog->notebook)) != NOTEBOOK_PAGE_HIGHLIGHT)
+    g_object_set (G_OBJECT (dialog->color_chooser), "show-editor", FALSE, NULL);
 }
