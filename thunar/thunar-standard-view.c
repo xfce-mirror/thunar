@@ -45,6 +45,7 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-history.h>
 #include <thunar/thunar-icon-renderer.h>
+#include <thunar/thunar-text-renderer.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-private.h>
@@ -288,6 +289,12 @@ static void                 thunar_standard_view_set_sort_order                 
                                                                                     GtkSortType               order);
 static gboolean             thunar_standard_view_toggle_sort_order                 (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_store_sort_column                 (ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_highlight_option_changed          (ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_cell_layout_data_func             (GtkCellLayout            *layout,
+                                                                                    GtkCellRenderer          *cell,
+                                                                                    GtkTreeModel             *model,
+                                                                                    GtkTreeIter              *iter,
+                                                                                    gpointer                  data);
 
 struct _ThunarStandardViewPrivate
 {
@@ -546,6 +553,8 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   gtkwidget_class->unrealize = thunar_standard_view_unrealize;
   gtkwidget_class->grab_focus = thunar_standard_view_grab_focus;
   gtkwidget_class->draw = thunar_standard_view_draw;
+
+  klass->cell_layout_data_func = thunar_standard_view_cell_layout_data_func;
 
   xfce_gtk_translate_action_entries (thunar_standard_view_action_entries, G_N_ELEMENTS (thunar_standard_view_action_entries));
 
@@ -826,16 +835,22 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   g_object_ref_sink (G_OBJECT (standard_view->icon_renderer));
   g_object_bind_property (G_OBJECT (standard_view), "zoom-level", G_OBJECT (standard_view->icon_renderer), "size", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->priv->thumbnailer), "thumbnail-size", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-highlighting-enabled", G_OBJECT (standard_view->icon_renderer), "highlighting-enabled", G_BINDING_SYNC_CREATE);
 
   /* setup the name renderer */
-  standard_view->name_renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
+  standard_view->name_renderer = thunar_text_renderer_new ();
+  g_object_set (standard_view->name_renderer,
 #if PANGO_VERSION_CHECK (1, 44, 0)
-                                               "attributes", thunar_pango_attr_disable_hyphens (),
+                "attributes", thunar_pango_attr_disable_hyphens (),
 #endif
-                                               "alignment", PANGO_ALIGN_CENTER,
-                                               "xalign", 0.5,
-                                               NULL);
+                "alignment", PANGO_ALIGN_CENTER,
+                "xalign", 0.5,
+                NULL);
   g_object_ref_sink (G_OBJECT (standard_view->name_renderer));
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-highlighting-enabled", G_OBJECT (standard_view->name_renderer), "highlighting-enabled", G_BINDING_SYNC_CREATE);
+
+  /* this is required in order to disable foreground & background colors on the text renderers when the feature is disabled */
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-highlighting-enabled", G_OBJECT (standard_view->name_renderer), "foreground-set", G_BINDING_SYNC_CREATE);
 
   /* TODO: prelit underline
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (standard_view->name_renderer), "follow-prelit", G_BINDING_SYNC_CREATE);*/
@@ -1253,6 +1268,11 @@ thunar_standard_view_realize (GtkWidget *widget)
   /* apply the thumbnail frame preferences after icon_factory got initialized */
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-thumbnail-draw-frames", G_OBJECT (standard_view), "thumbnail-draw-frames", G_BINDING_SYNC_CREATE);
 
+  /* apply/unapply the highlights to name & icon renderers whenever the property changes */
+  g_signal_connect_swapped (standard_view->preferences, "notify::misc-highlighting-enabled",
+                            G_CALLBACK (thunar_standard_view_highlight_option_changed), standard_view);
+  thunar_standard_view_highlight_option_changed (standard_view);
+
   /* store sort information to keep indicators in menu in sync */
   thunar_standard_view_store_sort_column (standard_view);
 }
@@ -1266,6 +1286,7 @@ thunar_standard_view_unrealize (GtkWidget *widget)
 
   /* drop the reference on the icon factory */
   g_signal_handlers_disconnect_by_func (G_OBJECT (standard_view->icon_factory), gtk_widget_queue_draw, standard_view);
+  g_signal_handlers_disconnect_by_func (standard_view->preferences, thunar_standard_view_highlight_option_changed, standard_view);
   g_object_unref (G_OBJECT (standard_view->icon_factory));
   standard_view->icon_factory = NULL;
 
@@ -4382,4 +4403,78 @@ XfceGtkActionEntry*
 thunar_standard_view_get_action_entries (void)
 {
   return thunar_standard_view_action_entries;
+}
+
+
+
+static void
+thunar_standard_view_highlight_option_changed (ThunarStandardView *standard_view)
+{
+  GtkWidget             *view = gtk_bin_get_child (GTK_BIN (standard_view));
+  GtkCellLayout         *layout = NULL;
+  GtkCellLayoutDataFunc  function = NULL;
+  gboolean               show_highlight;
+
+  if (GTK_IS_TREE_VIEW (view))
+    layout = GTK_CELL_LAYOUT (gtk_tree_view_get_column (GTK_TREE_VIEW (view), THUNAR_COLUMN_NAME));
+  else
+    layout = GTK_CELL_LAYOUT (view);
+
+  g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (standard_view)->preferences), "misc-highlighting-enabled", &show_highlight, NULL);
+
+  if (show_highlight)
+    function = (GtkCellLayoutDataFunc) THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->cell_layout_data_func;
+
+  gtk_cell_layout_set_cell_data_func (layout,
+                                      standard_view->icon_renderer,
+                                      function, NULL, NULL);
+  gtk_cell_layout_set_cell_data_func (layout,
+                                      standard_view->name_renderer,
+                                      function, NULL, NULL);
+}
+
+
+
+static void
+thunar_standard_view_cell_layout_data_func (GtkCellLayout   *layout,
+                                            GtkCellRenderer *cell,
+                                            GtkTreeModel    *model,
+                                            GtkTreeIter     *iter,
+                                            gpointer         data)
+{
+  ThunarFile  *file = THUNAR_FILE (thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter));
+  const gchar *background = NULL;
+  const gchar *foreground = NULL;
+
+  background = thunar_file_get_metadata_setting (file, "highlight-color-background");
+  foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
+
+  /* since this function is being used for both icon & name renderers;
+   * we need to make sure the right properties are applied to the right renderers */
+  if (THUNAR_IS_TEXT_RENDERER (cell))
+    g_object_set (G_OBJECT (cell),
+                  "foreground", foreground,
+                  "highlight-color", background,
+                  NULL);
+
+  else if (THUNAR_IS_ICON_RENDERER (cell))
+    g_object_set (G_OBJECT (cell),
+                  "highlight-color", background,
+                  NULL);
+
+  else if (GTK_IS_CELL_RENDERER_TEXT (cell))
+    g_object_set (G_OBJECT (cell),
+                  "foreground", foreground,
+                  "background", background,
+                  NULL);
+
+  else if (GTK_IS_CELL_RENDERER (cell))
+    g_object_set (G_OBJECT (cell),
+                  "cell-background", background,
+                  NULL);
+
+  else
+    g_warn_if_reached ();
+
+  g_object_unref (file);
 }
