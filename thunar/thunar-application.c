@@ -2071,7 +2071,6 @@ thunar_application_copy_to (ThunarApplication *application,
   /* launch the operation */
   thunar_application_launch (application, parent, "edit-copy",
                              _("Copying files..."), thunar_io_jobs_copy_files,
-                             /* TODO: add parameter for thunar operation log file along with undo-ing it */
                              source_file_list, target_file_list, FALSE, TRUE, THUNAR_OPERATION_LOG_OPERATIONS, new_files_closure);
 }
 
@@ -2137,7 +2136,7 @@ thunar_application_copy_into (ThunarApplication *application,
                                          title, thunar_io_jobs_copy_files,
                                          source_file_list, target_file,
                                          FALSE, TRUE,
-                                         THUNAR_OPERATION_LOG_OPERATIONS, /* FIXME update to add argument to take in log flag instead*/
+                                         THUNAR_OPERATION_LOG_OPERATIONS,
                                          new_files_closure);
 
   /* free */
@@ -2191,7 +2190,7 @@ thunar_application_link_into (ThunarApplication *application,
                                          title, thunar_io_jobs_link_files,
                                          source_file_list, target_file,
                                          FALSE, TRUE,
-                                         THUNAR_OPERATION_LOG_OPERATIONS, /* FIXME update to add argument to take in log flag instead*/
+                                         THUNAR_OPERATION_LOG_OPERATIONS,
                                          new_files_closure);
 
   /* free the title */
@@ -2408,7 +2407,6 @@ thunar_application_unlink_files (ThunarApplication *application,
           /* launch the "Delete" operation */
           thunar_application_launch (application, parent, "edit-delete",
                                      _("Deleting files..."), unlink_stub,
-                                     /* TODO: add parameter for thunar operation log file along with undo-ing it */
                                      path_list, path_list, TRUE, FALSE, THUNAR_OPERATION_LOG_OPERATIONS, NULL);
         }
     }
@@ -2444,7 +2442,6 @@ thunar_application_trash (ThunarApplication *application,
 
   thunar_application_launch (application, parent, "user-trash-full",
                              _("Moving files into the trash..."), trash_stub,
-                             /* TODO: add parameter for thunar operation log file along with undo-ing it */
                              file_list, NULL, TRUE, FALSE, THUNAR_OPERATION_LOG_OPERATIONS, NULL);
 }
 
@@ -2491,7 +2488,6 @@ thunar_application_creat (ThunarApplication *application,
   /* launch the operation */
   thunar_application_launch (application, parent, "document-new",
                              _("Creating files..."), creat_stub,
-                             /* TODO: add parameter for thunar operation log file along with undo-ing it */
                              &template_list, file_list, FALSE, TRUE, THUNAR_OPERATION_LOG_OPERATIONS, new_files_closure);
 }
 
@@ -2531,7 +2527,6 @@ thunar_application_mkdir (ThunarApplication *application,
   /* launch the operation */
   thunar_application_launch (application, parent, "folder-new",
                              _("Creating directories..."), mkdir_stub,
-                             /* TODO: add parameter for thunar operation log file along with undo-ing it */
                              file_list, file_list, TRUE, FALSE, THUNAR_OPERATION_LOG_OPERATIONS, new_files_closure);
 }
 
@@ -2598,7 +2593,6 @@ thunar_application_empty_trash (ThunarApplication *application,
       /* launch the operation */
       thunar_application_launch (application, parent, "user-trash",
                                  _("Emptying the Trash..."),
-                                 /* TODO: add parameter for thunar operation log file along with undo-ing it */
                                  unlink_stub, &file_list, NULL, TRUE, FALSE, THUNAR_OPERATION_LOG_OPERATIONS, NULL);
 
       /* cleanup */
