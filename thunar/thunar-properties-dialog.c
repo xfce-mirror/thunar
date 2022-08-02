@@ -105,6 +105,7 @@ static void     thunar_properties_dialog_reset_highlight      (ThunarPropertiesD
 static void     thunar_properties_dialog_apply_highlight      (ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_set_foreground       (ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_set_background       (ThunarPropertiesDialog      *dialog);
+static void     thunar_properties_dialog_update_apply_button  (ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_colorize_example_box (ThunarPropertiesDialog      *dialog,
                                                                const gchar                 *background,
                                                                const gchar                 *foreground);
@@ -163,6 +164,7 @@ struct _ThunarPropertiesDialog
   GtkWidget              *color_chooser;
   GtkWidget              *example_box;
   GtkWidget              *highlight_buttons;
+  GtkWidget              *highlight_apply_button;
   GtkWidget              *editor_button;
 
   gchar                  *foreground_color;
@@ -769,25 +771,21 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
     gtk_widget_set_sensitive (box, FALSE);
   gtk_widget_show (box);
 
+  button = gtk_button_new_with_mnemonic (_("_Apply"));
+  gtk_style_context_add_class (gtk_widget_get_style_context (button), "suggested-action");
+  g_signal_connect_swapped (G_OBJECT (button), "clicked",
+                            G_CALLBACK (thunar_properties_dialog_apply_highlight), dialog);
+  gtk_box_pack_end (GTK_BOX (box), button, FALSE, FALSE, 0);
+  gtk_widget_set_vexpand (button, FALSE);
+  gtk_widget_set_valign (button, GTK_ALIGN_END);
+  gtk_widget_show (button);
+
+  dialog->highlight_apply_button = button;
+  gtk_widget_set_sensitive (dialog->highlight_apply_button, FALSE);
+
   button = gtk_button_new_with_mnemonic (_("_Reset"));
   g_signal_connect_swapped (G_OBJECT (button), "clicked",
                             G_CALLBACK (thunar_properties_dialog_reset_highlight), dialog);
-  gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
-  gtk_widget_set_vexpand (button, FALSE);
-  gtk_widget_set_valign (button, GTK_ALIGN_END);
-  gtk_widget_show (button);
-
-  button = gtk_button_new_with_mnemonic (_("_Apply"));
-  g_signal_connect_swapped (G_OBJECT (button), "clicked",
-                            G_CALLBACK (thunar_properties_dialog_apply_highlight), dialog);
-  gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
-  gtk_widget_set_vexpand (button, FALSE);
-  gtk_widget_set_valign (button, GTK_ALIGN_END);
-  gtk_widget_show (button);
-
-  button = gtk_button_new_with_mnemonic (_("Set _Background"));
-  g_signal_connect_swapped (G_OBJECT (button), "clicked",
-                            G_CALLBACK (thunar_properties_dialog_set_background), dialog);
   gtk_box_pack_end (GTK_BOX (box), button, FALSE, FALSE, 0);
   gtk_widget_set_vexpand (button, FALSE);
   gtk_widget_set_valign (button, GTK_ALIGN_END);
@@ -796,7 +794,15 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   button = gtk_button_new_with_mnemonic (_("Set _Foreground"));
   g_signal_connect_swapped (G_OBJECT (button), "clicked",
                             G_CALLBACK (thunar_properties_dialog_set_foreground), dialog);
-  gtk_box_pack_end (GTK_BOX (box), button, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
+  gtk_widget_set_vexpand (button, FALSE);
+  gtk_widget_set_valign (button, GTK_ALIGN_END);
+  gtk_widget_show (button);
+
+  button = gtk_button_new_with_mnemonic (_("Set _Background"));
+  g_signal_connect_swapped (G_OBJECT (button), "clicked",
+                            G_CALLBACK (thunar_properties_dialog_set_background), dialog);
+  gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
   gtk_widget_set_vexpand (button, FALSE);
   gtk_widget_set_valign (button, GTK_ALIGN_END);
   gtk_widget_show (button);
@@ -1802,6 +1808,8 @@ thunar_properties_dialog_reset_highlight (ThunarPropertiesDialog *dialog)
   thunar_properties_dialog_colorize_example_box (dialog, NULL, NULL);
 
   thunar_properties_dialog_reload (dialog);
+
+  thunar_properties_dialog_update_apply_button (dialog);
 }
 
 
@@ -1829,6 +1837,8 @@ thunar_properties_dialog_apply_highlight (ThunarPropertiesDialog *dialog)
     }
 
   thunar_properties_dialog_reload (dialog);
+
+  thunar_properties_dialog_update_apply_button (dialog);
 }
 
 
@@ -1847,6 +1857,7 @@ thunar_properties_dialog_set_foreground (ThunarPropertiesDialog *dialog)
   g_free (dialog->foreground_color);
   dialog->foreground_color = NULL;
   dialog->foreground_color = color_str;
+  thunar_properties_dialog_update_apply_button (dialog);
 }
 
 
@@ -1865,6 +1876,30 @@ thunar_properties_dialog_set_background (ThunarPropertiesDialog *dialog)
   g_free (dialog->background_color);
   dialog->background_color = NULL;
   dialog->background_color = color_str;
+  thunar_properties_dialog_update_apply_button (dialog);
+}
+
+
+
+static void
+thunar_properties_dialog_update_apply_button (ThunarPropertiesDialog *dialog)
+{
+  for (GList *lp = dialog->files; lp != NULL; lp = lp->next)
+    {
+      if (dialog->foreground_color != NULL && g_strcmp0 (dialog->foreground_color, thunar_file_get_metadata_setting (lp->data, "highlight-color-foreground")) != 0)
+        {
+          gtk_widget_set_sensitive (dialog->highlight_apply_button, TRUE);
+          return;
+        }
+
+      if (dialog->background_color != NULL && g_strcmp0 (dialog->background_color, thunar_file_get_metadata_setting (lp->data, "highlight-color-background")) != 0)
+        {
+          gtk_widget_set_sensitive (dialog->highlight_apply_button, TRUE);
+          return;
+        }
+    }
+
+  gtk_widget_set_sensitive (dialog->highlight_apply_button, FALSE);
 }
 
 
