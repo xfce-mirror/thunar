@@ -831,6 +831,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-custom-style", G_OBJECT (standard_view->model), "date-custom-style", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-folders-first", G_OBJECT (standard_view->model), "folders-first", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-file-size-binary", G_OBJECT (standard_view->model), "file-size-binary", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-items-count-as-dir-size", G_OBJECT (standard_view->model), "items-count-as-dir-size", G_BINDING_SYNC_CREATE);
 
   /* setup the icon renderer */
   standard_view->icon_renderer = thunar_icon_renderer_new ();
