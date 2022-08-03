@@ -470,7 +470,7 @@ ttj_copy_file (ThunarTransferJob  *job,
   gboolean   target_exists;
   gboolean   use_partial;
   gboolean   verify_file;
-  gboolean   add_to_operation;
+  gboolean   add_to_operation = TRUE;
   GError    *err = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), FALSE);
@@ -526,12 +526,6 @@ ttj_copy_file (ThunarTransferJob  *job,
   thunar_g_file_copy (source_file, target_file, copy_flags, use_partial,
                       exo_job_get_cancellable (EXO_JOB (job)),
                       thunar_transfer_job_progress, job, &err);
-
-  /* unless the copy involved an overwrite, register the operation*/
-  if (copy_flags & G_FILE_COPY_OVERWRITE)
-    add_to_operation = FALSE;
-  else
-    add_to_operation = TRUE;
 
   switch (job->transfer_verify_file)
     {
@@ -652,7 +646,12 @@ ttj_copy_file (ThunarTransferJob  *job,
   else
     {
       if (add_to_operation)
-        thunar_job_operation_add (operation, source_file, target_file);
+        {
+          if (copy_flags & G_FILE_COPY_OVERWRITE)
+            thunar_job_operation_overwrite (operation, target_file);
+
+          thunar_job_operation_add (operation, source_file, target_file);
+        }
       return TRUE;
     }
 }
@@ -1232,6 +1231,7 @@ thunar_transfer_job_prepare_untrash_file (ExoJob     *job,
 
 static gboolean
 thunar_transfer_job_move_file_with_rename (ExoJob             *job,
+                                           ThunarJobOperation *operation,
                                            ThunarTransferNode *node,
                                            GList              *tp,
                                            GFileCopyFlags      flags,
@@ -1263,6 +1263,10 @@ thunar_transfer_job_move_file_with_rename (ExoJob             *job,
       if (!move_rename_successful && !exo_job_is_cancelled (job) && ((*error)->code == G_IO_ERROR_EXISTS))
         continue;
 
+      /* Log the operation if the move and rename were successful and logging is enabled */
+      if (thunar_job_get_log_mode (THUNAR_JOB (job)) == THUNAR_OPERATION_LOG_OPERATIONS)
+        thunar_job_operation_add (operation, node->source_file, renamed_file);
+
       return move_rename_successful;
     }
 }
@@ -1270,6 +1274,7 @@ thunar_transfer_job_move_file_with_rename (ExoJob             *job,
 
 static gboolean
 thunar_transfer_job_move_file (ExoJob                *job,
+                               ThunarJobOperation    *operation,
                                GFileInfo             *info,
                                GList                 *sp,
                                ThunarTransferNode    *node,
@@ -1307,11 +1312,18 @@ thunar_transfer_job_move_file (ExoJob                *job,
                                          move_flags | G_FILE_COPY_OVERWRITE,
                                          exo_job_get_cancellable (job),
                                          NULL, NULL, error);
+
+          if (move_successful && thunar_job_get_log_mode (THUNAR_JOB (job)) == THUNAR_OPERATION_LOG_OPERATIONS)
+            {
+              thunar_job_operation_overwrite (operation, tp->data);
+              thunar_job_operation_add (operation, node->source_file, tp->data);
+            }
+
         }
       /* if the user chose to rename then try to do so */
       else if (response == THUNAR_JOB_RESPONSE_RENAME)
         {
-          move_successful = thunar_transfer_job_move_file_with_rename (job, node, tp, move_flags, error);
+          move_successful = thunar_transfer_job_move_file_with_rename (job, operation, node, tp, move_flags, error);
         }
       /* if the user chose to cancel then abort all remaining file moves */
       else if (response == THUNAR_JOB_RESPONSE_CANCEL)
@@ -1328,6 +1340,12 @@ thunar_transfer_job_move_file (ExoJob                *job,
        * files will be released and the matching list items will be dropped below
        */
     }
+  else
+    {
+      if (thunar_job_get_log_mode (THUNAR_JOB (job)) == THUNAR_OPERATION_LOG_OPERATIONS)
+        thunar_job_operation_add (operation, node->source_file, tp->data);
+    }
+
   if (*error == NULL)
     {
       if (move_successful)
@@ -1569,7 +1587,7 @@ thunar_transfer_job_execute (ExoJob  *job,
   ThunarTransferNode   *node;
   ThunarApplication    *application;
   ThunarTransferJob    *transfer_job = THUNAR_TRANSFER_JOB (job);
-  ThunarJobOperation   *operation;
+  ThunarJobOperation   *operation = NULL;
   GFileInfo            *info;
   GError               *err = NULL;
   GList                *new_files_list = NULL;
@@ -1577,6 +1595,7 @@ thunar_transfer_job_execute (ExoJob  *job,
   GList                *sp;
   GList                *tnext;
   GList                *tp;
+  gboolean              log_operations;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -1590,6 +1609,15 @@ thunar_transfer_job_execute (ExoJob  *job,
   application = thunar_application_get ();
   thumbnail_cache = thunar_application_get_thumbnail_cache (application);
   g_object_unref (application);
+
+  /* whether or not we want to log operations to the undo list */
+  if (thunar_job_get_log_mode (THUNAR_JOB (transfer_job)) == THUNAR_OPERATION_LOG_OPERATIONS)
+    log_operations = TRUE;
+  else
+    log_operations = FALSE;
+
+  if (log_operations && transfer_job->type == THUNAR_TRANSFER_JOB_MOVE)
+    operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_MOVE);
 
   for (sp = transfer_job->source_node_list, tp = transfer_job->target_file_list;
        sp != NULL && tp != NULL && err == NULL;
@@ -1619,14 +1647,14 @@ thunar_transfer_job_execute (ExoJob  *job,
         {
           if (!thunar_transfer_job_prepare_untrash_file (job, info, tp->data, &err))
             break;
-          if (!thunar_transfer_job_move_file (job, info, sp, node, tp,
+          if (!thunar_transfer_job_move_file (job, operation, info, sp, node, tp,
                                               G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA,
                                               thumbnail_cache, &new_files_list, &err))
             break;
         }
       else if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE)
         {
-          if (!thunar_transfer_job_move_file (job, info, sp, node, tp,
+          if (!thunar_transfer_job_move_file (job, operation, info, sp, node, tp,
                                               G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_NO_FALLBACK_FOR_MOVE | G_FILE_COPY_ALL_METADATA,
                                               thumbnail_cache, &new_files_list, &err))
             break;
@@ -1663,7 +1691,9 @@ thunar_transfer_job_execute (ExoJob  *job,
 
       /* transfer starts now */
       transfer_job->start_time = g_get_real_time ();
-      operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_COPY);
+
+      if (log_operations && transfer_job->type == THUNAR_TRANSFER_JOB_COPY)
+        operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_COPY);
 
       /* perform the copy recursively for all source transfer nodes */
       for (sp = transfer_job->source_node_list, tp = transfer_job->target_file_list;
@@ -1686,8 +1716,13 @@ thunar_transfer_job_execute (ExoJob  *job,
       thunar_job_new_files (THUNAR_JOB (job), new_files_list);
       thunar_g_list_free_full (new_files_list);
 
-      thunar_job_operation_commit (operation);
-      g_object_unref (operation);
+      /* Note that we only created a new thunar job operation of the appropriate kind (move or copy)
+       * in a mutually exclusive way, so we know that only one operation was created. */
+      if (log_operations)
+        {
+          thunar_job_operation_commit (operation);
+          g_object_unref (operation);
+        }
 
       return TRUE;
     }
