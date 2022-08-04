@@ -2664,7 +2664,6 @@ thunar_application_restore_files (ThunarApplication *application,
       /* launch the operation */
       thunar_application_launch (application, parent, "stock_folder-move",
                                  _("Restoring files..."), thunar_io_jobs_restore_files,
-                                 /* TODO: add parameter for thunar operation log file along with undo-ing it */
                                  source_path_list, target_path_list, TRUE, TRUE, THUNAR_OPERATION_LOG_OPERATIONS, new_files_closure);
     }
 
