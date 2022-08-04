@@ -17,6 +17,7 @@
  */
 
 #include <thunar/thunar-application.h>
+#include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-job-operation.h>
 #include <thunar/thunar-private.h>
@@ -51,6 +52,7 @@ struct _ThunarJobOperation
   ThunarJobOperationKind  operation_kind;
   GList                  *source_file_list;
   GList                  *target_file_list;
+  GList                  *overwritten_file_list;
 };
 
 G_DEFINE_TYPE (ThunarJobOperation, thunar_job_operation, G_TYPE_OBJECT)
@@ -77,6 +79,7 @@ thunar_job_operation_init (ThunarJobOperation *self)
   self->operation_kind = THUNAR_JOB_OPERATION_KIND_COPY;
   self->source_file_list = NULL;
   self->target_file_list = NULL;
+  self->overwritten_file_list = NULL;
 }
 
 
@@ -90,6 +93,7 @@ thunar_job_operation_dispose (GObject *object)
 
   g_list_free_full (op->source_file_list, g_object_unref);
   g_list_free_full (op->target_file_list, g_object_unref);
+  g_list_free_full (op->overwritten_file_list, g_object_unref);
 
   (*G_OBJECT_CLASS (thunar_job_operation_parent_class)->dispose) (object);
 }
@@ -159,6 +163,24 @@ thunar_job_operation_add (ThunarJobOperation *job_operation,
 
 
 
+/***
+ * thunar_job_operation_overwrite:
+ * @job_operation:    a #ThunarJobOperation
+ * @overwritten_file: a #GFile representing the file that has been overwritten
+ *
+ * Logs a file overwritten as a part of an operation.
+ **/
+void
+thunar_job_operation_overwrite (ThunarJobOperation *job_operation,
+                                GFile              *overwritten_file)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
+
+  job_operation->overwritten_file_list = thunar_g_list_append_deep (job_operation->overwritten_file_list, overwritten_file);
+}
+
+
+
 /**
  * thunar_job_operation_commit:
  * @job_operation: a #ThunarJobOperation
@@ -170,10 +192,6 @@ void
 thunar_job_operation_commit (ThunarJobOperation *job_operation)
 {
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
-
-  /* do not register an 'empty' job operation */
-  if (job_operation->source_file_list == NULL && job_operation->target_file_list == NULL)
-    return;
 
   /* We only keep one job operation commited in the job operation list, so we have to free the
    * memory for the job operation in the list, if any, stored in before we commit the new one. */
@@ -195,6 +213,10 @@ thunar_job_operation_undo (void)
 {
   ThunarJobOperation *operation_marker;
   ThunarJobOperation *inverted_operation;
+  GEnumClass         *enum_class;
+  GEnumValue         *enum_value;
+  GString            *warning_body;
+  gchar              *file_uri;
 
   /* do nothing in case there is no job operation to undo */
   if (job_operation_list == NULL)
@@ -203,9 +225,49 @@ thunar_job_operation_undo (void)
   /* the 'marked' operation */
   operation_marker = job_operation_list->data;
 
-  inverted_operation = thunar_job_operation_new_invert (operation_marker);
-  thunar_job_operation_execute (inverted_operation);
-  g_object_unref (inverted_operation);
+  /* the enum value of the operation kind, which will be used to get its nick name */
+  enum_class = g_type_class_ref (THUNAR_TYPE_JOB_OPERATION_KIND);
+  enum_value = g_enum_get_value (enum_class, operation_marker->operation_kind);
+
+  /* warn the user if the previous operation is empty, since then there is nothing to undo */
+  if (operation_marker->source_file_list == NULL && operation_marker->target_file_list == NULL)
+    {
+
+      xfce_dialog_show_warning (NULL,
+                                _("The operation you are trying to undo does not have any files "
+                                  "associated with it, and thus cannot be undone. "
+                                  "This is most likely because it involved the overwriting of files."),
+                                _("%s operation cannot be undone"), enum_value->value_nick);
+    }
+  else
+    {
+      /* if there were files overwritten in the operation, warn about them */
+      if (operation_marker->overwritten_file_list != NULL)
+        {
+          gint index;
+
+          index = 1; /* one indexed for the dialog */
+          warning_body = g_string_new (_("The following files were overwritten in the operation "
+                                         "you are trying to undo and cannot be restored:\n"));
+
+          for (GList *lp = operation_marker->overwritten_file_list; lp != NULL; lp = lp->next, index++)
+            {
+              file_uri = g_file_get_uri (lp->data);
+              g_string_append_printf (warning_body, "%d. %s\n", index, file_uri);
+              g_free (file_uri);
+            }
+
+          xfce_dialog_show_warning (NULL,
+                                    warning_body->str,
+                                    _("%s operation can only be partially undone"), enum_value->value_nick);
+
+          g_string_free (warning_body, TRUE);
+        }
+
+      inverted_operation = thunar_job_operation_new_invert (operation_marker);
+      thunar_job_operation_execute (inverted_operation);
+      g_object_unref (inverted_operation);
+    }
 
   /* Completely clear the job operation list on undo, this is because we only store the single
    * most recent operation, and we do not want it to be available to undo *again* after it has
@@ -239,6 +301,13 @@ thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
         inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
         break;
 
+      case THUNAR_JOB_OPERATION_KIND_MOVE:
+        inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
+        inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_MOVE;
+        inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
+        inverted_operation->target_file_list = thunar_g_list_copy_deep (job_operation->source_file_list);
+        break;
+
       default:
         g_assert_not_reached ();
         break;
@@ -261,6 +330,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
   GList             *thunar_file_list = NULL;
   GError            *error            = NULL;
   ThunarFile        *thunar_file;
+  GFile             *parent_dir;
 
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
@@ -287,7 +357,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
 
             if (!THUNAR_IS_FILE (thunar_file))
               {
-                g_error ("One of the files in the job operation list did not convert to a valid ThunarFile");
+                g_warning ("One of the files in the job operation list did not convert to a valid ThunarFile");
                 continue;
               }
 
@@ -297,6 +367,39 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
         thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE);
 
         thunar_g_list_free_full (thunar_file_list);
+        break;
+
+      case THUNAR_JOB_OPERATION_KIND_MOVE:
+
+        /* ensure that all the targets have parent directories which exist */
+        for (GList *lp = job_operation->target_file_list; lp != NULL; lp = lp->next)
+          {
+            parent_dir = g_file_get_parent (lp->data);
+            g_file_make_directory_with_parents (parent_dir, NULL, &error);
+            g_object_unref (parent_dir);
+
+            if (error != NULL)
+            {
+              /* there is no issue if the target directory already exists */
+              if (error->code == G_IO_ERROR_EXISTS)
+                {
+                  g_clear_error (&error);
+                  continue;
+                }
+
+              /* output the error message to console otherwise and abort */
+              g_warning (_("Error while moving files: %s\n"
+                           "Aborting operation\n"),
+                         error->message);
+              g_clear_error (&error);
+              g_object_unref (application);
+              return;
+            }
+          }
+
+        thunar_application_move_files (application, NULL,
+                                       job_operation->source_file_list, job_operation->target_file_list,
+                                       THUNAR_OPERATION_LOG_NO_OPERATIONS, NULL);
         break;
 
       default:
