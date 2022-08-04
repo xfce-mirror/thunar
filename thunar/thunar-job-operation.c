@@ -236,7 +236,6 @@ thunar_job_operation_undo (void)
       xfce_dialog_show_warning (NULL,
                                 _("The operation you are trying to undo does not have any files "
                                   "associated with it, and thus cannot be undone. "
-                                  "This is most likely because it involved the overwriting of files."),
                                 _("%s operation cannot be undone"), enum_value->value_nick);
     }
   else
@@ -388,8 +387,8 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
                 }
 
               /* output the error message to console otherwise and abort */
-              g_warning (_("Error while moving files: %s\n"
-                           "Aborting operation\n"),
+              g_warning ("Error while moving files: %s\n"
+                           "Aborting operation\n",
                          error->message);
               g_clear_error (&error);
               g_object_unref (application);
