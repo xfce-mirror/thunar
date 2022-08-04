@@ -216,6 +216,7 @@ thunar_job_operation_undo (void)
   GEnumClass         *enum_class;
   GEnumValue         *enum_value;
   GString            *warning_body;
+  gchar              *file_uri;
 
   /* do nothing in case there is no job operation to undo */
   if (job_operation_list == NULL)
@@ -250,7 +251,11 @@ thunar_job_operation_undo (void)
                                          "you are trying to undo and cannot be restored:\n"));
 
           for (GList *lp = operation_marker->overwritten_file_list; lp != NULL; lp = lp->next, index++)
-              g_string_append_printf (warning_body, "%d. %s\n", index, g_file_get_uri (lp->data));
+            {
+              file_uri = g_file_get_uri (lp->data);
+              g_string_append_printf (warning_body, "%d. %s\n", index, file_uri);
+              g_free (file_uri);
+            }
 
           xfce_dialog_show_warning (NULL,
                                     warning_body->str,
@@ -371,6 +376,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
           {
             parent_dir = g_file_get_parent (lp->data);
             g_file_make_directory_with_parents (parent_dir, NULL, &error);
+            g_object_unref (parent_dir);
 
             if (error != NULL)
             {
