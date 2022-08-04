@@ -235,7 +235,7 @@ thunar_job_operation_undo (void)
 
       xfce_dialog_show_warning (NULL,
                                 _("The operation you are trying to undo does not have any files "
-                                  "associated with it, and thus cannot be undone. "
+                                  "associated with it, and thus cannot be undone. "),
                                 _("%s operation cannot be undone"), enum_value->value_nick);
     }
   else
