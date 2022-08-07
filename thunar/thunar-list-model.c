@@ -33,6 +33,7 @@
 #include <libxfce4util/libxfce4util.h>
 
 #include <thunar/thunar-application.h>
+#include <thunar/thunar-file.h>
 #include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-list-model.h>
@@ -55,6 +56,7 @@ enum
   PROP_FOLDERS_FIRST,
   PROP_NUM_FILES,
   PROP_SHOW_HIDDEN,
+  PROP_ITEMS_COUNT_AS_DIR_SIZE,
   PROP_FILE_SIZE_BINARY,
   N_PROPERTIES
 };
@@ -195,6 +197,9 @@ static gint               sort_by_size                            (const ThunarF
 static gint               sort_by_size_in_bytes                   (const ThunarFile            *a,
                                                                    const ThunarFile            *b,
                                                                    gboolean                     case_sensitive);
+static gint               sort_by_size_and_items_count            (ThunarFile                  *a,
+                                                                   ThunarFile                  *b,
+                                                                   gboolean                     case_sensitive);    
 static gint               sort_by_type                            (const ThunarFile            *a,
                                                                    const ThunarFile            *b,
                                                                    gboolean                     case_sensitive);
@@ -220,7 +225,9 @@ static void               thunar_list_model_search_folder         (ThunarListMod
                                                                    enum ThunarListModelSearch   search_type,
                                                                    gboolean                     show_hidden);
 static void               thunar_list_model_cancel_search_job     (ThunarListModel             *model);
-
+static gboolean           thunar_list_model_get_items_count_as_dir_size (ThunarListModel       *store);
+static void               thunar_list_model_set_items_count_as_dir_size (ThunarListModel       *store,
+                                                                         gboolean               items_count);
 
 
 struct _ThunarListModelClass
@@ -249,6 +256,7 @@ struct _ThunarListModel
   GSList         *hidden;
   ThunarFolder   *folder;
   gboolean        show_hidden : 1;
+  gboolean        items_count_as_dir_size : 1;
   gboolean        file_size_binary : 1;
   ThunarDateStyle date_style;
   char           *date_custom_style;
@@ -402,6 +410,16 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
       g_param_spec_boolean ("file-size-binary",
                             "file-size-binary",
                             "file-size-binary",
+                            TRUE,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarListModel:items-count-as-dir-size:
+   **/
+  list_model_props[PROP_ITEMS_COUNT_AS_DIR_SIZE] =
+      g_param_spec_boolean ("items-count-as-dir-size",
+                            "items-count-as-dir-size",
+                            "items-count-as-dir-size",
                             TRUE,
                             EXO_PARAM_READWRITE);
 
@@ -594,6 +612,10 @@ thunar_list_model_get_property (GObject    *object,
       g_value_set_boolean (value, thunar_list_model_get_file_size_binary (store));
       break;
 
+    case PROP_ITEMS_COUNT_AS_DIR_SIZE:
+      g_value_set_boolean (value, thunar_list_model_get_items_count_as_dir_size (store));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -638,6 +660,10 @@ thunar_list_model_set_property (GObject      *object,
 
     case PROP_FILE_SIZE_BINARY:
       thunar_list_model_set_file_size_binary (store, g_value_get_boolean (value));
+      break;
+
+    case PROP_ITEMS_COUNT_AS_DIR_SIZE:
+      thunar_list_model_set_items_count_as_dir_size (store, g_value_get_boolean (value));
       break;
 
     default:
@@ -776,16 +802,16 @@ thunar_list_model_get_value (GtkTreeModel *model,
                              gint          column,
                              GValue       *value)
 {
-  ThunarGroup  *group;
-  const gchar  *device_type;
-  const gchar  *name;
-  const gchar  *real_name;
-  ThunarUser   *user;
-  ThunarFile   *file;
+  ThunarGroup *group;
+  const gchar *device_type;
+  const gchar *name;
+  const gchar *real_name;
+  ThunarUser  *user;
+  ThunarFile  *file;
   ThunarFolder *folder;
-  GFile        *g_file;
-  GFile        *g_file_parent;
-  gchar        *str;
+  gchar       *str;
+  guint32      item_count;
+  GFile       *g_file_parent;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
   _thunar_return_if_fail (iter->stamp == (THUNAR_LIST_MODEL (model))->stamp);
@@ -930,16 +956,12 @@ thunar_list_model_get_value (GtkTreeModel *model,
 
     case THUNAR_COLUMN_SIZE:
       g_value_init (value, G_TYPE_STRING);
-      if (thunar_file_is_mountable (file))
+      if (THUNAR_LIST_MODEL (model)->items_count_as_dir_size && thunar_file_is_directory (file) )
         {
-          g_file = thunar_file_get_target_location (file);
-          if (g_file == NULL)
-            break;
-          g_value_take_string (value, thunar_g_file_get_free_space_string (g_file, THUNAR_LIST_MODEL (model)->file_size_binary));
-          g_object_unref (g_file);
-          break;
+          item_count = thunar_folder_get_file_count (thunar_folder_get_for_file (file));
+          g_value_take_string (value, g_strdup_printf (ngettext ("%u item", "%u items", item_count), item_count));
         }
-      if (!thunar_file_is_directory (file))
+      else
         g_value_take_string (value, thunar_file_get_size_string_formatted (file, THUNAR_LIST_MODEL (model)->file_size_binary));
       break;
 
@@ -1104,7 +1126,7 @@ thunar_list_model_get_sort_column_id (GtkTreeSortable *sortable,
     *sort_column_id = THUNAR_COLUMN_NAME;
   else if (store->sort_func == sort_by_permissions)
     *sort_column_id = THUNAR_COLUMN_PERMISSIONS;
-  else if (store->sort_func == sort_by_size)
+  else if (store->sort_func == sort_by_size || store->sort_func == (ThunarSortFunc) sort_by_size_and_items_count)
     *sort_column_id = THUNAR_COLUMN_SIZE;
   else if (store->sort_func == sort_by_size_in_bytes)
     *sort_column_id = THUNAR_COLUMN_SIZE_IN_BYTES;
@@ -1199,7 +1221,7 @@ thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
       break;
 
     case THUNAR_COLUMN_SIZE:
-      store->sort_func = sort_by_size;
+      store->sort_func = store->items_count_as_dir_size ? (ThunarSortFunc) sort_by_size_and_items_count : sort_by_size;
       break;
 
     case THUNAR_COLUMN_SIZE_IN_BYTES:
@@ -1854,6 +1876,32 @@ sort_by_size_in_bytes (const ThunarFile *a,
                        gboolean          case_sensitive)
 {
   return sort_by_size (a, b, case_sensitive);
+}
+
+
+
+static gint
+sort_by_size_and_items_count (ThunarFile *a,
+                              ThunarFile *b,
+                              gboolean    case_sensitive)
+{
+  guint32       count_a;
+  guint32       count_b;
+
+  if (thunar_file_is_directory(a) && thunar_file_is_directory(b))
+  {
+    count_a = thunar_folder_get_file_count (thunar_folder_get_for_file (a));
+    count_b = thunar_folder_get_file_count (thunar_folder_get_for_file (b));
+
+    if (count_a < count_b)
+      return -1;
+    else if (count_a > count_b)
+      return 1;
+    else
+      return thunar_file_compare_by_name (a, b, case_sensitive);
+  }
+
+  return sort_by_size(a, b, case_sensitive);
 }
 
 
@@ -2687,6 +2735,53 @@ thunar_list_model_set_file_size_binary (ThunarListModel *store,
                               (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed,
                               NULL);
     }
+}
+
+
+
+/**
+ * thunar_list_model_get_items_count_as_dir_size:
+ * @store : a #ThunarListModel.
+ *
+ * Return value: %TRUE if items count in directory will be shown as
+ *               directory size, else %FALSE.
+ **/
+static gboolean
+thunar_list_model_get_items_count_as_dir_size (ThunarListModel *store)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
+  return store->items_count_as_dir_size;
+}
+
+
+
+/**
+ * thunar_list_model_set_items_count_as_dir_size:
+ * @store             : a #ThunarListModel.
+ * @count_as_dir_size : %TRUE if items count in directory will be shown
+ *                      as directory size, else %FALSE.
+ **/
+void
+thunar_list_model_set_items_count_as_dir_size (ThunarListModel *store,
+                                               gboolean         count_as_dir_size)
+{
+  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
+
+  /* check if the new setting differs */
+  if (store->items_count_as_dir_size == count_as_dir_size)
+    return;
+
+  store->items_count_as_dir_size = count_as_dir_size;
+  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_ITEMS_COUNT_AS_DIR_SIZE]);
+
+  gtk_tree_model_foreach (GTK_TREE_MODEL (store), (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed, NULL);
+
+  /* re-sorting the store if needed */
+  if (store->sort_func == sort_by_size || store->sort_func == (ThunarSortFunc) sort_by_size_and_items_count)
+  {
+    store->sort_func = store->items_count_as_dir_size ? (ThunarSortFunc) sort_by_size_and_items_count : sort_by_size;
+    thunar_list_model_sort (store);
+  }
 }
 
 
