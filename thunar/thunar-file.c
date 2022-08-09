@@ -1588,6 +1588,7 @@ thunar_file_execute (ThunarFile  *file,
                      GError     **error)
 {
   gboolean    snotify = FALSE;
+  gboolean    prefers_no_default_gpu = FALSE;
   gboolean    terminal;
   gboolean    result = FALSE;
   GKeyFile   *key_file;
@@ -1602,6 +1603,7 @@ thunar_file_execute (ThunarFile  *file,
   gchar      *location;
   gchar      *escaped_location;
   gchar     **argv = NULL;
+  gchar     **envp = NULL;
   gchar      *exec;
   gchar      *command;
   gchar      *directory = NULL;
@@ -1647,6 +1649,9 @@ thunar_file_execute (ThunarFile  *file,
                   directory = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_PATH, NULL);
                   terminal = g_key_file_get_boolean (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_TERMINAL, NULL);
                   snotify = g_key_file_get_boolean (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_STARTUP_NOTIFY, NULL);
+
+                  /* New key available since version 1.4 of the Desktop Entry Specification - No G_KEY_FILE_DESKTOP macro available yet */
+                  prefers_no_default_gpu = g_key_file_get_boolean (key_file, G_KEY_FILE_DESKTOP_GROUP, "PrefersNonDefaultGPU", NULL);
 
                   /* expand the field codes and parse the execute command */
                   command = xfce_expand_desktop_entry_field_codes (exec, uri_list, icon_name,
@@ -1766,15 +1771,28 @@ thunar_file_execute (ThunarFile  *file,
           stimestamp = gtk_get_current_event_time ();
         }
 
+      if (prefers_no_default_gpu == TRUE)
+        {
+          envp = g_get_environ ();
+
+          /* For nvidia discrete GPUs these environment variables do the trick */
+          envp = g_environ_setenv (envp, "__NV_PRIME_RENDER_OFFLOAD", "1", TRUE);
+          envp = g_environ_setenv (envp, "__GLX_VENDOR_LIBRARY_NAME", "nvidia", TRUE);
+          envp = g_environ_setenv (envp, "__VK_LAYER_NV_optimus", "NVIDIA_only", TRUE);
+
+          /* TODO: What is needed for AMD discrete GPUs ? */
+        }
+
       /* execute the command */
-      result = xfce_spawn_on_screen (thunar_util_parse_parent (parent, NULL),
-                                     directory, argv, NULL, G_SPAWN_SEARCH_PATH,
-                                     snotify, stimestamp, icon_name, error);
+      result = xfce_spawn (thunar_util_parse_parent (parent, NULL),
+                           directory, argv, envp, G_SPAWN_SEARCH_PATH,
+                           snotify, stimestamp, icon_name, TRUE, error);
     }
 
   /* clean up */
   g_slist_free_full (uri_list, g_free);
   g_strfreev (argv);
+  g_strfreev (envp);
   g_free (location);
   g_free (directory);
   g_free (icon_name);
