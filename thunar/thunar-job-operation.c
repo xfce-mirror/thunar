@@ -278,6 +278,28 @@ thunar_job_operation_undo (void)
 
 
 
+/* thunar_job_operation_can_undo:
+ *
+ * Returns whether or not there is an operation on the job operation list that can be undone.
+ **/
+gboolean
+thunar_job_operation_can_undo (void)
+{
+  ThunarJobOperation *operation_marker;
+
+  if (job_operation_list == NULL)
+    return FALSE;
+ 
+  operation_marker = job_operation_list->data;
+
+  if (operation_marker->source_file_list == NULL && operation_marker->target_file_list == NULL)
+    return FALSE;
+
+  return TRUE;
+}
+
+
+
 /* thunar_job_operation_new_invert:
  * @job_operation: a #ThunarJobOperation
  *
