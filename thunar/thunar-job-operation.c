@@ -19,6 +19,7 @@
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-enum-types.h>
+#include <thunar/thunar-io-jobs.h>
 #include <thunar/thunar-job-operation.h>
 #include <thunar/thunar-private.h>
 
@@ -220,7 +221,12 @@ thunar_job_operation_undo (void)
 
   /* do nothing in case there is no job operation to undo */
   if (job_operation_list == NULL)
-    return;
+    {
+      xfce_dialog_show_warning (NULL,
+                                _("No operation has been performed yet that can be undone."),
+                                _("There is no operation to be undone"));
+      return;
+    }
 
   /* the 'marked' operation */
   operation_marker = job_operation_list->data;
@@ -277,6 +283,28 @@ thunar_job_operation_undo (void)
 
 
 
+/* thunar_job_operation_can_undo:
+ *
+ * Returns whether or not there is an operation on the job operation list that can be undone.
+ **/
+gboolean
+thunar_job_operation_can_undo (void)
+{
+  ThunarJobOperation *operation_marker;
+
+  if (job_operation_list == NULL)
+    return FALSE;
+ 
+  operation_marker = job_operation_list->data;
+
+  if (operation_marker->source_file_list == NULL && operation_marker->target_file_list == NULL)
+    return FALSE;
+
+  return TRUE;
+}
+
+
+
 /* thunar_job_operation_new_invert:
  * @job_operation: a #ThunarJobOperation
  *
@@ -307,6 +335,13 @@ thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
         inverted_operation->target_file_list = thunar_g_list_copy_deep (job_operation->source_file_list);
         break;
 
+      case THUNAR_JOB_OPERATION_KIND_RENAME:
+        inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
+        inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_RENAME;
+        inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
+        inverted_operation->target_file_list = thunar_g_list_copy_deep (job_operation->source_file_list);
+        break;
+
       default:
         g_assert_not_reached ();
         break;
@@ -328,8 +363,10 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
   ThunarApplication *application;
   GList             *thunar_file_list = NULL;
   GError            *error            = NULL;
+  ThunarJob         *job              = NULL;
   ThunarFile        *thunar_file;
   GFile             *parent_dir;
+  gchar             *display_name;
 
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
@@ -369,7 +406,6 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
         break;
 
       case THUNAR_JOB_OPERATION_KIND_MOVE:
-
         /* ensure that all the targets have parent directories which exist */
         for (GList *lp = job_operation->target_file_list; lp != NULL; lp = lp->next)
           {
@@ -388,7 +424,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
 
               /* output the error message to console otherwise and abort */
               g_warning ("Error while moving files: %s\n"
-                           "Aborting operation\n",
+                         "Aborting operation\n",
                          error->message);
               g_clear_error (&error);
               g_object_unref (application);
@@ -399,6 +435,33 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
         thunar_application_move_files (application, NULL,
                                        job_operation->source_file_list, job_operation->target_file_list,
                                        THUNAR_OPERATION_LOG_NO_OPERATIONS, NULL);
+        break;
+
+      case THUNAR_JOB_OPERATION_KIND_RENAME:
+        for (GList *slp = job_operation->source_file_list, *tlp = job_operation->target_file_list;
+             slp != NULL && tlp != NULL;
+             slp = slp->next, tlp = tlp->next)
+          {
+            display_name = thunar_g_file_get_display_name (tlp->data);
+            thunar_file = thunar_file_get (slp->data, &error);
+
+            if (error != NULL)
+              {
+                g_warning ("Error while renaming files: %s\n", error->message);
+                g_clear_error (&error);
+
+                g_free (display_name);
+                g_object_unref (thunar_file);
+
+                continue;
+              }
+
+            job = thunar_io_jobs_rename_file (thunar_file, display_name, THUNAR_OPERATION_LOG_NO_OPERATIONS);
+            exo_job_launch (EXO_JOB (job));
+
+            g_free (display_name);
+            g_object_unref (thunar_file);
+          }
         break;
 
       default:
