@@ -1869,14 +1869,16 @@ thunar_application_rename_file_finished (ExoJob  *job,
  *                to open on the default screen.
  * @startup_id  : startup id from startup notification passed along
  *                with dbus to make focus stealing work properly.
+ * @log_mode    : a #ThunarOperationLogMode to control logging of the operation
  *
  * Prompts the user to rename the @file.
  **/
 void
-thunar_application_rename_file (ThunarApplication *application,
-                                ThunarFile        *file,
-                                GdkScreen         *screen,
-                                const gchar       *startup_id)
+thunar_application_rename_file (ThunarApplication      *application,
+                                ThunarFile             *file,
+                                GdkScreen              *screen,
+                                const gchar            *startup_id,
+                                ThunarOperationLogMode  log_mode)
 {
   ThunarJob *job;
 
@@ -1888,7 +1890,7 @@ thunar_application_rename_file (ThunarApplication *application,
   /* TODO pass the startup ID to the rename dialog */
 
   /* run the rename dialog */
-  job = thunar_dialogs_show_rename_file (screen, file);
+  job = thunar_dialogs_show_rename_file (screen, file, log_mode);
   if (G_LIKELY (job != NULL))
     {
       /* remember the screen and file */
