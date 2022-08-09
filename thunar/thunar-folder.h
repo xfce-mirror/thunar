@@ -41,6 +41,8 @@ ThunarFolder *thunar_folder_get_for_file           (ThunarFile         *file);
 ThunarFile   *thunar_folder_get_corresponding_file (const ThunarFolder *folder);
 GList        *thunar_folder_get_files              (const ThunarFolder *folder);
 guint32       thunar_folder_get_file_count         (ThunarFolder       *folder);
+guint32       thunar_folder_get_file_count_async   (ThunarFolder       *folder,
+                                                    GValue             *value);
 gboolean      thunar_folder_get_loading            (const ThunarFolder *folder);
 gboolean      thunar_folder_has_folder_monitor     (const ThunarFolder *folder);
 
