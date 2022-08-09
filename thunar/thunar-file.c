@@ -1784,9 +1784,9 @@ thunar_file_execute (ThunarFile  *file,
         }
 
       /* execute the command */
-      result = xfce_spawn_on_screen (thunar_util_parse_parent (parent, NULL),
-                                     directory, argv, envp, G_SPAWN_SEARCH_PATH,
-                                     snotify, stimestamp, icon_name, error);
+      result = xfce_spawn (thunar_util_parse_parent (parent, NULL),
+                           directory, argv, envp, G_SPAWN_SEARCH_PATH,
+                           snotify, stimestamp, icon_name, TRUE, error);
     }
 
   /* clean up */
