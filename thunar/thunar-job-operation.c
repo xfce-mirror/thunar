@@ -221,7 +221,12 @@ thunar_job_operation_undo (void)
 
   /* do nothing in case there is no job operation to undo */
   if (job_operation_list == NULL)
-    return;
+    {
+      xfce_dialog_show_warning (NULL,
+                                _("No operation has been performed yet that can be undone."),
+                                _("There is no operation to be undone"));
+      return;
+    }
 
   /* the 'marked' operation */
   operation_marker = job_operation_list->data;
