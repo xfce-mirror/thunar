@@ -1852,6 +1852,11 @@ thunar_action_manager_append_menu_item (ThunarActionManager       *action_mgr,
         gtk_menu_item_set_label (GTK_MENU_ITEM (item), eject_label);
         return item;
 
+      case THUNAR_ACTION_MANAGER_ACTION_UNDO:
+        item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
+        gtk_widget_set_sensitive (item, thunar_job_operation_can_undo ());
+        return item;
+
       default:
         return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
     }
