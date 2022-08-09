@@ -422,12 +422,18 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
               {
                 g_warning ("Error while renaming files: %s\n", error->message);
                 g_clear_error (&error);
+
+                g_free (display_name);
+                g_object_unref (thunar_file);
+
+                continue;
               }
 
             job = thunar_io_jobs_rename_file (thunar_file, display_name, THUNAR_OPERATION_LOG_NO_OPERATIONS);
             exo_job_launch (EXO_JOB (job));
 
             g_free (display_name);
+            g_object_unref (thunar_file);
           }
         break;
 
