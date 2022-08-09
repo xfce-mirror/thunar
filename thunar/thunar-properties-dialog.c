@@ -1028,7 +1028,7 @@ thunar_properties_dialog_name_activate (GtkWidget              *entry,
   old_name = thunar_file_get_display_name (file);
   if (g_utf8_collate (new_name, old_name) != 0)
     {
-      job = thunar_io_jobs_rename_file (file, new_name);
+      job = thunar_io_jobs_rename_file (file, new_name, THUNAR_OPERATION_LOG_OPERATIONS);
       exo_job_launch (EXO_JOB (job));
       if (job != NULL)
         {

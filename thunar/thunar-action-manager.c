@@ -2443,7 +2443,7 @@ thunar_action_manager_action_rename (ThunarActionManager *action_mgr)
   if (g_list_length (action_mgr->files_to_process) == 1)
     {
       /* run the rename dialog */
-      job = thunar_dialogs_show_rename_file (GTK_WINDOW (window), THUNAR_FILE (action_mgr->files_to_process->data));
+      job = thunar_dialogs_show_rename_file (GTK_WINDOW (window), THUNAR_FILE (action_mgr->files_to_process->data), THUNAR_OPERATION_LOG_OPERATIONS);
       if (G_LIKELY (job != NULL))
         {
           g_signal_connect (job, "error", G_CALLBACK (thunar_action_manager_rename_error), action_mgr->widget);
