@@ -444,6 +444,22 @@ typedef enum
 
 GType thunar_job_operation_kind_get_type (void) G_GNUC_CONST;
 
+/**
+ * ThunarOperationLogMode:
+ *
+ * Specify control logging for operations.
+ **/
+
+#define THUNAR_TYPE_OPERATION_LOG_MODE (thunar_operation_log_mode_get_type ())
+
+typedef enum
+{
+  THUNAR_OPERATION_LOG_NO_OPERATIONS,
+  THUNAR_OPERATION_LOG_OPERATIONS,
+} ThunarOperationLogMode;
+
+GType thunar_operation_log_mode_get_type (void) G_GNUC_CONST;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_ENUM_TYPES_H__ */
