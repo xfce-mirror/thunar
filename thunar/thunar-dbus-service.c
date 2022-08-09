@@ -1028,7 +1028,7 @@ thunar_dbus_service_rename_file (ThunarDBusFileManager  *object,
 
   /* popup a new window for the folder */
   application = thunar_application_get ();
-  thunar_application_rename_file (application, file, screen, startup_id);
+  thunar_application_rename_file (application, file, screen, startup_id, THUNAR_OPERATION_LOG_OPERATIONS);
   g_object_unref (G_OBJECT (application));
 
   /* cleanup */
