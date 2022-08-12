@@ -334,6 +334,37 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), button);
   gtk_widget_show (button);
 
+  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
+  gtk_widget_show (frame);
+
+  label = gtk_label_new (_("File size of folders"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
+  gtk_widget_show (label);
+
+  grid = gtk_grid_new ();
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 6);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
+  gtk_container_add (GTK_CONTAINER (frame), grid);
+  gtk_widget_show (grid);
+
+  /* explain what it does */
+  label = gtk_label_new (_("When the column 'size' is selected, you may choose to show the\n"
+                           "number of items in a folder instead of the fixed folder size."));
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
+  gtk_widget_show (label);
+
+  /* create the "Display number of files in size column of folders" button */
+  button = gtk_check_button_new_with_mnemonic (_("Display the number of items instead of the fixed size"));
+  g_object_bind_property (G_OBJECT (column_editor->preferences), "misc-items-count-as-dir-size", G_OBJECT (button), "active", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  gtk_widget_set_tooltip_text (button, _("Select this option to show the number of files in the 'size' column of folders."));
+  gtk_widget_set_hexpand (button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 4, 2, 1);
+  gtk_widget_show (button);
+
   /* setup the tree selection */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (column_editor->tree_view));
   g_signal_connect_swapped (G_OBJECT (selection), "changed", G_CALLBACK (thunar_column_editor_update_buttons), column_editor);
