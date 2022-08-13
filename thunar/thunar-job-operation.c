@@ -223,8 +223,9 @@ thunar_job_operation_undo (void)
   if (job_operation_list == NULL)
     {
       xfce_dialog_show_warning (NULL,
-                                _("No operation has been performed yet that can be undone."),
-                                _("There is no operation to be undone"));
+                                _("No operation which can be undone has been performed yet.\n"
+                                  "(For some operations undo is not supported)"),
+                                _("There is no operation to undo"));
       return;
     }
 
