@@ -2414,10 +2414,6 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
                                   "sort-order-default", sort_order, NULL);
   thunar_view_set_show_hidden (THUNAR_VIEW (view), window->show_hidden);
 
-  /* If directory specific settings are disabled, directly use the sort settings of the current view for it */
-  if (!window->directory_specific_settings)
-    g_object_set (view, "sort-column", sort_column, "sort-order", sort_order, NULL);
-
   gtk_widget_show (view);
 
   /* set the history of the view if a history is provided */
