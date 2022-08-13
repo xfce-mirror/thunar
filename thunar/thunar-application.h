@@ -84,10 +84,11 @@ gboolean              thunar_application_process_filenames          (ThunarAppli
                                                                      GError           **error,
                                                                      ThunarApplicationProcessAction action);
 
-void                  thunar_application_rename_file                (ThunarApplication *application,
-                                                                     ThunarFile        *file,
-                                                                     GdkScreen         *screen,
-                                                                     const gchar       *startup_id);
+void                  thunar_application_rename_file                (ThunarApplication      *application,
+                                                                     ThunarFile             *file,
+                                                                     GdkScreen              *screen,
+                                                                     const gchar            *startup_id,
+                                                                     ThunarOperationLogMode  log_mode);
 void                  thunar_application_create_file                (ThunarApplication *application,
                                                                      ThunarFile        *parent_directory,
                                                                      const gchar       *content_type,

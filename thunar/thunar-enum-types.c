@@ -669,3 +669,23 @@ thunar_job_operation_kind_get_type (void)
 
   return type;
 }
+
+GType
+thunar_operation_log_mode_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GEnumValue values[] =
+      {
+        { THUNAR_OPERATION_LOG_OPERATIONS,    "THUNAR_OPERATION_LOG_OPERATIONS",    N_("Log operations") },
+        { THUNAR_OPERATION_LOG_NO_OPERATIONS, "THUNAR_OPERATION_LOG_NO_OPERATIONS", N_("Log no operations") },
+        { 0,                                  NULL,                                 NULL }
+      };
+
+      type = g_enum_register_static ("ThunarOperationLogMode", values);
+    }
+
+  return type;
+}
