@@ -219,7 +219,7 @@ thunar_job_operation_undo (void)
   GString            *warning_body;
   gchar              *file_uri;
 
-  /* do nothing in case there is no job operation to undo */
+  /* Show a warning in case there is no operation to undo */
   if (job_operation_list == NULL)
     {
       xfce_dialog_show_warning (NULL,
