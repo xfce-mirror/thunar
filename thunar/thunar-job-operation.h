@@ -27,17 +27,6 @@ G_BEGIN_DECLS
 #define THUNAR_TYPE_JOB_OPERATION (thunar_job_operation_get_type ())
 G_DECLARE_FINAL_TYPE (ThunarJobOperation, thunar_job_operation, THUNAR, JOB_OPERATION, GObject)
 
-/**
- * ThunarOperationLogMode:
- *
- * Specify control logging for operations.
- **/
-typedef enum
-{
-  THUNAR_OPERATION_LOG_NO_OPERATIONS,
-  THUNAR_OPERATION_LOG_OPERATIONS,
-} ThunarOperationLogMode;
-
 ThunarJobOperation    *thunar_job_operation_new          (ThunarJobOperationKind kind);
 void                   thunar_job_operation_add          (ThunarJobOperation    *job_operation,
                                                           GFile                 *source_file,
@@ -46,6 +35,7 @@ void                   thunar_job_operation_overwrite    (ThunarJobOperation    
                                                           GFile                 *overwritten_file);
 void                   thunar_job_operation_commit       (ThunarJobOperation    *job_operation);
 void                   thunar_job_operation_undo         (void);
+gboolean               thunar_job_operation_can_undo     (void);
 
 G_END_DECLS
 
