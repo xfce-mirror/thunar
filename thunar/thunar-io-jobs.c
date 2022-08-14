@@ -812,12 +812,14 @@ _thunar_io_jobs_trash (ThunarJob  *job,
                        GArray     *param_values,
                        GError    **error)
 {
-  ThunarThumbnailCache *thumbnail_cache;
-  ThunarApplication    *application;
-  ThunarJobResponse     response;
-  GError               *err = NULL;
-  GList                *file_list;
-  GList                *lp;
+  ThunarThumbnailCache   *thumbnail_cache;
+  ThunarApplication      *application;
+  ThunarJobOperation     *operation = NULL;
+  ThunarJobResponse       response;
+  ThunarOperationLogMode  log_mode;
+  GError                 *err = NULL;
+  GList                  *file_list;
+  GList                  *lp;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
