@@ -85,6 +85,7 @@ void       thunar_util_clip_view_background     (GtkCellRenderer      *cell,
                                                  const GdkRectangle   *background_area,
                                                  GtkWidget            *widget,
                                                  GtkCellRendererState  flags);
+gchar     *thunar_util_trash_next_name          (const gchar          *file_name);
 
 extern const char *SEARCH_PREFIX;
 
