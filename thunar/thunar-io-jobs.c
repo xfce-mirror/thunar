@@ -812,12 +812,19 @@ _thunar_io_jobs_trash (ThunarJob  *job,
                        GArray     *param_values,
                        GError    **error)
 {
-  ThunarThumbnailCache *thumbnail_cache;
-  ThunarApplication    *application;
-  ThunarJobResponse     response;
-  GError               *err = NULL;
-  GList                *file_list;
-  GList                *lp;
+  ThunarThumbnailCache   *thumbnail_cache;
+  ThunarApplication      *application;
+  ThunarJobOperation     *operation = NULL;
+  ThunarJobResponse       response;
+  ThunarOperationLogMode  log_mode;
+  GError                 *err = NULL;
+  GList                  *file_list;
+  GList                  *lp;
+  GFile                  *trashed_file;
+  gchar                  *base_name;
+  gchar                  *trashed_name;
+  gchar                  *escaped_name;
+  gchar                  *uri;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -833,6 +840,11 @@ _thunar_io_jobs_trash (ThunarJob  *job,
   application = thunar_application_get ();
   thumbnail_cache = thunar_application_get_thumbnail_cache (application);
   g_object_unref (application);
+
+  log_mode = thunar_job_get_log_mode (job);
+
+  if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
+    operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_TRASH);
 
   for (lp = file_list; err == NULL && lp != NULL; lp = lp->next)
     {
@@ -854,12 +866,47 @@ _thunar_io_jobs_trash (ThunarJob  *job,
             _tij_delete_file (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err);
         }
 
+      else if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
+        {
+          /* get the name of the file after trashing */
+          base_name = g_file_get_basename (lp->data);
+          trashed_name = thunar_util_trash_next_name (base_name);
+          /* NOTE: should we be allowing UTF-8 chars? */
+          escaped_name = g_uri_escape_string (trashed_name, NULL, TRUE);
+
+          /* build the file's URI */
+          uri = g_strdup_printf ("trash:///%s", escaped_name);
+
+#ifndef NDEBUG /* temporary debugging code */
+          g_print ("base_name: %s\n", base_name);
+          g_print ("trashed_name: %s\n", trashed_name);
+          g_print ("escaped_name: %s\n", escaped_name);
+          g_print ("uri: %s\n", uri);
+#endif
+
+          /* use it to get the GFile for the trashed file */
+          trashed_file = g_file_new_for_uri (uri);
+
+          /* add the file to the current operation */
+          thunar_job_operation_add (operation, lp->data, trashed_file);
+
+          g_free (base_name);
+          g_free (trashed_name);
+          g_free (escaped_name);
+        }
+
       /* update the thumbnail cache */
       thunar_thumbnail_cache_cleanup_file (thumbnail_cache, lp->data);
     }
 
   /* release the thumbnail cache */
   g_object_unref (thumbnail_cache);
+
+  if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
+  {
+    thunar_job_operation_commit (operation);
+    g_object_unref (operation);
+  }
 
   if (err != NULL)
     {
@@ -1334,6 +1381,7 @@ _thunar_io_jobs_rename (ThunarJob  *job,
           operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_RENAME);
           thunar_job_operation_add (operation, g_file_new_for_uri (old_file_uri), thunar_file_get_file (file));
           thunar_job_operation_commit (operation);
+          g_object_unref (operation);
         }
     }
 
