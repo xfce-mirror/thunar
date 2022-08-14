@@ -914,7 +914,7 @@ thunar_dbus_service_move_to_trash (ThunarDBusTrash        *object,
         {
           /* tell the application to move the specified files to the trash */
           application = thunar_application_get ();
-          thunar_application_trash (application, screen, file_list);
+          thunar_application_trash (application, screen, file_list, THUNAR_OPERATION_LOG_OPERATIONS);
           g_object_unref (application);
         }
 
