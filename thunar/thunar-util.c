@@ -1005,12 +1005,13 @@ thunar_util_clip_view_background (GtkCellRenderer      *cell,
  * This function finds the next free name for the given file name in the trash,
  * effectively calculating what the name of the file will be when it is trashed.
  *
- * Return value: a newly allocated string with the new name of the file in the trash. */
+ * Return value: a newly allocated string with the new name of the file in the trash.
+ *               it should be freed by the user with g_free when it is no longer needed. */
 
 gchar *
 thunar_util_trash_next_name (const gchar *file_name)
 {
-  GError        *err;
+  GError        *err = NULL;
   unsigned long  file_name_size;
   unsigned       count = 0;
   ThunarFile    *trash_thunar_file;
@@ -1022,11 +1023,14 @@ thunar_util_trash_next_name (const gchar *file_name)
   file_name_size = strlen (file_name);
   new_name = g_strdup (file_name);
   trash_thunar_file = thunar_file_get_for_uri ("trash:///", &err);
+  _thunar_assert (trash_thunar_file != NULL);
 
   if (err != NULL)
     return NULL;
 
   trash_thunar_folder = thunar_folder_get_for_file (trash_thunar_file);
+  _thunar_assert (trash_thunar_folder != NULL);
+
   g_object_unref (trash_thunar_file);
 
 #ifndef NDEBUG /* temporary debugging code */
@@ -1044,6 +1048,10 @@ thunar_util_trash_next_name (const gchar *file_name)
   while (TRUE)
     {
       found_duplicate = FALSE;
+
+#ifndef NDEBUG /* temporary debugging code */
+      g_print ("number of files in trash: %d\n", g_list_length (thunar_folder_get_files (trash_thunar_folder)));
+#endif
 
       for (GList *lp = thunar_folder_get_files (trash_thunar_folder); lp != NULL; lp = lp->next)
         {
