@@ -998,3 +998,81 @@ thunar_util_clip_view_background (GtkCellRenderer      *cell,
   g_free (highlight_color);
   cairo_restore (cr);
 }
+
+/* thunar_util_trash_next_name:
+ * @file_name: the name of the file to be trashed
+ *
+ * This function finds the next free name for the given file name in the trash,
+ * effectively calculating what the name of the file will be when it is trashed.
+ *
+ * Return value: a newly allocated string with the new name of the file in the trash. */
+
+gchar *
+thunar_util_trash_next_name (const gchar *file_name)
+{
+  GError        *err;
+  unsigned long  file_name_size;
+  unsigned       count = 0;
+  ThunarFile    *trash_thunar_file;
+  ThunarFolder  *trash_thunar_folder;
+  gchar         *extension;
+  gchar         *new_name;
+  gboolean       found_duplicate = FALSE;
+
+  file_name_size = strlen (file_name);
+  new_name = g_strdup (file_name);
+  trash_thunar_file = thunar_file_get_for_uri ("trash:///", &err);
+
+  if (err != NULL)
+    return NULL;
+
+  trash_thunar_folder = thunar_folder_get_for_file (trash_thunar_file);
+  g_object_unref (trash_thunar_file);
+
+#ifndef NDEBUG /* temporary debugging code */
+  g_print ("thunar_util_trash_next_name\n");
+#endif
+
+  /* get file extension if file is not a directory */
+  extension = thunar_util_str_get_extension (file_name);
+
+  /* if the file has an extension don't include it in the search */
+  if (extension != NULL)
+    file_name_size -= strlen (extension);
+
+  /* loop through the trash until new_name is unique */
+  while (TRUE)
+    {
+      found_duplicate = FALSE;
+
+      for (GList *lp = thunar_folder_get_files (trash_thunar_folder); lp != NULL; lp = lp->next)
+        {
+          ThunarFile *file = lp->data;
+          gchar      *name = g_file_get_basename (thunar_file_get_file (file));
+
+#ifndef NDEBUG /* temporary debugging code */
+          g_print ("name: %s\n", name);
+#endif
+          if (g_strcmp0 (new_name, name) == 0)
+            {
+              found_duplicate = TRUE;
+              g_free (name);
+              break;
+            }
+
+          g_free (name);
+        }
+
+      /* we can continue with the current name itself if no duplicate was found */
+      if (!found_duplicate)
+        break;
+
+      /* otherwise, we must change new_name */
+      g_free (new_name);
+      new_name = g_strdup_printf ("%.*s.%u%s", (int) file_name_size, file_name, ++count, extension ? extension : "");
+    }
+
+  g_object_unref (trash_thunar_folder);
+
+  return new_name;
+}
