@@ -27,6 +27,7 @@
 #include <thunar/thunar-action-manager.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
+#include <thunar/thunar-standard-view.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-window.h>
@@ -642,6 +643,13 @@ thunar_abstract_icon_view_zoom_level_changed (ThunarAbstractIconView *abstract_i
 {
   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
 
-  /* this should reload the window without unsetting the cell_layout_data_funcs (needed for highlighting) */
-  thunar_view_reload (THUNAR_VIEW (abstract_icon_view), TRUE);
+  gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (gtk_bin_get_child (GTK_BIN (abstract_icon_view))),
+                                      THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer,
+                                      NULL, NULL, NULL);
+
+  /* reset the cell_layout_data_func (required for highlighting) */
+  gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (gtk_bin_get_child (GTK_BIN (abstract_icon_view))),
+                                      THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer,
+                                      THUNAR_STANDARD_VIEW_GET_CLASS (abstract_icon_view)->cell_layout_data_func,
+                                      NULL, NULL);
 }
