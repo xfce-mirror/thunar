@@ -205,6 +205,9 @@ struct _ThunarThumbnailerJob
 
   /* handle returned by the tumbler dbus service */
   guint              handle;
+
+  /* used to override the thumbnail size of ThunarThumbnailer */
+  ThunarThumbnailSize thumbnail_size;
 };
 
 struct _ThunarThumbnailerIdle
@@ -415,6 +418,7 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
   ThunarFileThumbState   thumb_state;
   const gchar           *thumbnail_path;
   gint                   request_no;
+  ThunarThumbnailSize    thumbnail_size;
 
   if (thumbnailer->proxy_state == THUNAR_THUMBNAILER_PROXY_WAITING)
     {
@@ -426,6 +430,8 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
       /* the job has no chance to be completed - ever */
       return FALSE;
     }
+
+  thumbnail_size = job->thumbnail_size == THUNAR_THUMBNAIL_SIZE_INVALID ? thumbnailer->thumbnail_size : job->thumbnail_size;
 
   /* collect all supported files from the list that are neither in the
    * about to be queued (wait queue), nor already queued, nor already
@@ -468,7 +474,7 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
         {
           /* still a regular file, but the type is now known to tumbler but
            * maybe the application created a thumbnail */
-          thumbnail_path = thunar_file_get_thumbnail_path (lp->data, thumbnailer->thumbnail_size);
+          thumbnail_path = thunar_file_get_thumbnail_path (lp->data, thumbnail_size);
 
           /* test if a thumbnail can be found */
           if (thumbnail_path != NULL && g_file_test (thumbnail_path, G_FILE_TEST_EXISTS))
@@ -518,7 +524,7 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
       thunar_thumbnailer_dbus_call_queue (thumbnailer->thumbnailer_proxy,
                                           (const gchar *const *)uris,
                                           (const gchar *const *)mime_hints,
-                                          thunar_thumbnail_size_get_nick (thumbnailer->thumbnail_size),
+                                          thunar_thumbnail_size_get_nick (thumbnail_size),
                                           "foreground", 0,
                                           NULL,
                                           thunar_thumbnailer_queue_async_reply,
@@ -1100,9 +1106,10 @@ thunar_thumbnailer_get (void)
 
 
 gboolean
-thunar_thumbnailer_queue_file (ThunarThumbnailer *thumbnailer,
-                               ThunarFile        *file,
-                               guint             *request)
+thunar_thumbnailer_queue_file (ThunarThumbnailer  *thumbnailer,
+                               ThunarFile         *file,
+                               guint              *request,
+                               ThunarThumbnailSize size)
 {
   GList files;
 
@@ -1115,16 +1122,17 @@ thunar_thumbnailer_queue_file (ThunarThumbnailer *thumbnailer,
   files.prev = NULL;
 
   /* queue a thumbnail request for the file */
-  return thunar_thumbnailer_queue_files (thumbnailer, FALSE, &files, request);
+  return thunar_thumbnailer_queue_files (thumbnailer, FALSE, &files, request, size);
 }
 
 
 
 gboolean
-thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
-                                gboolean           lazy_checks,
-                                GList             *files,
-                                guint             *request)
+thunar_thumbnailer_queue_files (ThunarThumbnailer   *thumbnailer,
+                                gboolean             lazy_checks,
+                                GList               *files,
+                                guint               *request,
+                                ThunarThumbnailSize  size)
 {
   gboolean               success = FALSE;
   ThunarThumbnailerJob  *job = NULL;
@@ -1140,12 +1148,13 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
   job->thumbnailer = thumbnailer;
   job->files = g_list_copy_deep (files, (GCopyFunc) (void (*)(void)) g_object_ref, NULL);
   job->lazy_checks = lazy_checks ? 1 : 0;
+  job->thumbnail_size = size;
 
   success = thunar_thumbnailer_begin_job (thumbnailer, job);
   if (success)
     {
       thumbnailer->jobs = g_slist_prepend (thumbnailer->jobs, job);
-      if (request)
+      if (request != NULL)
         *request = job->request;
     }
   else
