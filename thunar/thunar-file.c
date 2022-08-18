@@ -3683,10 +3683,6 @@ thunar_file_is_desktop (const ThunarFile *file)
 const gchar *
 thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_size)
 {
-  GChecksum *checksum;
-  gchar     *filename;
-  gchar     *uri;
-
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
   /* if the thumbstate is known to be not there, return null */
@@ -3707,7 +3703,7 @@ thunar_file_get_thumbnail_path_forced (ThunarFile *file, ThunarThumbnailSize thu
   GChecksum *checksum;
   gchar     *filename;
   gchar     *uri;
-  gchar     *thumbnail_path;
+  gchar     *thumbnail_path = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
