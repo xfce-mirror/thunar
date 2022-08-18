@@ -385,10 +385,15 @@ struct _ThunarWindow
   gboolean                menubar_visible;
   GtkWidget              *spinner;
   GtkWidget              *paned;
+  GtkWidget              *paned_right;
   GtkWidget              *sidepane_box;
   GtkWidget              *sidepane;
   GtkWidget              *sidepane_preview;
   GtkWidget              *sidepane_preview_image;
+  GtkWidget              *right_pane_grid;
+  GtkWidget              *right_pane_preview_image;
+  GtkWidget              *right_pane_image_label;
+  GtkWidget              *right_pane_size;
   GtkWidget              *view_box;
   GtkWidget              *trash_infobar;
   GtkWidget              *trash_infobar_restore_button;
@@ -743,6 +748,8 @@ thunar_window_init (ThunarWindow *window)
   gboolean         last_window_maximized;
   gboolean         last_statusbar_visible;
   gboolean         last_image_preview_visible;
+  gboolean         misc_image_preview_full;
+  gint             max_paned_position;
   GtkStyleContext *context;
 
   /* unset the view type */
@@ -779,6 +786,7 @@ thunar_window_init (ThunarWindow *window)
                 "last-side-pane", &last_side_pane,
                 "last-statusbar-visible", &last_statusbar_visible,
                 "last-image-preview-visible", &last_image_preview_visible,
+                "misc-image-preview-full", &misc_image_preview_full,
                 NULL);
 
   /* update the visual on screen_changed events */
@@ -872,6 +880,7 @@ thunar_window_init (ThunarWindow *window)
       gtk_widget_show (label);
     }
 
+  /* main paned widget */
   window->paned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
   gtk_container_set_border_width (GTK_CONTAINER (window->paned), 0);
   gtk_widget_set_hexpand (window->paned, TRUE);
@@ -879,6 +888,7 @@ thunar_window_init (ThunarWindow *window)
   gtk_grid_attach (GTK_GRID (window->grid), window->paned, 0, 4, 1, 1);
   gtk_widget_show (window->paned);
 
+  /* left sidepane */
   window->sidepane_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
   gtk_paned_pack1 (GTK_PANED (window->paned), window->sidepane_box, FALSE, FALSE);
   gtk_widget_show (window->sidepane_box);
@@ -886,7 +896,7 @@ thunar_window_init (ThunarWindow *window)
   window->sidepane_preview = gtk_frame_new (_("Preview"));
   gtk_container_set_border_width (GTK_CONTAINER (window->sidepane_preview), 3);
   gtk_box_pack_end (GTK_BOX (window->sidepane_box), window->sidepane_preview, FALSE, TRUE, 0);
-  if (last_image_preview_visible == TRUE)
+  if (last_image_preview_visible == TRUE && misc_image_preview_full == FALSE)
     gtk_widget_show (window->sidepane_preview);
 
   window->sidepane_preview_image = gtk_image_new_from_file ("");
@@ -898,19 +908,50 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect_swapped (window->paned, "accept-position", G_CALLBACK (thunar_window_save_paned), window);
   g_signal_connect_swapped (window->paned, "button-release-event", G_CALLBACK (thunar_window_save_paned), window);
 
-  window->view_box = gtk_grid_new ();
-  gtk_paned_pack2 (GTK_PANED (window->paned), window->view_box, TRUE, FALSE);
-  gtk_widget_show (window->view_box);
+  /* nested paned widget */
+  window->paned_right = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
+  gtk_container_set_border_width (GTK_CONTAINER (window->paned_right), 0);
+  gtk_widget_set_hexpand (window->paned_right, TRUE);
+  gtk_widget_set_vexpand (window->paned_right, TRUE);
+  gtk_widget_show (window->paned_right);
+  gtk_paned_pack2 (GTK_PANED (window->paned), window->paned_right, TRUE, FALSE);
+
+  /* right sidepane */
+  window->right_pane_grid = gtk_grid_new ();
+  gtk_widget_set_halign (window->right_pane_grid, GTK_ALIGN_CENTER);
+  gtk_paned_pack2 (GTK_PANED (window->paned_right), window->right_pane_grid, TRUE, FALSE);
+
+  window->right_pane_preview_image = gtk_image_new_from_file ("");
+  gtk_widget_set_size_request (window->right_pane_preview_image, 276, -1); /* large thumbnail size + 20 */
+  gtk_grid_attach (GTK_GRID (window->right_pane_grid), window->right_pane_preview_image, 0, 0, 2, 1);
+
+  window->right_pane_image_label = gtk_label_new ("");
+  gtk_grid_attach (GTK_GRID (window->right_pane_grid), window->right_pane_image_label, 0, 1, 2, 1);
+
+  gtk_grid_attach (GTK_GRID (window->right_pane_grid), gtk_label_new (_("Size: ")), 0, 2, 1, 1);
+  window->right_pane_size = gtk_label_new ("");
+  gtk_grid_attach (GTK_GRID (window->right_pane_grid), window->right_pane_size, 1, 2, 1, 1);
+
+  gtk_widget_show_all (window->right_pane_grid);
+
+  if (last_image_preview_visible == FALSE || misc_image_preview_full == FALSE)
+    gtk_widget_hide(window->right_pane_grid);
 
   /* split view: Create panes where the two notebooks */
   window->paned_notebooks = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
   g_signal_connect_swapped (window->preferences, "notify::misc-vertical-split-pane", G_CALLBACK (thunar_window_paned_notebooks_update_orientation), window);
   thunar_window_paned_notebooks_update_orientation (window);
 
-  gtk_paned_add2 (GTK_PANED (window->paned), window->view_box);
+  window->view_box = gtk_grid_new ();
+  gtk_paned_pack1 (GTK_PANED (window->paned_right), window->view_box, TRUE, FALSE);
+  gtk_widget_show (window->view_box);
+
   gtk_widget_add_events (window->paned_notebooks, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK | GDK_BUTTON_PRESS_MASK);
   gtk_grid_attach (GTK_GRID (window->view_box), window->paned_notebooks, 0, 0, 1, 1);
   gtk_widget_show (window->paned_notebooks);
+
+  g_object_get (window->paned_right, "max-position", &max_paned_position, NULL);
+  gtk_paned_set_position (GTK_PANED (window->paned_right), max_paned_position);
 
   /** close notebooks on window-remove signal because later on window property
    *  pointers are broken.
@@ -3617,15 +3658,48 @@ thunar_window_action_tree_changed (ThunarWindow *window)
 static gboolean
 thunar_window_action_image_preview (ThunarWindow *window)
 {
-  gboolean last_image_preview_visible;
+  gboolean last_image_preview_visible, misc_image_preview_full;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  g_object_get (window->preferences, "last-image-preview-visible", &last_image_preview_visible, NULL);
+  g_object_get (window->preferences,
+                "last-image-preview-visible", &last_image_preview_visible,
+                "misc-image-preview-full", &misc_image_preview_full,
+                NULL);
 
-  gtk_widget_set_visible (window->sidepane_preview, !last_image_preview_visible);
+  if (misc_image_preview_full == FALSE)
+    {
+      gtk_widget_set_visible (window->sidepane_preview, !last_image_preview_visible);
+      gtk_widget_set_visible (window->right_pane_grid, FALSE);
+    }
+  else
+    {
+      gtk_widget_set_visible (window->sidepane_preview, FALSE);
+      gtk_widget_set_visible (window->right_pane_grid, !last_image_preview_visible);
+    }
 
   g_object_set (G_OBJECT (window->preferences), "last-image-preview-visible", !last_image_preview_visible, NULL);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
+}
+
+
+
+gboolean
+thunar_window_image_preview_full_changed (ThunarWindow *window)
+{
+  gboolean last_image_preview_visible, misc_image_preview_full;
+
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  g_object_get (window->preferences,
+                "last-image-preview-visible", &last_image_preview_visible,
+                "misc-image-preview-full", &misc_image_preview_full,
+                NULL);
+
+  gtk_widget_set_visible (window->sidepane_preview, last_image_preview_visible && !misc_image_preview_full);
+  gtk_widget_set_visible (window->right_pane_grid, last_image_preview_visible && misc_image_preview_full);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -5491,12 +5565,24 @@ thunar_window_selection_changed (ThunarWindow *window)
         thunar_thumbnailer_queue_file (window->thumbnailer, selected_files->data, &window->thumbnail_request, THUNAR_THUMBNAIL_SIZE_LARGE);
       else /* display the thumbnail */
         {
+          gchar *file_size = thunar_file_get_size_string (selected_files->data);
+
           gtk_image_set_from_file (GTK_IMAGE (window->sidepane_preview_image), path);
+          gtk_image_set_from_file (GTK_IMAGE (window->right_pane_preview_image), path);
+          gtk_label_set_text (GTK_LABEL (window->right_pane_image_label), thunar_file_get_display_name (selected_files->data));
+          gtk_label_set_text (GTK_LABEL (window->right_pane_size), file_size);
+
+          g_free (file_size);
           g_free (path);
         }
     }
   else
-    gtk_image_set_from_file (GTK_IMAGE (window->sidepane_preview_image), "");
+    {
+      gtk_image_set_from_file(GTK_IMAGE (window->sidepane_preview_image), "");
+      gtk_image_set_from_file(GTK_IMAGE (window->right_pane_preview_image), "");
+      gtk_label_set_text (GTK_LABEL (window->right_pane_image_label), "");
+      gtk_label_set_text (GTK_LABEL (window->right_pane_size), "");
+    }
 }
 
 
