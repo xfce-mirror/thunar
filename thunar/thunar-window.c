@@ -5592,6 +5592,8 @@ thunar_window_finished_thumbnailing (ThunarWindow       *window,
                                      guint               request,
                                      ThunarThumbnailer  *thumbnailer)
 {
+  GList* selected_files = NULL;
+
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   if (window->thumbnail_request != request)
@@ -5599,7 +5601,7 @@ thunar_window_finished_thumbnailing (ThunarWindow       *window,
 
   window->thumbnail_request = 0;
 
-  GList* selected_files = thunar_view_get_selected_files (THUNAR_VIEW (window->view));
+  selected_files = thunar_view_get_selected_files (THUNAR_VIEW (window->view));
   if (g_list_length (selected_files) == 1)
     {
       /* there is no guarantee that the thumbnail will exist, the type of the selected file might be unsupported by the thumbnailer */
