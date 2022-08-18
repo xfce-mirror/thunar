@@ -812,12 +812,14 @@ _thunar_io_jobs_trash (ThunarJob  *job,
                        GArray     *param_values,
                        GError    **error)
 {
-  ThunarThumbnailCache *thumbnail_cache;
-  ThunarApplication    *application;
-  ThunarJobResponse     response;
-  GError               *err = NULL;
-  GList                *file_list;
-  GList                *lp;
+  ThunarThumbnailCache   *thumbnail_cache;
+  ThunarApplication      *application;
+  ThunarJobOperation     *operation = NULL;
+  ThunarJobResponse       response;
+  ThunarOperationLogMode  log_mode;
+  GError                 *err = NULL;
+  GList                  *file_list;
+  GList                  *lp;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -833,6 +835,11 @@ _thunar_io_jobs_trash (ThunarJob  *job,
   application = thunar_application_get ();
   thumbnail_cache = thunar_application_get_thumbnail_cache (application);
   g_object_unref (application);
+
+  log_mode = thunar_job_get_log_mode (job);
+
+  if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
+    operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_TRASH);
 
   for (lp = file_list; err == NULL && lp != NULL; lp = lp->next)
     {
@@ -854,12 +861,22 @@ _thunar_io_jobs_trash (ThunarJob  *job,
             _tij_delete_file (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err);
         }
 
+      else if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
+          thunar_job_operation_add (operation, lp->data, NULL);
+
       /* update the thumbnail cache */
       thunar_thumbnail_cache_cleanup_file (thumbnail_cache, lp->data);
     }
 
   /* release the thumbnail cache */
   g_object_unref (thumbnail_cache);
+
+  if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
+  {
+    thunar_job_operation_set_timestamp (operation, g_get_real_time());
+    thunar_job_operation_commit (operation);
+    g_object_unref (operation);
+  }
 
   if (err != NULL)
     {
@@ -1334,6 +1351,7 @@ _thunar_io_jobs_rename (ThunarJob  *job,
           operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_RENAME);
           thunar_job_operation_add (operation, g_file_new_for_uri (old_file_uri), thunar_file_get_file (file));
           thunar_job_operation_commit (operation);
+          g_object_unref (operation);
         }
     }
 
