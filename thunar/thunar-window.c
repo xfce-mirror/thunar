@@ -5495,7 +5495,7 @@ thunar_window_selection_changed (ThunarWindow *window)
     {
       gchar *path = thunar_file_get_thumbnail_path_forced (selected_files->data, THUNAR_THUMBNAIL_SIZE_LARGE);
       if (path == NULL) /* request the creation of the thumbnail if it doesn't exist */
-        thunar_thumbnailer_queue_file (window->thumbnailer, selected_files->data, &window->thumbnail_request);
+        thunar_thumbnailer_queue_file (window->thumbnailer, selected_files->data, &window->thumbnail_request, THUNAR_THUMBNAIL_SIZE_LARGE);
       else /* display the thumbnail */
         {
           gtk_image_set_from_file (GTK_IMAGE (window->sidepane_preview_image), path);
