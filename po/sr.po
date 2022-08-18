@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-14 00:45+0200\n"
+"POT-Creation-Date: 2022-08-18 12:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>, 2012-2014,2017-2019,2021\n"
 "Language-Team: Serbian (http://www.transifex.com/xfce/thunar/language/sr/)\n"
@@ -552,12 +552,7 @@ msgstr "Нисам успео да избацим „%s“"
 msgid "Failed to unmount \"%s\""
 msgstr "Нисам успео да откачим „%s“"
 
-#: ../thunar/thunar-action-manager.c:3189
-#, c-format
-msgid "Open With \"%s\""
-msgstr "Отвори помоћу „%s“"
-
-#: ../thunar/thunar-action-manager.c:3190
+#: ../thunar/thunar-action-manager.c:3188
 #: ../thunar/thunar-action-manager.c:3259
 #, c-format
 msgid "Use \"%s\" to open the selected file"
@@ -787,7 +782,7 @@ msgstr "Постави као по_дразумевано за овакву вр
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1286
-#: ../thunar/thunar-properties-dialog.c:1079 ../thunar/thunar-window.c:4100
+#: ../thunar/thunar-properties-dialog.c:1079 ../thunar/thunar-window.c:4096
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -2997,36 +2992,36 @@ msgstr "_Опадајуће"
 msgid "Sort items in descending order"
 msgstr "Ређа ставке у опадајућем редоследу"
 
-#: ../thunar/thunar-standard-view.c:1782
+#: ../thunar/thunar-standard-view.c:1779
 msgid "Loading folder contents..."
 msgstr "Учитавам садржај фасцикле..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2342 ../thunar/thunar-window.c:3914
+#: ../thunar/thunar-standard-view.c:2339 ../thunar/thunar-window.c:3910
 msgid "Failed to open the home folder"
 msgstr "Нисам успео да отворим личну фасциклу"
 
-#: ../thunar/thunar-standard-view.c:2423
+#: ../thunar/thunar-standard-view.c:2420
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "Изабери по обрасцу"
 
-#: ../thunar/thunar-standard-view.c:2428
+#: ../thunar/thunar-standard-view.c:2425
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "_Откажи"
 
-#: ../thunar/thunar-standard-view.c:2430
+#: ../thunar/thunar-standard-view.c:2427
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "_Изабери"
 
-#: ../thunar/thunar-standard-view.c:2443
+#: ../thunar/thunar-standard-view.c:2440
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "_Образац:"
 
-#: ../thunar/thunar-standard-view.c:2444
+#: ../thunar/thunar-standard-view.c:2441
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3036,7 +3031,7 @@ msgstr "Датотеке чија имена се поклапају са обр
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: ../thunar/thunar-standard-view.c:2458
+#: ../thunar/thunar-standard-view.c:2455
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3047,24 +3042,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr "? је поклапање са тачно са једним знаком,\n* је поклапање са било којим бројем знакова, укључујући нулу.\n\nНа пример: *.txt, датотека??.png, слика\n\nБез заменских знакова * или ?, образац ће се поклапати било где у имену. Са заменским знаковима, образац се мора поклапати са почетком и крајем имена."
 
-#: ../thunar/thunar-standard-view.c:2462
+#: ../thunar/thunar-standard-view.c:2459
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr "Осетљиво на в_еличину слова"
 
-#: ../thunar/thunar-standard-view.c:2463
+#: ../thunar/thunar-standard-view.c:2460
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr "Уколико је омогућено, величина слова се мора поклапати са обрасцем.\nПрим* се поклапа са Пример.txt а не са пример.txt"
 
-#: ../thunar/thunar-standard-view.c:2468
+#: ../thunar/thunar-standard-view.c:2465
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr "_Поклапање дијакритичких знакова"
 
-#: ../thunar/thunar-standard-view.c:2469
+#: ../thunar/thunar-standard-view.c:2466
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3073,21 +3068,21 @@ msgstr "Уколико је омогућено, захтева да се наг�
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: ../thunar/thunar-standard-view.c:2853
+#: ../thunar/thunar-standard-view.c:2850
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Неисправно име датотеке од стране ИксДС сајта"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:3047
+#: ../thunar/thunar-standard-view.c:3044
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Нисам успео да направим везу до адресе „%s“"
 
-#: ../thunar/thunar-standard-view.c:3093
+#: ../thunar/thunar-standard-view.c:3090
 msgid "Untitled document"
 msgstr "Безимени докуменат"
 
-#: ../thunar/thunar-standard-view.c:3581 ../thunar/thunar-window.c:4010
+#: ../thunar/thunar-standard-view.c:3578 ../thunar/thunar-window.c:4006
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Нисам успео да отворим фасциклу „%s“"
@@ -3636,76 +3631,76 @@ msgstr "Откажи претрагу датотека"
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "Упозорење: користите налог кореног руковаоца. Можете оштетити систем."
 
-#: ../thunar/thunar-window.c:2471
+#: ../thunar/thunar-window.c:2467
 msgid "Close tab"
 msgstr "Затвори лист"
 
-#: ../thunar/thunar-window.c:2924
+#: ../thunar/thunar-window.c:2920
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Отвори место „%s“"
 
-#: ../thunar/thunar-window.c:3854
+#: ../thunar/thunar-window.c:3850
 msgid "Failed to open parent folder"
 msgstr "Нисам успео да отворим родитељску фасциклу"
 
-#: ../thunar/thunar-window.c:3985
+#: ../thunar/thunar-window.c:3981
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Фасцикла „%s“ не постоји. Да ли желите да је направите?"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4055
+#: ../thunar/thunar-window.c:4051
 msgid "Failed to browse the computer"
 msgstr "Нисам успео да прегледам рачунар"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4098
+#: ../thunar/thunar-window.c:4094
 msgid "About Templates"
 msgstr "О обрасцима"
 
-#: ../thunar/thunar-window.c:4120
+#: ../thunar/thunar-window.c:4116
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Све датотеке из ове фасцикле ће се појавити у изборнику „Направи документ“."
 
-#: ../thunar/thunar-window.c:4127
+#: ../thunar/thunar-window.c:4123
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Уколико често радите са неким врстама докумената направите умножак једне и ставите је у ову фасциклу. Тунар ће додати унос за овај документ у изборнику „Направи документ“.\n\nКада изабрати ставку из изборника „Направи документ“ умножак документа ће бити направљена у фасцикли где се тренутно налазите."
 
-#: ../thunar/thunar-window.c:4139
+#: ../thunar/thunar-window.c:4135
 msgid "Do _not display this message again"
 msgstr "_Не приказуј поново ову поруку"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4173
+#: ../thunar/thunar-window.c:4169
 msgid "Failed to open the file system root folder"
 msgstr "Нисам успео да отворим корену фасциклу система датотека"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4209
+#: ../thunar/thunar-window.c:4205
 msgid "Failed to display `Recent`"
 msgstr "Нисам успео да прикажем „Скорашње“"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4245
+#: ../thunar/thunar-window.c:4241
 msgid "Failed to display the contents of the trash can"
 msgstr "Нисам успео да прикажем садржај смећа"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4281
+#: ../thunar/thunar-window.c:4277
 msgid "Failed to browse the network"
 msgstr "Нисам успео да разгледам мрежу"
 
-#: ../thunar/thunar-window.c:4392
+#: ../thunar/thunar-window.c:4388
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Тунар је брз и лаган разгледач датотека за\nсучеље ИксФЦЕ-а."
 
-#: ../thunar/thunar-window.c:5459
+#: ../thunar/thunar-window.c:5455
 msgid "Failed to launch search with Catfish"
 msgstr "Нисам успео да покренем претрагу Сомом"
 
