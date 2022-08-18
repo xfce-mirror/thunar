@@ -3177,7 +3177,6 @@ thunar_action_manager_build_application_submenu (ThunarActionManager *action_mgr
   GtkWidget *submenu;
   GtkWidget *image;
   GtkWidget *item;
-  gchar     *label_text;
   gchar     *tooltip_text;
 
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), NULL);
@@ -3186,15 +3185,16 @@ thunar_action_manager_build_application_submenu (ThunarActionManager *action_mgr
   /* add open with subitem per application */
   for (lp = applications; lp != NULL; lp = lp->next)
     {
-      label_text   = g_strdup_printf (_("Open With \"%s\""), g_app_info_get_name (lp->data));
       tooltip_text = g_strdup_printf (ngettext ("Use \"%s\" to open the selected file",
                                                 "Use \"%s\" to open the selected files",
                                                 action_mgr->n_files_to_process), g_app_info_get_name (lp->data));
       image = gtk_image_new_from_gicon (g_app_info_get_icon (lp->data), GTK_ICON_SIZE_MENU);
-      item  = xfce_gtk_image_menu_item_new (label_text, tooltip_text, NULL, G_CALLBACK (thunar_action_manager_menu_item_activated), G_OBJECT (action_mgr), image, GTK_MENU_SHELL (submenu));
+      item  = xfce_gtk_image_menu_item_new (g_app_info_get_name (lp->data),
+                                            tooltip_text, NULL, G_CALLBACK (thunar_action_manager_menu_item_activated),
+                                            G_OBJECT (action_mgr),
+                                            image, GTK_MENU_SHELL (submenu));
       g_object_set_qdata_full (G_OBJECT (item), thunar_action_manager_appinfo_quark, g_object_ref (lp->data), g_object_unref);
       g_free (tooltip_text);
-      g_free (label_text);
     }
 
   if (action_mgr->n_files_to_process == 1)
