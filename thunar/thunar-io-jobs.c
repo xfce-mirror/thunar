@@ -820,11 +820,6 @@ _thunar_io_jobs_trash (ThunarJob  *job,
   GError                 *err = NULL;
   GList                  *file_list;
   GList                  *lp;
-  GFile                  *trashed_file;
-  gchar                  *base_name;
-  gchar                  *trashed_name;
-  gchar                  *escaped_name;
-  gchar                  *uri;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -867,33 +862,7 @@ _thunar_io_jobs_trash (ThunarJob  *job,
         }
 
       else if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
-        {
-          /* get the name of the file after trashing */
-          base_name = g_file_get_basename (lp->data);
-          trashed_name = thunar_util_trash_next_name (base_name);
-          /* NOTE: should we be allowing UTF-8 chars? */
-          escaped_name = g_uri_escape_string (trashed_name, NULL, TRUE);
-
-          /* build the file's URI */
-          uri = g_strdup_printf ("trash:///%s", escaped_name);
-
-#ifndef NDEBUG /* temporary debugging code */
-          g_print ("base_name: %s\n", base_name);
-          g_print ("trashed_name: %s\n", trashed_name);
-          g_print ("escaped_name: %s\n", escaped_name);
-          g_print ("uri: %s\n", uri);
-#endif
-
-          /* use it to get the GFile for the trashed file */
-          trashed_file = g_file_new_for_uri (uri);
-
-          /* add the file to the current operation */
-          thunar_job_operation_add (operation, lp->data, trashed_file);
-
-          g_free (base_name);
-          g_free (trashed_name);
-          g_free (escaped_name);
-        }
+          thunar_job_operation_add (operation, lp->data, NULL);
 
       /* update the thumbnail cache */
       thunar_thumbnail_cache_cleanup_file (thumbnail_cache, lp->data);
@@ -904,6 +873,7 @@ _thunar_io_jobs_trash (ThunarJob  *job,
 
   if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
   {
+    thunar_job_operation_set_timestamp (operation, g_get_real_time());
     thunar_job_operation_commit (operation);
     g_object_unref (operation);
   }

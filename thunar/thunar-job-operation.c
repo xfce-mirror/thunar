@@ -54,6 +54,7 @@ struct _ThunarJobOperation
   GList                  *source_file_list;
   GList                  *target_file_list;
   GList                  *overwritten_file_list;
+  gint64                  timestamp;
 };
 
 G_DEFINE_TYPE (ThunarJobOperation, thunar_job_operation, G_TYPE_OBJECT)
@@ -146,7 +147,7 @@ thunar_job_operation_add (ThunarJobOperation *job_operation,
 
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
   _thunar_return_if_fail (G_IS_FILE (source_file));
-  _thunar_return_if_fail (G_IS_FILE (target_file));
+  _thunar_return_if_fail (target_file == NULL || G_IS_FILE (target_file));
 
   /* When a directory has a file operation applied to it (for e.g. deletion),
    * the operation will also automatically get applied to its descendants.
@@ -159,7 +160,7 @@ thunar_job_operation_add (ThunarJobOperation *job_operation,
     return;
 
   job_operation->source_file_list = g_list_append (job_operation->source_file_list, g_object_ref (source_file));
-  job_operation->target_file_list = g_list_append (job_operation->target_file_list, g_object_ref (target_file));
+  job_operation->target_file_list = g_list_append (job_operation->target_file_list, (target_file != NULL)? g_object_ref (target_file): target_file);
 }
 
 
@@ -179,6 +180,41 @@ thunar_job_operation_overwrite (ThunarJobOperation *job_operation,
 
   job_operation->overwritten_file_list = thunar_g_list_append_deep (job_operation->overwritten_file_list, overwritten_file);
 }
+
+
+
+/**
+ * thunar_job_operation_set_timestamp
+ * @job_operation: a #ThunarJobOperation
+ * @timestamp:     the timestamp to set
+ *
+ * Set the timestamp for the corresponding #ThunarJobOperation.
+ **/
+void
+thunar_job_operation_set_timestamp (ThunarJobOperation *operation,
+                                    gint64              timestamp)
+{
+  operation->timestamp = timestamp;
+}
+
+
+
+/**
+ * thunar_job_operation_get_timestamp
+ * @job_operation: a #ThunarJobOperation
+ *
+ * Get the timestamp for the corresponding #ThunarJobOperation.
+ * A timestamp is not guaranteed to be set for a #ThunarJobOperation. In case it is called on an operation
+ * for which the value is not set, an uninitialized #gint64 is returned (undefined behaviour).
+ *
+ * Return value: the timestamp for the operation
+ **/
+gint64
+thunar_job_operation_get_timestamp (ThunarJobOperation *operation)
+{
+  return operation->timestamp;
+}
+
 
 
 
@@ -287,6 +323,8 @@ thunar_job_operation_undo (void)
 /* thunar_job_operation_can_undo:
  *
  * Returns whether or not there is an operation on the job operation list that can be undone.
+ *
+ * Return value: A gboolean representing whether or not there is an undoable operation
  **/
 gboolean
 thunar_job_operation_can_undo (void)
