@@ -43,6 +43,9 @@ static ThunarJobOperation    *thunar_job_operation_new_invert         (ThunarJob
 static void                   thunar_job_operation_execute            (ThunarJobOperation *job_operation);
 static gint                   is_ancestor                             (gconstpointer       descendant,
                                                                        gconstpointer       ancestor);
+static void                   _tjo_restore_from_trash                 (GList              *file_list,
+                                                                       gint64              timestamp,
+                                                                       GError            **error);
 
 
 
@@ -59,7 +62,8 @@ struct _ThunarJobOperation
 
 G_DEFINE_TYPE (ThunarJobOperation, thunar_job_operation, G_TYPE_OBJECT)
 
-static GList *job_operation_list = NULL;
+static GList      *job_operation_list = NULL;
+static GHashTable *trash_hash_table   = NULL;
 
 
 
@@ -234,6 +238,19 @@ thunar_job_operation_commit (ThunarJobOperation *job_operation)
    * memory for the job operation in the list, if any, stored in before we commit the new one. */
   thunar_g_list_free_full (job_operation_list);
   job_operation_list = g_list_append (NULL, g_object_ref (job_operation));
+
+  /* If the operation is a trash operation, we also need to store the files deleted
+   * in the hash table for the trash */
+  if (job_operation->operation_kind == THUNAR_JOB_OPERATION_KIND_TRASH)
+    {
+      /* initialize the hash table if this is the first delete */
+      if (trash_hash_table == NULL)
+        trash_hash_table = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, g_object_unref, g_object_unref);
+
+      /* add all the files deleted to the hash table */
+      for (GList *lp = job_operation->source_file_list; lp != NULL; lp = lp->next)
+        g_hash_table_add (trash_hash_table, lp->data);
+    }
 }
 
 
@@ -381,6 +398,12 @@ thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
         inverted_operation->target_file_list = thunar_g_list_copy_deep (job_operation->source_file_list);
         break;
 
+      case THUNAR_JOB_OPERATION_KIND_TRASH:
+        inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
+        inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_RESTORE;
+        inverted_operation->target_file_list = thunar_g_list_copy_deep (job_operation->source_file_list);
+        break;
+
       default:
         g_assert_not_reached ();
         break;
@@ -503,6 +526,17 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
           }
         break;
 
+      case THUNAR_JOB_OPERATION_KIND_RESTORE:
+        _tjo_restore_from_trash (job_operation->target_file_list, job_operation->timestamp, &error);
+
+        if (error != NULL)
+        {
+          g_warning ("Error while restoring files: %s\n", error->message);
+          g_clear_error (&error);
+        }
+
+        break;
+
       default:
         _thunar_assert_not_reached ();
         break;
@@ -530,4 +564,95 @@ is_ancestor (gconstpointer ancestor,
     return 0;
   else
     return 1;
+}
+
+
+
+static void
+_tjo_restore_from_trash (GList              *file_list,
+                         gint64              timestamp,
+                         GError            **error)
+{
+  GFileEnumerator *enumerator;
+  GFileInfo       *info;
+  GFile           *trash;
+  GFile           *trashed_file;
+  GFile           *original_file;
+  const char      *original_path;
+  GDateTime       *date;
+  GError          *err = NULL;
+  gint64           deletion_time;
+  gpointer         lookup;
+  GHashTable      *files_to_restore = NULL;
+  GList           *files_in_trash;
+
+  /* enumerate over the files in the trash */
+  trash = g_file_new_for_uri ("trash:///");
+  enumerator = g_file_enumerate_children (trash,
+                                          G_FILE_ATTRIBUTE_STANDARD_NAME ","
+                                          G_FILE_ATTRIBUTE_TRASH_DELETION_DATE ","
+                                          G_FILE_ATTRIBUTE_TRASH_ORIG_PATH,
+                                          G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                          NULL, &err);
+
+  if (err != NULL)
+    {
+      g_propagate_error (error, err);
+      return;
+    }
+
+  /* iterate over the files in the trash, adding them to a hash table storing
+   * the files which are to be restored and their original paths */
+  while ((info = g_file_enumerator_next_file (enumerator, NULL, &err)) != NULL)
+    {
+      /* get the original path of the file before deletion */
+      original_path = g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH);
+      original_file = g_file_new_for_path (original_path);
+
+      /* get the deletion date reported by the file */
+      date = g_file_info_get_deletion_date (info);
+      deletion_time = g_date_time_to_unix (date);
+
+      /* see if we deleted the file in this session */
+      lookup = g_hash_table_lookup (trash_hash_table, original_file);
+
+      /* if we deleted the file in this session, and the current file we're looking at was deleted
+       * at that time, we conclude we found the right file */
+      if (lookup != NULL && ABS (deletion_time - timestamp) <= TRASH_TIME_EPSILON)
+        {
+          trashed_file = g_file_get_child (trash, g_file_info_get_name (info));
+          g_hash_table_insert (files_to_restore, trashed_file, g_object_ref (original_file));
+          g_object_unref (original_file);
+        }
+    }
+
+  g_object_unref (enumerator);
+  g_object_unref (trash);
+
+  if (err != NULL)
+    {
+      g_propagate_error (error, err);
+      return;
+    }
+
+  if (files_to_restore != NULL)
+    {
+      files_in_trash = g_hash_table_get_keys (files_to_restore);
+
+      /* restore the files that we had selected earlier */
+      for (GList *lp = files_in_trash; lp != NULL; lp = lp->next)
+      {
+        trashed_file = lp->data;
+        original_file = g_hash_table_lookup (files_to_restore, trashed_file);
+
+        /* actually restore the file */
+        g_file_move (trashed_file, original_file, G_FILE_COPY_NOFOLLOW_SYMLINKS, NULL, NULL, NULL, NULL);
+
+        /* and remove it from the trash hash table */
+        g_hash_table_remove (trash_hash_table, trashed_file);
+      }
+
+      thunar_g_list_free_full (files_in_trash);
+    }
+  g_object_unref (files_to_restore);
 }

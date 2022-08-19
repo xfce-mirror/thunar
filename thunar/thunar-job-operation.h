@@ -24,6 +24,11 @@
 
 G_BEGIN_DECLS
 
+/* We use g_get_real_time while logging trashing of the file,
+ * and there may be a slight delay between the time of logging the trash
+ * and the actual deletion of the file, so we need a small margin of error. */
+#define TRASH_TIME_EPSILON 2
+
 #define THUNAR_TYPE_JOB_OPERATION (thunar_job_operation_get_type ())
 G_DECLARE_FINAL_TYPE (ThunarJobOperation, thunar_job_operation, THUNAR, JOB_OPERATION, GObject)
 
