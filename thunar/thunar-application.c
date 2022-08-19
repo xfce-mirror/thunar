@@ -2249,7 +2249,7 @@ thunar_application_move_into (ThunarApplication      *application,
   /* launch the appropriate operation depending on the target file */
   if (thunar_g_file_is_trash (target_file))
     {
-      thunar_application_trash (application, parent, source_file_list);
+      thunar_application_trash (application, parent, source_file_list, THUNAR_OPERATION_LOG_OPERATIONS);
     }
   else
     {
@@ -2417,7 +2417,7 @@ thunar_application_unlink_files (ThunarApplication *application,
   else
     {
       /* launch the "Move to Trash" operation */
-      thunar_application_trash (application, parent, path_list);
+      thunar_application_trash (application, parent, path_list, THUNAR_OPERATION_LOG_OPERATIONS);
     }
 
   /* release the path list */
@@ -2435,10 +2435,19 @@ trash_stub (GList *source_file_list,
 
 
 
+/* thunar_application_trash:
+ * @application       : a #ThunarApplication.
+ * @parent            : a #GdkScreen, a #GtkWidget or %NULL.
+ * @file_list         : the list of #GFile<!---->s to trash.
+ * @log_mode          : a #ThunarOperationLogMode to control logging
+ *
+ * Trashes the files specified by @file_list
+ **/
 void
-thunar_application_trash (ThunarApplication *application,
-                          gpointer           parent,
-                          GList             *file_list)
+thunar_application_trash (ThunarApplication     *application,
+                          gpointer               parent,
+                          GList                 *file_list,
+                          ThunarOperationLogMode log_mode)
 {
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
@@ -2446,7 +2455,7 @@ thunar_application_trash (ThunarApplication *application,
 
   thunar_application_launch (application, parent, "user-trash-full",
                              _("Moving files into the trash..."), trash_stub,
-                             file_list, NULL, TRUE, FALSE, THUNAR_OPERATION_LOG_OPERATIONS, NULL);
+                             file_list, NULL, TRUE, FALSE, log_mode, NULL);
 }
 
 
