@@ -4374,6 +4374,7 @@ thunar_standard_view_connect_accelerators (ThunarStandardView *standard_view)
   if (standard_view->accel_group == NULL)
     return;
 
+  /* can cause emissions of "accel-map::changed" which in turns calls thunar_window_reconnect_accelerators */
   xfce_gtk_accel_map_add_entries (thunar_standard_view_action_entries, G_N_ELEMENTS (thunar_standard_view_action_entries));
   xfce_gtk_accel_group_connect_action_entries (standard_view->accel_group,
                                                thunar_standard_view_action_entries,

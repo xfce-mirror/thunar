@@ -1992,7 +1992,6 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   /* Use accelerators only on the current active tab */
   if (window->view != NULL)
     g_object_set (G_OBJECT (window->view), "accel-group", NULL, NULL);
-  g_object_set (G_OBJECT (page), "accel-group", window->accel_group, NULL);
 
   if (G_LIKELY (window->view != NULL))
     {
@@ -2046,6 +2045,10 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   /* activate new view */
   window->view = page;
   window->view_type = G_TYPE_FROM_INSTANCE (page);
+
+  /* connect accelerators for the view, we need to do this after window->view has been set,
+   * see thunar_window_reconnect_accelerators and thunar_standard_view_connect_accelerators */
+  g_object_set (G_OBJECT (page), "accel-group", window->accel_group, NULL);
 
   g_signal_connect_swapped (G_OBJECT (window->view), "notify::selected-files",
                             G_CALLBACK (thunar_window_trash_selection_updated), window);
