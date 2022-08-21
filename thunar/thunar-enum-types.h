@@ -188,7 +188,9 @@ typedef enum
   THUNAR_THUMBNAIL_SIZE_NORMAL,
   THUNAR_THUMBNAIL_SIZE_LARGE,
   THUNAR_THUMBNAIL_SIZE_X_LARGE,
-  THUNAR_THUMBNAIL_SIZE_XX_LARGE
+  THUNAR_THUMBNAIL_SIZE_XX_LARGE,
+
+  THUNAR_THUMBNAIL_SIZE_INVALID = -1
 } ThunarThumbnailSize;
 
 GType       thunar_thumbnail_size_get_type (void)                               G_GNUC_CONST;
