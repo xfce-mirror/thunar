@@ -873,7 +873,8 @@ _thunar_io_jobs_trash (ThunarJob  *job,
 
   if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
   {
-    thunar_job_operation_set_timestamp (operation, g_get_real_time());
+    /* g_get_real_time gives us the time in microseconds, whereas we need the time in seconds */
+    thunar_job_operation_set_timestamp (operation, g_get_real_time() / (gint64) 1e6);
     thunar_job_operation_commit (operation);
     g_object_unref (operation);
   }

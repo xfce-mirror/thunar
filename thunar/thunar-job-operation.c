@@ -402,6 +402,7 @@ thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
         inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
         inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_RESTORE;
         inverted_operation->target_file_list = thunar_g_list_copy_deep (job_operation->source_file_list);
+        inverted_operation->timestamp = job_operation->timestamp;
         break;
 
       default:
@@ -530,11 +531,10 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
         _tjo_restore_from_trash (job_operation->target_file_list, job_operation->timestamp, &error);
 
         if (error != NULL)
-        {
-          g_warning ("Error while restoring files: %s\n", error->message);
-          g_clear_error (&error);
-        }
-
+          {
+            g_warning ("Error while restoring files: %s\n", error->message);
+            g_clear_error (&error);
+          }
         break;
 
       default:
@@ -583,7 +583,7 @@ _tjo_restore_from_trash (GList              *file_list,
   GError          *err = NULL;
   gint64           deletion_time;
   gpointer         lookup;
-  GHashTable      *files_to_restore = NULL;
+  GHashTable      *files_to_restore;
   GList           *files_in_trash;
 
   /* enumerate over the files in the trash */
@@ -595,6 +595,9 @@ _tjo_restore_from_trash (GList              *file_list,
                                           G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                                           NULL, &err);
 
+  /* set up a hash table for the files we'll want to restore */
+  files_to_restore = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, g_object_unref, g_object_unref);
+
   if (err != NULL)
     {
       g_propagate_error (error, err);
@@ -605,6 +608,12 @@ _tjo_restore_from_trash (GList              *file_list,
    * the files which are to be restored and their original paths */
   while ((info = g_file_enumerator_next_file (enumerator, NULL, &err)) != NULL)
     {
+
+      if (err != NULL)
+        {
+          g_propagate_error (error, err);
+          return;
+        }
       /* get the original path of the file before deletion */
       original_path = g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH);
       original_file = g_file_new_for_path (original_path);
@@ -635,7 +644,7 @@ _tjo_restore_from_trash (GList              *file_list,
       return;
     }
 
-  if (files_to_restore != NULL)
+  if (g_hash_table_size (files_to_restore) > 0)
     {
       files_in_trash = g_hash_table_get_keys (files_to_restore);
 
@@ -654,5 +663,6 @@ _tjo_restore_from_trash (GList              *file_list,
 
       thunar_g_list_free_full (files_in_trash);
     }
-  g_object_unref (files_to_restore);
+
+  g_hash_table_unref (files_to_restore);
 }
