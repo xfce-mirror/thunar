@@ -392,7 +392,6 @@ struct _ThunarWindow
   GtkWidget              *paned_right;
   GtkWidget              *sidepane_box;
   GtkWidget              *sidepane;
-  GtkWidget              *sidepane_preview;
   GtkWidget              *sidepane_preview_image;
   GtkWidget              *right_pane_grid;
   GtkWidget              *right_pane_preview_image;
@@ -897,15 +896,10 @@ thunar_window_init (ThunarWindow *window)
   gtk_paned_pack1 (GTK_PANED (window->paned), window->sidepane_box, FALSE, FALSE);
   gtk_widget_show (window->sidepane_box);
 
-  window->sidepane_preview = gtk_frame_new (_("Preview"));
-  gtk_container_set_border_width (GTK_CONTAINER (window->sidepane_preview), 3);
-  gtk_box_pack_end (GTK_BOX (window->sidepane_box), window->sidepane_preview, FALSE, TRUE, 0);
-  if (last_image_preview_visible == TRUE && misc_image_preview_full == FALSE)
-    gtk_widget_show (window->sidepane_preview);
-
   window->sidepane_preview_image = gtk_image_new_from_file ("");
-  gtk_widget_show (window->sidepane_preview_image);
-  gtk_container_add (GTK_CONTAINER (window->sidepane_preview), window->sidepane_preview_image);
+  gtk_box_pack_end (GTK_BOX (window->sidepane_box), window->sidepane_preview_image, FALSE, TRUE, 0);
+  if (last_image_preview_visible == TRUE && misc_image_preview_full == FALSE)
+    gtk_widget_show (window->sidepane_preview_image);
 
   /* determine the last separator position and apply it to the paned view */
   gtk_paned_set_position (GTK_PANED (window->paned), last_separator_position);
@@ -3676,12 +3670,12 @@ thunar_window_action_image_preview (ThunarWindow *window)
 
   if (misc_image_preview_full == FALSE)
     {
-      gtk_widget_set_visible (window->sidepane_preview, !last_image_preview_visible);
+      gtk_widget_set_visible (window->sidepane_preview_image, !last_image_preview_visible);
       gtk_widget_set_visible (window->right_pane_grid, FALSE);
     }
   else
     {
-      gtk_widget_set_visible (window->sidepane_preview, FALSE);
+      gtk_widget_set_visible (window->sidepane_preview_image, FALSE);
       gtk_widget_set_visible (window->right_pane_grid, !last_image_preview_visible);
     }
 
@@ -3705,7 +3699,7 @@ thunar_window_image_preview_full_changed (ThunarWindow *window)
                 "misc-image-preview-full", &misc_image_preview_full,
                 NULL);
 
-  gtk_widget_set_visible (window->sidepane_preview, last_image_preview_visible && !misc_image_preview_full);
+  gtk_widget_set_visible (window->sidepane_preview_image, last_image_preview_visible && !misc_image_preview_full);
   gtk_widget_set_visible (window->right_pane_grid, last_image_preview_visible && misc_image_preview_full);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
