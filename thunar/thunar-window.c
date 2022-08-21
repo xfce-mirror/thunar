@@ -5606,10 +5606,14 @@ thunar_window_finished_thumbnailing (ThunarWindow       *window,
       /* there is no guarantee that the thumbnail will exist, the type of the selected file might be unsupported by the thumbnailer */
       gchar *path = thunar_file_get_thumbnail_path_forced (selected_files->data, THUNAR_THUMBNAIL_SIZE_LARGE);
       gtk_image_set_from_file (GTK_IMAGE (window->sidepane_preview_image), path != NULL ? path : "");
+      gtk_image_set_from_file (GTK_IMAGE (window->right_pane_preview_image), path != NULL ? path : "");
       g_free (path);
     }
   else
-    gtk_image_set_from_file (GTK_IMAGE (window->sidepane_preview_image), "");
+    {
+      gtk_image_set_from_file (GTK_IMAGE (window->sidepane_preview_image), "");
+      gtk_image_set_from_file (GTK_IMAGE (window->right_pane_preview_image), "");
+    }
 }
 
 
