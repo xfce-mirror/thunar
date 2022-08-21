@@ -5552,6 +5552,11 @@ thunar_window_selection_changed (ThunarWindow *window)
       window->thumbnail_request = 0;
     }
 
+  gtk_image_set_from_file(GTK_IMAGE (window->sidepane_preview_image), "");
+  gtk_image_set_from_file(GTK_IMAGE (window->right_pane_preview_image), "");
+  gtk_label_set_text (GTK_LABEL (window->right_pane_image_label), "");
+  gtk_label_set_text (GTK_LABEL (window->right_pane_size), "");
+
   if (g_list_length (selected_files) == 1)
     {
       gchar *path = thunar_file_get_thumbnail_path_forced (selected_files->data, THUNAR_THUMBNAIL_SIZE_LARGE);
@@ -5569,13 +5574,6 @@ thunar_window_selection_changed (ThunarWindow *window)
           g_free (file_size);
           g_free (path);
         }
-    }
-  else
-    {
-      gtk_image_set_from_file(GTK_IMAGE (window->sidepane_preview_image), "");
-      gtk_image_set_from_file(GTK_IMAGE (window->right_pane_preview_image), "");
-      gtk_label_set_text (GTK_LABEL (window->right_pane_image_label), "");
-      gtk_label_set_text (GTK_LABEL (window->right_pane_size), "");
     }
 }
 
