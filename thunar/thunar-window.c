@@ -339,6 +339,10 @@ static guint      thunar_window_toolbar_item_count                       (Thunar
 static GtkWidget* thunar_window_create_toolbar_item_from_action          (ThunarWindow           *window,
                                                                           ThunarWindowAction      action,
                                                                           guint                   item_order);
+static GtkWidget* thunar_window_create_toolbar_toggle_item_from_action   (ThunarWindow           *window,
+                                                                          ThunarWindowAction      action,
+                                                                          gboolean                active,
+                                                                          guint                   item_order);
 
 
 
@@ -462,7 +466,7 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_VIEW_MENU,                      "<Actions>/ThunarWindow/view-menu",                       "",                     XFCE_GTK_MENU_ITEM,       N_ ("_View"),                  NULL,                                                                                NULL,                      NULL,                                                 },
     { THUNAR_WINDOW_ACTION_RELOAD,                         "<Actions>/ThunarWindow/reload",                          "<Primary>r",           XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Reload"),                N_ ("Reload the current folder"),                                                    "view-refresh-symbolic",   G_CALLBACK (thunar_window_action_reload),             },
     { THUNAR_WINDOW_ACTION_RELOAD_ALT,                     "<Actions>/ThunarWindow/reload-alt",                      "F5",                   XFCE_GTK_IMAGE_MENU_ITEM, NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_action_reload),             },
-    { THUNAR_WINDOW_ACTION_VIEW_SPLIT,                     "<Actions>/ThunarWindow/toggle-split-view",               "F3",                   XFCE_GTK_CHECK_MENU_ITEM, N_ ("Spl_it View"),            N_ ("Open/Close Split View"),                                                        NULL,                      G_CALLBACK (thunar_window_action_toggle_split_view),  },
+    { THUNAR_WINDOW_ACTION_VIEW_SPLIT,                     "<Actions>/ThunarWindow/toggle-split-view",               "F3",                   XFCE_GTK_CHECK_MENU_ITEM, N_ ("Spl_it View"),            N_ ("Open/Close Split View"),                                                        "view-dual-symbolic",      G_CALLBACK (thunar_window_action_toggle_split_view),  },
     { THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_MENU,    "<Actions>/ThunarWindow/view-location-selector-menu",     "",                     XFCE_GTK_MENU_ITEM,       N_ ("_Location Selector"),     NULL,                                                                                NULL,                      NULL,                                                 },
     { THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_ENTRY,   "<Actions>/ThunarWindow/view-location-selector-entry",    "",                     XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Entry Style"),           N_ ("Traditional entry showing the current path"),                                   NULL,                      G_CALLBACK (thunar_window_action_locationbar_entry),  },
     { THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_BUTTONS, "<Actions>/ThunarWindow/view-location-selector-buttons",  "",                     XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Buttons Style"),         N_ ("Modern approach with buttons that correspond to folders"),                      NULL,                      G_CALLBACK (thunar_window_action_locationbar_buttons),},
@@ -5640,6 +5644,26 @@ thunar_window_create_toolbar_item_from_action (ThunarWindow       *window,
 
 
 
+static GtkWidget*
+thunar_window_create_toolbar_toggle_item_from_action (ThunarWindow           *window,
+                                                      ThunarWindowAction      action,
+                                                      gboolean                active,
+                                                      guint                   item_order)
+{
+  GtkWidget *toolbar_item;
+
+  toolbar_item = xfce_gtk_toggle_tool_button_new_from_action_entry (get_action_entry (action), G_OBJECT (window), active, GTK_TOOLBAR (window->location_toolbar));
+  g_object_set_data_full (G_OBJECT (toolbar_item), "label", g_strdup (get_action_entry (action)->menu_item_label_text), g_free);
+  g_object_set_data_full (G_OBJECT (toolbar_item), "icon", g_strdup (get_action_entry (action)->menu_item_icon_name), g_free);
+  g_signal_connect_after (G_OBJECT (toolbar_item), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
+
+  thunar_g_object_set_guint_data (G_OBJECT (toolbar_item), "default-order", item_order);
+
+  return toolbar_item;
+}
+
+
+
 static void
 thunar_window_location_toolbar_create (ThunarWindow *window)
 {
@@ -5679,6 +5703,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
                                                thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_ICONS, item_order++);
                                                thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST, item_order++);
                                                thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST, item_order++);
+                                               thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_SPLIT, thunar_window_split_view_is_active (window), item_order++);
 
   g_signal_connect (G_OBJECT (window->location_toolbar_item_back), "button-press-event", G_CALLBACK (thunar_window_history_clicked), G_OBJECT (window));
   g_signal_connect (G_OBJECT (window->location_toolbar_item_forward), "button-press-event", G_CALLBACK (thunar_window_history_clicked), G_OBJECT (window));
@@ -5700,12 +5725,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   thunar_g_object_set_guint_data (G_OBJECT (tool_item), "default-order", item_order++);
 
   thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_RELOAD, item_order++);
-
-  window->location_toolbar_item_search = xfce_gtk_toggle_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_SEARCH), G_OBJECT (window), window->is_searching, GTK_TOOLBAR (window->location_toolbar));
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_search), "label", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_SEARCH)->menu_item_label_text), g_free);
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_search), "icon", g_strdup (get_action_entry (THUNAR_WINDOW_ACTION_SEARCH)->menu_item_icon_name), g_free);
-  g_signal_connect (G_OBJECT (window->location_toolbar_item_search), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
-  thunar_g_object_set_guint_data (G_OBJECT (window->location_toolbar_item_search), "default-order", item_order++);
+  window->location_toolbar_item_search = thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_SEARCH, window->is_searching, item_order++);
 
   /* add custom actions to the toolbar */
   thunar_window_location_toolbar_add_ucas (window);
