@@ -861,7 +861,7 @@ _thunar_io_jobs_trash (ThunarJob  *job,
             _tij_delete_file (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err);
         }
 
-      else if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
+      if (err == NULL && log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
           thunar_job_operation_add (operation, lp->data, NULL);
 
       /* update the thumbnail cache */
