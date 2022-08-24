@@ -188,41 +188,6 @@ thunar_job_operation_overwrite (ThunarJobOperation *job_operation,
 
 
 /**
- * thunar_job_operation_set_timestamp
- * @job_operation: a #ThunarJobOperation
- * @timestamp:     the timestamp to set
- *
- * Set the timestamp for the corresponding #ThunarJobOperation.
- **/
-void
-thunar_job_operation_set_timestamp (ThunarJobOperation *operation,
-                                    gint64              timestamp)
-{
-  operation->timestamp = timestamp;
-}
-
-
-
-/**
- * thunar_job_operation_get_timestamp
- * @job_operation: a #ThunarJobOperation
- *
- * Get the timestamp for the corresponding #ThunarJobOperation.
- * A timestamp is not guaranteed to be set for a #ThunarJobOperation. In case it is called on an operation
- * for which the value is not set, an uninitialized #gint64 is returned (undefined behaviour).
- *
- * Return value: the timestamp for the operation
- **/
-gint64
-thunar_job_operation_get_timestamp (ThunarJobOperation *operation)
-{
-  return operation->timestamp;
-}
-
-
-
-
-/**
  * thunar_job_operation_commit:
  * @job_operation: a #ThunarJobOperation
  *
@@ -250,6 +215,10 @@ thunar_job_operation_commit (ThunarJobOperation *job_operation)
       /* add all the files deleted to the hash table */
       for (GList *lp = job_operation->source_file_list; lp != NULL; lp = lp->next)
         g_hash_table_add (trash_hash_table, lp->data);
+
+      /* set the timestamp for the operation, in seconds. g_get_real_time gives
+       * us the time in microseconds, so we need to divide by 1e6. */
+      job_operation->timestamp = g_get_real_time () / (gint64) 1e6;
     }
 }
 

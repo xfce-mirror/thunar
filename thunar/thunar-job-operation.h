@@ -38,9 +38,6 @@ void                   thunar_job_operation_add             (ThunarJobOperation 
                                                              GFile                 *target_file);
 void                   thunar_job_operation_overwrite       (ThunarJobOperation    *job_operation,
                                                              GFile                 *overwritten_file);
-void                   thunar_job_operation_set_timestamp   (ThunarJobOperation    *job_operation,
-                                                             gint64                 timestamp);
-gint64                 thunar_job_operation_get_timestamp   (ThunarJobOperation    *job_operation);
 void                   thunar_job_operation_commit          (ThunarJobOperation    *job_operation);
 void                   thunar_job_operation_undo            (void);
 gboolean               thunar_job_operation_can_undo        (void);
