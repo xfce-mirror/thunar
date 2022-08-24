@@ -24,18 +24,23 @@
 
 G_BEGIN_DECLS
 
+/* We use g_get_real_time while logging trashing of the file,
+ * and there may be a slight delay between the time of logging the trash
+ * and the actual deletion of the file, so we need a small margin of error. */
+#define TRASH_TIME_EPSILON 2
+
 #define THUNAR_TYPE_JOB_OPERATION (thunar_job_operation_get_type ())
 G_DECLARE_FINAL_TYPE (ThunarJobOperation, thunar_job_operation, THUNAR, JOB_OPERATION, GObject)
 
-ThunarJobOperation    *thunar_job_operation_new          (ThunarJobOperationKind kind);
-void                   thunar_job_operation_add          (ThunarJobOperation    *job_operation,
-                                                          GFile                 *source_file,
-                                                          GFile                 *target_file);
-void                   thunar_job_operation_overwrite    (ThunarJobOperation    *job_operation,
-                                                          GFile                 *overwritten_file);
-void                   thunar_job_operation_commit       (ThunarJobOperation    *job_operation);
-void                   thunar_job_operation_undo         (void);
-gboolean               thunar_job_operation_can_undo     (void);
+ThunarJobOperation    *thunar_job_operation_new             (ThunarJobOperationKind kind);
+void                   thunar_job_operation_add             (ThunarJobOperation    *job_operation,
+                                                             GFile                 *source_file,
+                                                             GFile                 *target_file);
+void                   thunar_job_operation_overwrite       (ThunarJobOperation    *job_operation,
+                                                             GFile                 *overwritten_file);
+void                   thunar_job_operation_commit          (ThunarJobOperation    *job_operation);
+void                   thunar_job_operation_undo            (void);
+gboolean               thunar_job_operation_can_undo        (void);
 
 G_END_DECLS
 
