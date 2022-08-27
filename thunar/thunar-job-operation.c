@@ -63,7 +63,6 @@ struct _ThunarJobOperation
 G_DEFINE_TYPE (ThunarJobOperation, thunar_job_operation, G_TYPE_OBJECT)
 
 static GList      *job_operation_list = NULL;
-static GHashTable *trash_hash_table   = NULL;
 
 
 
@@ -206,22 +205,9 @@ thunar_job_operation_commit (ThunarJobOperation *job_operation)
   thunar_g_list_free_full (job_operation_list);
   job_operation_list = g_list_append (NULL, g_object_ref (job_operation));
 
-  /* If the operation is a trash operation, we also need to store the files deleted
-   * in the hash table for the trash */
-  if (job_operation->operation_kind == THUNAR_JOB_OPERATION_KIND_TRASH)
-    {
-      /* initialize the hash table if this is the first delete */
-      if (trash_hash_table == NULL)
-        trash_hash_table = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, g_object_unref, g_object_unref);
-
-      /* add all the files deleted to the hash table */
-      for (GList *lp = job_operation->source_file_list; lp != NULL; lp = lp->next)
-        g_hash_table_add (trash_hash_table, lp->data);
-
-      /* set the timestamp for the operation, in seconds. g_get_real_time gives
-       * us the time in microseconds, so we need to divide by 1e6. */
-      job_operation->end_timestamp = g_get_real_time () / (gint64) 1e6;
-    }
+  /* set the timestamp for the operation, in seconds. g_get_real_time gives
+   * us the time in microseconds, so we need to divide by 1e6. */
+  job_operation->end_timestamp = g_get_real_time () / (gint64) 1e6;
 }
 
 
@@ -555,7 +541,8 @@ _tjo_restore_from_trash (ThunarJobOperation *operation,
   gint64           deletion_time;
   gpointer         lookup;
   GHashTable      *files_to_restore;
-  GList           *files_in_trash;
+  GHashTable      *files_trashed;
+  GList           *to_restore_list;
 
   /* enumerate over the files in the trash */
   trash = g_file_new_for_uri ("trash:///");
@@ -566,8 +553,14 @@ _tjo_restore_from_trash (ThunarJobOperation *operation,
                                           G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                                           NULL, &err);
 
-  /* set up a hash table for the files we'll want to restore */
+  /* set up a hash table for the files we'll want to restore, and for the files we deleted */
   files_to_restore = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, g_object_unref, g_object_unref);
+  files_trashed = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, g_object_unref, g_object_unref);
+
+  /* add all the files that were deleted in the hash table so we can check if a file
+   * was deleted as a part of this operation or not in constant time. */
+  for (GList *lp = operation->target_file_list; lp != NULL; lp = lp->next)
+    g_hash_table_add (files_trashed, lp->data);
 
   if (err != NULL)
     {
@@ -594,11 +587,11 @@ _tjo_restore_from_trash (ThunarJobOperation *operation,
       deletion_time = g_date_time_to_unix (date);
 
       /* see if we deleted the file in this session */
-      lookup = g_hash_table_lookup (trash_hash_table, original_file);
+      lookup = g_hash_table_lookup (files_trashed, original_file);
 
       /* if we deleted the file in this session, and the current file we're looking at was deleted
-       * at that time, we conclude we found the right file */
-      if (lookup != NULL && ABS (deletion_time - operation->end_timestamp) <= TRASH_TIME_EPSILON)
+       * during the time the operation occured, we conclude we found the right file */
+      if (lookup != NULL && operation->start_timestamp <= deletion_time && deletion_time <= operation->end_timestamp)
         {
           trashed_file = g_file_get_child (trash, g_file_info_get_name (info));
           g_hash_table_insert (files_to_restore, trashed_file, g_object_ref (original_file));
@@ -617,23 +610,21 @@ _tjo_restore_from_trash (ThunarJobOperation *operation,
 
   if (g_hash_table_size (files_to_restore) > 0)
     {
-      files_in_trash = g_hash_table_get_keys (files_to_restore);
+      to_restore_list = g_hash_table_get_keys (files_to_restore);
 
       /* restore the files that we had selected earlier */
-      for (GList *lp = files_in_trash; lp != NULL; lp = lp->next)
+      for (GList *lp = to_restore_list; lp != NULL; lp = lp->next)
       {
         trashed_file = lp->data;
         original_file = g_hash_table_lookup (files_to_restore, trashed_file);
 
         /* actually restore the file */
         g_file_move (trashed_file, original_file, G_FILE_COPY_NOFOLLOW_SYMLINKS, NULL, NULL, NULL, NULL);
-
-        /* and remove it from the trash hash table */
-        g_hash_table_remove (trash_hash_table, trashed_file);
       }
 
-      thunar_g_list_free_full (files_in_trash);
+      thunar_g_list_free_full (to_restore_list);
     }
 
   g_hash_table_unref (files_to_restore);
+  g_hash_table_unref (files_trashed);
 }
