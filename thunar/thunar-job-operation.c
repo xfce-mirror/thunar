@@ -43,8 +43,7 @@ static ThunarJobOperation    *thunar_job_operation_new_invert         (ThunarJob
 static void                   thunar_job_operation_execute            (ThunarJobOperation *job_operation);
 static gint                   is_ancestor                             (gconstpointer       descendant,
                                                                        gconstpointer       ancestor);
-static void                   _tjo_restore_from_trash                 (GList              *file_list,
-                                                                       gint64              timestamp,
+static void                   _tjo_restore_from_trash                 (ThunarJobOperation *operation,
                                                                        GError            **error);
 
 
@@ -57,7 +56,8 @@ struct _ThunarJobOperation
   GList                  *source_file_list;
   GList                  *target_file_list;
   GList                  *overwritten_file_list;
-  gint64                  timestamp;
+  gint64                  start_timestamp;
+  gint64                  end_timestamp;
 };
 
 G_DEFINE_TYPE (ThunarJobOperation, thunar_job_operation, G_TYPE_OBJECT)
@@ -129,6 +129,8 @@ thunar_job_operation_new (ThunarJobOperationKind kind)
 
   operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
   operation->operation_kind = kind;
+  /* we store the start timestamp in seconds, so we need to divide by 1e6 */
+  operation->start_timestamp = g_get_real_time () / (gint64) 1e6 ;
 
   return operation;
 }
@@ -218,7 +220,7 @@ thunar_job_operation_commit (ThunarJobOperation *job_operation)
 
       /* set the timestamp for the operation, in seconds. g_get_real_time gives
        * us the time in microseconds, so we need to divide by 1e6. */
-      job_operation->timestamp = g_get_real_time () / (gint64) 1e6;
+      job_operation->end_timestamp = g_get_real_time () / (gint64) 1e6;
     }
 }
 
@@ -371,7 +373,8 @@ thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
         inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
         inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_RESTORE;
         inverted_operation->target_file_list = thunar_g_list_copy_deep (job_operation->source_file_list);
-        inverted_operation->timestamp = job_operation->timestamp;
+        inverted_operation->start_timestamp = job_operation->start_timestamp;
+        inverted_operation->end_timestamp = job_operation->end_timestamp;
         break;
 
       default:
@@ -497,7 +500,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
         break;
 
       case THUNAR_JOB_OPERATION_KIND_RESTORE:
-        _tjo_restore_from_trash (job_operation->target_file_list, job_operation->timestamp, &error);
+        _tjo_restore_from_trash (job_operation, &error);
 
         if (error != NULL)
           {
@@ -538,8 +541,7 @@ is_ancestor (gconstpointer ancestor,
 
 
 static void
-_tjo_restore_from_trash (GList              *file_list,
-                         gint64              timestamp,
+_tjo_restore_from_trash (ThunarJobOperation *operation,
                          GError            **error)
 {
   GFileEnumerator *enumerator;
@@ -596,7 +598,7 @@ _tjo_restore_from_trash (GList              *file_list,
 
       /* if we deleted the file in this session, and the current file we're looking at was deleted
        * at that time, we conclude we found the right file */
-      if (lookup != NULL && ABS (deletion_time - timestamp) <= TRASH_TIME_EPSILON)
+      if (lookup != NULL && ABS (deletion_time - operation->end_timestamp) <= TRASH_TIME_EPSILON)
         {
           trashed_file = g_file_get_child (trash, g_file_info_get_name (info));
           g_hash_table_insert (files_to_restore, trashed_file, g_object_ref (original_file));
