@@ -156,6 +156,9 @@ thunar_history_finalize (GObject *object)
   g_slist_free_full (history->forward_list, g_object_unref);
   g_slist_free_full (history->back_list, g_object_unref);
 
+  if (history->current_directory != NULL)
+    g_object_unref (history->current_directory);
+
   (*G_OBJECT_CLASS (thunar_history_parent_class)->finalize) (object);
 }
 
