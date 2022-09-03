@@ -263,8 +263,10 @@ thunar_text_renderer_render (GtkCellRenderer      *cell,
   if (THUNAR_TEXT_RENDERER (cell)->highlighting_enabled)
     {
       /* This should paint on top of the current surface. This should hide the highlight
-         that is drawn by the default render function of GtkCellRendererText */
-      thunar_text_renderer_clear_background (cr, widget);
+         that is drawn by the default render function of GtkCellRendererText.
+         Note: This will unfortunately also hide the prelight. Hence, limiting it to rounded corners only. */
+      if (THUNAR_TEXT_RENDERER (cell)->rounded_corners)
+        thunar_text_renderer_clear_background (cr, widget);
 
       thunar_util_clip_view_background (cell, cr, background_area, widget, flags);
     }
