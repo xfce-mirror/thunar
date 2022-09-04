@@ -574,6 +574,11 @@ _tjo_restore_from_trash (ThunarJobOperation *operation,
 
   if (err != NULL)
     {
+      g_object_unref (trash);
+      g_object_unref (enumerator);
+      g_hash_table_unref (files_to_restore);
+      g_hash_table_unref (files_trashed);
+
       g_propagate_error (error, err);
       return;
     }
@@ -585,6 +590,12 @@ _tjo_restore_from_trash (ThunarJobOperation *operation,
 
       if (err != NULL)
         {
+          g_object_unref (trash);
+          g_object_unref (enumerator);
+          g_hash_table_unref (files_to_restore);
+          g_hash_table_unref (files_trashed);
+          g_object_unref (info);
+
           g_propagate_error (error, err);
           return;
         }
@@ -596,6 +607,7 @@ _tjo_restore_from_trash (ThunarJobOperation *operation,
       /* get the deletion date reported by the file */
       date = g_file_info_get_deletion_date (info);
       deletion_time = g_date_time_to_unix (date);
+      g_date_time_unref (date);
 
       /* see if we deleted the file in this session */
       lookup = g_hash_table_lookup (files_trashed, original_file);
@@ -606,15 +618,21 @@ _tjo_restore_from_trash (ThunarJobOperation *operation,
         {
           trashed_file = g_file_get_child (trash, g_file_info_get_name (info));
           g_hash_table_insert (files_to_restore, trashed_file, g_object_ref (original_file));
-          g_object_unref (original_file);
         }
+
+      g_object_unref (original_file);
     }
 
-  g_object_unref (enumerator);
   g_object_unref (trash);
+  g_object_unref (enumerator);
 
   if (err != NULL)
     {
+      g_object_unref (trash);
+      g_object_unref (enumerator);
+      g_hash_table_unref (files_to_restore);
+      g_hash_table_unref (files_trashed);
+
       g_propagate_error (error, err);
       return;
     }
