@@ -865,7 +865,7 @@ thunar_dbus_service_move_to_trash (ThunarDBusTrash        *object,
         {
           /* tell the application to move the specified files to the trash */
           application = thunar_application_get ();
-          thunar_application_trash (application, screen, file_list, THUNAR_OPERATION_LOG_OPERATIONS);
+          thunar_application_trash (application, screen, file_list, THUNAR_OPERATION_LOG_NO_OPERATIONS);
           g_object_unref (application);
         }
 
@@ -1028,7 +1028,7 @@ thunar_dbus_service_rename_file (ThunarDBusFileManager  *object,
 
   /* popup a new window for the folder */
   application = thunar_application_get ();
-  thunar_application_rename_file (application, file, screen, startup_id, THUNAR_OPERATION_LOG_OPERATIONS);
+  thunar_application_rename_file (application, file, screen, startup_id, THUNAR_OPERATION_LOG_NO_OPERATIONS);
   g_object_unref (G_OBJECT (application));
 
   /* cleanup */
@@ -1241,7 +1241,7 @@ thunar_dbus_service_transfer_files (ThunarDBusTransferMode transfer_mode,
             case THUNAR_DBUS_TRANSFER_MODE_MOVE_INTO:
               thunar_application_move_into (application, screen,
                                             source_file_list, target_file_list->data,
-                                            THUNAR_OPERATION_LOG_OPERATIONS,
+                                            THUNAR_OPERATION_LOG_NO_OPERATIONS,
                                             NULL);
               break;
             case THUNAR_DBUS_TRANSFER_MODE_LINK_INTO:
