@@ -163,6 +163,8 @@ struct _ThunarPropertiesDialog
   GtkWidget              *deleted_label;
   GtkWidget              *modified_label;
   GtkWidget              *accessed_label;
+  GtkWidget              *capacity_vbox;
+  GtkWidget              *capacity_label;
   GtkWidget              *freespace_vbox;
   GtkWidget              *freespace_bar;
   GtkWidget              *freespace_label;
@@ -634,6 +636,28 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
                           G_BINDING_SYNC_CREATE);
   gtk_box_pack_start (GTK_BOX (box), dialog->volume_label, TRUE, TRUE, 0);
   gtk_widget_show (dialog->volume_label);
+
+  ++row;
+
+  label = gtk_label_new (_("Capacity:"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
+  gtk_label_set_yalign (GTK_LABEL (label), 0.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
+  gtk_widget_show (label);
+
+  dialog->capacity_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
+  gtk_widget_set_hexpand (dialog->capacity_vbox, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->capacity_vbox, 1, row, 1, 1);
+  g_object_bind_property (G_OBJECT (dialog->capacity_vbox), "visible",
+                          G_OBJECT (label),                 "visible",
+                          G_BINDING_SYNC_CREATE);
+  gtk_widget_show (dialog->capacity_vbox);
+
+  dialog->capacity_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->capacity_label), TRUE);
+  gtk_box_pack_start (GTK_BOX (dialog->capacity_vbox), dialog->capacity_label, TRUE, TRUE, 0);
+  gtk_widget_show (dialog->capacity_label);
 
   ++row;
 
@@ -1176,6 +1200,8 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   gchar             *volume_name;
   gchar             *volume_id;
   gchar             *volume_label;
+  guint64            capacity = 0;
+  gchar             *capacity_str = NULL;
   ThunarFile        *file;
   ThunarFile        *parent_file;
   gboolean           show_chooser;
@@ -1398,6 +1424,12 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     {
       gtk_widget_hide (dialog->freespace_vbox);
     }
+
+  /* update the capacity (space of containing volume) */
+  if (thunar_g_file_get_free_space (thunar_file_get_file (file), NULL, &capacity))
+    capacity_str = g_format_size_full (capacity, dialog->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+  gtk_label_set_text (GTK_LABEL (dialog->capacity_label), capacity_str);
+  g_free (capacity_str);
 
   /* update the volume */
   volume = thunar_file_get_volume (file);
