@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-18 12:46+0200\n"
+"POT-Creation-Date: 2022-09-11 00:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>, 2011-2022\n"
 "Language-Team: Korean (http://www.transifex.com/xfce/thunar/language/ko/)\n"
@@ -289,7 +289,7 @@ msgstr[0] "새 창 %d개 열기"
 #: ../thunar/thunar-dialogs.c:778 ../thunar/thunar-dialogs.c:1062
 #: ../thunar/thunar-dnd.c:171 ../thunar/thunar-permissions-chooser.c:559
 #: ../thunar/thunar-permissions-chooser.c:1169
-#: ../thunar/thunar-properties-dialog.c:1078
+#: ../thunar/thunar-properties-dialog.c:1102
 #: ../thunar/thunar-renamer-dialog.c:358
 #: ../thunar/thunar-renamer-dialog.c:1073
 #: ../thunar/thunar-renamer-progress.c:176
@@ -451,7 +451,7 @@ msgstr[0] "선택한 파일을 \"%s\"(으)로 보냅니다"
 
 #. display an error message
 #: ../thunar/thunar-action-manager.c:2411 ../thunar/thunar-application.c:1846
-#: ../thunar/thunar-properties-dialog.c:989
+#: ../thunar/thunar-properties-dialog.c:1013
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "\"%s\" 이름 바꾸기에 실패했습니다"
@@ -728,7 +728,7 @@ msgstr "이 형식의 파일에 대해 기본으로 사용(_D)"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1286
-#: ../thunar/thunar-properties-dialog.c:1079 ../thunar/thunar-window.c:4096
+#: ../thunar/thunar-properties-dialog.c:1103 ../thunar/thunar-window.c:4103
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -890,7 +890,7 @@ msgstr "클립보드에 붙여넣을 자료가 없습니다"
 #. add a regular close button, the header bar already provides one
 #: ../thunar/thunar-column-editor.c:156 ../thunar/thunar-dialogs.c:1007
 #: ../thunar/thunar-preferences-dialog.c:297
-#: ../thunar/thunar-properties-dialog.c:291
+#: ../thunar/thunar-properties-dialog.c:293
 #: ../thunar/thunar-renamer-dialog.c:359
 #: ../thunar/thunar-renamer-progress.c:193
 #: ../thunar/thunar-toolbar-editor.c:121
@@ -905,8 +905,8 @@ msgstr "자세히 보기에서 항목 수정"
 #. add the "Help" button
 #: ../thunar/thunar-column-editor.c:162
 #: ../thunar/thunar-preferences-dialog.c:305
-#: ../thunar/thunar-properties-dialog.c:290
-#: ../thunar/thunar-toolbar-editor.c:128 ../thunar/thunar-window.c:504
+#: ../thunar/thunar-properties-dialog.c:292
+#: ../thunar/thunar-toolbar-editor.c:128 ../thunar/thunar-window.c:508
 msgid "_Help"
 msgstr "도움말(_H)"
 
@@ -1168,12 +1168,12 @@ msgstr "기존 파일을 바꾸시렵니까?"
 
 #. Fourth box (size, volume, free space)
 #: ../thunar/thunar-dialogs.c:885 ../thunar/thunar-dialogs.c:930
-#: ../thunar/thunar-properties-dialog.c:575
+#: ../thunar/thunar-properties-dialog.c:577
 msgid "Size:"
 msgstr "크기:"
 
 #: ../thunar/thunar-dialogs.c:885 ../thunar/thunar-dialogs.c:930
-#: ../thunar/thunar-properties-dialog.c:528
+#: ../thunar/thunar-properties-dialog.c:530
 msgid "Modified:"
 msgstr "수정함:"
 
@@ -1278,7 +1278,7 @@ msgid "Owner"
 msgstr "소유자"
 
 #. Permissions chooser
-#: ../thunar/thunar-enum-types.c:112 ../thunar/thunar-properties-dialog.c:689
+#: ../thunar/thunar-enum-types.c:112 ../thunar/thunar-properties-dialog.c:713
 msgid "Permissions"
 msgstr "소유권"
 
@@ -1368,7 +1368,7 @@ msgid "Log no operations"
 msgstr ""
 
 #: ../thunar/thunar-file.c:1076 ../thunar/thunar-gio-extensions.c:480
-#: ../thunar/thunar-shortcuts-model.c:1009 ../thunar/thunar-window.c:492
+#: ../thunar/thunar-shortcuts-model.c:1009 ../thunar/thunar-window.c:496
 msgid "File System"
 msgstr "파일 시스템"
 
@@ -1482,11 +1482,10 @@ msgstr "전화"
 msgid "%s on %s"
 msgstr "%2$s의 %1$s"
 
-#. free disk space string
-#: ../thunar/thunar-gio-extensions.c:674
+#: ../thunar/thunar-gio-extensions.c:673
 #, c-format
-msgid "%s of %s free (%d%% used)"
-msgstr "%2$s중 %1$s남음(%3$d%% 사용함)"
+msgid "%s used (%d%%)  |  %s free (%d%%)"
+msgstr ""
 
 #: ../thunar/thunar-history.c:297
 msgid "The item will be removed from the history"
@@ -1696,7 +1695,7 @@ msgstr "%s"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: ../thunar/thunar-list-model.c:3105 ../thunar/thunar-properties-dialog.c:449
+#: ../thunar/thunar-list-model.c:3105 ../thunar/thunar-properties-dialog.c:451
 msgid "Original Path:"
 msgstr "기존 경로:"
 
@@ -2369,7 +2368,7 @@ msgid ""
 msgstr "이동식 드라이브와 미디어의 관리요소를 <a href=\"volman-config:\">설정합니다</a>"
 
 #: ../thunar/thunar-preferences-dialog.c:1304
-#: ../thunar/thunar-properties-dialog.c:733
+#: ../thunar/thunar-properties-dialog.c:757
 msgid "Missing dependencies"
 msgstr "빠진 의존성"
 
@@ -2442,127 +2441,131 @@ msgstr ""
 msgid "Queued"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:301
+#: ../thunar/thunar-properties-dialog.c:303
 msgid "General"
 msgstr "일반"
 
-#: ../thunar/thunar-properties-dialog.c:325
+#: ../thunar/thunar-properties-dialog.c:327
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:2
 msgid "_Name:"
 msgstr "이름(_N):"
 
-#: ../thunar/thunar-properties-dialog.c:364
+#: ../thunar/thunar-properties-dialog.c:366
 msgid "Names:"
 msgstr "이름:"
 
 #. Second box (kind, open with, link target)
-#: ../thunar/thunar-properties-dialog.c:387
+#: ../thunar/thunar-properties-dialog.c:389
 msgid "Kind:"
 msgstr "형식:"
 
-#: ../thunar/thunar-properties-dialog.c:411
+#: ../thunar/thunar-properties-dialog.c:413
 msgid "_Open With:"
 msgstr "다음으로 열기(_O):"
 
-#: ../thunar/thunar-properties-dialog.c:428
+#: ../thunar/thunar-properties-dialog.c:430
 msgid "Link Target:"
 msgstr "링크 대상:"
 
-#: ../thunar/thunar-properties-dialog.c:466
+#: ../thunar/thunar-properties-dialog.c:468
 msgid "Location:"
 msgstr "위치:"
 
 #. Third box (deleted, modified, accessed)
-#: ../thunar/thunar-properties-dialog.c:494
+#: ../thunar/thunar-properties-dialog.c:496
 msgid "Deleted:"
 msgstr "삭제함:"
 
-#: ../thunar/thunar-properties-dialog.c:511
+#: ../thunar/thunar-properties-dialog.c:513
 msgid "Created:"
 msgstr "만든 사용자:"
 
-#: ../thunar/thunar-properties-dialog.c:545
+#: ../thunar/thunar-properties-dialog.c:547
 msgid "Accessed:"
 msgstr "접근함:"
 
-#: ../thunar/thunar-properties-dialog.c:591
+#: ../thunar/thunar-properties-dialog.c:593
 msgid "Content:"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:609
+#: ../thunar/thunar-properties-dialog.c:611
 msgid "Volume:"
 msgstr "볼륨:"
 
-#: ../thunar/thunar-properties-dialog.c:640
+#: ../thunar/thunar-properties-dialog.c:642
+msgid "Capacity:"
+msgstr ""
+
+#: ../thunar/thunar-properties-dialog.c:664
 msgid "Usage:"
 msgstr "사용법:"
 
 #. Emblem chooser
-#: ../thunar/thunar-properties-dialog.c:677
+#: ../thunar/thunar-properties-dialog.c:701
 msgid "Emblems"
 msgstr "상징"
 
-#: ../thunar/thunar-properties-dialog.c:702
+#: ../thunar/thunar-properties-dialog.c:726
 msgid "Highlight"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:741
+#: ../thunar/thunar-properties-dialog.c:765
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "This feature will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:769
+#: ../thunar/thunar-properties-dialog.c:793
 msgid "Example.txt"
 msgstr ""
 
 #. add the "Apply" button
-#: ../thunar/thunar-properties-dialog.c:786
+#: ../thunar/thunar-properties-dialog.c:810
 #: ../thunar/thunar-renamer-dialog.c:371
 msgid "_Apply"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:798
+#: ../thunar/thunar-properties-dialog.c:822
 msgid "_Reset"
 msgstr "초기화(_R)"
 
-#: ../thunar/thunar-properties-dialog.c:806
+#: ../thunar/thunar-properties-dialog.c:830
 msgid "Set _Foreground"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:814
+#: ../thunar/thunar-properties-dialog.c:838
 msgid "Set _Background"
 msgstr ""
 
 #. allocate the icon chooser
 #. allocate the chooser dialog
-#: ../thunar/thunar-properties-dialog.c:1076
+#: ../thunar/thunar-properties-dialog.c:1100
 #: ../plugins/thunar-uca/thunar-uca-editor.c:436
 #, c-format
 msgid "Select an Icon for \"%s\""
 msgstr "\"%s\"의 아이콘을 선택하십시오"
 
-#: ../thunar/thunar-properties-dialog.c:1101
+#: ../thunar/thunar-properties-dialog.c:1125
 #, c-format
 msgid "Failed to change icon of \"%s\""
 msgstr "\"%s\" 아이콘 바꾸기에 실패했습니다"
 
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:1210
+#: ../thunar/thunar-properties-dialog.c:1236
 #, c-format
 msgid "%s - Properties"
 msgstr "%s - 속성"
 
-#: ../thunar/thunar-properties-dialog.c:1268
+#: ../thunar/thunar-properties-dialog.c:1294
 msgid "unknown"
 msgstr "알 수 없음"
 
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:1466
+#: ../thunar/thunar-properties-dialog.c:1498
 msgid "Properties"
 msgstr "속성"
 
-#: ../thunar/thunar-properties-dialog.c:1567
+#: ../thunar/thunar-properties-dialog.c:1599
 msgid "mixed"
 msgstr "혼합"
 
@@ -2582,7 +2585,7 @@ msgstr "지우기"
 msgid "Clear the file list below"
 msgstr "아래의 파일 목록을 지웁니다"
 
-#: ../thunar/thunar-renamer-dialog.c:196 ../thunar/thunar-window.c:506
+#: ../thunar/thunar-renamer-dialog.c:196 ../thunar/thunar-window.c:510
 msgid "_About"
 msgstr "정보(_A)"
 
@@ -2709,7 +2712,7 @@ msgid ""
 msgstr "이 파일을 취소하고 나머지 파일의 이름 바꾸기를 계속 하시렵니까?"
 
 #: ../thunar/thunar-shortcuts-model.c:646
-#: ../thunar/thunar-shortcuts-model.c:1010 ../thunar/thunar-window.c:492
+#: ../thunar/thunar-shortcuts-model.c:1010 ../thunar/thunar-window.c:496
 msgid "Browse the file system"
 msgstr "파일 시스템 탐색"
 
@@ -2741,7 +2744,7 @@ msgstr "네트워크"
 msgid "Browse Network"
 msgstr "네트워크 탐색"
 
-#: ../thunar/thunar-shortcuts-model.c:1055 ../thunar/thunar-window.c:502
+#: ../thunar/thunar-shortcuts-model.c:1055 ../thunar/thunar-window.c:506
 msgid "Browse local network connections"
 msgstr "로컬 네트워크 연결을 탐색합니다"
 
@@ -2757,7 +2760,7 @@ msgstr "내 폴더 열기"
 msgid "Open the desktop folder"
 msgstr "데스크톱 폴더 열기"
 
-#: ../thunar/thunar-shortcuts-model.c:1153 ../thunar/thunar-window.c:495
+#: ../thunar/thunar-shortcuts-model.c:1153 ../thunar/thunar-window.c:499
 #: ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr "컴퓨터"
@@ -2766,7 +2769,7 @@ msgstr "컴퓨터"
 msgid "Browse the computer"
 msgstr "컴퓨터 탐색"
 
-#: ../thunar/thunar-shortcuts-model.c:1166 ../thunar/thunar-window.c:496
+#: ../thunar/thunar-shortcuts-model.c:1166 ../thunar/thunar-window.c:500
 msgid "Recent"
 msgstr ""
 
@@ -2929,7 +2932,7 @@ msgid "Loading folder contents..."
 msgstr "폴더의 내용을 로딩중..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2339 ../thunar/thunar-window.c:3910
+#: ../thunar/thunar-standard-view.c:2339 ../thunar/thunar-window.c:3917
 msgid "Failed to open the home folder"
 msgstr "내 폴더를 열기에 실패했습니다"
 
@@ -3014,7 +3017,7 @@ msgstr "\"%s\" URL 링크 만들기에 실패했습니다"
 msgid "Untitled document"
 msgstr "무제 문서"
 
-#: ../thunar/thunar-standard-view.c:3578 ../thunar/thunar-window.c:4006
+#: ../thunar/thunar-standard-view.c:3578 ../thunar/thunar-window.c:4013
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "\"%s\" 디렉터리 열기에 실패했습니다"
@@ -3205,428 +3208,428 @@ msgstr ""
 msgid "link %u to %.*s.%s"
 msgstr ""
 
-#: ../thunar/thunar-window.c:451
+#: ../thunar/thunar-window.c:455
 msgid "_File"
 msgstr "파일(_F)"
 
-#: ../thunar/thunar-window.c:452
+#: ../thunar/thunar-window.c:456
 msgid "New _Tab"
 msgstr "새 탭(_T)"
 
-#: ../thunar/thunar-window.c:452
+#: ../thunar/thunar-window.c:456
 msgid "Open a new tab for the displayed location"
 msgstr "표시한 위치를 새 탭으로 엽니다"
 
-#: ../thunar/thunar-window.c:453
+#: ../thunar/thunar-window.c:457
 msgid "New _Window"
 msgstr "새 창(_W)"
 
-#: ../thunar/thunar-window.c:453
+#: ../thunar/thunar-window.c:457
 msgid "Open a new Thunar window for the displayed location"
 msgstr "표시한 위치에 새 투나 창을 엽니다"
 
-#: ../thunar/thunar-window.c:454
+#: ../thunar/thunar-window.c:458
 msgid "Detac_h Tab"
 msgstr "탭 분리(_H)"
 
-#: ../thunar/thunar-window.c:454
+#: ../thunar/thunar-window.c:458
 msgid "Open current folder in a new window"
 msgstr "현재 폴더를 새 창으로 엽니다"
 
-#: ../thunar/thunar-window.c:455
+#: ../thunar/thunar-window.c:459
 msgid "C_lose Tab"
 msgstr "탭 닫기(_L)"
 
-#: ../thunar/thunar-window.c:455
+#: ../thunar/thunar-window.c:459
 msgid "Close this folder"
 msgstr "이 폴더를 닫습니다"
 
-#: ../thunar/thunar-window.c:456
+#: ../thunar/thunar-window.c:460
 msgid "_Close Window"
 msgstr "창 닫기(_C)"
 
-#: ../thunar/thunar-window.c:456
+#: ../thunar/thunar-window.c:460
 msgid "Close this window"
 msgstr "현재 창을 닫습니다"
 
-#: ../thunar/thunar-window.c:457
+#: ../thunar/thunar-window.c:461
 msgid "Close _All Windows"
 msgstr "모든 창 닫기(_A)"
 
-#: ../thunar/thunar-window.c:457
+#: ../thunar/thunar-window.c:461
 msgid "Close all Thunar windows"
 msgstr "모든 투나 창을 닫습니다"
 
-#: ../thunar/thunar-window.c:459
+#: ../thunar/thunar-window.c:463
 msgid "_Edit"
 msgstr "편집(_E)"
 
-#: ../thunar/thunar-window.c:460
+#: ../thunar/thunar-window.c:464
 msgid "Pr_eferences..."
 msgstr "기본 설정(_E)..."
 
-#: ../thunar/thunar-window.c:460
+#: ../thunar/thunar-window.c:464
 msgid "Edit Thunars Preferences"
 msgstr "투나 기본 설정을 편집합니다"
 
-#: ../thunar/thunar-window.c:462
+#: ../thunar/thunar-window.c:466
 msgid "_View"
 msgstr "보기(_V)"
 
-#: ../thunar/thunar-window.c:463
+#: ../thunar/thunar-window.c:467
 msgid "_Reload"
 msgstr "다시 읽기(_R)"
 
-#: ../thunar/thunar-window.c:463
+#: ../thunar/thunar-window.c:467
 msgid "Reload the current folder"
 msgstr "현재의 폴더를 새로 고칩니다"
 
-#: ../thunar/thunar-window.c:465
+#: ../thunar/thunar-window.c:469
 msgid "Spl_it View"
 msgstr "분할 보기(_I)"
 
-#: ../thunar/thunar-window.c:465
+#: ../thunar/thunar-window.c:469
 msgid "Open/Close Split View"
 msgstr "분할 보기를 열고 닫습니다"
 
-#: ../thunar/thunar-window.c:466
+#: ../thunar/thunar-window.c:470
 msgid "_Location Selector"
 msgstr "위치 선택 메뉴(_L)"
 
-#: ../thunar/thunar-window.c:467
+#: ../thunar/thunar-window.c:471
 msgid "_Entry Style"
 msgstr ""
 
-#: ../thunar/thunar-window.c:467
+#: ../thunar/thunar-window.c:471
 msgid "Traditional entry showing the current path"
 msgstr ""
 
-#: ../thunar/thunar-window.c:468
+#: ../thunar/thunar-window.c:472
 msgid "_Buttons Style"
 msgstr ""
 
-#: ../thunar/thunar-window.c:468
+#: ../thunar/thunar-window.c:472
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "폴더에 대응하는 단추를 이용한 최신 접근방식입니다"
 
-#: ../thunar/thunar-window.c:469
+#: ../thunar/thunar-window.c:473
 msgid "_Side Pane"
 msgstr "가장자리 창(_S)"
 
-#: ../thunar/thunar-window.c:470
+#: ../thunar/thunar-window.c:474
 msgid "_Shortcuts"
 msgstr "바로 가기(_S)"
 
-#: ../thunar/thunar-window.c:470
+#: ../thunar/thunar-window.c:474
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "바로 가기 창의 표시를 결정합니다"
 
-#: ../thunar/thunar-window.c:471
+#: ../thunar/thunar-window.c:475
 msgid "_Tree"
 msgstr "트리(_T)"
 
-#: ../thunar/thunar-window.c:471
+#: ../thunar/thunar-window.c:475
 msgid "Toggles the visibility of the tree pane"
 msgstr "트리창의 표시를 결정합니다"
 
-#: ../thunar/thunar-window.c:473
+#: ../thunar/thunar-window.c:477
 msgid "St_atusbar"
 msgstr "상태 표시줄(_A)"
 
-#: ../thunar/thunar-window.c:473
+#: ../thunar/thunar-window.c:477
 msgid "Change the visibility of this window's statusbar"
 msgstr "현재 창의 상태 표시줄의 표시를 결정합니다"
 
-#: ../thunar/thunar-window.c:474
+#: ../thunar/thunar-window.c:478
 msgid "_Menubar"
 msgstr "메뉴 표시줄(_M)"
 
-#: ../thunar/thunar-window.c:474
+#: ../thunar/thunar-window.c:478
 msgid "Change the visibility of this window's menubar"
 msgstr "현재 창의 메뉴 표시줄 표시 여부를 바꿉니다"
 
-#: ../thunar/thunar-window.c:475
+#: ../thunar/thunar-window.c:479
 msgid "Configure _Toolbar..."
 msgstr ""
 
-#: ../thunar/thunar-window.c:475
+#: ../thunar/thunar-window.c:479
 msgid "Configure the toolbar"
 msgstr ""
 
-#: ../thunar/thunar-window.c:476
+#: ../thunar/thunar-window.c:480
 msgid "Clear Saved _Folder View Settings"
 msgstr "저장된 폴더 보기 설정 모두 삭제(_F)"
 
-#: ../thunar/thunar-window.c:476
+#: ../thunar/thunar-window.c:480
 msgid "Delete saved view settings for this folder"
 msgstr "이 폴더의 폴더 보기 설정 삭제"
 
-#: ../thunar/thunar-window.c:477
+#: ../thunar/thunar-window.c:481
 msgid "Show _Hidden Files"
 msgstr "숨김 파일 표시(_H)"
 
-#: ../thunar/thunar-window.c:477
+#: ../thunar/thunar-window.c:481
 msgid "Toggles the display of hidden files in the current window"
 msgstr "현재 창 안의 숨김 파일의 표시를 결정합니다"
 
-#: ../thunar/thunar-window.c:478
+#: ../thunar/thunar-window.c:482
 msgid "Show File Hi_ghlight"
 msgstr ""
 
-#: ../thunar/thunar-window.c:478
+#: ../thunar/thunar-window.c:482
 msgid ""
 "Toggles the display of file highlight which can be configured in the file "
 "specific property dialog"
 msgstr ""
 
-#: ../thunar/thunar-window.c:479
+#: ../thunar/thunar-window.c:483
 msgid "Zoom I_n"
 msgstr "확대(_N)"
 
-#: ../thunar/thunar-window.c:479
+#: ../thunar/thunar-window.c:483
 msgid "Show the contents in more detail"
 msgstr "내용을 더 자세히 보여줍니다"
 
-#: ../thunar/thunar-window.c:482
+#: ../thunar/thunar-window.c:486
 msgid "Zoom _Out"
 msgstr "축소(_O)"
 
-#: ../thunar/thunar-window.c:482
+#: ../thunar/thunar-window.c:486
 msgid "Show the contents in less detail"
 msgstr "내용을 덜 자세히 보여줍니다"
 
-#: ../thunar/thunar-window.c:484
+#: ../thunar/thunar-window.c:488
 msgid "Normal Si_ze"
 msgstr "일반 크기(_Z)"
 
-#: ../thunar/thunar-window.c:484
+#: ../thunar/thunar-window.c:488
 msgid "Show the contents at the normal size"
 msgstr "일반적인 크기로 내용을 보여줍니다"
 
-#: ../thunar/thunar-window.c:486
+#: ../thunar/thunar-window.c:490
 msgid "_Icon View"
 msgstr "아이콘으로 보기(_I)"
 
-#: ../thunar/thunar-window.c:486
+#: ../thunar/thunar-window.c:490
 msgid "Display folder content in an icon view"
 msgstr "아이콘 보기로 폴더의 내용을 보여줍니다"
 
-#: ../thunar/thunar-window.c:487
+#: ../thunar/thunar-window.c:491
 msgid "_List View"
 msgstr "목록으로 보기(_L)"
 
-#: ../thunar/thunar-window.c:487
+#: ../thunar/thunar-window.c:491
 msgid "Display folder content in a detailed list view"
 msgstr "자세히 보기로 폴더의 내용을 보여줍니다"
 
-#: ../thunar/thunar-window.c:488
+#: ../thunar/thunar-window.c:492
 msgid "_Compact View"
 msgstr "간단히 보기(_C)"
 
-#: ../thunar/thunar-window.c:488
+#: ../thunar/thunar-window.c:492
 msgid "Display folder content in a compact list view"
 msgstr "간단히 보기로 폴더의 내용을 보여줍니다"
 
-#: ../thunar/thunar-window.c:490
+#: ../thunar/thunar-window.c:494
 msgid "_Go"
 msgstr "이동(_G)"
 
-#: ../thunar/thunar-window.c:491
+#: ../thunar/thunar-window.c:495
 msgid "_Bookmarks"
 msgstr ""
 
-#: ../thunar/thunar-window.c:493
+#: ../thunar/thunar-window.c:497
 msgid "_Home"
 msgstr "내 폴더(_H)"
 
-#: ../thunar/thunar-window.c:493
+#: ../thunar/thunar-window.c:497
 msgid "Go to the home folder"
 msgstr "내 폴더로 이동"
 
-#: ../thunar/thunar-window.c:494
+#: ../thunar/thunar-window.c:498
 msgid "Desktop"
 msgstr "데스크톱"
 
-#: ../thunar/thunar-window.c:494
+#: ../thunar/thunar-window.c:498
 msgid "Go to the desktop folder"
 msgstr "데스크톱 폴더로 이동"
 
-#: ../thunar/thunar-window.c:495
+#: ../thunar/thunar-window.c:499
 msgid ""
 "Browse all local and remote disks and folders accessible from this computer"
 msgstr "이 컴퓨터에서 접근할 수 있는 모든 로컬, 원격 디스크, 폴더를 탐색합니다"
 
-#: ../thunar/thunar-window.c:496
+#: ../thunar/thunar-window.c:500
 msgid "Display recently used files"
 msgstr ""
 
-#: ../thunar/thunar-window.c:497
+#: ../thunar/thunar-window.c:501
 msgid "T_rash"
 msgstr "휴지통(_R)"
 
-#: ../thunar/thunar-window.c:497
+#: ../thunar/thunar-window.c:501
 msgid "Display the contents of the trash can"
 msgstr "휴지통의 내용을 보여줍니다"
 
-#: ../thunar/thunar-window.c:498
+#: ../thunar/thunar-window.c:502
 msgid "Open _Parent"
 msgstr "상위 폴더 열기(_P)"
 
-#: ../thunar/thunar-window.c:498
+#: ../thunar/thunar-window.c:502
 msgid "Open the parent folder"
 msgstr "상위 폴더 열기"
 
-#: ../thunar/thunar-window.c:499
+#: ../thunar/thunar-window.c:503
 msgid "_Open Location..."
 msgstr "위치 열기(_O)..."
 
-#: ../thunar/thunar-window.c:499
+#: ../thunar/thunar-window.c:503
 msgid "Specify a location to open"
 msgstr "열 위치를 정의합니다"
 
-#: ../thunar/thunar-window.c:501
+#: ../thunar/thunar-window.c:505
 msgid "T_emplates"
 msgstr "서식(_E)"
 
-#: ../thunar/thunar-window.c:501
+#: ../thunar/thunar-window.c:505
 msgid "Go to the templates folder"
 msgstr "서식 폴더로 갑니다"
 
-#: ../thunar/thunar-window.c:502
+#: ../thunar/thunar-window.c:506
 msgid "B_rowse Network"
 msgstr "네트워크 탐색(_R)"
 
-#: ../thunar/thunar-window.c:505
+#: ../thunar/thunar-window.c:509
 msgid "_Contents"
 msgstr "목차(_C)"
 
-#: ../thunar/thunar-window.c:505
+#: ../thunar/thunar-window.c:509
 msgid "Display Thunar user manual"
 msgstr "투나 사용자 설명서를 보여줍니다"
 
-#: ../thunar/thunar-window.c:506
+#: ../thunar/thunar-window.c:510
 msgid "Display information about Thunar"
 msgstr "투나의 정보를 보여줍니다"
 
-#: ../thunar/thunar-window.c:507
+#: ../thunar/thunar-window.c:511
 msgid "Back"
 msgstr "뒤로"
 
-#: ../thunar/thunar-window.c:507
+#: ../thunar/thunar-window.c:511
 msgid "Go to the previous visited folder"
 msgstr "이전에 방문한 폴더로 이동"
 
-#: ../thunar/thunar-window.c:509
+#: ../thunar/thunar-window.c:513
 msgid "Forward"
 msgstr "앞으로"
 
-#: ../thunar/thunar-window.c:509
+#: ../thunar/thunar-window.c:513
 msgid "Go to the next visited folder"
 msgstr "다음 폴더로 이동"
 
-#: ../thunar/thunar-window.c:510
+#: ../thunar/thunar-window.c:514
 msgid "_Previous Tab"
 msgstr "이전 탭(_P)"
 
-#: ../thunar/thunar-window.c:510
+#: ../thunar/thunar-window.c:514
 msgid "Switch to Previous Tab"
 msgstr "이전 탭으로 전환"
 
-#: ../thunar/thunar-window.c:511
+#: ../thunar/thunar-window.c:515
 msgid "_Next Tab"
 msgstr "다음 탭(_N)"
 
-#: ../thunar/thunar-window.c:511
+#: ../thunar/thunar-window.c:515
 msgid "Switch to Next Tab"
 msgstr "다음 탭으로 전환"
 
-#: ../thunar/thunar-window.c:512
+#: ../thunar/thunar-window.c:516
 msgid "_Search for Files..."
 msgstr ""
 
-#: ../thunar/thunar-window.c:512
+#: ../thunar/thunar-window.c:516
 msgid "Search for a specific file in the current folder and Recent"
 msgstr ""
 
-#: ../thunar/thunar-window.c:513
+#: ../thunar/thunar-window.c:517
 msgid "Cancel search for files"
 msgstr ""
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:852
+#: ../thunar/thunar-window.c:856
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "경고: 루트 계정을 사용하고 있습니다. 시스템에 해를 끼칠 수 있습니다."
 
-#: ../thunar/thunar-window.c:2467
+#: ../thunar/thunar-window.c:2474
 msgid "Close tab"
 msgstr "탭을 닫습니다"
 
-#: ../thunar/thunar-window.c:2920
+#: ../thunar/thunar-window.c:2927
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "\"%s\" 위치 열기"
 
-#: ../thunar/thunar-window.c:3850
+#: ../thunar/thunar-window.c:3857
 msgid "Failed to open parent folder"
 msgstr "상위 폴더 열기에 실패했습니다"
 
-#: ../thunar/thunar-window.c:3981
+#: ../thunar/thunar-window.c:3988
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "\"%s\" 디렉터리가 없습니다. 새로 만드시렵니까?"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4051
+#: ../thunar/thunar-window.c:4058
 msgid "Failed to browse the computer"
 msgstr "컴퓨터 탐색 실패"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4094
+#: ../thunar/thunar-window.c:4101
 msgid "About Templates"
 msgstr "서식 정보"
 
-#: ../thunar/thunar-window.c:4116
+#: ../thunar/thunar-window.c:4123
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "이 폴더의 모든 문서는 \"문서 만들기\" 메뉴에 나타납니다."
 
-#: ../thunar/thunar-window.c:4123
+#: ../thunar/thunar-window.c:4130
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "특정 종류의 문서를 자주 만든다면, 그것의 복사본을 만들고 이 폴더안에 넣으십시오. 투나는 해당 문서를 \"문서 만들기\" 메뉴에 추가합니다.\n\n\"문서 만들기\" 메뉴에서 항목을 선택하면 해당 문서의 복사본을 현재 보고 있는 디렉터리에 생성합니다."
 
-#: ../thunar/thunar-window.c:4135
+#: ../thunar/thunar-window.c:4142
 msgid "Do _not display this message again"
 msgstr "이 메시지를 다시 보여주지 않음(_N)"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4169
+#: ../thunar/thunar-window.c:4176
 msgid "Failed to open the file system root folder"
 msgstr "파일 시스템 루트 폴더 열기에 실패했습니다"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4205
+#: ../thunar/thunar-window.c:4212
 msgid "Failed to display `Recent`"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4241
+#: ../thunar/thunar-window.c:4248
 msgid "Failed to display the contents of the trash can"
 msgstr "휴지통 내용을 표시에 실패했습니다"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4277
+#: ../thunar/thunar-window.c:4284
 msgid "Failed to browse the network"
 msgstr "네트워크 탐색에 실패했습니다"
 
-#: ../thunar/thunar-window.c:4388
+#: ../thunar/thunar-window.c:4395
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "투나는 Xfce 데스크톱 환경의\n빠르고 사용하기 쉬운 파일 관리자 입니다."
 
-#: ../thunar/thunar-window.c:5455
+#: ../thunar/thunar-window.c:5462
 msgid "Failed to launch search with Catfish"
 msgstr ""
 
