@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-18 12:46+0200\n"
+"POT-Creation-Date: 2022-09-11 00:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: AmirRezaTM <amirrezatm@protonmail.com>, 2022\n"
 "Language-Team: Persian (Iran) (http://www.transifex.com/xfce/thunar/language/fa_IR/)\n"
@@ -291,7 +291,7 @@ msgstr[1] "باز کردن در %d پنجره جدید"
 #: ../thunar/thunar-dialogs.c:778 ../thunar/thunar-dialogs.c:1062
 #: ../thunar/thunar-dnd.c:171 ../thunar/thunar-permissions-chooser.c:559
 #: ../thunar/thunar-permissions-chooser.c:1169
-#: ../thunar/thunar-properties-dialog.c:1078
+#: ../thunar/thunar-properties-dialog.c:1102
 #: ../thunar/thunar-renamer-dialog.c:358
 #: ../thunar/thunar-renamer-dialog.c:1073
 #: ../thunar/thunar-renamer-progress.c:176
@@ -472,7 +472,7 @@ msgstr[1] "ارسال پرونده‌های انتخاب شده به \"%s\""
 
 #. display an error message
 #: ../thunar/thunar-action-manager.c:2411 ../thunar/thunar-application.c:1846
-#: ../thunar/thunar-properties-dialog.c:989
+#: ../thunar/thunar-properties-dialog.c:1013
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "تغییر نام \"%s\" با شکست مواجه شد"
@@ -752,7 +752,7 @@ msgstr "به عنوان پیش‌فرض برای این نوع فایل استف
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1286
-#: ../thunar/thunar-properties-dialog.c:1079 ../thunar/thunar-window.c:4096
+#: ../thunar/thunar-properties-dialog.c:1103 ../thunar/thunar-window.c:4103
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -914,7 +914,7 @@ msgstr "چیزی در کلیپ‌بورد برای جایگذاری نیست"
 #. add a regular close button, the header bar already provides one
 #: ../thunar/thunar-column-editor.c:156 ../thunar/thunar-dialogs.c:1007
 #: ../thunar/thunar-preferences-dialog.c:297
-#: ../thunar/thunar-properties-dialog.c:291
+#: ../thunar/thunar-properties-dialog.c:293
 #: ../thunar/thunar-renamer-dialog.c:359
 #: ../thunar/thunar-renamer-progress.c:193
 #: ../thunar/thunar-toolbar-editor.c:121
@@ -929,8 +929,8 @@ msgstr "ستون‌ها را در نمای فهرستی باجزئیات پیک�
 #. add the "Help" button
 #: ../thunar/thunar-column-editor.c:162
 #: ../thunar/thunar-preferences-dialog.c:305
-#: ../thunar/thunar-properties-dialog.c:290
-#: ../thunar/thunar-toolbar-editor.c:128 ../thunar/thunar-window.c:504
+#: ../thunar/thunar-properties-dialog.c:292
+#: ../thunar/thunar-toolbar-editor.c:128 ../thunar/thunar-window.c:508
 msgid "_Help"
 msgstr "راهنما"
 
@@ -1192,12 +1192,12 @@ msgstr "آیا می خواهید فایل موجود را جایگزین کنی�
 
 #. Fourth box (size, volume, free space)
 #: ../thunar/thunar-dialogs.c:885 ../thunar/thunar-dialogs.c:930
-#: ../thunar/thunar-properties-dialog.c:575
+#: ../thunar/thunar-properties-dialog.c:577
 msgid "Size:"
 msgstr "اندازه:"
 
 #: ../thunar/thunar-dialogs.c:885 ../thunar/thunar-dialogs.c:930
-#: ../thunar/thunar-properties-dialog.c:528
+#: ../thunar/thunar-properties-dialog.c:530
 msgid "Modified:"
 msgstr "تغییر یافته:"
 
@@ -1302,7 +1302,7 @@ msgid "Owner"
 msgstr "مالک"
 
 #. Permissions chooser
-#: ../thunar/thunar-enum-types.c:112 ../thunar/thunar-properties-dialog.c:689
+#: ../thunar/thunar-enum-types.c:112 ../thunar/thunar-properties-dialog.c:713
 msgid "Permissions"
 msgstr "اجازه‌ها"
 
@@ -1392,7 +1392,7 @@ msgid "Log no operations"
 msgstr ""
 
 #: ../thunar/thunar-file.c:1076 ../thunar/thunar-gio-extensions.c:480
-#: ../thunar/thunar-shortcuts-model.c:1009 ../thunar/thunar-window.c:492
+#: ../thunar/thunar-shortcuts-model.c:1009 ../thunar/thunar-window.c:496
 msgid "File System"
 msgstr "سیستم پرونده‌ها"
 
@@ -1506,11 +1506,10 @@ msgstr ""
 msgid "%s on %s"
 msgstr "%s به روی %s"
 
-#. free disk space string
-#: ../thunar/thunar-gio-extensions.c:674
+#: ../thunar/thunar-gio-extensions.c:673
 #, c-format
-msgid "%s of %s free (%d%% used)"
-msgstr "%s از %s آزاد است (%d%% استفاده شده)"
+msgid "%s used (%d%%)  |  %s free (%d%%)"
+msgstr ""
 
 #: ../thunar/thunar-history.c:297
 msgid "The item will be removed from the history"
@@ -1723,7 +1722,7 @@ msgstr ""
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: ../thunar/thunar-list-model.c:3105 ../thunar/thunar-properties-dialog.c:449
+#: ../thunar/thunar-list-model.c:3105 ../thunar/thunar-properties-dialog.c:451
 msgid "Original Path:"
 msgstr "مسیر اصلی:"
 
@@ -2396,7 +2395,7 @@ msgid ""
 msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:1304
-#: ../thunar/thunar-properties-dialog.c:733
+#: ../thunar/thunar-properties-dialog.c:757
 msgid "Missing dependencies"
 msgstr ""
 
@@ -2469,127 +2468,131 @@ msgstr ""
 msgid "Queued"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:301
+#: ../thunar/thunar-properties-dialog.c:303
 msgid "General"
 msgstr "عمومی"
 
-#: ../thunar/thunar-properties-dialog.c:325
+#: ../thunar/thunar-properties-dialog.c:327
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:2
 msgid "_Name:"
 msgstr "نام:"
 
-#: ../thunar/thunar-properties-dialog.c:364
+#: ../thunar/thunar-properties-dialog.c:366
 msgid "Names:"
 msgstr "نام‌ها:"
 
 #. Second box (kind, open with, link target)
-#: ../thunar/thunar-properties-dialog.c:387
+#: ../thunar/thunar-properties-dialog.c:389
 msgid "Kind:"
 msgstr "نوع:"
 
-#: ../thunar/thunar-properties-dialog.c:411
+#: ../thunar/thunar-properties-dialog.c:413
 msgid "_Open With:"
 msgstr "بازکردن با:"
 
-#: ../thunar/thunar-properties-dialog.c:428
+#: ../thunar/thunar-properties-dialog.c:430
 msgid "Link Target:"
 msgstr "هدف پیوند:"
 
-#: ../thunar/thunar-properties-dialog.c:466
+#: ../thunar/thunar-properties-dialog.c:468
 msgid "Location:"
 msgstr "مکان:"
 
 #. Third box (deleted, modified, accessed)
-#: ../thunar/thunar-properties-dialog.c:494
+#: ../thunar/thunar-properties-dialog.c:496
 msgid "Deleted:"
 msgstr "حذف شده:"
 
-#: ../thunar/thunar-properties-dialog.c:511
+#: ../thunar/thunar-properties-dialog.c:513
 msgid "Created:"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:545
+#: ../thunar/thunar-properties-dialog.c:547
 msgid "Accessed:"
 msgstr "در دسترس از:"
 
-#: ../thunar/thunar-properties-dialog.c:591
+#: ../thunar/thunar-properties-dialog.c:593
 msgid "Content:"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:609
+#: ../thunar/thunar-properties-dialog.c:611
 msgid "Volume:"
 msgstr "حجم:"
 
-#: ../thunar/thunar-properties-dialog.c:640
+#: ../thunar/thunar-properties-dialog.c:642
+msgid "Capacity:"
+msgstr ""
+
+#: ../thunar/thunar-properties-dialog.c:664
 msgid "Usage:"
 msgstr "کاربرد:"
 
 #. Emblem chooser
-#: ../thunar/thunar-properties-dialog.c:677
+#: ../thunar/thunar-properties-dialog.c:701
 msgid "Emblems"
 msgstr "نشانه‌ها"
 
-#: ../thunar/thunar-properties-dialog.c:702
+#: ../thunar/thunar-properties-dialog.c:726
 msgid "Highlight"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:741
+#: ../thunar/thunar-properties-dialog.c:765
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "This feature will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:769
+#: ../thunar/thunar-properties-dialog.c:793
 msgid "Example.txt"
 msgstr ""
 
 #. add the "Apply" button
-#: ../thunar/thunar-properties-dialog.c:786
+#: ../thunar/thunar-properties-dialog.c:810
 #: ../thunar/thunar-renamer-dialog.c:371
 msgid "_Apply"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:798
+#: ../thunar/thunar-properties-dialog.c:822
 msgid "_Reset"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:806
+#: ../thunar/thunar-properties-dialog.c:830
 msgid "Set _Foreground"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:814
+#: ../thunar/thunar-properties-dialog.c:838
 msgid "Set _Background"
 msgstr ""
 
 #. allocate the icon chooser
 #. allocate the chooser dialog
-#: ../thunar/thunar-properties-dialog.c:1076
+#: ../thunar/thunar-properties-dialog.c:1100
 #: ../plugins/thunar-uca/thunar-uca-editor.c:436
 #, c-format
 msgid "Select an Icon for \"%s\""
 msgstr "انتخاب کردن یک آیکون برای \"%s\""
 
-#: ../thunar/thunar-properties-dialog.c:1101
+#: ../thunar/thunar-properties-dialog.c:1125
 #, c-format
 msgid "Failed to change icon of \"%s\""
 msgstr "تغییر آیکون «%s» با شکست مواجه شد"
 
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:1210
+#: ../thunar/thunar-properties-dialog.c:1236
 #, c-format
 msgid "%s - Properties"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:1268
+#: ../thunar/thunar-properties-dialog.c:1294
 msgid "unknown"
 msgstr "ناشناخته"
 
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:1466
+#: ../thunar/thunar-properties-dialog.c:1498
 msgid "Properties"
 msgstr "ویژگی‌ها"
 
-#: ../thunar/thunar-properties-dialog.c:1567
+#: ../thunar/thunar-properties-dialog.c:1599
 msgid "mixed"
 msgstr "ترکیب‌شده"
 
@@ -2609,7 +2612,7 @@ msgstr "تمیز کردن"
 msgid "Clear the file list below"
 msgstr "تمیز کردن فهرست پروندهٔ زیر"
 
-#: ../thunar/thunar-renamer-dialog.c:196 ../thunar/thunar-window.c:506
+#: ../thunar/thunar-renamer-dialog.c:196 ../thunar/thunar-window.c:510
 msgid "_About"
 msgstr "درباره"
 
@@ -2738,7 +2741,7 @@ msgid ""
 msgstr ""
 
 #: ../thunar/thunar-shortcuts-model.c:646
-#: ../thunar/thunar-shortcuts-model.c:1010 ../thunar/thunar-window.c:492
+#: ../thunar/thunar-shortcuts-model.c:1010 ../thunar/thunar-window.c:496
 msgid "Browse the file system"
 msgstr "مرور سیستم پرونده‌ها"
 
@@ -2771,7 +2774,7 @@ msgstr ""
 msgid "Browse Network"
 msgstr "مرور شبکه"
 
-#: ../thunar/thunar-shortcuts-model.c:1055 ../thunar/thunar-window.c:502
+#: ../thunar/thunar-shortcuts-model.c:1055 ../thunar/thunar-window.c:506
 msgid "Browse local network connections"
 msgstr "مرور اتصالات شبکه محلی"
 
@@ -2787,7 +2790,7 @@ msgstr ""
 msgid "Open the desktop folder"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-model.c:1153 ../thunar/thunar-window.c:495
+#: ../thunar/thunar-shortcuts-model.c:1153 ../thunar/thunar-window.c:499
 #: ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr ""
@@ -2796,7 +2799,7 @@ msgstr ""
 msgid "Browse the computer"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-model.c:1166 ../thunar/thunar-window.c:496
+#: ../thunar/thunar-shortcuts-model.c:1166 ../thunar/thunar-window.c:500
 msgid "Recent"
 msgstr ""
 
@@ -2960,7 +2963,7 @@ msgid "Loading folder contents..."
 msgstr "بار کردن محتوای پوشه..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2339 ../thunar/thunar-window.c:3910
+#: ../thunar/thunar-standard-view.c:2339 ../thunar/thunar-window.c:3917
 msgid "Failed to open the home folder"
 msgstr ""
 
@@ -3045,7 +3048,7 @@ msgstr "ایجاد یک پیوند برای URL «%s» با شکست مواجه 
 msgid "Untitled document"
 msgstr "سند بی‌عنوان"
 
-#: ../thunar/thunar-standard-view.c:3578 ../thunar/thunar-window.c:4006
+#: ../thunar/thunar-standard-view.c:3578 ../thunar/thunar-window.c:4013
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "باز کردن شاخهٔ «%s» با شکست مواجه شد"
@@ -3239,428 +3242,428 @@ msgstr ""
 msgid "link %u to %.*s.%s"
 msgstr ""
 
-#: ../thunar/thunar-window.c:451
+#: ../thunar/thunar-window.c:455
 msgid "_File"
 msgstr "پرونده"
 
-#: ../thunar/thunar-window.c:452
+#: ../thunar/thunar-window.c:456
 msgid "New _Tab"
 msgstr "زبانه جدید"
 
-#: ../thunar/thunar-window.c:452
+#: ../thunar/thunar-window.c:456
 msgid "Open a new tab for the displayed location"
 msgstr "باز کردن زبانهٔ جدید برای مکان نمایش داده شده"
 
-#: ../thunar/thunar-window.c:453
+#: ../thunar/thunar-window.c:457
 msgid "New _Window"
 msgstr "پنجره جدید"
 
-#: ../thunar/thunar-window.c:453
+#: ../thunar/thunar-window.c:457
 msgid "Open a new Thunar window for the displayed location"
 msgstr "باز کردن یک پنجرهٔ Thunar جدید برای مکان نشان داده شده"
 
-#: ../thunar/thunar-window.c:454
+#: ../thunar/thunar-window.c:458
 msgid "Detac_h Tab"
 msgstr "جدا کردن زبانه"
 
-#: ../thunar/thunar-window.c:454
+#: ../thunar/thunar-window.c:458
 msgid "Open current folder in a new window"
 msgstr "باز کردن پوشهٔ موجود در پنجرهٔ جدید"
 
-#: ../thunar/thunar-window.c:455
+#: ../thunar/thunar-window.c:459
 msgid "C_lose Tab"
 msgstr "بستن زبانه"
 
-#: ../thunar/thunar-window.c:455
+#: ../thunar/thunar-window.c:459
 msgid "Close this folder"
 msgstr "بستن این پوشه"
 
-#: ../thunar/thunar-window.c:456
+#: ../thunar/thunar-window.c:460
 msgid "_Close Window"
 msgstr "بستن پنجره"
 
-#: ../thunar/thunar-window.c:456
+#: ../thunar/thunar-window.c:460
 msgid "Close this window"
 msgstr "بستن این پنجره"
 
-#: ../thunar/thunar-window.c:457
+#: ../thunar/thunar-window.c:461
 msgid "Close _All Windows"
 msgstr "بستن تمام پنجره‌ها"
 
-#: ../thunar/thunar-window.c:457
+#: ../thunar/thunar-window.c:461
 msgid "Close all Thunar windows"
 msgstr "بستن تمام پنجره‌های تونار"
 
-#: ../thunar/thunar-window.c:459
+#: ../thunar/thunar-window.c:463
 msgid "_Edit"
 msgstr "ویرایش"
 
-#: ../thunar/thunar-window.c:460
+#: ../thunar/thunar-window.c:464
 msgid "Pr_eferences..."
 msgstr "ترجیحات..."
 
-#: ../thunar/thunar-window.c:460
+#: ../thunar/thunar-window.c:464
 msgid "Edit Thunars Preferences"
 msgstr "ویرایش ترجیحات Thunar"
 
-#: ../thunar/thunar-window.c:462
+#: ../thunar/thunar-window.c:466
 msgid "_View"
 msgstr "نما"
 
-#: ../thunar/thunar-window.c:463
+#: ../thunar/thunar-window.c:467
 msgid "_Reload"
 msgstr "بازخوانی"
 
-#: ../thunar/thunar-window.c:463
+#: ../thunar/thunar-window.c:467
 msgid "Reload the current folder"
 msgstr "بازخوانی پوشه فعلی"
 
-#: ../thunar/thunar-window.c:465
+#: ../thunar/thunar-window.c:469
 msgid "Spl_it View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:465
+#: ../thunar/thunar-window.c:469
 msgid "Open/Close Split View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:466
+#: ../thunar/thunar-window.c:470
 msgid "_Location Selector"
 msgstr "انتخاب‌گر مکان"
 
-#: ../thunar/thunar-window.c:467
+#: ../thunar/thunar-window.c:471
 msgid "_Entry Style"
 msgstr ""
 
-#: ../thunar/thunar-window.c:467
+#: ../thunar/thunar-window.c:471
 msgid "Traditional entry showing the current path"
 msgstr ""
 
-#: ../thunar/thunar-window.c:468
+#: ../thunar/thunar-window.c:472
 msgid "_Buttons Style"
 msgstr ""
 
-#: ../thunar/thunar-window.c:468
+#: ../thunar/thunar-window.c:472
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "رویکرد مدرن با دکمه‌هایی که به پوشه‌ها مرتبط هستند"
 
-#: ../thunar/thunar-window.c:469
+#: ../thunar/thunar-window.c:473
 msgid "_Side Pane"
 msgstr "قاب کناری"
 
-#: ../thunar/thunar-window.c:470
+#: ../thunar/thunar-window.c:474
 msgid "_Shortcuts"
 msgstr "میانبرها"
 
-#: ../thunar/thunar-window.c:470
+#: ../thunar/thunar-window.c:474
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "تغییر حالت نمایش قاب میانبر"
 
-#: ../thunar/thunar-window.c:471
+#: ../thunar/thunar-window.c:475
 msgid "_Tree"
 msgstr "درخت"
 
-#: ../thunar/thunar-window.c:471
+#: ../thunar/thunar-window.c:475
 msgid "Toggles the visibility of the tree pane"
 msgstr "تغییر حالت نمایش قاب درخت"
 
-#: ../thunar/thunar-window.c:473
+#: ../thunar/thunar-window.c:477
 msgid "St_atusbar"
 msgstr "نوار وضعیت"
 
-#: ../thunar/thunar-window.c:473
+#: ../thunar/thunar-window.c:477
 msgid "Change the visibility of this window's statusbar"
 msgstr "تغییر نمایش نوار وضعیت این پنجره"
 
-#: ../thunar/thunar-window.c:474
+#: ../thunar/thunar-window.c:478
 msgid "_Menubar"
 msgstr "نوار منو"
 
-#: ../thunar/thunar-window.c:474
+#: ../thunar/thunar-window.c:478
 msgid "Change the visibility of this window's menubar"
 msgstr "تغییر دادن مرئی بودن نوار منوی پنجره"
 
-#: ../thunar/thunar-window.c:475
+#: ../thunar/thunar-window.c:479
 msgid "Configure _Toolbar..."
 msgstr ""
 
-#: ../thunar/thunar-window.c:475
+#: ../thunar/thunar-window.c:479
 msgid "Configure the toolbar"
 msgstr ""
 
-#: ../thunar/thunar-window.c:476
+#: ../thunar/thunar-window.c:480
 msgid "Clear Saved _Folder View Settings"
 msgstr ""
 
-#: ../thunar/thunar-window.c:476
+#: ../thunar/thunar-window.c:480
 msgid "Delete saved view settings for this folder"
 msgstr ""
 
-#: ../thunar/thunar-window.c:477
+#: ../thunar/thunar-window.c:481
 msgid "Show _Hidden Files"
 msgstr "نمایش پرونده‌های مخفی"
 
-#: ../thunar/thunar-window.c:477
+#: ../thunar/thunar-window.c:481
 msgid "Toggles the display of hidden files in the current window"
 msgstr "تغییر حالت نمایش پرونده‌های مخفی در پنجرهٔ فعلی"
 
-#: ../thunar/thunar-window.c:478
+#: ../thunar/thunar-window.c:482
 msgid "Show File Hi_ghlight"
 msgstr ""
 
-#: ../thunar/thunar-window.c:478
+#: ../thunar/thunar-window.c:482
 msgid ""
 "Toggles the display of file highlight which can be configured in the file "
 "specific property dialog"
 msgstr ""
 
-#: ../thunar/thunar-window.c:479
+#: ../thunar/thunar-window.c:483
 msgid "Zoom I_n"
 msgstr "بزرگ‌نمایی"
 
-#: ../thunar/thunar-window.c:479
+#: ../thunar/thunar-window.c:483
 msgid "Show the contents in more detail"
 msgstr "نمایش محتوا با جزئیات بیشتر"
 
-#: ../thunar/thunar-window.c:482
+#: ../thunar/thunar-window.c:486
 msgid "Zoom _Out"
 msgstr "کوچک‌نمایی"
 
-#: ../thunar/thunar-window.c:482
+#: ../thunar/thunar-window.c:486
 msgid "Show the contents in less detail"
 msgstr "نمایش محتوا با جزئیات کمتر"
 
-#: ../thunar/thunar-window.c:484
+#: ../thunar/thunar-window.c:488
 msgid "Normal Si_ze"
 msgstr "اندازه معمولی"
 
-#: ../thunar/thunar-window.c:484
+#: ../thunar/thunar-window.c:488
 msgid "Show the contents at the normal size"
 msgstr "نمایش محتوا در اندازه معمولی"
 
-#: ../thunar/thunar-window.c:486
+#: ../thunar/thunar-window.c:490
 msgid "_Icon View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:486
+#: ../thunar/thunar-window.c:490
 msgid "Display folder content in an icon view"
 msgstr "نمایش محتوای پوشه به صورت نمای شمایلی"
 
-#: ../thunar/thunar-window.c:487
+#: ../thunar/thunar-window.c:491
 msgid "_List View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:487
+#: ../thunar/thunar-window.c:491
 msgid "Display folder content in a detailed list view"
 msgstr "نمایش محتوای پوشه به صورت نمای لیست تفضیلی"
 
-#: ../thunar/thunar-window.c:488
+#: ../thunar/thunar-window.c:492
 msgid "_Compact View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:488
+#: ../thunar/thunar-window.c:492
 msgid "Display folder content in a compact list view"
 msgstr "نمایش محتوای پوشه به صورت نمای لیست فشرده"
 
-#: ../thunar/thunar-window.c:490
+#: ../thunar/thunar-window.c:494
 msgid "_Go"
 msgstr "برو"
 
-#: ../thunar/thunar-window.c:491
+#: ../thunar/thunar-window.c:495
 msgid "_Bookmarks"
 msgstr ""
 
-#: ../thunar/thunar-window.c:493
+#: ../thunar/thunar-window.c:497
 msgid "_Home"
 msgstr "خانه"
 
-#: ../thunar/thunar-window.c:493
+#: ../thunar/thunar-window.c:497
 msgid "Go to the home folder"
 msgstr "به پوشه خانگی برو"
 
-#: ../thunar/thunar-window.c:494
+#: ../thunar/thunar-window.c:498
 msgid "Desktop"
 msgstr "رومیزی"
 
-#: ../thunar/thunar-window.c:494
+#: ../thunar/thunar-window.c:498
 msgid "Go to the desktop folder"
 msgstr "به پوشه رومیزی برو"
 
-#: ../thunar/thunar-window.c:495
+#: ../thunar/thunar-window.c:499
 msgid ""
 "Browse all local and remote disks and folders accessible from this computer"
 msgstr ""
 
-#: ../thunar/thunar-window.c:496
+#: ../thunar/thunar-window.c:500
 msgid "Display recently used files"
 msgstr ""
 
-#: ../thunar/thunar-window.c:497
+#: ../thunar/thunar-window.c:501
 msgid "T_rash"
 msgstr "زباله"
 
-#: ../thunar/thunar-window.c:497
+#: ../thunar/thunar-window.c:501
 msgid "Display the contents of the trash can"
 msgstr "نمایش محتوای زباله‌دان"
 
-#: ../thunar/thunar-window.c:498
+#: ../thunar/thunar-window.c:502
 msgid "Open _Parent"
 msgstr "باز کردن والد"
 
-#: ../thunar/thunar-window.c:498
+#: ../thunar/thunar-window.c:502
 msgid "Open the parent folder"
 msgstr "به پوشه والد برو"
 
-#: ../thunar/thunar-window.c:499
+#: ../thunar/thunar-window.c:503
 msgid "_Open Location..."
 msgstr "باز کردن مکان..."
 
-#: ../thunar/thunar-window.c:499
+#: ../thunar/thunar-window.c:503
 msgid "Specify a location to open"
 msgstr "مشخص کردن یک مکان برای باز شدن"
 
-#: ../thunar/thunar-window.c:501
+#: ../thunar/thunar-window.c:505
 msgid "T_emplates"
 msgstr "قالب‌ها"
 
-#: ../thunar/thunar-window.c:501
+#: ../thunar/thunar-window.c:505
 msgid "Go to the templates folder"
 msgstr "به پوشه قالب‌ها برو"
 
-#: ../thunar/thunar-window.c:502
+#: ../thunar/thunar-window.c:506
 msgid "B_rowse Network"
 msgstr "مرور شبکه"
 
-#: ../thunar/thunar-window.c:505
+#: ../thunar/thunar-window.c:509
 msgid "_Contents"
 msgstr "محتوا"
 
-#: ../thunar/thunar-window.c:505
+#: ../thunar/thunar-window.c:509
 msgid "Display Thunar user manual"
 msgstr "نمایش راهنمای کاربر Thunar"
 
-#: ../thunar/thunar-window.c:506
+#: ../thunar/thunar-window.c:510
 msgid "Display information about Thunar"
 msgstr "نمایش اطلاعات در مورد Thunar"
 
-#: ../thunar/thunar-window.c:507
+#: ../thunar/thunar-window.c:511
 msgid "Back"
 msgstr "بازگشت"
 
-#: ../thunar/thunar-window.c:507
+#: ../thunar/thunar-window.c:511
 msgid "Go to the previous visited folder"
 msgstr "به پوشه‌ی بازدید شده‌ی قبلی برو"
 
-#: ../thunar/thunar-window.c:509
+#: ../thunar/thunar-window.c:513
 msgid "Forward"
 msgstr "جلو"
 
-#: ../thunar/thunar-window.c:509
+#: ../thunar/thunar-window.c:513
 msgid "Go to the next visited folder"
 msgstr "به پوشه بازدید شده‌ی بعدی برو"
 
-#: ../thunar/thunar-window.c:510
+#: ../thunar/thunar-window.c:514
 msgid "_Previous Tab"
 msgstr ""
 
-#: ../thunar/thunar-window.c:510
+#: ../thunar/thunar-window.c:514
 msgid "Switch to Previous Tab"
 msgstr ""
 
-#: ../thunar/thunar-window.c:511
+#: ../thunar/thunar-window.c:515
 msgid "_Next Tab"
 msgstr ""
 
-#: ../thunar/thunar-window.c:511
+#: ../thunar/thunar-window.c:515
 msgid "Switch to Next Tab"
 msgstr ""
 
-#: ../thunar/thunar-window.c:512
+#: ../thunar/thunar-window.c:516
 msgid "_Search for Files..."
 msgstr ""
 
-#: ../thunar/thunar-window.c:512
+#: ../thunar/thunar-window.c:516
 msgid "Search for a specific file in the current folder and Recent"
 msgstr ""
 
-#: ../thunar/thunar-window.c:513
+#: ../thunar/thunar-window.c:517
 msgid "Cancel search for files"
 msgstr ""
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:852
+#: ../thunar/thunar-window.c:856
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr ""
 
-#: ../thunar/thunar-window.c:2467
+#: ../thunar/thunar-window.c:2474
 msgid "Close tab"
 msgstr "بستن زبانه"
 
-#: ../thunar/thunar-window.c:2920
+#: ../thunar/thunar-window.c:2927
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "باز کردن مکان «%s»"
 
-#: ../thunar/thunar-window.c:3850
+#: ../thunar/thunar-window.c:3857
 msgid "Failed to open parent folder"
 msgstr "باز کردن پوشهٔ والد با شکست مواجه شد"
 
-#: ../thunar/thunar-window.c:3981
+#: ../thunar/thunar-window.c:3988
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "شاخهٔ «%s» وجود ندارد. آیا می‌خواهید ایجادش کنید؟"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4051
+#: ../thunar/thunar-window.c:4058
 msgid "Failed to browse the computer"
 msgstr ""
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4094
+#: ../thunar/thunar-window.c:4101
 msgid "About Templates"
 msgstr "درباره قالب‌ها"
 
-#: ../thunar/thunar-window.c:4116
+#: ../thunar/thunar-window.c:4123
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "تمام پرونده‌ها در این پوشه در منوی «ایجاد سند» ظاهر خواهند شد."
 
-#: ../thunar/thunar-window.c:4123
+#: ../thunar/thunar-window.c:4130
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr ""
 
-#: ../thunar/thunar-window.c:4135
+#: ../thunar/thunar-window.c:4142
 msgid "Do _not display this message again"
 msgstr "این پیام را دیگر نشان نده"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4169
+#: ../thunar/thunar-window.c:4176
 msgid "Failed to open the file system root folder"
 msgstr "باز کردن پوشهٔ ریشهٔ سیستم پرونده با شکست مواجه شد"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4205
+#: ../thunar/thunar-window.c:4212
 msgid "Failed to display `Recent`"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4241
+#: ../thunar/thunar-window.c:4248
 msgid "Failed to display the contents of the trash can"
 msgstr "نمایش دادن محتوای سطل زباله با شکست مواجه شد"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4277
+#: ../thunar/thunar-window.c:4284
 msgid "Failed to browse the network"
 msgstr "مرور شبکه با شکست مواجه شد"
 
-#: ../thunar/thunar-window.c:4388
+#: ../thunar/thunar-window.c:4395
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar یک مدیر پروندهٔ سریع و ساده برای محیط میزکار Xfce ست."
 
-#: ../thunar/thunar-window.c:5455
+#: ../thunar/thunar-window.c:5462
 msgid "Failed to launch search with Catfish"
 msgstr ""
 
