@@ -168,8 +168,11 @@ thunar_job_operation_add (ThunarJobOperation *job_operation,
   if (g_list_find_custom (job_operation->source_file_list, source_file, _tjo_is_ancestor) != NULL)
     return;
 
-  job_operation->source_file_list = g_list_append (job_operation->source_file_list, g_object_ref (source_file));
-  job_operation->target_file_list = g_list_append (job_operation->target_file_list, (target_file != NULL)? g_object_ref (target_file): target_file);
+  /* Don't add NULL files to the list, since it causes memory management issues on object destruction */
+  if (source_file != NULL)
+    job_operation->source_file_list = g_list_append (job_operation->source_file_list, g_object_ref (source_file));
+  if (target_file != NULL)
+    job_operation->target_file_list = g_list_append (job_operation->target_file_list, g_object_ref (target_file));
 }
 
 
@@ -565,7 +568,7 @@ _tjo_restore_from_trash (ThunarJobOperation *operation,
 
   /* set up a hash table for the files we'll want to restore, and for the files we deleted */
   files_to_restore = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, g_object_unref, g_object_unref);
-  files_trashed = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, g_object_unref, g_object_unref);
+  files_trashed = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, NULL, NULL);
 
   /* add all the files that were deleted in the hash table so we can check if a file
    * was deleted as a part of this operation or not in constant time. */
@@ -651,7 +654,7 @@ _tjo_restore_from_trash (ThunarJobOperation *operation,
         g_file_move (trashed_file, original_file, G_FILE_COPY_NOFOLLOW_SYMLINKS, NULL, NULL, NULL, NULL);
       }
 
-      thunar_g_list_free_full (to_restore_list);
+      g_list_free (to_restore_list);
     }
 
   g_hash_table_unref (files_to_restore);
