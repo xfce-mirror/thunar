@@ -113,6 +113,8 @@ struct _ThunarFolder
   GList             *files;
   gboolean           reload_info;
 
+  guint32            file_count;
+
   GList             *content_type_ptr;
   guint              content_type_idle_id;
 
@@ -963,6 +965,135 @@ thunar_folder_get_files (const ThunarFolder *folder)
 
 
 /**
+ * thunar_folder_get_file_count:
+ * @file : a #ThunarFolder instance.
+ *
+ * Returns the number of items in the directory
+ * Counts the number of files in the directory as fast as possible.
+ * Will use cached data to do calculations only once
+ *
+ * Return value: Number of files in a folder
+ **/
+guint32
+thunar_folder_get_file_count (ThunarFolder *folder)
+{
+  ThunarFile      *file;
+  GFileEnumerator *enumerator;
+  GFileInfo       *child_info;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), 0);
+
+  /* If the content type loader already loaded the file-list, just count it*/
+  if (folder->files != NULL)
+    {
+      folder->file_count = g_list_length (folder->files);
+      return folder->file_count;
+    }
+
+  /* As fallback we will go through the list of gfiles */
+  file = thunar_folder_get_corresponding_file (folder);
+  enumerator = g_file_enumerate_children (thunar_file_get_file (file), NULL,
+                                          G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                          NULL, NULL);
+  if(!enumerator)
+    return 0;
+
+  folder->file_count = 0;
+  child_info = g_file_enumerator_next_file (enumerator, NULL, NULL);
+  while (child_info)
+    {
+      ++(folder->file_count);
+      g_object_unref (child_info);
+      child_info = g_file_enumerator_next_file (enumerator, NULL, NULL);
+    }
+  g_file_enumerator_close (enumerator, NULL, NULL);
+  g_object_unref (enumerator);
+
+  return folder->file_count;
+}
+
+static void
+_enumerate_children_callback (GObject      *source_object,
+                              GAsyncResult *result,
+                              gpointer     *user_data)
+{
+  ThunarFolder    *folder;
+  ThunarFile      *file;
+  GFile           *g_file;
+  GFileEnumerator *enumerator;
+  GFileInfo       *child_info;
+  GValue          *value;
+  GError          *error = NULL;
+
+  value = (GValue *) user_data;
+  g_file = G_FILE (source_object);
+  file = thunar_file_get (g_file, &error);
+
+  if (error != NULL)
+    {
+      g_warning ("Error converting file to ThunarFile: %s\n", error->message);
+      g_clear_error (&error);
+      return;
+    }
+
+  folder = thunar_folder_get_for_file (file);
+  enumerator = g_file_enumerate_children_finish (g_file, result, &error);
+
+  if (error != NULL)
+    {
+      g_warning ("Error occured while enumerating children to get the file count for folder: %s\n", error->message);
+      g_clear_error (&error);
+      return;
+    }
+
+  if (!enumerator)
+    return;
+
+  folder->file_count = 0;
+  child_info = g_file_enumerator_next_file (enumerator, NULL, NULL);
+
+  while (child_info)
+    {
+      (folder->file_count)++;
+      g_object_unref (child_info);
+      child_info = g_file_enumerator_next_file (enumerator, NULL, NULL);
+    }
+
+  g_file_enumerator_close (enumerator, NULL, NULL);
+  g_object_unref (enumerator);
+
+  g_value_take_string (value, g_strdup_printf (ngettext ("%u item", "%u items", folder->file_count), folder->file_count));
+  g_object_unref (value);
+}
+
+
+/**
+ * thunar_folder_get_file_count_async:
+ * @folder : A #ThunarFolder instance
+ * @value  : A #GValue to store the final count string in
+ *
+ * Asynchronously get the file count and update the string given to reflect it.
+ **/
+guint32
+thunar_folder_get_file_count_async (ThunarFolder *folder,
+                                    GValue       *value)
+{
+  ThunarFile  *file;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), 0);
+
+  file = thunar_folder_get_corresponding_file (folder);
+
+  g_file_enumerate_children_async (thunar_file_get_file (file), NULL,
+                                   G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                   1, NULL, (GAsyncReadyCallback) _enumerate_children_callback, value);
+
+  return folder->file_count;
+}
+
+
+
+/**
  * thunar_folder_get_loading:
  * @folder : a #ThunarFolder instance.
  *
@@ -1010,6 +1141,8 @@ thunar_folder_reload (ThunarFolder *folder,
                       gboolean      reload_info)
 {
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
+
+  folder->file_count = 0;
 
   /* reload file info too? */
   folder->reload_info = reload_info;
