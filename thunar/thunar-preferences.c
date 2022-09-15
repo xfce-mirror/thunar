@@ -120,6 +120,7 @@ enum
   PROP_TREE_ICON_SIZE,
   PROP_MISC_SWITCH_TO_NEW_TAB,
   PROP_MISC_VERTICAL_SPLIT_PANE,
+  PROP_MISC_OPEN_NEW_WINDOWS_IN_SPLIT_VIEW,
   PROP_MISC_COMPACT_VIEW_MAX_CHARS,
   PROP_MISC_HIGHLIGHTING_ENABLED,
   N_PROPERTIES,
@@ -1089,6 +1090,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   preferences_props[PROP_MISC_VERTICAL_SPLIT_PANE] =
     g_param_spec_boolean ("misc-vertical-split-pane",
                           "MiscVerticalSplitPane",
+                          NULL,
+                          FALSE,
+                          EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-open-new-windows-in-split-view
+   *
+   * If true, all thunar windows will have split view enabled.
+   **/
+  preferences_props[PROP_MISC_OPEN_NEW_WINDOWS_IN_SPLIT_VIEW] =
+    g_param_spec_boolean ("misc-open-new-windows-in-split-view",
+                          "MiscOpenNewWindowsInSplitView",
                           NULL,
                           FALSE,
                           EXO_PARAM_READWRITE);

@@ -1409,6 +1409,8 @@ thunar_application_open_window (ThunarApplication *application,
   GtkWidget *window;
   gchar     *role;
   gboolean   open_new_window_as_tab;
+  gboolean   misc_open_new_windows_in_split_view;
+  gboolean   restore_tabs;
 
   _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), NULL);
   _thunar_return_val_if_fail (directory == NULL || THUNAR_IS_FILE (directory), NULL);
@@ -1468,6 +1470,12 @@ thunar_application_open_window (ThunarApplication *application,
   /* change the directory */
   if (directory != NULL)
     thunar_window_set_current_directory (THUNAR_WINDOW (window), directory);
+
+  /* enable split view, if preffered */
+  g_object_get (G_OBJECT (application->preferences), "misc-open-new-windows-in-split-view", &misc_open_new_windows_in_split_view, NULL);
+  g_object_get (G_OBJECT (application->preferences), "last-restore-tabs", &restore_tabs, NULL);
+  if (misc_open_new_windows_in_split_view && !restore_tabs)
+    thunar_window_notebook_toggle_split_view (THUNAR_WINDOW (window));
 
   return window;
 }
