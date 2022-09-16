@@ -566,6 +566,15 @@ _tjo_restore_from_trash (ThunarJobOperation *operation,
                                           G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                                           NULL, &err);
 
+  if (err != NULL)
+    {
+      g_object_unref (trash);
+      g_object_unref (enumerator);
+
+      g_propagate_error (error, err);
+      return;
+    }
+
   /* set up a hash table for the files we'll want to restore, and for the files we deleted */
   files_to_restore = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, g_object_unref, g_object_unref);
   files_trashed = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, NULL, NULL);
@@ -575,22 +584,11 @@ _tjo_restore_from_trash (ThunarJobOperation *operation,
   for (GList *lp = operation->target_file_list; lp != NULL; lp = lp->next)
     g_hash_table_add (files_trashed, lp->data);
 
-  if (err != NULL)
-    {
-      g_object_unref (trash);
-      g_object_unref (enumerator);
-      g_hash_table_unref (files_to_restore);
-      g_hash_table_unref (files_trashed);
-
-      g_propagate_error (error, err);
-      return;
-    }
-
   /* iterate over the files in the trash, adding them to a hash table storing
    * the files which are to be restored and their original paths */
-  while ((info = g_file_enumerator_next_file (enumerator, NULL, &err)) != NULL)
+  /* while ((info = g_file_enumerator_next_file (enumerator, NULL, &err)) != NULL) */
+  for (info = g_file_enumerator_next_file (enumerator, NULL, &err); info != NULL; info = g_file_enumerator_next_file (enumerator, NULL, &err))
     {
-
       if (err != NULL)
         {
           g_object_unref (trash);
@@ -628,17 +626,6 @@ _tjo_restore_from_trash (ThunarJobOperation *operation,
 
   g_object_unref (trash);
   g_object_unref (enumerator);
-
-  if (err != NULL)
-    {
-      g_object_unref (trash);
-      g_object_unref (enumerator);
-      g_hash_table_unref (files_to_restore);
-      g_hash_table_unref (files_trashed);
-
-      g_propagate_error (error, err);
-      return;
-    }
 
   if (g_hash_table_size (files_to_restore) > 0)
     {
