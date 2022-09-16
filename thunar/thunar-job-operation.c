@@ -66,7 +66,7 @@ struct _ThunarJobOperation
 
 G_DEFINE_TYPE (ThunarJobOperation, thunar_job_operation, G_TYPE_OBJECT)
 
-static GList      *job_operation_list = NULL;
+static GList *job_operation_list = NULL;
 
 
 
