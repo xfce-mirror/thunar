@@ -3242,12 +3242,17 @@ thunar_window_action_open_new_window (ThunarWindow *window,
   ThunarHistory     *history;
   ThunarWindow      *new_window;
   ThunarFile        *start_file;
+  gboolean           misc_open_new_windows_in_split_view;
 
   /* popup a new window */
   application = thunar_application_get ();
   new_window = THUNAR_WINDOW (thunar_application_open_window (application, window->current_directory,
                                                               gtk_widget_get_screen (GTK_WIDGET (window)), NULL, TRUE));
   g_object_unref (G_OBJECT (application));
+
+  g_object_get (G_OBJECT (window->preferences), "misc-open-new-windows-in-split-view", &misc_open_new_windows_in_split_view, NULL);
+  if (misc_open_new_windows_in_split_view)
+    thunar_window_notebook_toggle_split_view (new_window);
 
   /* if we have no origin view we are done */
   if (window->view == NULL)
