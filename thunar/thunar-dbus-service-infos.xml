@@ -46,8 +46,35 @@
       the file after choosing an application.
     -->
     <method name="DisplayChooserDialog">
+      <annotation name="org.freedesktop.DBus.Deprecated" value="Deprecated. Use DisplayApplicationChooserDialog instead"/>
       <arg direction="in" name="uri" type="s" />
       <arg direction="in" name="open" type="b" />
+      <arg direction="in" name="display" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
+    </method>
+
+    <!--
+      DisplayApplicationChooserDialog (uri : STRING, open : BOOLEAN, display : STRING, startup_id : STRING) : VOID
+
+      uri                        : either a file:-URI or an absolute path.
+      open                       : TRUE to let the user open the file identified by the
+                                   uri after choosing an application, FALSE to only update
+                                   the mime database.
+      preselect_default_checkbox : TRUE in order to preselect the 'use as default application' checkbox
+      display                    : the screen on which to display the chooser dialog or
+                                   "" to use the default screen of the file manager.
+      startup_id                 : the DESKTOP_STARTUP_ID environment variable for properly
+                                   handling startup notification and focus stealing.
+
+      Displays the chooser dialog, which lets the user select an application
+      to handle the file identified by the uri (and all other files of the
+      same mime type). If open is TRUE the user will also be able to open
+      the file after choosing an application.
+    -->
+    <method name="DisplayApplicationChooserDialog">
+      <arg direction="in" name="uri" type="s" />
+      <arg direction="in" name="open" type="b" />
+      <arg direction="in" name="preselect_default_checkbox" type="b" />
       <arg direction="in" name="display" type="s" />
       <arg direction="in" name="startup_id" type="s" />
     </method>
