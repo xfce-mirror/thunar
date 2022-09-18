@@ -162,6 +162,8 @@ thunar_renamer_progress_run_error_dialog (ThunarRenamerProgress *renamer_progres
                                     _("Failed to rename \"%s\" to \"%s\"."),
                                     oldname, pair->name);
 
+  gtk_window_set_title (GTK_WINDOW (message), _("Error"));
+
   /* release old name */
   g_free (oldname);
 

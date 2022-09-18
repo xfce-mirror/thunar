@@ -820,6 +820,7 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
                                         GTK_MESSAGE_ERROR,
                                         GTK_BUTTONS_CLOSE,
                                         _("Failed to save \"%s\"."), filename);
+      gtk_window_set_title (GTK_WINDOW (message), _("Error"));
       gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s.", error->message);
       gtk_dialog_run (GTK_DIALOG (message));
       gtk_widget_destroy (message);

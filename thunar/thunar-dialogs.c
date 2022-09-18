@@ -482,6 +482,8 @@ thunar_dialogs_show_error (gpointer      parent,
                                    GTK_BUTTONS_CLOSE,
                                    "%s.", primary_text);
 
+  gtk_window_set_title (GTK_WINDOW (dialog), _("Error"));
+
   /* move the dialog to the appropriate screen */
   if (G_UNLIKELY (window == NULL && screen != NULL))
     gtk_window_set_screen (GTK_WINDOW (dialog), screen);
@@ -580,6 +582,7 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
                                     GTK_MESSAGE_QUESTION,
                                     GTK_BUTTONS_NONE,
                                     "%s", primary->str);
+  gtk_window_set_title (GTK_WINDOW (message), _("Attention"));
   if (G_LIKELY (*secondary->str != '\0'))
     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s", secondary->str);
 
@@ -1002,6 +1005,7 @@ thunar_dialogs_show_job_error (GtkWindow *parent,
                                     GTK_MESSAGE_ERROR,
                                     GTK_BUTTONS_NONE,
                                     "%s", primary->str);
+  gtk_window_set_title (GTK_WINDOW (message), _("Error"));
   if (G_LIKELY (*secondary->str != '\0'))
     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s", secondary->str);
   gtk_dialog_add_button (GTK_DIALOG (message), _("_Close"), GTK_RESPONSE_CANCEL);
@@ -1056,6 +1060,7 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
                                    GTK_MESSAGE_WARNING,
                                    GTK_BUTTONS_NONE,
                                    "%s", primary);
+  gtk_window_set_title (GTK_WINDOW (dialog), _("Attention"));
   gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Launch Anyway"), GTK_RESPONSE_OK);
   if (thunar_file_is_chmodable (file))
     gtk_dialog_add_button (GTK_DIALOG (dialog), _("Mark _Executable"), GTK_RESPONSE_APPLY);

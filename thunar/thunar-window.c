@@ -3987,6 +3987,7 @@ thunar_window_open_user_folder (ThunarWindow   *window,
                                        GTK_BUTTONS_YES_NO,
                                        _("The directory \"%s\" does not exist. Do you want to create it?"),
                                        parse_name);
+      gtk_window_set_title (GTK_WINDOW (dialog), _("Create directory"));
       gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
       response = gtk_dialog_run (GTK_DIALOG (dialog));
       gtk_widget_destroy (dialog);
