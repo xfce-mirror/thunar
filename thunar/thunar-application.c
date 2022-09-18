@@ -2394,6 +2394,7 @@ thunar_application_unlink_files (ThunarApplication *application,
                                        "%s", message);
       if (G_UNLIKELY (window == NULL && screen != NULL))
         gtk_window_set_screen (GTK_WINDOW (dialog), screen);
+      gtk_window_set_title (GTK_WINDOW (dialog), _("Attention"));
       gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                               _("_Cancel"), GTK_RESPONSE_CANCEL,
                               _("_Delete"), GTK_RESPONSE_YES,
@@ -2573,6 +2574,7 @@ thunar_application_empty_trash (ThunarApplication *application,
   if (G_UNLIKELY (window == NULL && screen != NULL))
     gtk_window_set_screen (GTK_WINDOW (dialog), screen);
   gtk_window_set_startup_id (GTK_WINDOW (dialog), startup_id);
+  gtk_window_set_title (GTK_WINDOW (dialog), _("Empty Trash"));
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                           _("_Cancel"), GTK_RESPONSE_CANCEL,
                           _("_Empty Trash"), GTK_RESPONSE_YES,

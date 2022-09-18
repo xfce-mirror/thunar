@@ -745,6 +745,7 @@ thunar_chooser_dialog_action_remove (ThunarChooserDialog *dialog)
                                         GTK_MESSAGE_QUESTION,
                                         GTK_BUTTONS_NONE,
                                         _("Are you sure that you want to remove \"%s\"?"), name);
+      gtk_window_set_title (GTK_WINDOW (message), _("Remove application launcher"));
       gtk_dialog_add_buttons (GTK_DIALOG (message),
                               _("_Cancel"), GTK_RESPONSE_CANCEL,
                               _("_Remove"), GTK_RESPONSE_YES,
@@ -819,6 +820,7 @@ thunar_chooser_dialog_action_forget (ThunarChooserDialog *dialog)
                                         GTK_MESSAGE_QUESTION,
                                         GTK_BUTTONS_NONE,
                                         _("Are you sure that you want to forget \"%s\"?"), name);
+      gtk_window_set_title (GTK_WINDOW (message), _("Forget application launcher"));
       gtk_dialog_add_buttons (GTK_DIALOG (message),
                               _("_Cancel"), GTK_RESPONSE_CANCEL,
                               _("_Forget"), GTK_RESPONSE_YES,

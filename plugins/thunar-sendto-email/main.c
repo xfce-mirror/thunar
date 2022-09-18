@@ -141,6 +141,7 @@ tse_error (GError      *error,
 
   /* allocate the error dialog */
   dialog = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "%s.", primary_text);
+  gtk_window_set_title (GTK_WINDOW (dialog), _("Error"));
   gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s.", error->message);
 
   /* display the dialog */
@@ -218,6 +219,7 @@ tse_ask_compress (GList *infos)
           message = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
                                             _("Send \"%s\" as compressed archive?"),
                                             g_file_info_get_display_name (tse_data->info));
+          gtk_window_set_title (GTK_WINDOW (message), _("Send email"));
           gtk_dialog_add_button (GTK_DIALOG (message), _("_Cancel"), GTK_RESPONSE_CANCEL);
           gtk_dialog_add_button (GTK_DIALOG (message), _("Send _directly"), TSE_RESPONSE_PLAIN);
           gtk_dialog_add_button (GTK_DIALOG (message), _("Send com_pressed"), TSE_RESPONSE_COMPRESS);
@@ -237,6 +239,7 @@ tse_ask_compress (GList *infos)
                                                       "Send %d files as compressed archive?",
                                                       n_infos),
                                             n_infos);
+          gtk_window_set_title (GTK_WINDOW (message), _("Send email"));
           gtk_dialog_add_button (GTK_DIALOG (message), _("_Cancel"), GTK_RESPONSE_CANCEL);
           gtk_dialog_add_button (GTK_DIALOG (message), _("Send _directly"), TSE_RESPONSE_PLAIN);
           gtk_dialog_add_button (GTK_DIALOG (message), _("Send as _archive"), TSE_RESPONSE_COMPRESS);

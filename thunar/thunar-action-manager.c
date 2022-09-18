@@ -980,6 +980,7 @@ thunar_action_manager_open_windows (ThunarActionManager *action_mgr,
                                        GTK_MESSAGE_QUESTION,
                                        GTK_BUTTONS_NONE,
                                        _("Are you sure you want to open all folders?"));
+      gtk_window_set_title (GTK_WINDOW (dialog), _("Open folders"));
       gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
                                                 ngettext ("This will open %d separate file manager window.",
                                                           "This will open %d separate file manager windows.",

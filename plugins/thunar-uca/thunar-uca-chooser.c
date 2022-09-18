@@ -317,6 +317,7 @@ thunar_uca_chooser_save (ThunarUcaChooser *uca_chooser,
                                        GTK_MESSAGE_ERROR,
                                        GTK_BUTTONS_CLOSE,
                                        _("Failed to save actions to disk."));
+      gtk_window_set_title (GTK_WINDOW (dialog), _("Error"));
       gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s.", error->message);
       gtk_dialog_run (GTK_DIALOG (dialog));
       gtk_widget_destroy (dialog);
@@ -368,6 +369,7 @@ thunar_uca_chooser_delete_clicked (ThunarUcaChooser *uca_chooser)
                                        GTK_MESSAGE_QUESTION,
                                        GTK_BUTTONS_NONE,
                                        _("Are you sure that you want to delete\naction \"%s\"?"), name);
+      gtk_window_set_title (GTK_WINDOW (dialog), _("Delete action"));
       gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("If you delete a custom action, it is permanently lost."));
       gtk_dialog_add_buttons (GTK_DIALOG (dialog), _("_Cancel"), GTK_RESPONSE_CANCEL,
                               _("_Delete"), GTK_RESPONSE_YES, NULL);
