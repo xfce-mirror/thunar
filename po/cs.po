@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-11 00:46+0200\n"
+"POT-Creation-Date: 2022-09-19 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Michal Várady <miko.vaji@gmail.com>, 2013-2015,2017-2022\n"
 "Language-Team: Czech (http://www.transifex.com/xfce/thunar/language/cs/)\n"
@@ -56,7 +56,7 @@ msgid "Open With Other _Application..."
 msgstr "Otevřít v jiné _aplikaci..."
 
 #: ../thunar/thunar-action-manager.c:275
-#: ../thunar/thunar-action-manager.c:3300
+#: ../thunar/thunar-action-manager.c:3301
 msgid "Choose another application with which to open the selected file"
 msgstr "Vybere jinou aplikaci pro otevření vybraného souboru"
 
@@ -101,7 +101,7 @@ msgid "View the properties of the selected file"
 msgstr "Zobrazit vlastnosti vybraného souboru"
 
 #: ../thunar/thunar-action-manager.c:284
-#: ../thunar/thunar-action-manager.c:1615
+#: ../thunar/thunar-action-manager.c:1616
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Vy_tvořit odkaz"
@@ -118,7 +118,7 @@ msgid "_Rename..."
 msgstr "_Přejmenovat..."
 
 #. prepare the menu item
-#: ../thunar/thunar-action-manager.c:287 ../thunar/thunar-application.c:2578
+#: ../thunar/thunar-action-manager.c:287 ../thunar/thunar-application.c:2589
 #: ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "Vy_sypat koš"
@@ -167,8 +167,8 @@ msgstr "_Obnovit a zobrazit soubor(y)"
 msgid "Mo_ve to Trash"
 msgstr "Přesu_nout do koše"
 
-#: ../thunar/thunar-action-manager.c:295 ../thunar/thunar-application.c:2399
-#: ../plugins/thunar-uca/thunar-uca-chooser.c:373
+#: ../thunar/thunar-action-manager.c:295 ../thunar/thunar-application.c:2409
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:375
 msgid "_Delete"
 msgstr "_Smazat"
 
@@ -272,7 +272,11 @@ msgstr[3] "Nepodařilo se otevřít %d souborů."
 msgid "Are you sure you want to open all folders?"
 msgstr "Opravdu chcete otevřít všechny složky?"
 
-#: ../thunar/thunar-action-manager.c:984
+#: ../thunar/thunar-action-manager.c:983
+msgid "Open folders"
+msgstr ""
+
+#: ../thunar/thunar-action-manager.c:985
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
@@ -281,7 +285,7 @@ msgstr[1] "Bude otevřeno %d oddělěné okna správce souborů."
 msgstr[2] "Bude otevřeno %d oddělěných oken správce souborů."
 msgstr[3] "Bude otevřeno %d oddělěných oken správce souborů."
 
-#: ../thunar/thunar-action-manager.c:987
+#: ../thunar/thunar-action-manager.c:988
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
@@ -294,38 +298,38 @@ msgstr[3] "Otevřít %d nových oken"
 #. append the cancel item
 #. add the Cancel/Close buttons
 #. configure the dialog properties
-#: ../thunar/thunar-action-manager.c:988 ../thunar/thunar-application.c:2398
-#: ../thunar/thunar-application.c:2577 ../thunar/thunar-chooser-dialog.c:293
-#: ../thunar/thunar-chooser-dialog.c:749 ../thunar/thunar-chooser-dialog.c:823
-#: ../thunar/thunar-chooser-dialog.c:874 ../thunar/thunar-dialogs.c:98
-#: ../thunar/thunar-dialogs.c:241 ../thunar/thunar-dialogs.c:664
-#: ../thunar/thunar-dialogs.c:778 ../thunar/thunar-dialogs.c:1062
+#: ../thunar/thunar-action-manager.c:989 ../thunar/thunar-application.c:2408
+#: ../thunar/thunar-application.c:2588 ../thunar/thunar-chooser-dialog.c:293
+#: ../thunar/thunar-chooser-dialog.c:750 ../thunar/thunar-chooser-dialog.c:825
+#: ../thunar/thunar-chooser-dialog.c:876 ../thunar/thunar-dialogs.c:98
+#: ../thunar/thunar-dialogs.c:241 ../thunar/thunar-dialogs.c:667
+#: ../thunar/thunar-dialogs.c:781 ../thunar/thunar-dialogs.c:1067
 #: ../thunar/thunar-dnd.c:171 ../thunar/thunar-permissions-chooser.c:559
-#: ../thunar/thunar-permissions-chooser.c:1169
+#: ../thunar/thunar-permissions-chooser.c:1170
 #: ../thunar/thunar-properties-dialog.c:1102
 #: ../thunar/thunar-renamer-dialog.c:358
 #: ../thunar/thunar-renamer-dialog.c:1073
-#: ../thunar/thunar-renamer-progress.c:176
-#: ../thunar/thunar-renamer-progress.c:186
-#: ../plugins/thunar-sendto-email/main.c:221
-#: ../plugins/thunar-sendto-email/main.c:240
-#: ../plugins/thunar-sendto-email/main.c:304
-#: ../plugins/thunar-uca/thunar-uca-chooser.c:372
+#: ../thunar/thunar-renamer-progress.c:178
+#: ../thunar/thunar-renamer-progress.c:188
+#: ../plugins/thunar-sendto-email/main.c:223
+#: ../plugins/thunar-sendto-email/main.c:243
+#: ../plugins/thunar-sendto-email/main.c:307
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:374
 #: ../plugins/thunar-uca/thunar-uca-editor.c:145
 #: ../plugins/thunar-uca/thunar-uca-editor.c:180
 #: ../plugins/thunar-uca/thunar-uca-editor.c:438
 msgid "_Cancel"
 msgstr "_Zrušit"
 
-#: ../thunar/thunar-action-manager.c:1075
-#: ../thunar/thunar-action-manager.c:1953
+#: ../thunar/thunar-action-manager.c:1076
+#: ../thunar/thunar-action-manager.c:1954
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Nepodařilo se připojit %s"
 
 #. tell the user that we were unable to launch the file specified
-#: ../thunar/thunar-action-manager.c:1123 ../thunar/thunar-application.c:1624
-#: ../thunar/thunar-application.c:1784 ../thunar/thunar-location-entry.c:358
+#: ../thunar/thunar-action-manager.c:1124 ../thunar/thunar-application.c:1633
+#: ../thunar/thunar-application.c:1793 ../thunar/thunar-location-entry.c:358
 #: ../thunar/thunar-location-entry.c:386
 #, c-format
 msgid "Failed to open \"%s\""
@@ -333,15 +337,15 @@ msgstr "Nepodařilo se otevřít soubor \"%s\""
 
 #. aka "activate"
 #. change the accept button label text
-#: ../thunar/thunar-action-manager.c:1551
-#: ../thunar/thunar-chooser-dialog.c:875
-#: ../thunar/thunar-chooser-dialog.c:1286
+#: ../thunar/thunar-action-manager.c:1552
+#: ../thunar/thunar-chooser-dialog.c:877
+#: ../thunar/thunar-chooser-dialog.c:1288
 #: ../thunar/thunar-renamer-dialog.c:1074
 #: ../plugins/thunar-uca/thunar-uca-editor.c:181
 msgid "_Open"
 msgstr "_Otevřít"
 
-#: ../thunar/thunar-action-manager.c:1551
+#: ../thunar/thunar-action-manager.c:1552
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "Otevřít vybraný soubor"
@@ -349,11 +353,11 @@ msgstr[1] "Otevřít vybrané soubory"
 msgstr[2] "Otevřít vybrané soubory"
 msgstr[3] "Otevřít vybrané soubory"
 
-#: ../thunar/thunar-action-manager.c:1555
+#: ../thunar/thunar-action-manager.c:1556
 msgid "_Execute"
 msgstr "_Spustit"
 
-#: ../thunar/thunar-action-manager.c:1555
+#: ../thunar/thunar-action-manager.c:1556
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "Spustit vybraný soubor"
@@ -361,7 +365,7 @@ msgstr[1] "Spustit vybrané soubory"
 msgstr[2] "Spustit vybrané soubory"
 msgstr[3] "Spustit vybrané soubory"
 
-#: ../thunar/thunar-action-manager.c:1560
+#: ../thunar/thunar-action-manager.c:1561
 #, c-format
 msgid "Open in New _Tab"
 msgid_plural "Open in %d New _Tabs"
@@ -370,7 +374,7 @@ msgstr[1] "Otevřít na %d nových kar_tách"
 msgstr[2] "Otevřít na %d nových kar_tách"
 msgstr[3] "Otevřít na %d nových kar_tách"
 
-#: ../thunar/thunar-action-manager.c:1561
+#: ../thunar/thunar-action-manager.c:1562
 #, c-format
 msgid "Open the selected directory in new tab"
 msgid_plural "Open the selected directories in %d new tabs"
@@ -379,7 +383,7 @@ msgstr[1] "Otevřít vybrané adresáře na %d nových kartách"
 msgstr[2] "Otevřít vybrané adresáře na %d nových kartách"
 msgstr[3] "Otevřít vybrané adresáře na %d nových kartách"
 
-#: ../thunar/thunar-action-manager.c:1570
+#: ../thunar/thunar-action-manager.c:1571
 #, c-format
 msgid "Open in New _Window"
 msgid_plural "Open in %d New _Windows"
@@ -388,7 +392,7 @@ msgstr[1] "Ote_vřít ve %d nových oknech"
 msgstr[2] "Ote_vřít v %d nových oknech"
 msgstr[3] "Ote_vřít v %d nových oknech"
 
-#: ../thunar/thunar-action-manager.c:1571
+#: ../thunar/thunar-action-manager.c:1572
 #, c-format
 msgid "Open the selected directory in new window"
 msgid_plural "Open the selected directories in %d new windows"
@@ -397,7 +401,7 @@ msgstr[1] "Otevřít vybrané adresáře ve %d nových oknech"
 msgstr[2] "Otevřít vybrané adresáře v %d nových oknech"
 msgstr[3] "Otevřít vybrané adresáře v %d nových oknech"
 
-#: ../thunar/thunar-action-manager.c:1616
+#: ../thunar/thunar-action-manager.c:1617
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Vytvoří symbolický odkaz pro vybraný soubor"
@@ -405,7 +409,7 @@ msgstr[1] "Vytvoří symbolický odkaz pro každý z vybraných souborů"
 msgstr[2] "Vytvoří symbolický odkaz pro každý z vybraných souborů"
 msgstr[3] "Vytvoří symbolický odkaz pro každý z vybraných souborů"
 
-#: ../thunar/thunar-action-manager.c:1646
+#: ../thunar/thunar-action-manager.c:1647
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Přejmenovat vybraný soubor"
@@ -413,7 +417,7 @@ msgstr[1] "Přejmenovat vybrané soubory"
 msgstr[2] "Přejmenovat vybrané soubory"
 msgstr[3] "Přejmenovat vybrané soubory"
 
-#: ../thunar/thunar-action-manager.c:1656
+#: ../thunar/thunar-action-manager.c:1657
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
 msgstr[0] "Obnovit vybraný soubor do původního umístění"
@@ -421,7 +425,7 @@ msgstr[1] "Obnovit vybrané soubory do původních umístění"
 msgstr[2] "Obnovit vybrané soubory do původních umístění"
 msgstr[3] "Obnovit vybrané soubory do původních umístění"
 
-#: ../thunar/thunar-action-manager.c:1668
+#: ../thunar/thunar-action-manager.c:1669
 msgid ""
 "Restore the selected file to its original location and open the location in "
 "a new window/tab"
@@ -433,7 +437,7 @@ msgstr[1] "Obnoví vybrané soubory to jejich původních umístění a otevře 
 msgstr[2] "Obnoví vybrané soubory to jejich původních umístění a otevře umístění v novém okně nebo kartě"
 msgstr[3] "Obnoví vybrané soubory to jejich původních umístění a otevře umístění v novém okně nebo kartě"
 
-#: ../thunar/thunar-action-manager.c:1685
+#: ../thunar/thunar-action-manager.c:1686
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "Přesunout vybraný soubor do koše"
@@ -441,7 +445,7 @@ msgstr[1] "Přesunout vybrané soubory do koše"
 msgstr[2] "Přesunout vybrané soubory do koše"
 msgstr[3] "Přesunout vybrané soubory do koše"
 
-#: ../thunar/thunar-action-manager.c:1702
+#: ../thunar/thunar-action-manager.c:1703
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "Smazat vybraný soubor"
@@ -449,11 +453,11 @@ msgstr[1] "Smazat vybrané soubory"
 msgstr[2] "Smazat vybrané soubory"
 msgstr[3] "Smazat vybrané soubory"
 
-#: ../thunar/thunar-action-manager.c:1761
+#: ../thunar/thunar-action-manager.c:1762
 msgid "Cut the selection"
 msgstr "Vyjmout výběr"
 
-#: ../thunar/thunar-action-manager.c:1771
+#: ../thunar/thunar-action-manager.c:1772
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Připraví vybraný soubor k přesunu pomocí příkazu Vložit"
@@ -461,11 +465,11 @@ msgstr[1] "Připraví vybrané soubory k přesunu pomocí příkazu Vložit"
 msgstr[2] "Připraví vybrané soubory k přesunu pomocí příkazu Vložit"
 msgstr[3] "Připraví vybrané soubory k přesunu pomocí příkazu Vložit"
 
-#: ../thunar/thunar-action-manager.c:1785
+#: ../thunar/thunar-action-manager.c:1786
 msgid "Copy the selection"
 msgstr "Zkopírovat výběr"
 
-#: ../thunar/thunar-action-manager.c:1795
+#: ../thunar/thunar-action-manager.c:1796
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Připraví vybraný soubor ke zkopírování pomocí příkazu Vložit"
@@ -473,11 +477,11 @@ msgstr[1] "Připraví vybrané soubory ke zkopírování pomocí příkazu Vlož
 msgstr[2] "Připraví vybrané soubory ke zkopírování pomocí příkazu Vložit"
 msgstr[3] "Připraví vybrané soubory ke zkopírování pomocí příkazu Vložit"
 
-#: ../thunar/thunar-action-manager.c:1818
+#: ../thunar/thunar-action-manager.c:1819
 msgid "Paste the clipboard"
 msgstr "Vložit ze schránky"
 
-#: ../thunar/thunar-action-manager.c:2064
+#: ../thunar/thunar-action-manager.c:2065
 msgid "Side Pane (Add Bookmark)"
 msgid_plural "Side Pane (Add Bookmarks)"
 msgstr[0] "Postranní panel (Přidat záložku)"
@@ -485,7 +489,7 @@ msgstr[1] "Postranní panel (Přidat záložky)"
 msgstr[2] "Postranní panel (Přidat záložky)"
 msgstr[3] "Postranní panel (Přidat záložky)"
 
-#: ../thunar/thunar-action-manager.c:2065
+#: ../thunar/thunar-action-manager.c:2066
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "Přidá vybranou složku do panelu se záložkami"
@@ -493,7 +497,7 @@ msgstr[1] "Přidá vybrané složky do panelu se záložkami"
 msgstr[2] "Přidá vybrané složky do panelu se záložkami"
 msgstr[3] "Přidá vybrané složky do panelu se záložkami"
 
-#: ../thunar/thunar-action-manager.c:2084
+#: ../thunar/thunar-action-manager.c:2085
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "Pracovní plocha (Vytvořit symbolický odkaz)"
@@ -501,7 +505,7 @@ msgstr[1] "Pracovní plocha (Vytvořit symbolické odkazy)"
 msgstr[2] "Pracovní plocha (Vytvořit symbolické odkazy)"
 msgstr[3] "Pracovní plocha (Vytvořit symbolické odkazy)"
 
-#: ../thunar/thunar-action-manager.c:2085
+#: ../thunar/thunar-action-manager.c:2086
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "Vytvořit odkazy k vybranému souborům na pracovní plochu"
@@ -509,8 +513,8 @@ msgstr[1] "Vytvořit odkazy k vybraných souborům na pracovní plochu"
 msgstr[2] "Vytvořit odkazy k vybraných souborům na pracovní plochu"
 msgstr[3] "Vytvořit odkazy k vybraných souborům na pracovní plochu"
 
-#: ../thunar/thunar-action-manager.c:2106
-#: ../thunar/thunar-action-manager.c:2144
+#: ../thunar/thunar-action-manager.c:2107
+#: ../thunar/thunar-action-manager.c:2145
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
@@ -520,62 +524,62 @@ msgstr[2] "Odeslat vybrané soubory do %s"
 msgstr[3] "Odeslat vybrané soubory do %s"
 
 #. display an error message
-#: ../thunar/thunar-action-manager.c:2411 ../thunar/thunar-application.c:1846
+#: ../thunar/thunar-action-manager.c:2412 ../thunar/thunar-application.c:1855
 #: ../thunar/thunar-properties-dialog.c:1013
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Nepodařilo se přejmenovat \"%s\""
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-action-manager.c:2627 ../thunar/thunar-application.c:1950
+#: ../thunar/thunar-action-manager.c:2628 ../thunar/thunar-application.c:1959
 msgid "New Folder"
 msgstr "Nová složka"
 
-#: ../thunar/thunar-action-manager.c:2631 ../thunar/thunar-application.c:1951
+#: ../thunar/thunar-action-manager.c:2632 ../thunar/thunar-application.c:1960
 msgid "Create New Folder"
 msgstr "Vytvořit novou složku"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-action-manager.c:2683 ../thunar/thunar-application.c:2013
+#: ../thunar/thunar-action-manager.c:2684 ../thunar/thunar-application.c:2022
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Vytvoří dokument z šablony \"%s\""
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-action-manager.c:2699
+#: ../thunar/thunar-action-manager.c:2700
 msgid "New Empty File"
 msgstr "Nový prázdný soubor"
 
-#: ../thunar/thunar-action-manager.c:2703
+#: ../thunar/thunar-action-manager.c:2704
 msgid "New Empty File..."
 msgstr "Nový prázdný soubor..."
 
-#: ../thunar/thunar-action-manager.c:2906
+#: ../thunar/thunar-action-manager.c:2907
 #, c-format
 msgid "No templates installed in \"%s\""
 msgstr "V umístění %s nejsou nainstalovány žádné šablony"
 
-#: ../thunar/thunar-action-manager.c:2919
+#: ../thunar/thunar-action-manager.c:2920
 msgid "_Empty File"
 msgstr "_Prázdný soubor"
 
-#: ../thunar/thunar-action-manager.c:3024
+#: ../thunar/thunar-action-manager.c:3025
 #, c-format
 msgid "Failed to edit launcher via command \"%s\""
 msgstr ""
 
-#: ../thunar/thunar-action-manager.c:3063
+#: ../thunar/thunar-action-manager.c:3064
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Nepodařilo se vysunout \"%s\""
 
-#: ../thunar/thunar-action-manager.c:3125
+#: ../thunar/thunar-action-manager.c:3126
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Nepodařilo se odpojit \"%s\""
 
-#: ../thunar/thunar-action-manager.c:3188
-#: ../thunar/thunar-action-manager.c:3259
+#: ../thunar/thunar-action-manager.c:3189
+#: ../thunar/thunar-action-manager.c:3260
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
@@ -584,18 +588,18 @@ msgstr[1] "Otevřít vybrané soubory v aplikaci %s"
 msgstr[2] "Otevřít vybrané soubory v aplikaci %s"
 msgstr[3] "Otevřít vybrané soubory v aplikaci %s"
 
-#: ../thunar/thunar-action-manager.c:3258
+#: ../thunar/thunar-action-manager.c:3259
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "_Otevřít v aplikaci %s"
 
 #. we can only show a generic "Open" action
-#: ../thunar/thunar-action-manager.c:3278
+#: ../thunar/thunar-action-manager.c:3279
 #, c-format
 msgid "_Open With Default Applications"
 msgstr "_Otevřít výchozími aplikacemi"
 
-#: ../thunar/thunar-action-manager.c:3279
+#: ../thunar/thunar-action-manager.c:3280
 #, c-format
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
@@ -604,7 +608,7 @@ msgstr[1] "Otevřít vybrané soubory výchozími aplikacemi"
 msgstr[2] "Otevřít vybrané soubory výchozími aplikacemi"
 msgstr[3] "Otevřít vybrané soubory výchozími aplikacemi"
 
-#: ../thunar/thunar-action-manager.c:3299
+#: ../thunar/thunar-action-manager.c:3300
 #: ../thunar/thunar-chooser-dialog.c:187
 msgid "Open With"
 msgstr "Otevřít pomocí"
@@ -658,50 +662,50 @@ msgstr "Prosíme, abyste chyby nahlásili na adresu <%s>."
 msgid "Failed to launch operation"
 msgstr "Nepodařilo se spustit operaci"
 
-#: ../thunar/thunar-application.c:1788
+#: ../thunar/thunar-application.c:1797
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "Nepodařilo se otevřít soubor \"%s\": %s"
 
-#: ../thunar/thunar-application.c:1955
+#: ../thunar/thunar-application.c:1964
 msgid "New File"
 msgstr "Nový soubor"
 
-#: ../thunar/thunar-application.c:1956
+#: ../thunar/thunar-application.c:1965
 msgid "Create New File"
 msgstr "Vytvořit nový soubor"
 
-#: ../thunar/thunar-application.c:2077
+#: ../thunar/thunar-application.c:2086
 msgid "Copying files..."
 msgstr "Kopírování souborů..."
 
-#: ../thunar/thunar-application.c:2135
+#: ../thunar/thunar-application.c:2144
 #, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "Kopírování souborů do \"%s\"..."
 
-#: ../thunar/thunar-application.c:2189
+#: ../thunar/thunar-application.c:2198
 #, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "Vytváření symbolických odkazů v \"%s\"..."
 
-#: ../thunar/thunar-application.c:2258
+#: ../thunar/thunar-application.c:2267
 #, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "Přesouvání souborů do \"%s\"..."
 
-#: ../thunar/thunar-application.c:2303
+#: ../thunar/thunar-application.c:2312
 msgid "Moving files ..."
 msgstr ""
 
-#: ../thunar/thunar-application.c:2378
+#: ../thunar/thunar-application.c:2387
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr "Opravdu chcete trvale\nodstranit \"%s\"?"
 
-#: ../thunar/thunar-application.c:2383
+#: ../thunar/thunar-application.c:2392
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -714,52 +718,61 @@ msgstr[1] "Opravdu chcete trvale odstranit %u vybrané soubory?"
 msgstr[2] "Opravdu chcete trvale odstranit %u vybraných souborů?"
 msgstr[3] "Opravdu chcete trvale odstranit %u vybraných souborů?"
 
-#: ../thunar/thunar-application.c:2403
+#: ../thunar/thunar-application.c:2406 ../thunar/thunar-dialogs.c:585
+#: ../thunar/thunar-dialogs.c:1063
+msgid "Attention"
+msgstr ""
+
+#: ../thunar/thunar-application.c:2413
 msgid "If you delete a file, it is permanently lost."
 msgstr "Smažete-li soubor, bude nenávratně ztracen."
 
-#: ../thunar/thunar-application.c:2413
+#: ../thunar/thunar-application.c:2423
 msgid "Deleting files..."
 msgstr "Mazání souborů..."
 
-#: ../thunar/thunar-application.c:2448
+#: ../thunar/thunar-application.c:2458
 msgid "Moving files into the trash..."
 msgstr "Přesouvání souborů do koše..."
 
-#: ../thunar/thunar-application.c:2494
+#: ../thunar/thunar-application.c:2504
 msgid "Creating files..."
 msgstr "Vytváření souborů..."
 
-#: ../thunar/thunar-application.c:2533
+#: ../thunar/thunar-application.c:2543
 msgid "Creating directories..."
 msgstr "Vytváření adresářů..."
 
-#: ../thunar/thunar-application.c:2572
+#: ../thunar/thunar-application.c:2582
 msgid "Remove all files and folders from the Trash?"
 msgstr "Odebrat všechny soubory a složky z koše?"
 
-#: ../thunar/thunar-application.c:2582
+#: ../thunar/thunar-application.c:2586
+msgid "Empty Trash"
+msgstr ""
+
+#: ../thunar/thunar-application.c:2593
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr "Zvolíte-li vyprázdnění koše, všechny položky budou nenávratně ztraceny. Položky můžete také mazat odděleně."
 
-#: ../thunar/thunar-application.c:2599
+#: ../thunar/thunar-application.c:2610
 msgid "Emptying the Trash..."
 msgstr "Vyprazdňuji koš..."
 
-#: ../thunar/thunar-application.c:2645
+#: ../thunar/thunar-application.c:2656
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "Nepodařilo se zjistit původní cestu pro \"%s\""
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:2662
+#: ../thunar/thunar-application.c:2673
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "Nelze obnovit \"%s\""
 
-#: ../thunar/thunar-application.c:2670
+#: ../thunar/thunar-application.c:2681
 msgid "Restoring files..."
 msgstr "Obnovování souborů..."
 
@@ -806,8 +819,8 @@ msgstr "Použít jako _výchozí pro tento typ souboru"
 
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
-#: ../thunar/thunar-chooser-dialog.c:1286
-#: ../thunar/thunar-properties-dialog.c:1103 ../thunar/thunar-window.c:4103
+#: ../thunar/thunar-chooser-dialog.c:1288
+#: ../thunar/thunar-properties-dialog.c:1103 ../thunar/thunar-window.c:4109
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -859,11 +872,15 @@ msgstr "Změnit výchozí aplikaci pro soubory typu \"%s\" na vybranou aplikaci.
 msgid "Are you sure that you want to remove \"%s\"?"
 msgstr "Opravdu chcete odstranit \"%s\"?"
 
-#: ../thunar/thunar-chooser-dialog.c:750
+#: ../thunar/thunar-chooser-dialog.c:748
+msgid "Remove application launcher"
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:751
 msgid "_Remove"
 msgstr "_Odebrat"
 
-#: ../thunar/thunar-chooser-dialog.c:753
+#: ../thunar/thunar-chooser-dialog.c:754
 msgid ""
 "This will remove the application launcher that appears in the file context menu, but will not uninstall the application itself.\n"
 "\n"
@@ -871,69 +888,73 @@ msgid ""
 msgstr "Odebere spouštěč aplikace objevující se v kontextové nabídce souboru, neodinstaluje však samotnou aplikaci.\n\nMůžete odebrat pouze spouštěče aplikací, které byly vytvořeny použitím vlastního příkazu v dialogu \"Otevřít pomocí\" správce souborů."
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:768
+#: ../thunar/thunar-chooser-dialog.c:769
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "Nepodařilo se odstranit soubor \"%s\""
 
-#: ../thunar/thunar-chooser-dialog.c:821
+#: ../thunar/thunar-chooser-dialog.c:822
 #, c-format
 msgid "Are you sure that you want to forget \"%s\"?"
 msgstr "Opravdu chcete zapomenout \"%s\"?"
 
-#: ../thunar/thunar-chooser-dialog.c:824
+#: ../thunar/thunar-chooser-dialog.c:823
+msgid "Forget application launcher"
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:826
 msgid "_Forget"
 msgstr "_Zapomenout"
 
-#: ../thunar/thunar-chooser-dialog.c:827
+#: ../thunar/thunar-chooser-dialog.c:829
 msgid ""
 "This will dissociate the application launcher for this file type, but will "
 "not uninstall or remove the application launcher itself."
 msgstr "Odebere asociaci spouštěče aplikací pro tento typ souboru, ale neodinstaluje ani neodstraní samotný spouštěč aplikací."
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:844
+#: ../thunar/thunar-chooser-dialog.c:846
 #, c-format
 msgid "Failed to forget \"%s\""
 msgstr "Nepodařilo se zapomenout \"%s\""
 
-#: ../thunar/thunar-chooser-dialog.c:871
+#: ../thunar/thunar-chooser-dialog.c:873
 #: ../plugins/thunar-uca/thunar-uca-editor.c:177
 msgid "Select an Application"
 msgstr "Vyberte aplikaci"
 
-#: ../thunar/thunar-chooser-dialog.c:881
+#: ../thunar/thunar-chooser-dialog.c:883
 #: ../thunar/thunar-renamer-dialog.c:1081
 #: ../plugins/thunar-uca/thunar-uca-editor.c:188
 msgid "All Files"
 msgstr "Všechny soubory"
 
-#: ../thunar/thunar-chooser-dialog.c:886
+#: ../thunar/thunar-chooser-dialog.c:888
 #: ../plugins/thunar-uca/thunar-uca-editor.c:193
 msgid "Executable Files"
 msgstr "Spustitelné soubory"
 
-#: ../thunar/thunar-chooser-dialog.c:901
+#: ../thunar/thunar-chooser-dialog.c:903
 #: ../plugins/thunar-uca/thunar-uca-editor.c:208
 msgid "Perl Scripts"
 msgstr "Skripty jazyka Perl"
 
-#: ../thunar/thunar-chooser-dialog.c:907
+#: ../thunar/thunar-chooser-dialog.c:909
 #: ../plugins/thunar-uca/thunar-uca-editor.c:214
 msgid "Python Scripts"
 msgstr "Skripty jazyka Python"
 
-#: ../thunar/thunar-chooser-dialog.c:913
+#: ../thunar/thunar-chooser-dialog.c:915
 #: ../plugins/thunar-uca/thunar-uca-editor.c:220
 msgid "Ruby Scripts"
 msgstr "Skripty jazyka Ruby"
 
-#: ../thunar/thunar-chooser-dialog.c:919
+#: ../thunar/thunar-chooser-dialog.c:921
 #: ../plugins/thunar-uca/thunar-uca-editor.c:226
 msgid "Shell Scripts"
 msgstr "Shellové skripty"
 
-#: ../thunar/thunar-chooser-dialog.c:1354
+#: ../thunar/thunar-chooser-dialog.c:1356
 msgid "Set Default Application"
 msgstr "Nastavit výchozí aplikaci"
 
@@ -967,11 +988,11 @@ msgstr "Ve schránce se nenacházejí žádné položky"
 #. add the "Close" button
 #. setup the dialog
 #. add a regular close button, the header bar already provides one
-#: ../thunar/thunar-column-editor.c:156 ../thunar/thunar-dialogs.c:1007
+#: ../thunar/thunar-column-editor.c:156 ../thunar/thunar-dialogs.c:1011
 #: ../thunar/thunar-preferences-dialog.c:297
 #: ../thunar/thunar-properties-dialog.c:293
 #: ../thunar/thunar-renamer-dialog.c:359
-#: ../thunar/thunar-renamer-progress.c:193
+#: ../thunar/thunar-renamer-progress.c:195
 #: ../thunar/thunar-toolbar-editor.c:121
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:132
 msgid "_Close"
@@ -1064,34 +1085,34 @@ msgstr "Stručný výpis adresáře"
 msgid "Compact view"
 msgstr "Stručný pohled"
 
-#: ../thunar/thunar-dbus-service.c:527
+#: ../thunar/thunar-dbus-service.c:576
 #, c-format
 msgid "Invalid filename \"%s\""
 msgstr "Neplatný název souboru \"%s\""
 
 #. LaunchFiles() invoked without a valid working directory
-#: ../thunar/thunar-dbus-service.c:976
+#: ../thunar/thunar-dbus-service.c:1025
 #, c-format
 msgid "The working directory must be an absolute path"
 msgstr "Pracovní adresář musí být uveden pomocí absolutní cesty"
 
 #. LaunchFiles() invoked with an empty filename list
-#: ../thunar/thunar-dbus-service.c:984 ../thunar/thunar-dbus-service.c:1420
+#: ../thunar/thunar-dbus-service.c:1033 ../thunar/thunar-dbus-service.c:1469
 #, c-format
 msgid "At least one filename must be specified"
 msgstr "Je nutné zadat alespoň jeden název souboru"
 
-#: ../thunar/thunar-dbus-service.c:1159
+#: ../thunar/thunar-dbus-service.c:1208
 #, c-format
 msgid "At least one source filename must be specified"
 msgstr "Je nutné zadat alespoň jeden název zdrojového souboru"
 
-#: ../thunar/thunar-dbus-service.c:1169
+#: ../thunar/thunar-dbus-service.c:1218
 #, c-format
 msgid "The number of source and target filenames must be the same"
 msgstr "Počet zdrojových a cílových názvů souborů se musí shodovat"
 
-#: ../thunar/thunar-dbus-service.c:1178
+#: ../thunar/thunar-dbus-service.c:1227
 #, c-format
 msgid "A destination directory must be specified"
 msgstr "Je nutné zadat cílový adresář"
@@ -1160,132 +1181,141 @@ msgstr "Zadejte nový název:"
 msgid "translator-credits"
 msgstr "Michal Várady <miko.vaji@gmail.com>\nRadim Kolář"
 
-#: ../thunar/thunar-dialogs.c:597 ../thunar/thunar-permissions-chooser.c:561
+#: ../thunar/thunar-dialogs.c:485 ../thunar/thunar-dialogs.c:1008
+#: ../thunar/thunar-renamer-progress.c:165
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:823
+#: ../plugins/thunar-sendto-email/main.c:144
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:320
+#: ../plugins/thunar-uca/thunar-uca-provider.c:529
+msgid "Error"
+msgstr "Chyba"
+
+#: ../thunar/thunar-dialogs.c:600 ../thunar/thunar-permissions-chooser.c:561
 msgid "_Yes"
 msgstr "_Ano"
 
-#: ../thunar/thunar-dialogs.c:601
+#: ../thunar/thunar-dialogs.c:604
 msgid "Yes to _all"
 msgstr "Ano pro _všechny"
 
-#: ../thunar/thunar-dialogs.c:605 ../thunar/thunar-dialogs.c:782
+#: ../thunar/thunar-dialogs.c:608 ../thunar/thunar-dialogs.c:785
 msgid "_Replace"
 msgstr "_Nahradit"
 
-#: ../thunar/thunar-dialogs.c:609 ../thunar/thunar-dialogs.c:781
+#: ../thunar/thunar-dialogs.c:612 ../thunar/thunar-dialogs.c:784
 msgid "Replace _All"
 msgstr "Nahradit _vše"
 
-#: ../thunar/thunar-dialogs.c:613 ../thunar/thunar-dialogs.c:780
+#: ../thunar/thunar-dialogs.c:616 ../thunar/thunar-dialogs.c:783
 msgid "_Skip"
 msgstr "_Přeskočit"
 
-#: ../thunar/thunar-dialogs.c:617 ../thunar/thunar-dialogs.c:779
+#: ../thunar/thunar-dialogs.c:620 ../thunar/thunar-dialogs.c:782
 msgid "S_kip All"
 msgstr "Přeskočit _vše"
 
-#: ../thunar/thunar-dialogs.c:621 ../thunar/thunar-dialogs.c:784
+#: ../thunar/thunar-dialogs.c:624 ../thunar/thunar-dialogs.c:787
 msgid "Re_name"
 msgstr "Přejme_novat"
 
-#: ../thunar/thunar-dialogs.c:625 ../thunar/thunar-dialogs.c:783
+#: ../thunar/thunar-dialogs.c:628 ../thunar/thunar-dialogs.c:786
 msgid "Rena_me All"
 msgstr "Přej_menovat vše"
 
-#: ../thunar/thunar-dialogs.c:629 ../thunar/thunar-permissions-chooser.c:560
+#: ../thunar/thunar-dialogs.c:632 ../thunar/thunar-permissions-chooser.c:560
 msgid "_No"
 msgstr "_Ne"
 
-#: ../thunar/thunar-dialogs.c:633
+#: ../thunar/thunar-dialogs.c:636
 msgid "N_o to all"
 msgstr "N_e pro všechny"
 
-#: ../thunar/thunar-dialogs.c:637
+#: ../thunar/thunar-dialogs.c:640
 msgid "_Retry"
 msgstr "_Opakovat"
 
-#: ../thunar/thunar-dialogs.c:641
+#: ../thunar/thunar-dialogs.c:644
 msgid "Copy _Anyway"
 msgstr "Přesto _zkopírovat"
 
-#: ../thunar/thunar-dialogs.c:757
+#: ../thunar/thunar-dialogs.c:760
 msgid "Confirm to replace files"
 msgstr "Potvrďte nahrazení souborů"
 
-#: ../thunar/thunar-dialogs.c:827
+#: ../thunar/thunar-dialogs.c:830
 #, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
 msgstr "Tato složka již obsahuje symbolický odkaz \"%s\"."
 
-#: ../thunar/thunar-dialogs.c:832
+#: ../thunar/thunar-dialogs.c:835
 #, c-format
 msgid "This folder already contains a folder \"%s\"."
 msgstr "Tato složka již obsahuje složku \"%s\"."
 
-#: ../thunar/thunar-dialogs.c:837
+#: ../thunar/thunar-dialogs.c:840
 #, c-format
 msgid "This folder already contains a file \"%s\"."
 msgstr "Tato složka již obsahuje soubor \"%s\"."
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: ../thunar/thunar-dialogs.c:852
+#: ../thunar/thunar-dialogs.c:855
 #, c-format
 msgid "Do you want to replace the link"
 msgstr "Chcete nahradit odkaz"
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: ../thunar/thunar-dialogs.c:855
+#: ../thunar/thunar-dialogs.c:858
 #, c-format
 msgid "Do you want to replace the existing folder"
 msgstr "Chcete nahradit existující složku"
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: ../thunar/thunar-dialogs.c:858
+#: ../thunar/thunar-dialogs.c:861
 #, c-format
 msgid "Do you want to replace the existing file"
 msgstr "Chcete nahradit existující soubor"
 
 #. Fourth box (size, volume, free space)
-#: ../thunar/thunar-dialogs.c:885 ../thunar/thunar-dialogs.c:930
+#: ../thunar/thunar-dialogs.c:888 ../thunar/thunar-dialogs.c:933
 #: ../thunar/thunar-properties-dialog.c:577
 msgid "Size:"
 msgstr "Velikost:"
 
-#: ../thunar/thunar-dialogs.c:885 ../thunar/thunar-dialogs.c:930
+#: ../thunar/thunar-dialogs.c:888 ../thunar/thunar-dialogs.c:933
 #: ../thunar/thunar-properties-dialog.c:530
 msgid "Modified:"
 msgstr "Změněno:"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: ../thunar/thunar-dialogs.c:897
+#: ../thunar/thunar-dialogs.c:900
 #, c-format
 msgid "with the following link?"
 msgstr "následujícím odkazem?"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: ../thunar/thunar-dialogs.c:900
+#: ../thunar/thunar-dialogs.c:903
 #, c-format
 msgid "with the following folder?"
 msgstr "následující složkou?"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: ../thunar/thunar-dialogs.c:903
+#: ../thunar/thunar-dialogs.c:906
 #, c-format
 msgid "with the following file?"
 msgstr "následujícím souborem?"
 
-#: ../thunar/thunar-dialogs.c:1042
+#: ../thunar/thunar-dialogs.c:1046
 #, c-format
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
 msgstr "Soubor plochy %s není v bezpečném umístění a není označen jako spustitelný soubor. Nedůvěřujete-li programu, stiskněte tlačítko Zrušit."
 
-#: ../thunar/thunar-dialogs.c:1059
+#: ../thunar/thunar-dialogs.c:1064
 msgid "_Launch Anyway"
 msgstr "Přesto _spustit"
 
-#: ../thunar/thunar-dialogs.c:1061
+#: ../thunar/thunar-dialogs.c:1066
 msgid "Mark _Executable"
 msgstr "Označit jako _spustitelný"
 
@@ -1965,11 +1995,15 @@ msgstr "Měnící se (žádná změna)"
 msgid "Correct folder permissions automatically?"
 msgstr "Opravit oprávnění ke složce automaticky?"
 
-#: ../thunar/thunar-permissions-chooser.c:1170
+#: ../thunar/thunar-permissions-chooser.c:1169
+msgid "Folder permissions"
+msgstr ""
+
+#: ../thunar/thunar-permissions-chooser.c:1171
 msgid "Correct _folder permissions"
 msgstr "Opravit oprávnění _složky"
 
-#: ../thunar/thunar-permissions-chooser.c:1172
+#: ../thunar/thunar-permissions-chooser.c:1173
 msgid ""
 "The folder permissions will be reset to a consistent state. Only users "
 "allowed to read the contents of this folder will be allowed to enter the "
@@ -2784,23 +2818,23 @@ msgstr "Hromadné přejmenování - přejmenování více souborů"
 msgid "Failed to rename \"%s\" to \"%s\"."
 msgstr "Nepodařilo se přejmenovat \"%s\" na \"%s\"."
 
-#: ../thunar/thunar-renamer-progress.c:172
+#: ../thunar/thunar-renamer-progress.c:174
 msgid ""
 "You can either choose to skip this file and continue to rename the remaining"
 " files, or revert the previously renamed files to their previous names, or "
 "cancel the operation without reverting previous changes."
 msgstr "Tento soubor můžete přeskočit a pokračovat v přejmenovávání zbývajících souborů nebo obnovit všechny názvy dosud přejmenovaných souborů nebo zrušit operaci bez obnovení již přejmenovaných souborů."
 
-#: ../thunar/thunar-renamer-progress.c:177
+#: ../thunar/thunar-renamer-progress.c:179
 msgid "_Revert Changes"
 msgstr "_Vrátit změny"
 
-#: ../thunar/thunar-renamer-progress.c:178
-#: ../thunar/thunar-renamer-progress.c:187
+#: ../thunar/thunar-renamer-progress.c:180
+#: ../thunar/thunar-renamer-progress.c:189
 msgid "_Skip This File"
 msgstr "_Přeskočit tento soubor"
 
-#: ../thunar/thunar-renamer-progress.c:184
+#: ../thunar/thunar-renamer-progress.c:186
 msgid ""
 "Do you want to skip this file and continue to rename the remaining files?"
 msgstr "Chcete přeskočit tento soubor a pokračovat v přejmenovávání zbývajících souborů?"
@@ -3032,7 +3066,7 @@ msgid "Loading folder contents..."
 msgstr "Načítání obsahu složky..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2339 ../thunar/thunar-window.c:3917
+#: ../thunar/thunar-standard-view.c:2339 ../thunar/thunar-window.c:3922
 msgid "Failed to open the home folder"
 msgstr "Nepodařilo se otevřít domovskou složku"
 
@@ -3117,7 +3151,7 @@ msgstr "Nepodařilo se vytvořit odkaz pro adresu URL \"%s\""
 msgid "Untitled document"
 msgstr "Nepojmenovaný dokument"
 
-#: ../thunar/thunar-standard-view.c:3578 ../thunar/thunar-window.c:4013
+#: ../thunar/thunar-standard-view.c:3578 ../thunar/thunar-window.c:4019
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Nepodařilo se otevřít adresář \"%s\""
@@ -3678,67 +3712,71 @@ msgstr "Zavřít kartu"
 msgid "Open the location \"%s\""
 msgstr "Otevřít umístění položky %s"
 
-#: ../thunar/thunar-window.c:3857
+#: ../thunar/thunar-window.c:3862
 msgid "Failed to open parent folder"
 msgstr "Nepodařilo se otevřít nadřazenou složku"
 
-#: ../thunar/thunar-window.c:3988
+#: ../thunar/thunar-window.c:3993
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Adresář %s neexistuje. Chcete jej vytvořit?"
 
+#: ../thunar/thunar-window.c:3995
+msgid "Create directory"
+msgstr ""
+
 #. display an error to the user
-#: ../thunar/thunar-window.c:4058
+#: ../thunar/thunar-window.c:4064
 msgid "Failed to browse the computer"
 msgstr "Nepodařilo se projít tento počítač"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4101
+#: ../thunar/thunar-window.c:4107
 msgid "About Templates"
 msgstr "O šablonách"
 
-#: ../thunar/thunar-window.c:4123
+#: ../thunar/thunar-window.c:4129
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Všechny soubory v této složce se objeví v nabídce \"Vytvořit dokument\"."
 
-#: ../thunar/thunar-window.c:4130
+#: ../thunar/thunar-window.c:4136
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Pokud často vytváříte určitý typ dokumentů, vytvořte si jednu kopii a tu umístěte do této složky. Aplikace Thunar přidá položku pro tento dokument do nabídky \"Vytvořit dokument\".\n\nPotom se volbou položky z menu \"Vytvořit dokument\" v aktuálním adresáři vytvoří kopie tohoto dokumentu."
 
-#: ../thunar/thunar-window.c:4142
+#: ../thunar/thunar-window.c:4148
 msgid "Do _not display this message again"
 msgstr "_Nezobrazovat tuto zprávu znovu"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4176
+#: ../thunar/thunar-window.c:4182
 msgid "Failed to open the file system root folder"
 msgstr "Nepodařilo se otevřít kořenovou složku"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4212
+#: ../thunar/thunar-window.c:4218
 msgid "Failed to display `Recent`"
 msgstr "Nepodařilo se zobrazit nedávné soubory"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4248
+#: ../thunar/thunar-window.c:4254
 msgid "Failed to display the contents of the trash can"
 msgstr "Nepodařilo se zobrazit obsah koše"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4284
+#: ../thunar/thunar-window.c:4290
 msgid "Failed to browse the network"
 msgstr "Nepodařilo se procházet síť"
 
-#: ../thunar/thunar-window.c:4395
+#: ../thunar/thunar-window.c:4401
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Aplikace Thunar je rychlý a snadno použitelný\nsprávce souborů pro prostředí Xfce."
 
-#: ../thunar/thunar-window.c:5462
+#: ../thunar/thunar-window.c:5468
 msgid "Failed to launch search with Catfish"
 msgstr "Nepodařilo se spustit hledání aplikací Catfish"
 
@@ -4141,28 +4179,33 @@ msgstr "Neplatný regulární výraz, chybu způsobil znak na pozici %ld: %s"
 msgid "Search & Replace"
 msgstr "Najít a nahradit"
 
-#: ../plugins/thunar-sendto-email/main.c:219
+#: ../plugins/thunar-sendto-email/main.c:220
 #, c-format
 msgid "Send \"%s\" as compressed archive?"
 msgstr "Odeslat %s jako komprimovaný archiv?"
 
 #: ../plugins/thunar-sendto-email/main.c:222
-#: ../plugins/thunar-sendto-email/main.c:241
+#: ../plugins/thunar-sendto-email/main.c:242
+msgid "Send email"
+msgstr ""
+
+#: ../plugins/thunar-sendto-email/main.c:224
+#: ../plugins/thunar-sendto-email/main.c:244
 msgid "Send _directly"
 msgstr "O_deslat přímo"
 
-#: ../plugins/thunar-sendto-email/main.c:223
+#: ../plugins/thunar-sendto-email/main.c:225
 msgid "Send com_pressed"
 msgstr "Odeslat kom_primovaný"
 
-#: ../plugins/thunar-sendto-email/main.c:225
+#: ../plugins/thunar-sendto-email/main.c:227
 msgid ""
 "When sending a file via email, you can either choose to send the file "
 "directly, as is, or compress the file before attaching it to an email. It is"
 " highly recommended to compress large files before sending them."
 msgstr "Při odesílání souboru elektronickou poštou můžete zvolit, zda má být soubor poslán v současné podobě, nebo zda má být zkomprimován před připojením do zprávy elektronické pošty. Doporučujeme velké soubory před odesláním vždy komprimovat."
 
-#: ../plugins/thunar-sendto-email/main.c:236
+#: ../plugins/thunar-sendto-email/main.c:238
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
@@ -4171,11 +4214,11 @@ msgstr[1] "Odeslat %d soubory jako komprimovaný archiv?"
 msgstr[2] "Odeslat %d souborů jako komprimovaný archiv?"
 msgstr[3] "Odeslat %d souborů jako komprimovaný archiv?"
 
-#: ../plugins/thunar-sendto-email/main.c:242
+#: ../plugins/thunar-sendto-email/main.c:245
 msgid "Send as _archive"
 msgstr "Poslat jako _archiv"
 
-#: ../plugins/thunar-sendto-email/main.c:244
+#: ../plugins/thunar-sendto-email/main.c:247
 msgid ""
 "When sending multiple files via email, you can either choose to send the "
 "files directly, attaching multiple files to an email, or send all files "
@@ -4185,29 +4228,29 @@ msgstr "Při hromadném odesílání souborů elektronickou poštou můžete zvo
 
 #. allocate the progress dialog
 #. setup the label
-#: ../plugins/thunar-sendto-email/main.c:302
-#: ../plugins/thunar-sendto-email/main.c:328
+#: ../plugins/thunar-sendto-email/main.c:305
+#: ../plugins/thunar-sendto-email/main.c:331
 msgid "Compressing files..."
 msgstr "Komprimace souborů..."
 
 #. tell the user that the command failed
-#: ../plugins/thunar-sendto-email/main.c:353
+#: ../plugins/thunar-sendto-email/main.c:356
 #, c-format
 msgid "ZIP command terminated with error %d"
 msgstr "Příkaz ZIP byl ukončen s chybovým hlášením %d"
 
-#: ../plugins/thunar-sendto-email/main.c:441
+#: ../plugins/thunar-sendto-email/main.c:444
 msgid "Failed to create temporary directory"
 msgstr "Vytvoření dočasného adresáře se nezdařilo"
 
-#: ../plugins/thunar-sendto-email/main.c:503
-#: ../plugins/thunar-sendto-email/main.c:514
+#: ../plugins/thunar-sendto-email/main.c:506
+#: ../plugins/thunar-sendto-email/main.c:517
 #, c-format
 msgid "Failed to create symbolic link for \"%s\""
 msgstr "Nepodařilo se vytvořit symbolický odkaz pro %s"
 
 #. tell the user that we failed to compress the file(s)
-#: ../plugins/thunar-sendto-email/main.c:538
+#: ../plugins/thunar-sendto-email/main.c:541
 #, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
@@ -4217,7 +4260,7 @@ msgstr[2] "Nepodařilo se zkomprimovat %d souborů"
 msgstr[3] "Nepodařilo se zkomprimovat %d souborů"
 
 #. tell the user that we failed
-#: ../plugins/thunar-sendto-email/main.c:690
+#: ../plugins/thunar-sendto-email/main.c:693
 msgid "Failed to compose new email"
 msgstr "Nepodařilo se napsat zprávu elektronické pošty"
 
@@ -4259,14 +4302,18 @@ msgstr "Vytvořit akci"
 msgid "Failed to save actions to disk."
 msgstr "Nepodařilo se uložit akci na disk."
 
-#: ../plugins/thunar-uca/thunar-uca-chooser.c:370
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:371
 #, c-format
 msgid ""
 "Are you sure that you want to delete\n"
 "action \"%s\"?"
 msgstr "Opravdu chcete smazat\nakci \"%s\"?"
 
-#: ../plugins/thunar-uca/thunar-uca-chooser.c:371
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:372
+msgid "Delete action"
+msgstr ""
+
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:373
 msgid "If you delete a custom action, it is permanently lost."
 msgstr "Smažete-li vlastní akci, bude nenávratně ztracena."
 
