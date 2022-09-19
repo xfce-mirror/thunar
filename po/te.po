@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-18 12:46+0200\n"
+"POT-Creation-Date: 2022-09-19 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: వీవెన్ <veeven@gmail.com>, 2013\n"
 "Language-Team: Telugu (http://www.transifex.com/xfce/thunar/language/te/)\n"
@@ -51,7 +51,7 @@ msgid "Open With Other _Application..."
 msgstr "ఇతర అనువర్తనముతో తెరువు...(_A)"
 
 #: ../thunar/thunar-action-manager.c:275
-#: ../thunar/thunar-action-manager.c:3300
+#: ../thunar/thunar-action-manager.c:3301
 msgid "Choose another application with which to open the selected file"
 msgstr "ఎంచుకున్న దస్త్రాన్ని తెరుచుటకు వేరొక అనువర్తనమును ఎన్నుకొను"
 
@@ -96,7 +96,7 @@ msgid "View the properties of the selected file"
 msgstr "ఎంచుకున్న దస్త్రం యొక్క లక్షణాలను చూడు"
 
 #: ../thunar/thunar-action-manager.c:284
-#: ../thunar/thunar-action-manager.c:1615
+#: ../thunar/thunar-action-manager.c:1616
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "లింకును తయారుచేయి (_k)"
@@ -111,7 +111,7 @@ msgid "_Rename..."
 msgstr "పేరుమార్చు...(_R)"
 
 #. prepare the menu item
-#: ../thunar/thunar-action-manager.c:287 ../thunar/thunar-application.c:2578
+#: ../thunar/thunar-action-manager.c:287 ../thunar/thunar-application.c:2589
 #: ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "చెత్తబుట్టను ఖాళీచేయి (_E)"
@@ -160,8 +160,8 @@ msgstr ""
 msgid "Mo_ve to Trash"
 msgstr "చెత్తబుట్టకు తరలించు (_v)"
 
-#: ../thunar/thunar-action-manager.c:295 ../thunar/thunar-application.c:2399
-#: ../plugins/thunar-uca/thunar-uca-chooser.c:373
+#: ../thunar/thunar-action-manager.c:295 ../thunar/thunar-application.c:2409
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:375
 msgid "_Delete"
 msgstr "తొలగించు (_D)"
 
@@ -263,14 +263,18 @@ msgstr[1] "%d దస్త్రాలను తెరుచుటలో వి�
 msgid "Are you sure you want to open all folders?"
 msgstr "మీరు ఖచ్చితంగా అన్ని సంచయాలను తెరవాలనుకుంటున్నారా?"
 
-#: ../thunar/thunar-action-manager.c:984
+#: ../thunar/thunar-action-manager.c:983
+msgid "Open folders"
+msgstr ""
+
+#: ../thunar/thunar-action-manager.c:985
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-action-manager.c:987
+#: ../thunar/thunar-action-manager.c:988
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
@@ -281,38 +285,38 @@ msgstr[1] "%d కొత్త కిటికీలను తెరువు"
 #. append the cancel item
 #. add the Cancel/Close buttons
 #. configure the dialog properties
-#: ../thunar/thunar-action-manager.c:988 ../thunar/thunar-application.c:2398
-#: ../thunar/thunar-application.c:2577 ../thunar/thunar-chooser-dialog.c:293
-#: ../thunar/thunar-chooser-dialog.c:749 ../thunar/thunar-chooser-dialog.c:823
-#: ../thunar/thunar-chooser-dialog.c:874 ../thunar/thunar-dialogs.c:98
-#: ../thunar/thunar-dialogs.c:241 ../thunar/thunar-dialogs.c:664
-#: ../thunar/thunar-dialogs.c:778 ../thunar/thunar-dialogs.c:1062
+#: ../thunar/thunar-action-manager.c:989 ../thunar/thunar-application.c:2408
+#: ../thunar/thunar-application.c:2588 ../thunar/thunar-chooser-dialog.c:293
+#: ../thunar/thunar-chooser-dialog.c:750 ../thunar/thunar-chooser-dialog.c:825
+#: ../thunar/thunar-chooser-dialog.c:876 ../thunar/thunar-dialogs.c:98
+#: ../thunar/thunar-dialogs.c:241 ../thunar/thunar-dialogs.c:667
+#: ../thunar/thunar-dialogs.c:781 ../thunar/thunar-dialogs.c:1067
 #: ../thunar/thunar-dnd.c:171 ../thunar/thunar-permissions-chooser.c:559
-#: ../thunar/thunar-permissions-chooser.c:1169
-#: ../thunar/thunar-properties-dialog.c:1078
+#: ../thunar/thunar-permissions-chooser.c:1170
+#: ../thunar/thunar-properties-dialog.c:1102
 #: ../thunar/thunar-renamer-dialog.c:358
 #: ../thunar/thunar-renamer-dialog.c:1073
-#: ../thunar/thunar-renamer-progress.c:176
-#: ../thunar/thunar-renamer-progress.c:186
-#: ../plugins/thunar-sendto-email/main.c:221
-#: ../plugins/thunar-sendto-email/main.c:240
-#: ../plugins/thunar-sendto-email/main.c:304
-#: ../plugins/thunar-uca/thunar-uca-chooser.c:372
+#: ../thunar/thunar-renamer-progress.c:178
+#: ../thunar/thunar-renamer-progress.c:188
+#: ../plugins/thunar-sendto-email/main.c:223
+#: ../plugins/thunar-sendto-email/main.c:243
+#: ../plugins/thunar-sendto-email/main.c:307
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:374
 #: ../plugins/thunar-uca/thunar-uca-editor.c:145
 #: ../plugins/thunar-uca/thunar-uca-editor.c:180
 #: ../plugins/thunar-uca/thunar-uca-editor.c:438
 msgid "_Cancel"
 msgstr "రద్దుచేయి (_C)"
 
-#: ../thunar/thunar-action-manager.c:1075
-#: ../thunar/thunar-action-manager.c:1953
+#: ../thunar/thunar-action-manager.c:1076
+#: ../thunar/thunar-action-manager.c:1954
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "\"%s\" అధిరోహించుటలో విఫలమైంది"
 
 #. tell the user that we were unable to launch the file specified
-#: ../thunar/thunar-action-manager.c:1123 ../thunar/thunar-application.c:1624
-#: ../thunar/thunar-application.c:1784 ../thunar/thunar-location-entry.c:358
+#: ../thunar/thunar-action-manager.c:1124 ../thunar/thunar-application.c:1633
+#: ../thunar/thunar-application.c:1793 ../thunar/thunar-location-entry.c:358
 #: ../thunar/thunar-location-entry.c:386
 #, c-format
 msgid "Failed to open \"%s\""
@@ -320,77 +324,77 @@ msgstr "\"%s\" తెరుచుటలో విఫలమైంది"
 
 #. aka "activate"
 #. change the accept button label text
-#: ../thunar/thunar-action-manager.c:1551
-#: ../thunar/thunar-chooser-dialog.c:875
-#: ../thunar/thunar-chooser-dialog.c:1286
+#: ../thunar/thunar-action-manager.c:1552
+#: ../thunar/thunar-chooser-dialog.c:877
+#: ../thunar/thunar-chooser-dialog.c:1288
 #: ../thunar/thunar-renamer-dialog.c:1074
 #: ../plugins/thunar-uca/thunar-uca-editor.c:181
 msgid "_Open"
 msgstr "తెరువు (_O)"
 
-#: ../thunar/thunar-action-manager.c:1551
+#: ../thunar/thunar-action-manager.c:1552
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "ఎంచుకున్న దస్త్రాన్ని తెరువు"
 msgstr[1] "ఎంచుకున్న దస్త్రాలను తెరువు"
 
-#: ../thunar/thunar-action-manager.c:1555
+#: ../thunar/thunar-action-manager.c:1556
 msgid "_Execute"
 msgstr "అమలుపరుచు (_E)"
 
-#: ../thunar/thunar-action-manager.c:1555
+#: ../thunar/thunar-action-manager.c:1556
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "ఎంచుకున్న దస్త్రాన్ని అమలుపరుచు"
 msgstr[1] "ఎంచుకున్న దస్త్రాలను అమలుపరుచు"
 
-#: ../thunar/thunar-action-manager.c:1560
+#: ../thunar/thunar-action-manager.c:1561
 #, c-format
 msgid "Open in New _Tab"
 msgid_plural "Open in %d New _Tabs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-action-manager.c:1561
+#: ../thunar/thunar-action-manager.c:1562
 #, c-format
 msgid "Open the selected directory in new tab"
 msgid_plural "Open the selected directories in %d new tabs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-action-manager.c:1570
+#: ../thunar/thunar-action-manager.c:1571
 #, c-format
 msgid "Open in New _Window"
 msgid_plural "Open in %d New _Windows"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-action-manager.c:1571
+#: ../thunar/thunar-action-manager.c:1572
 #, c-format
 msgid "Open the selected directory in new window"
 msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-action-manager.c:1616
+#: ../thunar/thunar-action-manager.c:1617
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-action-manager.c:1646
+#: ../thunar/thunar-action-manager.c:1647
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "ఎంచుకున్న దస్త్రం పేరుమార్చు"
 msgstr[1] "ఎంచుకున్న దస్త్రాల పేరుమార్చు"
 
-#: ../thunar/thunar-action-manager.c:1656
+#: ../thunar/thunar-action-manager.c:1657
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-action-manager.c:1668
+#: ../thunar/thunar-action-manager.c:1669
 msgid ""
 "Restore the selected file to its original location and open the location in "
 "a new window/tab"
@@ -400,68 +404,68 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-action-manager.c:1685
+#: ../thunar/thunar-action-manager.c:1686
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "ఎంచుకున్న దస్త్రాన్ని చెత్తబుట్టకు తరలించు"
 msgstr[1] "ఎంచుకున్న దస్త్రాలను చెత్తబుట్టకు తరలించు"
 
-#: ../thunar/thunar-action-manager.c:1702
+#: ../thunar/thunar-action-manager.c:1703
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "ఎంపికచేసిన దస్త్రాన్ని శాశ్వతంగా తొలగించు"
 msgstr[1] "ఎంపికచేసిన దస్త్రాలను శాశ్వతంగా తొలగించు"
 
-#: ../thunar/thunar-action-manager.c:1761
+#: ../thunar/thunar-action-manager.c:1762
 msgid "Cut the selection"
 msgstr ""
 
-#: ../thunar/thunar-action-manager.c:1771
+#: ../thunar/thunar-action-manager.c:1772
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-action-manager.c:1785
+#: ../thunar/thunar-action-manager.c:1786
 msgid "Copy the selection"
 msgstr ""
 
-#: ../thunar/thunar-action-manager.c:1795
+#: ../thunar/thunar-action-manager.c:1796
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-action-manager.c:1818
+#: ../thunar/thunar-action-manager.c:1819
 msgid "Paste the clipboard"
 msgstr ""
 
-#: ../thunar/thunar-action-manager.c:2064
+#: ../thunar/thunar-action-manager.c:2065
 msgid "Side Pane (Add Bookmark)"
 msgid_plural "Side Pane (Add Bookmarks)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-action-manager.c:2065
+#: ../thunar/thunar-action-manager.c:2066
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-action-manager.c:2084
+#: ../thunar/thunar-action-manager.c:2085
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "డెస్క్‌టాప్ (లంకెను సృష్టించు)"
 msgstr[1] "డెస్క్‍టాప్ (లింకులను సృష్టించు)"
 
-#: ../thunar/thunar-action-manager.c:2085
+#: ../thunar/thunar-action-manager.c:2086
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-action-manager.c:2106
-#: ../thunar/thunar-action-manager.c:2144
+#: ../thunar/thunar-action-manager.c:2107
+#: ../thunar/thunar-action-manager.c:2145
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
@@ -469,87 +473,87 @@ msgstr[0] "ఎంచుకున్న దస్త్రాన్ని \"%s\"�
 msgstr[1] "ఎంచుకున్న దస్త్రాలను \"%s\"కి పంపు"
 
 #. display an error message
-#: ../thunar/thunar-action-manager.c:2411 ../thunar/thunar-application.c:1846
-#: ../thunar/thunar-properties-dialog.c:989
+#: ../thunar/thunar-action-manager.c:2412 ../thunar/thunar-application.c:1855
+#: ../thunar/thunar-properties-dialog.c:1013
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "\"%s\" పేరుమార్చుటలో విఫలమైంది"
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-action-manager.c:2627 ../thunar/thunar-application.c:1950
+#: ../thunar/thunar-action-manager.c:2628 ../thunar/thunar-application.c:1959
 msgid "New Folder"
 msgstr "కొత్త సంచయము"
 
-#: ../thunar/thunar-action-manager.c:2631 ../thunar/thunar-application.c:1951
+#: ../thunar/thunar-action-manager.c:2632 ../thunar/thunar-application.c:1960
 msgid "Create New Folder"
 msgstr "కొత్త సంచయాన్ని సృష్టించు"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-action-manager.c:2683 ../thunar/thunar-application.c:2013
+#: ../thunar/thunar-action-manager.c:2684 ../thunar/thunar-application.c:2022
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "\"%s\" మూస నుండి పత్రమును సృష్టించు"
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-action-manager.c:2699
+#: ../thunar/thunar-action-manager.c:2700
 msgid "New Empty File"
 msgstr "కొత్త ఖాళీ దస్త్రం"
 
-#: ../thunar/thunar-action-manager.c:2703
+#: ../thunar/thunar-action-manager.c:2704
 msgid "New Empty File..."
 msgstr "కొత్త ఖాళీ దస్త్రం..."
 
-#: ../thunar/thunar-action-manager.c:2906
+#: ../thunar/thunar-action-manager.c:2907
 #, c-format
 msgid "No templates installed in \"%s\""
 msgstr ""
 
-#: ../thunar/thunar-action-manager.c:2919
+#: ../thunar/thunar-action-manager.c:2920
 msgid "_Empty File"
 msgstr "ఖాళీ దస్త్రం (_E)"
 
-#: ../thunar/thunar-action-manager.c:3024
+#: ../thunar/thunar-action-manager.c:3025
 #, c-format
 msgid "Failed to edit launcher via command \"%s\""
 msgstr ""
 
-#: ../thunar/thunar-action-manager.c:3063
+#: ../thunar/thunar-action-manager.c:3064
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "\"%s\"ని నెట్టివేయుటలో విఫలమైంది"
 
-#: ../thunar/thunar-action-manager.c:3125
+#: ../thunar/thunar-action-manager.c:3126
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "\"%s\" అన్‌మౌంటు చేయుటలో విఫలమైంది"
 
-#: ../thunar/thunar-action-manager.c:3188
-#: ../thunar/thunar-action-manager.c:3259
+#: ../thunar/thunar-action-manager.c:3189
+#: ../thunar/thunar-action-manager.c:3260
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "ఎంచుకున్న దస్త్రాన్ని తెరవడానికి \"%s\"ని వాడు"
 msgstr[1] "ఎంచుకున్న దస్త్రాలను తెరవడానికి \"%s\"ని వాడు"
 
-#: ../thunar/thunar-action-manager.c:3258
+#: ../thunar/thunar-action-manager.c:3259
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "\"%s\"తో తెరువు (_O)"
 
 #. we can only show a generic "Open" action
-#: ../thunar/thunar-action-manager.c:3278
+#: ../thunar/thunar-action-manager.c:3279
 #, c-format
 msgid "_Open With Default Applications"
 msgstr "అప్రమేయ అనువర్తనములతో తెరువు (_O)"
 
-#: ../thunar/thunar-action-manager.c:3279
+#: ../thunar/thunar-action-manager.c:3280
 #, c-format
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "ఎంచుకున్న దస్త్రాన్ని అప్రమేయ అనువర్తనముతో తెరువు"
 msgstr[1] "ఎంచుకున్న దస్త్రాలను అప్రమేయ అనువర్తనాలతో తెరువు"
 
-#: ../thunar/thunar-action-manager.c:3299
+#: ../thunar/thunar-action-manager.c:3300
 #: ../thunar/thunar-chooser-dialog.c:187
 msgid "Open With"
 msgstr "దీనితో తెరువు"
@@ -603,50 +607,50 @@ msgstr "దయచేసి బగ్‌లను <%s>కు నివేది�
 msgid "Failed to launch operation"
 msgstr "కార్యమును ప్రారంభించుటలో విఫలమైంది"
 
-#: ../thunar/thunar-application.c:1788
+#: ../thunar/thunar-application.c:1797
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "\"%s\" తెరుచుటలో విఫలమైంది: %s"
 
-#: ../thunar/thunar-application.c:1955
+#: ../thunar/thunar-application.c:1964
 msgid "New File"
 msgstr "కొత్త దస్త్రం"
 
-#: ../thunar/thunar-application.c:1956
+#: ../thunar/thunar-application.c:1965
 msgid "Create New File"
 msgstr "కొత్త దస్త్రం సృష్టించు"
 
-#: ../thunar/thunar-application.c:2077
+#: ../thunar/thunar-application.c:2086
 msgid "Copying files..."
 msgstr "దస్త్రాలను నకలుతీస్తున్నది..."
 
-#: ../thunar/thunar-application.c:2135
+#: ../thunar/thunar-application.c:2144
 #, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "దస్త్రాలను \"%s\"కు నకలుచేస్తున్నది..."
 
-#: ../thunar/thunar-application.c:2189
+#: ../thunar/thunar-application.c:2198
 #, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "\"%s\"లో సింబాలిక్ లింకులను సృష్టిస్తోంది..."
 
-#: ../thunar/thunar-application.c:2258
+#: ../thunar/thunar-application.c:2267
 #, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "దస్త్రాలను \"%s\"లోనికి తరలిస్తున్నది..."
 
-#: ../thunar/thunar-application.c:2303
+#: ../thunar/thunar-application.c:2312
 msgid "Moving files ..."
 msgstr ""
 
-#: ../thunar/thunar-application.c:2378
+#: ../thunar/thunar-application.c:2387
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr "మీరు \"%s\"ను శాశ్వతముగా \nతీసివేయాలనుకుంటున్నారా?"
 
-#: ../thunar/thunar-application.c:2383
+#: ../thunar/thunar-application.c:2392
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -657,52 +661,61 @@ msgid_plural ""
 msgstr[0] "ఎంచుకున్న దస్త్రాన్ని మీరు ఖచ్చితంగా\nతీసివేయాలనుకుంటున్నారా?"
 msgstr[1] "ఎంచుకున్న %u దస్త్రాలను మీరు ఖచ్చితంగా\nతీసివేయాలనుకుంటున్నారా?"
 
-#: ../thunar/thunar-application.c:2403
+#: ../thunar/thunar-application.c:2406 ../thunar/thunar-dialogs.c:585
+#: ../thunar/thunar-dialogs.c:1063
+msgid "Attention"
+msgstr ""
+
+#: ../thunar/thunar-application.c:2413
 msgid "If you delete a file, it is permanently lost."
 msgstr "ఒకవేళ మీరు ఒక దస్త్రాన్ని తీసివేస్తే, అది శాశ్వతంగా పోతుంది."
 
-#: ../thunar/thunar-application.c:2413
+#: ../thunar/thunar-application.c:2423
 msgid "Deleting files..."
 msgstr "దస్త్రాలను తీసివేస్తున్నది..."
 
-#: ../thunar/thunar-application.c:2448
+#: ../thunar/thunar-application.c:2458
 msgid "Moving files into the trash..."
 msgstr "దస్త్రాలను చెత్తబుట్టలోకి తరలిస్తున్నది..."
 
-#: ../thunar/thunar-application.c:2494
+#: ../thunar/thunar-application.c:2504
 msgid "Creating files..."
 msgstr "దస్త్రాలను సృష్టిస్తున్నది..."
 
-#: ../thunar/thunar-application.c:2533
+#: ../thunar/thunar-application.c:2543
 msgid "Creating directories..."
 msgstr "సంచయాలను సృష్టిస్తోంది..."
 
-#: ../thunar/thunar-application.c:2572
+#: ../thunar/thunar-application.c:2582
 msgid "Remove all files and folders from the Trash?"
 msgstr "చెత్తబుట్టలో ఉన్న అన్ని దస్త్రాలను మరియు సంచయములను తొలగించాలా?"
 
-#: ../thunar/thunar-application.c:2582
+#: ../thunar/thunar-application.c:2586
+msgid "Empty Trash"
+msgstr ""
+
+#: ../thunar/thunar-application.c:2593
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr "ఒకవేళ చెత్తబుట్టను ఖాళీ చేయదలచుకుంటే, చెత్తబుట్టలో ఉన్న అన్ని అంశాలు శాశ్వతంగా పోతాయి, దయచేసి మీరు కావాలనుకుంటే వీటిని వేరు వేరుగా తీసివేయవచ్చు."
 
-#: ../thunar/thunar-application.c:2599
+#: ../thunar/thunar-application.c:2610
 msgid "Emptying the Trash..."
 msgstr "చెత్తబుట్టను ఖాళీ చేస్తున్నది..."
 
-#: ../thunar/thunar-application.c:2645
+#: ../thunar/thunar-application.c:2656
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "\"%s\" నకు అసలు పథాన్ని కనుగొనుటలో విఫలమైంది"
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:2662
+#: ../thunar/thunar-application.c:2673
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "\"%s\"ను పునరుద్ధరించుట వీలుకాదు"
 
-#: ../thunar/thunar-application.c:2670
+#: ../thunar/thunar-application.c:2681
 msgid "Restoring files..."
 msgstr "దస్త్రాలను పునరుద్ధరిస్తున్నాము..."
 
@@ -749,8 +762,8 @@ msgstr "ఈ రకపు దస్త్రానికి అప్రమేయ
 
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
-#: ../thunar/thunar-chooser-dialog.c:1286
-#: ../thunar/thunar-properties-dialog.c:1079 ../thunar/thunar-window.c:4096
+#: ../thunar/thunar-chooser-dialog.c:1288
+#: ../thunar/thunar-properties-dialog.c:1103 ../thunar/thunar-window.c:4109
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -802,11 +815,15 @@ msgstr ""
 msgid "Are you sure that you want to remove \"%s\"?"
 msgstr "మీరు ఖచ్చితంగా \"%s\"ని తీసివేయాలనుకుంటున్నారా?"
 
-#: ../thunar/thunar-chooser-dialog.c:750
+#: ../thunar/thunar-chooser-dialog.c:748
+msgid "Remove application launcher"
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:751
 msgid "_Remove"
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:753
+#: ../thunar/thunar-chooser-dialog.c:754
 msgid ""
 "This will remove the application launcher that appears in the file context menu, but will not uninstall the application itself.\n"
 "\n"
@@ -814,69 +831,73 @@ msgid ""
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:768
+#: ../thunar/thunar-chooser-dialog.c:769
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "\"%s\" తొలగించుటలో విఫలమైంది"
 
-#: ../thunar/thunar-chooser-dialog.c:821
+#: ../thunar/thunar-chooser-dialog.c:822
 #, c-format
 msgid "Are you sure that you want to forget \"%s\"?"
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:824
+#: ../thunar/thunar-chooser-dialog.c:823
+msgid "Forget application launcher"
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:826
 msgid "_Forget"
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:827
+#: ../thunar/thunar-chooser-dialog.c:829
 msgid ""
 "This will dissociate the application launcher for this file type, but will "
 "not uninstall or remove the application launcher itself."
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:844
+#: ../thunar/thunar-chooser-dialog.c:846
 #, c-format
 msgid "Failed to forget \"%s\""
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:871
+#: ../thunar/thunar-chooser-dialog.c:873
 #: ../plugins/thunar-uca/thunar-uca-editor.c:177
 msgid "Select an Application"
 msgstr "ఒక అనువర్తనమును ఎంచుకోండి"
 
-#: ../thunar/thunar-chooser-dialog.c:881
+#: ../thunar/thunar-chooser-dialog.c:883
 #: ../thunar/thunar-renamer-dialog.c:1081
 #: ../plugins/thunar-uca/thunar-uca-editor.c:188
 msgid "All Files"
 msgstr "అన్ని దస్త్రాలు"
 
-#: ../thunar/thunar-chooser-dialog.c:886
+#: ../thunar/thunar-chooser-dialog.c:888
 #: ../plugins/thunar-uca/thunar-uca-editor.c:193
 msgid "Executable Files"
 msgstr "ఎక్జిక్యూటబుల్ దస్త్రాలు"
 
-#: ../thunar/thunar-chooser-dialog.c:901
+#: ../thunar/thunar-chooser-dialog.c:903
 #: ../plugins/thunar-uca/thunar-uca-editor.c:208
 msgid "Perl Scripts"
 msgstr "పెర్ల్ స్క్రిప్టులు"
 
-#: ../thunar/thunar-chooser-dialog.c:907
+#: ../thunar/thunar-chooser-dialog.c:909
 #: ../plugins/thunar-uca/thunar-uca-editor.c:214
 msgid "Python Scripts"
 msgstr "పైథాన్ స్క్రిప్టులు"
 
-#: ../thunar/thunar-chooser-dialog.c:913
+#: ../thunar/thunar-chooser-dialog.c:915
 #: ../plugins/thunar-uca/thunar-uca-editor.c:220
 msgid "Ruby Scripts"
 msgstr "రుబి స్క్రిప్టులు"
 
-#: ../thunar/thunar-chooser-dialog.c:919
+#: ../thunar/thunar-chooser-dialog.c:921
 #: ../plugins/thunar-uca/thunar-uca-editor.c:226
 msgid "Shell Scripts"
 msgstr "షెల్ స్క్రిప్టులు"
 
-#: ../thunar/thunar-chooser-dialog.c:1354
+#: ../thunar/thunar-chooser-dialog.c:1356
 msgid "Set Default Application"
 msgstr ""
 
@@ -910,11 +931,11 @@ msgstr "అతికించడానికి క్లిప్‌బోర�
 #. add the "Close" button
 #. setup the dialog
 #. add a regular close button, the header bar already provides one
-#: ../thunar/thunar-column-editor.c:156 ../thunar/thunar-dialogs.c:1007
+#: ../thunar/thunar-column-editor.c:156 ../thunar/thunar-dialogs.c:1011
 #: ../thunar/thunar-preferences-dialog.c:297
-#: ../thunar/thunar-properties-dialog.c:291
+#: ../thunar/thunar-properties-dialog.c:293
 #: ../thunar/thunar-renamer-dialog.c:359
-#: ../thunar/thunar-renamer-progress.c:193
+#: ../thunar/thunar-renamer-progress.c:195
 #: ../thunar/thunar-toolbar-editor.c:121
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:132
 msgid "_Close"
@@ -927,8 +948,8 @@ msgstr ""
 #. add the "Help" button
 #: ../thunar/thunar-column-editor.c:162
 #: ../thunar/thunar-preferences-dialog.c:305
-#: ../thunar/thunar-properties-dialog.c:290
-#: ../thunar/thunar-toolbar-editor.c:128 ../thunar/thunar-window.c:504
+#: ../thunar/thunar-properties-dialog.c:292
+#: ../thunar/thunar-toolbar-editor.c:128 ../thunar/thunar-window.c:508
 msgid "_Help"
 msgstr "సహాయం (_H)"
 
@@ -1007,34 +1028,34 @@ msgstr ""
 msgid "Compact view"
 msgstr "సౌలభ్య వీక్షణం"
 
-#: ../thunar/thunar-dbus-service.c:527
+#: ../thunar/thunar-dbus-service.c:576
 #, c-format
 msgid "Invalid filename \"%s\""
 msgstr "దస్త్రం పేరు \"%s\" చెల్లనిది"
 
 #. LaunchFiles() invoked without a valid working directory
-#: ../thunar/thunar-dbus-service.c:976
+#: ../thunar/thunar-dbus-service.c:1025
 #, c-format
 msgid "The working directory must be an absolute path"
 msgstr ""
 
 #. LaunchFiles() invoked with an empty filename list
-#: ../thunar/thunar-dbus-service.c:984 ../thunar/thunar-dbus-service.c:1420
+#: ../thunar/thunar-dbus-service.c:1033 ../thunar/thunar-dbus-service.c:1469
 #, c-format
 msgid "At least one filename must be specified"
 msgstr ""
 
-#: ../thunar/thunar-dbus-service.c:1159
+#: ../thunar/thunar-dbus-service.c:1208
 #, c-format
 msgid "At least one source filename must be specified"
 msgstr ""
 
-#: ../thunar/thunar-dbus-service.c:1169
+#: ../thunar/thunar-dbus-service.c:1218
 #, c-format
 msgid "The number of source and target filenames must be the same"
 msgstr ""
 
-#: ../thunar/thunar-dbus-service.c:1178
+#: ../thunar/thunar-dbus-service.c:1227
 #, c-format
 msgid "A destination directory must be specified"
 msgstr ""
@@ -1103,132 +1124,141 @@ msgstr "కొత్త పేరును ప్రవేశపెట్టం�
 msgid "translator-credits"
 msgstr "Praveen Illa <mail2ipn@gmail.com>, 2011.,2014."
 
-#: ../thunar/thunar-dialogs.c:597 ../thunar/thunar-permissions-chooser.c:561
+#: ../thunar/thunar-dialogs.c:485 ../thunar/thunar-dialogs.c:1008
+#: ../thunar/thunar-renamer-progress.c:165
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:823
+#: ../plugins/thunar-sendto-email/main.c:144
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:320
+#: ../plugins/thunar-uca/thunar-uca-provider.c:529
+msgid "Error"
+msgstr "దోషం"
+
+#: ../thunar/thunar-dialogs.c:600 ../thunar/thunar-permissions-chooser.c:561
 msgid "_Yes"
 msgstr "అవును (_Y)"
 
-#: ../thunar/thunar-dialogs.c:601
+#: ../thunar/thunar-dialogs.c:604
 msgid "Yes to _all"
 msgstr "అన్నిటికి అవును (_a)"
 
-#: ../thunar/thunar-dialogs.c:605 ../thunar/thunar-dialogs.c:782
+#: ../thunar/thunar-dialogs.c:608 ../thunar/thunar-dialogs.c:785
 msgid "_Replace"
 msgstr "పునఃస్థాపించు (_R)"
 
-#: ../thunar/thunar-dialogs.c:609 ../thunar/thunar-dialogs.c:781
+#: ../thunar/thunar-dialogs.c:612 ../thunar/thunar-dialogs.c:784
 msgid "Replace _All"
 msgstr "అన్నిటిని పునఃస్థాపించు (_A)"
 
-#: ../thunar/thunar-dialogs.c:613 ../thunar/thunar-dialogs.c:780
+#: ../thunar/thunar-dialogs.c:616 ../thunar/thunar-dialogs.c:783
 msgid "_Skip"
 msgstr "దాటవేయి (_S)"
 
-#: ../thunar/thunar-dialogs.c:617 ../thunar/thunar-dialogs.c:779
+#: ../thunar/thunar-dialogs.c:620 ../thunar/thunar-dialogs.c:782
 msgid "S_kip All"
 msgstr "అన్నీ దాటవేయి (_k)"
 
-#: ../thunar/thunar-dialogs.c:621 ../thunar/thunar-dialogs.c:784
+#: ../thunar/thunar-dialogs.c:624 ../thunar/thunar-dialogs.c:787
 msgid "Re_name"
 msgstr ""
 
-#: ../thunar/thunar-dialogs.c:625 ../thunar/thunar-dialogs.c:783
+#: ../thunar/thunar-dialogs.c:628 ../thunar/thunar-dialogs.c:786
 msgid "Rena_me All"
 msgstr ""
 
-#: ../thunar/thunar-dialogs.c:629 ../thunar/thunar-permissions-chooser.c:560
+#: ../thunar/thunar-dialogs.c:632 ../thunar/thunar-permissions-chooser.c:560
 msgid "_No"
 msgstr "కాదు (_N)"
 
-#: ../thunar/thunar-dialogs.c:633
+#: ../thunar/thunar-dialogs.c:636
 msgid "N_o to all"
 msgstr "అన్నిటికి కాదు (_o)"
 
-#: ../thunar/thunar-dialogs.c:637
+#: ../thunar/thunar-dialogs.c:640
 msgid "_Retry"
 msgstr "మళ్ళీ ప్రయత్నించు (_R)"
 
-#: ../thunar/thunar-dialogs.c:641
+#: ../thunar/thunar-dialogs.c:644
 msgid "Copy _Anyway"
 msgstr "ఏది ఏమైనప్పటికీ నకలుచేయి (_A)"
 
-#: ../thunar/thunar-dialogs.c:757
+#: ../thunar/thunar-dialogs.c:760
 msgid "Confirm to replace files"
 msgstr "దస్త్రాలను పునఃస్థాపించడానికి నిర్ధారించండి"
 
-#: ../thunar/thunar-dialogs.c:827
+#: ../thunar/thunar-dialogs.c:830
 #, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
 msgstr ""
 
-#: ../thunar/thunar-dialogs.c:832
+#: ../thunar/thunar-dialogs.c:835
 #, c-format
 msgid "This folder already contains a folder \"%s\"."
 msgstr ""
 
-#: ../thunar/thunar-dialogs.c:837
+#: ../thunar/thunar-dialogs.c:840
 #, c-format
 msgid "This folder already contains a file \"%s\"."
 msgstr ""
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: ../thunar/thunar-dialogs.c:852
+#: ../thunar/thunar-dialogs.c:855
 #, c-format
 msgid "Do you want to replace the link"
 msgstr ""
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: ../thunar/thunar-dialogs.c:855
+#: ../thunar/thunar-dialogs.c:858
 #, c-format
 msgid "Do you want to replace the existing folder"
 msgstr ""
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: ../thunar/thunar-dialogs.c:858
+#: ../thunar/thunar-dialogs.c:861
 #, c-format
 msgid "Do you want to replace the existing file"
 msgstr ""
 
 #. Fourth box (size, volume, free space)
-#: ../thunar/thunar-dialogs.c:885 ../thunar/thunar-dialogs.c:930
-#: ../thunar/thunar-properties-dialog.c:575
+#: ../thunar/thunar-dialogs.c:888 ../thunar/thunar-dialogs.c:933
+#: ../thunar/thunar-properties-dialog.c:577
 msgid "Size:"
 msgstr "పరిమాణం:"
 
-#: ../thunar/thunar-dialogs.c:885 ../thunar/thunar-dialogs.c:930
-#: ../thunar/thunar-properties-dialog.c:528
+#: ../thunar/thunar-dialogs.c:888 ../thunar/thunar-dialogs.c:933
+#: ../thunar/thunar-properties-dialog.c:530
 msgid "Modified:"
 msgstr "సవరించబడినది:"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: ../thunar/thunar-dialogs.c:897
+#: ../thunar/thunar-dialogs.c:900
 #, c-format
 msgid "with the following link?"
 msgstr ""
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: ../thunar/thunar-dialogs.c:900
+#: ../thunar/thunar-dialogs.c:903
 #, c-format
 msgid "with the following folder?"
 msgstr ""
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: ../thunar/thunar-dialogs.c:903
+#: ../thunar/thunar-dialogs.c:906
 #, c-format
 msgid "with the following file?"
 msgstr ""
 
-#: ../thunar/thunar-dialogs.c:1042
+#: ../thunar/thunar-dialogs.c:1046
 #, c-format
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
 msgstr ""
 
-#: ../thunar/thunar-dialogs.c:1059
+#: ../thunar/thunar-dialogs.c:1064
 msgid "_Launch Anyway"
 msgstr "ఏమైనాసరే ప్రారంభించు (_L)"
 
-#: ../thunar/thunar-dialogs.c:1061
+#: ../thunar/thunar-dialogs.c:1066
 msgid "Mark _Executable"
 msgstr ""
 
@@ -1300,7 +1330,7 @@ msgid "Owner"
 msgstr "యజమాని"
 
 #. Permissions chooser
-#: ../thunar/thunar-enum-types.c:112 ../thunar/thunar-properties-dialog.c:689
+#: ../thunar/thunar-enum-types.c:112 ../thunar/thunar-properties-dialog.c:713
 msgid "Permissions"
 msgstr "అనుమతులు"
 
@@ -1390,7 +1420,7 @@ msgid "Log no operations"
 msgstr ""
 
 #: ../thunar/thunar-file.c:1076 ../thunar/thunar-gio-extensions.c:480
-#: ../thunar/thunar-shortcuts-model.c:1009 ../thunar/thunar-window.c:492
+#: ../thunar/thunar-shortcuts-model.c:1009 ../thunar/thunar-window.c:496
 msgid "File System"
 msgstr "దస్త్ర వ్యవస్థ"
 
@@ -1504,10 +1534,9 @@ msgstr "ఫోను"
 msgid "%s on %s"
 msgstr "%s పైన %s"
 
-#. free disk space string
-#: ../thunar/thunar-gio-extensions.c:674
+#: ../thunar/thunar-gio-extensions.c:673
 #, c-format
-msgid "%s of %s free (%d%% used)"
+msgid "%s used (%d%%)  |  %s free (%d%%)"
 msgstr ""
 
 #: ../thunar/thunar-history.c:297
@@ -1721,7 +1750,7 @@ msgstr ""
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: ../thunar/thunar-list-model.c:3105 ../thunar/thunar-properties-dialog.c:449
+#: ../thunar/thunar-list-model.c:3105 ../thunar/thunar-properties-dialog.c:451
 msgid "Original Path:"
 msgstr "అసలు పథం:"
 
@@ -1903,11 +1932,15 @@ msgstr "మారుతూవుంది (మార్పు లేదు)"
 msgid "Correct folder permissions automatically?"
 msgstr "సంచయపు అనుమతులను స్వయంచాలకంగా సరిచేయాలా?"
 
-#: ../thunar/thunar-permissions-chooser.c:1170
+#: ../thunar/thunar-permissions-chooser.c:1169
+msgid "Folder permissions"
+msgstr ""
+
+#: ../thunar/thunar-permissions-chooser.c:1171
 msgid "Correct _folder permissions"
 msgstr "సంచయం అనుమతులను సరిచేయి (_f)"
 
-#: ../thunar/thunar-permissions-chooser.c:1172
+#: ../thunar/thunar-permissions-chooser.c:1173
 msgid ""
 "The folder permissions will be reset to a consistent state. Only users "
 "allowed to read the contents of this folder will be allowed to enter the "
@@ -2394,7 +2427,7 @@ msgid ""
 msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:1304
-#: ../thunar/thunar-properties-dialog.c:733
+#: ../thunar/thunar-properties-dialog.c:757
 msgid "Missing dependencies"
 msgstr ""
 
@@ -2467,127 +2500,131 @@ msgstr ""
 msgid "Queued"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:301
+#: ../thunar/thunar-properties-dialog.c:303
 msgid "General"
 msgstr "సాధారణ"
 
-#: ../thunar/thunar-properties-dialog.c:325
+#: ../thunar/thunar-properties-dialog.c:327
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:2
 msgid "_Name:"
 msgstr "పేరు (_N):"
 
-#: ../thunar/thunar-properties-dialog.c:364
+#: ../thunar/thunar-properties-dialog.c:366
 msgid "Names:"
 msgstr "పేర్లు:"
 
 #. Second box (kind, open with, link target)
-#: ../thunar/thunar-properties-dialog.c:387
+#: ../thunar/thunar-properties-dialog.c:389
 msgid "Kind:"
 msgstr "రకము:"
 
-#: ../thunar/thunar-properties-dialog.c:411
+#: ../thunar/thunar-properties-dialog.c:413
 msgid "_Open With:"
 msgstr "దీనితో తెరువు (_O):"
 
-#: ../thunar/thunar-properties-dialog.c:428
+#: ../thunar/thunar-properties-dialog.c:430
 msgid "Link Target:"
 msgstr "లంకె లక్ష్యం:"
 
-#: ../thunar/thunar-properties-dialog.c:466
+#: ../thunar/thunar-properties-dialog.c:468
 msgid "Location:"
 msgstr "స్థానము:"
 
 #. Third box (deleted, modified, accessed)
-#: ../thunar/thunar-properties-dialog.c:494
+#: ../thunar/thunar-properties-dialog.c:496
 msgid "Deleted:"
 msgstr "తొలగించబడింది:"
 
-#: ../thunar/thunar-properties-dialog.c:511
+#: ../thunar/thunar-properties-dialog.c:513
 msgid "Created:"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:545
+#: ../thunar/thunar-properties-dialog.c:547
 msgid "Accessed:"
 msgstr "వాడబడినది:"
 
-#: ../thunar/thunar-properties-dialog.c:591
+#: ../thunar/thunar-properties-dialog.c:593
 msgid "Content:"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:609
+#: ../thunar/thunar-properties-dialog.c:611
 msgid "Volume:"
 msgstr "సంపుటము:"
 
-#: ../thunar/thunar-properties-dialog.c:640
+#: ../thunar/thunar-properties-dialog.c:642
+msgid "Capacity:"
+msgstr ""
+
+#: ../thunar/thunar-properties-dialog.c:664
 msgid "Usage:"
 msgstr "వాడుక:"
 
 #. Emblem chooser
-#: ../thunar/thunar-properties-dialog.c:677
+#: ../thunar/thunar-properties-dialog.c:701
 msgid "Emblems"
 msgstr "చిహ్నాలు"
 
-#: ../thunar/thunar-properties-dialog.c:702
+#: ../thunar/thunar-properties-dialog.c:726
 msgid "Highlight"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:741
+#: ../thunar/thunar-properties-dialog.c:765
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "This feature will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:769
+#: ../thunar/thunar-properties-dialog.c:793
 msgid "Example.txt"
 msgstr ""
 
 #. add the "Apply" button
-#: ../thunar/thunar-properties-dialog.c:786
+#: ../thunar/thunar-properties-dialog.c:810
 #: ../thunar/thunar-renamer-dialog.c:371
 msgid "_Apply"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:798
+#: ../thunar/thunar-properties-dialog.c:822
 msgid "_Reset"
 msgstr "తిరిగి అమర్చు (_R)"
 
-#: ../thunar/thunar-properties-dialog.c:806
+#: ../thunar/thunar-properties-dialog.c:830
 msgid "Set _Foreground"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:814
+#: ../thunar/thunar-properties-dialog.c:838
 msgid "Set _Background"
 msgstr ""
 
 #. allocate the icon chooser
 #. allocate the chooser dialog
-#: ../thunar/thunar-properties-dialog.c:1076
+#: ../thunar/thunar-properties-dialog.c:1100
 #: ../plugins/thunar-uca/thunar-uca-editor.c:436
 #, c-format
 msgid "Select an Icon for \"%s\""
 msgstr "\"%s\" కొరకు ఒక ప్రతీకను ఎంచుకోండి"
 
-#: ../thunar/thunar-properties-dialog.c:1101
+#: ../thunar/thunar-properties-dialog.c:1125
 #, c-format
 msgid "Failed to change icon of \"%s\""
 msgstr "\"%s\" యొక్క ప్రతీకను మార్చుటలో విఫలమైంది"
 
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:1210
+#: ../thunar/thunar-properties-dialog.c:1236
 #, c-format
 msgid "%s - Properties"
 msgstr "%s - లక్షణాలు"
 
-#: ../thunar/thunar-properties-dialog.c:1268
+#: ../thunar/thunar-properties-dialog.c:1294
 msgid "unknown"
 msgstr "తెలియదు"
 
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:1466
+#: ../thunar/thunar-properties-dialog.c:1498
 msgid "Properties"
 msgstr "లక్షణాలు"
 
-#: ../thunar/thunar-properties-dialog.c:1567
+#: ../thunar/thunar-properties-dialog.c:1599
 msgid "mixed"
 msgstr "మిశ్రమం"
 
@@ -2607,7 +2644,7 @@ msgstr "శుభ్రపరుచు"
 msgid "Clear the file list below"
 msgstr "క్రిందనున్న దస్త్ర జాబితాను తుడిచివేయి"
 
-#: ../thunar/thunar-renamer-dialog.c:196 ../thunar/thunar-window.c:506
+#: ../thunar/thunar-renamer-dialog.c:196 ../thunar/thunar-window.c:510
 msgid "_About"
 msgstr "గురించి (_A)"
 
@@ -2714,29 +2751,29 @@ msgstr "పెద్దసంఖ్యలో పేరుమార్పు - �
 msgid "Failed to rename \"%s\" to \"%s\"."
 msgstr "\"%s\" ని \"%s\"కు పేరుమార్చుటలో విఫలమైంది."
 
-#: ../thunar/thunar-renamer-progress.c:172
+#: ../thunar/thunar-renamer-progress.c:174
 msgid ""
 "You can either choose to skip this file and continue to rename the remaining"
 " files, or revert the previously renamed files to their previous names, or "
 "cancel the operation without reverting previous changes."
 msgstr ""
 
-#: ../thunar/thunar-renamer-progress.c:177
+#: ../thunar/thunar-renamer-progress.c:179
 msgid "_Revert Changes"
 msgstr "మార్పులను రద్దుచేయి (_R)"
 
-#: ../thunar/thunar-renamer-progress.c:178
-#: ../thunar/thunar-renamer-progress.c:187
+#: ../thunar/thunar-renamer-progress.c:180
+#: ../thunar/thunar-renamer-progress.c:189
 msgid "_Skip This File"
 msgstr "ఈ దస్త్రాన్ని దాటవేయి (_S)"
 
-#: ../thunar/thunar-renamer-progress.c:184
+#: ../thunar/thunar-renamer-progress.c:186
 msgid ""
 "Do you want to skip this file and continue to rename the remaining files?"
 msgstr "ఈ దస్త్రాన్ని దాటవేసి మిగిలిన దస్త్రాల యొక్క పేరుమార్చుట కొనసాగించాలనుకుంటున్నారా?"
 
 #: ../thunar/thunar-shortcuts-model.c:646
-#: ../thunar/thunar-shortcuts-model.c:1010 ../thunar/thunar-window.c:492
+#: ../thunar/thunar-shortcuts-model.c:1010 ../thunar/thunar-window.c:496
 msgid "Browse the file system"
 msgstr "దస్త్ర వ్యవస్థలో విహరించు"
 
@@ -2769,7 +2806,7 @@ msgstr "నెట్‌వర్క్"
 msgid "Browse Network"
 msgstr "నెట్‌వర్కులో విహరించు"
 
-#: ../thunar/thunar-shortcuts-model.c:1055 ../thunar/thunar-window.c:502
+#: ../thunar/thunar-shortcuts-model.c:1055 ../thunar/thunar-window.c:506
 msgid "Browse local network connections"
 msgstr "స్థానిక నెట్‌వర్క్ అనుసంధానాలను విహరించండి"
 
@@ -2785,7 +2822,7 @@ msgstr ""
 msgid "Open the desktop folder"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-model.c:1153 ../thunar/thunar-window.c:495
+#: ../thunar/thunar-shortcuts-model.c:1153 ../thunar/thunar-window.c:499
 #: ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr ""
@@ -2794,7 +2831,7 @@ msgstr ""
 msgid "Browse the computer"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-model.c:1166 ../thunar/thunar-window.c:496
+#: ../thunar/thunar-shortcuts-model.c:1166 ../thunar/thunar-window.c:500
 msgid "Recent"
 msgstr ""
 
@@ -2958,7 +2995,7 @@ msgid "Loading folder contents..."
 msgstr "సంచయపు విషయములను లోడుచేస్తున్నది..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2339 ../thunar/thunar-window.c:3910
+#: ../thunar/thunar-standard-view.c:2339 ../thunar/thunar-window.c:3922
 msgid "Failed to open the home folder"
 msgstr "నివాస సంచయాన్ని తెరుచుటలో విఫలమైంది"
 
@@ -3043,7 +3080,7 @@ msgstr ""
 msgid "Untitled document"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:3578 ../thunar/thunar-window.c:4006
+#: ../thunar/thunar-standard-view.c:3578 ../thunar/thunar-window.c:4019
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "\"%s\" సంచయాన్ని తెరుచుటలో విఫలమైంది"
@@ -3237,428 +3274,432 @@ msgstr ""
 msgid "link %u to %.*s.%s"
 msgstr ""
 
-#: ../thunar/thunar-window.c:451
+#: ../thunar/thunar-window.c:455
 msgid "_File"
 msgstr "దస్త్రం (_F)"
 
-#: ../thunar/thunar-window.c:452
+#: ../thunar/thunar-window.c:456
 msgid "New _Tab"
 msgstr "కొత్త నెట్టు (_T)"
 
-#: ../thunar/thunar-window.c:452
+#: ../thunar/thunar-window.c:456
 msgid "Open a new tab for the displayed location"
 msgstr "ప్రదర్శించిన స్థానమునకు వేరొక నెట్టును తెరువు"
 
-#: ../thunar/thunar-window.c:453
+#: ../thunar/thunar-window.c:457
 msgid "New _Window"
 msgstr "కొత్త కిటికీ (_W)"
 
-#: ../thunar/thunar-window.c:453
+#: ../thunar/thunar-window.c:457
 msgid "Open a new Thunar window for the displayed location"
 msgstr "ప్రదర్శిత స్థానము కొరకు ఒక కొత్త తునార్ కిటికీని తెరువు"
 
-#: ../thunar/thunar-window.c:454
+#: ../thunar/thunar-window.c:458
 msgid "Detac_h Tab"
 msgstr "నెట్టును వేరుచేయి (_h)"
 
-#: ../thunar/thunar-window.c:454
+#: ../thunar/thunar-window.c:458
 msgid "Open current folder in a new window"
 msgstr "ప్రస్థుత సంచయాన్ని ఒక కొత్త కిటికీలో తెరువు"
 
-#: ../thunar/thunar-window.c:455
+#: ../thunar/thunar-window.c:459
 msgid "C_lose Tab"
 msgstr "నెట్టును మూసివేయి (_l)"
 
-#: ../thunar/thunar-window.c:455
+#: ../thunar/thunar-window.c:459
 msgid "Close this folder"
 msgstr "ఈ సంచయాన్ని మూసివేయి"
 
-#: ../thunar/thunar-window.c:456
+#: ../thunar/thunar-window.c:460
 msgid "_Close Window"
 msgstr "కిటికీని మూసివేయి (_C)"
 
-#: ../thunar/thunar-window.c:456
+#: ../thunar/thunar-window.c:460
 msgid "Close this window"
 msgstr "ఈ కిటికీని మూసివేయి"
 
-#: ../thunar/thunar-window.c:457
+#: ../thunar/thunar-window.c:461
 msgid "Close _All Windows"
 msgstr "అన్ని కిటికీలను మూసివేయి (_A)"
 
-#: ../thunar/thunar-window.c:457
+#: ../thunar/thunar-window.c:461
 msgid "Close all Thunar windows"
 msgstr "తునార్ అన్ని కిటికీలను మూసివేయి"
 
-#: ../thunar/thunar-window.c:459
+#: ../thunar/thunar-window.c:463
 msgid "_Edit"
 msgstr "సవరణ (_E)"
 
-#: ../thunar/thunar-window.c:460
+#: ../thunar/thunar-window.c:464
 msgid "Pr_eferences..."
 msgstr "అభిరుచులు...(_e)"
 
-#: ../thunar/thunar-window.c:460
+#: ../thunar/thunar-window.c:464
 msgid "Edit Thunars Preferences"
 msgstr "తునార్ అభిరుచులను సవరించు"
 
-#: ../thunar/thunar-window.c:462
+#: ../thunar/thunar-window.c:466
 msgid "_View"
 msgstr "చూడటం (_V)"
 
-#: ../thunar/thunar-window.c:463
+#: ../thunar/thunar-window.c:467
 msgid "_Reload"
 msgstr "తిరిగినింపు (_R)"
 
-#: ../thunar/thunar-window.c:463
+#: ../thunar/thunar-window.c:467
 msgid "Reload the current folder"
 msgstr "ప్రస్తుత సంచయాన్ని తిరిగినింపు"
 
-#: ../thunar/thunar-window.c:465
+#: ../thunar/thunar-window.c:469
 msgid "Spl_it View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:465
+#: ../thunar/thunar-window.c:469
 msgid "Open/Close Split View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:466
+#: ../thunar/thunar-window.c:470
 msgid "_Location Selector"
 msgstr "స్థాన ఎంపికరి (_L)"
 
-#: ../thunar/thunar-window.c:467
+#: ../thunar/thunar-window.c:471
 msgid "_Entry Style"
 msgstr ""
 
-#: ../thunar/thunar-window.c:467
+#: ../thunar/thunar-window.c:471
 msgid "Traditional entry showing the current path"
 msgstr ""
 
-#: ../thunar/thunar-window.c:468
+#: ../thunar/thunar-window.c:472
 msgid "_Buttons Style"
 msgstr ""
 
-#: ../thunar/thunar-window.c:468
+#: ../thunar/thunar-window.c:472
 msgid "Modern approach with buttons that correspond to folders"
 msgstr ""
 
-#: ../thunar/thunar-window.c:469
+#: ../thunar/thunar-window.c:473
 msgid "_Side Pane"
 msgstr "ప్రక్క పట్టీ (_S)"
 
-#: ../thunar/thunar-window.c:470
+#: ../thunar/thunar-window.c:474
 msgid "_Shortcuts"
 msgstr "అడ్డదారులు (_S)"
 
-#: ../thunar/thunar-window.c:470
+#: ../thunar/thunar-window.c:474
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "ఈ కిటికీ యొక్క పక్క పేన్ గోచరతను మార్చును"
 
-#: ../thunar/thunar-window.c:471
+#: ../thunar/thunar-window.c:475
 msgid "_Tree"
 msgstr "వృక్షం (_T)"
 
-#: ../thunar/thunar-window.c:471
+#: ../thunar/thunar-window.c:475
 msgid "Toggles the visibility of the tree pane"
 msgstr " కిటికీ యొక్క పక్క పేన్ కనిపించువిధానాన్ని మార్చు"
 
-#: ../thunar/thunar-window.c:473
+#: ../thunar/thunar-window.c:477
 msgid "St_atusbar"
 msgstr "స్థితి పట్టీ (_a)"
 
-#: ../thunar/thunar-window.c:473
+#: ../thunar/thunar-window.c:477
 msgid "Change the visibility of this window's statusbar"
 msgstr ""
 
-#: ../thunar/thunar-window.c:474
+#: ../thunar/thunar-window.c:478
 msgid "_Menubar"
 msgstr "మెనూపట్టీ (_M)"
 
-#: ../thunar/thunar-window.c:474
+#: ../thunar/thunar-window.c:478
 msgid "Change the visibility of this window's menubar"
 msgstr ""
 
-#: ../thunar/thunar-window.c:475
+#: ../thunar/thunar-window.c:479
 msgid "Configure _Toolbar..."
 msgstr ""
 
-#: ../thunar/thunar-window.c:475
+#: ../thunar/thunar-window.c:479
 msgid "Configure the toolbar"
 msgstr ""
 
-#: ../thunar/thunar-window.c:476
+#: ../thunar/thunar-window.c:480
 msgid "Clear Saved _Folder View Settings"
 msgstr ""
 
-#: ../thunar/thunar-window.c:476
+#: ../thunar/thunar-window.c:480
 msgid "Delete saved view settings for this folder"
 msgstr ""
 
-#: ../thunar/thunar-window.c:477
+#: ../thunar/thunar-window.c:481
 msgid "Show _Hidden Files"
 msgstr "అదృశ్య దస్త్రాలను చూపించు (_H)"
 
-#: ../thunar/thunar-window.c:477
+#: ../thunar/thunar-window.c:481
 msgid "Toggles the display of hidden files in the current window"
 msgstr "కనపడకుండా దాచబడిన దస్త్రాల యొక్క ప్రదర్శనను ప్రస్తుత కిటికీలో మార్చును"
 
-#: ../thunar/thunar-window.c:478
+#: ../thunar/thunar-window.c:482
 msgid "Show File Hi_ghlight"
 msgstr ""
 
-#: ../thunar/thunar-window.c:478
+#: ../thunar/thunar-window.c:482
 msgid ""
 "Toggles the display of file highlight which can be configured in the file "
 "specific property dialog"
 msgstr ""
 
-#: ../thunar/thunar-window.c:479
+#: ../thunar/thunar-window.c:483
 msgid "Zoom I_n"
 msgstr "పెద్దగాచేయి (_n)"
 
-#: ../thunar/thunar-window.c:479
+#: ../thunar/thunar-window.c:483
 msgid "Show the contents in more detail"
 msgstr "విషయాలను మరింత వివరణాత్మకముగా చూపించు"
 
-#: ../thunar/thunar-window.c:482
+#: ../thunar/thunar-window.c:486
 msgid "Zoom _Out"
 msgstr "చిన్నగాచేయి (_O)"
 
-#: ../thunar/thunar-window.c:482
+#: ../thunar/thunar-window.c:486
 msgid "Show the contents in less detail"
 msgstr "విషయాలను తక్కువ వివరాలతో చూపించు"
 
-#: ../thunar/thunar-window.c:484
+#: ../thunar/thunar-window.c:488
 msgid "Normal Si_ze"
 msgstr "సాధారణ పరిమాణం (_z)"
 
-#: ../thunar/thunar-window.c:484
+#: ../thunar/thunar-window.c:488
 msgid "Show the contents at the normal size"
 msgstr "విషయాలను సాధారణ పరిమాణం వద్ద చూపించు"
 
-#: ../thunar/thunar-window.c:486
+#: ../thunar/thunar-window.c:490
 msgid "_Icon View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:486
+#: ../thunar/thunar-window.c:490
 msgid "Display folder content in an icon view"
 msgstr "సంచయము విషయాన్ని ప్రతీక వీక్షణలో ప్రదర్శించు"
 
-#: ../thunar/thunar-window.c:487
+#: ../thunar/thunar-window.c:491
 msgid "_List View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:487
+#: ../thunar/thunar-window.c:491
 msgid "Display folder content in a detailed list view"
 msgstr ""
 
-#: ../thunar/thunar-window.c:488
+#: ../thunar/thunar-window.c:492
 msgid "_Compact View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:488
+#: ../thunar/thunar-window.c:492
 msgid "Display folder content in a compact list view"
 msgstr ""
 
-#: ../thunar/thunar-window.c:490
+#: ../thunar/thunar-window.c:494
 msgid "_Go"
 msgstr "వెళ్ళు (_G)"
 
-#: ../thunar/thunar-window.c:491
+#: ../thunar/thunar-window.c:495
 msgid "_Bookmarks"
 msgstr ""
 
-#: ../thunar/thunar-window.c:493
+#: ../thunar/thunar-window.c:497
 msgid "_Home"
 msgstr "నివాసం (_H)"
 
-#: ../thunar/thunar-window.c:493
+#: ../thunar/thunar-window.c:497
 msgid "Go to the home folder"
 msgstr "నివాస సంచయమునకు వెళ్ళు"
 
-#: ../thunar/thunar-window.c:494
+#: ../thunar/thunar-window.c:498
 msgid "Desktop"
 msgstr "డెస్క్‌టాప్"
 
-#: ../thunar/thunar-window.c:494
+#: ../thunar/thunar-window.c:498
 msgid "Go to the desktop folder"
 msgstr "డెస్క్‌టాప్ సంచయానికి వెళ్ళు"
 
-#: ../thunar/thunar-window.c:495
+#: ../thunar/thunar-window.c:499
 msgid ""
 "Browse all local and remote disks and folders accessible from this computer"
 msgstr ""
 
-#: ../thunar/thunar-window.c:496
+#: ../thunar/thunar-window.c:500
 msgid "Display recently used files"
 msgstr ""
 
-#: ../thunar/thunar-window.c:497
+#: ../thunar/thunar-window.c:501
 msgid "T_rash"
 msgstr "చెత్తబుట్ట (_r)"
 
-#: ../thunar/thunar-window.c:497
+#: ../thunar/thunar-window.c:501
 msgid "Display the contents of the trash can"
 msgstr "చెత్తబుట్టలోని విషయాలను ప్రదర్శించు"
 
-#: ../thunar/thunar-window.c:498
+#: ../thunar/thunar-window.c:502
 msgid "Open _Parent"
 msgstr "మూలాన్ని తెరువు (_P)"
 
-#: ../thunar/thunar-window.c:498
+#: ../thunar/thunar-window.c:502
 msgid "Open the parent folder"
 msgstr "మూల సంచయమును తెరువు"
 
-#: ../thunar/thunar-window.c:499
+#: ../thunar/thunar-window.c:503
 msgid "_Open Location..."
 msgstr "స్థానాన్ని తెరువు...(_O)"
 
-#: ../thunar/thunar-window.c:499
+#: ../thunar/thunar-window.c:503
 msgid "Specify a location to open"
 msgstr "తెరుచుటకు ఒక స్థానాన్ని నిర్దేశించండి"
 
-#: ../thunar/thunar-window.c:501
+#: ../thunar/thunar-window.c:505
 msgid "T_emplates"
 msgstr "మూసలు (_e)"
 
-#: ../thunar/thunar-window.c:501
+#: ../thunar/thunar-window.c:505
 msgid "Go to the templates folder"
 msgstr "మూసల సంచయానికి వెళ్ళు"
 
-#: ../thunar/thunar-window.c:502
+#: ../thunar/thunar-window.c:506
 msgid "B_rowse Network"
 msgstr "నెట్‌వర్కులో విహరించండి (_r)"
 
-#: ../thunar/thunar-window.c:505
+#: ../thunar/thunar-window.c:509
 msgid "_Contents"
 msgstr "విషయసూచిక (_C)"
 
-#: ../thunar/thunar-window.c:505
+#: ../thunar/thunar-window.c:509
 msgid "Display Thunar user manual"
 msgstr "తునార్ వాడుకరి కరదీపికను చూపించు"
 
-#: ../thunar/thunar-window.c:506
+#: ../thunar/thunar-window.c:510
 msgid "Display information about Thunar"
 msgstr "తునార్ గురించిన సమాచారాన్ని చూపించు"
 
-#: ../thunar/thunar-window.c:507
+#: ../thunar/thunar-window.c:511
 msgid "Back"
 msgstr "వెనుకకు"
 
-#: ../thunar/thunar-window.c:507
+#: ../thunar/thunar-window.c:511
 msgid "Go to the previous visited folder"
 msgstr "ఇంతకు ముందు సందర్శించిన సంచయమునకు వెళ్ళు"
 
-#: ../thunar/thunar-window.c:509
+#: ../thunar/thunar-window.c:513
 msgid "Forward"
 msgstr "ముందుకు"
 
-#: ../thunar/thunar-window.c:509
+#: ../thunar/thunar-window.c:513
 msgid "Go to the next visited folder"
 msgstr "తరువాత సందర్శించిన సంచయమునకు వెళ్ళు"
 
-#: ../thunar/thunar-window.c:510
+#: ../thunar/thunar-window.c:514
 msgid "_Previous Tab"
 msgstr ""
 
-#: ../thunar/thunar-window.c:510
+#: ../thunar/thunar-window.c:514
 msgid "Switch to Previous Tab"
 msgstr ""
 
-#: ../thunar/thunar-window.c:511
+#: ../thunar/thunar-window.c:515
 msgid "_Next Tab"
 msgstr ""
 
-#: ../thunar/thunar-window.c:511
+#: ../thunar/thunar-window.c:515
 msgid "Switch to Next Tab"
 msgstr ""
 
-#: ../thunar/thunar-window.c:512
+#: ../thunar/thunar-window.c:516
 msgid "_Search for Files..."
 msgstr ""
 
-#: ../thunar/thunar-window.c:512
+#: ../thunar/thunar-window.c:516
 msgid "Search for a specific file in the current folder and Recent"
 msgstr ""
 
-#: ../thunar/thunar-window.c:513
+#: ../thunar/thunar-window.c:517
 msgid "Cancel search for files"
 msgstr ""
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:852
+#: ../thunar/thunar-window.c:856
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr ""
 
-#: ../thunar/thunar-window.c:2467
+#: ../thunar/thunar-window.c:2474
 msgid "Close tab"
 msgstr "నెట్టు మూసివేయి"
 
-#: ../thunar/thunar-window.c:2920
+#: ../thunar/thunar-window.c:2927
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "\"%s\" స్థానమును తెరువు"
 
-#: ../thunar/thunar-window.c:3850
+#: ../thunar/thunar-window.c:3862
 msgid "Failed to open parent folder"
 msgstr "మూల సంచయాన్ని తెరుచుటలో విఫలమైంది"
 
-#: ../thunar/thunar-window.c:3981
+#: ../thunar/thunar-window.c:3993
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr ""
 
+#: ../thunar/thunar-window.c:3995
+msgid "Create directory"
+msgstr ""
+
 #. display an error to the user
-#: ../thunar/thunar-window.c:4051
+#: ../thunar/thunar-window.c:4064
 msgid "Failed to browse the computer"
 msgstr ""
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4094
+#: ../thunar/thunar-window.c:4107
 msgid "About Templates"
 msgstr "మూసల గురించి"
 
-#: ../thunar/thunar-window.c:4116
+#: ../thunar/thunar-window.c:4129
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "ఈ సంచయములోని అన్ని దస్త్రాలు \"పత్రమును సృష్టించు\" మెను నందు కనిపిస్తాయి."
 
-#: ../thunar/thunar-window.c:4123
+#: ../thunar/thunar-window.c:4136
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr ""
 
-#: ../thunar/thunar-window.c:4135
+#: ../thunar/thunar-window.c:4148
 msgid "Do _not display this message again"
 msgstr "ఈ సందేశాన్ని మరలా ప్రదర్శించవద్దు (_n)"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4169
+#: ../thunar/thunar-window.c:4182
 msgid "Failed to open the file system root folder"
 msgstr "దస్త్ర వ్యవస్థ రూట్ సంచయాన్ని తెరుచుటలో విఫలమయింది"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4205
+#: ../thunar/thunar-window.c:4218
 msgid "Failed to display `Recent`"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4241
+#: ../thunar/thunar-window.c:4254
 msgid "Failed to display the contents of the trash can"
 msgstr "చెత్తబుట్టలోని విషయాలను ప్రదర్శించుటలో విఫలమైంది"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4277
+#: ../thunar/thunar-window.c:4290
 msgid "Failed to browse the network"
 msgstr "నెట్‌వర్కుని విహరించుటలో విఫలమైంది"
 
-#: ../thunar/thunar-window.c:4388
+#: ../thunar/thunar-window.c:4401
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "తునార్ అనేది Xfce డెస్క్‍టాప్ పరిసరం కొరకు రూపొందించబడిన\nఒక వేగవంతమైన మరియు సులభమైన ఫైల్ నిర్వాహకం."
 
-#: ../thunar/thunar-window.c:5455
+#: ../thunar/thunar-window.c:5468
 msgid "Failed to launch search with Catfish"
 msgstr ""
 
@@ -4059,39 +4100,44 @@ msgstr ""
 msgid "Search & Replace"
 msgstr "వెతుకు & పునఃస్థాపించు"
 
-#: ../plugins/thunar-sendto-email/main.c:219
+#: ../plugins/thunar-sendto-email/main.c:220
 #, c-format
 msgid "Send \"%s\" as compressed archive?"
 msgstr "\"%s\"ను కుంచించిన సంగ్రహము వలె పంపాలా?"
 
 #: ../plugins/thunar-sendto-email/main.c:222
-#: ../plugins/thunar-sendto-email/main.c:241
+#: ../plugins/thunar-sendto-email/main.c:242
+msgid "Send email"
+msgstr ""
+
+#: ../plugins/thunar-sendto-email/main.c:224
+#: ../plugins/thunar-sendto-email/main.c:244
 msgid "Send _directly"
 msgstr "నేరుగా పంపు (_d)"
 
-#: ../plugins/thunar-sendto-email/main.c:223
+#: ../plugins/thunar-sendto-email/main.c:225
 msgid "Send com_pressed"
 msgstr "సంగ్రహించిన వాటిని పంపు (_p)"
 
-#: ../plugins/thunar-sendto-email/main.c:225
+#: ../plugins/thunar-sendto-email/main.c:227
 msgid ""
 "When sending a file via email, you can either choose to send the file "
 "directly, as is, or compress the file before attaching it to an email. It is"
 " highly recommended to compress large files before sending them."
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:236
+#: ../plugins/thunar-sendto-email/main.c:238
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
 msgstr[0] "%d దస్త్రాన్ని కుంచించిన సంగ్రహము వలె పంపాలా?"
 msgstr[1] "%d దస్త్రాలను కుంచించిన సంగ్రహము వలె పంపాలా?"
 
-#: ../plugins/thunar-sendto-email/main.c:242
+#: ../plugins/thunar-sendto-email/main.c:245
 msgid "Send as _archive"
 msgstr "సంగ్రహము వలె పంపు (_a)"
 
-#: ../plugins/thunar-sendto-email/main.c:244
+#: ../plugins/thunar-sendto-email/main.c:247
 msgid ""
 "When sending multiple files via email, you can either choose to send the "
 "files directly, attaching multiple files to an email, or send all files "
@@ -4101,29 +4147,29 @@ msgstr ""
 
 #. allocate the progress dialog
 #. setup the label
-#: ../plugins/thunar-sendto-email/main.c:302
-#: ../plugins/thunar-sendto-email/main.c:328
+#: ../plugins/thunar-sendto-email/main.c:305
+#: ../plugins/thunar-sendto-email/main.c:331
 msgid "Compressing files..."
 msgstr "దస్త్రాలను కుంచిస్తున్నది..."
 
 #. tell the user that the command failed
-#: ../plugins/thunar-sendto-email/main.c:353
+#: ../plugins/thunar-sendto-email/main.c:356
 #, c-format
 msgid "ZIP command terminated with error %d"
 msgstr "జిప్ ఆదేశము %d దోషముతో ముగిసినది"
 
-#: ../plugins/thunar-sendto-email/main.c:441
+#: ../plugins/thunar-sendto-email/main.c:444
 msgid "Failed to create temporary directory"
 msgstr "తాత్కాలిక సంచయాన్ని సృష్టించుటలో విఫలమైంది"
 
-#: ../plugins/thunar-sendto-email/main.c:503
-#: ../plugins/thunar-sendto-email/main.c:514
+#: ../plugins/thunar-sendto-email/main.c:506
+#: ../plugins/thunar-sendto-email/main.c:517
 #, c-format
 msgid "Failed to create symbolic link for \"%s\""
 msgstr ""
 
 #. tell the user that we failed to compress the file(s)
-#: ../plugins/thunar-sendto-email/main.c:538
+#: ../plugins/thunar-sendto-email/main.c:541
 #, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
@@ -4131,7 +4177,7 @@ msgstr[0] "%d దస్త్రాన్ని సంగ్రహించు�
 msgstr[1] "%d దస్త్రాలను సంగ్రహించుటలో విఫలమైంది"
 
 #. tell the user that we failed
-#: ../plugins/thunar-sendto-email/main.c:690
+#: ../plugins/thunar-sendto-email/main.c:693
 msgid "Failed to compose new email"
 msgstr "కొత్త ఈమెయిల్ కూర్చుటలో విఫలమైంది"
 
@@ -4173,14 +4219,18 @@ msgstr "చర్యను సృష్టించు"
 msgid "Failed to save actions to disk."
 msgstr "చర్యలను డిస్కుకి భద్రపరుచుటలో విఫలమైంది."
 
-#: ../plugins/thunar-uca/thunar-uca-chooser.c:370
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:371
 #, c-format
 msgid ""
 "Are you sure that you want to delete\n"
 "action \"%s\"?"
 msgstr "మీరు ఖచ్చితముగా \"%s\" చర్యను\nతొలగించాలనుకుంటున్నారా?"
 
-#: ../plugins/thunar-uca/thunar-uca-chooser.c:371
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:372
+msgid "Delete action"
+msgstr ""
+
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:373
 msgid "If you delete a custom action, it is permanently lost."
 msgstr "ఒకవేళ మీరు ఒక అనురూపిత చర్యను తొలగించినట్లయితే, అది శాశ్వతంగా పోతుంది."
 
