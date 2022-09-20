@@ -460,6 +460,30 @@ typedef enum
 
 GType thunar_operation_log_mode_get_type (void) G_GNUC_CONST;
 
+/**
+ * ThunarItemsAsFolderSize
+ *
+ * Specify when the size column on a folder
+ * should instead show the item count of the folder
+ **/
+
+#define THUNAR_TYPE_ITEMS_AS_FOLDER_SIZE (thunar_items_as_folder_size_get_type ())
+
+/**
+ * ThunarItemsAsFolderSize:
+ * @THUNAR_ITEMS_AS_FOLDER_SIZE_NEVER,        : never show number of items as the size of the folder
+ * @THUNAR_ITEMS_AS_FOLDER_SIZE_ONLY_LOCAL,   : only show number of items as size of folder for local folders
+ * @THUNAR_ITEMS_AS_FOLDER_SIZE_ALWAYS,       : always show the number of items as the size of the folder
+ **/
+typedef enum
+{
+  THUNAR_ITEMS_AS_FOLDER_SIZE_NEVER,
+  THUNAR_ITEMS_AS_FOLDER_SIZE_ONLY_LOCAL,
+  THUNAR_ITEMS_AS_FOLDER_SIZE_ALWAYS,
+} ThunarItemsAsFolderSize;
+
+GType thunar_items_as_folder_size_get_type (void) G_GNUC_CONST;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_ENUM_TYPES_H__ */
