@@ -958,7 +958,8 @@ thunar_list_model_get_value (GtkTreeModel *model,
       g_value_init (value, G_TYPE_STRING);
       if (THUNAR_LIST_MODEL (model)->items_count_as_dir_size && thunar_file_is_directory (file) )
         {
-          item_count = thunar_folder_get_file_count_async (thunar_folder_get_for_file (file), g_object_ref (value));
+          item_count = thunar_folder_get_file_count (thunar_folder_get_for_file (file));
+          g_value_take_string (value, g_strdup_printf (ngettext ("%u item", "%u items", item_count), item_count));
         }
       else
         g_value_take_string (value, thunar_file_get_size_string_formatted (file, THUNAR_LIST_MODEL (model)->file_size_binary));
