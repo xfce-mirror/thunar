@@ -114,6 +114,7 @@ struct _ThunarFolder
   gboolean           reload_info;
 
   guint32            file_count;
+  gboolean           file_count_is_cached;
 
   GList             *content_type_ptr;
   guint              content_type_idle_id;
@@ -983,10 +984,15 @@ thunar_folder_get_file_count (ThunarFolder *folder)
 
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), 0);
 
+  /* If we already have a cached value, just return it */
+  if (G_LIKELY (folder->file_count_is_cached))
+    return folder->file_count;
+
   /* If the content type loader already loaded the file-list, just count it*/
   if (folder->files != NULL)
     {
       folder->file_count = g_list_length (folder->files);
+      folder->file_count_is_cached = TRUE;
       return folder->file_count;
     }
 
@@ -1009,6 +1015,7 @@ thunar_folder_get_file_count (ThunarFolder *folder)
   g_file_enumerator_close (enumerator, NULL, NULL);
   g_object_unref (enumerator);
 
+  folder->file_count_is_cached = TRUE;
   return folder->file_count;
 }
 
@@ -1064,6 +1071,7 @@ thunar_folder_reload (ThunarFolder *folder,
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
 
   folder->file_count = 0;
+  folder->file_count_is_cached = FALSE;
 
   /* reload file info too? */
   folder->reload_info = reload_info;
