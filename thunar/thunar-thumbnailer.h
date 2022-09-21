@@ -41,11 +41,13 @@ ThunarThumbnailer *thunar_thumbnailer_get             (void) G_GNUC_MALLOC;
 
 gboolean           thunar_thumbnailer_queue_file      (ThunarThumbnailer        *thumbnailer,
                                                        ThunarFile               *file,
-                                                       guint                    *request);
+                                                       guint                    *request,
+                                                       ThunarThumbnailSize       size);
 gboolean           thunar_thumbnailer_queue_files     (ThunarThumbnailer        *thumbnailer,
                                                        gboolean                  lazy_checks,
                                                        GList                    *files,
-                                                       guint                    *request);
+                                                       guint                    *request,
+                                                       ThunarThumbnailSize       size);
 void               thunar_thumbnailer_dequeue         (ThunarThumbnailer        *thumbnailer,
                                                        guint                     request);
 
