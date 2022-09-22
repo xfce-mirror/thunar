@@ -543,19 +543,23 @@ static void
 _tjo_restore_from_trash (ThunarJobOperation *operation,
                          GError            **error)
 {
-  GFileEnumerator *enumerator;
-  GFileInfo       *info;
-  GFile           *trash;
-  GFile           *trashed_file;
-  GFile           *original_file;
-  const char      *original_path;
-  GDateTime       *date;
-  GError          *err = NULL;
-  gint64           deletion_time;
-  gpointer         lookup;
-  GHashTable      *files_to_restore;
-  GHashTable      *files_trashed;
-  GList           *to_restore_list;
+  GFileEnumerator   *enumerator;
+  GFileInfo         *info;
+  GFile             *trash;
+  GFile             *trashed_file;
+  GFile             *original_file;
+  const char        *original_path;
+  GDateTime         *date;
+  GError            *err = NULL;
+  gint64             deletion_time;
+  gpointer           lookup;
+  GHashTable        *files_to_restore;
+  GHashTable        *files_trashed;
+  GList             *to_restore_list;
+  ThunarApplication *application;
+  GList             *source_file_list = NULL;
+  GList             *target_file_list = NULL;
+
 
   /* enumerate over the files in the trash */
   trash = g_file_new_for_uri ("trash:///");
@@ -631,17 +635,25 @@ _tjo_restore_from_trash (ThunarJobOperation *operation,
     {
       to_restore_list = g_hash_table_get_keys (files_to_restore);
 
-      /* restore the files that we had selected earlier */
+      /* add the files to be restored all together later */
       for (GList *lp = to_restore_list; lp != NULL; lp = lp->next)
       {
         trashed_file = lp->data;
         original_file = g_hash_table_lookup (files_to_restore, trashed_file);
 
-        /* actually restore the file */
-        g_file_move (trashed_file, original_file, G_FILE_COPY_NOFOLLOW_SYMLINKS, NULL, NULL, NULL, NULL);
+        source_file_list = g_list_append (source_file_list, trashed_file);
+        target_file_list = g_list_append (target_file_list, original_file);
       }
 
+      /* restore the lists asynchronously using a move operation */
+      application = thunar_application_get ();
+      thunar_application_move_files (application, NULL, source_file_list, target_file_list, THUNAR_OPERATION_LOG_NO_OPERATIONS, NULL);
+      g_object_unref (application);
+
       g_list_free (to_restore_list);
+      g_list_free (source_file_list);
+      g_list_free (target_file_list);
+
     }
 
   g_hash_table_unref (files_to_restore);
