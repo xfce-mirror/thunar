@@ -1223,7 +1223,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
 
   /* queue a new thumbnail request */
   thunar_thumbnailer_queue_file (dialog->thumbnailer, file,
-                                 &dialog->thumbnail_request);
+                                 &dialog->thumbnail_request, THUNAR_THUMBNAIL_SIZE_INVALID);
 
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (dialog)));
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
