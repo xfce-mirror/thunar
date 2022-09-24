@@ -41,9 +41,9 @@ static void                   thunar_job_operation_dispose            (GObject  
 static void                   thunar_job_operation_finalize           (GObject            *object);
 static ThunarJobOperation    *thunar_job_operation_new_invert         (ThunarJobOperation *job_operation);
 static void                   thunar_job_operation_execute            (ThunarJobOperation *job_operation);
-static gint                   _tjo_is_ancestor                        (gconstpointer       descendant,
+static gint                   thunar_job_operation_is_ancestor        (gconstpointer       descendant,
                                                                        gconstpointer       ancestor);
-static void                   _tjo_restore_from_trash                 (ThunarJobOperation *operation,
+static void                   thunar_job_operation_restore_from_trash (ThunarJobOperation *operation,
                                                                        GError            **error);
 
 
@@ -167,7 +167,7 @@ thunar_job_operation_add (ThunarJobOperation *job_operation,
    *
    * So to avoid such issues on executing a job operation, if the source file is
    * a descendant of an existing file, do not add it to the job operation. */
-  if (g_list_find_custom (job_operation->source_file_list, source_file, _tjo_is_ancestor) != NULL)
+  if (g_list_find_custom (job_operation->source_file_list, source_file, thunar_job_operation_is_ancestor) != NULL)
     return;
 
   /* Don't add NULL files to the list, since it causes memory management issues on object destruction */
@@ -495,7 +495,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
         break;
 
       case THUNAR_JOB_OPERATION_KIND_RESTORE:
-        _tjo_restore_from_trash (job_operation, &error);
+        thunar_job_operation_restore_from_trash (job_operation, &error);
 
         if (error != NULL)
           {
@@ -514,7 +514,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
 
 
 
-/* _tjo_is_ancestor:
+/* thunar_job_operation_is_ancestor:
  * @ancestor:     potential ancestor of @descendant. A #GFile
  * @descendant:   potential descendant of @ancestor. A #GFile
  *
@@ -524,7 +524,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
  *               %1 otherwise
  **/
 static gint
-_tjo_is_ancestor (gconstpointer ancestor,
+thunar_job_operation_is_ancestor (gconstpointer ancestor,
              gconstpointer descendant)
 {
   if (thunar_g_file_is_descendant (G_FILE (descendant), G_FILE (ancestor)))
@@ -535,14 +535,14 @@ _tjo_is_ancestor (gconstpointer ancestor,
 
 
 
-/* _tjo_restore_from_trash:
+/* thunar_job_operation_restore_from_trash::
  * @operation: operation containing the information for the files which must be restored
  * @error:     a GError instance for error handling
  *
  * Helper function to restore files based on the given @operation
  **/
 static void
-_tjo_restore_from_trash (ThunarJobOperation *operation,
+thunar_job_operation_restore_from_trash (ThunarJobOperation *operation,
                          GError            **error)
 {
   GFileEnumerator   *enumerator;
