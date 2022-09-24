@@ -555,9 +555,7 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation *operation,
   GError            *err = NULL;
   gint64             deletion_time;
   gpointer           lookup;
-  GHashTable        *files_to_restore;
   GHashTable        *files_trashed;
-  GList             *to_restore_list;
   ThunarApplication *application;
   GList             *source_file_list = NULL;
   GList             *target_file_list = NULL;
@@ -581,8 +579,7 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation *operation,
       return;
     }
 
-  /* set up a hash table for the files we'll want to restore, and for the files we deleted */
-  files_to_restore = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, g_object_unref, g_object_unref);
+  /* set up a hash table for the files we deleted */
   files_trashed = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, NULL, NULL);
 
   /* add all the files that were deleted in the hash table so we can check if a file
@@ -590,7 +587,7 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation *operation,
   for (GList *lp = operation->target_file_list; lp != NULL; lp = lp->next)
     g_hash_table_add (files_trashed, lp->data);
 
-  /* iterate over the files in the trash, adding them to a hash table storing
+  /* iterate over the files in the trash, adding them to source and target lists of
    * the files which are to be restored and their original paths */
   for (info = g_file_enumerator_next_file (enumerator, NULL, &err); info != NULL; info = g_file_enumerator_next_file (enumerator, NULL, &err))
     {
@@ -598,7 +595,6 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation *operation,
         {
           g_object_unref (trash);
           g_object_unref (enumerator);
-          g_hash_table_unref (files_to_restore);
           g_hash_table_unref (files_trashed);
           g_object_unref (info);
 
@@ -623,7 +619,10 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation *operation,
       if (lookup != NULL && operation->start_timestamp <= deletion_time && deletion_time <= operation->end_timestamp)
         {
           trashed_file = g_file_get_child (trash, g_file_info_get_name (info));
-          g_hash_table_insert (files_to_restore, trashed_file, g_object_ref (original_file));
+
+          source_file_list = thunar_g_list_append_deep (source_file_list, trashed_file);
+          target_file_list = thunar_g_list_append_deep (target_file_list, original_file);
+
         }
 
       g_object_unref (original_file);
@@ -632,31 +631,16 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation *operation,
   g_object_unref (trash);
   g_object_unref (enumerator);
 
-  if (g_hash_table_size (files_to_restore) > 0)
+  if (source_file_list != NULL && target_file_list != NULL)
     {
-      to_restore_list = g_hash_table_get_keys (files_to_restore);
-
-      /* add the files to be restored all together later */
-      for (GList *lp = to_restore_list; lp != NULL; lp = lp->next)
-      {
-        trashed_file = lp->data;
-        original_file = g_hash_table_lookup (files_to_restore, trashed_file);
-
-        source_file_list = g_list_append (source_file_list, trashed_file);
-        target_file_list = g_list_append (target_file_list, original_file);
-      }
-
       /* restore the lists asynchronously using a move operation */
       application = thunar_application_get ();
       thunar_application_move_files (application, NULL, source_file_list, target_file_list, THUNAR_OPERATION_LOG_NO_OPERATIONS, NULL);
       g_object_unref (application);
 
-      g_list_free (to_restore_list);
-      g_list_free (source_file_list);
-      g_list_free (target_file_list);
-
+      thunar_g_list_free_full (source_file_list);
+      thunar_g_list_free_full (target_file_list);
     }
 
-  g_hash_table_unref (files_to_restore);
   g_hash_table_unref (files_trashed);
 }
