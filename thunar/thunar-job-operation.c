@@ -56,6 +56,7 @@ struct _ThunarJobOperation
   GList                  *source_file_list;
   GList                  *target_file_list;
   GList                  *overwritten_file_list;
+
   /**
    * Optional timestampes (in seconds) which tell when the operation was started and ended.
    * Only used for trash/restore operations.
@@ -132,6 +133,7 @@ thunar_job_operation_new (ThunarJobOperationKind kind)
 
   operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
   operation->operation_kind = kind;
+
   /* we store the start timestamp in seconds, so we need to divide by 1e6 */
   operation->start_timestamp = g_get_real_time () / (gint64) 1e6 ;
 
@@ -590,7 +592,6 @@ _tjo_restore_from_trash (ThunarJobOperation *operation,
 
   /* iterate over the files in the trash, adding them to a hash table storing
    * the files which are to be restored and their original paths */
-  /* while ((info = g_file_enumerator_next_file (enumerator, NULL, &err)) != NULL) */
   for (info = g_file_enumerator_next_file (enumerator, NULL, &err); info != NULL; info = g_file_enumerator_next_file (enumerator, NULL, &err))
     {
       if (err != NULL)
