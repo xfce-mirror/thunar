@@ -1119,7 +1119,7 @@ thunar_dbus_service_create_file (ThunarDBusFileManager  *object,
 
   /* popup a new window for the folder */
   application = thunar_application_get ();
-  thunar_application_create_file (application, file, content_type, screen, startup_id);
+  thunar_application_create_file (application, file, content_type, screen, startup_id, THUNAR_OPERATION_LOG_NO_OPERATIONS);
   g_object_unref (G_OBJECT (application));
 
   /* cleanup */
@@ -1163,7 +1163,7 @@ thunar_dbus_service_create_file_from_template (ThunarDBusFileManager  *object,
 
   /* popup a new window for the folder */
   application = thunar_application_get ();
-  thunar_application_create_file_from_template (application, file, template_file, screen, startup_id);
+  thunar_application_create_file_from_template (application, file, template_file, screen, startup_id, THUNAR_OPERATION_LOG_NO_OPERATIONS);
   g_object_unref (G_OBJECT (application));
 
   /* cleanup */

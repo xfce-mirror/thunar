@@ -121,17 +121,19 @@ _thunar_io_jobs_create (ThunarJob  *job,
                         GArray     *param_values,
                         GError    **error)
 {
-  GFileOutputStream *stream;
-  ThunarJobResponse  response = THUNAR_JOB_RESPONSE_CANCEL;
-  GFileInfo         *info;
-  GError            *err = NULL;
-  GList             *file_list;
-  GList             *lp;
-  gchar             *base_name;
-  gchar             *display_name;
-  guint              n_processed = 0;
-  GFile             *template_file;
-  GFileInputStream  *template_stream = NULL;
+  GFileOutputStream      *stream;
+  ThunarJobResponse       response = THUNAR_JOB_RESPONSE_CANCEL;
+  GFileInfo              *info;
+  GError                 *err = NULL;
+  GList                  *file_list;
+  GList                  *lp;
+  gchar                  *base_name;
+  gchar                  *display_name;
+  guint                   n_processed = 0;
+  GFile                  *template_file;
+  GFileInputStream       *template_stream = NULL;
+  ThunarJobOperation     *operation = NULL;
+  ThunarOperationLogMode  log_mode;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -156,6 +158,11 @@ _thunar_io_jobs_create (ThunarJob  *job,
           return FALSE;
         }
     }
+
+  log_mode = thunar_job_get_log_mode (job);
+
+  if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
+    operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_CREATE);
 
   /* iterate over all files in the list */
   for (lp = file_list;
@@ -247,6 +254,11 @@ _thunar_io_jobs_create (ThunarJob  *job,
         }
       else
         {
+
+          /* remember the file for possible undo */
+          if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
+               thunar_job_operation_add (operation, NULL, lp->data);
+
           if (template_stream != NULL)
             {
               /* write the template into the new file */
@@ -268,12 +280,24 @@ _thunar_io_jobs_create (ThunarJob  *job,
   if (err != NULL)
     {
       g_propagate_error (error, err);
+      if (operation != NULL)
+        g_object_unref (operation);
       return FALSE;
     }
 
   /* check if the job was cancelled */
   if (exo_job_is_cancelled (EXO_JOB (job)))
-    return FALSE;
+    {
+      if (operation != NULL)
+        g_object_unref (operation);
+      return FALSE;
+    }
+
+  if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
+    {
+      thunar_job_operation_commit (operation);
+      g_object_unref (operation);
+    }
 
   /* emit the "new-files" signal with the given file list */
   thunar_job_new_files (THUNAR_JOB (job), file_list);
@@ -299,14 +323,16 @@ _thunar_io_jobs_mkdir (ThunarJob  *job,
                        GArray     *param_values,
                        GError    **error)
 {
-  ThunarJobResponse response;
-  GFileInfo        *info;
-  GError           *err = NULL;
-  GList            *file_list;
-  GList            *lp;
-  gchar            *base_name;
-  gchar            *display_name;
-  guint             n_processed = 0;
+  ThunarJobResponse       response;
+  GFileInfo              *info;
+  GError                 *err = NULL;
+  GList                  *file_list;
+  GList                  *lp;
+  gchar                  *base_name;
+  gchar                  *display_name;
+  guint                  n_processed = 0;
+  ThunarJobOperation     *operation = NULL;
+  ThunarOperationLogMode  log_mode;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -317,6 +343,11 @@ _thunar_io_jobs_mkdir (ThunarJob  *job,
 
   /* we know the total list of files to process */
   thunar_job_set_total_files (THUNAR_JOB (job), file_list);
+
+  log_mode = thunar_job_get_log_mode (job);
+
+  if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
+    operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_CREATE);
 
   for (lp = file_list;
        err == NULL && lp != NULL && !exo_job_is_cancelled (EXO_JOB (job));
@@ -400,19 +431,36 @@ _thunar_io_jobs_mkdir (ThunarJob  *job,
               if (response == THUNAR_JOB_RESPONSE_RETRY)
                 goto again;
             }
-        }
-    }
+        } /* end try creation */
+
+      /* remember the file for possible undo */
+      if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
+          thunar_job_operation_add (operation, NULL, lp->data);
+
+    } /* end for all files */
 
   /* check if we have failed */
   if (err != NULL)
     {
       g_propagate_error (error, err);
+      if (operation != NULL)
+        g_object_unref (operation);
       return FALSE;
     }
 
   /* check if the job was cancelled */
   if (exo_job_is_cancelled (EXO_JOB (job)))
-    return FALSE;
+    {
+      if (operation != NULL)
+        g_object_unref (operation);
+      return FALSE;
+    }
+
+  if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
+    {
+      thunar_job_operation_commit (operation);
+      g_object_unref (operation);
+    }
 
   /* emit the "new-files" signal with the given file list */
   thunar_job_new_files (THUNAR_JOB (job), file_list);

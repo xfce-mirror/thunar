@@ -157,7 +157,7 @@ thunar_job_operation_add (ThunarJobOperation *job_operation,
 {
 
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
-  _thunar_return_if_fail (G_IS_FILE (source_file));
+  _thunar_return_if_fail (source_file == NULL || G_IS_FILE (source_file));
   _thunar_return_if_fail (target_file == NULL || G_IS_FILE (target_file));
 
   /* When a directory has a file operation applied to it (for e.g. deletion),
@@ -370,6 +370,12 @@ thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
         inverted_operation->target_file_list = thunar_g_list_copy_deep (job_operation->source_file_list);
         inverted_operation->start_timestamp = job_operation->start_timestamp;
         inverted_operation->end_timestamp = job_operation->end_timestamp;
+        break;
+
+      case THUNAR_JOB_OPERATION_KIND_CREATE:
+        inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
+        inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_DELETE;
+        inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
         break;
 
       default:

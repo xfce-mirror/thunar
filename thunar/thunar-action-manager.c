@@ -2643,7 +2643,7 @@ thunar_action_manager_action_create_folder (ThunarActionManager *action_mgr)
 
       /* launch the operation */
       application = thunar_application_get ();
-      thunar_application_mkdir (application, action_mgr->widget, &path_list, action_mgr->new_files_created_closure);
+      thunar_application_mkdir (application, action_mgr->widget, &path_list, action_mgr->new_files_created_closure, THUNAR_OPERATION_LOG_OPERATIONS);
       g_object_unref (G_OBJECT (application));
 
       /* release the path */
@@ -2721,7 +2721,7 @@ thunar_action_manager_action_create_document (ThunarActionManager *action_mgr,
           application = thunar_application_get ();
           thunar_application_creat (application, action_mgr->widget, &target_path_list,
                                     template_file != NULL ? thunar_file_get_file (template_file) : NULL,
-                                    action_mgr->new_files_created_closure);
+                                    action_mgr->new_files_created_closure, THUNAR_OPERATION_LOG_OPERATIONS);
           g_object_unref (G_OBJECT (application));
 
           /* release the target path */

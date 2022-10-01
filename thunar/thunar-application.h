@@ -89,16 +89,21 @@ void                  thunar_application_rename_file                (ThunarAppli
                                                                      GdkScreen              *screen,
                                                                      const gchar            *startup_id,
                                                                      ThunarOperationLogMode  log_mode);
-void                  thunar_application_create_file                (ThunarApplication *application,
-                                                                     ThunarFile        *parent_directory,
-                                                                     const gchar       *content_type,
-                                                                     GdkScreen         *screen,
-                                                                     const gchar       *startup_id);
-void                  thunar_application_create_file_from_template (ThunarApplication *application,
-                                                                    ThunarFile        *parent_directory,
-                                                                    ThunarFile        *template_file,
-                                                                    GdkScreen         *screen,
-                                                                    const gchar       *startup_id);
+
+void                  thunar_application_create_file                (ThunarApplication      *application,
+                                                                     ThunarFile             *parent_directory,
+                                                                     const gchar            *content_type,
+                                                                     GdkScreen              *screen,
+                                                                     const gchar            *startup_id,
+                                                                     ThunarOperationLogMode  log_mode);
+
+void                  thunar_application_create_file_from_template (ThunarApplication       *application,
+                                                                    ThunarFile              *parent_directory,
+                                                                    ThunarFile              *template_file,
+                                                                    GdkScreen               *screen,
+                                                                    const gchar             *startup_id,
+                                                                    ThunarOperationLogMode   log_mode);
+
 void                  thunar_application_copy_to                   (ThunarApplication *application,
                                                                     gpointer           parent,
                                                                     GList             *source_file_list,
@@ -131,26 +136,28 @@ void                  thunar_application_move_files                (ThunarApplic
                                                                     ThunarOperationLogMode   log_mode,
                                                                     GClosure                *new_files_closure);
 
-void                  thunar_application_unlink_files              (ThunarApplication *application,
-                                                                    gpointer           parent,
-                                                                    GList             *file_list,
-                                                                    gboolean           permanently);
+void                  thunar_application_unlink_files              (ThunarApplication       *application,
+                                                                    gpointer                 parent,
+                                                                    GList                   *file_list,
+                                                                    gboolean                 permanently);
 
-void                  thunar_application_trash                     (ThunarApplication     *application,
-                                                                    gpointer               parent,
-                                                                    GList                 *file_list,
-                                                                    ThunarOperationLogMode log_mode);
+void                  thunar_application_trash                     (ThunarApplication       *application,
+                                                                    gpointer                 parent,
+                                                                    GList                   *file_list,
+                                                                    ThunarOperationLogMode   log_mode);
 
-void                  thunar_application_creat                     (ThunarApplication *application,
-                                                                    gpointer           parent,
-                                                                    GList             *file_list,
-                                                                    GFile             *template_file,
-                                                                    GClosure          *new_files_closure);
+void                  thunar_application_creat                     (ThunarApplication        *application,
+                                                                    gpointer                  parent,
+                                                                    GList                    *file_list,
+                                                                    GFile                    *template_file,
+                                                                    GClosure                 *new_files_closure,
+                                                                    ThunarOperationLogMode    log_mode);
 
-void                  thunar_application_mkdir                     (ThunarApplication *application,
-                                                                    gpointer           parent,
-                                                                    GList             *file_list,
-                                                                    GClosure          *new_files_closure);
+void                  thunar_application_mkdir                     (ThunarApplication        *application,
+                                                                    gpointer                  parent,
+                                                                    GList                    *file_list,
+                                                                    GClosure                 *new_files_closure,
+                                                                    ThunarOperationLogMode    log_mode);
 
 void                  thunar_application_empty_trash               (ThunarApplication *application,
                                                                     gpointer           parent,

@@ -1928,17 +1928,19 @@ thunar_application_rename_file (ThunarApplication      *application,
  *                     to open on the default screen.
  * @startup_id       : startup id from startup notification passed along
  *                     with dbus to make focus stealing work properly.
+ * @log_mode          : a #ThunarOperationLogMode to control logging
  *
  * Prompts the user to create a new file or directory in @parent_directory.
  * The @content_type defines the icon and other elements in the filename
  * prompt dialog.
  **/
 void
-thunar_application_create_file (ThunarApplication *application,
-                                ThunarFile        *parent_directory,
-                                const gchar       *content_type,
-                                GdkScreen         *screen,
-                                const gchar       *startup_id)
+thunar_application_create_file (ThunarApplication      *application,
+                                ThunarFile             *parent_directory,
+                                const gchar            *content_type,
+                                GdkScreen              *screen,
+                                const gchar            *startup_id,
+                                ThunarOperationLogMode  log_mode)
 {
   const gchar *dialog_title;
   const gchar *title;
@@ -1976,9 +1978,9 @@ thunar_application_create_file (ThunarApplication *application,
 
       /* launch the operation */
       if (is_directory)
-        thunar_application_mkdir (application, screen, &path_list, NULL);
+        thunar_application_mkdir (application, screen, &path_list, NULL, log_mode);
       else
-        thunar_application_creat (application, screen, &path_list, NULL, NULL);
+        thunar_application_creat (application, screen, &path_list, NULL, NULL, log_mode);
 
       g_object_unref (path_list.data);
       g_free (name);
@@ -1996,17 +1998,19 @@ thunar_application_create_file (ThunarApplication *application,
  *                     to open on the default screen.
  * @startup_id       : startup id from startup notification passed along
  *                     with dbus to make focus stealing work properly.
+ * @log_mode          : a #ThunarOperationLogMode to control logging
  *
  * Prompts the user to create a new file or directory in @parent_directory
  * from an existing @template_file which predefines the name and extension
  * in the create dialog.
  **/
 void
-thunar_application_create_file_from_template (ThunarApplication *application,
-                                              ThunarFile        *parent_directory,
-                                              ThunarFile        *template_file,
-                                              GdkScreen         *screen,
-                                              const gchar       *startup_id)
+thunar_application_create_file_from_template (ThunarApplication      *application,
+                                              ThunarFile             *parent_directory,
+                                              ThunarFile             *template_file,
+                                              GdkScreen              *screen,
+                                              const gchar            *startup_id,
+                                              ThunarOperationLogMode log_mode)
 {
   GList  target_path_list;
   gchar *name;
@@ -2039,7 +2043,7 @@ thunar_application_create_file_from_template (ThunarApplication *application,
       thunar_application_creat (application, screen,
                                 &target_path_list,
                                 thunar_file_get_file (template_file),
-                                NULL);
+                                NULL, log_mode);
 
       /* release the target path */
       g_object_unref (target_path_list.data);
@@ -2489,16 +2493,18 @@ creat_stub (GList *template_file,
  *                      which will be emitted when the job finishes with the
  *                      list of #GFile<!---->s created by the job, or
  *                      %NULL if you're not interested in the signal.
+ * @log_mode          : a #ThunarOperationLogMode to control logging
  *
  * Creates empty files for all #GFile<!---->s listed in @file_list. This
  * method takes care of all user interaction.
  **/
 void
-thunar_application_creat (ThunarApplication *application,
-                          gpointer           parent,
-                          GList             *file_list,
-                          GFile             *template_file,
-                          GClosure          *new_files_closure)
+thunar_application_creat (ThunarApplication      *application,
+                          gpointer                parent,
+                          GList                  *file_list,
+                          GFile                  *template_file,
+                          GClosure               *new_files_closure,
+                          ThunarOperationLogMode  log_mode)
 {
   GList template_list;
 
@@ -2511,7 +2517,7 @@ thunar_application_creat (ThunarApplication *application,
   /* launch the operation */
   thunar_application_launch (application, parent, "document-new",
                              _("Creating files..."), creat_stub,
-                             &template_list, file_list, FALSE, TRUE, THUNAR_OPERATION_LOG_OPERATIONS, new_files_closure);
+                             &template_list, file_list, FALSE, TRUE, log_mode, new_files_closure);
 }
 
 
@@ -2534,15 +2540,17 @@ mkdir_stub (GList *source_path_list,
  *                      which will be emitted when the job finishes with the
  *                      list of #GFile<!---->s created by the job, or
  *                      %NULL if you're not interested in the signal.
+ * @log_mode          : a #ThunarOperationLogMode to control logging
  *
  * Creates all directories referenced by the @file_list. This method takes care of all user
  * interaction.
  **/
 void
-thunar_application_mkdir (ThunarApplication *application,
-                          gpointer           parent,
-                          GList             *file_list,
-                          GClosure          *new_files_closure)
+thunar_application_mkdir (ThunarApplication      *application,
+                          gpointer                parent,
+                          GList                  *file_list,
+                          GClosure               *new_files_closure,
+                          ThunarOperationLogMode  log_mode)
 {
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
@@ -2550,7 +2558,7 @@ thunar_application_mkdir (ThunarApplication *application,
   /* launch the operation */
   thunar_application_launch (application, parent, "folder-new",
                              _("Creating directories..."), mkdir_stub,
-                             file_list, file_list, TRUE, FALSE, THUNAR_OPERATION_LOG_OPERATIONS, new_files_closure);
+                             file_list, file_list, TRUE, FALSE, log_mode, new_files_closure);
 }
 
 
