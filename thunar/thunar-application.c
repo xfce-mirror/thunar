@@ -2174,6 +2174,7 @@ thunar_application_copy_into (ThunarApplication *application,
  * @parent            : a #GdkScreen, a #GtkWidget or %NULL.
  * @source_file_list  : the list of #GFile<!---->s that should be symlinked.
  * @target_file       : the target directory.
+ * @log_mode          : A #ThunarOperationLogMode enum to control logging.
  * @new_files_closure : a #GClosure to connect to the job's "new-files" signal,
  *                      which will be emitted when the job finishes with the
  *                      list of #GFile<!---->s created by the job, or
@@ -2184,11 +2185,12 @@ thunar_application_copy_into (ThunarApplication *application,
  * interaction.
  **/
 void
-thunar_application_link_into (ThunarApplication *application,
-                              gpointer           parent,
-                              GList             *source_file_list,
-                              GFile             *target_file,
-                              GClosure          *new_files_closure)
+thunar_application_link_into (ThunarApplication      *application,
+                              gpointer                parent,
+                              GList                  *source_file_list,
+                              GFile                  *target_file,
+                              ThunarOperationLogMode  log_mode,
+                              GClosure                *new_files_closure)
 {
   gchar *display_name;
   gchar *title;
@@ -2207,7 +2209,7 @@ thunar_application_link_into (ThunarApplication *application,
                                          title, thunar_io_jobs_link_files,
                                          source_file_list, target_file,
                                          FALSE, TRUE,
-                                         THUNAR_OPERATION_LOG_OPERATIONS,
+                                         log_mode,
                                          new_files_closure);
 
   /* free the title */

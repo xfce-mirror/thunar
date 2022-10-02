@@ -1296,6 +1296,7 @@ thunar_dbus_service_transfer_files (ThunarDBusTransferMode transfer_mode,
             case THUNAR_DBUS_TRANSFER_MODE_LINK_INTO:
               thunar_application_link_into (application, screen,
                                             source_file_list, target_file_list->data,
+                                            THUNAR_OPERATION_LOG_NO_OPERATIONS,
                                             NULL);
               break;
             }

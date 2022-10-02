@@ -378,6 +378,13 @@ thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
         inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
         break;
 
+      case THUNAR_JOB_OPERATION_KIND_LINK:
+        inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
+        inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_UNLINK;
+        inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
+        inverted_operation->target_file_list = thunar_g_list_copy_deep (job_operation->source_file_list);
+        break;
+
       default:
         g_assert_not_reached ();
         break;
@@ -411,6 +418,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
   switch (job_operation->operation_kind)
     {
       case THUNAR_JOB_OPERATION_KIND_DELETE:
+      case THUNAR_JOB_OPERATION_KIND_UNLINK:
         for (GList *lp = job_operation->source_file_list; lp != NULL; lp = lp->next)
           {
             if (!G_IS_FILE (lp->data))

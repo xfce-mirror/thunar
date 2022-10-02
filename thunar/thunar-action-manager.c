@@ -1886,7 +1886,7 @@ thunar_action_manager_action_sendto_desktop (ThunarActionManager *action_mgr)
 
   /* launch the link job */
   application = thunar_application_get ();
-  thunar_application_link_into (application, action_mgr->widget, files, desktop_file, NULL);
+  thunar_application_link_into (application, action_mgr->widget, files, desktop_file, THUNAR_OPERATION_LOG_OPERATIONS, NULL);
   g_object_unref (G_OBJECT (application));
 
   /* cleanup */
@@ -2226,7 +2226,7 @@ thunar_action_manager_action_make_link (ThunarActionManager *action_mgr)
    */
   application = thunar_application_get ();
   thunar_application_link_into (application, action_mgr->widget, g_files,
-                                thunar_file_get_file (action_mgr->current_directory), action_mgr->new_files_created_closure);
+                                thunar_file_get_file (action_mgr->current_directory), THUNAR_OPERATION_LOG_OPERATIONS, action_mgr->new_files_created_closure);
   g_object_unref (G_OBJECT (application));
   g_list_free (g_files);
 

@@ -235,7 +235,7 @@ thunar_dnd_perform (GtkWidget    *widget,
           break;
 
         case GDK_ACTION_LINK:
-          thunar_application_link_into (application, widget, file_list, thunar_file_get_file (file), new_files_closure);
+          thunar_application_link_into (application, widget, file_list, thunar_file_get_file (file), THUNAR_OPERATION_LOG_OPERATIONS, new_files_closure);
           break;
 
         default:

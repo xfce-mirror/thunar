@@ -116,11 +116,12 @@ void                  thunar_application_copy_into                 (ThunarApplic
                                                                     GFile             *target_file,
                                                                     GClosure          *new_files_closure);
 
-void                  thunar_application_link_into                 (ThunarApplication *application,
-                                                                    gpointer           parent,
-                                                                    GList             *source_file_list,
-                                                                    GFile             *target_file,
-                                                                    GClosure          *new_files_closure);
+void                  thunar_application_link_into                 (ThunarApplication      *application,
+                                                                    gpointer                parent,
+                                                                    GList                  *source_file_list,
+                                                                    GFile                  *target_file,
+                                                                    ThunarOperationLogMode  log_mode,
+                                                                    GClosure                *new_files_closure);
 
 void                  thunar_application_move_into                 (ThunarApplication      *application,
                                                                     gpointer                parent,

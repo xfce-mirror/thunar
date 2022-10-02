@@ -761,16 +761,18 @@ _thunar_io_jobs_link (ThunarJob  *job,
                       GArray     *param_values,
                       GError    **error)
 {
-  ThunarThumbnailCache *thumbnail_cache;
-  ThunarApplication    *application;
-  GError               *err = NULL;
-  GFile                *real_target_file;
-  GList                *new_files_list = NULL;
-  GList                *source_file_list;
-  GList                *sp;
-  GList                *target_file_list;
-  GList                *tp;
-  guint                 n_processed = 0;
+  ThunarThumbnailCache   *thumbnail_cache;
+  ThunarApplication      *application;
+  GError                 *err = NULL;
+  GFile                  *real_target_file;
+  GList                  *new_files_list = NULL;
+  GList                  *source_file_list;
+  GList                  *sp;
+  GList                  *target_file_list;
+  GList                  *tp;
+  guint                   n_processed = 0;
+  ThunarJobOperation     *operation = NULL;
+  ThunarOperationLogMode  log_mode;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -787,6 +789,11 @@ _thunar_io_jobs_link (ThunarJob  *job,
   application = thunar_application_get ();
   thumbnail_cache = thunar_application_get_thumbnail_cache (application);
   g_object_unref (application);
+
+  log_mode = thunar_job_get_log_mode (job);
+
+  if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
+    operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_LINK);
 
   /* process all files */
   for (sp = source_file_list, tp = target_file_list;
@@ -814,6 +821,9 @@ _thunar_io_jobs_link (ThunarJob  *job,
               thunar_thumbnail_cache_copy_file (thumbnail_cache, sp->data,
                                                 real_target_file);
 
+              /* remember the file for possible undo */
+              if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
+                   thunar_job_operation_add (operation, sp->data, real_target_file);
             }
 
           /* release the real target file */
@@ -823,6 +833,12 @@ _thunar_io_jobs_link (ThunarJob  *job,
 
   /* release the thumbnail cache */
   g_object_unref (thumbnail_cache);
+
+  if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
+    {
+      thunar_job_operation_commit (operation);
+      g_object_unref (operation);
+    }
 
   if (err != NULL)
     {
