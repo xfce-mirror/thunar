@@ -162,7 +162,7 @@ _thunar_io_jobs_create (ThunarJob  *job,
   log_mode = thunar_job_get_log_mode (job);
 
   if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
-    operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_CREATE);
+    operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_CREATE_FILE);
 
   /* iterate over all files in the list */
   for (lp = file_list;
@@ -257,7 +257,7 @@ _thunar_io_jobs_create (ThunarJob  *job,
 
           /* remember the file for possible undo */
           if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
-               thunar_job_operation_add (operation, NULL, lp->data);
+               thunar_job_operation_add (operation, template_file, lp->data);
 
           if (template_stream != NULL)
             {
@@ -347,7 +347,7 @@ _thunar_io_jobs_mkdir (ThunarJob  *job,
   log_mode = thunar_job_get_log_mode (job);
 
   if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
-    operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_CREATE);
+    operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_CREATE_FOLDER);
 
   for (lp = file_list;
        err == NULL && lp != NULL && !exo_job_is_cancelled (EXO_JOB (job));
@@ -823,7 +823,7 @@ _thunar_io_jobs_link (ThunarJob  *job,
 
               /* remember the file for possible undo */
               if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
-                   thunar_job_operation_add (operation, sp->data, real_target_file);
+                thunar_job_operation_add (operation, sp->data, real_target_file);
             }
 
           /* release the real target file */

@@ -650,7 +650,8 @@ ttj_copy_file (ThunarTransferJob  *job,
           if (copy_flags & G_FILE_COPY_OVERWRITE)
             thunar_job_operation_overwrite (operation, target_file);
 
-          thunar_job_operation_add (operation, source_file, target_file);
+          if (thunar_job_get_log_mode (THUNAR_JOB (job)) == THUNAR_OPERATION_LOG_OPERATIONS)
+            thunar_job_operation_add (operation, source_file, target_file);
         }
       return TRUE;
     }

@@ -1280,11 +1280,13 @@ thunar_dbus_service_transfer_files (ThunarDBusTransferMode transfer_mode,
             case THUNAR_DBUS_TRANSFER_MODE_COPY_TO:
               thunar_application_copy_to (application, screen,
                                           source_file_list, target_file_list,
+                                          THUNAR_OPERATION_LOG_NO_OPERATIONS,
                                           NULL);
               break;
             case THUNAR_DBUS_TRANSFER_MODE_COPY_INTO:
               thunar_application_copy_into (application, screen,
                                             source_file_list, target_file_list->data,
+                                            THUNAR_OPERATION_LOG_NO_OPERATIONS,
                                             NULL);
               break;
             case THUNAR_DBUS_TRANSFER_MODE_MOVE_INTO:

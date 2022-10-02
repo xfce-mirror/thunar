@@ -206,6 +206,7 @@ static GtkWidget              *thunar_action_manager_create_document_submenu_new
 static void                    thunar_action_manager_new_files_created          (ThunarActionManager            *action_mgr,
                                                                                  GList                          *new_thunar_files);
 static gboolean                thunar_action_manager_action_undo                (ThunarActionManager            *action_mgr);
+static gboolean                thunar_action_manager_action_redo                (ThunarActionManager            *action_mgr);
 
 
 
@@ -309,6 +310,7 @@ static XfceGtkActionEntry thunar_action_manager_action_entries[] =
     { THUNAR_ACTION_MANAGER_ACTION_UNMOUNT,          NULL,                                                   "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Unmount"),                        N_ ("Unmount the selected device"),                                                              NULL,                   G_CALLBACK (thunar_action_manager_action_unmount),             },
     { THUNAR_ACTION_MANAGER_ACTION_EJECT,            NULL,                                                   "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Eject"),                          N_ ("Eject the selected device"),                                                                NULL,                   G_CALLBACK (thunar_action_manager_action_eject),               },
     { THUNAR_ACTION_MANAGER_ACTION_UNDO,             "<Actions>/ThunarActionManager/undo",                   "<Primary>Z",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Undo"),                           N_ ("Undo the latest operation"),                                                               "edit-undo-symbolic",    G_CALLBACK (thunar_action_manager_action_undo),                },
+    { THUNAR_ACTION_MANAGER_ACTION_REDO,             "<Actions>/ThunarActionManager/redo",                   "<Primary><shift>Z", XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Redo"),                           N_ ("Redo the latest operation"),                                                               "edit-redo-symbolic",    G_CALLBACK (thunar_action_manager_action_redo),                },
     { THUNAR_ACTION_MANAGER_ACTION_EDIT_LAUNCHER,    NULL,                                                   "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Edit Launcher"),                  N_ ("Edit the selected action_mgr"),                                                             "gtk-edit",             G_CALLBACK (thunar_action_manager_action_edit_launcher),       },
 };
 
@@ -1858,6 +1860,11 @@ thunar_action_manager_append_menu_item (ThunarActionManager       *action_mgr,
         gtk_widget_set_sensitive (item, thunar_job_operation_can_undo ());
         return item;
 
+      case THUNAR_ACTION_MANAGER_ACTION_REDO:
+        item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
+        gtk_widget_set_sensitive (item, thunar_job_operation_can_redo ());
+        return item;
+
       default:
         return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
     }
@@ -1923,7 +1930,7 @@ thunar_action_manager_sendto_device (ThunarActionManager *action_mgr,
     {
       /* copy the files onto the specified device */
       application = thunar_application_get ();
-      thunar_application_copy_into (application, action_mgr->widget, files, mount_point, NULL);
+      thunar_application_copy_into (application, action_mgr->widget, files, mount_point, THUNAR_OPERATION_LOG_OPERATIONS, NULL);
       g_object_unref (application);
       g_object_unref (mount_point);
     }
@@ -2258,7 +2265,7 @@ thunar_action_manager_action_duplicate (ThunarActionManager *action_mgr)
        */
       application = thunar_application_get ();
       thunar_application_copy_into (application, action_mgr->widget, files_to_process,
-                                    thunar_file_get_file (action_mgr->current_directory), action_mgr->new_files_created_closure);
+                                    thunar_file_get_file (action_mgr->current_directory), THUNAR_OPERATION_LOG_OPERATIONS, action_mgr->new_files_created_closure);
       g_object_unref (G_OBJECT (application));
 
       /* clean up */
@@ -3395,6 +3402,18 @@ thunar_action_manager_action_undo (ThunarActionManager *action_mgr)
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
   thunar_job_operation_undo ();
+
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_action_manager_action_redo (ThunarActionManager *action_mgr)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
+
+  thunar_job_operation_redo ();
 
   return TRUE;
 }

@@ -104,17 +104,19 @@ void                  thunar_application_create_file_from_template (ThunarApplic
                                                                     const gchar             *startup_id,
                                                                     ThunarOperationLogMode   log_mode);
 
-void                  thunar_application_copy_to                   (ThunarApplication *application,
-                                                                    gpointer           parent,
-                                                                    GList             *source_file_list,
-                                                                    GList             *target_file_list,
-                                                                    GClosure          *new_files_closure);
+void                  thunar_application_copy_to                   (ThunarApplication       *application,
+                                                                    gpointer                 parent,
+                                                                    GList                   *source_file_list,
+                                                                    GList                   *target_file_list,
+                                                                    ThunarOperationLogMode   log_mode,
+                                                                    GClosure                *new_files_closure);
 
-void                  thunar_application_copy_into                 (ThunarApplication *application,
-                                                                    gpointer           parent,
-                                                                    GList             *source_file_list,
-                                                                    GFile             *target_file,
-                                                                    GClosure          *new_files_closure);
+void                  thunar_application_copy_into                 (ThunarApplication       *application,
+                                                                    gpointer                 parent,
+                                                                    GList                   *source_file_list,
+                                                                    GFile                   *target_file,
+                                                                    ThunarOperationLogMode   log_mode,
+                                                                    GClosure                *new_files_closure);
 
 void                  thunar_application_link_into                 (ThunarApplication      *application,
                                                                     gpointer                parent,

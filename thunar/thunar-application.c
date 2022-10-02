@@ -2064,6 +2064,7 @@ thunar_application_create_file_from_template (ThunarApplication      *applicatio
  * @parent            : a #GdkScreen, a #GtkWidget or %NULL.
  * @source_file_list  : the lst of #GFile<!---->s that should be copied.
  * @target_file_list  : the list of #GFile<!---->s where files should be copied to.
+ * @log_mode          : a #ThunarOperationLogMode controlling the logging of the operation.
  * @new_files_closure : a #GClosure to connect to the job's "new-files" signal,
  *                      which will be emitted when the job finishes with the
  *                      list of #GFile<!---->s created by the job, or
@@ -2075,11 +2076,12 @@ thunar_application_create_file_from_template (ThunarApplication      *applicatio
  * @source_file_list and @target_file_list must be of the same length.
  **/
 void
-thunar_application_copy_to (ThunarApplication *application,
-                            gpointer           parent,
-                            GList             *source_file_list,
-                            GList             *target_file_list,
-                            GClosure          *new_files_closure)
+thunar_application_copy_to (ThunarApplication      *application,
+                            gpointer                parent,
+                            GList                  *source_file_list,
+                            GList                  *target_file_list,
+                            ThunarOperationLogMode  log_mode,
+                            GClosure               *new_files_closure)
 {
   _thunar_return_if_fail (g_list_length (source_file_list) == g_list_length (target_file_list));
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
@@ -2088,7 +2090,7 @@ thunar_application_copy_to (ThunarApplication *application,
   /* launch the operation */
   thunar_application_launch (application, parent, "edit-copy",
                              _("Copying files..."), thunar_io_jobs_copy_files,
-                             source_file_list, target_file_list, FALSE, TRUE, THUNAR_OPERATION_LOG_OPERATIONS, new_files_closure);
+                             source_file_list, target_file_list, FALSE, TRUE, log_mode, new_files_closure);
 }
 
 
@@ -2099,6 +2101,7 @@ thunar_application_copy_to (ThunarApplication *application,
  * @parent            : a #GdkScreen, a #GtkWidget or %NULL.
  * @source_file_list  : the list of #GFile<!---->s that should be copied.
  * @target_file       : the #GFile to the target directory.
+ * @log_mode          : a #ThunarOperationLogMode controlling the logging of the operation.
  * @new_files_closure : a #GClosure to connect to the job's "new-files" signal,
  *                      which will be emitted when the job finishes with the
  *                      list of #GFile<!---->s created by the job, or
@@ -2108,11 +2111,12 @@ thunar_application_copy_to (ThunarApplication *application,
  * referenced by @target_file. This method takes care of all user interaction.
  **/
 void
-thunar_application_copy_into (ThunarApplication *application,
-                              gpointer           parent,
-                              GList             *source_file_list,
-                              GFile             *target_file,
-                              GClosure          *new_files_closure)
+thunar_application_copy_into (ThunarApplication       *application,
+                              gpointer                 parent,
+                              GList                   *source_file_list,
+                              GFile                   *target_file,
+                              ThunarOperationLogMode   log_mode,
+                              GClosure                *new_files_closure)
 {
   ThunarFile *target_folder;
   GVolume    *volume         = NULL;
@@ -2153,7 +2157,7 @@ thunar_application_copy_into (ThunarApplication *application,
                                          title, thunar_io_jobs_copy_files,
                                          source_file_list, target_file,
                                          FALSE, TRUE,
-                                         THUNAR_OPERATION_LOG_OPERATIONS,
+                                         log_mode,
                                          new_files_closure);
 
   /* free */

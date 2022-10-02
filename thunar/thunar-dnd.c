@@ -227,7 +227,7 @@ thunar_dnd_perform (GtkWidget    *widget,
       switch (action)
         {
         case GDK_ACTION_COPY:
-          thunar_application_copy_into (application, widget, file_list, thunar_file_get_file (file), new_files_closure);
+          thunar_application_copy_into (application, widget, file_list, thunar_file_get_file (file), THUNAR_OPERATION_LOG_OPERATIONS,  new_files_closure);
           break;
 
         case GDK_ACTION_MOVE:

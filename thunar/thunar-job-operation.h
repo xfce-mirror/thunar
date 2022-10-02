@@ -35,7 +35,9 @@ void                   thunar_job_operation_overwrite    (ThunarJobOperation    
                                                           GFile                 *overwritten_file);
 void                   thunar_job_operation_commit       (ThunarJobOperation    *job_operation);
 void                   thunar_job_operation_undo         (void);
+void                   thunar_job_operation_redo         (void);
 gboolean               thunar_job_operation_can_undo     (void);
+gboolean               thunar_job_operation_can_redo     (void);
 
 G_END_DECLS
 
