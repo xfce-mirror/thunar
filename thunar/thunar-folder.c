@@ -968,6 +968,7 @@ thunar_folder_get_files (const ThunarFolder *folder)
 /**
  * thunar_folder_get_file_count:
  * @file : a #ThunarFolder instance.
+ * @only_local_files: a gboolean stating whether only local files should be counted or remote ones as well
  *
  * Returns the number of items in the directory
  * Counts the number of files in the directory as fast as possible.
@@ -976,13 +977,21 @@ thunar_folder_get_files (const ThunarFolder *folder)
  * Return value: Number of files in a folder
  **/
 guint32
-thunar_folder_get_file_count (ThunarFolder *folder)
+thunar_folder_get_file_count (ThunarFolder *folder,
+                              gboolean      only_local_files)
 {
   ThunarFile      *file;
   GFileEnumerator *enumerator;
   GFileInfo       *child_info;
+  gboolean         is_local;
 
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), 0);
+
+  file = thunar_folder_get_corresponding_file (folder);
+  is_local = thunar_g_file_is_on_local_device (thunar_file_get_file (file));
+
+  if (only_local_files && !is_local)
+    return 0;
 
   /* If we already have a cached value, just return it */
   if (G_LIKELY (folder->file_count_is_cached))
@@ -997,7 +1006,6 @@ thunar_folder_get_file_count (ThunarFolder *folder)
     }
 
   /* As fallback we will go through the list of gfiles */
-  file = thunar_folder_get_corresponding_file (folder);
   enumerator = g_file_enumerate_children (thunar_file_get_file (file), NULL,
                                           G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                                           NULL, NULL);
