@@ -50,11 +50,11 @@ static void thunar_column_editor_toggle_visibility  (ThunarColumnEditor       *c
 static void thunar_column_editor_update_buttons     (ThunarColumnEditor       *column_editor);
 static void thunar_column_editor_use_defaults       (ThunarColumnEditor       *column_editor,
                                                      GtkWidget                *button);
-static gboolean transform_dirsize_string_to_enum    (GBinding                 *binding,
+static gboolean transform_dirsize_enum_to_index    (GBinding                 *binding,
                                                      const GValue             *src_value,
                                                      GValue                   *dst_value,
                                                      gpointer                  user_data);
-static gboolean transform_dirsize_enum_to_string    (GBinding                 *binding,
+static gboolean transform_dirsize_index_to_enum    (GBinding                 *binding,
                                                      const GValue             *src_value,
                                                      GValue                   *dst_value,
                                                      gpointer                  user_data);
@@ -374,8 +374,8 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   g_object_bind_property_full (G_OBJECT (column_editor->preferences), "misc-items-count-as-dir-size",
                                G_OBJECT (combo), "active",
                                G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE,
-                               transform_dirsize_string_to_enum,
-                               transform_dirsize_enum_to_string,
+                               transform_dirsize_enum_to_index,
+                               transform_dirsize_index_to_enum,
                                NULL, NULL);
 
   gtk_widget_set_hexpand (combo, TRUE);
@@ -665,20 +665,31 @@ thunar_column_editor_use_defaults (ThunarColumnEditor *column_editor,
 
 
 static gboolean
-transform_dirsize_enum_to_string (GBinding     *binding,
-                                  const GValue *src_value,
-                                  GValue       *dst_value,
-                                  gpointer      user_data)
+transform_dirsize_enum_to_index (GBinding     *binding,
+                                const GValue *src_value,
+                                GValue       *dst_value,
+                                gpointer      user_data)
 {
-  GEnumClass *enum_class;
-  GEnumValue *enum_value;
-  gint        val;
+  gint val;
 
-  val = g_value_get_int (src_value);
-  enum_class = g_type_class_ref (THUNAR_TYPE_ITEMS_AS_FOLDER_SIZE);
-  enum_value = g_enum_get_value (enum_class, val);
+  val = g_value_get_enum (src_value);
 
-  g_value_set_static_string (dst_value, enum_value->value_nick);
+  switch (val)
+     {
+      case THUNAR_ITEMS_AS_FOLDER_SIZE_NEVER:
+        g_value_set_int (dst_value, 0);
+        break;
+      case THUNAR_ITEMS_AS_FOLDER_SIZE_ONLY_LOCAL:
+        g_value_set_int (dst_value, 1);
+        break;
+      case THUNAR_ITEMS_AS_FOLDER_SIZE_ALWAYS:
+        g_value_set_int (dst_value, 2);
+        break;
+
+      default:
+        g_warning ("Invalid value for directory size display prefernce option.");
+        return FALSE;
+     }
 
   return TRUE;
 }
@@ -686,22 +697,27 @@ transform_dirsize_enum_to_string (GBinding     *binding,
 
 
 static gboolean
-transform_dirsize_string_to_enum (GBinding     *binding,
-                                  const GValue *src_value,
-                                  GValue       *dst_value,
-                                  gpointer      user_data)
+transform_dirsize_index_to_enum (GBinding     *binding,
+                                const GValue *src_value,
+                                GValue       *dst_value,
+                                gpointer      user_data)
 {
-  GEnumClass *enum_class;
-  GEnumValue *enum_value;
-  char       *nick;
-  gint        val;
+  switch (g_value_get_int (src_value))
+    {
+      case 0:
+        g_value_set_enum (dst_value, THUNAR_ITEMS_AS_FOLDER_SIZE_NEVER);
+        break;
+      case 1:
+        g_value_set_enum (dst_value, THUNAR_ITEMS_AS_FOLDER_SIZE_ONLY_LOCAL);
+        break;
+      case 2:
+        g_value_set_enum (dst_value, THUNAR_ITEMS_AS_FOLDER_SIZE_ALWAYS);
+        break;
 
-  nick = g_value_get_string (src_value);
-  enum_class = g_type_class_ref (THUNAR_TYPE_ITEMS_AS_FOLDER_SIZE);
-  enum_value = g_enum_get_value_by_nick (enum_class, nick);
-
-  val = g_value_get_enum (enum_value);
-  g_value_set_enum (dst_value, val);
+      default:
+        g_warning ("Invalid value for directory size display prefernce option.");
+        return FALSE;
+    }
 
   return TRUE;
 }
