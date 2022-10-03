@@ -50,6 +50,14 @@ static void thunar_column_editor_toggle_visibility  (ThunarColumnEditor       *c
 static void thunar_column_editor_update_buttons     (ThunarColumnEditor       *column_editor);
 static void thunar_column_editor_use_defaults       (ThunarColumnEditor       *column_editor,
                                                      GtkWidget                *button);
+static gboolean transform_dirsize_string_to_enum    (GBinding                 *binding,
+                                                     const GValue             *src_value,
+                                                     GValue                   *dst_value,
+                                                     gpointer                  user_data);
+static gboolean transform_dirsize_enum_to_string    (GBinding                 *binding,
+                                                     const GValue             *src_value,
+                                                     GValue                   *dst_value,
+                                                     gpointer                  user_data);
 
 
 
@@ -359,29 +367,22 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_widget_show (label);
 
   combo = gtk_combo_box_text_new ();
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Always"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Local files only"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Never"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Only for local files"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Always"));
 
-  /* g_object_bind_property_full (G_OBJECT (dialog->preferences), "default-view", */
-  /*                              G_OBJECT (combo), "active", */
-  /*                              G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE, */
-  /*                              transform_view_string_to_index, */
-  /*                              transform_view_index_to_string, */
-  /*                              NULL, NULL); */
+  g_object_bind_property_full (G_OBJECT (column_editor->preferences), "misc-items-count-as-dir-size",
+                               G_OBJECT (combo), "active",
+                               G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE,
+                               transform_dirsize_string_to_enum,
+                               transform_dirsize_enum_to_string,
+                               NULL, NULL);
 
   gtk_widget_set_hexpand (combo, TRUE);
   gtk_grid_attach (GTK_GRID (grid), combo, 1, row - 1, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
-
-  /* create the "Display number of files in size column of folders" button */
-  /* g_object_bind_property (G_OBJECT (column_editor->preferences), "misc-items-count-as-dir-size", G_OBJECT (button), "active", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE); */
-  gtk_widget_set_tooltip_text (button, _("Select this option to show the number of files in the 'size' column of folders."));
-  gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 4, 2, 1);
-  gtk_widget_show (button);
 
   /* setup the tree selection */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (column_editor->tree_view));
@@ -659,6 +660,50 @@ thunar_column_editor_use_defaults (ThunarColumnEditor *column_editor,
   /* reset the tree view selection */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (column_editor->tree_view));
   gtk_tree_selection_unselect_all (selection);
+}
+
+
+
+static gboolean
+transform_dirsize_enum_to_string (GBinding     *binding,
+                                  const GValue *src_value,
+                                  GValue       *dst_value,
+                                  gpointer      user_data)
+{
+  GEnumClass *enum_class;
+  GEnumValue *enum_value;
+  gint        val;
+
+  val = g_value_get_int (src_value);
+  enum_class = g_type_class_ref (THUNAR_TYPE_ITEMS_AS_FOLDER_SIZE);
+  enum_value = g_enum_get_value (enum_class, val);
+
+  g_value_set_static_string (dst_value, enum_value->value_nick);
+
+  return TRUE;
+}
+
+
+
+static gboolean
+transform_dirsize_string_to_enum (GBinding     *binding,
+                                  const GValue *src_value,
+                                  GValue       *dst_value,
+                                  gpointer      user_data)
+{
+  GEnumClass *enum_class;
+  GEnumValue *enum_value;
+  char       *nick;
+  gint        val;
+
+  nick = g_value_get_string (src_value);
+  enum_class = g_type_class_ref (THUNAR_TYPE_ITEMS_AS_FOLDER_SIZE);
+  enum_value = g_enum_get_value_by_nick (enum_class, nick);
+
+  val = g_value_get_enum (enum_value);
+  g_value_set_enum (dst_value, val);
+
+  return TRUE;
 }
 
 
