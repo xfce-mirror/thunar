@@ -959,7 +959,19 @@ thunar_list_model_get_value (GtkTreeModel *model,
       g_value_init (value, G_TYPE_STRING);
       if ( (THUNAR_LIST_MODEL (model)->items_count_as_dir_size != THUNAR_ITEMS_AS_FOLDER_SIZE_NEVER) && thunar_file_is_directory (file) )
         {
-          item_count = thunar_folder_get_file_count (thunar_folder_get_for_file (file));
+          gboolean only_local_files;
+
+          if (THUNAR_LIST_MODEL (model)->items_count_as_dir_size == THUNAR_ITEMS_AS_FOLDER_SIZE_ONLY_LOCAL)
+            only_local_files = TRUE;
+          else if (THUNAR_LIST_MODEL (model)->items_count_as_dir_size == THUNAR_ITEMS_AS_FOLDER_SIZE_ALWAYS)
+            only_local_files = FALSE;
+          else
+            {
+              g_warning ("Error, unknown enum value for items_count_as_dir_size in the list model");
+              break;
+            }
+
+          item_count = thunar_folder_get_file_count (thunar_folder_get_for_file (file), only_local_files);
           g_value_take_string (value, g_strdup_printf (ngettext ("%u item", "%u items", item_count), item_count));
         }
       else
@@ -1891,8 +1903,8 @@ sort_by_size_and_items_count (ThunarFile *a,
 
   if (thunar_file_is_directory(a) && thunar_file_is_directory(b))
   {
-    count_a = thunar_folder_get_file_count (thunar_folder_get_for_file (a));
-    count_b = thunar_folder_get_file_count (thunar_folder_get_for_file (b));
+    count_a = thunar_folder_get_file_count (thunar_folder_get_for_file (a), TRUE);
+    count_b = thunar_folder_get_file_count (thunar_folder_get_for_file (b), TRUE);
 
     if (count_a < count_b)
       return -1;
