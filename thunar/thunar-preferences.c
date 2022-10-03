@@ -689,14 +689,15 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:misc-folders-first:
+   * ThunarPreferences:misc-items-count-as-dir-size
    **/
   preferences_props[PROP_MISC_ITEMS_COUNT_AS_DIR_SIZE] =
-      g_param_spec_boolean ("misc-items-count-as-dir-size",
-                            "MiscItemsCountAsDirSize",
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+      g_param_spec_enum ("misc-items-count-as-dir-size",
+                        "MiscItemsCountAsDirSize",
+                        NULL,
+                        THUNAR_TYPE_ITEMS_AS_FOLDER_SIZE,
+                        TRUE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-full-path-in-tab-title:
