@@ -1006,13 +1006,16 @@ thunar_folder_get_file_count (ThunarFolder *folder)
     return 0;
 
   folder->file_count = 0;
-  child_info = g_file_enumerator_next_file (enumerator, NULL, NULL);
-  while (child_info)
+
+  /* count through the files given by the enumerator */
+  for (child_info = g_file_enumerator_next_file (enumerator, NULL, NULL);
+       child_info != NULL;
+       child_info = g_file_enumerator_next_file (enumerator, NULL, NULL))
     {
       ++(folder->file_count);
       g_object_unref (child_info);
-      child_info = g_file_enumerator_next_file (enumerator, NULL, NULL);
     }
+
   g_file_enumerator_close (enumerator, NULL, NULL);
   g_object_unref (enumerator);
 
