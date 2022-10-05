@@ -56,6 +56,7 @@ enum
   PROP_NUM_FILES,
   PROP_SHOW_HIDDEN,
   PROP_FILE_SIZE_BINARY,
+  PROP_TREE_VIEW,
   N_PROPERTIES
 };
 
@@ -281,6 +282,8 @@ struct _ThunarListModel
 
   /* used to stop the periodic call to add_search_files when the search is finished/canceled */
   guint          update_search_results_timeout_id;
+
+  gboolean       tree_view;
 };
 
 
@@ -403,6 +406,18 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
                             "file-size-binary",
                             "file-size-binary",
                             TRUE,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarListModel::tree-view:
+   *
+   * Tells whether to enable tree-view.
+   **/
+  list_model_props[PROP_TREE_VIEW] =
+      g_param_spec_boolean ("tree-view",
+                            "tree-view",
+                            "tree-view",
+                            FALSE,
                             EXO_PARAM_READWRITE);
 
   /* install properties */
@@ -594,6 +609,10 @@ thunar_list_model_get_property (GObject    *object,
       g_value_set_boolean (value, thunar_list_model_get_file_size_binary (store));
       break;
 
+    case PROP_TREE_VIEW:
+      g_value_set_boolean (value, store->tree_view);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -640,6 +659,10 @@ thunar_list_model_set_property (GObject      *object,
       thunar_list_model_set_file_size_binary (store, g_value_get_boolean (value));
       break;
 
+    case PROP_TREE_VIEW:
+      store->tree_view = g_value_get_boolean (value);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -651,7 +674,7 @@ thunar_list_model_set_property (GObject      *object,
 static GtkTreeModelFlags
 thunar_list_model_get_flags (GtkTreeModel *model)
 {
-  return GTK_TREE_MODEL_ITERS_PERSIST | GTK_TREE_MODEL_LIST_ONLY;
+  return GTK_TREE_MODEL_ITERS_PERSIST | THUNAR_LIST_MODEL (model)->tree_view ? 0 : GTK_TREE_MODEL_LIST_ONLY;
 }
 
 
