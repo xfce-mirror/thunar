@@ -4646,3 +4646,4 @@ thunar_standard_view_cell_layout_data_func (GtkCellLayout   *layout,
 
   g_object_unref (file);
 }
+
