@@ -221,20 +221,6 @@ thunar_job_operation_commit (ThunarJobOperation *job_operation)
       /* set the timestamp for the operation, in seconds. g_get_real_time gives
        * us the time in microseconds, so we need to divide by 1e6. */
       job_operation->end_timestamp = g_get_real_time () / (gint64) 1e6;
-
-      /* hack for 'redo' of 'trash' operations, which requires 'THUNAR_OPERATION_LOG_OPERATIONS' to get the new timestamps */
-      /* If we have an identical operation already in the list, we assume that it was a 'redo'.*
-      /* In that case we just update the timestamps of the old operation instead of adding the new operation */
-      for (GList* lp = job_operation_list; lp != NULL; lp = lp->next)
-        {
-          ThunarJobOperation *old_operation = lp->data;
-          if (thunar_job_operation_compare (old_operation, job_operation) == 0)
-            {
-              old_operation->start_timestamp = job_operation->start_timestamp;
-              old_operation->end_timestamp = job_operation->end_timestamp;
-              return;
-            }
-        }
     }
 
   /* When a new operation is added, drop all previous operations which where undone from the list */
@@ -253,6 +239,35 @@ thunar_job_operation_commit (ThunarJobOperation *job_operation)
   /* reset the undo pointer to latest operation and clear the redo pointer */
   lp_undo_job_operation = g_list_last (job_operation_list);
   lp_redo_job_operation = NULL;
+}
+
+
+
+/**
+ * thunar_job_operation_update_timestamps_only:
+ * @job_operation: a #ThunarJobOperation
+ *
+ * Only updates the timestamps of the latest trash operation
+ * That is needed after 'redo' of a 'trash' operation,
+ * since it requires to set new timestamps (otherwise 'undo' of that operation wont work afterwards)
+ **/
+void
+thunar_job_operation_update_trash_timestamps (ThunarJobOperation *job_operation)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
+
+  if (job_operation->operation_kind != THUNAR_JOB_OPERATION_KIND_TRASH)
+    return;
+
+  if (lp_undo_job_operation == NULL)
+    return;
+
+  if (thunar_job_operation_compare ( THUNAR_JOB_OPERATION (lp_undo_job_operation->data), job_operation) == 0)
+    {
+      THUNAR_JOB_OPERATION (lp_undo_job_operation->data)->start_timestamp = job_operation->start_timestamp;
+      THUNAR_JOB_OPERATION (lp_undo_job_operation->data)->end_timestamp = g_get_real_time () / (gint64) 1e6;
+      return;
+    }
 }
 
 
@@ -673,11 +688,11 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
 
       case THUNAR_JOB_OPERATION_KIND_TRASH:
         /* Special case: 'THUNAR_JOB_OPERATION_KIND_TRASH' only can be triggered by redo */
-        /* Since we as well need to update the timestamps, we have to use THUNAR_OPERATION_LOG_OPERATIONS */
-        /* 'thunar_job_operation_commit' will take care on update the existing job operation instead of adding a new one */
+        /* Since we as well need to update the timestamps, we have to use THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS */
+        /* 'thunar_job_operation_update_trash_timestamps' will than take care on update the existing job operation instead of adding a new one */
         thunar_application_trash (application, NULL,
                                   job_operation->source_file_list,
-                                  THUNAR_OPERATION_LOG_OPERATIONS);
+                                  THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS);
         break;
 
       case THUNAR_JOB_OPERATION_KIND_LINK:

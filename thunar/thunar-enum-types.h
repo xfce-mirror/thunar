@@ -457,6 +457,7 @@ typedef enum
 {
   THUNAR_OPERATION_LOG_NO_OPERATIONS,
   THUNAR_OPERATION_LOG_OPERATIONS,
+  THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS,
 } ThunarOperationLogMode;
 
 GType thunar_operation_log_mode_get_type (void) G_GNUC_CONST;
