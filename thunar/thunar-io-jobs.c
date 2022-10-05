@@ -902,7 +902,7 @@ _thunar_io_jobs_trash (ThunarJob  *job,
 
   log_mode = thunar_job_get_log_mode (job);
 
-  if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
+  if (log_mode != THUNAR_OPERATION_LOG_NO_OPERATIONS)
     operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_TRASH);
 
   for (lp = file_list; err == NULL && lp != NULL; lp = lp->next)
@@ -925,7 +925,7 @@ _thunar_io_jobs_trash (ThunarJob  *job,
             _tij_delete_file (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err);
         }
 
-      if (err == NULL && log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
+      if (err == NULL && log_mode != THUNAR_OPERATION_LOG_NO_OPERATIONS)
           thunar_job_operation_add (operation, lp->data, NULL);
 
       /* update the thumbnail cache */
@@ -936,10 +936,16 @@ _thunar_io_jobs_trash (ThunarJob  *job,
   g_object_unref (thumbnail_cache);
 
   if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
-  {
-    thunar_job_operation_commit (operation);
-    g_object_unref (operation);
-  }
+    {
+      thunar_job_operation_commit (operation);
+      g_object_unref (operation);
+    }
+  else if (log_mode == THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS)
+    {
+      /* only required for 'redo' operation, in order to update the timestamps of the original trash operation */
+      thunar_job_operation_update_trash_timestamps (operation);
+      g_object_unref (operation);
+    }
 
   if (err != NULL)
     {

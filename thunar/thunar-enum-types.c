@@ -680,9 +680,10 @@ thunar_operation_log_mode_get_type (void)
     {
       static const GEnumValue values[] =
       {
-        { THUNAR_OPERATION_LOG_OPERATIONS,    "THUNAR_OPERATION_LOG_OPERATIONS",    N_("Log operations") },
-        { THUNAR_OPERATION_LOG_NO_OPERATIONS, "THUNAR_OPERATION_LOG_NO_OPERATIONS", N_("Log no operations") },
-        { 0,                                  NULL,                                 NULL }
+        { THUNAR_OPERATION_LOG_OPERATIONS,      "THUNAR_OPERATION_LOG_OPERATIONS",      N_("Log operations") },
+        { THUNAR_OPERATION_LOG_NO_OPERATIONS,   "THUNAR_OPERATION_LOG_NO_OPERATIONS",   N_("Log no operations") },
+        { THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS, "THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS", N_("Log only timestamps") },
+        { 0,                                    NULL,                                   NULL }
       };
 
       type = g_enum_register_static ("ThunarOperationLogMode", values);
