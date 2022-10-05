@@ -942,6 +942,7 @@ _thunar_io_jobs_trash (ThunarJob  *job,
     }
   else if (log_mode == THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS)
     {
+      /* only required for 'redo' operation, in order to update the timestamps of the original trash operation */
       thunar_job_operation_update_trash_timestamps (operation);
       g_object_unref (operation);
     }
