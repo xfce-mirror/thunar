@@ -244,7 +244,7 @@ thunar_job_operation_commit (ThunarJobOperation *job_operation)
 
 
 /**
- * thunar_job_operation_update_timestamps_only:
+ * thunar_job_operation_update_trash_timestamps:
  * @job_operation: a #ThunarJobOperation
  *
  * Only updates the timestamps of the latest trash operation
@@ -266,7 +266,6 @@ thunar_job_operation_update_trash_timestamps (ThunarJobOperation *job_operation)
     {
       THUNAR_JOB_OPERATION (lp_undo_job_operation->data)->start_timestamp = job_operation->start_timestamp;
       THUNAR_JOB_OPERATION (lp_undo_job_operation->data)->end_timestamp = g_get_real_time () / (gint64) 1e6;
-      return;
     }
 }
 
