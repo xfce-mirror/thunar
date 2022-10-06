@@ -44,6 +44,11 @@
 
 
 
+/* convenience macro */
+#define THUNAR_LIST_MODEL_ITEM(item) ((ThunarListModelItem *) (item))
+
+
+
 /* Property identifiers */
 enum
 {
@@ -221,6 +226,7 @@ static void               thunar_list_model_search_folder         (ThunarListMod
                                                                    enum ThunarListModelSearch   search_type,
                                                                    gboolean                     show_hidden);
 static void               thunar_list_model_cancel_search_job     (ThunarListModel             *model);
+static void               thunar_list_model_item_destroy          (gpointer                     data);
 
 
 
@@ -284,6 +290,17 @@ struct _ThunarListModel
   guint          update_search_results_timeout_id;
 
   gboolean       tree_view;
+};
+
+struct _ThunarListModelItem
+{
+  ThunarFile          *file;
+
+  gint                *indices; /* for GtkTreePath */
+  gint                 n_indices;
+
+  /* the invisible children of this node */
+  GSequence           *invisible_children;
 };
 
 
@@ -514,7 +531,7 @@ thunar_list_model_init (ThunarListModel *store)
   store->sort_folders_first = TRUE;
   store->sort_sign = 1;
   store->sort_func = thunar_file_compare_by_name;
-  store->rows = g_sequence_new (g_object_unref);
+  store->rows = g_sequence_new (thunar_list_model_item_destroy);
   g_mutex_init (&store->mutex_files_to_add);
 
   /* connect to the shared ThunarFileMonitor, so we don't need to
@@ -754,23 +771,32 @@ thunar_list_model_get_iter (GtkTreeModel *model,
                             GtkTreePath  *path)
 {
   ThunarListModel *store = THUNAR_LIST_MODEL (model);
-  GSequenceIter   *row;
-  gint             offset;
+  GtkTreeIter      parent;
+  const gint      *indices;
+  gint             depth;
+  gint             n;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
   _thunar_return_val_if_fail (gtk_tree_path_get_depth (path) > 0, FALSE);
 
-  /* determine the row for the path */
-  offset = gtk_tree_path_get_indices (path)[0];
-  row = g_sequence_get_iter_at_pos (store->rows, offset);
+  /* determine the path depth */
+  depth = gtk_tree_path_get_depth (path);
 
-  if (!g_sequence_iter_is_end (row))
+  /* determine the path indices */
+  indices = gtk_tree_path_get_indices (path);
+
+  /* initialize the parent iterator with the root element */
+  if (!gtk_tree_model_iter_nth_child (model, iter, NULL, indices [0]))
+    return FALSE;
+
+  for (n = 1; n < depth; ++n)
     {
-      GTK_TREE_ITER_INIT (*iter, store->stamp, row);
-      return TRUE;
+      parent = *iter;
+      if (!gtk_tree_model_iter_nth_child (model, iter, &parent, indices[n]))
+        return FALSE;
     }
 
-  return FALSE;
+  return TRUE;
 }
 
 
@@ -779,16 +805,13 @@ static GtkTreePath*
 thunar_list_model_get_path (GtkTreeModel *model,
                             GtkTreeIter  *iter)
 {
-  gint idx;
+  ThunarListModelItem *item;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (model), NULL);
   _thunar_return_val_if_fail (iter->stamp == THUNAR_LIST_MODEL (model)->stamp, NULL);
 
-  idx = g_sequence_iter_get_position (iter->user_data);
-  if (G_LIKELY (idx >= 0))
-    return gtk_tree_path_new_from_indices (idx, -1);
-
-  return NULL;
+  item = THUNAR_LIST_MODEL_ITEM (g_sequence_get (iter->user_data));
+  return gtk_tree_path_new_from_indicesv (item->indices, item->n_indices);
 }
 
 
@@ -813,7 +836,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
   _thunar_return_if_fail (iter->stamp == (THUNAR_LIST_MODEL (model))->stamp);
 
-  file = g_sequence_get (iter->user_data);
+  file = THUNAR_LIST_MODEL_ITEM (g_sequence_get (iter->user_data))->file;
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   switch (column)
@@ -1019,13 +1042,18 @@ thunar_list_model_iter_children (GtkTreeModel *model,
                                  GtkTreeIter  *parent)
 {
   ThunarListModel *store = THUNAR_LIST_MODEL (model);
+  GSequence       *seq;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
 
-  if (G_LIKELY (parent == NULL
-      && g_sequence_get_length (store->rows) > 0))
+  if (G_LIKELY (parent == NULL))
+    seq = store->rows;
+  else
+    seq = THUNAR_LIST_MODEL_ITEM (parent->user_data)->invisible_children;
+
+  if (G_LIKELY (seq != NULL && g_sequence_get_length (seq) > 0))
     {
-      GTK_TREE_ITER_INIT (*iter, store->stamp, g_sequence_get_begin_iter (store->rows));
+      GTK_TREE_ITER_INIT (*iter, store->stamp, g_sequence_get_begin_iter (seq));
       return TRUE;
     }
 
@@ -1038,7 +1066,9 @@ static gboolean
 thunar_list_model_iter_has_child (GtkTreeModel *model,
                                   GtkTreeIter  *iter)
 {
-  return FALSE;
+  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (model), 0);
+
+  return THUNAR_LIST_MODEL_ITEM (iter->user_data)->invisible_children != NULL;
 }
 
 
@@ -1048,10 +1078,13 @@ thunar_list_model_iter_n_children (GtkTreeModel *model,
                                    GtkTreeIter  *iter)
 {
   ThunarListModel *store = THUNAR_LIST_MODEL (model);
+  GSequence       *seq;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), 0);
 
-  return (iter == NULL) ? g_sequence_get_length (store->rows) : 0;
+  seq = (iter == NULL) ? store->rows : THUNAR_LIST_MODEL_ITEM (g_sequence_get (iter->user_data))->invisible_children;
+
+  return seq == NULL ? 0 : g_sequence_get_length (seq);
 }
 
 
@@ -1062,22 +1095,30 @@ thunar_list_model_iter_nth_child (GtkTreeModel *model,
                                   GtkTreeIter  *parent,
                                   gint          n)
 {
-  ThunarListModel *store = THUNAR_LIST_MODEL (model);
-  GSequenceIter   *row;
+  ThunarListModel     *store = THUNAR_LIST_MODEL (model);
+  ThunarListModelItem *item;
+  GSequenceIter       *row;
+  GSequence           *seq;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
 
-  if (G_LIKELY (parent == NULL))
+  if (G_LIKELY (parent != NULL))
     {
-      row = g_sequence_get_iter_at_pos (store->rows, n);
-      if (g_sequence_iter_is_end (row))
-        return FALSE;
-
-      GTK_TREE_ITER_INIT (*iter, store->stamp, row);
-      return TRUE;
+      item = g_sequence_get (parent->user_data);
+      seq = item->invisible_children;
     }
+  else
+    seq = store->rows;
 
-  return FALSE;
+  if (G_UNLIKELY (seq == NULL))
+    return FALSE;
+
+  row = g_sequence_get_iter_at_pos (seq, n);
+  if (g_sequence_iter_is_end (row))
+    return FALSE;
+
+  GTK_TREE_ITER_INIT (*iter, store->stamp, row);
+  return TRUE;
 }
 
 
@@ -1087,7 +1128,19 @@ thunar_list_model_iter_parent (GtkTreeModel *model,
                                GtkTreeIter  *iter,
                                GtkTreeIter  *child)
 {
-  return FALSE;
+  ThunarListModelItem *item;
+  GtkTreePath         *path;
+  gboolean             has_parent;
+
+  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (model), FALSE);
+
+  item = THUNAR_LIST_MODEL_ITEM (iter->user_data);
+  path = gtk_tree_path_new_from_indicesv (item->indices, item->n_indices);
+  gtk_tree_path_up (path);
+
+  has_parent = gtk_tree_model_get_iter (model, iter, path);
+  gtk_tree_path_free (path);
+  return has_parent;
 }
 
 
@@ -1288,6 +1341,9 @@ thunar_list_model_cmp_func (gconstpointer a,
   ThunarListModel *store = THUNAR_LIST_MODEL (user_data);
   gboolean         isdir_a;
   gboolean         isdir_b;
+  
+  a = THUNAR_LIST_MODEL_ITEM (a)->file;
+  b = THUNAR_LIST_MODEL_ITEM (b)->file;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (a), 0);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (b), 0);
@@ -1387,7 +1443,7 @@ thunar_list_model_file_changed (ThunarFileMonitor *file_monitor,
 
   while (row != end)
     {
-      if (G_UNLIKELY (g_sequence_get (row) == file))
+      if (G_UNLIKELY (THUNAR_LIST_MODEL_ITEM (g_sequence_get (row))->file == file))
         {
           /* generate the iterator for this row */
           GTK_TREE_ITER_INIT (iter, store->stamp, row);
@@ -1487,8 +1543,12 @@ thunar_list_model_files_added (ThunarFolder    *folder,
   ThunarFile    *file;
   gint          *indices;
   GSequenceIter *row;
+  GSequenceIter *seq;
   GList         *lp;
   gboolean       has_handler;
+  ThunarListModelItem *item;
+  ThunarListModelItem *child;
+  GList               *list;
 
   /* we use a simple trick here to avoid allocating
    * GtkTreePath's again and again, by simply accessing
@@ -1515,9 +1575,35 @@ thunar_list_model_files_added (ThunarFolder    *folder,
         }
       else
         {
+          item = g_new0 (ThunarListModelItem, 1);
+          item->file = g_object_ref (file);
+          item->invisible_children = NULL;
+          if (thunar_file_is_directory (file))
+            {
+              folder = thunar_folder_get_for_file (file);
+              list = thunar_folder_get_files (folder);
+              if (g_list_length (list) > 0)
+                {
+                  item->invisible_children = g_sequence_new (thunar_list_model_item_destroy);
+                  for (; list != NULL; list = list->next)
+                    {
+                      child = g_new0 (ThunarListModelItem, 1);
+                      child->file = g_object_ref (list->data);
+                      child->invisible_children = NULL;
+                      seq = g_sequence_insert_sorted (item->invisible_children, child, thunar_list_model_cmp_func, store);
+                      child->indices = g_malloc (sizeof (gint) * 2);
+                      child->indices [0] = item->indices [0];
+                      child->indices [1] = g_sequence_iter_get_position (seq);
+                      child->n_indices = 2;
+                    }
+                }
+            }
           /* insert the file */
-          row = g_sequence_insert_sorted (store->rows, file,
+          row = g_sequence_insert_sorted (store->rows, item,
                                           thunar_list_model_cmp_func, store);
+          item->n_indices = 1;
+          item->indices = g_malloc (sizeof (gint) * 1);
+          item->indices [0] = g_sequence_iter_get_position (row);
 
           if (has_handler)
             {
@@ -2626,7 +2712,7 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
         {
           next = g_sequence_iter_next (row);
 
-          file = g_sequence_get (row);
+          file = THUNAR_LIST_MODEL_ITEM (g_sequence_get (row))->file;
           if (thunar_file_is_hidden (file))
             {
               /* store file in the list */
@@ -2732,7 +2818,7 @@ thunar_list_model_get_file (ThunarListModel *store,
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
   _thunar_return_val_if_fail (iter->stamp == store->stamp, NULL);
 
-  return g_object_ref (g_sequence_get (iter->user_data));
+  return g_object_ref (THUNAR_LIST_MODEL_ITEM (g_sequence_get (iter->user_data))->file);
 }
 
 
@@ -3051,7 +3137,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       end = g_sequence_get_end_iter (store->rows);
       for (row = g_sequence_get_begin_iter (store->rows); row != end; row = g_sequence_iter_next (row))
         {
-          relevant_files = g_list_append (relevant_files, g_sequence_get (row));
+          relevant_files = g_list_append (relevant_files, THUNAR_LIST_MODEL_ITEM (g_sequence_get (row))->file);
         }
 
       /* try to determine a file for the current folder */
@@ -3077,7 +3163,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, selected_items->data);
 
       /* get the file for the given iter */
-      file = g_sequence_get (iter.user_data);
+      file = THUNAR_LIST_MODEL_ITEM (g_sequence_get (iter.user_data))->file;
 
       /* determine the content type of the file */
       content_type = thunar_file_get_content_type (file);
@@ -3178,4 +3264,17 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
   g_list_free_full (text_list, g_free);
   g_object_unref (preferences);
   return text;
+}
+
+
+
+static void
+thunar_list_model_item_destroy (gpointer data)
+{
+  ThunarListModelItem *item = THUNAR_LIST_MODEL_ITEM (data);
+  g_object_unref (item->file);
+  g_free (item->indices);
+  if (item->invisible_children != NULL)
+    g_sequence_free (item->invisible_children);
+  g_free (item);
 }
