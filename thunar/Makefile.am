@@ -37,12 +37,14 @@ thunar_built_sources =							\
 
 
 thunar_SOURCES =							\
-	$(thunar_include_HEADERS)					\
 	$(thunar_built_sources)						\
 	$(thunar_dbus_sources)						\
+	$(thunar_include_HEADERS)					\
 	main.c								\
 	thunar-abstract-dialog.c					\
 	thunar-abstract-dialog.h					\
+	thunar-abstract-gallery-view.c					\
+	thunar-abstract-gallery-view.h					\
 	thunar-abstract-icon-view.c					\
 	thunar-abstract-icon-view.h					\
 	thunar-action-manager.c						\
@@ -69,28 +71,30 @@ thunar_SOURCES =							\
 	thunar-component.h						\
 	thunar-dbus-service.c						\
 	thunar-dbus-service.h						\
-	thunar-deep-count-job.h						\
 	thunar-deep-count-job.c						\
+	thunar-deep-count-job.h						\
 	thunar-details-view.c						\
 	thunar-details-view.h						\
-	thunar-dialogs.c						\
-	thunar-dialogs.h						\
-	thunar-device.c							\
-	thunar-device.h							\
 	thunar-device-monitor.c						\
 	thunar-device-monitor.h						\
+	thunar-device.c							\
+	thunar-device.h							\
+	thunar-dialogs.c						\
+	thunar-dialogs.h						\
 	thunar-dnd.c							\
 	thunar-dnd.h							\
 	thunar-emblem-chooser.c						\
 	thunar-emblem-chooser.h						\
 	thunar-enum-types.c						\
 	thunar-enum-types.h						\
-	thunar-file.c							\
-	thunar-file.h							\
 	thunar-file-monitor.c						\
 	thunar-file-monitor.h						\
+	thunar-file.c							\
+	thunar-file.h							\
 	thunar-folder.c							\
 	thunar-folder.h							\
+	thunar-gallery-view.c						\
+	thunar-gallery-view.h						\
 	thunar-gdk-extensions.c						\
 	thunar-gdk-extensions.h						\
 	thunar-gio-extensions.c						\
@@ -107,22 +111,20 @@ thunar_SOURCES =							\
 	thunar-icon-factory.h						\
 	thunar-icon-renderer.c						\
 	thunar-icon-renderer.h						\
-	thunar-text-renderer.c						\
-	thunar-text-renderer.h						\
 	thunar-icon-view.c						\
 	thunar-icon-view.h						\
 	thunar-image.c							\
 	thunar-image.h							\
-	thunar-io-jobs.c						\
-	thunar-io-jobs.h						\
 	thunar-io-jobs-util.c						\
 	thunar-io-jobs-util.h						\
+	thunar-io-jobs.c						\
+	thunar-io-jobs.h						\
 	thunar-io-scan-directory.c					\
 	thunar-io-scan-directory.h					\
-	thunar-job.c							\
-	thunar-job.h							\
 	thunar-job-operation.c						\
 	thunar-job-operation.h						\
+	thunar-job.c							\
+	thunar-job.h							\
 	thunar-list-model.c						\
 	thunar-list-model.h						\
 	thunar-location-bar.c						\
@@ -135,10 +137,10 @@ thunar_SOURCES =							\
 	thunar-location-entry.h						\
 	thunar-menu.c							\
 	thunar-menu.h							\
-	thunar-notify.c							\
-	thunar-notify.h							\
 	thunar-navigator.c						\
 	thunar-navigator.h						\
+	thunar-notify.c							\
+	thunar-notify.h							\
 	thunar-pango-extensions.c					\
 	thunar-pango-extensions.h					\
 	thunar-path-entry.c						\
@@ -186,12 +188,13 @@ thunar_SOURCES =							\
 	thunar-standard-view.h						\
 	thunar-statusbar.c						\
 	thunar-statusbar.h						\
-	thunar-toolbar-editor.c						\
-    thunar-toolbar-editor.h						\
+	thunar-text-renderer.c						\
+	thunar-text-renderer.h						\
 	thunar-thumbnail-cache.c					\
 	thunar-thumbnail-cache.h					\
 	thunar-thumbnailer.c						\
 	thunar-thumbnailer.h						\
+	thunar-toolbar-editor.c						\
 	thunar-transfer-job.c						\
 	thunar-transfer-job.h						\
 	thunar-tree-model.c						\
@@ -207,7 +210,8 @@ thunar_SOURCES =							\
 	thunar-view.c							\
 	thunar-view.h							\
 	thunar-window.c							\
-	thunar-window.h
+	thunar-window.h							\
+        thunar-toolbar-editor.
 
 noinst_LIBRARIES = thunar.a
 thunar_a_SOURCES =

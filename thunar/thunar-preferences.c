@@ -65,6 +65,7 @@ enum
   PROP_LAST_DETAILS_VIEW_VISIBLE_COLUMNS,
   PROP_LAST_DETAILS_VIEW_ZOOM_LEVEL,
   PROP_LAST_ICON_VIEW_ZOOM_LEVEL,
+  PROP_LAST_GALLERY_VIEW_ZOOM_LEVEL,
   PROP_LAST_LOCATION_BAR,
   PROP_LAST_MENUBAR_VISIBLE,
   PROP_LAST_SEPARATOR_POSITION,
@@ -376,6 +377,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          NULL,
                          THUNAR_TYPE_ZOOM_LEVEL,
                          THUNAR_ZOOM_LEVEL_100_PERCENT,
+                         EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-gallery-view-zoom-level:
+   *
+   * The last selected #ThunarZoomLevel for the #ThunarGalleryView.
+   **/
+  preferences_props[PROP_LAST_GALLERY_VIEW_ZOOM_LEVEL] =
+      g_param_spec_enum ("last-gallery-view-zoom-level",
+                         "LastGalleryViewZoomLevel",
+                         NULL,
+                         THUNAR_TYPE_ZOOM_LEVEL,
+                         THUNAR_ZOOM_LEVEL_200_PERCENT,
                          EXO_PARAM_READWRITE);
 
   /**
