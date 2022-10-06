@@ -65,7 +65,6 @@ typedef enum
   THUNAR_MENU_SECTION_PROPERTIES          = 1 << 13,
   THUNAR_MENU_SECTION_MOUNTABLE           = 1 << 14,
   THUNAR_MENU_SECTION_REMOVE_FROM_RECENT  = 1 << 15,
-  THUNAR_MENU_SECTION_UNDO                = 1 << 16,
   THUNAR_MENU_SECTION_EDIT_LAUNCHER       = 1 << 17,
 
 } ThunarMenuSections;
