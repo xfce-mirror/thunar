@@ -449,12 +449,13 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * ThunarPreferences:last-toolbar-visible-buttons:
    *
    * The comma separated list that specifies the visibility of toolbar items.
+   * The order of the default value corresponds to the order in which the buttons are added inside 'thunar_window_location_toolbar_create'
    **/
     preferences_props[PROP_LAST_TOOLBAR_VISIBLE_BUTTONS] =
         g_param_spec_string ("last-toolbar-visible-buttons",
                              "LastToolbarVisibleButtons",
                              NULL,
-                             "0,1,1,1,1,0,0,0,0,0,0,0,1,0,1",
+                             "0,1,1,1,1,0,0,0,0,0,0,0,0,0,1,0,1",
                              EXO_PARAM_READWRITE);
 
   /**
@@ -466,7 +467,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
         g_param_spec_string ("last-toolbar-item-order",
                              "LastToolbarButtonOrder",
                              NULL,
-                             "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14",
+                             "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16",
                              EXO_PARAM_READWRITE);
 
   /**
