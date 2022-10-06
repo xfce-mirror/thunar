@@ -89,6 +89,8 @@ static void     thunar_folder_monitor                     (GFileMonitor         
 static gboolean thunar_folder_get_file_count_in_job       (ThunarJob              *job,
                                                            GArray                 *param_values,
                                                            GError                **error);
+static void     thunar_folder_file_count_callback         (ExoJob  *job,
+                                                           gpointer user_data);
 
 
 
@@ -129,6 +131,12 @@ struct _ThunarFolder
 
   GFileMonitor      *monitor;
 };
+
+typedef struct {
+  GtkTreeModel *model;
+  GtkTreePath  *path;
+  GtkTreeIter  *iter;
+} EnumerateChildrenUserData;
 
 
 
@@ -972,29 +980,41 @@ thunar_folder_get_files (const ThunarFolder *folder)
 /**
  * thunar_folder_get_file_count:
  * @file : a #ThunarFolder instance.
+ * @model: a #GtkTreeModel
+ * @iter: a #GtkTreeIter
  *
  * Returns the number of items in the directory
  * Counts the number of files in the directory as fast as possible.
  * Will use cached data to do calculations only once
+ * The @model and @iter are needed to force the redraw once the file count
+ * values are actually calculated.
  *
  * Return value: Number of files in a folder
  **/
 guint32
-thunar_folder_get_file_count (ThunarFolder *folder)
+thunar_folder_get_file_count (ThunarFolder *folder,
+                              GtkTreeModel *model,
+                              GtkTreeIter  *iter)
 {
-  guint64          last_modified;
-  ThunarJob       *job;
+  guint64                    last_modified;
+  ThunarJob                 *job;
+  GtkTreePath               *path;
+  EnumerateChildrenUserData *data;
 
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), 0);
 
   last_modified = thunar_file_get_date (thunar_folder_get_corresponding_file (folder), THUNAR_FILE_DATE_MODIFIED);
+
+  /* This will only happen if it is called by the sorting function, so just return cached values to it */
+  if (model == NULL && iter == NULL)
+    return folder->file_count;
 
   /* return a cached value if last time that the file count was computed is later
    * than the last time the file was modified */
   if (G_LIKELY (last_modified < folder->file_count_timestamp))
     return folder->file_count;
 
-  /* If the content type loader already loaded the file-list, just count it*/
+  /* If the content type loader already loaded the file-list, just count it */
   if (folder->files != NULL)
     {
       folder->file_count = g_list_length (folder->files);
@@ -1003,13 +1023,22 @@ thunar_folder_get_file_count (ThunarFolder *folder)
       return folder->file_count;
     }
 
+
   /* Set up a job to actually enumerate over the folder's contents and get its file count */
   job = thunar_simple_job_new (thunar_folder_get_file_count_in_job, 1,
                                THUNAR_TYPE_FOLDER, folder);
 
+  /* set up the user data to pass to the callback once file counting is done */
+  path = gtk_tree_model_get_path (model, iter);
+  data = g_malloc (sizeof (EnumerateChildrenUserData));
+
+  data->model = model;
+  data->path = path;
+  data->iter = iter;
+
   /* set up the signal on finish to update the row model and ask for redraw
    * TODO Add the callback */
-  /* g_signal_connect (job, "finished", G_CALLBACK (), NULL); */
+  g_signal_connect (job, "finished", G_CALLBACK (thunar_folder_file_count_callback), data);
   exo_job_launch (EXO_JOB (job));
 
   return folder->file_count;
@@ -1062,6 +1091,19 @@ thunar_folder_get_file_count_in_job (ThunarJob *job,
 
     folder->file_count_timestamp = g_get_real_time () / (guint64) 1e6;
     return TRUE;
+}
+
+
+
+static void
+thunar_folder_file_count_callback (ExoJob  *job,
+                                   gpointer user_data)
+{
+  EnumerateChildrenUserData data;
+
+  data = *(EnumerateChildrenUserData *) user_data;
+
+  gtk_tree_model_row_changed (data.model, data.path, data.iter);
 }
 
 
