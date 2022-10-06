@@ -47,6 +47,7 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-history.h>
 #include <thunar/thunar-icon-view.h>
+#include <thunar/thunar-job-operation.h>
 #include <thunar/thunar-location-buttons.h>
 #include <thunar/thunar-location-entry.h>
 #include <thunar/thunar-marshal.h>
@@ -198,6 +199,10 @@ static gboolean  thunar_window_action_close_all_windows   (ThunarWindow         
 static gboolean  thunar_window_action_close_tab           (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
 static gboolean  thunar_window_action_close_window        (ThunarWindow           *window,
+                                                           GtkWidget              *menu_item);
+static gboolean  thunar_window_action_undo                (ThunarWindow           *window,
+                                                           GtkWidget              *menu_item);
+static gboolean  thunar_window_action_redo                (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
 static gboolean  thunar_window_action_preferences         (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
@@ -485,6 +490,8 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_CLOSE_ALL_WINDOWS,              "<Actions>/ThunarWindow/close-all-windows",               "<Primary><Shift>w",    XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Close _All Windows"),     N_ ("Close all Thunar windows"),                                                     NULL,                      G_CALLBACK (thunar_window_action_close_all_windows),  },
 
     { THUNAR_WINDOW_ACTION_EDIT_MENU,                      "<Actions>/ThunarWindow/edit-menu",                       "",                     XFCE_GTK_MENU_ITEM,       N_ ("_Edit"),                  NULL,                                                                                NULL,                      NULL,                                                 },
+    { THUNAR_WINDOW_ACTION_UNDO,                           "<Actions>/ThunarActionManager/undo",                     "<Primary>Z",           XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Undo"),                  N_ ("Undo the latest operation"),                                                    "edit-undo-symbolic",      G_CALLBACK (thunar_window_action_undo),               },
+    { THUNAR_WINDOW_ACTION_REDO,                           "<Actions>/ThunarActionManager/redo",                     "<Primary><shift>Z",    XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Redo"),                  N_ ("Redo the latest operation"),                                                    "edit-redo-symbolic",      G_CALLBACK (thunar_window_action_redo),               },
     { THUNAR_WINDOW_ACTION_PREFERENCES,                    "<Actions>/ThunarWindow/preferences",                     "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Pr_eferences..."),        N_ ("Edit Thunars Preferences"),                                                     "preferences-system",      G_CALLBACK (thunar_window_action_preferences),        },
 
     { THUNAR_WINDOW_ACTION_VIEW_MENU,                      "<Actions>/ThunarWindow/view-menu",                       "",                     XFCE_GTK_MENU_ITEM,       N_ ("_View"),                  NULL,                                                                                NULL,                      NULL,                                                 },
@@ -1281,10 +1288,16 @@ thunar_window_update_edit_menu (ThunarWindow *window,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   thunar_gtk_menu_clean (GTK_MENU (menu));
+
+  gtk_menu_item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_UNDO), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  gtk_widget_set_sensitive (gtk_menu_item, thunar_job_operation_can_undo ());
+  gtk_menu_item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_REDO), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  gtk_widget_set_sensitive (gtk_menu_item, thunar_job_operation_can_redo ());
+  xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
+
   thunar_menu_add_sections (THUNAR_MENU (menu), THUNAR_MENU_SECTION_CUT
                                               | THUNAR_MENU_SECTION_COPY_PASTE
-                                              | THUNAR_MENU_SECTION_TRASH_DELETE
-                                              | THUNAR_MENU_SECTION_UNDO);
+                                              | THUNAR_MENU_SECTION_TRASH_DELETE);
   if (window->view != NULL)
     {
       thunar_standard_view_append_menu_item (THUNAR_STANDARD_VIEW (window->view),
@@ -1322,6 +1335,7 @@ thunar_window_update_edit_menu (ThunarWindow *window,
           g_list_free (thunarx_menu_items);
         }
     }
+
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_PREFERENCES), G_OBJECT (window), GTK_MENU_SHELL (menu));
   gtk_widget_show_all (GTK_WIDGET (menu));
 
@@ -3486,6 +3500,26 @@ thunar_window_action_close_window (ThunarWindow *window,
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
+}
+
+
+
+static gboolean
+thunar_window_action_undo (ThunarWindow *window,
+                           GtkWidget    *menu_item)
+{
+  thunar_job_operation_undo ();
+  return TRUE; /* return value required in case of shortcut activation, in order to signal that the accel key got handled */
+}
+
+
+
+static gboolean
+thunar_window_action_redo (ThunarWindow *window,
+                           GtkWidget    *menu_item)
+{
+  thunar_job_operation_redo ();
+  return TRUE; /* return value required in case of shortcut activation, in order to signal that the accel key got handled */
 }
 
 
