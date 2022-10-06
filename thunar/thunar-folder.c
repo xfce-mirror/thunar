@@ -113,6 +113,9 @@ struct _ThunarFolder
   GList             *files;
   gboolean           reload_info;
 
+  guint32            file_count;
+  guint64            file_count_timestamp;
+
   GList             *content_type_ptr;
   guint              content_type_idle_id;
 
@@ -963,6 +966,71 @@ thunar_folder_get_files (const ThunarFolder *folder)
 
 
 /**
+ * thunar_folder_get_file_count:
+ * @file : a #ThunarFolder instance.
+ *
+ * Returns the number of items in the directory
+ * Counts the number of files in the directory as fast as possible.
+ * Will use cached data to do calculations only once
+ *
+ * Return value: Number of files in a folder
+ **/
+guint32
+thunar_folder_get_file_count (ThunarFolder *folder)
+{
+  ThunarFile      *file;
+  GFileEnumerator *enumerator;
+  GFileInfo       *child_info;
+  guint64          last_modified;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), 0);
+
+  last_modified = thunar_file_get_date (thunar_folder_get_corresponding_file (folder), THUNAR_FILE_DATE_MODIFIED);
+
+  /* return a cached value if last time that the file count was computed is later
+   * than the last time the file was modified */
+  if (G_LIKELY (last_modified < folder->file_count_timestamp))
+    return folder->file_count;
+
+  /* If the content type loader already loaded the file-list, just count it*/
+  if (folder->files != NULL)
+    {
+      folder->file_count = g_list_length (folder->files);
+      /* dividing by 1e6 to convert microseconds to seconds */
+      folder->file_count_timestamp = g_get_real_time () / (guint64) 1e6;
+      return folder->file_count;
+    }
+
+  /* As fallback we will go through the list of gfiles */
+  file = thunar_folder_get_corresponding_file (folder);
+  enumerator = g_file_enumerate_children (thunar_file_get_file (file), NULL,
+                                          G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                          NULL, NULL);
+
+  if(!enumerator)
+    return 0;
+
+  folder->file_count = 0;
+
+  /* count through the files given by the enumerator */
+  for (child_info = g_file_enumerator_next_file (enumerator, NULL, NULL);
+       child_info != NULL;
+       child_info = g_file_enumerator_next_file (enumerator, NULL, NULL))
+    {
+      ++(folder->file_count);
+      g_object_unref (child_info);
+    }
+
+  g_file_enumerator_close (enumerator, NULL, NULL);
+  g_object_unref (enumerator);
+
+  folder->file_count_timestamp = g_get_real_time () / (guint64) 1e6;
+  return folder->file_count;
+}
+
+
+
+/**
  * thunar_folder_get_loading:
  * @folder : a #ThunarFolder instance.
  *
@@ -1010,6 +1078,9 @@ thunar_folder_reload (ThunarFolder *folder,
                       gboolean      reload_info)
 {
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
+
+  folder->file_count = 0;
+  folder->file_count_timestamp = 0;
 
   /* reload file info too? */
   folder->reload_info = reload_info;
