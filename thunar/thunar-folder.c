@@ -114,7 +114,7 @@ struct _ThunarFolder
   gboolean           reload_info;
 
   guint32            file_count;
-  gboolean           file_count_is_cached;
+  guint64            file_count_timestamp;
 
   GList             *content_type_ptr;
   guint              content_type_idle_id;
@@ -981,18 +981,23 @@ thunar_folder_get_file_count (ThunarFolder *folder)
   ThunarFile      *file;
   GFileEnumerator *enumerator;
   GFileInfo       *child_info;
+  guint64          last_modified;
 
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), 0);
 
-  /* If we already have a cached value, just return it */
-  if (G_LIKELY (folder->file_count_is_cached))
+  last_modified = thunar_file_get_date (thunar_folder_get_corresponding_file (folder), THUNAR_FILE_DATE_MODIFIED);
+
+  /* return a cached value if last time that the file count was computed is later
+   * than the last time the file was modified */
+  if (G_LIKELY (last_modified < folder->file_count_timestamp))
     return folder->file_count;
 
   /* If the content type loader already loaded the file-list, just count it*/
   if (folder->files != NULL)
     {
       folder->file_count = g_list_length (folder->files);
-      folder->file_count_is_cached = TRUE;
+      /* dividing by 1e6 to convert microseconds to seconds */
+      folder->file_count_timestamp = g_get_real_time () / (guint64) 1e6;
       return folder->file_count;
     }
 
@@ -1019,7 +1024,7 @@ thunar_folder_get_file_count (ThunarFolder *folder)
   g_file_enumerator_close (enumerator, NULL, NULL);
   g_object_unref (enumerator);
 
-  folder->file_count_is_cached = TRUE;
+  folder->file_count_timestamp = g_get_real_time () / (guint64) 1e6;
   return folder->file_count;
 }
 
@@ -1075,7 +1080,7 @@ thunar_folder_reload (ThunarFolder *folder,
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
 
   folder->file_count = 0;
-  folder->file_count_is_cached = FALSE;
+  folder->file_count_timestamp = 0;
 
   /* reload file info too? */
   folder->reload_info = reload_info;
