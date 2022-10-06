@@ -1143,7 +1143,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
       g_param_spec_int ("misc-undo-redo-history-size",
                         "MiscUndoRedoHistorySize",
                         NULL,
-                        G_MININT, G_MAXINT,
+                        -1, G_MAXINT,
                         10,
                         EXO_PARAM_READWRITE);
 
