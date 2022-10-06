@@ -2410,6 +2410,9 @@ thunar_file_get_group (const ThunarFile *file)
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
+  if (file->info == NULL)
+    return NULL;
+
   /* TODO what are we going to do on non-UNIX systems? */
   gid = g_file_info_get_attribute_uint32 (file->info,
                                           G_FILE_ATTRIBUTE_UNIX_GID);
@@ -2438,6 +2441,9 @@ thunar_file_get_user (const ThunarFile *file)
   guint32 uid;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  if (file->info == NULL)
+    return NULL;
 
   /* TODO what are we going to do on non-UNIX systems? */
   uid = g_file_info_get_attribute_uint32 (file->info,
@@ -3847,7 +3853,9 @@ thunar_file_get_preview_icon (const ThunarFile *file)
   GObject *icon;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->info), NULL);
+
+  if (file->info == NULL)
+    return NULL;
 
   icon = g_file_info_get_attribute_object (file->info, G_FILE_ATTRIBUTE_PREVIEW_ICON);
   if (G_LIKELY (icon != NULL))
