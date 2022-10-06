@@ -21,6 +21,7 @@
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-io-jobs.h>
 #include <thunar/thunar-job-operation.h>
+#include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 
 /**
@@ -71,6 +72,7 @@ G_DEFINE_TYPE (ThunarJobOperation, thunar_job_operation, G_TYPE_OBJECT)
 
 /* List of job operations which were logged */
 static GList *job_operation_list = NULL;
+static gint   job_operation_list_max_size;
 
 /* List pointer to the operation which can be undone */
 static GList *lp_undo_job_operation = NULL;
@@ -81,11 +83,16 @@ static GList *lp_redo_job_operation = NULL;
 static void
 thunar_job_operation_class_init (ThunarJobOperationClass *klass)
 {
-  GObjectClass *gobject_class;
+  GObjectClass      *gobject_class;
+  ThunarPreferences *preferences;
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_job_operation_dispose;
   gobject_class->finalize = thunar_job_operation_finalize;
+
+  preferences = thunar_preferences_get ();
+  g_object_get (G_OBJECT (preferences), "misc-undo-redo-history-size", &job_operation_list_max_size, NULL);
+  g_object_unref (preferences);
 }
 
 
@@ -239,6 +246,14 @@ thunar_job_operation_commit (ThunarJobOperation *job_operation)
   /* reset the undo pointer to latest operation and clear the redo pointer */
   lp_undo_job_operation = g_list_last (job_operation_list);
   lp_redo_job_operation = NULL;
+
+  /* Limit the size of the list */
+  if (job_operation_list_max_size != -1 && g_list_length (job_operation_list) > (guint)job_operation_list_max_size)
+    {
+      GList* first = g_list_first (job_operation_list);
+      job_operation_list = g_list_remove_link (job_operation_list, first);
+      g_list_free_full (first, g_object_unref);
+    }
 }
 
 
