@@ -123,6 +123,7 @@ enum
   PROP_MISC_OPEN_NEW_WINDOWS_IN_SPLIT_VIEW,
   PROP_MISC_COMPACT_VIEW_MAX_CHARS,
   PROP_MISC_HIGHLIGHTING_ENABLED,
+  PROP_MISC_UNDO_REDO_HISTORY_SIZE,
   N_PROPERTIES,
 };
 
@@ -1131,6 +1132,20 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             NULL,
                             thunar_g_vfs_metadata_is_supported (),
                             EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-undo-redo-history-size
+   *
+   * Maximum number of ThunarJobOperations which can be undone/redone
+   * -1 for unlimited
+   **/
+  preferences_props[PROP_MISC_UNDO_REDO_HISTORY_SIZE] =
+      g_param_spec_int ("misc-undo-redo-history-size",
+                        "MiscUndoRedoHistorySize",
+                        NULL,
+                        -1, G_MAXINT,
+                        10,
+                        EXO_PARAM_READWRITE);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
