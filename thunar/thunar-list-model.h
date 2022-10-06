@@ -26,6 +26,7 @@
 G_BEGIN_DECLS;
 
 typedef struct _ThunarListModelClass ThunarListModelClass;
+typedef struct _ThunarListModelItem  ThunarListModelItem;
 typedef struct _ThunarListModel      ThunarListModel;
 
 typedef enum ThunarListModelSearch
