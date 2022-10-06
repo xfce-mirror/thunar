@@ -178,15 +178,13 @@ thunar_abstract_gallery_view_init (ThunarAbstractGalleryView *abstract_gallery_v
   exo_icon_view_set_selection_mode (EXO_ICON_VIEW (view), GTK_SELECTION_MULTIPLE);
 
   /* add the abstract icon renderer */
-  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_gallery_view)->icon_renderer), "follow-state", TRUE, "rounded-corners", TRUE, NULL);
+  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_gallery_view)->icon_renderer), "follow-state", TRUE, NULL);
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_gallery_view)->icon_renderer, FALSE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_gallery_view)->icon_renderer,
                                  "file", THUNAR_COLUMN_FILE);
 
-  /* add the name renderer */
-  /*FIXME text prelit*/
-  /*g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_gallery_view)->name_renderer), "follow-state", TRUE, NULL);*/
-  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_gallery_view)->name_renderer), "rounded-corners", TRUE, NULL);
+  /* add the name renderer, but make it invisible */
+  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_gallery_view)->name_renderer), "visible", FALSE, NULL);
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_gallery_view)->name_renderer, TRUE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_gallery_view)->name_renderer,
                                  "text", THUNAR_COLUMN_NAME);
