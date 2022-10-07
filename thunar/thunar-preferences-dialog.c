@@ -25,6 +25,7 @@
 #include <libxfce4kbd-private-3/libxfce4kbd-private/xfce-shortcuts-editor.h>
 #include <libxfce4kbd-private-3/libxfce4kbd-private/xfce-shortcuts-editor-dialog.h>
 
+#include <thunar/thunar-application.h>
 #include <thunar/thunar-compact-view.h>
 #include <thunar/thunar-details-view.h>
 #include <thunar/thunar-dialogs.h>
@@ -751,6 +752,15 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
 
+  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
+  gtk_widget_show (frame);
+
+  label = gtk_label_new (_("Image Preview"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
+  gtk_widget_show (label);
+
   /* next row */
   row++;
 
@@ -762,6 +772,28 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button, _("Select this option to display icon emblems in the tree pane for all folders "
                                          "for which emblems have been defined in the folders properties dialog."));
+  gtk_widget_set_hexpand (button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 2, 1);
+  gtk_widget_show (button);
+
+  /* new grid */
+  row = 0;
+
+  grid = gtk_grid_new ();
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
+  gtk_container_add (GTK_CONTAINER (frame), grid);
+  gtk_widget_show (grid);
+
+  button = gtk_check_button_new_with_mnemonic (_("Detailed Image Preview"));
+  g_object_bind_property (G_OBJECT (dialog->preferences),
+                          "misc-image-preview-full",
+                          G_OBJECT (button),
+                          "active",
+                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  gtk_widget_set_tooltip_text (button, _("Select this option to use the standalone image preview pane."));
   gtk_widget_set_hexpand (button, TRUE);
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 2, 1);
   gtk_widget_show (button);
