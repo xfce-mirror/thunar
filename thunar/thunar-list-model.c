@@ -44,6 +44,14 @@
 
 
 
+/* convenience macros */
+#define G_NODE(node)                 ((GNode *) (node))
+#define G_NODE_HAS_DUMMY(node)       (node->children != NULL \
+                                      && node->children->data == NULL \
+                                      && node->children->next == NULL)
+
+
+
 /* convenience macro */
 #define THUNAR_LIST_MODEL_ITEM(item) ((ThunarListModelItem *) (item))
 
@@ -227,6 +235,8 @@ static void               thunar_list_model_search_folder         (ThunarListMod
                                                                    gboolean                     show_hidden);
 static void               thunar_list_model_cancel_search_job     (ThunarListModel             *model);
 static void               thunar_list_model_item_destroy          (gpointer                     data);
+static gboolean           thunar_list_model_node_traverse_free    (GNode                       *node,
+                                                                   gpointer                     user_data);
 
 
 
@@ -252,7 +262,7 @@ struct _ThunarListModel
   gint           stamp;
 #endif
 
-  GSequence      *rows;
+  GNode          *root;
   GSList         *hidden;
   ThunarFolder   *folder;
   gboolean        show_hidden : 1;
@@ -290,17 +300,6 @@ struct _ThunarListModel
   guint          update_search_results_timeout_id;
 
   gboolean       tree_view;
-};
-
-struct _ThunarListModelItem
-{
-  ThunarFile          *file;
-
-  gint                *indices; /* for GtkTreePath */
-  gint                 n_indices;
-
-  /* the invisible children of this node */
-  GSequence           *invisible_children;
 };
 
 
@@ -531,15 +530,15 @@ thunar_list_model_init (ThunarListModel *store)
   store->sort_folders_first = TRUE;
   store->sort_sign = 1;
   store->sort_func = thunar_file_compare_by_name;
-  store->rows = g_sequence_new (thunar_list_model_item_destroy);
+  store->root = g_node_new (NULL); /* initialize the virtual root node */
   g_mutex_init (&store->mutex_files_to_add);
 
   /* connect to the shared ThunarFileMonitor, so we don't need to
    * connect "changed" to every single ThunarFile we own.
    */
   store->file_monitor = thunar_file_monitor_get_default ();
-  g_signal_connect (G_OBJECT (store->file_monitor), "file-changed",
-                    G_CALLBACK (thunar_list_model_file_changed), store);
+  // g_signal_connect (G_OBJECT (store->file_monitor), "file-changed",
+  //                   G_CALLBACK (thunar_list_model_file_changed), store);
 }
 
 
@@ -570,7 +569,11 @@ thunar_list_model_finalize (GObject *object)
   thunar_g_list_free_full (store->files_to_add);
   store->files_to_add = NULL;
 
-  g_sequence_free (store->rows);
+  if (store->root != NULL)
+    {
+      g_node_traverse (store->root, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_list_model_node_traverse_free, NULL);
+      g_node_destroy (store->root);
+    }
   g_mutex_clear (&store->mutex_files_to_add);
 
   /* disconnect from the file monitor */
@@ -802,16 +805,65 @@ thunar_list_model_get_iter (GtkTreeModel *model,
 
 
 static GtkTreePath*
-thunar_list_model_get_path (GtkTreeModel *model,
+thunar_list_model_get_path (GtkTreeModel *tree_model,
                             GtkTreeIter  *iter)
 {
-  ThunarListModelItem *item;
+  ThunarListModel *model = THUNAR_LIST_MODEL (tree_model);
+  GtkTreePath     *path;
+  GtkTreeIter      tmp_iter;
+  GNode           *tmp_node;
+  GNode           *node;
+  gint             n;
 
-  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (model), NULL);
-  _thunar_return_val_if_fail (iter->stamp == THUNAR_LIST_MODEL (model)->stamp, NULL);
+  _thunar_return_val_if_fail (iter->user_data != NULL, NULL);
+  _thunar_return_val_if_fail (iter->stamp == model->stamp, NULL);
 
-  item = THUNAR_LIST_MODEL_ITEM (g_sequence_get (iter->user_data));
-  return gtk_tree_path_new_from_indicesv (item->indices, item->n_indices);
+  /* determine the node for the iterator */
+  node = iter->user_data;
+
+  /* check if the iter refers to the "virtual root node" */
+  if (node->parent == NULL && node == model->root)
+    return gtk_tree_path_new ();
+  else if (G_UNLIKELY (node->parent == NULL))
+    return NULL;
+
+  if (node->parent == model->root)
+    {
+      path = gtk_tree_path_new ();
+      tmp_node = g_node_first_child (model->root);
+    }
+  else
+    {
+      /* determine the iterator for the parent node */
+      GTK_TREE_ITER_INIT (tmp_iter, model->stamp, node->parent);
+
+      /* determine the path for the parent node */
+      path = gtk_tree_model_get_path (tree_model, &tmp_iter);
+
+      /* and the node for the parent's children */
+      tmp_node = g_node_first_child (node->parent);
+    }
+
+  /* check if we have a valid path */
+  if (G_LIKELY (path != NULL))
+    {
+      /* lookup our index in the child list */
+      for (n = 0; tmp_node != NULL; ++n, tmp_node = tmp_node->next)
+        if (tmp_node == node)
+          break;
+
+      /* check if we have found the node */
+      if (G_UNLIKELY (tmp_node == NULL))
+        {
+          gtk_tree_path_free (path);
+          return NULL;
+        }
+
+      /* append the index to the parent path */
+      gtk_tree_path_append_index (path, n);
+    }
+
+  return path;
 }
 
 
@@ -832,11 +884,12 @@ thunar_list_model_get_value (GtkTreeModel *model,
   GFile        *g_file;
   GFile        *g_file_parent;
   gchar        *str;
+  GNode        *node = iter->user_data;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
   _thunar_return_if_fail (iter->stamp == (THUNAR_LIST_MODEL (model))->stamp);
 
-  file = THUNAR_LIST_MODEL_ITEM (g_sequence_get (iter->user_data))->file;
+  file = node->data;
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   switch (column)
@@ -1030,30 +1083,10 @@ thunar_list_model_iter_next (GtkTreeModel *model,
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (model), FALSE);
   _thunar_return_val_if_fail (iter->stamp == (THUNAR_LIST_MODEL (model))->stamp, FALSE);
 
-  iter->user_data = g_sequence_iter_next (iter->user_data);
-  return !g_sequence_iter_is_end (iter->user_data);
-}
-
-
-
-static gboolean
-thunar_list_model_iter_children (GtkTreeModel *model,
-                                 GtkTreeIter  *iter,
-                                 GtkTreeIter  *parent)
-{
-  ThunarListModel *store = THUNAR_LIST_MODEL (model);
-  GSequence       *seq;
-
-  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
-
-  if (G_LIKELY (parent == NULL))
-    seq = store->rows;
-  else
-    seq = THUNAR_LIST_MODEL_ITEM (parent->user_data)->invisible_children;
-
-  if (G_LIKELY (seq != NULL && g_sequence_get_length (seq) > 0))
+  /* check if we have any further nodes in this row */
+  if (g_node_next_sibling (iter->user_data) != NULL)
     {
-      GTK_TREE_ITER_INIT (*iter, store->stamp, g_sequence_get_begin_iter (seq));
+      iter->user_data = g_node_next_sibling (iter->user_data);
       return TRUE;
     }
 
@@ -1063,84 +1096,106 @@ thunar_list_model_iter_children (GtkTreeModel *model,
 
 
 static gboolean
-thunar_list_model_iter_has_child (GtkTreeModel *model,
+thunar_list_model_iter_children (GtkTreeModel *tree_model,
+                                 GtkTreeIter  *iter,
+                                 GtkTreeIter  *parent)
+{
+  ThunarListModel *model = THUNAR_LIST_MODEL (tree_model);
+  GNode           *children;
+
+  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (model), FALSE);
+
+  if (G_LIKELY (parent != NULL))
+    children = g_node_first_child (parent->user_data);
+  else
+    children = g_node_first_child (model->root);
+
+  if (G_LIKELY (children != NULL))
+    {
+      GTK_TREE_ITER_INIT (*iter, model->stamp, children);
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_list_model_iter_has_child (GtkTreeModel *tree_model,
                                   GtkTreeIter  *iter)
 {
-  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (model), 0);
+  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (tree_model), 0);
+  _thunar_return_val_if_fail (iter->stamp == THUNAR_LIST_MODEL (tree_model)->stamp, FALSE);
+  _thunar_return_val_if_fail (iter->user_data != NULL, FALSE);
 
-  return THUNAR_LIST_MODEL_ITEM (iter->user_data)->invisible_children != NULL;
+  return (g_node_first_child (iter->user_data) != NULL);
 }
 
 
 
 static gint
-thunar_list_model_iter_n_children (GtkTreeModel *model,
+thunar_list_model_iter_n_children (GtkTreeModel *tree_model,
                                    GtkTreeIter  *iter)
 {
-  ThunarListModel *store = THUNAR_LIST_MODEL (model);
-  GSequence       *seq;
+  ThunarListModel *model = THUNAR_LIST_MODEL (tree_model);
 
-  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), 0);
+  _thunar_return_val_if_fail (iter == NULL || iter->user_data != NULL, 0);
+  _thunar_return_val_if_fail (iter == NULL || iter->stamp == model->stamp, 0);
 
-  seq = (iter == NULL) ? store->rows : THUNAR_LIST_MODEL_ITEM (g_sequence_get (iter->user_data))->invisible_children;
-
-  return seq == NULL ? 0 : g_sequence_get_length (seq);
+  return g_node_n_children ((iter == NULL) ? model->root : iter->user_data);
 }
 
 
 
 static gboolean
-thunar_list_model_iter_nth_child (GtkTreeModel *model,
+thunar_list_model_iter_nth_child (GtkTreeModel *tree_model,
                                   GtkTreeIter  *iter,
                                   GtkTreeIter  *parent,
                                   gint          n)
 {
-  ThunarListModel     *store = THUNAR_LIST_MODEL (model);
-  ThunarListModelItem *item;
-  GSequenceIter       *row;
-  GSequence           *seq;
+  ThunarListModel *model = THUNAR_LIST_MODEL (tree_model);
+  GNode           *child;
 
-  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
+  _thunar_return_val_if_fail (parent == NULL || parent->user_data != NULL, FALSE);
+  _thunar_return_val_if_fail (parent == NULL || parent->stamp == model->stamp, FALSE);
 
-  if (G_LIKELY (parent != NULL))
+  child = g_node_nth_child ((parent != NULL) ? parent->user_data : model->root, n);
+  if (G_LIKELY (child != NULL))
     {
-      item = g_sequence_get (parent->user_data);
-      seq = item->invisible_children;
+      GTK_TREE_ITER_INIT (*iter, model->stamp, child);
+      return TRUE;
     }
-  else
-    seq = store->rows;
 
-  if (G_UNLIKELY (seq == NULL))
-    return FALSE;
-
-  row = g_sequence_get_iter_at_pos (seq, n);
-  if (g_sequence_iter_is_end (row))
-    return FALSE;
-
-  GTK_TREE_ITER_INIT (*iter, store->stamp, row);
-  return TRUE;
+  return FALSE;
 }
 
 
 
 static gboolean
-thunar_list_model_iter_parent (GtkTreeModel *model,
+thunar_list_model_iter_parent (GtkTreeModel *tree_model,
                                GtkTreeIter  *iter,
                                GtkTreeIter  *child)
 {
-  ThunarListModelItem *item;
-  GtkTreePath         *path;
-  gboolean             has_parent;
+  ThunarListModel *model = THUNAR_LIST_MODEL (tree_model);
+  GNode           *parent;
 
-  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (model), FALSE);
+  _thunar_return_val_if_fail (iter != NULL, FALSE);
+  _thunar_return_val_if_fail (child->user_data != NULL, FALSE);
+  _thunar_return_val_if_fail (child->stamp == model->stamp, FALSE);
 
-  item = THUNAR_LIST_MODEL_ITEM (iter->user_data);
-  path = gtk_tree_path_new_from_indicesv (item->indices, item->n_indices);
-  gtk_tree_path_up (path);
-
-  has_parent = gtk_tree_model_get_iter (model, iter, path);
-  gtk_tree_path_free (path);
-  return has_parent;
+  /* check if we have a parent for iter */
+  parent = G_NODE (child->user_data)->parent;
+  if (G_LIKELY (parent != model->root))
+    {
+      GTK_TREE_ITER_INIT (*iter, model->stamp, parent);
+      return TRUE;
+    }
+  else
+    {
+      /* no "real parent" for this node */
+      return FALSE;
+    }
 }
 
 
@@ -1342,9 +1397,6 @@ thunar_list_model_cmp_func (gconstpointer a,
   gboolean         isdir_a;
   gboolean         isdir_b;
   
-  a = THUNAR_LIST_MODEL_ITEM (a)->file;
-  b = THUNAR_LIST_MODEL_ITEM (b)->file;
-
   _thunar_return_val_if_fail (THUNAR_IS_FILE (a), 0);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (b), 0);
 
@@ -1364,57 +1416,7 @@ thunar_list_model_cmp_func (gconstpointer a,
 static void
 thunar_list_model_sort (ThunarListModel *store)
 {
-  GtkTreePath    *path;
-  GSequenceIter **old_order;
-  gint           *new_order;
-  gint            n;
-  gint            length;
-  GSequenceIter  *row;
-
-  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
-
-  length = g_sequence_get_length (store->rows);
-  if (G_UNLIKELY (length <= 1))
-    return;
-
-  /* be sure to not overuse the stack */
-  if (G_LIKELY (length < 2000))
-    {
-      old_order = g_newa (GSequenceIter *, length);
-      new_order = g_newa (gint, length);
-    }
-  else
-    {
-      old_order = g_new (GSequenceIter *, length);
-      new_order = g_new (gint, length);
-    }
-
-  /* store old order */
-  row = g_sequence_get_begin_iter (store->rows);
-  for (n = 0; n < length; ++n)
-    {
-      old_order[n] = row;
-      row = g_sequence_iter_next (row);
-    }
-
-  /* sort */
-  g_sequence_sort (store->rows, thunar_list_model_cmp_func, store);
-
-  /* new_order[newpos] = oldpos */
-  for (n = 0; n < length; ++n)
-    new_order[g_sequence_iter_get_position (old_order[n])] = n;
-
-  /* tell the view about the new item order */
-  path = gtk_tree_path_new_first ();
-  gtk_tree_model_rows_reordered (GTK_TREE_MODEL (store), path, NULL, new_order);
-  gtk_tree_path_free (path);
-
-  /* clean up if we used the heap */
-  if (G_UNLIKELY (length >= 2000))
-    {
-      g_free (old_order);
-      g_free (new_order);
-    }
+  /* TODO */
 }
 
 
@@ -1424,79 +1426,7 @@ thunar_list_model_file_changed (ThunarFileMonitor *file_monitor,
                                 ThunarFile        *file,
                                 ThunarListModel   *store)
 {
-  GSequenceIter *row;
-  GSequenceIter *end;
-  gint           pos_after;
-  gint           pos_before = 0;
-  gint          *new_order;
-  gint           length;
-  gint           i, j;
-  GtkTreePath   *path;
-  GtkTreeIter    iter;
-
-  _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
-  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
-
-  row = g_sequence_get_begin_iter (store->rows);
-  end = g_sequence_get_end_iter (store->rows);
-
-  while (row != end)
-    {
-      if (G_UNLIKELY (THUNAR_LIST_MODEL_ITEM (g_sequence_get (row))->file == file))
-        {
-          /* generate the iterator for this row */
-          GTK_TREE_ITER_INIT (iter, store->stamp, row);
-
-          _thunar_assert (pos_before == g_sequence_iter_get_position (row));
-
-          /* check if the sorting changed */
-          g_sequence_sort_changed (row, thunar_list_model_cmp_func, store);
-          pos_after = g_sequence_iter_get_position (row);
-          if (pos_after != pos_before)
-            {
-              /* do swap sorting here since its much faster than a complete sort */
-              length = g_sequence_get_length (store->rows);
-              if (G_LIKELY (length < 2000))
-                new_order = g_newa (gint, length);
-              else
-                new_order = g_new (gint, length);
-
-              /* new_order[newpos] = oldpos */
-              for (i = 0, j = 0; i < length; ++i)
-                {
-                  if (G_UNLIKELY (i == pos_after))
-                    {
-                      new_order[i] = pos_before;
-                    }
-                  else
-                    {
-                      if (G_UNLIKELY (j == pos_before))
-                        j++;
-                      new_order[i] = j++;
-                    }
-                }
-
-              /* tell the view about the new item order */
-              path = gtk_tree_path_new_first ();
-              gtk_tree_model_rows_reordered (GTK_TREE_MODEL (store), path, NULL, new_order);
-              gtk_tree_path_free (path);
-
-              /* clean up if we used the heap */
-              if (G_UNLIKELY (length >= 2000))
-                g_free (new_order);
-            }
-
-          /* notify the view that it has to redraw the file */
-          path = gtk_tree_path_new_from_indices (pos_before, -1);
-          gtk_tree_model_row_changed (GTK_TREE_MODEL (store), path, &iter);
-          gtk_tree_path_free (path);
-          break;
-        }
-
-      row = g_sequence_iter_next (row);
-      pos_before++;
-    }
+  /* TODO */
 }
 
 
@@ -1534,32 +1464,55 @@ thunar_list_model_folder_error (ThunarFolder    *folder,
 
 
 static void
+thunar_list_model_build_tree (ThunarListModel *model,
+                              GNode           *node)
+{
+  GtkTreePath  *path;
+  GtkTreeIter   iter;
+  ThunarFolder *folder;
+  GList        *files;
+  GNode        *child;
+  if (node == NULL || !thunar_file_is_directory (THUNAR_FILE (node->data)))
+    return;
+  folder = thunar_folder_get_for_file (node->data); 
+  files = thunar_folder_get_files (folder);
+  if (files == NULL || g_list_length (files) < 1)
+    return;
+  for (GList *lp = files; lp != NULL; lp = lp->next)
+    {
+      child = g_node_append_data (node, g_object_ref (THUNAR_FILE (lp->data)));
+
+      /* determine the tree iter for the child */
+      GTK_TREE_ITER_INIT (iter, model->stamp, child);
+
+      /* emit a "row-changed" for the new node */
+      path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+      gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
+      gtk_tree_path_free (path);
+      thunar_list_model_build_tree (model, child);
+    }
+}
+
+
+
+static void
 thunar_list_model_files_added (ThunarFolder    *folder,
                                GList           *files,
-                               ThunarListModel *store)
+                               ThunarListModel *model)
 {
   GtkTreePath   *path;
   GtkTreeIter    iter;
+  ThunarFile    *folder_file;
   ThunarFile    *file;
-  gint          *indices;
-  GSequenceIter *row;
-  GSequenceIter *seq;
   GList         *lp;
-  gboolean       has_handler;
-  ThunarListModelItem *item;
-  ThunarListModelItem *child;
-  GList               *list;
+  GNode         *node;
+  GNode         *child_node;
 
-  /* we use a simple trick here to avoid allocating
-   * GtkTreePath's again and again, by simply accessing
-   * the indices directly and only modifying the first
-   * item in the integer array... looks a hack, eh?
-   */
-  path = gtk_tree_path_new_first ();
-  indices = gtk_tree_path_get_indices (path);
-
-  /* check if we have any handlers connected for "row-inserted" */
-  has_handler = g_signal_has_handler_pending (G_OBJECT (store), store->row_inserted_id, 0, FALSE);
+  folder_file = thunar_folder_get_corresponding_file (folder);
+  if (model->root == NULL)
+    model->root = g_node_new (folder_file);
+  node = model->root;
+  _thunar_return_if_fail (node != NULL);
 
   /* process all added files */
   for (lp = files; lp != NULL; lp = lp->next)
@@ -1569,58 +1522,26 @@ thunar_list_model_files_added (ThunarFolder    *folder,
       _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
       /* check if the file should be hidden */
-      if (!store->show_hidden && thunar_file_is_hidden (file))
+      if (!model->show_hidden && thunar_file_is_hidden (file))
         {
-          store->hidden = g_slist_prepend (store->hidden, file);
+          model->hidden = g_slist_prepend (model->hidden, file);
         }
       else
         {
-          item = g_new0 (ThunarListModelItem, 1);
-          item->file = g_object_ref (file);
-          item->invisible_children = NULL;
-          if (thunar_file_is_directory (file))
-            {
-              folder = thunar_folder_get_for_file (file);
-              list = thunar_folder_get_files (folder);
-              if (g_list_length (list) > 0)
-                {
-                  item->invisible_children = g_sequence_new (thunar_list_model_item_destroy);
-                  for (; list != NULL; list = list->next)
-                    {
-                      child = g_new0 (ThunarListModelItem, 1);
-                      child->file = g_object_ref (list->data);
-                      child->invisible_children = NULL;
-                      seq = g_sequence_insert_sorted (item->invisible_children, child, thunar_list_model_cmp_func, store);
-                      child->indices = g_malloc (sizeof (gint) * 2);
-                      child->indices [0] = item->indices [0];
-                      child->indices [1] = g_sequence_iter_get_position (seq);
-                      child->n_indices = 2;
-                    }
-                }
-            }
-          /* insert the file */
-          row = g_sequence_insert_sorted (store->rows, item,
-                                          thunar_list_model_cmp_func, store);
-          item->n_indices = 1;
-          item->indices = g_malloc (sizeof (gint) * 1);
-          item->indices [0] = g_sequence_iter_get_position (row);
+          child_node = g_node_append_data (node, lp->data);
 
-          if (has_handler)
-            {
-              /* generate an iterator for the new item */
-              GTK_TREE_ITER_INIT (iter, store->stamp, row);
+          /* determine the tree iter for the child */
+          GTK_TREE_ITER_INIT (iter, model->stamp, child_node);
 
-              indices[0] = g_sequence_iter_get_position (row);
-              gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
-            }
+          /* emit a "row-changed" for the new node */
+          path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+          gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
+          gtk_tree_path_free (path);
         }
     }
 
-  /* release the path */
-  gtk_tree_path_free (path);
-
   /* number of visible files may have changed */
-  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_NUM_FILES]);
+  g_object_notify_by_pspec (G_OBJECT (model), list_model_props[PROP_NUM_FILES]);
 }
 
 
@@ -1628,60 +1549,36 @@ thunar_list_model_files_added (ThunarFolder    *folder,
 static void
 thunar_list_model_files_removed (ThunarFolder    *folder,
                                  GList           *files,
-                                 ThunarListModel *store)
+                                 ThunarListModel *model)
 {
+  ThunarFile    *file;
   GList         *lp;
-  GSequenceIter *row;
-  GSequenceIter *end;
-  GSequenceIter *next;
-  GtkTreePath   *path;
-  gboolean       found;
+  GNode         *node;
 
-  /* drop all the referenced files from the model */
+  if (model->root == NULL)
+    return;
+
+  /* process all added files */
   for (lp = files; lp != NULL; lp = lp->next)
     {
-      row = g_sequence_get_begin_iter (store->rows);
-      end = g_sequence_get_end_iter (store->rows);
+      /* take a reference on that file */
+      file = THUNAR_FILE (g_object_ref (G_OBJECT (lp->data)));
+      _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-      found = FALSE;
-
-      while (row != end)
+      /* check if the file should be hidden */
+      if (!model->show_hidden && thunar_file_is_hidden (file))
         {
-          next = g_sequence_iter_next (row);
-
-          if (g_sequence_get (row) == lp->data)
-            {
-              /* setup path for "row-deleted" */
-              path = gtk_tree_path_new_from_indices (g_sequence_iter_get_position (row), -1);
-
-              /* remove file from the model */
-              g_sequence_remove (row);
-
-              /* notify the view(s) */
-              gtk_tree_model_row_deleted (GTK_TREE_MODEL (store), path);
-              gtk_tree_path_free (path);
-
-              /* no need to look in the hidden files */
-              found = TRUE;
-
-              break;
-            }
-
-          row = next;
+          model->hidden = g_slist_remove (model->hidden, file);
         }
-
-      /* check if the file was found */
-      if (!found)
+      else
         {
-          /* file is hidden */
-          _thunar_assert (g_slist_find (store->hidden, lp->data) != NULL);
-          store->hidden = g_slist_remove (store->hidden, lp->data);
-          g_object_unref (G_OBJECT (lp->data));
+          node = g_node_find (model->root, G_POST_ORDER, G_TRAVERSE_ALL, lp->data);
+          g_node_destroy (node);
         }
     }
 
-  /* this probably changed */
-  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_NUM_FILES]);
+  /* number of visible files may have changed */
+  g_object_notify_by_pspec (G_OBJECT (model), list_model_props[PROP_NUM_FILES]);
 }
 
 
@@ -2472,13 +2369,6 @@ thunar_list_model_set_folder (ThunarListModel *store,
                               ThunarFolder    *folder,
                               gchar           *search_query)
 {
-  GtkTreePath   *path;
-  gboolean       has_handler;
-  GList         *files;
-  GSequenceIter *row;
-  GSequenceIter *end;
-  GSequenceIter *next;
-
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
   _thunar_return_if_fail (folder == NULL || THUNAR_IS_FOLDER (folder));
 
@@ -2495,28 +2385,9 @@ thunar_list_model_set_folder (ThunarListModel *store,
       thunar_g_list_free_full (store->files_to_add);
       store->files_to_add = NULL;
 
-      /* check if we have any handlers connected for "row-deleted" */
-      has_handler = g_signal_has_handler_pending (G_OBJECT (store), store->row_deleted_id, 0, FALSE);
-
-      row = g_sequence_get_begin_iter (store->rows);
-      end = g_sequence_get_end_iter (store->rows);
-
-      /* remove existing entries */
-      path = gtk_tree_path_new_first ();
-      while (row != end)
-        {
-          /* remove the row from the list */
-          next = g_sequence_iter_next (row);
-          g_sequence_remove (row);
-          row = next;
-
-          /* notify the view(s) if they're actually
-           * interested in the "row-deleted" signal.
-           */
-          if (G_LIKELY (has_handler))
-            gtk_tree_model_row_deleted (GTK_TREE_MODEL (store), path);
-        }
-      gtk_tree_path_free (path);
+      g_node_traverse (store->root, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_list_model_node_traverse_free, NULL);
+      g_node_destroy (store->root);
+      store->root = NULL;
 
       /* remove hidden entries */
       g_slist_free_full (store->hidden, g_object_unref);
@@ -2526,9 +2397,6 @@ thunar_list_model_set_folder (ThunarListModel *store,
       g_signal_handlers_disconnect_matched (G_OBJECT (store->folder), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
       g_object_unref (G_OBJECT (store->folder));
     }
-
-  /* ... just to be sure! */
-  _thunar_assert (g_sequence_get_length (store->rows) == 0);
 
 #ifndef NDEBUG
   /* new stamp since the model changed */
@@ -2546,37 +2414,8 @@ thunar_list_model_set_folder (ThunarListModel *store,
     {
       g_object_ref (G_OBJECT (folder));
 
-      /* get the already loaded files or search for files matching the search_query
-       * don't start searching if the query is empty, that would be a waste of resources
-       */
-      if (search_query == NULL || strlen (search_query) == 0)
-        {
-          files = thunar_folder_get_files (folder);
-        }
-      else
-        {
-          gchar *search_query_c;  /* normalized */
-
-          search_query_c = thunar_g_utf8_normalize_for_search (search_query, TRUE, TRUE);
-          files = NULL;
-
-          /* search the current folder
-           * start a new recursive_search_job */
-          store->recursive_search_job = thunar_list_model_job_search_directory (store, search_query_c, thunar_folder_get_corresponding_file (folder));
-          exo_job_launch (EXO_JOB (store->recursive_search_job));
-
-          g_signal_connect (store->recursive_search_job, "error", G_CALLBACK (search_error), NULL);
-          g_signal_connect (store->recursive_search_job, "finished", G_CALLBACK (search_finished), store);
-
-          /* add new results to the model every X ms */
-          store->update_search_results_timeout_id = g_timeout_add (500, add_search_files, store);
-
-          g_free (search_query_c);
-        }
-
-      /* insert the files */
-      if (files != NULL)
-        thunar_list_model_files_added (folder, files, store);
+      store->root = g_node_new (g_object_ref (thunar_folder_get_corresponding_file (folder)));
+      thunar_list_model_build_tree (store, store->root);
 
       /* connect signals to the new folder */
       g_signal_connect (G_OBJECT (store->folder), "destroy", G_CALLBACK (thunar_list_model_folder_destroy), store);
@@ -2664,81 +2503,7 @@ void
 thunar_list_model_set_show_hidden (ThunarListModel *store,
                                    gboolean         show_hidden)
 {
-  GtkTreePath   *path;
-  GtkTreeIter    iter;
-  ThunarFile    *file;
-  GSList        *lp;
-  GSequenceIter *row;
-  GSequenceIter *next;
-  GSequenceIter *end;
-
-  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
-
-  /* check if the settings differ */
-  if (store->show_hidden == show_hidden)
-    return;
-
-  store->show_hidden = show_hidden;
-
-  if (store->show_hidden)
-    {
-      for (lp = store->hidden; lp != NULL; lp = lp->next)
-        {
-          file = THUNAR_FILE (lp->data);
-
-          /* insert file in the sorted position */
-          row = g_sequence_insert_sorted (store->rows, file,
-                                          thunar_list_model_cmp_func, store);
-
-          GTK_TREE_ITER_INIT (iter, store->stamp, row);
-
-          /* tell the view about the new row */
-          path = gtk_tree_path_new_from_indices (g_sequence_iter_get_position (row), -1);
-          gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
-          gtk_tree_path_free (path);
-        }
-      g_slist_free (store->hidden);
-      store->hidden = NULL;
-    }
-  else
-    {
-      _thunar_assert (store->hidden == NULL);
-
-      /* remove all hidden files */
-      row = g_sequence_get_begin_iter (store->rows);
-      end = g_sequence_get_end_iter (store->rows);
-
-      while (row != end)
-        {
-          next = g_sequence_iter_next (row);
-
-          file = THUNAR_LIST_MODEL_ITEM (g_sequence_get (row))->file;
-          if (thunar_file_is_hidden (file))
-            {
-              /* store file in the list */
-              store->hidden = g_slist_prepend (store->hidden, g_object_ref (file));
-
-              /* setup path for "row-deleted" */
-              path = gtk_tree_path_new_from_indices (g_sequence_iter_get_position (row), -1);
-
-              /* remove file from the model */
-              g_sequence_remove (row);
-
-              /* notify the view(s) */
-              gtk_tree_model_row_deleted (GTK_TREE_MODEL (store), path);
-              gtk_tree_path_free (path);
-            }
-
-          row = next;
-          _thunar_assert (end == g_sequence_get_end_iter (store->rows));
-        }
-    }
-
-  /* notify listeners about the new setting */
-  g_object_freeze_notify (G_OBJECT (store));
-  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_NUM_FILES]);
-  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_SHOW_HIDDEN]);
-  g_object_thaw_notify (G_OBJECT (store));
+  /* TODO */
 }
 
 
@@ -2818,7 +2583,7 @@ thunar_list_model_get_file (ThunarListModel *store,
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
   _thunar_return_val_if_fail (iter->stamp == store->stamp, NULL);
 
-  return g_object_ref (THUNAR_LIST_MODEL_ITEM (g_sequence_get (iter->user_data))->file);
+  return g_object_ref (G_NODE (iter->user_data)->data);
 }
 
 
@@ -2836,7 +2601,7 @@ static gint
 thunar_list_model_get_num_files (ThunarListModel *store)
 {
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), 0);
-  return g_sequence_get_length (store->rows);
+  return g_node_n_children (store->root);
 }
 
 
@@ -2863,27 +2628,18 @@ GList*
 thunar_list_model_get_paths_for_files (ThunarListModel *store,
                                        GList           *files)
 {
-  GList         *paths = NULL;
-  GSequenceIter *row;
-  GSequenceIter *end;
-  gint           i = 0;
+  GList       *paths = NULL;
+  GNode       *node;
+  GtkTreeIter  iter;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
 
-  row = g_sequence_get_begin_iter (store->rows);
-  end = g_sequence_get_end_iter (store->rows);
-
-  /* find the rows for the given files */
-  while (row != end)
+  for (GList *lp = files; lp != NULL; lp = lp->next)
     {
-      if (g_list_find (files, g_sequence_get (row)) != NULL)
-        {
-          _thunar_assert (i == g_sequence_iter_get_position (row));
-          paths = g_list_prepend (paths, gtk_tree_path_new_from_indices (i, -1));
-        }
-
-      row = g_sequence_iter_next (row);
-      i++;
+      node = g_node_find (store->root, G_POST_ORDER, G_TRAVERSE_ALL, lp->data);
+      /* determine the tree iter for the child */
+      GTK_TREE_ITER_INIT (iter, store->stamp, node);
+      paths = g_list_append (paths, gtk_tree_model_get_path (GTK_TREE_MODEL (store), &iter));
     }
 
   return paths;
@@ -2914,52 +2670,8 @@ thunar_list_model_get_paths_for_pattern (ThunarListModel *store,
                                          gboolean         case_sensitive,
                                          gboolean         match_diacritics)
 {
-  GPatternSpec  *pspec;
-  gchar         *normalized_pattern;
-  GList         *paths = NULL;
-  GSequenceIter *row;
-  GSequenceIter *end;
-  ThunarFile    *file;
-  const gchar   *display_name;
-  gchar         *normalized_display_name;
-  gboolean       name_matched;
-  gint           i = 0;
-
-  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
-  _thunar_return_val_if_fail (g_utf8_validate (pattern, -1, NULL), NULL);
-
-  /* compile the pattern */
-  normalized_pattern = thunar_g_utf8_normalize_for_search (pattern, !match_diacritics, !case_sensitive);
-  pspec = g_pattern_spec_new (normalized_pattern);
-  g_free (normalized_pattern);
-
-  row = g_sequence_get_begin_iter (store->rows);
-  end = g_sequence_get_end_iter (store->rows);
-
-  /* find all rows that match the given pattern */
-  while (row != end)
-    {
-      file = g_sequence_get (row);
-      display_name = thunar_file_get_display_name (file);
-
-      normalized_display_name = thunar_g_utf8_normalize_for_search (display_name, !match_diacritics, !case_sensitive);
-      name_matched = g_pattern_match_string (pspec, normalized_display_name);
-      g_free (normalized_display_name);
-
-      if (name_matched)
-        {
-          _thunar_assert (i == g_sequence_iter_get_position (row));
-          paths = g_list_prepend (paths, gtk_tree_path_new_from_indices (i, -1));
-        }
-
-      row = g_sequence_iter_next (row);
-      i++;
-    }
-
-  /* release the pattern */
-  g_pattern_spec_free (pspec);
-
-  return paths;
+  /* TODO */
+  return NULL;
 }
 
 
@@ -2981,98 +2693,8 @@ thunar_list_model_get_statusbar_text_for_files (ThunarListModel *store,
                                                 GList           *files,
                                                 gboolean         show_file_size_binary_format)
 {
-  guint64            size_summary       = 0;
-  gint               folder_count       = 0;
-  gint               non_folder_count   = 0;
-  GList             *lp;
-  GList             *text_list          = NULL;
-  gchar             *size_string        = NULL;
-  gchar             *temp_string        = NULL;
-  gchar             *folder_text        = NULL;
-  gchar             *non_folder_text    = NULL;
-  ThunarPreferences *preferences;
-  guint              active;
-  guint64            last_modified_date = 0;
-  guint64            temp_last_modified_date;
-  ThunarFile        *last_modified_file = NULL;
-  gboolean           show_size, show_size_in_bytes, show_last_modified;
-
-  preferences = thunar_preferences_get ();
-  g_object_get (G_OBJECT (preferences), "misc-status-bar-active-info", &active, NULL);
-  show_size = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE);
-  show_size_in_bytes = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES);
-  show_last_modified = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_LAST_MODIFIED);
-  g_object_unref (preferences);
-
-  /* analyze files */
-  for (lp = files; lp != NULL; lp = lp->next)
-    {
-      if (thunar_file_is_directory (lp->data))
-        {
-          folder_count++;
-        }
-      else
-        {
-          non_folder_count++;
-          if (thunar_file_is_regular (lp->data))
-            size_summary += thunar_file_get_size (lp->data);
-        }
-      temp_last_modified_date = thunar_file_get_date (lp->data, THUNAR_FILE_DATE_MODIFIED);
-      if (last_modified_date <= temp_last_modified_date)
-        {
-          last_modified_date = temp_last_modified_date;
-          last_modified_file = lp->data;
-        }
-    }
-
-  if (non_folder_count > 0)
-    {
-      if (show_size == TRUE)
-        {
-          if (show_size_in_bytes == TRUE)
-            {
-              size_string = g_format_size_full (size_summary, G_FORMAT_SIZE_LONG_FORMAT
-                                                              | (show_file_size_binary_format ? G_FORMAT_SIZE_IEC_UNITS
-                                                                                              : G_FORMAT_SIZE_DEFAULT));
-            }
-          else
-            {
-              size_string = g_format_size_full (size_summary, show_file_size_binary_format ? G_FORMAT_SIZE_IEC_UNITS
-                                                                                           : G_FORMAT_SIZE_DEFAULT);
-            }
-          non_folder_text = g_strdup_printf (ngettext ("%d file: %s",
-                                                       "%d files: %s",
-                                                       non_folder_count), non_folder_count, size_string);
-          g_free (size_string);
-        }
-      else
-        non_folder_text = g_strdup_printf (ngettext ("%d file", "%d files", non_folder_count), non_folder_count);
-    }
-
-  if (folder_count > 0)
-    {
-      folder_text = g_strdup_printf (ngettext ("%d folder",
-                                               "%d folders",
-                                               folder_count), folder_count);
-    }
-
-  if (non_folder_text == NULL && folder_text == NULL)
-    text_list = g_list_append (text_list, g_strdup_printf (_("0 items")));
-  if (folder_text != NULL)
-    text_list = g_list_append (text_list, folder_text);
-  if (non_folder_text != NULL)
-    text_list = g_list_append (text_list, non_folder_text);
-
-  if (show_last_modified && last_modified_file != NULL)
-    {
-      temp_string = thunar_file_get_date_string (last_modified_file, THUNAR_FILE_DATE_MODIFIED, store->date_style, store->date_custom_style);
-      text_list = g_list_append (text_list, g_strdup_printf (_("Last Modified: %s"), temp_string));
-      g_free (temp_string);
-    }
-
-  temp_string = thunar_util_strjoin_list (text_list, "  |  ");
-  g_list_free_full (text_list, g_free);
-  return temp_string;
+  /* TODO */
+  return NULL;
 }
 
 
@@ -3100,181 +2722,17 @@ gchar*
 thunar_list_model_get_statusbar_text (ThunarListModel *store,
                                       GList           *selected_items)
 {
-  const gchar       *content_type;
-  const gchar       *original_path;
-  GtkTreeIter        iter;
-  ThunarFile        *file;
-  guint64            size;
-  GList             *lp;
-  GList             *text_list      = NULL;
-  gchar             *temp_string    = NULL;
-  gchar             *text           = "";
-  gint               height;
-  gint               width;
-  GSequenceIter     *row;
-  GSequenceIter     *end;
-  ThunarPreferences *preferences;
-  gboolean           show_image_size;
-  gboolean           show_file_size_binary_format;
-  GList             *relevant_files = NULL;
-  guint              active;
-  gboolean           show_size, show_size_in_bytes, show_filetype, show_display_name, show_last_modified;
-
-  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
-
-  preferences = thunar_preferences_get ();
-  g_object_get (G_OBJECT (preferences), "misc-status-bar-active-info", &active, NULL);
-  show_size = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE);
-  show_size_in_bytes = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES);
-  show_filetype = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_FILETYPE);
-  show_display_name = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_DISPLAY_NAME);
-  show_last_modified = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_LAST_MODIFIED);
-  show_file_size_binary_format = thunar_list_model_get_file_size_binary(store);
-
-  if (selected_items == NULL) /* nothing selected */
-    {
-      /* build a GList of all files */
-      end = g_sequence_get_end_iter (store->rows);
-      for (row = g_sequence_get_begin_iter (store->rows); row != end; row = g_sequence_iter_next (row))
-        {
-          relevant_files = g_list_append (relevant_files, THUNAR_LIST_MODEL_ITEM (g_sequence_get (row))->file);
-        }
-
-      /* try to determine a file for the current folder */
-      file = (store->folder != NULL) ? thunar_folder_get_corresponding_file (store->folder) : NULL;
-      temp_string = thunar_list_model_get_statusbar_text_for_files (store, relevant_files, show_file_size_binary_format);
-      text_list = g_list_append (text_list, temp_string);
-
-      /* check if we can determine the amount of free space for the volume */
-      if (G_LIKELY (file != NULL && thunar_g_file_get_free_space (thunar_file_get_file (file), &size, NULL)))
-        {
-          /* humanize the free space */
-          gchar *size_string = g_format_size_full (size, show_file_size_binary_format ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
-          temp_string = g_strdup_printf (_("Free space: %s"), size_string);
-          text_list = g_list_append (text_list, temp_string);
-          g_free (size_string);
-        }
-
-      g_list_free (relevant_files);
-    }
-  else if (selected_items->next == NULL) /* only one item selected */
-    {
-      /* resolve the iter for the single path */
-      gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, selected_items->data);
-
-      /* get the file for the given iter */
-      file = THUNAR_LIST_MODEL_ITEM (g_sequence_get (iter.user_data))->file;
-
-      /* determine the content type of the file */
-      content_type = thunar_file_get_content_type (file);
-
-      if (show_display_name == TRUE)
-        {
-          temp_string = g_strdup_printf (_("\"%s\""), thunar_file_get_display_name (file));
-          text_list = g_list_append (text_list, temp_string);
-        }
-
-      if (thunar_file_is_regular (file) || G_UNLIKELY (thunar_file_is_symlink (file)))
-        {
-          if (show_size == TRUE)
-            {
-              if (show_size_in_bytes == TRUE)
-                temp_string = thunar_file_get_size_string_long (file, show_file_size_binary_format);
-              else
-                temp_string = thunar_file_get_size_string_formatted (file, show_file_size_binary_format);
-              text_list = g_list_append (text_list, temp_string);
-            }
-        }
-
-      if (show_filetype == TRUE)
-        {
-          if (G_UNLIKELY (content_type != NULL && g_str_equal (content_type, "inode/symlink")))
-            temp_string = g_strdup (_("broken link"));
-          else if (G_UNLIKELY (thunar_file_is_symlink (file)))
-            temp_string = g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (file));
-          else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_SHORTCUT))
-            temp_string = g_strdup (_("shortcut"));
-          else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_MOUNTABLE))
-            temp_string = g_strdup (_("mountable"));
-          else
-            {
-              gchar *description = g_content_type_get_description (content_type);
-              temp_string = g_strdup_printf (_("%s"), description);
-              g_free (description);
-            }
-          text_list = g_list_append (text_list, temp_string);
-        }
-
-      /* append the original path (if any) */
-      original_path = thunar_file_get_original_path (file);
-      if (G_UNLIKELY (original_path != NULL))
-        {
-          /* append the original path to the statusbar text */
-          gchar *original_path_string = g_filename_display_name (original_path);
-          temp_string = g_strdup_printf ("%s %s", _("Original Path:"), original_path_string);
-          text_list = g_list_append (text_list, temp_string);
-          g_free (original_path_string);
-        }
-      else if (thunar_file_is_local (file)
-               && thunar_file_is_regular (file)
-               && g_str_has_prefix (content_type, "image/")) /* bug #2913 */
-        {
-          /* check if the size should be visible in the statusbar, disabled by
-           * default to avoid high i/o  */
-          g_object_get (preferences, "misc-image-size-in-statusbar", &show_image_size, NULL);
-          if (show_image_size)
-            {
-              /* check if we can determine the dimension of this file (only for image files) */
-              gchar *file_path = g_file_get_path (thunar_file_get_file (file));
-              if (file_path != NULL && gdk_pixbuf_get_file_info (file_path, &width, &height) != NULL)
-                {
-                  /* append the image dimensions to the statusbar text */
-                  temp_string = g_strdup_printf ("%s %dx%d", _("Image Size:"), width, height);
-                  text_list = g_list_append (text_list, temp_string);
-                }
-              g_free (file_path);
-            }
-        }
-
-      if (show_last_modified)
-        {
-          gchar *date_string = thunar_file_get_date_string (file, THUNAR_FILE_DATE_MODIFIED, store->date_style, store->date_custom_style);
-          temp_string = g_strdup_printf (_("Last Modified: %s"), date_string);
-          text_list = g_list_append (text_list, temp_string);
-          g_free (date_string);
-        }
-    }
-  else /* more than one item selected */
-    {
-      gchar *selected_string;
-      /* build GList of files from selection */
-      for (lp = selected_items; lp != NULL; lp = lp->next)
-        {
-          gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, lp->data);
-          relevant_files = g_list_append (relevant_files, g_sequence_get (iter.user_data));
-        }
-      selected_string = thunar_list_model_get_statusbar_text_for_files (store, relevant_files, show_file_size_binary_format);
-      temp_string = g_strdup_printf (_("Selection: %s"), selected_string);
-      text_list = g_list_append (text_list, temp_string);
-      g_list_free (relevant_files);
-      g_free (selected_string);
-    }
-
-  text = thunar_util_strjoin_list (text_list, "  |  ");
-  g_list_free_full (text_list, g_free);
-  g_object_unref (preferences);
-  return text;
+  /* TODO */
+  return g_strdup ("");
 }
 
 
 
-static void
-thunar_list_model_item_destroy (gpointer data)
+static gboolean
+thunar_list_model_node_traverse_free (GNode   *node,
+                                      gpointer user_data)
 {
-  ThunarListModelItem *item = THUNAR_LIST_MODEL_ITEM (data);
-  g_object_unref (item->file);
-  g_free (item->indices);
-  if (item->invisible_children != NULL)
-    g_sequence_free (item->invisible_children);
-  g_free (item);
+  if (G_LIKELY (node->data != NULL))
+    g_object_unref (node->data);
+  return FALSE;
 }
