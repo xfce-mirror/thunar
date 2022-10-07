@@ -50,6 +50,14 @@ static void thunar_column_editor_toggle_visibility  (ThunarColumnEditor       *c
 static void thunar_column_editor_update_buttons     (ThunarColumnEditor       *column_editor);
 static void thunar_column_editor_use_defaults       (ThunarColumnEditor       *column_editor,
                                                      GtkWidget                *button);
+static gboolean transform_dirsize_enum_to_index    (GBinding                 *binding,
+                                                     const GValue             *src_value,
+                                                     GValue                   *dst_value,
+                                                     gpointer                  user_data);
+static gboolean transform_dirsize_index_to_enum    (GBinding                 *binding,
+                                                     const GValue             *src_value,
+                                                     GValue                   *dst_value,
+                                                     gpointer                  user_data);
 
 
 
@@ -128,6 +136,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   GtkTreeIter        iter;
   GtkWidget         *separator;
   GtkWidget         *button;
+  GtkWidget         *combo;
   GtkWidget         *frame;
   GtkWidget         *image;
   GtkWidget         *label;
@@ -333,6 +342,47 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), button);
   gtk_widget_show (button);
+
+  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
+  gtk_widget_show (frame);
+
+  label = gtk_label_new (_("File size of folders"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
+  gtk_widget_show (label);
+
+  grid = gtk_grid_new ();
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 6);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
+  gtk_container_add (GTK_CONTAINER (frame), grid);
+  gtk_widget_show (grid);
+
+  /* explain what it does */
+  label = gtk_label_new (_("Show the number of items in the 'size' column\n"
+                           "for folders instead of the fixed folder size"));
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
+  gtk_widget_show (label);
+
+  combo = gtk_combo_box_text_new ();
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Never"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Only for local files"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Always"));
+
+  g_object_bind_property_full (G_OBJECT (column_editor->preferences), "misc-items-count-as-dir-size",
+                               G_OBJECT (combo), "active",
+                               G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE,
+                               transform_dirsize_enum_to_index,
+                               transform_dirsize_index_to_enum,
+                               NULL, NULL);
+
+  gtk_widget_set_hexpand (combo, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, row - 1, 1, 1);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
+  gtk_widget_show (combo);
 
   /* setup the tree selection */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (column_editor->tree_view));
@@ -610,6 +660,66 @@ thunar_column_editor_use_defaults (ThunarColumnEditor *column_editor,
   /* reset the tree view selection */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (column_editor->tree_view));
   gtk_tree_selection_unselect_all (selection);
+}
+
+
+
+static gboolean
+transform_dirsize_enum_to_index (GBinding     *binding,
+                                const GValue *src_value,
+                                GValue       *dst_value,
+                                gpointer      user_data)
+{
+  gint val;
+
+  val = g_value_get_enum (src_value);
+
+  switch (val)
+     {
+      case THUNAR_ITEMS_AS_FOLDER_SIZE_NEVER:
+        g_value_set_int (dst_value, 0);
+        break;
+      case THUNAR_ITEMS_AS_FOLDER_SIZE_ONLY_LOCAL:
+        g_value_set_int (dst_value, 1);
+        break;
+      case THUNAR_ITEMS_AS_FOLDER_SIZE_ALWAYS:
+        g_value_set_int (dst_value, 2);
+        break;
+
+      default:
+        g_warning ("Invalid value for directory size display prefernce option.");
+        return FALSE;
+     }
+
+  return TRUE;
+}
+
+
+
+static gboolean
+transform_dirsize_index_to_enum (GBinding     *binding,
+                                const GValue *src_value,
+                                GValue       *dst_value,
+                                gpointer      user_data)
+{
+  switch (g_value_get_int (src_value))
+    {
+      case 0:
+        g_value_set_enum (dst_value, THUNAR_ITEMS_AS_FOLDER_SIZE_NEVER);
+        break;
+      case 1:
+        g_value_set_enum (dst_value, THUNAR_ITEMS_AS_FOLDER_SIZE_ONLY_LOCAL);
+        break;
+      case 2:
+        g_value_set_enum (dst_value, THUNAR_ITEMS_AS_FOLDER_SIZE_ALWAYS);
+        break;
+
+      default:
+        g_warning ("Invalid value for directory size display prefernce option.");
+        return FALSE;
+    }
+
+  return TRUE;
 }
 
 
