@@ -3748,17 +3748,19 @@ image_preview_resize (GtkWidget     *parent,
     {
       gtk_image_set_from_pixbuf (GTK_IMAGE (image), exo_gdk_pixbuf_scale_ratio (window->preview_image_pixbuf,
                                                                                 allocation->width < allocation->height ?
-                                                                                allocation->width - 100 :
-                                                                                allocation->height - 100));
+                                                                                allocation->width - 50 :
+                                                                                allocation->height - 50));
     }
   else
     {
       GtkAllocation alloc;
       gtk_widget_get_allocation (parent, &alloc);
+      if (alloc.width - 50 <= 0) /* the widget doesn't have any allocated space */
+        return;
       gtk_image_set_from_pixbuf (GTK_IMAGE (image), exo_gdk_pixbuf_scale_ratio (window->preview_image_pixbuf,
                                                                                 alloc.width < alloc.height ?
-                                                                                alloc.width - 100 :
-                                                                                alloc.height - 100));
+                                                                                alloc.width - 50 :
+                                                                                alloc.height - 50));
     }
 }
 
@@ -5619,8 +5621,8 @@ thunar_window_selection_changed (ThunarWindow *window)
   if (window->preview_image_pixbuf != NULL)
     {
       g_object_unref (window->preview_image_pixbuf);
-      g_object_unref (gtk_image_get_pixbuf (GTK_IMAGE (window->sidepane_preview_image)));
-      g_object_unref (gtk_image_get_pixbuf (GTK_IMAGE (window->right_pane_preview_image)));
+//      g_object_unref (gtk_image_get_pixbuf (GTK_IMAGE (window->sidepane_preview_image)));
+//      g_object_unref (gtk_image_get_pixbuf (GTK_IMAGE (window->right_pane_preview_image)));
       window->preview_image_pixbuf = NULL;
     }
 
