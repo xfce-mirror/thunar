@@ -1043,6 +1043,7 @@ thunar_util_toast_notification (const gchar *string)
       gtk_widget_set_halign (box, GTK_ALIGN_CENTER);
       gtk_widget_set_valign (box, GTK_ALIGN_START);
 
+      gtk_info_bar_set_revealed (bar, TRUE);
       gtk_widget_show_all (GTK_WIDGET (box));
       g_object_unref (overlay);
     }
