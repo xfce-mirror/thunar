@@ -3533,7 +3533,7 @@ thunar_standard_view_row_changed (ThunarListModel    *model,
     {
       thunar_standard_view_cancel_thumbnailing (standard_view);
       thunar_thumbnailer_queue_file (standard_view->priv->thumbnailer, file,
-                                     &standard_view->priv->thumbnail_request);
+                                     &standard_view->priv->thumbnail_request, THUNAR_THUMBNAIL_SIZE_DEFAULT);
     }
   g_object_unref (G_OBJECT (file));
 }
@@ -3934,7 +3934,8 @@ thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
       /* queue a thumbnail request */
       thunar_thumbnailer_queue_files (standard_view->priv->thumbnailer,
                                       lazy_request, visible_files,
-                                      &standard_view->priv->thumbnail_request);
+                                      &standard_view->priv->thumbnail_request,
+                                      THUNAR_THUMBNAIL_SIZE_DEFAULT);
 
       /* release the file list */
       g_list_free_full (visible_files, g_object_unref);
