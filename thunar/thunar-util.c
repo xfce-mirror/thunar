@@ -56,6 +56,8 @@
 
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
+#include <thunar/thunar-application.h>
+#include <thunar/thunar-window.h>
 #include <thunar/thunar-folder.h>
 #include <thunar/thunar-text-renderer.h>
 #include <thunar/thunar-icon-renderer.h>
@@ -114,6 +116,16 @@ thunar_util_strrchr_offset (const gchar *str,
 }
 
 
+
+static gboolean
+thunar_util_destory_widget (gpointer user_data)
+{
+  GtkWidget *widget;
+  widget = GTK_WIDGET (user_data);
+  gtk_widget_destroy (widget);
+
+  return G_SOURCE_REMOVE;
+}
 
 /**
  * thunar_util_str_get_extension
@@ -998,3 +1010,58 @@ thunar_util_clip_view_background (GtkCellRenderer      *cell,
   g_free (highlight_color);
   cairo_restore (cr);
 }
+
+
+
+void
+thunar_util_toast_notification (const gchar *string,
+                                guint        timeout_interval)
+{
+  ThunarApplication *application;
+  ThunarWindow      *window;
+  GtkWidget         *label;
+  GtkInfoBar        *bar;
+  GtkWidget         *content;
+  GtkWidget         *box;
+  GtkWidget         *overlay;
+
+  application = thunar_application_get ();
+
+  /* Make an info bar and a label out of the given string */
+  label = gtk_label_new (string);
+  bar = GTK_INFO_BAR (gtk_info_bar_new ());
+  content = gtk_info_bar_get_content_area (bar);
+
+  /* Add the label and an 'OK' button to the bar */
+  gtk_container_add (GTK_CONTAINER (content), label);
+  gtk_info_bar_add_button (bar,
+                           _("_OK"),
+                           GTK_RESPONSE_OK);
+  g_signal_connect (bar,
+                    "response",
+                    G_CALLBACK (gtk_widget_hide),
+                    NULL);
+
+  for (GList *lp = thunar_application_get_windows (application); lp != NULL; lp = lp->next)
+    {
+      window = lp->data;
+      box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 10);
+      overlay = thunar_window_get_overlay (window);
+
+      gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (bar));
+
+      gtk_overlay_add_overlay (GTK_OVERLAY (overlay), box);
+      gtk_widget_set_halign (box, GTK_ALIGN_CENTER);
+      gtk_widget_set_valign (box, GTK_ALIGN_START);
+
+      gtk_info_bar_set_revealed (bar, TRUE);
+      gtk_widget_show_all (GTK_WIDGET (box));
+
+      g_timeout_add (timeout_interval, thunar_util_destory_widget, box);
+
+      g_object_unref (overlay);
+    }
+
+  g_object_unref (application);
+}
+
