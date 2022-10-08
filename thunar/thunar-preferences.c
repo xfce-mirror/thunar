@@ -1002,17 +1002,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                        EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:misc-image-preview-full:
+   * ThunarPreferences:misc-image-preview-mode:
    *
    * Whether the image preview functionality uses its own sidepane or is embedded
    * in the left sidepane.
    **/
   preferences_props[PROP_MISC_IMAGE_PREVIEW_FULL] =
-          g_param_spec_boolean ("misc-image-preview-full",
-                                "MiscImagePreviewFull",
-                                NULL,
-                                TRUE,
-                                EXO_PARAM_READWRITE);
+    g_param_spec_enum ("misc-image-preview-mode",
+                       "MiscImagePreviewMoe",
+                       NULL,
+                       THUNAR_TYPE_IMAGE_PREVIEW_MODE,
+                       THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED,
+                       EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-confirm-close-multiple-tabs:

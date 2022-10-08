@@ -787,16 +787,35 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_container_add (GTK_CONTAINER (frame), grid);
   gtk_widget_show (grid);
 
-  button = gtk_check_button_new_with_mnemonic (_("Detailed Image Preview"));
-  g_object_bind_property (G_OBJECT (dialog->preferences),
-                          "misc-image-preview-full",
-                          G_OBJECT (button),
-                          "active",
-                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
-  gtk_widget_set_tooltip_text (button, _("Select this option to use the standalone image preview pane."));
-  gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 2, 1);
-  gtk_widget_show (button);
+  label = gtk_label_new_with_mnemonic (_("Image Preview Mode:"));
+  gtk_widget_set_tooltip_text (label, _(
+                                        "- Standalone: Image Preview uses a separate pane\n"
+                                        "- Embedded: Image Preview is embedded in the left sidepane\n"
+                                      ));
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
+  gtk_widget_show (label);
+
+  combo = gtk_combo_box_text_new ();
+  type = g_type_class_ref (THUNAR_TYPE_IMAGE_PREVIEW_MODE);
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
+                                  g_enum_get_value (type, THUNAR_IMAGE_PREVIEW_MODE_STANDALONE)->value_nick);
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
+                                  g_enum_get_value (type, THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED)->value_nick);
+  g_type_class_unref (type);
+  g_object_bind_property_full (G_OBJECT (dialog->preferences),
+                               "misc-image-preview-mode",
+                               G_OBJECT (combo),
+                               "active",
+                               G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE,
+                               transform_enum_value_to_index,
+                               transform_index_to_enum_value,
+                               (gpointer) thunar_verify_file_get_type, NULL);
+  gtk_widget_set_hexpand (combo, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, row, 1, 1);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
+  gtk_widget_show (combo);
 
 
   /*

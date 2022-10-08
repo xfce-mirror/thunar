@@ -464,6 +464,22 @@ typedef enum
 
 GType thunar_operation_log_mode_get_type (void) G_GNUC_CONST;
 
+/**
+ * ThunarImagePreviewMode:
+ *
+ * Specify control logging for operations.
+ **/
+
+#define THUNAR_TYPE_IMAGE_PREVIEW_MODE (thunar_image_preview_mode_get_type ())
+
+typedef enum
+{
+  THUNAR_IMAGE_PREVIEW_MODE_STANDALONE,
+  THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED,
+} ThunarImagePreviewMode;
+
+GType thunar_image_preview_mode_get_type (void) G_GNUC_CONST;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_ENUM_TYPES_H__ */

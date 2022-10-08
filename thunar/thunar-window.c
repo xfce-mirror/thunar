@@ -321,6 +321,8 @@ static gboolean   thunar_window_action_clear_directory_specific_settings (Thunar
 static void       thunar_window_trash_infobar_clicked                    (GtkInfoBar             *info_bar,
                                                                           gint                    response_id,
                                                                           ThunarWindow           *window);
+static void       thunar_window_update_embedded_image_preview            (ThunarWindow           *window);
+static void       thunar_window_update_standalone_image_preview          (ThunarWindow           *window);
 static void       thunar_window_selection_changed                        (ThunarWindow           *window);
 static void       thunar_window_finished_thumbnailing                    (ThunarWindow           *window,
                                                                           guint                   request,
@@ -348,7 +350,8 @@ static GtkWidget* thunar_window_create_toolbar_toggle_item_from_action   (Thunar
                                                                           ThunarWindowAction      action,
                                                                           gboolean                active,
                                                                           guint                   item_order);
-static void       image_preview_resize                                   (GtkWidget              *parent,
+static gboolean   thunar_window_image_preview_mode_changed               (ThunarWindow           *window);
+static void       image_preview_update                                   (GtkWidget              *parent,
                                                                           GtkAllocation          *allocation,
                                                                           GtkWidget              *image);
 
@@ -400,7 +403,7 @@ struct _ThunarWindow
   GtkWidget              *right_pane_grid;
   GtkWidget              *right_pane_preview_image;
   GtkWidget              *right_pane_image_label;
-  GtkWidget              *right_pane_size;
+  GtkWidget              *right_pane_size_label;
   GtkWidget              *view_box;
   GtkWidget              *trash_infobar;
   GtkWidget              *trash_infobar_restore_button;
@@ -740,25 +743,25 @@ thunar_window_paned_notebooks_destroy (GtkWidget    *paned_notebooks,
 static void
 thunar_window_init (ThunarWindow *window)
 {
-  GtkWidget       *label;
-  GtkWidget       *infobar;
-  GtkWidget       *item;
-  GtkWidget       *event_box;
-  gboolean         last_menubar_visible;
-  gchar           *last_location_bar;
-  gchar           *last_side_pane;
-  gchar           *uca_path;
-  gchar           *catfish_path;
-  GType            type;
-  gint             last_separator_position;
-  gint             last_window_width;
-  gint             last_window_height;
-  gboolean         last_window_maximized;
-  gboolean         last_statusbar_visible;
-  gboolean         last_image_preview_visible;
-  gboolean         misc_image_preview_full;
-  gint             max_paned_position;
-  GtkStyleContext *context;
+  GtkWidget             *label;
+  GtkWidget             *infobar;
+  GtkWidget             *item;
+  GtkWidget             *event_box;
+  gboolean               last_menubar_visible;
+  gchar                 *last_location_bar;
+  gchar                 *last_side_pane;
+  gchar                 *uca_path;
+  gchar                 *catfish_path;
+  GType                  type;
+  gint                   last_separator_position;
+  gint                   last_window_width;
+  gint                   last_window_height;
+  gboolean               last_window_maximized;
+  gboolean               last_statusbar_visible;
+  gboolean               last_image_preview_visible;
+  ThunarImagePreviewMode misc_image_preview_mode;
+  gint                   max_paned_position;
+  GtkStyleContext       *context;
 
   /* unset the view type */
   window->view_type = G_TYPE_NONE;
@@ -794,7 +797,7 @@ thunar_window_init (ThunarWindow *window)
                 "last-side-pane", &last_side_pane,
                 "last-statusbar-visible", &last_statusbar_visible,
                 "last-image-preview-visible", &last_image_preview_visible,
-                "misc-image-preview-full", &misc_image_preview_full,
+                "misc-image-preview-mode", &misc_image_preview_mode,
                 NULL);
 
   /* update the visual on screen_changed events */
@@ -903,10 +906,10 @@ thunar_window_init (ThunarWindow *window)
 
   window->sidepane_preview_image = gtk_image_new_from_file ("");
   gtk_box_pack_end (GTK_BOX (window->sidepane_box), window->sidepane_preview_image, FALSE, TRUE, 0);
-  if (last_image_preview_visible == TRUE && misc_image_preview_full == FALSE)
+  if (last_image_preview_visible == TRUE && misc_image_preview_mode == THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED)
     gtk_widget_show (window->sidepane_preview_image);
 
-  g_signal_connect (G_OBJECT (window->sidepane_box), "size-allocate", G_CALLBACK (image_preview_resize), window->sidepane_preview_image);
+  g_signal_connect (G_OBJECT (window->sidepane_box), "size-allocate", G_CALLBACK (image_preview_update), window->sidepane_preview_image);
 
   /* determine the last separator position and apply it to the paned view */
   gtk_paned_set_position (GTK_PANED (window->paned), last_separator_position);
@@ -939,17 +942,17 @@ thunar_window_init (ThunarWindow *window)
   gtk_grid_attach (GTK_GRID (window->right_pane_grid), window->right_pane_image_label, 0, 1, 2, 1);
 
   gtk_grid_attach (GTK_GRID (window->right_pane_grid), gtk_label_new (_("Size: ")), 0, 2, 1, 1);
-  window->right_pane_size = gtk_label_new ("");
-  gtk_grid_attach (GTK_GRID (window->right_pane_grid), window->right_pane_size, 1, 2, 1, 1);
+  window->right_pane_size_label = gtk_label_new ("");
+  gtk_grid_attach (GTK_GRID (window->right_pane_grid), window->right_pane_size_label, 1, 2, 1, 1);
 
   gtk_widget_show_all (window->right_pane_box);
 
-  if (last_image_preview_visible == FALSE || misc_image_preview_full == FALSE)
+  if (last_image_preview_visible == FALSE || misc_image_preview_mode == THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED)
     gtk_widget_hide(window->right_pane_box);
 
-  g_signal_connect (G_OBJECT (window->right_pane_box), "size-allocate", G_CALLBACK (image_preview_resize), window->right_pane_preview_image);
+  g_signal_connect (G_OBJECT (window->right_pane_box), "size-allocate", G_CALLBACK (image_preview_update), window->right_pane_preview_image);
 
-  g_signal_connect_swapped (window->preferences, "notify::misc-image-preview-full", G_CALLBACK (thunar_window_image_preview_full_changed), window);
+  g_signal_connect_swapped (window->preferences, "notify::misc-image-preview-mode", G_CALLBACK (thunar_window_image_preview_mode_changed), window);
 
   window->preview_image_pixbuf = NULL;
 
@@ -3682,16 +3685,17 @@ thunar_window_action_tree_changed (ThunarWindow *window)
 static gboolean
 thunar_window_action_image_preview (ThunarWindow *window)
 {
-  gboolean last_image_preview_visible, misc_image_preview_full;
+  ThunarImagePreviewMode misc_image_preview_mode;
+  gboolean               last_image_preview_visible;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   g_object_get (window->preferences,
                 "last-image-preview-visible", &last_image_preview_visible,
-                "misc-image-preview-full", &misc_image_preview_full,
+                "misc-image-preview-mode", &misc_image_preview_mode,
                 NULL);
 
-  if (misc_image_preview_full == FALSE)
+  if (misc_image_preview_mode == THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED)
     {
       gtk_widget_set_visible (window->sidepane_preview_image, !last_image_preview_visible);
       gtk_widget_set_visible (window->right_pane_box, FALSE);
@@ -3711,19 +3715,20 @@ thunar_window_action_image_preview (ThunarWindow *window)
 
 
 gboolean
-thunar_window_image_preview_full_changed (ThunarWindow *window)
+thunar_window_image_preview_mode_changed (ThunarWindow *window)
 {
-  gboolean last_image_preview_visible, misc_image_preview_full;
+  ThunarImagePreviewMode misc_image_preview_mode;
+  gboolean               last_image_preview_visible;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   g_object_get (window->preferences,
                 "last-image-preview-visible", &last_image_preview_visible,
-                "misc-image-preview-full", &misc_image_preview_full,
+                "misc-image-preview-mode", &misc_image_preview_mode,
                 NULL);
 
-  gtk_widget_set_visible (window->sidepane_preview_image, last_image_preview_visible && !misc_image_preview_full);
-  gtk_widget_set_visible (window->right_pane_box, last_image_preview_visible && misc_image_preview_full);
+  gtk_widget_set_visible (window->sidepane_preview_image, last_image_preview_visible && misc_image_preview_mode == THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED);
+  gtk_widget_set_visible (window->right_pane_box, last_image_preview_visible && misc_image_preview_mode == THUNAR_IMAGE_PREVIEW_MODE_STANDALONE);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -3732,7 +3737,7 @@ thunar_window_image_preview_full_changed (ThunarWindow *window)
 
 
 static void
-image_preview_resize (GtkWidget     *parent,
+image_preview_update (GtkWidget     *parent,
                       GtkAllocation *allocation,
                       GtkWidget     *image)
 {
@@ -3740,7 +3745,7 @@ image_preview_resize (GtkWidget     *parent,
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  /* there is no image to resize */
+  /* there is no image to preview */
   if (window->preview_image_pixbuf == NULL)
     return;
 
@@ -3762,6 +3767,9 @@ image_preview_resize (GtkWidget     *parent,
                                                                                 alloc.width - 50 :
                                                                                 alloc.height - 50));
     }
+
+  /* GtkImage has its own reference for the pixbuf, and we want to pass ownership to it */
+  g_object_unref (gtk_image_get_pixbuf (GTK_IMAGE (image)));
 }
 
 
@@ -5592,11 +5600,43 @@ thunar_window_trash_infobar_clicked (GtkInfoBar   *info_bar,
 
 
 
+static void thunar_window_update_embedded_image_preview (ThunarWindow *window)
+{
+  ThunarImagePreviewMode misc_image_preview_mode;
+  gboolean               last_image_preview_visible;
+
+  g_object_get (window->preferences,
+                "last-image-preview-visible", &last_image_preview_visible,
+                "misc-image-preview-mode", &misc_image_preview_mode,
+                NULL);
+
+  image_preview_update (window->sidepane_box, NULL, window->sidepane_preview_image);
+  if (last_image_preview_visible == TRUE && misc_image_preview_mode == THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED)
+    gtk_widget_show (window->sidepane_preview_image);
+}
+
+
+
+static void thunar_window_update_standalone_image_preview (ThunarWindow *window)
+{
+  GList*                 selected_files = thunar_view_get_selected_files (THUNAR_VIEW (window->view));
+  gchar                 *file_size      = thunar_file_get_size_string (selected_files->data);
+
+  image_preview_update (window->right_pane_box, NULL, window->right_pane_preview_image);
+  gtk_label_set_text (GTK_LABEL (window->right_pane_image_label), thunar_file_get_display_name (selected_files->data));
+  gtk_label_set_text (GTK_LABEL (window->right_pane_size_label), file_size);
+
+  g_free (file_size);
+}
+
+
+
 /**
  * thunar_window_selection_changed:
  * @window      : a #ThunarWindow instance.
  *
- * Used to set the `sensitive` value of the `Restore` button in the trash infobar.
+ * Used to set the `sensitive` value of the `Restore` button in the trash infobar and to
+ * update the image previews.
  **/
 static void
 thunar_window_selection_changed (ThunarWindow *window)
@@ -5618,20 +5658,19 @@ thunar_window_selection_changed (ThunarWindow *window)
       window->thumbnail_request = 0;
     }
 
+  /* clear image previews */
   if (window->preview_image_pixbuf != NULL)
     {
       g_object_unref (window->preview_image_pixbuf);
-//      g_object_unref (gtk_image_get_pixbuf (GTK_IMAGE (window->sidepane_preview_image)));
-//      g_object_unref (gtk_image_get_pixbuf (GTK_IMAGE (window->right_pane_preview_image)));
       window->preview_image_pixbuf = NULL;
     }
 
   gtk_image_clear (GTK_IMAGE (window->sidepane_preview_image));
   gtk_image_clear (GTK_IMAGE (window->right_pane_preview_image));
-
   gtk_label_set_text (GTK_LABEL (window->right_pane_image_label), "");
-  gtk_label_set_text (GTK_LABEL (window->right_pane_size), "");
+  gtk_label_set_text (GTK_LABEL (window->right_pane_size_label), "");
 
+  /* update image previews */
   if (g_list_length (selected_files) == 1)
     {
       gchar *path = thunar_file_get_thumbnail_path_forced (selected_files->data, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
@@ -5639,31 +5678,11 @@ thunar_window_selection_changed (ThunarWindow *window)
         thunar_thumbnailer_queue_file (window->thumbnailer, selected_files->data, &window->thumbnail_request, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
       else /* display the thumbnail */
         {
-          gboolean last_image_preview_visible, misc_image_preview_full;
-          gchar   *file_size = thunar_file_get_size_string (selected_files->data);
-
-          g_object_get (window->preferences,
-                        "last-image-preview-visible", &last_image_preview_visible,
-                        "misc-image-preview-full", &misc_image_preview_full,
-                        NULL);
-
           window->preview_image_pixbuf = gdk_pixbuf_new_from_file (path, NULL);
-
-          gtk_image_set_from_pixbuf (GTK_IMAGE (window->sidepane_preview_image), gdk_pixbuf_new_from_file (path, NULL));
-          image_preview_resize (window->sidepane_box, NULL, window->sidepane_preview_image);
-
-          gtk_image_set_from_pixbuf (GTK_IMAGE (window->right_pane_preview_image),  gdk_pixbuf_new_from_file (path, NULL));
-          image_preview_resize (window->right_pane_box, NULL, window->right_pane_preview_image);
-
-          gtk_label_set_text (GTK_LABEL (window->right_pane_image_label), thunar_file_get_display_name (selected_files->data));
-          gtk_label_set_text (GTK_LABEL (window->right_pane_size), file_size);
-
-          if (last_image_preview_visible == TRUE && misc_image_preview_full == FALSE)
-            gtk_widget_show (window->sidepane_preview_image);
-
-          g_free (file_size);
-          g_free (path);
+          thunar_window_update_embedded_image_preview (window);
+          thunar_window_update_standalone_image_preview (window);
         }
+      g_free (path);
     }
   else
     gtk_widget_hide (window->sidepane_preview_image);
@@ -5685,36 +5704,23 @@ thunar_window_finished_thumbnailing (ThunarWindow       *window,
 
   window->thumbnail_request = 0;
 
+  /* update image previews */
   selected_files = thunar_view_get_selected_files (THUNAR_VIEW (window->view));
   if (g_list_length (selected_files) == 1)
     {
-      gboolean last_image_preview_visible, misc_image_preview_full;
       /* there is no guarantee that the thumbnail will exist, the type of the selected file might be unsupported by the thumbnailer */
       gchar *path = thunar_file_get_thumbnail_path_forced (selected_files->data, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
-      gchar *file_size = thunar_file_get_size_string (selected_files->data);
-
-      g_object_get (window->preferences,
-                    "last-image-preview-visible", &last_image_preview_visible,
-                    "misc-image-preview-full", &misc_image_preview_full,
-                    NULL);
+      if (path == NULL)
+        return;
 
       window->preview_image_pixbuf = gdk_pixbuf_new_from_file (path, NULL);
+      thunar_window_update_embedded_image_preview (window);
+      thunar_window_update_standalone_image_preview (window);
 
-      gtk_image_set_from_pixbuf (GTK_IMAGE (window->sidepane_preview_image), gdk_pixbuf_new_from_file (path, NULL));
-      image_preview_resize (window->sidepane_box, NULL, window->sidepane_preview_image);
-
-      gtk_image_set_from_pixbuf (GTK_IMAGE (window->right_pane_preview_image),  gdk_pixbuf_new_from_file (path, NULL));
-      image_preview_resize (window->right_pane_box, NULL, window->right_pane_preview_image);
-
-      gtk_label_set_text (GTK_LABEL (window->right_pane_image_label), thunar_file_get_display_name (selected_files->data));
-      gtk_label_set_text (GTK_LABEL (window->right_pane_size), file_size);
-
-      if (last_image_preview_visible == TRUE && misc_image_preview_full == FALSE)
-        gtk_widget_show (window->sidepane_preview_image);
-
-      g_free (file_size);
       g_free (path);
     }
+  else
+    gtk_widget_hide (window->sidepane_preview_image);
 }
 
 

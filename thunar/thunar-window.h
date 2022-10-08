@@ -157,7 +157,6 @@ void                      thunar_window_toolbar_toggle_item_visibility      (Thu
 void                      thunar_window_toolbar_swap_items                  (ThunarWindow        *window,
                                                                              gint                 index_a,
                                                                              gint                 index_b);
-gboolean                  thunar_window_image_preview_full_changed          (ThunarWindow        *window);
 
 XfceGtkActionEntry*       thunar_window_get_action_entries                  (void);
 
