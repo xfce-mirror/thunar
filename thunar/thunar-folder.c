@@ -1014,15 +1014,10 @@ thunar_folder_get_file_count (ThunarFolder *folder,
   if (G_LIKELY (last_modified < folder->file_count_timestamp))
     return folder->file_count;
 
-  /* If the content type loader already loaded the file-list, just count it */
-  if (folder->files != NULL)
-    {
-      folder->file_count = g_list_length (folder->files);
-      /* dividing by 1e6 to convert microseconds to seconds */
-      folder->file_count_timestamp = g_get_real_time () / (guint64) 1e6;
-      return folder->file_count;
-    }
-
+  /* put the timestamp calculation at the *start* of the process to prevent another call to
+   * thunar_folder_get_file_count starting another job on the same folder before one has ended.
+   * Divide by 1e6 to convert from microseconds to seconds */
+  folder->file_count_timestamp = g_get_real_time () / (guint64) 1e6;
 
   /* Set up a job to actually enumerate over the folder's contents and get its file count */
   job = thunar_simple_job_new (thunar_folder_get_file_count_in_job, 1,
@@ -1062,8 +1057,15 @@ thunar_folder_get_file_count_in_job (ThunarJob *job,
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   folder = THUNAR_FOLDER (g_value_get_object (&g_array_index (param_values, GValue, 0)));
-  file = thunar_folder_get_corresponding_file (folder);
 
+  /* If the content type loader already loaded the file-list, just count it */
+  if (folder->files != NULL)
+    {
+      folder->file_count = g_list_length (folder->files);
+      return TRUE;
+    }
+
+  file = thunar_folder_get_corresponding_file (folder);
   enumerator = g_file_enumerate_children (thunar_file_get_file (file), NULL,
                                           G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                                           NULL, &err);
@@ -1089,7 +1091,6 @@ thunar_folder_get_file_count_in_job (ThunarJob *job,
       g_object_unref (child_info);
     }
 
-    folder->file_count_timestamp = g_get_real_time () / (guint64) 1e6;
     return TRUE;
 }
 
