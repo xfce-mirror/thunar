@@ -379,6 +379,7 @@ struct _ThunarWindow
   /* to be able to change folder on "device-pre-unmount" if required */
   ThunarDeviceMonitor    *device_monitor;
 
+  GtkWidget              *overlay;
   GtkWidget              *grid;
   GtkWidget              *menubar;
   gboolean                menubar_visible;
@@ -805,8 +806,12 @@ thunar_window_init (ThunarWindow *window)
   context = gtk_widget_get_style_context (GTK_WIDGET (window));
   gtk_style_context_add_class (context, "thunar");
 
+  window->overlay = gtk_overlay_new ();
+  gtk_container_add (GTK_CONTAINER (window), window->overlay);
+  gtk_widget_show (window->overlay);
+
   window->grid = gtk_grid_new ();
-  gtk_container_add (GTK_CONTAINER (window), window->grid);
+  gtk_container_add (GTK_CONTAINER (window->overlay), window->grid);
   gtk_widget_show (window->grid);
 
   /* build the menubar */
