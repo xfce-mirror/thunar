@@ -122,6 +122,7 @@ enum
   PROP_MISC_VERTICAL_SPLIT_PANE,
   PROP_MISC_OPEN_NEW_WINDOWS_IN_SPLIT_VIEW,
   PROP_MISC_COMPACT_VIEW_MAX_CHARS,
+  PROP_MISC_TOAST_NOTIFICATION_TIMEOUT,
   PROP_MISC_HIGHLIGHTING_ENABLED,
   N_PROPERTIES,
 };
@@ -1118,6 +1119,20 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         G_MININT, G_MAXINT,
                         50,
                         EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-toast-notification-timeout
+   *
+   * The timeout in milliseconds after which toast notifications are automatically
+   * destroyed.
+   **/
+  preferences_props[PROP_MISC_TOAST_NOTIFICATION_TIMEOUT] =
+      g_param_spec_uint ("misc-toast-notification-timeout",
+                         "MiscToastNotificationTimeout",
+                         NULL,
+                         0, G_MAXUINT,
+                         4000,
+                         EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-highlighting-enabled

@@ -117,6 +117,14 @@ thunar_util_strrchr_offset (const gchar *str,
 
 
 
+static void
+thunar_util_destory_widget (gpointer user_data)
+{
+  GtkWidget *widget;
+  widget = GTK_WIDGET (user_data);
+  gtk_widget_destroy (widget);
+}
+
 /**
  * thunar_util_str_get_extension
  * @filename : an UTF-8 filename
@@ -1004,7 +1012,8 @@ thunar_util_clip_view_background (GtkCellRenderer      *cell,
 
 
 void
-thunar_util_toast_notification (const gchar *string)
+thunar_util_toast_notification (const gchar *string,
+                                guint        timeout_interval)
 {
   ThunarApplication *application;
   ThunarWindow      *window;
@@ -1045,6 +1054,9 @@ thunar_util_toast_notification (const gchar *string)
 
       gtk_info_bar_set_revealed (bar, TRUE);
       gtk_widget_show_all (GTK_WIDGET (box));
+
+      g_timeout_add_once (timeout_interval, thunar_util_destory_widget, box);
+
       g_object_unref (overlay);
     }
 
