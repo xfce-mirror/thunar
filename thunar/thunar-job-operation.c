@@ -41,7 +41,8 @@
 static void                   thunar_job_operation_dispose            (GObject            *object);
 static void                   thunar_job_operation_finalize           (GObject            *object);
 static ThunarJobOperation    *thunar_job_operation_new_invert         (ThunarJobOperation *job_operation);
-static void                   thunar_job_operation_execute            (ThunarJobOperation *job_operation);
+static void                   thunar_job_operation_execute            (ThunarJobOperation *job_operation,
+                                                                       GError            **error);
 static gint                   thunar_job_operation_is_ancestor        (gconstpointer       descendant,
                                                                        gconstpointer       ancestor);
 static gint                   thunar_job_operation_compare            (ThunarJobOperation *operation1,
@@ -303,6 +304,7 @@ thunar_job_operation_undo (void)
   GEnumValue         *enum_value;
   GString            *warning_body;
   gchar              *file_uri;
+  GError             *err = NULL;
 
   /* Show a warning in case there is no operation to undo */
   if (lp_undo_job_operation == NULL)
@@ -360,7 +362,7 @@ thunar_job_operation_undo (void)
         }
 
       inverted_operation = thunar_job_operation_new_invert (operation_marker);
-      thunar_job_operation_execute (inverted_operation);
+      thunar_job_operation_execute (inverted_operation, &err);
       g_object_unref (inverted_operation);
     }
 }
@@ -380,6 +382,7 @@ thunar_job_operation_redo (void)
   GEnumValue         *enum_value;
   GString            *warning_body;
   gchar              *file_uri;
+  GError             *err = NULL;
 
   /* Show a warning in case there is no operation to undo */
   if (lp_redo_job_operation == NULL)
@@ -435,7 +438,7 @@ thunar_job_operation_redo (void)
           g_string_free (warning_body, TRUE);
         }
 
-      thunar_job_operation_execute (operation_marker);
+      thunar_job_operation_execute (operation_marker, &err);
     }
 }
 
@@ -560,19 +563,22 @@ thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
 
 /* thunar_job_operation_execute:
  * @job_operation: a #ThunarJobOperation
+ * @error: A #GError to propagate any errors encountered.
  *
  * Executes the given @job_operation, depending on what kind of an operation it is.
  **/
-void
-thunar_job_operation_execute (ThunarJobOperation *job_operation)
+static void
+thunar_job_operation_execute (ThunarJobOperation *job_operation,
+                              GError            **error)
 {
   ThunarApplication *application;
   GList             *thunar_file_list = NULL;
-  GError            *error            = NULL;
+  GError            *err              = NULL;
   ThunarJob         *job              = NULL;
   ThunarFile        *thunar_file;
   GFile             *parent_dir;
   gchar             *display_name;
+  GFile             *template_file;
 
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
@@ -590,12 +596,12 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
                 continue;
               }
 
-            thunar_file = thunar_file_get (lp->data, &error);
+            thunar_file = thunar_file_get (lp->data, &err);
 
-            if (error != NULL)
+            if (err != NULL)
               {
-                g_warning ("Failed to convert GFile to ThunarFile: %s", error->message);
-                g_clear_error (&error);
+                g_warning ("Failed to convert GFile to ThunarFile: %s", err->message);
+                g_clear_error (&err);
               }
 
             if (!THUNAR_IS_FILE (thunar_file))
@@ -617,23 +623,24 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
         for (GList *lp = job_operation->target_file_list; lp != NULL; lp = lp->next)
           {
             parent_dir = g_file_get_parent (lp->data);
-            g_file_make_directory_with_parents (parent_dir, NULL, &error);
+            g_file_make_directory_with_parents (parent_dir, NULL, &err);
             g_object_unref (parent_dir);
 
-            if (error != NULL)
+            if (err != NULL)
             {
               /* there is no issue if the target directory already exists */
-              if (error->code == G_IO_ERROR_EXISTS)
+              if (err->code == G_IO_ERROR_EXISTS)
                 {
-                  g_clear_error (&error);
+                  g_clear_error (&err);
                   continue;
                 }
 
-              /* output the error message to console otherwise and abort */
-              g_warning ("Error while moving files: %s\n"
+              /* output the err message to console otherwise and abort */
+              g_warning ("err while moving files: %s\n"
                          "Aborting operation\n",
-                         error->message);
-              g_clear_error (&error);
+                         err->message);
+              g_propagate_error (error, err);
+              g_clear_error (&err);
               g_object_unref (application);
               return;
             }
@@ -650,12 +657,13 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
              slp = slp->next, tlp = tlp->next)
           {
             display_name = thunar_g_file_get_display_name (tlp->data);
-            thunar_file = thunar_file_get (slp->data, &error);
+            thunar_file = thunar_file_get (slp->data, &err);
 
-            if (error != NULL)
+            if (err != NULL)
               {
-                g_warning ("Error while renaming files: %s\n", error->message);
-                g_clear_error (&error);
+                g_warning ("err while renaming files: %s\n", err->message);
+                g_propagate_error (error, err);
+                g_clear_error (&err);
 
                 g_free (display_name);
                 g_object_unref (thunar_file);
@@ -672,12 +680,13 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
         break;
 
       case THUNAR_JOB_OPERATION_KIND_RESTORE:
-        thunar_job_operation_restore_from_trash (job_operation, &error);
+        thunar_job_operation_restore_from_trash (job_operation, &err);
 
-        if (error != NULL)
+        if (err != NULL)
           {
-            g_warning ("Error while restoring files: %s\n", error->message);
-            g_clear_error (&error);
+            g_warning ("err while restoring files: %s\n", err->message);
+            g_propagate_error (error, err);
+            g_clear_error (&err);
           }
         break;
 
@@ -688,7 +697,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
         break;
 
       case THUNAR_JOB_OPERATION_KIND_CREATE_FILE:
-        GFile *template_file = NULL;
+        template_file = NULL;
         if (job_operation->source_file_list != NULL)
           template_file = job_operation->source_file_list->data;
         thunar_application_creat (application, NULL,
