@@ -160,6 +160,7 @@ void                      thunar_window_toolbar_swap_items                  (Thu
 XfceGtkActionEntry*       thunar_window_get_action_entries                  (void);
 
 void                      thunar_window_reconnect_accelerators              (ThunarWindow        *window);
+GtkWidget                *thunar_window_get_overlay                         (ThunarWindow        *window);
 
 
 G_END_DECLS;
