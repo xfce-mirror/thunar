@@ -6069,3 +6069,11 @@ thunar_window_toolbar_swap_items (ThunarWindow *window,
 
   g_list_free (toolbar_items);
 }
+
+
+
+GtkWidget *
+thunar_window_get_overlay (ThunarWindow *window)
+{
+  return g_object_ref (window->overlay);
+}
