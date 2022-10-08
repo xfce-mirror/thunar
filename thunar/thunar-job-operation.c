@@ -306,6 +306,8 @@ thunar_job_operation_undo (void)
   GString            *warning_body;
   gchar              *file_uri;
   GError             *err = NULL;
+  ThunarPreferences  *preferences;
+  guint               timeout_interval;
 
   /* Show a warning in case there is no operation to undo */
   if (lp_undo_job_operation == NULL)
@@ -366,8 +368,12 @@ thunar_job_operation_undo (void)
   thunar_job_operation_execute (inverted_operation, &err);
   g_object_unref (inverted_operation);
 
+  preferences = thunar_preferences_get ();
+  g_object_get (G_OBJECT (preferences), "misc-toast-notification-timeout", &timeout_interval, NULL);
+  g_object_unref (preferences);
+
   if (err == NULL)
-      thunar_util_toast_notification (g_strdup_printf ("%s operation undone", enum_value->value_nick));
+      thunar_util_toast_notification (g_strdup_printf ("%s operation undone", enum_value->value_nick), timeout_interval);
 }
 
 
@@ -386,6 +392,8 @@ thunar_job_operation_redo (void)
   GString            *warning_body;
   gchar              *file_uri;
   GError             *err = NULL;
+  ThunarPreferences  *preferences;
+  guint               timeout_interval;
 
   /* Show a warning in case there is no operation to undo */
   if (lp_redo_job_operation == NULL)
@@ -443,8 +451,12 @@ thunar_job_operation_redo (void)
 
   thunar_job_operation_execute (operation_marker, &err);
 
+  preferences = thunar_preferences_get ();
+  g_object_get (G_OBJECT (preferences), "misc-toast-notification-timeout", &timeout_interval, NULL);
+  g_object_unref (preferences);
+
   if (err == NULL)
-      thunar_util_toast_notification (g_strdup_printf ("%s operation redone", enum_value->value_nick));
+      thunar_util_toast_notification (g_strdup_printf ("%s operation redone", enum_value->value_nick), timeout_interval);
 }
 
 

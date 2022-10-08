@@ -86,7 +86,8 @@ void       thunar_util_clip_view_background     (GtkCellRenderer      *cell,
                                                  GtkWidget            *widget,
                                                  GtkCellRendererState  flags);
 
-void       thunar_util_toast_notification       (const gchar          *string);
+void       thunar_util_toast_notification       (const gchar          *string,
+                                                 guint                 timeout_interval);
 
 extern const char *SEARCH_PREFIX;
 
