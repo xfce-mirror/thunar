@@ -905,6 +905,8 @@ thunar_window_init (ThunarWindow *window)
   gtk_widget_show (window->sidepane_box);
 
   window->sidepane_preview_image = gtk_image_new_from_file ("");
+  gtk_widget_set_margin_top (window->sidepane_preview_image, 10);
+  gtk_widget_set_margin_bottom (window->sidepane_preview_image, 10);
   gtk_box_pack_end (GTK_BOX (window->sidepane_box), window->sidepane_preview_image, FALSE, TRUE, 0);
   if (last_image_preview_visible == TRUE && misc_image_preview_mode == THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED)
     gtk_widget_show (window->sidepane_preview_image);
