@@ -304,36 +304,38 @@ thunar_job_operation_undo (void)
                                 _("The operation you are trying to undo does not have any files "
                                   "associated with it, and thus cannot be undone. "),
                                 _("%s operation cannot be undone"), enum_value->value_nick);
+      return;
     }
-  else
+
+  /* if there were files overwritten in the operation, warn about them */
+  if (operation_marker->overwritten_file_list != NULL)
+  {
+    gint index;
+
+    index = 1; /* one indexed for the dialog */
+    warning_body = g_string_new (_("The following files were overwritten in the operation "
+          "you are trying to undo and cannot be restored:\n"));
+
+    for (GList *lp = operation_marker->overwritten_file_list; lp != NULL; lp = lp->next, index++)
     {
-      /* if there were files overwritten in the operation, warn about them */
-      if (operation_marker->overwritten_file_list != NULL)
-        {
-          gint index;
-
-          index = 1; /* one indexed for the dialog */
-          warning_body = g_string_new (_("The following files were overwritten in the operation "
-                                         "you are trying to undo and cannot be restored:\n"));
-
-          for (GList *lp = operation_marker->overwritten_file_list; lp != NULL; lp = lp->next, index++)
-            {
-              file_uri = g_file_get_uri (lp->data);
-              g_string_append_printf (warning_body, "%d. %s\n", index, file_uri);
-              g_free (file_uri);
-            }
-
-          xfce_dialog_show_warning (NULL,
-                                    warning_body->str,
-                                    _("%s operation can only be partially undone"), enum_value->value_nick);
-
-          g_string_free (warning_body, TRUE);
-        }
-
-      inverted_operation = thunar_job_operation_new_invert (operation_marker);
-      thunar_job_operation_execute (inverted_operation, &err);
-      g_object_unref (inverted_operation);
+      file_uri = g_file_get_uri (lp->data);
+      g_string_append_printf (warning_body, "%d. %s\n", index, file_uri);
+      g_free (file_uri);
     }
+
+    xfce_dialog_show_warning (NULL,
+        warning_body->str,
+        _("%s operation can only be partially undone"), enum_value->value_nick);
+
+    g_string_free (warning_body, TRUE);
+  }
+
+  inverted_operation = thunar_job_operation_new_invert (operation_marker);
+  thunar_job_operation_execute (inverted_operation, &err);
+  g_object_unref (inverted_operation);
+
+  if (err == NULL)
+      thunar_util_toast_notification (g_strdup_printf ("%s operation undone", enum_value->value_nick));
 }
 
 
@@ -381,34 +383,36 @@ thunar_job_operation_redo (void)
                                 _("The operation you are trying to redo does not have any files "
                                   "associated with it, and thus cannot be redone. "),
                                 _("%s operation cannot be redone"), enum_value->value_nick);
+      return;
     }
-  else
+
+  /* if there were files overwritten in the operation, warn about them */
+  if (operation_marker->overwritten_file_list != NULL)
+  {
+    gint index;
+
+    index = 1; /* one indexed for the dialog */
+    warning_body = g_string_new (_("The following files were overwritten in the operation "
+          "you are trying to redo and cannot be restored:\n"));
+
+    for (GList *lp = operation_marker->overwritten_file_list; lp != NULL; lp = lp->next, index++)
     {
-      /* if there were files overwritten in the operation, warn about them */
-      if (operation_marker->overwritten_file_list != NULL)
-        {
-          gint index;
-
-          index = 1; /* one indexed for the dialog */
-          warning_body = g_string_new (_("The following files were overwritten in the operation "
-                                         "you are trying to redo and cannot be restored:\n"));
-
-          for (GList *lp = operation_marker->overwritten_file_list; lp != NULL; lp = lp->next, index++)
-            {
-              file_uri = g_file_get_uri (lp->data);
-              g_string_append_printf (warning_body, "%d. %s\n", index, file_uri);
-              g_free (file_uri);
-            }
-
-          xfce_dialog_show_warning (NULL,
-                                    warning_body->str,
-                                    _("%s operation can only be partially redone"), enum_value->value_nick);
-
-          g_string_free (warning_body, TRUE);
-        }
-
-      thunar_job_operation_execute (operation_marker, &err);
+      file_uri = g_file_get_uri (lp->data);
+      g_string_append_printf (warning_body, "%d. %s\n", index, file_uri);
+      g_free (file_uri);
     }
+
+    xfce_dialog_show_warning (NULL,
+        warning_body->str,
+        _("%s operation can only be partially redone"), enum_value->value_nick);
+
+    g_string_free (warning_body, TRUE);
+  }
+
+  thunar_job_operation_execute (operation_marker, &err);
+
+  if (err == NULL)
+      thunar_util_toast_notification (g_strdup_printf ("%s operation redone", enum_value->value_nick));
 }
 
 
