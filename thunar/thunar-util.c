@@ -117,12 +117,14 @@ thunar_util_strrchr_offset (const gchar *str,
 
 
 
-static void
+static gboolean
 thunar_util_destory_widget (gpointer user_data)
 {
   GtkWidget *widget;
   widget = GTK_WIDGET (user_data);
   gtk_widget_destroy (widget);
+
+  return G_SOURCE_REMOVE;
 }
 
 /**
@@ -1055,7 +1057,7 @@ thunar_util_toast_notification (const gchar *string,
       gtk_info_bar_set_revealed (bar, TRUE);
       gtk_widget_show_all (GTK_WIDGET (box));
 
-      g_timeout_add_once (timeout_interval, thunar_util_destory_widget, box);
+      g_timeout_add (timeout_interval, thunar_util_destory_widget, box);
 
       g_object_unref (overlay);
     }
