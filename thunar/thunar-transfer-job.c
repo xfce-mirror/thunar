@@ -39,7 +39,7 @@
 
 
 /* seconds before we show the transfer rate + remaining time */
-#define MINIMUM_TRANSFER_TIME (10 * G_USEC_PER_SEC) /* 10 seconds */
+#define MINIMUM_TRANSFER_TIME (2 * G_USEC_PER_SEC) /* 2 seconds */
 
 
 
