@@ -691,3 +691,24 @@ thunar_operation_log_mode_get_type (void)
 
   return type;
 }
+
+GType
+thunar_image_preview_mode_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GEnumValue values[] =
+      {
+        { THUNAR_IMAGE_PREVIEW_MODE_STANDALONE, "THUNAR_IMAGE_PREVIEW_MODE_STANDALONE", N_("Standalone Image Preview") },
+        { THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED,   "THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED",   N_("Embedded Image Preview") },
+        { 0,                                    NULL,                                   NULL }
+      };
+
+      type = g_enum_register_static ("ThunarOperationLogMode", values);
+    }
+
+  return type;
+}
+

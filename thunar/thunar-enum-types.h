@@ -188,7 +188,9 @@ typedef enum
   THUNAR_THUMBNAIL_SIZE_NORMAL,
   THUNAR_THUMBNAIL_SIZE_LARGE,
   THUNAR_THUMBNAIL_SIZE_X_LARGE,
-  THUNAR_THUMBNAIL_SIZE_XX_LARGE
+  THUNAR_THUMBNAIL_SIZE_XX_LARGE,
+
+  THUNAR_THUMBNAIL_SIZE_DEFAULT = -1
 } ThunarThumbnailSize;
 
 GType       thunar_thumbnail_size_get_type (void)                               G_GNUC_CONST;
@@ -461,6 +463,22 @@ typedef enum
 } ThunarOperationLogMode;
 
 GType thunar_operation_log_mode_get_type (void) G_GNUC_CONST;
+
+/**
+ * ThunarImagePreviewMode:
+ *
+ * Specify control logging for operations.
+ **/
+
+#define THUNAR_TYPE_IMAGE_PREVIEW_MODE (thunar_image_preview_mode_get_type ())
+
+typedef enum
+{
+  THUNAR_IMAGE_PREVIEW_MODE_STANDALONE,
+  THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED,
+} ThunarImagePreviewMode;
+
+GType thunar_image_preview_mode_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS;
 
