@@ -379,6 +379,7 @@ struct _ThunarWindow
   /* to be able to change folder on "device-pre-unmount" if required */
   ThunarDeviceMonitor    *device_monitor;
 
+  GtkWidget              *overlay;
   GtkWidget              *grid;
   GtkWidget              *menubar;
   gboolean                menubar_visible;
@@ -870,8 +871,12 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect_swapped (window->paned, "accept-position", G_CALLBACK (thunar_window_save_paned), window);
   g_signal_connect_swapped (window->paned, "button-release-event", G_CALLBACK (thunar_window_save_paned), window);
 
+  window->overlay = gtk_overlay_new ();
+  gtk_paned_pack2 (GTK_PANED (window->paned), window->overlay, TRUE, FALSE);
+  gtk_widget_show (window->overlay);
+
   window->view_box = gtk_grid_new ();
-  gtk_paned_pack2 (GTK_PANED (window->paned), window->view_box, TRUE, FALSE);
+  gtk_container_add (GTK_CONTAINER (window->overlay), window->view_box);
   gtk_widget_show (window->view_box);
 
   /* split view: Create panes where the two notebooks */
@@ -6063,4 +6068,12 @@ thunar_window_toolbar_swap_items (ThunarWindow *window,
   g_object_unref (item_b);
 
   g_list_free (toolbar_items);
+}
+
+
+
+GtkWidget *
+thunar_window_get_overlay (ThunarWindow *window)
+{
+  return g_object_ref (window->overlay);
 }
