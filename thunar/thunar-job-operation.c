@@ -290,6 +290,30 @@ thunar_job_operation_update_trash_timestamps (ThunarJobOperation *job_operation)
 
 
 
+/* thunar_job_operation_get_kind_nick:
+ * @job_operation: A #ThunarJobOperation
+ *
+ * Get the nick name of the operation's kind in string format.
+ * The string returned should NOT be freed.
+ *
+ * Return value: A string containing the nick name of the job operation's kind
+ **/
+const gchar *
+thunar_job_operation_get_kind_nick (ThunarJobOperation *job_operation)
+{
+  GEnumClass         *enum_class;
+  GEnumValue         *enum_value;
+
+  /* the enum value of the operation kind, which will be used to get its nick name */
+  enum_class = g_type_class_ref (THUNAR_TYPE_JOB_OPERATION_KIND);
+  enum_value = g_enum_get_value (enum_class, job_operation->operation_kind);
+
+  return enum_value->value_nick;
+}
+
+
+
+
 /**
  * thunar_job_operation_undo:
  *
@@ -300,8 +324,6 @@ thunar_job_operation_undo (void)
 {
   ThunarJobOperation *operation_marker;
   ThunarJobOperation *inverted_operation;
-  GEnumClass         *enum_class;
-  GEnumValue         *enum_value;
   GString            *warning_body;
   gchar              *file_uri;
   GError             *err = NULL;
@@ -323,10 +345,6 @@ thunar_job_operation_undo (void)
   lp_redo_job_operation = lp_undo_job_operation;
   lp_undo_job_operation = g_list_previous (lp_undo_job_operation);
 
-  /* the enum value of the operation kind, which will be used to get its nick name */
-  enum_class = g_type_class_ref (THUNAR_TYPE_JOB_OPERATION_KIND);
-  enum_value = g_enum_get_value (enum_class, operation_marker->operation_kind);
-
   /* warn the user if the previous operation is empty, since then there is nothing to undo */
   if (operation_marker->source_file_list == NULL && operation_marker->target_file_list == NULL)
     {
@@ -334,7 +352,7 @@ thunar_job_operation_undo (void)
       xfce_dialog_show_warning (NULL,
                                 _("The operation you are trying to undo does not have any files "
                                   "associated with it, and thus cannot be undone. "),
-                                _("%s operation cannot be undone"), enum_value->value_nick);
+                                _("%s operation cannot be undone"), thunar_job_operation_get_kind_nick (operation_marker));
       return;
     }
 
@@ -356,7 +374,8 @@ thunar_job_operation_undo (void)
 
         xfce_dialog_show_warning (NULL,
                                   warning_body->str,
-                                  _("%s operation can only be partially undone"), enum_value->value_nick);
+                                  _("%s operation can only be partially undone"),
+                                  thunar_job_operation_get_kind_nick (operation_marker));
 
         g_string_free (warning_body, TRUE);
       }
@@ -377,8 +396,6 @@ void
 thunar_job_operation_redo (void)
 {
   ThunarJobOperation *operation_marker;
-  GEnumClass         *enum_class;
-  GEnumValue         *enum_value;
   GString            *warning_body;
   gchar              *file_uri;
   GError             *err = NULL;
@@ -399,10 +416,6 @@ thunar_job_operation_redo (void)
   lp_undo_job_operation = lp_redo_job_operation;
   lp_redo_job_operation = g_list_next (lp_redo_job_operation);
 
-  /* the enum value of the operation kind, which will be used to get its nick name */
-  enum_class = g_type_class_ref (THUNAR_TYPE_JOB_OPERATION_KIND);
-  enum_value = g_enum_get_value (enum_class, operation_marker->operation_kind);
-
   /* warn the user if the previous operation is empty, since then there is nothing to undo */
   if (operation_marker->source_file_list == NULL && operation_marker->target_file_list == NULL)
     {
@@ -410,7 +423,7 @@ thunar_job_operation_redo (void)
       xfce_dialog_show_warning (NULL,
                                 _("The operation you are trying to redo does not have any files "
                                   "associated with it, and thus cannot be redone. "),
-                                _("%s operation cannot be redone"), enum_value->value_nick);
+                                _("%s operation cannot be redone"), thunar_job_operation_get_kind_nick (operation_marker));
       return;
     }
 
@@ -432,7 +445,8 @@ thunar_job_operation_redo (void)
 
         xfce_dialog_show_warning (NULL,
                                   warning_body->str,
-                                  _("%s operation can only be partially redone"), enum_value->value_nick);
+                                  _("%s operation can only be partially redone"),
+                                  thunar_job_operaton_get_kind_nick (operation_marker));
 
         g_string_free (warning_body, TRUE);
       }
