@@ -34,7 +34,8 @@ void                   thunar_job_operation_add                     (ThunarJobOp
 void                   thunar_job_operation_overwrite               (ThunarJobOperation    *job_operation,
                                                                      GFile                 *overwritten_file);
 void                   thunar_job_operation_commit                  (ThunarJobOperation    *job_operation);
-void                   thunar_job_operation_update_trash_timestamps (ThunarJobOperation *job_operation);
+void                   thunar_job_operation_update_trash_timestamps (ThunarJobOperation    *job_operation);
+const gchar           *thunar_job_operation_get_kind_nick           (ThunarJobOperation    *job_operation);
 void                   thunar_job_operation_undo                    (void);
 void                   thunar_job_operation_redo                    (void);
 gboolean               thunar_job_operation_can_undo                (void);
