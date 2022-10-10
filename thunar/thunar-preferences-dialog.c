@@ -64,20 +64,20 @@ struct _ThunarPreferencesDialog
 
 static XfceSettingsEditorEntry thunar_preferences_dialog_misc_preferences[] =
 {
-    { "/misc-always-show-tabs",              _("Always show tabs"),               _("If the view tabs should always be visible.") },
-    { "/misc-case-sensitive",                _("Case sensitive"),                 _("Determines whether the sorting should be done in a case-sensitive manner. The default is false.") },
-    { "/misc-full-path-in-tab-title",        _("Full path in tab title"),         _("Show the full directory path in the tab title, instead of only the directory name.") },
-    { "/misc-full-path-in-window-title",     _("Full path in window title"),      _("Show the full directory path in the window title, instead of only the directory name.") },
-    { "/misc-horizontal-wheel-navigates",    _("Horizontal wheel navigates"),     _("Controls whether the horizontal mouse wheel is used to navigate back and forth within a Thunar view, or whether it should be used for horizontal scrolling.") },
-    { "/misc-image-size-in-statusbar",       _("Image size in statusbar"),        _("Show the image size in the statusbar when a single image file is selected in the view. This is disabled by default because it causes relatively high I/O when changing the selection quickly.") },
-    { "/misc-remember-geometry",             _("Remember geometry"),              _("Whether Thunar should remember the size of windows and apply that size to new windows. If true the width and height are saved to last-window-width and last-window-height. If false the user may specify the start size in 'last-window-width and 'last-window-height.") },
-    { "/misc-small-toolbar-icons",           _("Small toolbar icons"),            _("Use small icons on the toolbar instead of the default toolbar size.") },
-    { "/misc-tab-close-middle-click",        _("Middle click to close tab"),      _("Whether to close tabs when the tab label is clicked with the 2nd/middle-mouse-button.") },
-    { "/misc-exec-shell-scripts-by-default", _("Exec shell scripts by default"),  _("Whether shell scripts should be executed or opened by default. The default action is to open them; setting this to TRUE will allow executing them.") },
-    { "/misc-switch-to-new-tab",             _("Switch to new tab"),              _("Whether if new tabs should be directly opened. The default is 'TRUE'.") },
-    { "/misc-vertical-split-pane",           _("Vertical split pane"),            _("Whether on F3 the panes should be split vertically or horizontally.") },
-    { "/misc-compact-view-max-chars",        _("Compact view max chars"),         _("Controls the ellipsization limit in compact view.") },
-    { "/misc-confirm-close-multiple-tabs",   _("Confirm to close multiple tabs"), _("Whether to warn the user before closing a window with multiple tabs.") }
+    { "/misc-always-show-tabs",              N_("Always show tabs"),               N_("If the view tabs should always be visible.") },
+    { "/misc-case-sensitive",                N_("Case sensitive"),                 N_("Determines whether the sorting should be done in a case-sensitive manner. The default is false.") },
+    { "/misc-full-path-in-tab-title",        N_("Full path in tab title"),         N_("Show the full directory path in the tab title, instead of only the directory name.") },
+    { "/misc-full-path-in-window-title",     N_("Full path in window title"),      N_("Show the full directory path in the window title, instead of only the directory name.") },
+    { "/misc-horizontal-wheel-navigates",    N_("Horizontal wheel navigates"),     N_("Controls whether the horizontal mouse wheel is used to navigate back and forth within a Thunar view, or whether it should be used for horizontal scrolling.") },
+    { "/misc-image-size-in-statusbar",       N_("Image size in statusbar"),        N_("Show the image size in the statusbar when a single image file is selected in the view. This is disabled by default because it causes relatively high I/O when changing the selection quickly.") },
+    { "/misc-remember-geometry",             N_("Remember geometry"),              N_("Whether Thunar should remember the size of windows and apply that size to new windows. If true the width and height are saved to last-window-width and last-window-height. If false the user may specify the start size in 'last-window-width and 'last-window-height.") },
+    { "/misc-small-toolbar-icons",           N_("Small toolbar icons"),            N_("Use small icons on the toolbar instead of the default toolbar size.") },
+    { "/misc-tab-close-middle-click",        N_("Middle click to close tab"),      N_("Whether to close tabs when the tab label is clicked with the 2nd/middle-mouse-button.") },
+    { "/misc-exec-shell-scripts-by-default", N_("Exec shell scripts by default"),  N_("Whether shell scripts should be executed or opened by default. The default action is to open them; setting this to TRUE will allow executing them.") },
+    { "/misc-switch-to-new-tab",             N_("Switch to new tab"),              N_("Whether if new tabs should be directly opened. The default is 'TRUE'.") },
+    { "/misc-vertical-split-pane",           N_("Vertical split pane"),            N_("Whether on F3 the panes should be split vertically or horizontally.") },
+    { "/misc-compact-view-max-chars",        N_("Compact view max chars"),         N_("Controls the ellipsization limit in compact view.") },
+    { "/misc-confirm-close-multiple-tabs",   N_("Confirm to close multiple tabs"), N_("Whether to warn the user before closing a window with multiple tabs.") }
 };
 
 
