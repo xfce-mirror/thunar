@@ -40,7 +40,7 @@ static gboolean thunar_notify_initted = FALSE;
 
 
 
-static gboolean
+gboolean
 thunar_notify_init (void)
 {
   gchar *spec_version = NULL;
