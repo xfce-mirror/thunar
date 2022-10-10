@@ -26,15 +26,17 @@
 
 G_BEGIN_DECLS
 
-void thunar_notify_unmount        (ThunarDevice *device);
+gboolean thunar_notify_init        (void);
 
-void thunar_notify_eject          (ThunarDevice *device);
+void     thunar_notify_unmount     (ThunarDevice *device);
 
-void thunar_notify_progress       (ThunarDevice *device, const gchar *message_to_show);
+void     thunar_notify_eject       (ThunarDevice *device);
 
-void thunar_notify_finish         (ThunarDevice *device);
+void     thunar_notify_progress    (ThunarDevice *device, const gchar *message_to_show);
 
-void thunar_notify_uninit         (void);
+void     thunar_notify_finish      (ThunarDevice *device);
+
+void     thunar_notify_uninit      (void);
 
 G_END_DECLS
 
