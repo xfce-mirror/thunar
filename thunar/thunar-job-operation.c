@@ -21,6 +21,7 @@
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-io-jobs.h>
 #include <thunar/thunar-job-operation.h>
+#include <thunar/thunar-notify.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 
@@ -383,6 +384,12 @@ thunar_job_operation_undo (void)
     inverted_operation = thunar_job_operation_new_invert (operation_marker);
     thunar_job_operation_execute (inverted_operation, &err);
     g_object_unref (inverted_operation);
+
+    if (err == NULL)
+      {
+        thunar_notify_init ();
+        thunar_notify_undo (operation_marker);
+      }
 }
 
 
@@ -446,12 +453,18 @@ thunar_job_operation_redo (void)
         xfce_dialog_show_warning (NULL,
                                   warning_body->str,
                                   _("%s operation can only be partially redone"),
-                                  thunar_job_operaton_get_kind_nick (operation_marker));
+                                  thunar_job_operation_get_kind_nick (operation_marker));
 
         g_string_free (warning_body, TRUE);
       }
 
     thunar_job_operation_execute (operation_marker, &err);
+
+    if (err == NULL)
+      {
+        thunar_notify_init ();
+        thunar_notify_redo (operation_marker);
+      }
 }
 
 

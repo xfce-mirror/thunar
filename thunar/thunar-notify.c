@@ -39,6 +39,8 @@
 static gboolean thunar_notify_initted = FALSE;
 
 
+static void thunar_notify_undo_or_redo (ThunarJobOperation *operation, gboolean undo);
+
 
 gboolean
 thunar_notify_init (void)
@@ -299,6 +301,73 @@ thunar_notify_finish (ThunarDevice *device)
     }
 #endif
 }
+
+
+
+void
+thunar_notify_undo (ThunarJobOperation *operation)
+{
+  thunar_notify_undo_or_redo (operation, TRUE);
+}
+
+
+
+
+void
+thunar_notify_redo (ThunarJobOperation *operation)
+{
+  thunar_notify_undo_or_redo (operation, FALSE);
+}
+
+
+
+static void
+thunar_notify_undo_or_redo (ThunarJobOperation *operation,
+                            gboolean            undo)
+{
+#ifdef HAVE_LIBNOTIFY
+  NotifyNotification *notification;
+  gchar              *summary;
+  gchar              *message;
+  gchar              *icon_name;
+
+  /* prepare the notification args according to whether it's an undo operation
+   * or not, in which case it must be a redo operation */
+  if (undo)
+    {
+      summary = g_strdup (_("Undo performed"));
+      message = g_strdup_printf (_("%s operation was undone"), thunar_job_operation_get_kind_nick (operation));
+      icon_name = g_strdup ("edit-undo-symbolic");
+    }
+  else
+    {
+      summary = g_strdup (_("Redo performed"));
+      message = g_strdup_printf (_("%s operation was redone"), thunar_job_operation_get_kind_nick (operation));
+      icon_name = g_strdup ("edit-redo-symbolic");
+    }
+
+
+  /* create notification */
+#ifdef NOTIFY_CHECK_VERSION
+#if NOTIFY_CHECK_VERSION (0, 7, 0)
+  notification = notify_notification_new (summary, message, icon_name);
+#else
+  notification = notify_notification_new (summary, message, icon_name, NULL);
+#endif
+#else
+  notification = notify_notification_new (summary, message, icon_name, NULL);
+#endif
+
+  notify_notification_set_urgency (notification, NOTIFY_URGENCY_LOW);
+  notify_notification_set_timeout (notification, NOTIFY_EXPIRES_DEFAULT);
+  notify_notification_show (notification, NULL);
+
+  g_free (summary);
+  g_free (message);
+  g_free (icon_name);
+#endif
+}
+
 
 
 
