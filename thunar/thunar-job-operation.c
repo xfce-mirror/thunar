@@ -314,7 +314,6 @@ thunar_job_operation_get_kind_nick (ThunarJobOperation *job_operation)
 
 
 
-
 /**
  * thunar_job_operation_undo:
  *
@@ -387,7 +386,6 @@ thunar_job_operation_undo (void)
 
     if (err == NULL)
       {
-        thunar_notify_init ();
         thunar_notify_undo (operation_marker);
       }
 }
@@ -462,7 +460,6 @@ thunar_job_operation_redo (void)
 
     if (err == NULL)
       {
-        thunar_notify_init ();
         thunar_notify_redo (operation_marker);
       }
 }
@@ -709,7 +706,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
 
         if (err != NULL)
           {
-            g_warning ("err while restoring files: %s\n", err->message);
+            g_warning ("Error while restoring files: %s\n", err->message);
             g_propagate_error (error, err);
             g_clear_error (&err);
           }

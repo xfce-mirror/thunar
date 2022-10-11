@@ -27,8 +27,6 @@
 
 G_BEGIN_DECLS
 
-gboolean thunar_notify_init        (void);
-
 void     thunar_notify_unmount     (ThunarDevice *device);
 
 void     thunar_notify_eject       (ThunarDevice *device);
