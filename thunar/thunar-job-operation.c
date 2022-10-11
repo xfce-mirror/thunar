@@ -21,6 +21,7 @@
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-io-jobs.h>
 #include <thunar/thunar-job-operation.h>
+#include <thunar/thunar-notify.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 
@@ -41,7 +42,8 @@
 static void                   thunar_job_operation_dispose            (GObject            *object);
 static void                   thunar_job_operation_finalize           (GObject            *object);
 static ThunarJobOperation    *thunar_job_operation_new_invert         (ThunarJobOperation *job_operation);
-static void                   thunar_job_operation_execute            (ThunarJobOperation *job_operation);
+static void                   thunar_job_operation_execute            (ThunarJobOperation *job_operation,
+                                                                       GError            **error);
 static gint                   thunar_job_operation_is_ancestor        (gconstpointer       descendant,
                                                                        gconstpointer       ancestor);
 static gint                   thunar_job_operation_compare            (ThunarJobOperation *operation1,
@@ -289,6 +291,29 @@ thunar_job_operation_update_trash_timestamps (ThunarJobOperation *job_operation)
 
 
 
+/* thunar_job_operation_get_kind_nick:
+ * @job_operation: A #ThunarJobOperation
+ *
+ * Get the nick name of the operation's kind in string format.
+ * The string returned should NOT be freed.
+ *
+ * Return value: A string containing the nick name of the job operation's kind
+ **/
+const gchar *
+thunar_job_operation_get_kind_nick (ThunarJobOperation *job_operation)
+{
+  GEnumClass         *enum_class;
+  GEnumValue         *enum_value;
+
+  /* the enum value of the operation kind, which will be used to get its nick name */
+  enum_class = g_type_class_ref (THUNAR_TYPE_JOB_OPERATION_KIND);
+  enum_value = g_enum_get_value (enum_class, job_operation->operation_kind);
+
+  return enum_value->value_nick;
+}
+
+
+
 /**
  * thunar_job_operation_undo:
  *
@@ -299,10 +324,9 @@ thunar_job_operation_undo (void)
 {
   ThunarJobOperation *operation_marker;
   ThunarJobOperation *inverted_operation;
-  GEnumClass         *enum_class;
-  GEnumValue         *enum_value;
   GString            *warning_body;
   gchar              *file_uri;
+  GError             *err = NULL;
 
   /* Show a warning in case there is no operation to undo */
   if (lp_undo_job_operation == NULL)
@@ -321,10 +345,6 @@ thunar_job_operation_undo (void)
   lp_redo_job_operation = lp_undo_job_operation;
   lp_undo_job_operation = g_list_previous (lp_undo_job_operation);
 
-  /* the enum value of the operation kind, which will be used to get its nick name */
-  enum_class = g_type_class_ref (THUNAR_TYPE_JOB_OPERATION_KIND);
-  enum_value = g_enum_get_value (enum_class, operation_marker->operation_kind);
-
   /* warn the user if the previous operation is empty, since then there is nothing to undo */
   if (operation_marker->source_file_list == NULL && operation_marker->target_file_list == NULL)
     {
@@ -332,37 +352,42 @@ thunar_job_operation_undo (void)
       xfce_dialog_show_warning (NULL,
                                 _("The operation you are trying to undo does not have any files "
                                   "associated with it, and thus cannot be undone. "),
-                                _("%s operation cannot be undone"), enum_value->value_nick);
+                                _("%s operation cannot be undone"), thunar_job_operation_get_kind_nick (operation_marker));
+      return;
     }
-  else
-    {
-      /* if there were files overwritten in the operation, warn about them */
-      if (operation_marker->overwritten_file_list != NULL)
-        {
-          gint index;
 
-          index = 1; /* one indexed for the dialog */
-          warning_body = g_string_new (_("The following files were overwritten in the operation "
-                                         "you are trying to undo and cannot be restored:\n"));
+    /* if there were files overwritten in the operation, warn about them */
+    if (operation_marker->overwritten_file_list != NULL)
+      {
+        gint index;
 
-          for (GList *lp = operation_marker->overwritten_file_list; lp != NULL; lp = lp->next, index++)
-            {
-              file_uri = g_file_get_uri (lp->data);
-              g_string_append_printf (warning_body, "%d. %s\n", index, file_uri);
-              g_free (file_uri);
-            }
+        index = 1; /* one indexed for the dialog */
+        warning_body = g_string_new (_("The following files were overwritten in the operation "
+                                       "you are trying to undo and cannot be restored:\n"));
 
-          xfce_dialog_show_warning (NULL,
-                                    warning_body->str,
-                                    _("%s operation can only be partially undone"), enum_value->value_nick);
+        for (GList *lp = operation_marker->overwritten_file_list; lp != NULL; lp = lp->next, index++)
+          {
+            file_uri = g_file_get_uri (lp->data);
+            g_string_append_printf (warning_body, "%d. %s\n", index, file_uri);
+            g_free (file_uri);
+          }
 
-          g_string_free (warning_body, TRUE);
-        }
+        xfce_dialog_show_warning (NULL,
+                                  warning_body->str,
+                                  _("%s operation can only be partially undone"),
+                                  thunar_job_operation_get_kind_nick (operation_marker));
 
-      inverted_operation = thunar_job_operation_new_invert (operation_marker);
-      thunar_job_operation_execute (inverted_operation);
-      g_object_unref (inverted_operation);
-    }
+        g_string_free (warning_body, TRUE);
+      }
+
+    inverted_operation = thunar_job_operation_new_invert (operation_marker);
+    thunar_job_operation_execute (inverted_operation, &err);
+    g_object_unref (inverted_operation);
+
+    if (err == NULL)
+      {
+        thunar_notify_undo (operation_marker);
+      }
 }
 
 
@@ -376,10 +401,9 @@ void
 thunar_job_operation_redo (void)
 {
   ThunarJobOperation *operation_marker;
-  GEnumClass         *enum_class;
-  GEnumValue         *enum_value;
   GString            *warning_body;
   gchar              *file_uri;
+  GError             *err = NULL;
 
   /* Show a warning in case there is no operation to undo */
   if (lp_redo_job_operation == NULL)
@@ -397,10 +421,6 @@ thunar_job_operation_redo (void)
   lp_undo_job_operation = lp_redo_job_operation;
   lp_redo_job_operation = g_list_next (lp_redo_job_operation);
 
-  /* the enum value of the operation kind, which will be used to get its nick name */
-  enum_class = g_type_class_ref (THUNAR_TYPE_JOB_OPERATION_KIND);
-  enum_value = g_enum_get_value (enum_class, operation_marker->operation_kind);
-
   /* warn the user if the previous operation is empty, since then there is nothing to undo */
   if (operation_marker->source_file_list == NULL && operation_marker->target_file_list == NULL)
     {
@@ -408,35 +428,40 @@ thunar_job_operation_redo (void)
       xfce_dialog_show_warning (NULL,
                                 _("The operation you are trying to redo does not have any files "
                                   "associated with it, and thus cannot be redone. "),
-                                _("%s operation cannot be redone"), enum_value->value_nick);
+                                _("%s operation cannot be redone"), thunar_job_operation_get_kind_nick (operation_marker));
+      return;
     }
-  else
-    {
-      /* if there were files overwritten in the operation, warn about them */
-      if (operation_marker->overwritten_file_list != NULL)
-        {
-          gint index;
 
-          index = 1; /* one indexed for the dialog */
-          warning_body = g_string_new (_("The following files were overwritten in the operation "
-                                         "you are trying to redo and cannot be restored:\n"));
+    /* if there were files overwritten in the operation, warn about them */
+    if (operation_marker->overwritten_file_list != NULL)
+      {
+        gint index;
 
-          for (GList *lp = operation_marker->overwritten_file_list; lp != NULL; lp = lp->next, index++)
-            {
-              file_uri = g_file_get_uri (lp->data);
-              g_string_append_printf (warning_body, "%d. %s\n", index, file_uri);
-              g_free (file_uri);
-            }
+        index = 1; /* one indexed for the dialog */
+        warning_body = g_string_new (_("The following files were overwritten in the operation "
+                                       "you are trying to redo and cannot be restored:\n"));
 
-          xfce_dialog_show_warning (NULL,
-                                    warning_body->str,
-                                    _("%s operation can only be partially redone"), enum_value->value_nick);
+        for (GList *lp = operation_marker->overwritten_file_list; lp != NULL; lp = lp->next, index++)
+          {
+            file_uri = g_file_get_uri (lp->data);
+            g_string_append_printf (warning_body, "%d. %s\n", index, file_uri);
+            g_free (file_uri);
+          }
 
-          g_string_free (warning_body, TRUE);
-        }
+        xfce_dialog_show_warning (NULL,
+                                  warning_body->str,
+                                  _("%s operation can only be partially redone"),
+                                  thunar_job_operation_get_kind_nick (operation_marker));
 
-      thunar_job_operation_execute (operation_marker);
-    }
+        g_string_free (warning_body, TRUE);
+      }
+
+    thunar_job_operation_execute (operation_marker, &err);
+
+    if (err == NULL)
+      {
+        thunar_notify_redo (operation_marker);
+      }
 }
 
 
@@ -560,19 +585,22 @@ thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
 
 /* thunar_job_operation_execute:
  * @job_operation: a #ThunarJobOperation
+ * @error: A #GError to propagate any errors encountered.
  *
  * Executes the given @job_operation, depending on what kind of an operation it is.
  **/
-void
-thunar_job_operation_execute (ThunarJobOperation *job_operation)
+static void
+thunar_job_operation_execute (ThunarJobOperation *job_operation,
+                              GError            **error)
 {
   ThunarApplication *application;
   GList             *thunar_file_list = NULL;
-  GError            *error            = NULL;
+  GError            *err              = NULL;
   ThunarJob         *job              = NULL;
   ThunarFile        *thunar_file;
   GFile             *parent_dir;
   gchar             *display_name;
+  GFile             *template_file;
 
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
@@ -590,12 +618,12 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
                 continue;
               }
 
-            thunar_file = thunar_file_get (lp->data, &error);
+            thunar_file = thunar_file_get (lp->data, &err);
 
-            if (error != NULL)
+            if (err != NULL)
               {
-                g_warning ("Failed to convert GFile to ThunarFile: %s", error->message);
-                g_clear_error (&error);
+                g_warning ("Failed to convert GFile to ThunarFile: %s", err->message);
+                g_clear_error (&err);
               }
 
             if (!THUNAR_IS_FILE (thunar_file))
@@ -617,23 +645,24 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
         for (GList *lp = job_operation->target_file_list; lp != NULL; lp = lp->next)
           {
             parent_dir = g_file_get_parent (lp->data);
-            g_file_make_directory_with_parents (parent_dir, NULL, &error);
+            g_file_make_directory_with_parents (parent_dir, NULL, &err);
             g_object_unref (parent_dir);
 
-            if (error != NULL)
+            if (err != NULL)
             {
               /* there is no issue if the target directory already exists */
-              if (error->code == G_IO_ERROR_EXISTS)
+              if (err->code == G_IO_ERROR_EXISTS)
                 {
-                  g_clear_error (&error);
+                  g_clear_error (&err);
                   continue;
                 }
 
-              /* output the error message to console otherwise and abort */
-              g_warning ("Error while moving files: %s\n"
+              /* output the err message to console otherwise and abort */
+              g_warning ("err while moving files: %s\n"
                          "Aborting operation\n",
-                         error->message);
-              g_clear_error (&error);
+                         err->message);
+              g_propagate_error (error, err);
+              g_clear_error (&err);
               g_object_unref (application);
               return;
             }
@@ -650,12 +679,13 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
              slp = slp->next, tlp = tlp->next)
           {
             display_name = thunar_g_file_get_display_name (tlp->data);
-            thunar_file = thunar_file_get (slp->data, &error);
+            thunar_file = thunar_file_get (slp->data, &err);
 
-            if (error != NULL)
+            if (err != NULL)
               {
-                g_warning ("Error while renaming files: %s\n", error->message);
-                g_clear_error (&error);
+                g_warning ("err while renaming files: %s\n", err->message);
+                g_propagate_error (error, err);
+                g_clear_error (&err);
 
                 g_free (display_name);
                 g_object_unref (thunar_file);
@@ -672,12 +702,13 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
         break;
 
       case THUNAR_JOB_OPERATION_KIND_RESTORE:
-        thunar_job_operation_restore_from_trash (job_operation, &error);
+        thunar_job_operation_restore_from_trash (job_operation, &err);
 
-        if (error != NULL)
+        if (err != NULL)
           {
-            g_warning ("Error while restoring files: %s\n", error->message);
-            g_clear_error (&error);
+            g_warning ("Error while restoring files: %s\n", err->message);
+            g_propagate_error (error, err);
+            g_clear_error (&err);
           }
         break;
 
@@ -688,7 +719,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation)
         break;
 
       case THUNAR_JOB_OPERATION_KIND_CREATE_FILE:
-        GFile *template_file = NULL;
+        template_file = NULL;
         if (job_operation->source_file_list != NULL)
           template_file = job_operation->source_file_list->data;
         thunar_application_creat (application, NULL,
