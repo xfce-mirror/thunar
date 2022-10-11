@@ -706,7 +706,7 @@ thunar_image_preview_mode_get_type (void)
         { 0,                                    NULL,                                   NULL }
       };
 
-      type = g_enum_register_static ("ThunarOperationLogMode", values);
+      type = g_enum_register_static ("ThunarImagePreviewMode", values);
     }
 
   return type;
