@@ -654,7 +654,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
                 }
 
               /* output the err message to console otherwise and abort */
-              g_warning ("err while moving files: %s\n"
+              g_warning ("Error while moving files: %s\n"
                          "Aborting operation\n",
                          err->message);
               g_propagate_error (error, err);
@@ -679,7 +679,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
 
             if (err != NULL)
               {
-                g_warning ("err while renaming files: %s\n", err->message);
+                g_warning ("Error while renaming files: %s\n", err->message);
                 g_propagate_error (error, err);
                 g_clear_error (&err);
 
