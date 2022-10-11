@@ -38,11 +38,11 @@
 #ifdef HAVE_LIBNOTIFY
 static gboolean thunar_notify_initted = FALSE;
 
-
 static void thunar_notify_undo_or_redo (ThunarJobOperation *operation, gboolean undo);
 
 
-gboolean
+
+static gboolean
 thunar_notify_init (void)
 {
   gchar *spec_version = NULL;
@@ -307,9 +307,11 @@ thunar_notify_finish (ThunarDevice *device)
 void
 thunar_notify_undo (ThunarJobOperation *operation)
 {
+  if (!thunar_notify_init ())
+    return;
+
   thunar_notify_undo_or_redo (operation, TRUE);
 }
-
 
 
 
@@ -367,7 +369,6 @@ thunar_notify_undo_or_redo (ThunarJobOperation *operation,
   g_free (icon_name);
 #endif
 }
-
 
 
 
