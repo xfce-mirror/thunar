@@ -385,7 +385,7 @@ thunar_job_operation_undo (void)
     g_object_unref (inverted_operation);
 
     if (err == NULL)
-        thunar_notify_undo (operation_marker);
+      thunar_notify_undo (operation_marker);
 }
 
 
