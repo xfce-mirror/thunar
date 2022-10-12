@@ -457,7 +457,7 @@ thunar_job_operation_redo (void)
     thunar_job_operation_execute (operation_marker, &err);
 
     if (err == NULL)
-        thunar_notify_redo (operation_marker);
+      thunar_notify_redo (operation_marker);
 }
 
 
