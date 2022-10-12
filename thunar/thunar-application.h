@@ -23,7 +23,7 @@
 #ifndef __THUNAR_APPLICATION_H__
 #define __THUNAR_APPLICATION_H__
 
-#include <thunar/thunar-job-operation.h>
+#include <thunar/thunar-job-operation-history.h>
 #include <thunar/thunar-window.h>
 #include <thunar/thunar-thumbnail-cache.h>
 
