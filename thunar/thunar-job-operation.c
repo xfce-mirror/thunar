@@ -81,6 +81,10 @@ static GList *lp_undo_job_operation = NULL;
 /* List pointer to the operation which can be redone */
 static GList *lp_redo_job_operation = NULL;
 
+/* since the job operation list, undo lp, and redo lp all refer to the same memory locations,
+ * which may be accessed by different threads, we need to protect this memory with a mutex */
+static GMutex job_operation_list_mutex;
+
 static void
 thunar_job_operation_class_init (ThunarJobOperationClass *klass)
 {
@@ -231,6 +235,8 @@ thunar_job_operation_commit (ThunarJobOperation *job_operation)
       job_operation->end_timestamp = g_get_real_time () / (gint64) 1e6;
     }
 
+  g_mutex_lock (&job_operation_list_mutex);
+
   /* When a new operation is added, drop all previous operations which where undone from the list */
   if (lp_redo_job_operation != NULL)
     {
@@ -255,6 +261,8 @@ thunar_job_operation_commit (ThunarJobOperation *job_operation)
       job_operation_list = g_list_remove_link (job_operation_list, first);
       g_list_free_full (first, g_object_unref);
     }
+
+  g_mutex_unlock (&job_operation_list_mutex);
 }
 
 
@@ -275,8 +283,13 @@ thunar_job_operation_update_trash_timestamps (ThunarJobOperation *job_operation)
   if (job_operation->operation_kind != THUNAR_JOB_OPERATION_KIND_TRASH)
     return;
 
+  g_mutex_lock (&job_operation_list_mutex);
+
   if (lp_undo_job_operation == NULL)
-    return;
+    {
+      g_mutex_unlock (&job_operation_list_mutex);
+      return;
+    }
 
   if (thunar_job_operation_compare ( THUNAR_JOB_OPERATION (lp_undo_job_operation->data), job_operation) == 0)
     {
@@ -286,6 +299,8 @@ thunar_job_operation_update_trash_timestamps (ThunarJobOperation *job_operation)
        * us the time in microseconds, so we need to divide by 1e6. */
       THUNAR_JOB_OPERATION (lp_undo_job_operation->data)->end_timestamp = g_get_real_time () / (gint64) 1e6;
     }
+
+  g_mutex_unlock (&job_operation_list_mutex);
 }
 
 
@@ -327,6 +342,8 @@ thunar_job_operation_undo (void)
   gchar              *file_uri;
   GError             *err = NULL;
 
+  g_mutex_lock (&job_operation_list_mutex);
+
   /* Show a warning in case there is no operation to undo */
   if (lp_undo_job_operation == NULL)
     {
@@ -334,6 +351,7 @@ thunar_job_operation_undo (void)
                                 _("No operation which can be undone has been performed yet.\n"
                                   "(For some operations undo is not supported)"),
                                 _("There is no operation to undo"));
+      g_mutex_unlock (&job_operation_list_mutex);
       return;
     }
 
@@ -352,6 +370,7 @@ thunar_job_operation_undo (void)
                                 _("The operation you are trying to undo does not have any files "
                                   "associated with it, and thus cannot be undone. "),
                                 _("%s operation cannot be undone"), thunar_job_operation_get_kind_nick (operation_marker));
+      g_mutex_unlock (&job_operation_list_mutex);
       return;
     }
 
@@ -385,6 +404,8 @@ thunar_job_operation_undo (void)
 
     if (err == NULL)
       thunar_notify_undo (operation_marker);
+
+    g_mutex_unlock (&job_operation_list_mutex);
 }
 
 
@@ -402,12 +423,15 @@ thunar_job_operation_redo (void)
   gchar              *file_uri;
   GError             *err = NULL;
 
+  g_mutex_lock (&job_operation_list_mutex);
+
   /* Show a warning in case there is no operation to undo */
   if (lp_redo_job_operation == NULL)
     {
       xfce_dialog_show_warning (NULL,
                                 _("No operation which can be redone available.\n"),
                                 _("There is no operation to redo"));
+      g_mutex_unlock (&job_operation_list_mutex);
       return;
     }
 
@@ -426,6 +450,7 @@ thunar_job_operation_redo (void)
                                 _("The operation you are trying to redo does not have any files "
                                   "associated with it, and thus cannot be redone. "),
                                 _("%s operation cannot be redone"), thunar_job_operation_get_kind_nick (operation_marker));
+      g_mutex_unlock (&job_operation_list_mutex);
       return;
     }
 
@@ -457,6 +482,8 @@ thunar_job_operation_redo (void)
 
     if (err == NULL)
       thunar_notify_redo (operation_marker);
+
+    g_mutex_unlock (&job_operation_list_mutex);
 }
 
 
@@ -472,14 +499,23 @@ thunar_job_operation_can_undo (void)
 {
   ThunarJobOperation *operation_marker;
 
+  g_mutex_lock (&job_operation_list_mutex);
+
   if (lp_undo_job_operation == NULL)
-    return FALSE;
+    {
+      g_mutex_unlock (&job_operation_list_mutex);
+      return FALSE;
+    }
  
   operation_marker = lp_undo_job_operation->data;
 
   if (operation_marker->source_file_list == NULL && operation_marker->target_file_list == NULL)
-    return FALSE;
+    {
+      g_mutex_unlock (&job_operation_list_mutex);
+      return FALSE;
+    }
 
+  g_mutex_unlock (&job_operation_list_mutex);
   return TRUE;
 }
 
@@ -496,14 +532,23 @@ thunar_job_operation_can_redo (void)
 {
   ThunarJobOperation *operation_marker;
 
+  g_mutex_lock (&job_operation_list_mutex);
+
   if (lp_redo_job_operation == NULL)
-    return FALSE;
+    {
+      g_mutex_unlock (&job_operation_list_mutex);
+      return FALSE;
+    }
 
   operation_marker = lp_redo_job_operation->data;
 
   if (operation_marker->source_file_list == NULL && operation_marker->target_file_list == NULL)
-    return FALSE;
+    {
+      g_mutex_unlock (&job_operation_list_mutex);
+      return FALSE;
+    }
 
+  g_mutex_unlock (&job_operation_list_mutex);
   return TRUE;
 }
 
