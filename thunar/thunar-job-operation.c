@@ -33,11 +33,10 @@
  * The #ThunarJobOperation class represents a single 'job operation', a file operation like copying, moving
  * etc. that can be logged centrally and undone.
  *
- * The @job_operation_list is a #GList of such job operations. It is not necessary that @job_operation_list
- * points to the head of the list; it points to the 'marked operation', the operation that reflects
- * the latest state of the operation history.
- * Usually, this will be the latest performed operation, which hasn't been undone yet.
- */
+ * The @job_operation_list is a #GList of such job operations. @lp_undo_job_operation points to a
+ * #GList item in this list, whose data contains the first #ThunarJobOperation which can be undone.
+ * Similarly, @lp_redo_job_operation points to the item whose data contains the first
+ * #ThunarJobOperation which can be redone. */
 
 static void                   thunar_job_operation_dispose            (GObject            *object);
 static void                   thunar_job_operation_finalize           (GObject            *object);
@@ -63,7 +62,7 @@ struct _ThunarJobOperation
   GList                  *overwritten_file_list;
 
   /**
-   * Optional timestampes (in seconds) which tell when the operation was started and ended.
+   * Optional timestamps (in seconds) which tell when the operation was started and ended.
    * Only used for trash/restore operations.
    **/
   gint64                  start_timestamp;
@@ -771,7 +770,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
  **/
 static gint
 thunar_job_operation_is_ancestor (gconstpointer ancestor,
-             gconstpointer descendant)
+                                  gconstpointer descendant)
 {
   if (thunar_g_file_is_descendant (G_FILE (descendant), G_FILE (ancestor)))
     return 0;
@@ -832,7 +831,7 @@ thunar_job_operation_compare (ThunarJobOperation *operation1,
  **/
 static void
 thunar_job_operation_restore_from_trash (ThunarJobOperation *operation,
-                         GError            **error)
+                                         GError            **error)
 {
   GFileEnumerator   *enumerator;
   GFileInfo         *info;
