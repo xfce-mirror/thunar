@@ -32,7 +32,20 @@
  * The single #ThunarJobOperationHistory instance stores all job operations in a #GList
  * and manages tools to manage the list and the next/previous operations which can be undone/redone */
 
-static void thunar_job_operation_history_finalize (GObject *object);
+/* property identifiers */
+enum
+{
+  PROP_0,
+  PROP_CAN_UNDO,
+  PROP_CAN_REDO,
+};
+
+
+static void thunar_job_operation_history_finalize     (GObject *object);
+static void thunar_job_operation_history_get_property (GObject    *object,
+                                                       guint       prop_id,
+                                                       GValue     *value,
+                                                       GParamSpec *pspec);
 
 
 
@@ -63,7 +76,24 @@ thunar_job_operation_history_class_init (ThunarJobOperationHistoryClass *klass)
   GObjectClass      *gobject_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->get_property = thunar_job_operation_history_get_property;
   gobject_class->finalize = thunar_job_operation_history_finalize;
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_CAN_UNDO,
+                                   g_param_spec_boolean ("can-undo",
+                                                         "can-undo",
+                                                         "can-undo",
+                                                         FALSE,
+                                                         EXO_PARAM_READABLE));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_CAN_REDO,
+                                   g_param_spec_boolean ("can-redo",
+                                                         "can-redo",
+                                                         "can-redo",
+                                                         FALSE,
+                                                         EXO_PARAM_READABLE));
 }
 
 
@@ -94,6 +124,30 @@ thunar_job_operation_history_finalize (GObject *object)
   g_list_free_full (history->job_operation_list, g_object_unref);
 
   (*G_OBJECT_CLASS (thunar_job_operation_history_parent_class)->finalize) (object);
+}
+
+
+
+static void
+thunar_job_operation_history_get_property (GObject    *object,
+                                           guint       prop_id,
+                                           GValue     *value,
+                                           GParamSpec *pspec)
+{
+  switch (prop_id)
+    {
+    case PROP_CAN_UNDO:
+      g_value_set_boolean (value, thunar_job_operation_history_can_undo ());
+      break;
+
+    case PROP_CAN_REDO:
+      g_value_set_boolean (value, thunar_job_operation_history_can_redo ());
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
 }
 
 
@@ -175,6 +229,9 @@ thunar_job_operation_history_commit (ThunarJobOperation *job_operation)
       job_operation_history->job_operation_list = g_list_remove_link (job_operation_history->job_operation_list, first);
       g_list_free_full (first, g_object_unref);
     }
+
+  g_object_notify (G_OBJECT (job_operation_history), "can-undo");
+  g_object_notify (G_OBJECT (job_operation_history), "can-redo");
 }
 
 
@@ -289,6 +346,9 @@ thunar_job_operation_history_undo (void)
 
     if (err == NULL)
       thunar_notify_undo (operation_marker);
+
+    g_object_notify (G_OBJECT (job_operation_history), "can-undo");
+    g_object_notify (G_OBJECT (job_operation_history), "can-redo");
 }
 
 
@@ -363,6 +423,9 @@ thunar_job_operation_history_redo (void)
 
     if (err == NULL)
       thunar_notify_redo (operation_marker);
+
+    g_object_notify (G_OBJECT (job_operation_history), "can-undo");
+    g_object_notify (G_OBJECT (job_operation_history), "can-redo");
 }
 
 

@@ -995,6 +995,9 @@ thunar_window_init (ThunarWindow *window)
   /* add first notebook and select it*/
   window->notebook_selected = thunar_window_paned_notebooks_add(window);
 
+  /* get a reference of the global job operation history */
+  window->job_operation_history = thunar_job_operation_history_get_default ();
+
   window->location_toolbar = NULL;
   thunar_window_location_toolbar_create (window);
 
@@ -1082,9 +1085,6 @@ thunar_window_init (ThunarWindow *window)
 
   window->search_query = NULL;
   window->reset_view_type_idle_id = 0;
-
-  /* get a reference of the global job operation history */
-  window->job_operation_history = thunar_job_operation_history_get_default ();
 }
 
 
@@ -6069,6 +6069,9 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   g_signal_connect (G_OBJECT (window->location_toolbar_item_home), "button-press-event", G_CALLBACK (thunar_window_open_home_clicked), G_OBJECT (window));
   g_signal_connect (G_OBJECT (window), "button-press-event", G_CALLBACK (thunar_window_button_press_event), G_OBJECT (window));
   window->signal_handler_id_history_changed = 0;
+
+  g_object_bind_property (G_OBJECT (window->job_operation_history), "can-undo", G_OBJECT (window->location_toolbar_item_undo), "sensitive", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (window->job_operation_history), "can-redo", G_OBJECT (window->location_toolbar_item_redo), "sensitive", G_BINDING_SYNC_CREATE);
 
   /* The UCA shortcuts need to be checked 'by hand', since we dont want to permanently keep menu items for them */
   g_signal_connect (window, "key-press-event", G_CALLBACK (thunar_window_check_uca_key_activation), NULL);
