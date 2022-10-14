@@ -48,7 +48,7 @@ struct _ThunarJobOperation
   GList                  *target_file_list;
 
   /* Files overwritten as a part of an operation */
-  GList                  *overwritten_files_;
+  GList                  *overwritten_files;
 
   /**
    * Optional timestampes (in seconds) which tell when the operation was started and ended.
