@@ -981,7 +981,7 @@ thunar_folder_get_files (const ThunarFolder *folder)
  * Will use cached data to do calculations only once
  * The @model is needed to force the redraw once the file count
  * values are actually calculated.
- * Cached values aree returned if @model is NULL.
+ * Cached values are returned if @model is NULL.
  *
  * Return value: Number of files in a folder
  **/
@@ -989,16 +989,34 @@ guint32
 thunar_folder_get_file_count (ThunarFolder *folder,
                               GtkTreeModel *model)
 {
-  guint64                    last_modified;
+  GError                    *err = NULL;
   ThunarJob                 *job;
+  GFileInfo                 *info;
+  ThunarFile                *file;
+  guint64                    last_modified;
 
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), 0);
-
-  last_modified = thunar_file_get_date (thunar_folder_get_corresponding_file (folder), THUNAR_FILE_DATE_MODIFIED);
 
   /* This will only happen if it is called by the sorting function, so just return cached values to it */
   if (model == NULL)
     return folder->file_count;
+
+  /* We need to make a new query so we don't get stale values */
+  file = thunar_folder_get_corresponding_file (folder);
+  info = g_file_query_info (thunar_file_get_file (file),
+                            G_FILE_ATTRIBUTE_TIME_MODIFIED,
+                            G_FILE_QUERY_INFO_NONE,
+                            NULL,
+                            &err);
+
+  if (err != NULL)
+    {
+      g_warning ("An error occured while trying to get file counts.");
+      return folder->file_count;
+    }
+
+  last_modified = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_MODIFIED);
+  g_object_unref (info);
 
   /* return a cached value if last time that the file count was computed is later
    * than the last time the file was modified */
