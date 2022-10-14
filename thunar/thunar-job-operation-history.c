@@ -41,7 +41,7 @@ enum
 };
 
 
-static void thunar_job_operation_history_finalize     (GObject *object);
+static void thunar_job_operation_history_finalize     (GObject    *object);
 static void thunar_job_operation_history_get_property (GObject    *object,
                                                        guint       prop_id,
                                                        GValue     *value,
@@ -194,6 +194,8 @@ thunar_job_operation_history_get_default (void)
 void
 thunar_job_operation_history_commit (ThunarJobOperation *job_operation)
 {
+  GList* new_list = NULL;
+
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
   if (thunar_job_operation_get_kind (job_operation) == THUNAR_JOB_OPERATION_KIND_TRASH)
@@ -203,13 +205,12 @@ thunar_job_operation_history_commit (ThunarJobOperation *job_operation)
       thunar_job_operation_set_end_timestamp (job_operation, g_get_real_time () / (gint64) 1e6);
     }
 
-  /* When a new operation is added, drop all previous operations which where undone from the list */
+  /* When a new operation is added, drop all previous operations which were undone from the list */
   if (job_operation_history->lp_redo != NULL)
     {
-      GList* new_list = NULL;
       for (GList* lp = job_operation_history->job_operation_list;
-          lp != NULL && lp != job_operation_history->lp_redo;
-          lp = lp->next)
+           lp != NULL && lp != job_operation_history->lp_redo;
+           lp = lp->next)
         new_list = g_list_append (new_list, g_object_ref (lp->data));
       g_list_free_full (job_operation_history->job_operation_list, g_object_unref);
       job_operation_history->job_operation_list = new_list;
@@ -230,6 +231,7 @@ thunar_job_operation_history_commit (ThunarJobOperation *job_operation)
       g_list_free_full (first, g_object_unref);
     }
 
+  /* Notify all subscribers of our properties */
   g_object_notify (G_OBJECT (job_operation_history), "can-undo");
   g_object_notify (G_OBJECT (job_operation_history), "can-redo");
 }
@@ -347,6 +349,7 @@ thunar_job_operation_history_undo (void)
     if (err == NULL)
       thunar_notify_undo (operation_marker);
 
+    /* Notify all subscribers of our properties */
     g_object_notify (G_OBJECT (job_operation_history), "can-undo");
     g_object_notify (G_OBJECT (job_operation_history), "can-redo");
 }
@@ -424,6 +427,7 @@ thunar_job_operation_history_redo (void)
     if (err == NULL)
       thunar_notify_redo (operation_marker);
 
+    /* Notify all subscribers of our properties */
     g_object_notify (G_OBJECT (job_operation_history), "can-undo");
     g_object_notify (G_OBJECT (job_operation_history), "can-redo");
 }

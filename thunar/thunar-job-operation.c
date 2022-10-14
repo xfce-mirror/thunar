@@ -23,11 +23,11 @@
 
 /**
  * SECTION:thunar-job-operation
- * @Short_description: Stores a job operations (copy, move, trash, rename, etc.)
+ * @Short_description: Stores a job operation (copy, move, trash, rename, etc.)
  * @Title: ThunarJobOperation
  *
  * The #ThunarJobOperation class represents a single 'job operation', a file operation like copying, moving
- * trashing, renaming etc. and it's source/target locations.
+ * trashing, renaming etc. and its source/target locations.
  *
  */
 
@@ -48,7 +48,7 @@ struct _ThunarJobOperation
   GList                  *target_file_list;
 
   /* Files overwritten as a part of an operation */
-  GList                  *overwritten_files_;
+  GList                  *overwritten_files;
 
   /**
    * Optional timestampes (in seconds) which tell when the operation was started and ended.
@@ -79,7 +79,7 @@ thunar_job_operation_init (ThunarJobOperation *self)
   self->operation_kind = THUNAR_JOB_OPERATION_KIND_COPY;
   self->source_file_list = NULL;
   self->target_file_list = NULL;
-  self->overwritten_files_ = NULL;
+  self->overwritten_files = NULL;
 }
 
 
@@ -93,7 +93,7 @@ thunar_job_operation_finalize (GObject *object)
 
   g_list_free_full (op->source_file_list, g_object_unref);
   g_list_free_full (op->target_file_list, g_object_unref);
-  g_list_free_full (op->overwritten_files_, g_object_unref);
+  g_list_free_full (op->overwritten_files, g_object_unref);
 
   (*G_OBJECT_CLASS (thunar_job_operation_parent_class)->finalize) (object);
 }
@@ -174,7 +174,7 @@ thunar_job_operation_overwrite (ThunarJobOperation *job_operation,
 {
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
-  job_operation->overwritten_files_ = thunar_g_list_append_deep (job_operation->overwritten_files_, overwritten_file);
+  job_operation->overwritten_files = thunar_g_list_append_deep (job_operation->overwritten_files, overwritten_file);
 }
 
 
@@ -265,7 +265,7 @@ const GList*
 thunar_job_operation_get_overwritten_files (ThunarJobOperation *job_operation)
 {
   _thunar_return_val_if_fail (THUNAR_IS_JOB_OPERATION (job_operation), NULL);
-   return job_operation->overwritten_files_;
+   return job_operation->overwritten_files;
 }
 
 
