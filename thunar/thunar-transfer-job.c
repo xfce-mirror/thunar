@@ -30,7 +30,7 @@
 #include <thunar/thunar-io-scan-directory.h>
 #include <thunar/thunar-io-jobs-util.h>
 #include <thunar/thunar-job.h>
-#include <thunar/thunar-job-operation.h>
+#include <thunar/thunar-job-operation-history.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-thumbnail-cache.h>
@@ -1721,7 +1721,7 @@ thunar_transfer_job_execute (ExoJob  *job,
        * in a mutually exclusive way, so we know that only one operation was created. */
       if (log_operations)
         {
-          thunar_job_operation_commit (operation);
+          thunar_job_operation_history_commit (operation);
           g_object_unref (operation);
         }
 

@@ -295,7 +295,7 @@ _thunar_io_jobs_create (ThunarJob  *job,
 
   if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
     {
-      thunar_job_operation_commit (operation);
+      thunar_job_operation_history_commit (operation);
       g_object_unref (operation);
     }
 
@@ -458,7 +458,7 @@ _thunar_io_jobs_mkdir (ThunarJob  *job,
 
   if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
     {
-      thunar_job_operation_commit (operation);
+      thunar_job_operation_history_commit (operation);
       g_object_unref (operation);
     }
 
@@ -836,7 +836,7 @@ _thunar_io_jobs_link (ThunarJob  *job,
 
   if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
     {
-      thunar_job_operation_commit (operation);
+      thunar_job_operation_history_commit (operation);
       g_object_unref (operation);
     }
 
@@ -937,13 +937,13 @@ _thunar_io_jobs_trash (ThunarJob  *job,
 
   if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
     {
-      thunar_job_operation_commit (operation);
+      thunar_job_operation_history_commit (operation);
       g_object_unref (operation);
     }
   else if (log_mode == THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS)
     {
       /* only required for 'redo' operation, in order to update the timestamps of the original trash operation */
-      thunar_job_operation_update_trash_timestamps (operation);
+      thunar_job_operation_history_update_trash_timestamps (operation);
       g_object_unref (operation);
     }
 
@@ -1419,7 +1419,7 @@ _thunar_io_jobs_rename (ThunarJob  *job,
         {
           operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_RENAME);
           thunar_job_operation_add (operation, g_file_new_for_uri (old_file_uri), thunar_file_get_file (file));
-          thunar_job_operation_commit (operation);
+          thunar_job_operation_history_commit (operation);
           g_object_unref (operation);
         }
     }
