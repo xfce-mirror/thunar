@@ -41,7 +41,7 @@ enum
 };
 
 
-static void thunar_job_operation_history_finalize     (GObject *object);
+static void thunar_job_operation_history_finalize     (GObject    *object);
 static void thunar_job_operation_history_get_property (GObject    *object,
                                                        guint       prop_id,
                                                        GValue     *value,
@@ -230,6 +230,7 @@ thunar_job_operation_history_commit (ThunarJobOperation *job_operation)
       g_list_free_full (first, g_object_unref);
     }
 
+  /* Notify all subscribers of our properties */
   g_object_notify (G_OBJECT (job_operation_history), "can-undo");
   g_object_notify (G_OBJECT (job_operation_history), "can-redo");
 }
@@ -347,6 +348,7 @@ thunar_job_operation_history_undo (void)
     if (err == NULL)
       thunar_notify_undo (operation_marker);
 
+    /* Notify all subscribers of our properties */
     g_object_notify (G_OBJECT (job_operation_history), "can-undo");
     g_object_notify (G_OBJECT (job_operation_history), "can-redo");
 }
@@ -424,6 +426,7 @@ thunar_job_operation_history_redo (void)
     if (err == NULL)
       thunar_notify_redo (operation_marker);
 
+    /* Notify all subscribers of our properties */
     g_object_notify (G_OBJECT (job_operation_history), "can-undo");
     g_object_notify (G_OBJECT (job_operation_history), "can-redo");
 }

@@ -23,7 +23,7 @@
 
 #include <glib.h>
 #include <thunar/thunar-device.h>
-#include <thunar/thunar-job-operation-history.h>
+#include <thunar/thunar-job-operation.h>
 
 G_BEGIN_DECLS
 
