@@ -23,7 +23,7 @@
 
 /**
  * SECTION:thunar-job-operation
- * @Short_description: Stores a job operations (copy, move, trash, rename, etc.)
+ * @Short_description: Stores a job operation (copy, move, trash, rename, etc.)
  * @Title: ThunarJobOperation
  *
  * The #ThunarJobOperation class represents a single 'job operation', a file operation like copying, moving
