@@ -28,7 +28,7 @@
 
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-file.h>
-#include <thunar/thunar-job-operation.h>
+#include <thunar/thunar-job-operation-history.h>
 
 G_BEGIN_DECLS
 
