@@ -194,6 +194,8 @@ thunar_job_operation_history_get_default (void)
 void
 thunar_job_operation_history_commit (ThunarJobOperation *job_operation)
 {
+  GList* new_list = NULL;
+
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
   if (thunar_job_operation_get_kind (job_operation) == THUNAR_JOB_OPERATION_KIND_TRASH)
@@ -206,7 +208,6 @@ thunar_job_operation_history_commit (ThunarJobOperation *job_operation)
   /* When a new operation is added, drop all previous operations which were undone from the list */
   if (job_operation_history->lp_redo != NULL)
     {
-      GList* new_list = NULL;
       for (GList* lp = job_operation_history->job_operation_list;
            lp != NULL && lp != job_operation_history->lp_redo;
            lp = lp->next)
