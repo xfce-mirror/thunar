@@ -47,6 +47,7 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-history.h>
 #include <thunar/thunar-icon-view.h>
+#include <thunar/thunar-job-operation-history.h>
 #include <thunar/thunar-location-buttons.h>
 #include <thunar/thunar-location-entry.h>
 #include <thunar/thunar-marshal.h>
@@ -198,6 +199,10 @@ static gboolean  thunar_window_action_close_all_windows   (ThunarWindow         
 static gboolean  thunar_window_action_close_tab           (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
 static gboolean  thunar_window_action_close_window        (ThunarWindow           *window,
+                                                           GtkWidget              *menu_item);
+static gboolean  thunar_window_action_undo                (ThunarWindow           *window,
+                                                           GtkWidget              *menu_item);
+static gboolean  thunar_window_action_redo                (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
 static gboolean  thunar_window_action_preferences         (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
@@ -376,100 +381,105 @@ struct _ThunarWindow
   GtkWindow __parent__;
 
   /* support for custom preferences actions */
-  ThunarxProviderFactory *provider_factory;
-  GList                  *thunarx_preferences_providers;
+  ThunarxProviderFactory    *provider_factory;
+  GList                     *thunarx_preferences_providers;
 
-  GFile                  *bookmark_file;
-  GList                  *bookmarks;
-  GFileMonitor           *bookmark_monitor;
+  GFile                     *bookmark_file;
+  GList                     *bookmarks;
+  GFileMonitor              *bookmark_monitor;
 
-  ThunarClipboardManager *clipboard;
+  ThunarClipboardManager   *clipboard;
 
-  ThunarPreferences      *preferences;
+  ThunarPreferences         *preferences;
 
   /* to be able to change folder on "device-pre-unmount" if required */
-  ThunarDeviceMonitor    *device_monitor;
+  ThunarDeviceMonitor       *device_monitor;
 
-  GtkWidget              *grid;
-  GtkWidget              *menubar;
-  gboolean                menubar_visible;
-  GtkWidget              *spinner;
-  GtkWidget              *paned;
-  GtkWidget              *paned_right;
-  GtkWidget              *sidepane_box;
-  GtkWidget              *sidepane;
-  GtkWidget              *sidepane_preview_image;
-  GtkWidget              *right_pane_box;
-  GtkWidget              *right_pane_grid;
-  GtkWidget              *right_pane_preview_image;
-  GtkWidget              *right_pane_image_label;
-  GtkWidget              *right_pane_size_label;
-  GtkWidget              *view_box;
-  GtkWidget              *trash_infobar;
-  GtkWidget              *trash_infobar_restore_button;
-  GtkWidget              *trash_infobar_empty_button;
+  GtkWidget                 *grid;
+  GtkWidget                 *menubar;
+  gboolean                   menubar_visible;
+  GtkWidget                *spinner;
+  GtkWidget                 *paned;
+  GtkWidget                 *paned_right;
+  GtkWidget                 *sidepane_box;
+  GtkWidget                 *sidepane;
+  GtkWidget                 *sidepane_preview_image;
+  GtkWidget                 *right_pane_box;
+  GtkWidget                 *right_pane_grid;
+  GtkWidget                 *right_pane_preview_image;
+  GtkWidget                 *right_pane_image_label;
+  GtkWidget                 *right_pane_size_label;
+  GtkWidget                 *view_box;
+  GtkWidget                 *trash_infobar;
+  GtkWidget                 *trash_infobar_restore_button;
+  GtkWidget                 *trash_infobar_empty_button;
 
   /* split view panes */
-  GtkWidget              *paned_notebooks;
-  GtkWidget              *notebook_selected;
-  GtkWidget              *notebook_left;
-  GtkWidget              *notebook_right;
+  GtkWidget                 *paned_notebooks;
+  GtkWidget                 *notebook_selected;
+  GtkWidget                 *notebook_left;
+  GtkWidget                 *notebook_right;
 
-  GtkWidget              *view;
-  GtkWidget              *statusbar;
+  GtkWidget                 *view;
+  GtkWidget                 *statusbar;
 
   /* search */
-  GtkWidget              *catfish_search_button;
-  gchar                  *search_query;
-  gboolean                is_searching;
-  gboolean                ignore_next_search_update;
+  GtkWidget                 *catfish_search_button;
+  gchar                     *search_query;
+  gboolean                   is_searching;
+  gboolean                   ignore_next_search_update;
 
-  GType                   view_type;
-  GSList                 *view_bindings;
-  guint                   reset_view_type_idle_id;
+  GType                      view_type;
+  GSList                    *view_bindings;
+  guint                      reset_view_type_idle_id;
 
   /* support for two different styles of location bars */
-  GtkWidget              *location_bar;
-  GtkWidget              *location_toolbar;
-  GFileMonitor           *uca_file_monitor;
-  GFile                  *uca_file;
+  GtkWidget                 *location_bar;
+  GtkWidget                 *location_toolbar;
+  GFileMonitor              *uca_file_monitor;
+  GFile                     *uca_file;
 
   /* we need to maintain pointers to be able to toggle sensitivity */
-  GtkWidget              *location_toolbar_item_back;
-  GtkWidget              *location_toolbar_item_forward;
-  GtkWidget              *location_toolbar_item_parent;
-  GtkWidget              *location_toolbar_item_home;
-  GtkWidget              *location_toolbar_item_zoom_in;
-  GtkWidget              *location_toolbar_item_zoom_out;
-  GtkWidget              *location_toolbar_item_search;
-  GtkWidget              *location_toolbar_item_view_menubar;
+  GtkWidget                 *location_toolbar_item_back;
+  GtkWidget                 *location_toolbar_item_forward;
+  GtkWidget                 *location_toolbar_item_parent;
+  GtkWidget                 *location_toolbar_item_home;
+  GtkWidget                 *location_toolbar_item_undo;
+  GtkWidget                 *location_toolbar_item_redo;
+  GtkWidget                 *location_toolbar_item_zoom_in;
+  GtkWidget                 *location_toolbar_item_zoom_out;
+  GtkWidget                 *location_toolbar_item_search;
+  GtkWidget                 *location_toolbar_item_view_menubar;
 
-  ThunarActionManager    *action_mgr;
+  ThunarActionManager       *action_mgr;
 
-  gulong                  signal_handler_id_history_changed;
+  gulong                     signal_handler_id_history_changed;
 
-  ThunarFile             *current_directory;
-  GtkAccelGroup          *accel_group;
+  ThunarFile                *current_directory;
+  GtkAccelGroup             *accel_group;
 
   /* zoom-level support */
-  ThunarZoomLevel         zoom_level;
+  ThunarZoomLevel            zoom_level;
 
-  gboolean                show_hidden;
+  gboolean                   show_hidden;
 
-  gboolean                directory_specific_settings;
+  gboolean                   directory_specific_settings;
 
   /* support to remember window geometry */
-  guint                   save_geometry_timer_id;
+  guint                      save_geometry_timer_id;
 
   /* support to toggle side pane using F9,
    * see the toggle_sidepane() function.
    */
-  GType                   toggle_sidepane_type;
+  GType                      toggle_sidepane_type;
 
   /* Image Preview thumbnail generation */
-  ThunarThumbnailer      *thumbnailer;
-  guint                   thumbnail_request;
-  GdkPixbuf              *preview_image_pixbuf;
+  ThunarThumbnailer         *thumbnailer;
+  guint                      thumbnail_request;
+  GdkPixbuf                 *preview_image_pixbuf;
+
+  /* Reference to the global job operation history */
+  ThunarJobOperationHistory *job_operation_history;
 };
 
 
@@ -485,6 +495,8 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_CLOSE_ALL_WINDOWS,              "<Actions>/ThunarWindow/close-all-windows",               "<Primary><Shift>w",    XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Close _All Windows"),     N_ ("Close all Thunar windows"),                                                     NULL,                      G_CALLBACK (thunar_window_action_close_all_windows),  },
 
     { THUNAR_WINDOW_ACTION_EDIT_MENU,                      "<Actions>/ThunarWindow/edit-menu",                       "",                     XFCE_GTK_MENU_ITEM,       N_ ("_Edit"),                  NULL,                                                                                NULL,                      NULL,                                                 },
+    { THUNAR_WINDOW_ACTION_UNDO,                           "<Actions>/ThunarActionManager/undo",                     "<Primary>Z",           XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Undo"),                  N_ ("Undo the latest operation"),                                                    "edit-undo-symbolic",      G_CALLBACK (thunar_window_action_undo),               },
+    { THUNAR_WINDOW_ACTION_REDO,                           "<Actions>/ThunarActionManager/redo",                     "<Primary><shift>Z",    XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Redo"),                  N_ ("Redo the latest operation"),                                                    "edit-redo-symbolic",      G_CALLBACK (thunar_window_action_redo),               },
     { THUNAR_WINDOW_ACTION_PREFERENCES,                    "<Actions>/ThunarWindow/preferences",                     "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Pr_eferences..."),        N_ ("Edit Thunars Preferences"),                                                     "preferences-system",      G_CALLBACK (thunar_window_action_preferences),        },
 
     { THUNAR_WINDOW_ACTION_VIEW_MENU,                      "<Actions>/ThunarWindow/view-menu",                       "",                     XFCE_GTK_MENU_ITEM,       N_ ("_View"),                  NULL,                                                                                NULL,                      NULL,                                                 },
@@ -983,6 +995,9 @@ thunar_window_init (ThunarWindow *window)
   /* add first notebook and select it*/
   window->notebook_selected = thunar_window_paned_notebooks_add(window);
 
+  /* get a reference of the global job operation history */
+  window->job_operation_history = thunar_job_operation_history_get_default ();
+
   window->location_toolbar = NULL;
   thunar_window_location_toolbar_create (window);
 
@@ -1281,10 +1296,16 @@ thunar_window_update_edit_menu (ThunarWindow *window,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   thunar_gtk_menu_clean (GTK_MENU (menu));
+
+  gtk_menu_item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_UNDO), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  gtk_widget_set_sensitive (gtk_menu_item, thunar_job_operation_history_can_undo ());
+  gtk_menu_item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_REDO), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  gtk_widget_set_sensitive (gtk_menu_item, thunar_job_operation_history_can_redo ());
+  xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
+
   thunar_menu_add_sections (THUNAR_MENU (menu), THUNAR_MENU_SECTION_CUT
                                               | THUNAR_MENU_SECTION_COPY_PASTE
-                                              | THUNAR_MENU_SECTION_TRASH_DELETE
-                                              | THUNAR_MENU_SECTION_UNDO);
+                                              | THUNAR_MENU_SECTION_TRASH_DELETE);
   if (window->view != NULL)
     {
       thunar_standard_view_append_menu_item (THUNAR_STANDARD_VIEW (window->view),
@@ -1322,6 +1343,7 @@ thunar_window_update_edit_menu (ThunarWindow *window,
           g_list_free (thunarx_menu_items);
         }
     }
+
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_PREFERENCES), G_OBJECT (window), GTK_MENU_SHELL (menu));
   gtk_widget_show_all (GTK_WIDGET (menu));
 
@@ -1592,6 +1614,8 @@ thunar_window_finalize (GObject *object)
 
   /* disconnect signal from GtkRecentManager */
   g_signal_handlers_disconnect_by_data (G_OBJECT (gtk_recent_manager_get_default()), window);
+
+  g_object_unref (window->job_operation_history);
 
   (*G_OBJECT_CLASS (thunar_window_parent_class)->finalize) (object);
 }
@@ -3486,6 +3510,26 @@ thunar_window_action_close_window (ThunarWindow *window,
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
+}
+
+
+
+static gboolean
+thunar_window_action_undo (ThunarWindow *window,
+                           GtkWidget    *menu_item)
+{
+  thunar_job_operation_history_undo ();
+  return TRUE; /* return value required in case of shortcut activation, in order to signal that the accel key got handled */
+}
+
+
+
+static gboolean
+thunar_window_action_redo (ThunarWindow *window,
+                           GtkWidget    *menu_item)
+{
+  thunar_job_operation_history_redo ();
+  return TRUE; /* return value required in case of shortcut activation, in order to signal that the accel key got handled */
 }
 
 
@@ -6009,6 +6053,8 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   window->location_toolbar_item_forward      = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_FORWARD, item_order++);
   window->location_toolbar_item_parent       = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_OPEN_PARENT, item_order++);
   window->location_toolbar_item_home         = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_OPEN_HOME, item_order++);
+  window->location_toolbar_item_undo         = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_UNDO, item_order++);
+  window->location_toolbar_item_redo         = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_REDO, item_order++);
   window->location_toolbar_item_zoom_out     = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_ZOOM_OUT, item_order++);
   window->location_toolbar_item_zoom_in      = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_ZOOM_IN, item_order++);
                                                thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_ZOOM_RESET, item_order++);
@@ -6023,6 +6069,9 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   g_signal_connect (G_OBJECT (window->location_toolbar_item_home), "button-press-event", G_CALLBACK (thunar_window_open_home_clicked), G_OBJECT (window));
   g_signal_connect (G_OBJECT (window), "button-press-event", G_CALLBACK (thunar_window_button_press_event), G_OBJECT (window));
   window->signal_handler_id_history_changed = 0;
+
+  g_object_bind_property (G_OBJECT (window->job_operation_history), "can-undo", G_OBJECT (window->location_toolbar_item_undo), "sensitive", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (window->job_operation_history), "can-redo", G_OBJECT (window->location_toolbar_item_redo), "sensitive", G_BINDING_SYNC_CREATE);
 
   /* The UCA shortcuts need to be checked 'by hand', since we dont want to permanently keep menu items for them */
   g_signal_connect (window, "key-press-event", G_CALLBACK (thunar_window_check_uca_key_activation), NULL);

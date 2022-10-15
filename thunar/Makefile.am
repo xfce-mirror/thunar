@@ -123,6 +123,8 @@ thunar_SOURCES =							\
 	thunar-job.h							\
 	thunar-job-operation.c						\
 	thunar-job-operation.h						\
+	thunar-job-operation-history.c					\
+	thunar-job-operation-history.h					\
 	thunar-list-model.c						\
 	thunar-list-model.h						\
 	thunar-location-bar.c						\
