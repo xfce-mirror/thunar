@@ -57,6 +57,10 @@ struct _ThunarJobOperationHistory
   GList   *job_operation_list;
   gint     job_operation_list_max_size;
 
+  /* since the job operation list, lp_undo and lp_redo all refer to the same memory locations,
+   * which may be accessed by different threads, we need to protect this memory with a mutex */
+  GMutex   job_operation_list_mutex;
+
   /* List pointer to the operation which can be undone */
   GList   *lp_undo;
 
@@ -110,6 +114,8 @@ thunar_job_operation_history_init (ThunarJobOperationHistory *self)
   preferences = thunar_preferences_get ();
   g_object_get (G_OBJECT (preferences), "misc-undo-redo-history-size", &(self->job_operation_list_max_size), NULL);
   g_object_unref (preferences);
+
+  g_mutex_init (&self->job_operation_list_mutex);
 }
 
 
@@ -122,6 +128,8 @@ thunar_job_operation_history_finalize (GObject *object)
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION_HISTORY (history));
 
   g_list_free_full (history->job_operation_list, g_object_unref);
+
+  g_mutex_clear (&history->job_operation_list_mutex);
 
   (*G_OBJECT_CLASS (thunar_job_operation_history_parent_class)->finalize) (object);
 }
@@ -205,6 +213,8 @@ thunar_job_operation_history_commit (ThunarJobOperation *job_operation)
       thunar_job_operation_set_end_timestamp (job_operation, g_get_real_time () / (gint64) 1e6);
     }
 
+  g_mutex_lock (&job_operation_history->job_operation_list_mutex);
+
   /* When a new operation is added, drop all previous operations which were undone from the list */
   if (job_operation_history->lp_redo != NULL)
     {
@@ -231,6 +241,8 @@ thunar_job_operation_history_commit (ThunarJobOperation *job_operation)
       g_list_free_full (first, g_object_unref);
     }
 
+  g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
+
   /* Notify all subscribers of our properties */
   g_object_notify (G_OBJECT (job_operation_history), "can-undo");
   g_object_notify (G_OBJECT (job_operation_history), "can-redo");
@@ -254,8 +266,13 @@ thunar_job_operation_history_update_trash_timestamps (ThunarJobOperation *job_op
   if (thunar_job_operation_get_kind (job_operation) != THUNAR_JOB_OPERATION_KIND_TRASH)
     return;
 
+  g_mutex_lock (&job_operation_history->job_operation_list_mutex);
+
   if (job_operation_history->lp_undo == NULL)
-    return;
+    {
+      g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
+      return;
+    }
 
   if (thunar_job_operation_compare ( THUNAR_JOB_OPERATION (job_operation_history->lp_undo->data), job_operation) == 0)
     {
@@ -270,6 +287,8 @@ thunar_job_operation_history_update_trash_timestamps (ThunarJobOperation *job_op
       thunar_job_operation_set_start_timestamp (THUNAR_JOB_OPERATION (job_operation_history->lp_undo->data), start_timestamp);
       thunar_job_operation_set_end_timestamp (THUNAR_JOB_OPERATION (job_operation_history->lp_undo->data), end_timestamp);
     }
+
+  g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
 }
 
 
@@ -289,6 +308,8 @@ thunar_job_operation_history_undo (void)
   GError             *err = NULL;
   const GList        *overwritten_files;
 
+  g_mutex_lock (&job_operation_history->job_operation_list_mutex);
+
   /* Show a warning in case there is no operation to undo */
   if (job_operation_history->lp_undo == NULL)
     {
@@ -296,6 +317,7 @@ thunar_job_operation_history_undo (void)
                                 _("No operation which can be undone has been performed yet.\n"
                                   "(For some operations undo is not supported)"),
                                 _("There is no operation to undo"));
+      g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
       return;
     }
 
@@ -314,6 +336,7 @@ thunar_job_operation_history_undo (void)
                                 _("The operation you are trying to undo does not have any files "
                                   "associated with it, and thus cannot be undone. "),
                                 _("%s operation cannot be undone"), thunar_job_operation_get_kind_nick (operation_marker));
+      g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
       return;
     }
 
@@ -349,6 +372,8 @@ thunar_job_operation_history_undo (void)
     if (err == NULL)
       thunar_notify_undo (operation_marker);
 
+    g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
+
     /* Notify all subscribers of our properties */
     g_object_notify (G_OBJECT (job_operation_history), "can-undo");
     g_object_notify (G_OBJECT (job_operation_history), "can-redo");
@@ -370,12 +395,15 @@ thunar_job_operation_history_redo (void)
   GError             *err = NULL;
   const GList        *overwritten_files;
 
+  g_mutex_lock (&job_operation_history->job_operation_list_mutex);
+
   /* Show a warning in case there is no operation to undo */
   if (job_operation_history->lp_redo == NULL)
     {
       xfce_dialog_show_warning (NULL,
                                 _("No operation which can be redone available.\n"),
                                 _("There is no operation to redo"));
+      g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
       return;
     }
 
@@ -394,6 +422,7 @@ thunar_job_operation_history_redo (void)
                                 _("The operation you are trying to redo does not have any files "
                                   "associated with it, and thus cannot be redone. "),
                                 _("%s operation cannot be redone"), thunar_job_operation_get_kind_nick (operation_marker));
+      g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
       return;
     }
 
@@ -427,6 +456,8 @@ thunar_job_operation_history_redo (void)
     if (err == NULL)
       thunar_notify_redo (operation_marker);
 
+    g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
+
     /* Notify all subscribers of our properties */
     g_object_notify (G_OBJECT (job_operation_history), "can-undo");
     g_object_notify (G_OBJECT (job_operation_history), "can-redo");
@@ -443,12 +474,21 @@ thunar_job_operation_history_redo (void)
 gboolean
 thunar_job_operation_history_can_undo (void)
 {
-  if (job_operation_history->lp_undo == NULL)
-    return FALSE;
- 
-  if (thunar_job_operation_empty (job_operation_history->lp_undo->data))
-    return FALSE;
+  g_mutex_lock (&job_operation_history->job_operation_list_mutex);
 
+  if (job_operation_history->lp_undo == NULL)
+    {
+      g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
+      return FALSE;
+    }
+
+  if (thunar_job_operation_empty (job_operation_history->lp_undo->data))
+    {
+      g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
+      return FALSE;
+    }
+
+  g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
   return TRUE;
 }
 
@@ -463,12 +503,21 @@ thunar_job_operation_history_can_undo (void)
 gboolean
 thunar_job_operation_history_can_redo (void)
 {
+  g_mutex_lock (&job_operation_history->job_operation_list_mutex);
+
   if (job_operation_history->lp_redo == NULL)
-    return FALSE;
+    {
+      g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
+      return FALSE;
+    }
 
   if (thunar_job_operation_empty (job_operation_history->lp_redo->data))
-    return FALSE;
+    {
+      g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
+      return FALSE;
+    }
 
+  g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
   return TRUE;
 }
 
