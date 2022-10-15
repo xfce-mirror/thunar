@@ -208,8 +208,8 @@ thunar_job_operation_history_commit (ThunarJobOperation *job_operation)
     {
       GList* new_list = NULL;
       for (GList* lp = job_operation_history->job_operation_list;
-          lp != NULL && lp != job_operation_history->lp_redo;
-          lp = lp->next)
+           lp != NULL && lp != job_operation_history->lp_redo;
+           lp = lp->next)
         new_list = g_list_append (new_list, g_object_ref (lp->data));
       g_list_free_full (job_operation_history->job_operation_list, g_object_unref);
       job_operation_history->job_operation_list = new_list;
