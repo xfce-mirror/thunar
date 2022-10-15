@@ -17,37 +17,23 @@
  */
 
 #include <thunar/thunar-application.h>
-#include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-io-jobs.h>
 #include <thunar/thunar-job-operation.h>
-#include <thunar/thunar-notify.h>
-#include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 
 /**
  * SECTION:thunar-job-operation
- * @Short_description: Manages the logging of job operations (copy, move etc.) and undoing and redoing them
+ * @Short_description: Stores a job operation (copy, move, trash, rename, etc.)
  * @Title: ThunarJobOperation
  *
  * The #ThunarJobOperation class represents a single 'job operation', a file operation like copying, moving
- * etc. that can be logged centrally and undone.
+ * trashing, renaming etc. and it's source/target locations.
  *
- * The @job_operation_list is a #GList of such job operations. It is not necessary that @job_operation_list
- * points to the head of the list; it points to the 'marked operation', the operation that reflects
- * the latest state of the operation history.
- * Usually, this will be the latest performed operation, which hasn't been undone yet.
  */
 
-static void                   thunar_job_operation_dispose            (GObject            *object);
 static void                   thunar_job_operation_finalize           (GObject            *object);
-static ThunarJobOperation    *thunar_job_operation_new_invert         (ThunarJobOperation *job_operation);
-static void                   thunar_job_operation_execute            (ThunarJobOperation *job_operation,
-                                                                       GError            **error);
 static gint                   thunar_job_operation_is_ancestor        (gconstpointer       descendant,
                                                                        gconstpointer       ancestor);
-static gint                   thunar_job_operation_compare            (ThunarJobOperation *operation1,
-                                                                       ThunarJobOperation *operation2);
 static void                   thunar_job_operation_restore_from_trash (ThunarJobOperation *operation,
                                                                        GError            **error);
 
@@ -60,7 +46,9 @@ struct _ThunarJobOperation
   ThunarJobOperationKind  operation_kind;
   GList                  *source_file_list;
   GList                  *target_file_list;
-  GList                  *overwritten_file_list;
+
+  /* Files overwritten as a part of an operation */
+  GList                  *overwritten_files;
 
   /**
    * Optional timestampes (in seconds) which tell when the operation was started and ended.
@@ -72,29 +60,15 @@ struct _ThunarJobOperation
 
 G_DEFINE_TYPE (ThunarJobOperation, thunar_job_operation, G_TYPE_OBJECT)
 
-/* List of job operations which were logged */
-static GList *job_operation_list = NULL;
-static gint   job_operation_list_max_size;
 
-/* List pointer to the operation which can be undone */
-static GList *lp_undo_job_operation = NULL;
-
-/* List pointer to the operation which can be redone */
-static GList *lp_redo_job_operation = NULL;
 
 static void
 thunar_job_operation_class_init (ThunarJobOperationClass *klass)
 {
   GObjectClass      *gobject_class;
-  ThunarPreferences *preferences;
 
   gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->dispose = thunar_job_operation_dispose;
   gobject_class->finalize = thunar_job_operation_finalize;
-
-  preferences = thunar_preferences_get ();
-  g_object_get (G_OBJECT (preferences), "misc-undo-redo-history-size", &job_operation_list_max_size, NULL);
-  g_object_unref (preferences);
 }
 
 
@@ -105,23 +79,7 @@ thunar_job_operation_init (ThunarJobOperation *self)
   self->operation_kind = THUNAR_JOB_OPERATION_KIND_COPY;
   self->source_file_list = NULL;
   self->target_file_list = NULL;
-  self->overwritten_file_list = NULL;
-}
-
-
-
-static void
-thunar_job_operation_dispose (GObject *object)
-{
-  ThunarJobOperation *op;
-
-  op = THUNAR_JOB_OPERATION (object);
-
-  g_list_free_full (op->source_file_list, g_object_unref);
-  g_list_free_full (op->target_file_list, g_object_unref);
-  g_list_free_full (op->overwritten_file_list, g_object_unref);
-
-  (*G_OBJECT_CLASS (thunar_job_operation_parent_class)->dispose) (object);
+  self->overwritten_files = NULL;
 }
 
 
@@ -129,6 +87,14 @@ thunar_job_operation_dispose (GObject *object)
 static void
 thunar_job_operation_finalize (GObject *object)
 {
+  ThunarJobOperation *op;
+
+  op = THUNAR_JOB_OPERATION (object);
+
+  g_list_free_full (op->source_file_list, g_object_unref);
+  g_list_free_full (op->target_file_list, g_object_unref);
+  g_list_free_full (op->overwritten_files, g_object_unref);
+
   (*G_OBJECT_CLASS (thunar_job_operation_parent_class)->finalize) (object);
 }
 
@@ -208,88 +174,112 @@ thunar_job_operation_overwrite (ThunarJobOperation *job_operation,
 {
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
-  job_operation->overwritten_file_list = thunar_g_list_append_deep (job_operation->overwritten_file_list, overwritten_file);
+  job_operation->overwritten_files = thunar_g_list_append_deep (job_operation->overwritten_files, overwritten_file);
 }
 
 
 
 /**
- * thunar_job_operation_commit:
+ * thunar_job_operation_get_timestamps:
  * @job_operation: a #ThunarJobOperation
+ * @start_timestamp: Will be set to the current start_timestamp of the #ThunarJobOperation
+ * @end_timestamp: Will be set to the current end_timestamp of the #ThunarJobOperation
  *
- * Commits, or registers, the given thunar_job_operation, adding the job operation
- * to the job operation list.
+ * Getter for both timestamps
  **/
 void
-thunar_job_operation_commit (ThunarJobOperation *job_operation)
+thunar_job_operation_get_timestamps (ThunarJobOperation *job_operation,
+                                     gint64             *start_timestamp,
+                                     gint64             *end_timestamp)
 {
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
-  if (job_operation->operation_kind == THUNAR_JOB_OPERATION_KIND_TRASH)
-    {
-      /* set the timestamp for the operation, in seconds. g_get_real_time gives
-       * us the time in microseconds, so we need to divide by 1e6. */
-      job_operation->end_timestamp = g_get_real_time () / (gint64) 1e6;
-    }
-
-  /* When a new operation is added, drop all previous operations which where undone from the list */
-  if (lp_redo_job_operation != NULL)
-    {
-      GList* new_list = NULL;
-      for (GList* lp = job_operation_list; lp != NULL && lp != lp_redo_job_operation; lp = lp->next)
-        new_list = g_list_append (new_list, g_object_ref (lp->data));
-      g_list_free_full (job_operation_list, g_object_unref);
-      job_operation_list = new_list;
-    }
-
-  /* Add the new operation to our list */
-  job_operation_list = g_list_append (job_operation_list, g_object_ref (job_operation));
-
-  /* reset the undo pointer to latest operation and clear the redo pointer */
-  lp_undo_job_operation = g_list_last (job_operation_list);
-  lp_redo_job_operation = NULL;
-
-  /* Limit the size of the list */
-  if (job_operation_list_max_size != -1 && g_list_length (job_operation_list) > (guint)job_operation_list_max_size)
-    {
-      GList* first = g_list_first (job_operation_list);
-      job_operation_list = g_list_remove_link (job_operation_list, first);
-      g_list_free_full (first, g_object_unref);
-    }
+  if (start_timestamp != NULL)
+    *start_timestamp = job_operation->start_timestamp;
+  if (end_timestamp != NULL)
+    *end_timestamp = job_operation->end_timestamp;
 }
 
 
 
 /**
- * thunar_job_operation_update_trash_timestamps:
+ * thunar_job_operation_set_start_timestamp:
  * @job_operation: a #ThunarJobOperation
+ * @start_timestamp: the new start_timestamp of the #ThunarJobOperation
  *
- * Only updates the timestamps of the latest trash operation
- * That is needed after 'redo' of a 'trash' operation,
- * since it requires to set new timestamps (otherwise 'undo' of that operation wont work afterwards)
+ * Setter for start_timestamp
  **/
 void
-thunar_job_operation_update_trash_timestamps (ThunarJobOperation *job_operation)
+thunar_job_operation_set_start_timestamp (ThunarJobOperation *job_operation,
+                                          gint64              start_timestamp)
 {
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
-  if (job_operation->operation_kind != THUNAR_JOB_OPERATION_KIND_TRASH)
-    return;
-
-  if (lp_undo_job_operation == NULL)
-    return;
-
-  if (thunar_job_operation_compare ( THUNAR_JOB_OPERATION (lp_undo_job_operation->data), job_operation) == 0)
-    {
-      THUNAR_JOB_OPERATION (lp_undo_job_operation->data)->start_timestamp = job_operation->start_timestamp;
-
-      /* set the timestamp for the operation, in seconds. g_get_real_time gives
-       * us the time in microseconds, so we need to divide by 1e6. */
-      THUNAR_JOB_OPERATION (lp_undo_job_operation->data)->end_timestamp = g_get_real_time () / (gint64) 1e6;
-    }
+  job_operation->start_timestamp = start_timestamp;
 }
 
 
+
+/**
+ * thunar_job_operation_set_end_timestamp:
+ * @job_operation: a #ThunarJobOperation
+ * @start_timestamp: the new end_timestamp of the #ThunarJobOperation
+ *
+ * Setter for end_timestamp
+ **/
+void
+thunar_job_operation_set_end_timestamp (ThunarJobOperation *job_operation,
+                                        gint64              end_timestamp)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
+
+  job_operation->end_timestamp = end_timestamp;
+}
+
+
+
+/* thunar_job_operation_get_kind:
+ * @job_operation: A #ThunarJobOperation
+ *
+ * Get the kind of the operation
+ *
+ * Return value: The kind of the operation
+ **/
+ThunarJobOperationKind
+thunar_job_operation_get_kind (ThunarJobOperation *job_operation)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_JOB_OPERATION (job_operation), THUNAR_JOB_OPERATION_KIND_COPY);
+   return job_operation->operation_kind;
+}
+
+
+
+/* thunar_job_operation_get_overwritten_files:
+ * @job_operation: A #ThunarJobOperation
+ *
+ * Get the overwritten_files of the operation
+ *
+ * Return value: The overwritten_files of the operation
+ **/
+const GList*
+thunar_job_operation_get_overwritten_files (ThunarJobOperation *job_operation)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_JOB_OPERATION (job_operation), NULL);
+   return job_operation->overwritten_files;
+}
+
+
+
+gboolean
+thunar_job_operation_empty (ThunarJobOperation *job_operation)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_JOB_OPERATION (job_operation), TRUE);
+
+  if (job_operation->source_file_list == NULL && job_operation->target_file_list == NULL)
+    return TRUE;
+
+  return FALSE;
+}
 
 /* thunar_job_operation_get_kind_nick:
  * @job_operation: A #ThunarJobOperation
@@ -310,202 +300,6 @@ thunar_job_operation_get_kind_nick (ThunarJobOperation *job_operation)
   enum_value = g_enum_get_value (enum_class, job_operation->operation_kind);
 
   return enum_value->value_nick;
-}
-
-
-
-/**
- * thunar_job_operation_undo:
- *
- * Undoes the latest job operation, by executing its inverse
- **/
-void
-thunar_job_operation_undo (void)
-{
-  ThunarJobOperation *operation_marker;
-  ThunarJobOperation *inverted_operation;
-  GString            *warning_body;
-  gchar              *file_uri;
-  GError             *err = NULL;
-
-  /* Show a warning in case there is no operation to undo */
-  if (lp_undo_job_operation == NULL)
-    {
-      xfce_dialog_show_warning (NULL,
-                                _("No operation which can be undone has been performed yet.\n"
-                                  "(For some operations undo is not supported)"),
-                                _("There is no operation to undo"));
-      return;
-    }
-
-  /* the 'marked' operation */
-  operation_marker = lp_undo_job_operation->data;
-
-  /* fix position undo/redo pointers */
-  lp_redo_job_operation = lp_undo_job_operation;
-  lp_undo_job_operation = g_list_previous (lp_undo_job_operation);
-
-  /* warn the user if the previous operation is empty, since then there is nothing to undo */
-  if (operation_marker->source_file_list == NULL && operation_marker->target_file_list == NULL)
-    {
-
-      xfce_dialog_show_warning (NULL,
-                                _("The operation you are trying to undo does not have any files "
-                                  "associated with it, and thus cannot be undone. "),
-                                _("%s operation cannot be undone"), thunar_job_operation_get_kind_nick (operation_marker));
-      return;
-    }
-
-    /* if there were files overwritten in the operation, warn about them */
-    if (operation_marker->overwritten_file_list != NULL)
-      {
-        gint index;
-
-        index = 1; /* one indexed for the dialog */
-        warning_body = g_string_new (_("The following files were overwritten in the operation "
-                                       "you are trying to undo and cannot be restored:\n"));
-
-        for (GList *lp = operation_marker->overwritten_file_list; lp != NULL; lp = lp->next, index++)
-          {
-            file_uri = g_file_get_uri (lp->data);
-            g_string_append_printf (warning_body, "%d. %s\n", index, file_uri);
-            g_free (file_uri);
-          }
-
-        xfce_dialog_show_warning (NULL,
-                                  warning_body->str,
-                                  _("%s operation can only be partially undone"),
-                                  thunar_job_operation_get_kind_nick (operation_marker));
-
-        g_string_free (warning_body, TRUE);
-      }
-
-    inverted_operation = thunar_job_operation_new_invert (operation_marker);
-    thunar_job_operation_execute (inverted_operation, &err);
-    g_object_unref (inverted_operation);
-
-    if (err == NULL)
-      thunar_notify_undo (operation_marker);
-}
-
-
-
-/**
- * thunar_job_operation_redo:
- *
- * Redoes the last job operation which had been undone (if any)
- **/
-void
-thunar_job_operation_redo (void)
-{
-  ThunarJobOperation *operation_marker;
-  GString            *warning_body;
-  gchar              *file_uri;
-  GError             *err = NULL;
-
-  /* Show a warning in case there is no operation to undo */
-  if (lp_redo_job_operation == NULL)
-    {
-      xfce_dialog_show_warning (NULL,
-                                _("No operation which can be redone available.\n"),
-                                _("There is no operation to redo"));
-      return;
-    }
-
-  /* the 'marked' operation */
-  operation_marker = lp_redo_job_operation->data;
-
-  /* fix position undo/redo pointers */
-  lp_undo_job_operation = lp_redo_job_operation;
-  lp_redo_job_operation = g_list_next (lp_redo_job_operation);
-
-  /* warn the user if the previous operation is empty, since then there is nothing to undo */
-  if (operation_marker->source_file_list == NULL && operation_marker->target_file_list == NULL)
-    {
-
-      xfce_dialog_show_warning (NULL,
-                                _("The operation you are trying to redo does not have any files "
-                                  "associated with it, and thus cannot be redone. "),
-                                _("%s operation cannot be redone"), thunar_job_operation_get_kind_nick (operation_marker));
-      return;
-    }
-
-    /* if there were files overwritten in the operation, warn about them */
-    if (operation_marker->overwritten_file_list != NULL)
-      {
-        gint index;
-
-        index = 1; /* one indexed for the dialog */
-        warning_body = g_string_new (_("The following files were overwritten in the operation "
-                                       "you are trying to redo and cannot be restored:\n"));
-
-        for (GList *lp = operation_marker->overwritten_file_list; lp != NULL; lp = lp->next, index++)
-          {
-            file_uri = g_file_get_uri (lp->data);
-            g_string_append_printf (warning_body, "%d. %s\n", index, file_uri);
-            g_free (file_uri);
-          }
-
-        xfce_dialog_show_warning (NULL,
-                                  warning_body->str,
-                                  _("%s operation can only be partially redone"),
-                                  thunar_job_operation_get_kind_nick (operation_marker));
-
-        g_string_free (warning_body, TRUE);
-      }
-
-    thunar_job_operation_execute (operation_marker, &err);
-
-    if (err == NULL)
-      thunar_notify_redo (operation_marker);
-}
-
-
-
-/* thunar_job_operation_can_undo:
- *
- * Returns whether or not there is an operation on the job operation list that can be undone.
- *
- * Return value: A gboolean representing whether or not there is an undoable operation
- **/
-gboolean
-thunar_job_operation_can_undo (void)
-{
-  ThunarJobOperation *operation_marker;
-
-  if (lp_undo_job_operation == NULL)
-    return FALSE;
- 
-  operation_marker = lp_undo_job_operation->data;
-
-  if (operation_marker->source_file_list == NULL && operation_marker->target_file_list == NULL)
-    return FALSE;
-
-  return TRUE;
-}
-
-
-
-/* thunar_job_operation_can_redo:
- *
- * Returns whether or not there is an operation on the job operation list that can be redone.
- *
- * Return value: A gboolean representing whether or not there is an redoable operation
- **/
-gboolean
-thunar_job_operation_can_redo (void)
-{
-  ThunarJobOperation *operation_marker;
-
-  if (lp_redo_job_operation == NULL)
-    return FALSE;
-
-  operation_marker = lp_redo_job_operation->data;
-
-  if (operation_marker->source_file_list == NULL && operation_marker->target_file_list == NULL)
-    return FALSE;
-
-  return TRUE;
 }
 
 
@@ -585,7 +379,7 @@ thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
  *
  * Executes the given @job_operation, depending on what kind of an operation it is.
  **/
-static void
+void
 thunar_job_operation_execute (ThunarJobOperation *job_operation,
                               GError            **error)
 {
@@ -733,7 +527,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
       case THUNAR_JOB_OPERATION_KIND_TRASH:
         /* Special case: 'THUNAR_JOB_OPERATION_KIND_TRASH' only can be triggered by redo */
         /* Since we as well need to update the timestamps, we have to use THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS */
-        /* 'thunar_job_operation_update_trash_timestamps' will then take care on update the existing job operation instead of adding a new one */
+        /* 'thunar_job_operation_history_update_trash_timestamps' will then take care on update the existing job operation instead of adding a new one */
         thunar_application_trash (application, NULL,
                                   job_operation->source_file_list,
                                   THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS);
@@ -791,7 +585,7 @@ thunar_job_operation_is_ancestor (gconstpointer ancestor,
  * Return value: %0 if both operations match
  *               %1 otherwise
  **/
-static gint
+gint
 thunar_job_operation_compare (ThunarJobOperation *operation1,
                               ThunarJobOperation *operation2)
 {
