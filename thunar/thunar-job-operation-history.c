@@ -203,7 +203,7 @@ thunar_job_operation_history_commit (ThunarJobOperation *job_operation)
       thunar_job_operation_set_end_timestamp (job_operation, g_get_real_time () / (gint64) 1e6);
     }
 
-  /* When a new operation is added, drop all previous operations which where undone from the list */
+  /* When a new operation is added, drop all previous operations which were undone from the list */
   if (job_operation_history->lp_redo != NULL)
     {
       GList* new_list = NULL;
