@@ -27,7 +27,7 @@
  * @Title: ThunarJobOperation
  *
  * The #ThunarJobOperation class represents a single 'job operation', a file operation like copying, moving
- * trashing, renaming etc. and it's source/target locations.
+ * trashing, renaming etc. and its source/target locations.
  *
  */
 
