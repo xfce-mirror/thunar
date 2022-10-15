@@ -51,7 +51,7 @@ struct _ThunarJobOperation
   GList                  *overwritten_files;
 
   /**
-   * Optional timestampes (in seconds) which tell when the operation was started and ended.
+   * Optional timestamps (in seconds) which tell when the operation was started and ended.
    * Only used for trash/restore operations.
    **/
   gint64                  start_timestamp;
@@ -565,7 +565,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
  **/
 static gint
 thunar_job_operation_is_ancestor (gconstpointer ancestor,
-             gconstpointer descendant)
+                                  gconstpointer descendant)
 {
   if (thunar_g_file_is_descendant (G_FILE (descendant), G_FILE (ancestor)))
     return 0;
@@ -625,8 +625,8 @@ thunar_job_operation_compare (ThunarJobOperation *operation1,
  * Helper function to restore files based on the given @operation
  **/
 static void
-thunar_job_operation_restore_from_trash (ThunarJobOperation *operation,
-                         GError            **error)
+thunar_job_operation_restore_from_trash (ThunarJobOperation  *operation,
+                                         GError             **error)
 {
   GFileEnumerator   *enumerator;
   GFileInfo         *info;
