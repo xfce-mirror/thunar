@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-abstract-icon-view.h>
 #include <thunar/thunar-gallery-view.h>
 #include <thunar/thunar-private.h>
 
@@ -46,17 +47,17 @@ static void         thunar_gallery_view_zoom_level_changed     (ThunarStandardVi
 
 struct _ThunarGalleryViewClass
 {
-  ThunarAbstractGalleryViewClass __parent__;
+  ThunarAbstractIconViewClass __parent__;
 };
 
 struct _ThunarGalleryView
 {
-  ThunarAbstractGalleryView __parent__;
+  ThunarAbstractIconView __parent__;
 };
 
 
 
-G_DEFINE_TYPE (ThunarGalleryView, thunar_gallery_view, THUNAR_TYPE_ABSTRACT_GALLERY_VIEW)
+G_DEFINE_TYPE (ThunarGalleryView, thunar_gallery_view, THUNAR_TYPE_ABSTRACT_ICON_VIEW)
 
 
 
@@ -96,14 +97,24 @@ thunar_gallery_view_class_init (ThunarGalleryViewClass *klass)
 static void
 thunar_gallery_view_init (ThunarGalleryView *gallery_view)
 {
+  /* Get all the cells in the layout, repack them and don't pack the name_renderer */
+  GtkCellArea *cell_area;
+  GtkWidget   *view;
+
+  /* remove all cell renderers in the layout */
+  view = gtk_bin_get_child (GTK_BIN (gallery_view));
+  gtk_cell_layout_clear (GTK_CELL_LAYOUT (view));
+
+  /* add the icon renderer, but not the name renderer */
+  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (gallery_view)->icon_renderer), "follow-state", TRUE, "rounded-corners", TRUE, NULL);
+  gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (gallery_view)->icon_renderer, FALSE);
+  gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (gallery_view)->icon_renderer,
+                                 "file", THUNAR_COLUMN_FILE);
+
   /* setup the icon renderer */
   g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (gallery_view)->icon_renderer),
                 "ypad", 1u,
-                NULL);
-
-  /* setup the name renderer */
-  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (gallery_view)->name_renderer),
-                "wrap-mode", PANGO_WRAP_WORD_CHAR,
+                "square-icons", TRUE,
                 NULL);
 
   /* synchronize the "text-beside-icons" property with the global preference */
