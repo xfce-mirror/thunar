@@ -43,9 +43,6 @@ static void         thunar_abstract_gallery_view_unselect_all            (Thunar
 static void         thunar_abstract_gallery_view_selection_invert        (ThunarStandardView           *standard_view);
 static void         thunar_abstract_gallery_view_select_path             (ThunarStandardView           *standard_view,
                                                                           GtkTreePath                  *path);
-static void         thunar_abstract_gallery_view_set_cursor              (ThunarStandardView           *standard_view,
-                                                                          GtkTreePath                  *path,
-                                                                          gboolean                      start_editing);
 static void         thunar_abstract_gallery_view_scroll_to_path          (ThunarStandardView           *standard_view,
                                                                           GtkTreePath                  *path,
                                                                           gboolean                      use_align,
@@ -118,7 +115,6 @@ thunar_abstract_gallery_view_class_init (ThunarAbstractGalleryViewClass *klass)
   thunarstandard_view_class->unselect_all = thunar_abstract_gallery_view_unselect_all;
   thunarstandard_view_class->selection_invert = thunar_abstract_gallery_view_selection_invert;
   thunarstandard_view_class->select_path = thunar_abstract_gallery_view_select_path;
-  thunarstandard_view_class->set_cursor = thunar_abstract_gallery_view_set_cursor;
   thunarstandard_view_class->scroll_to_path = thunar_abstract_gallery_view_scroll_to_path;
   thunarstandard_view_class->get_path_at_pos = thunar_abstract_gallery_view_get_path_at_pos;
   thunarstandard_view_class->get_visible_range = thunar_abstract_gallery_view_get_visible_range;
@@ -184,12 +180,6 @@ thunar_abstract_gallery_view_init (ThunarAbstractGalleryView *abstract_gallery_v
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_gallery_view)->icon_renderer, FALSE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_gallery_view)->icon_renderer,
                                  "file", THUNAR_COLUMN_FILE);
-
-  /* add the name renderer, but make it invisible */
-  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_gallery_view)->name_renderer), "visible", FALSE, NULL);
-  gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_gallery_view)->name_renderer, TRUE);
-  gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_gallery_view)->name_renderer,
-                                 "text", THUNAR_COLUMN_NAME);
 
   /* update the icon view on size-allocate events */
   /* TODO: issue not reproducible anymore as of gtk 3.24.18
@@ -261,28 +251,6 @@ thunar_abstract_gallery_view_select_path (ThunarStandardView *standard_view,
 {
   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_GALLERY_VIEW (standard_view));
   exo_icon_view_select_path (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), path);
-}
-
-
-
-static void
-thunar_abstract_gallery_view_set_cursor (ThunarStandardView *standard_view,
-                                         GtkTreePath        *path,
-                                         gboolean            start_editing)
-{
-  GtkCellRendererMode mode;
-
-  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_GALLERY_VIEW (standard_view));
-
-  /* make sure the name renderer is editable */
-  g_object_get ( G_OBJECT (standard_view->name_renderer), "mode", &mode, NULL);
-  g_object_set ( G_OBJECT (standard_view->name_renderer), "mode", GTK_CELL_RENDERER_MODE_EDITABLE, NULL);
-
-  /* tell the abstract_icon view to start editing the given item */
-  exo_icon_view_set_cursor (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), path, standard_view->name_renderer, start_editing);
-
-  /* reset the name renderer mode */
-  g_object_set (G_OBJECT (standard_view->name_renderer), "mode", mode, NULL);
 }
 
 
