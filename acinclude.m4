@@ -39,7 +39,7 @@ AM_CONDITIONAL([THUNAR_PLUGIN_SBR], [test x"$ac_bm_thunar_plugin_sbr" = x"yes"])
 AC_MSG_RESULT([$ac_bm_thunar_plugin_sbr])
 
 dnl Check for PCRE (for the "Search & Replace" renamer)
-XDT_CHECK_OPTIONAL_PACKAGE([PCRE], [libpcre], [6.0], [pcre], [Regular expression support])
+XDT_CHECK_OPTIONAL_PACKAGE([PCRE], [libpcre2-8], [10.0], [pcre2], [Regular expression support])
 ])
 
 
