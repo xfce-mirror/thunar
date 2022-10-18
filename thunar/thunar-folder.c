@@ -87,9 +87,6 @@ static void     thunar_folder_monitor                     (GFileMonitor         
                                                            GFile                  *other_file,
                                                            GFileMonitorEvent       event_type,
                                                            gpointer                user_data);
-static gboolean thunar_folder_get_file_count_in_job       (ThunarJob              *job,
-                                                           GArray                 *param_values,
-                                                           GError                **error);
 static void     thunar_folder_file_count_callback         (ExoJob  *job,
                                                            gpointer user_data);
 
@@ -1053,69 +1050,13 @@ thunar_folder_get_file_count (ThunarFolder *folder,
   folder->file_count_timestamp = g_get_real_time () / (guint64) 1e6;
 
   /* Set up a job to actually enumerate over the folder's contents and get its file count */
-  job = thunar_simple_job_new (thunar_folder_get_file_count_in_job, 1,
-                               THUNAR_TYPE_FOLDER, folder);
+  job = thunar_io_jobs_count_files (file);
 
   /* set up the signal on finish to update the row model and ask for redraw */
   g_signal_connect (job, "finished", G_CALLBACK (thunar_folder_file_count_callback), model);
   exo_job_launch (EXO_JOB (job));
 
   return folder->file_count;
-}
-
-
-
-static gboolean
-thunar_folder_get_file_count_in_job (ThunarJob *job,
-                                     GArray    *param_values,
-                                     GError   **error)
-{
-  GError          *err = NULL;
-  ThunarFolder    *folder;
-  ThunarFile      *file;
-  GFileEnumerator *enumerator;
-
-  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
-  _thunar_return_val_if_fail (param_values != NULL, FALSE);
-  _thunar_return_val_if_fail (param_values->len == 1, FALSE);
-  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-
-  folder = THUNAR_FOLDER (g_value_get_object (&g_array_index (param_values, GValue, 0)));
-
-  /* If the content type loader already loaded the file-list, just count it */
-  if (folder->files != NULL)
-    {
-      folder->file_count = g_list_length (folder->files);
-      return TRUE;
-    }
-
-  file = thunar_folder_get_corresponding_file (folder);
-  enumerator = g_file_enumerate_children (thunar_file_get_file (file), NULL,
-                                          G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                          NULL, &err);
-
-  if (err != NULL)
-    {
-      g_propagate_error (error, err);
-      return FALSE;
-    }
-
-  folder->file_count = 0;
-  for (GFileInfo *child_info = g_file_enumerator_next_file (enumerator, NULL, &err);
-       child_info != NULL;
-       child_info = g_file_enumerator_next_file (enumerator, NULL, &err))
-    {
-      if (err != NULL)
-        {
-          g_propagate_error (error, err);
-          return FALSE;
-        }
-
-      (folder->file_count)++;
-      g_object_unref (child_info);
-    }
-
-    return TRUE;
 }
 
 
