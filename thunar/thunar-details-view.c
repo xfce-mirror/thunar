@@ -251,6 +251,10 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   /* enable rubberbanding (if supported) */
   gtk_tree_view_set_rubber_banding (GTK_TREE_VIEW (tree_view), TRUE);
 
+  /* Enable tree view */
+  g_object_set (THUNAR_STANDARD_VIEW (details_view)->model, "tree-view", TRUE, NULL);
+  gtk_tree_view_set_show_expanders (GTK_TREE_VIEW (tree_view), TRUE);
+
   /* connect to the default column model */
   details_view->column_model = thunar_column_model_get_default ();
   g_signal_connect (G_OBJECT (details_view->column_model), "columns-changed", G_CALLBACK (thunar_details_view_columns_changed), details_view);
@@ -434,6 +438,8 @@ thunar_details_view_finalize (GObject *object)
 
   g_signal_handlers_disconnect_by_func (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences),
                                         thunar_details_view_highlight_option_changed, details_view);
+
+  g_object_set (THUNAR_STANDARD_VIEW (details_view)->model, "tree-view", FALSE, NULL);
 
   (*G_OBJECT_CLASS (thunar_details_view_parent_class)->finalize) (object);
 }
