@@ -31,10 +31,11 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-enum-types.h>
+#include <thunar/thunar-file.h>
 #include <thunar/thunar-gio-extensions.h>
-#include <thunar/thunar-io-scan-directory.h>
-#include <thunar/thunar-io-jobs.h>
 #include <thunar/thunar-io-jobs-util.h>
+#include <thunar/thunar-io-jobs.h>
+#include <thunar/thunar-io-scan-directory.h>
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-simple-job.h>
@@ -1445,3 +1446,71 @@ thunar_io_jobs_rename_file (ThunarFile            *file,
                                 G_TYPE_STRING, display_name,
                                 THUNAR_TYPE_OPERATION_LOG_MODE, log_mode);
 }
+
+
+
+static gboolean
+_thunar_io_jobs_count (ThunarJob *job,
+                       GArray    *param_values,
+                       GError   **error)
+{
+  GError *err = NULL;
+  ThunarFolder    *folder;
+  ThunarFile      *file;
+  GFileEnumerator *enumerator;
+  guint32           count;
+
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
+  _thunar_return_val_if_fail (param_values != NULL, FALSE);
+  _thunar_return_val_if_fail (param_values->len == 1, FALSE);
+  _thunar_return_val_if_fail (G_VALUE_HOLDS (&g_array_index (param_values, GValue, 0), THUNAR_TYPE_FILE), FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  file = THUNAR_FILE (g_value_get_object (&g_array_index (param_values, GValue, 0)));
+  folder = THUNAR_FOLDER (thunar_folder_get_for_file (file));
+
+  if (file == NULL || folder == NULL)
+    return FALSE;
+
+  enumerator = g_file_enumerate_children (thunar_file_get_file (file), NULL,
+                                          G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                          NULL, &err);
+  if (err != NULL)
+    {
+      g_propagate_error (error, err);
+      return FALSE;
+    }
+
+  count = 0;
+  for (GFileInfo *child_info = g_file_enumerator_next_file (enumerator, NULL, &err);
+       child_info != NULL;
+       child_info = g_file_enumerator_next_file (enumerator, NULL, &err))
+    {
+      if (err != NULL)
+        {
+          g_propagate_error (error, err);
+          return FALSE;
+        }
+
+      count++;
+      g_object_unref (child_info);
+    }
+
+  g_object_set (folder,
+                "file-count", count,
+                NULL);
+
+    return TRUE;
+}
+
+
+
+ThunarJob *
+thunar_io_jobs_count_files (ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  return thunar_simple_job_new (_thunar_io_jobs_count, 1,
+                                THUNAR_TYPE_FILE, file);
+}
+
