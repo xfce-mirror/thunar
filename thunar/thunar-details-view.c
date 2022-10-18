@@ -113,6 +113,7 @@ static void         thunar_details_view_append_menu_items       (ThunarStandardV
                                                                  GtkMenu                *menu,
                                                                  GtkAccelGroup          *accel_group);
 static void         thunar_details_view_highlight_option_changed(ThunarDetailsView      *details_view);
+static gboolean     thunar_details_view_enable_tree_view        (ThunarDetailsView      *details_view);
 
 
 
@@ -143,13 +144,16 @@ struct _ThunarDetailsView
   guint idle_id;
 
   GtkCellRenderer   *renderers[THUNAR_N_VISIBLE_COLUMNS];
+
+  GtkTreeView       *view;
 };
 
 
 
 static XfceGtkActionEntry thunar_details_view_action_entries[] =
 {
-    { THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS,  "<Actions>/ThunarStandardView/configure-columns", "", XFCE_GTK_MENU_ITEM , N_ ("Configure _Columns..."), N_("Configure the columns in the detailed list view"), NULL, G_CALLBACK (thunar_show_column_editor), },
+    { THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS,  "<Actions>/ThunarStandardView/configure-columns", "", XFCE_GTK_MENU_ITEM ,       N_ ("Configure _Columns..."), N_("Configure the columns in the detailed list view"), NULL, G_CALLBACK (thunar_show_column_editor),            },
+    { THUNAR_DETAILS_VIEW_ACTION_ENABLE_TREE_VIEW,   "<Actions>/ThunarStandardView/enable-tree-view",  "", XFCE_GTK_CHECK_MENU_ITEM,  N_ ("Enable _Tree View"),     N_("Enable tree like expansion of folders"),           NULL, G_CALLBACK (thunar_details_view_enable_tree_view), },
 };
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_details_view_action_entries,G_N_ELEMENTS(thunar_details_view_action_entries),id)
@@ -218,6 +222,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   GtkCellRenderer  *renderer;
   ThunarColumn      column;
   GtkWidget        *tree_view;
+  gboolean          tree_view_enabled;
 
   /* we need to force the GtkTreeView to recalculate column sizes
    * whenever the zoom-level changes, so we connect a handler here.
@@ -238,12 +243,17 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                     G_CALLBACK (thunar_details_view_select_cursor_row), details_view);
   gtk_container_add (GTK_CONTAINER (details_view), tree_view);
   gtk_widget_show (tree_view);
+  details_view->view = GTK_TREE_VIEW (tree_view);
 
   /* configure general aspects of the details view */
   gtk_tree_view_set_enable_search (GTK_TREE_VIEW (tree_view), TRUE);
 
   /* enable rubberbanding (if supported) */
   gtk_tree_view_set_rubber_banding (GTK_TREE_VIEW (tree_view), TRUE);
+
+  /* Enable tree view */
+  g_object_set (THUNAR_STANDARD_VIEW (details_view)->model, "tree-view", TRUE, NULL);
+  gtk_tree_view_set_show_expanders (GTK_TREE_VIEW (tree_view), TRUE);
 
   /* connect to the default column model */
   details_view->column_model = thunar_column_model_get_default ();
@@ -355,6 +365,9 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                             G_CALLBACK (thunar_details_view_highlight_option_changed), details_view);
   thunar_details_view_highlight_option_changed (details_view);
 
+  g_object_get (THUNAR_STANDARD_VIEW (details_view)->model, "tree-view", &tree_view_enabled, NULL);
+  gtk_tree_view_set_show_expanders (GTK_TREE_VIEW (tree_view), tree_view_enabled);
+
   /* release the shared text renderers */
   g_object_unref (G_OBJECT (right_aligned_renderer));
   g_object_unref (G_OBJECT (left_aligned_renderer));
@@ -425,6 +438,8 @@ thunar_details_view_finalize (GObject *object)
 
   g_signal_handlers_disconnect_by_func (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences),
                                         thunar_details_view_highlight_option_changed, details_view);
+
+  g_object_set (THUNAR_STANDARD_VIEW (details_view)->model, "tree-view", FALSE, NULL);
 
   (*G_OBJECT_CLASS (thunar_details_view_parent_class)->finalize) (object);
 }
@@ -1043,10 +1058,14 @@ thunar_details_view_append_menu_items (ThunarStandardView *standard_view,
                                        GtkAccelGroup      *accel_group)
 {
   ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (standard_view);
+  gboolean tree_view_active;
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
+  g_object_get (THUNAR_STANDARD_VIEW (details_view)->model, "tree-view", &tree_view_active, NULL);
+
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS), G_OBJECT (details_view), GTK_MENU_SHELL (menu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_ENABLE_TREE_VIEW), G_OBJECT (details_view), tree_view_active, GTK_MENU_SHELL (menu));
 }
 
 
@@ -1195,4 +1214,18 @@ thunar_details_view_highlight_option_changed (ThunarDetailsView *details_view)
                                                GTK_CELL_RENDERER (details_view->renderers[column]),
                                                function, NULL, NULL);
     }
+}
+
+
+
+static gboolean
+thunar_details_view_enable_tree_view (ThunarDetailsView *details_view)
+{
+  gboolean active;
+
+  g_object_get (THUNAR_STANDARD_VIEW (details_view)->model, "tree-view", &active, NULL);
+  g_object_set (THUNAR_STANDARD_VIEW (details_view)->model, "tree-view", !active, NULL);
+  gtk_tree_view_set_show_expanders (details_view->view, !active);
+
+  return TRUE;
 }
