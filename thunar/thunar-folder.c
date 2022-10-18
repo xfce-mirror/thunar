@@ -42,6 +42,7 @@ enum
   PROP_0,
   PROP_CORRESPONDING_FILE,
   PROP_LOADING,
+  PROP_FILE_COUNT,
 };
 
 /* signal identifiers */
@@ -207,6 +208,21 @@ thunar_folder_class_init (ThunarFolderClass *klass)
                                                          "loading",
                                                          FALSE,
                                                          EXO_PARAM_READABLE));
+
+  /** ThunarFolder::file-count:
+   *
+   * The number of files in the #ThunarFolder
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_FILE_COUNT,
+                                   g_param_spec_uint ("file-count",
+                                                      "file-count",
+                                                      "file-count",
+                                                      0,
+                                                      G_MAXUINT32,
+                                                      0,
+                                                      EXO_PARAM_READWRITE));
+
   /**
    * ThunarFolder::destroy:
    * @folder : a #ThunarFolder.
@@ -374,6 +390,10 @@ thunar_folder_get_property (GObject    *object,
       g_value_set_boolean (value, thunar_folder_get_loading (folder));
       break;
 
+    case PROP_FILE_COUNT:
+      g_value_set_uint (value, folder->file_count);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -400,6 +420,10 @@ thunar_folder_set_property (GObject      *object,
 
     case PROP_LOADING:
       _thunar_assert_not_reached ();
+      break;
+
+    case PROP_FILE_COUNT:
+      folder->file_count = g_value_get_uint (value);
       break;
 
     default:
