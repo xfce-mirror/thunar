@@ -1455,7 +1455,6 @@ _thunar_io_jobs_count (ThunarJob *job,
                        GError   **error)
 {
   GError *err = NULL;
-  ThunarFolder    *folder;
   ThunarFile      *file;
   GFileEnumerator *enumerator;
   guint            count;
@@ -1467,9 +1466,8 @@ _thunar_io_jobs_count (ThunarJob *job,
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   file = THUNAR_FILE (g_value_get_object (&g_array_index (param_values, GValue, 0)));
-  folder = THUNAR_FOLDER (thunar_folder_get_for_file (file));
 
-  if (file == NULL || folder == NULL)
+  if (file == NULL)
     return FALSE;
 
   enumerator = g_file_enumerate_children (thunar_file_get_file (file), NULL,
