@@ -42,7 +42,6 @@ enum
   PROP_0,
   PROP_CORRESPONDING_FILE,
   PROP_LOADING,
-  PROP_FILE_COUNT,
 };
 
 /* signal identifiers */
@@ -87,9 +86,6 @@ static void     thunar_folder_monitor                     (GFileMonitor         
                                                            GFile                  *other_file,
                                                            GFileMonitorEvent       event_type,
                                                            gpointer                user_data);
-static void     thunar_folder_file_count_callback         (ExoJob  *job,
-                                                           gpointer user_data);
-
 
 
 struct _ThunarFolderClass
@@ -116,9 +112,6 @@ struct _ThunarFolder
   GList             *new_files;
   GList             *files;
   gboolean           reload_info;
-
-  guint32            file_count;
-  guint64            file_count_timestamp;
 
   GList             *content_type_ptr;
   guint              content_type_idle_id;
@@ -205,21 +198,6 @@ thunar_folder_class_init (ThunarFolderClass *klass)
                                                          "loading",
                                                          FALSE,
                                                          EXO_PARAM_READABLE));
-
-  /** ThunarFolder::file-count:
-   *
-   * The number of files in the #ThunarFolder
-   **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_FILE_COUNT,
-                                   g_param_spec_uint ("file-count",
-                                                      "file-count",
-                                                      "file-count",
-                                                      0,
-                                                      G_MAXUINT32,
-                                                      0,
-                                                      EXO_PARAM_READWRITE));
-
   /**
    * ThunarFolder::destroy:
    * @folder : a #ThunarFolder.
@@ -387,10 +365,6 @@ thunar_folder_get_property (GObject    *object,
       g_value_set_boolean (value, thunar_folder_get_loading (folder));
       break;
 
-    case PROP_FILE_COUNT:
-      g_value_set_uint (value, folder->file_count);
-      break;
-
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -417,10 +391,6 @@ thunar_folder_set_property (GObject      *object,
 
     case PROP_LOADING:
       _thunar_assert_not_reached ();
-      break;
-
-    case PROP_FILE_COUNT:
-      folder->file_count = g_value_get_uint (value);
       break;
 
     default:
@@ -989,87 +959,6 @@ thunar_folder_get_files (const ThunarFolder *folder)
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), NULL);
   return folder->files;
 }
-
-
-
-/**
- * thunar_folder_get_file_count:
- * @file : a #ThunarFolder instance.
- * @model: a #GtkTreeModel or %NULL
- *
- * Returns the number of items in the directory
- * Counts the number of files in the directory as fast as possible.
- * Will use cached data to do calculations only once
- * The @model is needed to force the redraw once the file count
- * values are actually calculated.
- * Cached values are returned if @model is NULL.
- *
- * Return value: Number of files in a folder
- **/
-guint32
-thunar_folder_get_file_count (ThunarFolder *folder,
-                              GtkTreeModel *model)
-{
-  GError                    *err = NULL;
-  ThunarJob                 *job;
-  GFileInfo                 *info;
-  ThunarFile                *file;
-  guint64                    last_modified;
-
-  _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), 0);
-
-  /* This will only happen if it is called by the sorting function, so just return cached values to it */
-  if (model == NULL)
-    return folder->file_count;
-
-  /* We need to make a new query so we don't get stale values */
-  file = thunar_folder_get_corresponding_file (folder);
-  info = g_file_query_info (thunar_file_get_file (file),
-                            G_FILE_ATTRIBUTE_TIME_MODIFIED,
-                            G_FILE_QUERY_INFO_NONE,
-                            NULL,
-                            &err);
-
-  if (err != NULL)
-    {
-      g_warning ("An error occured while trying to get file counts.");
-      return folder->file_count;
-    }
-
-  last_modified = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_MODIFIED);
-  g_object_unref (info);
-
-  /* return a cached value if last time that the file count was computed is later
-   * than the last time the file was modified */
-  if (G_LIKELY (last_modified < folder->file_count_timestamp))
-    return folder->file_count;
-
-  /* put the timestamp calculation at the *start* of the process to prevent another call to
-   * thunar_folder_get_file_count starting another job on the same folder before one has ended.
-   * Divide by 1e6 to convert from microseconds to seconds */
-  folder->file_count_timestamp = g_get_real_time () / (guint64) 1e6;
-
-  /* Set up a job to actually enumerate over the folder's contents and get its file count */
-  job = thunar_io_jobs_count_files (file);
-
-  /* set up the signal on finish to update the row model and ask for redraw */
-  g_signal_connect (job, "finished", G_CALLBACK (thunar_folder_file_count_callback), model);
-  exo_job_launch (EXO_JOB (job));
-
-  return folder->file_count;
-}
-
-
-
-static void
-thunar_folder_file_count_callback (ExoJob  *job,
-                                   gpointer model)
-{
-  gtk_tree_model_foreach (GTK_TREE_MODEL (model), (GtkTreeModelForeachFunc) gtk_tree_model_row_changed, NULL);
-}
-
-
-
 /**
  * thunar_folder_get_loading:
  * @folder : a #ThunarFolder instance.
@@ -1118,9 +1007,6 @@ thunar_folder_reload (ThunarFolder *folder,
                       gboolean      reload_info)
 {
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
-
-  folder->file_count = 0;
-  folder->file_count_timestamp = 0;
 
   /* reload file info too? */
   folder->reload_info = reload_info;
