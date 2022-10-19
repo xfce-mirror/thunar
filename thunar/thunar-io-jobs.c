@@ -1458,7 +1458,7 @@ _thunar_io_jobs_count (ThunarJob *job,
   ThunarFolder    *folder;
   ThunarFile      *file;
   GFileEnumerator *enumerator;
-  guint32           count;
+  guint            count;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -1496,11 +1496,9 @@ _thunar_io_jobs_count (ThunarJob *job,
       g_object_unref (child_info);
     }
 
-  g_object_set (folder,
-                "file-count", count,
-                NULL);
+  thunar_file_set_file_count (file, count);
 
-    return TRUE;
+  return TRUE;
 }
 
 
