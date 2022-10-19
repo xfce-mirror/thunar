@@ -25,6 +25,17 @@
 
 G_BEGIN_DECLS;
 
+
+gboolean transform_enum_value_to_index (GBinding     *binding,
+                                        const GValue *src_value,
+                                        GValue       *dst_value,
+                                        gpointer      user_data);
+
+gboolean transform_index_to_enum_value (GBinding     *binding,
+                                        const GValue *src_value,
+                                        GValue       *dst_value,
+                                        gpointer      user_data);
+
 #define THUNAR_TYPE_RENAMER_MODE (thunar_renamer_mode_get_type ())
 
 /**
