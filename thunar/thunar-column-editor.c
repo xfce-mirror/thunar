@@ -340,7 +340,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
 
-  label = gtk_label_new (_("File size of folders"));
+  label = gtk_label_new (_("Size Column of Folders"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
@@ -353,8 +353,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_widget_show (grid);
 
   /* explain what it does */
-  label = gtk_label_new (_("Show the number of items in the 'size' column\n"
-                           "for folders instead of the fixed folder size"));
+  label = gtk_label_new (_("Show number of containing items"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
   gtk_widget_show (label);
