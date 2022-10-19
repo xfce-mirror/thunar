@@ -164,45 +164,6 @@ transform_view_index_to_string (GBinding     *binding,
 
 
 static gboolean
-transform_enum_value_to_index (GBinding     *binding,
-                         const GValue *src_value,
-                         GValue       *dst_value,
-                         gpointer      user_data)
-{
-  GEnumClass *klass;
-  GType     (*type_func)() = user_data;
-  guint       n;
-
-  klass = g_type_class_ref (type_func ());
-  for (n = 0; n < klass->n_values; ++n)
-    if (klass->values[n].value == g_value_get_enum (src_value))
-      g_value_set_int (dst_value, n);
-  g_type_class_unref (klass);
-
-  return TRUE;
-}
-
-
-
-static gboolean
-transform_index_to_enum_value (GBinding     *binding,
-                         const GValue *src_value,
-                         GValue       *dst_value,
-                         gpointer      user_data)
-{
-  GEnumClass *klass;
-  GType     (*type_func)() = user_data;
-
-  klass = g_type_class_ref (type_func ());
-  g_value_set_enum (dst_value, klass->values[g_value_get_int (src_value)].value);
-  g_type_class_unref (klass);
-
-  return TRUE;
-}
-
-
-
-static gboolean
 transform_string_to_uint64 (GBinding     *binding,
                             const GValue *src_value,
                             GValue       *dst_value,
