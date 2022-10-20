@@ -89,7 +89,7 @@ enum
   PROP_MISC_DATE_CUSTOM_STYLE,
   PROP_EXEC_SHELL_SCRIPTS_BY_DEFAULT,
   PROP_MISC_FOLDERS_FIRST,
-  PROP_MISC_ITEMS_COUNT_AS_DIR_SIZE,
+  PROP_MISC_FOLDER_ITEM_COUNT,
   PROP_MISC_FULL_PATH_IN_TAB_TITLE,
   PROP_MISC_FULL_PATH_IN_WINDOW_TITLE,
   PROP_MISC_HORIZONTAL_WHEEL_NAVIGATES,
@@ -689,15 +689,15 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:misc-items-count-as-dir-size
+   * ThunarPreferences:misc-folder-item-count
    **/
-  preferences_props[PROP_MISC_ITEMS_COUNT_AS_DIR_SIZE] =
-      g_param_spec_enum ("misc-items-count-as-dir-size",
-                        "MiscItemsCountAsDirSize",
-                        NULL,
-                        THUNAR_TYPE_ITEMS_AS_FOLDER_SIZE,
-                        TRUE,
-                        EXO_PARAM_READWRITE);
+  preferences_props[PROP_MISC_FOLDER_ITEM_COUNT] =
+      g_param_spec_enum ("misc-folder-item-count",
+                         "MiscFolderItemCount",
+                         NULL,
+                         THUNAR_TYPE_FOLDER_ITEM_COUNT,
+                         TRUE,
+                         EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-full-path-in-tab-title:
