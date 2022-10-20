@@ -812,6 +812,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
   ThunarFolder *folder;
   gchar        *str;
   guint32       item_count;
+  GFile        *g_file;
   GFile        *g_file_parent;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
@@ -958,9 +959,17 @@ thunar_list_model_get_value (GtkTreeModel *model,
     case THUNAR_COLUMN_SIZE:
       g_value_init (value, G_TYPE_STRING);
 
-      if (thunar_file_is_directory (file))
+      if (thunar_file_is_mountable (file))
         {
-          /* TODO refactor as switch case */
+          g_file = thunar_file_get_target_location (file);
+          if (g_file == NULL)
+            break;
+          g_value_take_string (value, thunar_g_file_get_free_space_string (g_file, THUNAR_LIST_MODEL (model)->file_size_binary));
+          g_object_unref (g_file);
+          break;
+        }
+      else if (thunar_file_is_directory (file))
+        {
           /* If the option is set to never show folder sizes as item counts, then just give the folder's binary size */
           if (THUNAR_LIST_MODEL (model)->folder_item_count == THUNAR_FOLDER_ITEM_COUNT_NEVER)
             g_value_take_string (value, thunar_file_get_size_string_formatted (file, THUNAR_LIST_MODEL (model)->file_size_binary));
