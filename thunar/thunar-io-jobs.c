@@ -1496,6 +1496,8 @@ _thunar_io_jobs_count (ThunarJob *job,
 
   thunar_file_set_file_count (file, count);
 
+  g_object_unref (enumerator);
+
   return TRUE;
 }
 

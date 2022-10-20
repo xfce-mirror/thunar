@@ -3537,7 +3537,7 @@ thunar_file_get_file_count (ThunarFile   *file,
     return file->file_count;
 
   /* put the timestamp calculation at the *start* of the process to prevent another call to
-   * thunar_folder_get_file_count starting another job on the same folder before one has ended.
+   * thunar_file_get_count starting another job on the same folder before one has ended.
    * Divide by 1e6 to convert from microseconds to seconds */
   file->file_count_timestamp = g_get_real_time () / (guint64) 1e6;
 
