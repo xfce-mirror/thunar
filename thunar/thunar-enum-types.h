@@ -492,28 +492,28 @@ typedef enum
 GType thunar_image_preview_mode_get_type (void) G_GNUC_CONST;
 
 /**
- * ThunarItemsAsFolderSize
+ * ThunarFolderItemCount
  *
  * Specify when the size column on a folder
  * should instead show the item count of the folder
  **/
 
-#define THUNAR_TYPE_ITEMS_AS_FOLDER_SIZE (thunar_items_as_folder_size_get_type ())
+#define THUNAR_TYPE_FOLDER_ITEM_COUNT (thunar_folder_item_count_get_type ())
 
 /**
- * ThunarItemsAsFolderSize:
- * @THUNAR_ITEMS_AS_FOLDER_SIZE_NEVER,        : never show number of items as the size of the folder
- * @THUNAR_ITEMS_AS_FOLDER_SIZE_ONLY_LOCAL,   : only show number of items as size of folder for local folders
- * @THUNAR_ITEMS_AS_FOLDER_SIZE_ALWAYS,       : always show the number of items as the size of the folder
+ * ThunarFolderItemCount:
+ * @THUNAR_FOLDER_ITEM_COUNT_NEVER,        : never show number of items as the size of the folder
+ * @THUNAR_FOLDER_ITEM_COUNT_ONLY_LOCAL,   : only show number of items as size of folder for local folders
+ * @THUNAR_FOLDER_ITEM_COUNT_ALWAYS,       : always show the number of items as the size of the folder
  **/
 typedef enum
 {
-  THUNAR_ITEMS_AS_FOLDER_SIZE_NEVER,
-  THUNAR_ITEMS_AS_FOLDER_SIZE_ONLY_LOCAL,
-  THUNAR_ITEMS_AS_FOLDER_SIZE_ALWAYS,
-} ThunarItemsAsFolderSize;
+  THUNAR_FOLDER_ITEM_COUNT_NEVER,
+  THUNAR_FOLDER_ITEM_COUNT_ONLY_LOCAL,
+  THUNAR_FOLDER_ITEM_COUNT_ALWAYS,
+} ThunarFolderItemCount;
 
-GType thunar_items_as_folder_size_get_type (void) G_GNUC_CONST;
+GType thunar_folder_item_count_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS;
 
