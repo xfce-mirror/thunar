@@ -77,6 +77,13 @@ gchar           *thunar_list_model_get_statusbar_text     (ThunarListModel  *sto
 ThunarJob       *thunar_list_model_get_job                (ThunarListModel  *store);
 void             thunar_list_model_set_job                (ThunarListModel  *store,
                                                            ThunarJob        *job);
+void             thunar_list_model_refilter           (ThunarListModel            *model);
+void             thunar_list_model_cleanup            (ThunarListModel            *model);
+gboolean         thunar_list_model_node_has_dummy     (ThunarListModel            *model,
+                                                       GNode                      *node);
+void             thunar_list_model_add_child          (ThunarListModel            *model,
+                                                       GNode                      *node,
+                                                       ThunarFile                 *file);
 
 G_END_DECLS;
 
