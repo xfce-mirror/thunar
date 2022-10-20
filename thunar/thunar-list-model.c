@@ -261,11 +261,6 @@ static gboolean             thunar_list_model_node_traverse_sort        (GNode  
                                                                          gpointer                     user_data);
 static gboolean             thunar_list_model_node_traverse_free        (GNode                       *node,
                                                                          gpointer                     user_data);
-static gboolean             thunar_list_model_default_visiblity         (ThunarListModel             *model,
-                                                                         ThunarFile                  *file,
-                                                                         gpointer                     data);
-
-
 
 
 
@@ -292,6 +287,7 @@ struct _ThunarListModel
 #endif
 
   GNode          *root;
+  GList          *hidden;
   ThunarFolder   *folder;
   gboolean        show_hidden : 1;
   gboolean        file_size_binary : 1;
@@ -330,8 +326,6 @@ struct _ThunarListModel
   guint          cleanup_idle_id;
 
   gboolean       tree_view;
-  ThunarListModelVisibleFunc  visible_func;
-  gpointer                    visible_data;
 };
 
 struct _ThunarListModelItem
@@ -581,8 +575,6 @@ thunar_list_model_init (ThunarListModel *store)
   store->row_deleted_id = g_signal_lookup ("row-deleted", GTK_TYPE_TREE_MODEL);
 
   store->sort_case_sensitive = TRUE;
-  store->visible_func = thunar_list_model_default_visiblity;
-  store->visible_data = NULL;
   store->sort_folders_first = TRUE;
   store->sort_sign = 1;
   store->sort_func = thunar_file_compare_by_name;
@@ -1806,7 +1798,6 @@ thunar_list_model_item_files_added (ThunarListModelItem *item,
 
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (item->folder == folder);
-  _thunar_return_if_fail (model->visible_func != NULL);
 
 
   /* process all specified files */
@@ -1815,7 +1806,7 @@ thunar_list_model_item_files_added (ThunarListModelItem *item,
       file = THUNAR_FILE (lp->data);
 
       /* if this file should be visible */
-      if (!model->visible_func (model, file, model->visible_data))
+      if (!model->show_hidden && thunar_file_is_hidden (file))
         {
           /* file is invisible, insert it in the invisible list and continue */
           item->invisible_children = g_slist_prepend (item->invisible_children,
@@ -2009,9 +2000,6 @@ thunar_list_model_node_insert_dummy (GNode           *parent,
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
   _thunar_return_if_fail (g_node_n_children (parent) == 0);
-
-  if (!thunar_file_is_directory (THUNAR_LIST_MODEL_ITEM (parent->data)->file))
-    return;
 
   /* add the dummy node */
   node = g_node_append_data (parent, NULL);
@@ -2211,13 +2199,12 @@ thunar_list_model_node_traverse_visible (GNode    *node,
   ThunarListModelItem *parent, *child;
   ThunarFile          *file;
 
-  _thunar_return_val_if_fail (model->visible_func != NULL, FALSE);
   _thunar_return_val_if_fail (item == NULL || item->file == NULL || THUNAR_IS_FILE (item->file), FALSE);
 
   if (G_LIKELY (item != NULL && item->file != NULL))
     {
       /* check if this file should be visible in the treeview */
-      if (!model->visible_func (model, item->file, model->visible_data))
+      if (!model->show_hidden && thunar_file_is_hidden (item->file))
         {
           /* delete all the children of the node */
           while (node->children)
@@ -2253,7 +2240,7 @@ thunar_list_model_node_traverse_visible (GNode    *node,
 
               _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
-              if (model->visible_func (model, file, model->visible_data))
+              if (model->show_hidden || !thunar_file_is_hidden (file))
                 {
                   /* allocate a new item for the file */
                   child = thunar_list_model_item_new_with_file (model, file);
@@ -3219,6 +3206,9 @@ thunar_list_model_set_folder (ThunarListModel *store,
       g_node_destroy (store->root);
       store->root = NULL;
 
+      g_list_free_full (store->hidden, g_object_unref);
+      store->hidden = NULL;
+
       /* unregister signals and drop the reference */
       g_signal_handlers_disconnect_matched (G_OBJECT (store->folder), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
       g_object_unref (G_OBJECT (store->folder));
@@ -3242,47 +3232,26 @@ thunar_list_model_set_folder (ThunarListModel *store,
 
       store->root = g_node_new (NULL);
 
-      /* get the already loaded files or search for files matching the search_query
-       * don't start searching if the query is empty, that would be a waste of resources
-       */
-      if (search_query == NULL || strlen (search_query) == 0)
+      files = thunar_folder_get_files (folder);
+      for (GList *lp = files; lp != NULL; lp = lp->next)
         {
-          files = thunar_folder_get_files (folder);
-          for (GList *lp = files; lp != NULL; lp = lp->next)
-            {
-              item = thunar_list_model_item_new_with_file (store, lp->data);
-              g_node_append_data (store->root, item);
-            }
+          item = thunar_list_model_item_new_with_file (store, lp->data);
+          g_node_append_data (store->root, item);
+
+          if (thunar_file_is_hidden (lp->data))
+            store->hidden = g_list_append (store->hidden, g_object_ref (lp->data));
         }
-      else
-        {
-          gchar *search_query_c;  /* normalized */
 
-          search_query_c = thunar_g_utf8_normalize_for_search (search_query, TRUE, TRUE);
-          files = NULL;
-
-          /* search the current folder
-           * start a new recursive_search_job */
-          store->recursive_search_job = thunar_list_model_job_search_directory (store, search_query_c, thunar_folder_get_corresponding_file (folder));
-          exo_job_launch (EXO_JOB (store->recursive_search_job));
-
-          g_signal_connect (store->recursive_search_job, "error", G_CALLBACK (search_error), NULL);
-          g_signal_connect (store->recursive_search_job, "finished", G_CALLBACK (search_finished), store);
-
-          /* add new results to the model every X ms */
-          store->update_search_results_timeout_id = g_timeout_add (500, add_search_files, store);
-
-          g_free (search_query_c);
-        }
+      /* sort the rows */
+      g_node_traverse (store->root, G_POST_ORDER, G_TRAVERSE_NON_LEAVES, -1, thunar_list_model_node_traverse_sort, store);
+      /* update show_hidden status */
+      thunar_list_model_refilter (store);
 
       /* connect signals to the new folder */
       /* TODO: Are these required ? */
       g_signal_connect (G_OBJECT (store->folder), "destroy", G_CALLBACK (thunar_list_model_folder_destroy), store);
       g_signal_connect (G_OBJECT (store->folder), "error", G_CALLBACK (thunar_list_model_folder_error), store);
     }
-
-  if (store->root != NULL)
-    g_node_traverse (store->root, G_POST_ORDER, G_TRAVERSE_NON_LEAVES, -1, thunar_list_model_node_traverse_sort, store);
 
   /* notify listeners that we have a new folder */
   g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_FOLDER]);
@@ -3363,6 +3332,11 @@ void
 thunar_list_model_set_show_hidden (ThunarListModel *store,
                                    gboolean         show_hidden)
 {
+  ThunarListModelItem *item;
+  GNode               *node;
+  GtkTreeIter          iter;
+  GtkTreePath         *path;
+
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
 
   /* normalize the value */
@@ -3376,6 +3350,21 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
 
       /* update the model */
       thunar_list_model_refilter (store);
+
+      if (show_hidden)
+        {
+          for (GList *lp = store->hidden; lp != NULL; lp = lp->next)
+            {
+              item = thunar_list_model_item_new_with_file (store, lp->data);
+              node = g_node_append_data (store->root, item);
+              GTK_TREE_ITER_INIT(iter, store->stamp, node);
+              path = gtk_tree_model_get_path (GTK_TREE_MODEL (store), &iter);
+              gtk_tree_model_row_inserted(GTK_TREE_MODEL (store), path, &iter);
+              gtk_tree_path_free (path);
+            }
+          /* sort the view */
+          g_node_traverse (store->root, G_POST_ORDER, G_TRAVERSE_NON_LEAVES, -1, thunar_list_model_node_traverse_sort, store);
+        }
 
       /* notify listeners */
       g_object_notify (G_OBJECT (store), "show-hidden");
@@ -3590,39 +3579,4 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
                                       GList           *selected_items)
 {
   return g_strdup ("");
-}
-
-
-
-static gboolean
-thunar_list_model_default_visiblity (ThunarListModel *model,
-                                     ThunarFile      *file,
-                                     gpointer         data)
-{
-  return TRUE;
-}
-
-
-
-/**
- * thunar_list_model_set_visible_func:
- * @model : a #ThunarListModel.
- * @func  : a #ThunarListModelVisibleFunc, the visible function.
- * @data  : User data to pass to the visible function, or %NULL.
- *
- * Sets the visible function used when filtering the #ThunarListModel.
- * The function should return %TRUE if the given row should be visible
- * and %FALSE otherwise.
- **/
-void
-thunar_list_model_set_visible_func (ThunarListModel            *model,
-                                    ThunarListModelVisibleFunc  func,
-                                    gpointer                    data)
-{
-  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
-  _thunar_return_if_fail (func != NULL);
-
-  /* set the new visiblity function and user data */
-  model->visible_func = func;
-  model->visible_data = data;
 }

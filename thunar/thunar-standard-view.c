@@ -296,9 +296,6 @@ static void                 thunar_standard_view_cell_layout_data_func          
                                                                                     GtkTreeModel             *model,
                                                                                     GtkTreeIter              *iter,
                                                                                     gpointer                  data);
-static gboolean             thunar_standard_view_visible_func                      (ThunarListModel          *model,
-                                                                                    ThunarFile               *file,
-                                                                                    gpointer                  user_data);
 
 struct _ThunarStandardViewPrivate
 {
@@ -834,7 +831,6 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-custom-style", G_OBJECT (standard_view->model), "date-custom-style", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-folders-first", G_OBJECT (standard_view->model), "folders-first", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-file-size-binary", G_OBJECT (standard_view->model), "file-size-binary", G_BINDING_SYNC_CREATE);
-  thunar_list_model_set_visible_func (standard_view->model, thunar_standard_view_visible_func, standard_view);
 
   /* setup the icon renderer */
   standard_view->icon_renderer = thunar_icon_renderer_new ();
@@ -4619,32 +4615,4 @@ thunar_standard_view_cell_layout_data_func (GtkCellLayout   *layout,
     g_warn_if_reached ();
 
   g_object_unref (file);
-}
-
-
-
-static gboolean
-thunar_standard_view_visible_func (ThunarListModel *model,
-                                   ThunarFile      *file,
-                                   gpointer         user_data)
-{
-  ThunarStandardView *view;
-  gboolean            visible = TRUE;
-  gboolean            show_hidden;
-
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (model), FALSE);
-  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (user_data), FALSE);
-
-  /* if show_hidden is TRUE, nothing is filtered */
-  view = THUNAR_STANDARD_VIEW (user_data);
-  g_object_get (model, "show-hidden", &show_hidden, NULL);
-  if (G_LIKELY (!show_hidden))
-    {
-      /* we display all non-hidden file and hidden files that are ancestors of the current directory */
-      visible = !thunar_file_is_hidden (file) || (view->priv->current_directory == file)
-                || (view->priv->current_directory != NULL && thunar_file_is_ancestor (view->priv->current_directory, file));
-    }
-
-  return visible;
 }

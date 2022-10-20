@@ -88,9 +88,6 @@ gboolean         thunar_list_model_node_has_dummy         (ThunarListModel  *mod
 void             thunar_list_model_add_child              (ThunarListModel  *model,
                                                            GNode            *node,
                                                            ThunarFile       *file);
-void             thunar_list_model_set_visible_func       (ThunarListModel            *model,
-                                                           ThunarListModelVisibleFunc  func,
-                                                           gpointer                    data);
 
 G_END_DECLS;
 
