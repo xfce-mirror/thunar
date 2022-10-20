@@ -712,3 +712,22 @@ thunar_image_preview_mode_get_type (void)
   return type;
 }
 
+GType
+thunar_items_as_folder_size_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GEnumValue values[] =
+      {
+        { THUNAR_FOLDER_ITEM_COUNT_NEVER,       "THUNAR_FOLDER_ITEM_COUNT_NEVER",       N_("Never") },
+        { THUNAR_FOLDER_ITEM_COUNT_ONLY_LOCAL,  "THUNAR_FOLDER_ITEM_COUNT_ONLY_LOCAL",  N_("Only for local files") },
+        { THUNAR_FOLDER_ITEM_COUNT_ALWAYS,      "THUNAR_FOLDER_ITEM_COUNT_ALWAYS",      N_("Always") },
+        { 0,                                     NULL,                                  NULL }
+      };
+
+      type = g_enum_register_static ("ThunarItemsAsFolderSize", values);
+    }
+  return type;
+}
