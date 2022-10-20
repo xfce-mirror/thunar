@@ -30,7 +30,6 @@
 #include <thunar/thunar-io-jobs.h>
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-private.h>
-#include <thunar/thunar-simple-job.h>
 
 #define DEBUG_FILE_CHANGES FALSE
 
@@ -86,6 +85,7 @@ static void     thunar_folder_monitor                     (GFileMonitor         
                                                            GFile                  *other_file,
                                                            GFileMonitorEvent       event_type,
                                                            gpointer                user_data);
+
 
 
 struct _ThunarFolderClass
@@ -959,6 +959,9 @@ thunar_folder_get_files (const ThunarFolder *folder)
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), NULL);
   return folder->files;
 }
+
+
+
 /**
  * thunar_folder_get_loading:
  * @folder : a #ThunarFolder instance.
