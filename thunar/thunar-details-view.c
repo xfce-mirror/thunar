@@ -92,6 +92,10 @@ static void         thunar_details_view_row_activated           (GtkTreeView    
                                                                  GtkTreePath            *path,
                                                                  GtkTreeViewColumn      *column,
                                                                  ThunarDetailsView      *details_view);
+static void         thunar_details_view_row_collapsed           (GtkTreeView            *tree_view,
+                                                                 GtkTreeIter            *iter,
+                                                                 GtkTreePath            *path,
+                                                                 ThunarDetailsView      *view);
 static gboolean     thunar_details_view_select_cursor_row       (GtkTreeView            *tree_view,
                                                                  gboolean                editing,
                                                                  ThunarDetailsView      *details_view);
@@ -239,6 +243,8 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                     G_CALLBACK (thunar_details_view_key_press_event), details_view);
   g_signal_connect (G_OBJECT (tree_view), "row-activated",
                     G_CALLBACK (thunar_details_view_row_activated), details_view);
+  g_signal_connect (G_OBJECT (tree_view), "row-collapsed",
+                    G_CALLBACK (thunar_details_view_row_collapsed), details_view);
   g_signal_connect (G_OBJECT (tree_view), "select-cursor-row",
                     G_CALLBACK (thunar_details_view_select_cursor_row), details_view);
   gtk_container_add (GTK_CONTAINER (details_view), tree_view);
@@ -880,6 +886,18 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
   window = gtk_widget_get_toplevel (GTK_WIDGET (details_view));
   action_mgr = thunar_window_get_action_manager (THUNAR_WINDOW (window));
   thunar_action_manager_activate_selected_files (action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL);
+}
+
+
+
+static void
+thunar_details_view_row_collapsed (GtkTreeView       *tree_view,
+                                   GtkTreeIter       *iter,
+                                   GtkTreePath       *path,
+                                   ThunarDetailsView *view)
+{
+  /* schedule a cleanup of the tree model; i.e remove nodes that are not being used (ref == 0) */
+  thunar_list_model_cleanup (THUNAR_STANDARD_VIEW (view)->model);
 }
 
 
