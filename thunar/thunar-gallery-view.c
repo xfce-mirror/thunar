@@ -26,22 +26,7 @@
 #include <thunar/thunar-private.h>
 
 
-
-/* Property identifiers */
-enum
-{
-  PROP_0,
-  PROP_TEXT_BESIDE_ICONS,
-};
-
-
-
-static void         thunar_gallery_view_set_property           (GObject             *object,
-                                                                guint                prop_id,
-                                                                const GValue        *value,
-                                                                GParamSpec          *pspec);
 static AtkObject   *thunar_gallery_view_get_accessible         (GtkWidget           *widget);
-static void         thunar_gallery_view_zoom_level_changed     (ThunarStandardView  *standard_view);
 
 
 
@@ -66,10 +51,6 @@ thunar_gallery_view_class_init (ThunarGalleryViewClass *klass)
 {
   ThunarStandardViewClass *thunarstandard_view_class;
   GtkWidgetClass          *gtkwidget_class;
-  GObjectClass            *gobject_class;
-
-  gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->set_property = thunar_gallery_view_set_property;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->get_accessible = thunar_gallery_view_get_accessible;
@@ -77,19 +58,6 @@ thunar_gallery_view_class_init (ThunarGalleryViewClass *klass)
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
   thunarstandard_view_class->zoom_level_property_name = "last-gallery-view-zoom-level";
 
-  /**
-   * ThunarGalleryView::text-beside-icons:
-   *
-   * Write-only property to specify whether text should be
-   * display besides the icon rather than below.
-   **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_TEXT_BESIDE_ICONS,
-                                   g_param_spec_boolean ("text-beside-icons",
-                                                         "text-beside-icons",
-                                                         "text-beside-icons",
-                                                         FALSE,
-                                                         EXO_PARAM_WRITABLE));
 }
 
 
@@ -97,11 +65,10 @@ thunar_gallery_view_class_init (ThunarGalleryViewClass *klass)
 static void
 thunar_gallery_view_init (ThunarGalleryView *gallery_view)
 {
-  /* Get all the cells in the layout, repack them and don't pack the name_renderer */
-  GtkCellArea *cell_area;
   GtkWidget   *view;
 
-  /* remove all cell renderers in the layout */
+  /* remove all cell renderers in the layout, since by default that includes not only the
+   * icon renderer, but also the name renderer */
   view = gtk_bin_get_child (GTK_BIN (gallery_view));
   gtk_cell_layout_clear (GTK_CELL_LAYOUT (view));
 
@@ -116,51 +83,6 @@ thunar_gallery_view_init (ThunarGalleryView *gallery_view)
                 "ypad", 1u,
                 "square-icons", TRUE,
                 NULL);
-
-  /* synchronize the "text-beside-icons" property with the global preference */
-  g_object_bind_property (G_OBJECT (THUNAR_STANDARD_VIEW (gallery_view)->preferences),
-                          "misc-text-beside-icons",
-                          G_OBJECT (gallery_view),
-                          "text-beside-icons",
-                          G_BINDING_SYNC_CREATE);
-}
-
-
-
-static void
-thunar_gallery_view_set_property (GObject      *object,
-                               guint         prop_id,
-                               const GValue *value,
-                               GParamSpec   *pspec)
-{
-  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (object);
-
-  switch (prop_id)
-    {
-    case PROP_TEXT_BESIDE_ICONS:
-      if (G_UNLIKELY (g_value_get_boolean (value)))
-        {
-          exo_icon_view_set_orientation (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), GTK_ORIENTATION_HORIZONTAL);
-          g_object_set (G_OBJECT (standard_view->name_renderer), "wrap-width", 128, "yalign", 0.5f, "xalign", 0.0f, "alignment", PANGO_ALIGN_LEFT, NULL);
-
-          /* disconnect the "zoom-level" signal handler, since we're using a fixed wrap-width here */
-          g_signal_handlers_disconnect_by_func (object, thunar_gallery_view_zoom_level_changed, NULL);
-        }
-      else
-        {
-          exo_icon_view_set_orientation (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), GTK_ORIENTATION_VERTICAL);
-          g_object_set (G_OBJECT (standard_view->name_renderer), "yalign", 0.0f, "xalign", 0.5f, "alignment", PANGO_ALIGN_CENTER, NULL);
-
-          /* connect the "zoom-level" signal handler as the wrap-width is now synced with the "zoom-level" */
-          g_signal_connect (object, "notify::zoom-level", G_CALLBACK (thunar_gallery_view_zoom_level_changed), NULL);
-          thunar_gallery_view_zoom_level_changed (standard_view);
-        }
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-      break;
-    }
 }
 
 
@@ -183,44 +105,3 @@ thunar_gallery_view_get_accessible (GtkWidget *widget)
 
   return object;
 }
-
-
-
-static void
-thunar_gallery_view_zoom_level_changed (ThunarStandardView *standard_view)
-{
-  gint wrap_width;
-
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-
-  /* determine the "wrap-width" depending on the "zoom-level" */
-  switch (thunar_view_get_zoom_level (THUNAR_VIEW (standard_view)))
-    {
-    case THUNAR_ZOOM_LEVEL_25_PERCENT:
-      wrap_width = 48;
-      break;
-
-    case THUNAR_ZOOM_LEVEL_38_PERCENT:
-      wrap_width = 64;
-      break;
-
-    case THUNAR_ZOOM_LEVEL_50_PERCENT:
-      wrap_width = 72;
-      break;
-
-    case THUNAR_ZOOM_LEVEL_75_PERCENT:
-      wrap_width = 112;
-      break;
-
-    default:
-      wrap_width = 128;
-      break;
-    }
-
-  /* set the new "wrap-width" for the text renderer */
-  g_object_set (G_OBJECT (standard_view->name_renderer), "wrap-width", wrap_width, NULL);
-}
-
-
-
-
