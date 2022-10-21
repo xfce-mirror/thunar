@@ -235,6 +235,12 @@ gboolean          thunar_file_is_chmodable               (const ThunarFile      
 gboolean          thunar_file_is_renameable              (const ThunarFile       *file);
 gboolean          thunar_file_can_be_trashed             (const ThunarFile       *file);
 
+
+guint             thunar_file_get_file_count             (ThunarFile             *file,
+                                                          GtkTreeModel           *store);
+void              thunar_file_set_file_count             (ThunarFile             *file,
+                                                          const guint             count);
+
 GList            *thunar_file_get_emblem_names           (ThunarFile              *file);
 void              thunar_file_set_emblem_names           (ThunarFile              *file,
                                                           GList                   *emblem_names);
