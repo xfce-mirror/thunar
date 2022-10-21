@@ -20,7 +20,7 @@
 #ifndef __THUNAR_GALLERY_VIEW_H__
 #define __THUNAR_GALLERY_VIEW_H__
 
-#include <thunar/thunar-abstract-gallery-view.h>
+#include <thunar/thunar-abstract-icon-view.h>
 
 G_BEGIN_DECLS;
 

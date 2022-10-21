@@ -43,8 +43,6 @@ thunar_SOURCES =							\
 	main.c								\
 	thunar-abstract-dialog.c					\
 	thunar-abstract-dialog.h					\
-	thunar-abstract-gallery-view.c					\
-	thunar-abstract-gallery-view.h					\
 	thunar-abstract-icon-view.c					\
 	thunar-abstract-icon-view.h					\
 	thunar-action-manager.c						\
