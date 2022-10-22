@@ -1460,7 +1460,7 @@ _thunar_io_jobs_count (ThunarJob *job,
                        GArray    *param_values,
                        GError   **error)
 {
-  GError *err = NULL;
+  GError          *err = NULL;
   ThunarFile      *file;
   GFileEnumerator *enumerator;
   guint            count;
