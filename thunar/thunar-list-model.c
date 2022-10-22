@@ -33,6 +33,7 @@
 #include <libxfce4util/libxfce4util.h>
 
 #include <thunar/thunar-application.h>
+#include <thunar/thunar-file.h>
 #include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-list-model.h>
@@ -55,6 +56,7 @@ enum
   PROP_FOLDERS_FIRST,
   PROP_NUM_FILES,
   PROP_SHOW_HIDDEN,
+  PROP_FOLDER_ITEM_COUNT,
   PROP_FILE_SIZE_BINARY,
   N_PROPERTIES
 };
@@ -73,155 +75,160 @@ typedef gint (*ThunarSortFunc) (const ThunarFile *a,
                                 const ThunarFile *b,
                                 gboolean          case_sensitive);
 
-static void               thunar_list_model_tree_model_init       (GtkTreeModelIface           *iface);
-static void               thunar_list_model_drag_dest_init        (GtkTreeDragDestIface        *iface);
-static void               thunar_list_model_sortable_init         (GtkTreeSortableIface        *iface);
-static void               thunar_list_model_dispose               (GObject                     *object);
-static void               thunar_list_model_finalize              (GObject                     *object);
-static void               thunar_list_model_get_property          (GObject                     *object,
-                                                                   guint                        prop_id,
-                                                                   GValue                      *value,
-                                                                   GParamSpec                  *pspec);
-static void               thunar_list_model_set_property          (GObject                     *object,
-                                                                   guint                        prop_id,
-                                                                   const GValue                *value,
-                                                                   GParamSpec                  *pspec);
-static GtkTreeModelFlags  thunar_list_model_get_flags             (GtkTreeModel                *model);
-static gint               thunar_list_model_get_n_columns         (GtkTreeModel                *model);
-static GType              thunar_list_model_get_column_type       (GtkTreeModel                *model,
-                                                                   gint                         idx);
-static gboolean           thunar_list_model_get_iter              (GtkTreeModel                *model,
-                                                                   GtkTreeIter                 *iter,
-                                                                   GtkTreePath                 *path);
-static GtkTreePath       *thunar_list_model_get_path              (GtkTreeModel                *model,
-                                                                   GtkTreeIter                 *iter);
-static void               thunar_list_model_get_value             (GtkTreeModel                *model,
-                                                                   GtkTreeIter                 *iter,
-                                                                   gint                         column,
-                                                                   GValue                      *value);
-static gboolean           thunar_list_model_iter_next             (GtkTreeModel                *model,
-                                                                   GtkTreeIter                 *iter);
-static gboolean           thunar_list_model_iter_children         (GtkTreeModel                *model,
-                                                                   GtkTreeIter                 *iter,
-                                                                   GtkTreeIter                 *parent);
-static gboolean           thunar_list_model_iter_has_child        (GtkTreeModel                *model,
-                                                                   GtkTreeIter                 *iter);
-static gint               thunar_list_model_iter_n_children       (GtkTreeModel                *model,
-                                                                   GtkTreeIter                 *iter);
-static gboolean           thunar_list_model_iter_nth_child        (GtkTreeModel                *model,
-                                                                   GtkTreeIter                 *iter,
-                                                                   GtkTreeIter                 *parent,
-                                                                   gint                         n);
-static gboolean           thunar_list_model_iter_parent           (GtkTreeModel                *model,
-                                                                   GtkTreeIter                 *iter,
-                                                                   GtkTreeIter                 *child);
-static gboolean           thunar_list_model_drag_data_received    (GtkTreeDragDest             *dest,
-                                                                   GtkTreePath                 *path,
-                                                                   GtkSelectionData            *data);
-static gboolean           thunar_list_model_row_drop_possible     (GtkTreeDragDest             *dest,
-                                                                   GtkTreePath                 *path,
-                                                                   GtkSelectionData            *data);
-static gboolean           thunar_list_model_get_sort_column_id    (GtkTreeSortable             *sortable,
-                                                                   gint                        *sort_column_id,
-                                                                   GtkSortType                 *order);
-static void               thunar_list_model_set_sort_column_id    (GtkTreeSortable             *sortable,
-                                                                   gint                         sort_column_id,
-                                                                   GtkSortType                  order);
-static void               thunar_list_model_set_default_sort_func (GtkTreeSortable             *sortable,
-                                                                   GtkTreeIterCompareFunc       func,
-                                                                   gpointer                     data,
-                                                                   GDestroyNotify               destroy);
-static void               thunar_list_model_set_sort_func         (GtkTreeSortable             *sortable,
-                                                                   gint                         sort_column_id,
-                                                                   GtkTreeIterCompareFunc       func,
-                                                                   gpointer                     data,
-                                                                   GDestroyNotify               destroy);
-static gboolean           thunar_list_model_has_default_sort_func (GtkTreeSortable             *sortable);
-static gint               thunar_list_model_cmp_func              (gconstpointer                a,
-                                                                   gconstpointer                b,
-                                                                   gpointer                     user_data);
-static void               thunar_list_model_sort                  (ThunarListModel             *store);
-static void               thunar_list_model_file_changed          (ThunarFileMonitor           *file_monitor,
-                                                                   ThunarFile                  *file,
-                                                                   ThunarListModel             *store);
-static void               thunar_list_model_folder_destroy        (ThunarFolder                *folder,
-                                                                   ThunarListModel             *store);
-static void               thunar_list_model_folder_error          (ThunarFolder                *folder,
-                                                                   const GError                *error,
-                                                                   ThunarListModel             *store);
-static void               thunar_list_model_files_added           (ThunarFolder                *folder,
-                                                                   GList                       *files,
-                                                                   ThunarListModel             *store);
-static void               thunar_list_model_files_removed         (ThunarFolder                *folder,
-                                                                   GList                       *files,
-                                                                   ThunarListModel             *store);
-static gint               sort_by_date                            (const ThunarFile            *a,
-                                                                   const ThunarFile            *b,
-                                                                   gboolean                     case_sensitive,
-                                                                   gint                         type);
-static gint               sort_by_date_created                    (const ThunarFile            *a,
-                                                                   const ThunarFile            *b,
-                                                                   gboolean                     case_sensitive);
-static gint               sort_by_date_accessed                   (const ThunarFile            *a,
-                                                                   const ThunarFile            *b,
-                                                                   gboolean                     case_sensitive);
-static gint               sort_by_date_modified                   (const ThunarFile            *a,
-                                                                   const ThunarFile            *b,
-                                                                   gboolean                     case_sensitive);
-static gint               sort_by_date_deleted                    (const ThunarFile            *a,
-                                                                   const ThunarFile            *b,
-                                                                   gboolean                     case_sensitive);
-static gint               sort_by_recency                         (const ThunarFile            *a,
-                                                                   const ThunarFile            *b,
-                                                                   gboolean                     case_sensitive);
-static gint               sort_by_location                        (const ThunarFile            *a,
-                                                                   const ThunarFile            *b,
-                                                                   gboolean                     case_sensitive);
-static gint               sort_by_group                           (const ThunarFile            *a,
-                                                                   const ThunarFile            *b,
-                                                                   gboolean                     case_sensitive);
-static gint               sort_by_mime_type                       (const ThunarFile            *a,
-                                                                   const ThunarFile            *b,
-                                                                   gboolean                     case_sensitive);
-static gint               sort_by_owner                           (const ThunarFile            *a,
-                                                                   const ThunarFile            *b,
-                                                                   gboolean                     case_sensitive);
-static gint               sort_by_permissions                     (const ThunarFile            *a,
-                                                                   const ThunarFile            *b,
-                                                                   gboolean                     case_sensitive);
-static gint               sort_by_size                            (const ThunarFile            *a,
-                                                                   const ThunarFile            *b,
-                                                                   gboolean                     case_sensitive);
-static gint               sort_by_size_in_bytes                   (const ThunarFile            *a,
-                                                                   const ThunarFile            *b,
-                                                                   gboolean                     case_sensitive);
-static gint               sort_by_type                            (const ThunarFile            *a,
-                                                                   const ThunarFile            *b,
-                                                                   gboolean                     case_sensitive);
+static void               thunar_list_model_tree_model_init             (GtkTreeModelIface            *iface);
+static void               thunar_list_model_drag_dest_init              (GtkTreeDragDestIface         *iface);
+static void               thunar_list_model_sortable_init               (GtkTreeSortableIface         *iface);
+static void               thunar_list_model_dispose                     (GObject                      *object);
+static void               thunar_list_model_finalize                    (GObject                      *object);
+static void               thunar_list_model_get_property                (GObject                      *object,
+                                                                         guint                         prop_id,
+                                                                         GValue                       *value,
+                                                                         GParamSpec                   *pspec);
+static void               thunar_list_model_set_property                (GObject                      *object,
+                                                                         guint                         prop_id,
+                                                                         const GValue                 *value,
+                                                                         GParamSpec                   *pspec);
+static GtkTreeModelFlags  thunar_list_model_get_flags                   (GtkTreeModel                 *model);
+static gint               thunar_list_model_get_n_columns               (GtkTreeModel                 *model);
+static GType              thunar_list_model_get_column_type             (GtkTreeModel                 *model,
+                                                                         gint                          idx);
+static gboolean           thunar_list_model_get_iter                    (GtkTreeModel                 *model,
+                                                                         GtkTreeIter                  *iter,
+                                                                         GtkTreePath                  *path);
+static GtkTreePath       *thunar_list_model_get_path                    (GtkTreeModel                 *model,
+                                                                         GtkTreeIter                  *iter);
+static void               thunar_list_model_get_value                   (GtkTreeModel                 *model,
+                                                                         GtkTreeIter                  *iter,
+                                                                         gint                          column,
+                                                                         GValue                       *value);
+static gboolean           thunar_list_model_iter_next                   (GtkTreeModel                 *model,
+                                                                         GtkTreeIter                  *iter);
+static gboolean           thunar_list_model_iter_children               (GtkTreeModel                 *model,
+                                                                         GtkTreeIter                  *iter,
+                                                                         GtkTreeIter                  *parent);
+static gboolean           thunar_list_model_iter_has_child              (GtkTreeModel                 *model,
+                                                                         GtkTreeIter                  *iter);
+static gint               thunar_list_model_iter_n_children             (GtkTreeModel                 *model,
+                                                                         GtkTreeIter                  *iter);
+static gboolean           thunar_list_model_iter_nth_child              (GtkTreeModel                 *model,
+                                                                         GtkTreeIter                  *iter,
+                                                                         GtkTreeIter                  *parent,
+                                                                         gint                          n);
+static gboolean           thunar_list_model_iter_parent                 (GtkTreeModel                 *model,
+                                                                         GtkTreeIter                  *iter,
+                                                                         GtkTreeIter                  *child);
+static gboolean           thunar_list_model_drag_data_received          (GtkTreeDragDest              *dest,
+                                                                         GtkTreePath                  *path,
+                                                                         GtkSelectionData             *data);
+static gboolean           thunar_list_model_row_drop_possible           (GtkTreeDragDest              *dest,
+                                                                         GtkTreePath                  *path,
+                                                                         GtkSelectionData             *data);
+static gboolean           thunar_list_model_get_sort_column_id          (GtkTreeSortable              *sortable,
+                                                                         gint                         *sort_column_id,
+                                                                         GtkSortType                  *order);
+static void               thunar_list_model_set_sort_column_id          (GtkTreeSortable              *sortable,
+                                                                         gint                          sort_column_id,
+                                                                         GtkSortType                   order);
+static void               thunar_list_model_set_default_sort_func       (GtkTreeSortable              *sortable,
+                                                                         GtkTreeIterCompareFunc        func,
+                                                                         gpointer                      data,
+                                                                         GDestroyNotify                destroy);
+static void               thunar_list_model_set_sort_func               (GtkTreeSortable              *sortable,
+                                                                         gint                          sort_column_id,
+                                                                         GtkTreeIterCompareFunc        func,
+                                                                         gpointer                      data,
+                                                                         GDestroyNotify                destroy);
+static gboolean           thunar_list_model_has_default_sort_func       (GtkTreeSortable              *sortable);
+static gint               thunar_list_model_cmp_func                    (gconstpointer                 a,
+                                                                         gconstpointer                 b,
+                                                                         gpointer                      user_data);
+static void               thunar_list_model_sort                        (ThunarListModel              *store);
+static void               thunar_list_model_file_changed                (ThunarFileMonitor            *file_monitor,
+                                                                         ThunarFile                   *file,
+                                                                         ThunarListModel              *store);
+static void               thunar_list_model_folder_destroy              (ThunarFolder                 *folder,
+                                                                         ThunarListModel              *store);
+static void               thunar_list_model_folder_error                (ThunarFolder                 *folder,
+                                                                         const GError                 *error,
+                                                                         ThunarListModel              *store);
+static void               thunar_list_model_files_added                 (ThunarFolder                 *folder,
+                                                                         GList                        *files,
+                                                                         ThunarListModel              *store);
+static void               thunar_list_model_files_removed               (ThunarFolder                 *folder,
+                                                                         GList                        *files,
+                                                                         ThunarListModel              *store);
+static gint               sort_by_date                                  (const ThunarFile             *a,
+                                                                         const ThunarFile             *b,
+                                                                         gboolean                      case_sensitive,
+                                                                         gint                          type);
+static gint               sort_by_date_created                          (const ThunarFile             *a,
+                                                                         const ThunarFile             *b,
+                                                                         gboolean                      case_sensitive);
+static gint               sort_by_date_accessed                         (const ThunarFile             *a,
+                                                                         const ThunarFile             *b,
+                                                                         gboolean                      case_sensitive);
+static gint               sort_by_date_modified                         (const ThunarFile             *a,
+                                                                         const ThunarFile             *b,
+                                                                         gboolean                      case_sensitive);
+static gint               sort_by_date_deleted                          (const ThunarFile             *a,
+                                                                         const ThunarFile             *b,
+                                                                         gboolean                      case_sensitive);
+static gint               sort_by_recency                               (const ThunarFile             *a,
+                                                                         const ThunarFile             *b,
+                                                                         gboolean                      case_sensitive);
+static gint               sort_by_location                              (const ThunarFile             *a,
+                                                                         const ThunarFile             *b,
+                                                                         gboolean                      case_sensitive);
+static gint               sort_by_group                                 (const ThunarFile             *a,
+                                                                         const ThunarFile             *b,
+                                                                         gboolean                      case_sensitive);
+static gint               sort_by_mime_type                             (const ThunarFile             *a,
+                                                                         const ThunarFile             *b,
+                                                                         gboolean                      case_sensitive);
+static gint               sort_by_owner                                 (const ThunarFile             *a,
+                                                                         const ThunarFile             *b,
+                                                                         gboolean                      case_sensitive);
+static gint               sort_by_permissions                           (const ThunarFile             *a,
+                                                                         const ThunarFile             *b,
+                                                                         gboolean                      case_sensitive);
+static gint               sort_by_size                                  (const ThunarFile             *a,
+                                                                         const ThunarFile             *b,
+                                                                         gboolean                      case_sensitive);
+static gint               sort_by_size_in_bytes                         (const ThunarFile             *a,
+                                                                         const ThunarFile             *b,
+                                                                         gboolean                      case_sensitive);
+static gint               sort_by_size_and_items_count                  (ThunarFile                   *a,
+                                                                         ThunarFile                   *b,
+                                                                         gboolean                      case_sensitive);    
+static gint               sort_by_type                                  (const ThunarFile             *a,
+                                                                         const ThunarFile             *b,
+                                                                         gboolean                      case_sensitive);
 
-static gboolean           thunar_list_model_get_case_sensitive    (ThunarListModel             *store);
-static void               thunar_list_model_set_case_sensitive    (ThunarListModel             *store,
-                                                                   gboolean                     case_sensitive);
-static ThunarDateStyle    thunar_list_model_get_date_style        (ThunarListModel             *store);
-static void               thunar_list_model_set_date_style        (ThunarListModel             *store,
-                                                                   ThunarDateStyle              date_style);
-static const char*        thunar_list_model_get_date_custom_style (ThunarListModel             *store);
-static void               thunar_list_model_set_date_custom_style (ThunarListModel             *store,
-                                                                   const char                  *date_custom_style);
-static gint               thunar_list_model_get_num_files         (ThunarListModel             *store);
-static gboolean           thunar_list_model_get_folders_first     (ThunarListModel             *store);
-static ThunarJob*         thunar_list_model_job_search_directory  (ThunarListModel             *model,
-                                                                   const gchar                 *search_query_c,
-                                                                   ThunarFile                  *directory);
-static void               thunar_list_model_search_folder         (ThunarListModel             *model,
-                                                                   ThunarJob                   *job,
-                                                                   gchar                       *uri,
-                                                                   gchar                      **search_query_c_terms,
-                                                                   enum ThunarListModelSearch   search_type,
-                                                                   gboolean                     show_hidden);
-static void               thunar_list_model_cancel_search_job     (ThunarListModel             *model);
+static gboolean           thunar_list_model_get_case_sensitive          (ThunarListModel              *store);
+static void               thunar_list_model_set_case_sensitive          (ThunarListModel              *store,
+                                                                         gboolean                      case_sensitive);
+static ThunarDateStyle    thunar_list_model_get_date_style              (ThunarListModel              *store);
+static void               thunar_list_model_set_date_style              (ThunarListModel              *store,
+                                                                         ThunarDateStyle               date_style);
+static const char*        thunar_list_model_get_date_custom_style       (ThunarListModel              *store);
+static void               thunar_list_model_set_date_custom_style       (ThunarListModel              *store,
+                                                                         const char                   *date_custom_style);
+static gint               thunar_list_model_get_num_files               (ThunarListModel              *store);
+static gboolean           thunar_list_model_get_folders_first           (ThunarListModel              *store);
+static ThunarJob*         thunar_list_model_job_search_directory        (ThunarListModel              *model,
+                                                                         const gchar                  *search_query_c,
+                                                                         ThunarFile                   *directory);
+static void               thunar_list_model_search_folder               (ThunarListModel              *model,
+                                                                         ThunarJob                    *job,
+                                                                         gchar                        *uri,
+                                                                         gchar                       **search_query_c_terms,
+                                                                         enum ThunarListModelSearch    search_type,
+                                                                         gboolean                      show_hidden);
+static void               thunar_list_model_cancel_search_job           (ThunarListModel              *model);
 
-
+static gint               thunar_list_model_get_folder_item_count       (ThunarListModel              *store);
+static void               thunar_list_model_set_folder_item_count       (ThunarListModel              *store,
+                                                                         ThunarFolderItemCount         count_as_dir_size);
 
 struct _ThunarListModelClass
 {
@@ -245,13 +252,14 @@ struct _ThunarListModel
   gint           stamp;
 #endif
 
-  GSequence      *rows;
-  GSList         *hidden;
-  ThunarFolder   *folder;
-  gboolean        show_hidden : 1;
-  gboolean        file_size_binary : 1;
-  ThunarDateStyle date_style;
-  char           *date_custom_style;
+  GSequence               *rows;
+  GSList                  *hidden;
+  ThunarFolder            *folder;
+  gboolean                 show_hidden : 1;
+  ThunarFolderItemCount    folder_item_count;
+  gboolean                 file_size_binary : 1;
+  ThunarDateStyle          date_style;
+  char                    *date_custom_style;
 
   /* Use the shared ThunarFileMonitor instance, so we
    * do not need to connect "changed" handler to every
@@ -404,6 +412,19 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
                             "file-size-binary",
                             TRUE,
                             EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarListModel:folder-item-count:
+   * 
+   * Tells when the size column of folders should show the number of containing files
+   **/
+  list_model_props[PROP_FOLDER_ITEM_COUNT] =
+      g_param_spec_enum ("folder-item-count",
+                         "folder-item-count",
+                         "folder-item-count",
+                         THUNAR_TYPE_FOLDER_ITEM_COUNT,
+                         TRUE,
+                         EXO_PARAM_READWRITE);
 
   /* install properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, list_model_props);
@@ -594,6 +615,10 @@ thunar_list_model_get_property (GObject    *object,
       g_value_set_boolean (value, thunar_list_model_get_file_size_binary (store));
       break;
 
+    case PROP_FOLDER_ITEM_COUNT:
+      g_value_set_enum (value, thunar_list_model_get_folder_item_count (store));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -638,6 +663,10 @@ thunar_list_model_set_property (GObject      *object,
 
     case PROP_FILE_SIZE_BINARY:
       thunar_list_model_set_file_size_binary (store, g_value_get_boolean (value));
+      break;
+
+    case PROP_FOLDER_ITEM_COUNT:
+      thunar_list_model_set_folder_item_count (store, g_value_get_enum (value));
       break;
 
     default:
@@ -783,9 +812,10 @@ thunar_list_model_get_value (GtkTreeModel *model,
   ThunarUser   *user;
   ThunarFile   *file;
   ThunarFolder *folder;
+  gchar        *str;
+  guint32       item_count;
   GFile        *g_file;
   GFile        *g_file_parent;
-  gchar        *str;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
   _thunar_return_if_fail (iter->stamp == (THUNAR_LIST_MODEL (model))->stamp);
@@ -930,6 +960,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
 
     case THUNAR_COLUMN_SIZE:
       g_value_init (value, G_TYPE_STRING);
+
       if (thunar_file_is_mountable (file))
         {
           g_file = thunar_file_get_target_location (file);
@@ -939,8 +970,38 @@ thunar_list_model_get_value (GtkTreeModel *model,
           g_object_unref (g_file);
           break;
         }
-      if (!thunar_file_is_directory (file))
-        g_value_take_string (value, thunar_file_get_size_string_formatted (file, THUNAR_LIST_MODEL (model)->file_size_binary));
+      else if (thunar_file_is_directory (file))
+        {
+          /* If the option is set to never show folder sizes as item counts, then just give the folder's binary size */
+          if (THUNAR_LIST_MODEL (model)->folder_item_count == THUNAR_FOLDER_ITEM_COUNT_NEVER)
+            g_value_take_string (value, thunar_file_get_size_string_formatted (file, THUNAR_LIST_MODEL (model)->file_size_binary));
+
+          /* If the option is set to always show folder sizes as item counts, then give the folder's item count */
+          else if (THUNAR_LIST_MODEL (model)->folder_item_count == THUNAR_FOLDER_ITEM_COUNT_ALWAYS)
+            {
+              item_count = thunar_file_get_file_count (file, model);
+              g_value_take_string (value, g_strdup_printf (ngettext ("%u item", "%u items", item_count), item_count));
+            }
+
+          /* If the option is set to always show folder sizes as item counts only for local files,
+           * check if the files is local or not, and act accordingly */
+          else if (THUNAR_LIST_MODEL (model)->folder_item_count == THUNAR_FOLDER_ITEM_COUNT_ONLY_LOCAL)
+            {
+              if (thunar_file_is_local (file))
+                {
+                  item_count = thunar_file_get_file_count (file, model);
+                  g_value_take_string (value, g_strdup_printf (ngettext ("%u item", "%u items", item_count), item_count));
+                }
+              else
+                g_value_take_string (value, thunar_file_get_size_string_formatted (file, THUNAR_LIST_MODEL (model)->file_size_binary));
+            }
+          else
+              g_warning ("Error, unknown enum value for folder_item_count in the list model");
+        }
+      else
+        {
+          g_value_take_string (value, thunar_file_get_size_string_formatted (file, THUNAR_LIST_MODEL (model)->file_size_binary));
+        }
       break;
 
     case THUNAR_COLUMN_SIZE_IN_BYTES:
@@ -1104,7 +1165,7 @@ thunar_list_model_get_sort_column_id (GtkTreeSortable *sortable,
     *sort_column_id = THUNAR_COLUMN_NAME;
   else if (store->sort_func == sort_by_permissions)
     *sort_column_id = THUNAR_COLUMN_PERMISSIONS;
-  else if (store->sort_func == sort_by_size)
+  else if (store->sort_func == sort_by_size || store->sort_func == (ThunarSortFunc) sort_by_size_and_items_count)
     *sort_column_id = THUNAR_COLUMN_SIZE;
   else if (store->sort_func == sort_by_size_in_bytes)
     *sort_column_id = THUNAR_COLUMN_SIZE_IN_BYTES;
@@ -1199,7 +1260,7 @@ thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
       break;
 
     case THUNAR_COLUMN_SIZE:
-      store->sort_func = sort_by_size;
+      store->sort_func = (store->folder_item_count != THUNAR_FOLDER_ITEM_COUNT_NEVER) ? (ThunarSortFunc) sort_by_size_and_items_count : sort_by_size;
       break;
 
     case THUNAR_COLUMN_SIZE_IN_BYTES:
@@ -1854,6 +1915,32 @@ sort_by_size_in_bytes (const ThunarFile *a,
                        gboolean          case_sensitive)
 {
   return sort_by_size (a, b, case_sensitive);
+}
+
+
+
+static gint
+sort_by_size_and_items_count (ThunarFile *a,
+                              ThunarFile *b,
+                              gboolean    case_sensitive)
+{
+  guint32       count_a;
+  guint32       count_b;
+
+  if (thunar_file_is_directory (a) && thunar_file_is_directory (b))
+  {
+    count_a = thunar_file_get_file_count (a, NULL);
+    count_b = thunar_file_get_file_count (b, NULL);
+
+    if (count_a < count_b)
+      return -1;
+    else if (count_a > count_b)
+      return 1;
+    else
+      return thunar_file_compare_by_name (a, b, case_sensitive);
+  }
+
+  return sort_by_size(a, b, case_sensitive);
 }
 
 
@@ -2687,6 +2774,51 @@ thunar_list_model_set_file_size_binary (ThunarListModel *store,
                               (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed,
                               NULL);
     }
+}
+
+
+
+/**
+ * thunar_list_model_get_folder_item_count:
+ * @store : a #ThunarListModel.
+ *
+ * Return value: A value of the enum #ThunarFolderItemCount
+ **/
+static gint
+thunar_list_model_get_folder_item_count (ThunarListModel *store)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
+  return store->folder_item_count;
+}
+
+
+
+/**
+ * thunar_list_model_set_folder_item_count:
+ * @store             : a #ThunarListModel.
+ * @count_as_dir_size : a value of the enum #ThunarFolderItemCount
+ **/
+static void
+thunar_list_model_set_folder_item_count (ThunarListModel         *store,
+                                         ThunarFolderItemCount    count_as_dir_size)
+{
+  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
+
+  /* check if the new setting differs */
+  if (store->folder_item_count == count_as_dir_size)
+    return;
+
+  store->folder_item_count = count_as_dir_size;
+  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_FOLDER_ITEM_COUNT]);
+
+  gtk_tree_model_foreach (GTK_TREE_MODEL (store), (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed, NULL);
+
+  /* re-sorting the store if needed */
+  if (store->sort_func == sort_by_size || store->sort_func == (ThunarSortFunc) sort_by_size_and_items_count)
+  {
+    store->sort_func = (store->folder_item_count != THUNAR_FOLDER_ITEM_COUNT_NEVER) ? (ThunarSortFunc) sort_by_size_and_items_count : sort_by_size;
+    thunar_list_model_sort (store);
+  }
 }
 
 
