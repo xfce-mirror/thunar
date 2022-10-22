@@ -197,6 +197,7 @@ thunar_SOURCES =							\
 	thunar-thumbnailer.c						\
 	thunar-thumbnailer.h						\
 	thunar-toolbar-editor.c						\
+	thunar-toolbar-editor.h						\
 	thunar-transfer-job.c						\
 	thunar-transfer-job.h						\
 	thunar-tree-model.c						\
@@ -212,8 +213,7 @@ thunar_SOURCES =							\
 	thunar-view.c							\
 	thunar-view.h							\
 	thunar-window.c							\
-	thunar-window.h							\
-        thunar-toolbar-editor.
+	thunar-window.h
 
 noinst_LIBRARIES = thunar.a
 thunar_a_SOURCES =
