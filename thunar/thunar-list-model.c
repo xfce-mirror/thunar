@@ -415,6 +415,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
 
   /**
    * ThunarListModel:folder-item-count:
+   * 
+   * Tells when the size column of folders should show the number of containing files
    **/
   list_model_props[PROP_FOLDER_ITEM_COUNT] =
       g_param_spec_enum ("folder-item-count",

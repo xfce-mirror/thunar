@@ -690,6 +690,8 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
 
   /**
    * ThunarPreferences:misc-folder-item-count
+   * 
+   * Tells when the size column of folders should show the number of containing files
    **/
   preferences_props[PROP_MISC_FOLDER_ITEM_COUNT] =
       g_param_spec_enum ("misc-folder-item-count",
