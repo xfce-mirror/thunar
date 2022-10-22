@@ -230,6 +230,9 @@ static gint               thunar_list_model_get_folder_item_count       (ThunarL
 static void               thunar_list_model_set_folder_item_count       (ThunarListModel              *store,
                                                                          ThunarFolderItemCount         count_as_dir_size);
 
+static void               thunar_list_model_file_count_callback         (ExoJob                       *job,
+                                                                         gpointer                      model);
+
 struct _ThunarListModelClass
 {
   GObjectClass __parent__;
@@ -979,7 +982,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
           /* If the option is set to always show folder sizes as item counts, then give the folder's item count */
           else if (THUNAR_LIST_MODEL (model)->folder_item_count == THUNAR_FOLDER_ITEM_COUNT_ALWAYS)
             {
-              item_count = thunar_file_get_file_count (file, model);
+              item_count = thunar_file_get_file_count (file, G_CALLBACK (thunar_list_model_file_count_callback), model);
               g_value_take_string (value, g_strdup_printf (ngettext ("%u item", "%u items", item_count), item_count));
             }
 
@@ -989,7 +992,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
             {
               if (thunar_file_is_local (file))
                 {
-                  item_count = thunar_file_get_file_count (file, model);
+                  item_count = thunar_file_get_file_count (file, G_CALLBACK (thunar_list_model_file_count_callback), model);
                   g_value_take_string (value, g_strdup_printf (ngettext ("%u item", "%u items", item_count), item_count));
                 }
               else
@@ -1929,8 +1932,8 @@ sort_by_size_and_items_count (ThunarFile *a,
 
   if (thunar_file_is_directory (a) && thunar_file_is_directory (b))
   {
-    count_a = thunar_file_get_file_count (a, NULL);
-    count_b = thunar_file_get_file_count (b, NULL);
+    count_a = thunar_file_get_file_count (a, NULL, NULL);
+    count_b = thunar_file_get_file_count (b, NULL, NULL);
 
     if (count_a < count_b)
       return -1;
@@ -3287,4 +3290,13 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
   g_list_free_full (text_list, g_free);
   g_object_unref (preferences);
   return text;
+}
+
+
+
+static void
+thunar_list_model_file_count_callback (ExoJob  *job,
+                                       gpointer model)
+{
+  gtk_tree_model_foreach (GTK_TREE_MODEL (model), (GtkTreeModelForeachFunc) gtk_tree_model_row_changed, NULL);
 }

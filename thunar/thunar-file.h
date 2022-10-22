@@ -237,7 +237,8 @@ gboolean          thunar_file_can_be_trashed             (const ThunarFile      
 
 
 guint             thunar_file_get_file_count             (ThunarFile             *file,
-                                                          GtkTreeModel           *store);
+                                                          GCallback               callback,
+                                                          gpointer                data);
 void              thunar_file_set_file_count             (ThunarFile             *file,
                                                           const guint             count);
 
