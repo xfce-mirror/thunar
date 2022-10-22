@@ -190,7 +190,8 @@ struct _ThunarFile
   /* tells whether the file watch is not set */
   gboolean              no_file_watch;
 
-  /* the file count, valid only if the file is a directory */
+  /* Number of files in this directory (only used if this #Thunarfile is a directory) */
+  /* Note that this feature was added into #ThunarFile on purpose, because having inside #ThunarFolder caused lag when there were > 10.000 files in a folder (Creation of #ThunarFolder seems to be slow) */
   guint              file_count;
   guint64            file_count_timestamp;
 
@@ -3495,7 +3496,7 @@ thunar_file_can_be_trashed (const ThunarFile *file)
 
 /**
  * thunar_file_get_file_count
- * @file : a #ThunarFolder instance.
+ * @file : a #ThunarFile instance.
  * @store: a #GtkTreeModel or %NULL
  *
  * Returns the number of items in the directory
