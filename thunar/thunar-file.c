@@ -192,8 +192,8 @@ struct _ThunarFile
 
   /* Number of files in this directory (only used if this #Thunarfile is a directory) */
   /* Note that this feature was added into #ThunarFile on purpose, because having inside #ThunarFolder caused lag when there were > 10.000 files in a folder (Creation of #ThunarFolder seems to be slow) */
-  guint              file_count;
-  guint64            file_count_timestamp;
+  guint                 file_count;
+  guint64               file_count_timestamp;
 
 };
 
@@ -391,6 +391,8 @@ thunar_file_class_init (ThunarFileClass *klass)
 static void
 thunar_file_init (ThunarFile *file)
 {
+  file->file_count = 0;
+  file->file_count_timestamp = 0;
 }
 
 
