@@ -338,7 +338,6 @@ struct _ThunarListModelItem
 
   /* list of children of this node that are
    * not visible in the treeview */
-  /* TODO: Should we use GSequence instead here ? */
   GSList          *invisible_children;
 };
 
@@ -3179,7 +3178,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
                               ThunarFolder    *folder,
                               gchar           *search_query)
 {
-  GList         *files;
+  GList               *files;
   ThunarListModelItem *item;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
@@ -3473,7 +3472,28 @@ static gint
 thunar_list_model_get_num_files (ThunarListModel *store)
 {
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), 0);
-  return 0;
+  return g_node_n_children (store->root) + g_list_length (store->hidden);
+}
+
+
+
+static gboolean
+gtk_tree_model_foreach_func (GtkTreeModel *model,
+                             GtkTreePath  *path,
+                             GtkTreeIter  *iter,
+                             gpointer      user_data)
+{
+  ThunarListModelItem *item;
+  GHashTable *table = (GHashTable *) user_data;
+
+  if (iter->user_data != NULL)
+    {
+      item = THUNAR_LIST_MODEL_ITEM (G_NODE (iter->user_data));
+      if (item->file != NULL && g_hash_table_contains (table, item->file))
+        g_hash_table_replace (table, item->file, gtk_tree_path_copy (path));
+    }
+
+  return FALSE;
 }
 
 
@@ -3500,7 +3520,19 @@ GList*
 thunar_list_model_get_paths_for_files (ThunarListModel *store,
                                        GList           *files)
 {
-  return NULL;
+  GHashTable *table;
+  GList      *paths;
+
+  _thunar_return_val_if_fail(THUNAR_IS_LIST_MODEL (store), NULL);
+
+  table = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, NULL);
+  for (GList *lp = files; lp != NULL; lp = lp->next)
+    g_hash_table_add (table, g_object_ref (lp->data));
+  
+  gtk_tree_model_foreach (GTK_TREE_MODEL (store), gtk_tree_model_foreach_func, table);
+  for (GList *lp = files; lp != NULL; lp = lp->next)
+    paths = g_list_append(paths, g_hash_table_lookup (table, lp->data));
+  return paths;
 }
 
 
@@ -3578,5 +3610,169 @@ gchar*
 thunar_list_model_get_statusbar_text (ThunarListModel *store,
                                       GList           *selected_items)
 {
+  // const gchar       *content_type;
+  // const gchar       *original_path;
+  // GtkTreeIter        iter;
+  // ThunarFile        *file;
+  // guint64            size;
+  // GList             *lp;
+  // GList             *text_list      = NULL;
+  // gchar             *temp_string    = NULL;
+  // gchar             *text           = "";
+  // gint               height;
+  // gint               width;
+  // GSequenceIter     *row;
+  // GSequenceIter     *end;
+  // ThunarPreferences *preferences;
+  // gboolean           show_image_size;
+  // gboolean           show_file_size_binary_format;
+  // GList             *relevant_files = NULL;
+  // guint              active;
+  // gboolean           show_size, show_size_in_bytes, show_filetype, show_display_name, show_last_modified;
+
+  // _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
+
+  // preferences = thunar_preferences_get ();
+  // g_object_get (G_OBJECT (preferences), "misc-status-bar-active-info", &active, NULL);
+  // show_size = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE);
+  // show_size_in_bytes = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES);
+  // show_filetype = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_FILETYPE);
+  // show_display_name = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_DISPLAY_NAME);
+  // show_last_modified = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_LAST_MODIFIED);
+  // show_file_size_binary_format = thunar_list_model_get_file_size_binary(store);
+
+  // if (selected_items == NULL) /* nothing selected */
+  //   {
+  //     /* build a GList of all files */
+  //     end = g_sequence_get_end_iter (store->rows);
+  //     for (row = g_sequence_get_begin_iter (store->rows); row != end; row = g_sequence_iter_next (row))
+  //       {
+  //         relevant_files = g_list_append (relevant_files, g_sequence_get (row));
+  //       }
+
+  //     /* try to determine a file for the current folder */
+  //     file = (store->folder != NULL) ? thunar_folder_get_corresponding_file (store->folder) : NULL;
+  //     temp_string = thunar_list_model_get_statusbar_text_for_files (store, relevant_files, show_file_size_binary_format);
+  //     text_list = g_list_append (text_list, temp_string);
+
+  //     /* check if we can determine the amount of free space for the volume */
+  //     if (G_LIKELY (file != NULL && thunar_g_file_get_free_space (thunar_file_get_file (file), &size, NULL)))
+  //       {
+  //         /* humanize the free space */
+  //         gchar *size_string = g_format_size_full (size, show_file_size_binary_format ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+  //         temp_string = g_strdup_printf (_("Free space: %s"), size_string);
+  //         text_list = g_list_append (text_list, temp_string);
+  //         g_free (size_string);
+  //       }
+
+  //     g_list_free (relevant_files);
+  //   }
+  // else if (selected_items->next == NULL) /* only one item selected */
+  //   {
+  //     /* resolve the iter for the single path */
+  //     gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, selected_items->data);
+
+  //     /* get the file for the given iter */
+  //     file = g_sequence_get (iter.user_data);
+
+  //     /* determine the content type of the file */
+  //     content_type = thunar_file_get_content_type (file);
+
+  //     if (show_display_name == TRUE)
+  //       {
+  //         temp_string = g_strdup_printf (_("\"%s\""), thunar_file_get_display_name (file));
+  //         text_list = g_list_append (text_list, temp_string);
+  //       }
+
+  //     if (thunar_file_is_regular (file) || G_UNLIKELY (thunar_file_is_symlink (file)))
+  //       {
+  //         if (show_size == TRUE)
+  //           {
+  //             if (show_size_in_bytes == TRUE)
+  //               temp_string = thunar_file_get_size_string_long (file, show_file_size_binary_format);
+  //             else
+  //               temp_string = thunar_file_get_size_string_formatted (file, show_file_size_binary_format);
+  //             text_list = g_list_append (text_list, temp_string);
+  //           }
+  //       }
+
+  //     if (show_filetype == TRUE)
+  //       {
+  //         if (G_UNLIKELY (content_type != NULL && g_str_equal (content_type, "inode/symlink")))
+  //           temp_string = g_strdup (_("broken link"));
+  //         else if (G_UNLIKELY (thunar_file_is_symlink (file)))
+  //           temp_string = g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (file));
+  //         else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_SHORTCUT))
+  //           temp_string = g_strdup (_("shortcut"));
+  //         else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_MOUNTABLE))
+  //           temp_string = g_strdup (_("mountable"));
+  //         else
+  //           {
+  //             gchar *description = g_content_type_get_description (content_type);
+  //             temp_string = g_strdup_printf (_("%s"), description);
+  //             g_free (description);
+  //           }
+  //         text_list = g_list_append (text_list, temp_string);
+  //       }
+
+  //     /* append the original path (if any) */
+  //     original_path = thunar_file_get_original_path (file);
+  //     if (G_UNLIKELY (original_path != NULL))
+  //       {
+  //         /* append the original path to the statusbar text */
+  //         gchar *original_path_string = g_filename_display_name (original_path);
+  //         temp_string = g_strdup_printf ("%s %s", _("Original Path:"), original_path_string);
+  //         text_list = g_list_append (text_list, temp_string);
+  //         g_free (original_path_string);
+  //       }
+  //     else if (thunar_file_is_local (file)
+  //              && thunar_file_is_regular (file)
+  //              && g_str_has_prefix (content_type, "image/")) /* bug #2913 */
+  //       {
+  //         /* check if the size should be visible in the statusbar, disabled by
+  //          * default to avoid high i/o  */
+  //         g_object_get (preferences, "misc-image-size-in-statusbar", &show_image_size, NULL);
+  //         if (show_image_size)
+  //           {
+  //             /* check if we can determine the dimension of this file (only for image files) */
+  //             gchar *file_path = g_file_get_path (thunar_file_get_file (file));
+  //             if (file_path != NULL && gdk_pixbuf_get_file_info (file_path, &width, &height) != NULL)
+  //               {
+  //                 /* append the image dimensions to the statusbar text */
+  //                 temp_string = g_strdup_printf ("%s %dx%d", _("Image Size:"), width, height);
+  //                 text_list = g_list_append (text_list, temp_string);
+  //               }
+  //             g_free (file_path);
+  //           }
+  //       }
+
+  //     if (show_last_modified)
+  //       {
+  //         gchar *date_string = thunar_file_get_date_string (file, THUNAR_FILE_DATE_MODIFIED, store->date_style, store->date_custom_style);
+  //         temp_string = g_strdup_printf (_("Last Modified: %s"), date_string);
+  //         text_list = g_list_append (text_list, temp_string);
+  //         g_free (date_string);
+  //       }
+  //   }
+  // else /* more than one item selected */
+  //   {
+  //     gchar *selected_string;
+  //     /* build GList of files from selection */
+  //     for (lp = selected_items; lp != NULL; lp = lp->next)
+  //       {
+  //         gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, lp->data);
+  //         relevant_files = g_list_append (relevant_files, g_sequence_get (iter.user_data));
+  //       }
+  //     selected_string = thunar_list_model_get_statusbar_text_for_files (store, relevant_files, show_file_size_binary_format);
+  //     temp_string = g_strdup_printf (_("Selection: %s"), selected_string);
+  //     text_list = g_list_append (text_list, temp_string);
+  //     g_list_free (relevant_files);
+  //     g_free (selected_string);
+  //   }
+
+  // text = thunar_util_strjoin_list (text_list, "  |  ");
+  // g_list_free_full (text_list, g_free);
+  // g_object_unref (preferences);
+  // return text;
   return g_strdup ("");
 }
