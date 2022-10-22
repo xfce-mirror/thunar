@@ -1927,7 +1927,7 @@ sort_by_size_and_items_count (ThunarFile *a,
   guint32       count_a;
   guint32       count_b;
 
-  if (thunar_file_is_directory(a) && thunar_file_is_directory(b))
+  if (thunar_file_is_directory (a) && thunar_file_is_directory (b))
   {
     count_a = thunar_file_get_file_count (a, NULL);
     count_b = thunar_file_get_file_count (b, NULL);
