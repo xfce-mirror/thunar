@@ -698,7 +698,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          "MiscFolderItemCount",
                          NULL,
                          THUNAR_TYPE_FOLDER_ITEM_COUNT,
-                         TRUE,
+                         THUNAR_FOLDER_ITEM_COUNT_NEVER,
                          EXO_PARAM_READWRITE);
 
   /**
