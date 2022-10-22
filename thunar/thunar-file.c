@@ -117,8 +117,6 @@ static gboolean           thunar_file_load                     (ThunarFile      
 static gboolean           thunar_file_is_readable              (const ThunarFile       *file);
 static gboolean           thunar_file_same_filesystem          (const ThunarFile       *file_a,
                                                                 const ThunarFile       *file_b);
-static void               thunar_file_count_callback           (ExoJob                 *job,
-                                                                gpointer                model);
 
 
 
@@ -3499,21 +3497,21 @@ thunar_file_can_be_trashed (const ThunarFile *file)
 
 /**
  * thunar_file_get_file_count
- * @file : a #ThunarFile instance.
- * @store: a #GtkTreeModel or %NULL
+ * @file    : a #ThunarFile instance.
+ * @callback: a #GCallback to be executed after the file count
+ * @data    : a #gpointer containing user data to pass to the callback
  *
  * Returns the number of items in the directory
  * Counts the number of files in the directory as fast as possible.
- * Will use cached data to do calculations only once
- * The @store is needed to force the redraw once the file count
- * values are actually calculated.
- * Cached values are returned if @store is NULL.
+ * Will use cached data to do calculations only when the file has
+ * been modified since the last time its contents were counted.
  *
  * Return value: Number of files in a folder
  **/
 guint
 thunar_file_get_file_count (ThunarFile   *file,
-                            GtkTreeModel *store)
+                            GCallback     callback,
+                            gpointer      data)
 {
   GError                    *err = NULL;
   ThunarJob                 *job;
@@ -3554,8 +3552,10 @@ thunar_file_get_file_count (ThunarFile   *file,
   /* set up a job to actually enumerate over the folder's contents and get its file count */
   job = thunar_io_jobs_count_files (file);
 
-  /* set up the signal on finish to update the row model and ask for redraw */
-  g_signal_connect (job, "finished", G_CALLBACK (thunar_file_count_callback), store);
+  /* set up the signal on finish to call the callback */
+  if (callback != NULL)
+    g_signal_connect (job, "finished", G_CALLBACK (callback), data);
+
   exo_job_launch (EXO_JOB (job));
 
   return file->file_count;
@@ -4560,15 +4560,6 @@ thunar_file_same_filesystem (const ThunarFile *file_a,
 
   /* compare the filesystem IDs */
   return (g_strcmp0 (filesystem_id_a, filesystem_id_b) == 0);
-}
-
-
-
-static void
-thunar_file_count_callback (ExoJob  *job,
-                            gpointer model)
-{
-  gtk_tree_model_foreach (GTK_TREE_MODEL (model), (GtkTreeModelForeachFunc) gtk_tree_model_row_changed, NULL);
 }
 
 
