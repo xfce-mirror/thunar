@@ -191,7 +191,8 @@ struct _ThunarFile
   gboolean              no_file_watch;
 
   /* Number of files in this directory (only used if this #Thunarfile is a directory) */
-  /* Note that this feature was added into #ThunarFile on purpose, because having inside #ThunarFolder caused lag when there were > 10.000 files in a folder (Creation of #ThunarFolder seems to be slow) */
+  /* Note that this feature was added into #ThunarFile on purpose, because having inside #ThunarFolder caused lag when
+   * there were > 10.000 files in a folder (Creation of #ThunarFolder seems to be slow) */
   guint                 file_count;
   guint64               file_count_timestamp;
 
