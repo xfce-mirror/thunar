@@ -988,8 +988,15 @@ thunar_path_entry_match_func (GtkEntryCompletion *completion,
     {
       /* check if the file is hidden */
       gtk_tree_model_get (model, iter, THUNAR_COLUMN_FILE, &file, -1);
-      matched = !thunar_file_is_hidden (file);
-      g_object_unref (G_OBJECT (file));
+      /* FIX: list-model now returns NULL for files if not yet loaded. What to do ? */
+      if (file != NULL)
+        {
+          g_print ("File is NULL !!\n");
+          matched = !thunar_file_is_hidden (file);
+          g_object_unref (G_OBJECT (file));
+        }
+      else
+        matched = FALSE;
     }
   else
     {
