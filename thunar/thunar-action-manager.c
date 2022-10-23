@@ -2513,7 +2513,7 @@ thunar_action_manager_action_move_to_trash (ThunarActionManager *action_mgr)
     return;
 
   application = thunar_application_get ();
-  thunar_application_unlink_files (application, action_mgr->widget, action_mgr->files_to_process, FALSE);
+  thunar_application_unlink_files (application, action_mgr->widget, action_mgr->files_to_process, FALSE, TRUE);
   g_object_unref (G_OBJECT (application));
 }
 
@@ -2530,7 +2530,7 @@ thunar_action_manager_action_delete (ThunarActionManager *action_mgr)
     return TRUE;
 
   application = thunar_application_get ();
-  thunar_application_unlink_files (application, action_mgr->widget, action_mgr->files_to_process, TRUE);
+  thunar_application_unlink_files (application, action_mgr->widget, action_mgr->files_to_process, TRUE, TRUE);
   g_object_unref (G_OBJECT (application));
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
