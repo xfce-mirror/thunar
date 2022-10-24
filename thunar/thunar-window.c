@@ -1032,7 +1032,8 @@ thunar_window_init (ThunarWindow *window)
   catfish_path =  g_find_program_in_path ("catfish");
   if (catfish_path != NULL)
     {
-      window->catfish_search_button = gtk_button_new_with_label ("Search with Catfish...");
+      /* TRANSLATORS: `Catfish' is a software package, please don't translate it. */
+      window->catfish_search_button = gtk_button_new_with_label (_("Search with Catfish..."));
       gtk_grid_attach (GTK_GRID (window->view_box), window->catfish_search_button, 0, 1, 1, 1);
       g_signal_connect_swapped (window->catfish_search_button, "clicked", G_CALLBACK (thunar_window_catfish_dialog_configure), window);
       gtk_widget_hide (window->catfish_search_button);
@@ -1043,8 +1044,8 @@ thunar_window_init (ThunarWindow *window)
 
   window->trash_infobar = gtk_info_bar_new ();
   gtk_grid_attach (GTK_GRID (window->view_box), window->trash_infobar, 0, 2, 1, 1);
-  window->trash_infobar_restore_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Restore Selected Items", RESTORE);
-  window->trash_infobar_empty_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Empty Trash", EMPTY);
+  window->trash_infobar_restore_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), _("Restore Selected Items"), RESTORE);
+  window->trash_infobar_empty_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), _("Empty Trash"), EMPTY);
   g_signal_connect (window->trash_infobar,
                     "response",
                     G_CALLBACK (thunar_window_trash_infobar_clicked),
