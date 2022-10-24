@@ -58,16 +58,17 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-chooser-dialog.h>
-#include <thunar/thunar-file.h>
+#include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-file-monitor.h>
+#include <thunar/thunar-file.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-private.h>
+#include <thunar/thunar-icon-factory.h>
+#include <thunar/thunar-io-jobs.h>
 #include <thunar/thunar-preferences.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-user.h>
 #include <thunar/thunar-util.h>
-#include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-icon-factory.h>
 
 
 
@@ -186,6 +187,13 @@ struct _ThunarFile
 
   /* tells whether the file watch is not set */
   gboolean              no_file_watch;
+
+  /* Number of files in this directory (only used if this #Thunarfile is a directory) */
+  /* Note that this feature was added into #ThunarFile on purpose, because having inside #ThunarFolder caused lag when
+   * there were > 10.000 files in a folder (Creation of #ThunarFolder seems to be slow) */
+  guint                 file_count;
+  guint64               file_count_timestamp;
+
 };
 
 typedef struct
@@ -382,6 +390,8 @@ thunar_file_class_init (ThunarFileClass *klass)
 static void
 thunar_file_init (ThunarFile *file)
 {
+  file->file_count = 0;
+  file->file_count_timestamp = 0;
 }
 
 
@@ -3483,6 +3493,92 @@ thunar_file_can_be_trashed (const ThunarFile *file)
                                             G_FILE_ATTRIBUTE_ACCESS_CAN_TRASH);
 }
 
+
+
+/**
+ * thunar_file_get_file_count
+ * @file    : a #ThunarFile instance.
+ * @callback: a #GCallback to be executed after the file count
+ * @data    : a #gpointer containing user data to pass to the callback
+ *
+ * Returns the number of items in the directory
+ * Counts the number of files in the directory as fast as possible.
+ * Will use cached data to do calculations only when the file has
+ * been modified since the last time its contents were counted.
+ *
+ * Return value: Number of files in a folder
+ **/
+guint
+thunar_file_get_file_count (ThunarFile   *file,
+                            GCallback     callback,
+                            gpointer      data)
+{
+  GError                    *err = NULL;
+  ThunarJob                 *job;
+  GFileInfo                 *info;
+  guint64                    last_modified;
+
+  _thunar_return_val_if_fail (thunar_file_is_directory (file), 0);
+
+  /* Forcefully get cached values by passing NULL as the second argument */
+  if (file == NULL)
+    return file->file_count;
+
+  info = g_file_query_info (thunar_file_get_file (file),
+                            G_FILE_ATTRIBUTE_TIME_MODIFIED,
+                            G_FILE_QUERY_INFO_NONE,
+                            NULL,
+                            &err);
+
+  if (err != NULL)
+    {
+      g_warning ("An error occured while trying to get file counts.");
+      return file->file_count;
+    }
+
+  last_modified = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_MODIFIED);
+  g_object_unref (info);
+
+  /* return a cached value if last time that the file count was computed is later
+   * than the last time the file was modified */
+  if (G_LIKELY (last_modified < file->file_count_timestamp))
+    return file->file_count;
+
+  /* put the timestamp calculation at the *start* of the process to prevent another call to
+   * thunar_file_get_count starting another job on the same folder before one has ended.
+   * Divide by 1e6 to convert from microseconds to seconds */
+  file->file_count_timestamp = g_get_real_time () / (guint64) 1e6;
+
+  /* set up a job to actually enumerate over the folder's contents and get its file count */
+  job = thunar_io_jobs_count_files (file);
+
+  /* set up the signal on finish to call the callback */
+  if (callback != NULL)
+    g_signal_connect (job, "finished", G_CALLBACK (callback), data);
+
+  exo_job_launch (EXO_JOB (job));
+
+  return file->file_count;
+}
+
+
+
+/**
+ * thunar_file_set_file_count
+ * @file: A #ThunarFileInstance
+ * @count: The value to set the file's count to
+ *
+ * Set @file's count to the given number if it is a directory.
+ * Does *NOT* update the file's count timestamp.
+ **/
+void
+thunar_file_set_file_count (ThunarFile  *file,
+                            const guint  count)
+{
+  _thunar_return_if_fail (thunar_file_is_directory (file));
+
+  file->file_count = count;
+}
 
 
 /**
