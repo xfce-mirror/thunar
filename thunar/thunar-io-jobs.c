@@ -1517,4 +1517,3 @@ thunar_io_jobs_count_files (ThunarFile *file)
   return thunar_simple_job_new (_thunar_io_jobs_count, 1,
                                 THUNAR_TYPE_FILE, file);
 }
-
