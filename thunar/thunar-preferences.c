@@ -126,6 +126,7 @@ enum
   PROP_MISC_COMPACT_VIEW_MAX_CHARS,
   PROP_MISC_HIGHLIGHTING_ENABLED,
   PROP_MISC_UNDO_REDO_HISTORY_SIZE,
+  PROP_MISC_ENABLE_TREE_VIEW,
   N_PROPERTIES,
 };
 
@@ -1175,6 +1176,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         -1, G_MAXINT,
                         10,
                         EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-enable-tree-view
+   *
+   * If true details view shows expanders.
+   * Can be toggled using the View > Enable Tree View when in details view.
+   **/
+  preferences_props[PROP_MISC_ENABLE_TREE_VIEW] =
+      g_param_spec_boolean ("misc-enable-tree-view",
+                            "MiscEnableTreeView",
+                            NULL,
+                            FALSE,
+                            EXO_PARAM_READWRITE);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
