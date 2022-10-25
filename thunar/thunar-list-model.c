@@ -199,7 +199,7 @@ static gint               sort_by_size_in_bytes                         (const T
                                                                          gboolean                      case_sensitive);
 static gint               sort_by_size_and_items_count                  (ThunarFile                   *a,
                                                                          ThunarFile                   *b,
-                                                                         gboolean                      case_sensitive);    
+                                                                         gboolean                      case_sensitive);
 static gint               sort_by_type                                  (const ThunarFile             *a,
                                                                          const ThunarFile             *b,
                                                                          gboolean                      case_sensitive);
