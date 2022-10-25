@@ -37,6 +37,45 @@ static ThunarThumbnailSize thunar_icon_size_to_thumbnail_size   (ThunarIconSize 
 
 
 
+gboolean
+transform_enum_value_to_index (GBinding     *binding,
+                               const GValue *src_value,
+                               GValue       *dst_value,
+                               gpointer      user_data)
+{
+  GEnumClass *klass;
+  GType     (*type_func)() = user_data;
+  guint       n;
+
+  klass = g_type_class_ref (type_func ());
+  for (n = 0; n < klass->n_values; ++n)
+    if (klass->values[n].value == g_value_get_enum (src_value))
+      g_value_set_int (dst_value, n);
+  g_type_class_unref (klass);
+
+  return TRUE;
+}
+
+
+
+gboolean
+transform_index_to_enum_value (GBinding     *binding,
+                               const GValue *src_value,
+                               GValue       *dst_value,
+                               gpointer      user_data)
+{
+  GEnumClass *klass;
+  GType     (*type_func)() = user_data;
+
+  klass = g_type_class_ref (type_func ());
+  g_value_set_enum (dst_value, klass->values[g_value_get_int (src_value)].value);
+  g_type_class_unref (klass);
+
+  return TRUE;
+}
+
+
+
 GType
 thunar_renamer_mode_get_type (void)
 {
@@ -712,3 +751,42 @@ thunar_image_preview_mode_get_type (void)
   return type;
 }
 
+GType thunar_folder_item_count_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GEnumValue values[] =
+      {
+        { THUNAR_FOLDER_ITEM_COUNT_NEVER,       "THUNAR_FOLDER_ITEM_COUNT_NEVER",       N_("Never") },
+        { THUNAR_FOLDER_ITEM_COUNT_ONLY_LOCAL,  "THUNAR_FOLDER_ITEM_COUNT_ONLY_LOCAL",  N_("Only for local files") },
+        { THUNAR_FOLDER_ITEM_COUNT_ALWAYS,      "THUNAR_FOLDER_ITEM_COUNT_ALWAYS",      N_("Always") },
+        { 0,                                    NULL,                                   NULL }
+      };
+
+      type = g_enum_register_static ("ThunarFolderItemCount", values);
+    }
+
+  return type;
+}
+
+GType
+thunar_items_as_folder_size_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GEnumValue values[] =
+      {
+        { THUNAR_FOLDER_ITEM_COUNT_NEVER,       "THUNAR_FOLDER_ITEM_COUNT_NEVER",       N_("Never") },
+        { THUNAR_FOLDER_ITEM_COUNT_ONLY_LOCAL,  "THUNAR_FOLDER_ITEM_COUNT_ONLY_LOCAL",  N_("Only for local files") },
+        { THUNAR_FOLDER_ITEM_COUNT_ALWAYS,      "THUNAR_FOLDER_ITEM_COUNT_ALWAYS",      N_("Always") },
+        { 0,                                     NULL,                                  NULL }
+      };
+
+      type = g_enum_register_static ("ThunarItemsAsFolderSize", values);
+    }
+  return type;
+}
