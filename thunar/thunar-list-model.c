@@ -1419,7 +1419,7 @@ thunar_list_model_file_changed (ThunarFileMonitor *file_monitor,
   GtkTreePath   *path;
   GtkTreeIter    iter;
 
-  _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
+  _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor) || file_monitor == NULL);
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
@@ -3298,5 +3298,14 @@ static void
 thunar_list_model_file_count_callback (ExoJob  *job,
                                        gpointer model)
 {
-  gtk_tree_model_foreach (GTK_TREE_MODEL (model), (GtkTreeModelForeachFunc) gtk_tree_model_row_changed, NULL);
+  GArray     *param_values;
+  ThunarFile *file;
+
+  param_values = thunar_simple_job_get_param_values (THUNAR_SIMPLE_JOB (job));
+  file = THUNAR_FILE (g_value_get_object (&g_array_index (param_values, GValue, 0)));
+
+  if (file == NULL)
+    return;
+
+  thunar_list_model_file_changed (NULL, file, THUNAR_LIST_MODEL (model));
 }
