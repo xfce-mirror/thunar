@@ -154,6 +154,9 @@ static void               thunar_list_model_folder_error                (ThunarF
 static void               thunar_list_model_files_added                 (ThunarFolder                 *folder,
                                                                          GList                       *files,
                                                                          ThunarListModel             *store);
+static void               thunar_list_model_files_added                 (ThunarFolder                 *folder,
+                                                                         GList                        *files,
+                                                                         ThunarListModel              *store);
 static void               thunar_list_model_files_removed               (ThunarFolder                 *folder,
                                                                          GList                        *files,
                                                                          ThunarListModel              *store);
