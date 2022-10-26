@@ -152,9 +152,6 @@ static void               thunar_list_model_folder_error                (ThunarF
                                                                          const GError                 *error,
                                                                          ThunarListModel              *store);
 static void               thunar_list_model_files_added                 (ThunarFolder                 *folder,
-                                                                         GList                       *files,
-                                                                         ThunarListModel             *store);
-static void               thunar_list_model_files_added                 (ThunarFolder                 *folder,
                                                                          GList                        *files,
                                                                          ThunarListModel              *store);
 static void               thunar_list_model_files_removed               (ThunarFolder                 *folder,
@@ -229,8 +226,6 @@ static void               thunar_list_model_search_folder               (ThunarL
                                                                          gchar                       **search_query_c_terms,
                                                                          enum ThunarListModelSearch    search_type,
                                                                          gboolean                      show_hidden);
-static void               thunar_list_model_cancel_search_job           (ThunarListModel              *model);
-static gchar**            thunar_list_model_split_search_query          (const gchar                  *search_query,
 static void               thunar_list_model_cancel_search_job           (ThunarListModel              *model);
 static gchar**            thunar_list_model_split_search_query          (const gchar                  *search_query,
                                                                          GError                      **error);
@@ -1540,7 +1535,6 @@ thunar_list_model_folder_error (ThunarFolder    *folder,
 
   /* forward the error signal */
   g_signal_emit (G_OBJECT (store), list_model_signals[ERROR], 0, error);
-}
 }
 
 
