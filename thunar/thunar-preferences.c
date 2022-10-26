@@ -469,7 +469,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
         g_param_spec_string ("last-toolbar-visible-buttons",
                              "LastToolbarVisibleButtons",
                              NULL,
-                             "0,1,1,1,1,0,0,0,0,0,0,0,0,0,1,0,1",
+                             "0,1,1,1,1,0,0,0,0,0,0,0,0,0,1,0,0,1",
                              EXO_PARAM_READWRITE);
 
   /**
@@ -481,7 +481,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
         g_param_spec_string ("last-toolbar-item-order",
                              "LastToolbarButtonOrder",
                              NULL,
-                             "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16",
+                             "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17",
                              EXO_PARAM_READWRITE);
 
   /**

@@ -1071,6 +1071,7 @@ thunar_window_init (ThunarWindow *window)
   g_type_ensure (THUNAR_TYPE_ICON_VIEW);
   g_type_ensure (THUNAR_TYPE_DETAILS_VIEW);
   g_type_ensure (THUNAR_TYPE_COMPACT_VIEW);
+  g_type_ensure (THUNAR_TYPE_GALLERY_VIEW);
 
   /* load the bookmarks file and monitor */
   window->bookmarks = NULL;
@@ -6077,6 +6078,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
                                                thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_ICONS, item_order++);
                                                thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST, item_order++);
                                                thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST, item_order++);
+                                               thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_GALLERY, item_order++);
                                                thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_SPLIT, thunar_window_split_view_is_active (window), item_order++);
 
   g_signal_connect (G_OBJECT (window->location_toolbar_item_back), "button-press-event", G_CALLBACK (thunar_window_history_clicked), G_OBJECT (window));
