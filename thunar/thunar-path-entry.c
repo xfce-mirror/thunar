@@ -577,9 +577,14 @@ thunar_path_entry_changed (GtkEditable *editable)
   if (G_UNLIKELY (text != NULL && thunar_util_is_a_search_query (text)) == TRUE)
     {
       GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (editable));
-      path_entry->search_mode = TRUE;
-      update_icon = TRUE;
-      thunar_window_update_search (THUNAR_WINDOW (window));
+      if (path_entry->search_mode == FALSE)
+        {
+          thunar_window_action_search (THUNAR_WINDOW (window));
+          path_entry->search_mode = TRUE;
+          update_icon = TRUE;
+        }
+      else
+        thunar_window_update_search (THUNAR_WINDOW (window));
     }
   else
     {
