@@ -160,8 +160,8 @@ static void               thunar_list_model_files_added                 (ThunarF
 static void               thunar_list_model_files_removed               (ThunarFolder                 *folder,
                                                                          GList                        *files,
                                                                          ThunarListModel              *store);
-static void               thunar_list_model_insert_files                (ThunarListModel             *store,
-                                                                         GList                       *files);
+static void               thunar_list_model_insert_files                (ThunarListModel              *store,
+                                                                         GList                        *files);
 static gint               sort_by_date                                  (const ThunarFile             *a,
                                                                          const ThunarFile             *b,
                                                                          gboolean                      case_sensitive,
