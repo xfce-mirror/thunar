@@ -1541,6 +1541,8 @@ thunar_list_model_folder_error (ThunarFolder    *folder,
   /* forward the error signal */
   g_signal_emit (G_OBJECT (store), list_model_signals[ERROR], 0, error);
 }
+}
+
 
 
 static void
