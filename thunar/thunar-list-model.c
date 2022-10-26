@@ -231,7 +231,9 @@ static void               thunar_list_model_search_folder               (ThunarL
                                                                          gboolean                      show_hidden);
 static void               thunar_list_model_cancel_search_job           (ThunarListModel              *model);
 static gchar**            thunar_list_model_split_search_query          (const gchar                  *search_query,
-                                                                         GError                     **error);
+static void               thunar_list_model_cancel_search_job           (ThunarListModel              *model);
+static gchar**            thunar_list_model_split_search_query          (const gchar                  *search_query,
+                                                                         GError                      **error);
 static gboolean           thunar_list_model_search_terms_match          (gchar                       **terms,
                                                                          gchar                        *str);
 
