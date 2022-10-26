@@ -1657,6 +1657,7 @@ thunar_dbus_freedesktop_show_item_properties (ThunarOrgFreedesktopFileManager1 *
   ThunarApplication *application;
   GdkScreen         *screen;
   gint               n;
+  GList             *thunar_files = NULL;
   GFile             *file;
   GtkWidget         *dialog;
   ThunarFile        *thunar_file;
@@ -1673,15 +1674,22 @@ thunar_dbus_freedesktop_show_item_properties (ThunarOrgFreedesktopFileManager1 *
       if (thunar_file == NULL)
         continue;
 
+      thunar_files = g_list_prepend (thunar_files, thunar_file);
+    }
+
+  if (thunar_files != NULL)
+    {
+      thunar_files = g_list_reverse (thunar_files);
+
       dialog = thunar_properties_dialog_new (NULL);
       gtk_window_set_screen (GTK_WINDOW (dialog), screen);
       gtk_window_set_startup_id (GTK_WINDOW (dialog), startup_id);
-      thunar_properties_dialog_set_file (THUNAR_PROPERTIES_DIALOG (dialog),
-                                         thunar_file);
+      thunar_properties_dialog_set_files (THUNAR_PROPERTIES_DIALOG (dialog),
+                                          thunar_files);
       gtk_window_present (GTK_WINDOW (dialog));
       thunar_application_take_window (application, GTK_WINDOW (dialog));
 
-      g_object_unref (G_OBJECT (thunar_file));
+      g_list_free_full (thunar_files, g_object_unref);
     }
 
   g_object_unref (G_OBJECT (application));
