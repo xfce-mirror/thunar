@@ -1674,7 +1674,7 @@ thunar_dbus_freedesktop_show_item_properties (ThunarOrgFreedesktopFileManager1 *
       if (thunar_file == NULL)
         continue;
 
-      thunar_files = g_list_prepend(thunar_files, thunar_file);
+      thunar_files = g_list_prepend (thunar_files, thunar_file);
     }
 
   if (thunar_files != NULL)
