@@ -4490,6 +4490,8 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
   if (standard_view->priv->search_query != NULL && search_query == NULL)
     thunar_standard_view_search_done (standard_view->model, standard_view);
 
+  standard_view->priv->active_search = TRUE;
+
   /* save the new query (used for switching between views) */
   g_free (standard_view->priv->search_query);
   standard_view->priv->search_query = g_strdup (search_query);
