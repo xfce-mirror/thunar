@@ -362,8 +362,9 @@ struct _ThunarStandardViewPrivate
   guint                   thumbnail_source_id;
   gboolean                thumbnailing_scheduled;
 
-  /* file insert signal */
+  /* row insert and delete signal IDs, for blocking/unblocking */
   gulong                  row_changed_id;
+  gulong                  row_deleted_id;
 
   /* current sort column ID and it's fallback
    * the default is only relevant for directory specific settings */
@@ -821,7 +822,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
 
   /* setup the list model */
   standard_view->model = thunar_list_model_new ();
-  g_signal_connect_after (G_OBJECT (standard_view->model), "row-deleted", G_CALLBACK (thunar_standard_view_select_after_row_deleted), standard_view);
+  standard_view->priv->row_deleted_id = g_signal_connect_after (G_OBJECT (standard_view->model), "row-deleted", G_CALLBACK (thunar_standard_view_select_after_row_deleted), standard_view);
   standard_view->priv->row_changed_id = g_signal_connect (G_OBJECT (standard_view->model), "row-changed", G_CALLBACK (thunar_standard_view_row_changed), standard_view);
   g_signal_connect (G_OBJECT (standard_view->model), "rows-reordered", G_CALLBACK (thunar_standard_view_rows_reordered), standard_view);
   g_signal_connect (G_OBJECT (standard_view->model), "error", G_CALLBACK (thunar_standard_view_error), standard_view);
@@ -4494,9 +4495,13 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
   standard_view->priv->search_query = g_strdup (search_query);
 
   /* initiate the search */
+  /* set_folder() can emit a large number of row-deleted signals for large folders,
+   * to the extent it degrades performance: https://gitlab.xfce.org/xfce/thunar/-/issues/914 */
+  g_signal_handler_block (standard_view->model, standard_view->priv->row_deleted_id);
   g_object_ref (G_OBJECT (thunar_list_model_get_folder (standard_view->model))); /* temporarily hold a reference so the folder doesn't get deleted */
   thunar_list_model_set_folder (standard_view->model, thunar_list_model_get_folder (standard_view->model), search_query);
   g_object_unref (G_OBJECT (thunar_list_model_get_folder (standard_view->model))); /* reference no longer needed */
+  g_signal_handler_unblock (standard_view->model, standard_view->priv->row_deleted_id);
 
   /* change the display name in the tab */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
