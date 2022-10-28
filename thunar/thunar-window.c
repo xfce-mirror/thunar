@@ -5706,7 +5706,8 @@ static void thunar_window_update_standalone_image_preview (ThunarWindow *window)
 static void
 thunar_window_selection_changed (ThunarWindow *window)
 {
-  GList *selected_files = thunar_view_get_selected_files (THUNAR_VIEW (window->view));
+  gboolean  last_image_preview_visible;
+  GList    *selected_files = thunar_view_get_selected_files (THUNAR_VIEW (window->view));
 
   /* butttons specific to the Trash location */
   if (g_list_length (selected_files) > 0)
@@ -5716,7 +5717,7 @@ thunar_window_selection_changed (ThunarWindow *window)
 
   /* image preview sidepane */
   /* check if we have a pending thumbnail request (for the image preview) */
-  if (window->thumbnail_request > 0)
+  if (window->thumbnail_request != 0)
     {
       /* cancel the request */
       thunar_thumbnailer_dequeue (window->thumbnailer, window->thumbnail_request);
@@ -5730,8 +5731,13 @@ thunar_window_selection_changed (ThunarWindow *window)
       window->preview_image_pixbuf = NULL;
     }
 
+  /* only request new preview thumbnails if the user wants image previews */
+  g_object_get (G_OBJECT (window->preferences),
+                "last-image-preview-visible", &last_image_preview_visible,
+                NULL);
+
   /* get or request a thumbnail */
-  if (g_list_length (selected_files) == 1)
+  if ((last_image_preview_visible == TRUE) && (g_list_length (selected_files) == 1))
     {
       gchar *path = thunar_file_get_thumbnail_path_forced (selected_files->data, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
       if (path == NULL) /* request the creation of the thumbnail if it doesn't exist */
