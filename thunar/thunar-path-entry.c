@@ -223,12 +223,27 @@ thunar_path_entry_editable_init (GtkEditableInterface *iface)
 
 
 
+static gboolean
+visible_func (GtkTreeModel *filter,
+              GtkTreeIter  *iter,
+              gpointer      user_data)
+{
+  ThunarFile  *file;
+
+  gtk_tree_model_get (filter, iter, THUNAR_COLUMN_FILE, &file, -1);
+
+  return file != NULL;
+}
+
+
+
 static void
 thunar_path_entry_init (ThunarPathEntry *path_entry)
 {
   GtkEntryCompletion *completion;
   GtkCellRenderer    *renderer;
   ThunarListModel    *store;
+  GtkTreeModel       *filter;
 
   path_entry->check_completion_idle_id = 0;
   path_entry->working_directory = NULL;
@@ -254,8 +269,11 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
   thunar_list_model_set_show_hidden (store, TRUE);
   thunar_list_model_set_folders_first (store, TRUE);
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store), THUNAR_COLUMN_FILE_NAME, GTK_SORT_ASCENDING);
-  gtk_entry_completion_set_model (completion, GTK_TREE_MODEL (store));
+  filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (store), NULL);
+  gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (filter), visible_func, NULL, NULL);
+  gtk_entry_completion_set_model (completion, filter);
   g_object_unref (G_OBJECT (store));
+  g_object_unref (G_OBJECT (filter));
 
   /* need to connect the "key-press-event" before the GtkEntry class connects the completion signals, so
    * we get the Tab key before its handled as part of the completion stuff.
@@ -650,7 +668,8 @@ thunar_path_entry_changed (GtkEditable *editable)
       model = gtk_entry_completion_get_model (completion);
       g_object_ref (G_OBJECT (model));
       gtk_entry_completion_set_model (completion, NULL);
-      thunar_list_model_set_folder (THUNAR_LIST_MODEL (model), folder, NULL);
+      thunar_list_model_set_folder (THUNAR_LIST_MODEL (gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model))), folder, NULL);
+      gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (model));
       gtk_entry_completion_set_model (completion, model);
       g_object_unref (G_OBJECT (model));
 

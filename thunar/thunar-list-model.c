@@ -1760,9 +1760,7 @@ thunar_list_model_folder_files_added (ThunarFolder    *folder,
     }
 
   /* sort the rows */
-  g_node_traverse (store->root, G_POST_ORDER, G_TRAVERSE_NON_LEAVES, -1, thunar_list_model_node_traverse_sort, store);
-  /* update show_hidden status */
-  thunar_list_model_refilter (store);
+  thunar_list_model_sort (store, store->root);
 
   /* number of visible files may have changed */
   g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_NUM_FILES]);
