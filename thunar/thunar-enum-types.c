@@ -187,6 +187,8 @@ thunar_icon_size_get_type (void)
         { THUNAR_ICON_SIZE_256,  "THUNAR_ICON_SIZE_256",       "256px",  },
         { THUNAR_ICON_SIZE_512,  "THUNAR_ICON_SIZE_512",       "512px",  },
         { THUNAR_ICON_SIZE_1024, "THUNAR_ICON_SIZE_1024",      "1024px", },
+        { THUNAR_ICON_SIZE_2048, "THUNAR_ICON_SIZE_2048",      "2048px", },
+        { THUNAR_ICON_SIZE_4096, "THUNAR_ICON_SIZE_4096",      "4096px", },
         /* Support of old type-strings for two thunar stable releases. Old strings will be transformed to new ones on write*/
         { THUNAR_ICON_SIZE_16,   "THUNAR_ICON_SIZE_SMALLEST",  "16px",   },
         { THUNAR_ICON_SIZE_24,   "THUNAR_ICON_SIZE_SMALLER",   "24px",   },
@@ -276,6 +278,8 @@ thunar_zoom_level_get_type (void)
         { THUNAR_ZOOM_LEVEL_400_PERCENT,  "THUNAR_ZOOM_LEVEL_400_PERCENT",   "400%", },
         { THUNAR_ZOOM_LEVEL_800_PERCENT,  "THUNAR_ZOOM_LEVEL_800_PERCENT",   "800%", },
         { THUNAR_ZOOM_LEVEL_1600_PERCENT, "THUNAR_ZOOM_LEVEL_1600_PERCENT",  "1600%",},
+        { THUNAR_ZOOM_LEVEL_3200_PERCENT, "THUNAR_ZOOM_LEVEL_3200_PERCENT",  "3200%",},
+        { THUNAR_ZOOM_LEVEL_6400_PERCENT, "THUNAR_ZOOM_LEVEL_6400_PERCENT",  "6400%",},
         /* Support of old type-strings for two thunar stable releases. Old strings will be transformed to new ones on write*/
         { THUNAR_ZOOM_LEVEL_25_PERCENT,   "THUNAR_ZOOM_LEVEL_SMALLEST",      "25%",  },
         { THUNAR_ZOOM_LEVEL_38_PERCENT,   "THUNAR_ZOOM_LEVEL_SMALLER",       "38%",  },
@@ -382,11 +386,13 @@ thunar_thumbnail_size_get_type (void)
     {
       static const GEnumValue values[] =
       {
-        { THUNAR_THUMBNAIL_SIZE_NORMAL,     "THUNAR_THUMBNAIL_SIZE_NORMAL",   "normal",   },
-        { THUNAR_THUMBNAIL_SIZE_LARGE,      "THUNAR_THUMBNAIL_SIZE_LARGE",    "large",    },
-        { THUNAR_THUMBNAIL_SIZE_X_LARGE,    "THUNAR_THUMBNAIL_SIZE_X_LARGE",  "x-large",  },
-        { THUNAR_THUMBNAIL_SIZE_XX_LARGE,   "THUNAR_THUMBNAIL_SIZE_XX_LARGE", "xx-large", },
-        { 0,                             NULL,                           NULL,     },
+        { THUNAR_THUMBNAIL_SIZE_NORMAL,       "THUNAR_THUMBNAIL_SIZE_NORMAL",      "normal",   },
+        { THUNAR_THUMBNAIL_SIZE_LARGE,        "THUNAR_THUMBNAIL_SIZE_LARGE",       "large",    },
+        { THUNAR_THUMBNAIL_SIZE_X_LARGE,      "THUNAR_THUMBNAIL_SIZE_X_LARGE",     "x-large",  },
+        { THUNAR_THUMBNAIL_SIZE_XX_LARGE,     "THUNAR_THUMBNAIL_SIZE_XX_LARGE",    "xx-large", },
+        { THUNAR_THUMBNAIL_SIZE_XXX_LARGE,    "THUNAR_THUMBNAIL_SIZE_XXX_LARGE",   "x-large",  },
+        { THUNAR_THUMBNAIL_SIZE_XXXX_LARGE,   "THUNAR_THUMBNAIL_SIZE_XXXX_LARGE",  "xx-large", },
+        { 0,                                  NULL,                                NULL,       },
       };
 
       type = g_enum_register_static (I_("ThunarThumbnailSize"), values);
@@ -454,6 +460,8 @@ thunar_zoom_level_to_icon_size (ThunarZoomLevel zoom_level)
     case THUNAR_ZOOM_LEVEL_400_PERCENT:  return THUNAR_ICON_SIZE_256;
     case THUNAR_ZOOM_LEVEL_800_PERCENT:  return THUNAR_ICON_SIZE_512;
     case THUNAR_ZOOM_LEVEL_1600_PERCENT: return THUNAR_ICON_SIZE_1024;
+    case THUNAR_ZOOM_LEVEL_3200_PERCENT: return THUNAR_ICON_SIZE_2048;
+    case THUNAR_ZOOM_LEVEL_6400_PERCENT: return THUNAR_ICON_SIZE_4096;
     default:                             return THUNAR_ICON_SIZE_64; // default = 100 %zoom
     }
 }
@@ -463,6 +471,12 @@ thunar_zoom_level_to_icon_size (ThunarZoomLevel zoom_level)
 static ThunarThumbnailSize
 thunar_icon_size_to_thumbnail_size (ThunarIconSize icon_size)
 {
+  if (icon_size >= THUNAR_ICON_SIZE_4096)
+    return THUNAR_THUMBNAIL_SIZE_XXXX_LARGE;
+
+  if (icon_size >= THUNAR_ICON_SIZE_2048)
+    return THUNAR_THUMBNAIL_SIZE_XXX_LARGE;
+
   if (icon_size >= THUNAR_ICON_SIZE_1024)
     return THUNAR_THUMBNAIL_SIZE_XX_LARGE;
 
