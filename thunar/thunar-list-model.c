@@ -630,19 +630,19 @@ thunar_list_model_finalize (GObject *object)
   thunar_g_list_free_full (store->files_to_add);
   store->files_to_add = NULL;
 
-  /* release all resources allocated to the model */
+  /* disconnect from the file monitor */
+  g_signal_handlers_disconnect_by_func (G_OBJECT (store->file_monitor), thunar_list_model_file_changed, store);
+  g_object_unref (G_OBJECT (store->file_monitor));
 
+  /* release all resources allocated to the model */
   if (store->root != NULL)
     {
       g_node_traverse (store->root, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_list_model_node_traverse_free, NULL);
       g_node_destroy (store->root);
+      store->root = NULL;
     }
 
   g_mutex_clear (&store->mutex_files_to_add);
-
-  /* disconnect from the file monitor */
-  g_signal_handlers_disconnect_by_func (G_OBJECT (store->file_monitor), thunar_list_model_file_changed, store);
-  g_object_unref (G_OBJECT (store->file_monitor));
 
   g_free (store->date_custom_style);
 
@@ -847,7 +847,11 @@ thunar_list_model_get_iter (GtkTreeModel *model,
   gint             n;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
-  _thunar_return_val_if_fail ((depth = gtk_tree_path_get_depth (path)) > 0, FALSE);
+  _thunar_return_val_if_fail (gtk_tree_path_get_depth (path) > 0, FALSE);
+
+  /* Nothing to get if folder is not set */
+  if (store->root == NULL)
+    return FALSE;
 
   /* determine the path depth */
   depth = gtk_tree_path_get_depth (path);
@@ -953,11 +957,12 @@ thunar_list_model_get_value (GtkTreeModel *model,
   GFile        *g_file_parent;
   gchar        *str;
   gchar        *loading = g_strdup (_("Loading..."));
+  GNode        *node = G_NODE (iter->user_data);
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
   _thunar_return_if_fail (iter->stamp == (THUNAR_LIST_MODEL (model))->stamp);
 
-  item = G_NODE (iter->user_data)->data;
+  item = node->data;
 
   switch (column)
     {
@@ -1683,7 +1688,7 @@ thunar_list_model_file_changed (ThunarFileMonitor *file_monitor,
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   /* traverse the model and emit "row-changed" for the file's nodes */
-  if (thunar_file_is_directory (file))
+  if (thunar_file_is_directory (file) && store->root != NULL)
     g_node_traverse (store->root, G_PRE_ORDER, G_TRAVERSE_ALL, -1, thunar_list_model_node_traverse_changed, file);
 }
 
