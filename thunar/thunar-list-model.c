@@ -293,7 +293,7 @@ struct _ThunarListModel
 #endif
 
   GNode          *root;
-  GList          *hidden;
+  GSList         *hidden;
   ThunarFolder   *folder;
   gboolean        show_hidden : 1;
   gboolean        file_size_binary : 1;
@@ -637,17 +637,23 @@ thunar_list_model_finalize (GObject *object)
   /* release all resources allocated to the model */
   if (store->root != NULL)
     {
-      g_node_traverse (store->root, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_list_model_node_traverse_free, NULL);
+      /* remove all the entries */
+      while (store->root->children)
+        g_node_traverse (store->root->children, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_list_model_node_traverse_remove, store);
+      /* root is an empty node no item to free here */
       g_node_destroy (store->root);
       store->root = NULL;
     }
 
+  if (store->hidden != NULL)
+    g_slist_free_full (store->hidden, g_object_unref);
+
+  if (store->folder != NULL)
+    g_object_unref (store->folder);
+
   g_mutex_clear (&store->mutex_files_to_add);
 
   g_free (store->date_custom_style);
-
-  /* start with tree view disabled */
-  store->tree_view = FALSE;
 
   (*G_OBJECT_CLASS (thunar_list_model_parent_class)->finalize) (object);
 }
@@ -955,8 +961,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
   ThunarFolder *folder;
   GFile        *g_file;
   GFile        *g_file_parent;
-  gchar        *str;
-  gchar        *loading = g_strdup (_("Loading..."));
+  gchar        *str = NULL;
   GNode        *node = G_NODE (iter->user_data);
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
@@ -970,35 +975,45 @@ thunar_list_model_get_value (GtkTreeModel *model,
       g_value_init (value, G_TYPE_STRING);
       if (item != NULL)
         str = thunar_file_get_date_string (item->file, THUNAR_FILE_DATE_CREATED, THUNAR_LIST_MODEL (model)->date_style, THUNAR_LIST_MODEL (model)->date_custom_style);
-      g_value_take_string (value, item != NULL ? str : loading);
+      else
+        str = g_strdup (_("Loading..."));
+      g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_DATE_ACCESSED:
       g_value_init (value, G_TYPE_STRING);
       if (item != NULL)
         str = thunar_file_get_date_string (item->file, THUNAR_FILE_DATE_ACCESSED, THUNAR_LIST_MODEL (model)->date_style, THUNAR_LIST_MODEL (model)->date_custom_style);
-      g_value_take_string (value, item != NULL ? str : loading);
+      else
+        str = g_strdup (_("Loading..."));
+      g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_DATE_MODIFIED:
       g_value_init (value, G_TYPE_STRING);
       if (item != NULL)
         str = thunar_file_get_date_string (item->file, THUNAR_FILE_DATE_MODIFIED, THUNAR_LIST_MODEL (model)->date_style, THUNAR_LIST_MODEL (model)->date_custom_style);
-      g_value_take_string (value, item != NULL ? str : loading);
+      else
+        str = g_strdup (_("Loading..."));
+      g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_DATE_DELETED:
       g_value_init (value, G_TYPE_STRING);
       if (item != NULL)
         str = thunar_file_get_date_string (item->file, THUNAR_FILE_DATE_DELETED, THUNAR_LIST_MODEL (model)->date_style, THUNAR_LIST_MODEL (model)->date_custom_style);
-      g_value_take_string (value, item != NULL ? str : loading);
+      else
+        str = g_strdup (_("Loading..."));
+      g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_RECENCY:
       g_value_init (value, G_TYPE_STRING);
       if (item != NULL)
         str = thunar_file_get_date_string (item->file, THUNAR_FILE_RECENCY, THUNAR_LIST_MODEL (model)->date_style, THUNAR_LIST_MODEL (model)->date_custom_style);
-      g_value_take_string (value, item != NULL ? str : loading);
+      else
+        str = g_strdup (_("Loading..."));
+      g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_LOCATION:
@@ -1049,7 +1064,9 @@ thunar_list_model_get_value (GtkTreeModel *model,
 
           g_object_unref (g_file_parent);
         }
-      g_value_take_string (value, item != NULL ? str : loading);
+      else
+        str = g_strdup (_("Loading..."));
+      g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_GROUP:
@@ -1057,29 +1074,35 @@ thunar_list_model_get_value (GtkTreeModel *model,
       if (item != NULL)
         {
           group = thunar_file_get_group (item->file);
-        if (G_LIKELY (group != NULL))
-          {
-            g_value_set_string (value, thunar_group_get_name (group));
-            g_object_unref (G_OBJECT (group));
-          }
-        else
-          {
-            g_value_set_static_string (value, _("Unknown"));
-          }
+          if (G_LIKELY (group != NULL))
+            {
+              str = g_strdup (thunar_group_get_name (group));
+              g_object_unref (G_OBJECT (group));
+            }
+          else
+            str = g_strdup (_("Unknown"));
         }
       else
-        g_value_take_string (value, loading);
+        str = g_strdup (_("Loading..."));
+      g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_MIME_TYPE:
       g_value_init (value, G_TYPE_STRING);
-      g_value_set_static_string (value, item != NULL ? thunar_file_get_content_type (item->file) : _("Loading..."));
-
+      if (item != NULL)
+        str = g_strdup (thunar_file_get_content_type (item->file));
+      else
+        str = g_strdup (_("Loading..."));
+      g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_NAME:
       g_value_init (value, G_TYPE_STRING);
-      g_value_set_static_string (value, item != NULL ? thunar_file_get_display_name (item->file) : _("Loading..."));
+      if (item != NULL)
+        str = g_strdup (thunar_file_get_display_name (item->file));
+      else
+        str = g_strdup (_("Loading..."));
+      g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_OWNER:
@@ -1101,21 +1124,23 @@ thunar_list_model_get_value (GtkTreeModel *model,
                 }
               else
                 str = g_strdup (name);
-              g_value_take_string (value, str);
               g_object_unref (G_OBJECT (user));
             }
           else
-            {
-              g_value_set_static_string (value, _("Unknown"));
-            }
+            str = g_strdup (_("Unknown"));
         }
       else
-        g_value_set_static_string (value, _("Loading..."));
+        str = g_strdup (_("Loading..."));
+      g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_PERMISSIONS:
       g_value_init (value, G_TYPE_STRING);
-      g_value_take_string (value, item != NULL ? thunar_file_get_mode_string (item->file) : loading);
+      if (item != NULL)
+        str = g_strdup (thunar_file_get_mode_string (item->file));
+      else
+        str = g_strdup (_("Loading..."));
+      g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_SIZE:
@@ -1127,20 +1152,26 @@ thunar_list_model_get_value (GtkTreeModel *model,
               g_file = thunar_file_get_target_location (item->file);
               if (g_file == NULL)
                 break;
-              g_value_take_string (value, thunar_g_file_get_free_space_string (g_file, THUNAR_LIST_MODEL (model)->file_size_binary));
+              str = thunar_g_file_get_free_space_string (g_file, THUNAR_LIST_MODEL (model)->file_size_binary);
               g_object_unref (g_file);
               break;
             }
           if (!thunar_file_is_directory (item->file))
-            g_value_take_string (value, thunar_file_get_size_string_formatted (item->file, THUNAR_LIST_MODEL (model)->file_size_binary));
+            str = thunar_file_get_size_string_formatted (item->file, THUNAR_LIST_MODEL (model)->file_size_binary);
         }
       else
-        g_value_set_static_string (value, _("Loading..."));
+        str = g_strdup (_("Loading..."));
+      if (str != NULL)
+        g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_SIZE_IN_BYTES:
       g_value_init (value, G_TYPE_STRING);
-      g_value_take_string (value, item != NULL ? thunar_file_get_size_in_bytes_string (item->file) : loading);
+      if (item != NULL)
+        str = thunar_file_get_size_in_bytes_string (item->file);
+      else
+        str = g_strdup (_("Loading..."));
+      g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_TYPE:
@@ -1153,20 +1184,28 @@ thunar_list_model_get_value (GtkTreeModel *model,
               g_value_take_string (value, g_strdup (device_type));
               break;
             }
-          g_value_take_string (value, thunar_file_get_content_type_desc (item->file));
+          str = thunar_file_get_content_type_desc (item->file);
         }
       else
-        g_value_set_static_string (value, _("Loading..."));
+        str = g_strdup (_("Loading..."));
+      g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_FILE:
       g_value_init (value, THUNAR_TYPE_FILE);
-      g_value_set_object (value, item != NULL ? item->file : NULL);
+      if (item != NULL)
+        g_value_set_object (value, item->file);
+      else
+        g_value_set_object (value, NULL);
       break;
 
     case THUNAR_COLUMN_FILE_NAME:
       g_value_init (value, G_TYPE_STRING);
-      g_value_set_static_string (value, item != NULL ? thunar_file_get_display_name (item->file) : _("Loading..."));
+      if (item != NULL)
+        str = g_strdup (thunar_file_get_display_name (item->file));
+      else
+        str = g_strdup (_("Loading..."));
+      g_value_take_string (value, str);
       break;
 
     default:
@@ -1741,13 +1780,13 @@ thunar_list_model_folder_files_added (ThunarFolder    *folder,
   for (GList *lp = files; lp != NULL; lp = lp->next)
     {
       /* take a reference on that file */
-      file = THUNAR_FILE (g_object_ref (G_OBJECT (lp->data)));
+      file = THUNAR_FILE (lp->data);
       _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
       /* check if the file should be hidden */
       if (!store->show_hidden && thunar_file_is_hidden (file))
         {
-          store->hidden = g_list_prepend (store->hidden, file);
+          store->hidden = g_slist_prepend (store->hidden, g_object_ref (file));
         }
       else
         {
@@ -1797,8 +1836,8 @@ thunar_list_model_folder_files_removed (ThunarFolder    *folder,
       if (!found)
         {
           /* file is hidden */
-          _thunar_assert (g_list_find (store->hidden, lp->data) != NULL);
-          store->hidden = g_list_remove (store->hidden, lp->data);
+          _thunar_assert (g_slist_find (store->hidden, lp->data) != NULL);
+          store->hidden = g_slist_remove (store->hidden, lp->data);
           g_object_unref (G_OBJECT (lp->data));
         }
     }
@@ -3296,16 +3335,18 @@ thunar_list_model_set_folder (ThunarListModel *store,
       /* block the file monitor */
       g_signal_handlers_block_by_func (store->file_monitor, thunar_list_model_file_changed, store);
 
-      /* remove existing entries */
+      /* remove all the entries */
       while (store->root->children)
         g_node_traverse (store->root->children, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_list_model_node_traverse_remove, store);
+      /* root is an empty node no item to free here */
       g_node_destroy (store->root);
       store->root = NULL;
 
       /* unblock the file monitor */
       g_signal_handlers_unblock_by_func (store->file_monitor, thunar_list_model_file_changed, store);
 
-      g_list_free_full (store->hidden, g_object_unref);
+      if (store->hidden != NULL)
+        g_slist_free_full (store->hidden, g_object_unref);
       store->hidden = NULL;
 
       /* unregister signals and drop the reference */
@@ -3363,7 +3404,6 @@ thunar_list_model_set_folder (ThunarListModel *store,
         thunar_list_model_folder_files_added (folder, files, store);
 
       /* connect signals to the new folder */
-      /* TODO: Are these required ? */
       g_signal_connect (G_OBJECT (store->folder), "destroy", G_CALLBACK (thunar_list_model_folder_destroy), store);
       g_signal_connect (G_OBJECT (store->folder), "error", G_CALLBACK (thunar_list_model_folder_error), store);
       g_signal_connect (G_OBJECT (store->folder), "files-added", G_CALLBACK (thunar_list_model_folder_files_added), store);
@@ -3470,7 +3510,7 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
 
       if (show_hidden)
         {
-          for (GList *lp = store->hidden; lp != NULL; lp = lp->next)
+          for (GSList *lp = store->hidden; lp != NULL; lp = lp->next)
             {
               item = thunar_list_model_item_new_with_file (store, lp->data);
               node = g_node_append_data (store->root, item);

@@ -988,9 +988,13 @@ thunar_path_entry_match_func (GtkEntryCompletion *completion,
     {
       /* check if the file is hidden */
       gtk_tree_model_get (model, iter, THUNAR_COLUMN_FILE, &file, -1);
-      matched = file != NULL && !thunar_file_is_hidden (file);
       if (file != NULL)
-        g_object_unref (G_OBJECT (file));
+        {
+          matched = !thunar_file_is_hidden (file);
+          g_object_unref (G_OBJECT (file));
+        }
+      else
+        matched = FALSE;
     }
   else
     {
