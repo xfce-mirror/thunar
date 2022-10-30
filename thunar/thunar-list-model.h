@@ -28,10 +28,6 @@ G_BEGIN_DECLS;
 typedef struct _ThunarListModelClass ThunarListModelClass;
 typedef struct _ThunarListModel      ThunarListModel;
 
-typedef gboolean (* ThunarListModelVisibleFunc) (ThunarListModel *model,
-                                                 ThunarFile      *file,
-                                                 gpointer         data);
-
 typedef enum ThunarListModelSearch
 {
     THUNAR_LIST_MODEL_SEARCH_RECURSIVE,

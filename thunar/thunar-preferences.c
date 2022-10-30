@@ -1180,8 +1180,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   /**
    * ThunarPreferences:misc-enable-tree-view
    *
-   * If true details view shows expanders.
-   * Can be toggled using the View > Enable Tree View when in details view.
+   * If true details-view opens with expandable folders.
    **/
   preferences_props[PROP_MISC_ENABLE_TREE_VIEW] =
       g_param_spec_boolean ("misc-enable-tree-view",
