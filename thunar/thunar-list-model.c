@@ -647,6 +647,7 @@ thunar_list_model_finalize (GObject *object)
 
   if (store->hidden != NULL)
     g_slist_free_full (store->hidden, g_object_unref);
+  store->hidden = NULL;
 
   if (store->folder != NULL)
     g_object_unref (store->folder);
@@ -1908,6 +1909,14 @@ thunar_list_model_item_load_folder (ThunarListModelItem *item)
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (item->file));
 
+  /* Do not query children if tree_view is false;
+   * model should behave exactly like a list if not in tree_view;
+   * In tree-view folders are loaded idly, so there will exist dummy iters,
+   * that if accessed will return NULL values. Then existing code, where list-model is used,
+   * has to be adjusted to handle this case. Ex - Completion in Path-Entry */
+  if (!item->model->tree_view)
+    return;
+
   /* schedule the "load" idle source (if not already done) */
   if (G_LIKELY (item->load_idle_id == 0 && item->folder == NULL))
     {
@@ -3042,7 +3051,7 @@ add_search_files (gpointer user_data)
   g_mutex_lock (&model->mutex_files_to_add);
 
   thunar_list_model_folder_files_added (model->folder, model->files_to_add, model);
-  g_list_free (model->files_to_add);
+  thunar_g_list_free_full (model->files_to_add);
   model->files_to_add = NULL;
 
   g_mutex_unlock (&model->mutex_files_to_add);
@@ -3918,7 +3927,8 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       /* build a GList of all files */
       for (GNode *row = g_node_first_child (store->root); row != NULL; row = g_node_next_sibling (row))
         {
-          relevant_files = g_list_append (relevant_files, row->data != NULL ? THUNAR_LIST_MODEL_ITEM (row->data)->file : NULL);
+          if (row->data != NULL)
+            relevant_files = g_list_prepend (relevant_files, THUNAR_LIST_MODEL_ITEM (row->data)->file);
         }
 
       /* try to determine a file for the current folder */
@@ -4039,9 +4049,10 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
           item = G_NODE (iter.user_data)->data;
           if (item != NULL)
             {
+              /* since the item is in view the file should remain in memory */
               file = THUNAR_LIST_MODEL_ITEM (item)->file;
               if (file != NULL)
-                relevant_files = g_list_append (relevant_files, file);
+                relevant_files = g_list_prepend (relevant_files, file);
             }
         }
       selected_string = thunar_list_model_get_statusbar_text_for_files (store, relevant_files, show_file_size_binary_format);

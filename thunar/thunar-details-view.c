@@ -1236,9 +1236,25 @@ thunar_details_view_highlight_option_changed (ThunarDetailsView *details_view)
 static gboolean
 thunar_details_view_enable_tree_view (ThunarDetailsView *details_view)
 {
+  ThunarListModel *model = THUNAR_STANDARD_VIEW (details_view)->model;
+  ThunarFolder    *folder;
+
+  _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (model), FALSE);
+
   details_view->tree_view = !details_view->tree_view;
 
-  g_object_set (THUNAR_STANDARD_VIEW (details_view)->model, "tree-view", details_view->tree_view, NULL);
+  g_object_set (model, "tree-view", details_view->tree_view, NULL);
+
+  /* refresh the model; list_model will update internal structure,
+   * to drop children if tree_view is set to false */
+  folder = thunar_list_model_get_folder (model);
+  if (folder != NULL)
+    {
+      thunar_list_model_set_folder (model, NULL, NULL);
+      thunar_list_model_set_folder (model, folder, NULL);
+    }
+
   gtk_tree_view_set_show_expanders (details_view->view, details_view->tree_view);
   gtk_tree_view_set_enable_tree_lines (details_view->view, details_view->tree_view);
 

@@ -251,6 +251,7 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
 
   /* allocate a new list mode for the completion */
   store = thunar_list_model_new ();
+  g_object_set (G_OBJECT (store), "tree-view", FALSE, NULL);
   thunar_list_model_set_show_hidden (store, TRUE);
   thunar_list_model_set_folders_first (store, TRUE);
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store), THUNAR_COLUMN_FILE_NAME, GTK_SORT_ASCENDING);
@@ -988,13 +989,8 @@ thunar_path_entry_match_func (GtkEntryCompletion *completion,
     {
       /* check if the file is hidden */
       gtk_tree_model_get (model, iter, THUNAR_COLUMN_FILE, &file, -1);
-      if (file != NULL)
-        {
-          matched = !thunar_file_is_hidden (file);
-          g_object_unref (G_OBJECT (file));
-        }
-      else
-        matched = FALSE;
+      matched = !thunar_file_is_hidden (file);
+      g_object_unref (G_OBJECT (file));
     }
   else
     {
