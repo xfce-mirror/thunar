@@ -3789,7 +3789,11 @@ image_preview_update (GtkWidget     *parent,
                       GtkAllocation *allocation,
                       GtkWidget     *image)
 {
-  ThunarWindow *window = THUNAR_WINDOW (gtk_widget_get_toplevel (parent));
+  ThunarWindow    *window = THUNAR_WINDOW (gtk_widget_get_toplevel (parent));
+  GdkPixbuf       *scaled_preview;
+  cairo_surface_t *surface;
+  gint             new_size;
+  gint             scale_factor;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
@@ -3797,12 +3801,12 @@ image_preview_update (GtkWidget     *parent,
   if (window->preview_image_pixbuf == NULL)
     return;
 
+
   if (allocation != NULL)
     {
-      gtk_image_set_from_pixbuf (GTK_IMAGE (image), exo_gdk_pixbuf_scale_ratio (window->preview_image_pixbuf,
-                                                                                allocation->width < allocation->height ?
-                                                                                allocation->width - 50 :
-                                                                                allocation->height - 50));
+      new_size = allocation->width < allocation->height ?
+          allocation->width - 50 :
+          allocation->height - 50;
     }
   else
     {
@@ -3810,14 +3814,18 @@ image_preview_update (GtkWidget     *parent,
       gtk_widget_get_allocation (parent, &alloc);
       if (alloc.width - 50 <= 0) /* the widget doesn't have any allocated space */
         return;
-      gtk_image_set_from_pixbuf (GTK_IMAGE (image), exo_gdk_pixbuf_scale_ratio (window->preview_image_pixbuf,
-                                                                                alloc.width < alloc.height ?
-                                                                                alloc.width - 50 :
-                                                                                alloc.height - 50));
+      new_size = alloc.width < alloc.height ?
+          alloc.width - 50 :
+          alloc.height - 50;
     }
 
-  /* GtkImage has its own reference for the pixbuf, and we want to pass ownership to it */
-  g_object_unref (gtk_image_get_pixbuf (GTK_IMAGE (image)));
+  scale_factor = gtk_widget_get_scale_factor (parent);
+  scaled_preview = exo_gdk_pixbuf_scale_ratio (window->preview_image_pixbuf, new_size * scale_factor);
+  surface = gdk_cairo_surface_create_from_pixbuf (scaled_preview, scale_factor, gtk_widget_get_window (parent));
+  gtk_image_set_from_surface (GTK_IMAGE (image), surface);
+
+  g_object_unref (G_OBJECT (scaled_preview));
+  cairo_surface_destroy (surface);
 }
 
 
