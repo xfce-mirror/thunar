@@ -51,9 +51,13 @@ static void thunar_image_set_property         (GObject           *object,
                                                guint              prop_id,
                                                const GValue      *value,
                                                GParamSpec        *pspec);
+static void thunar_image_scale_changed        (GObject           *object,
+                                               GParamSpec        *pspec,
+                                               gpointer           user_data);
 static void thunar_image_file_changed         (ThunarFileMonitor *monitor,
                                                ThunarFile        *file,
                                                ThunarImage       *image);
+static void thunar_image_update               (ThunarImage *image);
 
 
 
@@ -110,6 +114,8 @@ thunar_image_init (ThunarImage *image)
   image->priv->monitor = thunar_file_monitor_get_default ();
   g_signal_connect (image->priv->monitor, "file-changed",
                     G_CALLBACK (thunar_image_file_changed), image);
+
+  g_signal_connect (G_OBJECT (image), "notify::scale-factor", G_CALLBACK (thunar_image_scale_changed), NULL);
 }
 
 
@@ -173,12 +179,24 @@ thunar_image_set_property (GObject      *object,
 
 
 static void
+thunar_image_scale_changed (GObject    *object,
+                            GParamSpec *pspec,
+                            gpointer    user_data)
+{
+    thunar_image_update (THUNAR_IMAGE (object));
+}
+
+
+
+static void
 thunar_image_update (ThunarImage *image)
 {
   ThunarIconFactory *icon_factory;
   GtkIconTheme      *icon_theme;
   GdkPixbuf         *icon;
   GdkScreen         *screen;
+  gint               scale_factor;
+  cairo_surface_t   *surface;
 
   _thunar_return_if_fail (THUNAR_IS_IMAGE (image));
 
@@ -188,13 +206,16 @@ thunar_image_update (ThunarImage *image)
       icon_theme = gtk_icon_theme_get_for_screen (screen);
       icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
 
+      scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (image));
       icon = thunar_icon_factory_load_file_icon (icon_factory, image->priv->file,
-                                                 THUNAR_FILE_ICON_STATE_DEFAULT, 48);
+                                                 THUNAR_FILE_ICON_STATE_DEFAULT, 48 * scale_factor);
 
-      gtk_image_set_from_pixbuf (GTK_IMAGE (image), icon);
+      surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, gtk_widget_get_window (GTK_WIDGET (image)));
+      gtk_image_set_from_surface (GTK_IMAGE (image), surface);
 
       g_object_unref (icon_factory);
       g_object_unref (icon);
+      cairo_surface_destroy (surface);
     }
 }
 
