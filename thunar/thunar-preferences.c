@@ -1024,7 +1024,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    **/
   preferences_props[PROP_MISC_IMAGE_PREVIEW_FULL] =
     g_param_spec_enum ("misc-image-preview-mode",
-                       "MiscImagePreviewMoe",
+                       "MiscImagePreviewMode",
                        NULL,
                        THUNAR_TYPE_IMAGE_PREVIEW_MODE,
                        THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED,
