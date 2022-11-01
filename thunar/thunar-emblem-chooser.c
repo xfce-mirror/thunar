@@ -54,6 +54,9 @@ static void       thunar_emblem_chooser_set_property    (GObject                
                                                          guint                      prop_id,
                                                          const GValue              *value,
                                                          GParamSpec                *pspec);
+static void       thunar_emblem_chooser_scale_changed   (GObject                   *object,
+                                                         GParamSpec                *pspec,
+                                                         gpointer                   user_data);
 static void       thunar_emblem_chooser_realize         (GtkWidget                 *widget);
 static void       thunar_emblem_chooser_unrealize       (GtkWidget                 *widget);
 static void       thunar_emblem_chooser_button_toggled  (GtkToggleButton           *button,
@@ -144,6 +147,8 @@ thunar_emblem_chooser_init (ThunarEmblemChooser *chooser)
                                  NULL);
   gtk_container_add (GTK_CONTAINER (viewport), chooser->table);
   gtk_widget_show (chooser->table);
+
+  g_signal_connect (G_OBJECT (chooser), "notify::scale-factor", G_CALLBACK (thunar_emblem_chooser_scale_changed), NULL);
 }
 
 
@@ -201,6 +206,16 @@ thunar_emblem_chooser_set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static void
+thunar_emblem_chooser_scale_changed (GObject    *object,
+                                     GParamSpec *pspec,
+                                     gpointer    user_data)
+{
+    gtk_widget_queue_draw (GTK_WIDGET (object));
 }
 
 
@@ -449,14 +464,17 @@ static GtkWidget*
 thunar_emblem_chooser_create_button (ThunarEmblemChooser *chooser,
                                      const gchar         *emblem)
 {
-  GtkIconInfo *info;
-  const gchar *name;
-  GtkWidget   *button = NULL;
-  GtkWidget   *image;
-  GdkPixbuf   *icon;
+  GtkIconInfo     *info;
+  const gchar     *name;
+  GtkWidget       *button = NULL;
+  GtkWidget       *image;
+  GdkPixbuf       *icon;
+  gint             scale_factor;
+  cairo_surface_t *surface;
 
   /* lookup the icon info for the emblem */
-  info = gtk_icon_theme_lookup_icon (chooser->icon_theme, emblem, 48, 0);
+  scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (chooser));
+  info = gtk_icon_theme_lookup_icon (chooser->icon_theme, emblem, 48 * scale_factor, 0);
   if (G_UNLIKELY (info == NULL))
     return NULL;
 
@@ -475,12 +493,14 @@ thunar_emblem_chooser_create_button (ThunarEmblemChooser *chooser,
   g_signal_connect (G_OBJECT (button), "toggled", G_CALLBACK (thunar_emblem_chooser_button_toggled), chooser);
 
   /* allocate the image */
-  image = gtk_image_new_from_pixbuf (icon);
+  surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, gtk_widget_get_window (GTK_WIDGET (chooser)));
+  image = gtk_image_new_from_surface (surface);
   gtk_container_add (GTK_CONTAINER (button), image);
   gtk_widget_set_tooltip_text (image, name);
   gtk_widget_show (image);
 
   g_object_unref (G_OBJECT (icon));
+  cairo_surface_destroy (surface);
 done:
   g_object_unref (info);
   return button;
