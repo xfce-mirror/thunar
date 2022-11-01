@@ -81,6 +81,9 @@ static void     thunar_path_entry_icon_release_event            (GtkEntry       
                                                                  GtkEntryIconPosition icon_pos,
                                                                  GdkEventButton      *event,
                                                                  gpointer             user_data);
+static void     thunar_path_entry_scale_changed                 (GObject              *object,
+                                                                 GParamSpec           *pspec,
+                                                                 gpointer              user_data);
 static gboolean thunar_path_entry_motion_notify_event           (GtkWidget            *widget,
                                                                  GdkEventMotion       *event);
 static gboolean thunar_path_entry_key_press_event               (GtkWidget            *widget,
@@ -275,6 +278,7 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
   /* connect the icon signals */
   g_signal_connect (G_OBJECT (path_entry), "icon-press", G_CALLBACK (thunar_path_entry_icon_press_event), NULL);
   g_signal_connect (G_OBJECT (path_entry), "icon-release", G_CALLBACK (thunar_path_entry_icon_release_event), NULL);
+  g_signal_connect (G_OBJECT (path_entry), "notify::scale-factor", G_CALLBACK (thunar_path_entry_scale_changed), NULL);
 
   /* disabled initially */
   path_entry->search_mode = FALSE;
@@ -420,6 +424,16 @@ thunar_path_entry_icon_release_event (GtkEntry            *entry,
       /* reset the drag button state */
       path_entry->drag_button = 0;
     }
+}
+
+
+
+static void
+thunar_path_entry_scale_changed (GObject    *object,
+                                 GParamSpec *pspec,
+                                 gpointer    user_data)
+{
+  gtk_widget_queue_draw (GTK_WIDGET (object));
 }
 
 
