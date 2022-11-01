@@ -511,13 +511,17 @@ thunar_abstract_icon_view_draw (ExoIconView            *view,
 {
   const XfceGtkActionEntry *action_entry = NULL;
   GdkPixbuf                *gesture_icon = NULL;
+  cairo_surface_t          *surface;
   gint                      x, y;
+  gint scale_factor;
 
   _thunar_return_val_if_fail (EXO_IS_ICON_VIEW (view), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view), FALSE);
   _thunar_return_val_if_fail (abstract_icon_view->priv->gesture_expose_id > 0, FALSE);
   _thunar_return_val_if_fail (abstract_icon_view->priv->gesture_motion_id > 0, FALSE);
   _thunar_return_val_if_fail (abstract_icon_view->priv->gesture_release_id > 0, FALSE);
+
+  scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (view));
 
   /* shade the abstract_icon view content while performing mouse gestures */
   cairo_set_source_rgba (cr, 1, 1, 1, 0.7);
@@ -532,25 +536,27 @@ thunar_abstract_icon_view_draw (ExoIconView            *view,
     {
       gesture_icon = gtk_icon_theme_load_icon (gtk_icon_theme_get_default(),
                                                action_entry->menu_item_icon_name,
-                                               32,
+                                               32 * scale_factor,
                                                GTK_ICON_LOOKUP_FORCE_SIZE,
                                                NULL);
       /* draw the rendered icon */
       if (G_LIKELY (gesture_icon != NULL))
         {
           /* x/y position of the icon */
-          x = abstract_icon_view->priv->gesture_start_x - gdk_pixbuf_get_width (gesture_icon) / 2;
-          y = abstract_icon_view->priv->gesture_start_y - gdk_pixbuf_get_height (gesture_icon) / 2;
+          x = abstract_icon_view->priv->gesture_start_x - gdk_pixbuf_get_width (gesture_icon) / (scale_factor * 2);
+          y = abstract_icon_view->priv->gesture_start_y - gdk_pixbuf_get_height (gesture_icon) / (scale_factor * 2);
 
           /* render the icon into the abstract_icon view window */
-          gdk_cairo_set_source_pixbuf (cr, gesture_icon, x, y);
+          surface = gdk_cairo_surface_create_from_pixbuf (gesture_icon, scale_factor, gtk_widget_get_window (GTK_WIDGET (view)));
+          cairo_set_source_surface (cr, surface, x, y);
           cairo_rectangle (cr, x, y,
                            gdk_pixbuf_get_width (gesture_icon),
                            gdk_pixbuf_get_height (gesture_icon));
           cairo_fill (cr);
 
-          /* release the stock abstract_icon */
+          /* release the stock abstract_icon & its surface */
           g_object_unref (G_OBJECT (gesture_icon));
+          cairo_surface_destroy (surface);
         }
     }
 
