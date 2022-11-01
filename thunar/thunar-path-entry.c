@@ -446,7 +446,9 @@ thunar_path_entry_motion_notify_event (GtkWidget      *widget,
   GdkDragContext  *context;
   GtkTargetList   *target_list;
   GdkPixbuf       *icon;
+  cairo_surface_t *surface;
   gint             size;
+  gint             scale_factor;
 
   if (path_entry->drag_button > 0
       && path_entry->current_file != NULL
@@ -464,14 +466,17 @@ thunar_path_entry_motion_notify_event (GtkWidget      *widget,
 
       /* setup the drag icon (atleast 24px) */
       gtk_widget_style_get (widget, "icon-size", &size, NULL);
+      scale_factor = gtk_widget_get_scale_factor (widget);
       icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory,
                                                  path_entry->current_file,
                                                  THUNAR_FILE_ICON_STATE_DEFAULT,
-                                                 MAX (size, 16));
+                                                 MAX (size, 16) * scale_factor);
       if (G_LIKELY (icon != NULL))
         {
-          gtk_drag_set_icon_pixbuf (context, icon, 0, 0);
+          surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, gtk_widget_get_window (widget));
           g_object_unref (G_OBJECT (icon));
+          gtk_drag_set_icon_surface (context, surface);
+          cairo_surface_destroy (surface);
         }
 
       /* reset the drag button state */
