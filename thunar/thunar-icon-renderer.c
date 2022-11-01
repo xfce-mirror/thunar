@@ -504,8 +504,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   /* determine the icon state */
   icon_state = (icon_renderer->drop_file != icon_renderer->file)
              ? is_expanded
-              ? THUNAR_FILE_ICON_STATE_OPEN
-              : THUNAR_FILE_ICON_STATE_DEFAULT
+             ? THUNAR_FILE_ICON_STATE_OPEN
+             : THUNAR_FILE_ICON_STATE_DEFAULT
              : THUNAR_FILE_ICON_STATE_DROP;
 
   /* load the main icon */
