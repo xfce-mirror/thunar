@@ -31,7 +31,8 @@ GdkScreen *thunar_gdk_screen_open             (const gchar *display_name,
 void       thunar_gdk_cairo_set_source_pixbuf (cairo_t     *cr,
                                                GdkPixbuf   *pixbuf,
                                                gdouble      pixbuf_x,
-                                               gdouble      pixbuf_y);
+                                               gdouble      pixbuf_y,
+                                               gint         scale_factor);
 
 G_END_DECLS;
 
