@@ -347,6 +347,8 @@ struct _ThunarListModelItem
   GSList          *invisible_children;
 };
 
+/* This struct is required for sorting.
+ * The offset is required notifying the reordering in GtkTreeModel */
 typedef struct
 {
   gint   offset;
@@ -640,6 +642,7 @@ thunar_list_model_finalize (GObject *object)
       /* remove all the entries */
       while (store->root->children)
         g_node_traverse (store->root->children, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_list_model_node_traverse_remove, store);
+
       /* root is an empty node no item to free here */
       g_node_destroy (store->root);
       store->root = NULL;
