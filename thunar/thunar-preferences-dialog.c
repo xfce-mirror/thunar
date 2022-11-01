@@ -17,7 +17,6 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "thunar/thunar-gallery-view.h"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -31,6 +30,7 @@
 #include <thunar/thunar-details-view.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-enum-types.h>
+#include <thunar/thunar-gallery-view.h>
 #include <thunar/thunar-gdk-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-view.h>
@@ -38,11 +38,11 @@
 #include <thunar/thunar-preferences-dialog.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-renamer-dialog.h>
+#include <thunar/thunar-shortcuts-view.h>
+#include <thunar/thunar-statusbar.h>
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-window.h>
-#include <thunar/thunar-shortcuts-view.h>
-#include <thunar/thunar-renamer-dialog.h>
-#include <thunar/thunar-statusbar.h>
 
 
 

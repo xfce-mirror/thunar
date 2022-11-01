@@ -19,7 +19,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "thunar/thunar-gallery-view.h"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -41,8 +40,9 @@
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-compact-view.h>
 #include <thunar/thunar-details-view.h>
+#include <thunar/thunar-device-monitor.h>
 #include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-shortcuts-pane.h>
+#include <thunar/thunar-gallery-view.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
@@ -57,13 +57,13 @@
 #include <thunar/thunar-preferences-dialog.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
-#include <thunar/thunar-util.h>
+#include <thunar/thunar-shortcuts-pane.h>
 #include <thunar/thunar-statusbar.h>
-#include <thunar/thunar-tree-pane.h>
-#include <thunar/thunar-window.h>
-#include <thunar/thunar-device-monitor.h>
-#include <thunar/thunar-toolbar-editor.h>
 #include <thunar/thunar-thumbnailer.h>
+#include <thunar/thunar-toolbar-editor.h>
+#include <thunar/thunar-tree-pane.h>
+#include <thunar/thunar-util.h>
+#include <thunar/thunar-window.h>
 
 #include <glib.h>
 
@@ -530,6 +530,7 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST,          "<Actions>/ThunarWindow/view-as-detailed-list",           "<Primary>2",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_List View"),             N_ ("Display folder content in a detailed list view"),                               "view-list-symbolic",        G_CALLBACK (thunar_window_action_detailed_view),                     },
     { THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST,           "<Actions>/ThunarWindow/view-as-compact-list",            "<Primary>3",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Compact View"),          N_ ("Display folder content in a compact list view"),                                "view-compact-symbolic",     G_CALLBACK (thunar_window_action_compact_view),                      },
     { THUNAR_WINDOW_ACTION_VIEW_AS_GALLERY,                "<Actions>/ThunarWindow/view-as-gallery",                 "<Primary>4",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Gallery View"),          N_ ("Display folder content in a gallery view"),                                     "image-x-generic-symbolic",  G_CALLBACK (thunar_window_action_gallery_view),                      },
+
     { THUNAR_WINDOW_ACTION_GO_MENU,                        "<Actions>/ThunarWindow/go-menu",                         "",                     XFCE_GTK_MENU_ITEM,       N_ ("_Go"),                    NULL,                                                                                NULL,                        NULL,                                                                },
     { THUNAR_WINDOW_ACTION_BOOKMARKS_MENU,                 "<Actions>/ThunarWindow/bookmarks-menu",                  "",                     XFCE_GTK_MENU_ITEM,       N_ ("_Bookmarks"),             NULL,                                                                                NULL,                        NULL,                                                                },
     { THUNAR_WINDOW_ACTION_OPEN_FILE_SYSTEM,               "<Actions>/ThunarWindow/open-file-system",                "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("File System"),            N_ ("Browse the file system"),                                                       "drive-harddisk",            G_CALLBACK (thunar_window_action_open_file_system),                  },
