@@ -44,7 +44,8 @@ static const cairo_user_data_key_t cairo_key;
 
 
 static cairo_surface_t *
-thunar_gdk_cairo_create_surface (const GdkPixbuf *pixbuf)
+thunar_gdk_cairo_create_surface (const GdkPixbuf *pixbuf,
+                                 gint             scale_factor)
 {
   gint             width;
   gint             height;
@@ -141,6 +142,8 @@ thunar_gdk_cairo_create_surface (const GdkPixbuf *pixbuf)
 #undef MULT
     }
 
+  cairo_surface_set_device_scale(surface, scale_factor, scale_factor);
+
   return surface;
 }
 
@@ -224,10 +227,11 @@ thunar_gdk_screen_open (const gchar *display_name,
 
 /**
  * thunar_gdk_cairo_set_source_pixbuf:
- * cr       : a Cairo context
- * pixbuf   : a GdkPixbuf
- * pixbuf_x : X coordinate of location to place upper left corner of pixbuf
- * pixbuf_y : Y coordinate of location to place upper left corner of pixbuf
+ * cr           : a Cairo context
+ * pixbuf       : a GdkPixbuf
+ * pixbuf_x     : X coordinate of location to place upper left corner of pixbuf
+ * pixbuf_y     : Y coordinate of location to place upper left corner of pixbuf
+ * scale_factor : UI scaling factor
  *
  * Works like gdk_cairo_set_source_pixbuf but we try to cache the surface
  * on the pixbuf, which is efficient within Thunar because we also share
@@ -237,7 +241,8 @@ void
 thunar_gdk_cairo_set_source_pixbuf (cairo_t   *cr,
                                     GdkPixbuf *pixbuf,
                                     gdouble    pixbuf_x,
-                                    gdouble    pixbuf_y)
+                                    gdouble    pixbuf_y,
+                                    gint       scale_factor)
 {
   cairo_surface_t *surface;
   static GQuark    surface_quark = 0;
@@ -250,7 +255,7 @@ thunar_gdk_cairo_set_source_pixbuf (cairo_t   *cr,
   if (surface == NULL)
     {
       /* create a new surface */
-      surface = thunar_gdk_cairo_create_surface (pixbuf);
+      surface = thunar_gdk_cairo_create_surface (pixbuf, scale_factor);
 
       /* store the pixbuf on the pixbuf */
       g_object_set_qdata_full (G_OBJECT (pixbuf), surface_quark,
