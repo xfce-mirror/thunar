@@ -78,6 +78,9 @@ static void           thunar_shortcuts_view_set_property                 (GObjec
                                                                           guint                     prop_id,
                                                                           const GValue             *value,
                                                                           GParamSpec               *pspec);
+static void           thunar_shortcuts_view_scale_changed                (GObject                  *object,
+                                                                          GParamSpec               *pspec,
+                                                                          gpointer                  user_data);
 static ThunarFile*    thunar_shortcuts_view_get_current_directory        (ThunarNavigator          *navigator);
 static void           thunar_shortcuts_view_set_current_directory        (ThunarNavigator          *navigator,
                                                                           ThunarFile               *current_directory);
@@ -344,6 +347,7 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
                                        "device", THUNAR_SHORTCUTS_MODEL_COLUMN_DEVICE,
                                        "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_IS_ITEM,
                                        NULL);
+  g_signal_connect (G_OBJECT (view), "notify::scale-factor", G_CALLBACK (thunar_shortcuts_view_scale_changed), NULL);
 
   /* sync the "emblems" property of the icon renderer with the "shortcuts-icon-emblems" preference
    * and the "size" property of the renderer with the "shortcuts-icon-size" preference.
@@ -478,6 +482,16 @@ thunar_shortcuts_view_set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static void
+thunar_shortcuts_view_scale_changed (GObject    *object,
+                                     GParamSpec *pspec,
+                                     gpointer    user_data)
+{
+    gtk_widget_queue_draw (GTK_WIDGET (object));
 }
 
 
