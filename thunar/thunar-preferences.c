@@ -65,6 +65,7 @@ enum
   PROP_LAST_DETAILS_VIEW_VISIBLE_COLUMNS,
   PROP_LAST_DETAILS_VIEW_ZOOM_LEVEL,
   PROP_LAST_ICON_VIEW_ZOOM_LEVEL,
+  PROP_LAST_GALLERY_VIEW_ZOOM_LEVEL,
   PROP_LAST_LOCATION_BAR,
   PROP_LAST_MENUBAR_VISIBLE,
   PROP_LAST_SEPARATOR_POSITION,
@@ -383,6 +384,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          EXO_PARAM_READWRITE);
 
   /**
+   * ThunarPreferences:last-gallery-view-zoom-level:
+   *
+   * The last selected #ThunarZoomLevel for the #ThunarGalleryView.
+   **/
+  preferences_props[PROP_LAST_GALLERY_VIEW_ZOOM_LEVEL] =
+      g_param_spec_enum ("last-gallery-view-zoom-level",
+                         "LastGalleryViewZoomLevel",
+                         NULL,
+                         THUNAR_TYPE_ZOOM_LEVEL,
+                         THUNAR_ZOOM_LEVEL_200_PERCENT,
+                         EXO_PARAM_READWRITE);
+
+  /**
    * ThunarPreferences:last-location-bar:
    *
    * The name of the widget class, which should be used for the
@@ -456,7 +470,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
         g_param_spec_string ("last-toolbar-visible-buttons",
                              "LastToolbarVisibleButtons",
                              NULL,
-                             "0,1,1,1,1,0,0,0,0,0,0,0,0,0,1,0,1",
+                             "0,1,1,1,1,0,0,0,0,0,0,0,0,0,1,0,0,1",
                              EXO_PARAM_READWRITE);
 
   /**
@@ -468,7 +482,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
         g_param_spec_string ("last-toolbar-item-order",
                              "LastToolbarButtonOrder",
                              NULL,
-                             "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16",
+                             "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17",
                              EXO_PARAM_READWRITE);
 
   /**
