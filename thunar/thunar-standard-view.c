@@ -120,6 +120,9 @@ static void                 thunar_standard_view_set_property               (GOb
                                                                              guint                     prop_id,
                                                                              const GValue             *value,
                                                                              GParamSpec               *pspec);
+static void                 thunar_standard_view_scale_changed              (GObject                  *object,
+                                                                             GParamSpec               *pspec,
+                                                                             gpointer                  user_data);
 static void                 thunar_standard_view_realize                    (GtkWidget                *widget);
 static void                 thunar_standard_view_unrealize                  (GtkWidget                *widget);
 static void                 thunar_standard_view_grab_focus                 (GtkWidget                *widget);
@@ -840,6 +843,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   g_object_bind_property (G_OBJECT (standard_view), "zoom-level", G_OBJECT (standard_view->icon_renderer), "size", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->priv->thumbnailer), "thumbnail-size", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-highlighting-enabled", G_OBJECT (standard_view->icon_renderer), "highlighting-enabled", G_BINDING_SYNC_CREATE);
+  g_signal_connect (G_OBJECT (standard_view), "notify::scale-factor", G_CALLBACK (thunar_standard_view_scale_changed), NULL);
 
   /* setup the name renderer */
   standard_view->name_renderer = thunar_text_renderer_new ();
@@ -1242,6 +1246,16 @@ thunar_standard_view_set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static void
+thunar_standard_view_scale_changed (GObject    *object,
+                                    GParamSpec *pspec,
+                                    gpointer    user_data)
+{
+    gtk_widget_queue_draw (GTK_WIDGET (object));
 }
 
 
