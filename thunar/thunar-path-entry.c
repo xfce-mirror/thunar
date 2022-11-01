@@ -717,6 +717,7 @@ thunar_path_entry_update_icon (ThunarPathEntry *path_entry)
   GdkPixbuf          *icon = NULL;
   GtkIconTheme       *icon_theme;
   gint                icon_size;
+  gint                scale_factor;
 
   if (path_entry->search_mode == TRUE)
     {
@@ -733,20 +734,21 @@ thunar_path_entry_update_icon (ThunarPathEntry *path_entry)
     }
 
   gtk_widget_style_get (GTK_WIDGET (path_entry), "icon-size", &icon_size, NULL);
+  scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (path_entry));
 
   if (G_UNLIKELY (path_entry->current_file != NULL))
     {
       icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory,
                                                  path_entry->current_file,
                                                  THUNAR_FILE_ICON_STATE_DEFAULT,
-                                                 icon_size);
+                                                 icon_size * scale_factor);
     }
   else if (G_LIKELY (path_entry->current_folder != NULL))
     {
       icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory,
                                                  path_entry->current_folder,
                                                  THUNAR_FILE_ICON_STATE_DEFAULT,
-                                                 icon_size);
+                                                 icon_size * scale_factor);
     }
 
   if (icon != NULL)
