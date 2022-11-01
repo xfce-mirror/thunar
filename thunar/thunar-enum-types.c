@@ -740,8 +740,8 @@ thunar_image_preview_mode_get_type (void)
     {
       static const GEnumValue values[] =
       {
-        { THUNAR_IMAGE_PREVIEW_MODE_STANDALONE, "THUNAR_IMAGE_PREVIEW_MODE_STANDALONE", N_("Standalone Image Preview") },
-        { THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED,   "THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED",   N_("Embedded Image Preview") },
+        { THUNAR_IMAGE_PREVIEW_MODE_STANDALONE, "THUNAR_IMAGE_PREVIEW_MODE_STANDALONE", N_("Standalone") },
+        { THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED,   "THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED",   N_("Embedded") },
         { 0,                                    NULL,                                   NULL }
       };
 
