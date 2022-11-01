@@ -527,18 +527,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   icon_area.height = gdk_pixbuf_get_height (icon);
 
   /* scale down the icon on-demand */
-  if (!square_icons && (G_UNLIKELY (icon_area.width > cell_area->width || icon_area.height > cell_area->height)))
-    {
-      /* scale down to fit */
-      temp = exo_gdk_pixbuf_scale_down (icon, TRUE, MAX (1, cell_area->width), MAX (1, cell_area->height));
-      g_object_unref (G_OBJECT (icon));
-      icon = temp;
-
-      /* determine the icon dimensions again */
-      icon_area.width = gdk_pixbuf_get_width (icon);
-      icon_area.height = gdk_pixbuf_get_height (icon);
-    }
-  else if (square_icons)
+  if (square_icons)
     {
       /* generate a sub pixbuf which is square first */
       smaller_dimension = MIN (icon_area.width, icon_area.height);
@@ -555,6 +544,17 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       g_object_unref (icon);
       icon = temp;
 
+      icon_area.width = gdk_pixbuf_get_width (icon);
+      icon_area.height = gdk_pixbuf_get_height (icon);
+    }
+  else if (G_UNLIKELY (icon_area.width > cell_area->width || icon_area.height > cell_area->height))
+    {
+      /* scale down to fit */
+      temp = exo_gdk_pixbuf_scale_down (icon, TRUE, MAX (1, cell_area->width), MAX (1, cell_area->height));
+      g_object_unref (G_OBJECT (icon));
+      icon = temp;
+
+      /* determine the icon dimensions again */
       icon_area.width = gdk_pixbuf_get_width (icon);
       icon_area.height = gdk_pixbuf_get_height (icon);
     }
