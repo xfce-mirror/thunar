@@ -89,6 +89,9 @@ static void                     thunar_tree_view_set_property                 (G
                                                                                guint                    prop_id,
                                                                                const GValue            *value,
                                                                                GParamSpec              *pspec);
+static void                     thunar_tree_view_scale_changed                (GObject                 *object,
+                                                                               GParamSpec              *pspec,
+                                                                               gpointer                 user_data);
 static ThunarFile              *thunar_tree_view_get_current_directory        (ThunarNavigator         *navigator);
 static void                     thunar_tree_view_set_current_directory        (ThunarNavigator         *navigator,
                                                                                ThunarFile              *current_directory);
@@ -381,6 +384,7 @@ thunar_tree_view_init (ThunarTreeView *view)
                                        "file", THUNAR_TREE_MODEL_COLUMN_FILE,
                                        "device", THUNAR_TREE_MODEL_COLUMN_DEVICE,
                                        NULL);
+  g_signal_connect (G_OBJECT (view), "notify::scale-factor", G_CALLBACK (thunar_tree_view_scale_changed), NULL);
 
   /* sync the "emblems" property of the icon renderer with the "tree-icon-emblems" preference
    * and the "size" property of the renderer with the "tree-icon-size" preference.
@@ -509,6 +513,16 @@ thunar_tree_view_set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static void
+thunar_tree_view_scale_changed (GObject    *object,
+                                GParamSpec *pspec,
+                                gpointer    user_data)
+{
+    gtk_widget_queue_draw (GTK_WIDGET (object));
 }
 
 

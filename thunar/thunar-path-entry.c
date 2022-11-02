@@ -81,6 +81,9 @@ static void     thunar_path_entry_icon_release_event            (GtkEntry       
                                                                  GtkEntryIconPosition icon_pos,
                                                                  GdkEventButton      *event,
                                                                  gpointer             user_data);
+static void     thunar_path_entry_scale_changed                 (GObject              *object,
+                                                                 GParamSpec           *pspec,
+                                                                 gpointer              user_data);
 static gboolean thunar_path_entry_motion_notify_event           (GtkWidget            *widget,
                                                                  GdkEventMotion       *event);
 static gboolean thunar_path_entry_key_press_event               (GtkWidget            *widget,
@@ -275,6 +278,7 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
   /* connect the icon signals */
   g_signal_connect (G_OBJECT (path_entry), "icon-press", G_CALLBACK (thunar_path_entry_icon_press_event), NULL);
   g_signal_connect (G_OBJECT (path_entry), "icon-release", G_CALLBACK (thunar_path_entry_icon_release_event), NULL);
+  g_signal_connect (G_OBJECT (path_entry), "notify::scale-factor", G_CALLBACK (thunar_path_entry_scale_changed), NULL);
 
   /* disabled initially */
   path_entry->search_mode = FALSE;
@@ -424,6 +428,16 @@ thunar_path_entry_icon_release_event (GtkEntry            *entry,
 
 
 
+static void
+thunar_path_entry_scale_changed (GObject    *object,
+                                 GParamSpec *pspec,
+                                 gpointer    user_data)
+{
+  gtk_widget_queue_draw (GTK_WIDGET (object));
+}
+
+
+
 static gboolean
 thunar_path_entry_motion_notify_event (GtkWidget      *widget,
                                        GdkEventMotion *event)
@@ -432,7 +446,9 @@ thunar_path_entry_motion_notify_event (GtkWidget      *widget,
   GdkDragContext  *context;
   GtkTargetList   *target_list;
   GdkPixbuf       *icon;
+  cairo_surface_t *surface;
   gint             size;
+  gint             scale_factor;
 
   if (path_entry->drag_button > 0
       && path_entry->current_file != NULL
@@ -450,14 +466,17 @@ thunar_path_entry_motion_notify_event (GtkWidget      *widget,
 
       /* setup the drag icon (atleast 24px) */
       gtk_widget_style_get (widget, "icon-size", &size, NULL);
+      scale_factor = gtk_widget_get_scale_factor (widget);
       icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory,
                                                  path_entry->current_file,
                                                  THUNAR_FILE_ICON_STATE_DEFAULT,
-                                                 MAX (size, 16));
+                                                 MAX (size, 16) * scale_factor);
       if (G_LIKELY (icon != NULL))
         {
-          gtk_drag_set_icon_pixbuf (context, icon, 0, 0);
+          surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, gtk_widget_get_window (widget));
           g_object_unref (G_OBJECT (icon));
+          gtk_drag_set_icon_surface (context, surface);
+          cairo_surface_destroy (surface);
         }
 
       /* reset the drag button state */
@@ -703,6 +722,7 @@ thunar_path_entry_update_icon (ThunarPathEntry *path_entry)
   GdkPixbuf          *icon = NULL;
   GtkIconTheme       *icon_theme;
   gint                icon_size;
+  gint                scale_factor;
 
   if (path_entry->search_mode == TRUE)
     {
@@ -719,20 +739,21 @@ thunar_path_entry_update_icon (ThunarPathEntry *path_entry)
     }
 
   gtk_widget_style_get (GTK_WIDGET (path_entry), "icon-size", &icon_size, NULL);
+  scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (path_entry));
 
   if (G_UNLIKELY (path_entry->current_file != NULL))
     {
       icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory,
                                                  path_entry->current_file,
                                                  THUNAR_FILE_ICON_STATE_DEFAULT,
-                                                 icon_size);
+                                                 icon_size * scale_factor);
     }
   else if (G_LIKELY (path_entry->current_folder != NULL))
     {
       icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory,
                                                  path_entry->current_folder,
                                                  THUNAR_FILE_ICON_STATE_DEFAULT,
-                                                 icon_size);
+                                                 icon_size * scale_factor);
     }
 
   if (icon != NULL)
