@@ -239,11 +239,12 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
       xfconf_channel_set_string (channel, image_path_prop, file_name);
       xfconf_channel_set_bool (channel, image_show_prop, TRUE);
 
-      /* If there isn't a wallpaper style set, then set one */
+      /* If there isn't a wallpaper style set (-1), or it is set to 'None' (which is 0) then set one */
       current_image_style = xfconf_channel_get_int (channel, image_style_prop, -1);
-      if (current_image_style == -1)
+      if (current_image_style <= 0 )
         {
-          xfconf_channel_set_int (channel, image_style_prop, 0);
+          /* Lets hope that 5 = 'Zoomed' works fine for the selected picture */
+          xfconf_channel_set_int (channel, image_style_prop, 5);
         }
 
       g_free(image_path_prop);
@@ -281,10 +282,11 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
 
       xfconf_channel_set_string (channel, image_path_prop, file_name);
 
-      /* If there isn't a wallpaper style set, then set one */
+      /* If there isn't a wallpaper style set (-1), or it is set to 'None' (which is 0) then set one */
       current_image_style = xfconf_channel_get_int (channel, image_style_prop, -1);
-      if (current_image_style == -1)
+      if (current_image_style <= 0)
         {
+          /* Lets hope that 5 = 'Zoomed' works fine for the selected picture */
           xfconf_channel_set_int (channel, image_style_prop, 5);
         }
 
