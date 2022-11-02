@@ -459,6 +459,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   GdkPixbuf              *temp;
   GList                  *emblems;
   GList                  *lp;
+  gint                    scale_factor;
   gint                    max_emblems;
   gint                    position;
   gdouble                 alpha;
@@ -488,7 +489,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   /* load the main icon */
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-  icon = thunar_icon_factory_load_file_icon (icon_factory, icon_renderer->file, icon_state, icon_renderer->size);
+  scale_factor = gtk_widget_get_scale_factor (widget);
+  icon = thunar_icon_factory_load_file_icon (icon_factory, icon_renderer->file, icon_state, icon_renderer->size * scale_factor);
   if (G_UNLIKELY (icon == NULL))
     {
       g_object_unref (G_OBJECT (icon_factory));
@@ -500,20 +502,20 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
     flags |= GTK_CELL_RENDERER_PRELIT;
 
   /* determine the real icon size */
-  icon_area.width = gdk_pixbuf_get_width (icon);
-  icon_area.height = gdk_pixbuf_get_height (icon);
+  icon_area.width = gdk_pixbuf_get_width (icon) / scale_factor;
+  icon_area.height = gdk_pixbuf_get_height (icon) / scale_factor;
 
   /* scale down the icon on-demand */
   if (G_UNLIKELY (icon_area.width > cell_area->width || icon_area.height > cell_area->height))
     {
       /* scale down to fit */
-      temp = exo_gdk_pixbuf_scale_down (icon, TRUE, MAX (1, cell_area->width), MAX (1, cell_area->height));
+      temp = exo_gdk_pixbuf_scale_down (icon, TRUE, MAX (1, cell_area->width * scale_factor), MAX (1, cell_area->height * scale_factor));
       g_object_unref (G_OBJECT (icon));
       icon = temp;
 
       /* determine the icon dimensions again */
-      icon_area.width = gdk_pixbuf_get_width (icon);
-      icon_area.height = gdk_pixbuf_get_height (icon);
+      icon_area.width = gdk_pixbuf_get_width (icon) / scale_factor;
+      icon_area.height = gdk_pixbuf_get_height (icon) / scale_factor;
     }
 
   icon_area.x = cell_area->x + (cell_area->width - icon_area.width) / 2;
@@ -545,7 +547,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       g_object_unref (G_OBJECT (clipboard));
 
       /* render the invalid parts of the icon */
-      thunar_gdk_cairo_set_source_pixbuf (cr, icon, icon_area.x, icon_area.y);
+      thunar_gdk_cairo_set_source_pixbuf (cr, icon, icon_area.x, icon_area.y, scale_factor);
       cairo_paint_with_alpha (cr, alpha);
 
       /* check if we should render an insensitive icon */
@@ -581,25 +583,25 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
               emblem_size = MIN ((2 * icon_renderer->size) / 3, 32);
 
               /* check if we have the emblem in the icon theme */
-              emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, emblem_size, FALSE);
+              emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, emblem_size * scale_factor, FALSE);
               if (G_UNLIKELY (emblem == NULL))
                 continue;
 
               /* determine the dimensions of the emblem */
-              emblem_area.width = gdk_pixbuf_get_width (emblem);
-              emblem_area.height = gdk_pixbuf_get_height (emblem);
+              emblem_area.width = gdk_pixbuf_get_width (emblem) / scale_factor;
+              emblem_area.height = gdk_pixbuf_get_height (emblem) / scale_factor;
 
               /* shrink insane emblems */
               if (G_UNLIKELY (MAX (emblem_area.width, emblem_area.height) > emblem_size))
                 {
                   /* scale down the emblem */
-                  temp = exo_gdk_pixbuf_scale_ratio (emblem, emblem_size);
+                  temp = exo_gdk_pixbuf_scale_ratio (emblem, emblem_size * scale_factor);
                   g_object_unref (G_OBJECT (emblem));
                   emblem = temp;
 
                   /* determine the size again */
-                  emblem_area.width = gdk_pixbuf_get_width (emblem);
-                  emblem_area.height = gdk_pixbuf_get_height (emblem);
+                  emblem_area.width = gdk_pixbuf_get_width (emblem) / scale_factor;
+                  emblem_area.height = gdk_pixbuf_get_height (emblem) / scale_factor;
                 }
 
               /* determine a good position for the emblem, depending on the position index */
@@ -641,7 +643,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
               if (gdk_rectangle_intersect (&clip_area, &emblem_area, NULL))
                 {
                   /* render the invalid parts of the icon */
-                  thunar_gdk_cairo_set_source_pixbuf (cr, emblem, emblem_area.x, emblem_area.y);
+                  thunar_gdk_cairo_set_source_pixbuf (cr, emblem, emblem_area.x, emblem_area.y, scale_factor);
                   cairo_paint (cr);
 
                   /* paint the lighten mask */

@@ -120,6 +120,9 @@ static void                 thunar_standard_view_set_property               (GOb
                                                                              guint                     prop_id,
                                                                              const GValue             *value,
                                                                              GParamSpec               *pspec);
+static void                 thunar_standard_view_scale_changed              (GObject                  *object,
+                                                                             GParamSpec               *pspec,
+                                                                             gpointer                  user_data);
 static void                 thunar_standard_view_realize                    (GtkWidget                *widget);
 static void                 thunar_standard_view_unrealize                  (GtkWidget                *widget);
 static void                 thunar_standard_view_grab_focus                 (GtkWidget                *widget);
@@ -840,6 +843,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   g_object_bind_property (G_OBJECT (standard_view), "zoom-level", G_OBJECT (standard_view->icon_renderer), "size", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->priv->thumbnailer), "thumbnail-size", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-highlighting-enabled", G_OBJECT (standard_view->icon_renderer), "highlighting-enabled", G_BINDING_SYNC_CREATE);
+  g_signal_connect (G_OBJECT (standard_view), "notify::scale-factor", G_CALLBACK (thunar_standard_view_scale_changed), NULL);
 
   /* setup the name renderer */
   standard_view->name_renderer = thunar_text_renderer_new ();
@@ -1242,6 +1246,16 @@ thunar_standard_view_set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static void
+thunar_standard_view_scale_changed (GObject    *object,
+                                    GParamSpec *pspec,
+                                    gpointer    user_data)
+{
+    gtk_widget_queue_draw (GTK_WIDGET (object));
 }
 
 
@@ -3369,9 +3383,11 @@ thunar_standard_view_drag_begin (GtkWidget          *view,
                                  GdkDragContext     *context,
                                  ThunarStandardView *standard_view)
 {
-  ThunarFile *file;
-  GdkPixbuf  *icon;
-  gint        size;
+  ThunarFile      *file;
+  GdkPixbuf       *icon;
+  cairo_surface_t *surface;
+  gint             size;
+  gint             scale_factor;
 
   /* release the drag path list (just in case the drag-end wasn't fired before) */
   thunar_g_list_free_full (standard_view->priv->drag_g_file_list);
@@ -3386,9 +3402,15 @@ thunar_standard_view_drag_begin (GtkWidget          *view,
         {
           /* generate an icon based on that file */
           g_object_get (G_OBJECT (standard_view->icon_renderer), "size", &size, NULL);
-          icon = thunar_icon_factory_load_file_icon (standard_view->icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, size);
-          gtk_drag_set_icon_pixbuf (context, icon, 0, 0);
-          g_object_unref (G_OBJECT (icon));
+          scale_factor = gtk_widget_get_scale_factor (view);
+          icon = thunar_icon_factory_load_file_icon (standard_view->icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, size * scale_factor);
+          if (G_LIKELY (icon != NULL))
+            {
+              surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, gtk_widget_get_window (view));
+              g_object_unref (G_OBJECT (icon));
+              gtk_drag_set_icon_surface (context, surface);
+              cairo_surface_destroy (surface);
+            }
 
           /* release the file */
           g_object_unref (G_OBJECT (file));
