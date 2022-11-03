@@ -23,6 +23,7 @@
 
 #include <thunar/thunar-text-renderer.h>
 #include <thunar/thunar-util.h>
+#include <thunar/thunar-file.h>
 
 
 
