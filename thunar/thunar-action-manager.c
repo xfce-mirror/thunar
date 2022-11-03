@@ -2896,7 +2896,7 @@ thunar_action_manager_create_document_submenu_new (ThunarActionManager *action_m
   if (files == NULL)
     {
       template_path = g_file_get_path (templates_dir);
-      label_text = g_strdup_printf (_("No templates installed in \"%s\""), template_path);
+      label_text = g_strdup_printf (_("No templates installed in\n\"%s\""), template_path);
       item = xfce_gtk_image_menu_item_new (label_text, NULL, NULL, NULL, NULL, NULL, GTK_MENU_SHELL (submenu));
       gtk_widget_set_sensitive (item, FALSE);
       g_free (template_path);
