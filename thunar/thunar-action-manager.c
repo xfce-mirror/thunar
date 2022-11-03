@@ -283,7 +283,7 @@ static XfceGtkActionEntry thunar_action_manager_action_entries[] =
     {THUNAR_ACTION_MANAGER_ACTION_DUPLICATE,          "<Actions>/ThunarStandardView/duplicate",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Du_plicate"),          NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_duplicate),           },
     {THUNAR_ACTION_MANAGER_ACTION_RENAME,             "<Actions>/ThunarStandardView/rename",            "F2",                XFCE_GTK_MENU_ITEM,       N_ ("_Rename..."),          NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_rename),              },
     {THUNAR_ACTION_MANAGER_ACTION_EMPTY_TRASH,        "<Actions>/ThunarWindow/empty-trash",             "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Empty Trash"),        N_ ("Delete all files and folders in the Trash"), NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_empty_trash),         },
-    {THUNAR_ACTION_MANAGER_ACTION_REMOVE_FROM_RECENT, "<Actions>/ThunarWindow/remove-from-recent",      "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Remove from recent"), N_ ("Remove the selected files from Recent"),     NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_remove_from_recent),  },
+    {THUNAR_ACTION_MANAGER_ACTION_REMOVE_FROM_RECENT, "<Actions>/ThunarWindow/remove-from-recent",      "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Remove from Recent"), N_ ("Remove the selected files from Recent"),     NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_remove_from_recent),  },
     {THUNAR_ACTION_MANAGER_ACTION_CREATE_FOLDER,      "<Actions>/ThunarStandardView/create-folder",     "<Primary><shift>N", XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Create _Folder..."),   N_ ("Create an empty folder within the current folder"),                                         "folder-new",                                  G_CALLBACK (thunar_action_manager_action_create_folder),       },
     {THUNAR_ACTION_MANAGER_ACTION_CREATE_DOCUMENT,    "<Actions>/ThunarStandardView/create-document",   "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Create _Document"),    N_ ("Create a new document from a template"),                                                    "document-new",                                G_CALLBACK (NULL),                                             },
 
@@ -2896,7 +2896,7 @@ thunar_action_manager_create_document_submenu_new (ThunarActionManager *action_m
   if (files == NULL)
     {
       template_path = g_file_get_path (templates_dir);
-      label_text = g_strdup_printf (_("No templates installed in \"%s\""), template_path);
+      label_text = g_strdup_printf (_("No templates installed in\n\"%s\""), template_path);
       item = xfce_gtk_image_menu_item_new (label_text, NULL, NULL, NULL, NULL, NULL, GTK_MENU_SHELL (submenu));
       gtk_widget_set_sensitive (item, FALSE);
       g_free (template_path);

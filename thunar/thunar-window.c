@@ -1387,6 +1387,7 @@ thunar_window_update_view_menu (ThunarWindow *window,
                                                    thunar_window_has_shortcut_sidepane (window), GTK_MENU_SHELL (sub_items));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_TREE), G_OBJECT (window),
                                                    thunar_window_has_tree_view_sidepane (window), GTK_MENU_SHELL (sub_items));
+  xfce_gtk_menu_append_separator (GTK_MENU_SHELL (sub_items));
   g_object_get (window->preferences, "last-image-preview-visible", &last_visible_image_preview, NULL);
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_TOGGLE_IMAGE_PREVIEW), G_OBJECT (window),
                                                    last_visible_image_preview, GTK_MENU_SHELL (sub_items));
