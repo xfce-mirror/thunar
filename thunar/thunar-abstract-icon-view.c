@@ -190,8 +190,6 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer, TRUE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer,
                                  "text", THUNAR_COLUMN_NAME);
-  gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer,
-                                 "file", THUNAR_COLUMN_FILE);
 
   /* update the icon view on size-allocate events */
   /* TODO: issue not reproducible anymore as of gtk 3.24.18
