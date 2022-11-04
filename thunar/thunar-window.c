@@ -1360,7 +1360,7 @@ thunar_window_update_view_menu (ThunarWindow *window,
   GtkWidget  *item;
   GtkWidget  *sub_items;
   gchar      *last_location_bar;
-  gboolean    last_visible_image_preview;
+  gboolean    image_preview_visible;
   gboolean    highlight_enabled;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
@@ -1388,9 +1388,10 @@ thunar_window_update_view_menu (ThunarWindow *window,
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_TREE), G_OBJECT (window),
                                                    thunar_window_has_tree_view_sidepane (window), GTK_MENU_SHELL (sub_items));
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (sub_items));
-  g_object_get (window->preferences, "last-image-preview-visible", &last_visible_image_preview, NULL);
+  image_preview_visible = gtk_widget_get_visible (window->right_pane_box) || gtk_widget_get_visible (window->sidepane_preview_image);
+
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_TOGGLE_IMAGE_PREVIEW), G_OBJECT (window),
-                                                   last_visible_image_preview, GTK_MENU_SHELL (sub_items));
+                                                   image_preview_visible, GTK_MENU_SHELL (sub_items));
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (sub_items));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_STATUSBAR), G_OBJECT (window),
                                                    gtk_widget_get_visible (window->statusbar), GTK_MENU_SHELL (menu));
@@ -3735,27 +3736,26 @@ static gboolean
 thunar_window_action_image_preview (ThunarWindow *window)
 {
   ThunarImagePreviewMode misc_image_preview_mode;
-  gboolean               last_image_preview_visible;
+  gboolean               image_preview_visible;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  g_object_get (window->preferences,
-                "last-image-preview-visible", &last_image_preview_visible,
-                "misc-image-preview-mode", &misc_image_preview_mode,
-                NULL);
+  g_object_get (window->preferences, "misc-image-preview-mode", &misc_image_preview_mode, NULL);
+
+  image_preview_visible = gtk_widget_get_visible (window->right_pane_box) || gtk_widget_get_visible (window->sidepane_preview_image);
 
   if (misc_image_preview_mode == THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED)
     {
-      gtk_widget_set_visible (window->sidepane_preview_image, !last_image_preview_visible);
+      gtk_widget_set_visible (window->sidepane_preview_image, !image_preview_visible);
       gtk_widget_set_visible (window->right_pane_box, FALSE);
     }
   else
     {
       gtk_widget_set_visible (window->sidepane_preview_image, FALSE);
-      gtk_widget_set_visible (window->right_pane_box, !last_image_preview_visible);
+      gtk_widget_set_visible (window->right_pane_box, !image_preview_visible);
     }
 
-  g_object_set (G_OBJECT (window->preferences), "last-image-preview-visible", !last_image_preview_visible, NULL);
+  g_object_set (G_OBJECT (window->preferences), "last-image-preview-visible", !image_preview_visible, NULL);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
