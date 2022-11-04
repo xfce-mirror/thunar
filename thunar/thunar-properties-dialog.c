@@ -81,8 +81,8 @@ enum
 {
   NOTEBOOK_PAGE_GENERAL,
   NOTEBOOK_PAGE_EMBLEMS,
-  NOTEBOOK_PAGE_PERMISSIONS,
-  NOTEBOOK_PAGE_HIGHLIGHT
+  NOTEBOOK_PAGE_HIGHLIGHT,
+  NOTEBOOK_PAGE_PERMISSIONS
 };
 
 
@@ -708,18 +708,6 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (label);
 
   /*
-     Permissions chooser
-   */
-  label = gtk_label_new (_("Permissions"));
-  dialog->permissions_chooser = thunar_permissions_chooser_new ();
-  g_object_bind_property (G_OBJECT (dialog),                      "files",
-                          G_OBJECT (dialog->permissions_chooser), "files",
-                          G_BINDING_SYNC_CREATE);
-  gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), dialog->permissions_chooser, label);
-  gtk_widget_show (dialog->permissions_chooser);
-  gtk_widget_show (label);
-
-  /*
      Highlight Color Chooser
    */
   grid = gtk_grid_new ();
@@ -852,6 +840,18 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
                             G_CALLBACK (thunar_properties_dialog_color_editor_close), dialog);
   gtk_box_pack_start (GTK_BOX (box), button, TRUE, TRUE, 0);
   gtk_widget_show (button);
+
+  /*
+     Permissions chooser
+   */
+  label = gtk_label_new (_("Permissions"));
+  dialog->permissions_chooser = thunar_permissions_chooser_new ();
+  g_object_bind_property (G_OBJECT (dialog),                      "files",
+                          G_OBJECT (dialog->permissions_chooser), "files",
+                          G_BINDING_SYNC_CREATE);
+  gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), dialog->permissions_chooser, label);
+  gtk_widget_show (dialog->permissions_chooser);
+  gtk_widget_show (label);
 }
 
 
