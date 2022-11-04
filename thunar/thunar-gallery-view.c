@@ -65,15 +65,23 @@ thunar_gallery_view_class_init (ThunarGalleryViewClass *klass)
 static void
 thunar_gallery_view_init (ThunarGalleryView *gallery_view)
 {
+  GtkWidget   *view;
+
+  /* remove all cell renderers in the layout, since by default that includes not only the
+   * icon renderer, but also the name renderer */
+  view = gtk_bin_get_child (GTK_BIN (gallery_view));
+  gtk_cell_layout_clear (GTK_CELL_LAYOUT (view));
+
+  /* add the icon renderer, but not the name renderer */
+  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (gallery_view)->icon_renderer), "follow-state", TRUE, "rounded-corners", TRUE, NULL);
+  gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (gallery_view)->icon_renderer, FALSE);
+  gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (gallery_view)->icon_renderer,
+                                 "file", THUNAR_COLUMN_FILE);
+
   /* setup the icon renderer */
   g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (gallery_view)->icon_renderer),
                 "ypad", 1u,
                 "square-icons", TRUE,
-                NULL);
-
-  /* setup the name renderer */
-  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (gallery_view)->name_renderer),
-                "render-only-folders", TRUE,
                 NULL);
 }
 
