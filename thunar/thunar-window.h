@@ -111,12 +111,6 @@ GType                     thunar_window_get_type                            (voi
 ThunarFile               *thunar_window_get_current_directory               (ThunarWindow        *window);
 void                      thunar_window_set_current_directory               (ThunarWindow        *window,
                                                                              ThunarFile          *current_directory);
-void                      thunar_window_scroll_to_file                      (ThunarWindow        *window,
-                                                                             ThunarFile          *file,
-                                                                             gboolean             select,
-                                                                             gboolean             use_align,
-                                                                             gfloat               row_align,
-                                                                             gfloat               col_align);
 GList                    *thunar_window_get_directories                     (ThunarWindow        *window,
                                                                              gint                *active_page);
 gboolean                  thunar_window_set_directories                     (ThunarWindow        *window,

@@ -1144,6 +1144,7 @@ thunar_window_show_and_select_files (ThunarWindow *window,
                                      GList        *files_to_select)
 {
   gboolean      restore_and_show_in_progress;
+  ThunarFile   *first_file;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
@@ -1155,6 +1156,14 @@ thunar_window_show_and_select_files (ThunarWindow *window,
   else
     {
       thunar_window_select_files (window, files_to_select);
+    }
+
+  /* scroll to first file */
+  if (files_to_select != NULL)
+    {
+      first_file = thunar_file_get (files_to_select->data, NULL);
+      thunar_view_scroll_to_file (THUNAR_VIEW (window->view), first_file, FALSE, TRUE, 0.1f, 0.1f);
+      g_object_unref (first_file);
     }
 }
 
@@ -3400,7 +3409,7 @@ thunar_window_action_open_new_window (ThunarWindow *window,
   if (thunar_view_get_visible_range (THUNAR_VIEW (window->view), &start_file, NULL))
     {
       /* scroll the new window to the same file */
-      thunar_window_scroll_to_file (new_window, start_file, FALSE, TRUE, 0.1f, 0.1f);
+      thunar_view_scroll_to_file (THUNAR_VIEW (window->view), start_file, FALSE, TRUE, 0.1f, 0.1f);
 
       /* release the file reference */
       g_object_unref (G_OBJECT (start_file));
@@ -5197,36 +5206,6 @@ thunar_window_set_current_directory (ThunarWindow *window,
   thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), is_trash);
   thunar_details_view_set_recency_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
   thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
-}
-
-
-
-/**
- * thunar_window_scroll_to_file:
- * @window      : a #ThunarWindow instance.
- * @file        : a #ThunarFile.
- * @select_file : if %TRUE the @file will also be selected.
- * @use_align   : %TRUE to use the alignment arguments.
- * @row_align   : the vertical alignment.
- * @col_align   : the horizontal alignment.
- *
- * Tells the @window to scroll to the @file
- * in the current view.
- **/
-void
-thunar_window_scroll_to_file (ThunarWindow *window,
-                              ThunarFile   *file,
-                              gboolean      select_file,
-                              gboolean      use_align,
-                              gfloat        row_align,
-                              gfloat        col_align)
-{
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
-
-  /* verify that we have a valid view */
-  if (G_LIKELY (window->view != NULL))
-    thunar_view_scroll_to_file (THUNAR_VIEW (window->view), file, select_file, use_align, row_align, col_align);
 }
 
 

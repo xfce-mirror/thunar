@@ -563,11 +563,11 @@ thunar_dbus_service_display_folder_and_select (ThunarDBusFileManager  *object,
                                                ThunarDBusService      *dbus_service)
 {
   ThunarApplication *application;
-  ThunarFile        *file;
   ThunarFile        *folder;
   GdkScreen         *screen;
   GtkWidget         *window;
-  GFile             *path;
+  GFile             *gfile;
+  GList             *gfiles = NULL;
   GError            *error = NULL;
 
   /* verify that filename is valid */
@@ -587,22 +587,13 @@ thunar_dbus_service_display_folder_and_select (ThunarDBusFileManager  *object,
   g_object_unref (application);
 
   /* determine the path for the filename relative to the folder */
-  path = g_file_resolve_relative_path (thunar_file_get_file (folder), filename);
-  if (G_LIKELY (path != NULL))
+  gfile = g_file_resolve_relative_path (thunar_file_get_file (folder), filename);
+  if (G_LIKELY (gfile != NULL))
     {
-      /* try to determine the file for the path */
-      file = thunar_file_get (path, NULL);
-      if (G_LIKELY (file != NULL))
-        {
-          /* tell the window to scroll to the given file and select it */
-          thunar_window_scroll_to_file (THUNAR_WINDOW (window), file, TRUE, TRUE, 0.5f, 0.5f);
+      gfiles = g_list_append (gfiles, gfile);
+      thunar_window_show_and_select_files (THUNAR_WINDOW (window), gfiles);
 
-          /* release the file reference */
-          g_object_unref (file);
-        }
-
-      /* release the path */
-      g_object_unref (path);
+      g_list_free_full (gfiles, g_object_unref);
     }
 
   /* cleanup */
@@ -1605,37 +1596,42 @@ thunar_dbus_freedesktop_show_items (ThunarOrgFreedesktopFileManager1 *object,
   GtkWidget         *window;
   GdkScreen         *screen;
   gint               n;
-  GFile             *file;
-  ThunarFile        *thunar_folder, *thunar_file = NULL;
+  GList             *gfiles = NULL;
+  ThunarFile        *thunar_file = NULL;
+  ThunarFile        *thunar_folder = NULL;
+  GError            *error = NULL;
 
   screen = gdk_screen_get_default ();
   application = thunar_application_get ();
 
   for (n = 0; uris[n] != NULL; ++n)
     {
-      file = g_file_new_for_uri (uris[n]);
-      thunar_folder = thunar_file_get (file, NULL);
-
-      g_object_unref (G_OBJECT (file));
-      if (thunar_folder == NULL)
-        continue;
-
-      if (G_LIKELY (thunar_file_has_parent (thunar_folder)))
+      thunar_file = thunar_file_get_for_uri (uris[n], &error);
+      if (error)
         {
-          thunar_file = thunar_folder;
-          thunar_folder = thunar_file_get_parent (thunar_folder, NULL);
+          g_dbus_method_invocation_take_error (invocation, error);
+          continue;
+        }
+
+      thunar_folder = NULL;
+      if (G_LIKELY (thunar_file_has_parent (thunar_file)))
+        thunar_folder = thunar_file_get_parent (thunar_file, NULL);
+
+      if (thunar_folder == NULL)
+        {
+          g_object_unref (G_OBJECT (thunar_file));
+          continue;
         }
 
       window = thunar_application_open_window (application, thunar_folder,
                                                screen, startup_id, FALSE);
 
-      if (G_LIKELY (thunar_file != NULL))
-        {
-          thunar_window_scroll_to_file (THUNAR_WINDOW (window), thunar_file,
-                                        TRUE, TRUE, 0.5f, 0.5f);
-          g_object_unref (G_OBJECT (thunar_file));
-        }
+      gfiles = g_list_append (gfiles, thunar_file_get_file (thunar_file));
+      thunar_window_show_and_select_files (THUNAR_WINDOW (window), gfiles);
 
+      g_list_free (gfiles);
+      gfiles = NULL;
+      g_object_unref (G_OBJECT (thunar_file));
       g_object_unref (G_OBJECT (thunar_folder));
     }
 
