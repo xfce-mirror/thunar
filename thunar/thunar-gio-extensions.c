@@ -667,12 +667,12 @@ thunar_g_file_get_free_space_string (GFile *file, gboolean file_size_binary)
 
   if (thunar_g_file_get_free_space (file, &fs_size_free, &fs_size_total) && fs_size_total > 0)
     {
-      fs_size_free_str  = g_format_size_full (fs_size_free,  file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
-      fs_size_used_str =  g_format_size_full (fs_size_total - fs_size_free, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+      fs_size_free_str = g_format_size_full (fs_size_free, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+      fs_size_used_str = g_format_size_full (fs_size_total - fs_size_free, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
 
-      free_space_string = g_strdup_printf (_("%s used (%d%%)  |  %s free (%d%%)"),
-                                   fs_size_used_str, (gint) ((fs_size_total - fs_size_free) * 100 / fs_size_total),
-                                   fs_size_free_str, (gint) (fs_size_free * 100 / fs_size_total));
+      free_space_string = g_strdup_printf (_("%s used (%.0f%%)  |  %s free (%.0f%%)"),
+                                   fs_size_used_str, ((fs_size_total - fs_size_free) * 100.0 / fs_size_total),
+                                   fs_size_free_str, (fs_size_free * 100.0 / fs_size_total));
 
       g_free (fs_size_free_str);
       g_free (fs_size_used_str);
