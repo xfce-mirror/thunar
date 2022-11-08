@@ -23,6 +23,7 @@
 
 #include <thunar/thunar-text-renderer.h>
 #include <thunar/thunar-util.h>
+#include <thunar/thunar-file.h>
 
 
 
@@ -32,6 +33,8 @@ enum
   PROP_HIGHLIGHT_COLOR,
   PROP_ROUNDED_CORNERS,
   PROP_HIGHLIGHTING_ENABLED,
+  PROP_RENDER_ONLY_FOLDERS,
+  PROP_FILE,
 };
 
 
@@ -73,6 +76,8 @@ struct _ThunarTextRenderer
   gchar               *highlight_color;
   gboolean             rounded_corners;
   gboolean             highlighting_enabled;
+  gboolean             render_only_folders;
+  ThunarFile          *file;
 };
 
 
@@ -132,6 +137,30 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
                                    g_param_spec_boolean ("highlighting-enabled", "highlighting-enabled", "highlighting-enabled",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarTextRenderer:render-only-folders:
+   *
+   * Determines whether the text renderer is only used if the file associated with it is a folder or not.
+   **/
+  g_object_class_install_property (object_class,
+                                   PROP_RENDER_ONLY_FOLDERS,
+                                   g_param_spec_boolean ("render-only-folders", "render-only-folders", "render-only-folders",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
+
+
+  /**
+   * ThunarTextRenderer:file:
+   *
+   * The file associated with the rendering.
+   **/
+  g_object_class_install_property (object_class,
+                                   PROP_FILE,
+                                   g_param_spec_object ("file", "file", "file",
+                                                        THUNAR_TYPE_FILE,
+                                                        EXO_PARAM_READWRITE));
+
 }
 
 
@@ -178,6 +207,14 @@ thunar_text_renderer_get_property (GObject    *object,
       g_value_set_boolean (value, text_renderer->highlighting_enabled);
       break;
 
+    case PROP_RENDER_ONLY_FOLDERS:
+      g_value_set_boolean (value, text_renderer->render_only_folders);
+      break;
+
+    case PROP_FILE:
+      g_value_set_object (value, text_renderer->file);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -207,6 +244,16 @@ thunar_text_renderer_set_property (GObject      *object,
 
     case PROP_HIGHLIGHTING_ENABLED:
       text_renderer->highlighting_enabled = g_value_get_boolean (value);
+      break;
+
+    case PROP_RENDER_ONLY_FOLDERS:
+      text_renderer->render_only_folders = g_value_get_boolean (value);
+      break;
+
+    case PROP_FILE:
+      if (G_LIKELY (text_renderer->file != NULL))
+        g_object_unref (G_OBJECT (text_renderer->file));
+      text_renderer->file = (gpointer) g_value_dup_object (value);
       break;
 
     default:
@@ -260,6 +307,11 @@ thunar_text_renderer_render (GtkCellRenderer      *cell,
                              const GdkRectangle   *cell_area,
                              GtkCellRendererState  flags)
 {
+  /* Do not render anything if render-only-folders is set and the file is not a directory */
+  if (THUNAR_TEXT_RENDERER (cell)->render_only_folders
+      && !thunar_file_is_directory (THUNAR_FILE (THUNAR_TEXT_RENDERER (cell)->file)))
+    return;
+
   if (THUNAR_TEXT_RENDERER (cell)->highlighting_enabled)
     {
       /* This should paint on top of the current surface. This should hide the highlight
