@@ -27,6 +27,9 @@
 
 
 static AtkObject   *thunar_gallery_view_get_accessible         (GtkWidget           *widget);
+static void        *thunar_gallery_view_icon_hovered           (ExoIconView         *view,
+                                                                GtkTreePath         *path,
+                                                                ThunarGalleryView   *gallery_view);
 
 
 
@@ -83,6 +86,9 @@ thunar_gallery_view_init (ThunarGalleryView *gallery_view)
                 "ypad", 1u,
                 "square-icons", TRUE,
                 NULL);
+
+  /* set up the icon-hovered signal and its corresponding callback */
+  g_signal_connect (G_OBJECT (view), "icon-hovered", G_CALLBACK (thunar_gallery_view_icon_hovered), gallery_view);
 }
 
 
@@ -104,4 +110,14 @@ thunar_gallery_view_get_accessible (GtkWidget *widget)
     }
 
   return object;
+}
+
+static void
+*thunar_gallery_view_icon_hovered (ExoIconView        *view,
+                                   GtkTreePath        *path,
+                                   ThunarGalleryView  *gallery_view)
+{
+#ifndef NDEBUG
+  g_print ("path: %s", gtk_tree_path_to_string (path));
+#endif
 }
