@@ -27,7 +27,7 @@
 
 
 static AtkObject   *thunar_gallery_view_get_accessible         (GtkWidget           *widget);
-static void        *thunar_gallery_view_icon_hovered           (ExoIconView         *view,
+static void         thunar_gallery_view_icon_hovered           (ExoIconView         *view,
                                                                 GtkTreePath         *path,
                                                                 ThunarGalleryView   *gallery_view);
 
@@ -113,9 +113,9 @@ thunar_gallery_view_get_accessible (GtkWidget *widget)
 }
 
 static void
-*thunar_gallery_view_icon_hovered (ExoIconView        *view,
-                                   GtkTreePath        *path,
-                                   ThunarGalleryView  *gallery_view)
+thunar_gallery_view_icon_hovered (ExoIconView        *view,
+                                  GtkTreePath        *path,
+                                  ThunarGalleryView  *gallery_view)
 {
 #ifndef NDEBUG
   g_print ("path: %s", gtk_tree_path_to_string (path));
