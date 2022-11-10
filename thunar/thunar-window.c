@@ -6021,10 +6021,8 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   GtkToolItem     *tool_item;
   guint            item_order = 0;
   gboolean         small_icons;
-  gboolean         last_menubar_visible;
 
-  g_object_get (G_OBJECT (window->preferences), "misc-small-toolbar-icons", &small_icons,
-                                                "last-menubar-visible", &last_menubar_visible, NULL);
+  g_object_get (G_OBJECT (window->preferences), "misc-small-toolbar-icons", &small_icons, NULL);
 
   /* allocate the new location bar widget */
   window->location_bar = thunar_location_bar_new ();
@@ -6090,7 +6088,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   gtk_widget_show_all (window->location_toolbar);
 
   /* view_menubar is only visible when the menu is hidden */
-  gtk_widget_set_visible (window->location_toolbar_item_view_menubar, last_menubar_visible);
+  gtk_widget_set_visible (window->location_toolbar_item_view_menubar, !window->menubar_visible);
 
   /* add the location bar itself after gtk_widget_show_all to not mess with the visibility of the location buttons */
   gtk_container_add (GTK_CONTAINER (tool_item), window->location_bar);
