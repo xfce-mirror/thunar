@@ -117,7 +117,20 @@ thunar_gallery_view_icon_hovered (ExoIconView        *view,
                                   GtkTreePath        *path,
                                   ThunarGalleryView  *gallery_view)
 {
-#ifndef NDEBUG
-  g_print ("path: %s", gtk_tree_path_to_string (path));
-#endif
+  GtkTreeModel *model = NULL;
+  GtkTreeIter   iter;
+  GValue        val = G_VALUE_INIT;
+  const gchar  *name = NULL;
+
+  if (path == NULL)
+    return;
+
+  model = exo_icon_view_get_model (view);
+  if (!gtk_tree_model_get_iter (model, &iter, path))
+    return;
+
+  gtk_tree_model_get_value (model, &iter, THUNAR_COLUMN_NAME, &val);
+  name = g_value_get_string (&val);
+
+  gtk_widget_set_tooltip_text (GTK_WIDGET (gallery_view), name);
 }
