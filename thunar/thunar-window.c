@@ -6355,6 +6355,11 @@ thunar_window_toolbar_toggle_item_visibility (ThunarWindow *window,
   for (gint i = 0; lp != NULL; lp = lp->next, i++)
     {
       GtkWidget *item = lp->data;
+
+      /* visibility of this item is only controlled by 'window->menubar_visible' */
+      if (item == window->location_toolbar_item_view_menubar)
+        continue;
+
       if (index == i)
         {
           gtk_widget_set_visible (item, !gtk_widget_is_visible (item));
