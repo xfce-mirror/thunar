@@ -698,6 +698,8 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
       gtk_editable_set_editable (GTK_EDITABLE (desktop_page->comment_entry), writable);
       gtk_widget_set_sensitive (desktop_page->snotify_button, writable);
       gtk_widget_set_sensitive (desktop_page->terminal_button, writable);
+      gtk_widget_set_sensitive (desktop_page->program_button, writable);
+      gtk_widget_set_sensitive (desktop_page->trusted_button, writable);
 
       /* cleanup */
       g_free (type);
