@@ -1056,7 +1056,7 @@ thunar_apr_desktop_page_program_toggled (GtkWidget            *button,
   if (error != NULL)
     {
       g_warning ("Error while setting execution flag : %s", error->message);
-      g_free (error);
+      g_error_free (error);
       return;
     }
 
@@ -1091,7 +1091,7 @@ thunar_apr_desktop_page_trusted_toggled (GtkWidget            *button,
   if (error != NULL)
     {
       g_warning ("Error while setting safety flag : %s", error->message);
-      g_free (error);
+      g_error_free (error);
       return;
     }
 
