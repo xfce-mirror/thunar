@@ -1116,7 +1116,7 @@ thunar_action_manager_poke_location_finish (ThunarBrowser *browser,
 
   if (error != NULL)
     {
-      gchar* path = g_file_get_path (location);
+      gchar* path = g_file_get_uri (location);
       thunar_dialogs_show_error (GTK_WIDGET (THUNAR_ACTION_MANAGER (browser)->widget), error,
                                  _("Failed to open \"%s\""), path);
       g_free (path);
