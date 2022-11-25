@@ -1243,8 +1243,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   /* check if the icon may be changed (only for writable .desktop files) */
   g_object_ref (G_OBJECT (dialog->icon_image));
   gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (dialog->icon_image)), dialog->icon_image);
-  if (thunar_file_is_writable (file)
-      && thunar_file_is_desktop_file (file, NULL))
+  if (thunar_file_is_writable (file) && thunar_file_is_desktop_file (file))
     {
       gtk_container_add (GTK_CONTAINER (dialog->icon_button), dialog->icon_image);
       gtk_widget_show (dialog->icon_button);

@@ -1583,7 +1583,7 @@ thunar_action_manager_append_menu_item (ThunarActionManager       *action_mgr,
         return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
 
       case THUNAR_ACTION_MANAGER_ACTION_EDIT_LAUNCHER:
-        if (action_mgr->n_files_to_process == 1 && thunar_file_is_desktop_file (action_mgr->files_to_process->data, NULL))
+        if (action_mgr->n_files_to_process == 1 && thunar_file_is_desktop_file (action_mgr->files_to_process->data))
           return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
         else
           return NULL;

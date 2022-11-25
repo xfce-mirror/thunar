@@ -218,8 +218,7 @@ gboolean          thunar_file_is_trash                   (const ThunarFile      
 gboolean          thunar_file_is_trashed                 (const ThunarFile       *file);
 gboolean          thunar_file_is_recent                  (const ThunarFile       *file);
 gboolean          thunar_file_is_in_recent               (const ThunarFile       *file);
-gboolean          thunar_file_is_desktop_file            (const ThunarFile       *file,
-                                                          gboolean               *is_secure);
+gboolean          thunar_file_is_desktop_file            (const ThunarFile       *file);
 const gchar      *thunar_file_get_display_name           (const ThunarFile       *file) G_GNUC_CONST;
 
 gchar            *thunar_file_get_deletion_date          (const ThunarFile       *file,
