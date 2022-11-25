@@ -209,7 +209,7 @@ gboolean          thunar_file_is_gfile_ancestor          (const ThunarFile      
                                                           GFile                  *ancestor);
 gboolean          thunar_file_is_ancestor                (const ThunarFile       *file,
                                                           const ThunarFile       *ancestor);
-gboolean          thunar_file_is_executable              (const ThunarFile       *file);
+gboolean          thunar_file_can_execute                (ThunarFile             *file);
 gboolean          thunar_file_is_writable                (const ThunarFile       *file);
 gboolean          thunar_file_is_hidden                  (const ThunarFile       *file);
 gboolean          thunar_file_is_home                    (const ThunarFile       *file);
@@ -218,8 +218,7 @@ gboolean          thunar_file_is_trash                   (const ThunarFile      
 gboolean          thunar_file_is_trashed                 (const ThunarFile       *file);
 gboolean          thunar_file_is_recent                  (const ThunarFile       *file);
 gboolean          thunar_file_is_in_recent               (const ThunarFile       *file);
-gboolean          thunar_file_is_desktop_file            (const ThunarFile       *file,
-                                                          gboolean               *is_secure);
+gboolean          thunar_file_is_desktop_file            (const ThunarFile       *file);
 const gchar      *thunar_file_get_display_name           (const ThunarFile       *file) G_GNUC_CONST;
 
 gchar            *thunar_file_get_deletion_date          (const ThunarFile       *file,
