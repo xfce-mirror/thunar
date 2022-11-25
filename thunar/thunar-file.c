@@ -2989,8 +2989,10 @@ thunar_file_is_ancestor (const ThunarFile *file,
  * Return value: %TRUE if @file can be executed.
  **/
 gboolean
-thunar_file_can_execute (const ThunarFile *file)
+thunar_file_can_execute (ThunarFile *file)
 {
+  ThunarFile          *file_to_check;
+  GFile               *link_target;
   ThunarPreferences   *preferences;
   gboolean             exec_shell_scripts = FALSE;
   const gchar         *content_type;
@@ -3001,27 +3003,55 @@ thunar_file_can_execute (const ThunarFile *file)
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
-  if (file->info == NULL)
-    return FALSE;
+  if (thunar_file_is_symlink (file))
+    {
+      link_target = thunar_g_file_new_for_symlink_target (file->gfile);
+      if (link_target == NULL)
+        return FALSE;
+      file_to_check = thunar_file_get (link_target, NULL);
+      g_object_unref (link_target);
+      if (file_to_check == NULL)
+        return FALSE;
+    }
+  else
+    file_to_check = g_object_ref (file);
 
-  exec_bit_set = g_file_info_get_attribute_boolean (file->info, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE);
+  if (file_to_check->info == NULL)
+    {
+      g_object_unref (file_to_check);
+      return FALSE;
+    }
 
-  if (!thunar_file_is_desktop_file (file))
+  exec_bit_set = g_file_info_get_attribute_boolean (file_to_check->info, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE);
+
+  if (!thunar_file_is_desktop_file (file_to_check))
     {
       if (!exec_bit_set)
-        return FALSE;
+        {
+          g_object_unref (file_to_check);
+          return FALSE;
+        }
 
       /* get the content type of the file */
-      content_type = thunar_file_get_content_type (THUNAR_FILE (file));
+      content_type = thunar_file_get_content_type (THUNAR_FILE (file_to_check));
       if (G_UNLIKELY (content_type == NULL))
-        return FALSE;
+        {
+          g_object_unref (file_to_check);
+          return FALSE;
+        }
 
       if (!g_content_type_can_be_executable (content_type))
-        return FALSE;
+        {
+          g_object_unref (file_to_check);
+          return FALSE;
+        }
 
       /* do never execute plain text files which are not shell scripts but marked executable */
       if (g_content_type_equals (content_type, "text/plain"))
-        return FALSE;
+        {
+          g_object_unref (file_to_check);
+          return FALSE;
+        }
 
       /* check if the shell scripts should be executed or opened by default */
       preferences = thunar_preferences_get ();
@@ -3029,23 +3059,28 @@ thunar_file_can_execute (const ThunarFile *file)
       g_object_unref (preferences);
 
       if (g_content_type_is_a (content_type, "text/plain") && ! exec_shell_scripts)
-        return FALSE;
+        {
+          g_object_unref (file_to_check);
+          return FALSE;
+        }
 
+      g_object_unref (file_to_check);
       return TRUE;
     }
 
   /* desktop files in XDG_DATA_DIRS dont need an executable bit to be executed */
-  if (g_file_is_native (thunar_file_get_file (file)))
+  if (g_file_is_native (file_to_check->gfile))
     {
       data_dirs = g_get_system_data_dirs ();
       if (G_LIKELY (data_dirs != NULL))
         {
-          path = g_file_get_path (thunar_file_get_file (file));
+          path = g_file_get_path (file_to_check->gfile);
           for (i = 0; data_dirs[i] != NULL; i++)
             {
               if (g_str_has_prefix (path, data_dirs[i]))
                 {
                   /* has known prefix, can launch without problems */
+                  g_object_unref (file_to_check);
                   return TRUE;
                 }
             }
@@ -3055,14 +3090,19 @@ thunar_file_can_execute (const ThunarFile *file)
 
   /* Desktop files outside XDG_DATA_DIRS need to have at least the execute bit set */
   if (!exec_bit_set)
-    return FALSE;
+    {
+      g_object_unref (file_to_check);
+      return FALSE;
+    }
 
   /* Additional security measure only applicable if gvfs is installed: */
   /* Desktop files outside XDG_DATA_DIRS, need to be 'trusted'. */
   if (thunar_g_vfs_metadata_is_supported ())
-    return xfce_g_file_is_trusted (file->gfile, NULL, NULL);
-  else
-    return TRUE;
+    return xfce_g_file_is_trusted (file_to_check->gfile, NULL, NULL);
+
+   g_object_unref (file_to_check);
+   return TRUE;
+
 }
 
 
