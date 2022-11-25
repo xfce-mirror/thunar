@@ -209,7 +209,7 @@ gboolean          thunar_file_is_gfile_ancestor          (const ThunarFile      
                                                           GFile                  *ancestor);
 gboolean          thunar_file_is_ancestor                (const ThunarFile       *file,
                                                           const ThunarFile       *ancestor);
-gboolean          thunar_file_is_executable              (const ThunarFile       *file);
+gboolean          thunar_file_can_execute                (const ThunarFile       *file);
 gboolean          thunar_file_is_writable                (const ThunarFile       *file);
 gboolean          thunar_file_is_hidden                  (const ThunarFile       *file);
 gboolean          thunar_file_is_home                    (const ThunarFile       *file);

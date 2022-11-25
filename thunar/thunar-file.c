@@ -1035,7 +1035,7 @@ thunar_file_info_reload (ThunarFile   *file,
     }
 
   /* check if this file is a desktop entry and we have the permission to execute it */
-  if (thunar_file_is_desktop_file (file) && thunar_file_is_executable (file))
+  if (thunar_file_is_desktop_file (file) && thunar_file_can_execute (file))
     {
       /* determine the custom icon and display name for .desktop files */
 
@@ -1629,7 +1629,7 @@ thunar_file_execute (ThunarFile  *file,
 
   if (thunar_file_is_desktop_file (file))
     {
-      is_secure = thunar_file_is_executable (file);
+      is_secure = thunar_file_can_execute (file);
 
       key_file = thunar_g_file_query_key_file (file->gfile, NULL, &err);
       if (key_file == NULL)
@@ -1859,7 +1859,7 @@ thunar_file_launch (ThunarFile  *file,
     }
 
   /* check if we should execute the file */
-  if (thunar_file_is_executable (file))
+  if (thunar_file_can_execute (file))
     return thunar_file_execute (file, NULL, parent, NULL, NULL, error);
 
   /* determine the default application to open the file */
@@ -2096,7 +2096,7 @@ thunar_file_accepts_drop (ThunarFile     *file,
             }
         }
     }
-  else if (thunar_file_is_executable (file))
+  else if (thunar_file_can_execute (file))
     {
       /* determine the possible actions */
       actions &= (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE);
@@ -2978,7 +2978,7 @@ thunar_file_is_ancestor (const ThunarFile *file,
 
 
 /**
- * thunar_file_is_executable:
+ * thunar_file_can_execute:
  * @file : a #ThunarFile instance.
  *
  * Determines whether the owner of the current process is allowed
@@ -2989,7 +2989,7 @@ thunar_file_is_ancestor (const ThunarFile *file,
  * Return value: %TRUE if @file can be executed.
  **/
 gboolean
-thunar_file_is_executable (const ThunarFile *file)
+thunar_file_can_execute (const ThunarFile *file)
 {
   ThunarPreferences   *preferences;
   gboolean             exec_shell_scripts = FALSE;

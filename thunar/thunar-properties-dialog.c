@@ -1294,7 +1294,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     }
 
   /* update the application chooser (shown only for non-executable regular files!) */
-  show_chooser = thunar_file_is_regular (file) && !thunar_file_is_executable (file);
+  show_chooser = thunar_file_is_regular (file) && !thunar_file_can_execute (file);
   gtk_widget_set_visible (dialog->openwith_chooser, show_chooser);
   if (show_chooser)
     thunar_chooser_button_set_file (THUNAR_CHOOSER_BUTTON (dialog->openwith_chooser), file);
