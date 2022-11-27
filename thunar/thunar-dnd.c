@@ -242,7 +242,7 @@ thunar_dnd_perform (GtkWidget    *widget,
           succeed = FALSE;
         }
     }
-  else if (thunar_file_is_executable (file))
+  else if (thunar_file_can_execute (file))
     {
       /* TODO any chance to determine the working dir here? */
       succeed = thunar_file_execute (file, NULL, widget, file_list, NULL, &error);

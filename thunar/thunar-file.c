@@ -998,7 +998,6 @@ thunar_file_info_reload (ThunarFile   *file,
   GKeyFile    *key_file;
   gchar       *p;
   const gchar *display_name;
-  gboolean     is_secure = FALSE;
   gchar       *casefold;
   gchar       *path;
 
@@ -1035,8 +1034,8 @@ thunar_file_info_reload (ThunarFile   *file,
       g_free (path);
     }
 
-  /* check if this file is a desktop entry */
-  if (thunar_file_is_desktop_file (file, &is_secure) && is_secure)
+  /* check if this file is a desktop entry and we have the permission to execute it */
+  if (thunar_file_is_desktop_file (file) && thunar_file_can_execute (file))
     {
       /* determine the custom icon and display name for .desktop files */
 
@@ -1628,12 +1627,10 @@ thunar_file_execute (ThunarFile  *file,
     uri_list = g_slist_prepend (uri_list, g_file_get_uri (li->data));
   uri_list = g_slist_reverse (uri_list);
 
-  if (thunar_file_is_desktop_file (file, &is_secure))
+  if (thunar_file_is_desktop_file (file))
     {
-      if (thunar_g_vfs_metadata_is_supported ())
-        is_secure = is_secure && xfce_g_file_is_trusted (file->gfile, NULL, NULL);
+      is_secure = thunar_file_can_execute (file);
 
-      /* parse file first, even if it is insecure */
       key_file = thunar_g_file_query_key_file (file->gfile, NULL, &err);
       if (key_file == NULL)
         {
@@ -1718,7 +1715,7 @@ thunar_file_execute (ThunarFile  *file,
       g_free (type);
       g_key_file_free (key_file);
     }
-  else
+  else /* Not a desktop file */
     {
       /* fake the Exec line */
       escaped_location = g_shell_quote (location);
@@ -1862,7 +1859,7 @@ thunar_file_launch (ThunarFile  *file,
     }
 
   /* check if we should execute the file */
-  if (thunar_file_is_executable (file))
+  if (thunar_file_can_execute (file))
     return thunar_file_execute (file, NULL, parent, NULL, NULL, error);
 
   /* determine the default application to open the file */
@@ -2099,7 +2096,7 @@ thunar_file_accepts_drop (ThunarFile     *file,
             }
         }
     }
-  else if (thunar_file_is_executable (file))
+  else if (thunar_file_can_execute (file))
     {
       /* determine the possible actions */
       actions &= (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE);
@@ -2981,7 +2978,7 @@ thunar_file_is_ancestor (const ThunarFile *file,
 
 
 /**
- * thunar_file_is_executable:
+ * thunar_file_can_execute:
  * @file : a #ThunarFile instance.
  *
  * Determines whether the owner of the current process is allowed
@@ -2992,36 +2989,69 @@ thunar_file_is_ancestor (const ThunarFile *file,
  * Return value: %TRUE if @file can be executed.
  **/
 gboolean
-thunar_file_is_executable (const ThunarFile *file)
+thunar_file_can_execute (ThunarFile *file)
 {
-  ThunarPreferences *preferences;
-  gboolean           desktop_can_execute;
-  gboolean           exec_shell_scripts = FALSE;
-  const gchar       *content_type;
+  ThunarFile          *file_to_check;
+  GFile               *link_target;
+  ThunarPreferences   *preferences;
+  gboolean             exec_shell_scripts = FALSE;
+  const gchar         *content_type;
+  const gchar * const *data_dirs;
+  guint                i;
+  gchar               *path;
+  gboolean             exec_bit_set = FALSE;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
-  if (file->info == NULL)
-    return FALSE;
-
-  if (thunar_file_is_desktop_file (file, &desktop_can_execute))
-    return desktop_can_execute;
-  else
+  if (thunar_file_is_symlink (file))
     {
-      if (!g_file_info_get_attribute_boolean (file->info, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE))
+      link_target = thunar_g_file_new_for_symlink_target (file->gfile);
+      if (link_target == NULL)
         return FALSE;
+      file_to_check = thunar_file_get (link_target, NULL);
+      g_object_unref (link_target);
+      if (file_to_check == NULL)
+        return FALSE;
+    }
+  else
+    file_to_check = g_object_ref (file);
+
+  if (file_to_check->info == NULL)
+    {
+      g_object_unref (file_to_check);
+      return FALSE;
+    }
+
+  exec_bit_set = g_file_info_get_attribute_boolean (file_to_check->info, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE);
+
+  if (!thunar_file_is_desktop_file (file_to_check))
+    {
+      if (!exec_bit_set)
+        {
+          g_object_unref (file_to_check);
+          return FALSE;
+        }
 
       /* get the content type of the file */
-      content_type = thunar_file_get_content_type (THUNAR_FILE (file));
+      content_type = thunar_file_get_content_type (THUNAR_FILE (file_to_check));
       if (G_UNLIKELY (content_type == NULL))
-        return FALSE;
+        {
+          g_object_unref (file_to_check);
+          return FALSE;
+        }
 
       if (!g_content_type_can_be_executable (content_type))
-        return FALSE;
+        {
+          g_object_unref (file_to_check);
+          return FALSE;
+        }
 
       /* do never execute plain text files which are not shell scripts but marked executable */
       if (g_content_type_equals (content_type, "text/plain"))
-        return FALSE;
+        {
+          g_object_unref (file_to_check);
+          return FALSE;
+        }
 
       /* check if the shell scripts should be executed or opened by default */
       preferences = thunar_preferences_get ();
@@ -3029,10 +3059,50 @@ thunar_file_is_executable (const ThunarFile *file)
       g_object_unref (preferences);
 
       if (g_content_type_is_a (content_type, "text/plain") && ! exec_shell_scripts)
-        return FALSE;
+        {
+          g_object_unref (file_to_check);
+          return FALSE;
+        }
 
+      g_object_unref (file_to_check);
       return TRUE;
     }
+
+  /* desktop files in XDG_DATA_DIRS dont need an executable bit to be executed */
+  if (g_file_is_native (file_to_check->gfile))
+    {
+      data_dirs = g_get_system_data_dirs ();
+      if (G_LIKELY (data_dirs != NULL))
+        {
+          path = g_file_get_path (file_to_check->gfile);
+          for (i = 0; data_dirs[i] != NULL; i++)
+            {
+              if (g_str_has_prefix (path, data_dirs[i]))
+                {
+                  /* has known prefix, can launch without problems */
+                  g_object_unref (file_to_check);
+                  return TRUE;
+                }
+            }
+          g_free (path);
+        }
+    }
+
+  /* Desktop files outside XDG_DATA_DIRS need to have at least the execute bit set */
+  if (!exec_bit_set)
+    {
+      g_object_unref (file_to_check);
+      return FALSE;
+    }
+
+  /* Additional security measure only applicable if gvfs is installed: */
+  /* Desktop files outside XDG_DATA_DIRS, need to be 'trusted'. */
+  if (thunar_g_vfs_metadata_is_supported ())
+    return xfce_g_file_is_trusted (file_to_check->gfile, NULL, NULL);
+
+   g_object_unref (file_to_check);
+   return TRUE;
+
 }
 
 
@@ -3210,68 +3280,20 @@ thunar_file_is_in_recent (const ThunarFile *file)
 /**
  * thunar_file_is_desktop_file:
  * @file      : a #ThunarFile.
- * @is_secure : if %NULL do a simple check, else it will set this boolean
- *              to indicate if the desktop file is safe see bug #5012
- *              for more info.
  *
- * Returns %TRUE if @file is a .desktop file. The @is_secure return value
- * will tell if the .desktop file is also secure.
+ * Returns %TRUE if @file is a .desktop file.
  *
  * Return value: %TRUE if @file is a .desktop file.
  **/
 gboolean
-thunar_file_is_desktop_file (const ThunarFile *file,
-                             gboolean         *is_secure)
+thunar_file_is_desktop_file (const ThunarFile *file)
 {
-  const gchar * const *data_dirs;
-  guint                n;
-  gchar               *path;
-
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-
-  if (file->info == NULL)
-    return FALSE;
 
   /* only allow regular files with a .desktop extension */
   if (!g_str_has_suffix (file->basename, ".desktop")
       || file->kind != G_FILE_TYPE_REGULAR)
     return FALSE;
-
-  /* don't check more if not needed */
-  if (is_secure == NULL)
-    return TRUE;
-
-  /* desktop files outside xdg directories need to be executable for security reasons */
-  if (g_file_info_get_attribute_boolean (file->info, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE))
-    {
-      /* has +x */
-      *is_secure = TRUE;
-    }
-  else
-    {
-      /* assume the file is not safe */
-      *is_secure = FALSE;
-
-      /* deskopt files in xdg directories are also fine... */
-      if (g_file_is_native (thunar_file_get_file (file)))
-        {
-          data_dirs = g_get_system_data_dirs ();
-          if (G_LIKELY (data_dirs != NULL))
-            {
-              path = g_file_get_path (thunar_file_get_file (file));
-              for (n = 0; data_dirs[n] != NULL; n++)
-                {
-                  if (g_str_has_prefix (path, data_dirs[n]))
-                    {
-                      /* has known prefix, can launch without problems */
-                      *is_secure = TRUE;
-                      break;
-                    }
-                }
-              g_free (path);
-            }
-        }
-    }
 
   return TRUE;
 }
