@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-15 00:45+0200\n"
+"POT-Creation-Date: 2022-11-28 14:59+0100\n"
 "PO-Revision-Date: 2020-12-28 17:42+0000\n"
 "Last-Translator: Nasser Bin Laboun <nasser1990com@gmail.com>, 2021\n"
 "Language-Team: Arabic (https://www.transifex.com/xfce/teams/16840/ar/)\n"
@@ -133,7 +133,7 @@ msgstr "فشل في تنفيذ العملية"
 #: ../thunar/thunar-application.c:1507 ../thunar/thunar-application.c:1667
 #: ../thunar/thunar-location-entry.c:366 ../thunar/thunar-location-entry.c:394
 #: ../thunar/thunar-shortcuts-view.c:1706
-#: ../thunar/thunar-shortcuts-view.c:1734 ../thunar/thunar-window.c:2426
+#: ../thunar/thunar-shortcuts-view.c:1734 ../thunar/thunar-window.c:2440
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "فشل في فتح \"%s\""
@@ -367,7 +367,7 @@ msgstr "إستعمال كإفتراضي ل_هذا النوع من الملفات
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:291
 #: ../thunar/thunar-chooser-dialog.c:1173
-#: ../thunar/thunar-properties-dialog.c:828 ../thunar/thunar-window.c:3171
+#: ../thunar/thunar-properties-dialog.c:828 ../thunar/thunar-window.c:3185
 #: ../plugins/thunar-uca/thunar-uca-editor.c:142
 #: ../plugins/thunar-uca/thunar-uca-editor.c:435
 msgid "_OK"
@@ -905,12 +905,12 @@ msgid "File Name"
 msgstr "إسم الملف"
 
 #: ../thunar/thunar-file.c:1058 ../thunar/thunar-gio-extensions.c:289
-#: ../thunar/thunar-shortcuts-model.c:1108 ../thunar.desktop.in.in.h:7
+#: ../thunar/thunar-shortcuts-model.c:1125 ../thunar.desktop.in.in.h:7
 msgid "Trash"
 msgstr "المهملات"
 
 #: ../thunar/thunar-file.c:1065 ../thunar/thunar-gio-extensions.c:287
-#: ../thunar/thunar-shortcuts-model.c:990 ../thunar/thunar-window.c:400
+#: ../thunar/thunar-shortcuts-model.c:1007 ../thunar/thunar-window.c:400
 msgid "File System"
 msgstr "نظام الملفات"
 
@@ -955,7 +955,7 @@ msgid "%s on %s"
 msgstr "%s على %s"
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:480
+#: ../thunar/thunar-gio-extensions.c:481
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr "%s من %s مساحة فارغة (%d%% مستخدم)"
@@ -2536,22 +2536,22 @@ msgid ""
 "Do you want to skip this file and continue to rename the remaining files?"
 msgstr "هل تريد تخطي هذا الملف و تغيير إسم باقي الملفات؟"
 
-#: ../thunar/thunar-shortcuts-model.c:627
-#: ../thunar/thunar-shortcuts-model.c:991 ../thunar/thunar-window.c:400
+#: ../thunar/thunar-shortcuts-model.c:644
+#: ../thunar/thunar-shortcuts-model.c:1008 ../thunar/thunar-window.c:400
 msgid "Browse the file system"
 msgstr "تصفح ملفات النظام"
 
-#: ../thunar/thunar-shortcuts-model.c:661
+#: ../thunar/thunar-shortcuts-model.c:678
 #, c-format
 msgid "Mount and open %s (%s)"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-model.c:674
+#: ../thunar/thunar-shortcuts-model.c:691
 #: ../plugins/thunar-tpa/thunar-tpa.c:284
 msgid "Trash is empty"
 msgstr "المهملات فارغة"
 
-#: ../thunar/thunar-shortcuts-model.c:678
+#: ../thunar/thunar-shortcuts-model.c:695
 #, c-format
 msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
@@ -2562,40 +2562,40 @@ msgstr[3] "سلة المهملات بها %d ملفات"
 msgstr[4] "سلة المهملات بها %d ملفات"
 msgstr[5] "سلة المهملات بها %d ملفات"
 
-#: ../thunar/thunar-shortcuts-model.c:984
+#: ../thunar/thunar-shortcuts-model.c:1001
 msgid "Devices"
 msgstr "أجهزة"
 
-#: ../thunar/thunar-shortcuts-model.c:1027
+#: ../thunar/thunar-shortcuts-model.c:1044
 msgid "Network"
 msgstr "الشبكة"
 
-#: ../thunar/thunar-shortcuts-model.c:1035
+#: ../thunar/thunar-shortcuts-model.c:1052
 msgid "Browse Network"
 msgstr "تصفح الشبكة"
 
-#: ../thunar/thunar-shortcuts-model.c:1036 ../thunar/thunar-window.c:410
+#: ../thunar/thunar-shortcuts-model.c:1053 ../thunar/thunar-window.c:410
 msgid "Browse local network connections"
 msgstr "تصفح اتصالات شبكة الاتصال المحلية"
 
-#: ../thunar/thunar-shortcuts-model.c:1058
+#: ../thunar/thunar-shortcuts-model.c:1075
 msgid "Places"
 msgstr "الأماكن"
 
-#: ../thunar/thunar-shortcuts-model.c:1070
+#: ../thunar/thunar-shortcuts-model.c:1087
 msgid "Open the home folder"
 msgstr "افتح مجلد المنزل"
 
-#: ../thunar/thunar-shortcuts-model.c:1087
+#: ../thunar/thunar-shortcuts-model.c:1104
 msgid "Open the desktop folder"
 msgstr "افتح مجلد سطح المكتب"
 
-#: ../thunar/thunar-shortcuts-model.c:1134 ../thunar/thunar-window.c:401
+#: ../thunar/thunar-shortcuts-model.c:1151 ../thunar/thunar-window.c:401
 #: ../thunar/thunar-window.c:404 ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr "حاسوب"
 
-#: ../thunar/thunar-shortcuts-model.c:1135
+#: ../thunar/thunar-shortcuts-model.c:1152
 msgid "Browse the computer"
 msgstr "تصفح الحاسب"
 
@@ -2698,7 +2698,7 @@ msgid "Loading folder contents..."
 msgstr "تحميل محتويات المجلد..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2000 ../thunar/thunar-window.c:2993
+#: ../thunar/thunar-standard-view.c:2000 ../thunar/thunar-window.c:3007
 msgid "Failed to open the home folder"
 msgstr "فشل فتح مجلد المنزل"
 
@@ -2730,7 +2730,7 @@ msgstr "اسم ملف غير صالح يقدمه موقع السحب XDS"
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "فشل إنشاء وصلة العنوان التالي\"%s\""
 
-#: ../thunar/thunar-standard-view.c:3037 ../thunar/thunar-window.c:3087
+#: ../thunar/thunar-standard-view.c:3037 ../thunar/thunar-window.c:3101
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "فشل في فتح المجلد \"%s\""
@@ -3172,44 +3172,44 @@ msgstr "بدل إلى اللسان التالي"
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr ""
 
-#: ../thunar/thunar-window.c:2010
+#: ../thunar/thunar-window.c:2024
 msgid "Close tab"
 msgstr "أغلق التبويب"
 
-#: ../thunar/thunar-window.c:2254
+#: ../thunar/thunar-window.c:2268
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "فتح الموقع \"%s\""
 
-#: ../thunar/thunar-window.c:2400
+#: ../thunar/thunar-window.c:2414
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "فشل في إطلاق \"%s\""
 
-#: ../thunar/thunar-window.c:2942
+#: ../thunar/thunar-window.c:2956
 msgid "Failed to open parent folder"
 msgstr "فشل فتح المجلد الأصل"
 
-#: ../thunar/thunar-window.c:3062
+#: ../thunar/thunar-window.c:3076
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "المجلد \"%s\" غير موجود. هل تريد إنشائه؟"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3129
+#: ../thunar/thunar-window.c:3143
 msgid "Failed to browse the computer"
 msgstr "فشل في تصفح الحاسب"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:3169
+#: ../thunar/thunar-window.c:3183
 msgid "About Templates"
 msgstr "حول القوالب"
 
-#: ../thunar/thunar-window.c:3191
+#: ../thunar/thunar-window.c:3205
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "ستعرض كافة الملفات في هذا المجلد في قائمة \"إنشاء مستند\"."
 
-#: ../thunar/thunar-window.c:3198
+#: ../thunar/thunar-window.c:3212
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
@@ -3219,26 +3219,26 @@ msgstr ""
 "\n"
 "يمكنك بعد ذلك اختيار \"أنشئ·ملف\" من القائمة و سيتم إنشاء نسخة من الملف في المجلد الحالي."
 
-#: ../thunar/thunar-window.c:3210
+#: ../thunar/thunar-window.c:3224
 msgid "Do _not display this message again"
 msgstr "ﻻتظهر هذه الرسالة مجددا"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3241
+#: ../thunar/thunar-window.c:3255
 msgid "Failed to open the file system root folder"
 msgstr "فشل فتح مجلد نظام الملفات الجذر"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3274
+#: ../thunar/thunar-window.c:3288
 msgid "Failed to display the contents of the trash can"
 msgstr "فشل عرض محتويات سلة المهملات"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3307
+#: ../thunar/thunar-window.c:3321
 msgid "Failed to browse the network"
 msgstr "فشل تصفح الأنترنت"
 
-#: ../thunar/thunar-window.c:3411
+#: ../thunar/thunar-window.c:3425
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
