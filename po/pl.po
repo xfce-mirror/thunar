@@ -23,7 +23,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-11-28 14:52+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
-"Last-Translator: Piotr Sokół <psokol.l10n@gmail.com>, 2019,2022\n"
+"Last-Translator: Marek Adamski, 2021-2022\n"
 "Language-Team: Polish (http://www.transifex.com/xfce/thunar/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -134,7 +134,7 @@ msgstr "Usuwa wszystkie pliki i katalogi z kosza"
 
 #: ../thunar/thunar-action-manager.c:286
 msgid "_Remove from Recent"
-msgstr ""
+msgstr "Usuń z os_tatnich"
 
 #: ../thunar/thunar-action-manager.c:286
 msgid "Remove the selected files from Recent"
@@ -556,7 +556,7 @@ msgstr "Nowy plik"
 msgid ""
 "No templates installed in\n"
 "\"%s\""
-msgstr ""
+msgstr "Brak zainstalowanych szablonów w\n„%s”"
 
 #: ../thunar/thunar-action-manager.c:2912
 msgid "_Empty File"
@@ -1065,12 +1065,12 @@ msgstr "Automatyczne _skalowanie"
 
 #: ../thunar/thunar-column-editor.c:343
 msgid "Size Column of Folders"
-msgstr ""
+msgstr "Kolumna rozmiaru folderów"
 
 #. explain what it does
 #: ../thunar/thunar-column-editor.c:356
 msgid "Show number of containing items"
-msgstr ""
+msgstr "Wyświetlanie liczby elementów zawierających"
 
 #. reset page title
 #. tell the user that we're unable to determine the file info
@@ -1451,11 +1451,11 @@ msgstr "Zmień nazwę"
 
 #: ../thunar/thunar-enum-types.c:697
 msgid "Create File"
-msgstr ""
+msgstr "Utwórz plik"
 
 #: ../thunar/thunar-enum-types.c:698
 msgid "Create Folder"
-msgstr ""
+msgstr "Utwórz katalog"
 
 #: ../thunar/thunar-enum-types.c:699
 msgid "Delete (opposite of create)"
@@ -1490,19 +1490,19 @@ msgstr "Bez rejestrowania operacji"
 
 #: ../thunar/thunar-enum-types.c:724
 msgid "Log only timestamps"
-msgstr ""
+msgstr "Rejestrowanie tylko sygnatur czasowych"
 
 #: ../thunar/thunar-enum-types.c:743
 msgid "Standalone"
-msgstr ""
+msgstr "Samodzielny"
 
 #: ../thunar/thunar-enum-types.c:744
 msgid "Embedded"
-msgstr ""
+msgstr "Osadzony"
 
 #: ../thunar/thunar-enum-types.c:763
 msgid "Only for local files"
-msgstr ""
+msgstr "Tylko dla plików lokalnych"
 
 #: ../thunar/thunar-file.c:1085 ../thunar/thunar-gio-extensions.c:480
 #: ../thunar/thunar-shortcuts-model.c:1009 ../thunar/thunar-window.c:533
@@ -1622,7 +1622,7 @@ msgstr "%s z %s"
 #: ../thunar/thunar-gio-extensions.c:673
 #, c-format
 msgid "%s used (%.0f%%)  |  %s free (%.0f%%)"
-msgstr ""
+msgstr "zajęte %s (%.0f%%)  | wolne %s (%.0f%%)"
 
 #: ../thunar/thunar-history.c:297
 msgid "The item will be removed from the history"
@@ -1760,7 +1760,7 @@ msgstr "Operacji %s nie można cofnąć"
 msgid ""
 "The following files were overwritten in the operation you are trying to undo"
 " and cannot be restored:\n"
-msgstr "Następujące pliki zostały nadpisane podczas operacji, którą próbujesz cofnąć, i nie można ich przywrócić:\n"
+msgstr "Następujące pliki zostały nadpisane podczas operacji, którą próbujesz cofnąć, więc nie można ich przywrócić:\n"
 
 #: ../thunar/thunar-job-operation-history.c:362
 #, c-format
@@ -1769,43 +1769,43 @@ msgstr "Operację %s można cofnąć tylko częściowo"
 
 #: ../thunar/thunar-job-operation-history.c:404
 msgid "No operation which can be redone available.\n"
-msgstr ""
+msgstr "Brak operacji, które można ponowić.\n"
 
 #: ../thunar/thunar-job-operation-history.c:405
 msgid "There is no operation to redo"
-msgstr ""
+msgstr "Nie ma operacji do ponowienia"
 
 #: ../thunar/thunar-job-operation-history.c:422
 msgid ""
 "The operation you are trying to redo does not have any files associated with"
 " it, and thus cannot be redone. "
-msgstr ""
+msgstr "Z operacją, którą próbujesz ponowić, nie są skojarzone żadne pliki, dlatego nie można jej wykonać ponownie."
 
 #: ../thunar/thunar-job-operation-history.c:424
 #, c-format
 msgid "%s operation cannot be redone"
-msgstr ""
+msgstr "Operacja %s nie może zostać ponowiona"
 
 #. one indexed for the dialog
 #: ../thunar/thunar-job-operation-history.c:436
 msgid ""
 "The following files were overwritten in the operation you are trying to redo"
 " and cannot be restored:\n"
-msgstr ""
+msgstr "Następujące pliki zostały nadpisane w operacji, którą próbujesz ponowić, więc nie można ich przywrócić:\n"
 
 #: ../thunar/thunar-job-operation-history.c:448
 #, c-format
 msgid "%s operation can only be partially redone"
-msgstr ""
+msgstr "Operację %s można ponowić tylko częściowo"
 
 #: ../thunar/thunar-list-model.c:1007 ../thunar/thunar-list-model.c:1017
 #, c-format
 msgid "%u item"
 msgid_plural "%u items"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "%u element"
+msgstr[1] "%u elementy"
+msgstr[2] "%u elementów"
+msgstr[3] "%u elementów"
 
 #: ../thunar/thunar-list-model.c:3195
 #, c-format
@@ -1903,21 +1903,21 @@ msgstr "Plik nie istnieje"
 
 #: ../thunar/thunar-notify.c:189
 msgid "Undo performed"
-msgstr ""
+msgstr "Cofnięcie wykonano"
 
 #: ../thunar/thunar-notify.c:190
 #, c-format
 msgid "%s operation was undone"
-msgstr ""
+msgstr "Operacja %s została cofnięta"
 
 #: ../thunar/thunar-notify.c:195
 msgid "Redo performed"
-msgstr ""
+msgstr "Ponowienie wykonano"
 
 #: ../thunar/thunar-notify.c:196
 #, c-format
 msgid "%s operation was redone"
-msgstr ""
+msgstr "Operacja %s została ponowiona"
 
 #: ../thunar/thunar-notify.c:280
 msgid "Unmounting device"
@@ -2367,7 +2367,7 @@ msgstr "_Rozmiar ikon:"
 
 #: ../thunar/thunar-preferences-dialog.c:720 ../thunar/thunar-window.c:513
 msgid "Image Preview"
-msgstr ""
+msgstr "Podgląd obrazu"
 
 #: ../thunar/thunar-preferences-dialog.c:728
 msgid "Show Icon E_mblems"
@@ -2381,13 +2381,13 @@ msgstr "Wyświetla zdefiniowane symbole katalogów w panelu drzewa katalogów"
 
 #: ../thunar/thunar-preferences-dialog.c:751
 msgid "Image Preview Mode:"
-msgstr ""
+msgstr "Tryb podglądu obrazu:"
 
 #: ../thunar/thunar-preferences-dialog.c:753
 msgid ""
 "- Standalone: Image Preview uses a separate pane\n"
 "- Embedded: Image Preview is embedded in the left sidepane\n"
-msgstr ""
+msgstr "- Samodzielny: podgląd obrazu używa oddzielnego okienka\n- Osadzony: podgląd obrazu jest osadzony w lewym panelu bocznym\n"
 
 #. Behavior
 #: ../thunar/thunar-preferences-dialog.c:785
@@ -3099,11 +3099,11 @@ msgstr "So_rtowanie"
 
 #: ../thunar/thunar-standard-view.c:400
 msgid "T_oggle Sort Order"
-msgstr ""
+msgstr "Przełącz porządek _sortowania"
 
 #: ../thunar/thunar-standard-view.c:400
 msgid "Toggle ascending/descending sort order"
-msgstr ""
+msgstr "Przełączanie porządku sortowania rosnącego i malejącego"
 
 #: ../thunar/thunar-standard-view.c:401
 msgid "By _Name"
@@ -3517,11 +3517,11 @@ msgstr "Cofa ostatnią akcję"
 
 #: ../thunar/thunar-window.c:499
 msgid "_Redo"
-msgstr ""
+msgstr "_Ponów"
 
 #: ../thunar/thunar-window.c:499
 msgid "Redo the latest operation"
-msgstr ""
+msgstr "Ponawia ostatnią operację"
 
 #: ../thunar/thunar-window.c:500
 msgid "Pr_eferences..."
@@ -3593,7 +3593,7 @@ msgstr "Wyświetla w panelu bocznym drzewo katalogów"
 
 #: ../thunar/thunar-window.c:513
 msgid "Change the visibility of this window's image preview"
-msgstr ""
+msgstr "Zmiana widoczność podglądu obrazu tego okna"
 
 #: ../thunar/thunar-window.c:514
 msgid "St_atusbar"
@@ -3825,16 +3825,16 @@ msgstr "Uwaga: używane konto należy do użytkownika root. Istnieje możliwoś�
 
 #: ../thunar/thunar-window.c:959
 msgid "Size: "
-msgstr ""
+msgstr "Rozmiar: "
 
 #. TRANSLATORS: `Catfish' is a software package, please don't translate it.
 #: ../thunar/thunar-window.c:1036
 msgid "Search with Catfish..."
-msgstr ""
+msgstr "Wyszukiwanie za pomocą Catfish..."
 
 #: ../thunar/thunar-window.c:1047
 msgid "Restore Selected Items"
-msgstr ""
+msgstr "Przywróć wybrane elementy"
 
 #: ../thunar/thunar-window.c:2607
 msgid "Close tab"
