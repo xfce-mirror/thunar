@@ -6074,7 +6074,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   gtk_tool_item_set_expand (tool_item, TRUE);
   gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), tool_item, -1);
   gtk_toolbar_set_show_arrow (GTK_TOOLBAR (window->location_toolbar), FALSE);
-  g_object_set_data_full (G_OBJECT (tool_item), "label", g_strdup ("Location Bar"), g_free);
+  g_object_set_data_full (G_OBJECT (tool_item), "label", g_strdup (_("Location Bar")), g_free);
   g_object_set_data_full (G_OBJECT (tool_item), "icon", g_strdup(""), g_free);
   thunar_g_object_set_guint_data (G_OBJECT (tool_item), "default-order", item_order++);
 
