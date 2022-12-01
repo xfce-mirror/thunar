@@ -128,6 +128,8 @@ thunar_statusbar_class_init (ThunarStatusbarClass *klass)
             GTK_SHADOW_NONE,              //default
             G_PARAM_READWRITE ));         //flags
     }
+
+  xfce_gtk_translate_action_entries (thunar_status_bar_action_entries, G_N_ELEMENTS (thunar_status_bar_action_entries));
 }
 
 
