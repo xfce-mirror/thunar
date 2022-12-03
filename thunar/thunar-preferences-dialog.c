@@ -759,10 +759,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   combo = gtk_combo_box_text_new ();
   type = g_type_class_ref (THUNAR_TYPE_IMAGE_PREVIEW_MODE);
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
-                                  g_enum_get_value (type, THUNAR_IMAGE_PREVIEW_MODE_STANDALONE)->value_nick);
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
-                                  g_enum_get_value (type, THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED)->value_nick);
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(g_enum_get_value (type, THUNAR_IMAGE_PREVIEW_MODE_STANDALONE)->value_nick));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(g_enum_get_value (type, THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED)->value_nick));
   g_type_class_unref (type);
   g_object_bind_property_full (G_OBJECT (dialog->preferences),
                                "misc-image-preview-mode",
@@ -1079,12 +1077,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   combo = gtk_combo_box_text_new ();
   type = g_type_class_ref (THUNAR_TYPE_USE_PARTIAL_MODE);
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
-                                  g_enum_get_value (type, THUNAR_USE_PARTIAL_MODE_DISABLED)->value_nick);
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
-                                  g_enum_get_value (type, THUNAR_USE_PARTIAL_MODE_REMOTE_ONLY)->value_nick);
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
-                                  g_enum_get_value (type, THUNAR_USE_PARTIAL_MODE_ALWAYS)->value_nick);
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(g_enum_get_value (type, THUNAR_USE_PARTIAL_MODE_DISABLED)->value_nick));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(g_enum_get_value (type, THUNAR_USE_PARTIAL_MODE_REMOTE_ONLY)->value_nick));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(g_enum_get_value (type, THUNAR_USE_PARTIAL_MODE_ALWAYS)->value_nick));
   g_type_class_unref (type);
   g_object_bind_property_full (G_OBJECT (dialog->preferences),
                                "misc-transfer-use-partial",
@@ -1113,12 +1108,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   combo = gtk_combo_box_text_new ();
   type = g_type_class_ref (THUNAR_TYPE_VERIFY_FILE_MODE);
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
-                                  g_enum_get_value (type, THUNAR_VERIFY_FILE_MODE_DISABLED)->value_nick);
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
-                                  g_enum_get_value (type, THUNAR_VERIFY_FILE_MODE_REMOTE_ONLY)->value_nick);
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
-                                  g_enum_get_value (type, THUNAR_VERIFY_FILE_MODE_ALWAYS)->value_nick);
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(g_enum_get_value (type, THUNAR_VERIFY_FILE_MODE_DISABLED)->value_nick));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(g_enum_get_value (type, THUNAR_VERIFY_FILE_MODE_REMOTE_ONLY)->value_nick));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(g_enum_get_value (type, THUNAR_VERIFY_FILE_MODE_ALWAYS)->value_nick));
   g_type_class_unref (type);
   g_object_bind_property_full (G_OBJECT (dialog->preferences),
                                "misc-transfer-verify-file",
