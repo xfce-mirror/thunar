@@ -361,12 +361,9 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   combo = gtk_combo_box_text_new ();
   enum_class = g_type_class_ref (THUNAR_TYPE_FOLDER_ITEM_COUNT);
 
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
-                                  g_enum_get_value (enum_class, THUNAR_FOLDER_ITEM_COUNT_NEVER)->value_nick);
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
-                                  g_enum_get_value (enum_class, THUNAR_FOLDER_ITEM_COUNT_ONLY_LOCAL)->value_nick);
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
-                                  g_enum_get_value (enum_class, THUNAR_FOLDER_ITEM_COUNT_ALWAYS)->value_nick);
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(g_enum_get_value (enum_class, THUNAR_FOLDER_ITEM_COUNT_NEVER)->value_nick));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(g_enum_get_value (enum_class, THUNAR_FOLDER_ITEM_COUNT_ONLY_LOCAL)->value_nick));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(g_enum_get_value (enum_class, THUNAR_FOLDER_ITEM_COUNT_ALWAYS)->value_nick));
   g_type_class_unref (enum_class);
 
   g_object_bind_property_full (G_OBJECT (column_editor->preferences), "misc-folder-item-count",
