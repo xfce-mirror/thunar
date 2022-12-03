@@ -136,7 +136,7 @@ thunar_column_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GEnumValue values[] =
+      static GEnumValue values[] =
       {
         { THUNAR_COLUMN_DATE_CREATED,  "THUNAR_COLUMN_DATE_CREATED",  N_ ("Date Created"),  },
         { THUNAR_COLUMN_DATE_ACCESSED, "THUNAR_COLUMN_DATE_ACCESSED", N_ ("Date Accessed"), },
@@ -156,6 +156,10 @@ thunar_column_get_type (void)
         { THUNAR_COLUMN_FILE_NAME,     "THUNAR_COLUMN_FILE_NAME",     N_ ("File Name"),     },
         { 0,                           NULL,                          NULL,                 },
       };
+
+      /* Translate the nick, since it will be used in dialogs */
+      for (int i = 0; values[i].value_nick != NULL; i++)
+        values[i].value_nick = g_dgettext (NULL, values[i].value_nick);
 
       type = g_enum_register_static (I_("ThunarColumn"), values);
     }
@@ -608,7 +612,7 @@ thunar_use_partial_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GEnumValue values[] =
+      static GEnumValue values[] =
       {
         { THUNAR_USE_PARTIAL_MODE_DISABLED,    "THUNAR_USE_PARTIAL_MODE_NEVER",    N_("Never"),},
         { THUNAR_USE_PARTIAL_MODE_REMOTE_ONLY, "THUNAR_USE_PARTIAL_MODE_REMOTE",   N_("Only for remote location"),},
@@ -616,9 +620,14 @@ thunar_use_partial_get_type (void)
         { 0,                                NULL,                               NULL,},
       };
 
+      /* Translate the nick, since it will be used in the preferences dialog */
+      for (int i = 0; values[i].value_nick != NULL; i++)
+        values[i].value_nick = g_dgettext (NULL, values[i].value_nick);
+
       type = g_enum_register_static (I_("ThunarUsePartialMode"), values);
     }
 
+  //action_entries[i].menu_item_label_text = g_strdup( g_dgettext (NULL, action_entries[i].menu_item_label_text));
   return type;
 }
 
@@ -631,13 +640,17 @@ thunar_verify_file_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GEnumValue values[] =
+      static GEnumValue values[] =
       {
         { THUNAR_VERIFY_FILE_MODE_DISABLED,    "THUNAR_VERIFY_FILE_MODE_NEVER",    N_("Never"),},
         { THUNAR_VERIFY_FILE_MODE_REMOTE_ONLY, "THUNAR_VERIFY_FILE_MODE_REMOTE",   N_("Only for remote location"),},
         { THUNAR_VERIFY_FILE_MODE_ALWAYS,      "THUNAR_VERIFY_FILE_MODE_ALWAYS",   N_("Always"),},
         { 0,                                   NULL,                               NULL,},
       };
+
+      /* Translate the nick, since it will be used in the preferences dialog */
+      for (int i = 0; values[i].value_nick != NULL; i++)
+        values[i].value_nick = g_dgettext (NULL, values[i].value_nick);
 
       type = g_enum_register_static (I_("ThunarVerifyFileMode"), values);
     }
@@ -689,7 +702,7 @@ thunar_job_operation_kind_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GEnumValue values[] =
+      static GEnumValue values[] =
       {
         { THUNAR_JOB_OPERATION_KIND_COPY,         "THUNAR_JOB_OPERATION_KIND_COPY",          N_("Copy"),  },
         { THUNAR_JOB_OPERATION_KIND_MOVE,         "THUNAR_JOB_OPERATION_KIND_MOVE",          N_("Move") },
@@ -704,6 +717,10 @@ thunar_job_operation_kind_get_type (void)
         { 0,                                      NULL,                                      NULL }
       };
 
+      /* Translate the nick, since it will be used in dialogs */
+      for (int i = 0; values[i].value_nick != NULL; i++)
+        values[i].value_nick = g_dgettext (NULL, values[i].value_nick);
+
       type = g_enum_register_static ("ThunarJobOperationKind", values);
     }
 
@@ -717,13 +734,17 @@ thunar_operation_log_mode_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GEnumValue values[] =
+      static GEnumValue values[] =
       {
         { THUNAR_OPERATION_LOG_OPERATIONS,      "THUNAR_OPERATION_LOG_OPERATIONS",      N_("Log operations") },
         { THUNAR_OPERATION_LOG_NO_OPERATIONS,   "THUNAR_OPERATION_LOG_NO_OPERATIONS",   N_("Log no operations") },
         { THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS, "THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS", N_("Log only timestamps") },
         { 0,                                    NULL,                                   NULL }
       };
+
+      /* Translate the nick, since it will be used in dialogs */
+      for (int i = 0; values[i].value_nick != NULL; i++)
+        values[i].value_nick = g_dgettext (NULL, values[i].value_nick);
 
       type = g_enum_register_static ("ThunarOperationLogMode", values);
     }
@@ -738,12 +759,16 @@ thunar_image_preview_mode_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GEnumValue values[] =
+      static GEnumValue values[] =
       {
         { THUNAR_IMAGE_PREVIEW_MODE_STANDALONE, "THUNAR_IMAGE_PREVIEW_MODE_STANDALONE", N_("Standalone") },
         { THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED,   "THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED",   N_("Embedded") },
         { 0,                                    NULL,                                   NULL }
       };
+
+      /* Translate the nick, since it will be used in the preferences dialog */
+      for (int i = 0; values[i].value_nick != NULL; i++)
+        values[i].value_nick = g_dgettext (NULL, values[i].value_nick);
 
       type = g_enum_register_static ("ThunarImagePreviewMode", values);
     }
@@ -757,13 +782,17 @@ GType thunar_folder_item_count_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GEnumValue values[] =
+      static GEnumValue values[] =
       {
         { THUNAR_FOLDER_ITEM_COUNT_NEVER,       "THUNAR_FOLDER_ITEM_COUNT_NEVER",       N_("Never") },
         { THUNAR_FOLDER_ITEM_COUNT_ONLY_LOCAL,  "THUNAR_FOLDER_ITEM_COUNT_ONLY_LOCAL",  N_("Only for local files") },
         { THUNAR_FOLDER_ITEM_COUNT_ALWAYS,      "THUNAR_FOLDER_ITEM_COUNT_ALWAYS",      N_("Always") },
         { 0,                                    NULL,                                   NULL }
       };
+
+      /* Translate the nick, since it will be used in dialogs */
+      for (int i = 0; values[i].value_nick != NULL; i++)
+        values[i].value_nick = g_dgettext (NULL, values[i].value_nick);
 
       type = g_enum_register_static ("ThunarFolderItemCount", values);
     }
