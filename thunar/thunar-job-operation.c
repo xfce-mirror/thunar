@@ -299,7 +299,7 @@ thunar_job_operation_get_kind_nick (ThunarJobOperation *job_operation)
   enum_class = g_type_class_ref (THUNAR_TYPE_JOB_OPERATION_KIND);
   enum_value = g_enum_get_value (enum_class, job_operation->operation_kind);
 
-  return enum_value->value_nick;
+  return _(enum_value->value_nick);
 }
 
 
