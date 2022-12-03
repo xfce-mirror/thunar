@@ -1154,7 +1154,7 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer   *thumbnailer,
   if (success)
     {
       thumbnailer->jobs = g_slist_prepend (thumbnailer->jobs, job);
-      if (request != NULL)
+      if (*request != 0)
         *request = job->request;
     }
   else
