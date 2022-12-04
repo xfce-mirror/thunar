@@ -944,6 +944,7 @@ thunar_window_init (ThunarWindow *window)
   gtk_paned_pack2 (GTK_PANED (window->paned_right), window->right_pane_box, TRUE, FALSE);
 
   window->right_pane_preview_image = gtk_image_new_from_file ("");
+  window->thumbnail_request = 0;
   gtk_widget_set_size_request (window->right_pane_preview_image, 276, -1); /* large thumbnail size + 20 */
   gtk_box_pack_start (GTK_BOX (window->right_pane_box), window->right_pane_preview_image, FALSE, TRUE, 0);
 
