@@ -1342,7 +1342,6 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
       gtk_widget_hide (dialog->location_label);
     }
 
-#if GLIB_CHECK_VERSION (2, 65, 2)
   /* update the created time */
   date = thunar_file_get_date_string (file, THUNAR_FILE_DATE_CREATED, date_style, date_custom_style);
   if (G_LIKELY (date != NULL))
@@ -1352,7 +1351,6 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
       g_free (date);
     }
   else
-#endif
     {
       gtk_widget_hide (dialog->created_label);
     }
