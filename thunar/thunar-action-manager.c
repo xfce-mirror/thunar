@@ -674,7 +674,7 @@ thunar_action_manager_set_selected_files (ThunarComponent *component,
         }
       else
         {
-          if (action_mgr->files_are_all_executable && !thunar_file_can_execute (lp->data))
+          if (action_mgr->files_are_all_executable && !thunar_file_can_execute (lp->data) && !thunar_file_is_desktop_file (lp->data))
             action_mgr->files_are_all_executable = FALSE;
           ++action_mgr->n_regulars_to_process;
         }
@@ -1180,8 +1180,8 @@ thunar_action_manager_poke_files_finish (ThunarBrowser *browser,
               /* add to our file list */
               files = g_list_prepend (files, lp->data);
 
-              /* check if the file is executable */
-              executable = (executable && thunar_file_can_execute (lp->data));
+              /* check if we should try to execute the file */
+              executable = (executable && (thunar_file_can_execute (lp->data) || thunar_file_is_desktop_file (lp->data)));
             }
         }
 
