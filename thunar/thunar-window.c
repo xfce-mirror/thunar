@@ -5915,10 +5915,14 @@ thunar_window_check_activate_toolbar_uca (UCAActivation *data)
 
           g_object_get (G_OBJECT (lp_item->data), "name", &name, NULL);
           if (strncmp ("uca-action", name, 10) != 0)
-            break;
+            {
+              g_free (name);
+              break;
+            }
 
           if (g_strcmp0 (action_name, name) == 0)
             thunarx_menu_item_activate (lp_item->data);
+          g_free (name);
         }
 
       g_list_free (thunarx_menu_items);
