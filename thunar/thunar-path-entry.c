@@ -1371,10 +1371,10 @@ thunar_path_entry_get_search_query (ThunarPathEntry *path_entry)
 {
   unsigned long search_prefix_length;
   const gchar *text = gtk_entry_get_text (GTK_ENTRY (path_entry));
-  search_prefix_length = strlen (SEARCH_PREFIX);
+  search_prefix_length = strlen (thunar_util_get_search_prefix ());
 
   _thunar_return_val_if_fail (THUNAR_IS_PATH_ENTRY (path_entry), NULL);
-  _thunar_return_val_if_fail (strncmp (text, SEARCH_PREFIX, search_prefix_length) == 0, NULL);
+  _thunar_return_val_if_fail (strncmp (text, thunar_util_get_search_prefix (), search_prefix_length) == 0, NULL);
 
   return strlen(text) > search_prefix_length ? g_strdup (&text[search_prefix_length]) : g_strdup ("");
 }
