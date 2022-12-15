@@ -383,6 +383,15 @@ typedef struct
 } SortTuple;
 
 
+/* This struct is used in thunar_list_model_get_paths_for_files */
+/* TODO: ? find a better name ? */
+typedef struct
+{
+  GList           *files;
+  GList           *paths;
+  ThunarListModel *model;
+} FindFilesStruct;
+
 
 static guint       list_model_signals[LAST_SIGNAL];
 static GParamSpec *list_model_props[N_PROPERTIES] = { NULL, };
@@ -684,6 +693,7 @@ thunar_list_model_finalize (GObject *object)
   /* release the files and associated data structures */
   /* TODO: ? find a better name ? */
   thunar_list_model_release_files (store);
+  g_node_destroy (store->root);
 
   g_free (store->date_custom_style);
 
@@ -1841,7 +1851,7 @@ thunar_list_model_insert_files (ThunarListModel *store,
   for (lp = files; lp != NULL; lp = lp->next)
     {
       /* take a reference on that file */
-      file = THUNAR_FILE (g_object_ref (G_OBJECT (lp->data)));
+      file = THUNAR_FILE (lp->data);
       _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
       /* check if the file should be stashed in the hidden list */
@@ -1851,9 +1861,7 @@ thunar_list_model_insert_files (ThunarListModel *store,
       if (!store->show_hidden && thunar_file_is_hidden (file))
         {
           if (search_mode == FALSE)
-            store->hidden = g_slist_prepend (store->hidden, file);
-          else
-            g_object_unref (file);
+            store->hidden = g_slist_prepend (store->hidden, g_object_ref (file));
         }
       else
         {
@@ -1911,6 +1919,7 @@ thunar_list_model_files_removed (ThunarFolder    *folder,
       /* file is hidden */
       /* this only makes sense when not storing search results */
       _thunar_assert (g_slist_find (store->hidden, lp->data) != NULL);
+      /* TODO: file leak ? */
       store->hidden = g_slist_remove (store->hidden, lp->data);
       g_object_unref (G_OBJECT (lp->data));
     }
@@ -2818,8 +2827,6 @@ thunar_list_model_set_folder (ThunarListModel *store,
     {
       g_object_ref (G_OBJECT (folder));
 
-      store->root = g_node_new (NULL);
-
       /* get the already loaded files or search for files matching the search_query
        * don't start searching if the query is empty, that would be a waste of resources
        */
@@ -3599,6 +3606,35 @@ thunar_list_model_node_traverse_free (GNode   *node,
 
 
 static gboolean
+thunar_list_model_node_traverse_find_files (GNode    *node,
+                                            gpointer  user_data)
+{
+  FindFilesStruct *ffs = (FindFilesStruct *) user_data;
+  GList           *lp;
+  GtkTreeIter      iter;
+  GtkTreePath     *path;
+
+  if (G_LIKELY (node->data == NULL))
+    return FALSE;
+
+  lp = g_list_find (ffs->files, THUNAR_LIST_MODEL_ITEM (node->data)->file);
+  if (lp == NULL)
+    return FALSE;
+
+  /* generate an iterator for the item */
+  GTK_TREE_ITER_INIT (iter, ffs->model->stamp, node);
+
+  /* Add the path to paths list */
+  path = gtk_tree_model_get_path (GTK_TREE_MODEL (ffs->model), &iter);
+  ffs->paths = g_list_prepend (ffs->paths, path);
+
+  /* the traversal should be complete. */
+  return FALSE;
+}
+
+
+
+static gboolean
 thunar_list_model_node_traverse_visible (GNode    *node,
                                          gpointer  user_data)
 {
@@ -3721,7 +3757,7 @@ thunar_list_model_get_file (ThunarListModel *store,
   gtk_tree_model_ref_node (GTK_TREE_MODEL (store), iter);
   node = iter->user_data;
   if (node != NULL && node->data != NULL)
-      file = g_object_ref (THUNAR_LIST_MODEL_ITEM (node->data)->file);
+    file = g_object_ref (THUNAR_LIST_MODEL_ITEM (node->data)->file);
   gtk_tree_model_unref_node (GTK_TREE_MODEL (store), iter);
   return file;
 }
@@ -3768,28 +3804,18 @@ GList*
 thunar_list_model_get_paths_for_files (ThunarListModel *store,
                                        GList           *files)
 {
-  GList *paths = NULL;
-  GNode *node;
-  gint   i = 0;
+  FindFilesStruct ffs;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
 
-  node = g_node_first_child (store->root);
+  ffs.files = files;
+  ffs.paths = NULL;
+  ffs.model = store;
 
-  /* find the rows for the given files */
-  while (node != NULL)
-    {
-      if (g_list_find (files, THUNAR_LIST_MODEL_ITEM (node->data)->file) != NULL)
-        {
-          _thunar_assert (i == g_node_child_position (store->root, node));
-          paths = g_list_prepend (paths, gtk_tree_path_new_from_indices (i, -1));
-        }
+  /* Traverse through all nodes to find the nodes corresponding to given files */
+  g_node_traverse (store->root, G_PRE_ORDER, G_TRAVERSE_ALL, -1, thunar_list_model_node_traverse_find_files, &ffs);
 
-      node = g_node_next_sibling (node);
-      i++;
-    }
-
-  return paths;
+  return ffs.paths;
 }
 
 
@@ -4330,10 +4356,6 @@ thunar_list_model_release_files (ThunarListModel *model)
       /* remove all the entries */
       while (store->root->children)
         g_node_traverse (store->root->children, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_list_model_node_traverse_remove, store);
-
-      /* root is an empty node no item to free here */
-      g_node_destroy (store->root);
-      store->root = NULL;
     }
 
   if (store->hidden != NULL)
