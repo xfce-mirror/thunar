@@ -82,8 +82,6 @@ enum
   DRAW_ON_ALL_SIDES,
 } DrawOnSide;
 
-const char *SEARCH_PREFIX = "Search: ";
-
 /**
  * thunar_util_strrchr_offset:
  * @str:    haystack
@@ -775,6 +773,19 @@ thunar_util_next_new_file_name (ThunarFile            *dir,
 
 
 /**
+ * thunar_util_get_search_prefix
+ *
+ * Return value: The localized search prefix
+**/
+const char*
+thunar_util_get_search_prefix (void)
+{
+  return _("Search: ");
+}
+
+
+
+/**
  * thunar_util_is_a_search_query
  * @string : the string to check
  *
@@ -783,7 +794,7 @@ thunar_util_next_new_file_name (ThunarFile            *dir,
 gboolean
 thunar_util_is_a_search_query (const gchar *string)
 {
-  return strncmp (string, SEARCH_PREFIX, strlen (SEARCH_PREFIX)) == 0;
+  return strncmp (string, thunar_util_get_search_prefix (), strlen (thunar_util_get_search_prefix ())) == 0;
 }
 
 
