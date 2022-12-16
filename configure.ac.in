@@ -177,9 +177,6 @@ XDT_CHECK_PACKAGE([LIBXFCE4KBD_PRIVATE], [libxfce4kbd-private-3], [4.17.2])
 XDT_CHECK_PACKAGE([XFCONF], [libxfconf-0], [4.12.0])
 XDT_CHECK_PACKAGE([PANGO], [pango], [1.38.0])
 
-AC_DEFINE(GLIB_VERSION_MIN_REQUIRED, GLIB_VERSION_2_66, [Ignore post 2.66 deprecations])
-AC_DEFINE(GLIB_VERSION_MAX_ALLOWED, GLIB_VERSION_2_66, [Prevent post 2.66 APIs])
-
 dnl ******************************
 dnl *** GObject Instrospection ***
 dnl ******************************
