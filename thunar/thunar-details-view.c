@@ -849,6 +849,9 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
                                      GdkEventKey       *event,
                                      ThunarDetailsView *details_view)
 {
+  GtkTreePath *path;
+  gboolean     stopPropagation = FALSE;
+
   details_view->button_pressed = FALSE;
 
   /* popup context menu if "Menu" or "<Shift>F10" is pressed */
@@ -858,7 +861,66 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
       return TRUE;
     }
 
-  return FALSE;
+  /* Get path of currently highlighted item */
+  gtk_tree_view_get_cursor(tree_view, &path, NULL);
+
+  if (path == NULL)
+    return stopPropagation;
+
+  switch (event->keyval)
+    {
+    case GDK_KEY_Up:
+    case GDK_KEY_KP_Up:
+    case GDK_KEY_Down:
+    case GDK_KEY_KP_Down:
+      /* Allow default actions to handle this case */
+      GTK_WIDGET_CLASS (thunar_details_view_parent_class)->key_press_event (GTK_WIDGET (tree_view), event);
+      stopPropagation = TRUE;
+      break;
+
+    case GDK_KEY_Left:
+    case GDK_KEY_KP_Left:
+      /* if branch is expanded then collapse it */
+      if (gtk_tree_view_row_expanded (tree_view, path))
+        gtk_tree_view_collapse_row (tree_view, path);
+
+      else /* if the branch is already collapsed */
+        if (gtk_tree_path_get_depth (path) > 1 && gtk_tree_path_up (path))
+          {
+            /* if this is not a toplevel item then move to parent */
+            gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
+          }
+
+      stopPropagation = TRUE;
+      break;
+
+    case GDK_KEY_Right:
+    case GDK_KEY_KP_Right:
+      /* if branch is not expanded then expand it */
+      if (!gtk_tree_view_row_expanded (tree_view, path))
+          gtk_tree_view_expand_row (tree_view, path, FALSE);
+      else /* if branch is already expanded then move to first child */
+        {
+          gtk_tree_path_down (path);
+          gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
+        }
+      stopPropagation = TRUE;
+      break;
+
+    case GDK_KEY_space:
+    case GDK_KEY_Return:
+    case GDK_KEY_KP_Enter:
+      /* Allow default actions to handle this case */
+      GTK_WIDGET_CLASS (thunar_details_view_parent_class)->key_press_event (GTK_WIDGET (tree_view), event);
+      stopPropagation = TRUE;
+      break;
+    }
+
+  gtk_tree_path_free (path);
+  if (stopPropagation)
+    gtk_widget_grab_focus (GTK_WIDGET (tree_view));
+
+  return stopPropagation;
 }
 
 
