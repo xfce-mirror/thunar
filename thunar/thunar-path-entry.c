@@ -254,6 +254,7 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
 
   /* allocate a new list mode for the completion */
   store = thunar_list_model_new ();
+  g_object_set (G_OBJECT (store), "tree-view", FALSE, NULL);
   thunar_list_model_set_show_hidden (store, TRUE);
   thunar_list_model_set_folders_first (store, TRUE);
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store), THUNAR_COLUMN_FILE_NAME, GTK_SORT_ASCENDING);
