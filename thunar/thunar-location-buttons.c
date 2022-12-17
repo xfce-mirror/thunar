@@ -736,17 +736,24 @@ thunar_location_buttons_size_allocate (GtkWidget     *widget,
       required_width_total += temp_width;
     }
 
-  /* hide buttons before first_visible_button */
-  for (lp = buttons->first_visible_button->next; lp != NULL; lp = lp->next)
+  if (buttons->first_visible_button != NULL)
     {
-      need_reorder |= gtk_widget_get_child_visible (GTK_WIDGET (lp->data)) == TRUE;
-      gtk_widget_set_child_visible (GTK_WIDGET (lp->data), FALSE);
+      /* hide buttons before first_visible_button */
+      for (lp = buttons->first_visible_button->next; lp != NULL; lp = lp->next)
+        {
+          need_reorder |= gtk_widget_get_child_visible (GTK_WIDGET (lp->data)) == TRUE;
+          gtk_widget_set_child_visible (GTK_WIDGET (lp->data), FALSE);
+        }
     }
-  /* hide buttons after last visible_button */
-  for (lp = buttons->last_visible_button->prev; lp != NULL; lp = lp->prev)
+
+  if (buttons->last_visible_button != NULL)
     {
-      need_reorder |= gtk_widget_get_child_visible (GTK_WIDGET (lp->data)) == TRUE;
-      gtk_widget_set_child_visible (GTK_WIDGET (lp->data), FALSE);
+      /* hide buttons after last visible_button */
+      for (lp = buttons->last_visible_button->prev; lp != NULL; lp = lp->prev)
+        {
+          need_reorder |= gtk_widget_get_child_visible (GTK_WIDGET (lp->data)) == TRUE;
+          gtk_widget_set_child_visible (GTK_WIDGET (lp->data), FALSE);
+        }
     }
 
   /* allocate space for the buttons */
