@@ -2211,7 +2211,7 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   /* if the view has an ongoing search operation take that into account, otherwise cancel the current search (if there is one) */
   if (thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (page)) != NULL)
     {
-      gchar *str = g_strjoin (NULL, SEARCH_PREFIX, thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (page)), NULL);
+      gchar *str = g_strjoin (NULL, thunar_util_get_search_prefix (), thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (page)), NULL);
       thunar_window_resume_search (window, str);
       g_free (str);
     }
@@ -4712,7 +4712,7 @@ thunar_window_action_search (ThunarWindow *window)
   if (window->is_searching == FALSE)
     {
       /* initiate search */
-      thunar_window_start_open_location (window, SEARCH_PREFIX);
+      thunar_window_start_open_location (window, thunar_util_get_search_prefix ());
       g_signal_handlers_block_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
       gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_search), TRUE);
       g_signal_handlers_unblock_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
