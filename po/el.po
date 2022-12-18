@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 00:45+0100\n"
+"POT-Creation-Date: 2022-12-18 00:45+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Ioannis LM, 2021-2022\n"
 "Language-Team: Greek (http://www.transifex.com/xfce/thunar/language/el/)\n"
@@ -1022,8 +1022,8 @@ msgstr "Εμφάνιση του αριθμού των αντικειμένων �
 #. tell the user that we're unable to determine the file info
 #: ../thunar/thunar-column-model.c:876 ../thunar/thunar-list-model.c:940
 #: ../thunar/thunar-list-model.c:976
-#: ../thunar/thunar-permissions-chooser.c:232 ../thunar/thunar-util.c:427
-#: ../thunar/thunar-util.c:430
+#: ../thunar/thunar-permissions-chooser.c:232 ../thunar/thunar-util.c:425
+#: ../thunar/thunar-util.c:428
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:711
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:293
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:294
@@ -3096,31 +3096,31 @@ msgid "Loading folder contents..."
 msgstr "Φόρτωμα περιεχομένων φακέλου..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2357 ../thunar/thunar-window.c:4178
+#: ../thunar/thunar-standard-view.c:2355 ../thunar/thunar-window.c:4178
 msgid "Failed to open the home folder"
 msgstr "Απέτυχε το άνοιγμα του αρχικού φακέλου"
 
-#: ../thunar/thunar-standard-view.c:2438
+#: ../thunar/thunar-standard-view.c:2436
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "Επιλογή βάσει μοτίβου"
 
-#: ../thunar/thunar-standard-view.c:2443
+#: ../thunar/thunar-standard-view.c:2441
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "_Ακύρωση"
 
-#: ../thunar/thunar-standard-view.c:2445
+#: ../thunar/thunar-standard-view.c:2443
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "Επιλο_γή"
 
-#: ../thunar/thunar-standard-view.c:2458
+#: ../thunar/thunar-standard-view.c:2456
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "_Μοτίβο:"
 
-#: ../thunar/thunar-standard-view.c:2459
+#: ../thunar/thunar-standard-view.c:2457
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3130,7 +3130,7 @@ msgstr "Τα αρχεία των οποίων, το όνομα ταιριάζε�
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: ../thunar/thunar-standard-view.c:2473
+#: ../thunar/thunar-standard-view.c:2471
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3141,24 +3141,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr "? ταιριάζει με ένα χαρακτήρα,\n* ταιριάζει με οποιονδήποτε χαρακτήρα, συμπεριλαμβανομένου του μηδενός.\n\nΓια παράδειγμα: *.txt, file??.png, pict\n\nΤο μοτίβο χωρίς κάποιο από τα σύμβολα * ή ?, θα ταιριάζει παντού στο όνομα. Με τα σύμβολα, πρέπει να ταιριάζει τόσο στην αρχή όσο και στο τέλος του ονόματος."
 
-#: ../thunar/thunar-standard-view.c:2477
+#: ../thunar/thunar-standard-view.c:2475
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr "_Διάκριση πεζών/κεφαλαίων"
 
-#: ../thunar/thunar-standard-view.c:2478
+#: ../thunar/thunar-standard-view.c:2476
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr "Εάν το επιλέξετε, η κατάσταση των γραμμάτων ταιριάζει με το μοτίβο.\nΤο Examp* θα ταιριάζει το Example.txt και όχι το example.txt"
 
-#: ../thunar/thunar-standard-view.c:2483
+#: ../thunar/thunar-standard-view.c:2481
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr "Αντιστοιχία διακ_ριτικών"
 
-#: ../thunar/thunar-standard-view.c:2484
+#: ../thunar/thunar-standard-view.c:2482
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3167,21 +3167,21 @@ msgstr "Εάν το επιλέξετε, απαιτούνται τόνοι που
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: ../thunar/thunar-standard-view.c:2868
+#: ../thunar/thunar-standard-view.c:2866
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Το XDS παρέδωσε ένα μη έγκυρο όνομα αρχείου"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:3062
+#: ../thunar/thunar-standard-view.c:3060
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Απέτυχε η δημιουργία δεσμού για τη διεύθυνση \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3108
+#: ../thunar/thunar-standard-view.c:3106
 msgid "Untitled document"
 msgstr "Έγγραφο χωρίς όνομα"
 
-#: ../thunar/thunar-standard-view.c:3604 ../thunar/thunar-window.c:4275
+#: ../thunar/thunar-standard-view.c:3602 ../thunar/thunar-window.c:4275
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Απέτυχε το άνοιγμα του καταλόγου \"%s\""
@@ -3311,69 +3311,73 @@ msgstr[1] "Απομένουν %lu δευτερόλεπτα  (%s/sec)"
 msgid "Loading..."
 msgstr "Φόρτωση..."
 
-#: ../thunar/thunar-util.c:303
+#: ../thunar/thunar-util.c:301
 #, c-format
 msgid "Invalid path"
 msgstr "Μη έγκυρη διαδρομή"
 
-#: ../thunar/thunar-util.c:337
+#: ../thunar/thunar-util.c:335
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "Άγνωστος χρήστης \"%s\""
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:448
+#: ../thunar/thunar-util.c:446
 msgid "Today"
 msgstr "Σήμερα"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:453
+#: ../thunar/thunar-util.c:451
 #, c-format
 msgid "Today at %X"
 msgstr "Σήμερα στις %X"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:461
+#: ../thunar/thunar-util.c:459
 msgid "Yesterday"
 msgstr "Χτές"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:466
+#: ../thunar/thunar-util.c:464
 #, c-format
 msgid "Yesterday at %X"
 msgstr "Χτές στις %X"
 
 #. Days from last week
-#: ../thunar/thunar-util.c:484
+#: ../thunar/thunar-util.c:482
 #, c-format
 msgid "%A at %X"
 msgstr "%A στις %X"
 
 #. Any other date
-#: ../thunar/thunar-util.c:489
+#: ../thunar/thunar-util.c:487
 #, c-format
 msgid "%x at %X"
 msgstr "%x στις %X"
 
-#: ../thunar/thunar-util.c:752
+#: ../thunar/thunar-util.c:750
 #, c-format
 msgid "%.*s %u%s"
 msgstr "%.*s %u %s"
 
-#: ../thunar/thunar-util.c:754
+#: ../thunar/thunar-util.c:752
 #, c-format
 msgid "%.*s (copy %u)%s"
 msgstr "%.*s (αντιγραφή %u) %s"
 
-#: ../thunar/thunar-util.c:759
+#: ../thunar/thunar-util.c:757
 #, c-format
 msgid "link to %.*s.%s"
 msgstr "δεσμός προς το %.*s.%s"
 
-#: ../thunar/thunar-util.c:764
+#: ../thunar/thunar-util.c:762
 #, c-format
 msgid "link %u to %.*s.%s"
 msgstr "δεσμός %u προς το %.*s.%s"
+
+#: ../thunar/thunar-util.c:783
+msgid "Search: "
+msgstr "Αναζήτηση:"
 
 #: ../thunar/thunar-window.c:489
 msgid "_File"
@@ -3672,7 +3676,7 @@ msgstr "Άνοιγμα _τοποθεσίας..."
 
 #: ../thunar/thunar-window.c:540
 msgid "Specify a location to open"
-msgstr "Καθορίστε μια τοποθεσία για άνοιγμα"
+msgstr "Καθορίστε τοποθεσία για άνοιγμα"
 
 #: ../thunar/thunar-window.c:542
 msgid "T_emplates"
@@ -4553,7 +4557,7 @@ msgid ""
 "should be displayed for a selected file. If you specify more than one "
 "pattern here, the list items must be separated with semicolons (e.g. "
 "*.txt;*.doc)."
-msgstr "Για να καθορίσετε την εμφάνιση της προσαρμοσμένης ενέργειας για το επιλεγμένο αρχείο, εισάγετε λίστα με τις επεκτάσεις των αρχείων που θέλετε να αφορά η ενέργεια. Εάν ορίσετε παραπάνω από μία επέκταση, θα πρέπει να χωρίζονται με ερωτηματικά (π.χ. *.txt;*.doc)."
+msgstr "Eισάγετε λίστα με τις επεκτάσεις των αρχείων, που θα χρησιμοποιηθούν για να καθοριστεί αν αυτή η ενέργεια θα πρέπει να εμφανίζεται για ένα επιλεγμένο αρχείο. Εάν ορίσετε παραπάνω από μία θα πρέπει να διαχωρίζονται με ερωτηματικό (π.χ. *.txt;*.doc)."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:32
 msgid "*"
@@ -4571,7 +4575,7 @@ msgstr "Εάν η εντολή θα πρέπει να λειτουργήσει �
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:35
 msgid "Appears if selection contains:"
-msgstr "Εμφανίζεται εάν η επιλογή περιέχει:"
+msgstr "Εμφανίζεται εάν η επιλογή περιλαμβάνει:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:36
 msgid "_Directories **"
@@ -4602,7 +4606,7 @@ msgid ""
 "This page lists the conditions under which the action will appear in the file managers context menus. The file patterns are specified as a list of simple file patterns separated by semicolons (e.g. *.txt;*.doc). For an action to appear in the context menu of a file or folder, at least one of these patterns must match the name of the file or folder. Additionally, you can specify that the action should only appear for certain kinds of files.\n"
 "\n"
 "** The custom action will be eligible to appear in the toolbar."
-msgstr "Αυτή η σελίδα περιέχει τις συνθήκες βάσει των οποίων θα εμφανίζεται η ενέργεια στο μενού επιλογών. Το μοτίβο καθορίζει τις επεκτάσεις των αρχείων σε σειρά διαχωρισμένες με ερωτηματικά (π.χ. *.txt;*.doc). Για να εμφανιστεί η ενέργεια σε αρχείο ή φάκελο, θα πρέπει να καθορίσετε και το είδος των αρχείων ή/και των φακέλων για τα οποία θα εμφανίζεται.\n\n** Η προσαρμοσμένη ενέργεια θα είναι διαθέσιμη και για τη γραμμή εργαλείων."
+msgstr "Αυτή η σελίδα περιέχει τις συνθήκες υπό τις οποίες η ενέργεια θα εμφανίζεται στο μενού επιλογών. Το μοτίβο καθορίζει τις επεκτάσεις των αρχείων σε σειρά διαχωρισμένες με ερωτηματικά (π.χ. *.txt;*.doc). Για να εμφανιστεί η ενέργεια στο μενού, θα πρέπει να ταιριάζει τουλάχιστον μια από αυτές με το όνομα του αρχείου ή του φακέλου. Επιπλέον, μπορείτε να καθορίσετε την εμφάνιση της ενέργειας μόνο για ορισμένα είδη αρχείων.\n\n** Η προσαρμοσμένη ενέργεια θα είναι διαθέσιμη και για τη γραμμή εργαλείων."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:45
 msgid "Appearance Conditions"
