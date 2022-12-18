@@ -6043,7 +6043,6 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   gtk_toolbar_set_icon_size (GTK_TOOLBAR (window->location_toolbar),
                              small_icons ? GTK_ICON_SIZE_SMALL_TOOLBAR : GTK_ICON_SIZE_LARGE_TOOLBAR);
   gtk_widget_set_hexpand (window->location_toolbar, TRUE);
-  gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 1, 1);
 
   /* The first toolbar item must always be THUNAR_WINDOW_ACTION_VIEW_MENUBAR which we hide by default */
   window->location_toolbar_item_view_menubar = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_MENUBAR, item_order++);
@@ -6101,8 +6100,11 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   /* load the correct order of items in the toolbar */
   thunar_window_location_toolbar_load_last_order (window);
 
-  /* run as idle because otherwise it would be called before the window is initialized */
-  g_idle_add ((void*) thunar_window_location_toolbar_load_visibility, window);
+  /* load the correct visibility of items in the toolbar */
+  thunar_window_location_toolbar_load_visibility (window);
+
+  /* attach the toolbar to the window */
+  gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 1, 1);
 }
 
 
