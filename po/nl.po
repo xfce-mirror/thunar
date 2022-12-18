@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 00:45+0100\n"
+"POT-Creation-Date: 2022-12-18 00:45+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Pjotr <pjotrvertaalt@gmail.com>, 2013-2015,2017-2022\n"
 "Language-Team: Dutch (http://www.transifex.com/xfce/thunar/language/nl/)\n"
@@ -1012,8 +1012,8 @@ msgstr "Toon aantal elementen erin"
 #. tell the user that we're unable to determine the file info
 #: ../thunar/thunar-column-model.c:876 ../thunar/thunar-list-model.c:940
 #: ../thunar/thunar-list-model.c:976
-#: ../thunar/thunar-permissions-chooser.c:232 ../thunar/thunar-util.c:427
-#: ../thunar/thunar-util.c:430
+#: ../thunar/thunar-permissions-chooser.c:232 ../thunar/thunar-util.c:425
+#: ../thunar/thunar-util.c:428
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:711
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:293
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:294
@@ -3086,31 +3086,31 @@ msgid "Loading folder contents..."
 msgstr "Mapinhoud laden..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2357 ../thunar/thunar-window.c:4178
+#: ../thunar/thunar-standard-view.c:2355 ../thunar/thunar-window.c:4178
 msgid "Failed to open the home folder"
 msgstr "Kon persoonlijke map niet openen"
 
-#: ../thunar/thunar-standard-view.c:2438
+#: ../thunar/thunar-standard-view.c:2436
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "Op patroon kiezen"
 
-#: ../thunar/thunar-standard-view.c:2443
+#: ../thunar/thunar-standard-view.c:2441
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "_Afbreken"
 
-#: ../thunar/thunar-standard-view.c:2445
+#: ../thunar/thunar-standard-view.c:2443
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "_Kiezen"
 
-#: ../thunar/thunar-standard-view.c:2458
+#: ../thunar/thunar-standard-view.c:2456
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "_Patroon:"
 
-#: ../thunar/thunar-standard-view.c:2459
+#: ../thunar/thunar-standard-view.c:2457
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3120,7 +3120,7 @@ msgstr "Bestanden waarvan de namen overeenkomen met het jokertekenpatroon dat u 
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: ../thunar/thunar-standard-view.c:2473
+#: ../thunar/thunar-standard-view.c:2471
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3131,24 +3131,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr "? komt overeen met precies één teken,\n* komt overeen met elk aantal tekens, inclusief nul.\n\nBijvoorbeeld: *.txt, bestand??.png, pict\n\nZonder enige jokertekens als * of ?, wordt er gezocht naar een overeenkomst met het patroon op elke willekeurige plek in een naam. Met jokertekens moet het patroon zowel aan het begin als aan het eind van een naam overeenkomen."
 
-#: ../thunar/thunar-standard-view.c:2477
+#: ../thunar/thunar-standard-view.c:2475
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr "Hoofdletter_gevoelig"
 
-#: ../thunar/thunar-standard-view.c:2478
+#: ../thunar/thunar-standard-view.c:2476
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr "Indien ingeschakeld, moeten hoofd- en kleine letters overeenkomen met het patroon.\nVoorbeel* komt dan dus overeen met Voorbeeld.txt en niet met voorbeeld.txt"
 
-#: ../thunar/thunar-standard-view.c:2483
+#: ../thunar/thunar-standard-view.c:2481
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr "Overeenkomstige accenten"
 
-#: ../thunar/thunar-standard-view.c:2484
+#: ../thunar/thunar-standard-view.c:2482
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3157,21 +3157,21 @@ msgstr "Indien ingeschakeld, vereist dit dat accenten overeenkomen met het patro
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: ../thunar/thunar-standard-view.c:2868
+#: ../thunar/thunar-standard-view.c:2866
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Ongeldige bestandnaam verkregen van XDS-sleepbron"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:3062
+#: ../thunar/thunar-standard-view.c:3060
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Kon geen koppeling voor het webadres '%s' maken"
 
-#: ../thunar/thunar-standard-view.c:3108
+#: ../thunar/thunar-standard-view.c:3106
 msgid "Untitled document"
 msgstr "Naamloos document"
 
-#: ../thunar/thunar-standard-view.c:3604 ../thunar/thunar-window.c:4275
+#: ../thunar/thunar-standard-view.c:3602 ../thunar/thunar-window.c:4275
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Kon map '%s' niet openen"
@@ -3301,69 +3301,73 @@ msgstr[1] "%lu seconden te gaan (%s/sec)"
 msgid "Loading..."
 msgstr "Laden..."
 
-#: ../thunar/thunar-util.c:303
+#: ../thunar/thunar-util.c:301
 #, c-format
 msgid "Invalid path"
 msgstr "Ongeldig pad"
 
-#: ../thunar/thunar-util.c:337
+#: ../thunar/thunar-util.c:335
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "Onbekende gebruiker '%s'"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:448
+#: ../thunar/thunar-util.c:446
 msgid "Today"
 msgstr "Vandaag"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:453
+#: ../thunar/thunar-util.c:451
 #, c-format
 msgid "Today at %X"
 msgstr "Vandaag om %X"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:461
+#: ../thunar/thunar-util.c:459
 msgid "Yesterday"
 msgstr "Gisteren"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:466
+#: ../thunar/thunar-util.c:464
 #, c-format
 msgid "Yesterday at %X"
 msgstr "Gisteren om %X"
 
 #. Days from last week
-#: ../thunar/thunar-util.c:484
+#: ../thunar/thunar-util.c:482
 #, c-format
 msgid "%A at %X"
 msgstr "%A om %X"
 
 #. Any other date
-#: ../thunar/thunar-util.c:489
+#: ../thunar/thunar-util.c:487
 #, c-format
 msgid "%x at %X"
 msgstr "%x om %X"
 
-#: ../thunar/thunar-util.c:752
+#: ../thunar/thunar-util.c:750
 #, c-format
 msgid "%.*s %u%s"
 msgstr "%.*s %u%s"
 
-#: ../thunar/thunar-util.c:754
+#: ../thunar/thunar-util.c:752
 #, c-format
 msgid "%.*s (copy %u)%s"
 msgstr "%.*s (kopie %u)%s"
 
-#: ../thunar/thunar-util.c:759
+#: ../thunar/thunar-util.c:757
 #, c-format
 msgid "link to %.*s.%s"
 msgstr "koppeling naar %.*s.%s"
 
-#: ../thunar/thunar-util.c:764
+#: ../thunar/thunar-util.c:762
 #, c-format
 msgid "link %u to %.*s.%s"
 msgstr "koppeling %u naar %.*s.%s"
+
+#: ../thunar/thunar-util.c:783
+msgid "Search: "
+msgstr "Zoeken:"
 
 #: ../thunar/thunar-window.c:489
 msgid "_File"
