@@ -1030,9 +1030,6 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
   gint            response;
   GtkWidget      *dialog;
   GString        *secondary;
-  ThunarFileMode  old_mode;
-  ThunarFileMode  new_mode;
-  GFileInfo      *info;
   GError         *err = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
@@ -1073,42 +1070,10 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
   response = gtk_dialog_run (GTK_DIALOG (dialog));
   gtk_widget_destroy (dialog);
 
-  /* check if we should make the file executable */
+  /* check if we can set the file executable */
   if (response == GTK_RESPONSE_APPLY)
     {
-      /* try to query information about the file */
-      info = g_file_query_info (thunar_file_get_file (file),
-                                G_FILE_ATTRIBUTE_UNIX_MODE,
-                                G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                NULL, &err);
-
-      if (G_LIKELY (info != NULL))
-        {
-          if (g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_UNIX_MODE))
-            {
-              /* determine the current mode */
-              old_mode = g_file_info_get_attribute_uint32 (info, G_FILE_ATTRIBUTE_UNIX_MODE);
-
-              /* generate the new mode */
-              new_mode = old_mode | THUNAR_FILE_MODE_USR_EXEC | THUNAR_FILE_MODE_GRP_EXEC | THUNAR_FILE_MODE_OTH_EXEC;
-
-              if (old_mode != new_mode)
-                {
-                  g_file_set_attribute_uint32 (thunar_file_get_file (file),
-                                               G_FILE_ATTRIBUTE_UNIX_MODE, new_mode,
-                                               G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                               NULL, &err);
-                }
-            }
-          else
-            {
-              g_warning ("No %s attribute found", G_FILE_ATTRIBUTE_UNIX_MODE);
-            }
-
-          g_object_unref (info);
-        }
-
-      if (err != NULL)
+      if (thunar_g_file_set_executable_flags (thunar_file_get_file (file), &err))
         {
           thunar_dialogs_show_error (parent, err, ("Unable to mark launcher executable"));
           g_clear_error (&err);

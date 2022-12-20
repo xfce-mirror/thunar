@@ -1231,3 +1231,57 @@ thunar_g_file_is_on_local_device (GFile *file)
   return is_local;
 }
 
+/**
+ * thunar_g_file_set_executable_flags:
+ * @file : the #GFile for which execute flags should be set
+ *
+ * Tries to set +x flag of the file for user, group and others
+ *
+ * Return value: %TRUE on sucess, %FALSE on error
+ **/
+gboolean
+thunar_g_file_set_executable_flags (GFile   *file,
+                                    GError **error)
+{
+  ThunarFileMode  old_mode;
+  ThunarFileMode  new_mode;
+  GFileInfo      *info;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  /* try to query information about the file */
+  info = g_file_query_info (file,
+                            G_FILE_ATTRIBUTE_UNIX_MODE,
+                            G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                            NULL, error);
+
+  if (G_LIKELY (info != NULL))
+    {
+      if (g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_UNIX_MODE))
+        {
+          /* determine the current mode */
+          old_mode = g_file_info_get_attribute_uint32 (info, G_FILE_ATTRIBUTE_UNIX_MODE);
+
+          /* generate the new mode */
+          new_mode = old_mode | THUNAR_FILE_MODE_USR_EXEC | THUNAR_FILE_MODE_GRP_EXEC | THUNAR_FILE_MODE_OTH_EXEC;
+
+          if (old_mode != new_mode)
+            {
+              g_file_set_attribute_uint32 (file,
+                                           G_FILE_ATTRIBUTE_UNIX_MODE, new_mode,
+                                           G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                           NULL, error);
+            }
+        }
+      else
+        {
+          g_warning ("No %s attribute found", G_FILE_ATTRIBUTE_UNIX_MODE);
+        }
+
+      g_object_unref (info);
+    }
+
+  return (error == NULL);
+}
+
