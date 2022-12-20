@@ -2996,9 +2996,6 @@ thunar_file_can_execute (ThunarFile *file)
   ThunarPreferences   *preferences;
   gboolean             exec_shell_scripts = FALSE;
   const gchar         *content_type;
-  const gchar * const *data_dirs;
-  guint                i;
-  gchar               *path;
   gboolean             exec_bit_set = FALSE;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
@@ -3069,23 +3066,10 @@ thunar_file_can_execute (ThunarFile *file)
     }
 
   /* desktop files in XDG_DATA_DIRS dont need an executable bit to be executed */
-  if (g_file_is_native (file_to_check->gfile))
+  if (thunar_g_file_is_in_xdg_data_dir (file_to_check->gfile))
     {
-      data_dirs = g_get_system_data_dirs ();
-      if (G_LIKELY (data_dirs != NULL))
-        {
-          path = g_file_get_path (file_to_check->gfile);
-          for (i = 0; data_dirs[i] != NULL; i++)
-            {
-              if (g_str_has_prefix (path, data_dirs[i]))
-                {
-                  /* has known prefix, can launch without problems */
-                  g_object_unref (file_to_check);
-                  return TRUE;
-                }
-            }
-          g_free (path);
-        }
+      g_object_unref (file_to_check);
+      return TRUE;
     }
 
   /* Desktop files outside XDG_DATA_DIRS need to have at least the execute bit set */

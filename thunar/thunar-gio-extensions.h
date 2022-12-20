@@ -119,6 +119,7 @@ gboolean     thunar_g_vfs_metadata_is_supported        (void);
 gboolean     thunar_g_file_is_on_local_device          (GFile             *file);
 gboolean     thunar_g_file_set_executable_flags        (GFile             *file,
                                                         GError           **error);
+gboolean     thunar_g_file_is_in_xdg_data_dir          (GFile             *file);
 
 G_END_DECLS
 

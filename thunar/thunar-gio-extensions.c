@@ -1231,6 +1231,8 @@ thunar_g_file_is_on_local_device (GFile *file)
   return is_local;
 }
 
+
+
 /**
  * thunar_g_file_set_executable_flags:
  * @file : the #GFile for which execute flags should be set
@@ -1285,3 +1287,42 @@ thunar_g_file_set_executable_flags (GFile   *file,
   return (error == NULL);
 }
 
+
+
+/**
+ * thunar_g_file_is_in_xdg_data_dir:
+ * @file      : a #GFile.
+ *
+ * Returns %TRUE if @file is located below one of the directories given in XDG_DATA_DIRS
+ *
+ * Return value: %TRUE if @file is located inside a XDG_DATA_DIR
+ **/
+gboolean
+thunar_g_file_is_in_xdg_data_dir (GFile *file)
+{
+    const gchar * const *data_dirs;
+    guint                i;
+    gchar               *path;
+    gboolean             found = FALSE;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+
+  if (g_file_is_native (file))
+    {
+      data_dirs = g_get_system_data_dirs ();
+      if (G_LIKELY (data_dirs != NULL))
+        {
+          path = g_file_get_path (file);
+          for (i = 0; data_dirs[i] != NULL; i++)
+            {
+              if (g_str_has_prefix (path, data_dirs[i]))
+              {
+                found = TRUE;
+                break;
+              }
+            }
+          g_free (path);
+        }
+    }
+    return found;
+}
