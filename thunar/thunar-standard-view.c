@@ -3935,6 +3935,8 @@ thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
         {
           /* prepend the file to the visible items list */
           file = thunar_list_model_get_file (standard_view->model, &iter);
+          if (file == NULL)
+            continue;
           visible_files = g_list_prepend (visible_files, file);
 
           /* check if we've reached the end of the visible range */
@@ -3956,10 +3958,11 @@ thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
         }
 
       /* queue a thumbnail request */
-      thunar_thumbnailer_queue_files (standard_view->priv->thumbnailer,
-                                      lazy_request, visible_files,
-                                      &standard_view->priv->thumbnail_request,
-                                      THUNAR_THUMBNAIL_SIZE_DEFAULT);
+      if (visible_files != NULL)
+        thunar_thumbnailer_queue_files (standard_view->priv->thumbnailer,
+                                        lazy_request, visible_files,
+                                        &standard_view->priv->thumbnail_request,
+                                        THUNAR_THUMBNAIL_SIZE_DEFAULT);
 
       /* release the file list */
       g_list_free_full (visible_files, g_object_unref);
