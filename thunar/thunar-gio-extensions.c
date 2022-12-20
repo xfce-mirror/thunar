@@ -1326,3 +1326,37 @@ thunar_g_file_is_in_xdg_data_dir (GFile *file)
     }
     return found;
 }
+
+
+
+/**
+ * thunar_g_file_is_desktop_file:
+ * @file      : a #GFile.
+ *
+ * Returns %TRUE if @file is a .desktop file.
+ *
+ * Return value: %TRUE if @file is a .desktop file.
+ **/
+gboolean
+thunar_g_file_is_desktop_file (GFile *file)
+{
+  gchar     *basename;
+  gboolean   is_desktop_file = FALSE;
+  GFileInfo *info;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+
+  basename = g_file_get_basename (file);
+
+  /* only allow regular files with a .desktop extension */
+  if (g_str_has_suffix (basename, ".desktop"))
+    {
+      info = g_file_query_info (file, G_FILE_ATTRIBUTE_STANDARD_TYPE, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, NULL, NULL);
+      if (G_LIKELY (info != NULL && g_file_info_get_file_type (info) == G_FILE_TYPE_REGULAR))
+        is_desktop_file = TRUE;
+      g_object_unref (info);
+    }
+  
+  g_free (basename);
+  return is_desktop_file;
+}
