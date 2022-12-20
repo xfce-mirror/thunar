@@ -117,6 +117,8 @@ gboolean     thunar_g_app_info_should_show             (GAppInfo          *info)
 gboolean     thunar_g_vfs_metadata_is_supported        (void);
 
 gboolean     thunar_g_file_is_on_local_device          (GFile             *file);
+gboolean     thunar_g_file_set_executable_flags        (GFile             *file,
+                                                        GError           **error);
 
 G_END_DECLS
 
