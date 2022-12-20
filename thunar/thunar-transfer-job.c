@@ -578,6 +578,18 @@ ttj_copy_file (ThunarTransferJob  *job,
       g_clear_object (&info);
     }
 
+  /* Preserve trusted state when launchers are copied */
+  if (G_UNLIKELY (err == NULL && g_file_is_native (source_file) && thunar_g_file_is_desktop_file (source_file)))
+    {
+      if (xfce_g_file_is_trusted (source_file, NULL, NULL) || thunar_g_file_is_in_xdg_data_dir (source_file))
+        {
+          xfce_g_file_set_trusted (target_file, TRUE, NULL, NULL);
+
+          /* launchers located in the XDG_DATA_DIR often dont have a +x flag */
+          thunar_g_file_set_executable_flags (target_file, NULL);
+        }
+    }
+
   /* check if there were errors */
   if (G_UNLIKELY (err != NULL && err->domain == G_IO_ERROR))
     {
