@@ -38,7 +38,7 @@ typedef struct _ThunarDetailsView      ThunarDetailsView;
 typedef enum
 {
   THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS,
-  THUNAR_DETAILS_VIEW_ACTION_ENABLE_TREE_VIEW,
+  THUNAR_DETAILS_VIEW_ACTION_TOGGLE_TREE_VIEW,
 } ThunarDetailsViewAction;
 
 GType      thunar_details_view_get_type                         (void) G_GNUC_CONST;

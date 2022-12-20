@@ -4176,7 +4176,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       for (lp = selected_items; lp != NULL; lp = lp->next)
         {
           gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, lp->data);
-          relevant_files = g_list_append (relevant_files, g_sequence_get (iter.user_data));
+          relevant_files = g_list_append (relevant_files, THUNAR_LIST_MODEL_ITEM (G_NODE (iter.user_data)->data)->file);
         }
       selected_string = thunar_list_model_get_statusbar_text_for_files (store, relevant_files, show_file_size_binary_format);
       temp_string = g_strdup_printf (_("Selection: %s"), selected_string);
