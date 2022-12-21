@@ -767,11 +767,24 @@ thunar_g_file_copy (GFile                *source,
   /* check destination */
   if (g_file_query_exists (destination, NULL))
     {
-      /* Try to mimic g_file_copy() error */
-      if (error != NULL)
-        *error = g_error_new (G_IO_ERROR, G_IO_ERROR_EXISTS,
-                              "Error opening file \"%s\": File exists", g_file_peek_path (destination));
-      return FALSE;
+      if (flags & G_FILE_COPY_OVERWRITE)
+        {
+          /* We want to overwrite. Just delete the old file */
+          if (error != NULL)
+            g_clear_error (error);
+          error = NULL;
+          g_file_delete (destination, NULL, error);
+          if (error != NULL)
+            return FALSE;
+        }
+      else
+        {
+          /* Try to mimic g_file_copy() error */
+          if (error != NULL)
+            *error = g_error_new (G_IO_ERROR, G_IO_ERROR_EXISTS,
+                                  "Error opening file \"%s\": File exists", g_file_peek_path (destination));
+          return FALSE;
+        }
     }
 
   /* generate partial file name */
