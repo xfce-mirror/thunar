@@ -4047,12 +4047,8 @@ thunar_standard_view_size_allocate (ThunarStandardView *standard_view,
   if (thunar_view_get_loading (THUNAR_VIEW (standard_view)))
     return;
 
-  /* to avoid a flow of updates, don't update if there is already a request pending */
-  if (standard_view->priv->thumbnail_source_id == 0)
-    {
-      /* reschedule a thumbnail request timeout */
-      thunar_standard_view_schedule_thumbnail_timeout (standard_view);
-    }
+  /* Try to load thumbnails for files which are now visible */
+  thunar_standard_view_request_thumbnails_real (standard_view, TRUE);
 }
 
 
