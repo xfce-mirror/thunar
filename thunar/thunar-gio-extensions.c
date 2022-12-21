@@ -1231,3 +1231,132 @@ thunar_g_file_is_on_local_device (GFile *file)
   return is_local;
 }
 
+
+
+/**
+ * thunar_g_file_set_executable_flags:
+ * @file : the #GFile for which execute flags should be set
+ *
+ * Tries to set +x flag of the file for user, group and others
+ *
+ * Return value: %TRUE on sucess, %FALSE on error
+ **/
+gboolean
+thunar_g_file_set_executable_flags (GFile   *file,
+                                    GError **error)
+{
+  ThunarFileMode  old_mode;
+  ThunarFileMode  new_mode;
+  GFileInfo      *info;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  /* try to query information about the file */
+  info = g_file_query_info (file,
+                            G_FILE_ATTRIBUTE_UNIX_MODE,
+                            G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                            NULL, error);
+
+  if (G_LIKELY (info != NULL))
+    {
+      if (g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_UNIX_MODE))
+        {
+          /* determine the current mode */
+          old_mode = g_file_info_get_attribute_uint32 (info, G_FILE_ATTRIBUTE_UNIX_MODE);
+
+          /* generate the new mode */
+          new_mode = old_mode | THUNAR_FILE_MODE_USR_EXEC | THUNAR_FILE_MODE_GRP_EXEC | THUNAR_FILE_MODE_OTH_EXEC;
+
+          if (old_mode != new_mode)
+            {
+              g_file_set_attribute_uint32 (file,
+                                           G_FILE_ATTRIBUTE_UNIX_MODE, new_mode,
+                                           G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                           NULL, error);
+            }
+        }
+      else
+        {
+          g_warning ("No %s attribute found", G_FILE_ATTRIBUTE_UNIX_MODE);
+        }
+
+      g_object_unref (info);
+    }
+
+  return (error == NULL);
+}
+
+
+
+/**
+ * thunar_g_file_is_in_xdg_data_dir:
+ * @file      : a #GFile.
+ *
+ * Returns %TRUE if @file is located below one of the directories given in XDG_DATA_DIRS
+ *
+ * Return value: %TRUE if @file is located inside a XDG_DATA_DIR
+ **/
+gboolean
+thunar_g_file_is_in_xdg_data_dir (GFile *file)
+{
+    const gchar * const *data_dirs;
+    guint                i;
+    gchar               *path;
+    gboolean             found = FALSE;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+
+  if (g_file_is_native (file))
+    {
+      data_dirs = g_get_system_data_dirs ();
+      if (G_LIKELY (data_dirs != NULL))
+        {
+          path = g_file_get_path (file);
+          for (i = 0; data_dirs[i] != NULL; i++)
+            {
+              if (g_str_has_prefix (path, data_dirs[i]))
+              {
+                found = TRUE;
+                break;
+              }
+            }
+          g_free (path);
+        }
+    }
+    return found;
+}
+
+
+
+/**
+ * thunar_g_file_is_desktop_file:
+ * @file      : a #GFile.
+ *
+ * Returns %TRUE if @file is a .desktop file.
+ *
+ * Return value: %TRUE if @file is a .desktop file.
+ **/
+gboolean
+thunar_g_file_is_desktop_file (GFile *file)
+{
+  gchar     *basename;
+  gboolean   is_desktop_file = FALSE;
+  GFileInfo *info;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+
+  basename = g_file_get_basename (file);
+
+  /* only allow regular files with a .desktop extension */
+  if (g_str_has_suffix (basename, ".desktop"))
+    {
+      info = g_file_query_info (file, G_FILE_ATTRIBUTE_STANDARD_TYPE, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, NULL, NULL);
+      if (G_LIKELY (info != NULL && g_file_info_get_file_type (info) == G_FILE_TYPE_REGULAR))
+        is_desktop_file = TRUE;
+      g_object_unref (info);
+    }
+  
+  g_free (basename);
+  return is_desktop_file;
+}
