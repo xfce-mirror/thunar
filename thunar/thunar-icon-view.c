@@ -178,12 +178,17 @@ thunar_icon_view_get_accessible (GtkWidget *widget)
 static void
 thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view)
 {
-  gint wrap_width;
+  gint            wrap_width;
+  ExoIconView    *exo_icon_view;
+  ThunarZoomLevel zoom_level;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
+  exo_icon_view = EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view)));
+  zoom_level = thunar_view_get_zoom_level (THUNAR_VIEW (standard_view));
+
   /* determine the "wrap-width" depending on the "zoom-level" */
-  switch (thunar_view_get_zoom_level (THUNAR_VIEW (standard_view)))
+  switch (zoom_level)
     {
     case THUNAR_ZOOM_LEVEL_25_PERCENT:
       wrap_width = 48;
@@ -208,6 +213,11 @@ thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view)
 
   /* set the new "wrap-width" for the text renderer */
   g_object_set (G_OBJECT (standard_view->name_renderer), "wrap-width", wrap_width, NULL);
+
+  /* Like that rubber band selection can be done properly on high zoom levels */
+  /* Without margin adjustment it would be almost impossible to start the selection on the left */
+  exo_icon_view_set_margin (exo_icon_view, thunar_zoom_level_to_view_margin (zoom_level));
+
 }
 
 
