@@ -2537,6 +2537,7 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   GtkWidget      *icon;
   ThunarColumn    sort_column;
   GtkSortType     sort_order;
+  gboolean        tree_view = FALSE;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), NULL);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (directory), NULL);
@@ -2547,7 +2548,14 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   if (window->view == NULL)
     g_object_get (G_OBJECT (window->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
   else
-    g_object_get (window->view, "sort-column", &sort_column, "sort-order", &sort_order, NULL);
+    {
+      if (THUNAR_IS_DETAILS_VIEW (window->view))
+        g_object_get (window->view, "tree-view", &tree_view, NULL);
+      g_object_get (window->view, "sort-column", &sort_column, "sort-order", &sort_order, NULL);
+    }
+
+  if (window->view == NULL || !THUNAR_IS_DETAILS_VIEW (window->view))
+    g_object_get (G_OBJECT (window->preferences), "misc-enable-tree-view", &tree_view, NULL);
 
   /* allocate and setup a new view */
   view = g_object_new (view_type, "current-directory", directory,
@@ -2556,6 +2564,9 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   thunar_view_set_show_hidden (THUNAR_VIEW (view), window->show_hidden);
 
   gtk_widget_show (view);
+
+  if (view_type == THUNAR_TYPE_DETAILS_VIEW)
+    g_object_set (view, "tree-view", tree_view, NULL);
 
   /* set the history of the view if a history is provided */
   if (history != NULL)
