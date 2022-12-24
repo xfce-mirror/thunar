@@ -14,9 +14,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: thunar\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-22 12:28+0100\n"
+"POT-Creation-Date: 2022-12-22 12:50+0100\n"
 "PO-Revision-Date: 2022-12-22 11:28+0000\n"
 "Last-Translator: Elishai Eliyahu <elishai@mailfence.com>, 2022\n"
 "Language-Team: Hebrew (https://www.transifex.com/xfce/teams/16840/he/)\n"
@@ -130,7 +130,7 @@ msgstr "מחק את כל הקבצים והתיקיות שבתוך אשפה"
 
 #: ../thunar/thunar-action-manager.c:286
 msgid "_Remove from Recent"
-msgstr ""
+msgstr "_הסר מאחרונים"
 
 #: ../thunar/thunar-action-manager.c:286
 msgid "Remove the selected files from Recent"
@@ -239,7 +239,7 @@ msgstr "_ערוך משגר"
 
 #: ../thunar/thunar-action-manager.c:309
 msgid "Edit the selected launcher"
-msgstr ""
+msgstr "ערוך את המפעיל הנבחר"
 
 #. display an error message to the user
 #. display an error to the user
@@ -269,7 +269,7 @@ msgstr "האם אתה בטוח שברצונך לפתוח את כל התיקיו�
 
 #: ../thunar/thunar-action-manager.c:980
 msgid "Open folders"
-msgstr ""
+msgstr "פתח תיקיות"
 
 #: ../thunar/thunar-action-manager.c:982
 #, c-format
@@ -555,6 +555,8 @@ msgid ""
 "No templates installed in\n"
 "\"%s\""
 msgstr ""
+"לא מותקנות תבניות ב-\n"
+"\"%s\""
 
 #: ../thunar/thunar-action-manager.c:2912
 msgid "_Empty File"
@@ -720,7 +722,7 @@ msgstr[3] ""
 #: ../thunar/thunar-application.c:2418 ../thunar/thunar-dialogs.c:585
 #: ../thunar/thunar-dialogs.c:1060
 msgid "Attention"
-msgstr ""
+msgstr "תשומת לב"
 
 #: ../thunar/thunar-application.c:2425
 msgid "If you delete a file, it is permanently lost."
@@ -748,7 +750,7 @@ msgstr "להסיר את כל הקבצים והתיקיות מתוך האשפה?"
 
 #: ../thunar/thunar-application.c:2617 ../thunar/thunar-window.c:1049
 msgid "Empty Trash"
-msgstr ""
+msgstr "רוקן אשפה"
 
 #: ../thunar/thunar-application.c:2624
 msgid ""
@@ -876,7 +878,7 @@ msgstr "האם אתה בטוח כי ברצונך להסיר את \"%s\"?"
 
 #: ../thunar/thunar-chooser-dialog.c:748
 msgid "Remove application launcher"
-msgstr ""
+msgstr "הסר מפעיל ישום"
 
 #: ../thunar/thunar-chooser-dialog.c:751
 msgid "_Remove"
@@ -905,7 +907,7 @@ msgstr "האם אתה בטוח שברצונך לשכוח את \"%s\"?"
 
 #: ../thunar/thunar-chooser-dialog.c:823
 msgid "Forget application launcher"
-msgstr ""
+msgstr "שכח מפעיל ישום"
 
 #: ../thunar/thunar-chooser-dialog.c:826
 msgid "_Forget"
@@ -1076,12 +1078,12 @@ msgstr "ה_רחב את גדלי העמודות אוטומטית לפי הצור�
 
 #: ../thunar/thunar-column-editor.c:343
 msgid "Size Column of Folders"
-msgstr ""
+msgstr "עמודת גודל של תיקיות"
 
 #. explain what it does
 #: ../thunar/thunar-column-editor.c:356
 msgid "Show number of containing items"
-msgstr ""
+msgstr "הצג מספר של פריטים מכילים"
 
 #. reset page title
 #. tell the user that we're unable to determine the file info
@@ -1464,11 +1466,11 @@ msgstr "שנה שם"
 
 #: ../thunar/thunar-enum-types.c:697
 msgid "Create File"
-msgstr ""
+msgstr "צור קובץ"
 
 #: ../thunar/thunar-enum-types.c:698
 msgid "Create Folder"
-msgstr ""
+msgstr "צור תיקיה"
 
 #: ../thunar/thunar-enum-types.c:699
 msgid "Delete (opposite of create)"
@@ -1503,19 +1505,19 @@ msgstr "אל תרשום פעולות ביומן"
 
 #: ../thunar/thunar-enum-types.c:724
 msgid "Log only timestamps"
-msgstr ""
+msgstr "רשום ביומן רק חותמות זמן"
 
 #: ../thunar/thunar-enum-types.c:743
 msgid "Standalone"
-msgstr ""
+msgstr "עצמאי"
 
 #: ../thunar/thunar-enum-types.c:744
 msgid "Embedded"
-msgstr ""
+msgstr "מוטבע"
 
 #: ../thunar/thunar-enum-types.c:763
 msgid "Only for local files"
-msgstr ""
+msgstr "רק לקבצים מקומיים"
 
 #: ../thunar/thunar-file.c:1085 ../thunar/thunar-gio-extensions.c:480
 #: ../thunar/thunar-shortcuts-model.c:1009 ../thunar/thunar-window.c:533
@@ -1635,7 +1637,7 @@ msgstr "%s על %s"
 #: ../thunar/thunar-gio-extensions.c:673
 #, c-format
 msgid "%s used (%.0f%%)  |  %s free (%.0f%%)"
-msgstr ""
+msgstr "%s בשימוש (%.0f%%)  |  %s חופשי (%.0f%%)"
 
 #: ../thunar/thunar-history.c:297
 msgid "The item will be removed from the history"
@@ -1788,34 +1790,35 @@ msgstr "%sפעולה ניתנת לביטול באופן חלקי בלבד"
 
 #: ../thunar/thunar-job-operation-history.c:404
 msgid "No operation which can be redone available.\n"
-msgstr ""
+msgstr "אף פעולה שניתנת לביצוע נוסף אינה זמינה.\n"
 
 #: ../thunar/thunar-job-operation-history.c:405
 msgid "There is no operation to redo"
-msgstr ""
+msgstr "אין פעולה לביצוע נוסף"
 
 #: ../thunar/thunar-job-operation-history.c:422
 msgid ""
 "The operation you are trying to redo does not have any files associated with"
 " it, and thus cannot be redone. "
 msgstr ""
+"לפעולה שאתה מנסה לבצע שוב אין קבצים משויכים, ולכן אינה ניתנת לביצוע נוסף."
 
 #: ../thunar/thunar-job-operation-history.c:424
 #, c-format
 msgid "%s operation cannot be redone"
-msgstr ""
+msgstr "הפעולה %s אינה ניתנת לביצוע נוסף"
 
 #. one indexed for the dialog
 #: ../thunar/thunar-job-operation-history.c:436
 msgid ""
 "The following files were overwritten in the operation you are trying to redo"
 " and cannot be restored:\n"
-msgstr ""
+msgstr "הקבצים הבאים שוכתבו בפעולה שאתה מנסה לבצע שוב ולא ניתנים לשיחזור:\n"
 
 #: ../thunar/thunar-job-operation-history.c:448
 #, c-format
 msgid "%s operation can only be partially redone"
-msgstr ""
+msgstr "הפעולה %s ניתנת לביצוע נוסף באופן חלקי בלבד"
 
 #: ../thunar/thunar-list-model.c:1007 ../thunar/thunar-list-model.c:1017
 #, c-format
@@ -1922,21 +1925,21 @@ msgstr "קובץ לא קיים"
 
 #: ../thunar/thunar-notify.c:189
 msgid "Undo performed"
-msgstr ""
+msgstr "ביטול בוצע"
 
 #: ../thunar/thunar-notify.c:190
 #, c-format
 msgid "%s operation was undone"
-msgstr ""
+msgstr "הפעולה %s בוטלה"
 
 #: ../thunar/thunar-notify.c:195
 msgid "Redo performed"
-msgstr ""
+msgstr "ביצוע חוזר בוצע"
 
 #: ../thunar/thunar-notify.c:196
 #, c-format
 msgid "%s operation was redone"
-msgstr ""
+msgstr "הפעולה %s בוצעה שוב"
 
 #: ../thunar/thunar-notify.c:280
 msgid "Unmounting device"
@@ -2110,7 +2113,7 @@ msgstr "לתקן הרשאות תיקייה באופן אוטומטי?"
 
 #: ../thunar/thunar-permissions-chooser.c:1169
 msgid "Folder permissions"
-msgstr ""
+msgstr "הרשאות תיקיה"
 
 #: ../thunar/thunar-permissions-chooser.c:1171
 msgid "Correct _folder permissions"
@@ -2413,7 +2416,7 @@ msgstr "_גודל איקון:"
 
 #: ../thunar/thunar-preferences-dialog.c:720 ../thunar/thunar-window.c:513
 msgid "Image Preview"
-msgstr ""
+msgstr "תצוגה מקדימה של תמונה"
 
 #: ../thunar/thunar-preferences-dialog.c:728
 msgid "Show Icon E_mblems"
