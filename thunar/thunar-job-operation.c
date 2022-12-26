@@ -427,7 +427,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
 
         /* perform permanent deletion without warning, because we can bring back the file with
          * an undo or a redo (depending on whether a redo or an undo caused the deletion) */
-        thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE, FALSE);
+        thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE, FALSE, THUNAR_OPERATION_LOG_OPERATIONS);
 
         thunar_g_list_free_full (thunar_file_list);
         break;
