@@ -2576,7 +2576,8 @@ thunar_file_get_content_type_desc (ThunarFile *file)
 {
   const gchar *content_type;
   gchar       *description;
-  gchar       *temp;
+  gchar       *type_text;
+  gchar       *link_text;
 
   /* thunar_file_get_content_type always provides fallback, hence no NULL check needed */
   content_type = thunar_file_get_content_type (file);
@@ -2588,10 +2589,12 @@ thunar_file_get_content_type_desc (ThunarFile *file)
   if (G_UNLIKELY (g_content_type_equals (content_type, "inode/symlink")))
     return g_strdup ("broken link");
 
-  /* append " (link)" to description if link is not broken */
-  temp = g_content_type_get_description (content_type);
-  description = g_strdup_printf ("%s (link)", temp);
-  g_free (temp);
+  /* append " (link to <target>)" to description if link is not broken */
+  type_text = g_content_type_get_description (content_type);
+  link_text = g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (file));
+  description = g_strdup_printf ("%s (%s)", type_text, link_text);
+  g_free (link_text);
+  g_free (type_text);
   return description;
 }
 
