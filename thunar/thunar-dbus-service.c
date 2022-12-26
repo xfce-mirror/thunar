@@ -35,6 +35,7 @@
 #include <libxfce4util/libxfce4util.h>
 
 #include <thunar/thunar-application.h>
+#include <thunar/thunar-preferences.h>
 #include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-dbus-service.h>
 #include <thunar/thunar-file.h>
@@ -871,12 +872,15 @@ thunar_dbus_service_move_to_trash (ThunarDBusTrash        *object,
                                    ThunarDBusService      *dbus_service)
 {
   ThunarApplication *application;
+  ThunarPreferences *preferences;
+  ThunarFile        *thunar_file;
   GFile             *file;
   GdkScreen         *screen;
   GError            *err = NULL;
   GList             *file_list = NULL;
   gchar             *filename;
   guint              n;
+  gboolean           warn;
 
   /* try to open the screen for the display name */
   screen = thunar_gdk_screen_open (display, &err);
@@ -890,9 +894,12 @@ thunar_dbus_service_move_to_trash (ThunarDBusTrash        *object,
           if (G_LIKELY (err == NULL))
             {
               /* determine the path for the filename */
-              /* TODO Not sure this will work as expected */
               file = g_file_new_for_commandline_arg (filename);
-              file_list = thunar_g_list_append_deep (file_list, file);
+              thunar_file = thunar_file_get (file, &err);
+
+              if (thunar_file != NULL)
+                file_list = g_list_append (file_list, thunar_file);
+
               g_object_unref (file);
             }
 
@@ -903,9 +910,14 @@ thunar_dbus_service_move_to_trash (ThunarDBusTrash        *object,
       /* check if we succeed */
       if (G_LIKELY (err == NULL))
         {
+          /* check if the user wants a confirmation before moving to trash */
+          preferences = thunar_preferences_get ();
+          g_object_get (G_OBJECT (preferences), "misc-confirm-move-to-trash", &warn, NULL);
+          g_object_unref (G_OBJECT (preferences));
+          
           /* tell the application to move the specified files to the trash */
           application = thunar_application_get ();
-          thunar_application_trash (application, screen, file_list, THUNAR_OPERATION_LOG_NO_OPERATIONS);
+          thunar_application_unlink_files (application, screen, file_list, FALSE, warn, THUNAR_OPERATION_LOG_NO_OPERATIONS);
           g_object_unref (application);
         }
 
@@ -1506,7 +1518,7 @@ thunar_dbus_service_unlink_files (ThunarDBusFileManager  *object,
         {
           /* tell the application to move the specified files to the trash */
           application = thunar_application_get ();
-          thunar_application_unlink_files (application, screen, file_list, TRUE, TRUE);
+          thunar_application_unlink_files (application, screen, file_list, TRUE, TRUE, THUNAR_OPERATION_LOG_NO_OPERATIONS);
           g_object_unref (application);
         }
 
