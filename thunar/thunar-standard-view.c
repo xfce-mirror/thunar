@@ -4035,8 +4035,8 @@ thunar_standard_view_scrolled (GtkAdjustment      *adjustment,
   if (thunar_view_get_loading (THUNAR_VIEW (standard_view)))
     return;
 
-  /* reschedule a thumbnail request timeout */
-  thunar_standard_view_schedule_thumbnail_timeout (standard_view);
+  /* Try to load thumbnails for files which are now visible */
+  thunar_standard_view_request_thumbnails_real (standard_view, TRUE);
 }
 
 
