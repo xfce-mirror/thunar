@@ -499,6 +499,29 @@ thunar_zoom_level_to_icon_size (ThunarZoomLevel zoom_level)
 
 
 
+gint
+thunar_zoom_level_to_view_margin (ThunarZoomLevel zoom_level)
+{
+  switch (zoom_level)
+    {
+    case THUNAR_ZOOM_LEVEL_25_PERCENT:   return 3;
+    case THUNAR_ZOOM_LEVEL_38_PERCENT:   return 3;
+    case THUNAR_ZOOM_LEVEL_50_PERCENT:   return 3;
+    case THUNAR_ZOOM_LEVEL_75_PERCENT:   return 3;
+    case THUNAR_ZOOM_LEVEL_100_PERCENT:  return 3;
+    case THUNAR_ZOOM_LEVEL_150_PERCENT:  return 5;
+    case THUNAR_ZOOM_LEVEL_200_PERCENT:  return 10;
+    case THUNAR_ZOOM_LEVEL_250_PERCENT:  return 12;
+    case THUNAR_ZOOM_LEVEL_300_PERCENT:  return 15;
+    case THUNAR_ZOOM_LEVEL_400_PERCENT:  return 18;
+    case THUNAR_ZOOM_LEVEL_800_PERCENT:  return 20;
+    case THUNAR_ZOOM_LEVEL_1600_PERCENT: return 40;
+    default:                             return 3;
+    }
+}
+
+
+
 static ThunarThumbnailSize
 thunar_icon_size_to_thumbnail_size (ThunarIconSize icon_size)
 {
