@@ -2480,12 +2480,8 @@ thunar_application_unlink_files (ThunarApplication            *application,
       gtk_widget_destroy (dialog);
       g_free (message);
 
-      /* perform the move to trash operation */
       if (G_LIKELY (response == GTK_RESPONSE_YES))
-        {
-          /* launch the "Move to Trash" operation */
-          thunar_application_trash (application, parent, path_list, log_mode);
-        }
+        thunar_application_trash (application, parent, path_list, log_mode);
     }
   else
     {
