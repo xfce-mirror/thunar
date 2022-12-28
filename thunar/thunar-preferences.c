@@ -127,6 +127,7 @@ enum
   PROP_MISC_COMPACT_VIEW_MAX_CHARS,
   PROP_MISC_HIGHLIGHTING_ENABLED,
   PROP_MISC_UNDO_REDO_HISTORY_SIZE,
+  PROP_MISC_CONFIRM_MOVE_TO_TRASH,
   N_PROPERTIES,
 };
 
@@ -1190,6 +1191,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         10,
                         EXO_PARAM_READWRITE);
 
+  /**
+   * ThunarPreferences:misc-confirm-move-to-trash
+   *
+   * If true enables a confirmation to move files to trash (similar to permanently delete)
+   **/
+  preferences_props[PROP_MISC_CONFIRM_MOVE_TO_TRASH] =
+      g_param_spec_boolean ("misc-confirm-move-to-trash",
+                            "MiscConfirmMoveToTrash",
+                            NULL,
+                            FALSE,
+                            EXO_PARAM_READWRITE);
+      
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
 }
