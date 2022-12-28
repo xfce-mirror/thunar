@@ -1903,7 +1903,8 @@ thunar_show_renamer_dialog (gpointer     parent,
     thunar_renamer_model_append (THUNAR_RENAMER_DIALOG (dialog)->model, lp->data);
 
   /* if there are only directories selected change the mode to both */
-  directories_only = TRUE;
+  directories_only = g_list_length (files) == 0 ? FALSE : TRUE;
+
   for (lp = files; lp != NULL; lp = lp->next)
     if (thunar_file_is_directory (THUNAR_FILE (lp->data)) == FALSE)
       directories_only = FALSE;
