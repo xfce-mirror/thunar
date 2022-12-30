@@ -80,13 +80,6 @@ static gboolean thunar_dbus_service_transfer_files              (ThunarDBusTrans
                                                                  GError                **error);
 static void     thunar_dbus_service_trash_bin_changed           (ThunarDBusService      *dbus_service,
                                                                  ThunarFile             *trash_bin);
-static gboolean thunar_dbus_service_display_chooser_dialog      (ThunarDBusFileManager  *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *uri,
-                                                                 gboolean                open,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
 static gboolean thunar_dbus_service_display_app_chooser_dialog  (ThunarDBusFileManager  *object,
                                                                  GDBusMethodInvocation  *invocation,
                                                                  const gchar            *uri,
@@ -313,7 +306,6 @@ thunar_dbus_service_init (ThunarDBusService *dbus_service)
   dbus_service->file_manager_fdo  = thunar_org_freedesktop_file_manager1_skeleton_new ();
 
   connect_signals_multiple (dbus_service->file_manager, dbus_service,
-                            "handle-display-chooser-dialog", thunar_dbus_service_display_chooser_dialog,
                             "handle-display-application-chooser-dialog", thunar_dbus_service_display_app_chooser_dialog,
                             "handle-display-folder", thunar_dbus_service_display_folder,
                             "handle-display-folder-and-select", thunar_dbus_service_display_folder_and_select,
@@ -442,45 +434,6 @@ thunar_dbus_service_trash_bin_changed (ThunarDBusService *dbus_service,
 
 
 
-/**
- * TODO: Method to be removed after thunar 4.18 got released (dbus call is marked as deprecated). Use thunar_dbus_service_display_app_chooser_dialog instead.
- */
-static gboolean
-thunar_dbus_service_display_chooser_dialog (ThunarDBusFileManager  *object,
-                                            GDBusMethodInvocation  *invocation,
-                                            const gchar            *uri,
-                                            gboolean                open,
-                                            const gchar            *display,
-                                            const gchar            *startup_id,
-                                            ThunarDBusService      *dbus_service)
-{
-  ThunarFile *file;
-  GdkScreen  *screen;
-  GError     *error = NULL;
-
-  /* parse uri and display parameters */
-  if (!thunar_dbus_service_parse_uri_and_display (dbus_service, uri, display, &file, &screen, &error))
-    goto out;
-
-  /* popup the chooser dialog */
-  /* TODO use the startup id! */
-  thunar_show_chooser_dialog (screen, file, open, FALSE);
-
-  /* cleanup */
-  g_object_unref (G_OBJECT (screen));
-  g_object_unref (G_OBJECT (file));
-
-out:
-  if (error)
-    g_dbus_method_invocation_take_error (invocation, error);
-  else
-    thunar_dbus_file_manager_complete_display_chooser_dialog (object, invocation);
-
-  return TRUE;
-}
-
-
-
 static gboolean
 thunar_dbus_service_display_app_chooser_dialog (ThunarDBusFileManager  *object,
                                                 GDBusMethodInvocation  *invocation,
@@ -511,7 +464,7 @@ out:
   if (error)
     g_dbus_method_invocation_take_error (invocation, error);
   else
-    thunar_dbus_file_manager_complete_display_chooser_dialog (object, invocation);
+    thunar_dbus_file_manager_complete_display_application_chooser_dialog (object, invocation);
 
   return TRUE;
 }
