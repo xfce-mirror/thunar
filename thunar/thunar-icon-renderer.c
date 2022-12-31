@@ -490,7 +490,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
   scale_factor = gtk_widget_get_scale_factor (widget);
-  icon = thunar_icon_factory_load_file_icon (icon_factory, icon_renderer->file, icon_state, icon_renderer->size * scale_factor);
+  icon = thunar_icon_factory_load_file_icon (icon_factory, icon_renderer->file, icon_state, icon_renderer->size, scale_factor);
   if (G_UNLIKELY (icon == NULL))
     {
       g_object_unref (G_OBJECT (icon_factory));
@@ -583,7 +583,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
               emblem_size = MIN ((2 * icon_renderer->size) / 3, 32);
 
               /* check if we have the emblem in the icon theme */
-              emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, emblem_size * scale_factor, FALSE);
+              emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, emblem_size, scale_factor, FALSE);
               if (G_UNLIKELY (emblem == NULL))
                 continue;
 
