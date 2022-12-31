@@ -3403,7 +3403,7 @@ thunar_standard_view_drag_begin (GtkWidget          *view,
           /* generate an icon based on that file */
           g_object_get (G_OBJECT (standard_view->icon_renderer), "size", &size, NULL);
           scale_factor = gtk_widget_get_scale_factor (view);
-          icon = thunar_icon_factory_load_file_icon (standard_view->icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, size * scale_factor);
+          icon = thunar_icon_factory_load_file_icon (standard_view->icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, size, scale_factor);
           if (G_LIKELY (icon != NULL))
             {
               surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, gtk_widget_get_window (view));

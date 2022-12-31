@@ -534,11 +534,12 @@ thunar_abstract_icon_view_draw (ExoIconView            *view,
   action_entry = thunar_abstract_icon_view_gesture_action (abstract_icon_view, GTK_TEXT_DIR_NONE);
   if (G_LIKELY (action_entry != NULL))
     {
-      gesture_icon = gtk_icon_theme_load_icon (gtk_icon_theme_get_default(),
-                                               action_entry->menu_item_icon_name,
-                                               32 * scale_factor,
-                                               GTK_ICON_LOOKUP_FORCE_SIZE,
-                                               NULL);
+      gesture_icon = gtk_icon_theme_load_icon_for_scale (gtk_icon_theme_get_default(),
+                                                         action_entry->menu_item_icon_name,
+                                                         32,
+                                                         scale_factor,
+                                                         GTK_ICON_LOOKUP_FORCE_SIZE,
+                                                         NULL);
       /* draw the rendered icon */
       if (G_LIKELY (gesture_icon != NULL))
         {
