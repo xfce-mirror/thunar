@@ -474,7 +474,7 @@ thunar_emblem_chooser_create_button (ThunarEmblemChooser *chooser,
 
   /* lookup the icon info for the emblem */
   scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (chooser));
-  info = gtk_icon_theme_lookup_icon (chooser->icon_theme, emblem, 48 * scale_factor, 0);
+  info = gtk_icon_theme_lookup_icon_for_scale (chooser->icon_theme, emblem, 48, scale_factor, GTK_ICON_LOOKUP_FORCE_SIZE);
   if (G_UNLIKELY (info == NULL))
     return NULL;
 
