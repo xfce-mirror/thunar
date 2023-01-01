@@ -1598,6 +1598,7 @@ thunar_window_finalize (GObject *object)
   g_signal_handlers_disconnect_matched (window->device_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
   g_object_unref (window->device_monitor);
 
+  g_signal_handlers_disconnect_by_data (window->action_mgr, window);
   g_object_unref (window->action_mgr);
 
   if (window->bookmark_file != NULL)
@@ -1621,8 +1622,10 @@ thunar_window_finalize (GObject *object)
   g_object_unref (window->provider_factory);
 
   /* release the preferences reference */
+  g_signal_handlers_disconnect_by_data (window->preferences, window);
   g_object_unref (window->preferences);
 
+  g_signal_handlers_disconnect_by_data (window->thumbnailer, window);
   g_object_unref (window->thumbnailer);
 
   /* disconnect signal from GtkRecentManager */
