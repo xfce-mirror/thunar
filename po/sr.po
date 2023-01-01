@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-18 00:45+0100\n"
+"POT-Creation-Date: 2022-12-28 12:48+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>, 2012-2014,2017-2019,2021-2022\n"
 "Language-Team: Serbian (http://www.transifex.com/xfce/thunar/language/sr/)\n"
@@ -57,7 +57,7 @@ msgid "Open With Other _Application..."
 msgstr "Отвори другим _програмом..."
 
 #: ../thunar/thunar-action-manager.c:273
-#: ../thunar/thunar-action-manager.c:3293
+#: ../thunar/thunar-action-manager.c:3296
 msgid "Choose another application with which to open the selected file"
 msgstr "Изаберите други програм за отварање изабране датотеке"
 
@@ -118,7 +118,7 @@ msgid "_Rename..."
 msgstr "_Преименуј..."
 
 #. prepare the menu item
-#: ../thunar/thunar-action-manager.c:285 ../thunar/thunar-application.c:2620
+#: ../thunar/thunar-action-manager.c:285 ../thunar/thunar-application.c:2661
 #: ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "_Избаци смеће"
@@ -167,7 +167,7 @@ msgstr "_Поврати и прикажи датотеку(е)"
 msgid "Mo_ve to Trash"
 msgstr "_Премести у смеће"
 
-#: ../thunar/thunar-action-manager.c:293 ../thunar/thunar-application.c:2421
+#: ../thunar/thunar-action-manager.c:293 ../thunar/thunar-application.c:2423
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:375
 msgid "_Delete"
 msgstr "_Обриши"
@@ -287,13 +287,14 @@ msgstr[2] "Отвори %d нових прозора"
 #. append the cancel item
 #. add the Cancel/Close buttons
 #. configure the dialog properties
-#: ../thunar/thunar-action-manager.c:986 ../thunar/thunar-application.c:2420
-#: ../thunar/thunar-application.c:2619 ../thunar/thunar-chooser-dialog.c:293
-#: ../thunar/thunar-chooser-dialog.c:750 ../thunar/thunar-chooser-dialog.c:825
-#: ../thunar/thunar-chooser-dialog.c:876 ../thunar/thunar-dialogs.c:98
-#: ../thunar/thunar-dialogs.c:241 ../thunar/thunar-dialogs.c:667
-#: ../thunar/thunar-dialogs.c:781 ../thunar/thunar-dialogs.c:1067
-#: ../thunar/thunar-dnd.c:171 ../thunar/thunar-permissions-chooser.c:559
+#: ../thunar/thunar-action-manager.c:986 ../thunar/thunar-application.c:2422
+#: ../thunar/thunar-application.c:2476 ../thunar/thunar-application.c:2660
+#: ../thunar/thunar-chooser-dialog.c:293 ../thunar/thunar-chooser-dialog.c:750
+#: ../thunar/thunar-chooser-dialog.c:825 ../thunar/thunar-chooser-dialog.c:876
+#: ../thunar/thunar-dialogs.c:98 ../thunar/thunar-dialogs.c:241
+#: ../thunar/thunar-dialogs.c:667 ../thunar/thunar-dialogs.c:781
+#: ../thunar/thunar-dialogs.c:1064 ../thunar/thunar-dnd.c:171
+#: ../thunar/thunar-permissions-chooser.c:559
 #: ../thunar/thunar-permissions-chooser.c:1170
 #: ../thunar/thunar-properties-dialog.c:1102
 #: ../thunar/thunar-renamer-dialog.c:358
@@ -501,57 +502,57 @@ msgid "Failed to rename \"%s\""
 msgstr "Нисам успео да преименујем „%s“"
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-action-manager.c:2620 ../thunar/thunar-application.c:1961
+#: ../thunar/thunar-action-manager.c:2623 ../thunar/thunar-application.c:1961
 msgid "New Folder"
 msgstr "Нова фасцикла"
 
-#: ../thunar/thunar-action-manager.c:2624 ../thunar/thunar-application.c:1962
+#: ../thunar/thunar-action-manager.c:2627 ../thunar/thunar-application.c:1962
 msgid "Create New Folder"
 msgstr "Образује нову фасциклу"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-action-manager.c:2676 ../thunar/thunar-application.c:2026
+#: ../thunar/thunar-action-manager.c:2679 ../thunar/thunar-application.c:2026
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Прави документ на основу обрасца „%s“"
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-action-manager.c:2692
+#: ../thunar/thunar-action-manager.c:2695
 msgid "New Empty File"
 msgstr "Нова празна датотека"
 
-#: ../thunar/thunar-action-manager.c:2696
+#: ../thunar/thunar-action-manager.c:2699
 msgid "New Empty File..."
 msgstr "Нова празна датотека..."
 
-#: ../thunar/thunar-action-manager.c:2899
+#: ../thunar/thunar-action-manager.c:2902
 #, c-format
 msgid ""
 "No templates installed in\n"
 "\"%s\""
 msgstr "Нема уграђених образаца у\n„%s“"
 
-#: ../thunar/thunar-action-manager.c:2912
+#: ../thunar/thunar-action-manager.c:2915
 msgid "_Empty File"
 msgstr "Пра_зна датотека"
 
-#: ../thunar/thunar-action-manager.c:3017
+#: ../thunar/thunar-action-manager.c:3020
 #, c-format
 msgid "Failed to edit launcher via command \"%s\""
 msgstr "Нисам успео да уредим покретача преко наредбе „%s“"
 
-#: ../thunar/thunar-action-manager.c:3056
+#: ../thunar/thunar-action-manager.c:3059
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Нисам успео да избацим „%s“"
 
-#: ../thunar/thunar-action-manager.c:3118
+#: ../thunar/thunar-action-manager.c:3121
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Нисам успео да откачим „%s“"
 
-#: ../thunar/thunar-action-manager.c:3181
-#: ../thunar/thunar-action-manager.c:3252
+#: ../thunar/thunar-action-manager.c:3184
+#: ../thunar/thunar-action-manager.c:3255
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
@@ -559,18 +560,18 @@ msgstr[0] "Користи „%s“ за отварање означене дат
 msgstr[1] "Користи „%s“ за отварање означених датотека"
 msgstr[2] "Користи „%s“ за отварање означених датотека"
 
-#: ../thunar/thunar-action-manager.c:3251
+#: ../thunar/thunar-action-manager.c:3254
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "О_твори помоћу „%s“"
 
 #. we can only show a generic "Open" action
-#: ../thunar/thunar-action-manager.c:3271
+#: ../thunar/thunar-action-manager.c:3274
 #, c-format
 msgid "_Open With Default Applications"
 msgstr "О_твори подразумеваним програмима"
 
-#: ../thunar/thunar-action-manager.c:3272
+#: ../thunar/thunar-action-manager.c:3275
 #, c-format
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
@@ -578,7 +579,7 @@ msgstr[0] "Отвори означену датотеку подразумева
 msgstr[1] "Отвори означене датотеке подразумеваним програмима"
 msgstr[2] "Отвори означене датотеке подразумеваним програмима"
 
-#: ../thunar/thunar-action-manager.c:3292
+#: ../thunar/thunar-action-manager.c:3295
 #: ../thunar/thunar-chooser-dialog.c:187
 msgid "Open With"
 msgstr "Отвори помоћу"
@@ -668,14 +669,14 @@ msgstr "Премештам датотеке у „%s“..."
 msgid "Moving files ..."
 msgstr "Премештање датотека ..."
 
-#: ../thunar/thunar-application.c:2399
+#: ../thunar/thunar-application.c:2401
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr "Да ли заиста желите да трајно\nобришете „%s“?"
 
-#: ../thunar/thunar-application.c:2404
+#: ../thunar/thunar-application.c:2406
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -687,61 +688,84 @@ msgstr[0] "Да ли сигурно желите да трајно\nобрише
 msgstr[1] "Да ли сигурно желите да трајно\nобришете %u изабране датотеке?"
 msgstr[2] "Да ли сигурно желите да трајно\nобришете %u изабраних датотека?"
 
-#: ../thunar/thunar-application.c:2418 ../thunar/thunar-dialogs.c:585
-#: ../thunar/thunar-dialogs.c:1063
+#: ../thunar/thunar-application.c:2420 ../thunar/thunar-application.c:2474
+#: ../thunar/thunar-dialogs.c:585 ../thunar/thunar-dialogs.c:1060
 msgid "Attention"
 msgstr "Пажња"
 
-#: ../thunar/thunar-application.c:2425
+#: ../thunar/thunar-application.c:2427
 msgid "If you delete a file, it is permanently lost."
 msgstr "Уколико обришете датотеку она ће бити заувек изгубљена."
 
-#: ../thunar/thunar-application.c:2435 ../thunar/thunar-application.c:2442
+#: ../thunar/thunar-application.c:2437 ../thunar/thunar-application.c:2444
 msgid "Deleting files..."
 msgstr "Бришем датотеке..."
 
-#: ../thunar/thunar-application.c:2485
+#: ../thunar/thunar-application.c:2455
+#, c-format
+msgid ""
+"Are you sure that you want to\n"
+"move \"%s\" to trash ?"
+msgstr "Да ли сте сигурни да желите\nпреместити „%s“ у смеће?"
+
+#: ../thunar/thunar-application.c:2460
+#, c-format
+msgid ""
+"Are you sure that you want to\n"
+"move the selected file to trash?"
+msgid_plural ""
+"Are you sure that you want to\n"
+"move the %u selected files to trash?"
+msgstr[0] "Да ли сте сигурни да желите\nпреместити %u означену датотеку у смеће?"
+msgstr[1] "Да ли сте сигурни да желите\nпреместити %u означене датотеке у смеће?"
+msgstr[2] "Да ли сте сигурни да желите\nпреместити %u означених датотека у смеће?"
+
+#: ../thunar/thunar-application.c:2477
+msgid "Move to Trash"
+msgstr "Премести у смеће"
+
+#: ../thunar/thunar-application.c:2526
 msgid "Moving files into the trash..."
 msgstr "Премештам датотеке у смеће..."
 
-#: ../thunar/thunar-application.c:2533
+#: ../thunar/thunar-application.c:2574
 msgid "Creating files..."
 msgstr "Образујем датотеке..."
 
-#: ../thunar/thunar-application.c:2574
+#: ../thunar/thunar-application.c:2615
 msgid "Creating directories..."
 msgstr "Образујем фасцикле..."
 
-#: ../thunar/thunar-application.c:2613
+#: ../thunar/thunar-application.c:2654
 msgid "Remove all files and folders from the Trash?"
 msgstr "Да ли да уклоним све ставке из смећа?"
 
-#: ../thunar/thunar-application.c:2617 ../thunar/thunar-window.c:1049
+#: ../thunar/thunar-application.c:2658 ../thunar/thunar-window.c:1049
 msgid "Empty Trash"
 msgstr "_Испразни смеће"
 
-#: ../thunar/thunar-application.c:2624
+#: ../thunar/thunar-application.c:2665
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr "Уколико избаците смеће, све ставке ће бити трајно обрисане. Безбедније је да избаците сваку ставку посебно."
 
-#: ../thunar/thunar-application.c:2641
+#: ../thunar/thunar-application.c:2682
 msgid "Emptying the Trash..."
 msgstr "Празним смеће..."
 
-#: ../thunar/thunar-application.c:2687
+#: ../thunar/thunar-application.c:2728
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "Нисам успео да одредим изворну путању за „%s“"
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:2704
+#: ../thunar/thunar-application.c:2745
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "Нисам успео да повратим „%s“"
 
-#: ../thunar/thunar-application.c:2712
+#: ../thunar/thunar-application.c:2753
 msgid "Restoring files..."
 msgstr "Враћам датотеке..."
 
@@ -1063,34 +1087,34 @@ msgstr "Збијен приказ фасцикли"
 msgid "Compact view"
 msgstr "Збијен приказ"
 
-#: ../thunar/thunar-dbus-service.c:576
+#: ../thunar/thunar-dbus-service.c:577
 #, c-format
 msgid "Invalid filename \"%s\""
 msgstr "Неисправно име датотеке „%s“"
 
 #. LaunchFiles() invoked without a valid working directory
-#: ../thunar/thunar-dbus-service.c:1016
+#: ../thunar/thunar-dbus-service.c:1028
 #, c-format
 msgid "The working directory must be an absolute path"
 msgstr "Радна фасцикла мора бити апсолутна путања"
 
 #. LaunchFiles() invoked with an empty filename list
-#: ../thunar/thunar-dbus-service.c:1024 ../thunar/thunar-dbus-service.c:1463
+#: ../thunar/thunar-dbus-service.c:1036 ../thunar/thunar-dbus-service.c:1475
 #, c-format
 msgid "At least one filename must be specified"
 msgstr "Морате одредити бар једно име датотеке"
 
-#: ../thunar/thunar-dbus-service.c:1199
+#: ../thunar/thunar-dbus-service.c:1211
 #, c-format
 msgid "At least one source filename must be specified"
 msgstr "Морате одредити бар једно изворно име датотеке"
 
-#: ../thunar/thunar-dbus-service.c:1209
+#: ../thunar/thunar-dbus-service.c:1221
 #, c-format
 msgid "The number of source and target filenames must be the same"
 msgstr "Број изворних и циљних датотека мора бити исти"
 
-#: ../thunar/thunar-dbus-service.c:1218
+#: ../thunar/thunar-dbus-service.c:1230
 #, c-format
 msgid "A destination directory must be specified"
 msgstr "Морате одредити циљну фасциклу"
@@ -1282,18 +1306,18 @@ msgstr "следећом фасциклом?"
 msgid "with the following file?"
 msgstr "следећом датотеком?"
 
-#: ../thunar/thunar-dialogs.c:1046
+#: ../thunar/thunar-dialogs.c:1043
 #, c-format
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
 msgstr "Датотека радне површи „%s“ је на месту које није безбедно, и није означена као извршна. Уколико не верујете овом програму, кликните на Одустани."
 
-#: ../thunar/thunar-dialogs.c:1064
+#: ../thunar/thunar-dialogs.c:1061
 msgid "_Launch Anyway"
 msgstr "Ипак _покрени"
 
-#: ../thunar/thunar-dialogs.c:1066
+#: ../thunar/thunar-dialogs.c:1063
 msgid "Mark _Executable"
 msgstr "Означи датотеку извршном"
 
@@ -1512,6 +1536,11 @@ msgstr "Није унето „URL“ поље"
 #: ../thunar/thunar-file.c:1712
 msgid "Invalid desktop file"
 msgstr "Неисправна датотека радне површи"
+
+#: ../thunar/thunar-file.c:2594 ../thunar/thunar-list-model.c:3346
+#, c-format
+msgid "link to %s"
+msgstr "веза до %s"
 
 #. Implementation specific
 #: ../thunar/thunar-gio-extensions.c:51
@@ -1823,11 +1852,6 @@ msgstr "„%s“"
 #: ../thunar/thunar-list-model.c:3344
 msgid "broken link"
 msgstr "неисправна веза"
-
-#: ../thunar/thunar-list-model.c:3346
-#, c-format
-msgid "link to %s"
-msgstr "веза до %s"
 
 #: ../thunar/thunar-list-model.c:3348
 msgid "shortcut"
@@ -3272,7 +3296,7 @@ msgstr "По_дразумевани распоред"
 msgid "Comparing checksums..."
 msgstr "Упоређујем збирове..."
 
-#: ../thunar/thunar-transfer-job.c:1122
+#: ../thunar/thunar-transfer-job.c:1134
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
@@ -3280,45 +3304,45 @@ msgid ""
 msgstr "Грешка приликом умножавања на „%s“: %s простора више је потребно за умножавање на одредиште"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1156
+#: ../thunar/thunar-transfer-job.c:1168
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Покушавам да вратим „%s“"
 
-#: ../thunar/thunar-transfer-job.c:1185
+#: ../thunar/thunar-transfer-job.c:1197
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "Више не постоји фасцикла „%s“ која је неопходна за враћање датотеке „%s“ из смећа"
 
-#: ../thunar/thunar-transfer-job.c:1212
+#: ../thunar/thunar-transfer-job.c:1224
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Нисам успео да вратим фасциклу „%s“"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1293
+#: ../thunar/thunar-transfer-job.c:1305
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Покушавам да преместим „%s“"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1382
+#: ../thunar/thunar-transfer-job.c:1394
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "Нисам успео да преместим „%s“ директно. Прикупљам датотеке за умножавање..."
 
-#: ../thunar/thunar-transfer-job.c:1607
+#: ../thunar/thunar-transfer-job.c:1619
 msgid "Collecting files..."
 msgstr "Прикупљам датотеке..."
 
-#: ../thunar/thunar-transfer-job.c:1827
+#: ../thunar/thunar-transfer-job.c:1839
 #, c-format
 msgid "%s of %s"
 msgstr "%s од %s"
 
-#: ../thunar/thunar-transfer-job.c:1847
+#: ../thunar/thunar-transfer-job.c:1859
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
@@ -3326,7 +3350,7 @@ msgstr[0] "Преостаје још %lu сат (%s/sec)"
 msgstr[1] "Преостају још %lu сата (%s/sec)"
 msgstr[2] "Преостаје још %lu сати (%s/sec)"
 
-#: ../thunar/thunar-transfer-job.c:1855
+#: ../thunar/thunar-transfer-job.c:1867
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
@@ -3334,7 +3358,7 @@ msgstr[0] "Преостаје још %lu минут (%s/sec)"
 msgstr[1] "Преостаје још %lu минута (%s/sec)"
 msgstr[2] "Преостаје још %lu минута (%s/sec)"
 
-#: ../thunar/thunar-transfer-job.c:1862
+#: ../thunar/thunar-transfer-job.c:1874
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
@@ -3876,7 +3900,7 @@ msgstr "Тунар је брз и лаган разгледач датотека
 msgid "Failed to launch search with Catfish"
 msgstr "Нисам успео да покренем претрагу Сомом"
 
-#: ../thunar/thunar-window.c:6082
+#: ../thunar/thunar-window.c:6083
 msgid "Location Bar"
 msgstr "Трака места"
 
