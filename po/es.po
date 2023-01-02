@@ -10,15 +10,16 @@
 # Casper, 2022
 # Xfce Bot <transifex@xfce.org>, 2022
 # Toni Estévez <toni.estevez@gmail.com>, 2022
+# Joel Barrios <darkshram@gmail.com>, 2023
 # 
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: thunar\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-22 12:28+0100\n"
+"POT-Creation-Date: 2022-12-22 12:50+0100\n"
 "PO-Revision-Date: 2022-12-22 11:28+0000\n"
-"Last-Translator: Toni Estévez <toni.estevez@gmail.com>, 2022\n"
+"Last-Translator: Joel Barrios <darkshram@gmail.com>, 2023\n"
 "Language-Team: Spanish (https://www.transifex.com/xfce/teams/16840/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -262,9 +263,9 @@ msgstr "No se ha podido abrir el archivo «%s»"
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Error al abrir %d archivo"
+msgstr[1] "Error al abrir %d archivos"
+msgstr[2] "Error al abrir %d archivos"
 
 #: ../thunar/thunar-action-manager.c:979
 msgid "Are you sure you want to open all folders?"
@@ -278,17 +279,17 @@ msgstr "Abrir carpetas"
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Ésto abrirá %d ventana separada del gestor de archivos."
+msgstr[1] "Ésto abrirá %d ventanas separadas del gestor de archivos."
+msgstr[2] "Ésto abrirá %d ventanas separadas del gestor de archivos."
 
 #: ../thunar/thunar-action-manager.c:985
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Abrir %d Nueva Ventana"
+msgstr[1] "Abrir %d Nuevas Ventanas"
+msgstr[2] "Abrir %d Nuevas Ventanas"
 
 #. add the "Cancel" button
 #. append the cancel item
@@ -344,9 +345,9 @@ msgstr "_Abrir"
 #: ../thunar/thunar-action-manager.c:1549
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Abrir el archivo seleccionado"
+msgstr[1] "Abrir los archivos seleccionados"
+msgstr[2] "Abrir los archivos seleccionados"
 
 #: ../thunar/thunar-action-manager.c:1553
 msgid "_Execute"
@@ -355,9 +356,9 @@ msgstr "Ejec_utar"
 #: ../thunar/thunar-action-manager.c:1553
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Ejecutar el archivo seleccionado"
+msgstr[1] "Ejecutar los archivos seleccionados"
+msgstr[2] "Ejecutar los archivos seleccionados"
 
 #: ../thunar/thunar-action-manager.c:1558
 #, c-format
@@ -371,9 +372,9 @@ msgstr[2] ""
 #, c-format
 msgid "Open the selected directory in new tab"
 msgid_plural "Open the selected directories in %d new tabs"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Abrir el directorio seleccionado en una nueva pestaña"
+msgstr[1] "Abrir los directorios seleccionados en %d nuevas pestañas"
+msgstr[2] "Abrir los directorios seleccionados en %d nuevas pestañas"
 
 #: ../thunar/thunar-action-manager.c:1568
 #, c-format
@@ -394,23 +395,23 @@ msgstr[2] ""
 #: ../thunar/thunar-action-manager.c:1614
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Crear un enlace simbólico para el archivo seleccionado"
+msgstr[1] "Crear un enlace simbólico para cada archivo seleccionado"
+msgstr[2] "Crear un enlace simbólico para cada archivo seleccionado"
 
 #: ../thunar/thunar-action-manager.c:1644
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Renombrar archivo seleccionado"
+msgstr[1] "Renombrar archivos seleccionados"
+msgstr[2] "Renombrar archivos seleccionados"
 
 #: ../thunar/thunar-action-manager.c:1654
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Restaurar el archivo seleccionado a su ubicación original"
+msgstr[1] "Restaurar los archivos seleccionados a su ubicación original"
+msgstr[2] "Restaurar los archivos seleccionados a su ubicación original"
 
 #: ../thunar/thunar-action-manager.c:1666
 msgid ""
@@ -420,22 +421,28 @@ msgid_plural ""
 "Restore the selected files to their original locations and open the "
 "locations in a new window/tab"
 msgstr[0] ""
+"Restaurar el archivo seleccionado a su ubicación original y abra la "
+"ubicación en una nueva ventana/pestaña"
 msgstr[1] ""
+"Restaurar los archivos seleccionados a sus ubicaciones originales y abra las"
+" ubicaciones en una nueva ventana/pestaña"
 msgstr[2] ""
+"Restaurar los archivos seleccionados a sus ubicaciones originales y abra las"
+" ubicaciones en una nueva ventana/pestaña"
 
 #: ../thunar/thunar-action-manager.c:1683
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Mover el archivo seleccionado a la Papelera"
+msgstr[1] "Mover los archivos seleccionados a la Papelera"
+msgstr[2] "Mover los archivos seleccionados a la Papelera"
 
 #: ../thunar/thunar-action-manager.c:1700
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Eliminar permanentemente el archivo seleccionado"
+msgstr[1] "Eliminar permanentemente los archivos seleccionados"
+msgstr[2] "Eliminar permanentemente los archivos seleccionados"
 
 #: ../thunar/thunar-action-manager.c:1759
 msgid "Cut the selection"
@@ -444,9 +451,11 @@ msgstr "Cortar la selección"
 #: ../thunar/thunar-action-manager.c:1769
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
-msgstr[0] ""
+msgstr[0] "Preparar el archivo seleccionado para moverlo con un comando Pegar"
 msgstr[1] ""
+"Preparar los archivos seleccionados para moverlos con un comando Pegar"
 msgstr[2] ""
+"Preparar los archivos seleccionados para moverlos con un comando Pegar"
 
 #: ../thunar/thunar-action-manager.c:1783
 msgid "Copy the selection"
@@ -456,8 +465,11 @@ msgstr "Copiar la selección"
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] ""
+"Preparar el archivo seleccionado para copiarlo con un comando Pegar"
 msgstr[1] ""
+"Preparar los archivos seleccionados para copiarlos con un comando Pegar"
 msgstr[2] ""
+"Preparar los archivos seleccionados para copiarlos con un comando Pegar"
 
 #: ../thunar/thunar-action-manager.c:1816
 msgid "Paste the clipboard"
@@ -466,30 +478,33 @@ msgstr "Pegar el portapapeles"
 #: ../thunar/thunar-action-manager.c:2057
 msgid "Side Pane (Add Bookmark)"
 msgid_plural "Side Pane (Add Bookmarks)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Panel lateral (Agregar marcador)"
+msgstr[1] "Panel lateral (Agregar marcadores)"
+msgstr[2] "Panel lateral (Agregar marcadores)"
 
 #: ../thunar/thunar-action-manager.c:2058
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] ""
+"Agregar la carpeta seleccionada al panel lateral de accesos directos"
 msgstr[1] ""
+"Agregar las carpetas seleccionadas al panel lateral de accesos directos"
 msgstr[2] ""
+"Agregar las carpetas seleccionadas al panel lateral de accesos directos"
 
 #: ../thunar/thunar-action-manager.c:2077
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Escritorio (Crear enlace)"
+msgstr[1] "Escritorio (Crear enlaces)"
+msgstr[2] "Escritorio (Crear enlaces)"
 
 #: ../thunar/thunar-action-manager.c:2078
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Crear enlace hacia el archivo seleccionado en el escritorio"
+msgstr[1] "Crear enlaces hacia los archivos seleccionados en el escritorio"
+msgstr[2] "Crear enlaces hacia los archivos seleccionados en el escritorio"
 
 #: ../thunar/thunar-action-manager.c:2099
 #: ../thunar/thunar-action-manager.c:2137
@@ -1840,9 +1855,9 @@ msgstr "La operación %s solo se puede rehacer parcialmente"
 #, c-format
 msgid "%u item"
 msgid_plural "%u items"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%u elemento"
+msgstr[1] "%u elementos"
+msgstr[2] "%u elementos"
 
 #: ../thunar/thunar-list-model.c:3195
 #, c-format
@@ -1864,9 +1879,9 @@ msgstr[2] ""
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%d carpeta"
+msgstr[1] "%d carpetas"
+msgstr[2] "%d carpetas"
 
 #: ../thunar/thunar-list-model.c:3212
 #, c-format
@@ -2994,16 +3009,18 @@ msgstr ""
 #: ../thunar/thunar-renamer-dialog.c:872
 msgid "Remove File"
 msgid_plural "Remove Files"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Eliminar archivo"
+msgstr[1] "Eliminar archivos"
+msgstr[2] "Eliminar archivos"
 
 #: ../thunar/thunar-renamer-dialog.c:873
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
-msgstr[0] ""
+msgstr[0] "Quitar el archivo seleccionado de la lista de archivos a renombrar"
 msgstr[1] ""
+"Quitar los archivos seleccionados de la lista de archivos a renombrar"
 msgstr[2] ""
+"Quitar los archivos seleccionados de la lista de archivos a renombrar"
 
 #. tell the user that we failed
 #: ../thunar/thunar-renamer-dialog.c:969
@@ -3096,9 +3113,9 @@ msgstr "La papelera está vacía"
 #, c-format
 msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Papelera contiene %d archivo"
+msgstr[1] "Papelera contiene %d archivos"
+msgstr[2] "Papelera contiene %d archivos"
 
 #: ../thunar/thunar-shortcuts-model.c:1003
 msgid "Devices"
@@ -4295,9 +4312,9 @@ msgstr "Tipo de imagen:"
 #, c-format
 msgid "%dx%d pixel"
 msgid_plural "%dx%d pixels"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%dx%d pixel"
+msgstr[1] "%dx%d pixeles"
+msgstr[2] "%dx%d pixeles"
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:117
 msgid "Con_vert to:"
@@ -4540,9 +4557,9 @@ msgstr ""
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "¿Enviar %d archivo como archivo comprimido?"
+msgstr[1] "¿Enviar %d archivos como archivo comprimido?"
+msgstr[2] "¿Enviar %d archivos como archivo comprimido?"
 
 #: ../plugins/thunar-sendto-email/main.c:245
 msgid "Send as _archive"
@@ -4588,9 +4605,9 @@ msgstr "No se ha podido crear el enlace simbólico para «%s»"
 #, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Error al comprimir %d archivo"
+msgstr[1] "Error al comprimir %d archivos"
+msgstr[2] "Error al comprimir %d archivos"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:693
