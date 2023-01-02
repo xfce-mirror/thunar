@@ -1160,7 +1160,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscCompactViewMaxChars",
                         NULL,
                         G_MININT, G_MAXINT,
-                        50,
+                        100,
                         EXO_PARAM_READWRITE);
 
   /**
