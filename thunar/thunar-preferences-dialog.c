@@ -985,8 +985,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
       grid = gtk_grid_new ();
       gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
-      gtk_grid_set_row_spacing (GTK_GRID (grid), 2);
-      gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
+      gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+      gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
+      gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
       gtk_container_add (GTK_CONTAINER (frame), grid);
       gtk_widget_show (grid);
 
