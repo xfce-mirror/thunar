@@ -1301,9 +1301,12 @@ thunar_standard_view_unrealize (GtkWidget *widget)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (widget);
 
+  /* Disconnect from methods which make use of the icon factory */
+  g_signal_handlers_disconnect_by_func (G_OBJECT (standard_view->model), thunar_standard_view_row_changed, standard_view);
+  g_signal_handlers_disconnect_by_func (G_OBJECT (standard_view->preferences), thunar_standard_view_highlight_option_changed, standard_view);
+  g_signal_handlers_disconnect_by_data (G_OBJECT (standard_view->icon_factory), standard_view);
+
   /* drop the reference on the icon factory */
-  g_signal_handlers_disconnect_by_func (G_OBJECT (standard_view->icon_factory), gtk_widget_queue_draw, standard_view);
-  g_signal_handlers_disconnect_by_func (standard_view->preferences, thunar_standard_view_highlight_option_changed, standard_view);
   g_object_unref (G_OBJECT (standard_view->icon_factory));
   standard_view->icon_factory = NULL;
 
