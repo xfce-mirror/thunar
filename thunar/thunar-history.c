@@ -523,11 +523,13 @@ thunar_history_show_menu (ThunarHistory         *history,
 {
   ThunarIconFactory *icon_factory;
   GtkIconTheme      *icon_theme;
+  gint               scale_factor;
   GCallback          handler;
   GtkWidget         *image;
   GtkWidget         *menu;
   GtkWidget         *item;
   GdkPixbuf         *icon;
+  cairo_surface_t   *surface;
   GSList            *lp;
   ThunarFile        *file;
   const gchar       *display_name;
@@ -542,6 +544,7 @@ thunar_history_show_menu (ThunarHistory         *history,
   /* determine the icon factory to use to load the icons */
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (parent));
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
+  scale_factor = gtk_widget_get_scale_factor (parent);
 
   /* check if we have "Back" or "Forward" here */
   if (type == THUNAR_HISTORY_MENU_BACK)
@@ -566,12 +569,14 @@ thunar_history_show_menu (ThunarHistory         *history,
       if (file != NULL)
         {
           /* load the icon for the file */
-          icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, 16);
+          icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, 16, scale_factor);
           if (icon != NULL)
             {
               /* setup the image for the file */
-              image = gtk_image_new_from_pixbuf (icon);
+              surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, NULL);
+              image = gtk_image_new_from_surface (surface);
               g_object_unref (G_OBJECT (icon));
+              cairo_surface_destroy (surface);
             }
 
           g_object_unref (file);
