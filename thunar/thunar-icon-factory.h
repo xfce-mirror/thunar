@@ -47,12 +47,14 @@ gboolean               thunar_icon_factory_get_show_thumbnail (const ThunarIconF
 GdkPixbuf             *thunar_icon_factory_load_icon          (ThunarIconFactory        *factory,
                                                                const gchar              *name,
                                                                gint                      size,
+                                                               gint                      scale_factor,
                                                                gboolean                  wants_default);
 
 GdkPixbuf             *thunar_icon_factory_load_file_icon     (ThunarIconFactory        *factory,
                                                                ThunarFile               *file,
                                                                ThunarFileIconState       icon_state,
-                                                               gint                      icon_size);
+                                                               gint                      icon_size,
+                                                               gint                      scale_factor);
 
 void                   thunar_icon_factory_clear_pixmap_cache (ThunarFile               *file);
 

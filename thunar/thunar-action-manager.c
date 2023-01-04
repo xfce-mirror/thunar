@@ -2781,6 +2781,7 @@ thunar_action_manager_create_document_submenu_templates (ThunarActionManager *ac
   ThunarIconFactory *icon_factory;
   ThunarFile        *file;
   GdkPixbuf         *icon;
+  cairo_surface_t   *surface;
   GtkWidget         *parent_menu;
   GtkWidget         *submenu;
   GtkWidget         *image;
@@ -2788,6 +2789,7 @@ thunar_action_manager_create_document_submenu_templates (ThunarActionManager *ac
   GList             *lp;
   GList             *dirs = NULL;
   GList             *items = NULL;
+  gint               scale_factor;
 
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
@@ -2797,6 +2799,7 @@ thunar_action_manager_create_document_submenu_templates (ThunarActionManager *ac
 
   /* get the icon factory */
   icon_factory = thunar_icon_factory_get_default ();
+  scale_factor = gtk_widget_get_scale_factor (create_file_submenu);
 
   /* sort items so that directories come before files and ancestors come
    * before descendants */
@@ -2812,10 +2815,15 @@ thunar_action_manager_create_document_submenu_templates (ThunarActionManager *ac
         parent_menu = create_file_submenu;
 
       /* determine the icon for this file/directory */
-      icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, 16);
+      icon = thunar_icon_factory_load_file_icon (icon_factory,
+                                                 file,
+                                                 THUNAR_FILE_ICON_STATE_DEFAULT,
+                                                 16,
+                                                 scale_factor);
+      surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, NULL);
 
       /* allocate an image based on the icon */
-      image = gtk_image_new_from_pixbuf (icon);
+      image = gtk_image_new_from_surface (surface);
 
       item = xfce_gtk_image_menu_item_new (thunar_file_get_display_name (file), NULL, NULL, NULL, NULL, image, GTK_MENU_SHELL (parent_menu));
       if (thunar_file_is_directory (file))
@@ -2836,8 +2844,10 @@ thunar_action_manager_create_document_submenu_templates (ThunarActionManager *ac
           g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_action_manager_action_create_document), action_mgr);
           g_object_set_qdata_full (G_OBJECT (item), thunar_action_manager_file_quark, g_object_ref (file), g_object_unref);
         }
+
       /* release the icon reference */
       g_object_unref (icon);
+      cairo_surface_destroy (surface);
     }
 
   /* destroy lists */
