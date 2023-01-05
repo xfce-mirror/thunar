@@ -47,15 +47,19 @@
 
 
 static void          thunar_dialogs_select_filename      (GtkWidget *entry);
-static void          thunar_dialogs_shrink               (GtkWidget *dialog);
+static void          thunar_dialogs_shrink_height        (GtkWidget *dialog);
 
 
 
 static void
-thunar_dialogs_shrink (GtkWidget *dialog)
+thunar_dialogs_shrink_height (GtkWidget *dialog)
 {
-  /* Shrinks the dialog to it's minimum size */
-  gtk_window_resize (GTK_WINDOW (dialog), 1, 1);
+  gint width;
+  gint height;
+
+  /* Shrinks the dialog to it's minimum height */
+  gtk_window_get_size (GTK_WINDOW (dialog), &width, &height);
+  gtk_window_resize (GTK_WINDOW (dialog), width, 1);
 }
 
 
@@ -150,7 +154,6 @@ thunar_dialogs_show_create (gpointer     parent,
                             gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
   g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (xfce_filename_input_sensitise_widget),
                             gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
-  g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (thunar_dialogs_shrink), dialog);
 
   /* next row */
   row++;
@@ -172,6 +175,9 @@ thunar_dialogs_show_create (gpointer     parent,
   if (window != NULL)
     gtk_window_set_transient_for (GTK_WINDOW (dialog), window);
 
+  /* shrink the dialog again, after some filename error was fixed */
+  g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (thunar_dialogs_shrink_height), dialog);
+ 
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
     {
       /* determine the chosen filename */
@@ -299,8 +305,7 @@ thunar_dialogs_show_rename_file (gpointer               parent,
                             gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
   g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (xfce_filename_input_sensitise_widget),
                             gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
-  g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (thunar_dialogs_shrink), dialog);
-                            
+                          
                             /* next row */
   row++;
 
@@ -339,6 +344,9 @@ thunar_dialogs_show_rename_file (gpointer               parent,
   g_signal_connect_swapped (G_OBJECT (file), "destroy",
                             G_CALLBACK (gtk_widget_destroy), dialog);
 
+  /* shrink the dialog again, after some filename error was fixed */
+  g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (thunar_dialogs_shrink_height), dialog);
+ 
   /* run the dialog */
   response = gtk_dialog_run (GTK_DIALOG (dialog));
   if (G_LIKELY (response == GTK_RESPONSE_OK))
