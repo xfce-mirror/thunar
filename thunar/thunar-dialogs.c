@@ -47,6 +47,16 @@
 
 
 static void          thunar_dialogs_select_filename      (GtkWidget *entry);
+static void          thunar_dialogs_shrink               (GtkWidget *dialog);
+
+
+
+static void
+thunar_dialogs_shrink (GtkWidget *dialog)
+{
+  /* Shrinks the dialog to it's minimum size */
+  gtk_window_resize (GTK_WINDOW (dialog), 1, 1);
+}
 
 
 
@@ -120,6 +130,7 @@ thunar_dialogs_show_create (gpointer     parent,
       image = g_object_new (GTK_TYPE_IMAGE, "xpad", 6, "ypad", 6, NULL);
       gtk_image_set_from_gicon (GTK_IMAGE (image), icon, GTK_ICON_SIZE_DIALOG);
       gtk_grid_attach (GTK_GRID (grid), image, 0, row, 1, 2);
+      gtk_widget_set_valign (GTK_WIDGET (image), GTK_ALIGN_START);
       g_object_unref (icon);
       gtk_widget_show (image);
     }
@@ -139,6 +150,7 @@ thunar_dialogs_show_create (gpointer     parent,
                             gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
   g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (xfce_filename_input_sensitise_widget),
                             gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
+  g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (thunar_dialogs_shrink), dialog);
 
   /* next row */
   row++;
@@ -181,15 +193,6 @@ thunar_dialogs_show_create (gpointer     parent,
   gtk_widget_destroy (dialog);
 
   return name;
-}
-
-
-
-static void
-thunar_dialogs_shrink (GtkWidget *dialog)
-{
-  /* Shrinks the dialog to it's minimum size */
-  gtk_window_resize (GTK_WINDOW (dialog), 1, 1);
 }
 
 
