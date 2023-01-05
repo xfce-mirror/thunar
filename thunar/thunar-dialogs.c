@@ -185,6 +185,15 @@ thunar_dialogs_show_create (gpointer     parent,
 
 
 
+static void
+thunar_dialogs_shrink (GtkWidget *dialog)
+{
+  /* Shrinks the dialog to it's minimum size */
+  gtk_window_resize (GTK_WINDOW (dialog), 1, 1);
+}
+
+
+
 /**
  * thunar_dialogs_show_rename_file:
  * @parent : a #GtkWidget on which the error dialog should be shown, or a #GdkScreen
@@ -261,10 +270,11 @@ thunar_dialogs_show_rename_file (gpointer               parent,
   g_object_unref (G_OBJECT (icon_factory));
 
   image = gtk_image_new_from_pixbuf (icon);
-  gtk_widget_set_margin_start (GTK_WIDGET(image), 6);
-  gtk_widget_set_margin_end (GTK_WIDGET(image), 6);
-  gtk_widget_set_margin_top (GTK_WIDGET(image), 6);
-  gtk_widget_set_margin_bottom (GTK_WIDGET(image), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (image), 6);
+  gtk_widget_set_margin_end (GTK_WIDGET (image), 6);
+  gtk_widget_set_margin_top (GTK_WIDGET (image), 6);
+  gtk_widget_set_margin_bottom (GTK_WIDGET (image), 6);
+  gtk_widget_set_valign (GTK_WIDGET (image), GTK_ALIGN_START);
   gtk_grid_attach (GTK_GRID (grid), image, 0, row, 1, 2);
   g_object_unref (G_OBJECT (icon));
   gtk_widget_show (image);
@@ -286,8 +296,9 @@ thunar_dialogs_show_rename_file (gpointer               parent,
                             gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
   g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (xfce_filename_input_sensitise_widget),
                             gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
-
-  /* next row */
+  g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (thunar_dialogs_shrink), dialog);
+                            
+                            /* next row */
   row++;
 
   gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (filename_input), 1, row, 1, 1);
