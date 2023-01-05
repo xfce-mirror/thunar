@@ -322,6 +322,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   dialog->icon_image = thunar_image_new ();
   gtk_box_pack_start (GTK_BOX (dialog->single_box), dialog->icon_image, FALSE, TRUE, 0);
+  gtk_widget_set_valign (GTK_WIDGET (dialog->icon_image), GTK_ALIGN_START);
   gtk_widget_show (dialog->icon_image);
 
   label = gtk_label_new_with_mnemonic (_("_Name:"));
