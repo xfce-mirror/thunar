@@ -1162,3 +1162,62 @@ static void thunar_dialogs_select_filename (GtkWidget *entry)
   if (G_LIKELY (offset > 0))
     gtk_editable_select_region (GTK_EDITABLE (entry), 0, offset);
 }
+
+
+
+/**
+ * thunar_dialog_confirm_close_split_view_tabs:
+ * @parent              : (allow-none): transient parent of the dialog, or %NULL.
+ *
+ * Runs a dialog to ask the user whether they want to close a split pane with multiple tabs
+ *
+ * Return value: #GTK_RESPONSE_CANCEL if cancelled, #GTK_RESPONSE_CLOSE if the user
+ * wants to close all tabs of the other split pane
+ */
+gint
+thunar_dialog_confirm_close_split_pane_tabs (GtkWindow *parent)
+{
+  GtkWidget         *dialog, *checkbutton, *vbox;
+  const gchar       *primary_text, *warning_icon;
+  gchar             *secondary_text;
+  ThunarPreferences *preferences;
+  gint               response;
+
+  g_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), GTK_RESPONSE_NONE);
+
+  primary_text = _("Close split pane with multiple tabs?");
+  secondary_text = g_strdup (_("The other split pane has multiple open tabs. Closing it "
+                                "will close all these tabs."));
+
+  warning_icon = "dialog-warning";
+
+  dialog = xfce_message_dialog_new (parent,
+                                    _("Warning"),
+                                    warning_icon,
+                                    primary_text,
+                                    secondary_text,
+                                    XFCE_BUTTON_TYPE_MIXED, NULL, _("_Cancel"), GTK_RESPONSE_CANCEL,
+                                    XFCE_BUTTON_TYPE_MIXED, NULL, _("Close Pane"), GTK_RESPONSE_CLOSE,
+                                    NULL);
+
+  checkbutton = gtk_check_button_new_with_mnemonic (_("Do _not ask me again"));
+  vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+  gtk_box_pack_end (GTK_BOX (vbox), checkbutton, FALSE, FALSE, 5);
+  g_object_set (G_OBJECT (checkbutton), "halign", GTK_ALIGN_END, "margin-start", 6, "margin-end", 6, NULL);
+  gtk_widget_set_hexpand (checkbutton, TRUE);
+
+  gtk_widget_show_all (dialog);
+  response = gtk_dialog_run (GTK_DIALOG (dialog));
+
+  /* if the user requested not to be asked again, store this preference */
+  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton)))
+    {
+      preferences = thunar_preferences_get ();
+      g_object_set (G_OBJECT (preferences), "misc-confirm-close-multiple-tabs", FALSE, NULL);
+      g_object_unref (G_OBJECT (preferences));
+    }
+    
+  gtk_widget_destroy (dialog);
+  g_free (secondary_text);
+  return response;
+}

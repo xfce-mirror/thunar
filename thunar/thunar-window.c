@@ -3612,16 +3612,24 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
 
   if (thunar_window_split_view_is_active (window))
     {
+      GtkWidget* notebook_to_close = window->notebook_selected == window->notebook_left ? window->notebook_right : window->notebook_left;
+      gint       tabs_to_close = gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook_to_close));
+
+      if (tabs_to_close > 1)
+      {
+        gboolean confirm_close_multiple_tabs;
+        g_object_get (G_OBJECT (window->preferences),
+                      "misc-confirm-close-multiple-tabs", &confirm_close_multiple_tabs,
+                      NULL);
+        if (confirm_close_multiple_tabs && thunar_dialog_confirm_close_split_pane_tabs (GTK_WINDOW (window)) == GTK_RESPONSE_CANCEL)
+          return TRUE;
+      }
+        
+      gtk_widget_destroy (notebook_to_close);
       if (window->notebook_selected == window->notebook_left)
-        {
-          gtk_widget_destroy (window->notebook_right);
-          window->notebook_right = NULL;
-        }
+        window->notebook_right = NULL;
       else if (window->notebook_selected == window->notebook_right)
-        {
-          gtk_widget_destroy (window->notebook_left);
-          window->notebook_left = NULL;
-        }
+        window->notebook_left = NULL;
       gtk_notebook_set_show_border (GTK_NOTEBOOK (window->notebook_selected), FALSE);
     }
   else
