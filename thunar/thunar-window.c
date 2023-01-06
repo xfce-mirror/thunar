@@ -2749,6 +2749,8 @@ thunar_window_paned_notebooks_indicate_focus (ThunarWindow *window,
 
   if (notebook == window->notebook_right)
     gtk_notebook_set_show_border (GTK_NOTEBOOK (window->notebook_left), FALSE);
+
+  gtk_widget_grab_focus (notebook);
 }
 
 
@@ -3612,25 +3614,20 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
     {
       if (window->notebook_selected == window->notebook_left)
         {
-          /** without split view, no VISUAL selection indicator needed:
-           *  so missuse indicate_focus() to remove VISUAL selection indicator of
-           *  the remaining notebook.
-           **/
-          thunar_window_paned_notebooks_indicate_focus (window, window->notebook_right);
           gtk_widget_destroy (window->notebook_right);
           window->notebook_right = NULL;
         }
       else if (window->notebook_selected == window->notebook_right)
         {
-          thunar_window_paned_notebooks_indicate_focus (window, window->notebook_left);
           gtk_widget_destroy (window->notebook_left);
           window->notebook_left = NULL;
         }
+      gtk_notebook_set_show_border (GTK_NOTEBOOK (window->notebook_selected), FALSE);
     }
   else
     {
+      GtkWidget* old_notebook = window->notebook_selected;
       window->notebook_selected = thunar_window_paned_notebooks_add (window);
-      thunar_window_paned_notebooks_indicate_focus (window, window->notebook_selected);
       directory = thunar_window_get_current_directory (window);
 
       /* save the history of the current view */
@@ -3653,6 +3650,10 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
         }
 
       gtk_paned_set_position (GTK_PANED (window->paned_notebooks), last_splitview_separator_position);
+  
+      /* Keep focus on the old notebook */
+      thunar_window_paned_notebooks_indicate_focus (window, old_notebook);
+
       g_signal_connect_swapped (window->paned, "accept-position", G_CALLBACK (thunar_window_save_paned_notebooks), window);
       g_signal_connect_swapped (window->paned, "button-release-event", G_CALLBACK (thunar_window_save_paned_notebooks), window);
     }
