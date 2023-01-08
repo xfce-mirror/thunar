@@ -82,7 +82,8 @@ static GtkWidget   *thunar_location_bar_install_widget             (ThunarLocati
 static void         thunar_location_bar_settings_changed           (ThunarLocationBar    *bar);
 static void         thunar_location_bar_on_enry_edit_done          (ThunarLocationEntry  *entry,
                                                                     ThunarLocationBar    *bar);
-
+static void         thunar_location_bar_request_temp_entry         (ThunarLocationBar    *bar,
+                                                                    const gchar          *initial_text);
 
 
 G_DEFINE_TYPE_WITH_CODE (ThunarLocationBar, thunar_location_bar, GTK_TYPE_BIN,
@@ -275,7 +276,7 @@ thunar_location_bar_install_widget (ThunarLocationBar    *bar,
         {
           bar->locationButtons = gtk_widget_new (THUNAR_TYPE_LOCATION_BUTTONS, "current-directory", NULL, NULL);
           g_object_ref (bar->locationButtons);
-          g_signal_connect_swapped (bar->locationButtons, "entry-requested", G_CALLBACK (thunar_location_bar_request_entry), bar);
+          g_signal_connect_swapped (bar->locationButtons, "entry-requested", G_CALLBACK (thunar_location_bar_request_temp_entry), bar);
           g_signal_connect_swapped (bar->locationButtons, "change-directory", G_CALLBACK (thunar_navigator_change_directory), THUNAR_NAVIGATOR (bar));
           g_signal_connect_swapped (bar->locationButtons, "open-new-tab", G_CALLBACK (thunar_navigator_open_new_tab), THUNAR_NAVIGATOR (bar));
         }
@@ -307,11 +308,21 @@ thunar_location_bar_on_enry_edit_done (ThunarLocationEntry *entry,
 
 
 
+static void
+thunar_location_bar_request_temp_entry (ThunarLocationBar *bar,
+                                        const gchar       *initial_text)
+{
+  thunar_location_bar_request_entry (bar, initial_text, TRUE);
+}
+
+
+
 /**
  * thunar_location_bar_request_entry
  * @bar          : The #ThunarLocationBar
  * @initial_text : The initial text to be placed inside the entry, or NULL to
  *                 use the path of the current directory.
+ * @temporary_till_focus_lost : Revert to the previous location bar style when focus got lost
  *
  * Makes the location bar display an entry with the given text and places the cursor
  * accordingly. If the currently displayed location widget is a path bar, it will be
@@ -320,7 +331,8 @@ thunar_location_bar_on_enry_edit_done (ThunarLocationEntry *entry,
  */
 void
 thunar_location_bar_request_entry (ThunarLocationBar *bar,
-                                   const gchar       *initial_text)
+                                   const gchar       *initial_text,
+                                   gboolean           temporary_till_focus_lost)
 {
   GtkWidget *child;
 
@@ -340,7 +352,11 @@ thunar_location_bar_request_entry (ThunarLocationBar *bar,
       thunar_location_entry_accept_focus (THUNAR_LOCATION_ENTRY (child), initial_text);
     }
 
-  g_signal_connect (child, "edit-done", G_CALLBACK (thunar_location_bar_on_enry_edit_done), bar);
+  if (temporary_till_focus_lost)
+    {
+      thunar_location_entry_enable_edit_done_once (THUNAR_LOCATION_ENTRY (child));
+      g_signal_connect (child, "edit-done", G_CALLBACK (thunar_location_bar_on_enry_edit_done), bar);
+    }
 }
 
 
@@ -379,6 +395,9 @@ thunar_location_bar_cancel_search (ThunarLocationBar *bar)
 {
   if (bar->locationEntry != NULL)
     thunar_location_entry_cancel_search (THUNAR_LOCATION_ENTRY (bar->locationEntry));
+  
+  /* Recover the previous location bar style (BUTTONS/ENTRY) after search is done */
+  thunar_location_bar_settings_changed (bar);
 }
 
 

@@ -3215,7 +3215,7 @@ thunar_window_start_open_location (ThunarWindow *window,
 
       /* temporary show the location toolbar, even if it is normally hidden */
       gtk_widget_show (window->location_toolbar);
-      thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
+      thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text, FALSE);
 
       thunar_window_update_search (window);
       window->is_searching = TRUE;
@@ -3227,11 +3227,19 @@ thunar_window_start_open_location (ThunarWindow *window,
     }
   else /* location edit */
     {
+      gchar *last_location_bar = NULL;
+      gboolean temporary_till_focus_lost = FALSE;
+
+      g_object_get (window->preferences, "last-location-bar", &last_location_bar, NULL);
+      if (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)) == 0)
+        temporary_till_focus_lost = TRUE;
+      g_free (last_location_bar);
+
       thunar_window_action_cancel_search (window);
 
       /* temporary show the location toolbar, even if it is normally hidden */
       gtk_widget_show (window->location_toolbar);
-      thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
+      thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text, temporary_till_focus_lost);
     }
 }
 
@@ -3251,7 +3259,7 @@ thunar_window_resume_search (ThunarWindow *window,
 
   /* temporary show the location toolbar, even if it is normally hidden */
   gtk_widget_show (window->location_toolbar);
-  thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
+  thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text, FALSE);
 
   /* change to search UI and options */
   g_free (window->search_query);
@@ -3676,6 +3684,8 @@ thunar_window_action_locationbar_entry (ThunarWindow *window)
   entry_checked = (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_ENTRY)) == 0);
   g_free (last_location_bar);
 
+  thunar_window_action_cancel_search (window);
+
   if (entry_checked)
     g_object_set (window->preferences, "last-location-bar", g_type_name (G_TYPE_NONE), NULL);
   else
@@ -3698,6 +3708,8 @@ thunar_window_action_locationbar_buttons (ThunarWindow *window)
   g_object_get (window->preferences, "last-location-bar", &last_location_bar, NULL);
   buttons_checked = (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)) == 0);
   g_free (last_location_bar);
+
+  thunar_window_action_cancel_search (window);
 
   if (buttons_checked)
     g_object_set (window->preferences, "last-location-bar", g_type_name (G_TYPE_NONE), NULL);
