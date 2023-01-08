@@ -94,7 +94,6 @@ struct _ThunarLocationEntry
   GtkWidget    *path_entry;
 
   gboolean      right_click_occurred;
-  gboolean      is_searching;
 };
 
 
@@ -285,18 +284,6 @@ thunar_location_entry_accept_focus (ThunarLocationEntry *location_entry,
   /* give the keyboard focus to the path entry */
   gtk_widget_grab_focus (location_entry->path_entry);
 
-  /* setup search if the initial_text signifies a search operation, otherwise setup location editing */
-  location_entry->is_searching = (initial_text != NULL && thunar_util_is_a_search_query (initial_text) == TRUE);
-  if (location_entry->is_searching)
-    {
-      g_signal_handlers_disconnect_by_func (location_entry->path_entry, G_CALLBACK (thunar_location_entry_emit_edit_done), location_entry);
-    }
-  else
-    {
-      /* make sure the edit-done signal is emitted upon moving the focus somewhere else */
-      g_signal_connect_swapped (location_entry->path_entry, "focus-out-event", G_CALLBACK (thunar_location_entry_emit_edit_done), location_entry);
-    }
-
   /* check if we have an initial text for the location bar */
   if (G_LIKELY (initial_text != NULL))
     {
@@ -446,12 +433,27 @@ thunar_location_entry_reset (ThunarLocationEntry *location_entry)
 
 
 
+/**
+ * thunar_location_entry_enable_edit_done_once:
+ * @entry: The #ThunarLocationEntry
+ *
+ * Request to emit the 'edit done' once, whenever the focus on the widget got lost
+ */
+void
+thunar_location_entry_enable_edit_done_once (ThunarLocationEntry *location_entry)
+{
+  g_signal_connect_swapped (location_entry->path_entry, "focus-out-event", G_CALLBACK (thunar_location_entry_emit_edit_done), location_entry);
+}
+
+
+
 static void
 thunar_location_entry_emit_edit_done (ThunarLocationEntry *entry)
 {
-  /* do not emit the signal if the context menu was opened or a search is active */
-  if (entry->right_click_occurred == FALSE && entry->is_searching == FALSE)
+  /* do not emit the signal if the context menu was opened */
+  if (entry->right_click_occurred == FALSE)
     {
+      g_signal_handlers_disconnect_by_func (entry->path_entry, G_CALLBACK (thunar_location_entry_emit_edit_done), entry);
       g_signal_emit_by_name (entry, "edit-done");
     }
 
@@ -469,7 +471,6 @@ thunar_location_entry_emit_edit_done (ThunarLocationEntry *entry)
 void
 thunar_location_entry_cancel_search (ThunarLocationEntry *entry)
 {
-  entry->is_searching = FALSE;
   entry->right_click_occurred = FALSE;
   thunar_location_entry_emit_edit_done (entry);
 

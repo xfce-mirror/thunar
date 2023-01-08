@@ -33,14 +33,13 @@ typedef struct _ThunarLocationBar      ThunarLocationBar;
 #define THUNAR_LOCATION_BAR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_LOCATION_BAR, ThunarLocationBarClass))
 
 
-GType      thunar_location_bar_get_type      (void) G_GNUC_CONST;
+GType      thunar_location_bar_get_type         (void) G_GNUC_CONST;
 
-GtkWidget *thunar_location_bar_new           (void);
-
-void       thunar_location_bar_request_entry (ThunarLocationBar *bar, const gchar *initial_text);
-
-void       thunar_location_bar_cancel_search (ThunarLocationBar *bar);
-
+GtkWidget *thunar_location_bar_new              (void);
+void       thunar_location_bar_request_entry    (ThunarLocationBar *bar,
+                                                 const gchar       *initial_text,
+                                                 gboolean           temporary_till_focus_lost);
+void       thunar_location_bar_cancel_search    (ThunarLocationBar *bar);
 gchar*     thunar_location_bar_get_search_query (ThunarLocationBar *entry);
 
 G_END_DECLS;
