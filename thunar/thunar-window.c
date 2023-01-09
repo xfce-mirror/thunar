@@ -2211,6 +2211,10 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
 
   gtk_widget_grab_focus (page);
 
+  /* Set trash infobar's `empty trash` button sensitivity, if required */
+  if (thunar_file_is_trash (window->current_directory))
+    gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_item_count (window->current_directory) > 0);
+
   /* if the view has an ongoing search operation take that into account, otherwise cancel the current search (if there is one) */
   if (thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (page)) != NULL)
     {
@@ -4865,8 +4869,9 @@ thunar_window_notify_loading (ThunarView   *view,
           gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (window)), NULL);
         }
 
-      /* Set trash infobar's `empty trash` button sensitivity */
-      gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_item_count (window->current_directory) > 0);
+      /* Set trash infobar's `empty trash` button sensitivity, if required */
+      if (thunar_file_is_trash (window->current_directory))
+        gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_item_count (window->current_directory) > 0);
     }
 }
 
