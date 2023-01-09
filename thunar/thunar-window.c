@@ -2211,6 +2211,10 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
 
   gtk_widget_grab_focus (page);
 
+  /* Set trash infobar's `empty trash` button sensitivity, if required */
+  if (thunar_file_is_trash (window->current_directory))
+    gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_item_count (window->current_directory) > 0);
+
   /* if the view has an ongoing search operation take that into account, otherwise cancel the current search (if there is one) */
   if (thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (page)) != NULL)
     {
@@ -3624,7 +3628,7 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
       gint       tabs_to_close = gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook_to_close));
 
       if (tabs_to_close > 1)
-      {
+        {
         gboolean confirm_close_multiple_tabs;
         g_object_get (G_OBJECT (window->preferences),
                       "misc-confirm-close-multiple-tabs", &confirm_close_multiple_tabs,
@@ -3635,9 +3639,9 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
         
       gtk_widget_destroy (notebook_to_close);
       if (window->notebook_selected == window->notebook_left)
-        window->notebook_right = NULL;
+          window->notebook_right = NULL;
       else if (window->notebook_selected == window->notebook_right)
-        window->notebook_left = NULL;
+          window->notebook_left = NULL;
       gtk_notebook_set_show_border (GTK_NOTEBOOK (window->notebook_selected), FALSE);
     }
   else
@@ -4873,8 +4877,9 @@ thunar_window_notify_loading (ThunarView   *view,
           gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (window)), NULL);
         }
 
-      /* Set trash infobar's `empty trash` button sensitivity */
-      gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_item_count (window->current_directory) > 0);
+      /* Set trash infobar's `empty trash` button sensitivity, if required */
+      if (thunar_file_is_trash (window->current_directory))
+        gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_item_count (window->current_directory) > 0);
     }
 }
 
