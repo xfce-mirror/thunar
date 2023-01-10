@@ -657,7 +657,7 @@ ttj_copy_file (ThunarTransferJob  *job,
     }
   else
     {
-      if (add_to_operation && thunar_job_get_log_mode (THUNAR_JOB (job)) == THUNAR_OPERATION_LOG_OPERATIONS)
+      if (operation != NULL && add_to_operation)
         {
           if (copy_flags & G_FILE_COPY_OVERWRITE)
             thunar_job_operation_overwrite (operation, target_file);
@@ -1276,7 +1276,7 @@ thunar_transfer_job_move_file_with_rename (ExoJob             *job,
         continue;
 
       /* Log the operation if the move and rename were successful and logging is enabled */
-      if (thunar_job_get_log_mode (THUNAR_JOB (job)) == THUNAR_OPERATION_LOG_OPERATIONS)
+      if (operation != NULL)
         thunar_job_operation_add (operation, node->source_file, renamed_file);
 
       return move_rename_successful;
@@ -1325,7 +1325,7 @@ thunar_transfer_job_move_file (ExoJob                *job,
                                          exo_job_get_cancellable (job),
                                          NULL, NULL, error);
 
-          if (move_successful && thunar_job_get_log_mode (THUNAR_JOB (job)) == THUNAR_OPERATION_LOG_OPERATIONS)
+          if (operation != NULL && move_successful)
             {
               thunar_job_operation_overwrite (operation, tp->data);
               thunar_job_operation_add (operation, node->source_file, tp->data);
@@ -1354,7 +1354,7 @@ thunar_transfer_job_move_file (ExoJob                *job,
     }
   else
     {
-      if (thunar_job_get_log_mode (THUNAR_JOB (job)) == THUNAR_OPERATION_LOG_OPERATIONS)
+      if (operation != NULL)
         thunar_job_operation_add (operation, node->source_file, tp->data);
     }
 
@@ -1607,7 +1607,6 @@ thunar_transfer_job_execute (ExoJob  *job,
   GList                *sp;
   GList                *tnext;
   GList                *tp;
-  gboolean              log_operations;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -1624,12 +1623,14 @@ thunar_transfer_job_execute (ExoJob  *job,
 
   /* whether or not we want to log operations to the undo list */
   if (thunar_job_get_log_mode (THUNAR_JOB (transfer_job)) == THUNAR_OPERATION_LOG_OPERATIONS)
-    log_operations = TRUE;
-  else
-    log_operations = FALSE;
-
-  if (log_operations && transfer_job->type == THUNAR_TRANSFER_JOB_MOVE)
-    operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_MOVE);
+    {
+      if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE)
+        operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_MOVE);
+      else if (transfer_job->type == THUNAR_TRANSFER_JOB_COPY)
+        operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_COPY);
+      else
+        operation = NULL;
+    }
 
   for (sp = transfer_job->source_node_list, tp = transfer_job->target_file_list;
        sp != NULL && tp != NULL && err == NULL;
@@ -1692,20 +1693,21 @@ thunar_transfer_job_execute (ExoJob  *job,
           if (err != NULL)
             {
               g_propagate_error (error, err);
+              if (operation != NULL)
+                g_object_unref (operation);
               return FALSE;
             }
           else
             {
               /* pretend nothing happened */
+              if (operation != NULL)
+                g_object_unref (operation);
               return TRUE;
             }
         }
 
       /* transfer starts now */
       transfer_job->start_time = g_get_real_time ();
-
-      if (log_operations && transfer_job->type == THUNAR_TRANSFER_JOB_COPY)
-        operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_COPY);
 
       /* perform the copy recursively for all source transfer nodes */
       for (sp = transfer_job->source_node_list, tp = transfer_job->target_file_list;
@@ -1721,6 +1723,8 @@ thunar_transfer_job_execute (ExoJob  *job,
   if (G_UNLIKELY (err != NULL))
     {
       g_propagate_error (error, err);
+      if (operation != NULL)
+        g_object_unref (operation);
       return FALSE;
     }
   else
@@ -1730,7 +1734,7 @@ thunar_transfer_job_execute (ExoJob  *job,
 
       /* Note that we only created a new thunar job operation of the appropriate kind (move or copy)
        * in a mutually exclusive way, so we know that only one operation was created. */
-      if (log_operations)
+      if (operation != NULL)
         {
           thunar_job_operation_history_commit (operation);
           g_object_unref (operation);
