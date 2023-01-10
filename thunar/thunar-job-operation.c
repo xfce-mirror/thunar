@@ -729,3 +729,20 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation  *operation,
 
   g_hash_table_unref (files_trashed);
 }
+
+/**
+ * thunar_job_operation_get_source_files_count:
+ * @job_operation: a #ThunarJobOperation
+ *
+ * Returns the number of source files in this operation
+ **/
+guint
+thunar_job_operation_get_source_files_count (ThunarJobOperation *job_operation)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_JOB_OPERATION (job_operation), TRUE);
+
+  if (job_operation->source_file_list == NULL)
+    return 0;
+  
+  return g_list_length(job_operation->source_file_list);
+}
