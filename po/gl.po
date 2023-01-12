@@ -5,16 +5,16 @@
 # 
 # Translators:
 # Xfce Bot <transifex@xfce.org>, 2021
-# Daniel Muñiz Fontoira <dani@damufo.eu>, 2021
+# Daniel Muñiz Fontoira <dani@damufo.eu>, 2023
 # 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-15 00:45+0200\n"
+"POT-Creation-Date: 2022-11-28 14:59+0100\n"
 "PO-Revision-Date: 2020-12-28 17:42+0000\n"
-"Last-Translator: Daniel Muñiz Fontoira <dani@damufo.eu>, 2021\n"
+"Last-Translator: Daniel Muñiz Fontoira <dani@damufo.eu>, 2023\n"
 "Language-Team: Galician (https://www.transifex.com/xfce/teams/16840/gl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -132,7 +132,7 @@ msgstr "Non se puido iniciar a operación"
 #: ../thunar/thunar-application.c:1507 ../thunar/thunar-application.c:1667
 #: ../thunar/thunar-location-entry.c:366 ../thunar/thunar-location-entry.c:394
 #: ../thunar/thunar-shortcuts-view.c:1706
-#: ../thunar/thunar-shortcuts-view.c:1734 ../thunar/thunar-window.c:2426
+#: ../thunar/thunar-shortcuts-view.c:1734 ../thunar/thunar-window.c:2440
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Non se puido abrir «%s»"
@@ -358,7 +358,7 @@ msgstr "Usar de xeito predeterminado para este tipo de ficheiro"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:291
 #: ../thunar/thunar-chooser-dialog.c:1173
-#: ../thunar/thunar-properties-dialog.c:828 ../thunar/thunar-window.c:3171
+#: ../thunar/thunar-properties-dialog.c:828 ../thunar/thunar-window.c:3185
 #: ../plugins/thunar-uca/thunar-uca-editor.c:142
 #: ../plugins/thunar-uca/thunar-uca-editor.c:435
 msgid "_OK"
@@ -490,7 +490,7 @@ msgstr "Outras aplicacións"
 #: ../thunar/thunar-chooser-model.c:406
 #, c-format
 msgid "Failed to remove \"%s\"."
-msgstr "Produciuse un fallo ao retirar «%s»"
+msgstr "Produciuse un fallo ao retirar «%s»."
 
 #. tell the user that we cannot paste
 #: ../thunar/thunar-clipboard-manager.c:354
@@ -685,7 +685,7 @@ msgstr ""
 "Leandro Regueiro <leandro.regueiro@gmail.com>, 2008, 2009, 2010.\n"
 "Xosé <xosecalvo@gmail.com>, 2015\n"
 "\n"
-"Proxecto Trasno http://trasno.net"
+"Proxecto Trasno https://trasno.gal"
 
 #: ../thunar/thunar-dialogs.c:582 ../thunar/thunar-permissions-chooser.c:537
 msgid "_Yes"
@@ -902,12 +902,12 @@ msgid "File Name"
 msgstr "Nome de ficheiro"
 
 #: ../thunar/thunar-file.c:1058 ../thunar/thunar-gio-extensions.c:289
-#: ../thunar/thunar-shortcuts-model.c:1108 ../thunar.desktop.in.in.h:7
+#: ../thunar/thunar-shortcuts-model.c:1125 ../thunar.desktop.in.in.h:7
 msgid "Trash"
-msgstr "Papeleira"
+msgstr "Enviar ao lixo"
 
 #: ../thunar/thunar-file.c:1065 ../thunar/thunar-gio-extensions.c:287
-#: ../thunar/thunar-shortcuts-model.c:990 ../thunar/thunar-window.c:400
+#: ../thunar/thunar-shortcuts-model.c:1007 ../thunar/thunar-window.c:400
 msgid "File System"
 msgstr "Sistema de ficheiros"
 
@@ -952,7 +952,7 @@ msgid "%s on %s"
 msgstr "%s en %s"
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:480
+#: ../thunar/thunar-gio-extensions.c:481
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr "%s de %s libre (%d%% usado)"
@@ -1913,7 +1913,7 @@ msgstr "Panel de atallos"
 
 #: ../thunar/thunar-preferences-dialog.c:545
 msgid "_Icon Size:"
-msgstr "Tamaño das _iconas"
+msgstr "Tamaño das _iconas:"
 
 #: ../thunar/thunar-preferences-dialog.c:550
 #: ../thunar/thunar-preferences-dialog.c:598
@@ -1985,7 +1985,7 @@ msgstr "Panel arborescente"
 
 #: ../thunar/thunar-preferences-dialog.c:593
 msgid "Icon _Size:"
-msgstr "Tamaño das _iconas"
+msgstr "Tamaño das _iconas:"
 
 #: ../thunar/thunar-preferences-dialog.c:616
 msgid "Show Icon E_mblems"
@@ -2462,62 +2462,62 @@ msgid ""
 msgstr ""
 "Desexa omitir este ficheiro e continuar a renomear os ficheiros restantes?"
 
-#: ../thunar/thunar-shortcuts-model.c:627
-#: ../thunar/thunar-shortcuts-model.c:991 ../thunar/thunar-window.c:400
+#: ../thunar/thunar-shortcuts-model.c:644
+#: ../thunar/thunar-shortcuts-model.c:1008 ../thunar/thunar-window.c:400
 msgid "Browse the file system"
 msgstr "Explorar o sistema de ficheiros"
 
-#: ../thunar/thunar-shortcuts-model.c:661
+#: ../thunar/thunar-shortcuts-model.c:678
 #, c-format
 msgid "Mount and open %s (%s)"
 msgstr "Montar e abrir %s (%s)"
 
-#: ../thunar/thunar-shortcuts-model.c:674
+#: ../thunar/thunar-shortcuts-model.c:691
 #: ../plugins/thunar-tpa/thunar-tpa.c:284
 msgid "Trash is empty"
 msgstr "A papeleira está baleira"
 
-#: ../thunar/thunar-shortcuts-model.c:678
+#: ../thunar/thunar-shortcuts-model.c:695
 #, c-format
 msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
 msgstr[0] "O lixo contén %d ficheiro"
 msgstr[1] "A papeleira contén %d ficheiros"
 
-#: ../thunar/thunar-shortcuts-model.c:984
+#: ../thunar/thunar-shortcuts-model.c:1001
 msgid "Devices"
 msgstr "Dispositivo"
 
-#: ../thunar/thunar-shortcuts-model.c:1027
+#: ../thunar/thunar-shortcuts-model.c:1044
 msgid "Network"
 msgstr "Rede"
 
-#: ../thunar/thunar-shortcuts-model.c:1035
+#: ../thunar/thunar-shortcuts-model.c:1052
 msgid "Browse Network"
 msgstr "Explorar a rede"
 
-#: ../thunar/thunar-shortcuts-model.c:1036 ../thunar/thunar-window.c:410
+#: ../thunar/thunar-shortcuts-model.c:1053 ../thunar/thunar-window.c:410
 msgid "Browse local network connections"
 msgstr "Explorar as conexións da rede local"
 
-#: ../thunar/thunar-shortcuts-model.c:1058
+#: ../thunar/thunar-shortcuts-model.c:1075
 msgid "Places"
 msgstr "Lugares"
 
-#: ../thunar/thunar-shortcuts-model.c:1070
+#: ../thunar/thunar-shortcuts-model.c:1087
 msgid "Open the home folder"
 msgstr "Abrir o cartafol persoal"
 
-#: ../thunar/thunar-shortcuts-model.c:1087
+#: ../thunar/thunar-shortcuts-model.c:1104
 msgid "Open the desktop folder"
 msgstr "Abrir o cartafol do escritorio"
 
-#: ../thunar/thunar-shortcuts-model.c:1134 ../thunar/thunar-window.c:401
+#: ../thunar/thunar-shortcuts-model.c:1151 ../thunar/thunar-window.c:401
 #: ../thunar/thunar-window.c:404 ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr "Computador"
 
-#: ../thunar/thunar-shortcuts-model.c:1135
+#: ../thunar/thunar-shortcuts-model.c:1152
 msgid "Browse the computer"
 msgstr "Navegar polo computador"
 
@@ -2616,7 +2616,7 @@ msgid "Loading folder contents..."
 msgstr "Cargando o contido do cartafol..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2000 ../thunar/thunar-window.c:2993
+#: ../thunar/thunar-standard-view.c:2000 ../thunar/thunar-window.c:3007
 msgid "Failed to open the home folder"
 msgstr "Non se puido abrir o cartafol persoal"
 
@@ -2648,7 +2648,7 @@ msgstr "O nome do ficheiro proporcionado polo sitio XDS é incorrecto"
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Non se puido crear unha ligazón ao URL «%s»"
 
-#: ../thunar/thunar-standard-view.c:3037 ../thunar/thunar-window.c:3087
+#: ../thunar/thunar-standard-view.c:3037 ../thunar/thunar-window.c:3101
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Non se puido abrir o directorio «%s»"
@@ -3080,47 +3080,47 @@ msgstr "Cambiar á lapela seguinte"
 #. add the label with the root warning
 #: ../thunar/thunar-window.c:742
 msgid "Warning: you are using the root account. You may harm your system."
-msgstr "Aviso: está a usar a conta root. Pode prexudicar o seu sistema"
+msgstr "Aviso: está a usar a conta root. Pode prexudicar o seu sistema."
 
-#: ../thunar/thunar-window.c:2010
+#: ../thunar/thunar-window.c:2024
 msgid "Close tab"
 msgstr "Pechar a lapela"
 
-#: ../thunar/thunar-window.c:2254
+#: ../thunar/thunar-window.c:2268
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Abrir a localización «%s»"
 
-#: ../thunar/thunar-window.c:2400
+#: ../thunar/thunar-window.c:2414
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Non se puido iniciar «%s»"
 
-#: ../thunar/thunar-window.c:2942
+#: ../thunar/thunar-window.c:2956
 msgid "Failed to open parent folder"
 msgstr "Non se puido abrir o cartafol superior"
 
-#: ../thunar/thunar-window.c:3062
+#: ../thunar/thunar-window.c:3076
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
-msgstr "Non existe o cartafol «%s». Desexa crealo? "
+msgstr "Non existe o cartafol «%s». Desexa crealo?"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3129
+#: ../thunar/thunar-window.c:3143
 msgid "Failed to browse the computer"
 msgstr "Produciuse un fallo ao explorar o computador"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:3169
+#: ../thunar/thunar-window.c:3183
 msgid "About Templates"
 msgstr "Sobre os modelos"
 
-#: ../thunar/thunar-window.c:3191
+#: ../thunar/thunar-window.c:3205
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 "Todos os ficheiros deste cartafol aparecerán no menú «Crear documento»."
 
-#: ../thunar/thunar-window.c:3198
+#: ../thunar/thunar-window.c:3212
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
@@ -3130,26 +3130,26 @@ msgstr ""
 "\n"
 "Logo pode seleccionar a entrada no menú «Crear documento» e crearase unha copia do documento no directorio no que estea situado."
 
-#: ../thunar/thunar-window.c:3210
+#: ../thunar/thunar-window.c:3224
 msgid "Do _not display this message again"
 msgstr "_Non amosar esta mensaxe de novo"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3241
+#: ../thunar/thunar-window.c:3255
 msgid "Failed to open the file system root folder"
 msgstr "Produciuse un fallo ao abrir o cartafol raíz do sistema de ficheiros"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3274
+#: ../thunar/thunar-window.c:3288
 msgid "Failed to display the contents of the trash can"
 msgstr "Non se puido amosar o contido da papeleira"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3307
+#: ../thunar/thunar-window.c:3321
 msgid "Failed to browse the network"
 msgstr "Produciuse un fallo ao explorar a rede"
 
-#: ../thunar/thunar-window.c:3411
+#: ../thunar/thunar-window.c:3425
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -3275,12 +3275,12 @@ msgstr "Iniciador"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:368
 msgid "Link"
-msgstr "Ligazón"
+msgstr "Ligar"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:610
 #, c-format
 msgid "Failed to save \"%s\"."
-msgstr "Non se puido gardar «%s»"
+msgstr "Non se puido gardar «%s»."
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:47
 msgid "Date Taken:"
@@ -3796,7 +3796,7 @@ msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:10
 msgid "Keyboard _Shortcut:"
-msgstr "_Atallo de teclado"
+msgstr "_Atallo de teclado:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:11
 msgid "The keyboard shortcut for the action."
@@ -4039,4 +4039,4 @@ msgstr "Executar Thunar como superusuario"
 
 #: ../org.xfce.thunar.policy.in.in.h:7
 msgid "Authentication is required to run Thunar as root."
-msgstr "Requírese autenticación para executar Thunar como administrador"
+msgstr "Requírese autenticación para executar Thunar como administrador."
