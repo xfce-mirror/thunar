@@ -199,10 +199,6 @@ thunarx_provider_factory_create_modules (ThunarxProviderFactory *factory)
                   /* allocate the new module and add it to our lists */
                   module = thunarx_provider_module_new (name);
                   thunarx_provider_modules = g_list_prepend (thunarx_provider_modules, module);
-                  if (thunarx_provider_plugin_get_resident (THUNARX_PROVIDER_PLUGIN (module)))
-                      thunarx_persistent_provider_modules = g_list_prepend (thunarx_persistent_provider_modules, module);
-                  else
-                      thunarx_volatile_provider_modules = g_list_prepend (thunarx_volatile_provider_modules, module);
                 }
             }
 
@@ -313,16 +309,24 @@ thunarx_provider_factory_list_providers (ThunarxProviderFactory *factory,
     {
       thunarx_provider_factory_create_modules (factory);
 
-      /* Persistent modules are loaded only once */
-      for (lp = thunarx_persistent_provider_modules; lp != NULL; lp = lp->next)
-        g_type_module_use (G_TYPE_MODULE (lp->data));
+      /* On the first call, we need to load all modules once, since only when loaded, we can tell if they are persistent or volatile */
+      for (lp = thunarx_provider_modules; lp != NULL; lp = lp->next)
+        {
+          g_type_module_use (G_TYPE_MODULE (lp->data));
+          if (thunarx_provider_plugin_get_resident (THUNARX_PROVIDER_PLUGIN (lp->data)))
+              thunarx_persistent_provider_modules = g_list_prepend (thunarx_persistent_provider_modules, lp->data);
+          else
+              thunarx_volatile_provider_modules = g_list_prepend (thunarx_volatile_provider_modules, lp->data);
+        }
 
       thunarx_provider_modules_created = TRUE;
     }
-
-  /* volatile modules are reloaded on each call */
-  for (lp = thunarx_volatile_provider_modules; lp != NULL; lp = lp->next)
-    g_type_module_use (G_TYPE_MODULE (lp->data));
+  else
+    {
+      /* volatile modules are reloaded on each call */
+      for (lp = thunarx_volatile_provider_modules; lp != NULL; lp = lp->next)
+        g_type_module_use (G_TYPE_MODULE (lp->data));
+    }
 
   if (factory->initialized == FALSE)
     {
