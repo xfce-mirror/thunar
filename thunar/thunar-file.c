@@ -3561,9 +3561,16 @@ thunar_file_get_file_count (ThunarFile   *file,
   /* set up a job to actually enumerate over the folder's contents and get its file count */
   job = thunar_io_jobs_count_files (file);
 
-  /* set up the signal on finish to call the callback */
+  /* set up the signal on finish to call the callback and keep a reference on the data */
   if (callback != NULL)
-    g_signal_connect (job, "finished", G_CALLBACK (callback), data);
+    {
+      g_signal_connect_data (job,
+                             "finished",
+                             G_CALLBACK (callback),
+                             data,
+                             (GClosureNotify) (void (*)(void)) g_object_unref,
+                             G_CONNECT_AFTER);
+    }
 
   exo_job_launch (EXO_JOB (job));
 
