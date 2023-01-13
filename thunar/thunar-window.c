@@ -1310,8 +1310,10 @@ thunar_window_update_edit_menu (ThunarWindow *window,
 
   gtk_menu_item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_UNDO), G_OBJECT (window), GTK_MENU_SHELL (menu));
   gtk_widget_set_sensitive (gtk_menu_item, thunar_job_operation_history_can_undo ());
+  thunar_job_operation_history_update_undo_action(gtk_menu_item);
   gtk_menu_item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_REDO), G_OBJECT (window), GTK_MENU_SHELL (menu));
   gtk_widget_set_sensitive (gtk_menu_item, thunar_job_operation_history_can_redo ());
+  thunar_job_operation_history_update_redo_action(gtk_menu_item);
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
 
   thunar_menu_add_sections (THUNAR_MENU (menu), THUNAR_MENU_SECTION_CUT
