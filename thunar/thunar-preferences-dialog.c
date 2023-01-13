@@ -30,6 +30,7 @@
 #include <thunar/thunar-details-view.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-enum-types.h>
+#include <thunar/thunar-gallery-view.h>
 #include <thunar/thunar-gdk-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-view.h>
@@ -37,11 +38,11 @@
 #include <thunar/thunar-preferences-dialog.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-renamer-dialog.h>
+#include <thunar/thunar-shortcuts-view.h>
+#include <thunar/thunar-statusbar.h>
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-window.h>
-#include <thunar/thunar-shortcuts-view.h>
-#include <thunar/thunar-renamer-dialog.h>
-#include <thunar/thunar-statusbar.h>
 
 
 
@@ -126,8 +127,10 @@ transform_view_string_to_index (GBinding     *binding,
     g_value_set_int (dst_value, 1);
   else if (type == THUNAR_TYPE_COMPACT_VIEW)
     g_value_set_int (dst_value, 2);
-  else
+  else if (type == THUNAR_TYPE_GALLERY_VIEW)
     g_value_set_int (dst_value, 3);
+  else
+    g_value_set_int (dst_value, 4);
 
   return TRUE;
 }
@@ -152,6 +155,10 @@ transform_view_index_to_string (GBinding     *binding,
 
     case 2:
       g_value_set_static_string (dst_value, g_type_name (THUNAR_TYPE_COMPACT_VIEW));
+      break;
+
+    case 3:
+      g_value_set_static_string (dst_value, g_type_name (THUNAR_TYPE_GALLERY_VIEW));
       break;
 
     default:
@@ -311,6 +318,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Icon View"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("List View"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Compact View"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Gallery View"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Last Active View"));
   g_object_bind_property_full (G_OBJECT (dialog->preferences), "default-view",
                                G_OBJECT (combo), "active",
