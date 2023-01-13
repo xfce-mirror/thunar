@@ -156,7 +156,7 @@ tex_open_terminal_activated (ThunarxMenuItem *item,
   command = g_strdup_printf ("exo-open --launch TerminalEmulator --working-directory \"%s\"", path);
 
   /* try to run the terminal command */
-  if (!xfce_spawn_command_line_on_screen (gtk_widget_get_screen (window), command, FALSE, FALSE, &error))
+  if (!xfce_spawn_command_line (NULL, command, FALSE, FALSE, TRUE, &error))
     {
       /* display an error dialog */
       xfce_dialog_show_error (GTK_WINDOW (window), error, "Failed to open terminal in folder %s.", path);
