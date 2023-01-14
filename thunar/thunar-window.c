@@ -359,6 +359,8 @@ static gboolean   thunar_window_image_preview_mode_changed               (Thunar
 static void       image_preview_update                                   (GtkWidget              *parent,
                                                                           GtkAllocation          *allocation,
                                                                           GtkWidget              *image);
+static void       thunar_window_append_action_menu_text                 (GtkWidget              *menu_item,
+                                                                          gchar                  *text);
 
 
 
@@ -1310,10 +1312,10 @@ thunar_window_update_edit_menu (ThunarWindow *window,
 
   gtk_menu_item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_UNDO), G_OBJECT (window), GTK_MENU_SHELL (menu));
   gtk_widget_set_sensitive (gtk_menu_item, thunar_job_operation_history_can_undo ());
-  thunar_job_operation_history_update_undo_action(gtk_menu_item);
+  thunar_window_append_action_menu_text (gtk_menu_item, thunar_job_operation_history_get_undo_text ());
   gtk_menu_item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_REDO), G_OBJECT (window), GTK_MENU_SHELL (menu));
   gtk_widget_set_sensitive (gtk_menu_item, thunar_job_operation_history_can_redo ());
-  thunar_job_operation_history_update_redo_action(gtk_menu_item);
+  thunar_window_append_action_menu_text (gtk_menu_item, thunar_job_operation_history_get_redo_text ());
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
 
   thunar_menu_add_sections (THUNAR_MENU (menu), THUNAR_MENU_SECTION_CUT
@@ -6456,4 +6458,30 @@ thunar_window_toolbar_swap_items (ThunarWindow *window,
   g_object_unref (item_b);
 
   g_list_free (toolbar_items);
+}
+
+
+/**
+ * thunar_window_append_action_menu_text:
+ *
+ * Appends text to a menu item. It will free the text passed as parameter.
+ **/
+void
+thunar_window_append_action_menu_text (GtkWidget *menu_item,
+                                       gchar     *text)
+{
+  if (action_text != NULL)
+    {
+      GtkWidget *menu_label;
+      const gchar *current_text;
+      gchar *final_text;
+      
+      menu_label = gtk_bin_get_child (GTK_BIN (menu_item));
+      current_text = gtk_label_get_text (GTK_LABEL (menu_label));
+      final_text = g_strdup_printf ("%s %s", current_text, text);
+      gtk_label_set_text (GTK_LABEL (menu_label), final_text);
+
+      g_free (final_text);
+      g_free (text);
+    }
 }

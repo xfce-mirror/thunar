@@ -744,5 +744,5 @@ thunar_job_operation_get_source_files_count (ThunarJobOperation *job_operation)
   if (job_operation->source_file_list == NULL)
     return 0;
   
-  return g_list_length(job_operation->source_file_list);
+  return g_list_length (job_operation->source_file_list);
 }
