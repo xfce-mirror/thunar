@@ -6470,7 +6470,7 @@ void
 thunar_window_append_action_menu_text (GtkWidget *menu_item,
                                        gchar     *text)
 {
-  if (action_text != NULL)
+  if (text != NULL)
     {
       GtkWidget *menu_label;
       const gchar *current_text;
