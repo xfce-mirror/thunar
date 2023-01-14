@@ -34,8 +34,8 @@ void                       thunar_job_operation_history_undo                    
 void                       thunar_job_operation_history_redo                    (void);
 gboolean                   thunar_job_operation_history_can_undo                (void);
 gboolean                   thunar_job_operation_history_can_redo                (void);
-void                       thunar_job_operation_history_update_undo_action      (GtkWidget *gtk_menu_item);
-void                       thunar_job_operation_history_update_redo_action      (GtkWidget *gtk_menu_item);
+gchar*                     thunar_job_operation_history_get_undo_text           (void);
+gchar*                     thunar_job_operation_history_get_redo_text           (void);
 
 G_END_DECLS
 
