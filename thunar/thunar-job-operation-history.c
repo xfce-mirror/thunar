@@ -46,6 +46,7 @@ static void thunar_job_operation_history_get_property (GObject    *object,
                                                        guint       prop_id,
                                                        GValue     *value,
                                                        GParamSpec *pspec);
+static void thunar_job_operation_history_update_action (GtkWidget *gtk_menu_item, ThunarJobOperation *operation);
 
 
 
@@ -521,3 +522,47 @@ thunar_job_operation_history_can_redo (void)
   return TRUE;
 }
 
+
+void
+thunar_job_operation_history_update_action (GtkWidget *gtk_menu_item, ThunarJobOperation *operation)
+{
+  GtkWidget* menu_item = gtk_bin_get_child (GTK_BIN (gtk_menu_item));
+  const gchar* current_text = gtk_label_get_text (GTK_LABEL (menu_item));
+  guint files_count = thunar_job_operation_get_source_files_count (operation);
+  gchar* files_text = g_strdup_printf (ngettext ("%d file", "%d files", files_count), files_count);
+  gchar* new_text = g_strdup_printf ("%s %s (%s)", current_text, thunar_job_operation_get_kind_nick (operation), files_text);
+  gtk_label_set_text (GTK_LABEL (menu_item), new_text);
+  g_free(new_text);
+  g_free(files_text);
+}
+
+/**
+ * thunar_job_operation_history_update_undo_action:
+ * @gtk_menu_item: a GtkBin for a menu entry
+ *
+ * Appends the description of the undo operation to a menu entry
+ **/
+void
+thunar_job_operation_history_update_undo_action (GtkWidget *gtk_menu_item)
+{
+  if (thunar_job_operation_history_can_undo ())
+    {
+      thunar_job_operation_history_update_action(gtk_menu_item, job_operation_history->lp_undo->data);
+    }
+}
+
+
+/**
+ * thunar_job_operation_history_update_redo_action:
+ * @gtk_menu_item: a GtkBin for a menu entry
+ *
+ * Appends the description of the redo operation to a menu entry
+ **/
+void
+thunar_job_operation_history_update_redo_action (GtkWidget *gtk_menu_item)
+{
+  if (thunar_job_operation_history_can_redo ())
+    {
+      thunar_job_operation_history_update_action(gtk_menu_item, job_operation_history->lp_redo->data);
+    }
+}
