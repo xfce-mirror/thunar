@@ -529,7 +529,7 @@ thunar_job_operation_history_update_action (GtkWidget *gtk_menu_item, ThunarJobO
   GtkWidget* menu_item = gtk_bin_get_child (GTK_BIN (gtk_menu_item));
   const gchar* current_text = gtk_label_get_text (GTK_LABEL (menu_item));
   guint files_count = thunar_job_operation_get_source_files_count (operation);
-  gchar* files_text = g_strdup_printf (ngettext("%d file", "%d files", files_count), files_count);
+  gchar* files_text = g_strdup_printf (ngettext ("%d file", "%d files", files_count), files_count);
   gchar* new_text = g_strdup_printf ("%s %s (%s)", current_text, thunar_job_operation_get_kind_nick (operation), files_text);
   gtk_label_set_text (GTK_LABEL (menu_item), new_text);
   g_free(new_text);
