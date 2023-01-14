@@ -41,12 +41,12 @@ enum
 };
 
 
-static void thunar_job_operation_history_finalize     (GObject    *object);
-static void thunar_job_operation_history_get_property (GObject    *object,
-                                                       guint       prop_id,
-                                                       GValue     *value,
-                                                       GParamSpec *pspec);
-static void thunar_job_operation_history_update_action (GtkWidget *gtk_menu_item, ThunarJobOperation *operation);
+static void thunar_job_operation_history_finalize          (GObject    *object);
+static void thunar_job_operation_history_get_property      (GObject    *object,
+                                                            guint       prop_id,
+                                                            GValue     *value,
+                                                            GParamSpec *pspec);
+static gchar* thunar_job_operation_history_get_action_text (ThunarJobOperation *operation);
 
 
 
@@ -523,46 +523,47 @@ thunar_job_operation_history_can_redo (void)
 }
 
 
-void
-thunar_job_operation_history_update_action (GtkWidget *gtk_menu_item, ThunarJobOperation *operation)
+gchar*
+thunar_job_operation_history_get_action_text (ThunarJobOperation *operation)
 {
-  GtkWidget* menu_item = gtk_bin_get_child (GTK_BIN (gtk_menu_item));
-  const gchar* current_text = gtk_label_get_text (GTK_LABEL (menu_item));
   guint files_count = thunar_job_operation_get_source_files_count (operation);
   gchar* files_text = g_strdup_printf (ngettext ("%d file", "%d files", files_count), files_count);
-  gchar* new_text = g_strdup_printf ("%s %s (%s)", current_text, thunar_job_operation_get_kind_nick (operation), files_text);
-  gtk_label_set_text (GTK_LABEL (menu_item), new_text);
-  g_free(new_text);
-  g_free(files_text);
+  gchar* new_text = g_strdup_printf ("%s (%s)", thunar_job_operation_get_kind_nick (operation), files_text);
+  g_free (files_text);
+  return new_text;
 }
 
 /**
- * thunar_job_operation_history_update_undo_action:
- * @gtk_menu_item: a GtkBin for a menu entry
+ * thunar_job_operation_history_get_undo_text:
  *
- * Appends the description of the undo operation to a menu entry
+ * Returns the description of the undo action
+ * The returned string should be freed with g_free() when no longer needed.
+ *
+ * Return value: a newly-allocated string holding the text, NULL if can't undo
  **/
-void
-thunar_job_operation_history_update_undo_action (GtkWidget *gtk_menu_item)
+gchar*
+thunar_job_operation_history_get_undo_text (void)
 {
   if (thunar_job_operation_history_can_undo ())
-    {
-      thunar_job_operation_history_update_action(gtk_menu_item, job_operation_history->lp_undo->data);
-    }
+    return thunar_job_operation_history_get_action_text (job_operation_history->lp_undo->data);
+  
+  return NULL;
 }
 
 
 /**
- * thunar_job_operation_history_update_redo_action:
- * @gtk_menu_item: a GtkBin for a menu entry
+ * thunar_job_operation_history_get_redo_text
+ * 
+ * Returns the description of the redo action. 
+ * The returned string should be freed with g_free() when no longer needed.
  *
- * Appends the description of the redo operation to a menu entry
+ * Return value: a newly-allocated string holding the text, NULL if can't redo
  **/
-void
-thunar_job_operation_history_update_redo_action (GtkWidget *gtk_menu_item)
+gchar*
+thunar_job_operation_history_get_redo_text (void)
 {
   if (thunar_job_operation_history_can_redo ())
-    {
-      thunar_job_operation_history_update_action(gtk_menu_item, job_operation_history->lp_redo->data);
-    }
+    return thunar_job_operation_history_get_action_text (job_operation_history->lp_redo->data);
+  
+  return NULL;
 }
