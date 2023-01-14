@@ -3579,6 +3579,14 @@ thunar_standard_view_select_after_row_deleted (ThunarListModel    *model,
   if (standard_view->priv->active_search == TRUE)
     return;
 
+  /* ignore if we have selected files */
+  if (standard_view->priv->selected_files != NULL)
+    return;
+
+  /* select the path */
+  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->select_path) (standard_view, path);
+
+  /* place the cursor on the first selected path (must be first for GtkTreeView) */
   (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->set_cursor) (standard_view, path, FALSE);
 }
 
