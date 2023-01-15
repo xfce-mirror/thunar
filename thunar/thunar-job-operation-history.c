@@ -41,11 +41,12 @@ enum
 };
 
 
-static void thunar_job_operation_history_finalize     (GObject    *object);
-static void thunar_job_operation_history_get_property (GObject    *object,
-                                                       guint       prop_id,
-                                                       GValue     *value,
-                                                       GParamSpec *pspec);
+static void thunar_job_operation_history_finalize          (GObject    *object);
+static void thunar_job_operation_history_get_property      (GObject    *object,
+                                                            guint       prop_id,
+                                                            GValue     *value,
+                                                            GParamSpec *pspec);
+static gchar* thunar_job_operation_history_get_action_text (ThunarJobOperation *operation);
 
 
 
@@ -521,3 +522,48 @@ thunar_job_operation_history_can_redo (void)
   return TRUE;
 }
 
+
+gchar*
+thunar_job_operation_history_get_action_text (ThunarJobOperation *operation)
+{
+  guint files_count = thunar_job_operation_get_source_files_count (operation);
+  gchar* files_text = g_strdup_printf (ngettext ("%d file", "%d files", files_count), files_count);
+  gchar* new_text = g_strdup_printf ("%s (%s)", thunar_job_operation_get_kind_nick (operation), files_text);
+  g_free (files_text);
+  return new_text;
+}
+
+/**
+ * thunar_job_operation_history_get_undo_text:
+ *
+ * Returns the description of the undo action
+ * The returned string should be freed with g_free() when no longer needed.
+ *
+ * Return value: a newly-allocated string holding the text, NULL if can't undo
+ **/
+gchar*
+thunar_job_operation_history_get_undo_text (void)
+{
+  if (thunar_job_operation_history_can_undo ())
+    return thunar_job_operation_history_get_action_text (job_operation_history->lp_undo->data);
+  
+  return NULL;
+}
+
+
+/**
+ * thunar_job_operation_history_get_redo_text
+ * 
+ * Returns the description of the redo action. 
+ * The returned string should be freed with g_free() when no longer needed.
+ *
+ * Return value: a newly-allocated string holding the text, NULL if can't redo
+ **/
+gchar*
+thunar_job_operation_history_get_redo_text (void)
+{
+  if (thunar_job_operation_history_can_redo ())
+    return thunar_job_operation_history_get_action_text (job_operation_history->lp_redo->data);
+  
+  return NULL;
+}
