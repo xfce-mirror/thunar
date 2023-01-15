@@ -359,8 +359,10 @@ static gboolean   thunar_window_image_preview_mode_changed               (Thunar
 static void       image_preview_update                                   (GtkWidget              *parent,
                                                                           GtkAllocation          *allocation,
                                                                           GtkWidget              *image);
-static void       thunar_window_append_action_menu_text                  (GtkWidget              *menu_item,
-                                                                          gchar                  *text);
+static GtkWidget* thunar_window_create_action_menu_item                  (ThunarWindowAction      action,
+                                                                          gchar                  *action_detail_text,
+                                                                          ThunarWindow           *window,
+                                                                          GtkWidget              *menu_to_append_item);
 
 
 
@@ -1302,20 +1304,19 @@ static void
 thunar_window_update_edit_menu (ThunarWindow *window,
                                 GtkWidget    *menu)
 {
-  GtkWidget       *gtk_menu_item;
-  GList           *thunarx_menu_items;
-  GList           *pp, *lp;
+  GtkWidget *gtk_menu_item;
+  GList     *thunarx_menu_items;
+  GList     *pp, *lp;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   thunar_gtk_menu_clean (GTK_MENU (menu));
 
-  gtk_menu_item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_UNDO), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  // gtk_menu_item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_UNDO), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  gtk_menu_item = thunar_window_create_action_menu_item (THUNAR_WINDOW_ACTION_UNDO, thunar_job_operation_history_get_undo_text (), window, menu);
   gtk_widget_set_sensitive (gtk_menu_item, thunar_job_operation_history_can_undo ());
-  thunar_window_append_action_menu_text (gtk_menu_item, thunar_job_operation_history_get_undo_text ());
-  gtk_menu_item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_REDO), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  gtk_menu_item = thunar_window_create_action_menu_item (THUNAR_WINDOW_ACTION_REDO, thunar_job_operation_history_get_redo_text (), window, menu);
   gtk_widget_set_sensitive (gtk_menu_item, thunar_job_operation_history_can_redo ());
-  thunar_window_append_action_menu_text (gtk_menu_item, thunar_job_operation_history_get_redo_text ());
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
 
   thunar_menu_add_sections (THUNAR_MENU (menu), THUNAR_MENU_SECTION_CUT
@@ -6462,26 +6463,38 @@ thunar_window_toolbar_swap_items (ThunarWindow *window,
 
 
 /**
- * thunar_window_append_action_menu_text:
+ * thunar_window_create_action_menu_item:
+ * @action_entry       : the #ThunarWindowAction to be created.
+ * @action_detail_text : an optional text to append to the item label 
+ * @window             : a #ThunarWindow instance.
+ * @menu_to_append_item: a GtkMenuShell to append the new item.
  *
- * Appends text to a menu item. It will free the text passed as parameter.
+ * Method to create a menu item from the passed action entry. It will g_free the action_detail_text if it isn't NULL.
+ *
+ * returns a new #GtkMenuItem
  **/
-void
-thunar_window_append_action_menu_text (GtkWidget *menu_item,
-                                       gchar     *text)
+GtkWidget*
+thunar_window_create_action_menu_item (ThunarWindowAction  action,
+                                       gchar              *action_detail_text,
+                                       ThunarWindow       *window,
+                                       GtkWidget          *menu_to_append_item)
 {
-  if (text != NULL)
-    {
-      GtkWidget *menu_label;
-      const gchar *current_text;
-      gchar *final_text;
-      
-      menu_label = gtk_bin_get_child (GTK_BIN (menu_item));
-      current_text = gtk_label_get_text (GTK_LABEL (menu_label));
-      final_text = g_strdup_printf ("%s %s", current_text, text);
-      gtk_label_set_text (GTK_LABEL (menu_label), final_text);
+  const XfceGtkActionEntry *action_entry = get_action_entry (action);
+  GtkWidget                *menu_item;
+  gchar                    *text = action_entry->menu_item_label_text;
+  
+  if (action_detail_text != NULL)
+    text = g_strdup_printf ("%s %s", action_entry->menu_item_label_text, action_detail_text);
 
-      g_free (final_text);
+  menu_item = xfce_gtk_image_menu_item_new_from_icon_name (text, action_entry->menu_item_tooltip_text,
+                                                           action_entry->accel_path, action_entry->callback,
+                                                           G_OBJECT (window), action_entry->menu_item_icon_name, GTK_MENU_SHELL (menu_to_append_item));
+
+  if (action_detail_text != NULL)
+    {
+      g_free (action_detail_text);
       g_free (text);
     }
+
+  return menu_item;
 }
