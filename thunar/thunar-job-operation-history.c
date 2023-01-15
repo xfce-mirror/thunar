@@ -526,10 +526,12 @@ thunar_job_operation_history_can_redo (void)
 gchar*
 thunar_job_operation_history_get_action_text (ThunarJobOperation *operation)
 {
-  guint files_count = thunar_job_operation_get_source_files_count (operation);
-  gchar* files_text = g_strdup_printf (ngettext ("%d file", "%d files", files_count), files_count);
-  gchar* new_text = g_strdup_printf ("%s (%s)", thunar_job_operation_get_kind_nick (operation), files_text);
+  guint  files_count = thunar_job_operation_get_source_files_count (operation);
+  gchar *files_text  = g_strdup_printf (ngettext ("%d file", "%d files", files_count), files_count);
+  gchar *op_text     = g_utf8_strdown(thunar_job_operation_get_kind_nick (operation), -1);
+  gchar *new_text    = g_strdup_printf ("%s (%s)", op_text, files_text);
   g_free (files_text);
+  g_free (op_text);
   return new_text;
 }
 
