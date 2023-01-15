@@ -359,7 +359,7 @@ static gboolean   thunar_window_image_preview_mode_changed               (Thunar
 static void       image_preview_update                                   (GtkWidget              *parent,
                                                                           GtkAllocation          *allocation,
                                                                           GtkWidget              *image);
-static void       thunar_window_append_action_menu_text                 (GtkWidget              *menu_item,
+static void       thunar_window_append_action_menu_text                  (GtkWidget              *menu_item,
                                                                           gchar                  *text);
 
 
