@@ -41,11 +41,11 @@ enum
 };
 
 
-static void thunar_job_operation_history_finalize          (GObject    *object);
-static void thunar_job_operation_history_get_property      (GObject    *object,
-                                                            guint       prop_id,
-                                                            GValue     *value,
-                                                            GParamSpec *pspec);
+static void thunar_job_operation_history_finalize          (GObject            *object);
+static void thunar_job_operation_history_get_property      (GObject            *object,
+                                                            guint               prop_id,
+                                                            GValue             *value,
+                                                            GParamSpec         *pspec);
 static gchar* thunar_job_operation_history_get_action_text (ThunarJobOperation *operation);
 
 
