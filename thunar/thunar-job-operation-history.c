@@ -529,7 +529,7 @@ thunar_job_operation_history_get_action_text (const gchar* action, ThunarJobOper
 {
   guint  files_count = thunar_job_operation_get_source_files_count (operation);
   gchar *files_text  = g_strdup_printf (ngettext ("%d file", "%d files", files_count), files_count);
-  gchar *op_text     = g_utf8_strdown(thunar_job_operation_get_kind_nick (operation), -1);
+  gchar *op_text     = g_utf8_strdown (thunar_job_operation_get_kind_nick (operation), -1);
   gchar *new_text    = g_strdup_printf ("%s %s (%s)", action, op_text, files_text);
   g_free (files_text);
   g_free (op_text);
