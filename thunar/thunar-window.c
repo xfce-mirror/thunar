@@ -3234,8 +3234,9 @@ thunar_window_start_open_location (ThunarWindow *window,
       gchar *last_location_bar = NULL;
       gboolean temporary_till_focus_lost = FALSE;
 
+      /* If the style is already 'location entry', we dont need to care about 'focus-lost' */
       g_object_get (window->preferences, "last-location-bar", &last_location_bar, NULL);
-      if (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)) == 0)
+      if (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_ENTRY)) != 0)
         temporary_till_focus_lost = TRUE;
       g_free (last_location_bar);
 
@@ -3369,6 +3370,10 @@ thunar_window_action_cancel_search (ThunarWindow *window)
   g_signal_handlers_block_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_search), FALSE);
   g_signal_handlers_unblock_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
+  
+  /* bring back the original location bar style (relevant if the bar is hidden) */
+  thunar_window_update_location_bar_visible (window);
+
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
