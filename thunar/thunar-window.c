@@ -360,8 +360,6 @@ static void       image_preview_update                                   (GtkWid
                                                                           GtkAllocation          *allocation,
                                                                           GtkWidget              *image);
 
-
-
 struct _ThunarWindowClass
 {
   GtkWindowClass __parent__;
@@ -1300,17 +1298,29 @@ static void
 thunar_window_update_edit_menu (ThunarWindow *window,
                                 GtkWidget    *menu)
 {
-  GtkWidget       *gtk_menu_item;
-  GList           *thunarx_menu_items;
-  GList           *pp, *lp;
+  GtkWidget                *gtk_menu_item;
+  GList                    *thunarx_menu_items;
+  GList                    *pp, *lp;
+  const XfceGtkActionEntry *action_entry;
+  gchar                    *action_text;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   thunar_gtk_menu_clean (GTK_MENU (menu));
 
-  gtk_menu_item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_UNDO), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  action_entry = get_action_entry (THUNAR_WINDOW_ACTION_UNDO);
+  action_text = thunar_job_operation_history_get_undo_text ();
+  gtk_menu_item = xfce_gtk_image_menu_item_new_from_icon_name (action_text, action_entry->menu_item_tooltip_text,
+                                                           action_entry->accel_path, action_entry->callback,
+                                                           G_OBJECT (window), action_entry->menu_item_icon_name, GTK_MENU_SHELL (menu));
+  g_free (action_text);
   gtk_widget_set_sensitive (gtk_menu_item, thunar_job_operation_history_can_undo ());
-  gtk_menu_item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_REDO), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  action_entry = get_action_entry (THUNAR_WINDOW_ACTION_REDO);
+  action_text = thunar_job_operation_history_get_redo_text ();  
+  gtk_menu_item = xfce_gtk_image_menu_item_new_from_icon_name (action_text, action_entry->menu_item_tooltip_text,
+                                                           action_entry->accel_path, action_entry->callback,
+                                                           G_OBJECT (window), action_entry->menu_item_icon_name, GTK_MENU_SHELL (menu));
+  g_free (action_text);
   gtk_widget_set_sensitive (gtk_menu_item, thunar_job_operation_history_can_redo ());
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
 
