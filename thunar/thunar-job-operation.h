@@ -49,8 +49,7 @@ const gchar            *thunar_job_operation_get_kind_nick         (ThunarJobOpe
 ThunarJobOperationKind  thunar_job_operation_get_kind              (ThunarJobOperation    *job_operation);
 const GList            *thunar_job_operation_get_overwritten_files (ThunarJobOperation    *job_operation);
 gboolean                thunar_job_operation_empty                 (ThunarJobOperation    *job_operation);
-guint                   thunar_job_operation_get_source_files_count(ThunarJobOperation    *job_operation);
-
+gchar                  *thunar_job_operation_get_action_text       (ThunarJobOperation    *job_operation);
 
 G_END_DECLS
 

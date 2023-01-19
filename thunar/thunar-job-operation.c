@@ -730,19 +730,16 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation  *operation,
   g_hash_table_unref (files_trashed);
 }
 
-/**
- * thunar_job_operation_get_source_files_count:
- * @job_operation: a #ThunarJobOperation
- *
- * Returns the number of source files in this operation
- **/
-guint
-thunar_job_operation_get_source_files_count (ThunarJobOperation *job_operation)
-{
-  _thunar_return_val_if_fail (THUNAR_IS_JOB_OPERATION (job_operation), TRUE);
 
-  if (job_operation->source_file_list == NULL)
-    return 0;
-  
-  return g_list_length (job_operation->source_file_list);
+
+gchar*
+thunar_job_operation_get_action_text (ThunarJobOperation *job_operation)
+{
+  guint  files_count = job_operation->source_file_list == NULL ? 0 : g_list_length (job_operation->source_file_list);
+  gchar *files_text  = g_strdup_printf (ngettext ("%d file", "%d files", files_count), files_count);
+  gchar *op_text     = g_utf8_strdown (thunar_job_operation_get_kind_nick (job_operation), -1);
+  gchar *new_text    = g_strdup_printf ("%s (%s)", op_text, files_text);
+  g_free (files_text);
+  g_free (op_text);
+  return new_text;
 }

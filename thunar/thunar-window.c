@@ -1310,14 +1310,14 @@ thunar_window_update_edit_menu (ThunarWindow *window,
 
   action_entry = get_action_entry (THUNAR_WINDOW_ACTION_UNDO);
   action_text = thunar_job_operation_history_get_undo_text ();
-  gtk_menu_item = xfce_gtk_image_menu_item_new_from_icon_name (action_text, action_entry->menu_item_tooltip_text,
+  gtk_menu_item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, action_text,
                                                            action_entry->accel_path, action_entry->callback,
                                                            G_OBJECT (window), action_entry->menu_item_icon_name, GTK_MENU_SHELL (menu));
   g_free (action_text);
   gtk_widget_set_sensitive (gtk_menu_item, thunar_job_operation_history_can_undo ());
   action_entry = get_action_entry (THUNAR_WINDOW_ACTION_REDO);
   action_text = thunar_job_operation_history_get_redo_text ();  
-  gtk_menu_item = xfce_gtk_image_menu_item_new_from_icon_name (action_text, action_entry->menu_item_tooltip_text,
+  gtk_menu_item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, action_text,
                                                            action_entry->accel_path, action_entry->callback,
                                                            G_OBJECT (window), action_entry->menu_item_icon_name, GTK_MENU_SHELL (menu));
   g_free (action_text);
