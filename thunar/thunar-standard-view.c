@@ -1624,8 +1624,10 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
                                  standard_view,
                                  thunar_standard_view_loading_unbound);
 
-  /* apply the new folder */
+  /* apply the new folder, ignore removal of any old files */
+  g_signal_handler_block (standard_view->model, standard_view->priv->row_deleted_id);
   thunar_list_model_set_folder (standard_view->model, folder, NULL);
+  g_signal_handler_unblock (standard_view->model, standard_view->priv->row_deleted_id);
   g_object_unref (G_OBJECT (folder));
 
   /* reconnect our model to the view */
