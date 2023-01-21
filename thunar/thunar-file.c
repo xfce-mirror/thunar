@@ -4978,6 +4978,9 @@ thunar_file_clear_directory_specific_settings (ThunarFile *file)
   g_file_info_remove_attribute (file->info, "metadata::thunar-sort-column");
   g_file_info_remove_attribute (file->info, "metadata::thunar-sort-order");
   g_file_info_remove_attribute (file->info, "metadata::thunar-zoom-level");
+  g_file_info_remove_attribute (file->info, "metadata::thunar-zoom-level-ThunarDetailsView");
+  g_file_info_remove_attribute (file->info, "metadata::thunar-zoom-level-ThunarIconView");
+  g_file_info_remove_attribute (file->info, "metadata::thunar-zoom-level-ThunarCompactView");
 
   g_file_set_attribute (file->gfile, "metadata::thunar-view-type", G_FILE_ATTRIBUTE_TYPE_INVALID,
                         NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
@@ -4986,6 +4989,12 @@ thunar_file_clear_directory_specific_settings (ThunarFile *file)
   g_file_set_attribute (file->gfile, "metadata::thunar-sort-order", G_FILE_ATTRIBUTE_TYPE_INVALID,
                         NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
   g_file_set_attribute (file->gfile, "metadata::thunar-zoom-level", G_FILE_ATTRIBUTE_TYPE_INVALID,
+                        NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
+  g_file_set_attribute (file->gfile, "metadata::thunar-zoom-level-ThunarDetailsView", G_FILE_ATTRIBUTE_TYPE_INVALID,
+                        NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
+  g_file_set_attribute (file->gfile, "metadata::thunar-zoom-level-ThunarIconView", G_FILE_ATTRIBUTE_TYPE_INVALID,
+                        NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
+  g_file_set_attribute (file->gfile, "metadata::thunar-zoom-level-ThunarCompactView", G_FILE_ATTRIBUTE_TYPE_INVALID,
                         NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
 
   thunar_file_changed (file);
@@ -5016,6 +5025,12 @@ thunar_file_has_directory_specific_settings (ThunarFile *file)
   if (g_file_info_has_attribute (file->info, "metadata::thunar-sort-order"))
     return TRUE;
   if (g_file_info_has_attribute (file->info, "metadata::thunar-zoom-level"))
+    return TRUE;
+  if (g_file_info_has_attribute (file->info, "metadata::thunar-zoom-level-ThunarDetailsView"))
+    return TRUE;
+  if (g_file_info_has_attribute (file->info, "metadata::thunar-zoom-level-ThunarIconView"))
+    return TRUE;
+  if (g_file_info_has_attribute (file->info, "metadata::thunar-zoom-level-ThunarCompactView"))
     return TRUE;
 
   return FALSE;

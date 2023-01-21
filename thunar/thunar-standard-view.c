@@ -1840,7 +1840,8 @@ thunar_standard_view_set_zoom_level (ThunarView     *view,
                                      ThunarZoomLevel zoom_level)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
-  gboolean newThumbnailSize = FALSE;
+  gboolean            newThumbnailSize = FALSE;
+  gchar              *zoom_level_attribute_name;
 
   /* check if we have a new zoom-level here */
   if (G_LIKELY (standard_view->priv->zoom_level != zoom_level))
@@ -1854,7 +1855,9 @@ thunar_standard_view_set_zoom_level (ThunarView     *view,
           if (zoom_level_name != NULL)
             {
               /* do not set it asynchronously to ensure the correct operation of thumbnails (check the commit message for more) */
-              thunar_file_set_metadata_setting (standard_view->priv->current_directory, "zoom-level", zoom_level_name, FALSE);
+              zoom_level_attribute_name = g_strdup_printf ("zoom-level-%s", G_OBJECT_TYPE_NAME (standard_view));
+              thunar_file_set_metadata_setting (standard_view->priv->current_directory, zoom_level_attribute_name, zoom_level_name, FALSE);
+              g_free (zoom_level_attribute_name);
             }
         }
 
@@ -1901,6 +1904,7 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
   ThunarColumn sort_column;
   GtkSortType  sort_order;
   gint         zoom_level;
+  gchar       *zoom_level_attribute_name;
 
   /* get the default sort column and sort order */
   g_object_get (G_OBJECT (standard_view->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
@@ -1908,7 +1912,10 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
   /* get the stored directory specific settings (if any) */
   sort_column_name = thunar_file_get_metadata_setting (directory, "sort-column");
   sort_order_name = thunar_file_get_metadata_setting (directory, "sort-order");
-  zoom_level_name = thunar_file_get_metadata_setting (directory, "zoom-level");
+
+  zoom_level_attribute_name = g_strdup_printf ("zoom-level-%s", G_OBJECT_TYPE_NAME (standard_view));
+  zoom_level_name = thunar_file_get_metadata_setting (directory, zoom_level_attribute_name);
+  g_free (zoom_level_attribute_name);
 
   /* convert the sort column name to a value */
   if (sort_column_name != NULL)
