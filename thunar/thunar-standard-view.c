@@ -1917,6 +1917,10 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
   zoom_level_name = thunar_file_get_metadata_setting (directory, zoom_level_attribute_name);
   g_free (zoom_level_attribute_name);
 
+  /* View specific zoom level was added later on .. fall back to shared zoom-level if not found */
+  if (zoom_level_name == NULL)
+    zoom_level_name = thunar_file_get_metadata_setting (directory, "zoom-level");
+
   /* convert the sort column name to a value */
   if (sort_column_name != NULL)
     thunar_column_value_from_string (sort_column_name, &sort_column);
