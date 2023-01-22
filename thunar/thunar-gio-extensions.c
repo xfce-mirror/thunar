@@ -57,7 +57,7 @@ device_icon_name [] =
   { "drive-removable-media-usb"          , N_("USB Drive") },
 
   /* Freedesktop icon-naming-spec */
-  { "camera*"                , N_("Camera") },
+  { "camera-photo*"          , N_("Camera") },
   { "drive-harddisk*"        , N_("Harddisk") },
   { "drive-optical*"         , N_("Optical Drive") },
   { "drive-removable-media*" , N_("Removable Drive") },
