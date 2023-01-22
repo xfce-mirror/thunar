@@ -521,3 +521,51 @@ thunar_job_operation_history_can_redo (void)
   return TRUE;
 }
 
+
+
+/**
+ * thunar_job_operation_history_get_undo_text:
+ *
+ * Returns the description of the undo action
+ * The returned string should be freed with g_free() when no longer needed.
+ *
+ * Return value: a newly-allocated string holding the text, NULL if can't undo
+ **/
+gchar*
+thunar_job_operation_history_get_undo_text (void)
+{
+  if (thunar_job_operation_history_can_undo ())
+    {
+      gchar *action_text = thunar_job_operation_get_action_text (job_operation_history->lp_undo->data);
+      /* TRANSLATORS: An example: 'Undo the latest 'copy' operation (2 files) */
+      gchar *final_text = g_strdup_printf (_("Undo the latest '%s' operation (%s)"),  thunar_job_operation_get_kind_nick (job_operation_history->lp_undo->data), action_text);
+      g_free (action_text);
+      return final_text;
+    }
+  
+  return g_strdup (gettext ("Undo the latest operation"));
+}
+
+
+
+/**
+ * thunar_job_operation_history_get_redo_text
+ * 
+ * Returns the description of the redo action. 
+ * The returned string should be freed with g_free() when no longer needed.
+ *
+ * Return value: a newly-allocated string holding the text, NULL if can't redo
+ **/
+gchar*
+thunar_job_operation_history_get_redo_text (void)
+{
+  if (thunar_job_operation_history_can_redo ())
+    {
+      gchar *action_text = thunar_job_operation_get_action_text (job_operation_history->lp_redo->data);
+      gchar *final_text = g_strdup_printf ("%s %s", gettext ("_Redo") + 1, action_text);
+      g_free (action_text);
+      return final_text;
+    }
+  
+  return g_strdup (gettext ("Redo the latest operation"));
+}
