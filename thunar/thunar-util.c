@@ -756,12 +756,12 @@ thunar_util_next_new_file_name (ThunarFile            *dir,
         {
           if (count == 0)
             {
-              new_name = g_strdup_printf (_("link to %.*s.%s"), (int) file_name_size, file_name, extension ? extension : "");
+              new_name = g_strdup_printf (_("link to %.*s%s"), (int) file_name_size, file_name, extension ? extension : "");
               ++count;
             }
           else
             {
-              new_name = g_strdup_printf (_("link %u to %.*s.%s"), ++count, (int) file_name_size, file_name, extension ? extension : "");
+              new_name = g_strdup_printf (_("link %u to %.*s%s"), ++count, (int) file_name_size, file_name, extension ? extension : "");
             }
         }
       else
