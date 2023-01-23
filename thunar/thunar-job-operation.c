@@ -729,3 +729,12 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation  *operation,
 
   g_hash_table_unref (files_trashed);
 }
+
+
+
+gchar*
+thunar_job_operation_get_action_text (ThunarJobOperation *job_operation)
+{
+  guint  files_count = job_operation->source_file_list == NULL ? 0 : g_list_length (job_operation->source_file_list);
+  return g_strdup_printf (ngettext ("%d file", "%d files", files_count), files_count);
+}
