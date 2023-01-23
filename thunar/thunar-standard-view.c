@@ -1944,6 +1944,8 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
 
   /* apply the sort column and sort order */
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), sort_column, sort_order);
+  standard_view->priv->sort_column = sort_column;
+  standard_view->priv->sort_order = sort_order;
 
   /* keep the currently selected files selected after the change */
   thunar_component_restore_selection (THUNAR_COMPONENT (standard_view));
@@ -1984,6 +1986,8 @@ thunar_standard_view_set_directory_specific_settings (ThunarStandardView *standa
       if (sort_column >= THUNAR_N_VISIBLE_COLUMNS)
         sort_column = THUNAR_COLUMN_NAME;
       gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), sort_column, sort_order);
+      standard_view->priv->sort_column = sort_column;
+      standard_view->priv->sort_order = sort_order;
     }
 }
 
