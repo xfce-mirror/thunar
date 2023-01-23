@@ -503,6 +503,7 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_RELOAD,                         "<Actions>/ThunarWindow/reload",                          "<Primary>r",           XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Reload"),                N_ ("Reload the current folder"),                                                    "view-refresh-symbolic",   G_CALLBACK (thunar_window_action_reload),             },
     { THUNAR_WINDOW_ACTION_RELOAD_ALT,                     "<Actions>/ThunarWindow/reload-alt",                      "F5",                   XFCE_GTK_IMAGE_MENU_ITEM, NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_action_reload),             },
     { THUNAR_WINDOW_ACTION_VIEW_SPLIT,                     "<Actions>/ThunarWindow/toggle-split-view",               "F3",                   XFCE_GTK_CHECK_MENU_ITEM, N_ ("Spl_it View"),            N_ ("Open/Close Split View"),                                                        "view-dual-symbolic",      G_CALLBACK (thunar_window_action_toggle_split_view),  },
+    { THUNAR_WINDOW_ACTION_SWITCH_FOCUSED_SPLIT_VIEW_PANE, "<Actions>/ThunarWindow/switch-focused-split-view-pane",  "",                     XFCE_GTK_MENU_ITEM,       N_ ("Switch Focused Split View Pane"), NULL,                                                                        NULL,                      G_CALLBACK (thunar_window_paned_notebooks_switch),    },
     { THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_MENU,    "<Actions>/ThunarWindow/view-location-selector-menu",     "",                     XFCE_GTK_MENU_ITEM,       N_ ("_Location Selector"),     NULL,                                                                                NULL,                      NULL,                                                 },
     { THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_ENTRY,   "<Actions>/ThunarWindow/view-location-selector-entry",    "",                     XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Entry Style"),           N_ ("Traditional entry showing the current path"),                                   NULL,                      G_CALLBACK (thunar_window_action_locationbar_entry),  },
     { THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_BUTTONS, "<Actions>/ThunarWindow/view-location-selector-buttons",  "",                     XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Buttons Style"),         N_ ("Modern approach with buttons that correspond to folders"),                      NULL,                      G_CALLBACK (thunar_window_action_locationbar_buttons),},
@@ -2709,7 +2710,9 @@ thunar_window_paned_notebooks_switch (ThunarWindow *window)
   GtkWidget *new_curr_notebook = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
-  _thunar_return_if_fail (thunar_window_split_view_is_active (window));
+
+  if (!thunar_window_split_view_is_active (window))
+    return;
 
   if (window->notebook_selected == window->notebook_left)
     new_curr_notebook = window->notebook_right;
