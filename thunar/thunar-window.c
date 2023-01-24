@@ -3529,6 +3529,8 @@ static gboolean
 thunar_window_action_close_tab (ThunarWindow *window,
                                 GtkWidget    *menu_item)
 {
+  gboolean response;
+
   if (thunar_window_split_view_is_active (window))
     {
       if (window->view != NULL)
@@ -3537,7 +3539,11 @@ thunar_window_action_close_tab (ThunarWindow *window,
   else
     {
       if (gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_selected)) == 1)
-        gtk_widget_destroy (GTK_WIDGET (window));
+        {
+          response = thunar_window_delete (GTK_WIDGET (window), NULL, NULL);
+          if (response == FALSE)
+            gtk_widget_destroy (GTK_WIDGET (window));
+        }
       else if (window->view != NULL)
         gtk_widget_destroy (window->view);
     }
