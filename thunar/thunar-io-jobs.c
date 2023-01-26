@@ -663,11 +663,9 @@ _thunar_io_jobs_link_file (ThunarJob *job,
                            GFile     *target_file,
                            GError   **error)
 {
-  ThunarJobResponse response;
-  GError           *err = NULL;
-  gchar            *base_name;
-  gchar            *display_name;
-  gchar            *source_path;
+  ThunarJobResponse  response;
+  GError            *err = NULL;
+  gchar             *symlink_target;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
   _thunar_return_val_if_fail (G_IS_FILE (source_file), NULL);
@@ -678,45 +676,33 @@ _thunar_io_jobs_link_file (ThunarJob *job,
   if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return NULL;
 
-  /* try to determine the source path */
-  source_path = g_file_get_path (source_file);
-  if (source_path == NULL)
-    {
-      base_name = g_file_get_basename (source_file);
-      display_name = g_filename_display_name (base_name);
-      g_set_error (&err, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
-                   _("Could not create symbolic link to \"%s\" "
-                     "because it is not a local file"), display_name);
-      g_free (display_name);
-      g_free (base_name);
-    }
-
   /* various attempts to create the symbolic link */
   while (err == NULL)
     {
-      GFile *target;
+      GFile *symlink;
       if (!g_file_equal (source_file, target_file))
-        target = g_object_ref (target_file);
+        symlink = g_object_ref (target_file);
       else
-        target = thunar_io_jobs_util_next_duplicate_file (job, source_file, THUNAR_NEXT_FILE_NAME_MODE_LINK, &err);
-
+        symlink = thunar_io_jobs_util_next_duplicate_file (job, source_file, THUNAR_NEXT_FILE_NAME_MODE_LINK, &err);
       if (err == NULL)
         {
-          /* try to create the symlink */
-          if (g_file_make_symbolic_link (target, source_path,
+          /* try to create the symlink from the g_file */
+          symlink_target = thunar_g_file_get_link_path_for_symlink (source_file, symlink);
+          if (g_file_make_symbolic_link (symlink, symlink_target,
                                          exo_job_get_cancellable (EXO_JOB (job)),
                                          &err))
             {
-              /* release the source path */
-              g_free (source_path);
+              g_free (symlink_target);
 
-              /* return the real target file */
-              return target;
+              /* return the new symlink */
+              return symlink;
             }
 
-          /* release our reference */
-          g_object_unref (target);
+          /* on error release the target, to be reused in the next iteration */
+          g_free (symlink_target);
         }
+
+      g_object_unref (symlink);
 
       /* check if we can recover from this error */
       if (err->domain == G_IO_ERROR && err->code == G_IO_ERROR_EXISTS)
@@ -747,9 +733,6 @@ _thunar_io_jobs_link_file (ThunarJob *job,
     }
 
   _thunar_assert (err != NULL);
-
-  /* free the source path */
-  g_free (source_path);
 
   g_propagate_error (error, err);
   return NULL;

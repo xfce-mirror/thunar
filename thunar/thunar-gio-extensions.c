@@ -1373,3 +1373,49 @@ thunar_g_file_is_desktop_file (GFile *file)
   g_free (basename);
   return is_desktop_file;
 }
+
+
+
+/**
+ * thunar_g_file_get_link_path_for_symlink:
+ * @file_to_link : the #GFile to which @symlink will have to point
+ * @symlink      : a #GFile representing the symlink
+ *
+ * Method to build the link target path in order to link from @symlink to @file_to_link.
+ * The caller is responsible for freeing the string using g_free() when done.
+ *
+ * Return value: The link path, or NULL on failure
+ **/
+char *
+thunar_g_file_get_link_path_for_symlink (GFile *file_to_link,
+                                         GFile *symlink)
+{
+    GFile *root;
+    GFile *parent;
+    char  *relative_path;
+    char  *link_path;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file_to_link), NULL);
+  _thunar_return_val_if_fail (G_IS_FILE (symlink), NULL);
+
+    /* */
+    if (g_file_is_native (file_to_link) || g_file_is_native (symlink))
+    {
+        return g_file_get_path (file_to_link);
+    }
+
+    /* Search for the filesystem root */
+    root = g_object_ref (file_to_link);
+    while ((parent = g_file_get_parent (root)) != NULL)
+    {
+        g_object_unref (root);
+        root = parent;
+    }
+
+    /* Build a absolute path, using the relative path up to the filesystem root */
+    relative_path = g_file_get_relative_path (root, file_to_link);
+    g_object_unref (root);
+    link_path = g_strconcat ("/", relative_path, NULL);
+    g_free (relative_path);
+    return link_path;
+}
