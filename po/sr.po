@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-24 00:46+0100\n"
+"POT-Creation-Date: 2023-01-27 12:47+0100\n"
 "PO-Revision-Date: 2022-12-22 11:28+0000\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>, 2023\n"
 "Language-Team: Serbian (https://www.transifex.com/xfce/teams/16840/sr/)\n"
@@ -810,7 +810,7 @@ msgstr "Постави као по_дразумевано за овакву вр
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1288
-#: ../thunar/thunar-properties-dialog.c:1104 ../thunar/thunar-window.c:4390
+#: ../thunar/thunar-properties-dialog.c:1104 ../thunar/thunar-window.c:4396
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -1680,24 +1680,18 @@ msgstr "Припремам..."
 msgid "Could not delete file \"%s\": %s"
 msgstr "Нисам успео да обришем датотеку „%s“: %s"
 
-#: ../thunar/thunar-io-jobs.c:688
-#, c-format
-msgid "Could not create symbolic link to \"%s\" because it is not a local file"
-msgstr ""
-"Нисам успео да направим симболичку везу на „%s“ јер то није месна датотека"
-
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:1076
+#: ../thunar/thunar-io-jobs.c:1059
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "Нисам успео да променим власника за „%s“: %s"
 
-#: ../thunar/thunar-io-jobs.c:1077
+#: ../thunar/thunar-io-jobs.c:1060
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "Нисам успео да променим групу за „%s“: %s"
 
-#: ../thunar/thunar-io-jobs.c:1232
+#: ../thunar/thunar-io-jobs.c:1215
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Нисам успео да променим овлашћења за „%s“: %s"
@@ -3268,7 +3262,7 @@ msgid "Loading folder contents..."
 msgstr "Учитавам садржај фасцикле..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2364 ../thunar/thunar-window.c:4203
+#: ../thunar/thunar-standard-view.c:2364 ../thunar/thunar-window.c:4209
 msgid "Failed to open the home folder"
 msgstr "Нисам успео да отворим личну фасциклу"
 
@@ -3365,7 +3359,7 @@ msgstr "Нисам успео да направим везу до адресе �
 msgid "Untitled document"
 msgstr "Безимени докуменат"
 
-#: ../thunar/thunar-standard-view.c:3619 ../thunar/thunar-window.c:4300
+#: ../thunar/thunar-standard-view.c:3619 ../thunar/thunar-window.c:4306
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Нисам успео да отворим фасциклу „%s“"
@@ -3964,35 +3958,35 @@ msgstr "Затвори лист"
 msgid "Open the location \"%s\""
 msgstr "Отвори место „%s“"
 
-#: ../thunar/thunar-window.c:4143
+#: ../thunar/thunar-window.c:4149
 msgid "Failed to open parent folder"
 msgstr "Нисам успео да отворим родитељску фасциклу"
 
-#: ../thunar/thunar-window.c:4274
+#: ../thunar/thunar-window.c:4280
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Фасцикла „%s“ не постоји. Да ли желите да је направите?"
 
-#: ../thunar/thunar-window.c:4276
+#: ../thunar/thunar-window.c:4282
 msgid "Create directory"
 msgstr "Образуј фасциклу"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4345
+#: ../thunar/thunar-window.c:4351
 msgid "Failed to browse the computer"
 msgstr "Нисам успео да прегледам рачунар"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4388
+#: ../thunar/thunar-window.c:4394
 msgid "About Templates"
 msgstr "О обрасцима"
 
-#: ../thunar/thunar-window.c:4410
+#: ../thunar/thunar-window.c:4416
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 "Све датотеке из ове фасцикле ће се појавити у изборнику „Направи документ“."
 
-#: ../thunar/thunar-window.c:4417
+#: ../thunar/thunar-window.c:4423
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
@@ -4002,31 +3996,31 @@ msgstr ""
 "\n"
 "Када изабрати ставку из изборника „Направи документ“ умножак документа ће бити направљена у фасцикли где се тренутно налазите."
 
-#: ../thunar/thunar-window.c:4429
+#: ../thunar/thunar-window.c:4435
 msgid "Do _not display this message again"
 msgstr "_Не приказуј поново ову поруку"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4463
+#: ../thunar/thunar-window.c:4469
 msgid "Failed to open the file system root folder"
 msgstr "Нисам успео да отворим корену фасциклу система датотека"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4499
+#: ../thunar/thunar-window.c:4505
 msgid "Failed to display `Recent`"
 msgstr "Нисам успео да прикажем „Скорашње“"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4535
+#: ../thunar/thunar-window.c:4541
 msgid "Failed to display the contents of the trash can"
 msgstr "Нисам успео да прикажем садржај смећа"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4571
+#: ../thunar/thunar-window.c:4577
 msgid "Failed to browse the network"
 msgstr "Нисам успео да разгледам мрежу"
 
-#: ../thunar/thunar-window.c:4682
+#: ../thunar/thunar-window.c:4688
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -4034,11 +4028,11 @@ msgstr ""
 "Тунар је брз и лаган разгледач датотека за\n"
 "сучеље ИксФЦЕ-а."
 
-#: ../thunar/thunar-window.c:5840
+#: ../thunar/thunar-window.c:5846
 msgid "Failed to launch search with Catfish"
 msgstr "Нисам успео да покренем претрагу Сомом"
 
-#: ../thunar/thunar-window.c:6109
+#: ../thunar/thunar-window.c:6115
 msgid "Location Bar"
 msgstr "Трака места"
 
