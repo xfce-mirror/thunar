@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-24 00:46+0100\n"
+"POT-Creation-Date: 2023-01-27 12:47+0100\n"
 "PO-Revision-Date: 2022-12-22 11:28+0000\n"
 "Last-Translator: Luna Jernberg <bittin@cafe8bitar.se>, 2023\n"
 "Language-Team: Swedish (https://www.transifex.com/xfce/teams/16840/sv/)\n"
@@ -784,7 +784,7 @@ msgstr "Använd som _standardval för den här typen av fil"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1288
-#: ../thunar/thunar-properties-dialog.c:1104 ../thunar/thunar-window.c:4390
+#: ../thunar/thunar-properties-dialog.c:1104 ../thunar/thunar-window.c:4396
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -1663,25 +1663,18 @@ msgstr "Förbereder..."
 msgid "Could not delete file \"%s\": %s"
 msgstr "Det gick inte att ta bort fil \"%s\": %s"
 
-#: ../thunar/thunar-io-jobs.c:688
-#, c-format
-msgid "Could not create symbolic link to \"%s\" because it is not a local file"
-msgstr ""
-"Det gick inte att skapa symbolisk länk till \"%s\" därför att det inte är en"
-" lokal fil"
-
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:1076
+#: ../thunar/thunar-io-jobs.c:1059
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "Misslyckades med att ändra ägare på \"%s\": %s"
 
-#: ../thunar/thunar-io-jobs.c:1077
+#: ../thunar/thunar-io-jobs.c:1060
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "Misslyckades med att ändra grupp på \"%s\": %s"
 
-#: ../thunar/thunar-io-jobs.c:1232
+#: ../thunar/thunar-io-jobs.c:1215
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Misslyckades med att ändra rättigheter på \"%s\": %s"
@@ -3252,7 +3245,7 @@ msgid "Loading folder contents..."
 msgstr "Läser in mappinnehåll..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2364 ../thunar/thunar-window.c:4203
+#: ../thunar/thunar-standard-view.c:2364 ../thunar/thunar-window.c:4209
 msgid "Failed to open the home folder"
 msgstr "Misslyckades med att öppna hemmappen"
 
@@ -3349,7 +3342,7 @@ msgstr "Misslyckades med att skapa en länk för URL-en \"%s\""
 msgid "Untitled document"
 msgstr "Namnlöst dokument"
 
-#: ../thunar/thunar-standard-view.c:3619 ../thunar/thunar-window.c:4300
+#: ../thunar/thunar-standard-view.c:3619 ../thunar/thunar-window.c:4306
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Misslyckades med att öppna katalogen \"%s\""
@@ -3946,34 +3939,34 @@ msgstr "Stäng flik"
 msgid "Open the location \"%s\""
 msgstr "Öppna platsen \"%s\""
 
-#: ../thunar/thunar-window.c:4143
+#: ../thunar/thunar-window.c:4149
 msgid "Failed to open parent folder"
 msgstr "Misslyckades med att öppna överordnad mapp"
 
-#: ../thunar/thunar-window.c:4274
+#: ../thunar/thunar-window.c:4280
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Katalogen \"%s\" finns inte. Vill du skapa den?"
 
-#: ../thunar/thunar-window.c:4276
+#: ../thunar/thunar-window.c:4282
 msgid "Create directory"
 msgstr "Skapa mapp"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4345
+#: ../thunar/thunar-window.c:4351
 msgid "Failed to browse the computer"
 msgstr "Det gick inte att bläddra på datorn"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4388
+#: ../thunar/thunar-window.c:4394
 msgid "About Templates"
 msgstr "Om mallar"
 
-#: ../thunar/thunar-window.c:4410
+#: ../thunar/thunar-window.c:4416
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Alla filer i den här mappen kommer att visas i \"Skapa dokument\"-menyn."
 
-#: ../thunar/thunar-window.c:4417
+#: ../thunar/thunar-window.c:4423
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
@@ -3983,31 +3976,31 @@ msgstr ""
 "\n"
 "Du kan sedan välja objektet från \"Skapa dokument\"-menyn och en kopia av dokumentet kommer att skapas i katalogen som du står i."
 
-#: ../thunar/thunar-window.c:4429
+#: ../thunar/thunar-window.c:4435
 msgid "Do _not display this message again"
 msgstr "Visa _inte det här meddelandet igen"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4463
+#: ../thunar/thunar-window.c:4469
 msgid "Failed to open the file system root folder"
 msgstr "Misslyckades med att öppna filsystemets rotmapp"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4499
+#: ../thunar/thunar-window.c:4505
 msgid "Failed to display `Recent`"
 msgstr "Misslyckades med att visa `Senaste`"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4535
+#: ../thunar/thunar-window.c:4541
 msgid "Failed to display the contents of the trash can"
 msgstr "Misslyckades med att visa innehållet i papperskorgen"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4571
+#: ../thunar/thunar-window.c:4577
 msgid "Failed to browse the network"
 msgstr "Misslyckades med att bläddra i nätverket"
 
-#: ../thunar/thunar-window.c:4682
+#: ../thunar/thunar-window.c:4688
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -4015,11 +4008,11 @@ msgstr ""
 "Thunar är en snabb och lättanvänd filhanterare\n"
 "för skrivbordsmiljön Xfce."
 
-#: ../thunar/thunar-window.c:5840
+#: ../thunar/thunar-window.c:5846
 msgid "Failed to launch search with Catfish"
 msgstr "Det gick inte att starta sök med Catfish"
 
-#: ../thunar/thunar-window.c:6109
+#: ../thunar/thunar-window.c:6115
 msgid "Location Bar"
 msgstr "Platsfält"
 
