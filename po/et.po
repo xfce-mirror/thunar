@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-24 00:46+0100\n"
+"POT-Creation-Date: 2023-01-27 00:45+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Priit Jõerüüt <transifex@joeruut.com>, 2020-2022\n"
 "Language-Team: Estonian (http://www.transifex.com/xfce/thunar/language/et/)\n"
@@ -780,7 +780,7 @@ msgstr "_Vaikimisi rakendus selle failitüübi jaoks"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1288
-#: ../thunar/thunar-properties-dialog.c:1104 ../thunar/thunar-window.c:4413
+#: ../thunar/thunar-properties-dialog.c:1104 ../thunar/thunar-window.c:4419
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -1659,23 +1659,18 @@ msgstr "Ettevalmistamine..."
 msgid "Could not delete file \"%s\": %s"
 msgstr "Faili „%s“ pole võimalik kustutada: %s"
 
-#: ../thunar/thunar-io-jobs.c:688
-#, c-format
-msgid "Could not create symbolic link to \"%s\" because it is not a local file"
-msgstr "Failile „%s“ pole võimalik sümbolviita luua, kuna see pole kohalik fail"
-
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:1076
+#: ../thunar/thunar-io-jobs.c:1059
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "„%s“ omaniku vahetamine ei õnnestunud: %s"
 
-#: ../thunar/thunar-io-jobs.c:1077
+#: ../thunar/thunar-io-jobs.c:1060
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "„%s“ grupi vahetamine ei õnnestunud: %s"
 
-#: ../thunar/thunar-io-jobs.c:1232
+#: ../thunar/thunar-io-jobs.c:1215
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "„%s“ õiguste muutmine ei õnnestunud: %s"
@@ -3150,7 +3145,7 @@ msgid "Loading folder contents..."
 msgstr "Kausta sisu laadimine..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2375 ../thunar/thunar-window.c:4226
+#: ../thunar/thunar-standard-view.c:2375 ../thunar/thunar-window.c:4232
 msgid "Failed to open the home folder"
 msgstr "Kodukataloogi avamine ebaõnnestus"
 
@@ -3235,7 +3230,7 @@ msgstr "URLi „%s” viite loomine ebaõnnestus"
 msgid "Untitled document"
 msgstr "Nimeta dokument"
 
-#: ../thunar/thunar-standard-view.c:3630 ../thunar/thunar-window.c:4323
+#: ../thunar/thunar-standard-view.c:3630 ../thunar/thunar-window.c:4329
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Kataloogi „%s” avamine ebaõnnestus"
@@ -3823,75 +3818,75 @@ msgstr "Sulge kaart"
 msgid "Open the location \"%s\""
 msgstr "„%s” kausta avamine"
 
-#: ../thunar/thunar-window.c:4166
+#: ../thunar/thunar-window.c:4172
 msgid "Failed to open parent folder"
 msgstr "Ülemise kausta avamine ebaõnnestus"
 
-#: ../thunar/thunar-window.c:4297
+#: ../thunar/thunar-window.c:4303
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Kausta „%s” pole olemas. Kas tahad selle luua?"
 
-#: ../thunar/thunar-window.c:4299
+#: ../thunar/thunar-window.c:4305
 msgid "Create directory"
 msgstr "Loo kataloog"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4368
+#: ../thunar/thunar-window.c:4374
 msgid "Failed to browse the computer"
 msgstr "Arvuti sirvimine ebaõnnestus"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4411
+#: ../thunar/thunar-window.c:4417
 msgid "About Templates"
 msgstr "Mallidest"
 
-#: ../thunar/thunar-window.c:4433
+#: ../thunar/thunar-window.c:4439
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Selles kaustas olevad failid ilmuvad „Loo dokument” menüüsse."
 
-#: ../thunar/thunar-window.c:4440
+#: ../thunar/thunar-window.c:4446
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Kui sa lood tihti sama tüüpi dokumente, kopeeri üks siia kataloogi. Thunar teeb sellest faili jaoks kirje „Loo dokument” menüüsse.\n\nSeejärel võid „Loo dokument” menüü alt selle valida ning sellest failist tehakse koopia töökataloogi."
 
-#: ../thunar/thunar-window.c:4452
+#: ../thunar/thunar-window.c:4458
 msgid "Do _not display this message again"
 msgstr "Ära _näita seda sõnumit uuesti"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4486
+#: ../thunar/thunar-window.c:4492
 msgid "Failed to open the file system root folder"
 msgstr "Süsteemi juurkataloogi avamine nurjus"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4522
+#: ../thunar/thunar-window.c:4528
 msgid "Failed to display `Recent`"
 msgstr "Hiljuti kasutatud failide kuvamine ei õnnestunud"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4558
+#: ../thunar/thunar-window.c:4564
 msgid "Failed to display the contents of the trash can"
 msgstr "Prügikasti sisu näitamine ebaõnnestus"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4594
+#: ../thunar/thunar-window.c:4600
 msgid "Failed to browse the network"
 msgstr "Võrgu sirvimine nurjus"
 
-#: ../thunar/thunar-window.c:4705
+#: ../thunar/thunar-window.c:4711
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar on kiire ja lihtne failihaldur\nXfce keskkonna jaoks."
 
-#: ../thunar/thunar-window.c:5863
+#: ../thunar/thunar-window.c:5869
 msgid "Failed to launch search with Catfish"
 msgstr "Otsingu käivitamine rakenduses Catfish ei õnnestunud"
 
-#: ../thunar/thunar-window.c:6132
+#: ../thunar/thunar-window.c:6138
 msgid "Location Bar"
 msgstr ""
 
