@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-24 00:46+0100\n"
+"POT-Creation-Date: 2023-01-27 12:47+0100\n"
 "PO-Revision-Date: 2022-12-22 11:28+0000\n"
 "Last-Translator: Haoyu Qiu, 2023\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/xfce/teams/16840/zh_CN/)\n"
@@ -737,7 +737,7 @@ msgstr "设为此种类文件的默认(_D)"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1288
-#: ../thunar/thunar-properties-dialog.c:1104 ../thunar/thunar-window.c:4390
+#: ../thunar/thunar-properties-dialog.c:1104 ../thunar/thunar-window.c:4396
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -1608,23 +1608,18 @@ msgstr "正在准备..."
 msgid "Could not delete file \"%s\": %s"
 msgstr "未能删除文件 “%s”: %s"
 
-#: ../thunar/thunar-io-jobs.c:688
-#, c-format
-msgid "Could not create symbolic link to \"%s\" because it is not a local file"
-msgstr "因为 “%s” 不是本地文件，所以未能创建指向它的符号链接"
-
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:1076
+#: ../thunar/thunar-io-jobs.c:1059
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "无法更改 “%s” 的所有者: %s"
 
-#: ../thunar/thunar-io-jobs.c:1077
+#: ../thunar/thunar-io-jobs.c:1060
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "无法更改 “%s” 的群组: %s"
 
-#: ../thunar/thunar-io-jobs.c:1232
+#: ../thunar/thunar-io-jobs.c:1215
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "无法更改 “%s” 的权限: %s"
@@ -3113,7 +3108,7 @@ msgid "Loading folder contents..."
 msgstr "正在载入文件夹内容..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2364 ../thunar/thunar-window.c:4203
+#: ../thunar/thunar-standard-view.c:2364 ../thunar/thunar-window.c:4209
 msgid "Failed to open the home folder"
 msgstr "无法打开主文件夹"
 
@@ -3208,7 +3203,7 @@ msgstr "无法为 URL “%s” 创建链接"
 msgid "Untitled document"
 msgstr "无标题文档"
 
-#: ../thunar/thunar-standard-view.c:3619 ../thunar/thunar-window.c:4300
+#: ../thunar/thunar-standard-view.c:3619 ../thunar/thunar-window.c:4306
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "无法打开目录 “%s”"
@@ -3793,34 +3788,34 @@ msgstr "关闭标签"
 msgid "Open the location \"%s\""
 msgstr "打开位置 \"%s\""
 
-#: ../thunar/thunar-window.c:4143
+#: ../thunar/thunar-window.c:4149
 msgid "Failed to open parent folder"
 msgstr "无法打开父文件夹"
 
-#: ../thunar/thunar-window.c:4274
+#: ../thunar/thunar-window.c:4280
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "目录 \"%s\" 不存在。您是否希望创建它？"
 
-#: ../thunar/thunar-window.c:4276
+#: ../thunar/thunar-window.c:4282
 msgid "Create directory"
 msgstr "创建目录"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4345
+#: ../thunar/thunar-window.c:4351
 msgid "Failed to browse the computer"
 msgstr "无法浏览此计算机"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4388
+#: ../thunar/thunar-window.c:4394
 msgid "About Templates"
 msgstr "关于模板"
 
-#: ../thunar/thunar-window.c:4410
+#: ../thunar/thunar-window.c:4416
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "此文件夹下的所有文件都会在 “创建文档” 菜单中出现。"
 
-#: ../thunar/thunar-window.c:4417
+#: ../thunar/thunar-window.c:4423
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
@@ -3830,31 +3825,31 @@ msgstr ""
 "\n"
 "然后您从 “创建文档” 菜单中选择此条目，就会在您正在浏览的目录中创建此文档的一个副本。"
 
-#: ../thunar/thunar-window.c:4429
+#: ../thunar/thunar-window.c:4435
 msgid "Do _not display this message again"
 msgstr "不再显示此信息(_N)"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4463
+#: ../thunar/thunar-window.c:4469
 msgid "Failed to open the file system root folder"
 msgstr "无法打开文件系统根目录"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4499
+#: ../thunar/thunar-window.c:4505
 msgid "Failed to display `Recent`"
 msgstr "无法显示“最近访问” "
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4535
+#: ../thunar/thunar-window.c:4541
 msgid "Failed to display the contents of the trash can"
 msgstr "无法显示回收站的内容"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4571
+#: ../thunar/thunar-window.c:4577
 msgid "Failed to browse the network"
 msgstr "无法浏览网络"
 
-#: ../thunar/thunar-window.c:4682
+#: ../thunar/thunar-window.c:4688
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -3862,11 +3857,11 @@ msgstr ""
 "Thunar 是 Xfce 桌面环境内一款快速易用的\n"
 "文件管理器。"
 
-#: ../thunar/thunar-window.c:5840
+#: ../thunar/thunar-window.c:5846
 msgid "Failed to launch search with Catfish"
 msgstr "无法使用 Catfish 进行搜索 "
 
-#: ../thunar/thunar-window.c:6109
+#: ../thunar/thunar-window.c:6115
 msgid "Location Bar"
 msgstr "地址栏"
 
