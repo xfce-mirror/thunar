@@ -34,7 +34,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-24 00:46+0100\n"
+"POT-Creation-Date: 2023-01-27 00:45+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Toni Estévez <toni.estevez@gmail.com>, 2019-2023\n"
 "Language-Team: Spanish (http://www.transifex.com/xfce/thunar/language/es/)\n"
@@ -830,7 +830,7 @@ msgstr "Usar por _defecto para este tipo de archivo"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1288
-#: ../thunar/thunar-properties-dialog.c:1104 ../thunar/thunar-window.c:4413
+#: ../thunar/thunar-properties-dialog.c:1104 ../thunar/thunar-window.c:4419
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -1709,23 +1709,18 @@ msgstr "Preparando..."
 msgid "Could not delete file \"%s\": %s"
 msgstr "No se ha podido eliminar el archivo «%s»: %s"
 
-#: ../thunar/thunar-io-jobs.c:688
-#, c-format
-msgid "Could not create symbolic link to \"%s\" because it is not a local file"
-msgstr "No se ha podido crear un enlace simbólico a «%s» porque no es un archivo local"
-
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:1076
+#: ../thunar/thunar-io-jobs.c:1059
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "No se ha podido cambiar el propietario de «%s»: %s"
 
-#: ../thunar/thunar-io-jobs.c:1077
+#: ../thunar/thunar-io-jobs.c:1060
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "No se ha podido cambiar el grupo de «%s»: %s"
 
-#: ../thunar/thunar-io-jobs.c:1232
+#: ../thunar/thunar-io-jobs.c:1215
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "No se han podido cambiar los permisos de «%s»: %s"
@@ -3208,7 +3203,7 @@ msgid "Loading folder contents..."
 msgstr "Cargando el contenido de la carpeta..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2375 ../thunar/thunar-window.c:4226
+#: ../thunar/thunar-standard-view.c:2375 ../thunar/thunar-window.c:4232
 msgid "Failed to open the home folder"
 msgstr "No se ha podido abrir la carpeta personal"
 
@@ -3293,7 +3288,7 @@ msgstr "No se ha podido crear un enlace para el URL «%s»"
 msgid "Untitled document"
 msgstr "Documento sin titulo"
 
-#: ../thunar/thunar-standard-view.c:3630 ../thunar/thunar-window.c:4323
+#: ../thunar/thunar-standard-view.c:3630 ../thunar/thunar-window.c:4329
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "No se ha podido abrir la carpeta «%s»"
@@ -3884,75 +3879,75 @@ msgstr "Cerrar la pestaña"
 msgid "Open the location \"%s\""
 msgstr "Abrir la ubicación «%s»"
 
-#: ../thunar/thunar-window.c:4166
+#: ../thunar/thunar-window.c:4172
 msgid "Failed to open parent folder"
 msgstr "No se ha podido abrir la carpeta superior"
 
-#: ../thunar/thunar-window.c:4297
+#: ../thunar/thunar-window.c:4303
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "No existe la carpeta «%s». ¿Quiere crearla?"
 
-#: ../thunar/thunar-window.c:4299
+#: ../thunar/thunar-window.c:4305
 msgid "Create directory"
 msgstr "Crear una carpeta"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4368
+#: ../thunar/thunar-window.c:4374
 msgid "Failed to browse the computer"
 msgstr "No se ha podido navegar por el equipo"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4411
+#: ../thunar/thunar-window.c:4417
 msgid "About Templates"
 msgstr "Acerca de las plantillas"
 
-#: ../thunar/thunar-window.c:4433
+#: ../thunar/thunar-window.c:4439
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Todos los archivos en esta carpeta aparecerán en el menú «Crear un documento»."
 
-#: ../thunar/thunar-window.c:4440
+#: ../thunar/thunar-window.c:4446
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Si crea frecuentemente ciertos tipos de documento, haga una copia de uno y colóquela en esta carpeta.\nThunar añadirá una entrada para ese documento en el menú «Crear un documento».\n\nA continuación podrá seleccionar la entrada del menú «Crear un documento» y se creará una copia\ndel documento en la carpeta que se está mostrando."
 
-#: ../thunar/thunar-window.c:4452
+#: ../thunar/thunar-window.c:4458
 msgid "Do _not display this message again"
 msgstr "_No mostrar este mensaje de nuevo"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4486
+#: ../thunar/thunar-window.c:4492
 msgid "Failed to open the file system root folder"
 msgstr "No se ha podido abrir la carpeta raíz del sistema de archivos"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4522
+#: ../thunar/thunar-window.c:4528
 msgid "Failed to display `Recent`"
 msgstr "No se han podido mostrar los elementos recientes"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4558
+#: ../thunar/thunar-window.c:4564
 msgid "Failed to display the contents of the trash can"
 msgstr "No se ha podido mostrar el contenido de la papelera"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4594
+#: ../thunar/thunar-window.c:4600
 msgid "Failed to browse the network"
 msgstr "No se ha podido navegar por la red"
 
-#: ../thunar/thunar-window.c:4705
+#: ../thunar/thunar-window.c:4711
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar es un gestor de archivos rápido y\nfácil de usar para el entorno de escritorio Xfce."
 
-#: ../thunar/thunar-window.c:5863
+#: ../thunar/thunar-window.c:5869
 msgid "Failed to launch search with Catfish"
 msgstr "No se puede iniciar la búsqueda con Catfish"
 
-#: ../thunar/thunar-window.c:6132
+#: ../thunar/thunar-window.c:6138
 msgid "Location Bar"
 msgstr "Barra de ubicación"
 
