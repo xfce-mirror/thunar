@@ -50,10 +50,7 @@ struct _ThunarJobOperation
   /* Files overwritten as a part of an operation */
   GList                  *overwritten_files;
 
-  /**
-   * Optional timestamps (in seconds) which tell when the operation was started and ended.
-   * Only used for trash/restore operations.
-   **/
+  /** timestamps (in seconds) which tell when the operation was started and ended. */
   gint64                  start_timestamp;
   gint64                  end_timestamp;
 };
@@ -368,6 +365,9 @@ thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
         break;
     }
 
+  inverted_operation->start_timestamp = job_operation->start_timestamp;
+  inverted_operation->end_timestamp   = job_operation->end_timestamp;
+
   return inverted_operation;
 }
 
@@ -391,6 +391,8 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
   GFile             *parent_dir;
   gchar             *display_name;
   GFile             *template_file;
+  guint64            changed_stamp;
+  gboolean           warn_permanent_delete = FALSE;
 
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
@@ -422,12 +424,16 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
                 continue;
               }
 
+            /* If nothing changed, we can just bring back the file with undo/redo
+             * Though if any file was modified, we need to ask if deletion is ok */
+            changed_stamp = thunar_file_get_date (thunar_file, THUNAR_FILE_DATE_MODIFIED);
+            if (changed_stamp > (guint64) job_operation->end_timestamp)
+              warn_permanent_delete = TRUE;
+
             thunar_file_list = g_list_append (thunar_file_list, thunar_file);
           }
 
-        /* perform permanent deletion without warning, because we can bring back the file with
-         * an undo or a redo (depending on whether a redo or an undo caused the deletion) */
-        thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE, FALSE);
+        thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE, warn_permanent_delete);
 
         thunar_g_list_free_full (thunar_file_list);
         break;
