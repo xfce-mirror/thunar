@@ -77,6 +77,9 @@ thunar_job_operation_init (ThunarJobOperation *self)
   self->source_file_list = NULL;
   self->target_file_list = NULL;
   self->overwritten_files = NULL;
+
+  /* Initialize the start stamp with the creation stamp of the job operation */
+  self->start_timestamp = g_get_real_time () / (gint64) 1e6;
 }
 
 
@@ -425,9 +428,10 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
               }
 
             /* If nothing changed, we can just bring back the file with undo/redo
-             * Though if any file was modified, we need to ask if deletion is ok */
+             * Though if any file was modified or replaced with an older one, we need to ask if deletion is ok */
             changed_stamp = thunar_file_get_date (thunar_file, THUNAR_FILE_DATE_MODIFIED);
-            if (changed_stamp > (guint64) job_operation->end_timestamp)
+            if (changed_stamp > (guint64) job_operation->end_timestamp ||
+                changed_stamp < (guint64) job_operation->start_timestamp)
               warn_permanent_delete = TRUE;
 
             thunar_file_list = g_list_append (thunar_file_list, thunar_file);
