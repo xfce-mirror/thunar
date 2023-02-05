@@ -77,6 +77,9 @@ thunar_job_operation_init (ThunarJobOperation *self)
   self->source_file_list = NULL;
   self->target_file_list = NULL;
   self->overwritten_files = NULL;
+
+  /* Initialize the start stamp with the creation stamp of the job operation */
+  self->start_timestamp = g_get_real_time () / (gint64) 1e6;
 }
 
 
@@ -392,7 +395,6 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
   gchar             *display_name;
   GFile             *template_file;
   guint64            changed_stamp;
-  gboolean           warn_permanent_delete = FALSE;
 
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
@@ -425,15 +427,63 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
               }
 
             /* If nothing changed, we can just bring back the file with undo/redo
-             * Though if any file was modified, we need to ask if deletion is ok */
+             * Though if any file was modified or replaced with an older one, we need to ask if deletion is ok */
             changed_stamp = thunar_file_get_date (thunar_file, THUNAR_FILE_DATE_MODIFIED);
-            if (changed_stamp > (guint64) job_operation->end_timestamp)
-              warn_permanent_delete = TRUE;
+            if (changed_stamp > (guint64) job_operation->end_timestamp ||
+                changed_stamp < (guint64) job_operation->start_timestamp)
+              {
+                  GtkWidget *dialog;
+                  GList     *window_list;
+                  GtkWindow *window;
+                  gchar     *message, *message1, *message2;
+                  gint       response;
+
+                  window_list = thunar_application_get_windows (application);
+                  window_list = g_list_last (window_list); /* this will be the topmost Window */
+                  window = GTK_WINDOW (window_list->data);
+
+                  message1 = g_strdup_printf (_("The file \"%s\" was modified recently.\n\n"),
+                                     thunar_file_get_display_name (thunar_file));
+                  message2 = g_strdup_printf (_("Are you sure that you want to\npermanently delete \"%s\"?"),
+                                     thunar_file_get_display_name (thunar_file));
+                  message = g_strconcat (message1, message2, NULL);
+
+                  /* ask the user to confirm the delete operation */
+                  dialog = gtk_message_dialog_new (window,
+                                                  GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                  GTK_MESSAGE_QUESTION,
+                                                  GTK_BUTTONS_NONE,
+                                                  "%s", message);
+                  gtk_window_set_title (GTK_WINDOW (dialog), _("Attention"));
+                  gtk_dialog_add_buttons (GTK_DIALOG (dialog),
+                                          _("_Skip"), GTK_RESPONSE_CANCEL,
+                                          _("_Delete"), GTK_RESPONSE_YES,
+                                          NULL);
+                  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
+                  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+                                                            _("If you delete a file, it is permanently lost."));
+                  response = gtk_dialog_run (GTK_DIALOG (dialog));
+                  gtk_widget_destroy (dialog);
+                  g_free (message1);
+                  g_free (message2);
+                  g_free (message);
+                  g_list_free (window_list);
+
+                  if (response == GTK_RESPONSE_CANCEL)
+                    continue;
+              }
 
             thunar_file_list = g_list_append (thunar_file_list, thunar_file);
           }
 
-        thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE, warn_permanent_delete);
+        if (thunar_file_list != NULL)
+          thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE, FALSE);
+        else
+          {
+            *error = g_error_new (G_FILE_ERROR_FAILED,
+                                 G_FILE_ERROR_FAILED,
+                                "No file available to do the operation");
+          }
 
         thunar_g_list_free_full (thunar_file_list);
         break;
