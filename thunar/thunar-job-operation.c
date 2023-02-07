@@ -425,9 +425,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
             thunar_file_list = g_list_append (thunar_file_list, thunar_file);
           }
 
-        /* perform permanent deletion without warning, because we can bring back the file with
-         * an undo or a redo (depending on whether a redo or an undo caused the deletion) */
-        thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE, FALSE);
+        thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE, TRUE);
 
         thunar_g_list_free_full (thunar_file_list);
         break;
