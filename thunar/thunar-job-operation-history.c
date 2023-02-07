@@ -206,10 +206,12 @@ thunar_job_operation_history_commit (ThunarJobOperation *job_operation)
 
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
-  /* set the timestamp for the operation, in seconds. g_get_real_time gives
-   * us the time in microseconds, so we need to divide by 1e6. */
-  thunar_job_operation_set_end_timestamp (job_operation, g_get_real_time () / (gint64) 1e6);
-
+  if (thunar_job_operation_get_kind (job_operation) == THUNAR_JOB_OPERATION_KIND_TRASH)
+    {
+      /* set the timestamp for the operation, in seconds. g_get_real_time gives
+       * us the time in microseconds, so we need to divide by 1e6. */
+      thunar_job_operation_set_end_timestamp (job_operation, g_get_real_time () / (gint64) 1e6);
+    }
 
   g_mutex_lock (&job_operation_history->job_operation_list_mutex);
 
