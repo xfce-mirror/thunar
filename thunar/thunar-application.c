@@ -1673,9 +1673,6 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
       application->files_to_launch = g_list_delete_link (application->files_to_launch,
                                                          application->files_to_launch);
 
-      /* release the file */
-      g_object_unref (file);
-
       /* check if we have more files to process */
       if (application->files_to_launch != NULL)
         {
@@ -1687,6 +1684,9 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
   /* unset the startup id */
   if (startup_id != NULL)
     g_object_set_qdata (G_OBJECT (file), thunar_application_startup_id_quark, NULL);
+
+  /* release the file */
+  g_object_unref (file);
 
   /* release the application */
   g_application_release (G_APPLICATION (application));
