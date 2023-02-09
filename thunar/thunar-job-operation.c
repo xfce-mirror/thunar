@@ -663,12 +663,35 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation  *operation,
     }
 
   /* set up a hash table for the files we deleted */
-  files_trashed = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, NULL, NULL);
+  files_trashed = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, g_object_unref, NULL);
 
   /* add all the files that were deleted in the hash table so we can check if a file
    * was deleted as a part of this operation or not in constant time. */
   for (GList *lp = operation->target_file_list; lp != NULL; lp = lp->next)
-    g_hash_table_add (files_trashed, lp->data);
+  {
+    GFile *parent = g_file_get_parent (lp->data);
+    gchar *real_path = NULL;
+    
+    /* Try to resolve symlinks, otherwise Gfiles wont match */
+    /* (All files located in trash have symlinks resolved) */
+    if (parent != NULL)
+      {
+        gchar *real_path_parent = NULL;
+        gchar *basename = g_file_get_basename (lp->data);
+        real_path_parent = thunar_g_file_get_resolved_path (parent);
+        g_object_unref (parent);
+        if (real_path_parent != NULL && basename != NULL)
+          real_path = g_build_filename (real_path_parent, basename, NULL);
+        g_free (basename);
+        g_free (real_path_parent);
+      }
+
+    if (real_path != NULL)
+      g_hash_table_add (files_trashed, g_file_new_for_path (real_path));
+    else
+      g_hash_table_add (files_trashed, g_object_ref (lp->data));
+    g_free (real_path);
+  }
 
   /* iterate over the files in the trash, adding them to source and target lists of
    * the files which are to be restored and their original paths */
