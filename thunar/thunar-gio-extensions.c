@@ -29,6 +29,10 @@
 #include <gio/gdesktopappinfo.h>
 #endif
 
+#ifndef HAVE_REALPATH
+#define realpath(path, resolved_path) NULL
+#endif
+
 #include <libxfce4util/libxfce4util.h>
 
 #include <thunar/thunar-file.h>
@@ -1418,4 +1422,41 @@ thunar_g_file_get_link_path_for_symlink (GFile *file_to_link,
     link_path = g_strconcat ("/", relative_path, NULL);
     g_free (relative_path);
     return link_path;
+}
+
+
+
+/**
+ * thunar_g_file_get_resolved_path:
+ * @file : #GFile for which the path will be resolved
+ *
+ * Gets the local pathname with resolved symlinks for GFile, if one exists.
+ * If non-NULL, this is guaranteed to be an absolute, canonical path.
+ *
+ * This only will work if all components of the #GFile path actually do exist
+ *
+ * Return value: (nullable) (transfer full): A #gchar on success and %NULL on failure.
+ * The returned string should be freed with g_free() when no longer needed.
+ **/
+char*
+thunar_g_file_get_resolved_path (GFile *file)
+{
+  gchar *path;
+  gchar *real_path;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+
+  path = g_file_get_path (file);
+
+  /* No local path for file found */
+  if (path == NULL)
+    return NULL;
+
+  real_path = realpath (path, NULL);
+
+  if (real_path == NULL)
+    g_warning ("Failed to resolve path: '%s' Error: %s\n", path, strerror (errno));
+
+  g_free (path);
+  return real_path;
 }
