@@ -139,7 +139,7 @@ void                  thunar_application_move_files                (ThunarApplic
                                                                     ThunarOperationLogMode   log_mode,
                                                                     GClosure                *new_files_closure);
 
-void                  thunar_application_unlink_files              (ThunarApplication           *application,
+gboolean              thunar_application_unlink_files              (ThunarApplication           *application,
                                                                     gpointer                     parent,
                                                                     GList                       *file_list,
                                                                     gboolean                     permanently,

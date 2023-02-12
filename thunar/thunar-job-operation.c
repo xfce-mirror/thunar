@@ -391,6 +391,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
   GFile             *parent_dir;
   gchar             *display_name;
   GFile             *template_file;
+  gboolean           execute_failed = FALSE;
 
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
@@ -425,9 +426,22 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
             thunar_file_list = g_list_append (thunar_file_list, thunar_file);
           }
 
-        thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE, TRUE, THUNAR_OPERATION_LOG_OPERATIONS);
+        if (thunar_file_list == NULL)
+          {
+            execute_failed = TRUE;
+          }
+        else
+          {
+            execute_failed = thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE, TRUE, THUNAR_OPERATION_LOG_OPERATIONS);
+            g_list_free_full (thunar_file_list, g_object_unref);
+          }
 
-        thunar_g_list_free_full (thunar_file_list);
+        if (execute_failed)
+          {
+            *error = g_error_new (G_FILE_ERROR,
+                                  G_FILE_ERROR_AGAIN,
+                                  "Failed to execute operation");
+          }
         break;
 
       case THUNAR_JOB_OPERATION_KIND_MOVE:

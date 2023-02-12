@@ -2352,8 +2352,10 @@ unlink_stub (GList *source_path_list,
  * If the user pressed the shift key while triggering the delete action,
  * the files will be deleted permanently (after confirming the action),
  * otherwise the files will be moved to the trash.
+ *
+ * Return value: TRUE if the trash/delete operation was canceled, FALSE otehrwise
  **/
-void
+gboolean
 thunar_application_unlink_files (ThunarApplication            *application,
                                  gpointer                      parent,
                                  GList                        *file_list,
@@ -2369,9 +2371,10 @@ thunar_application_unlink_files (ThunarApplication            *application,
   gchar     *message;
   guint      n_path_list = 0;
   gint       response;
+  gboolean   operation_canceled = FALSE;
 
-  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
-  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), TRUE);
+  _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), TRUE);
 
   /* determine the paths for the files */
   for (lp = g_list_last (file_list); lp != NULL; lp = lp->prev, ++n_path_list)
@@ -2387,7 +2390,7 @@ thunar_application_unlink_files (ThunarApplication            *application,
 
   /* nothing to do if we don't have any paths */
   if (G_UNLIKELY (n_path_list == 0))
-    return;
+    return FALSE;
 
   /* ask the user to confirm if deleting permanently */
   if (G_UNLIKELY (permanently) && warn)
@@ -2437,6 +2440,8 @@ thunar_application_unlink_files (ThunarApplication            *application,
                                      _("Deleting files..."), unlink_stub,
                                      path_list, path_list, TRUE, FALSE, log_mode, NULL);
         }
+      else
+        operation_canceled = TRUE;
     }
   else if (G_UNLIKELY (permanently))
     {
@@ -2482,6 +2487,8 @@ thunar_application_unlink_files (ThunarApplication            *application,
 
       if (G_LIKELY (response == GTK_RESPONSE_YES))
         thunar_application_trash (application, parent, path_list, log_mode);
+      else
+        operation_canceled = TRUE;
     }
   else
     {
@@ -2491,6 +2498,8 @@ thunar_application_unlink_files (ThunarApplication            *application,
 
   /* release the path list */
   thunar_g_list_free_full (path_list);
+
+  return operation_canceled;
 }
 
 
