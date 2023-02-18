@@ -29,8 +29,8 @@
 #include <gio/gdesktopappinfo.h>
 #endif
 
-#ifndef HAVE_REALPATH
-#define realpath(path, resolved_path) NULL
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h> /* realpath */
 #endif
 
 #include <libxfce4util/libxfce4util.h>
