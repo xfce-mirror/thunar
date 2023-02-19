@@ -33,6 +33,10 @@
 #include <stdlib.h> /* realpath */
 #endif
 
+#ifndef HAVE_REALPATH
+#define realpath(path, resolved_path) NULL
+#endif
+
 #include <libxfce4util/libxfce4util.h>
 
 #include <thunar/thunar-file.h>
