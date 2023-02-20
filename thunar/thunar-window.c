@@ -173,9 +173,6 @@ static void      thunar_window_notebook_select_current_page(ThunarWindow        
 
 static GtkWidget*thunar_window_paned_notebooks_add        (ThunarWindow           *window);
 static void      thunar_window_paned_notebooks_switch     (ThunarWindow           *window);
-static gboolean  thunar_window_paned_notebooks_select     (GtkWidget              *view,
-                                                           GtkDirectionType       *direction,
-                                                           ThunarWindow           *window);
 static void      thunar_window_paned_notebooks_indicate_focus (ThunarWindow       *window,
                                                            GtkWidget              *notebook);
 static gboolean  thunar_window_split_view_is_active       (ThunarWindow           *window);
@@ -2628,9 +2625,6 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   gtk_notebook_set_tab_reorderable (GTK_NOTEBOOK (window->notebook_selected), view, TRUE);
   gtk_notebook_set_tab_detachable (GTK_NOTEBOOK (window->notebook_selected), view, TRUE);
 
-  /* only gets clicks on the notebook(page) it self */
-  g_signal_connect (G_OBJECT (gtk_bin_get_child (GTK_BIN (view))), "focus-in-event", G_CALLBACK (thunar_window_paned_notebooks_select), window);
-
   return view;
 }
 
@@ -2667,9 +2661,6 @@ thunar_window_paned_notebooks_add (ThunarWindow *window)
   g_signal_connect_after (G_OBJECT (notebook), "button-press-event", G_CALLBACK (thunar_window_notebook_button_press_event), window);
   g_signal_connect (G_OBJECT (notebook), "popup-menu", G_CALLBACK (thunar_window_notebook_popup_menu), window);
   g_signal_connect (G_OBJECT (notebook), "create-window", G_CALLBACK (thunar_window_notebook_create_window), window);
-
-  /* only gets clicks on tabs */
-  g_signal_connect (G_OBJECT (GTK_CONTAINER (notebook)), "focus-in-event", G_CALLBACK (thunar_window_paned_notebooks_select), window);
 
   gtk_notebook_set_show_border (GTK_NOTEBOOK (notebook), FALSE);
   gtk_notebook_set_scrollable (GTK_NOTEBOOK (notebook), TRUE);
@@ -2716,25 +2707,22 @@ thunar_window_paned_notebooks_switch (ThunarWindow *window)
 
 
 
-static gboolean
-thunar_window_paned_notebooks_select (GtkWidget         *view,
-                                      GtkDirectionType  *direction,
-                                      ThunarWindow      *window)
+void
+thunar_window_focus_view (ThunarWindow *window,
+                          GtkWidget    *view)
 {
   GtkWidget  *selected_notebook;
 
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
-  _thunar_return_val_if_fail (window->notebook_left != NULL || window->notebook_right != NULL, FALSE);
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   if (!thunar_window_split_view_is_active (window))
-    return FALSE;
+    return;
 
   selected_notebook = gtk_widget_get_ancestor (view, GTK_TYPE_NOTEBOOK);
   if (selected_notebook == window->notebook_selected)
-    return FALSE;
+    return;
 
   thunar_window_paned_notebooks_switch (window);
-  return FALSE;
 }
 
 

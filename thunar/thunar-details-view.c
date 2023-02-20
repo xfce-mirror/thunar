@@ -707,10 +707,15 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
   GtkTreePath       *path = NULL;
   GtkTreeViewColumn *column;
   GtkTreeViewColumn *name_column;
+  GtkWidget         *window;
 
   /* check if the event is for the bin window */
   if (G_UNLIKELY (event->window != gtk_tree_view_get_bin_window (tree_view)))
     return thunar_details_view_column_header_clicked (details_view, event);
+
+  /* give focus to the clicked view */
+  window = gtk_widget_get_toplevel (GTK_WIDGET (details_view));
+  thunar_window_focus_view (THUNAR_WINDOW (window), GTK_WIDGET (details_view));
 
   /* get the current selection */
   selection = gtk_tree_view_get_selection (tree_view);

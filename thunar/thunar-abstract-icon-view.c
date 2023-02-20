@@ -388,8 +388,13 @@ thunar_abstract_icon_view_button_press_event (ExoIconView            *view,
                                               ThunarAbstractIconView *abstract_icon_view)
 {
   GtkTreePath       *path;
+  GtkWidget         *window;
 
   abstract_icon_view->priv->button_pressed = TRUE;
+
+  /* give focus to the clicked view */
+  window = gtk_widget_get_toplevel (GTK_WIDGET (abstract_icon_view));
+  thunar_window_focus_view (THUNAR_WINDOW (window), GTK_WIDGET (abstract_icon_view));
 
   if (event->type == GDK_BUTTON_PRESS && event->button == 3)
     {
