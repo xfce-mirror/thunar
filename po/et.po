@@ -6,14 +6,14 @@
 # Kristjan Siimson <epost@ksiimson.se>, 2008
 # Mattias Põldaru <mahfiaz@gmail.com>, 2008,2014
 # Peeter Vois <Peeter.Vois@proekspert.ee>, 2006
-# Priit Jõerüüt <transifex@joeruut.com>, 2020-2022
+# Priit Jõerüüt <transifex@joeruut.com>, 2020-2023
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-27 00:45+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
-"Last-Translator: Priit Jõerüüt <transifex@joeruut.com>, 2020-2022\n"
+"Last-Translator: Priit Jõerüüt <transifex@joeruut.com>, 2020-2023\n"
 "Language-Team: Estonian (http://www.transifex.com/xfce/thunar/language/et/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -229,7 +229,7 @@ msgstr "_Muuda käivitajat"
 
 #: ../thunar/thunar-action-manager.c:309
 msgid "Edit the selected launcher"
-msgstr ""
+msgstr "Muuda valitud käivitajat"
 
 #. display an error message to the user
 #. display an error to the user
@@ -674,7 +674,7 @@ msgstr "Kustutan failie..."
 msgid ""
 "Are you sure that you want to\n"
 "move \"%s\" to trash ?"
-msgstr ""
+msgstr "Kas sa oled kindel, et soovid\nvisata „%s“ prügikasti?"
 
 #: ../thunar/thunar-application.c:2460
 #, c-format
@@ -684,12 +684,12 @@ msgid ""
 msgid_plural ""
 "Are you sure that you want to\n"
 "move the %u selected files to trash?"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Kas sa oled kindel, et soovid\nvisata valitud faili prügikasti?"
+msgstr[1] "Kas sa oled kindel, et soovid\nvisata %u valitud faili prügikasti?"
 
 #: ../thunar/thunar-application.c:2477
 msgid "Move to Trash"
-msgstr ""
+msgstr "Viska prügikasti"
 
 #: ../thunar/thunar-application.c:2526
 msgid "Moving files into the trash..."
@@ -1290,13 +1290,13 @@ msgstr "_Märgi käivitatavaks"
 
 #: ../thunar/thunar-dialogs.c:1188
 msgid "Close split pane with multiple tabs?"
-msgstr ""
+msgstr "Kas sulgen mitme kaardiga jagatud paneeli?"
 
 #: ../thunar/thunar-dialogs.c:1189
 msgid ""
 "The other split pane has multiple open tabs. Closing it will close all these"
 " tabs."
-msgstr ""
+msgstr "Teisel jagatud paneelil on avatud kitu kaarti. Paneeli sulgemisega suletakse ka need kaardid."
 
 #: ../thunar/thunar-dialogs.c:1195
 msgid "Warning"
@@ -1304,7 +1304,7 @@ msgstr "Hoiatus"
 
 #: ../thunar/thunar-dialogs.c:1200
 msgid "Close Pane"
-msgstr ""
+msgstr "Sulge paneel"
 
 #: ../thunar/thunar-dialogs.c:1203 ../thunar/thunar-permissions-chooser.c:591
 msgid "Do _not ask me again"
@@ -1793,7 +1793,7 @@ msgstr "%s - tegevust saab vaid osaliselt korrata"
 #: ../thunar/thunar-job-operation-history.c:541
 #, c-format
 msgid "Undo the latest '%s' operation (%s)"
-msgstr ""
+msgstr "Pööra eelmine tegevus tagasi („%s“ - %s)"
 
 #: ../thunar/thunar-job-operation-history.c:546 ../thunar/thunar-window.c:498
 msgid "Undo the latest operation"
@@ -1803,7 +1803,7 @@ msgstr "Pööra eelmine tegevus tagasi"
 #: ../thunar/thunar-job-operation-history.c:566
 #, c-format
 msgid "Redo the latest '%s' operation (%s)"
-msgstr ""
+msgstr "Korda eelmist tegevust („%s“ - %s)"
 
 #: ../thunar/thunar-job-operation-history.c:571 ../thunar/thunar-window.c:499
 msgid "Redo the latest operation"
@@ -3200,7 +3200,7 @@ msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
-msgstr ""
+msgstr "Kui see valik on kasutusel siis suur- ja väiketähti otsitakse täpselt.\nNäiteks Failinimi* leiaks Failinimi.txt, aga mitte failinimi.txt"
 
 #: ../thunar/thunar-standard-view.c:2501
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
@@ -3417,16 +3417,16 @@ msgstr "%.*s (koopia %u)%s"
 #: ../thunar/thunar-util.c:757
 #, c-format
 msgid "link to %.*s%s"
-msgstr ""
+msgstr "viide asukohta %.*s%s"
 
 #: ../thunar/thunar-util.c:762
 #, c-format
 msgid "link %u to %.*s%s"
-msgstr ""
+msgstr "%u viide asukohta %.*s.%s"
 
 #: ../thunar/thunar-util.c:783
 msgid "Search: "
-msgstr ""
+msgstr "Otsing:"
 
 #: ../thunar/thunar-window.c:489
 msgid "_File"
@@ -3522,7 +3522,7 @@ msgstr "Ava või sulge jagatud vaade"
 
 #: ../thunar/thunar-window.c:506
 msgid "Switch Focused Split View Pane"
-msgstr ""
+msgstr "Vaheta fookus teisele jagatud vaatega paneelile"
 
 #: ../thunar/thunar-window.c:507
 msgid "_Location Selector"
@@ -3888,7 +3888,7 @@ msgstr "Otsingu käivitamine rakenduses Catfish ei õnnestunud"
 
 #: ../thunar/thunar-window.c:6138
 msgid "Location Bar"
-msgstr ""
+msgstr "Asukohariba"
 
 #: ../thunarx/thunarx-property-page.c:111
 msgid "Label"
