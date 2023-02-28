@@ -163,7 +163,6 @@ struct _ThunarRenamerDialog
 
   ThunarActionManager *action_mgr;
 
-  GtkWidget           *cancel_button;
   GtkWidget           *close_button;
 
   GtkWidget           *tree_view;
@@ -354,26 +353,17 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   gtk_window_set_default_size (GTK_WINDOW (renamer_dialog), 510, 490);
   gtk_window_set_title (GTK_WINDOW (renamer_dialog), _("Rename Multiple Files"));
 
-  /* add the Cancel/Close buttons */
-  renamer_dialog->cancel_button = gtk_dialog_add_button (GTK_DIALOG (renamer_dialog), _("_Cancel"), GTK_RESPONSE_CANCEL);
+  /* add the "Close" button */
   renamer_dialog->close_button = gtk_dialog_add_button (GTK_DIALOG (renamer_dialog), _("_Close"), GTK_RESPONSE_DELETE_EVENT);
-  gtk_widget_hide (renamer_dialog->close_button);
+  gtk_widget_set_tooltip_text (renamer_dialog->close_button, _("Close this window, cancel further changes."));
 
-  /* add the "Done" button */
-  button = gtk_dialog_add_button (GTK_DIALOG (renamer_dialog), _("_Done"), GTK_RESPONSE_ACCEPT);
-  g_object_bind_property (G_OBJECT (renamer_dialog->model), "can-rename",
-                          G_OBJECT (button),                "sensitive",
-                          G_BINDING_SYNC_CREATE);
-  gtk_dialog_set_default_response (GTK_DIALOG (renamer_dialog), GTK_RESPONSE_ACCEPT);
-  gtk_widget_set_tooltip_text (button, _("Click here to actually rename the files listed above to their new names and close the window."));
-
-  /* add the "Apply" button */
-  button = gtk_dialog_add_button (GTK_DIALOG (renamer_dialog), _("_Apply"), GTK_RESPONSE_APPLY);
+  /* add the "Rename" button */
+  button = gtk_dialog_add_button (GTK_DIALOG (renamer_dialog), _("_Rename"), GTK_RESPONSE_APPLY);
   g_object_bind_property (G_OBJECT (renamer_dialog->model), "can-rename",
                           G_OBJECT (button),                "sensitive",
                           G_BINDING_SYNC_CREATE);
   gtk_dialog_set_default_response (GTK_DIALOG (renamer_dialog), GTK_RESPONSE_APPLY);
-  gtk_widget_set_tooltip_text (button, _("Click here to actually rename the files listed above to their new names and keep the window open."));
+  gtk_widget_set_tooltip_text (button, _("Rename items listed above, keep this window open."));
 
   /* setup the action manager support for this dialog */
   renamer_dialog->action_mgr = g_object_new (THUNAR_TYPE_ACTION_MANAGER, "widget", GTK_WIDGET (renamer_dialog), NULL);
@@ -767,12 +757,8 @@ thunar_renamer_dialog_response (GtkDialog *dialog,
   g_object_ref (G_OBJECT (dialog));
 
   /* check if we should rename */
-  if (G_LIKELY (response == GTK_RESPONSE_ACCEPT  || response == GTK_RESPONSE_APPLY))
+  if (G_LIKELY (response == GTK_RESPONSE_APPLY))
     {
-      /* hide the close button and show the cancel button */
-      gtk_widget_show (renamer_dialog->cancel_button);
-      gtk_widget_hide (renamer_dialog->close_button);
-
       /* save the current settings */
       thunar_renamer_dialog_save (renamer_dialog);
 
@@ -810,20 +796,6 @@ thunar_renamer_dialog_response (GtkDialog *dialog,
 
       /* release the pairs */
       thunar_renamer_pair_list_free (pair_list);
-
-      /* check if we're in standalone mode */
-      if (thunar_renamer_dialog_get_standalone (renamer_dialog) || response == GTK_RESPONSE_APPLY)
-        {
-          /* hide the cancel button again and display the close button */
-          gtk_widget_hide (renamer_dialog->cancel_button);
-          gtk_widget_show (renamer_dialog->close_button);
-        }
-      else
-        {
-          /* hide and destroy the dialog window */
-          gtk_widget_hide (GTK_WIDGET (dialog));
-          gtk_widget_destroy (GTK_WIDGET (dialog));
-        }
     }
   else if (thunar_renamer_progress_running (THUNAR_RENAMER_PROGRESS (renamer_dialog->progress)))
     {
@@ -1805,20 +1777,6 @@ thunar_renamer_dialog_set_standalone (ThunarRenamerDialog *renamer_dialog,
 
       /* change title to reflect the standalone status */
       gtk_window_set_title (GTK_WINDOW (renamer_dialog), standalone ? _("Bulk Rename - Rename Multiple Files") : _("Rename Multiple Files"));
-
-      /* display the appropriate Cancel/Close button */
-      if (G_UNLIKELY (standalone))
-        {
-          /* standalone has Close button by default */
-          gtk_widget_hide (renamer_dialog->cancel_button);
-          gtk_widget_show (renamer_dialog->close_button);
-        }
-      else
-        {
-          /* else, Cancel button is default */
-          gtk_widget_show (renamer_dialog->cancel_button);
-          gtk_widget_hide (renamer_dialog->close_button);
-        }
 
       /* notify listeners */
       g_object_notify (G_OBJECT (renamer_dialog), "standalone");
