@@ -24,18 +24,13 @@ dnl *** Version information ***
 dnl ***************************
 m4_define([thunarx_verinfo], [0:0:0])
 m4_define([thunarx_version_api], [3])
-m4_define([thunar_version_major], [4])
-m4_define([thunar_version_minor], [18])
-m4_define([thunar_version_micro], [0])
-m4_define([thunar_version_nano], [])
-m4_define([thunar_version_build], [@REVISION@])
-m4_define([thunar_version_tag], [git])
-m4_define([thunar_version], [thunar_version_major().thunar_version_minor().thunar_version_micro()ifelse(thunar_version_nano(), [], [], [.thunar_version_nano()])ifelse(thunar_version_tag(), [git], [thunar_version_tag()-thunar_version_build()], [thunar_version_tag()])])
+
+XDT_VERSION_INIT([4.18.0], [git])
 
 dnl *******************************************
 dnl *** Debugging support for GIT snapshots ***
 dnl *******************************************
-m4_define([thunar_debug_default], [ifelse(thunar_version_tag(), [git], [yes], [minimum])])
+m4_define([thunar_debug_default], [ifelse(xdt_version_tag(), [git], [yes], [minimum])])
 
 dnl ***************************
 dnl *** Initialize autoconf ***
@@ -87,9 +82,9 @@ dnl *** Substitute version information ***
 dnl **************************************
 THUNARX_VERINFO=thunarx_verinfo()
 THUNARX_VERSION_API=thunarx_version_api()
-THUNAR_VERSION_MAJOR=thunar_version_major()
-THUNAR_VERSION_MINOR=thunar_version_minor()
-THUNAR_VERSION_MICRO=thunar_version_micro()
+THUNAR_VERSION_MAJOR=xdt_version_major()
+THUNAR_VERSION_MINOR=xdt_version_minor()
+THUNAR_VERSION_MICRO=xdt_version_micro()
 AC_SUBST([THUNARX_VERINFO])
 AC_SUBST([THUNARX_VERSION_API])
 AC_SUBST([THUNAR_VERSION_MAJOR])
@@ -149,7 +144,7 @@ AC_CHECK_FUNCS([localeconv mkdtemp pread pwrite sched_yield setgroupent \
 dnl ******************************
 dnl *** Check for i18n support ***
 dnl ******************************
-XDT_I18N([@LINGUAS@])
+XDT_I18N()
 
 dnl *********************
 dnl *** Check for X11 ***
