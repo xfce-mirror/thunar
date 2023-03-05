@@ -2698,6 +2698,31 @@ thunar_file_get_size (const ThunarFile *file)
 
 
 /**
+ * thunar_file_get_size_on_disk:
+ * @file : a #ThunarFile instance.
+ *
+ * Tries to determine the allocated size of @file in bytes and
+ * returns the allocated size if available, otherwise returns -1.
+ *
+ * Return value: the allocated size of @file in bytes.
+ **/
+guint64
+thunar_file_get_size_on_disk (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), 0);
+
+  if (file->info == NULL)
+    return (guint64)-1;
+
+  if (g_file_info_has_attribute (file->info, G_FILE_ATTRIBUTE_STANDARD_ALLOCATED_SIZE))
+    return g_file_info_get_attribute_uint64 (file->info, G_FILE_ATTRIBUTE_STANDARD_ALLOCATED_SIZE);
+
+  return (guint64)-1;
+}
+
+
+
+/**
  * thunar_file_get_default_handler:
  * @file : a #ThunarFile instance.
  *
