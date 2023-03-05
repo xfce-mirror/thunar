@@ -43,7 +43,7 @@ G_BEGIN_DECLS
   "preview::*," \
   "standard::type,standard::is-hidden,standard::is-backup," \
   "standard::is-symlink,standard::name,standard::display-name," \
-  "standard::size,standard::symlink-target," \
+  "standard::size,standard::allocated-size,standard::symlink-target," \
   "time::*," \
   "trash::*," \
   "recent::*," \
