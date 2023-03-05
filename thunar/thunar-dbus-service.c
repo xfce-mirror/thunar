@@ -584,7 +584,7 @@ thunar_dbus_service_display_file_properties (ThunarDBusFileManager  *object,
     goto out;
 
   /* popup the file properties dialog */
-  dialog = thunar_properties_dialog_new (NULL);
+  dialog = thunar_properties_dialog_new (NULL, THUNAR_PROPERTIES_DIALOG_NONE);
   gtk_window_set_screen (GTK_WINDOW (dialog), screen);
   gtk_window_set_startup_id (GTK_WINDOW (dialog), startup_id);
   thunar_properties_dialog_set_file (THUNAR_PROPERTIES_DIALOG (dialog), file);
@@ -1642,7 +1642,7 @@ thunar_dbus_freedesktop_show_item_properties (ThunarOrgFreedesktopFileManager1 *
     {
       thunar_files = g_list_reverse (thunar_files);
 
-      dialog = thunar_properties_dialog_new (NULL);
+      dialog = thunar_properties_dialog_new (NULL, THUNAR_PROPERTIES_DIALOG_NONE);
       gtk_window_set_screen (GTK_WINDOW (dialog), screen);
       gtk_window_set_startup_id (GTK_WINDOW (dialog), startup_id);
       thunar_properties_dialog_set_files (THUNAR_PROPERTIES_DIALOG (dialog),

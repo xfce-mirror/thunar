@@ -24,6 +24,19 @@
 
 G_BEGIN_DECLS;
 
+/**
+ * ThunarPropertiesDialogFlags:
+ * @THUNAR_PROPERTIES_DIALOG_NONE: No flags set.
+ * @THUNAR_PROPERTIES_DIALOG_SHOW_HIGHLIGHT: SHow the file highlight tab
+ *
+ * Flags used when creating a #ThunarPropertiesDialog
+ */
+typedef enum
+{
+  THUNAR_PROPERTIES_DIALOG_NONE           = 0,
+  THUNAR_PROPERTIES_DIALOG_SHOW_HIGHLIGHT = (1 << 0),
+} ThunarPropertiesDialogFlags;
+
 typedef struct _ThunarPropertiesDialogClass ThunarPropertiesDialogClass;
 typedef struct _ThunarPropertiesDialog      ThunarPropertiesDialog;
 
@@ -36,7 +49,8 @@ typedef struct _ThunarPropertiesDialog      ThunarPropertiesDialog;
 
 GType       thunar_properties_dialog_get_type (void) G_GNUC_CONST;
 
-GtkWidget  *thunar_properties_dialog_new       (GtkWindow              *parent);
+GtkWidget  *thunar_properties_dialog_new       (GtkWindow                  *parent,
+                                                ThunarPropertiesDialogFlags flags);
 
 void        thunar_properties_dialog_set_files (ThunarPropertiesDialog *dialog,
                                                 GList                  *files);

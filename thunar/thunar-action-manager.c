@@ -2173,7 +2173,7 @@ thunar_action_manager_action_properties (ThunarActionManager *action_mgr)
   toplevel = gtk_widget_get_toplevel (action_mgr->widget);
   if (G_LIKELY (toplevel != NULL))
     {
-      dialog = thunar_properties_dialog_new (GTK_WINDOW (toplevel));
+      dialog = thunar_properties_dialog_new (GTK_WINDOW (toplevel), THUNAR_PROPERTIES_DIALOG_SHOW_HIGHLIGHT);
 
       /* check if no files are currently selected */
       if (action_mgr->files_to_process == NULL)
