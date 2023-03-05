@@ -38,6 +38,7 @@ typedef enum
 {
     THUNAR_SIZE_LABEL_SIZE,
     THUNAR_SIZE_LABEL_CONTENT,
+    THUNAR_SIZE_LABEL_DISK_SIZE,
     N_THUNAR_SIZE_LABEL
 } ThunarSizeLabelType;
 
@@ -46,6 +47,7 @@ GType       thunar_size_label_get_type  (void) G_GNUC_CONST;
 
 GtkWidget  *thunar_size_label_new       (void) G_GNUC_MALLOC;
 GtkWidget  *thunar_content_label_new    (void) G_GNUC_MALLOC;
+GtkWidget  *thunar_disk_size_label_new  (void) G_GNUC_MALLOC;
 
 G_END_DECLS;
 

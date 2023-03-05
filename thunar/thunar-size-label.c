@@ -69,6 +69,7 @@ static void     thunar_size_label_finished              (ExoJob               *j
                                                          ThunarSizeLabel      *size_label);
 static void     thunar_size_label_status_update         (ThunarDeepCountJob   *job,
                                                          guint64               total_size,
+                                                         guint64               total_disk_size,
                                                          guint                 file_count,
                                                          guint                 directory_count,
                                                          guint                 unreadable_directory_count,
@@ -363,8 +364,16 @@ thunar_size_label_files_changed (ThunarSizeLabel *size_label)
       gtk_spinner_stop (GTK_SPINNER (size_label->spinner));
       gtk_widget_hide (size_label->spinner);
 
-      /* determine the size of the file */
-      size = thunar_file_get_size (THUNAR_FILE (size_label->files->data));
+      if (size_label->type == THUNAR_SIZE_LABEL_DISK_SIZE)
+        {
+          /* determine the allocated size of the file */
+          size = thunar_file_get_disk_size (THUNAR_FILE (size_label->files->data));
+        }
+      else // if (size_label->type == THUNAR_SIZE_LABEL_SIZE)
+        {
+          /* determine the size of the file */
+          size = thunar_file_get_size (THUNAR_FILE (size_label->files->data));
+        }
 
       /* setup the new label */
       size_string = g_format_size_full (size, size_label->file_size_binary ? G_FORMAT_SIZE_LONG_FORMAT | G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_LONG_FORMAT);
@@ -413,6 +422,7 @@ thunar_size_label_finished (ExoJob          *job,
 static void
 thunar_size_label_status_update (ThunarDeepCountJob *job,
                                  guint64             total_size,
+                                 guint64             total_disk_size,
                                  guint               file_count,
                                  guint               directory_count,
                                  guint               unreadable_directory_count,
@@ -437,6 +447,14 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
       if (size_label->type == THUNAR_SIZE_LABEL_SIZE)
         {
           size_string = g_format_size_full (total_size, G_FORMAT_SIZE_LONG_FORMAT | (size_label->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT));
+          text = g_strdup_printf ("%s", size_string);
+
+          gtk_label_set_text (GTK_LABEL (size_label->label), text);
+          g_free (size_string);
+        }
+      else if (size_label->type == THUNAR_SIZE_LABEL_DISK_SIZE)
+        {
+          size_string = g_format_size_full (total_disk_size, G_FORMAT_SIZE_LONG_FORMAT | (size_label->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT));
           text = g_strdup_printf ("%s", size_string);
 
           gtk_label_set_text (GTK_LABEL (size_label->label), text);
@@ -546,6 +564,21 @@ GtkWidget*
 thunar_size_label_new (void)
 {
   return g_object_new (THUNAR_TYPE_SIZE_LABEL, "label-type", THUNAR_SIZE_LABEL_SIZE, NULL);
+}
+
+
+
+/**
+ * thunar_disk_size_label_new:
+ *
+ * Allocates a new #ThunarSizeLabel instance.
+ *
+ * Return value: the newly allocated #ThunarSizeLabel.
+ **/
+GtkWidget*
+thunar_disk_size_label_new (void)
+{
+  return g_object_new (THUNAR_TYPE_SIZE_LABEL, "label-type", THUNAR_SIZE_LABEL_DISK_SIZE, NULL);
 }
 
 
