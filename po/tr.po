@@ -6,15 +6,16 @@
 # Translators:
 # Xfce Bot <transifex@xfce.org>, 2021
 # Butterfly <gokhanlnx@gmail.com>, 2021
+# Sabri Ünal <libreajans@gmail.com>, 2023
 # 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-15 00:45+0200\n"
+"POT-Creation-Date: 2022-11-28 14:59+0100\n"
 "PO-Revision-Date: 2020-12-28 17:42+0000\n"
-"Last-Translator: Butterfly <gokhanlnx@gmail.com>, 2021\n"
+"Last-Translator: Sabri Ünal <libreajans@gmail.com>, 2023\n"
 "Language-Team: Turkish (https://www.transifex.com/xfce/teams/16840/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -132,7 +133,7 @@ msgstr "İşlem çalıştırılamadı"
 #: ../thunar/thunar-application.c:1507 ../thunar/thunar-application.c:1667
 #: ../thunar/thunar-location-entry.c:366 ../thunar/thunar-location-entry.c:394
 #: ../thunar/thunar-shortcuts-view.c:1706
-#: ../thunar/thunar-shortcuts-view.c:1734 ../thunar/thunar-window.c:2426
+#: ../thunar/thunar-shortcuts-view.c:1734 ../thunar/thunar-window.c:2440
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "\"%s\" açılamadı"
@@ -356,7 +357,7 @@ msgstr "Bu tür dosyalarda _öntanımlı olarak kullan"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:291
 #: ../thunar/thunar-chooser-dialog.c:1173
-#: ../thunar/thunar-properties-dialog.c:828 ../thunar/thunar-window.c:3171
+#: ../thunar/thunar-properties-dialog.c:828 ../thunar/thunar-window.c:3185
 #: ../plugins/thunar-uca/thunar-uca-editor.c:142
 #: ../plugins/thunar-uca/thunar-uca-editor.c:435
 msgid "_OK"
@@ -901,12 +902,12 @@ msgid "File Name"
 msgstr "Dosya Adı"
 
 #: ../thunar/thunar-file.c:1058 ../thunar/thunar-gio-extensions.c:289
-#: ../thunar/thunar-shortcuts-model.c:1108 ../thunar.desktop.in.in.h:7
+#: ../thunar/thunar-shortcuts-model.c:1125 ../thunar.desktop.in.in.h:7
 msgid "Trash"
 msgstr "Çöp"
 
 #: ../thunar/thunar-file.c:1065 ../thunar/thunar-gio-extensions.c:287
-#: ../thunar/thunar-shortcuts-model.c:990 ../thunar/thunar-window.c:400
+#: ../thunar/thunar-shortcuts-model.c:1007 ../thunar/thunar-window.c:400
 msgid "File System"
 msgstr "Dosya Sistemi"
 
@@ -951,7 +952,7 @@ msgid "%s on %s"
 msgstr "%s üzerinde %s"
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:480
+#: ../thunar/thunar-gio-extensions.c:481
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr "%s / %s boş (%%%d kullanılıyor)"
@@ -2436,62 +2437,62 @@ msgstr ""
 "Bu dosyayı atlayıp diğer dosyaların yeniden adlandırılmasını südürmek ister "
 "misiniz?"
 
-#: ../thunar/thunar-shortcuts-model.c:627
-#: ../thunar/thunar-shortcuts-model.c:991 ../thunar/thunar-window.c:400
+#: ../thunar/thunar-shortcuts-model.c:644
+#: ../thunar/thunar-shortcuts-model.c:1008 ../thunar/thunar-window.c:400
 msgid "Browse the file system"
 msgstr "Dosya sistemine göz at"
 
-#: ../thunar/thunar-shortcuts-model.c:661
+#: ../thunar/thunar-shortcuts-model.c:678
 #, c-format
 msgid "Mount and open %s (%s)"
 msgstr "Bağla ve aç %s (%s)"
 
-#: ../thunar/thunar-shortcuts-model.c:674
+#: ../thunar/thunar-shortcuts-model.c:691
 #: ../plugins/thunar-tpa/thunar-tpa.c:284
 msgid "Trash is empty"
 msgstr "Çöp boş"
 
-#: ../thunar/thunar-shortcuts-model.c:678
+#: ../thunar/thunar-shortcuts-model.c:695
 #, c-format
 msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
 msgstr[0] "Çöp kutusunda %d dosya var"
 msgstr[1] "Çöp kutusunda %d dosya var"
 
-#: ../thunar/thunar-shortcuts-model.c:984
+#: ../thunar/thunar-shortcuts-model.c:1001
 msgid "Devices"
 msgstr "Aygıtlar"
 
-#: ../thunar/thunar-shortcuts-model.c:1027
+#: ../thunar/thunar-shortcuts-model.c:1044
 msgid "Network"
 msgstr "Ağ"
 
-#: ../thunar/thunar-shortcuts-model.c:1035
+#: ../thunar/thunar-shortcuts-model.c:1052
 msgid "Browse Network"
 msgstr "Ağı Tara"
 
-#: ../thunar/thunar-shortcuts-model.c:1036 ../thunar/thunar-window.c:410
+#: ../thunar/thunar-shortcuts-model.c:1053 ../thunar/thunar-window.c:410
 msgid "Browse local network connections"
 msgstr "Yerel ağ bağlantılarına göz at"
 
-#: ../thunar/thunar-shortcuts-model.c:1058
+#: ../thunar/thunar-shortcuts-model.c:1075
 msgid "Places"
 msgstr "Yer"
 
-#: ../thunar/thunar-shortcuts-model.c:1070
+#: ../thunar/thunar-shortcuts-model.c:1087
 msgid "Open the home folder"
 msgstr "Başlangıç klasörünü aç"
 
-#: ../thunar/thunar-shortcuts-model.c:1087
+#: ../thunar/thunar-shortcuts-model.c:1104
 msgid "Open the desktop folder"
 msgstr "Masaüstü klasörünü aç"
 
-#: ../thunar/thunar-shortcuts-model.c:1134 ../thunar/thunar-window.c:401
+#: ../thunar/thunar-shortcuts-model.c:1151 ../thunar/thunar-window.c:401
 #: ../thunar/thunar-window.c:404 ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr "Bilgisayar"
 
-#: ../thunar/thunar-shortcuts-model.c:1135
+#: ../thunar/thunar-shortcuts-model.c:1152
 msgid "Browse the computer"
 msgstr "Bilgisayara göz at"
 
@@ -2592,7 +2593,7 @@ msgid "Loading folder contents..."
 msgstr "Dosya içeriği yükleniyor..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2000 ../thunar/thunar-window.c:2993
+#: ../thunar/thunar-standard-view.c:2000 ../thunar/thunar-window.c:3007
 msgid "Failed to open the home folder"
 msgstr "Ev dizini açılamıyor"
 
@@ -2624,7 +2625,7 @@ msgstr "XDS bırakma alanı geçersiz dosya adı sağladı"
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "\"%s\" URL'sine bağ yaratılamadı"
 
-#: ../thunar/thunar-standard-view.c:3037 ../thunar/thunar-window.c:3087
+#: ../thunar/thunar-standard-view.c:3037 ../thunar/thunar-window.c:3101
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "\"%s\" dizini açılamadı"
@@ -2683,7 +2684,7 @@ msgstr "%s / %s"
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
-msgstr[0] "%lu saat kaldı (%s/sec)"
+msgstr[0] "%lu saat kaldı (%s/sn)"
 msgstr[1] "%lu saat kaldı (%s/sn)"
 
 #: ../thunar/thunar-transfer-job.c:1729
@@ -3056,44 +3057,44 @@ msgstr "Sonraki Sekmeye Geç"
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "Uyarı: Kök hesabı kullanıyorsunuz. Sisteminize zarar verebilirsiniz."
 
-#: ../thunar/thunar-window.c:2010
+#: ../thunar/thunar-window.c:2024
 msgid "Close tab"
 msgstr "Sekmeyi kapat"
 
-#: ../thunar/thunar-window.c:2254
+#: ../thunar/thunar-window.c:2268
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "\"%s\" konumunu aç"
 
-#: ../thunar/thunar-window.c:2400
+#: ../thunar/thunar-window.c:2414
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "\"%s\" çalıştırılamadı"
 
-#: ../thunar/thunar-window.c:2942
+#: ../thunar/thunar-window.c:2956
 msgid "Failed to open parent folder"
 msgstr "Üst dizin açılamıyor"
 
-#: ../thunar/thunar-window.c:3062
+#: ../thunar/thunar-window.c:3076
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "\"%s\" dizini yok. Oluşturmak ister misiniz?"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3129
+#: ../thunar/thunar-window.c:3143
 msgid "Failed to browse the computer"
 msgstr "Bilgisayara göz atılamadı"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:3169
+#: ../thunar/thunar-window.c:3183
 msgid "About Templates"
 msgstr "Şablonlar Hakkında"
 
-#: ../thunar/thunar-window.c:3191
+#: ../thunar/thunar-window.c:3205
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Bu klasördeki tüm dosyalar \"Belge Oluştur\" menüsünde görüntülenecek."
 
-#: ../thunar/thunar-window.c:3198
+#: ../thunar/thunar-window.c:3212
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
@@ -3103,26 +3104,26 @@ msgstr ""
 "\n"
 "Daha sonra bu kopyayı bulunduğunuz dizinde oluşturmak için \"Belge Oluştur\" menüsünü kullanabilirsiniz."
 
-#: ../thunar/thunar-window.c:3210
+#: ../thunar/thunar-window.c:3224
 msgid "Do _not display this message again"
 msgstr "Bu iletiyi yeniden _görüntüleme"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3241
+#: ../thunar/thunar-window.c:3255
 msgid "Failed to open the file system root folder"
 msgstr "Dosya sistemi kök dizinini açma başarısız"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3274
+#: ../thunar/thunar-window.c:3288
 msgid "Failed to display the contents of the trash can"
 msgstr "Çöp kutusu başlıkları görüntülenemedi"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3307
+#: ../thunar/thunar-window.c:3321
 msgid "Failed to browse the network"
 msgstr "Ağ tarama başarısız"
 
-#: ../thunar/thunar-window.c:3411
+#: ../thunar/thunar-window.c:3425
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
