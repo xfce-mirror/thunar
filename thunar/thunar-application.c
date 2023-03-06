@@ -135,7 +135,7 @@ static gboolean       thunar_application_dbus_register          (GApplication   
 static void           thunar_application_load_css               (void);
 static void           thunar_application_accel_map_changed      (ThunarApplication      *application);
 static gboolean       thunar_application_accel_map_save         (gpointer                user_data);
-static gboolean       thunar_application_accel_map_load         (gpointer                user_data);
+static gboolean       thunar_application_accel_map_init         (gpointer                user_data);
 static void           thunar_application_collect_and_launch     (ThunarApplication      *application,
                                                                  gpointer                parent,
                                                                  const gchar            *icon_name,
@@ -379,8 +379,8 @@ thunar_application_startup (GApplication *gapp)
   /* connect to the session manager */
   application->session_client = thunar_session_client_new (opt_sm_client_id);
 
-  /* schedule accel map load and update windows when finished, this way empty but active accelerators are preserved */
-  application->accel_map_load_id = gdk_threads_add_idle_full (G_PRIORITY_LOW, thunar_application_accel_map_load, application, NULL);
+  /* schedule accel map init and update windows when finished */
+  application->accel_map_load_id = gdk_threads_add_idle_full (G_PRIORITY_LOW, thunar_application_accel_map_init, application, NULL);
 
   thunar_application_load_css ();
 }
@@ -752,17 +752,13 @@ thunar_application_accel_map_save (gpointer user_data)
 
 
 static gboolean
-thunar_application_accel_map_load (gpointer user_data)
+thunar_application_accel_map_init (gpointer user_data)
 {
   ThunarApplication *application = user_data;
   gchar             *path;
+  GList             *windows;
 
-  /* watch for changes */
-  application->accel_map = gtk_accel_map_get ();
-  g_signal_connect_swapped (G_OBJECT (application->accel_map), "changed",
-                            G_CALLBACK (thunar_application_accel_map_changed), application);
-
-  /* check if we have a saved accel map */
+  /* check if we have a saved accel map and load it, if found */
   path = xfce_resource_lookup (XFCE_RESOURCE_CONFIG, ACCEL_MAP_PATH);
   if (G_LIKELY (path != NULL))
     {
@@ -770,6 +766,18 @@ thunar_application_accel_map_load (gpointer user_data)
       gtk_accel_map_load (path);
       g_free (path);
     }
+
+  /* update the accelerators for each window */
+  windows = thunar_application_get_windows (application);
+  for (GList *lp = windows; lp != NULL; lp = lp->next)
+    {
+      ThunarWindow *window = lp->data;
+      thunar_window_reconnect_accelerators (window);
+    }
+
+  /* watch for thunar-internal accelerator changes, in order to write changes to file if required */
+  application->accel_map = gtk_accel_map_get ();
+  g_signal_connect_swapped (G_OBJECT (application->accel_map), "changed", G_CALLBACK (thunar_application_accel_map_changed), application);
 
   application->accel_map_load_id = 0;
 
