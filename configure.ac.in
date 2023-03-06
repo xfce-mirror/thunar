@@ -27,11 +27,6 @@ m4_define([thunarx_version_api], [3])
 
 XDT_VERSION_INIT([4.18.0], [git])
 
-dnl *******************************************
-dnl *** Debugging support for GIT snapshots ***
-dnl *******************************************
-m4_define([thunar_debug_default], [ifelse(xdt_version_tag(), [git], [yes], [minimum])])
-
 dnl ***************************
 dnl *** Initialize autoconf ***
 dnl ***************************
@@ -203,7 +198,7 @@ XDT_CHECK_OPTIONAL_PACKAGE([LIBNOTIFY], [libnotify], [0.4.0], [notifications],
 dnl ***********************************
 dnl *** Check for debugging support ***
 dnl ***********************************
-XDT_FEATURE_DEBUG([thunar_debug_default])
+XDT_FEATURE_DEBUG([xdt_debug_default])
 
 dnl **************************************
 dnl *** Check for linker optimizations ***
