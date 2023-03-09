@@ -193,6 +193,7 @@ const gchar      *thunar_file_get_symlink_target         (const ThunarFile      
 const gchar      *thunar_file_get_basename               (const ThunarFile       *file) G_GNUC_CONST;
 gboolean          thunar_file_is_symlink                 (const ThunarFile       *file);
 guint64           thunar_file_get_size                   (const ThunarFile       *file);
+guint64           thunar_file_get_size_on_disk           (const ThunarFile       *file);
 GAppInfo         *thunar_file_get_default_handler        (const ThunarFile       *file);
 GFileType         thunar_file_get_kind                   (const ThunarFile       *file) G_GNUC_PURE;
 GFile            *thunar_file_get_target_location        (const ThunarFile       *file);
