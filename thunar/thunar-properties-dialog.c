@@ -615,7 +615,7 @@ thunar_properties_dialog_constructed (GObject *object)
 
   ++row;
 
-  label = gtk_label_new (_("Size on disk:"));
+  label = gtk_label_new (_("Size on Disk:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
