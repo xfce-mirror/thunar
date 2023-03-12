@@ -378,8 +378,10 @@ thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
  * @error: A #GError to propagate any errors encountered.
  *
  * Executes the given @job_operation, depending on what kind of an operation it is.
+ *
+ * Return value: TRUE if the operation was canceled, FALSE otherwise
  **/
-void
+gboolean
 thunar_job_operation_execute (ThunarJobOperation *job_operation,
                               GError            **error)
 {
@@ -391,9 +393,9 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
   GFile             *parent_dir;
   gchar             *display_name;
   GFile             *template_file;
-  gboolean           execute_failed = FALSE;
+  gboolean           operation_canceled = FALSE;
 
-  _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
+  _thunar_return_val_if_fail (THUNAR_IS_JOB_OPERATION (job_operation), FALSE);
 
   application = thunar_application_get ();
 
@@ -428,20 +430,16 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
 
         if (thunar_file_list == NULL)
           {
-            execute_failed = TRUE;
+            *error = g_error_new (G_FILE_ERROR,
+                                  G_FILE_ERROR_NOENT,
+                                  "No files for deletion found.");
           }
         else
           {
-            execute_failed = thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE, TRUE);
+            operation_canceled = thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE, TRUE);
             g_list_free_full (thunar_file_list, g_object_unref);
           }
 
-        if (execute_failed)
-          {
-            *error = g_error_new (G_FILE_ERROR,
-                                  G_FILE_ERROR_AGAIN,
-                                  "Failed to execute operation");
-          }
         break;
 
       case THUNAR_JOB_OPERATION_KIND_MOVE:
@@ -468,7 +466,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
               g_propagate_error (error, err);
               g_clear_error (&err);
               g_object_unref (application);
-              return;
+              return operation_canceled;
             }
           }
 
@@ -564,6 +562,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
     }
 
   g_object_unref (application);
+  return operation_canceled;
 }
 
 
