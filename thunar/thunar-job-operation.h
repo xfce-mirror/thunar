@@ -34,7 +34,7 @@ void                    thunar_job_operation_add                   (ThunarJobOpe
 void                    thunar_job_operation_overwrite             (ThunarJobOperation    *job_operation,
                                                                     GFile                 *overwritten_file);
 ThunarJobOperation     *thunar_job_operation_new_invert            (ThunarJobOperation    *job_operation);
-void                    thunar_job_operation_execute               (ThunarJobOperation    *job_operation,
+gboolean                thunar_job_operation_execute               (ThunarJobOperation    *job_operation,
                                                                     GError               **error);
 gint                    thunar_job_operation_compare               (ThunarJobOperation    *operation1,
                                                                     ThunarJobOperation    *operation2);
