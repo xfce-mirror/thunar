@@ -307,6 +307,7 @@ thunar_job_operation_history_undo (void)
   gchar              *file_uri;
   GError             *err = NULL;
   const GList        *overwritten_files;
+  gboolean            operation_canceled;
 
   g_mutex_lock (&job_operation_history->job_operation_list_mutex);
 
@@ -366,11 +367,20 @@ thunar_job_operation_history_undo (void)
       }
 
     inverted_operation = thunar_job_operation_new_invert (operation_marker);
-    thunar_job_operation_execute (inverted_operation, &err);
+    operation_canceled = thunar_job_operation_execute (inverted_operation, &err);
     g_object_unref (inverted_operation);
 
-    if (err == NULL)
+    if (err == NULL && !operation_canceled)
       thunar_notify_undo (operation_marker);
+
+    if (err != NULL)
+      {
+        xfce_dialog_show_warning (NULL,
+                                  err->message,
+                                  _("Failed to undo operation '%s'"),
+                                  thunar_job_operation_get_kind_nick (operation_marker));
+        g_clear_error (&err);
+      }
 
     g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
 
@@ -394,6 +404,7 @@ thunar_job_operation_history_redo (void)
   gchar              *file_uri;
   GError             *err = NULL;
   const GList        *overwritten_files;
+  gboolean            operation_canceled;
 
   g_mutex_lock (&job_operation_history->job_operation_list_mutex);
 
@@ -451,10 +462,19 @@ thunar_job_operation_history_redo (void)
         g_string_free (warning_body, TRUE);
       }
 
-    thunar_job_operation_execute (operation_marker, &err);
+    operation_canceled = thunar_job_operation_execute (operation_marker, &err);
 
-    if (err == NULL)
-      thunar_notify_redo (operation_marker);
+    if (err == NULL && !operation_canceled)
+      thunar_notify_undo (operation_marker);
+
+    if (err != NULL)
+      {
+        xfce_dialog_show_warning (NULL,
+                                  err->message,
+                                  _("Failed to redo operation '%s'"),
+                                  thunar_job_operation_get_kind_nick (operation_marker));
+        g_clear_error (&err);
+      }
 
     g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
 
