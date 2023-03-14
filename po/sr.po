@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-11 00:47+0100\n"
+"POT-Creation-Date: 2023-03-14 00:45+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>, 2012-2014,2017-2019,2021-2023\n"
 "Language-Team: Serbian (http://www.transifex.com/xfce/thunar/language/sr/)\n"
@@ -738,7 +738,7 @@ msgstr "Образујем фасцикле..."
 msgid "Remove all files and folders from the Trash?"
 msgstr "Да ли да уклоним све ставке из смећа?"
 
-#: ../thunar/thunar-application.c:2675 ../thunar/thunar-window.c:1047
+#: ../thunar/thunar-application.c:2675 ../thunar/thunar-window.c:1045
 msgid "Empty Trash"
 msgstr "_Испразни смеће"
 
@@ -811,7 +811,7 @@ msgstr "Постави као по_дразумевано за овакву вр
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1288
-#: ../thunar/thunar-properties-dialog.c:1155 ../thunar/thunar-window.c:4407
+#: ../thunar/thunar-properties-dialog.c:1155 ../thunar/thunar-window.c:4405
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -1750,7 +1750,7 @@ msgid ""
 "space."
 msgstr "Нема довољно простора на одредишту. Покушајте да уклоните датотеке ради ослобађања простора."
 
-#: ../thunar/thunar-job-operation.c:782 ../thunar/thunar-list-model.c:3201
+#: ../thunar/thunar-job-operation.c:781 ../thunar/thunar-list-model.c:3201
 #: ../thunar/thunar-size-label.c:473
 #, c-format
 msgid "%d file"
@@ -1759,87 +1759,97 @@ msgstr[0] "%d датотека"
 msgstr[1] "%d датотеке"
 msgstr[2] "%d датотека"
 
-#: ../thunar/thunar-job-operation-history.c:317
+#: ../thunar/thunar-job-operation-history.c:318
 msgid ""
 "No operation which can be undone has been performed yet.\n"
 "(For some operations undo is not supported)"
 msgstr "Још увек нема обрада података које се могу опозвати.\n(За неке обраде опозив није подржан)"
 
-#: ../thunar/thunar-job-operation-history.c:319
+#: ../thunar/thunar-job-operation-history.c:320
 msgid "There is no operation to undo"
 msgstr "Нема обрада података за опозив"
 
-#: ../thunar/thunar-job-operation-history.c:336
+#: ../thunar/thunar-job-operation-history.c:337
 msgid ""
 "The operation you are trying to undo does not have any files associated with"
 " it, and thus cannot be undone. "
 msgstr "Радња коју желите да поништите нема ни једне придружене датотеке себи, и не може бити опозвана. "
 
-#: ../thunar/thunar-job-operation-history.c:338
+#: ../thunar/thunar-job-operation-history.c:339
 #, c-format
 msgid "%s operation cannot be undone"
 msgstr "%s радња не може бити опозвана"
 
 #. one indexed for the dialog
-#: ../thunar/thunar-job-operation-history.c:350
+#: ../thunar/thunar-job-operation-history.c:351
 msgid ""
 "The following files were overwritten in the operation you are trying to undo"
 " and cannot be restored:\n"
 msgstr "Следеће датотеке су преписане у радњи коју желите да опозовете и не могу бити повраћене:\n"
 
-#: ../thunar/thunar-job-operation-history.c:362
+#: ../thunar/thunar-job-operation-history.c:363
 #, c-format
 msgid "%s operation can only be partially undone"
 msgstr "%s радња не може бити делимично опозвана"
 
-#: ../thunar/thunar-job-operation-history.c:404
+#: ../thunar/thunar-job-operation-history.c:380
+#, c-format
+msgid "Failed to undo operation '%s'"
+msgstr "Нисам успео да опозовем дејство „%s“"
+
+#: ../thunar/thunar-job-operation-history.c:415
 msgid "No operation which can be redone available.\n"
 msgstr "Нема доступне радње која би се могла поновити.\n"
 
-#: ../thunar/thunar-job-operation-history.c:405
+#: ../thunar/thunar-job-operation-history.c:416
 msgid "There is no operation to redo"
 msgstr "Нема радњи за опозив"
 
-#: ../thunar/thunar-job-operation-history.c:422
+#: ../thunar/thunar-job-operation-history.c:433
 msgid ""
 "The operation you are trying to redo does not have any files associated with"
 " it, and thus cannot be redone. "
 msgstr "Радња коју желите опозвати нема ни једну придружену датотеку, и зато не може бити поновљена. "
 
-#: ../thunar/thunar-job-operation-history.c:424
+#: ../thunar/thunar-job-operation-history.c:435
 #, c-format
 msgid "%s operation cannot be redone"
 msgstr "%s радњи не може бити поновљео"
 
 #. one indexed for the dialog
-#: ../thunar/thunar-job-operation-history.c:436
+#: ../thunar/thunar-job-operation-history.c:447
 msgid ""
 "The following files were overwritten in the operation you are trying to redo"
 " and cannot be restored:\n"
 msgstr "Следеће датотеке су преписане у радњи коју желите опозвати и не може бити повраћена:\n"
 
-#: ../thunar/thunar-job-operation-history.c:448
+#: ../thunar/thunar-job-operation-history.c:459
 #, c-format
 msgid "%s operation can only be partially redone"
 msgstr "%s радњи могу бити само делимично поновљене"
 
+#: ../thunar/thunar-job-operation-history.c:474
+#, c-format
+msgid "Failed to redo operation '%s'"
+msgstr "Нисам успео да повратим дејство „%s“"
+
 #. TRANSLATORS: An example: 'Undo the latest 'copy' operation (2 files)
-#: ../thunar/thunar-job-operation-history.c:541
+#: ../thunar/thunar-job-operation-history.c:561
 #, c-format
 msgid "Undo the latest '%s' operation (%s)"
 msgstr "Опозови последње „%s“ дејство (%s)"
 
-#: ../thunar/thunar-job-operation-history.c:546 ../thunar/thunar-window.c:495
+#: ../thunar/thunar-job-operation-history.c:566 ../thunar/thunar-window.c:495
 msgid "Undo the latest operation"
 msgstr "Опозови последњу радњу"
 
 #. TRANSLATORS: An example: 'Redo the latest 'copy' operation (2 files)
-#: ../thunar/thunar-job-operation-history.c:566
+#: ../thunar/thunar-job-operation-history.c:586
 #, c-format
 msgid "Redo the latest '%s' operation (%s)"
 msgstr "Поврати последње „%s“ дејство (%s)"
 
-#: ../thunar/thunar-job-operation-history.c:571 ../thunar/thunar-window.c:496
+#: ../thunar/thunar-job-operation-history.c:591 ../thunar/thunar-window.c:496
 msgid "Redo the latest operation"
 msgstr "_Опозови последњу радњу"
 
@@ -3179,7 +3189,7 @@ msgid "Loading folder contents..."
 msgstr "Учитавам садржај фасцикле..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2375 ../thunar/thunar-window.c:4220
+#: ../thunar/thunar-standard-view.c:2375 ../thunar/thunar-window.c:4218
 msgid "Failed to open the home folder"
 msgstr "Нисам успео да отворим личну фасциклу"
 
@@ -3264,7 +3274,7 @@ msgstr "Нисам успео да направим везу до адресе �
 msgid "Untitled document"
 msgstr "Безимени докуменат"
 
-#: ../thunar/thunar-standard-view.c:3630 ../thunar/thunar-window.c:4317
+#: ../thunar/thunar-standard-view.c:3630 ../thunar/thunar-window.c:4315
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Нисам успео да отворим фасциклу „%s“"
@@ -3829,101 +3839,101 @@ msgid "Cancel search for files"
 msgstr "Откажи претрагу датотека"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:899
+#: ../thunar/thunar-window.c:897
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "Упозорење: користите налог кореног руковаоца. Можете оштетити систем."
 
-#: ../thunar/thunar-window.c:958
+#: ../thunar/thunar-window.c:956
 msgid "Size: "
 msgstr "Величина: "
 
 #. TRANSLATORS: `Catfish' is a software package, please don't translate it.
-#: ../thunar/thunar-window.c:1035
+#: ../thunar/thunar-window.c:1033
 msgid "Search with Catfish..."
 msgstr "Претражи Сомом..."
 
-#: ../thunar/thunar-window.c:1046
+#: ../thunar/thunar-window.c:1044
 msgid "Restore Selected Items"
 msgstr "Поврати означене ставке"
 
-#: ../thunar/thunar-window.c:2625
+#: ../thunar/thunar-window.c:2623
 msgid "Close tab"
 msgstr "Затвори лист"
 
-#: ../thunar/thunar-window.c:3076
+#: ../thunar/thunar-window.c:3074
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Отвори место „%s“"
 
-#: ../thunar/thunar-window.c:4160
+#: ../thunar/thunar-window.c:4158
 msgid "Failed to open parent folder"
 msgstr "Нисам успео да отворим родитељску фасциклу"
 
-#: ../thunar/thunar-window.c:4291
+#: ../thunar/thunar-window.c:4289
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Фасцикла „%s“ не постоји. Да ли желите да је направите?"
 
-#: ../thunar/thunar-window.c:4293
+#: ../thunar/thunar-window.c:4291
 msgid "Create directory"
 msgstr "Образуј фасциклу"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4362
+#: ../thunar/thunar-window.c:4360
 msgid "Failed to browse the computer"
 msgstr "Нисам успео да прегледам рачунар"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4405
+#: ../thunar/thunar-window.c:4403
 msgid "About Templates"
 msgstr "О обрасцима"
 
-#: ../thunar/thunar-window.c:4427
+#: ../thunar/thunar-window.c:4425
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Све датотеке из ове фасцикле ће се појавити у изборнику „Направи документ“."
 
-#: ../thunar/thunar-window.c:4434
+#: ../thunar/thunar-window.c:4432
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Уколико често радите са неким врстама докумената направите умножак једне и ставите је у ову фасциклу. Тунар ће додати унос за овај документ у изборнику „Направи документ“.\n\nКада изабрати ставку из изборника „Направи документ“ умножак документа ће бити направљена у фасцикли где се тренутно налазите."
 
-#: ../thunar/thunar-window.c:4446
+#: ../thunar/thunar-window.c:4444
 msgid "Do _not display this message again"
 msgstr "_Не приказуј поново ову поруку"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4480
+#: ../thunar/thunar-window.c:4478
 msgid "Failed to open the file system root folder"
 msgstr "Нисам успео да отворим корену фасциклу система датотека"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4516
+#: ../thunar/thunar-window.c:4514
 msgid "Failed to display `Recent`"
 msgstr "Нисам успео да прикажем „Скорашње“"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4552
+#: ../thunar/thunar-window.c:4550
 msgid "Failed to display the contents of the trash can"
 msgstr "Нисам успео да прикажем садржај смећа"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4588
+#: ../thunar/thunar-window.c:4586
 msgid "Failed to browse the network"
 msgstr "Нисам успео да разгледам мрежу"
 
-#: ../thunar/thunar-window.c:4699
+#: ../thunar/thunar-window.c:4697
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Тунар је брз и лаган разгледач датотека за\nсучеље ИксФЦЕ-а."
 
-#: ../thunar/thunar-window.c:5857
+#: ../thunar/thunar-window.c:5855
 msgid "Failed to launch search with Catfish"
 msgstr "Нисам успео да покренем претрагу Сомом"
 
-#: ../thunar/thunar-window.c:6126
+#: ../thunar/thunar-window.c:6124
 msgid "Location Bar"
 msgstr "Трака места"
 
