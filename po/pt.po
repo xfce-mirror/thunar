@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-11 00:47+0100\n"
+"POT-Creation-Date: 2023-03-14 00:45+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>, 2019-2023\n"
 "Language-Team: Portuguese (http://www.transifex.com/xfce/thunar/language/pt/)\n"
@@ -733,7 +733,7 @@ msgstr "A criar diretórios..."
 msgid "Remove all files and folders from the Trash?"
 msgstr "Remover todos os ficheiros e pastas do Lixo?"
 
-#: ../thunar/thunar-application.c:2675 ../thunar/thunar-window.c:1047
+#: ../thunar/thunar-application.c:2675 ../thunar/thunar-window.c:1045
 msgid "Empty Trash"
 msgstr "Esvaziar Lixo"
 
@@ -806,7 +806,7 @@ msgstr "Utilizar por pre_definição para este tipo de ficheiro"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1288
-#: ../thunar/thunar-properties-dialog.c:1155 ../thunar/thunar-window.c:4407
+#: ../thunar/thunar-properties-dialog.c:1155 ../thunar/thunar-window.c:4405
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -1745,7 +1745,7 @@ msgid ""
 "space."
 msgstr "Não existe espaço livre suficiente no destino. Tente remover alguns ficheiros para criar espaço."
 
-#: ../thunar/thunar-job-operation.c:782 ../thunar/thunar-list-model.c:3201
+#: ../thunar/thunar-job-operation.c:781 ../thunar/thunar-list-model.c:3201
 #: ../thunar/thunar-size-label.c:473
 #, c-format
 msgid "%d file"
@@ -1754,87 +1754,97 @@ msgstr[0] "%d ficheiro"
 msgstr[1] "%d ficheiros"
 msgstr[2] "%d ficheiros"
 
-#: ../thunar/thunar-job-operation-history.c:317
+#: ../thunar/thunar-job-operation-history.c:318
 msgid ""
 "No operation which can be undone has been performed yet.\n"
 "(For some operations undo is not supported)"
 msgstr "Ainda não foi efetuada nenhuma operação que possa ser anulada.\n(Para algumas operações não é possível anular)"
 
-#: ../thunar/thunar-job-operation-history.c:319
+#: ../thunar/thunar-job-operation-history.c:320
 msgid "There is no operation to undo"
 msgstr "Não há nenhuma operação para anular"
 
-#: ../thunar/thunar-job-operation-history.c:336
+#: ../thunar/thunar-job-operation-history.c:337
 msgid ""
 "The operation you are trying to undo does not have any files associated with"
 " it, and thus cannot be undone. "
 msgstr "A operação que está a tentar anular não tem quaisquer ficheiros associados a ela, pelo que não pode ser anulada."
 
-#: ../thunar/thunar-job-operation-history.c:338
+#: ../thunar/thunar-job-operation-history.c:339
 #, c-format
 msgid "%s operation cannot be undone"
 msgstr "A operação de %s não pode ser anulada"
 
 #. one indexed for the dialog
-#: ../thunar/thunar-job-operation-history.c:350
+#: ../thunar/thunar-job-operation-history.c:351
 msgid ""
 "The following files were overwritten in the operation you are trying to undo"
 " and cannot be restored:\n"
 msgstr "Os seguintes ficheiros foram substituídos na operação que está a tentar anular e não podem ser restaurados:\n"
 
-#: ../thunar/thunar-job-operation-history.c:362
+#: ../thunar/thunar-job-operation-history.c:363
 #, c-format
 msgid "%s operation can only be partially undone"
 msgstr "A operação de %s apenas pode ser parcialmente anulada"
 
-#: ../thunar/thunar-job-operation-history.c:404
+#: ../thunar/thunar-job-operation-history.c:380
+#, c-format
+msgid "Failed to undo operation '%s'"
+msgstr "Falha ao anular operação '%s'"
+
+#: ../thunar/thunar-job-operation-history.c:415
 msgid "No operation which can be redone available.\n"
 msgstr "Nenhuma operação que possa ser refeita\n"
 
-#: ../thunar/thunar-job-operation-history.c:405
+#: ../thunar/thunar-job-operation-history.c:416
 msgid "There is no operation to redo"
 msgstr "Não há nenhuma operação para refazer"
 
-#: ../thunar/thunar-job-operation-history.c:422
+#: ../thunar/thunar-job-operation-history.c:433
 msgid ""
 "The operation you are trying to redo does not have any files associated with"
 " it, and thus cannot be redone. "
 msgstr "A operação que está a tentar refazer não tem quaisquer ficheiros associados a ela, pelo que não pode ser refeita."
 
-#: ../thunar/thunar-job-operation-history.c:424
+#: ../thunar/thunar-job-operation-history.c:435
 #, c-format
 msgid "%s operation cannot be redone"
 msgstr "A operação de %s não pode ser refeita"
 
 #. one indexed for the dialog
-#: ../thunar/thunar-job-operation-history.c:436
+#: ../thunar/thunar-job-operation-history.c:447
 msgid ""
 "The following files were overwritten in the operation you are trying to redo"
 " and cannot be restored:\n"
 msgstr "Os seguintes ficheiros foram substituídos na operação que está a tentar refazer e não podem ser restaurados:\n"
 
-#: ../thunar/thunar-job-operation-history.c:448
+#: ../thunar/thunar-job-operation-history.c:459
 #, c-format
 msgid "%s operation can only be partially redone"
 msgstr "A operação de %s apenas pode ser parcialmente refeita"
 
+#: ../thunar/thunar-job-operation-history.c:474
+#, c-format
+msgid "Failed to redo operation '%s'"
+msgstr "Falha ao refazer operação '%s'"
+
 #. TRANSLATORS: An example: 'Undo the latest 'copy' operation (2 files)
-#: ../thunar/thunar-job-operation-history.c:541
+#: ../thunar/thunar-job-operation-history.c:561
 #, c-format
 msgid "Undo the latest '%s' operation (%s)"
 msgstr "Anular a última operação de '%s' (%s)"
 
-#: ../thunar/thunar-job-operation-history.c:546 ../thunar/thunar-window.c:495
+#: ../thunar/thunar-job-operation-history.c:566 ../thunar/thunar-window.c:495
 msgid "Undo the latest operation"
 msgstr "Anular a última operação"
 
 #. TRANSLATORS: An example: 'Redo the latest 'copy' operation (2 files)
-#: ../thunar/thunar-job-operation-history.c:566
+#: ../thunar/thunar-job-operation-history.c:586
 #, c-format
 msgid "Redo the latest '%s' operation (%s)"
 msgstr "Refazer a última operação de '%s' (%s)"
 
-#: ../thunar/thunar-job-operation-history.c:571 ../thunar/thunar-window.c:496
+#: ../thunar/thunar-job-operation-history.c:591 ../thunar/thunar-window.c:496
 msgid "Redo the latest operation"
 msgstr "Refazer a última operação"
 
@@ -2727,7 +2737,7 @@ msgstr "Acedido:"
 
 #: ../thunar/thunar-properties-dialog.c:618
 msgid "Size on Disk:"
-msgstr ""
+msgstr "Tamanho no Disco:"
 
 #: ../thunar/thunar-properties-dialog.c:634
 msgid "Content:"
@@ -3174,7 +3184,7 @@ msgid "Loading folder contents..."
 msgstr "A carregar conteúdo da pasta..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2375 ../thunar/thunar-window.c:4220
+#: ../thunar/thunar-standard-view.c:2375 ../thunar/thunar-window.c:4218
 msgid "Failed to open the home folder"
 msgstr "Ocorreu um erro ao abrir a pasta pessoal"
 
@@ -3259,7 +3269,7 @@ msgstr "Ocorreu um erro ao criar a ligação para o URL \"%s\""
 msgid "Untitled document"
 msgstr "Documento sem título"
 
-#: ../thunar/thunar-standard-view.c:3630 ../thunar/thunar-window.c:4317
+#: ../thunar/thunar-standard-view.c:3630 ../thunar/thunar-window.c:4315
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Ocorreu um erro ao abrir a pasta \"%s\""
@@ -3824,101 +3834,101 @@ msgid "Cancel search for files"
 msgstr "Cancelar a procura por ficheiros"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:899
+#: ../thunar/thunar-window.c:897
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "Aviso: está a utilizar a conta root. Pode danificar o sistema."
 
-#: ../thunar/thunar-window.c:958
+#: ../thunar/thunar-window.c:956
 msgid "Size: "
 msgstr "Tamanho: "
 
 #. TRANSLATORS: `Catfish' is a software package, please don't translate it.
-#: ../thunar/thunar-window.c:1035
+#: ../thunar/thunar-window.c:1033
 msgid "Search with Catfish..."
 msgstr "Procurar com o Catfish..."
 
-#: ../thunar/thunar-window.c:1046
+#: ../thunar/thunar-window.c:1044
 msgid "Restore Selected Items"
 msgstr "Restaurar itens selecionados"
 
-#: ../thunar/thunar-window.c:2625
+#: ../thunar/thunar-window.c:2623
 msgid "Close tab"
 msgstr "Fechar separador"
 
-#: ../thunar/thunar-window.c:3076
+#: ../thunar/thunar-window.c:3074
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Abrir a localização \"%s\""
 
-#: ../thunar/thunar-window.c:4160
+#: ../thunar/thunar-window.c:4158
 msgid "Failed to open parent folder"
 msgstr "Falha ao abrir a pasta ascendente"
 
-#: ../thunar/thunar-window.c:4291
+#: ../thunar/thunar-window.c:4289
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "O diretório \"%s\" não existe. Pretende criá-lo?"
 
-#: ../thunar/thunar-window.c:4293
+#: ../thunar/thunar-window.c:4291
 msgid "Create directory"
 msgstr "Criar diretório"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4362
+#: ../thunar/thunar-window.c:4360
 msgid "Failed to browse the computer"
 msgstr "Falha ao navegar no computador"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4405
+#: ../thunar/thunar-window.c:4403
 msgid "About Templates"
 msgstr "Sobre os modelos"
 
-#: ../thunar/thunar-window.c:4427
+#: ../thunar/thunar-window.c:4425
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Todos os ficheiros nesta pasta vão aparecer no menu \"Criar documento\"."
 
-#: ../thunar/thunar-window.c:4434
+#: ../thunar/thunar-window.c:4432
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Se cria certos tipos de documentos com frequência, faça uma cópia e coloque-a nesta pasta. O Thunar irá criar uma entrada para este documento no menu \"Criar documento\".\n\nPode então selecionar a entrada do menu \"Criar documento\" e uma cópia do documento será criada na pasta que está a visualizar."
 
-#: ../thunar/thunar-window.c:4446
+#: ../thunar/thunar-window.c:4444
 msgid "Do _not display this message again"
 msgstr "_Não mostrar novamente esta mensagem"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4480
+#: ../thunar/thunar-window.c:4478
 msgid "Failed to open the file system root folder"
 msgstr "Falha ao abrir a pasta root do sistema de ficheiros"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4516
+#: ../thunar/thunar-window.c:4514
 msgid "Failed to display `Recent`"
 msgstr "Falha ao mostrar `Recentes`"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4552
+#: ../thunar/thunar-window.c:4550
 msgid "Failed to display the contents of the trash can"
 msgstr "Falha ao mostrar o conteúdo do caixote do lixo"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4588
+#: ../thunar/thunar-window.c:4586
 msgid "Failed to browse the network"
 msgstr "Falha ao navegar na rede"
 
-#: ../thunar/thunar-window.c:4699
+#: ../thunar/thunar-window.c:4697
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "O Thunar é um gestor de ficheiros rápido e\nfácil de usar para o ambiente de trabalho Xfce."
 
-#: ../thunar/thunar-window.c:5857
+#: ../thunar/thunar-window.c:5855
 msgid "Failed to launch search with Catfish"
 msgstr "Falha no lançamento da pesquisa com o Catfish"
 
-#: ../thunar/thunar-window.c:6126
+#: ../thunar/thunar-window.c:6124
 msgid "Location Bar"
 msgstr "Barra de localização"
 
