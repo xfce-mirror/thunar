@@ -235,7 +235,7 @@ launch_waiting_jobs (ThunarProgressDialog *dialog)
           dialog->views         = g_list_concat (lp, dialog->views);
           thunar_progress_view_launch_job (THUNAR_PROGRESS_VIEW (lp->data));
 
-          job_list = g_list_prepend (job_list, lp->data);
+          job_list = g_list_prepend (job_list, thunar_progress_view_get_job (THUNAR_PROGRESS_VIEW (lp->data)));
         }
       lp = next;
     }
