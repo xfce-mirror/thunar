@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-11 00:47+0100\n"
+"POT-Creation-Date: 2023-03-14 00:45+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: UTUMI Hirosi <utuhiro78@yahoo.co.jp>, 2019-2023\n"
 "Language-Team: Japanese (http://www.transifex.com/xfce/thunar/language/ja/)\n"
@@ -677,7 +677,7 @@ msgstr "フォルダーを作成しています..."
 msgid "Remove all files and folders from the Trash?"
 msgstr "ゴミ箱にあるファイルとフォルダーをすべて削除しますか?"
 
-#: ../thunar/thunar-application.c:2675 ../thunar/thunar-window.c:1047
+#: ../thunar/thunar-application.c:2675 ../thunar/thunar-window.c:1045
 msgid "Empty Trash"
 msgstr "ゴミ箱を空にする"
 
@@ -750,7 +750,7 @@ msgstr "この種類のファイルのデフォルトアプリケーションに
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1288
-#: ../thunar/thunar-properties-dialog.c:1155 ../thunar/thunar-window.c:4407
+#: ../thunar/thunar-properties-dialog.c:1155 ../thunar/thunar-window.c:4405
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -1689,94 +1689,104 @@ msgid ""
 "space."
 msgstr "移動/コピー先に十分な空き容量がありません。ファイルを削除するなどして容量を確保してください。"
 
-#: ../thunar/thunar-job-operation.c:782 ../thunar/thunar-list-model.c:3201
+#: ../thunar/thunar-job-operation.c:781 ../thunar/thunar-list-model.c:3201
 #: ../thunar/thunar-size-label.c:473
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
 msgstr[0] "%d ファイル"
 
-#: ../thunar/thunar-job-operation-history.c:317
+#: ../thunar/thunar-job-operation-history.c:318
 msgid ""
 "No operation which can be undone has been performed yet.\n"
 "(For some operations undo is not supported)"
 msgstr "元に戻す操作はまだ実行されていません。\n（一部の操作は元に戻せません）"
 
-#: ../thunar/thunar-job-operation-history.c:319
+#: ../thunar/thunar-job-operation-history.c:320
 msgid "There is no operation to undo"
 msgstr "元に戻す操作はありません"
 
-#: ../thunar/thunar-job-operation-history.c:336
+#: ../thunar/thunar-job-operation-history.c:337
 msgid ""
 "The operation you are trying to undo does not have any files associated with"
 " it, and thus cannot be undone. "
 msgstr "元に戻そうとしている操作には関連付けられているファイルがないため、元に戻すことができません。"
 
-#: ../thunar/thunar-job-operation-history.c:338
+#: ../thunar/thunar-job-operation-history.c:339
 #, c-format
 msgid "%s operation cannot be undone"
 msgstr "%s の操作を元に戻すことはできません"
 
 #. one indexed for the dialog
-#: ../thunar/thunar-job-operation-history.c:350
+#: ../thunar/thunar-job-operation-history.c:351
 msgid ""
 "The following files were overwritten in the operation you are trying to undo"
 " and cannot be restored:\n"
 msgstr "次のファイルは、元に戻そうとした操作で上書きされたため、復元できません。\n"
 
-#: ../thunar/thunar-job-operation-history.c:362
+#: ../thunar/thunar-job-operation-history.c:363
 #, c-format
 msgid "%s operation can only be partially undone"
 msgstr "%s の操作は一部のみ元に戻すことができます"
 
-#: ../thunar/thunar-job-operation-history.c:404
+#: ../thunar/thunar-job-operation-history.c:380
+#, c-format
+msgid "Failed to undo operation '%s'"
+msgstr "操作 '%s' を元に戻せませんでした"
+
+#: ../thunar/thunar-job-operation-history.c:415
 msgid "No operation which can be redone available.\n"
 msgstr "やり直し可能な操作はありません。\n"
 
-#: ../thunar/thunar-job-operation-history.c:405
+#: ../thunar/thunar-job-operation-history.c:416
 msgid "There is no operation to redo"
 msgstr "やり直す操作はありません"
 
-#: ../thunar/thunar-job-operation-history.c:422
+#: ../thunar/thunar-job-operation-history.c:433
 msgid ""
 "The operation you are trying to redo does not have any files associated with"
 " it, and thus cannot be redone. "
 msgstr "やり直そうとした操作には関連するファイルがないため、やり直すことができません。"
 
-#: ../thunar/thunar-job-operation-history.c:424
+#: ../thunar/thunar-job-operation-history.c:435
 #, c-format
 msgid "%s operation cannot be redone"
 msgstr "%s 操作をやり直すことはできません"
 
 #. one indexed for the dialog
-#: ../thunar/thunar-job-operation-history.c:436
+#: ../thunar/thunar-job-operation-history.c:447
 msgid ""
 "The following files were overwritten in the operation you are trying to redo"
 " and cannot be restored:\n"
 msgstr "次のファイルはやり直そうとした操作で上書きされたため、復元できません。\n"
 
-#: ../thunar/thunar-job-operation-history.c:448
+#: ../thunar/thunar-job-operation-history.c:459
 #, c-format
 msgid "%s operation can only be partially redone"
 msgstr "%s 操作は部分的にしかやり直すことができません"
 
+#: ../thunar/thunar-job-operation-history.c:474
+#, c-format
+msgid "Failed to redo operation '%s'"
+msgstr "操作 '%s' のやり直しに失敗しました"
+
 #. TRANSLATORS: An example: 'Undo the latest 'copy' operation (2 files)
-#: ../thunar/thunar-job-operation-history.c:541
+#: ../thunar/thunar-job-operation-history.c:561
 #, c-format
 msgid "Undo the latest '%s' operation (%s)"
 msgstr "最後の操作 '%s' を元に戻す (%s)"
 
-#: ../thunar/thunar-job-operation-history.c:546 ../thunar/thunar-window.c:495
+#: ../thunar/thunar-job-operation-history.c:566 ../thunar/thunar-window.c:495
 msgid "Undo the latest operation"
 msgstr "最新の操作を元に戻す"
 
 #. TRANSLATORS: An example: 'Redo the latest 'copy' operation (2 files)
-#: ../thunar/thunar-job-operation-history.c:566
+#: ../thunar/thunar-job-operation-history.c:586
 #, c-format
 msgid "Redo the latest '%s' operation (%s)"
 msgstr "最後の操作 '%s' をやり直す (%s)"
 
-#: ../thunar/thunar-job-operation-history.c:571 ../thunar/thunar-window.c:496
+#: ../thunar/thunar-job-operation-history.c:591 ../thunar/thunar-window.c:496
 msgid "Redo the latest operation"
 msgstr "最後の操作をやり直す"
 
@@ -3102,7 +3112,7 @@ msgid "Loading folder contents..."
 msgstr "フォルダーの内容を読み込んでいます..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2375 ../thunar/thunar-window.c:4220
+#: ../thunar/thunar-standard-view.c:2375 ../thunar/thunar-window.c:4218
 msgid "Failed to open the home folder"
 msgstr "ホームフォルダーを開けませんでした。"
 
@@ -3187,7 +3197,7 @@ msgstr "URL \"%s\" のリンク作成に失敗しました"
 msgid "Untitled document"
 msgstr "無題のドキュメント"
 
-#: ../thunar/thunar-standard-view.c:3630 ../thunar/thunar-window.c:4317
+#: ../thunar/thunar-standard-view.c:3630 ../thunar/thunar-window.c:4315
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "フォルダー \"%s\" を開けませんでした"
@@ -3746,101 +3756,101 @@ msgid "Cancel search for files"
 msgstr "ファイルの検索を中止します"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:899
+#: ../thunar/thunar-window.c:897
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "警告: rootアカウントを使用しています。システムに害を及ぼす可能性があります。"
 
-#: ../thunar/thunar-window.c:958
+#: ../thunar/thunar-window.c:956
 msgid "Size: "
 msgstr "サイズ: "
 
 #. TRANSLATORS: `Catfish' is a software package, please don't translate it.
-#: ../thunar/thunar-window.c:1035
+#: ../thunar/thunar-window.c:1033
 msgid "Search with Catfish..."
 msgstr "Catfish で検索..."
 
-#: ../thunar/thunar-window.c:1046
+#: ../thunar/thunar-window.c:1044
 msgid "Restore Selected Items"
 msgstr "選択したアイテムを復元する"
 
-#: ../thunar/thunar-window.c:2625
+#: ../thunar/thunar-window.c:2623
 msgid "Close tab"
 msgstr "タブを閉じる"
 
-#: ../thunar/thunar-window.c:3076
+#: ../thunar/thunar-window.c:3074
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "\"%s\" を開きます"
 
-#: ../thunar/thunar-window.c:4160
+#: ../thunar/thunar-window.c:4158
 msgid "Failed to open parent folder"
 msgstr "上位のフォルダーを開けませんでした"
 
-#: ../thunar/thunar-window.c:4291
+#: ../thunar/thunar-window.c:4289
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "ディレクトリ \"%s\" は存在しません。作成しますか?"
 
-#: ../thunar/thunar-window.c:4293
+#: ../thunar/thunar-window.c:4291
 msgid "Create directory"
 msgstr "ディレクトリの作成"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4362
+#: ../thunar/thunar-window.c:4360
 msgid "Failed to browse the computer"
 msgstr "コンピューターの閲覧に失敗しました"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4405
+#: ../thunar/thunar-window.c:4403
 msgid "About Templates"
 msgstr "テンプレートについて"
 
-#: ../thunar/thunar-window.c:4427
+#: ../thunar/thunar-window.c:4425
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "このフォルダーにあるすべてのファイルは\nメニュー \"ドキュメントを作成\" に表示されます。"
 
-#: ../thunar/thunar-window.c:4434
+#: ../thunar/thunar-window.c:4432
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "ある決まった種類のドキュメントを頻繁に作成するのでしたら、そのコピーを作成してこのフォルダーに置いてください。メニュー \"ドキュメントを作成\" にこのドキュメントのための項目が加えられます。\n\nその後で \"ドキュメントを作成\" メニューからこの項目を選択する事ができ、表示されているフォルダーにドキュメントのコピーが作成されます。"
 
-#: ../thunar/thunar-window.c:4446
+#: ../thunar/thunar-window.c:4444
 msgid "Do _not display this message again"
 msgstr "このメッセージを再び表示しない(_N)"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4480
+#: ../thunar/thunar-window.c:4478
 msgid "Failed to open the file system root folder"
 msgstr "ファイルシステムのルートフォルダーを開けませんでした。"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4516
+#: ../thunar/thunar-window.c:4514
 msgid "Failed to display `Recent`"
 msgstr "「最近使用したファイル」の表示に失敗しました "
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4552
+#: ../thunar/thunar-window.c:4550
 msgid "Failed to display the contents of the trash can"
 msgstr "ゴミ箱の中身を表示できませんでした。"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4588
+#: ../thunar/thunar-window.c:4586
 msgid "Failed to browse the network"
 msgstr "ネットワークの参照に失敗しました。"
 
-#: ../thunar/thunar-window.c:4699
+#: ../thunar/thunar-window.c:4697
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar は Xfce デスクトップ環境向けの\n使いやすく軽快なファイルマネージャーです。"
 
-#: ../thunar/thunar-window.c:5857
+#: ../thunar/thunar-window.c:5855
 msgid "Failed to launch search with Catfish"
 msgstr "Catfish で検索を開始できませんでした"
 
-#: ../thunar/thunar-window.c:6126
+#: ../thunar/thunar-window.c:6124
 msgid "Location Bar"
 msgstr "ロケーションバー"
 
