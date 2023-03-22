@@ -245,6 +245,9 @@ static gboolean  thunar_window_action_show_highlight      (ThunarWindow         
 static gboolean  thunar_window_propagate_key_event        (GtkWindow              *window,
                                                            GdkEvent               *key_event,
                                                            gpointer                user_data);
+static gboolean  thunar_window_after_propagate_key_event  (GtkWindow              *window,
+                                                           GdkEvent               *key_event,
+                                                           gpointer                user_data);
 static gboolean  thunar_window_action_open_file_menu      (ThunarWindow           *window);
 static void      thunar_window_current_directory_changed  (ThunarFile             *current_directory,
                                                            ThunarWindow           *window);
@@ -828,6 +831,7 @@ thunar_window_init (ThunarWindow *window)
   /* Catch key events before accelerators get processed */
   g_signal_connect (window, "key-press-event", G_CALLBACK (thunar_window_propagate_key_event), NULL);
   g_signal_connect (window, "key-release-event", G_CALLBACK (thunar_window_propagate_key_event), NULL);
+  g_signal_connect_after (window, "key-release-event", G_CALLBACK (thunar_window_after_propagate_key_event), NULL);
 
   window->action_mgr = g_object_new (THUNAR_TYPE_ACTION_MANAGER, "widget", GTK_WIDGET (window), NULL);
 
@@ -4646,6 +4650,38 @@ thunar_window_propagate_key_event (GtkWindow* window,
   /* ThunarStatusbar doesn't handle it own shortcuts, so ThunarWindow will handle any Tab-accelerated actions */
   if (xfce_gtk_handle_tab_accels ((GdkEventKey *) key_event, thunar_window->accel_group, thunar_window->statusbar, thunar_statusbar_get_action_entries (), THUNAR_STATUS_BAR_N_ACTIONS) == TRUE)
     return TRUE;
+
+  return GDK_EVENT_PROPAGATE;
+}
+
+
+
+static gboolean
+thunar_window_after_propagate_key_event (GtkWindow* window,
+                                         GdkEvent  *key_event,
+                                         gpointer   user_data)
+{
+  GtkWidget    *focused_widget;
+  ThunarWindow *thunar_window = THUNAR_WINDOW (window);
+
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), GDK_EVENT_PROPAGATE);
+
+  focused_widget = gtk_window_get_focus (window);
+
+  /* After 'tab' was preassed, we might need to update the selected notebook */
+  if (thunar_window_split_view_is_active (thunar_window))
+    {
+      if (thunar_window->notebook_left != NULL && gtk_widget_is_ancestor (focused_widget, thunar_window->notebook_left))
+        {
+          thunar_window->notebook_selected = thunar_window->notebook_left;
+          thunar_window_notebook_select_current_page (thunar_window);
+        }
+      if(thunar_window->notebook_right != NULL && gtk_widget_is_ancestor (focused_widget, thunar_window->notebook_right))
+        {
+          thunar_window->notebook_selected = thunar_window->notebook_right;
+          thunar_window_notebook_select_current_page (thunar_window);
+        }
+    }
 
   return GDK_EVENT_PROPAGATE;
 }
