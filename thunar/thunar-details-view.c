@@ -113,7 +113,7 @@ static void         thunar_details_view_append_menu_items       (ThunarStandardV
                                                                  GtkMenu                *menu,
                                                                  GtkAccelGroup          *accel_group);
 static void         thunar_details_view_highlight_option_changed(ThunarDetailsView      *details_view);
-
+static void         thunar_details_view_draw                    (ThunarDetailsView *details_view);
 
 
 struct _ThunarDetailsViewClass
@@ -238,6 +238,10 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                     G_CALLBACK (thunar_details_view_select_cursor_row), details_view);
   gtk_container_add (GTK_CONTAINER (details_view), tree_view);
   gtk_widget_show (tree_view);
+
+  /* forwards the 'draw' signal down to the tree-view */
+  g_signal_connect_after (G_OBJECT (details_view), "draw",
+                    G_CALLBACK (thunar_details_view_draw), details_view);
 
   /* configure general aspects of the details view */
   gtk_tree_view_set_enable_search (GTK_TREE_VIEW (tree_view), TRUE);
@@ -427,6 +431,19 @@ thunar_details_view_finalize (GObject *object)
                                         thunar_details_view_highlight_option_changed, details_view);
 
   (*G_OBJECT_CLASS (thunar_details_view_parent_class)->finalize) (object);
+}
+
+
+
+static void
+thunar_details_view_draw (ThunarDetailsView *details_view)
+{
+  GList *children;
+
+  /* redraw as well the corresponding exo_tree_view, which is the only child */
+  children = gtk_container_get_children (GTK_CONTAINER (details_view));
+  for (GList *lp = children; lp != NULL; lp = lp->next)
+    gtk_widget_queue_draw (lp->data);
 }
 
 
