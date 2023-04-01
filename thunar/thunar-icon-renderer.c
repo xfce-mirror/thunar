@@ -530,7 +530,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
     {
       /* use a translucent icon to represent cutted and hidden files to the user */
       clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (widget));
-      if (thunar_clipboard_manager_has_cutted_file (clipboard, icon_renderer->file))
+      if (thunar_clipboard_manager_has_cutted_file (clipboard, icon_renderer->file) && thunar_file_is_writable (icon_renderer->file))
         {
           /* 50% translucent for cutted files */
           alpha = 0.50;
