@@ -87,7 +87,10 @@ enum
 };
 
 
-static void     thunar_properties_dialog_constructed          (GObject                     *object);
+
+static GObject *thunar_properties_dialog_constructor         (GType                         type,
+                                                              guint                         n_construct_params,
+                                                               GObjectConstructParam       *construct_params);
 static void     thunar_properties_dialog_dispose              (GObject                     *object);
 static void     thunar_properties_dialog_finalize             (GObject                     *object);
 static void     thunar_properties_dialog_get_property         (GObject                     *object,
@@ -203,7 +206,7 @@ thunar_properties_dialog_class_init (ThunarPropertiesDialogClass *klass)
   gobject_class->finalize = thunar_properties_dialog_finalize;
   gobject_class->get_property = thunar_properties_dialog_get_property;
   gobject_class->set_property = thunar_properties_dialog_set_property;
-  gobject_class->constructed = thunar_properties_dialog_constructed;
+  gobject_class->constructor = thunar_properties_dialog_constructor;
 
   gtkdialog_class = GTK_DIALOG_CLASS (klass);
   gtkdialog_class->response = thunar_properties_dialog_response;
@@ -296,9 +299,14 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
 
 
-static void
-thunar_properties_dialog_constructed (GObject *object)
+static GObject *
+thunar_properties_dialog_constructor (GType                  type,
+                                      guint                  n_construct_params,
+                                      GObjectConstructParam *construct_params)
 {
+  GObject *object = G_OBJECT_CLASS (thunar_properties_dialog_parent_class)->constructor (type,
+                                                                                         n_construct_params,
+                                                                                         construct_params);
   ThunarPropertiesDialog *dialog = THUNAR_PROPERTIES_DIALOG (object);
 
   GtkWidget *chooser;
@@ -896,6 +904,8 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), dialog->permissions_chooser, label);
   gtk_widget_show (dialog->permissions_chooser);
   gtk_widget_show (label);
+
+  return object;
 }
 
 
