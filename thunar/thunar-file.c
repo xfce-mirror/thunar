@@ -1326,18 +1326,23 @@ thunar_file_get (GFile   *gfile,
         {
           /* failed loading, destroy the file (outside the lock) */
           file_load_failed = TRUE;
-
-          /* make sure we return NULL */
-          file = NULL;
         }
     }
 
   /* Finished related activity on the cache */
   G_UNLOCK (file_cache_mutex);
 
-  /* Calls thunar_file_finalize(), which itself requires the lock */
   if (file_load_failed == TRUE)
-    g_object_unref (file);
+    {
+      if (file != NULL)
+        {
+          /* Calls thunar_file_finalize(), which itself requires the lock */
+          g_object_unref (file);
+
+        }
+
+      return NULL;
+    }
 
   return file;
 }
