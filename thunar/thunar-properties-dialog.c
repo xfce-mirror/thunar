@@ -312,6 +312,8 @@ thunar_properties_dialog_constructed (GObject *object)
   GtkWidget *infobar;
   GtkWidget *frame;
 
+  G_OBJECT_CLASS (thunar_properties_dialog_parent_class)->constructed (object);
+  
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                           _("_Help"), GTK_RESPONSE_HELP,
                           _("_Close"), GTK_RESPONSE_CLOSE,
