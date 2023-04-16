@@ -3414,15 +3414,15 @@ thunar_window_action_open_new_window (ThunarWindow *window,
       thunar_standard_view_set_history (THUNAR_STANDARD_VIEW (new_window->view), history);
       thunar_window_history_changed (new_window);
 
-      /* connect to the new history */
-      window->signal_handler_id_history_changed = g_signal_connect_swapped (G_OBJECT (history), "history-changed", G_CALLBACK (thunar_window_history_changed), new_window);
+      /* connect the new window to the new history */
+      new_window->signal_handler_id_history_changed = g_signal_connect_swapped (G_OBJECT (history), "history-changed", G_CALLBACK (thunar_window_history_changed), new_window);
     }
 
   /* determine the first visible file in the current window */
   if (thunar_view_get_visible_range (THUNAR_VIEW (window->view), &start_file, NULL))
     {
       /* scroll the new window to the same file */
-      thunar_view_scroll_to_file (THUNAR_VIEW (window->view), start_file, FALSE, TRUE, 0.1f, 0.1f);
+      thunar_view_scroll_to_file (THUNAR_VIEW (new_window->view), start_file, FALSE, TRUE, 0.1f, 0.1f);
 
       /* release the file reference */
       g_object_unref (G_OBJECT (start_file));
