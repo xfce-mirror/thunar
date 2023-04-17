@@ -2365,7 +2365,8 @@ thunar_action_manager_check_uca_key_activation (ThunarActionManager *action_mgr,
           accel_path = g_strconcat ("<Actions>/ThunarActions/", name, NULL);
           if (gtk_accel_map_lookup_entry (accel_path, &uca_key) == TRUE)
             {
-              if (g_ascii_tolower (key_event->keyval) == g_ascii_tolower (uca_key.accel_key))
+              /* The passed key_event can have <Shift> modifier AND upper-case keyval. So for comparison we need to lower the keyval */
+              if (g_unichar_tolower (key_event->keyval) == g_unichar_tolower (uca_key.accel_key))
                 {
                   if ((key_event->state & gtk_accelerator_get_default_mod_mask ()) == uca_key.accel_mods)
                     {

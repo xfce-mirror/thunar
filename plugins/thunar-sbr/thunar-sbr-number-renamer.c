@@ -389,8 +389,8 @@ thunar_sbr_number_renamer_process (ThunarxRenamer  *renamer,
       /* "start" property must be 'a', 'b', 'c', etc. */
       start = *number_renamer->start;
       invalid = (strlen (number_renamer->start) != 1
-              || g_ascii_tolower (start) < 'a'
-              || g_ascii_tolower (start) > 'z');
+              || g_unichar_tolower (start) < 'a'
+              || g_unichar_tolower (start) > 'z');
     }
 
   /* check if we have invalid settings */
@@ -484,8 +484,8 @@ thunar_sbr_number_renamer_update (ThunarSbrNumberRenamer *number_renamer)
     {
       /* "start" property must be 'a', 'b', 'c', etc. */
       invalid = (strlen (number_renamer->start) != 1
-              || g_ascii_tolower (*number_renamer->start) < 'a'
-              || g_ascii_tolower (*number_renamer->start) > 'z');
+              || g_unichar_tolower (*number_renamer->start) < 'a'
+              || g_unichar_tolower (*number_renamer->start) > 'z');
     }
 
   /* check if the start entry is realized */
