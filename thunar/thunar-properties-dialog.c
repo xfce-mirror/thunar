@@ -411,7 +411,7 @@ thunar_properties_dialog_constructed (GObject *object)
 
 
   /*
-     Second box (kind, open with, link target)
+     Second box (kind, open with, link target, original path, location, volume)
    */
   label = gtk_label_new (_("Kind:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
@@ -509,6 +509,37 @@ thunar_properties_dialog_constructed (GObject *object)
 
   ++row;
 
+  label = gtk_label_new (_("Volume:"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
+  gtk_widget_show (label);
+
+  box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+  g_object_bind_property (G_OBJECT (box),   "visible",
+                          G_OBJECT (label), "visible",
+                          G_BINDING_SYNC_CREATE);
+  gtk_widget_set_hexpand (box, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), box, 1, row, 1, 1);
+  gtk_widget_show (box);
+
+  dialog->volume_image = gtk_image_new ();
+  g_object_bind_property (G_OBJECT (dialog->volume_image), "visible",
+                          G_OBJECT (box),                  "visible",
+                          G_BINDING_SYNC_CREATE);
+  gtk_box_pack_start (GTK_BOX (box), dialog->volume_image, FALSE, TRUE, 0);
+  gtk_widget_show (dialog->volume_image);
+
+  dialog->volume_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->volume_label), TRUE);
+  g_object_bind_property (G_OBJECT (dialog->volume_label), "visible",
+                          G_OBJECT (dialog->volume_image), "visible",
+                          G_BINDING_SYNC_CREATE);
+  gtk_box_pack_start (GTK_BOX (box), dialog->volume_label, TRUE, TRUE, 0);
+  gtk_widget_show (dialog->volume_label);
+
+  ++row;
+
 
   spacer = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "height-request", 12, NULL);
   gtk_grid_attach (GTK_GRID (grid), spacer, 0, row, 2, 1);
@@ -599,7 +630,7 @@ thunar_properties_dialog_constructed (GObject *object)
 
 
   /*
-     Fourth box (size, volume, free space)
+     Fourth box (size)
    */
   label = gtk_label_new (_("Size:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
@@ -633,6 +664,17 @@ thunar_properties_dialog_constructed (GObject *object)
 
   ++row;
 
+
+  spacer = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "height-request", 12, NULL);
+  gtk_grid_attach (GTK_GRID (grid), spacer, 0, row, 2, 1);
+  gtk_widget_show (spacer);
+
+  ++row;
+
+
+  /*
+     Fifth box (content, capacity, free space)
+   */
   label = gtk_label_new (_("Content:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
@@ -648,37 +690,6 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_grid_attach (GTK_GRID (grid), label, 1, row, 1, 1);
   gtk_widget_show (label);
   dialog->content_value_label = label;
-
-  ++row;
-
-  label = gtk_label_new (_("Volume:"));
-  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
-  gtk_widget_show (label);
-
-  box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
-  g_object_bind_property (G_OBJECT (box),   "visible",
-                          G_OBJECT (label), "visible",
-                          G_BINDING_SYNC_CREATE);
-  gtk_widget_set_hexpand (box, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), box, 1, row, 1, 1);
-  gtk_widget_show (box);
-
-  dialog->volume_image = gtk_image_new ();
-  g_object_bind_property (G_OBJECT (dialog->volume_image), "visible",
-                          G_OBJECT (box),                  "visible",
-                          G_BINDING_SYNC_CREATE);
-  gtk_box_pack_start (GTK_BOX (box), dialog->volume_image, FALSE, TRUE, 0);
-  gtk_widget_show (dialog->volume_image);
-
-  dialog->volume_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
-  gtk_label_set_selectable (GTK_LABEL (dialog->volume_label), TRUE);
-  g_object_bind_property (G_OBJECT (dialog->volume_label), "visible",
-                          G_OBJECT (dialog->volume_image), "visible",
-                          G_BINDING_SYNC_CREATE);
-  gtk_box_pack_start (GTK_BOX (box), dialog->volume_label, TRUE, TRUE, 0);
-  gtk_widget_show (dialog->volume_label);
 
   ++row;
 
@@ -1396,6 +1407,31 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
       gtk_widget_hide (dialog->location_label);
     }
 
+  /* update the volume */
+  volume = thunar_file_get_volume (file);
+  if (G_LIKELY (volume != NULL))
+    {
+      gicon = g_volume_get_icon (volume);
+      gtk_image_set_from_gicon (GTK_IMAGE (dialog->volume_image), gicon, GTK_ICON_SIZE_MENU);
+      if (G_LIKELY (gicon != NULL))
+        g_object_unref (gicon);
+
+      volume_name = g_volume_get_name (volume);
+      volume_id = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+      volume_label= g_strdup_printf ("%s (%s)", volume_name, volume_id);
+      gtk_label_set_text (GTK_LABEL (dialog->volume_label), volume_label);
+      gtk_widget_show (dialog->volume_label);
+      g_free (volume_name);
+      g_free (volume_id);
+      g_free (volume_label);
+
+      g_object_unref (G_OBJECT (volume));
+    }
+  else
+    {
+      gtk_widget_hide (dialog->volume_label);
+    }
+
   /* update the created time */
   date = thunar_file_get_date_string (file, THUNAR_FILE_DATE_CREATED, date_style, date_custom_style);
   if (G_LIKELY (date != NULL))
@@ -1448,9 +1484,16 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
       gtk_widget_hide (dialog->accessed_label);
     }
 
-  /* update the free space (only for folders) */
+  /* update the capacity and the free space (only for folders) */
   if (thunar_file_is_directory (file))
     {
+      /* capacity (space of containing volume) */
+      if (thunar_g_file_get_free_space (thunar_file_get_file (file), NULL, &capacity))
+        capacity_str = g_format_size_full (capacity, dialog->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+      gtk_label_set_text (GTK_LABEL (dialog->capacity_label), capacity_str);
+      g_free (capacity_str);
+
+      /* free space */
       fs_string = thunar_g_file_get_free_space_string (thunar_file_get_file (file),
                                                        dialog->file_size_binary);
       if (thunar_g_file_get_free_space (thunar_file_get_file (file), &fs_free, &fs_size)
@@ -1473,38 +1516,8 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     }
   else
     {
+      gtk_widget_hide (dialog->capacity_vbox);
       gtk_widget_hide (dialog->freespace_vbox);
-    }
-
-  /* update the capacity (space of containing volume) */
-  if (thunar_g_file_get_free_space (thunar_file_get_file (file), NULL, &capacity))
-    capacity_str = g_format_size_full (capacity, dialog->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
-  gtk_label_set_text (GTK_LABEL (dialog->capacity_label), capacity_str);
-  g_free (capacity_str);
-
-  /* update the volume */
-  volume = thunar_file_get_volume (file);
-  if (G_LIKELY (volume != NULL))
-    {
-      gicon = g_volume_get_icon (volume);
-      gtk_image_set_from_gicon (GTK_IMAGE (dialog->volume_image), gicon, GTK_ICON_SIZE_MENU);
-      if (G_LIKELY (gicon != NULL))
-        g_object_unref (gicon);
-
-      volume_name = g_volume_get_name (volume);
-      volume_id = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
-      volume_label= g_strdup_printf ("%s (%s)", volume_name, volume_id);
-      gtk_label_set_text (GTK_LABEL (dialog->volume_label), volume_label);
-      gtk_widget_show (dialog->volume_label);
-      g_free (volume_name);
-      g_free (volume_id);
-      g_free (volume_label);
-
-      g_object_unref (G_OBJECT (volume));
-    }
-  else
-    {
-      gtk_widget_hide (dialog->volume_label);
     }
 
   if (dialog->show_file_highlight_tab && G_LIKELY (thunar_g_vfs_metadata_is_supported ()))
@@ -1553,6 +1566,7 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
   gtk_widget_hide (dialog->deleted_label);
   gtk_widget_hide (dialog->modified_label);
   gtk_widget_hide (dialog->accessed_label);
+  gtk_widget_hide (dialog->capacity_vbox);
   gtk_widget_hide (dialog->freespace_vbox);
   gtk_widget_hide (dialog->origin_label);
   gtk_widget_hide (dialog->openwith_chooser);
