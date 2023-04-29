@@ -2016,7 +2016,7 @@ thunar_window_clipboard_manager_changed (GtkWidget *widget)
    * in order to do not redraw te view if just some text is copied.
    */
   if (thunar_clipboard_manager_get_can_paste (window->clipboard) && G_LIKELY (window->view != NULL))
-    gtk_widget_queue_draw (window->view);
+    thunar_view_redraw (THUNAR_VIEW (window->view));
 }
 
 

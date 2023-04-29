@@ -152,6 +152,7 @@ static void                 thunar_standard_view_set_directory_specific_settings
                                                                                        gboolean              directory_specific_settings);
 static void                 thunar_standard_view_reload                     (ThunarView               *view,
                                                                              gboolean                  reload_info);
+static void                 thunar_standard_view_redraw                     (ThunarView               *view);
 static gboolean             thunar_standard_view_get_visible_range          (ThunarView               *view,
                                                                              ThunarFile              **start_file,
                                                                              ThunarFile              **end_file);
@@ -791,6 +792,7 @@ thunar_standard_view_view_init (ThunarViewIface *iface)
   iface->scroll_to_file = thunar_standard_view_scroll_to_file;
   iface->get_selected_files = thunar_standard_view_get_selected_files_view;
   iface->set_selected_files = thunar_standard_view_set_selected_files_view;
+  iface->redraw = thunar_standard_view_redraw;
 }
 
 
@@ -2032,6 +2034,20 @@ thunar_standard_view_reload (ThunarView *view,
   /* schedule thumbnail reload update */
   if (!standard_view->priv->thumbnailing_scheduled)
     thunar_standard_view_schedule_thumbnail_idle (standard_view);
+}
+
+
+
+static void
+thunar_standard_view_redraw (ThunarView *view)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
+
+  /* first redraw view specific stuff */
+  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->redraw) (standard_view);
+
+  /* than request a redraw of the complete widget */
+  gtk_widget_queue_draw (GTK_WIDGET (standard_view));
 }
 
 
