@@ -2695,6 +2695,7 @@ thunar_file_get_size (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), 0);
 
+printf("thunar_file_get_size\n");
   if (file->info == NULL)
     return 0;
 
