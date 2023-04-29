@@ -174,7 +174,7 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
   gobject_class->finalize = thunar_details_view_finalize;
   gobject_class->get_property = thunar_details_view_get_property;
   gobject_class->set_property = thunar_details_view_set_property;
- 
+
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->get_accessible = thunar_details_view_get_accessible;
   gtkwidget_class->draw = thunar_details_view_draw;
