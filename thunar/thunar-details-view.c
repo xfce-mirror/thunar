@@ -74,6 +74,7 @@ static gboolean     thunar_details_view_get_visible_range       (ThunarStandardV
                                                                  GtkTreePath           **end_path);
 static void         thunar_details_view_highlight_path          (ThunarStandardView     *standard_view,
                                                                  GtkTreePath            *path);
+static void         thunar_details_view_redraw                  (ThunarStandardView     *standard_view);
 static void         thunar_details_view_notify_model            (GtkTreeView            *tree_view,
                                                                  GParamSpec             *pspec,
                                                                  ThunarDetailsView      *details_view);
@@ -113,7 +114,6 @@ static void         thunar_details_view_append_menu_items       (ThunarStandardV
                                                                  GtkMenu                *menu,
                                                                  GtkAccelGroup          *accel_group);
 static void         thunar_details_view_highlight_option_changed(ThunarDetailsView      *details_view);
-static void         thunar_details_view_draw                    (ThunarDetailsView *details_view);
 
 
 struct _ThunarDetailsViewClass
@@ -189,6 +189,7 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
   thunarstandard_view_class->append_menu_items = thunar_details_view_append_menu_items;
   thunarstandard_view_class->connect_accelerators = thunar_details_view_connect_accelerators;
   thunarstandard_view_class->disconnect_accelerators = thunar_details_view_disconnect_accelerators;
+  thunarstandard_view_class->redraw = thunar_details_view_redraw;
   thunarstandard_view_class->zoom_level_property_name = "last-details-view-zoom-level";
 
   xfce_gtk_translate_action_entries (thunar_details_view_action_entries, G_N_ELEMENTS (thunar_details_view_action_entries));
@@ -238,10 +239,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                     G_CALLBACK (thunar_details_view_select_cursor_row), details_view);
   gtk_container_add (GTK_CONTAINER (details_view), tree_view);
   gtk_widget_show (tree_view);
-
-  /* forwards the 'draw' signal down to the tree-view */
-  g_signal_connect_after (G_OBJECT (details_view), "draw",
-                    G_CALLBACK (thunar_details_view_draw), details_view);
 
   /* configure general aspects of the details view */
   gtk_tree_view_set_enable_search (GTK_TREE_VIEW (tree_view), TRUE);
@@ -436,12 +433,14 @@ thunar_details_view_finalize (GObject *object)
 
 
 static void
-thunar_details_view_draw (ThunarDetailsView *details_view)
+thunar_details_view_redraw (ThunarStandardView *standard_view)
 {
   GList *children;
 
+    _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view));
+
   /* redraw as well the corresponding exo_tree_view, which is the only child */
-  children = gtk_container_get_children (GTK_CONTAINER (details_view));
+  children = gtk_container_get_children (GTK_CONTAINER (standard_view));
   for (GList *lp = children; lp != NULL; lp = lp->next)
     gtk_widget_queue_draw (lp->data);
 }

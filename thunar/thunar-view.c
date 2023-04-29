@@ -272,6 +272,21 @@ thunar_view_reload (ThunarView *view,
 
 
 /**
+ * thunar_view_redraw:
+ * @view : a #ThunarView instance.
+ *
+ * Tells @view to redraw the currently displayed folder
+ **/
+void
+thunar_view_redraw (ThunarView *view)
+{
+  _thunar_return_if_fail (THUNAR_IS_VIEW (view));
+  (*THUNAR_VIEW_GET_IFACE (view)->redraw) (view);
+}
+
+
+
+/**
  * thunar_view_get_visible_range:
  * @view       : a #ThunarView instance.
  * @start_file : return location for start of region, or %NULL.

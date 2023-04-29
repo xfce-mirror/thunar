@@ -58,6 +58,7 @@ static gboolean     thunar_abstract_icon_view_get_visible_range       (ThunarSta
                                                                        GtkTreePath                 **end_path);
 static void         thunar_abstract_icon_view_highlight_path          (ThunarStandardView           *standard_view,
                                                                        GtkTreePath                  *path);
+static void         thunar_abstract_icon_view_redraw                  (ThunarStandardView           *standard_view);
 static void         thunar_abstract_icon_view_notify_model            (ExoIconView                  *view,
                                                                        GParamSpec                   *pspec,
                                                                        ThunarAbstractIconView       *abstract_icon_view);
@@ -122,6 +123,7 @@ thunar_abstract_icon_view_class_init (ThunarAbstractIconViewClass *klass)
   thunarstandard_view_class->get_path_at_pos = thunar_abstract_icon_view_get_path_at_pos;
   thunarstandard_view_class->get_visible_range = thunar_abstract_icon_view_get_visible_range;
   thunarstandard_view_class->highlight_path = thunar_abstract_icon_view_highlight_path;
+  thunarstandard_view_class->redraw = thunar_abstract_icon_view_redraw;
 
   /**
    * ThunarAbstractIconView:column-spacing:
@@ -328,6 +330,16 @@ thunar_abstract_icon_view_highlight_path (ThunarStandardView *standard_view,
 {
   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
   exo_icon_view_set_drag_dest_item (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), path, EXO_ICON_VIEW_DROP_INTO);
+}
+
+
+
+static void
+thunar_abstract_icon_view_redraw (ThunarStandardView *standard_view)
+{
+   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
+
+   // Nothing special to do for icon views
 }
 
 

@@ -53,6 +53,7 @@ struct _ThunarViewIface
 
   void            (*reload)             (ThunarView     *view,
                                          gboolean        reload_info);
+  void            (*redraw)             (ThunarView     *view);
 
   gboolean        (*get_visible_range)  (ThunarView     *view,
                                          ThunarFile    **start_file,
@@ -85,6 +86,7 @@ void            thunar_view_reset_zoom_level    (ThunarView     *view);
 
 void            thunar_view_reload              (ThunarView     *view,
                                                  gboolean        reload_info);
+void            thunar_view_redraw              (ThunarView     *view);
 
 gboolean        thunar_view_get_visible_range   (ThunarView     *view,
                                                  ThunarFile    **start_file,
