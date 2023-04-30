@@ -3091,7 +3091,11 @@ thunar_file_can_execute (ThunarFile *file)
   /* Additional security measure only applicable if gvfs is installed: */
   /* Desktop files outside XDG_DATA_DIRS, need to be 'trusted'. */
   if (thunar_g_vfs_metadata_is_supported ())
-    return xfce_g_file_is_trusted (file_to_check->gfile, NULL, NULL);
+    {
+      gboolean can_execute = xfce_g_file_is_trusted (file_to_check->gfile, NULL, NULL);
+      g_object_unref (file_to_check);
+      return can_execute;
+    }
 
    g_object_unref (file_to_check);
    return TRUE;
