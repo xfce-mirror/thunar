@@ -201,6 +201,8 @@ GType               thunar_standard_view_get_saved_view_type   (ThunarStandardVi
 
 XfceGtkActionEntry *thunar_standard_view_get_action_entries (void);
 
+void                thunar_standard_view_redraw                (ThunarStandardView       *standard_view);
+
 
 G_END_DECLS;
 
