@@ -4603,6 +4603,15 @@ thunar_standard_view_get_action_entries (void)
 
 
 
+void
+thunar_standard_view_queue_redraw (ThunarStandardView *standard_view)
+{
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->queue_redraw) (standard_view);
+}
+
+
+
 static void
 thunar_standard_view_highlight_option_changed (ThunarStandardView *standard_view)
 {
