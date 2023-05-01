@@ -113,6 +113,7 @@ static void         thunar_details_view_append_menu_items       (ThunarStandardV
                                                                  GtkMenu                *menu,
                                                                  GtkAccelGroup          *accel_group);
 static void         thunar_details_view_highlight_option_changed(ThunarDetailsView      *details_view);
+static void         thunar_details_view_queue_redraw            (ThunarStandardView     *standard_view);
 
 
 
@@ -191,6 +192,7 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
   thunarstandard_view_class->append_menu_items = thunar_details_view_append_menu_items;
   thunarstandard_view_class->connect_accelerators = thunar_details_view_connect_accelerators;
   thunarstandard_view_class->disconnect_accelerators = thunar_details_view_disconnect_accelerators;
+  thunarstandard_view_class->queue_redraw = thunar_details_view_queue_redraw;
   thunarstandard_view_class->zoom_level_property_name = "last-details-view-zoom-level";
 
   xfce_gtk_translate_action_entries (thunar_details_view_action_entries, G_N_ELEMENTS (thunar_details_view_action_entries));
@@ -1201,4 +1203,16 @@ thunar_details_view_highlight_option_changed (ThunarDetailsView *details_view)
                                                GTK_CELL_RENDERER (details_view->renderers[column]),
                                                function, NULL, NULL);
     }
+}
+
+
+
+static void
+thunar_details_view_queue_redraw (ThunarStandardView *standard_view)
+{
+  ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (standard_view);
+
+  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+
+  gtk_widget_queue_draw (GTK_WIDGET (details_view->tree_view));
 }
