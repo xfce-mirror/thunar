@@ -170,6 +170,14 @@ void
 thunar_gtk_menu_run (GtkMenu *menu)
 {
   GdkEvent *event = gtk_get_current_event ();
+
+  /* hide mnemonics in DnD menu by adding button-release-event parameters */
+  if (event != NULL && event->type == GDK_DROP_START)
+    {
+      event->button.type = GDK_BUTTON_RELEASE;
+      event->button.button = 3;
+    }
+
   thunar_gtk_menu_run_at_event (menu, event);
   gdk_event_free (event);
 }
