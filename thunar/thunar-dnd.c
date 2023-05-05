@@ -69,8 +69,8 @@ thunar_dnd_ask (GtkWidget    *widget,
                 GdkDragAction dnd_actions)
 {
   static const GdkDragAction dnd_action_items[] = { GDK_ACTION_COPY, GDK_ACTION_MOVE, GDK_ACTION_LINK };
-  static const gchar        *dnd_action_names[] = { N_ ("_Copy here"), N_ ("_Move here"), N_ ("_Link here") };
-  static const gchar        *dnd_action_icons[] = { "stock_folder-copy", "stock_folder-move", NULL };
+  static const gchar        *dnd_action_names[] = { N_ ("Copy _Here"), N_ ("_Move Here"), N_ ("_Link Here") };
+  static const gchar        *dnd_action_icons[] = { "stock_folder-copy", "stock_folder-move", "insert-link" };
 
   ThunarxProviderFactory *factory;
   GdkDragAction           dnd_action = 0;
@@ -168,7 +168,11 @@ G_GNUC_END_IGNORE_DEPRECATIONS
     }
 
   /* append the cancel item */
-  item = gtk_menu_item_new_with_mnemonic (_("_Cancel"));
+  image = gtk_image_new_from_icon_name ("gtk-cancel", GTK_ICON_SIZE_MENU);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+  item = gtk_image_menu_item_new_with_mnemonic (_("_Cancel"));
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+G_GNUC_END_IGNORE_DEPRECATIONS
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);
 
