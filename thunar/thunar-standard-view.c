@@ -4603,6 +4603,27 @@ thunar_standard_view_get_action_entries (void)
 
 
 
+void
+thunar_standard_view_redraw (ThunarStandardView *standard_view)
+{
+  GtkWidget *view = gtk_bin_get_child (GTK_BIN (standard_view));
+  GList     *children;
+
+  if (GTK_IS_TREE_VIEW (view))
+  {
+    /* redraw as well the corresponding exo_tree_view, which is the only child */
+    children = gtk_container_get_children (GTK_CONTAINER (standard_view));
+    for (GList *lp = children; lp != NULL; lp = lp->next)
+      gtk_widget_queue_draw (lp->data);
+  }
+  else
+  {
+    gtk_widget_queue_draw (view);
+  }
+}
+
+
+
 static void
 thunar_standard_view_highlight_option_changed (ThunarStandardView *standard_view)
 {
