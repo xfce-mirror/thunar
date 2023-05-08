@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-14 00:45+0100\n"
+"POT-Creation-Date: 2023-05-08 09:31+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Priit Jõerüüt <transifex@joeruut.com>, 2020-2023\n"
 "Language-Team: Estonian (http://app.transifex.com/xfce/thunar/language/et/)\n"
@@ -51,7 +51,7 @@ msgid "Open With Other _Application..."
 msgstr "_Ava teise rakendusega..."
 
 #: ../thunar/thunar-action-manager.c:273
-#: ../thunar/thunar-action-manager.c:3306
+#: ../thunar/thunar-action-manager.c:3307
 msgid "Choose another application with which to open the selected file"
 msgstr "Vali muu rakendus selle faili avamiseks"
 
@@ -233,7 +233,7 @@ msgstr "Muuda valitud käivitajat"
 
 #. display an error message to the user
 #. display an error to the user
-#: ../thunar/thunar-action-manager.c:799 ../thunar/thunar-dnd.c:252
+#: ../thunar/thunar-action-manager.c:799 ../thunar/thunar-dnd.c:256
 #, c-format
 msgid "Failed to execute file \"%s\""
 msgstr "Faili „%s“ käivitamine ei õnnestunud"
@@ -274,7 +274,6 @@ msgstr[0] "Ava %d uus aken"
 msgstr[1] "Ava %d uut akent"
 
 #. add the "Cancel" button
-#. append the cancel item
 #. configure the dialog properties
 #: ../thunar/thunar-action-manager.c:986 ../thunar/thunar-application.c:2433
 #: ../thunar/thunar-application.c:2489 ../thunar/thunar-application.c:2677
@@ -283,9 +282,9 @@ msgstr[1] "Ava %d uut akent"
 #: ../thunar/thunar-dialogs.c:112 ../thunar/thunar-dialogs.c:261
 #: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:819
 #: ../thunar/thunar-dialogs.c:1106 ../thunar/thunar-dialogs.c:1199
-#: ../thunar/thunar-dnd.c:171 ../thunar/thunar-permissions-chooser.c:559
+#: ../thunar/thunar-dnd.c:173 ../thunar/thunar-permissions-chooser.c:559
 #: ../thunar/thunar-permissions-chooser.c:1170
-#: ../thunar/thunar-properties-dialog.c:1154
+#: ../thunar/thunar-properties-dialog.c:1167
 #: ../thunar/thunar-renamer-dialog.c:1045
 #: ../thunar/thunar-renamer-progress.c:178
 #: ../thunar/thunar-renamer-progress.c:188
@@ -464,89 +463,89 @@ msgstr[0] "Kopeeri valitud faili asukohta „%s“"
 msgstr[1] "Kopeeri valitud failid asukohta „%s“"
 
 #. display an error message
-#: ../thunar/thunar-action-manager.c:2404 ../thunar/thunar-application.c:1863
-#: ../thunar/thunar-properties-dialog.c:1065
+#: ../thunar/thunar-action-manager.c:2405 ../thunar/thunar-application.c:1863
+#: ../thunar/thunar-properties-dialog.c:1078
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "„%s“ nime muutmine ebaõnnestus"
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-action-manager.c:2623 ../thunar/thunar-application.c:1969
+#: ../thunar/thunar-action-manager.c:2624 ../thunar/thunar-application.c:1969
 msgid "New Folder"
 msgstr "Uus kaust"
 
-#: ../thunar/thunar-action-manager.c:2627 ../thunar/thunar-application.c:1970
+#: ../thunar/thunar-action-manager.c:2628 ../thunar/thunar-application.c:1970
 msgid "Create New Folder"
 msgstr "Loo uus kaust"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-action-manager.c:2679 ../thunar/thunar-application.c:2034
+#: ../thunar/thunar-action-manager.c:2680 ../thunar/thunar-application.c:2034
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Loo dokument mallist „%s“"
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-action-manager.c:2695
+#: ../thunar/thunar-action-manager.c:2696
 msgid "New Empty File"
 msgstr "Uus tühi fail"
 
-#: ../thunar/thunar-action-manager.c:2699
+#: ../thunar/thunar-action-manager.c:2700
 msgid "New Empty File..."
 msgstr "Uus tühi fail..."
 
-#: ../thunar/thunar-action-manager.c:2912
+#: ../thunar/thunar-action-manager.c:2913
 #, c-format
 msgid ""
 "No templates installed in\n"
 "\"%s\""
 msgstr "Selles kaustas pole ühtegi malli\n\"%s\""
 
-#: ../thunar/thunar-action-manager.c:2925
+#: ../thunar/thunar-action-manager.c:2926
 msgid "_Empty File"
 msgstr "_Tühi fail"
 
-#: ../thunar/thunar-action-manager.c:3030
+#: ../thunar/thunar-action-manager.c:3031
 #, c-format
 msgid "Failed to edit launcher via command \"%s\""
 msgstr "Käivitaja muutmine käsuga „%s“ ei õnnestunud"
 
-#: ../thunar/thunar-action-manager.c:3069
+#: ../thunar/thunar-action-manager.c:3070
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "„%s“ väljastamine ei õnnestunud"
 
-#: ../thunar/thunar-action-manager.c:3131
+#: ../thunar/thunar-action-manager.c:3132
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "„%s“ lahtihaakimine ei õnnestunud"
 
-#: ../thunar/thunar-action-manager.c:3194
-#: ../thunar/thunar-action-manager.c:3265
+#: ../thunar/thunar-action-manager.c:3195
+#: ../thunar/thunar-action-manager.c:3266
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "Ava valitud fail rakendusega „%s“"
 msgstr[1] "Ava valitud failid rakendusega „%s“"
 
-#: ../thunar/thunar-action-manager.c:3264
+#: ../thunar/thunar-action-manager.c:3265
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "_Ava rakendusega „%s“"
 
 #. we can only show a generic "Open" action
-#: ../thunar/thunar-action-manager.c:3284
+#: ../thunar/thunar-action-manager.c:3285
 #, c-format
 msgid "_Open With Default Applications"
 msgstr "_Ava vaikimisi rakendusega"
 
-#: ../thunar/thunar-action-manager.c:3285
+#: ../thunar/thunar-action-manager.c:3286
 #, c-format
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "Ava valitud fail vaikimisi rakendusega"
 msgstr[1] "Ava valitud failid vaikimisi rakendusega"
 
-#: ../thunar/thunar-action-manager.c:3305
+#: ../thunar/thunar-action-manager.c:3306
 #: ../thunar/thunar-chooser-dialog.c:187
 msgid "Open With"
 msgstr "Ava rakendusega"
@@ -705,7 +704,7 @@ msgstr "Loon kaustu..."
 msgid "Remove all files and folders from the Trash?"
 msgstr "Kas kustutame prügikastist kõik failid ja kaustad?"
 
-#: ../thunar/thunar-application.c:2675 ../thunar/thunar-window.c:1045
+#: ../thunar/thunar-application.c:2675 ../thunar/thunar-window.c:1049
 msgid "Empty Trash"
 msgstr "Tühjenda Prügikast"
 
@@ -778,7 +777,7 @@ msgstr "_Vaikimisi rakendus selle failitüübi jaoks"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1288
-#: ../thunar/thunar-properties-dialog.c:1155 ../thunar/thunar-window.c:4405
+#: ../thunar/thunar-properties-dialog.c:1168 ../thunar/thunar-window.c:4409
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -948,7 +947,7 @@ msgstr "Lõikelaual pole midagi, mida asetada"
 #. add a regular close button, the header bar already provides one
 #: ../thunar/thunar-column-editor.c:158 ../thunar/thunar-dialogs.c:1053
 #: ../thunar/thunar-preferences-dialog.c:259
-#: ../thunar/thunar-properties-dialog.c:317
+#: ../thunar/thunar-properties-dialog.c:319
 #: ../thunar/thunar-renamer-dialog.c:357
 #: ../thunar/thunar-renamer-progress.c:195
 #: ../thunar/thunar-toolbar-editor.c:121
@@ -963,8 +962,8 @@ msgstr "Seadusta üksikasjaliku loendivaate veergusid"
 #. add the "Help" button
 #: ../thunar/thunar-column-editor.c:164
 #: ../thunar/thunar-preferences-dialog.c:267
-#: ../thunar/thunar-properties-dialog.c:316
-#: ../thunar/thunar-toolbar-editor.c:128 ../thunar/thunar-window.c:543
+#: ../thunar/thunar-properties-dialog.c:318
+#: ../thunar/thunar-toolbar-editor.c:128 ../thunar/thunar-window.c:546
 msgid "_Help"
 msgstr "A_bi"
 
@@ -1244,14 +1243,14 @@ msgstr "Kas sa soovid olemasoleva kausta asendada"
 msgid "Do you want to replace the existing file"
 msgstr "Kas sa soovid olemasoleva faili asendada"
 
-#. Fourth box (size, volume, free space)
+#. Fourth box (size)
 #: ../thunar/thunar-dialogs.c:928 ../thunar/thunar-dialogs.c:975
-#: ../thunar/thunar-properties-dialog.c:602
+#: ../thunar/thunar-properties-dialog.c:635
 msgid "Size:"
 msgstr "Suurus:"
 
 #: ../thunar/thunar-dialogs.c:928 ../thunar/thunar-dialogs.c:975
-#: ../thunar/thunar-properties-dialog.c:555
+#: ../thunar/thunar-properties-dialog.c:588
 msgid "Modified:"
 msgstr "Muudetud:"
 
@@ -1311,15 +1310,15 @@ msgid "Do _not ask me again"
 msgstr "Ära küsi mi_nult uuesti"
 
 #: ../thunar/thunar-dnd.c:72
-msgid "_Copy here"
-msgstr "_Kopeeri siia"
+msgid "Copy _Here"
+msgstr "Kopeeri _siia"
 
 #: ../thunar/thunar-dnd.c:72
-msgid "_Move here"
+msgid "_Move Here"
 msgstr "_Liiguta siia"
 
 #: ../thunar/thunar-dnd.c:72
-msgid "_Link here"
+msgid "_Link Here"
 msgstr "_Lingi siia"
 
 #: ../thunar/thunar-enum-types.c:88
@@ -1378,7 +1377,7 @@ msgid "Owner"
 msgstr "Omanik"
 
 #. Permissions chooser
-#: ../thunar/thunar-enum-types.c:151 ../thunar/thunar-properties-dialog.c:891
+#: ../thunar/thunar-enum-types.c:151 ../thunar/thunar-properties-dialog.c:904
 msgid "Permissions"
 msgstr "Õigused"
 
@@ -1444,7 +1443,7 @@ msgstr "Loo kaust"
 msgid "Delete (opposite of create)"
 msgstr "Kustuta (vastand loomisele)"
 
-#: ../thunar/thunar-enum-types.c:723 ../thunar/thunar-file.c:1078
+#: ../thunar/thunar-enum-types.c:723 ../thunar/thunar-file.c:1083
 #: ../thunar/thunar-gio-extensions.c:490
 #: ../thunar/thunar-shortcuts-model.c:1127 ../thunar.desktop.in.in.h:7
 msgid "Trash"
@@ -1487,46 +1486,46 @@ msgstr "Lõimitud"
 msgid "Only for local files"
 msgstr "Vaid kohalike failide puhul"
 
-#: ../thunar/thunar-file.c:1085 ../thunar/thunar-gio-extensions.c:488
-#: ../thunar/thunar-shortcuts-model.c:1009 ../thunar/thunar-window.c:531
+#: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:488
+#: ../thunar/thunar-shortcuts-model.c:1009 ../thunar/thunar-window.c:534
 msgid "File System"
 msgstr "Failisüsteem"
 
-#: ../thunar/thunar-file.c:1541
+#: ../thunar/thunar-file.c:1547
 #, c-format
 msgid "The root folder has no parent"
 msgstr "Juurkataloogil pole ülemist kataloogi"
 
-#: ../thunar/thunar-file.c:1638
+#: ../thunar/thunar-file.c:1644
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "Töölauafaili parsimine nurjus: %s"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1651
+#: ../thunar/thunar-file.c:1657
 msgid "Untrusted application launcher"
 msgstr "Rakenduse käivitaja pole usaldusväärne"
 
-#: ../thunar/thunar-file.c:1682
+#: ../thunar/thunar-file.c:1688
 #, c-format
 msgid "No Exec field specified"
 msgstr "Käivitamise välja pole määratud"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1691
+#: ../thunar/thunar-file.c:1697
 msgid "Untrusted link launcher"
 msgstr "Viida käivitaja pole usaldusväärne"
 
-#: ../thunar/thunar-file.c:1707
+#: ../thunar/thunar-file.c:1713
 #, c-format
 msgid "No URL field specified"
 msgstr "URL-i välja pole täpsustatud"
 
-#: ../thunar/thunar-file.c:1712
+#: ../thunar/thunar-file.c:1718
 msgid "Invalid desktop file"
 msgstr "Vigane töölaua fail"
 
-#: ../thunar/thunar-file.c:2594 ../thunar/thunar-list-model.c:3346
+#: ../thunar/thunar-file.c:2600 ../thunar/thunar-list-model.c:3346
 #, c-format
 msgid "link to %s"
 msgstr "viide asukohta %s"
@@ -1805,7 +1804,7 @@ msgstr "Ei õnnestunud korrata tegevust „%s“"
 msgid "Undo the latest '%s' operation (%s)"
 msgstr "Pööra eelmine tegevus tagasi („%s“ - %s)"
 
-#: ../thunar/thunar-job-operation-history.c:566 ../thunar/thunar-window.c:495
+#: ../thunar/thunar-job-operation-history.c:566 ../thunar/thunar-window.c:498
 msgid "Undo the latest operation"
 msgstr "Pööra eelmine tegevus tagasi"
 
@@ -1815,7 +1814,7 @@ msgstr "Pööra eelmine tegevus tagasi"
 msgid "Redo the latest '%s' operation (%s)"
 msgstr "Korda eelmist tegevust („%s“ - %s)"
 
-#: ../thunar/thunar-job-operation-history.c:591 ../thunar/thunar-window.c:496
+#: ../thunar/thunar-job-operation-history.c:591 ../thunar/thunar-window.c:499
 msgid "Redo the latest operation"
 msgstr "Korda eelmist tegevust"
 
@@ -1882,7 +1881,7 @@ msgstr "%s"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: ../thunar/thunar-list-model.c:3366 ../thunar/thunar-properties-dialog.c:476
+#: ../thunar/thunar-list-model.c:3366 ../thunar/thunar-properties-dialog.c:478
 msgid "Original Path:"
 msgstr "Algne asukoht:"
 
@@ -2362,7 +2361,7 @@ msgstr "Kataloogipuu paneel"
 msgid "Icon _Size:"
 msgstr "Ikooni _suurus:"
 
-#: ../thunar/thunar-preferences-dialog.c:720 ../thunar/thunar-window.c:511
+#: ../thunar/thunar-preferences-dialog.c:720 ../thunar/thunar-window.c:514
 msgid "Image Preview"
 msgstr "Pildi eelvaade"
 
@@ -2587,7 +2586,7 @@ msgid ""
 msgstr "<a href=\"volman-config:\">Seadista</a> eemaldavate andmekandjate, seadmete\nja meedia haldamist."
 
 #: ../thunar/thunar-preferences-dialog.c:1309
-#: ../thunar/thunar-properties-dialog.c:788
+#: ../thunar/thunar-properties-dialog.c:801
 msgid "Missing dependencies"
 msgstr "Sõltuvused pole paigaldatud"
 
@@ -2660,133 +2659,134 @@ msgstr "Jätkan peatatud tööd..."
 msgid "Queued"
 msgstr "Lisasin järjekorda"
 
-#: ../thunar/thunar-properties-dialog.c:327
+#: ../thunar/thunar-properties-dialog.c:329
 msgid "General"
 msgstr "Üldine"
 
-#: ../thunar/thunar-properties-dialog.c:352
+#: ../thunar/thunar-properties-dialog.c:354
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:2
 msgid "_Name:"
 msgstr "_Nimi:"
 
-#: ../thunar/thunar-properties-dialog.c:391
+#: ../thunar/thunar-properties-dialog.c:393
 msgid "Names:"
 msgstr "Nimed:"
 
-#. Second box (kind, open with, link target)
-#: ../thunar/thunar-properties-dialog.c:414
+#. Second box (kind, open with, link target, original path, location, volume)
+#: ../thunar/thunar-properties-dialog.c:416
 msgid "Kind:"
 msgstr "Liik:"
 
-#: ../thunar/thunar-properties-dialog.c:438
+#: ../thunar/thunar-properties-dialog.c:440
 msgid "_Open With:"
 msgstr "_Rakendus:"
 
-#: ../thunar/thunar-properties-dialog.c:455
+#: ../thunar/thunar-properties-dialog.c:457
 msgid "Link Target:"
 msgstr "Viite siht:"
 
-#: ../thunar/thunar-properties-dialog.c:493
+#: ../thunar/thunar-properties-dialog.c:495
 msgid "Location:"
 msgstr "Asukoht:"
 
-#. Third box (deleted, modified, accessed)
-#: ../thunar/thunar-properties-dialog.c:521
-msgid "Deleted:"
-msgstr "Kustutatud:"
-
-#: ../thunar/thunar-properties-dialog.c:538
-msgid "Created:"
-msgstr "Loodud:"
-
-#: ../thunar/thunar-properties-dialog.c:572
-msgid "Accessed:"
-msgstr "Viimati avati:"
-
-#: ../thunar/thunar-properties-dialog.c:618
-msgid "Size on Disk:"
-msgstr "Suurus andmekandjal:"
-
-#: ../thunar/thunar-properties-dialog.c:634
-msgid "Content:"
-msgstr "Sisu:"
-
-#: ../thunar/thunar-properties-dialog.c:652
+#: ../thunar/thunar-properties-dialog.c:512
 msgid "Volume:"
 msgstr "Andmeruum:"
 
-#: ../thunar/thunar-properties-dialog.c:683
+#. Third box (deleted, modified, accessed)
+#: ../thunar/thunar-properties-dialog.c:554
+msgid "Deleted:"
+msgstr "Kustutatud:"
+
+#: ../thunar/thunar-properties-dialog.c:571
+msgid "Created:"
+msgstr "Loodud:"
+
+#: ../thunar/thunar-properties-dialog.c:605
+msgid "Accessed:"
+msgstr "Viimati avati:"
+
+#: ../thunar/thunar-properties-dialog.c:651
+msgid "Size on Disk:"
+msgstr "Suurus andmekandjal:"
+
+#. Fifth box (content, capacity, free space)
+#: ../thunar/thunar-properties-dialog.c:678
+msgid "Content:"
+msgstr "Sisu:"
+
+#: ../thunar/thunar-properties-dialog.c:696
 msgid "Capacity:"
 msgstr "Salvestusruum:"
 
-#: ../thunar/thunar-properties-dialog.c:705
+#: ../thunar/thunar-properties-dialog.c:718
 msgid "Usage:"
 msgstr "Kasutus:"
 
 #. Emblem chooser
-#: ../thunar/thunar-properties-dialog.c:742
+#: ../thunar/thunar-properties-dialog.c:755
 msgid "Emblems"
 msgstr "Embleemid"
 
-#: ../thunar/thunar-properties-dialog.c:757
+#: ../thunar/thunar-properties-dialog.c:770
 msgid "Highlight"
 msgstr "Failide esiletõstmine"
 
-#: ../thunar/thunar-properties-dialog.c:796
+#: ../thunar/thunar-properties-dialog.c:809
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "This feature will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr "Tundub et <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> ei ole saadaval.\nSee funktsionaalsus ei toimi. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Lisateave]</a>"
 
-#: ../thunar/thunar-properties-dialog.c:824
+#: ../thunar/thunar-properties-dialog.c:837
 msgid "Example.txt"
 msgstr "näidis.txt"
 
-#: ../thunar/thunar-properties-dialog.c:841
+#: ../thunar/thunar-properties-dialog.c:854
 msgid "_Apply"
 msgstr "_Rakenda"
 
-#: ../thunar/thunar-properties-dialog.c:853
+#: ../thunar/thunar-properties-dialog.c:866
 msgid "_Reset"
 msgstr "_Lähtesta"
 
-#: ../thunar/thunar-properties-dialog.c:861
+#: ../thunar/thunar-properties-dialog.c:874
 msgid "Set _Foreground"
 msgstr "Seadista _esiplaan"
 
-#: ../thunar/thunar-properties-dialog.c:869
+#: ../thunar/thunar-properties-dialog.c:882
 msgid "Set _Background"
 msgstr "Seadista _taust"
 
 #. allocate the icon chooser
 #. allocate the chooser dialog
-#: ../thunar/thunar-properties-dialog.c:1152
+#: ../thunar/thunar-properties-dialog.c:1165
 #: ../plugins/thunar-uca/thunar-uca-editor.c:436
 #, c-format
 msgid "Select an Icon for \"%s\""
 msgstr "„%s” jaoks ikooni valimine"
 
-#: ../thunar/thunar-properties-dialog.c:1177
+#: ../thunar/thunar-properties-dialog.c:1190
 #, c-format
 msgid "Failed to change icon of \"%s\""
 msgstr "„%s” ikooni vahetamine ebaõnnestus"
 
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:1288
+#: ../thunar/thunar-properties-dialog.c:1301
 #, c-format
 msgid "%s - Properties"
 msgstr "%s - omadused"
 
-#: ../thunar/thunar-properties-dialog.c:1345
+#: ../thunar/thunar-properties-dialog.c:1358
 msgid "unknown"
 msgstr "tundmatu"
 
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:1547
+#: ../thunar/thunar-properties-dialog.c:1562
 msgid "Properties"
 msgstr "Omadused"
 
-#: ../thunar/thunar-properties-dialog.c:1648
+#: ../thunar/thunar-properties-dialog.c:1664
 msgid "mixed"
 msgstr "erinevad"
 
@@ -2806,7 +2806,7 @@ msgstr "Puhasta"
 msgid "Clear the file list below"
 msgstr "Alumise faililoendi puhastamine"
 
-#: ../thunar/thunar-renamer-dialog.c:195 ../thunar/thunar-window.c:545
+#: ../thunar/thunar-renamer-dialog.c:195 ../thunar/thunar-window.c:548
 msgid "_About"
 msgstr "Te_ave"
 
@@ -2926,7 +2926,7 @@ msgid ""
 msgstr "Kas soovid selle faili vahele jätta ja jätkata ülejäänud failide nimemuutmisega?"
 
 #: ../thunar/thunar-shortcuts-model.c:646
-#: ../thunar/thunar-shortcuts-model.c:1010 ../thunar/thunar-window.c:531
+#: ../thunar/thunar-shortcuts-model.c:1010 ../thunar/thunar-window.c:534
 msgid "Browse the file system"
 msgstr "Sirvi failisüsteemi"
 
@@ -2959,7 +2959,7 @@ msgstr "Võrk"
 msgid "Browse Network"
 msgstr "Sirvi võrku"
 
-#: ../thunar/thunar-shortcuts-model.c:1055 ../thunar/thunar-window.c:541
+#: ../thunar/thunar-shortcuts-model.c:1055 ../thunar/thunar-window.c:544
 msgid "Browse local network connections"
 msgstr "Sirvi kohalikke võrguühendusi"
 
@@ -2975,7 +2975,7 @@ msgstr "Ava kodukaust"
 msgid "Open the desktop folder"
 msgstr "Ava töölaua kaust"
 
-#: ../thunar/thunar-shortcuts-model.c:1153 ../thunar/thunar-window.c:534
+#: ../thunar/thunar-shortcuts-model.c:1153 ../thunar/thunar-window.c:537
 #: ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr "Arvuti"
@@ -2984,7 +2984,7 @@ msgstr "Arvuti"
 msgid "Browse the computer"
 msgstr "Sirvi arvutit"
 
-#: ../thunar/thunar-shortcuts-model.c:1166 ../thunar/thunar-window.c:535
+#: ../thunar/thunar-shortcuts-model.c:1166 ../thunar/thunar-window.c:538
 msgid "Recent"
 msgstr "Hiljutised failid"
 
@@ -3148,7 +3148,7 @@ msgid "Loading folder contents..."
 msgstr "Kausta sisu laadimine..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2375 ../thunar/thunar-window.c:4218
+#: ../thunar/thunar-standard-view.c:2375 ../thunar/thunar-window.c:4222
 msgid "Failed to open the home folder"
 msgstr "Kodukataloogi avamine ebaõnnestus"
 
@@ -3219,21 +3219,21 @@ msgstr "Kui see valik on kasutusel siis täpitähti otsitakse täpselt.\nNäitek
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: ../thunar/thunar-standard-view.c:2886
+#: ../thunar/thunar-standard-view.c:2888
 msgid "Invalid filename provided by XDS drag site"
 msgstr "XDS lähtefaili nimi on vigane"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:3080
+#: ../thunar/thunar-standard-view.c:3082
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "URLi „%s” viite loomine ebaõnnestus"
 
-#: ../thunar/thunar-standard-view.c:3126
+#: ../thunar/thunar-standard-view.c:3128
 msgid "Untitled document"
 msgstr "Nimeta dokument"
 
-#: ../thunar/thunar-standard-view.c:3630 ../thunar/thunar-window.c:4315
+#: ../thunar/thunar-standard-view.c:3632 ../thunar/thunar-window.c:4319
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Kataloogi „%s” avamine ebaõnnestus"
@@ -3431,465 +3431,465 @@ msgstr "%u viide asukohta %.*s.%s"
 msgid "Search: "
 msgstr "Otsing:"
 
-#: ../thunar/thunar-window.c:486
+#: ../thunar/thunar-window.c:489
 msgid "_File"
 msgstr "_Fail"
 
-#: ../thunar/thunar-window.c:487
+#: ../thunar/thunar-window.c:490
 msgid "New _Tab"
 msgstr "Uus _kaart"
 
-#: ../thunar/thunar-window.c:487
+#: ../thunar/thunar-window.c:490
 msgid "Open a new tab for the displayed location"
 msgstr "Ava valitud asukoht uuel kaardil"
 
-#: ../thunar/thunar-window.c:488
+#: ../thunar/thunar-window.c:491
 msgid "New _Window"
 msgstr "Uus _aken"
 
-#: ../thunar/thunar-window.c:488
+#: ../thunar/thunar-window.c:491
 msgid "Open a new Thunar window for the displayed location"
 msgstr "Ava valitud asukoht uues Thunari aknas"
 
-#: ../thunar/thunar-window.c:489
+#: ../thunar/thunar-window.c:492
 msgid "Detac_h Tab"
 msgstr "_Kaart eraldi aknasse"
 
-#: ../thunar/thunar-window.c:489
+#: ../thunar/thunar-window.c:492
 msgid "Open current folder in a new window"
 msgstr "Ava see kaust uues aknas"
 
-#: ../thunar/thunar-window.c:490
+#: ../thunar/thunar-window.c:493
 msgid "C_lose Tab"
 msgstr "_Sulge kaart"
 
-#: ../thunar/thunar-window.c:490
+#: ../thunar/thunar-window.c:493
 msgid "Close this folder"
 msgstr "Sulge see kaust"
 
-#: ../thunar/thunar-window.c:491
+#: ../thunar/thunar-window.c:494
 msgid "_Close Window"
 msgstr "_Sulge aken"
 
-#: ../thunar/thunar-window.c:491
+#: ../thunar/thunar-window.c:494
 msgid "Close this window"
 msgstr "Sulge see aken"
 
-#: ../thunar/thunar-window.c:492
+#: ../thunar/thunar-window.c:495
 msgid "Close _All Windows"
 msgstr "Sulge _kõik aknad"
 
-#: ../thunar/thunar-window.c:492
+#: ../thunar/thunar-window.c:495
 msgid "Close all Thunar windows"
 msgstr "Sulge kõik Thunari aknad"
 
-#: ../thunar/thunar-window.c:494
+#: ../thunar/thunar-window.c:497
 msgid "_Edit"
 msgstr "_Redaktor"
 
-#: ../thunar/thunar-window.c:495
+#: ../thunar/thunar-window.c:498
 msgid "_Undo"
 msgstr "Võta tagasi"
 
-#: ../thunar/thunar-window.c:496
+#: ../thunar/thunar-window.c:499
 msgid "_Redo"
 msgstr "_Korda tegevust"
 
-#: ../thunar/thunar-window.c:497
+#: ../thunar/thunar-window.c:500
 msgid "Pr_eferences..."
 msgstr "_Eelistused..."
 
-#: ../thunar/thunar-window.c:497
+#: ../thunar/thunar-window.c:500
 msgid "Edit Thunars Preferences"
 msgstr "Thunari eelistuste muutmine"
 
-#: ../thunar/thunar-window.c:499
+#: ../thunar/thunar-window.c:502
 msgid "_View"
 msgstr "_Vaade"
 
-#: ../thunar/thunar-window.c:500
+#: ../thunar/thunar-window.c:503
 msgid "_Reload"
 msgstr "_Uuenda"
 
-#: ../thunar/thunar-window.c:500
+#: ../thunar/thunar-window.c:503
 msgid "Reload the current folder"
 msgstr "Laadi käesoleva kausta sisu uuesti"
 
-#: ../thunar/thunar-window.c:502
+#: ../thunar/thunar-window.c:505
 msgid "Spl_it View"
 msgstr "_Jagatud vaade"
 
-#: ../thunar/thunar-window.c:502
+#: ../thunar/thunar-window.c:505
 msgid "Open/Close Split View"
 msgstr "Ava või sulge jagatud vaade"
 
-#: ../thunar/thunar-window.c:503
+#: ../thunar/thunar-window.c:506
 msgid "Switch Focused Split View Pane"
 msgstr "Vaheta fookus teisele jagatud vaatega paneelile"
 
-#: ../thunar/thunar-window.c:504
+#: ../thunar/thunar-window.c:507
 msgid "_Location Selector"
 msgstr "_Asukoha näitaja"
 
-#: ../thunar/thunar-window.c:505
+#: ../thunar/thunar-window.c:508
 msgid "_Entry Style"
 msgstr "_Sisestuse viis"
 
-#: ../thunar/thunar-window.c:505
+#: ../thunar/thunar-window.c:508
 msgid "Traditional entry showing the current path"
 msgstr "Tavaline sisestus, mis näitab praegust asukohta"
 
-#: ../thunar/thunar-window.c:506
+#: ../thunar/thunar-window.c:509
 msgid "_Buttons Style"
 msgstr "_Nuppude stiil"
 
-#: ../thunar/thunar-window.c:506
+#: ../thunar/thunar-window.c:509
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "Kaasaegne lähenemine kaustadele vastavate nuppudega"
 
-#: ../thunar/thunar-window.c:507
+#: ../thunar/thunar-window.c:510
 msgid "_Side Pane"
 msgstr "_Külgpaneel"
 
-#: ../thunar/thunar-window.c:508
+#: ../thunar/thunar-window.c:511
 msgid "_Shortcuts"
 msgstr "_Otseteed"
 
-#: ../thunar/thunar-window.c:508
+#: ../thunar/thunar-window.c:511
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "Lühiteede paneeli nähtavuse sisse või välja lülitamine"
 
-#: ../thunar/thunar-window.c:509
+#: ../thunar/thunar-window.c:512
 msgid "_Tree"
 msgstr "Ka_taloogipuu"
 
-#: ../thunar/thunar-window.c:509
+#: ../thunar/thunar-window.c:512
 msgid "Toggles the visibility of the tree pane"
 msgstr "Kataloogipuu paneeli nähtavuse sisse või välja lülitamine"
 
-#: ../thunar/thunar-window.c:511
+#: ../thunar/thunar-window.c:514
 msgid "Change the visibility of this window's image preview"
 msgstr "Muuda selle akna piltide eelvaate nähtavust"
 
-#: ../thunar/thunar-window.c:512
+#: ../thunar/thunar-window.c:515
 msgid "St_atusbar"
 msgstr "Olekurib_a"
 
-#: ../thunar/thunar-window.c:512
+#: ../thunar/thunar-window.c:515
 msgid "Change the visibility of this window's statusbar"
 msgstr "Selle akna olekuriba nähtavuse muutmine"
 
-#: ../thunar/thunar-window.c:513
+#: ../thunar/thunar-window.c:516
 msgid "_Menubar"
 msgstr "_Menüüriba"
 
-#: ../thunar/thunar-window.c:513
+#: ../thunar/thunar-window.c:516
 msgid "Change the visibility of this window's menubar"
 msgstr "Akna menüüriba nähtavuse muutmine"
 
-#: ../thunar/thunar-window.c:514
+#: ../thunar/thunar-window.c:517
 msgid "Configure _Toolbar..."
 msgstr "Seadista _tööriistariba..."
 
-#: ../thunar/thunar-window.c:514
+#: ../thunar/thunar-window.c:517
 msgid "Configure the toolbar"
 msgstr "Seadista tööriistariba"
 
-#: ../thunar/thunar-window.c:515
+#: ../thunar/thunar-window.c:518
 msgid "Clear Saved _Folder View Settings"
 msgstr "Eemalda salvestatud _kaustavaadete seadistused"
 
-#: ../thunar/thunar-window.c:515
+#: ../thunar/thunar-window.c:518
 msgid "Delete saved view settings for this folder"
 msgstr "Kustuta selle kausta kohta salvestatud vaadete seadistused"
 
-#: ../thunar/thunar-window.c:516
+#: ../thunar/thunar-window.c:519
 msgid "Show _Hidden Files"
 msgstr "_Näita peidetud faile"
 
-#: ../thunar/thunar-window.c:516
+#: ../thunar/thunar-window.c:519
 msgid "Toggles the display of hidden files in the current window"
 msgstr "Käesolevas aknas peidetud failide näitamise sisse või välja lülitamine"
 
-#: ../thunar/thunar-window.c:517
+#: ../thunar/thunar-window.c:520
 msgid "Show File Hi_ghlight"
 msgstr "Kasuta failide _esiletõstmist"
 
-#: ../thunar/thunar-window.c:517
+#: ../thunar/thunar-window.c:520
 msgid ""
 "Toggles the display of file highlight which can be configured in the file "
 "specific property dialog"
 msgstr "Lülitab failide esiletõstmise sisse või välja ning seda saab täiendavalt seadistada failide omadusete vaates"
 
-#: ../thunar/thunar-window.c:518
+#: ../thunar/thunar-window.c:521
 msgid "Zoom I_n"
 msgstr "Suure_nda"
 
-#: ../thunar/thunar-window.c:518
+#: ../thunar/thunar-window.c:521
 msgid "Show the contents in more detail"
 msgstr "Näita sisu suuremana"
 
-#: ../thunar/thunar-window.c:521
+#: ../thunar/thunar-window.c:524
 msgid "Zoom _Out"
 msgstr "_Vähenda"
 
-#: ../thunar/thunar-window.c:521
+#: ../thunar/thunar-window.c:524
 msgid "Show the contents in less detail"
 msgstr "Näita sisu väiksemana"
 
-#: ../thunar/thunar-window.c:523
+#: ../thunar/thunar-window.c:526
 msgid "Normal Si_ze"
 msgstr "Tavasuu_rus"
 
-#: ../thunar/thunar-window.c:523
+#: ../thunar/thunar-window.c:526
 msgid "Show the contents at the normal size"
 msgstr "Näita sisu tavasuuruses"
 
-#: ../thunar/thunar-window.c:525
+#: ../thunar/thunar-window.c:528
 msgid "_Icon View"
 msgstr "_Ikoonivaade"
 
-#: ../thunar/thunar-window.c:525
+#: ../thunar/thunar-window.c:528
 msgid "Display folder content in an icon view"
 msgstr "Kausta sisu näidatakse ikoonivaates"
 
-#: ../thunar/thunar-window.c:526
+#: ../thunar/thunar-window.c:529
 msgid "_List View"
 msgstr "Ü_ksikasjalik vaade"
 
-#: ../thunar/thunar-window.c:526
+#: ../thunar/thunar-window.c:529
 msgid "Display folder content in a detailed list view"
 msgstr "Kausta sisu näidatakse üksikasjalikus loendivaates"
 
-#: ../thunar/thunar-window.c:527
+#: ../thunar/thunar-window.c:530
 msgid "_Compact View"
 msgstr "_Tihendatud vaade"
 
-#: ../thunar/thunar-window.c:527
+#: ../thunar/thunar-window.c:530
 msgid "Display folder content in a compact list view"
 msgstr "Kausta sisu näidatakse tihendatud loendivaates"
 
-#: ../thunar/thunar-window.c:529
+#: ../thunar/thunar-window.c:532
 msgid "_Go"
 msgstr "_Mine"
 
-#: ../thunar/thunar-window.c:530
+#: ../thunar/thunar-window.c:533
 msgid "_Bookmarks"
 msgstr "_Järjehoidjad"
 
-#: ../thunar/thunar-window.c:532
+#: ../thunar/thunar-window.c:535
 msgid "_Home"
 msgstr "_Kodukataloog"
 
-#: ../thunar/thunar-window.c:532
+#: ../thunar/thunar-window.c:535
 msgid "Go to the home folder"
 msgstr "Ava kodukaust"
 
-#: ../thunar/thunar-window.c:533
+#: ../thunar/thunar-window.c:536
 msgid "Desktop"
 msgstr "Töölaud"
 
-#: ../thunar/thunar-window.c:533
+#: ../thunar/thunar-window.c:536
 msgid "Go to the desktop folder"
 msgstr "Ava töölaua kaust"
 
-#: ../thunar/thunar-window.c:534
+#: ../thunar/thunar-window.c:537
 msgid ""
 "Browse all local and remote disks and folders accessible from this computer"
 msgstr "Sirvi kõik siin arvutis leiduvad kohalikke ja kaugkettaid ning kaustu"
 
-#: ../thunar/thunar-window.c:535
+#: ../thunar/thunar-window.c:538
 msgid "Display recently used files"
 msgstr "Näita hiljuti kasutatud faile"
 
-#: ../thunar/thunar-window.c:536
+#: ../thunar/thunar-window.c:539
 msgid "T_rash"
 msgstr "_Prügikast"
 
-#: ../thunar/thunar-window.c:536
+#: ../thunar/thunar-window.c:539
 msgid "Display the contents of the trash can"
 msgstr "Näita prügikasti sisu"
 
-#: ../thunar/thunar-window.c:537
+#: ../thunar/thunar-window.c:540
 msgid "Open _Parent"
 msgstr "_Ava ülemine"
 
-#: ../thunar/thunar-window.c:537
+#: ../thunar/thunar-window.c:540
 msgid "Open the parent folder"
 msgstr "Ava ülemine kaust"
 
-#: ../thunar/thunar-window.c:538
+#: ../thunar/thunar-window.c:541
 msgid "_Open Location..."
 msgstr "Ava asuk_oht..."
 
-#: ../thunar/thunar-window.c:538
+#: ../thunar/thunar-window.c:541
 msgid "Specify a location to open"
 msgstr "Määra avatav asukoht"
 
-#: ../thunar/thunar-window.c:540
+#: ../thunar/thunar-window.c:543
 msgid "T_emplates"
 msgstr "_Mallid"
 
-#: ../thunar/thunar-window.c:540
+#: ../thunar/thunar-window.c:543
 msgid "Go to the templates folder"
 msgstr "Ava mallide kaust"
 
-#: ../thunar/thunar-window.c:541
+#: ../thunar/thunar-window.c:544
 msgid "B_rowse Network"
 msgstr "_Sirvi võrku"
 
-#: ../thunar/thunar-window.c:544
+#: ../thunar/thunar-window.c:547
 msgid "_Contents"
 msgstr "_Sisukord"
 
-#: ../thunar/thunar-window.c:544
+#: ../thunar/thunar-window.c:547
 msgid "Display Thunar user manual"
 msgstr "Näita Thunari kasutusjuhendit"
 
-#: ../thunar/thunar-window.c:545
+#: ../thunar/thunar-window.c:548
 msgid "Display information about Thunar"
 msgstr "Näita teavet Thunari kohta"
 
-#: ../thunar/thunar-window.c:546
+#: ../thunar/thunar-window.c:549
 msgid "Back"
 msgstr "Tagasi"
 
-#: ../thunar/thunar-window.c:546
+#: ../thunar/thunar-window.c:549
 msgid "Go to the previous visited folder"
 msgstr "Liigu eelmisesse külastatud kausta"
 
-#: ../thunar/thunar-window.c:548
+#: ../thunar/thunar-window.c:551
 msgid "Forward"
 msgstr "Edasi"
 
-#: ../thunar/thunar-window.c:548
+#: ../thunar/thunar-window.c:551
 msgid "Go to the next visited folder"
 msgstr "Liigu järgmisesse külastatud kausta"
 
-#: ../thunar/thunar-window.c:549
+#: ../thunar/thunar-window.c:552
 msgid "_Previous Tab"
 msgstr "_Eelmine kaart"
 
-#: ../thunar/thunar-window.c:549
+#: ../thunar/thunar-window.c:552
 msgid "Switch to Previous Tab"
 msgstr "Vali eelmine kaart"
 
-#: ../thunar/thunar-window.c:550
+#: ../thunar/thunar-window.c:553
 msgid "_Next Tab"
 msgstr "_Järgmine kaart"
 
-#: ../thunar/thunar-window.c:550
+#: ../thunar/thunar-window.c:553
 msgid "Switch to Next Tab"
 msgstr "Vali järgmine kaart"
 
-#: ../thunar/thunar-window.c:551
+#: ../thunar/thunar-window.c:554
 msgid "_Search for Files..."
 msgstr "Ot_si faile..."
 
-#: ../thunar/thunar-window.c:551
+#: ../thunar/thunar-window.c:554
 msgid "Search for a specific file in the current folder and Recent"
 msgstr "Otsi faili praegusest kaustast ning hiljuti kasutatud failide alt "
 
-#: ../thunar/thunar-window.c:552
+#: ../thunar/thunar-window.c:555
 msgid "Cancel search for files"
 msgstr "Lõpeta failiotsing"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:897
+#: ../thunar/thunar-window.c:901
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "Hoiatus! Oled juurkasutaja õigustes ja võid oma süsteemi kahjustada."
 
-#: ../thunar/thunar-window.c:956
+#: ../thunar/thunar-window.c:960
 msgid "Size: "
 msgstr "Suurus:"
 
 #. TRANSLATORS: `Catfish' is a software package, please don't translate it.
-#: ../thunar/thunar-window.c:1033
+#: ../thunar/thunar-window.c:1037
 msgid "Search with Catfish..."
 msgstr "Otsi Catfish'i abil..."
 
-#: ../thunar/thunar-window.c:1044
+#: ../thunar/thunar-window.c:1048
 msgid "Restore Selected Items"
 msgstr "Taasta valitud kirjed"
 
-#: ../thunar/thunar-window.c:2623
+#: ../thunar/thunar-window.c:2627
 msgid "Close tab"
 msgstr "Sulge kaart"
 
-#: ../thunar/thunar-window.c:3074
+#: ../thunar/thunar-window.c:3078
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "„%s” kausta avamine"
 
-#: ../thunar/thunar-window.c:4158
+#: ../thunar/thunar-window.c:4162
 msgid "Failed to open parent folder"
 msgstr "Ülemise kausta avamine ebaõnnestus"
 
-#: ../thunar/thunar-window.c:4289
+#: ../thunar/thunar-window.c:4293
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Kausta „%s” pole olemas. Kas tahad selle luua?"
 
-#: ../thunar/thunar-window.c:4291
+#: ../thunar/thunar-window.c:4295
 msgid "Create directory"
 msgstr "Loo kataloog"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4360
+#: ../thunar/thunar-window.c:4364
 msgid "Failed to browse the computer"
 msgstr "Arvuti sirvimine ebaõnnestus"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4403
+#: ../thunar/thunar-window.c:4407
 msgid "About Templates"
 msgstr "Mallidest"
 
-#: ../thunar/thunar-window.c:4425
+#: ../thunar/thunar-window.c:4429
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Selles kaustas olevad failid ilmuvad „Loo dokument” menüüsse."
 
-#: ../thunar/thunar-window.c:4432
+#: ../thunar/thunar-window.c:4436
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Kui sa lood tihti sama tüüpi dokumente, kopeeri üks siia kataloogi. Thunar teeb sellest faili jaoks kirje „Loo dokument” menüüsse.\n\nSeejärel võid „Loo dokument” menüü alt selle valida ning sellest failist tehakse koopia töökataloogi."
 
-#: ../thunar/thunar-window.c:4444
+#: ../thunar/thunar-window.c:4448
 msgid "Do _not display this message again"
 msgstr "Ära _näita seda sõnumit uuesti"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4478
+#: ../thunar/thunar-window.c:4482
 msgid "Failed to open the file system root folder"
 msgstr "Süsteemi juurkataloogi avamine nurjus"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4514
+#: ../thunar/thunar-window.c:4518
 msgid "Failed to display `Recent`"
 msgstr "Hiljuti kasutatud failide kuvamine ei õnnestunud"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4550
+#: ../thunar/thunar-window.c:4554
 msgid "Failed to display the contents of the trash can"
 msgstr "Prügikasti sisu näitamine ebaõnnestus"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4586
+#: ../thunar/thunar-window.c:4590
 msgid "Failed to browse the network"
 msgstr "Võrgu sirvimine nurjus"
 
-#: ../thunar/thunar-window.c:4697
+#: ../thunar/thunar-window.c:4733
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar on kiire ja lihtne failihaldur\nXfce keskkonna jaoks."
 
-#: ../thunar/thunar-window.c:5855
+#: ../thunar/thunar-window.c:5891
 msgid "Failed to launch search with Catfish"
 msgstr "Otsingu käivitamine rakenduses Catfish ei õnnestunud"
 
-#: ../thunar/thunar-window.c:6124
+#: ../thunar/thunar-window.c:6160
 msgid "Location Bar"
 msgstr "Asukohariba"
 
