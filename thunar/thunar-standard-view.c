@@ -388,6 +388,11 @@ struct _ThunarStandardViewPrivate
 
   /* used to restore the view type after a search is completed */
   GType                   type;
+
+  /* used to reset the border-radius when file-highlighting is disabled,
+   * since we alter it when file-highlighting is enabled.
+   * (see: thunar_standard_view_highlight_option_changed) */
+  gint                    original_border_radius;
 };
 
 static XfceGtkActionEntry thunar_standard_view_action_entries[] =
@@ -888,6 +893,10 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->search_query = NULL;
   standard_view->priv->active_search = FALSE;
   standard_view->priv->type = 0;
+
+  /* value is queried from the actual view (ExoIconView ...)
+   * so cannot be queried here as it has not been created/set yet. */
+  standard_view->priv->original_border_radius = -1;
 }
 
 static void thunar_standard_view_store_sort_column  (ThunarStandardView *standard_view)
@@ -4619,6 +4628,20 @@ thunar_standard_view_highlight_option_changed (ThunarStandardView *standard_view
   GtkCellLayout         *layout = NULL;
   GtkCellLayoutDataFunc  function = NULL;
   gboolean               show_highlight;
+  GtkCssProvider        *provider;
+  gchar                 *css_data;
+  gint                   radius;
+
+  /* fetch and store the border radius before making any altercations */
+  if (standard_view->priv->original_border_radius == -1)
+    {
+      gtk_style_context_get (
+        gtk_widget_get_style_context(view),
+        GTK_STATE_FLAG_SELECTED,
+        GTK_STYLE_PROPERTY_BORDER_RADIUS,
+        &standard_view->priv->original_border_radius, NULL
+      );
+    }
 
   if (GTK_IS_TREE_VIEW (view))
     layout = GTK_CELL_LAYOUT (gtk_tree_view_get_column (GTK_TREE_VIEW (view), THUNAR_COLUMN_NAME));
@@ -4628,7 +4651,23 @@ thunar_standard_view_highlight_option_changed (ThunarStandardView *standard_view
   g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (standard_view)->preferences), "misc-highlighting-enabled", &show_highlight, NULL);
 
   if (show_highlight)
-    function = (GtkCellLayoutDataFunc) THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->cell_layout_data_func;
+    {
+      radius = 12;
+      function = (GtkCellLayoutDataFunc) THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->cell_layout_data_func;
+    }
+  else
+    radius = standard_view->priv->original_border_radius;
+
+  /* add the css to set the border-radius */
+  provider = gtk_css_provider_new ();
+  css_data = g_strdup_printf(".view:selected { border-radius: %dpx; }", radius);
+  gtk_css_provider_load_from_data (provider, css_data, -1, NULL);
+  gtk_style_context_add_provider (
+    gtk_widget_get_style_context(GTK_WIDGET (view)),
+    GTK_STYLE_PROVIDER (provider),
+    GTK_STYLE_PROVIDER_PRIORITY_THEME
+  );
+  g_object_unref (provider);
 
   gtk_cell_layout_set_cell_data_func (layout,
                                       standard_view->icon_renderer,
