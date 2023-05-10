@@ -143,6 +143,8 @@ struct _ThunarStandardViewClass
                                            GtkTreeIter       *iter,
                                            gpointer           data);
 
+  void        (*queue_redraw)           (ThunarStandardView *standard_view);
+
   /* The name of the property in ThunarPreferences, that determines
    * the last (and default) zoom-level for the view classes (i.e. in
    * case of ThunarIconView, this is "last-icon-view-zoom-level").
@@ -200,6 +202,8 @@ void                thunar_standard_view_save_view_type        (ThunarStandardVi
 GType               thunar_standard_view_get_saved_view_type   (ThunarStandardView       *standard_view);
 
 XfceGtkActionEntry *thunar_standard_view_get_action_entries (void);
+
+void                thunar_standard_view_queue_redraw          (ThunarStandardView       *standard_view);
 
 
 G_END_DECLS;
