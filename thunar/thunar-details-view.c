@@ -143,6 +143,8 @@ struct _ThunarDetailsView
   guint idle_id;
 
   GtkCellRenderer   *renderers[THUNAR_N_VISIBLE_COLUMNS];
+
+  ExoTreeView       *tree_view;
 };
 
 
@@ -217,7 +219,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   GtkCellRenderer  *left_aligned_renderer;
   GtkCellRenderer  *renderer;
   ThunarColumn      column;
-  GtkWidget        *tree_view;
 
   /* we need to force the GtkTreeView to recalculate column sizes
    * whenever the zoom-level changes, so we connect a handler here.
@@ -225,25 +226,25 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   g_signal_connect (G_OBJECT (details_view), "notify::zoom-level", G_CALLBACK (thunar_details_view_zoom_level_changed), NULL);
 
   /* create the tree view to embed */
-  tree_view = exo_tree_view_new ();
-  g_signal_connect (G_OBJECT (tree_view), "notify::model",
+  details_view->tree_view = EXO_TREE_VIEW (exo_tree_view_new ());
+  g_signal_connect (G_OBJECT (details_view->tree_view), "notify::model",
                     G_CALLBACK (thunar_details_view_notify_model), details_view);
-  g_signal_connect (G_OBJECT (tree_view), "button-press-event",
+  g_signal_connect (G_OBJECT (details_view->tree_view), "button-press-event",
                     G_CALLBACK (thunar_details_view_button_press_event), details_view);
-  g_signal_connect (G_OBJECT (tree_view), "key-press-event",
+  g_signal_connect (G_OBJECT (details_view->tree_view), "key-press-event",
                     G_CALLBACK (thunar_details_view_key_press_event), details_view);
-  g_signal_connect (G_OBJECT (tree_view), "row-activated",
+  g_signal_connect (G_OBJECT (details_view->tree_view), "row-activated",
                     G_CALLBACK (thunar_details_view_row_activated), details_view);
-  g_signal_connect (G_OBJECT (tree_view), "select-cursor-row",
+  g_signal_connect (G_OBJECT (details_view->tree_view), "select-cursor-row",
                     G_CALLBACK (thunar_details_view_select_cursor_row), details_view);
-  gtk_container_add (GTK_CONTAINER (details_view), tree_view);
-  gtk_widget_show (tree_view);
+  gtk_container_add (GTK_CONTAINER (details_view), GTK_WIDGET (details_view->tree_view));
+  gtk_widget_show (GTK_WIDGET (details_view->tree_view));
 
   /* configure general aspects of the details view */
-  gtk_tree_view_set_enable_search (GTK_TREE_VIEW (tree_view), TRUE);
+  gtk_tree_view_set_enable_search (GTK_TREE_VIEW (details_view->tree_view), TRUE);
 
   /* enable rubberbanding (if supported) */
-  gtk_tree_view_set_rubber_banding (GTK_TREE_VIEW (tree_view), TRUE);
+  gtk_tree_view_set_rubber_banding (GTK_TREE_VIEW (details_view->tree_view), TRUE);
 
   /* connect to the default column model */
   details_view->column_model = thunar_column_model_get_default ();
@@ -318,11 +319,11 @@ thunar_details_view_init (ThunarDetailsView *details_view)
         }
 
       /* append the tree view column to the tree view */
-      gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), details_view->columns[column]);
+      gtk_tree_view_append_column (GTK_TREE_VIEW (details_view->tree_view), details_view->columns[column]);
     }
 
   /* configure the tree selection */
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_view));
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (details_view->tree_view));
   gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
   g_signal_connect_swapped (G_OBJECT (selection), "changed",
                             G_CALLBACK (thunar_standard_view_selection_changed), details_view);
