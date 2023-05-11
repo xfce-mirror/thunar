@@ -80,6 +80,7 @@ static void         thunar_abstract_icon_view_item_activated          (ExoIconVi
                                                                        GtkTreePath                  *path,
                                                                        ThunarAbstractIconView       *abstract_icon_view);
 static void         thunar_abstract_icon_view_zoom_level_changed      (ThunarAbstractIconView       *abstract_icon_view);
+static void         thunar_abstract_icon_view_queue_redraw            (ThunarStandardView           *standard_view);
 
 
 
@@ -122,6 +123,7 @@ thunar_abstract_icon_view_class_init (ThunarAbstractIconViewClass *klass)
   thunarstandard_view_class->get_path_at_pos = thunar_abstract_icon_view_get_path_at_pos;
   thunarstandard_view_class->get_visible_range = thunar_abstract_icon_view_get_visible_range;
   thunarstandard_view_class->highlight_path = thunar_abstract_icon_view_highlight_path;
+  thunarstandard_view_class->queue_redraw = thunar_abstract_icon_view_queue_redraw;
 
   /**
    * ThunarAbstractIconView:column-spacing:
@@ -663,4 +665,13 @@ thunar_abstract_icon_view_zoom_level_changed (ThunarAbstractIconView *abstract_i
                                       THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer,
                                       THUNAR_STANDARD_VIEW_GET_CLASS (abstract_icon_view)->cell_layout_data_func,
                                       NULL, NULL);
+}
+
+
+
+static void
+thunar_abstract_icon_view_queue_redraw (ThunarStandardView *standard_view)
+{
+  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
+  gtk_widget_queue_draw (gtk_bin_get_child (GTK_BIN (standard_view)));
 }
