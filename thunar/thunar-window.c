@@ -2013,7 +2013,7 @@ thunar_window_clipboard_manager_changed (GtkWidget *widget)
   ThunarWindow *window = THUNAR_WINDOW (widget);
 
   /* check if the content actually can be pasted into thunar,
-   * in order to do not redraw te view if just some text is copied.
+   * in order to do not redraw the view if just some text is copied.
    */
   if (thunar_clipboard_manager_get_can_paste (window->clipboard) && G_LIKELY (window->view != NULL))
     thunar_standard_view_queue_redraw (THUNAR_STANDARD_VIEW (window->view));
