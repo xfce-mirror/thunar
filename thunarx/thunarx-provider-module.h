@@ -44,5 +44,6 @@ ThunarxProviderModule *thunarx_provider_module_new        (const gchar          
 void                   thunarx_provider_module_list_types (const ThunarxProviderModule *module,
                                                            const GType                **types,
                                                            gint                        *n_types);
+void                   thunarx_provider_module_unuse      (ThunarxProviderModule       *module);
 
 #endif /* !__THUNARX_PROVIDER_MODULE_H__ */

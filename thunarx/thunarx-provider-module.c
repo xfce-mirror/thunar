@@ -312,9 +312,32 @@ thunarx_provider_module_list_types (const ThunarxProviderModule *module,
                                     gint                        *n_types)
 {
   g_return_if_fail (THUNARX_IS_PROVIDER_MODULE (module));
-  g_return_if_fail (module->list_types != NULL);
   g_return_if_fail (n_types != NULL);
   g_return_if_fail (types != NULL);
 
+  if (module->list_types == NULL)
+    {
+      g_warning ("No list_types available for module '%s' ... skipping .", G_TYPE_MODULE (module)->name);
+      return;
+    }
+
   (*module->list_types) (types, n_types);
+}
+
+
+
+
+/**
+ * thunarx_provider_module_unuse:
+ * @module  : a #ThunarxProviderModule.
+ *
+ * Wrapper for 'g_type_module_unuse' which first checks if the module is in use
+ **/
+void
+thunarx_provider_module_unuse (ThunarxProviderModule *module)
+{
+  g_return_if_fail (THUNARX_IS_PROVIDER_MODULE (module));
+
+  if (G_TYPE_MODULE (module)->use_count > 0)
+    g_type_module_unuse (G_TYPE_MODULE (module));
 }

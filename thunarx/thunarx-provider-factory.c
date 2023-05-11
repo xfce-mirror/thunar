@@ -132,19 +132,23 @@ static void
 thunarx_provider_factory_add (ThunarxProviderFactory *factory,
                               ThunarxProviderModule  *module)
 {
-  const GType *types;
-  gint         n_types;
+  const GType *types = NULL;
+  gint         n_types = 0;
+
 
   /* determines the types provided by the module */
   thunarx_provider_module_list_types (module, &types, &n_types);
 
-  /* add the types provided by the extension */
-  factory->infos = g_renew (ThunarxProviderInfo, factory->infos, factory->n_infos + n_types);
-  for (; n_types-- > 0; ++types)
+  if (types != NULL && n_types != 0)
     {
-      factory->infos[factory->n_infos].provider = NULL;
-      factory->infos[factory->n_infos].type = *types;
-      ++factory->n_infos;
+      /* add the types provided by the extension */
+      factory->infos = g_renew (ThunarxProviderInfo, factory->infos, factory->n_infos + n_types);
+      for (; n_types-- > 0; ++types)
+        {
+          factory->infos[factory->n_infos].provider = NULL;
+          factory->infos[factory->n_infos].type = *types;
+          ++factory->n_infos;
+        }
     }
 }
 
@@ -364,7 +368,7 @@ thunarx_provider_factory_list_providers (ThunarxProviderFactory *factory,
 
   /* unload all volatile modules */
   for (lp = thunarx_volatile_provider_modules; lp != NULL; lp = lp->next)
-    g_type_module_unuse (G_TYPE_MODULE (lp->data));
+    thunarx_provider_module_unuse (THUNARX_PROVIDER_MODULE (lp->data));
 
   return providers;
 }
