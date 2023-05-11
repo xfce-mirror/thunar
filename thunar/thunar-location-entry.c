@@ -450,8 +450,13 @@ thunar_location_entry_enable_edit_done_once (ThunarLocationEntry *location_entry
 static void
 thunar_location_entry_emit_edit_done (ThunarLocationEntry *entry)
 {
-  /* do not emit the signal if the context menu was opened */
-  if (entry->right_click_occurred == FALSE)
+  GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (entry));
+
+  /**
+   * - do not emit the signal if the context menu was opened
+   * - only emit the signal if we are the toplevel window (no reset on a window backdrop)
+   */
+  if (entry->right_click_occurred == FALSE && gtk_window_has_toplevel_focus (GTK_WINDOW (window)) == TRUE)
     {
       g_signal_handlers_disconnect_by_func (entry->path_entry, G_CALLBACK (thunar_location_entry_emit_edit_done), entry);
       g_signal_emit_by_name (entry, "edit-done");
