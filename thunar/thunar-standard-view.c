@@ -4619,6 +4619,8 @@ thunar_standard_view_highlight_option_changed (ThunarStandardView *standard_view
   GtkCellLayout         *layout = NULL;
   GtkCellLayoutDataFunc  function = NULL;
   gboolean               show_highlight;
+  GtkCssProvider        *provider;
+  gchar                 *css_data;
 
   if (GTK_IS_TREE_VIEW (view))
     layout = GTK_CELL_LAYOUT (gtk_tree_view_get_column (GTK_TREE_VIEW (view), THUNAR_COLUMN_NAME));
@@ -4630,12 +4632,23 @@ thunar_standard_view_highlight_option_changed (ThunarStandardView *standard_view
   if (show_highlight)
     function = (GtkCellLayoutDataFunc) THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->cell_layout_data_func;
 
+  /* add the css to set the border-radius */
+  provider = gtk_css_provider_new ();
+  css_data = ".view:selected { background-color: rgba(0,0,0,0); }";
+  gtk_css_provider_load_from_data (provider, css_data, -1, NULL);
+  gtk_style_context_add_provider (
+    gtk_widget_get_style_context(GTK_WIDGET (view)),
+    GTK_STYLE_PROVIDER (provider),
+    GTK_STYLE_PROVIDER_PRIORITY_USER
+  );
+  g_object_unref (provider);
+
   gtk_cell_layout_set_cell_data_func (layout,
                                       standard_view->icon_renderer,
-                                      function, NULL, NULL);
+                                      function, (gpointer) standard_view, NULL);
   gtk_cell_layout_set_cell_data_func (layout,
                                       standard_view->name_renderer,
-                                      function, NULL, NULL);
+                                      function, (gpointer) standard_view, NULL);
 }
 
 
@@ -4648,17 +4661,28 @@ thunar_standard_view_cell_layout_data_func (GtkCellLayout   *layout,
                                             gpointer         data)
 {
   ThunarFile  *file = THUNAR_FILE (thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter));
+  GtkWidget   *view = GTK_WIDGET (data);
   const gchar *background = NULL;
   const gchar *foreground = NULL;
+  GdkRGBA      foreground_rgba;
+  GtkWidget   *toplevel;
 
   background = thunar_file_get_metadata_setting (file, "highlight-color-background");
   foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
+  if (foreground != NULL)
+    gdk_rgba_parse (&foreground_rgba, foreground);
+  foreground_rgba.alpha = 1.0;
+
+  /* check the state of our window (active/backdrop) */
+  toplevel = gtk_widget_get_toplevel (view);
+  if (GTK_IS_WINDOW (toplevel) && !gtk_window_is_active (GTK_WINDOW (toplevel)))
+    foreground_rgba.alpha = 0.5;
 
   /* since this function is being used for both icon & name renderers;
    * we need to make sure the right properties are applied to the right renderers */
   if (THUNAR_IS_TEXT_RENDERER (cell))
     g_object_set (G_OBJECT (cell),
-                  "foreground", foreground,
+                  "foreground-rgba", foreground != NULL ? &foreground_rgba : NULL,
                   "highlight-color", background,
                   NULL);
 
@@ -4669,7 +4693,7 @@ thunar_standard_view_cell_layout_data_func (GtkCellLayout   *layout,
 
   else if (GTK_IS_CELL_RENDERER_TEXT (cell))
     g_object_set (G_OBJECT (cell),
-                  "foreground", foreground,
+                  "foreground-rgba", foreground != NULL ? &foreground_rgba : NULL,
                   "background", background,
                   NULL);
 
