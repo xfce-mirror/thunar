@@ -964,6 +964,8 @@ thunar_util_clip_view_background (GtkCellRenderer      *cell,
   gchar            *highlight_color;
   gdouble           radius = 0.0;
   gint              side = DRAW_ON_ALL_SIDES;
+  GtkWidget        *toplevel;
+  gboolean          window_is_backdrop = TRUE;
 
   g_object_get (G_OBJECT (cell), 
                 "highlight-color", &highlight_color,
@@ -988,6 +990,11 @@ thunar_util_clip_view_background (GtkCellRenderer      *cell,
       color = gdk_rgba_copy (&highlight_color_rgba);
     }
 
+  /* check the state of our window (active/backdrop) */
+  toplevel = gtk_widget_get_toplevel (widget);
+  if (GTK_IS_WINDOW (toplevel) && gtk_window_is_active (GTK_WINDOW (toplevel)))
+    window_is_backdrop = FALSE;
+
   /**
    * If the item is selected then paint the background area with the theme's selected item's color.
    * To distinguish between highlighted & non highlighted files, the background area of icon renderer
@@ -996,14 +1003,18 @@ thunar_util_clip_view_background (GtkCellRenderer      *cell,
   if (G_UNLIKELY (color_selected && !(THUNAR_IS_ICON_RENDERER (cell) && highlight_color != NULL)))
     {
       context = gtk_widget_get_style_context (widget);
-      gtk_style_context_get (context, GTK_STATE_FLAG_SELECTED, GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &color, NULL);
+      if (window_is_backdrop)
+        gtk_style_context_lookup_color (context, "theme_unfocused_selected_bg_color", &highlight_color_rgba);
+      else
+        gtk_style_context_lookup_color (context, "theme_selected_bg_color", &highlight_color_rgba);
+      color = gdk_rgba_copy (&highlight_color_rgba);
     }
 
   if (G_LIKELY (color != NULL))
     {
       gdk_cairo_set_source_rgba (cr, color);
       gdk_rgba_free (color);
-      cairo_paint (cr);
+      cairo_paint_with_alpha (cr, window_is_backdrop ? 0.5 : 1.0);
     }
 
   g_free (highlight_color);
