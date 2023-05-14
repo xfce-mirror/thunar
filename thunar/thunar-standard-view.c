@@ -4612,6 +4612,42 @@ thunar_standard_view_queue_redraw (ThunarStandardView *standard_view)
 
 
 
+/* *
+ * Used in @thunar_standard_view_highlight_option_changed.
+ *
+ * Creates/maintains a custom css provider to
+ * remove the default background-color highlighting
+ * of selected files/folders in the view.
+ *
+ * The css_provider is added or removed to the style_context of the view.
+ * Thus we need to maintain the reference.
+ * */
+static GtkCssProvider*
+get_transparent_selected_bg_css_provider (void)
+{
+  static GtkCssProvider *provider = NULL;
+
+  if (G_UNLIKELY (provider == NULL))
+    {
+      provider = gtk_css_provider_new ();
+      gtk_css_provider_load_from_data (
+        provider,
+        ".view:selected { background-color: rgba(0,0,0,0); }",
+        -1, NULL
+      );
+      g_object_add_weak_pointer (G_OBJECT (provider),
+                                 (gpointer) &provider);
+    }
+  else
+    {
+      g_object_ref (G_OBJECT (provider));
+    }
+
+  return provider;
+}
+
+
+
 static void
 thunar_standard_view_highlight_option_changed (ThunarStandardView *standard_view)
 {
@@ -4620,7 +4656,7 @@ thunar_standard_view_highlight_option_changed (ThunarStandardView *standard_view
   GtkCellLayoutDataFunc  function = NULL;
   gboolean               show_highlight;
   GtkCssProvider        *provider;
-  gchar                 *css_data;
+  GtkStyleContext       *context = gtk_widget_get_style_context (view);
 
   if (GTK_IS_TREE_VIEW (view))
     layout = GTK_CELL_LAYOUT (gtk_tree_view_get_column (GTK_TREE_VIEW (view), THUNAR_COLUMN_NAME));
@@ -4632,23 +4668,26 @@ thunar_standard_view_highlight_option_changed (ThunarStandardView *standard_view
   if (show_highlight)
     function = (GtkCellLayoutDataFunc) THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->cell_layout_data_func;
 
-  /* add the css to set the border-radius */
-  provider = gtk_css_provider_new ();
-  css_data = ".view:selected { background-color: rgba(0,0,0,0); }";
-  gtk_css_provider_load_from_data (provider, css_data, -1, NULL);
-  gtk_style_context_add_provider (
-    gtk_widget_get_style_context(GTK_WIDGET (view)),
-    GTK_STYLE_PROVIDER (provider),
-    GTK_STYLE_PROVIDER_PRIORITY_USER
-  );
-  g_object_unref (provider);
+  /* fetch our custom css */
+  provider = get_transparent_selected_bg_css_provider ();
+
+  /* if highlighting is enabled; add our custom css. */
+  if (show_highlight)
+    gtk_style_context_add_provider (
+      context,
+      GTK_STYLE_PROVIDER (provider),
+      GTK_STYLE_PROVIDER_PRIORITY_USER
+    );
+  /* if highlighting is disabled; drop our custom css */
+  else
+    gtk_style_context_remove_provider (context, GTK_STYLE_PROVIDER (provider));
 
   gtk_cell_layout_set_cell_data_func (layout,
                                       standard_view->icon_renderer,
-                                      function, (gpointer) standard_view, NULL);
+                                      function, standard_view, NULL);
   gtk_cell_layout_set_cell_data_func (layout,
                                       standard_view->name_renderer,
-                                      function, (gpointer) standard_view, NULL);
+                                      function, standard_view, NULL);
 }
 
 
@@ -4661,22 +4700,26 @@ thunar_standard_view_cell_layout_data_func (GtkCellLayout   *layout,
                                             gpointer         data)
 {
   ThunarFile  *file = THUNAR_FILE (thunar_list_model_get_file (THUNAR_LIST_MODEL (model), iter));
-  GtkWidget   *view = GTK_WIDGET (data);
   const gchar *background = NULL;
   const gchar *foreground = NULL;
   GdkRGBA      foreground_rgba;
+  GtkWidget   *view = GTK_WIDGET (data);
   GtkWidget   *toplevel;
 
   background = thunar_file_get_metadata_setting (file, "highlight-color-background");
   foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
+
   if (foreground != NULL)
     gdk_rgba_parse (&foreground_rgba, foreground);
   foreground_rgba.alpha = 1.0;
 
   /* check the state of our window (active/backdrop) */
-  toplevel = gtk_widget_get_toplevel (view);
-  if (GTK_IS_WINDOW (toplevel) && !gtk_window_is_active (GTK_WINDOW (toplevel)))
-    foreground_rgba.alpha = 0.5;
+  if (GTK_IS_WIDGET (view))
+    {
+      toplevel = gtk_widget_get_toplevel (view);
+      if (GTK_IS_WINDOW (toplevel) && !gtk_window_is_active (GTK_WINDOW (toplevel)))
+        foreground_rgba.alpha = 0.5;
+    }
 
   /* since this function is being used for both icon & name renderers;
    * we need to make sure the right properties are applied to the right renderers */
