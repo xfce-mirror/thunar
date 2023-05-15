@@ -1014,7 +1014,7 @@ thunar_util_clip_view_background (GtkCellRenderer      *cell,
     {
       gdk_cairo_set_source_rgba (cr, color);
       gdk_rgba_free (color);
-      cairo_paint_with_alpha (cr, window_is_backdrop ? 0.5 : 1.0);
+      cairo_paint_with_alpha (cr, window_is_backdrop ? ALPHA_BACKDROP : ALPHA_FOCUSED);
     }
 
   g_free (highlight_color);
