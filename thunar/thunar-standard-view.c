@@ -1058,7 +1058,8 @@ thunar_standard_view_finalize (GObject *object)
     g_object_unref (G_OBJECT (standard_view->priv->scroll_to_file));
 
   /* release css_provider */
-  g_clear_object (G_OBJECT (standard_view->priv->css_provider));
+  if (G_UNLIKELY (standard_view->priv->css_provider != NULL))
+    g_object_unref (G_OBJECT (standard_view->priv->css_provider));
 
   /* release the selected_files list (if any) */
   thunar_g_list_free_full (standard_view->priv->selected_files);
