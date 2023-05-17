@@ -401,6 +401,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   combo = gtk_combo_box_text_new ();
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Never"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Local Files Only"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Recommended Only"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Always"));
   g_object_bind_property_full (G_OBJECT (dialog->preferences),
                                "misc-thumbnail-mode",

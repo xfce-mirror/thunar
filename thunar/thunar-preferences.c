@@ -924,7 +924,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          NULL,
                          NULL,
                          THUNAR_TYPE_THUMBNAIL_MODE,
-                         THUNAR_THUMBNAIL_MODE_ONLY_LOCAL,
+                         THUNAR_THUMBNAIL_MODE_ONLY_RECOMMENDED,
                          EXO_PARAM_READWRITE);
 
   /**
