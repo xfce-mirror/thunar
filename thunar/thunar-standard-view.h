@@ -20,6 +20,7 @@
 #ifndef __THUNAR_STANDARD_VIEW_H__
 #define __THUNAR_STANDARD_VIEW_H__
 
+#include "thunar-standard-view-model.h"
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-history.h>
 #include <thunar/thunar-icon-factory.h>
@@ -158,7 +159,7 @@ struct _ThunarStandardView
 
   ThunarPreferences         *preferences;
 
-  ThunarListModel           *model;
+  ThunarStandardViewModel   *model;
 
   ThunarIconFactory         *icon_factory;
   GtkCellRenderer           *icon_renderer;
