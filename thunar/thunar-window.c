@@ -4052,7 +4052,7 @@ thunar_window_replace_view (ThunarWindow *window,
           history = thunar_standard_view_copy_history (THUNAR_STANDARD_VIEW (view));
 
           /* Transfer ownership of the search-job to the new view. It is the new view's responsibility to cancel the search. */
-          job = thunar_list_model_get_job (THUNAR_STANDARD_VIEW (view)->model);
+          job = thunar_standard_view_model_get_job (THUNAR_STANDARD_VIEW (view)->model);
         }
     }
 
@@ -4117,7 +4117,7 @@ thunar_window_replace_view (ThunarWindow *window,
                                                                             window);
     }
 
-  thunar_list_model_set_job (THUNAR_STANDARD_VIEW (new_view)->model, job);
+  thunar_standard_view_model_set_job (THUNAR_STANDARD_VIEW (new_view)->model, job);
 }
 
 
