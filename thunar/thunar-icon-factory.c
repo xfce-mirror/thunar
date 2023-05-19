@@ -194,7 +194,7 @@ thunar_icon_factory_class_init (ThunarIconFactoryClass *klass)
                                                       "thumbnail-mode",
                                                       "thumbnail-mode",
                                                       THUNAR_TYPE_THUMBNAIL_MODE,
-                                                      THUNAR_THUMBNAIL_MODE_ONLY_LOCAL,
+                                                      THUNAR_THUMBNAIL_MODE_ONLY_RECOMMENDED,
                                                       EXO_PARAM_READWRITE));
 
   /**
@@ -245,7 +245,7 @@ thunar_icon_factory_class_init (ThunarIconFactoryClass *klass)
 static void
 thunar_icon_factory_init (ThunarIconFactory *factory)
 {
-  factory->thumbnail_mode = THUNAR_THUMBNAIL_MODE_ONLY_LOCAL;
+  factory->thumbnail_mode = THUNAR_THUMBNAIL_MODE_ONLY_RECOMMENDED;
   factory->thumbnail_size = THUNAR_THUMBNAIL_SIZE_NORMAL;
 
   /* connect emission hook for the "changed" signal on the GtkIconTheme class. We use the emission
@@ -827,9 +827,12 @@ thunar_icon_factory_get_show_thumbnail (const ThunarIconFactory *factory,
   _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), THUNAR_THUMBNAIL_MODE_NEVER);
   _thunar_return_val_if_fail (file == NULL || THUNAR_IS_FILE (file), THUNAR_THUMBNAIL_MODE_NEVER);
 
-  if (file == NULL
-      || factory->thumbnail_mode == THUNAR_THUMBNAIL_MODE_NEVER)
+  if (file == NULL || factory->thumbnail_mode == THUNAR_THUMBNAIL_MODE_NEVER)
     return FALSE;
+
+  /* Always means always, no matter what glib restricts (e.g. glib returns NEVER for all mtp devices) */
+  if (factory->thumbnail_mode == THUNAR_THUMBNAIL_MODE_ALWAYS)
+    return TRUE;
 
   /* always create thumbs for local files */
   if (thunar_file_is_local (file))
@@ -837,16 +840,19 @@ thunar_icon_factory_get_show_thumbnail (const ThunarIconFactory *factory,
 
   preview = thunar_file_get_preview_type (file);
 
-  /* file system says to never thumbnail anything */
+  /* glib suggests to not show a preview for that type of file system */
   if (preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER)
     return FALSE;
 
-  /* only if the setting is local and the fs reports to be local */
+  /* Show only files recomended by glib */
+  if (factory->thumbnail_mode == THUNAR_THUMBNAIL_MODE_ONLY_RECOMMENDED)
+    return preview == G_FILESYSTEM_PREVIEW_TYPE_IF_ALWAYS;
+
+  /* Some files with gvfs URI are still local ... show them if recomended by glib and ONLY_LOCAL is selected */
   if (factory->thumbnail_mode == THUNAR_THUMBNAIL_MODE_ONLY_LOCAL)
     return preview == G_FILESYSTEM_PREVIEW_TYPE_IF_LOCAL;
 
-  /* THUNAR_THUMBNAIL_MODE_ALWAYS */
-  return TRUE;
+  return FALSE;
 }
 
 
