@@ -2979,7 +2979,7 @@ static void
 thunar_window_install_sidepane (ThunarWindow       *window,
                                 ThunarSidepaneType  type)
 {
-  GtkStyleContext   *context;
+  GtkStyleContext *context;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
