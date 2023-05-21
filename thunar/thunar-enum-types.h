@@ -516,6 +516,30 @@ typedef enum
 
 GType thunar_folder_item_count_get_type (void) G_GNUC_CONST;
 
+/**
+ * ThunarSidepaneType
+ *
+ * Specify which sidepane type to use
+ **/
+#define THUNAR_TYPE_SIDEPANE_TYPE (thunar_sidepane_type_get_type ())
+
+/**
+ * ThunarSidepaneType:
+ * @THUNAR_SIDEPANE_TYPE_SHORTCUTS,        : the shurtcuts sidepane
+ * @THUNAR_SIDEPANE_TYPE_TREE,             : the tree sidepane
+ * @THUNAR_SIDEPANE_TYPE_HIDDEN_SHORTCUTS, : no sidepane. On toggle, recover to shurtcuts sidepane
+ * @THUNAR_SIDEPANE_TYPE_HIDDEN_TREE,      : no sidepane. On toggle, recover to tree sidepane
+ **/
+typedef enum
+{
+  THUNAR_SIDEPANE_TYPE_SHORTCUTS,
+  THUNAR_SIDEPANE_TYPE_TREE,
+  THUNAR_SIDEPANE_TYPE_HIDDEN_SHORTCUTS,
+  THUNAR_SIDEPANE_TYPE_HIDDEN_TREE,
+} ThunarSidepaneType;
+
+GType thunar_sidepane_type_get_type (void) G_GNUC_CONST;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_ENUM_TYPES_H__ */
