@@ -4024,32 +4024,6 @@ thunar_file_get_preview_icon (const ThunarFile *file)
 
 
 
-GFilesystemPreviewType
-thunar_file_get_preview_type (const ThunarFile *file)
-{
-  GFilesystemPreviewType  preview;
-  GFileInfo              *info;
-
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), G_FILESYSTEM_PREVIEW_TYPE_NEVER);
-  _thunar_return_val_if_fail (G_IS_FILE (file->gfile), G_FILESYSTEM_PREVIEW_TYPE_NEVER);
-
-  info = g_file_query_filesystem_info (file->gfile, G_FILE_ATTRIBUTE_FILESYSTEM_USE_PREVIEW, NULL, NULL);
-  if (G_LIKELY (info != NULL))
-    {
-      preview = g_file_info_get_attribute_uint32 (info, G_FILE_ATTRIBUTE_FILESYSTEM_USE_PREVIEW);
-      g_object_unref (G_OBJECT (info));
-    }
-  else
-    {
-      /* assume we don't know */
-      preview = G_FILESYSTEM_PREVIEW_TYPE_NEVER;
-    }
-
-  return preview;
-}
-
-
-
 static const gchar *
 thunar_file_get_icon_name_for_state (const gchar         *icon_name,
                                      ThunarFileIconState  icon_state)

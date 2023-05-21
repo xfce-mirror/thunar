@@ -822,31 +822,25 @@ gboolean
 thunar_icon_factory_get_show_thumbnail (const ThunarIconFactory *factory,
                                         const ThunarFile        *file)
 {
-  GFilesystemPreviewType preview;
 
   _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), THUNAR_THUMBNAIL_MODE_NEVER);
   _thunar_return_val_if_fail (file == NULL || THUNAR_IS_FILE (file), THUNAR_THUMBNAIL_MODE_NEVER);
 
-  if (file == NULL
-      || factory->thumbnail_mode == THUNAR_THUMBNAIL_MODE_NEVER)
+  if (file == NULL || factory->thumbnail_mode == THUNAR_THUMBNAIL_MODE_NEVER)
     return FALSE;
 
-  /* always create thumbs for local files */
-  if (thunar_file_is_local (file))
+  /*
+  * Note: We ignore 'G_FILE_ATTRIBUTE_FILESYSTEM_USE_PREVIEW' on purpose,
+  * since following the glib suggestion would lead to having no thumbnails at all for mtp and gphoto2 devices.
+  * Instead, settings 'THUNAR_THUMBNAIL_MODE_ALWAYS' will indeed always show thumbnails.
+  */
+  if (factory->thumbnail_mode == THUNAR_THUMBNAIL_MODE_ALWAYS)
     return TRUE;
 
-  preview = thunar_file_get_preview_type (file);
+  if (factory->thumbnail_mode == THUNAR_THUMBNAIL_MODE_ONLY_LOCAL && thunar_file_is_local (file))
+    return TRUE;
 
-  /* file system says to never thumbnail anything */
-  if (preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER)
-    return FALSE;
-
-  /* only if the setting is local and the fs reports to be local */
-  if (factory->thumbnail_mode == THUNAR_THUMBNAIL_MODE_ONLY_LOCAL)
-    return preview == G_FILESYSTEM_PREVIEW_TYPE_IF_LOCAL;
-
-  /* THUNAR_THUMBNAIL_MODE_ALWAYS */
-  return TRUE;
+  return FALSE;
 }
 
 
