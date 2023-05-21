@@ -1398,7 +1398,6 @@ thunar_window_update_view_menu (ThunarWindow *window,
                                                    thunar_window_has_tree_view_sidepane (window), GTK_MENU_SHELL (sub_items));
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (sub_items));
   image_preview_visible = gtk_widget_get_visible (window->right_pane_box) || gtk_widget_get_visible (window->sidepane_preview_image);
-
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_TOGGLE_IMAGE_PREVIEW), G_OBJECT (window),
                                                    image_preview_visible, GTK_MENU_SHELL (sub_items));
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (sub_items));
@@ -1416,14 +1415,13 @@ thunar_window_update_view_menu (ThunarWindow *window,
     }
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_SHOW_HIDDEN), G_OBJECT (window),
                                                    window->show_hidden, GTK_MENU_SHELL (menu));
-  xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
   if (thunar_g_vfs_metadata_is_supported ())
     {
       g_object_get (G_OBJECT (window->preferences), "misc-highlighting-enabled", &highlight_enabled, NULL);
       xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_SHOW_HIGHLIGHT), G_OBJECT (window),
                                                        highlight_enabled, GTK_MENU_SHELL (menu));
-      xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
     }
+  xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
   if (window->view != NULL)
     thunar_standard_view_append_menu_items (THUNAR_STANDARD_VIEW (window->view), GTK_MENU (menu), window->accel_group);
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
