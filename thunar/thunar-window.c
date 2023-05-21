@@ -2376,12 +2376,9 @@ thunar_window_notebook_button_press_event (GtkWidget      *notebook,
   gint           x, y;
   gboolean       close_tab;
 
-  if (event->button == 1)
-    {
-      /* switch focus to parent notebook */
-      if (window->notebook_selected != notebook)
-        thunar_window_paned_notebooks_switch (window);
-    }
+  /* switch focus to parent notebook */
+  if (window->notebook_selected != notebook)
+    thunar_window_paned_notebooks_switch (window);
 
   if ((event->button == 2 || event->button == 3)
       && event->type == GDK_BUTTON_PRESS)
