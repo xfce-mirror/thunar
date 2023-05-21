@@ -487,16 +487,15 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   /**
    * ThunarPreferences:last-side-pane:
    *
-   * The name of the widget class, which should be used for the
-   * side pane in #ThunarWindow<!---->s or "void" to hide the
-   * side pane completely.
+   * The side pane type which should be used.
    **/
   preferences_props[PROP_LAST_SIDE_PANE] =
-      g_param_spec_string ("last-side-pane",
-                           "LastSidePane",
-                           NULL,
-                           "ThunarShortcutsPane",
-                           EXO_PARAM_READWRITE);
+      g_param_spec_enum ("last-side-pane",
+                         "LastSidePane",
+                         NULL,
+                         THUNAR_TYPE_SIDEPANE_TYPE,
+                         THUNAR_SIDEPANE_TYPE_SHORTCUTS,
+                         EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-sort-column:
