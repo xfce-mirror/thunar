@@ -179,7 +179,7 @@ static gboolean  thunar_window_split_view_is_active       (ThunarWindow         
 
 static void      thunar_window_update_location_bar_visible(ThunarWindow           *window);
 static void      thunar_window_install_sidepane           (ThunarWindow           *window,
-                                                           GType                   type);
+                                                           ThunarSidepaneType      type);
 static void      thunar_window_start_open_location        (ThunarWindow           *window,
                                                            const gchar            *initial_text);
 static void      thunar_window_resume_search              (ThunarWindow           *window,
@@ -468,10 +468,8 @@ struct _ThunarWindow
   /* support to remember window geometry */
   guint                      save_geometry_timer_id;
 
-  /* support to toggle side pane using F9,
-   * see the toggle_sidepane() function.
-   */
-  GType                      toggle_sidepane_type;
+  /* type of the sidepane */
+  ThunarSidepaneType         sidepane_type;
 
   /* Image Preview thumbnail generation */
   ThunarThumbnailer         *thumbnailer;
@@ -762,10 +760,9 @@ thunar_window_init (ThunarWindow *window)
   GtkWidget             *event_box;
   gboolean               last_menubar_visible;
   gchar                 *last_location_bar;
-  gchar                 *last_side_pane;
+  ThunarSidepaneType     last_side_pane;
   gchar                 *uca_path;
   gchar                 *catfish_path;
-  GType                  type;
   gint                   last_separator_position;
   gint                   last_window_width;
   gint                   last_window_height;
@@ -1016,15 +1013,8 @@ thunar_window_init (ThunarWindow *window)
   /* update window icon whenever preferences change */
   g_signal_connect_object (G_OBJECT (window->preferences), "notify::misc-change-window-icon", G_CALLBACK (thunar_window_update_window_icon), window, G_CONNECT_SWAPPED);
 
-  /* determine the selected side pane */
-  if (g_strcmp0 (last_side_pane, g_type_name (THUNAR_TYPE_SHORTCUTS_PANE)) == 0)
-    type = THUNAR_TYPE_SHORTCUTS_PANE;
-  else if (g_strcmp0 (last_side_pane, g_type_name (THUNAR_TYPE_TREE_PANE)) == 0)
-    type = THUNAR_TYPE_TREE_PANE;
-  else
-    type = G_TYPE_NONE;
-  thunar_window_install_sidepane (window, type);
-  g_free (last_side_pane);
+  /* set the selected side pane */
+  thunar_window_install_sidepane (window, last_side_pane);
 
   /* synchronise the "directory-specific-settings" property with the global "misc-directory-specific-settings" property */
   g_object_bind_property (G_OBJECT (window->preferences), "misc-directory-specific-settings", G_OBJECT (window), "directory-specific-settings", G_BINDING_SYNC_CREATE);
@@ -1885,19 +1875,22 @@ thunar_window_toggle_sidepane (ThunarWindow *window)
 {
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  /* check if a side pane is currently active */
-  if (G_LIKELY (window->sidepane != NULL))
-    {
-      /* determine the currently active side pane type */
-      window->toggle_sidepane_type = G_OBJECT_TYPE (window->sidepane);
-      thunar_window_install_sidepane (window, G_TYPE_NONE);
-    }
-  else
-    {
-      /* check if we have a previously remembered toggle type */
-      if (window->toggle_sidepane_type == THUNAR_TYPE_TREE_PANE || window->toggle_sidepane_type == THUNAR_TYPE_SHORTCUTS_PANE)
-          thunar_window_install_sidepane (window, window->toggle_sidepane_type);
-    }
+  /* invert the sidepane type hidden status */
+  switch (window->sidepane_type)
+  {
+    case THUNAR_SIDEPANE_TYPE_HIDDEN_SHORTCUTS:
+      thunar_window_install_sidepane (window, THUNAR_SIDEPANE_TYPE_SHORTCUTS);
+      break;
+    case THUNAR_SIDEPANE_TYPE_SHORTCUTS:
+      thunar_window_install_sidepane (window, THUNAR_SIDEPANE_TYPE_HIDDEN_SHORTCUTS);
+      break;
+    case THUNAR_SIDEPANE_TYPE_HIDDEN_TREE:
+      thunar_window_install_sidepane (window, THUNAR_SIDEPANE_TYPE_TREE);
+      break;
+    case THUNAR_SIDEPANE_TYPE_TREE:
+      thunar_window_install_sidepane (window, THUNAR_SIDEPANE_TYPE_HIDDEN_TREE);
+      break;
+  }
 
   return TRUE;
 }
@@ -2983,12 +2976,11 @@ thunar_window_update_window_icon (ThunarWindow *window)
 
 
 static void
-thunar_window_install_sidepane (ThunarWindow *window,
-                                GType         type)
+thunar_window_install_sidepane (ThunarWindow       *window,
+                                ThunarSidepaneType  type)
 {
   GtkStyleContext *context;
 
-  _thunar_return_if_fail (type == G_TYPE_NONE || g_type_is_a (type, THUNAR_TYPE_SIDE_PANE));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* drop the previous side pane (if any) */
@@ -2999,10 +2991,13 @@ thunar_window_install_sidepane (ThunarWindow *window,
     }
 
   /* check if we have a new sidepane widget */
-  if (G_LIKELY (type != G_TYPE_NONE))
+  if (G_LIKELY (type == THUNAR_SIDEPANE_TYPE_SHORTCUTS || type == THUNAR_SIDEPANE_TYPE_TREE))
     {
       /* allocate the new side pane widget */
-      window->sidepane = g_object_new (type, NULL);
+      if (type == THUNAR_SIDEPANE_TYPE_SHORTCUTS)
+        window->sidepane = g_object_new (THUNAR_TYPE_SHORTCUTS_PANE, NULL);
+      else
+        window->sidepane = g_object_new (THUNAR_TYPE_TREE_PANE, NULL);
       gtk_widget_set_size_request (window->sidepane, 0, -1);
       g_object_bind_property (G_OBJECT (window), "current-directory", G_OBJECT (window->sidepane), "current-directory", G_BINDING_SYNC_CREATE);
       g_signal_connect_swapped (G_OBJECT (window->sidepane), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
@@ -3018,15 +3013,16 @@ thunar_window_install_sidepane (ThunarWindow *window,
         thunar_window_binding_create (window, window->view, "selected-files", window->sidepane, "selected-files", G_BINDING_SYNC_CREATE);
 
       /* apply show_hidden config to tree pane */
-      if (type == THUNAR_TYPE_TREE_PANE)
+      if (type == THUNAR_SIDEPANE_TYPE_TREE)
         thunar_side_pane_set_show_hidden (THUNAR_SIDE_PANE (window->sidepane), window->show_hidden);
     }
   else
     gtk_widget_hide (window->sidepane_box);
 
   /* remember the setting */
+  window->sidepane_type = type;
   if (gtk_widget_get_visible (GTK_WIDGET (window)))
-    g_object_set (G_OBJECT (window->preferences), "last-side-pane", g_type_name (type), NULL);
+    g_object_set (G_OBJECT (window->preferences), "last-side-pane", type, NULL);
 }
 
 
@@ -3754,14 +3750,12 @@ thunar_window_action_locationbar_buttons (ThunarWindow *window)
 static gboolean
 thunar_window_action_shortcuts_changed (ThunarWindow *window)
 {
-  GType type = G_TYPE_NONE;
-
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  if (thunar_window_has_shortcut_sidepane (window) == FALSE)
-    type = THUNAR_TYPE_SHORTCUTS_PANE;
-
-  thunar_window_install_sidepane (window, type);
+  if (thunar_window_has_shortcut_sidepane (window))
+    thunar_window_install_sidepane (window, THUNAR_SIDEPANE_TYPE_HIDDEN_SHORTCUTS);
+  else
+    thunar_window_install_sidepane (window, THUNAR_SIDEPANE_TYPE_SHORTCUTS);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -3772,14 +3766,12 @@ thunar_window_action_shortcuts_changed (ThunarWindow *window)
 static gboolean
 thunar_window_action_tree_changed (ThunarWindow *window)
 {
-  GType type = G_TYPE_NONE;
-
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  if (thunar_window_has_tree_view_sidepane (window) == FALSE)
-    type = THUNAR_TYPE_TREE_PANE;
-
-  thunar_window_install_sidepane (window, type);
+  if (thunar_window_has_tree_view_sidepane (window))
+    thunar_window_install_sidepane (window, THUNAR_SIDEPANE_TYPE_HIDDEN_TREE);
+  else
+    thunar_window_install_sidepane (window, THUNAR_SIDEPANE_TYPE_TREE);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;

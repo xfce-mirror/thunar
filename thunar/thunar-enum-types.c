@@ -793,3 +793,29 @@ GType thunar_folder_item_count_get_type (void)
 
   return type;
 }
+
+GType thunar_sidepane_type_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GEnumValue values[] =
+      {
+        { THUNAR_SIDEPANE_TYPE_SHORTCUTS,       "THUNAR_SIDEPANE_TYPE_SHORTCUTS",        ("Shurtcuts sidepane") },
+        { THUNAR_SIDEPANE_TYPE_TREE,            "THUNAR_SIDEPANE_TYPE_TREE",             ("Tree sidepane") },
+        { THUNAR_SIDEPANE_TYPE_HIDDEN_SHORTCUTS,"THUNAR_SIDEPANE_TYPE_HIDDEN_SHORTCUTS", ("No sidepane. On toggle, recover to shurtcuts sidepane") },
+        { THUNAR_SIDEPANE_TYPE_HIDDEN_TREE,     "THUNAR_SIDEPANE_TYPE_HIDDEN_TREE",      ("No sidepane. On toggle, recover to tree sidepane") },
+        /* Support for deprecated old types */
+        { THUNAR_SIDEPANE_TYPE_SHORTCUTS,       "ThunarShortcutsPane",                   ("") },
+        { THUNAR_SIDEPANE_TYPE_TREE,            "ThunarTreePane",                        ("") },
+        { THUNAR_SIDEPANE_TYPE_HIDDEN_SHORTCUTS,"void",                                  ("") },
+
+        { 0,                                    NULL,                                    NULL }
+      };
+
+      type = g_enum_register_static ("ThunarSidepaneType", values);
+    }
+
+  return type;
+}
