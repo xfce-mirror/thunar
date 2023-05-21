@@ -2376,6 +2376,13 @@ thunar_window_notebook_button_press_event (GtkWidget      *notebook,
   gint           x, y;
   gboolean       close_tab;
 
+  if (event->button == 1)
+    {
+      /* switch focus to parent notebook */
+      if (window->notebook_selected != notebook)
+        thunar_window_paned_notebooks_switch (window);
+    }
+
   if ((event->button == 2 || event->button == 3)
       && event->type == GDK_BUTTON_PRESS)
     {
@@ -2671,7 +2678,7 @@ thunar_window_paned_notebooks_add (ThunarWindow *window)
   g_signal_connect (G_OBJECT (notebook), "switch-page", G_CALLBACK (thunar_window_notebook_switch_page), window);
   g_signal_connect (G_OBJECT (notebook), "page-added", G_CALLBACK (thunar_window_notebook_page_added), window);
   g_signal_connect (G_OBJECT (notebook), "page-removed", G_CALLBACK (thunar_window_notebook_page_removed), window);
-  g_signal_connect_after (G_OBJECT (notebook), "button-press-event", G_CALLBACK (thunar_window_notebook_button_press_event), window);
+  g_signal_connect (G_OBJECT (notebook), "button-press-event", G_CALLBACK (thunar_window_notebook_button_press_event), window);
   g_signal_connect (G_OBJECT (notebook), "popup-menu", G_CALLBACK (thunar_window_notebook_popup_menu), window);
   g_signal_connect (G_OBJECT (notebook), "create-window", G_CALLBACK (thunar_window_notebook_create_window), window);
 
@@ -3660,7 +3667,6 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
     }
   else
     {
-      GtkWidget* old_notebook = window->notebook_selected;
       window->notebook_selected = thunar_window_paned_notebooks_add (window);
       directory = thunar_window_get_current_directory (window);
 
@@ -3685,8 +3691,8 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
 
       gtk_paned_set_position (GTK_PANED (window->paned_notebooks), last_splitview_separator_position);
   
-      /* Keep focus on the old notebook */
-      thunar_window_paned_notebooks_indicate_focus (window, old_notebook);
+      /* Keep focus on the first notebook */
+      thunar_window_paned_notebooks_switch (window);
 
       g_signal_connect_swapped (window->paned, "accept-position", G_CALLBACK (thunar_window_save_paned_notebooks), window);
       g_signal_connect_swapped (window->paned, "button-release-event", G_CALLBACK (thunar_window_save_paned_notebooks), window);
