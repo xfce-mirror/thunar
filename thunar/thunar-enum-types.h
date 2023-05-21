@@ -171,14 +171,16 @@ GType thunar_icon_size_get_type (void) G_GNUC_CONST;
 
 /**
  * ThunarThumbnailMode:
- * @THUNAR_THUMBNAIL_MODE_NEVER      : never show thumbnails.
- * @THUNAR_THUMBNAIL_MODE_ONLY_LOCAL : only show thumbnails on local filesystems.
- * @THUNAR_THUMBNAIL_MODE_ALWAYS     : always show thumbnails (everywhere).
+ * @THUNAR_THUMBNAIL_MODE_NEVER            : never show thumbnails.
+ * @THUNAR_THUMBNAIL_MODE_ONLY_LOCAL       : only show thumbnails on local filesystems.
+ * @THUNAR_THUMBNAIL_MODE_ONLY_RECOMMENDED : only show thumbnails when glibs suggests to show previews for that filesystem-type
+ * @THUNAR_THUMBNAIL_MODE_ALWAYS           : always show thumbnails (everywhere).
  **/
 typedef enum
 {
   THUNAR_THUMBNAIL_MODE_NEVER,
   THUNAR_THUMBNAIL_MODE_ONLY_LOCAL,
+  THUNAR_THUMBNAIL_MODE_ONLY_RECOMMENDED,
   THUNAR_THUMBNAIL_MODE_ALWAYS
 } ThunarThumbnailMode;
 

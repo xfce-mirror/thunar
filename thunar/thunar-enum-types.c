@@ -398,10 +398,11 @@ thunar_thumbnail_mode_get_type (void)
     {
       static const GEnumValue values[] =
       {
-        { THUNAR_THUMBNAIL_MODE_NEVER,      "THUNAR_THUMBNAIL_MODE_NEVER",      "never",      },
-        { THUNAR_THUMBNAIL_MODE_ONLY_LOCAL, "THUNAR_THUMBNAIL_MODE_ONLY_LOCAL", "only-local", },
-        { THUNAR_THUMBNAIL_MODE_ALWAYS,     "THUNAR_THUMBNAIL_MODE_ALWAYS",     "always",     },
-        { 0,                                NULL,                               NULL,         },
+        { THUNAR_THUMBNAIL_MODE_NEVER,            "THUNAR_THUMBNAIL_MODE_NEVER",            "never",            },
+        { THUNAR_THUMBNAIL_MODE_ONLY_LOCAL,       "THUNAR_THUMBNAIL_MODE_ONLY_LOCAL",       "only-local",       },
+        { THUNAR_THUMBNAIL_MODE_ONLY_RECOMMENDED, "THUNAR_THUMBNAIL_MODE_ONLY_RECOMMENDED", "only-recommended", },
+        { THUNAR_THUMBNAIL_MODE_ALWAYS,           "THUNAR_THUMBNAIL_MODE_ALWAYS",           "always",           },
+        { 0,                                      NULL,                                     NULL,               },
       };
 
       type = g_enum_register_static (I_("ThunarThumbnailMode"), values);
