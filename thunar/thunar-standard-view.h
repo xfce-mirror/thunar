@@ -20,11 +20,11 @@
 #ifndef __THUNAR_STANDARD_VIEW_H__
 #define __THUNAR_STANDARD_VIEW_H__
 
-#include "thunar-standard-view-model.h"
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-history.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-list-model.h>
+#include <thunar/thunar-tree-view-model.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-view.h>
 
