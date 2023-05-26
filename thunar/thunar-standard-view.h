@@ -24,6 +24,7 @@
 #include <thunar/thunar-history.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-list-model.h>
+#include <thunar/thunar-tree-view-model.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-view.h>
 
@@ -158,7 +159,7 @@ struct _ThunarStandardView
 
   ThunarPreferences         *preferences;
 
-  ThunarListModel           *model;
+  ThunarStandardViewModel   *model;
 
   ThunarIconFactory         *icon_factory;
   GtkCellRenderer           *icon_renderer;
