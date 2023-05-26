@@ -34,9 +34,16 @@ typedef struct _ThunarTreeViewModel      ThunarTreeViewModel;
 #define THUNAR_IS_TREE_VIEW_MODEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_TREE_VIEW_MODEL))
 #define THUNAR_TREE_VIEW_MODEL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_TREE_VIEW_MODEL, ThunarTreeViewModelClass))
 
-GType                thunar_tree_view_model_get_type               (void) G_GNUC_CONST;
+GType                    thunar_tree_view_model_get_type               (void) G_GNUC_CONST;
 
 ThunarStandardViewModel *thunar_tree_view_model_new                    (void);
+void             thunar_tree_view_model_refilter               (ThunarTreeViewModel  *model);
+void             thunar_tree_view_model_cleanup                (ThunarTreeViewModel  *model);
+gboolean         thunar_tree_view_model_node_has_dummy         (ThunarTreeViewModel  *model,
+                                                           GNode            *node);
+void             thunar_tree_view_model_add_child              (ThunarTreeViewModel  *model,
+                                                           GNode            *node,
+                                                           ThunarFile       *file);
 
 
 G_END_DECLS;
