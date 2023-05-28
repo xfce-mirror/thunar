@@ -312,6 +312,10 @@ static gchar             *thunar_tree_view_model_get_statusbar_text          (Th
 static ThunarJob         *thunar_tree_view_model_get_job                     (ThunarStandardViewModel  *store);
 static void               thunar_tree_view_model_set_job                     (ThunarStandardViewModel  *store,
                                                                          ThunarJob                *job);
+static gboolean           thunar_tree_view_model_foreach_row_changed         (GtkTreeModel *model,
+                                                                         GtkTreePath  *path,
+                                                                         GtkTreeIter  *iter,
+                                                                         gpointer      data);
 
 struct _ThunarTreeViewModelClass
 {
@@ -2332,7 +2336,7 @@ thunar_tree_view_model_set_case_sensitive (ThunarTreeViewModel *store,
       /* emit a "changed" signal for each row, so the display is
          reloaded with the new case-sensitive setting */
       gtk_tree_model_foreach (GTK_TREE_MODEL (store),
-                              (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed,
+                              (GtkTreeModelForeachFunc) thunar_tree_view_model_foreach_row_changed,
                               NULL);
     }
 }
@@ -2381,7 +2385,7 @@ thunar_tree_view_model_set_date_style (ThunarTreeViewModel *store,
 
       /* emit a "changed" signal for each row, so the display is reloaded with the new date style */
       gtk_tree_model_foreach (GTK_TREE_MODEL (store),
-                              (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed,
+                              (GtkTreeModelForeachFunc) thunar_tree_view_model_foreach_row_changed,
                               NULL);
     }
 }
@@ -2429,7 +2433,7 @@ thunar_tree_view_model_set_date_custom_style (ThunarTreeViewModel *store,
 
       /* emit a "changed" signal for each row, so the display is reloaded with the new date style */
       gtk_tree_model_foreach (GTK_TREE_MODEL (store),
-                              (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed,
+                              (GtkTreeModelForeachFunc) thunar_tree_view_model_foreach_row_changed,
                               NULL);
     }
 }
@@ -2918,9 +2922,6 @@ thunar_tree_view_model_set_folders_first (ThunarStandardViewModel *model,
 
   /* emit a "changed" signal for each row, so the display is
      reloaded with the new folders first setting */
-  gtk_tree_model_foreach (GTK_TREE_MODEL (store),
-                          (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed,
-                          NULL);
 }
 
 
@@ -3060,7 +3061,7 @@ thunar_tree_view_model_set_file_size_binary (ThunarStandardViewModel *model,
       /* emit a "changed" signal for each row, so the display is
          reloaded with the new binary file size setting */
       gtk_tree_model_foreach (GTK_TREE_MODEL (store),
-                              (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed,
+                              (GtkTreeModelForeachFunc) thunar_tree_view_model_foreach_row_changed,
                               NULL);
     }
 }
@@ -3100,7 +3101,7 @@ thunar_tree_view_model_set_folder_item_count (ThunarTreeViewModel         *store
   store->folder_item_count = count_as_dir_size;
   g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_FOLDER_ITEM_COUNT]);
 
-  gtk_tree_model_foreach (GTK_TREE_MODEL (store), (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed, NULL);
+  gtk_tree_model_foreach (GTK_TREE_MODEL (store), (GtkTreeModelForeachFunc) thunar_tree_view_model_foreach_row_changed, NULL);
 
   /* re-sorting the store if needed */
   if (store->sort_func == sort_by_size || store->sort_func == (ThunarSortFunc) sort_by_size_and_items_count)
@@ -4360,4 +4361,22 @@ thunar_tree_view_model_release_files (ThunarTreeViewModel *model)
 
   /* unblock the file monitor */
   g_signal_handlers_unblock_by_func (store->file_monitor, thunar_tree_view_model_file_changed, store);
+}
+
+
+
+static gboolean
+thunar_tree_view_model_foreach_row_changed (GtkTreeModel *model,
+                                         GtkTreePath  *path,
+                                         GtkTreeIter  *iter,
+                                         gpointer      data)
+{
+  GNode *node = iter->user_data;
+  ThunarTreeViewModelItem *item = node->data;
+
+  if (G_NODE_HAS_DUMMY (node) || item == NULL || item->file == NULL)
+    return FALSE;
+
+  gtk_tree_model_row_changed(model, path, iter);
+  return FALSE;
 }
