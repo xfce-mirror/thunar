@@ -83,6 +83,7 @@ enum
   PROP_SORT_ORDER,
   PROP_SORT_ORDER_DEFAULT,
   PROP_ACCEL_GROUP,
+  PROP_MODEL_TYPE,
   N_PROPERTIES
 };
 
@@ -299,6 +300,7 @@ static void                 thunar_standard_view_cell_layout_data_func          
                                                                                     GtkTreeModel             *model,
                                                                                     GtkTreeIter              *iter,
                                                                                     gpointer                  data);
+static void                 thunar_standard_view_set_model                  (ThunarStandardView       *standard_view);
 
 struct _ThunarStandardViewPrivate
 {
@@ -393,6 +395,8 @@ struct _ThunarStandardViewPrivate
    * using @gtk_style_context_add/remove_provider.
    * Thus we need to maintain the reference. */
   GtkCssProvider         *css_provider;
+
+  GType                   model_type;
 };
 
 static XfceGtkActionEntry thunar_standard_view_action_entries[] =
@@ -565,6 +569,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   gtkwidget_class->grab_focus = thunar_standard_view_grab_focus;
   gtkwidget_class->draw = thunar_standard_view_draw;
 
+  klass->set_model = thunar_standard_view_set_model;
   klass->cell_layout_data_func = thunar_standard_view_cell_layout_data_func;
 
   xfce_gtk_translate_action_entries (thunar_standard_view_action_entries, G_N_ELEMENTS (thunar_standard_view_action_entries));
@@ -704,6 +709,19 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                          GTK_SORT_ASCENDING,
                          EXO_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY);
 
+  /**
+   * ThunarStandardView:model-type:
+   *
+   * Defines the GType of the model to be used.
+   * To be set by the different views for different models.
+   **/
+  standard_view_props[PROP_MODEL_TYPE] =
+      g_param_spec_gtype ("model-type",
+                          "ModelType",
+                          NULL,
+                          G_TYPE_NONE,
+                          EXO_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+
   /* override ThunarComponent's properties */
   g_iface = g_type_default_interface_peek (THUNAR_TYPE_COMPONENT);
   standard_view_props[PROP_SELECTED_FILES] =
@@ -829,18 +847,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   g_signal_connect_swapped (G_OBJECT (standard_view->priv->history), "change-directory", G_CALLBACK (thunar_navigator_change_directory), standard_view);
 
   /* setup the list model */
-  standard_view->model = thunar_tree_view_model_new ();
-  standard_view->priv->row_deleted_id = g_signal_connect_after (G_OBJECT (standard_view->model), "row-deleted", G_CALLBACK (thunar_standard_view_select_after_row_deleted), standard_view);
-  standard_view->priv->row_changed_id = g_signal_connect (G_OBJECT (standard_view->model), "row-changed", G_CALLBACK (thunar_standard_view_row_changed), standard_view);
-  g_signal_connect (G_OBJECT (standard_view->model), "rows-reordered", G_CALLBACK (thunar_standard_view_rows_reordered), standard_view);
-  g_signal_connect (G_OBJECT (standard_view->model), "error", G_CALLBACK (thunar_standard_view_error), standard_view);
-  g_signal_connect (G_OBJECT (standard_view->model), "search-done", G_CALLBACK (thunar_standard_view_search_done), standard_view);
-  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-case-sensitive", G_OBJECT (standard_view->model), "case-sensitive", G_BINDING_SYNC_CREATE);
-  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-style", G_OBJECT (standard_view->model), "date-style", G_BINDING_SYNC_CREATE);
-  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-custom-style", G_OBJECT (standard_view->model), "date-custom-style", G_BINDING_SYNC_CREATE);
-  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-folders-first", G_OBJECT (standard_view->model), "folders-first", G_BINDING_SYNC_CREATE);
-  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-file-size-binary", G_OBJECT (standard_view->model), "file-size-binary", G_BINDING_SYNC_CREATE);
-  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-folder-item-count", G_OBJECT (standard_view->model), "folder-item-count", G_BINDING_SYNC_CREATE);
+  standard_view->model = NULL;
 
   standard_view->priv->thumbnail_request = 0;
 
@@ -870,16 +877,6 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* TODO: prelit underline
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (standard_view->name_renderer), "follow-prelit", G_BINDING_SYNC_CREATE);*/
 
-  /* be sure to update the selection whenever the folder changes */
-  g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::folder", G_CALLBACK (thunar_standard_view_selection_changed), standard_view);
-
-  /* be sure to update the statusbar text whenever the number of
-   * files in our model changes.
-   */
-  g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::num-files", G_CALLBACK (thunar_standard_view_update_statusbar_text), standard_view);
-
-  /* be sure to update the statusbar text whenever the file-size-binary property changes */
-  g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::file-size-binary", G_CALLBACK (thunar_standard_view_update_statusbar_text), standard_view);
 
   /* connect to size allocation signals for generating thumbnail requests */
   g_signal_connect_after (G_OBJECT (standard_view), "size-allocate",
@@ -1186,6 +1183,10 @@ thunar_standard_view_get_property (GObject    *object,
       g_value_set_enum (value, THUNAR_STANDARD_VIEW (object)->priv->sort_order);
       break;
 
+    case PROP_MODEL_TYPE:
+      g_value_set_gtype(value, THUNAR_STANDARD_VIEW (object)->priv->model_type);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -1253,6 +1254,11 @@ thunar_standard_view_set_property (GObject      *object,
       thunar_standard_view_disconnect_accelerators (standard_view);
       standard_view->accel_group = g_value_dup_object (value);
       thunar_standard_view_connect_accelerators (standard_view);
+      break;
+
+    case PROP_MODEL_TYPE:
+      standard_view->priv->model_type = g_value_get_gtype(value);
+      THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->set_model (standard_view);
       break;
 
     default:
@@ -4730,4 +4736,42 @@ thunar_standard_view_cell_layout_data_func (GtkCellLayout   *layout,
     g_warn_if_reached ();
 
   g_object_unref (file);
+}
+
+
+
+void
+thunar_standard_view_set_model (ThunarStandardView *standard_view)
+{
+  if (standard_view->priv->model_type == G_TYPE_NONE)
+    return;
+
+  if (standard_view->model != NULL)
+    {
+      g_signal_handlers_disconnect_matched (G_OBJECT (standard_view->model), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, standard_view);
+      g_object_unref (G_OBJECT (standard_view->model));
+      standard_view->model = NULL;
+    }
+
+  standard_view->model = g_object_new (standard_view->priv->model_type, NULL);
+  standard_view->priv->row_deleted_id = g_signal_connect_after (G_OBJECT (standard_view->model), "row-deleted", G_CALLBACK (thunar_standard_view_select_after_row_deleted), standard_view);
+  standard_view->priv->row_changed_id = g_signal_connect (G_OBJECT (standard_view->model), "row-changed", G_CALLBACK (thunar_standard_view_row_changed), standard_view);
+  g_signal_connect (G_OBJECT (standard_view->model), "rows-reordered", G_CALLBACK (thunar_standard_view_rows_reordered), standard_view);
+  g_signal_connect (G_OBJECT (standard_view->model), "error", G_CALLBACK (thunar_standard_view_error), standard_view);
+  g_signal_connect (G_OBJECT (standard_view->model), "search-done", G_CALLBACK (thunar_standard_view_search_done), standard_view);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-case-sensitive", G_OBJECT (standard_view->model), "case-sensitive", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-style", G_OBJECT (standard_view->model), "date-style", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-custom-style", G_OBJECT (standard_view->model), "date-custom-style", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-folders-first", G_OBJECT (standard_view->model), "folders-first", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-file-size-binary", G_OBJECT (standard_view->model), "file-size-binary", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-folder-item-count", G_OBJECT (standard_view->model), "folder-item-count", G_BINDING_SYNC_CREATE);
+
+  /* be sure to update the selection whenever the folder changes */
+  g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::folder", G_CALLBACK (thunar_standard_view_selection_changed), standard_view);
+
+  /* be sure to update the statusbar text whenever the number of files in our model changes. */
+  g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::num-files", G_CALLBACK (thunar_standard_view_update_statusbar_text), standard_view);
+
+  /* be sure to update the statusbar text whenever the file-size-binary property changes */
+  g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::file-size-binary", G_CALLBACK (thunar_standard_view_update_statusbar_text), standard_view);
 }
