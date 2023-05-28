@@ -24,6 +24,7 @@
 #include <thunar/thunar-history.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-list-model.h>
+#include <thunar/thunar-tree-view-model.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-view.h>
 
@@ -145,6 +146,8 @@ struct _ThunarStandardViewClass
 
   void        (*queue_redraw)           (ThunarStandardView *standard_view);
 
+  void        (*set_model)              (ThunarStandardView *standard_view);
+
   /* The name of the property in ThunarPreferences, that determines
    * the last (and default) zoom-level for the view classes (i.e. in
    * case of ThunarIconView, this is "last-icon-view-zoom-level").
@@ -158,7 +161,7 @@ struct _ThunarStandardView
 
   ThunarPreferences         *preferences;
 
-  ThunarListModel           *model;
+  ThunarStandardViewModel   *model;
 
   ThunarIconFactory         *icon_factory;
   GtkCellRenderer           *icon_renderer;
