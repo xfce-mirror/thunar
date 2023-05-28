@@ -186,6 +186,8 @@ thunar_SOURCES =							\
 	thunar-size-label.h						\
 	thunar-standard-view.c						\
 	thunar-standard-view.h						\
+	thunar-standard-view-model.c						\
+	thunar-standard-view-model.h						\
 	thunar-statusbar.c						\
 	thunar-statusbar.h						\
 	thunar-toolbar-editor.c						\
@@ -202,6 +204,8 @@ thunar_SOURCES =							\
 	thunar-tree-pane.h						\
 	thunar-tree-view.c						\
 	thunar-tree-view.h						\
+	thunar-tree-view-model.c					\
+	thunar-tree-view-model.h					\
 	thunar-user.c							\
 	thunar-user.h							\
 	thunar-util.c							\
