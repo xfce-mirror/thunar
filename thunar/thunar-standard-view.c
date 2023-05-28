@@ -362,8 +362,7 @@ struct _ThunarStandardViewPrivate
   guint                   restore_selection_idle_id;
 
   /* support for generating thumbnails */
-  ThunarThumbnailer      *thumbnailer;
-  guint                   thumbnail_request;
+  /* Thumbnailer and thumbnail_request made public : Used in details view */
   guint                   thumbnail_source_id;
   gboolean                thumbnailing_scheduled;
 
@@ -830,8 +829,8 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->preferences = thunar_preferences_get ();
 
   /* create a thumbnailer */
-  standard_view->priv->thumbnailer = thunar_thumbnailer_get ();
-  g_signal_connect (G_OBJECT (standard_view->priv->thumbnailer), "request-finished", G_CALLBACK (thunar_standard_view_finished_thumbnailing), standard_view);
+  standard_view->thumbnailer = thunar_thumbnailer_get ();
+  g_signal_connect (G_OBJECT (standard_view->thumbnailer), "request-finished", G_CALLBACK (thunar_standard_view_finished_thumbnailing), standard_view);
   standard_view->priv->thumbnailing_scheduled = FALSE;
 
   /* initialize the scrolled window */
@@ -846,16 +845,17 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->history = g_object_new (THUNAR_TYPE_HISTORY, NULL);
   g_signal_connect_swapped (G_OBJECT (standard_view->priv->history), "change-directory", G_CALLBACK (thunar_navigator_change_directory), standard_view);
 
-  /* setup the list model */
+  /* The model will be set by the derived views.
+   * i.e Abstract icon view or Details view */
   standard_view->model = NULL;
 
-  standard_view->priv->thumbnail_request = 0;
+  standard_view->thumbnail_request = 0;
 
   /* setup the icon renderer */
   standard_view->icon_renderer = thunar_icon_renderer_new ();
   g_object_ref_sink (G_OBJECT (standard_view->icon_renderer));
   g_object_bind_property (G_OBJECT (standard_view), "zoom-level", G_OBJECT (standard_view->icon_renderer), "size", G_BINDING_SYNC_CREATE);
-  g_object_bind_property (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->priv->thumbnailer), "thumbnail-size", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->thumbnailer), "thumbnail-size", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-highlighting-enabled", G_OBJECT (standard_view->icon_renderer), "highlighting-enabled", G_BINDING_SYNC_CREATE);
   g_signal_connect (G_OBJECT (standard_view), "notify::scale-factor", G_CALLBACK (thunar_standard_view_scale_changed), NULL);
 
@@ -1047,8 +1047,8 @@ thunar_standard_view_finalize (GObject *object)
   thunar_standard_view_disconnect_accelerators (standard_view);
 
   /* release the thumbnailer */
-  g_signal_handlers_disconnect_by_func (standard_view->priv->thumbnailer, thunar_standard_view_finished_thumbnailing, standard_view);
-  g_object_unref (standard_view->priv->thumbnailer);
+  g_signal_handlers_disconnect_by_func (standard_view->thumbnailer, thunar_standard_view_finished_thumbnailing, standard_view);
+  g_object_unref (standard_view->thumbnailer);
 
   /* release the scroll_to_file reference (if any) */
   if (G_UNLIKELY (standard_view->priv->scroll_to_file != NULL))
@@ -3582,7 +3582,7 @@ thunar_standard_view_row_changed (ThunarStandardViewModel    *model,
   if (standard_view->priv->active_search == TRUE)
     return;
 
-  if (standard_view->priv->thumbnail_request != 0)
+  if (standard_view->thumbnail_request != 0)
     return;
 
   /* leave if this view is not suitable for generating thumbnails */
@@ -3592,11 +3592,13 @@ thunar_standard_view_row_changed (ThunarStandardViewModel    *model,
 
   /* queue a thumbnail request */
   file = thunar_standard_view_model_get_file (standard_view->model, iter);
+  if (file == NULL)
+    return;
   if (thunar_file_get_thumb_state (file) == THUNAR_FILE_THUMB_STATE_UNKNOWN)
     {
       thunar_standard_view_cancel_thumbnailing (standard_view);
-      thunar_thumbnailer_queue_file (standard_view->priv->thumbnailer, file,
-                                     &standard_view->priv->thumbnail_request, THUNAR_THUMBNAIL_SIZE_DEFAULT);
+      thunar_thumbnailer_queue_file (standard_view->thumbnailer, file,
+                                     &standard_view->thumbnail_request, THUNAR_THUMBNAIL_SIZE_DEFAULT);
     }
   g_object_unref (G_OBJECT (file));
 }
@@ -3852,8 +3854,8 @@ thunar_standard_view_finished_thumbnailing (ThunarThumbnailer  *thumbnailer,
 {
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-  if (standard_view->priv->thumbnail_request == request)
-    standard_view->priv->thumbnail_request = 0;
+  if (standard_view->thumbnail_request == request)
+    standard_view->thumbnail_request = 0;
 }
 
 
@@ -3880,12 +3882,12 @@ thunar_standard_view_cancel_thumbnailing (ThunarStandardView *standard_view)
     g_source_remove (standard_view->priv->thumbnail_source_id);
 
   /* check if we have a pending thumbnail request */
-  if (standard_view->priv->thumbnail_request > 0)
+  if (standard_view->thumbnail_request > 0)
     {
       /* cancel the request */
-      thunar_thumbnailer_dequeue (standard_view->priv->thumbnailer,
-                                  standard_view->priv->thumbnail_request);
-      standard_view->priv->thumbnail_request = 0;
+      thunar_thumbnailer_dequeue (standard_view->thumbnailer,
+                                  standard_view->thumbnail_request);
+      standard_view->thumbnail_request = 0;
     }
 }
 
@@ -3945,17 +3947,54 @@ thunar_standard_view_schedule_thumbnail_idle (ThunarStandardView *standard_view)
 
 
 
+static void
+thunar_standard_view_get_visible_files (GtkWidget     *view,
+                                        GtkTreeModel  *model,
+                                        GtkTreePath   *start,
+                                        GtkTreePath   *end,
+                                        GList        **visible_files)
+{
+  GtkTreeIter  iter;
+  ThunarFile  *file;
+  gboolean     iter_is_valid = gtk_tree_model_get_iter (model, &iter, start);
+  gboolean     has_visible_children = FALSE;
+
+  _thunar_return_if_fail (EXO_IS_ICON_VIEW (view) || GTK_IS_TREE_VIEW (view));
+  _thunar_return_if_fail (GTK_IS_TREE_MODEL (model));
+
+  if (iter_is_valid == FALSE || gtk_tree_path_compare (start, end) > 0)
+    return;
+
+  /* might return NULL here; when row has not been loaded it returns NULL */
+  file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &iter);
+  if (file != NULL)
+    *visible_files = g_list_prepend (*visible_files, file);
+
+  if (GTK_IS_TREE_VIEW (view) && file != NULL)
+    {
+      has_visible_children = gtk_tree_view_row_expanded (GTK_TREE_VIEW (view), start);
+      if (has_visible_children)
+        {
+          gtk_tree_path_down (start);
+          thunar_standard_view_get_visible_files (view, model, start, end, visible_files);
+          gtk_tree_path_up (start);
+        }
+    }
+
+  gtk_tree_path_next (start);
+  thunar_standard_view_get_visible_files (view, model, start, end, visible_files);
+}
+
+
+
 static gboolean
 thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
                                               gboolean            lazy_request)
 {
   GtkTreePath *start_path;
   GtkTreePath *end_path;
-  GtkTreePath *path;
-  GtkTreeIter  iter;
-  ThunarFile  *file;
-  gboolean     valid_iter;
   GList       *visible_files = NULL;
+  GtkWidget   *view = gtk_bin_get_child (GTK_BIN (standard_view));
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (standard_view->icon_factory), FALSE);
@@ -3970,7 +4009,7 @@ thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
     return TRUE;
 
   /* do nothing if we are already loading thumbnails */
-  if (standard_view->priv->thumbnail_request != 0)
+  if (standard_view->thumbnail_request != 0)
     return FALSE;
 
   /* compute visible item range */
@@ -3978,38 +4017,25 @@ thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
                                                                             &start_path,
                                                                             &end_path))
     {
-      /* iterate over the range to collect all files */
-      valid_iter = gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model),
-                                            &iter, start_path);
+      /* Find the lowest common ancestor of start_path and end_path
+       * if they have any (they might be toplevel siblings) */
+      while (!gtk_tree_path_is_ancestor (start_path, end_path) && gtk_tree_path_up (start_path))
+        ;
 
-      while (valid_iter)
-        {
-          /* prepend the file to the visible items list */
-          file = thunar_standard_view_model_get_file (standard_view->model, &iter);
-          visible_files = g_list_prepend (visible_files, file);
+      /* If a common ancestor has been found start looking for the visible
+       * files from the first child of this ancestor */
+      if (gtk_tree_path_is_ancestor (start_path, end_path))
+        gtk_tree_path_down (start_path);
 
-          /* check if we've reached the end of the visible range */
-          path = gtk_tree_model_get_path (GTK_TREE_MODEL (standard_view->model), &iter);
-          if (gtk_tree_path_compare (path, end_path) != 0)
-            {
-              /* try to compute the next visible item */
-              valid_iter =
-                gtk_tree_model_iter_next (GTK_TREE_MODEL (standard_view->model), &iter);
-            }
-          else
-            {
-              /* we have reached the end, terminate the loop */
-              valid_iter = FALSE;
-            }
-
-          /* release the tree path */
-          gtk_tree_path_free (path);
-        }
-
+      /* Recursively looks for files in visible range [start_path, end_path]
+       * starting from the lowest common ancestor;
+       * Recursiveness is required when tree-view is enabled. */
+      thunar_standard_view_get_visible_files (view, GTK_TREE_MODEL (standard_view->model), start_path, end_path, &visible_files);
+      
       /* queue a thumbnail request */
-      thunar_thumbnailer_queue_files (standard_view->priv->thumbnailer,
+      thunar_thumbnailer_queue_files (standard_view->thumbnailer,
                                       lazy_request, visible_files,
-                                      &standard_view->priv->thumbnail_request,
+                                      &standard_view->thumbnail_request,
                                       THUNAR_THUMBNAIL_SIZE_DEFAULT);
 
       /* release the file list */
