@@ -846,7 +846,8 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->history = g_object_new (THUNAR_TYPE_HISTORY, NULL);
   g_signal_connect_swapped (G_OBJECT (standard_view->priv->history), "change-directory", G_CALLBACK (thunar_navigator_change_directory), standard_view);
 
-  /* setup the list model */
+  /* The model will be set by the derived views.
+   * i.e Abstract icon view or Details view */
   standard_view->model = NULL;
 
   standard_view->priv->thumbnail_request = 0;
@@ -944,12 +945,6 @@ thunar_standard_view_constructor (GType                  type,
   /* apply the single-click settings to the view */
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (view), "single-click", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-single-click-timeout", G_OBJECT (view), "single-click-timeout", G_BINDING_SYNC_CREATE);
-
-  /* apply the default sort column and sort order */
-  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), standard_view->priv->sort_column_default, standard_view->priv->sort_order_default);
-
-  /* stay informed about changes to the sort column/order */
-  g_signal_connect (G_OBJECT (standard_view->model), "sort-column-changed", G_CALLBACK (thunar_standard_view_sort_column_changed), standard_view);
 
   /* setup support to navigate using a horizontal mouse wheel and the back and forward buttons */
   g_signal_connect (G_OBJECT (view), "scroll-event", G_CALLBACK (thunar_standard_view_scroll_event), object);
@@ -1258,7 +1253,7 @@ thunar_standard_view_set_property (GObject      *object,
 
     case PROP_MODEL_TYPE:
       standard_view->priv->model_type = g_value_get_gtype(value);
-      THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->set_model (standard_view);
+      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->set_model) (standard_view);
       break;
 
     default:
@@ -3592,7 +3587,7 @@ thunar_standard_view_row_changed (ThunarStandardViewModel    *model,
 
   /* queue a thumbnail request */
   file = thunar_standard_view_model_get_file (standard_view->model, iter);
-  if (thunar_file_get_thumb_state (file) == THUNAR_FILE_THUMB_STATE_UNKNOWN)
+  if (file != NULL && thunar_file_get_thumb_state (file) == THUNAR_FILE_THUMB_STATE_UNKNOWN)
     {
       thunar_standard_view_cancel_thumbnailing (standard_view);
       thunar_thumbnailer_queue_file (standard_view->priv->thumbnailer, file,
@@ -4774,4 +4769,11 @@ thunar_standard_view_set_model (ThunarStandardView *standard_view)
 
   /* be sure to update the statusbar text whenever the file-size-binary property changes */
   g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::file-size-binary", G_CALLBACK (thunar_standard_view_update_statusbar_text), standard_view);
+
+  /* apply the default sort column and sort order */
+  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), standard_view->priv->sort_column_default, standard_view->priv->sort_order_default);
+
+  /* stay informed about changes to the sort column/order */
+  g_signal_connect (G_OBJECT (standard_view->model), "sort-column-changed", G_CALLBACK (thunar_standard_view_sort_column_changed), standard_view);
+
 }
