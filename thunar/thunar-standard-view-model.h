@@ -42,6 +42,10 @@ typedef enum ThunarStandardViewModelSignals
   THUNAR_STANDARD_VIEW_MODEL_LAST_SIGNAL,
 } ThunarStandardViewModelSignals;
 
+typedef gint (*ThunarSortFunc) (const ThunarFile *a,
+                                const ThunarFile *b,
+                                gboolean          case_sensitive);
+
 #define THUNAR_TYPE_STANDARD_VIEW_MODEL            (thunar_standard_view_model_get_type ())
 #define THUNAR_STANDARD_VIEW_MODEL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_STANDARD_VIEW_MODEL, ThunarStandardViewModel))
 #define THUNAR_IS_STANDARD_VIEW_MODEL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_STANDARD_VIEW_MODEL))
@@ -58,36 +62,29 @@ struct _ThunarStandardViewModelIface
   /* virtual methods */
   ThunarFolder    *(*get_folder)             (ThunarStandardViewModel  *model);
   void             (*set_folder)             (ThunarStandardViewModel  *model,
-                                                                         ThunarFolder             *folder,
-                                                                         gchar                    *search_query);
-  
+                                              ThunarFolder             *folder,
+                                              gchar                    *search_query);
   void             (*set_folders_first)      (ThunarStandardViewModel  *model,
-                                                                         gboolean                  folders_first);
-  
+                                              gboolean                  folders_first);
   gboolean         (*get_show_hidden)        (ThunarStandardViewModel  *model);
   void             (*set_show_hidden)        (ThunarStandardViewModel  *model,
-                                                                         gboolean                  show_hidden);
-  
+                                              gboolean                  show_hidden);
   gboolean         (*get_file_size_binary)   (ThunarStandardViewModel  *model);
   void             (*set_file_size_binary)   (ThunarStandardViewModel  *model,
-                                                                         gboolean                  file_size_binary);
-  
+                                              gboolean                  file_size_binary);
   ThunarFile      *(*get_file)               (ThunarStandardViewModel  *model,
-                                                                         GtkTreeIter              *iter);
-  
-  
+                                              GtkTreeIter              *iter);
   GList           *(*get_paths_for_files)    (ThunarStandardViewModel  *model,
-                                                                         GList                    *files);
+                                              GList                    *files);
   GList           *(*get_paths_for_pattern)  (ThunarStandardViewModel  *model,
-                                                                         const gchar              *pattern,
-                                                                         gboolean                  case_sensitive,
-                                                                         gboolean                  match_diacritics);
-  
+                                              const gchar              *pattern,
+                                              gboolean                  case_sensitive,
+                                              gboolean                  match_diacritics);
   gchar           *(*get_statusbar_text)     (ThunarStandardViewModel  *model,
-                                                                         GList                    *selected_items);
+                                              GList                    *selected_items);
   ThunarJob       *(*get_job)                (ThunarStandardViewModel  *model);
   void             (*set_job)                (ThunarStandardViewModel  *model,
-                                                                         ThunarJob                *job);
+                                              ThunarJob                *job);
 };
 
 GType            thunar_standard_view_model_get_type               (void) G_GNUC_CONST;
