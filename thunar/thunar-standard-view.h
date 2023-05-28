@@ -27,6 +27,7 @@
 #include <thunar/thunar-tree-view-model.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-view.h>
+#include <thunar/thunar-thumbnailer.h>
 
 G_BEGIN_DECLS;
 
@@ -166,6 +167,10 @@ struct _ThunarStandardView
   ThunarIconFactory         *icon_factory;
   GtkCellRenderer           *icon_renderer;
   GtkCellRenderer           *name_renderer;
+
+  /* Thumbnailer support : required in DetailsView (row_expanded) */
+  ThunarThumbnailer         *thumbnailer;
+  guint                      thumbnail_request;
 
   GBinding                  *loading_binding;
   gboolean                   loading;
