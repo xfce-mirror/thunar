@@ -171,6 +171,18 @@ static void thunar_standard_view_model_class_init (gpointer klass)
                              EXO_PARAM_READWRITE));
 
       /**
+       * ThunarStandardViewModel:loading:
+       *
+       * Tells if the model is yet loading a folder
+       **/
+      g_object_interface_install_property (klass,
+          g_param_spec_boolean ("loading",
+                                "loading",
+                                "loading",
+                                FALSE,
+                                EXO_PARAM_READABLE));
+
+      /**
        * ThunarStandardViewModel::error:
        * @store : a #ThunarStandardViewModel.
        * @error : a #GError that describes the problem.

@@ -27,6 +27,7 @@
 #include <thunar/thunar-tree-view-model.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-view.h>
+#include <thunar/thunar-thumbnailer.h>
 
 G_BEGIN_DECLS;
 

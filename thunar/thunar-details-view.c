@@ -39,6 +39,7 @@ enum
 {
   PROP_0,
   PROP_FIXED_COLUMNS,
+  PROP_EXPANDABLE_FOLDERS,
 };
 
 
@@ -93,6 +94,14 @@ static void         thunar_details_view_row_activated           (GtkTreeView    
                                                                  GtkTreePath            *path,
                                                                  GtkTreeViewColumn      *column,
                                                                  ThunarDetailsView      *details_view);
+static void         thunar_details_view_row_expanded            (GtkTreeView            *tree_view,
+                                                                 GtkTreeIter            *iter,
+                                                                 GtkTreePath            *path,
+                                                                 ThunarDetailsView      *view);
+static void         thunar_details_view_row_collapsed           (GtkTreeView            *tree_view,
+                                                                 GtkTreeIter            *iter,
+                                                                 GtkTreePath            *path,
+                                                                 ThunarDetailsView      *view);
 static gboolean     thunar_details_view_select_cursor_row       (GtkTreeView            *tree_view,
                                                                  gboolean                editing,
                                                                  ThunarDetailsView      *details_view);
@@ -106,6 +115,8 @@ static void         thunar_details_view_zoom_level_changed      (ThunarDetailsVi
 static gboolean     thunar_details_view_get_fixed_columns       (ThunarDetailsView      *details_view);
 static void         thunar_details_view_set_fixed_columns       (ThunarDetailsView      *details_view,
                                                                  gboolean                fixed_columns);
+static void         thunar_details_view_set_expandable_folders  (ThunarDetailsView      *details_view,
+                                                                 gboolean                expandable_folders);
 static void         thunar_details_view_connect_accelerators    (ThunarStandardView     *standard_view,
                                                                  GtkAccelGroup          *accel_group);
 static void         thunar_details_view_disconnect_accelerators (ThunarStandardView     *standard_view,
@@ -115,6 +126,10 @@ static void         thunar_details_view_append_menu_items       (ThunarStandardV
                                                                  GtkAccelGroup          *accel_group);
 static void         thunar_details_view_highlight_option_changed(ThunarDetailsView      *details_view);
 static void         thunar_details_view_queue_redraw            (ThunarStandardView     *standard_view);
+static gboolean     thunar_details_view_toggle_expandable_folders(ThunarDetailsView     *details_view);
+static void         thunar_details_view_finished_thumbnailing   (ThunarThumbnailer      *thumbnailer,
+                                                                 guint                   request,
+                                                                 ThunarDetailsView      *view);
 
 
 
@@ -147,13 +162,19 @@ struct _ThunarDetailsView
   GtkCellRenderer   *renderers[THUNAR_N_VISIBLE_COLUMNS];
 
   ExoTreeView       *tree_view;
+
+  gboolean           expandable_folders;
+
+  ThunarThumbnailer *thumbnailer;
+  guint              thumbnail_request;
 };
 
 
 
 static XfceGtkActionEntry thunar_details_view_action_entries[] =
 {
-    { THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS,  "<Actions>/ThunarStandardView/configure-columns", "", XFCE_GTK_MENU_ITEM , N_ ("Configure _Columns..."), N_("Configure the columns in the detailed list view"), NULL, G_CALLBACK (thunar_show_column_editor), },
+    { THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS,           "<Actions>/ThunarStandardView/configure-columns",         "", XFCE_GTK_MENU_ITEM ,       N_ ("Configure _Columns..."),      N_ ("Configure the columns in the detailed list view"), NULL, G_CALLBACK (thunar_show_column_editor),                     },
+    { THUNAR_DETAILS_VIEW_ACTION_TOGGLE_EXPANDABLE_FOLDERS,   "<Actions>/ThunarDetailsView/toggle-expandable-folders",  "", XFCE_GTK_CHECK_MENU_ITEM,  N_ ("Enable E_xpandable Folders"), N_ ("Allow tree like expansion of folders"),            NULL, G_CALLBACK (thunar_details_view_toggle_expandable_folders), },
 };
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_details_view_action_entries,G_N_ELEMENTS(thunar_details_view_action_entries),id)
@@ -210,6 +231,19 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
                                                          "fixed-columns",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarDetailsView:tree-view:
+   *
+   * %TRUE to enable tree-view.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_EXPANDABLE_FOLDERS,
+                                   g_param_spec_boolean ("expandable-folders",
+                                                         "expandable-folders",
+                                                         "expandable-folders",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 }
 
 
@@ -240,6 +274,12 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                     G_CALLBACK (thunar_details_view_row_activated), details_view);
   g_signal_connect (G_OBJECT (details_view->tree_view), "select-cursor-row",
                     G_CALLBACK (thunar_details_view_select_cursor_row), details_view);
+  g_signal_connect (G_OBJECT (details_view->tree_view), "row-expanded",
+                    G_CALLBACK (thunar_details_view_row_expanded), details_view);
+  g_signal_connect (G_OBJECT (details_view->tree_view), "row-collapsed",
+                    G_CALLBACK (thunar_details_view_row_collapsed), details_view);
+  g_signal_connect (G_OBJECT (details_view->tree_view), "select-cursor-row",
+                    G_CALLBACK (thunar_details_view_select_cursor_row), details_view);
   gtk_container_add (GTK_CONTAINER (details_view), GTK_WIDGET (details_view->tree_view));
   gtk_widget_show (GTK_WIDGET (details_view->tree_view));
 
@@ -249,10 +289,13 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   /* enable rubberbanding (if supported) */
   gtk_tree_view_set_rubber_banding (GTK_TREE_VIEW (details_view->tree_view), TRUE);
 
-  gtk_tree_view_set_show_expanders (GTK_TREE_VIEW (details_view->tree_view), TRUE);
-  gtk_tree_view_set_enable_tree_lines (GTK_TREE_VIEW (details_view->tree_view), TRUE);
-
+  /* tell standard view to use tree-model */
   g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)), "model-type", THUNAR_TYPE_TREE_VIEW_MODEL, NULL);
+
+  /* Bind tree-view property between view and preferences object */
+  g_object_bind_property (THUNAR_STANDARD_VIEW (details_view)->preferences, "misc-enable-expandable-folders",
+                          G_OBJECT (details_view), "expandable-folders",
+                          G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
 
   /* connect to the default column model */
   details_view->column_model = thunar_column_model_get_default ();
@@ -364,6 +407,14 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                             G_CALLBACK (thunar_details_view_highlight_option_changed), details_view);
   thunar_details_view_highlight_option_changed (details_view);
 
+  details_view->thumbnailer = thunar_thumbnailer_get ();
+  details_view->thumbnail_request = 0;
+
+  /* queue a redraw when thumbnail loading is finished */
+  g_signal_connect (details_view->thumbnailer, "request-finished",
+                    G_CALLBACK (thunar_details_view_finished_thumbnailing),
+                    details_view);
+
   /* release the shared text renderers */
   g_object_unref (G_OBJECT (right_aligned_renderer));
   g_object_unref (G_OBJECT (left_aligned_renderer));
@@ -383,6 +434,10 @@ thunar_details_view_get_property (GObject    *object,
     {
     case PROP_FIXED_COLUMNS:
       g_value_set_boolean (value, thunar_details_view_get_fixed_columns (details_view));
+      break;
+
+    case PROP_EXPANDABLE_FOLDERS:
+      g_value_set_boolean (value,  details_view->expandable_folders);
       break;
 
     default:
@@ -405,6 +460,10 @@ thunar_details_view_set_property (GObject      *object,
     {
     case PROP_FIXED_COLUMNS:
       thunar_details_view_set_fixed_columns (details_view, g_value_get_boolean (value));
+      break;
+
+    case PROP_EXPANDABLE_FOLDERS:
+      thunar_details_view_set_expandable_folders (details_view, g_value_get_boolean (value));
       break;
 
     default:
@@ -434,6 +493,9 @@ thunar_details_view_finalize (GObject *object)
 
   g_signal_handlers_disconnect_by_func (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences),
                                         thunar_details_view_highlight_option_changed, details_view);
+
+  g_signal_handlers_disconnect_by_func (G_OBJECT (details_view->thumbnailer),
+                                        thunar_details_view_finished_thumbnailing, details_view);
 
   (*G_OBJECT_CLASS (thunar_details_view_parent_class)->finalize) (object);
 }
@@ -717,6 +779,10 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
   GtkTreeViewColumn *column;
   GtkTreeViewColumn *name_column;
   GtkWidget         *window;
+  GtkTreeModel      *model = gtk_tree_view_get_model (tree_view);
+  GtkTreeIter        iter;
+  ThunarFile        *file = NULL;
+  gboolean           row_selected;
 
   /* check if the event is for the bin window */
   if (G_UNLIKELY (event->window != gtk_tree_view_get_bin_window (tree_view)))
@@ -766,12 +832,21 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
               /* the clicked row does not have the focus and is not
                * selected, so make it the new selection (start) */
               gtk_tree_selection_unselect_all (selection);
-              gtk_tree_selection_select_path (selection, path);
+              if (gtk_tree_model_get_iter (model, &iter, path))
+                {
+                  file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &iter);
+                  if (file != NULL)
+                    {
+                       row_selected = TRUE;
+                       gtk_tree_selection_select_path (selection, path);
+                       g_object_unref (file);
+                    }
+                }
 
               gtk_tree_path_free (path);
 
-              /* return FALSE to not abort dragging */
-              return FALSE;
+              /* return FALSE to not abort dragging; when row was selected */
+              return !row_selected;
             }
           gtk_tree_path_free (path);
         }
@@ -802,7 +877,15 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
               if (!gtk_tree_selection_path_is_selected (selection, path))
                 {
                   gtk_tree_selection_unselect_all (selection);
-                  gtk_tree_selection_select_path (selection, path);
+                  if (gtk_tree_model_get_iter (model, &iter, path))
+                    {
+                      file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &iter);
+                      if (file != NULL)
+                        {
+                          g_object_unref (file);
+                          gtk_tree_selection_select_path (selection, path);
+                        }
+                    }
                 }
 
               /* queue the menu popup */
@@ -820,10 +903,17 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
         {
           /* select only the path to the item on which the user clicked */
           gtk_tree_selection_unselect_all (selection);
-          gtk_tree_selection_select_path (selection, path);
-
-          /* try to open the path as new window/tab, if possible */
-          _thunar_standard_view_open_on_middle_click (THUNAR_STANDARD_VIEW (details_view), path, event->state);
+          if (gtk_tree_model_get_iter (model, &iter, path))
+            {
+              file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &iter);
+              if (file != NULL)
+                {
+                  g_object_unref (file);
+                  gtk_tree_selection_select_path (selection, path);
+                  /* try to open the path as new window/tab, if possible */
+                  _thunar_standard_view_open_on_middle_click (THUNAR_STANDARD_VIEW (details_view), path, event->state);
+                }
+            }
 
           /* cleanup */
           gtk_tree_path_free (path);
@@ -838,10 +928,148 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
 
 
 static gboolean
+tree_view_set_cursor_if_file_not_null (GtkTreeView  *tree_view,
+                                       GtkTreeModel *model,
+                                       GtkTreePath  *path)
+{
+  ThunarFile  *file;
+  GtkTreeIter  iter;
+
+  /* sets the cursor if file != NULL for the iter;
+   * if cursor set then TRUE is returned; FALSE otherwise */
+
+  _thunar_return_val_if_fail (GTK_IS_TREE_VIEW (tree_view), FALSE);
+  _thunar_return_val_if_fail (GTK_IS_TREE_MODEL (model), FALSE);
+  _thunar_return_val_if_fail (path != NULL, FALSE);
+
+  if (!gtk_tree_model_get_iter (model, &iter, path))
+    return FALSE;
+
+  file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &iter);
+
+  if (file == NULL)
+    return FALSE;
+
+  g_object_unref (file);
+  gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
+  return TRUE;
+}
+
+
+
+static void
+thunar_details_view_key_up_set_cursor (GtkTreeView  *tree_view,
+                                       GtkTreeModel *model,
+                                       GtkTreePath  *cursor)
+{
+  GtkTreeIter  iter;
+  gint        *indices;
+  gint         depth;
+
+  _thunar_return_if_fail (GTK_IS_TREE_VIEW (tree_view));
+  _thunar_return_if_fail (GTK_IS_TREE_MODEL (model));
+  _thunar_return_if_fail (cursor != NULL);
+
+  if (!gtk_tree_path_prev (cursor))
+    {
+      /* if we are at the first most toplevel node we have nothing do */
+      if (gtk_tree_path_get_depth (cursor) <= 1)
+        return;
+
+      /* it might be the first child of an expanded node;
+       * in this case we want to point to the parent */
+      gtk_tree_path_up (cursor);
+
+      /* the parent path we got now should be perfectly fine;
+       * but just in case setting the cursor fails
+       * we go and set the prev node of the parent */
+      if (G_UNLIKELY (!tree_view_set_cursor_if_file_not_null (tree_view, model, cursor)))
+        thunar_details_view_key_up_set_cursor(tree_view, model, cursor);
+
+      return;
+    }
+
+  /* set cursor if no child visible */
+  if (!gtk_tree_view_row_expanded (tree_view, cursor))
+    {
+      /* If we are at a row that is loading set cursor will fail;
+       * try the previous node */
+      if (G_UNLIKELY (!tree_view_set_cursor_if_file_not_null (tree_view, model, cursor)))
+        thunar_details_view_key_up_set_cursor (tree_view, model, cursor);
+      return;
+    }
+
+  /* get the iter for the cursor */
+  if (G_UNLIKELY (!gtk_tree_model_get_iter (model, &iter, cursor)))
+    return;
+
+  /* set cursor to the last visible child;
+   * Works recursively to point to the truly last child */
+  gtk_tree_path_down (cursor);
+  indices = gtk_tree_path_get_indices_with_depth (cursor, &depth);
+
+  /* point to the last child */
+  if (depth > 0)
+    indices[depth - 1] = gtk_tree_model_iter_n_children (model, &iter);
+
+  /* If we are at a row that is loading set cursor will fail;
+   * try the previous node */
+  if (G_UNLIKELY (!tree_view_set_cursor_if_file_not_null (tree_view, model, cursor)))
+      thunar_details_view_key_up_set_cursor (tree_view, model, cursor);
+}
+
+
+
+static void
+thunar_details_view_key_down_set_cursor (GtkTreeView  *tree_view,
+                                         GtkTreeModel *model,
+                                         GtkTreePath  *cursor)
+{
+  _thunar_return_if_fail (GTK_IS_TREE_VIEW (tree_view));
+  _thunar_return_if_fail (GTK_IS_TREE_MODEL (model));
+  _thunar_return_if_fail (cursor != NULL);
+
+  if (!gtk_tree_view_row_expanded (tree_view, cursor))
+    {
+      gtk_tree_path_next (cursor);
+
+      if (tree_view_set_cursor_if_file_not_null (tree_view, model, cursor)
+          || gtk_tree_path_get_depth(cursor) <= 1)
+        return;
+
+      if (!gtk_tree_path_up (cursor))
+        return;
+
+      gtk_tree_path_next (cursor);
+
+      /* If we are at a row that is loading set cursor will fail;
+       * try the next node */
+      if (G_UNLIKELY (!tree_view_set_cursor_if_file_not_null (tree_view, model, cursor)))
+        thunar_details_view_key_down_set_cursor (tree_view, model, cursor);
+
+      return;
+    }
+  gtk_tree_path_down (cursor);
+
+  /* If we are at a row that is loading set cursor will fail;
+   * try the next node */
+  if (G_UNLIKELY (!tree_view_set_cursor_if_file_not_null (tree_view, model, cursor)))
+    thunar_details_view_key_down_set_cursor (tree_view, model, cursor);
+}
+
+
+
+static gboolean
 thunar_details_view_key_press_event (GtkTreeView       *tree_view,
                                      GdkEventKey       *event,
                                      ThunarDetailsView *details_view)
 {
+  GtkTreePath      *path;
+  gboolean          stopPropagation = FALSE;
+  GtkTreeModel     *model = gtk_tree_view_get_model (tree_view);
+  GtkTreeIter       iter;
+  ThunarFile       *file = NULL;
+
   details_view->button_pressed = FALSE;
 
   /* popup context menu if "Menu" or "<Shift>F10" is pressed */
@@ -851,7 +1079,83 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
       return TRUE;
     }
 
-  return FALSE;
+  /* don't allow keyboard nav for tree-view if tree-view isn't allowed */
+  if (details_view->expandable_folders == FALSE)
+    return FALSE;
+
+  /* Get path of currently highlighted item */
+  gtk_tree_view_get_cursor(tree_view, &path, NULL);
+
+  if (path == NULL)
+    return stopPropagation;
+
+  switch (event->keyval)
+    {
+    case GDK_KEY_Up:
+    case GDK_KEY_KP_Up:
+      thunar_details_view_key_up_set_cursor (tree_view, model, path);
+      stopPropagation = TRUE;
+      break;
+
+    case GDK_KEY_Down:
+    case GDK_KEY_KP_Down:
+      thunar_details_view_key_down_set_cursor (tree_view, model, path);
+      stopPropagation = TRUE;
+      break;
+
+    case GDK_KEY_Left:
+    case GDK_KEY_KP_Left:
+      /* if branch is expanded then collapse it */
+      if (gtk_tree_view_row_expanded (tree_view, path))
+        {
+          gtk_tree_view_collapse_row (tree_view, path);
+        }
+      else /* if the branch is already collapsed */
+        {
+          if (gtk_tree_path_get_depth (path) > 1 && gtk_tree_path_up (path))
+            {
+              /* if this is not a toplevel item then move to parent */
+              gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
+            }
+        }
+
+      stopPropagation = TRUE;
+      break;
+
+    case GDK_KEY_Right:
+    case GDK_KEY_KP_Right:
+      /* if branch is not expanded then expand it */
+      if (!gtk_tree_view_row_expanded (tree_view, path))
+        {
+          gtk_tree_view_expand_row (tree_view, path, FALSE);
+        }
+      else /* if branch is already expanded then move to first child */
+        {
+          if (gtk_tree_model_get_iter (model, &iter, path))
+            {
+              gtk_tree_model_get (model, &iter,
+                                  THUNAR_COLUMN_FILE, &file, -1);
+              if (file != NULL)
+                gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
+            }
+        }
+      stopPropagation = TRUE;
+      break;
+
+    case GDK_KEY_space:
+    case GDK_KEY_Return:
+    case GDK_KEY_KP_Enter:
+      /* Allow default actions to handle this case */
+      GTK_WIDGET_CLASS (thunar_details_view_parent_class)->key_press_event (GTK_WIDGET (tree_view), event);
+      stopPropagation = TRUE;
+      break;
+    }
+
+  gtk_tree_path_free (path);
+  if (stopPropagation)
+    gtk_widget_grab_focus (GTK_WIDGET (tree_view));
+
+  return stopPropagation;
 }
 
 
@@ -879,6 +1183,69 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
   window = gtk_widget_get_toplevel (GTK_WIDGET (details_view));
   action_mgr = thunar_window_get_action_manager (THUNAR_WINDOW (window));
   thunar_action_manager_activate_selected_files (action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL);
+}
+
+
+
+static void
+thunar_details_view_row_expanded (GtkTreeView       *tree_view,
+                                  GtkTreeIter       *parent,
+                                  GtkTreePath       *path,
+                                  ThunarDetailsView *view)
+{
+  GtkTreeModel *model = gtk_tree_view_get_model (tree_view);
+  GtkTreeIter   child;
+  ThunarFile   *file = NULL;
+  GList        *files = NULL;
+  gboolean      has_next;
+
+  /* do nothing if we are not supposed to show thumbnails at all */
+  if (!thunar_icon_factory_get_show_thumbnail (THUNAR_STANDARD_VIEW (view)->icon_factory,
+                                               thunar_navigator_get_current_directory (THUNAR_NAVIGATOR(view))))
+    return;
+
+  if (thunar_view_get_loading (THUNAR_VIEW (view)))
+    return;
+
+  has_next = gtk_tree_model_iter_children (model, &child, parent);
+
+  /* StandardView only requests thumbnails for direct descendants of
+   * currently active folder in view.
+   * Therefore thumbnail requests for newly visible files from a row
+   * expansion need to be made here separately. */
+
+  while (has_next)
+    {
+      /* can return NULL but shouldn't here since the rows are visible so the
+       * files should have been loaded by now */
+      file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &child);
+      if (file != NULL)
+        files = g_list_prepend (files, file);
+      has_next = gtk_tree_model_iter_next (model, &child);
+    }
+
+  if (G_UNLIKELY (files == NULL))
+    return;
+
+  /* queue a thumbnail request */
+  thunar_thumbnailer_queue_files (view->thumbnailer,
+                                  TRUE, files, /* lazy: TRUE ? */
+                                  &view->thumbnail_request,
+                                  THUNAR_THUMBNAIL_SIZE_DEFAULT);
+
+  g_list_free_full (files, g_object_unref);
+}
+
+
+
+static void
+thunar_details_view_row_collapsed (GtkTreeView       *tree_view,
+                                   GtkTreeIter       *iter,
+                                   GtkTreePath       *path,
+                                   ThunarDetailsView *view)
+{
+  /* schedule a cleanup of the tree model; i.e remove nodes that are not being used (ref == 0) */
+  thunar_tree_view_model_cleanup (THUNAR_TREE_VIEW_MODEL (THUNAR_STANDARD_VIEW (view)->model));
 }
 
 
@@ -1061,6 +1428,7 @@ thunar_details_view_append_menu_items (ThunarStandardView *standard_view,
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS), G_OBJECT (details_view), GTK_MENU_SHELL (menu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_TOGGLE_EXPANDABLE_FOLDERS), G_OBJECT (details_view), details_view->expandable_folders, GTK_MENU_SHELL (menu));
 }
 
 
@@ -1155,6 +1523,34 @@ thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
 
 
 /**
+ * thunar_details_view_set_expandable_folders:
+ * @details_view  : a #ThunarDetailsView.
+ * @expandable_folders : %TRUE to enable expansion of folders.
+ *
+ * Sets @expandable_folders in @details_view.
+ * Accordingly, updates view to show expanders and tree-lines.
+ **/
+static void
+thunar_details_view_set_expandable_folders (ThunarDetailsView *details_view,
+                                            gboolean           expandable_folders)
+{
+  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+
+  details_view->expandable_folders = expandable_folders;
+
+  gtk_tree_view_set_show_expanders (GTK_TREE_VIEW (details_view->tree_view), details_view->expandable_folders);
+  gtk_tree_view_set_enable_tree_lines (GTK_TREE_VIEW (details_view->tree_view), details_view->expandable_folders);
+
+  if (details_view->expandable_folders == FALSE)
+    gtk_tree_view_collapse_all (GTK_TREE_VIEW (details_view->tree_view));
+
+  /* notify listeners */
+  g_object_notify (G_OBJECT (details_view), "expandable-folders");
+}
+
+
+
+/**
  * thunar_details_view_set_date_deleted_column_visible:
  * @details_view  : a #ThunarDetailsView.
  * @visible : %TRUE to show the Date Deleted column.
@@ -1221,4 +1617,38 @@ thunar_details_view_queue_redraw (ThunarStandardView *standard_view)
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
   gtk_widget_queue_draw (GTK_WIDGET (details_view->tree_view));
+}
+
+
+
+/**
+ * thunar_details_view_toggle_expandable_folders:
+ * @details_view  : a #ThunarDetailsView.
+ *
+ * Toggles the expandable folders feature.
+ **/
+static gboolean
+thunar_details_view_toggle_expandable_folders (ThunarDetailsView *details_view)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
+
+  thunar_details_view_set_expandable_folders (details_view, !details_view->expandable_folders);
+
+  return TRUE;
+}
+
+
+
+static void
+thunar_details_view_finished_thumbnailing (ThunarThumbnailer *thumbnailer,
+                                           guint              request,
+                                           ThunarDetailsView *view)
+{
+  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (view));
+
+  if (view->thumbnail_request == request)
+    {
+      view->thumbnail_request = 0;
+      thunar_details_view_queue_redraw (THUNAR_STANDARD_VIEW (view));
+    }
 }
