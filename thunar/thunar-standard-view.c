@@ -846,7 +846,8 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->history = g_object_new (THUNAR_TYPE_HISTORY, NULL);
   g_signal_connect_swapped (G_OBJECT (standard_view->priv->history), "change-directory", G_CALLBACK (thunar_navigator_change_directory), standard_view);
 
-  /* setup the list model */
+  /* The model will be set by the derived views.
+   * i.e Abstract icon view or Details view */
   standard_view->model = NULL;
 
   standard_view->priv->thumbnail_request = 0;
@@ -1184,7 +1185,7 @@ thunar_standard_view_get_property (GObject    *object,
       break;
 
     case PROP_MODEL_TYPE:
-      g_value_set_gtype(value, THUNAR_STANDARD_VIEW (object)->priv->model_type);
+      g_value_set_gtype (value, THUNAR_STANDARD_VIEW (object)->priv->model_type);
       break;
 
     default:
@@ -1257,8 +1258,8 @@ thunar_standard_view_set_property (GObject      *object,
       break;
 
     case PROP_MODEL_TYPE:
-      standard_view->priv->model_type = g_value_get_gtype(value);
-      THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->set_model (standard_view);
+      standard_view->priv->model_type = g_value_get_gtype (value);
+      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->set_model) (standard_view);
       break;
 
     default:
@@ -2071,6 +2072,8 @@ thunar_standard_view_get_visible_range (ThunarView  *view,
         {
           gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, start_path);
           *start_file = thunar_standard_view_model_get_file (standard_view->model, &iter);
+          if (*start_file == NULL)
+            return FALSE;
         }
 
       /* determine the file for the end path */
@@ -2078,6 +2081,8 @@ thunar_standard_view_get_visible_range (ThunarView  *view,
         {
           gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, end_path);
           *end_file = thunar_standard_view_model_get_file (standard_view->model, &iter);
+          if (*end_file == NULL)
+            return FALSE;
         }
 
       /* release the tree paths */
@@ -2235,7 +2240,7 @@ thunar_standard_view_get_drop_file (ThunarStandardView *standard_view,
       file = thunar_standard_view_model_get_file (standard_view->model, &iter);
 
       /* we can only drop to directories and executable files */
-      if (!thunar_file_is_directory (file) && !thunar_file_can_execute (file))
+      if (file != NULL && !thunar_file_is_directory (file) && !thunar_file_can_execute (file))
         {
           /* drop to the folder instead */
           g_object_unref (G_OBJECT (file));
@@ -3542,10 +3547,10 @@ thunar_standard_view_restore_selection_idle (gpointer user_data)
 
 static void
 thunar_standard_view_rows_reordered (ThunarStandardViewModel *model,
-                                     GtkTreePath        *path,
-                                     GtkTreeIter        *iter,
-                                     gpointer            new_order,
-                                     ThunarStandardView *standard_view)
+                                     GtkTreePath             *path,
+                                     GtkTreeIter             *iter,
+                                     gpointer                 new_order,
+                                     ThunarStandardView      *standard_view)
 {
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
@@ -3566,10 +3571,10 @@ thunar_standard_view_rows_reordered (ThunarStandardViewModel *model,
 
 
 static void
-thunar_standard_view_row_changed (ThunarStandardViewModel    *model,
-                                  GtkTreePath        *path,
-                                  GtkTreeIter        *iter,
-                                  ThunarStandardView *standard_view)
+thunar_standard_view_row_changed (ThunarStandardViewModel *model,
+                                  GtkTreePath             *path,
+                                  GtkTreeIter             *iter,
+                                  ThunarStandardView      *standard_view)
 {
   ThunarFile *file;
 
@@ -3592,21 +3597,21 @@ thunar_standard_view_row_changed (ThunarStandardViewModel    *model,
 
   /* queue a thumbnail request */
   file = thunar_standard_view_model_get_file (standard_view->model, iter);
-  if (thunar_file_get_thumb_state (file) == THUNAR_FILE_THUMB_STATE_UNKNOWN)
+  if (file != NULL && thunar_file_get_thumb_state (file) == THUNAR_FILE_THUMB_STATE_UNKNOWN)
     {
       thunar_standard_view_cancel_thumbnailing (standard_view);
       thunar_thumbnailer_queue_file (standard_view->priv->thumbnailer, file,
                                      &standard_view->priv->thumbnail_request, THUNAR_THUMBNAIL_SIZE_DEFAULT);
+      g_object_unref (G_OBJECT (file));
     }
-  g_object_unref (G_OBJECT (file));
 }
 
 
 
 static void
-thunar_standard_view_select_after_row_deleted (ThunarStandardViewModel    *model,
-                                               GtkTreePath        *path,
-                                               ThunarStandardView *standard_view)
+thunar_standard_view_select_after_row_deleted (ThunarStandardViewModel *model,
+                                               GtkTreePath             *path,
+                                               ThunarStandardView      *standard_view)
 {
   _thunar_return_if_fail (path != NULL);
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
@@ -3654,7 +3659,7 @@ thunar_standard_view_error (ThunarStandardViewModel    *model,
 
 static void
 thunar_standard_view_search_done (ThunarStandardViewModel *model,
-                                  ThunarStandardView *standard_view)
+                                  ThunarStandardView      *standard_view)
 {
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
@@ -3986,7 +3991,8 @@ thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
         {
           /* prepend the file to the visible items list */
           file = thunar_standard_view_model_get_file (standard_view->model, &iter);
-          visible_files = g_list_prepend (visible_files, file);
+          if (file != NULL)
+            visible_files = g_list_prepend (visible_files, file);
 
           /* check if we've reached the end of the visible range */
           path = gtk_tree_model_get_path (GTK_TREE_MODEL (standard_view->model), &iter);
@@ -4279,6 +4285,8 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 
       /* ...and replace it with the file */
       lp->data = thunar_standard_view_model_get_file (standard_view->model, &iter);
+      if (lp->data == NULL)
+        selected_thunar_files = g_list_delete_link (selected_thunar_files, lp);
     }
 
   /* and setup the new selected files list */
@@ -4692,6 +4700,9 @@ thunar_standard_view_cell_layout_data_func (GtkCellLayout   *layout,
   GdkRGBA      foreground_rgba;
   GtkWidget   *view = GTK_WIDGET (data);
   GtkWidget   *toplevel;
+
+  if (file == NULL)
+    return;
 
   background = thunar_file_get_metadata_setting (file, "highlight-color-background");
   foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
