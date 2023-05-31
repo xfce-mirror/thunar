@@ -362,6 +362,7 @@ struct _ThunarStandardViewPrivate
   guint                   restore_selection_idle_id;
 
   /* support for generating thumbnails */
+  /* Thumbnailer and thumbnail_request made public : Used in details view */
   guint                   thumbnail_source_id;
   gboolean                thumbnailing_scheduled;
 
@@ -844,7 +845,8 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->history = g_object_new (THUNAR_TYPE_HISTORY, NULL);
   g_signal_connect_swapped (G_OBJECT (standard_view->priv->history), "change-directory", G_CALLBACK (thunar_navigator_change_directory), standard_view);
 
-  /* setup the list model */
+  /* The model will be set by the derived views.
+   * i.e Abstract icon view or Details view */
   standard_view->model = NULL;
 
   standard_view->thumbnail_request = 0;

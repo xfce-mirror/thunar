@@ -251,6 +251,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   GtkCellRenderer  *left_aligned_renderer;
   GtkCellRenderer  *renderer;
   ThunarColumn      column;
+  gboolean          is_tree_view;
 
   /* we need to force the GtkTreeView to recalculate column sizes
    * whenever the zoom-level changes, so we connect a handler here.
@@ -287,10 +288,9 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   /* tell standard view to use tree-model */
   g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)), "model-type", THUNAR_TYPE_TREE_VIEW_MODEL, NULL);
 
-  /* Enable tree view */
-  g_object_get (THUNAR_STANDARD_VIEW (details_view)->preferences, "misc-enable-tree-view", &details_view->is_tree_view, NULL);
-  gtk_tree_view_set_show_expanders (GTK_TREE_VIEW (details_view->tree_view), details_view->is_tree_view);
-  gtk_tree_view_set_enable_tree_lines (GTK_TREE_VIEW (details_view->tree_view), details_view->is_tree_view);
+  /* Set tree view feature according to preference */
+  g_object_get (THUNAR_STANDARD_VIEW (details_view)->preferences, "misc-enable-tree-view", &is_tree_view, NULL);
+  thunar_details_view_set_tree_view (details_view, is_tree_view);
 
   /* connect to the default column model */
   details_view->column_model = thunar_column_model_get_default ();
@@ -902,7 +902,8 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
     }
 
   /* don't allow keyboard nav for tree-view if tree-view isn't allowed */
-  if (!details_view->is_tree_view) return FALSE;
+  if (details_view->is_tree_view == FALSE)
+    return FALSE;
 
   /* Get path of currently highlighted item */
   gtk_tree_view_get_cursor(tree_view, &path, NULL);
@@ -1026,7 +1027,7 @@ thunar_details_view_row_expanded (GtkTreeView       *tree_view,
 
   /* queue a thumbnail request */
   thunar_thumbnailer_queue_files (standard_view->thumbnailer,
-                                  TRUE, files, /* lazy: TRUE ? */
+                                  FALSE, files, /* lazy: FALSE ? */
                                   &standard_view->thumbnail_request,
                                   THUNAR_THUMBNAIL_SIZE_DEFAULT);
 
@@ -1341,7 +1342,8 @@ thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
  * @details_view  : a #ThunarDetailsView.
  * @tree_view : %TRUE to enable tree-view.
  *
- * Sets @tree_view in @details_view.
+ * Sets @is_tree_view in @details_view.
+ * Accordingly, updates view to show expanders and tree-lines.
  **/
 static void
 thunar_details_view_set_tree_view (ThunarDetailsView *details_view,
@@ -1428,6 +1430,12 @@ thunar_details_view_queue_redraw (ThunarStandardView *standard_view)
 
 
 
+/**
+ * thunar_details_view_set_tree_view:
+ * @details_view  : a #ThunarDetailsView.
+ *
+ * Toggles the tree-view feature.
+ **/
 static gboolean
 thunar_details_view_toggle_tree_view (ThunarDetailsView *details_view)
 {

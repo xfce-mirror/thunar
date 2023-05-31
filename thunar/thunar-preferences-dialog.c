@@ -376,7 +376,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /* next row */
   row++;
 
-  button = gtk_check_button_new_with_mnemonic (_("Open new-tabs/windows with tree-view enabled on list-view."));
+  button = gtk_check_button_new_with_mnemonic (_("Always open list-view with tree-view enabled."));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "misc-enable-tree-view",
                           G_OBJECT (button),
