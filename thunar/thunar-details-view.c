@@ -94,6 +94,10 @@ static void         thunar_details_view_row_activated           (GtkTreeView    
                                                                  GtkTreePath            *path,
                                                                  GtkTreeViewColumn      *column,
                                                                  ThunarDetailsView      *details_view);
+static void         thunar_details_view_row_expanded            (GtkTreeView            *tree_view,
+                                                                 GtkTreeIter            *iter,
+                                                                 GtkTreePath            *path,
+                                                                 ThunarDetailsView      *view);
 static void         thunar_details_view_row_collapsed           (GtkTreeView            *tree_view,
                                                                  GtkTreeIter            *iter,
                                                                  GtkTreePath            *path,
@@ -265,6 +269,8 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                     G_CALLBACK (thunar_details_view_row_activated), details_view);
   g_signal_connect (G_OBJECT (details_view->tree_view), "select-cursor-row",
                     G_CALLBACK (thunar_details_view_select_cursor_row), details_view);
+  g_signal_connect (G_OBJECT (details_view->tree_view), "row-expanded",
+                    G_CALLBACK (thunar_details_view_row_expanded), details_view);
   g_signal_connect (G_OBJECT (details_view->tree_view), "row-collapsed",
                     G_CALLBACK (thunar_details_view_row_collapsed), details_view);
   g_signal_connect (G_OBJECT (details_view->tree_view), "select-cursor-row",
@@ -985,6 +991,46 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
   window = gtk_widget_get_toplevel (GTK_WIDGET (details_view));
   action_mgr = thunar_window_get_action_manager (THUNAR_WINDOW (window));
   thunar_action_manager_activate_selected_files (action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL);
+}
+
+
+
+static void
+thunar_details_view_row_expanded (GtkTreeView       *tree_view,
+                                  GtkTreeIter       *parent,
+                                  GtkTreePath       *path,
+                                  ThunarDetailsView *view)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
+  GtkTreeModel       *model = gtk_tree_view_get_model (tree_view);
+  GtkTreeIter         child;
+  ThunarFile         *file = NULL;
+  GList              *files = NULL;
+  gboolean            has_next;
+
+  has_next = gtk_tree_model_iter_children (model, &child, parent);
+  
+  /* StandardView only requests thumbnails for direct descendants of 
+   * currently active folder in view.
+   * Therefore thumbnail requests for newly visible files from a row
+   * expansion need to be made here separately. */
+
+  while (has_next) {
+    /* can return NULL but shouldn't here since the rows are visible so the
+     * files should have been loaded by now */
+    file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &child);
+    if (file != NULL)
+      files = g_list_prepend (files, file);
+    has_next = gtk_tree_model_iter_next (model, &child);
+  }
+
+  /* queue a thumbnail request */
+  thunar_thumbnailer_queue_files (standard_view->thumbnailer,
+                                  TRUE, files, /* lazy: TRUE ? */
+                                  &standard_view->thumbnail_request,
+                                  THUNAR_THUMBNAIL_SIZE_DEFAULT);
+
+  g_list_free_full (files, g_object_unref);
 }
 
 
