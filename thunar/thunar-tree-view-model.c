@@ -995,66 +995,93 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
                              GValue       *value)
 {
   ThunarTreeViewModelItem *item;
-  ThunarGroup  *group;
+  ThunarGroup  *group = NULL;
   const gchar  *device_type;
   const gchar  *name;
   const gchar  *real_name;
-  ThunarUser   *user;
+  ThunarUser   *user = NULL;
   ThunarFolder *folder;
   guint32       item_count;
   GFile        *g_file;
-  GFile        *g_file_parent;
+  GFile        *g_file_parent = NULL;
   gchar        *str = NULL;
   GNode        *node;
-  ThunarFile   *file;
+  ThunarFile   *file = NULL;
 
   _thunar_return_if_fail (THUNAR_STANDARD_VIEW_MODEL (model));
   _thunar_return_if_fail (iter->stamp == (THUNAR_TREE_VIEW_MODEL (model))->stamp);
 
-  gtk_tree_model_ref_node (model, iter);
   node = G_NODE (iter->user_data);
   item = node->data;
-  file = g_object_ref (item->file);
-  gtk_tree_model_unref_node (model, iter);
+  if (item != NULL)
+    file = g_object_ref (item->file);
 
   switch (column)
     {
     case THUNAR_COLUMN_DATE_CREATED:
       g_value_init (value, G_TYPE_STRING);
+      if (file == NULL)
+        {
+          g_value_set_static_string (value, _("Unknown"));
+          break;
+        }
       str = thunar_file_get_date_string (file, THUNAR_FILE_DATE_CREATED, THUNAR_TREE_VIEW_MODEL (model)->date_style, THUNAR_TREE_VIEW_MODEL (model)->date_custom_style);
-      g_value_take_string (value, str);
+      g_value_take_string (value, str); /* take str is nullable */
       break;
 
     case THUNAR_COLUMN_DATE_ACCESSED:
       g_value_init (value, G_TYPE_STRING);
+      if (file == NULL)
+        {
+          g_value_set_static_string (value, _("Unknown"));
+          break;
+        }
       str = thunar_file_get_date_string (file, THUNAR_FILE_DATE_ACCESSED, THUNAR_TREE_VIEW_MODEL (model)->date_style, THUNAR_TREE_VIEW_MODEL (model)->date_custom_style);
       g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_DATE_MODIFIED:
       g_value_init (value, G_TYPE_STRING);
+      if (file == NULL)
+        {
+          g_value_set_static_string (value, _("Unknown"));
+          break;
+        }
       str = thunar_file_get_date_string (file, THUNAR_FILE_DATE_MODIFIED, THUNAR_TREE_VIEW_MODEL (model)->date_style, THUNAR_TREE_VIEW_MODEL (model)->date_custom_style);
       g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_DATE_DELETED:
       g_value_init (value, G_TYPE_STRING);
+      if (file == NULL)
+        {
+          g_value_set_static_string (value, _("Unknown"));
+          break;
+        }
       str = thunar_file_get_date_string (file, THUNAR_FILE_DATE_DELETED, THUNAR_TREE_VIEW_MODEL (model)->date_style, THUNAR_TREE_VIEW_MODEL (model)->date_custom_style);
       g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_RECENCY:
       g_value_init (value, G_TYPE_STRING);
+      if (file == NULL)
+        {
+          g_value_set_static_string (value, _("Unknown"));
+          break;
+        }
       str = thunar_file_get_date_string (file, THUNAR_FILE_RECENCY, THUNAR_TREE_VIEW_MODEL (model)->date_style, THUNAR_TREE_VIEW_MODEL (model)->date_custom_style);
       g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_LOCATION:
       g_value_init (value, G_TYPE_STRING);
-      g_file_parent = g_file_get_parent (thunar_file_get_file (file));
+      /* NOTE: return val can be null due to file not having been loaded yet.
+       * The non visible children are lazily loaded. */
+      if (file != NULL)
+        g_file_parent = g_file_get_parent (thunar_file_get_file (file));
       str = NULL;
 
-      /* g_file_parent will be NULL only if a search returned the root
+      /* g_file_parent will be NULL if a search returned the root
        * directory somehow, or "file:///" is in recent:/// somehow.
        * These should be quite rare circumstances. */
       if (G_UNLIKELY (g_file_parent == NULL))
@@ -1099,7 +1126,8 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
 
     case THUNAR_COLUMN_GROUP:
       g_value_init (value, G_TYPE_STRING);
-      group = thunar_file_get_group (file);
+      if (file != NULL)
+        group = thunar_file_get_group (file);
       if (G_LIKELY (group != NULL))
         {
           g_value_set_string (value, thunar_group_get_name (group));
@@ -1113,17 +1141,28 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
 
     case THUNAR_COLUMN_MIME_TYPE:
       g_value_init (value, G_TYPE_STRING);
+      if (file == NULL)
+        {
+          g_value_set_static_string (value, _("Unknown"));
+          break;
+        }
       g_value_set_static_string (value, thunar_file_get_content_type (file));
       break;
 
     case THUNAR_COLUMN_NAME:
       g_value_init (value, G_TYPE_STRING);
+      if (file == NULL)
+        {
+          g_value_set_static_string (value, _("Unknown"));
+          break;
+        }
       g_value_set_static_string (value, thunar_file_get_display_name (file));
       break;
 
     case THUNAR_COLUMN_OWNER:
       g_value_init (value, G_TYPE_STRING);
-      user = thunar_file_get_user (file);
+      if (file != NULL)
+        user = thunar_file_get_user (file);
       if (G_LIKELY (user != NULL))
         {
           /* determine sane display name for the owner */
@@ -1149,12 +1188,21 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
 
     case THUNAR_COLUMN_PERMISSIONS:
       g_value_init (value, G_TYPE_STRING);
+      if (file == NULL)
+        {
+          g_value_set_static_string (value, _("Unknown"));
+          break;
+        }
       g_value_take_string (value, thunar_file_get_mode_string (file));
       break;
 
     case THUNAR_COLUMN_SIZE:
       g_value_init (value, G_TYPE_STRING);
-
+      if (file == NULL)
+        {
+          g_value_set_static_string (value, _("Unknown"));
+          break;
+        }
       if (thunar_file_is_mountable (file))
         {
           g_file = thunar_file_get_target_location (file);
@@ -1200,11 +1248,21 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
 
     case THUNAR_COLUMN_SIZE_IN_BYTES:
       g_value_init (value, G_TYPE_STRING);
+      if (file == NULL)
+        {
+          g_value_set_static_string (value, _("Unknown"));
+          break;
+        }
       g_value_take_string (value, thunar_file_get_size_in_bytes_string (file));
       break;
 
     case THUNAR_COLUMN_TYPE:
       g_value_init (value, G_TYPE_STRING);
+      if (file == NULL)
+        {
+          g_value_set_static_string (value, _("Unknown"));
+          break;
+        }
       device_type = thunar_file_get_device_type (file);
       if (device_type != NULL)
         {
@@ -1221,6 +1279,11 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
 
     case THUNAR_COLUMN_FILE_NAME:
       g_value_init (value, G_TYPE_STRING);
+      if (file == NULL)
+        {
+          g_value_set_static_string (value, _("Unknown"));
+          break;
+        }
       g_value_set_static_string (value, thunar_file_get_display_name (file));
       break;
 
@@ -3749,11 +3812,9 @@ thunar_tree_view_model_get_file (ThunarStandardViewModel *model,
   _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (store), NULL);
   _thunar_return_val_if_fail (iter->stamp == store->stamp, NULL);
 
-  gtk_tree_model_ref_node (GTK_TREE_MODEL (store), iter);
   node = iter->user_data;
   if (node != NULL && node->data != NULL)
     file = g_object_ref (THUNAR_TREE_VIEW_MODEL_ITEM (node->data)->file);
-  gtk_tree_model_unref_node (GTK_TREE_MODEL (store), iter);
   return file;
 }
 
