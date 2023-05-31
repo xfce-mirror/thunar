@@ -1355,6 +1355,9 @@ thunar_details_view_set_tree_view (ThunarDetailsView *details_view,
 
   gtk_tree_view_set_show_expanders (GTK_TREE_VIEW (details_view->tree_view), details_view->is_tree_view);
   gtk_tree_view_set_enable_tree_lines (GTK_TREE_VIEW (details_view->tree_view), details_view->is_tree_view);
+
+  if (details_view->is_tree_view == FALSE)
+    gtk_tree_view_collapse_all (GTK_TREE_VIEW (details_view->tree_view));
 }
 
 
