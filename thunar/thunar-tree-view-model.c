@@ -1429,7 +1429,7 @@ thunar_tree_view_model_ref_node (GtkTreeModel *model,
 {
   ThunarTreeViewModelItem *item;
   ThunarTreeViewModel     *store = THUNAR_TREE_VIEW_MODEL (model);
-  GNode               *node;
+  GNode                   *node;
 
   _thunar_return_if_fail (iter->user_data != NULL);
   _thunar_return_if_fail (iter->stamp == store->stamp);
@@ -1465,7 +1465,7 @@ thunar_tree_view_model_unref_node (GtkTreeModel *model,
 {
   ThunarTreeViewModelItem *item;
   ThunarTreeViewModel     *store = THUNAR_TREE_VIEW_MODEL (model);
-  GNode               *node;
+  GNode                   *node;
 
   _thunar_return_if_fail (iter->user_data != NULL);
   _thunar_return_if_fail (iter->stamp == store->stamp);
@@ -3211,7 +3211,7 @@ thunar_tree_view_model_item_files_added (ThunarTreeViewModelItem *item,
                                          GList                   *files,
                                          ThunarFolder            *folder)
 {
-  ThunarTreeViewModel     *model = THUNAR_TREE_VIEW_MODEL (item->model);
+  ThunarTreeViewModel *model = THUNAR_TREE_VIEW_MODEL (item->model);
   ThunarFile          *file;
   GNode               *node = NULL;
   GList               *lp;
@@ -3257,13 +3257,13 @@ thunar_tree_view_model_item_files_removed (ThunarTreeViewModelItem *item,
                                            ThunarFolder            *folder)
 {
   ThunarTreeViewModel *model = item->model;
-  GtkTreePath     *path;
-  GtkTreeIter      iter;
-  GNode           *child_node;
-  GNode           *node;
-  GList           *lp;
-  GSList          *inv_link;
-  gboolean         has_handler;
+  GtkTreePath         *path;
+  GtkTreeIter          iter;
+  GNode               *child_node;
+  GNode               *node;
+  GList               *lp;
+  GSList              *inv_link;
+  gboolean             has_handler;
 
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (item->folder == folder);
@@ -3329,8 +3329,8 @@ thunar_tree_view_model_item_files_removed (ThunarTreeViewModelItem *item,
 
 static void
 thunar_tree_view_model_item_notify_loading (ThunarTreeViewModelItem *item,
-                                            GParamSpec          *pspec,
-                                            ThunarFolder        *folder)
+                                            GParamSpec              *pspec,
+                                            ThunarFolder            *folder)
 {
   GNode *node;
 
@@ -3357,9 +3357,9 @@ static gboolean
 thunar_tree_view_model_item_load_idle (gpointer user_data)
 {
   ThunarTreeViewModelItem *item = user_data;
-  GList               *files;
+  GList                   *files;
 #ifndef NDEBUG
-  GNode               *node;
+  GNode                   *node;
 #endif
 
   _thunar_return_val_if_fail (item->folder == NULL, FALSE);
@@ -3511,11 +3511,11 @@ thunar_tree_view_model_node_traverse_changed (GNode   *node,
                                               gpointer user_data)
 {
   ThunarTreeViewModel     *model;
-  GtkTreePath         *path;
-  GtkTreeIter          iter;
-  ThunarFile          *file = THUNAR_FILE (user_data);
+  GtkTreePath             *path;
+  GtkTreeIter              iter;
+  ThunarFile              *file = THUNAR_FILE (user_data);
   ThunarTreeViewModelItem *item = THUNAR_TREE_VIEW_MODEL_ITEM (node->data);
-  gboolean             has_handler;
+  gboolean                 has_handler;
 
   /* check if the node's file is the file that changed */
   if (G_UNLIKELY (item != NULL && item->file == file))
@@ -4302,10 +4302,10 @@ thunar_tree_view_model_add_child (ThunarTreeViewModel *model,
                                   ThunarFile          *file)
 {
   ThunarTreeViewModelItem *child_item;
-  GNode               *child_node;
-  GtkTreeIter          child_iter;
-  GtkTreePath         *child_path;
-  gboolean             has_handler;
+  GNode                   *child_node;
+  GtkTreeIter              child_iter;
+  GtkTreePath             *child_path;
+  gboolean                 has_handler;
 
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
