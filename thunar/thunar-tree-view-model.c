@@ -695,7 +695,6 @@ thunar_tree_view_model_finalize (GObject *object)
   g_object_unref (G_OBJECT (store->file_monitor));
 
   /* release the files and associated data structures */
-  /* TODO: ? find a better name ? */
   thunar_tree_view_model_release_files (store);
   g_node_destroy (store->root);
 

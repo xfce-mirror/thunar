@@ -94,10 +94,6 @@ static void         thunar_details_view_row_activated           (GtkTreeView    
                                                                  GtkTreePath            *path,
                                                                  GtkTreeViewColumn      *column,
                                                                  ThunarDetailsView      *details_view);
-static void         thunar_details_view_row_expanded            (GtkTreeView            *tree_view,
-                                                                 GtkTreeIter            *iter,
-                                                                 GtkTreePath            *path,
-                                                                 ThunarDetailsView      *view);
 static void         thunar_details_view_row_collapsed           (GtkTreeView            *tree_view,
                                                                  GtkTreeIter            *iter,
                                                                  GtkTreePath            *path,
@@ -115,7 +111,7 @@ static void         thunar_details_view_zoom_level_changed      (ThunarDetailsVi
 static gboolean     thunar_details_view_get_fixed_columns       (ThunarDetailsView      *details_view);
 static void         thunar_details_view_set_fixed_columns       (ThunarDetailsView      *details_view,
                                                                  gboolean                fixed_columns);
-static gboolean     thunar_details_view_get_tree_view           (ThunarDetailsView      *details_view);
+static gboolean     thunar_details_view_is_tree_view_enabled    (ThunarDetailsView      *details_view);
 static void         thunar_details_view_set_tree_view           (ThunarDetailsView      *details_view,
                                                                  gboolean                tree_view);
 static void         thunar_details_view_connect_accelerators    (ThunarStandardView     *standard_view,
@@ -270,8 +266,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                     G_CALLBACK (thunar_details_view_row_activated), details_view);
   g_signal_connect (G_OBJECT (details_view->tree_view), "select-cursor-row",
                     G_CALLBACK (thunar_details_view_select_cursor_row), details_view);
-  g_signal_connect (G_OBJECT (details_view->tree_view), "row-expanded",
-                    G_CALLBACK (thunar_details_view_row_expanded), details_view);
   g_signal_connect (G_OBJECT (details_view->tree_view), "row-collapsed",
                     G_CALLBACK (thunar_details_view_row_collapsed), details_view);
   g_signal_connect (G_OBJECT (details_view->tree_view), "select-cursor-row",
@@ -424,7 +418,7 @@ thunar_details_view_get_property (GObject    *object,
       break;
 
     case PROP_TREE_VIEW:
-      g_value_set_boolean (value, thunar_details_view_get_tree_view (details_view));
+      g_value_set_boolean (value, thunar_details_view_is_tree_view_enabled (details_view));
       break;
 
     default:
@@ -997,46 +991,6 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
 
 
 static void
-thunar_details_view_row_expanded (GtkTreeView       *tree_view,
-                                  GtkTreeIter       *parent,
-                                  GtkTreePath       *path,
-                                  ThunarDetailsView *view)
-{
-  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
-  GtkTreeModel       *model = gtk_tree_view_get_model (tree_view);
-  GtkTreeIter         child;
-  ThunarFile         *file = NULL;
-  GList              *files = NULL;
-  gboolean            has_next;
-
-  has_next = gtk_tree_model_iter_children (model, &child, parent);
-
-  /* StandardView only requests thumbnails for direct descendants of
-   * currently active folder in view.
-   * Therefore thumbnail requests for newly visible files from a row
-   * expansion need to be made here separately. */
-
-  while (has_next) {
-    /* can return NULL but shouldn't here since the rows are visible so the
-     * files should have been loaded by now */
-    file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &child);
-    if (file != NULL)
-      files = g_list_prepend (files, file);
-    has_next = gtk_tree_model_iter_next (model, &child);
-  }
-
-  /* queue a thumbnail request */
-  thunar_thumbnailer_queue_files (standard_view->thumbnailer,
-                                  FALSE, files, /* lazy: FALSE ? */
-                                  &standard_view->thumbnail_request,
-                                  THUNAR_THUMBNAIL_SIZE_DEFAULT);
-
-  g_list_free_full (files, g_object_unref);
-}
-
-
-
-static void
 thunar_details_view_row_collapsed (GtkTreeView       *tree_view,
                                    GtkTreeIter       *iter,
                                    GtkTreePath       *path,
@@ -1249,7 +1203,7 @@ thunar_details_view_get_fixed_columns (ThunarDetailsView *details_view)
 
 
 /**
- * thunar_details_view_get_tree_view:
+ * thunar_details_view_is_tree_view_enabled:
  * @details_view : a #ThunarDetailsView.
  *
  * Returns %TRUE if @details_view has tree-view enabled.
@@ -1257,7 +1211,7 @@ thunar_details_view_get_fixed_columns (ThunarDetailsView *details_view)
  * Return value: %TRUE if @details_view has tree-view enabled.
  **/
 static gboolean
-thunar_details_view_get_tree_view (ThunarDetailsView *details_view)
+thunar_details_view_is_tree_view_enabled (ThunarDetailsView *details_view)
 {
   _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
   return details_view->is_tree_view;

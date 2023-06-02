@@ -3947,17 +3947,54 @@ thunar_standard_view_schedule_thumbnail_idle (ThunarStandardView *standard_view)
 
 
 
+static void
+thunar_standard_view_get_visible_files (GtkWidget     *view,
+                                        GtkTreeModel  *model,
+                                        GtkTreePath   *start,
+                                        GtkTreePath   *end,
+                                        GList        **visible_files)
+{
+  GtkTreeIter  iter;
+  ThunarFile  *file;
+  gboolean     iter_is_valid = gtk_tree_model_get_iter (model, &iter, start);
+  gboolean     has_visible_children = FALSE;
+
+  _thunar_return_if_fail (EXO_IS_ICON_VIEW (view) || GTK_IS_TREE_VIEW (view));
+  _thunar_return_if_fail (GTK_IS_TREE_MODEL (model));
+
+  if (iter_is_valid == FALSE || gtk_tree_path_compare (start, end) > 0)
+    return;
+
+  /* might return NULL here; when row has not been loaded it returns NULL */
+  file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &iter);
+  if (file != NULL)
+    *visible_files = g_list_prepend (*visible_files, file);
+
+  if (GTK_IS_TREE_VIEW (view) && file != NULL)
+    {
+      has_visible_children = gtk_tree_view_row_expanded (GTK_TREE_VIEW (view), start);
+      if (has_visible_children)
+        {
+          gtk_tree_path_down (start);
+          thunar_standard_view_get_visible_files (view, model, start, end, visible_files);
+          gtk_tree_path_up (start);
+        }
+    }
+
+  gtk_tree_path_next (start);
+  thunar_standard_view_get_visible_files (view, model, start, end, visible_files);
+}
+
+
+
 static gboolean
 thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
                                               gboolean            lazy_request)
 {
   GtkTreePath *start_path;
   GtkTreePath *end_path;
-  GtkTreePath *path;
-  GtkTreeIter  iter;
-  ThunarFile  *file;
-  gboolean     valid_iter;
   GList       *visible_files = NULL;
+  GtkWidget   *view = gtk_bin_get_child (GTK_BIN (standard_view));
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (standard_view->icon_factory), FALSE);
@@ -3980,34 +4017,21 @@ thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
                                                                             &start_path,
                                                                             &end_path))
     {
-      /* iterate over the range to collect all files */
-      valid_iter = gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model),
-                                            &iter, start_path);
+      /* Find the lowest common ancestor of start_path and end_path
+       * if they have any (they might be toplevel siblings) */
+      while (!gtk_tree_path_is_ancestor (start_path, end_path) && gtk_tree_path_up (start_path))
+        ;
 
-      while (valid_iter)
-        {
-          /* prepend the file to the visible items list */
-          file = thunar_standard_view_model_get_file (standard_view->model, &iter);
-          visible_files = g_list_prepend (visible_files, file);
+      /* If a common ancestor has been found start looking for the visible
+       * files from the first child of this ancestor */
+      if (gtk_tree_path_is_ancestor (start_path, end_path))
+        gtk_tree_path_down (start_path);
 
-          /* check if we've reached the end of the visible range */
-          path = gtk_tree_model_get_path (GTK_TREE_MODEL (standard_view->model), &iter);
-          if (gtk_tree_path_compare (path, end_path) != 0)
-            {
-              /* try to compute the next visible item */
-              valid_iter =
-                gtk_tree_model_iter_next (GTK_TREE_MODEL (standard_view->model), &iter);
-            }
-          else
-            {
-              /* we have reached the end, terminate the loop */
-              valid_iter = FALSE;
-            }
-
-          /* release the tree path */
-          gtk_tree_path_free (path);
-        }
-
+      /* Recursively looks for files in visible range [start_path, end_path]
+       * starting from the lowest common ancestor;
+       * Recursiveness is required when tree-view is enabled. */
+      thunar_standard_view_get_visible_files (view, GTK_TREE_MODEL (standard_view->model), start_path, end_path, &visible_files);
+      
       /* queue a thumbnail request */
       thunar_thumbnailer_queue_files (standard_view->thumbnailer,
                                       lazy_request, visible_files,
