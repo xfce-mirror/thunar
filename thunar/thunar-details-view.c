@@ -111,7 +111,6 @@ static void         thunar_details_view_zoom_level_changed      (ThunarDetailsVi
 static gboolean     thunar_details_view_get_fixed_columns       (ThunarDetailsView      *details_view);
 static void         thunar_details_view_set_fixed_columns       (ThunarDetailsView      *details_view,
                                                                  gboolean                fixed_columns);
-static gboolean     thunar_details_view_is_tree_view_enabled    (ThunarDetailsView      *details_view);
 static void         thunar_details_view_set_tree_view           (ThunarDetailsView      *details_view,
                                                                  gboolean                tree_view);
 static void         thunar_details_view_connect_accelerators    (ThunarStandardView     *standard_view,
@@ -164,8 +163,8 @@ struct _ThunarDetailsView
 
 static XfceGtkActionEntry thunar_details_view_action_entries[] =
 {
-    { THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS,  "<Actions>/ThunarStandardView/configure-columns", "", XFCE_GTK_MENU_ITEM ,       N_ ("Configure _Columns..."), N_("Configure the columns in the detailed list view"), NULL, G_CALLBACK (thunar_show_column_editor),            },
-    { THUNAR_DETAILS_VIEW_ACTION_TOGGLE_TREE_VIEW,   "<Actions>/ThunarStandardView/toggle-tree-view",  "", XFCE_GTK_CHECK_MENU_ITEM,  N_ ("Toggle _Tree View"),     N_("Toggle tree like expansion of folders"),           NULL, G_CALLBACK (thunar_details_view_toggle_tree_view), },
+    { THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS,  "<Actions>/ThunarStandardView/configure-columns", "", XFCE_GTK_MENU_ITEM ,       N_ ("Configure _Columns..."),      N_ ("Configure the columns in the detailed list view"), NULL, G_CALLBACK (thunar_show_column_editor),            },
+    { THUNAR_DETAILS_VIEW_ACTION_TOGGLE_TREE_VIEW,   "<Actions>/ThunarStandardView/toggle-tree-view",  "", XFCE_GTK_CHECK_MENU_ITEM,  N_ ("Enable E_xpandable Folders"), N_ ("Allow tree like expansion of folders"),            NULL, G_CALLBACK (thunar_details_view_toggle_tree_view), },
 };
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_details_view_action_entries,G_N_ELEMENTS(thunar_details_view_action_entries),id)
@@ -247,7 +246,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   GtkCellRenderer  *left_aligned_renderer;
   GtkCellRenderer  *renderer;
   ThunarColumn      column;
-  gboolean          is_tree_view;
 
   /* we need to force the GtkTreeView to recalculate column sizes
    * whenever the zoom-level changes, so we connect a handler here.
@@ -282,9 +280,10 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   /* tell standard view to use tree-model */
   g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)), "model-type", THUNAR_TYPE_TREE_VIEW_MODEL, NULL);
 
-  /* Set tree view feature according to preference */
-  g_object_get (THUNAR_STANDARD_VIEW (details_view)->preferences, "misc-enable-tree-view", &is_tree_view, NULL);
-  thunar_details_view_set_tree_view (details_view, is_tree_view);
+  /* Bind tree-view property between view and preferences object */
+  g_object_bind_property (THUNAR_STANDARD_VIEW (details_view)->preferences, "misc-enable-tree-view",
+                          G_OBJECT (details_view), "tree-view",
+                          G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
 
   /* connect to the default column model */
   details_view->column_model = thunar_column_model_get_default ();
@@ -418,7 +417,7 @@ thunar_details_view_get_property (GObject    *object,
       break;
 
     case PROP_TREE_VIEW:
-      g_value_set_boolean (value, thunar_details_view_is_tree_view_enabled (details_view));
+      g_value_set_boolean (value,  details_view->is_tree_view);
       break;
 
     default:
@@ -1203,23 +1202,6 @@ thunar_details_view_get_fixed_columns (ThunarDetailsView *details_view)
 
 
 /**
- * thunar_details_view_is_tree_view_enabled:
- * @details_view : a #ThunarDetailsView.
- *
- * Returns %TRUE if @details_view has tree-view enabled.
- *
- * Return value: %TRUE if @details_view has tree-view enabled.
- **/
-static gboolean
-thunar_details_view_is_tree_view_enabled (ThunarDetailsView *details_view)
-{
-  _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
-  return details_view->is_tree_view;
-}
-
-
-
-/**
  * thunar_details_view_set_fixed_columns:
  * @details_view  : a #ThunarDetailsView.
  * @fixed_columns : %TRUE to use fixed column widths.
@@ -1301,17 +1283,20 @@ thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
  **/
 static void
 thunar_details_view_set_tree_view (ThunarDetailsView *details_view,
-                                   gboolean           tree_view)
+                                   gboolean           is_tree_view)
 {
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
-  details_view->is_tree_view = tree_view;
+  details_view->is_tree_view = is_tree_view;
 
   gtk_tree_view_set_show_expanders (GTK_TREE_VIEW (details_view->tree_view), details_view->is_tree_view);
   gtk_tree_view_set_enable_tree_lines (GTK_TREE_VIEW (details_view->tree_view), details_view->is_tree_view);
 
   if (details_view->is_tree_view == FALSE)
     gtk_tree_view_collapse_all (GTK_TREE_VIEW (details_view->tree_view));
+
+  /* notify listeners */
+  g_object_notify (G_OBJECT (details_view), "tree-view");
 }
 
 
@@ -1388,10 +1373,10 @@ thunar_details_view_queue_redraw (ThunarStandardView *standard_view)
 
 
 /**
- * thunar_details_view_set_tree_view:
+ * thunar_details_view_toggle_tree_view:
  * @details_view  : a #ThunarDetailsView.
  *
- * Toggles the tree-view feature.
+ * Toggles the expandable folders feature.
  **/
 static gboolean
 thunar_details_view_toggle_tree_view (ThunarDetailsView *details_view)
