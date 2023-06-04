@@ -345,6 +345,7 @@ static void
 thunar_list_model_class_init (ThunarListModelClass *klass)
 {
   GObjectClass *gobject_class;
+  gpointer      g_iface;
 
   gobject_class               = G_OBJECT_CLASS (klass);
   gobject_class->dispose      = thunar_list_model_dispose;
@@ -352,17 +353,15 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
   gobject_class->get_property = thunar_list_model_get_property;
   gobject_class->set_property = thunar_list_model_set_property;
 
+  g_iface = g_type_default_interface_peek (THUNAR_TYPE_STANDARD_VIEW_MODEL);
   /**
    * ThunarListModel:case-sensitive:
    *
    * Tells whether the sorting should be case sensitive.
    **/
   list_model_props[PROP_CASE_SENSITIVE] =
-      g_param_spec_boolean ("case-sensitive",
-                            "case-sensitive",
-                            "case-sensitive",
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+    g_param_spec_override ("case-sensitive",
+                           g_object_interface_find_property (g_iface, "case-sensitive"));
 
   /**
    * ThunarListModel:date-style:
@@ -370,12 +369,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * The style used to format dates.
    **/
   list_model_props[PROP_DATE_STYLE] =
-      g_param_spec_enum ("date-style",
-                         "date-style",
-                         "date-style",
-                         THUNAR_TYPE_DATE_STYLE,
-                         THUNAR_DATE_STYLE_SIMPLE,
-                         EXO_PARAM_READWRITE);
+    g_param_spec_override ("date-style",
+                           g_object_interface_find_property (g_iface, "date-style"));
 
   /**
    * ThunarListModel:date-custom-style:
@@ -383,11 +378,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * The style used for custom format of dates.
    **/
   list_model_props[PROP_DATE_CUSTOM_STYLE] =
-      g_param_spec_string ("date-custom-style",
-                           "DateCustomStyle",
-                           NULL,
-                           "%Y-%m-%d %H:%M:%S",
-                           EXO_PARAM_READWRITE);
+    g_param_spec_override ("date-custom-style",
+                           g_object_interface_find_property (g_iface, "date-custom-style"));
 
   /**
    * ThunarListModel:folder:
@@ -395,11 +387,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * The folder presented by this #ThunarListModel.
    **/
   list_model_props[PROP_FOLDER] =
-      g_param_spec_object ("folder",
-                           "folder",
-                           "folder",
-                           THUNAR_TYPE_FOLDER,
-                           EXO_PARAM_READWRITE);
+    g_param_spec_override ("folder",
+                           g_object_interface_find_property (g_iface, "folder"));
 
   /**
    * ThunarListModel::folders-first:
@@ -407,11 +396,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * Tells whether to always sort folders before other files.
    **/
   list_model_props[PROP_FOLDERS_FIRST] =
-      g_param_spec_boolean ("folders-first",
-                            "folders-first",
-                            "folders-first",
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+    g_param_spec_override ("folders-first",
+                           g_object_interface_find_property (g_iface, "folders-first"));
 
   /**
    * ThunarListModel::num-files:
@@ -419,11 +405,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * The number of files in the folder presented by this #ThunarListModel.
    **/
   list_model_props[PROP_NUM_FILES] =
-      g_param_spec_uint ("num-files",
-                         "num-files",
-                         "num-files",
-                         0, G_MAXUINT, 0,
-                         EXO_PARAM_READABLE);
+    g_param_spec_override ("num-files",
+                           g_object_interface_find_property (g_iface, "num-files"));
 
   /**
    * ThunarListModel::show-hidden:
@@ -431,11 +414,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * Tells whether to include hidden (and backup) files.
    **/
   list_model_props[PROP_SHOW_HIDDEN] =
-      g_param_spec_boolean ("show-hidden",
-                            "show-hidden",
-                            "show-hidden",
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+    g_param_spec_override ("show-hidden",
+                           g_object_interface_find_property (g_iface, "show-hidden"));
 
   /**
    * ThunarListModel::misc-file-size-binary:
@@ -443,11 +423,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * Tells whether to format file size in binary.
    **/
   list_model_props[PROP_FILE_SIZE_BINARY] =
-      g_param_spec_boolean ("file-size-binary",
-                            "file-size-binary",
-                            "file-size-binary",
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+    g_param_spec_override ("file-size-binary",
+                           g_object_interface_find_property (g_iface, "file-size-binary"));
 
   /**
    * ThunarListModel:folder-item-count:
@@ -455,12 +432,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * Tells when the size column of folders should show the number of containing files
    **/
   list_model_props[PROP_FOLDER_ITEM_COUNT] =
-      g_param_spec_enum ("folder-item-count",
-                         "folder-item-count",
-                         "folder-item-count",
-                         THUNAR_TYPE_FOLDER_ITEM_COUNT,
-                         TRUE,
-                         EXO_PARAM_READWRITE);
+    g_param_spec_override ("folder-item-count",
+                           g_object_interface_find_property (g_iface, "folder-item-count"));
 
   /* install properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, list_model_props);

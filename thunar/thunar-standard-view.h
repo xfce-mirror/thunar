@@ -168,10 +168,6 @@ struct _ThunarStandardView
   GtkCellRenderer           *icon_renderer;
   GtkCellRenderer           *name_renderer;
 
-  /* Thumbnailer support : required in DetailsView (row_expanded) */
-  ThunarThumbnailer         *thumbnailer;
-  guint                      thumbnail_request;
-
   GBinding                  *loading_binding;
   gboolean                   loading;
   GtkAccelGroup             *accel_group;
