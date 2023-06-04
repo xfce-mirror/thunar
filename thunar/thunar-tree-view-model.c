@@ -417,8 +417,8 @@ typedef struct
 } FindFilesStruct;
 
 
-static guint       list_model_signals[LAST_SIGNAL];
-static GParamSpec *list_model_props[N_PROPERTIES] = { NULL, };
+static guint       tree_model_signals[LAST_SIGNAL];
+static GParamSpec *tree_model_props[N_PROPERTIES] = { NULL, };
 
 
 
@@ -434,6 +434,7 @@ static void
 thunar_tree_view_model_class_init (ThunarTreeViewModelClass *klass)
 {
   GObjectClass *gobject_class;
+  gpointer      g_iface;
 
   gobject_class               = G_OBJECT_CLASS (klass);
   gobject_class->dispose      = thunar_tree_view_model_dispose;
@@ -441,118 +442,90 @@ thunar_tree_view_model_class_init (ThunarTreeViewModelClass *klass)
   gobject_class->get_property = thunar_tree_view_model_get_property;
   gobject_class->set_property = thunar_tree_view_model_set_property;
 
+  g_iface = g_type_default_interface_peek (THUNAR_TYPE_STANDARD_VIEW_MODEL);
   /**
    * ThunarTreeViewModel:case-sensitive:
    *
    * Tells whether the sorting should be case sensitive.
    **/
-  list_model_props[PROP_CASE_SENSITIVE] =
-      g_param_spec_boolean ("case-sensitive",
-                            "case-sensitive",
-                            "case-sensitive",
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  tree_model_props[PROP_CASE_SENSITIVE] =
+    g_param_spec_override ("case-sensitive",
+                           g_object_interface_find_property (g_iface, "case-sensitive"));
 
   /**
    * ThunarTreeViewModel:date-style:
    *
    * The style used to format dates.
    **/
-  list_model_props[PROP_DATE_STYLE] =
-      g_param_spec_enum ("date-style",
-                         "date-style",
-                         "date-style",
-                         THUNAR_TYPE_DATE_STYLE,
-                         THUNAR_DATE_STYLE_SIMPLE,
-                         EXO_PARAM_READWRITE);
+  tree_model_props[PROP_DATE_STYLE] =
+    g_param_spec_override ("date-style",
+                           g_object_interface_find_property (g_iface, "date-style"));
 
   /**
    * ThunarTreeViewModel:date-custom-style:
    *
    * The style used for custom format of dates.
    **/
-  list_model_props[PROP_DATE_CUSTOM_STYLE] =
-      g_param_spec_string ("date-custom-style",
-                           "DateCustomStyle",
-                           NULL,
-                           "%Y-%m-%d %H:%M:%S",
-                           EXO_PARAM_READWRITE);
+  tree_model_props[PROP_DATE_CUSTOM_STYLE] =
+    g_param_spec_override ("date-custom-style",
+                           g_object_interface_find_property (g_iface, "date-custom-style"));
 
   /**
    * ThunarTreeViewModel:folder:
    *
    * The folder presented by this #ThunarTreeViewModel.
    **/
-  list_model_props[PROP_FOLDER] =
-      g_param_spec_object ("folder",
-                           "folder",
-                           "folder",
-                           THUNAR_TYPE_FOLDER,
-                           EXO_PARAM_READWRITE);
+  tree_model_props[PROP_FOLDER] =
+    g_param_spec_override ("folder",
+                           g_object_interface_find_property (g_iface, "folder"));
 
   /**
    * ThunarTreeViewModel::folders-first:
    *
    * Tells whether to always sort folders before other files.
    **/
-  list_model_props[PROP_FOLDERS_FIRST] =
-      g_param_spec_boolean ("folders-first",
-                            "folders-first",
-                            "folders-first",
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  tree_model_props[PROP_FOLDERS_FIRST] =
+    g_param_spec_override ("folders-first",
+                           g_object_interface_find_property (g_iface, "folders-first"));
 
   /**
    * ThunarTreeViewModel::num-files:
    *
    * The number of files in the folder presented by this #ThunarTreeViewModel.
    **/
-  list_model_props[PROP_NUM_FILES] =
-      g_param_spec_uint ("num-files",
-                         "num-files",
-                         "num-files",
-                         0, G_MAXUINT, 0,
-                         EXO_PARAM_READABLE);
+  tree_model_props[PROP_NUM_FILES] =
+    g_param_spec_override ("num-files",
+                           g_object_interface_find_property (g_iface, "num-files"));
 
   /**
    * ThunarTreeViewModel::show-hidden:
    *
    * Tells whether to include hidden (and backup) files.
    **/
-  list_model_props[PROP_SHOW_HIDDEN] =
-      g_param_spec_boolean ("show-hidden",
-                            "show-hidden",
-                            "show-hidden",
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  tree_model_props[PROP_SHOW_HIDDEN] =
+    g_param_spec_override ("show-hidden",
+                           g_object_interface_find_property (g_iface, "show-hidden"));
 
   /**
    * ThunarTreeViewModel::misc-file-size-binary:
    *
    * Tells whether to format file size in binary.
    **/
-  list_model_props[PROP_FILE_SIZE_BINARY] =
-      g_param_spec_boolean ("file-size-binary",
-                            "file-size-binary",
-                            "file-size-binary",
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  tree_model_props[PROP_FILE_SIZE_BINARY] =
+    g_param_spec_override ("file-size-binary",
+                           g_object_interface_find_property (g_iface, "file-size-binary"));
 
   /**
    * ThunarTreeViewModel:folder-item-count:
    *
    * Tells when the size column of folders should show the number of containing files
    **/
-  list_model_props[PROP_FOLDER_ITEM_COUNT] =
-      g_param_spec_enum ("folder-item-count",
-                         "folder-item-count",
-                         "folder-item-count",
-                         THUNAR_TYPE_FOLDER_ITEM_COUNT,
-                         TRUE,
-                         EXO_PARAM_READWRITE);
+  tree_model_props[PROP_FOLDER_ITEM_COUNT] =
+    g_param_spec_override ("folder-item-count",
+                           g_object_interface_find_property (g_iface, "folder-item-count"));
 
   /* install properties */
-  g_object_class_install_properties (gobject_class, N_PROPERTIES, list_model_props);
+  g_object_class_install_properties (gobject_class, N_PROPERTIES, tree_model_props);
 
   /* No need to install signals. Already done by the interface */
 }
@@ -1841,7 +1814,7 @@ thunar_tree_view_model_folder_error (ThunarFolder        *folder,
   thunar_tree_view_model_set_folder (THUNAR_STANDARD_VIEW_MODEL (store) , NULL, NULL);
 
   /* forward the error signal */
-  g_signal_emit (G_OBJECT (store), list_model_signals[ERROR], 0, error);
+  g_signal_emit (G_OBJECT (store), tree_model_signals[ERROR], 0, error);
 }
 
 
@@ -1917,7 +1890,7 @@ thunar_tree_view_model_insert_files (ThunarTreeViewModel *store,
   thunar_tree_view_model_sort (store, store->root);
 
   /* number of visible files may have changed */
-  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_NUM_FILES]);
+  g_object_notify_by_pspec (G_OBJECT (store), tree_model_props[PROP_NUM_FILES]);
 }
 
 
@@ -1957,7 +1930,7 @@ thunar_tree_view_model_files_removed (ThunarFolder        *folder,
     }
 
   /* this probably changed */
-  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_NUM_FILES]);
+  g_object_notify_by_pspec (G_OBJECT (store), tree_model_props[PROP_NUM_FILES]);
 }
 
 
@@ -2371,7 +2344,7 @@ thunar_tree_view_model_set_case_sensitive (ThunarTreeViewModel *store,
       g_node_traverse (store->root, G_POST_ORDER, G_TRAVERSE_NON_LEAVES, -1, thunar_tree_view_model_node_traverse_sort, store);
 
       /* notify listeners */
-      g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_CASE_SENSITIVE]);
+      g_object_notify_by_pspec (G_OBJECT (store), tree_model_props[PROP_CASE_SENSITIVE]);
 
       /* emit a "changed" signal for each row, so the display is
          reloaded with the new case-sensitive setting */
@@ -2421,7 +2394,7 @@ thunar_tree_view_model_set_date_style (ThunarTreeViewModel *store,
       store->date_style = date_style;
 
       /* notify listeners */
-      g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_DATE_STYLE]);
+      g_object_notify_by_pspec (G_OBJECT (store), tree_model_props[PROP_DATE_STYLE]);
 
       /* emit a "changed" signal for each row, so the display is reloaded with the new date style */
       gtk_tree_model_foreach (GTK_TREE_MODEL (store),
@@ -2469,7 +2442,7 @@ thunar_tree_view_model_set_date_custom_style (ThunarTreeViewModel *store,
       store->date_custom_style = g_strdup (date_custom_style);
 
       /* notify listeners */
-      g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_DATE_CUSTOM_STYLE]);
+      g_object_notify_by_pspec (G_OBJECT (store), tree_model_props[PROP_DATE_CUSTOM_STYLE]);
 
       /* emit a "changed" signal for each row, so the display is reloaded with the new date style */
       gtk_tree_model_foreach (GTK_TREE_MODEL (store),
@@ -2912,8 +2885,8 @@ thunar_tree_view_model_set_folder (ThunarStandardViewModel *model,
     }
 
   /* notify listeners that we have a new folder */
-  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_FOLDER]);
-  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_NUM_FILES]);
+  g_object_notify_by_pspec (G_OBJECT (store), tree_model_props[PROP_FOLDER]);
+  g_object_notify_by_pspec (G_OBJECT (store), tree_model_props[PROP_NUM_FILES]);
   g_object_thaw_notify (G_OBJECT (store));
 }
 
@@ -2956,7 +2929,7 @@ thunar_tree_view_model_set_folders_first (ThunarStandardViewModel *model,
 
   /* apply the new setting (re-sorting the store) */
   store->sort_folders_first = folders_first;
-  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_FOLDERS_FIRST]);
+  g_object_notify_by_pspec (G_OBJECT (store), tree_model_props[PROP_FOLDERS_FIRST]);
   /* re-sort the store */
   g_node_traverse (store->root, G_POST_ORDER, G_TRAVERSE_NON_LEAVES, -1, thunar_tree_view_model_node_traverse_sort, store);
 
@@ -3025,8 +2998,8 @@ thunar_tree_view_model_set_show_hidden (ThunarStandardViewModel *model,
 
   /* notify listeners about the new setting */
   g_object_freeze_notify (G_OBJECT (store));
-  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_NUM_FILES]);
-  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_SHOW_HIDDEN]);
+  g_object_notify_by_pspec (G_OBJECT (store), tree_model_props[PROP_NUM_FILES]);
+  g_object_notify_by_pspec (G_OBJECT (store), tree_model_props[PROP_SHOW_HIDDEN]);
   g_object_thaw_notify (G_OBJECT (store));
 }
 
@@ -3079,7 +3052,7 @@ thunar_tree_view_model_set_file_size_binary (ThunarStandardViewModel *model,
       g_node_traverse (store->root, G_POST_ORDER, G_TRAVERSE_NON_LEAVES, -1, thunar_tree_view_model_node_traverse_sort, store);
 
       /* notify listeners */
-      g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_FILE_SIZE_BINARY]);
+      g_object_notify_by_pspec (G_OBJECT (store), tree_model_props[PROP_FILE_SIZE_BINARY]);
 
       /* emit a "changed" signal for each row, so the display is
          reloaded with the new binary file size setting */
@@ -3122,7 +3095,7 @@ thunar_tree_view_model_set_folder_item_count (ThunarTreeViewModel   *store,
     return;
 
   store->folder_item_count = count_as_dir_size;
-  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_FOLDER_ITEM_COUNT]);
+  g_object_notify_by_pspec (G_OBJECT (store), tree_model_props[PROP_FOLDER_ITEM_COUNT]);
 
   gtk_tree_model_foreach (GTK_TREE_MODEL (store), (GtkTreeModelForeachFunc) thunar_tree_view_model_foreach_row_changed, NULL);
 
@@ -3246,7 +3219,7 @@ thunar_tree_view_model_item_files_added (ThunarTreeViewModelItem *item,
   if (G_LIKELY (node != NULL))
     thunar_tree_view_model_sort (model, node);
 
-  g_object_notify_by_pspec (G_OBJECT (model), list_model_props[PROP_NUM_FILES]);
+  g_object_notify_by_pspec (G_OBJECT (model), tree_model_props[PROP_NUM_FILES]);
 }
 
 
@@ -3322,7 +3295,7 @@ thunar_tree_view_model_item_files_removed (ThunarTreeViewModelItem *item,
         }
     }
 
-  g_object_notify_by_pspec (G_OBJECT (model), list_model_props[PROP_NUM_FILES]);
+  g_object_notify_by_pspec (G_OBJECT (model), tree_model_props[PROP_NUM_FILES]);
 }
 
 
