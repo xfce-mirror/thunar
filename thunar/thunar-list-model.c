@@ -149,52 +149,6 @@ static void               thunar_list_model_files_removed               (ThunarF
                                                                          ThunarListModel              *store);
 static void               thunar_list_model_insert_files                (ThunarListModel              *store,
                                                                          GList                        *files);
-static gint               sort_by_date                                  (const ThunarFile             *a,
-                                                                         const ThunarFile             *b,
-                                                                         gboolean                      case_sensitive,
-                                                                         gint                          type);
-static gint               sort_by_date_created                          (const ThunarFile             *a,
-                                                                         const ThunarFile             *b,
-                                                                         gboolean                      case_sensitive);
-static gint               sort_by_date_accessed                         (const ThunarFile             *a,
-                                                                         const ThunarFile             *b,
-                                                                         gboolean                      case_sensitive);
-static gint               sort_by_date_modified                         (const ThunarFile             *a,
-                                                                         const ThunarFile             *b,
-                                                                         gboolean                      case_sensitive);
-static gint               sort_by_date_deleted                          (const ThunarFile             *a,
-                                                                         const ThunarFile             *b,
-                                                                         gboolean                      case_sensitive);
-static gint               sort_by_recency                               (const ThunarFile             *a,
-                                                                         const ThunarFile             *b,
-                                                                         gboolean                      case_sensitive);
-static gint               sort_by_location                              (const ThunarFile             *a,
-                                                                         const ThunarFile             *b,
-                                                                         gboolean                      case_sensitive);
-static gint               sort_by_group                                 (const ThunarFile             *a,
-                                                                         const ThunarFile             *b,
-                                                                         gboolean                      case_sensitive);
-static gint               sort_by_mime_type                             (const ThunarFile             *a,
-                                                                         const ThunarFile             *b,
-                                                                         gboolean                      case_sensitive);
-static gint               sort_by_owner                                 (const ThunarFile             *a,
-                                                                         const ThunarFile             *b,
-                                                                         gboolean                      case_sensitive);
-static gint               sort_by_permissions                           (const ThunarFile             *a,
-                                                                         const ThunarFile             *b,
-                                                                         gboolean                      case_sensitive);
-static gint               sort_by_size                                  (const ThunarFile             *a,
-                                                                         const ThunarFile             *b,
-                                                                         gboolean                      case_sensitive);
-static gint               sort_by_size_in_bytes                         (const ThunarFile             *a,
-                                                                         const ThunarFile             *b,
-                                                                         gboolean                      case_sensitive);
-static gint               sort_by_size_and_items_count                  (ThunarFile                   *a,
-                                                                         ThunarFile                   *b,
-                                                                         gboolean                      case_sensitive);
-static gint               sort_by_type                                  (const ThunarFile             *a,
-                                                                         const ThunarFile             *b,
-                                                                         gboolean                      case_sensitive);
 
 static gboolean           thunar_list_model_get_case_sensitive          (ThunarListModel              *store);
 static void               thunar_list_model_set_case_sensitive          (ThunarListModel              *store,
@@ -1161,33 +1115,33 @@ thunar_list_model_get_sort_column_id (GtkTreeSortable *sortable,
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
 
-  if (store->sort_func == sort_by_mime_type)
+  if (store->sort_func == thunar_cmp_files_by_mime_type)
     *sort_column_id = THUNAR_COLUMN_MIME_TYPE;
   else if (store->sort_func == thunar_file_compare_by_name)
     *sort_column_id = THUNAR_COLUMN_NAME;
-  else if (store->sort_func == sort_by_permissions)
+  else if (store->sort_func == thunar_cmp_files_by_permissions)
     *sort_column_id = THUNAR_COLUMN_PERMISSIONS;
-  else if (store->sort_func == sort_by_size || store->sort_func == (ThunarSortFunc) sort_by_size_and_items_count)
+  else if (store->sort_func == thunar_cmp_files_by_size || store->sort_func == (ThunarSortFunc) thunar_cmp_files_by_size_and_items_count)
     *sort_column_id = THUNAR_COLUMN_SIZE;
-  else if (store->sort_func == sort_by_size_in_bytes)
+  else if (store->sort_func == thunar_cmp_files_by_size_in_bytes)
     *sort_column_id = THUNAR_COLUMN_SIZE_IN_BYTES;
-  else if (store->sort_func == sort_by_date_created)
+  else if (store->sort_func == thunar_cmp_files_by_date_created)
     *sort_column_id = THUNAR_COLUMN_DATE_CREATED;
-  else if (store->sort_func == sort_by_date_accessed)
+  else if (store->sort_func == thunar_cmp_files_by_date_accessed)
     *sort_column_id = THUNAR_COLUMN_DATE_ACCESSED;
-  else if (store->sort_func == sort_by_date_modified)
+  else if (store->sort_func == thunar_cmp_files_by_date_modified)
     *sort_column_id = THUNAR_COLUMN_DATE_MODIFIED;
-  else if (store->sort_func == sort_by_date_deleted)
+  else if (store->sort_func == thunar_cmp_files_by_date_deleted)
     *sort_column_id = THUNAR_COLUMN_DATE_DELETED;
-  else if (store->sort_func == sort_by_recency)
+  else if (store->sort_func == thunar_cmp_files_by_recency)
     *sort_column_id = THUNAR_COLUMN_RECENCY;
-  else if (store->sort_func == sort_by_location)
+  else if (store->sort_func == thunar_cmp_files_by_location)
     *sort_column_id = THUNAR_COLUMN_LOCATION;
-  else if (store->sort_func == sort_by_type)
+  else if (store->sort_func == thunar_cmp_files_by_type)
     *sort_column_id = THUNAR_COLUMN_TYPE;
-  else if (store->sort_func == sort_by_owner)
+  else if (store->sort_func == thunar_cmp_files_by_owner)
     *sort_column_id = THUNAR_COLUMN_OWNER;
-  else if (store->sort_func == sort_by_group)
+  else if (store->sort_func == thunar_cmp_files_by_group)
     *sort_column_id = THUNAR_COLUMN_GROUP;
   else
     _thunar_assert_not_reached ();
@@ -1217,35 +1171,35 @@ thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
   switch (sort_column_id)
     {
     case THUNAR_COLUMN_DATE_CREATED:
-      store->sort_func = sort_by_date_created;
+      store->sort_func = thunar_cmp_files_by_date_created;
       break;
 
     case THUNAR_COLUMN_DATE_ACCESSED:
-      store->sort_func = sort_by_date_accessed;
+      store->sort_func = thunar_cmp_files_by_date_accessed;
       break;
 
     case THUNAR_COLUMN_DATE_MODIFIED:
-      store->sort_func = sort_by_date_modified;
+      store->sort_func = thunar_cmp_files_by_date_modified;
       break;
 
     case THUNAR_COLUMN_DATE_DELETED:
-      store->sort_func = sort_by_date_deleted;
+      store->sort_func = thunar_cmp_files_by_date_deleted;
       break;
 
     case THUNAR_COLUMN_RECENCY:
-      store->sort_func = sort_by_recency;
+      store->sort_func = thunar_cmp_files_by_recency;
       break;
 
     case THUNAR_COLUMN_LOCATION:
-      store->sort_func = sort_by_location;
+      store->sort_func = thunar_cmp_files_by_location;
       break;
 
     case THUNAR_COLUMN_GROUP:
-      store->sort_func = sort_by_group;
+      store->sort_func = thunar_cmp_files_by_group;
       break;
 
     case THUNAR_COLUMN_MIME_TYPE:
-      store->sort_func = sort_by_mime_type;
+      store->sort_func = thunar_cmp_files_by_mime_type;
       break;
 
     case THUNAR_COLUMN_FILE_NAME:
@@ -1254,23 +1208,23 @@ thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
       break;
 
     case THUNAR_COLUMN_OWNER:
-      store->sort_func = sort_by_owner;
+      store->sort_func = thunar_cmp_files_by_owner;
       break;
 
     case THUNAR_COLUMN_PERMISSIONS:
-      store->sort_func = sort_by_permissions;
+      store->sort_func = thunar_cmp_files_by_permissions;
       break;
 
     case THUNAR_COLUMN_SIZE:
-      store->sort_func = (store->folder_item_count != THUNAR_FOLDER_ITEM_COUNT_NEVER) ? (ThunarSortFunc) sort_by_size_and_items_count : sort_by_size;
+      store->sort_func = (store->folder_item_count != THUNAR_FOLDER_ITEM_COUNT_NEVER) ? (ThunarSortFunc) thunar_cmp_files_by_size_and_items_count : thunar_cmp_files_by_size;
       break;
 
     case THUNAR_COLUMN_SIZE_IN_BYTES:
-      store->sort_func = sort_by_size_in_bytes;
+      store->sort_func = thunar_cmp_files_by_size_in_bytes;
       break;
 
     case THUNAR_COLUMN_TYPE:
-      store->sort_func = sort_by_type;
+      store->sort_func = thunar_cmp_files_by_type;
       break;
 
     default:
@@ -1690,354 +1644,6 @@ thunar_list_model_files_removed (ThunarFolder    *folder,
 
   /* this probably changed */
   g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_NUM_FILES]);
-}
-
-
-
-static gint
-sort_by_date         (const ThunarFile *a,
-                      const ThunarFile *b,
-                      gboolean          case_sensitive,
-                      gint              type)
-{
-  guint64 date_a;
-  guint64 date_b;
-
-  date_a = thunar_file_get_date (a, type);
-  date_b = thunar_file_get_date (b, type);
-
-  if (date_a < date_b)
-    return -1;
-  else if (date_a > date_b)
-    return 1;
-
-  return thunar_file_compare_by_name (a, b, case_sensitive);
-}
-
-
-
-static gint
-sort_by_date_created (const ThunarFile *a,
-                      const ThunarFile *b,
-                      gboolean          case_sensitive)
-{
-  return sort_by_date (a, b, case_sensitive, THUNAR_FILE_DATE_CREATED);
-}
-
-
-
-static gint
-sort_by_date_accessed (const ThunarFile *a,
-                       const ThunarFile *b,
-                       gboolean          case_sensitive)
-{
-  return sort_by_date (a, b, case_sensitive, THUNAR_FILE_DATE_ACCESSED);
-}
-
-
-
-static gint
-sort_by_date_modified (const ThunarFile *a,
-                       const ThunarFile *b,
-                       gboolean          case_sensitive)
-{
-  return sort_by_date (a, b, case_sensitive, THUNAR_FILE_DATE_MODIFIED);
-}
-
-
-
-static gint
-sort_by_date_deleted (const ThunarFile *a,
-                      const ThunarFile *b,
-                      gboolean          case_sensitive)
-{
-  return sort_by_date (a, b, case_sensitive, THUNAR_FILE_DATE_DELETED);
-}
-
-
-
-static gint
-sort_by_recency      (const ThunarFile *a,
-                      const ThunarFile *b,
-                      gboolean          case_sensitive)
-{
-  return sort_by_date (a, b, case_sensitive, THUNAR_FILE_RECENCY);
-}
-
-
-
-static gint
-sort_by_location (const ThunarFile *a,
-                  const ThunarFile *b,
-                  gboolean          case_sensitive)
-{
-  gchar *uri_a;
-  gchar *uri_b;
-  gchar *location_a;
-  gchar *location_b;
-  gint   result;
-
-  uri_a = thunar_file_dup_uri (a);
-  uri_b = thunar_file_dup_uri (b);
-
-  location_a = g_path_get_dirname (uri_a);
-  location_b = g_path_get_dirname (uri_b);
-
-  result = strcasecmp (location_a, location_b);
-
-  g_free (uri_a);
-  g_free (uri_b);
-  g_free (location_a);
-  g_free (location_b);
-
-  return result;
-}
-
-
-
-static gint
-sort_by_group (const ThunarFile *a,
-               const ThunarFile *b,
-               gboolean          case_sensitive)
-{
-  ThunarGroup *group_a;
-  ThunarGroup *group_b;
-  guint32      gid_a;
-  guint32      gid_b;
-  gint         result;
-  const gchar *name_a;
-  const gchar *name_b;
-
-  if (thunar_file_get_info (a) == NULL || thunar_file_get_info (b) == NULL)
-    return thunar_file_compare_by_name (a, b, case_sensitive);
-
-  group_a = thunar_file_get_group (a);
-  group_b = thunar_file_get_group (b);
-
-  if (group_a != NULL && group_b != NULL)
-    {
-      name_a = thunar_group_get_name (group_a);
-      name_b = thunar_group_get_name (group_b);
-
-      if (!case_sensitive)
-        result = strcasecmp (name_a, name_b);
-      else
-        result = strcmp (name_a, name_b);
-    }
-  else
-    {
-      gid_a = g_file_info_get_attribute_uint32 (thunar_file_get_info (a),
-                                                G_FILE_ATTRIBUTE_UNIX_GID);
-      gid_b = g_file_info_get_attribute_uint32 (thunar_file_get_info (b),
-                                                G_FILE_ATTRIBUTE_UNIX_GID);
-
-      result = CLAMP ((gint) gid_a - (gint) gid_b, -1, 1);
-    }
-
-  if (group_a != NULL)
-    g_object_unref (group_a);
-
-  if (group_b != NULL)
-    g_object_unref (group_b);
-
-  if (result == 0)
-    return thunar_file_compare_by_name (a, b, case_sensitive);
-  else
-    return result;
-}
-
-
-
-static gint
-sort_by_mime_type (const ThunarFile *a,
-                   const ThunarFile *b,
-                   gboolean          case_sensitive)
-{
-  const gchar *content_type_a;
-  const gchar *content_type_b;
-  gint         result;
-
-  content_type_a = thunar_file_get_content_type (THUNAR_FILE (a));
-  content_type_b = thunar_file_get_content_type (THUNAR_FILE (b));
-
-  if (content_type_a == NULL)
-    content_type_a = "";
-  if (content_type_b == NULL)
-    content_type_b = "";
-
-  result = strcasecmp (content_type_a, content_type_b);
-
-  if (result == 0)
-    result = thunar_file_compare_by_name (a, b, case_sensitive);
-
-  return result;
-}
-
-
-
-static gint
-sort_by_owner (const ThunarFile *a,
-               const ThunarFile *b,
-               gboolean          case_sensitive)
-{
-  const gchar *name_a;
-  const gchar *name_b;
-  ThunarUser  *user_a;
-  ThunarUser  *user_b;
-  guint32      uid_a;
-  guint32      uid_b;
-  gint         result;
-
-  if (thunar_file_get_info (a) == NULL || thunar_file_get_info (b) == NULL)
-    return thunar_file_compare_by_name (a, b, case_sensitive);
-
-  user_a = thunar_file_get_user (a);
-  user_b = thunar_file_get_user (b);
-
-  if (user_a != NULL && user_b != NULL)
-    {
-      /* compare the system names */
-      name_a = thunar_user_get_name (user_a);
-      name_b = thunar_user_get_name (user_b);
-
-      if (!case_sensitive)
-        result = strcasecmp (name_a, name_b);
-      else
-        result = strcmp (name_a, name_b);
-    }
-  else
-    {
-      uid_a = g_file_info_get_attribute_uint32 (thunar_file_get_info (a),
-                                                G_FILE_ATTRIBUTE_UNIX_UID);
-      uid_b = g_file_info_get_attribute_uint32 (thunar_file_get_info (b),
-                                                G_FILE_ATTRIBUTE_UNIX_UID);
-
-      result = CLAMP ((gint) uid_a - (gint) uid_b, -1, 1);
-    }
-
-  if (result == 0)
-    return thunar_file_compare_by_name (a, b, case_sensitive);
-  else
-    return result;
-}
-
-
-
-static gint
-sort_by_permissions (const ThunarFile *a,
-                     const ThunarFile *b,
-                     gboolean          case_sensitive)
-{
-  ThunarFileMode mode_a;
-  ThunarFileMode mode_b;
-
-  mode_a = thunar_file_get_mode (a);
-  mode_b = thunar_file_get_mode (b);
-
-  if (mode_a < mode_b)
-    return -1;
-  else if (mode_a > mode_b)
-    return 1;
-
-  return thunar_file_compare_by_name (a, b, case_sensitive);
-}
-
-
-
-static gint
-sort_by_size (const ThunarFile *a,
-              const ThunarFile *b,
-              gboolean          case_sensitive)
-{
-  guint64 size_a;
-  guint64 size_b;
-
-  size_a = thunar_file_get_size (a);
-  size_b = thunar_file_get_size (b);
-
-  if (size_a < size_b)
-    return -1;
-  else if (size_a > size_b)
-    return 1;
-
-  return thunar_file_compare_by_name (a, b, case_sensitive);
-}
-
-
-
-static gint
-sort_by_size_in_bytes (const ThunarFile *a,
-                       const ThunarFile *b,
-                       gboolean          case_sensitive)
-{
-  return sort_by_size (a, b, case_sensitive);
-}
-
-
-
-static gint
-sort_by_size_and_items_count (ThunarFile *a,
-                              ThunarFile *b,
-                              gboolean    case_sensitive)
-{
-  guint32       count_a;
-  guint32       count_b;
-
-  if (thunar_file_is_directory (a) && thunar_file_is_directory (b))
-  {
-    count_a = thunar_file_get_file_count (a, NULL, NULL);
-    count_b = thunar_file_get_file_count (b, NULL, NULL);
-
-    if (count_a < count_b)
-      return -1;
-    else if (count_a > count_b)
-      return 1;
-    else
-      return thunar_file_compare_by_name (a, b, case_sensitive);
-  }
-
-  return sort_by_size(a, b, case_sensitive);
-}
-
-
-
-static gint
-sort_by_type (const ThunarFile *a,
-              const ThunarFile *b,
-              gboolean          case_sensitive)
-{
-  gchar       *description_a = NULL;
-  gchar       *description_b = NULL;
-  gint         result;
-
-  /* we alter the description of symlinks here because they are
-   * displayed as "... (link)" in the detailed list view as well */
-
-  /* fetch the content type description for @file(s) a & b */
-  description_a = thunar_file_get_content_type_desc (THUNAR_FILE (a));
-  description_b = thunar_file_get_content_type_desc (THUNAR_FILE (b));
-
-  /* avoid calling strcasecmp with NULL parameters */
-  if (description_a == NULL || description_b == NULL)
-    {
-      g_free (description_a);
-      g_free (description_b);
-
-      return 0;
-    }
-
-  if (!case_sensitive)
-    result = strcasecmp (description_a, description_b);
-  else
-    result = strcmp (description_a, description_b);
-
-  g_free (description_a);
-  g_free (description_b);
-
-  if (result == 0)
-    return thunar_file_compare_by_name (a, b, case_sensitive);
-  else
-    return result;
 }
 
 
@@ -2930,9 +2536,9 @@ thunar_list_model_set_folder_item_count (ThunarListModel         *store,
   gtk_tree_model_foreach (GTK_TREE_MODEL (store), (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed, NULL);
 
   /* re-sorting the store if needed */
-  if (store->sort_func == sort_by_size || store->sort_func == (ThunarSortFunc) sort_by_size_and_items_count)
+  if (store->sort_func == thunar_cmp_files_by_size || store->sort_func == (ThunarSortFunc) thunar_cmp_files_by_size_and_items_count)
   {
-    store->sort_func = (store->folder_item_count != THUNAR_FOLDER_ITEM_COUNT_NEVER) ? (ThunarSortFunc) sort_by_size_and_items_count : sort_by_size;
+    store->sort_func = (store->folder_item_count != THUNAR_FOLDER_ITEM_COUNT_NEVER) ? (ThunarSortFunc) thunar_cmp_files_by_size_and_items_count : thunar_cmp_files_by_size;
     thunar_list_model_sort (store);
   }
 }
