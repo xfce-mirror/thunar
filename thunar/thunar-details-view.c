@@ -1175,8 +1175,6 @@ thunar_details_view_zoom_level_changed (ThunarDetailsView *details_view)
       /* Call when idle to ensure that gtk_tree_view_column_queue_resize got finished */
       details_view->idle_id = gdk_threads_add_idle (thunar_details_view_zoom_level_changed_reload_fixed_height, details_view);
     }
-
-  thunar_view_reload (THUNAR_VIEW (details_view), TRUE);
 }
 
 
