@@ -820,7 +820,6 @@ thunar_action_manager_open_files (ThunarActionManager *action_mgr,
 {
   GHashTable *applications;
   GAppInfo   *app_info;
-  GList      *file_list = NULL;
   GList      *lp;
 
   /* allocate a hash table to associate applications to URIs. since GIO allocates
@@ -855,7 +854,9 @@ thunar_action_manager_open_files (ThunarActionManager *action_mgr,
         {
           /* check if we have that application already */
           /* Not possibly to check via g_hash_table_lookup directly, since that will only compare pointers */
-          GList *keys = g_hash_table_get_keys (applications);
+          GList *keys      = g_hash_table_get_keys (applications);
+          GList *file_list = NULL;
+
           for (GList *lp_keys = keys;  lp_keys != NULL; lp_keys = lp_keys->next)
             {
               if (thunar_g_app_info_equal (lp_keys->data, app_info))
