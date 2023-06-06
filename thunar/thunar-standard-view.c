@@ -3593,9 +3593,7 @@ thunar_standard_view_row_changed (ThunarStandardViewModel    *model,
 
   /* queue a thumbnail request */
   file = thunar_standard_view_model_get_file (standard_view->model, iter);
-  if (file == NULL)
-    return;
-  if (thunar_file_get_thumb_state (file) == THUNAR_FILE_THUMB_STATE_UNKNOWN)
+  if (file != NULL && thunar_file_get_thumb_state (file) == THUNAR_FILE_THUMB_STATE_UNKNOWN)
     {
       thunar_standard_view_cancel_thumbnailing (standard_view);
       thunar_thumbnailer_queue_file (standard_view->priv->thumbnailer, file,

@@ -410,6 +410,11 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   details_view->thumbnailer = thunar_thumbnailer_get ();
   details_view->thumbnail_request = 0;
 
+  /* queue a redraw when thumbnail loading is finished */
+  g_signal_connect (details_view->thumbnailer, "request-finished",
+                    G_CALLBACK (thunar_details_view_finished_thumbnailing),
+                    details_view);
+
   /* release the shared text renderers */
   g_object_unref (G_OBJECT (right_aligned_renderer));
   g_object_unref (G_OBJECT (left_aligned_renderer));
@@ -1039,11 +1044,6 @@ thunar_details_view_row_expanded (GtkTreeView       *tree_view,
                                   TRUE, files, /* lazy: TRUE ? */
                                   &view->thumbnail_request,
                                   THUNAR_THUMBNAIL_SIZE_DEFAULT);
-
-  /* queue a redraw when thumbnail loading is finished */
-  g_signal_connect (view->thumbnailer, "request-finished",
-                    G_CALLBACK (thunar_details_view_finished_thumbnailing),
-                    view);
 
   g_list_free_full (files, g_object_unref);
 }

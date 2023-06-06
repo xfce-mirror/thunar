@@ -1682,6 +1682,10 @@ thunar_tree_view_model_sort (ThunarTreeViewModel *store,
       sort_array[n].node->prev = NULL;
       sort_array[n].node->parent = NULL;
       g_node_append (node, sort_array[n].node);
+      /* Optimization possible ? */
+      /* O(n) append ? if so then total O(n^2) */
+      /* Instead prepend O(1) and then reverse list
+       * O(2n) = O(n) */
     }
 
   /* determine the iterator for the parent node */
@@ -1735,7 +1739,7 @@ thunar_tree_view_model_file_changed (ThunarFileMonitor     *file_monitor,
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   /* traverse the model and emit "row-changed" for the file's nodes */
-  if (thunar_file_is_directory (file) && store->root != NULL)
+  if (store->root != NULL)
     g_node_traverse (store->root, G_PRE_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_view_model_node_traverse_changed, file);
 }
 
@@ -3105,12 +3109,10 @@ thunar_tree_view_model_node_traverse_changed (GNode   *node,
       /* determine the iterator for the node */
       GTK_TREE_ITER_INIT (iter, model->stamp, node);
 
-      /* check if the changed node is not one of the root nodes */
-      if (G_LIKELY (node->parent != model->root))
-        {
-          /* need to re-sort as the name of the file may have changed */
-          thunar_tree_view_model_sort (model, node->parent);
-        }
+      /* need to re-sort as the name of the file may have changed */
+      /* Optimization possible: no need to sort the entire thing
+       * just move the changed node to correct location */
+      thunar_tree_view_model_sort (model, node->parent);
 
       /* check if we have any handlers connected for "row-inserted" */
       has_handler = g_signal_has_handler_pending (G_OBJECT (model), model->row_inserted_id, 0, FALSE);
@@ -3960,7 +3962,7 @@ thunar_tree_view_model_foreach_row_changed (GtkTreeModel *model,
   GNode *node = iter->user_data;
   ThunarTreeViewModelItem *item = node->data;
 
-  if (G_NODE_HAS_DUMMY (node) || item == NULL || item->file == NULL)
+  if (item == NULL || item->file == NULL)
     return FALSE;
 
   gtk_tree_model_row_changed(model, path, iter);
