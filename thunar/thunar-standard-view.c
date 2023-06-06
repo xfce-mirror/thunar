@@ -4647,7 +4647,7 @@ thunar_standard_view_highlight_option_changed (ThunarStandardView *standard_view
     standard_view->priv->css_provider = gtk_css_provider_new ();
     gtk_css_provider_load_from_data (
       standard_view->priv->css_provider,
-      ".view:selected { background-color: rgba(0,0,0,0); }",
+      ".standard-view .view:selected { background-color: rgba(0,0,0,0); outline: rgba(0,0,0,0); }",
       -1, NULL
     );
   }
