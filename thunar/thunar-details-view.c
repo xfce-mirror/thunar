@@ -274,7 +274,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                     G_CALLBACK (thunar_details_view_row_activated), details_view);
   g_signal_connect (G_OBJECT (details_view->tree_view), "select-cursor-row",
                     G_CALLBACK (thunar_details_view_select_cursor_row), details_view);
-  g_signal_connect (G_OBJECT (details_view->tree_view), "row-expanded",
+  g_signal_connect_after (G_OBJECT (details_view->tree_view), "row-expanded",
                     G_CALLBACK (thunar_details_view_row_expanded), details_view);
   g_signal_connect (G_OBJECT (details_view->tree_view), "row-collapsed",
                     G_CALLBACK (thunar_details_view_row_collapsed), details_view);
@@ -1023,6 +1023,14 @@ thunar_details_view_row_expanded (GtkTreeView       *tree_view,
   GList        *files = NULL;
   gboolean      has_next;
 
+  /* do nothing if we are not supposed to show thumbnails at all */
+  if (!thunar_icon_factory_get_show_thumbnail (THUNAR_STANDARD_VIEW (view)->icon_factory,
+                                               thunar_navigator_get_current_directory (THUNAR_NAVIGATOR(view))))
+    return;
+
+  if (thunar_view_get_loading (THUNAR_VIEW (view)))
+    return;
+
   has_next = gtk_tree_model_iter_children (model, &child, parent);
 
   /* StandardView only requests thumbnails for direct descendants of
@@ -1038,6 +1046,9 @@ thunar_details_view_row_expanded (GtkTreeView       *tree_view,
       files = g_list_prepend (files, file);
     has_next = gtk_tree_model_iter_next (model, &child);
   }
+
+  if (G_UNLIKELY (files == NULL))
+    return;
 
   /* queue a thumbnail request */
   thunar_thumbnailer_queue_files (view->thumbnailer,
