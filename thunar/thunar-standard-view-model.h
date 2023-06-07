@@ -17,6 +17,36 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/*
+ 
+                         +--------------------------------------------+
+                         |                                            |
+                         |                                            |
+                         |          ThunarStandardViewModel           |
+                         |                (Interface)                 |
+                         |                                            |
+                         +---------------------+----------------------+
+                                               |
+               +------------------------implemented by-------------------------+
+               |                               |                               |
+               v                               v                               v
++--------------+------------+   +----------------------------+  +--------------+---------------+
+|                           |   |                            |  |                              |
+|  ThunarListModel          |   |  ThunarTreeViewModel       |  |                              |
+|                           |   |                            |  |                              |
+|---------------------------|   |----------------------------|  |                              |
+|  + Used by                |   |  + Used by                 |  |                              |
+|                           |   |                            |  |   New models for new views   |
+|  - IconView               |   |  - DetailsView             |  |   E.g Miller View.           |
+|                           |   |                            |  |                              |
+|  - CompactView            |   |                            |  |                              |
+|                           |   |                            |  |                              |
+|  - ThunarPathEntry        |   |                            |  |                              |
+|                           |   |                            |  |                              |
++---------------------------+   +----------------------------+  +------------------------------+
+
+ */
+
 #ifndef __THUNAR_STANDARD_VIEW_MODEL__
 #define __THUNAR_STANDARD_VIEW_MODEL__
 
