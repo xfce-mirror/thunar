@@ -32,7 +32,21 @@
 #include <thunar/thunar-io-scan-directory.h>
 
 
-
+/**
+ * thunar_io_scan_directory:
+ * @job                 : a #ThunarJob instance
+ * @file                : The folder to scan 
+ * @flags               : @GFileQueryInfoFlags to consider during scan
+ * @recursively         : Wheather as well subfolders should be scanned
+ * @unlinking           : ???
+ * @return_thunar_files : TRUE in order to return the result as a list of #ThunarFile's, FALSE to return a list of #GFile's  
+ * @n_files_max         : Maximum number of files to scan, NULL for unlimited
+ * @error               : Will be se on any error
+ *
+ * Scans the passed folder for files and returns them as a #GList
+ *
+ * Return value: (transfer full): the #GLIst of #GFiles or #ThunarFiles, to be released with e.g. 'g_list_free_full' 
+ **/
 GList *
 thunar_io_scan_directory (ThunarJob          *job,
                           GFile              *file,
@@ -40,6 +54,7 @@ thunar_io_scan_directory (ThunarJob          *job,
                           gboolean            recursively,
                           gboolean            unlinking,
                           gboolean            return_thunar_files,
+                          guint              *n_files_max,
                           GError            **error)
 {
   GFileEnumerator *enumerator;
@@ -116,6 +131,14 @@ thunar_io_scan_directory (ThunarJob          *job,
       if (G_UNLIKELY (info == NULL && err == NULL))
         break;
 
+      if (G_UNLIKELY (n_files_max != NULL))
+        {
+          if (*n_files_max == 0)
+            break;
+          else
+            (*n_files_max)--;
+        }
+
       is_mounted = TRUE;
       if (err != NULL)
         {
@@ -188,7 +211,7 @@ thunar_io_scan_directory (ThunarJob          *job,
           && g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
         {
           child_files = thunar_io_scan_directory (job, child_file, flags, recursively,
-                                                  unlinking, return_thunar_files, &err);
+                                                  unlinking, return_thunar_files, n_files_max, &err);
 
           /* prepend children to the file list to make sure they're
            * processed first (required for unlinking) */

@@ -2884,8 +2884,11 @@ thunar_action_manager_create_document_submenu_new (ThunarActionManager *action_m
   gchar           *label_text;
   GtkWidget       *submenu;
   GtkWidget       *item;
+  guint            file_scan_limit;
 
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), NULL);
+
+  g_object_get (G_OBJECT (action_mgr->preferences), "misc-max-number-of-templates", &file_scan_limit, NULL);
 
   home_dir = thunar_g_file_new_for_home ();
   path     = g_get_user_special_dir (G_USER_DIRECTORY_TEMPLATES);
@@ -2904,7 +2907,7 @@ thunar_action_manager_create_document_submenu_new (ThunarActionManager *action_m
   if (G_LIKELY (templates_dir != NULL))
     {
       /* load the ThunarFiles */
-      files = thunar_io_scan_directory (NULL, templates_dir, G_FILE_QUERY_INFO_NONE, TRUE, FALSE, TRUE, NULL);
+      files = thunar_io_scan_directory (NULL, templates_dir, G_FILE_QUERY_INFO_NONE, TRUE, FALSE, TRUE, &file_scan_limit, NULL);
     }
 
   submenu = gtk_menu_new();
@@ -2926,6 +2929,14 @@ thunar_action_manager_create_document_submenu_new (ThunarActionManager *action_m
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (submenu));
   xfce_gtk_image_menu_item_new_from_icon_name (_("_Empty File"), NULL, NULL, G_CALLBACK (thunar_action_manager_action_create_document),
                                                G_OBJECT (action_mgr), "text-x-generic", GTK_MENU_SHELL (submenu));
+                                         
+  if (file_scan_limit == 0)
+    {
+        xfce_gtk_menu_append_separator (GTK_MENU_SHELL (submenu));
+        xfce_gtk_image_menu_item_new_from_icon_name (("The maximum number of templates was exceeded.\n"
+                                                      "Adjust 'misc-max-number-of-templates' if required."), NULL, NULL, NULL,
+                                                      G_OBJECT (action_mgr), "dialog-warning", GTK_MENU_SHELL (submenu));
+    }
 
 
   g_object_unref (templates_dir);
