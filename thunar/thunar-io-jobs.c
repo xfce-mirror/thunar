@@ -63,7 +63,7 @@ _tij_collect_nofollow (ThunarJob *job,
       /* try to scan the directory */
       child_file_list = thunar_io_scan_directory (job, lp->data,
                                                   G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                                  TRUE, unlinking, FALSE, &err);
+                                                  TRUE, unlinking, FALSE, NULL, &err);
 
       /* prepend the new files to the existing list */
       file_list = thunar_g_list_prepend_deep (file_list, lp->data);
@@ -1295,7 +1295,7 @@ _thunar_io_jobs_ls (ThunarJob  *job,
   /* collect directory contents (non-recursively) */
   file_list = thunar_io_scan_directory (job, directory,
                                         G_FILE_QUERY_INFO_NONE,
-                                        FALSE, FALSE, TRUE, &err);
+                                        FALSE, FALSE, TRUE, NULL, &err);
 
   /* abort on errors or cancellation */
   if (err != NULL)

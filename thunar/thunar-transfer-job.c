@@ -417,7 +417,7 @@ thunar_transfer_job_collect_node (ThunarTransferJob  *job,
       /* scan the directory for immediate children */
       file_list = thunar_io_scan_directory (THUNAR_JOB (job), node->source_file,
                                             G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                            FALSE, FALSE, FALSE, &err);
+                                            FALSE, FALSE, FALSE, NULL, &err);
 
       /* add children to the transfer node */
       for (lp = file_list; err == NULL && lp != NULL; lp = lp->next)

@@ -34,6 +34,7 @@ GList *thunar_io_scan_directory (ThunarJob          *job,
                                  gboolean            recursively,
                                  gboolean            unlinking,
                                  gboolean            return_thunar_files,
+                                 guint              *n_files_max,
                                  GError            **error);
 
 G_END_DECLS
