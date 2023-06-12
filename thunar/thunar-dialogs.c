@@ -250,7 +250,7 @@ thunar_dialogs_show_rename_file (gpointer               parent,
   screen = thunar_util_parse_parent (parent, &window);
 
   /* get the filename of the file */
-  filename = thunar_file_get_display_name (file);
+  filename = thunar_file_get_basename (file);
 
   /* create a new dialog window */
   title = g_strdup_printf (_("Rename \"%s\""), filename);
