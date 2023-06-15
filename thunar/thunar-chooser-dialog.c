@@ -119,6 +119,7 @@ struct _ThunarChooserDialog
   GtkWidget   *default_button;
   GtkWidget   *cancel_button;
   GtkWidget   *accept_button;
+  GtkWidget   *install_button;
 };
 
 
@@ -290,9 +291,19 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
   gtk_widget_show (dialog->default_button);
 
   /* add the "Install" button */
-  if (thunar_util_packagekit_available ())
-    gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Install more apps..."), THUNAR_CHOOSER_DIALOG_RESPONSE_INSTALL);
+  dialog->install_button = gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Install more apps ..."), THUNAR_CHOOSER_DIALOG_RESPONSE_INSTALL);
 
+  if (thunar_util_packagekit_available ())
+    {
+      thunar_gtk_widget_set_tooltip (dialog->install_button,
+                                _("Open installer to install more applications which can open this file-type"));
+    }
+  else
+    {
+      gtk_widget_set_sensitive (dialog->install_button, FALSE);
+      thunar_gtk_widget_set_tooltip (dialog->install_button,
+                                _("Install a 'PackageKit' provider to use this feature"));
+    }
 
   /* add the "Cancel" button */
   dialog->cancel_button = gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Cancel"), GTK_RESPONSE_CANCEL);
