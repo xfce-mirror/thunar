@@ -120,7 +120,6 @@ struct _ThunarChooserDialog
   GtkWidget   *custom_entry;
   GtkWidget   *custom_button;
   GtkWidget   *default_button;
-  GtkWidget   *install_button;
   GtkWidget   *cancel_button;
   GtkWidget   *accept_button;
 };
@@ -295,7 +294,7 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
 
   /* add the "Install" button */
   if (thunar_chooser_dialog_packagekit_available ())
-    dialog->install_button = gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Install more apps..."), THUNAR_CHOOSER_DIALOG_RESPONSE_INSTALL);
+    gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Install more apps..."), THUNAR_CHOOSER_DIALOG_RESPONSE_INSTALL);
 
 
   /* add the "Cancel" button */
@@ -426,7 +425,7 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   /* no special processing for non-accept responses */
   if (G_UNLIKELY (response != GTK_RESPONSE_ACCEPT))
     {
-      gtk_widget_destroy(GTK_WIDGET(dialog));
+      gtk_widget_destroy (GTK_WIDGET (dialog));
       return;
     }
 
@@ -565,7 +564,7 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   g_object_unref (app_info);
 
   /* Close the dialog.. */
-  gtk_widget_destroy (GTK_WIDGET(dialog));
+  gtk_widget_destroy (GTK_WIDGET (dialog));
 }
 
 
@@ -1452,6 +1451,7 @@ thunar_chooser_dialog_packagekit_available (void)
       return FALSE;
     }
 
+  /* We get an 'as' = array of strings and check these for a packagekit service */
   g_variant_get (result, "(as)", &iter);
   while (g_variant_iter_loop (iter, "s", &activable))
     {
@@ -1489,7 +1489,7 @@ thunar_chooser_dialog_install_handlers_ready_cb (GObject      *source_object,
   if (error != NULL)
     {
       /* display an error to the user */
-      thunar_dialogs_show_error (GTK_WIDGET(dialog), error, _("There was an error searching for new applications"));
+      thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("There was an error searching for new applications"));
 
       /* release the error */
       g_error_free (error);
@@ -1497,7 +1497,7 @@ thunar_chooser_dialog_install_handlers_ready_cb (GObject      *source_object,
     }
 
   /* Refresh the dialog... */
-  thunar_chooser_dialog_set_file (dialog, thunar_chooser_dialog_get_file (dialog));
+  thunar_chooser_dialog_set_file (dialog, dialog->file);
   g_variant_unref (variant);
 }
 
@@ -1556,9 +1556,9 @@ thunar_chooser_dialog_install_handlers (ThunarChooserDialog *dialog,
 
   g_dbus_proxy_call (proxy, "InstallMimeTypes",
                      g_variant_new ("(uass)",
-                                    0, /* xid */
-                                    mime_types,
-                                    "hide-finished,show-warnings"
+                                    0,                            /* unisgned xid [uint32]       */
+                                    mime_types,                   /* mime_types   [string array] */
+                                    "hide-finished,show-warnings" /* interaction  [string]       */
                      ),
                      G_DBUS_CALL_FLAGS_NONE,
                      G_MAXINT,
@@ -1567,7 +1567,7 @@ thunar_chooser_dialog_install_handlers (ThunarChooserDialog *dialog,
                      dialog);
 
   g_variant_builder_unref (mime_types);
-  g_object_unref(proxy);
+  g_object_unref (proxy);
   g_object_unref (connection);
 }
 
