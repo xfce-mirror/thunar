@@ -38,6 +38,7 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -96,10 +97,6 @@ static void        thunar_chooser_dialog_set_file            (ThunarChooserDialo
 static gboolean    thunar_chooser_dialog_get_open            (ThunarChooserDialog *dialog);
 static void        thunar_chooser_dialog_set_open            (ThunarChooserDialog *dialog,
                                                               gboolean             open);
-
-static gboolean    thunar_chooser_dialog_packagekit_available(void);
-static void        thunar_chooser_dialog_install_handlers    (ThunarChooserDialog *dialog,
-                                                              const gchar         *mime_type);
 
 struct _ThunarChooserDialogClass
 {
@@ -293,7 +290,7 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
   gtk_widget_show (dialog->default_button);
 
   /* add the "Install" button */
-  if (thunar_chooser_dialog_packagekit_available ())
+  if (thunar_util_packagekit_available ())
     gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Install more apps..."), THUNAR_CHOOSER_DIALOG_RESPONSE_INSTALL);
 
 
@@ -418,7 +415,7 @@ thunar_chooser_dialog_response (GtkDialog *widget,
       content_type = thunar_file_get_content_type (dialog->file);
 
       /* suggests installing new software that handles this type of content */
-      thunar_chooser_dialog_install_handlers (dialog, content_type);
+      thunar_util_install_app_for_mime_type (GTK_WIDGET (dialog), content_type);
       return;
     }
 
@@ -1398,176 +1395,3 @@ thunar_show_chooser_dialog (gpointer    parent,
   /* display the dialog */
   gtk_widget_show (dialog);
 }
-
-
-
-/**
- * thunar_chooser_dialog_packagekit_available:
- *
- * Check if there is a PackageKit service available to install resources
- *
- * Return value: %TRUE if there are any service.
- **/
-static gboolean
-thunar_chooser_dialog_packagekit_available (void)
-{
-  GDBusProxy *proxy;
-  GVariant *result;
-  GVariantIter *iter;
-  GError *error = NULL;
-  gchar *activable;
-  gboolean available = FALSE;
-
-  proxy = g_dbus_proxy_new_for_bus_sync (G_BUS_TYPE_SESSION,
-                                         G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES,
-                                         NULL,
-                                         "org.freedesktop.DBus",
-                                         "/org/freedesktop/DBus",
-                                         "org.freedesktop.DBus",
-                                         NULL,
-                                         &error);
-
-  if (error != NULL)
-    {
-      g_warning ("Could not ask org.freedesktop.DBus if PackageKit is available: %s",
-                error->message);
-      g_error_free (error);
-      return FALSE;
-    }
-
-  result = g_dbus_proxy_call_sync (proxy, "ListActivatableNames",
-                                   NULL,
-                                   G_DBUS_CALL_FLAGS_NONE,
-                                   -1,
-                                   NULL,
-                                   &error);
-
-  if (error != NULL)
-    {
-      g_warning ("Could not ask org.freedesktop.DBus if PackageKit is available: %s",
-                error->message);
-      g_error_free (error);
-      g_object_unref (proxy);
-      return FALSE;
-    }
-
-  /* We get an 'as' = array of strings and check these for a packagekit service */
-  g_variant_get (result, "(as)", &iter);
-  while (g_variant_iter_loop (iter, "s", &activable))
-    {
-      if (g_strcmp0(activable, "org.freedesktop.PackageKit") == 0)
-        {
-          available = TRUE;
-          break;
-        }
-    }
-
-  g_variant_iter_free (iter);
-  g_variant_unref (result);
-
-  g_object_unref (proxy);
-
-  return available;
-}
-
-
-
-static void
-thunar_chooser_dialog_install_handlers_ready_cb (GObject      *source_object,
-                                                 GAsyncResult *res,
-                                                 gpointer      user_data)
-{
-  GDBusProxy *proxy;
-	GVariant   *variant;
-	GError     *error = NULL;
-
-  ThunarChooserDialog *dialog = THUNAR_CHOOSER_DIALOG (user_data);
-
-	proxy = G_DBUS_PROXY (source_object);
-	variant = g_dbus_proxy_call_finish (proxy, res, &error);
-
-  if (error != NULL)
-    {
-      /* display an error to the user */
-      thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("There was an error searching for new applications"));
-
-      /* release the error */
-      g_error_free (error);
-      return;
-    }
-
-  /* Refresh the dialog... */
-  thunar_chooser_dialog_set_file (dialog, dialog->file);
-  g_variant_unref (variant);
-}
-
-
-
-/**
- * thunar_chooser_dialog_install_handlers:
- * @dialog : a #ThunarChooserDialog.
- * @content_type: An string with the mime_type to handle.
- *
- * Launch the PackageKit service available to install the applications according
- * to content_type.
- *
- **/
-static void
-thunar_chooser_dialog_install_handlers (ThunarChooserDialog *dialog,
-                                        const gchar         *content_type)
-{
-  GDBusConnection *connection;
-  GDBusProxy *proxy;
-  GError* error = NULL;
-  GVariantBuilder *mime_types;
-
-  connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
-
-  if (error != NULL)
-    {
-      g_warning ("Could not get session bus: %s", error->message);
-      g_error_free (error);
-      return;
-    }
-
-  proxy = g_dbus_proxy_new_sync (connection,
-                                 G_DBUS_PROXY_FLAGS_NONE,
-                                 NULL,
-                                 "org.freedesktop.PackageKit",
-                                 "/org/freedesktop/PackageKit",
-                                 "org.freedesktop.PackageKit.Modify",
-                                 NULL,
-                                 &error);
-
-  if (error != NULL)
-    {
-      /* display an error to the user */
-      thunar_dialogs_show_error (GTK_WIDGET(dialog), error, _("There was an error searching for new applications"));
-
-      /* release the error */
-      g_error_free (error);
-
-      g_object_unref (connection);
-      return;
-    }
-
-  mime_types = g_variant_builder_new (G_VARIANT_TYPE ("as"));
-  g_variant_builder_add (mime_types, "s", content_type);
-
-  g_dbus_proxy_call (proxy, "InstallMimeTypes",
-                     g_variant_new ("(uass)",
-                                    0,                            /* unisgned xid [uint32]       */
-                                    mime_types,                   /* mime_types   [string array] */
-                                    "hide-finished,show-warnings" /* interaction  [string]       */
-                     ),
-                     G_DBUS_CALL_FLAGS_NONE,
-                     G_MAXINT,
-                     NULL,
-                     thunar_chooser_dialog_install_handlers_ready_cb,
-                     dialog);
-
-  g_variant_builder_unref (mime_types);
-  g_object_unref (proxy);
-  g_object_unref (connection);
-}
-
