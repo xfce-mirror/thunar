@@ -59,6 +59,7 @@ enum
   PROP_SHOW_HIDDEN,
   PROP_FOLDER_ITEM_COUNT,
   PROP_FILE_SIZE_BINARY,
+  PROP_LOADING,
   N_PROPERTIES
 };
 
@@ -141,6 +142,8 @@ static void               thunar_list_model_folder_destroy              (ThunarF
 static void               thunar_list_model_folder_error                (ThunarFolder                 *folder,
                                                                          const GError                 *error,
                                                                          ThunarListModel              *store);
+static void               thunar_list_model_notify_loading              (ThunarFolder                 *folder,
+                                                                         ThunarListModel              *model);
 static void               thunar_list_model_files_added                 (ThunarFolder                 *folder,
                                                                          GList                        *files,
                                                                          ThunarListModel              *store);
@@ -184,6 +187,9 @@ static gboolean           thunar_list_model_add_search_files            (gpointe
 static gint               thunar_list_model_get_folder_item_count       (ThunarListModel              *store);
 static void               thunar_list_model_set_folder_item_count       (ThunarListModel              *store,
                                                                          ThunarFolderItemCount         count_as_dir_size);
+static gboolean           thunar_list_model_get_loading                 (ThunarListModel              *store);
+static void               thunar_list_model_set_loading                 (ThunarListModel              *store,
+                                                                         gboolean                      loading);
 
 static void               thunar_list_model_file_count_callback         (ExoJob                       *job,
                                                                          gpointer                      model);
@@ -278,6 +284,9 @@ struct _ThunarListModel
 
   /* used to stop the periodic call to thunar_list_model_add_search_files when the search is finished/canceled */
   guint          update_search_results_timeout_id;
+
+  /* Tells if the model is yet loading the set folder */
+  gboolean       loading;
 };
 
 
@@ -389,6 +398,15 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
     g_param_spec_override ("folder-item-count",
                            g_object_interface_find_property (g_iface, "folder-item-count"));
 
+  /**
+   * ThunarListModel:loading:
+   *
+   * Tells if the model is yet loading a folder
+   **/
+  list_model_props[PROP_LOADING] =
+    g_param_spec_override ("loading",
+                           g_object_interface_find_property (g_iface, "loading"));
+
   /* install properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, list_model_props);
 
@@ -476,6 +494,8 @@ thunar_list_model_init (ThunarListModel *store)
   store->sort_func = thunar_file_compare_by_name;
   store->rows = g_sequence_new (g_object_unref);
   g_mutex_init (&store->mutex_files_to_add);
+
+  store->loading = FALSE;
 
   /* connect to the shared ThunarFileMonitor, so we don't need to
    * connect "changed" to every single ThunarFile we own.
@@ -573,6 +593,10 @@ thunar_list_model_get_property (GObject    *object,
 
     case PROP_FOLDER_ITEM_COUNT:
       g_value_set_enum (value, thunar_list_model_get_folder_item_count (store));
+      break;
+
+    case PROP_LOADING:
+      g_value_set_boolean (value, thunar_list_model_get_loading (store));
       break;
 
     default:
@@ -1472,6 +1496,26 @@ thunar_list_model_folder_error (ThunarFolder    *folder,
 
 
 static void
+thunar_list_model_notify_loading (ThunarFolder    *folder,
+                                  ThunarListModel *model)
+{
+  gboolean folder_loading;
+
+  _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
+  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (folder));
+
+  folder_loading = thunar_folder_get_loading (folder);
+
+  if (model->loading == folder_loading)
+    return;
+
+  model->loading = folder_loading;
+  g_object_notify_by_pspec (G_OBJECT (model), list_model_props[PROP_LOADING]);
+}
+
+
+
+static void
 thunar_list_model_files_added (ThunarFolder    *folder,
                                GList           *files,
                                ThunarListModel *store)
@@ -2231,6 +2275,7 @@ thunar_list_model_set_folder (ThunarStandardViewModel *model,
   if (folder != NULL)
     {
       g_object_ref (G_OBJECT (folder));
+      thunar_list_model_set_loading (store, TRUE);
 
       /* get the already loaded files or search for files matching the search_query
        * don't start searching if the query is empty, that would be a waste of resources
@@ -2278,6 +2323,11 @@ thunar_list_model_set_folder (ThunarStandardViewModel *model,
       g_signal_connect (G_OBJECT (store->folder), "error", G_CALLBACK (thunar_list_model_folder_error), store);
       g_signal_connect (G_OBJECT (store->folder), "files-added", G_CALLBACK (thunar_list_model_files_added), store);
       g_signal_connect (G_OBJECT (store->folder), "files-removed", G_CALLBACK (thunar_list_model_files_removed), store);
+      g_signal_connect (G_OBJECT (store->folder), "notify::loading", G_CALLBACK (thunar_list_model_notify_loading), store);
+
+      /* notify for "loading" if already loaded */
+      if (!thunar_folder_get_loading (store->folder))
+          g_object_notify (G_OBJECT (store->folder), "loading");
     }
 
   /* notify listeners that we have a new folder */
@@ -2511,6 +2561,40 @@ thunar_list_model_get_folder_item_count (ThunarListModel *store)
 {
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
   return store->folder_item_count;
+}
+
+
+
+/**
+ * thunar_list_model_get_loading:
+ * @store : a #ThunarListModel.
+ *
+ * Return value: %TRUE if @store is yet loading a folder.
+ **/
+static gboolean
+thunar_list_model_get_loading (ThunarListModel *store)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
+  return store->loading;
+}
+
+
+
+/**
+ * thunar_list_model_set_loading:
+ * @store : a #ThunarListModel.
+ *
+ * sets model's loading property to @loading.
+ *
+ * Return value: void
+ **/
+static void
+thunar_list_model_set_loading (ThunarListModel *store,
+                               gboolean         loading)
+{
+  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
+  store->loading = loading;
+  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_LOADING]);
 }
 
 

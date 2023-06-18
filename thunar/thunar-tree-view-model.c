@@ -68,6 +68,7 @@ enum
   PROP_SHOW_HIDDEN,
   PROP_FOLDER_ITEM_COUNT,
   PROP_FILE_SIZE_BINARY,
+  PROP_LOADING,
   N_PROPERTIES
 };
 
@@ -166,6 +167,8 @@ static void                      thunar_tree_view_model_folder_destroy          
 static void                      thunar_tree_view_model_folder_error                (ThunarFolder                 *folder,
                                                                                      const GError                 *error,
                                                                                      ThunarTreeViewModel          *store);
+static void                      thunar_tree_view_model_notify_loading              (ThunarFolder                 *folder,
+                                                                                     ThunarTreeViewModel          *model);
 static void                      thunar_tree_view_model_files_added                 (ThunarFolder                 *folder,
                                                                                      GList                        *files,
                                                                                      ThunarTreeViewModel          *store);
@@ -186,6 +189,9 @@ static void                      thunar_tree_view_model_set_date_custom_style   
                                                                                      const char                   *date_custom_style);
 static gint                      thunar_tree_view_model_get_num_files               (ThunarTreeViewModel          *store);
 static gboolean                  thunar_tree_view_model_get_folders_first           (ThunarTreeViewModel          *store);
+static gboolean                  thunar_tree_view_model_get_loading                 (ThunarTreeViewModel          *store);
+static void                      thunar_tree_view_model_inc_loading                 (ThunarTreeViewModel          *store);
+static void                      thunar_tree_view_model_dec_loading                 (ThunarTreeViewModel          *store);
 static ThunarJob*                thunar_tree_view_model_job_search_directory        (ThunarTreeViewModel          *model,
                                                                                      const gchar                  *search_query_c,
                                                                                      ThunarFile                   *directory);
@@ -353,8 +359,12 @@ struct _ThunarTreeViewModel
   /* used to stop the periodic call to thunar_tree_view_model_add_search_files when the search is finished/canceled */
   guint          update_search_results_timeout_id;
 
-  /* TODO: comment */
+  /* see: thunar_tree_view_model_cleanup;
+   * this the timeout source id for timely cleanup of non visible files/folders */
   guint          cleanup_idle_id;
+
+  /* specifies the number of folders the model is yet loading */
+  gint           loading;
 };
 
 struct _ThunarTreeViewModelItem
@@ -496,6 +506,15 @@ thunar_tree_view_model_class_init (ThunarTreeViewModelClass *klass)
     g_param_spec_override ("folder-item-count",
                            g_object_interface_find_property (g_iface, "folder-item-count"));
 
+  /**
+   * ThunarTreeViewModel:loading:
+   *
+   * Tells if the model is yet loading a folder
+   **/
+  tree_model_props[PROP_LOADING] =
+    g_param_spec_override ("loading",
+                           g_object_interface_find_property (g_iface, "loading"));
+
   /* install properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, tree_model_props);
 
@@ -584,6 +603,8 @@ thunar_tree_view_model_init (ThunarTreeViewModel *store)
   store->sort_sign = 1;
   store->sort_func = thunar_file_compare_by_name;
   g_mutex_init (&store->mutex_files_to_add);
+
+  store->loading = 0;
 
   /* Details view triggers cleanup(non-visible files/folders are released)
    * of the tree structure whenever an expanded row is collapsed.
@@ -697,6 +718,10 @@ thunar_tree_view_model_get_property (GObject    *object,
 
     case PROP_FOLDER_ITEM_COUNT:
       g_value_set_enum (value, thunar_tree_view_model_get_folder_item_count (store));
+      break;
+
+    case PROP_LOADING:
+      g_value_set_boolean (value, thunar_tree_view_model_get_loading (store));
       break;
 
     default:
@@ -1819,6 +1844,18 @@ thunar_tree_view_model_folder_error (ThunarFolder        *folder,
 
 
 static void
+thunar_tree_view_model_notify_loading (ThunarFolder        *folder,
+                                       ThunarTreeViewModel *model)
+{
+  _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (folder));
+
+  thunar_tree_view_model_dec_loading (model);
+}
+
+
+
+static void
 thunar_tree_view_model_files_added (ThunarFolder        *folder,
                                     GList               *files,
                                     ThunarTreeViewModel *store)
@@ -2486,6 +2523,7 @@ thunar_tree_view_model_set_folder (ThunarStandardViewModel *model,
   if (folder != NULL)
     {
       g_object_ref (G_OBJECT (folder));
+      thunar_tree_view_model_inc_loading (store);
 
       /* get the already loaded files or search for files matching the search_query
        * don't start searching if the query is empty, that would be a waste of resources
@@ -2533,6 +2571,11 @@ thunar_tree_view_model_set_folder (ThunarStandardViewModel *model,
       g_signal_connect (G_OBJECT (store->folder), "error", G_CALLBACK (thunar_tree_view_model_folder_error), store);
       g_signal_connect (G_OBJECT (store->folder), "files-added", G_CALLBACK (thunar_tree_view_model_files_added), store);
       g_signal_connect (G_OBJECT (store->folder), "files-removed", G_CALLBACK (thunar_tree_view_model_files_removed), store);
+      g_signal_connect (G_OBJECT (store->folder), "notify::loading", G_CALLBACK (thunar_tree_view_model_notify_loading), store);
+
+      /* notify for "loading" if already loaded */
+      if (!thunar_folder_get_loading (store->folder))
+          g_object_notify (G_OBJECT (store->folder), "loading");
     }
 
   /* notify listeners that we have a new folder */
@@ -2556,6 +2599,51 @@ thunar_tree_view_model_get_folders_first (ThunarTreeViewModel *store)
 {
   _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (store), FALSE);
   return store->sort_folders_first;
+}
+
+
+
+/**
+ * thunar_tree_view_model_get_loading:
+ * @store : a #ThunarTreeViewModel.
+ *
+ * Determines whether @store is yet loading a folder.
+ *
+ * Return value: %TRUE if @store is loading a folder.
+ **/
+static gboolean
+thunar_tree_view_model_get_loading (ThunarTreeViewModel *store)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (store), FALSE);
+  return store->loading > 0;
+}
+
+
+
+static void
+thunar_tree_view_model_inc_loading (ThunarTreeViewModel *model)
+{
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
+
+  model->loading++;
+
+  /* only notify for the first increment from 0 */
+  if (model->loading == 1)
+    g_object_notify_by_pspec (G_OBJECT (model), tree_model_props[PROP_LOADING]);
+}
+
+
+
+static void
+thunar_tree_view_model_dec_loading (ThunarTreeViewModel *model)
+{
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
+
+  model->loading--;
+
+  /* only notify not loading when loading count == 0 */
+  if (model->loading == 0)
+    g_object_notify_by_pspec (G_OBJECT (model), tree_model_props[PROP_LOADING]);
 }
 
 
@@ -2947,6 +3035,8 @@ thunar_tree_view_model_item_notify_loading (ThunarTreeViewModelItem *item,
       /* ...and drop the dummy for the node */
       if (G_NODE_HAS_DUMMY (node))
         thunar_tree_view_model_node_drop_dummy (node, item->model);
+
+      thunar_tree_view_model_dec_loading (item->model);
     }
 }
 
@@ -2982,15 +3072,17 @@ THUNAR_THREADS_ENTER
       item->folder = thunar_folder_get_for_file (item->file);
       if (G_LIKELY (item->folder != NULL))
         {
-          /* load the initial set of files (if any) */
-          files = thunar_folder_get_files (item->folder);
-          if (G_UNLIKELY (files != NULL))
-            thunar_tree_view_model_item_files_added (item, files, item->folder);
+          thunar_tree_view_model_inc_loading (item->model);
 
           /* connect signals */
           g_signal_connect_swapped (G_OBJECT (item->folder), "files-added", G_CALLBACK (thunar_tree_view_model_item_files_added), item);
           g_signal_connect_swapped (G_OBJECT (item->folder), "files-removed", G_CALLBACK (thunar_tree_view_model_item_files_removed), item);
           g_signal_connect_swapped (G_OBJECT (item->folder), "notify::loading", G_CALLBACK (thunar_tree_view_model_item_notify_loading), item);
+
+          /* load the initial set of files (if any) */
+          files = thunar_folder_get_files (item->folder);
+          if (G_UNLIKELY (files != NULL))
+            thunar_tree_view_model_item_files_added (item, files, item->folder);
 
           /* notify for "loading" if already loaded */
           if (!thunar_folder_get_loading (item->folder))
