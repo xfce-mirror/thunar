@@ -520,7 +520,7 @@ thunar_browser_poke_file_internal (ThunarBrowser                *browser,
  * In the other cases, if the enclosing volume of the @file is not mounted
  * yet, it tries to mount it.
  *
- * When finished or if an error occured, it calls @func with the provided
+ * When finished or if an error occurred, it calls @func with the provided
  * @user data. The #GError parameter to @func is set if, and only if there
  * was an error.
  **/

@@ -3576,7 +3576,7 @@ thunar_file_get_file_count (ThunarFile   *file,
 
   if (err != NULL)
     {
-      g_warning ("An error occured while trying to get file counts.");
+      g_warning ("An error occurred while trying to get file counts.");
       return file->file_count;
     }
 
