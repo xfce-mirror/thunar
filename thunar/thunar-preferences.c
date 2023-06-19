@@ -1226,7 +1226,8 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
 static void
 thunar_preferences_init (ThunarPreferences *preferences)
 {
-  const gchar check_prop[] = "/last-view";
+  const gchar last_view[] = "/last-view";
+  const gchar real_name[] = "/show-real-file-name";
 
   /* don't set a channel if xfconf init failed */
   if (no_xfconf)
@@ -1236,15 +1237,18 @@ thunar_preferences_init (ThunarPreferences *preferences)
   preferences->channel = xfconf_channel_get ("thunar");
 
   /* check one of the property to see if there are values */
-  if (!xfconf_channel_has_property (preferences->channel, check_prop))
+  if (!xfconf_channel_has_property (preferences->channel, last_view))
     {
       /* try to load the old config file */
       thunar_preferences_load_rc_file (preferences);
 
       /* set the string we check */
-      if (!xfconf_channel_has_property (preferences->channel, check_prop))
-        xfconf_channel_set_string (preferences->channel, check_prop, "ThunarIconView");
+      if (!xfconf_channel_has_property (preferences->channel, last_view))
+        xfconf_channel_set_string (preferences->channel, last_view, "ThunarIconView");
     }
+
+  if (xfconf_channel_has_property (preferences->channel, real_name) == FALSE)
+    xfconf_channel_set_bool (preferences->channel, real_name, FALSE);
 
   preferences->property_changed_id =
     g_signal_connect (G_OBJECT (preferences->channel), "property-changed",
