@@ -38,6 +38,7 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -97,7 +98,6 @@ static gboolean    thunar_chooser_dialog_get_open            (ThunarChooserDialo
 static void        thunar_chooser_dialog_set_open            (ThunarChooserDialog *dialog,
                                                               gboolean             open);
 
-
 struct _ThunarChooserDialogClass
 {
   ThunarAbstractDialogClass __parent__;
@@ -119,6 +119,7 @@ struct _ThunarChooserDialog
   GtkWidget   *default_button;
   GtkWidget   *cancel_button;
   GtkWidget   *accept_button;
+  GtkWidget   *install_button;
 };
 
 
@@ -289,6 +290,14 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
   gtk_box_pack_start (GTK_BOX (box), dialog->default_button, FALSE, FALSE, 0);
   gtk_widget_show (dialog->default_button);
 
+  /* add the "Install" button */
+  if (thunar_util_packagekit_available ())
+    {
+      dialog->install_button = gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Install more apps ..."), THUNAR_CHOOSER_DIALOG_RESPONSE_INSTALL);
+      thunar_gtk_widget_set_tooltip (dialog->install_button,
+                                _("Open installer to install more applications which can open this file-type"));
+    }
+
   /* add the "Cancel" button */
   dialog->cancel_button = gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Cancel"), GTK_RESPONSE_CANCEL);
 
@@ -404,9 +413,22 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   GdkScreen           *screen;
   GAppInfo            *default_app = NULL;
 
+  if (G_UNLIKELY (response == THUNAR_CHOOSER_DIALOG_RESPONSE_INSTALL))
+    {
+      /* determine the content type for the file */
+      content_type = thunar_file_get_content_type (dialog->file);
+
+      /* suggests installing new software that handles this type of content */
+      thunar_util_install_app_for_mime_type (GTK_WIDGET (dialog), content_type);
+      return;
+    }
+
   /* no special processing for non-accept responses */
   if (G_UNLIKELY (response != GTK_RESPONSE_ACCEPT))
-    return;
+    {
+      gtk_widget_destroy (GTK_WIDGET (dialog));
+      return;
+    }
 
   /* determine the content type for the file */
   content_type = thunar_file_get_content_type (dialog->file);
@@ -541,6 +563,9 @@ thunar_chooser_dialog_response (GtkDialog *widget,
 
   /* cleanup */
   g_object_unref (app_info);
+
+  /* Close the dialog.. */
+  gtk_widget_destroy (GTK_WIDGET (dialog));
 }
 
 
@@ -1366,9 +1391,6 @@ thunar_show_chooser_dialog (gpointer    parent,
       gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
     }
 
-  /* destroy the dialog after a user interaction */
-  g_signal_connect_after (G_OBJECT (dialog), "response", G_CALLBACK (gtk_widget_destroy), NULL);
-
   /* let the application handle the dialog */
   application = thunar_application_get ();
   thunar_application_take_window (application, GTK_WINDOW (dialog));
@@ -1377,7 +1399,3 @@ thunar_show_chooser_dialog (gpointer    parent,
   /* display the dialog */
   gtk_widget_show (dialog);
 }
-
-
-
-
