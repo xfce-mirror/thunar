@@ -734,7 +734,7 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation  *operation,
       lookup = g_hash_table_lookup (files_trashed, original_file);
 
       /* if we deleted the file in this session, and the current file we're looking at was deleted
-       * during the time the operation occured, we conclude we found the right file */
+       * during the time the operation occurred, we conclude we found the right file */
       if (lookup != NULL && operation->start_timestamp <= deletion_time && deletion_time <= operation->end_timestamp)
         {
           trashed_file = g_file_get_child (trash, g_file_info_get_name (info));
