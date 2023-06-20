@@ -374,7 +374,8 @@ struct _ThunarTreeViewModelItem
   ThunarFile          *file;
   ThunarFolder        *folder;
   ThunarTreeViewModel *model;
-  GSequence           *files_to_add;
+  GList               *files_to_add;
+  gint                 add_files_timeout;
 
   /* list of children of this node that are
    * not visible in the treeview */
@@ -2872,6 +2873,10 @@ thunar_tree_view_model_item_free (ThunarTreeViewModelItem *item)
   if (G_UNLIKELY (item->load_idle_id != 0))
     g_source_remove (item->load_idle_id);
 
+  /* cancel update timeout */
+  if (G_UNLIKELY (item->add_files_timeout != 0))
+    g_source_remove (item->add_files_timeout);
+
   /* disconnect from the folder */
   if (G_LIKELY (item->folder != NULL))
     {
@@ -2920,24 +2925,24 @@ thunar_tree_view_model_item_load_folder (ThunarTreeViewModelItem *item)
 
 
 
+static gpointer
+list_copy_func (gpointer data,
+                gpointer user_data)
+{
+  return g_object_ref (data);
+}
+
+
+
 static void
 thunar_tree_view_model_item_files_added (ThunarTreeViewModelItem *item,
                                          GList                   *files,
                                          ThunarFolder            *folder)
 
 {
-  ThunarTreeViewModel *model;
-  GNode               *node = NULL;
-
-  _thunar_return_if_fail (item != NULL);
-  _thunar_return_if_fail (THUNAR_IS_FOLDER (item->folder));
-
-  model = THUNAR_TREE_VIEW_MODEL (item->model);
-
-  node = g_node_find (model->root, G_POST_ORDER, G_TRAVERSE_ALL, item);
-  _thunar_return_if_fail (node != NULL);
-
-  thunar_tree_view_model_add_children (model, node, files);
+  GList *files_copy;
+  files_copy = g_list_copy_deep (files, (GCopyFunc) list_copy_func, NULL);
+  item->files_to_add = g_list_concat (item->files_to_add, files_copy);
 }
 
 
@@ -3045,6 +3050,38 @@ thunar_tree_view_model_item_notify_loading (ThunarTreeViewModelItem *item,
 
 
 static gboolean
+thunar_tree_view_model_item_add_files (gpointer data)
+{
+  ThunarTreeViewModelItem *item;
+  ThunarTreeViewModel     *model;
+  GNode                   *node = NULL;
+
+  item = THUNAR_TREE_VIEW_MODEL_ITEM (data);
+
+  _thunar_return_val_if_fail (data != NULL, G_SOURCE_REMOVE);
+
+  if (item->folder == NULL)
+    return G_SOURCE_REMOVE;
+
+  if (item->files_to_add == NULL)
+    return G_SOURCE_CONTINUE;
+
+  model = THUNAR_TREE_VIEW_MODEL (item->model);
+
+  node = g_node_find (model->root, G_POST_ORDER, G_TRAVERSE_ALL, item);
+  _thunar_return_val_if_fail (node != NULL, G_SOURCE_REMOVE);
+
+  thunar_tree_view_model_add_children (model, node, item->files_to_add);
+
+  g_list_free_full (item->files_to_add, g_object_unref);
+  item->files_to_add = NULL;
+
+  return G_SOURCE_CONTINUE;
+}
+
+
+
+static gboolean
 thunar_tree_view_model_item_load_idle (gpointer user_data)
 {
   ThunarTreeViewModelItem *item = user_data;
@@ -3080,6 +3117,7 @@ THUNAR_THREADS_ENTER
           g_signal_connect_swapped (G_OBJECT (item->folder), "files-added", G_CALLBACK (thunar_tree_view_model_item_files_added), item);
           g_signal_connect_swapped (G_OBJECT (item->folder), "files-removed", G_CALLBACK (thunar_tree_view_model_item_files_removed), item);
           g_signal_connect_swapped (G_OBJECT (item->folder), "notify::loading", G_CALLBACK (thunar_tree_view_model_item_notify_loading), item);
+          item->add_files_timeout = g_timeout_add_full (G_PRIORITY_HIGH_IDLE, 25, thunar_tree_view_model_item_add_files, item, NULL);
 
           /* load the initial set of files (if any) */
           files = thunar_folder_get_files (item->folder);
@@ -3181,6 +3219,11 @@ thunar_tree_view_model_node_traverse_cleanup (GNode    *node,
   if (item && item->folder != NULL && item->ref_count == 0)
     {
       /* disconnect from the folder */
+      if (item->add_files_timeout != 0)
+        {
+          g_source_remove (item->add_files_timeout);
+          item->add_files_timeout = 0;
+        }
       g_signal_handlers_disconnect_matched (G_OBJECT (item->folder), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, item);
       g_object_unref (G_OBJECT (item->folder));
       item->folder = NULL;
