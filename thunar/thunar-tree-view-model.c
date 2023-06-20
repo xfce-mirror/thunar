@@ -168,6 +168,7 @@ static void                      thunar_tree_view_model_folder_error            
                                                                                      const GError                 *error,
                                                                                      ThunarTreeViewModel          *store);
 static void                      thunar_tree_view_model_notify_loading              (ThunarFolder                 *folder,
+                                                                                     GParamSpec                   *spec,
                                                                                      ThunarTreeViewModel          *model);
 static void                      thunar_tree_view_model_files_added                 (ThunarFolder                 *folder,
                                                                                      GList                        *files,
@@ -288,7 +289,6 @@ static gint                      thunar_tree_view_model_unlink_child            
                                                                                      GNode                        *child);
 static gint                      thunar_tree_view_model_insert_child_node_sorted    (ThunarTreeViewModel          *model,
                                                                                      GNode                        *parent,
-                                                                                     GNode                        *after,
                                                                                      GNode                        *child);
 static void                      thunar_tree_view_model_reorder_if_req              (ThunarTreeViewModel          *model,
                                                                                      GNode                        *node);
@@ -374,6 +374,7 @@ struct _ThunarTreeViewModelItem
   ThunarFile          *file;
   ThunarFolder        *folder;
   ThunarTreeViewModel *model;
+  GSequence           *files_to_add;
 
   /* list of children of this node that are
    * not visible in the treeview */
@@ -390,7 +391,6 @@ typedef struct
 
 
 /* This struct is used in thunar_tree_view_model_get_paths_for_files */
-/* TODO: ? find a better name ? */
 typedef struct
 {
   GList               *files;
@@ -661,7 +661,6 @@ thunar_tree_view_model_finalize (GObject *object)
   g_object_unref (G_OBJECT (store->file_monitor));
 
   /* release the files and associated data structures */
-  /* TODO: ? find a better name ? */
   thunar_tree_view_model_release_files (store);
   g_node_destroy (store->root);
 
@@ -1845,10 +1844,11 @@ thunar_tree_view_model_folder_error (ThunarFolder        *folder,
 
 static void
 thunar_tree_view_model_notify_loading (ThunarFolder        *folder,
+                                       GParamSpec          *spec,
                                        ThunarTreeViewModel *model)
 {
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
-  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (folder));
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
 
   thunar_tree_view_model_dec_loading (model);
 }
@@ -2500,7 +2500,6 @@ thunar_tree_view_model_set_folder (ThunarStandardViewModel *model,
       store->files_to_add = NULL;
 
       /* release the files and associated data structures */
-      /* TODO: ? find a better name ? */
       thunar_tree_view_model_release_files (store);
 
       /* unregister signals and drop the reference */
@@ -2624,6 +2623,7 @@ static void
 thunar_tree_view_model_inc_loading (ThunarTreeViewModel *model)
 {
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
+  _thunar_return_if_fail (model->loading >= 0);
 
   model->loading++;
 
@@ -2639,7 +2639,8 @@ thunar_tree_view_model_dec_loading (ThunarTreeViewModel *model)
 {
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
 
-  model->loading--;
+  if (model->loading > 0)
+    model->loading--;
 
   /* only notify not loading when loading count == 0 */
   if (model->loading == 0)
@@ -2857,6 +2858,7 @@ thunar_tree_view_model_item_new_with_file (ThunarTreeViewModel *model,
   item = g_slice_new0 (ThunarTreeViewModelItem);
   item->file = THUNAR_FILE (g_object_ref (G_OBJECT (file)));
   item->model = model;
+  item->files_to_add = NULL;
 
   return item;
 }
@@ -4024,106 +4026,22 @@ thunar_tree_view_model_add_child (ThunarTreeViewModel *model,
  *
  * Creates a n #ThunarTreeModelItem's as a children of @node and stores a reference to correspoding @files
  * Automatically creates/removes dummy items if required
+ * Additionally sorts the children.
  **/
 static void
 thunar_tree_view_model_add_children (ThunarTreeViewModel *model,
                                      GNode               *node,
                                      GList               *files)
 {
-  ThunarTreeViewModelItem *child_item;
-  ThunarTreeViewModelItem *parent_item;
-  GNode                   *child_node = NULL;
-  GNode                   *prev;
-  GtkTreeIter              child_iter;
-  GtkTreePath             *path;
-  GtkTreeIter              parent_iter;
-  gboolean                 has_handler;
-  ThunarFile              *file;
-  gint                     pos;
-  gint                    *indices;
-  gint                     depth;
+  GList *lp;
 
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
   _thunar_return_if_fail (files != NULL);
 
-  /* check if we have any handlers connected for "row-inserted" */
-  has_handler = g_signal_has_handler_pending (G_OBJECT (model), model->row_inserted_id, 0, FALSE);
+  for (lp = files; lp != NULL; lp = lp->next)
+    thunar_tree_view_model_add_child (model, node, lp->data);
 
-  parent_item = node->data;
-
-  /* determine the tree iter for the node */
-  GTK_TREE_ITER_INIT (parent_iter, model->stamp, node);
-  path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &parent_iter);
-  gtk_tree_path_down (path);
-  indices = gtk_tree_path_get_indices_with_depth (path, &depth);
-
-  /* sort the files; a simple optimisation for O(n) insertion of files;
-   * Overall this func should run in O(n lgn) */
-  files = g_list_sort_with_data (files, (GCompareDataFunc) thunar_tree_view_model_cmp_files, model);
-
-  for (GList *lp = files; lp != NULL; lp = lp->next)
-    {
-      file = THUNAR_FILE (lp->data);
-      _thunar_return_if_fail (THUNAR_IS_FILE (file));
-
-      /* if this file should be visible */
-      if (!model->show_hidden && thunar_file_is_hidden (file))
-        {
-          /* file is invisible, insert it in the invisible list and continue */
-          parent_item->invisible_children = g_slist_prepend (parent_item->invisible_children,
-                                                             g_object_ref (G_OBJECT (file)));
-          continue;
-        }
-
-      /* allocate a new item for the file */
-      child_item = thunar_tree_view_model_item_new_with_file (model, file);
-
-      /* optimization: since we have a sorted files list
-       * we can start search for next position to insert the next node
-       * from previously inserted node */
-      prev = child_node;
-
-      /* check if the node has only the dummy child */
-      if (G_UNLIKELY (G_NODE_HAS_DUMMY (node)))
-        {
-          /* replace the dummy node with the new node */
-          child_node = g_node_first_child (node);
-          child_node->data = child_item;
-
-          if (has_handler)
-            {
-              /* determine the tree iter for the child */
-              GTK_TREE_ITER_INIT (child_iter, model->stamp, child_node);
-
-              /* emit a "row-changed" for the new node */
-              gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &child_iter);
-            }
-        }
-      else
-        {
-          child_node = g_node_new (child_item);
-
-          pos = thunar_tree_view_model_insert_child_node_sorted (model, node, prev, child_node);
-          g_assert (child_node->parent == node);
-
-          indices[depth - 1] = pos;
-
-          if (has_handler)
-            {
-              /* determine the tree iter for the child */
-              GTK_TREE_ITER_INIT (child_iter, model->stamp, child_node);
-
-              /* emit a "row-inserted" for the new node */
-              gtk_tree_model_row_inserted (GTK_TREE_MODEL (model), path, &child_iter);
-            }
-        }
-
-      /* add a dummy to the new child */
-      if (thunar_file_is_directory (file))
-        thunar_tree_view_model_node_insert_dummy (child_node, model);
-    }
-
-  gtk_tree_path_free (path);
+  thunar_tree_view_model_sort (model, node);
 }
 
 
@@ -4210,15 +4128,10 @@ thunar_tree_view_model_unlink_child (GNode *parent,
 static gint
 thunar_tree_view_model_insert_child_node_sorted (ThunarTreeViewModel *model,
                                                  GNode               *parent,
-                                                 GNode               *after,
                                                  GNode               *child)
 {
   GNode *lp;
   gint   pos;
-
-  /* after is the child of parent from where we start our search for
-   * the correct position to insert child */
-  _thunar_return_val_if_fail (after == NULL || after->parent == parent, -1);
 
   if (parent->children == NULL)
     {
@@ -4229,10 +4142,9 @@ thunar_tree_view_model_insert_child_node_sorted (ThunarTreeViewModel *model,
       return 0;
     }
 
-  lp = after != NULL ? after : parent->children;
   pos = 0;
 
-  for (; lp != NULL; lp = lp->next, ++pos)
+  for (lp = parent->children; lp != NULL; lp = lp->next, ++pos)
     {
       if (lp->next == NULL)
         {
@@ -4286,7 +4198,7 @@ thunar_tree_view_model_reorder_if_req (ThunarTreeViewModel *model,
   parent = node->parent;
 
   pos_before = thunar_tree_view_model_unlink_child (node->parent, node);
-  pos_after = thunar_tree_view_model_insert_child_node_sorted (model, parent, NULL, node);
+  pos_after = thunar_tree_view_model_insert_child_node_sorted (model, parent, node);
 
   /* check if we have any handlers connected for "row-inserted" */
   has_handler = g_signal_has_handler_pending (G_OBJECT (model), model->row_inserted_id, 0, FALSE);
@@ -4296,7 +4208,6 @@ thunar_tree_view_model_reorder_if_req (ThunarTreeViewModel *model,
 
   length = g_node_n_children (node->parent);
 
-  /* TODO: don't use magic number */
   if (G_LIKELY (length < STACK_ALLOC_LIMIT))
       new_order = g_newa (gint, length);
   else
