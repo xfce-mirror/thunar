@@ -1568,13 +1568,6 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   /* cancel any pending thumbnail sources and requests */
   thunar_standard_view_cancel_thumbnailing (standard_view);
 
-  /* disconnect any previous "loading" binding */
-  if (G_LIKELY (standard_view->loading_binding != NULL))
-    {
-      g_object_unref (standard_view->loading_binding);
-      standard_view->loading_binding = NULL;
-    }
-
   /* store the current scroll position */
   if (current_directory != NULL)
     thunar_standard_view_scroll_position_save (standard_view);
@@ -1632,15 +1625,6 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 
   /* open the new directory as folder */
   folder = thunar_folder_get_for_file (current_directory);
-
-  /* connect the "loading" binding */
-  standard_view->loading_binding =
-    g_object_bind_property_full (folder,        "loading",
-                                 standard_view, "loading",
-                                 G_BINDING_SYNC_CREATE,
-                                 NULL, NULL,
-                                 standard_view,
-                                 thunar_standard_view_loading_unbound);
 
   /* apply the new folder, ignore removal of any old files */
   g_signal_handler_block (standard_view->model, standard_view->priv->row_deleted_id);
@@ -4762,6 +4746,11 @@ thunar_standard_view_set_model (ThunarStandardView *standard_view)
       g_signal_handlers_disconnect_matched (G_OBJECT (standard_view->model), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, standard_view);
       g_object_unref (G_OBJECT (standard_view->model));
       standard_view->model = NULL;
+      if (G_LIKELY (standard_view->loading_binding != NULL))
+        {
+          g_object_unref (G_OBJECT (standard_view->loading_binding));
+          standard_view->loading_binding = NULL;
+        }
     }
 
   standard_view->model = g_object_new (standard_view->priv->model_type, NULL);
@@ -4785,4 +4774,12 @@ thunar_standard_view_set_model (ThunarStandardView *standard_view)
 
   /* be sure to update the statusbar text whenever the file-size-binary property changes */
   g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::file-size-binary", G_CALLBACK (thunar_standard_view_update_statusbar_text), standard_view);
+
+  standard_view->loading_binding =
+    g_object_bind_property_full (standard_view->model, "loading",
+                                 standard_view,        "loading",
+                                 G_BINDING_SYNC_CREATE,
+                                 NULL, NULL,
+                                 standard_view,
+                                 thunar_standard_view_loading_unbound);
 }

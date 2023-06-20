@@ -143,6 +143,7 @@ static void               thunar_list_model_folder_error                (ThunarF
                                                                          const GError                 *error,
                                                                          ThunarListModel              *store);
 static void               thunar_list_model_notify_loading              (ThunarFolder                 *folder,
+                                                                         GParamSpec                   *pspec,
                                                                          ThunarListModel              *model);
 static void               thunar_list_model_files_added                 (ThunarFolder                 *folder,
                                                                          GList                        *files,
@@ -1497,12 +1498,13 @@ thunar_list_model_folder_error (ThunarFolder    *folder,
 
 static void
 thunar_list_model_notify_loading (ThunarFolder    *folder,
+                                  GParamSpec      *pspec,
                                   ThunarListModel *model)
 {
   gboolean folder_loading;
 
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
-  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (folder));
+  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
 
   folder_loading = thunar_folder_get_loading (folder);
 
