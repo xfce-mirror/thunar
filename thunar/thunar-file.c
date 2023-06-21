@@ -5074,3 +5074,19 @@ thunar_file_has_directory_specific_settings (ThunarFile *file)
 
   return FALSE;
 }
+
+
+
+void
+thunar_file_lock_rename()
+{
+  G_LOCK (file_rename_mutex);
+}
+
+
+
+void
+thunar_file_unlock_rename()
+{
+  G_UNLOCK (file_rename_mutex);
+}
