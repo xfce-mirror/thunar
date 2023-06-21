@@ -121,6 +121,9 @@ typedef void (*ThunarFileGetFunc) (GFile      *location,
 
 GType             thunar_file_get_type                   (void) G_GNUC_CONST;
 
+ThunarFile       *thunar_file_get_reload                 (GFile                  *file,
+                                                          GError                **error,
+                                                          gboolean                reload);
 ThunarFile       *thunar_file_get                        (GFile                  *file,
                                                           GError                **error);
 ThunarFile       *thunar_file_get_with_info              (GFile                  *file,

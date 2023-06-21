@@ -1255,9 +1255,10 @@ thunar_file_load (ThunarFile   *file,
 
 
 /**
- * thunar_file_get:
- * @file  : a #GFile.
- * @error : return location for errors.
+ * thunar_file_get_reload:
+ * @file   : a #GFile.
+ * @error  : return location for errors.
+ * @reload : calls "thunar_file_reload" if file cached
  *
  * Looks up the #ThunarFile referred to by @file. This function may return a
  * ThunarFile even though the file doesn't actually exist. This is the case
@@ -1269,8 +1270,9 @@ thunar_file_load (ThunarFile   *file,
  * Return value: the #ThunarFile for @file or %NULL on errors.
  **/
 ThunarFile*
-thunar_file_get (GFile   *gfile,
-                 GError **error)
+thunar_file_get_reload (GFile   *gfile,
+                        GError **error,
+                        gboolean reload)
 {
   ThunarFile *file;
 
@@ -1285,7 +1287,11 @@ thunar_file_get (GFile   *gfile,
   if (G_UNLIKELY (file != NULL))
     {
       /* return the file, it already has an additional ref set
-       * in thunar_file_cache_lookup */
+       * in thunar_file_cache_lookup and reload if it's requested */
+      if (reload && !thunar_file_reload (file))
+        {
+          file = NULL;
+        }
     }
   else
     {
@@ -1314,6 +1320,30 @@ thunar_file_get (GFile   *gfile,
 
   return file;
 }
+
+
+
+/**
+ * thunar_file_get:
+ * @file  : a #GFile.
+ * @error : return location for errors.
+ *
+ * Looks up the #ThunarFile referred to by @file. This function may return a
+ * ThunarFile even though the file doesn't actually exist. This is the case
+ * with remote URIs (like SFTP) for instance, if they are not mounted.
+ *
+ * The caller is responsible to call g_object_unref()
+ * when done with the returned object.
+ *
+ * Return value: the #ThunarFile for @file or %NULL on errors.
+ **/
+ThunarFile*
+thunar_file_get (GFile   *gfile,
+                 GError **error)
+{
+  return thunar_file_get_reload (gfile, error, FALSE);
+}
+
 
 
 /**
