@@ -746,6 +746,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
   ThunarFile   *file;
   ThunarFile   *other_parent;
   GList        *lp;
+  GList        *lp2;
   GList         list;
   gboolean      restart = FALSE;
 
@@ -767,72 +768,110 @@ thunar_folder_monitor (GFileMonitor     *monitor,
       if (folder->content_type_idle_id != 0)
         restart = g_source_remove (folder->content_type_idle_id);
 
-      /* if we don't have it, add it if the event is not an "deleted" event */
-      if (G_UNLIKELY (lp == NULL && event_type != G_FILE_MONITOR_EVENT_DELETED))
+      /* if we don't have it, add it if the event does not "delete" the "event_file" */
+      if (lp == NULL &&
+          event_type != G_FILE_MONITOR_EVENT_DELETED &&
+          event_type != G_FILE_MONITOR_EVENT_RENAMED &&
+          event_type != G_FILE_MONITOR_EVENT_MOVED_OUT)
         {
-          /* allocate a file for the path */
           file = thunar_file_get (event_file, NULL);
-          if (G_UNLIKELY (file != NULL))
+          if (file != NULL)
             {
               /* prepend it to our internal list */
               folder->files = g_list_prepend (folder->files, file);
 
               /* tell others about the new file */
-              list.data = file; list.next = list.prev = NULL;
+              list.data = file;
+              list.next = list.prev = NULL;
               g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, &list);
 
               /* load the new file */
               thunar_file_reload (file);
+
+              if (other_file != NULL && event_type == G_FILE_MONITOR_EVENT_MOVED_IN)
+                {
+                  /* notify the thumbnail cache that we can now also move the thumbnail */
+                  thunar_file_move_thumbnail_cache_file (other_file, event_file);
+                }
             }
         }
       else if (lp != NULL)
         {
           if (event_type == G_FILE_MONITOR_EVENT_DELETED)
             {
-              ThunarFile *destroyed;
-
               /* destroy the file */
               thunar_file_destroy (lp->data);
-
-              /* if the file has not been destroyed by now, reload it to invalidate it */
-              destroyed = thunar_file_cache_lookup (event_file);
-              if (destroyed != NULL)
-                {
-                  thunar_file_reload (destroyed);
-                  g_object_unref (destroyed);
-                }
             }
           else if (event_type == G_FILE_MONITOR_EVENT_RENAMED ||
                    event_type == G_FILE_MONITOR_EVENT_MOVED_IN ||
                    event_type == G_FILE_MONITOR_EVENT_MOVED_OUT)
             {
-              /* destroy the old file and update the new one */
-              thunar_file_destroy (lp->data);
+              if (event_type == G_FILE_MONITOR_EVENT_MOVED_IN)
+                {
+                  /* reload existing file, the case when file doesn't exist
+                     is handled above where "lp" is NULL */
+                  thunar_file_reload (lp->data);
+                }
+              else if (event_type == G_FILE_MONITOR_EVENT_MOVED_OUT)
+                {
+                  /* destroy the old file */
+                  thunar_file_destroy (lp->data);
+                }
+
               if (other_file != NULL)
                 {
-                  file = thunar_file_get(other_file, NULL);
-                  if (file != NULL && THUNAR_IS_FILE (file))
+                  if (event_type == G_FILE_MONITOR_EVENT_RENAMED)
                     {
-                      if (thunar_file_reload (file))
+                      thunar_file_lock_rename ();
+
+                      /* check if we already ship the destination file */
+                      for (lp2 = folder->files; lp2 != NULL; lp2 = lp2->next)
+                        if (g_file_equal (other_file, thunar_file_get_file (lp2->data)))
+                          break;
+
+                      /* if "thunar_file_rename" was called, pointers are the same,
+                         because file is already moved */
+                      if (lp != lp2)
                         {
-                          /* if source and target folders are different, also tell
-                             the target folder to reload for the changes */
-                          if (thunar_file_has_parent (file))
+                          /* notify the file is renamed */
+                          thunar_file_monitor_moved (lp->data, other_file);
+
+                          /* destroy source file if the destination file already exists
+                             to prevent duplicated file */
+                          if (lp2)
+                            thunar_file_destroy (lp->data);
+                        }
+                    }
+
+                  file = thunar_file_get_reload (other_file, NULL, TRUE);
+                  if (file != NULL)
+                    {
+                      /* notify the thumbnail cache that we can now also move the thumbnail */
+                      if (event_type == G_FILE_MONITOR_EVENT_MOVED_IN)
+                        thunar_file_move_thumbnail_cache_file (other_file, event_file);
+                      else if (event_type == G_FILE_MONITOR_EVENT_MOVED_OUT)
+                        thunar_file_move_thumbnail_cache_file (event_file, other_file);
+
+                      /* if source and target folders are different, also tell
+                         the target folder to reload for the changes */
+                      if (thunar_file_has_parent (file))
+                        {
+                          other_parent = thunar_file_get_parent (file, NULL);
+                          if (other_parent &&
+                              !g_file_equal (thunar_file_get_file(folder->corresponding_file),
+                                             thunar_file_get_file(other_parent)))
                             {
-                              other_parent = thunar_file_get_parent (file, NULL);
-                              if (other_parent &&
-                                  !g_file_equal (thunar_file_get_file(folder->corresponding_file),
-                                                 thunar_file_get_file(other_parent)))
-                                {
-                                  thunar_file_reload (other_parent);
-                                  g_object_unref (other_parent);
-                                }
+                              thunar_file_reload (other_parent);
+                              g_object_unref (other_parent);
                             }
                         }
 
                       /* drop reference on the other file */
                       g_object_unref (file);
                     }
+
+                  if (event_type == G_FILE_MONITOR_EVENT_RENAMED)
+                    thunar_file_unlock_rename ();
                 }
             }
           else
@@ -853,8 +892,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
       /* update/destroy the corresponding file */
       if (event_type == G_FILE_MONITOR_EVENT_DELETED)
         {
-          if (!thunar_file_exists (folder->corresponding_file))
-            thunar_file_destroy (folder->corresponding_file);
+          thunar_file_destroy (folder->corresponding_file);
         }
       else
         {

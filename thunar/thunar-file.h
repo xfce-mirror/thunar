@@ -121,6 +121,9 @@ typedef void (*ThunarFileGetFunc) (GFile      *location,
 
 GType             thunar_file_get_type                   (void) G_GNUC_CONST;
 
+ThunarFile       *thunar_file_get_reload                 (GFile                  *file,
+                                                          GError                **error,
+                                                          gboolean                reload);
 ThunarFile       *thunar_file_get                        (GFile                  *file,
                                                           GError                **error);
 ThunarFile       *thunar_file_get_with_info              (GFile                  *file,
@@ -270,7 +273,6 @@ void              thunar_file_unwatch                    (ThunarFile            
 gboolean          thunar_file_reload                     (ThunarFile              *file);
 void              thunar_file_reload_idle                (ThunarFile              *file);
 void              thunar_file_reload_idle_unref          (ThunarFile              *file);
-void              thunar_file_reload_parent              (ThunarFile              *file);
 
 void              thunar_file_destroy                    (ThunarFile              *file);
 
@@ -299,6 +301,15 @@ void              thunar_file_clear_metadata_setting     (ThunarFile            
                                                           const gchar            *setting_name);
 void              thunar_file_clear_directory_specific_settings (ThunarFile      *file);
 gboolean          thunar_file_has_directory_specific_settings   (ThunarFile      *file);
+
+void              thunar_file_move_thumbnail_cache_file  (GFile *old_file,
+                                                          GFile *new_file);
+
+void              thunar_file_monitor_moved              (ThunarFile *file,
+                                                          GFile      *renamed_file);
+
+void              thunar_file_lock_rename                (void);
+void              thunar_file_unlock_rename              (void);
 
 /**
  * thunar_file_is_root:
