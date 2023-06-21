@@ -719,7 +719,7 @@ thunar_file_monitor_update (GFile             *path,
 
 
 
-static void
+void
 thunar_file_move_thumbnail_cache_file (GFile *old_file,
                                        GFile *new_file)
 {

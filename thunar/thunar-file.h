@@ -300,6 +300,9 @@ void              thunar_file_clear_metadata_setting     (ThunarFile            
 void              thunar_file_clear_directory_specific_settings (ThunarFile      *file);
 gboolean          thunar_file_has_directory_specific_settings   (ThunarFile      *file);
 
+void              thunar_file_move_thumbnail_cache_file  (GFile *old_file,
+                                                          GFile *new_file);
+
 /**
  * thunar_file_is_root:
  * @file : a #ThunarFile.
