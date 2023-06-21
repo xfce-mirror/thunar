@@ -853,8 +853,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
       /* update/destroy the corresponding file */
       if (event_type == G_FILE_MONITOR_EVENT_DELETED)
         {
-          if (!thunar_file_exists (folder->corresponding_file))
-            thunar_file_destroy (folder->corresponding_file);
+          thunar_file_destroy (folder->corresponding_file);
         }
       else
         {
