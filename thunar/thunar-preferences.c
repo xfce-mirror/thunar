@@ -129,6 +129,7 @@ enum
   PROP_MISC_UNDO_REDO_HISTORY_SIZE,
   PROP_MISC_CONFIRM_MOVE_TO_TRASH,
   PROP_MISC_MAX_NUMBER_OF_TEMPLATES,
+  PROP_SHOW_LAUNCHER_NAMES_INSTEAD_REAL_FILENAMES,
   N_PROPERTIES,
 };
 
@@ -1203,7 +1204,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             FALSE,
                             EXO_PARAM_READWRITE);
 
-   /**
+  /**
    * ThunarPreferences:misc-max-number-of-templates
    *
    * Maximum number of templates for which will be scanned in the 'templates' directory
@@ -1217,6 +1218,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          100,
                          EXO_PARAM_READWRITE);
 
+  /**
+   * ThunarPreferences:show-launcher-names-instead-real-filenames:
+   *
+   * Wheter to show real file names or launcher names for .desktop files
+   **/
+  preferences_props[PROP_SHOW_LAUNCHER_NAMES_INSTEAD_REAL_FILENAMES] =
+       g_param_spec_boolean ("show-launcher-names-instead-real-filenames",
+                             "ShowLauncherNamesInsteadRealFilenames",
+                             NULL,
+                             TRUE,
+                             EXO_PARAM_READWRITE);
+  
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
 }
@@ -1226,8 +1239,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
 static void
 thunar_preferences_init (ThunarPreferences *preferences)
 {
-  const gchar last_view[] = "/last-view";
-  const gchar real_name[] = "/show-real-file-name";
+  const gchar check_prop[] = "/last-view";
 
   /* don't set a channel if xfconf init failed */
   if (no_xfconf)
@@ -1237,18 +1249,15 @@ thunar_preferences_init (ThunarPreferences *preferences)
   preferences->channel = xfconf_channel_get ("thunar");
 
   /* check one of the property to see if there are values */
-  if (!xfconf_channel_has_property (preferences->channel, last_view))
+  if (!xfconf_channel_has_property (preferences->channel, check_prop))
     {
       /* try to load the old config file */
       thunar_preferences_load_rc_file (preferences);
 
       /* set the string we check */
-      if (!xfconf_channel_has_property (preferences->channel, last_view))
-        xfconf_channel_set_string (preferences->channel, last_view, "ThunarIconView");
+      if (!xfconf_channel_has_property (preferences->channel, check_prop))
+        xfconf_channel_set_string (preferences->channel, check_prop, "ThunarIconView");
     }
-
-  if (xfconf_channel_has_property (preferences->channel, real_name) == FALSE)
-    xfconf_channel_set_bool (preferences->channel, real_name, FALSE);
 
   preferences->property_changed_id =
     g_signal_connect (G_OBJECT (preferences->channel), "property-changed",

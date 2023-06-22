@@ -1063,20 +1063,29 @@ thunar_properties_dialog_rename_error (ExoJob                 *job,
                                        GError                 *error,
                                        ThunarPropertiesDialog *dialog)
 {
+  ThunarFile  *file;
+  
   _thunar_return_if_fail (EXO_IS_JOB (job));
   _thunar_return_if_fail (error != NULL);
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) == 1);
 
+  file = THUNAR_FILE (dialog->files->data);
+
   /* reset the entry display name to the original name, so the focus
      out event does not trigger the rename again by calling
      thunar_properties_dialog_name_activate */
   gtk_entry_set_text (GTK_ENTRY (xfce_filename_input_get_entry (dialog->name_entry)),
-                      thunar_file_get_display_name (THUNAR_FILE (dialog->files->data)));
+                      thunar_file_get_basename (file));
 
   /* display an error message */
-  thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to rename \"%s\""),
-                             thunar_file_get_display_name (THUNAR_FILE (dialog->files->data)));
+  if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
+    thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to rename \"%s\" (%s)"),
+                               thunar_file_get_display_name (file),
+                               thunar_file_get_basename (file));
+  else
+    thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to rename \"%s\""),
+                               thunar_file_get_basename (file));
 }
 
 
@@ -1114,7 +1123,7 @@ thunar_properties_dialog_name_activate (GtkWidget              *entry,
   /* determine new and old name */
   file = THUNAR_FILE (dialog->files->data);
   new_name = xfce_filename_input_get_text (dialog->name_entry);
-  old_name = thunar_file_get_display_name (file);
+  old_name = thunar_file_get_basename (file);
   if (g_utf8_collate (new_name, old_name) != 0)
     {
       job = thunar_io_jobs_rename_file (file, new_name, THUNAR_OPERATION_LOG_OPERATIONS);
@@ -1162,7 +1171,10 @@ thunar_properties_dialog_icon_button_clicked (GtkWidget              *button,
   file = THUNAR_FILE (dialog->files->data);
 
   /* allocate the icon chooser */
-  title = g_strdup_printf (_("Select an Icon for \"%s\""), thunar_file_get_display_name (file));
+  if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
+    title = g_strdup_printf (_("Select an Icon for \"%s\" (%s)"), thunar_file_get_display_name (file), thunar_file_get_basename (file));
+  else
+    title = g_strdup_printf (_("Select an Icon for \"%s\""), thunar_file_get_display_name (file));
   chooser = exo_icon_chooser_dialog_new (title, GTK_WINDOW (dialog),
                                          _("_Cancel"), GTK_RESPONSE_CANCEL,
                                          _("_OK"), GTK_RESPONSE_ACCEPT,
@@ -1186,9 +1198,14 @@ thunar_properties_dialog_icon_button_clicked (GtkWidget              *button,
           gtk_widget_hide (chooser);
 
           /* tell the user that we failed to change the icon of the .desktop file */
-          thunar_dialogs_show_error (GTK_WIDGET (dialog), err,
-                                     _("Failed to change icon of \"%s\""),
-                                     thunar_file_get_display_name (file));
+          if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
+            thunar_dialogs_show_error (GTK_WIDGET (dialog), err,
+                                       _("Failed to change icon of \"%s\" (%s)"),
+                                       thunar_file_get_display_name (file), thunar_file_get_basename (file));
+          else
+            thunar_dialogs_show_error (GTK_WIDGET (dialog), err,
+                                       _("Failed to change icon of \"%s\""),
+                                       thunar_file_get_display_name (file));
           g_error_free (err);
         }
       g_free (icon);
@@ -1298,7 +1315,10 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   g_object_get (G_OBJECT (dialog->preferences), "misc-date-custom-style", &date_custom_style, NULL);
 
   /* update the properties dialog title */
-  str = g_strdup_printf (_("%s - Properties"), thunar_file_get_display_name (file));
+  if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
+    str = g_strdup_printf (_("%s (%s) - Properties"), thunar_file_get_display_name (file), thunar_file_get_basename (file));
+  else
+    str = g_strdup_printf (_("%s - Properties"), thunar_file_get_display_name (file));
   gtk_window_set_title (GTK_WINDOW (dialog), str);
   g_free (str);
 
@@ -1323,7 +1343,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   /* update the name (if it differs) */
   gtk_editable_set_editable (GTK_EDITABLE (xfce_filename_input_get_entry (dialog->name_entry)),
                              thunar_file_is_renameable (file));
-  name = thunar_file_get_display_name (file);
+  name = thunar_file_get_basename (file);
   if (G_LIKELY (strcmp (name, xfce_filename_input_get_text (dialog->name_entry)) != 0))
     {
       gtk_entry_set_text (xfce_filename_input_get_entry (dialog->name_entry), name);
@@ -1583,7 +1603,7 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
       /* append the name */
       if (!first_file)
         g_string_append (names_string, ", ");
-      g_string_append (names_string, thunar_file_get_display_name (file));
+      g_string_append (names_string, thunar_file_get_basename (file));
 
       /* update the content type */
       if (first_file)

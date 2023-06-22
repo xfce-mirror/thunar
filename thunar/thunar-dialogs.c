@@ -875,8 +875,13 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
     }
   else
     {
-      text = g_strdup_printf (_("This folder already contains a file \"%s\"."),
-                              thunar_file_get_display_name (dst_file));
+      if (g_strcmp0 (thunar_file_get_display_name (dst_file), thunar_file_get_basename (dst_file)) != 0)
+        text = g_strdup_printf (_("This folder already contains a file \"%s\" (%s)."),
+                                thunar_file_get_display_name (dst_file),
+                                thunar_file_get_basename (dst_file));
+      else
+        text = g_strdup_printf (_("This folder already contains a file \"%s\"."),
+                                thunar_file_get_display_name (dst_file));
     }
 
   label = gtk_label_new (text);
@@ -1082,10 +1087,17 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
 
   /* secondary text */
   secondary = g_string_new (NULL);
-  g_string_append_printf (secondary, _("The desktop file \"%s\" is in an insecure location "
-                                       "and not marked as executable. If you do not trust "
-                                       "this program, click Cancel."),
-                                       thunar_file_get_display_name (file));
+  if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
+    g_string_append_printf (secondary, _("The desktop file \"%s\" (%s) is in an insecure location "
+                                         "and not marked as executable. If you do not trust "
+                                         "this program, click Cancel."),
+                                         thunar_file_get_display_name (file),
+                                         thunar_file_get_basename (file));
+  else
+    g_string_append_printf (secondary, _("The desktop file \"%s\" is in an insecure location "
+                                         "and not marked as executable. If you do not trust "
+                                         "this program, click Cancel."),
+                                         thunar_file_get_display_name (file));
   g_string_append (secondary, "\n\n");
   if (g_uri_is_valid (command, G_URI_FLAGS_NONE, NULL))
     g_string_append_printf (secondary, G_KEY_FILE_DESKTOP_KEY_URL"=%s", command);
@@ -1219,5 +1231,51 @@ thunar_dialog_confirm_close_split_pane_tabs (GtkWindow *parent)
     
   gtk_widget_destroy (dialog);
   g_free (secondary_text);
+  return response;
+}
+
+
+
+/**
+ * thunar_dialog_show_rename_launcher_options:
+ * @parent : a #GtkWidget on which the error dialog should be shown, or a #GdkScreen
+ *           if no #GtkWidget is known. May also be %NULL, in which case the default
+ *           #GdkScreen will be used.
+ *
+ * Shows a dialog where the user is asked if he wants to edit the launcher name or the actual filename.
+ *
+ * Return value: THUNAR_RESPONSE_FILENAME if the user chooses "Filename", THUNAR_RESPONSE_LAUNCHERNAME
+ * if the user selects "Launchername" and GTK_RESPONSE_DELETE_EVENT if the user deletes the dialog.
+ **/
+gint
+thunar_dialog_show_rename_launcher_options (GtkWindow *parent)
+{
+  gint       response;
+  GtkWidget *dialog;
+  GtkWidget *button;
+  
+  dialog = gtk_message_dialog_new (parent,
+                                   GTK_DIALOG_MODAL |
+                                   GTK_DIALOG_DESTROY_WITH_PARENT,
+                                   GTK_MESSAGE_QUESTION,
+                                   GTK_BUTTONS_NONE,
+                                   "%s", _("What what you like to rename?"));
+  
+  gtk_window_set_title (GTK_WINDOW (dialog), _("Rename options"));
+  
+  button = gtk_button_new_with_mnemonic (_("_Filename"));
+  gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, THUNAR_RESPONSE_FILENAME);
+  gtk_widget_show (button);
+  
+  button = gtk_button_new_with_mnemonic (_("_Launchername"));
+  gtk_widget_set_can_default (button, TRUE);
+  gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, THUNAR_RESPONSE_LAUNCHERNAME);
+  gtk_widget_show (button);
+  gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_RESPONSE_LAUNCHERNAME);
+  
+  /* run the question dialog */
+  response = gtk_dialog_run (GTK_DIALOG (dialog));
+  gtk_widget_destroy (dialog);
+
   return response;
 }
