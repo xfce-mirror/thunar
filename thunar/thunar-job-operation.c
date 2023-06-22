@@ -464,7 +464,6 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
                          "Aborting operation\n",
                          err->message);
               g_propagate_error (error, err);
-              g_clear_error (&err);
               g_object_unref (application);
               return operation_canceled;
             }
@@ -487,10 +486,10 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
               {
                 g_warning ("Error while renaming files: %s\n", err->message);
                 g_propagate_error (error, err);
-                g_clear_error (&err);
 
                 g_free (display_name);
-                g_object_unref (thunar_file);
+                if (thunar_file)
+                  g_object_unref (thunar_file);
 
                 continue;
               }
@@ -510,7 +509,6 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
           {
             g_warning ("Error while restoring files: %s\n", err->message);
             g_propagate_error (error, err);
-            g_clear_error (&err);
           }
         break;
 
