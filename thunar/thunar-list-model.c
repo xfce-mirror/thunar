@@ -288,6 +288,12 @@ struct _ThunarListModel
 
   /* Tells if the model is yet loading the set folder */
   gboolean       loading;
+
+  /* indicates that file was removed from this model */
+  gboolean       file_was_removed;
+
+  /* tells is workaround for removed file should be used */
+  gboolean       removed_workaround;
 };
 
 
@@ -800,6 +806,31 @@ thunar_list_model_get_value (GtkTreeModel *model,
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
   _thunar_return_if_fail (iter->stamp == (THUNAR_LIST_MODEL (model))->stamp);
+
+  /* WORKAROUND: if file was removed from the completion  model, sometimes the view is
+   * trying to access the removed data, so check if requested item is in the model. */
+  if (THUNAR_LIST_MODEL (model)->removed_workaround && THUNAR_LIST_MODEL (model)->file_was_removed)
+    {
+      GSequenceIter *row = g_sequence_get_begin_iter (THUNAR_LIST_MODEL (model)->rows);
+      GSequenceIter *end = g_sequence_get_end_iter (THUNAR_LIST_MODEL (model)->rows);
+      GSequenceIter *next;
+      gboolean       found = FALSE;
+      while (row != end)
+        {
+          next = g_sequence_iter_next (row);
+          if (row == iter->user_data)
+            {
+              found = TRUE;
+              break;
+            }
+          row = next;
+        }
+      if (!found)
+        {
+          g_critical ("Requested file doesn't exist in the list model!");
+          return;
+        }
+    }
 
   file = g_sequence_get (iter->user_data);
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
@@ -1655,6 +1686,9 @@ thunar_list_model_files_removed (ThunarFolder    *folder,
 
           if (g_sequence_get (row) == lp->data)
             {
+              /* indicate that file was removed from this model */
+              store->file_was_removed = TRUE;
+
               /* setup path for "row-deleted" */
               path = gtk_tree_path_new_from_indices (g_sequence_iter_get_position (row), -1);
 
@@ -1706,6 +1740,19 @@ ThunarStandardViewModel*
 thunar_list_model_new (void)
 {
   return g_object_new (THUNAR_TYPE_LIST_MODEL, NULL);
+}
+
+
+
+/**
+ * thunar_list_model_set_removed_workaround:
+ *
+ * Enables file removed workaround to prevent crash.
+ **/
+void
+thunar_list_model_set_removed_workaround (ThunarListModel *model)
+{
+  model->removed_workaround = TRUE;
 }
 
 
@@ -2253,6 +2300,9 @@ thunar_list_model_set_folder (ThunarStandardViewModel *model,
       /* remove hidden entries */
       g_slist_free_full (store->hidden, g_object_unref);
       store->hidden = NULL;
+
+      /* reset the information that file was removed from this model */
+      store->file_was_removed = FALSE;
 
       /* unregister signals and drop the reference */
       g_signal_handlers_disconnect_matched (G_OBJECT (store->folder), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);

@@ -38,6 +38,8 @@ GType                    thunar_list_model_get_type               (void) G_GNUC_
 
 ThunarStandardViewModel *thunar_list_model_new                    (void);
 
+void                     thunar_list_model_set_removed_workaround (ThunarListModel *model);
+
 
 G_END_DECLS;
 
