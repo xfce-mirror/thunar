@@ -122,7 +122,6 @@ static gboolean           thunar_file_same_filesystem          (const ThunarFile
 
 static GRecMutex G_LOCK_NAME (file_cache_mutex);
 G_LOCK_DEFINE_STATIC         (file_content_type_mutex);
-G_LOCK_DEFINE_STATIC         (file_rename_mutex);
 
 
 
@@ -689,36 +688,6 @@ thunar_file_denies_access_permission (const ThunarFile *file,
 
 
 
-static void
-thunar_file_monitor_update (GFile             *path,
-                            GFileMonitorEvent  event_type)
-{
-  ThunarFile *file;
-
-  _thunar_return_if_fail (G_IS_FILE (path));
-  file = thunar_file_cache_lookup (path);
-  if (G_LIKELY (file != NULL))
-    {
-      switch (event_type)
-        {
-        case G_FILE_MONITOR_EVENT_CREATED:
-        case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
-        case G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
-        case G_FILE_MONITOR_EVENT_PRE_UNMOUNT:
-        case G_FILE_MONITOR_EVENT_DELETED:
-          thunar_file_reload (file);
-          break;
-
-        default:
-          break;
-        }
-
-      g_object_unref (file);
-    }
-}
-
-
-
 void
 thunar_file_move_thumbnail_cache_file (GFile *old_file,
                                        GFile *new_file)
@@ -739,31 +708,25 @@ thunar_file_move_thumbnail_cache_file (GFile *old_file,
 
 
 
-static void
-thunar_file_monitor_moved (ThunarFile *file,
-                           GFile      *renamed_file)
+void
+thunar_file_replace_file (ThunarFile *file,
+                          GFile      *renamed_file)
 {
   GFile *previous_file;
 
-  /* ref the old location */
-  previous_file = G_FILE (g_object_ref (G_OBJECT (file->gfile)));
+  G_REC_LOCK (file_cache_mutex);
 
-  /* notify the thumbnail cache that we can now also move the thumbnail */
-  thunar_file_move_thumbnail_cache_file (previous_file, renamed_file);
+  /* get the old location */
+  previous_file = file->gfile;
 
   /* set the new file */
-  file->gfile = G_FILE (g_object_ref (G_OBJECT (renamed_file)));
-
-  /* reload file information */
-  thunar_file_load (file, NULL, NULL);
-
-  /* need to re-register the monitor handle for the new uri */
-  thunar_file_watch_reconnect (file);
-
-  G_REC_LOCK (file_cache_mutex);
+  file->gfile = g_object_ref (renamed_file);
 
   /* drop the previous entry from the cache */
   g_hash_table_remove (file_cache, previous_file);
+
+  /* need to re-register the monitor handle for the new uri */
+  thunar_file_watch_reconnect (file);
 
   /* drop the reference on the previous file */
   g_object_unref (previous_file);
@@ -778,32 +741,6 @@ thunar_file_monitor_moved (ThunarFile *file,
 
 
 
-void
-thunar_file_reload_parent (ThunarFile *file)
-{
-  ThunarFile *parent = NULL;
-
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
-
-  if (thunar_file_has_parent (file))
-    {
-      GFile *parent_file;
-
-      /* only reload file if it is in cache */
-      parent_file = g_file_get_parent (file->gfile);
-      parent = thunar_file_cache_lookup (parent_file);
-      g_object_unref (parent_file);
-    }
-
-  if (parent)
-    {
-      thunar_file_reload (parent);
-      g_object_unref (parent);
-    }
-}
-
-
-
 static void
 thunar_file_monitor (GFileMonitor     *monitor,
                      GFile            *event_path,
@@ -812,8 +749,6 @@ thunar_file_monitor (GFileMonitor     *monitor,
                      gpointer          user_data)
 {
   ThunarFile *file = THUNAR_FILE (user_data);
-  ThunarFile *other_file;
-  gboolean    reload_ok = TRUE;
 
   _thunar_return_if_fail (G_IS_FILE_MONITOR (monitor));
   _thunar_return_if_fail (G_IS_FILE (event_path));
@@ -822,56 +757,28 @@ thunar_file_monitor (GFileMonitor     *monitor,
   if (g_file_equal (event_path, file->gfile))
     {
       /* the event occurred for the monitored ThunarFile */
-      if (event_type == G_FILE_MONITOR_EVENT_RENAMED ||
-          event_type == G_FILE_MONITOR_EVENT_MOVED_IN ||
-          event_type == G_FILE_MONITOR_EVENT_MOVED_OUT)
+      switch (event_type)
         {
-          G_LOCK (file_rename_mutex);
-          thunar_file_monitor_moved (file, other_path);
-          G_UNLOCK (file_rename_mutex);
-          return;
-        }
+        case G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
+        case G_FILE_MONITOR_EVENT_DELETED:
+        case G_FILE_MONITOR_EVENT_CREATED:
+        case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
+        case G_FILE_MONITOR_EVENT_PRE_UNMOUNT:
+          thunar_file_reload (file);
+          break;
 
-      if (G_LIKELY (event_path))
-          thunar_file_monitor_update (event_path, event_type);
+        default:
+          break;
+        }
     }
   else
     {
       /* The event did not occur for the monitored ThunarFile, but for
          a file that is contained in ThunarFile which is actually a
-         directory. */
-      if (event_type == G_FILE_MONITOR_EVENT_RENAMED ||
-          event_type == G_FILE_MONITOR_EVENT_MOVED_IN ||
-          event_type == G_FILE_MONITOR_EVENT_MOVED_OUT)
-        {
-          /* reload the target file if cached */
-          if (other_path == NULL)
-            return;
-
-          G_LOCK (file_rename_mutex);
-
-          other_file = thunar_file_cache_lookup (other_path);
-          if (other_file)
-              reload_ok = thunar_file_reload (other_file);
-          else
-              other_file = thunar_file_get (other_path, NULL);
-
-          if (reload_ok && other_file != NULL)
-            {
-              /* notify the thumbnail cache that we can now also move the thumbnail */
-              thunar_file_move_thumbnail_cache_file (event_path, other_path);
-
-              /* reload the containing target folder */
-              thunar_file_reload_parent (other_file);
-
-              g_object_unref (other_file);
-            }
-
-          G_UNLOCK (file_rename_mutex);
-        }
-      return;
+         directory. It's handled in "thunar_folder_monitor" */
     }
 }
+
 
 
 static void
@@ -907,7 +814,7 @@ thunar_file_watch_reconnect (ThunarFile *file)
         }
 
       /* create a file or directory monitor */
-      file_watch->monitor = g_file_monitor (file->gfile, G_FILE_MONITOR_WATCH_MOUNTS | G_FILE_MONITOR_SEND_MOVED, NULL, NULL);
+      file_watch->monitor = g_file_monitor (file->gfile, G_FILE_MONITOR_WATCH_MOUNTS, NULL, NULL);
       if (G_LIKELY (file_watch->monitor != NULL))
         {
           /* watch monitor for file changes */
@@ -1945,29 +1852,17 @@ thunar_file_rename (ThunarFile   *file,
   _thunar_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  G_LOCK (file_rename_mutex);
   /* try to rename the file */
   renamed_file = g_file_set_display_name (file->gfile, name, cancellable, error);
 
   /* check if we succeeded */
   if (renamed_file != NULL)
     {
-      /* notify the file is renamed */
-      thunar_file_monitor_moved (file, renamed_file);
-
-      g_object_unref (G_OBJECT (renamed_file));
-
-      if (!called_from_job)
-        {
-          /* emit the file changed signal */
-          thunar_file_changed (file);
-        }
-      G_UNLOCK (file_rename_mutex);
+      g_object_unref (renamed_file);
       return TRUE;
     }
   else
     {
-      G_UNLOCK (file_rename_mutex);
       return FALSE;
     }
 }
@@ -4264,8 +4159,7 @@ thunar_file_watch (ThunarFile *file)
       file_watch->watch_count = 1;
 
       /* create a file or directory monitor */
-      file_watch->monitor = g_file_monitor (file->gfile, G_FILE_MONITOR_WATCH_MOUNTS |
-                                            G_FILE_MONITOR_WATCH_MOVES, NULL, &error);
+      file_watch->monitor = g_file_monitor (file->gfile, G_FILE_MONITOR_WATCH_MOUNTS, NULL, &error);
 
       if (G_UNLIKELY (file_watch->monitor == NULL))
         {
