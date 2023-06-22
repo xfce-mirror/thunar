@@ -270,7 +270,6 @@ void              thunar_file_unwatch                    (ThunarFile            
 gboolean          thunar_file_reload                     (ThunarFile              *file);
 void              thunar_file_reload_idle                (ThunarFile              *file);
 void              thunar_file_reload_idle_unref          (ThunarFile              *file);
-void              thunar_file_reload_parent              (ThunarFile              *file);
 
 void              thunar_file_destroy                    (ThunarFile              *file);
 
@@ -299,6 +298,12 @@ void              thunar_file_clear_metadata_setting     (ThunarFile            
                                                           const gchar            *setting_name);
 void              thunar_file_clear_directory_specific_settings (ThunarFile      *file);
 gboolean          thunar_file_has_directory_specific_settings   (ThunarFile      *file);
+
+void              thunar_file_move_thumbnail_cache_file  (GFile *old_file,
+                                                          GFile *new_file);
+
+void              thunar_file_replace_file               (ThunarFile *file,
+                                                          GFile      *renamed_file);
 
 /**
  * thunar_file_is_root:
