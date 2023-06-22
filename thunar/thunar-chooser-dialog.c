@@ -476,10 +476,17 @@ thunar_chooser_dialog_response (GtkDialog *widget,
       if (G_UNLIKELY (!succeed))
         {
           /* display an error to the user */
-          thunar_dialogs_show_error (GTK_WIDGET (dialog),
-                                     error,
-                                     _("Failed to set default application for \"%s\""),
-                                     thunar_file_get_display_name (dialog->file));
+          if (g_strcmp0 (thunar_file_get_display_name (dialog->file), thunar_file_get_basename (dialog->file)) != 0)
+            thunar_dialogs_show_error (GTK_WIDGET (dialog),
+                                       error,
+                                       _("Failed to set default application for \"%s\" (%s)"),
+                                       thunar_file_get_display_name (dialog->file),
+                                       thunar_file_get_basename (dialog->file));
+          else
+            thunar_dialogs_show_error (GTK_WIDGET (dialog),
+                                       error,
+                                       _("Failed to set default application for \"%s\""),
+                                       thunar_file_get_display_name (dialog->file));
 
           /* release the error */
           g_error_free (error);
@@ -684,9 +691,15 @@ thunar_chooser_dialog_update_header (ThunarChooserDialog *dialog)
       g_object_unref (icon);
 
       /* update the header label */
-      text = g_strdup_printf (_("Open <i>%s</i> and other files of type \"%s\" with:"),
-                              thunar_file_get_display_name (dialog->file),
-                              description);
+      if (g_strcmp0 (thunar_file_get_display_name (dialog->file), thunar_file_get_basename (dialog->file)) != 0)
+        text = g_strdup_printf (_("Open <i>%s (%s)</i> and other files of type \"%s\" with:"),
+                                thunar_file_get_display_name (dialog->file),
+                                thunar_file_get_basename (dialog->file),
+                                description);
+      else
+        text = g_strdup_printf (_("Open <i>%s</i> and other files of type \"%s\" with:"),
+                                thunar_file_get_display_name (dialog->file),
+                                description);
       gtk_label_set_markup (GTK_LABEL (dialog->header_label), text);
       g_free (text);
 

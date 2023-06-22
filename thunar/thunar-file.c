@@ -906,14 +906,14 @@ static void
 thunar_file_info_reload (ThunarFile   *file,
                          GCancellable *cancellable)
 {
-  const gchar   *target_uri;
-  const gchar   *display_name;
-  GKeyFile      *key_file;
-  gchar         *p;
-  gchar         *casefold;
-  gchar         *path;
-  gboolean       real_name;
-  XfconfChannel *channel;
+  const gchar       *target_uri;
+  const gchar       *display_name;
+  gchar             *p;
+  gchar             *casefold;
+  gchar             *path;
+  GKeyFile          *key_file;
+  gboolean           launcher_name;
+  ThunarPreferences *preferences;
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (file->info == NULL || G_IS_FILE_INFO (file->info));
@@ -982,10 +982,11 @@ thunar_file_info_reload (ThunarFile   *file,
             }
 
           /* read the display name from the .desktop file (will be overwritten later
-          * if it's undefined here) */
-          channel = xfconf_channel_get ("thunar");
-          real_name = xfconf_channel_get_bool (channel, "/show-real-file-name", FALSE);
-          if (xfce_g_file_is_trusted (file->gfile, NULL, NULL) && real_name == FALSE)
+           * if it's undefined here) */
+          preferences = thunar_preferences_get ();
+          g_object_get (preferences, "show-launcher-names-instead-real-filenames", &launcher_name, NULL);
+          g_object_unref (preferences);
+          if (thunar_g_vfs_metadata_is_supported () && xfce_g_file_is_trusted (file->gfile, NULL, NULL) && launcher_name == TRUE)
             {
               file->display_name = g_key_file_get_locale_string (key_file,
                                                                  G_KEY_FILE_DESKTOP_GROUP,
@@ -2492,9 +2493,17 @@ thunar_file_get_content_type (ThunarFile *file)
                   if (G_LIKELY (is_symlink && err->code == G_IO_ERROR_NOT_FOUND))
                     file->content_type = g_strdup ("inode/symlink");
                   else
-                    g_warning ("Content type loading failed for %s: %s",
-                              thunar_file_get_display_name (file),
-                              err->message);
+                  {
+                    if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
+                      g_warning ("Content type loading failed for %s (%s): %s",
+                                 thunar_file_get_display_name (file),
+                                 thunar_file_get_basename (file),
+                                 err->message);
+                    else
+                      g_warning ("Content type loading failed for %s: %s",
+                                 thunar_file_get_display_name (file),
+                                 err->message);
+                  }
 
                   g_error_free (err);
                 }
