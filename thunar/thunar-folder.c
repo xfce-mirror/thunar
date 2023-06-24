@@ -32,6 +32,7 @@
 #include <thunar/thunar-private.h>
 
 #define DEBUG_FILE_CHANGES FALSE
+#define BATCH_PUBLISH_WAIT 100 /* in milliseconds */
 
 
 
@@ -85,6 +86,10 @@ static void     thunar_folder_monitor                     (GFileMonitor         
                                                            GFile                  *other_file,
                                                            GFileMonitorEvent       event_type,
                                                            gpointer                user_data);
+static void     thunar_folder_push_files_added            (ThunarFolder           *folder,
+                                                           GList                  *files);
+static void     thunar_folder_push_files_removed          (ThunarFolder           *folder,
+                                                           GList                  *files);
 
 
 
@@ -111,7 +116,11 @@ struct _ThunarFolder
   ThunarFile        *corresponding_file;
   GList             *new_files;
   GList             *files;
+  GList             *files_added;
+  GList             *files_removed;
   gboolean           reload_info;
+  guint              awaiting_add;
+  guint              awaiting_remove;
 
   GList             *content_type_ptr;
   guint              content_type_idle_id;
@@ -527,9 +536,7 @@ thunar_folder_finished (ExoJob       *job,
       /* check if any files were added */
       if (G_UNLIKELY (files != NULL))
         {
-          /* emit a "files-added" signal for the added files */
-          g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, files);
-
+          thunar_folder_push_files_added (folder, files);
           /* release the added files list */
           g_list_free (files);
         }
@@ -558,7 +565,7 @@ thunar_folder_finished (ExoJob       *job,
       if (G_UNLIKELY (files != NULL))
         {
           /* emit a "files-removed" signal for the removed files */
-          g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, files);
+          thunar_folder_push_files_removed (folder, files);
 
           /* release the removed files list */
           thunar_g_list_free_full (files);
@@ -664,7 +671,7 @@ thunar_folder_file_destroyed (ThunarFileMonitor *file_monitor,
 
           /* tell everybody that the file is gone */
           files.data = file; files.next = files.prev = NULL;
-          g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, &files);
+          thunar_folder_push_files_removed (folder, &files);
 
           /* drop our reference to the file */
           g_object_unref (G_OBJECT (file));
@@ -799,7 +806,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
 
               /* tell others about the new file */
               list.data = file; list.next = list.prev = NULL;
-              g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, &list);
+              thunar_folder_push_files_added (folder, &list);
 
               if (other_file != NULL)
                 {
