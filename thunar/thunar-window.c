@@ -168,7 +168,8 @@ static GtkWidget*thunar_window_notebook_insert_page       (ThunarWindow         
                                                            ThunarFile             *directory,
                                                            GType                   view_type,
                                                            gint                    position,
-                                                           ThunarHistory          *history);
+                                                           ThunarHistory          *history,
+                                                           gboolean                preserve_history);
 static void      thunar_window_notebook_select_current_page(ThunarWindow           *window);
 
 static GtkWidget*thunar_window_paned_notebooks_add        (ThunarWindow           *window);
@@ -2541,7 +2542,8 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
                                     ThunarFile    *directory,
                                     GType          view_type,
                                     gint           position,
-                                    ThunarHistory *history)
+                                    ThunarHistory *history,
+                                    gboolean       preserve_history)
 {
   GtkWidget      *view;
   GtkWidget      *label;
@@ -2574,9 +2576,12 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   /* set the history of the view if a history is provided */
   if (history != NULL)
     {
-      /* history only is updated on 'change-directory' signal. */
-      /* For inserting a new tab, we need to update it manually */
-      thunar_history_add (history, directory);
+      if (!preserve_history)
+        {
+          /* history only is updated on 'change-directory' signal. */
+          /* For inserting a new tab, we need to update it manually */
+          thunar_history_add (history, directory);
+        }
 
       thunar_standard_view_set_history (THUNAR_STANDARD_VIEW (view), history);
     }
@@ -2814,7 +2819,7 @@ thunar_window_notebook_add_new_tab (ThunarWindow        *window,
 
   /* insert the new view */
   page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
-  view = thunar_window_notebook_insert_page (window, directory, view_type, page_num + 1, history);
+  view = thunar_window_notebook_insert_page (window, directory, view_type, page_num + 1, history, FALSE);
 
   /* switch to the new view */
   g_object_get (G_OBJECT (window->preferences), "misc-switch-to-new-tab", &switch_to_new_tab, NULL);
@@ -3672,7 +3677,7 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
 
       /* insert the new view */
       page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
-      thunar_window_notebook_insert_page (window, directory, view_type, page_num+1, history);
+      thunar_window_notebook_insert_page (window, directory, view_type, page_num+1, history, FALSE);
 
       /* Prevent notebook expand on tab creation */
       g_object_get (G_OBJECT (window->preferences), "last-splitview-separator-position", &last_splitview_separator_position, NULL);
@@ -4072,7 +4077,7 @@ thunar_window_replace_view (ThunarWindow *window,
     page_num = -1;
 
   /* insert the new view */
-  new_view = thunar_window_notebook_insert_page (window, current_directory, view_type, page_num + 1, history);
+  new_view = thunar_window_notebook_insert_page (window, current_directory, view_type, page_num + 1, history, TRUE);
 
   /* if we are replacing the active view, make the new view the active view */
   if (is_current_view)
