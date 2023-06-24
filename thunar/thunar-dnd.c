@@ -253,7 +253,10 @@ thunar_dnd_perform (GtkWidget    *widget,
       if (G_UNLIKELY (!succeed))
         {
           /* display an error to the user */
-          thunar_dialogs_show_error (widget, error, _("Failed to execute file \"%s\""), thunar_file_get_display_name (file));
+          if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
+            thunar_dialogs_show_error (widget, error, _("Failed to execute file \"%s\" (%s)"), thunar_file_get_display_name (file), thunar_file_get_basename (file));
+          else
+            thunar_dialogs_show_error (widget, error, _("Failed to execute file \"%s\""), thunar_file_get_display_name (file));
 
           /* release the error */
           g_error_free (error);
