@@ -844,9 +844,15 @@ thunar_folder_monitor (GFileMonitor     *monitor,
                     {
                       /* destroy source file if the destination file already exists
                          to prevent duplicated file */
-                      g_assert (lp != lp2);
-                      thunar_file_destroy (lp->data);
-                      file = lp2->data;
+                      if (lp == lp2)
+                        {
+                          g_warning ("Same g_file for source and destination file during rename");
+                        }
+                      else
+                        {
+                          thunar_file_destroy (lp->data);
+                          file = lp2->data;
+                        }
                     }
                   else
                     {
