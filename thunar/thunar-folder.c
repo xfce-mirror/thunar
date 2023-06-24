@@ -85,6 +85,10 @@ static void     thunar_folder_monitor                     (GFileMonitor         
                                                            GFile                  *other_file,
                                                            GFileMonitorEvent       event_type,
                                                            gpointer                user_data);
+static void     thunar_folder_push_files_added_req        (ThunarFolder           *folder,
+                                                           GList                  *files);
+static void     thunar_folder_push_files_removed_req      (ThunarFolder           *folder,
+                                                           GList                  *files);
 
 
 
@@ -111,7 +115,11 @@ struct _ThunarFolder
   ThunarFile        *corresponding_file;
   GList             *new_files;
   GList             *files;
+  GList             *files_waiting_to_publish;
+  GList             *files_waiting_to_delete;
   gboolean           reload_info;
+  guint              waiting_to_publish;
+  guint              waiting_to_delete;
 
   GList             *content_type_ptr;
   guint              content_type_idle_id;
@@ -527,9 +535,7 @@ thunar_folder_finished (ExoJob       *job,
       /* check if any files were added */
       if (G_UNLIKELY (files != NULL))
         {
-          /* emit a "files-added" signal for the added files */
-          g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, files);
-
+          thunar_folder_push_files_added_req (folder, files);
           /* release the added files list */
           g_list_free (files);
         }
@@ -558,7 +564,7 @@ thunar_folder_finished (ExoJob       *job,
       if (G_UNLIKELY (files != NULL))
         {
           /* emit a "files-removed" signal for the removed files */
-          g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, files);
+          thunar_folder_push_files_removed_req (folder, files);
 
           /* release the removed files list */
           thunar_g_list_free_full (files);
@@ -664,7 +670,7 @@ thunar_folder_file_destroyed (ThunarFileMonitor *file_monitor,
 
           /* tell everybody that the file is gone */
           files.data = file; files.next = files.prev = NULL;
-          g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, &files);
+          thunar_folder_push_files_removed_req (folder, &files);
 
           /* drop our reference to the file */
           g_object_unref (G_OBJECT (file));
@@ -779,7 +785,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
 
               /* tell others about the new file */
               list.data = file; list.next = list.prev = NULL;
-              g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, &list);
+              thunar_folder_push_files_added_req (folder, &list);
 
               /* load the new file */
               thunar_file_reload (file);
@@ -1040,4 +1046,92 @@ thunar_folder_reload (ThunarFolder *folder,
 
   /* tell all consumers that we're loading */
   g_object_notify (G_OBJECT (folder), "loading");
+}
+
+
+
+static gboolean
+thunar_folder_publish_files_added_batch (gpointer data)
+{
+  ThunarFolder *folder = THUNAR_FOLDER (data);
+
+  /* emit a "files-added" signal for the added files */
+  g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, folder->files_waiting_to_publish);
+
+  g_list_free_full (folder->files_waiting_to_publish, g_object_unref);
+  folder->files_waiting_to_publish = NULL;
+
+  return G_SOURCE_REMOVE;
+}
+
+
+
+static void
+waiting_to_publish_timeout_delete (gpointer data)
+{
+  THUNAR_FOLDER (data)->waiting_to_publish = 0;
+}
+
+
+
+static void
+thunar_folder_push_files_added_req (ThunarFolder *folder,
+                                    GList        *files)
+{
+  for (GList *lp = files; lp != NULL; lp = lp->next)
+    folder->files_waiting_to_publish = g_list_prepend (folder->files_waiting_to_publish, g_object_ref (lp->data));
+
+  if (folder->waiting_to_publish == 0)
+    folder->waiting_to_publish = g_timeout_add_full (G_PRIORITY_DEFAULT, 100,
+                                                     thunar_folder_publish_files_added_batch,
+                                                     folder, waiting_to_publish_timeout_delete);
+}
+
+
+
+static gboolean
+thunar_folder_publish_files_removed_batch (gpointer data)
+{
+  ThunarFolder *folder = THUNAR_FOLDER (data);
+
+  /* emit a "files-added" signal for the added files */
+  g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, folder->files_waiting_to_delete);
+
+  g_list_free_full (folder->files_waiting_to_delete, g_object_unref);
+  folder->files_waiting_to_delete = NULL;
+
+  return G_SOURCE_REMOVE;
+}
+
+
+
+static void
+waiting_to_delete_timeout_delete (gpointer data)
+{
+  THUNAR_FOLDER (data)->waiting_to_delete = 0;
+}
+
+
+
+static void
+thunar_folder_push_files_removed_req (ThunarFolder *folder,
+                                      GList        *files)
+{
+  GList *lp, *link;
+  for (GList *lp = files; lp != NULL; lp = lp->next)
+    {
+      link = g_list_find (folder->files_waiting_to_publish, lp->data);
+      if (link == NULL)
+        folder->files_waiting_to_delete = g_list_prepend (folder->files_waiting_to_delete, g_object_ref (lp->data));
+      else
+        {
+          g_object_unref (link->data);
+          folder->files_waiting_to_publish = g_list_delete_link (folder->files_waiting_to_publish, link);
+        }
+    }
+
+  if (folder->waiting_to_delete == 0)
+    folder->waiting_to_delete = g_timeout_add_full (G_PRIORITY_DEFAULT, 100,
+                                                     thunar_folder_publish_files_removed_batch,
+                                                     folder, waiting_to_delete_timeout_delete );
 }
