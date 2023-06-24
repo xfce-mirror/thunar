@@ -540,6 +540,17 @@ typedef enum
 
 GType thunar_sidepane_type_get_type (void) G_GNUC_CONST;
 
+/**
+ * ThunarRenameLauncher:
+ * @THUNAR_RESPONSE_LAUNCHERNAME, : edit launcher name
+ * @THUNAR_RESPONSE_FILENAME,     : edit file name
+ **/
+typedef enum
+{
+    THUNAR_RESPONSE_LAUNCHERNAME,
+    THUNAR_RESPONSE_FILENAME,
+} ThunarResponseType;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_ENUM_TYPES_H__ */

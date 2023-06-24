@@ -54,6 +54,7 @@ gboolean           thunar_dialogs_show_insecure_program (gpointer              p
                                                          ThunarFile           *file,
                                                          const gchar          *command);
 gint               thunar_dialog_confirm_close_split_pane_tabs (GtkWindow     *parent);
+gint               thunar_dialog_show_rename_launcher_options  (GtkWindow     *parent);
 
 G_END_DECLS;
 

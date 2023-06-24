@@ -498,14 +498,14 @@ thunar_renamer_model_get_value (GtkTreeModel *tree_model,
       if (G_LIKELY (item->name != NULL))
         g_value_set_string (value, item->name);
       else if (item->conflict)
-        g_value_set_static_string (value, thunar_file_get_display_name (item->file));
+        g_value_set_static_string (value, thunar_file_get_basename (item->file));
       else
         g_value_set_static_string (value, "");
       break;
 
     case THUNAR_RENAMER_MODEL_COLUMN_OLDNAME:
       g_value_init (value, G_TYPE_STRING);
-      g_value_set_static_string (value, thunar_file_get_display_name (item->file));
+      g_value_set_static_string (value, thunar_file_get_basename (item->file));
       break;
 
     default:
@@ -771,8 +771,8 @@ thunar_renamer_model_conflict_item (ThunarRenamerModel     *renamer_model,
 
       /* check if this other item conflicts with the item in question (can only conflict if in same directory) */
       if (trm_same_directory (item->file, oitem->file)
-          && ((item->name != NULL && oitem->name == NULL && strcmp (item->name, thunar_file_get_display_name (oitem->file)) == 0)
-           || (item->name == NULL && oitem->name != NULL && strcmp (thunar_file_get_display_name (item->file), oitem->name) == 0)
+          && ((item->name != NULL && oitem->name == NULL && strcmp (item->name, thunar_file_get_basename (oitem->file)) == 0)
+           || (item->name == NULL && oitem->name != NULL && strcmp (thunar_file_get_basename (item->file), oitem->name) == 0)
            || (item->name != NULL && oitem->name != NULL && strcmp (item->name, oitem->name) == 0)))
         {
           /* check if the other item is already in conflict state */
@@ -817,8 +817,8 @@ thunar_renamer_model_process_item (ThunarRenamerModel     *renamer_model,
   if (G_UNLIKELY (renamer_model->renamer == NULL))
     return NULL;
 
-  /* determine the current display name of the file */
-  display_name = thunar_file_get_display_name (item->file);
+  /* determine the current file name of the file */
+  display_name = thunar_file_get_basename (item->file);
 
   /* determine the extension in the filename */
   dot = thunar_util_str_get_extension (display_name);
