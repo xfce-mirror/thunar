@@ -304,6 +304,52 @@ void              thunar_file_move_thumbnail_cache_file  (GFile *old_file,
 
 void              thunar_file_replace_file               (ThunarFile *file,
                                                           GFile      *renamed_file);
+gint              thunar_cmp_files_by_date                      (const ThunarFile   *a,
+                                                                 const ThunarFile   *b,
+                                                                 gboolean            case_sensitive,
+                                                                 ThunarFileDateType  type);
+gint              thunar_cmp_files_by_date_created              (const ThunarFile   *a,
+                                                                 const ThunarFile   *b,
+                                                                 gboolean            case_sensitive);
+gint              thunar_cmp_files_by_date_accessed             (const ThunarFile   *a,
+                                                                 const ThunarFile   *b,
+                                                                 gboolean            case_sensitive);
+gint              thunar_cmp_files_by_date_modified             (const ThunarFile   *a,
+                                                                 const ThunarFile   *b,
+                                                                 gboolean            case_sensitive);
+gint              thunar_cmp_files_by_date_deleted              (const ThunarFile   *a,
+                                                                 const ThunarFile   *b,
+                                                                 gboolean            case_sensitive);
+gint              thunar_cmp_files_by_recency                   (const ThunarFile   *a,
+                                                                 const ThunarFile   *b,
+                                                                 gboolean            case_sensitive);
+gint              thunar_cmp_files_by_location                  (const ThunarFile   *a,
+                                                                 const ThunarFile   *b,
+                                                                 gboolean            case_sensitive);
+gint              thunar_cmp_files_by_group                     (const ThunarFile   *a,
+                                                                 const ThunarFile   *b,
+                                                                 gboolean            case_sensitive);
+gint              thunar_cmp_files_by_mime_type                 (const ThunarFile   *a,
+                                                                 const ThunarFile   *b,
+                                                                 gboolean            case_sensitive);
+gint              thunar_cmp_files_by_owner                     (const ThunarFile   *a,
+                                                                 const ThunarFile   *b,
+                                                                 gboolean            case_sensitive);
+gint              thunar_cmp_files_by_permissions               (const ThunarFile   *a,
+                                                                 const ThunarFile   *b,
+                                                                 gboolean            case_sensitive);
+gint              thunar_cmp_files_by_size                      (const ThunarFile   *a,
+                                                                 const ThunarFile   *b,
+                                                                 gboolean            case_sensitive);
+gint              thunar_cmp_files_by_size_in_bytes             (const ThunarFile   *a,
+                                                                 const ThunarFile   *b,
+                                                                 gboolean            case_sensitive);
+gint              thunar_cmp_files_by_size_and_items_count      (ThunarFile         *a,
+                                                                 ThunarFile         *b,
+                                                                 gboolean            case_sensitive);
+gint              thunar_cmp_files_by_type                      (const ThunarFile   *a,
+                                                                 const ThunarFile   *b,
+                                                                 gboolean            case_sensitive);
 
 /**
  * thunar_file_is_root:
