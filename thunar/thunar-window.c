@@ -2574,10 +2574,6 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   /* set the history of the view if a history is provided */
   if (history != NULL)
     {
-      /* history only is updated on 'change-directory' signal. */
-      /* For inserting a new tab, we need to update it manually */
-      thunar_history_add (history, directory);
-
       thunar_standard_view_set_history (THUNAR_STANDARD_VIEW (view), history);
     }
 
@@ -2807,6 +2803,11 @@ thunar_window_notebook_add_new_tab (ThunarWindow        *window,
   if (THUNAR_IS_STANDARD_VIEW (window->view))
     {
       history = thunar_standard_view_copy_history (THUNAR_STANDARD_VIEW (window->view));
+
+      /* history is updated only on 'change-directory' signal. */
+      /* For inserting a new tab, we need to update it manually */
+      if (G_LIKELY (history))
+        thunar_history_add (history, directory);
     }
 
   /* find the correct view type */
