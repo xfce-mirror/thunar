@@ -2452,7 +2452,7 @@ thunar_action_manager_action_rename (ThunarActionManager *action_mgr)
   /* start renaming if we have exactly one selected file */
   if (g_list_length (action_mgr->files_to_process) == 1)
     {
-      if (thunar_file_is_desktop_file(THUNAR_FILE (action_mgr->files_to_process->data)))
+      if (thunar_file_is_desktop_file (THUNAR_FILE (action_mgr->files_to_process->data)))
         {
           response = thunar_dialog_show_rename_launcher_options (GTK_WINDOW (window));
           if (response == THUNAR_RESPONSE_LAUNCHERNAME)

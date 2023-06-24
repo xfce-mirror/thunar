@@ -1178,7 +1178,7 @@ static void thunar_dialogs_select_filename (GtkWidget *entry)
 
 
 /**
- * thunar_dialog_confirm_close_split_view_tabs:
+ * thunar_dialog_confirm_close_split_pane_tabs:
  * @parent              : (allow-none): transient parent of the dialog, or %NULL.
  *
  * Runs a dialog to ask the user whether they want to close a split pane with multiple tabs
@@ -1259,15 +1259,16 @@ thunar_dialog_show_rename_launcher_options (GtkWindow *parent)
                                    GTK_DIALOG_DESTROY_WITH_PARENT,
                                    GTK_MESSAGE_QUESTION,
                                    GTK_BUTTONS_NONE,
-                                   "%s", _("What what you like to rename?"));
+                                   "%s", _("Do you want to rename the launcher, or the file itself?"));
   
-  gtk_window_set_title (GTK_WINDOW (dialog), _("Rename options"));
+  gtk_window_set_title (GTK_WINDOW (dialog), _("Rename Launcher Options"));
   
-  button = gtk_button_new_with_mnemonic (_("_Filename"));
+  button = gtk_button_new_with_mnemonic (_("Rename _File"));
+  gtk_widget_set_margin_end (GTK_WIDGET(button), 6);
   gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, THUNAR_RESPONSE_FILENAME);
   gtk_widget_show (button);
   
-  button = gtk_button_new_with_mnemonic (_("_Launchername"));
+  button = gtk_button_new_with_mnemonic (_("Rename _Launcher"));
   gtk_widget_set_can_default (button, TRUE);
   gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, THUNAR_RESPONSE_LAUNCHERNAME);
   gtk_widget_show (button);

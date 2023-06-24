@@ -817,7 +817,7 @@ thunar_renamer_model_process_item (ThunarRenamerModel     *renamer_model,
   if (G_UNLIKELY (renamer_model->renamer == NULL))
     return NULL;
 
-  /* determine the current display name of the file */
+  /* determine the current file name of the file */
   display_name = thunar_file_get_basename (item->file);
 
   /* determine the extension in the filename */
