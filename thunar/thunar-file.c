@@ -1080,7 +1080,7 @@ thunar_file_info_reload (ThunarFile   *file,
           preferences = thunar_preferences_get ();
           g_object_get (preferences, "show-launcher-names-instead-real-filenames", &launcher_name, NULL);
           g_object_unref (preferences);
-          if (thunar_g_vfs_metadata_is_supported () && xfce_g_file_is_trusted (file->gfile, NULL, NULL) && launcher_name == TRUE)
+          if (thunar_g_vfs_metadata_is_supported () && xfce_g_file_is_trusted (file->gfile, NULL, NULL) && launcher_name == TRUE && file->display_name == NULL)
             {
               file->display_name = g_key_file_get_locale_string (key_file,
                                                                  G_KEY_FILE_DESKTOP_GROUP,
@@ -1088,7 +1088,7 @@ thunar_file_info_reload (ThunarFile   *file,
                                                                  NULL, NULL);
 
               /* drop the name if it's empty or has invalid encoding */
-              if (file->display_name != NULL && (exo_str_is_empty (file->display_name) || !g_utf8_validate (file->display_name, -1, NULL)))
+              if (exo_str_is_empty (file->display_name) || !g_utf8_validate (file->display_name, -1, NULL))
                 {
                   g_free (file->display_name);
                   file->display_name = NULL;

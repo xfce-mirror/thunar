@@ -1264,7 +1264,6 @@ thunar_dialog_show_rename_launcher_options (GtkWindow *parent)
   gtk_window_set_title (GTK_WINDOW (dialog), _("Rename Launcher Options"));
   
   button = gtk_button_new_with_mnemonic (_("Rename _File"));
-  gtk_widget_set_margin_end (GTK_WIDGET(button), 6);
   gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, THUNAR_RESPONSE_FILENAME);
   gtk_widget_show (button);
   
