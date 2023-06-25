@@ -89,6 +89,9 @@ void        thunar_util_clip_view_background     (GtkCellRenderer      *cell,
                                                   const GdkRectangle   *background_area,
                                                   GtkWidget            *widget,
                                                   GtkCellRendererState  flags);
+gboolean   thunar_util_packagekit_available      (void);
+void       thunar_util_install_app_for_mime_type (GtkWidget           *parent,
+                                                  const gchar         *mime_type);
 
 G_END_DECLS;
 
