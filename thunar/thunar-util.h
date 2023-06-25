@@ -40,6 +40,10 @@ G_BEGIN_DECLS;
 #define ALPHA_BACKDROP 0.5
 #define ALPHA_FOCUSED 1.0
 
+/* if we need an array of size greater
+ * than this threshold; we'll use heap */
+#define STACK_ALLOC_LIMIT 2000
+
 typedef enum
 {
   THUNAR_NEXT_FILE_NAME_MODE_NEW,
