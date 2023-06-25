@@ -4968,3 +4968,351 @@ thunar_file_has_directory_specific_settings (ThunarFile *file)
 
   return FALSE;
 }
+
+
+
+gint
+thunar_cmp_files_by_date         (const ThunarFile   *a,
+                                  const ThunarFile   *b,
+                                  gboolean            case_sensitive,
+                                  ThunarFileDateType  type)
+{
+  guint64 date_a;
+  guint64 date_b;
+
+  date_a = thunar_file_get_date (a, type);
+  date_b = thunar_file_get_date (b, type);
+
+  if (date_a < date_b)
+      return -1;
+  else if (date_a > date_b)
+      return 1;
+
+  return thunar_file_compare_by_name (a, b, case_sensitive);
+}
+
+
+
+gint
+thunar_cmp_files_by_date_created (const ThunarFile *a,
+                                  const ThunarFile *b,
+                                  gboolean          case_sensitive)
+{
+  return thunar_cmp_files_by_date (a, b, case_sensitive, THUNAR_FILE_DATE_CREATED);
+}
+
+
+
+gint
+thunar_cmp_files_by_date_accessed (const ThunarFile *a,
+                                   const ThunarFile *b,
+                                   gboolean          case_sensitive)
+{
+  return thunar_cmp_files_by_date (a, b, case_sensitive, THUNAR_FILE_DATE_ACCESSED);
+}
+
+
+
+gint
+thunar_cmp_files_by_date_modified (const ThunarFile *a,
+                                   const ThunarFile *b,
+                                   gboolean          case_sensitive)
+{
+  return thunar_cmp_files_by_date (a, b, case_sensitive, THUNAR_FILE_DATE_MODIFIED);
+}
+
+
+
+gint
+thunar_cmp_files_by_date_deleted (const ThunarFile *a,
+                                  const ThunarFile *b,
+                                  gboolean          case_sensitive)
+{
+  return thunar_cmp_files_by_date (a, b, case_sensitive, THUNAR_FILE_DATE_DELETED);
+}
+
+
+
+gint
+thunar_cmp_files_by_recency      (const ThunarFile *a,
+                                  const ThunarFile *b,
+                                  gboolean          case_sensitive)
+{
+  return thunar_cmp_files_by_date (a, b, case_sensitive, THUNAR_FILE_RECENCY);
+}
+
+
+
+gint
+thunar_cmp_files_by_location (const ThunarFile *a,
+                              const ThunarFile *b,
+                              gboolean          case_sensitive)
+{
+  gchar *uri_a;
+  gchar *uri_b;
+  gchar *location_a;
+  gchar *location_b;
+  gint   result;
+
+  uri_a = thunar_file_dup_uri (a);
+  uri_b = thunar_file_dup_uri (b);
+
+  location_a = g_path_get_dirname (uri_a);
+  location_b = g_path_get_dirname (uri_b);
+
+  result = strcasecmp (location_a, location_b);
+
+  g_free (uri_a);
+  g_free (uri_b);
+  g_free (location_a);
+  g_free (location_b);
+
+  return result;
+}
+
+
+
+gint
+thunar_cmp_files_by_group (const ThunarFile *a,
+                           const ThunarFile *b,
+                           gboolean          case_sensitive)
+{
+  ThunarGroup *group_a;
+  ThunarGroup *group_b;
+  guint32      gid_a;
+  guint32      gid_b;
+  gint         result;
+  const gchar *name_a;
+  const gchar *name_b;
+
+  if (thunar_file_get_info (a) == NULL || thunar_file_get_info (b) == NULL)
+      return thunar_file_compare_by_name (a, b, case_sensitive);
+
+  group_a = thunar_file_get_group (a);
+  group_b = thunar_file_get_group (b);
+
+  if (group_a != NULL && group_b != NULL)
+    {
+      name_a = thunar_group_get_name (group_a);
+      name_b = thunar_group_get_name (group_b);
+
+      if (!case_sensitive)
+          result = strcasecmp (name_a, name_b);
+      else
+          result = strcmp (name_a, name_b);
+    }
+  else
+    {
+      gid_a = g_file_info_get_attribute_uint32 (thunar_file_get_info (a),
+                                                G_FILE_ATTRIBUTE_UNIX_GID);
+      gid_b = g_file_info_get_attribute_uint32 (thunar_file_get_info (b),
+                                                G_FILE_ATTRIBUTE_UNIX_GID);
+
+      result = CLAMP ((gint) gid_a - (gint) gid_b, -1, 1);
+    }
+
+  if (group_a != NULL)
+      g_object_unref (group_a);
+
+  if (group_b != NULL)
+      g_object_unref (group_b);
+
+  if (result == 0)
+      return thunar_file_compare_by_name (a, b, case_sensitive);
+  else
+      return result;
+}
+
+
+
+gint
+thunar_cmp_files_by_mime_type (const ThunarFile *a,
+                               const ThunarFile *b,
+                               gboolean          case_sensitive)
+{
+  const gchar *content_type_a;
+  const gchar *content_type_b;
+  gint         result;
+
+  content_type_a = thunar_file_get_content_type (THUNAR_FILE (a));
+  content_type_b = thunar_file_get_content_type (THUNAR_FILE (b));
+
+  if (content_type_a == NULL)
+      content_type_a = "";
+  if (content_type_b == NULL)
+      content_type_b = "";
+
+  result = strcasecmp (content_type_a, content_type_b);
+
+  if (result == 0)
+      result = thunar_file_compare_by_name (a, b, case_sensitive);
+
+  return result;
+}
+
+
+
+gint
+thunar_cmp_files_by_owner (const ThunarFile *a,
+                           const ThunarFile *b,
+                           gboolean          case_sensitive)
+{
+  const gchar *name_a;
+  const gchar *name_b;
+  ThunarUser  *user_a;
+  ThunarUser  *user_b;
+  guint32      uid_a;
+  guint32      uid_b;
+  gint         result;
+
+  if (thunar_file_get_info (a) == NULL || thunar_file_get_info (b) == NULL)
+      return thunar_file_compare_by_name (a, b, case_sensitive);
+
+  user_a = thunar_file_get_user (a);
+  user_b = thunar_file_get_user (b);
+
+  if (user_a != NULL && user_b != NULL)
+    {
+      /* compare the system names */
+      name_a = thunar_user_get_name (user_a);
+      name_b = thunar_user_get_name (user_b);
+
+      if (!case_sensitive)
+          result = strcasecmp (name_a, name_b);
+      else
+          result = strcmp (name_a, name_b);
+    }
+  else
+    {
+      uid_a = g_file_info_get_attribute_uint32 (thunar_file_get_info (a),
+                                                G_FILE_ATTRIBUTE_UNIX_UID);
+      uid_b = g_file_info_get_attribute_uint32 (thunar_file_get_info (b),
+                                                G_FILE_ATTRIBUTE_UNIX_UID);
+
+      result = CLAMP ((gint) uid_a - (gint) uid_b, -1, 1);
+    }
+
+  if (result == 0)
+      return thunar_file_compare_by_name (a, b, case_sensitive);
+  else
+      return result;
+}
+
+
+
+gint
+thunar_cmp_files_by_permissions (const ThunarFile *a,
+                                 const ThunarFile *b,
+                                 gboolean          case_sensitive)
+{
+  ThunarFileMode mode_a;
+  ThunarFileMode mode_b;
+
+  mode_a = thunar_file_get_mode (a);
+  mode_b = thunar_file_get_mode (b);
+
+  if (mode_a < mode_b)
+      return -1;
+  else if (mode_a > mode_b)
+      return 1;
+
+  return thunar_file_compare_by_name (a, b, case_sensitive);
+}
+
+
+
+gint
+thunar_cmp_files_by_size (const ThunarFile *a,
+                          const ThunarFile *b,
+                          gboolean          case_sensitive)
+{
+  guint64 size_a;
+  guint64 size_b;
+
+  size_a = thunar_file_get_size (a);
+  size_b = thunar_file_get_size (b);
+
+  if (size_a < size_b)
+      return -1;
+  else if (size_a > size_b)
+      return 1;
+
+  return thunar_file_compare_by_name (a, b, case_sensitive);
+}
+
+
+
+gint
+thunar_cmp_files_by_size_in_bytes (const ThunarFile *a,
+                                   const ThunarFile *b,
+                                   gboolean          case_sensitive)
+{
+  return thunar_cmp_files_by_size (a, b, case_sensitive);
+}
+
+
+
+gint
+thunar_cmp_files_by_size_and_items_count (ThunarFile *a,
+                                        ThunarFile *b,
+                                        gboolean    case_sensitive)
+{
+  guint32       count_a;
+  guint32       count_b;
+
+  if (thunar_file_is_directory (a) && thunar_file_is_directory (b))
+    {
+      count_a = thunar_file_get_file_count (a, NULL, NULL);
+      count_b = thunar_file_get_file_count (b, NULL, NULL);
+
+      if (count_a < count_b)
+          return -1;
+      else if (count_a > count_b)
+          return 1;
+      else
+          return thunar_file_compare_by_name (a, b, case_sensitive);
+    }
+
+  return thunar_cmp_files_by_size(a, b, case_sensitive);
+}
+
+
+
+gint
+thunar_cmp_files_by_type (const ThunarFile *a,
+                          const ThunarFile *b,
+                          gboolean          case_sensitive)
+{
+  gchar       *description_a = NULL;
+  gchar       *description_b = NULL;
+  gint         result;
+
+  /* we alter the description of symlinks here because they are
+   * displayed as "... (link)" in the detailed list view as well */
+
+  /* fetch the content type description for @file(s) a & b */
+  description_a = thunar_file_get_content_type_desc (THUNAR_FILE (a));
+  description_b = thunar_file_get_content_type_desc (THUNAR_FILE (b));
+
+  /* avoid calling strcasecmp with NULL parameters */
+  if (description_a == NULL || description_b == NULL)
+    {
+      g_free (description_a);
+      g_free (description_b);
+
+      return 0;
+    }
+
+  if (!case_sensitive)
+      result = strcasecmp (description_a, description_b);
+  else
+      result = strcmp (description_a, description_b);
+
+  g_free (description_a);
+  g_free (description_b);
+
+  if (result == 0)
+      return thunar_file_compare_by_name (a, b, case_sensitive);
+  else
+      return result;
+}
