@@ -215,6 +215,7 @@ thunar_dnd_perform (GtkWidget    *widget,
 {
   ThunarApplication *application;
   gboolean           succeed = TRUE;
+  gboolean           ask_execute = FALSE;
   GError            *error = NULL;
 
   _thunar_return_val_if_fail (GTK_IS_WIDGET (widget), FALSE);
@@ -246,10 +247,24 @@ thunar_dnd_perform (GtkWidget    *widget,
           succeed = FALSE;
         }
     }
-  else if (thunar_file_can_execute (file))
+  else if (thunar_file_can_execute (file, &ask_execute))
     {
-      /* TODO any chance to determine the working dir here? */
-      succeed = thunar_file_execute (file, NULL, widget, file_list, NULL, &error);
+      gboolean in_terminal = FALSE;
+      gint     ask_execute_response = THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN;
+
+      if (ask_execute)
+        {
+          ask_execute_response = thunar_dialog_ask_execute (file, widget, FALSE, TRUE);
+          if (ask_execute_response == THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN_IN_TERMINAL)
+            in_terminal = TRUE;
+        }
+
+      if (ask_execute_response == THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN_IN_TERMINAL ||
+          ask_execute_response == THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN)
+        {
+          /* TODO any chance to determine the working dir here? */
+          succeed = thunar_file_execute (file, NULL, widget, in_terminal, file_list, NULL, &error);
+        }
       if (G_UNLIKELY (!succeed))
         {
           /* display an error to the user */
