@@ -945,6 +945,7 @@ tree_view_set_cursor_if_file_not_null (GtkTreeView  *tree_view,
   if (file == NULL)
     return FALSE;
 
+  g_object_unref (file);
   gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
   return TRUE;
 }

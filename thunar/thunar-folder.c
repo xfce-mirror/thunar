@@ -1170,7 +1170,6 @@ thunar_folder_push_files_removed (ThunarFolder *folder,
                                   GList        *files)
 {
   GList *lp, *link;
-  GList *lp, *link;
 
   /* check if the files to be removed are awaiting a publish;
    * i.e if they haven't been emitted through files-added signal,
