@@ -3322,7 +3322,10 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
 
       if (show_display_name == TRUE)
         {
-          temp_string = g_strdup_printf (_("\"%s\""), thunar_file_get_display_name (file));
+          if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
+            temp_string = g_strdup_printf (_("\"%s\" (%s)"), thunar_file_get_display_name (file), thunar_file_get_basename (file));
+          else
+            temp_string = g_strdup_printf (_("\"%s\""), thunar_file_get_display_name (file));
           text_list = g_list_append (text_list, temp_string);
         }
 
