@@ -1221,3 +1221,68 @@ thunar_dialog_confirm_close_split_pane_tabs (GtkWindow *parent)
   g_free (secondary_text);
   return response;
 }
+
+
+
+gint
+thunar_dialog_ask_execute (const ThunarFile *file,
+                           gpointer          parent,
+                           gboolean          can_open,
+                           gboolean          single_file)
+{
+  GtkWidget *dialog;
+  GtkWindow *window;
+  GdkScreen *screen;
+  gint       response;
+  gchar     *title;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), THUNAR_FILE_ASK_EXECUTE_RESPONSE_OPEN);
+
+  /* parse the parent window and screen */
+  screen = thunar_util_parse_parent (parent, &window);
+
+  if (single_file)
+    {
+      gchar *basename = g_file_get_basename (thunar_file_get_file (file));
+      title = g_strdup_printf (_("What do you want to do with \"%s\" file?"), basename);
+      g_free (basename);
+    }
+  else
+    {
+      title = g_strdup (_("What do you want to do with selected files?"));
+    }
+
+  if (can_open)
+    {
+      dialog = gtk_dialog_new_with_buttons (title,
+                                            window,
+                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                            _("Run in _terminal"), THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN_IN_TERMINAL,
+                                            _("_Execute"), THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN,
+                                            _("_Open"), THUNAR_FILE_ASK_EXECUTE_RESPONSE_OPEN,
+                                            NULL);
+      gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_FILE_ASK_EXECUTE_RESPONSE_OPEN);
+    }
+  else
+    {
+      dialog = gtk_dialog_new_with_buttons (title,
+                                            window,
+                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                            _("Run in _terminal"), THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN_IN_TERMINAL,
+                                            _("_Execute"), THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN,
+                                            NULL);
+      gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN);
+    }
+
+  if (G_UNLIKELY (window == NULL && screen != NULL))
+    gtk_window_set_screen (GTK_WINDOW (dialog), screen);
+
+  response = gtk_dialog_run (GTK_DIALOG (dialog));
+
+  gtk_widget_destroy (dialog);
+
+  g_free (title);
+
+  return response;
+}
