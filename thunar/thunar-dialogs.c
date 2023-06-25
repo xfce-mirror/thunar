@@ -1279,3 +1279,78 @@ thunar_dialog_show_rename_launcher_options (GtkWindow *parent)
 
   return response;
 }
+
+
+
+gint
+thunar_dialog_ask_execute (const ThunarFile *file,
+                           gpointer          parent,
+                           gboolean          can_open,
+                           gboolean          single_file)
+{
+  GtkWidget *dialog;
+  GtkWindow *window;
+  GdkScreen *screen;
+  gint       response;
+  gchar     *title;
+  GtkWidget *button;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), THUNAR_FILE_ASK_EXECUTE_RESPONSE_OPEN);
+
+  /* parse the parent window and screen */
+  screen = thunar_util_parse_parent (parent, &window);
+
+  if (single_file)
+    {
+      gchar *basename = g_file_get_basename (thunar_file_get_file (file));
+      title = g_strdup_printf (_("What do you want to do with <b>%s</b> file?"), basename);
+      g_free (basename);
+    }
+  else
+    {
+      title = g_strdup (_("What do you want to do with selected files?"));
+    }
+
+  dialog = gtk_message_dialog_new (window,
+                                   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                   GTK_MESSAGE_QUESTION,
+                                   GTK_BUTTONS_NONE,
+                                   NULL);
+
+  gtk_window_set_title (GTK_WINDOW (dialog), _("Open Shell Script"));
+  gtk_message_dialog_set_markup (GTK_MESSAGE_DIALOG (dialog), title);
+
+  g_free (title);
+
+  button = gtk_button_new_with_mnemonic (_("Run In _Terminal"));
+  gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN_IN_TERMINAL);
+  gtk_widget_show (button);
+
+  button = gtk_button_new_with_mnemonic (_("_Execute"));
+  gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN);
+  gtk_widget_show (button);
+
+  if (can_open)
+    {
+      button = gtk_button_new_with_mnemonic (_("_Open"));
+      gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, THUNAR_FILE_ASK_EXECUTE_RESPONSE_OPEN);
+      gtk_widget_show (button);
+
+      gtk_widget_set_can_default (button, TRUE);
+      gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_FILE_ASK_EXECUTE_RESPONSE_OPEN);
+    }
+  else
+    {
+      gtk_widget_set_can_default (button, TRUE);
+      gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN);
+    }
+
+  if (G_UNLIKELY (window == NULL && screen != NULL))
+    gtk_window_set_screen (GTK_WINDOW (dialog), screen);
+
+  response = gtk_dialog_run (GTK_DIALOG (dialog));
+  gtk_widget_destroy (dialog);
+
+  return response;
+}
