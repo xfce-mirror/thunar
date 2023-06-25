@@ -973,6 +973,7 @@ thunar_details_view_key_up_set_cursor (GtkTreeView  *tree_view,
       /* it might be the first child of an expanded node;
        * in this case we want to point to the parent */
       gtk_tree_path_up (cursor);
+
       /* the parent path we got now should be perfectly fine;
        * but just in case setting the cursor fails
        * we go and set the prev node of the parent */
@@ -1000,9 +1001,11 @@ thunar_details_view_key_up_set_cursor (GtkTreeView  *tree_view,
    * Works recursively to point to the truly last child */
   gtk_tree_path_down (cursor);
   indices = gtk_tree_path_get_indices_with_depth (cursor, &depth);
+
   /* point to the last child */
   if (depth > 0)
     indices[depth - 1] = gtk_tree_model_iter_n_children (model, &iter);
+
   /* If we are at a row that is loading set cursor will fail;
    * try the previous node */
   if (G_UNLIKELY (!tree_view_set_cursor_if_file_not_null (tree_view, model, cursor)))
@@ -1030,7 +1033,9 @@ thunar_details_view_key_down_set_cursor (GtkTreeView  *tree_view,
 
       if (!gtk_tree_path_up (cursor))
         return;
+
       gtk_tree_path_next (cursor);
+
       /* If we are at a row that is loading set cursor will fail;
        * try the next node */
       if (G_UNLIKELY (!tree_view_set_cursor_if_file_not_null (tree_view, model, cursor)))
@@ -1038,8 +1043,8 @@ thunar_details_view_key_down_set_cursor (GtkTreeView  *tree_view,
 
       return;
     }
-
   gtk_tree_path_down (cursor);
+
   /* If we are at a row that is loading set cursor will fail;
    * try the next node */
   if (G_UNLIKELY (!tree_view_set_cursor_if_file_not_null (tree_view, model, cursor)))
@@ -1096,14 +1101,17 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
     case GDK_KEY_KP_Left:
       /* if branch is expanded then collapse it */
       if (gtk_tree_view_row_expanded (tree_view, path))
-        gtk_tree_view_collapse_row (tree_view, path);
-
+        {
+          gtk_tree_view_collapse_row (tree_view, path);
+        }
       else /* if the branch is already collapsed */
-        if (gtk_tree_path_get_depth (path) > 1 && gtk_tree_path_up (path))
-          {
-            /* if this is not a toplevel item then move to parent */
-            gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
-          }
+        {
+          if (gtk_tree_path_get_depth (path) > 1 && gtk_tree_path_up (path))
+            {
+              /* if this is not a toplevel item then move to parent */
+              gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
+            }
+        }
 
       stopPropagation = TRUE;
       break;
@@ -1112,7 +1120,9 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
     case GDK_KEY_KP_Right:
       /* if branch is not expanded then expand it */
       if (!gtk_tree_view_row_expanded (tree_view, path))
+        {
           gtk_tree_view_expand_row (tree_view, path, FALSE);
+        }
       else /* if branch is already expanded then move to first child */
         {
           if (gtk_tree_model_get_iter (model, &iter, path))
@@ -1198,14 +1208,15 @@ thunar_details_view_row_expanded (GtkTreeView       *tree_view,
    * Therefore thumbnail requests for newly visible files from a row
    * expansion need to be made here separately. */
 
-  while (has_next) {
-    /* can return NULL but shouldn't here since the rows are visible so the
-     * files should have been loaded by now */
-    file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &child);
-    if (file != NULL)
-      files = g_list_prepend (files, file);
-    has_next = gtk_tree_model_iter_next (model, &child);
-  }
+  while (has_next)
+    {
+      /* can return NULL but shouldn't here since the rows are visible so the
+       * files should have been loaded by now */
+      file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &child);
+      if (file != NULL)
+        files = g_list_prepend (files, file);
+      has_next = gtk_tree_model_iter_next (model, &child);
+    }
 
   if (G_UNLIKELY (files == NULL))
     return;

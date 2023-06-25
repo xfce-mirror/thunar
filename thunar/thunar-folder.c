@@ -1122,7 +1122,7 @@ thunar_folder_push_files_added (ThunarFolder *folder,
     folder->files_added = g_list_prepend (folder->files_added, g_object_ref (lp->data));
 
   if (folder->awaiting_add == 0)
-    folder->awaiting_add = g_timeout_add_full (G_PRIORITY_DEFAULT, 100,
+    folder->awaiting_add = g_timeout_add_full (G_PRIORITY_DEFAULT, BATCH_PUBLISH_WAIT,
                                                thunar_folder_publish_files_added_batch,
                                                folder, awaiting_add_timeout_delete);
 }
@@ -1170,10 +1170,12 @@ thunar_folder_push_files_removed (ThunarFolder *folder,
                                   GList        *files)
 {
   GList *lp, *link;
+  GList *lp, *link;
+
   /* check if the files to be removed are awaiting a publish;
    * i.e if they haven't been emitted through files-added signal,
    * then simply find and remove them from folder->files_added. */
-  for (GList *lp = files; lp != NULL; lp = lp->next)
+  for (lp = files; lp != NULL; lp = lp->next)
     {
       link = g_list_find (folder->files_added, lp->data);
       if (link == NULL)
@@ -1187,7 +1189,7 @@ thunar_folder_push_files_removed (ThunarFolder *folder,
     }
 
   if (folder->awaiting_remove == 0)
-    folder->awaiting_remove = g_timeout_add_full (G_PRIORITY_DEFAULT, 100,
+    folder->awaiting_remove = g_timeout_add_full (G_PRIORITY_DEFAULT, BATCH_PUBLISH_WAIT,
                                                   thunar_folder_publish_files_removed_batch,
                                                   folder, awaiting_remove_timeout_delete);
 }

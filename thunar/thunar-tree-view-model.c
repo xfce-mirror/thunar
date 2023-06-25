@@ -652,7 +652,8 @@ thunar_tree_view_model_finalize (GObject *object)
       g_source_remove (store->update_search_results_timeout_id);
       store->update_search_results_timeout_id = 0;
     }
-  thunar_g_list_free_full (store->files_to_add);
+  if (store->files_to_add != NULL)
+    thunar_g_list_free_full (store->files_to_add);
   store->files_to_add = NULL;
 
   g_mutex_clear (&store->mutex_files_to_add);
@@ -667,7 +668,8 @@ thunar_tree_view_model_finalize (GObject *object)
 
   g_free (store->date_custom_style);
 
-  g_strfreev (store->search_terms);
+  if (store->search_terms != NULL)
+    g_strfreev (store->search_terms);
 
   (*G_OBJECT_CLASS (thunar_tree_view_model_parent_class)->finalize) (object);
 }
@@ -1067,7 +1069,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
       folder = THUNAR_TREE_VIEW_MODEL (model)->folder;
       if (G_LIKELY (folder != NULL))
         {
-          const gchar *folder_basename = thunar_file_get_basename( thunar_folder_get_corresponding_file (folder));
+          const gchar *folder_basename = thunar_file_get_basename (thunar_folder_get_corresponding_file (folder));
           GFile *g_folder = thunar_file_get_file (thunar_folder_get_corresponding_file (folder));
           if (g_file_equal (g_folder, g_file_parent))
             {
@@ -1140,9 +1142,9 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
           /* determine sane display name for the owner */
           name = thunar_user_get_name (user);
           real_name = thunar_user_get_real_name (user);
-          if(G_LIKELY (real_name != NULL))
+          if (G_LIKELY (real_name != NULL))
             {
-              if(strcmp (name, real_name) == 0)
+              if (strcmp (name, real_name) == 0)
                 str = g_strdup (name);
               else
                 str = g_strdup_printf ("%s (%s)", real_name, name);
@@ -1916,7 +1918,7 @@ thunar_tree_view_model_insert_files (ThunarTreeViewModel *store,
        * it is not being used to store search results. In the search
        * case, we simply restart the search, */
 
-      if (thunar_file_is_hidden(file))
+      if (thunar_file_is_hidden (file))
         store->hidden = g_slist_prepend (store->hidden, g_object_ref (file));
 
       if (!thunar_file_is_hidden (file) || store->show_hidden)
@@ -2671,6 +2673,7 @@ thunar_tree_view_model_set_folders_first (ThunarStandardViewModel *model,
   /* apply the new setting (re-sorting the store) */
   store->sort_folders_first = folders_first;
   g_object_notify_by_pspec (G_OBJECT (store), tree_model_props[PROP_FOLDERS_FIRST]);
+
   /* re-sort the store */
   g_node_traverse (store->root, G_POST_ORDER, G_TRAVERSE_NON_LEAVES, -1, thunar_tree_view_model_node_traverse_sort, store);
 
@@ -4129,7 +4132,7 @@ thunar_tree_view_model_foreach_row_changed (GtkTreeModel *model,
   if (item == NULL || item->file == NULL)
     return FALSE;
 
-  gtk_tree_model_row_changed(model, path, iter);
+  gtk_tree_model_row_changed (model, path, iter);
   return FALSE;
 }
 
