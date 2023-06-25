@@ -129,6 +129,7 @@ enum
   PROP_MISC_UNDO_REDO_HISTORY_SIZE,
   PROP_MISC_CONFIRM_MOVE_TO_TRASH,
   PROP_MISC_MAX_NUMBER_OF_TEMPLATES,
+  PROP_MISC_ENABLE_EXPANDABLE_FOLDERS,
   N_PROPERTIES,
 };
 
@@ -1216,6 +1217,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          0, G_MAXUINT,
                          100,
                          EXO_PARAM_READWRITE);
+      
+  /**
+   * ThunarPreferences:misc-enable-expandable-folders
+   *
+   * If true details-view opens with expandable folders.
+   **/
+  preferences_props[PROP_MISC_ENABLE_EXPANDABLE_FOLDERS] =
+      g_param_spec_boolean ("misc-enable-expandable-folders",
+                            "MiscEnableExpandableFolders",
+                            NULL,
+                            FALSE,
+                            EXO_PARAM_READWRITE);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
