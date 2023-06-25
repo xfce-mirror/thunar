@@ -1341,7 +1341,7 @@ thunar_list_model_sort (ThunarListModel *store)
     return;
 
   /* be sure to not overuse the stack */
-  if (G_LIKELY (length < 2000))
+  if (G_LIKELY (length < STACK_ALLOC_LIMIT))
     {
       old_order = g_newa (GSequenceIter *, length);
       new_order = g_newa (gint, length);
@@ -1373,7 +1373,7 @@ thunar_list_model_sort (ThunarListModel *store)
   gtk_tree_path_free (path);
 
   /* clean up if we used the heap */
-  if (G_UNLIKELY (length >= 2000))
+  if (G_UNLIKELY (length >= STACK_ALLOC_LIMIT))
     {
       g_free (old_order);
       g_free (new_order);
@@ -1420,7 +1420,7 @@ thunar_list_model_file_changed (ThunarFileMonitor *file_monitor,
             {
               /* do swap sorting here since its much faster than a complete sort */
               length = g_sequence_get_length (store->rows);
-              if (G_LIKELY (length < 2000))
+              if (G_LIKELY (length < STACK_ALLOC_LIMIT))
                 new_order = g_newa (gint, length);
               else
                 new_order = g_new (gint, length);
@@ -1446,7 +1446,7 @@ thunar_list_model_file_changed (ThunarFileMonitor *file_monitor,
               gtk_tree_path_free (path);
 
               /* clean up if we used the heap */
-              if (G_UNLIKELY (length >= 2000))
+              if (G_UNLIKELY (length >= STACK_ALLOC_LIMIT))
                 g_free (new_order);
             }
 

@@ -5192,6 +5192,11 @@ thunar_cmp_files_by_owner (const ThunarFile *a,
       result = CLAMP ((gint) uid_a - (gint) uid_b, -1, 1);
     }
 
+  if (user_a != NULL)
+    g_object_unref (user_a);
+  if (user_b != NULL)
+    g_object_unref (user_b);
+
   if (result == 0)
       return thunar_file_compare_by_name (a, b, case_sensitive);
   else

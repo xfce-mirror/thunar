@@ -49,9 +49,6 @@
 #define G_NODE_HAS_DUMMY(node)            (node->children != NULL \
                                            && node->children->data == NULL \
                                            && node->children->next == NULL)
-/* if we need an array of size greater
- * than this threshold; we'll use heap */
-#define STACK_ALLOC_LIMIT 2000
 
 
 
@@ -359,6 +356,8 @@ struct _ThunarTreeViewModel
   /* used to stop the periodic call to thunar_tree_view_model_add_search_files when the search is finished/canceled */
   guint          update_search_results_timeout_id;
 
+  ThunarPreferences *preferences;
+
   /* see: thunar_tree_view_model_cleanup;
    * this the timeout source id for timely cleanup of non visible files/folders */
   guint          cleanup_idle_id;
@@ -605,6 +604,10 @@ thunar_tree_view_model_init (ThunarTreeViewModel *store)
   store->sort_func = thunar_file_compare_by_name;
   g_mutex_init (&store->mutex_files_to_add);
 
+  store->date_custom_style = NULL;
+
+  store->preferences = thunar_preferences_get ();
+
   store->loading = 0;
 
   /* Details view triggers cleanup(non-visible files/folders are released)
@@ -662,11 +665,14 @@ thunar_tree_view_model_finalize (GObject *object)
   g_signal_handlers_disconnect_by_func (G_OBJECT (store->file_monitor), thunar_tree_view_model_file_changed, store);
   g_object_unref (G_OBJECT (store->file_monitor));
 
+  g_object_unref (G_OBJECT (store->preferences));
+
   /* release the files and associated data structures */
   thunar_tree_view_model_release_files (store);
   g_node_destroy (store->root);
 
-  g_free (store->date_custom_style);
+  if (store->date_custom_style != NULL)
+    g_free (store->date_custom_style);
 
   if (store->search_terms != NULL)
     g_strfreev (store->search_terms);
@@ -1719,7 +1725,7 @@ thunar_tree_view_model_sort (ThunarTreeViewModel *store,
     return;
 
   /* be sure to not overuse the stack */
-  if (G_LIKELY (n_children < 500))
+  if (G_LIKELY (n_children < STACK_ALLOC_LIMIT))
     sort_array = g_newa (SortTuple, n_children);
   else
     sort_array = g_new (SortTuple, n_children);
@@ -1765,7 +1771,7 @@ thunar_tree_view_model_sort (ThunarTreeViewModel *store,
   gtk_tree_path_free (path);
 
   /* cleanup if we used the heap */
-  if (G_UNLIKELY (n_children >= 500))
+  if (G_UNLIKELY (n_children >= STACK_ALLOC_LIMIT))
     g_free (sort_array);
 }
 
@@ -1940,32 +1946,24 @@ thunar_tree_view_model_files_removed (ThunarFolder        *folder,
                                       ThunarTreeViewModel *store)
 {
   GList    *lp;
-  gboolean  found;
-  gboolean  search_mode;
 
   /* drop all the referenced files from the model */
-  search_mode = (store->search_terms != NULL);
   for (lp = files; lp != NULL; lp = lp->next)
     {
-      found = FALSE;
-
       for (GNode *node = g_node_first_child (store->root); node != NULL; node = g_node_next_sibling (node))
         if (node->data != NULL && THUNAR_TREE_VIEW_MODEL_ITEM (node->data)->file == lp->data)
           {
             g_node_traverse (node, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_view_model_node_traverse_remove, store);
-            found = TRUE;
             break;
           }
 
-      if (found || search_mode != FALSE)
+      if (!thunar_file_is_hidden (THUNAR_FILE (lp->data)))
         continue;
 
-      /* file is hidden */
-      /* this only makes sense when not storing search results */
-      _thunar_assert (g_slist_find (store->hidden, lp->data) != NULL);
-      /* TODO: file leak ? */
+      /* a hidden file is inserted into the hidden (GList)
+       * irrespective of whether it is being displayed or not */
       store->hidden = g_slist_remove (store->hidden, lp->data);
-      g_object_unref (G_OBJECT (lp->data));
+      g_object_unref (G_OBJECT (lp->data)); /* unref for the ref on insert into above list */
     }
 
   /* this probably changed */
@@ -2250,6 +2248,7 @@ _thunar_job_search_directory (ThunarJob  *job,
   ThunarRecursiveSearchMode   mode;
   enum ThunarStandardViewModelSearch  search_type;
   gboolean                    show_hidden;
+  char                       *uri;
 
   search_type = THUNAR_STANDARD_VIEW_MODEL_SEARCH_NON_RECURSIVE;
 
@@ -2277,8 +2276,11 @@ _thunar_job_search_directory (ThunarJob  *job,
   if (mode == THUNAR_RECURSIVE_SEARCH_ALWAYS || (mode == THUNAR_RECURSIVE_SEARCH_LOCAL && is_source_device_local))
     search_type = THUNAR_STANDARD_VIEW_MODEL_SEARCH_RECURSIVE;
 
-  thunar_tree_view_model_search_folder (model, job, thunar_file_dup_uri (directory), search_query_c_terms, search_type, show_hidden);
+  uri = thunar_file_dup_uri (directory);
 
+  thunar_tree_view_model_search_folder (model, job, uri, search_query_c_terms, search_type, show_hidden);
+
+  g_free (uri);
   g_strfreev (search_query_c_terms);
 
   return TRUE;
@@ -2341,7 +2343,8 @@ thunar_tree_view_model_search_finished (ThunarJob           *job,
       store->update_search_results_timeout_id = 0;
     }
 
-  thunar_g_list_free_full (store->files_to_add);
+  if (store->files_to_add != NULL)
+    thunar_g_list_free_full (store->files_to_add);
   store->files_to_add = NULL;
 
   g_signal_emit_by_name (store, "search-done");
@@ -2364,10 +2367,10 @@ thunar_tree_view_model_search_folder (ThunarTreeViewModel   *model,
   const gchar     *namespace;
   const gchar     *display_name;
   gchar           *display_name_c; /* converted to ignore case */
+  char            *file_uri;
 
   cancellable = exo_job_get_cancellable (EXO_JOB (job));
   directory = g_file_new_for_uri (uri);
-  g_free (uri);
   namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE ","
               G_FILE_ATTRIBUTE_STANDARD_TARGET_URI ","
               G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
@@ -2402,6 +2405,7 @@ thunar_tree_view_model_search_folder (ThunarTreeViewModel   *model,
           file = g_file_new_for_uri (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI));
           g_object_unref (info);
           info = g_file_query_info (file, namespace, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, cancellable, NULL);
+          g_object_unref (file);
           if (G_UNLIKELY (info == NULL))
             break;
         }
@@ -2425,7 +2429,9 @@ thunar_tree_view_model_search_folder (ThunarTreeViewModel   *model,
       /* handle directories */
       if (type == G_FILE_TYPE_DIRECTORY && search_type == THUNAR_STANDARD_VIEW_MODEL_SEARCH_RECURSIVE)
         {
-          thunar_tree_view_model_search_folder (model, job, g_file_get_uri (file), search_query_c_terms, search_type, show_hidden);
+          file_uri = g_file_get_uri (file);
+          thunar_tree_view_model_search_folder (model, job, file_uri, search_query_c_terms, search_type, show_hidden);
+          g_free (file_uri);
         }
 
       /* prepare entry display name */
@@ -3653,19 +3659,16 @@ thunar_tree_view_model_get_statusbar_text_for_files (ThunarTreeViewModel *store,
   gchar             *temp_string        = NULL;
   gchar             *folder_text        = NULL;
   gchar             *non_folder_text    = NULL;
-  ThunarPreferences *preferences;
   guint              active;
   guint64            last_modified_date = 0;
   guint64            temp_last_modified_date;
   ThunarFile        *last_modified_file = NULL;
   gboolean           show_size, show_size_in_bytes, show_last_modified;
 
-  preferences = thunar_preferences_get ();
-  g_object_get (G_OBJECT (preferences), "misc-status-bar-active-info", &active, NULL);
+  g_object_get (G_OBJECT (store->preferences), "misc-status-bar-active-info", &active, NULL);
   show_size = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE);
   show_size_in_bytes = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES);
   show_last_modified = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_LAST_MODIFIED);
-  g_object_unref (preferences);
 
   /* analyze files */
   for (lp = files; lp != NULL; lp = lp->next)
