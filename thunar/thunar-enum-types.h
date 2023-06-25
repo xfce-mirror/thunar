@@ -551,6 +551,28 @@ typedef enum
     THUNAR_RESPONSE_FILENAME,
 } ThunarResponseType;
 
+/**
+* ThunarExecuteShellScript
+ *
+ * Specify script open action.
+ **/
+#define THUNAR_TYPE_EXECUTE_SHELL_SCRIPT (thunar_execute_shell_script_get_type ())
+
+/**
+ * ThunarExecuteShellScript:
+ * @THUNAR_EXECUTE_SHELL_SCRIPT_NEVER,  : don't execute shell scripts
+ * @THUNAR_EXECUTE_SHELL_SCRIPT_ALWAYS, : always execute shell scripts
+ * @THUNAR_EXECUTE_SHELL_SCRIPT_ASK,    : ask whether to execute shell script or display it
+ **/
+typedef enum
+{
+  THUNAR_EXECUTE_SHELL_SCRIPT_NEVER,
+  THUNAR_EXECUTE_SHELL_SCRIPT_ALWAYS,
+  THUNAR_EXECUTE_SHELL_SCRIPT_ASK,
+} ThunarExecuteShellScript;
+
+GType thunar_execute_shell_script_get_type (void) G_GNUC_CONST;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_ENUM_TYPES_H__ */

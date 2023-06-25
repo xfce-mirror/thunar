@@ -668,15 +668,16 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Shell scripts are often unsafe to execute, require additional
    * parameters and most users will only want to edit them in their
    * favorite editor, so the default is to open them in the associated
-   * application. Setting this to TRUE allows executing them, like
+   * application. Setting this to "Always" allows executing them, like
    * binaries, by default. See bug #7596.
    **/
   preferences_props[PROP_EXEC_SHELL_SCRIPTS_BY_DEFAULT] =
-      g_param_spec_boolean ("misc-exec-shell-scripts-by-default",
-                            "MiscExecShellScriptsByDefault",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+      g_param_spec_enum ("misc-exec-shell-scripts-by-default",
+                         "MiscExecShellScriptsByDefault",
+                         NULL,
+                         THUNAR_TYPE_EXECUTE_SHELL_SCRIPT,
+                         THUNAR_EXECUTE_SHELL_SCRIPT_NEVER,
+                         EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-folders-first:
