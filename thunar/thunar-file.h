@@ -96,6 +96,21 @@ typedef enum /*< flags >*/
   THUNAR_FILE_THUMB_STATE_LOADING = 3,
 } ThunarFileThumbState;
 
+/**
+ * ThunarFileAskExecuteResponse:
+ * @THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN_IN_TERMINAL : executes the file in terminal
+ * @THUNAR_FILE_ASK_EXECUTE_RESPONSE_OPEN            : opens in a default associated application
+ * @THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN             : executes the file
+ *
+ * Response of #thunar_dialog_ask_execute.
+ **/
+typedef enum
+{
+  THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN_IN_TERMINAL = 0,
+  THUNAR_FILE_ASK_EXECUTE_RESPONSE_OPEN            = 1,
+  THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN             = 2,
+} ThunarFileAskExecuteResponse;
+
 
 
 #define THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK "emblem-symbolic-link"
@@ -146,6 +161,7 @@ gboolean          thunar_file_check_loaded               (ThunarFile            
 gboolean          thunar_file_execute                    (ThunarFile             *file,
                                                           GFile                  *working_directory,
                                                           gpointer                parent,
+                                                          gboolean                in_terminal,
                                                           GList                  *path_list,
                                                           const gchar            *startup_id,
                                                           GError                **error);
@@ -210,7 +226,8 @@ gboolean          thunar_file_is_gfile_ancestor          (const ThunarFile      
                                                           GFile                  *ancestor);
 gboolean          thunar_file_is_ancestor                (const ThunarFile       *file,
                                                           const ThunarFile       *ancestor);
-gboolean          thunar_file_can_execute                (ThunarFile             *file);
+gboolean          thunar_file_can_execute                (ThunarFile             *file,
+                                                          gboolean               *ask_execute);
 gboolean          thunar_file_is_writable                (const ThunarFile       *file);
 gboolean          thunar_file_is_hidden                  (const ThunarFile       *file);
 gboolean          thunar_file_is_home                    (const ThunarFile       *file);
