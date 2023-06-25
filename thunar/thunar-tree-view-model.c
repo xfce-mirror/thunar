@@ -1945,17 +1945,20 @@ thunar_tree_view_model_files_removed (ThunarFolder        *folder,
                                       GList               *files,
                                       ThunarTreeViewModel *store)
 {
-  GList    *lp;
+  GNode *child_node;
+  GList *lp;
 
   /* drop all the referenced files from the model */
   for (lp = files; lp != NULL; lp = lp->next)
     {
-      for (GNode *node = g_node_first_child (store->root); node != NULL; node = g_node_next_sibling (node))
-        if (node->data != NULL && THUNAR_TREE_VIEW_MODEL_ITEM (node->data)->file == lp->data)
-          {
-            g_node_traverse (node, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_view_model_node_traverse_remove, store);
-            break;
-          }
+      /* find the child node for the file */
+      for (child_node = g_node_first_child (store->root); child_node != NULL; child_node = g_node_next_sibling (child_node))
+        if (child_node->data != NULL && THUNAR_TREE_VIEW_MODEL_ITEM (child_node->data)->file == lp->data)
+          break;
+
+      /* drop the child node (and all descendant nodes) from the model */
+      if (G_LIKELY (child_node != NULL))
+        g_node_traverse (child_node, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_view_model_node_traverse_remove, store);
 
       if (!thunar_file_is_hidden (THUNAR_FILE (lp->data)))
         continue;

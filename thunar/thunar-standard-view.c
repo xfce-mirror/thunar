@@ -4239,7 +4239,7 @@ void
 thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 {
   GtkTreeIter iter;
-  GList      *lp, *selected_thunar_files;
+  GList      *lp, *selected_thunar_files, *selected_files = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
@@ -4270,12 +4270,12 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 
       /* ...and replace it with the file */
       lp->data = thunar_standard_view_model_get_file (standard_view->model, &iter);
-      if (lp->data == NULL)
-        selected_thunar_files = g_list_delete_link (selected_thunar_files, lp);
+      if (lp->data != NULL)
+        selected_files = g_list_prepend (selected_files, lp->data);
     }
 
   /* and setup the new selected files list */
-  standard_view->priv->selected_files = selected_thunar_files;
+  standard_view->priv->selected_files = selected_files;
 
   /* update the statusbar text */
   thunar_standard_view_update_statusbar_text (standard_view);
