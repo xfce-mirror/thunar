@@ -149,7 +149,7 @@ thunar_renamer_progress_run_error_dialog (ThunarRenamerProgress *renamer_progres
   gint       response;
 
   if (g_strcmp0(thunar_file_get_display_name (pair->file), thunar_file_get_basename (pair->file)) != 0)
-    oldname = g_strconcat (thunar_file_get_display_name (pair->file), " (", thunar_file_get_basename (pair->file), ")");
+    oldname = g_strconcat (thunar_file_get_display_name (pair->file), " (", thunar_file_get_basename (pair->file), ")", NULL);
   else
     oldname = g_strdup (thunar_file_get_display_name (pair->file));
 
