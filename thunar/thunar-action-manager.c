@@ -796,7 +796,10 @@ thunar_action_manager_execute_files (ThunarActionManager *action_mgr,
       if (!thunar_file_execute (lp->data, working_directory, action_mgr->widget, NULL, NULL, &error))
         {
           /* display an error message to the user */
-          thunar_dialogs_show_error (action_mgr->widget, error, _("Failed to execute file \"%s\""), thunar_file_get_display_name (lp->data));
+          if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
+            thunar_dialogs_show_error (action_mgr->widget, error, _("Failed to execute file \"%s\" (%s)"), thunar_file_get_display_name (lp->data), thunar_file_get_basename (lp->data));
+          else
+            thunar_dialogs_show_error (action_mgr->widget, error, _("Failed to execute file \"%s\""), thunar_file_get_display_name (lp->data));
           g_error_free (error);
           break;
         }
@@ -2402,9 +2405,15 @@ thunar_action_manager_rename_error (ExoJob    *job,
   param_values = thunar_simple_job_get_param_values (THUNAR_SIMPLE_JOB (job));
   file = g_value_get_object (&g_array_index (param_values, GValue, 0));
 
-  thunar_dialogs_show_error (GTK_WIDGET (widget), error,
-                             _("Failed to rename \"%s\""),
-                             thunar_file_get_display_name (file));
+  if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
+    thunar_dialogs_show_error (GTK_WIDGET (widget), error,
+                               _("Failed to rename \"%s\" (%s)"),
+                               thunar_file_get_display_name (file),
+                               thunar_file_get_basename (file));
+  else
+    thunar_dialogs_show_error (GTK_WIDGET (widget), error,
+                               _("Failed to rename \"%s\""),
+                               thunar_file_get_display_name (file));
   g_object_unref (file);
 }
 
@@ -2428,6 +2437,7 @@ thunar_action_manager_action_rename (ThunarActionManager *action_mgr)
 {
   ThunarJob *job;
   GtkWidget *window;
+  gint       response;
 
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
@@ -2442,6 +2452,18 @@ thunar_action_manager_action_rename (ThunarActionManager *action_mgr)
   /* start renaming if we have exactly one selected file */
   if (g_list_length (action_mgr->files_to_process) == 1)
     {
+      if (thunar_file_is_desktop_file (THUNAR_FILE (action_mgr->files_to_process->data)))
+        {
+          response = thunar_dialog_show_rename_launcher_options (GTK_WINDOW (window));
+          if (response == THUNAR_RESPONSE_LAUNCHERNAME)
+            {
+              thunar_action_manager_action_edit_launcher (action_mgr);
+              return TRUE;
+            }
+          else if (response != THUNAR_RESPONSE_FILENAME)
+            return TRUE;
+        }
+      
       /* run the rename dialog */
       job = thunar_dialogs_show_rename_file (GTK_WINDOW (window), THUNAR_FILE (action_mgr->files_to_process->data), THUNAR_OPERATION_LOG_OPERATIONS);
       if (G_LIKELY (job != NULL))
