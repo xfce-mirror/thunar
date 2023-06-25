@@ -1661,9 +1661,9 @@ thunar_file_execute (ThunarFile  *file,
           else
             {
               /* use the directory of the executable file */
-              parent = g_file_get_parent (file->gfile);
-              directory = (parent != NULL) ? thunar_g_file_get_location (parent) : NULL;
-              g_object_unref (parent);
+              file_parent = g_file_get_parent (file->gfile);
+              directory = (file_parent != NULL) ? thunar_g_file_get_location (file_parent) : NULL;
+              g_object_unref (file_parent);
             }
         }
 
