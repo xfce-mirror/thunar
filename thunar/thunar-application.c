@@ -1638,8 +1638,13 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
       if (error->domain != G_IO_ERROR || error->code != G_IO_ERROR_CANCELLED)
         {
           /* tell the user that we were unable to launch the file specified */
-          thunar_dialogs_show_error (screen, error, _("Failed to open \"%s\""),
-                                     thunar_file_get_display_name (file));
+          if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
+          thunar_dialogs_show_error (screen, error, _("Failed to open \"%s\" (%s)"),
+                                     thunar_file_get_display_name (file),
+                                     thunar_file_get_basename (file));
+          else
+            thunar_dialogs_show_error (screen, error, _("Failed to open \"%s\""),
+                                       thunar_file_get_display_name (file));
         }
 
       /* stop processing files */
@@ -1860,8 +1865,13 @@ thunar_application_rename_file_error (ExoJob            *job,
   g_assert (screen != NULL);
   g_assert (file != NULL);
 
-  thunar_dialogs_show_error (screen, error, _("Failed to rename \"%s\""),
-                             thunar_file_get_display_name (file));
+  if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
+    thunar_dialogs_show_error (screen, error, _("Failed to rename \"%s\" (%s)"),
+                               thunar_file_get_display_name (file),
+                               thunar_file_get_basename (file));
+  else
+    thunar_dialogs_show_error (screen, error, _("Failed to rename \"%s\""),
+                               thunar_file_get_display_name (file));
 }
 
 
@@ -2409,8 +2419,13 @@ thunar_application_unlink_files (ThunarApplication            *application,
       /* generate the question to confirm the delete operation */
       if (G_LIKELY (n_path_list == 1))
         {
-          message = g_strdup_printf (_("Are you sure that you want to\npermanently delete \"%s\"?"),
-                                     thunar_file_get_display_name (THUNAR_FILE (file_list->data)));
+          if (g_strcmp0 (thunar_file_get_display_name (file_list->data), thunar_file_get_basename (file_list->data)) != 0)
+            message = g_strdup_printf (_("Are you sure that you want to\npermanently delete \"%s\" (%s)?"),
+                                       thunar_file_get_display_name (THUNAR_FILE (file_list->data)),
+                                       thunar_file_get_basename (THUNAR_FILE (file_list->data)));
+          else
+            message = g_strdup_printf (_("Are you sure that you want to\npermanently delete \"%s\"?"),
+                                       thunar_file_get_display_name (THUNAR_FILE (file_list->data)));
         }
       else
         {
@@ -2465,8 +2480,13 @@ thunar_application_unlink_files (ThunarApplication            *application,
       /* generate the question to confirm the move to trash operation */
       if (G_LIKELY (n_path_list == 1))
         {
-          message = g_strdup_printf (_("Are you sure that you want to\nmove \"%s\" to trash ?"),
-                                     thunar_file_get_display_name (THUNAR_FILE(file_list->data)));
+          if (g_strcmp0 (thunar_file_get_display_name (file_list->data), thunar_file_get_basename (file_list->data)) != 0)
+            message = g_strdup_printf (_("Are you sure that you want to\nmove \"%s\" (%s) to trash ?"),
+                                       thunar_file_get_display_name (THUNAR_FILE(file_list->data)),
+                                       thunar_file_get_basename (THUNAR_FILE(file_list->data)));
+          else
+            message = g_strdup_printf (_("Are you sure that you want to\nmove \"%s\" to trash ?"),
+                                       thunar_file_get_display_name (THUNAR_FILE(file_list->data)));
         }
       else
         {
@@ -2741,9 +2761,15 @@ thunar_application_restore_files (ThunarApplication *application,
       if (G_UNLIKELY (original_uri == NULL))
         {
           /* no OriginalPath, impossible to continue */
-          g_set_error (&err, G_FILE_ERROR, G_FILE_ERROR_INVAL,
-                       _("Failed to determine the original path for \"%s\""),
-                       thunar_file_get_display_name (lp->data));
+          if (g_strcmp0 (thunar_file_get_display_name (lp->data), thunar_file_get_basename (lp->data)) != 0)
+            g_set_error (&err, G_FILE_ERROR, G_FILE_ERROR_INVAL,
+                         _("Failed to determine the original path for \"%s\" (%s)"),
+                         thunar_file_get_display_name (lp->data),
+                         thunar_file_get_basename (lp->data));
+          else
+            g_set_error (&err, G_FILE_ERROR, G_FILE_ERROR_INVAL,
+                         _("Failed to determine the original path for \"%s\""),
+                         thunar_file_get_display_name (lp->data));
           break;
         }
 
@@ -2759,8 +2785,13 @@ thunar_application_restore_files (ThunarApplication *application,
   if (G_UNLIKELY (err != NULL))
     {
       /* display an error dialog */
-      thunar_dialogs_show_error (parent, err, _("Could not restore \"%s\""),
-                                 thunar_file_get_display_name (lp->data));
+      if (g_strcmp0 (thunar_file_get_display_name (lp->data), thunar_file_get_basename (lp->data)) != 0)
+        thunar_dialogs_show_error (parent, err, _("Could not restore \"%s\" (%s)"),
+                                   thunar_file_get_display_name (lp->data),
+                                   thunar_file_get_basename (lp->data));
+      else
+        thunar_dialogs_show_error (parent, err, _("Could not restore \"%s\""),
+                                   thunar_file_get_display_name (lp->data));
       g_error_free (err);
     }
   else
