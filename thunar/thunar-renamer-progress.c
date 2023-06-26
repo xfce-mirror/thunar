@@ -148,7 +148,10 @@ thunar_renamer_progress_run_error_dialog (ThunarRenamerProgress *renamer_progres
   GtkWidget *message;
   gint       response;
 
-  oldname = g_strdup (thunar_file_get_display_name (pair->file));
+  if (g_strcmp0(thunar_file_get_display_name (pair->file), thunar_file_get_basename (pair->file)) != 0)
+    oldname = g_strconcat (thunar_file_get_display_name (pair->file), " (", thunar_file_get_basename (pair->file), ")", NULL);
+  else
+    oldname = g_strdup (thunar_file_get_display_name (pair->file));
 
   /* determine the toplevel widget */
   toplevel = (GtkWindow *) gtk_widget_get_toplevel (GTK_WIDGET (renamer_progress));
@@ -268,7 +271,7 @@ THUNAR_THREADS_ENTER
       else
         {
           /* remember the old file name (for undo) */
-          oldname = g_strdup (thunar_file_get_display_name (pair->file));
+          oldname = g_strdup (thunar_file_get_basename (pair->file));
 
           /* replace the newname with the oldname for the pair (-> undo) */
           g_free (pair->name);
