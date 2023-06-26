@@ -396,6 +396,7 @@ thunar_file_init (ThunarFile *file)
 {
   file->file_count = 0;
   file->file_count_timestamp = 0;
+  file->display_name = NULL;
 }
 
 
@@ -906,12 +907,14 @@ static void
 thunar_file_info_reload (ThunarFile   *file,
                          GCancellable *cancellable)
 {
-  const gchar *target_uri;
-  GKeyFile    *key_file;
-  gchar       *p;
-  const gchar *display_name;
-  gchar       *casefold;
-  gchar       *path;
+  const gchar       *target_uri;
+  const gchar       *display_name;
+  gchar             *p;
+  gchar             *casefold;
+  gchar             *path;
+  GKeyFile          *key_file;
+  gboolean           launcher_name;
+  ThunarPreferences *preferences;
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (file->info == NULL || G_IS_FILE_INFO (file->info));
@@ -978,6 +981,29 @@ thunar_file_info_reload (ThunarFile   *file,
                     *p = '\0';
                 }
             }
+
+          /* read the display name from the .desktop file (will be overwritten later
+           * if it's undefined here) */
+          preferences = thunar_preferences_get ();
+          g_object_get (preferences, "show-launcher-names-instead-real-filenames", &launcher_name, NULL);
+          g_object_unref (preferences);
+          if (thunar_g_vfs_metadata_is_supported () && xfce_g_file_is_trusted (file->gfile, NULL, NULL) && launcher_name == TRUE)
+            {
+              g_free (file->display_name);
+
+              file->display_name = g_key_file_get_locale_string (key_file,
+                                                                 G_KEY_FILE_DESKTOP_GROUP,
+                                                                 G_KEY_FILE_DESKTOP_KEY_NAME,
+                                                                 NULL, NULL);
+
+              /* drop the name if it's empty or has invalid encoding */
+              if (exo_str_is_empty (file->display_name) || !g_utf8_validate (file->display_name, -1, NULL))
+                {
+                  g_free (file->display_name);
+                  file->display_name = NULL;
+                }
+              }
+
           /* free the key file */
           g_key_file_free (key_file);
         }
@@ -2470,9 +2496,17 @@ thunar_file_get_content_type (ThunarFile *file)
                   if (G_LIKELY (is_symlink && err->code == G_IO_ERROR_NOT_FOUND))
                     file->content_type = g_strdup ("inode/symlink");
                   else
-                    g_warning ("Content type loading failed for %s: %s",
-                              thunar_file_get_display_name (file),
-                              err->message);
+                  {
+                    if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
+                      g_warning ("Content type loading failed for %s (%s): %s",
+                                 thunar_file_get_display_name (file),
+                                 thunar_file_get_basename (file),
+                                 err->message);
+                    else
+                      g_warning ("Content type loading failed for %s: %s",
+                                 thunar_file_get_display_name (file),
+                                 err->message);
+                  }
 
                   g_error_free (err);
                 }
