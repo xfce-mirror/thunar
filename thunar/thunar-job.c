@@ -287,9 +287,15 @@ thunar_job_real_ask_replace (ThunarJob  *job,
   _thunar_return_val_if_fail (THUNAR_IS_FILE (source_file), THUNAR_JOB_RESPONSE_CANCEL);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (target_file), THUNAR_JOB_RESPONSE_CANCEL);
 
-  message = g_strdup_printf (_("The file \"%s\" already exists. Would you like to replace it?\n\n"
-                               "If you replace an existing file, its contents will be overwritten."),
-                             thunar_file_get_display_name (source_file));
+  if (g_strcmp0 (thunar_file_get_display_name (source_file), thunar_file_get_basename (source_file)) != 0)
+    message = g_strdup_printf (_("The file \"%s\" (%s) already exists. Would you like to replace it?\n\n"
+                                 "If you replace an existing file, its contents will be overwritten."),
+                               thunar_file_get_display_name (source_file),
+                               thunar_file_get_basename (source_file));
+  else
+    message = g_strdup_printf (_("The file \"%s\" already exists. Would you like to replace it?\n\n"
+                                 "If you replace an existing file, its contents will be overwritten."),
+                               thunar_file_get_display_name (source_file));
 
   g_signal_emit (job, job_signals[ASK], 0, message,
                  THUNAR_JOB_RESPONSE_REPLACE
