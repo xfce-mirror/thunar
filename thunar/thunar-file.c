@@ -70,7 +70,7 @@
 #include <thunar/thunar-user.h>
 #include <thunar/thunar-util.h>
 
-#include <xfconf/xfconf.h>
+
 
 /* Dump the file cache every X second, set to 0 to disable */
 #define DUMP_FILE_CACHE 0
