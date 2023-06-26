@@ -134,6 +134,8 @@ thunar_icon_view_set_property (GObject      *object,
 
           /* disconnect the "zoom-level" signal handler, since we're using a fixed wrap-width here */
           g_signal_handlers_disconnect_by_func (object, thunar_icon_view_zoom_level_changed, NULL);
+
+          exo_icon_view_set_item_width (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), -1);
         }
       else
         {
@@ -210,6 +212,8 @@ thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view)
       wrap_width = 128;
       break;
     }
+
+  exo_icon_view_set_item_width (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), wrap_width * 5 / 4);
 
   /* set the new "wrap-width" for the text renderer */
   g_object_set (G_OBJECT (standard_view->name_renderer), "wrap-width", wrap_width, NULL);
