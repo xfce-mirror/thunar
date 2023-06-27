@@ -782,6 +782,7 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
   GtkTreeModel      *model = gtk_tree_view_get_model (tree_view);
   GtkTreeIter        iter;
   ThunarFile        *file = NULL;
+  gboolean           row_selected;
 
   /* check if the event is for the bin window */
   if (G_UNLIKELY (event->window != gtk_tree_view_get_bin_window (tree_view)))
@@ -833,16 +834,19 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
               gtk_tree_selection_unselect_all (selection);
               if (gtk_tree_model_get_iter (model, &iter, path))
                 {
-                  gtk_tree_model_get (model, &iter,
-                                      THUNAR_COLUMN_FILE, &file, -1);
+                  file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &iter);
                   if (file != NULL)
-                    gtk_tree_selection_select_path (selection, path);
+                    {
+                       row_selected = TRUE;
+                       gtk_tree_selection_select_path (selection, path);
+                       g_object_unref (file);
+                    }
                 }
 
               gtk_tree_path_free (path);
 
-              /* return FALSE to not abort dragging */
-              return file == NULL;
+              /* return FALSE to not abort dragging; when row was selected */
+              return !row_selected;
             }
           gtk_tree_path_free (path);
         }
@@ -875,12 +879,13 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
                   gtk_tree_selection_unselect_all (selection);
                   if (gtk_tree_model_get_iter (model, &iter, path))
                     {
-                      gtk_tree_model_get (model, &iter,
-                                          THUNAR_COLUMN_FILE, &file, -1);
-                      if (file == NULL)
-                        return TRUE;
+                      file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &iter);
+                      if (file != NULL)
+                        {
+                          g_object_unref (file);
+                          gtk_tree_selection_select_path (selection, path);
+                        }
                     }
-                  gtk_tree_selection_select_path (selection, path);
                 }
 
               /* queue the menu popup */
@@ -900,15 +905,15 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
           gtk_tree_selection_unselect_all (selection);
           if (gtk_tree_model_get_iter (model, &iter, path))
             {
-              gtk_tree_model_get (model, &iter,
-                                  THUNAR_COLUMN_FILE, &file, -1);
-              if (file == NULL)
-                return TRUE;
+              file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &iter);
+              if (file != NULL)
+                {
+                  g_object_unref (file);
+                  gtk_tree_selection_select_path (selection, path);
+                  /* try to open the path as new window/tab, if possible */
+                  _thunar_standard_view_open_on_middle_click (THUNAR_STANDARD_VIEW (details_view), path, event->state);
+                }
             }
-          gtk_tree_selection_select_path (selection, path);
-
-          /* try to open the path as new window/tab, if possible */
-          _thunar_standard_view_open_on_middle_click (THUNAR_STANDARD_VIEW (details_view), path, event->state);
 
           /* cleanup */
           gtk_tree_path_free (path);
