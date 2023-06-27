@@ -40,6 +40,9 @@ static void         thunar_icon_view_set_property           (GObject            
                                                              const GValue        *value,
                                                              GParamSpec          *pspec);
 static AtkObject   *thunar_icon_view_get_accessible         (GtkWidget           *widget);
+static void         thunar_icon_view_style_set              (GtkWidget           *widget,
+                                                             GtkStyle            *previous_style);
+static void         thunar_icon_view_set_item_width         (ThunarIconView      *icon_view);
 static void         thunar_icon_view_zoom_level_changed     (ThunarStandardView  *standard_view);
 
 
@@ -52,6 +55,8 @@ struct _ThunarIconViewClass
 struct _ThunarIconView
 {
   ThunarAbstractIconView __parent__;
+
+  gboolean text_beside_icons;
 };
 
 
@@ -72,6 +77,7 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->get_accessible = thunar_icon_view_get_accessible;
+  gtkwidget_class->style_set = thunar_icon_view_style_set;
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
   thunarstandard_view_class->zoom_level_property_name = "last-icon-view-zoom-level";
@@ -122,18 +128,23 @@ thunar_icon_view_set_property (GObject      *object,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
+  ThunarIconView     *icon_view = THUNAR_ICON_VIEW (object);
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (object);
 
   switch (prop_id)
     {
     case PROP_TEXT_BESIDE_ICONS:
-      if (G_UNLIKELY (g_value_get_boolean (value)))
+      icon_view->text_beside_icons = g_value_get_boolean (value);
+      if (icon_view->text_beside_icons)
         {
           exo_icon_view_set_orientation (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), GTK_ORIENTATION_HORIZONTAL);
           g_object_set (G_OBJECT (standard_view->name_renderer), "wrap-width", 128, "yalign", 0.5f, "xalign", 0.0f, "alignment", PANGO_ALIGN_LEFT, NULL);
 
           /* disconnect the "zoom-level" signal handler, since we're using a fixed wrap-width here */
           g_signal_handlers_disconnect_by_func (object, thunar_icon_view_zoom_level_changed, NULL);
+
+          /* reset the consistent horizontal spacing */
+          thunar_icon_view_set_item_width (THUNAR_ICON_VIEW (standard_view));
         }
       else
         {
@@ -176,6 +187,48 @@ thunar_icon_view_get_accessible (GtkWidget *widget)
 
 
 static void
+thunar_icon_view_style_set (GtkWidget *widget,
+                            GtkStyle  *previous_style)
+{
+  /* call the parent handler */
+  (*GTK_WIDGET_CLASS (thunar_icon_view_parent_class)->style_set) (widget, previous_style);
+
+  /* (re)set the consistent horizontal spacing */
+  thunar_icon_view_set_item_width (THUNAR_ICON_VIEW (widget));
+}
+
+
+
+static void
+thunar_icon_view_set_item_width (ThunarIconView *icon_view)
+{
+  const gint          exo_additional_padding = 4;
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (icon_view);
+  ExoIconView        *exo_icon_view = EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view)));
+  gint                wrap_width;
+  gint                xpad;
+  gint                column_spacing;
+
+  if (icon_view->text_beside_icons)
+    {
+      /* reset the consistent horizontal spacing */
+      exo_icon_view_set_item_width (exo_icon_view, -1);
+      return;
+    }
+
+  /* set the consistent horizontal spacing */
+
+  g_object_get (G_OBJECT (standard_view->name_renderer), "wrap-width", &wrap_width, NULL);
+  gtk_cell_renderer_get_padding (standard_view->name_renderer, &xpad, NULL);
+
+  column_spacing = exo_icon_view_get_column_spacing (exo_icon_view);
+
+  exo_icon_view_set_item_width (exo_icon_view, wrap_width + MAX(0, exo_additional_padding - column_spacing + xpad * 2));
+}
+
+
+
+static void
 thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view)
 {
   gint            wrap_width;
@@ -213,6 +266,9 @@ thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view)
 
   /* set the new "wrap-width" for the text renderer */
   g_object_set (G_OBJECT (standard_view->name_renderer), "wrap-width", wrap_width, NULL);
+
+  /* set the consistent horizontal spacing */
+  thunar_icon_view_set_item_width (THUNAR_ICON_VIEW (standard_view));
 
   /* Like that rubber band selection can be done properly on high zoom levels */
   /* Without margin adjustment it would be almost impossible to start the selection on the left */
