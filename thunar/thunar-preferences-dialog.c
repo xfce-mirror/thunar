@@ -1231,20 +1231,32 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
   gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
   gtk_container_add (GTK_CONTAINER (frame), grid);
+  gtk_grid_set_column_homogeneous (GTK_GRID (grid), TRUE);
   gtk_widget_show (grid);
 
+  label = gtk_label_new_with_mnemonic (_("Execute shell scripts:"));
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
+  gtk_widget_show (label);
+
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
-  gtk_grid_attach (GTK_GRID (grid), hbox, 0, row, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), hbox, 1, row, 1, 1);
   gtk_widget_show (hbox);
 
-  button = gtk_check_button_new_with_mnemonic (_("Execute shell scripts"));
+  combo = gtk_combo_box_text_new ();
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Never"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Always"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Ask every time"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "misc-exec-shell-scripts-by-default",
-                          G_OBJECT (button),
+                          G_OBJECT (combo),
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
-  gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
-  gtk_widget_show (button);
+  gtk_widget_set_hexpand (combo, TRUE);
+  gtk_box_pack_start (GTK_BOX (hbox), combo, FALSE, TRUE, 0);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
+  gtk_widget_show (combo);
 
   image = gtk_image_new_from_icon_name ("dialog-warning", GTK_ICON_SIZE_MENU);
   gtk_widget_set_tooltip_text (image, _("Allowing untrusted programs to run presents a security risk to your system."));

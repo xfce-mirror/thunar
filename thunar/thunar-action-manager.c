@@ -130,7 +130,8 @@ static void                    thunar_action_manager_set_current_directory      
 static void                    thunar_action_manager_set_selected_files         (ThunarComponent                *component,
                                                                                  GList                          *selected_files);
 static void                    thunar_action_manager_execute_files              (ThunarActionManager            *action_mgr,
-                                                                                 GList                          *files);
+                                                                                 GList                          *files,
+                                                                                 gboolean                        in_terminal);
 static void                    thunar_action_manager_open_files                 (ThunarActionManager            *action_mgr,
                                                                                  GList                          *files,
                                                                                  GAppInfo                       *application_to_use);
@@ -674,7 +675,7 @@ thunar_action_manager_set_selected_files (ThunarComponent *component,
         }
       else
         {
-          if (action_mgr->files_are_all_executable && !thunar_file_can_execute (lp->data) && !thunar_file_is_desktop_file (lp->data))
+          if (action_mgr->files_are_all_executable && !thunar_file_can_execute (lp->data, NULL) && !thunar_file_is_desktop_file (lp->data))
             action_mgr->files_are_all_executable = FALSE;
           ++action_mgr->n_regulars_to_process;
         }
@@ -778,7 +779,8 @@ thunar_action_manager_activate_selected_files (ThunarActionManager              
 
 static void
 thunar_action_manager_execute_files (ThunarActionManager *action_mgr,
-                                     GList               *files)
+                                     GList               *files,
+                                     gboolean             in_terminal)
 {
   GError *error = NULL;
   GFile  *working_directory;
@@ -793,7 +795,7 @@ thunar_action_manager_execute_files (ThunarActionManager *action_mgr,
       working_directory = thunar_file_get_file (action_mgr->current_directory);
       gtk_recent_manager_add_item (gtk_recent_manager_get_default(), g_file_get_uri (gfile));
 
-      if (!thunar_file_execute (lp->data, working_directory, action_mgr->widget, NULL, NULL, &error))
+      if (!thunar_file_execute (lp->data, working_directory, action_mgr->widget, in_terminal, NULL, NULL, &error))
         {
           /* display an error message to the user */
           if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
@@ -1143,9 +1145,11 @@ thunar_action_manager_poke_files_finish (ThunarBrowser *browser,
   ThunarActionManagerPokeData *poke_data = user_data;
   gboolean                     executable = TRUE;
   gboolean                     open_new_window_as_tab = TRUE;
+  gboolean                     in_terminal = FALSE;
   GList                       *directories = NULL;
   GList                       *files = NULL;
   GList                       *lp;
+  gint                         ask_execute_response = GTK_RESPONSE_NONE;
 
   _thunar_return_if_fail (THUNAR_IS_BROWSER (browser));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
@@ -1171,6 +1175,21 @@ thunar_action_manager_poke_files_finish (ThunarBrowser *browser,
 
   if (poke_data->files_to_poke == NULL)
     {
+      gint     tmp = 0;
+      gboolean single_file = TRUE;
+
+      for (lp = poke_data->files_poked; lp != NULL; lp = lp->next)
+        {
+          if (thunar_file_is_directory (lp->data))
+            continue;
+
+          if (++tmp > 1)
+            {
+              single_file = FALSE;
+              break;
+            }
+        }
+
       /* separate files and directories in the selected files list */
       for (lp = poke_data->files_poked; lp != NULL; lp = lp->next)
         {
@@ -1181,11 +1200,34 @@ thunar_action_manager_poke_files_finish (ThunarBrowser *browser,
             }
           else
             {
+              gboolean ask_for_exec = FALSE;
+
               /* add to our file list */
               files = g_list_prepend (files, lp->data);
 
               /* check if we should try to execute the file */
-              executable = (executable && (thunar_file_can_execute (lp->data) || thunar_file_is_desktop_file (lp->data)));
+              executable = (executable && (thunar_file_can_execute (lp->data, &ask_for_exec) || thunar_file_is_desktop_file (lp->data)));
+              if (ask_for_exec && G_LIKELY (executable) && ask_execute_response == GTK_RESPONSE_NONE)
+                {
+                  ask_execute_response = thunar_dialog_ask_execute (file, THUNAR_ACTION_MANAGER (browser)->widget, TRUE, single_file);
+                  if (ask_execute_response == THUNAR_FILE_ASK_EXECUTE_RESPONSE_OPEN)
+                    {
+                      executable = FALSE;
+                    }
+                  else if (ask_execute_response == THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN_IN_TERMINAL)
+                    {
+                      in_terminal = TRUE;
+                    }
+                  else if (ask_execute_response != THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN)
+                    {
+                      /* bail out */
+                      if (directories != NULL)
+                        g_list_free (directories);
+                      g_list_free (files);
+                      thunar_action_manager_poke_data_free (poke_data);
+                      return;
+                    }
+                }
             }
         }
 
@@ -1238,7 +1280,7 @@ thunar_action_manager_poke_files_finish (ThunarBrowser *browser,
           if (G_UNLIKELY (executable) && poke_data->application_to_use == NULL)
             {
               /* try to execute all given files */
-              thunar_action_manager_execute_files (THUNAR_ACTION_MANAGER (browser), files);
+              thunar_action_manager_execute_files (THUNAR_ACTION_MANAGER (browser), files, in_terminal);
             }
           else
             {
