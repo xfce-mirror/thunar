@@ -40,6 +40,9 @@ static void         thunar_icon_view_set_property           (GObject            
                                                              const GValue        *value,
                                                              GParamSpec          *pspec);
 static AtkObject   *thunar_icon_view_get_accessible         (GtkWidget           *widget);
+static void         thunar_icon_view_style_set              (GtkWidget           *widget,
+                                                             GtkStyle            *previous_style);
+static void         thunar_icon_view_set_consistent_horizontal_spacing (ThunarIconView *icon_view);
 static void         thunar_icon_view_zoom_level_changed     (ThunarStandardView  *standard_view);
 
 
@@ -71,6 +74,7 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
   gobject_class->set_property = thunar_icon_view_set_property;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
+  gtkwidget_class->style_set = thunar_icon_view_style_set;
   gtkwidget_class->get_accessible = thunar_icon_view_get_accessible;
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
@@ -134,6 +138,9 @@ thunar_icon_view_set_property (GObject      *object,
 
           /* disconnect the "zoom-level" signal handler, since we're using a fixed wrap-width here */
           g_signal_handlers_disconnect_by_func (object, thunar_icon_view_zoom_level_changed, NULL);
+
+          /* reset consistent horizontal spacing */
+          thunar_icon_view_set_consistent_horizontal_spacing (THUNAR_ICON_VIEW (standard_view));
         }
       else
         {
@@ -176,6 +183,47 @@ thunar_icon_view_get_accessible (GtkWidget *widget)
 
 
 static void
+thunar_icon_view_style_set (GtkWidget *widget,
+                            GtkStyle  *previous_style)
+{
+  /* call the parent handler */
+  (*GTK_WIDGET_CLASS (thunar_icon_view_parent_class)->style_set) (widget, previous_style);
+
+  /* (re)set consistent horizontal spacing */
+  thunar_icon_view_set_consistent_horizontal_spacing (THUNAR_ICON_VIEW (widget));
+}
+
+
+
+static void
+thunar_icon_view_set_consistent_horizontal_spacing (ThunarIconView *icon_view)
+{
+  const gint          exo_additional_padding = 4; /* https://gitlab.xfce.org/xfce/exo/-/commit/842e57b6f3ec01d292476923ffbca29256c6f8bf */
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (icon_view);
+  ExoIconView        *exo_icon_view = EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view)));
+  gint                wrap_width;
+  gint                xpad;
+  gint                column_spacing;
+
+  if (exo_icon_view_get_orientation (exo_icon_view) == GTK_ORIENTATION_HORIZONTAL)
+    {
+      /* reset consistent horizontal spacing if text is beside icon */
+      exo_icon_view_set_item_width (exo_icon_view, -1);
+      return;
+    }
+
+  g_object_get (G_OBJECT (standard_view->name_renderer), "wrap-width", &wrap_width, NULL);
+  gtk_cell_renderer_get_padding (standard_view->name_renderer, &xpad, NULL);
+
+  column_spacing = exo_icon_view_get_column_spacing (exo_icon_view);
+
+  /* set consistent horizontal spacing */
+  exo_icon_view_set_item_width (exo_icon_view, wrap_width + MAX(0, exo_additional_padding - column_spacing + xpad * 2));
+}
+
+
+
+static void
 thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view)
 {
   gint            wrap_width;
@@ -213,6 +261,9 @@ thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view)
 
   /* set the new "wrap-width" for the text renderer */
   g_object_set (G_OBJECT (standard_view->name_renderer), "wrap-width", wrap_width, NULL);
+
+  /* set consistent horizontal spacing */
+  thunar_icon_view_set_consistent_horizontal_spacing (THUNAR_ICON_VIEW (standard_view));
 
   /* Like that rubber band selection can be done properly on high zoom levels */
   /* Without margin adjustment it would be almost impossible to start the selection on the left */
