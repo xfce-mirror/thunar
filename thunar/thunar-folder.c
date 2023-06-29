@@ -1141,7 +1141,7 @@ thunar_folder_publish_files_removed_batch (gpointer data)
 {
   ThunarFolder *folder = THUNAR_FOLDER (data);
 
-  /* emit a "files-added" signal for the added files */
+  /* emit a "files-removed" signal for the removed files */
   g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, folder->files_removed);
 
   g_list_free_full (folder->files_removed, g_object_unref);
@@ -1187,7 +1187,7 @@ thunar_folder_push_files_removed (ThunarFolder *folder,
         folder->files_removed = g_list_prepend (folder->files_removed, g_object_ref (lp->data));
       else
         {
-          /* release the file before removing it's node from fils_added */
+          /* release the file before removing it's node from files_added */
           g_object_unref (link->data);
           folder->files_added = g_list_delete_link (folder->files_added, link);
         }
