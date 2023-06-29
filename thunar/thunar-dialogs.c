@@ -1279,3 +1279,91 @@ thunar_dialog_show_rename_launcher_options (GtkWindow *parent)
 
   return response;
 }
+
+
+
+/**
+ * thunar_dialog_ask_execute:
+ * @file        : a #ThunarFile pointer
+ * @parent      : a #GtkWidget on which the error dialog should be shown, or a #GdkScreen
+ *                if no #GtkWidget is known. May also be %NULL, in which case the default
+ *                #GdkScreen will be used.
+ * @allow_open  : if set, the "Open" button is visible.
+ * @single_file : if set, the file name is visible in dialog message. Otherwise there is
+ *                generic message about selected files.
+ *
+ * Shows a dialog where the user is asked if and how he wants to run the executable script.
+ *
+ * Return value: One of #ThunarFileAskExecuteResponse enum value.
+ **/
+gint
+thunar_dialog_ask_execute (const ThunarFile *file,
+                           gpointer          parent,
+                           gboolean          allow_open,
+                           gboolean          single_file)
+{
+  GtkWidget *dialog;
+  GtkWindow *window;
+  GdkScreen *screen;
+  gint       response;
+  gchar     *dialog_text;
+  GtkWidget *button;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), THUNAR_FILE_ASK_EXECUTE_RESPONSE_OPEN);
+
+  /* parse the parent window and screen */
+  screen = thunar_util_parse_parent (parent, &window);
+
+  if (single_file)
+    {
+      gchar *basename = g_file_get_basename (thunar_file_get_file (file));
+      dialog_text = g_strdup_printf (_("The file \"%s\" seems to be executable. What do you want to do with it?"), basename);
+      g_free (basename);
+    }
+  else
+    {
+      dialog_text = g_strdup (_("The selected files seem to be executable. What do you want to do with them?"));
+    }
+
+  dialog = gtk_message_dialog_new (window,
+                                   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                   GTK_MESSAGE_QUESTION,
+                                   GTK_BUTTONS_NONE,
+                                   "%s", dialog_text);
+
+  gtk_window_set_title (GTK_WINDOW (dialog), _("Open Shell Script"));
+
+  g_free (dialog_text);
+
+  button = gtk_button_new_with_mnemonic (_("Run In _Terminal"));
+  gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN_IN_TERMINAL);
+  gtk_widget_show (button);
+
+  button = gtk_button_new_with_mnemonic (_("_Execute"));
+  gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN);
+  gtk_widget_show (button);
+
+  if (allow_open)
+    {
+      button = gtk_button_new_with_mnemonic (_("_Open"));
+      gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, THUNAR_FILE_ASK_EXECUTE_RESPONSE_OPEN);
+      gtk_widget_show (button);
+
+      gtk_widget_set_can_default (button, TRUE);
+      gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_FILE_ASK_EXECUTE_RESPONSE_OPEN);
+    }
+  else
+    {
+      gtk_widget_set_can_default (button, TRUE);
+      gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN);
+    }
+
+  if (G_UNLIKELY (window == NULL && screen != NULL))
+    gtk_window_set_screen (GTK_WINDOW (dialog), screen);
+
+  response = gtk_dialog_run (GTK_DIALOG (dialog));
+  gtk_widget_destroy (dialog);
+
+  return response;
+}
