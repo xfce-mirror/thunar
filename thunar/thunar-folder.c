@@ -32,7 +32,7 @@
 #include <thunar/thunar-private.h>
 
 #define DEBUG_FILE_CHANGES FALSE
-#define BATCH_PUBLISH_WAIT 100 /* in milliseconds */
+#define BATCH_PUBLISH_WAIT 40 /* in milliseconds */
 
 
 
@@ -312,6 +312,18 @@ thunar_folder_finalize (GObject *object)
 
   if (folder->corresponding_file)
     thunar_file_unwatch (folder->corresponding_file);
+
+  /* release files_added batch */
+  if (folder->awaiting_add != 0)
+    g_source_remove (folder->awaiting_add);
+  if (folder->files_added != NULL)
+    thunar_g_list_free_full (folder->files_added);
+
+  /* release files_removed batch */
+  if (folder->awaiting_remove != 0)
+    g_source_remove (folder->awaiting_remove);
+  if (folder->files_removed != NULL)
+    thunar_g_list_free_full (folder->files_removed);
 
   /* disconnect from the ThunarFileMonitor instance */
   g_signal_handlers_disconnect_matched (folder->file_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
