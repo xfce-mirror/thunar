@@ -32,7 +32,6 @@
 #include <thunar/thunar-private.h>
 
 #define DEBUG_FILE_CHANGES FALSE
-#define BATCH_PUBLISH_WAIT 40 /* in milliseconds */
 
 
 
@@ -86,10 +85,6 @@ static void     thunar_folder_monitor                     (GFileMonitor         
                                                            GFile                  *other_file,
                                                            GFileMonitorEvent       event_type,
                                                            gpointer                user_data);
-static void     thunar_folder_push_files_added            (ThunarFolder           *folder,
-                                                           GList                  *files);
-static void     thunar_folder_push_files_removed          (ThunarFolder           *folder,
-                                                           GList                  *files);
 
 
 
@@ -116,11 +111,7 @@ struct _ThunarFolder
   ThunarFile        *corresponding_file;
   GList             *new_files;
   GList             *files;
-  GList             *files_added;
-  GList             *files_removed;
   gboolean           reload_info;
-  guint              awaiting_add;
-  guint              awaiting_remove;
 
   GList             *content_type_ptr;
   guint              content_type_idle_id;
@@ -312,18 +303,6 @@ thunar_folder_finalize (GObject *object)
 
   if (folder->corresponding_file)
     thunar_file_unwatch (folder->corresponding_file);
-
-  /* release files_added batch */
-  if (folder->awaiting_add != 0)
-    g_source_remove (folder->awaiting_add);
-  if (folder->files_added != NULL)
-    thunar_g_list_free_full (folder->files_added);
-
-  /* release files_removed batch */
-  if (folder->awaiting_remove != 0)
-    g_source_remove (folder->awaiting_remove);
-  if (folder->files_removed != NULL)
-    thunar_g_list_free_full (folder->files_removed);
 
   /* disconnect from the ThunarFileMonitor instance */
   g_signal_handlers_disconnect_matched (folder->file_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
@@ -548,7 +527,9 @@ thunar_folder_finished (ExoJob       *job,
       /* check if any files were added */
       if (G_UNLIKELY (files != NULL))
         {
-          thunar_folder_push_files_added (folder, files);
+          /* emit a "files-added" signal for the added files */
+          g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, files);
+
           /* release the added files list */
           g_list_free (files);
         }
@@ -577,7 +558,7 @@ thunar_folder_finished (ExoJob       *job,
       if (G_UNLIKELY (files != NULL))
         {
           /* emit a "files-removed" signal for the removed files */
-          thunar_folder_push_files_removed (folder, files);
+          g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, files);
 
           /* release the removed files list */
           thunar_g_list_free_full (files);
@@ -683,7 +664,7 @@ thunar_folder_file_destroyed (ThunarFileMonitor *file_monitor,
 
           /* tell everybody that the file is gone */
           files.data = file; files.next = files.prev = NULL;
-          thunar_folder_push_files_removed (folder, &files);
+          g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, &files);
 
           /* drop our reference to the file */
           g_object_unref (G_OBJECT (file));
@@ -818,7 +799,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
 
               /* tell others about the new file */
               list.data = file; list.next = list.prev = NULL;
-              thunar_folder_push_files_added (folder, &list);
+              g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, &list);
 
               if (other_file != NULL)
                 {
@@ -1092,121 +1073,4 @@ thunar_folder_reload (ThunarFolder *folder,
 
   /* tell all consumers that we're loading */
   g_object_notify (G_OBJECT (folder), "loading");
-}
-
-
-
-/* Callback used in @thunar_folder_push_files_added */
-static gboolean
-thunar_folder_publish_files_added_batch (gpointer data)
-{
-  ThunarFolder *folder = THUNAR_FOLDER (data);
-
-  /* emit a "files-added" signal for the added files */
-  g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, folder->files_added);
-
-  g_list_free_full (folder->files_added, g_object_unref);
-  folder->files_added = NULL;
-
-  return G_SOURCE_REMOVE;
-}
-
-
-
-/* Callback used in @thunar_folder_push_files_added */
-static void
-awaiting_add_timeout_delete (gpointer data)
-{
-  THUNAR_FOLDER (data)->awaiting_add = 0;
-}
-
-
-
-/**
- * thunar_folder_push_files_added:
- * @folder : a #ThunarFolder.
- * @files : a list of files to be added from folder.
- *
- * This function batches the files_added signal events
- * with a wait period of BATCH_PUBLISH_WAIT (ms)
- *
- * Return: (void);
- **/
-static void
-thunar_folder_push_files_added (ThunarFolder *folder,
-                                GList        *files)
-{
-  for (GList *lp = files; lp != NULL; lp = lp->next)
-    folder->files_added = g_list_prepend (folder->files_added, g_object_ref (lp->data));
-
-  if (folder->awaiting_add == 0)
-    folder->awaiting_add = g_timeout_add_full (G_PRIORITY_DEFAULT, BATCH_PUBLISH_WAIT,
-                                               thunar_folder_publish_files_added_batch,
-                                               folder, awaiting_add_timeout_delete);
-}
-
-
-
-/* Callback used in @thunar_folder_push_files_removed */
-static gboolean
-thunar_folder_publish_files_removed_batch (gpointer data)
-{
-  ThunarFolder *folder = THUNAR_FOLDER (data);
-
-  /* emit a "files-removed" signal for the removed files */
-  g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, folder->files_removed);
-
-  g_list_free_full (folder->files_removed, g_object_unref);
-  folder->files_removed = NULL;
-
-  return G_SOURCE_REMOVE;
-}
-
-
-
-/* Callback used in @thunar_folder_push_files_removed */
-static void
-awaiting_remove_timeout_delete (gpointer data)
-{
-  THUNAR_FOLDER (data)->awaiting_remove = 0;
-}
-
-
-
-/**
- * thunar_folder_push_files_removed:
- * @folder : a #ThunarFolder.
- * @files : a list of files to be removed from folder.
- *
- * This function batches the files_removed signal events
- * with a wait period of BATCH_PUBLISH_WAIT (ms)
- *
- * Return: (void);
- **/
-static void
-thunar_folder_push_files_removed (ThunarFolder *folder,
-                                  GList        *files)
-{
-  GList *lp, *link;
-
-  /* check if the files to be removed are awaiting a publish;
-   * i.e if they haven't been emitted through files-added signal,
-   * then simply find and remove them from folder->files_added. */
-  for (lp = files; lp != NULL; lp = lp->next)
-    {
-      link = g_list_find (folder->files_added, lp->data);
-      if (link == NULL)
-        folder->files_removed = g_list_prepend (folder->files_removed, g_object_ref (lp->data));
-      else
-        {
-          /* release the file before removing it's node from files_added */
-          g_object_unref (link->data);
-          folder->files_added = g_list_delete_link (folder->files_added, link);
-        }
-    }
-
-  if (folder->awaiting_remove == 0)
-    folder->awaiting_remove = g_timeout_add_full (G_PRIORITY_DEFAULT, BATCH_PUBLISH_WAIT,
-                                                  thunar_folder_publish_files_removed_batch,
-                                                  folder, awaiting_remove_timeout_delete);
 }
