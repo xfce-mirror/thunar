@@ -32,7 +32,7 @@
 #include <thunar/thunar-private.h>
 
 #define DEBUG_FILE_CHANGES FALSE
-#define BATCH_PUBLISH_WAIT 100 /* in milliseconds */
+#define BATCH_PUBLISH_WAIT 40 /* in milliseconds */
 
 
 
@@ -312,6 +312,18 @@ thunar_folder_finalize (GObject *object)
 
   if (folder->corresponding_file)
     thunar_file_unwatch (folder->corresponding_file);
+
+  /* release files_added batch */
+  if (folder->awaiting_add != 0)
+    g_source_remove (folder->awaiting_add);
+  if (folder->files_added != NULL)
+    thunar_g_list_free_full (folder->files_added);
+
+  /* release files_removed batch */
+  if (folder->awaiting_remove != 0)
+    g_source_remove (folder->awaiting_remove);
+  if (folder->files_removed != NULL)
+    thunar_g_list_free_full (folder->files_removed);
 
   /* disconnect from the ThunarFileMonitor instance */
   g_signal_handlers_disconnect_matched (folder->file_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
@@ -1141,7 +1153,7 @@ thunar_folder_publish_files_removed_batch (gpointer data)
 {
   ThunarFolder *folder = THUNAR_FOLDER (data);
 
-  /* emit a "files-added" signal for the added files */
+  /* emit a "files-removed" signal for the removed files */
   g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, folder->files_removed);
 
   g_list_free_full (folder->files_removed, g_object_unref);
@@ -1187,7 +1199,7 @@ thunar_folder_push_files_removed (ThunarFolder *folder,
         folder->files_removed = g_list_prepend (folder->files_removed, g_object_ref (lp->data));
       else
         {
-          /* release the file before removing it's node from fils_added */
+          /* release the file before removing it's node from files_added */
           g_object_unref (link->data);
           folder->files_added = g_list_delete_link (folder->files_added, link);
         }
