@@ -235,6 +235,7 @@ struct _ThunarActionManager
 
   /* closure invoked whenever action manager creates new files (create, paste, rename, etc) */
   GClosure               *new_files_created_closure;
+  GList                  *new_files_created;
 
   ThunarPreferences      *preferences;
 
@@ -3418,13 +3419,31 @@ thunar_action_manager_set_selection (ThunarActionManager *action_mgr,
 
 
 
+static gboolean
+_thunar_action_manager_new_files_created (gpointer data)
+{
+  ThunarActionManager *manager = THUNAR_ACTION_MANAGER (data);
+
+  g_signal_emit (manager, action_manager_signals[NEW_FILES_CREATED], 0, manager->new_files_created);
+
+  return G_SOURCE_REMOVE;
+}
+
+
+
 static void
 thunar_action_manager_new_files_created (ThunarActionManager *action_mgr,
                                          GList               *new_thunar_files)
 {
   _thunar_return_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr));
 
-  g_signal_emit (action_mgr, action_manager_signals[NEW_FILES_CREATED], 0, new_thunar_files);
+  if (action_mgr->new_files_created != NULL) {
+    thunar_g_list_free_full (action_mgr->new_files_created);
+    action_mgr->new_files_created = NULL;
+  }
+
+  action_mgr->new_files_created = thunar_g_list_copy_deep (new_thunar_files);
+  g_timeout_add (150, _thunar_action_manager_new_files_created, action_mgr);
 }
 
 
