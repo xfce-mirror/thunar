@@ -3037,7 +3037,9 @@ thunar_file_can_execute (ThunarFile *file)
         }
 
       /* do never execute plain text files which are not shell scripts but marked executable */
-      if (g_content_type_equals (content_type, "text/plain"))
+      if (g_content_type_equals (content_type, "text/plain") ||
+          g_content_type_equals (content_type, "application/json") ||
+          g_content_type_equals (content_type, "application/xml"))
         {
           g_object_unref (file_to_check);
           return FALSE;
