@@ -950,7 +950,7 @@ thunar_file_info_reload (ThunarFile   *file,
     }
 
   /* check if this file is a desktop entry and we have the permission to execute it */
-  if (thunar_file_is_desktop_file (file) && thunar_file_can_execute (file))
+  if (thunar_file_is_desktop_file (file) && thunar_file_can_execute (file, NULL))
     {
       /* determine the custom icon and display name for .desktop files */
 
@@ -1531,6 +1531,7 @@ gboolean
 thunar_file_execute (ThunarFile  *file,
                      GFile       *working_directory,
                      gpointer     parent,
+                     gboolean     in_terminal,
                      GList       *file_list,
                      const gchar *startup_id,
                      GError     **error)
@@ -1568,7 +1569,7 @@ thunar_file_execute (ThunarFile  *file,
 
   if (thunar_file_is_desktop_file (file))
     {
-      is_secure = thunar_file_can_execute (file);
+      is_secure = thunar_file_can_execute (file, NULL);
 
       key_file = thunar_g_file_query_key_file (file->gfile, NULL, &err);
       if (key_file == NULL)
@@ -1658,7 +1659,10 @@ thunar_file_execute (ThunarFile  *file,
     {
       /* fake the Exec line */
       escaped_location = g_shell_quote (location);
-      exec = g_strconcat (escaped_location, " %F", NULL);
+      if (in_terminal)
+        exec = g_strconcat ("exo-open --launch TerminalEmulator ", escaped_location, " %F", NULL);
+      else
+        exec = g_strconcat (escaped_location, " %F", NULL);
       command = xfce_expand_desktop_entry_field_codes (exec, uri_list, NULL, NULL, NULL, FALSE);
       result = g_shell_parse_argv (command, NULL, &argv, error);
       g_free (escaped_location);
@@ -1781,6 +1785,7 @@ thunar_file_launch (ThunarFile  *file,
   gboolean             succeed;
   GList                path_list;
   GdkScreen           *screen;
+  gboolean             ask_execute = FALSE;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -1798,8 +1803,20 @@ thunar_file_launch (ThunarFile  *file,
     }
 
   /* check if we should execute the file */
-  if (thunar_file_can_execute (file))
-    return thunar_file_execute (file, NULL, parent, NULL, NULL, error);
+  if (thunar_file_can_execute (file, &ask_execute))
+    {
+      gint response = THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN;
+
+      if (ask_execute)
+        response = thunar_dialog_ask_execute (file, parent, TRUE, TRUE);
+
+      if (response == THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN)
+        return thunar_file_execute (file, NULL, parent, FALSE, NULL, NULL, error);
+      else if (response == THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN_IN_TERMINAL)
+        return thunar_file_execute (file, NULL, parent, TRUE, NULL, NULL, error);
+      else if (response != THUNAR_FILE_ASK_EXECUTE_RESPONSE_OPEN)
+        return TRUE;
+    }
 
   /* determine the default application to open the file */
   /* TODO We should probably add a cancellable argument to thunar_file_launch() */
@@ -2053,7 +2070,7 @@ thunar_file_accepts_drop (ThunarFile     *file,
             }
         }
     }
-  else if (thunar_file_can_execute (file))
+  else if (thunar_file_can_execute (file, NULL))
     {
       /* determine the possible actions */
       actions &= (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE);
@@ -2982,12 +2999,13 @@ thunar_file_is_ancestor (const ThunarFile *file,
  * Return value: %TRUE if @file can be executed.
  **/
 gboolean
-thunar_file_can_execute (ThunarFile *file)
+thunar_file_can_execute (ThunarFile *file,
+                         gboolean   *ask_execute)
 {
   ThunarFile          *file_to_check;
   GFile               *link_target;
   ThunarPreferences   *preferences;
-  gboolean             exec_shell_scripts = FALSE;
+  gint                 exec_shell_scripts = THUNAR_EXECUTE_SHELL_SCRIPT_NEVER;
   const gchar         *content_type;
   gboolean             exec_bit_set = FALSE;
 
@@ -3043,15 +3061,21 @@ thunar_file_can_execute (ThunarFile *file)
           return FALSE;
         }
 
-      /* check if the shell scripts should be executed or opened by default */
-      preferences = thunar_preferences_get ();
-      g_object_get (preferences, "misc-exec-shell-scripts-by-default", &exec_shell_scripts, NULL);
-      g_object_unref (preferences);
-
-      if (g_content_type_is_a (content_type, "text/plain") && ! exec_shell_scripts)
+      if (g_content_type_is_a (content_type, "text/plain"))
         {
-          g_object_unref (file_to_check);
-          return FALSE;
+          /* check if the shell scripts should be executed or opened by default */
+          preferences = thunar_preferences_get ();
+          g_object_get (preferences, "misc-exec-shell-scripts-by-default", &exec_shell_scripts, NULL);
+          g_object_unref (preferences);
+
+          if (exec_shell_scripts == THUNAR_EXECUTE_SHELL_SCRIPT_NEVER)
+            {
+              g_object_unref (file_to_check);
+              return FALSE;
+            }
+
+          if (exec_shell_scripts == THUNAR_EXECUTE_SHELL_SCRIPT_ASK && ask_execute)
+            *ask_execute = TRUE;
         }
 
       g_object_unref (file_to_check);

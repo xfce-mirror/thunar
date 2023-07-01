@@ -819,3 +819,24 @@ GType thunar_sidepane_type_get_type (void)
 
   return type;
 }
+
+GType thunar_execute_shell_script_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GEnumValue values[] =
+      {
+        { THUNAR_EXECUTE_SHELL_SCRIPT_NEVER,  "THUNAR_EXECUTE_SHELL_SCRIPT_NEVER",  ("Never") },
+        { THUNAR_EXECUTE_SHELL_SCRIPT_ALWAYS, "THUNAR_EXECUTE_SHELL_SCRIPT_ALWAYS", ("Always") },
+        { THUNAR_EXECUTE_SHELL_SCRIPT_ASK,    "THUNAR_EXECUTE_SHELL_SCRIPT_ASK",    ("Ask every time") },
+
+        { 0,                                  NULL,                                 NULL }
+      };
+
+      type = g_enum_register_static ("ThunarExecuteShellScript", values);
+    }
+
+  return type;
+}
