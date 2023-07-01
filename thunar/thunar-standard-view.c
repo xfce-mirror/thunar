@@ -2224,7 +2224,7 @@ thunar_standard_view_get_drop_file (ThunarStandardView *standard_view,
       file = thunar_standard_view_model_get_file (standard_view->model, &iter);
 
       /* we can only drop to directories and executable files */
-      if (file != NULL && !thunar_file_is_directory (file) && !thunar_file_can_execute (file))
+      if (file != NULL && !thunar_file_is_directory (file) && !thunar_file_can_execute (file, NULL))
         {
           /* drop to the folder instead */
           g_object_unref (G_OBJECT (file));

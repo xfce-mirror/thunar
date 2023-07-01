@@ -682,7 +682,7 @@ thunar_dbus_service_execute (ThunarDBusFileManager  *object,
 
       /* try to launch the file on the given screen */
       working_dir = g_file_new_for_commandline_arg (working_directory);
-      thunar_file_execute (file, working_dir, screen, file_list, startup_id, &error);
+      thunar_file_execute (file, working_dir, screen, FALSE, file_list, startup_id, &error);
       g_object_unref (working_dir);
 
       /* cleanup */
