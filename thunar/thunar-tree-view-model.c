@@ -4243,11 +4243,12 @@ thunar_tree_view_model_reorder_if_req (ThunarTreeViewModel *model,
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
   _thunar_return_if_fail (node != NULL);
 
-  if (g_node_n_children (node->parent) < 2) return;
-
   parent = node->parent;
+  length = g_node_n_children (parent);
 
-  pos_before = thunar_tree_view_model_unlink_child (node->parent, node);
+  if (length < 2) return;
+
+  pos_before = thunar_tree_view_model_unlink_child (parent, node);
   pos_after = thunar_tree_view_model_insert_child_node_sorted (model, parent, node);
 
   /* check if we have any handlers connected for "row-inserted" */
@@ -4255,8 +4256,6 @@ thunar_tree_view_model_reorder_if_req (ThunarTreeViewModel *model,
 
   if (pos_before == pos_after || !has_handler)
       return;
-
-  length = g_node_n_children (node->parent);
 
   if (G_LIKELY (length < STACK_ALLOC_LIMIT))
       new_order = g_newa (gint, length);
@@ -4276,22 +4275,12 @@ thunar_tree_view_model_reorder_if_req (ThunarTreeViewModel *model,
         }
     }
 
-  if (node->parent == model->root)
-    {
-      path = gtk_tree_path_new_first();
-    }
-  else
-    {
-      /* determine the iterator for the node */
-      GTK_TREE_ITER_INIT (iter, model->stamp, node->parent);
-
-      path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
-    }
+  /* determine the iterator for the node */
+  GTK_TREE_ITER_INIT (iter, model->stamp, parent);
 
   /* tell the view about the new item order */
-  gtk_tree_model_rows_reordered (GTK_TREE_MODEL (model), path,
-                                 node->parent == model->root ? NULL : &iter,
-                                 new_order);
+  path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+  gtk_tree_model_rows_reordered (GTK_TREE_MODEL (model), path, &iter, new_order);
   gtk_tree_path_free (path);
 
   /* clean up if we used the heap */
