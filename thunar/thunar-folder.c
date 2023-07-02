@@ -118,6 +118,7 @@ struct _ThunarFolder
   GList             *files;
   GList             *files_added;
   GList             *files_removed;
+  gboolean           reload_info_recurse;
   gboolean           reload_info;
   guint              awaiting_add;
   guint              awaiting_remove;
@@ -588,17 +589,12 @@ thunar_folder_finished (ExoJob       *job,
         }
     }
 
-  /* schedule a reload of the file information of all files if requested */
+  /* reload the file information of all files if requested */
   if (folder->reload_info)
     {
       folder->reload_info = FALSE;
       for (lp = folder->files; lp != NULL; lp = lp->next)
         thunar_file_reload (lp->data);
-
-      /* reload folder information too */
-      if (thunar_file_reload (folder->corresponding_file))
-        return;
-
     }
 
   /* we did it, the folder is loaded */
@@ -1051,8 +1047,29 @@ thunar_folder_reload (ThunarFolder *folder,
 {
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
 
+  if (reload_info)
+    {
+      /* reload folder information first, this will trigger "thunar_folder_reload"
+       * recursively with "reload_info" set to "FALSE" */
+      folder->reload_info_recurse = TRUE;
+      if (thunar_file_reload (folder->corresponding_file))
+        {
+          /* reloading info must be cleared by a recursive call to "thunar_folder_reload" */
+          if (G_UNLIKELY (folder->reload_info_recurse))
+            {
+              folder->reload_info_recurse = FALSE;
+              g_warning ("reload_info_recurse is not cleared!");
+            }
+          return;
+        }
+      folder->reload_info_recurse = FALSE;
+    }
+
   /* reload file info too? */
-  folder->reload_info = reload_info;
+  folder->reload_info = reload_info || folder->reload_info_recurse;
+
+  /* clear "reload_info_recurse" info */
+  folder->reload_info_recurse = FALSE;
 
   /* stop metadata collector */
   if (folder->content_type_idle_id != 0)
