@@ -4192,8 +4192,6 @@ thunar_tree_view_model_add_children (ThunarTreeViewModel *model,
 
   for (lp = files; lp != NULL; lp = lp->next)
     thunar_tree_view_model_add_child (model, node, lp->data);
-
-  /* thunar_tree_view_model_sort (model, node); */
 }
 
 
