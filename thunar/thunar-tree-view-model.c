@@ -364,6 +364,8 @@ struct _ThunarTreeViewModel
 
   /* specifies the number of folders the model is yet loading */
   gint           loading;
+
+  GSource       *sort_timeout;
 };
 
 struct _ThunarTreeViewModelItem
@@ -2945,6 +2947,33 @@ list_copy_func (gpointer data,
 }
 
 
+static gboolean
+sort_timeout (gpointer data)
+{
+  ThunarTreeViewModelItem *item;
+  ThunarTreeViewModel     *model;
+  GNode                   *node;
+
+  item = THUNAR_TREE_VIEW_MODEL_ITEM (data);
+  model = item->model;
+
+  node = g_node_find (model->root, G_POST_ORDER, G_TRAVERSE_ALL, item);
+  _thunar_return_if_fail (node != NULL);
+
+  thunar_tree_view_model_sort (model, node);
+
+  return G_SOURCE_REMOVE;
+}
+
+
+
+static void
+sort_timeout_destroy (gpointer data)
+{
+  THUNAR_TREE_VIEW_MODEL_ITEM (data)->model->sort_timeout = NULL;
+}
+
+
 
 static void
 thunar_tree_view_model_item_files_added (ThunarTreeViewModelItem *item,
@@ -2955,6 +2984,16 @@ thunar_tree_view_model_item_files_added (ThunarTreeViewModelItem *item,
   GList *files_copy;
   files_copy = g_list_copy_deep (files, (GCopyFunc) list_copy_func, NULL);
   item->files_to_add = g_list_concat (item->files_to_add, files_copy);
+
+  if (item->model->sort_timeout == NULL)
+    {
+      item->model->sort_timeout = g_timeout_source_new (50);
+      g_source_set_callback (item->model->sort_timeout, (GSourceFunc) sort_timeout, item, sort_timeout_destroy);
+      g_source_attach (item->model->sort_timeout, g_main_context_default ());
+    }
+  else
+    /* delay by 10 ms */
+    g_source_set_ready_time (item->model->sort_timeout, g_get_monotonic_time() + 10000); /* monotonic_time is in microsec */
 }
 
 
@@ -4091,7 +4130,7 @@ thunar_tree_view_model_add_children (ThunarTreeViewModel *model,
   for (lp = files; lp != NULL; lp = lp->next)
     thunar_tree_view_model_add_child (model, node, lp->data);
 
-  thunar_tree_view_model_sort (model, node);
+  /* thunar_tree_view_model_sort (model, node); */
 }
 
 
