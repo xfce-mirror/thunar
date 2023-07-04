@@ -1965,7 +1965,10 @@ thunar_tree_view_model_files_added (ThunarFolder        *folder,
 {
   GList *files_copy;
   files_copy = thunar_g_list_copy_deep (files);
-  store->files_added = g_list_concat (store->files_added, files_copy);
+  if (store->files_added == NULL)
+    store->files_added = files_copy;
+  else
+    store->files_added = g_list_concat (store->files_added, files_copy);
 
   if (store->sort_timeout == 0)
     store->sort_timeout = g_timeout_add_full (G_PRIORITY_DEFAULT, SORT_DELAY,
@@ -3051,7 +3054,10 @@ thunar_tree_view_model_item_files_added (ThunarTreeViewModelItem *item,
 {
   GList *files_copy;
   files_copy = thunar_g_list_copy_deep (files);
-  item->files_to_add = g_list_concat (item->files_to_add, files_copy);
+  if (item->files_to_add == NULL)
+    item->files_to_add = files_copy;
+  else
+    item->files_to_add = g_list_concat (item->files_to_add, files_copy);
 
   if (item->sort_timeout == 0)
     item->sort_timeout = g_timeout_add_full (G_PRIORITY_LOW, SORT_DELAY,
