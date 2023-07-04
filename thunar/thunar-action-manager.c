@@ -2665,7 +2665,7 @@ thunar_action_manager_action_create_folder (ThunarActionManager *action_mgr)
     return TRUE;
 
   /* ask the user to enter a name for the new folder */
-  generated_name = thunar_util_next_new_file_name (action_mgr->current_directory, _("New Folder"), THUNAR_NEXT_FILE_NAME_MODE_NEW);
+  generated_name = thunar_util_next_new_file_name (action_mgr->current_directory, _("New Folder"), THUNAR_NEXT_FILE_NAME_MODE_NEW, TRUE);
   name = thunar_dialogs_show_create (action_mgr->widget,
                                      "inode/directory",
                                      generated_name,
@@ -2725,7 +2725,7 @@ thunar_action_manager_action_create_document (ThunarActionManager *action_mgr,
                                thunar_file_get_display_name (template_file));
 
       /* ask the user to enter a name for the new document */
-      generated_name = thunar_util_next_new_file_name (action_mgr->current_directory, basename, THUNAR_NEXT_FILE_NAME_MODE_NEW);
+      generated_name = thunar_util_next_new_file_name (action_mgr->current_directory, basename, THUNAR_NEXT_FILE_NAME_MODE_NEW, FALSE);
       g_free (basename);
       name = thunar_dialogs_show_create (action_mgr->widget,
                                          thunar_file_get_content_type (THUNAR_FILE (template_file)),
@@ -2737,7 +2737,7 @@ thunar_action_manager_action_create_document (ThunarActionManager *action_mgr,
   else
     {
       /* ask the user to enter a name for the new empty file */
-      generated_name = thunar_util_next_new_file_name (action_mgr->current_directory, _("New Empty File"), THUNAR_NEXT_FILE_NAME_MODE_NEW);
+      generated_name = thunar_util_next_new_file_name (action_mgr->current_directory, _("New Empty File"), THUNAR_NEXT_FILE_NAME_MODE_NEW, FALSE);
       name = thunar_dialogs_show_create (action_mgr->widget,
                                          "text/plain",
                                          generated_name,

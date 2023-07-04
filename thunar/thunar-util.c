@@ -688,6 +688,7 @@ thunar_setup_display_cb (gpointer data)
  * @dir : the directory to search for a free filename
  * @file_name : the filename which will be used as the basis/default
  * @ThunarNextFileNameMode: To decide if the naming should follow "file copy","file link" or "new file" syntax
+ * @is_directory: TRUE, if @file_name is supposed to be the name of a directory
  *
  * Returns a filename that is like @file_name with the possible addition of
  * a number to differentiate it from other similarly named files. In other words
@@ -709,7 +710,8 @@ thunar_setup_display_cb (gpointer data)
 gchar*
 thunar_util_next_new_file_name (ThunarFile            *dir,
                                 const gchar           *file_name,
-                                ThunarNextFileNameMode name_mode)
+                                ThunarNextFileNameMode name_mode,
+                                gboolean               is_directory)
 {
   ThunarFolder   *folder          = thunar_folder_get_for_file (dir);
   unsigned long   file_name_size  = strlen (file_name);
@@ -719,7 +721,8 @@ thunar_util_next_new_file_name (ThunarFile            *dir,
   gchar          *new_name        = g_strdup (file_name);
 
   /* get file extension if file is not a directory */
-  extension = thunar_util_str_get_extension (file_name);
+  if (!is_directory)
+    extension = thunar_util_str_get_extension (file_name);
 
   /* if the file has an extension don't include it in the search */
   if (extension != NULL)

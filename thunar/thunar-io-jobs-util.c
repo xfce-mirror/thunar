@@ -62,6 +62,7 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob               *job,
   GFile       *duplicate_file = NULL;
   GFile       *parent_file = NULL;
   ThunarFile  *thunar_parent_file;
+  ThunarFile  *thunar_file;
   const gchar *old_filename;
   gchar       *filename;
 
@@ -83,11 +84,19 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob               *job,
       g_propagate_error (error, err);
       return NULL;
     }
+  thunar_file = thunar_file_get (file, &err);
+  if (thunar_file == NULL)
+    {
+      g_propagate_error (error, err);
+      return NULL;
+    }
 
   filename = thunar_util_next_new_file_name (thunar_parent_file,
                                              old_filename,
-                                             name_mode);
+                                             name_mode,
+                                             thunar_file_is_directory (thunar_file));
   g_object_unref (thunar_parent_file);
+  g_object_unref (thunar_file);
 
   /* create the GFile for the copy/link */
   duplicate_file = g_file_get_child (parent_file, filename);

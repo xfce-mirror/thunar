@@ -3143,7 +3143,7 @@ thunar_standard_view_receive_application_octet_stream (GdkDragContext     *conte
           gchar* folder_path;
 
           folder_path = g_file_get_path (thunar_file_get_file (file));
-          filename_temp = thunar_util_next_new_file_name (file, filename, THUNAR_NEXT_FILE_NAME_MODE_COPY);
+          filename_temp = thunar_util_next_new_file_name (file, filename, THUNAR_NEXT_FILE_NAME_MODE_COPY, FALSE);
           g_free (filename);
           filename = filename_temp;
           filepath = g_build_filename (folder_path, filename, NULL);
