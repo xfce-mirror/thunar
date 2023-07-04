@@ -244,6 +244,9 @@ struct _ThunarActionManager
 
   /* TRUE if the active view is displaying search results or actively searching for files */
   gboolean                is_searching;
+
+  GList                  *new_files;
+  guint                   new_files_created_timeout;
 };
 
 static GQuark thunar_action_manager_appinfo_quark;
@@ -511,6 +514,12 @@ thunar_action_manager_finalize (GObject *object)
 {
   ThunarActionManager *action_mgr = THUNAR_ACTION_MANAGER (object);
 
+  if (G_UNLIKELY (action_mgr->new_files_created_timeout != 0))
+    {
+      g_source_remove (action_mgr->new_files_created_timeout);
+      action_mgr->new_files_created_timeout = 0;
+    }
+
   g_closure_invalidate (action_mgr->new_files_created_closure);
   g_closure_unref (action_mgr->new_files_created_closure);
 
@@ -597,6 +606,12 @@ thunar_action_manager_set_current_directory (ThunarNavigator *navigator,
                                              ThunarFile      *current_directory)
 {
   ThunarActionManager *action_mgr = THUNAR_ACTION_MANAGER (navigator);
+
+  if (G_UNLIKELY (action_mgr->new_files_created_timeout != 0))
+    {
+      g_source_remove (action_mgr->new_files_created_timeout);
+      action_mgr->new_files_created_timeout = 0;
+    }
 
   /* disconnect from the previous directory */
   if (G_LIKELY (action_mgr->current_directory != NULL))
@@ -3439,13 +3454,44 @@ thunar_action_manager_set_selection (ThunarActionManager *action_mgr,
 
 
 
+static gboolean
+_thunar_action_manager_new_files_created (ThunarActionManager *action_mgr)
+{
+  if (action_mgr->new_files == NULL)
+    return G_SOURCE_REMOVE;
+
+  g_signal_emit (action_mgr, action_manager_signals[NEW_FILES_CREATED], 0, action_mgr->new_files);
+
+  g_list_free_full (action_mgr->new_files, g_object_unref);
+  action_mgr->new_files = NULL;
+
+  return G_SOURCE_REMOVE;
+}
+
+
+
+static void
+_thunar_action_manager_new_files_created_destroy (gpointer data)
+{
+  THUNAR_ACTION_MANAGER (data)->new_files_created_timeout = 0;
+}
+
+
+
 static void
 thunar_action_manager_new_files_created (ThunarActionManager *action_mgr,
                                          GList               *new_thunar_files)
 {
   _thunar_return_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr));
 
-  g_signal_emit (action_mgr, action_manager_signals[NEW_FILES_CREATED], 0, new_thunar_files);
+  action_mgr->new_files = thunar_g_list_copy_deep (new_thunar_files);
+
+  if (action_mgr->new_files_created_timeout != 0)
+    g_source_remove (action_mgr->new_files_created_timeout);
+  action_mgr->new_files_created_timeout =
+    g_timeout_add_full (G_PRIORITY_DEFAULT, 25,
+                        G_SOURCE_FUNC (_thunar_action_manager_new_files_created), action_mgr,
+                        _thunar_action_manager_new_files_created_destroy);
 }
 
 
