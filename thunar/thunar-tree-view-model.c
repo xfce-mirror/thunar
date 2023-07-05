@@ -50,8 +50,6 @@
                                            && node->children->data == NULL \
                                            && node->children->next == NULL)
 
-#define FILES_ADDED_DELAY 25 /* in ms */
-
 
 /* Property identifiers */
 enum
@@ -1882,7 +1880,7 @@ _thunar_tree_view_model_files_added (gpointer data)
   store = THUNAR_TREE_VIEW_MODEL (data);
 
   if (store->files_added == NULL)
-    return G_SOURCE_CONTINUE;
+    return G_SOURCE_REMOVE;
 
   /* pass the list directly if not currently showing search results */
   if (store->search_terms == NULL)
@@ -1890,7 +1888,7 @@ _thunar_tree_view_model_files_added (gpointer data)
       thunar_tree_view_model_insert_files (store, store->files_added);
       thunar_g_list_free_full (store->files_added);
       store->files_added = NULL;
-      return G_SOURCE_CONTINUE;
+      return G_SOURCE_REMOVE;
     }
 
   /* otherwise, filter out files that don't match the current search terms */
@@ -1916,7 +1914,15 @@ _thunar_tree_view_model_files_added (gpointer data)
   thunar_g_list_free_full (store->files_added);
   store->files_added = NULL;
 
-  return G_SOURCE_CONTINUE;
+  return G_SOURCE_REMOVE;
+}
+
+
+
+static void
+_thunar_tree_view_model_files_added_destroy (gpointer data)
+{
+  THUNAR_TREE_VIEW_MODEL (data)->add_files_timeout = 0;
 }
 
 
@@ -1932,6 +1938,10 @@ thunar_tree_view_model_files_added (ThunarFolder        *folder,
     store->files_added = files_copy;
   else
     store->files_added = g_list_concat (store->files_added, files_copy);
+
+  store->add_files_timeout = g_timeout_add_full (G_PRIORITY_HIGH_IDLE, FILES_ADDED_DELAY,
+                                                 _thunar_tree_view_model_files_added, store,
+                                                 _thunar_tree_view_model_files_added_destroy);
 }
 
 
@@ -1976,7 +1986,17 @@ thunar_tree_view_model_files_removed (ThunarFolder        *folder,
                                       ThunarTreeViewModel *store)
 {
   GNode *child_node;
-  GList *lp;
+  GList *lp, *_lp;
+
+  /* some files might be waiting to be added;
+   * remove them from the waiting list */
+  if (store->files_added != NULL)
+    for (lp = files; lp != NULL; lp = lp->next)
+      {
+        _lp = g_list_find (store->files_added, lp->data);
+        if (_lp != NULL)
+          store->files_added = g_list_delete_link (store->files_added, _lp);
+      }
 
   /* drop all the referenced files from the model */
   for (lp = files; lp != NULL; lp = lp->next)
@@ -2613,7 +2633,6 @@ thunar_tree_view_model_set_folder (ThunarStandardViewModel *model,
       g_signal_connect (G_OBJECT (store->folder), "files-added", G_CALLBACK (thunar_tree_view_model_files_added), store);
       g_signal_connect (G_OBJECT (store->folder), "files-removed", G_CALLBACK (thunar_tree_view_model_files_removed), store);
       g_signal_connect (G_OBJECT (store->folder), "notify::loading", G_CALLBACK (thunar_tree_view_model_notify_loading), store);
-      store->add_files_timeout = g_timeout_add_full (G_PRIORITY_HIGH_IDLE, FILES_ADDED_DELAY, _thunar_tree_view_model_files_added, store, NULL);
 
       /* insert the files */
       if (files != NULL)
@@ -2973,11 +2992,47 @@ thunar_tree_view_model_item_load_folder (ThunarTreeViewModelItem *item)
 
 
 
+static gboolean
+thunar_tree_view_model_item_add_files (gpointer data)
+{
+  ThunarTreeViewModelItem *item = THUNAR_TREE_VIEW_MODEL_ITEM (data);
+  ThunarTreeViewModel     *model;
+  GNode                   *node = NULL;
+
+  _thunar_return_val_if_fail (item != NULL, G_SOURCE_REMOVE);
+
+  if (item->folder == NULL || item->files_to_add == NULL)
+    return G_SOURCE_REMOVE;
+
+  model = THUNAR_TREE_VIEW_MODEL (item->model);
+
+  node = g_node_find (model->root, G_POST_ORDER, G_TRAVERSE_ALL, item);
+  _thunar_return_val_if_fail (node != NULL, G_SOURCE_REMOVE);
+
+  thunar_tree_view_model_add_children (model, node, item->files_to_add);
+
+  thunar_tree_view_model_sort (model, node);
+
+  g_list_free_full (item->files_to_add, g_object_unref);
+  item->files_to_add = NULL;
+
+  return G_SOURCE_REMOVE;
+}
+
+
+
+static void
+thunar_tree_view_model_item_add_files_destroy (gpointer data)
+{
+  THUNAR_TREE_VIEW_MODEL_ITEM (data)->add_files_timeout = 0;
+}
+
+
+
 static void
 thunar_tree_view_model_item_files_added (ThunarTreeViewModelItem *item,
                                          GList                   *files,
                                          ThunarFolder            *folder)
-
 {
   GList *files_copy;
   files_copy = thunar_g_list_copy_deep (files);
@@ -2985,6 +3040,10 @@ thunar_tree_view_model_item_files_added (ThunarTreeViewModelItem *item,
     item->files_to_add = files_copy;
   else
     item->files_to_add = g_list_concat (item->files_to_add, files_copy);
+
+  item->add_files_timeout = g_timeout_add_full (G_PRIORITY_HIGH_IDLE, FILES_ADDED_DELAY,
+                                                thunar_tree_view_model_item_add_files, item,
+                                                thunar_tree_view_model_item_add_files_destroy);
 }
 
 
@@ -3002,6 +3061,7 @@ thunar_tree_view_model_item_files_removed (ThunarTreeViewModelItem *item,
   GList               *lp;
   GSList              *inv_link;
   gboolean             has_handler;
+  GList               *_lp;
 
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (item->folder == folder);
@@ -3012,6 +3072,16 @@ thunar_tree_view_model_item_files_removed (ThunarTreeViewModelItem *item,
   /* determine the node for the folder */
   node = g_node_find (model->root, G_POST_ORDER, G_TRAVERSE_ALL, item);
   _thunar_return_if_fail (node != NULL);
+
+  /* some files might be waiting to be added;
+   * remove them from the waiting list */
+  if (item->files_to_add != NULL)
+    for (lp = files; lp != NULL; lp = lp->next)
+      {
+        _lp = g_list_find (item->files_to_add, lp->data);
+        if (_lp != NULL)
+          item->files_to_add = g_list_delete_link (item->files_to_add, _lp);
+      }
 
   /* check if the node has any visible children */
   if (G_LIKELY (node->children != NULL))
@@ -3091,39 +3161,6 @@ thunar_tree_view_model_item_notify_loading (ThunarTreeViewModelItem *item,
 
 
 
-static gboolean
-thunar_tree_view_model_item_add_files (gpointer data)
-{
-  ThunarTreeViewModelItem *item;
-  ThunarTreeViewModel     *model;
-  GNode                   *node = NULL;
-
-  item = THUNAR_TREE_VIEW_MODEL_ITEM (data);
-
-  _thunar_return_val_if_fail (data != NULL, G_SOURCE_REMOVE);
-
-  if (item->folder == NULL)
-    return G_SOURCE_REMOVE;
-
-  if (item->files_to_add == NULL)
-    return G_SOURCE_CONTINUE;
-
-  model = THUNAR_TREE_VIEW_MODEL (item->model);
-
-  node = g_node_find (model->root, G_POST_ORDER, G_TRAVERSE_ALL, item);
-  _thunar_return_val_if_fail (node != NULL, G_SOURCE_REMOVE);
-
-  thunar_tree_view_model_add_children (model, node, item->files_to_add);
-
-  thunar_tree_view_model_sort (model, node);
-
-  g_list_free_full (item->files_to_add, g_object_unref);
-  item->files_to_add = NULL;
-
-  return G_SOURCE_CONTINUE;
-}
-
-
 
 static gboolean
 thunar_tree_view_model_item_load_idle (gpointer user_data)
@@ -3161,7 +3198,6 @@ THUNAR_THREADS_ENTER
           g_signal_connect_swapped (G_OBJECT (item->folder), "files-added", G_CALLBACK (thunar_tree_view_model_item_files_added), item);
           g_signal_connect_swapped (G_OBJECT (item->folder), "files-removed", G_CALLBACK (thunar_tree_view_model_item_files_removed), item);
           g_signal_connect_swapped (G_OBJECT (item->folder), "notify::loading", G_CALLBACK (thunar_tree_view_model_item_notify_loading), item);
-          item->add_files_timeout = g_timeout_add_full (G_PRIORITY_HIGH_IDLE, FILES_ADDED_DELAY, thunar_tree_view_model_item_add_files, item, NULL);
 
           /* load the initial set of files (if any) */
           files = thunar_folder_get_files (item->folder);
@@ -3350,15 +3386,15 @@ thunar_tree_view_model_node_traverse_remove (GNode   *node,
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
   if (G_LIKELY (path != NULL))
     {
-      /* emit a "row-deleted" */
-      if (has_handler)
-        gtk_tree_model_row_deleted (GTK_TREE_MODEL (model), path);
-
       /* release the item for the node */
       thunar_tree_view_model_node_traverse_free (node, user_data);
 
       /* remove the node from the tree */
       g_node_destroy (node);
+
+      /* emit a "row-deleted" */
+      if (has_handler)
+        gtk_tree_model_row_deleted (GTK_TREE_MODEL (model), path);
 
       /* release the path */
       gtk_tree_path_free (path);
