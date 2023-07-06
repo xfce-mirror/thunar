@@ -43,6 +43,11 @@
 
 
 
+/* Defintions & typedefs */
+typedef struct _Node Node;
+
+
+
 /* Property identifiers */
 enum
 {
@@ -213,12 +218,36 @@ struct _ThunarTreeViewModel
   gint           stamp;
 #endif
 
+  Node *root;
+  ThunarFolder *dir;
+
   gboolean       sort_case_sensitive : 1;
   gboolean       sort_folders_first : 1;
   gint           sort_sign;   /* 1 = ascending, -1 descending */
   ThunarSortFunc sort_func;
 
-  ThunarFolderItemCount folder_item_count;
+  /* Options */
+  ThunarFolderItemCount  folder_item_count;
+  gboolean               file_size_binary : 1;
+  ThunarDateStyle        date_style;
+  char                  *date_custom_style;
+};
+
+
+
+struct _Node
+{
+  ThunarFile *file;
+  ThunarFolder *dir;
+
+  Node *parent;
+  GSequenceIter *ptr; /* self ref */
+
+  gint depth;
+  gint n_children;
+  gint loaded : 1;
+  
+  GSequence *children; /* Nodes */
 };
 
 
@@ -227,10 +256,10 @@ struct _ThunarTreeViewModel
  *  GType Definitions
  *************************************************/
 G_DEFINE_TYPE_WITH_CODE (ThunarTreeViewModel, thunar_tree_view_model, G_TYPE_OBJECT,
-    G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL, thunar_tree_view_model_tree_model_init)
-    G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_DRAG_DEST, thunar_tree_view_model_drag_dest_init)
-    G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_SORTABLE, thunar_tree_view_model_sortable_init)
-    G_IMPLEMENT_INTERFACE (THUNAR_TYPE_STANDARD_VIEW_MODEL, thunar_tree_view_model_standard_view_model_init))
+  G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_DRAG_DEST, thunar_tree_view_model_drag_dest_init)
+  G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_SORTABLE, thunar_tree_view_model_sortable_init)
+  G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL, thunar_tree_view_model_tree_model_init)
+  G_IMPLEMENT_INTERFACE (THUNAR_TYPE_STANDARD_VIEW_MODEL, thunar_tree_view_model_standard_view_model_init))
 
 
 
@@ -829,5 +858,228 @@ thunar_tree_view_model_get_iter (GtkTreeModel *model,
                                  GtkTreeIter  *iter,
                                  GtkTreePath  *path)
 {
+  ThunarTreeViewModel *_model;
+  GSequenceIter *ptr;
+  gint *indices;
+  gint  depth, loc;
+  Node *node;
 
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), FALSE);
+  _thunar_return_val_if_fail (iter->stamp != THUNAR_TREE_VIEW_MODEL (model)->stamp, FALSE);
+  _thunar_return_val_if_fail (gtk_tree_path_get_depth <= 0, FALSE);
+
+  _model = THUNAR_TREE_VIEW_MODEL (model);
+
+  indices = gtk_tree_path_get_indices_with_depth (path, &depth);
+  node = _model->root;
+  for (gint d = 0; d < depth; d++)
+    {
+      loc = indices[d];
+
+      if (loc < 0 || loc >= node->n_children)
+        return FALSE;
+
+      ptr = g_sequence_get_iter_at_pos (node->children, loc);
+      if (g_sequence_iter_is_end (ptr))
+        return FALSE;
+      node = g_sequence_get (ptr);
+    }
+
+  GTK_TREE_ITER_INIT (*iter, _model->stamp, ptr);
+
+  return TRUE;
 }
+
+
+
+static GtkTreePath*
+thunar_tree_view_model_get_path (GtkTreeModel *model,
+                                 GtkTreeIter  *iter)
+{
+  ThunarTreeViewModel *_model;
+
+  GtkTreePath *path;
+  Node        *node;
+  gint        *indices;
+  gint         depth;
+
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), NULL);
+  _thunar_return_val_if_fail (iter->stamp != THUNAR_TREE_VIEW_MODEL (model)->stamp, NULL);
+  _thunar_return_val_if_fail (iter->user_data == NULL, NULL);
+
+  node = g_sequence_get (iter->user_data);
+
+  depth = node->depth;
+  indices = g_newa (gint, depth);
+
+  for (gint d = depth - 1; d >= 0; --d)
+    {
+      indices[d] = g_sequence_iter_get_position (node->ptr);
+      node = node->parent;
+    }
+    
+  return gtk_tree_path_new_from_indicesv (indices, depth);
+}
+
+
+
+static void
+thunar_tree_view_model_get_value (GtkTreeModel *model,
+                                  GtkTreeIter  *iter,
+                                  gint          column,
+                                  GValue       *value)
+{
+  /* TODO: */
+}
+
+
+
+static gboolean
+thunar_tree_view_model_iter_next (GtkTreeModel *model,
+                                  GtkTreeIter  *iter)
+{
+  GSequenceIter *ptr;
+
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), FALSE);
+  _thunar_return_val_if_fail (iter->stamp != THUNAR_TREE_VIEW_MODEL (model)->stamp, FALSE);
+  _thunar_return_val_if_fail (iter->user_data != NULL, FALSE);
+
+  ptr = iter->user_data;
+  ptr = g_sequence_iter_next (ptr);
+  return !g_sequence_iter_is_end (ptr);
+}
+
+
+
+static gboolean
+thunar_tree_view_model_iter_children (GtkTreeModel *model,
+                                      GtkTreeIter  *iter,
+                                      GtkTreeIter  *parent)
+{
+  GSequenceIter *ptr;
+  Node *node;
+  
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), FALSE);
+  _thunar_return_val_if_fail (iter->stamp != THUNAR_TREE_VIEW_MODEL (model)->stamp, FALSE);
+
+  if (parent == NULL)
+    /* return iter corresponding to path -> "0"; i.e 1st iter */
+    return gtk_tree_model_get_iter_first (model, iter);
+
+  node = g_sequence_get (parent->user_data);
+  if (node->children == NULL)
+    return FALSE;
+
+  ptr = g_sequence_get_begin_iter (node->children);
+  GTK_TREE_ITER_INIT (*iter, THUNAR_TREE_VIEW_MODEL (model)->stamp, ptr);
+
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_tree_view_model_iter_has_child (GtkTreeModel *model,
+                                       GtkTreeIter  *iter)
+{
+  Node *node;
+
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), FALSE);
+  _thunar_return_val_if_fail (iter->stamp != THUNAR_TREE_VIEW_MODEL (model)->stamp, FALSE);
+  _thunar_return_val_if_fail (iter->user_data != NULL, FALSE);
+
+  node = g_sequence_get (iter->user_data);
+  return node->n_children > 0;
+}
+
+
+
+static gint
+thunar_tree_view_model_iter_n_children (GtkTreeModel *model,
+                                        GtkTreeIter  *iter)
+{
+  Node *node;
+
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), FALSE);
+  _thunar_return_val_if_fail (iter->stamp != THUNAR_TREE_VIEW_MODEL (model)->stamp, FALSE);
+  _thunar_return_val_if_fail (iter->user_data != NULL, FALSE);
+
+  node = g_sequence_get (iter->user_data);
+  return node->n_children;
+}
+
+
+
+static gboolean
+thunar_tree_view_model_iter_nth_child (GtkTreeModel *model,
+                                       GtkTreeIter  *iter,
+                                       GtkTreeIter  *parent,
+                                       gint          n)
+{
+  GSequenceIter *ptr;
+  Node *node;
+
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), FALSE);
+  _thunar_return_val_if_fail (iter->stamp != THUNAR_TREE_VIEW_MODEL (model)->stamp, FALSE);
+  _thunar_return_val_if_fail (parent->user_data != NULL, FALSE);
+
+  node = g_sequence_get (parent->user_data);
+  if (n >= node->n_children)
+    return FALSE;
+
+  ptr = g_sequence_get_iter_at_pos (node->children, n);
+  _assert (!g_sequence_iter_is_end (ptr));
+  GTK_TREE_ITER_INIT (*iter, THUNAR_TREE_VIEW_MODEL (model)->stamp, ptr);
+
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_tree_view_model_iter_parent (GtkTreeModel *model,
+                                    GtkTreeIter  *iter,
+                                    GtkTreeIter  *child)
+{
+  GSequenceIter *ptr;
+  Node *node;
+  
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), FALSE);
+  _thunar_return_val_if_fail (iter->stamp != THUNAR_TREE_VIEW_MODEL (model)->stamp, FALSE);
+  _thunar_return_val_if_fail (child->user_data != NULL, FALSE);
+
+  node = g_sequence_get (child->user_data);
+  if (node->depth <= 0)
+    return FALSE;
+
+  ptr = node->parent->ptr;
+  GTK_TREE_ITER_INIT (*iter, THUNAR_TREE_VIEW_MODEL (model)->stamp, ptr);
+
+  return TRUE;
+}
+
+
+
+static void
+thunar_tree_view_model_ref_node (GtkTreeModel *model,
+                                 GtkTreeIter  *iter)
+{
+  Node *node;
+  
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
+  _thunar_return_if_fail (iter->stamp != THUNAR_TREE_VIEW_MODEL (model)->stamp);
+  _thunar_return_if_fail (iter->user_data != NULL);
+
+  node = g_sequence_get (iter->user_data);
+  /* TODO: load the dir */
+}
+
+
+
+static void
+thunar_tree_view_model_unref_node (GtkTreeModel *model,
+                                   GtkTreeIter  *iter)
+{
+  /* DO NOTHING */
+}
+
