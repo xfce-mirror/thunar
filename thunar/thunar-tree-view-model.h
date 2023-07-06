@@ -36,9 +36,7 @@ typedef struct _ThunarTreeViewModel      ThunarTreeViewModel;
 
 GType                    thunar_tree_view_model_get_type               (void) G_GNUC_CONST;
 
-ThunarStandardViewModel *thunar_tree_view_model_new                    (void);
-void                     thunar_tree_view_model_cleanup                (ThunarTreeViewModel  *model);
-
+ThunarStandardViewModel *thunar_tree_view_model_new (void);
 
 G_END_DECLS;
 
