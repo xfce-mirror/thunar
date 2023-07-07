@@ -295,9 +295,7 @@ G_DEFINE_TYPE_WITH_CODE (ThunarTreeViewModel, thunar_tree_view_model, G_TYPE_OBJ
 
 
 /* Reference to GParamSpec(s) of all the N_PROPERTIES */
-static GParamSpec *tree_model_props[N_PROPERTIES] = {
-  NULL,
-};
+static GParamSpec *tree_model_props[N_PROPERTIES] = { NULL, };
 
 
 
