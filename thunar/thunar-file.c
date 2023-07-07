@@ -2494,7 +2494,7 @@ thunar_file_get_content_type (ThunarFile *file)
           if (G_LIKELY (info != NULL))
             {
               /* store the new content type */
-              content_type = g_file_info_get_content_type (info);
+              content_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
               if (G_UNLIKELY (content_type == NULL))
                 content_type = g_file_info_get_attribute_string (info,
                                                                  G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE);
@@ -2614,7 +2614,7 @@ thunar_file_get_symlink_target (const ThunarFile *file)
   if (file->info == NULL)
     return NULL;
 
-  return g_file_info_get_symlink_target (file->info);
+  return g_file_info_get_attribute_byte_string (file->info, G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET);
 }
 
 
@@ -2652,7 +2652,7 @@ thunar_file_is_symlink (const ThunarFile *file)
   if (file->info == NULL)
     return FALSE;
 
-  return g_file_info_get_is_symlink (file->info);
+  return g_file_info_get_attribute_boolean (file->info, G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK);
 }
 
 
@@ -3182,8 +3182,8 @@ thunar_file_is_hidden (const ThunarFile *file)
   if (file->info == NULL)
     return FALSE;
 
-  return g_file_info_get_is_hidden (file->info)
-         || g_file_info_get_is_backup (file->info);
+  return g_file_info_get_attribute_boolean (file->info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN)
+         || g_file_info_get_attribute_boolean (file->info, G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP);
 }
 
 
@@ -4131,7 +4131,7 @@ thunar_file_get_icon_name (ThunarFile          *file,
       if (G_LIKELY (fileinfo != NULL))
         {
           /* take the icon from the info */
-          icon = g_file_info_get_icon (fileinfo);
+          icon = G_ICON (g_file_info_get_attribute_object (fileinfo, G_FILE_ATTRIBUTE_STANDARD_ICON));
           if (G_LIKELY (icon != NULL))
             g_object_ref (icon);
 
