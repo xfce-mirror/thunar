@@ -161,7 +161,7 @@ tse_file_is_archive (GFileInfo *file_info)
   const gchar *content_type;
   guint        n;
   /* determine the content type */
-  content_type = g_file_info_get_content_type (file_info);
+  content_type = g_file_info_get_attribute_string (file_info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
   if (content_type == NULL)
   {
     return FALSE;
