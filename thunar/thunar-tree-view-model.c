@@ -67,128 +67,156 @@ enum
 
 
 
-static void                      thunar_tree_view_model_drag_dest_init              (GtkTreeDragDestIface         *iface);
-static void                      thunar_tree_view_model_sortable_init               (GtkTreeSortableIface         *iface);
-static void                      thunar_tree_view_model_tree_model_init             (GtkTreeModelIface            *iface);
-static void                      thunar_tree_view_model_standard_view_model_init    (ThunarStandardViewModelIface *iface);
+static void              thunar_tree_view_model_drag_dest_init (GtkTreeDragDestIface *iface);
+static void              thunar_tree_view_model_sortable_init (GtkTreeSortableIface *iface);
+static void              thunar_tree_view_model_tree_model_init (GtkTreeModelIface *iface);
+static void              thunar_tree_view_model_standard_view_model_init (ThunarStandardViewModelIface *iface);
 
-/* GObject Virtual Methods */
-static void                      thunar_tree_view_model_dispose                     (GObject                      *object);
-static void                      thunar_tree_view_model_finalize                    (GObject                      *object);
-static void                      thunar_tree_view_model_get_property                (GObject                      *object,
-                                                                                     guint                         prop_id,
-                                                                                     GValue                       *value,
-                                                                                     GParamSpec                   *pspec);
-static void                      thunar_tree_view_model_set_property                (GObject                      *object,
-                                                                                     guint                         prop_id,
-                                                                                     const GValue                 *value,
-                                                                                     GParamSpec                   *pspec);
 
-/* GtkTreeDragDest Virtual Methods */
-static gboolean                  thunar_tree_view_model_drag_data_received          (GtkTreeDragDest              *dest,
-                                                                                     GtkTreePath                  *path,
-                                                                                     GtkSelectionData             *data);
-static gboolean                  thunar_tree_view_model_row_drop_possible           (GtkTreeDragDest              *dest,
-                                                                                     GtkTreePath                  *path,
-                                                                                     GtkSelectionData             *data);
+/*************************************************
+ * GObject Virtual Methods
+ *************************************************/
+static void              thunar_tree_view_model_dispose (GObject *object);
+static void              thunar_tree_view_model_finalize (GObject *object);
+static void              thunar_tree_view_model_get_property (GObject    *object,
+                                                              guint       prop_id,
+                                                              GValue     *value,
+                                                              GParamSpec *pspec);
+static void              thunar_tree_view_model_set_property (GObject      *object,
+                                                              guint         prop_id,
+                                                              const GValue *value,
+                                                              GParamSpec   *pspec);
 
-/* GtkSortable Virtual Methods */
-static gboolean                  thunar_tree_view_model_get_sort_column_id          (GtkTreeSortable              *sortable,
-                                                                                     gint                         *sort_column_id,
-                                                                                     GtkSortType                  *order);
-static void                      thunar_tree_view_model_set_sort_column_id          (GtkTreeSortable              *sortable,
-                                                                                     gint                          sort_column_id,
-                                                                                     GtkSortType                   order);
-static void                      thunar_tree_view_model_set_default_sort_func       (GtkTreeSortable              *sortable,
-                                                                                     GtkTreeIterCompareFunc        func,
-                                                                                     gpointer                      data,
-                                                                                     GDestroyNotify                destroy);
-static void                      thunar_tree_view_model_set_sort_func               (GtkTreeSortable              *sortable,
-                                                                                     gint                          sort_column_id,
-                                                                                     GtkTreeIterCompareFunc        func,
-                                                                                     gpointer                      data,
-                                                                                     GDestroyNotify                destroy);
-static gboolean                  thunar_tree_view_model_has_default_sort_func       (GtkTreeSortable              *sortable);
 
-/* GtkTreeModel Virtual Methods */
-static GtkTreeModelFlags         thunar_tree_view_model_get_flags                   (GtkTreeModel                 *model);
-static gint                      thunar_tree_view_model_get_n_columns               (GtkTreeModel                 *model);
-static GType                     thunar_tree_view_model_get_column_type             (GtkTreeModel                 *model,
-                                                                                     gint                          idx);
-static gboolean                  thunar_tree_view_model_get_iter                    (GtkTreeModel                 *model,
-                                                                                     GtkTreeIter                  *iter,
-                                                                                     GtkTreePath                  *path);
-static GtkTreePath              *thunar_tree_view_model_get_path                    (GtkTreeModel                 *model,
-                                                                                     GtkTreeIter                  *iter);
-static void                      thunar_tree_view_model_get_value                   (GtkTreeModel                 *model,
-                                                                                     GtkTreeIter                  *iter,
-                                                                                     gint                          column,
-                                                                                     GValue                       *value);
-static gboolean                  thunar_tree_view_model_iter_next                   (GtkTreeModel                 *model,
-                                                                                     GtkTreeIter                  *iter);
-static gboolean                  thunar_tree_view_model_iter_children               (GtkTreeModel                 *model,
-                                                                                     GtkTreeIter                  *iter,
-                                                                                     GtkTreeIter                  *parent);
-static gboolean                  thunar_tree_view_model_iter_has_child              (GtkTreeModel                 *model,
-                                                                                     GtkTreeIter                  *iter);
-static gint                      thunar_tree_view_model_iter_n_children             (GtkTreeModel                 *model,
-                                                                                     GtkTreeIter                  *iter);
-static gboolean                  thunar_tree_view_model_iter_nth_child              (GtkTreeModel                 *model,
-                                                                                     GtkTreeIter                  *iter,
-                                                                                     GtkTreeIter                  *parent,
-                                                                                     gint                          n);
-static gboolean                  thunar_tree_view_model_iter_parent                 (GtkTreeModel                 *model,
-                                                                                     GtkTreeIter                  *iter,
-                                                                                     GtkTreeIter                  *child);
-static void                      thunar_tree_view_model_ref_node                    (GtkTreeModel                 *tree_model,
-                                                                                     GtkTreeIter                  *iter);
-static void                      thunar_tree_view_model_unref_node                  (GtkTreeModel                 *tree_model,
-                                                                                     GtkTreeIter                  *iter);
+/*************************************************
+ * GtkTreeDragDest Virtual Methods
+ *************************************************/
+static gboolean          thunar_tree_view_model_drag_data_received (GtkTreeDragDest  *dest,
+                                                                    GtkTreePath      *path,
+                                                                    GtkSelectionData *data);
+static gboolean          thunar_tree_view_model_row_drop_possible (GtkTreeDragDest  *dest,
+                                                                   GtkTreePath      *path,
+                                                                   GtkSelectionData *data);
 
-/* ThunarStandardViewModel Virtual Methods */
-static gboolean                  thunar_tree_view_model_get_case_sensitive          (ThunarTreeViewModel          *store);
-static void                      thunar_tree_view_model_set_case_sensitive          (ThunarTreeViewModel          *store,
-                                                                                     gboolean                      case_sensitive);
-static ThunarDateStyle           thunar_tree_view_model_get_date_style              (ThunarTreeViewModel          *store);
-static void                      thunar_tree_view_model_set_date_style              (ThunarTreeViewModel          *store,
-                                                                                     ThunarDateStyle               date_style);
-static const char*               thunar_tree_view_model_get_date_custom_style       (ThunarTreeViewModel          *store);
-static void                      thunar_tree_view_model_set_date_custom_style       (ThunarTreeViewModel          *store,
-                                                                                     const char                   *date_custom_style);
-static gint                      thunar_tree_view_model_get_num_files               (ThunarTreeViewModel          *store);
-static gboolean                  thunar_tree_view_model_get_folders_first           (ThunarTreeViewModel          *store);
-static gint                      thunar_tree_view_model_get_folder_item_count       (ThunarTreeViewModel          *store);
-static void                      thunar_tree_view_model_set_folder_item_count       (ThunarTreeViewModel          *store,
-                                                                                     ThunarFolderItemCount         count_as_dir_size);
-static ThunarFolder             *thunar_tree_view_model_get_folder                  (ThunarStandardViewModel      *store);
-static void                      thunar_tree_view_model_set_folder                  (ThunarStandardViewModel      *store,
-                                                                                     ThunarFolder                 *folder,
-                                                                                     gchar                        *search_query);
-static void                      thunar_tree_view_model_set_folders_first           (ThunarStandardViewModel      *store,
-                                                                                     gboolean                      folders_first);
-static gboolean                  thunar_tree_view_model_get_show_hidden             (ThunarStandardViewModel      *store);
-static void                      thunar_tree_view_model_set_show_hidden             (ThunarStandardViewModel      *store,
-                                                                                     gboolean                      show_hidden);
-static gboolean                  thunar_tree_view_model_get_file_size_binary        (ThunarStandardViewModel      *store);
-static void                      thunar_tree_view_model_set_file_size_binary        (ThunarStandardViewModel      *store,
-                                                                                     gboolean                      file_size_binary);
-static ThunarFile               *thunar_tree_view_model_get_file                    (ThunarStandardViewModel      *store,
-                                                                                     GtkTreeIter                  *iter);
-static GList                    *thunar_tree_view_model_get_paths_for_files         (ThunarStandardViewModel      *store,
-                                                                                     GList                        *files);
-static GList                    *thunar_tree_view_model_get_paths_for_pattern       (ThunarStandardViewModel      *store,
-                                                                                     const gchar                  *pattern,
-                                                                                     gboolean                      case_sensitive,
-                                                                                     gboolean                      match_diacritics);
-static gchar                    *thunar_tree_view_model_get_statusbar_text          (ThunarStandardViewModel      *store,
-                                                                                     GList                        *selected_items);
-static ThunarJob                *thunar_tree_view_model_get_job                     (ThunarStandardViewModel      *store);
-static void                      thunar_tree_view_model_set_job                     (ThunarStandardViewModel      *store,
-                                                                                     ThunarJob                    *job);
 
-/* Private Methods */
-// TODO: Write here
+/*************************************************
+ * GtkSortable Virtual Methods
+ *************************************************/
+static gboolean          thunar_tree_view_model_get_sort_column_id (GtkTreeSortable *sortable,
+                                                                    gint            *sort_column_id,
+                                                                    GtkSortType     *order);
+static void              thunar_tree_view_model_set_sort_column_id (GtkTreeSortable *sortable,
+                                                                    gint             sort_column_id,
+                                                                    GtkSortType      order);
+static void              thunar_tree_view_model_set_default_sort_func (GtkTreeSortable       *sortable,
+                                                                       GtkTreeIterCompareFunc func,
+                                                                       gpointer               data,
+                                                                       GDestroyNotify         destroy);
+static void              thunar_tree_view_model_set_sort_func (GtkTreeSortable       *sortable,
+                                                               gint                   sort_column_id,
+                                                               GtkTreeIterCompareFunc func,
+                                                               gpointer               data,
+                                                               GDestroyNotify         destroy);
+static gboolean          thunar_tree_view_model_has_default_sort_func (GtkTreeSortable *sortable);
 
+
+/*************************************************
+ * GtkTreeModel Virtual Methods
+ *************************************************/
+static GtkTreeModelFlags thunar_tree_view_model_get_flags (GtkTreeModel *model);
+static gint              thunar_tree_view_model_get_n_columns (GtkTreeModel *model);
+static GType             thunar_tree_view_model_get_column_type (GtkTreeModel *model,
+                                                                 gint          idx);
+static gboolean          thunar_tree_view_model_get_iter (GtkTreeModel *model,
+                                                          GtkTreeIter  *iter,
+                                                          GtkTreePath  *path);
+static GtkTreePath      *thunar_tree_view_model_get_path (GtkTreeModel *model,
+                                                          GtkTreeIter  *iter);
+static void              thunar_tree_view_model_get_value (GtkTreeModel *model,
+                                                           GtkTreeIter  *iter,
+                                                           gint          column,
+                                                           GValue       *value);
+static gboolean          thunar_tree_view_model_iter_next (GtkTreeModel *model,
+                                                           GtkTreeIter  *iter);
+static gboolean          thunar_tree_view_model_iter_children (GtkTreeModel *model,
+                                                               GtkTreeIter  *iter,
+                                                               GtkTreeIter  *parent);
+static gboolean          thunar_tree_view_model_iter_has_child (GtkTreeModel *model,
+                                                                GtkTreeIter  *iter);
+static gint              thunar_tree_view_model_iter_n_children (GtkTreeModel *model,
+                                                                 GtkTreeIter  *iter);
+static gboolean          thunar_tree_view_model_iter_nth_child (GtkTreeModel *model,
+                                                                GtkTreeIter  *iter,
+                                                                GtkTreeIter  *parent,
+                                                                gint          n);
+static gboolean          thunar_tree_view_model_iter_parent (GtkTreeModel *model,
+                                                             GtkTreeIter  *iter,
+                                                             GtkTreeIter  *child);
+static void              thunar_tree_view_model_ref_node (GtkTreeModel *tree_model,
+                                                          GtkTreeIter  *iter);
+static void              thunar_tree_view_model_unref_node (GtkTreeModel *tree_model,
+                                                            GtkTreeIter  *iter);
+
+
+/*************************************************
+ * ThunarStandardViewModel Virtual Methods
+ *************************************************/
+/* Getters */
+static ThunarFolder     *thunar_tree_view_model_get_folder (ThunarStandardViewModel *model);
+static gboolean          thunar_tree_view_model_get_show_hidden (ThunarStandardViewModel *model);
+static gboolean          thunar_tree_view_model_get_file_size_binary (ThunarStandardViewModel *model);
+static ThunarFile       *thunar_tree_view_model_get_file (ThunarStandardViewModel *model,
+                                                          GtkTreeIter             *iter);
+static GList            *thunar_tree_view_model_get_paths_for_files (ThunarStandardViewModel *model,
+                                                                     GList                   *files);
+static GList            *thunar_tree_view_model_get_paths_for_pattern (ThunarStandardViewModel *model,
+                                                                       const gchar             *pattern,
+                                                                       gboolean                 case_sensitive,
+                                                                       gboolean                 match_diacritics);
+static gchar            *thunar_tree_view_model_get_statusbar_text (ThunarStandardViewModel *model,
+                                                                    GList                   *selected_items);
+static ThunarJob        *thunar_tree_view_model_get_job (ThunarStandardViewModel *model);
+
+/* Setters */
+static void              thunar_tree_view_model_set_folder (ThunarStandardViewModel *model,
+                                                            ThunarFolder            *folder,
+                                                            gchar                   *search_query);
+static void              thunar_tree_view_model_set_show_hidden (ThunarStandardViewModel *model,
+                                                                 gboolean                 show_hidden);
+static void              thunar_tree_view_model_set_folders_first (ThunarStandardViewModel *model,
+                                                                   gboolean                 folders_first);
+static void              thunar_tree_view_model_set_file_size_binary (ThunarStandardViewModel *model,
+                                                                      gboolean                 file_size_binary);
+static void              thunar_tree_view_model_set_job (ThunarStandardViewModel *model,
+                                                         ThunarJob               *job);
+
+
+/*************************************************
+ * Private Methods
+ *************************************************/
+/* Property Getters */
+static gboolean          thunar_tree_view_model_get_case_sensitive (ThunarTreeViewModel *model);
+static ThunarDateStyle   thunar_tree_view_model_get_date_style (ThunarTreeViewModel *model);
+static const char       *thunar_tree_view_model_get_date_custom_style (ThunarTreeViewModel *model);
+static gint              thunar_tree_view_model_get_num_files (ThunarTreeViewModel *model);
+static gboolean          thunar_tree_view_model_get_folders_first (ThunarTreeViewModel *model);
+static gint              thunar_tree_view_model_get_folder_item_count (ThunarTreeViewModel *model);
+
+/* Property Setters */
+static void              thunar_tree_view_model_set_case_sensitive (ThunarTreeViewModel *model,
+                                                                    gboolean             case_sensitive);
+static void              thunar_tree_view_model_set_date_style (ThunarTreeViewModel *model,
+                                                                ThunarDateStyle      date_style);
+static void              thunar_tree_view_model_set_date_custom_style (ThunarTreeViewModel *model,
+                                                                       const char          *date_custom_style);
+static void              thunar_tree_view_model_set_folder_item_count (ThunarTreeViewModel  *model,
+                                                                       ThunarFolderItemCount count_as_dir_size);
+
+/* Internal helper funcs */
+static void              thunar_tree_view_model_load_dir (ThunarTreeViewModel *model,
+                                                          Node                *node);
+static void              thunar_tree_view_model_cleanup (ThunarTreeViewModel *model,
+                                                         gboolean             async);
 
 
 /*************************************************
@@ -199,7 +227,7 @@ struct _ThunarTreeViewModelClass
   GObjectClass __parent__;
 
   /* signals */
-  void (*error) (ThunarTreeViewModel *store,
+  void (*error) (ThunarTreeViewModel *model,
                  const GError        *error);
   void (*search_done) (void);
 };
@@ -215,39 +243,42 @@ struct _ThunarTreeViewModel
    * generated by another model.
    */
 #ifndef NDEBUG
-  gint           stamp;
+  gint stamp;
 #endif
 
-  Node *root;
-  ThunarFolder *dir;
+  Node                 *root;
+  ThunarFolder         *dir;
 
-  gboolean       sort_case_sensitive : 1;
-  gboolean       sort_folders_first : 1;
-  gint           sort_sign;   /* 1 = ascending, -1 descending */
-  ThunarSortFunc sort_func;
+  gboolean              sort_case_sensitive : 1;
+  gboolean              sort_folders_first  : 1;
+  gint                  sort_sign; /* 1 = ascending, -1 descending */
+  ThunarSortFunc        sort_func;
 
   /* Options */
-  ThunarFolderItemCount  folder_item_count;
-  gboolean               file_size_binary : 1;
-  ThunarDateStyle        date_style;
-  char                  *date_custom_style;
+  ThunarFolderItemCount folder_item_count;
+  gboolean              file_size_binary : 1;
+  ThunarDateStyle       date_style;
+  char                 *date_custom_style;
+  gboolean              show_hidden;
+
+  gint                  n_visible_files;
 };
 
 
 
 struct _Node
 {
-  ThunarFile *file;
-  ThunarFolder *dir;
+  ThunarFile    *file;
+  ThunarFolder  *dir;
 
-  Node *parent;
+  Node          *parent;
   GSequenceIter *ptr; /* self ref */
 
-  gint depth;
-  gint n_children;
-  gint loaded : 1;
-  
-  GSequence *children; /* Nodes */
+  gint           depth;
+  gint           n_children;
+  gint           loaded : 1;
+
+  GSequence     *children; /* Nodes */
 };
 
 
@@ -264,7 +295,9 @@ G_DEFINE_TYPE_WITH_CODE (ThunarTreeViewModel, thunar_tree_view_model, G_TYPE_OBJ
 
 
 /* Reference to GParamSpec(s) of all the N_PROPERTIES */
-static GParamSpec *tree_model_props[N_PROPERTIES] = { NULL, };
+static GParamSpec *tree_model_props[N_PROPERTIES] = {
+  NULL,
+};
 
 
 
@@ -274,9 +307,9 @@ thunar_tree_view_model_class_init (ThunarTreeViewModelClass *klass)
   GObjectClass *gobject_class;
   gpointer      g_iface;
 
-  gobject_class               = G_OBJECT_CLASS (klass);
-  gobject_class->dispose      = thunar_tree_view_model_dispose;
-  gobject_class->finalize     = thunar_tree_view_model_finalize;
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->dispose = thunar_tree_view_model_dispose;
+  gobject_class->finalize = thunar_tree_view_model_finalize;
   gobject_class->get_property = thunar_tree_view_model_get_property;
   gobject_class->set_property = thunar_tree_view_model_set_property;
 
@@ -380,11 +413,11 @@ thunar_tree_view_model_class_init (ThunarTreeViewModelClass *klass)
 
 
 static void
-thunar_tree_view_model_init (ThunarTreeViewModel *store)
+thunar_tree_view_model_init (ThunarTreeViewModel *model)
 {
   /* generate a unique stamp if we're in debug mode */
 #ifndef NDEBUG
-  store->stamp = g_random_int ();
+  model->stamp = g_random_int ();
 #endif
 }
 
@@ -394,7 +427,7 @@ static void
 thunar_tree_view_model_drag_dest_init (GtkTreeDragDestIface *iface)
 {
   iface->drag_data_received = thunar_tree_view_model_drag_data_received;
-  iface->row_drop_possible  = thunar_tree_view_model_row_drop_possible;
+  iface->row_drop_possible = thunar_tree_view_model_row_drop_possible;
 }
 
 
@@ -402,11 +435,11 @@ thunar_tree_view_model_drag_dest_init (GtkTreeDragDestIface *iface)
 static void
 thunar_tree_view_model_sortable_init (GtkTreeSortableIface *iface)
 {
-  iface->get_sort_column_id     = thunar_tree_view_model_get_sort_column_id;
-  iface->set_sort_column_id     = thunar_tree_view_model_set_sort_column_id;
-  iface->set_sort_func          = thunar_tree_view_model_set_sort_func;
-  iface->set_default_sort_func  = thunar_tree_view_model_set_default_sort_func;
-  iface->has_default_sort_func  = thunar_tree_view_model_has_default_sort_func;
+  iface->get_sort_column_id = thunar_tree_view_model_get_sort_column_id;
+  iface->set_sort_column_id = thunar_tree_view_model_set_sort_column_id;
+  iface->set_sort_func = thunar_tree_view_model_set_sort_func;
+  iface->set_default_sort_func = thunar_tree_view_model_set_default_sort_func;
+  iface->has_default_sort_func = thunar_tree_view_model_has_default_sort_func;
 }
 
 
@@ -414,19 +447,19 @@ thunar_tree_view_model_sortable_init (GtkTreeSortableIface *iface)
 static void
 thunar_tree_view_model_standard_view_model_init (ThunarStandardViewModelIface *iface)
 {
-  iface->get_job               = thunar_tree_view_model_get_job;
-  iface->set_job               = thunar_tree_view_model_set_job;
-  iface->get_file              = thunar_tree_view_model_get_file;
-  iface->get_folder            = thunar_tree_view_model_get_folder;
-  iface->set_folder            = thunar_tree_view_model_set_folder;
-  iface->get_show_hidden       = thunar_tree_view_model_get_show_hidden;
-  iface->set_show_hidden       = thunar_tree_view_model_set_show_hidden;
-  iface->get_paths_for_files   = thunar_tree_view_model_get_paths_for_files;
+  iface->get_job = thunar_tree_view_model_get_job;
+  iface->set_job = thunar_tree_view_model_set_job;
+  iface->get_file = thunar_tree_view_model_get_file;
+  iface->get_folder = thunar_tree_view_model_get_folder;
+  iface->set_folder = thunar_tree_view_model_set_folder;
+  iface->get_show_hidden = thunar_tree_view_model_get_show_hidden;
+  iface->set_show_hidden = thunar_tree_view_model_set_show_hidden;
+  iface->get_paths_for_files = thunar_tree_view_model_get_paths_for_files;
   iface->get_paths_for_pattern = thunar_tree_view_model_get_paths_for_pattern;
-  iface->get_file_size_binary  = thunar_tree_view_model_get_file_size_binary;
-  iface->set_file_size_binary  = thunar_tree_view_model_set_file_size_binary;
-  iface->set_folders_first     = thunar_tree_view_model_set_folders_first;
-  iface->get_statusbar_text    = thunar_tree_view_model_get_statusbar_text;
+  iface->get_file_size_binary = thunar_tree_view_model_get_file_size_binary;
+  iface->set_file_size_binary = thunar_tree_view_model_set_file_size_binary;
+  iface->set_folders_first = thunar_tree_view_model_set_folders_first;
+  iface->get_statusbar_text = thunar_tree_view_model_get_statusbar_text;
 }
 
 
@@ -434,18 +467,18 @@ thunar_tree_view_model_standard_view_model_init (ThunarStandardViewModelIface *i
 static void
 thunar_tree_view_model_tree_model_init (GtkTreeModelIface *iface)
 {
-  iface->get_flags        = thunar_tree_view_model_get_flags;
-  iface->get_n_columns    = thunar_tree_view_model_get_n_columns;
-  iface->get_column_type  = thunar_tree_view_model_get_column_type;
-  iface->get_iter         = thunar_tree_view_model_get_iter;
-  iface->get_path         = thunar_tree_view_model_get_path;
-  iface->get_value        = thunar_tree_view_model_get_value;
-  iface->iter_next        = thunar_tree_view_model_iter_next;
-  iface->iter_children    = thunar_tree_view_model_iter_children;
-  iface->iter_has_child   = thunar_tree_view_model_iter_has_child;
-  iface->iter_n_children  = thunar_tree_view_model_iter_n_children;
-  iface->iter_nth_child   = thunar_tree_view_model_iter_nth_child;
-  iface->iter_parent      = thunar_tree_view_model_iter_parent;
+  iface->get_flags = thunar_tree_view_model_get_flags;
+  iface->get_n_columns = thunar_tree_view_model_get_n_columns;
+  iface->get_column_type = thunar_tree_view_model_get_column_type;
+  iface->get_iter = thunar_tree_view_model_get_iter;
+  iface->get_path = thunar_tree_view_model_get_path;
+  iface->get_value = thunar_tree_view_model_get_value;
+  iface->iter_next = thunar_tree_view_model_iter_next;
+  iface->iter_children = thunar_tree_view_model_iter_children;
+  iface->iter_has_child = thunar_tree_view_model_iter_has_child;
+  iface->iter_n_children = thunar_tree_view_model_iter_n_children;
+  iface->iter_nth_child = thunar_tree_view_model_iter_nth_child;
+  iface->iter_parent = thunar_tree_view_model_iter_parent;
 }
 
 
@@ -477,53 +510,53 @@ thunar_tree_view_model_get_property (GObject    *object,
                                      GValue     *value,
                                      GParamSpec *pspec)
 {
-  ThunarTreeViewModel *store = THUNAR_TREE_VIEW_MODEL (object);
+  ThunarTreeViewModel *model = THUNAR_TREE_VIEW_MODEL (object);
 
   switch (prop_id)
     {
-    case PROP_CASE_SENSITIVE:
-      g_value_set_boolean (value, thunar_tree_view_model_get_case_sensitive (store));
-      break;
+      case PROP_CASE_SENSITIVE:
+        g_value_set_boolean (value, thunar_tree_view_model_get_case_sensitive (model));
+        break;
 
-    case PROP_DATE_STYLE:
-      g_value_set_enum (value, thunar_tree_view_model_get_date_style (store));
-      break;
+      case PROP_DATE_STYLE:
+        g_value_set_enum (value, thunar_tree_view_model_get_date_style (model));
+        break;
 
-    case PROP_DATE_CUSTOM_STYLE:
-      g_value_set_string (value, thunar_tree_view_model_get_date_custom_style (store));
-      break;
+      case PROP_DATE_CUSTOM_STYLE:
+        g_value_set_string (value, thunar_tree_view_model_get_date_custom_style (model));
+        break;
 
-    case PROP_FOLDER:
-      g_value_set_object (value, thunar_tree_view_model_get_folder (THUNAR_STANDARD_VIEW_MODEL (store)));
-      break;
+      case PROP_FOLDER:
+        g_value_set_object (value, thunar_tree_view_model_get_folder (THUNAR_STANDARD_VIEW_MODEL (model)));
+        break;
 
-    case PROP_FOLDERS_FIRST:
-      g_value_set_boolean (value, thunar_tree_view_model_get_folders_first (store));
-      break;
+      case PROP_FOLDERS_FIRST:
+        g_value_set_boolean (value, thunar_tree_view_model_get_folders_first (model));
+        break;
 
-    case PROP_NUM_FILES:
-      g_value_set_uint (value, thunar_tree_view_model_get_num_files (store));
-      break;
+      case PROP_NUM_FILES:
+        g_value_set_uint (value, thunar_tree_view_model_get_num_files (model));
+        break;
 
-    case PROP_SHOW_HIDDEN:
-      g_value_set_boolean (value, thunar_tree_view_model_get_show_hidden (THUNAR_STANDARD_VIEW_MODEL (store)));
-      break;
+      case PROP_SHOW_HIDDEN:
+        g_value_set_boolean (value, thunar_tree_view_model_get_show_hidden (THUNAR_STANDARD_VIEW_MODEL (model)));
+        break;
 
-    case PROP_FILE_SIZE_BINARY:
-      g_value_set_boolean (value, thunar_tree_view_model_get_file_size_binary (THUNAR_STANDARD_VIEW_MODEL (store)));
-      break;
+      case PROP_FILE_SIZE_BINARY:
+        g_value_set_boolean (value, thunar_tree_view_model_get_file_size_binary (THUNAR_STANDARD_VIEW_MODEL (model)));
+        break;
 
-    case PROP_FOLDER_ITEM_COUNT:
-      g_value_set_enum (value, thunar_tree_view_model_get_folder_item_count (store));
-      break;
+      case PROP_FOLDER_ITEM_COUNT:
+        g_value_set_enum (value, thunar_tree_view_model_get_folder_item_count (model));
+        break;
 
-    case PROP_LOADING:
-      g_value_set_boolean (value, thunar_tree_view_model_get_loading (store));
-      break;
+      case PROP_LOADING:
+        g_value_set_boolean (value, thunar_tree_view_model_get_loading (model));
+        break;
 
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-      break;
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+        break;
     }
 }
 
@@ -535,45 +568,45 @@ thunar_tree_view_model_set_property (GObject      *object,
                                      const GValue *value,
                                      GParamSpec   *pspec)
 {
-  ThunarTreeViewModel *store = THUNAR_TREE_VIEW_MODEL (object);
+  ThunarTreeViewModel *model = THUNAR_TREE_VIEW_MODEL (object);
 
   switch (prop_id)
     {
-    case PROP_CASE_SENSITIVE:
-      thunar_tree_view_model_set_case_sensitive (store, g_value_get_boolean (value));
-      break;
+      case PROP_CASE_SENSITIVE:
+        thunar_tree_view_model_set_case_sensitive (model, g_value_get_boolean (value));
+        break;
 
-    case PROP_DATE_STYLE:
-      thunar_tree_view_model_set_date_style (store, g_value_get_enum (value));
-      break;
+      case PROP_DATE_STYLE:
+        thunar_tree_view_model_set_date_style (model, g_value_get_enum (value));
+        break;
 
-    case PROP_DATE_CUSTOM_STYLE:
-      thunar_tree_view_model_set_date_custom_style (store, g_value_get_string (value));
-      break;
+      case PROP_DATE_CUSTOM_STYLE:
+        thunar_tree_view_model_set_date_custom_style (model, g_value_get_string (value));
+        break;
 
-    case PROP_FOLDER:
-      thunar_tree_view_model_set_folder (THUNAR_STANDARD_VIEW_MODEL (store), g_value_get_object (value), NULL);
-      break;
+      case PROP_FOLDER:
+        thunar_tree_view_model_set_folder (THUNAR_STANDARD_VIEW_MODEL (model), g_value_get_object (value), NULL);
+        break;
 
-    case PROP_FOLDERS_FIRST:
-      thunar_tree_view_model_set_folders_first (THUNAR_STANDARD_VIEW_MODEL (store), g_value_get_boolean (value));
-      break;
+      case PROP_FOLDERS_FIRST:
+        thunar_tree_view_model_set_folders_first (THUNAR_STANDARD_VIEW_MODEL (model), g_value_get_boolean (value));
+        break;
 
-    case PROP_SHOW_HIDDEN:
-      thunar_tree_view_model_set_show_hidden (THUNAR_STANDARD_VIEW_MODEL (store), g_value_get_boolean (value));
-      break;
+      case PROP_SHOW_HIDDEN:
+        thunar_tree_view_model_set_show_hidden (THUNAR_STANDARD_VIEW_MODEL (model), g_value_get_boolean (value));
+        break;
 
-    case PROP_FILE_SIZE_BINARY:
-      thunar_tree_view_model_set_file_size_binary (THUNAR_STANDARD_VIEW_MODEL (store), g_value_get_boolean (value));
-      break;
+      case PROP_FILE_SIZE_BINARY:
+        thunar_tree_view_model_set_file_size_binary (THUNAR_STANDARD_VIEW_MODEL (model), g_value_get_boolean (value));
+        break;
 
-    case PROP_FOLDER_ITEM_COUNT:
-      thunar_tree_view_model_set_folder_item_count (store, g_value_get_enum (value));
-      break;
+      case PROP_FOLDER_ITEM_COUNT:
+        thunar_tree_view_model_set_folder_item_count (model, g_value_get_enum (value));
+        break;
 
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-      break;
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+        break;
     }
 }
 
@@ -669,65 +702,65 @@ thunar_tree_view_model_set_sort_column_id (GtkTreeSortable *sortable,
 
   switch (sort_column_id)
     {
-    case THUNAR_COLUMN_DATE_CREATED:
-      model->sort_func = thunar_cmp_files_by_date_created;
-      break;
+      case THUNAR_COLUMN_DATE_CREATED:
+        model->sort_func = thunar_cmp_files_by_date_created;
+        break;
 
-    case THUNAR_COLUMN_DATE_ACCESSED:
-      model->sort_func = thunar_cmp_files_by_date_accessed;
-      break;
+      case THUNAR_COLUMN_DATE_ACCESSED:
+        model->sort_func = thunar_cmp_files_by_date_accessed;
+        break;
 
-    case THUNAR_COLUMN_DATE_MODIFIED:
-      model->sort_func = thunar_cmp_files_by_date_modified;
-      break;
+      case THUNAR_COLUMN_DATE_MODIFIED:
+        model->sort_func = thunar_cmp_files_by_date_modified;
+        break;
 
-    case THUNAR_COLUMN_DATE_DELETED:
-      model->sort_func = thunar_cmp_files_by_date_deleted;
-      break;
+      case THUNAR_COLUMN_DATE_DELETED:
+        model->sort_func = thunar_cmp_files_by_date_deleted;
+        break;
 
-    case THUNAR_COLUMN_RECENCY:
-      model->sort_func = thunar_cmp_files_by_recency;
-      break;
+      case THUNAR_COLUMN_RECENCY:
+        model->sort_func = thunar_cmp_files_by_recency;
+        break;
 
-    case THUNAR_COLUMN_LOCATION:
-      model->sort_func = thunar_cmp_files_by_location;
-      break;
+      case THUNAR_COLUMN_LOCATION:
+        model->sort_func = thunar_cmp_files_by_location;
+        break;
 
-    case THUNAR_COLUMN_GROUP:
-      model->sort_func = thunar_cmp_files_by_group;
-      break;
+      case THUNAR_COLUMN_GROUP:
+        model->sort_func = thunar_cmp_files_by_group;
+        break;
 
-    case THUNAR_COLUMN_MIME_TYPE:
-      model->sort_func = thunar_cmp_files_by_mime_type;
-      break;
+      case THUNAR_COLUMN_MIME_TYPE:
+        model->sort_func = thunar_cmp_files_by_mime_type;
+        break;
 
-    case THUNAR_COLUMN_FILE_NAME:
-    case THUNAR_COLUMN_NAME:
-      model->sort_func = thunar_file_compare_by_name;
-      break;
+      case THUNAR_COLUMN_FILE_NAME:
+      case THUNAR_COLUMN_NAME:
+        model->sort_func = thunar_file_compare_by_name;
+        break;
 
-    case THUNAR_COLUMN_OWNER:
-      model->sort_func = thunar_cmp_files_by_owner;
-      break;
+      case THUNAR_COLUMN_OWNER:
+        model->sort_func = thunar_cmp_files_by_owner;
+        break;
 
-    case THUNAR_COLUMN_PERMISSIONS:
-      model->sort_func = thunar_cmp_files_by_permissions;
-      break;
+      case THUNAR_COLUMN_PERMISSIONS:
+        model->sort_func = thunar_cmp_files_by_permissions;
+        break;
 
-    case THUNAR_COLUMN_SIZE:
-      model->sort_func = (model->folder_item_count != THUNAR_FOLDER_ITEM_COUNT_NEVER) ? (ThunarSortFunc) thunar_cmp_files_by_size_and_items_count : thunar_cmp_files_by_size;
-      break;
+      case THUNAR_COLUMN_SIZE:
+        model->sort_func = (model->folder_item_count != THUNAR_FOLDER_ITEM_COUNT_NEVER) ? (ThunarSortFunc) thunar_cmp_files_by_size_and_items_count : thunar_cmp_files_by_size;
+        break;
 
-    case THUNAR_COLUMN_SIZE_IN_BYTES:
-      model->sort_func = thunar_cmp_files_by_size_in_bytes;
-      break;
+      case THUNAR_COLUMN_SIZE_IN_BYTES:
+        model->sort_func = thunar_cmp_files_by_size_in_bytes;
+        break;
 
-    case THUNAR_COLUMN_TYPE:
-      model->sort_func = thunar_cmp_files_by_type;
-      break;
+      case THUNAR_COLUMN_TYPE:
+        model->sort_func = thunar_cmp_files_by_type;
+        break;
 
-    default:
-      _thunar_assert_not_reached ();
+      default:
+        _thunar_assert_not_reached ();
     }
 
   /* new sort sign */
@@ -798,53 +831,53 @@ thunar_tree_view_model_get_column_type (GtkTreeModel *model,
 {
   switch (idx)
     {
-    case THUNAR_COLUMN_DATE_CREATED:
-      return G_TYPE_STRING;
+      case THUNAR_COLUMN_DATE_CREATED:
+        return G_TYPE_STRING;
 
-    case THUNAR_COLUMN_DATE_ACCESSED:
-      return G_TYPE_STRING;
+      case THUNAR_COLUMN_DATE_ACCESSED:
+        return G_TYPE_STRING;
 
-    case THUNAR_COLUMN_DATE_MODIFIED:
-      return G_TYPE_STRING;
+      case THUNAR_COLUMN_DATE_MODIFIED:
+        return G_TYPE_STRING;
 
-    case THUNAR_COLUMN_DATE_DELETED:
-      return G_TYPE_STRING;
+      case THUNAR_COLUMN_DATE_DELETED:
+        return G_TYPE_STRING;
 
-    case THUNAR_COLUMN_RECENCY:
-      return G_TYPE_STRING;
+      case THUNAR_COLUMN_RECENCY:
+        return G_TYPE_STRING;
 
-    case THUNAR_COLUMN_LOCATION:
-      return G_TYPE_STRING;
+      case THUNAR_COLUMN_LOCATION:
+        return G_TYPE_STRING;
 
-    case THUNAR_COLUMN_GROUP:
-      return G_TYPE_STRING;
+      case THUNAR_COLUMN_GROUP:
+        return G_TYPE_STRING;
 
-    case THUNAR_COLUMN_MIME_TYPE:
-      return G_TYPE_STRING;
+      case THUNAR_COLUMN_MIME_TYPE:
+        return G_TYPE_STRING;
 
-    case THUNAR_COLUMN_NAME:
-      return G_TYPE_STRING;
+      case THUNAR_COLUMN_NAME:
+        return G_TYPE_STRING;
 
-    case THUNAR_COLUMN_OWNER:
-      return G_TYPE_STRING;
+      case THUNAR_COLUMN_OWNER:
+        return G_TYPE_STRING;
 
-    case THUNAR_COLUMN_PERMISSIONS:
-      return G_TYPE_STRING;
+      case THUNAR_COLUMN_PERMISSIONS:
+        return G_TYPE_STRING;
 
-    case THUNAR_COLUMN_SIZE:
-      return G_TYPE_STRING;
+      case THUNAR_COLUMN_SIZE:
+        return G_TYPE_STRING;
 
-    case THUNAR_COLUMN_SIZE_IN_BYTES:
-      return G_TYPE_STRING;
+      case THUNAR_COLUMN_SIZE_IN_BYTES:
+        return G_TYPE_STRING;
 
-    case THUNAR_COLUMN_TYPE:
-      return G_TYPE_STRING;
+      case THUNAR_COLUMN_TYPE:
+        return G_TYPE_STRING;
 
-    case THUNAR_COLUMN_FILE:
-      return THUNAR_TYPE_FILE;
+      case THUNAR_COLUMN_FILE:
+        return THUNAR_TYPE_FILE;
 
-    case THUNAR_COLUMN_FILE_NAME:
-      return G_TYPE_STRING;
+      case THUNAR_COLUMN_FILE_NAME:
+        return G_TYPE_STRING;
     }
 
   _thunar_assert_not_reached ();
@@ -859,10 +892,10 @@ thunar_tree_view_model_get_iter (GtkTreeModel *model,
                                  GtkTreePath  *path)
 {
   ThunarTreeViewModel *_model;
-  GSequenceIter *ptr;
-  gint *indices;
-  gint  depth, loc;
-  Node *node;
+  GSequenceIter       *ptr;
+  gint                *indices;
+  gint                 depth, loc;
+  Node                *node;
 
   _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), FALSE);
   _thunar_return_val_if_fail (iter->stamp != THUNAR_TREE_VIEW_MODEL (model)->stamp, FALSE);
@@ -892,16 +925,16 @@ thunar_tree_view_model_get_iter (GtkTreeModel *model,
 
 
 
-static GtkTreePath*
+static GtkTreePath *
 thunar_tree_view_model_get_path (GtkTreeModel *model,
                                  GtkTreeIter  *iter)
 {
   ThunarTreeViewModel *_model;
 
-  GtkTreePath *path;
-  Node        *node;
-  gint        *indices;
-  gint         depth;
+  GtkTreePath         *path;
+  Node                *node;
+  gint                *indices;
+  gint                 depth;
 
   _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), NULL);
   _thunar_return_val_if_fail (iter->stamp != THUNAR_TREE_VIEW_MODEL (model)->stamp, NULL);
@@ -917,7 +950,7 @@ thunar_tree_view_model_get_path (GtkTreeModel *model,
       indices[d] = g_sequence_iter_get_position (node->ptr);
       node = node->parent;
     }
-    
+
   return gtk_tree_path_new_from_indicesv (indices, depth);
 }
 
@@ -957,8 +990,8 @@ thunar_tree_view_model_iter_children (GtkTreeModel *model,
                                       GtkTreeIter  *parent)
 {
   GSequenceIter *ptr;
-  Node *node;
-  
+  Node          *node;
+
   _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), FALSE);
   _thunar_return_val_if_fail (iter->stamp != THUNAR_TREE_VIEW_MODEL (model)->stamp, FALSE);
 
@@ -1017,7 +1050,7 @@ thunar_tree_view_model_iter_nth_child (GtkTreeModel *model,
                                        gint          n)
 {
   GSequenceIter *ptr;
-  Node *node;
+  Node          *node;
 
   _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), FALSE);
   _thunar_return_val_if_fail (iter->stamp != THUNAR_TREE_VIEW_MODEL (model)->stamp, FALSE);
@@ -1042,8 +1075,8 @@ thunar_tree_view_model_iter_parent (GtkTreeModel *model,
                                     GtkTreeIter  *child)
 {
   GSequenceIter *ptr;
-  Node *node;
-  
+  Node          *node;
+
   _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), FALSE);
   _thunar_return_val_if_fail (iter->stamp != THUNAR_TREE_VIEW_MODEL (model)->stamp, FALSE);
   _thunar_return_val_if_fail (child->user_data != NULL, FALSE);
@@ -1065,7 +1098,7 @@ thunar_tree_view_model_ref_node (GtkTreeModel *model,
                                  GtkTreeIter  *iter)
 {
   Node *node;
-  
+
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
   _thunar_return_if_fail (iter->stamp != THUNAR_TREE_VIEW_MODEL (model)->stamp);
   _thunar_return_if_fail (iter->user_data != NULL);
@@ -1083,3 +1116,187 @@ thunar_tree_view_model_unref_node (GtkTreeModel *model,
   /* DO NOTHING */
 }
 
+
+
+static ThunarFolder *
+thunar_tree_view_model_get_folder (ThunarStandardViewModel *model)
+{
+  return THUNAR_TREE_VIEW_MODEL (model)->dir;
+}
+
+
+
+static gboolean
+thunar_tree_view_model_get_show_hidden (ThunarStandardViewModel *model)
+{
+  return THUNAR_TREE_VIEW_MODEL (model)->show_hidden;
+}
+
+
+
+static gboolean
+thunar_tree_view_model_get_file_size_binary (ThunarStandardViewModel *model)
+{
+  return THUNAR_TREE_VIEW_MODEL (model)->file_size_binary;
+}
+
+
+
+static ThunarFile *
+thunar_tree_view_model_get_file (ThunarStandardViewModel *model,
+                                 GtkTreeIter             *iter)
+{
+  return ((Node *) g_sequence_get (iter->user_data))->file;
+}
+
+
+
+static GList *
+thunar_tree_view_model_get_paths_for_files (ThunarStandardViewModel *model,
+                                            GList                   *files)
+{
+  /* TODO: */
+  return NULL;
+}
+
+
+
+static GList *
+thunar_tree_view_model_get_paths_for_pattern (ThunarStandardViewModel *model,
+                                              const gchar             *pattern,
+                                              gboolean                 case_sensitive,
+                                              gboolean                 match_diacritics)
+{
+  /* TODO: */
+  return NULL;
+}
+
+
+
+static gchar *
+thunar_tree_view_model_get_statusbar_text (ThunarStandardViewModel *model,
+                                           GList                   *selected_items)
+{
+  /* TODO: */
+  return NULL;
+}
+
+
+
+static ThunarJob *
+thunar_tree_view_model_get_job (ThunarStandardViewModel *model)
+{
+  /* TODO: */
+  return NULL;
+}
+
+
+
+static void
+thunar_tree_view_model_set_folder (ThunarStandardViewModel *model,
+                                   ThunarFolder            *folder,
+                                   gchar                   *search_query)
+{
+  ThunarTreeViewModel *_model;
+
+  _model = THUNAR_TREE_VIEW_MODEL (model);
+
+  /* idle free & release */
+  thunar_tree_view_model_cleanup (_model, TRUE);
+
+  _model->dir = folder;
+
+  thunar_tree_view_model_load_dir (_model, _model->root);
+}
+
+
+
+static void
+thunar_tree_view_model_set_show_hidden (ThunarStandardViewModel *model,
+                                        gboolean                 show_hidden)
+{
+  /* TODO: */
+}
+
+
+
+static void
+thunar_tree_view_model_set_folders_first (ThunarStandardViewModel *model,
+                                          gboolean                 folders_first)
+{
+  /* TODO */
+}
+
+
+
+static void
+thunar_tree_view_model_set_file_size_binary (ThunarStandardViewModel *model,
+                                             gboolean                 file_size_binary)
+{
+  /* TODO */
+}
+
+
+
+static void
+thunar_tree_view_model_set_job (ThunarStandardViewModel *model,
+                                ThunarJob               *job)
+{
+  /* TODO */
+}
+
+
+
+static gboolean
+thunar_tree_view_model_get_case_sensitive (ThunarTreeViewModel *model)
+{
+  return model->sort_case_sensitive;
+}
+
+
+
+static ThunarDateStyle
+thunar_tree_view_model_get_date_style (ThunarTreeViewModel *model)
+{
+  return model->date_style;
+}
+
+
+
+static const char *
+thunar_tree_view_model_get_date_custom_style (ThunarTreeViewModel *model)
+{
+  return model->date_custom_style;
+}
+
+
+
+static gint
+thunar_tree_view_model_get_num_files (ThunarTreeViewModel *model)
+{
+  return model->n_visible_files;
+}
+
+
+
+static gboolean
+thunar_tree_view_model_get_folders_first (ThunarTreeViewModel *model)
+{
+  return model->sort_folders_first;
+}
+
+
+
+static gint
+thunar_tree_view_model_get_folder_item_count (ThunarTreeViewModel *model)
+{
+  return model->folder_item_count;
+}
+
+
+
+static void
+thunar_tree_view_model_load_dir (ThunarTreeViewModel *model,
+                                 Node                *node)
+{
+}
