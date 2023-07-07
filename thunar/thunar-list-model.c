@@ -2704,9 +2704,8 @@ static ThunarFile*
 thunar_list_model_get_file (ThunarStandardViewModel *model,
                             GtkTreeIter             *iter)
 {
-  ThunarListModel   *store = THUNAR_LIST_MODEL (model);
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
-  _thunar_return_val_if_fail (iter->stamp == store->stamp, NULL);
+  _thunar_return_val_if_fail (iter->stamp == THUNAR_LIST_MODEL (model)->stamp, NULL);
 
   return g_object_ref (g_sequence_get (iter->user_data));
 }
