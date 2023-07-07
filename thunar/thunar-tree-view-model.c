@@ -3490,12 +3490,11 @@ static ThunarFile*
 thunar_tree_view_model_get_file (ThunarStandardViewModel *model,
                                  GtkTreeIter             *iter)
 {
-  ThunarTreeViewModel *store = THUNAR_TREE_VIEW_MODEL(model);
   GNode      *node;
   ThunarFile *file = NULL;
 
-  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (store), NULL);
-  _thunar_return_val_if_fail (iter->stamp == store->stamp, NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), NULL);
+  _thunar_return_val_if_fail (iter->stamp == THUNAR_TREE_VIEW_MODEL (model)->stamp, NULL);
 
   node = iter->user_data;
   if (node != NULL && node->data != NULL)
