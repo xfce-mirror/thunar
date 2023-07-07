@@ -1245,7 +1245,7 @@ thunar_details_view_row_collapsed (GtkTreeView       *tree_view,
                                    ThunarDetailsView *view)
 {
   /* schedule a cleanup of the tree model; i.e remove nodes that are not being used (ref == 0) */
-  thunar_tree_view_model_cleanup (THUNAR_TREE_VIEW_MODEL (THUNAR_STANDARD_VIEW (view)->model));
+  // thunar_tree_view_model_cleanup (THUNAR_TREE_VIEW_MODEL (THUNAR_STANDARD_VIEW (view)->model));
 }
 
 
