@@ -2186,7 +2186,8 @@ thunar_list_model_search_folder (ThunarListModel           *model,
       if (show_hidden == FALSE)
         {
           /* same logic as thunar_file_is_hidden() */
-          if (g_file_info_get_is_hidden (info) || g_file_info_get_is_backup (info))
+          if (g_file_info_get_attribute_boolean (info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN)
+              || g_file_info_get_attribute_boolean (info, G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP))
             {
               g_object_unref (file);
               g_object_unref (info);
