@@ -24,6 +24,7 @@
 
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-file.h>
+#include <thunar/thunar-standard-view-model.h>
 
 #define THUNAR_THREADS_ENTER \
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS \
@@ -94,6 +95,8 @@ void        thunar_util_clip_view_background     (GtkCellRenderer      *cell,
                                                   const GdkRectangle   *background_area,
                                                   GtkWidget            *widget,
                                                   GtkCellRendererState  flags);
+gchar      *thunar_util_get_statusbar_text       (ThunarStandardViewModel *model,
+                                                  GList                   *selected_items);
 
 G_END_DECLS;
 
