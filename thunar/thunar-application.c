@@ -1907,7 +1907,12 @@ thunar_application_rename_file (ThunarApplication      *application,
                                 const gchar            *startup_id,
                                 ThunarOperationLogMode  log_mode)
 {
-  ThunarJob *job;
+  ThunarJob   *job;
+  gint         response;
+  const gchar *display_name;
+  gchar       *cmd   = NULL,
+              *uri   = NULL;
+  GError      *error = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
@@ -1915,6 +1920,27 @@ thunar_application_rename_file (ThunarApplication      *application,
   _thunar_return_if_fail (startup_id != NULL);
 
   /* TODO pass the startup ID to the rename dialog */
+
+  if (thunar_file_is_desktop_file (file))
+    {
+      response = thunar_dialog_show_rename_launcher_options (NULL);
+      if (response == THUNAR_RESPONSE_LAUNCHERNAME)
+        {
+          uri = thunar_file_dup_uri (file);
+          display_name = gdk_display_get_name (gdk_screen_get_display (screen));
+          cmd = g_strdup_printf ("exo-desktop-item-edit \"--display=%s\" \"%s\"", display_name, uri);
+
+          if (xfce_spawn_command_line (NULL, cmd, FALSE, FALSE, FALSE, &error) == FALSE)
+            thunar_dialogs_show_error (screen, error, _("Failed to edit launcher via command \"%s\""), cmd);
+
+          g_free (cmd);
+          g_free (uri);
+          g_clear_error (&error);
+          return;
+        }
+      else if (response != THUNAR_RESPONSE_FILENAME)
+        return;
+    }
 
   /* run the rename dialog */
   job = thunar_dialogs_show_rename_file (screen, file, log_mode);
