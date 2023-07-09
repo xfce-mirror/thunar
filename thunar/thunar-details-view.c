@@ -1207,6 +1207,8 @@ thunar_details_view_row_expanded (GtkTreeView       *tree_view,
   if (thunar_view_get_loading (THUNAR_VIEW (view)))
     return;
 
+  thunar_tree_view_model_row_expanded (THUNAR_TREE_VIEW_MODEL (model), parent);
+
   has_next = gtk_tree_model_iter_children (model, &child, parent);
 
   /* StandardView only requests thumbnails for direct descendants of

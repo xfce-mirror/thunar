@@ -152,10 +152,6 @@ static gboolean          thunar_tree_view_model_iter_nth_child (GtkTreeModel *mo
 static gboolean          thunar_tree_view_model_iter_parent (GtkTreeModel *model,
                                                              GtkTreeIter  *iter,
                                                              GtkTreeIter  *child);
-static void              thunar_tree_view_model_ref_node (GtkTreeModel *tree_model,
-                                                          GtkTreeIter  *iter);
-static void              thunar_tree_view_model_unref_node (GtkTreeModel *tree_model,
-                                                            GtkTreeIter  *iter);
 
 
 /*************************************************
@@ -221,8 +217,7 @@ static gint              thunar_tree_view_model_cmp_nodes (gconstpointer a,
                                                            gconstpointer b,
                                                            gpointer      data);
 static void              thunar_tree_view_model_sort (ThunarTreeViewModel *model);
-static void              thunar_tree_view_model_load_dir (ThunarTreeViewModel *model,
-                                                          Node                *node);
+static void              thunar_tree_view_model_load_dir (Node *node);
 static void              thunar_tree_view_model_cleanup_node (Node *node);
 
 
@@ -269,6 +264,8 @@ struct _ThunarTreeViewModel
   gboolean              show_hidden;
 
   gint                  n_visible_files;
+
+  gint                  row_inserted_id;
 };
 
 
@@ -285,6 +282,7 @@ struct _Node
   gint                 n_children;
   gboolean             loaded;
   gboolean             loading;
+  gboolean             load_children;
 
   GHashTable          *set;
 
@@ -428,6 +426,8 @@ thunar_tree_view_model_init (ThunarTreeViewModel *model)
 #endif
 
   model->sort_func = thunar_file_compare_by_name;
+
+  model->row_inserted_id = g_signal_lookup ("row-inserted", GTK_TYPE_TREE_MODEL);
 }
 
 
@@ -488,8 +488,6 @@ thunar_tree_view_model_tree_model_init (GtkTreeModelIface *iface)
   iface->iter_n_children = thunar_tree_view_model_iter_n_children;
   iface->iter_nth_child = thunar_tree_view_model_iter_nth_child;
   iface->iter_parent = thunar_tree_view_model_iter_parent;
-  iface->ref_node = thunar_tree_view_model_ref_node;
-  iface->unref_node = thunar_tree_view_model_unref_node;
 }
 
 
@@ -1351,33 +1349,6 @@ thunar_tree_view_model_iter_parent (GtkTreeModel *model,
 
 
 
-static void
-thunar_tree_view_model_ref_node (GtkTreeModel *model,
-                                 GtkTreeIter  *iter)
-{
-  Node *node;
-
-  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
-  _thunar_return_if_fail (iter->stamp == THUNAR_TREE_VIEW_MODEL (model)->stamp);
-  _thunar_return_if_fail (iter->user_data != NULL);
-
-  node = g_sequence_get (iter->user_data);
-  if (node->loaded || node->loading)
-    return;
-  thunar_tree_view_model_load_dir (THUNAR_TREE_VIEW_MODEL (model), node);
-}
-
-
-
-static void
-thunar_tree_view_model_unref_node (GtkTreeModel *model,
-                                   GtkTreeIter  *iter)
-{
-  /* DO NOTHING */
-}
-
-
-
 static ThunarFolder *
 thunar_tree_view_model_get_folder (ThunarStandardViewModel *model)
 {
@@ -1485,7 +1456,8 @@ thunar_tree_view_model_set_folder (ThunarStandardViewModel *model,
   file = thunar_folder_get_corresponding_file (_model->dir);
   _model->root = thunar_tree_view_model_new_node (file);
   _model->root->model = _model;
-  thunar_tree_view_model_load_dir (_model, _model->root);
+  _model->root->load_children = TRUE;
+  thunar_tree_view_model_load_dir (_model->root);
 }
 
 
@@ -1737,6 +1709,8 @@ _thunar_tree_view_model_node_destroy (Node *node)
       g_object_unref (node->dir);
     }
 
+  g_print ("%d\n", node->depth);
+
   /* g_sequence_free will recursively free the children nodes */
   if (node->children != NULL)
     g_sequence_free (node->children);
@@ -1816,6 +1790,9 @@ thunar_tree_view_model_node_add_children (Node  *node,
       indices[depth - 1] = g_sequence_iter_get_position (child->ptr);
       GTK_TREE_ITER_INIT (iter, node->model->stamp, child->ptr);
       gtk_tree_model_row_inserted (GTK_TREE_MODEL (node->model), path, &iter);
+
+      if (node->load_children)
+        thunar_tree_view_model_load_dir (child);
     }
 
   gtk_tree_path_free (path);
@@ -1995,15 +1972,17 @@ _thunar_tree_view_model_dir_notify_loading (Node *node, GParamSpec *spec, Thunar
 
 
 static void
-thunar_tree_view_model_load_dir (ThunarTreeViewModel *model,
-                                 Node                *node)
+thunar_tree_view_model_load_dir (Node *node)
 {
   GList *files;
 
-  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
   _thunar_return_if_fail (node != NULL);
 
+  if (node->loaded)
+    return;
+
   node->loading = TRUE;
+
   if (!thunar_file_is_directory (node->file))
     {
       node->loaded = TRUE;
@@ -2041,5 +2020,27 @@ static void
 thunar_tree_view_model_cleanup_node (Node *node)
 {
   _thunar_return_if_fail (node != NULL);
+  /* clean up the nodes in the background*/
   g_idle_add ((GSourceFunc) _thunar_tree_view_model_cleanup_idle, node);
+}
+
+
+
+void
+thunar_tree_view_model_row_expanded (ThunarTreeViewModel *model,
+                                     GtkTreeIter         *tree_iter)
+{
+  Node          *node, *_node;
+  GSequenceIter *iter;
+
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
+  _thunar_return_if_fail (tree_iter != NULL && tree_iter->user_data != NULL);
+
+  node = g_sequence_get (tree_iter->user_data);
+  g_assert (node->children != NULL);
+  for (iter = g_sequence_get_begin_iter (node->children); !g_sequence_iter_is_end (iter); iter = g_sequence_iter_next (iter))
+    {
+      _node = g_sequence_get (iter);
+      thunar_tree_view_model_load_dir (_node);
+    }
 }
