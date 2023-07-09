@@ -758,7 +758,7 @@ msgid ""
 "The selected application is used to open this and other files of type "
 "\"%s\"."
 msgstr ""
-"Η επιλεγμένη εφαρμογή καλείται να ανοίξει αυτό και τα άλλα αρχεία του τύπου "
+"Η επιλεγμένη εφαρμογή καλείται να ανοίξει αυτό και τα άλλα αρχεία τύπου "
 "\"%s\"."
 
 #: ../thunar/thunar-chooser-button.c:497
@@ -772,15 +772,14 @@ msgstr "Άλλη εφαρμογή..."
 #. create the "Custom command" expand
 #: ../thunar/thunar-chooser-dialog.c:256
 msgid "Use a _custom command:"
-msgstr "Χρήση προσαρμοσμένης εντο_λής:"
+msgstr "Χρήση εντο_λής:"
 
 #: ../thunar/thunar-chooser-dialog.c:257
 msgid ""
 "Use a custom command for an application that is not available from the above"
 " application list."
 msgstr ""
-"Χρήση προσαρμοσμένης εντολής για εφαρμογή που δεν είναι διαθέσιμη στην "
-"παραπάνω λίστα."
+"Χρήση εντολής για εφαρμογή που δεν είναι διαθέσιμη στην παραπάνω λίστα."
 
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:278
@@ -790,7 +789,7 @@ msgstr "_Περιήγηση..."
 #. create the "Use as default for this kind of file" button
 #: ../thunar/thunar-chooser-dialog.c:284
 msgid "Use as _default for this kind of file"
-msgstr "Χρήση ως εξ _ορισμού για αυτό τον τύπο αρχείου"
+msgstr "Ορισμός πρ_οεπιλογής για αυτό αυτό το είδος αρχείου"
 
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
@@ -826,7 +825,7 @@ msgstr "Α_ποσυσχέτιση"
 #: ../thunar/thunar-chooser-dialog.c:687
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
-msgstr "Άνοιγμα του <i>%s</i> και των άλλων αρχείων του τύπου \"%s\" με:"
+msgstr "Άνοιγμα του <i>%s</i> και των άλλων αρχείων τύπου \"%s\" με:"
 
 #: ../thunar/thunar-chooser-dialog.c:695
 #, c-format
@@ -834,8 +833,8 @@ msgid ""
 "Browse the file system to select an application to open files of type "
 "\"%s\"."
 msgstr ""
-"Περιηγηθείτε στο σύστημα αρχείων για να επιλέξετε την εφαρμογή που θα "
-"χρησιμοποιείτε για το άνοιγμα των αρχείων τύπου \"%s\"."
+"Περιήγηση στο σύστημα αρχείων για να επιλέξετε την εφαρμογή για το άνοιγμα "
+"αρχείων τύπου \"%s\"."
 
 #: ../thunar/thunar-chooser-dialog.c:701
 #, c-format
@@ -843,8 +842,8 @@ msgid ""
 "Change the default application for files of type \"%s\" to the selected "
 "application."
 msgstr ""
-"Αλλαγή της προεπιλεγμένης εφαρμογής για το άνοιγμα αρχείων τύπου \"%s\" για "
-"την επιλεγμένη εφαρμογή."
+"Αλλαγή της προεπιλογής για το άνοιγμα αρχείων τύπου \"%s\" με την επιλεγμένη"
+" εφαρμογή."
 
 #: ../thunar/thunar-chooser-dialog.c:747
 #, c-format
@@ -1030,11 +1029,11 @@ msgstr "Α_πόκρυψη"
 #. create the "Use Default" button
 #: ../thunar/thunar-column-editor.c:292
 msgid "Use De_fault"
-msgstr "Χρήση π_ροκαθορισμένου"
+msgstr "Χρήση π_ροκαθορισμένων"
 
 #: ../thunar/thunar-column-editor.c:301
 msgid "Column Sizing"
-msgstr "Μέγεθος στηλών"
+msgstr "Μέγεθος στήλης"
 
 #. create the label that explains the column sizing option
 #: ../thunar/thunar-column-editor.c:317
@@ -1046,18 +1045,18 @@ msgid ""
 msgstr ""
 "Εξ ορισμού οι στήλες θα επεκτείνονται αυτόματα, εάν \n"
 "είναι απαραίτητο, ώστε το κείμενο να είναι πλήρως \n"
-"ορατό. Εάν απενεργοποιήσετε αυτή τη συμπεριφορά, \n"
-"ο διαχειριστής αρχείων θα χρησιμοποιεί για τις στήλες \n"
-"τα καθορισμένα από το χρήστη πλάτη."
+"ορατό. Εάν το απενεργοποιήσετε πιο κάτω, \n"
+"ο διαχειριστής αρχείων θα χρησιμοποιεί πάντα το \n"
+"πλάτος που ο χρήστης καθορίζει σε κάθε στήλη."
 
 #. create the "Automatically expand columns as needed" button
 #: ../thunar/thunar-column-editor.c:329
 msgid "Automatically _expand columns as needed"
-msgstr "Αυτόματη _επέκταση στηλών"
+msgstr "Αυτόματη _επέκταση"
 
 #: ../thunar/thunar-column-editor.c:343
 msgid "Size Column of Folders"
-msgstr "Στήλη μεγεθών φακέλων"
+msgstr "Στήλη μεγέθους φακέλων"
 
 #. explain what it does
 #: ../thunar/thunar-column-editor.c:356
@@ -2685,10 +2684,10 @@ msgid ""
 "removable media and remote location browsing\n"
 "will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
-"Φαίνεται ότι το <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> δεν είναι διαθέσιμο\n"
-"Σημαντικά χαρακτηριστικά όπως, τα απορρίματα\n"
-"τα αφαιρούμενα μέσα και η περιήγηση απομακρυσμένης τοποθεσίας\n"
-"δεν θα λειτουργήσουν. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Περισσότερα]</a>"
+"Φαίνεται σαν να μην υπάρχει το <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a>.\n"
+"Σημαντικά χαρακτηριστικά όπως, απορρίμματα\n"
+"αφαιρούμενα μέσα και η περιήγηση απομακρυσμένης\n"
+"τοποθεσίας δεν θα λειτουργήσουν. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Περισσότερα]</a>"
 
 #. Shortcuts
 #: ../thunar/thunar-preferences-dialog.c:1332
@@ -2824,7 +2823,7 @@ msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "This feature will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
-"Φαίνεται ότι το <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> δεν είναι διαθέσιμο.\n"
+"Φαίνεται σαν να μην υπάρχει το <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a>.\n"
 "Αυτή η δυνατότητα δεν θα αξιοποιηθεί. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Περισσότερα]</a>"
 
 #: ../thunar/thunar-properties-dialog.c:810
