@@ -1169,7 +1169,7 @@ thunar_util_get_statusbar_text (ThunarStandardViewModel *model,
   const gchar       *content_type;
   const gchar       *original_path;
   GtkTreeIter        iter;
-  ThunarFile        *file;
+  ThunarFile        *file, *_file;
   guint64            size;
   GList             *lp;
   GList             *text_list = NULL;
@@ -1205,7 +1205,9 @@ thunar_util_get_statusbar_text (ThunarStandardViewModel *model,
       has_next = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (model), &iter);
       while (has_next)
         {
-          relevant_files = g_list_append (relevant_files, thunar_standard_view_model_get_file (model, &iter));
+          _file = thunar_standard_view_model_get_file (model, &iter);
+          if (_file != NULL)
+            relevant_files = g_list_append (relevant_files, _file);
           has_next = gtk_tree_model_iter_next (GTK_TREE_MODEL (model), &iter);
         }
 
@@ -1234,7 +1236,9 @@ thunar_util_get_statusbar_text (ThunarStandardViewModel *model,
 
       /* get the file for the given iter */
       file = thunar_standard_view_model_get_file (model, &iter);
-      g_assert (THUNAR_IS_FILE (file));
+
+      if (file == NULL)
+        return g_strdup ("");
 
       /* determine the content type of the file */
       content_type = thunar_file_get_content_type (file);
@@ -1326,7 +1330,9 @@ thunar_util_get_statusbar_text (ThunarStandardViewModel *model,
       for (lp = selected_items; lp != NULL; lp = lp->next)
         {
           gtk_tree_model_get_iter (GTK_TREE_MODEL (model), &iter, lp->data);
-          relevant_files = g_list_append (relevant_files, thunar_standard_view_model_get_file (model, &iter));
+          _file = thunar_standard_view_model_get_file (model, &iter);
+          if (_file != NULL)
+            relevant_files = g_list_append (relevant_files, _file);
         }
       selected_string = thunar_util_get_statusbar_text_for_files (model, relevant_files, show_file_size_binary_format);
       temp_string = g_strdup_printf (_ ("Selection: %s"), selected_string);

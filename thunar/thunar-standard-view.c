@@ -3998,10 +3998,11 @@ thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
         }
 
       /* queue a thumbnail request */
-      thunar_thumbnailer_queue_files (standard_view->priv->thumbnailer,
-                                      lazy_request, visible_files,
-                                      &standard_view->priv->thumbnail_request,
-                                      THUNAR_THUMBNAIL_SIZE_DEFAULT);
+      if (visible_files != NULL)
+        thunar_thumbnailer_queue_files (standard_view->priv->thumbnailer,
+                                        lazy_request, visible_files,
+                                        &standard_view->priv->thumbnail_request,
+                                        THUNAR_THUMBNAIL_SIZE_DEFAULT);
 
       /* release the file list */
       g_list_free_full (visible_files, g_object_unref);
