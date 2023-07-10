@@ -214,7 +214,7 @@ static void              thunar_tree_view_model_set_folder_item_count (ThunarTre
 
 /* Internal helper funcs */
 static Node             *thunar_tree_view_model_new_node (ThunarFile *file);
-static Node             *thunar_tree_view_model_new_dummy_node ();
+static Node             *thunar_tree_view_model_new_dummy_node (void);
 static gboolean          thunar_tree_view_model_node_has_dummy_child (Node *node);
 static void              thunar_tree_view_model_node_add_child (Node *node,
                                                                 Node *child);
@@ -1548,6 +1548,14 @@ thunar_tree_view_model_set_folder (ThunarStandardViewModel *model,
   if (_model->dir == folder)
     return;
 
+  if (_model->root != NULL)
+    thunar_tree_view_model_cleanup_node (_model->root);
+  _model->root = NULL;
+
+  if (_model->dir != NULL)
+    g_object_unref (_model->dir);
+  _model->dir = NULL;
+
   _model->dir = folder;
   if (_model->dir == NULL)
     return;
@@ -1803,7 +1811,7 @@ thunar_tree_view_model_new_node (ThunarFile *file)
 
 
 static Node *
-thunar_tree_view_model_new_dummy_node ()
+thunar_tree_view_model_new_dummy_node (void)
 {
   Node *_node = g_malloc (sizeof (Node));
 
@@ -1869,8 +1877,7 @@ thunar_tree_view_model_node_add_child (Node *node,
       child->ptr = iter;
       g_assert (iter != NULL);
 
-      /* free the dummy node */
-      thunar_tree_view_model_node_destroy (_child);
+      g_free (_child); /* free the dummy node */
 
       /* notify the view */
       GTK_TREE_ITER_INIT (tree_iter, node->model->stamp, child->ptr);
@@ -1901,7 +1908,6 @@ thunar_tree_view_model_node_add_dummy_child (Node *node)
 {
   GtkTreeIter    tree_iter;
   GtkTreePath   *path;
-  GSequenceIter *iter;
   Node          *dummy;
 
   dummy = thunar_tree_view_model_new_dummy_node ();
@@ -2109,7 +2115,19 @@ _thunar_tree_view_model_dir_files_removed (Node *node, GList *files)
       thunar_tree_view_model_node_destroy (g_sequence_get (iter));
 
       g_sequence_remove (iter);
-      g_hash_table_remove (node->children, file);
+      g_hash_table_remove (node->set, file);
+      node->n_children--;
+    }
+
+  g_assert (node->n_children >= 0);
+
+  /* notify the model if all children have been deleted */
+  if (node->ptr != NULL && node->n_children == 0)
+    {
+      GTK_TREE_ITER_INIT (tree_iter, node->model->stamp, node->ptr);
+      path = gtk_tree_model_get_path (GTK_TREE_MODEL (node->model), &tree_iter);
+      gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (node->model), path, &tree_iter);
+      gtk_tree_path_free (path);
     }
 }
 
@@ -2118,11 +2136,6 @@ _thunar_tree_view_model_dir_files_removed (Node *node, GList *files)
 static void
 _thunar_tree_view_model_dir_notify_loading (Node *node, GParamSpec *spec, ThunarFolder *dir)
 {
-  Node          *_node;
-  GSequenceIter *iter;
-  GtkTreeIter    tree_iter;
-  GtkTreePath   *path;
-
   if (!thunar_folder_get_loading (dir))
     {
       node->loaded = TRUE;
@@ -2210,5 +2223,46 @@ thunar_tree_view_model_file_count_callback (ExoJob  *job,
 static void
 thunar_tree_view_model_node_destroy (Node *node)
 {
-  /* TODO: */
+  GtkTreeIter    tree_iter;
+  GtkTreePath   *path;
+  GSequenceIter *iter;
+
+  if (node->file == NULL)
+    {
+      /* we have found a dummy node */
+      g_free (node);
+      return;
+    }
+
+  g_assert (node->file != NULL);
+
+  if (node->dir != NULL)
+    {
+      g_signal_handlers_disconnect_by_data (G_OBJECT (node->dir), node);
+      g_object_unref (node->dir);
+    }
+
+  if (node->ptr != NULL)
+    {
+      GTK_TREE_ITER_INIT (tree_iter, node->model->stamp, node->ptr);
+      path = gtk_tree_model_get_path (GTK_TREE_MODEL (node->model), &tree_iter);
+    }
+  else
+    path = gtk_tree_path_new ();
+
+  gtk_tree_path_down (path);
+
+  while (node->n_children > 0)
+    {
+      iter = g_sequence_get_iter_at_pos (node->children, 0);
+      thunar_tree_view_model_node_destroy (g_sequence_get (iter));
+      g_sequence_remove (iter);
+      node->n_children--;
+    }
+
+  g_sequence_free (node->children);
+  g_hash_table_destroy (node->set);
+
+  g_object_unref (node->file);
+  g_free (node);
 }
