@@ -2412,53 +2412,11 @@ thunar_action_manager_check_uca_key_activation (ThunarActionManager *action_mgr,
 
 
 
-static void
-thunar_action_manager_rename_error (ExoJob    *job,
-                                    GError    *error,
-                                    GtkWidget *widget)
-{
-  GArray     *param_values;
-  ThunarFile *file;
-
-  _thunar_return_if_fail (EXO_IS_JOB (job));
-  _thunar_return_if_fail (error != NULL);
-
-  param_values = thunar_simple_job_get_param_values (THUNAR_SIMPLE_JOB (job));
-  file = g_value_get_object (&g_array_index (param_values, GValue, 0));
-
-  if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
-    thunar_dialogs_show_error (GTK_WIDGET (widget), error,
-                               _("Failed to rename \"%s\" (%s)"),
-                               thunar_file_get_display_name (file),
-                               thunar_file_get_basename (file));
-  else
-    thunar_dialogs_show_error (GTK_WIDGET (widget), error,
-                               _("Failed to rename \"%s\""),
-                               thunar_file_get_display_name (file));
-  g_object_unref (file);
-}
-
-
-
-static void
-thunar_action_manager_rename_finished (ExoJob    *job,
-                                       GtkWidget *widget)
-{
-  _thunar_return_if_fail (EXO_IS_JOB (job));
-
-  /* destroy the job */
-  g_signal_handlers_disconnect_matched (job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, widget);
-  g_object_unref (job);
-}
-
-
-
 static gboolean
 thunar_action_manager_action_rename (ThunarActionManager *action_mgr)
 {
-  ThunarJob *job;
   GtkWidget *window;
-  gint       response;
+  GdkScreen *screen;
 
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
@@ -2467,31 +2425,18 @@ thunar_action_manager_action_rename (ThunarActionManager *action_mgr)
   if (action_mgr->files_are_selected == FALSE || thunar_file_is_trash (action_mgr->current_directory))
     return TRUE;
 
-  /* get the window */
+  /* get the window and the screen */
   window = gtk_widget_get_toplevel (action_mgr->widget);
-
+  screen = thunar_util_parse_parent (window, NULL);
+  
   /* start renaming if we have exactly one selected file */
   if (g_list_length (action_mgr->files_to_process) == 1)
     {
-      if (thunar_file_is_desktop_file (THUNAR_FILE (action_mgr->files_to_process->data)))
-        {
-          response = thunar_dialog_show_rename_launcher_options (GTK_WINDOW (window));
-          if (response == THUNAR_RESPONSE_LAUNCHERNAME)
-            {
-              thunar_action_manager_action_edit_launcher (action_mgr);
-              return TRUE;
-            }
-          else if (response != THUNAR_RESPONSE_FILENAME)
-            return TRUE;
-        }
-      
-      /* run the rename dialog */
-      job = thunar_dialogs_show_rename_file (GTK_WINDOW (window), THUNAR_FILE (action_mgr->files_to_process->data), THUNAR_OPERATION_LOG_OPERATIONS);
-      if (G_LIKELY (job != NULL))
-        {
-          g_signal_connect (job, "error", G_CALLBACK (thunar_action_manager_rename_error), action_mgr->widget);
-          g_signal_connect (job, "finished", G_CALLBACK (thunar_action_manager_rename_finished), action_mgr->widget);
-        }
+      thunar_application_rename_file (thunar_application_get (),
+                                      action_mgr->files_to_process->data,
+                                      screen,
+                                      NULL,
+                                      THUNAR_OPERATION_LOG_OPERATIONS);
     }
   else
     {
@@ -3073,21 +3018,9 @@ thunar_action_manager_action_paste_into_folder (ThunarActionManager *action_mgr)
 static void
 thunar_action_manager_action_edit_launcher (ThunarActionManager *action_mgr)
 {
-  const gchar *display_name;
-  gchar       *cmd   = NULL,
-              *uri   = NULL;
-  GError      *error = NULL;
+  _thunar_return_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr));
   
-  uri = thunar_file_dup_uri (action_mgr->files_to_process->data);
-  display_name = gdk_display_get_name (gdk_screen_get_display (gtk_widget_get_screen (action_mgr->widget)));
-  cmd = g_strdup_printf ("exo-desktop-item-edit \"--display=%s\" \"%s\"", display_name, uri);
-  
-  if (xfce_spawn_command_line (NULL, cmd, FALSE, FALSE, FALSE, &error) == FALSE)
-    thunar_dialogs_show_error (action_mgr->widget, error, _("Failed to edit launcher via command \"%s\""), cmd);
-
-  g_free (cmd);
-  g_free (uri);
-  g_clear_error (&error);
+  thunar_application_show_launcher_edit_dialog (action_mgr->files_to_process->data, action_mgr->widget);
 }
 
 
