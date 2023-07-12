@@ -1892,10 +1892,10 @@ thunar_application_rename_file_finished (ExoJob  *job,
  * thunar_application_rename_file:
  * @application : a #ThunarApplication.
  * @file        : a #ThunarFile to be renamed.
- * @screen      : the #GdkScreen on which to open the window or %NULL
+ * @screen      : the #GdkScreen on which to open the window
  *                to open on the default screen.
  * @startup_id  : startup id from startup notification passed along
- *                with dbus to make focus stealing work properly.
+ *                with dbus to make focus stealing work properly. Ignored if NULL.
  * @log_mode    : a #ThunarOperationLogMode to control logging of the operation
  *
  * Prompts the user to rename the @file.
@@ -1909,15 +1909,10 @@ thunar_application_rename_file (ThunarApplication      *application,
 {
   ThunarJob   *job;
   gint         response;
-  const gchar *display_name;
-  gchar       *cmd   = NULL,
-              *uri   = NULL;
-  GError      *error = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (GDK_IS_SCREEN (screen));
-  _thunar_return_if_fail (startup_id != NULL);
 
   /* TODO pass the startup ID to the rename dialog */
 
@@ -1926,16 +1921,7 @@ thunar_application_rename_file (ThunarApplication      *application,
       response = thunar_dialog_show_rename_launcher_options (NULL);
       if (response == THUNAR_RESPONSE_LAUNCHERNAME)
         {
-          uri = thunar_file_dup_uri (file);
-          display_name = gdk_display_get_name (gdk_screen_get_display (screen));
-          cmd = g_strdup_printf ("exo-desktop-item-edit \"--display=%s\" \"%s\"", display_name, uri);
-
-          if (xfce_spawn_command_line (NULL, cmd, FALSE, FALSE, FALSE, &error) == FALSE)
-            thunar_dialogs_show_error (screen, error, _("Failed to edit launcher via command \"%s\""), cmd);
-
-          g_free (cmd);
-          g_free (uri);
-          g_clear_error (&error);
+          thunar_application_show_launcher_edit_dialog (file, screen);
           return;
         }
       else if (response != THUNAR_RESPONSE_FILENAME)
@@ -2847,3 +2833,37 @@ thunar_application_get_thumbnail_cache (ThunarApplication *application)
 }
 
 
+
+/**
+ * thunar_application_show_launcher_edit_dialog:
+ * @file       : a #ThunarFile.
+ * @parent     : a #GdkScreen, a #GtkWidget or %NULL. If %NULL is passed then the default screen will be used.
+ *
+ * Calls the exo-desktop-item-edit command to edit the properties of a .desktop file.
+ * A dialog with the current properties will appear.
+ **/
+void
+thunar_application_show_launcher_edit_dialog (ThunarFile *file,
+                                              gpointer    parent)
+{
+  const gchar *display_name;
+  gchar       *cmd   = NULL,
+              *uri   = NULL;
+  GError      *error = NULL;
+  GdkScreen   *screen;
+
+  _thunar_return_if_fail (file == NULL || THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+  
+  screen = thunar_util_parse_parent (parent, NULL);
+  uri = thunar_file_dup_uri (file);
+  display_name = gdk_display_get_name (gdk_screen_get_display (screen));
+  cmd = g_strdup_printf ("exo-desktop-item-edit \"--display=%s\" \"%s\"", display_name, uri);
+
+  if (xfce_spawn_command_line (NULL, cmd, FALSE, FALSE, FALSE, &error) == FALSE)
+    thunar_dialogs_show_error (screen, error, _("Failed to edit launcher via command \"%s\""), cmd);
+
+  g_free (cmd);
+  g_free (uri);
+  g_clear_error (&error);
+}
