@@ -40,6 +40,8 @@ G_BEGIN_DECLS;
 #define ALPHA_BACKDROP 0.5
 #define ALPHA_FOCUSED 1.0
 
+#define FILES_ADDED_DELAY 25 /* in ms */
+
 /* if we need an array of size greater
  * than this threshold; we'll use heap */
 #define STACK_ALLOC_LIMIT 2000
