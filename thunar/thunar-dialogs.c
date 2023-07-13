@@ -1371,7 +1371,7 @@ thunar_dialog_ask_execute (const ThunarFile *file,
 
 
 /**
- * thunar_dialog_show_rename_launcher:
+ * thunar_dialog_show_launcher_props:
  * @launcher       : a #ThunarFile.
  * @parent     : a #GdkScreen, a #GtkWidget or %NULL. If %NULL is passed then the default screen will be used.
  *
