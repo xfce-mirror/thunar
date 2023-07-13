@@ -175,9 +175,6 @@ void                  thunar_application_restore_files             (ThunarApplic
 
 ThunarThumbnailCache *thunar_application_get_thumbnail_cache       (ThunarApplication *application);
 
-void                  thunar_application_show_launcher_edit_dialog (ThunarFile        *file,
-                                                                    gpointer           parent);
-
 G_END_DECLS;
 
 #endif /* !__THUNAR_APPLICATION_H__ */

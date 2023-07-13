@@ -2415,8 +2415,9 @@ thunar_action_manager_check_uca_key_activation (ThunarActionManager *action_mgr,
 static gboolean
 thunar_action_manager_action_rename (ThunarActionManager *action_mgr)
 {
-  GtkWidget *window;
-  GdkScreen *screen;
+  GtkWidget         *window;
+  GdkScreen         *screen;
+  ThunarApplication *application;
 
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
@@ -2432,11 +2433,13 @@ thunar_action_manager_action_rename (ThunarActionManager *action_mgr)
   /* start renaming if we have exactly one selected file */
   if (g_list_length (action_mgr->files_to_process) == 1)
     {
-      thunar_application_rename_file (thunar_application_get (),
+      application = thunar_application_get ();
+      thunar_application_rename_file (application,
                                       action_mgr->files_to_process->data,
                                       screen,
                                       NULL,
                                       THUNAR_OPERATION_LOG_OPERATIONS);
+      g_object_unref (G_OBJECT (application));
     }
   else
     {
@@ -3020,7 +3023,7 @@ thunar_action_manager_action_edit_launcher (ThunarActionManager *action_mgr)
 {
   _thunar_return_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr));
   
-  thunar_application_show_launcher_edit_dialog (action_mgr->files_to_process->data, action_mgr->widget);
+  thunar_dialog_show_launcher_props (action_mgr->files_to_process->data, action_mgr->widget);
 }
 
 
