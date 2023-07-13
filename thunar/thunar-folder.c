@@ -588,10 +588,14 @@ thunar_folder_finished (ExoJob       *job,
       for (lp = folder->files; lp != NULL; lp = lp->next)
         thunar_file_reload (lp->data);
 
-      /* reload folder information too */
-      if (thunar_file_reload (folder->corresponding_file))
-        return;
+      /* block 'file-changed' signals of the folder itself until reload is done, in order to prevent recursion */
+      g_signal_handlers_block_by_func (G_OBJECT (folder->file_monitor), G_CALLBACK (thunar_folder_file_changed), folder);
 
+      /* reload folder itself */
+      thunar_file_reload (folder->corresponding_file);
+
+      /* listen to 'file-changed' signals of the folder itself again when reload is done */
+      g_signal_handlers_unblock_by_func (G_OBJECT (folder->file_monitor), G_CALLBACK (thunar_folder_file_changed), folder);
     }
 
   /* we did it, the folder is loaded */
