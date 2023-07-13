@@ -234,7 +234,7 @@ static gint              thunar_tree_view_model_cmp_nodes (gconstpointer a,
                                                            gpointer      data);
 static void              thunar_tree_view_model_sort (ThunarTreeViewModel *model);
 static void              thunar_tree_view_model_load_dir (Node *node);
-static void              thunar_tree_view_model_cleanup_node (Node *node);
+static void              thunar_tree_view_model_cleanup_model (ThunarTreeViewModel *model);
 static void              thunar_tree_view_model_file_count_callback (ExoJob  *job,
                                                                      gpointer model);
 static void              thunar_tree_view_model_node_destroy (Node *node);
@@ -1487,7 +1487,10 @@ thunar_tree_view_model_ref_node (GtkTreeModel *model,
 
   node = g_sequence_get (iter->user_data);
   /* tell the parent to load */
-  thunar_tree_view_model_load_dir (node->parent);
+  if (node->file == NULL)
+    thunar_tree_view_model_load_dir (node->parent);
+  else
+    thunar_tree_view_model_load_dir (node);
 }
 
 
@@ -1616,12 +1619,11 @@ thunar_tree_view_model_set_folder (ThunarStandardViewModel *model,
   if (_model->dir == folder)
     return;
 
+  thunar_tree_view_model_cleanup_model (_model);
+  _model->root = NULL;
+
   if (g_hash_table_size (_model->subdirs) > 0)
     g_hash_table_remove_all (_model->subdirs);
-
-  if (_model->root != NULL)
-    thunar_tree_view_model_cleanup_node (_model->root);
-  _model->root = NULL;
 
   if (_model->dir != NULL)
     g_object_unref (_model->dir);
@@ -1641,7 +1643,8 @@ thunar_tree_view_model_set_folder (ThunarStandardViewModel *model,
 
 
 static void
-_thunar_tree_view_model_set_show_hidden (Node *node)
+_thunar_tree_view_model_set_show_hidden (Node    *node,
+                                         gpointer data)
 {
   ThunarFile    *file;
   GList         *lp;
@@ -1652,8 +1655,11 @@ _thunar_tree_view_model_set_show_hidden (Node *node)
 
   /* we have a dummy node here! */
   if (node->file == NULL || node->dir == NULL
-      || thunar_tree_view_model_node_has_dummy_child (node))
+      || thunar_tree_view_model_node_has_dummy_child (node)
+      || node->n_children == 0)
     return;
+
+  g_sequence_foreach (node->children, (GFunc) _thunar_tree_view_model_set_show_hidden, NULL);
 
   if (node->model->show_hidden)
     for (lp = node->hidden_files; lp != NULL; lp = lp->next)
@@ -1680,9 +1686,7 @@ thunar_tree_view_model_set_show_hidden (ThunarStandardViewModel *model,
 
   THUNAR_TREE_VIEW_MODEL (model)->show_hidden = show_hidden;
 
-  /* recursively update the hidden files */
-  for (GList *dirs = g_hash_table_get_values (_model->subdirs); dirs != NULL; dirs = dirs->next)
-    _thunar_tree_view_model_set_show_hidden (dirs->data);
+  _thunar_tree_view_model_set_show_hidden (_model->root, NULL);
 }
 
 
@@ -2141,7 +2145,6 @@ thunar_tree_view_model_dir_add_file (Node       *node,
     {
       g_hash_table_insert (node->model->subdirs, file, child);
       thunar_tree_view_model_node_add_dummy_child (child);
-      thunar_file_get_file_count (file, G_CALLBACK (_drop_dummy_if_file_has_no_child), child);
     }
 }
 
@@ -2411,15 +2414,15 @@ thunar_tree_view_model_load_dir (Node *node)
 
   _thunar_return_if_fail (node != NULL);
 
+  if (G_UNLIKELY (node->file == NULL || !thunar_file_is_directory (node->file)))
+    return;
+
   if (node->loaded || node->loading)
     return;
 
   node->loading = TRUE;
 
   thunar_tree_view_model_inc_loading (node->model);
-
-  if (G_UNLIKELY (node->file == NULL || !thunar_file_is_directory (node->file)))
-    return;
 
   node->dir = thunar_folder_get_for_file (node->file);
   g_assert (node->dir != NULL);
@@ -2441,7 +2444,11 @@ thunar_tree_view_model_load_dir (Node *node)
 static gboolean
 _thunar_tree_view_model_cleanup_idle (Node *node)
 {
+  THUNAR_THREADS_ENTER
+
   thunar_tree_view_model_node_destroy (node);
+
+  THUNAR_THREADS_LEAVE
 
   return G_SOURCE_REMOVE;
 }
@@ -2449,11 +2456,33 @@ _thunar_tree_view_model_cleanup_idle (Node *node)
 
 
 static void
-thunar_tree_view_model_cleanup_node (Node *node)
+thunar_tree_view_model_cleanup_model (ThunarTreeViewModel *model)
 {
-  _thunar_return_if_fail (node != NULL);
+  Node *_node;
+
+  /* TODO: change name to cleanup_model */
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
+
+  if (model->root == NULL)
+    /* we have nothing to cleanup */
+    return;
+
+  /* since we are doing a lazy cleanup we should make sure
+   to disconnect from the signal handlers of the folders */
+  for (GList *dirs = g_hash_table_get_values (model->subdirs); dirs != NULL; dirs = dirs->next)
+    {
+      _node = dirs->data;
+      if (_node->dir == NULL)
+        continue;
+      g_signal_handlers_disconnect_matched (G_OBJECT (_node->dir), G_SIGNAL_MATCH_DATA,
+                                            0, 0, NULL, NULL, _node);
+      g_object_unref (_node->dir);
+      _node->dir = NULL;
+    }
+
   /* clean up the nodes in the background*/
-  g_idle_add ((GSourceFunc) _thunar_tree_view_model_cleanup_idle, node);
+  g_idle_add ((GSourceFunc) _thunar_tree_view_model_cleanup_idle, model->root);
+  model->root = NULL;
 }
 
 
@@ -2464,6 +2493,9 @@ thunar_tree_view_model_file_count_callback (ExoJob  *job,
 {
   GArray     *param_values;
   ThunarFile *file;
+
+  if (job == NULL)
+    return;
 
   param_values = thunar_simple_job_get_param_values (THUNAR_SIMPLE_JOB (job));
   file = THUNAR_FILE (g_value_get_object (&g_array_index (param_values, GValue, 0)));
