@@ -1372,7 +1372,7 @@ thunar_dialog_ask_execute (const ThunarFile *file,
 
 /**
  * thunar_dialog_show_launcher_props:
- * @launcher       : a #ThunarFile.
+ * @launcher   : a #ThunarFile.
  * @parent     : a #GdkScreen, a #GtkWidget or %NULL. If %NULL is passed then the default screen will be used.
  *
  * Calls the exo-desktop-item-edit command to edit the properties of a .desktop file.
@@ -1380,7 +1380,7 @@ thunar_dialog_ask_execute (const ThunarFile *file,
  **/
 void
 thunar_dialog_show_launcher_props (ThunarFile *launcher,
-                                              gpointer    parent)
+                                   gpointer    parent)
 {
   const gchar *display_name;
   gchar       *cmd   = NULL,
