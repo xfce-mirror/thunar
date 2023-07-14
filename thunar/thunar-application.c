@@ -1892,10 +1892,10 @@ thunar_application_rename_file_finished (ExoJob  *job,
  * thunar_application_rename_file:
  * @application : a #ThunarApplication.
  * @file        : a #ThunarFile to be renamed.
- * @screen      : the #GdkScreen on which to open the window or %NULL
+ * @screen      : the #GdkScreen on which to open the window
  *                to open on the default screen.
  * @startup_id  : startup id from startup notification passed along
- *                with dbus to make focus stealing work properly.
+ *                with dbus to make focus stealing work properly. Ignored if NULL.
  * @log_mode    : a #ThunarOperationLogMode to control logging of the operation
  *
  * Prompts the user to rename the @file.
@@ -1907,14 +1907,26 @@ thunar_application_rename_file (ThunarApplication      *application,
                                 const gchar            *startup_id,
                                 ThunarOperationLogMode  log_mode)
 {
-  ThunarJob *job;
+  ThunarJob   *job;
+  gint         response;
 
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (GDK_IS_SCREEN (screen));
-  _thunar_return_if_fail (startup_id != NULL);
 
   /* TODO pass the startup ID to the rename dialog */
+
+  if (thunar_file_is_desktop_file (file))
+    {
+      response = thunar_dialog_show_rename_launcher_options (NULL);
+      if (response == THUNAR_RESPONSE_LAUNCHERNAME)
+        {
+          thunar_dialog_show_launcher_props (file, screen);
+          return;
+        }
+      else if (response != THUNAR_RESPONSE_FILENAME)
+        return;
+    }
 
   /* run the rename dialog */
   job = thunar_dialogs_show_rename_file (screen, file, log_mode);
@@ -2819,5 +2831,3 @@ thunar_application_get_thumbnail_cache (ThunarApplication *application)
 
   return g_object_ref (application->thumbnail_cache);
 }
-
-
