@@ -1539,6 +1539,19 @@ thunar_transfer_job_determine_copy_behavior (ThunarTransferJob *transfer_job,
           *freeze_if_tgt_busy_p = ! transfer_job->is_target_device_local;
         }
     }
+  else if (transfer_job->parallel_copy_mode == THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_IDLE_DEVICE)
+    {
+      /* always parallel copy if:
+       * - source and target device fs are local
+       */
+      *always_parallel_copy_p = transfer_job->is_source_device_local && transfer_job->is_target_device_local;
+
+      /* freeze copy if
+       * - src / tgt device appears in another job
+       */
+      *freeze_if_src_busy_p = TRUE;
+      *freeze_if_tgt_busy_p = TRUE;
+    }
   else /* THUNAR_PARALLEL_COPY_MODE_NEVER */
     {
       /* freeze copy if another transfer job is running */
