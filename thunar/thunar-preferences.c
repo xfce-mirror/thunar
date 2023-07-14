@@ -979,7 +979,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          "MiscParallelCopyMode",
                          NULL,
                          THUNAR_TYPE_PARALLEL_COPY_MODE,
-                         THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL,
+                         THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_IDLE_DEVICE,
                          EXO_PARAM_READWRITE);
 
   /**
