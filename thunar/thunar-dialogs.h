@@ -59,6 +59,8 @@ gint               thunar_dialog_ask_execute            (const ThunarFile     *f
                                                          gpointer              parent,
                                                          gboolean              allow_open,
                                                          gboolean              single_file);
+void               thunar_dialog_show_launcher_props    (ThunarFile           *launcher,
+                                                         gpointer              parent);
 
 G_END_DECLS;
 
