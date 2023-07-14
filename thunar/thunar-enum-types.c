@@ -457,6 +457,7 @@ thunar_parallel_copy_mode_get_type (void)
         { THUNAR_PARALLEL_COPY_MODE_ALWAYS,                  "THUNAR_PARALLEL_COPY_MODE_ALWAYS",                  "always",                  },
         { THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL,              "THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL",              "only-local",              },
         { THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_SAME_DEVICES, "THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_SAME_DEVICES", "only-local-same-devices", },
+        { THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_IDLE_DEVICE,  "THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_IDLE_DEVICE",  "only-local-idle-device",  },
         { THUNAR_PARALLEL_COPY_MODE_NEVER,                   "THUNAR_PARALLEL_COPY_MODE_NEVER",                   "never",                   },
         { 0,                                                 NULL,                                                NULL,                      },
       };

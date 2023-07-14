@@ -215,6 +215,7 @@ const char* thunar_thumbnail_size_get_nick (ThunarThumbnailSize thumbnail_size) 
  * @THUNAR_PARALLEL_COPY_MODE_NEVER                   : copies will be done consecutively, one after another.
  * @THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL              : only do parallel copies when source and destination are local files.
  * @THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_SAME_DEVICES : same as only local, but only if source and destination devices are the same.
+ * @THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_IDLE_DEVICE  : only for local files. Dont tranfer in parallel if the source or the target already runs a file transfer job (prevent HDD thrashing)
  * @THUNAR_PARALLEL_COPY_MODE_ALWAYS                  : all copies will be started immediately.
  **/
 typedef enum
@@ -222,6 +223,7 @@ typedef enum
   THUNAR_PARALLEL_COPY_MODE_NEVER,
   THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL,
   THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_SAME_DEVICES,
+  THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_IDLE_DEVICE,
   THUNAR_PARALLEL_COPY_MODE_ALWAYS
 } ThunarParallelCopyMode;
 
