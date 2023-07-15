@@ -29,7 +29,6 @@
 #include <string.h>
 #endif
 
-#include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-renamer-model.h>
@@ -104,11 +103,9 @@ static gboolean                thunar_renamer_model_iter_parent         (GtkTree
                                                                          GtkTreeIter             *iter,
                                                                          GtkTreeIter             *child);
 static void                    thunar_renamer_model_file_changed        (ThunarRenamerModel      *renamer_model,
-                                                                         ThunarFile              *file,
-                                                                         ThunarFileMonitor       *file_monitor);
+                                                                         ThunarFile              *file);
 static void                    thunar_renamer_model_file_destroyed      (ThunarRenamerModel      *renamer_model,
-                                                                         ThunarFile              *file,
-                                                                         ThunarFileMonitor       *file_monitor);
+                                                                         ThunarFile              *file);
 static void                    thunar_renamer_model_invalidate_all      (ThunarRenamerModel      *renamer_model);
 static void                    thunar_renamer_model_invalidate_item     (ThunarRenamerModel      *renamer_model,
                                                                          ThunarRenamerModelItem  *item);
@@ -151,7 +148,6 @@ struct _ThunarRenamerModel
 #endif
 
   ThunarRenamerMode  mode;
-  ThunarFileMonitor *file_monitor;
   ThunarxRenamer    *renamer;
   GList             *items;
 
@@ -275,13 +271,6 @@ thunar_renamer_model_init (ThunarRenamerModel *renamer_model)
 #ifndef NDEBUG
   renamer_model->stamp = g_random_int ();
 #endif
-
-  /* connect to the file monitor */
-  renamer_model->file_monitor = thunar_file_monitor_get_default ();
-  g_signal_connect_swapped (G_OBJECT (renamer_model->file_monitor), "file-changed",
-                            G_CALLBACK (thunar_renamer_model_file_changed), renamer_model);
-  g_signal_connect_swapped (G_OBJECT (renamer_model->file_monitor), "file-destroyed",
-                            G_CALLBACK (thunar_renamer_model_file_destroyed), renamer_model);
 }
 
 
@@ -296,11 +285,6 @@ thunar_renamer_model_finalize (GObject *object)
 
   /* release all items */
   g_list_free_full (renamer_model->items, thunar_renamer_model_item_free);
-
-  /* disconnect from the file monitor */
-  g_signal_handlers_disconnect_by_func (G_OBJECT (renamer_model->file_monitor), thunar_renamer_model_file_destroyed, renamer_model);
-  g_signal_handlers_disconnect_by_func (G_OBJECT (renamer_model->file_monitor), thunar_renamer_model_file_changed, renamer_model);
-  g_object_unref (G_OBJECT (renamer_model->file_monitor));
 
   /* be sure to cancel any pending update idle source (must be last!) */
   if (G_UNLIKELY (renamer_model->update_idle_id != 0))
@@ -600,8 +584,7 @@ thunar_renamer_model_iter_parent (GtkTreeModel *tree_model,
 
 static void
 thunar_renamer_model_file_changed (ThunarRenamerModel *renamer_model,
-                                   ThunarFile         *file,
-                                   ThunarFileMonitor  *file_monitor)
+                                   ThunarFile         *file)
 {
   ThunarRenamerModelItem *item;
   GtkTreePath            *path;
@@ -610,9 +593,7 @@ thunar_renamer_model_file_changed (ThunarRenamerModel *renamer_model,
   guint64                 date_changed;
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
-  _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
   _thunar_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
-  _thunar_return_if_fail (renamer_model->file_monitor == file_monitor);
 
   /* check if we have that file */
   for (lp = renamer_model->items; lp != NULL; lp = lp->next)
@@ -656,40 +637,44 @@ thunar_renamer_model_file_changed (ThunarRenamerModel *renamer_model,
 
 static void
 thunar_renamer_model_file_destroyed (ThunarRenamerModel *renamer_model,
-                                     ThunarFile         *file,
-                                     ThunarFileMonitor  *file_monitor)
+                                     ThunarFile         *file)
 {
   GtkTreePath *path;
   GList       *lp;
   gint         idx;
 
   _thunar_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
-  _thunar_return_if_fail (renamer_model->file_monitor == file_monitor);
-  _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   /* check if we have that file */
   for (lp = renamer_model->items; lp != NULL; lp = lp->next)
-    if (THUNAR_RENAMER_MODEL_ITEM (lp->data)->file == file)
-      {
-        /* determine the idx of the item */
-        idx = g_list_position (renamer_model->items, lp);
+    {
+      ThunarRenamerModelItem *item = lp->data;
+      if (item->file == file)
+        {
+          /* determine the idx of the item */
+          idx = g_list_position (renamer_model->items, lp);
 
-        /* free the item data */
-        thunar_renamer_model_item_free (lp->data);
+          /* stop subscription to relevant signals */
+          g_signal_handlers_disconnect_matched (G_OBJECT (item->file), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, renamer_model);
+          thunar_file_unwatch (THUNAR_FILE (item->file));
 
-        /* drop the item from the list */
-        renamer_model->items = g_list_delete_link (renamer_model->items, lp);
+          /* free the item data */
+          thunar_renamer_model_item_free (item);
 
-        /* tell the view that the item is gone */
-        path = gtk_tree_path_new_from_indices (idx, -1);
-        gtk_tree_model_row_deleted (GTK_TREE_MODEL (renamer_model), path);
-        gtk_tree_path_free (path);
+          /* drop the item from the list */
+          renamer_model->items = g_list_delete_link (renamer_model->items, lp);
 
-        /* invalidate all other items */
-        thunar_renamer_model_invalidate_all (renamer_model);
-        break;
-      }
+          /* tell the view that the item is gone */
+          path = gtk_tree_path_new_from_indices (idx, -1);
+          gtk_tree_model_row_deleted (GTK_TREE_MODEL (renamer_model), path);
+          gtk_tree_path_free (path);
+
+          /* invalidate all other items */
+          thunar_renamer_model_invalidate_all (renamer_model);
+          break;
+        }
+    }
 }
 
 
@@ -1316,6 +1301,10 @@ thunar_renamer_model_insert (ThunarRenamerModel *renamer_model,
   /* determine the iterator for the new item */
   GTK_TREE_ITER_INIT (iter, renamer_model->stamp, g_list_find (renamer_model->items, item));
 
+  /* subscribe to relevant signals */
+  g_signal_connect_swapped (G_OBJECT (file), "changed", G_CALLBACK (thunar_renamer_model_file_changed), renamer_model);
+  g_signal_connect_swapped (G_OBJECT (file), "pre-destroy", G_CALLBACK (thunar_renamer_model_file_destroyed), renamer_model);
+
   /* emit the "row-inserted" signal */
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (renamer_model), &iter);
   gtk_tree_model_row_inserted (GTK_TREE_MODEL (renamer_model), path, &iter);
@@ -1473,8 +1462,7 @@ thunar_renamer_model_clear (ThunarRenamerModel *renamer_model)
   while (renamer_model->items != NULL)
     {
       /* just use the "file-destroyed" handler here to drop the first item */
-      thunar_renamer_model_file_destroyed (renamer_model, THUNAR_RENAMER_MODEL_ITEM (renamer_model->items->data)->file,
-                                           renamer_model->file_monitor);
+      thunar_renamer_model_file_destroyed (renamer_model, THUNAR_RENAMER_MODEL_ITEM (renamer_model->items->data)->file);
     }
 
   /* thaw notifications */

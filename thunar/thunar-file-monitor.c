@@ -152,7 +152,7 @@ thunar_file_monitor_get_default (void)
  *
  * Emits the ::file-changed signal on the default
  * #ThunarFileMonitor (if any). This method should
- * only be used by #ThunarFile.
+ * only be used by #ThunarFile . It should be called whenever a THunar
  **/
 void
 thunar_file_monitor_file_changed (ThunarFile *file)

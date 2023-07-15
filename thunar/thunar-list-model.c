@@ -34,7 +34,6 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-file.h>
-#include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-list-model.h>
 #include <thunar/thunar-preferences.h>
@@ -134,8 +133,7 @@ static gint               thunar_list_model_cmp_func                    (gconstp
                                                                          gconstpointer                 b,
                                                                          gpointer                      user_data);
 static void               thunar_list_model_sort                        (ThunarListModel              *store);
-static void               thunar_list_model_file_changed                (ThunarFileMonitor            *file_monitor,
-                                                                         ThunarFile                   *file,
+static void               thunar_list_model_file_changed                (ThunarFile                   *file,
                                                                          ThunarListModel              *store);
 static void               thunar_list_model_folder_destroy              (ThunarFolder                 *folder,
                                                                          ThunarListModel              *store);
@@ -256,12 +254,6 @@ struct _ThunarListModel
    * Search job may have finished even if this is non-NULL.
    */
   gchar **search_terms;
-
-  /* Use the shared ThunarFileMonitor instance, so we
-   * do not need to connect "changed" handler to every
-   * file in the model.
-   */
-  ThunarFileMonitor *file_monitor;
 
   /* ids for the "row-inserted" and "row-deleted" signals
    * of GtkTreeModel to speed up folder changing.
@@ -504,13 +496,6 @@ thunar_list_model_init (ThunarListModel *store)
   g_mutex_init (&store->mutex_files_to_add);
 
   store->loading = FALSE;
-
-  /* connect to the shared ThunarFileMonitor, so we don't need to
-   * connect "changed" to every single ThunarFile we own.
-   */
-  store->file_monitor = thunar_file_monitor_get_default ();
-  g_signal_connect (G_OBJECT (store->file_monitor), "file-changed",
-                    G_CALLBACK (thunar_list_model_file_changed), store);
 }
 
 
@@ -518,6 +503,25 @@ thunar_list_model_init (ThunarListModel *store)
 static void
 thunar_list_model_dispose (GObject *object)
 {
+  ThunarListModel *store = THUNAR_LIST_MODEL (object);
+  ThunarFile      *file;
+  GSequenceIter   *row;
+  GSequenceIter   *end;
+
+  row = g_sequence_get_begin_iter (store->rows);
+  end = g_sequence_get_end_iter (store->rows);
+
+  while (row != end)
+    {
+      file = g_sequence_get (row);
+
+      /* stop monitoring the file for changes */
+      g_signal_handlers_disconnect_matched (G_OBJECT (file), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
+      thunar_file_unwatch (file);
+
+      row = g_sequence_iter_next (row);
+    }
+
   /* unlink from the folder (if any) */
   thunar_list_model_set_folder (THUNAR_STANDARD_VIEW_MODEL (object), NULL, NULL);
 
@@ -543,10 +547,6 @@ thunar_list_model_finalize (GObject *object)
 
   g_sequence_free (store->rows);
   g_mutex_clear (&store->mutex_files_to_add);
-
-  /* disconnect from the file monitor */
-  g_signal_handlers_disconnect_by_func (G_OBJECT (store->file_monitor), thunar_list_model_file_changed, store);
-  g_object_unref (G_OBJECT (store->file_monitor));
 
   g_free (store->date_custom_style);
 
@@ -1419,8 +1419,7 @@ thunar_list_model_sort (ThunarListModel *store)
 
 
 static void
-thunar_list_model_file_changed (ThunarFileMonitor *file_monitor,
-                                ThunarFile        *file,
+thunar_list_model_file_changed (ThunarFile        *file,
                                 ThunarListModel   *store)
 {
   GSequenceIter *row;
@@ -1433,7 +1432,6 @@ thunar_list_model_file_changed (ThunarFileMonitor *file_monitor,
   GtkTreePath   *path;
   GtkTreeIter    iter;
 
-  _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor) || file_monitor == NULL);
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
@@ -1654,6 +1652,11 @@ thunar_list_model_insert_files (ThunarListModel *store,
               gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
             }
         }
+
+      /* enable monitoring for the file and subscribe to changed signal */
+      thunar_file_watch (file);
+      g_signal_connect (G_OBJECT (file), "changed", G_CALLBACK (thunar_list_model_file_changed), store);
+
     }
 
   /* release the path */
@@ -1682,6 +1685,10 @@ thunar_list_model_files_removed (ThunarFolder    *folder,
   search_mode = (store->search_terms != NULL);
   for (lp = files; lp != NULL; lp = lp->next)
     {
+      /* stop monitoring the file for changes */
+      g_signal_handlers_disconnect_matched (G_OBJECT (lp->data), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
+      thunar_file_unwatch (lp->data);
+
       row = g_sequence_get_begin_iter (store->rows);
       end = g_sequence_get_end_iter (store->rows);
 
@@ -3177,5 +3184,5 @@ thunar_list_model_file_count_callback (ExoJob  *job,
   if (file == NULL)
     return;
 
-  thunar_list_model_file_changed (NULL, file, THUNAR_LIST_MODEL (model));
+  thunar_list_model_file_changed (file, THUNAR_LIST_MODEL (model));
 }

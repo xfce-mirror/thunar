@@ -78,8 +78,10 @@
 
 
 /* Signal identifiers */
+/* Note that the signals 'CHANGED' and 'RENAMED' are provided by THUNARX_FILE_INFO */
 enum
 {
+  PRE_DESTROY,
   DESTROY,
   LAST_SIGNAL,
 };
@@ -161,7 +163,9 @@ struct _ThunarFileClass
   GObjectClass __parent__;
 
   /* signals */
-  void (*destroy) (ThunarFile *file);
+  void (*pre_destroy) (ThunarFile *file);
+  void (*destroy)     (ThunarFile *file);
+
 };
 
 struct _ThunarFile
@@ -373,11 +377,25 @@ thunar_file_class_init (ThunarFileClass *klass)
   gobject_class->finalize = thunar_file_finalize;
 
   /**
+   * ThunarFile::pre-destroy:
+   * @file : the #ThunarFile instance.
+   *
+   * Emitted before @file is destroyed, so that subscriber can release references before destroy
+   **/
+  file_signals[PRE_DESTROY] =
+    g_signal_new (I_("pre-destroy"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_CLEANUP | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
+                  G_STRUCT_OFFSET (ThunarFileClass, pre_destroy),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__VOID,
+                  G_TYPE_NONE, 0);
+
+  /**
    * ThunarFile::destroy:
    * @file : the #ThunarFile instance.
    *
-   * Emitted when the system notices that the @file
-   * was destroyed.
+   * Emitted when the system notices that the @file was destroyed.
    **/
   file_signals[DESTROY] =
     g_signal_new (I_("destroy"),
@@ -387,6 +405,8 @@ thunar_file_class_init (ThunarFileClass *klass)
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
+
+
 }
 
 
@@ -607,9 +627,6 @@ thunar_file_info_changed (ThunarxFileInfo *file_info)
   /* set the new thumbnail state manually, so we only emit file
    * changed once */
   FLAG_SET_THUMB_STATE (file, THUNAR_FILE_THUMB_STATE_UNKNOWN);
-
-  /* tell the file monitor that this file changed */
-  thunar_file_monitor_file_changed (file);
 }
 
 
@@ -771,6 +788,9 @@ thunar_file_monitor (GFileMonitor     *monitor,
         default:
           break;
         }
+
+      /* Notify subscriber of the ThunarFile 'changed' signal */
+      thunar_file_changed (file);
     }
   else
     {
@@ -3955,9 +3975,9 @@ thunar_file_set_thumb_state (ThunarFile          *file,
       file->thumbnail_path = NULL;
     }
 
-  /* if the file has a thumbnail, reload it */
+  /* if the file has a thumbnail, tell others that this file changed */
   if (state == THUNAR_FILE_THUMB_STATE_READY)
-    thunar_file_monitor_file_changed (file);
+    thunar_file_changed (file);
 }
 
 
@@ -4375,7 +4395,7 @@ thunar_file_reload_idle (ThunarFile *file)
 
 
 /**
- * thunar_file_reload_idle_unref:
+ * thunar_file_reload_idle_unref:destroy
  * @file : a #ThunarFile instance.
  *
  * Schedules a reload of the @file by calling thunar_file_reload
@@ -4418,8 +4438,8 @@ thunar_file_destroy (ThunarFile *file)
        */
       g_object_ref (G_OBJECT (file));
 
-      /* tell the file monitor that this file was destroyed */
-      thunar_file_monitor_file_destroyed (file);
+      /* tell others that this file will be destroyed, so that they can free references */
+      g_signal_emit (G_OBJECT (file), file_signals[PRE_DESTROY], 0);
 
       /* run the dispose handler */
       g_object_run_dispose (G_OBJECT (file));
