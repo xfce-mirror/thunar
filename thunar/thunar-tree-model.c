@@ -29,7 +29,6 @@
 #include <string.h>
 #endif
 
-#include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-folder.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-pango-extensions.h>
@@ -191,8 +190,6 @@ struct _ThunarTreeModel
   /* removable devices */
   ThunarDeviceMonitor        *device_monitor;
 
-  ThunarFileMonitor          *file_monitor;
-
   gboolean                    sort_case_sensitive;
 
   ThunarTreeModelVisibleFunc  visible_func;
@@ -301,10 +298,6 @@ thunar_tree_model_init (ThunarTreeModel *model)
   model->visible_func = thunar_tree_model_default_visiblity;
   model->visible_data = NULL;
   model->cleanup_idle_id = 0;
-
-  /* connect to the file monitor */
-  model->file_monitor = thunar_file_monitor_get_default ();
-  g_signal_connect (G_OBJECT (model->file_monitor), "file-changed", G_CALLBACK (thunar_tree_model_file_changed), model);
 
   /* allocate the "virtual root node" */
   model->root = g_node_new (NULL);

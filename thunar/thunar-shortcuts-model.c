@@ -1743,9 +1743,6 @@ thunar_shortcuts_model_file_changed (ThunarFile             *file,
       if (thunar_file_is_trash (file) ||
           (THUNAR_SHORTCUT (lp->data)->location != NULL && g_file_equal (g_file, THUNAR_SHORTCUT (lp->data)->location) == FALSE))
         {
-          if (thunar_file_is_trash (file))
-            printf("trasdh changed\n");
-
           /* generate an iterator for the path */
           GTK_TREE_ITER_INIT (iter, model->stamp, lp);
 

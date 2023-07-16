@@ -59,7 +59,6 @@
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-file.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
@@ -3951,8 +3950,7 @@ thunar_file_get_thumb_state (const ThunarFile *file)
  * @thumb_state : the new #ThunarFileThumbState.
  *
  * Sets the #ThunarFileThumbState for @file to @thumb_state.
- * This will cause a "file-changed" signal to be emitted from
- * #ThunarFileMonitor.
+ * This will cause a "changed" signal to be emitted
  **/
 void
 thunar_file_set_thumb_state (ThunarFile          *file,
