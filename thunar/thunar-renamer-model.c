@@ -1303,7 +1303,7 @@ thunar_renamer_model_insert (ThunarRenamerModel *renamer_model,
 
   /* subscribe to relevant signals */
   g_signal_connect_swapped (G_OBJECT (file), "changed", G_CALLBACK (thunar_renamer_model_file_changed), renamer_model);
-  g_signal_connect_swapped (G_OBJECT (file), "pre-destroy", G_CALLBACK (thunar_renamer_model_file_destroyed), renamer_model);
+  g_signal_connect_swapped (G_OBJECT (file), "destroy", G_CALLBACK (thunar_renamer_model_file_destroyed), renamer_model);
 
   /* emit the "row-inserted" signal */
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (renamer_model), &iter);
