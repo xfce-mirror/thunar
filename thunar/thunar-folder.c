@@ -676,7 +676,7 @@ thunar_folder_file_destroyed (ThunarFile        *file,
         restart = g_source_remove (folder->content_type_idle_id);
 
       /* remove the file from our list */
-      g_signal_handlers_disconnect_matched (lp, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
+      g_signal_handlers_disconnect_matched (lp->data, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
       folder->files = g_list_delete_link (folder->files, lp);
 
       /* tell everybody that the file is gone */
