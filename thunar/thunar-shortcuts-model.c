@@ -1734,7 +1734,6 @@ thunar_shortcuts_model_file_changed (ThunarFile             *file,
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-printf("thunar_shortcuts_model_file_changed\n");
     /* find the shortcut */
   for (lp = model->shortcuts, idx = 0; lp != NULL; lp = lp->next, idx++)
     {

@@ -32,7 +32,6 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-file.h>
-#include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-tree-view-model.h>
 #include <thunar/thunar-preferences.h>
@@ -156,8 +155,7 @@ static gint                      thunar_tree_view_model_cmp_func                
                                                                                      gpointer                      user_data);
 static void                      thunar_tree_view_model_sort                        (ThunarTreeViewModel          *store,
                                                                                      GNode                        *node);
-static void                      thunar_tree_view_model_file_changed                (ThunarFileMonitor            *file_monitor,
-                                                                                     ThunarFile                   *file,
+static void                      thunar_tree_view_model_file_changed                (ThunarFile                   *file,
                                                                                      ThunarTreeViewModel          *store);
 static void                      thunar_tree_view_model_folder_destroy              (ThunarFolder                 *folder,
                                                                                      ThunarTreeViewModel          *store);
@@ -326,12 +324,6 @@ struct _ThunarTreeViewModel
    * Search job may have finished even if this is non-NULL.
    */
   gchar **search_terms;
-
-  /* Use the shared ThunarFileMonitor instance, so we
-   * do not need to connect "changed" handler to every
-   * file in the model.
-   */
-  ThunarFileMonitor *file_monitor;
 
   /* ids for the "row-inserted" and "row-deleted" signals
    * of GtkTreeModel to speed up folder changing.
@@ -618,12 +610,6 @@ thunar_tree_view_model_init (ThunarTreeViewModel *store)
 
   /* allocate the "virtual root node" */
   store->root = g_node_new (NULL);
-
-  /* connect to the shared ThunarFileMonitor, so we don't need to
-   * connect "changed" to every single ThunarFile we own. */
-  store->file_monitor = thunar_file_monitor_get_default ();
-  g_signal_connect (G_OBJECT (store->file_monitor), "file-changed",
-                    G_CALLBACK (thunar_tree_view_model_file_changed), store);
 }
 
 
@@ -660,10 +646,6 @@ thunar_tree_view_model_finalize (GObject *object)
   store->files_to_add = NULL;
 
   g_mutex_clear (&store->mutex_files_to_add);
-
-  /* disconnect from the file monitor */
-  g_signal_handlers_disconnect_by_func (G_OBJECT (store->file_monitor), thunar_tree_view_model_file_changed, store);
-  g_object_unref (G_OBJECT (store->file_monitor));
 
   g_object_unref (G_OBJECT (store->preferences));
 
@@ -1804,11 +1786,9 @@ thunar_tree_view_model_cleanup_idle_destroy (gpointer user_data)
 
 
 static void
-thunar_tree_view_model_file_changed (ThunarFileMonitor     *file_monitor,
-                                     ThunarFile            *file,
+thunar_tree_view_model_file_changed (ThunarFile            *file,
                                      ThunarTreeViewModel   *store)
 {
-  _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor) || file_monitor == NULL);
   _thunar_return_if_fail (THUNAR_STANDARD_VIEW_MODEL (store));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
@@ -3302,12 +3282,20 @@ static gboolean
 thunar_tree_view_model_node_traverse_remove (GNode   *node,
                                              gpointer user_data)
 {
-  ThunarTreeViewModel *model = THUNAR_TREE_VIEW_MODEL (user_data);
-  GtkTreeIter      iter;
-  GtkTreePath     *path;
-  gboolean         has_handler;
+  ThunarTreeViewModel     *model = THUNAR_TREE_VIEW_MODEL (user_data);
+  ThunarTreeViewModelItem *item = node->data;
+  GtkTreeIter              iter;
+  GtkTreePath             *path;
+  gboolean                 has_handler;
 
   _thunar_return_val_if_fail (node->children == NULL, FALSE);
+
+  /* stop monitoring the file */
+  if (item && item->file != NULL)
+    {
+      g_signal_handlers_disconnect_matched (G_OBJECT (item->file), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, model);
+      thunar_file_unwatch (THUNAR_FILE (item->file));
+    }
 
   /* determine the iterator for the node */
   GTK_TREE_ITER_INIT (iter, model->stamp, node);
@@ -3947,7 +3935,7 @@ thunar_tree_view_model_file_count_callback (ExoJob  *job,
   if (file == NULL)
     return;
 
-  thunar_tree_view_model_file_changed (NULL, file, THUNAR_TREE_VIEW_MODEL (model));
+  thunar_tree_view_model_file_changed (file, THUNAR_TREE_VIEW_MODEL (model));
 }
 
 
@@ -4064,6 +4052,11 @@ thunar_tree_view_model_add_child (ThunarTreeViewModel *model,
   /* add a dummy to the new child */
   if (thunar_file_is_directory (file))
     thunar_tree_view_model_node_insert_dummy (child_node, model);
+
+  /* enable monitoring for the new file */
+  thunar_file_watch (file);
+  g_signal_connect (G_OBJECT (file), "changed", G_CALLBACK (thunar_tree_view_model_file_changed), model);
+
 }
 
 
@@ -4101,9 +4094,6 @@ thunar_tree_view_model_release_files (ThunarTreeViewModel *model)
 {
   ThunarTreeViewModel *store = THUNAR_TREE_VIEW_MODEL (model);
 
-  /* block the file monitor */
-  g_signal_handlers_block_by_func (store->file_monitor, thunar_tree_view_model_file_changed, store);
-
   /* release all resources allocated to the model */
   if (store->root != NULL)
     {
@@ -4117,9 +4107,6 @@ thunar_tree_view_model_release_files (ThunarTreeViewModel *model)
       g_slist_free_full (store->hidden, g_object_unref);
       store->hidden = NULL;
     }
-
-  /* unblock the file monitor */
-  g_signal_handlers_unblock_by_func (store->file_monitor, thunar_tree_view_model_file_changed, store);
 }
 
 

@@ -503,10 +503,30 @@ thunar_list_model_init (ThunarListModel *store)
 static void
 thunar_list_model_dispose (GObject *object)
 {
+  /* unlink from the folder (if any) */
+  thunar_list_model_set_folder (THUNAR_STANDARD_VIEW_MODEL (object), NULL, NULL);
+
+  (*G_OBJECT_CLASS (thunar_list_model_parent_class)->dispose) (object);
+}
+
+
+
+static void
+thunar_list_model_finalize (GObject *object)
+{
   ThunarListModel *store = THUNAR_LIST_MODEL (object);
   ThunarFile      *file;
   GSequenceIter   *row;
   GSequenceIter   *end;
+
+  thunar_list_model_cancel_search_job (store);
+
+  if (store->update_search_results_timeout_id > 0)
+    {
+      g_source_remove (store->update_search_results_timeout_id);
+      store->update_search_results_timeout_id = 0;
+    }
+
 
   row = g_sequence_get_begin_iter (store->rows);
   end = g_sequence_get_end_iter (store->rows);
@@ -522,26 +542,6 @@ thunar_list_model_dispose (GObject *object)
       row = g_sequence_iter_next (row);
     }
 
-  /* unlink from the folder (if any) */
-  thunar_list_model_set_folder (THUNAR_STANDARD_VIEW_MODEL (object), NULL, NULL);
-
-  (*G_OBJECT_CLASS (thunar_list_model_parent_class)->dispose) (object);
-}
-
-
-
-static void
-thunar_list_model_finalize (GObject *object)
-{
-  ThunarListModel *store = THUNAR_LIST_MODEL (object);
-
-  thunar_list_model_cancel_search_job (store);
-
-  if (store->update_search_results_timeout_id > 0)
-    {
-      g_source_remove (store->update_search_results_timeout_id);
-      store->update_search_results_timeout_id = 0;
-    }
   thunar_g_list_free_full (store->files_to_add);
   store->files_to_add = NULL;
 
@@ -1651,12 +1651,11 @@ thunar_list_model_insert_files (ThunarListModel *store,
               indices[0] = g_sequence_iter_get_position (row);
               gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
             }
+
+          /* enable monitoring for the file and subscribe to changed signal */
+          thunar_file_watch (file);
+          g_signal_connect (G_OBJECT (file), "changed", G_CALLBACK (thunar_list_model_file_changed), store);
         }
-
-      /* enable monitoring for the file and subscribe to changed signal */
-      thunar_file_watch (file);
-      g_signal_connect (G_OBJECT (file), "changed", G_CALLBACK (thunar_list_model_file_changed), store);
-
     }
 
   /* release the path */
@@ -1680,15 +1679,12 @@ thunar_list_model_files_removed (ThunarFolder    *folder,
   GtkTreePath   *path;
   gboolean       found;
   gboolean       search_mode;
+  ThunarFile    *file;
 
   /* drop all the referenced files from the model */
   search_mode = (store->search_terms != NULL);
   for (lp = files; lp != NULL; lp = lp->next)
     {
-      /* stop monitoring the file for changes */
-      g_signal_handlers_disconnect_matched (G_OBJECT (lp->data), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
-      thunar_file_unwatch (lp->data);
-
       row = g_sequence_get_begin_iter (store->rows);
       end = g_sequence_get_end_iter (store->rows);
 
@@ -1700,6 +1696,12 @@ thunar_list_model_files_removed (ThunarFolder    *folder,
 
           if (g_sequence_get (row) == lp->data)
             {
+              file = g_sequence_get (row);
+
+              /* stop monitoring the file for changes */
+              g_signal_handlers_disconnect_matched (G_OBJECT (file), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
+              thunar_file_unwatch (file);
+
               /* indicate that file was removed from this model */
               store->file_was_removed = TRUE;
 
@@ -2267,6 +2269,7 @@ thunar_list_model_set_folder (ThunarStandardViewModel *model,
 {
   ThunarListModel   *store = THUNAR_LIST_MODEL (model);
   GtkTreePath   *path;
+  ThunarFile    *file;
   gboolean       has_handler;
   GList         *files;
   GSequenceIter *row;
@@ -2299,6 +2302,12 @@ thunar_list_model_set_folder (ThunarStandardViewModel *model,
       path = gtk_tree_path_new_first ();
       while (row != end)
         {
+          file = g_sequence_get (row);
+
+          /* stop monitoring the file for changes */
+          g_signal_handlers_disconnect_matched (G_OBJECT (file), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
+          thunar_file_unwatch (file);
+
           /* remove the row from the list */
           next = g_sequence_iter_next (row);
           g_sequence_remove (row);
@@ -2536,6 +2545,10 @@ thunar_list_model_set_show_hidden (ThunarStandardViewModel *model,
 
               /* setup path for "row-deleted" */
               path = gtk_tree_path_new_from_indices (g_sequence_iter_get_position (row), -1);
+
+              /* stop monitoring the file for changes */
+              g_signal_handlers_disconnect_matched (G_OBJECT (file), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
+              thunar_file_unwatch (file);
 
               /* remove file from the model */
               g_sequence_remove (row);

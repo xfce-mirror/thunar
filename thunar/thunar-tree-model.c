@@ -113,8 +113,7 @@ static void                 thunar_tree_model_sort                    (ThunarTre
                                                                        GNode                  *node);
 static gboolean             thunar_tree_model_cleanup_idle            (gpointer                user_data);
 static void                 thunar_tree_model_cleanup_idle_destroy    (gpointer                user_data);
-static void                 thunar_tree_model_file_changed            (ThunarFileMonitor      *file_monitor,
-                                                                       ThunarFile             *file,
+static void                 thunar_tree_model_file_changed            (ThunarFile             *file,
                                                                        ThunarTreeModel        *model);
 static void                 thunar_tree_model_device_added            (ThunarDeviceMonitor    *device_monitor,
                                                                        ThunarDevice           *device,
@@ -399,10 +398,6 @@ thunar_tree_model_finalize (GObject *object)
   /* remove the cleanup idle */
   if (model->cleanup_idle_id != 0)
     g_source_remove (model->cleanup_idle_id);
-
-  /* disconnect from the file monitor */
-  g_signal_handlers_disconnect_by_func (model->file_monitor, thunar_tree_model_file_changed, model);
-  g_object_unref (model->file_monitor);
 
   /* release all resources allocated to the model */
   g_node_traverse (model->root, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_model_node_traverse_free, NULL);
@@ -962,12 +957,9 @@ thunar_tree_model_cleanup_idle_destroy (gpointer user_data)
 
 
 static void
-thunar_tree_model_file_changed (ThunarFileMonitor *file_monitor,
-                                ThunarFile        *file,
+thunar_tree_model_file_changed (ThunarFile        *file,
                                 ThunarTreeModel   *model)
 {
-  _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
-  _thunar_return_if_fail (model->file_monitor == file_monitor);
   _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
@@ -1340,6 +1332,10 @@ thunar_tree_model_item_files_removed (ThunarTreeModelItem *item,
   /* determine the node for the folder */
   node = g_node_find (model->root, G_POST_ORDER, G_TRAVERSE_ALL, item);
   _thunar_return_if_fail (node != NULL);
+
+  /* stop subscription to the folder and disable monitoring */
+  g_signal_handlers_disconnect_matched (G_OBJECT (thunar_folder_get_corresponding_file (folder)), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, model); 
+  thunar_file_unwatch (thunar_folder_get_corresponding_file (folder));
 
   /* check if the node has any visible children */
   if (G_LIKELY (node->children != NULL))
@@ -1972,8 +1968,12 @@ thunar_tree_model_add_child (ThunarTreeModel *model,
       gtk_tree_path_free (child_path);
     }
 
-  /* add a dummy to the new child */
-  thunar_tree_model_node_insert_dummy (child_node, model);
+    /* add a dummy to the new child */
+    thunar_tree_model_node_insert_dummy (child_node, model);
+
+    /* enable monitoring for the file */
+    thunar_file_watch (file);
+    g_signal_connect (G_OBJECT (file), "changed", G_CALLBACK (thunar_tree_model_file_changed), model);
 }
 
 
