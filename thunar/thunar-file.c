@@ -59,7 +59,6 @@
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-file.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
@@ -78,6 +77,7 @@
 
 
 /* Signal identifiers */
+/* Note that the signals 'CHANGED' and 'RENAMED' are provided by THUNARX_FILE_INFO */
 enum
 {
   DESTROY,
@@ -376,8 +376,7 @@ thunar_file_class_init (ThunarFileClass *klass)
    * ThunarFile::destroy:
    * @file : the #ThunarFile instance.
    *
-   * Emitted when the system notices that the @file
-   * was destroyed.
+   * Emitted when @file is destroyed.
    **/
   file_signals[DESTROY] =
     g_signal_new (I_("destroy"),
@@ -604,12 +603,8 @@ thunar_file_info_changed (ThunarxFileInfo *file_info)
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file_info));
 
-  /* set the new thumbnail state manually, so we only emit file
-   * changed once */
+  /* if the file changed, we need to reload the thumbnail */
   FLAG_SET_THUMB_STATE (file, THUNAR_FILE_THUMB_STATE_UNKNOWN);
-
-  /* tell the file monitor that this file changed */
-  thunar_file_monitor_file_changed (file);
 }
 
 
@@ -762,6 +757,8 @@ thunar_file_monitor (GFileMonitor     *monitor,
         {
         case G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
         case G_FILE_MONITOR_EVENT_DELETED:
+          thunar_file_destroy (file);
+          return;
         case G_FILE_MONITOR_EVENT_CREATED:
         case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
         case G_FILE_MONITOR_EVENT_PRE_UNMOUNT:
@@ -771,6 +768,9 @@ thunar_file_monitor (GFileMonitor     *monitor,
         default:
           break;
         }
+
+      /* Notify subscriber of the ThunarFile 'changed' signal */
+      thunar_file_changed (file);
     }
   else
     {
@@ -3931,8 +3931,7 @@ thunar_file_get_thumb_state (const ThunarFile *file)
  * @thumb_state : the new #ThunarFileThumbState.
  *
  * Sets the #ThunarFileThumbState for @file to @thumb_state.
- * This will cause a "file-changed" signal to be emitted from
- * #ThunarFileMonitor.
+ * This will cause a "changed" signal to be emitted
  **/
 void
 thunar_file_set_thumb_state (ThunarFile          *file,
@@ -3955,9 +3954,9 @@ thunar_file_set_thumb_state (ThunarFile          *file,
       file->thumbnail_path = NULL;
     }
 
-  /* if the file has a thumbnail, reload it */
+  /* if the file has a thumbnail, tell others that this file changed */
   if (state == THUNAR_FILE_THUMB_STATE_READY)
-    thunar_file_monitor_file_changed (file);
+    thunar_file_changed (file);
 }
 
 
@@ -4417,9 +4416,6 @@ thunar_file_destroy (ThunarFile *file)
        * invocation may already release the last reference.
        */
       g_object_ref (G_OBJECT (file));
-
-      /* tell the file monitor that this file was destroyed */
-      thunar_file_monitor_file_destroyed (file);
 
       /* run the dispose handler */
       g_object_run_dispose (G_OBJECT (file));
