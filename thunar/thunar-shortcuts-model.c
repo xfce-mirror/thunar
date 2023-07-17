@@ -1252,7 +1252,7 @@ thunar_shortcuts_model_add_shortcut_with_path (ThunarShortcutsModel *model,
       thunar_file_watch (shortcut->file);
 
       /* subscribe to relevant signals */
-      g_signal_connect (G_OBJECT (shortcut->file), "pre-destroy", G_CALLBACK (thunar_shortcuts_model_file_destroyed), model);
+      g_signal_connect (G_OBJECT (shortcut->file), "destroy", G_CALLBACK (thunar_shortcuts_model_file_destroyed), model);
       g_signal_connect (G_OBJECT (shortcut->file), "changed", G_CALLBACK (thunar_shortcuts_model_file_changed), model);
     }
 

@@ -157,6 +157,8 @@ static void                      thunar_tree_view_model_sort                    
                                                                                      GNode                        *node);
 static void                      thunar_tree_view_model_file_changed                (ThunarFile                   *file,
                                                                                      ThunarTreeViewModel          *store);
+static void                      thunar_tree_view_model_file_destroyed              (ThunarFile                   *file,
+                                                                                     ThunarTreeViewModel          *store);
 static void                      thunar_tree_view_model_folder_destroy              (ThunarFolder                 *folder,
                                                                                      ThunarTreeViewModel          *store);
 static void                      thunar_tree_view_model_folder_error                (ThunarFolder                 *folder,
@@ -1795,6 +1797,25 @@ thunar_tree_view_model_file_changed (ThunarFile            *file,
   /* traverse the model and emit "row-changed" for the file's nodes */
   if (store->root != NULL)
     g_node_traverse (store->root, G_PRE_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_view_model_node_traverse_changed, file);
+}
+
+
+
+static void
+thunar_tree_view_model_file_destroyed (ThunarFile            *file,
+                                       ThunarTreeViewModel   *store)
+{
+  GList *files = NULL;
+  _thunar_return_if_fail (THUNAR_STANDARD_VIEW_MODEL (store));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  /* traverse the model and emit "row-changed" for the file's nodes */
+  if (store->root != NULL)
+  {
+    files = g_list_append (files, file);
+    thunar_tree_view_model_files_removed (NULL, files, store);
+    g_list_free (files);
+  }
 }
 
 
@@ -4056,7 +4077,7 @@ thunar_tree_view_model_add_child (ThunarTreeViewModel *model,
   /* enable monitoring for the new file */
   thunar_file_watch (file);
   g_signal_connect (G_OBJECT (file), "changed", G_CALLBACK (thunar_tree_view_model_file_changed), model);
-
+  g_signal_connect (G_OBJECT (file), "destroy", G_CALLBACK (thunar_tree_view_model_file_destroyed), model);
 }
 
 

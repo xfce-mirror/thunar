@@ -396,7 +396,7 @@ thunar_folder_set_property (GObject      *object,
 
         /* subscribe to relevant signals */
         g_signal_connect (G_OBJECT (folder->corresponding_file), "changed", G_CALLBACK (thunar_folder_changed), folder);
-        g_signal_connect (G_OBJECT (folder->corresponding_file), "pre-destroy", G_CALLBACK (thunar_folder_destroyed), folder);
+        g_signal_connect (G_OBJECT (folder->corresponding_file), "destroy", G_CALLBACK (thunar_folder_destroyed), folder);
       }
 
       break;
@@ -533,7 +533,7 @@ thunar_folder_finished (ExoJob       *job,
 
             /* add to the internal files list */
             folder->files = g_list_prepend (folder->files, lp->data);
-            g_signal_connect (G_OBJECT (lp->data), "pre-destroy", G_CALLBACK (thunar_folder_file_destroyed), folder);
+            g_signal_connect (G_OBJECT (lp->data), "destroy", G_CALLBACK (thunar_folder_file_destroyed), folder);
 
             g_object_ref (G_OBJECT (lp->data));
           }
@@ -584,7 +584,7 @@ thunar_folder_finished (ExoJob       *job,
   else /* folder->files == NULL */
     {
       for (lp = folder->new_files; lp != NULL; lp=lp->next)
-        g_signal_connect (G_OBJECT (lp->data), "pre-destroy", G_CALLBACK (thunar_folder_file_destroyed), folder);
+        g_signal_connect (G_OBJECT (lp->data), "destroy", G_CALLBACK (thunar_folder_file_destroyed), folder);
       
       /* just use the new files for the files list */
       folder->files = folder->new_files;
@@ -812,7 +812,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
             {
               /* prepend it to our internal list and connect to thunar-internal destroy signal */
               folder->files = g_list_prepend (folder->files, file);
-              g_signal_connect (G_OBJECT (file), "pre-destroy", G_CALLBACK (thunar_folder_file_destroyed), folder);
+              g_signal_connect (G_OBJECT (file), "destroy", G_CALLBACK (thunar_folder_file_destroyed), folder);
 
               /* tell others about the new file */
               list.data = file; list.next = list.prev = NULL;

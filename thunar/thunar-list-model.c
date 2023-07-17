@@ -1655,6 +1655,7 @@ thunar_list_model_insert_files (ThunarListModel *store,
           /* enable monitoring for the file and subscribe to changed signal */
           thunar_file_watch (file);
           g_signal_connect (G_OBJECT (file), "changed", G_CALLBACK (thunar_list_model_file_changed), store);
+         // g_signal_connect (G_OBJECT (file), "destroy", G_CALLBACK (thunar_list_model_file_destroyed), store);
         }
     }
 
