@@ -74,7 +74,8 @@
 /* Dump the file cache every X second, set to 0 to disable */
 #define DUMP_FILE_CACHE 0
 
-
+/* Minimum delay between wo 'changed' signals of the same file */
+#define FILE_CHANGED_SIGNAL_RATE_LIMIT 100 /* in milliseconds */
 
 /* Signal identifiers */
 /* Note that the signals 'CHANGED' and 'RENAMED' are provided by THUNARX_FILE_INFO */
@@ -191,6 +192,9 @@ struct _ThunarFile
 
   /* tells whether the file watch is not set */
   gboolean              no_file_watch;
+
+  /* event source id used to rate-limit file-changed signals */
+  guint                 signal_changed_source_id;;
 
   /* Number of files in this directory (only used if this #Thunarfile is a directory) */
   /* Note that this feature was added into #ThunarFile on purpose, because having inside #ThunarFolder caused lag when
@@ -396,6 +400,7 @@ thunar_file_init (ThunarFile *file)
   file->file_count = 0;
   file->file_count_timestamp = 0;
   file->display_name = NULL;
+  file->signal_changed_source_id = 0;
 }
 
 
@@ -441,6 +446,9 @@ static void
 thunar_file_finalize (GObject *object)
 {
   ThunarFile *file = THUNAR_FILE (object);
+
+  if (file->signal_changed_source_id != 0)
+    g_source_remove (file->signal_changed_source_id);
 
   /* verify that nobody's watching the file anymore */
 #ifdef G_ENABLE_DEBUG
@@ -5376,4 +5384,39 @@ thunar_cmp_files_by_type (const ThunarFile *a,
       return thunar_file_compare_by_name (a, b, case_sensitive);
   else
       return result;
+}
+
+
+
+static gboolean
+thunar_file_changed_signal_emit (gpointer data)
+{
+  /* emit the changed signal on thunarx level */
+  thunarx_file_info_changed (THUNARX_FILE_INFO (data));
+  return G_SOURCE_REMOVE;
+}
+
+
+
+static void
+thunar_file_changed_signal_destroy (gpointer data)
+{
+  THUNAR_FILE (data)->signal_changed_source_id = 0;
+}
+
+
+
+/**
+ * thunar_file_changed:
+ * @file : a #ThunarFile instance.
+ *
+ * Emits the ::changed signal on @file. This function is meant to be called
+ * by derived classes whenever they notice changes to the @file.
+ **/
+void thunar_file_changed (ThunarFile *file)                         
+{
+  if (file->signal_changed_source_id == 0)
+    file->signal_changed_source_id = g_timeout_add_full (G_PRIORITY_DEFAULT, FILE_CHANGED_SIGNAL_RATE_LIMIT,
+                                                         thunar_file_changed_signal_emit,
+                                                         file, thunar_file_changed_signal_destroy);
 }
