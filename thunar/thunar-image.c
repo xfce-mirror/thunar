@@ -26,7 +26,6 @@
 #include <glib-object.h>
 
 #include <thunar/thunar-application.h>
-#include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-image.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-private.h>
@@ -54,8 +53,7 @@ static void thunar_image_set_property         (GObject           *object,
 static void thunar_image_scale_changed        (GObject           *object,
                                                GParamSpec        *pspec,
                                                gpointer           user_data);
-static void thunar_image_file_changed         (ThunarFileMonitor *monitor,
-                                               ThunarFile        *file,
+static void thunar_image_file_changed         (ThunarFile        *file,
                                                ThunarImage       *image);
 static void thunar_image_update               (ThunarImage       *image);
 
@@ -75,7 +73,6 @@ struct _ThunarImage
 
 struct _ThunarImagePrivate
 {
-  ThunarFileMonitor *monitor;
   ThunarFile        *file;
 };
 
@@ -111,10 +108,6 @@ thunar_image_init (ThunarImage *image)
   image->priv = thunar_image_get_instance_private (image);
   image->priv->file = NULL;
 
-  image->priv->monitor = thunar_file_monitor_get_default ();
-  g_signal_connect (image->priv->monitor, "file-changed",
-                    G_CALLBACK (thunar_image_file_changed), image);
-
   g_signal_connect (G_OBJECT (image), "notify::scale-factor", G_CALLBACK (thunar_image_scale_changed), NULL);
 }
 
@@ -124,10 +117,6 @@ static void
 thunar_image_finalize (GObject *object)
 {
   ThunarImage *image = THUNAR_IMAGE (object);
-
-  g_signal_handlers_disconnect_by_func (image->priv->monitor,
-                                        thunar_image_file_changed, image);
-  g_object_unref (image->priv->monitor);
 
   thunar_image_set_file (image, NULL);
 
@@ -222,16 +211,13 @@ thunar_image_update (ThunarImage *image)
 
 
 static void
-thunar_image_file_changed (ThunarFileMonitor *monitor,
-                           ThunarFile        *file,
+thunar_image_file_changed (ThunarFile        *file,
                            ThunarImage       *image)
 {
-  _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (monitor));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (THUNAR_IS_IMAGE (image));
 
-  if (file == image->priv->file)
-    thunar_image_update (image);
+  thunar_image_update (image);
 }
 
 
@@ -255,13 +241,25 @@ thunar_image_set_file (ThunarImage *image,
       if (image->priv->file == file)
         return;
 
+      /* disable monitoring for the file and unsubscribe from changes */
+      thunar_file_unwatch (file);
+      g_signal_handlers_disconnect_matched (file, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, image);
+
       g_object_unref (image->priv->file);
     }
 
   if (file != NULL)
-    image->priv->file = g_object_ref (file);
+    {
+      image->priv->file = g_object_ref (file);
+
+      /* enable monitoring for the file and subscribe to changes */
+      thunar_file_watch (file);
+      g_signal_connect (G_OBJECT (file), "changed", G_CALLBACK (thunar_image_file_changed), image);
+    }
   else
-    image->priv->file = NULL;
+    {
+      image->priv->file = NULL;
+    }
 
   thunar_image_update (image);
 

@@ -32,7 +32,6 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-file.h>
-#include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-tree-view-model.h>
 #include <thunar/thunar-preferences.h>
@@ -156,9 +155,9 @@ static gint                      thunar_tree_view_model_cmp_func                
                                                                                      gpointer                      user_data);
 static void                      thunar_tree_view_model_sort                        (ThunarTreeViewModel          *store,
                                                                                      GNode                        *node);
-static void                      thunar_tree_view_model_file_changed                (ThunarFileMonitor            *file_monitor,
-                                                                                     ThunarFile                   *file,
-                                                                                     ThunarTreeViewModel          *store);
+static void                      thunar_tree_view_model_item_files_changed          (ThunarTreeViewModelItem      *item,
+                                                                                     GList                        *files,
+                                                                                     ThunarFolder                 *folder);
 static void                      thunar_tree_view_model_folder_destroy              (ThunarFolder                 *folder,
                                                                                      ThunarTreeViewModel          *store);
 static void                      thunar_tree_view_model_folder_error                (ThunarFolder                 *folder,
@@ -214,8 +213,8 @@ static gint                      thunar_tree_view_model_get_folder_item_count   
 static void                      thunar_tree_view_model_set_folder_item_count       (ThunarTreeViewModel          *store,
                                                                                      ThunarFolderItemCount         count_as_dir_size);
 
-static void                      thunar_tree_view_model_file_count_callback         (ExoJob                       *job,
-                                                                                     gpointer                      model);
+static void                      thunar_tree_view_model_item_file_count_callback    (ExoJob                       *job,
+                                                                                     gpointer                      item);
 static void                      thunar_tree_view_model_item_free                   (ThunarTreeViewModelItem      *item);
 static void                      thunar_tree_view_model_item_load_folder            (ThunarTreeViewModelItem      *item);
 static void                      thunar_tree_view_model_item_files_added            (ThunarTreeViewModelItem      *item,
@@ -326,12 +325,6 @@ struct _ThunarTreeViewModel
    * Search job may have finished even if this is non-NULL.
    */
   gchar **search_terms;
-
-  /* Use the shared ThunarFileMonitor instance, so we
-   * do not need to connect "changed" handler to every
-   * file in the model.
-   */
-  ThunarFileMonitor *file_monitor;
 
   /* ids for the "row-inserted" and "row-deleted" signals
    * of GtkTreeModel to speed up folder changing.
@@ -618,12 +611,6 @@ thunar_tree_view_model_init (ThunarTreeViewModel *store)
 
   /* allocate the "virtual root node" */
   store->root = g_node_new (NULL);
-
-  /* connect to the shared ThunarFileMonitor, so we don't need to
-   * connect "changed" to every single ThunarFile we own. */
-  store->file_monitor = thunar_file_monitor_get_default ();
-  g_signal_connect (G_OBJECT (store->file_monitor), "file-changed",
-                    G_CALLBACK (thunar_tree_view_model_file_changed), store);
 }
 
 
@@ -660,10 +647,6 @@ thunar_tree_view_model_finalize (GObject *object)
   store->files_to_add = NULL;
 
   g_mutex_clear (&store->mutex_files_to_add);
-
-  /* disconnect from the file monitor */
-  g_signal_handlers_disconnect_by_func (G_OBJECT (store->file_monitor), thunar_tree_view_model_file_changed, store);
-  g_object_unref (G_OBJECT (store->file_monitor));
 
   g_object_unref (G_OBJECT (store->preferences));
 
@@ -1201,7 +1184,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
           /* If the option is set to always show folder sizes as item counts, then give the folder's item count */
           else if (THUNAR_TREE_VIEW_MODEL (model)->folder_item_count == THUNAR_FOLDER_ITEM_COUNT_ALWAYS)
             {
-              item_count = thunar_file_get_file_count (file, G_CALLBACK (thunar_tree_view_model_file_count_callback), model);
+              item_count = thunar_file_get_file_count (file, G_CALLBACK (thunar_tree_view_model_item_file_count_callback), item);
               g_value_take_string (value, g_strdup_printf (ngettext ("%u item", "%u items", item_count), item_count));
             }
 
@@ -1211,7 +1194,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
             {
               if (thunar_file_is_local (file))
                 {
-                  item_count = thunar_file_get_file_count (file, G_CALLBACK (thunar_tree_view_model_file_count_callback), model);
+                  item_count = thunar_file_get_file_count (file, G_CALLBACK (thunar_tree_view_model_item_file_count_callback), item);
                   g_value_take_string (value, g_strdup_printf (ngettext ("%u item", "%u items", item_count), item_count));
                 }
               else
@@ -1804,17 +1787,21 @@ thunar_tree_view_model_cleanup_idle_destroy (gpointer user_data)
 
 
 static void
-thunar_tree_view_model_file_changed (ThunarFileMonitor     *file_monitor,
-                                     ThunarFile            *file,
-                                     ThunarTreeViewModel   *store)
+thunar_tree_view_model_item_files_changed (ThunarTreeViewModelItem      *item,
+                                           GList                        *files,
+                                           ThunarFolder                 *folder)
 {
-  _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor) || file_monitor == NULL);
-  _thunar_return_if_fail (THUNAR_STANDARD_VIEW_MODEL (store));
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  ThunarTreeViewModel *model = item->model;
+  GNode               *node;
+
+  /* determine the node for the folder */
+  node = g_node_find (model->root, G_POST_ORDER, G_TRAVERSE_ALL, item);
+  _thunar_return_if_fail (node != NULL);
 
   /* traverse the model and emit "row-changed" for the file's nodes */
-  if (store->root != NULL)
-    g_node_traverse (store->root, G_PRE_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_view_model_node_traverse_changed, file);
+  for (GList *lp = files; lp != NULL; lp = lp->next)
+    g_node_traverse (node, G_PRE_ORDER, G_TRAVERSE_ALL, 2, thunar_tree_view_model_node_traverse_changed, lp->data);
+
 }
 
 
@@ -3129,6 +3116,7 @@ THUNAR_THREADS_ENTER
           /* connect signals */
           g_signal_connect_swapped (G_OBJECT (item->folder), "files-added", G_CALLBACK (thunar_tree_view_model_item_files_added), item);
           g_signal_connect_swapped (G_OBJECT (item->folder), "files-removed", G_CALLBACK (thunar_tree_view_model_item_files_removed), item);
+          g_signal_connect_swapped (G_OBJECT (item->folder), "files-changed", G_CALLBACK (thunar_tree_view_model_item_files_changed), item);
           g_signal_connect_swapped (G_OBJECT (item->folder), "notify::loading", G_CALLBACK (thunar_tree_view_model_item_notify_loading), item);
           item->add_files_timeout = g_timeout_add_full (G_PRIORITY_HIGH_IDLE, 25, thunar_tree_view_model_item_add_files, item, NULL);
 
@@ -3935,11 +3923,12 @@ thunar_tree_view_model_get_statusbar_text (ThunarStandardViewModel *model,
 
 
 static void
-thunar_tree_view_model_file_count_callback (ExoJob  *job,
-                                            gpointer model)
+thunar_tree_view_model_item_file_count_callback (ExoJob  *job,
+                                                 gpointer item)
 {
   GArray     *param_values;
   ThunarFile *file;
+  GList      *files = NULL;
 
   param_values = thunar_simple_job_get_param_values (THUNAR_SIMPLE_JOB (job));
   file = THUNAR_FILE (g_value_get_object (&g_array_index (param_values, GValue, 0)));
@@ -3947,7 +3936,9 @@ thunar_tree_view_model_file_count_callback (ExoJob  *job,
   if (file == NULL)
     return;
 
-  thunar_tree_view_model_file_changed (NULL, file, THUNAR_TREE_VIEW_MODEL (model));
+  files = g_list_append (files, file);
+  thunar_tree_view_model_item_files_changed (THUNAR_TREE_VIEW_MODEL_ITEM (item), files, NULL);
+  g_list_free (files);
 }
 
 
@@ -4101,9 +4092,6 @@ thunar_tree_view_model_release_files (ThunarTreeViewModel *model)
 {
   ThunarTreeViewModel *store = THUNAR_TREE_VIEW_MODEL (model);
 
-  /* block the file monitor */
-  g_signal_handlers_block_by_func (store->file_monitor, thunar_tree_view_model_file_changed, store);
-
   /* release all resources allocated to the model */
   if (store->root != NULL)
     {
@@ -4117,9 +4105,6 @@ thunar_tree_view_model_release_files (ThunarTreeViewModel *model)
       g_slist_free_full (store->hidden, g_object_unref);
       store->hidden = NULL;
     }
-
-  /* unblock the file monitor */
-  g_signal_handlers_unblock_by_func (store->file_monitor, thunar_tree_view_model_file_changed, store);
 }
 
 
