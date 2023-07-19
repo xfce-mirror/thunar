@@ -193,8 +193,9 @@ struct _ThunarFile
   /* tells whether the file watch is not set */
   gboolean              no_file_watch;
 
-  /* event source id used to rate-limit file-changed signals */
-  guint                 signal_changed_source_id;;
+  /* request flag and event source id used to rate-limit file-changed signals */
+  gboolean              signal_changed_requested;
+  guint                 signal_changed_source_id;
 
   /* Number of files in this directory (only used if this #Thunarfile is a directory) */
   /* Note that this feature was added into #ThunarFile on purpose, because having inside #ThunarFolder caused lag when
@@ -400,6 +401,7 @@ thunar_file_init (ThunarFile *file)
   file->file_count = 0;
   file->file_count_timestamp = 0;
   file->display_name = NULL;
+  file->signal_changed_requested = FALSE;
   file->signal_changed_source_id = 0;
 }
 
@@ -5391,8 +5393,17 @@ thunar_cmp_files_by_type (const ThunarFile *a,
 static gboolean
 thunar_file_changed_signal_emit (gpointer data)
 {
+  ThunarFile *file = THUNAR_FILE (data);
+
+  if (file->signal_changed_requested == FALSE)
+    return G_SOURCE_REMOVE;
+
   /* emit the changed signal on thunarx level */
   thunarx_file_info_changed (THUNARX_FILE_INFO (data));
+
+  /* reset the request to prevent double-signaling */
+  file->signal_changed_requested = FALSE;
+
   return G_SOURCE_REMOVE;
 }
 
@@ -5415,8 +5426,14 @@ thunar_file_changed_signal_destroy (gpointer data)
  **/
 void thunar_file_changed (ThunarFile *file)                         
 {
+  file->signal_changed_requested = TRUE;
+
   if (file->signal_changed_source_id == 0)
+  {
+    /* Directly emit a signal before starting the delay, in order to keep responsiveness. */
+    thunar_file_changed_signal_emit (file);
     file->signal_changed_source_id = g_timeout_add_full (G_PRIORITY_DEFAULT, FILE_CHANGED_SIGNAL_RATE_LIMIT,
                                                          thunar_file_changed_signal_emit,
                                                          file, thunar_file_changed_signal_destroy);
+  }
 }

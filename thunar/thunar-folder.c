@@ -31,7 +31,7 @@
 #include <thunar/thunar-private.h>
 
 #define DEBUG_FILE_CHANGES FALSE
-#define BATCH_PUBLISH_WAIT 100 /* in milliseconds */
+#define BATCH_PUBLISH_WAIT 200 /* in milliseconds */
 
 
 
@@ -1116,6 +1116,9 @@ thunar_folder_publish_files_added_batch (gpointer data)
 {
   ThunarFolder *folder = THUNAR_FOLDER (data);
 
+  if (folder->files_added == NULL)
+    return G_SOURCE_REMOVE;
+
   /* emit a "files-added" signal for the added files */
   g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, folder->files_added);
 
@@ -1153,9 +1156,13 @@ thunar_folder_push_files_added (ThunarFolder *folder,
   folder->files_added = g_list_prepend (folder->files_added, g_object_ref (file));
 
   if (folder->awaiting_files_added == 0)
+  {
+    /* Directly process our changed files before starting a delay, in order to keep responsiveness. */
+    thunar_folder_publish_files_added_batch (folder);
     folder->awaiting_files_added = g_timeout_add_full (G_PRIORITY_DEFAULT, BATCH_PUBLISH_WAIT,
                                                        thunar_folder_publish_files_added_batch,
                                                        folder, awaiting_files_added_timeout_delete);
+  }
 }
 
 
@@ -1165,6 +1172,9 @@ static gboolean
 thunar_folder_publish_files_removed_batch (gpointer data)
 {
   ThunarFolder *folder = THUNAR_FOLDER (data);
+
+  if (folder->files_removed == NULL)
+    return G_SOURCE_REMOVE;
 
   /* emit a "files-added" signal for the added files */
   g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, folder->files_removed);
@@ -1216,9 +1226,13 @@ thunar_folder_push_files_removed (ThunarFolder *folder,
     }
 
   if (folder->awaiting_files_removed == 0)
+  {
+    /* Directly process our changed files before starting a delay, in order to keep responsiveness. */
+    thunar_folder_publish_files_removed_batch (folder);
     folder->awaiting_files_removed = g_timeout_add_full (G_PRIORITY_DEFAULT, BATCH_PUBLISH_WAIT,
                                                          thunar_folder_publish_files_removed_batch,
                                                          folder, awaiting_files_removed_timeout_delete);
+  }
 }
 
 
@@ -1228,6 +1242,9 @@ static gboolean
 thunar_folder_publish_files_changed_batch (gpointer data)
 {
   ThunarFolder *folder = THUNAR_FOLDER (data);
+
+  if (folder->files_changed == NULL)
+    return G_SOURCE_REMOVE;
 
   /* emit a "files-added" signal for the added files */
   g_signal_emit (G_OBJECT (folder), folder_signals[FILES_CHANGED], 0, folder->files_changed);
@@ -1255,7 +1272,11 @@ thunar_folder_push_files_changed (ThunarFile   *file,
   folder->files_changed = g_list_prepend (folder->files_changed, g_object_ref (file));
 
   if (folder->awaiting_files_changed == 0)
-    folder->awaiting_files_changed = g_timeout_add_full (G_PRIORITY_DEFAULT, BATCH_PUBLISH_WAIT,
-                                                         thunar_folder_publish_files_changed_batch,
-                                                         folder, awaiting_files_changed_timeout_delete);
+    {
+      /* Directly process our changed files before starting a delay, in order to keep responsiveness. */
+      thunar_folder_publish_files_changed_batch (folder);
+      folder->awaiting_files_changed = g_timeout_add_full (G_PRIORITY_DEFAULT, BATCH_PUBLISH_WAIT,
+                                                           thunar_folder_publish_files_changed_batch,
+                                                           folder, awaiting_files_changed_timeout_delete);
+    }
 }
