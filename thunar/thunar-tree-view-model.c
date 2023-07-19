@@ -548,7 +548,15 @@ thunar_tree_view_model_finalize (GObject *object)
 
   thunar_tree_view_model_set_folder (THUNAR_STANDARD_VIEW_MODEL (model), NULL, NULL);
 
+  /* disconnect from the file monitor */
+  g_signal_handlers_disconnect_by_func (G_OBJECT (model->monitor), thunar_tree_view_model_file_changed, model);
+  g_object_unref (G_OBJECT (model->monitor));
+
+  g_free (model->date_custom_style);
+
   g_hash_table_destroy (model->subdirs);
+
+  (*G_OBJECT_CLASS (thunar_tree_view_model_parent_class)->finalize) (object);
 }
 
 
