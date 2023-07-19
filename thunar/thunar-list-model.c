@@ -1476,10 +1476,10 @@ thunar_list_model_files_changed (ThunarFolder    *folder,
             gtk_tree_model_row_changed (GTK_TREE_MODEL (store), path, &iter);
             gtk_tree_path_free (path);
           }
-
-        row = g_sequence_iter_next (row);
-        pos_before++;
       }
+
+      row = g_sequence_iter_next (row);
+      pos_before++;
     }
 }
 
