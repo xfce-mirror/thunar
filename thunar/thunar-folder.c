@@ -889,13 +889,17 @@ thunar_folder_monitor (GFileMonitor     *monitor,
                 }
             }
         }
+      /* This is the cause for the freeze.
+       * Why do we even need to listen to any other event? */
+      /*
       else
         {
 #if DEBUG_FILE_CHANGES
           thunar_file_infos_equal (lp->data, event_file);
 #endif
-          thunar_file_reload (lp->data);
+          thunar_file_reload(lp->data);
         }
+      */
     }
 
   /* check if we need to restart the collector */
