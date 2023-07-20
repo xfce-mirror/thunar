@@ -23,6 +23,7 @@
 
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-enum-types.h>
+#include <thunar/thunar-standard-view-model.h>
 
 G_BEGIN_DECLS
 
@@ -53,6 +54,9 @@ ThunarJob *thunar_io_jobs_rename_file      (ThunarFile            *file,
                                             const gchar           *display_name,
                                             ThunarOperationLogMode log_mode) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 ThunarJob *thunar_io_jobs_count_files      (ThunarFile            *file);
+ThunarJob *thunar_io_jobs_search_directory (ThunarStandardViewModel *model,
+                                            const gchar             *search_query,
+                                            ThunarFile              *directory);
 
 G_END_DECLS
 
