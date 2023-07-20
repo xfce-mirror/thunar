@@ -86,46 +86,46 @@ enum
 
 
 
-static void               thunar_file_info_init                (ThunarxFileInfoIface   *iface);
-static void               thunar_file_dispose                  (GObject                *object);
-static void               thunar_file_finalize                 (GObject                *object);
-static gchar             *thunar_file_info_get_name            (ThunarxFileInfo        *file_info);
-static gchar             *thunar_file_info_get_uri             (ThunarxFileInfo        *file_info);
-static gchar             *thunar_file_info_get_parent_uri      (ThunarxFileInfo        *file_info);
-static gchar             *thunar_file_info_get_uri_scheme      (ThunarxFileInfo        *file_info);
-static gchar             *thunar_file_info_get_mime_type       (ThunarxFileInfo        *file_info);
-static gboolean           thunar_file_info_has_mime_type       (ThunarxFileInfo        *file_info,
-                                                                const gchar            *mime_type);
-static gboolean           thunar_file_info_is_directory        (ThunarxFileInfo        *file_info);
-static GFileInfo         *thunar_file_info_get_file_info       (ThunarxFileInfo        *file_info);
-static GFileInfo         *thunar_file_info_get_filesystem_info (ThunarxFileInfo        *file_info);
-static GFile             *thunar_file_info_get_location        (ThunarxFileInfo        *file_info);
-static void               thunar_file_info_changed             (ThunarxFileInfo        *file_info);
-static gboolean           thunar_file_denies_access_permission (const ThunarFile       *file,
-                                                                ThunarFileMode          usr_permissions,
-                                                                ThunarFileMode          grp_permissions,
-                                                                ThunarFileMode          oth_permissions);
-static void               thunar_file_monitor                  (GFileMonitor           *monitor,
-                                                                GFile                  *path,
-                                                                GFile                  *other_path,
-                                                                GFileMonitorEvent       event_type,
-                                                                gpointer                user_data);
-static void               thunar_file_watch_reconnect          (ThunarFile             *file);
-static gboolean           thunar_file_load                     (ThunarFile             *file,
-                                                                GCancellable           *cancellable,
-                                                                GError                **error);
-static gboolean           thunar_file_is_readable              (const ThunarFile       *file);
-static gboolean           thunar_file_same_filesystem          (const ThunarFile       *file_a,
-                                                                const ThunarFile       *file_b);
+static void       thunar_file_info_init (ThunarxFileInfoIface *iface);
+static void       thunar_file_dispose (GObject *object);
+static void       thunar_file_finalize (GObject *object);
+static gchar     *thunar_file_info_get_name (ThunarxFileInfo *file_info);
+static gchar     *thunar_file_info_get_uri (ThunarxFileInfo *file_info);
+static gchar     *thunar_file_info_get_parent_uri (ThunarxFileInfo *file_info);
+static gchar     *thunar_file_info_get_uri_scheme (ThunarxFileInfo *file_info);
+static gchar     *thunar_file_info_get_mime_type (ThunarxFileInfo *file_info);
+static gboolean   thunar_file_info_has_mime_type (ThunarxFileInfo *file_info,
+                                                  const gchar     *mime_type);
+static gboolean   thunar_file_info_is_directory (ThunarxFileInfo *file_info);
+static GFileInfo *thunar_file_info_get_file_info (ThunarxFileInfo *file_info);
+static GFileInfo *thunar_file_info_get_filesystem_info (ThunarxFileInfo *file_info);
+static GFile     *thunar_file_info_get_location (ThunarxFileInfo *file_info);
+static void       thunar_file_info_changed (ThunarxFileInfo *file_info);
+static gboolean   thunar_file_denies_access_permission (const ThunarFile *file,
+                                                        ThunarFileMode    usr_permissions,
+                                                        ThunarFileMode    grp_permissions,
+                                                        ThunarFileMode    oth_permissions);
+static void       thunar_file_monitor (GFileMonitor     *monitor,
+                                       GFile            *path,
+                                       GFile            *other_path,
+                                       GFileMonitorEvent event_type,
+                                       gpointer          user_data);
+static void       thunar_file_watch_reconnect (ThunarFile *file);
+static gboolean   thunar_file_load (ThunarFile   *file,
+                                    GCancellable *cancellable,
+                                    GError      **error);
+static gboolean   thunar_file_is_readable (const ThunarFile *file);
+static gboolean   thunar_file_same_filesystem (const ThunarFile *file_a,
+                                               const ThunarFile *file_b);
 
 
 
-static GRecMutex G_LOCK_NAME (file_cache_mutex);
-G_LOCK_DEFINE_STATIC         (file_content_type_mutex);
+static GRecMutex  G_LOCK_NAME (file_cache_mutex);
+G_LOCK_DEFINE_STATIC (file_content_type_mutex);
 
 
 
-#define G_REC_LOCK(name)   g_rec_mutex_lock   (&G_LOCK_NAME (name))
+#define G_REC_LOCK(name)   g_rec_mutex_lock (&G_LOCK_NAME (name))
 #define G_REC_UNLOCK(name) g_rec_mutex_unlock (&G_LOCK_NAME (name))
 
 
@@ -138,11 +138,26 @@ static guint              file_signals[LAST_SIGNAL];
 
 
 
-#define FLAG_SET_THUMB_STATE(file,new_state) G_STMT_START{ (file)->flags = ((file)->flags & ~THUNAR_FILE_FLAG_THUMB_MASK) | (new_state); }G_STMT_END
-#define FLAG_GET_THUMB_STATE(file)           ((file)->flags & THUNAR_FILE_FLAG_THUMB_MASK)
-#define FLAG_SET(file,flag)                  G_STMT_START{ ((file)->flags |= (flag)); }G_STMT_END
-#define FLAG_UNSET(file,flag)                G_STMT_START{ ((file)->flags &= ~(flag)); }G_STMT_END
-#define FLAG_IS_SET(file,flag)               (((file)->flags & (flag)) != 0)
+#define FLAG_SET_THUMB_STATE(file, new_state)                                     \
+  G_STMT_START                                                                    \
+  {                                                                               \
+    (file)->flags = ((file)->flags & ~THUNAR_FILE_FLAG_THUMB_MASK) | (new_state); \
+  }                                                                               \
+  G_STMT_END
+#define FLAG_GET_THUMB_STATE(file) ((file)->flags & THUNAR_FILE_FLAG_THUMB_MASK)
+#define FLAG_SET(file, flag)   \
+  G_STMT_START                 \
+  {                            \
+    ((file)->flags |= (flag)); \
+  }                            \
+  G_STMT_END
+#define FLAG_UNSET(file, flag)  \
+  G_STMT_START                  \
+  {                             \
+    ((file)->flags &= ~(flag)); \
+  }                             \
+  G_STMT_END
+#define FLAG_IS_SET(file, flag) (((file)->flags & (flag)) != 0)
 
 #define DEFAULT_CONTENT_TYPE "application/octet-stream"
 
@@ -150,11 +165,10 @@ static guint              file_signals[LAST_SIGNAL];
 
 typedef enum
 {
-  THUNAR_FILE_FLAG_THUMB_MASK     = 0x03,   /* storage for ThunarFileThumbState */
+  THUNAR_FILE_FLAG_THUMB_MASK = 0x03,       /* storage for ThunarFileThumbState */
   THUNAR_FILE_FLAG_IN_DESTRUCTION = 1 << 2, /* for avoiding recursion during destroy */
-  THUNAR_FILE_FLAG_IS_MOUNTED     = 1 << 3, /* whether this file is mounted */
-}
-ThunarFileFlags;
+  THUNAR_FILE_FLAG_IS_MOUNTED = 1 << 3,     /* whether this file is mounted */
+} ThunarFileFlags;
 
 struct _ThunarFileClass
 {
@@ -166,79 +180,73 @@ struct _ThunarFileClass
 
 struct _ThunarFile
 {
-  GObject __parent__;
+  GObject         __parent__;
 
   /* storage for the file information */
-  GFileInfo            *info;
-  GFileInfo            *recent_info;
-  GFileType             kind;
-  GFile                *gfile;
-  gchar                *content_type;
-  gchar                *icon_name;
+  GFileInfo      *info;
+  GFileInfo      *recent_info;
+  GFileType       kind;
+  GFile          *gfile;
+  gchar          *content_type;
+  gchar          *icon_name;
 
-  gchar                *custom_icon_name;
-  gchar                *display_name;
-  gchar                *basename;
-  const gchar          *device_type;
-  gchar                *thumbnail_path;
+  gchar          *custom_icon_name;
+  gchar          *display_name;
+  gchar          *basename;
+  const gchar    *device_type;
+  gchar          *thumbnail_path;
 
   /* sorting */
-  gchar                *collate_key;
-  gchar                *collate_key_nocase;
+  gchar          *collate_key;
+  gchar          *collate_key_nocase;
 
   /* flags for thumbnail state etc */
-  ThunarFileFlags       flags;
+  ThunarFileFlags flags;
 
   /* tells whether the file watch is not set */
-  gboolean              no_file_watch;
+  gboolean        no_file_watch;
 
   /* Number of files in this directory (only used if this #Thunarfile is a directory) */
   /* Note that this feature was added into #ThunarFile on purpose, because having inside #ThunarFolder caused lag when
    * there were > 10.000 files in a folder (Creation of #ThunarFolder seems to be slow) */
-  guint                 file_count;
-  guint64               file_count_timestamp;
-
+  guint           file_count;
+  guint64         file_count_timestamp;
 };
 
 typedef struct
 {
-  GFileMonitor  *monitor;
-  guint          watch_count;
-}
-ThunarFileWatch;
+  GFileMonitor *monitor;
+  guint         watch_count;
+} ThunarFileWatch;
 
 typedef struct
 {
-  ThunarFileGetFunc  func;
-  gpointer           user_data;
-  GCancellable      *cancellable;
-}
-ThunarFileGetData;
+  ThunarFileGetFunc func;
+  gpointer          user_data;
+  GCancellable     *cancellable;
+} ThunarFileGetData;
 
 static struct
 {
-  GUserDirectory  type;
-  const gchar    *icon_name;
-}
-thunar_file_dirs[] =
-{
-  { G_USER_DIRECTORY_DESKTOP,      "user-desktop" },
-  { G_USER_DIRECTORY_DOCUMENTS,    "folder-documents" },
-  { G_USER_DIRECTORY_DOWNLOAD,     "folder-download" },
-  { G_USER_DIRECTORY_MUSIC,        "folder-music" },
-  { G_USER_DIRECTORY_PICTURES,     "folder-pictures" },
-  { G_USER_DIRECTORY_PUBLIC_SHARE, "folder-publicshare" },
-  { G_USER_DIRECTORY_TEMPLATES,    "folder-templates" },
-  { G_USER_DIRECTORY_VIDEOS,       "folder-videos" }
+  GUserDirectory type;
+  const gchar   *icon_name;
+} thunar_file_dirs[] = {
+  {     G_USER_DIRECTORY_DESKTOP,       "user-desktop"},
+  {   G_USER_DIRECTORY_DOCUMENTS,   "folder-documents"},
+  {    G_USER_DIRECTORY_DOWNLOAD,    "folder-download"},
+  {       G_USER_DIRECTORY_MUSIC,       "folder-music"},
+  {    G_USER_DIRECTORY_PICTURES,    "folder-pictures"},
+  {G_USER_DIRECTORY_PUBLIC_SHARE, "folder-publicshare"},
+  {   G_USER_DIRECTORY_TEMPLATES,   "folder-templates"},
+  {      G_USER_DIRECTORY_VIDEOS,      "folder-videos"}
 };
 
 
 
-G_DEFINE_TYPE_WITH_CODE (ThunarFile, thunar_file, G_TYPE_OBJECT,
-    G_IMPLEMENT_INTERFACE (THUNARX_TYPE_FILE_INFO, thunar_file_info_init))
+G_DEFINE_TYPE_WITH_CODE (ThunarFile, thunar_file, G_TYPE_OBJECT, G_IMPLEMENT_INTERFACE (THUNARX_TYPE_FILE_INFO, thunar_file_info_init))
 
 
-static GWeakRef*
+static GWeakRef *
 weak_ref_new (GObject *obj)
 {
   GWeakRef *ref;
@@ -349,7 +357,7 @@ thunar_file_class_init (ThunarFileClass *klass)
 #ifdef HAVE_ATEXIT
   if (G_UNLIKELY (!thunar_file_atexit_registered))
     {
-      atexit ((void (*)(void)) thunar_file_atexit);
+      atexit ((void (*) (void)) thunar_file_atexit);
       thunar_file_atexit_registered = TRUE;
     }
 #endif
@@ -380,7 +388,7 @@ thunar_file_class_init (ThunarFileClass *klass)
    * was destroyed.
    **/
   file_signals[DESTROY] =
-    g_signal_new (I_("destroy"),
+    g_signal_new (I_ ("destroy"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_CLEANUP | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
                   G_STRUCT_OFFSET (ThunarFileClass, destroy),
@@ -449,7 +457,8 @@ thunar_file_finalize (GObject *object)
   if (file_watch != NULL)
     {
       g_error ("Attempt to finalize a ThunarFile, which has an active "
-               "watch count of %d", file_watch->watch_count);
+               "watch count of %d",
+               file_watch->watch_count);
     }
 #endif
 
@@ -501,7 +510,7 @@ thunar_file_info_get_name (ThunarxFileInfo *file_info)
 
 
 
-static gchar*
+static gchar *
 thunar_file_info_get_uri (ThunarxFileInfo *file_info)
 {
   return thunar_file_dup_uri (THUNAR_FILE (file_info));
@@ -509,7 +518,7 @@ thunar_file_info_get_uri (ThunarxFileInfo *file_info)
 
 
 
-static gchar*
+static gchar *
 thunar_file_info_get_parent_uri (ThunarxFileInfo *file_info)
 {
   GFile *parent;
@@ -527,7 +536,7 @@ thunar_file_info_get_parent_uri (ThunarxFileInfo *file_info)
 
 
 
-static gchar*
+static gchar *
 thunar_file_info_get_uri_scheme (ThunarxFileInfo *file_info)
 {
   return g_file_get_uri_scheme (THUNAR_FILE (file_info)->gfile);
@@ -535,7 +544,7 @@ thunar_file_info_get_uri_scheme (ThunarxFileInfo *file_info)
 
 
 
-static gchar*
+static gchar *
 thunar_file_info_get_mime_type (ThunarxFileInfo *file_info)
 {
   return g_strdup (thunar_file_get_content_type (THUNAR_FILE (file_info)));
@@ -760,16 +769,16 @@ thunar_file_monitor (GFileMonitor     *monitor,
       /* the event occurred for the monitored ThunarFile */
       switch (event_type)
         {
-        case G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
-        case G_FILE_MONITOR_EVENT_DELETED:
-        case G_FILE_MONITOR_EVENT_CREATED:
-        case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
-        case G_FILE_MONITOR_EVENT_PRE_UNMOUNT:
-          thunar_file_reload (file);
-          break;
+          case G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
+          case G_FILE_MONITOR_EVENT_DELETED:
+          case G_FILE_MONITOR_EVENT_CREATED:
+          case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
+          case G_FILE_MONITOR_EVENT_PRE_UNMOUNT:
+            thunar_file_reload (file);
+            break;
 
-        default:
-          break;
+          default:
+            break;
         }
     }
   else
@@ -931,7 +940,7 @@ thunar_file_info_reload (ThunarFile   *file,
               && !g_file_info_get_attribute_boolean (file->info, G_FILE_ATTRIBUTE_MOUNTABLE_CAN_MOUNT))
             FLAG_SET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
           else
-             FLAG_UNSET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
+            FLAG_UNSET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
         }
     }
 
@@ -977,7 +986,7 @@ thunar_file_info_reload (ThunarFile   *file,
               if (!g_path_is_absolute (file->custom_icon_name))
                 {
                   p = strrchr (file->custom_icon_name, '.');
-                  if(g_strcmp0(p, ".png") == 0 || g_strcmp0(p, ".xpm") == 0 || g_strcmp0(p, ".svg") == 0)
+                  if (g_strcmp0 (p, ".png") == 0 || g_strcmp0 (p, ".xpm") == 0 || g_strcmp0 (p, ".svg") == 0)
                     *p = '\0';
                 }
             }
@@ -1002,7 +1011,7 @@ thunar_file_info_reload (ThunarFile   *file,
                   g_free (file->display_name);
                   file->display_name = NULL;
                 }
-              }
+            }
 
           /* free the key file */
           g_key_file_free (key_file);
@@ -1013,14 +1022,14 @@ thunar_file_info_reload (ThunarFile   *file,
   if (file->display_name == NULL)
     {
       if (G_UNLIKELY (thunar_file_is_trash (file)))
-        file->display_name = g_strdup (_("Trash"));
+        file->display_name = g_strdup (_ ("Trash"));
       else if (G_LIKELY (file->info != NULL))
         {
           display_name = g_file_info_get_display_name (file->info);
           if (G_LIKELY (display_name != NULL))
             {
               if (strcmp (display_name, "/") == 0)
-                file->display_name = g_strdup (_("File System"));
+                file->display_name = g_strdup (_ ("File System"));
               else
                 file->display_name = g_strdup (display_name);
             }
@@ -1083,10 +1092,10 @@ thunar_file_get_async_finish (GObject      *object,
   if (error != NULL
       && error->domain == G_IO_ERROR
       && error->code == G_IO_ERROR_NOT_MOUNTED)
-   {
+    {
       FLAG_UNSET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
       g_clear_error (&error);
-   }
+    }
 
   /* insert the file into the cache */
   G_REC_LOCK (file_cache_mutex);
@@ -1157,10 +1166,10 @@ thunar_file_load (ThunarFile   *file,
   if (err != NULL
       && err->domain == G_IO_ERROR
       && err->code == G_IO_ERROR_NOT_MOUNTED)
-   {
+    {
       FLAG_UNSET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
       g_clear_error (&err);
-   }
+    }
 
   if (err != NULL)
     {
@@ -1201,7 +1210,7 @@ thunar_file_load (ThunarFile   *file,
  *
  * Return value: the #ThunarFile for @file or %NULL on errors.
  **/
-ThunarFile*
+ThunarFile *
 thunar_file_get (GFile   *gfile,
                  GError **error)
 {
@@ -1339,7 +1348,7 @@ thunar_file_get_with_info (GFile     *gfile,
  * Return value: the #ThunarFile for the given @uri or %NULL if
  *               unable to determine.
  **/
-ThunarFile*
+ThunarFile *
 thunar_file_get_for_uri (const gchar *uri,
                          GError     **error)
 {
@@ -1463,7 +1472,7 @@ thunar_file_get_info (const ThunarFile *file)
  *
  * Return value: the parent #ThunarFile or %NULL.
  **/
-ThunarFile*
+ThunarFile *
 thunar_file_get_parent (const ThunarFile *file,
                         GError          **error)
 {
@@ -1477,7 +1486,7 @@ thunar_file_get_parent (const ThunarFile *file,
 
   if (parent_file == NULL)
     {
-      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_NOENT, _("The root folder has no parent"));
+      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_NOENT, _ ("The root folder has no parent"));
       return NULL;
     }
 
@@ -1536,28 +1545,28 @@ thunar_file_execute (ThunarFile  *file,
                      const gchar *startup_id,
                      GError     **error)
 {
-  gboolean    snotify = FALSE;
-  gboolean    prefers_no_default_gpu = FALSE;
-  gboolean    terminal;
-  gboolean    result = FALSE;
-  GKeyFile   *key_file;
-  GError     *err = NULL;
-  GFile      *file_parent;
-  GList      *li;
-  GSList     *uri_list = NULL;
-  gchar      *icon_name = NULL;
-  gchar      *name;
-  gchar      *type;
-  gchar      *url;
-  gchar      *location;
-  gchar      *escaped_location;
-  gchar     **argv = NULL;
-  gchar     **envp = NULL;
-  gchar      *exec;
-  gchar      *command;
-  gchar      *directory = NULL;
-  gboolean    is_secure = FALSE;
-  guint32     stimestamp = 0;
+  gboolean  snotify = FALSE;
+  gboolean  prefers_no_default_gpu = FALSE;
+  gboolean  terminal;
+  gboolean  result = FALSE;
+  GKeyFile *key_file;
+  GError   *err = NULL;
+  GFile    *file_parent;
+  GList    *li;
+  GSList   *uri_list = NULL;
+  gchar    *icon_name = NULL;
+  gchar    *name;
+  gchar    *type;
+  gchar    *url;
+  gchar    *location;
+  gchar    *escaped_location;
+  gchar   **argv = NULL;
+  gchar   **envp = NULL;
+  gchar    *exec;
+  gchar    *command;
+  gchar    *directory = NULL;
+  gboolean  is_secure = FALSE;
+  guint32   stimestamp = 0;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -1575,7 +1584,7 @@ thunar_file_execute (ThunarFile  *file,
       if (key_file == NULL)
         {
           g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL,
-                       _("Failed to parse the desktop file: %s"), err->message);
+                       _ ("Failed to parse the desktop file: %s"), err->message);
           g_error_free (err);
           return FALSE;
         }
@@ -1588,7 +1597,7 @@ thunar_file_execute (ThunarFile  *file,
           if (G_LIKELY (exec != NULL))
             {
               /* if the .desktop file is not secure, ask user what to do */
-              if (is_secure || thunar_dialogs_show_insecure_program (parent, _("Untrusted application launcher"), file, exec))
+              if (is_secure || thunar_dialogs_show_insecure_program (parent, _ ("Untrusted application launcher"), file, exec))
                 {
                   /* parse other fields */
                   name = g_key_file_get_locale_string (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_NAME, NULL, NULL);
@@ -1619,7 +1628,7 @@ thunar_file_execute (ThunarFile  *file,
             {
               /* TRANSLATORS: `Exec' is a field name in a .desktop file. Don't translate it. */
               g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL,
-                           _("No Exec field specified"));
+                           _ ("No Exec field specified"));
             }
         }
       else if (g_strcmp0 (type, "Link") == 0)
@@ -1628,7 +1637,7 @@ thunar_file_execute (ThunarFile  *file,
           if (G_LIKELY (url != NULL))
             {
               /* if the .desktop file is not secure, ask user what to do */
-              if (is_secure || thunar_dialogs_show_insecure_program (parent, _("Untrusted link launcher"), file, url))
+              if (is_secure || thunar_dialogs_show_insecure_program (parent, _ ("Untrusted link launcher"), file, url))
                 {
                   /* pass the URL to the webbrowser, this could be a bit strange,
                    * but then at least we are on the secure side */
@@ -1644,12 +1653,12 @@ thunar_file_execute (ThunarFile  *file,
             {
               /* TRANSLATORS: `URL' is a field name in a .desktop file. Don't translate it. */
               g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL,
-                           _("No URL field specified"));
+                           _ ("No URL field specified"));
             }
         }
       else
         {
-          g_set_error_literal (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Invalid desktop file"));
+          g_set_error_literal (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _ ("Invalid desktop file"));
         }
 
       g_free (type);
@@ -1888,10 +1897,10 @@ thunar_file_rename (ThunarFile   *file,
                     gboolean      called_from_job,
                     GError      **error)
 {
-  GFile                *renamed_file;
-  ThunarFile           *parent_thunar_file;
-  ThunarFolder         *parent_thunar_folder;
-  gboolean              reload_file = FALSE;
+  GFile        *renamed_file;
+  ThunarFile   *parent_thunar_file;
+  ThunarFolder *parent_thunar_folder;
+  gboolean      reload_file = FALSE;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (g_utf8_validate (name, -1, NULL), FALSE);
@@ -2049,7 +2058,7 @@ thunar_file_accepts_drop (ThunarFile     *file,
               /* we only can 'move' if we know the source folder is writable (i.e. the file can be deleted)
                * and both the source and the target are on the same disk.
                */
-              if (ofile == NULL) 
+              if (ofile == NULL)
                 {
                   suggested_action = GDK_ACTION_COPY;
                   break;
@@ -2126,31 +2135,31 @@ thunar_file_get_date (const ThunarFile  *file,
 
   switch (date_type)
     {
-    case THUNAR_FILE_DATE_ACCESSED:
-      attribute = G_FILE_ATTRIBUTE_TIME_ACCESS;
-      break;
-    case THUNAR_FILE_DATE_CHANGED:
-      attribute = G_FILE_ATTRIBUTE_TIME_CHANGED;
-      break;
-    case THUNAR_FILE_DATE_CREATED:
-      attribute = G_FILE_ATTRIBUTE_TIME_CREATED;
-      break;
-    case THUNAR_FILE_DATE_MODIFIED:
-      attribute = G_FILE_ATTRIBUTE_TIME_MODIFIED;
-      break;
-    case THUNAR_FILE_DATE_DELETED:
-      datetime = g_file_info_get_deletion_date (file->info);
-      if (datetime == NULL)
-        return 0;
-      date = g_date_time_to_unix (datetime);
-      g_date_time_unref (datetime);
-      return date;
-    case THUNAR_FILE_RECENCY:
-      return g_file_info_get_attribute_int64 (file->recent_info ? file->recent_info : file->info, G_FILE_ATTRIBUTE_RECENT_MODIFIED);
+      case THUNAR_FILE_DATE_ACCESSED:
+        attribute = G_FILE_ATTRIBUTE_TIME_ACCESS;
+        break;
+      case THUNAR_FILE_DATE_CHANGED:
+        attribute = G_FILE_ATTRIBUTE_TIME_CHANGED;
+        break;
+      case THUNAR_FILE_DATE_CREATED:
+        attribute = G_FILE_ATTRIBUTE_TIME_CREATED;
+        break;
+      case THUNAR_FILE_DATE_MODIFIED:
+        attribute = G_FILE_ATTRIBUTE_TIME_MODIFIED;
+        break;
+      case THUNAR_FILE_DATE_DELETED:
+        datetime = g_file_info_get_deletion_date (file->info);
+        if (datetime == NULL)
+          return 0;
+        date = g_date_time_to_unix (datetime);
+        g_date_time_unref (datetime);
+        return date;
+      case THUNAR_FILE_RECENCY:
+        return g_file_info_get_attribute_int64 (file->recent_info ? file->recent_info : file->info, G_FILE_ATTRIBUTE_RECENT_MODIFIED);
 
-    default:
-      g_warn_if_reached ();
-      return 0;
+      default:
+        g_warn_if_reached ();
+        return 0;
     }
 
   return g_file_info_get_attribute_uint64 (file->info, attribute);
@@ -2172,7 +2181,7 @@ thunar_file_get_date (const ThunarFile  *file,
  *
  * Return value: the @date_type of @file formatted as string.
  **/
-gchar*
+gchar *
 thunar_file_get_date_string (const ThunarFile  *file,
                              ThunarFileDateType date_type,
                              ThunarDateStyle    date_style,
@@ -2192,7 +2201,7 @@ thunar_file_get_date_string (const ThunarFile  *file,
  *
  * Return value: the mode of @file as string.
  **/
-gchar*
+gchar *
 thunar_file_get_mode_string (const ThunarFile *file)
 {
   ThunarFileMode mode;
@@ -2210,34 +2219,40 @@ thunar_file_get_mode_string (const ThunarFile *file)
    * 'D' for doors. Do we still need those? */
   switch (kind)
     {
-    case G_FILE_TYPE_SYMBOLIC_LINK: text[0] = 'l'; break;
-    case G_FILE_TYPE_REGULAR:       text[0] = '-'; break;
-    case G_FILE_TYPE_DIRECTORY:     text[0] = 'd'; break;
-    case G_FILE_TYPE_SPECIAL:
-    case G_FILE_TYPE_UNKNOWN:
-    default:
-      if (S_ISCHR (mode))
-        text[0] = 'c';
-      else if (S_ISSOCK (mode))
-        text[0] = 's';
-      else if (S_ISFIFO (mode))
-        text[0] = 'f';
-      else if (S_ISBLK (mode))
-        text[0] = 'b';
-      else
-        text[0] = ' ';
+      case G_FILE_TYPE_SYMBOLIC_LINK:
+        text[0] = 'l';
+        break;
+      case G_FILE_TYPE_REGULAR:
+        text[0] = '-';
+        break;
+      case G_FILE_TYPE_DIRECTORY:
+        text[0] = 'd';
+        break;
+      case G_FILE_TYPE_SPECIAL:
+      case G_FILE_TYPE_UNKNOWN:
+      default:
+        if (S_ISCHR (mode))
+          text[0] = 'c';
+        else if (S_ISSOCK (mode))
+          text[0] = 's';
+        else if (S_ISFIFO (mode))
+          text[0] = 'f';
+        else if (S_ISBLK (mode))
+          text[0] = 'b';
+        else
+          text[0] = ' ';
     }
 
   /* permission flags */
-  text[1] = (mode & THUNAR_FILE_MODE_USR_READ)  ? 'r' : '-';
+  text[1] = (mode & THUNAR_FILE_MODE_USR_READ) ? 'r' : '-';
   text[2] = (mode & THUNAR_FILE_MODE_USR_WRITE) ? 'w' : '-';
-  text[3] = (mode & THUNAR_FILE_MODE_USR_EXEC)  ? 'x' : '-';
-  text[4] = (mode & THUNAR_FILE_MODE_GRP_READ)  ? 'r' : '-';
+  text[3] = (mode & THUNAR_FILE_MODE_USR_EXEC) ? 'x' : '-';
+  text[4] = (mode & THUNAR_FILE_MODE_GRP_READ) ? 'r' : '-';
   text[5] = (mode & THUNAR_FILE_MODE_GRP_WRITE) ? 'w' : '-';
-  text[6] = (mode & THUNAR_FILE_MODE_GRP_EXEC)  ? 'x' : '-';
-  text[7] = (mode & THUNAR_FILE_MODE_OTH_READ)  ? 'r' : '-';
+  text[6] = (mode & THUNAR_FILE_MODE_GRP_EXEC) ? 'x' : '-';
+  text[7] = (mode & THUNAR_FILE_MODE_OTH_READ) ? 'r' : '-';
   text[8] = (mode & THUNAR_FILE_MODE_OTH_WRITE) ? 'w' : '-';
-  text[9] = (mode & THUNAR_FILE_MODE_OTH_EXEC)  ? 'x' : '-';
+  text[9] = (mode & THUNAR_FILE_MODE_OTH_EXEC) ? 'x' : '-';
 
   /* special flags */
   if (G_UNLIKELY (mode & THUNAR_FILE_MODE_SUID))
@@ -2288,7 +2303,7 @@ gchar *
 thunar_file_get_size_in_bytes_string (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return g_strdup_printf ("%'"G_GUINT64_FORMAT, thunar_file_get_size (file));
+  return g_strdup_printf ("%'" G_GUINT64_FORMAT, thunar_file_get_size (file));
 }
 
 
@@ -2350,7 +2365,7 @@ thunar_file_get_size_string_long (const ThunarFile *file, const gboolean file_si
  *
  * Return value: the #GVolume for @file or %NULL.
  **/
-GVolume*
+GVolume *
 thunar_file_get_volume (const ThunarFile *file)
 {
   GVolume *volume = NULL;
@@ -2416,7 +2431,7 @@ thunar_file_get_group (const ThunarFile *file)
  *
  * Return value: the #ThunarUser for @file or %NULL.
  **/
-ThunarUser*
+ThunarUser *
 thunar_file_get_user (const ThunarFile *file)
 {
   guint32 uid;
@@ -2464,7 +2479,7 @@ thunar_file_get_content_type (ThunarFile *file)
 
       /* make sure this is not loaded in the general info */
       _thunar_assert (file->info == NULL
-          || !g_file_info_has_attribute (file->info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE));
+                      || !g_file_info_has_attribute (file->info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE));
 
       if (G_UNLIKELY (file->kind == G_FILE_TYPE_DIRECTORY))
         {
@@ -2484,8 +2499,7 @@ thunar_file_get_content_type (ThunarFile *file)
           if (G_LIKELY (gfile != NULL))
             {
               info = g_file_query_info (gfile,
-                                        G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
-                                        G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+                                        G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE "," G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
                                         G_FILE_QUERY_INFO_NONE,
                                         NULL, &err);
               g_object_unref (gfile);
@@ -2513,17 +2527,17 @@ thunar_file_get_content_type (ThunarFile *file)
                   if (G_LIKELY (is_symlink && err->code == G_IO_ERROR_NOT_FOUND))
                     file->content_type = g_strdup ("inode/symlink");
                   else
-                  {
-                    if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
-                      g_warning ("Content type loading failed for %s (%s): %s",
-                                 thunar_file_get_display_name (file),
-                                 thunar_file_get_basename (file),
-                                 err->message);
-                    else
-                      g_warning ("Content type loading failed for %s: %s",
-                                 thunar_file_get_display_name (file),
-                                 err->message);
-                  }
+                    {
+                      if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
+                        g_warning ("Content type loading failed for %s (%s): %s",
+                                   thunar_file_get_display_name (file),
+                                   thunar_file_get_basename (file),
+                                   err->message);
+                      else
+                        g_warning ("Content type loading failed for %s: %s",
+                                   thunar_file_get_display_name (file),
+                                   err->message);
+                    }
 
                   g_error_free (err);
                 }
@@ -2534,7 +2548,7 @@ thunar_file_get_content_type (ThunarFile *file)
             file->content_type = g_strdup (DEFAULT_CONTENT_TYPE);
         }
 
-      bailout:
+    bailout:
 
       G_UNLOCK (file_content_type_mutex);
     }
@@ -2573,7 +2587,7 @@ thunar_file_get_content_type_desc (ThunarFile *file)
 
   /* append " (link to <target>)" to description if link is not broken */
   type_text = g_content_type_get_description (content_type);
-  link_text = g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (file));
+  link_text = g_strdup_printf (_ ("link to %s"), thunar_file_get_symlink_target (file));
   description = g_strdup_printf ("%s (%s)", type_text, link_text);
   g_free (link_text);
   g_free (type_text);
@@ -2694,12 +2708,12 @@ thunar_file_get_size_on_disk (const ThunarFile *file)
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), 0);
 
   if (file->info == NULL)
-    return (guint64)-1;
+    return (guint64) -1;
 
   if (g_file_info_has_attribute (file->info, G_FILE_ATTRIBUTE_STANDARD_ALLOCATED_SIZE))
     return g_file_info_get_attribute_uint64 (file->info, G_FILE_ATTRIBUTE_STANDARD_ALLOCATED_SIZE);
 
-  return (guint64)-1;
+  return (guint64) -1;
 }
 
 
@@ -2935,15 +2949,15 @@ gboolean
 thunar_file_is_gfile_ancestor (const ThunarFile *file,
                                GFile            *ancestor)
 {
-  GFile   *current = NULL;
-  GFile   *tmp;
+  GFile *current = NULL;
+  GFile *tmp;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (G_IS_FILE (file->gfile), FALSE);
   _thunar_return_val_if_fail (G_IS_FILE (ancestor), FALSE);
 
   current = g_object_ref (file->gfile);
-  while(TRUE)
+  while (TRUE)
     {
       tmp = g_file_get_parent (current);
       g_object_unref (current);
@@ -3002,12 +3016,12 @@ gboolean
 thunar_file_can_execute (ThunarFile *file,
                          gboolean   *ask_execute)
 {
-  ThunarFile          *file_to_check;
-  GFile               *link_target;
-  ThunarPreferences   *preferences;
-  gint                 exec_shell_scripts = THUNAR_EXECUTE_SHELL_SCRIPT_NEVER;
-  const gchar         *content_type;
-  gboolean             exec_bit_set = FALSE;
+  ThunarFile        *file_to_check;
+  GFile             *link_target;
+  ThunarPreferences *preferences;
+  gint               exec_shell_scripts = THUNAR_EXECUTE_SHELL_SCRIPT_NEVER;
+  const gchar       *content_type;
+  gboolean           exec_bit_set = FALSE;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
@@ -3055,9 +3069,7 @@ thunar_file_can_execute (ThunarFile *file,
         }
 
       /* do never execute plain text files which are not shell scripts but marked executable */
-      if (g_content_type_equals (content_type, "text/plain") ||
-          g_content_type_equals (content_type, "application/json") ||
-          g_content_type_equals (content_type, "application/xml"))
+      if (g_content_type_equals (content_type, "text/plain") || g_content_type_equals (content_type, "application/json") || g_content_type_equals (content_type, "application/xml"))
         {
           g_object_unref (file_to_check);
           return FALSE;
@@ -3107,9 +3119,8 @@ thunar_file_can_execute (ThunarFile *file,
       return can_execute;
     }
 
-   g_object_unref (file_to_check);
-   return TRUE;
-
+  g_object_unref (file_to_check);
+  return TRUE;
 }
 
 
@@ -3341,7 +3352,7 @@ thunar_file_get_display_name (const ThunarFile *file)
  * Return value: the deletion date of @file if @file is
  *               in the trash, %NULL otherwise.
  **/
-gchar*
+gchar *
 thunar_file_get_deletion_date (const ThunarFile *file,
                                ThunarDateStyle   date_style,
                                const gchar      *date_custom_style)
@@ -3378,10 +3389,10 @@ thunar_file_get_deletion_date (const ThunarFile *file,
  * Return value: the recency date of @file if @file is
  *               in `recent:///`, %NULL otherwise.
  **/
-gchar*
-thunar_file_get_recency       (const ThunarFile *file,
-                               ThunarDateStyle   date_style,
-                               const gchar      *date_custom_style)
+gchar *
+thunar_file_get_recency (const ThunarFile *file,
+                         ThunarDateStyle   date_style,
+                         const gchar      *date_custom_style)
 {
   const gchar *date;
   time_t       recency_time;
@@ -3477,8 +3488,7 @@ thunar_file_is_chmodable (const ThunarFile *file)
   else
     {
       return ((effective_user_id == 0
-               || effective_user_id == g_file_info_get_attribute_uint32 (file->info,
-                                                                         G_FILE_ATTRIBUTE_UNIX_UID))
+               || effective_user_id == g_file_info_get_attribute_uint32 (file->info, G_FILE_ATTRIBUTE_UNIX_UID))
               && !thunar_file_is_trashed (file));
     }
 }
@@ -3538,14 +3548,14 @@ thunar_file_can_be_trashed (const ThunarFile *file)
  * Return value: Number of files in a folder
  **/
 guint
-thunar_file_get_file_count (ThunarFile   *file,
-                            GCallback     callback,
-                            gpointer      data)
+thunar_file_get_file_count (ThunarFile *file,
+                            GCallback   callback,
+                            gpointer    data)
 {
-  GError                    *err = NULL;
-  ThunarJob                 *job;
-  GFileInfo                 *info;
-  guint64                    last_modified;
+  GError    *err = NULL;
+  ThunarJob *job;
+  GFileInfo *info;
+  guint64    last_modified;
 
   _thunar_return_val_if_fail (thunar_file_is_directory (file), 0);
 
@@ -3594,7 +3604,7 @@ thunar_file_get_file_count (ThunarFile   *file,
                              "finished",
                              G_CALLBACK (callback),
                              data,
-                             (GClosureNotify) (void (*)(void)) g_object_unref,
+                             (GClosureNotify) (void (*) (void)) g_object_unref,
                              G_CONNECT_AFTER);
     }
 
@@ -3614,8 +3624,8 @@ thunar_file_get_file_count (ThunarFile   *file,
  * Does *NOT* update the file's count timestamp.
  **/
 void
-thunar_file_set_file_count (ThunarFile  *file,
-                            const guint  count)
+thunar_file_set_file_count (ThunarFile *file,
+                            const guint count)
 {
   _thunar_return_if_fail (thunar_file_is_directory (file));
 
@@ -3639,12 +3649,12 @@ thunar_file_set_file_count (ThunarFile  *file,
  *
  * Return value: the names of the emblems for @file.
  **/
-GList*
+GList *
 thunar_file_get_emblem_names (ThunarFile *file)
 {
-  guint32   uid;
-  gchar   **emblem_names;
-  GList    *emblems = NULL;
+  guint32 uid;
+  gchar **emblem_names;
+  GList  *emblems = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
@@ -3665,9 +3675,7 @@ thunar_file_get_emblem_names (ThunarFile *file)
 
   /* determine the user ID of the file owner */
   /* TODO what are we going to do here on non-UNIX systems? */
-  uid = file->info != NULL
-        ? g_file_info_get_attribute_uint32 (file->info, G_FILE_ATTRIBUTE_UNIX_UID)
-        : 0;
+  uid = file->info != NULL ? g_file_info_get_attribute_uint32 (file->info, G_FILE_ATTRIBUTE_UNIX_UID) : 0;
 
   /* we add "cant-read" if either (a) the file is not readable or (b) a directory, that lacks the
    * x-bit, see https://bugzilla.xfce.org/show_bug.cgi?id=1408 for the details about this change.
@@ -3675,8 +3683,8 @@ thunar_file_get_emblem_names (ThunarFile *file)
   if (!thunar_file_is_readable (file)
       || (thunar_file_is_directory (file)
           && thunar_file_denies_access_permission (file, THUNAR_FILE_MODE_USR_EXEC,
-                                                         THUNAR_FILE_MODE_GRP_EXEC,
-                                                         THUNAR_FILE_MODE_OTH_EXEC)))
+                                                   THUNAR_FILE_MODE_GRP_EXEC,
+                                                   THUNAR_FILE_MODE_OTH_EXEC)))
     {
       emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_CANT_READ);
     }
@@ -3705,10 +3713,10 @@ void
 thunar_file_set_emblem_names (ThunarFile *file,
                               GList      *emblem_names)
 {
-  GList      *lp;
-  gchar     **emblems = NULL;
-  gint        n;
-  GFileInfo  *info;
+  GList     *lp;
+  gchar    **emblems = NULL;
+  gint       n;
+  GFileInfo *info;
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (G_IS_FILE_INFO (file->info));
@@ -3869,22 +3877,22 @@ thunar_file_get_thumbnail_path_forced (ThunarFile *file, ThunarThumbnailSize thu
        */
 
       /* build and check if the thumbnail is in the new location */
-      thumbnail_path = g_build_path ("/", g_get_user_cache_dir(),
-                                           "thumbnails", thunar_thumbnail_size_get_nick (thumbnail_size),
-                                           filename, NULL);
+      thumbnail_path = g_build_path ("/", g_get_user_cache_dir (),
+                                     "thumbnails", thunar_thumbnail_size_get_nick (thumbnail_size),
+                                     filename, NULL);
 
-      if (!g_file_test(thumbnail_path, G_FILE_TEST_EXISTS))
+      if (!g_file_test (thumbnail_path, G_FILE_TEST_EXISTS))
         {
           /* Fallback to old version */
-          g_free(thumbnail_path);
+          g_free (thumbnail_path);
 
           thumbnail_path = g_build_filename (xfce_get_homedir (),
-                                                   ".thumbnails", thunar_thumbnail_size_get_nick (thumbnail_size),
-                                                   filename, NULL);
+                                             ".thumbnails", thunar_thumbnail_size_get_nick (thumbnail_size),
+                                             filename, NULL);
 
-          if(!g_file_test(thumbnail_path, G_FILE_TEST_EXISTS))
+          if (!g_file_test (thumbnail_path, G_FILE_TEST_EXISTS))
             {
-              g_free(thumbnail_path);
+              g_free (thumbnail_path);
               thumbnail_path = NULL;
 
               if (thunar_file_is_directory (file) == FALSE)
@@ -4016,8 +4024,8 @@ thunar_file_get_preview_icon (const ThunarFile *file)
 
 
 static const gchar *
-thunar_file_get_icon_name_for_state (const gchar         *icon_name,
-                                     ThunarFileIconState  icon_state)
+thunar_file_get_icon_name_for_state (const gchar        *icon_name,
+                                     ThunarFileIconState icon_state)
 {
   if (xfce_str_is_empty (icon_name))
     return NULL;
@@ -4050,19 +4058,19 @@ thunar_file_get_icon_name_for_state (const gchar         *icon_name,
  * Return value: the icon name for @file in @icon_theme.
  **/
 const gchar *
-thunar_file_get_icon_name (ThunarFile          *file,
-                           ThunarFileIconState  icon_state,
-                           GtkIconTheme        *icon_theme)
+thunar_file_get_icon_name (ThunarFile         *file,
+                           ThunarFileIconState icon_state,
+                           GtkIconTheme       *icon_theme)
 {
-  GFile               *icon_file;
-  GIcon               *icon = NULL;
-  const gchar * const *names;
-  gchar               *icon_name = NULL;
-  gchar               *path;
-  const gchar         *special_names[] = { NULL, "folder", NULL };
-  guint                i;
-  const gchar         *special_dir;
-  GFileInfo           *fileinfo;
+  GFile              *icon_file;
+  GIcon              *icon = NULL;
+  const gchar *const *names;
+  gchar              *icon_name = NULL;
+  gchar              *path;
+  const gchar        *special_names[] = { NULL, "folder", NULL };
+  guint               i;
+  const gchar        *special_dir;
+  GFileInfo          *fileinfo;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
@@ -4157,12 +4165,12 @@ thunar_file_get_icon_name (ThunarFile          *file,
   icon = g_content_type_get_icon (thunar_file_get_content_type (file));
   if (G_LIKELY (icon != NULL))
     {
-      check_icon:
+    check_icon:
       if (G_IS_THEMED_ICON (icon))
         {
           names = g_themed_icon_get_names (G_THEMED_ICON (icon));
 
-          check_names:
+        check_names:
 
           if (G_LIKELY (names != NULL))
             {
@@ -4494,9 +4502,9 @@ thunar_file_compare_by_type (ThunarFile *a,
     }
   /* again, ancestors come first */
   else if (g_file_has_prefix (file_b, parent_a))
-      ret = -1;
+    ret = -1;
   else if (g_file_has_prefix (file_a, parent_b))
-      ret = 1;
+    ret = 1;
 
   g_object_unref (parent_a);
   g_object_unref (parent_b);
@@ -4678,7 +4686,7 @@ compare_app_infos (gconstpointer a,
  * Return value: the list of #GAppInfo<!---->s that can be used to open all
  *               items in the @file_list.
  **/
-GList*
+GList *
 thunar_file_list_get_applications (GList *file_list)
 {
   GList       *applications = NULL;
@@ -4793,7 +4801,7 @@ thunar_file_list_get_applications (GList *file_list)
  *
  * Return value: the list of #GFile<!---->s for @file_list.
  **/
-GList*
+GList *
 thunar_file_list_to_thunar_g_file_list (GList *file_list)
 {
   GList *list = NULL;
@@ -4817,7 +4825,7 @@ thunar_file_list_to_thunar_g_file_list (GList *file_list)
  *
  * Return value: (transfer none): the stored value of the setting for @file, or %NULL
  **/
-const gchar*
+const gchar *
 thunar_file_get_metadata_setting (ThunarFile  *file,
                                   const gchar *setting_name)
 {
@@ -4933,9 +4941,9 @@ thunar_file_set_metadata_setting (ThunarFile  *file,
  **/
 void
 thunar_file_clear_metadata_setting (ThunarFile  *file,
-                                     const gchar *setting_name)
+                                    const gchar *setting_name)
 {
-  gchar     *attr_name;
+  gchar *attr_name;
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
@@ -5038,10 +5046,10 @@ thunar_file_has_directory_specific_settings (ThunarFile *file)
 
 
 gint
-thunar_cmp_files_by_date         (const ThunarFile   *a,
-                                  const ThunarFile   *b,
-                                  gboolean            case_sensitive,
-                                  ThunarFileDateType  type)
+thunar_cmp_files_by_date (const ThunarFile  *a,
+                          const ThunarFile  *b,
+                          gboolean           case_sensitive,
+                          ThunarFileDateType type)
 {
   guint64 date_a;
   guint64 date_b;
@@ -5050,9 +5058,9 @@ thunar_cmp_files_by_date         (const ThunarFile   *a,
   date_b = thunar_file_get_date (b, type);
 
   if (date_a < date_b)
-      return -1;
+    return -1;
   else if (date_a > date_b)
-      return 1;
+    return 1;
 
   return thunar_file_compare_by_name (a, b, case_sensitive);
 }
@@ -5100,9 +5108,9 @@ thunar_cmp_files_by_date_deleted (const ThunarFile *a,
 
 
 gint
-thunar_cmp_files_by_recency      (const ThunarFile *a,
-                                  const ThunarFile *b,
-                                  gboolean          case_sensitive)
+thunar_cmp_files_by_recency (const ThunarFile *a,
+                             const ThunarFile *b,
+                             gboolean          case_sensitive)
 {
   return thunar_cmp_files_by_date (a, b, case_sensitive, THUNAR_FILE_RECENCY);
 }
@@ -5152,7 +5160,7 @@ thunar_cmp_files_by_group (const ThunarFile *a,
   const gchar *name_b;
 
   if (thunar_file_get_info (a) == NULL || thunar_file_get_info (b) == NULL)
-      return thunar_file_compare_by_name (a, b, case_sensitive);
+    return thunar_file_compare_by_name (a, b, case_sensitive);
 
   group_a = thunar_file_get_group (a);
   group_b = thunar_file_get_group (b);
@@ -5163,9 +5171,9 @@ thunar_cmp_files_by_group (const ThunarFile *a,
       name_b = thunar_group_get_name (group_b);
 
       if (!case_sensitive)
-          result = strcasecmp (name_a, name_b);
+        result = strcasecmp (name_a, name_b);
       else
-          result = strcmp (name_a, name_b);
+        result = strcmp (name_a, name_b);
     }
   else
     {
@@ -5178,15 +5186,15 @@ thunar_cmp_files_by_group (const ThunarFile *a,
     }
 
   if (group_a != NULL)
-      g_object_unref (group_a);
+    g_object_unref (group_a);
 
   if (group_b != NULL)
-      g_object_unref (group_b);
+    g_object_unref (group_b);
 
   if (result == 0)
-      return thunar_file_compare_by_name (a, b, case_sensitive);
+    return thunar_file_compare_by_name (a, b, case_sensitive);
   else
-      return result;
+    return result;
 }
 
 
@@ -5204,14 +5212,14 @@ thunar_cmp_files_by_mime_type (const ThunarFile *a,
   content_type_b = thunar_file_get_content_type (THUNAR_FILE (b));
 
   if (content_type_a == NULL)
-      content_type_a = "";
+    content_type_a = "";
   if (content_type_b == NULL)
-      content_type_b = "";
+    content_type_b = "";
 
   result = strcasecmp (content_type_a, content_type_b);
 
   if (result == 0)
-      result = thunar_file_compare_by_name (a, b, case_sensitive);
+    result = thunar_file_compare_by_name (a, b, case_sensitive);
 
   return result;
 }
@@ -5232,7 +5240,7 @@ thunar_cmp_files_by_owner (const ThunarFile *a,
   gint         result;
 
   if (thunar_file_get_info (a) == NULL || thunar_file_get_info (b) == NULL)
-      return thunar_file_compare_by_name (a, b, case_sensitive);
+    return thunar_file_compare_by_name (a, b, case_sensitive);
 
   user_a = thunar_file_get_user (a);
   user_b = thunar_file_get_user (b);
@@ -5244,9 +5252,9 @@ thunar_cmp_files_by_owner (const ThunarFile *a,
       name_b = thunar_user_get_name (user_b);
 
       if (!case_sensitive)
-          result = strcasecmp (name_a, name_b);
+        result = strcasecmp (name_a, name_b);
       else
-          result = strcmp (name_a, name_b);
+        result = strcmp (name_a, name_b);
     }
   else
     {
@@ -5264,9 +5272,9 @@ thunar_cmp_files_by_owner (const ThunarFile *a,
     g_object_unref (user_b);
 
   if (result == 0)
-      return thunar_file_compare_by_name (a, b, case_sensitive);
+    return thunar_file_compare_by_name (a, b, case_sensitive);
   else
-      return result;
+    return result;
 }
 
 
@@ -5283,9 +5291,9 @@ thunar_cmp_files_by_permissions (const ThunarFile *a,
   mode_b = thunar_file_get_mode (b);
 
   if (mode_a < mode_b)
-      return -1;
+    return -1;
   else if (mode_a > mode_b)
-      return 1;
+    return 1;
 
   return thunar_file_compare_by_name (a, b, case_sensitive);
 }
@@ -5304,9 +5312,9 @@ thunar_cmp_files_by_size (const ThunarFile *a,
   size_b = thunar_file_get_size (b);
 
   if (size_a < size_b)
-      return -1;
+    return -1;
   else if (size_a > size_b)
-      return 1;
+    return 1;
 
   return thunar_file_compare_by_name (a, b, case_sensitive);
 }
@@ -5325,11 +5333,11 @@ thunar_cmp_files_by_size_in_bytes (const ThunarFile *a,
 
 gint
 thunar_cmp_files_by_size_and_items_count (ThunarFile *a,
-                                        ThunarFile *b,
-                                        gboolean    case_sensitive)
+                                          ThunarFile *b,
+                                          gboolean    case_sensitive)
 {
-  guint32       count_a;
-  guint32       count_b;
+  guint32 count_a;
+  guint32 count_b;
 
   if (thunar_file_is_directory (a) && thunar_file_is_directory (b))
     {
@@ -5337,14 +5345,14 @@ thunar_cmp_files_by_size_and_items_count (ThunarFile *a,
       count_b = thunar_file_get_file_count (b, NULL, NULL);
 
       if (count_a < count_b)
-          return -1;
+        return -1;
       else if (count_a > count_b)
-          return 1;
+        return 1;
       else
-          return thunar_file_compare_by_name (a, b, case_sensitive);
+        return thunar_file_compare_by_name (a, b, case_sensitive);
     }
 
-  return thunar_cmp_files_by_size(a, b, case_sensitive);
+  return thunar_cmp_files_by_size (a, b, case_sensitive);
 }
 
 
@@ -5354,9 +5362,9 @@ thunar_cmp_files_by_type (const ThunarFile *a,
                           const ThunarFile *b,
                           gboolean          case_sensitive)
 {
-  gchar       *description_a = NULL;
-  gchar       *description_b = NULL;
-  gint         result;
+  gchar *description_a = NULL;
+  gchar *description_b = NULL;
+  gint   result;
 
   /* we alter the description of symlinks here because they are
    * displayed as "... (link)" in the detailed list view as well */
@@ -5375,15 +5383,15 @@ thunar_cmp_files_by_type (const ThunarFile *a,
     }
 
   if (!case_sensitive)
-      result = strcasecmp (description_a, description_b);
+    result = strcasecmp (description_a, description_b);
   else
-      result = strcmp (description_a, description_b);
+    result = strcmp (description_a, description_b);
 
   g_free (description_a);
   g_free (description_b);
 
   if (result == 0)
-      return thunar_file_compare_by_name (a, b, case_sensitive);
+    return thunar_file_compare_by_name (a, b, case_sensitive);
   else
-      return result;
+    return result;
 }
