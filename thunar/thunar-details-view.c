@@ -1199,6 +1199,8 @@ thunar_details_view_row_expanded (GtkTreeView       *tree_view,
   GList        *files = NULL;
   gboolean      has_next;
 
+  thunar_tree_view_model_load_subdir (THUNAR_TREE_VIEW_MODEL (model), parent);
+
   /* do nothing if we are not supposed to show thumbnails at all */
   if (!thunar_icon_factory_get_show_thumbnail (THUNAR_STANDARD_VIEW (view)->icon_factory,
                                                thunar_navigator_get_current_directory (THUNAR_NAVIGATOR(view))))
