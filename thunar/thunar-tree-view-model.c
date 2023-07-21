@@ -306,6 +306,7 @@ struct _Node
   gboolean             loaded;
   gboolean             loading;
   gboolean             cleaning;
+  gboolean             expanded;
 
   GHashTable          *set;
   GList               *hidden_files;
@@ -1546,7 +1547,71 @@ thunar_tree_view_model_get_paths_for_files (ThunarStandardViewModel *model,
       paths = g_list_prepend (paths, path);
     }
 
-  return g_list_reverse (paths);
+  return paths;
+}
+
+
+
+static void
+_thunar_tree_view_model_get_paths_for_pattern (Node         *node,
+                                               GList       **paths,
+                                               GPatternSpec *pspec,
+                                               gboolean      match_diacritics,
+                                               gboolean      case_sensitive)
+{
+  GSequenceIter *row;
+  GSequenceIter *end;
+  ThunarFile    *file;
+  Node          *_node;
+  const gchar   *display_name;
+  gchar         *normalized_display_name;
+  gboolean       name_matched;
+  GtkTreeIter    tree_iter;
+  GtkTreePath   *path;
+  gint          *indices;
+  gint           depth, i = 0;
+
+  row = g_sequence_get_begin_iter (node->children);
+  end = g_sequence_get_end_iter (node->children);
+
+  if (node->ptr != NULL)
+    {
+      GTK_TREE_ITER_INIT (tree_iter, node->model->stamp, node->ptr);
+      path = gtk_tree_model_get_path (GTK_TREE_MODEL (node->model), &tree_iter);
+      gtk_tree_path_down (path);
+    }
+  else
+    path = gtk_tree_path_new_first ();
+  indices = gtk_tree_path_get_indices_with_depth (path, &depth);
+
+  /* find all rows that match the given pattern;
+   * recurse into rows that are expanded */
+  while (row != end)
+    {
+      _node = g_sequence_get (row);
+      if (_node->loaded && _node->expanded)
+        _thunar_tree_view_model_get_paths_for_pattern (_node, paths, pspec, match_diacritics, case_sensitive);
+      g_assert (node != NULL);
+      file = _node->file;
+      g_assert (file != NULL);
+      display_name = thunar_file_get_display_name (file);
+
+      normalized_display_name = thunar_g_utf8_normalize_for_search (display_name, !match_diacritics, !case_sensitive);
+      name_matched = g_pattern_spec_match_string (pspec, normalized_display_name);
+      g_free (normalized_display_name);
+
+      if (name_matched)
+        {
+          _thunar_assert (i == g_sequence_iter_get_position (row));
+          indices[depth - 1] = i;
+          *paths = g_list_prepend (*paths, gtk_tree_path_new_from_indicesv (indices, depth));
+        }
+
+      row = g_sequence_iter_next (row);
+      i++;
+    }
+
+  gtk_tree_path_free (path);
 }
 
 
@@ -1557,8 +1622,31 @@ thunar_tree_view_model_get_paths_for_pattern (ThunarStandardViewModel *model,
                                               gboolean                 case_sensitive,
                                               gboolean                 match_diacritics)
 {
-  /* TODO: */
-  return NULL;
+  ThunarTreeViewModel *_model = THUNAR_TREE_VIEW_MODEL (model);
+  GPatternSpec        *pspec;
+  gchar               *normalized_pattern;
+  GList               *paths = NULL;
+
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (_model), NULL);
+  _thunar_return_val_if_fail (g_utf8_validate (pattern, -1, NULL), NULL);
+
+  if (_model->root == NULL)
+    return NULL;
+
+  /* compile the pattern */
+  normalized_pattern = thunar_g_utf8_normalize_for_search (pattern, !match_diacritics, !case_sensitive);
+  pspec = g_pattern_spec_new (normalized_pattern);
+  g_free (normalized_pattern);
+
+  /* find all rows that match the given pattern */
+  _thunar_tree_view_model_get_paths_for_pattern (_model->root,
+                                                 &paths, pspec,
+                                                 match_diacritics, case_sensitive);
+
+  /* release the pattern */
+  g_pattern_spec_free (pspec);
+
+  return paths;
 }
 
 
@@ -2100,10 +2188,11 @@ thunar_tree_view_model_dir_add_file (Node       *node,
   child = thunar_tree_view_model_new_node (file);
   thunar_tree_view_model_node_add_child (node, child);
 
-  if (thunar_file_is_directory (file) && !thunar_file_is_empty (file))
+  if (thunar_file_is_directory (file))
     {
       g_hash_table_insert (node->model->subdirs, file, child);
-      thunar_tree_view_model_node_add_dummy_child (child);
+      if (!thunar_file_is_empty (file))
+        thunar_tree_view_model_node_add_dummy_child (child);
     }
 
   /* notify the model if a child has been added to previously empty folder */
@@ -2626,6 +2715,7 @@ thunar_tree_view_model_load_subdir (ThunarTreeViewModel *model,
   node = g_sequence_get (iter->user_data);
   g_assert (node != NULL);
   thunar_tree_view_model_load_dir (node);
+  node->expanded = TRUE;
 }
 
 
@@ -2660,4 +2750,5 @@ thunar_tree_view_model_unload_subdir (ThunarTreeViewModel *model,
   node = g_sequence_get (iter->user_data);
   g_assert (node != NULL);
   thunar_tree_view_model_unload_dir (node);
+  node->expanded = FALSE;
 }
