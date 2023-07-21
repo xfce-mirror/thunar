@@ -3550,7 +3550,7 @@ thunar_file_get_file_count (ThunarFile   *file,
   _thunar_return_val_if_fail (thunar_file_is_directory (file), 0);
 
   /* Forcefully get cached values by passing NULL as the second argument */
-  if (file == NULL)
+  if (callback == NULL)
     return file->file_count;
 
   info = g_file_query_info (thunar_file_get_file (file),
@@ -3571,7 +3571,10 @@ thunar_file_get_file_count (ThunarFile   *file,
   /* return a cached value if last time that the file count was computed is later
    * than the last time the file was modified */
   if (G_LIKELY (last_modified < file->file_count_timestamp))
-    return file->file_count;
+    {
+      ((void (*) (ExoJob *, gpointer)) (*callback)) (NULL, data);
+      return file->file_count;
+    }
 
   /* put the timestamp calculation at the *start* of the process to prevent another call to
    * thunar_file_get_count starting another job on the same folder before one has ended.
