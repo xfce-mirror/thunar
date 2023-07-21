@@ -155,10 +155,6 @@ static gboolean          thunar_tree_view_model_iter_nth_child (GtkTreeModel *mo
 static gboolean          thunar_tree_view_model_iter_parent (GtkTreeModel *model,
                                                              GtkTreeIter  *iter,
                                                              GtkTreeIter  *child);
-static void              thunar_tree_view_model_ref_node (GtkTreeModel *model,
-                                                          GtkTreeIter  *iter);
-static void              thunar_tree_view_model_unref_node (GtkTreeModel *model,
-                                                            GtkTreeIter  *iter);
 
 /*************************************************
  * ThunarStandardViewModel Virtual Methods
@@ -309,6 +305,7 @@ struct _Node
   gint                 n_children;
   gboolean             loaded;
   gboolean             loading;
+  gboolean             cleaning;
 
   GHashTable          *set;
   GList               *hidden_files;
@@ -521,8 +518,6 @@ thunar_tree_view_model_tree_model_init (GtkTreeModelIface *iface)
   iface->iter_n_children = thunar_tree_view_model_iter_n_children;
   iface->iter_nth_child = thunar_tree_view_model_iter_nth_child;
   iface->iter_parent = thunar_tree_view_model_iter_parent;
-  iface->ref_node = thunar_tree_view_model_ref_node;
-  iface->unref_node = thunar_tree_view_model_unref_node;
 }
 
 
@@ -1487,37 +1482,6 @@ thunar_tree_view_model_iter_parent (GtkTreeModel *model,
 
 
 
-static void
-thunar_tree_view_model_ref_node (GtkTreeModel *model,
-                                 GtkTreeIter  *iter)
-{
-  Node *node;
-
-  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
-  _thunar_return_if_fail (iter->stamp == THUNAR_TREE_VIEW_MODEL (model)->stamp);
-  _thunar_return_if_fail (iter->user_data != NULL);
-
-  node = g_sequence_get (iter->user_data);
-  /* tell the parent to load */
-  if (node->file == NULL)
-    thunar_tree_view_model_load_dir (node->parent);
-  else
-    thunar_tree_view_model_load_dir (node);
-}
-
-
-
-static void
-thunar_tree_view_model_unref_node (GtkTreeModel *model,
-                                   GtkTreeIter  *iter)
-{
-  /* TODO: periodically Free unused nodes; put an unreffed node on destroy list */
-  /* Idea: have a GList of nodes that are no longer being reffed;
-   * We will periodically go through this list and do node_destroy or cleanup for these nodes */
-}
-
-
-
 static ThunarFolder *
 thunar_tree_view_model_get_folder (ThunarStandardViewModel *model)
 {
@@ -2136,7 +2100,7 @@ thunar_tree_view_model_dir_add_file (Node       *node,
   child = thunar_tree_view_model_new_node (file);
   thunar_tree_view_model_node_add_child (node, child);
 
-  if (thunar_file_is_directory (file))
+  if (thunar_file_is_directory (file) && !thunar_file_is_empty (file))
     {
       g_hash_table_insert (node->model->subdirs, file, child);
       thunar_tree_view_model_node_add_dummy_child (child);
@@ -2644,4 +2608,56 @@ thunar_tree_view_model_dec_loading (ThunarTreeViewModel *model)
 
   if (model->loading == 0)
     g_object_notify (G_OBJECT (model), "loading");
+}
+
+
+
+void
+thunar_tree_view_model_load_subdir (ThunarTreeViewModel *model,
+                                    GtkTreeIter         *iter)
+{
+  Node *node;
+
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
+  _thunar_return_if_fail (iter->stamp == model->stamp);
+  _thunar_return_if_fail (iter->user_data != NULL);
+
+  g_assert (!g_sequence_iter_is_end (iter->user_data));
+  node = g_sequence_get (iter->user_data);
+  g_assert (node != NULL);
+  thunar_tree_view_model_load_dir (node);
+}
+
+
+
+static void
+thunar_tree_view_model_unload_dir (Node *node)
+{
+  // _thunar_return_if_fail (node != NULL);
+
+  // if (!node->loaded || node->cleaning)
+  //   return;
+
+  // node->cleaning = TRUE;
+  // node->loaded = FALSE;
+
+  // g_timeout_add (100, (GSourceFunc) _thunar_tree_view_model_cleanup_idle, node);
+}
+
+
+
+void
+thunar_tree_view_model_unload_subdir (ThunarTreeViewModel *model,
+                                      GtkTreeIter         *iter)
+{
+  Node *node;
+
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
+  _thunar_return_if_fail (iter->stamp == model->stamp);
+  _thunar_return_if_fail (iter->user_data != NULL);
+
+  g_assert (!g_sequence_iter_is_end (iter->user_data));
+  node = g_sequence_get (iter->user_data);
+  g_assert (node != NULL);
+  thunar_tree_view_model_unload_dir (node);
 }
