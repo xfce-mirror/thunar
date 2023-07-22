@@ -422,6 +422,9 @@ thunar_shortcuts_view_finalize (GObject *object)
 {
   ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (object);
 
+  /* Disconnect from the model */
+  //g_signal_handlers_disconnect_matched (gtk_tree_view_get_model (GTK_TREE_VIEW (view)), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, view);
+
   /* release drop path list (if drag_leave wasn't called) */
   thunar_g_list_free_full (view->drop_file_list);
 
@@ -1829,9 +1832,13 @@ thunar_shortcuts_view_new (void)
   model = thunar_shortcuts_model_get_default ();
   filter_model = gtk_tree_model_filter_new (GTK_TREE_MODEL (model), NULL);
   gtk_tree_model_filter_set_visible_column (GTK_TREE_MODEL_FILTER (filter_model), THUNAR_SHORTCUTS_MODEL_COLUMN_VISIBLE);
-  g_object_unref (G_OBJECT (model));
 
   view = g_object_new (THUNAR_TYPE_SHORTCUTS_VIEW, "model", filter_model, NULL);
+
+  /* redraw the view when the model changes */
+  g_signal_connect_swapped (G_OBJECT (model), "row-changed", G_CALLBACK (gtk_widget_queue_draw), view);
+
+  g_object_unref (G_OBJECT (model));
   g_object_unref (G_OBJECT (filter_model));
 
   return view;
