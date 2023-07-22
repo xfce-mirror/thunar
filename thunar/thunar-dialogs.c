@@ -1085,7 +1085,7 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
   /* parse the parent window and screen */
   screen = thunar_util_parse_parent (parent, &window);
 
-  /* secondary text */
+  /* create the secondary text */
   secondary = g_string_new (_("The desktop file "));
   if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
     g_string_append_printf (secondary,
