@@ -53,36 +53,36 @@ enum
 
 
 
-static void     thunar_folder_dispose (GObject *object);
-static void     thunar_folder_finalize (GObject *object);
-static void     thunar_folder_get_property (GObject    *object,
-                                            guint       prop_id,
-                                            GValue     *value,
-                                            GParamSpec *pspec);
-static void     thunar_folder_set_property (GObject      *object,
-                                            guint         prop_uid,
-                                            const GValue *value,
-                                            GParamSpec   *pspec);
-static void     thunar_folder_real_destroy (ThunarFolder *folder);
-static void     thunar_folder_error (ExoJob       *job,
-                                     GError       *error,
-                                     ThunarFolder *folder);
-static gboolean thunar_folder_files_ready (ThunarJob    *job,
-                                           GList        *files,
-                                           ThunarFolder *folder);
-static void     thunar_folder_finished (ExoJob       *job,
-                                        ThunarFolder *folder);
-static void     thunar_folder_file_changed (ThunarFileMonitor *file_monitor,
-                                            ThunarFile        *file,
-                                            ThunarFolder      *folder);
-static void     thunar_folder_file_destroyed (ThunarFileMonitor *file_monitor,
-                                              ThunarFile        *file,
-                                              ThunarFolder      *folder);
-static void     thunar_folder_monitor (GFileMonitor     *monitor,
-                                       GFile            *file,
-                                       GFile            *other_file,
-                                       GFileMonitorEvent event_type,
-                                       gpointer          user_data);
+static void           thunar_folder_dispose               (GObject               *object);
+static void           thunar_folder_finalize              (GObject               *object);
+static void           thunar_folder_get_property          (GObject               *object,
+                                                           guint                  prop_id,
+                                                           GValue                *value,
+                                                           GParamSpec            *pspec);
+static void           thunar_folder_set_property          (GObject               *object,
+                                                           guint                  prop_uid,
+                                                           const GValue          *value,
+                                                           GParamSpec            *pspec);
+static void           thunar_folder_real_destroy          (ThunarFolder          *folder);
+static void           thunar_folder_error                 (ExoJob                *job,
+                                                           GError                *error,
+                                                           ThunarFolder          *folder);
+static gboolean       thunar_folder_files_ready           (ThunarJob             *job,
+                                                           GList                 *files,
+                                                           ThunarFolder          *folder);
+static void           thunar_folder_finished              (ExoJob                *job,
+                                                           ThunarFolder          *folder);
+static void           thunar_folder_file_changed          (ThunarFileMonitor     *file_monitor,
+                                                           ThunarFile            *file,
+                                                           ThunarFolder          *folder);
+static void           thunar_folder_file_destroyed        (ThunarFileMonitor     *file_monitor,
+                                                           ThunarFile            *file,
+                                                           ThunarFolder          *folder);
+static void           thunar_folder_monitor               (GFileMonitor          *monitor,
+                                                           GFile                 *file,
+                                                           GFile                 *other_file,
+                                                           GFileMonitorEvent      event_type,
+                                                           gpointer               user_data);
 
 
 
@@ -564,6 +564,11 @@ thunar_folder_finished (ExoJob       *job,
 
       /* put the file on the removed list (owns the reference now) */
       files = g_list_prepend (files, file);
+    }
+
+  for (lp = files; lp != NULL; lp = lp->next)
+    {
+      file = THUNAR_FILE (lp->data);
 
       /* remove from the internal files list */
       folder->files = g_list_delete_link (folder->files,
@@ -870,12 +875,14 @@ thunar_folder_monitor (GFileMonitor     *monitor,
                 }
               else
                 {
+                  /* remove the old reference from the hash table before it becomes invalid;
+                   * during thunar_file_replace_file call */
+                  g_hash_table_remove (folder->files_map, event_file);
+
                   /* replace GFile in ThunarFile for the renamed file */
                   thunar_file_replace_file (lp->data, other_file);
 
-                  /* thunar_folder_file_destroyed handles the cases where thunar_file_destroy is called;
-                   * but in this case we need to replace (event_file, lp) mapping with (other_file, lp) */
-                  g_hash_table_remove (folder->files_map, event_file);
+                  /* insert new mapping of (gfile, ThunarFile) for the newly renamed file */
                   g_hash_table_insert (folder->files_map, other_file, lp);
 
                   file = lp->data;
