@@ -3610,7 +3610,12 @@ thunar_standard_view_select_after_row_deleted (ThunarStandardViewModel *model,
     return;
 
   /* select the path */
-  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->select_path) (standard_view, path);
+  /* This is the reason for slow for i in {1..10000}; do touch $i; done */
+  /* why do we need select after row-delete if nothing was selected ? */
+  /* shouldn't we instead select the next available item in view after a selected row
+     has been deleted ? */
+  /* but commenting this out will give a few warnings from the thumbnailer working in the background. */
+  // (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->select_path) (standard_view, path);
 
   /* place the cursor on the first selected path (must be first for GtkTreeView) */
   (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->set_cursor) (standard_view, path, FALSE);
