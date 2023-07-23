@@ -2446,9 +2446,11 @@ _thunar_tree_view_model_dir_files_removed (Node *node, GList *files)
 
 
 static void
-_thunar_tree_view_model_dir_notify_loading (Node *node, GParamSpec *spec, ThunarFolder *dir)
+_thunar_tree_view_model_dir_notify_loading (Node         *node,
+                                            GParamSpec   *spec,
+                                            ThunarFolder *dir)
 {
-  if (!thunar_folder_get_loading (dir))
+  if (!thunar_folder_get_loading (dir) && !node->loaded)
     {
       node->loaded = TRUE;
       node->loading = FALSE;
@@ -2456,7 +2458,7 @@ _thunar_tree_view_model_dir_notify_loading (Node *node, GParamSpec *spec, Thunar
       if (thunar_tree_view_model_node_has_dummy_child (node))
         thunar_tree_view_model_node_drop_dummy_child (node);
 
-      /* signal model that this dir is loading */
+      /* signal model that this dir is done loading */
       thunar_tree_view_model_dec_loading (node->model);
     }
 }
@@ -2479,6 +2481,7 @@ thunar_tree_view_model_load_dir (Node *node)
   node->loading = TRUE;
 
   thunar_tree_view_model_inc_loading (node->model);
+  thunar_tree_view_model_inc_loading (node->model);
 
   node->dir = thunar_folder_get_for_file (node->file);
   g_assert (node->dir != NULL);
@@ -2493,6 +2496,8 @@ thunar_tree_view_model_load_dir (Node *node)
 
   if (!thunar_folder_get_loading (node->dir))
     g_object_notify (G_OBJECT (node->dir), "loading");
+
+  thunar_tree_view_model_dec_loading (node->model);
 }
 
 
