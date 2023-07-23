@@ -896,9 +896,8 @@ thunar_folder_monitor (GFileMonitor     *monitor,
                 }
             }
         }
-      /* This is the cause for the freeze.
-       * Why do we even need to listen to any other event? */
-      /*
+      /* This should handle G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT &
+       * G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED */
       else
         {
 #if DEBUG_FILE_CHANGES
@@ -906,7 +905,6 @@ thunar_folder_monitor (GFileMonitor     *monitor,
 #endif
           thunar_file_reload(lp->data);
         }
-      */
     }
 
   /* check if we need to restart the collector */

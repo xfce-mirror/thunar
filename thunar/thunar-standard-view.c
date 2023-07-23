@@ -397,8 +397,6 @@ struct _ThunarStandardViewPrivate
   GtkCssProvider         *css_provider;
 
   GType                   model_type;
-
-  gboolean                had_selection;
 };
 
 static XfceGtkActionEntry thunar_standard_view_action_entries[] =
@@ -824,8 +822,6 @@ static void
 thunar_standard_view_init (ThunarStandardView *standard_view)
 {
   standard_view->priv = thunar_standard_view_get_instance_private (standard_view);
-
-  standard_view->priv->had_selection = FALSE;
 
   /* allocate the scroll_to_files mapping (directory GFile -> first visible child GFile) */
   standard_view->priv->scroll_to_files = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, g_object_unref, g_object_unref);
@@ -1648,8 +1644,6 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   /* update tab label and tooltip */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_FULL_PARSED_PATH]);
-
-  standard_view->priv->had_selection = FALSE;
 
   /* restore the selection from the history */
   thunar_standard_view_restore_selection_from_history (standard_view);
@@ -3612,7 +3606,7 @@ thunar_standard_view_select_after_row_deleted (ThunarStandardViewModel *model,
     return;
 
   /* ignore if we have selected files */
-  if (!standard_view->priv->had_selection || standard_view->priv->selected_files != NULL)
+  if (standard_view->priv->selected_files != NULL)
     return;
 
   /* select the path */
@@ -4261,8 +4255,6 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
       g_closure_unref (standard_view->priv->new_files_closure);
       standard_view->priv->new_files_closure = NULL;
     }
-
-  standard_view->priv->had_selection = standard_view->priv->selected_files != NULL;
 
   /* release the previously selected files */
   thunar_g_list_free_full (standard_view->priv->selected_files);
