@@ -1078,6 +1078,8 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
   GtkWidget      *dialog;
   GString        *secondary;
   GError         *err = NULL;
+  gchar          *file_name;
+  gchar          *executable;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (g_utf8_validate (command, -1, NULL), FALSE);
@@ -1086,20 +1088,28 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
   screen = thunar_util_parse_parent (parent, &window);
 
   /* create the secondary text */
-  secondary = g_string_new (_("The desktop file "));
   if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
-    g_string_append_printf (secondary,
-                            "\"%s\" (%s)",
-                            thunar_file_get_display_name (file),
-                            thunar_file_get_basename (file));
+    file_name = g_strdup_printf ("\"%s\" (%s)", thunar_file_get_display_name (file), thunar_file_get_basename (file));
   else
-    g_string_append_printf (secondary,
-                            "\"%s\"",
-                            thunar_file_get_display_name (file));
-  g_string_append (secondary, _(" is in an insecure location and not marked as secure"));
+    file_name = g_strdup_printf ("\"%s\"", thunar_file_get_display_name (file));
+    
   if (g_file_info_get_attribute_boolean (thunar_file_get_info (file), G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE) == FALSE)
-    g_string_append (secondary, _("/executable"));
-  g_string_append (secondary, _(". If you do not trust this program, click Cancel.\n\n"));
+    /* TRANSLATORS: This string will be inserted in the following sentence in the second appearance of %s:
+     * "The desktop file %s is in an insecure location and not marked as secure%s." */
+    executable = g_strdup (_("/executable"));
+  else
+    executable = g_strdup ("");
+    
+  secondary = g_string_new (NULL);
+  g_string_printf (secondary,
+                   _("The desktop file %s is in an insecure location and not marked as secure%s. "
+                     "If you do not trust this program, click Cancel.\n\n"),
+                   file_name,
+                   executable);
+  
+  g_free (file_name);
+  g_free (executable);
+  
   if (g_uri_is_valid (command, G_URI_FLAGS_NONE, NULL))
     g_string_append_printf (secondary, G_KEY_FILE_DESKTOP_KEY_URL"=%s", command);
   else
