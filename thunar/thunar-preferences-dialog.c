@@ -958,6 +958,20 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /* next row */
   row++;
 
+  button = gtk_check_button_new_with_mnemonic (_("Append application name in title"));
+  g_object_bind_property (G_OBJECT (dialog->preferences),
+                          "misc-show-application-name-in-title",
+                          G_OBJECT (button),
+                          "active",
+                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  gtk_widget_set_tooltip_text (button, _("Select this option to add application name as suffix in title bar"));
+  gtk_widget_set_hexpand (button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
+  gtk_widget_show (button);
+
+  /* next row */
+  row++;
+
   button = gtk_check_button_new_with_mnemonic (_("Restore tabs on startup"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "last-restore-tabs",
