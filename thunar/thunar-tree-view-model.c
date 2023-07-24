@@ -44,6 +44,8 @@
 
 
 
+#define CLEANUP_AFTER_COLLAPSE_DELAY 5000 /* in ms */
+
 /* Defintions & typedefs */
 typedef struct _Node Node;
 
@@ -305,7 +307,6 @@ struct _Node
   gint                 n_children;
   gboolean             loaded;
   gboolean             loading;
-  gboolean             cleaning;
   gboolean             expanded;
 
   GHashTable          *set;
@@ -313,6 +314,8 @@ struct _Node
 
   GSequence           *children; /* Nodes */
   ThunarTreeViewModel *model;
+
+  guint                scheduled_cleanup_id;
 };
 
 
@@ -453,7 +456,7 @@ thunar_tree_view_model_init (ThunarTreeViewModel *model)
   model->sort_func = thunar_file_compare_by_name;
   model->loading = 0;
 
-  model->subdirs = g_hash_table_new (g_direct_hash, g_direct_equal);
+  model->subdirs = g_hash_table_new (g_file_hash, (GEqualFunc) g_file_equal);
 
   model->monitor = thunar_file_monitor_get_default ();
   g_signal_connect (G_OBJECT (model->monitor), "file-changed",
@@ -1700,7 +1703,7 @@ thunar_tree_view_model_set_folder (ThunarStandardViewModel *model,
   g_object_ref (_model->dir);
   _model->root = thunar_tree_view_model_new_node (thunar_folder_get_corresponding_file (_model->dir));
   _model->root->model = _model;
-  g_hash_table_insert (_model->subdirs, _model->root->file, _model->root);
+  g_hash_table_insert (_model->subdirs, thunar_file_get_file (_model->root->file), _model->root);
   thunar_tree_view_model_load_dir (_model->root);
 }
 
@@ -2012,9 +2015,11 @@ thunar_tree_view_model_new_node (ThunarFile *file)
   _node->loaded = FALSE;
   _node->loading = FALSE;
 
-  _node->set = g_hash_table_new (g_direct_hash, g_direct_equal);
+  _node->set = g_hash_table_new (g_file_hash, (GEqualFunc) g_file_equal);
   _node->hidden_files = NULL;
   _node->children = g_sequence_new (NULL);
+
+  _node->scheduled_cleanup_id = 0;
 
   return _node;
 }
@@ -2043,6 +2048,8 @@ thunar_tree_view_model_new_dummy_node (void)
   _node->set = NULL;
   _node->hidden_files = NULL;
   _node->children = NULL;
+
+  _node->scheduled_cleanup_id = 0;
 
   return _node;
 }
@@ -2110,7 +2117,7 @@ thunar_tree_view_model_node_add_child (Node *node,
       gtk_tree_path_free (path);
     }
 
-  g_hash_table_insert (node->set, child->file, child->ptr);
+  g_hash_table_insert (node->set, thunar_file_get_file (child->file), child->ptr);
 }
 
 
@@ -2183,14 +2190,14 @@ thunar_tree_view_model_dir_add_file (Node       *node,
   GtkTreePath *path;
   Node        *child;
 
-  g_assert (!g_hash_table_contains (node->set, file));
+  g_assert (!g_hash_table_contains (node->set, thunar_file_get_file (file)));
 
   child = thunar_tree_view_model_new_node (file);
   thunar_tree_view_model_node_add_child (node, child);
 
   if (thunar_file_is_directory (file))
     {
-      g_hash_table_insert (node->model->subdirs, file, child);
+      g_hash_table_insert (node->model->subdirs, thunar_file_get_file (file), child);
       if (!thunar_file_is_empty (file))
         thunar_tree_view_model_node_add_dummy_child (child);
     }
@@ -2215,7 +2222,7 @@ thunar_tree_view_model_dir_remove_file (Node       *node,
   GtkTreePath   *path;
   GSequenceIter *iter;
 
-  iter = g_hash_table_lookup (node->set, file);
+  iter = g_hash_table_lookup (node->set, thunar_file_get_file (file));
   g_assert (iter != NULL);
 
   GTK_TREE_ITER_INIT (tree_iter, node->model->stamp, iter);
@@ -2226,7 +2233,7 @@ thunar_tree_view_model_dir_remove_file (Node       *node,
   thunar_tree_view_model_node_destroy (g_sequence_get (iter));
 
   g_sequence_remove (iter);
-  g_hash_table_remove (node->set, file);
+  g_hash_table_remove (node->set, thunar_file_get_file (file));
   node->n_children--;
 
   g_assert (node->n_children >= 0);
@@ -2259,16 +2266,16 @@ thunar_tree_view_model_locate_file (ThunarTreeViewModel *model,
 
   parent = thunar_file_get_parent (file, NULL);
 
-  if (!g_hash_table_contains (model->subdirs, parent))
+  if (!g_hash_table_contains (model->subdirs, thunar_file_get_file (parent)))
     return NULL;
 
-  parent_node = g_hash_table_lookup (model->subdirs, parent);
+  parent_node = g_hash_table_lookup (model->subdirs, thunar_file_get_file (parent));
   g_assert (parent_node != NULL);
 
-  if (!g_hash_table_contains (parent_node->set, file))
+  if (!g_hash_table_contains (parent_node->set, thunar_file_get_file (file)))
     return NULL;
 
-  iter = g_hash_table_lookup (parent_node->set, file);
+  iter = g_hash_table_lookup (parent_node->set, thunar_file_get_file (file));
   g_assert (iter != NULL);
 
   return g_sequence_get (iter);
@@ -2573,6 +2580,12 @@ thunar_tree_view_model_node_destroy (Node *node)
 {
   GSequenceIter *iter;
 
+  if (node->scheduled_cleanup_id != 0)
+    {
+      g_source_remove (node->scheduled_cleanup_id);
+      node->scheduled_cleanup_id = 0;
+    }
+
   if (node->file == NULL)
     {
       /* we have found a dummy node */
@@ -2719,31 +2732,73 @@ thunar_tree_view_model_load_subdir (ThunarTreeViewModel *model,
   g_assert (!g_sequence_iter_is_end (iter->user_data));
   node = g_sequence_get (iter->user_data);
   g_assert (node != NULL);
-  thunar_tree_view_model_load_dir (node);
   node->expanded = TRUE;
+  if (node->scheduled_cleanup_id != 0)
+    g_source_remove (node->scheduled_cleanup_id);
+  node->scheduled_cleanup_id = 0;
+  thunar_tree_view_model_load_dir (node);
+}
+
+
+
+static gboolean
+_thunar_tree_view_model_cleanup_func (Node *node)
+{
+  GSequenceIter *iter;
+  GtkTreeIter    tree_iter;
+  GtkTreePath   *path;
+  Node          *_node;
+
+  node->loaded = FALSE;
+
+  if (node->dir != NULL)
+    {
+      g_signal_handlers_disconnect_matched (G_OBJECT (node->dir), G_SIGNAL_MATCH_DATA,
+                                            0, 0, NULL, NULL, node);
+      g_object_unref (node->dir);
+      node->dir = NULL;
+    }
+
+  g_hash_table_remove_all (node->set);
+
+  GTK_TREE_ITER_INIT (tree_iter, node->model->stamp, node->ptr);
+  path = gtk_tree_model_get_path (GTK_TREE_MODEL (node->model), &tree_iter);
+  gtk_tree_path_down (path);
+
+  while (node->n_children > 0)
+    {
+      iter = g_sequence_get_iter_at_pos (node->children, 0);
+      _node = g_sequence_get (iter);
+      gtk_tree_model_row_deleted (GTK_TREE_MODEL (node->model), path);
+      thunar_tree_view_model_node_destroy (_node);
+      g_sequence_remove (iter);
+      node->n_children--;
+    }
+
+  gtk_tree_path_free (path);
+
+  if (node->hidden_files != NULL)
+    thunar_g_list_free_full (node->hidden_files);
+  node->hidden_files = NULL;
+
+  thunar_tree_view_model_node_add_dummy_child (node);
+
+  return G_SOURCE_REMOVE;
 }
 
 
 
 static void
-thunar_tree_view_model_unload_dir (Node *node)
+_thunar_tree_view_model_cleanup_destroy (Node *node)
 {
-  // _thunar_return_if_fail (node != NULL);
-
-  // if (!node->loaded || node->cleaning)
-  //   return;
-
-  // node->cleaning = TRUE;
-  // node->loaded = FALSE;
-
-  // g_timeout_add (100, (GSourceFunc) _thunar_tree_view_model_cleanup_idle, node);
+  node->scheduled_cleanup_id = 0;
 }
 
 
 
 void
-thunar_tree_view_model_unload_subdir (ThunarTreeViewModel *model,
-                                      GtkTreeIter         *iter)
+thunar_tree_view_model_schedule_cleanup (ThunarTreeViewModel *model,
+                                         GtkTreeIter         *iter)
 {
   Node *node;
 
@@ -2754,6 +2809,8 @@ thunar_tree_view_model_unload_subdir (ThunarTreeViewModel *model,
   g_assert (!g_sequence_iter_is_end (iter->user_data));
   node = g_sequence_get (iter->user_data);
   g_assert (node != NULL);
-  thunar_tree_view_model_unload_dir (node);
   node->expanded = FALSE;
+  node->scheduled_cleanup_id = g_timeout_add_full (G_PRIORITY_LOW, CLEANUP_AFTER_COLLAPSE_DELAY,
+                                                   G_SOURCE_FUNC (_thunar_tree_view_model_cleanup_func),
+                                                   node, (GDestroyNotify) _thunar_tree_view_model_cleanup_destroy);
 }
