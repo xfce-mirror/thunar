@@ -4805,6 +4805,7 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
                                          ThunarWindow *window)
 {
   gboolean      show_full_path;
+  gboolean      show_application_name;
   gchar        *title;
   gchar        *parse_name = NULL;
   const gchar  *name;
@@ -4821,7 +4822,12 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
     name = thunar_file_get_display_name (current_directory);
 
   /* set window title */
-  title = g_strdup_printf ("%s - %s", name, "Thunar");
+  g_object_get (G_OBJECT (window->preferences), "misc-show-application-name-in-title", &show_application_name, NULL);
+  if (G_UNLIKELY (show_application_name))
+    title = g_strdup_printf ("%s - %s", name, "Thunar");
+  else
+    title = g_strdup (name);
+
   gtk_window_set_title (GTK_WINDOW (window), title);
   g_free (title);
   g_free (parse_name);

@@ -128,6 +128,7 @@ enum
   PROP_MISC_HIGHLIGHTING_ENABLED,
   PROP_MISC_UNDO_REDO_HISTORY_SIZE,
   PROP_MISC_MAX_NUMBER_OF_TEMPLATES,
+  PROP_MISC_SHOW_APPLICATION_NAME_IN_TITLE,
   N_PROPERTIES,
 };
 
@@ -1204,6 +1205,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          0, G_MAXUINT,
                          100,
                          EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-show-application-name-in-title:
+   *
+   * Append application name in title
+   **/
+  preferences_props[PROP_MISC_SHOW_APPLICATION_NAME_IN_TITLE] =
+      g_param_spec_boolean ("misc-show-application-name-in-title",
+                            "MiscShowApplicationNameInTitle",
+                            NULL,
+                            TRUE,
+                            EXO_PARAM_READWRITE);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
