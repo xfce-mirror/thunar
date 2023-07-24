@@ -1187,6 +1187,7 @@ thunar_util_get_statusbar_text (ThunarStandardViewModel *model,
   gboolean           has_next;
   ThunarDateStyle    date_style;
   gchar             *date_custom_style;
+  gchar             *date_string;
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model), NULL);
 
@@ -1317,7 +1318,7 @@ thunar_util_get_statusbar_text (ThunarStandardViewModel *model,
       if (show_last_modified)
         {
           g_object_get (G_OBJECT (model), "date-style", &date_style, "date-custom-style", &date_custom_style, NULL);
-          gchar *date_string = thunar_file_get_date_string (file, THUNAR_FILE_DATE_MODIFIED, date_style, date_custom_style);
+          date_string = thunar_file_get_date_string (file, THUNAR_FILE_DATE_MODIFIED, date_style, date_custom_style);
           temp_string = g_strdup_printf (_ ("Last Modified: %s"), date_string);
           text_list = g_list_append (text_list, temp_string);
           g_free (date_string);
@@ -1345,4 +1346,59 @@ thunar_util_get_statusbar_text (ThunarStandardViewModel *model,
   g_list_free_full (text_list, g_free);
   g_object_unref (preferences);
   return text;
+}
+
+
+
+/**
+ * thunar_util_split_search_query:
+ * @search_query: The search query to split.
+ * @error: Return location for regex compilation errors.
+ *
+ * Search terms are split on whitespace. Search queries must be
+ * normalized before passing to this function.
+ *
+ * See also: thunar_g_utf8_normalize_for_search().
+ *
+ * Return value: a list of search terms which must be freed with g_strfreev()
+ **/
+gchar **
+thunar_util_split_search_query (const gchar *search_query_normalized,
+                                GError     **error)
+{
+  GRegex *whitespace_regex;
+  gchar **search_terms;
+
+  whitespace_regex = g_regex_new ("\\s+", 0, 0, error);
+  if (whitespace_regex == NULL)
+    return NULL;
+  search_terms = g_regex_split (whitespace_regex, search_query_normalized, 0);
+  g_regex_unref (whitespace_regex);
+  return search_terms;
+}
+
+
+
+/**
+ * thunar_util_search_terms_match:
+ * @terms: The search terms to look for, prepared with thunar_util_split_search_query().
+ * @str: The string which the search terms might be found in.
+ *
+ * All search terms must match. Thunar uses simple substring matching
+ * for the broadest multilingual support. @str must be normalized before
+ * passing to this function.
+ *
+ * See also: thunar_g_utf8_normalize_for_search().
+ *
+ * Return value: TRUE if all terms matched, FALSE otherwise.
+ **/
+
+gboolean
+thunar_util_search_terms_match (gchar **terms,
+                                gchar  *str)
+{
+  for (gint i = 0; terms[i] != NULL; i++)
+    if (g_strrstr (str, terms[i]) == NULL)
+      return FALSE;
+  return TRUE;
 }

@@ -454,3 +454,13 @@ thunar_standard_view_model_set_job (ThunarStandardViewModel  *model,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model));
   return (*THUNAR_STANDARD_VIEW_MODEL_GET_IFACE (model)->set_job) (model, job);
 }
+
+
+
+void
+thunar_standard_view_model_add_search_files (ThunarStandardViewModel *model,
+                                             GList                   *files)
+{
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model));
+  return (*THUNAR_STANDARD_VIEW_MODEL_GET_IFACE (model)->add_search_files) (model, files);
+}

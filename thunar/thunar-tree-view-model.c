@@ -41,6 +41,7 @@
 #include <thunar/thunar-simple-job.h>
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-file-monitor.h>
+#include <thunar/thunar-io-jobs.h>
 
 
 
@@ -241,6 +242,9 @@ static void              thunar_tree_view_model_file_changed (ThunarFileMonitor 
                                                               ThunarTreeViewModel *model);
 static void              thunar_tree_view_model_inc_loading (ThunarTreeViewModel *model);
 static void              thunar_tree_view_model_dec_loading (ThunarTreeViewModel *model);
+static gboolean          thunar_tree_view_model_update_search_files (ThunarTreeViewModel *model);
+static void              thunar_tree_view_model_add_search_files (ThunarStandardViewModel *model,
+                                                                  GList                   *files);
 
 
 /*************************************************
@@ -291,6 +295,14 @@ struct _ThunarTreeViewModel
 
   gint                  n_visible_files;
   gint                  loading;
+
+  gchar               **search_terms;
+
+  ThunarJob            *search_job;
+  GList                *search_files;
+  GMutex                mutex_add_search_files;
+
+  guint                 update_search_results_timeout_id;
 };
 
 
@@ -453,6 +465,13 @@ thunar_tree_view_model_init (ThunarTreeViewModel *model)
   model->stamp = g_random_int ();
 #endif
 
+  model->search_job = NULL;
+  model->update_search_results_timeout_id = 0;
+
+  model->search_terms = NULL;
+  model->search_files = NULL;
+  g_mutex_init (&model->mutex_add_search_files);
+
   model->sort_func = thunar_file_compare_by_name;
   model->loading = 0;
 
@@ -502,6 +521,7 @@ thunar_tree_view_model_standard_view_model_init (ThunarStandardViewModelIface *i
   iface->set_file_size_binary = thunar_tree_view_model_set_file_size_binary;
   iface->set_folders_first = thunar_tree_view_model_set_folders_first;
   iface->get_statusbar_text = thunar_tree_view_model_get_statusbar_text;
+  iface->add_search_files = thunar_tree_view_model_add_search_files;
 }
 
 
@@ -1666,8 +1686,58 @@ thunar_tree_view_model_get_statusbar_text (ThunarStandardViewModel *model,
 static ThunarJob *
 thunar_tree_view_model_get_job (ThunarStandardViewModel *model)
 {
-  /* TODO: */
-  return NULL;
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), NULL);
+  return THUNAR_TREE_VIEW_MODEL (model)->search_job;
+}
+
+
+
+static void
+_thunar_tree_view_model_search_error (ThunarJob *job)
+{
+  g_error ("Error while searching recursively");
+}
+
+
+
+static void
+_thunar_tree_view_model_search_finished (ThunarJob           *job,
+                                         ThunarTreeViewModel *model)
+{
+  if (model->search_job)
+    {
+      g_signal_handlers_disconnect_matched (model->search_job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, model);
+      g_object_unref (model->search_job);
+      model->search_job = NULL;
+    }
+
+  if (model->update_search_results_timeout_id > 0)
+    {
+      thunar_tree_view_model_update_search_files (model);
+      g_source_remove (model->update_search_results_timeout_id);
+      model->update_search_results_timeout_id = 0;
+    }
+
+  thunar_g_list_free_full (model->search_files);
+  model->search_files = NULL;
+
+  g_signal_emit_by_name (model, "search-done");
+}
+
+
+
+static void
+_thunar_tree_view_model_cancel_search_job (ThunarTreeViewModel *model)
+{
+  /* cancel the ongoing search if there is one */
+  if (model->search_job)
+    {
+      exo_job_cancel (EXO_JOB (model->search_job));
+
+      g_signal_handlers_disconnect_matched (model->search_job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, model);
+      g_object_unref (model->search_job);
+      model->search_job = NULL;
+    }
 }
 
 
@@ -1678,13 +1748,21 @@ thunar_tree_view_model_set_folder (ThunarStandardViewModel *model,
                                    gchar                   *search_query)
 {
   ThunarTreeViewModel *_model;
+  gchar               *search_query_normalized;
 
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
 
   _model = THUNAR_TREE_VIEW_MODEL (model);
 
-  if (_model->dir == folder)
-    return;
+  _thunar_tree_view_model_cancel_search_job (_model);
+
+  if (_model->update_search_results_timeout_id != 0)
+    {
+      g_source_remove (_model->update_search_results_timeout_id);
+      _model->update_search_results_timeout_id = 0;
+    }
+  thunar_g_list_free_full (_model->search_files);
+  _model->search_files = NULL;
 
   thunar_tree_view_model_cleanup_model (_model);
   _model->root = NULL;
@@ -1700,11 +1778,41 @@ thunar_tree_view_model_set_folder (ThunarStandardViewModel *model,
   if (_model->dir == NULL)
     return;
 
+  g_object_freeze_notify (G_OBJECT (model));
+
   g_object_ref (_model->dir);
   _model->root = thunar_tree_view_model_new_node (thunar_folder_get_corresponding_file (_model->dir));
   _model->root->model = _model;
-  g_hash_table_insert (_model->subdirs, thunar_file_get_file (_model->root->file), _model->root);
-  thunar_tree_view_model_load_dir (_model->root);
+
+  if (search_query == NULL || strlen (g_strstrip (search_query)) == 0)
+    {
+      g_hash_table_insert (_model->subdirs, thunar_file_get_file (_model->root->file), _model->root);
+      thunar_tree_view_model_load_dir (_model->root);
+    }
+  else
+    {
+      search_query_normalized = thunar_g_utf8_normalize_for_search (search_query, TRUE, TRUE);
+      g_strfreev (_model->search_terms);
+      _model->search_terms = thunar_util_split_search_query (search_query_normalized, NULL);
+      if (_model->search_terms != NULL)
+        {
+          /* search the current folder
+           * start a new recursive_search_job */
+          _model->search_job = thunar_io_jobs_search_directory (THUNAR_STANDARD_VIEW_MODEL (_model), search_query_normalized, thunar_folder_get_corresponding_file (folder));
+          g_signal_connect (_model->search_job, "error", G_CALLBACK (_thunar_tree_view_model_search_error), NULL);
+          g_signal_connect (_model->search_job, "finished", G_CALLBACK (_thunar_tree_view_model_search_finished), _model);
+          exo_job_launch (EXO_JOB (_model->search_job));
+
+          /* add new results to the model every X ms */
+          _model->update_search_results_timeout_id = g_timeout_add (500, G_SOURCE_FUNC (thunar_tree_view_model_update_search_files), _model);
+        }
+      g_free (search_query_normalized);
+    }
+
+  /* notify listeners that we have a new folder */
+  g_object_notify_by_pspec (G_OBJECT (model), tree_model_props[PROP_FOLDER]);
+  g_object_notify_by_pspec (G_OBJECT (model), tree_model_props[PROP_NUM_FILES]);
+  g_object_thaw_notify (G_OBJECT (model));
 }
 
 
@@ -1822,7 +1930,8 @@ static void
 thunar_tree_view_model_set_job (ThunarStandardViewModel *model,
                                 ThunarJob               *job)
 {
-  /* TODO: */
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
+  THUNAR_TREE_VIEW_MODEL (model)->search_job = job;
 }
 
 
@@ -2813,4 +2922,56 @@ thunar_tree_view_model_schedule_cleanup (ThunarTreeViewModel *model,
   node->scheduled_cleanup_id = g_timeout_add_full (G_PRIORITY_LOW, CLEANUP_AFTER_COLLAPSE_DELAY,
                                                    G_SOURCE_FUNC (_thunar_tree_view_model_cleanup_func),
                                                    node, (GDestroyNotify) _thunar_tree_view_model_cleanup_destroy);
+}
+
+
+
+static gboolean
+thunar_tree_view_model_update_search_files (ThunarTreeViewModel *model)
+{
+  ThunarFile *file;
+  gboolean    matched;
+  gchar      *name_n;
+
+  g_mutex_lock (&model->mutex_add_search_files);
+
+  for (GList *lp = model->search_files; lp != NULL; lp = lp->next)
+    {
+      /* take a reference on that file */
+      file = THUNAR_FILE (g_object_ref (G_OBJECT (lp->data)));
+      _thunar_return_val_if_fail (THUNAR_IS_FILE (file), TRUE);
+
+      name_n = (gchar *) thunar_file_get_display_name (file);
+      name_n = thunar_g_utf8_normalize_for_search (name_n, TRUE, TRUE);
+      matched = thunar_util_search_terms_match (model->search_terms, name_n);
+      g_free (name_n);
+
+      if (matched)
+        thunar_tree_view_model_dir_add_file (model->root, lp->data);
+
+      g_object_unref (file);
+    }
+
+  if (model->search_files != NULL)
+    g_list_free (model->search_files);
+  model->search_files = NULL;
+
+  g_mutex_unlock (&model->mutex_add_search_files);
+
+  return TRUE;
+}
+
+
+
+static void
+thunar_tree_view_model_add_search_files (ThunarStandardViewModel *model,
+                                         GList                   *files)
+{
+  ThunarTreeViewModel *_model = THUNAR_TREE_VIEW_MODEL (model);
+
+  g_mutex_lock (&_model->mutex_add_search_files);
+
+  _model->search_files = g_list_concat (_model->search_files, files);
+
+  g_mutex_unlock (&_model->mutex_add_search_files);
 }

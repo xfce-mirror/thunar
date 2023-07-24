@@ -97,6 +97,11 @@ void        thunar_util_clip_view_background     (GtkCellRenderer      *cell,
                                                   GtkCellRendererState  flags);
 gchar      *thunar_util_get_statusbar_text       (ThunarStandardViewModel *model,
                                                   GList                   *selected_items);
+gchar     **thunar_util_split_search_query (const gchar *search_query_normalized,
+                                            GError     **error);
+gboolean    thunar_util_search_terms_match (gchar **terms,
+                                            gchar  *str);
+
 
 G_END_DECLS;
 
