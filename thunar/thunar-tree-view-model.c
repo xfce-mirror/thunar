@@ -340,6 +340,7 @@ G_DEFINE_TYPE_WITH_CODE (ThunarTreeViewModel, thunar_tree_view_model, G_TYPE_OBJ
 
 
 /* Reference to GParamSpec(s) of all the N_PROPERTIES */
+static guint       tree_model_signals[THUNAR_STANDARD_VIEW_MODEL_LAST_SIGNAL];
 static GParamSpec *tree_model_props[N_PROPERTIES] = {
   NULL,
 };
@@ -2510,6 +2511,36 @@ thunar_tree_view_model_sort (ThunarTreeViewModel *model)
 
 
 static void
+_thunar_tree_view_model_folder_destroy (Node *node)
+{
+  if (node->parent == NULL)
+    thunar_tree_view_model_set_folder (THUNAR_STANDARD_VIEW_MODEL (node->model), NULL, NULL);
+
+  /* TODO: What to do when the folder is deleted? */
+}
+
+
+
+static void
+_thunar_tree_view_model_folder_error (Node         *node,
+                                      const GError *error)
+{
+  _thunar_return_if_fail (error != NULL);
+
+  /* we only care about the root node here */
+  if (node->parent != NULL)
+    return;
+
+  /* reset the current folder */
+  thunar_tree_view_model_set_folder (THUNAR_STANDARD_VIEW_MODEL (node->model), NULL, NULL);
+
+  /* forward the error signal */
+  g_signal_emit (G_OBJECT (node->model), tree_model_signals[THUNAR_STANDARD_VIEW_MODEL_ERROR], 0, error);
+}
+
+
+
+static void
 _thunar_tree_view_model_dir_files_added (Node  *node,
                                          GList *files)
 {
@@ -2602,6 +2633,8 @@ thunar_tree_view_model_load_dir (Node *node)
   node->dir = thunar_folder_get_for_file (node->file);
   g_assert (node->dir != NULL);
 
+  g_signal_connect_swapped (G_OBJECT (node->dir), "destroy", G_CALLBACK (_thunar_tree_view_model_folder_destroy), node);
+  g_signal_connect_swapped (G_OBJECT (node->dir), "error", G_CALLBACK (_thunar_tree_view_model_folder_error), node);
   g_signal_connect_swapped (G_OBJECT (node->dir), "files-added", G_CALLBACK (_thunar_tree_view_model_dir_files_added), node);
   g_signal_connect_swapped (G_OBJECT (node->dir), "files-removed", G_CALLBACK (_thunar_tree_view_model_dir_files_removed), node);
   g_signal_connect_swapped (G_OBJECT (node->dir), "notify::loading", G_CALLBACK (_thunar_tree_view_model_dir_notify_loading), node);
@@ -2707,6 +2740,8 @@ thunar_tree_view_model_node_destroy (Node *node)
   if (node->dir != NULL)
     {
       g_signal_handlers_disconnect_by_data (G_OBJECT (node->dir), node);
+      g_assert (g_hash_table_contains (node->model->subdirs, thunar_file_get_file (node->file)));
+      g_hash_table_remove (node->model->subdirs, thunar_file_get_file (node->file));
       g_object_unref (node->dir);
     }
 
