@@ -634,7 +634,7 @@ thunar_standard_view_model_get_statusbar_text (ThunarStandardViewModel *model,
       /* try to determine a file for the current folder */
       folder = thunar_standard_view_model_get_folder (model);
       file = (folder != NULL) ? thunar_folder_get_corresponding_file (folder) : NULL;
-      temp_string = thunar_util_get_statusbar_text_for_files (model, relevant_files, show_file_size_binary_format);
+      temp_string = thunar_standard_view_model_get_statusbar_text_for_files (model, relevant_files, show_file_size_binary_format);
       text_list = g_list_append (text_list, temp_string);
 
       /* check if we can determine the amount of free space for the volume */
@@ -754,7 +754,7 @@ thunar_standard_view_model_get_statusbar_text (ThunarStandardViewModel *model,
           if (_file != NULL)
             relevant_files = g_list_append (relevant_files, _file);
         }
-      selected_string = thunar_util_get_statusbar_text_for_files (model, relevant_files, show_file_size_binary_format);
+      selected_string = thunar_standard_view_model_get_statusbar_text_for_files (model, relevant_files, show_file_size_binary_format);
       temp_string = g_strdup_printf (_ ("Selection: %s"), selected_string);
       text_list = g_list_append (text_list, temp_string);
       g_list_free_full (relevant_files, g_object_unref);

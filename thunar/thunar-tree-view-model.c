@@ -528,7 +528,6 @@ thunar_tree_view_model_standard_view_model_init (ThunarStandardViewModelIface *i
   iface->get_file_size_binary = thunar_tree_view_model_get_file_size_binary;
   iface->set_file_size_binary = thunar_tree_view_model_set_file_size_binary;
   iface->set_folders_first = thunar_tree_view_model_set_folders_first;
-  iface->get_statusbar_text = thunar_tree_view_model_get_statusbar_text;
   iface->add_search_files = thunar_tree_view_model_add_search_files;
 }
 
@@ -1691,15 +1690,6 @@ thunar_tree_view_model_get_paths_for_pattern (ThunarStandardViewModel *model,
   g_pattern_spec_free (pspec);
 
   return paths;
-}
-
-
-
-static gchar *
-thunar_tree_view_model_get_statusbar_text (ThunarStandardViewModel *model,
-                                           GList                   *selected_items)
-{
-  return thunar_util_get_statusbar_text (model, selected_items);
 }
 
 
