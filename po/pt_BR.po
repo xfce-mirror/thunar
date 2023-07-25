@@ -35,7 +35,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-15 00:45+0200\n"
+"POT-Creation-Date: 2023-07-25 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: The Cat, 2023\n"
 "Language-Team: Portuguese (Brazil) (http://app.transifex.com/xfce/thunar/language/pt_BR/)\n"
@@ -312,7 +312,7 @@ msgstr[2] "Abrir %d novas janelas"
 #: ../thunar/thunar-chooser-dialog.c:838 ../thunar/thunar-chooser-dialog.c:889
 #: ../thunar/thunar-dialogs.c:112 ../thunar/thunar-dialogs.c:261
 #: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:819
-#: ../thunar/thunar-dialogs.c:1118 ../thunar/thunar-dialogs.c:1211
+#: ../thunar/thunar-dialogs.c:1129 ../thunar/thunar-dialogs.c:1222
 #: ../thunar/thunar-dnd.c:173 ../thunar/thunar-permissions-chooser.c:559
 #: ../thunar/thunar-permissions-chooser.c:1170
 #: ../thunar/thunar-properties-dialog.c:1179
@@ -347,7 +347,7 @@ msgstr "Falha ao abrir \"%s\""
 #. change the accept button label text
 #: ../thunar/thunar-action-manager.c:1574
 #: ../thunar/thunar-chooser-dialog.c:890
-#: ../thunar/thunar-chooser-dialog.c:1301 ../thunar/thunar-dialogs.c:1349
+#: ../thunar/thunar-chooser-dialog.c:1301 ../thunar/thunar-dialogs.c:1360
 #: ../thunar/thunar-renamer-dialog.c:1046
 #: ../plugins/thunar-uca/thunar-uca-editor.c:181
 msgid "_Open"
@@ -360,7 +360,7 @@ msgstr[0] "_Abrir o arquivo selecionado"
 msgstr[1] "Abrir os arquivos selecionados"
 msgstr[2] "Abrir os arquivos selecionados"
 
-#: ../thunar/thunar-action-manager.c:1578 ../thunar/thunar-dialogs.c:1343
+#: ../thunar/thunar-action-manager.c:1578 ../thunar/thunar-dialogs.c:1354
 msgid "_Execute"
 msgstr "_Executar"
 
@@ -719,7 +719,7 @@ msgstr[1] "Você tem certeza que deseja excluir\npermanentemente os %u arquivos 
 msgstr[2] "Você tem certeza que deseja excluir\npermanentemente os %u arquivos selecionados?"
 
 #: ../thunar/thunar-application.c:2458 ../thunar/thunar-application.c:2519
-#: ../thunar/thunar-dialogs.c:616 ../thunar/thunar-dialogs.c:1114
+#: ../thunar/thunar-dialogs.c:616 ../thunar/thunar-dialogs.c:1125
 msgid "Attention"
 msgstr "Atenção"
 
@@ -1376,85 +1376,86 @@ msgstr "com a seguinte pasta?"
 msgid "with the following file?"
 msgstr "com o seguinte arquivo?"
 
-#: ../thunar/thunar-dialogs.c:1091
+#. TRANSLATORS: This string will be inserted in the following sentence in the
+#. second appearance of %s:
+#. * "The desktop file %s is in an insecure location and not marked as
+#. secure%s."
+#: ../thunar/thunar-dialogs.c:1099
+msgid "/executable"
+msgstr ""
+
+#: ../thunar/thunar-dialogs.c:1105
 #, c-format
 msgid ""
-"The desktop file \"%s\" (%s) is in an insecure location and not marked as "
-"executable. If you do not trust this program, click Cancel."
-msgstr "O arquivo da área de trabalho \"%s\" (%s) não está numa localização segura e não está marcado como executável. Se você não confia no programa, clique em Cancelar."
+"The desktop file %s is in an insecure location and not marked as secure%s. If you do not trust this program, click Cancel.\n"
+"\n"
+msgstr ""
 
-#: ../thunar/thunar-dialogs.c:1097
-#, c-format
-msgid ""
-"The desktop file \"%s\" is in an insecure location and not marked as "
-"executable. If you do not trust this program, click Cancel."
-msgstr "O arquivo de desktop \"%s\" é em uma localização insegura e não marcada como executável. Se você não confia neste programa, clique Cancelar."
-
-#: ../thunar/thunar-dialogs.c:1115
+#: ../thunar/thunar-dialogs.c:1126
 msgid "_Launch Anyway"
 msgstr "_Lançar mesmo assim"
 
-#: ../thunar/thunar-dialogs.c:1117
-msgid "Mark _Executable"
-msgstr "Marcar _executável"
+#: ../thunar/thunar-dialogs.c:1128
+msgid "Mark As _Secure And Launch"
+msgstr ""
 
-#: ../thunar/thunar-dialogs.c:1200
+#: ../thunar/thunar-dialogs.c:1211
 msgid "Close split pane with multiple tabs?"
 msgstr "Fechar painel dividido com várias abas?"
 
-#: ../thunar/thunar-dialogs.c:1201
+#: ../thunar/thunar-dialogs.c:1212
 msgid ""
 "The other split pane has multiple open tabs. Closing it will close all these"
 " tabs."
 msgstr "O outro painel dividido possui várias abas abertas. Se você o fechar, fechará também todas estas abas."
 
-#: ../thunar/thunar-dialogs.c:1207
+#: ../thunar/thunar-dialogs.c:1218
 msgid "Warning"
 msgstr "Aviso"
 
-#: ../thunar/thunar-dialogs.c:1212
+#: ../thunar/thunar-dialogs.c:1223
 msgid "Close Pane"
 msgstr "Fechar painel"
 
-#: ../thunar/thunar-dialogs.c:1215 ../thunar/thunar-permissions-chooser.c:591
+#: ../thunar/thunar-dialogs.c:1226 ../thunar/thunar-permissions-chooser.c:591
 msgid "Do _not ask me again"
 msgstr "_Não pergunte novamente"
 
-#: ../thunar/thunar-dialogs.c:1262
+#: ../thunar/thunar-dialogs.c:1273
 msgid "Do you want to rename the launcher, or the file itself?"
 msgstr "Deseja mudar o nome do lançador ou do próprio arquivo?"
 
-#: ../thunar/thunar-dialogs.c:1264
+#: ../thunar/thunar-dialogs.c:1275
 msgid "Rename Launcher Options"
 msgstr "Renomear as opções do lançador"
 
-#: ../thunar/thunar-dialogs.c:1266
+#: ../thunar/thunar-dialogs.c:1277
 msgid "Rename _File"
 msgstr "Renomear _Arquivo"
 
-#: ../thunar/thunar-dialogs.c:1270
+#: ../thunar/thunar-dialogs.c:1281
 msgid "Rename _Launcher"
 msgstr "Renomear _Lançador"
 
-#: ../thunar/thunar-dialogs.c:1321
+#: ../thunar/thunar-dialogs.c:1332
 #, c-format
 msgid "The file \"%s\" seems to be executable. What do you want to do with it?"
 msgstr "O arquivo \"%s\" parece ser executável. O que é que deseja fazer com ele?"
 
-#: ../thunar/thunar-dialogs.c:1326
+#: ../thunar/thunar-dialogs.c:1337
 msgid ""
 "The selected files seem to be executable. What do you want to do with them?"
 msgstr "Os arquivos selecionados parecem ser executáveis. O que deseja fazer com eles?"
 
-#: ../thunar/thunar-dialogs.c:1335
+#: ../thunar/thunar-dialogs.c:1346
 msgid "Open Shell Script"
 msgstr "Abrir o Shell Script"
 
-#: ../thunar/thunar-dialogs.c:1339
+#: ../thunar/thunar-dialogs.c:1350
 msgid "Run In _Terminal"
 msgstr "Executar no _Terminal"
 
-#: ../thunar/thunar-dialogs.c:1400
+#: ../thunar/thunar-dialogs.c:1411
 #, c-format
 msgid "Failed to edit launcher via command \"%s\""
 msgstr "Falha ao editar o lançador pelo comando \"%s\""
