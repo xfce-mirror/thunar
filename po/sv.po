@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-15 00:45+0200\n"
+"POT-Creation-Date: 2023-07-25 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Luna Jernberg <bittin@cafe8bitar.se>, 2020-2023\n"
 "Language-Team: Swedish (http://app.transifex.com/xfce/thunar/language/sv/)\n"
@@ -291,7 +291,7 @@ msgstr[1] "Öppna %d nya fönster"
 #: ../thunar/thunar-chooser-dialog.c:838 ../thunar/thunar-chooser-dialog.c:889
 #: ../thunar/thunar-dialogs.c:112 ../thunar/thunar-dialogs.c:261
 #: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:819
-#: ../thunar/thunar-dialogs.c:1118 ../thunar/thunar-dialogs.c:1211
+#: ../thunar/thunar-dialogs.c:1129 ../thunar/thunar-dialogs.c:1222
 #: ../thunar/thunar-dnd.c:173 ../thunar/thunar-permissions-chooser.c:559
 #: ../thunar/thunar-permissions-chooser.c:1170
 #: ../thunar/thunar-properties-dialog.c:1179
@@ -326,7 +326,7 @@ msgstr "Misslyckades med att öppna \"%s\""
 #. change the accept button label text
 #: ../thunar/thunar-action-manager.c:1574
 #: ../thunar/thunar-chooser-dialog.c:890
-#: ../thunar/thunar-chooser-dialog.c:1301 ../thunar/thunar-dialogs.c:1349
+#: ../thunar/thunar-chooser-dialog.c:1301 ../thunar/thunar-dialogs.c:1360
 #: ../thunar/thunar-renamer-dialog.c:1046
 #: ../plugins/thunar-uca/thunar-uca-editor.c:181
 msgid "_Open"
@@ -338,7 +338,7 @@ msgid_plural "Open the selected files"
 msgstr[0] "Öppna den markerade filen"
 msgstr[1] "Öppna de markerade filerna"
 
-#: ../thunar/thunar-action-manager.c:1578 ../thunar/thunar-dialogs.c:1343
+#: ../thunar/thunar-action-manager.c:1578 ../thunar/thunar-dialogs.c:1354
 msgid "_Execute"
 msgstr "_Starta"
 
@@ -676,7 +676,7 @@ msgstr[0] "Är du säker att du vill ta bort\nden markerade filen permanent?"
 msgstr[1] "Är du säker att du vill ta bort\nde %u markerade filerna permanent?"
 
 #: ../thunar/thunar-application.c:2458 ../thunar/thunar-application.c:2519
-#: ../thunar/thunar-dialogs.c:616 ../thunar/thunar-dialogs.c:1114
+#: ../thunar/thunar-dialogs.c:616 ../thunar/thunar-dialogs.c:1125
 msgid "Attention"
 msgstr "Uppmärksamhet"
 
@@ -1332,85 +1332,86 @@ msgstr "med följande mapp?"
 msgid "with the following file?"
 msgstr "med följande fil?"
 
-#: ../thunar/thunar-dialogs.c:1091
+#. TRANSLATORS: This string will be inserted in the following sentence in the
+#. second appearance of %s:
+#. * "The desktop file %s is in an insecure location and not marked as
+#. secure%s."
+#: ../thunar/thunar-dialogs.c:1099
+msgid "/executable"
+msgstr ""
+
+#: ../thunar/thunar-dialogs.c:1105
 #, c-format
 msgid ""
-"The desktop file \"%s\" (%s) is in an insecure location and not marked as "
-"executable. If you do not trust this program, click Cancel."
-msgstr "Skrivbordsfilen \"%s\" (%s) är på en osäker plats och inte markerad som körbar. Om du inte litar på det här programmet klickar du på Avbryt."
+"The desktop file %s is in an insecure location and not marked as secure%s. If you do not trust this program, click Cancel.\n"
+"\n"
+msgstr ""
 
-#: ../thunar/thunar-dialogs.c:1097
-#, c-format
-msgid ""
-"The desktop file \"%s\" is in an insecure location and not marked as "
-"executable. If you do not trust this program, click Cancel."
-msgstr "Skrivbordsfilen \"%s\" är på en osäker plats och inte märkt som körbar. Om du inte litar på detta program, klicka Avbryt."
-
-#: ../thunar/thunar-dialogs.c:1115
+#: ../thunar/thunar-dialogs.c:1126
 msgid "_Launch Anyway"
 msgstr "Starta i a_lla fall"
 
-#: ../thunar/thunar-dialogs.c:1117
-msgid "Mark _Executable"
-msgstr "Märk k_örbar"
+#: ../thunar/thunar-dialogs.c:1128
+msgid "Mark As _Secure And Launch"
+msgstr ""
 
-#: ../thunar/thunar-dialogs.c:1200
+#: ../thunar/thunar-dialogs.c:1211
 msgid "Close split pane with multiple tabs?"
 msgstr "Stäng delad panel med flera flikar?"
 
-#: ../thunar/thunar-dialogs.c:1201
+#: ../thunar/thunar-dialogs.c:1212
 msgid ""
 "The other split pane has multiple open tabs. Closing it will close all these"
 " tabs."
 msgstr "Den andra delade panelen har flera öppna flikar. Om du stänger den stängs alla dessa flikar."
 
-#: ../thunar/thunar-dialogs.c:1207
+#: ../thunar/thunar-dialogs.c:1218
 msgid "Warning"
 msgstr "Varning"
 
-#: ../thunar/thunar-dialogs.c:1212
+#: ../thunar/thunar-dialogs.c:1223
 msgid "Close Pane"
 msgstr "Stäng panel"
 
-#: ../thunar/thunar-dialogs.c:1215 ../thunar/thunar-permissions-chooser.c:591
+#: ../thunar/thunar-dialogs.c:1226 ../thunar/thunar-permissions-chooser.c:591
 msgid "Do _not ask me again"
 msgstr "Fråga mig i_nte igen"
 
-#: ../thunar/thunar-dialogs.c:1262
+#: ../thunar/thunar-dialogs.c:1273
 msgid "Do you want to rename the launcher, or the file itself?"
 msgstr "Vill du byta namn på programstartaren, eller själva filen?"
 
-#: ../thunar/thunar-dialogs.c:1264
+#: ../thunar/thunar-dialogs.c:1275
 msgid "Rename Launcher Options"
 msgstr "Byt namn på programstartare alternativ"
 
-#: ../thunar/thunar-dialogs.c:1266
+#: ../thunar/thunar-dialogs.c:1277
 msgid "Rename _File"
 msgstr "Byt namn på _fil"
 
-#: ../thunar/thunar-dialogs.c:1270
+#: ../thunar/thunar-dialogs.c:1281
 msgid "Rename _Launcher"
 msgstr "Byt namn på _programstartare"
 
-#: ../thunar/thunar-dialogs.c:1321
+#: ../thunar/thunar-dialogs.c:1332
 #, c-format
 msgid "The file \"%s\" seems to be executable. What do you want to do with it?"
 msgstr "Filen \"%s\" verkar vara körbar. Vad vill du göra med den?"
 
-#: ../thunar/thunar-dialogs.c:1326
+#: ../thunar/thunar-dialogs.c:1337
 msgid ""
 "The selected files seem to be executable. What do you want to do with them?"
 msgstr "De valda filerna verkar vara körbara. Vad vill du göra med dem?"
 
-#: ../thunar/thunar-dialogs.c:1335
+#: ../thunar/thunar-dialogs.c:1346
 msgid "Open Shell Script"
 msgstr "Öppna Skalskript"
 
-#: ../thunar/thunar-dialogs.c:1339
+#: ../thunar/thunar-dialogs.c:1350
 msgid "Run In _Terminal"
 msgstr "Kör i _Terminal"
 
-#: ../thunar/thunar-dialogs.c:1400
+#: ../thunar/thunar-dialogs.c:1411
 #, c-format
 msgid "Failed to edit launcher via command \"%s\""
 msgstr "Misslyckades att redigera programstartare via kommando \"%s\""
