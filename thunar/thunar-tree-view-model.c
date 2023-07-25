@@ -45,6 +45,9 @@
 
 
 
+/* A delay after which the children of the collapsed subdir will be
+ * freed and replaced by a dummy node (cleanup); if the subdir is again
+ * expanded before the delay elapses the scheduled cleanup will be cancelled */
 #define CLEANUP_AFTER_COLLAPSE_DELAY 5000 /* in ms */
 
 /* Defintions & typedefs */
@@ -279,6 +282,8 @@ struct _ThunarTreeViewModel
 
   ThunarFileMonitor    *monitor;
 
+  /* Hashtable for quick access to all directories and sub-directories which are managed by this view
+   * The key is the corresponding #GFile of the directory, and the value is the #_Node of the directory */
   GHashTable           *subdirs;
 
   gboolean              sort_case_sensitive : 1;
@@ -321,6 +326,8 @@ struct _Node
   gboolean             loading;
   gboolean             expanded;
 
+  /* set of all the children gfiles;
+   * contains mappings of (gfile -> GSequenceIter *(_child_node->ptr)) */
   GHashTable          *set;
   GList               *hidden_files;
 
@@ -566,6 +573,18 @@ thunar_tree_view_model_finalize (GObject *object)
 {
   ThunarTreeViewModel *model = THUNAR_TREE_VIEW_MODEL (object);
 
+  thunar_tree_view_model_cancel_search_job (model);
+
+  if (model->update_search_results_timeout_id > 0)
+    {
+      g_source_remove (model->update_search_results_timeout_id);
+      model->update_search_results_timeout_id = 0;
+    }
+  thunar_g_list_free_full (model->search_files);
+  model->search_files = NULL;
+
+  g_mutex_clear (&model->mutex_add_search_files);
+
   thunar_tree_view_model_set_folder (THUNAR_STANDARD_VIEW_MODEL (model), NULL, NULL);
 
   /* disconnect from the file monitor */
@@ -573,6 +592,7 @@ thunar_tree_view_model_finalize (GObject *object)
   g_object_unref (G_OBJECT (model->monitor));
 
   g_free (model->date_custom_style);
+  g_strfreev (model->search_terms);
 
   g_hash_table_destroy (model->subdirs);
 
@@ -859,7 +879,7 @@ thunar_tree_view_model_set_default_sort_func (GtkTreeSortable       *sortable,
                                               gpointer               data,
                                               GDestroyNotify         destroy)
 {
-  g_critical ("ThunarListModel has sorting facilities built-in!");
+  g_critical ("ThunarTreeViewModel has sorting facilities built-in!");
 }
 
 
@@ -871,7 +891,7 @@ thunar_tree_view_model_set_sort_func (GtkTreeSortable       *sortable,
                                       gpointer               data,
                                       GDestroyNotify         destroy)
 {
-  g_critical ("ThunarListModel has sorting facilities built-in!");
+  g_critical ("ThunarTreeViewModel has sorting facilities built-in!");
 }
 
 
@@ -2566,7 +2586,8 @@ _thunar_tree_view_model_dir_files_added (Node  *node,
 
 
 static void
-_thunar_tree_view_model_dir_files_removed (Node *node, GList *files)
+_thunar_tree_view_model_dir_files_removed (Node  *node,
+                                           GList *files)
 {
   ThunarFile *file;
   GList      *lp, *_node;
