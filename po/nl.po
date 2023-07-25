@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-15 00:45+0200\n"
+"POT-Creation-Date: 2023-07-25 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Pjotr <pjotrvertaalt@gmail.com>, 2013-2015,2017-2023\n"
 "Language-Team: Dutch (http://app.transifex.com/xfce/thunar/language/nl/)\n"
@@ -282,7 +282,7 @@ msgstr[1] "Open %d nieuwe vensters"
 #: ../thunar/thunar-chooser-dialog.c:838 ../thunar/thunar-chooser-dialog.c:889
 #: ../thunar/thunar-dialogs.c:112 ../thunar/thunar-dialogs.c:261
 #: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:819
-#: ../thunar/thunar-dialogs.c:1118 ../thunar/thunar-dialogs.c:1211
+#: ../thunar/thunar-dialogs.c:1129 ../thunar/thunar-dialogs.c:1222
 #: ../thunar/thunar-dnd.c:173 ../thunar/thunar-permissions-chooser.c:559
 #: ../thunar/thunar-permissions-chooser.c:1170
 #: ../thunar/thunar-properties-dialog.c:1179
@@ -317,7 +317,7 @@ msgstr "Kon '%s' niet openen"
 #. change the accept button label text
 #: ../thunar/thunar-action-manager.c:1574
 #: ../thunar/thunar-chooser-dialog.c:890
-#: ../thunar/thunar-chooser-dialog.c:1301 ../thunar/thunar-dialogs.c:1349
+#: ../thunar/thunar-chooser-dialog.c:1301 ../thunar/thunar-dialogs.c:1360
 #: ../thunar/thunar-renamer-dialog.c:1046
 #: ../plugins/thunar-uca/thunar-uca-editor.c:181
 msgid "_Open"
@@ -329,7 +329,7 @@ msgid_plural "Open the selected files"
 msgstr[0] "Het geselecteerde bestand openen"
 msgstr[1] "Open de gekozen bestanden"
 
-#: ../thunar/thunar-action-manager.c:1578 ../thunar/thunar-dialogs.c:1343
+#: ../thunar/thunar-action-manager.c:1578 ../thunar/thunar-dialogs.c:1354
 msgid "_Execute"
 msgstr "Uitvoer_en"
 
@@ -667,7 +667,7 @@ msgstr[0] "Weet u zeker dat u het geselecteerde\nbestand voorgoed wil verwijdere
 msgstr[1] "Weet u zeker dat u de %u geselecteerde\nbestanden voorgoed wilt verwijderen?"
 
 #: ../thunar/thunar-application.c:2458 ../thunar/thunar-application.c:2519
-#: ../thunar/thunar-dialogs.c:616 ../thunar/thunar-dialogs.c:1114
+#: ../thunar/thunar-dialogs.c:616 ../thunar/thunar-dialogs.c:1125
 msgid "Attention"
 msgstr "Attentie"
 
@@ -1323,85 +1323,86 @@ msgstr "door de volgende map?"
 msgid "with the following file?"
 msgstr "door het volgende bestand?"
 
-#: ../thunar/thunar-dialogs.c:1091
+#. TRANSLATORS: This string will be inserted in the following sentence in the
+#. second appearance of %s:
+#. * "The desktop file %s is in an insecure location and not marked as
+#. secure%s."
+#: ../thunar/thunar-dialogs.c:1099
+msgid "/executable"
+msgstr ""
+
+#: ../thunar/thunar-dialogs.c:1105
 #, c-format
 msgid ""
-"The desktop file \"%s\" (%s) is in an insecure location and not marked as "
-"executable. If you do not trust this program, click Cancel."
-msgstr "Het bureaubladbestand '%s' (%s) bevindt zich op een onveilige plek en is niet gemarkeerd als uitvoerbaar. Als u dit programma niet vertrouwt, klik dan op Afbreken."
+"The desktop file %s is in an insecure location and not marked as secure%s. If you do not trust this program, click Cancel.\n"
+"\n"
+msgstr ""
 
-#: ../thunar/thunar-dialogs.c:1097
-#, c-format
-msgid ""
-"The desktop file \"%s\" is in an insecure location and not marked as "
-"executable. If you do not trust this program, click Cancel."
-msgstr "Het bureaubladbestand '%s' staat op een onveilige plek en is niet gemarkeerd als uitvoerbaar. Als u dit programma niet vertrouwt, klik dan op Afbreken."
-
-#: ../thunar/thunar-dialogs.c:1115
+#: ../thunar/thunar-dialogs.c:1126
 msgid "_Launch Anyway"
 msgstr "Toch starten"
 
-#: ../thunar/thunar-dialogs.c:1117
-msgid "Mark _Executable"
-msgstr "Markeer als uitvoerbaar"
+#: ../thunar/thunar-dialogs.c:1128
+msgid "Mark As _Secure And Launch"
+msgstr ""
 
-#: ../thunar/thunar-dialogs.c:1200
+#: ../thunar/thunar-dialogs.c:1211
 msgid "Close split pane with multiple tabs?"
 msgstr "Gesplitst paneel met meerdere tabbladen sluiten?"
 
-#: ../thunar/thunar-dialogs.c:1201
+#: ../thunar/thunar-dialogs.c:1212
 msgid ""
 "The other split pane has multiple open tabs. Closing it will close all these"
 " tabs."
 msgstr "Het andere gesplitste paneel heeft meerdere open tabbladen. Al deze tabbladen zullen worden gesloten wanneer u het sluit."
 
-#: ../thunar/thunar-dialogs.c:1207
+#: ../thunar/thunar-dialogs.c:1218
 msgid "Warning"
 msgstr "Waarschuwing"
 
-#: ../thunar/thunar-dialogs.c:1212
+#: ../thunar/thunar-dialogs.c:1223
 msgid "Close Pane"
 msgstr "Paneel sluiten"
 
-#: ../thunar/thunar-dialogs.c:1215 ../thunar/thunar-permissions-chooser.c:591
+#: ../thunar/thunar-dialogs.c:1226 ../thunar/thunar-permissions-chooser.c:591
 msgid "Do _not ask me again"
 msgstr "Vraag me dit _niet opnieuw"
 
-#: ../thunar/thunar-dialogs.c:1262
+#: ../thunar/thunar-dialogs.c:1273
 msgid "Do you want to rename the launcher, or the file itself?"
 msgstr "Wilt u de starter hernoemen, of het bestand zelf?"
 
-#: ../thunar/thunar-dialogs.c:1264
+#: ../thunar/thunar-dialogs.c:1275
 msgid "Rename Launcher Options"
 msgstr "Opties voor hernoemen van starter"
 
-#: ../thunar/thunar-dialogs.c:1266
+#: ../thunar/thunar-dialogs.c:1277
 msgid "Rename _File"
 msgstr "_Bestand hernoemen"
 
-#: ../thunar/thunar-dialogs.c:1270
+#: ../thunar/thunar-dialogs.c:1281
 msgid "Rename _Launcher"
 msgstr "_Starter hernoemen"
 
-#: ../thunar/thunar-dialogs.c:1321
+#: ../thunar/thunar-dialogs.c:1332
 #, c-format
 msgid "The file \"%s\" seems to be executable. What do you want to do with it?"
 msgstr "Het bestand '%s' lijkt uitvoerbaar te zijn. Wat wilt u ermee doen?"
 
-#: ../thunar/thunar-dialogs.c:1326
+#: ../thunar/thunar-dialogs.c:1337
 msgid ""
 "The selected files seem to be executable. What do you want to do with them?"
 msgstr "De gekozen bestanden lijken uitvoerbaar te zijn. Wat wilt u ermee doen?"
 
-#: ../thunar/thunar-dialogs.c:1335
+#: ../thunar/thunar-dialogs.c:1346
 msgid "Open Shell Script"
 msgstr "Shellscript openen"
 
-#: ../thunar/thunar-dialogs.c:1339
+#: ../thunar/thunar-dialogs.c:1350
 msgid "Run In _Terminal"
 msgstr "Draaien in _terminalvenster"
 
-#: ../thunar/thunar-dialogs.c:1400
+#: ../thunar/thunar-dialogs.c:1411
 #, c-format
 msgid "Failed to edit launcher via command \"%s\""
 msgstr "Kon starter niet bewerken met opdracht '%s'"
