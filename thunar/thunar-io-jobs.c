@@ -1523,8 +1523,12 @@ _thunar_search_folder (ThunarStandardViewModel           *model,
 
   cancellable = exo_job_get_cancellable (EXO_JOB (job));
   directory = g_file_new_for_uri (uri);
-  g_free (uri);
-  namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_TARGET_URI "," G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME "," G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP "," G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN "," G_FILE_ATTRIBUTE_STANDARD_NAME ", recent::*";
+  namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE ","
+              G_FILE_ATTRIBUTE_STANDARD_TARGET_URI ","
+              G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
+              G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP ","
+              G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN ","
+              G_FILE_ATTRIBUTE_STANDARD_NAME ", recent::*";
 
   /* The directory enumerator MUST NOT follow symlinks itself, meaning that any symlinks that
    * g_file_enumerator_next_file() emits are the actual symlink entries. This prevents one
@@ -1618,6 +1622,7 @@ _thunar_job_search_directory (ThunarJob *job,
   ThunarRecursiveSearchMode          mode;
   gboolean                           show_hidden;
   enum ThunarStandardViewModelSearch search_type;
+  gchar                             *directory_uri;
 
   search_type = THUNAR_STANDARD_VIEW_MODEL_SEARCH_NON_RECURSIVE;
 
@@ -1638,8 +1643,11 @@ _thunar_job_search_directory (ThunarJob *job,
   if (mode == THUNAR_RECURSIVE_SEARCH_ALWAYS || (mode == THUNAR_RECURSIVE_SEARCH_LOCAL && is_source_device_local))
     search_type = THUNAR_STANDARD_VIEW_MODEL_SEARCH_RECURSIVE;
 
-  _thunar_search_folder (model, job, thunar_file_dup_uri (directory), search_query_c_terms, search_type, show_hidden);
+  directory_uri = thunar_file_dup_uri (directory);
 
+  _thunar_search_folder (model, job, directory_uri, search_query_c_terms, search_type, show_hidden);
+
+  g_free (directory_uri);
   g_strfreev (search_query_c_terms);
 
   return TRUE;
