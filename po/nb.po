@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-15 00:45+0200\n"
+"POT-Creation-Date: 2023-07-25 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: heskjestad <cato@heskjestad.xyz>, 2021-2023\n"
 "Language-Team: Norwegian Bokmål (http://app.transifex.com/xfce/thunar/language/nb/)\n"
@@ -288,7 +288,7 @@ msgstr[1] "Åpne %d nye vinduer"
 #: ../thunar/thunar-chooser-dialog.c:838 ../thunar/thunar-chooser-dialog.c:889
 #: ../thunar/thunar-dialogs.c:112 ../thunar/thunar-dialogs.c:261
 #: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:819
-#: ../thunar/thunar-dialogs.c:1118 ../thunar/thunar-dialogs.c:1211
+#: ../thunar/thunar-dialogs.c:1129 ../thunar/thunar-dialogs.c:1222
 #: ../thunar/thunar-dnd.c:173 ../thunar/thunar-permissions-chooser.c:559
 #: ../thunar/thunar-permissions-chooser.c:1170
 #: ../thunar/thunar-properties-dialog.c:1179
@@ -323,7 +323,7 @@ msgstr "Klarte ikke åpne «%s»"
 #. change the accept button label text
 #: ../thunar/thunar-action-manager.c:1574
 #: ../thunar/thunar-chooser-dialog.c:890
-#: ../thunar/thunar-chooser-dialog.c:1301 ../thunar/thunar-dialogs.c:1349
+#: ../thunar/thunar-chooser-dialog.c:1301 ../thunar/thunar-dialogs.c:1360
 #: ../thunar/thunar-renamer-dialog.c:1046
 #: ../plugins/thunar-uca/thunar-uca-editor.c:181
 msgid "_Open"
@@ -335,7 +335,7 @@ msgid_plural "Open the selected files"
 msgstr[0] "Åpne valgt fil"
 msgstr[1] "Åpne valgte filer"
 
-#: ../thunar/thunar-action-manager.c:1578 ../thunar/thunar-dialogs.c:1343
+#: ../thunar/thunar-action-manager.c:1578 ../thunar/thunar-dialogs.c:1354
 msgid "_Execute"
 msgstr "_Kjør"
 
@@ -673,7 +673,7 @@ msgstr[0] "Er du sikker på at du vil slette \nden valgte filen permanent?"
 msgstr[1] "Er du sikker på at du vil slette \n %u filer permanent?"
 
 #: ../thunar/thunar-application.c:2458 ../thunar/thunar-application.c:2519
-#: ../thunar/thunar-dialogs.c:616 ../thunar/thunar-dialogs.c:1114
+#: ../thunar/thunar-dialogs.c:616 ../thunar/thunar-dialogs.c:1125
 msgid "Attention"
 msgstr "Varsel"
 
@@ -1329,85 +1329,86 @@ msgstr "med den følgende mappen?"
 msgid "with the following file?"
 msgstr "med den følgende filen?"
 
-#: ../thunar/thunar-dialogs.c:1091
+#. TRANSLATORS: This string will be inserted in the following sentence in the
+#. second appearance of %s:
+#. * "The desktop file %s is in an insecure location and not marked as
+#. secure%s."
+#: ../thunar/thunar-dialogs.c:1099
+msgid "/executable"
+msgstr ""
+
+#: ../thunar/thunar-dialogs.c:1105
 #, c-format
 msgid ""
-"The desktop file \"%s\" (%s) is in an insecure location and not marked as "
-"executable. If you do not trust this program, click Cancel."
-msgstr "Skrivebordsfilen «%s» (%s) er på en usikret plass, og er ikke markert som kjørbar. Hvis du ikke har tiltro til dette programmet, trykk Avbryt."
+"The desktop file %s is in an insecure location and not marked as secure%s. If you do not trust this program, click Cancel.\n"
+"\n"
+msgstr ""
 
-#: ../thunar/thunar-dialogs.c:1097
-#, c-format
-msgid ""
-"The desktop file \"%s\" is in an insecure location and not marked as "
-"executable. If you do not trust this program, click Cancel."
-msgstr "Skrivebordsfilen «%s» er på en usikret plass, og er ikke markert som kjørbar. Hvis du ikke har tiltro til dette programmet, trykk Avbryt."
-
-#: ../thunar/thunar-dialogs.c:1115
+#: ../thunar/thunar-dialogs.c:1126
 msgid "_Launch Anyway"
 msgstr "Kjør _likevel"
 
-#: ../thunar/thunar-dialogs.c:1117
-msgid "Mark _Executable"
-msgstr "Merk som _kjørbar"
+#: ../thunar/thunar-dialogs.c:1128
+msgid "Mark As _Secure And Launch"
+msgstr ""
 
-#: ../thunar/thunar-dialogs.c:1200
+#: ../thunar/thunar-dialogs.c:1211
 msgid "Close split pane with multiple tabs?"
 msgstr "Lukk splittet rute med flere faner?"
 
-#: ../thunar/thunar-dialogs.c:1201
+#: ../thunar/thunar-dialogs.c:1212
 msgid ""
 "The other split pane has multiple open tabs. Closing it will close all these"
 " tabs."
 msgstr "Den andre ruta har flere åpne faner. Disse vil også lukkes."
 
-#: ../thunar/thunar-dialogs.c:1207
+#: ../thunar/thunar-dialogs.c:1218
 msgid "Warning"
 msgstr "Advarsel"
 
-#: ../thunar/thunar-dialogs.c:1212
+#: ../thunar/thunar-dialogs.c:1223
 msgid "Close Pane"
 msgstr "Lukk rute"
 
-#: ../thunar/thunar-dialogs.c:1215 ../thunar/thunar-permissions-chooser.c:591
+#: ../thunar/thunar-dialogs.c:1226 ../thunar/thunar-permissions-chooser.c:591
 msgid "Do _not ask me again"
 msgstr "_Ikke spør på nytt"
 
-#: ../thunar/thunar-dialogs.c:1262
+#: ../thunar/thunar-dialogs.c:1273
 msgid "Do you want to rename the launcher, or the file itself?"
 msgstr "Vil du endre navnet på snarveien, eller selve filen?"
 
-#: ../thunar/thunar-dialogs.c:1264
+#: ../thunar/thunar-dialogs.c:1275
 msgid "Rename Launcher Options"
 msgstr "Alternativer for endring av navn på snarvei"
 
-#: ../thunar/thunar-dialogs.c:1266
+#: ../thunar/thunar-dialogs.c:1277
 msgid "Rename _File"
 msgstr "Endre navn på _fil"
 
-#: ../thunar/thunar-dialogs.c:1270
+#: ../thunar/thunar-dialogs.c:1281
 msgid "Rename _Launcher"
 msgstr "Endring av navn på _snarvei"
 
-#: ../thunar/thunar-dialogs.c:1321
+#: ../thunar/thunar-dialogs.c:1332
 #, c-format
 msgid "The file \"%s\" seems to be executable. What do you want to do with it?"
 msgstr "Filen «%s» kan antakelig kjøres. Hva vil du gjøre med den?"
 
-#: ../thunar/thunar-dialogs.c:1326
+#: ../thunar/thunar-dialogs.c:1337
 msgid ""
 "The selected files seem to be executable. What do you want to do with them?"
 msgstr "De valgte filene kan antakelig kjøres. Hva vil du gjøre med dem?"
 
-#: ../thunar/thunar-dialogs.c:1335
+#: ../thunar/thunar-dialogs.c:1346
 msgid "Open Shell Script"
 msgstr "Åpne skallskript"
 
-#: ../thunar/thunar-dialogs.c:1339
+#: ../thunar/thunar-dialogs.c:1350
 msgid "Run In _Terminal"
 msgstr "Kjør i _terminal"
 
-#: ../thunar/thunar-dialogs.c:1400
+#: ../thunar/thunar-dialogs.c:1411
 #, c-format
 msgid "Failed to edit launcher via command \"%s\""
 msgstr "Klarte ikke redigere snarvei med kommandoen «%s»"
