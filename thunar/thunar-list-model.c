@@ -428,7 +428,6 @@ thunar_list_model_standard_view_model_init (ThunarStandardViewModelIface *iface)
   iface->get_file_size_binary = thunar_list_model_get_file_size_binary;
   iface->set_file_size_binary = thunar_list_model_set_file_size_binary;
   iface->set_folders_first = thunar_list_model_set_folders_first;
-  iface->get_statusbar_text = thunar_list_model_get_statusbar_text;
   iface->add_search_files = thunar_list_model_add_search_files;
 }
 
@@ -2634,34 +2633,6 @@ thunar_list_model_get_paths_for_pattern (ThunarStandardViewModel *model,
   g_pattern_spec_free (pspec);
 
   return paths;
-}
-
-
-
-/**
- * thunar_list_model_get_statusbar_text:
- * @store          : a #ThunarListModel instance.
- * @selected_items : the list of selected items (as GtkTreePath's).
- *
- * Generates the statusbar text for @store with the given
- * @selected_items.
- *
- * This function is used by the #ThunarStandardView (and thereby
- * implicitly by #ThunarIconView and #ThunarDetailsView) to
- * calculate the text to display in the statusbar for a given
- * file selection.
- *
- * The caller is reponsible to free the returned text using
- * g_free() when it's no longer needed.
- *
- * Return value: the statusbar text for @store with the given
- *               @selected_items.
- **/
-static gchar*
-thunar_list_model_get_statusbar_text (ThunarStandardViewModel *model,
-                                      GList                   *selected_items)
-{
-  return thunar_util_get_statusbar_text (model, selected_items);
 }
 
 
