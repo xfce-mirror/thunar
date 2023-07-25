@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-15 00:45+0200\n"
+"POT-Creation-Date: 2023-07-25 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Kiril Kirilov <cybercop_montana@abv.bg>, 2014-2015,2017-2023\n"
 "Language-Team: Bulgarian (http://app.transifex.com/xfce/thunar/language/bg/)\n"
@@ -288,7 +288,7 @@ msgstr[1] "Отваряне на %d нови прозореца"
 #: ../thunar/thunar-chooser-dialog.c:838 ../thunar/thunar-chooser-dialog.c:889
 #: ../thunar/thunar-dialogs.c:112 ../thunar/thunar-dialogs.c:261
 #: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:819
-#: ../thunar/thunar-dialogs.c:1118 ../thunar/thunar-dialogs.c:1211
+#: ../thunar/thunar-dialogs.c:1129 ../thunar/thunar-dialogs.c:1222
 #: ../thunar/thunar-dnd.c:173 ../thunar/thunar-permissions-chooser.c:559
 #: ../thunar/thunar-permissions-chooser.c:1170
 #: ../thunar/thunar-properties-dialog.c:1179
@@ -323,7 +323,7 @@ msgstr "Неуспех при отваряне на „%s“"
 #. change the accept button label text
 #: ../thunar/thunar-action-manager.c:1574
 #: ../thunar/thunar-chooser-dialog.c:890
-#: ../thunar/thunar-chooser-dialog.c:1301 ../thunar/thunar-dialogs.c:1349
+#: ../thunar/thunar-chooser-dialog.c:1301 ../thunar/thunar-dialogs.c:1360
 #: ../thunar/thunar-renamer-dialog.c:1046
 #: ../plugins/thunar-uca/thunar-uca-editor.c:181
 msgid "_Open"
@@ -335,7 +335,7 @@ msgid_plural "Open the selected files"
 msgstr[0] "Отваряне на избрания файл"
 msgstr[1] "Отваряне на избраните файлове"
 
-#: ../thunar/thunar-action-manager.c:1578 ../thunar/thunar-dialogs.c:1343
+#: ../thunar/thunar-action-manager.c:1578 ../thunar/thunar-dialogs.c:1354
 msgid "_Execute"
 msgstr "_Изпълнение"
 
@@ -673,7 +673,7 @@ msgstr[0] "Наистина ли искате да изтриете завина
 msgstr[1] "Наистина ли искате да изтриете завинаги\nизбраните %u файла?"
 
 #: ../thunar/thunar-application.c:2458 ../thunar/thunar-application.c:2519
-#: ../thunar/thunar-dialogs.c:616 ../thunar/thunar-dialogs.c:1114
+#: ../thunar/thunar-dialogs.c:616 ../thunar/thunar-dialogs.c:1125
 msgid "Attention"
 msgstr "Внимание"
 
@@ -1329,85 +1329,86 @@ msgstr "със следната папка?"
 msgid "with the following file?"
 msgstr "със следният файл?"
 
-#: ../thunar/thunar-dialogs.c:1091
+#. TRANSLATORS: This string will be inserted in the following sentence in the
+#. second appearance of %s:
+#. * "The desktop file %s is in an insecure location and not marked as
+#. secure%s."
+#: ../thunar/thunar-dialogs.c:1099
+msgid "/executable"
+msgstr "/изпълним"
+
+#: ../thunar/thunar-dialogs.c:1105
 #, c-format
 msgid ""
-"The desktop file \"%s\" (%s) is in an insecure location and not marked as "
-"executable. If you do not trust this program, click Cancel."
-msgstr "Файлът на работния плот \"%s\" (%s) е на несигурно място и не е маркиран като изпълним. Ако нямате доверие на тази програма, щракнете върху Отказ."
+"The desktop file %s is in an insecure location and not marked as secure%s. If you do not trust this program, click Cancel.\n"
+"\n"
+msgstr "Десктоп файлът %s е на несигурно място и не е маркиран като сигурен %s. Ако нямате доверие на тази програма, кликнете върху Отказ.\n"
 
-#: ../thunar/thunar-dialogs.c:1097
-#, c-format
-msgid ""
-"The desktop file \"%s\" is in an insecure location and not marked as "
-"executable. If you do not trust this program, click Cancel."
-msgstr "Файлът на работния плот „%s“ е с несигурен произход и не е зададен като изпълним. Ако не се доверявате на тази програма, натиснете „Отказ“."
-
-#: ../thunar/thunar-dialogs.c:1115
+#: ../thunar/thunar-dialogs.c:1126
 msgid "_Launch Anyway"
 msgstr "_Изпълнение въпреки това"
 
-#: ../thunar/thunar-dialogs.c:1117
-msgid "Mark _Executable"
-msgstr "_Отбелязване като изпълним"
+#: ../thunar/thunar-dialogs.c:1128
+msgid "Mark As _Secure And Launch"
+msgstr "Маркиране като _сигурен и стартиране"
 
-#: ../thunar/thunar-dialogs.c:1200
+#: ../thunar/thunar-dialogs.c:1211
 msgid "Close split pane with multiple tabs?"
 msgstr "Да се затвори ли разделения панел с множество раздели?"
 
-#: ../thunar/thunar-dialogs.c:1201
+#: ../thunar/thunar-dialogs.c:1212
 msgid ""
 "The other split pane has multiple open tabs. Closing it will close all these"
 " tabs."
 msgstr "Другият разделен панел има множество отворени раздели. Затварянето му ще затвори всички тези раздели."
 
-#: ../thunar/thunar-dialogs.c:1207
+#: ../thunar/thunar-dialogs.c:1218
 msgid "Warning"
 msgstr "Внимание"
 
-#: ../thunar/thunar-dialogs.c:1212
+#: ../thunar/thunar-dialogs.c:1223
 msgid "Close Pane"
 msgstr "Затваряне на панела"
 
-#: ../thunar/thunar-dialogs.c:1215 ../thunar/thunar-permissions-chooser.c:591
+#: ../thunar/thunar-dialogs.c:1226 ../thunar/thunar-permissions-chooser.c:591
 msgid "Do _not ask me again"
 msgstr "Повече не ме питай"
 
-#: ../thunar/thunar-dialogs.c:1262
+#: ../thunar/thunar-dialogs.c:1273
 msgid "Do you want to rename the launcher, or the file itself?"
 msgstr "Искате ли да преименувате стартера или самия файл?"
 
-#: ../thunar/thunar-dialogs.c:1264
+#: ../thunar/thunar-dialogs.c:1275
 msgid "Rename Launcher Options"
 msgstr "Опции на преименуване на стартер"
 
-#: ../thunar/thunar-dialogs.c:1266
+#: ../thunar/thunar-dialogs.c:1277
 msgid "Rename _File"
 msgstr "Преименуване _Файл"
 
-#: ../thunar/thunar-dialogs.c:1270
+#: ../thunar/thunar-dialogs.c:1281
 msgid "Rename _Launcher"
 msgstr "Преименуване _Стартер"
 
-#: ../thunar/thunar-dialogs.c:1321
+#: ../thunar/thunar-dialogs.c:1332
 #, c-format
 msgid "The file \"%s\" seems to be executable. What do you want to do with it?"
 msgstr "Файлът \"%s\" изглежда изпълним. Какво искате да направите с него?"
 
-#: ../thunar/thunar-dialogs.c:1326
+#: ../thunar/thunar-dialogs.c:1337
 msgid ""
 "The selected files seem to be executable. What do you want to do with them?"
 msgstr "Избраните файлове изглеждат изпълними. Какво искате да направите с тях?"
 
-#: ../thunar/thunar-dialogs.c:1335
+#: ../thunar/thunar-dialogs.c:1346
 msgid "Open Shell Script"
 msgstr "Отваряне на шел скрипт"
 
-#: ../thunar/thunar-dialogs.c:1339
+#: ../thunar/thunar-dialogs.c:1350
 msgid "Run In _Terminal"
 msgstr "Стартиране в терминал"
 
-#: ../thunar/thunar-dialogs.c:1400
+#: ../thunar/thunar-dialogs.c:1411
 #, c-format
 msgid "Failed to edit launcher via command \"%s\""
 msgstr "Неуспешно редактиране на стартера с командара \"%s\""
