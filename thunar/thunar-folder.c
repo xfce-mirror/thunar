@@ -53,36 +53,36 @@ enum
 
 
 
-static void     thunar_folder_dispose (GObject *object);
-static void     thunar_folder_finalize (GObject *object);
-static void     thunar_folder_get_property (GObject    *object,
-                                            guint       prop_id,
-                                            GValue     *value,
-                                            GParamSpec *pspec);
-static void     thunar_folder_set_property (GObject      *object,
-                                            guint         prop_uid,
-                                            const GValue *value,
-                                            GParamSpec   *pspec);
-static void     thunar_folder_real_destroy (ThunarFolder *folder);
-static void     thunar_folder_error (ExoJob       *job,
-                                     GError       *error,
-                                     ThunarFolder *folder);
-static gboolean thunar_folder_files_ready (ThunarJob    *job,
-                                           GList        *files,
-                                           ThunarFolder *folder);
-static void     thunar_folder_finished (ExoJob       *job,
-                                        ThunarFolder *folder);
-static void     thunar_folder_file_changed (ThunarFileMonitor *file_monitor,
-                                            ThunarFile        *file,
-                                            ThunarFolder      *folder);
-static void     thunar_folder_file_destroyed (ThunarFileMonitor *file_monitor,
-                                              ThunarFile        *file,
-                                              ThunarFolder      *folder);
-static void     thunar_folder_monitor (GFileMonitor     *monitor,
-                                       GFile            *file,
-                                       GFile            *other_file,
-                                       GFileMonitorEvent event_type,
-                                       gpointer          user_data);
+static void           thunar_folder_dispose               (GObject               *object);
+static void           thunar_folder_finalize              (GObject               *object);
+static void           thunar_folder_get_property          (GObject               *object,
+                                                           guint                  prop_id,
+                                                           GValue                *value,
+                                                           GParamSpec            *pspec);
+static void           thunar_folder_set_property          (GObject               *object,
+                                                           guint                  prop_uid,
+                                                           const GValue          *value,
+                                                           GParamSpec            *pspec);
+static void           thunar_folder_real_destroy          (ThunarFolder          *folder);
+static void           thunar_folder_error                 (ExoJob                *job,
+                                                           GError                *error,
+                                                           ThunarFolder          *folder);
+static gboolean       thunar_folder_files_ready           (ThunarJob             *job,
+                                                           GList                 *files,
+                                                           ThunarFolder          *folder);
+static void           thunar_folder_finished              (ExoJob                *job,
+                                                           ThunarFolder          *folder);
+static void           thunar_folder_file_changed          (ThunarFileMonitor     *file_monitor,
+                                                           ThunarFile            *file,
+                                                           ThunarFolder          *folder);
+static void           thunar_folder_file_destroyed        (ThunarFileMonitor     *file_monitor,
+                                                           ThunarFile            *file,
+                                                           ThunarFolder          *folder);
+static void           thunar_folder_monitor               (GFileMonitor          *monitor,
+                                                           GFile                 *file,
+                                                           GFile                 *other_file,
+                                                           GFileMonitorEvent      event_type,
+                                                           gpointer               user_data);
 
 
 
@@ -91,11 +91,11 @@ struct _ThunarFolderClass
   GObjectClass __parent__;
 
   /* signals */
-  void (*destroy) (ThunarFolder *folder);
-  void (*error) (ThunarFolder *folder,
-                 const GError *error);
-  void (*files_added) (ThunarFolder *folder,
-                       GList        *files);
+  void (*destroy)       (ThunarFolder *folder);
+  void (*error)         (ThunarFolder *folder,
+                         const GError *error);
+  void (*files_added)   (ThunarFolder *folder,
+                         GList        *files);
   void (*files_removed) (ThunarFolder *folder,
                          GList        *files);
 };
@@ -903,7 +903,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
 #if DEBUG_FILE_CHANGES
           thunar_file_infos_equal (lp->data, event_file);
 #endif
-          thunar_file_reload (lp->data);
+          thunar_file_reload(lp->data);
         }
     }
 
