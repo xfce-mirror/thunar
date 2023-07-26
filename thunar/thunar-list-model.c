@@ -200,12 +200,10 @@ static ThunarFile        *thunar_list_model_get_file                    (ThunarS
                                                                          GtkTreeIter                  *iter);
 static GList             *thunar_list_model_get_paths_for_files         (ThunarStandardViewModel      *store,
                                                                          GList                        *files);
-static GList             *thunar_list_model_get_paths_for_pattern       (ThunarStandardViewModel      *store,
-                                                                         const gchar                  *pattern,
-                                                                         gboolean                      case_sensitive,
-                                                                         gboolean                      match_diacritics);
-static gchar             *thunar_list_model_get_statusbar_text          (ThunarStandardViewModel      *store,
-                                                                         GList                        *selected_items);
+static GList             *thunar_list_model_get_paths_for_pattern (ThunarStandardViewModel *store,
+                                                                   const gchar             *pattern,
+                                                                   gboolean                 case_sensitive,
+                                                                   gboolean                 match_diacritics);
 static ThunarJob         *thunar_list_model_get_job                     (ThunarStandardViewModel      *store);
 static void               thunar_list_model_set_job                     (ThunarStandardViewModel      *store,
                                                                          ThunarJob                    *job);
