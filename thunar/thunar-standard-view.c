@@ -3998,10 +3998,11 @@ thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
         }
 
       /* queue a thumbnail request */
-      thunar_thumbnailer_queue_files (standard_view->priv->thumbnailer,
-                                      lazy_request, visible_files,
-                                      &standard_view->priv->thumbnail_request,
-                                      THUNAR_THUMBNAIL_SIZE_DEFAULT);
+      if (visible_files != NULL)
+        thunar_thumbnailer_queue_files (standard_view->priv->thumbnailer,
+                                        lazy_request, visible_files,
+                                        &standard_view->priv->thumbnail_request,
+                                        THUNAR_THUMBNAIL_SIZE_DEFAULT);
 
       /* release the file list */
       g_list_free_full (visible_files, g_object_unref);
@@ -4239,7 +4240,7 @@ void
 thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 {
   GtkTreeIter iter;
-  GList      *lp, *selected_thunar_files, *selected_files = NULL;
+  GList      *lp, *selected_thunar_files;
   ThunarFile *file;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
@@ -4264,19 +4265,20 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   for (lp = selected_thunar_files; lp != NULL; lp = lp->next)
     {
       /* determine the iterator for the path */
-      if (!gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, lp->data))
-        continue;
+      g_assert (gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, lp->data));
+
+      gtk_tree_path_free (lp->data);
+
+      file = thunar_standard_view_model_get_file (standard_view->model, &iter);
+      g_assert (file != NULL);
 
       /* ...and replace it with the file */
-      file = thunar_standard_view_model_get_file (standard_view->model, &iter);
-      if (file != NULL)
-        selected_files = g_list_prepend (selected_files, file);
+      lp->data = file;
+      g_print ("%s\n", thunar_file_get_display_name (file));
     }
 
-  g_list_free_full (selected_thunar_files, (GDestroyNotify) gtk_tree_path_free);
-
   /* and setup the new selected files list */
-  standard_view->priv->selected_files = selected_files;
+  standard_view->priv->selected_files = selected_thunar_files;
 
   /* update the statusbar text */
   thunar_standard_view_update_statusbar_text (standard_view);
@@ -4545,6 +4547,8 @@ void
 thunar_standard_view_set_searching (ThunarStandardView *standard_view,
                                     gchar              *search_query)
 {
+  GtkTreeView *tree_view = NULL;
+
   /* can be called from a change in the path entry when the tab switches and a new directory is set
    * which in turn sets a new location (see thunar_window_notebook_switch_page) */
   if (standard_view == NULL)
@@ -4560,20 +4564,43 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
   /* initiate the search */
   /* set_folder() can emit a large number of row-deleted signals for large folders,
    * to the extent it degrades performance: https://gitlab.xfce.org/xfce/thunar/-/issues/914 */
-  g_signal_handler_block (standard_view->model, standard_view->priv->row_deleted_id);
+
+  /* We drop the model from the view as a simple optimization to speed up
+   * the process of disconnecting the model data from the view.
+   */
+  g_object_set (G_OBJECT (gtk_bin_get_child (GTK_BIN (standard_view))), "model", NULL, NULL);
+
   g_object_ref (G_OBJECT (thunar_standard_view_model_get_folder (standard_view->model))); /* temporarily hold a reference so the folder doesn't get deleted */
   thunar_standard_view_model_set_folder (standard_view->model, thunar_standard_view_model_get_folder (standard_view->model), search_query);
   g_object_unref (G_OBJECT (thunar_standard_view_model_get_folder (standard_view->model))); /* reference no longer needed */
-  g_signal_handler_unblock (standard_view->model, standard_view->priv->row_deleted_id);
+
+  /* reconnect our model to the view */
+  g_object_set (G_OBJECT (gtk_bin_get_child (GTK_BIN (standard_view))), "model", standard_view->model, NULL);
+
 
   /* change the display name in the tab */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
 
+  if (THUNAR_IS_DETAILS_VIEW (standard_view))
+    tree_view = GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view)));
 
   if (search_query != NULL && g_strcmp0 (search_query, "") != 0)
-    standard_view->priv->active_search = TRUE;
+    {
+      standard_view->priv->active_search = TRUE;
+      /* disable expandable folders when searching */
+      if (tree_view != NULL)
+        {
+          gtk_tree_view_set_show_expanders (tree_view, FALSE);
+          gtk_tree_view_set_enable_tree_lines (tree_view, FALSE);
+          gtk_tree_view_collapse_all (tree_view);
+        }
+    }
   else
-    standard_view->priv->active_search = FALSE;
+    {
+      standard_view->priv->active_search = FALSE;
+      if (tree_view != NULL)
+        g_object_notify (G_OBJECT (standard_view->preferences), "misc-enable-expandable-folders");
+    }
 
   /* notify listeners */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_SEARCHING]);

@@ -43,6 +43,7 @@
 #include <thunar/thunar-simple-job.h>
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-standard-view-model.h>
+#include <thunar/thunar-io-jobs.h>
 
 
 
@@ -165,25 +166,14 @@ static void               thunar_list_model_set_date_custom_style       (ThunarL
                                                                          const char                   *date_custom_style);
 static gint               thunar_list_model_get_num_files               (ThunarListModel              *store);
 static gboolean           thunar_list_model_get_folders_first           (ThunarListModel              *store);
-static ThunarJob*         thunar_list_model_job_search_directory        (ThunarListModel              *model,
-                                                                         const gchar                  *search_query_c,
-                                                                         ThunarFile                   *directory);
-static void               thunar_list_model_search_folder               (ThunarListModel              *model,
-                                                                         ThunarJob                    *job,
-                                                                         gchar                        *uri,
-                                                                         gchar                       **search_query_c_terms,
-                                                                         enum ThunarStandardViewModelSearch search_type,
-                                                                         gboolean                      show_hidden);
-static void               thunar_list_model_cancel_search_job           (ThunarListModel              *model);
-static gchar**            thunar_list_model_split_search_query          (const gchar                  *search_query,
-                                                                         GError                      **error);
-static gboolean           thunar_list_model_search_terms_match          (gchar                       **terms,
-                                                                         gchar                        *str);
+static void               thunar_list_model_cancel_search_job (ThunarListModel *model);
 
 static void               thunar_list_model_search_error                (ThunarJob                    *job);
 static void               thunar_list_model_search_finished             (ThunarJob                    *job,
                                                                          ThunarListModel              *store);
-static gboolean           thunar_list_model_add_search_files            (gpointer user_data);
+static void               thunar_list_model_add_search_files (ThunarStandardViewModel *model,
+                                                              GList                   *files);
+static gboolean           thunar_list_model_update_search_files (ThunarListModel *model);
 
 static gint               thunar_list_model_get_folder_item_count       (ThunarListModel              *store);
 static void               thunar_list_model_set_folder_item_count       (ThunarListModel              *store,
@@ -208,14 +198,8 @@ static void               thunar_list_model_set_file_size_binary        (ThunarS
                                                                          gboolean                      file_size_binary);
 static ThunarFile        *thunar_list_model_get_file                    (ThunarStandardViewModel      *store,
                                                                          GtkTreeIter                  *iter);
-static GList             *thunar_list_model_get_paths_for_files         (ThunarStandardViewModel      *store,
-                                                                         GList                        *files);
-static GList             *thunar_list_model_get_paths_for_pattern       (ThunarStandardViewModel      *store,
-                                                                         const gchar                  *pattern,
-                                                                         gboolean                      case_sensitive,
-                                                                         gboolean                      match_diacritics);
-static gchar             *thunar_list_model_get_statusbar_text          (ThunarStandardViewModel      *store,
-                                                                         GList                        *selected_items);
+static GList             *thunar_list_model_get_paths_for_files (ThunarStandardViewModel *store,
+                                                                 GList                   *files);
 static ThunarJob         *thunar_list_model_get_job                     (ThunarStandardViewModel      *store);
 static void               thunar_list_model_set_job                     (ThunarStandardViewModel      *store,
                                                                          ThunarJob                    *job);
@@ -434,11 +418,10 @@ thunar_list_model_standard_view_model_init (ThunarStandardViewModelIface *iface)
   iface->get_show_hidden = thunar_list_model_get_show_hidden;
   iface->set_show_hidden = thunar_list_model_set_show_hidden;
   iface->get_paths_for_files = thunar_list_model_get_paths_for_files;
-  iface->get_paths_for_pattern = thunar_list_model_get_paths_for_pattern;
   iface->get_file_size_binary = thunar_list_model_get_file_size_binary;
   iface->set_file_size_binary = thunar_list_model_set_file_size_binary;
   iface->set_folders_first = thunar_list_model_set_folders_first;
-  iface->get_statusbar_text = thunar_list_model_get_statusbar_text;
+  iface->add_search_files = thunar_list_model_add_search_files;
 }
 
 
@@ -1583,7 +1566,7 @@ thunar_list_model_files_added (ThunarFolder    *folder,
 
       name_n = (gchar *)thunar_file_get_display_name (file);
       name_n = thunar_g_utf8_normalize_for_search (name_n, TRUE, TRUE);
-      matched = thunar_list_model_search_terms_match (store->search_terms, name_n);
+      matched = thunar_util_search_terms_match (store->search_terms, name_n);
       g_free (name_n);
 
       if (! matched)
@@ -1937,138 +1920,36 @@ thunar_list_model_set_job (ThunarStandardViewModel  *model,
 
 
 
-static gboolean
-thunar_list_model_add_search_files (gpointer user_data)
+static void
+thunar_list_model_add_search_files (ThunarStandardViewModel *model,
+                                    GList                   *files)
 {
-  ThunarListModel *model = THUNAR_LIST_MODEL (user_data);
+  ThunarListModel *_model = THUNAR_LIST_MODEL (model);
 
+  g_mutex_lock (&_model->mutex_files_to_add);
+
+  _model->files_to_add = g_list_concat (_model->files_to_add, files);
+
+  g_mutex_unlock (&_model->mutex_files_to_add);
+}
+
+
+
+static gboolean
+thunar_list_model_update_search_files (ThunarListModel *model)
+{
   g_mutex_lock (&model->mutex_files_to_add);
 
-  thunar_list_model_insert_files (model, model->files_to_add);
-  g_list_free (model->files_to_add);
-  model->files_to_add = NULL;
+  if (model->files_to_add != NULL)
+    {
+      thunar_list_model_insert_files (model, model->files_to_add);
+      g_list_free (model->files_to_add);
+      model->files_to_add = NULL;
+    }
 
   g_mutex_unlock (&model->mutex_files_to_add);
 
   return TRUE;
-}
-
-
-/**
- * thunar_list_model_split_search_query:
- * @search_query: The search query to split.
- * @error: Return location for regex compilation errors.
- *
- * Search terms are split on whitespace. Search queries must be
- * normalized before passing to this function.
- *
- * See also: thunar_g_utf8_normalize_for_search().
- *
- * Return value: a list of search terms which must be freed with g_strfreev()
- **/
-
-static gchar **
-thunar_list_model_split_search_query (const gchar  *search_query,
-                                      GError      **error)
-{
-  GRegex *whitespace_regex;
-  gchar **search_terms;
-
-  whitespace_regex = g_regex_new ("\\s+", 0, 0, error);
-  if (whitespace_regex == NULL)
-    return NULL;
-  search_terms = g_regex_split (whitespace_regex, search_query, 0);
-  g_regex_unref (whitespace_regex);
-  return search_terms;
-}
-
-
-
-/**
- * thunar_list_model_search_terms_match:
- * @terms: The search terms to look for, prepared with thunar_list_model_split_search_query().
- * @str: The string which the search terms might be found in.
- *
- * All search terms must match. Thunar uses simple substring matching
- * for the broadest multilingual support. @str must be normalized before
- * passing to this function.
- *
- * See also: thunar_g_utf8_normalize_for_search().
- *
- * Return value: TRUE if all terms matched, FALSE otherwise.
- **/
-
-static gboolean
-thunar_list_model_search_terms_match (gchar **terms,
-                                      gchar  *str)
-{
-  for (gint i = 0; terms[i] != NULL; i++)
-    if (g_strrstr (str, terms[i]) == NULL)
-      return FALSE;
-  return TRUE;
-}
-
-
-
-static gboolean
-_thunar_job_search_directory (ThunarJob  *job,
-                               GArray     *param_values,
-                               GError    **error)
-{
-  ThunarListModel            *model;
-  ThunarFile                 *directory;
-  const char                 *search_query_c;
-  gchar                     **search_query_c_terms;
-  ThunarPreferences          *preferences;
-  gboolean                    is_source_device_local;
-  ThunarRecursiveSearchMode   mode;
-  enum ThunarStandardViewModelSearch  search_type;
-  gboolean                    show_hidden;
-
-  search_type = THUNAR_STANDARD_VIEW_MODEL_SEARCH_NON_RECURSIVE;
-
-  /* grab a reference on the preferences */
-  preferences = thunar_preferences_get ();
-
-  /* determine the current recursive search mode */
-  g_object_get (G_OBJECT (preferences), "misc-recursive-search", &mode, NULL);
-  g_object_get (G_OBJECT (preferences), "last-show-hidden", &show_hidden, NULL);
-
-  g_object_unref (preferences);
-
-  if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
-    return FALSE;
-
-  model = g_value_get_object (&g_array_index (param_values, GValue, 0));
-  search_query_c = g_value_get_string (&g_array_index (param_values, GValue, 1));
-  directory = g_value_get_object (&g_array_index (param_values, GValue, 2));
-
-  search_query_c_terms = thunar_list_model_split_search_query (search_query_c, error);
-  if (search_query_c_terms == NULL)
-    return FALSE;
-
-  is_source_device_local = thunar_g_file_is_on_local_device (thunar_file_get_file (directory));
-  if (mode == THUNAR_RECURSIVE_SEARCH_ALWAYS || (mode == THUNAR_RECURSIVE_SEARCH_LOCAL && is_source_device_local))
-    search_type = THUNAR_STANDARD_VIEW_MODEL_SEARCH_RECURSIVE;
-
-  thunar_list_model_search_folder (model, job, thunar_file_dup_uri (directory), search_query_c_terms, search_type, show_hidden);
-
-  g_strfreev (search_query_c_terms);
-
-  return TRUE;
-}
-
-
-
-static ThunarJob*
-thunar_list_model_job_search_directory (ThunarListModel *model,
-                                        const gchar     *search_query_c,
-                                        ThunarFile      *directory)
-{
-  return thunar_simple_job_new (_thunar_job_search_directory, 3,
-                                THUNAR_TYPE_LIST_MODEL, model,
-                                G_TYPE_STRING,          search_query_c,
-                                THUNAR_TYPE_FILE,       directory);
 }
 
 
@@ -2110,7 +1991,7 @@ thunar_list_model_search_finished (ThunarJob       *job,
 
   if (store->update_search_results_timeout_id > 0)
     {
-      thunar_list_model_add_search_files (store);
+      thunar_list_model_update_search_files (store);
       g_source_remove (store->update_search_results_timeout_id);
       store->update_search_results_timeout_id = 0;
     }
@@ -2119,113 +2000,6 @@ thunar_list_model_search_finished (ThunarJob       *job,
   store->files_to_add = NULL;
 
   g_signal_emit_by_name (store, "search-done");
-}
-
-
-
-static void
-thunar_list_model_search_folder (ThunarListModel           *model,
-                                 ThunarJob                 *job,
-                                 gchar                     *uri,
-                                 gchar                    **search_query_c_terms,
-                                 enum ThunarStandardViewModelSearch search_type,
-                                 gboolean                   show_hidden)
-{
-  GCancellable    *cancellable;
-  GFileEnumerator *enumerator;
-  GFile           *directory;
-  GList           *files_found = NULL; /* contains the matching files in this folder only */
-  const gchar     *namespace;
-  const gchar     *display_name;
-  gchar           *display_name_c; /* converted to ignore case */
-
-  cancellable = exo_job_get_cancellable (EXO_JOB (job));
-  directory = g_file_new_for_uri (uri);
-  g_free (uri);
-  namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE ","
-              G_FILE_ATTRIBUTE_STANDARD_TARGET_URI ","
-              G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
-              G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP ","
-              G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN ","
-              G_FILE_ATTRIBUTE_STANDARD_NAME ", recent::*";
-
-  /* The directory enumerator MUST NOT follow symlinks itself, meaning that any symlinks that
-   * g_file_enumerator_next_file() emits are the actual symlink entries. This prevents one
-   * possible source of infinitely deep recursion.
-   *
-   * There is otherwise no special handling of entries in the folder which are symlinks,
-   * which allows them to appear in the search results. */
-  enumerator = g_file_enumerate_children (directory, namespace, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, cancellable, NULL);
-  if (enumerator == NULL)
-    return;
-
-  /* go through every file in the folder and check if it matches */
-  while (exo_job_is_cancelled (EXO_JOB (job)) == FALSE)
-    {
-      GFile     *file;
-      GFileInfo *info;
-      GFileType  type;
-
-      /* get GFile and GFileInfo */
-      info = g_file_enumerator_next_file (enumerator, cancellable, NULL);
-      if (G_UNLIKELY (info == NULL))
-        break;
-
-      if (g_file_has_uri_scheme (directory, "recent"))
-        {
-          file = g_file_new_for_uri (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI));
-          g_object_unref (info);
-          info = g_file_query_info (file, namespace, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, cancellable, NULL);
-          if (G_UNLIKELY (info == NULL))
-            break;
-        }
-      else
-        file = g_file_get_child (directory, g_file_info_get_name (info));
-
-      /* respect last-show-hidden */
-      if (show_hidden == FALSE)
-        {
-          /* same logic as thunar_file_is_hidden() */
-          if (g_file_info_get_attribute_boolean (info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN)
-              || g_file_info_get_attribute_boolean (info, G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP))
-            {
-              g_object_unref (file);
-              g_object_unref (info);
-              continue;
-            }
-        }
-
-      type = g_file_info_get_file_type (info);
-
-      /* handle directories */
-      if (type == G_FILE_TYPE_DIRECTORY && search_type == THUNAR_STANDARD_VIEW_MODEL_SEARCH_RECURSIVE)
-        {
-          thunar_list_model_search_folder (model, job, g_file_get_uri (file), search_query_c_terms, search_type, show_hidden);
-        }
-
-      /* prepare entry display name */
-      display_name = g_file_info_get_display_name (info);
-      display_name_c = thunar_g_utf8_normalize_for_search (display_name, TRUE, TRUE);
-
-      /* search for all substrings */
-      if (thunar_list_model_search_terms_match (search_query_c_terms, display_name_c))
-        files_found = g_list_prepend (files_found, thunar_file_get (file, NULL));
-
-      /* free memory */
-      g_free (display_name_c);
-      g_object_unref (file);
-      g_object_unref (info);
-    }
-
-  g_object_unref (enumerator);
-  g_object_unref (directory);
-
-  if (exo_job_is_cancelled (EXO_JOB (job)))
-    return;
-
-  g_mutex_lock (&model->mutex_files_to_add);
-  model->files_to_add = g_list_concat (model->files_to_add, files_found);
-  g_mutex_unlock (&model->mutex_files_to_add);
 }
 
 
@@ -2357,19 +2131,19 @@ thunar_list_model_set_folder (ThunarStandardViewModel *model,
 
           search_query_c = thunar_g_utf8_normalize_for_search (search_query, TRUE, TRUE);
           g_strfreev (store->search_terms);
-          store->search_terms = thunar_list_model_split_search_query (search_query_c, NULL);
+          store->search_terms = thunar_util_split_search_query (search_query_c, NULL);
           if (store->search_terms != NULL)
             {
               /* search the current folder
                * start a new recursive_search_job */
-              store->recursive_search_job = thunar_list_model_job_search_directory (store, search_query_c, thunar_folder_get_corresponding_file (folder));
+              store->recursive_search_job = thunar_io_jobs_search_directory (THUNAR_STANDARD_VIEW_MODEL (store), search_query_c, thunar_folder_get_corresponding_file (folder));
               exo_job_launch (EXO_JOB (store->recursive_search_job));
 
               g_signal_connect (store->recursive_search_job, "error", G_CALLBACK (thunar_list_model_search_error), NULL);
               g_signal_connect (store->recursive_search_job, "finished", G_CALLBACK (thunar_list_model_search_finished), store);
 
               /* add new results to the model every X ms */
-              store->update_search_results_timeout_id = g_timeout_add (500, thunar_list_model_add_search_files, store);
+              store->update_search_results_timeout_id = g_timeout_add (500, G_SOURCE_FUNC (thunar_list_model_update_search_files), store);
             }
           g_free (search_query_c);
           files = NULL;
@@ -2782,394 +2556,15 @@ thunar_list_model_get_paths_for_files (ThunarStandardViewModel *model,
 
 
 
-/**
- * thunar_list_model_get_paths_for_pattern:
- * @store          : a #ThunarListModel instance.
- * @pattern        : the pattern to match.
- * @case_sensitive    : %TRUE to use case sensitive search.
- * @match_diacritics : %TRUE to use case sensitive search.
- *
- * Looks up all rows in the @store that match @pattern and returns
- * a list of #GtkTreePath<!---->s corresponding to the rows.
- *
- * The caller is responsible to free the returned list using:
- * <informalexample><programlisting>
- * g_list_free_full (list, (GDestroyNotify) gtk_tree_path_free);
- * </programlisting></informalexample>
- *
- * Return value: the list of #GtkTreePath<!---->s that match @pattern.
- **/
-static GList*
-thunar_list_model_get_paths_for_pattern (ThunarStandardViewModel *model,
-                                         const gchar             *pattern,
-                                         gboolean                 case_sensitive,
-                                         gboolean                 match_diacritics)
-{
-  ThunarListModel   *store = THUNAR_LIST_MODEL (model);
-  GPatternSpec  *pspec;
-  gchar         *normalized_pattern;
-  GList         *paths = NULL;
-  GSequenceIter *row;
-  GSequenceIter *end;
-  ThunarFile    *file;
-  const gchar   *display_name;
-  gchar         *normalized_display_name;
-  gboolean       name_matched;
-  gint           i = 0;
-
-  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
-  _thunar_return_val_if_fail (g_utf8_validate (pattern, -1, NULL), NULL);
-
-  /* compile the pattern */
-  normalized_pattern = thunar_g_utf8_normalize_for_search (pattern, !match_diacritics, !case_sensitive);
-  pspec = g_pattern_spec_new (normalized_pattern);
-  g_free (normalized_pattern);
-
-  row = g_sequence_get_begin_iter (store->rows);
-  end = g_sequence_get_end_iter (store->rows);
-
-  /* find all rows that match the given pattern */
-  while (row != end)
-    {
-      file = g_sequence_get (row);
-      display_name = thunar_file_get_display_name (file);
-
-      normalized_display_name = thunar_g_utf8_normalize_for_search (display_name, !match_diacritics, !case_sensitive);
-      name_matched = g_pattern_match_string (pspec, normalized_display_name);
-      g_free (normalized_display_name);
-
-      if (name_matched)
-        {
-          _thunar_assert (i == g_sequence_iter_get_position (row));
-          paths = g_list_prepend (paths, gtk_tree_path_new_from_indices (i, -1));
-        }
-
-      row = g_sequence_iter_next (row);
-      i++;
-    }
-
-  /* release the pattern */
-  g_pattern_spec_free (pspec);
-
-  return paths;
-}
-
-
-
-/**
- * thunar_list_model_get_statusbar_text_for_files:
- * @files                        : list of files for which a text is requested
- * @show_file_size_binary_format : weather the file size should be displayed in binary format
- *
- * Generates the statusbar text for the given @files.
- *
- * The caller is reponsible to free the returned text using
- * g_free() when it's no longer needed.
- *
- * Return value: the statusbar text for @store with the given @files.
- **/
-static gchar*
-thunar_list_model_get_statusbar_text_for_files (ThunarListModel *store,
-                                                GList           *files,
-                                                gboolean         show_file_size_binary_format)
-{
-  guint64            size_summary       = 0;
-  gint               folder_count       = 0;
-  gint               non_folder_count   = 0;
-  GList             *lp;
-  GList             *text_list          = NULL;
-  gchar             *size_string        = NULL;
-  gchar             *temp_string        = NULL;
-  gchar             *folder_text        = NULL;
-  gchar             *non_folder_text    = NULL;
-  ThunarPreferences *preferences;
-  guint              active;
-  guint64            last_modified_date = 0;
-  guint64            temp_last_modified_date;
-  ThunarFile        *last_modified_file = NULL;
-  gboolean           show_size, show_size_in_bytes, show_last_modified;
-
-  preferences = thunar_preferences_get ();
-  g_object_get (G_OBJECT (preferences), "misc-status-bar-active-info", &active, NULL);
-  show_size = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE);
-  show_size_in_bytes = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES);
-  show_last_modified = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_LAST_MODIFIED);
-  g_object_unref (preferences);
-
-  /* analyze files */
-  for (lp = files; lp != NULL; lp = lp->next)
-    {
-      if (thunar_file_is_directory (lp->data))
-        {
-          folder_count++;
-        }
-      else
-        {
-          non_folder_count++;
-          if (thunar_file_is_regular (lp->data))
-            size_summary += thunar_file_get_size (lp->data);
-        }
-      temp_last_modified_date = thunar_file_get_date (lp->data, THUNAR_FILE_DATE_MODIFIED);
-      if (last_modified_date <= temp_last_modified_date)
-        {
-          last_modified_date = temp_last_modified_date;
-          last_modified_file = lp->data;
-        }
-    }
-
-  if (non_folder_count > 0)
-    {
-      if (show_size == TRUE)
-        {
-          if (show_size_in_bytes == TRUE)
-            {
-              size_string = g_format_size_full (size_summary, G_FORMAT_SIZE_LONG_FORMAT
-                                                              | (show_file_size_binary_format ? G_FORMAT_SIZE_IEC_UNITS
-                                                                                              : G_FORMAT_SIZE_DEFAULT));
-            }
-          else
-            {
-              size_string = g_format_size_full (size_summary, show_file_size_binary_format ? G_FORMAT_SIZE_IEC_UNITS
-                                                                                           : G_FORMAT_SIZE_DEFAULT);
-            }
-          non_folder_text = g_strdup_printf (ngettext ("%d file: %s",
-                                                       "%d files: %s",
-                                                       non_folder_count), non_folder_count, size_string);
-          g_free (size_string);
-        }
-      else
-        non_folder_text = g_strdup_printf (ngettext ("%d file", "%d files", non_folder_count), non_folder_count);
-    }
-
-  if (folder_count > 0)
-    {
-      folder_text = g_strdup_printf (ngettext ("%d folder",
-                                               "%d folders",
-                                               folder_count), folder_count);
-    }
-
-  if (non_folder_text == NULL && folder_text == NULL)
-    text_list = g_list_append (text_list, g_strdup_printf (_("0 items")));
-  if (folder_text != NULL)
-    text_list = g_list_append (text_list, folder_text);
-  if (non_folder_text != NULL)
-    text_list = g_list_append (text_list, non_folder_text);
-
-  if (show_last_modified && last_modified_file != NULL)
-    {
-      temp_string = thunar_file_get_date_string (last_modified_file, THUNAR_FILE_DATE_MODIFIED, store->date_style, store->date_custom_style);
-      text_list = g_list_append (text_list, g_strdup_printf (_("Last Modified: %s"), temp_string));
-      g_free (temp_string);
-    }
-
-  temp_string = thunar_util_strjoin_list (text_list, "  |  ");
-  g_list_free_full (text_list, g_free);
-  return temp_string;
-}
-
-
-
-/**
- * thunar_list_model_get_statusbar_text:
- * @store          : a #ThunarListModel instance.
- * @selected_items : the list of selected items (as GtkTreePath's).
- *
- * Generates the statusbar text for @store with the given
- * @selected_items.
- *
- * This function is used by the #ThunarStandardView (and thereby
- * implicitly by #ThunarIconView and #ThunarDetailsView) to
- * calculate the text to display in the statusbar for a given
- * file selection.
- *
- * The caller is reponsible to free the returned text using
- * g_free() when it's no longer needed.
- *
- * Return value: the statusbar text for @store with the given
- *               @selected_items.
- **/
-static gchar*
-thunar_list_model_get_statusbar_text (ThunarStandardViewModel *model,
-                                      GList                   *selected_items)
-{
-  ThunarListModel   *store = THUNAR_LIST_MODEL (model);
-  const gchar       *content_type;
-  const gchar       *original_path;
-  GtkTreeIter        iter;
-  ThunarFile        *file;
-  guint64            size;
-  GList             *lp;
-  GList             *text_list      = NULL;
-  gchar             *temp_string    = NULL;
-  gchar             *text           = "";
-  gint               height;
-  gint               width;
-  GSequenceIter     *row;
-  GSequenceIter     *end;
-  ThunarPreferences *preferences;
-  gboolean           show_image_size;
-  gboolean           show_file_size_binary_format;
-  GList             *relevant_files = NULL;
-  guint              active;
-  gboolean           show_size, show_size_in_bytes, show_filetype, show_display_name, show_last_modified;
-
-  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
-
-  preferences = thunar_preferences_get ();
-  g_object_get (G_OBJECT (preferences), "misc-status-bar-active-info", &active, NULL);
-  show_size = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE);
-  show_size_in_bytes = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES);
-  show_filetype = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_FILETYPE);
-  show_display_name = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_DISPLAY_NAME);
-  show_last_modified = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_LAST_MODIFIED);
-  show_file_size_binary_format = thunar_list_model_get_file_size_binary(model);
-
-  if (selected_items == NULL) /* nothing selected */
-    {
-      /* build a GList of all files */
-      end = g_sequence_get_end_iter (store->rows);
-      for (row = g_sequence_get_begin_iter (store->rows); row != end; row = g_sequence_iter_next (row))
-        {
-          relevant_files = g_list_append (relevant_files, g_sequence_get (row));
-        }
-
-      /* try to determine a file for the current folder */
-      file = (store->folder != NULL) ? thunar_folder_get_corresponding_file (store->folder) : NULL;
-      temp_string = thunar_list_model_get_statusbar_text_for_files (store, relevant_files, show_file_size_binary_format);
-      text_list = g_list_append (text_list, temp_string);
-
-      /* check if we can determine the amount of free space for the volume */
-      if (G_LIKELY (file != NULL && thunar_g_file_get_free_space (thunar_file_get_file (file), &size, NULL)))
-        {
-          /* humanize the free space */
-          gchar *size_string = g_format_size_full (size, show_file_size_binary_format ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
-          temp_string = g_strdup_printf (_("Free space: %s"), size_string);
-          text_list = g_list_append (text_list, temp_string);
-          g_free (size_string);
-        }
-
-      g_list_free (relevant_files);
-    }
-  else if (selected_items->next == NULL) /* only one item selected */
-    {
-      /* resolve the iter for the single path */
-      gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, selected_items->data);
-
-      /* get the file for the given iter */
-      file = g_sequence_get (iter.user_data);
-
-      /* determine the content type of the file */
-      content_type = thunar_file_get_content_type (file);
-
-      if (show_display_name == TRUE)
-        {
-          if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
-            temp_string = g_strdup_printf (_("\"%s\" (%s)"), thunar_file_get_display_name (file), thunar_file_get_basename (file));
-          else
-            temp_string = g_strdup_printf (_("\"%s\""), thunar_file_get_display_name (file));
-          text_list = g_list_append (text_list, temp_string);
-        }
-
-      if (thunar_file_is_regular (file) || G_UNLIKELY (thunar_file_is_symlink (file)))
-        {
-          if (show_size == TRUE)
-            {
-              if (show_size_in_bytes == TRUE)
-                temp_string = thunar_file_get_size_string_long (file, show_file_size_binary_format);
-              else
-                temp_string = thunar_file_get_size_string_formatted (file, show_file_size_binary_format);
-              text_list = g_list_append (text_list, temp_string);
-            }
-        }
-
-      if (show_filetype == TRUE)
-        {
-          if (G_UNLIKELY (content_type != NULL && g_str_equal (content_type, "inode/symlink")))
-            temp_string = g_strdup (_("broken link"));
-          else if (G_UNLIKELY (thunar_file_is_symlink (file)))
-            temp_string = g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (file));
-          else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_SHORTCUT))
-            temp_string = g_strdup (_("shortcut"));
-          else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_MOUNTABLE))
-            temp_string = g_strdup (_("mountable"));
-          else
-            {
-              gchar *description = g_content_type_get_description (content_type);
-              temp_string = g_strdup_printf (_("%s"), description);
-              g_free (description);
-            }
-          text_list = g_list_append (text_list, temp_string);
-        }
-
-      /* append the original path (if any) */
-      original_path = thunar_file_get_original_path (file);
-      if (G_UNLIKELY (original_path != NULL))
-        {
-          /* append the original path to the statusbar text */
-          gchar *original_path_string = g_filename_display_name (original_path);
-          temp_string = g_strdup_printf ("%s %s", _("Original Path:"), original_path_string);
-          text_list = g_list_append (text_list, temp_string);
-          g_free (original_path_string);
-        }
-      else if (thunar_file_is_local (file)
-               && thunar_file_is_regular (file)
-               && g_str_has_prefix (content_type, "image/")) /* bug #2913 */
-        {
-          /* check if the size should be visible in the statusbar, disabled by
-           * default to avoid high i/o  */
-          g_object_get (preferences, "misc-image-size-in-statusbar", &show_image_size, NULL);
-          if (show_image_size)
-            {
-              /* check if we can determine the dimension of this file (only for image files) */
-              gchar *file_path = g_file_get_path (thunar_file_get_file (file));
-              if (file_path != NULL && gdk_pixbuf_get_file_info (file_path, &width, &height) != NULL)
-                {
-                  /* append the image dimensions to the statusbar text */
-                  temp_string = g_strdup_printf ("%s %dx%d", _("Image Size:"), width, height);
-                  text_list = g_list_append (text_list, temp_string);
-                }
-              g_free (file_path);
-            }
-        }
-
-      if (show_last_modified)
-        {
-          gchar *date_string = thunar_file_get_date_string (file, THUNAR_FILE_DATE_MODIFIED, store->date_style, store->date_custom_style);
-          temp_string = g_strdup_printf (_("Last Modified: %s"), date_string);
-          text_list = g_list_append (text_list, temp_string);
-          g_free (date_string);
-        }
-    }
-  else /* more than one item selected */
-    {
-      gchar *selected_string;
-      /* build GList of files from selection */
-      for (lp = selected_items; lp != NULL; lp = lp->next)
-        {
-          gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, lp->data);
-          relevant_files = g_list_append (relevant_files, g_sequence_get (iter.user_data));
-        }
-      selected_string = thunar_list_model_get_statusbar_text_for_files (store, relevant_files, show_file_size_binary_format);
-      temp_string = g_strdup_printf (_("Selection: %s"), selected_string);
-      text_list = g_list_append (text_list, temp_string);
-      g_list_free (relevant_files);
-      g_free (selected_string);
-    }
-
-  text = thunar_util_strjoin_list (text_list, "  |  ");
-  g_list_free_full (text_list, g_free);
-  g_object_unref (preferences);
-  return text;
-}
-
-
-
 static void
 thunar_list_model_file_count_callback (ExoJob  *job,
                                        gpointer model)
 {
   GArray     *param_values;
   ThunarFile *file;
+
+  if (job == NULL)
+    return;
 
   param_values = thunar_simple_job_get_param_values (THUNAR_SIMPLE_JOB (job));
   file = THUNAR_FILE (g_value_get_object (&g_array_index (param_values, GValue, 0)));
