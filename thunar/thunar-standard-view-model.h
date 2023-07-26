@@ -106,12 +106,6 @@ struct _ThunarStandardViewModelIface
                                               GtkTreeIter              *iter);
   GList           *(*get_paths_for_files)    (ThunarStandardViewModel  *model,
                                               GList                    *files);
-  GList           *(*get_paths_for_pattern)  (ThunarStandardViewModel  *model,
-                                              const gchar              *pattern,
-                                              gboolean                  case_sensitive,
-                                              gboolean                  match_diacritics);
-  gchar           *(*get_statusbar_text)     (ThunarStandardViewModel  *model,
-                                              GList                    *selected_items);
   ThunarJob       *(*get_job)                (ThunarStandardViewModel  *model);
   void             (*set_job)                (ThunarStandardViewModel  *model,
                                               ThunarJob                *job);

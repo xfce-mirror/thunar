@@ -25,6 +25,7 @@
 #include <thunar/thunar-standard-view-model.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-util.h>
+#include <thunar/thunar-gobject-extensions.h>
 
 static void thunar_standard_view_model_class_init (gpointer klass);
 
@@ -53,6 +54,14 @@ thunar_standard_view_model_get_type (void)
 
   return type__static;
 }
+
+struct _MatchForeach
+{
+  GList       **paths;
+  GPatternSpec *pspec;
+  gboolean      match_diacritics;
+  gboolean      case_sensitive;
+};
 
 static guint       model_signals[THUNAR_STANDARD_VIEW_MODEL_LAST_SIGNAL];
 
@@ -385,35 +394,6 @@ thunar_standard_view_model_get_paths_for_files (ThunarStandardViewModel  *model,
 {
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model), NULL);
   return (*THUNAR_STANDARD_VIEW_MODEL_GET_IFACE (model)->get_paths_for_files) (model, files);
-}
-
-
-
-/**
- * thunar_standard_view_model_get_paths_for_pattern:
- * @store          : a #ThunarStandardViewModel instance.
- * @pattern        : the pattern to match.
- * @case_sensitive    : %TRUE to use case sensitive search.
- * @match_diacritics : %TRUE to use case sensitive search.
- *
- * Looks up all rows in the @store that match @pattern and returns
- * a list of #GtkTreePath<!---->s corresponding to the rows.
- *
- * The caller is responsible to free the returned list using:
- * <informalexample><programlisting>
- * g_list_free_full (list, (GDestroyNotify) gtk_tree_path_free);
- * </programlisting></informalexample>
- *
- * Return value: the list of #GtkTreePath<!---->s that match @pattern.
- **/
-GList*
-thunar_standard_view_model_get_paths_for_pattern  (ThunarStandardViewModel  *model,
-                                                   const gchar              *pattern,
-                                                   gboolean                  case_sensitive,
-                                                   gboolean                  match_diacritics)
-{
-  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model), NULL);
-  return (*THUNAR_STANDARD_VIEW_MODEL_GET_IFACE (model)->get_paths_for_pattern) (model, pattern, case_sensitive, match_diacritics);
 }
 
 
@@ -766,4 +746,85 @@ thunar_standard_view_model_get_statusbar_text (ThunarStandardViewModel *model,
   g_list_free_full (text_list, g_free);
   g_object_unref (preferences);
   return text;
+}
+
+
+
+static gboolean
+_thunar_standard_view_model_match_pattern_foreach (GtkTreeModel *model,
+                                                   GtkTreePath  *path,
+                                                   GtkTreeIter  *iter,
+                                                   gpointer      data)
+{
+  ThunarFile           *file;
+  const gchar          *display_name;
+  gchar                *normalized_display_name;
+  gboolean              name_matched;
+  struct _MatchForeach *mf = (struct _MatchForeach *) data;
+
+  file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), iter);
+  if (file == NULL)
+    return FALSE;
+
+  display_name = thunar_file_get_display_name (file);
+  normalized_display_name = thunar_g_utf8_normalize_for_search (display_name,
+                                                                !mf->match_diacritics,
+                                                                !mf->case_sensitive);
+  name_matched = g_pattern_spec_match_string (mf->pspec, normalized_display_name);
+  g_free (normalized_display_name);
+
+  if (name_matched)
+    *mf->paths = g_list_prepend (*mf->paths, gtk_tree_path_copy (path));
+
+  return FALSE;
+}
+
+
+
+/**
+ * thunar_standard_view_model_get_paths_for_pattern:
+ * @store          : a #ThunarStandardViewModel instance.
+ * @pattern        : the pattern to match.
+ * @case_sensitive    : %TRUE to use case sensitive search.
+ * @match_diacritics : %TRUE to use case sensitive search.
+ *
+ * Looks up all rows in the @store that match @pattern and returns
+ * a list of #GtkTreePath<!---->s corresponding to the rows.
+ *
+ * The caller is responsible to free the returned list using:
+ * <informalexample><programlisting>
+ * g_list_free_full (list, (GDestroyNotify) gtk_tree_path_free);
+ * </programlisting></informalexample>
+ *
+ * Return value: the list of #GtkTreePath<!---->s that match @pattern.
+ **/
+GList *
+thunar_standard_view_model_get_paths_for_pattern (ThunarStandardViewModel *model,
+                                                  const gchar             *pattern,
+                                                  gboolean                 case_sensitive,
+                                                  gboolean                 match_diacritics)
+{
+  struct _MatchForeach mf;
+  gchar               *normalized_pattern;
+
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model), NULL);
+  _thunar_return_val_if_fail (g_utf8_validate (pattern, -1, NULL), NULL);
+
+  /* compile the pattern */
+  normalized_pattern = thunar_g_utf8_normalize_for_search (pattern, !match_diacritics, !case_sensitive);
+  mf.pspec = g_pattern_spec_new (normalized_pattern);
+  g_free (normalized_pattern);
+
+  *mf.paths = NULL;
+  mf.case_sensitive = case_sensitive;
+  mf.match_diacritics = match_diacritics;
+
+  /* find all rows that match the given pattern */
+  gtk_tree_model_foreach (GTK_TREE_MODEL (model),
+                          _thunar_standard_view_model_match_pattern_foreach, &mf);
+
+  /* release the pattern */
+  g_pattern_spec_free (mf.pspec);
+
+  return *mf.paths;
 }

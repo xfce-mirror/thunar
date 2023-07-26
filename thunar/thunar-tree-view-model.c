@@ -173,10 +173,6 @@ static ThunarFile       *thunar_tree_view_model_get_file (ThunarStandardViewMode
                                                           GtkTreeIter             *iter);
 static GList            *thunar_tree_view_model_get_paths_for_files (ThunarStandardViewModel *model,
                                                                      GList                   *files);
-static GList            *thunar_tree_view_model_get_paths_for_pattern (ThunarStandardViewModel *model,
-                                                                       const gchar             *pattern,
-                                                                       gboolean                 case_sensitive,
-                                                                       gboolean                 match_diacritics);
 static ThunarJob        *thunar_tree_view_model_get_job (ThunarStandardViewModel *model);
 
 /* Setters */
@@ -522,7 +518,6 @@ thunar_tree_view_model_standard_view_model_init (ThunarStandardViewModelIface *i
   iface->get_show_hidden = thunar_tree_view_model_get_show_hidden;
   iface->set_show_hidden = thunar_tree_view_model_set_show_hidden;
   iface->get_paths_for_files = thunar_tree_view_model_get_paths_for_files;
-  iface->get_paths_for_pattern = thunar_tree_view_model_get_paths_for_pattern;
   iface->get_file_size_binary = thunar_tree_view_model_get_file_size_binary;
   iface->set_file_size_binary = thunar_tree_view_model_set_file_size_binary;
   iface->set_folders_first = thunar_tree_view_model_set_folders_first;
@@ -1580,105 +1575,6 @@ thunar_tree_view_model_get_paths_for_files (ThunarStandardViewModel *model,
       path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &tree_iter);
       paths = g_list_prepend (paths, path);
     }
-
-  return paths;
-}
-
-
-
-static void
-_thunar_tree_view_model_get_paths_for_pattern (Node         *node,
-                                               GList       **paths,
-                                               GPatternSpec *pspec,
-                                               gboolean      match_diacritics,
-                                               gboolean      case_sensitive)
-{
-  GSequenceIter *row;
-  GSequenceIter *end;
-  ThunarFile    *file;
-  Node          *_node;
-  const gchar   *display_name;
-  gchar         *normalized_display_name;
-  gboolean       name_matched;
-  GtkTreeIter    tree_iter;
-  GtkTreePath   *path;
-  gint          *indices;
-  gint           depth, i = 0;
-
-  row = g_sequence_get_begin_iter (node->children);
-  end = g_sequence_get_end_iter (node->children);
-
-  if (node->ptr != NULL)
-    {
-      GTK_TREE_ITER_INIT (tree_iter, node->model->stamp, node->ptr);
-      path = gtk_tree_model_get_path (GTK_TREE_MODEL (node->model), &tree_iter);
-      gtk_tree_path_down (path);
-    }
-  else
-    path = gtk_tree_path_new_first ();
-  indices = gtk_tree_path_get_indices_with_depth (path, &depth);
-
-  /* find all rows that match the given pattern;
-   * recurse into rows that are expanded */
-  while (row != end)
-    {
-      _node = g_sequence_get (row);
-      if (_node->loaded && _node->expanded)
-        _thunar_tree_view_model_get_paths_for_pattern (_node, paths, pspec, match_diacritics, case_sensitive);
-      g_assert (node != NULL);
-      file = _node->file;
-      g_assert (file != NULL);
-      display_name = thunar_file_get_display_name (file);
-
-      normalized_display_name = thunar_g_utf8_normalize_for_search (display_name, !match_diacritics, !case_sensitive);
-      name_matched = g_pattern_spec_match_string (pspec, normalized_display_name);
-      g_free (normalized_display_name);
-
-      if (name_matched)
-        {
-          _thunar_assert (i == g_sequence_iter_get_position (row));
-          indices[depth - 1] = i;
-          *paths = g_list_prepend (*paths, gtk_tree_path_new_from_indicesv (indices, depth));
-        }
-
-      row = g_sequence_iter_next (row);
-      i++;
-    }
-
-  gtk_tree_path_free (path);
-}
-
-
-
-static GList *
-thunar_tree_view_model_get_paths_for_pattern (ThunarStandardViewModel *model,
-                                              const gchar             *pattern,
-                                              gboolean                 case_sensitive,
-                                              gboolean                 match_diacritics)
-{
-  ThunarTreeViewModel *_model = THUNAR_TREE_VIEW_MODEL (model);
-  GPatternSpec        *pspec;
-  gchar               *normalized_pattern;
-  GList               *paths = NULL;
-
-  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (_model), NULL);
-  _thunar_return_val_if_fail (g_utf8_validate (pattern, -1, NULL), NULL);
-
-  if (_model->root == NULL)
-    return NULL;
-
-  /* compile the pattern */
-  normalized_pattern = thunar_g_utf8_normalize_for_search (pattern, !match_diacritics, !case_sensitive);
-  pspec = g_pattern_spec_new (normalized_pattern);
-  g_free (normalized_pattern);
-
-  /* find all rows that match the given pattern */
-  _thunar_tree_view_model_get_paths_for_pattern (_model->root,
-                                                 &paths, pspec,
-                                                 match_diacritics, case_sensitive);
-
-  /* release the pattern */
-  g_pattern_spec_free (pspec);
 
   return paths;
 }
