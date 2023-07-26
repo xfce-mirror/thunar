@@ -2559,6 +2559,10 @@ thunar_tree_view_model_load_dir (Node *node)
 
   node->loading = TRUE;
 
+  /* we are increasing the counter twice to handle the case
+   * when the folder has already been loaded & we are adding
+   * the children to the files */
+  /* TODO: should we instead add this inc_loading & dec_loading to files-added & files-removed signal? */
   thunar_tree_view_model_inc_loading (node->model);
   thunar_tree_view_model_inc_loading (node->model);
 
