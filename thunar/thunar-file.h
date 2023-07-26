@@ -321,7 +321,6 @@ void              thunar_file_move_thumbnail_cache_file  (GFile *old_file,
 
 void              thunar_file_replace_file               (ThunarFile *file,
                                                           GFile      *renamed_file);
-gboolean          thunar_file_is_empty                   (ThunarFile *file);
 gint              thunar_cmp_files_by_date                      (const ThunarFile   *a,
                                                                  const ThunarFile   *b,
                                                                  gboolean            case_sensitive,

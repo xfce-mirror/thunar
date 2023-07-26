@@ -5034,36 +5034,6 @@ thunar_file_has_directory_specific_settings (ThunarFile *file)
 
 
 
-gboolean
-thunar_file_is_empty (ThunarFile *file)
-{
-  GFileEnumerator *enumerator;
-  GError          *err = NULL;
-  gboolean         is_empty = TRUE;
-  GFileInfo       *info;
-
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), TRUE);
-
-  enumerator = g_file_enumerate_children (thunar_file_get_file (file), NULL,
-                                          G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                          NULL, &err);
-
-  if (err != NULL)
-    {
-      g_warning ("Failed to check if the file has any children!");
-      return TRUE;
-    }
-
-  if (g_file_enumerator_iterate (enumerator, &info, NULL, NULL, &err) && info != NULL)
-    is_empty = FALSE;
-
-  g_object_unref (enumerator);
-
-  return is_empty;
-}
-
-
-
 gint
 thunar_cmp_files_by_date         (const ThunarFile   *a,
                                   const ThunarFile   *b,
