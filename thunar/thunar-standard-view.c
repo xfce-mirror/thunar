@@ -4240,7 +4240,7 @@ void
 thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 {
   GtkTreeIter iter;
-  GList      *lp, *selected_thunar_files, *selected_files = NULL;
+  GList      *lp, *selected_thunar_files;
   ThunarFile *file;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
@@ -4265,19 +4265,20 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   for (lp = selected_thunar_files; lp != NULL; lp = lp->next)
     {
       /* determine the iterator for the path */
-      if (!gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, lp->data))
-        continue;
+      g_assert (gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, lp->data));
+
+      gtk_tree_path_free (lp->data);
+
+      file = thunar_standard_view_model_get_file (standard_view->model, &iter);
+      g_assert (file != NULL);
 
       /* ...and replace it with the file */
-      file = thunar_standard_view_model_get_file (standard_view->model, &iter);
-      if (file != NULL)
-        selected_files = g_list_prepend (selected_files, file);
+      lp->data = file;
+      g_print ("%s\n", thunar_file_get_display_name (file));
     }
 
-  g_list_free_full (selected_thunar_files, (GDestroyNotify) gtk_tree_path_free);
-
   /* and setup the new selected files list */
-  standard_view->priv->selected_files = selected_files;
+  standard_view->priv->selected_files = selected_thunar_files;
 
   /* update the statusbar text */
   thunar_standard_view_update_statusbar_text (standard_view);
