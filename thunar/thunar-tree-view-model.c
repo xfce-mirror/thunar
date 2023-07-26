@@ -17,6 +17,30 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
+
+/*
+ * The rough working of the Model -
+ *
+ * Each file/subdir/dir is a #_Node.
+ * There are 2 types of #_Node - a file #_Node & a dummy Node.
+ * A file #_Node is one which could also be a subdir. But the key
+ * differentiating factor is that a file #_Node is always initialized with a file
+ * while a dummy Node is initialed with NULL.
+ * The dummy node's main purpose is to act as a child for a subdir
+ * which has not been expanded in the view yet.
+ * Whenever a #_Node is loaded, the node's file's children will be added as
+ * child nodes. If any of these child nodes are non-empty directories then
+ * they will additionally be given a dummy child node. When these subdirs
+ * will be loaded (expanded in the view), the dummy child node will be replaced
+ * by the actual children of the node.
+ *
+ * A Node's children are stored in sorted manner in a GSequence and additionally
+ * a HashTable is used to quickly query and retrieve the required child.
+ */
+
+
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -2436,7 +2460,7 @@ _thunar_tree_view_model_folder_error (Node         *node,
       thunar_tree_view_model_set_folder (THUNAR_STANDARD_VIEW_MODEL (node->model), NULL, NULL);
     }
   else
-  thunar_tree_view_model_dir_remove_file (node->parent, node->file);
+    thunar_tree_view_model_dir_remove_file (node->parent, node->file);
 
   /* forward the error signal */
   g_signal_emit (G_OBJECT (node->model), tree_model_signals[THUNAR_STANDARD_VIEW_MODEL_ERROR], 0, error);
