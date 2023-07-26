@@ -24,6 +24,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-standard-view-model.h>
 #include <thunar/thunar-preferences.h>
+#include <thunar/thunar-util.h>
 
 static void thunar_standard_view_model_class_init (gpointer klass);
 
