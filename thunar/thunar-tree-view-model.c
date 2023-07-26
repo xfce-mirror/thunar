@@ -2259,14 +2259,17 @@ thunar_tree_view_model_dir_remove_file (Node       *node,
 
   GTK_TREE_ITER_INIT (tree_iter, node->model->stamp, iter);
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (node->model), &tree_iter);
-  gtk_tree_model_row_deleted (GTK_TREE_MODEL (node->model), path);
-  gtk_tree_path_free (path);
 
   thunar_tree_view_model_node_destroy (g_sequence_get (iter));
 
   g_sequence_remove (iter);
   g_hash_table_remove (node->set, file);
   node->n_children--;
+
+  /* row deletion will trigger selection change if the file is selected;
+   * thus it is important to free the node before calling row_deleted */
+  gtk_tree_model_row_deleted (GTK_TREE_MODEL (node->model), path);
+  gtk_tree_path_free (path);
 
   g_assert (node->n_children >= 0);
 
