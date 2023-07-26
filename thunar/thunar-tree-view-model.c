@@ -66,6 +66,7 @@
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-io-jobs.h>
+#include <thunar/thunar-gio-extensions.h>
 
 
 
@@ -2230,7 +2231,7 @@ thunar_tree_view_model_dir_add_file (Node       *node,
   if (thunar_file_is_directory (file))
     {
       g_hash_table_insert (node->model->subdirs, file, child);
-      if (!thunar_file_is_empty (file))
+      if (!thunar_g_file_is_empty (thunar_file_get_file (file)))
         thunar_tree_view_model_node_add_dummy_child (child);
     }
 

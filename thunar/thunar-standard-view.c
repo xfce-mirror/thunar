@@ -4274,7 +4274,6 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 
       /* ...and replace it with the file */
       lp->data = file;
-      g_print ("%s\n", thunar_file_get_display_name (file));
     }
 
   /* and setup the new selected files list */
