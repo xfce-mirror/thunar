@@ -2605,6 +2605,7 @@ static void
 thunar_tree_view_model_cleanup_model (ThunarTreeViewModel *model)
 {
   Node *_node;
+  GList *values;
 
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
 
@@ -2614,7 +2615,8 @@ thunar_tree_view_model_cleanup_model (ThunarTreeViewModel *model)
 
   /* since we are doing a lazy cleanup we should make sure
    to disconnect from the signal handlers of the folders */
-  for (GList *dirs = g_hash_table_get_values (model->subdirs); dirs != NULL; dirs = dirs->next)
+  values = g_hash_table_get_values (model->subdirs);
+  for (GList *dirs = values; dirs != NULL; dirs = dirs->next)
     {
       _node = dirs->data;
       if (_node->dir == NULL)
@@ -2624,6 +2626,7 @@ thunar_tree_view_model_cleanup_model (ThunarTreeViewModel *model)
       g_object_unref (_node->dir);
       _node->dir = NULL;
     }
+  g_list_free (values);
 
   /* clean up the nodes in the background*/
   g_idle_add ((GSourceFunc) _thunar_tree_view_model_cleanup_idle, model->root);
