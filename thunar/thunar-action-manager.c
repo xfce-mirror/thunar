@@ -1671,7 +1671,7 @@ thunar_action_manager_append_menu_item (ThunarActionManager       *action_mgr,
         if (action_mgr->n_files_to_process == 1)
           label_text = g_strdup (action_entry->menu_item_label_text);
         else
-          label_text = g_strdup (_("Bulk _rename..."));
+          label_text = g_strdup (_("Bulk _Rename..."));
         item = xfce_gtk_menu_item_new (label_text, tooltip_text, action_entry->accel_path,
                                        action_entry->callback, G_OBJECT (action_mgr), menu);
         g_free (label_text);
