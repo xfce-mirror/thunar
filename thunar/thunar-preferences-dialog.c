@@ -265,7 +265,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /* configure the dialog properties */
   gtk_window_set_icon_name (GTK_WINDOW (dialog), "org.xfce.thunar");
   gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
-  gtk_window_set_title (GTK_WINDOW (dialog), _("File Manager Preferences"));
+  gtk_window_set_title (GTK_WINDOW (dialog), _("Thunar Preferences"));
 
   xfce_titled_dialog_create_action_area (XFCE_TITLED_DIALOG (dialog));
 
