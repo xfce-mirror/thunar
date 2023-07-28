@@ -27,7 +27,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-25 00:45+0200\n"
+"POT-Creation-Date: 2023-07-28 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: 玉堂白鹤 <yjwork@qq.com>, 2014-2015,2017-2023\n"
 "Language-Team: Chinese (China) (http://app.transifex.com/xfce/thunar/language/zh_CN/)\n"
@@ -67,7 +67,7 @@ msgid "Open With Other _Application..."
 msgstr "使用其它应用程序打开(_A)..."
 
 #: ../thunar/thunar-action-manager.c:274
-#: ../thunar/thunar-action-manager.c:3298
+#: ../thunar/thunar-action-manager.c:3303
 msgid "Choose another application with which to open the selected file"
 msgstr "选择另一个应用程序来打开所选文件"
 
@@ -314,7 +314,7 @@ msgid "_Cancel"
 msgstr "取消(_C)"
 
 #: ../thunar/thunar-action-manager.c:1079
-#: ../thunar/thunar-action-manager.c:1971
+#: ../thunar/thunar-action-manager.c:1976
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "无法挂载 “%s”"
@@ -385,12 +385,16 @@ msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "重命名所选文件"
 
-#: ../thunar/thunar-action-manager.c:1679
+#: ../thunar/thunar-action-manager.c:1674
+msgid "Bulk _Rename..."
+msgstr ""
+
+#: ../thunar/thunar-action-manager.c:1684
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
 msgstr[0] "将所选文件恢复到其原始位置"
 
-#: ../thunar/thunar-action-manager.c:1691
+#: ../thunar/thunar-action-manager.c:1696
 msgid ""
 "Restore the selected file to its original location and open the location in "
 "a new window/tab"
@@ -399,135 +403,135 @@ msgid_plural ""
 "locations in a new window/tab"
 msgstr[0] "将选择的文件进行恢复至原先的位置，并在新的窗口/标签页中打开该路径"
 
-#: ../thunar/thunar-action-manager.c:1708
+#: ../thunar/thunar-action-manager.c:1713
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "将所选文件移至回收站"
 
-#: ../thunar/thunar-action-manager.c:1725
+#: ../thunar/thunar-action-manager.c:1730
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "永久删除所选文件"
 
-#: ../thunar/thunar-action-manager.c:1784
+#: ../thunar/thunar-action-manager.c:1789
 msgid "Cut the selection"
 msgstr "剪切所选"
 
-#: ../thunar/thunar-action-manager.c:1794
+#: ../thunar/thunar-action-manager.c:1799
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "准备好选中的文件以便用粘贴命令移动"
 
-#: ../thunar/thunar-action-manager.c:1808
+#: ../thunar/thunar-action-manager.c:1813
 msgid "Copy the selection"
 msgstr "复制所选"
 
-#: ../thunar/thunar-action-manager.c:1818
+#: ../thunar/thunar-action-manager.c:1823
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "准备好选中的文件以便用粘贴命令复制"
 
-#: ../thunar/thunar-action-manager.c:1841
+#: ../thunar/thunar-action-manager.c:1846
 msgid "Paste the clipboard"
 msgstr "粘贴剪贴板"
 
-#: ../thunar/thunar-action-manager.c:2082
+#: ../thunar/thunar-action-manager.c:2087
 msgid "Side Pane (Add Bookmark)"
 msgid_plural "Side Pane (Add Bookmarks)"
 msgstr[0] "侧边栏(添加书签)"
 
-#: ../thunar/thunar-action-manager.c:2083
+#: ../thunar/thunar-action-manager.c:2088
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "将选中的文件夹添加到快捷方式侧边栏"
 
-#: ../thunar/thunar-action-manager.c:2102
+#: ../thunar/thunar-action-manager.c:2107
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "桌面(创建链接)"
 
-#: ../thunar/thunar-action-manager.c:2103
+#: ../thunar/thunar-action-manager.c:2108
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "在桌面上为所选文件创建链接"
 
-#: ../thunar/thunar-action-manager.c:2124
-#: ../thunar/thunar-action-manager.c:2162
+#: ../thunar/thunar-action-manager.c:2129
+#: ../thunar/thunar-action-manager.c:2167
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "将所选文件发送至 “%s”"
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-action-manager.c:2616 ../thunar/thunar-application.c:1991
+#: ../thunar/thunar-action-manager.c:2621 ../thunar/thunar-application.c:1991
 msgid "New Folder"
 msgstr "新建文件夹"
 
-#: ../thunar/thunar-action-manager.c:2620 ../thunar/thunar-application.c:1992
+#: ../thunar/thunar-action-manager.c:2625 ../thunar/thunar-application.c:1992
 msgid "Create New Folder"
 msgstr "创建新文件夹"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-action-manager.c:2672 ../thunar/thunar-application.c:2056
+#: ../thunar/thunar-action-manager.c:2677 ../thunar/thunar-application.c:2056
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "从模板 “%s” 创建文档"
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-action-manager.c:2688
+#: ../thunar/thunar-action-manager.c:2693
 msgid "New Empty File"
 msgstr "新建空文件"
 
-#: ../thunar/thunar-action-manager.c:2692
+#: ../thunar/thunar-action-manager.c:2697
 msgid "New Empty File..."
 msgstr "新建空文件..."
 
-#: ../thunar/thunar-action-manager.c:2908
+#: ../thunar/thunar-action-manager.c:2913
 #, c-format
 msgid ""
 "No templates installed in\n"
 "\"%s\""
 msgstr "\"%s\"中未安装模板"
 
-#: ../thunar/thunar-action-manager.c:2921
+#: ../thunar/thunar-action-manager.c:2926
 msgid "_Empty File"
 msgstr "空文件(_E)"
 
-#: ../thunar/thunar-action-manager.c:3061
+#: ../thunar/thunar-action-manager.c:3066
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "无法弹出 “%s”"
 
-#: ../thunar/thunar-action-manager.c:3123
+#: ../thunar/thunar-action-manager.c:3128
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "无法卸载 \"%s\""
 
-#: ../thunar/thunar-action-manager.c:3186
-#: ../thunar/thunar-action-manager.c:3257
+#: ../thunar/thunar-action-manager.c:3191
+#: ../thunar/thunar-action-manager.c:3262
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "使用 “%s” 打开所选文件"
 
-#: ../thunar/thunar-action-manager.c:3256
+#: ../thunar/thunar-action-manager.c:3261
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "用 “%s” 打开(_O)"
 
 #. we can only show a generic "Open" action
-#: ../thunar/thunar-action-manager.c:3276
+#: ../thunar/thunar-action-manager.c:3281
 #, c-format
 msgid "_Open With Default Applications"
 msgstr "用默认应用程序打开(_O)"
 
-#: ../thunar/thunar-action-manager.c:3277
+#: ../thunar/thunar-action-manager.c:3282
 #, c-format
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "用默认的应用程序打开所选文件"
 
-#: ../thunar/thunar-action-manager.c:3297
+#: ../thunar/thunar-action-manager.c:3302
 #: ../thunar/thunar-chooser-dialog.c:187
 msgid "Open With"
 msgstr "打开方式"
@@ -2200,8 +2204,9 @@ msgid ""
 msgstr "将文件夹权限重置为相符的状态。此后，只有对此文件夹内容有读权限的用户才能进入此文件夹。"
 
 #: ../thunar/thunar-preferences-dialog.c:268
-msgid "File Manager Preferences"
-msgstr "文件管理器首选项"
+#: ../thunar/thunar-settings.desktop.in.h:1
+msgid "Thunar Preferences"
+msgstr ""
 
 #. Display
 #: ../thunar/thunar-preferences-dialog.c:296
@@ -4848,10 +4853,6 @@ msgstr "主文件夹"
 #: ../thunar-bulk-rename.desktop.in.in.h:3
 msgid "bulk;renamer;renaming;thunar;files;folders;directory;directories;"
 msgstr "bulk;renamer;renaming;thunar;files;folders;directory;directories;批量;重命名;重命名;thunar;文件;文件夹;目录;"
-
-#: ../thunar/thunar-settings.desktop.in.h:1
-msgid "File Manager Settings"
-msgstr "文件管理器设置"
 
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "Configure the Thunar file manager"
