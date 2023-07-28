@@ -1748,8 +1748,7 @@ _thunar_tree_view_model_set_show_hidden (Node    *node,
 
   /* we have a dummy node here! */
   if (node->file == NULL || node->dir == NULL
-      || thunar_tree_view_model_node_has_dummy_child (node)
-      || node->n_children == 0)
+      || thunar_tree_view_model_node_has_dummy_child (node))
     return;
 
   g_sequence_foreach (node->children,
@@ -2510,7 +2509,7 @@ _thunar_tree_view_model_dir_files_removed (Node  *node,
 
       if (thunar_file_is_hidden (file))
         {
-          _node = g_list_find_custom (node->hidden_files, file, g_direct_equal);
+          _node = g_list_find (node->hidden_files, file);
           g_assert (_node != NULL);
           g_object_unref (_node->data);
           node->hidden_files = g_list_delete_link (node->hidden_files, _node);
@@ -2723,13 +2722,18 @@ thunar_tree_view_model_file_changed (ThunarFileMonitor   *monitor,
   if (node == NULL)
     return;
 
-  if (thunar_file_is_hidden (file) && !model->show_hidden
-      && g_hash_table_contains (node->parent->set, file))
+  if (thunar_file_is_hidden (file))
     {
-      /* This handles renaming of normal files into hidden files;
-       * in this case we simply remove the file & update the view */
-      thunar_tree_view_model_dir_remove_file (node->parent, file);
-      return;
+      /* when a file has been renamed to a hidden file then we need to check
+       * if a file exists in the parent's hidden file list or not & add it if
+       * not there */
+      if (node->parent->hidden_files == NULL
+          || g_list_find (node->parent->hidden_files, file) == NULL)
+        node->parent->hidden_files = g_list_prepend (node->parent->hidden_files, file);
+      /* if show_hidden is inactive and a normal file has been renamed
+       * to hidden file then hide that file */
+      if (!model->show_hidden && g_hash_table_contains (node->parent->set, file))
+        return thunar_tree_view_model_dir_remove_file (node->parent, file);
     }
 
   iter = node->ptr;
