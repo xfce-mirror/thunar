@@ -2438,10 +2438,10 @@ thunar_tree_view_model_sort (ThunarTreeViewModel *model)
 static void
 _thunar_tree_view_model_folder_destroy (Node *node)
 {
+  /* if a subdir get's destroyed it's handled internally but if the current_folder
+   * get's destroyed then we simply set_folder to NULL & cleanup things */
   if (node->parent == NULL)
     thunar_tree_view_model_set_folder (THUNAR_STANDARD_VIEW_MODEL (node->model), NULL, NULL);
-
-  /* TODO: What to do when the folder is deleted? */
 }
 
 
