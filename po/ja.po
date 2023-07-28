@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-25 00:45+0200\n"
+"POT-Creation-Date: 2023-07-28 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: UTUMI Hirosi <utuhiro78@yahoo.co.jp>, 2019-2023\n"
 "Language-Team: Japanese (http://app.transifex.com/xfce/thunar/language/ja/)\n"
@@ -50,7 +50,7 @@ msgid "Open With Other _Application..."
 msgstr "他のアプリケーションで開く(_A)..."
 
 #: ../thunar/thunar-action-manager.c:274
-#: ../thunar/thunar-action-manager.c:3298
+#: ../thunar/thunar-action-manager.c:3303
 msgid "Choose another application with which to open the selected file"
 msgstr "選択したファイルを開く別のアプリケーションを選びます。"
 
@@ -297,7 +297,7 @@ msgid "_Cancel"
 msgstr "キャンセル(_C)"
 
 #: ../thunar/thunar-action-manager.c:1079
-#: ../thunar/thunar-action-manager.c:1971
+#: ../thunar/thunar-action-manager.c:1976
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "\"%s\" のマウントに失敗しました"
@@ -368,12 +368,16 @@ msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "選択したファイルの名前を変更する"
 
-#: ../thunar/thunar-action-manager.c:1679
+#: ../thunar/thunar-action-manager.c:1674
+msgid "Bulk _Rename..."
+msgstr "一括リネーム(_R)..."
+
+#: ../thunar/thunar-action-manager.c:1684
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
 msgstr[0] "選択したファイルを元の場所に復元する"
 
-#: ../thunar/thunar-action-manager.c:1691
+#: ../thunar/thunar-action-manager.c:1696
 msgid ""
 "Restore the selected file to its original location and open the location in "
 "a new window/tab"
@@ -382,135 +386,135 @@ msgid_plural ""
 "locations in a new window/tab"
 msgstr[0] "選択したファイルを元の場所に復元し、新しいウィンドウ/タブで場所を開く"
 
-#: ../thunar/thunar-action-manager.c:1708
+#: ../thunar/thunar-action-manager.c:1713
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "選択したファイルをゴミ箱に移動する"
 
-#: ../thunar/thunar-action-manager.c:1725
+#: ../thunar/thunar-action-manager.c:1730
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "選択したファイルを完全に削除する"
 
-#: ../thunar/thunar-action-manager.c:1784
+#: ../thunar/thunar-action-manager.c:1789
 msgid "Cut the selection"
 msgstr "選択部分を切り取る"
 
-#: ../thunar/thunar-action-manager.c:1794
+#: ../thunar/thunar-action-manager.c:1799
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "選択したファイルを \"貼り付け\" コマンドで移動できるようにする"
 
-#: ../thunar/thunar-action-manager.c:1808
+#: ../thunar/thunar-action-manager.c:1813
 msgid "Copy the selection"
 msgstr "選択部分をコピー"
 
-#: ../thunar/thunar-action-manager.c:1818
+#: ../thunar/thunar-action-manager.c:1823
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "選択したファイルを \"貼り付け\" コマンドでコピーできるようにする"
 
-#: ../thunar/thunar-action-manager.c:1841
+#: ../thunar/thunar-action-manager.c:1846
 msgid "Paste the clipboard"
 msgstr "クリップボードを貼り付ける"
 
-#: ../thunar/thunar-action-manager.c:2082
+#: ../thunar/thunar-action-manager.c:2087
 msgid "Side Pane (Add Bookmark)"
 msgid_plural "Side Pane (Add Bookmarks)"
 msgstr[0] "サイドペイン (ブックマークを追加)"
 
-#: ../thunar/thunar-action-manager.c:2083
+#: ../thunar/thunar-action-manager.c:2088
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "選択したフォルダーを左のショートカットペインに追加します。"
 
-#: ../thunar/thunar-action-manager.c:2102
+#: ../thunar/thunar-action-manager.c:2107
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "デスクトップ (リンクを作成)"
 
-#: ../thunar/thunar-action-manager.c:2103
+#: ../thunar/thunar-action-manager.c:2108
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "選択したファイルのリンクをデスクトップに作成します。"
 
-#: ../thunar/thunar-action-manager.c:2124
-#: ../thunar/thunar-action-manager.c:2162
+#: ../thunar/thunar-action-manager.c:2129
+#: ../thunar/thunar-action-manager.c:2167
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "選択したファイルを \"%s\" に送信します。"
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-action-manager.c:2616 ../thunar/thunar-application.c:1991
+#: ../thunar/thunar-action-manager.c:2621 ../thunar/thunar-application.c:1991
 msgid "New Folder"
 msgstr "新しいフォルダー"
 
-#: ../thunar/thunar-action-manager.c:2620 ../thunar/thunar-application.c:1992
+#: ../thunar/thunar-action-manager.c:2625 ../thunar/thunar-application.c:1992
 msgid "Create New Folder"
 msgstr "新しいフォルダーを作成します。"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-action-manager.c:2672 ../thunar/thunar-application.c:2056
+#: ../thunar/thunar-action-manager.c:2677 ../thunar/thunar-application.c:2056
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "テンプレート \"%s\" からドキュメントを作成"
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-action-manager.c:2688
+#: ../thunar/thunar-action-manager.c:2693
 msgid "New Empty File"
 msgstr "新規ファイル"
 
-#: ../thunar/thunar-action-manager.c:2692
+#: ../thunar/thunar-action-manager.c:2697
 msgid "New Empty File..."
 msgstr "新規ファイル..."
 
-#: ../thunar/thunar-action-manager.c:2908
+#: ../thunar/thunar-action-manager.c:2913
 #, c-format
 msgid ""
 "No templates installed in\n"
 "\"%s\""
 msgstr "以下にテンプレートがインストールされていません\n”%s”"
 
-#: ../thunar/thunar-action-manager.c:2921
+#: ../thunar/thunar-action-manager.c:2926
 msgid "_Empty File"
 msgstr "空のファイル(_E)"
 
-#: ../thunar/thunar-action-manager.c:3061
+#: ../thunar/thunar-action-manager.c:3066
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "\"%s\" の取り出しに失敗しました"
 
-#: ../thunar/thunar-action-manager.c:3123
+#: ../thunar/thunar-action-manager.c:3128
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "\"%s\" のマウント解除に失敗しました"
 
-#: ../thunar/thunar-action-manager.c:3186
-#: ../thunar/thunar-action-manager.c:3257
+#: ../thunar/thunar-action-manager.c:3191
+#: ../thunar/thunar-action-manager.c:3262
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "%s を使用して選択したファイルを開きます。"
 
-#: ../thunar/thunar-action-manager.c:3256
+#: ../thunar/thunar-action-manager.c:3261
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "%s で開く(_O)"
 
 #. we can only show a generic "Open" action
-#: ../thunar/thunar-action-manager.c:3276
+#: ../thunar/thunar-action-manager.c:3281
 #, c-format
 msgid "_Open With Default Applications"
 msgstr "デフォルトのアプリケーションで開く(_O)"
 
-#: ../thunar/thunar-action-manager.c:3277
+#: ../thunar/thunar-action-manager.c:3282
 #, c-format
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "デフォルトのアプリケーションを使用して選択したファイルを開きます。"
 
-#: ../thunar/thunar-action-manager.c:3297
+#: ../thunar/thunar-action-manager.c:3302
 #: ../thunar/thunar-chooser-dialog.c:187
 msgid "Open With"
 msgstr "アプリケーションで開く"
@@ -2183,8 +2187,9 @@ msgid ""
 msgstr "このフォルダーのアクセス権が一貫するようにリセットします。ユーザーのみがこのフォルダーの内容を見ることができ、後でこのフォルダーに入る事ができるようになります。"
 
 #: ../thunar/thunar-preferences-dialog.c:268
-msgid "File Manager Preferences"
-msgstr "ファイルマネージャーの設定"
+#: ../thunar/thunar-settings.desktop.in.h:1
+msgid "Thunar Preferences"
+msgstr "Thunar の設定"
 
 #. Display
 #: ../thunar/thunar-preferences-dialog.c:296
@@ -4831,10 +4836,6 @@ msgstr "ホーム"
 #: ../thunar-bulk-rename.desktop.in.in.h:3
 msgid "bulk;renamer;renaming;thunar;files;folders;directory;directories;"
 msgstr "バルク;リネーマー;名前変更;thunar;ファイル;フォルダー;ディレクトリ;ディレクトリ;"
-
-#: ../thunar/thunar-settings.desktop.in.h:1
-msgid "File Manager Settings"
-msgstr "ファイルマネージャー設定"
 
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "Configure the Thunar file manager"
