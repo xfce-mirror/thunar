@@ -2642,6 +2642,9 @@ thunar_tree_view_model_file_count_callback (ExoJob  *job,
   GArray     *param_values;
   ThunarFile *file;
 
+  if (job == NULL)
+    return;
+
   param_values = thunar_simple_job_get_param_values (THUNAR_SIMPLE_JOB (job));
   file = THUNAR_FILE (g_value_get_object (&g_array_index (param_values, GValue, 0)));
 
