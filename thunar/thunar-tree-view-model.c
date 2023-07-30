@@ -342,7 +342,6 @@ struct _Node
   gint                 depth;
   gint                 n_children;
   gboolean             loaded;
-  gboolean             loading;
   gboolean             expanded;
 
   /* set of all the children gfiles;
@@ -2045,7 +2044,6 @@ thunar_tree_view_model_new_node (ThunarFile *file)
   _node->n_children = 0;
   /* if dir is NULL then no need to load; already loaded */
   _node->loaded = FALSE;
-  _node->loading = FALSE;
 
   _node->set = g_hash_table_new (g_direct_hash, g_direct_equal);
   _node->hidden_files = NULL;
@@ -2075,7 +2073,6 @@ thunar_tree_view_model_new_dummy_node (void)
   _node->n_children = 0;
   /* if dir is NULL then no need to load; already loaded */
   _node->loaded = FALSE;
-  _node->loading = FALSE;
 
   _node->set = NULL;
   _node->hidden_files = NULL;
@@ -2532,7 +2529,6 @@ _thunar_tree_view_model_dir_notify_loading (Node         *node,
   if (!thunar_folder_get_loading (dir) && !node->loaded)
     {
       node->loaded = TRUE;
-      node->loading = FALSE;
 
       if (thunar_tree_view_model_node_has_dummy_child (node))
         thunar_tree_view_model_node_drop_dummy_child (node);
@@ -2554,10 +2550,8 @@ thunar_tree_view_model_load_dir (Node *node)
   if (G_UNLIKELY (node->file == NULL || !thunar_file_is_directory (node->file)))
     return;
 
-  if (node->loaded || node->loading)
+  if (node->loaded)
     return;
-
-  node->loading = TRUE;
 
   /* we are increasing the counter twice to handle the case
    * when the folder has already been loaded & we are adding
