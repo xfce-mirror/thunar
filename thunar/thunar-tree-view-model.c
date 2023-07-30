@@ -2252,7 +2252,7 @@ thunar_tree_view_model_dir_remove_file (Node       *node,
   GSequenceIter *iter;
 
   iter = g_hash_table_lookup (node->set, file);
-  g_assert (iter != NULL);
+  _thunar_return_if_fail (iter != NULL);
 
   GTK_TREE_ITER_INIT (tree_iter, node->model->stamp, iter);
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (node->model), &tree_iter);
