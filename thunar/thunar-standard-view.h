@@ -148,6 +148,8 @@ struct _ThunarStandardViewClass
   void        (*queue_redraw)           (ThunarStandardView *standard_view);
 
   void        (*set_model)              (ThunarStandardView *standard_view);
+  void        (*block_selection)        (ThunarStandardView *standard_view);
+  void        (*unblock_selection)      (ThunarStandardView *standard_view);
 
   /* The name of the property in ThunarPreferences, that determines
    * the last (and default) zoom-level for the view classes (i.e. in
