@@ -4789,7 +4789,8 @@ thunar_standard_view_set_model (ThunarStandardView *standard_view)
       standard_view->model = NULL;
       if (G_LIKELY (standard_view->loading_binding != NULL))
         {
-          g_object_unref (G_OBJECT (standard_view->loading_binding));
+          /* this will free it as well */
+          g_binding_unbind (standard_view->loading_binding);
           standard_view->loading_binding = NULL;
         }
     }

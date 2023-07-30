@@ -1527,13 +1527,8 @@ thunar_list_model_notify_loading (ThunarFolder    *folder,
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
 
-  folder_loading = thunar_folder_get_loading (folder);
-
-  if (model->loading == folder_loading)
-    return;
-
-  model->loading = folder_loading;
-  g_object_notify_by_pspec (G_OBJECT (model), list_model_props[PROP_LOADING]);
+  if (!thunar_folder_get_loading (folder))
+    thunar_list_model_set_loading (model, FALSE);
 }
 
 
@@ -2110,7 +2105,6 @@ thunar_list_model_set_folder (ThunarStandardViewModel *model,
   if (folder != NULL)
     {
       g_object_ref (G_OBJECT (folder));
-      thunar_list_model_set_loading (store, TRUE);
 
       /* get the already loaded files or search for files matching the search_query
        * don't start searching if the query is empty, that would be a waste of resources
@@ -2118,6 +2112,7 @@ thunar_list_model_set_folder (ThunarStandardViewModel *model,
       if (search_query == NULL || strlen (g_strstrip (search_query)) == 0)
         {
           files = thunar_folder_get_files (folder);
+          thunar_list_model_set_loading (store, TRUE);
 
           if (store->search_terms != NULL)
             {
