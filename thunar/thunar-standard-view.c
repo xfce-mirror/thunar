@@ -1436,12 +1436,25 @@ thunar_standard_view_set_selected_files_component (ThunarComponent *component,
           /* place the cursor on the first selected path (must be first for GtkTreeView) */
           (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->set_cursor) (standard_view, first_path, FALSE);
 
+          /* if we don't block the selection changed then for each new selection,
+           * selection_changed handler will be called. selection_changed handler
+           * runs in O(n) time where it iterates over all the n selected paths.
+           * Since we select each file one by one, we will have a worst case
+           * time complexity ~ O(n^2); but instead if we call the handler after
+           * all the necessary files have been selected then time comp = O(n) */
+          (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->block_selection) (standard_view);
+
           /* select the given tree paths paths */
           for (first_path = paths->data, lp = paths; lp != NULL; lp = lp->next)
             {
               /* select the path */
               (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->select_path) (standard_view, lp->data);
             }
+
+          (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unblock_selection) (standard_view);
+
+          /* call the selection_changed call since we had previously blocked selection */
+          thunar_standard_view_selection_changed (standard_view);
 
           /* scroll to the first path (previously determined) */
           (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->scroll_to_path) (standard_view, first_path, FALSE, 0.0f, 0.0f);
