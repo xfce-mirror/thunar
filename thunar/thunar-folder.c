@@ -588,12 +588,12 @@ thunar_folder_finished (ExoJob       *job,
       thunar_g_list_free_full (files);
     }
 
+  /* drop all mappings for new_files list too */
+  g_hash_table_remove_all (folder->new_files_map);
+
   /* drop the temporary new_files list */
   thunar_g_list_free_full (folder->new_files);
   folder->new_files = NULL;
-
-  /* drop all mappings for new_files list too */
-  g_hash_table_remove_all (folder->new_files_map);
 
   /* schedule a reload of the file information of all files if requested */
   if (folder->reload_info)
@@ -1076,7 +1076,8 @@ thunar_folder_reload (ThunarFolder *folder,
       folder->job = NULL;
     }
 
-  /* reset the new_files list */
+  /* reset the new_files list & new_files_map hash table */
+  g_hash_table_remove_all (folder->new_files_map);
   thunar_g_list_free_full (folder->new_files);
   folder->new_files = NULL;
 
