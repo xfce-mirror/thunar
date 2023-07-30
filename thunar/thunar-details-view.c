@@ -130,6 +130,8 @@ static gboolean     thunar_details_view_toggle_expandable_folders(ThunarDetailsV
 static void         thunar_details_view_finished_thumbnailing   (ThunarThumbnailer      *thumbnailer,
                                                                  guint                   request,
                                                                  ThunarDetailsView      *view);
+static void         thunar_details_view_block_selection_changed (ThunarStandardView *standard_view);
+static void         thunar_details_view_unblock_selection_changed (ThunarStandardView *standard_view);
 
 
 
@@ -216,6 +218,8 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
   thunarstandard_view_class->disconnect_accelerators = thunar_details_view_disconnect_accelerators;
   thunarstandard_view_class->queue_redraw = thunar_details_view_queue_redraw;
   thunarstandard_view_class->zoom_level_property_name = "last-details-view-zoom-level";
+  thunarstandard_view_class->block_selection = thunar_details_view_block_selection_changed;
+  thunarstandard_view_class->unblock_selection = thunar_details_view_unblock_selection_changed;
 
   xfce_gtk_translate_action_entries (thunar_details_view_action_entries, G_N_ELEMENTS (thunar_details_view_action_entries));
 
@@ -1658,4 +1662,32 @@ thunar_details_view_finished_thumbnailing (ThunarThumbnailer *thumbnailer,
       view->thumbnail_request = 0;
       thunar_details_view_queue_redraw (THUNAR_STANDARD_VIEW (view));
     }
+}
+
+
+
+static void
+thunar_details_view_block_selection_changed (ThunarStandardView *view)
+{
+  ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (view);
+  GtkTreeSelection  *selection;
+
+  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (details_view->tree_view));
+  g_signal_handlers_block_by_func (G_OBJECT (selection), thunar_standard_view_selection_changed, view);
+}
+
+
+
+static void
+thunar_details_view_unblock_selection_changed (ThunarStandardView *view)
+{
+  ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (view);
+  GtkTreeSelection  *selection;
+
+  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (details_view->tree_view));
+  g_signal_handlers_unblock_by_func (G_OBJECT (selection), thunar_standard_view_selection_changed, view);
 }
