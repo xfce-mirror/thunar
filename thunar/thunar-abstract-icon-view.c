@@ -81,6 +81,8 @@ static void         thunar_abstract_icon_view_item_activated          (ExoIconVi
                                                                        ThunarAbstractIconView       *abstract_icon_view);
 static void         thunar_abstract_icon_view_zoom_level_changed      (ThunarAbstractIconView       *abstract_icon_view);
 static void         thunar_abstract_icon_view_queue_redraw            (ThunarStandardView           *standard_view);
+static void         thunar_abstract_icon_view_block_selection_changed (ThunarStandardView *standard_view);
+static void         thunar_abstract_icon_view_unblock_selection_changed (ThunarStandardView *standard_view);
 
 
 
@@ -124,6 +126,8 @@ thunar_abstract_icon_view_class_init (ThunarAbstractIconViewClass *klass)
   thunarstandard_view_class->get_visible_range = thunar_abstract_icon_view_get_visible_range;
   thunarstandard_view_class->highlight_path = thunar_abstract_icon_view_highlight_path;
   thunarstandard_view_class->queue_redraw = thunar_abstract_icon_view_queue_redraw;
+  thunarstandard_view_class->block_selection = thunar_abstract_icon_view_block_selection_changed;
+  thunarstandard_view_class->unblock_selection = thunar_abstract_icon_view_unblock_selection_changed;
 
   /**
    * ThunarAbstractIconView:column-spacing:
@@ -678,4 +682,26 @@ thunar_abstract_icon_view_queue_redraw (ThunarStandardView *standard_view)
 {
   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
   gtk_widget_queue_draw (gtk_bin_get_child (GTK_BIN (standard_view)));
+}
+
+
+
+static void
+thunar_abstract_icon_view_block_selection_changed (ThunarStandardView *view)
+{
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (view));
+
+  g_signal_handlers_block_by_func (G_OBJECT (gtk_bin_get_child (GTK_BIN (view))),
+                                   thunar_standard_view_selection_changed, view);
+}
+
+
+
+static void
+thunar_abstract_icon_view_unblock_selection_changed (ThunarStandardView *view)
+{
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (view));
+
+  g_signal_handlers_unblock_by_func (G_OBJECT (gtk_bin_get_child (GTK_BIN (view))),
+                                     thunar_standard_view_selection_changed, view);
 }
