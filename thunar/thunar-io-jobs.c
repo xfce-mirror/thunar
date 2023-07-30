@@ -41,6 +41,8 @@
 #include <thunar/thunar-simple-job.h>
 #include <thunar/thunar-thumbnail-cache.h>
 #include <thunar/thunar-transfer-job.h>
+#include <thunar/thunar-preferences.h>
+#include <thunar/thunar-gobject-extensions.h>
 
 
 
@@ -1499,4 +1501,180 @@ thunar_io_jobs_count_files (ThunarFile *file)
 
   return thunar_simple_job_new (_thunar_io_jobs_count, 1,
                                 THUNAR_TYPE_FILE, file);
+}
+
+
+
+static void
+_thunar_search_folder (ThunarStandardViewModel           *model,
+                       ThunarJob                         *job,
+                       gchar                             *uri,
+                       gchar                            **search_query_c_terms,
+                       enum ThunarStandardViewModelSearch search_type,
+                       gboolean                           show_hidden)
+{
+  GCancellable    *cancellable;
+  GFileEnumerator *enumerator;
+  GFile           *directory;
+  GList           *files_found = NULL; /* contains the matching files in this folder only */
+  const gchar *namespace;
+  const gchar *display_name;
+  gchar       *display_name_c; /* converted to ignore case */
+
+  cancellable = exo_job_get_cancellable (EXO_JOB (job));
+  directory = g_file_new_for_uri (uri);
+  namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE ","
+              G_FILE_ATTRIBUTE_STANDARD_TARGET_URI ","
+              G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
+              G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP ","
+              G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN ","
+              G_FILE_ATTRIBUTE_STANDARD_NAME ", recent::*";
+
+  /* The directory enumerator MUST NOT follow symlinks itself, meaning that any symlinks that
+   * g_file_enumerator_next_file() emits are the actual symlink entries. This prevents one
+   * possible source of infinitely deep recursion.
+   *
+   * There is otherwise no special handling of entries in the folder which are symlinks,
+   * which allows them to appear in the search results. */
+  enumerator = g_file_enumerate_children (directory, namespace, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, cancellable, NULL);
+  if (enumerator == NULL)
+    return;
+
+  /* go through every file in the folder and check if it matches */
+  while (exo_job_is_cancelled (EXO_JOB (job)) == FALSE)
+    {
+      GFile     *file;
+      GFileInfo *info;
+      GFileType  type;
+
+      /* get GFile and GFileInfo */
+      info = g_file_enumerator_next_file (enumerator, cancellable, NULL);
+      if (G_UNLIKELY (info == NULL))
+        break;
+
+      if (g_file_has_uri_scheme (directory, "recent"))
+        {
+          file = g_file_new_for_uri (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI));
+          g_object_unref (info);
+          info = g_file_query_info (file, namespace, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, cancellable, NULL);
+          if (G_UNLIKELY (info == NULL))
+            break;
+        }
+      else
+        file = g_file_get_child (directory, g_file_info_get_name (info));
+
+      /* respect last-show-hidden */
+      if (show_hidden == FALSE)
+        {
+          /* same logic as thunar_file_is_hidden() */
+          if (g_file_info_get_attribute_boolean (info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN)
+              || g_file_info_get_attribute_boolean (info, G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP))
+            {
+              g_object_unref (file);
+              g_object_unref (info);
+              continue;
+            }
+        }
+
+      type = g_file_info_get_file_type (info);
+
+      /* handle directories */
+      if (type == G_FILE_TYPE_DIRECTORY && search_type == THUNAR_STANDARD_VIEW_MODEL_SEARCH_RECURSIVE)
+        {
+          _thunar_search_folder (model, job, g_file_get_uri (file), search_query_c_terms, search_type, show_hidden);
+        }
+
+      /* prepare entry display name */
+      display_name = g_file_info_get_display_name (info);
+      display_name_c = thunar_g_utf8_normalize_for_search (display_name, TRUE, TRUE);
+
+      /* search for all substrings */
+      if (thunar_util_search_terms_match (search_query_c_terms, display_name_c))
+        files_found = g_list_prepend (files_found, thunar_file_get (file, NULL));
+
+      /* free memory */
+      g_free (display_name_c);
+      g_object_unref (file);
+      g_object_unref (info);
+    }
+
+  g_object_unref (enumerator);
+  g_object_unref (directory);
+
+  if (exo_job_is_cancelled (EXO_JOB (job)))
+    return;
+
+  thunar_standard_view_model_add_search_files (model, files_found);
+}
+
+
+
+static gboolean
+_thunar_job_search_directory (ThunarJob *job,
+                              GArray    *param_values,
+                              GError   **error)
+{
+  ThunarStandardViewModel           *model;
+  ThunarFile                        *directory;
+  const char                        *search_query_c;
+  gchar                            **search_query_c_terms;
+  gboolean                           is_source_device_local;
+  ThunarRecursiveSearchMode          mode;
+  gboolean                           show_hidden;
+  enum ThunarStandardViewModelSearch search_type;
+  gchar                             *directory_uri;
+
+  search_type = THUNAR_STANDARD_VIEW_MODEL_SEARCH_NON_RECURSIVE;
+
+  if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
+    return FALSE;
+
+  model = g_value_get_object (&g_array_index (param_values, GValue, 0));
+  search_query_c = g_value_get_string (&g_array_index (param_values, GValue, 1));
+  directory = g_value_get_object (&g_array_index (param_values, GValue, 2));
+  mode = g_value_get_enum (&g_array_index (param_values, GValue, 3));
+  show_hidden = g_value_get_boolean (&g_array_index (param_values, GValue, 4));
+
+  search_query_c_terms = thunar_util_split_search_query (search_query_c, error);
+  if (search_query_c_terms == NULL)
+    return FALSE;
+
+  is_source_device_local = thunar_g_file_is_on_local_device (thunar_file_get_file (directory));
+  if (mode == THUNAR_RECURSIVE_SEARCH_ALWAYS || (mode == THUNAR_RECURSIVE_SEARCH_LOCAL && is_source_device_local))
+    search_type = THUNAR_STANDARD_VIEW_MODEL_SEARCH_RECURSIVE;
+
+  directory_uri = thunar_file_dup_uri (directory);
+
+  _thunar_search_folder (model, job, directory_uri, search_query_c_terms, search_type, show_hidden);
+
+  g_free (directory_uri);
+  g_strfreev (search_query_c_terms);
+
+  return TRUE;
+}
+
+
+
+ThunarJob *
+thunar_io_jobs_search_directory (ThunarStandardViewModel *model,
+                                 const gchar             *search_query,
+                                 ThunarFile              *directory)
+{
+  ThunarPreferences        *preferences;
+  ThunarRecursiveSearchMode mode;
+  gboolean                  show_hidden;
+
+  preferences = thunar_preferences_get ();
+
+  /* grab a reference of preferences determine the current recursive search mode */
+  g_object_get (G_OBJECT (preferences), "misc-recursive-search", &mode, NULL);
+  g_object_get (G_OBJECT (preferences), "last-show-hidden", &show_hidden, NULL);
+
+  g_object_unref (preferences);
+  return thunar_simple_job_new (_thunar_job_search_directory, 5,
+                                THUNAR_TYPE_STANDARD_VIEW_MODEL, model,
+                                G_TYPE_STRING, search_query,
+                                THUNAR_TYPE_FILE, directory,
+                                G_TYPE_ENUM, mode,
+                                G_TYPE_BOOLEAN, show_hidden);
 }
