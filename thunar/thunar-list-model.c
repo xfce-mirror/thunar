@@ -1522,8 +1522,6 @@ thunar_list_model_notify_loading (ThunarFolder    *folder,
                                   GParamSpec      *pspec,
                                   ThunarListModel *model)
 {
-  gboolean folder_loading;
-
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
 
@@ -2423,7 +2421,12 @@ thunar_list_model_set_loading (ThunarListModel *store,
                                gboolean         loading)
 {
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
+
+  if (store->loading == loading)
+    return;
+
   store->loading = loading;
+
   g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_LOADING]);
 }
 

@@ -262,8 +262,8 @@ static void              thunar_tree_view_model_node_destroy (Node *node);
 static void              thunar_tree_view_model_file_changed (ThunarFileMonitor   *monitor,
                                                               ThunarFile          *file,
                                                               ThunarTreeViewModel *model);
-static void              thunar_tree_view_model_inc_loading (ThunarTreeViewModel *model);
-static void              thunar_tree_view_model_dec_loading (ThunarTreeViewModel *model);
+static void              thunar_tree_view_model_set_loading (ThunarTreeViewModel *model,
+                                                             gboolean             loading);
 static gboolean          thunar_tree_view_model_update_search_files (ThunarTreeViewModel *model);
 static void              thunar_tree_view_model_add_search_files (ThunarStandardViewModel *model,
                                                                   GList                   *files);
@@ -2534,7 +2534,7 @@ _thunar_tree_view_model_dir_notify_loading (Node         *node,
         thunar_tree_view_model_node_drop_dummy_child (node);
 
       /* signal model that this dir is done loading */
-      thunar_tree_view_model_dec_loading (node->model);
+      thunar_tree_view_model_set_loading (node->model, FALSE);
     }
 }
 
@@ -2553,12 +2553,7 @@ thunar_tree_view_model_load_dir (Node *node)
   if (node->loaded)
     return;
 
-  /* we are increasing the counter twice to handle the case
-   * when the folder has already been loaded & we are adding
-   * the children to the files */
-  /* TODO: should we instead add this inc_loading & dec_loading to files-added & files-removed signal? */
-  thunar_tree_view_model_inc_loading (node->model);
-  thunar_tree_view_model_inc_loading (node->model);
+  thunar_tree_view_model_set_loading (node->model, TRUE);
 
   node->dir = thunar_folder_get_for_file (node->file);
   g_assert (node->dir != NULL);
@@ -2575,8 +2570,6 @@ thunar_tree_view_model_load_dir (Node *node)
 
   if (!thunar_folder_get_loading (node->dir))
     g_object_notify (G_OBJECT (node->dir), "loading");
-
-  thunar_tree_view_model_dec_loading (node->model);
 }
 
 
@@ -2782,30 +2775,17 @@ thunar_tree_view_model_file_changed (ThunarFileMonitor   *monitor,
 
 
 static void
-thunar_tree_view_model_inc_loading (ThunarTreeViewModel *model)
+thunar_tree_view_model_set_loading (ThunarTreeViewModel *model,
+                                    gboolean             loading)
 {
-  g_assert (model->loading >= 0);
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
 
-  model->loading++;
-
-  if (model->loading == 1)
-    g_object_notify (G_OBJECT (model), "loading");
-}
-
-
-
-static void
-thunar_tree_view_model_dec_loading (ThunarTreeViewModel *model)
-{
-  g_assert (model->loading >= 0);
-
-  if (model->loading == 0)
+  if (model->loading == loading)
     return;
 
-  model->loading--;
+  model->loading = loading;
 
-  if (model->loading == 0)
-    g_object_notify (G_OBJECT (model), "loading");
+  g_object_notify (G_OBJECT (model), "loading");
 }
 
 
