@@ -39,7 +39,7 @@ GType                    thunar_tree_view_model_get_type               (void) G_
 ThunarStandardViewModel *thunar_tree_view_model_new (void);
 void                     thunar_tree_view_model_load_subdir (ThunarTreeViewModel *model,
                                                              GtkTreeIter         *iter);
-void                     thunar_tree_view_model_schedule_cleanup (ThunarTreeViewModel *model,
+void                     thunar_tree_view_model_schedule_unload (ThunarTreeViewModel *model,
                                                                   GtkTreeIter         *iter);
 G_END_DECLS;
 

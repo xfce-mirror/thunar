@@ -1256,7 +1256,7 @@ thunar_details_view_row_collapsed (GtkTreeView       *tree_view,
 {
   /* schedule a cleanup with a delay. If the row is expanded before
    * the scheduled cleanup then the cleanup is cancelled. */
-  thunar_tree_view_model_schedule_cleanup (THUNAR_TREE_VIEW_MODEL (THUNAR_STANDARD_VIEW (view)->model), iter);
+  thunar_tree_view_model_schedule_unload (THUNAR_TREE_VIEW_MODEL (THUNAR_STANDARD_VIEW (view)->model), iter);
 }
 
 
