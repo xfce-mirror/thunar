@@ -130,6 +130,8 @@ static gboolean     thunar_details_view_toggle_expandable_folders(ThunarDetailsV
 static void         thunar_details_view_finished_thumbnailing   (ThunarThumbnailer      *thumbnailer,
                                                                  guint                   request,
                                                                  ThunarDetailsView      *view);
+static void         thunar_details_view_block_selection_changed (ThunarStandardView *standard_view);
+static void         thunar_details_view_unblock_selection_changed (ThunarStandardView *standard_view);
 
 
 
@@ -216,6 +218,8 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
   thunarstandard_view_class->disconnect_accelerators = thunar_details_view_disconnect_accelerators;
   thunarstandard_view_class->queue_redraw = thunar_details_view_queue_redraw;
   thunarstandard_view_class->zoom_level_property_name = "last-details-view-zoom-level";
+  thunarstandard_view_class->block_selection = thunar_details_view_block_selection_changed;
+  thunarstandard_view_class->unblock_selection = thunar_details_view_unblock_selection_changed;
 
   xfce_gtk_translate_action_entries (thunar_details_view_action_entries, G_N_ELEMENTS (thunar_details_view_action_entries));
 
@@ -662,6 +666,10 @@ thunar_details_view_scroll_to_path (ThunarStandardView *standard_view,
   GtkTreeViewColumn *column;
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view));
+
+  /* sometimes StandardView can trigger this before the model has been set in the view */
+  if (gtk_tree_view_get_model (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view)))) == NULL)
+    return;
 
   /* tell the tree view to scroll to the given row */
   column = gtk_tree_view_get_column (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), 0);
@@ -1199,6 +1207,8 @@ thunar_details_view_row_expanded (GtkTreeView       *tree_view,
   GList        *files = NULL;
   gboolean      has_next;
 
+  thunar_tree_view_model_load_subdir (THUNAR_TREE_VIEW_MODEL (model), parent);
+
   /* do nothing if we are not supposed to show thumbnails at all */
   if (!thunar_icon_factory_get_show_thumbnail (THUNAR_STANDARD_VIEW (view)->icon_factory,
                                                thunar_navigator_get_current_directory (THUNAR_NAVIGATOR(view))))
@@ -1244,8 +1254,9 @@ thunar_details_view_row_collapsed (GtkTreeView       *tree_view,
                                    GtkTreePath       *path,
                                    ThunarDetailsView *view)
 {
-  /* schedule a cleanup of the tree model; i.e remove nodes that are not being used (ref == 0) */
-  thunar_tree_view_model_cleanup (THUNAR_TREE_VIEW_MODEL (THUNAR_STANDARD_VIEW (view)->model));
+  /* schedule a cleanup with a delay. If the row is expanded before
+   * the scheduled cleanup then the cleanup is cancelled. */
+  thunar_tree_view_model_schedule_unload (THUNAR_TREE_VIEW_MODEL (THUNAR_STANDARD_VIEW (view)->model), iter);
 }
 
 
@@ -1651,4 +1662,32 @@ thunar_details_view_finished_thumbnailing (ThunarThumbnailer *thumbnailer,
       view->thumbnail_request = 0;
       thunar_details_view_queue_redraw (THUNAR_STANDARD_VIEW (view));
     }
+}
+
+
+
+static void
+thunar_details_view_block_selection_changed (ThunarStandardView *view)
+{
+  ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (view);
+  GtkTreeSelection  *selection;
+
+  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (details_view->tree_view));
+  g_signal_handlers_block_by_func (G_OBJECT (selection), thunar_standard_view_selection_changed, view);
+}
+
+
+
+static void
+thunar_details_view_unblock_selection_changed (ThunarStandardView *view)
+{
+  ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (view);
+  GtkTreeSelection  *selection;
+
+  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (details_view->tree_view));
+  g_signal_handlers_unblock_by_func (G_OBJECT (selection), thunar_standard_view_selection_changed, view);
 }
