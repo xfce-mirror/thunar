@@ -24,6 +24,7 @@
 
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-file.h>
+#include <thunar/thunar-standard-view-model.h>
 
 #define THUNAR_THREADS_ENTER \
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS \
@@ -94,6 +95,11 @@ void        thunar_util_clip_view_background     (GtkCellRenderer      *cell,
                                                   const GdkRectangle   *background_area,
                                                   GtkWidget            *widget,
                                                   GtkCellRendererState  flags);
+gchar     **thunar_util_split_search_query       (const gchar          *search_query_normalized,
+                                                  GError              **error);
+gboolean    thunar_util_search_terms_match       (gchar               **terms,
+                                                  gchar                *str);
+
 
 G_END_DECLS;
 
