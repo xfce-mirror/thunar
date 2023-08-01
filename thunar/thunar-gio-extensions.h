@@ -82,6 +82,7 @@ gboolean     thunar_g_file_compare_checksum         (GFile                *file_
                                                      GFile                *file_b,
                                                      GCancellable         *cancellable,
                                                      GError              **error);
+gboolean     thunar_g_file_is_empty                 (GFile                *file);
 
 /**
  * THUNAR_TYPE_G_FILE_LIST:
