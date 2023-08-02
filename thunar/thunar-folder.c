@@ -22,7 +22,6 @@
 #include "config.h"
 #endif
 
-#include "thunar/thunar-file-monitor.h"
 #include "thunar/thunar-folder.h"
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-io-jobs.h"
@@ -48,6 +47,8 @@ enum
   ERROR,
   FILES_ADDED,
   FILES_REMOVED,
+  FILE_CHANGED,
+  THUMBNAILS_UPDATED,
   LAST_SIGNAL,
 };
 
@@ -72,12 +73,14 @@ static gboolean       thunar_folder_files_ready           (ThunarJob            
                                                            ThunarFolder          *folder);
 static void           thunar_folder_finished              (ExoJob                *job,
                                                            ThunarFolder          *folder);
-static void           thunar_folder_file_changed          (ThunarFileMonitor     *file_monitor,
-                                                           ThunarFile            *file,
+static void           thunar_folder_changed               (ThunarFile            *file,
                                                            ThunarFolder          *folder);
-static void           thunar_folder_file_destroyed        (ThunarFileMonitor     *file_monitor,
-                                                           ThunarFile            *file,
+static void           thunar_folder_destroyed             (ThunarFile            *file,
                                                            ThunarFolder          *folder);
+static void           thunar_folder_file_changed          (ThunarFolder          *folder,
+                                                           ThunarFile            *file);
+static void           thunar_folder_file_destroyed        (ThunarFolder          *folder,
+                                                           ThunarFile            *file);
 static void           thunar_folder_monitor               (GFileMonitor          *monitor,
                                                            GFile                 *file,
                                                            GFile                 *other_file,
@@ -85,6 +88,13 @@ static void           thunar_folder_monitor               (GFileMonitor         
                                                            gpointer               user_data);
 static void           thunar_folder_load_content_types    (ThunarFolder          *folder,
                                                            GList                 *files);
+static void           thunar_folder_add_file              (ThunarFolder          *folder,
+                                                           ThunarFile            *file);
+static void           thunar_folder_remove_file           (ThunarFolder          *folder,
+                                                           ThunarFile            *file);
+static void           thunar_folder_thumbnail_updated     (ThunarFolder          *folder,
+                                                          ThunarThumbnailSize     size,
+                                                           ThunarFile            *file);  
 
 
 
@@ -100,6 +110,10 @@ struct _ThunarFolderClass
                          GList        *files);
   void (*files_removed) (ThunarFolder *folder,
                          GList        *files);
+  void (*file_changed)  (ThunarFolder *folder,
+                         ThunarFile   *file);
+  void (*thumbnails_updated)  (ThunarFolder        *folder,
+                               GList               *files);
 };
 
 struct _ThunarFolder
@@ -119,9 +133,13 @@ struct _ThunarFolder
 
   guint              in_destruction : 1;
 
-  ThunarFileMonitor *file_monitor;
-
   GFileMonitor      *monitor;
+
+  /* List of ThunarFiles for which the thumbnail got updated */
+  GList             *thumbnail_updated_files;
+
+  /* timeout source ID, used for collecting files for which to update the thumbnail before sending the 'thumbnail-updated' signal */
+  guint              thumbnail_updated_timeout_source_id;
 };
 
 
@@ -262,6 +280,35 @@ thunar_folder_class_init (ThunarFolderClass *klass)
                   NULL, NULL,
                   g_cclosure_marshal_VOID__POINTER,
                   G_TYPE_NONE, 1, G_TYPE_POINTER);
+
+  /**
+   * ThunarFolder::file-changed:
+   *
+   * Emitted by the #ThunarFolder whenever a  file in the folder has changed
+   **/
+  folder_signals[FILE_CHANGED] =
+    g_signal_new (I_("file-changed"),
+                  G_TYPE_FROM_CLASS (gobject_class),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (ThunarFolderClass, file_changed),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__POINTER,
+                  G_TYPE_NONE, 1, G_TYPE_POINTER);
+
+  /**
+   * ThunarFolder::thumbnails-updated:
+   *
+   * This signal is emitted on #ThunarFolder whenever for the currently
+   * existing #ThunarFile thumbnail status changes.
+   **/
+  folder_signals[THUMBNAILS_UPDATED] =
+    g_signal_new (I_("thumbnails-updated"),
+                  G_TYPE_FROM_CLASS (gobject_class),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (ThunarFolderClass, thumbnails_updated),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__POINTER,
+                  G_TYPE_NONE, 1, G_TYPE_POINTER);
 }
 
 
@@ -274,13 +321,9 @@ thunar_folder_init (ThunarFolder *folder)
   folder->files_map = g_hash_table_new_full (g_direct_hash, NULL, g_object_unref, NULL);
   folder->new_files_map = g_hash_table_new_full (g_direct_hash, NULL, g_object_unref, NULL);
 
-  /* connect to the ThunarFileMonitor instance */
-  folder->file_monitor = thunar_file_monitor_get_default ();
-  g_signal_connect (G_OBJECT (folder->file_monitor), "file-changed", G_CALLBACK (thunar_folder_file_changed), folder);
-  g_signal_connect (G_OBJECT (folder->file_monitor), "file-destroyed", G_CALLBACK (thunar_folder_file_destroyed), folder);
-
-  folder->monitor = NULL;
   folder->reload_info = FALSE;
+  folder->thumbnail_updated_files = NULL;
+  folder->thumbnail_updated_timeout_source_id = 0;
 }
 
 
@@ -305,22 +348,32 @@ thunar_folder_dispose (GObject *object)
 static void
 thunar_folder_finalize (GObject *object)
 {
-  ThunarFolder *folder = THUNAR_FOLDER (object);
+  ThunarFolder   *folder = THUNAR_FOLDER (object);
+  GHashTableIter  iter;
+  gpointer        key, value;
+
+  /* stop any running tumbnailing timeout source */
+  if (folder->thumbnail_updated_timeout_source_id != 0)
+    g_source_remove (folder->thumbnail_updated_timeout_source_id);
+
+  if (folder->monitor != NULL)
+    g_signal_handlers_disconnect_by_data (folder->monitor, folder);
 
   if (folder->corresponding_file)
-    thunar_file_unwatch (folder->corresponding_file);
-
-  /* disconnect from the ThunarFileMonitor instance */
-  g_signal_handlers_disconnect_by_data (folder->file_monitor, folder);
-  g_object_unref (folder->file_monitor);
-
-  /* disconnect from the file alteration monitor */
-  if (G_LIKELY (folder->monitor != NULL))
     {
-      g_signal_handlers_disconnect_by_data (folder->monitor, folder);
-      g_file_monitor_cancel (folder->monitor);
-      g_object_unref (folder->monitor);
+      thunar_file_unwatch (folder->corresponding_file);
+
+      /* disconnect from the folder */
+      g_signal_handlers_disconnect_by_data (folder->corresponding_file, folder);
     }
+
+  /* disconnect ThunarFile signals from files inside the folder */
+  g_hash_table_iter_init (&iter, folder->files_map);
+  while (g_hash_table_iter_next (&iter, &key, &value))
+    g_signal_handlers_disconnect_by_data (value, folder);
+
+  /* release files to thumbnail if any */
+  thunar_g_list_free_full (folder->thumbnail_updated_files);
 
   /* cancel the pending job (if any) */
   if (G_UNLIKELY (folder->job != NULL))
@@ -386,8 +439,13 @@ thunar_folder_set_property (GObject      *object,
       case PROP_CORRESPONDING_FILE:
         folder->corresponding_file = g_value_dup_object (value);
         if (folder->corresponding_file)
-          thunar_file_watch (folder->corresponding_file);
-        break;
+          {
+            thunar_file_watch (folder->corresponding_file);
+            g_signal_connect (G_OBJECT (folder->corresponding_file), "changed", G_CALLBACK (thunar_folder_changed), folder);
+            g_signal_connect (G_OBJECT (folder->corresponding_file), "destroy", G_CALLBACK (thunar_folder_destroyed), folder);
+          }
+
+      break;
 
       case PROP_LOADING:
         _thunar_assert_not_reached ();
@@ -397,6 +455,36 @@ thunar_folder_set_property (GObject      *object,
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
         break;
     }
+}
+
+
+
+static void
+thunar_folder_add_file (ThunarFolder *folder,
+                        ThunarFile   *file)
+{
+  /* add the ThunarFile) to the hashmap and keep a reference to it */
+  g_hash_table_add (folder->files_map, g_object_ref (file));
+
+  /* and connect relevant signals */
+  g_signal_connect_swapped (G_OBJECT (file), "changed", G_CALLBACK (thunar_folder_file_changed), folder);
+  g_signal_connect_swapped (G_OBJECT (file), "destroy", G_CALLBACK (thunar_folder_file_destroyed), folder);
+  g_signal_connect_swapped (G_OBJECT (file), "thumbnail-updated", G_CALLBACK (thunar_folder_thumbnail_updated), folder);
+
+  /* Do not enable monitoring for the ThunarFile .. we already have monitoring for the ThunarFolder) */
+}
+
+
+
+static void
+thunar_folder_remove_file (ThunarFolder *folder,
+                           ThunarFile   *file)
+{
+  /* disconnect all signals for the file */
+  g_signal_handlers_disconnect_by_data (G_OBJECT (file), folder);
+
+  /* remove the ThunarFile from our map (the destroy method of the hashmap will to the 'g_object_unref')*/
+  g_hash_table_remove (folder->files_map, file);
 }
 
 
@@ -495,7 +583,7 @@ thunar_folder_finished (ExoJob       *job,
       /* preparing a list of newly added files to emit as "files-added" */
       files = g_list_prepend (files, key);
 
-      g_hash_table_add (folder->files_map, g_object_ref (key));
+      thunar_folder_add_file (folder, key);
     }
 
   /* check if any files were added */
@@ -529,7 +617,7 @@ thunar_folder_finished (ExoJob       *job,
   /* we can't remove while iterating over the hash table
    * thus removing in a separate loop */
   for (GList *lp = files; lp != NULL; lp = lp->next)
-    g_hash_table_remove (folder->files_map, lp->data);
+    thunar_folder_remove_file (folder, lp->data);
 
   /* check if any files were removed */
   if (G_UNLIKELY (files != NULL))
@@ -557,13 +645,13 @@ thunar_folder_finished (ExoJob       *job,
         }
 
       /* block 'file-changed' signals of the folder itself until reload is done, in order to prevent recursion */
-      g_signal_handlers_block_by_func (G_OBJECT (folder->file_monitor), G_CALLBACK (thunar_folder_file_changed), folder);
+      g_signal_handlers_block_by_func (G_OBJECT (folder->corresponding_file), G_CALLBACK (thunar_folder_changed), folder);
 
       /* reload folder itself */
       thunar_file_reload (folder->corresponding_file);
 
       /* listen to 'file-changed' signals of the folder itself again when reload is done */
-      g_signal_handlers_unblock_by_func (G_OBJECT (folder->file_monitor), G_CALLBACK (thunar_folder_file_changed), folder);
+      g_signal_handlers_unblock_by_func (G_OBJECT (folder->corresponding_file), G_CALLBACK (thunar_folder_changed), folder);
     }
 
   /* we did it, the folder is loaded */
@@ -579,36 +667,56 @@ thunar_folder_finished (ExoJob       *job,
 }
 
 
-
+/* The file representing the folder has changed */
 static void
-thunar_folder_file_changed (ThunarFileMonitor *file_monitor,
-                            ThunarFile        *file,
-                            ThunarFolder      *folder)
+thunar_folder_changed (ThunarFile        *file,
+                       ThunarFolder      *folder)
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
-  _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
 
-  /* check if the corresponding file changed... */
-  if (G_UNLIKELY (folder->corresponding_file == file))
-    {
-      /* ...and if so, reload the folder */
-      thunar_folder_reload (folder, FALSE);
-    }
+  /* reload the folder */
+  thunar_folder_reload (folder, FALSE);
+}
+
+
+/* The file representing the folder is in destruction */
+static void
+thunar_folder_destroyed (ThunarFile        *file,
+                         ThunarFolder      *folder)
+{
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
+
+  /* the folder is useless now */
+  if (!folder->in_destruction)
+    g_object_run_dispose (G_OBJECT (folder));
 }
 
 
 
 static void
-thunar_folder_file_destroyed (ThunarFileMonitor *file_monitor,
-                              ThunarFile        *file,
-                              ThunarFolder      *folder)
+thunar_folder_file_changed (ThunarFolder      *folder,
+                            ThunarFile        *file)
+{
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
+
+  /* emit a "file-changed" signal for the folder */
+  g_signal_emit (G_OBJECT (folder), folder_signals[FILE_CHANGED], 0, file);
+}
+
+
+
+/* One of the files inside the folder is in destruction */
+static void
+thunar_folder_file_destroyed (ThunarFolder      *folder,
+                              ThunarFile        *file)
 {
   GList    files;
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
-  _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
 
   /* check if the corresponding file was destroyed */
   if (G_UNLIKELY (folder->corresponding_file == file))
@@ -625,7 +733,7 @@ thunar_folder_file_destroyed (ThunarFileMonitor *file_monitor,
       g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, &files);
 
       /* remove the file from our list */
-      g_hash_table_remove (folder->files_map, file);
+      thunar_folder_remove_file (folder, file);
     }
 }
 
@@ -741,8 +849,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
       /* the file should not exist in file cache, so it's (re)loaded now */
       if (file != NULL)
         {
-          /* add a mapping of (gfile -> ThunarFile) to the hashmap */
-          g_hash_table_insert (folder->files_map, file, g_object_ref (file));
+          thunar_folder_add_file (folder, file);
 
           /* tell others about the new file */
           list.data = file;
@@ -805,15 +912,13 @@ thunar_folder_monitor (GFileMonitor     *monitor,
 
                   /* remove the old reference from the hash table before it becomes invalid;
                    * during thunar_file_replace_file call */
-                  g_hash_table_remove (folder->files_map, thunar_file_get (event_file, NULL));
+                  thunar_folder_remove_file (folder,  thunar_file_get (event_file, NULL));
 
                   /* replace GFile in ThunarFile for the renamed file */
                   thunar_file_replace_file (file, other_file);
 
                   /* insert new mapping of (gfile, ThunarFile) for the newly renamed file */
-                  g_hash_table_insert (folder->files_map, thunar_file_get (other_file, NULL), g_object_ref (file));
-
-
+                  thunar_folder_add_file (folder, file);
                 }
 
               /* reload the renamed file */
@@ -824,10 +929,15 @@ thunar_folder_monitor (GFileMonitor     *monitor,
                 }
             }
         }
-      /* This should handle G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT &
-       * G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED */
+      /* This should handle:
+       * - G_FILE_MONITOR_EVENT_CHANGED
+       * - G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT
+       * - G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED
+       */
       else
         {
+          thunar_folder_file_changed (folder, file_in_map);
+          //printf ("thunar_folder_monitor - changed: %s\n", g_file_get_basename (event_file));
 #if DEBUG_FILE_CHANGES
           thunar_file_infos_equal (file_in_map, event_file);
 #endif
@@ -1017,4 +1127,37 @@ thunar_folder_reload (ThunarFolder *folder,
 
   /* tell all consumers that we're loading */
   g_object_notify (G_OBJECT (folder), "loading");
+}
+
+
+
+static gboolean
+_thunar_folder_thumbnail_updated_timeout (gpointer data)
+{
+  ThunarFolder *folder = THUNAR_FOLDER (data);
+
+  g_signal_emit (G_OBJECT (folder), folder_signals[THUMBNAILS_UPDATED], 0, folder->thumbnail_updated_files);
+
+  thunar_g_list_free_full (folder->thumbnail_updated_files);
+  folder->thumbnail_updated_files = NULL;
+  folder->thumbnail_updated_timeout_source_id = 0;
+
+  return G_SOURCE_REMOVE;
+}
+
+
+
+static void
+thunar_folder_thumbnail_updated (ThunarFolder        *folder,
+                                 ThunarThumbnailSize  size,
+                                 ThunarFile          *file)
+{
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
+
+  folder->thumbnail_updated_files =
+    g_list_prepend (folder->thumbnail_updated_files, g_object_ref (file));
+
+  if (folder->thumbnail_updated_timeout_source_id == 0)
+    folder->thumbnail_updated_timeout_source_id = g_timeout_add (25, (GSourceFunc) _thunar_folder_thumbnail_updated_timeout, folder);
 }

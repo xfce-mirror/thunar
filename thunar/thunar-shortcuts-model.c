@@ -39,7 +39,6 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 
-#include "thunar/thunar-file-monitor.h"
 #include "thunar/thunar-file.h"
 #include "thunar/thunar-shortcuts-model.h"
 #include "thunar/thunar-device-monitor.h"
@@ -142,11 +141,9 @@ static void               thunar_shortcuts_model_device_removed     (ThunarDevic
 static void               thunar_shortcuts_model_device_changed     (ThunarDeviceMonitor       *device_monitor,
                                                                      ThunarDevice              *device,
                                                                      ThunarShortcutsModel      *model);
-static void               thunar_shortcuts_model_file_changed       (ThunarFileMonitor         *file_monitor,
-                                                                     ThunarFile                *file,
+static void               thunar_shortcuts_model_file_changed       (ThunarFile                *file,
                                                                      ThunarShortcutsModel      *model);
-static void               thunar_shortcuts_model_file_destroyed     (ThunarFileMonitor         *file_monitor,
-                                                                     ThunarFile                *file,
+static void               thunar_shortcuts_model_file_destroyed     (ThunarFile                *file,
                                                                      ThunarShortcutsModel      *model);
 static void               thunar_shortcut_free                      (ThunarShortcut            *shortcut,
                                                                      ThunarShortcutsModel      *model);
@@ -176,7 +173,6 @@ struct _ThunarShortcutsModel
   gchar               **hidden_bookmarks;
   gboolean              file_size_binary;
 
-  ThunarFileMonitor    *file_monitor;
   ThunarDeviceMonitor  *device_monitor;
 
   gint64                bookmarks_time;
@@ -303,11 +299,6 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
 
   /* add bookmarks */
   thunar_shortcuts_model_shortcut_places (model);
-
-  /* connect to the file monitor */
-  model->file_monitor = thunar_file_monitor_get_default ();
-  g_signal_connect (G_OBJECT (model->file_monitor), "file-changed", G_CALLBACK (thunar_shortcuts_model_file_changed), model);
-  g_signal_connect (G_OBJECT (model->file_monitor), "file-destroyed", G_CALLBACK (thunar_shortcuts_model_file_destroyed), model);
 }
 
 
@@ -315,6 +306,9 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
 static void
 thunar_shortcuts_model_finalize (GObject *object)
 {
+
+  GList                *lp;
+  ThunarShortcut       *shortcut;
   ThunarShortcutsModel *model = THUNAR_SHORTCUTS_MODEL (object);
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
@@ -327,6 +321,18 @@ thunar_shortcuts_model_finalize (GObject *object)
   if (model->bookmarks_idle_id != 0)
     g_source_remove (model->bookmarks_idle_id);
 
+  /* disable monitoring for the shortcuts */
+  for (lp = model->shortcuts; lp != NULL; lp=lp->next)
+    {
+      shortcut = THUNAR_SHORTCUT (lp->data);
+
+      if (shortcut->file != NULL)
+        {
+          thunar_file_unwatch (shortcut->file);
+          g_signal_handlers_disconnect_matched (shortcut->file, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, model);
+        }
+    }
+
   /* free all shortcuts */
   g_list_foreach (model->shortcuts, (GFunc) (void (*)(void)) thunar_shortcut_free, model);
   g_list_free (model->shortcuts);
@@ -336,11 +342,6 @@ thunar_shortcuts_model_finalize (GObject *object)
 
   /* free hidden list */
   g_strfreev (model->hidden_bookmarks);
-
-  /* disconnect from the file monitor */
-  g_signal_handlers_disconnect_by_func (model->file_monitor, thunar_shortcuts_model_file_changed, model);
-  g_signal_handlers_disconnect_by_func (model->file_monitor, thunar_shortcuts_model_file_destroyed, model);
-  g_object_unref (model->file_monitor);
 
   /* detach from the file monitor */
   if (model->bookmarks_monitor != NULL)
@@ -1248,9 +1249,12 @@ thunar_shortcuts_model_add_shortcut_with_path (ThunarShortcutsModel *model,
 
   if (G_LIKELY (shortcut->file != NULL))
     {
-      /* watch the trash for changes */
-      if (thunar_file_is_trash (shortcut->file))
-        thunar_file_watch (shortcut->file);
+      /* enable monitoring for the file */
+      thunar_file_watch (shortcut->file);
+
+      /* subscribe to relevant signals */
+      g_signal_connect (G_OBJECT (shortcut->file), "destroy", G_CALLBACK (thunar_shortcuts_model_file_destroyed), model);
+      g_signal_connect (G_OBJECT (shortcut->file), "changed", G_CALLBACK (thunar_shortcuts_model_file_changed), model);
     }
 
   if (path == NULL)
@@ -1299,6 +1303,13 @@ thunar_shortcuts_model_remove_shortcut (ThunarShortcutsModel *model,
   idx = g_list_index (model->shortcuts, shortcut);
   if (G_LIKELY (idx >= 0))
     {
+      if (shortcut->file != NULL)
+        {
+          /* disable monitoring for the file */
+          thunar_file_unwatch (shortcut->file);
+          g_signal_handlers_disconnect_by_data (shortcut->file, model);
+        }
+
       /* unlink the shortcut from the model */
       model->shortcuts = g_list_remove (model->shortcuts, shortcut);
 
@@ -1410,41 +1421,13 @@ static gboolean
 thunar_shortcuts_model_reload (gpointer data)
 {
   ThunarShortcutsModel *model = THUNAR_SHORTCUTS_MODEL (data);
-  ThunarShortcut       *shortcut;
-  GtkTreePath          *path;
   GList                *lp;
-  gint                  idx;
 
   _thunar_return_val_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model), FALSE);
 
   /* drop all existing user-defined shortcuts from the model */
-  for (idx = 0, lp = model->shortcuts; lp != NULL; )
-    {
-      /* grab the shortcut */
-      shortcut = THUNAR_SHORTCUT (lp->data);
-
-      /* advance to the next list item */
-      lp = g_list_next (lp);
-
-      /* drop the shortcut if it is user-defined */
-      if (shortcut->group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
-        {
-          /* unlink the shortcut from the model */
-          model->shortcuts = g_list_remove (model->shortcuts, shortcut);
-
-          /* tell everybody that we have lost a shortcut */
-          path = gtk_tree_path_new_from_indices (idx, -1);
-          gtk_tree_model_row_deleted (GTK_TREE_MODEL (model), path);
-          gtk_tree_path_free (path);
-
-          /* actually free the shortcut */
-          thunar_shortcut_free (shortcut, model);
-        }
-      else
-        {
-          ++idx;
-        }
-    }
+  for (lp = model->shortcuts; lp != NULL; lp = lp->next)
+    thunar_shortcuts_model_remove_shortcut (model, THUNAR_SHORTCUT (lp->data));
 
   /* load new bookmarks */
   return thunar_shortcuts_model_load (data);
@@ -1690,8 +1673,7 @@ thunar_shortcuts_model_device_changed (ThunarDeviceMonitor  *device_monitor,
 
 
 static void
-thunar_shortcuts_model_file_destroyed (ThunarFileMonitor      *file_monitor,
-                                       ThunarFile             *file,
+thunar_shortcuts_model_file_destroyed (ThunarFile             *file,
                                        ThunarShortcutsModel   *model)
 {
   GtkTreeIter     iter;
@@ -1706,6 +1688,10 @@ thunar_shortcuts_model_file_destroyed (ThunarFileMonitor      *file_monitor,
 
   if (G_LIKELY (lp != NULL))
     {
+      /* Disconnect from relevant signals */
+      thunar_file_unwatch (file);
+      g_signal_handlers_disconnect_matched (file, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, model);
+
       /* remove the thunar file from the list and set the g_file instead */
       GFile *g_file = thunar_file_get_file (file);
       THUNAR_SHORTCUT (lp->data)->file = NULL;
@@ -1728,8 +1714,7 @@ thunar_shortcuts_model_file_destroyed (ThunarFileMonitor      *file_monitor,
 
 
 static void
-thunar_shortcuts_model_file_changed (ThunarFileMonitor      *file_monitor,
-                                     ThunarFile             *file,
+thunar_shortcuts_model_file_changed (ThunarFile             *file,
                                      ThunarShortcutsModel   *model)
 {
   GtkTreeIter     iter;
@@ -1737,8 +1722,6 @@ thunar_shortcuts_model_file_changed (ThunarFileMonitor      *file_monitor,
   gint            idx;
   GtkTreePath    *path;
 
-  _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
-  _thunar_return_if_fail (model->file_monitor == file_monitor);
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
@@ -1777,13 +1760,7 @@ thunar_shortcut_free (ThunarShortcut       *shortcut,
                       ThunarShortcutsModel *model)
 {
   if (G_LIKELY (shortcut->file != NULL))
-    {
-      /* drop the file watch on trash */
-      if (thunar_file_is_trash (shortcut->file))
-        thunar_file_unwatch (shortcut->file);
-
-      g_object_unref (shortcut->file);
-    }
+    g_object_unref (shortcut->file);
 
   if (G_LIKELY (shortcut->device != NULL))
     g_object_unref (shortcut->device);
