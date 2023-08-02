@@ -468,7 +468,6 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
         }
       else /* if (size_label->type == THUNAR_SIZE_LABEL_CONTENT) */
         {
-          directory_count = directory_count > 0 ? directory_count : 0;
           folder_size_string = g_strdup_printf (ngettext ("%d folder", "%d folders", directory_count ), directory_count);
           file_size_string = g_strdup_printf (ngettext ("%d file", "%d files", file_count), file_count);
           text = g_strdup_printf (ngettext ("%u item (%s, %s)", "%u items (%s, %s)", n), n, file_size_string, folder_size_string);
