@@ -522,7 +522,6 @@ thunar_folder_finished (ExoJob       *job,
           /* put the file on the added list */
           files = g_list_prepend (files, file);
 
-          /* add a mapping of gfile to GList node */
           g_hash_table_insert (folder->files_map, thunar_file_get_file (file), g_object_ref (file));
         }
     }
