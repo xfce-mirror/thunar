@@ -658,13 +658,13 @@ thunar_folder_file_destroyed (ThunarFileMonitor *file_monitor,
       if (folder->content_type_idle_id != 0)
         restart = g_source_remove (folder->content_type_idle_id);
 
-      /* remove the file from our list */
-      g_hash_table_remove (folder->files_map, thunar_file_get_file (file));
-
       /* tell everybody that the file is gone */
       files.data = file;
       files.next = files.prev = NULL;
       g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, &files);
+
+      /* remove the file from our list */
+      g_hash_table_remove (folder->files_map, thunar_file_get_file (file));
 
       /* continue collecting the metadata */
       if (restart)
