@@ -4286,10 +4286,12 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
       gtk_tree_path_free (lp->data);
 
       file = thunar_standard_view_model_get_file (standard_view->model, &iter);
-      g_assert (file != NULL);
 
-      /* ...and replace it with the file */
-      lp->data = file;
+      if (file != NULL)
+        {
+          /* ...and replace it with the file */
+          lp->data = file;
+        }
     }
 
   /* and setup the new selected files list */

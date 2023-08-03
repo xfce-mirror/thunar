@@ -2560,7 +2560,10 @@ thunar_tree_view_model_load_dir (Node *node)
 
   files = thunar_folder_get_files (node->dir);
   if (files != NULL)
-    _thunar_tree_view_model_dir_files_added (node, files);
+    {
+      _thunar_tree_view_model_dir_files_added (node, files);
+      g_list_free (files);
+    }
 
   if (!thunar_folder_get_loading (node->dir))
     g_object_notify (G_OBJECT (node->dir), "loading");
