@@ -732,8 +732,9 @@ thunar_util_next_new_file_name (ThunarFile            *dir,
   /* loop through the directory until new_name is unique */
   while (TRUE)
     {
+      GList *files = thunar_folder_get_files (folder);
       found_duplicate = FALSE;
-      for (GList *files = thunar_folder_get_files (folder); files != NULL; files = files->next)
+      for (;files != NULL; files = files->next)
         {
           ThunarFile  *file = files->data;
           gchar       *name = g_file_get_basename (thunar_file_get_file (file));
@@ -746,6 +747,7 @@ thunar_util_next_new_file_name (ThunarFile            *dir,
             }
           g_free (name);
         }
+      g_list_free (files);
 
       if (!found_duplicate)
         break;
