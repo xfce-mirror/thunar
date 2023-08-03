@@ -1468,7 +1468,10 @@ THUNAR_THREADS_ENTER
           /* load the initial set of files (if any) */
           files = thunar_folder_get_files (item->folder);
           if (G_UNLIKELY (files != NULL))
-            thunar_tree_model_item_files_added (item, files, item->folder);
+            {
+              thunar_tree_model_item_files_added (item, files, item->folder);
+              g_list_free (files);
+            }
 
           /* notify for "loading" if already loaded */
           if (!thunar_folder_get_loading (item->folder))

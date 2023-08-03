@@ -2144,7 +2144,10 @@ thunar_list_model_set_folder (ThunarStandardViewModel *model,
 
       /* insert the files */
       if (files != NULL)
-        thunar_list_model_insert_files (store, files);
+        {
+          thunar_list_model_insert_files (store, files);
+          g_list_free (files);
+        }
 
       /* connect signals to the new folder */
       g_signal_connect (G_OBJECT (store->folder), "destroy", G_CALLBACK (thunar_list_model_folder_destroy), store);
@@ -2471,16 +2474,23 @@ thunar_list_model_set_folder_item_count (ThunarListModel         *store,
  * the returned object using #g_object_unref() when
  * you are done with it.
  *
- * Return value: the #ThunarFile.
+ * Returns : (transfer full) (nullable): The #ThunarFile, or NULL if no file is set for @iter
  **/
 static ThunarFile*
 thunar_list_model_get_file (ThunarStandardViewModel *model,
                             GtkTreeIter             *iter)
 {
+  ThunarFile* file;
+
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (model), NULL);
   _thunar_return_val_if_fail (iter->stamp == THUNAR_LIST_MODEL (model)->stamp, NULL);
 
-  return g_object_ref (g_sequence_get (iter->user_data));
+  file = g_sequence_get (iter->user_data);
+
+  if (file != NULL)
+    g_object_ref (file);
+
+  return file;
 }
 
 
