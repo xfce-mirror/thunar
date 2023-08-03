@@ -4255,6 +4255,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   GtkTreeIter iter;
   GList      *lp, *selected_thunar_files;
   ThunarFile *file;
+  gboolean    iter_is_valid;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
@@ -4278,7 +4279,9 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   for (lp = selected_thunar_files; lp != NULL; lp = lp->next)
     {
       /* determine the iterator for the path */
-      g_assert (gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, lp->data));
+      iter_is_valid = gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, lp->data);
+      g_assert (iter_is_valid);
+      iter_is_valid = iter_is_valid; /* to silence warning when building with --disable-debug */
 
       gtk_tree_path_free (lp->data);
 
