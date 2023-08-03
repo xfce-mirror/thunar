@@ -2144,7 +2144,10 @@ thunar_list_model_set_folder (ThunarStandardViewModel *model,
 
       /* insert the files */
       if (files != NULL)
-        thunar_list_model_insert_files (store, files);
+        {
+          thunar_list_model_insert_files (store, files);
+          g_list_free (files);
+        }
 
       /* connect signals to the new folder */
       g_signal_connect (G_OBJECT (store->folder), "destroy", G_CALLBACK (thunar_list_model_folder_destroy), store);
