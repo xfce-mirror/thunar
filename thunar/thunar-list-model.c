@@ -2471,7 +2471,7 @@ thunar_list_model_set_folder_item_count (ThunarListModel         *store,
  * the returned object using #g_object_unref() when
  * you are done with it.
  *
- * Return value: the #ThunarFile, or NULL if no file is set for @iter
+ * Returns : (transfer full) (nullable): The #ThunarFile, or NULL if no file is set for @iter
  **/
 static ThunarFile*
 thunar_list_model_get_file (ThunarStandardViewModel *model,
