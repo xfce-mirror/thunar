@@ -975,10 +975,10 @@ thunar_folder_get_corresponding_file (const ThunarFolder *folder)
  * @folder : a #ThunarFolder instance.
  *
  * Returns the list of files currently known for @folder.
- * The returned list is owned by @folder and may not be freed!
- *
- * Return value: A GList containing all the #ThunarFiles inside the hash table. The content of the list is owned by the hash table and should not be modified or freed. Use g_list_free() when done using the list.
+ * The content of the list is owned by the hash table and should not be modified or freed. Use g_list_free() when done using the list.
  * The caller of the function takes ownership of the data container, but not the data inside it.
+ *
+ * Returns: (transfer container): A GList containing all the #ThunarFiles inside the hash table. Use g_list_free() when done using the list.
  **/
 GList *
 thunar_folder_get_files (const ThunarFolder *folder)
