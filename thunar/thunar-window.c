@@ -2198,7 +2198,7 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   window->view = page;
   window->view_type = G_TYPE_FROM_INSTANCE (page);
 
-  /* before we can set which radio should be active we need to disconnect the "toggled" signals first */
+  /* before we can set which view button should be active we need to disconnect the "toggled" signals first */
   g_signal_handlers_disconnect_by_func (window->location_toolbar_item_detailed_view, get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST)->callback, window);
   g_signal_handlers_disconnect_by_func (window->location_toolbar_item_compact_view, get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST)->callback, window);
   g_signal_handlers_disconnect_by_func (window->location_toolbar_item_icon_view, get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_ICONS)->callback, window);
