@@ -519,6 +519,32 @@ typedef enum
 GType thunar_folder_item_count_get_type (void) G_GNUC_CONST;
 
 /**
+ * ThunarWindowTitleStyle
+ *
+ * Specify whether the window title should display the full directory path instead
+ * of only the directory name and with or without the application name appened.
+ **/
+
+#define THUNAR_TYPE_WINDOW_TITLE_STYLE (thunar_window_title_style_get_type ())
+
+/**
+ * ThunarWindowTitleStyle:
+ * @THUNAR_WINDOW_TITLE_STYLE_FOLDER_NAME_WITH_THUNAR_SUFFIX,    : folder name with the " - thunar" suffix
+ * @THUNAR_WINDOW_TITLE_STYLE_FOLDER_NAME_WITHOUT_THUNAR_SUFFIX, : folder name without the " - thunar" suffix
+ * @THUNAR_WINDOW_TITLE_STYLE_FULL_PATH_WITH_THUNAR_SUFFIX,      : full path with the " - thunar" suffix
+ * @THUNAR_WINDOW_TITLE_STYLE_FULL_PATH_WITHOUT_THUNAR_SUFFIX,   : full path without the " - thunar" suffix
+ **/
+typedef enum
+{
+  THUNAR_WINDOW_TITLE_STYLE_FOLDER_NAME_WITH_THUNAR_SUFFIX,
+  THUNAR_WINDOW_TITLE_STYLE_FOLDER_NAME_WITHOUT_THUNAR_SUFFIX,
+  THUNAR_WINDOW_TITLE_STYLE_FULL_PATH_WITH_THUNAR_SUFFIX,
+  THUNAR_WINDOW_TITLE_STYLE_FULL_PATH_WITHOUT_THUNAR_SUFFIX,
+} ThunarWindowTitleStyle;
+
+GType thunar_window_title_style_get_type (void) G_GNUC_CONST;
+
+/**
  * ThunarSidepaneType
  *
  * Specify which sidepane type to use
