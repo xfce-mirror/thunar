@@ -4822,10 +4822,10 @@ static void
 thunar_window_current_directory_changed (ThunarFile   *current_directory,
                                          ThunarWindow *window)
 {
-  ThunarWindowTitleStyle window_title_style;
-  gchar                 *title;
-  gchar                 *parse_name = NULL;
-  const gchar           *name;
+  ThunarWindowTitleStyle  window_title_style;
+  gchar                  *title;
+  gchar                  *parse_name = NULL;
+  const gchar            *name;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_FILE (current_directory));
