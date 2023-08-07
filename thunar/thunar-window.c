@@ -1317,7 +1317,7 @@ thunar_window_update_edit_menu (ThunarWindow *window,
   g_free (action_tooltip);
   gtk_widget_set_sensitive (gtk_menu_item, thunar_job_operation_history_can_undo ());
   action_entry = get_action_entry (THUNAR_WINDOW_ACTION_REDO);
-  action_tooltip = thunar_job_operation_history_get_redo_text ();  
+  action_tooltip = thunar_job_operation_history_get_redo_text ();
   gtk_menu_item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, action_tooltip,
                                                            action_entry->accel_path, action_entry->callback,
                                                            G_OBJECT (window), action_entry->menu_item_icon_name, GTK_MENU_SHELL (menu));
@@ -2345,7 +2345,7 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
   _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
   _thunar_return_if_fail (THUNAR_IS_VIEW (page));
   _thunar_return_if_fail (window->notebook_left == notebook || window->notebook_right == notebook);
-  
+
   /* drop connected signals */
   g_signal_handlers_disconnect_matched (page, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
 
@@ -3190,7 +3190,7 @@ thunar_window_update_bookmark (GFile       *g_file,
 
   /* Add the bookmark to our internal list of bookmarks */
   thunar_window_bookmark_add (window, g_file, name);
-  
+
   /* Add ref to window to each g_file, will be needed in callback */
   g_object_set_data_full (G_OBJECT (g_file), I_("thunar-window"), window, NULL);
 
@@ -3321,7 +3321,7 @@ thunar_window_update_search (ThunarWindow *window)
       window->ignore_next_search_update = FALSE;
       return;
     }
-    
+
   g_free (window->search_query);
   window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), window->search_query);
@@ -3399,7 +3399,7 @@ thunar_window_action_cancel_search (ThunarWindow *window)
   g_signal_handlers_block_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_search), FALSE);
   g_signal_handlers_unblock_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
-  
+
   /* bring back the original location bar style (relevant if the bar is hidden) */
   thunar_window_update_location_bar_visible (window);
 
@@ -3676,7 +3676,7 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
         if (confirm_close_multiple_tabs && thunar_dialog_confirm_close_split_pane_tabs (GTK_WINDOW (window)) == GTK_RESPONSE_CANCEL)
           return TRUE;
       }
-        
+
       gtk_widget_destroy (notebook_to_close);
       if (window->notebook_selected == window->notebook_left)
           window->notebook_right = NULL;
@@ -3709,7 +3709,7 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
         }
 
       gtk_paned_set_position (GTK_PANED (window->paned_notebooks), last_splitview_separator_position);
-  
+
       /* Keep focus on the first notebook */
       thunar_window_paned_notebooks_switch (window);
 
@@ -4854,24 +4854,27 @@ static void
 thunar_window_current_directory_changed (ThunarFile   *current_directory,
                                          ThunarWindow *window)
 {
-  gboolean      show_full_path;
-  gchar        *title;
-  gchar        *parse_name = NULL;
-  const gchar  *name;
+  ThunarWindowTitleStyle window_title_style;
+  gchar                 *title;
+  gchar                 *parse_name = NULL;
+  const gchar           *name;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_FILE (current_directory));
   _thunar_return_if_fail (window->current_directory == current_directory);
 
   /* get name of directory or full path */
-  g_object_get (G_OBJECT (window->preferences), "misc-full-path-in-window-title", &show_full_path, NULL);
-  if (G_UNLIKELY (show_full_path))
+  g_object_get (G_OBJECT (window->preferences), "misc-window-title-style", &window_title_style, NULL);
+  if (G_UNLIKELY (window_title_style == THUNAR_WINDOW_TITLE_STYLE_FULL_PATH_WITH_THUNAR_SUFFIX || window_title_style == THUNAR_WINDOW_TITLE_STYLE_FULL_PATH_WITHOUT_THUNAR_SUFFIX))
     name = parse_name = g_file_get_parse_name (thunar_file_get_file (current_directory));
   else
     name = thunar_file_get_display_name (current_directory);
 
   /* set window title */
-  title = g_strdup_printf ("%s - %s", name, "Thunar");
+  if (G_UNLIKELY (window_title_style == THUNAR_WINDOW_TITLE_STYLE_FOLDER_NAME_WITHOUT_THUNAR_SUFFIX || window_title_style == THUNAR_WINDOW_TITLE_STYLE_FULL_PATH_WITHOUT_THUNAR_SUFFIX))
+    title = g_strdup_printf ("%s", name);
+  else
+    title = g_strdup_printf ("%s - %s", name, "Thunar");
   gtk_window_set_title (GTK_WINDOW (window), title);
   g_free (title);
   g_free (parse_name);
@@ -6094,7 +6097,7 @@ thunar_window_create_toolbar_item_from_action (ThunarWindow       *window,
   toolbar_item = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (action), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
   g_object_set_data_full (G_OBJECT (toolbar_item), "label", g_strdup (get_action_entry (action)->menu_item_label_text), g_free);
   g_object_set_data_full (G_OBJECT (toolbar_item), "icon", g_strdup (get_action_entry (action)->menu_item_icon_name), g_free);
-  
+
   if (action != THUNAR_WINDOW_ACTION_BACK && action != THUNAR_WINDOW_ACTION_FORWARD)
     g_signal_connect_after (G_OBJECT (toolbar_item), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
 
