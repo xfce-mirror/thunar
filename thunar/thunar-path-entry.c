@@ -578,6 +578,8 @@ thunar_path_entry_changed (GtkEditable *editable)
   ThunarFolder       *folder;
   GtkTreeModel       *model;
   const gchar        *text;
+  GUri               *uri = NULL;
+  GError             *uri_parse_error = NULL;
   gchar              *escaped_text;
   ThunarFile         *current_folder;
   ThunarFile         *current_file;
@@ -610,11 +612,13 @@ thunar_path_entry_changed (GtkEditable *editable)
           thunar_window_action_cancel_search (THUNAR_WINDOW (window));
         }
       /* location/folder-path code */
-      if (G_UNLIKELY (g_uri_is_valid (text, G_URI_FLAGS_NONE, NULL)))
+      /* try to parse the URI text */
+      uri = g_uri_parse(text, G_URI_FLAGS_NONE, &uri_parse_error);
+      if (uri != NULL)
         {
-          /* try to parse the URI text */
-          escaped_text = g_uri_escape_string (text, G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, TRUE);
-          file_path = g_file_new_for_uri (escaped_text);
+          escaped_text = g_uri_to_string(uri);
+          file_path = g_file_new_for_uri(escaped_text);
+          g_uri_unref(uri);
           g_free (escaped_text);
 
           /* use the same file if the text assumes we're in a directory */
@@ -638,6 +642,9 @@ thunar_path_entry_changed (GtkEditable *editable)
           g_free (folder_part);
           g_free (file_part);
         }
+      /* cleanup */
+      if (uri_parse_error != NULL)
+        g_free(uri_parse_error);
     }
 
   /* determine new current file/folder from the paths */
