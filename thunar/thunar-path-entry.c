@@ -613,12 +613,12 @@ thunar_path_entry_changed (GtkEditable *editable)
         }
       /* location/folder-path code */
       /* try to parse the URI text */
-      uri = g_uri_parse(text, G_URI_FLAGS_NONE, &uri_parse_error);
+      uri = g_uri_parse (text, G_URI_FLAGS_NONE, &uri_parse_error);
       if (uri != NULL)
         {
-          escaped_text = g_uri_to_string(uri);
-          file_path = g_file_new_for_uri(escaped_text);
-          g_uri_unref(uri);
+          escaped_text = g_uri_to_string (uri);
+          file_path = g_file_new_for_uri (escaped_text);
+          g_uri_unref (uri);
           g_free (escaped_text);
 
           /* use the same file if the text assumes we're in a directory */
@@ -627,24 +627,27 @@ thunar_path_entry_changed (GtkEditable *editable)
           else
             folder_path = g_file_get_parent (file_path);
         }
-      else if (thunar_path_entry_parse (path_entry, &folder_part, &file_part, NULL))
+      else
         {
-          /* determine the folder path */
-          folder_path = g_file_new_for_path (folder_part);
+          /* cleanup */
+          g_free (uri_parse_error);
 
-          /* determine the relative file path */
-          if (G_LIKELY (*file_part != '\0'))
-            file_path = g_file_resolve_relative_path (folder_path, file_part);
-          else
-            file_path = g_object_ref (folder_path);
+          if (thunar_path_entry_parse (path_entry, &folder_part, &file_part, NULL))
+            {
+              /* determine the folder path */
+              folder_path = g_file_new_for_path (folder_part);
 
-          /* cleanup the part strings */
-          g_free (folder_part);
-          g_free (file_part);
+              /* determine the relative file path */
+              if (G_LIKELY (*file_part != '\0'))
+                file_path = g_file_resolve_relative_path (folder_path, file_part);
+              else
+                file_path = g_object_ref (folder_path);
+
+              /* cleanup the part strings */
+              g_free (folder_part);
+              g_free (file_part);
+            }
         }
-      /* cleanup */
-      if (uri_parse_error != NULL)
-        g_free(uri_parse_error);
     }
 
   /* determine new current file/folder from the paths */
