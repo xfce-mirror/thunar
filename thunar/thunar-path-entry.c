@@ -114,10 +114,6 @@ static gboolean thunar_path_entry_match_selected                (GtkEntryComplet
                                                                  GtkTreeModel         *model,
                                                                  GtkTreeIter          *iter,
                                                                  gpointer              user_data);
-static gboolean thunar_path_entry_parse                         (ThunarPathEntry      *path_entry,
-                                                                 gchar               **folder_part,
-                                                                 gchar               **file_part,
-                                                                 GError              **error);
 static void     thunar_path_entry_queue_check_completion        (ThunarPathEntry      *path_entry);
 static gboolean thunar_path_entry_check_completion_idle         (gpointer              user_data);
 static void     thunar_path_entry_check_completion_idle_destroy (gpointer              user_data);
@@ -578,15 +574,10 @@ thunar_path_entry_changed (GtkEditable *editable)
   ThunarFolder       *folder;
   GtkTreeModel       *model;
   const gchar        *text;
-  GUri               *uri = NULL;
-  GError             *uri_parse_error = NULL;
-  gchar              *escaped_text;
   ThunarFile         *current_folder;
   ThunarFile         *current_file;
   GFile              *folder_path = NULL;
   GFile              *file_path = NULL;
-  gchar              *folder_part = NULL;
-  gchar              *file_part = NULL;
   gboolean            update_icon = FALSE;
 
   /* check if we should ignore this event */
@@ -611,43 +602,13 @@ thunar_path_entry_changed (GtkEditable *editable)
           GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (editable));
           thunar_window_action_cancel_search (THUNAR_WINDOW (window));
         }
+
       /* location/folder-path code */
-      /* try to parse the URI text */
-      uri = g_uri_parse (text, G_URI_FLAGS_NONE, &uri_parse_error);
-      if (uri != NULL)
-        {
-          escaped_text = g_uri_to_string (uri);
-          file_path = g_file_new_for_uri (escaped_text);
-          g_uri_unref (uri);
-          g_free (escaped_text);
-
-          /* use the same file if the text assumes we're in a directory */
-          if (g_str_has_suffix (text, "/"))
-            folder_path = G_FILE (g_object_ref (G_OBJECT (file_path)));
-          else
-            folder_path = g_file_get_parent (file_path);
-        }
+      file_path = g_file_new_for_commandline_arg (text);
+      if (g_str_has_suffix (text, "/"))
+        folder_path = G_FILE (g_object_ref (G_OBJECT (file_path)));
       else
-        {
-          /* cleanup */
-          g_free (uri_parse_error);
-
-          if (thunar_path_entry_parse (path_entry, &folder_part, &file_part, NULL))
-            {
-              /* determine the folder path */
-              folder_path = g_file_new_for_path (folder_part);
-
-              /* determine the relative file path */
-              if (G_LIKELY (*file_part != '\0'))
-                file_path = g_file_resolve_relative_path (folder_path, file_part);
-              else
-                file_path = g_object_ref (folder_path);
-
-              /* cleanup the part strings */
-              g_free (folder_part);
-              g_free (file_part);
-            }
-        }
+        folder_path = g_file_get_parent (file_path);
     }
 
   /* determine new current file/folder from the paths */
@@ -1106,76 +1067,6 @@ thunar_path_entry_match_selected (GtkEntryCompletion *completion,
   g_free (real_name);
 
   return TRUE;
-}
-
-
-
-static gboolean
-thunar_path_entry_parse (ThunarPathEntry *path_entry,
-                         gchar          **folder_part,
-                         gchar          **file_part,
-                         GError         **error)
-{
-  const gchar *last_slash;
-  gchar       *filename;
-  gchar       *path;
-
-  _thunar_return_val_if_fail (THUNAR_IS_PATH_ENTRY (path_entry), FALSE);
-  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-  _thunar_return_val_if_fail (folder_part != NULL, FALSE);
-  _thunar_return_val_if_fail (file_part != NULL, FALSE);
-
-  /* expand the filename */
-  filename = thunar_util_expand_filename (gtk_entry_get_text (GTK_ENTRY (path_entry)),
-                                          path_entry->working_directory,
-                                          error);
-  if (G_UNLIKELY (filename == NULL))
-    return FALSE;
-
-  /* lookup the last slash character in the filename */
-  last_slash = strrchr (filename, G_DIR_SEPARATOR);
-  if (G_UNLIKELY (last_slash == NULL))
-    {
-      /* no slash character, it's relative to the home dir */
-      *file_part = g_filename_from_utf8 (filename, -1, NULL, NULL, error);
-      if (G_LIKELY (*file_part != NULL))
-        *folder_part = g_strdup (xfce_get_homedir ());
-    }
-  else
-    {
-      if (G_LIKELY (last_slash != filename))
-        *folder_part = g_filename_from_utf8 (filename, last_slash - filename, NULL, NULL, error);
-      else
-        *folder_part = g_strdup ("/");
-
-      if (G_LIKELY (*folder_part != NULL))
-        {
-          /* if folder_part doesn't start with '/', it's relative to the home dir */
-          if (G_UNLIKELY (**folder_part != G_DIR_SEPARATOR))
-            {
-              path = xfce_get_homefile (*folder_part, NULL);
-              g_free (*folder_part);
-              *folder_part = path;
-            }
-
-          /* determine the file part */
-          *file_part = g_filename_from_utf8 (last_slash + 1, -1, NULL, NULL, error);
-          if (G_UNLIKELY (*file_part == NULL))
-            {
-              g_free (*folder_part);
-              *folder_part = NULL;
-            }
-        }
-      else
-        {
-          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, "%s", g_strerror (EINVAL));
-        }
-    }
-
-  /* release the filename */
-  g_free (filename);
-
-  return (*folder_part != NULL);
 }
 
 
