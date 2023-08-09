@@ -604,7 +604,7 @@ thunar_path_entry_changed (GtkEditable *editable)
         }
 
       /* location/folder-path code */
-      file_path = g_file_new_for_commandline_arg (text);
+      file_path = g_file_new_for_commandline_arg_and_cwd (text, xfce_get_homedir ());
       if (g_str_has_suffix (text, "/"))
         folder_path = G_FILE (g_object_ref (G_OBJECT (file_path)));
       else
