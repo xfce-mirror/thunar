@@ -347,7 +347,7 @@ struct _Node
   /* set of all the children gfiles;
    * contains mappings of (gfile -> GSequenceIter *(_child_node->ptr)) */
   GHashTable          *set;
-  GList               *hidden_files;
+  GHashTable          *hidden_files;
 
   GSequence           *children; /* Nodes */
   ThunarTreeViewModel *model;
@@ -1740,7 +1740,8 @@ static void
 _thunar_tree_view_model_set_show_hidden (Node    *node,
                                          gpointer data)
 {
-  GList *lp;
+  GHashTableIter iter;
+  gpointer       key;
 
   /* we have a dummy node here! */
   if (node->file == NULL || node->dir == NULL
@@ -1750,12 +1751,13 @@ _thunar_tree_view_model_set_show_hidden (Node    *node,
   g_sequence_foreach (node->children,
                       (GFunc) _thunar_tree_view_model_set_show_hidden, NULL);
 
+  g_hash_table_iter_init (&iter, node->hidden_files);
   if (node->model->show_hidden)
-    for (lp = node->hidden_files; lp != NULL; lp = lp->next)
-      thunar_tree_view_model_dir_add_file (node, lp->data);
+    while (g_hash_table_iter_next (&iter, &key, NULL))
+      thunar_tree_view_model_dir_add_file (node, THUNAR_FILE (key));
   else
-    for (lp = node->hidden_files; lp != NULL; lp = lp->next)
-      thunar_tree_view_model_dir_remove_file (node, lp->data);
+    while (g_hash_table_iter_next (&iter, &key, NULL))
+      thunar_tree_view_model_dir_remove_file (node, THUNAR_FILE (key));
 }
 
 
@@ -2043,7 +2045,7 @@ thunar_tree_view_model_new_node (ThunarFile *file)
   _node->loaded = FALSE;
 
   _node->set = g_hash_table_new (g_direct_hash, g_direct_equal);
-  _node->hidden_files = NULL;
+  _node->hidden_files = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, NULL);
   _node->children = g_sequence_new (NULL);
 
   _node->scheduled_unload_id = 0;
@@ -2475,7 +2477,7 @@ _thunar_tree_view_model_dir_files_added (Node  *node,
 
       if (thunar_file_is_hidden (file))
         {
-          node->hidden_files = g_list_prepend (node->hidden_files, g_object_ref (file));
+          g_hash_table_add (node->hidden_files, g_object_ref (file));
 
           if (!node->model->show_hidden)
             continue;
@@ -2492,18 +2494,17 @@ _thunar_tree_view_model_dir_files_removed (Node  *node,
                                            GList *files)
 {
   ThunarFile *file;
-  GList      *lp, *_node;
+  GList      *lp;
 
   for (lp = files; lp != NULL; lp = lp->next)
     {
       file = THUNAR_FILE (lp->data);
 
-      if (thunar_file_is_hidden (file))
+      /* we cannot trust thunar_file_is_hidden here;
+       * don't know why. Maybe the file has gone through dispose */
+      if (g_hash_table_contains (node->hidden_files, file))
         {
-          _node = g_list_find (node->hidden_files, file);
-          g_assert (_node != NULL);
-          g_object_unref (_node->data);
-          node->hidden_files = g_list_delete_link (node->hidden_files, _node);
+          g_hash_table_remove (node->hidden_files, file);
 
           if (!node->model->show_hidden)
             continue;
@@ -2679,9 +2680,7 @@ thunar_tree_view_model_node_destroy (Node *node)
 
   g_sequence_free (node->children);
   g_hash_table_destroy (node->set);
-
-  if (node->hidden_files != NULL)
-    g_list_free_full (node->hidden_files, g_object_unref);
+  g_hash_table_destroy (node->hidden_files);
 
   g_object_unref (node->file);
   g_free (node);
@@ -2712,9 +2711,8 @@ thunar_tree_view_model_file_changed (ThunarFileMonitor   *monitor,
       /* when a file has been renamed to a hidden file then we need to check
        * if a file exists in the parent's hidden file list or not & add it if
        * not there */
-      if (node->parent->hidden_files == NULL
-          || g_list_find (node->parent->hidden_files, file) == NULL)
-        node->parent->hidden_files = g_list_prepend (node->parent->hidden_files, file);
+      if (!g_hash_table_contains (node->parent->hidden_files, file))
+        g_hash_table_add (node->parent->hidden_files, file);
       /* if show_hidden is inactive and a normal file has been renamed
        * to hidden file then hide that file */
       if (!model->show_hidden && g_hash_table_contains (node->parent->set, file))
@@ -2846,9 +2844,8 @@ _thunar_tree_view_model_dir_unload_timeout (Node *node)
 
   gtk_tree_path_free (path);
 
-  if (node->hidden_files != NULL)
-    thunar_g_list_free_full (node->hidden_files);
-  node->hidden_files = NULL;
+  g_hash_table_remove_all (node->hidden_files);
+  g_hash_table_remove_all (node->set);
 
   thunar_tree_view_model_node_add_dummy_child (node);
 
