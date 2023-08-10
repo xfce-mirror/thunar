@@ -722,7 +722,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * ThunarPreferences:misc-window-title-style:
    *
    * Whether the window title should display the full directory path instead
-   * of only the directory name and with or without the application name appened.
+   * of only the directory name and with or without the application name appended.
    **/
   preferences_props[PROP_MISC_WINDOW_TITLE_STYLE] =
       g_param_spec_enum ("misc-window-title-style",
