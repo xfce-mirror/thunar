@@ -2826,7 +2826,6 @@ _thunar_tree_view_model_dir_unload_timeout (Node *node)
       node->dir = NULL;
     }
 
-  g_hash_table_remove_all (node->set);
 
   GTK_TREE_ITER_INIT (tree_iter, node->model->stamp, node->ptr);
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (node->model), &tree_iter);
