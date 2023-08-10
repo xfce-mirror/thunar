@@ -1211,7 +1211,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * ThunarPreferences:misc-max-number-of-templates
    *
    * Maximum number of templates for which will be scanned in the 'templates' directory
-   * Required to prevent possible lag when thecontext menu is opened
+   * Required to prevent possible lag when the context menu is opened
    **/
   preferences_props[PROP_MISC_MAX_NUMBER_OF_TEMPLATES] =
       g_param_spec_uint ("misc-max-number-of-templates",
