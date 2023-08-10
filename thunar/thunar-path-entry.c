@@ -576,6 +576,7 @@ thunar_path_entry_changed (GtkEditable *editable)
   const gchar        *text;
   ThunarFile         *current_folder;
   ThunarFile         *current_file;
+  gchar              *expanded_path;
   GFile              *folder_path = NULL;
   GFile              *file_path = NULL;
   gboolean            update_icon = FALSE;
@@ -604,11 +605,19 @@ thunar_path_entry_changed (GtkEditable *editable)
         }
 
       /* location/folder-path code */
-      file_path = g_file_new_for_commandline_arg_and_cwd (text, xfce_get_homedir ());
-      if (g_str_has_suffix (text, "/"))
-        folder_path = G_FILE (g_object_ref (G_OBJECT (file_path)));
-      else
-        folder_path = g_file_get_parent (file_path);
+      expanded_path = thunar_util_expand_filename (text,
+                                                   path_entry->working_directory,
+                                                   NULL);
+      if (expanded_path != NULL)
+      {
+        file_path = g_file_new_for_commandline_arg_and_cwd (expanded_path, xfce_get_homedir ());
+        if (g_str_has_suffix (text, "/"))
+          folder_path = G_FILE (g_object_ref (G_OBJECT (file_path)));
+        else
+          folder_path = g_file_get_parent (file_path);
+      }
+
+      g_free (expanded_path);
     }
 
   /* determine new current file/folder from the paths */
