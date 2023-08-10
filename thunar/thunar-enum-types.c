@@ -795,6 +795,27 @@ GType thunar_folder_item_count_get_type (void)
   return type;
 }
 
+GType thunar_window_title_style_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GEnumValue values[] =
+      {
+        { THUNAR_WINDOW_TITLE_STYLE_FOLDER_NAME_WITH_THUNAR_SUFFIX,    "THUNAR_WINDOW_TITLE_STYLE_FOLDER_NAME_WITH_THUNAR_SUFFIX",    "folder-name-with-suffix" },
+        { THUNAR_WINDOW_TITLE_STYLE_FOLDER_NAME_WITHOUT_THUNAR_SUFFIX, "THUNAR_WINDOW_TITLE_STYLE_FOLDER_NAME_WITHOUT_THUNAR_SUFFIX", "folder-name-without-suffix" },
+        { THUNAR_WINDOW_TITLE_STYLE_FULL_PATH_WITH_THUNAR_SUFFIX,      "THUNAR_WINDOW_TITLE_STYLE_FULL_PATH_WITH_THUNAR_SUFFIX",      "full-path-with-suffix" },
+        { THUNAR_WINDOW_TITLE_STYLE_FULL_PATH_WITHOUT_THUNAR_SUFFIX,   "THUNAR_WINDOW_TITLE_STYLE_FULL_PATH_WITHOUT_THUNAR_SUFFIX",   "full-path-without-suffix" },
+        { 0,                                                           NULL,                                                          NULL }
+      };
+
+      type = g_enum_register_static ("ThunarWindowTitleStyle", values);
+    }
+
+  return type;
+}
+
 GType thunar_sidepane_type_get_type (void)
 {
   static GType type = G_TYPE_INVALID;
