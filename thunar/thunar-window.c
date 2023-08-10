@@ -444,7 +444,7 @@ struct _ThunarWindow
   GFileMonitor              *uca_file_monitor;
   GFile                     *uca_file;
 
-  /* we need to maintain pointers to be able to toggle sensitivity */
+  /* we need to maintain pointers to be able to toggle sensitivity and activity */
   GtkWidget                 *location_toolbar_item_back;
   GtkWidget                 *location_toolbar_item_forward;
   GtkWidget                 *location_toolbar_item_parent;
@@ -458,6 +458,7 @@ struct _ThunarWindow
   GtkWidget                 *location_toolbar_item_icon_view;
   GtkWidget                 *location_toolbar_item_detailed_view;
   GtkWidget                 *location_toolbar_item_compact_view;
+  GtkWidget                 *location_toolbar_item_split_view;
 
   ThunarActionManager       *action_mgr;
 
@@ -3716,6 +3717,13 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
       g_signal_connect_swapped (window->paned, "button-release-event", G_CALLBACK (thunar_window_save_paned_notebooks), window);
     }
 
+  if (thunar_window_split_view_is_active (window) != gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_split_view)))
+    {
+      g_signal_handlers_block_by_func (window->location_toolbar_item_split_view, get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SPLIT)->callback, window);
+      gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_split_view), thunar_window_split_view_is_active (window));
+      g_signal_handlers_unblock_by_func (window->location_toolbar_item_split_view, get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SPLIT)->callback, window);
+    }
+
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
@@ -6193,7 +6201,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   window->location_toolbar_item_icon_view     = thunar_window_create_toolbar_radio_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_ICONS, window->view_type == THUNAR_TYPE_ICON_VIEW, NULL, item_order++);
   window->location_toolbar_item_detailed_view = thunar_window_create_toolbar_radio_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST, window->view_type == THUNAR_TYPE_DETAILS_VIEW, GTK_RADIO_TOOL_BUTTON (window->location_toolbar_item_icon_view), item_order++);
   window->location_toolbar_item_compact_view  = thunar_window_create_toolbar_radio_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST, window->view_type == THUNAR_TYPE_COMPACT_VIEW, GTK_RADIO_TOOL_BUTTON (window->location_toolbar_item_icon_view), item_order++);
-                                                thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_SPLIT, thunar_window_split_view_is_active (window), item_order++);
+  window->location_toolbar_item_split_view    = thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_SPLIT, thunar_window_split_view_is_active (window), item_order++);
 
   g_signal_connect_swapped (window->location_toolbar_item_icon_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_ICONS)->callback, window);
   g_signal_connect_swapped (window->location_toolbar_item_detailed_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST)->callback, window);
