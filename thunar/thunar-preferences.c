@@ -91,7 +91,7 @@ enum
   PROP_MISC_FOLDERS_FIRST,
   PROP_MISC_FOLDER_ITEM_COUNT,
   PROP_MISC_FULL_PATH_IN_TAB_TITLE,
-  PROP_MISC_FULL_PATH_IN_WINDOW_TITLE,
+  PROP_MISC_WINDOW_TITLE_STYLE,
   PROP_MISC_HORIZONTAL_WHEEL_NAVIGATES,
   PROP_MISC_IMAGE_SIZE_IN_STATUSBAR,
   PROP_MISC_MIDDLE_CLICK_IN_TAB,
@@ -719,17 +719,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:misc-full-path-in-window-title:
+   * ThunarPreferences:misc-window-title-style:
    *
-   * Show the full directory path in the window title, instead of
-   * only the directory name.
+   * Whether the window title should display the full directory path instead
+   * of only the directory name and with or without the application name appended.
    **/
-  preferences_props[PROP_MISC_FULL_PATH_IN_WINDOW_TITLE] =
-      g_param_spec_boolean ("misc-full-path-in-window-title",
-                            "MiscFullPathInWindowTitle",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  preferences_props[PROP_MISC_WINDOW_TITLE_STYLE] =
+      g_param_spec_enum ("misc-window-title-style",
+                         "MiscWindowTitleStyle",
+                         NULL,
+                         THUNAR_TYPE_WINDOW_TITLE_STYLE,
+                         THUNAR_WINDOW_TITLE_STYLE_FOLDER_NAME_WITH_THUNAR_SUFFIX,
+                         EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-horizontal-wheel-navigates:
@@ -1210,7 +1211,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * ThunarPreferences:misc-max-number-of-templates
    *
    * Maximum number of templates for which will be scanned in the 'templates' directory
-   * Required to prevent possible lag when thecontext menu is opened 
+   * Required to prevent possible lag when thecontext menu is opened
    **/
   preferences_props[PROP_MISC_MAX_NUMBER_OF_TEMPLATES] =
       g_param_spec_uint ("misc-max-number-of-templates",
@@ -1219,7 +1220,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          0, G_MAXUINT,
                          100,
                          EXO_PARAM_READWRITE);
-      
+
   /**
    * ThunarPreferences:misc-enable-expandable-folders
    *
@@ -1243,7 +1244,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                              NULL,
                              TRUE,
                              EXO_PARAM_READWRITE);
-  
+
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
 }
