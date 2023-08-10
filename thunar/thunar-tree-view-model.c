@@ -2153,9 +2153,9 @@ thunar_tree_view_model_node_add_child (Node *node,
 static void
 thunar_tree_view_model_node_add_dummy_child (Node *node)
 {
-  GtkTreeIter    tree_iter;
-  GtkTreePath   *path;
-  Node          *dummy;
+  GtkTreeIter  tree_iter;
+  GtkTreePath *path;
+  Node        *dummy;
 
   dummy = thunar_tree_view_model_new_dummy_node ();
   dummy->depth = node->depth + 1;
@@ -2248,7 +2248,11 @@ thunar_tree_view_model_dir_remove_file (Node       *node,
   GSequenceIter *iter;
 
   iter = g_hash_table_lookup (node->set, file);
-  _thunar_return_if_fail (iter != NULL);
+  if (iter == NULL)
+    {
+      g_warn_if_reached ();
+      return;
+    }
 
   GTK_TREE_ITER_INIT (tree_iter, node->model->stamp, iter);
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (node->model), &tree_iter);
@@ -2591,7 +2595,7 @@ _thunar_tree_view_model_cleanup_idle (Node *node)
 static void
 thunar_tree_view_model_cleanup_model (ThunarTreeViewModel *model)
 {
-  Node *_node;
+  Node  *_node;
   GList *values;
 
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
@@ -2825,7 +2829,6 @@ _thunar_tree_view_model_dir_unload_timeout (Node *node)
       g_object_unref (node->dir);
       node->dir = NULL;
     }
-
 
   GTK_TREE_ITER_INIT (tree_iter, node->model->stamp, node->ptr);
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (node->model), &tree_iter);
