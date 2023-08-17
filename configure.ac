@@ -155,10 +155,10 @@ dnl ***********************************
 dnl *** Check for required packages ***
 dnl ***********************************
 XDT_CHECK_PACKAGE([EXO], [exo-2], [4.17.0])
-XDT_CHECK_PACKAGE([GLIB], [glib-2.0], [2.66.0])
-XDT_CHECK_PACKAGE([GIO], [gio-2.0], [2.66.0])
-XDT_CHECK_PACKAGE([GTHREAD], [gthread-2.0], [2.66.0])
-XDT_CHECK_PACKAGE([GMODULE], [gmodule-2.0], [2.66.0])
+XDT_CHECK_PACKAGE([GLIB], [glib-2.0], [2.70.0])
+XDT_CHECK_PACKAGE([GIO], [gio-2.0], [2.70.0])
+XDT_CHECK_PACKAGE([GTHREAD], [gthread-2.0], [2.70.0])
+XDT_CHECK_PACKAGE([GMODULE], [gmodule-2.0], [2.70.0])
 XDT_CHECK_PACKAGE([GTK], [gtk+-3.0], [3.24.0])
 XDT_CHECK_PACKAGE([GDK_PIXBUF], [gdk-pixbuf-2.0], [2.40.0])
 XDT_CHECK_PACKAGE([LIBXFCE4UTIL], [libxfce4util-1.0], [4.17.2])
@@ -181,7 +181,7 @@ dnl **********************************
 dnl *** Optional GIO UNIX features ***
 dnl **********************************
 XDT_CHECK_OPTIONAL_PACKAGE([GIO_UNIX], [gio-unix-2.0],
-                           [2.66.0], [gio-unix], [GIO UNIX features])
+                           [2.70.0], [gio-unix], [GIO UNIX features])
 
 dnl ***************************************************************
 dnl *** Optional support for GUDev (required for thunar-volman) ***
