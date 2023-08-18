@@ -791,6 +791,8 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
   GtkTreeIter        iter;
   ThunarFile        *file = NULL;
   gboolean           row_selected;
+  gint               expander_size, horizontal_separator;
+  gboolean           on_expander = FALSE, activate_on_single_click = FALSE;
 
   /* check if the event is for the bin window */
   if (G_UNLIKELY (event->window != gtk_tree_view_get_bin_window (tree_view)))
@@ -822,6 +824,17 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
 
       details_view->button_pressed = TRUE;
 
+      /* find out if the expander was clicked;
+       * only needed if expandable folders is enabled */
+      if (gtk_tree_view_get_show_expanders (tree_view))
+        {
+          gtk_widget_style_get (GTK_WIDGET (tree_view),
+                                "expander-size", &expander_size,
+                                "horizontal-separator", &horizontal_separator,
+                                NULL);
+          on_expander = (event->x <= horizontal_separator / 2 + gtk_tree_path_get_depth (path) * expander_size);
+        }
+
       /* grab the tree view */
       gtk_widget_grab_focus (GTK_WIDGET (tree_view));
 
@@ -829,6 +842,19 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
       if (cursor_path != NULL)
         {
           gtk_tree_path_free (cursor_path);
+
+          /* if single click is enabled and the click was directed
+           * towards the expander then expand/collapse the row but do not
+           * activate it */
+          g_object_get (tree_view, "single-click", &activate_on_single_click, NULL);
+          if (on_expander && activate_on_single_click)
+            {
+              if (gtk_tree_view_row_expanded (tree_view, path))
+                gtk_tree_view_collapse_row (tree_view, path);
+              else
+                gtk_tree_view_expand_row (tree_view, path, FALSE);
+              return TRUE;
+            }
 
           if (column != name_column)
             gtk_tree_selection_unselect_all (selection);
