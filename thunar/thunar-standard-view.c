@@ -2226,7 +2226,9 @@ thunar_standard_view_get_drop_file (ThunarStandardView *standard_view,
 {
   GtkTreePath *path = NULL;
   GtkTreeIter  iter;
-  ThunarFile  *file = NULL;
+  ThunarFile  *file = NULL, *parent = NULL;
+  GList        list;
+  GList       *path_list;
 
   /* determine the path for the given coordinates */
   path = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_path_at_pos) (standard_view, x, y);
@@ -2239,10 +2241,32 @@ thunar_standard_view_get_drop_file (ThunarStandardView *standard_view,
       /* we can only drop to directories and executable files */
       if (file != NULL && !thunar_file_is_directory (file) && !thunar_file_can_execute (file, NULL))
         {
-          /* drop to the folder instead */
+          /* since this is a file and not a folder we should
+           * instead drop the source file into the direct parent
+           * of this file i.e make the source a sibling of this file */
+          parent = thunar_file_get_parent (file, NULL);
           g_object_unref (G_OBJECT (file));
+          file = parent;
+
+          /* free the previous path */
           gtk_tree_path_free (path);
           path = NULL;
+
+          if (file != NULL)
+            {
+              /* get the path of the parent */
+              list.data = file;
+              list.next = NULL;
+              list.prev = NULL;
+              path_list = thunar_standard_view_model_get_paths_for_files (standard_view->model, &list);
+              if (path_list != NULL)
+                {
+                  path = path_list->data;
+                  /* only free the container */
+                  g_list_free (path_list);
+                  path_list = NULL;
+                }
+            }
         }
     }
 

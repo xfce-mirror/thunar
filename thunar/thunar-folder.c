@@ -118,6 +118,9 @@ struct _ThunarFolder
 
   guint              content_type_idle_id;
 
+  /* List of ThunarFiles for which the content type needs to be loaded */
+  GList             *files_to_load_content_type;
+
   guint              in_destruction : 1;
 
   ThunarFileMonitor *file_monitor;
@@ -278,6 +281,8 @@ thunar_folder_init (ThunarFolder *folder)
   g_signal_connect (G_OBJECT (folder->file_monitor), "file-changed", G_CALLBACK (thunar_folder_file_changed), folder);
   g_signal_connect (G_OBJECT (folder->file_monitor), "file-destroyed", G_CALLBACK (thunar_folder_file_destroyed), folder);
 
+  folder->files_to_load_content_type = NULL;
+
   folder->monitor = NULL;
   folder->reload_info = FALSE;
 }
@@ -340,6 +345,8 @@ thunar_folder_finalize (GObject *object)
   /* stop metadata collector */
   if (folder->content_type_idle_id != 0)
     g_source_remove (folder->content_type_idle_id);
+  if (folder->files_to_load_content_type != NULL)
+    g_list_free_full (folder->files_to_load_content_type, g_object_unref);
 
   /* release references to the current files lists */
   g_hash_table_destroy (folder->files_map);
@@ -452,23 +459,39 @@ static gboolean
 thunar_folder_content_type_loader_idle (gpointer data)
 {
   ThunarFolder   *folder;
-  GHashTableIter  iter;
-  gpointer        key, value;
+  GList          *lp_remove;
+  GList          *lp;
 
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (data), FALSE);
 
   folder = THUNAR_FOLDER (data);
-
-  /* load content types */
-  g_hash_table_iter_init (&iter, folder->files_map);
-  while (g_hash_table_iter_next (&iter, &key, &value))
+  
+  /* load another files content type */
+  for (lp = folder->files_to_load_content_type; lp != NULL; lp = lp->next)
     {
-      if (value != NULL)
-        thunar_file_load_content_type (THUNAR_FILE (value));
+      if (thunar_file_load_content_type (THUNAR_FILE (lp->data)))
+        {
+          lp_remove = lp;
+
+          /* release the ref to the ThunarFile */
+          g_object_unref (lp->data);
+
+          /* This list element is done, drop it from the list */
+          folder->files_to_load_content_type = g_list_delete_link (folder->files_to_load_content_type, lp_remove);
+
+          /* only one file per iteration to prevent lag/freeze */
+          return G_SOURCE_CONTINUE;
+        }
     }
 
-  /* all content types loaded */
-  return FALSE;
+  /* all content types loaded, let's clear the list and stop the g_source */
+  if (folder->files_to_load_content_type != NULL)
+  {
+    g_list_free_full (folder->files_to_load_content_type, g_object_unref);
+    folder->files_to_load_content_type = NULL;
+  }
+
+  return G_SOURCE_REMOVE;
 }
 
 
@@ -486,8 +509,23 @@ thunar_folder_content_type_loader_idle_destroyed (gpointer data)
 static void
 thunar_folder_content_type_loader (ThunarFolder *folder)
 {
+  GHashTableIter iter;
+  gpointer       key, value;
+
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (folder->content_type_idle_id == 0);
+
+  if (folder->files_to_load_content_type != NULL)
+  {
+    g_list_free_full (folder->files_to_load_content_type, g_object_unref);
+    folder->files_to_load_content_type = NULL;
+  }
+
+  g_hash_table_iter_init (&iter, folder->files_map);
+  while (g_hash_table_iter_next (&iter, &key, &value))
+    {
+      folder->files_to_load_content_type = g_list_append (folder->files_to_load_content_type, g_object_ref (THUNAR_FILE (value)));
+    }
 
   /* schedule idle */
   folder->content_type_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_folder_content_type_loader_idle,
