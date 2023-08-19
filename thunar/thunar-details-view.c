@@ -793,6 +793,8 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
   gboolean           row_selected;
   gint               expander_size, horizontal_separator;
   gboolean           on_expander = FALSE, activate_on_single_click = FALSE;
+  GdkRectangle       rect;
+  gint               edge_to_expander_region_width;
 
   /* check if the event is for the bin window */
   if (G_UNLIKELY (event->window != gtk_tree_view_get_bin_window (tree_view)))
@@ -828,11 +830,16 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
        * only needed if expandable folders is enabled */
       if (gtk_tree_view_get_show_expanders (tree_view))
         {
+          gtk_tree_view_get_visible_rect (tree_view, &rect);
           gtk_widget_style_get (GTK_WIDGET (tree_view),
                                 "expander-size", &expander_size,
                                 "horizontal-separator", &horizontal_separator,
                                 NULL);
-          on_expander = (event->x <= horizontal_separator / 2 + gtk_tree_path_get_depth (path) * expander_size);
+          edge_to_expander_region_width = horizontal_separator / 2 + gtk_tree_path_get_depth (path) * expander_size;
+          if (G_LIKELY (gtk_widget_get_direction (GTK_WIDGET (tree_view)) == GTK_TEXT_DIR_LTR))
+            on_expander = (event->x <= edge_to_expander_region_width);
+          else
+            on_expander = (rect.width - event->x <= edge_to_expander_region_width);
         }
 
       /* grab the tree view */
@@ -849,10 +856,15 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
           g_object_get (tree_view, "single-click", &activate_on_single_click, NULL);
           if (on_expander && activate_on_single_click)
             {
+              /* select the path and also set the cursor */
+              gtk_tree_selection_select_path (selection, path);
+              gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
+
               if (gtk_tree_view_row_expanded (tree_view, path))
                 gtk_tree_view_collapse_row (tree_view, path);
               else
                 gtk_tree_view_expand_row (tree_view, path, FALSE);
+
               return TRUE;
             }
 
