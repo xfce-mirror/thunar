@@ -2704,6 +2704,7 @@ thunar_tree_view_model_file_changed (ThunarFileMonitor   *monitor,
   gint           pos_after, pos_before = 0;
   gint          *new_order;
   gint           length;
+  gboolean       dummy_added;
 
   node = thunar_tree_view_model_locate_file (model, file);
 
@@ -2766,9 +2767,20 @@ thunar_tree_view_model_file_changed (ThunarFileMonitor   *monitor,
       g_free (new_order);
     }
 
+  if (thunar_file_is_directory (file)
+      && !thunar_g_file_is_empty (thunar_file_get_file (file))
+      && !node->loaded
+      && !thunar_tree_view_model_node_has_dummy_child (node))
+    {
+      dummy_added = TRUE;
+      thunar_tree_view_model_node_add_dummy_child (node);
+    }
+
   GTK_TREE_ITER_INIT (tree_iter, model->stamp, iter);
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &tree_iter);
   gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &tree_iter);
+  if (dummy_added)
+    gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (model), path, &tree_iter);
   gtk_tree_path_free (path);
 }
 
