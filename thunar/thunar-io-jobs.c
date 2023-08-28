@@ -1694,9 +1694,13 @@ _thunar_job_load_content_types (ThunarJob *job,
   thunar_files = g_value_get_boxed (&g_array_index (param_values, GValue, 0));
 
   for (GList *lp = thunar_files; lp != NULL; lp = lp->next)
-    thunar_file_get_content_type (THUNAR_FILE (lp->data));
+    {
+      thunar_file_get_content_type (THUNAR_FILE (lp->data));
+      // g_object_unref (lp->data);
+    }
 
-  thunar_g_list_free_full (thunar_files);
+  /* this causes crashes */
+  // thunar_g_list_free_full (thunar_files);
 
   return TRUE;
 }
