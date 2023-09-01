@@ -406,7 +406,7 @@ static XfceGtkActionEntry thunar_standard_view_action_entries[] =
     { THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION,   "<Actions>/ThunarStandardView/invert-selection",   "",           XFCE_GTK_MENU_ITEM,       N_ ("_Invert Selection"),     N_ ("Select all files but not those currently selected"), NULL, G_CALLBACK (thunar_standard_view_selection_invert),            },
     { THUNAR_STANDARD_VIEW_ACTION_UNSELECT_ALL_FILES, "<Actions>/ThunarStandardView/unselect-all-files", "Escape",     XFCE_GTK_MENU_ITEM,       N_ ("U_nselect all Files"),   N_ ("Unselect all files in this window"),                 NULL, G_CALLBACK (thunar_standard_view_unselect_all_files),          },
     { THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU, "<Actions>/ThunarStandardView/arrange-items-menu", "",           XFCE_GTK_MENU_ITEM,       N_ ("Arran_ge Items"),        NULL,                                                     NULL, G_CALLBACK (NULL),                                             },
-    { THUNAR_STANDARD_VIEW_ACTION_SORT_ORDER_TOGGLE,  "<Actions>/ThunarStandardView/toggle-sort-order",  "",           XFCE_GTK_MENU_ITEM,       N_ ("T_oggle Sort Order"),    N_ ("Toggle ascending/descending sort order"),            NULL, G_CALLBACK (thunar_standard_view_toggle_sort_order),           },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_ORDER_TOGGLE,  "<Actions>/ThunarStandardView/toggle-sort-order",  "",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Reversed Order"),        N_ ("Reverse the sort order"),                            NULL, G_CALLBACK (thunar_standard_view_toggle_sort_order),           },
     { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_NAME,       "<Actions>/ThunarStandardView/sort-by-name",       "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Name"),              N_ ("Keep items sorted by their name"),                   NULL, G_CALLBACK (thunar_standard_view_action_sort_by_name),         },
     { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_SIZE,       "<Actions>/ThunarStandardView/sort-by-size",       "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Size"),              N_ ("Keep items sorted by their size"),                   NULL, G_CALLBACK (thunar_standard_view_action_sort_by_size),         },
     { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_TYPE,       "<Actions>/ThunarStandardView/sort-by-type",       "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Type"),              N_ ("Keep items sorted by their type"),                   NULL, G_CALLBACK (thunar_standard_view_action_sort_by_type),         },
@@ -2226,7 +2226,9 @@ thunar_standard_view_get_drop_file (ThunarStandardView *standard_view,
 {
   GtkTreePath *path = NULL;
   GtkTreeIter  iter;
-  ThunarFile  *file = NULL;
+  ThunarFile  *file = NULL, *parent = NULL;
+  GList        list;
+  GList       *path_list;
 
   /* determine the path for the given coordinates */
   path = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_path_at_pos) (standard_view, x, y);
@@ -2239,10 +2241,32 @@ thunar_standard_view_get_drop_file (ThunarStandardView *standard_view,
       /* we can only drop to directories and executable files */
       if (file != NULL && !thunar_file_is_directory (file) && !thunar_file_can_execute (file, NULL))
         {
-          /* drop to the folder instead */
+          /* since this is a file and not a folder we should
+           * instead drop the source file into the direct parent
+           * of this file i.e make the source a sibling of this file */
+          parent = thunar_file_get_parent (file, NULL);
           g_object_unref (G_OBJECT (file));
+          file = parent;
+
+          /* free the previous path */
           gtk_tree_path_free (path);
           path = NULL;
+
+          if (file != NULL)
+            {
+              /* get the path of the parent */
+              list.data = file;
+              list.next = NULL;
+              list.prev = NULL;
+              path_list = thunar_standard_view_model_get_paths_for_files (standard_view->model, &list);
+              if (path_list != NULL)
+                {
+                  path = path_list->data;
+                  /* only free the container */
+                  g_list_free (path_list);
+                  path_list = NULL;
+                }
+            }
         }
     }
 
@@ -4404,8 +4428,8 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_DESCENDING), G_OBJECT (standard_view),
                                                    standard_view->priv->sort_order == GTK_SORT_DESCENDING, GTK_MENU_SHELL (submenu));
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_item_new_from_action_entry        (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_ORDER_TOGGLE), G_OBJECT (standard_view),
-                                                   GTK_MENU_SHELL (submenu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_ORDER_TOGGLE), G_OBJECT (standard_view),
+                                                   standard_view->priv->sort_order == GTK_SORT_DESCENDING, GTK_MENU_SHELL (submenu));
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (submenu));
   gtk_widget_show (item);
 

@@ -770,8 +770,6 @@ _thunar_standard_view_model_match_pattern_foreach (GtkTreeModel *model,
   normalized_display_name = thunar_g_utf8_normalize_for_search (display_name,
                                                                 !mf->match_diacritics,
                                                                 !mf->case_sensitive);
-  /* only available from glib version 70. But the other thing was deprecated.
-   * could we do a GLIB_VERSION_CHECK here and use the right thing accordingly ? */
   name_matched = g_pattern_spec_match_string (mf->pspec, normalized_display_name);
   g_free (normalized_display_name);
 
