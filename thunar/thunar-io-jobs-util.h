@@ -21,8 +21,8 @@
 #ifndef __THUNAR_IO_JOBS_UTIL_H__
 #define __THUNAR_IO_JOBS_UTIL_H__
 
-#include <thunar/thunar-job.h>
-#include <thunar/thunar-util.h>
+#include "thunar/thunar-job.h"
+#include "thunar/thunar-util.h"
 
 G_BEGIN_DECLS
 

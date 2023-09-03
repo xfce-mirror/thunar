@@ -22,7 +22,7 @@
 #ifndef __THUNAR_PATH_ENTRY_H__
 #define __THUNAR_PATH_ENTRY_H__
 
-#include <thunar/thunar-file.h>
+#include "thunar/thunar-file.h"
 
 G_BEGIN_DECLS;
 

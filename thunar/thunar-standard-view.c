@@ -20,7 +20,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_MEMORY_H
@@ -34,28 +34,28 @@
 
 #include <libxfce4util/libxfce4util.h>
 
-#include <thunar/thunar-action-manager.h>
-#include <thunar/thunar-application.h>
-#include <thunar/thunar-menu.h>
-#include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-dnd.h>
-#include <thunar/thunar-enum-types.h>
-#include <thunar/thunar-gio-extensions.h>
-#include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-gtk-extensions.h>
-#include <thunar/thunar-history.h>
-#include <thunar/thunar-icon-renderer.h>
-#include <thunar/thunar-text-renderer.h>
-#include <thunar/thunar-marshal.h>
-#include <thunar/thunar-pango-extensions.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-properties-dialog.h>
-#include <thunar/thunar-renamer-dialog.h>
-#include <thunar/thunar-simple-job.h>
-#include <thunar/thunar-standard-view.h>
-#include <thunar/thunar-thumbnailer.h>
-#include <thunar/thunar-util.h>
-#include <thunar/thunar-details-view.h>
+#include "thunar/thunar-action-manager.h"
+#include "thunar/thunar-application.h"
+#include "thunar/thunar-menu.h"
+#include "thunar/thunar-dialogs.h"
+#include "thunar/thunar-dnd.h"
+#include "thunar/thunar-enum-types.h"
+#include "thunar/thunar-gio-extensions.h"
+#include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-gtk-extensions.h"
+#include "thunar/thunar-history.h"
+#include "thunar/thunar-icon-renderer.h"
+#include "thunar/thunar-text-renderer.h"
+#include "thunar/thunar-marshal.h"
+#include "thunar/thunar-pango-extensions.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-properties-dialog.h"
+#include "thunar/thunar-renamer-dialog.h"
+#include "thunar/thunar-simple-job.h"
+#include "thunar/thunar-standard-view.h"
+#include "thunar/thunar-thumbnailer.h"
+#include "thunar/thunar-util.h"
+#include "thunar/thunar-details-view.h"
 
 #if defined(GDK_WINDOWING_X11)
 #include <gdk/gdkx.h>

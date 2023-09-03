@@ -20,7 +20,7 @@
 #define __THUNAR_JOB_OPERATION_HISTORY_H__
 
 #include <glib.h>
-#include <thunar-job-operation.h>
+#include "thunar-job-operation.h"
 
 G_BEGIN_DECLS
 

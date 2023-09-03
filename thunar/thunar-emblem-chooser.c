@@ -18,7 +18,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_MEMORY_H
@@ -30,9 +30,9 @@
 
 #include <libxfce4util/libxfce4util.h>
 
-#include <thunar/thunar-emblem-chooser.h>
-#include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-private.h>
+#include "thunar/thunar-emblem-chooser.h"
+#include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-private.h"
 
 
 

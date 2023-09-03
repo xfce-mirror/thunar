@@ -20,7 +20,7 @@
 #ifndef __THUNAR_SHORTCUTS_ICON_RENDERER_H__
 #define __THUNAR_SHORTCUTS_ICON_RENDERER_H__
 
-#include <thunar/thunar-icon-renderer.h>
+#include "thunar/thunar-icon-renderer.h"
 
 G_BEGIN_DECLS;
 

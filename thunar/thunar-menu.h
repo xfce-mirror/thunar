@@ -20,7 +20,7 @@
 
 #include <gtk/gtk.h>
 
-#include <thunar/thunar-file.h>
+#include "thunar/thunar-file.h"
 
 G_BEGIN_DECLS;
 

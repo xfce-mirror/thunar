@@ -20,7 +20,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_UNISTD_H
@@ -34,35 +34,35 @@
 
 #include <libxfce4util/libxfce4util.h>
 
-#include <thunar/thunar-action-manager.h>
-#include <thunar/thunar-application.h>
-#include <thunar/thunar-browser.h>
-#include <thunar/thunar-clipboard-manager.h>
-#include <thunar/thunar-compact-view.h>
-#include <thunar/thunar-details-view.h>
-#include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-shortcuts-pane.h>
-#include <thunar/thunar-gio-extensions.h>
-#include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-gtk-extensions.h>
-#include <thunar/thunar-history.h>
-#include <thunar/thunar-icon-view.h>
-#include <thunar/thunar-job-operation-history.h>
-#include <thunar/thunar-location-buttons.h>
-#include <thunar/thunar-location-entry.h>
-#include <thunar/thunar-marshal.h>
-#include <thunar/thunar-menu.h>
-#include <thunar/thunar-pango-extensions.h>
-#include <thunar/thunar-preferences-dialog.h>
-#include <thunar/thunar-preferences.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-util.h>
-#include <thunar/thunar-statusbar.h>
-#include <thunar/thunar-tree-pane.h>
-#include <thunar/thunar-window.h>
-#include <thunar/thunar-device-monitor.h>
-#include <thunar/thunar-toolbar-editor.h>
-#include <thunar/thunar-thumbnailer.h>
+#include "thunar/thunar-action-manager.h"
+#include "thunar/thunar-application.h"
+#include "thunar/thunar-browser.h"
+#include "thunar/thunar-clipboard-manager.h"
+#include "thunar/thunar-compact-view.h"
+#include "thunar/thunar-details-view.h"
+#include "thunar/thunar-dialogs.h"
+#include "thunar/thunar-shortcuts-pane.h"
+#include "thunar/thunar-gio-extensions.h"
+#include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-gtk-extensions.h"
+#include "thunar/thunar-history.h"
+#include "thunar/thunar-icon-view.h"
+#include "thunar/thunar-job-operation-history.h"
+#include "thunar/thunar-location-buttons.h"
+#include "thunar/thunar-location-entry.h"
+#include "thunar/thunar-marshal.h"
+#include "thunar/thunar-menu.h"
+#include "thunar/thunar-pango-extensions.h"
+#include "thunar/thunar-preferences-dialog.h"
+#include "thunar/thunar-preferences.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-util.h"
+#include "thunar/thunar-statusbar.h"
+#include "thunar/thunar-tree-pane.h"
+#include "thunar/thunar-window.h"
+#include "thunar/thunar-device-monitor.h"
+#include "thunar/thunar-toolbar-editor.h"
+#include "thunar/thunar-thumbnailer.h"
 
 #include <glib.h>
 
