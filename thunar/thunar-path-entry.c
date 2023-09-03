@@ -578,7 +578,7 @@ thunar_path_entry_changed (GtkEditable *editable)
   ThunarFolder       *folder;
   GtkTreeModel       *model;
   const gchar        *text;
-  gchar              *escaped_text;
+  gchar              *scheme;
   ThunarFile         *current_folder;
   ThunarFile         *current_file;
   GFile              *folder_path = NULL;
@@ -609,13 +609,14 @@ thunar_path_entry_changed (GtkEditable *editable)
           GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (editable));
           thunar_window_action_cancel_search (THUNAR_WINDOW (window));
         }
+      
       /* location/folder-path code */
-      if (G_UNLIKELY (g_uri_is_valid (text, G_URI_FLAGS_NONE, NULL)))
+      scheme = g_uri_parse_scheme (text);
+      if (G_UNLIKELY (scheme == NULL))
         {
-          /* try to parse the URI text */
-          escaped_text = g_uri_escape_string (text, G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, TRUE);
-          file_path = g_file_new_for_uri (escaped_text);
-          g_free (escaped_text);
+          /* Text is URI */
+          g_free (scheme);
+          file_path = g_file_new_for_uri (text);
 
           /* use the same file if the text assumes we're in a directory */
           if (g_str_has_suffix (text, "/"))
