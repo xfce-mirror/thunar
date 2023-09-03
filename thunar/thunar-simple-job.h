@@ -21,7 +21,7 @@
 #ifndef __THUNAR_SIMPLE_JOB_H__
 #define __THUNAR_SIMPLE_JOB_H__
 
-#include <thunar/thunar-job.h>
+#include "thunar/thunar-job.h"
 
 G_BEGIN_DECLS
 

@@ -20,7 +20,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 #ifdef HAVE_TIME_H
 #include <time.h>
@@ -30,24 +30,24 @@
 
 #include <libxfce4util/libxfce4util.h>
 
-#include <thunar/thunar-application.h>
-#include <thunar/thunar-clipboard-manager.h>
-#include <thunar/thunar-device.h>
-#include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-dnd.h>
-#include <thunar/thunar-gio-extensions.h>
-#include <thunar/thunar-gtk-extensions.h>
-#include <thunar/thunar-job.h>
-#include <thunar/thunar-marshal.h>
-#include <thunar/thunar-menu.h>
-#include <thunar/thunar-preferences.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-properties-dialog.h>
-#include <thunar/thunar-shortcuts-icon-renderer.h>
-#include <thunar/thunar-simple-job.h>
-#include <thunar/thunar-tree-model.h>
-#include <thunar/thunar-tree-view.h>
-#include <thunar/thunar-util.h>
+#include "thunar/thunar-application.h"
+#include "thunar/thunar-clipboard-manager.h"
+#include "thunar/thunar-device.h"
+#include "thunar/thunar-dialogs.h"
+#include "thunar/thunar-dnd.h"
+#include "thunar/thunar-gio-extensions.h"
+#include "thunar/thunar-gtk-extensions.h"
+#include "thunar/thunar-job.h"
+#include "thunar/thunar-marshal.h"
+#include "thunar/thunar-menu.h"
+#include "thunar/thunar-preferences.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-properties-dialog.h"
+#include "thunar/thunar-shortcuts-icon-renderer.h"
+#include "thunar/thunar-simple-job.h"
+#include "thunar/thunar-tree-model.h"
+#include "thunar/thunar-tree-view.h"
+#include "thunar/thunar-util.h"
 
 
 

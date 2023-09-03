@@ -19,17 +19,17 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <gtk/gtk.h>
 
 #include <libxfce4ui/libxfce4ui.h>
 
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-progress-dialog.h>
-#include <thunar/thunar-progress-view.h>
-#include <thunar/thunar-transfer-job.h>
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-progress-dialog.h"
+#include "thunar/thunar-progress-view.h"
+#include "thunar/thunar-transfer-job.h"
 
 
 

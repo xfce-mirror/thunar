@@ -20,9 +20,9 @@
 #ifndef __THUNAR_DIALOGS_H__
 #define __THUNAR_DIALOGS_H__
 
-#include <thunar/thunar-enum-types.h>
-#include <thunar/thunar-file.h>
-#include <thunar/thunar-job.h>
+#include "thunar/thunar-enum-types.h"
+#include "thunar/thunar-file.h"
+#include "thunar/thunar-job.h"
 
 G_BEGIN_DECLS;
 

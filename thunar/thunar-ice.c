@@ -18,7 +18,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_FCNTL_H
@@ -32,7 +32,7 @@
 #include <X11/ICE/ICElib.h>
 #endif
 
-#include <thunar/thunar-ice.h>
+#include "thunar/thunar-ice.h"
 
 
 

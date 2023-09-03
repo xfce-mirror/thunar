@@ -19,19 +19,19 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <exo/exo.h>
 
-#include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-job.h>
-#include <thunar/thunar-pango-extensions.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-util.h>
-#include <thunar/thunar-transfer-job.h>
-#include <thunar/thunar-progress-view.h>
+#include "thunar/thunar-dialogs.h"
+#include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-job.h"
+#include "thunar/thunar-pango-extensions.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-util.h"
+#include "thunar/thunar-transfer-job.h"
+#include "thunar/thunar-progress-view.h"
 
 
 

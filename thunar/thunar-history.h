@@ -20,7 +20,7 @@
 #ifndef __THUNAR_HISTORY_H__
 #define __THUNAR_HISTORY_H__
 
-#include <thunar/thunar-file.h>
+#include "thunar/thunar-file.h"
 
 G_BEGIN_DECLS;
 
