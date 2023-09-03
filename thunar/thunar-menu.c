@@ -16,15 +16,15 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
-#include <thunar/thunar-menu.h>
+#include "thunar/thunar-menu.h"
 
-#include <thunar/thunar-action-manager.h>
-#include <thunar/thunar-gtk-extensions.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-window.h>
+#include "thunar/thunar-action-manager.h"
+#include "thunar/thunar-gtk-extensions.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-window.h"
 
 
 

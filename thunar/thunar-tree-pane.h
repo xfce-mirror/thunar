@@ -20,7 +20,7 @@
 #ifndef __THUNAR_TREE_PANE_H__
 #define __THUNAR_TREE_PANE_H__
 
-#include <thunar/thunar-side-pane.h>
+#include "thunar/thunar-side-pane.h"
 
 G_BEGIN_DECLS;
 

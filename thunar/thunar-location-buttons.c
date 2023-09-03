@@ -22,20 +22,20 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
-#include <thunar/thunar-application.h>
-#include <thunar/thunar-clipboard-manager.h>
-#include <thunar/thunar-menu.h>
-#include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-gio-extensions.h>
-#include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-gtk-extensions.h>
-#include <thunar/thunar-location-button.h>
-#include <thunar/thunar-location-buttons.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-properties-dialog.h>
+#include "thunar/thunar-application.h"
+#include "thunar/thunar-clipboard-manager.h"
+#include "thunar/thunar-menu.h"
+#include "thunar/thunar-dialogs.h"
+#include "thunar/thunar-gio-extensions.h"
+#include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-gtk-extensions.h"
+#include "thunar/thunar-location-button.h"
+#include "thunar/thunar-location-buttons.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-properties-dialog.h"
 
 
 

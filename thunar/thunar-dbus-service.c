@@ -20,7 +20,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_MEMORY_H
@@ -34,22 +34,22 @@
 
 #include <libxfce4util/libxfce4util.h>
 
-#include <thunar/thunar-application.h>
-#include <thunar/thunar-preferences.h>
-#include <thunar/thunar-chooser-dialog.h>
-#include <thunar/thunar-dbus-service.h>
-#include <thunar/thunar-file.h>
-#include <thunar/thunar-gdk-extensions.h>
-#include <thunar/thunar-preferences-dialog.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-properties-dialog.h>
-#include <thunar/thunar-util.h>
+#include "thunar/thunar-application.h"
+#include "thunar/thunar-preferences.h"
+#include "thunar/thunar-chooser-dialog.h"
+#include "thunar/thunar-dbus-service.h"
+#include "thunar/thunar-file.h"
+#include "thunar/thunar-gdk-extensions.h"
+#include "thunar/thunar-preferences-dialog.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-properties-dialog.h"
+#include "thunar/thunar-util.h"
 
 
 
 /* include generate dbus infos */
-#include <thunar/thunar-dbus-freedesktop-interfaces.h>
-#include <thunar/thunar-dbus-service-infos.h>
+#include "thunar/thunar-dbus-freedesktop-interfaces.h"
+#include "thunar/thunar-dbus-service-infos.h"
 
 
 

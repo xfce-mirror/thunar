@@ -23,7 +23,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_ERRNO_H
@@ -38,14 +38,14 @@
 
 #include <gdk/gdkkeysyms.h>
 
-#include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-icon-factory.h>
-#include <thunar/thunar-icon-renderer.h>
-#include <thunar/thunar-list-model.h>
-#include <thunar/thunar-path-entry.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-util.h>
-#include <thunar/thunar-window.h>
+#include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-icon-factory.h"
+#include "thunar/thunar-icon-renderer.h"
+#include "thunar/thunar-list-model.h"
+#include "thunar/thunar-path-entry.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-util.h"
+#include "thunar/thunar-window.h"
 
 
 

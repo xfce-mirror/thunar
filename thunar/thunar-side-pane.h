@@ -20,7 +20,7 @@
 #ifndef __THUNAR_SIDE_PANE_H__
 #define __THUNAR_SIDE_PANE_H__
 
-#include <thunar/thunar-component.h>
+#include "thunar/thunar-component.h"
 
 G_BEGIN_DECLS;
 
