@@ -611,7 +611,7 @@ thunar_path_entry_changed (GtkEditable *editable)
       
       /* location/folder-path code */
       scheme = g_uri_parse_scheme (text);
-      if (G_UNLIKELY (scheme == NULL))
+      if (G_UNLIKELY (scheme != NULL))
         {
           /* Text is URI */
           g_free (scheme);
