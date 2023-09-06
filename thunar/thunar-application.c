@@ -21,7 +21,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_ERRNO_H
@@ -45,23 +45,23 @@
 
 #include <libxfce4ui/libxfce4ui.h>
 
-#include <thunar/thunar-application.h>
-#include <thunar/thunar-browser.h>
-#include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-gdk-extensions.h>
-#include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-io-jobs.h>
-#include <thunar/thunar-preferences.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-progress-dialog.h>
-#include <thunar/thunar-renamer-dialog.h>
-#include <thunar/thunar-thumbnail-cache.h>
-#include <thunar/thunar-thumbnailer.h>
-#include <thunar/thunar-transfer-job.h>
-#include <thunar/thunar-util.h>
-#include <thunar/thunar-view.h>
-#include <thunar/thunar-session-client.h>
-#include <thunar/thunar-dbus-service.h>
+#include "thunar/thunar-application.h"
+#include "thunar/thunar-browser.h"
+#include "thunar/thunar-dialogs.h"
+#include "thunar/thunar-gdk-extensions.h"
+#include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-io-jobs.h"
+#include "thunar/thunar-preferences.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-progress-dialog.h"
+#include "thunar/thunar-renamer-dialog.h"
+#include "thunar/thunar-thumbnail-cache.h"
+#include "thunar/thunar-thumbnailer.h"
+#include "thunar/thunar-transfer-job.h"
+#include "thunar/thunar-util.h"
+#include "thunar/thunar-view.h"
+#include "thunar/thunar-session-client.h"
+#include "thunar/thunar-dbus-service.h"
 
 #define ACCEL_MAP_PATH "Thunar/accels.scm"
 
@@ -76,6 +76,7 @@ static gchar   *opt_sm_client_id = NULL;
 /* option entries */
 static const GOptionEntry option_entries[] =
 {
+  { "separate-window", 's', 0, G_OPTION_ARG_NONE, NULL, N_ ("Force a separate window with all passed locations opened in tabs"), NULL, },
   { "bulk-rename", 'B', 0, G_OPTION_ARG_NONE, NULL, N_ ("Open the bulk rename dialog"), NULL, },
   { "daemon", 0, 0, G_OPTION_ARG_NONE, NULL, N_ ("Run in daemon mode"), NULL, },
   { "sm-client-id", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_STRING, &opt_sm_client_id, NULL, NULL, },
@@ -84,6 +85,18 @@ static const GOptionEntry option_entries[] =
   { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, NULL, NULL, NULL, },
   { NULL, },
 };
+
+
+
+typedef enum {
+  FSTW_DISABLED = 0,
+  FSTW_ENABLED,
+  FSTW_WINDOW_LOCK,
+  FSTW_WINDOW_CREATED
+} FstwState;
+
+/* controls, whether to force a new locked tab window */
+static FstwState force_separate_tab_window_state = FSTW_DISABLED;
 
 
 
@@ -498,6 +511,7 @@ thunar_application_command_line (GApplication            *gapp,
   gchar             *cwd_list[]   = { (gchar *)".", NULL };
 
   /* retrieve arguments */
+  g_variant_dict_lookup (options_dict, "separate-window", "b", &force_separate_tab_window_state);
   g_variant_dict_lookup (options_dict, "bulk-rename", "b", &bulk_rename);
   g_variant_dict_lookup (options_dict, "quit", "b", &quit);
   g_variant_dict_lookup (options_dict, "daemon", "b", &daemon);
@@ -510,6 +524,10 @@ thunar_application_command_line (GApplication            *gapp,
         g_application_quit (gapp);
         goto out;
     }
+
+  /* ensuring the non-zero boolean value returned above corresponds to 1 (FSTW_ENABLED) */
+  if (force_separate_tab_window_state != FSTW_DISABLED)
+    force_separate_tab_window_state = FSTW_ENABLED;
 
   /* check whether we should daemonize */
   if (G_UNLIKELY (daemon))
@@ -614,6 +632,8 @@ thunar_application_command_line (GApplication            *gapp,
     }
 
 out:
+  force_separate_tab_window_state = FSTW_DISABLED;
+
   /* cleanup */
   g_strfreev (filenames);
 
@@ -1413,12 +1433,9 @@ thunar_application_open_window (ThunarApplication *application,
                                 const gchar       *startup_id,
                                 gboolean           force_new_window)
 {
-  GList*     list;
+  GList*     window_list;
   GtkWidget *window;
-  gchar     *role;
   gboolean   open_new_window_as_tab;
-  gboolean   misc_open_new_windows_in_split_view;
-  gboolean   restore_tabs;
 
   _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), NULL);
   _thunar_return_val_if_fail (directory == NULL || THUNAR_IS_FILE (directory), NULL);
@@ -1429,45 +1446,57 @@ thunar_application_open_window (ThunarApplication *application,
 
   /* open as tab instead, if preferred */
   g_object_get (G_OBJECT (application->preferences), "misc-open-new-window-as-tab", &open_new_window_as_tab, NULL);
-  if (G_UNLIKELY (!force_new_window && open_new_window_as_tab))
+  if (G_UNLIKELY (!force_new_window && (open_new_window_as_tab || force_separate_tab_window_state > FSTW_DISABLED)))
     {
-      list = thunar_application_get_windows (application);
-      if (list != NULL)  
+      if (force_separate_tab_window_state == FSTW_ENABLED)
         {
-          GList     *lp = list;
-          GtkWidget *data;
+          force_separate_tab_window_state = FSTW_WINDOW_LOCK;
+        }
+      else
+        {
+          window_list = thunar_application_get_windows (application);
 
-          /* this will be the topmost Window */
-          list = g_list_last (list);
-          data = list->data;
+          if (window_list)
+            {
+              gboolean locked_window = TRUE;
 
-          if (directory != NULL)
-              thunar_window_notebook_add_new_tab (THUNAR_WINDOW (data), directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
-          
-          /* bring the window to front */
-          gtk_window_present (GTK_WINDOW (data));
+              /* this will be the topmost window */
+              window_list = g_list_reverse (window_list);
 
-          g_list_free (lp);
+              /* the newly created locked window is at the front of the reversed window list */
+              if (force_separate_tab_window_state != FSTW_WINDOW_CREATED)
+                {
+                  /* find a window not marked as 'locked' to add the tab to */
+                  while (TRUE)
+                    {
+                      locked_window = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (window_list->data), "misc-locked-window"));
 
-          return data;
+                      if (locked_window && window_list->next)
+                        window_list = g_list_remove (window_list, window_list->data);
+                      else
+                        break;
+                    }
+                }
+
+              window = window_list->data;
+              g_list_free (window_list);
+
+              /* if found an appropriate window, add a tab */
+              if (!locked_window || force_separate_tab_window_state == FSTW_WINDOW_CREATED)
+                {
+                  if (directory != NULL)
+                    thunar_window_notebook_add_new_tab (THUNAR_WINDOW (window), directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
+
+                  /* bring the window to front */
+                  gtk_window_present (GTK_WINDOW (window));
+
+                  return window_list->data;
+                }
+            }
         }
     }
 
-  /* generate a unique role for the new window (for session management) */
-  role = g_strdup_printf ("Thunar-%u-%u", (guint) time (NULL), (guint) g_random_int ());
-
-  /* allocate the window */
-  window = g_object_new (THUNAR_TYPE_WINDOW,
-                         "role", role,
-                         "screen", screen,
-                         NULL);
-
-  /* cleanup */
-  g_free (role);
-
-  /* set the startup id */
-  if (startup_id != NULL)
-    gtk_window_set_startup_id (GTK_WINDOW (window), startup_id);
+  window = thunar_window_new (application->preferences, screen, startup_id);
 
   /* hook up the window */
   thunar_application_take_window (application, GTK_WINDOW (window));
@@ -1479,12 +1508,12 @@ thunar_application_open_window (ThunarApplication *application,
   if (directory != NULL)
     thunar_window_set_current_directory (THUNAR_WINDOW (window), directory);
 
-  /* enable split view, if preferred */
-  g_object_get (G_OBJECT (application->preferences),
-                "misc-open-new-windows-in-split-view", &misc_open_new_windows_in_split_view,
-                "last-restore-tabs", &restore_tabs, NULL);
-  if (misc_open_new_windows_in_split_view && !restore_tabs)
-    thunar_window_notebook_toggle_split_view (THUNAR_WINDOW (window));
+  if (force_separate_tab_window_state == FSTW_WINDOW_LOCK)
+    {
+      /* indicates further tabs must not be added to this window */
+      g_object_set_data (G_OBJECT (window), "misc-locked-window", GINT_TO_POINTER (TRUE));
+      force_separate_tab_window_state = FSTW_WINDOW_CREATED;
+    }
 
   return window;
 }

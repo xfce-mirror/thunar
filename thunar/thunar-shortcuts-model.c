@@ -20,7 +20,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_ERRNO_H
@@ -39,13 +39,13 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 
-#include <thunar/thunar-file-monitor.h>
-#include <thunar/thunar-file.h>
-#include <thunar/thunar-shortcuts-model.h>
-#include <thunar/thunar-device-monitor.h>
-#include <thunar/thunar-preferences.h>
-#include <thunar/thunar-util.h>
-#include <thunar/thunar-private.h>
+#include "thunar/thunar-file-monitor.h"
+#include "thunar/thunar-file.h"
+#include "thunar/thunar-shortcuts-model.h"
+#include "thunar/thunar-device-monitor.h"
+#include "thunar/thunar-preferences.h"
+#include "thunar/thunar-util.h"
+#include "thunar/thunar-private.h"
 
 #define SPINNER_CYCLE_DURATION 1000
 #define SPINNER_NUM_STEPS      12

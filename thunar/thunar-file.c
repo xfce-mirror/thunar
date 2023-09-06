@@ -20,7 +20,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_SYS_TYPES_H
@@ -54,21 +54,21 @@
 #include <libxfce4ui/libxfce4ui.h>
 #include <libxfce4util/libxfce4util.h>
 
-#include <thunarx/thunarx.h>
+#include "thunarx/thunarx.h"
 
-#include <thunar/thunar-application.h>
-#include <thunar/thunar-chooser-dialog.h>
-#include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-file-monitor.h>
-#include <thunar/thunar-file.h>
-#include <thunar/thunar-gio-extensions.h>
-#include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-icon-factory.h>
-#include <thunar/thunar-io-jobs.h>
-#include <thunar/thunar-preferences.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-user.h>
-#include <thunar/thunar-util.h>
+#include "thunar/thunar-application.h"
+#include "thunar/thunar-chooser-dialog.h"
+#include "thunar/thunar-dialogs.h"
+#include "thunar/thunar-file-monitor.h"
+#include "thunar/thunar-file.h"
+#include "thunar/thunar-gio-extensions.h"
+#include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-icon-factory.h"
+#include "thunar/thunar-io-jobs.h"
+#include "thunar/thunar-preferences.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-user.h"
+#include "thunar/thunar-util.h"
 
 
 

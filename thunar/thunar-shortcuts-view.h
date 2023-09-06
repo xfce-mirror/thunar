@@ -20,7 +20,7 @@
 #ifndef __THUNAR_SHORTCUTS_VIEW_H__
 #define __THUNAR_SHORTCUTS_VIEW_H__
 
-#include <thunar/thunar-file.h>
+#include "thunar/thunar-file.h"
 
 G_BEGIN_DECLS;
 

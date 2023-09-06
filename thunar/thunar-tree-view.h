@@ -20,7 +20,7 @@
 #ifndef __THUNAR_TREE_VIEW_H__
 #define __THUNAR_TREE_VIEW_H__
 
-#include <thunar/thunar-navigator.h>
+#include "thunar/thunar-navigator.h"
 
 G_BEGIN_DECLS;
 

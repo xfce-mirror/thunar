@@ -22,8 +22,8 @@
 #define __THUNAR_NOTIFY_H__
 
 #include <glib.h>
-#include <thunar/thunar-device.h>
-#include <thunar/thunar-job-operation.h>
+#include "thunar/thunar-device.h"
+#include "thunar/thunar-job-operation.h"
 
 G_BEGIN_DECLS
 

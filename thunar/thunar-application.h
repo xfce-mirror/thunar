@@ -23,9 +23,9 @@
 #ifndef __THUNAR_APPLICATION_H__
 #define __THUNAR_APPLICATION_H__
 
-#include <thunar/thunar-job-operation.h>
-#include <thunar/thunar-window.h>
-#include <thunar/thunar-thumbnail-cache.h>
+#include "thunar/thunar-job-operation.h"
+#include "thunar/thunar-window.h"
+#include "thunar/thunar-thumbnail-cache.h"
 
 G_BEGIN_DECLS;
 

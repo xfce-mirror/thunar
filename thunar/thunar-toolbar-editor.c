@@ -18,21 +18,21 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <exo/exo.h>
 
 #include <libxfce4ui/libxfce4ui.h>
 
-#include <thunar/thunar-abstract-dialog.h>
-#include <thunar/thunar-toolbar-editor.h>
-#include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-gtk-extensions.h>
-#include <thunar/thunar-pango-extensions.h>
-#include <thunar/thunar-preferences.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-application.h>
+#include "thunar/thunar-abstract-dialog.h"
+#include "thunar/thunar-toolbar-editor.h"
+#include "thunar/thunar-dialogs.h"
+#include "thunar/thunar-gtk-extensions.h"
+#include "thunar/thunar-pango-extensions.h"
+#include "thunar/thunar-preferences.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-application.h"
 
 
 
