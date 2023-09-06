@@ -18,11 +18,11 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
-#include <thunar/thunar-tree-pane.h>
-#include <thunar/thunar-tree-view.h>
+#include "thunar/thunar-tree-pane.h"
+#include "thunar/thunar-tree-view.h"
 
 
 

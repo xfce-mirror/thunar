@@ -20,8 +20,8 @@
 #ifndef __THUNAR_RENAMER_MODEL_H__
 #define __THUNAR_RENAMER_MODEL_H__
 
-#include <thunar/thunar-enum-types.h>
-#include <thunar/thunar-file.h>
+#include "thunar/thunar-enum-types.h"
+#include "thunar/thunar-file.h"
 
 G_BEGIN_DECLS;
 

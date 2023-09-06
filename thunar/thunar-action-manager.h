@@ -21,8 +21,8 @@
 #ifndef __THUNAR_ACTION_MANAGER_H__
 #define __THUNAR_ACTION_MANAGER_H__
 
-#include <thunar/thunar-component.h>
-#include <thunar/thunar-device.h>
+#include "thunar/thunar-component.h"
+#include "thunar/thunar-device.h"
 
 G_BEGIN_DECLS;
 

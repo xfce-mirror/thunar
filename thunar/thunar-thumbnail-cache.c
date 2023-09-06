@@ -19,18 +19,18 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
-#include <thunar/thunar-thumbnail-cache-proxy.h>
+#include "thunar/thunar-thumbnail-cache-proxy.h"
 
 #include <glib.h>
 #include <glib-object.h>
 #include <gio/gio.h>
 
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-thumbnail-cache.h>
-#include <thunar/thunar-file.h>
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-thumbnail-cache.h"
+#include "thunar/thunar-file.h"
 
 #define _thumbnail_cache_lock(cache)   g_mutex_lock (&((cache)->lock))
 #define _thumbnail_cache_unlock(cache) g_mutex_unlock (&((cache)->lock))

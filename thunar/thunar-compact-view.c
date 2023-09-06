@@ -18,10 +18,10 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
-#include <thunar/thunar-compact-view.h>
+#include "thunar/thunar-compact-view.h"
 
 
 

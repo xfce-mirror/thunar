@@ -18,14 +18,14 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_STDARG_H
 #include <stdarg.h>
 #endif
 
-#include <thunar/thunar-pango-extensions.h>
+#include "thunar/thunar-pango-extensions.h"
 
 
 

@@ -18,12 +18,12 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-renamer-progress.h>
-#include <thunar/thunar-util.h>
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-renamer-progress.h"
+#include "thunar/thunar-util.h"
 
 
 

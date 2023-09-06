@@ -22,9 +22,9 @@
 #ifndef __THUNAR_UTIL_H__
 #define __THUNAR_UTIL_H__
 
-#include <thunar/thunar-enum-types.h>
-#include <thunar/thunar-file.h>
-#include <thunar/thunar-standard-view-model.h>
+#include "thunar/thunar-enum-types.h"
+#include "thunar/thunar-file.h"
+#include "thunar/thunar-standard-view-model.h"
 
 #define THUNAR_THREADS_ENTER \
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS \

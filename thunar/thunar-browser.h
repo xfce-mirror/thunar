@@ -21,8 +21,8 @@
 #ifndef __THUNAR_BROWSER_H__
 #define __THUNAR_BROWSER_H__
 
-#include <thunar/thunar-file.h>
-#include <thunar/thunar-device.h>
+#include "thunar/thunar-file.h"
+#include "thunar/thunar-device.h"
 
 G_BEGIN_DECLS
 

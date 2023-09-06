@@ -20,7 +20,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_MEMORY_H
@@ -32,18 +32,18 @@
 
 #include <libxfce4util/libxfce4util.h>
 
-#include <thunar/thunar-application.h>
-#include <thunar/thunar-file.h>
-#include <thunar/thunar-file-monitor.h>
-#include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-list-model.h>
-#include <thunar/thunar-preferences.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-user.h>
-#include <thunar/thunar-simple-job.h>
-#include <thunar/thunar-util.h>
-#include <thunar/thunar-standard-view-model.h>
-#include <thunar/thunar-io-jobs.h>
+#include "thunar/thunar-application.h"
+#include "thunar/thunar-file.h"
+#include "thunar/thunar-file-monitor.h"
+#include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-list-model.h"
+#include "thunar/thunar-preferences.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-user.h"
+#include "thunar/thunar-simple-job.h"
+#include "thunar/thunar-util.h"
+#include "thunar/thunar-standard-view-model.h"
+#include "thunar/thunar-io-jobs.h"
 
 
 

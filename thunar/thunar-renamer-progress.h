@@ -20,7 +20,7 @@
 #ifndef __THUNAR_RENAMER_PROGRESS_H__
 #define __THUNAR_RENAMER_PROGRESS_H__
 
-#include <thunar/thunar-renamer-pair.h>
+#include "thunar/thunar-renamer-pair.h"
 
 G_BEGIN_DECLS;
 
