@@ -20,7 +20,7 @@
 #ifndef __THUNAR_COLUMN_EDITOR_H__
 #define __THUNAR_COLUMN_EDITOR_H__
 
-#include <thunar/thunar-column-model.h>
+#include "thunar/thunar-column-model.h"
 
 G_BEGIN_DECLS;
 

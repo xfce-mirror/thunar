@@ -18,13 +18,13 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <exo/exo.h>
 
-#include <thunar/thunar-component.h>
-#include <thunar/thunar-private.h>
+#include "thunar/thunar-component.h"
+#include "thunar/thunar-private.h"
 
 
 

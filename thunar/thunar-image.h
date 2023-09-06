@@ -21,7 +21,7 @@
 #ifndef __THUNAR_IMAGE_H__
 #define __THUNAR_IMAGE_H__
 
-#include <thunar/thunar-file.h>
+#include "thunar/thunar-file.h"
 
 G_BEGIN_DECLS;
 

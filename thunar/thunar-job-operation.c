@@ -16,10 +16,10 @@
  * this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <thunar/thunar-application.h>
-#include <thunar/thunar-io-jobs.h>
-#include <thunar/thunar-job-operation.h>
-#include <thunar/thunar-private.h>
+#include "thunar/thunar-application.h"
+#include "thunar/thunar-io-jobs.h"
+#include "thunar/thunar-job-operation.h"
+#include "thunar/thunar-private.h"
 
 /**
  * SECTION:thunar-job-operation

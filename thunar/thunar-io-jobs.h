@@ -21,9 +21,9 @@
 #ifndef __THUNAR_IO_JOBS_H__
 #define __THUNAR_IO_JOBS_H__
 
-#include <thunar/thunar-job.h>
-#include <thunar/thunar-enum-types.h>
-#include <thunar/thunar-standard-view-model.h>
+#include "thunar/thunar-job.h"
+#include "thunar/thunar-enum-types.h"
+#include "thunar/thunar-standard-view-model.h"
 
 G_BEGIN_DECLS
 

@@ -19,7 +19,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_LIBNOTIFY
@@ -28,9 +28,9 @@
 
 #include <libxfce4util/libxfce4util.h>
 
-#include <thunar/thunar-notify.h>
-#include <thunar/thunar-device.h>
-#include <thunar/thunar-private.h>
+#include "thunar/thunar-notify.h"
+#include "thunar/thunar-device.h"
+#include "thunar/thunar-private.h"
 
 
 

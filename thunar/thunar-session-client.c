@@ -18,7 +18,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_MEMORY_H
@@ -39,11 +39,11 @@
 #include <glib/gstdio.h>
 #include <gdk/gdkx.h>
 
-#include <thunar/thunar-application.h>
-#include <thunar/thunar-ice.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-session-client.h>
-#include <thunar/thunar-file.h>
+#include "thunar/thunar-application.h"
+#include "thunar/thunar-ice.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-session-client.h"
+#include "thunar/thunar-file.h"
 
 
 

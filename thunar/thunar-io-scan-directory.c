@@ -19,17 +19,17 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <gio/gio.h>
 
 #include <exo/exo.h>
 
-#include <thunar/thunar-gio-extensions.h>
-#include <thunar/thunar-job.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-io-scan-directory.h>
+#include "thunar/thunar-gio-extensions.h"
+#include "thunar/thunar-job.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-io-scan-directory.h"
 
 
 /**

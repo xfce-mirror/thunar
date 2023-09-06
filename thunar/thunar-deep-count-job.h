@@ -23,7 +23,7 @@
 
 #include <gio/gio.h>
 
-#include <thunar/thunar-job.h>
+#include "thunar/thunar-job.h"
 
 G_BEGIN_DECLS;
 

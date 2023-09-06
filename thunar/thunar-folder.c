@@ -19,15 +19,15 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
-#include <thunar/thunar-file-monitor.h>
-#include <thunar/thunar-folder.h>
-#include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-io-jobs.h>
-#include <thunar/thunar-job.h>
-#include <thunar/thunar-private.h>
+#include "thunar/thunar-file-monitor.h"
+#include "thunar/thunar-folder.h"
+#include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-io-jobs.h"
+#include "thunar/thunar-job.h"
+#include "thunar/thunar-private.h"
 
 #define DEBUG_FILE_CHANGES FALSE
 

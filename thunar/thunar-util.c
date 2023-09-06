@@ -20,7 +20,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_SYS_TYPES_H
@@ -54,12 +54,12 @@
 #include <glib/gwin32.h>
 #endif
 
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-util.h>
-#include <thunar/thunar-folder.h>
-#include <thunar/thunar-text-renderer.h>
-#include <thunar/thunar-icon-renderer.h>
-#include <thunar/thunar-preferences.h>
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-util.h"
+#include "thunar/thunar-folder.h"
+#include "thunar/thunar-text-renderer.h"
+#include "thunar/thunar-icon-renderer.h"
+#include "thunar/thunar-preferences.h"
 
 #include <glib.h>
 #include <glib/gstdio.h>

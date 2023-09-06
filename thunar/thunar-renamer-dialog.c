@@ -18,7 +18,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_MEMORY_H
@@ -30,19 +30,19 @@
 
 #include <libxfce4ui/libxfce4ui.h>
 
-#include <thunar/thunar-abstract-dialog.h>
-#include <thunar/thunar-action-manager.h>
-#include <thunar/thunar-application.h>
-#include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-gtk-extensions.h>
-#include <thunar/thunar-icon-factory.h>
-#include <thunar/thunar-icon-renderer.h>
-#include <thunar/thunar-menu.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-properties-dialog.h>
-#include <thunar/thunar-renamer-dialog.h>
-#include <thunar/thunar-renamer-model.h>
-#include <thunar/thunar-renamer-progress.h>
+#include "thunar/thunar-abstract-dialog.h"
+#include "thunar/thunar-action-manager.h"
+#include "thunar/thunar-application.h"
+#include "thunar/thunar-dialogs.h"
+#include "thunar/thunar-gtk-extensions.h"
+#include "thunar/thunar-icon-factory.h"
+#include "thunar/thunar-icon-renderer.h"
+#include "thunar/thunar-menu.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-properties-dialog.h"
+#include "thunar/thunar-renamer-dialog.h"
+#include "thunar/thunar-renamer-model.h"
+#include "thunar/thunar-renamer-progress.h"
 
 
 

@@ -20,7 +20,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_MEMORY_H
@@ -35,9 +35,9 @@
 
 #include <gobject/gvaluecollector.h>
 
-#include <thunar/thunar-job.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-simple-job.h>
+#include "thunar/thunar-job.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-simple-job.h"
 
 
 

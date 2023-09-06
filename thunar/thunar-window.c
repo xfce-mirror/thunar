@@ -20,7 +20,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_UNISTD_H
@@ -34,35 +34,35 @@
 
 #include <libxfce4util/libxfce4util.h>
 
-#include <thunar/thunar-action-manager.h>
-#include <thunar/thunar-application.h>
-#include <thunar/thunar-browser.h>
-#include <thunar/thunar-clipboard-manager.h>
-#include <thunar/thunar-compact-view.h>
-#include <thunar/thunar-details-view.h>
-#include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-shortcuts-pane.h>
-#include <thunar/thunar-gio-extensions.h>
-#include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-gtk-extensions.h>
-#include <thunar/thunar-history.h>
-#include <thunar/thunar-icon-view.h>
-#include <thunar/thunar-job-operation-history.h>
-#include <thunar/thunar-location-buttons.h>
-#include <thunar/thunar-location-entry.h>
-#include <thunar/thunar-marshal.h>
-#include <thunar/thunar-menu.h>
-#include <thunar/thunar-pango-extensions.h>
-#include <thunar/thunar-preferences-dialog.h>
-#include <thunar/thunar-preferences.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-util.h>
-#include <thunar/thunar-statusbar.h>
-#include <thunar/thunar-tree-pane.h>
-#include <thunar/thunar-window.h>
-#include <thunar/thunar-device-monitor.h>
-#include <thunar/thunar-toolbar-editor.h>
-#include <thunar/thunar-thumbnailer.h>
+#include "thunar/thunar-action-manager.h"
+#include "thunar/thunar-application.h"
+#include "thunar/thunar-browser.h"
+#include "thunar/thunar-clipboard-manager.h"
+#include "thunar/thunar-compact-view.h"
+#include "thunar/thunar-details-view.h"
+#include "thunar/thunar-dialogs.h"
+#include "thunar/thunar-shortcuts-pane.h"
+#include "thunar/thunar-gio-extensions.h"
+#include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-gtk-extensions.h"
+#include "thunar/thunar-history.h"
+#include "thunar/thunar-icon-view.h"
+#include "thunar/thunar-job-operation-history.h"
+#include "thunar/thunar-location-buttons.h"
+#include "thunar/thunar-location-entry.h"
+#include "thunar/thunar-marshal.h"
+#include "thunar/thunar-menu.h"
+#include "thunar/thunar-pango-extensions.h"
+#include "thunar/thunar-preferences-dialog.h"
+#include "thunar/thunar-preferences.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-util.h"
+#include "thunar/thunar-statusbar.h"
+#include "thunar/thunar-tree-pane.h"
+#include "thunar/thunar-window.h"
+#include "thunar/thunar-device-monitor.h"
+#include "thunar/thunar-toolbar-editor.h"
+#include "thunar/thunar-thumbnailer.h"
 
 #include <glib.h>
 
@@ -1087,6 +1087,54 @@ thunar_window_init (ThunarWindow *window)
   window->search_query = NULL;
   window->reset_view_type_idle_id = 0;
 }
+
+
+/**
+ * thunar_window_new:
+ * @application_preferences : a #ThunarPreferences instance.
+ * @screen                  : the screen to display the window
+ * @startup_id              : startup id from startup notification passed along
+ *                            with dbus to make focus stealing work properly.
+ *
+ * A convinience function for creating a file browser window.
+ **/
+GtkWidget *
+thunar_window_new (gpointer     application_preferences,
+                   GdkScreen   *screen,
+                   const gchar *startup_id)
+{
+  GtkWidget             *window;
+  gchar                 *role;
+  gboolean               misc_open_new_windows_in_split_view;
+  gboolean               restore_tabs;
+
+  /* generate a unique role for the new window (for session management) */
+  role = g_strdup_printf ("Thunar-%u-%u", (guint) time (NULL), (guint) g_random_int ());
+
+  /* allocate the window */
+  window = g_object_new (THUNAR_TYPE_WINDOW,
+                         "role", role,
+                         "screen", screen,
+                         NULL);
+
+  /* cleanup */
+  g_free (role);
+
+  /* set the startup id */
+  if (startup_id != NULL)
+    gtk_window_set_startup_id (GTK_WINDOW (window), startup_id);
+
+  /* enable split view, if preferred */
+  g_object_get (G_OBJECT (application_preferences),
+                "misc-open-new-windows-in-split-view", &misc_open_new_windows_in_split_view,
+                "last-restore-tabs", &restore_tabs, NULL);
+
+  if (misc_open_new_windows_in_split_view && !restore_tabs)
+    thunar_window_notebook_toggle_split_view (THUNAR_WINDOW (window));
+
+  return window;
+}
+
 
 
 static void
