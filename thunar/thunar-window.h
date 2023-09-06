@@ -108,6 +108,9 @@ typedef enum
   THUNAR_WINDOW_N_ACTIONS
 } ThunarWindowAction;
 
+GtkWidget                *thunar_window_new                                 (gpointer             application_preferences,
+                                                                             GdkScreen           *screen,
+                                                                             const gchar         *startup_id);
 GType                     thunar_window_get_type                            (void) G_GNUC_CONST;
 ThunarFile               *thunar_window_get_current_directory               (ThunarWindow        *window);
 void                      thunar_window_set_current_directory               (ThunarWindow        *window,

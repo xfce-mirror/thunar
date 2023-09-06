@@ -1415,10 +1415,7 @@ thunar_application_open_window (ThunarApplication *application,
 {
   GList*     list;
   GtkWidget *window;
-  gchar     *role;
   gboolean   open_new_window_as_tab;
-  gboolean   misc_open_new_windows_in_split_view;
-  gboolean   restore_tabs;
 
   _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), NULL);
   _thunar_return_val_if_fail (directory == NULL || THUNAR_IS_FILE (directory), NULL);
@@ -1453,21 +1450,7 @@ thunar_application_open_window (ThunarApplication *application,
         }
     }
 
-  /* generate a unique role for the new window (for session management) */
-  role = g_strdup_printf ("Thunar-%u-%u", (guint) time (NULL), (guint) g_random_int ());
-
-  /* allocate the window */
-  window = g_object_new (THUNAR_TYPE_WINDOW,
-                         "role", role,
-                         "screen", screen,
-                         NULL);
-
-  /* cleanup */
-  g_free (role);
-
-  /* set the startup id */
-  if (startup_id != NULL)
-    gtk_window_set_startup_id (GTK_WINDOW (window), startup_id);
+  window = thunar_window_new (application->preferences, screen, startup_id);
 
   /* hook up the window */
   thunar_application_take_window (application, GTK_WINDOW (window));
@@ -1478,13 +1461,6 @@ thunar_application_open_window (ThunarApplication *application,
   /* change the directory */
   if (directory != NULL)
     thunar_window_set_current_directory (THUNAR_WINDOW (window), directory);
-
-  /* enable split view, if preferred */
-  g_object_get (G_OBJECT (application->preferences),
-                "misc-open-new-windows-in-split-view", &misc_open_new_windows_in_split_view,
-                "last-restore-tabs", &restore_tabs, NULL);
-  if (misc_open_new_windows_in_split_view && !restore_tabs)
-    thunar_window_notebook_toggle_split_view (THUNAR_WINDOW (window));
 
   return window;
 }

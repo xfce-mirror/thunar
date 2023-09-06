@@ -1089,6 +1089,54 @@ thunar_window_init (ThunarWindow *window)
 }
 
 
+/**
+ * thunar_window_new:
+ * @application_preferences : a #ThunarPreferences instance.
+ * @screen                  : the screen to display the window
+ * @startup_id              : startup id from startup notification passed along
+ *                            with dbus to make focus stealing work properly.
+ *
+ * A convinience function for creating a file browser window.
+ **/
+GtkWidget *
+thunar_window_new (gpointer     application_preferences,
+                   GdkScreen   *screen,
+                   const gchar *startup_id)
+{
+  GtkWidget             *window;
+  gchar                 *role;
+  gboolean               misc_open_new_windows_in_split_view;
+  gboolean               restore_tabs;
+
+  /* generate a unique role for the new window (for session management) */
+  role = g_strdup_printf ("Thunar-%u-%u", (guint) time (NULL), (guint) g_random_int ());
+
+  /* allocate the window */
+  window = g_object_new (THUNAR_TYPE_WINDOW,
+                         "role", role,
+                         "screen", screen,
+                         NULL);
+
+  /* cleanup */
+  g_free (role);
+
+  /* set the startup id */
+  if (startup_id != NULL)
+    gtk_window_set_startup_id (GTK_WINDOW (window), startup_id);
+
+  /* enable split view, if preferred */
+  g_object_get (G_OBJECT (application_preferences),
+                "misc-open-new-windows-in-split-view", &misc_open_new_windows_in_split_view,
+                "last-restore-tabs", &restore_tabs, NULL);
+
+  if (misc_open_new_windows_in_split_view && !restore_tabs)
+    thunar_window_notebook_toggle_split_view (THUNAR_WINDOW (window));
+
+  return window;
+}
+
+
+
 static void
 thunar_window_screen_changed (GtkWidget *widget,
                               GdkScreen *old_screen,
