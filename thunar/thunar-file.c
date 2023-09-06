@@ -3107,8 +3107,8 @@ thunar_file_can_execute (ThunarFile *file,
       return can_execute;
     }
 
-   g_object_unref (file_to_check);
-   return TRUE;
+  g_object_unref (file_to_check);
+  return TRUE;
 
 }
 
