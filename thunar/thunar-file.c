@@ -3002,7 +3002,7 @@ gboolean
 thunar_file_can_execute (ThunarFile *file,
                          gboolean   *ask_execute)
 {
-  ThunarFile          *file_to_check;
+  ThunarFile          *file_to_check, *parent_dir = NULL;
   GFile               *link_target;
   ThunarPreferences   *preferences;
   gint                 exec_shell_scripts = THUNAR_EXECUTE_SHELL_SCRIPT_NEVER;
@@ -3098,17 +3098,22 @@ thunar_file_can_execute (ThunarFile *file,
       return FALSE;
     }
 
+  if (thunar_file_has_parent(file_to_check))
+    parent_dir = thunar_file_get_parent(file_to_check, NULL);
+
   /* Additional security measure only applicable if gvfs is installed: */
-  /* Desktop files outside XDG_DATA_DIRS, need to be 'trusted'. */
-  if (thunar_g_vfs_metadata_is_supported ())
+  /* Desktop files outside XDG_DATA_DIRS or Desktop, need to be 'trusted'. */
+  if (thunar_g_vfs_metadata_is_supported () && !thunar_file_is_desktop (parent_dir))
     {
       gboolean can_execute = xfce_g_file_is_trusted (file_to_check->gfile, NULL, NULL);
       g_object_unref (file_to_check);
+      g_object_unref (parent_dir);
       return can_execute;
     }
 
-   g_object_unref (file_to_check);
-   return TRUE;
+  g_object_unref (file_to_check);
+  g_object_unref (parent_dir);
+  return TRUE;
 
 }
 
