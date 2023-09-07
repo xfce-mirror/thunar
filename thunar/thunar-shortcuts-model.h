@@ -20,8 +20,8 @@
 #ifndef __THUNAR_SHORTCUTS_MODEL_H__
 #define __THUNAR_SHORTCUTS_MODEL_H__
 
-#include <thunar/thunar-file.h>
-#include <thunar/thunar-device.h>
+#include "thunar/thunar-file.h"
+#include "thunar/thunar-device.h"
 
 G_BEGIN_DECLS;
 

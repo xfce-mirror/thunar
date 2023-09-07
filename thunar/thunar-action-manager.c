@@ -20,7 +20,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_MEMORY_H
@@ -30,28 +30,28 @@
 #include <string.h>
 #endif
 
-#include <thunar/thunar-action-manager.h>
-#include <thunar/thunar-application.h>
-#include <thunar/thunar-browser.h>
-#include <thunar/thunar-chooser-dialog.h>
-#include <thunar/thunar-clipboard-manager.h>
-#include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-gio-extensions.h>
-#include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-gtk-extensions.h>
-#include <thunar/thunar-icon-factory.h>
-#include <thunar/thunar-io-scan-directory.h>
-#include <thunar/thunar-preferences.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-properties-dialog.h>
-#include <thunar/thunar-renamer-dialog.h>
-#include <thunar/thunar-sendto-model.h>
-#include <thunar/thunar-shortcuts-pane.h>
-#include <thunar/thunar-simple-job.h>
-#include <thunar/thunar-device-monitor.h>
-#include <thunar/thunar-tree-view.h>
-#include <thunar/thunar-util.h>
-#include <thunar/thunar-window.h>
+#include "thunar/thunar-action-manager.h"
+#include "thunar/thunar-application.h"
+#include "thunar/thunar-browser.h"
+#include "thunar/thunar-chooser-dialog.h"
+#include "thunar/thunar-clipboard-manager.h"
+#include "thunar/thunar-dialogs.h"
+#include "thunar/thunar-gio-extensions.h"
+#include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-gtk-extensions.h"
+#include "thunar/thunar-icon-factory.h"
+#include "thunar/thunar-io-scan-directory.h"
+#include "thunar/thunar-preferences.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-properties-dialog.h"
+#include "thunar/thunar-renamer-dialog.h"
+#include "thunar/thunar-sendto-model.h"
+#include "thunar/thunar-shortcuts-pane.h"
+#include "thunar/thunar-simple-job.h"
+#include "thunar/thunar-device-monitor.h"
+#include "thunar/thunar-tree-view.h"
+#include "thunar/thunar-util.h"
+#include "thunar/thunar-window.h"
 
 #include <libxfce4ui/libxfce4ui.h>
 #include <libxfce4util/libxfce4util.h>

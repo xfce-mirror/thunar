@@ -18,14 +18,14 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
-#include <thunar/thunar-device.h>
-#include <thunar/thunar-device-monitor.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-file.h>
-#include <thunar/thunar-notify.h>
+#include "thunar/thunar-device.h"
+#include "thunar/thunar-device-monitor.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-file.h"
+#include "thunar/thunar-notify.h"
 
 
 

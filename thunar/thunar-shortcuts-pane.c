@@ -18,15 +18,15 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
-#include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-shortcuts-model.h>
-#include <thunar/thunar-shortcuts-pane.h>
-#include <thunar/thunar-shortcuts-view.h>
-#include <thunar/thunar-side-pane.h>
+#include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-shortcuts-model.h"
+#include "thunar/thunar-shortcuts-pane.h"
+#include "thunar/thunar-shortcuts-view.h"
+#include "thunar/thunar-side-pane.h"
 
 
 

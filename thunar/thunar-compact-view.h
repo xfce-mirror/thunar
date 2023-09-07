@@ -21,7 +21,7 @@
 #ifndef __THUNAR_COMPACT_VIEW_H__
 #define __THUNAR_COMPACT_VIEW_H__
 
-#include <thunar/thunar-abstract-icon-view.h>
+#include "thunar/thunar-abstract-icon-view.h"
 
 G_BEGIN_DECLS;
 

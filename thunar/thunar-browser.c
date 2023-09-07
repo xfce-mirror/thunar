@@ -19,18 +19,18 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <glib-object.h>
 
 #include <libxfce4util/libxfce4util.h>
 
-#include <thunar/thunar-browser.h>
-#include <thunar/thunar-file.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-util.h>
-#include <thunar/thunar-gtk-extensions.h>
+#include "thunar/thunar-browser.h"
+#include "thunar/thunar-file.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-util.h"
+#include "thunar/thunar-gtk-extensions.h"
 
 
 

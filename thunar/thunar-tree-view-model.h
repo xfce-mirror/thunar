@@ -20,7 +20,7 @@
 #ifndef __THUNAR_TREE_VIEW_MODEL_H__
 #define __THUNAR_TREE_VIEW_MODEL_H__
 
-#include <thunar/thunar-standard-view-model.h>
+#include "thunar/thunar-standard-view-model.h"
 
 G_BEGIN_DECLS;
 

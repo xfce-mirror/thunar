@@ -19,7 +19,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_MEMORY_H
@@ -33,10 +33,10 @@
 
 #include <libxfce4util/libxfce4util.h>
 
-#include <thunar/thunar-enum-types.h>
-#include <thunar/thunar-job.h>
-#include <thunar/thunar-marshal.h>
-#include <thunar/thunar-private.h>
+#include "thunar/thunar-enum-types.h"
+#include "thunar/thunar-job.h"
+#include "thunar/thunar-marshal.h"
+#include "thunar/thunar-private.h"
 
 
 

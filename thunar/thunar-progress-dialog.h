@@ -22,7 +22,7 @@
 #define __THUNAR_PROGRESS_DIALOG_H__
 
 #include <gtk/gtk.h>
-#include <thunar/thunar-job.h>
+#include "thunar/thunar-job.h"
 
 G_BEGIN_DECLS;
 
