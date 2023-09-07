@@ -16,12 +16,12 @@
  * this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-enum-types.h>
-#include <thunar/thunar-job-operation-history.h>
-#include <thunar/thunar-notify.h>
-#include <thunar/thunar-preferences.h>
-#include <thunar/thunar-private.h>
+#include "thunar/thunar-dialogs.h"
+#include "thunar/thunar-enum-types.h"
+#include "thunar/thunar-job-operation-history.h"
+#include "thunar/thunar-notify.h"
+#include "thunar/thunar-preferences.h"
+#include "thunar/thunar-private.h"
 #include <libxfce4ui/libxfce4ui.h>
 
 /**

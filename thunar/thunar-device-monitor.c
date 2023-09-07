@@ -19,7 +19,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <gio/gio.h>
@@ -29,10 +29,10 @@
 
 #include <libxfce4util/libxfce4util.h>
 
-#include <thunar/thunar-device-monitor.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-marshal.h>
-#include <thunar/thunar-preferences.h>
+#include "thunar/thunar-device-monitor.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-marshal.h"
+#include "thunar/thunar-preferences.h"
 
 
 

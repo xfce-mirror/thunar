@@ -20,9 +20,9 @@
 #ifndef __THUNAR_VIEW_H__
 #define __THUNAR_VIEW_H__
 
-#include <thunar/thunar-component.h>
-#include <thunar/thunar-enum-types.h>
-#include <thunar/thunar-navigator.h>
+#include "thunar/thunar-component.h"
+#include "thunar/thunar-enum-types.h"
+#include "thunar/thunar-navigator.h"
 
 G_BEGIN_DECLS;
 

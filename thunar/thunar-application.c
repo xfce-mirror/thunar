@@ -21,7 +21,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_ERRNO_H
@@ -45,23 +45,23 @@
 
 #include <libxfce4ui/libxfce4ui.h>
 
-#include <thunar/thunar-application.h>
-#include <thunar/thunar-browser.h>
-#include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-gdk-extensions.h>
-#include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-io-jobs.h>
-#include <thunar/thunar-preferences.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-progress-dialog.h>
-#include <thunar/thunar-renamer-dialog.h>
-#include <thunar/thunar-thumbnail-cache.h>
-#include <thunar/thunar-thumbnailer.h>
-#include <thunar/thunar-transfer-job.h>
-#include <thunar/thunar-util.h>
-#include <thunar/thunar-view.h>
-#include <thunar/thunar-session-client.h>
-#include <thunar/thunar-dbus-service.h>
+#include "thunar/thunar-application.h"
+#include "thunar/thunar-browser.h"
+#include "thunar/thunar-dialogs.h"
+#include "thunar/thunar-gdk-extensions.h"
+#include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-io-jobs.h"
+#include "thunar/thunar-preferences.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-progress-dialog.h"
+#include "thunar/thunar-renamer-dialog.h"
+#include "thunar/thunar-thumbnail-cache.h"
+#include "thunar/thunar-thumbnailer.h"
+#include "thunar/thunar-transfer-job.h"
+#include "thunar/thunar-util.h"
+#include "thunar/thunar-view.h"
+#include "thunar/thunar-session-client.h"
+#include "thunar/thunar-dbus-service.h"
 
 #define ACCEL_MAP_PATH "Thunar/accels.scm"
 

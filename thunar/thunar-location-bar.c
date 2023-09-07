@@ -18,17 +18,17 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
-#include <thunar/thunar-location-bar.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-navigator.h>
-#include <thunar/thunar-location-entry.h>
-#include <thunar/thunar-location-buttons.h>
-#include <thunar/thunar-preferences.h>
-#include <thunar/thunar-util.h>
-#include <thunar/thunar-window.h>
+#include "thunar/thunar-location-bar.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-navigator.h"
+#include "thunar/thunar-location-entry.h"
+#include "thunar/thunar-location-buttons.h"
+#include "thunar/thunar-preferences.h"
+#include "thunar/thunar-util.h"
+#include "thunar/thunar-window.h"
 
 
 
