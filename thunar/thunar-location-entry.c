@@ -20,26 +20,26 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <gdk/gdkkeysyms.h>
 
 #include <libxfce4util/libxfce4util.h>
 
-#include <thunar/thunar-browser.h>
-#include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-gtk-extensions.h>
-#include <thunar/thunar-icon-factory.h>
-#include <thunar/thunar-location-entry.h>
-#include <thunar/thunar-marshal.h>
-#include <thunar/thunar-path-entry.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-shortcuts-model.h>
-#include <thunar/thunar-util.h>
-#include <thunar/thunar-folder.h>
-#include <thunar/thunar-window.h>
+#include "thunar/thunar-browser.h"
+#include "thunar/thunar-dialogs.h"
+#include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-gtk-extensions.h"
+#include "thunar/thunar-icon-factory.h"
+#include "thunar/thunar-location-entry.h"
+#include "thunar/thunar-marshal.h"
+#include "thunar/thunar-path-entry.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-shortcuts-model.h"
+#include "thunar/thunar-util.h"
+#include "thunar/thunar-folder.h"
+#include "thunar/thunar-window.h"
 
 
 

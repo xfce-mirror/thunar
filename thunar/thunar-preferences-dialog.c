@@ -18,30 +18,30 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <libxfce4ui/libxfce4ui.h>
 #include <libxfce4kbd-private/xfce-shortcuts-editor.h>
 #include <libxfce4kbd-private/xfce-shortcuts-editor-dialog.h>
 
-#include <thunar/thunar-application.h>
-#include <thunar/thunar-compact-view.h>
-#include <thunar/thunar-details-view.h>
-#include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-enum-types.h>
-#include <thunar/thunar-gdk-extensions.h>
-#include <thunar/thunar-gtk-extensions.h>
-#include <thunar/thunar-icon-view.h>
-#include <thunar/thunar-pango-extensions.h>
-#include <thunar/thunar-preferences-dialog.h>
-#include <thunar/thunar-preferences.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-util.h>
-#include <thunar/thunar-window.h>
-#include <thunar/thunar-shortcuts-view.h>
-#include <thunar/thunar-renamer-dialog.h>
-#include <thunar/thunar-statusbar.h>
+#include "thunar/thunar-application.h"
+#include "thunar/thunar-compact-view.h"
+#include "thunar/thunar-details-view.h"
+#include "thunar/thunar-dialogs.h"
+#include "thunar/thunar-enum-types.h"
+#include "thunar/thunar-gdk-extensions.h"
+#include "thunar/thunar-gtk-extensions.h"
+#include "thunar/thunar-icon-view.h"
+#include "thunar/thunar-pango-extensions.h"
+#include "thunar/thunar-preferences-dialog.h"
+#include "thunar/thunar-preferences.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-util.h"
+#include "thunar/thunar-window.h"
+#include "thunar/thunar-shortcuts-view.h"
+#include "thunar/thunar-renamer-dialog.h"
+#include "thunar/thunar-statusbar.h"
 
 
 

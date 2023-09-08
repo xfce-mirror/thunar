@@ -20,7 +20,7 @@
 #ifndef __THUNAR_LOCATION_BUTTONS_H__
 #define __THUNAR_LOCATION_BUTTONS_H__
 
-#include <thunar/thunar-location-bar.h>
+#include "thunar/thunar-location-bar.h"
 
 G_BEGIN_DECLS;
 

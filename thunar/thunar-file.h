@@ -23,11 +23,11 @@
 
 #include <glib.h>
 
-#include <thunarx/thunarx.h>
+#include "thunarx/thunarx.h"
 
-#include <thunar/thunar-enum-types.h>
-#include <thunar/thunar-gio-extensions.h>
-#include <thunar/thunar-user.h>
+#include "thunar/thunar-enum-types.h"
+#include "thunar/thunar-gio-extensions.h"
+#include "thunar/thunar-user.h"
 
 G_BEGIN_DECLS;
 

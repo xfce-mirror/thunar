@@ -19,17 +19,17 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <glib.h>
 #include <glib-object.h>
 
-#include <thunar/thunar-application.h>
-#include <thunar/thunar-file-monitor.h>
-#include <thunar/thunar-image.h>
-#include <thunar/thunar-icon-factory.h>
-#include <thunar/thunar-private.h>
+#include "thunar/thunar-application.h"
+#include "thunar/thunar-file-monitor.h"
+#include "thunar/thunar-image.h"
+#include "thunar/thunar-icon-factory.h"
+#include "thunar/thunar-private.h"
 
 
 

@@ -20,18 +20,18 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <glib.h>
 #include <glib-object.h>
 #include <gio/gio.h>
 
-#include <thunar/thunar-deep-count-job.h>
-#include <thunar/thunar-job.h>
-#include <thunar/thunar-marshal.h>
-#include <thunar/thunar-util.h>
-#include <thunar/thunar-private.h>
+#include "thunar/thunar-deep-count-job.h"
+#include "thunar/thunar-job.h"
+#include "thunar/thunar-marshal.h"
+#include "thunar/thunar-util.h"
+#include "thunar/thunar-private.h"
 
 
 
