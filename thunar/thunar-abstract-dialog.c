@@ -18,12 +18,12 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <gdk/gdkkeysyms.h>
 
-#include <thunar/thunar-abstract-dialog.h>
+#include "thunar/thunar-abstract-dialog.h"
 
 
 

@@ -20,7 +20,7 @@
 #ifndef __THUNAR_DEVICE_MONITOR_H__
 #define __THUNAR_DEVICE_MONITOR_H__
 
-#include <thunar/thunar-device.h>
+#include "thunar/thunar-device.h"
 
 G_BEGIN_DECLS
 

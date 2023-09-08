@@ -19,17 +19,17 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <gio/gio.h>
 
-#include <thunar/thunar-gio-extensions.h>
-#include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-gdk-extensions.h>
-#include <thunar/thunar-icon-factory.h>
-#include <thunar/thunar-shortcuts-icon-renderer.h>
-#include <thunar/thunar-device.h>
+#include "thunar/thunar-gio-extensions.h"
+#include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-gdk-extensions.h"
+#include "thunar/thunar-icon-factory.h"
+#include "thunar/thunar-shortcuts-icon-renderer.h"
+#include "thunar/thunar-device.h"
 
 
 

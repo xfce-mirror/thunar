@@ -20,7 +20,7 @@
 #define __THUNAR_JOB_OPERATION_H__
 
 #include <glib.h>
-#include <thunar/thunar-enum-types.h>
+#include "thunar/thunar-enum-types.h"
 
 G_BEGIN_DECLS
 

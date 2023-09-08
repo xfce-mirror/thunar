@@ -19,7 +19,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_ERRNO_H
@@ -29,20 +29,20 @@
 #include <gio/gio.h>
 #include <glib/gstdio.h>
 
-#include <thunar/thunar-application.h>
-#include <thunar/thunar-enum-types.h>
-#include <thunar/thunar-file.h>
-#include <thunar/thunar-gio-extensions.h>
-#include <thunar/thunar-io-jobs-util.h>
-#include <thunar/thunar-io-jobs.h>
-#include <thunar/thunar-io-scan-directory.h>
-#include <thunar/thunar-job.h>
-#include <thunar/thunar-private.h>
-#include <thunar/thunar-simple-job.h>
-#include <thunar/thunar-thumbnail-cache.h>
-#include <thunar/thunar-transfer-job.h>
-#include <thunar/thunar-preferences.h>
-#include <thunar/thunar-gobject-extensions.h>
+#include "thunar/thunar-application.h"
+#include "thunar/thunar-enum-types.h"
+#include "thunar/thunar-file.h"
+#include "thunar/thunar-gio-extensions.h"
+#include "thunar/thunar-io-jobs-util.h"
+#include "thunar/thunar-io-jobs.h"
+#include "thunar/thunar-io-scan-directory.h"
+#include "thunar/thunar-job.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-simple-job.h"
+#include "thunar/thunar-thumbnail-cache.h"
+#include "thunar/thunar-transfer-job.h"
+#include "thunar/thunar-preferences.h"
+#include "thunar/thunar-gobject-extensions.h"
 
 
 

@@ -50,8 +50,8 @@
 #ifndef __THUNAR_STANDARD_VIEW_MODEL__
 #define __THUNAR_STANDARD_VIEW_MODEL__
 
-#include <thunar/thunar-folder.h>
-#include <thunar/thunar-job.h>
+#include "thunar/thunar-folder.h"
+#include "thunar/thunar-job.h"
 
 G_BEGIN_DECLS;
 

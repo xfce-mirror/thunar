@@ -20,7 +20,7 @@
 #ifndef __THUNAR_CHOOSER_DIALOG_H__
 #define __THUNAR_CHOOSER_DIALOG_H__
 
-#include <thunar/thunar-file.h>
+#include "thunar/thunar-file.h"
 
 G_BEGIN_DECLS;
 

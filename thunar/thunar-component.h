@@ -20,7 +20,7 @@
 #ifndef __THUNAR_COMPONENT_H__
 #define __THUNAR_COMPONENT_H__
 
-#include <thunar/thunar-navigator.h>
+#include "thunar/thunar-navigator.h"
 
 G_BEGIN_DECLS;
 

@@ -19,7 +19,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_ERRNO_H
@@ -38,12 +38,12 @@
 #include <string.h>
 #endif
 
-#include <thunar/thunar-enum-types.h>
-#include <thunar/thunar-gio-extensions.h>
-#include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-preferences.h>
-#include <thunar/thunar-private.h>
-#include <xfconf/xfconf.h>
+#include "thunar/thunar-enum-types.h"
+#include "thunar/thunar-gio-extensions.h"
+#include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-preferences.h"
+#include "thunar/thunar-private.h"
+#include "xfconf/xfconf.h"
 
 
 /* Property identifiers */
