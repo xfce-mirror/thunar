@@ -3987,6 +3987,9 @@ thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (standard_view->icon_factory), FALSE);
 
+  /* just a way to prevent this (temporary) */
+  return TRUE;
+
   /* do nothing if we are not supposed to show thumbnails at all */
   if (!thunar_icon_factory_get_show_thumbnail (standard_view->icon_factory,
                                                standard_view->priv->current_directory))
