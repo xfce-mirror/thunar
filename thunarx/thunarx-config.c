@@ -19,10 +19,10 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
-#include <thunarx/thunarx-config.h>
+#include "thunarx/thunarx-config.h"
 
 
 

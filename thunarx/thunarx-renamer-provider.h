@@ -25,7 +25,7 @@
 #ifndef __THUNARX_RENAMER_PROVIDER_H__
 #define __THUNARX_RENAMER_PROVIDER_H__
 
-#include <thunarx/thunarx-renamer.h>
+#include "thunarx/thunarx-renamer.h"
 
 G_BEGIN_DECLS
 

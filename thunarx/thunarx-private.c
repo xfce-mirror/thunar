@@ -19,7 +19,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_MEMORY_H
@@ -29,7 +29,7 @@
 #include <string.h>
 #endif
 
-#include <thunarx/thunarx-private.h>
+#include "thunarx/thunarx-private.h"
 
 
 

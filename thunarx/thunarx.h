@@ -23,17 +23,17 @@
 
 #define THUNARX_INSIDE_THUNARX_H
 
-#include <thunarx/thunarx-config.h>
-#include <thunarx/thunarx-file-info.h>
-#include <thunarx/thunarx-menu.h>
-#include <thunarx/thunarx-menu-provider.h>
-#include <thunarx/thunarx-preferences-provider.h>
-#include <thunarx/thunarx-property-page.h>
-#include <thunarx/thunarx-property-page-provider.h>
-#include <thunarx/thunarx-provider-factory.h>
-#include <thunarx/thunarx-provider-plugin.h>
-#include <thunarx/thunarx-renamer.h>
-#include <thunarx/thunarx-renamer-provider.h>
+#include "thunarx/thunarx-config.h"
+#include "thunarx/thunarx-file-info.h"
+#include "thunarx/thunarx-menu.h"
+#include "thunarx/thunarx-menu-provider.h"
+#include "thunarx/thunarx-preferences-provider.h"
+#include "thunarx/thunarx-property-page.h"
+#include "thunarx/thunarx-property-page-provider.h"
+#include "thunarx/thunarx-provider-factory.h"
+#include "thunarx/thunarx-provider-plugin.h"
+#include "thunarx/thunarx-renamer.h"
+#include "thunarx/thunarx-renamer-provider.h"
 
 #undef THUNARX_INSIDE_THUNARX_H
 
