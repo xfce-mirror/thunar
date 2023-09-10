@@ -19,15 +19,15 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <gdk/gdk.h>
 
-#include <thunarx/thunarx-private.h>
-#include <thunarx/thunarx-provider-factory.h>
-#include <thunarx/thunarx-provider-module.h>
-#include <thunarx/thunarx-provider-plugin.h>
+#include "thunarx/thunarx-private.h"
+#include "thunarx/thunarx-provider-factory.h"
+#include "thunarx/thunarx-provider-module.h"
+#include "thunarx/thunarx-provider-plugin.h"
 
 
 

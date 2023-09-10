@@ -25,7 +25,7 @@
 #ifndef __THUNARX_PROPERTY_PAGE_PROVIDER_H__
 #define __THUNARX_PROPERTY_PAGE_PROVIDER_H__
 
-#include <thunarx/thunarx-property-page.h>
+#include "thunarx/thunarx-property-page.h"
 
 G_BEGIN_DECLS
 

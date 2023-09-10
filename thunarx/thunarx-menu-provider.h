@@ -27,7 +27,7 @@
 
 #include <gtk/gtk.h>
 
-#include <thunarx/thunarx-file-info.h>
+#include "thunarx/thunarx-file-info.h"
 
 G_BEGIN_DECLS
 
