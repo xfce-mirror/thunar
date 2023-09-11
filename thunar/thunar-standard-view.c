@@ -874,7 +874,6 @@ thunar_standard_view_constructor (GType                  type,
 {
   ThunarStandardView *standard_view;
   ThunarZoomLevel     zoom_level;
-  GtkAdjustment      *adjustment;
   GtkWidget          *view;
   GObject            *object;
 
@@ -946,9 +945,6 @@ static void
 thunar_standard_view_dispose (GObject *object)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (object);
-
-  /* cancel pending thumbnail sources and requests */
-  thunar_standard_view_cancel_thumbnailing (standard_view);
 
   /* unregister the "loading" binding */
   if (G_UNLIKELY (standard_view->loading_binding != NULL))
@@ -1518,9 +1514,6 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   if (standard_view->priv->current_directory == current_directory)
     return;
 
-  /* cancel any pending thumbnail sources and requests */
-  thunar_standard_view_cancel_thumbnailing (standard_view);
-
   /* store the current scroll position */
   if (current_directory != NULL)
     thunar_standard_view_scroll_position_save (standard_view);
@@ -1587,9 +1580,6 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 
   /* reconnect our model to the view */
   g_object_set (G_OBJECT (gtk_bin_get_child (GTK_BIN (standard_view))), "model", standard_view->model, NULL);
-
-  /* schedule a thumbnail timeout */
-  /* NOTE: quickly after this we always trigger a size allocate wich will handle this */
 
   /* notify all listeners about the new/old current directory */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_CURRENT_DIRECTORY]);
@@ -2362,9 +2352,6 @@ thunar_standard_view_current_directory_changed (ThunarFile         *current_dire
   /* update tab label and tooltip */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_FULL_PARSED_PATH]);
-
-  /* directory is possibly moved, schedule a thumbnail update */
-  thunar_standard_view_schedule_thumbnail_timeout (standard_view);
 }
 
 
