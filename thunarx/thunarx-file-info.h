@@ -28,7 +28,7 @@
 
 #include <gio/gio.h>
 
-#include <thunarx/thunarx-config.h>
+#include "thunarx/thunarx-config.h"
 
 G_BEGIN_DECLS
 

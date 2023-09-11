@@ -19,13 +19,13 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <glib/gi18n-lib.h>
 
-#include <thunarx/thunarx-private.h>
-#include <thunarx/thunarx-property-page.h>
+#include "thunarx/thunarx-private.h"
+#include "thunarx/thunarx-property-page.h"
 
 
 

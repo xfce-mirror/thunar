@@ -16,14 +16,14 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <glib/gi18n-lib.h>
 
-#include <thunarx/thunarx-private.h>
-#include <thunarx/thunarx-menu-item.h>
-#include <thunarx/thunarx-menu.h>
+#include "thunarx/thunarx-private.h"
+#include "thunarx/thunarx-menu-item.h"
+#include "thunarx/thunarx-menu.h"
 
 
 
