@@ -126,9 +126,9 @@ static void         thunar_details_view_append_menu_items       (ThunarStandardV
                                                                  GtkAccelGroup          *accel_group);
 static void         thunar_details_view_highlight_option_changed(ThunarDetailsView      *details_view);
 static void         thunar_details_view_queue_redraw            (ThunarStandardView     *standard_view);
-static gboolean     thunar_details_view_toggle_expandable_folders (ThunarDetailsView *details_view);
-static void         thunar_details_view_block_selection_changed (ThunarStandardView *standard_view);
-static void         thunar_details_view_unblock_selection_changed (ThunarStandardView *standard_view);
+static gboolean     thunar_details_view_toggle_expandable_folders (ThunarDetailsView    *details_view);
+static void         thunar_details_view_block_selection_changed   (ThunarStandardView   *standard_view);
+static void         thunar_details_view_unblock_selection_changed (ThunarStandardView   *standard_view);
 
 
 
