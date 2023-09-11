@@ -193,7 +193,7 @@ thunar_g_file_new_for_symlink_target (GFile *file)
       return NULL;
     }
 
-  target_path = g_file_info_get_symlink_target (info);
+  target_path = g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET);
   file_parent = g_file_get_parent (file);
 
   /* if target_path is an absolute path, the target_gfile is created using only the target_path
@@ -457,7 +457,7 @@ thunar_g_file_guess_device_type (GFile *file)
   if (fileinfo == NULL)
     return NULL;
 
-  icon = g_file_info_get_icon (fileinfo);
+  icon = G_ICON (g_file_info_get_attribute_object (fileinfo, G_FILE_ATTRIBUTE_STANDARD_ICON));
   if (!G_IS_THEMED_ICON (icon))
     {
       g_object_unref (fileinfo);
