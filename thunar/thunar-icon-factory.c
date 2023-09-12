@@ -35,6 +35,7 @@
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-util.h"
+#include "thunar/thunar-thumbnailer.h"
 
 
 
@@ -125,6 +126,10 @@ struct _ThunarIconFactory
 
   /* stamp that gets bumped when the theme changes */
   guint                theme_stamp;
+
+  GHashTable          *thumbnail_requests;
+
+  ThunarThumbnailer   *thumbnailer;
 };
 
 struct _ThunarIconKey
@@ -247,6 +252,10 @@ thunar_icon_factory_init (ThunarIconFactory *factory)
 {
   factory->thumbnail_mode = THUNAR_THUMBNAIL_MODE_ONLY_LOCAL;
   factory->thumbnail_size = THUNAR_THUMBNAIL_SIZE_NORMAL;
+
+  factory->thumbnailer = thunar_thumbnailer_get ();
+  factory->thumbnail_requests = g_hash_table_new_full (g_int_hash, g_int_equal,
+                                                       g_free, NULL);
 
   /* connect emission hook for the "changed" signal on the GtkIconTheme class. We use the emission
    * hook way here, because that way we can make sure that the icon cache is definetly cleared
@@ -920,6 +929,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
   const gchar     *icon_name;
   const gchar     *custom_icon;
   ThunarIconStore *store;
+  guint            request;
 
   _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
@@ -1004,14 +1014,15 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
             {
               /* we have no preview icon but the thumbnail should be ready. determine
                * the filename of the thumbnail */
-              thumbnail_path = thunar_file_get_thumbnail_path (file, factory->thumbnail_size);
+              thumbnail_path = thunar_file_get_thumbnail_path (file, thunar_icon_size_to_thumbnail_size (icon_size));
 
               /* check if we have a valid path */
               if (thumbnail_path != NULL)
-                {
-                  /* try to load the thumbnail */
-                  icon = thunar_icon_factory_load_from_file (factory, thumbnail_path, icon_size, scale_factor);
-                }
+                /* try to load the thumbnail */
+                icon = thunar_icon_factory_load_from_file (factory, thumbnail_path, icon_size, scale_factor);
+              else if (thunar_file_get_thumb_state (file) != THUNAR_FILE_THUMB_STATE_NONE)
+                /* thumbnail does not exist; so load it */
+                thunar_thumbnailer_queue_file (factory->thumbnailer, file, &request, thunar_icon_size_to_thumbnail_size (icon_size));
             }
         }
     }
