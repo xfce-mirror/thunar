@@ -69,6 +69,7 @@
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-user.h"
 #include "thunar/thunar-util.h"
+#include "thunar/thunar-thumbnailer.h"
 
 
 
@@ -197,7 +198,7 @@ struct _ThunarFile
    * there were > 10.000 files in a folder (Creation of #ThunarFolder seems to be slow) */
   guint                 file_count;
   guint64               file_count_timestamp;
-
+  ThunarThumbnailSize   thumbnail_size;
 };
 
 typedef struct
@@ -397,6 +398,7 @@ thunar_file_init (ThunarFile *file)
   file->file_count = 0;
   file->file_count_timestamp = 0;
   file->display_name = NULL;
+  file->thumbnail_size = -1;
 }
 
 
@@ -3833,8 +3835,12 @@ thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_
   if (thunar_file_get_thumb_state (file) == THUNAR_FILE_THUMB_STATE_NONE)
     return NULL;
 
-  if (G_UNLIKELY (file->thumbnail_path == NULL))
-    file->thumbnail_path = thunar_file_get_thumbnail_path_forced (file, thumbnail_size);
+  if (G_UNLIKELY (file->thumbnail_path == NULL || file->thumbnail_size != thumbnail_size))
+    {
+      file->thumbnail_path = thunar_file_get_thumbnail_path_forced (file, thumbnail_size);
+      if (file->thumbnail_path != NULL)
+        file->thumbnail_size = thumbnail_size;
+    }
 
   return file->thumbnail_path;
 }
