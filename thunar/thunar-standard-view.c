@@ -53,7 +53,6 @@
 #include "thunar/thunar-renamer-dialog.h"
 #include "thunar/thunar-simple-job.h"
 #include "thunar/thunar-standard-view.h"
-#include "thunar/thunar-thumbnailer.h"
 #include "thunar/thunar-util.h"
 #include "thunar/thunar-details-view.h"
 
@@ -238,13 +237,9 @@ static void                 thunar_standard_view_drag_data_delete           (Gtk
 static void                 thunar_standard_view_drag_end                   (GtkWidget                *view,
                                                                              GdkDragContext           *context,
                                                                              ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_select_after_row_deleted   (ThunarStandardViewModel          *model,
-                                                                             GtkTreePath              *path,
-                                                                             ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_row_changed                (ThunarStandardViewModel          *model,
-                                                                             GtkTreePath              *path,
-                                                                             GtkTreeIter              *iter,
-                                                                             ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_select_after_row_deleted (ThunarStandardViewModel *model,
+                                                                           GtkTreePath             *path,
+                                                                           ThunarStandardView      *standard_view);
 static void                 thunar_standard_view_rows_reordered             (ThunarStandardViewModel          *model,
                                                                              GtkTreePath              *path,
                                                                              GtkTreeIter              *iter,
@@ -261,23 +256,7 @@ static void                 thunar_standard_view_loading_unbound            (gpo
 static gboolean             thunar_standard_view_drag_scroll_timer          (gpointer                  user_data);
 static void                 thunar_standard_view_drag_scroll_timer_destroy  (gpointer                  user_data);
 static gboolean             thunar_standard_view_drag_timer                 (gpointer                  user_data);
-static void                 thunar_standard_view_drag_timer_destroy         (gpointer                  user_data);
-static void                 thunar_standard_view_finished_thumbnailing      (ThunarThumbnailer        *thumbnailer,
-                                                                             guint                     request,
-                                                                             ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_thumbnailing_destroyed     (gpointer                  data);
-static void                 thunar_standard_view_cancel_thumbnailing        (ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_schedule_thumbnail_timeout (ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_schedule_thumbnail_idle    (ThunarStandardView       *standard_view);
-static gboolean             thunar_standard_view_request_thumbnails         (gpointer                  data);
-static gboolean             thunar_standard_view_request_thumbnails_lazy    (gpointer                  data);
-static void                 thunar_standard_view_thumbnail_mode_toggled     (ThunarStandardView       *standard_view,
-                                                                             GParamSpec               *pspec,
-                                                                             ThunarIconFactory        *icon_factory);
-static void                 thunar_standard_view_scrolled                   (GtkAdjustment            *adjustment,
-                                                                             ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_size_allocate              (ThunarStandardView       *standard_view,
-                                                                             GtkAllocation            *allocation);
+static void                 thunar_standard_view_drag_timer_destroy (gpointer user_data);
 static void                 thunar_standard_view_connect_accelerators       (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_disconnect_accelerators    (ThunarStandardView       *standard_view);
 
@@ -361,14 +340,7 @@ struct _ThunarStandardViewPrivate
   GList                  *selected_files;
   guint                   restore_selection_idle_id;
 
-  /* support for generating thumbnails */
-  ThunarThumbnailer      *thumbnailer;
-  guint                   thumbnail_request;
-  guint                   thumbnail_source_id;
-  gboolean                thumbnailing_scheduled;
-
   /* row insert and delete signal IDs, for blocking/unblocking */
-  gulong                  row_changed_id;
   gulong                  row_deleted_id;
 
   /* current sort column ID and it's fallback
@@ -829,11 +801,6 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* grab a reference on the preferences */
   standard_view->preferences = thunar_preferences_get ();
 
-  /* create a thumbnailer */
-  standard_view->priv->thumbnailer = thunar_thumbnailer_get ();
-  g_signal_connect (G_OBJECT (standard_view->priv->thumbnailer), "request-finished", G_CALLBACK (thunar_standard_view_finished_thumbnailing), standard_view);
-  standard_view->priv->thumbnailing_scheduled = FALSE;
-
   /* initialize the scrolled window */
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (standard_view),
                                   GTK_POLICY_AUTOMATIC,
@@ -850,13 +817,10 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
    * i.e Abstract icon view or Details view */
   standard_view->model = NULL;
 
-  standard_view->priv->thumbnail_request = 0;
-
   /* setup the icon renderer */
   standard_view->icon_renderer = thunar_icon_renderer_new ();
   g_object_ref_sink (G_OBJECT (standard_view->icon_renderer));
   g_object_bind_property (G_OBJECT (standard_view), "zoom-level", G_OBJECT (standard_view->icon_renderer), "size", G_BINDING_SYNC_CREATE);
-  g_object_bind_property (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->priv->thumbnailer), "thumbnail-size", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-highlighting-enabled", G_OBJECT (standard_view->icon_renderer), "highlighting-enabled", G_BINDING_SYNC_CREATE);
   g_signal_connect (G_OBJECT (standard_view), "notify::scale-factor", G_CALLBACK (thunar_standard_view_scale_changed), NULL);
 
@@ -877,11 +841,6 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
 
   /* TODO: prelit underline
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (standard_view->name_renderer), "follow-prelit", G_BINDING_SYNC_CREATE);*/
-
-
-  /* connect to size allocation signals for generating thumbnail requests */
-  g_signal_connect_after (G_OBJECT (standard_view), "size-allocate",
-                          G_CALLBACK (thunar_standard_view_size_allocate), NULL);
 
   /* add widget to css class */
   gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (standard_view)), "standard-view");
@@ -915,7 +874,6 @@ thunar_standard_view_constructor (GType                  type,
 {
   ThunarStandardView *standard_view;
   ThunarZoomLevel     zoom_level;
-  GtkAdjustment      *adjustment;
   GtkWidget          *view;
   GObject            *object;
 
@@ -972,14 +930,6 @@ thunar_standard_view_constructor (GType                  type,
   g_signal_connect (G_OBJECT (view), "drag-data-delete", G_CALLBACK (thunar_standard_view_drag_data_delete), object);
   g_signal_connect (G_OBJECT (view), "drag-end", G_CALLBACK (thunar_standard_view_drag_end), object);
 
-  /* connect to scroll events for generating thumbnail requests */
-  adjustment = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (standard_view));
-  g_signal_connect (adjustment, "value-changed",
-                    G_CALLBACK (thunar_standard_view_scrolled), object);
-  adjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (standard_view));
-  g_signal_connect (adjustment, "value-changed",
-                    G_CALLBACK (thunar_standard_view_scrolled), object);
-
   /* synchronise the "directory-specific-settings" property with the global "misc-directory-specific-settings" property */
   g_object_bind_property (standard_view->preferences, "misc-directory-specific-settings",
                           standard_view, "directory-specific-settings",
@@ -995,9 +945,6 @@ static void
 thunar_standard_view_dispose (GObject *object)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (object);
-
-  /* cancel pending thumbnail sources and requests */
-  thunar_standard_view_cancel_thumbnailing (standard_view);
 
   /* unregister the "loading" binding */
   if (G_UNLIKELY (standard_view->loading_binding != NULL))
@@ -1046,10 +993,6 @@ thunar_standard_view_finalize (GObject *object)
 
   /* disconnect accelerators */
   thunar_standard_view_disconnect_accelerators (standard_view);
-
-  /* release the thumbnailer */
-  g_signal_handlers_disconnect_by_func (standard_view->priv->thumbnailer, thunar_standard_view_finished_thumbnailing, standard_view);
-  g_object_unref (standard_view->priv->thumbnailer);
 
   /* release the scroll_to_file reference (if any) */
   if (G_UNLIKELY (standard_view->priv->scroll_to_file != NULL))
@@ -1294,12 +1237,6 @@ thunar_standard_view_realize (GtkWidget *widget)
   standard_view->icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
   g_object_bind_property (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->icon_factory), "thumbnail-size", G_BINDING_SYNC_CREATE);
 
-  /* we need to redraw whenever the "thumbnail_mode" property is toggled */
-  g_signal_connect_swapped (standard_view->icon_factory,
-                            "notify::thumbnail_mode",
-                            G_CALLBACK (thunar_standard_view_thumbnail_mode_toggled),
-                            standard_view);
-
   /* apply the thumbnail frame preferences after icon_factory got initialized */
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-thumbnail-draw-frames", G_OBJECT (standard_view), "thumbnail-draw-frames", G_BINDING_SYNC_CREATE);
 
@@ -1320,7 +1257,6 @@ thunar_standard_view_unrealize (GtkWidget *widget)
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (widget);
 
   /* Disconnect from methods which make use of the icon factory */
-  g_signal_handlers_disconnect_by_func (G_OBJECT (standard_view->model), thunar_standard_view_row_changed, standard_view);
   g_signal_handlers_disconnect_by_func (G_OBJECT (standard_view->preferences), thunar_standard_view_highlight_option_changed, standard_view);
   g_signal_handlers_disconnect_by_data (G_OBJECT (standard_view->icon_factory), standard_view);
 
@@ -1578,9 +1514,6 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   if (standard_view->priv->current_directory == current_directory)
     return;
 
-  /* cancel any pending thumbnail sources and requests */
-  thunar_standard_view_cancel_thumbnailing (standard_view);
-
   /* store the current scroll position */
   if (current_directory != NULL)
     thunar_standard_view_scroll_position_save (standard_view);
@@ -1648,9 +1581,6 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   /* reconnect our model to the view */
   g_object_set (G_OBJECT (gtk_bin_get_child (GTK_BIN (standard_view))), "model", standard_view->model, NULL);
 
-  /* schedule a thumbnail timeout */
-  /* NOTE: quickly after this we always trigger a size allocate wich will handle this */
-
   /* notify all listeners about the new/old current directory */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_CURRENT_DIRECTORY]);
 
@@ -1698,12 +1628,6 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
 
   /* apply the new state */
   standard_view->loading = loading;
-
-  /* block or unblock the insert signal to avoid queueing thumbnail reloads */
-  if (loading)
-    g_signal_handler_block (standard_view->model, standard_view->priv->row_changed_id);
-  else
-    g_signal_handler_unblock (standard_view->model, standard_view->priv->row_changed_id);
 
   /* check if we have a path list from new_files pending */
   if (G_UNLIKELY (!loading && standard_view->priv->new_files_path_list != NULL))
@@ -1774,17 +1698,6 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
                 }
             }
         }
-    }
-
-  /* check if we're done loading and a thumbnail timeout or idle was requested */
-  if (!loading && standard_view->priv->thumbnailing_scheduled)
-    {
-      /* We've just finished loading. It will probably take the user some time to
-       * understand the contents of the folder before he will start interacting
-       * with the view. So here we can safely schedule an idle function instead
-       * of a timeout. */
-      thunar_standard_view_schedule_thumbnail_idle (standard_view);
-      standard_view->priv->thumbnailing_scheduled = FALSE;
     }
 
   /* notify listeners */
@@ -2043,10 +1956,6 @@ thunar_standard_view_reload (ThunarView *view,
   /* specifically to ensure that any change in these settings is applied */
   if (standard_view->priv->directory_specific_settings)
     thunar_standard_view_apply_directory_specific_settings (standard_view, standard_view->priv->current_directory);
-
-  /* schedule thumbnail reload update */
-  if (!standard_view->priv->thumbnailing_scheduled)
-    thunar_standard_view_schedule_thumbnail_idle (standard_view);
 }
 
 
@@ -2443,9 +2352,6 @@ thunar_standard_view_current_directory_changed (ThunarFile         *current_dire
   /* update tab label and tooltip */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_FULL_PARSED_PATH]);
-
-  /* directory is possibly moved, schedule a thumbnail update */
-  thunar_standard_view_schedule_thumbnail_timeout (standard_view);
 }
 
 
@@ -3592,45 +3498,6 @@ thunar_standard_view_rows_reordered (ThunarStandardViewModel *model,
 
 
 static void
-thunar_standard_view_row_changed (ThunarStandardViewModel *model,
-                                  GtkTreePath             *path,
-                                  GtkTreeIter             *iter,
-                                  ThunarStandardView      *standard_view)
-{
-  ThunarFile *file;
-
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model));
-  _thunar_return_if_fail (path != NULL);
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-  _thunar_return_if_fail (standard_view->model == model);
-
-  /* ignore while searching */
-  if (standard_view->priv->active_search == TRUE)
-    return;
-
-  if (standard_view->priv->thumbnail_request != 0)
-    return;
-
-  /* leave if this view is not suitable for generating thumbnails */
-  if (!thunar_icon_factory_get_show_thumbnail (standard_view->icon_factory,
-                                               standard_view->priv->current_directory))
-    return;
-
-  /* queue a thumbnail request */
-  file = thunar_standard_view_model_get_file (standard_view->model, iter);
-  if (file == NULL) return;
-  if (thunar_file_get_thumb_state (file) == THUNAR_FILE_THUMB_STATE_UNKNOWN)
-    {
-      thunar_standard_view_cancel_thumbnailing (standard_view);
-      thunar_thumbnailer_queue_file (standard_view->priv->thumbnailer, file,
-                                     &standard_view->priv->thumbnail_request, THUNAR_THUMBNAIL_SIZE_DEFAULT);
-    }
-  g_object_unref (G_OBJECT (file));
-}
-
-
-
-static void
 thunar_standard_view_select_after_row_deleted (ThunarStandardViewModel *model,
                                                GtkTreePath             *path,
                                                ThunarStandardView      *standard_view)
@@ -3868,267 +3735,6 @@ thunar_standard_view_drag_timer_destroy (gpointer user_data)
 
   /* reset the drag timer source id */
   THUNAR_STANDARD_VIEW (user_data)->priv->drag_timer_id = 0;
-}
-
-
-
-static void
-thunar_standard_view_finished_thumbnailing (ThunarThumbnailer  *thumbnailer,
-                                            guint               request,
-                                            ThunarStandardView *standard_view)
-{
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-
-  if (standard_view->priv->thumbnail_request == request)
-    standard_view->priv->thumbnail_request = 0;
-}
-
-
-
-static void
-thunar_standard_view_thumbnailing_destroyed (gpointer data)
-{
-  ThunarStandardView *standard_view = data;
-
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-
-  standard_view->priv->thumbnail_source_id = 0;
-}
-
-
-
-static void
-thunar_standard_view_cancel_thumbnailing (ThunarStandardView *standard_view)
-{
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-
-  /* check if we have a pending thumbnail timeout/idle handler */
-  if (standard_view->priv->thumbnail_source_id > 0)
-    g_source_remove (standard_view->priv->thumbnail_source_id);
-
-  /* check if we have a pending thumbnail request */
-  if (standard_view->priv->thumbnail_request > 0)
-    {
-      /* cancel the request */
-      thunar_thumbnailer_dequeue (standard_view->priv->thumbnailer,
-                                  standard_view->priv->thumbnail_request);
-      standard_view->priv->thumbnail_request = 0;
-    }
-}
-
-
-
-static void
-thunar_standard_view_schedule_thumbnail_timeout (ThunarStandardView *standard_view)
-{
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-
-  /* delay creating the idle until the view has finished loading.
-   * this is done because we only can tell the visible range reliably after
-   * all items have been added and we've perhaps scrolled to the file remember
-   * the last time */
-  if (thunar_view_get_loading (THUNAR_VIEW (standard_view)))
-    {
-      standard_view->priv->thumbnailing_scheduled = TRUE;
-      return;
-    }
-
-  /* cancel any pending thumbnail sources and requests */
-  thunar_standard_view_cancel_thumbnailing (standard_view);
-
-  /* schedule the timeout handler */
-  g_assert (standard_view->priv->thumbnail_source_id == 0);
-  standard_view->priv->thumbnail_source_id =
-    g_timeout_add_full (G_PRIORITY_DEFAULT, 175, thunar_standard_view_request_thumbnails_lazy,
-                        standard_view, thunar_standard_view_thumbnailing_destroyed);
-}
-
-
-
-static void
-thunar_standard_view_schedule_thumbnail_idle (ThunarStandardView *standard_view)
-{
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-
-  /* delay creating the idle until the view has finished loading.
-   * this is done because we only can tell the visible range reliably after
-   * all items have been added, layouting has finished and we've perhaps
-   * scrolled to the file remembered the last time */
-  if (thunar_view_get_loading (THUNAR_VIEW (standard_view)))
-    {
-      standard_view->priv->thumbnailing_scheduled = TRUE;
-      return;
-    }
-
-  /* cancel any pending thumbnail sources or requests */
-  thunar_standard_view_cancel_thumbnailing (standard_view);
-
-  /* schedule the timeout or idle handler */
-  g_assert (standard_view->priv->thumbnail_source_id == 0);
-  standard_view->priv->thumbnail_source_id =
-    g_idle_add_full (G_PRIORITY_DEFAULT_IDLE, thunar_standard_view_request_thumbnails,
-                     standard_view, thunar_standard_view_thumbnailing_destroyed);
-}
-
-
-
-static gboolean
-thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
-                                              gboolean            lazy_request)
-{
-  GtkTreePath *start_path;
-  GtkTreePath *end_path;
-  GtkTreePath *path;
-  GtkTreeIter  iter;
-  ThunarFile  *file;
-  gboolean     valid_iter;
-  GList       *visible_files = NULL;
-
-  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
-  _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (standard_view->icon_factory), FALSE);
-
-  /* do nothing if we are not supposed to show thumbnails at all */
-  if (!thunar_icon_factory_get_show_thumbnail (standard_view->icon_factory,
-                                               standard_view->priv->current_directory))
-    return FALSE;
-
-  /* reschedule the source if we're still loading the folder */
-  if (thunar_view_get_loading (THUNAR_VIEW (standard_view)))
-    return TRUE;
-
-  /* do nothing if we are already loading thumbnails */
-  if (standard_view->priv->thumbnail_request != 0)
-    return FALSE;
-
-  /* compute visible item range */
-  if ((*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_visible_range) (standard_view,
-                                                                            &start_path,
-                                                                            &end_path))
-    {
-      /* iterate over the range to collect all files */
-      valid_iter = gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model),
-                                            &iter, start_path);
-
-      while (valid_iter)
-        {
-          /* prepend the file to the visible items list */
-          file = thunar_standard_view_model_get_file (standard_view->model, &iter);
-          if (file != NULL)
-            visible_files = g_list_prepend (visible_files, file);
-
-          /* check if we've reached the end of the visible range */
-          path = gtk_tree_model_get_path (GTK_TREE_MODEL (standard_view->model), &iter);
-          if (gtk_tree_path_compare (path, end_path) != 0)
-            {
-              /* try to compute the next visible item */
-              valid_iter =
-                gtk_tree_model_iter_next (GTK_TREE_MODEL (standard_view->model), &iter);
-            }
-          else
-            {
-              /* we have reached the end, terminate the loop */
-              valid_iter = FALSE;
-            }
-
-          /* release the tree path */
-          gtk_tree_path_free (path);
-        }
-
-      /* queue a thumbnail request */
-      if (visible_files != NULL)
-        thunar_thumbnailer_queue_files (standard_view->priv->thumbnailer,
-                                        lazy_request, visible_files,
-                                        &standard_view->priv->thumbnail_request,
-                                        THUNAR_THUMBNAIL_SIZE_DEFAULT);
-
-      /* release the file list */
-      g_list_free_full (visible_files, g_object_unref);
-
-      /* release the start and end path */
-      gtk_tree_path_free (start_path);
-      gtk_tree_path_free (end_path);
-    }
-
-  return FALSE;
-}
-
-
-
-static gboolean
-thunar_standard_view_request_thumbnails (gpointer data)
-{
-  return thunar_standard_view_request_thumbnails_real (data, FALSE);
-}
-
-
-
-static gboolean
-thunar_standard_view_request_thumbnails_lazy (gpointer data)
-{
-  return thunar_standard_view_request_thumbnails_real (data, TRUE);
-}
-
-
-
-static void
-thunar_standard_view_thumbnail_mode_toggled (ThunarStandardView *standard_view,
-                                             GParamSpec         *pspec,
-                                             ThunarIconFactory  *icon_factory)
-{
-  GtkAdjustment *vadjustment;
-
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-  _thunar_return_if_fail (THUNAR_IS_ICON_FACTORY (icon_factory));
-  _thunar_return_if_fail (standard_view->icon_factory == icon_factory);
-
-  /* check whether the user wants us to generate thumbnails */
-  if (thunar_icon_factory_get_show_thumbnail (icon_factory,
-                                              standard_view->priv->current_directory))
-    {
-      /* get the vertical adjustment of the view */
-      vadjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (standard_view));
-
-      /* fake a scroll event to generate thumbnail requests */
-      thunar_standard_view_scrolled (vadjustment, standard_view);
-    }
-  else
-    {
-      /* cancel any pending thumbnail requests */
-      thunar_standard_view_cancel_thumbnailing (standard_view);
-    }
-}
-
-
-
-static void
-thunar_standard_view_scrolled (GtkAdjustment      *adjustment,
-                               ThunarStandardView *standard_view)
-{
-  _thunar_return_if_fail (GTK_IS_ADJUSTMENT (adjustment));
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-
-  /* ignore adjustment changes when the view is still loading */
-  if (thunar_view_get_loading (THUNAR_VIEW (standard_view)))
-    return;
-
-  /* Try to load thumbnails for files which are now visible */
-  thunar_standard_view_request_thumbnails_real (standard_view, TRUE);
-}
-
-
-
-static void
-thunar_standard_view_size_allocate (ThunarStandardView *standard_view,
-                                    GtkAllocation      *allocation)
-{
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-
-  /* ignore size changes when the view is still loading */
-  if (thunar_view_get_loading (THUNAR_VIEW (standard_view)))
-    return;
-
-  /* Try to load thumbnails for files which are now visible */
-  thunar_standard_view_request_thumbnails_real (standard_view, TRUE);
 }
 
 
@@ -4826,7 +4432,6 @@ thunar_standard_view_set_model (ThunarStandardView *standard_view)
 
   standard_view->model = g_object_new (standard_view->priv->model_type, NULL);
   standard_view->priv->row_deleted_id = g_signal_connect_after (G_OBJECT (standard_view->model), "row-deleted", G_CALLBACK (thunar_standard_view_select_after_row_deleted), standard_view);
-  standard_view->priv->row_changed_id = g_signal_connect (G_OBJECT (standard_view->model), "row-changed", G_CALLBACK (thunar_standard_view_row_changed), standard_view);
   g_signal_connect (G_OBJECT (standard_view->model), "rows-reordered", G_CALLBACK (thunar_standard_view_rows_reordered), standard_view);
   g_signal_connect (G_OBJECT (standard_view->model), "error", G_CALLBACK (thunar_standard_view_error), standard_view);
   g_signal_connect (G_OBJECT (standard_view->model), "search-done", G_CALLBACK (thunar_standard_view_search_done), standard_view);
