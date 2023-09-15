@@ -181,7 +181,7 @@ struct _ThunarFile
   gchar                *display_name;
   gchar                *basename;
   const gchar          *device_type;
-  gchar                *thumbnail_path;
+  gchar                *thumbnail_path[N_THUMBNAIL_SIZES];
 
   /* sorting */
   gchar                *collate_key;
@@ -398,7 +398,8 @@ thunar_file_init (ThunarFile *file)
   file->file_count = 0;
   file->file_count_timestamp = 0;
   file->display_name = NULL;
-  file->thumbnail_size = -1;
+  for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
+    file->thumbnail_path[i] = NULL;
 }
 
 
@@ -485,7 +486,9 @@ thunar_file_finalize (GObject *object)
   g_free (file->collate_key);
 
   /* free the thumbnail path */
-  g_free (file->thumbnail_path);
+  for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
+    if (file->thumbnail_path[i] != NULL)
+      g_free (file->thumbnail_path[i]);
 
   /* release file */
   g_object_unref (file->gfile);
@@ -892,9 +895,11 @@ thunar_file_info_clear (ThunarFile *file)
   g_free (file->collate_key);
   file->collate_key = NULL;
 
+  /* is this really needed ?*/
   /* free thumbnail path */
-  g_free (file->thumbnail_path);
-  file->thumbnail_path = NULL;
+  // for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
+  //   if (file->thumbnail_path[i] != NULL)
+  //     g_free (file->thumbnail_path[i]);
 
   /* assume the file is mounted by default */
   FLAG_SET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
@@ -3835,14 +3840,10 @@ thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_
   if (thunar_file_get_thumb_state (file) == THUNAR_FILE_THUMB_STATE_NONE)
     return NULL;
 
-  if (G_UNLIKELY (file->thumbnail_path == NULL || file->thumbnail_size != thumbnail_size))
-    {
-      file->thumbnail_path = thunar_file_get_thumbnail_path_forced (file, thumbnail_size);
-      if (file->thumbnail_path != NULL)
-        file->thumbnail_size = thumbnail_size;
-    }
+  if (G_UNLIKELY (file->thumbnail_path[thumbnail_size] == NULL))
+    file->thumbnail_path[thumbnail_size] = thunar_file_get_thumbnail_path_forced (file, thumbnail_size);
 
-  return file->thumbnail_path;
+  return file->thumbnail_path[thumbnail_size];
 }
 
 
@@ -3960,12 +3961,13 @@ thunar_file_set_thumb_state (ThunarFile          *file,
   FLAG_SET_THUMB_STATE (file, state);
 
   /* remove path if the type is not supported */
-  if (state == THUNAR_FILE_THUMB_STATE_NONE
-      && file->thumbnail_path != NULL)
-    {
-      g_free (file->thumbnail_path);
-      file->thumbnail_path = NULL;
-    }
+  if (state == THUNAR_FILE_THUMB_STATE_NONE)
+    for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
+      {
+        if (file->thumbnail_path[i] != NULL)
+          g_free (file->thumbnail_path[i]);
+        file->thumbnail_path[i] = NULL;
+      }
 
   /* if the file has a thumbnail, reload it */
   if (state == THUNAR_FILE_THUMB_STATE_READY)
