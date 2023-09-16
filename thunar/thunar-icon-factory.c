@@ -127,8 +127,6 @@ struct _ThunarIconFactory
   /* stamp that gets bumped when the theme changes */
   guint                theme_stamp;
 
-  GHashTable          *thumbnail_requests;
-
   ThunarThumbnailer   *thumbnailer;
 };
 
@@ -254,8 +252,6 @@ thunar_icon_factory_init (ThunarIconFactory *factory)
   factory->thumbnail_size = THUNAR_THUMBNAIL_SIZE_NORMAL;
 
   factory->thumbnailer = thunar_thumbnailer_get ();
-  factory->thumbnail_requests = g_hash_table_new_full (g_int_hash, g_int_equal,
-                                                       g_free, NULL);
 
   /* connect emission hook for the "changed" signal on the GtkIconTheme class. We use the emission
    * hook way here, because that way we can make sure that the icon cache is definetly cleared
@@ -941,7 +937,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
       && store->icon_state == icon_state
       && store->icon_size == icon_size
       && store->stamp == factory->theme_stamp
-      && store->thumb_state == thunar_file_get_thumb_state (file))
+      && store->thumb_state == thunar_file_get_thumb_state (file, thunar_icon_size_to_thumbnail_size (icon_size)))
     {
       return g_object_ref (store->icon);
     }
@@ -1020,7 +1016,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
               if (thumbnail_path != NULL)
                 /* try to load the thumbnail */
                 icon = thunar_icon_factory_load_from_file (factory, thumbnail_path, icon_size, scale_factor);
-              else if (thunar_file_get_thumb_state (file) != THUNAR_FILE_THUMB_STATE_NONE)
+              else if (thunar_file_get_thumb_state (file, thunar_icon_size_to_thumbnail_size (icon_size)) != THUNAR_FILE_THUMB_STATE_NONE)
                 /* thumbnail does not exist; so load it */
                 thunar_thumbnailer_queue_file (factory->thumbnailer, file, &request, thunar_icon_size_to_thumbnail_size (icon_size));
             }
@@ -1040,7 +1036,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
       store->icon_size = icon_size;
       store->icon_state = icon_state;
       store->stamp = factory->theme_stamp;
-      store->thumb_state = thunar_file_get_thumb_state (file);
+      store->thumb_state = thunar_file_get_thumb_state (file, thunar_icon_size_to_thumbnail_size (icon_size));
       store->icon = g_object_ref (icon);
 
       g_object_set_qdata_full (G_OBJECT (file), thunar_icon_factory_store_quark,
