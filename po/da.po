@@ -458,8 +458,8 @@ msgstr[1] "Sidepanel (tilføj bogmærker)"
 #: ../thunar/thunar-action-manager.c:2058
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Tilføj den valgte mappe til genvejssideruden"
+msgstr[1] "Tilføj de valgte mapper til genvejssideruden"
 
 #: ../thunar/thunar-action-manager.c:2077
 msgid "Desktop (Create Link)"
@@ -470,16 +470,16 @@ msgstr[1] "Skrivebord (opret henvisninger)"
 #: ../thunar/thunar-action-manager.c:2078
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Opret en henvisning til den valgte fil på skrivebordet"
+msgstr[1] "Opret henvisninger til de valgte filer på skrivebordet"
 
 #: ../thunar/thunar-action-manager.c:2099
 #: ../thunar/thunar-action-manager.c:2137
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Send den valgte fil til \"%s\""
+msgstr[1] "Send de valgte filer til \"%s\""
 
 #. display an error message
 #: ../thunar/thunar-action-manager.c:2405 ../thunar/thunar-application.c:1855
@@ -518,6 +518,8 @@ msgid ""
 "No templates installed in\n"
 "\"%s\""
 msgstr ""
+"Der er ikke installeret nogen skabeloner i\n"
+"\"%s\""
 
 #: ../thunar/thunar-action-manager.c:2913
 msgid "_Empty File"
@@ -543,8 +545,8 @@ msgstr "Kunne ikke afmontere \"%s\""
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Brug \"%s\" til at åbne den valgte fil"
+msgstr[1] "Brug \"%s\" til at åbne de valgte filer"
 
 #: ../thunar/thunar-action-manager.c:3252
 #, c-format
@@ -561,8 +563,8 @@ msgstr "_Åbn med standardprogrammer"
 #, c-format
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Åbn den valgt fil med standardprogrammet"
+msgstr[1] "Åbn de valgte filer med standardprogrammerne"
 
 #: ../thunar/thunar-action-manager.c:3293
 #: ../thunar/thunar-chooser-dialog.c:187
@@ -672,12 +674,16 @@ msgid_plural ""
 "Are you sure that you want to permanently\n"
 "delete the %u selected files?"
 msgstr[0] ""
+"Er du sikker på, at du vil slette\n"
+"den valgte fil permanent?"
 msgstr[1] ""
+"Er du sikker på, at du vil slette\n"
+"de %u valgte filer permanent?"
 
 #: ../thunar/thunar-application.c:2421 ../thunar/thunar-dialogs.c:607
 #: ../thunar/thunar-dialogs.c:1082
 msgid "Attention"
-msgstr ""
+msgstr "OBS"
 
 #: ../thunar/thunar-application.c:2428
 msgid "If you delete a file, it is permanently lost."
@@ -1041,12 +1047,12 @@ msgstr "_Udvid automatisk kolonner når der er brug for det"
 
 #: ../thunar/thunar-column-editor.c:343
 msgid "Size Column of Folders"
-msgstr ""
+msgstr "Størrelseskolonne for mapper"
 
 #. explain what it does
 #: ../thunar/thunar-column-editor.c:356
 msgid "Show number of containing items"
-msgstr ""
+msgstr "Vis antallet af indeholdende elementer"
 
 #. reset page title
 #. tell the user that we're unable to determine the file info
@@ -1439,7 +1445,7 @@ msgstr "Opret mappe"
 
 #: ../thunar/thunar-enum-types.c:699
 msgid "Delete (opposite of create)"
-msgstr "Slet (modsat af opret)"
+msgstr "Slet (modsatte af at oprette)"
 
 #: ../thunar/thunar-enum-types.c:700 ../thunar/thunar-file.c:1083
 #: ../thunar/thunar-gio-extensions.c:490
@@ -1449,7 +1455,7 @@ msgstr "Papirkurv"
 
 #: ../thunar/thunar-enum-types.c:701
 msgid "Restore (opposite of trash)"
-msgstr ""
+msgstr "Gendan (modsatte af at flytte til papirkurv)"
 
 #: ../thunar/thunar-enum-types.c:702
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:534
@@ -1458,27 +1464,27 @@ msgstr "Henvisning"
 
 #: ../thunar/thunar-enum-types.c:703
 msgid "Unlink"
-msgstr ""
+msgstr "Fjern henvisning"
 
 #: ../thunar/thunar-enum-types.c:722
 msgid "Log operations"
-msgstr ""
+msgstr "Log handleringer"
 
 #: ../thunar/thunar-enum-types.c:723
 msgid "Log no operations"
-msgstr ""
+msgstr "Log ingen handleringer"
 
 #: ../thunar/thunar-enum-types.c:724
 msgid "Log only timestamps"
-msgstr ""
+msgstr "Log kun tidsstempler"
 
 #: ../thunar/thunar-enum-types.c:743
 msgid "Standalone"
-msgstr ""
+msgstr "Selvstændig"
 
 #: ../thunar/thunar-enum-types.c:744
 msgid "Embedded"
-msgstr ""
+msgstr "Indlejret"
 
 #: ../thunar/thunar-enum-types.c:763
 msgid "Only for local files"
@@ -1727,7 +1733,7 @@ msgstr ""
 
 #: ../thunar/thunar-job-operation-history.c:320
 msgid "There is no operation to undo"
-msgstr ""
+msgstr "Der er ingen handling at fortryde"
 
 #: ../thunar/thunar-job-operation-history.c:337
 msgid ""
@@ -1738,7 +1744,7 @@ msgstr ""
 #: ../thunar/thunar-job-operation-history.c:339
 #, c-format
 msgid "%s operation cannot be undone"
-msgstr ""
+msgstr "%s handling kan ikke fortrydes"
 
 #. one indexed for the dialog
 #: ../thunar/thunar-job-operation-history.c:351
@@ -1750,7 +1756,7 @@ msgstr ""
 #: ../thunar/thunar-job-operation-history.c:363
 #, c-format
 msgid "%s operation can only be partially undone"
-msgstr ""
+msgstr "%s handling kan kun fortrydes delvist"
 
 #: ../thunar/thunar-job-operation-history.c:380
 #, c-format
@@ -1759,7 +1765,7 @@ msgstr "Kunne ikke fortryde handlingen '%s'"
 
 #: ../thunar/thunar-job-operation-history.c:415
 msgid "No operation which can be redone available.\n"
-msgstr ""
+msgstr "Der er ingen handling som kan omgøres.\n"
 
 #: ../thunar/thunar-job-operation-history.c:416
 msgid "There is no operation to redo"
@@ -1786,7 +1792,7 @@ msgstr ""
 #: ../thunar/thunar-job-operation-history.c:459
 #, c-format
 msgid "%s operation can only be partially redone"
-msgstr ""
+msgstr "%s handling kan kun omgøres delvist"
 
 #: ../thunar/thunar-job-operation-history.c:474
 #, c-format
@@ -1797,8 +1803,8 @@ msgstr "Kunne ikke omgøre handlingen '%s'"
 #, c-format
 msgid "%u item"
 msgid_plural "%u items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%u element"
+msgstr[1] "%u elementer"
 
 #: ../thunar/thunar-list-model.c:3195
 #, c-format
@@ -2167,7 +2173,7 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:380
 msgid "Thumbnails"
-msgstr ""
+msgstr "Miniaturer"
 
 #: ../thunar/thunar-preferences-dialog.c:396
 msgid "Show thumbnails:"
@@ -2386,7 +2392,7 @@ msgstr "Ikon_størrelse:"
 
 #: ../thunar/thunar-preferences-dialog.c:720 ../thunar/thunar-window.c:513
 msgid "Image Preview"
-msgstr ""
+msgstr "Forhåndsvisning af billede"
 
 #: ../thunar/thunar-preferences-dialog.c:728
 msgid "Show Icon E_mblems"
@@ -2402,13 +2408,15 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:751
 msgid "Image Preview Mode:"
-msgstr ""
+msgstr "Tilstand for forhåndsvisning af billede:"
 
 #: ../thunar/thunar-preferences-dialog.c:753
 msgid ""
 "- Standalone: Image Preview uses a separate pane\n"
 "- Embedded: Image Preview is embedded in the left sidepane\n"
 msgstr ""
+"- Selvstændig: Forhåndsvisning af billede bruger en separat rude\n"
+"- Indlejret: Forhåndsvisning af billede er indlejret i den venstre siderude\n"
 
 #. Behavior
 #: ../thunar/thunar-preferences-dialog.c:783
@@ -2557,7 +2565,7 @@ msgstr "Kun lokale filer på de samme enheder"
 
 #: ../thunar/thunar-preferences-dialog.c:1071
 msgid "Use intermediate file on copy:"
-msgstr ""
+msgstr "Brug mellemliggende fil ved kopiering:"
 
 #: ../thunar/thunar-preferences-dialog.c:1075
 msgid ""
@@ -2571,7 +2579,7 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:1102
 msgid "Verify file checksum on copy:"
-msgstr ""
+msgstr "Verificer filens tjeksum ved kopiering:"
 
 #: ../thunar/thunar-preferences-dialog.c:1106
 msgid ""
@@ -2584,7 +2592,7 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:1134
 msgid "Search"
-msgstr ""
+msgstr "Søg"
 
 #: ../thunar/thunar-preferences-dialog.c:1151
 msgid "Include subfolders:"
@@ -2785,13 +2793,15 @@ msgstr "Emblemer"
 
 #: ../thunar/thunar-properties-dialog.c:743
 msgid "Highlight"
-msgstr "Fremhæv"
+msgstr "Fremhævning"
 
 #: ../thunar/thunar-properties-dialog.c:782
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "This feature will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
+"Det ser ikke ud til at <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> er tilgængelig.\n"
+"Funktionaliteter vil ikke virke. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Læs mere]</a>"
 
 #: ../thunar/thunar-properties-dialog.c:810
 msgid "Example.txt"
@@ -2924,14 +2934,14 @@ msgstr ""
 #: ../thunar/thunar-renamer-dialog.c:872
 msgid "Remove File"
 msgid_plural "Remove Files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Fjern fil"
+msgstr[1] "Fjern filer"
 
 #: ../thunar/thunar-renamer-dialog.c:873
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Fjern den valgte fil fra listen over filer som skal omdøbes"
+msgstr[1] "Fjern de valgte filer fra listen over filer som skal omdøbes"
 
 #. tell the user that we failed
 #: ../thunar/thunar-renamer-dialog.c:969
@@ -3024,8 +3034,8 @@ msgstr "Papirkurven er tom"
 #, c-format
 msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Papirkurven indeholder %d fil"
+msgstr[1] "Papirkurven indeholder %d filer"
 
 #: ../thunar/thunar-shortcuts-model.c:1003
 msgid "Devices"
@@ -3109,8 +3119,8 @@ msgstr "Beregning afbrudt"
 #, c-format
 msgid "%u item (%s, %s)"
 msgid_plural "%u items (%s, %s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%u element (%s, %s)"
+msgstr[1] "%u elementer (%s, %s)"
 
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
@@ -3137,7 +3147,7 @@ msgstr "Vælg _med mønster ..."
 
 #: ../thunar/thunar-standard-view.c:396
 msgid "Select all files that match a certain pattern"
-msgstr "Vælg alle filer der passer et bestemt mønster"
+msgstr "Vælg alle filer der matcher et bestemt mønster"
 
 #: ../thunar/thunar-standard-view.c:397
 msgid "_Invert Selection"
@@ -3161,11 +3171,11 @@ msgstr "_Opstil elementer"
 
 #: ../thunar/thunar-standard-view.c:400
 msgid "T_oggle Sort Order"
-msgstr ""
+msgstr "Skift _sorteringsrækkefølge"
 
 #: ../thunar/thunar-standard-view.c:400
 msgid "Toggle ascending/descending sort order"
-msgstr ""
+msgstr "Skift stigende/faldende sorteringsrækkefølge"
 
 #: ../thunar/thunar-standard-view.c:401
 msgid "By _Name"
@@ -3259,6 +3269,8 @@ msgid ""
 "Files whose name matches the wildcard pattern you enter will be selected in "
 "the main window."
 msgstr ""
+"Filer hvis navne der matcher det jokertegnsmønskter du har indtastet vil "
+"blive valgt i hovedvinduet."
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
@@ -3284,11 +3296,13 @@ msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr ""
+"Hvis den er aktiveret, så skal store/små bogstaver matche mønsteret.\n"
+"Eksemp* vil matche Eksempel.txt og ikke eksempel.txt"
 
 #: ../thunar/thunar-standard-view.c:2490
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
-msgstr ""
+msgstr "_Match diakritiske tegn"
 
 #: ../thunar/thunar-standard-view.c:2491
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
@@ -3348,20 +3362,20 @@ msgstr "Vis visningsnavn"
 
 #: ../thunar/thunar-statusbar.c:85
 msgid "Last Modified"
-msgstr ""
+msgstr "Sidst ændret"
 
 #: ../thunar/thunar-statusbar.c:85
 msgid "Show last modified"
-msgstr ""
+msgstr "Vis sidst ændret"
 
 #: ../thunar/thunar-toolbar-editor.c:125
 msgid "Configure the Toolbar"
-msgstr ""
+msgstr "Konfigurer værktøjslinjen"
 
 #. create the top label for the toolbar editor dialog
 #: ../thunar/thunar-toolbar-editor.c:140
 msgid "Configure the order and visibility of toolbar items."
-msgstr ""
+msgstr "Konfigurer rækkefølgen og synligheden af værktøjselementer."
 
 #. create the "Use Default" button
 #: ../thunar/thunar-toolbar-editor.c:230
@@ -3426,22 +3440,22 @@ msgstr "%s af %s"
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%lu time tilbage (%s/sek.)"
+msgstr[1] "%lu timer tilbage (%s/sek.)"
 
 #: ../thunar/thunar-transfer-job.c:1866
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%lu minut tilbage (%s/sek.)"
+msgstr[1] "%lu minutter tilbage (%s/sek.)"
 
 #: ../thunar/thunar-transfer-job.c:1873
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%lu sekund tilbage (%s/sek.)"
+msgstr[1] "%lu sekunder tilbage (%s/sek.)"
 
 #: ../thunar/thunar-tree-model.c:637
 msgid "Loading..."
@@ -3504,12 +3518,12 @@ msgstr "%.*s (kopi %u)%s"
 #: ../thunar/thunar-util.c:759
 #, c-format
 msgid "link to %.*s%s"
-msgstr ""
+msgstr "henvis til %.*s%s"
 
 #: ../thunar/thunar-util.c:764
 #, c-format
 msgid "link %u to %.*s%s"
-msgstr ""
+msgstr "henvis %u til %.*s%s"
 
 #: ../thunar/thunar-window.c:489
 msgid "_File"
@@ -3617,15 +3631,15 @@ msgstr "Sted_vælger"
 
 #: ../thunar/thunar-window.c:507
 msgid "_Entry Style"
-msgstr ""
+msgstr "_Punktstil"
 
 #: ../thunar/thunar-window.c:507
 msgid "Traditional entry showing the current path"
-msgstr ""
+msgstr "Traditionelt punkt som viser den nuværende sti"
 
 #: ../thunar/thunar-window.c:508
 msgid "_Buttons Style"
-msgstr ""
+msgstr "_Knapstil"
 
 #: ../thunar/thunar-window.c:508
 msgid "Modern approach with buttons that correspond to folders"
@@ -3653,7 +3667,7 @@ msgstr "Slår synligheden af træruden til/fra"
 
 #: ../thunar/thunar-window.c:513
 msgid "Change the visibility of this window's image preview"
-msgstr ""
+msgstr "Skift synligheden af vinduets forhåndsvisning af billede"
 
 #: ../thunar/thunar-window.c:514
 msgid "St_atusbar"
@@ -3697,13 +3711,15 @@ msgstr "Slår visningen af skjulte filer til/fra i det nuværende vindue"
 
 #: ../thunar/thunar-window.c:519
 msgid "Show File Hi_ghlight"
-msgstr ""
+msgstr "Vis _fremhævning af fil"
 
 #: ../thunar/thunar-window.c:519
 msgid ""
 "Toggles the display of file highlight which can be configured in the file "
 "specific property dialog"
 msgstr ""
+"Skifter visningen af fremhævning af fil hvilket kan konfigureres i den "
+"filspecifikke egenskaber-dialog"
 
 #: ../thunar/thunar-window.c:520
 msgid "Zoom I_n"
@@ -3895,7 +3911,7 @@ msgstr "Søg med Catfish ..."
 
 #: ../thunar/thunar-window.c:1047
 msgid "Restore Selected Items"
-msgstr ""
+msgstr "Gendan de valgte elementer"
 
 #: ../thunar/thunar-window.c:2612
 msgid "Close tab"
@@ -4192,8 +4208,8 @@ msgstr "Billedtype:"
 #, c-format
 msgid "%dx%d pixel"
 msgid_plural "%dx%d pixels"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%dx%d pixel"
+msgstr[1] "%dx%d pixels"
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:117
 msgid "Con_vert to:"
@@ -4434,8 +4450,8 @@ msgstr ""
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Send %d fil som komprimeret arkiv?"
+msgstr[1] "Send %d filer som komprimeret arkiv?"
 
 #: ../plugins/thunar-sendto-email/main.c:245
 msgid "Send as _archive"
@@ -4481,8 +4497,8 @@ msgstr "Kunne ikke oprette symbolsk henvisning for \"%s\""
 #, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Kunne ikke komprimere %d fil"
+msgstr[1] "Kunne ikke komprimere %d filer"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:693
@@ -4798,6 +4814,9 @@ msgid ""
 "\n"
 "** The custom action will be eligible to appear in the toolbar."
 msgstr ""
+"Siden viser betingelserne, som handlingen vises under, i filhåndteringernes genvejsmenuer. Filmønstrene angives som en liste over simple filmønstre adskilt af semikoloner (f.eks. *.txt;*.doc). Mindst et af mønstrene skal matche navnet på filen eller mappen for at en handlingen vises i genvejsmenuen for en fil eller mappe. Du kan desuden angive at handlingen kun skal vises for bestemte typer af filer.\n"
+"\n"
+"** Den tilpasset handlingen vil kunne blive vist på værktøjslinjen."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:45
 msgid "Appearance Conditions"
