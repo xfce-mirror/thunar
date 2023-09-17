@@ -566,19 +566,6 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                            EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:last-window-width:
-   *
-   * The last known width of a #ThunarWindow, which will be used as
-   * default width for newly created windows.
-   **/
-  preferences_props[PROP_LAST_WINDOW_WIDTH] =
-      g_param_spec_int ("last-window-width",
-                        "LastWindowWidth",
-                        NULL,
-                        1, G_MAXINT, 640,
-                        EXO_PARAM_READWRITE);  
-
-  /**
    * ThunarPreferences:last-window-height:
    *
    * The last known height of a #ThunarWindow, which will be used as
@@ -590,6 +577,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         NULL,
                         1, G_MAXINT, 480,
                         EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-window-width:
+   *
+   * The last known width of a #ThunarWindow, which will be used as
+   * default width for newly created windows.
+   **/
+  preferences_props[PROP_LAST_WINDOW_WIDTH] =
+      g_param_spec_int ("last-window-width",
+                        "LastWindowWidth",
+                        NULL,
+                        1, G_MAXINT, 640,
+                        EXO_PARAM_READWRITE);  
 
   /**
    * ThunarPreferences:last-window-maximized:
@@ -605,19 +605,6 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:last-renamer-dialog-width:
-   *
-   * The last known width of a #ThunarRenamerDialog, which will be used as
-   * default width for newly created dialgogs.
-   **/
-  preferences_props[PROP_LAST_RENAMER_DIALOG_WIDTH] =
-      g_param_spec_int ("last-renamer-dialog-width",
-                        "LastRenamerDialogWidth",
-                        NULL,
-                        1, G_MAXINT, 510,
-                        EXO_PARAM_READWRITE);
-
-  /**
    * ThunarPreferences:last-renamer-dialog-height:
    *
    * The last known height of a #ThunarRenamerDialog, which will be used as
@@ -628,6 +615,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "LastRenamerDialogHeight",
                         NULL,
                         1, G_MAXINT, 490,
+                        EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-renamer-dialog-width:
+   *
+   * The last known width of a #ThunarRenamerDialog, which will be used as
+   * default width for newly created dialgogs.
+   **/
+  preferences_props[PROP_LAST_RENAMER_DIALOG_WIDTH] =
+      g_param_spec_int ("last-renamer-dialog-width",
+                        "LastRenamerDialogWidth",
+                        NULL,
+                        1, G_MAXINT, 510,
                         EXO_PARAM_READWRITE);
 
   /**

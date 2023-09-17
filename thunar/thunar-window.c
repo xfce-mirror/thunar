@@ -267,8 +267,6 @@ static void      thunar_window_device_changed             (ThunarDeviceMonitor  
                                                            ThunarWindow           *window);
 static gboolean  thunar_window_save_paned                 (ThunarWindow           *window);
 static gboolean  thunar_window_save_paned_notebooks       (ThunarWindow           *window);
-static gboolean  thunar_window_save_geometry_timer        (gpointer                user_data);
-static void      thunar_window_save_geometry_timer_destroy(gpointer                user_data);
 static void      thunar_window_set_zoom_level             (ThunarWindow           *window,
                                                            ThunarZoomLevel         zoom_level);
 static void      thunar_window_update_window_icon         (ThunarWindow           *window);
@@ -475,7 +473,7 @@ struct _ThunarWindow
   gboolean                   directory_specific_settings;
 
   /* support to remember window geometry */
-  guint                      save_geometry_timer_id;
+  struct geometry_timer      timer_data;
 
   /* type of the sidepane */
   ThunarSidepaneType         sidepane_type;
@@ -818,7 +816,12 @@ thunar_window_init (ThunarWindow *window)
                 "last-image-preview-visible", &last_image_preview_visible,
                 "misc-image-preview-mode", &misc_image_preview_mode,
                 NULL);
-
+  
+  window->timer_data.window         = GTK_WIDGET (window);
+  window->timer_data.pref_width     = g_strdup ("last-window-width");
+  window->timer_data.pref_height    = g_strdup ("last-window-height");
+  window->timer_data.pref_maximized = g_strdup ("last-window-maximized");
+  
   /* update the visual on screen_changed events */
   g_signal_connect (window, "screen-changed", G_CALLBACK (thunar_window_screen_changed), NULL);
 
@@ -1583,8 +1586,8 @@ thunar_window_dispose (GObject *object)
     }
 
   /* destroy the save geometry timer source */
-  if (G_UNLIKELY (window->save_geometry_timer_id != 0))
-    g_source_remove (window->save_geometry_timer_id);
+  if (G_UNLIKELY (window->timer_data.id != 0))
+    g_source_remove (window->timer_data.id);
 
   /* disconnect from the current-directory */
   thunar_window_set_current_directory (window, NULL);
@@ -1598,6 +1601,11 @@ static void
 thunar_window_finalize (GObject *object)
 {
   ThunarWindow *window = THUNAR_WINDOW (object);
+
+  /* free geometry timer data */
+  g_free (window->timer_data.pref_width);
+  g_free (window->timer_data.pref_height);
+  g_free (window->timer_data.pref_maximized);
 
   thunar_window_free_bookmarks (window);
   g_list_free_full (window->thunarx_preferences_providers, g_object_unref);
@@ -2070,15 +2078,15 @@ thunar_window_configure_event (GtkWidget         *widget,
   if (widget_allocation.width != event->width || widget_allocation.height != event->height)
     {
       /* drop any previous timer source */
-      if (window->save_geometry_timer_id != 0)
-        g_source_remove (window->save_geometry_timer_id);
+      if (window->timer_data.id != 0)
+        g_source_remove (window->timer_data.id);
 
       /* check if we should schedule another save timer */
       if (gtk_widget_get_visible (widget))
         {
           /* save the geometry one second after the last configure event */
-          window->save_geometry_timer_id = g_timeout_add_seconds_full (G_PRIORITY_LOW, 1, thunar_window_save_geometry_timer,
-                                                                       window, thunar_window_save_geometry_timer_destroy);
+          window->timer_data.id = g_timeout_add_seconds_full (G_PRIORITY_LOW, 1, thunar_util_save_geometry_timer,
+                                                              &window->timer_data, thunar_util_save_geometry_timer_destroy);
         }
     }
 
@@ -5038,60 +5046,6 @@ thunar_window_save_paned_notebooks (ThunarWindow *window)
 
   /* for button release event */
   return FALSE;
-}
-
-
-
-static gboolean
-thunar_window_save_geometry_timer (gpointer user_data)
-{
-  GdkWindowState state;
-  ThunarWindow  *window = THUNAR_WINDOW (user_data);
-  gboolean       remember_geometry;
-  gint           width;
-  gint           height;
-
-THUNAR_THREADS_ENTER
-
-  /* check if we should remember the window geometry */
-  g_object_get (G_OBJECT (window->preferences), "misc-remember-geometry", &remember_geometry, NULL);
-  if (G_LIKELY (remember_geometry))
-    {
-      /* check if the window is still visible */
-      if (gtk_widget_get_visible (GTK_WIDGET (window)))
-        {
-          /* determine the current state of the window */
-          state = gdk_window_get_state (gtk_widget_get_window (GTK_WIDGET (window)));
-
-          /* don't save geometry for maximized or fullscreen windows */
-          if ((state & (GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN)) == 0)
-            {
-              /* determine the current width/height of the window... */
-              gtk_window_get_size (GTK_WINDOW (window), &width, &height);
-
-              /* ...and remember them as default for new windows */
-              g_object_set (G_OBJECT (window->preferences), "last-window-width", width, "last-window-height", height,
-                            "last-window-maximized", FALSE, NULL);
-            }
-          else
-            {
-              /* only store that the window is full screen */
-              g_object_set (G_OBJECT (window->preferences), "last-window-maximized", TRUE, NULL);
-            }
-        }
-    }
-
-THUNAR_THREADS_LEAVE
-
-  return FALSE;
-}
-
-
-
-static void
-thunar_window_save_geometry_timer_destroy (gpointer user_data)
-{
-  THUNAR_WINDOW (user_data)->save_geometry_timer_id = 0;
 }
 
 

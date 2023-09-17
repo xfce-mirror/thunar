@@ -1081,3 +1081,62 @@ thunar_util_search_terms_match (gchar **terms,
       return FALSE;
   return TRUE;
 }
+
+
+
+gboolean
+thunar_util_save_geometry_timer (gpointer user_data)
+{
+  GdkWindowState         state;
+  ThunarPreferences     *preferences;
+  gboolean               remember_geometry;
+  gint                   width;
+  gint                   height;
+  struct geometry_timer *timer_data;
+
+THUNAR_THREADS_ENTER
+  
+  timer_data = (struct geometry_timer *) user_data;
+  preferences = thunar_preferences_get ();
+  g_object_get (G_OBJECT (preferences), "misc-remember-geometry", &remember_geometry, NULL);
+  
+  /* check if we should remember the window geometry */
+  if (G_LIKELY (remember_geometry))
+    {
+      /* check if the window is still visible */
+      if (gtk_widget_get_visible (timer_data->window))
+        {
+          /* determine the current state of the window */
+          state = gdk_window_get_state (gtk_widget_get_window (timer_data->window));
+
+          /* don't save geometry for maximized or fullscreen windows */
+          if ((state & (GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN)) == 0)
+            {
+              /* determine the current width/height of the window... */
+              gtk_window_get_size (GTK_WINDOW (timer_data->window), &width, &height);
+
+              /* ...and remember them as default for new windows */
+              g_object_set (G_OBJECT (preferences), timer_data->pref_width, width, timer_data->pref_height, height,
+                            timer_data->pref_maximized, FALSE, NULL);
+            }
+          else
+            {
+              /* only store that the window is full screen */
+              g_object_set (G_OBJECT (preferences), timer_data->pref_maximized, TRUE, NULL);
+            }
+        }
+    }
+    g_object_unref(preferences);
+
+THUNAR_THREADS_LEAVE
+
+  return G_SOURCE_REMOVE;
+}
+
+
+
+void
+thunar_util_save_geometry_timer_destroy (gpointer user_data)
+{
+  ((struct geometry_timer *) user_data)->id = 0;
+}
