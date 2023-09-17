@@ -589,7 +589,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "LastWindowWidth",
                         NULL,
                         1, G_MAXINT, 640,
-                        EXO_PARAM_READWRITE);  
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-window-maximized:
