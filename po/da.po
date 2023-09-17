@@ -1730,6 +1730,8 @@ msgid ""
 "No operation which can be undone has been performed yet.\n"
 "(For some operations undo is not supported)"
 msgstr ""
+"Der er endnu ikke blevet udført nogen handling som kan fortrydes.\n"
+"(nogle handlinger kan ikke fortrydes)"
 
 #: ../thunar/thunar-job-operation-history.c:320
 msgid "There is no operation to undo"
@@ -1740,6 +1742,8 @@ msgid ""
 "The operation you are trying to undo does not have any files associated with"
 " it, and thus cannot be undone. "
 msgstr ""
+"Den handling du prøver at fortryde har ikke nogle filer tilknyttet og kan "
+"derfor ikke fortrydes."
 
 #: ../thunar/thunar-job-operation-history.c:339
 #, c-format
@@ -1752,6 +1756,8 @@ msgid ""
 "The following files were overwritten in the operation you are trying to undo"
 " and cannot be restored:\n"
 msgstr ""
+"Følgende filer blev overskredet i den handling du prøver at fortryde og kan "
+"ikke gendannes:\n"
 
 #: ../thunar/thunar-job-operation-history.c:363
 #, c-format
@@ -1776,6 +1782,8 @@ msgid ""
 "The operation you are trying to redo does not have any files associated with"
 " it, and thus cannot be redone. "
 msgstr ""
+"Den handling du prøver at omgøre har ikke nogle filer tilknyttet og kan "
+"derfor ikke omgøres."
 
 #: ../thunar/thunar-job-operation-history.c:435
 #, c-format
@@ -1788,6 +1796,8 @@ msgid ""
 "The following files were overwritten in the operation you are trying to redo"
 " and cannot be restored:\n"
 msgstr ""
+"Følgende filer blev overskredet i den handling du prøver at omgøre og kan "
+"ikke gendannes:\n"
 
 #: ../thunar/thunar-job-operation-history.c:459
 #, c-format
@@ -3284,6 +3294,12 @@ msgid ""
 "\n"
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr ""
+"? matcher præcist ét tegn,\n"
+"* matcher et vilkårligt antal tegn, inklusive nul.\n"
+"\n"
+"F.eks.: *.txt, fil??.png, bill\n"
+"\n"
+"Uden noget *- eller ?-jokertegn vil mønsteret matche hvor som helst i et navn. Med jokertegn skal mønsteret matche ved både begyndelsen og slutningen af et navn."
 
 #: ../thunar/thunar-standard-view.c:2484
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
@@ -3310,6 +3326,8 @@ msgid ""
 "If enabled, require accents to match the pattern.\n"
 "Rés* would match Résumé.txt and not Resume.txt"
 msgstr ""
+"Hvis den er aktiveret, så skal accenttegn matche mønsteret.\n"
+"Rés* vil matche Résumé.txt og ikke Resume.txt"
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
