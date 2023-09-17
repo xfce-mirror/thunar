@@ -467,7 +467,7 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
           if (max_size > 0 && thunar_file_get_size (lp->data) > max_size)
             continue;
 
-          supported_files = g_list_prepend (supported_files, lp->data);
+          supported_files = g_list_prepend (supported_files, g_object_ref (lp->data));
           n_items++;
         }
       else
@@ -534,12 +534,12 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
       g_free (mime_hints);
       g_strfreev (uris);
 
-      /* free the list of supported files */
-      g_list_free (supported_files);
-
       /* free the list of files passed in */
       g_list_free_full (job->files, g_object_unref);
       job->files = NULL;
+
+      /* we need to reload the files after the job is finished */
+      job->files = supported_files;
 
       /* we assume success if we've come so far */
       success = TRUE;
@@ -933,6 +933,9 @@ thunar_thumbnailer_thumbnailer_finished (GDBusProxy        *proxy,
 
           /* tell everybody we're done here */
           g_signal_emit (G_OBJECT (thumbnailer), thumbnailer_signals[REQUEST_FINISHED], 0, job->request);
+
+          for (GList *file_lp = job->files; file_lp != NULL; file_lp = file_lp->next)
+            thunar_file_reload (THUNAR_FILE (file_lp->data));
 
           /* remove job from the list */
           thumbnailer->jobs = g_slist_delete_link (thumbnailer->jobs, lp);
