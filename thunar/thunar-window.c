@@ -5834,12 +5834,11 @@ thunar_window_selection_changed (ThunarWindow *window)
   /* get or request a thumbnail */
   if ((last_image_preview_visible == TRUE) && (g_list_length (selected_files) == 1))
     {
-      gchar *path = thunar_file_get_thumbnail_path (selected_files->data, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+      const gchar *path = thunar_file_get_thumbnail_path(selected_files->data, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
       if (path == NULL) /* request the creation of the thumbnail if it doesn't exist */
         thunar_thumbnailer_queue_file (window->thumbnailer, selected_files->data, &window->thumbnail_request, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
       else /* display the thumbnail */
-        window->preview_image_pixbuf = gdk_pixbuf_new_from_file (path, NULL);
-      g_free (path);
+        window->preview_image_pixbuf = gdk_pixbuf_new_from_file(path, NULL);
     }
 
   /* update previews */
