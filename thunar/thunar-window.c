@@ -5874,7 +5874,7 @@ thunar_window_finished_thumbnailing (ThunarWindow       *window,
 
       window->preview_image_pixbuf = gdk_pixbuf_new_from_file (path, NULL);
       thunar_window_update_embedded_image_preview (window);
-      thunar_window_update_standalone_image_preview(window);
+      thunar_window_update_standalone_image_preview (window);
     }
 }
 
