@@ -3841,25 +3841,9 @@ thunar_file_is_desktop (const ThunarFile *file)
 
 
 
-const gchar *
-thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_size)
-{
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-
-  /* if the thumbstate is known to be not there, return null */
-  if (thunar_file_get_thumb_state (file, thumbnail_size) == THUNAR_FILE_THUMB_STATE_NONE)
-    return NULL;
-
-  if (G_UNLIKELY (file->thumbnail_path[thumbnail_size] == NULL))
-    file->thumbnail_path[thumbnail_size] = thunar_file_get_thumbnail_path_forced (file, thumbnail_size);
-
-  return file->thumbnail_path[thumbnail_size];
-}
-
-
-
-gchar *
-thunar_file_get_thumbnail_path_forced (ThunarFile *file, ThunarThumbnailSize thumbnail_size)
+static gchar *
+thunar_file_get_thumbnail_path_real (ThunarFile         *file,
+                                     ThunarThumbnailSize thumbnail_size)
 {
   GChecksum *checksum;
   gchar     *filename;
@@ -3926,6 +3910,25 @@ thunar_file_get_thumbnail_path_forced (ThunarFile *file, ThunarThumbnailSize thu
     }
 
   return thumbnail_path;
+}
+
+
+
+const gchar *
+thunar_file_get_thumbnail_path (ThunarFile         *file,
+                                ThunarThumbnailSize thumbnail_size)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  /* if the thumbstate is known to be not there, return null */
+  if (thunar_file_get_thumb_state (file, thumbnail_size) == THUNAR_FILE_THUMB_STATE_NONE)
+    return NULL;
+
+  /* cache the real thumbnail path */
+  if (G_UNLIKELY (file->thumbnail_path[thumbnail_size] == NULL))
+    file->thumbnail_path[thumbnail_size] = thunar_file_get_thumbnail_path_real (file, thumbnail_size);
+
+  return file->thumbnail_path[thumbnail_size];
 }
 
 
