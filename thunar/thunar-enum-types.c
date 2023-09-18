@@ -33,7 +33,6 @@ static void                thunar_icon_size_from_zoom_level     (const GValue   
 static void                thunar_thumbnail_size_from_icon_size (const GValue   *src_value,
                                                                  GValue         *dst_value);
 static ThunarIconSize      thunar_zoom_level_to_icon_size       (ThunarZoomLevel zoom_level);
-static ThunarThumbnailSize thunar_icon_size_to_thumbnail_size   (ThunarIconSize  icon_size);
 
 
 
@@ -523,7 +522,7 @@ thunar_zoom_level_to_view_margin (ThunarZoomLevel zoom_level)
 
 
 
-static ThunarThumbnailSize
+ThunarThumbnailSize
 thunar_icon_size_to_thumbnail_size (ThunarIconSize icon_size)
 {
   if (icon_size >= THUNAR_ICON_SIZE_1024)
