@@ -5834,7 +5834,7 @@ thunar_window_selection_changed (ThunarWindow *window)
   /* get or request a thumbnail */
   if ((last_image_preview_visible == TRUE) && (g_list_length (selected_files) == 1))
     {
-      gchar *path = thunar_file_get_thumbnail_path_forced (selected_files->data, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+      gchar *path = thunar_file_get_thumbnail_path (selected_files->data, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
       if (path == NULL) /* request the creation of the thumbnail if it doesn't exist */
         thunar_thumbnailer_queue_file (window->thumbnailer, selected_files->data, &window->thumbnail_request, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
       else /* display the thumbnail */
@@ -5868,15 +5868,13 @@ thunar_window_finished_thumbnailing (ThunarWindow       *window,
   if (g_list_length (selected_files) == 1)
     {
       /* there is no guarantee that the thumbnail will exist, the type of the selected file might be unsupported by the thumbnailer */
-      gchar *path = thunar_file_get_thumbnail_path_forced (selected_files->data, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+      const gchar *path = thunar_file_get_thumbnail_path (selected_files->data, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
       if (path == NULL)
         return;
 
       window->preview_image_pixbuf = gdk_pixbuf_new_from_file (path, NULL);
       thunar_window_update_embedded_image_preview (window);
-      thunar_window_update_standalone_image_preview (window);
-
-      g_free (path);
+      thunar_window_update_standalone_image_preview(window);
     }
 }
 
