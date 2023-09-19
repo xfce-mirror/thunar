@@ -1942,7 +1942,7 @@ thunar_renamer_configure_event (GtkWidget         *widget,
 
 
 
-void
+static void
 thunar_renamer_save_geometry_timer_destroy (gpointer user_data)
 {
   THUNAR_RENAMER_DIALOG (user_data)->save_geometry_timer_id = 0;

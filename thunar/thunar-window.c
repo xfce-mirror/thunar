@@ -5041,7 +5041,7 @@ thunar_window_save_paned_notebooks (ThunarWindow *window)
 
 
 
-void
+static void
 thunar_window_save_geometry_timer_destroy (gpointer user_data)
 {
   THUNAR_WINDOW (user_data)->save_geometry_timer_id = 0;
