@@ -2087,14 +2087,6 @@ thunar_window_configure_event (GtkWidget         *widget,
 
 
 
-void
-thunar_window_save_geometry_timer_destroy (gpointer user_data)
-{
-  THUNAR_WINDOW (user_data)->save_geometry_timer_id = 0;
-}
-
-
-
 static void
 thunar_window_binding_destroyed (gpointer data,
                                  GObject  *binding)
@@ -5045,6 +5037,14 @@ thunar_window_save_paned_notebooks (ThunarWindow *window)
 
   /* for button release event */
   return FALSE;
+}
+
+
+
+void
+thunar_window_save_geometry_timer_destroy (gpointer user_data)
+{
+  THUNAR_WINDOW (user_data)->save_geometry_timer_id = 0;
 }
 
 
