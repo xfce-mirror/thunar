@@ -525,13 +525,13 @@ thunar_zoom_level_to_view_margin (ThunarZoomLevel zoom_level)
 ThunarThumbnailSize
 thunar_icon_size_to_thumbnail_size (ThunarIconSize icon_size)
 {
-  if (icon_size >= THUNAR_ICON_SIZE_1024)
+  if (icon_size > THUNAR_ICON_SIZE_512)
     return THUNAR_THUMBNAIL_SIZE_XX_LARGE;
 
-  if (icon_size >= THUNAR_ICON_SIZE_512)
+  if (icon_size > THUNAR_ICON_SIZE_256)
     return THUNAR_THUMBNAIL_SIZE_X_LARGE;
 
-  if (icon_size >= THUNAR_ICON_SIZE_128)
+  if (icon_size > THUNAR_ICON_SIZE_128)
     return THUNAR_THUMBNAIL_SIZE_LARGE;
 
   return THUNAR_THUMBNAIL_SIZE_NORMAL;
