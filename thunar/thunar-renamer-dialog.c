@@ -148,6 +148,7 @@ static GtkWidget  *thunar_renamer_dialog_append_menu_item      (ThunarRenamerDia
                                                                 ThunarRenamerAction       action);
 static gboolean    thunar_renamer_configure_event              (GtkWidget                *widget,
                                                                 GdkEventConfigure        *event);
+static void        thunar_renamer_save_geometry_timer_destroy  (gpointer                  user_data);                                                                
 
 struct _ThunarRenamerDialogClass
 {
@@ -187,7 +188,7 @@ struct _ThunarRenamerDialog
   gboolean             drag_highlighted;
   
   /* support to remember window geometry */
-  struct geometry_timer timer_data;
+  guint                save_geometry_timer_id;
 };
 
 
@@ -368,11 +369,6 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
                 NULL);
   g_object_unref(preferences);
   gtk_window_set_default_size (GTK_WINDOW (renamer_dialog), last_dialog_width, last_dialog_height);
-  
-  renamer_dialog->timer_data.window         = GTK_WIDGET (renamer_dialog);
-  renamer_dialog->timer_data.pref_width     = g_strdup ("last-renamer-dialog-width");
-  renamer_dialog->timer_data.pref_height    = g_strdup ("last-renamer-dialog-height");
-  renamer_dialog->timer_data.pref_maximized = g_strdup ("last-renamer-dialog-maximized");
   
   /* restore the maxized state of the dialog */
   if (G_UNLIKELY (last_dialog_maximized))
@@ -657,8 +653,8 @@ thunar_renamer_dialog_dispose (GObject *object)
   ThunarRenamerDialog *renamer_dialog = THUNAR_RENAMER_DIALOG (object);
 
   /* destroy the save geometry timer source */
-  if (G_UNLIKELY (renamer_dialog->timer_data.id != 0))
-    g_source_remove (renamer_dialog->timer_data.id);
+  if (G_UNLIKELY (renamer_dialog->save_geometry_timer_id != 0))
+    g_source_remove (renamer_dialog->save_geometry_timer_id);
 
   /* reset the "current-directory" property */
   thunar_renamer_dialog_set_current_directory (renamer_dialog, NULL);
@@ -672,11 +668,6 @@ static void
 thunar_renamer_dialog_finalize (GObject *object)
 {
   ThunarRenamerDialog *renamer_dialog = THUNAR_RENAMER_DIALOG (object);
-
-  /* free geometry timer data */
-  g_free (renamer_dialog->timer_data.pref_width);
-  g_free (renamer_dialog->timer_data.pref_height);
-  g_free (renamer_dialog->timer_data.pref_maximized);
 
   /* release the action manager support */
   g_object_unref (G_OBJECT (renamer_dialog->action_mgr));
@@ -1931,18 +1922,26 @@ thunar_renamer_configure_event (GtkWidget         *widget,
   if (widget_allocation.width != event->width || widget_allocation.height != event->height)
     {
       /* drop any previous timer source */
-      if (dialog->timer_data.id != 0)
-        g_source_remove (dialog->timer_data.id);
+      if (dialog->save_geometry_timer_id != 0)
+        g_source_remove (dialog->save_geometry_timer_id);
 
       /* check if we should schedule another save timer */
       if (gtk_widget_get_visible (widget))
         {
           /* save the geometry one second after the last configure event */
-          dialog->timer_data.id = g_timeout_add_seconds_full (G_PRIORITY_LOW, 1, thunar_util_save_geometry_timer,
-                                                              &dialog->timer_data, thunar_util_save_geometry_timer_destroy);
+          dialog->save_geometry_timer_id = g_timeout_add_seconds_full (G_PRIORITY_LOW, 1, thunar_util_save_geometry_timer,
+                                                                       dialog, thunar_renamer_save_geometry_timer_destroy);
         }
     }
 
   /* let Gtk+ handle the configure event */
   return (*GTK_WIDGET_CLASS (thunar_renamer_dialog_parent_class)->configure_event) (widget, event);
+}
+
+
+
+void
+thunar_renamer_save_geometry_timer_destroy (gpointer user_data)
+{
+  THUNAR_RENAMER_DIALOG (user_data)->save_geometry_timer_id = 0;
 }

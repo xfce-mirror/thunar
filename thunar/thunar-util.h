@@ -52,15 +52,6 @@ typedef enum
   THUNAR_NEXT_FILE_NAME_MODE_LINK,
 } ThunarNextFileNameMode;
 
-struct geometry_timer
-{
-  GtkWidget *window;
-  gchar     *pref_width;
-  gchar     *pref_height;
-  gchar     *pref_maximized;
-  guint      id;
-};
-
 typedef void (*ThunarBookmarksFunc) (GFile       *file,
                                      const gchar *name,
                                      gint         row_num,
@@ -108,7 +99,6 @@ gchar     **thunar_util_split_search_query       (const gchar          *search_q
 gboolean    thunar_util_search_terms_match       (gchar               **terms,
                                                   gchar                *str);
 gboolean    thunar_util_save_geometry_timer      (gpointer user_data);
-void        thunar_util_save_geometry_timer_destroy (gpointer user_data);
 
 G_END_DECLS;
 
