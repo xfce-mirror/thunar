@@ -38,7 +38,6 @@
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-menu.h>
-#include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-renamer-dialog.h>
@@ -149,6 +148,8 @@ static GtkWidget  *thunar_renamer_dialog_append_menu_item      (ThunarRenamerDia
 static gboolean    thunar_renamer_configure_event              (GtkWidget                *widget,
                                                                 GdkEventConfigure        *event);
 static void        thunar_renamer_save_geometry_timer_destroy  (gpointer                  user_data);                                                                
+
+
 
 struct _ThunarRenamerDialogClass
 {

@@ -267,6 +267,7 @@ static void      thunar_window_device_changed             (ThunarDeviceMonitor  
                                                            ThunarWindow           *window);
 static gboolean  thunar_window_save_paned                 (ThunarWindow           *window);
 static gboolean  thunar_window_save_paned_notebooks       (ThunarWindow           *window);
+static void      thunar_window_save_geometry_timer_destroy(gpointer                user_data);
 static void      thunar_window_set_zoom_level             (ThunarWindow           *window,
                                                            ThunarZoomLevel         zoom_level);
 static void      thunar_window_update_window_icon         (ThunarWindow           *window);
@@ -362,7 +363,6 @@ static gboolean   thunar_window_image_preview_mode_changed               (Thunar
 static void       image_preview_update                                   (GtkWidget              *parent,
                                                                           GtkAllocation          *allocation,
                                                                           GtkWidget              *image);
-static void       thunar_window_save_geometry_timer_destroy              (gpointer                user_data);
 
 
 

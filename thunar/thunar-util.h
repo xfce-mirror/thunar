@@ -52,6 +52,7 @@ typedef enum
   THUNAR_NEXT_FILE_NAME_MODE_LINK,
 } ThunarNextFileNameMode;
 
+
 typedef void (*ThunarBookmarksFunc) (GFile       *file,
                                      const gchar *name,
                                      gint         row_num,
@@ -99,6 +100,7 @@ gchar     **thunar_util_split_search_query       (const gchar          *search_q
 gboolean    thunar_util_search_terms_match       (gchar               **terms,
                                                   gchar                *str);
 gboolean    thunar_util_save_geometry_timer      (gpointer user_data);
+
 
 G_END_DECLS;
 
