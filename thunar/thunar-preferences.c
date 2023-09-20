@@ -79,6 +79,9 @@ enum
   PROP_LAST_WINDOW_HEIGHT,
   PROP_LAST_WINDOW_WIDTH,
   PROP_LAST_WINDOW_FULLSCREEN,
+  PROP_LAST_RENAMER_DIALOG_HEIGHT,
+  PROP_LAST_RENAMER_DIALOG_WIDTH,
+  PROP_LAST_RENAMER_DIALOG_FULLSCREEN,
   PROP_LAST_TOOLBAR_VISIBLE_BUTTONS,
   PROP_LAST_TOOLBAR_BUTTON_ORDER,
   PROP_MISC_DIRECTORY_SPECIFIC_SETTINGS,
@@ -597,6 +600,45 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   preferences_props[PROP_LAST_WINDOW_FULLSCREEN] =
       g_param_spec_boolean ("last-window-maximized",
                             "LastWindowMaximized",
+                            NULL,
+                            FALSE,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-renamer-dialog-height:
+   *
+   * The last known height of a #ThunarRenamerDialog, which will be used as
+   * default height for newly created dialgogs.
+   **/
+  preferences_props[PROP_LAST_RENAMER_DIALOG_HEIGHT] =
+      g_param_spec_int ("last-renamer-dialog-height",
+                        "LastRenamerDialogHeight",
+                        NULL,
+                        1, G_MAXINT, 490,
+                        EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-renamer-dialog-width:
+   *
+   * The last known width of a #ThunarRenamerDialog, which will be used as
+   * default width for newly created dialgogs.
+   **/
+  preferences_props[PROP_LAST_RENAMER_DIALOG_WIDTH] =
+      g_param_spec_int ("last-renamer-dialog-width",
+                        "LastRenamerDialogWidth",
+                        NULL,
+                        1, G_MAXINT, 510,
+                        EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-renamer-dialog-maximized:
+   *
+   * The last known maximized state of a #ThunarRenamerDialog, which will be used as
+   * default width for newly created dialgogs.
+   **/
+  preferences_props[PROP_LAST_RENAMER_DIALOG_FULLSCREEN] =
+      g_param_spec_boolean ("last-renamer-dialog-maximized",
+                            "LastRenamerDialogMaximized",
                             NULL,
                             FALSE,
                             EXO_PARAM_READWRITE);
