@@ -130,7 +130,7 @@ enum
   PROP_MISC_CONFIRM_MOVE_TO_TRASH,
   PROP_MISC_MAX_NUMBER_OF_TEMPLATES,
   PROP_SHOW_LAUNCHER_NAMES_INSTEAD_REAL_FILENAMES,
-  PROP_MISC_ENABLE_EXPANDABLE_FOLDERS,
+  PROP_MISC_EXPANDABLE_FOLDERS,
   N_PROPERTIES,
 };
 
@@ -1222,12 +1222,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:misc-enable-expandable-folders
+   * ThunarPreferences:misc-expandable-folders
    *
    * If true details-view opens with expandable folders.
    **/
-  preferences_props[PROP_MISC_ENABLE_EXPANDABLE_FOLDERS] =
-      g_param_spec_boolean ("misc-enable-expandable-folders",
+  preferences_props[PROP_MISC_EXPANDABLE_FOLDERS] =
+      g_param_spec_boolean ("misc-expandable-folders",
                             "MiscEnableExpandableFolders",
                             NULL,
                             FALSE,

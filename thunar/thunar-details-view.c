@@ -291,7 +291,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)), "model-type", THUNAR_TYPE_TREE_VIEW_MODEL, NULL);
 
   /* Bind tree-view property between view and preferences object */
-  g_object_bind_property (THUNAR_STANDARD_VIEW (details_view)->preferences, "misc-enable-expandable-folders",
+  g_object_bind_property (THUNAR_STANDARD_VIEW (details_view)->preferences, "misc-expandable-folders",
                           G_OBJECT (details_view), "expandable-folders",
                           G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
 
