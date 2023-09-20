@@ -39,21 +39,36 @@ G_BEGIN_DECLS
 #define THUNARX_FILE_INFO_NAMESPACE \
   "access::*," \
   "id::filesystem," \
-  "mountable::can-mount,standard::target-uri," \
+  "mountable::can-mount," \
+  "standard::target-uri," \
   "preview::*," \
-  "standard::type,standard::is-hidden,standard::is-backup," \
-  "standard::is-symlink,standard::name,standard::display-name," \
-  "standard::size,standard::allocated-size,standard::symlink-target," \
+  "standard::type," \
+  "standard::is-hidden," \
+  "standard::is-backup," \
+  "standard::is-symlink," \
+  "standard::name," \
+  "standard::display-name," \
+  "standard::size," \
+  "standard::allocated-size," \
+  "standard::symlink-target," \
   "time::*," \
   "trash::*," \
   "recent::*," \
-  "unix::gid,unix::uid,unix::mode," \
+  "unix::gid," \
+  "unix::uid," \
+  "unix::mode," \
+  "xattr::icon," \
+  "metadata::icon," \
   "metadata::emblems," \
   "metadata::thunar-view-type," \
-  "metadata::thunar-sort-column,metadata::thunar-sort-order," \
+  "metadata::thunar-sort-column," \
+  "metadata::thunar-sort-order," \
   "metadata::thunar-zoom-level," \
-  "metadata::thunar-zoom-level-ThunarDetailsView,metadata::thunar-zoom-level-ThunarIconView,metadata::thunar-zoom-level-ThunarCompactView," \
-  "metadata::thunar-highlight-color-background,metadata::thunar-highlight-color-foreground" \
+  "metadata::thunar-zoom-level-ThunarDetailsView," \
+  "metadata::thunar-zoom-level-ThunarIconView," \
+  "metadata::thunar-zoom-level-ThunarCompactView," \
+  "metadata::thunar-highlight-color-background," \
+  "metadata::thunar-highlight-color-foreground"
 
 
 /*
