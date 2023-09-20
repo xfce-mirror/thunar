@@ -130,7 +130,7 @@ enum
   PROP_MISC_CONFIRM_MOVE_TO_TRASH,
   PROP_MISC_MAX_NUMBER_OF_TEMPLATES,
   PROP_SHOW_LAUNCHER_NAMES_INSTEAD_REAL_FILENAMES,
-  PROP_MISC_ENABLE_EXPANDABLE_FOLDERS,
+  PROP_MISC_EXPANDABLE_FOLDERS,
   N_PROPERTIES,
 };
 
@@ -693,7 +693,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:misc-folder-item-count
+   * ThunarPreferences:misc-folder-item-count:
    *
    * Tells when the size column of folders should show the number of containing files
    **/
@@ -1131,7 +1131,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
 
 
   /**
-   * ThunarPreferences:misc-vertical-split-pane
+   * ThunarPreferences:misc-vertical-split-pane:
    *
    * If true, split the thunar window vertically instead of horizontally
    * when splitting the thunar window into two panes.
@@ -1144,7 +1144,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                           EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:misc-open-new-windows-in-split-view
+   * ThunarPreferences:misc-open-new-windows-in-split-view:
    *
    * If true, all thunar windows will have split view enabled.
    **/
@@ -1156,7 +1156,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                           EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:compact-view-max-chars
+   * ThunarPreferences:compact-view-max-chars:
    *
    * The ellipsization threshold for compact view. Negative values disable ellipsization.
    **/
@@ -1169,7 +1169,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:misc-highlighting-enabled
+   * ThunarPreferences:misc-highlighting-enabled:
    *
    * If true file highlighting feature across the various views is enabled.
    * Can be toggled using the View > Show File Highlight.
@@ -1182,7 +1182,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:misc-undo-redo-history-size
+   * ThunarPreferences:misc-undo-redo-history-size:
    *
    * Maximum number of ThunarJobOperations which can be undone/redone
    * -1 for unlimited
@@ -1196,7 +1196,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:misc-confirm-move-to-trash
+   * ThunarPreferences:misc-confirm-move-to-trash:
    *
    * If true enables a confirmation to move files to trash (similar to permanently delete)
    **/
@@ -1208,7 +1208,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:misc-max-number-of-templates
+   * ThunarPreferences:misc-max-number-of-templates:
    *
    * Maximum number of templates for which will be scanned in the 'templates' directory
    * Required to prevent possible lag when the context menu is opened
@@ -1222,12 +1222,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:misc-enable-expandable-folders
+   * ThunarPreferences:misc-expandable-folders:
    *
    * If true details-view opens with expandable folders.
    **/
-  preferences_props[PROP_MISC_ENABLE_EXPANDABLE_FOLDERS] =
-      g_param_spec_boolean ("misc-enable-expandable-folders",
+  preferences_props[PROP_MISC_EXPANDABLE_FOLDERS] =
+      g_param_spec_boolean ("misc-expandable-folders",
                             "MiscEnableExpandableFolders",
                             NULL,
                             FALSE,
