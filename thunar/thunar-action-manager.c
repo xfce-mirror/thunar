@@ -3299,6 +3299,7 @@ thunar_action_manager_append_open_section (ThunarActionManager *action_mgr,
 
   if (G_LIKELY (applications != NULL))
     {
+      xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
       menu_item = xfce_gtk_menu_item_new (_("Open With"),
                                           _("Choose another application with which to open the selected file"),
                                           NULL, NULL, NULL, menu);
