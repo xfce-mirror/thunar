@@ -4246,7 +4246,7 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
     {
       standard_view->priv->active_search = FALSE;
       if (tree_view != NULL)
-        g_object_notify (G_OBJECT (standard_view->preferences), "misc-enable-expandable-folders");
+        g_object_notify (G_OBJECT (standard_view->preferences), "misc-expandable-folders");
     }
 
   /* notify listeners */
