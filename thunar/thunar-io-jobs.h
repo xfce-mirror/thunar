@@ -57,6 +57,14 @@ ThunarJob *thunar_io_jobs_count_files      (ThunarFile            *file);
 ThunarJob *thunar_io_jobs_search_directory (ThunarStandardViewModel *model,
                                             const gchar             *search_query,
                                             ThunarFile              *directory);
+void       thunar_io_jobs_clear_metadata_for_files (GList           *files,
+                                                    GCallback        callback,
+                                                    gpointer         data,
+                                                    ...);
+void       thunar_io_jobs_set_metadata_for_files   (GList           *files,
+                                                    GCallback        callback,
+                                                    gpointer         data,
+                                                    ...);
 
 G_END_DECLS
 
