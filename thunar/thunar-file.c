@@ -174,6 +174,7 @@ struct _ThunarFile
   /* The content type can be loaded as separate job or directly */
   gchar                *content_type;
   GMutex                content_type_mutex;
+  GMutex                content_type_initialize;
 
   gchar                *icon_name;
 
@@ -400,6 +401,7 @@ thunar_file_init (ThunarFile *file)
   file->display_name = NULL;
 
   g_mutex_init (&file->content_type_mutex);
+  g_mutex_init (&file->content_type_initialize);
 }
 
 
@@ -477,6 +479,8 @@ thunar_file_finalize (GObject *object)
   g_free (file->content_type);
   g_mutex_unlock (&file->content_type_mutex);
   g_mutex_clear (&file->content_type_mutex);
+
+  g_mutex_clear (&file->content_type_initialize);
 
   g_free (file->icon_name);
 
@@ -2456,13 +2460,22 @@ thunar_file_get_user (const ThunarFile *file)
 const gchar *
 thunar_file_get_content_type (ThunarFile *file)
 {
+  gboolean uninitialized = FALSE;
+
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
   g_mutex_lock (&file->content_type_mutex);
   if (G_UNLIKELY (file->content_type == NULL))
-    /* does this make it thread safe now ? */
-    thunar_file_load_content_type (file);
+    uninitialized = TRUE;
   g_mutex_unlock (&file->content_type_mutex);
+
+  if (uninitialized)
+    {
+      g_mutex_lock (&file->content_type_initialize);
+      if (file->content_type == NULL)
+        thunar_file_load_content_type (file);
+      g_mutex_unlock (&file->content_type_initialize);
+    }
 
   return file->content_type;
 }
