@@ -1678,3 +1678,149 @@ thunar_io_jobs_search_directory (ThunarStandardViewModel *model,
                                 G_TYPE_ENUM, mode,
                                 G_TYPE_BOOLEAN, show_hidden);
 }
+
+
+
+static gboolean
+_thunar_io_jobs_clear_metadata_for_files (ThunarJob *job,
+                                          GArray    *param_values,
+                                          GError   **error)
+{
+  GList *files;
+  GList *setting_names;
+
+  files = g_value_get_pointer (&g_array_index (param_values, GValue, 0));
+  setting_names = g_value_get_pointer (&g_array_index (param_values, GValue, 1));
+
+  for (GList *lp = files; lp != NULL; lp = lp->next)
+    for (GList *sn = setting_names; sn != NULL; sn = sn->next)
+      thunar_file_clear_metadata_setting (lp->data, sn->data);
+
+  thunar_g_list_free_full (files);
+  g_list_free_full (setting_names, g_free);
+
+  return TRUE;
+}
+
+
+
+/**
+ * thunar_io_jobs_clear_metadata_for_files:
+ * @files    : a #GList of #ThunarFiles
+ * @callback : a #GCallback or %NULL.
+ * @gpointer : data to pass to @callback or %NULL
+ *
+ * Accepts a variable length metadata_setting_names to clear
+ * for @files.
+ **/
+void
+thunar_io_jobs_clear_metadata_for_files (GList    *files,
+                                         GCallback callback,
+                                         gpointer  data,
+                                         ...)
+{
+  GList     *files_copy;
+  ThunarJob *job;
+  va_list    list;
+  GList     *setting_names = NULL;
+  gchar     *str;
+
+  va_start (list, data);
+  str = va_arg (list, gchar *);
+  while (str != NULL)
+    {
+      setting_names = g_list_prepend (setting_names, g_strdup (str));
+      str = va_arg (list, gchar *);
+    }
+  va_end (list);
+
+  files_copy = thunar_g_list_copy_deep (files);
+  job = thunar_simple_job_new (_thunar_io_jobs_clear_metadata_for_files, 2,
+                               G_TYPE_POINTER, files_copy,
+                               G_TYPE_POINTER, setting_names);
+
+  if (callback != NULL)
+    g_signal_connect_object (job,
+                             "finished",
+                             G_CALLBACK (callback),
+                             data,
+                             G_CONNECT_SWAPPED);
+
+  exo_job_launch (EXO_JOB (job));
+}
+
+
+
+static gboolean
+_thunar_io_jobs_set_metadata_for_files (ThunarJob *job,
+                                        GArray    *param_values,
+                                        GError   **error)
+{
+  GList *files;
+  GList *setting_value_pairs;
+
+  files = g_value_get_pointer (&g_array_index (param_values, GValue, 0));
+  setting_value_pairs = g_value_get_pointer (&g_array_index (param_values, GValue, 1));
+
+  for (GList *lp = files; lp != NULL; lp = lp->next)
+    for (GList *sn = setting_value_pairs; sn != NULL; sn = sn->next)
+      thunar_file_set_metadata_setting (lp->data, ((gchar **) sn->data)[0],
+                                        ((gchar **) sn->data)[1], FALSE);
+
+  return TRUE;
+}
+
+
+
+/**
+ * thunar_io_jobs_set_metadata_for_files:
+ * @files    : a #GList of #ThunarFiles
+ * @callback : a #GCallback or %NULL.
+ * @gpointer : data to pass to @callback or %NULL
+ *
+ * Accepts a variable length metadata setting_name
+ * & setting_value pairs to set for @files.
+ **/
+void
+thunar_io_jobs_set_metadata_for_files (GList    *files,
+                                       GCallback callback,
+                                       gpointer  data,
+                                       ...)
+{
+  GList     *files_copy;
+  ThunarJob *job;
+  va_list    list;
+  GList     *setting_value_pairs = NULL;
+  gchar     *str, *val;
+  gchar    **sn_val_pair;
+
+  /* this func accepts a variable length setting_name, setting_value pair*/
+  va_start (list, data);
+  str = va_arg (list, gchar *);
+  while (str != NULL)
+    {
+      val = va_arg (list, gchar *);
+      if (val == NULL)
+        break;
+      sn_val_pair = (gchar **) g_malloc0 (sizeof (gchar *) * 2);
+      sn_val_pair[0] = g_strdup (str);
+      sn_val_pair[1] = g_strdup (val);
+      setting_value_pairs = g_list_prepend (setting_value_pairs, sn_val_pair);
+      str = va_arg (list, gchar *);
+    }
+  va_end (list);
+
+  files_copy = thunar_g_list_copy_deep (files);
+  job = thunar_simple_job_new (_thunar_io_jobs_set_metadata_for_files, 2,
+                               G_TYPE_POINTER, files_copy,
+                               G_TYPE_POINTER, setting_value_pairs);
+
+  if (callback != NULL)
+    g_signal_connect_object (job,
+                             "finished",
+                             G_CALLBACK (callback),
+                             data,
+                             G_CONNECT_SWAPPED);
+
+  exo_job_launch (EXO_JOB (job));
+}
