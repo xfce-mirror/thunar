@@ -2456,22 +2456,16 @@ thunar_file_get_user (const ThunarFile *file)
 const gchar *
 thunar_file_get_content_type (ThunarFile *file)
 {
-  gboolean initialized = TRUE;
-
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
   g_mutex_lock (&file->content_type_mutex);
   if (G_UNLIKELY (file->content_type == NULL))
-    initialized = FALSE;
-  g_mutex_unlock (&file->content_type_mutex);
-
-  if (!initialized)
+    /* does this make it thread safe now ? */
     thunar_file_load_content_type (file);
+  g_mutex_unlock (&file->content_type_mutex);
 
   return file->content_type;
 }
-
-
 
 /**
  * thunar_file_set_content_type:
@@ -2490,8 +2484,6 @@ thunar_file_set_content_type (ThunarFile  *file,
   if (G_LIKELY (file->content_type == NULL))
     file->content_type = g_strdup (content_type);
   g_mutex_unlock (&file->content_type_mutex);
-
-  // thunar_file_changed (file);
 }
 
 

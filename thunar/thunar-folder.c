@@ -83,8 +83,8 @@ static void           thunar_folder_monitor               (GFileMonitor         
                                                            GFile                 *other_file,
                                                            GFileMonitorEvent      event_type,
                                                            gpointer               user_data);
-void                  thunar_folder_load_content_types (ThunarFolder *folder,
-                                                        GList        *files);
+static void           thunar_folder_load_content_types    (ThunarFolder          *folder,
+                                                           GList                 *files);
 
 
 
@@ -452,7 +452,7 @@ thunar_folder_files_ready (ThunarJob    *job,
  *
  * Starts a job to load the content type of all files inside the folder
  **/
-void
+static void
 thunar_folder_load_content_types (ThunarFolder *folder,
                                   GList        *files)
 {

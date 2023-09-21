@@ -1694,13 +1694,7 @@ _thunar_job_load_content_types (ThunarJob *job,
   thunar_files = g_value_get_boxed (&g_array_index (param_values, GValue, 0));
 
   for (GList *lp = thunar_files; lp != NULL; lp = lp->next)
-    {
-      thunar_file_get_content_type (THUNAR_FILE (lp->data));
-      // g_object_unref (lp->data);
-    }
-
-  /* this causes crashes */
-  // thunar_g_list_free_full (thunar_files);
+    thunar_file_get_content_type (THUNAR_FILE (lp->data));
 
   return TRUE;
 }
@@ -1710,6 +1704,11 @@ _thunar_job_load_content_types (ThunarJob *job,
 ThunarJob *
 thunar_io_jobs_load_content_types (GList *files)
 {
-  return thunar_simple_job_new (_thunar_job_load_content_types, 1,
-                                THUNAR_TYPE_G_FILE_LIST, files);
+  GList     *copy = thunar_g_list_copy_deep (files);
+  ThunarJob *job = thunar_simple_job_new (_thunar_job_load_content_types, 1,
+                                          THUNAR_TYPE_G_FILE_LIST, files);
+
+  g_signal_connect_swapped (job, "finished", G_CALLBACK (thunar_g_list_free_full), copy);
+
+  return job;
 }
