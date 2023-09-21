@@ -60,6 +60,8 @@
 #include "thunar/thunar-text-renderer.h"
 #include "thunar/thunar-icon-renderer.h"
 #include "thunar/thunar-preferences.h"
+#include "thunar/thunar-renamer-dialog.h"
+#include "thunar/thunar-window.h"
 
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -1080,4 +1082,60 @@ thunar_util_search_terms_match (gchar **terms,
     if (g_strrstr (str, terms[i]) == NULL)
       return FALSE;
   return TRUE;
+}
+
+
+
+gboolean
+thunar_util_save_geometry_timer (gpointer user_data)
+{
+  GdkWindowState         state;
+  ThunarPreferences     *preferences;
+  gboolean               remember_geometry;
+  gint                   width;
+  gint                   height;
+
+THUNAR_THREADS_ENTER
+  
+  preferences = thunar_preferences_get ();
+  g_object_get (G_OBJECT (preferences), "misc-remember-geometry", &remember_geometry, NULL);
+  
+  /* check if we should remember the window geometry */
+  if (G_LIKELY (remember_geometry))
+    {
+      /* check if the window is still visible */
+      if (gtk_widget_get_visible (user_data))
+        {
+          /* determine the current state of the window */
+          state = gdk_window_get_state (gtk_widget_get_window (user_data));
+
+          /* don't save geometry for maximized or fullscreen windows */
+          if ((state & (GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN)) == 0)
+            {
+              /* determine the current width/height of the window... */
+              gtk_window_get_size (GTK_WINDOW (user_data), &width, &height);
+
+              /* ...and remember them as default for new windows */
+              if (THUNAR_IS_WINDOW (user_data))
+                g_object_set (G_OBJECT (preferences), "last-window-width", width, "last-window-height", height,
+                              "last-window-maximized", FALSE, NULL);
+              else if (THUNAR_IS_RENAMER_DIALOG (user_data))
+                g_object_set (G_OBJECT (preferences), "last-renamer-dialog-width", width, "last-renamer-dialog-height", height,
+                              "last-renamer-dialog-maximized", FALSE, NULL);
+            }
+          else
+            {
+              /* only store that the window is full screen */
+              if (THUNAR_IS_WINDOW (user_data))
+                g_object_set (G_OBJECT (preferences), "last-window-maximized", TRUE, NULL);
+              else if (THUNAR_IS_RENAMER_DIALOG (user_data))
+                g_object_set (G_OBJECT (preferences), "last-renamer-dialog-maximized", TRUE, NULL);
+            }
+        }
+    }
+    g_object_unref(preferences);
+
+THUNAR_THREADS_LEAVE
+
+  return G_SOURCE_REMOVE;
 }

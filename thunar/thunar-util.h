@@ -99,6 +99,7 @@ gchar     **thunar_util_split_search_query       (const gchar          *search_q
                                                   GError              **error);
 gboolean    thunar_util_search_terms_match       (gchar               **terms,
                                                   gchar                *str);
+gboolean    thunar_util_save_geometry_timer      (gpointer user_data);
 
 
 G_END_DECLS;

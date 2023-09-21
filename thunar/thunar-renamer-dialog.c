@@ -38,11 +38,13 @@
 #include "thunar/thunar-icon-factory.h"
 #include "thunar/thunar-icon-renderer.h"
 #include "thunar/thunar-menu.h"
+#include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-properties-dialog.h"
 #include "thunar/thunar-renamer-dialog.h"
 #include "thunar/thunar-renamer-model.h"
 #include "thunar/thunar-renamer-progress.h"
+#include "thunar/thunar-util.h"
 
 
 
@@ -134,16 +136,19 @@ static void        thunar_renamer_dialog_row_activated         (GtkTreeView     
                                                                 ThunarRenamerDialog      *renamer_dialog);
 static void        thunar_renamer_dialog_selection_changed     (GtkTreeSelection         *selection,
                                                                 ThunarRenamerDialog      *renamer_dialog);
-static ThunarFile *thunar_renamer_dialog_get_current_directory (ThunarRenamerDialog *renamer_dialog);
-static void        thunar_renamer_dialog_set_current_directory (ThunarRenamerDialog *renamer_dialog,
-                                                                ThunarFile          *current_directory);
-static GList      *thunar_renamer_dialog_get_selected_files    (ThunarRenamerDialog *renamer_dialog);
-static gboolean    thunar_renamer_dialog_get_standalone        (ThunarRenamerDialog *renamer_dialog);
-static void        thunar_renamer_dialog_set_standalone        (ThunarRenamerDialog *renamer_dialog,
-                                                                gboolean             fixed);
-static GtkWidget  *thunar_renamer_dialog_append_menu_item      (ThunarRenamerDialog *renamer_dialog,
-                                                                GtkMenuShell        *menu,
-                                                                ThunarRenamerAction  action);
+static ThunarFile *thunar_renamer_dialog_get_current_directory (ThunarRenamerDialog      *renamer_dialog);
+static void        thunar_renamer_dialog_set_current_directory (ThunarRenamerDialog      *renamer_dialog,
+                                                                ThunarFile               *current_directory);
+static GList      *thunar_renamer_dialog_get_selected_files    (ThunarRenamerDialog      *renamer_dialog);
+static gboolean    thunar_renamer_dialog_get_standalone        (ThunarRenamerDialog      *renamer_dialog);
+static void        thunar_renamer_dialog_set_standalone        (ThunarRenamerDialog      *renamer_dialog,
+                                                                gboolean                  fixed);
+static GtkWidget  *thunar_renamer_dialog_append_menu_item      (ThunarRenamerDialog      *renamer_dialog,
+                                                                GtkMenuShell             *menu,
+                                                                ThunarRenamerAction       action);
+static gboolean    thunar_renamer_configure_event              (GtkWidget                *widget,
+                                                                GdkEventConfigure        *event);
+static void        thunar_renamer_save_geometry_timer_destroy  (gpointer                  user_data);                                                                
 
 
 
@@ -183,6 +188,9 @@ struct _ThunarRenamerDialog
 
   /* TRUE while drop highlighting */
   gboolean             drag_highlighted;
+  
+  /* support to remember window geometry */
+  guint                save_geometry_timer_id;
 };
 
 
@@ -231,6 +239,7 @@ thunar_renamer_dialog_class_init (ThunarRenamerDialogClass *klass)
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->realize = thunar_renamer_dialog_realize;
   gtkwidget_class->unrealize = thunar_renamer_dialog_unrealize;
+  gtkwidget_class->configure_event = thunar_renamer_configure_event;
 
   gtkdialog_class = GTK_DIALOG_CLASS (klass);
   gtkdialog_class->response = thunar_renamer_dialog_response;
@@ -301,6 +310,7 @@ static void
 thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
 {
   ThunarxProviderFactory *provider_factory;
+  ThunarPreferences      *preferences;
   GtkTreeViewColumn      *column;
   GtkTreeSelection       *selection;
   GtkCellRenderer        *renderer;
@@ -328,6 +338,9 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   GList                  *renamers = NULL;
   GList                  *lp;
   gint                    active = 0;
+  gint                    last_dialog_width;
+  gint                    last_dialog_height;
+  gint                    last_dialog_maximized;
   guint                   n;
 
   /* allocate a new bulk rename model */
@@ -350,7 +363,19 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   g_list_free (providers);
 
   /* initialize the dialog */
-  gtk_window_set_default_size (GTK_WINDOW (renamer_dialog), 510, 490);
+  preferences = thunar_preferences_get ();
+  g_object_get (G_OBJECT (preferences),
+                "last-renamer-dialog-width", &last_dialog_width,
+                "last-renamer-dialog-height", &last_dialog_height,
+                "last-renamer-dialog-maximized", &last_dialog_maximized,
+                NULL);
+  g_object_unref(preferences);
+  gtk_window_set_default_size (GTK_WINDOW (renamer_dialog), last_dialog_width, last_dialog_height);
+  
+  /* restore the maxized state of the dialog */
+  if (G_UNLIKELY (last_dialog_maximized))
+    gtk_window_maximize (GTK_WINDOW (renamer_dialog));
+  
   gtk_window_set_title (GTK_WINDOW (renamer_dialog), _("Rename Multiple Files"));
 
   /* add the "Close" button */
@@ -628,6 +653,10 @@ static void
 thunar_renamer_dialog_dispose (GObject *object)
 {
   ThunarRenamerDialog *renamer_dialog = THUNAR_RENAMER_DIALOG (object);
+
+  /* destroy the save geometry timer source */
+  if (G_UNLIKELY (renamer_dialog->save_geometry_timer_id != 0))
+    g_source_remove (renamer_dialog->save_geometry_timer_id);
 
   /* reset the "current-directory" property */
   thunar_renamer_dialog_set_current_directory (renamer_dialog, NULL);
@@ -1881,3 +1910,40 @@ thunar_show_renamer_dialog (gpointer     parent,
 }
 
 
+
+static gboolean
+thunar_renamer_configure_event (GtkWidget         *widget,
+                                GdkEventConfigure *event)
+{
+  ThunarRenamerDialog *dialog = THUNAR_RENAMER_DIALOG (widget);
+  GtkAllocation        widget_allocation;
+
+  gtk_widget_get_allocation (widget, &widget_allocation);
+
+  /* check if we have a new dimension here */
+  if (widget_allocation.width != event->width || widget_allocation.height != event->height)
+    {
+      /* drop any previous timer source */
+      if (dialog->save_geometry_timer_id != 0)
+        g_source_remove (dialog->save_geometry_timer_id);
+
+      /* check if we should schedule another save timer */
+      if (gtk_widget_get_visible (widget))
+        {
+          /* save the geometry one second after the last configure event */
+          dialog->save_geometry_timer_id = g_timeout_add_seconds_full (G_PRIORITY_LOW, 1, thunar_util_save_geometry_timer,
+                                                                       dialog, thunar_renamer_save_geometry_timer_destroy);
+        }
+    }
+
+  /* let Gtk+ handle the configure event */
+  return (*GTK_WIDGET_CLASS (thunar_renamer_dialog_parent_class)->configure_event) (widget, event);
+}
+
+
+
+static void
+thunar_renamer_save_geometry_timer_destroy (gpointer user_data)
+{
+  THUNAR_RENAMER_DIALOG (user_data)->save_geometry_timer_id = 0;
+}
