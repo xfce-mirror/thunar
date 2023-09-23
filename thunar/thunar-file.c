@@ -175,7 +175,9 @@ struct _ThunarFile
   gchar                *content_type;
   gchar                *icon_name;
 
+  /* custom icon name or absolute path to an image file */
   gchar                *custom_icon;
+
   gchar                *display_name;
   gchar                *basename;
   const gchar          *device_type;
@@ -977,6 +979,8 @@ thunar_file_info_reload (ThunarFile   *file,
           key_file = thunar_g_file_query_key_file (file->gfile, cancellable, NULL);
           if (key_file != NULL)
             {
+              g_free(file->custom_icon);
+
               /* read the icon name from the .desktop file */
               file->custom_icon = g_key_file_get_string (key_file,
                                                          G_KEY_FILE_DESKTOP_GROUP,
@@ -1028,18 +1032,20 @@ thunar_file_info_reload (ThunarFile   *file,
             }
         }
     }
-  else
+  else /* Not a desktop file */
     {
       const gchar *custom_icon;
       const gchar *icon_attr;
       if (thunar_g_vfs_metadata_is_supported ())
-        icon_attr = "metadata::icon";
+        icon_attr = "metadata::thunar-icon";
       else
-        /* TODO: maybe check if xattr is supported? or is it more efficient to just try it? */
-        icon_attr = "xattr::icon";
+        icon_attr = "xattr::thunar.icon";
      custom_icon = g_file_info_get_attribute_string (file->info, icon_attr);
-     if (custom_icon && custom_icon[0])
-       file->custom_icon = g_strdup (custom_icon);
+     if (!xfce_str_is_empty(custom_icon))
+       {
+         g_free(file->custom_icon);
+         file->custom_icon = g_strdup (custom_icon);
+       }
     }
 
   /* determine the display name */
@@ -3810,28 +3816,22 @@ thunar_file_set_custom_icon (ThunarFile  *file,
 
   if (thunar_file_is_desktop_file (file))
     {
-      const gchar *new_icon;
-      GKeyFile    *key_file = thunar_g_file_query_key_file (file->gfile, NULL, error);
+      GKeyFile *key_file = thunar_g_file_query_key_file (file->gfile, NULL, error);
 
       if (key_file == NULL)
         return FALSE;
 
-      if (custom_icon && custom_icon[0])
-        new_icon = custom_icon;
-      else
-        new_icon = "";
-
       g_key_file_set_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
-                             G_KEY_FILE_DESKTOP_KEY_ICON, new_icon);
+                             G_KEY_FILE_DESKTOP_KEY_ICON, (custom_icon == NULL) ? "" : custom_icon);
 
       if (thunar_g_file_write_key_file (file->gfile, key_file, NULL, error))
         {
           g_free (file->custom_icon);
 
-          if (new_icon[0])
-            file->custom_icon = g_strdup (custom_icon);
-          else
+          if (xfce_str_is_empty(custom_icon))
             file->custom_icon = NULL;
+          else
+            file->custom_icon = g_strdup (custom_icon);
 
           /* tell everybody that we have changed */
           thunar_file_reload (file);
@@ -3847,12 +3847,11 @@ thunar_file_set_custom_icon (ThunarFile  *file,
     }
 
   if (thunar_g_vfs_metadata_is_supported ())
-    icon_attr = "metadata::icon";
+    icon_attr = "metadata::thunar-icon";
   else
-    /* TODO: maybe check if xattr is supported? or is it more efficient to just try it? */
-    icon_attr = "xattr::icon";
+    icon_attr = "xattr::thunar.icon";
 
-  if (custom_icon && custom_icon[0])
+  if (!xfce_str_is_empty(custom_icon))
     {
       if (g_file_set_attribute_string (file->gfile, icon_attr, custom_icon, G_FILE_QUERY_INFO_NONE, NULL, error))
         {

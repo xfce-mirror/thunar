@@ -347,7 +347,7 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_widget_show (dialog->icon_button);
 
   dialog->icon_image = thunar_image_new ();
-  gtk_box_pack_start (GTK_BOX (dialog->single_box), dialog->icon_image, FALSE, TRUE, 0);
+  gtk_container_add (GTK_CONTAINER (dialog->icon_button), dialog->icon_image);
   gtk_widget_set_valign (GTK_WIDGET (dialog->icon_image), GTK_ALIGN_START);
   gtk_widget_show (dialog->icon_image);
 
@@ -1324,23 +1324,6 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
 
   /* update the preview image */
   thunar_image_set_file (THUNAR_IMAGE (dialog->icon_image), file);
-
-  /* check if the icon may be changed */
-  g_object_ref (G_OBJECT (dialog->icon_image));
-  gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (dialog->icon_image)), dialog->icon_image);
-
-  /* FIXME: isn't is better to have the button always clickable and explain why the opt failed later? */
-  if (thunar_file_is_writable (file) || !thunar_file_is_desktop_file (file))
-    {
-      gtk_container_add (GTK_CONTAINER (dialog->icon_button), dialog->icon_image);
-      gtk_widget_show (dialog->icon_button);
-    }
-  else
-    {
-      gtk_box_pack_start (GTK_BOX (gtk_widget_get_parent (dialog->icon_button)), dialog->icon_image, FALSE, TRUE, 0);
-      gtk_widget_hide (dialog->icon_button);
-    }
-  g_object_unref (G_OBJECT (dialog->icon_image));
 
   /* update the name (if it differs) */
   gtk_editable_set_editable (GTK_EDITABLE (xfce_filename_input_get_entry (dialog->name_entry)),

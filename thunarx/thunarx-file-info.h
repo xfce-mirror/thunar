@@ -57,9 +57,9 @@ G_BEGIN_DECLS
   "unix::gid," \
   "unix::uid," \
   "unix::mode," \
-  "xattr::icon," \
-  "metadata::icon," \
+  "xattr::thunar.icon," \
   "metadata::emblems," \
+  "metadata::thunar-icon," \
   "metadata::thunar-view-type," \
   "metadata::thunar-sort-column," \
   "metadata::thunar-sort-order," \
