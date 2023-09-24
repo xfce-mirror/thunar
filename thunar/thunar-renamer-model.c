@@ -899,8 +899,6 @@ thunar_renamer_model_update_idle (gpointer user_data)
   gchar                  *name;
   GList                  *lp;
 
-THUNAR_THREADS_ENTER
-
   /* don't do anything if the model is frozen */
   if (G_LIKELY (!renamer_model->frozen))
     {
@@ -960,8 +958,6 @@ THUNAR_THREADS_ENTER
             }
         }
     }
-
-THUNAR_THREADS_LEAVE
 
   /* keep the idle source as long as any item changed */
   return changed;

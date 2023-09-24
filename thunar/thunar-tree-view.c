@@ -1673,8 +1673,6 @@ thunar_tree_view_set_cursor (gpointer user_data)
       return FALSE;
     }
 
-THUNAR_THREADS_ENTER
-
   /* for easier navigation, we sometimes want to force/keep selection of a certain path */
   if (view->select_path != NULL)
     {
@@ -1797,8 +1795,6 @@ THUNAR_THREADS_ENTER
     }
   g_list_free (path_as_list);
 
-THUNAR_THREADS_LEAVE
-
   return !done;
 }
 
@@ -1826,8 +1822,6 @@ thunar_tree_view_drag_scroll_timer (gpointer user_data)
   gfloat          value;
   gint            offset;
   gint            y, h;
-
-THUNAR_THREADS_ENTER
 
   /* verify that we are realized */
   if (gtk_widget_get_realized (GTK_WIDGET (view)))
@@ -1898,8 +1892,6 @@ THUNAR_THREADS_ENTER
         }
     }
 
-THUNAR_THREADS_LEAVE
-
   return TRUE;
 }
 
@@ -1919,8 +1911,6 @@ thunar_tree_view_expand_timer (gpointer user_data)
   ThunarTreeView *view = THUNAR_TREE_VIEW (user_data);
   GtkTreePath    *path;
 
-THUNAR_THREADS_ENTER
-
   /* cancel the drag autoscroll timer when expanding a row */
   if (G_UNLIKELY (view->drag_scroll_timer_id != 0))
     g_source_remove (view->drag_scroll_timer_id);
@@ -1933,8 +1923,6 @@ THUNAR_THREADS_ENTER
       gtk_tree_view_expand_row (GTK_TREE_VIEW (view), path, FALSE);
       gtk_tree_path_free (path);
     }
-
-THUNAR_THREADS_LEAVE
 
   return FALSE;
 }

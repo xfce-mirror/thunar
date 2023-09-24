@@ -1094,8 +1094,6 @@ thunar_util_save_geometry_timer (gpointer user_data)
   gboolean               remember_geometry;
   gint                   width;
   gint                   height;
-
-THUNAR_THREADS_ENTER
   
   preferences = thunar_preferences_get ();
   g_object_get (G_OBJECT (preferences), "misc-remember-geometry", &remember_geometry, NULL);
@@ -1134,8 +1132,6 @@ THUNAR_THREADS_ENTER
         }
     }
     g_object_unref(preferences);
-
-THUNAR_THREADS_LEAVE
 
   return G_SOURCE_REMOVE;
 }

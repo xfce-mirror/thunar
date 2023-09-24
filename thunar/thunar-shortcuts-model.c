@@ -1391,8 +1391,6 @@ thunar_shortcuts_model_load (gpointer data)
 
   _thunar_return_val_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model), FALSE);
 
-THUNAR_THREADS_ENTER
-
   /* parse the bookmarks */
   thunar_util_load_bookmarks (model->bookmarks_file,
                               thunar_shortcuts_model_load_line,
@@ -1400,8 +1398,6 @@ THUNAR_THREADS_ENTER
 
   /* update the visibility */
   thunar_shortcuts_model_header_visibility (model);
-
-THUNAR_THREADS_LEAVE
 
   model->bookmarks_idle_id = 0;
 
@@ -1420,8 +1416,6 @@ thunar_shortcuts_model_reload (gpointer data)
   gint                  idx;
 
   _thunar_return_val_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model), FALSE);
-
-THUNAR_THREADS_ENTER
 
   /* drop all existing user-defined shortcuts from the model */
   for (idx = 0, lp = model->shortcuts; lp != NULL; )
@@ -1451,8 +1445,6 @@ THUNAR_THREADS_ENTER
           ++idx;
         }
     }
-
-THUNAR_THREADS_LEAVE
 
   /* load new bookmarks */
   return thunar_shortcuts_model_load (data);

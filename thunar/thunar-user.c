@@ -561,8 +561,6 @@ thunar_user_manager_flush_timer (gpointer user_data)
   ThunarUserManager *manager = THUNAR_USER_MANAGER (user_data);
   guint              size = 0;
 
-THUNAR_THREADS_ENTER
-
   /* drop all cached groups */
   size += g_hash_table_foreach_remove (manager->groups,
                                        (GHRFunc) (void (*)(void)) gtk_true,
@@ -587,8 +585,6 @@ THUNAR_THREADS_ENTER
       setpassent (TRUE);
 #endif
     }
-
-THUNAR_THREADS_LEAVE
 
   return TRUE;
 }

@@ -1189,8 +1189,6 @@ thunar_path_entry_check_completion_idle (gpointer user_data)
   ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (user_data);
   const gchar     *text;
 
-THUNAR_THREADS_ENTER
-
   /* check if the user entered at least part of a filename */
   text = gtk_entry_get_text (GTK_ENTRY (path_entry));
   if (*text != '\0' && text[strlen (text) - 1] != '/')
@@ -1198,8 +1196,6 @@ THUNAR_THREADS_ENTER
       /* automatically insert the common prefix */
       thunar_path_entry_common_prefix_append (path_entry, TRUE);
     }
-
-THUNAR_THREADS_LEAVE
 
   return FALSE;
 }

@@ -2206,8 +2206,6 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
-THUNAR_THREADS_ENTER
-
   /* clear the current status text (will be recalculated on-demand) */
   g_free (standard_view->priv->statusbar_text);
   standard_view->priv->statusbar_text = NULL;
@@ -2216,8 +2214,6 @@ THUNAR_THREADS_ENTER
 
   /* tell everybody that the statusbar text may have changed */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_STATUSBAR_TEXT]);
-
-THUNAR_THREADS_LEAVE
 
   return FALSE;
 }
@@ -3646,8 +3642,6 @@ thunar_standard_view_drag_scroll_timer (gpointer user_data)
   gint                y, x;
   gint                w, h;
 
-THUNAR_THREADS_ENTER
-
   /* verify that we are realized */
   if (G_LIKELY (gtk_widget_get_realized (GTK_WIDGET (standard_view))))
     {
@@ -3696,8 +3690,6 @@ THUNAR_THREADS_ENTER
         }
     }
 
-THUNAR_THREADS_LEAVE
-
   return TRUE;
 }
 
@@ -3717,9 +3709,7 @@ thunar_standard_view_drag_timer (gpointer user_data)
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (user_data);
 
   /* fire up the context menu */
-THUNAR_THREADS_ENTER
   thunar_standard_view_context_menu (standard_view);
-THUNAR_THREADS_LEAVE
 
   return FALSE;
 }

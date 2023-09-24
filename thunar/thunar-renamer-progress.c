@@ -234,8 +234,6 @@ thunar_renamer_progress_next_idle (gpointer user_data)
   guint                  n_total;
   GList                 *first;
 
-THUNAR_THREADS_ENTER
-
   /* check if we have still pairs to go */
   if (G_LIKELY (renamer_progress->pairs_pending_current_run != NULL))
     {
@@ -286,8 +284,6 @@ THUNAR_THREADS_ENTER
   /* be sure to cancel the internal loop once we're done */
   if (G_UNLIKELY (renamer_progress->pairs_pending_current_run == NULL))
     g_main_loop_quit (renamer_progress->next_idle_loop);
-
-THUNAR_THREADS_LEAVE
 
   /* keep the idle source alive as long as we have anything to do */
   return (renamer_progress->pairs_pending_current_run != NULL);

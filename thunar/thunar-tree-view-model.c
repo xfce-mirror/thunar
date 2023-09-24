@@ -2581,11 +2581,8 @@ thunar_tree_view_model_load_dir (Node *node)
 static gboolean
 _thunar_tree_view_model_cleanup_idle (Node *node)
 {
-  THUNAR_THREADS_ENTER
 
   thunar_tree_view_model_node_destroy (node);
-
-  THUNAR_THREADS_LEAVE
 
   return G_SOURCE_REMOVE;
 }
