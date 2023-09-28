@@ -1678,3 +1678,44 @@ thunar_io_jobs_search_directory (ThunarStandardViewModel *model,
                                 G_TYPE_ENUM, mode,
                                 G_TYPE_BOOLEAN, show_hidden);
 }
+
+
+
+static gboolean
+_thunar_job_load_content_types (ThunarJob *job,
+                                GArray    *param_values,
+                                GError   **error)
+{
+  GList *thunar_files;
+
+  if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
+    return FALSE;
+
+  thunar_files = g_value_get_boxed (&g_array_index (param_values, GValue, 0));
+
+  for (GList *lp = thunar_files; lp != NULL; lp = lp->next)
+    {
+      gchar *content_type;
+      GFile       *g_file;
+
+      g_file = thunar_file_get_file (THUNAR_FILE (lp->data));
+      content_type = thunar_g_file_get_content_type (g_file);
+      thunar_file_set_content_type (THUNAR_FILE (lp->data), content_type);
+      g_free (content_type);
+    }
+
+  return TRUE;
+}
+
+
+
+ThunarJob *
+thunar_io_jobs_load_content_types (GList *files)
+{
+  GList     *copy = thunar_g_list_copy_deep (files);
+  ThunarJob *job = thunar_simple_job_new (_thunar_job_load_content_types, 1,
+                                          THUNAR_TYPE_G_FILE_LIST, files);
+
+  g_signal_connect_swapped (job, "finished", G_CALLBACK (thunar_g_list_free_full), copy);
+  return job;
+}
