@@ -144,7 +144,7 @@ struct _ThunarPropertiesDialog
   GList                  *files;
   gboolean                file_size_binary;
   gboolean                show_file_highlight_tab;
-  
+
   ThunarThumbnailer      *thumbnailer;
   guint                   thumbnail_request;
 
@@ -313,7 +313,7 @@ thunar_properties_dialog_constructed (GObject *object)
   GtkWidget *frame;
 
   G_OBJECT_CLASS (thunar_properties_dialog_parent_class)->constructed (object);
-  
+
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                           _("_Help"), GTK_RESPONSE_HELP,
                           _("_Close"), GTK_RESPONSE_CLOSE,
@@ -347,7 +347,7 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_widget_show (dialog->icon_button);
 
   dialog->icon_image = thunar_image_new ();
-  gtk_box_pack_start (GTK_BOX (dialog->single_box), dialog->icon_image, FALSE, TRUE, 0);
+  gtk_container_add (GTK_CONTAINER (dialog->icon_button), dialog->icon_image);
   gtk_widget_set_valign (GTK_WIDGET (dialog->icon_image), GTK_ALIGN_START);
   gtk_widget_show (dialog->icon_image);
 
@@ -1064,7 +1064,7 @@ thunar_properties_dialog_rename_error (ExoJob                 *job,
                                        ThunarPropertiesDialog *dialog)
 {
   ThunarFile  *file;
-  
+
   _thunar_return_if_fail (EXO_IS_JOB (job));
   _thunar_return_if_fail (error != NULL);
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
@@ -1197,7 +1197,7 @@ thunar_properties_dialog_icon_button_clicked (GtkWidget              *button,
           /* hide the icon chooser dialog first */
           gtk_widget_hide (chooser);
 
-          /* tell the user that we failed to change the icon of the .desktop file */
+          /* tell the user that we failed to change the file icon */
           if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
             thunar_dialogs_show_error (GTK_WIDGET (dialog), err,
                                        _("Failed to change icon of \"%s\" (%s)"),
@@ -1324,21 +1324,6 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
 
   /* update the preview image */
   thunar_image_set_file (THUNAR_IMAGE (dialog->icon_image), file);
-
-  /* check if the icon may be changed (only for writable .desktop files) */
-  g_object_ref (G_OBJECT (dialog->icon_image));
-  gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (dialog->icon_image)), dialog->icon_image);
-  if (thunar_file_is_writable (file) && thunar_file_is_desktop_file (file))
-    {
-      gtk_container_add (GTK_CONTAINER (dialog->icon_button), dialog->icon_image);
-      gtk_widget_show (dialog->icon_button);
-    }
-  else
-    {
-      gtk_box_pack_start (GTK_BOX (gtk_widget_get_parent (dialog->icon_button)), dialog->icon_image, FALSE, TRUE, 0);
-      gtk_widget_hide (dialog->icon_button);
-    }
-  g_object_unref (G_OBJECT (dialog->icon_image));
 
   /* update the name (if it differs) */
   gtk_editable_set_editable (GTK_EDITABLE (xfce_filename_input_get_entry (dialog->name_entry)),
@@ -2078,7 +2063,7 @@ thunar_properties_dialog_color_editor_changed (ThunarPropertiesDialog *dialog)
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
 
   g_object_get (dialog->color_chooser, "show-editor", &show_editor, NULL);
-  
+
   if (show_editor)
     {
       gtk_widget_show (dialog->editor_button);

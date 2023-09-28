@@ -175,7 +175,9 @@ struct _ThunarFile
   gchar                *content_type;
   gchar                *icon_name;
 
-  gchar                *custom_icon_name;
+  /* custom icon name or absolute path to an image file */
+  gchar                *custom_icon;
+
   gchar                *display_name;
   gchar                *basename;
   const gchar          *device_type;
@@ -470,8 +472,8 @@ thunar_file_finalize (GObject *object)
   if (file->recent_info != NULL)
     g_object_unref (file->recent_info);
 
-  /* free the custom icon name */
-  g_free (file->custom_icon_name);
+  /* free the custom icon */
+  g_free (file->custom_icon);
 
   /* content type info */
   g_free (file->content_type);
@@ -875,9 +877,9 @@ thunar_file_info_clear (ThunarFile *file)
   /* unset */
   file->kind = G_FILE_TYPE_UNKNOWN;
 
-  /* free the custom icon name */
-  g_free (file->custom_icon_name);
-  file->custom_icon_name = NULL;
+  /* free the custom icon */
+  g_free (file->custom_icon);
+  file->custom_icon = NULL;
 
   /* free display name and basename */
   g_free (file->display_name);
@@ -967,63 +969,83 @@ thunar_file_info_reload (ThunarFile   *file,
     }
 
   /* check if this file is a desktop entry and we have the permission to execute it */
-  if (thunar_file_is_desktop_file (file) && thunar_file_can_execute (file, NULL))
+  if (thunar_file_is_desktop_file (file))
     {
-      /* determine the custom icon and display name for .desktop files */
-
-      /* query a key file for the .desktop file */
-      key_file = thunar_g_file_query_key_file (file->gfile, cancellable, NULL);
-      if (key_file != NULL)
+      if (thunar_file_can_execute (file, NULL))
         {
-          /* read the icon name from the .desktop file */
-          file->custom_icon_name = g_key_file_get_string (key_file,
-                                                          G_KEY_FILE_DESKTOP_GROUP,
-                                                          G_KEY_FILE_DESKTOP_KEY_ICON,
-                                                          NULL);
+          /* determine the custom icon and display name for .desktop files */
 
-          if (G_UNLIKELY (xfce_str_is_empty (file->custom_icon_name)))
+          /* query a key file for the .desktop file */
+          key_file = thunar_g_file_query_key_file (file->gfile, cancellable, NULL);
+          if (key_file != NULL)
             {
-              /* make sure we set null if the string is empty else the assertion in
-               * thunar_icon_factory_lookup_icon() will fail */
-              g_free (file->custom_icon_name);
-              file->custom_icon_name = NULL;
-            }
-          else
-            {
-              /* drop freedesktop.org supported suffixes from themed icons, if any */
-              if (!g_path_is_absolute (file->custom_icon_name))
+              g_free(file->custom_icon);
+
+              /* read the icon name from the .desktop file */
+              file->custom_icon = g_key_file_get_string (key_file,
+                                                         G_KEY_FILE_DESKTOP_GROUP,
+                                                         G_KEY_FILE_DESKTOP_KEY_ICON,
+                                                         NULL);
+
+              if (G_UNLIKELY (xfce_str_is_empty (file->custom_icon)))
                 {
-                  p = strrchr (file->custom_icon_name, '.');
-                  if(g_strcmp0(p, ".png") == 0 || g_strcmp0(p, ".xpm") == 0 || g_strcmp0(p, ".svg") == 0)
-                    *p = '\0';
+                  /* make sure we set null if the string is empty else the assertion in
+                   * thunar_icon_factory_lookup_icon() will fail */
+                  g_free (file->custom_icon);
+                  file->custom_icon = NULL;
                 }
-            }
+              else
+                {
+                  /* drop freedesktop.org supported suffixes from themed icons, if any */
+                  if (!g_path_is_absolute (file->custom_icon))
+                    {
+                      p = strrchr (file->custom_icon, '.');
+                      if(g_strcmp0(p, ".png") == 0 || g_strcmp0(p, ".xpm") == 0 || g_strcmp0(p, ".svg") == 0)
+                        *p = '\0';
+                    }
+                }
 
-          /* read the display name from the .desktop file (will be overwritten later
-           * if it's undefined here) */
-          preferences = thunar_preferences_get ();
-          g_object_get (preferences, "show-launcher-names-instead-real-filenames", &launcher_name, NULL);
-          g_object_unref (preferences);
-          if (thunar_g_vfs_metadata_is_supported () && xfce_g_file_is_trusted (file->gfile, NULL, NULL) && launcher_name == TRUE)
-            {
-              g_free (file->display_name);
-
-              file->display_name = g_key_file_get_locale_string (key_file,
-                                                                 G_KEY_FILE_DESKTOP_GROUP,
-                                                                 G_KEY_FILE_DESKTOP_KEY_NAME,
-                                                                 NULL, NULL);
-
-              /* drop the name if it's empty or has invalid encoding */
-              if (exo_str_is_empty (file->display_name) || !g_utf8_validate (file->display_name, -1, NULL))
+              /* read the display name from the .desktop file (will be overwritten later
+               * if it's undefined here) */
+              preferences = thunar_preferences_get ();
+              g_object_get (preferences, "show-launcher-names-instead-real-filenames", &launcher_name, NULL);
+              g_object_unref (preferences);
+              if (thunar_g_vfs_metadata_is_supported () && xfce_g_file_is_trusted (file->gfile, NULL, NULL) && launcher_name == TRUE)
                 {
                   g_free (file->display_name);
-                  file->display_name = NULL;
-                }
-              }
 
-          /* free the key file */
-          g_key_file_free (key_file);
+                  file->display_name = g_key_file_get_locale_string (key_file,
+                                                                     G_KEY_FILE_DESKTOP_GROUP,
+                                                                     G_KEY_FILE_DESKTOP_KEY_NAME,
+                                                                     NULL, NULL);
+
+                  /* drop the name if it's empty or has invalid encoding */
+                  if (exo_str_is_empty (file->display_name) || !g_utf8_validate (file->display_name, -1, NULL))
+                    {
+                      g_free (file->display_name);
+                      file->display_name = NULL;
+                    }
+                  }
+
+              /* free the key file */
+              g_key_file_free (key_file);
+            }
         }
+    }
+  else /* Not a desktop file */
+    {
+      const gchar *custom_icon;
+      const gchar *icon_attr;
+      if (thunar_g_vfs_metadata_is_supported ())
+        icon_attr = "metadata::thunar-icon";
+      else
+        icon_attr = "xattr::thunar.icon";
+     custom_icon = g_file_info_get_attribute_string (file->info, icon_attr);
+     if (!xfce_str_is_empty(custom_icon))
+       {
+         g_free(file->custom_icon);
+         file->custom_icon = g_strdup (custom_icon);
+       }
     }
 
   /* determine the display name */
@@ -3777,9 +3799,8 @@ thunar_file_set_emblem_names (ThunarFile *file,
  * @custom_icon : the new custom icon for the @file.
  * @error       : return location for errors or %NULL.
  *
- * Tries to change the custom icon of the .desktop file referred
- * to by @file. If that fails, %FALSE is returned and the
- * @error is set accordingly.
+ * Tries to change the custom icon of @file.
+ * If that fails, %FALSE is returned and the @error is set accordingly.
  *
  * Return value: %TRUE if the icon of @file was changed, %FALSE otherwise.
  **/
@@ -3788,31 +3809,76 @@ thunar_file_set_custom_icon (ThunarFile  *file,
                              const gchar *custom_icon,
                              GError     **error)
 {
-  GKeyFile *key_file;
+  const gchar *icon_attr;
 
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  _thunar_return_val_if_fail (custom_icon != NULL, FALSE);
 
-  key_file = thunar_g_file_query_key_file (file->gfile, NULL, error);
-
-  if (key_file == NULL)
-    return FALSE;
-
-  g_key_file_set_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
-                         G_KEY_FILE_DESKTOP_KEY_ICON, custom_icon);
-
-  if (thunar_g_file_write_key_file (file->gfile, key_file, NULL, error))
+  if (thunar_file_is_desktop_file (file))
     {
-      /* tell everybody that we have changed */
-      thunar_file_changed (file);
+      GKeyFile *key_file = thunar_g_file_query_key_file (file->gfile, NULL, error);
 
-      g_key_file_free (key_file);
+      if (key_file == NULL)
+        return FALSE;
+
+      g_key_file_set_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
+                             G_KEY_FILE_DESKTOP_KEY_ICON, (custom_icon == NULL) ? "" : custom_icon);
+
+      if (thunar_g_file_write_key_file (file->gfile, key_file, NULL, error))
+        {
+          g_free (file->custom_icon);
+
+          if (xfce_str_is_empty(custom_icon))
+            file->custom_icon = NULL;
+          else
+            file->custom_icon = g_strdup (custom_icon);
+
+          /* tell everybody that we have changed */
+          thunar_file_reload (file);
+
+          g_key_file_free (key_file);
+          return TRUE;
+        }
+      else
+        {
+          g_key_file_free (key_file);
+          return FALSE;
+        }
+    }
+
+  if (thunar_g_vfs_metadata_is_supported ())
+    icon_attr = "metadata::thunar-icon";
+  else
+    icon_attr = "xattr::thunar.icon";
+
+  if (!xfce_str_is_empty(custom_icon))
+    {
+      if (g_file_set_attribute_string (file->gfile, icon_attr, custom_icon, G_FILE_QUERY_INFO_NONE, NULL, error))
+        {
+          g_file_info_set_attribute_string (file->info, icon_attr, custom_icon);
+          g_free (file->custom_icon);
+          file->custom_icon = g_strdup (custom_icon);
+          thunar_file_reload (file);
+          return TRUE;
+        }
+      else
+        {
+          g_warning ("%s", (*error)->message);
+          return FALSE;
+        }
+    }
+
+  if (g_file_set_attribute (file->gfile, icon_attr, G_FILE_ATTRIBUTE_TYPE_INVALID, NULL, G_FILE_QUERY_INFO_NONE, NULL, error))
+    {
+      g_file_info_remove_attribute (file->info, icon_attr);
+      g_free (file->custom_icon);
+      file->custom_icon = NULL;
+      thunar_file_reload (file);
       return TRUE;
     }
   else
     {
-      g_key_file_free (key_file);
+      g_warning ("%s", (*error)->message);
       return FALSE;
     }
 }
@@ -4005,7 +4071,7 @@ const gchar *
 thunar_file_get_custom_icon (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return file->custom_icon_name;
+  return file->custom_icon;
 }
 
 
