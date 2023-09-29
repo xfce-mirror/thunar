@@ -144,7 +144,7 @@ static guint              file_signals[LAST_SIGNAL];
 #define FLAG_IS_SET(file,flag)               (((file)->flags & (flag)) != 0)
 
 #define DEFAULT_CONTENT_TYPE "application/octet-stream"
-
+#define UNKNOWN_FILE_NAME    "<UNKNOWN>"
 
 
 typedef enum
@@ -396,6 +396,7 @@ thunar_file_init (ThunarFile *file)
   file->file_count = 0;
   file->file_count_timestamp = 0;
   file->display_name = NULL;
+  file->basename = g_strdup (UNKNOWN_FILE_NAME);
   for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
     {
       file->thumbnail_path[i] = NULL;
@@ -953,8 +954,10 @@ thunar_file_info_reload (ThunarFile   *file,
     }
 
   /* determine the basename */
+  g_free (file->basename);
   file->basename = g_file_get_basename (file->gfile);
-  _thunar_assert (file->basename != NULL);
+  if (file->basename == NULL)
+    file->basename = g_strdup (UNKNOWN_FILE_NAME);
 
   /* problematic files with content type reading */
   if (g_strcmp0 (file->basename, "kmsg") == 0
