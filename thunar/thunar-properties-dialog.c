@@ -1897,7 +1897,7 @@ thunar_properties_dialog_set_file (ThunarPropertiesDialog *dialog,
 
 
 static void
-_make_highlight_btns_sensitive (gpointer data)
+_make_highlight_buttons_sensitive (gpointer data)
 {
   /* this callback is a problem */
   ThunarPropertiesDialog *dialog = THUNAR_PROPERTIES_DIALOG (data);
@@ -1926,7 +1926,7 @@ thunar_properties_dialog_reset_highlight (ThunarPropertiesDialog *dialog)
    * multiple threads which would then require a mutex logic to handle
    * callback. The highlight_buttons need be made sensitive only after both finish */
   thunar_io_jobs_clear_metadata_for_files (dialog->files,
-                                           G_CALLBACK (_make_highlight_btns_sensitive),
+                                           G_CALLBACK (_make_highlight_buttons_sensitive),
                                            dialog,
                                            "highlight-color-background",
                                            "highlight-color-foreground", NULL);
@@ -1971,21 +1971,21 @@ thunar_properties_dialog_apply_highlight (ThunarPropertiesDialog *dialog)
      * callback. The highlight_buttons need be made sensitive only after both finish.
      * The callback handles this */
     thunar_io_jobs_set_metadata_for_files (dialog->files,
-                                           G_CALLBACK (_make_highlight_btns_sensitive),
+                                           G_CALLBACK (_make_highlight_buttons_sensitive),
                                            dialog,
                                            "highlight-color-foreground", dialog->foreground_color,
                                            "highlight-color-background", dialog->background_color,
                                            NULL);
   else if (dialog->background_color != NULL)
     thunar_io_jobs_set_metadata_for_files (dialog->files,
-                                           G_CALLBACK (_make_highlight_btns_sensitive),
+                                           G_CALLBACK (_make_highlight_buttons_sensitive),
                                            dialog,
                                            "highlight-color-background", dialog->background_color,
                                            NULL);
   /* we are sure that if we reach thus far foreground_color cannot be NULL */
   else
     thunar_io_jobs_set_metadata_for_files (dialog->files,
-                                           G_CALLBACK (_make_highlight_btns_sensitive),
+                                           G_CALLBACK (_make_highlight_buttons_sensitive),
                                            dialog,
                                            "highlight-color-foreground", dialog->foreground_color,
                                            NULL);
