@@ -1686,17 +1686,19 @@ _thunar_io_jobs_clear_metadata_for_files (ThunarJob *job,
                                           GArray    *param_values,
                                           GError   **error)
 {
-  GList *files;
+  GList *gfiles, *infos;
   GList *setting_names;
 
-  files = g_value_get_pointer (&g_array_index (param_values, GValue, 0));
+  gfiles = g_value_get_pointer (&g_array_index (param_values, GValue, 0));
+  infos = g_value_get_pointer (&g_array_index (param_values, GValue, 0));
   setting_names = g_value_get_pointer (&g_array_index (param_values, GValue, 1));
 
-  for (GList *lp = files; lp != NULL; lp = lp->next)
+  for (GList *gfile = gfiles, *info = infos; gfile != NULL && info != NULL; gfile = gfile->next, info = info->next)
     for (GList *sn = setting_names; sn != NULL; sn = sn->next)
-      thunar_file_clear_metadata_setting (lp->data, sn->data);
+      thunar_g_file_clear_metadata_setting (gfile->data, info->data, sn->data);
 
-  thunar_g_list_free_full (files);
+  g_list_free_full (gfiles, g_object_unref);
+  g_list_free_full (infos, g_object_unref);
   g_list_free_full (setting_names, g_free);
 
   return TRUE;
@@ -1719,11 +1721,11 @@ thunar_io_jobs_clear_metadata_for_files (GList    *files,
                                          gpointer  data,
                                          ...)
 {
-  GList     *files_copy;
   ThunarJob *job;
   va_list    list;
   GList     *setting_names = NULL;
   gchar     *str;
+  GList     *gfiles = NULL, *infos = NULL;
 
   va_start (list, data);
   str = va_arg (list, gchar *);
@@ -1734,9 +1736,14 @@ thunar_io_jobs_clear_metadata_for_files (GList    *files,
     }
   va_end (list);
 
-  files_copy = thunar_g_list_copy_deep (files);
-  job = thunar_simple_job_new (_thunar_io_jobs_clear_metadata_for_files, 2,
-                               G_TYPE_POINTER, files_copy,
+  for (GList *lp = files; lp != NULL; lp = lp->next)
+    {
+      gfiles = g_list_prepend (gfiles, g_object_ref (thunar_file_get_file (THUNAR_FILE (lp->data))));
+      infos = g_list_prepend (infos, g_object_ref (thunar_file_get_info (THUNAR_FILE (lp->data))));
+    }
+  job = thunar_simple_job_new (_thunar_io_jobs_clear_metadata_for_files, 3,
+                               G_TYPE_POINTER, gfiles,
+                               G_TYPE_POINTER, infos,
                                G_TYPE_POINTER, setting_names);
 
   if (callback != NULL)
@@ -1756,16 +1763,22 @@ _thunar_io_jobs_set_metadata_for_files (ThunarJob *job,
                                         GArray    *param_values,
                                         GError   **error)
 {
-  GList *files;
+  GList *gfiles, *infos;
   GList *setting_value_pairs;
 
-  files = g_value_get_pointer (&g_array_index (param_values, GValue, 0));
+  gfiles = g_value_get_pointer (&g_array_index (param_values, GValue, 0));
+  infos = g_value_get_pointer (&g_array_index (param_values, GValue, 0));
   setting_value_pairs = g_value_get_pointer (&g_array_index (param_values, GValue, 1));
 
-  for (GList *lp = files; lp != NULL; lp = lp->next)
+  for (GList *gfile = gfiles, *info = infos; gfile != NULL && info != NULL; gfile = gfile->next, info = info->next)
     for (GList *sn = setting_value_pairs; sn != NULL; sn = sn->next)
-      thunar_file_set_metadata_setting (lp->data, ((gchar **) sn->data)[0],
-                                        ((gchar **) sn->data)[1], FALSE);
+      thunar_g_file_set_metadata_setting (gfile->data, info->data,
+                                          ((gchar **) sn->data)[0],
+                                          ((gchar **) sn->data)[1], FALSE);
+
+  g_list_free_full (gfiles, g_object_unref);
+  g_list_free_full (infos, g_object_unref);
+  g_list_free_full (setting_value_pairs, (GDestroyNotify) g_strfreev);
 
   return TRUE;
 }
@@ -1787,12 +1800,12 @@ thunar_io_jobs_set_metadata_for_files (GList    *files,
                                        gpointer  data,
                                        ...)
 {
-  GList     *files_copy;
   ThunarJob *job;
   va_list    list;
   GList     *setting_value_pairs = NULL;
   gchar     *str, *val;
   gchar    **sn_val_pair;
+  GList     *gfiles = NULL, *infos = NULL;
 
   /* this func accepts a variable length setting_name, setting_value pair*/
   va_start (list, data);
@@ -1802,17 +1815,24 @@ thunar_io_jobs_set_metadata_for_files (GList    *files,
       val = va_arg (list, gchar *);
       if (val == NULL)
         break;
-      sn_val_pair = (gchar **) g_malloc0 (sizeof (gchar *) * 2);
+      // Needs to be null terminated for use in g_strfreev
+      sn_val_pair = (gchar **) g_malloc0 (sizeof (gchar *) * 3);
       sn_val_pair[0] = g_strdup (str);
       sn_val_pair[1] = g_strdup (val);
+      sn_val_pair[2] = NULL;
       setting_value_pairs = g_list_prepend (setting_value_pairs, sn_val_pair);
       str = va_arg (list, gchar *);
     }
   va_end (list);
 
-  files_copy = thunar_g_list_copy_deep (files);
-  job = thunar_simple_job_new (_thunar_io_jobs_set_metadata_for_files, 2,
-                               G_TYPE_POINTER, files_copy,
+  for (GList *lp = files; lp != NULL; lp = lp->next)
+    {
+      gfiles = g_list_prepend (gfiles, g_object_ref (thunar_file_get_file (THUNAR_FILE (lp->data))));
+      infos = g_list_prepend (infos, g_object_ref (thunar_file_get_info (THUNAR_FILE (lp->data))));
+    }
+  job = thunar_simple_job_new (_thunar_io_jobs_set_metadata_for_files, 3,
+                               G_TYPE_POINTER, gfiles,
+                               G_TYPE_POINTER, infos,
                                G_TYPE_POINTER, setting_value_pairs);
 
   if (callback != NULL)
