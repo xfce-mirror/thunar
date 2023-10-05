@@ -57,6 +57,7 @@ ThunarJob *thunar_io_jobs_count_files      (ThunarFile            *file);
 ThunarJob *thunar_io_jobs_search_directory (ThunarStandardViewModel *model,
                                             const gchar             *search_query,
                                             ThunarFile              *directory);
+ThunarJob *thunar_io_jobs_load_content_types(GList                  *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS
 

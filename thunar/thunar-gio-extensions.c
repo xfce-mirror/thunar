@@ -81,8 +81,9 @@ device_icon_name [] =
 
 
 
-static const gchar *guess_device_type_from_icon_name (const gchar * icon_name);
-
+static const gchar     *guess_device_type_from_icon_name           (const gchar *icon_name);
+static       GFileInfo *thunar_g_file_get_content_type_querry_info (GFile       *gfile,
+                                                                    GError      *err);
 
 
 GFile *
@@ -1493,4 +1494,99 @@ thunar_g_file_is_empty (GFile *file)
   g_object_unref (enumerator);
 
   return is_empty;
+}
+
+
+
+static GFileInfo*
+thunar_g_file_get_content_type_querry_info (GFile *gfile,
+                                            GError *err)
+{
+  GFileInfo   *info = NULL;
+
+  info = g_file_query_info (gfile,
+                            G_FILE_ATTRIBUTE_STANDARD_TYPE ","
+                            G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK ","
+                            G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
+                            G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+                            G_FILE_QUERY_INFO_NONE,
+                            NULL, &err);
+  return info;
+}
+
+
+
+/**
+ * thunar_g_file_get_content_type:
+ * @file : #GFile for which the content type will be returned
+ *
+ * Gets the content type of the passed #GFile. Will always return a valid string.
+ *
+ * Return value: (transfer full): The content type as #gchar 
+ * The returned string should be freed with g_free() when no longer needed.
+ **/
+char*
+thunar_g_file_get_content_type (GFile *gfile)
+{
+  gboolean     is_symlink = FALSE;
+  GFileInfo   *info = NULL;
+  GError      *err = NULL;
+  gchar       *content_type = NULL;
+
+  info = thunar_g_file_get_content_type_querry_info (gfile, err);
+
+  /* follow symlink, if found */
+  if (G_LIKELY (info != NULL))
+    {
+      is_symlink = g_file_info_get_attribute_boolean (info, G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK);
+      if (is_symlink)
+        {
+          GFile *link_target = thunar_g_file_new_for_symlink_target (gfile);
+          g_object_unref (info);
+          info = NULL;
+          if (link_target != NULL)
+            info = thunar_g_file_get_content_type_querry_info (link_target, err);
+          g_object_unref (link_target);
+        }
+    }
+
+  if (G_LIKELY (info != NULL))
+    {
+      if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
+        {
+          /* this we known for sure */
+          content_type = g_strdup ("inode/directory");
+        }
+      else
+        {
+          content_type = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE));
+          if (G_UNLIKELY (content_type == NULL))
+            content_type = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE));
+        }
+
+      g_object_unref (info);
+    }
+  else
+    {
+      /* If gfile retrieved above is NULL, then g_file_query_info won't be called, thus keeping info NULL.
+        * In this case, err will also be NULL. So it will fallback to "unknown" mime-type */
+      if (G_LIKELY (err != NULL))
+        {
+          /* The mime-type 'inode/symlink' is  only used for broken links.
+            * When the link is functional, the mime-type of the link target will be used */
+          if (G_LIKELY (is_symlink && err->code == G_IO_ERROR_NOT_FOUND))
+              content_type = g_strdup ("inode/symlink");
+          else
+              g_warning ("Content type loading failed for %s: %s",
+                          g_file_get_uri (gfile),
+                          err->message);
+          g_error_free (err);
+        }
+    }
+
+  /* fallback */
+  if (content_type == NULL)
+    content_type = g_strdup (DEFAULT_CONTENT_TYPE);
+
+  return content_type;
 }
