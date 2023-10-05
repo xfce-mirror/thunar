@@ -4847,10 +4847,7 @@ const gchar*
 thunar_file_get_metadata_setting (ThunarFile  *file,
                                   const gchar *setting_name)
 {
-  const gchar *value = thunar_g_file_get_metadata_setting (g_object_ref (file->gfile), g_object_ref (file->info), setting_name);
-  g_object_unref (file->gfile);
-  g_object_unref (file->info);
-  return value;
+  return thunar_g_file_get_metadata_setting (file->gfile, file->info, setting_name);
 }
 
 
@@ -4871,9 +4868,7 @@ thunar_file_set_metadata_setting (ThunarFile  *file,
                                   const gchar *setting_value,
                                   gboolean     async)
 {
-  thunar_g_file_set_metadata_setting (g_object_ref (file->gfile), g_object_ref (file->info), setting_name, setting_value, async);
-  g_object_unref (file->gfile);
-  g_object_unref (file->info);
+  return thunar_g_file_set_metadata_setting (file->gfile, file->info, setting_name, setting_value, async);
 }
 
 
@@ -4889,9 +4884,7 @@ void
 thunar_file_clear_metadata_setting (ThunarFile  *file,
                                      const gchar *setting_name)
 {
-  thunar_g_file_clear_metadata_setting (g_object_ref (file->gfile), g_object_ref (file->info), setting_name);
-  g_object_unref (file->gfile);
-  g_object_unref (file->info);
+  return thunar_g_file_clear_metadata_setting (file->gfile, file->info, setting_name);
 }
 
 

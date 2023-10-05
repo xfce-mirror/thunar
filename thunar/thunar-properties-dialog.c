@@ -177,6 +177,7 @@ struct _ThunarPropertiesDialog
   /* (set_background, set_foreground, reset, apply)
    * btns under highlights tab */
   GtkWidget              *highlight_buttons;
+  GtkWidget              *higlighting_spinner;
 
   GtkWidget              *highlight_apply_button;
   GtkWidget              *editor_button;
@@ -867,6 +868,9 @@ thunar_properties_dialog_constructed (GObject *object)
       gtk_widget_set_vexpand (button, FALSE);
       gtk_widget_set_valign (button, GTK_ALIGN_END);
       gtk_widget_show (button);
+
+      dialog->higlighting_spinner = gtk_spinner_new ();
+      gtk_box_pack_end (GTK_BOX (box), dialog->higlighting_spinner, FALSE, FALSE, 0);
 
       button = gtk_button_new_with_mnemonic (_("Set _Foreground"));
       g_signal_connect_swapped (G_OBJECT (button), "clicked",
@@ -1899,12 +1903,14 @@ thunar_properties_dialog_set_file (ThunarPropertiesDialog *dialog,
 static void
 _make_highlight_buttons_sensitive (gpointer data)
 {
-  /* this callback is a problem */
   ThunarPropertiesDialog *dialog = THUNAR_PROPERTIES_DIALOG (data);
 
   gtk_widget_set_sensitive (dialog->highlight_buttons, TRUE);
+  gtk_spinner_stop (GTK_SPINNER (dialog->higlighting_spinner));
+  gtk_widget_hide (dialog->higlighting_spinner);
 
-  /* this slows things down & is it required ? because the view is correctly updated */
+  /* FIXME: this slows things down & is it required ? because the view is correctly updated */
+  /* but without this the cells won't refresh unless we hover over it or scroll or select the window */
   // thunar_properties_dialog_reload (dialog);
 
   thunar_properties_dialog_update_apply_button (dialog);
@@ -1915,21 +1921,21 @@ _make_highlight_buttons_sensitive (gpointer data)
 static void
 thunar_properties_dialog_reset_highlight (ThunarPropertiesDialog *dialog)
 {
+  ThunarJob *job;
+
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
 
   /* make the highlight buttons (set_background, set_foreground, reset, apply) insensitive */
   gtk_widget_set_sensitive (dialog->highlight_buttons, FALSE);
+  gtk_widget_show (dialog->higlighting_spinner);
+  gtk_spinner_start (GTK_SPINNER (dialog->higlighting_spinner));
 
-  /* the reason for making this func variable length is that
-   * by clearing multiple metadata at once we don't have to call
-   * this func for each metadata setting. Individual calls would trigger
-   * multiple threads which would then require a mutex logic to handle
-   * callback. The highlight_buttons need be made sensitive only after both finish */
-  thunar_io_jobs_clear_metadata_for_files (dialog->files,
-                                           G_CALLBACK (_make_highlight_buttons_sensitive),
-                                           dialog,
-                                           "highlight-color-background",
-                                           "highlight-color-foreground", NULL);
+  job = thunar_io_jobs_clear_metadata_for_files (dialog->files,
+                                                 "highlight-color-background",
+                                                 "highlight-color-foreground", NULL);
+
+  g_signal_connect_swapped (job, "finished", G_CALLBACK (_make_highlight_buttons_sensitive), dialog);
+  exo_job_launch (EXO_JOB (job));
 
   /* clear previouly set colors */
   g_free (dialog->foreground_color);
@@ -1947,7 +1953,8 @@ thunar_properties_dialog_reset_highlight (ThunarPropertiesDialog *dialog)
 static void
 thunar_properties_dialog_apply_highlight (ThunarPropertiesDialog *dialog)
 {
-  gboolean  highlighting_enabled;
+  ThunarJob *job;
+  gboolean   highlighting_enabled;
 
   if (dialog->foreground_color == NULL && dialog->background_color == NULL)
     /* nothing to do here */
@@ -1962,33 +1969,26 @@ thunar_properties_dialog_apply_highlight (ThunarPropertiesDialog *dialog)
     }
 
   gtk_widget_set_sensitive (dialog->highlight_buttons, FALSE);
+  gtk_widget_show (dialog->higlighting_spinner);
+  gtk_spinner_start (GTK_SPINNER (dialog->higlighting_spinner));
 
   if (dialog->foreground_color != NULL && dialog->background_color != NULL)
-    /* the reason for making this func variable length is that
-     * by clearing multiple metadata at once we don't have to call
-     * this func for each metadata setting. Individual calls would trigger
-     * multiple threads which would then require a mutex logic to handle
-     * callback. The highlight_buttons need be made sensitive only after both finish.
-     * The callback handles this */
-    thunar_io_jobs_set_metadata_for_files (dialog->files,
-                                           G_CALLBACK (_make_highlight_buttons_sensitive),
-                                           dialog,
-                                           "highlight-color-foreground", dialog->foreground_color,
-                                           "highlight-color-background", dialog->background_color,
-                                           NULL);
+    job = thunar_io_jobs_set_metadata_for_files (dialog->files,
+                                                 "highlight-color-foreground", dialog->foreground_color,
+                                                 "highlight-color-background", dialog->background_color,
+                                                 NULL);
   else if (dialog->background_color != NULL)
-    thunar_io_jobs_set_metadata_for_files (dialog->files,
-                                           G_CALLBACK (_make_highlight_buttons_sensitive),
-                                           dialog,
-                                           "highlight-color-background", dialog->background_color,
-                                           NULL);
+    job = thunar_io_jobs_set_metadata_for_files (dialog->files,
+                                                 "highlight-color-background", dialog->background_color,
+                                                 NULL);
   /* we are sure that if we reach thus far foreground_color cannot be NULL */
   else
-    thunar_io_jobs_set_metadata_for_files (dialog->files,
-                                           G_CALLBACK (_make_highlight_buttons_sensitive),
-                                           dialog,
-                                           "highlight-color-foreground", dialog->foreground_color,
-                                           NULL);
+    job = thunar_io_jobs_set_metadata_for_files (dialog->files,
+                                                 "highlight-color-foreground", dialog->foreground_color,
+                                                 NULL);
+
+  g_signal_connect_swapped (job, "finished", G_CALLBACK (_make_highlight_buttons_sensitive), dialog);
+  exo_job_launch (EXO_JOB (job));
 
   /* update the dialog & apply btn after the job is done i.e in the callback */
 }
