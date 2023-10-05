@@ -1690,8 +1690,8 @@ _thunar_io_jobs_clear_metadata_for_files (ThunarJob *job,
   GList *setting_names;
 
   gfiles = g_value_get_pointer (&g_array_index (param_values, GValue, 0));
-  infos = g_value_get_pointer (&g_array_index (param_values, GValue, 0));
-  setting_names = g_value_get_pointer (&g_array_index (param_values, GValue, 1));
+  infos = g_value_get_pointer (&g_array_index (param_values, GValue, 1));
+  setting_names = g_value_get_pointer (&g_array_index (param_values, GValue, 2));
 
   for (GList *gfile = gfiles, *info = infos; gfile != NULL && info != NULL; gfile = gfile->next, info = info->next)
     for (GList *sn = setting_names; sn != NULL; sn = sn->next)
@@ -1714,20 +1714,23 @@ _thunar_io_jobs_clear_metadata_for_files (ThunarJob *job,
  *
  * Accepts a variable length metadata_setting_names to clear
  * for @files.
+ *
+ * Note: the reason for making this func variable length is that
+ * by clearing multiple metadata at once we don't have to call
+ * this func for each metadata setting. Individual calls would trigger
+ * multiple threads which would then require a mutex logic to handle
+ * callback.
  **/
-void
-thunar_io_jobs_clear_metadata_for_files (GList    *files,
-                                         GCallback callback,
-                                         gpointer  data,
+ThunarJob *
+thunar_io_jobs_clear_metadata_for_files (GList *files,
                                          ...)
 {
-  ThunarJob *job;
   va_list    list;
   GList     *setting_names = NULL;
   gchar     *str;
   GList     *gfiles = NULL, *infos = NULL;
 
-  va_start (list, data);
+  va_start (list, files);
   str = va_arg (list, gchar *);
   while (str != NULL)
     {
@@ -1741,19 +1744,10 @@ thunar_io_jobs_clear_metadata_for_files (GList    *files,
       gfiles = g_list_prepend (gfiles, g_object_ref (thunar_file_get_file (THUNAR_FILE (lp->data))));
       infos = g_list_prepend (infos, g_object_ref (thunar_file_get_info (THUNAR_FILE (lp->data))));
     }
-  job = thunar_simple_job_new (_thunar_io_jobs_clear_metadata_for_files, 3,
-                               G_TYPE_POINTER, gfiles,
-                               G_TYPE_POINTER, infos,
-                               G_TYPE_POINTER, setting_names);
-
-  if (callback != NULL)
-    g_signal_connect_object (job,
-                             "finished",
-                             G_CALLBACK (callback),
-                             data,
-                             G_CONNECT_SWAPPED);
-
-  exo_job_launch (EXO_JOB (job));
+  return thunar_simple_job_new (_thunar_io_jobs_clear_metadata_for_files, 3,
+                                G_TYPE_POINTER, gfiles,
+                                G_TYPE_POINTER, infos,
+                                G_TYPE_POINTER, setting_names);
 }
 
 
@@ -1767,8 +1761,8 @@ _thunar_io_jobs_set_metadata_for_files (ThunarJob *job,
   GList *setting_value_pairs;
 
   gfiles = g_value_get_pointer (&g_array_index (param_values, GValue, 0));
-  infos = g_value_get_pointer (&g_array_index (param_values, GValue, 0));
-  setting_value_pairs = g_value_get_pointer (&g_array_index (param_values, GValue, 1));
+  infos = g_value_get_pointer (&g_array_index (param_values, GValue, 1));
+  setting_value_pairs = g_value_get_pointer (&g_array_index (param_values, GValue, 2));
 
   for (GList *gfile = gfiles, *info = infos; gfile != NULL && info != NULL; gfile = gfile->next, info = info->next)
     for (GList *sn = setting_value_pairs; sn != NULL; sn = sn->next)
@@ -1793,14 +1787,17 @@ _thunar_io_jobs_set_metadata_for_files (ThunarJob *job,
  *
  * Accepts a variable length metadata setting_name
  * & setting_value pairs to set for @files.
+ *
+ * Note: the reason for making this func variable length is that
+ * by clearing multiple metadata at once we don't have to call
+ * this func for each metadata setting. Individual calls would trigger
+ * multiple threads which would then require a mutex logic to handle
+ * callback.
  **/
-void
-thunar_io_jobs_set_metadata_for_files (GList    *files,
-                                       GCallback callback,
-                                       gpointer  data,
+ThunarJob *
+thunar_io_jobs_set_metadata_for_files (GList *files,
                                        ...)
 {
-  ThunarJob *job;
   va_list    list;
   GList     *setting_value_pairs = NULL;
   gchar     *str, *val;
@@ -1808,7 +1805,7 @@ thunar_io_jobs_set_metadata_for_files (GList    *files,
   GList     *gfiles = NULL, *infos = NULL;
 
   /* this func accepts a variable length setting_name, setting_value pair*/
-  va_start (list, data);
+  va_start (list, files);
   str = va_arg (list, gchar *);
   while (str != NULL)
     {
@@ -1830,17 +1827,9 @@ thunar_io_jobs_set_metadata_for_files (GList    *files,
       gfiles = g_list_prepend (gfiles, g_object_ref (thunar_file_get_file (THUNAR_FILE (lp->data))));
       infos = g_list_prepend (infos, g_object_ref (thunar_file_get_info (THUNAR_FILE (lp->data))));
     }
-  job = thunar_simple_job_new (_thunar_io_jobs_set_metadata_for_files, 3,
-                               G_TYPE_POINTER, gfiles,
-                               G_TYPE_POINTER, infos,
-                               G_TYPE_POINTER, setting_value_pairs);
 
-  if (callback != NULL)
-    g_signal_connect_object (job,
-                             "finished",
-                             G_CALLBACK (callback),
-                             data,
-                             G_CONNECT_SWAPPED);
-
-  exo_job_launch (EXO_JOB (job));
+  return thunar_simple_job_new (_thunar_io_jobs_set_metadata_for_files, 3,
+                                G_TYPE_POINTER, gfiles,
+                                G_TYPE_POINTER, infos,
+                                G_TYPE_POINTER, setting_value_pairs);
 }
