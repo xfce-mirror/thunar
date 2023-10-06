@@ -24,6 +24,7 @@
 #include "thunar/thunar-job.h"
 #include "thunar/thunar-enum-types.h"
 #include "thunar/thunar-standard-view-model.h"
+#include "thunar/thunar-job.h"
 
 G_BEGIN_DECLS
 
@@ -57,6 +58,10 @@ ThunarJob *thunar_io_jobs_count_files      (ThunarFile            *file);
 ThunarJob *thunar_io_jobs_search_directory (ThunarStandardViewModel *model,
                                             const gchar             *search_query,
                                             ThunarFile              *directory);
+ThunarJob *thunar_io_jobs_clear_metadata_for_files (GList          *files,
+                                                    ...);
+ThunarJob *thunar_io_jobs_set_metadata_for_files   (GList          *files,
+                                                    ...);
 
 G_END_DECLS
 
