@@ -125,6 +125,17 @@ gboolean     thunar_g_file_is_desktop_file             (GFile             *file)
 char        *thunar_g_file_get_link_path_for_symlink   (GFile             *file_to_link,
                                                         GFile             *symlink);
 char        *thunar_g_file_get_resolved_path           (GFile             *file);
+void         thunar_g_file_set_metadata_setting        (GFile             *file,
+                                                        GFileInfo         *info,
+                                                        const gchar       *setting_name,
+                                                        const gchar       *setting_value,
+                                                        gboolean           async);
+void         thunar_g_file_clear_metadata_setting      (GFile             *file,
+                                                        GFileInfo         *info,
+                                                        const gchar       *setting_name);
+const gchar *thunar_g_file_get_metadata_setting        (GFile             *file,
+                                                        GFileInfo         *info,
+                                                        const gchar       *setting_name);
 G_END_DECLS
 
 #endif /* !__THUNAR_GIO_EXTENSIONS_H__ */
