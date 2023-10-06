@@ -57,7 +57,7 @@ thunar_standard_view_model_get_type (void)
 
 struct _MatchForeach
 {
-  GList       **paths;
+  GList        *paths;
   GPatternSpec *pspec;
   gboolean      match_diacritics;
   gboolean      case_sensitive;
@@ -774,7 +774,7 @@ _thunar_standard_view_model_match_pattern_foreach (GtkTreeModel *model,
   g_free (normalized_display_name);
 
   if (name_matched)
-    *mf->paths = g_list_prepend (*mf->paths, gtk_tree_path_copy (path));
+    mf->paths = g_list_prepend (mf->paths, gtk_tree_path_copy (path));
 
   return FALSE;
 }
@@ -815,7 +815,7 @@ thunar_standard_view_model_get_paths_for_pattern (ThunarStandardViewModel *model
   mf.pspec = g_pattern_spec_new (normalized_pattern);
   g_free (normalized_pattern);
 
-  *mf.paths = NULL;
+  mf.paths = NULL;
   mf.case_sensitive = case_sensitive;
   mf.match_diacritics = match_diacritics;
 
@@ -826,5 +826,5 @@ thunar_standard_view_model_get_paths_for_pattern (ThunarStandardViewModel *model
   /* release the pattern */
   g_pattern_spec_free (mf.pspec);
 
-  return *mf.paths;
+  return mf.paths;
 }
