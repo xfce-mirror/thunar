@@ -1708,9 +1708,10 @@ _thunar_io_jobs_clear_metadata_for_files (ThunarJob *job,
 
 /**
  * thunar_io_jobs_clear_metadata_for_files:
- * @files    : a #GList of #ThunarFiles
- * @callback : a #GCallback or %NULL.
- * @gpointer : data to pass to @callback or %NULL
+ * @files: a #GList of #ThunarFiles
+ * @first_metadata_setting_name: the setting name to set
+ * @...: followed by the corresponding setting value and more
+ *       setting_name/value pairs, finally ending with a %NULL
  *
  * Accepts a variable length metadata_setting_names to clear
  * for @files.
@@ -1781,9 +1782,10 @@ _thunar_io_jobs_set_metadata_for_files (ThunarJob *job,
 
 /**
  * thunar_io_jobs_set_metadata_for_files:
- * @files    : a #GList of #ThunarFiles
- * @callback : a #GCallback or %NULL.
- * @gpointer : data to pass to @callback or %NULL
+ * @files: a #GList of #ThunarFiles
+ * @first_metadata_setting_name: the setting name to set
+ * @...: followed by the corresponding setting value and more
+ *       setting_name/value pairs, finally ending with a %NULL
  *
  * Accepts a variable length metadata setting_name
  * & setting_value pairs to set for @files.
