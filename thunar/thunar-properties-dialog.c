@@ -173,7 +173,14 @@ struct _ThunarPropertiesDialog
   GtkWidget              *content_value_label;
   GtkWidget              *color_chooser;
   GtkWidget              *example_box;
+
+  /* (set_background, set_foreground, reset, apply)
+   * btns under highlights tab */
   GtkWidget              *highlight_buttons;
+  GtkWidget              *highlighting_spinner;
+  ThunarJob              *highlight_change_job;
+  gulong                  highlight_change_job_finish_signal;
+
   GtkWidget              *highlight_apply_button;
   GtkWidget              *editor_button;
 
@@ -285,6 +292,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
 
   dialog->provider_factory = thunarx_provider_factory_get_default ();
+
+  dialog->highlight_change_job = NULL;
+  dialog->highlight_change_job_finish_signal = 0;
 }
 
 
@@ -864,6 +874,9 @@ thunar_properties_dialog_constructed (GObject *object)
       gtk_widget_set_valign (button, GTK_ALIGN_END);
       gtk_widget_show (button);
 
+      dialog->highlighting_spinner = gtk_spinner_new ();
+      gtk_box_pack_end (GTK_BOX (box), dialog->highlighting_spinner, FALSE, FALSE, 0);
+
       button = gtk_button_new_with_mnemonic (_("Set _Foreground"));
       g_signal_connect_swapped (G_OBJECT (button), "clicked",
                                 G_CALLBACK (thunar_properties_dialog_set_foreground), dialog);
@@ -936,6 +949,9 @@ thunar_properties_dialog_finalize (GObject *object)
 
   /* drop the reference on the provider factory */
   g_object_unref (dialog->provider_factory);
+
+  if (dialog->highlight_change_job != NULL && dialog->highlight_change_job_finish_signal != 0)
+    g_signal_handler_disconnect (dialog->highlight_change_job, dialog->highlight_change_job_finish_signal);
 
   (*G_OBJECT_CLASS (thunar_properties_dialog_parent_class)->finalize) (object);
 }
@@ -1893,17 +1909,44 @@ thunar_properties_dialog_set_file (ThunarPropertiesDialog *dialog,
 
 
 static void
+_make_highlight_buttons_sensitive (gpointer data)
+{
+  ThunarPropertiesDialog *dialog = THUNAR_PROPERTIES_DIALOG (data);
+
+  gtk_widget_set_sensitive (dialog->highlight_buttons, TRUE);
+  gtk_spinner_stop (GTK_SPINNER (dialog->highlighting_spinner));
+  gtk_widget_hide (dialog->highlighting_spinner);
+
+  /* FIXME: this slows things down & is it required ? because the view is correctly updated */
+  /* but without this the cells won't refresh unless we hover over it or scroll or select the window */
+  // thunar_properties_dialog_reload (dialog);
+
+  thunar_properties_dialog_update_apply_button (dialog);
+
+  dialog->highlight_change_job = NULL;
+  dialog->highlight_change_job_finish_signal = 0;
+}
+
+
+
+static void
 thunar_properties_dialog_reset_highlight (ThunarPropertiesDialog *dialog)
 {
-  GList   *lp;
-
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
 
-  for (lp = dialog->files; lp != NULL; lp = lp->next)
-    {
-      thunar_file_clear_metadata_setting (lp->data, "highlight-color-background");
-      thunar_file_clear_metadata_setting (lp->data, "highlight-color-foreground");
-    }
+  /* make the highlight buttons (set_background, set_foreground, reset, apply) insensitive */
+  gtk_widget_set_sensitive (dialog->highlight_buttons, FALSE);
+  gtk_widget_show (dialog->highlighting_spinner);
+  gtk_spinner_start (GTK_SPINNER (dialog->highlighting_spinner));
+
+  dialog->highlight_change_job = thunar_io_jobs_clear_metadata_for_files (dialog->files,
+                                                                          "highlight-color-background",
+                                                                          "highlight-color-foreground", NULL);
+
+  dialog->highlight_change_job_finish_signal =
+    g_signal_connect_swapped (dialog->highlight_change_job, "finished",
+                              G_CALLBACK (_make_highlight_buttons_sensitive), dialog);
+  exo_job_launch (EXO_JOB (dialog->highlight_change_job));
 
   /* clear previouly set colors */
   g_free (dialog->foreground_color);
@@ -1913,9 +1956,7 @@ thunar_properties_dialog_reset_highlight (ThunarPropertiesDialog *dialog)
 
   thunar_properties_dialog_colorize_example_box (dialog, NULL, NULL);
 
-  thunar_properties_dialog_reload (dialog);
-
-  thunar_properties_dialog_update_apply_button (dialog);
+  /* update the dialog & apply btn after the job is done i.e in the callback */
 }
 
 
@@ -1923,8 +1964,11 @@ thunar_properties_dialog_reset_highlight (ThunarPropertiesDialog *dialog)
 static void
 thunar_properties_dialog_apply_highlight (ThunarPropertiesDialog *dialog)
 {
-  GList    *lp;
-  gboolean  highlighting_enabled;
+  gboolean   highlighting_enabled;
+
+  if (dialog->foreground_color == NULL && dialog->background_color == NULL)
+    /* nothing to do here */
+    return;
 
   /* if this feature is disabled, then enable the feature */
   if (dialog->foreground_color != NULL || dialog->background_color != NULL)
@@ -1934,17 +1978,34 @@ thunar_properties_dialog_apply_highlight (ThunarPropertiesDialog *dialog)
         g_object_set (G_OBJECT (dialog->preferences), "misc-highlighting-enabled", TRUE, NULL);
     }
 
-  for (lp = dialog->files; lp != NULL; lp = lp->next)
-    {
-      if (dialog->foreground_color != NULL)
-        thunar_file_set_metadata_setting (lp->data, "highlight-color-foreground", dialog->foreground_color, FALSE);
-      if (dialog->background_color != NULL)
-        thunar_file_set_metadata_setting (lp->data, "highlight-color-background", dialog->background_color, FALSE);
-    }
+  gtk_widget_set_sensitive (dialog->highlight_buttons, FALSE);
+  gtk_widget_show (dialog->highlighting_spinner);
+  gtk_spinner_start (GTK_SPINNER (dialog->highlighting_spinner));
 
-  thunar_properties_dialog_reload (dialog);
+  if (dialog->foreground_color != NULL && dialog->background_color != NULL)
+    dialog->highlight_change_job =
+      thunar_io_jobs_set_metadata_for_files (dialog->files,
+                                             "highlight-color-foreground", dialog->foreground_color,
+                                             "highlight-color-background", dialog->background_color,
+                                             NULL);
+  else if (dialog->background_color != NULL)
+    dialog->highlight_change_job =
+      thunar_io_jobs_set_metadata_for_files (dialog->files,
+                                             "highlight-color-background", dialog->background_color,
+                                             NULL);
+  /* we are sure that if we reach thus far foreground_color cannot be NULL */
+  else
+    dialog->highlight_change_job =
+      thunar_io_jobs_set_metadata_for_files (dialog->files,
+                                             "highlight-color-foreground", dialog->foreground_color,
+                                             NULL);
 
-  thunar_properties_dialog_update_apply_button (dialog);
+  dialog->highlight_change_job_finish_signal =
+    g_signal_connect_swapped (dialog->highlight_change_job, "finished",
+                              G_CALLBACK (_make_highlight_buttons_sensitive), dialog);
+  exo_job_launch (EXO_JOB (dialog->highlight_change_job));
+
+  /* update the dialog & apply btn after the job is done i.e in the callback */
 }
 
 
