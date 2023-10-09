@@ -83,6 +83,8 @@ static void           thunar_folder_monitor               (GFileMonitor         
                                                            GFile                 *other_file,
                                                            GFileMonitorEvent      event_type,
                                                            gpointer               user_data);
+static void           thunar_folder_load_content_types    (ThunarFolder          *folder,
+                                                           GList                 *files);
 
 
 
@@ -105,6 +107,7 @@ struct _ThunarFolder
   GObject            __parent__;
 
   ThunarJob         *job;
+  ThunarJob         *content_type_job;
 
   ThunarFile        *corresponding_file;
 
@@ -115,8 +118,6 @@ struct _ThunarFolder
   GHashTable        *files_map;
 
   gboolean           reload_info;
-
-  guint              content_type_idle_id;
 
   guint              in_destruction : 1;
 
@@ -337,10 +338,6 @@ thunar_folder_finalize (GObject *object)
       g_object_unref (G_OBJECT (folder->corresponding_file));
     }
 
-  /* stop metadata collector */
-  if (folder->content_type_idle_id != 0)
-    g_source_remove (folder->content_type_idle_id);
-
   /* release references to the current files lists */
   g_hash_table_destroy (folder->files_map);
   g_hash_table_destroy (folder->new_files_map);
@@ -448,50 +445,30 @@ thunar_folder_files_ready (ThunarJob    *job,
 
 
 
-static gboolean
-thunar_folder_content_type_loader_idle (gpointer data)
-{
-  ThunarFolder   *folder;
-  GHashTableIter  iter;
-  gpointer        key, value;
-
-  _thunar_return_val_if_fail (THUNAR_IS_FOLDER (data), FALSE);
-
-  folder = THUNAR_FOLDER (data);
-
-  /* load content types */
-  g_hash_table_iter_init (&iter, folder->files_map);
-  while (g_hash_table_iter_next (&iter, &key, &value))
-    {
-      if (value != NULL)
-        thunar_file_load_content_type (THUNAR_FILE (value));
-    }
-
-  /* all content types loaded */
-  return FALSE;
-}
-
-
-
-static void
-thunar_folder_content_type_loader_idle_destroyed (gpointer data)
-{
-  _thunar_return_if_fail (THUNAR_IS_FOLDER (data));
-
-  THUNAR_FOLDER (data)->content_type_idle_id = 0;
-}
-
-
-
-static void
-thunar_folder_content_type_loader (ThunarFolder *folder)
+/**
+ * thunar_folder_load_content_types:
+ * @folder : a #ThunarFolder instance.
+ * @files : a #GList of #ThunarFile's for which the content type needs to be loaded.
+ *
+ * Starts a job to load the content type of all files inside the folder
+ **/
+void
+thunar_folder_load_content_types (ThunarFolder *folder,
+                                  GList        *files)
 {
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
-  _thunar_return_if_fail (folder->content_type_idle_id == 0);
 
-  /* schedule idle */
-  folder->content_type_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_folder_content_type_loader_idle,
-                                                  folder, thunar_folder_content_type_loader_idle_destroyed);
+  /* check if we are currently connect to a job */
+  if (G_UNLIKELY (folder->content_type_job != NULL))
+    {
+      exo_job_cancel (EXO_JOB (folder->content_type_job));
+      g_object_unref (folder->content_type_job);
+      folder->content_type_job = NULL;
+    }
+
+  /* start a new content_type_job */
+  folder->content_type_job = thunar_io_jobs_load_content_types (files);
+  exo_job_launch (EXO_JOB (folder->content_type_job));
 }
 
 
@@ -509,7 +486,6 @@ thunar_folder_finished (ExoJob       *job,
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (THUNAR_IS_FILE (folder->corresponding_file));
-  _thunar_return_if_fail (folder->content_type_idle_id == 0);
 
   /* determine all added files (files on new_files, but not on files) */
   g_hash_table_iter_init (&iter, folder->new_files_map);
@@ -531,6 +507,9 @@ thunar_folder_finished (ExoJob       *job,
     {
       /* emit a "files-added" signal for the added files */
       g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, files);
+
+      /* start loading the content types of all files in the folder */
+      thunar_folder_load_content_types (folder, files);
 
       /* release the added files list */
       g_list_free (files);
@@ -606,9 +585,6 @@ thunar_folder_finished (ExoJob       *job,
       folder->job = NULL;
     }
 
-  /* restart the content type idle loader */
-  thunar_folder_content_type_loader (folder);
-
   /* tell the consumers that we have loaded the directory */
   g_object_notify (G_OBJECT (folder), "loading");
 }
@@ -640,7 +616,6 @@ thunar_folder_file_destroyed (ThunarFileMonitor *file_monitor,
                               ThunarFolder      *folder)
 {
   GList    files;
-  gboolean restart = FALSE;
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
@@ -655,9 +630,6 @@ thunar_folder_file_destroyed (ThunarFileMonitor *file_monitor,
     }
   else if (g_hash_table_contains (folder->files_map, thunar_file_get_file (file)))
     {
-      if (folder->content_type_idle_id != 0)
-        restart = g_source_remove (folder->content_type_idle_id);
-
       /* tell everybody that the file is gone */
       files.data = file;
       files.next = files.prev = NULL;
@@ -665,10 +637,6 @@ thunar_folder_file_destroyed (ThunarFileMonitor *file_monitor,
 
       /* remove the file from our list */
       g_hash_table_remove (folder->files_map, thunar_file_get_file (file));
-
-      /* continue collecting the metadata */
-      if (restart)
-        thunar_folder_content_type_loader (folder);
     }
 }
 
@@ -742,7 +710,6 @@ thunar_folder_monitor (GFileMonitor     *monitor,
   ThunarFile   *file = NULL;
   ThunarFile   *file_in_map;
   GList         list;
-  gboolean      restart = FALSE;
 
   _thunar_return_if_fail (G_IS_FILE_MONITOR (monitor));
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
@@ -761,10 +728,6 @@ thunar_folder_monitor (GFileMonitor     *monitor,
     }
 
   file_in_map = g_hash_table_lookup (folder->files_map, event_file);
-
-  /* stop the content type collector */
-  if (folder->content_type_idle_id != 0)
-    restart = g_source_remove (folder->content_type_idle_id);
 
   /* if we don't have it, add it if the event does not "delete" the "event_file" */
   if (file_in_map == NULL && event_type != G_FILE_MONITOR_EVENT_DELETED && event_type != G_FILE_MONITOR_EVENT_MOVED_OUT)
@@ -882,10 +845,6 @@ thunar_folder_monitor (GFileMonitor     *monitor,
           thunar_file_reload (file_in_map);
         }
     }
-
-  /* check if we need to restart the collector */
-  if (restart)
-    thunar_folder_content_type_loader (folder);
 }
 
 
@@ -1040,9 +999,13 @@ thunar_folder_reload (ThunarFolder *folder,
   /* reload file info too? */
   folder->reload_info = reload_info;
 
-  /* stop metadata collector */
-  if (folder->content_type_idle_id != 0)
-    g_source_remove (folder->content_type_idle_id);
+  /* stop content type loading */
+  if (G_UNLIKELY (folder->content_type_job != NULL))
+    {
+      exo_job_cancel (EXO_JOB (folder->content_type_job));
+      g_object_unref (folder->content_type_job);
+      folder->content_type_job = NULL;
+    }
 
   /* check if we are currently connect to a job */
   if (G_UNLIKELY (folder->job != NULL))
