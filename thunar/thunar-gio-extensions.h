@@ -136,6 +136,7 @@ void         thunar_g_file_clear_metadata_setting      (GFile             *file,
 const gchar *thunar_g_file_get_metadata_setting        (GFile             *file,
                                                         GFileInfo         *info,
                                                         const gchar       *setting_name);
+char        *thunar_g_file_get_content_type            (GFile             *file);
 G_END_DECLS
 
 #endif /* !__THUNAR_GIO_EXTENSIONS_H__ */

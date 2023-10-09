@@ -118,11 +118,12 @@ static gboolean           thunar_file_load                     (ThunarFile      
 static gboolean           thunar_file_is_readable              (const ThunarFile       *file);
 static gboolean           thunar_file_same_filesystem          (const ThunarFile       *file_a,
                                                                 const ThunarFile       *file_b);
+static void               thunar_file_load_content_type        (ThunarFile             *file);
+                                                                
 
 
 
 static GRecMutex G_LOCK_NAME (file_cache_mutex);
-G_LOCK_DEFINE_STATIC         (file_content_type_mutex);
 
 
 
@@ -142,8 +143,6 @@ static guint              file_signals[LAST_SIGNAL];
 #define FLAG_SET(file,flag)                  G_STMT_START{ ((file)->flags |= (flag)); }G_STMT_END
 #define FLAG_UNSET(file,flag)                G_STMT_START{ ((file)->flags &= ~(flag)); }G_STMT_END
 #define FLAG_IS_SET(file,flag)               (((file)->flags & (flag)) != 0)
-
-#define DEFAULT_CONTENT_TYPE "application/octet-stream"
 #define UNKNOWN_FILE_NAME    "<UNKNOWN>"
 
 
@@ -172,7 +171,11 @@ struct _ThunarFile
   GFileInfo            *recent_info;
   GFileType             kind;
   GFile                *gfile;
+
+  /* The content type can be loaded as separate job or directly */
   gchar                *content_type;
+  GMutex                content_type_mutex;
+
   gchar                *icon_name;
 
   gchar                *custom_icon_name;
@@ -396,12 +399,13 @@ thunar_file_init (ThunarFile *file)
   file->file_count = 0;
   file->file_count_timestamp = 0;
   file->display_name = NULL;
-  file->basename = g_strdup (UNKNOWN_FILE_NAME);
   for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
     {
       file->thumbnail_path[i] = NULL;
       file->thumbnail_state[i] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
     }
+
+  g_mutex_init (&file->content_type_mutex);
 }
 
 
@@ -475,7 +479,11 @@ thunar_file_finalize (GObject *object)
   g_free (file->custom_icon_name);
 
   /* content type info */
+  g_mutex_lock (&file->content_type_mutex);
   g_free (file->content_type);
+  g_mutex_unlock (&file->content_type_mutex);
+  g_mutex_clear (&file->content_type_mutex);
+
   g_free (file->icon_name);
 
   /* free display name and basename */
@@ -888,8 +896,11 @@ thunar_file_info_clear (ThunarFile *file)
   file->basename = NULL;
 
   /* content type */
+  g_mutex_lock (&file->content_type_mutex);
   g_free (file->content_type);
   file->content_type = NULL;
+  g_mutex_unlock (&file->content_type_mutex);
+
   g_free (file->icon_name);
   file->icon_name = NULL;
 
@@ -965,7 +976,7 @@ thunar_file_info_reload (ThunarFile   *file,
     {
       path = g_file_get_path (file->gfile);
       if (g_strcmp0 (path, "/proc/kmsg") == 0)
-        file->content_type = g_strdup (DEFAULT_CONTENT_TYPE);
+        thunar_file_set_content_type (file, DEFAULT_CONTENT_TYPE);
       g_free (path);
     }
 
@@ -2466,100 +2477,40 @@ thunar_file_get_user (const ThunarFile *file)
 const gchar *
 thunar_file_get_content_type (ThunarFile *file)
 {
-  gboolean     is_symlink;
-  GFile       *gfile;
-  GFileInfo   *info = NULL;
-  GError      *err = NULL;
-  const gchar *content_type = NULL;
-
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
+  gboolean initialized = TRUE;
+
+  g_mutex_lock (&file->content_type_mutex);
   if (G_UNLIKELY (file->content_type == NULL))
-    {
-      G_LOCK (file_content_type_mutex);
+    initialized = FALSE;
+  g_mutex_unlock (&file->content_type_mutex);
 
-      /* make sure we weren't waiting for a lock */
-      if (G_UNLIKELY (file->content_type != NULL))
-        goto bailout;
-
-      /* make sure this is not loaded in the general info */
-      _thunar_assert (file->info == NULL
-          || !g_file_info_has_attribute (file->info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE));
-
-      if (G_UNLIKELY (file->kind == G_FILE_TYPE_DIRECTORY))
-        {
-          /* this we known for sure */
-          file->content_type = g_strdup ("inode/directory");
-        }
-      else
-        {
-          is_symlink = thunar_file_is_symlink (file);
-
-          if (G_UNLIKELY (is_symlink))
-            gfile = thunar_g_file_new_for_symlink_target (thunar_file_get_file (file));
-          else
-            gfile = g_object_ref (file->gfile);
-
-          /* async load the content-type */
-          if (G_LIKELY (gfile != NULL))
-            {
-              info = g_file_query_info (gfile,
-                                        G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
-                                        G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
-                                        G_FILE_QUERY_INFO_NONE,
-                                        NULL, &err);
-              g_object_unref (gfile);
-            }
-
-          if (G_LIKELY (info != NULL))
-            {
-              /* store the new content type */
-              content_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
-              if (G_UNLIKELY (content_type == NULL))
-                content_type = g_file_info_get_attribute_string (info,
-                                                                 G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE);
-              if (G_LIKELY (content_type != NULL))
-                file->content_type = g_strdup (content_type);
-              g_object_unref (G_OBJECT (info));
-            }
-          else
-            {
-              /* If gfile retrieved above is NULL, then g_file_query_info won't be called, thus keeping info NULL.
-               * In this case, err will also be NULL. So it will fallback to "unknown" mime-type */
-              if (G_LIKELY (err != NULL))
-                {
-                  /* The mime-type 'inode/symlink' is  only used for broken links.
-                   * When the link is functional, the mime-type of the link target will be used */
-                  if (G_LIKELY (is_symlink && err->code == G_IO_ERROR_NOT_FOUND))
-                    file->content_type = g_strdup ("inode/symlink");
-                  else
-                  {
-                    if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
-                      g_warning ("Content type loading failed for %s (%s): %s",
-                                 thunar_file_get_display_name (file),
-                                 thunar_file_get_basename (file),
-                                 err->message);
-                    else
-                      g_warning ("Content type loading failed for %s: %s",
-                                 thunar_file_get_display_name (file),
-                                 err->message);
-                  }
-
-                  g_error_free (err);
-                }
-            }
-
-          /* always provide a fallback */
-          if (file->content_type == NULL)
-            file->content_type = g_strdup (DEFAULT_CONTENT_TYPE);
-        }
-
-      bailout:
-
-      G_UNLOCK (file_content_type_mutex);
-    }
+  if (!initialized)
+    thunar_file_load_content_type (file);
 
   return file->content_type;
+}
+
+
+
+/**
+ * thunar_file_set_content_type:
+ * @file : a #ThunarFile.
+ * @content_type : The content type
+ *
+ * Sets the conetnt type of a #ThunarFile.
+ **/
+void
+thunar_file_set_content_type (ThunarFile  *file,
+                              const gchar *content_type)
+{
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  g_mutex_lock (&file->content_type_mutex);
+  if (G_LIKELY (file->content_type == NULL))
+    file->content_type = g_strdup (content_type);
+  g_mutex_unlock (&file->content_type_mutex);
 }
 
 
@@ -2602,17 +2553,27 @@ thunar_file_get_content_type_desc (ThunarFile *file)
 
 
 
-gboolean
+static void
 thunar_file_load_content_type (ThunarFile *file)
 {
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), TRUE);
+  gchar *content_type = NULL;
 
-  if (file->content_type != NULL)
-    return FALSE;
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  thunar_file_get_content_type (file);
+  /* make sure this is not loaded in the general info */
+  _thunar_assert (file->info == NULL
+      || !g_file_info_has_attribute (file->info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE));
 
-  return TRUE;
+  if (G_UNLIKELY (file->kind == G_FILE_TYPE_DIRECTORY))
+    {
+      /* this we known for sure */
+      thunar_file_set_content_type (file, "inode/directory");
+      return;
+    }
+
+  content_type = thunar_g_file_get_content_type (file->gfile);
+  thunar_file_set_content_type (file, content_type);
+  g_free (content_type);
 }
 
 
