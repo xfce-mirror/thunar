@@ -1,3 +1,130 @@
+4.19.0 (2023-10-10)
+======
+- thunar-settings: Let Thunar guess the right display to use
+- Load content types in a separate job (#1192)
+- Add possibility to change metadata via a ThunarJob
+- Remove thumbnail request in properties dialog
+- Use a fallback file basename when unknown (#1219)
+- Prevent deadlock during thumbnail loading (#1217)
+- Remember the bulk renamer dialog size (Issue #1040)
+- Apply scale factor as well to thumbnails (#1143)
+- Move thumbnail request handling to the icon-renderer
+- Support ipv6 remote URLs (#864)
+- Handled Expand/Collapse in single-click mode (#1148)
+- Fix DnD for expandable folders (#1144)
+- Change toggle sort order menu item to check menu item (#781)
+- Add a setting for window title style (#1130)
+- Change state of split view button in the toolbar when needed
+- Fix thunar critical and leak (#1179)
+- Convert toolbar view buttons into radio buttons (Issue #925)
+- Fix property dialog file count (#1173)
+- Remove GHashTable/GList dualism in ThunarFolder
+- Fix crash when build with --disable-debug (#1181)
+- Improved performance & responsive in details view
+- Fix ThunarFolder crash (#1175)
+- Change 'File Manager' to 'Thunar' (Issue #1136)
+- Change menu item 'Rename' to 'Bulk Rename' on multi select (#913)
+- Improve 'Untrusted Application Launcher' Dialog (#963)
+- Option to queue operations on busy disks (#1029)
+- Support launcher rename options via dbus
+- Fix criticals about unset GIO attributes (#1063)
+- Don't reload folder twice on manual reload (#937)
+- Ignore extension on dir rename (#1150)
+- Add dialog to ask what to do with script (#1070)
+- Make horizontal spacing consistent (#118)
+- New TreeViewModel model implemented (#41)
+- New StandarViewModelInterface interface (#41)
+- Option to show launcher name instead of filename (#451)
+- Add folder to history only for new tab (Issue #1072)
+- Improve folder monitor and move some logic from file monitor there
+- Don't check for file exists on "deleted" event
+- Fix job operation crash on error
+- Limit number of templates to prevent lag (#472)
+- Remove outline on filenames while using keyboard nav.
+- Prevent crash on multi-file-activate (#1121)
+- Add new attributes to default namespace (#1104)
+- Use enum to store sidepane type (#1102)
+- Focus split pane on any tab click (#1103)
+- Ignore attribute FILESYSTEM_USE_PREVIEW (#298)
+- Prevent glib-critical - followup of (#912)
+- Solving issue of overlapping highlights (#980)
+- Keep location selector state on focus lost (#912)
+- Harden thunarx module loading (#1094)
+- Don't reload the directory on copy or cut (#1060)
+- Prevent minor memory leak (#573)
+- Revert ce43203b to prevent high CPU usage in list-view (#1089)
+- Various properties dialog tweaks
+- Prevent overflow via g_ascii methods (#1084)
+- ThunarFile: Use recursive mutex for cache (#1060)
+- Use new window for history signal handler (#1073)
+- Prevent using CSD in properties dialog (#1056)
+- Keep alpha when cutting read-only files (#1060)
+- Dont reload the current folder on copy/cut (#1060)
+- Update selected notebook on tab press (#1067)
+- Make sure that accel_group is set before using it (#1067)
+- Add job to list of jobs, not a view (#1029)
+- Undo/Redo: Improve error handling
+- Dont store accel map on startup (#1047)
+- Optioanlly show prop-dialog hightlight tab (#1056)
+- Simplify Bulk Renamer buttons (#1032)
+- Dont open folder when mounting device (Issue #919)
+- Dont show full menu for unmounted devices (#1049)
+- Support handling URIs via desktop file (#1044)
+- Focus correct split pane on mouse click (#1039)
+- Use realpath only if available on platform (#1030)
+- Fix include/check for 'realpath' (#1030)
+- Prevent wrong undo/redo notify (#1036)
+- Support undo trash for linked pathes (#1030)
+- Always ask before delete files via undo (#1027)
+- Fix use after free fault (#1031)
+- Allow symlink creation on remote locations (#875)
+- Prevent crash when closing window (#884)
+- Keep directory specific sort details (#1017)
+- Dont add extra-dot when creating links (#1019)
+- Add Shortcut to switch split-view panes (#1005)
+- Undo/Redo: Show detailed tooltips (issue #938)
+- Make view margin/spacing depend on zoom level (Issue #839)
+- Add fallback to shared zoom-level (#832)
+- Directory specific settings - zoom improvm. (#832)
+- Keep hidden toolbar hidden after Ctrl+L (#1011)
+- Prevent jumping cursor on file deletion (#910)
+- Properly handle resident thunar plugins (#1007)
+- Prevent crash for copy+overwrite via DBus (#1002)
+- Make 'empty trash' sensitive on tab-switch (#1001)
+- Prevent segfault for location selector (Issue #994)
+- Dialog when closing split-pane with multiple tabs
+- split-view: prevent loosing open tabs (Issue #986)
+- Use GtkIconTheme properly when passing UI scale
+- Shrink rename dialog only in height
+- Improve alignment of XfceFileNameInput
+- Revert "Prevent focus stealing of file transfer dialog (Issue #643)"
+- Prevent rare crash when closing thunar (issue #698)
+- Prevent crash after closing windows (Issue #995)
+- bulk renamer: Remember LastActiveMode (Issue #989)
+- Add optional confirmation message to move to trash (Issue #464)
+- Re-add symlink target in type column (issue #985)
+- Few thumbnails missing after scroll (Issue #843)
+- Dont show toolbar menu for back/forward (Issue #983)
+- 'replace' option fixed for partial copy (Issue #974)
+- Preserve trusted state when launchers are copied
+- separate method for thunar_g_file_is_in_xdg_data_dir
+- Moved 'set executable flag' into separate method
+- Only attach toolbar after toolbar items were set up (Issue #927)
+- Dont reset zoom-level for directory specific settings (issue #970)
+- Prevent build failure for NixOS (Issue #972)
+- Prevent location bar crash (Issue #968)
+- Translation Updates:
+  Albanian, Arabic, Armenian, Armenian (Armenia), Asturian, Basque,
+  Bengali, Bulgarian, Catalan, Chinese (China), Chinese (Hong Kong),
+  Chinese (Taiwan), Czech, Danish, Dutch, Eastern Armenian, English
+  (Australia), English (United Kingdom), Esperanto, Estonian, Finnish,
+  French, Galician, German, Greek, Hebrew, Hungarian, Icelandic,
+  Indonesian, Interlingue, Italian, Japanese, Kazakh, Korean, Latvian,
+  Malay, Norwegian Bokmål, Norwegian Nynorsk, Occitan (post 1500),
+  Persian (Iran), Polish, Portuguese, Portuguese (Brazil), Romanian,
+  Serbian, Slovak, Spanish, Swedish, Telugu, Thai, Turkish, Urdu, Urdu
+  (Pakistan), Uyghur, Vietnamese
+
 4.18.0 (2022-12-15)
 ======
 - Fix minor mem leak (Issue #961)
