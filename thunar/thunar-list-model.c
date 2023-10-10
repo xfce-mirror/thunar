@@ -1473,7 +1473,7 @@ thunar_list_model_file_changed (ThunarFileMonitor *file_monitor,
 
           /* notify the view that it has to redraw the file */
           path = gtk_tree_path_new_from_indices (pos_before, -1);
-          gtk_tree_model_row_changed (GTK_TREE_MODEL (store), path, &iter);
+          // gtk_tree_model_row_changed (GTK_TREE_MODEL (store), path, &iter);
           gtk_tree_path_free (path);
           break;
         }
