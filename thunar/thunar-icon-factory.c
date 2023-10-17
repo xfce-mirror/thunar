@@ -1012,7 +1012,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
               if (thumbnail_path != NULL)
                 /* try to load the thumbnail */
                 icon = thunar_icon_factory_load_from_file (factory, thumbnail_path, icon_size, scale_factor);
-              else if (thunar_file_get_thumb_state (file, thunar_icon_size_to_thumbnail_size (icon_size * scale_factor)) != THUNAR_FILE_THUMB_STATE_NONE)
+              else if (thunar_file_get_thumb_state (file, thunar_icon_size_to_thumbnail_size (icon_size * scale_factor)) == THUNAR_FILE_THUMB_STATE_UNKNOWN)
                 /* thumbnail does not exist; so load it */
                 thunar_thumbnailer_queue_file (factory->thumbnailer, file, &request, thunar_icon_size_to_thumbnail_size (icon_size * scale_factor));
             }

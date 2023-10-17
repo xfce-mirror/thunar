@@ -934,7 +934,10 @@ thunar_thumbnailer_thumbnailer_finished (GDBusProxy        *proxy,
           g_signal_emit (G_OBJECT (thumbnailer), thumbnailer_signals[REQUEST_FINISHED], 0, job->request);
 
           for (GList *file_lp = job->files; file_lp != NULL; file_lp = file_lp->next)
-            files_to_reload = g_list_append (files_to_reload, g_object_ref (file_lp->data));
+            {
+              if (thunar_file_get_thumb_state (file_lp->data, job->thumbnail_size) == THUNAR_FILE_THUMB_STATE_READY)
+                files_to_reload = g_list_append (files_to_reload, g_object_ref (file_lp->data));
+            }
 
           /* remove job from the list */
           thumbnailer->jobs = g_slist_delete_link (thumbnailer->jobs, lp);
