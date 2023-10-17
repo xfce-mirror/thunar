@@ -154,7 +154,7 @@ GTK_DOC_CHECK([1.9])
 dnl ***********************************
 dnl *** Check for required packages ***
 dnl ***********************************
-XDT_CHECK_PACKAGE([EXO], [exo-2], [4.17.0])
+XDT_CHECK_PACKAGE([EXO], [exo-2], [4.19.0])
 XDT_CHECK_PACKAGE([GLIB], [glib-2.0], [2.70.0])
 XDT_CHECK_PACKAGE([GIO], [gio-2.0], [2.70.0])
 XDT_CHECK_PACKAGE([GTHREAD], [gthread-2.0], [2.70.0])
