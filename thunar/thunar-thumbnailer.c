@@ -30,6 +30,7 @@
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-thumbnailer.h"
+#include "thunar/thunar-icon-factory.h"
 
 
 
@@ -951,7 +952,10 @@ thunar_thumbnailer_thumbnailer_finished (GDBusProxy        *proxy,
 
   /* Do the reload outside of teh critical section in order to prevent a deadlock */
   for (GList *file_lp = files_to_reload; file_lp != NULL; file_lp = file_lp->next)
-    thunar_file_reload (THUNAR_FILE (file_lp->data));
+    {
+      thunar_icon_factory_clear_pixmap_cache (THUNAR_FILE (file_lp->data));
+      thunar_file_changed (THUNAR_FILE (file_lp->data));
+    }
   
   if (files_to_reload != NULL)
     g_list_free_full (files_to_reload, g_object_unref);
