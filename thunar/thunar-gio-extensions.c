@@ -1682,7 +1682,7 @@ thunar_g_file_set_metadata_setting (GFile       *file,
   _thunar_return_if_fail (G_IS_FILE_INFO (info));
 
   /* convert the setting name to an attribute name */
-  attr_name = g_strdup_printf ("metadata::thunar-%s", setting_name);
+  attr_name = g_strdup_printf ("metadata::%s", setting_name);
 
   /* set the value in the current info. this call is needed to update the in-memory
    * GFileInfo structure to ensure that the new attribute value is available immediately */
@@ -1735,7 +1735,7 @@ thunar_g_file_clear_metadata_setting (GFile       *file,
     return;
 
   /* convert the setting name to an attribute name */
-  attr_name = g_strdup_printf ("metadata::thunar-%s", setting_name);
+  attr_name = g_strdup_printf ("metadata::%s", setting_name);
 
   if (!g_file_info_has_attribute (info, attr_name))
     {
@@ -1775,7 +1775,7 @@ thunar_g_file_get_metadata_setting (GFile       *file,
     return NULL;
 
   /* convert the setting name to an attribute name */
-  attr_name = g_strdup_printf ("metadata::thunar-%s", setting_name);
+  attr_name = g_strdup_printf ("metadata::%s", setting_name);
 
   if (!g_file_info_has_attribute (info, attr_name))
     {

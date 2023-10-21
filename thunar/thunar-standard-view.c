@@ -1783,7 +1783,7 @@ thunar_standard_view_set_zoom_level (ThunarView     *view,
           if (zoom_level_name != NULL)
             {
               /* do not set it asynchronously to ensure the correct operation of thumbnails (check the commit message for more) */
-              zoom_level_attribute_name = g_strdup_printf ("zoom-level-%s", G_OBJECT_TYPE_NAME (standard_view));
+              zoom_level_attribute_name = g_strdup_printf ("thunar-zoom-level-%s", G_OBJECT_TYPE_NAME (standard_view));
               thunar_file_set_metadata_setting (standard_view->priv->current_directory, zoom_level_attribute_name, zoom_level_name, FALSE);
               g_free (zoom_level_attribute_name);
             }
@@ -1838,16 +1838,16 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
   g_object_get (G_OBJECT (standard_view->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
 
   /* get the stored directory specific settings (if any) */
-  sort_column_name = thunar_file_get_metadata_setting (directory, "sort-column");
-  sort_order_name = thunar_file_get_metadata_setting (directory, "sort-order");
+  sort_column_name = thunar_file_get_metadata_setting (directory, "thunar-sort-column");
+  sort_order_name = thunar_file_get_metadata_setting (directory, "thunar-sort-order");
 
-  zoom_level_attribute_name = g_strdup_printf ("zoom-level-%s", G_OBJECT_TYPE_NAME (standard_view));
+  zoom_level_attribute_name = g_strdup_printf ("thunar-zoom-level-%s", G_OBJECT_TYPE_NAME (standard_view));
   zoom_level_name = thunar_file_get_metadata_setting (directory, zoom_level_attribute_name);
   g_free (zoom_level_attribute_name);
 
   /* View specific zoom level was added later on .. fall back to shared zoom-level if not found */
   if (zoom_level_name == NULL)
-    zoom_level_name = thunar_file_get_metadata_setting (directory, "zoom-level");
+    zoom_level_name = thunar_file_get_metadata_setting (directory, "thunar-zoom-level");
 
   /* convert the sort column name to a value */
   if (sort_column_name != NULL)
@@ -3584,7 +3584,7 @@ thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
           /* save the sort column name */
           sort_column_name = thunar_column_string_from_value (sort_column);
           if (sort_column_name != NULL)
-            thunar_file_set_metadata_setting (standard_view->priv->current_directory, "sort-column", sort_column_name, TRUE);
+            thunar_file_set_metadata_setting (standard_view->priv->current_directory, "thunar-sort-column", sort_column_name, TRUE);
 
           /* convert the sort order to a string */
           if (sort_order == GTK_SORT_ASCENDING)
@@ -3593,7 +3593,7 @@ thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
             sort_order_name = "GTK_SORT_DESCENDING";
 
           /* save the sort order */
-          thunar_file_set_metadata_setting (standard_view->priv->current_directory, "sort-order", sort_order_name, TRUE);
+          thunar_file_set_metadata_setting (standard_view->priv->current_directory, "thunar-sort-order", sort_order_name, TRUE);
         }
       else
         {
@@ -4354,8 +4354,8 @@ thunar_standard_view_cell_layout_data_func (GtkCellLayout   *layout,
   if (file == NULL)
     return;
 
-  background = thunar_file_get_metadata_setting (file, "highlight-color-background");
-  foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
+  background = thunar_file_get_metadata_setting (file, "thunar-highlight-color-background");
+  foreground = thunar_file_get_metadata_setting (file, "thunar-highlight-color-foreground");
 
   if (foreground != NULL)
     gdk_rgba_parse (&foreground_rgba, foreground);
