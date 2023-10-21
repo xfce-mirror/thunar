@@ -85,7 +85,10 @@ device_icon_name [] =
 static const gchar     *guess_device_type_from_icon_name           (const gchar *icon_name);
 static       GFileInfo *thunar_g_file_get_content_type_querry_info (GFile       *gfile,
                                                                     GError      *err);
-
+static       void       thunar_g_file_info_set_attribute           (GFileInfo   *info,
+                                                                    ThunarGType  type,
+                                                                    const gchar *setting_name,
+                                                                    const gchar *setting_value);
 
 GFile *
 thunar_g_file_new_for_home (void)
@@ -1625,9 +1628,38 @@ thunar_g_file_set_metadata_setting_finish (GObject      *source_object,
 
 
 
+static void
+thunar_g_file_info_set_attribute (GFileInfo   *info,
+                                  ThunarGType  type,
+                                  const gchar *setting_name,
+                                  const gchar *setting_value)
+{
+  switch (type)
+    {
+      case THUNAR_GTYPE_STRING:
+        g_file_info_set_attribute_string (info, setting_name, setting_value);
+        break;
+
+      case THUNAR_GTYPE_STRINGV:
+        gchar **setting_values;
+        setting_values = g_strsplit (setting_value, THUNAR_METADATA_STRING_DELIMETER, 100);
+        g_file_info_set_attribute_stringv (info, setting_name, setting_values);
+        g_strfreev (setting_values);
+        break;
+
+      default:
+        g_warning ("ThunarGType not supported, skipping");
+        break;
+    }
+}
+
+
+
 /**
  * thunar_g_file_set_metadata_setting:
  * @file          : a #GFile instance.
+ * @info          : Additional #GFileInfo instance to update
+ * @type          : #ThunarGType of the metadata
  * @setting_name  : the name of the setting to set
  * @setting_value : the value to set
  * @async         : whether g_file_set_attributes_async or g_file_set_attributes_from_info should be used
@@ -1638,6 +1670,7 @@ thunar_g_file_set_metadata_setting_finish (GObject      *source_object,
 void
 thunar_g_file_set_metadata_setting (GFile       *file,
                                     GFileInfo   *info,
+                                    ThunarGType  type,
                                     const gchar *setting_name,
                                     const gchar *setting_value,
                                     gboolean     async)
@@ -1653,12 +1686,13 @@ thunar_g_file_set_metadata_setting (GFile       *file,
 
   /* set the value in the current info. this call is needed to update the in-memory
    * GFileInfo structure to ensure that the new attribute value is available immediately */
-  g_file_info_set_attribute_string (info, attr_name, setting_value);
+  if (setting_value)
+    thunar_g_file_info_set_attribute (info, type, attr_name, setting_value);
 
   /* send meta data to the daemon. this call is needed to store the new value of
    * the attribute in the file system */
   info_new = g_file_info_new ();
-  g_file_info_set_attribute_string (info_new, attr_name, setting_value);
+  thunar_g_file_info_set_attribute (info_new, type, attr_name, setting_value);
   if (async)
     {
       g_file_set_attributes_async (file, info_new,

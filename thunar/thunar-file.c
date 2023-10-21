@@ -4829,7 +4829,7 @@ thunar_file_set_metadata_setting (ThunarFile  *file,
                                   const gchar *setting_value,
                                   gboolean     async)
 {
-  return thunar_g_file_set_metadata_setting (file->gfile, file->info, setting_name, setting_value, async);
+  return thunar_g_file_set_metadata_setting (file->gfile, file->info, THUNAR_GTYPE_STRING, setting_name, setting_value, async);
 }
 
 

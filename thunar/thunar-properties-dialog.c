@@ -1984,19 +1984,19 @@ thunar_properties_dialog_apply_highlight (ThunarPropertiesDialog *dialog)
 
   if (dialog->foreground_color != NULL && dialog->background_color != NULL)
     dialog->highlight_change_job =
-      thunar_io_jobs_set_metadata_for_files (dialog->files,
+      thunar_io_jobs_set_metadata_for_files (dialog->files, THUNAR_GTYPE_STRING,
                                              "highlight-color-foreground", dialog->foreground_color,
                                              "highlight-color-background", dialog->background_color,
                                              NULL);
   else if (dialog->background_color != NULL)
     dialog->highlight_change_job =
-      thunar_io_jobs_set_metadata_for_files (dialog->files,
+      thunar_io_jobs_set_metadata_for_files (dialog->files, THUNAR_GTYPE_STRING,
                                              "highlight-color-background", dialog->background_color,
                                              NULL);
   /* we are sure that if we reach thus far foreground_color cannot be NULL */
   else
     dialog->highlight_change_job =
-      thunar_io_jobs_set_metadata_for_files (dialog->files,
+      thunar_io_jobs_set_metadata_for_files (dialog->files, THUNAR_GTYPE_STRING,
                                              "highlight-color-foreground", dialog->foreground_color,
                                              NULL);
 
