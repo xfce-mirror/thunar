@@ -263,8 +263,6 @@ void              thunar_file_set_file_count             (ThunarFile            
                                                           const guint             count);
 
 GList            *thunar_file_get_emblem_names           (ThunarFile              *file);
-void              thunar_file_set_emblem_names           (ThunarFile              *file,
-                                                          GList                   *emblem_names);
 
 const gchar      *thunar_file_get_custom_icon            (const ThunarFile        *file);
 gboolean          thunar_file_set_custom_icon            (ThunarFile              *file,
