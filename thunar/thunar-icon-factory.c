@@ -126,8 +126,6 @@ struct _ThunarIconFactory
 
   /* stamp that gets bumped when the theme changes */
   guint                theme_stamp;
-
-  ThunarThumbnailer   *thumbnailer;
 };
 
 struct _ThunarIconKey
@@ -250,8 +248,6 @@ thunar_icon_factory_init (ThunarIconFactory *factory)
 {
   factory->thumbnail_mode = THUNAR_THUMBNAIL_MODE_ONLY_LOCAL;
   factory->thumbnail_size = THUNAR_THUMBNAIL_SIZE_NORMAL;
-
-  factory->thumbnailer = thunar_thumbnailer_get ();
 
   /* connect emission hook for the "changed" signal on the GtkIconTheme class. We use the emission
    * hook way here, because that way we can make sure that the icon cache is definetly cleared
