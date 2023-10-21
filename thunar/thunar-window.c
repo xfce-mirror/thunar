@@ -6523,3 +6523,23 @@ thunar_window_toolbar_swap_items (ThunarWindow *window,
 
   g_list_free (toolbar_items);
 }
+
+
+
+/**
+ * thunar_window_queue_redraw:
+ * @window      : a #ThunarWindow instance.
+ *
+ * Method to trigger a redraw of the window
+ **/
+void
+thunar_window_queue_redraw (ThunarWindow *window)
+{
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  if (G_LIKELY (window->view != NULL))
+    thunar_standard_view_queue_redraw (THUNAR_STANDARD_VIEW (window->view));
+
+  // TODO: Redraw as well all other parts of the window
+}
+

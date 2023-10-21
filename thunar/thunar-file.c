@@ -849,27 +849,6 @@ thunar_file_watch_reconnect (ThunarFile *file)
 
 
 static void
-thunar_file_set_emblem_names_ready (GObject      *source_object,
-                                    GAsyncResult *result,
-                                    gpointer      user_data)
-{
-  ThunarFile *file = THUNAR_FILE (user_data);
-  GError     *error = NULL;
-
-  if (!g_file_set_attributes_finish (G_FILE (source_object), result, NULL, &error))
-    {
-      g_warning ("Failed to set metadata: %s", error->message);
-      g_error_free (error);
-
-      g_file_info_remove_attribute (file->info, "metadata::emblems");
-    }
-
-  thunar_file_changed (file);
-}
-
-
-
-static void
 thunar_file_info_clear (ThunarFile *file)
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
@@ -3670,67 +3649,6 @@ thunar_file_get_emblem_names (ThunarFile *file)
     }
 
   return emblems;
-}
-
-
-
-/**
- * thunar_file_set_emblem_names:
- * @file         : a #ThunarFile instance.
- * @emblem_names : a #GList of emblem names.
- *
- * Sets the custom emblem name list of @file to @emblem_names
- * and stores them in the @file<!---->s metadata.
- **/
-void
-thunar_file_set_emblem_names (ThunarFile *file,
-                              GList      *emblem_names)
-{
-  GList      *lp;
-  gchar     **emblems = NULL;
-  gint        n;
-  GFileInfo  *info;
-
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
-  _thunar_return_if_fail (G_IS_FILE_INFO (file->info));
-
-  /* allocate a zero-terminated array for the emblem names */
-  emblems = g_new0 (gchar *, g_list_length (emblem_names) + 1);
-
-  /* turn the emblem_names list into a zero terminated array */
-  for (lp = emblem_names, n = 0; lp != NULL; lp = lp->next)
-    {
-      /* skip special emblems */
-      if (strcmp (lp->data, THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK) == 0
-          || strcmp (lp->data, THUNAR_FILE_EMBLEM_NAME_CANT_READ) == 0
-          || strcmp (lp->data, THUNAR_FILE_EMBLEM_NAME_CANT_WRITE) == 0
-          || strcmp (lp->data, THUNAR_FILE_EMBLEM_NAME_DESKTOP) == 0)
-        continue;
-
-      /* add the emblem to our list */
-      emblems[n++] = g_strdup (lp->data);
-    }
-
-  /* set the value in the current info. this call is needed to update the in-memory
-   * GFileInfo structure to ensure that the new attribute value is available immediately */
-  if (n == 0)
-    g_file_info_remove_attribute (file->info, "metadata::emblems");
-  else
-    g_file_info_set_attribute_stringv (file->info, "metadata::emblems", emblems);
-
-  /* send meta data to the daemon. this call is needed to store the new value of
-   * the attribute in the file system */
-  info = g_file_info_new ();
-  g_file_info_set_attribute_stringv (info, "metadata::emblems", emblems);
-  g_file_set_attributes_async (file->gfile, info,
-                               G_FILE_QUERY_INFO_NONE,
-                               G_PRIORITY_DEFAULT,
-                               NULL,
-                               thunar_file_set_emblem_names_ready,
-                               file);
-  g_object_unref (G_OBJECT (info));
-
-  g_strfreev (emblems);
 }
 
 
