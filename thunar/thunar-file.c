@@ -635,15 +635,6 @@ thunar_file_info_changed (ThunarxFileInfo *file_info)
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file_info));
 
-  /* set the new thumbnail state manually, so we only emit file
-   * changed once */
-  // for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
-  //   {
-  //     file->thumbnail_state[i] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
-  //     g_free (file->thumbnail_path[i]);
-  //     file->thumbnail_path[i] = NULL;
-  //   }
-
   /* tell the file monitor that this file changed */
   thunar_file_monitor_file_changed (file);
 }
@@ -929,19 +920,8 @@ thunar_file_info_clear (ThunarFile *file)
   g_free (file->collate_key);
   file->collate_key = NULL;
 
-  /* free thumbnail path */
-  // for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
-  //   {
-  //     g_free (file->thumbnail_path[i]);
-  //     file->thumbnail_path[i] = NULL;
-  //   }
-
   /* assume the file is mounted by default */
   FLAG_SET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
-
-  /* set thumb state to unknown */
-  // for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
-  //   file->thumbnail_state[i] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
 }
 
 
@@ -1976,6 +1956,19 @@ thunar_file_rename (ThunarFile   *file,
               /* emit the file changed signal */
               thunar_file_changed (file);
             }
+        }
+
+      /* we need to also change thumb state since
+       * thumbnail paths are MD5 hashes of file uri;
+       * escentially we need to generate new thumbnails
+       * TODO: we just renamed, the thumbnail itself should
+       * have remained unaltered. Just rename the previous
+       * thumbnail to save on a new unnecessary thumbnail */
+      for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
+        {
+          file->thumbnail_state[i] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
+          g_free (file->thumbnail_path[i]);
+          file->thumbnail_path[i] = NULL;
         }
 
       g_object_unref (renamed_file);
@@ -3941,8 +3934,6 @@ thunar_file_get_thumb_state (const ThunarFile   *file,
  * @thumb_size  : the required #ThunarThumbnailSize
  *
  * Sets the #ThunarFileThumbState for @file to @thumb_state.
- * This will cause a "file-changed" signal to be emitted from
- * #ThunarFileMonitor.
  **/
 void
 thunar_file_set_thumb_state (ThunarFile          *file,
@@ -3964,10 +3955,6 @@ thunar_file_set_thumb_state (ThunarFile          *file,
       g_free (file->thumbnail_path[size]);
       file->thumbnail_path[size] = NULL;
     }
-
-  // /* if the file has a thumbnail, reload it */
-  // if (state == THUNAR_FILE_THUMB_STATE_READY)
-  //   thunar_file_monitor_file_changed (file);
 }
 
 
