@@ -2218,7 +2218,8 @@ thunar_tree_view_model_dir_add_file (Node       *node,
   GtkTreePath *path;
   Node        *child;
 
-  g_assert (!g_hash_table_contains (node->set, file));
+  if (g_hash_table_contains (node->set, file))
+    return;
 
   child = thunar_tree_view_model_new_node (file);
   thunar_tree_view_model_node_add_child (node, child);
@@ -2479,7 +2480,7 @@ _thunar_tree_view_model_dir_files_added (Node  *node,
     {
       file = THUNAR_FILE (lp->data);
 
-      if (thunar_file_is_hidden (file))
+      if (thunar_file_is_hidden (file) && !g_hash_table_contains (node->hidden_files, file))
         {
           g_hash_table_add (node->hidden_files, g_object_ref (file));
 
