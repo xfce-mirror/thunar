@@ -190,6 +190,7 @@ struct _ThunarFile
 
   ThunarThumbnailer    *thumbnailer;
   guint                 thumbnailer_request;
+  GMutex                thumbnailer_mutex;
 
   /* sorting */
   gchar                *collate_key;
@@ -418,6 +419,7 @@ thunar_file_init (ThunarFile *file)
     }
 
   g_mutex_init (&file->content_type_mutex);
+  g_mutex_init (&file->thumbnailer_mutex);
 }
 
 
@@ -634,6 +636,13 @@ thunar_file_info_changed (ThunarxFileInfo *file_info)
   ThunarFile *file = THUNAR_FILE (file_info);
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file_info));
+
+  for (gint i = 0; i < N_THUMBNAIL; i++)
+  {
+    file->thumbnail_state[i] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
+    g_free (file->thumbnail_path [i]);
+    file->thumbnail_path[i] = NULL;
+  }
 
   /* tell the file monitor that this file changed */
   thunar_file_monitor_file_changed (file);
@@ -5295,7 +5304,8 @@ thunar_file_thumbnailer_finished (ThunarFile        *file,
 
   file->thumbnailer_request = 0;
   thunar_icon_factory_clear_pixmap_cache (file);
-  thunar_file_changed (file);
+  /* trigger a row changed in the view model(s) */
+  thunar_file_monitor_file_changed (file);
 }
 
 
@@ -5304,5 +5314,11 @@ void
 thunar_file_request_thumbnail (ThunarFile          *file,
                                ThunarThumbnailSize  size)
 {
-  thunar_thumbnailer_queue_file (file->thumbnailer, file, &file->thumbnailer_request, size);
+  if (!g_mutex_trylock (&file->thumbnailer_mutex))
+    return;
+
+  if (thunar_file_get_thumb_state (file, size) == THUNAR_FILE_THUMB_STATE_UNKNOWN)
+    thunar_thumbnailer_queue_file (file->thumbnailer, file, &file->thumbnailer_request, size);
+
+  g_mutex_unlock (&file->thumbnailer_mutex);
 }
