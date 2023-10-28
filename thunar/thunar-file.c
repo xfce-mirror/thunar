@@ -119,6 +119,9 @@ static gboolean           thunar_file_is_readable              (const ThunarFile
 static gboolean           thunar_file_same_filesystem          (const ThunarFile       *file_a,
                                                                 const ThunarFile       *file_b);
 static void               thunar_file_load_content_type        (ThunarFile             *file);
+static void               thunar_file_thumbnailer_finished     (ThunarFile             *file,
+                                                                guint                   request_id,
+                                                                ThunarThumbnailer      *thumbnailer);
                                                                 
 
 
@@ -184,6 +187,10 @@ struct _ThunarFile
   const gchar          *device_type;
   gchar                *thumbnail_path[N_THUMBNAIL_SIZES];
   ThunarFileThumbState  thumbnail_state[N_THUMBNAIL_SIZES];
+
+  ThunarThumbnailer    *thumbnailer;
+  guint                 thumbnailer_request;
+  GMutex                thumbnailer_mutex;
 
   /* sorting */
   gchar                *collate_key;
@@ -399,6 +406,12 @@ thunar_file_init (ThunarFile *file)
   file->file_count = 0;
   file->file_count_timestamp = 0;
   file->display_name = NULL;
+
+  file->thumbnailer = thunar_thumbnailer_get ();
+  file->thumbnailer_request = 0;
+  g_signal_connect_swapped (file->thumbnailer, "request-finished",
+                            G_CALLBACK (thunar_file_thumbnailer_finished), file);
+
   for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
     {
       file->thumbnail_path[i] = NULL;
@@ -406,6 +419,7 @@ thunar_file_init (ThunarFile *file)
     }
 
   g_mutex_init (&file->content_type_mutex);
+  g_mutex_init (&file->thumbnailer_mutex);
 }
 
 
@@ -501,6 +515,8 @@ thunar_file_finalize (GObject *object)
       g_free (file->thumbnail_path[i]);
       file->thumbnail_path[i] = NULL;
     }
+
+  g_object_unref (file->thumbnailer);
 
   /* release file */
   g_object_unref (file->gfile);
@@ -621,14 +637,12 @@ thunar_file_info_changed (ThunarxFileInfo *file_info)
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file_info));
 
-  /* set the new thumbnail state manually, so we only emit file
-   * changed once */
-  for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
-    {
-      file->thumbnail_state[i] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
-      g_free (file->thumbnail_path[i]);
-      file->thumbnail_path[i] = NULL;
-    }
+  for (gint i = 0; i < N_THUMBNAIL; i++)
+  {
+    file->thumbnail_state[i] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
+    g_free (file->thumbnail_path [i]);
+    file->thumbnail_path[i] = NULL;
+  }
 
   /* tell the file monitor that this file changed */
   thunar_file_monitor_file_changed (file);
@@ -915,19 +929,8 @@ thunar_file_info_clear (ThunarFile *file)
   g_free (file->collate_key);
   file->collate_key = NULL;
 
-  /* free thumbnail path */
-  for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
-    {
-      g_free (file->thumbnail_path[i]);
-      file->thumbnail_path[i] = NULL;
-    }
-
   /* assume the file is mounted by default */
   FLAG_SET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
-
-  /* set thumb state to unknown */
-  for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
-    file->thumbnail_state[i] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
 }
 
 
@@ -1962,6 +1965,19 @@ thunar_file_rename (ThunarFile   *file,
               /* emit the file changed signal */
               thunar_file_changed (file);
             }
+        }
+
+      /* we need to also change thumb state since
+       * thumbnail paths are MD5 hashes of file uri;
+       * escentially we need to generate new thumbnails
+       * TODO: we just renamed, the thumbnail itself should
+       * have remained unaltered. Just rename the previous
+       * thumbnail to save on a new unnecessary thumbnail */
+      for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
+        {
+          file->thumbnail_state[i] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
+          g_free (file->thumbnail_path[i]);
+          file->thumbnail_path[i] = NULL;
         }
 
       g_object_unref (renamed_file);
@@ -3892,6 +3908,9 @@ thunar_file_get_thumbnail_path (ThunarFile         *file,
   if (G_UNLIKELY (file->thumbnail_path[thumbnail_size] == NULL))
     file->thumbnail_path[thumbnail_size] = thunar_file_get_thumbnail_path_real (file, thumbnail_size);
 
+  if (file->thumbnail_path[thumbnail_size] != NULL)
+    file->thumbnail_state[thumbnail_size] = THUNAR_FILE_THUMB_STATE_READY;
+
   return file->thumbnail_path[thumbnail_size];
 }
 
@@ -3924,8 +3943,6 @@ thunar_file_get_thumb_state (const ThunarFile   *file,
  * @thumb_size  : the required #ThunarThumbnailSize
  *
  * Sets the #ThunarFileThumbState for @file to @thumb_state.
- * This will cause a "file-changed" signal to be emitted from
- * #ThunarFileMonitor.
  **/
 void
 thunar_file_set_thumb_state (ThunarFile          *file,
@@ -3947,10 +3964,6 @@ thunar_file_set_thumb_state (ThunarFile          *file,
       g_free (file->thumbnail_path[size]);
       file->thumbnail_path[size] = NULL;
     }
-
-  /* if the file has a thumbnail, reload it */
-  if (state == THUNAR_FILE_THUMB_STATE_READY)
-    thunar_file_monitor_file_changed (file);
 }
 
 
@@ -5277,4 +5290,35 @@ thunar_cmp_files_by_type (const ThunarFile *a,
       return thunar_file_compare_by_name (a, b, case_sensitive);
   else
       return result;
+}
+
+
+
+static void
+thunar_file_thumbnailer_finished (ThunarFile        *file,
+                                  guint              request_id,
+                                  ThunarThumbnailer *thumbnailer)
+{
+  if (file->thumbnailer_request != request_id)
+    return;
+
+  file->thumbnailer_request = 0;
+  thunar_icon_factory_clear_pixmap_cache (file);
+  /* trigger a row changed in the view model(s) */
+  thunar_file_monitor_file_changed (file);
+}
+
+
+
+void
+thunar_file_request_thumbnail (ThunarFile          *file,
+                               ThunarThumbnailSize  size)
+{
+  if (!g_mutex_trylock (&file->thumbnailer_mutex))
+    return;
+
+  if (thunar_file_get_thumb_state (file, size) == THUNAR_FILE_THUMB_STATE_UNKNOWN)
+    thunar_thumbnailer_queue_file (file->thumbnailer, file, &file->thumbnailer_request, size);
+
+  g_mutex_unlock (&file->thumbnailer_mutex);
 }
