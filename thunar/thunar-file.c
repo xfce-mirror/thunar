@@ -637,7 +637,7 @@ thunar_file_info_changed (ThunarxFileInfo *file_info)
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file_info));
 
-  for (gint i = 0; i < N_THUMBNAIL; i++)
+  for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
   {
     file->thumbnail_state[i] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
     g_free (file->thumbnail_path [i]);
@@ -925,6 +925,13 @@ thunar_file_info_clear (ThunarFile *file)
   if (file->collate_key_nocase != file->collate_key)
     g_free (file->collate_key_nocase);
   file->collate_key_nocase = NULL;
+
+  for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
+  {
+    file->thumbnail_state[i] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
+    g_free (file->thumbnail_path [i]);
+    file->thumbnail_path[i] = NULL;
+  }
 
   g_free (file->collate_key);
   file->collate_key = NULL;
