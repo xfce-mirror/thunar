@@ -2477,9 +2477,11 @@ thunar_file_get_user (const ThunarFile *file)
 const gchar *
 thunar_file_get_content_type (ThunarFile *file)
 {
+  gboolean initialized;
+
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
-  gboolean initialized = TRUE;
+  initialized = TRUE;
 
   g_mutex_lock (&file->content_type_mutex);
   if (G_UNLIKELY (file->content_type == NULL))
