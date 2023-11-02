@@ -127,9 +127,6 @@ static void         thunar_details_view_append_menu_items       (ThunarStandardV
 static void         thunar_details_view_highlight_option_changed(ThunarDetailsView      *details_view);
 static void         thunar_details_view_queue_redraw            (ThunarStandardView     *standard_view);
 static gboolean     thunar_details_view_toggle_expandable_folders(ThunarDetailsView     *details_view);
-static void         thunar_details_view_finished_thumbnailing   (ThunarThumbnailer      *thumbnailer,
-                                                                 guint                   request,
-                                                                 ThunarDetailsView      *view);
 static void         thunar_details_view_block_selection_changed (ThunarStandardView *standard_view);
 static void         thunar_details_view_unblock_selection_changed (ThunarStandardView *standard_view);
 
@@ -166,9 +163,6 @@ struct _ThunarDetailsView
   ExoTreeView       *tree_view;
 
   gboolean           expandable_folders;
-
-  ThunarThumbnailer *thumbnailer;
-  guint              thumbnail_request;
 };
 
 
@@ -411,14 +405,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                             G_CALLBACK (thunar_details_view_highlight_option_changed), details_view);
   thunar_details_view_highlight_option_changed (details_view);
 
-  details_view->thumbnailer = thunar_thumbnailer_get ();
-  details_view->thumbnail_request = 0;
-
-  /* queue a redraw when thumbnail loading is finished */
-  g_signal_connect (details_view->thumbnailer, "request-finished",
-                    G_CALLBACK (thunar_details_view_finished_thumbnailing),
-                    details_view);
-
   /* release the shared text renderers */
   g_object_unref (G_OBJECT (right_aligned_renderer));
   g_object_unref (G_OBJECT (left_aligned_renderer));
@@ -497,9 +483,6 @@ thunar_details_view_finalize (GObject *object)
 
   g_signal_handlers_disconnect_by_func (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences),
                                         thunar_details_view_highlight_option_changed, details_view);
-
-  g_signal_handlers_disconnect_by_func (G_OBJECT (details_view->thumbnailer),
-                                        thunar_details_view_finished_thumbnailing, details_view);
 
   (*G_OBJECT_CLASS (thunar_details_view_parent_class)->finalize) (object);
 }
@@ -1240,48 +1223,7 @@ thunar_details_view_row_expanded (GtkTreeView       *tree_view,
                                   ThunarDetailsView *view)
 {
   GtkTreeModel *model = gtk_tree_view_get_model (tree_view);
-  GtkTreeIter   child;
-  ThunarFile   *file = NULL;
-  GList        *files = NULL;
-  gboolean      has_next;
-
   thunar_tree_view_model_load_subdir (THUNAR_TREE_VIEW_MODEL (model), parent);
-
-  /* do nothing if we are not supposed to show thumbnails at all */
-  if (!thunar_icon_factory_get_show_thumbnail (THUNAR_STANDARD_VIEW (view)->icon_factory,
-                                               thunar_navigator_get_current_directory (THUNAR_NAVIGATOR(view))))
-    return;
-
-  if (thunar_view_get_loading (THUNAR_VIEW (view)))
-    return;
-
-  has_next = gtk_tree_model_iter_children (model, &child, parent);
-
-  /* StandardView only requests thumbnails for direct descendants of
-   * currently active folder in view.
-   * Therefore thumbnail requests for newly visible files from a row
-   * expansion need to be made here separately. */
-
-  while (has_next)
-    {
-      /* can return NULL but shouldn't here since the rows are visible so the
-       * files should have been loaded by now */
-      file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &child);
-      if (file != NULL)
-        files = g_list_prepend (files, file);
-      has_next = gtk_tree_model_iter_next (model, &child);
-    }
-
-  if (G_UNLIKELY (files == NULL))
-    return;
-
-  /* queue a thumbnail request */
-  thunar_thumbnailer_queue_files (view->thumbnailer,
-                                  TRUE, files, /* lazy: TRUE ? */
-                                  &view->thumbnail_request,
-                                  THUNAR_THUMBNAIL_SIZE_DEFAULT);
-
-  g_list_free_full (files, g_object_unref);
 }
 
 
@@ -1684,22 +1626,6 @@ thunar_details_view_toggle_expandable_folders (ThunarDetailsView *details_view)
   thunar_details_view_set_expandable_folders (details_view, !details_view->expandable_folders);
 
   return TRUE;
-}
-
-
-
-static void
-thunar_details_view_finished_thumbnailing (ThunarThumbnailer *thumbnailer,
-                                           guint              request,
-                                           ThunarDetailsView *view)
-{
-  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (view));
-
-  if (view->thumbnail_request == request)
-    {
-      view->thumbnail_request = 0;
-      thunar_details_view_queue_redraw (THUNAR_STANDARD_VIEW (view));
-    }
 }
 
 
