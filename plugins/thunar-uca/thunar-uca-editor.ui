@@ -361,7 +361,7 @@
                       <object class="GtkLabel" id="label5">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label">%f</property>
+                        <property name="label">%n</property>
                         <property name="xalign">0</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
@@ -377,7 +377,7 @@
                       <object class="GtkLabel" id="label6">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label">%F</property>
+                        <property name="label">%N</property>
                         <property name="xalign">0</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
@@ -425,7 +425,7 @@
                       <object class="GtkLabel" id="label9">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label">%n</property>
+                        <property name="label">%f</property>
                         <property name="xalign">0</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
@@ -441,7 +441,7 @@
                       <object class="GtkLabel" id="label10">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label">%N</property>
+                        <property name="label">%F</property>
                         <property name="xalign">0</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
@@ -457,7 +457,7 @@
                       <object class="GtkLabel" id="label11">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">the path to the first selected file or directory</property>
+                        <property name="label" translatable="yes">file name of the selected file</property>
                         <property name="xalign">0</property>
                         <attributes>
                           <attribute name="scale" value="0.80000000000000004"/>
@@ -472,7 +472,7 @@
                       <object class="GtkLabel" id="label12">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">the paths to all selected files and directories</property>
+                        <property name="label" translatable="yes">file names of all selected files</property>
                         <property name="xalign">0</property>
                         <attributes>
                           <attribute name="scale" value="0.80000000000000004"/>
@@ -487,7 +487,7 @@
                       <object class="GtkLabel" id="label13">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">directory containing the file that is passed in %f</property>
+                        <property name="label" translatable="yes">path of the selected file's directory</property>
                         <property name="xalign">0</property>
                         <attributes>
                           <attribute name="scale" value="0.80000000000000004"/>
@@ -502,7 +502,7 @@
                       <object class="GtkLabel" id="label14">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">directories containing the files that are passed in %F</property>
+                        <property name="label" translatable="yes">paths of all selected files' directories</property>
                         <property name="xalign">0</property>
                         <attributes>
                           <attribute name="scale" value="0.80000000000000004"/>
@@ -517,7 +517,7 @@
                       <object class="GtkLabel" id="label15">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">the first selected filename (without path)</property>
+                        <property name="label" translatable="yes">path of the selected file including the file name</property>
                         <property name="xalign">0</property>
                         <attributes>
                           <attribute name="scale" value="0.80000000000000004"/>
@@ -532,7 +532,7 @@
                       <object class="GtkLabel" id="label16">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">the selected filenames (without paths)</property>
+                        <property name="label" translatable="yes">paths of the selected files including the file names</property>
                         <property name="xalign">0</property>
                         <attributes>
                           <attribute name="scale" value="0.80000000000000004"/>
