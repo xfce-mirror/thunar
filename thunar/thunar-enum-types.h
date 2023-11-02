@@ -200,13 +200,12 @@ typedef enum
   THUNAR_THUMBNAIL_SIZE_LARGE,
   THUNAR_THUMBNAIL_SIZE_X_LARGE,
   THUNAR_THUMBNAIL_SIZE_XX_LARGE,
-  N_THUMBNAIL_SIZES,
+
   THUNAR_THUMBNAIL_SIZE_DEFAULT = -1
 } ThunarThumbnailSize;
 
-GType               thunar_thumbnail_size_get_type     (void)                               G_GNUC_CONST;
-const char*         thunar_thumbnail_size_get_nick     (ThunarThumbnailSize thumbnail_size) G_GNUC_CONST;
-ThunarThumbnailSize thunar_icon_size_to_thumbnail_size (ThunarIconSize      icon_size);
+GType       thunar_thumbnail_size_get_type (void)                               G_GNUC_CONST;
+const char* thunar_thumbnail_size_get_nick (ThunarThumbnailSize thumbnail_size) G_GNUC_CONST;
 
 
 #define THUNAR_TYPE_PARALLEL_COPY_MODE (thunar_parallel_copy_mode_get_type ())

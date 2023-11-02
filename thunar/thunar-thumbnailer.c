@@ -439,12 +439,12 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
       /* the icon factory only loads icons for regular files and folders */
       if (!thunar_file_is_regular (lp->data) && !thunar_file_is_directory (lp->data))
         {
-          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE, thumbnail_size);
+          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
           continue;
         }
 
       /* get the current thumb state */
-      thumb_state = thunar_file_get_thumb_state (lp->data, thumbnail_size);
+      thumb_state = thunar_file_get_thumb_state (lp->data);
 
       if (job->lazy_checks)
         {
@@ -465,7 +465,7 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
           if (max_size > 0 && thunar_file_get_size (lp->data) > max_size)
             continue;
 
-          supported_files = g_list_prepend (supported_files, g_object_ref (lp->data));
+          supported_files = g_list_prepend (supported_files, lp->data);
           n_items++;
         }
       else
@@ -476,9 +476,9 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
 
           /* test if a thumbnail can be found */
           if (thumbnail_path != NULL && g_file_test (thumbnail_path, G_FILE_TEST_EXISTS))
-            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_READY, thumbnail_size);
+            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_READY);
           else
-            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE, thumbnail_size);
+            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
         }
     }
 
@@ -493,7 +493,7 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
       for (lp = supported_files, n = 0; lp != NULL; lp = lp->next, ++n)
         {
           /* set the thumbnail state to loading */
-          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_LOADING, thumbnail_size);
+          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_LOADING);
 
           /* save URI and MIME hint in the arrays */
           uris[n] = thunar_file_dup_uri (lp->data);
@@ -532,12 +532,12 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
       g_free (mime_hints);
       g_strfreev (uris);
 
+      /* free the list of supported files */
+      g_list_free (supported_files);
+
       /* free the list of files passed in */
       g_list_free_full (job->files, g_object_unref);
       job->files = NULL;
-
-      /* we need to reload the files after the job is finished */
-      job->files = supported_files;
 
       /* we assume success if we've come so far */
       success = TRUE;
@@ -1029,13 +1029,13 @@ thunar_thumbnailer_idle_func (gpointer user_data)
             {
               /* set thumbnail state to none unless the thumbnail has already been created.
                * This is to prevent race conditions with the other idle functions */
-              if (thunar_file_get_thumb_state (file, idle->thumbnailer->thumbnail_size) != THUNAR_FILE_THUMB_STATE_READY)
-                thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_NONE, idle->thumbnailer->thumbnail_size);
+              if (thunar_file_get_thumb_state (file) != THUNAR_FILE_THUMB_STATE_READY)
+                thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_NONE);
             }
           else if (idle->type == THUNAR_THUMBNAILER_IDLE_READY)
             {
               /* set thumbnail state to ready - we now have a thumbnail */
-              thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_READY, idle->thumbnailer->thumbnail_size);
+              thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_READY);
             }
           else
             {
