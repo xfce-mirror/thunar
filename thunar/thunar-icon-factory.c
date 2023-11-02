@@ -1008,6 +1008,8 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
                   /* try to load the thumbnail */
                   icon = thunar_icon_factory_load_from_file (factory, thumbnail_path, icon_size, scale_factor);
                 }
+              else
+                thunar_file_request_thumbnail (file, thunar_icon_size_to_thumbnail_size (icon_size * scale_factor));
             }
         }
     }
