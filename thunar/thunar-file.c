@@ -194,6 +194,7 @@ struct _ThunarFile
   ThunarThumbnailSize   thumbnailer_request_size;
   guint                 thumbnailer_loading_timeout;
   GMutex                thumbnailer_mutex;
+  gboolean              requires_thumbnail_request;
 
   /* sorting */
   gchar                *collate_key;
@@ -415,6 +416,7 @@ thunar_file_init (ThunarFile *file)
   file->thumbnailer_request = 0;
   file->thumbnailer_loading_timeout = 0;
   file->thumbnailer_request_size = -1;
+  file->requires_thumbnail_request = TRUE;
   g_signal_connect_swapped (file->thumbnailer, "request-finished",
                             G_CALLBACK (thunar_file_thumbnailer_finished), file);
 }
@@ -636,6 +638,8 @@ thunar_file_info_changed (ThunarxFileInfo *file_info)
   /* set the new thumbnail state manually, so we only emit file
    * changed once */
   FLAG_SET_THUMB_STATE (file, THUNAR_FILE_THUMB_STATE_UNKNOWN);
+
+  file->requires_thumbnail_request = TRUE;
 
   /* tell the file monitor that this file changed */
   thunar_file_monitor_file_changed (file);
@@ -5280,17 +5284,18 @@ thunar_file_thumbnailer_finished (ThunarFile        *file,
   if (file->thumbnailer_request != request_id)
     return;
 
-  if (thunar_file_get_thumb_state (file) == THUNAR_FILE_THUMB_STATE_LOADING
-      && thunar_file_get_thumbnail_path (file, file->thumbnailer_request_size))
-    FLAG_SET_THUMB_STATE (file, THUNAR_FILE_THUMB_STATE_READY);
-
   file->thumbnailer_request = 0;
-  
   if (FLAG_GET_THUMB_STATE (file) == THUNAR_FILE_THUMB_STATE_READY)
     {
       thunar_icon_factory_clear_pixmap_cache (file);
+      FLAG_SET_THUMB_STATE (file, THUNAR_FILE_THUMB_STATE_UNKNOWN);
+      /* why does this not issue a icon_renderer render ? */
+      /* we need only cause a draw of the icons for this file */
+      /* this definitely causes a row_changed in model
+       * but not a re-render of the icon */
       /* trigger a row changed in the view model(s) */
       thunar_file_monitor_file_changed (file);
+      g_print ("%s\n", thunar_file_get_basename (file));
     }
 }
 
@@ -5302,12 +5307,10 @@ thunar_file_request_thumbnail (ThunarFile          *file,
 {
   gboolean success;
   
-  g_print ("%s\n", file->basename);
-
-  if (!g_mutex_trylock (&file->thumbnailer_mutex))
+  if (!g_mutex_trylock (&file->thumbnailer_mutex) || file->requires_thumbnail_request)
     return;
   
-  file->thumbnailer_request_size = size;
+  file->requires_thumbnail_request = FALSE;
   success = thunar_thumbnailer_queue_file (file->thumbnailer, file, &file->thumbnailer_request, size);
   if (!success)
     file->thumbnailer_request = 0;
