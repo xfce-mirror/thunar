@@ -191,6 +191,8 @@ struct _ThunarFile
 
   ThunarThumbnailer    *thumbnailer;
   guint                 thumbnailer_request;
+  ThunarThumbnailSize   thumbnailer_request_size;
+  guint                 thumbnailer_loading_timeout;
   GMutex                thumbnailer_mutex;
 
   /* sorting */
@@ -408,7 +410,13 @@ thunar_file_init (ThunarFile *file)
   file->file_count = 0;
   file->file_count_timestamp = 0;
   file->display_name = NULL;
-
+  
+  file->thumbnailer = thunar_thumbnailer_get ();
+  file->thumbnailer_request = 0;
+  file->thumbnailer_loading_timeout = 0;
+  file->thumbnailer_request_size = -1;
+  g_signal_connect_swapped (file->thumbnailer, "request-finished",
+                            G_CALLBACK (thunar_file_thumbnailer_finished), file);
 }
 
 
@@ -486,6 +494,9 @@ thunar_file_finalize (GObject *object)
   g_free (file->content_type);
   g_mutex_unlock (&file->content_type_mutex);
   g_mutex_clear (&file->content_type_mutex);
+
+  if (file->thumbnailer_loading_timeout != 0)
+    g_source_remove (file->thumbnailer_loading_timeout);
 
   g_free (file->icon_name);
 
@@ -907,13 +918,6 @@ thunar_file_info_clear (ThunarFile *file)
   if (file->collate_key_nocase != file->collate_key)
     g_free (file->collate_key_nocase);
   file->collate_key_nocase = NULL;
-
-  for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
-  {
-    file->thumbnail_state[i] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
-    g_free (file->thumbnail_path [i]);
-    file->thumbnail_path[i] = NULL;
-  }
 
   g_free (file->collate_key);
   file->collate_key = NULL;
@@ -1961,19 +1965,6 @@ thunar_file_rename (ThunarFile   *file,
               /* emit the file changed signal */
               thunar_file_changed (file);
             }
-        }
-
-      /* we need to also change thumb state since
-       * thumbnail paths are MD5 hashes of file uri;
-       * escentially we need to generate new thumbnails
-       * TODO: we just renamed, the thumbnail itself should
-       * have remained unaltered. Just rename the previous
-       * thumbnail to save on a new unnecessary thumbnail */
-      for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
-        {
-          file->thumbnail_state[i] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
-          g_free (file->thumbnail_path[i]);
-          file->thumbnail_path[i] = NULL;
         }
 
       g_object_unref (renamed_file);
@@ -3906,28 +3897,6 @@ thunar_file_get_thumbnail_path_forced (ThunarFile *file, ThunarThumbnailSize thu
 
 
 
-const gchar *
-thunar_file_get_thumbnail_path (ThunarFile         *file,
-                                ThunarThumbnailSize thumbnail_size)
-{
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-
-  /* if the thumbstate is known to be not there, return null */
-  if (thunar_file_get_thumb_state (file, thumbnail_size) == THUNAR_FILE_THUMB_STATE_NONE)
-    return NULL;
-
-  /* cache the real thumbnail path */
-  if (G_UNLIKELY (file->thumbnail_path[thumbnail_size] == NULL))
-    file->thumbnail_path[thumbnail_size] = thunar_file_get_thumbnail_path_real (file, thumbnail_size);
-
-  if (file->thumbnail_path[thumbnail_size] != NULL)
-    file->thumbnail_state[thumbnail_size] = THUNAR_FILE_THUMB_STATE_READY;
-
-  return file->thumbnail_path[thumbnail_size];
-}
-
-
-
 /**
  * thunar_file_get_thumb_state:
  * @file : a #ThunarFile.
@@ -5311,10 +5280,18 @@ thunar_file_thumbnailer_finished (ThunarFile        *file,
   if (file->thumbnailer_request != request_id)
     return;
 
+  if (thunar_file_get_thumb_state (file) == THUNAR_FILE_THUMB_STATE_LOADING
+      && thunar_file_get_thumbnail_path (file, file->thumbnailer_request_size))
+    FLAG_SET_THUMB_STATE (file, THUNAR_FILE_THUMB_STATE_READY);
+
   file->thumbnailer_request = 0;
-  thunar_icon_factory_clear_pixmap_cache (file);
-  /* trigger a row changed in the view model(s) */
-  thunar_file_monitor_file_changed (file);
+  
+  if (FLAG_GET_THUMB_STATE (file) == THUNAR_FILE_THUMB_STATE_READY)
+    {
+      thunar_icon_factory_clear_pixmap_cache (file);
+      /* trigger a row changed in the view model(s) */
+      thunar_file_monitor_file_changed (file);
+    }
 }
 
 
@@ -5323,11 +5300,17 @@ void
 thunar_file_request_thumbnail (ThunarFile          *file,
                                ThunarThumbnailSize  size)
 {
+  gboolean success;
+  
+  g_print ("%s\n", file->basename);
+
   if (!g_mutex_trylock (&file->thumbnailer_mutex))
     return;
-
-  if (thunar_file_get_thumb_state (file, size) == THUNAR_FILE_THUMB_STATE_UNKNOWN)
-    thunar_thumbnailer_queue_file (file->thumbnailer, file, &file->thumbnailer_request, size);
+  
+  file->thumbnailer_request_size = size;
+  success = thunar_thumbnailer_queue_file (file->thumbnailer, file, &file->thumbnailer_request, size);
+  if (!success)
+    file->thumbnailer_request = 0;
 
   g_mutex_unlock (&file->thumbnailer_mutex);
->>>>>>> External Changes
+}
