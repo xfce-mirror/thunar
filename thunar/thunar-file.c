@@ -5295,7 +5295,6 @@ thunar_file_thumbnailer_finished (ThunarFile        *file,
        * but not a re-render of the icon */
       /* trigger a row changed in the view model(s) */
       thunar_file_monitor_file_changed (file);
-      g_print ("%s\n", thunar_file_get_basename (file));
     }
 }
 
