@@ -706,58 +706,58 @@ thunar_folder_monitor (GFileMonitor     *monitor,
   _thunar_return_if_fail (folder->monitor == monitor);
   _thunar_return_if_fail (THUNAR_IS_FILE (folder->corresponding_file));
   _thunar_return_if_fail (G_IS_FILE (event_file));
-  
+
   if (event_file == thunar_file_get_file (folder->corresponding_file))
     file = folder->corresponding_file;
   else
     file = g_hash_table_lookup (folder->files_map, event_file);
-  
+
   switch (event_type)
   {
     case G_FILE_MONITOR_EVENT_MOVED_IN:
       if (g_hash_table_contains (folder->files_map, other_file))
-      {
-        old = g_hash_table_lookup (folder->files_map, other_file);
-        thunar_file_destroy (old);
-        g_hash_table_remove (folder->files_map, other_file);
-      }
+        {
+          old = g_hash_table_lookup (folder->files_map, other_file);
+          thunar_file_destroy (old);
+          g_hash_table_remove (folder->files_map, other_file);
+        }
       if (!g_hash_table_contains (folder->files_map, event_file) && file == NULL)
-      {
-        file = thunar_file_get (event_file, NULL);
-        g_hash_table_insert (folder->files_map, g_object_ref (event_file), file);
-        
-        list.data = file;
-        list.next = NULL;
-        list.prev = NULL;
-        
-        g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, list);
-      }
+        {
+          file = thunar_file_get (event_file, NULL);
+          g_hash_table_insert (folder->files_map, g_object_ref (event_file), file);
+
+          list.data = file;
+          list.next = NULL;
+          list.prev = NULL;
+
+          g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, list);
+        }
       break;
-    
+
     case G_FILE_MONITOR_EVENT_MOVED_OUT:
       if (file)
         thunar_file_destroy (file);
       break;
-    
+
     case G_FILE_MONITOR_EVENT_RENAMED:
       renamed_file = thunar_file_get (other_file, NULL);
       if (file != NULL && file != renamed_file)
         thunar_file_destroy (file);
       if (file == NULL || file != renamed_file)
-      {
-        g_hash_table_insert (folder->files_map, g_object_ref (other_file), renamed_file);
-      
-        list.data = renamed_file;
-        list.next = NULL;
-        list.prev = NULL;
-        
-        g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, list);
-      }
+        {
+          g_hash_table_insert (folder->files_map, g_object_ref (other_file), renamed_file);
+
+          list.data = renamed_file;
+          list.next = NULL;
+          list.prev = NULL;
+
+          g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, list);
+        }
       break;
-    
+
     default:
-    if (file)
-      thunar_file_reload (file);
+      if (file)
+        thunar_file_reload (file);
   }
 }
 
