@@ -2621,8 +2621,7 @@ thunar_tree_view_model_cleanup_model (ThunarTreeViewModel *model)
 
       THUNAR_WARN_VOID_RETURN (_node == NULL || _node->dir == NULL);
 
-      g_signal_handlers_disconnect_matched (G_OBJECT (_node->dir), G_SIGNAL_MATCH_DATA,
-                                            0, 0, NULL, NULL, _node);
+      g_signal_handlers_disconnect_by_data (G_OBJECT (_node->dir), _node);
       g_object_unref (_node->dir);
       _node->dir = NULL;
     }
