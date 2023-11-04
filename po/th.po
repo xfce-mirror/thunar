@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-28 00:45+0200\n"
+"POT-Creation-Date: 2023-11-04 12:45+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Theppitak Karoonboonyanan <theppitak@gmail.com>, 2014-2015,2017,2019,2021\n"
 "Language-Team: Thai (http://app.transifex.com/xfce/thunar/language/th/)\n"
@@ -53,7 +53,7 @@ msgid "Open With Other _Application..."
 msgstr "เปิดด้วยแ_อปพลิเคชันอื่น..."
 
 #: ../thunar/thunar-action-manager.c:274
-#: ../thunar/thunar-action-manager.c:3303
+#: ../thunar/thunar-action-manager.c:3304
 msgid "Choose another application with which to open the selected file"
 msgstr "เลือกแอปพลิเคชันอื่นเพื่อใช้เปิดแฟ้มที่เลือก"
 
@@ -286,7 +286,7 @@ msgstr[0] "เปิดหน้าต่างใหม่ %d บาน"
 #: ../thunar/thunar-dnd.c:173 ../thunar/thunar-permissions-chooser.c:559
 #: ../thunar/thunar-permissions-chooser.c:1170
 #: ../thunar/thunar-properties-dialog.c:1179
-#: ../thunar/thunar-renamer-dialog.c:1045
+#: ../thunar/thunar-renamer-dialog.c:1074
 #: ../thunar/thunar-renamer-progress.c:181
 #: ../thunar/thunar-renamer-progress.c:191
 #: ../plugins/thunar-sendto-email/main.c:223
@@ -318,7 +318,7 @@ msgstr "เปิด \"%s\" ไม่สำเร็จ"
 #: ../thunar/thunar-action-manager.c:1574
 #: ../thunar/thunar-chooser-dialog.c:890
 #: ../thunar/thunar-chooser-dialog.c:1301 ../thunar/thunar-dialogs.c:1360
-#: ../thunar/thunar-renamer-dialog.c:1046
+#: ../thunar/thunar-renamer-dialog.c:1075
 #: ../plugins/thunar-uca/thunar-uca-editor.c:181
 msgid "_Open"
 msgstr "_เปิด"
@@ -517,7 +517,7 @@ msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "เปิดแฟ้มที่เลือกด้วยแอปพลิเคชันปริยาย"
 
-#: ../thunar/thunar-action-manager.c:3302
+#: ../thunar/thunar-action-manager.c:3303
 #: ../thunar/thunar-chooser-dialog.c:187
 msgid "Open With"
 msgstr "เปิดด้วย"
@@ -705,7 +705,7 @@ msgstr "กำลังสร้างโฟลเดอร์..."
 msgid "Remove all files and folders from the Trash?"
 msgstr "จะลบแฟ้มและโฟลเดอร์ทั้งหมดออกจากถังขยะหรือไม่?"
 
-#: ../thunar/thunar-application.c:2707 ../thunar/thunar-window.c:1039
+#: ../thunar/thunar-application.c:2707 ../thunar/thunar-window.c:1047
 msgid "Empty Trash"
 msgstr ""
 
@@ -792,7 +792,7 @@ msgstr "ใช้เป็นค่า_ปริยายสำหรับแ�
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1301
-#: ../thunar/thunar-properties-dialog.c:1180 ../thunar/thunar-window.c:4403
+#: ../thunar/thunar-properties-dialog.c:1180 ../thunar/thunar-window.c:4434
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -900,7 +900,7 @@ msgid "Select an Application"
 msgstr "เลือกแอปพลิเคชัน"
 
 #: ../thunar/thunar-chooser-dialog.c:896
-#: ../thunar/thunar-renamer-dialog.c:1053
+#: ../thunar/thunar-renamer-dialog.c:1082
 #: ../plugins/thunar-uca/thunar-uca-editor.c:188
 msgid "All Files"
 msgstr "ทุกแฟ้ม"
@@ -966,8 +966,8 @@ msgstr "ไม่มีสิ่งใดในคลิปบอร์ดที
 #. add a regular close button, the header bar already provides one
 #: ../thunar/thunar-column-editor.c:158 ../thunar/thunar-dialogs.c:1058
 #: ../thunar/thunar-preferences-dialog.c:273
-#: ../thunar/thunar-properties-dialog.c:319
-#: ../thunar/thunar-renamer-dialog.c:357
+#: ../thunar/thunar-properties-dialog.c:322
+#: ../thunar/thunar-renamer-dialog.c:382
 #: ../thunar/thunar-renamer-progress.c:198
 #: ../thunar/thunar-toolbar-editor.c:121
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:132
@@ -981,8 +981,8 @@ msgstr "ตั้งคอลัมน์ต่างๆ ในมุมมอ�
 #. add the "Help" button
 #: ../thunar/thunar-column-editor.c:164
 #: ../thunar/thunar-preferences-dialog.c:281
-#: ../thunar/thunar-properties-dialog.c:318
-#: ../thunar/thunar-toolbar-editor.c:128 ../thunar/thunar-window.c:544
+#: ../thunar/thunar-properties-dialog.c:321
+#: ../thunar/thunar-toolbar-editor.c:128 ../thunar/thunar-window.c:552
 msgid "_Help"
 msgstr "_วิธีใช้"
 
@@ -1051,11 +1051,11 @@ msgstr ""
 
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:876 ../thunar/thunar-list-model.c:933
-#: ../thunar/thunar-list-model.c:969
+#: ../thunar/thunar-column-model.c:876 ../thunar/thunar-list-model.c:916
+#: ../thunar/thunar-list-model.c:952
 #: ../thunar/thunar-permissions-chooser.c:232
 #: ../thunar/thunar-size-label.c:382 ../thunar/thunar-size-label.c:463
-#: ../thunar/thunar-util.c:425 ../thunar/thunar-util.c:428
+#: ../thunar/thunar-util.c:428 ../thunar/thunar-util.c:431
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:711
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:293
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:294
@@ -1103,27 +1103,27 @@ msgstr "จำนวนชื่อแฟ้มต้นทางและปล
 msgid "A destination directory must be specified"
 msgstr "ต้องระบุไดเรกทอรีปลายทาง"
 
-#: ../thunar/thunar-details-view.c:176
+#: ../thunar/thunar-details-view.c:172
 msgid "Configure _Columns..."
 msgstr "ตั้งค่า_คอลัมน์..."
 
-#: ../thunar/thunar-details-view.c:176
+#: ../thunar/thunar-details-view.c:172
 msgid "Configure the columns in the detailed list view"
 msgstr "ตั้งค่าคอลัมน์ต่างๆ ในมุมมองรายชื่อแบบละเอียด"
 
-#: ../thunar/thunar-details-view.c:177
-msgid "Enable E_xpandable Folders"
+#: ../thunar/thunar-details-view.c:173
+msgid "E_xpandable Folders"
 msgstr ""
 
-#: ../thunar/thunar-details-view.c:177
+#: ../thunar/thunar-details-view.c:173
 msgid "Allow tree like expansion of folders"
 msgstr ""
 
-#: ../thunar/thunar-details-view.c:516
+#: ../thunar/thunar-details-view.c:503
 msgid "Detailed directory listing"
 msgstr "การแสดงเนื้อหาไดเรกทอรีแบบละเอียด"
 
-#: ../thunar/thunar-details-view.c:517
+#: ../thunar/thunar-details-view.c:504
 msgid "Details view"
 msgstr "มุมมองแบบละเอียด"
 
@@ -1164,7 +1164,7 @@ msgid "Rename \"%s\""
 msgstr "เปลี่ยนชื่อ \"%s\""
 
 #. add the "Rename" button
-#: ../thunar/thunar-dialogs.c:262 ../thunar/thunar-renamer-dialog.c:361
+#: ../thunar/thunar-dialogs.c:262 ../thunar/thunar-renamer-dialog.c:386
 msgid "_Rename"
 msgstr "เ_ปลี่ยนชื่อ"
 
@@ -1277,12 +1277,12 @@ msgstr "คุณต้องการแทนที่แฟ้มที่ม
 
 #. Fourth box (size)
 #: ../thunar/thunar-dialogs.c:933 ../thunar/thunar-dialogs.c:980
-#: ../thunar/thunar-properties-dialog.c:635
+#: ../thunar/thunar-properties-dialog.c:638
 msgid "Size:"
 msgstr "ขนาด:"
 
 #: ../thunar/thunar-dialogs.c:933 ../thunar/thunar-dialogs.c:980
-#: ../thunar/thunar-properties-dialog.c:588
+#: ../thunar/thunar-properties-dialog.c:591
 msgid "Modified:"
 msgstr "เปลี่ยนแปลง:"
 
@@ -1400,295 +1400,294 @@ msgstr "_ย้ายมาที่นี่"
 msgid "_Link Here"
 msgstr "เ_ชื่อมโยงมาที่นี่"
 
-#: ../thunar/thunar-enum-types.c:88
+#: ../thunar/thunar-enum-types.c:87
 msgid "Name only"
 msgstr "ชื่อเท่านั้น"
 
-#: ../thunar/thunar-enum-types.c:89
+#: ../thunar/thunar-enum-types.c:88
 msgid "Extension only"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:90
+#: ../thunar/thunar-enum-types.c:89
 msgid "Name and Extension"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:141
+#: ../thunar/thunar-enum-types.c:140
 msgid "Date Created"
 msgstr "เวลาที่สร้าง"
 
-#: ../thunar/thunar-enum-types.c:142
+#: ../thunar/thunar-enum-types.c:141
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:137
 msgid "Date Accessed"
 msgstr "เวลาเข้าถึง"
 
-#: ../thunar/thunar-enum-types.c:143
+#: ../thunar/thunar-enum-types.c:142
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:138
 msgid "Date Modified"
 msgstr "เวลาแก้ไข"
 
-#: ../thunar/thunar-enum-types.c:144
+#: ../thunar/thunar-enum-types.c:143
 msgid "Date Deleted"
 msgstr "เวลาที่ลบ"
 
-#: ../thunar/thunar-enum-types.c:145
+#: ../thunar/thunar-enum-types.c:144
 msgid "Recency"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:146
+#: ../thunar/thunar-enum-types.c:145
 msgid "Location"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:147
+#: ../thunar/thunar-enum-types.c:146
 msgid "Group"
 msgstr "กลุ่ม"
 
-#: ../thunar/thunar-enum-types.c:148
+#: ../thunar/thunar-enum-types.c:147
 msgid "MIME Type"
 msgstr "ชนิด MIME"
 
-#: ../thunar/thunar-enum-types.c:149 ../thunar/thunar-renamer-dialog.c:418
+#: ../thunar/thunar-enum-types.c:148 ../thunar/thunar-renamer-dialog.c:443
 #: ../thunarx/thunarx-renamer.c:166
 msgid "Name"
 msgstr "ชื่อ"
 
-#: ../thunar/thunar-enum-types.c:150
+#: ../thunar/thunar-enum-types.c:149
 msgid "Owner"
 msgstr "เจ้าของ"
 
 #. Permissions chooser
-#: ../thunar/thunar-enum-types.c:151 ../thunar/thunar-properties-dialog.c:904
+#: ../thunar/thunar-enum-types.c:150 ../thunar/thunar-properties-dialog.c:910
 msgid "Permissions"
 msgstr "การกำหนดสิทธิ์"
 
-#: ../thunar/thunar-enum-types.c:152 ../thunar/thunar-statusbar.c:81
+#: ../thunar/thunar-enum-types.c:151 ../thunar/thunar-statusbar.c:81
 msgid "Size"
 msgstr "ขนาด"
 
-#: ../thunar/thunar-enum-types.c:153
+#: ../thunar/thunar-enum-types.c:152
 msgid "Size in Bytes"
 msgstr "ขนาดเป็นไบต์"
 
-#: ../thunar/thunar-enum-types.c:154
+#: ../thunar/thunar-enum-types.c:153
 msgid "Type"
 msgstr "ชนิด"
 
-#: ../thunar/thunar-enum-types.c:155
+#: ../thunar/thunar-enum-types.c:154
 msgid "File"
 msgstr "แฟ้ม"
 
-#: ../thunar/thunar-enum-types.c:156
+#: ../thunar/thunar-enum-types.c:155
 msgid "File Name"
 msgstr "ชื่อแฟ้ม"
 
-#: ../thunar/thunar-enum-types.c:637 ../thunar/thunar-enum-types.c:660
-#: ../thunar/thunar-enum-types.c:786 ../thunar/thunar-preferences-dialog.c:416
+#: ../thunar/thunar-enum-types.c:636 ../thunar/thunar-enum-types.c:659
+#: ../thunar/thunar-enum-types.c:785 ../thunar/thunar-preferences-dialog.c:416
 #: ../thunar/thunar-preferences-dialog.c:1068
 #: ../thunar/thunar-preferences-dialog.c:1174
 #: ../thunar/thunar-preferences-dialog.c:1262
 msgid "Never"
 msgstr "ไม่เลย"
 
-#: ../thunar/thunar-enum-types.c:638 ../thunar/thunar-enum-types.c:661
+#: ../thunar/thunar-enum-types.c:637 ../thunar/thunar-enum-types.c:660
 msgid "Only for remote location"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:639 ../thunar/thunar-enum-types.c:662
-#: ../thunar/thunar-enum-types.c:788 ../thunar/thunar-preferences-dialog.c:418
+#: ../thunar/thunar-enum-types.c:638 ../thunar/thunar-enum-types.c:661
+#: ../thunar/thunar-enum-types.c:787 ../thunar/thunar-preferences-dialog.c:418
 #: ../thunar/thunar-preferences-dialog.c:1064
 #: ../thunar/thunar-preferences-dialog.c:1173
 #: ../thunar/thunar-preferences-dialog.c:1263
 msgid "Always"
 msgstr "เสมอ"
 
-#: ../thunar/thunar-enum-types.c:718
+#: ../thunar/thunar-enum-types.c:717
 msgid "Copy"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:719
+#: ../thunar/thunar-enum-types.c:718
 msgid "Move"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:720
+#: ../thunar/thunar-enum-types.c:719
 msgid "Rename"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:721
+#: ../thunar/thunar-enum-types.c:720
 msgid "Create File"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:722
+#: ../thunar/thunar-enum-types.c:721
 msgid "Create Folder"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:723
+#: ../thunar/thunar-enum-types.c:722
 msgid "Delete (opposite of create)"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:724 ../thunar/thunar-file.c:1016
-#: ../thunar/thunar-gio-extensions.c:490
+#: ../thunar/thunar-enum-types.c:723 ../thunar/thunar-file.c:1047
+#: ../thunar/thunar-gio-extensions.c:492
 #: ../thunar/thunar-shortcuts-model.c:1127 ../thunar.desktop.in.in.h:7
 msgid "Trash"
 msgstr "ถังขยะ"
 
-#: ../thunar/thunar-enum-types.c:725
+#: ../thunar/thunar-enum-types.c:724
 msgid "Restore (opposite of trash)"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:726
+#: ../thunar/thunar-enum-types.c:725
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:534
 msgid "Link"
 msgstr "ลิงก์"
 
-#: ../thunar/thunar-enum-types.c:727
+#: ../thunar/thunar-enum-types.c:726
 msgid "Unlink"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:746
+#: ../thunar/thunar-enum-types.c:745
 msgid "Log operations"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:747
+#: ../thunar/thunar-enum-types.c:746
 msgid "Log no operations"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:748
+#: ../thunar/thunar-enum-types.c:747
 msgid "Log only timestamps"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:767
+#: ../thunar/thunar-enum-types.c:766
 msgid "Standalone"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:768
+#: ../thunar/thunar-enum-types.c:767
 msgid "Embedded"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:787
+#: ../thunar/thunar-enum-types.c:786
 msgid "Only for local files"
 msgstr ""
 
-#: ../thunar/thunar-file.c:1023 ../thunar/thunar-gio-extensions.c:488
-#: ../thunar/thunar-shortcuts-model.c:1009 ../thunar/thunar-window.c:532
+#: ../thunar/thunar-file.c:1054 ../thunar/thunar-gio-extensions.c:490
+#: ../thunar/thunar-shortcuts-model.c:1009 ../thunar/thunar-window.c:540
 msgid "File System"
 msgstr "ระบบแฟ้ม"
 
-#: ../thunar/thunar-file.c:1480
+#: ../thunar/thunar-file.c:1511
 #, c-format
 msgid "The root folder has no parent"
 msgstr "โฟลเดอร์รากไม่มีโฟลเดอร์แม่"
 
-#: ../thunar/thunar-file.c:1578
+#: ../thunar/thunar-file.c:1609
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "แจงแฟ้มเดสก์ท็อปไม่สำเร็จ: %s"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1591
+#: ../thunar/thunar-file.c:1622
 msgid "Untrusted application launcher"
 msgstr "ตัวเรียกแอปพลิเคชันไม่น่าเชื่อถือ"
 
-#: ../thunar/thunar-file.c:1622
+#: ../thunar/thunar-file.c:1653
 #, c-format
 msgid "No Exec field specified"
 msgstr "ไม่ได้ระบุช่องข้อมูล Exec"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1631
+#: ../thunar/thunar-file.c:1662
 msgid "Untrusted link launcher"
 msgstr "ตัวเรียกลิงก์ไม่น่าเชื่อถือ"
 
-#: ../thunar/thunar-file.c:1647
+#: ../thunar/thunar-file.c:1678
 #, c-format
 msgid "No URL field specified"
 msgstr "ไม่ได้ระบุช่องข้อมูล URL"
 
-#: ../thunar/thunar-file.c:1652
+#: ../thunar/thunar-file.c:1683
 msgid "Invalid desktop file"
 msgstr "แฟ้มเดสก์ท็อปใช้การไม่ได้"
 
-#: ../thunar/thunar-file.c:2576 ../thunar/thunar-list-model.c:3090
-#: ../thunar/thunar-tree-view-model.c:3860
+#: ../thunar/thunar-file.c:2547 ../thunar/thunar-standard-view-model.c:673
 #, c-format
 msgid "link to %s"
 msgstr "จุดเชื่อมไปยัง %s"
 
 #. Implementation specific
-#: ../thunar/thunar-gio-extensions.c:59
+#: ../thunar/thunar-gio-extensions.c:60
 msgid "iPod touch"
 msgstr "ไอพอดทัช"
 
-#: ../thunar/thunar-gio-extensions.c:60
+#: ../thunar/thunar-gio-extensions.c:61
 msgid "iPad"
 msgstr "ไอแพด"
 
-#: ../thunar/thunar-gio-extensions.c:61
+#: ../thunar/thunar-gio-extensions.c:62
 msgid "iPhone"
 msgstr "ไอโฟน"
 
-#: ../thunar/thunar-gio-extensions.c:62
+#: ../thunar/thunar-gio-extensions.c:63
 msgid "Solid State Drive"
 msgstr "ไดรว์แบบโซลิดสเตต"
 
-#: ../thunar/thunar-gio-extensions.c:63
+#: ../thunar/thunar-gio-extensions.c:64
 msgid "System Drive"
 msgstr "ไดรว์ระบบ"
 
-#: ../thunar/thunar-gio-extensions.c:64 ../thunar/thunar-gio-extensions.c:65
+#: ../thunar/thunar-gio-extensions.c:65 ../thunar/thunar-gio-extensions.c:66
 msgid "USB Drive"
 msgstr "ไดรว์ USB"
 
 #. Freedesktop icon-naming-spec
-#: ../thunar/thunar-gio-extensions.c:68
+#: ../thunar/thunar-gio-extensions.c:69
 msgid "Camera"
 msgstr "กล้องถ่ายรูป"
 
-#: ../thunar/thunar-gio-extensions.c:69
+#: ../thunar/thunar-gio-extensions.c:70
 msgid "Harddisk"
 msgstr "ฮาร์ดดิสก์"
 
-#: ../thunar/thunar-gio-extensions.c:70
+#: ../thunar/thunar-gio-extensions.c:71
 msgid "Optical Drive"
 msgstr "ไดรว์แบบออปติคัล"
 
-#: ../thunar/thunar-gio-extensions.c:71
+#: ../thunar/thunar-gio-extensions.c:72
 msgid "Removable Drive"
 msgstr "ไดรว์ถอดเสียบ"
 
-#: ../thunar/thunar-gio-extensions.c:72
+#: ../thunar/thunar-gio-extensions.c:73
 msgid "Flash Drive"
 msgstr "แฟลชไดรว์"
 
-#: ../thunar/thunar-gio-extensions.c:73
+#: ../thunar/thunar-gio-extensions.c:74
 msgid "Floppy"
 msgstr "ฟลอปปี้"
 
-#: ../thunar/thunar-gio-extensions.c:74
+#: ../thunar/thunar-gio-extensions.c:75
 msgid "Optical Media"
 msgstr "สื่อออปติคัล"
 
-#: ../thunar/thunar-gio-extensions.c:75
+#: ../thunar/thunar-gio-extensions.c:76
 msgid "Tape"
 msgstr "เทป"
 
-#: ../thunar/thunar-gio-extensions.c:76
+#: ../thunar/thunar-gio-extensions.c:77
 msgid "Multimedia Player"
 msgstr "เครื่องเล่นสื่อผสม"
 
-#: ../thunar/thunar-gio-extensions.c:77
+#: ../thunar/thunar-gio-extensions.c:78
 msgid "PDA"
 msgstr "PDA"
 
-#: ../thunar/thunar-gio-extensions.c:78
+#: ../thunar/thunar-gio-extensions.c:79
 msgid "Phone"
 msgstr "โทรศัพท์"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:570
+#: ../thunar/thunar-gio-extensions.c:572
 #, c-format
 msgid "%s on %s"
 msgstr "%s ที่ %s"
 
-#: ../thunar/thunar-gio-extensions.c:681
+#: ../thunar/thunar-gio-extensions.c:683
 #, c-format
 msgid "%s used (%.0f%%)  |  %s free (%.0f%%)"
 msgstr ""
@@ -1710,48 +1709,48 @@ msgstr "การแสดงเนื้อหาไดเรกทอรีแ
 msgid "Icon view"
 msgstr "มุมมองแบบไอคอน"
 
-#: ../thunar/thunar-io-jobs.c:112
+#: ../thunar/thunar-io-jobs.c:114
 #, c-format
 msgid "Error removing file: %s"
 msgstr "เกิดข้อผิดพลาดขณะลบแฟ้ม: %s"
 
-#: ../thunar/thunar-io-jobs.c:222 ../thunar/thunar-io-jobs.c:401
+#: ../thunar/thunar-io-jobs.c:224 ../thunar/thunar-io-jobs.c:403
 #, c-format
 msgid "The file \"%s\" already exists"
 msgstr "แฟ้ม \"%s\" มีอยู่ก่อนแล้ว"
 
-#: ../thunar/thunar-io-jobs.c:245
+#: ../thunar/thunar-io-jobs.c:247
 #, c-format
 msgid "Failed to create empty file \"%s\": %s"
 msgstr "สร้างแฟ้มเปล่า \"%s\" ไม่สำเร็จ: %s"
 
-#: ../thunar/thunar-io-jobs.c:424
+#: ../thunar/thunar-io-jobs.c:426
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
 msgstr "สร้างโฟลเดอร์ \"%s\" ไม่สำเร็จ: %s"
 
 #. tell the user that we're preparing to unlink the files
-#: ../thunar/thunar-io-jobs.c:508
+#: ../thunar/thunar-io-jobs.c:510
 msgid "Preparing..."
 msgstr "กำลังเตรียมการ..."
 
-#: ../thunar/thunar-io-jobs.c:586
+#: ../thunar/thunar-io-jobs.c:588
 #, c-format
 msgid "Could not delete file \"%s\": %s"
 msgstr "ไม่สามารถลบแฟ้ม \"%s\": %s"
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:1059
+#: ../thunar/thunar-io-jobs.c:1061
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "เปลี่ยนเจ้าของของ \"%s\" ไม่สำเร็จ: %s"
 
-#: ../thunar/thunar-io-jobs.c:1060
+#: ../thunar/thunar-io-jobs.c:1062
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "เปลี่ยนกลุ่มของ \"%s\" ไม่สำเร็จ: %s"
 
-#: ../thunar/thunar-io-jobs.c:1215
+#: ../thunar/thunar-io-jobs.c:1217
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "เปลี่ยนการกำหนดสิทธิ์ของ \"%s\" ไม่สำเร็จ: %s"
@@ -1806,8 +1805,8 @@ msgid ""
 "space."
 msgstr "มีเนื้อที่ว่างไม่พอที่แหล่งปลายทาง ลองลบแฟ้มบางแฟ้มดูเพื่อเพิ่มที่ว่าง"
 
-#: ../thunar/thunar-job-operation.c:779 ../thunar/thunar-list-model.c:2941
-#: ../thunar/thunar-size-label.c:473 ../thunar/thunar-tree-view-model.c:3716
+#: ../thunar/thunar-job-operation.c:779 ../thunar/thunar-size-label.c:472
+#: ../thunar/thunar-standard-view-model.c:513
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -1893,7 +1892,7 @@ msgstr ""
 msgid "Undo the latest '%s' operation (%s)"
 msgstr ""
 
-#: ../thunar/thunar-job-operation-history.c:566 ../thunar/thunar-window.c:496
+#: ../thunar/thunar-job-operation-history.c:566 ../thunar/thunar-window.c:504
 msgid "Undo the latest operation"
 msgstr ""
 
@@ -1903,95 +1902,17 @@ msgstr ""
 msgid "Redo the latest '%s' operation (%s)"
 msgstr ""
 
-#: ../thunar/thunar-job-operation-history.c:591 ../thunar/thunar-window.c:497
+#: ../thunar/thunar-job-operation-history.c:591 ../thunar/thunar-window.c:505
 msgid "Redo the latest operation"
 msgstr ""
 
-#: ../thunar/thunar-list-model.c:1000 ../thunar/thunar-list-model.c:1010
-#: ../thunar/thunar-tree-view-model.c:1205
-#: ../thunar/thunar-tree-view-model.c:1215
+#: ../thunar/thunar-list-model.c:983 ../thunar/thunar-list-model.c:993
+#: ../thunar/thunar-tree-view-model.c:1303
+#: ../thunar/thunar-tree-view-model.c:1313
 #, c-format
 msgid "%u item"
 msgid_plural "%u items"
 msgstr[0] ""
-
-#: ../thunar/thunar-list-model.c:2935 ../thunar/thunar-tree-view-model.c:3710
-#, c-format
-msgid "%d file: %s"
-msgid_plural "%d files: %s"
-msgstr[0] "%d แฟ้ม: %s"
-
-#: ../thunar/thunar-list-model.c:2946 ../thunar/thunar-size-label.c:472
-#: ../thunar/thunar-tree-view-model.c:3721
-#, c-format
-msgid "%d folder"
-msgid_plural "%d folders"
-msgstr[0] "%d โฟลเดอร์"
-
-#: ../thunar/thunar-list-model.c:2952 ../thunar/thunar-tree-view-model.c:3727
-#, c-format
-msgid "0 items"
-msgstr "0 รายการ"
-
-#: ../thunar/thunar-list-model.c:2961 ../thunar/thunar-list-model.c:3138
-#: ../thunar/thunar-tree-view-model.c:3736
-#: ../thunar/thunar-tree-view-model.c:3908
-#, c-format
-msgid "Last Modified: %s"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3046 ../thunar/thunar-tree-view-model.c:3819
-#, c-format
-msgid "Free space: %s"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3067
-#, c-format
-msgid "\"%s\" (%s)"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3069 ../thunar/thunar-tree-view-model.c:3839
-#, c-format
-msgid "\"%s\""
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3088 ../thunar/thunar-tree-view-model.c:3858
-msgid "broken link"
-msgstr "จุดเชื่อมเสีย"
-
-#: ../thunar/thunar-list-model.c:3092 ../thunar/thunar-tree-view-model.c:3862
-msgid "shortcut"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3094 ../thunar/thunar-tree-view-model.c:3864
-msgid "mountable"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3098 ../thunar/thunar-tree-view-model.c:3868
-#, c-format
-msgid "%s"
-msgstr ""
-
-#. TRANSLATORS: Try to come up with a short translation of "Original Path"
-#. (which is the path
-#. * where the trashed file/folder was located before it was moved to the
-#. trash), otherwise the
-#. * properties dialog width will be messed up.
-#: ../thunar/thunar-list-model.c:3110 ../thunar/thunar-properties-dialog.c:478
-#: ../thunar/thunar-tree-view-model.c:3880
-msgid "Original Path:"
-msgstr "พาธเดิม:"
-
-#. append the image dimensions to the statusbar text
-#: ../thunar/thunar-list-model.c:3128 ../thunar/thunar-tree-view-model.c:3898
-#: ../plugins/thunar-apr/thunar-apr-image-page.c:153
-msgid "Image Size:"
-msgstr "ขนาดภาพ:"
-
-#: ../thunar/thunar-list-model.c:3153 ../thunar/thunar-tree-view-model.c:3923
-#, c-format
-msgid "Selection: %s"
-msgstr "รายการที่เลือก: %s"
 
 #: ../thunar/thunar-location-entry.c:338
 #, c-format
@@ -2459,7 +2380,7 @@ msgstr "ช่องโครงสร้างต้นไม้"
 msgid "Icon _Size:"
 msgstr "ขนาดไ_อคอน:"
 
-#: ../thunar/thunar-preferences-dialog.c:734 ../thunar/thunar-window.c:512
+#: ../thunar/thunar-preferences-dialog.c:734 ../thunar/thunar-window.c:520
 msgid "Image Preview"
 msgstr ""
 
@@ -2689,7 +2610,7 @@ msgid ""
 msgstr "<a href=\"volman-config:\">ตั้งค่า</a> การจัดการไดรว์ อุปกรณ์ และสื่อถอดเสียบ"
 
 #: ../thunar/thunar-preferences-dialog.c:1338
-#: ../thunar/thunar-properties-dialog.c:801
+#: ../thunar/thunar-properties-dialog.c:804
 msgid "Missing dependencies"
 msgstr "องค์ประกอบขาดหาย"
 
@@ -2762,102 +2683,112 @@ msgstr "กำลังหยิบงานกลับมาทำต่อ...
 msgid "Queued"
 msgstr "เข้าคิวแล้ว"
 
-#: ../thunar/thunar-properties-dialog.c:329
+#: ../thunar/thunar-properties-dialog.c:332
 msgid "General"
 msgstr "ทั่วไป"
 
-#: ../thunar/thunar-properties-dialog.c:354
+#: ../thunar/thunar-properties-dialog.c:357
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:2
 msgid "_Name:"
 msgstr "_ชื่อ:"
 
-#: ../thunar/thunar-properties-dialog.c:393
+#: ../thunar/thunar-properties-dialog.c:396
 msgid "Names:"
 msgstr "ชื่อ:"
 
 #. Second box (kind, open with, link target, original path, location, volume)
-#: ../thunar/thunar-properties-dialog.c:416
+#: ../thunar/thunar-properties-dialog.c:419
 msgid "Kind:"
 msgstr "ชนิด:"
 
-#: ../thunar/thunar-properties-dialog.c:440
+#: ../thunar/thunar-properties-dialog.c:443
 msgid "_Open With:"
 msgstr "_เปิดด้วย:"
 
-#: ../thunar/thunar-properties-dialog.c:457
+#: ../thunar/thunar-properties-dialog.c:460
 msgid "Link Target:"
 msgstr "ปลายทางจุดเชื่อม:"
 
-#: ../thunar/thunar-properties-dialog.c:495
+#. TRANSLATORS: Try to come up with a short translation of "Original Path"
+#. (which is the path
+#. * where the trashed file/folder was located before it was moved to the
+#. trash), otherwise the
+#. * properties dialog width will be messed up.
+#: ../thunar/thunar-properties-dialog.c:481
+#: ../thunar/thunar-standard-view-model.c:693
+msgid "Original Path:"
+msgstr "พาธเดิม:"
+
+#: ../thunar/thunar-properties-dialog.c:498
 msgid "Location:"
 msgstr "ตำแหน่ง:"
 
-#: ../thunar/thunar-properties-dialog.c:512
+#: ../thunar/thunar-properties-dialog.c:515
 msgid "Volume:"
 msgstr "โวลุม:"
 
 #. Third box (deleted, modified, accessed)
-#: ../thunar/thunar-properties-dialog.c:554
+#: ../thunar/thunar-properties-dialog.c:557
 msgid "Deleted:"
 msgstr "ลบ:"
 
-#: ../thunar/thunar-properties-dialog.c:571
+#: ../thunar/thunar-properties-dialog.c:574
 msgid "Created:"
 msgstr "สร้าง:"
 
-#: ../thunar/thunar-properties-dialog.c:605
+#: ../thunar/thunar-properties-dialog.c:608
 msgid "Accessed:"
 msgstr "เข้าถึง:"
 
-#: ../thunar/thunar-properties-dialog.c:651
+#: ../thunar/thunar-properties-dialog.c:654
 msgid "Size on Disk:"
 msgstr ""
 
 #. Fifth box (content, capacity, free space)
-#: ../thunar/thunar-properties-dialog.c:678
+#: ../thunar/thunar-properties-dialog.c:681
 msgid "Content:"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:696
+#: ../thunar/thunar-properties-dialog.c:699
 msgid "Capacity:"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:718
+#: ../thunar/thunar-properties-dialog.c:721
 msgid "Usage:"
 msgstr "การใช้งาน:"
 
 #. Emblem chooser
-#: ../thunar/thunar-properties-dialog.c:755
+#: ../thunar/thunar-properties-dialog.c:758
 msgid "Emblems"
 msgstr "ตรา"
 
-#: ../thunar/thunar-properties-dialog.c:770
+#: ../thunar/thunar-properties-dialog.c:773
 msgid "Highlight"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:809
+#: ../thunar/thunar-properties-dialog.c:812
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "This feature will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:837
+#: ../thunar/thunar-properties-dialog.c:840
 msgid "Example.txt"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:854
+#: ../thunar/thunar-properties-dialog.c:857
 msgid "_Apply"
 msgstr "_ทำ"
 
-#: ../thunar/thunar-properties-dialog.c:866
+#: ../thunar/thunar-properties-dialog.c:869
 msgid "_Reset"
 msgstr "_ล้างค่า"
 
-#: ../thunar/thunar-properties-dialog.c:874
+#: ../thunar/thunar-properties-dialog.c:880
 msgid "Set _Foreground"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:882
+#: ../thunar/thunar-properties-dialog.c:888
 msgid "Set _Background"
 msgstr ""
 
@@ -2883,72 +2814,72 @@ msgstr ""
 msgid "Failed to change icon of \"%s\""
 msgstr "เปลี่ยนไอคอนของ \"%s\" ไม่สำเร็จ"
 
-#: ../thunar/thunar-properties-dialog.c:1319
+#: ../thunar/thunar-properties-dialog.c:1315
 #, c-format
 msgid "%s (%s) - Properties"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:1321
+#: ../thunar/thunar-properties-dialog.c:1317
 #, c-format
 msgid "%s - Properties"
 msgstr "%s - คุณสมบัติ"
 
-#: ../thunar/thunar-properties-dialog.c:1378
+#: ../thunar/thunar-properties-dialog.c:1374
 msgid "unknown"
 msgstr "ไม่ทราบ"
 
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:1582
+#: ../thunar/thunar-properties-dialog.c:1578
 msgid "Properties"
 msgstr "คุณสมบัติ"
 
-#: ../thunar/thunar-properties-dialog.c:1684
+#: ../thunar/thunar-properties-dialog.c:1680
 msgid "mixed"
 msgstr "ผสม"
 
-#: ../thunar/thunar-renamer-dialog.c:192
+#: ../thunar/thunar-renamer-dialog.c:200
 msgid "_Add Files..."
 msgstr "เ_พิ่มแฟ้ม..."
 
-#: ../thunar/thunar-renamer-dialog.c:192
+#: ../thunar/thunar-renamer-dialog.c:200
 msgid "Include additional files in the list of files to be renamed"
 msgstr "เพิ่มแฟ้มเข้าในรายชื่อแฟ้มที่จะเปลี่ยนชื่อ"
 
-#: ../thunar/thunar-renamer-dialog.c:194
+#: ../thunar/thunar-renamer-dialog.c:202
 msgid "Clear"
 msgstr "ล้าง"
 
-#: ../thunar/thunar-renamer-dialog.c:194
+#: ../thunar/thunar-renamer-dialog.c:202
 msgid "Clear the file list below"
 msgstr "ล้างรายชื่อแฟ้มด้านล่างนี้"
 
-#: ../thunar/thunar-renamer-dialog.c:195 ../thunar/thunar-window.c:546
+#: ../thunar/thunar-renamer-dialog.c:203 ../thunar/thunar-window.c:554
 msgid "_About"
 msgstr "เ_กี่ยวกับ"
 
-#: ../thunar/thunar-renamer-dialog.c:195
+#: ../thunar/thunar-renamer-dialog.c:203
 msgid "Display information about Thunar Bulk Rename"
 msgstr "แสดงข้อมูลเกี่ยวกับโปรแกรมเปลี่ยนชื่อกลุ่มแฟ้มของ Thunar"
 
-#: ../thunar/thunar-renamer-dialog.c:354
-#: ../thunar/thunar-renamer-dialog.c:1779
+#: ../thunar/thunar-renamer-dialog.c:379
+#: ../thunar/thunar-renamer-dialog.c:1808
 #: ../thunar-bulk-rename.desktop.in.in.h:2
 msgid "Rename Multiple Files"
 msgstr "เปลี่ยนชื่อแฟ้มทีละหลายแฟ้ม"
 
-#: ../thunar/thunar-renamer-dialog.c:358
+#: ../thunar/thunar-renamer-dialog.c:383
 msgid "Close this window, cancel further changes."
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:366
+#: ../thunar/thunar-renamer-dialog.c:391
 msgid "Rename items listed above, keep this window open."
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:436
+#: ../thunar/thunar-renamer-dialog.c:461
 msgid "New Name"
 msgstr "ชื่อใหม่"
 
-#: ../thunar/thunar-renamer-dialog.c:501
+#: ../thunar/thunar-renamer-dialog.c:526
 msgid ""
 "Click here to view the documentation for the selected rename operation."
 msgstr "คลิกที่นี่เพื่อดูเอกสารอธิบายการกระทำเกี่ยวกับการเปลี่ยนชื่อที่เลือก"
@@ -2957,59 +2888,59 @@ msgstr "คลิกที่นี่เพื่อดูเอกสารอ
 #. from $libdir/thunarx-2/,
 #. *              and opening the multi rename dialog by selecting multiple
 #. files and pressing F2.
-#: ../thunar/thunar-renamer-dialog.c:612
+#: ../thunar/thunar-renamer-dialog.c:637
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
 msgstr "ไม่พบมอดูลเครื่องมือเปลี่ยนชื่อใดในระบบของคุณ กรุณาตรวจสอบการติดตั้งของคุณ หรือติดต่อผู้ดูแลระบบของคุณ ถ้าคุณติดตั้ง Thunar จากซอร์ส กรุณาแน่ใจว่าได้เปิดใช้ปลั๊กอิน \"Simple Builtin Renamers\""
 
-#: ../thunar/thunar-renamer-dialog.c:844
+#: ../thunar/thunar-renamer-dialog.c:873
 msgid "Remove File"
 msgid_plural "Remove Files"
 msgstr[0] "ตัดแฟ้มออก"
 
-#: ../thunar/thunar-renamer-dialog.c:845
+#: ../thunar/thunar-renamer-dialog.c:874
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] "ตัดแฟ้มที่เลือกออกจากรายชื่อแฟ้มที่จะเปลี่ยนชื่อ"
 
 #. tell the user that we failed
-#: ../thunar/thunar-renamer-dialog.c:941
+#: ../thunar/thunar-renamer-dialog.c:970
 msgid "Failed to open the documentation browser"
 msgstr "เปิดเครื่องมือท่องดูเอกสารไม่สำเร็จ"
 
 #. allocate the file chooser
-#: ../thunar/thunar-renamer-dialog.c:1042
+#: ../thunar/thunar-renamer-dialog.c:1071
 msgid "Select files to rename"
 msgstr "เลือกแฟ้มที่จะเปลี่ยนชื่อ"
 
-#: ../thunar/thunar-renamer-dialog.c:1058
+#: ../thunar/thunar-renamer-dialog.c:1087
 msgid "Audio Files"
 msgstr "แฟ้มเสียง"
 
-#: ../thunar/thunar-renamer-dialog.c:1063
+#: ../thunar/thunar-renamer-dialog.c:1092
 msgid "Image Files"
 msgstr "แฟ้มรูปภาพ"
 
-#: ../thunar/thunar-renamer-dialog.c:1068
+#: ../thunar/thunar-renamer-dialog.c:1097
 msgid "Video Files"
 msgstr "แฟ้มวีดิทัศน์"
 
 #. just popup the about dialog
-#: ../thunar/thunar-renamer-dialog.c:1204
+#: ../thunar/thunar-renamer-dialog.c:1233
 #: ../thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
 msgstr "เปลี่ยนชื่อกลุ่มแฟ้ม"
 
-#: ../thunar/thunar-renamer-dialog.c:1205
+#: ../thunar/thunar-renamer-dialog.c:1234
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
 msgstr "โปรแกรมเปลี่ยนชื่อกลุ่มแฟ้มของ Thunar เป็นเครื่องมือที่ทรงพลัง\nและปรับขยายได้สำหรับเปลี่ยนชื่อแฟ้มทีละหลายแฟ้มพร้อมกัน"
 
 #. change title to reflect the standalone status
-#: ../thunar/thunar-renamer-dialog.c:1779
+#: ../thunar/thunar-renamer-dialog.c:1808
 msgid "Bulk Rename - Rename Multiple Files"
 msgstr "เปลี่ยนชื่อกลุ่มแฟ้ม - เปลี่ยนชื่อแฟ้มทีละหลายแฟ้ม"
 
@@ -3040,7 +2971,7 @@ msgid ""
 msgstr "คุณต้องการจะข้ามแฟ้มนี้แล้วเปลี่ยนชื่อแฟ้มที่เหลือต่อหรือไม่?"
 
 #: ../thunar/thunar-shortcuts-model.c:646
-#: ../thunar/thunar-shortcuts-model.c:1010 ../thunar/thunar-window.c:532
+#: ../thunar/thunar-shortcuts-model.c:1010 ../thunar/thunar-window.c:540
 msgid "Browse the file system"
 msgstr "ท่องดูระบบแฟ้ม"
 
@@ -3072,7 +3003,7 @@ msgstr "เครือข่าย"
 msgid "Browse Network"
 msgstr "ท่องดูเครือข่าย"
 
-#: ../thunar/thunar-shortcuts-model.c:1055 ../thunar/thunar-window.c:542
+#: ../thunar/thunar-shortcuts-model.c:1055 ../thunar/thunar-window.c:550
 msgid "Browse local network connections"
 msgstr "ท่องดูการเชื่อมต่อเครือข่ายเฉพาะที่"
 
@@ -3088,7 +3019,7 @@ msgstr "เปิดโฟลเดอร์บ้าน"
 msgid "Open the desktop folder"
 msgstr "เปิดโฟลเดอร์พื้นโต๊ะ"
 
-#: ../thunar/thunar-shortcuts-model.c:1153 ../thunar/thunar-window.c:535
+#: ../thunar/thunar-shortcuts-model.c:1153 ../thunar/thunar-window.c:543
 #: ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr "คอมพิวเตอร์"
@@ -3097,7 +3028,7 @@ msgstr "คอมพิวเตอร์"
 msgid "Browse the computer"
 msgstr "ท่องดูในคอมพิวเตอร์"
 
-#: ../thunar/thunar-shortcuts-model.c:1166 ../thunar/thunar-window.c:536
+#: ../thunar/thunar-shortcuts-model.c:1166 ../thunar/thunar-window.c:544
 msgid "Recent"
 msgstr ""
 
@@ -3138,7 +3069,14 @@ msgstr "กำลังคำนวณ..."
 msgid "Calculation aborted"
 msgstr "ยกเลิกการคำนวณแล้ว"
 
-#: ../thunar/thunar-size-label.c:474
+#: ../thunar/thunar-size-label.c:471
+#: ../thunar/thunar-standard-view-model.c:518
+#, c-format
+msgid "%d folder"
+msgid_plural "%d folders"
+msgstr[0] "%d โฟลเดอร์"
+
+#: ../thunar/thunar-size-label.c:473
 #, c-format
 msgid "%u item (%s, %s)"
 msgid_plural "%u items (%s, %s)"
@@ -3146,145 +3084,145 @@ msgstr[0] ""
 
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
-#: ../thunar/thunar-size-label.c:484
+#: ../thunar/thunar-size-label.c:483
 msgid "(some contents unreadable)"
 msgstr "(เนื้อหาบางส่วนไม่สามารถอ่านได้)"
 
 #. nothing was readable, so permission was denied
-#: ../thunar/thunar-size-label.c:495
+#: ../thunar/thunar-size-label.c:494
 msgid "Permission denied"
 msgstr "ไม่ได้รับอนุญาต"
 
-#: ../thunar/thunar-standard-view.c:404
+#: ../thunar/thunar-standard-view.c:376
 msgid "Select _all Files"
 msgstr "เลือกทุ_กแฟ้ม"
 
-#: ../thunar/thunar-standard-view.c:404
+#: ../thunar/thunar-standard-view.c:376
 msgid "Select all files in this window"
 msgstr "เลือกทุกแฟ้มในหน้าต่างนี้"
 
-#: ../thunar/thunar-standard-view.c:405
+#: ../thunar/thunar-standard-view.c:377
 msgid "Select _by Pattern..."
 msgstr "เลือกด้วยแ_พตเทิร์น..."
 
-#: ../thunar/thunar-standard-view.c:405
+#: ../thunar/thunar-standard-view.c:377
 msgid "Select all files that match a certain pattern"
 msgstr "เลือกทุกแฟ้มที่ตรงกับแพตเทิร์นที่กำหนด"
 
-#: ../thunar/thunar-standard-view.c:406
+#: ../thunar/thunar-standard-view.c:378
 msgid "_Invert Selection"
 msgstr "กลั_บการเลือก"
 
-#: ../thunar/thunar-standard-view.c:406
+#: ../thunar/thunar-standard-view.c:378
 msgid "Select all files but not those currently selected"
 msgstr "เลือกทุกแฟ้มที่เหลือและเลิกเลือกแฟ้มที่เลือกอยู่"
 
-#: ../thunar/thunar-standard-view.c:407
+#: ../thunar/thunar-standard-view.c:379
 msgid "U_nselect all Files"
 msgstr "เ_ลิกเลือกทุกแฟ้ม"
 
-#: ../thunar/thunar-standard-view.c:407
+#: ../thunar/thunar-standard-view.c:379
 msgid "Unselect all files in this window"
 msgstr "เลิกเลือกทุกแฟ้มในหน้าต่างนี้"
 
-#: ../thunar/thunar-standard-view.c:408
+#: ../thunar/thunar-standard-view.c:380
 msgid "Arran_ge Items"
 msgstr "จัดเ_รียงรายการ"
 
-#: ../thunar/thunar-standard-view.c:409
-msgid "T_oggle Sort Order"
+#: ../thunar/thunar-standard-view.c:381
+msgid "_Reversed Order"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:409
-msgid "Toggle ascending/descending sort order"
+#: ../thunar/thunar-standard-view.c:381
+msgid "Reverse the sort order"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:410
+#: ../thunar/thunar-standard-view.c:382
 msgid "By _Name"
 msgstr "ตาม_ชื่อ"
 
-#: ../thunar/thunar-standard-view.c:410
+#: ../thunar/thunar-standard-view.c:382
 msgid "Keep items sorted by their name"
 msgstr "เรียงลำดับรายการตามชื่อ"
 
-#: ../thunar/thunar-standard-view.c:411
+#: ../thunar/thunar-standard-view.c:383
 msgid "By _Size"
 msgstr "ตาม_ขนาด"
 
-#: ../thunar/thunar-standard-view.c:411
+#: ../thunar/thunar-standard-view.c:383
 msgid "Keep items sorted by their size"
 msgstr "เรียงลำดับรายการตามขนาด"
 
-#: ../thunar/thunar-standard-view.c:412
+#: ../thunar/thunar-standard-view.c:384
 msgid "By _Type"
 msgstr "ตามช_นิด"
 
-#: ../thunar/thunar-standard-view.c:412
+#: ../thunar/thunar-standard-view.c:384
 msgid "Keep items sorted by their type"
 msgstr "เรียงลำดับรายการตามชนิด"
 
-#: ../thunar/thunar-standard-view.c:413
+#: ../thunar/thunar-standard-view.c:385
 msgid "By Modification _Date"
 msgstr "ตามเวลาเ_ปลี่ยนแปลง"
 
-#: ../thunar/thunar-standard-view.c:413
+#: ../thunar/thunar-standard-view.c:385
 msgid "Keep items sorted by their modification date"
 msgstr "เรียงลำดับรายการตามเวลาที่เปลี่ยนแปลง"
 
-#: ../thunar/thunar-standard-view.c:414
+#: ../thunar/thunar-standard-view.c:386
 msgid "By D_eletion Date"
 msgstr "ตามเวลา_ลบ"
 
-#: ../thunar/thunar-standard-view.c:414
+#: ../thunar/thunar-standard-view.c:386
 msgid "Keep items sorted by their deletion date"
 msgstr "เรียงลำดับรายการตามเวลาที่ลบ"
 
-#: ../thunar/thunar-standard-view.c:415
+#: ../thunar/thunar-standard-view.c:387
 msgid "_Ascending"
 msgstr "_ก่อนไปหลัง"
 
-#: ../thunar/thunar-standard-view.c:415
+#: ../thunar/thunar-standard-view.c:387
 msgid "Sort items in ascending order"
 msgstr "เรียงลำดับรายการจากก่อนไปหลัง"
 
-#: ../thunar/thunar-standard-view.c:416
+#: ../thunar/thunar-standard-view.c:388
 msgid "_Descending"
 msgstr "_หลังมาหน้า"
 
-#: ../thunar/thunar-standard-view.c:416
+#: ../thunar/thunar-standard-view.c:388
 msgid "Sort items in descending order"
 msgstr "เรียงลำดับรายการจากหลังมาหน้า"
 
-#: ../thunar/thunar-standard-view.c:1804
+#: ../thunar/thunar-standard-view.c:1730
 msgid "Loading folder contents..."
 msgstr "กำลังโหลดเนื้อหาโฟลเดอร์..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2381 ../thunar/thunar-window.c:4216
+#: ../thunar/thunar-standard-view.c:2323 ../thunar/thunar-window.c:4247
 msgid "Failed to open the home folder"
 msgstr "เปิดโฟลเดอร์บ้านไม่สำเร็จ"
 
-#: ../thunar/thunar-standard-view.c:2462
+#: ../thunar/thunar-standard-view.c:2401
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "เลือกด้วยแพตเทิร์น"
 
-#: ../thunar/thunar-standard-view.c:2467
+#: ../thunar/thunar-standard-view.c:2406
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "_ยกเลิก"
 
-#: ../thunar/thunar-standard-view.c:2469
+#: ../thunar/thunar-standard-view.c:2408
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "เ_ลือก"
 
-#: ../thunar/thunar-standard-view.c:2482
+#: ../thunar/thunar-standard-view.c:2421
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "แ_พตเทิร์น:"
 
-#: ../thunar/thunar-standard-view.c:2483
+#: ../thunar/thunar-standard-view.c:2422
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3294,7 +3232,7 @@ msgstr ""
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: ../thunar/thunar-standard-view.c:2497
+#: ../thunar/thunar-standard-view.c:2436
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3305,24 +3243,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:2501
+#: ../thunar/thunar-standard-view.c:2440
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr "ตัว_พิมพ์ใหญ่-เล็กตรงกัน"
 
-#: ../thunar/thunar-standard-view.c:2502
+#: ../thunar/thunar-standard-view.c:2441
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:2507
+#: ../thunar/thunar-standard-view.c:2446
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:2508
+#: ../thunar/thunar-standard-view.c:2447
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3331,24 +3269,84 @@ msgstr ""
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: ../thunar/thunar-standard-view.c:2894
+#: ../thunar/thunar-standard-view.c:2833
 msgid "Invalid filename provided by XDS drag site"
 msgstr "ชื่อแฟ้มจากแหล่ง XDS ที่ลากมาไม่ถูกต้อง"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:3088
+#: ../thunar/thunar-standard-view.c:3027
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "สร้างลิงก์สำหรับ URL \"%s\" ไม่สำเร็จ"
 
-#: ../thunar/thunar-standard-view.c:3134
+#: ../thunar/thunar-standard-view.c:3073
 msgid "Untitled document"
 msgstr "เอกสารไม่มีชื่อ"
 
-#: ../thunar/thunar-standard-view.c:3639 ../thunar/thunar-window.c:4313
+#: ../thunar/thunar-standard-view.c:3539 ../thunar/thunar-window.c:4344
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "เปิดไดเรกทอรี \"%s\" ไม่สำเร็จ"
+
+#: ../thunar/thunar-standard-view-model.c:506
+#, c-format
+msgid "%d file: %s"
+msgid_plural "%d files: %s"
+msgstr[0] "%d แฟ้ม: %s"
+
+#: ../thunar/thunar-standard-view-model.c:525
+#, c-format
+msgid "0 items"
+msgstr "0 รายการ"
+
+#: ../thunar/thunar-standard-view-model.c:535
+#: ../thunar/thunar-standard-view-model.c:722
+#, c-format
+msgid "Last Modified: %s"
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:626
+#, c-format
+msgid "Free space: %s"
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:650
+#, c-format
+msgid "\"%s\" (%s)"
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:652
+#, c-format
+msgid "\"%s\""
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:671
+msgid "broken link"
+msgstr "จุดเชื่อมเสีย"
+
+#: ../thunar/thunar-standard-view-model.c:675
+msgid "shortcut"
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:677
+msgid "mountable"
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:681
+#, c-format
+msgid "%s"
+msgstr ""
+
+#. append the image dimensions to the statusbar text
+#: ../thunar/thunar-standard-view-model.c:711
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:153
+msgid "Image Size:"
+msgstr "ขนาดภาพ:"
+
+#: ../thunar/thunar-standard-view-model.c:739
+#, c-format
+msgid "Selection: %s"
+msgstr "รายการที่เลือก: %s"
 
 #: ../thunar/thunar-statusbar.c:81
 msgid "Show size"
@@ -3468,550 +3466,538 @@ msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
 msgstr[0] "เหลืออีก %lu วินาที (%s/วิ)"
 
-#: ../thunar/thunar-tree-model.c:637 ../thunar/thunar-tree-view-model.c:1005
-#: ../thunar/thunar-tree-view-model.c:1016
-#: ../thunar/thunar-tree-view-model.c:1027
-#: ../thunar/thunar-tree-view-model.c:1038
-#: ../thunar/thunar-tree-view-model.c:1049
-#: ../thunar/thunar-tree-view-model.c:1118
-#: ../thunar/thunar-tree-view-model.c:1126
-#: ../thunar/thunar-tree-view-model.c:1136
-#: ../thunar/thunar-tree-view-model.c:1165
-#: ../thunar/thunar-tree-view-model.c:1173
-#: ../thunar/thunar-tree-view-model.c:1183
-#: ../thunar/thunar-tree-view-model.c:1233
-#: ../thunar/thunar-tree-view-model.c:1243
-#: ../thunar/thunar-tree-view-model.c:1264
+#: ../thunar/thunar-tree-model.c:637 ../thunar/thunar-tree-view-model.c:1234
+#: ../thunar/thunar-tree-view-model.c:1362
 msgid "Loading..."
 msgstr "กำลังโหลด..."
 
-#: ../thunar/thunar-util.c:301
+#: ../thunar/thunar-util.c:304
 #, c-format
 msgid "Invalid path"
 msgstr "พาธไม่ถูกต้อง"
 
-#: ../thunar/thunar-util.c:335
+#: ../thunar/thunar-util.c:338
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "ไม่รู้จักผู้ใช้ \"%s\""
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:446
+#: ../thunar/thunar-util.c:449
 msgid "Today"
 msgstr "วันนี้"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:451
+#: ../thunar/thunar-util.c:454
 #, c-format
 msgid "Today at %X"
 msgstr "วันนี้ เมื่อ %X"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:459
+#: ../thunar/thunar-util.c:462
 msgid "Yesterday"
 msgstr "เมื่อวานนี้"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:464
+#: ../thunar/thunar-util.c:467
 #, c-format
 msgid "Yesterday at %X"
 msgstr "เมื่อวานนี้ เมื่อ %X"
 
 #. Days from last week
-#: ../thunar/thunar-util.c:482
+#: ../thunar/thunar-util.c:485
 #, c-format
 msgid "%A at %X"
 msgstr "วัน%A เมื่อ %X"
 
 #. Any other date
-#: ../thunar/thunar-util.c:487
+#: ../thunar/thunar-util.c:490
 #, c-format
 msgid "%x at %X"
 msgstr "%x เมื่อ %X"
 
-#: ../thunar/thunar-util.c:753
+#: ../thunar/thunar-util.c:758
 #, c-format
 msgid "%.*s %u%s"
 msgstr ""
 
-#: ../thunar/thunar-util.c:755
+#: ../thunar/thunar-util.c:760
 #, c-format
 msgid "%.*s (copy %u)%s"
 msgstr ""
 
-#: ../thunar/thunar-util.c:760
+#: ../thunar/thunar-util.c:765
 #, c-format
 msgid "link to %.*s%s"
 msgstr ""
 
-#: ../thunar/thunar-util.c:765
+#: ../thunar/thunar-util.c:770
 #, c-format
 msgid "link %u to %.*s%s"
 msgstr ""
 
-#: ../thunar/thunar-util.c:786
+#: ../thunar/thunar-util.c:791
 msgid "Search: "
 msgstr ""
 
-#: ../thunar/thunar-window.c:487
+#: ../thunar/thunar-window.c:495
 msgid "_File"
 msgstr "แ_ฟ้ม"
 
-#: ../thunar/thunar-window.c:488
+#: ../thunar/thunar-window.c:496
 msgid "New _Tab"
 msgstr "แ_ท็บใหม่"
 
-#: ../thunar/thunar-window.c:488
+#: ../thunar/thunar-window.c:496
 msgid "Open a new tab for the displayed location"
 msgstr "เปิดแท็บใหม่สำหรับตำแหน่งที่แสดง"
 
-#: ../thunar/thunar-window.c:489
+#: ../thunar/thunar-window.c:497
 msgid "New _Window"
 msgstr "_หน้าต่างใหม่"
 
-#: ../thunar/thunar-window.c:489
+#: ../thunar/thunar-window.c:497
 msgid "Open a new Thunar window for the displayed location"
 msgstr "เปิดหน้าต่าง Thunar ใหม่สำหรับตำแหน่งที่แสดง"
 
-#: ../thunar/thunar-window.c:490
+#: ../thunar/thunar-window.c:498
 msgid "Detac_h Tab"
 msgstr "แ_ยกแท็บ"
 
-#: ../thunar/thunar-window.c:490
+#: ../thunar/thunar-window.c:498
 msgid "Open current folder in a new window"
 msgstr "เปิดโฟลเดอร์ปัจจุบันในหน้าต่างใหม่"
 
-#: ../thunar/thunar-window.c:491
+#: ../thunar/thunar-window.c:499
 msgid "C_lose Tab"
 msgstr "ปิดแท็_บ"
 
-#: ../thunar/thunar-window.c:491
+#: ../thunar/thunar-window.c:499
 msgid "Close this folder"
 msgstr "ปิดโฟลเดอร์นี้"
 
-#: ../thunar/thunar-window.c:492
+#: ../thunar/thunar-window.c:500
 msgid "_Close Window"
 msgstr "ปิดหน้าต่า_ง"
 
-#: ../thunar/thunar-window.c:492
+#: ../thunar/thunar-window.c:500
 msgid "Close this window"
 msgstr "ปิดหน้าต่างนี้"
 
-#: ../thunar/thunar-window.c:493
+#: ../thunar/thunar-window.c:501
 msgid "Close _All Windows"
 msgstr "ปิดทุ_กหน้าต่าง"
 
-#: ../thunar/thunar-window.c:493
+#: ../thunar/thunar-window.c:501
 msgid "Close all Thunar windows"
 msgstr "ปิดหน้าต่าง Thunar ทุกบาน"
 
-#: ../thunar/thunar-window.c:495
+#: ../thunar/thunar-window.c:503
 msgid "_Edit"
 msgstr "แ_ก้ไข"
 
-#: ../thunar/thunar-window.c:496
+#: ../thunar/thunar-window.c:504
 msgid "_Undo"
 msgstr ""
 
-#: ../thunar/thunar-window.c:497
+#: ../thunar/thunar-window.c:505
 msgid "_Redo"
 msgstr ""
 
-#: ../thunar/thunar-window.c:498
+#: ../thunar/thunar-window.c:506
 msgid "Pr_eferences..."
 msgstr "ป_รับแต่ง..."
 
-#: ../thunar/thunar-window.c:498
+#: ../thunar/thunar-window.c:506
 msgid "Edit Thunars Preferences"
 msgstr "ปรับแต่ง Thunar"
 
-#: ../thunar/thunar-window.c:500
+#: ../thunar/thunar-window.c:508
 msgid "_View"
 msgstr "มุ_มมอง"
 
-#: ../thunar/thunar-window.c:501
+#: ../thunar/thunar-window.c:509
 msgid "_Reload"
 msgstr "อ่านใ_หม่"
 
-#: ../thunar/thunar-window.c:501
+#: ../thunar/thunar-window.c:509
 msgid "Reload the current folder"
 msgstr "อ่านโฟลเดอร์ปัจจุบันใหม่"
 
-#: ../thunar/thunar-window.c:503
+#: ../thunar/thunar-window.c:511
 msgid "Spl_it View"
 msgstr "แ_ยกช่องมอง"
 
-#: ../thunar/thunar-window.c:503
+#: ../thunar/thunar-window.c:511
 msgid "Open/Close Split View"
 msgstr "เปิด/ปิดการแยกช่องมอง"
 
-#: ../thunar/thunar-window.c:504
+#: ../thunar/thunar-window.c:512
 msgid "Switch Focused Split View Pane"
 msgstr ""
 
-#: ../thunar/thunar-window.c:505
+#: ../thunar/thunar-window.c:513
 msgid "_Location Selector"
 msgstr "การเลือก_ตำแหน่ง"
 
-#: ../thunar/thunar-window.c:506
-msgid "_Entry Style"
+#: ../thunar/thunar-window.c:514
+msgid "_Text Style"
 msgstr ""
 
-#: ../thunar/thunar-window.c:506
-msgid "Traditional entry showing the current path"
+#: ../thunar/thunar-window.c:514
+msgid "Traditional text box showing the current path"
 msgstr ""
 
-#: ../thunar/thunar-window.c:507
+#: ../thunar/thunar-window.c:515
 msgid "_Buttons Style"
 msgstr ""
 
-#: ../thunar/thunar-window.c:507
+#: ../thunar/thunar-window.c:515
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "วิธีแบบใหม่ซึ่งใช้ปุ่มกดเลือกโฟลเดอร์"
 
-#: ../thunar/thunar-window.c:508
+#: ../thunar/thunar-window.c:516
 msgid "_Side Pane"
 msgstr "ช่องข้า_ง"
 
-#: ../thunar/thunar-window.c:509
+#: ../thunar/thunar-window.c:517
 msgid "_Shortcuts"
 msgstr "จุด_ลัด"
 
-#: ../thunar/thunar-window.c:509
+#: ../thunar/thunar-window.c:517
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "เปิด-ปิดการแสดงช่องจุดลัด"
 
-#: ../thunar/thunar-window.c:510
+#: ../thunar/thunar-window.c:518
 msgid "_Tree"
 msgstr "_ต้นไม้"
 
-#: ../thunar/thunar-window.c:510
+#: ../thunar/thunar-window.c:518
 msgid "Toggles the visibility of the tree pane"
 msgstr "เปิด-ปิดการแสดงช่องโครงสร้างต้นไม้"
 
-#: ../thunar/thunar-window.c:512
+#: ../thunar/thunar-window.c:520
 msgid "Change the visibility of this window's image preview"
 msgstr ""
 
-#: ../thunar/thunar-window.c:513
+#: ../thunar/thunar-window.c:521
 msgid "St_atusbar"
 msgstr "แถบ_สถานะ"
 
-#: ../thunar/thunar-window.c:513
+#: ../thunar/thunar-window.c:521
 msgid "Change the visibility of this window's statusbar"
 msgstr "เปิด-ปิดแถบสถานะของหน้าต่างนี้"
 
-#: ../thunar/thunar-window.c:514
+#: ../thunar/thunar-window.c:522
 msgid "_Menubar"
 msgstr "แถบเ_มนู"
 
-#: ../thunar/thunar-window.c:514
+#: ../thunar/thunar-window.c:522
 msgid "Change the visibility of this window's menubar"
 msgstr "เปิด-ปิดแถบเมนูของหน้าต่างนี้"
 
-#: ../thunar/thunar-window.c:515
+#: ../thunar/thunar-window.c:523
 msgid "Configure _Toolbar..."
 msgstr ""
 
-#: ../thunar/thunar-window.c:515
+#: ../thunar/thunar-window.c:523
 msgid "Configure the toolbar"
 msgstr ""
 
-#: ../thunar/thunar-window.c:516
+#: ../thunar/thunar-window.c:524
 msgid "Clear Saved _Folder View Settings"
 msgstr "ล้างค่าการแสดงเนื้อหาโ_ฟลเดอร์ที่บันทึกไว้"
 
-#: ../thunar/thunar-window.c:516
+#: ../thunar/thunar-window.c:524
 msgid "Delete saved view settings for this folder"
 msgstr "ลบค่าตั้งที่บันทึกไว้สำหรับการแสดงเนื้อหาของโฟลเดอร์นี้"
 
-#: ../thunar/thunar-window.c:517
+#: ../thunar/thunar-window.c:525
 msgid "Show _Hidden Files"
 msgstr "แสดงแฟ้มซ่อ_น"
 
-#: ../thunar/thunar-window.c:517
+#: ../thunar/thunar-window.c:525
 msgid "Toggles the display of hidden files in the current window"
 msgstr "เปิด-ปิดการแสดงแฟ้มซ่อนในหน้าต่างปัจจุบัน"
 
-#: ../thunar/thunar-window.c:518
+#: ../thunar/thunar-window.c:526
 msgid "Show File Hi_ghlight"
 msgstr ""
 
-#: ../thunar/thunar-window.c:518
+#: ../thunar/thunar-window.c:526
 msgid ""
 "Toggles the display of file highlight which can be configured in the file "
 "specific property dialog"
 msgstr ""
 
-#: ../thunar/thunar-window.c:519
+#: ../thunar/thunar-window.c:527
 msgid "Zoom I_n"
 msgstr "ซูมเ_ข้า"
 
-#: ../thunar/thunar-window.c:519
+#: ../thunar/thunar-window.c:527
 msgid "Show the contents in more detail"
 msgstr "เพิ่มรายละเอียดเนื้อหาที่แสดง"
 
-#: ../thunar/thunar-window.c:522
+#: ../thunar/thunar-window.c:530
 msgid "Zoom _Out"
 msgstr "ซูมออ_ก"
 
-#: ../thunar/thunar-window.c:522
+#: ../thunar/thunar-window.c:530
 msgid "Show the contents in less detail"
 msgstr "ลดรายละเอียดเนื้อหาที่แสดง"
 
-#: ../thunar/thunar-window.c:524
+#: ../thunar/thunar-window.c:532
 msgid "Normal Si_ze"
 msgstr "ขนาด_ปกติ"
 
-#: ../thunar/thunar-window.c:524
+#: ../thunar/thunar-window.c:532
 msgid "Show the contents at the normal size"
 msgstr "แสดงเนื้อหาด้วยขนาดปกติ"
 
-#: ../thunar/thunar-window.c:526
+#: ../thunar/thunar-window.c:534
 msgid "_Icon View"
 msgstr "มุมมองไ_อคอน"
 
-#: ../thunar/thunar-window.c:526
+#: ../thunar/thunar-window.c:534
 msgid "Display folder content in an icon view"
 msgstr "แสดงเนื้อหาโฟลเดอร์ในแบบไอคอน"
 
-#: ../thunar/thunar-window.c:527
+#: ../thunar/thunar-window.c:535
 msgid "_List View"
 msgstr "มุมมอง_รายชื่อ"
 
-#: ../thunar/thunar-window.c:527
+#: ../thunar/thunar-window.c:535
 msgid "Display folder content in a detailed list view"
 msgstr "แสดงเนื้อหาโฟลเดอร์ในแบบรายชื่อพร้อมรายละเอียด"
 
-#: ../thunar/thunar-window.c:528
+#: ../thunar/thunar-window.c:536
 msgid "_Compact View"
 msgstr "มุมมอง_กระชับ"
 
-#: ../thunar/thunar-window.c:528
+#: ../thunar/thunar-window.c:536
 msgid "Display folder content in a compact list view"
 msgstr "แสดงเนื้อหาโฟลเดอร์ในแบบรายชื่อแบบกระชับ"
 
-#: ../thunar/thunar-window.c:530
+#: ../thunar/thunar-window.c:538
 msgid "_Go"
 msgstr "ไ_ป"
 
-#: ../thunar/thunar-window.c:531
+#: ../thunar/thunar-window.c:539
 msgid "_Bookmarks"
 msgstr "ที่_คั่นหน้า"
 
-#: ../thunar/thunar-window.c:533
+#: ../thunar/thunar-window.c:541
 msgid "_Home"
 msgstr "_บ้าน"
 
-#: ../thunar/thunar-window.c:533
+#: ../thunar/thunar-window.c:541
 msgid "Go to the home folder"
 msgstr "ไปที่โฟลเดอร์บ้าน"
 
-#: ../thunar/thunar-window.c:534
+#: ../thunar/thunar-window.c:542
 msgid "Desktop"
 msgstr "พื้นโต๊ะ"
 
-#: ../thunar/thunar-window.c:534
+#: ../thunar/thunar-window.c:542
 msgid "Go to the desktop folder"
 msgstr "ไปที่โฟลเดอร์พื้นโต๊ะ"
 
-#: ../thunar/thunar-window.c:535
+#: ../thunar/thunar-window.c:543
 msgid ""
 "Browse all local and remote disks and folders accessible from this computer"
 msgstr "ท่องดูดิสก์และโฟลเดอร์ต่างๆ ภายในเครื่องและในเครือข่ายที่เข้าถึงได้จากคอมพิวเตอร์เครื่องนี้"
 
-#: ../thunar/thunar-window.c:536
+#: ../thunar/thunar-window.c:544
 msgid "Display recently used files"
 msgstr ""
 
-#: ../thunar/thunar-window.c:537
+#: ../thunar/thunar-window.c:545
 msgid "T_rash"
 msgstr "_ถังขยะ"
 
-#: ../thunar/thunar-window.c:537
+#: ../thunar/thunar-window.c:545
 msgid "Display the contents of the trash can"
 msgstr "แสดงเนื้อหาในถังขยะ"
 
-#: ../thunar/thunar-window.c:538
+#: ../thunar/thunar-window.c:546
 msgid "Open _Parent"
 msgstr "โฟลเดอร์แ_ม่"
 
-#: ../thunar/thunar-window.c:538
+#: ../thunar/thunar-window.c:546
 msgid "Open the parent folder"
 msgstr "เปิดโฟลเดอร์แม่"
 
-#: ../thunar/thunar-window.c:539
+#: ../thunar/thunar-window.c:547
 msgid "_Open Location..."
 msgstr "_เปิดตำแหน่ง..."
 
-#: ../thunar/thunar-window.c:539
+#: ../thunar/thunar-window.c:547
 msgid "Specify a location to open"
 msgstr "ระบุตำแหน่งที่จะเปิด"
 
-#: ../thunar/thunar-window.c:541
+#: ../thunar/thunar-window.c:549
 msgid "T_emplates"
 msgstr "เ_ทมเพลต"
 
-#: ../thunar/thunar-window.c:541
+#: ../thunar/thunar-window.c:549
 msgid "Go to the templates folder"
 msgstr "ไปยังโฟลเดอร์เทมเพลต"
 
-#: ../thunar/thunar-window.c:542
+#: ../thunar/thunar-window.c:550
 msgid "B_rowse Network"
 msgstr "ท่องดูเ_ครือข่าย"
 
-#: ../thunar/thunar-window.c:545
+#: ../thunar/thunar-window.c:553
 msgid "_Contents"
 msgstr "เ_นื้อหา"
 
-#: ../thunar/thunar-window.c:545
+#: ../thunar/thunar-window.c:553
 msgid "Display Thunar user manual"
 msgstr "แสดงคู่มือผู้ใช้ของ Thunar"
 
-#: ../thunar/thunar-window.c:546
+#: ../thunar/thunar-window.c:554
 msgid "Display information about Thunar"
 msgstr "แสดงข้อมูลเกี่ยวกับ Thunar"
 
-#: ../thunar/thunar-window.c:547
+#: ../thunar/thunar-window.c:555
 msgid "Back"
 msgstr "ถอยกลับ"
 
-#: ../thunar/thunar-window.c:547
+#: ../thunar/thunar-window.c:555
 msgid "Go to the previous visited folder"
 msgstr "ไปยังโฟลเดอร์ที่เปิดดูก่อนหน้า"
 
-#: ../thunar/thunar-window.c:549
+#: ../thunar/thunar-window.c:557
 msgid "Forward"
 msgstr "ถัดไป"
 
-#: ../thunar/thunar-window.c:549
+#: ../thunar/thunar-window.c:557
 msgid "Go to the next visited folder"
 msgstr "ไปยังโฟลเดอร์ที่เปิดดูถัดไป"
 
-#: ../thunar/thunar-window.c:550
+#: ../thunar/thunar-window.c:558
 msgid "_Previous Tab"
 msgstr "แท็บ_ก่อนหน้า"
 
-#: ../thunar/thunar-window.c:550
+#: ../thunar/thunar-window.c:558
 msgid "Switch to Previous Tab"
 msgstr "สลับไปยังแท็บก่อนหน้า"
 
-#: ../thunar/thunar-window.c:551
+#: ../thunar/thunar-window.c:559
 msgid "_Next Tab"
 msgstr "แท็บ_ถัดไป"
 
-#: ../thunar/thunar-window.c:551
+#: ../thunar/thunar-window.c:559
 msgid "Switch to Next Tab"
 msgstr "สลับไปยังแท็บถัดไป"
 
-#: ../thunar/thunar-window.c:552
+#: ../thunar/thunar-window.c:560
 msgid "_Search for Files..."
 msgstr ""
 
-#: ../thunar/thunar-window.c:552
+#: ../thunar/thunar-window.c:560
 msgid "Search for a specific file in the current folder and Recent"
 msgstr ""
 
-#: ../thunar/thunar-window.c:553
+#: ../thunar/thunar-window.c:561
 msgid "Cancel search for files"
 msgstr ""
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:898
+#: ../thunar/thunar-window.c:906
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "คำเตือน: คุณกำลังใช้บัญชี root ซึ่งมีโอกาสทำให้ระบบเสียหายได้"
 
-#: ../thunar/thunar-window.c:957
+#: ../thunar/thunar-window.c:965
 msgid "Size: "
 msgstr ""
 
 #. TRANSLATORS: `Catfish' is a software package, please don't translate it.
-#: ../thunar/thunar-window.c:1027
+#: ../thunar/thunar-window.c:1035
 msgid "Search with Catfish..."
 msgstr ""
 
-#: ../thunar/thunar-window.c:1038
+#: ../thunar/thunar-window.c:1046
 msgid "Restore Selected Items"
 msgstr ""
 
-#: ../thunar/thunar-window.c:2618
+#: ../thunar/thunar-window.c:2642
 msgid "Close tab"
 msgstr "ปิดแท็บ"
 
-#: ../thunar/thunar-window.c:3077
+#: ../thunar/thunar-window.c:3101
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "เปิดตำแหน่ง \"%s\""
 
-#: ../thunar/thunar-window.c:4156
+#: ../thunar/thunar-window.c:4187
 msgid "Failed to open parent folder"
 msgstr "เปิดโฟลเดอร์แม่ไม่สำเร็จ"
 
-#: ../thunar/thunar-window.c:4287
+#: ../thunar/thunar-window.c:4318
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "ไดเรกทอรี \"%s\" ไม่มีอยู่ คุณต้องการสร้างไดเรกทอรีนี้หรือไม่?"
 
-#: ../thunar/thunar-window.c:4289
+#: ../thunar/thunar-window.c:4320
 msgid "Create directory"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4358
+#: ../thunar/thunar-window.c:4389
 msgid "Failed to browse the computer"
 msgstr "ท่องดูคอมพิวเตอร์ไม่สำเร็จ"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4401
+#: ../thunar/thunar-window.c:4432
 msgid "About Templates"
 msgstr "เกี่ยวกับเทมเพลต"
 
-#: ../thunar/thunar-window.c:4423
+#: ../thunar/thunar-window.c:4454
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "แฟ้มทั้งหมดในโฟลเดอร์นี้จะปรากฏในเมนู \"สร้างเอกสาร\""
 
-#: ../thunar/thunar-window.c:4430
+#: ../thunar/thunar-window.c:4461
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "ถ้าคุณสร้างเอกสารบางชนิดบ่อยๆ คุณสามารถเก็บเอกสารตัวอย่างไว้ในโฟลเดอร์นี้ได้ Thunar จะเพิ่มรายการสำหรับเอกสารดังกล่าวเข้าในเมนู \"สร้างเอกสาร\"\n\nจากนั้น คุณจะสามารถเลือกรายการดังกล่าวจากเมนู \"สร้างเอกสาร\" และ Thunar จะสร้างสำเนาของเอกสารดังกล่าวลงในไดเรกทอรีที่คุณกำลังดูอยู่"
 
-#: ../thunar/thunar-window.c:4442
+#: ../thunar/thunar-window.c:4473
 msgid "Do _not display this message again"
 msgstr "ไ_ม่ต้องแสดงข้อความนี้อีก"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4476
+#: ../thunar/thunar-window.c:4507
 msgid "Failed to open the file system root folder"
 msgstr "เปิดโฟลเดอร์รากของระบบแฟ้มไม่สำเร็จ"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4512
+#: ../thunar/thunar-window.c:4543
 msgid "Failed to display `Recent`"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4548
+#: ../thunar/thunar-window.c:4579
 msgid "Failed to display the contents of the trash can"
 msgstr "แสดงเนื้อหาในถังขยะไม่สำเร็จ"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4584
+#: ../thunar/thunar-window.c:4615
 msgid "Failed to browse the network"
 msgstr "ท่องแสดงเครือข่ายไม่สำเร็จ"
 
-#: ../thunar/thunar-window.c:4727
+#: ../thunar/thunar-window.c:4758
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar คือโปรแกรมจัดการแฟ้มที่ทำงานรวดเร็วและใช้ง่าย\nสำหรับเดสก์ท็อป Xfce"
 
-#: ../thunar/thunar-window.c:5885
+#: ../thunar/thunar-window.c:5870
 msgid "Failed to launch search with Catfish"
 msgstr ""
 
-#: ../thunar/thunar-window.c:6154
+#: ../thunar/thunar-window.c:6180
 msgid "Location Bar"
 msgstr ""
 
@@ -4685,40 +4671,38 @@ msgid ""
 msgstr "พารามิเตอร์ต่อไปนี้สำหรับคำสั่งจะถูกแทนที่เมื่อเรียกทำงานการกระทำ:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:21
-msgid "the path to the first selected file or directory"
-msgstr "พาธของแฟ้มหรือไดเรกทอรีแรกที่เลือก"
+msgid "file name of the selected file"
+msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:22
-msgid "the paths to all selected files and directories"
-msgstr "พาธของแฟ้มและไดเรกทอรีที่เลือกทั้งหมด"
+msgid "file names of all selected files"
+msgstr ""
+
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:23
+msgid "path of the selected file's directory"
+msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:24
-#, no-c-format
-msgid "directory containing the file that is passed in %f"
-msgstr "ไดเรกทอรีที่บรรจุแฟ้มที่ส่งมาใน %f"
+msgid "paths of all selected files' directories"
+msgstr ""
+
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:25
+msgid "path of the selected file including the file name"
+msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:26
-#, no-c-format
-msgid "directories containing the files that are passed in %F"
-msgstr "ไดเรกทอรีต่างๆ ที่บรรจุแฟ้มต่างๆ ที่ส่งมาใน %F"
+msgid "paths of all selected files including the file names"
+msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:27
-msgid "the first selected filename (without path)"
-msgstr "ชื่อของแฟ้มแรกที่เลือก (โดยไม่มีพาธ)"
-
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:28
-msgid "the selected filenames (without paths)"
-msgstr "ชื่อของแฟ้มทั้งหมดที่เลือก (โดยไม่มีพาธ)"
-
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:29
 msgid "Basic"
 msgstr "พื้นฐาน"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:30
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:28
 msgid "_File Pattern:"
 msgstr "แ_พตเทิร์นของแฟ้ม:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:31
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:29
 msgid ""
 "Enter a list of patterns that will be used to determine whether this action "
 "should be displayed for a selected file. If you specify more than one "
@@ -4726,56 +4710,56 @@ msgid ""
 "*.txt;*.doc)."
 msgstr "ป้อนรายชื่อของแพตเทิร์นที่จะใช้พิจารณาว่าจะแสดงการกระทำนี้สำหรับแฟ้มที่เลือกหรือไม่ ถ้าคุณระบุแพตเทิร์นมากกว่าหนึ่งแพตเทิร์น ก็ให้คั่นด้วยอัฒภาค (เช่น *.txt;*.doc)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:32
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:30
 msgid "*"
 msgstr "*"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:33
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:31
 msgid "_Range (min-max):"
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:34
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:32
 msgid ""
 "If the command should operate on say two or three files, enter the numerical"
 " range 2-3. If there are no limits, this string should be empty."
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:35
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:33
 msgid "Appears if selection contains:"
 msgstr "ปรากฏถ้าสิ่งที่เลือกมี:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:36
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:34
 msgid "_Directories **"
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:37
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:35
 msgid "_Audio Files"
 msgstr "แฟ้มเ_สียง"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:38
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:36
 msgid "_Image Files"
 msgstr "แฟ้มรูป_ภาพ"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:39
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:37
 msgid "_Text Files"
 msgstr "แฟ้ม_ข้อความ"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:40
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:38
 msgid "_Video Files"
 msgstr "แฟ้มวีดิ_ทัศน์"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:41
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:39
 msgid "_Other Files"
 msgstr "แฟ้ม_อื่นๆ"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:42
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:40
 msgid ""
 "This page lists the conditions under which the action will appear in the file managers context menus. The file patterns are specified as a list of simple file patterns separated by semicolons (e.g. *.txt;*.doc). For an action to appear in the context menu of a file or folder, at least one of these patterns must match the name of the file or folder. Additionally, you can specify that the action should only appear for certain kinds of files.\n"
 "\n"
 "** The custom action will be eligible to appear in the toolbar."
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:45
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:43
 msgid "Appearance Conditions"
 msgstr "เงื่อนไขการปรากฏ"
 
