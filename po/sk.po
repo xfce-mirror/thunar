@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-28 00:45+0200\n"
+"POT-Creation-Date: 2023-11-04 12:45+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Jose Riha <jose1711@gmail.com>, 2020\n"
 "Language-Team: Slovak (http://app.transifex.com/xfce/thunar/language/sk/)\n"
@@ -55,7 +55,7 @@ msgid "Open With Other _Application..."
 msgstr "Otvoriť _pomocou iného programu..."
 
 #: ../thunar/thunar-action-manager.c:274
-#: ../thunar/thunar-action-manager.c:3303
+#: ../thunar/thunar-action-manager.c:3304
 msgid "Choose another application with which to open the selected file"
 msgstr "Vybrať iný program na otvorenie tohto súboru"
 
@@ -300,7 +300,7 @@ msgstr[3] "Otvoriť %d nových okien"
 #: ../thunar/thunar-dnd.c:173 ../thunar/thunar-permissions-chooser.c:559
 #: ../thunar/thunar-permissions-chooser.c:1170
 #: ../thunar/thunar-properties-dialog.c:1179
-#: ../thunar/thunar-renamer-dialog.c:1045
+#: ../thunar/thunar-renamer-dialog.c:1074
 #: ../thunar/thunar-renamer-progress.c:181
 #: ../thunar/thunar-renamer-progress.c:191
 #: ../plugins/thunar-sendto-email/main.c:223
@@ -332,7 +332,7 @@ msgstr "Nepodarilo sa otvoriť \"%s\""
 #: ../thunar/thunar-action-manager.c:1574
 #: ../thunar/thunar-chooser-dialog.c:890
 #: ../thunar/thunar-chooser-dialog.c:1301 ../thunar/thunar-dialogs.c:1360
-#: ../thunar/thunar-renamer-dialog.c:1046
+#: ../thunar/thunar-renamer-dialog.c:1075
 #: ../plugins/thunar-uca/thunar-uca-editor.c:181
 msgid "_Open"
 msgstr "_Otvoriť"
@@ -594,7 +594,7 @@ msgstr[1] "Otvorí vybraný súbor predvolenou aplikáciou"
 msgstr[2] "Otvorí vybrané súbory predvolenou aplikáciou"
 msgstr[3] "Otvorí vybrané súbory predvolenou aplikáciou"
 
-#: ../thunar/thunar-action-manager.c:3302
+#: ../thunar/thunar-action-manager.c:3303
 #: ../thunar/thunar-chooser-dialog.c:187
 msgid "Open With"
 msgstr "Otvoriť pomocou"
@@ -788,7 +788,7 @@ msgstr "Vytvárajú sa priečinky..."
 msgid "Remove all files and folders from the Trash?"
 msgstr "Odstrániť všetky súbory a adresáre z koša?"
 
-#: ../thunar/thunar-application.c:2707 ../thunar/thunar-window.c:1039
+#: ../thunar/thunar-application.c:2707 ../thunar/thunar-window.c:1047
 msgid "Empty Trash"
 msgstr ""
 
@@ -875,7 +875,7 @@ msgstr "Použiť _ako štandardný program pre tento typ súborov"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1301
-#: ../thunar/thunar-properties-dialog.c:1180 ../thunar/thunar-window.c:4403
+#: ../thunar/thunar-properties-dialog.c:1180 ../thunar/thunar-window.c:4434
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -983,7 +983,7 @@ msgid "Select an Application"
 msgstr "Vyberte program"
 
 #: ../thunar/thunar-chooser-dialog.c:896
-#: ../thunar/thunar-renamer-dialog.c:1053
+#: ../thunar/thunar-renamer-dialog.c:1082
 #: ../plugins/thunar-uca/thunar-uca-editor.c:188
 msgid "All Files"
 msgstr "Všetky súbory"
@@ -1049,8 +1049,8 @@ msgstr "V schránke nie je nič, čo by ste mohli vložiť"
 #. add a regular close button, the header bar already provides one
 #: ../thunar/thunar-column-editor.c:158 ../thunar/thunar-dialogs.c:1058
 #: ../thunar/thunar-preferences-dialog.c:273
-#: ../thunar/thunar-properties-dialog.c:319
-#: ../thunar/thunar-renamer-dialog.c:357
+#: ../thunar/thunar-properties-dialog.c:322
+#: ../thunar/thunar-renamer-dialog.c:382
 #: ../thunar/thunar-renamer-progress.c:198
 #: ../thunar/thunar-toolbar-editor.c:121
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:132
@@ -1064,8 +1064,8 @@ msgstr "Stĺpce v podrobnom zozname súborov"
 #. add the "Help" button
 #: ../thunar/thunar-column-editor.c:164
 #: ../thunar/thunar-preferences-dialog.c:281
-#: ../thunar/thunar-properties-dialog.c:318
-#: ../thunar/thunar-toolbar-editor.c:128 ../thunar/thunar-window.c:544
+#: ../thunar/thunar-properties-dialog.c:321
+#: ../thunar/thunar-toolbar-editor.c:128 ../thunar/thunar-window.c:552
 msgid "_Help"
 msgstr "_Pomocník"
 
@@ -1134,11 +1134,11 @@ msgstr ""
 
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:876 ../thunar/thunar-list-model.c:933
-#: ../thunar/thunar-list-model.c:969
+#: ../thunar/thunar-column-model.c:876 ../thunar/thunar-list-model.c:916
+#: ../thunar/thunar-list-model.c:952
 #: ../thunar/thunar-permissions-chooser.c:232
 #: ../thunar/thunar-size-label.c:382 ../thunar/thunar-size-label.c:463
-#: ../thunar/thunar-util.c:425 ../thunar/thunar-util.c:428
+#: ../thunar/thunar-util.c:428 ../thunar/thunar-util.c:431
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:711
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:293
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:294
@@ -1186,27 +1186,27 @@ msgstr "Počet zdrojových a cieľových názvov súborov sa musí zhodovať"
 msgid "A destination directory must be specified"
 msgstr "Minimálne jeden názov cieľového adresára musí byť zadaný"
 
-#: ../thunar/thunar-details-view.c:176
+#: ../thunar/thunar-details-view.c:172
 msgid "Configure _Columns..."
 msgstr "N_astaviť stĺpce..."
 
-#: ../thunar/thunar-details-view.c:176
+#: ../thunar/thunar-details-view.c:172
 msgid "Configure the columns in the detailed list view"
 msgstr "Nastaviť stĺpce v podrobnom zozname súborov"
 
-#: ../thunar/thunar-details-view.c:177
-msgid "Enable E_xpandable Folders"
+#: ../thunar/thunar-details-view.c:173
+msgid "E_xpandable Folders"
 msgstr ""
 
-#: ../thunar/thunar-details-view.c:177
+#: ../thunar/thunar-details-view.c:173
 msgid "Allow tree like expansion of folders"
 msgstr ""
 
-#: ../thunar/thunar-details-view.c:516
+#: ../thunar/thunar-details-view.c:503
 msgid "Detailed directory listing"
 msgstr "Podrobný výpis obsahu priečinka"
 
-#: ../thunar/thunar-details-view.c:517
+#: ../thunar/thunar-details-view.c:504
 msgid "Details view"
 msgstr "Podrobný pohľad"
 
@@ -1247,7 +1247,7 @@ msgid "Rename \"%s\""
 msgstr "Premenovať \"%s\""
 
 #. add the "Rename" button
-#: ../thunar/thunar-dialogs.c:262 ../thunar/thunar-renamer-dialog.c:361
+#: ../thunar/thunar-dialogs.c:262 ../thunar/thunar-renamer-dialog.c:386
 msgid "_Rename"
 msgstr "_Premenovať"
 
@@ -1360,12 +1360,12 @@ msgstr "Chcete nahradiť existujúci súbor"
 
 #. Fourth box (size)
 #: ../thunar/thunar-dialogs.c:933 ../thunar/thunar-dialogs.c:980
-#: ../thunar/thunar-properties-dialog.c:635
+#: ../thunar/thunar-properties-dialog.c:638
 msgid "Size:"
 msgstr "Veľkosť:"
 
 #: ../thunar/thunar-dialogs.c:933 ../thunar/thunar-dialogs.c:980
-#: ../thunar/thunar-properties-dialog.c:588
+#: ../thunar/thunar-properties-dialog.c:591
 msgid "Modified:"
 msgstr "Čas zmeny:"
 
@@ -1483,295 +1483,294 @@ msgstr "_Presunúť sem"
 msgid "_Link Here"
 msgstr "Vytvoriť _odkaz"
 
-#: ../thunar/thunar-enum-types.c:88
+#: ../thunar/thunar-enum-types.c:87
 msgid "Name only"
 msgstr "Iba názov"
 
-#: ../thunar/thunar-enum-types.c:89
+#: ../thunar/thunar-enum-types.c:88
 msgid "Extension only"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:90
+#: ../thunar/thunar-enum-types.c:89
 msgid "Name and Extension"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:141
+#: ../thunar/thunar-enum-types.c:140
 msgid "Date Created"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:142
+#: ../thunar/thunar-enum-types.c:141
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:137
 msgid "Date Accessed"
 msgstr "Dátum prístupu"
 
-#: ../thunar/thunar-enum-types.c:143
+#: ../thunar/thunar-enum-types.c:142
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:138
 msgid "Date Modified"
 msgstr "Čas zmeny"
 
-#: ../thunar/thunar-enum-types.c:144
+#: ../thunar/thunar-enum-types.c:143
 msgid "Date Deleted"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:145
+#: ../thunar/thunar-enum-types.c:144
 msgid "Recency"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:146
+#: ../thunar/thunar-enum-types.c:145
 msgid "Location"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:147
+#: ../thunar/thunar-enum-types.c:146
 msgid "Group"
 msgstr "Skupina"
 
-#: ../thunar/thunar-enum-types.c:148
+#: ../thunar/thunar-enum-types.c:147
 msgid "MIME Type"
 msgstr "MIME typ"
 
-#: ../thunar/thunar-enum-types.c:149 ../thunar/thunar-renamer-dialog.c:418
+#: ../thunar/thunar-enum-types.c:148 ../thunar/thunar-renamer-dialog.c:443
 #: ../thunarx/thunarx-renamer.c:166
 msgid "Name"
 msgstr "Názov"
 
-#: ../thunar/thunar-enum-types.c:150
+#: ../thunar/thunar-enum-types.c:149
 msgid "Owner"
 msgstr "Vlastník"
 
 #. Permissions chooser
-#: ../thunar/thunar-enum-types.c:151 ../thunar/thunar-properties-dialog.c:904
+#: ../thunar/thunar-enum-types.c:150 ../thunar/thunar-properties-dialog.c:910
 msgid "Permissions"
 msgstr "Práva"
 
-#: ../thunar/thunar-enum-types.c:152 ../thunar/thunar-statusbar.c:81
+#: ../thunar/thunar-enum-types.c:151 ../thunar/thunar-statusbar.c:81
 msgid "Size"
 msgstr "Veľkosť"
 
-#: ../thunar/thunar-enum-types.c:153
+#: ../thunar/thunar-enum-types.c:152
 msgid "Size in Bytes"
 msgstr "Veľkosť v bajtoch"
 
-#: ../thunar/thunar-enum-types.c:154
+#: ../thunar/thunar-enum-types.c:153
 msgid "Type"
 msgstr "Typ"
 
-#: ../thunar/thunar-enum-types.c:155
+#: ../thunar/thunar-enum-types.c:154
 msgid "File"
 msgstr "Súbor"
 
-#: ../thunar/thunar-enum-types.c:156
+#: ../thunar/thunar-enum-types.c:155
 msgid "File Name"
 msgstr "Názov súboru"
 
-#: ../thunar/thunar-enum-types.c:637 ../thunar/thunar-enum-types.c:660
-#: ../thunar/thunar-enum-types.c:786 ../thunar/thunar-preferences-dialog.c:416
+#: ../thunar/thunar-enum-types.c:636 ../thunar/thunar-enum-types.c:659
+#: ../thunar/thunar-enum-types.c:785 ../thunar/thunar-preferences-dialog.c:416
 #: ../thunar/thunar-preferences-dialog.c:1068
 #: ../thunar/thunar-preferences-dialog.c:1174
 #: ../thunar/thunar-preferences-dialog.c:1262
 msgid "Never"
 msgstr "Nikdy"
 
-#: ../thunar/thunar-enum-types.c:638 ../thunar/thunar-enum-types.c:661
+#: ../thunar/thunar-enum-types.c:637 ../thunar/thunar-enum-types.c:660
 msgid "Only for remote location"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:639 ../thunar/thunar-enum-types.c:662
-#: ../thunar/thunar-enum-types.c:788 ../thunar/thunar-preferences-dialog.c:418
+#: ../thunar/thunar-enum-types.c:638 ../thunar/thunar-enum-types.c:661
+#: ../thunar/thunar-enum-types.c:787 ../thunar/thunar-preferences-dialog.c:418
 #: ../thunar/thunar-preferences-dialog.c:1064
 #: ../thunar/thunar-preferences-dialog.c:1173
 #: ../thunar/thunar-preferences-dialog.c:1263
 msgid "Always"
 msgstr "Vždy"
 
-#: ../thunar/thunar-enum-types.c:718
+#: ../thunar/thunar-enum-types.c:717
 msgid "Copy"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:719
+#: ../thunar/thunar-enum-types.c:718
 msgid "Move"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:720
+#: ../thunar/thunar-enum-types.c:719
 msgid "Rename"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:721
+#: ../thunar/thunar-enum-types.c:720
 msgid "Create File"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:722
+#: ../thunar/thunar-enum-types.c:721
 msgid "Create Folder"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:723
+#: ../thunar/thunar-enum-types.c:722
 msgid "Delete (opposite of create)"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:724 ../thunar/thunar-file.c:1016
-#: ../thunar/thunar-gio-extensions.c:490
+#: ../thunar/thunar-enum-types.c:723 ../thunar/thunar-file.c:1047
+#: ../thunar/thunar-gio-extensions.c:492
 #: ../thunar/thunar-shortcuts-model.c:1127 ../thunar.desktop.in.in.h:7
 msgid "Trash"
 msgstr "Kôš"
 
-#: ../thunar/thunar-enum-types.c:725
+#: ../thunar/thunar-enum-types.c:724
 msgid "Restore (opposite of trash)"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:726
+#: ../thunar/thunar-enum-types.c:725
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:534
 msgid "Link"
 msgstr "Odkaz"
 
-#: ../thunar/thunar-enum-types.c:727
+#: ../thunar/thunar-enum-types.c:726
 msgid "Unlink"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:746
+#: ../thunar/thunar-enum-types.c:745
 msgid "Log operations"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:747
+#: ../thunar/thunar-enum-types.c:746
 msgid "Log no operations"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:748
+#: ../thunar/thunar-enum-types.c:747
 msgid "Log only timestamps"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:767
+#: ../thunar/thunar-enum-types.c:766
 msgid "Standalone"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:768
+#: ../thunar/thunar-enum-types.c:767
 msgid "Embedded"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:787
+#: ../thunar/thunar-enum-types.c:786
 msgid "Only for local files"
 msgstr ""
 
-#: ../thunar/thunar-file.c:1023 ../thunar/thunar-gio-extensions.c:488
-#: ../thunar/thunar-shortcuts-model.c:1009 ../thunar/thunar-window.c:532
+#: ../thunar/thunar-file.c:1054 ../thunar/thunar-gio-extensions.c:490
+#: ../thunar/thunar-shortcuts-model.c:1009 ../thunar/thunar-window.c:540
 msgid "File System"
 msgstr "Súborový systém"
 
-#: ../thunar/thunar-file.c:1480
+#: ../thunar/thunar-file.c:1511
 #, c-format
 msgid "The root folder has no parent"
 msgstr "Koreňový priečinok nemá nadradený priečinok"
 
-#: ../thunar/thunar-file.c:1578
+#: ../thunar/thunar-file.c:1609
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "Nepodarilo sa spracovať súbor pracovnej plochy: %s"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1591
+#: ../thunar/thunar-file.c:1622
 msgid "Untrusted application launcher"
 msgstr "Nedôveryhodný spúšťač aplikácie"
 
-#: ../thunar/thunar-file.c:1622
+#: ../thunar/thunar-file.c:1653
 #, c-format
 msgid "No Exec field specified"
 msgstr "Nie je vyplnené pole \"Príkaz\""
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1631
+#: ../thunar/thunar-file.c:1662
 msgid "Untrusted link launcher"
 msgstr "Nedôveryhodný spúšťač aplikácie"
 
-#: ../thunar/thunar-file.c:1647
+#: ../thunar/thunar-file.c:1678
 #, c-format
 msgid "No URL field specified"
 msgstr "Nie je vyplnené pole \"Adresa\""
 
-#: ../thunar/thunar-file.c:1652
+#: ../thunar/thunar-file.c:1683
 msgid "Invalid desktop file"
 msgstr "Neplatný .desktop súbor"
 
-#: ../thunar/thunar-file.c:2576 ../thunar/thunar-list-model.c:3090
-#: ../thunar/thunar-tree-view-model.c:3860
+#: ../thunar/thunar-file.c:2547 ../thunar/thunar-standard-view-model.c:673
 #, c-format
 msgid "link to %s"
 msgstr "odkaz na %s"
 
 #. Implementation specific
-#: ../thunar/thunar-gio-extensions.c:59
+#: ../thunar/thunar-gio-extensions.c:60
 msgid "iPod touch"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:60
+#: ../thunar/thunar-gio-extensions.c:61
 msgid "iPad"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:61
+#: ../thunar/thunar-gio-extensions.c:62
 msgid "iPhone"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:62
+#: ../thunar/thunar-gio-extensions.c:63
 msgid "Solid State Drive"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:63
+#: ../thunar/thunar-gio-extensions.c:64
 msgid "System Drive"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:64 ../thunar/thunar-gio-extensions.c:65
+#: ../thunar/thunar-gio-extensions.c:65 ../thunar/thunar-gio-extensions.c:66
 msgid "USB Drive"
 msgstr ""
 
 #. Freedesktop icon-naming-spec
-#: ../thunar/thunar-gio-extensions.c:68
+#: ../thunar/thunar-gio-extensions.c:69
 msgid "Camera"
 msgstr "Fotoaparát"
 
-#: ../thunar/thunar-gio-extensions.c:69
+#: ../thunar/thunar-gio-extensions.c:70
 msgid "Harddisk"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:70
+#: ../thunar/thunar-gio-extensions.c:71
 msgid "Optical Drive"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:71
+#: ../thunar/thunar-gio-extensions.c:72
 msgid "Removable Drive"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:72
+#: ../thunar/thunar-gio-extensions.c:73
 msgid "Flash Drive"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:73
+#: ../thunar/thunar-gio-extensions.c:74
 msgid "Floppy"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:74
+#: ../thunar/thunar-gio-extensions.c:75
 msgid "Optical Media"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:75
+#: ../thunar/thunar-gio-extensions.c:76
 msgid "Tape"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:76
+#: ../thunar/thunar-gio-extensions.c:77
 msgid "Multimedia Player"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:77
+#: ../thunar/thunar-gio-extensions.c:78
 msgid "PDA"
 msgstr "PDA"
 
-#: ../thunar/thunar-gio-extensions.c:78
+#: ../thunar/thunar-gio-extensions.c:79
 msgid "Phone"
 msgstr "Telefón"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:570
+#: ../thunar/thunar-gio-extensions.c:572
 #, c-format
 msgid "%s on %s"
 msgstr "%s na %s"
 
-#: ../thunar/thunar-gio-extensions.c:681
+#: ../thunar/thunar-gio-extensions.c:683
 #, c-format
 msgid "%s used (%.0f%%)  |  %s free (%.0f%%)"
 msgstr ""
@@ -1793,48 +1792,48 @@ msgstr "Výpis obsahu priečinka s ikonami"
 msgid "Icon view"
 msgstr "Pohľad s ikonami"
 
-#: ../thunar/thunar-io-jobs.c:112
+#: ../thunar/thunar-io-jobs.c:114
 #, c-format
 msgid "Error removing file: %s"
 msgstr "Chyba pri odstraňovaní súboru: %s"
 
-#: ../thunar/thunar-io-jobs.c:222 ../thunar/thunar-io-jobs.c:401
+#: ../thunar/thunar-io-jobs.c:224 ../thunar/thunar-io-jobs.c:403
 #, c-format
 msgid "The file \"%s\" already exists"
 msgstr "Súbor \"%s\" už existuje"
 
-#: ../thunar/thunar-io-jobs.c:245
+#: ../thunar/thunar-io-jobs.c:247
 #, c-format
 msgid "Failed to create empty file \"%s\": %s"
 msgstr "Nepodarilo sa vytvoriť prázdny súbor \"%s\": %s"
 
-#: ../thunar/thunar-io-jobs.c:424
+#: ../thunar/thunar-io-jobs.c:426
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
 msgstr "Nepodarilo sa vytvoriť adresár \"%s\": %s"
 
 #. tell the user that we're preparing to unlink the files
-#: ../thunar/thunar-io-jobs.c:508
+#: ../thunar/thunar-io-jobs.c:510
 msgid "Preparing..."
 msgstr "Prebieha príprava..."
 
-#: ../thunar/thunar-io-jobs.c:586
+#: ../thunar/thunar-io-jobs.c:588
 #, c-format
 msgid "Could not delete file \"%s\": %s"
 msgstr "Nemožno vymazať súbor \"% s\":% s"
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:1059
+#: ../thunar/thunar-io-jobs.c:1061
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "Nepodarilo sa zmeniť  vlastníka \"%s\": %s"
 
-#: ../thunar/thunar-io-jobs.c:1060
+#: ../thunar/thunar-io-jobs.c:1062
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "Nepodarilo sa zmeniť  skupinu \"%s\": %s"
 
-#: ../thunar/thunar-io-jobs.c:1215
+#: ../thunar/thunar-io-jobs.c:1217
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Nepodarilo sa zmeniť  práva \"%s\": %s"
@@ -1889,8 +1888,8 @@ msgid ""
 "space."
 msgstr "V cieli nie je dostatok miesta. Na uvoľnenie miesta skúste odstrániť súbory."
 
-#: ../thunar/thunar-job-operation.c:779 ../thunar/thunar-list-model.c:2941
-#: ../thunar/thunar-size-label.c:473 ../thunar/thunar-tree-view-model.c:3716
+#: ../thunar/thunar-job-operation.c:779 ../thunar/thunar-size-label.c:472
+#: ../thunar/thunar-standard-view-model.c:513
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -1979,7 +1978,7 @@ msgstr ""
 msgid "Undo the latest '%s' operation (%s)"
 msgstr ""
 
-#: ../thunar/thunar-job-operation-history.c:566 ../thunar/thunar-window.c:496
+#: ../thunar/thunar-job-operation-history.c:566 ../thunar/thunar-window.c:504
 msgid "Undo the latest operation"
 msgstr ""
 
@@ -1989,13 +1988,13 @@ msgstr ""
 msgid "Redo the latest '%s' operation (%s)"
 msgstr ""
 
-#: ../thunar/thunar-job-operation-history.c:591 ../thunar/thunar-window.c:497
+#: ../thunar/thunar-job-operation-history.c:591 ../thunar/thunar-window.c:505
 msgid "Redo the latest operation"
 msgstr ""
 
-#: ../thunar/thunar-list-model.c:1000 ../thunar/thunar-list-model.c:1010
-#: ../thunar/thunar-tree-view-model.c:1205
-#: ../thunar/thunar-tree-view-model.c:1215
+#: ../thunar/thunar-list-model.c:983 ../thunar/thunar-list-model.c:993
+#: ../thunar/thunar-tree-view-model.c:1303
+#: ../thunar/thunar-tree-view-model.c:1313
 #, c-format
 msgid "%u item"
 msgid_plural "%u items"
@@ -2003,90 +2002,6 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
-
-#: ../thunar/thunar-list-model.c:2935 ../thunar/thunar-tree-view-model.c:3710
-#, c-format
-msgid "%d file: %s"
-msgid_plural "%d files: %s"
-msgstr[0] "%d súbor: %s"
-msgstr[1] "%d súbory: %s"
-msgstr[2] "%d súborov: %s"
-msgstr[3] "%d súborov: %s"
-
-#: ../thunar/thunar-list-model.c:2946 ../thunar/thunar-size-label.c:472
-#: ../thunar/thunar-tree-view-model.c:3721
-#, c-format
-msgid "%d folder"
-msgid_plural "%d folders"
-msgstr[0] "%d priečinok"
-msgstr[1] "%d priečinky"
-msgstr[2] "%d priečinkov"
-msgstr[3] "%d priečinkov"
-
-#: ../thunar/thunar-list-model.c:2952 ../thunar/thunar-tree-view-model.c:3727
-#, c-format
-msgid "0 items"
-msgstr "0 položiek"
-
-#: ../thunar/thunar-list-model.c:2961 ../thunar/thunar-list-model.c:3138
-#: ../thunar/thunar-tree-view-model.c:3736
-#: ../thunar/thunar-tree-view-model.c:3908
-#, c-format
-msgid "Last Modified: %s"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3046 ../thunar/thunar-tree-view-model.c:3819
-#, c-format
-msgid "Free space: %s"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3067
-#, c-format
-msgid "\"%s\" (%s)"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3069 ../thunar/thunar-tree-view-model.c:3839
-#, c-format
-msgid "\"%s\""
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3088 ../thunar/thunar-tree-view-model.c:3858
-msgid "broken link"
-msgstr "poškodený odkaz"
-
-#: ../thunar/thunar-list-model.c:3092 ../thunar/thunar-tree-view-model.c:3862
-msgid "shortcut"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3094 ../thunar/thunar-tree-view-model.c:3864
-msgid "mountable"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3098 ../thunar/thunar-tree-view-model.c:3868
-#, c-format
-msgid "%s"
-msgstr ""
-
-#. TRANSLATORS: Try to come up with a short translation of "Original Path"
-#. (which is the path
-#. * where the trashed file/folder was located before it was moved to the
-#. trash), otherwise the
-#. * properties dialog width will be messed up.
-#: ../thunar/thunar-list-model.c:3110 ../thunar/thunar-properties-dialog.c:478
-#: ../thunar/thunar-tree-view-model.c:3880
-msgid "Original Path:"
-msgstr "Originálna cesta:"
-
-#. append the image dimensions to the statusbar text
-#: ../thunar/thunar-list-model.c:3128 ../thunar/thunar-tree-view-model.c:3898
-#: ../plugins/thunar-apr/thunar-apr-image-page.c:153
-msgid "Image Size:"
-msgstr "Veľkosť obrázku:"
-
-#: ../thunar/thunar-list-model.c:3153 ../thunar/thunar-tree-view-model.c:3923
-#, c-format
-msgid "Selection: %s"
-msgstr "Výber: %s"
 
 #: ../thunar/thunar-location-entry.c:338
 #, c-format
@@ -2554,7 +2469,7 @@ msgstr "Strom"
 msgid "Icon _Size:"
 msgstr "Veľ_kosť ikony:"
 
-#: ../thunar/thunar-preferences-dialog.c:734 ../thunar/thunar-window.c:512
+#: ../thunar/thunar-preferences-dialog.c:734 ../thunar/thunar-window.c:520
 msgid "Image Preview"
 msgstr ""
 
@@ -2784,7 +2699,7 @@ msgid ""
 msgstr "<a href=\"volman-config:\">Konfigurovať</a> správu výmenných jednotiek,\nzariadení a médií."
 
 #: ../thunar/thunar-preferences-dialog.c:1338
-#: ../thunar/thunar-properties-dialog.c:801
+#: ../thunar/thunar-properties-dialog.c:804
 msgid "Missing dependencies"
 msgstr "Chýbajúce závislosti"
 
@@ -2857,102 +2772,112 @@ msgstr ""
 msgid "Queued"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:329
+#: ../thunar/thunar-properties-dialog.c:332
 msgid "General"
 msgstr "Všeobecné"
 
-#: ../thunar/thunar-properties-dialog.c:354
+#: ../thunar/thunar-properties-dialog.c:357
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:2
 msgid "_Name:"
 msgstr "_Názov:"
 
-#: ../thunar/thunar-properties-dialog.c:393
+#: ../thunar/thunar-properties-dialog.c:396
 msgid "Names:"
 msgstr "Názvy:"
 
 #. Second box (kind, open with, link target, original path, location, volume)
-#: ../thunar/thunar-properties-dialog.c:416
+#: ../thunar/thunar-properties-dialog.c:419
 msgid "Kind:"
 msgstr "Typ:"
 
-#: ../thunar/thunar-properties-dialog.c:440
+#: ../thunar/thunar-properties-dialog.c:443
 msgid "_Open With:"
 msgstr "_Otvoriť pomocou:"
 
-#: ../thunar/thunar-properties-dialog.c:457
+#: ../thunar/thunar-properties-dialog.c:460
 msgid "Link Target:"
 msgstr "Cieľ odkazu:"
 
-#: ../thunar/thunar-properties-dialog.c:495
+#. TRANSLATORS: Try to come up with a short translation of "Original Path"
+#. (which is the path
+#. * where the trashed file/folder was located before it was moved to the
+#. trash), otherwise the
+#. * properties dialog width will be messed up.
+#: ../thunar/thunar-properties-dialog.c:481
+#: ../thunar/thunar-standard-view-model.c:693
+msgid "Original Path:"
+msgstr "Originálna cesta:"
+
+#: ../thunar/thunar-properties-dialog.c:498
 msgid "Location:"
 msgstr "Umiestnenie"
 
-#: ../thunar/thunar-properties-dialog.c:512
+#: ../thunar/thunar-properties-dialog.c:515
 msgid "Volume:"
 msgstr "Diskový oddiel:"
 
 #. Third box (deleted, modified, accessed)
-#: ../thunar/thunar-properties-dialog.c:554
+#: ../thunar/thunar-properties-dialog.c:557
 msgid "Deleted:"
 msgstr "Zmazané:"
 
-#: ../thunar/thunar-properties-dialog.c:571
+#: ../thunar/thunar-properties-dialog.c:574
 msgid "Created:"
 msgstr "Vytvorené:"
 
-#: ../thunar/thunar-properties-dialog.c:605
+#: ../thunar/thunar-properties-dialog.c:608
 msgid "Accessed:"
 msgstr "Čas prístupu:"
 
-#: ../thunar/thunar-properties-dialog.c:651
+#: ../thunar/thunar-properties-dialog.c:654
 msgid "Size on Disk:"
 msgstr ""
 
 #. Fifth box (content, capacity, free space)
-#: ../thunar/thunar-properties-dialog.c:678
+#: ../thunar/thunar-properties-dialog.c:681
 msgid "Content:"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:696
+#: ../thunar/thunar-properties-dialog.c:699
 msgid "Capacity:"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:718
+#: ../thunar/thunar-properties-dialog.c:721
 msgid "Usage:"
 msgstr "Použitie:"
 
 #. Emblem chooser
-#: ../thunar/thunar-properties-dialog.c:755
+#: ../thunar/thunar-properties-dialog.c:758
 msgid "Emblems"
 msgstr "Emblémy"
 
-#: ../thunar/thunar-properties-dialog.c:770
+#: ../thunar/thunar-properties-dialog.c:773
 msgid "Highlight"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:809
+#: ../thunar/thunar-properties-dialog.c:812
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "This feature will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:837
+#: ../thunar/thunar-properties-dialog.c:840
 msgid "Example.txt"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:854
+#: ../thunar/thunar-properties-dialog.c:857
 msgid "_Apply"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:866
+#: ../thunar/thunar-properties-dialog.c:869
 msgid "_Reset"
 msgstr "_Reštartovať"
 
-#: ../thunar/thunar-properties-dialog.c:874
+#: ../thunar/thunar-properties-dialog.c:880
 msgid "Set _Foreground"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:882
+#: ../thunar/thunar-properties-dialog.c:888
 msgid "Set _Background"
 msgstr ""
 
@@ -2978,72 +2903,72 @@ msgstr ""
 msgid "Failed to change icon of \"%s\""
 msgstr "Chyba pri zmene ikony \"%s\""
 
-#: ../thunar/thunar-properties-dialog.c:1319
+#: ../thunar/thunar-properties-dialog.c:1315
 #, c-format
 msgid "%s (%s) - Properties"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:1321
+#: ../thunar/thunar-properties-dialog.c:1317
 #, c-format
 msgid "%s - Properties"
 msgstr "%s - vlastnosti"
 
-#: ../thunar/thunar-properties-dialog.c:1378
+#: ../thunar/thunar-properties-dialog.c:1374
 msgid "unknown"
 msgstr "neznámy"
 
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:1582
+#: ../thunar/thunar-properties-dialog.c:1578
 msgid "Properties"
 msgstr "Vlastnosti"
 
-#: ../thunar/thunar-properties-dialog.c:1684
+#: ../thunar/thunar-properties-dialog.c:1680
 msgid "mixed"
 msgstr "zmiešané"
 
-#: ../thunar/thunar-renamer-dialog.c:192
+#: ../thunar/thunar-renamer-dialog.c:200
 msgid "_Add Files..."
 msgstr "_Pridať súbory:"
 
-#: ../thunar/thunar-renamer-dialog.c:192
+#: ../thunar/thunar-renamer-dialog.c:200
 msgid "Include additional files in the list of files to be renamed"
 msgstr "Obsiahnuť pridané súbory v zozname súborov na premenovanie"
 
-#: ../thunar/thunar-renamer-dialog.c:194
+#: ../thunar/thunar-renamer-dialog.c:202
 msgid "Clear"
 msgstr "Vyčistiť"
 
-#: ../thunar/thunar-renamer-dialog.c:194
+#: ../thunar/thunar-renamer-dialog.c:202
 msgid "Clear the file list below"
 msgstr "Vyčistiť zoznam súborov"
 
-#: ../thunar/thunar-renamer-dialog.c:195 ../thunar/thunar-window.c:546
+#: ../thunar/thunar-renamer-dialog.c:203 ../thunar/thunar-window.c:554
 msgid "_About"
 msgstr "_O programe"
 
-#: ../thunar/thunar-renamer-dialog.c:195
+#: ../thunar/thunar-renamer-dialog.c:203
 msgid "Display information about Thunar Bulk Rename"
 msgstr "Zobraziť informácie o hromadnom premenovaní"
 
-#: ../thunar/thunar-renamer-dialog.c:354
-#: ../thunar/thunar-renamer-dialog.c:1779
+#: ../thunar/thunar-renamer-dialog.c:379
+#: ../thunar/thunar-renamer-dialog.c:1808
 #: ../thunar-bulk-rename.desktop.in.in.h:2
 msgid "Rename Multiple Files"
 msgstr "Hromadné premenovanie"
 
-#: ../thunar/thunar-renamer-dialog.c:358
+#: ../thunar/thunar-renamer-dialog.c:383
 msgid "Close this window, cancel further changes."
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:366
+#: ../thunar/thunar-renamer-dialog.c:391
 msgid "Rename items listed above, keep this window open."
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:436
+#: ../thunar/thunar-renamer-dialog.c:461
 msgid "New Name"
 msgstr "Nový názov"
 
-#: ../thunar/thunar-renamer-dialog.c:501
+#: ../thunar/thunar-renamer-dialog.c:526
 msgid ""
 "Click here to view the documentation for the selected rename operation."
 msgstr "Sem kliknite na zobrazenie dokumentácie o vybratej operácii premenovania."
@@ -3052,14 +2977,14 @@ msgstr "Sem kliknite na zobrazenie dokumentácie o vybratej operácii premenovan
 #. from $libdir/thunarx-2/,
 #. *              and opening the multi rename dialog by selecting multiple
 #. files and pressing F2.
-#: ../thunar/thunar-renamer-dialog.c:612
+#: ../thunar/thunar-renamer-dialog.c:637
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
 msgstr "Vo vašom systéme sa nenašiel nijaký premenovací modul. Skontrolujte\nprosím inštaláciu alebo kontaktujte vášho systémového správcu. Ak ste Thunar\ninštalovali zo zdrojákov, zapnite \"Simple Builtin Renamers\" plugin."
 
-#: ../thunar/thunar-renamer-dialog.c:844
+#: ../thunar/thunar-renamer-dialog.c:873
 msgid "Remove File"
 msgid_plural "Remove Files"
 msgstr[0] "Odstrániť súbory"
@@ -3067,7 +2992,7 @@ msgstr[1] "Odstrániť súbor"
 msgstr[2] "Odstrániť súbory"
 msgstr[3] "Odstrániť súbory"
 
-#: ../thunar/thunar-renamer-dialog.c:845
+#: ../thunar/thunar-renamer-dialog.c:874
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] "Odstrániť vybrané súbory zo zoznamu na premenovanie"
@@ -3076,41 +3001,41 @@ msgstr[2] "Odstrániť vybrané súbory zo zoznamu na premenovanie"
 msgstr[3] "Odstrániť vybrané súbory zo zoznamu na premenovanie"
 
 #. tell the user that we failed
-#: ../thunar/thunar-renamer-dialog.c:941
+#: ../thunar/thunar-renamer-dialog.c:970
 msgid "Failed to open the documentation browser"
 msgstr "Nepodarilo sa otvoriť prehliadač dokumentácie"
 
 #. allocate the file chooser
-#: ../thunar/thunar-renamer-dialog.c:1042
+#: ../thunar/thunar-renamer-dialog.c:1071
 msgid "Select files to rename"
 msgstr "Vyberte súbory, ktoré chcete premenovať"
 
-#: ../thunar/thunar-renamer-dialog.c:1058
+#: ../thunar/thunar-renamer-dialog.c:1087
 msgid "Audio Files"
 msgstr "Zvukové súbory"
 
-#: ../thunar/thunar-renamer-dialog.c:1063
+#: ../thunar/thunar-renamer-dialog.c:1092
 msgid "Image Files"
 msgstr "Súbory obrázkov"
 
-#: ../thunar/thunar-renamer-dialog.c:1068
+#: ../thunar/thunar-renamer-dialog.c:1097
 msgid "Video Files"
 msgstr "Súbory videa"
 
 #. just popup the about dialog
-#: ../thunar/thunar-renamer-dialog.c:1204
+#: ../thunar/thunar-renamer-dialog.c:1233
 #: ../thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
 msgstr "Hromadné premenovanie"
 
-#: ../thunar/thunar-renamer-dialog.c:1205
+#: ../thunar/thunar-renamer-dialog.c:1234
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
 msgstr "Hromadné premenovanie Thunar je mocný a rozšíriteľný\nnástroj na premenovanie viacerých súborov naraz."
 
 #. change title to reflect the standalone status
-#: ../thunar/thunar-renamer-dialog.c:1779
+#: ../thunar/thunar-renamer-dialog.c:1808
 msgid "Bulk Rename - Rename Multiple Files"
 msgstr "Hromadné premenovanie - premenovanie viacerých súborov naraz"
 
@@ -3141,7 +3066,7 @@ msgid ""
 msgstr "Chcete preskočiť tento súbor a pokračovať v premenovávaní zostávajúcich súborov?"
 
 #: ../thunar/thunar-shortcuts-model.c:646
-#: ../thunar/thunar-shortcuts-model.c:1010 ../thunar/thunar-window.c:532
+#: ../thunar/thunar-shortcuts-model.c:1010 ../thunar/thunar-window.c:540
 msgid "Browse the file system"
 msgstr "Prehliadať súborový systém"
 
@@ -3176,7 +3101,7 @@ msgstr "Sieť"
 msgid "Browse Network"
 msgstr "Prechádzať sieť"
 
-#: ../thunar/thunar-shortcuts-model.c:1055 ../thunar/thunar-window.c:542
+#: ../thunar/thunar-shortcuts-model.c:1055 ../thunar/thunar-window.c:550
 msgid "Browse local network connections"
 msgstr "Prechádzať lokálne sieťové spojenia"
 
@@ -3192,7 +3117,7 @@ msgstr "Otvoriť domovský priečinok"
 msgid "Open the desktop folder"
 msgstr "Otvoriť priečinok pracovnej plochy"
 
-#: ../thunar/thunar-shortcuts-model.c:1153 ../thunar/thunar-window.c:535
+#: ../thunar/thunar-shortcuts-model.c:1153 ../thunar/thunar-window.c:543
 #: ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr "Počítač"
@@ -3201,7 +3126,7 @@ msgstr "Počítač"
 msgid "Browse the computer"
 msgstr "Prehliadať počítač"
 
-#: ../thunar/thunar-shortcuts-model.c:1166 ../thunar/thunar-window.c:536
+#: ../thunar/thunar-shortcuts-model.c:1166 ../thunar/thunar-window.c:544
 msgid "Recent"
 msgstr ""
 
@@ -3242,7 +3167,17 @@ msgstr "Prebieha výpočet..."
 msgid "Calculation aborted"
 msgstr "Výpočet prerušený"
 
-#: ../thunar/thunar-size-label.c:474
+#: ../thunar/thunar-size-label.c:471
+#: ../thunar/thunar-standard-view-model.c:518
+#, c-format
+msgid "%d folder"
+msgid_plural "%d folders"
+msgstr[0] "%d priečinok"
+msgstr[1] "%d priečinky"
+msgstr[2] "%d priečinkov"
+msgstr[3] "%d priečinkov"
+
+#: ../thunar/thunar-size-label.c:473
 #, c-format
 msgid "%u item (%s, %s)"
 msgid_plural "%u items (%s, %s)"
@@ -3253,145 +3188,145 @@ msgstr[3] ""
 
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
-#: ../thunar/thunar-size-label.c:484
+#: ../thunar/thunar-size-label.c:483
 msgid "(some contents unreadable)"
 msgstr "(niektoré položky nečitateľné)"
 
 #. nothing was readable, so permission was denied
-#: ../thunar/thunar-size-label.c:495
+#: ../thunar/thunar-size-label.c:494
 msgid "Permission denied"
 msgstr "Prístup odmietnutý"
 
-#: ../thunar/thunar-standard-view.c:404
+#: ../thunar/thunar-standard-view.c:376
 msgid "Select _all Files"
 msgstr "Vybr_ať všetky súbory"
 
-#: ../thunar/thunar-standard-view.c:404
+#: ../thunar/thunar-standard-view.c:376
 msgid "Select all files in this window"
 msgstr "Vybrať všetky súbory v tomto okne"
 
-#: ../thunar/thunar-standard-view.c:405
+#: ../thunar/thunar-standard-view.c:377
 msgid "Select _by Pattern..."
 msgstr "Vy_brať podľa vzorky..."
 
-#: ../thunar/thunar-standard-view.c:405
+#: ../thunar/thunar-standard-view.c:377
 msgid "Select all files that match a certain pattern"
 msgstr "Vybrať všetky súbory zodpovedajúce nejakej vzorke"
 
-#: ../thunar/thunar-standard-view.c:406
+#: ../thunar/thunar-standard-view.c:378
 msgid "_Invert Selection"
 msgstr "_Invertovať výber"
 
-#: ../thunar/thunar-standard-view.c:406
+#: ../thunar/thunar-standard-view.c:378
 msgid "Select all files but not those currently selected"
 msgstr "Vybrať všetky, ale len tie, ktoré nie sú aktuálne vybrané"
 
-#: ../thunar/thunar-standard-view.c:407
+#: ../thunar/thunar-standard-view.c:379
 msgid "U_nselect all Files"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:407
+#: ../thunar/thunar-standard-view.c:379
 msgid "Unselect all files in this window"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:408
+#: ../thunar/thunar-standard-view.c:380
 msgid "Arran_ge Items"
 msgstr "_Usporiadať položky"
 
-#: ../thunar/thunar-standard-view.c:409
-msgid "T_oggle Sort Order"
+#: ../thunar/thunar-standard-view.c:381
+msgid "_Reversed Order"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:409
-msgid "Toggle ascending/descending sort order"
+#: ../thunar/thunar-standard-view.c:381
+msgid "Reverse the sort order"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:410
+#: ../thunar/thunar-standard-view.c:382
 msgid "By _Name"
 msgstr "Podľa _názvu"
 
-#: ../thunar/thunar-standard-view.c:410
+#: ../thunar/thunar-standard-view.c:382
 msgid "Keep items sorted by their name"
 msgstr "Udržiavať položky zoradené podľa ich názvu"
 
-#: ../thunar/thunar-standard-view.c:411
+#: ../thunar/thunar-standard-view.c:383
 msgid "By _Size"
 msgstr "Podľa veľ_kosti"
 
-#: ../thunar/thunar-standard-view.c:411
+#: ../thunar/thunar-standard-view.c:383
 msgid "Keep items sorted by their size"
 msgstr "Udržiavať položky zoradené podľa ich veľkosti"
 
-#: ../thunar/thunar-standard-view.c:412
+#: ../thunar/thunar-standard-view.c:384
 msgid "By _Type"
 msgstr "Podľa _typu"
 
-#: ../thunar/thunar-standard-view.c:412
+#: ../thunar/thunar-standard-view.c:384
 msgid "Keep items sorted by their type"
 msgstr "Udržiavať položky zoradené podľa ich typu"
 
-#: ../thunar/thunar-standard-view.c:413
+#: ../thunar/thunar-standard-view.c:385
 msgid "By Modification _Date"
 msgstr "Podľa _dátumu úpravy"
 
-#: ../thunar/thunar-standard-view.c:413
+#: ../thunar/thunar-standard-view.c:385
 msgid "Keep items sorted by their modification date"
 msgstr "Udržiavať položky zoradené podľa ich času ich poslednej zmeny"
 
-#: ../thunar/thunar-standard-view.c:414
+#: ../thunar/thunar-standard-view.c:386
 msgid "By D_eletion Date"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:414
+#: ../thunar/thunar-standard-view.c:386
 msgid "Keep items sorted by their deletion date"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:415
+#: ../thunar/thunar-standard-view.c:387
 msgid "_Ascending"
 msgstr "Vz_ostupne"
 
-#: ../thunar/thunar-standard-view.c:415
+#: ../thunar/thunar-standard-view.c:387
 msgid "Sort items in ascending order"
 msgstr "Zoradiť položky vo vzostupnom poradí"
 
-#: ../thunar/thunar-standard-view.c:416
+#: ../thunar/thunar-standard-view.c:388
 msgid "_Descending"
 msgstr "_Zostupne"
 
-#: ../thunar/thunar-standard-view.c:416
+#: ../thunar/thunar-standard-view.c:388
 msgid "Sort items in descending order"
 msgstr "Zoradiť položky v zostupnom poradí"
 
-#: ../thunar/thunar-standard-view.c:1804
+#: ../thunar/thunar-standard-view.c:1730
 msgid "Loading folder contents..."
 msgstr "Načítava sa obsah priečinka..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2381 ../thunar/thunar-window.c:4216
+#: ../thunar/thunar-standard-view.c:2323 ../thunar/thunar-window.c:4247
 msgid "Failed to open the home folder"
 msgstr "Nepodarilo sa otvoriť domovský adresár"
 
-#: ../thunar/thunar-standard-view.c:2462
+#: ../thunar/thunar-standard-view.c:2401
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "Vybrať podľa vzorky"
 
-#: ../thunar/thunar-standard-view.c:2467
+#: ../thunar/thunar-standard-view.c:2406
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "_Zrušiť"
 
-#: ../thunar/thunar-standard-view.c:2469
+#: ../thunar/thunar-standard-view.c:2408
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "_Vybrať"
 
-#: ../thunar/thunar-standard-view.c:2482
+#: ../thunar/thunar-standard-view.c:2421
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "Vz_orka:"
 
-#: ../thunar/thunar-standard-view.c:2483
+#: ../thunar/thunar-standard-view.c:2422
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3401,7 +3336,7 @@ msgstr ""
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: ../thunar/thunar-standard-view.c:2497
+#: ../thunar/thunar-standard-view.c:2436
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3412,24 +3347,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:2501
+#: ../thunar/thunar-standard-view.c:2440
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:2502
+#: ../thunar/thunar-standard-view.c:2441
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:2507
+#: ../thunar/thunar-standard-view.c:2446
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:2508
+#: ../thunar/thunar-standard-view.c:2447
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3438,24 +3373,87 @@ msgstr ""
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: ../thunar/thunar-standard-view.c:2894
+#: ../thunar/thunar-standard-view.c:2833
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Lokalita XDS drag poskytla neplatný názov súboru."
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:3088
+#: ../thunar/thunar-standard-view.c:3027
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Nepodarilo sa vytvoriť odkaz na adresu \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3134
+#: ../thunar/thunar-standard-view.c:3073
 msgid "Untitled document"
 msgstr "Nepomenovaný dokument"
 
-#: ../thunar/thunar-standard-view.c:3639 ../thunar/thunar-window.c:4313
+#: ../thunar/thunar-standard-view.c:3539 ../thunar/thunar-window.c:4344
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Nepodarilo sa otvoriť priečinok \"%s\""
+
+#: ../thunar/thunar-standard-view-model.c:506
+#, c-format
+msgid "%d file: %s"
+msgid_plural "%d files: %s"
+msgstr[0] "%d súbor: %s"
+msgstr[1] "%d súbory: %s"
+msgstr[2] "%d súborov: %s"
+msgstr[3] "%d súborov: %s"
+
+#: ../thunar/thunar-standard-view-model.c:525
+#, c-format
+msgid "0 items"
+msgstr "0 položiek"
+
+#: ../thunar/thunar-standard-view-model.c:535
+#: ../thunar/thunar-standard-view-model.c:722
+#, c-format
+msgid "Last Modified: %s"
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:626
+#, c-format
+msgid "Free space: %s"
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:650
+#, c-format
+msgid "\"%s\" (%s)"
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:652
+#, c-format
+msgid "\"%s\""
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:671
+msgid "broken link"
+msgstr "poškodený odkaz"
+
+#: ../thunar/thunar-standard-view-model.c:675
+msgid "shortcut"
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:677
+msgid "mountable"
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:681
+#, c-format
+msgid "%s"
+msgstr ""
+
+#. append the image dimensions to the statusbar text
+#: ../thunar/thunar-standard-view-model.c:711
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:153
+msgid "Image Size:"
+msgstr "Veľkosť obrázku:"
+
+#: ../thunar/thunar-standard-view-model.c:739
+#, c-format
+msgid "Selection: %s"
+msgstr "Výber: %s"
 
 #: ../thunar/thunar-statusbar.c:81
 msgid "Show size"
@@ -3584,550 +3582,538 @@ msgstr[1] "zostávajú %lu sekundy (%s/s)"
 msgstr[2] "zostáva %lu sekúnd (%s/s)"
 msgstr[3] "zostáva %lu sekúnd (%s/s)"
 
-#: ../thunar/thunar-tree-model.c:637 ../thunar/thunar-tree-view-model.c:1005
-#: ../thunar/thunar-tree-view-model.c:1016
-#: ../thunar/thunar-tree-view-model.c:1027
-#: ../thunar/thunar-tree-view-model.c:1038
-#: ../thunar/thunar-tree-view-model.c:1049
-#: ../thunar/thunar-tree-view-model.c:1118
-#: ../thunar/thunar-tree-view-model.c:1126
-#: ../thunar/thunar-tree-view-model.c:1136
-#: ../thunar/thunar-tree-view-model.c:1165
-#: ../thunar/thunar-tree-view-model.c:1173
-#: ../thunar/thunar-tree-view-model.c:1183
-#: ../thunar/thunar-tree-view-model.c:1233
-#: ../thunar/thunar-tree-view-model.c:1243
-#: ../thunar/thunar-tree-view-model.c:1264
+#: ../thunar/thunar-tree-model.c:637 ../thunar/thunar-tree-view-model.c:1234
+#: ../thunar/thunar-tree-view-model.c:1362
 msgid "Loading..."
 msgstr "Načítava sa..."
 
-#: ../thunar/thunar-util.c:301
+#: ../thunar/thunar-util.c:304
 #, c-format
 msgid "Invalid path"
 msgstr "Neplatná cesta"
 
-#: ../thunar/thunar-util.c:335
+#: ../thunar/thunar-util.c:338
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "Neznámy používateľ \"%s\""
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:446
+#: ../thunar/thunar-util.c:449
 msgid "Today"
 msgstr "Dnes"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:451
+#: ../thunar/thunar-util.c:454
 #, c-format
 msgid "Today at %X"
 msgstr "Dnes o %X"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:459
+#: ../thunar/thunar-util.c:462
 msgid "Yesterday"
 msgstr "Včera"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:464
+#: ../thunar/thunar-util.c:467
 #, c-format
 msgid "Yesterday at %X"
 msgstr "Včera o %X"
 
 #. Days from last week
-#: ../thunar/thunar-util.c:482
+#: ../thunar/thunar-util.c:485
 #, c-format
 msgid "%A at %X"
 msgstr "%A na %X"
 
 #. Any other date
-#: ../thunar/thunar-util.c:487
+#: ../thunar/thunar-util.c:490
 #, c-format
 msgid "%x at %X"
 msgstr "%x na %X"
 
-#: ../thunar/thunar-util.c:753
+#: ../thunar/thunar-util.c:758
 #, c-format
 msgid "%.*s %u%s"
 msgstr ""
 
-#: ../thunar/thunar-util.c:755
+#: ../thunar/thunar-util.c:760
 #, c-format
 msgid "%.*s (copy %u)%s"
 msgstr ""
 
-#: ../thunar/thunar-util.c:760
+#: ../thunar/thunar-util.c:765
 #, c-format
 msgid "link to %.*s%s"
 msgstr ""
 
-#: ../thunar/thunar-util.c:765
+#: ../thunar/thunar-util.c:770
 #, c-format
 msgid "link %u to %.*s%s"
 msgstr ""
 
-#: ../thunar/thunar-util.c:786
+#: ../thunar/thunar-util.c:791
 msgid "Search: "
 msgstr ""
 
-#: ../thunar/thunar-window.c:487
+#: ../thunar/thunar-window.c:495
 msgid "_File"
 msgstr "_Súbor"
 
-#: ../thunar/thunar-window.c:488
+#: ../thunar/thunar-window.c:496
 msgid "New _Tab"
 msgstr "Nová _karta"
 
-#: ../thunar/thunar-window.c:488
+#: ../thunar/thunar-window.c:496
 msgid "Open a new tab for the displayed location"
 msgstr "Otvoriť zobrazené umiestnenie v novej karte"
 
-#: ../thunar/thunar-window.c:489
+#: ../thunar/thunar-window.c:497
 msgid "New _Window"
 msgstr "Nové _okno"
 
-#: ../thunar/thunar-window.c:489
+#: ../thunar/thunar-window.c:497
 msgid "Open a new Thunar window for the displayed location"
 msgstr "Otvorí nové Thunar okno so zobrazeným miestom"
 
-#: ../thunar/thunar-window.c:490
+#: ../thunar/thunar-window.c:498
 msgid "Detac_h Tab"
 msgstr "_Odpojiť kartu"
 
-#: ../thunar/thunar-window.c:490
+#: ../thunar/thunar-window.c:498
 msgid "Open current folder in a new window"
 msgstr "Otvorí aktuálnu zložku v novom okne"
 
-#: ../thunar/thunar-window.c:491
+#: ../thunar/thunar-window.c:499
 msgid "C_lose Tab"
 msgstr "Za_tvoriť kartu"
 
-#: ../thunar/thunar-window.c:491
+#: ../thunar/thunar-window.c:499
 msgid "Close this folder"
 msgstr "Zatvoriť tento priečinok"
 
-#: ../thunar/thunar-window.c:492
+#: ../thunar/thunar-window.c:500
 msgid "_Close Window"
 msgstr "_Zatvoriť okno"
 
-#: ../thunar/thunar-window.c:492
+#: ../thunar/thunar-window.c:500
 msgid "Close this window"
 msgstr "Zatvoriť toto okno"
 
-#: ../thunar/thunar-window.c:493
+#: ../thunar/thunar-window.c:501
 msgid "Close _All Windows"
 msgstr "Zatvoriť všetky _okná"
 
-#: ../thunar/thunar-window.c:493
+#: ../thunar/thunar-window.c:501
 msgid "Close all Thunar windows"
 msgstr "Zatvoriť všetky okná správcu súborov Thunar"
 
-#: ../thunar/thunar-window.c:495
+#: ../thunar/thunar-window.c:503
 msgid "_Edit"
 msgstr "_Upraviť"
 
-#: ../thunar/thunar-window.c:496
+#: ../thunar/thunar-window.c:504
 msgid "_Undo"
 msgstr ""
 
-#: ../thunar/thunar-window.c:497
+#: ../thunar/thunar-window.c:505
 msgid "_Redo"
 msgstr ""
 
-#: ../thunar/thunar-window.c:498
+#: ../thunar/thunar-window.c:506
 msgid "Pr_eferences..."
 msgstr "_Nastavenia..."
 
-#: ../thunar/thunar-window.c:498
+#: ../thunar/thunar-window.c:506
 msgid "Edit Thunars Preferences"
 msgstr "Upraviť nastavenia správcu súborov Thunar"
 
-#: ../thunar/thunar-window.c:500
+#: ../thunar/thunar-window.c:508
 msgid "_View"
 msgstr "_Zobraziť"
 
-#: ../thunar/thunar-window.c:501
+#: ../thunar/thunar-window.c:509
 msgid "_Reload"
 msgstr "Ob_noviť"
 
-#: ../thunar/thunar-window.c:501
+#: ../thunar/thunar-window.c:509
 msgid "Reload the current folder"
 msgstr "Znovunačítať obsah aktuálneho priečinka"
 
-#: ../thunar/thunar-window.c:503
+#: ../thunar/thunar-window.c:511
 msgid "Spl_it View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:503
+#: ../thunar/thunar-window.c:511
 msgid "Open/Close Split View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:504
+#: ../thunar/thunar-window.c:512
 msgid "Switch Focused Split View Pane"
 msgstr ""
 
-#: ../thunar/thunar-window.c:505
+#: ../thunar/thunar-window.c:513
 msgid "_Location Selector"
 msgstr "_Panel umiestnenia"
 
-#: ../thunar/thunar-window.c:506
-msgid "_Entry Style"
+#: ../thunar/thunar-window.c:514
+msgid "_Text Style"
 msgstr ""
 
-#: ../thunar/thunar-window.c:506
-msgid "Traditional entry showing the current path"
+#: ../thunar/thunar-window.c:514
+msgid "Traditional text box showing the current path"
 msgstr ""
 
-#: ../thunar/thunar-window.c:507
+#: ../thunar/thunar-window.c:515
 msgid "_Buttons Style"
 msgstr ""
 
-#: ../thunar/thunar-window.c:507
+#: ../thunar/thunar-window.c:515
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "Moderný vzhľad s tlačidlami korenšpondujúcimi priečinkom"
 
-#: ../thunar/thunar-window.c:508
+#: ../thunar/thunar-window.c:516
 msgid "_Side Pane"
 msgstr "_Bočný panel"
 
-#: ../thunar/thunar-window.c:509
+#: ../thunar/thunar-window.c:517
 msgid "_Shortcuts"
 msgstr "_Záložky"
 
-#: ../thunar/thunar-window.c:509
+#: ../thunar/thunar-window.c:517
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "Prepne viditeľnosť panela skratiek"
 
-#: ../thunar/thunar-window.c:510
+#: ../thunar/thunar-window.c:518
 msgid "_Tree"
 msgstr "_Strom"
 
-#: ../thunar/thunar-window.c:510
+#: ../thunar/thunar-window.c:518
 msgid "Toggles the visibility of the tree pane"
 msgstr "Prepne viditeľnosť panela stromu"
 
-#: ../thunar/thunar-window.c:512
+#: ../thunar/thunar-window.c:520
 msgid "Change the visibility of this window's image preview"
 msgstr ""
 
-#: ../thunar/thunar-window.c:513
+#: ../thunar/thunar-window.c:521
 msgid "St_atusbar"
 msgstr "S_tavový riadok"
 
-#: ../thunar/thunar-window.c:513
+#: ../thunar/thunar-window.c:521
 msgid "Change the visibility of this window's statusbar"
 msgstr "Zmení viditeľnosť stavového riadku v okne"
 
-#: ../thunar/thunar-window.c:514
+#: ../thunar/thunar-window.c:522
 msgid "_Menubar"
 msgstr "Panel _menu"
 
-#: ../thunar/thunar-window.c:514
+#: ../thunar/thunar-window.c:522
 msgid "Change the visibility of this window's menubar"
 msgstr "Zmení viditeľnosť panela menu tohoto okna"
 
-#: ../thunar/thunar-window.c:515
+#: ../thunar/thunar-window.c:523
 msgid "Configure _Toolbar..."
 msgstr ""
 
-#: ../thunar/thunar-window.c:515
+#: ../thunar/thunar-window.c:523
 msgid "Configure the toolbar"
 msgstr ""
 
-#: ../thunar/thunar-window.c:516
+#: ../thunar/thunar-window.c:524
 msgid "Clear Saved _Folder View Settings"
 msgstr "Vymazať uložené nastavenia zobrazenia _priečinku"
 
-#: ../thunar/thunar-window.c:516
+#: ../thunar/thunar-window.c:524
 msgid "Delete saved view settings for this folder"
 msgstr "Odstrániť uložené nastavenia zobrazenia pre tento priečinok"
 
-#: ../thunar/thunar-window.c:517
+#: ../thunar/thunar-window.c:525
 msgid "Show _Hidden Files"
 msgstr "Zobraziť _skryté súbory"
 
-#: ../thunar/thunar-window.c:517
+#: ../thunar/thunar-window.c:525
 msgid "Toggles the display of hidden files in the current window"
 msgstr "Prepne zobrazenie skrytých súborov v aktuálnom okne"
 
-#: ../thunar/thunar-window.c:518
+#: ../thunar/thunar-window.c:526
 msgid "Show File Hi_ghlight"
 msgstr ""
 
-#: ../thunar/thunar-window.c:518
+#: ../thunar/thunar-window.c:526
 msgid ""
 "Toggles the display of file highlight which can be configured in the file "
 "specific property dialog"
 msgstr ""
 
-#: ../thunar/thunar-window.c:519
+#: ../thunar/thunar-window.c:527
 msgid "Zoom I_n"
 msgstr "Pri_blížiť"
 
-#: ../thunar/thunar-window.c:519
+#: ../thunar/thunar-window.c:527
 msgid "Show the contents in more detail"
 msgstr "Zobraziť obsah detailnejšie"
 
-#: ../thunar/thunar-window.c:522
+#: ../thunar/thunar-window.c:530
 msgid "Zoom _Out"
 msgstr "Z_menšiť"
 
-#: ../thunar/thunar-window.c:522
+#: ../thunar/thunar-window.c:530
 msgid "Show the contents in less detail"
 msgstr "Zobraziť obsah s menej detailami"
 
-#: ../thunar/thunar-window.c:524
+#: ../thunar/thunar-window.c:532
 msgid "Normal Si_ze"
 msgstr "_Normálna veľkosť"
 
-#: ../thunar/thunar-window.c:524
+#: ../thunar/thunar-window.c:532
 msgid "Show the contents at the normal size"
 msgstr "Zobraziť obsah v normálnej veľkosti"
 
-#: ../thunar/thunar-window.c:526
+#: ../thunar/thunar-window.c:534
 msgid "_Icon View"
 msgstr "Zobrazenie _ikon"
 
-#: ../thunar/thunar-window.c:526
+#: ../thunar/thunar-window.c:534
 msgid "Display folder content in an icon view"
 msgstr "Zobrazí obsah priečinkov v ikonách"
 
-#: ../thunar/thunar-window.c:527
+#: ../thunar/thunar-window.c:535
 msgid "_List View"
 msgstr "Zobrazenie zoz_namu"
 
-#: ../thunar/thunar-window.c:527
+#: ../thunar/thunar-window.c:535
 msgid "Display folder content in a detailed list view"
 msgstr "Zobrazí obsah priečinka v podrobnom zozname"
 
-#: ../thunar/thunar-window.c:528
+#: ../thunar/thunar-window.c:536
 msgid "_Compact View"
 msgstr "_Kompaktné zobrazenie"
 
-#: ../thunar/thunar-window.c:528
+#: ../thunar/thunar-window.c:536
 msgid "Display folder content in a compact list view"
 msgstr "Zobrazí obsah priečinka v kompaktnom zozname"
 
-#: ../thunar/thunar-window.c:530
+#: ../thunar/thunar-window.c:538
 msgid "_Go"
 msgstr "_Prejsť"
 
-#: ../thunar/thunar-window.c:531
+#: ../thunar/thunar-window.c:539
 msgid "_Bookmarks"
 msgstr ""
 
-#: ../thunar/thunar-window.c:533
+#: ../thunar/thunar-window.c:541
 msgid "_Home"
 msgstr "_Domov"
 
-#: ../thunar/thunar-window.c:533
+#: ../thunar/thunar-window.c:541
 msgid "Go to the home folder"
 msgstr "Prejsť do domovského priečinka"
 
-#: ../thunar/thunar-window.c:534
+#: ../thunar/thunar-window.c:542
 msgid "Desktop"
 msgstr "Plocha"
 
-#: ../thunar/thunar-window.c:534
+#: ../thunar/thunar-window.c:542
 msgid "Go to the desktop folder"
 msgstr "Prejsť do priečinka pracovnej plochy"
 
-#: ../thunar/thunar-window.c:535
+#: ../thunar/thunar-window.c:543
 msgid ""
 "Browse all local and remote disks and folders accessible from this computer"
 msgstr "Prehliadať všetky miestne a vzdialené disky a priečinky prístupné z tohto počítača"
 
-#: ../thunar/thunar-window.c:536
+#: ../thunar/thunar-window.c:544
 msgid "Display recently used files"
 msgstr ""
 
-#: ../thunar/thunar-window.c:537
+#: ../thunar/thunar-window.c:545
 msgid "T_rash"
 msgstr "_Kôš"
 
-#: ../thunar/thunar-window.c:537
+#: ../thunar/thunar-window.c:545
 msgid "Display the contents of the trash can"
 msgstr "Zobraziť obsah koša"
 
-#: ../thunar/thunar-window.c:538
+#: ../thunar/thunar-window.c:546
 msgid "Open _Parent"
 msgstr "Otvoriť _rodičovský"
 
-#: ../thunar/thunar-window.c:538
+#: ../thunar/thunar-window.c:546
 msgid "Open the parent folder"
 msgstr "Otvoriť rodičovský priečinok"
 
-#: ../thunar/thunar-window.c:539
+#: ../thunar/thunar-window.c:547
 msgid "_Open Location..."
 msgstr "_Otvoriť lokáciu..."
 
-#: ../thunar/thunar-window.c:539
+#: ../thunar/thunar-window.c:547
 msgid "Specify a location to open"
 msgstr "Zadať umiestnenie, ktoré otvoriť"
 
-#: ../thunar/thunar-window.c:541
+#: ../thunar/thunar-window.c:549
 msgid "T_emplates"
 msgstr "Š_ablóny"
 
-#: ../thunar/thunar-window.c:541
+#: ../thunar/thunar-window.c:549
 msgid "Go to the templates folder"
 msgstr "Prejsť do priečinka šablón"
 
-#: ../thunar/thunar-window.c:542
+#: ../thunar/thunar-window.c:550
 msgid "B_rowse Network"
 msgstr "P_rechádzať sieť"
 
-#: ../thunar/thunar-window.c:545
+#: ../thunar/thunar-window.c:553
 msgid "_Contents"
 msgstr "O_bsah"
 
-#: ../thunar/thunar-window.c:545
+#: ../thunar/thunar-window.c:553
 msgid "Display Thunar user manual"
 msgstr "Zobraziť používateľský manuál"
 
-#: ../thunar/thunar-window.c:546
+#: ../thunar/thunar-window.c:554
 msgid "Display information about Thunar"
 msgstr "Zobraziť informáciu o správcovi súborov Thunar"
 
-#: ../thunar/thunar-window.c:547
+#: ../thunar/thunar-window.c:555
 msgid "Back"
 msgstr "Späť"
 
-#: ../thunar/thunar-window.c:547
+#: ../thunar/thunar-window.c:555
 msgid "Go to the previous visited folder"
 msgstr "Prejsť na predchádzajúce navštívené miesto"
 
-#: ../thunar/thunar-window.c:549
+#: ../thunar/thunar-window.c:557
 msgid "Forward"
 msgstr "Dopredu"
 
-#: ../thunar/thunar-window.c:549
+#: ../thunar/thunar-window.c:557
 msgid "Go to the next visited folder"
 msgstr "Prejsť na nasledujúce navštívené miesto"
 
-#: ../thunar/thunar-window.c:550
+#: ../thunar/thunar-window.c:558
 msgid "_Previous Tab"
 msgstr "_Predchádzajúca karta"
 
-#: ../thunar/thunar-window.c:550
+#: ../thunar/thunar-window.c:558
 msgid "Switch to Previous Tab"
 msgstr "Prepne na predchádzajúcu kartu"
 
-#: ../thunar/thunar-window.c:551
+#: ../thunar/thunar-window.c:559
 msgid "_Next Tab"
 msgstr "_Nasledujúca karta"
 
-#: ../thunar/thunar-window.c:551
+#: ../thunar/thunar-window.c:559
 msgid "Switch to Next Tab"
 msgstr "Prepne na nasledujúcu kartu"
 
-#: ../thunar/thunar-window.c:552
+#: ../thunar/thunar-window.c:560
 msgid "_Search for Files..."
 msgstr ""
 
-#: ../thunar/thunar-window.c:552
+#: ../thunar/thunar-window.c:560
 msgid "Search for a specific file in the current folder and Recent"
 msgstr ""
 
-#: ../thunar/thunar-window.c:553
+#: ../thunar/thunar-window.c:561
 msgid "Cancel search for files"
 msgstr ""
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:898
+#: ../thunar/thunar-window.c:906
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "Upozornenie: používate účet správcu. Môžete si poškodiť systém."
 
-#: ../thunar/thunar-window.c:957
+#: ../thunar/thunar-window.c:965
 msgid "Size: "
 msgstr ""
 
 #. TRANSLATORS: `Catfish' is a software package, please don't translate it.
-#: ../thunar/thunar-window.c:1027
+#: ../thunar/thunar-window.c:1035
 msgid "Search with Catfish..."
 msgstr ""
 
-#: ../thunar/thunar-window.c:1038
+#: ../thunar/thunar-window.c:1046
 msgid "Restore Selected Items"
 msgstr ""
 
-#: ../thunar/thunar-window.c:2618
+#: ../thunar/thunar-window.c:2642
 msgid "Close tab"
 msgstr "Zatvoriť kartu"
 
-#: ../thunar/thunar-window.c:3077
+#: ../thunar/thunar-window.c:3101
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Otvoriť umiestnenie „%s”"
 
-#: ../thunar/thunar-window.c:4156
+#: ../thunar/thunar-window.c:4187
 msgid "Failed to open parent folder"
 msgstr "Otvorenie nadradeného priečinka zlyhalo"
 
-#: ../thunar/thunar-window.c:4287
+#: ../thunar/thunar-window.c:4318
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Adresár „%s” neexistuje. Chcete ho vytvoriť?"
 
-#: ../thunar/thunar-window.c:4289
+#: ../thunar/thunar-window.c:4320
 msgid "Create directory"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4358
+#: ../thunar/thunar-window.c:4389
 msgid "Failed to browse the computer"
 msgstr "Zlyhalo prehliadanie počítača"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4401
+#: ../thunar/thunar-window.c:4432
 msgid "About Templates"
 msgstr "O šablónach"
 
-#: ../thunar/thunar-window.c:4423
+#: ../thunar/thunar-window.c:4454
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Všetky súbory z tohoto priečinka budú v ponuke \"Vytvoriť dokument\"."
 
-#: ../thunar/thunar-window.c:4430
+#: ../thunar/thunar-window.c:4461
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Ak často vytvárate určitý druh dokumentov, vytvorte si jednu kópiu a tú umiestnite do tohoto priečinka. Aplikácia Thunar pridá položku pre tento dokument do ponuky \"Vytvoriť dokument\".\n\nPotom sa voľbou položky z menu \"Vytvoriť dokument\" v aktuálnom adresáre vytvorí kópia tohoto dokumentu."
 
-#: ../thunar/thunar-window.c:4442
+#: ../thunar/thunar-window.c:4473
 msgid "Do _not display this message again"
 msgstr "_Nezobrazovať viac túto správu"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4476
+#: ../thunar/thunar-window.c:4507
 msgid "Failed to open the file system root folder"
 msgstr "Nepodarilo sa otvoriť koreňový priečinok"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4512
+#: ../thunar/thunar-window.c:4543
 msgid "Failed to display `Recent`"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4548
+#: ../thunar/thunar-window.c:4579
 msgid "Failed to display the contents of the trash can"
 msgstr "Nepodarilo sa zobraziť obsah koša"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4584
+#: ../thunar/thunar-window.c:4615
 msgid "Failed to browse the network"
 msgstr "Nepodarilo sa prehliadať sieť"
 
-#: ../thunar/thunar-window.c:4727
+#: ../thunar/thunar-window.c:4758
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar je rýchly a ľahký správca súborov\npre prostredie Xfce"
 
-#: ../thunar/thunar-window.c:5885
+#: ../thunar/thunar-window.c:5870
 msgid "Failed to launch search with Catfish"
 msgstr ""
 
-#: ../thunar/thunar-window.c:6154
+#: ../thunar/thunar-window.c:6180
 msgid "Location Bar"
 msgstr ""
 
@@ -4810,40 +4796,38 @@ msgid ""
 msgstr "nasledujúce parametre príkazu budú pri vyvolaní akcie nahradené:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:21
-msgid "the path to the first selected file or directory"
-msgstr "cesta k prvému vybratému súboru alebo priečinku"
+msgid "file name of the selected file"
+msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:22
-msgid "the paths to all selected files and directories"
-msgstr "cesty ku všetkým vybratým súborom a priečinkom"
+msgid "file names of all selected files"
+msgstr ""
+
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:23
+msgid "path of the selected file's directory"
+msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:24
-#, no-c-format
-msgid "directory containing the file that is passed in %f"
-msgstr "adresár, v ktorom je súbor z premennej %f"
+msgid "paths of all selected files' directories"
+msgstr ""
+
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:25
+msgid "path of the selected file including the file name"
+msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:26
-#, no-c-format
-msgid "directories containing the files that are passed in %F"
-msgstr "adresáre obsahujúce súbory z premennej %F"
+msgid "paths of all selected files including the file names"
+msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:27
-msgid "the first selected filename (without path)"
-msgstr "prvý vybratý súbor (bez cesty)"
-
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:28
-msgid "the selected filenames (without paths)"
-msgstr "vybraté súbory (bez ciest)"
-
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:29
 msgid "Basic"
 msgstr "Základné"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:30
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:28
 msgid "_File Pattern:"
 msgstr "Vzorka _názvu súborov:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:31
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:29
 msgid ""
 "Enter a list of patterns that will be used to determine whether this action "
 "should be displayed for a selected file. If you specify more than one "
@@ -4851,56 +4835,56 @@ msgid ""
 "*.txt;*.doc)."
 msgstr "Zadajte zoznam vzorov, ktoré sa použijú na určenie , pre ktorý súbor sa má akcia zobraziť. Ak uvediete viac ako jeden vzor, zoznam položiek musí byť oddelených bodkočiarkami. (napr. *.txt;*.doc)."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:32
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:30
 msgid "*"
 msgstr "*"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:33
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:31
 msgid "_Range (min-max):"
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:34
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:32
 msgid ""
 "If the command should operate on say two or three files, enter the numerical"
 " range 2-3. If there are no limits, this string should be empty."
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:35
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:33
 msgid "Appears if selection contains:"
 msgstr "Zobrazí sa, ak výber obsahuje:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:36
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:34
 msgid "_Directories **"
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:37
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:35
 msgid "_Audio Files"
 msgstr "_Zvukové súbory"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:38
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:36
 msgid "_Image Files"
 msgstr "_Súbory obrázkov"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:39
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:37
 msgid "_Text Files"
 msgstr "_Textové súbory"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:40
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:38
 msgid "_Video Files"
 msgstr "_Video súbory"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:41
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:39
 msgid "_Other Files"
 msgstr "_Ostatné súbory"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:42
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:40
 msgid ""
 "This page lists the conditions under which the action will appear in the file managers context menus. The file patterns are specified as a list of simple file patterns separated by semicolons (e.g. *.txt;*.doc). For an action to appear in the context menu of a file or folder, at least one of these patterns must match the name of the file or folder. Additionally, you can specify that the action should only appear for certain kinds of files.\n"
 "\n"
 "** The custom action will be eligible to appear in the toolbar."
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:45
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:43
 msgid "Appearance Conditions"
 msgstr "Podmienky zobrazenia"
 
