@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-28 00:45+0200\n"
+"POT-Creation-Date: 2023-11-04 12:45+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Duy Truong Nguyen <truongap.ars@gmail.com>, 2014\n"
 "Language-Team: Vietnamese (http://app.transifex.com/xfce/thunar/language/vi/)\n"
@@ -52,7 +52,7 @@ msgid "Open With Other _Application..."
 msgstr "Mở với ứng dụng _khác"
 
 #: ../thunar/thunar-action-manager.c:274
-#: ../thunar/thunar-action-manager.c:3303
+#: ../thunar/thunar-action-manager.c:3304
 msgid "Choose another application with which to open the selected file"
 msgstr "CHọn một ứng dụng khác để mở file đã chọn"
 
@@ -285,7 +285,7 @@ msgstr[0] "Mở %d cửa sổ mới"
 #: ../thunar/thunar-dnd.c:173 ../thunar/thunar-permissions-chooser.c:559
 #: ../thunar/thunar-permissions-chooser.c:1170
 #: ../thunar/thunar-properties-dialog.c:1179
-#: ../thunar/thunar-renamer-dialog.c:1045
+#: ../thunar/thunar-renamer-dialog.c:1074
 #: ../thunar/thunar-renamer-progress.c:181
 #: ../thunar/thunar-renamer-progress.c:191
 #: ../plugins/thunar-sendto-email/main.c:223
@@ -317,7 +317,7 @@ msgstr "Không thể mở \"%s\""
 #: ../thunar/thunar-action-manager.c:1574
 #: ../thunar/thunar-chooser-dialog.c:890
 #: ../thunar/thunar-chooser-dialog.c:1301 ../thunar/thunar-dialogs.c:1360
-#: ../thunar/thunar-renamer-dialog.c:1046
+#: ../thunar/thunar-renamer-dialog.c:1075
 #: ../plugins/thunar-uca/thunar-uca-editor.c:181
 msgid "_Open"
 msgstr "_Mở"
@@ -516,7 +516,7 @@ msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "Mở các tập tin đã chọn bằng chương trình mặc định"
 
-#: ../thunar/thunar-action-manager.c:3302
+#: ../thunar/thunar-action-manager.c:3303
 #: ../thunar/thunar-chooser-dialog.c:187
 msgid "Open With"
 msgstr "Mở với"
@@ -704,7 +704,7 @@ msgstr "Đang tạo thư mục..."
 msgid "Remove all files and folders from the Trash?"
 msgstr "Loại bỏ tất cả các Files và thư mục từ thùng rác"
 
-#: ../thunar/thunar-application.c:2707 ../thunar/thunar-window.c:1039
+#: ../thunar/thunar-application.c:2707 ../thunar/thunar-window.c:1047
 msgid "Empty Trash"
 msgstr ""
 
@@ -791,7 +791,7 @@ msgstr "Sử dụng như _mặc định cho kiểu file này"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1301
-#: ../thunar/thunar-properties-dialog.c:1180 ../thunar/thunar-window.c:4403
+#: ../thunar/thunar-properties-dialog.c:1180 ../thunar/thunar-window.c:4434
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -899,7 +899,7 @@ msgid "Select an Application"
 msgstr "Lựa chọn ứng dụng"
 
 #: ../thunar/thunar-chooser-dialog.c:896
-#: ../thunar/thunar-renamer-dialog.c:1053
+#: ../thunar/thunar-renamer-dialog.c:1082
 #: ../plugins/thunar-uca/thunar-uca-editor.c:188
 msgid "All Files"
 msgstr "Tất cả tập tin"
@@ -965,8 +965,8 @@ msgstr "Không có dữ liệu trong clipboard để chép vào"
 #. add a regular close button, the header bar already provides one
 #: ../thunar/thunar-column-editor.c:158 ../thunar/thunar-dialogs.c:1058
 #: ../thunar/thunar-preferences-dialog.c:273
-#: ../thunar/thunar-properties-dialog.c:319
-#: ../thunar/thunar-renamer-dialog.c:357
+#: ../thunar/thunar-properties-dialog.c:322
+#: ../thunar/thunar-renamer-dialog.c:382
 #: ../thunar/thunar-renamer-progress.c:198
 #: ../thunar/thunar-toolbar-editor.c:121
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:132
@@ -980,8 +980,8 @@ msgstr "Cấu hình cột trong khung nhìn theo danh sách chi tiết"
 #. add the "Help" button
 #: ../thunar/thunar-column-editor.c:164
 #: ../thunar/thunar-preferences-dialog.c:281
-#: ../thunar/thunar-properties-dialog.c:318
-#: ../thunar/thunar-toolbar-editor.c:128 ../thunar/thunar-window.c:544
+#: ../thunar/thunar-properties-dialog.c:321
+#: ../thunar/thunar-toolbar-editor.c:128 ../thunar/thunar-window.c:552
 msgid "_Help"
 msgstr "Trợ giúp "
 
@@ -1050,11 +1050,11 @@ msgstr ""
 
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:876 ../thunar/thunar-list-model.c:933
-#: ../thunar/thunar-list-model.c:969
+#: ../thunar/thunar-column-model.c:876 ../thunar/thunar-list-model.c:916
+#: ../thunar/thunar-list-model.c:952
 #: ../thunar/thunar-permissions-chooser.c:232
 #: ../thunar/thunar-size-label.c:382 ../thunar/thunar-size-label.c:463
-#: ../thunar/thunar-util.c:425 ../thunar/thunar-util.c:428
+#: ../thunar/thunar-util.c:428 ../thunar/thunar-util.c:431
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:711
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:293
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:294
@@ -1102,27 +1102,27 @@ msgstr "Số tên tập tin nguồn và đích phải giống nhau"
 msgid "A destination directory must be specified"
 msgstr "Phải chỉ rõ thư mục đích"
 
-#: ../thunar/thunar-details-view.c:176
+#: ../thunar/thunar-details-view.c:172
 msgid "Configure _Columns..."
 msgstr "Cấu hình các _cột"
 
-#: ../thunar/thunar-details-view.c:176
+#: ../thunar/thunar-details-view.c:172
 msgid "Configure the columns in the detailed list view"
 msgstr "Cấu hình các cột trong chế độ xem danh sách chi tiết"
 
-#: ../thunar/thunar-details-view.c:177
-msgid "Enable E_xpandable Folders"
+#: ../thunar/thunar-details-view.c:173
+msgid "E_xpandable Folders"
 msgstr ""
 
-#: ../thunar/thunar-details-view.c:177
+#: ../thunar/thunar-details-view.c:173
 msgid "Allow tree like expansion of folders"
 msgstr ""
 
-#: ../thunar/thunar-details-view.c:516
+#: ../thunar/thunar-details-view.c:503
 msgid "Detailed directory listing"
 msgstr "Danh sách thư mục chi tiết"
 
-#: ../thunar/thunar-details-view.c:517
+#: ../thunar/thunar-details-view.c:504
 msgid "Details view"
 msgstr "Khung nhìn chi tiết"
 
@@ -1163,7 +1163,7 @@ msgid "Rename \"%s\""
 msgstr "Đổi tên \"%s\""
 
 #. add the "Rename" button
-#: ../thunar/thunar-dialogs.c:262 ../thunar/thunar-renamer-dialog.c:361
+#: ../thunar/thunar-dialogs.c:262 ../thunar/thunar-renamer-dialog.c:386
 msgid "_Rename"
 msgstr "Đổi tê_n"
 
@@ -1276,12 +1276,12 @@ msgstr ""
 
 #. Fourth box (size)
 #: ../thunar/thunar-dialogs.c:933 ../thunar/thunar-dialogs.c:980
-#: ../thunar/thunar-properties-dialog.c:635
+#: ../thunar/thunar-properties-dialog.c:638
 msgid "Size:"
 msgstr "Kích thước:"
 
 #: ../thunar/thunar-dialogs.c:933 ../thunar/thunar-dialogs.c:980
-#: ../thunar/thunar-properties-dialog.c:588
+#: ../thunar/thunar-properties-dialog.c:591
 msgid "Modified:"
 msgstr "Thay đổi:"
 
@@ -1399,295 +1399,294 @@ msgstr ""
 msgid "_Link Here"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:88
+#: ../thunar/thunar-enum-types.c:87
 msgid "Name only"
 msgstr "Chỉ tên"
 
-#: ../thunar/thunar-enum-types.c:89
+#: ../thunar/thunar-enum-types.c:88
 msgid "Extension only"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:90
+#: ../thunar/thunar-enum-types.c:89
 msgid "Name and Extension"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:141
+#: ../thunar/thunar-enum-types.c:140
 msgid "Date Created"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:142
+#: ../thunar/thunar-enum-types.c:141
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:137
 msgid "Date Accessed"
 msgstr "Ngày truy cập"
 
-#: ../thunar/thunar-enum-types.c:143
+#: ../thunar/thunar-enum-types.c:142
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:138
 msgid "Date Modified"
 msgstr "Ngày thay đổi"
 
-#: ../thunar/thunar-enum-types.c:144
+#: ../thunar/thunar-enum-types.c:143
 msgid "Date Deleted"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:145
+#: ../thunar/thunar-enum-types.c:144
 msgid "Recency"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:146
+#: ../thunar/thunar-enum-types.c:145
 msgid "Location"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:147
+#: ../thunar/thunar-enum-types.c:146
 msgid "Group"
 msgstr "Nhóm"
 
-#: ../thunar/thunar-enum-types.c:148
+#: ../thunar/thunar-enum-types.c:147
 msgid "MIME Type"
 msgstr "Kiểu MIME"
 
-#: ../thunar/thunar-enum-types.c:149 ../thunar/thunar-renamer-dialog.c:418
+#: ../thunar/thunar-enum-types.c:148 ../thunar/thunar-renamer-dialog.c:443
 #: ../thunarx/thunarx-renamer.c:166
 msgid "Name"
 msgstr "Tên"
 
-#: ../thunar/thunar-enum-types.c:150
+#: ../thunar/thunar-enum-types.c:149
 msgid "Owner"
 msgstr "Chủ sở hữu"
 
 #. Permissions chooser
-#: ../thunar/thunar-enum-types.c:151 ../thunar/thunar-properties-dialog.c:904
+#: ../thunar/thunar-enum-types.c:150 ../thunar/thunar-properties-dialog.c:910
 msgid "Permissions"
 msgstr "Quyền hạn"
 
-#: ../thunar/thunar-enum-types.c:152 ../thunar/thunar-statusbar.c:81
+#: ../thunar/thunar-enum-types.c:151 ../thunar/thunar-statusbar.c:81
 msgid "Size"
 msgstr "Kích cỡ"
 
-#: ../thunar/thunar-enum-types.c:153
+#: ../thunar/thunar-enum-types.c:152
 msgid "Size in Bytes"
 msgstr "Kích thước tính bằng byte"
 
-#: ../thunar/thunar-enum-types.c:154
+#: ../thunar/thunar-enum-types.c:153
 msgid "Type"
 msgstr "Kiểu"
 
-#: ../thunar/thunar-enum-types.c:155
+#: ../thunar/thunar-enum-types.c:154
 msgid "File"
 msgstr "Tập tin"
 
-#: ../thunar/thunar-enum-types.c:156
+#: ../thunar/thunar-enum-types.c:155
 msgid "File Name"
 msgstr "Tên file"
 
-#: ../thunar/thunar-enum-types.c:637 ../thunar/thunar-enum-types.c:660
-#: ../thunar/thunar-enum-types.c:786 ../thunar/thunar-preferences-dialog.c:416
+#: ../thunar/thunar-enum-types.c:636 ../thunar/thunar-enum-types.c:659
+#: ../thunar/thunar-enum-types.c:785 ../thunar/thunar-preferences-dialog.c:416
 #: ../thunar/thunar-preferences-dialog.c:1068
 #: ../thunar/thunar-preferences-dialog.c:1174
 #: ../thunar/thunar-preferences-dialog.c:1262
 msgid "Never"
 msgstr "Không"
 
-#: ../thunar/thunar-enum-types.c:638 ../thunar/thunar-enum-types.c:661
+#: ../thunar/thunar-enum-types.c:637 ../thunar/thunar-enum-types.c:660
 msgid "Only for remote location"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:639 ../thunar/thunar-enum-types.c:662
-#: ../thunar/thunar-enum-types.c:788 ../thunar/thunar-preferences-dialog.c:418
+#: ../thunar/thunar-enum-types.c:638 ../thunar/thunar-enum-types.c:661
+#: ../thunar/thunar-enum-types.c:787 ../thunar/thunar-preferences-dialog.c:418
 #: ../thunar/thunar-preferences-dialog.c:1064
 #: ../thunar/thunar-preferences-dialog.c:1173
 #: ../thunar/thunar-preferences-dialog.c:1263
 msgid "Always"
 msgstr "Luôn luôn"
 
-#: ../thunar/thunar-enum-types.c:718
+#: ../thunar/thunar-enum-types.c:717
 msgid "Copy"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:719
+#: ../thunar/thunar-enum-types.c:718
 msgid "Move"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:720
+#: ../thunar/thunar-enum-types.c:719
 msgid "Rename"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:721
+#: ../thunar/thunar-enum-types.c:720
 msgid "Create File"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:722
+#: ../thunar/thunar-enum-types.c:721
 msgid "Create Folder"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:723
+#: ../thunar/thunar-enum-types.c:722
 msgid "Delete (opposite of create)"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:724 ../thunar/thunar-file.c:1016
-#: ../thunar/thunar-gio-extensions.c:490
+#: ../thunar/thunar-enum-types.c:723 ../thunar/thunar-file.c:1047
+#: ../thunar/thunar-gio-extensions.c:492
 #: ../thunar/thunar-shortcuts-model.c:1127 ../thunar.desktop.in.in.h:7
 msgid "Trash"
 msgstr "Thùng rác"
 
-#: ../thunar/thunar-enum-types.c:725
+#: ../thunar/thunar-enum-types.c:724
 msgid "Restore (opposite of trash)"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:726
+#: ../thunar/thunar-enum-types.c:725
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:534
 msgid "Link"
 msgstr "Liên kết"
 
-#: ../thunar/thunar-enum-types.c:727
+#: ../thunar/thunar-enum-types.c:726
 msgid "Unlink"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:746
+#: ../thunar/thunar-enum-types.c:745
 msgid "Log operations"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:747
+#: ../thunar/thunar-enum-types.c:746
 msgid "Log no operations"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:748
+#: ../thunar/thunar-enum-types.c:747
 msgid "Log only timestamps"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:767
+#: ../thunar/thunar-enum-types.c:766
 msgid "Standalone"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:768
+#: ../thunar/thunar-enum-types.c:767
 msgid "Embedded"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:787
+#: ../thunar/thunar-enum-types.c:786
 msgid "Only for local files"
 msgstr ""
 
-#: ../thunar/thunar-file.c:1023 ../thunar/thunar-gio-extensions.c:488
-#: ../thunar/thunar-shortcuts-model.c:1009 ../thunar/thunar-window.c:532
+#: ../thunar/thunar-file.c:1054 ../thunar/thunar-gio-extensions.c:490
+#: ../thunar/thunar-shortcuts-model.c:1009 ../thunar/thunar-window.c:540
 msgid "File System"
 msgstr "File hệ thống"
 
-#: ../thunar/thunar-file.c:1480
+#: ../thunar/thunar-file.c:1511
 #, c-format
 msgid "The root folder has no parent"
 msgstr "Thư mục gốc không có thư mục cha"
 
-#: ../thunar/thunar-file.c:1578
+#: ../thunar/thunar-file.c:1609
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "Cú pháp tập tin \"%s\" không đúng"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1591
+#: ../thunar/thunar-file.c:1622
 msgid "Untrusted application launcher"
 msgstr "Trình chạy ứng dụng không tin tưởng"
 
-#: ../thunar/thunar-file.c:1622
+#: ../thunar/thunar-file.c:1653
 #, c-format
 msgid "No Exec field specified"
 msgstr "Exec không xác định"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1631
+#: ../thunar/thunar-file.c:1662
 msgid "Untrusted link launcher"
 msgstr "Trình chạy liên kết không tin tưởng"
 
-#: ../thunar/thunar-file.c:1647
+#: ../thunar/thunar-file.c:1678
 #, c-format
 msgid "No URL field specified"
 msgstr "URL không xác định"
 
-#: ../thunar/thunar-file.c:1652
+#: ../thunar/thunar-file.c:1683
 msgid "Invalid desktop file"
 msgstr "Desktop file không hợp lệ"
 
-#: ../thunar/thunar-file.c:2576 ../thunar/thunar-list-model.c:3090
-#: ../thunar/thunar-tree-view-model.c:3860
+#: ../thunar/thunar-file.c:2547 ../thunar/thunar-standard-view-model.c:673
 #, c-format
 msgid "link to %s"
 msgstr "Liên kết tới %s"
 
 #. Implementation specific
-#: ../thunar/thunar-gio-extensions.c:59
+#: ../thunar/thunar-gio-extensions.c:60
 msgid "iPod touch"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:60
+#: ../thunar/thunar-gio-extensions.c:61
 msgid "iPad"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:61
+#: ../thunar/thunar-gio-extensions.c:62
 msgid "iPhone"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:62
+#: ../thunar/thunar-gio-extensions.c:63
 msgid "Solid State Drive"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:63
+#: ../thunar/thunar-gio-extensions.c:64
 msgid "System Drive"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:64 ../thunar/thunar-gio-extensions.c:65
+#: ../thunar/thunar-gio-extensions.c:65 ../thunar/thunar-gio-extensions.c:66
 msgid "USB Drive"
 msgstr ""
 
 #. Freedesktop icon-naming-spec
-#: ../thunar/thunar-gio-extensions.c:68
+#: ../thunar/thunar-gio-extensions.c:69
 msgid "Camera"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:69
+#: ../thunar/thunar-gio-extensions.c:70
 msgid "Harddisk"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:70
+#: ../thunar/thunar-gio-extensions.c:71
 msgid "Optical Drive"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:71
+#: ../thunar/thunar-gio-extensions.c:72
 msgid "Removable Drive"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:72
+#: ../thunar/thunar-gio-extensions.c:73
 msgid "Flash Drive"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:73
+#: ../thunar/thunar-gio-extensions.c:74
 msgid "Floppy"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:74
+#: ../thunar/thunar-gio-extensions.c:75
 msgid "Optical Media"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:75
+#: ../thunar/thunar-gio-extensions.c:76
 msgid "Tape"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:76
+#: ../thunar/thunar-gio-extensions.c:77
 msgid "Multimedia Player"
 msgstr ""
 
-#: ../thunar/thunar-gio-extensions.c:77
+#: ../thunar/thunar-gio-extensions.c:78
 msgid "PDA"
 msgstr "PDA"
 
-#: ../thunar/thunar-gio-extensions.c:78
+#: ../thunar/thunar-gio-extensions.c:79
 msgid "Phone"
 msgstr "Điện thoại"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:570
+#: ../thunar/thunar-gio-extensions.c:572
 #, c-format
 msgid "%s on %s"
 msgstr "%s trên %s"
 
-#: ../thunar/thunar-gio-extensions.c:681
+#: ../thunar/thunar-gio-extensions.c:683
 #, c-format
 msgid "%s used (%.0f%%)  |  %s free (%.0f%%)"
 msgstr ""
@@ -1709,48 +1708,48 @@ msgstr "Danh sách thư mục theo biểu tượng"
 msgid "Icon view"
 msgstr "Khung nhìn biểu tượng"
 
-#: ../thunar/thunar-io-jobs.c:112
+#: ../thunar/thunar-io-jobs.c:114
 #, c-format
 msgid "Error removing file: %s"
 msgstr "Lỗi khi xóa tập tin:%s"
 
-#: ../thunar/thunar-io-jobs.c:222 ../thunar/thunar-io-jobs.c:401
+#: ../thunar/thunar-io-jobs.c:224 ../thunar/thunar-io-jobs.c:403
 #, c-format
 msgid "The file \"%s\" already exists"
 msgstr "File \"%s\" đã tồn tại "
 
-#: ../thunar/thunar-io-jobs.c:245
+#: ../thunar/thunar-io-jobs.c:247
 #, c-format
 msgid "Failed to create empty file \"%s\": %s"
 msgstr "Không tạo được tập tin rỗng \"%s\": %s"
 
-#: ../thunar/thunar-io-jobs.c:424
+#: ../thunar/thunar-io-jobs.c:426
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
 msgstr "Không tạo được thư mục \"%s\": %s"
 
 #. tell the user that we're preparing to unlink the files
-#: ../thunar/thunar-io-jobs.c:508
+#: ../thunar/thunar-io-jobs.c:510
 msgid "Preparing..."
 msgstr "Chuẩn bị..."
 
-#: ../thunar/thunar-io-jobs.c:586
+#: ../thunar/thunar-io-jobs.c:588
 #, c-format
 msgid "Could not delete file \"%s\": %s"
 msgstr "Xóa file \"%s\" bị lỗi: %s"
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:1059
+#: ../thunar/thunar-io-jobs.c:1061
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "Đổi chủ sở hữu của \"%s\" bị lỗi: %s"
 
-#: ../thunar/thunar-io-jobs.c:1060
+#: ../thunar/thunar-io-jobs.c:1062
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "Đổi nhóm của \"%s\" bị lỗi: %s"
 
-#: ../thunar/thunar-io-jobs.c:1215
+#: ../thunar/thunar-io-jobs.c:1217
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Đổi quyền của \"%s\" bị lỗi: %s"
@@ -1805,8 +1804,8 @@ msgid ""
 "space."
 msgstr "Không đủ dung lượng trống trên địa điểm đích. Thử xóa vài thứ để có thêm khoảng trống."
 
-#: ../thunar/thunar-job-operation.c:779 ../thunar/thunar-list-model.c:2941
-#: ../thunar/thunar-size-label.c:473 ../thunar/thunar-tree-view-model.c:3716
+#: ../thunar/thunar-job-operation.c:779 ../thunar/thunar-size-label.c:472
+#: ../thunar/thunar-standard-view-model.c:513
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -1892,7 +1891,7 @@ msgstr ""
 msgid "Undo the latest '%s' operation (%s)"
 msgstr ""
 
-#: ../thunar/thunar-job-operation-history.c:566 ../thunar/thunar-window.c:496
+#: ../thunar/thunar-job-operation-history.c:566 ../thunar/thunar-window.c:504
 msgid "Undo the latest operation"
 msgstr ""
 
@@ -1902,95 +1901,17 @@ msgstr ""
 msgid "Redo the latest '%s' operation (%s)"
 msgstr ""
 
-#: ../thunar/thunar-job-operation-history.c:591 ../thunar/thunar-window.c:497
+#: ../thunar/thunar-job-operation-history.c:591 ../thunar/thunar-window.c:505
 msgid "Redo the latest operation"
 msgstr ""
 
-#: ../thunar/thunar-list-model.c:1000 ../thunar/thunar-list-model.c:1010
-#: ../thunar/thunar-tree-view-model.c:1205
-#: ../thunar/thunar-tree-view-model.c:1215
+#: ../thunar/thunar-list-model.c:983 ../thunar/thunar-list-model.c:993
+#: ../thunar/thunar-tree-view-model.c:1303
+#: ../thunar/thunar-tree-view-model.c:1313
 #, c-format
 msgid "%u item"
 msgid_plural "%u items"
 msgstr[0] ""
-
-#: ../thunar/thunar-list-model.c:2935 ../thunar/thunar-tree-view-model.c:3710
-#, c-format
-msgid "%d file: %s"
-msgid_plural "%d files: %s"
-msgstr[0] ""
-
-#: ../thunar/thunar-list-model.c:2946 ../thunar/thunar-size-label.c:472
-#: ../thunar/thunar-tree-view-model.c:3721
-#, c-format
-msgid "%d folder"
-msgid_plural "%d folders"
-msgstr[0] ""
-
-#: ../thunar/thunar-list-model.c:2952 ../thunar/thunar-tree-view-model.c:3727
-#, c-format
-msgid "0 items"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:2961 ../thunar/thunar-list-model.c:3138
-#: ../thunar/thunar-tree-view-model.c:3736
-#: ../thunar/thunar-tree-view-model.c:3908
-#, c-format
-msgid "Last Modified: %s"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3046 ../thunar/thunar-tree-view-model.c:3819
-#, c-format
-msgid "Free space: %s"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3067
-#, c-format
-msgid "\"%s\" (%s)"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3069 ../thunar/thunar-tree-view-model.c:3839
-#, c-format
-msgid "\"%s\""
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3088 ../thunar/thunar-tree-view-model.c:3858
-msgid "broken link"
-msgstr "liên kết hỏng"
-
-#: ../thunar/thunar-list-model.c:3092 ../thunar/thunar-tree-view-model.c:3862
-msgid "shortcut"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3094 ../thunar/thunar-tree-view-model.c:3864
-msgid "mountable"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:3098 ../thunar/thunar-tree-view-model.c:3868
-#, c-format
-msgid "%s"
-msgstr ""
-
-#. TRANSLATORS: Try to come up with a short translation of "Original Path"
-#. (which is the path
-#. * where the trashed file/folder was located before it was moved to the
-#. trash), otherwise the
-#. * properties dialog width will be messed up.
-#: ../thunar/thunar-list-model.c:3110 ../thunar/thunar-properties-dialog.c:478
-#: ../thunar/thunar-tree-view-model.c:3880
-msgid "Original Path:"
-msgstr "Đường dẫn gốc:"
-
-#. append the image dimensions to the statusbar text
-#: ../thunar/thunar-list-model.c:3128 ../thunar/thunar-tree-view-model.c:3898
-#: ../plugins/thunar-apr/thunar-apr-image-page.c:153
-msgid "Image Size:"
-msgstr "Kích thước ảnh"
-
-#: ../thunar/thunar-list-model.c:3153 ../thunar/thunar-tree-view-model.c:3923
-#, c-format
-msgid "Selection: %s"
-msgstr ""
 
 #: ../thunar/thunar-location-entry.c:338
 #, c-format
@@ -2458,7 +2379,7 @@ msgstr "Kiểu cây"
 msgid "Icon _Size:"
 msgstr "Cỡ biểu tượng:"
 
-#: ../thunar/thunar-preferences-dialog.c:734 ../thunar/thunar-window.c:512
+#: ../thunar/thunar-preferences-dialog.c:734 ../thunar/thunar-window.c:520
 msgid "Image Preview"
 msgstr ""
 
@@ -2688,7 +2609,7 @@ msgid ""
 msgstr "<a href=\"volman-config:\">Cấu hình</a> trình quản lý ổ đĩa di động,\ncác thiế bị và phương tiện."
 
 #: ../thunar/thunar-preferences-dialog.c:1338
-#: ../thunar/thunar-properties-dialog.c:801
+#: ../thunar/thunar-properties-dialog.c:804
 msgid "Missing dependencies"
 msgstr "Thiếu gói phụ thuộc"
 
@@ -2761,102 +2682,112 @@ msgstr ""
 msgid "Queued"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:329
+#: ../thunar/thunar-properties-dialog.c:332
 msgid "General"
 msgstr "Chung"
 
-#: ../thunar/thunar-properties-dialog.c:354
+#: ../thunar/thunar-properties-dialog.c:357
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:2
 msgid "_Name:"
 msgstr "Tên:"
 
-#: ../thunar/thunar-properties-dialog.c:393
+#: ../thunar/thunar-properties-dialog.c:396
 msgid "Names:"
 msgstr "Tên:"
 
 #. Second box (kind, open with, link target, original path, location, volume)
-#: ../thunar/thunar-properties-dialog.c:416
+#: ../thunar/thunar-properties-dialog.c:419
 msgid "Kind:"
 msgstr "Kiểu:"
 
-#: ../thunar/thunar-properties-dialog.c:440
+#: ../thunar/thunar-properties-dialog.c:443
 msgid "_Open With:"
 msgstr "Mở bằng:"
 
-#: ../thunar/thunar-properties-dialog.c:457
+#: ../thunar/thunar-properties-dialog.c:460
 msgid "Link Target:"
 msgstr "Liên kết đích:"
 
-#: ../thunar/thunar-properties-dialog.c:495
+#. TRANSLATORS: Try to come up with a short translation of "Original Path"
+#. (which is the path
+#. * where the trashed file/folder was located before it was moved to the
+#. trash), otherwise the
+#. * properties dialog width will be messed up.
+#: ../thunar/thunar-properties-dialog.c:481
+#: ../thunar/thunar-standard-view-model.c:693
+msgid "Original Path:"
+msgstr "Đường dẫn gốc:"
+
+#: ../thunar/thunar-properties-dialog.c:498
 msgid "Location:"
 msgstr "Địa điểm:"
 
-#: ../thunar/thunar-properties-dialog.c:512
+#: ../thunar/thunar-properties-dialog.c:515
 msgid "Volume:"
 msgstr "Ổ đĩa"
 
 #. Third box (deleted, modified, accessed)
-#: ../thunar/thunar-properties-dialog.c:554
+#: ../thunar/thunar-properties-dialog.c:557
 msgid "Deleted:"
 msgstr "Đã xoá"
 
-#: ../thunar/thunar-properties-dialog.c:571
+#: ../thunar/thunar-properties-dialog.c:574
 msgid "Created:"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:605
+#: ../thunar/thunar-properties-dialog.c:608
 msgid "Accessed:"
 msgstr "Đã truy xuất:"
 
-#: ../thunar/thunar-properties-dialog.c:651
+#: ../thunar/thunar-properties-dialog.c:654
 msgid "Size on Disk:"
 msgstr ""
 
 #. Fifth box (content, capacity, free space)
-#: ../thunar/thunar-properties-dialog.c:678
+#: ../thunar/thunar-properties-dialog.c:681
 msgid "Content:"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:696
+#: ../thunar/thunar-properties-dialog.c:699
 msgid "Capacity:"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:718
+#: ../thunar/thunar-properties-dialog.c:721
 msgid "Usage:"
 msgstr "Cách sử dụng:"
 
 #. Emblem chooser
-#: ../thunar/thunar-properties-dialog.c:755
+#: ../thunar/thunar-properties-dialog.c:758
 msgid "Emblems"
 msgstr "Ý nghĩa"
 
-#: ../thunar/thunar-properties-dialog.c:770
+#: ../thunar/thunar-properties-dialog.c:773
 msgid "Highlight"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:809
+#: ../thunar/thunar-properties-dialog.c:812
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "This feature will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:837
+#: ../thunar/thunar-properties-dialog.c:840
 msgid "Example.txt"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:854
+#: ../thunar/thunar-properties-dialog.c:857
 msgid "_Apply"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:866
+#: ../thunar/thunar-properties-dialog.c:869
 msgid "_Reset"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:874
+#: ../thunar/thunar-properties-dialog.c:880
 msgid "Set _Foreground"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:882
+#: ../thunar/thunar-properties-dialog.c:888
 msgid "Set _Background"
 msgstr ""
 
@@ -2882,72 +2813,72 @@ msgstr ""
 msgid "Failed to change icon of \"%s\""
 msgstr "Không thể thay đổi biểu tượng của \"%s\""
 
-#: ../thunar/thunar-properties-dialog.c:1319
+#: ../thunar/thunar-properties-dialog.c:1315
 #, c-format
 msgid "%s (%s) - Properties"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:1321
+#: ../thunar/thunar-properties-dialog.c:1317
 #, c-format
 msgid "%s - Properties"
 msgstr "%s - Các thuộc tính"
 
-#: ../thunar/thunar-properties-dialog.c:1378
+#: ../thunar/thunar-properties-dialog.c:1374
 msgid "unknown"
 msgstr "không rõ"
 
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:1582
+#: ../thunar/thunar-properties-dialog.c:1578
 msgid "Properties"
 msgstr "Thuộc tính"
 
-#: ../thunar/thunar-properties-dialog.c:1684
+#: ../thunar/thunar-properties-dialog.c:1680
 msgid "mixed"
 msgstr "hỗn hợp"
 
-#: ../thunar/thunar-renamer-dialog.c:192
+#: ../thunar/thunar-renamer-dialog.c:200
 msgid "_Add Files..."
 msgstr "_Thêm tập tin"
 
-#: ../thunar/thunar-renamer-dialog.c:192
+#: ../thunar/thunar-renamer-dialog.c:200
 msgid "Include additional files in the list of files to be renamed"
 msgstr "Bao gồm những tập tin thêm vào trong dach sách tập tin được đổi tên"
 
-#: ../thunar/thunar-renamer-dialog.c:194
+#: ../thunar/thunar-renamer-dialog.c:202
 msgid "Clear"
 msgstr "Xoá"
 
-#: ../thunar/thunar-renamer-dialog.c:194
+#: ../thunar/thunar-renamer-dialog.c:202
 msgid "Clear the file list below"
 msgstr "Xoá danh sách file bên dưới"
 
-#: ../thunar/thunar-renamer-dialog.c:195 ../thunar/thunar-window.c:546
+#: ../thunar/thunar-renamer-dialog.c:203 ../thunar/thunar-window.c:554
 msgid "_About"
 msgstr "_Thông tin"
 
-#: ../thunar/thunar-renamer-dialog.c:195
+#: ../thunar/thunar-renamer-dialog.c:203
 msgid "Display information about Thunar Bulk Rename"
 msgstr "Hiển thị thông tin về chương trình đổi tên đồng loạt của Thunar"
 
-#: ../thunar/thunar-renamer-dialog.c:354
-#: ../thunar/thunar-renamer-dialog.c:1779
+#: ../thunar/thunar-renamer-dialog.c:379
+#: ../thunar/thunar-renamer-dialog.c:1808
 #: ../thunar-bulk-rename.desktop.in.in.h:2
 msgid "Rename Multiple Files"
 msgstr "Đổi tên nhiều tập tin"
 
-#: ../thunar/thunar-renamer-dialog.c:358
+#: ../thunar/thunar-renamer-dialog.c:383
 msgid "Close this window, cancel further changes."
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:366
+#: ../thunar/thunar-renamer-dialog.c:391
 msgid "Rename items listed above, keep this window open."
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:436
+#: ../thunar/thunar-renamer-dialog.c:461
 msgid "New Name"
 msgstr "Tên mới"
 
-#: ../thunar/thunar-renamer-dialog.c:501
+#: ../thunar/thunar-renamer-dialog.c:526
 msgid ""
 "Click here to view the documentation for the selected rename operation."
 msgstr "Bấm vào đây để xem tài liệu về tác vụ đổi tên đã chọn"
@@ -2956,59 +2887,59 @@ msgstr "Bấm vào đây để xem tài liệu về tác vụ đổi tên đã c
 #. from $libdir/thunarx-2/,
 #. *              and opening the multi rename dialog by selecting multiple
 #. files and pressing F2.
-#: ../thunar/thunar-renamer-dialog.c:612
+#: ../thunar/thunar-renamer-dialog.c:637
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
 msgstr "Không có mô đun tác vụ đổi tên nào trên hệ thống. Xin kiểm tra lại\nhoặc liên hệ với quản trị viên. Nếu bạn cài Thunar từ mã nguồn, hãy\nchắc chắn là bạn đã bật plugin \"Simple builtin renamers\""
 
-#: ../thunar/thunar-renamer-dialog.c:844
+#: ../thunar/thunar-renamer-dialog.c:873
 msgid "Remove File"
 msgid_plural "Remove Files"
 msgstr[0] "Bỏ tập tin"
 
-#: ../thunar/thunar-renamer-dialog.c:845
+#: ../thunar/thunar-renamer-dialog.c:874
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] "Bỏ những tập tin đã chọn khỏi danh sách sẽ đổi tên"
 
 #. tell the user that we failed
-#: ../thunar/thunar-renamer-dialog.c:941
+#: ../thunar/thunar-renamer-dialog.c:970
 msgid "Failed to open the documentation browser"
 msgstr "Khong mở được trình duyệt tài liệu"
 
 #. allocate the file chooser
-#: ../thunar/thunar-renamer-dialog.c:1042
+#: ../thunar/thunar-renamer-dialog.c:1071
 msgid "Select files to rename"
 msgstr "Chọn tập tin để đổi tên"
 
-#: ../thunar/thunar-renamer-dialog.c:1058
+#: ../thunar/thunar-renamer-dialog.c:1087
 msgid "Audio Files"
 msgstr "Các tập tin âm thành"
 
-#: ../thunar/thunar-renamer-dialog.c:1063
+#: ../thunar/thunar-renamer-dialog.c:1092
 msgid "Image Files"
 msgstr "Các tập tin hình"
 
-#: ../thunar/thunar-renamer-dialog.c:1068
+#: ../thunar/thunar-renamer-dialog.c:1097
 msgid "Video Files"
 msgstr "Các tập tin video"
 
 #. just popup the about dialog
-#: ../thunar/thunar-renamer-dialog.c:1204
+#: ../thunar/thunar-renamer-dialog.c:1233
 #: ../thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
 msgstr "Đổi tên hàng loạt"
 
-#: ../thunar/thunar-renamer-dialog.c:1205
+#: ../thunar/thunar-renamer-dialog.c:1234
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
 msgstr "\"Thunar Bulk Rename\" là một công cụ mở rộng rất\nhữu dụng để đổi tên hàng loạt tập tin cùng lúc."
 
 #. change title to reflect the standalone status
-#: ../thunar/thunar-renamer-dialog.c:1779
+#: ../thunar/thunar-renamer-dialog.c:1808
 msgid "Bulk Rename - Rename Multiple Files"
 msgstr "Bulk rename - Đổi tên tập tin hàng loạt"
 
@@ -3039,7 +2970,7 @@ msgid ""
 msgstr "Bạn có muốn bỏ qua tập tin này và tiếp tục đổi tên phần còn lại?"
 
 #: ../thunar/thunar-shortcuts-model.c:646
-#: ../thunar/thunar-shortcuts-model.c:1010 ../thunar/thunar-window.c:532
+#: ../thunar/thunar-shortcuts-model.c:1010 ../thunar/thunar-window.c:540
 msgid "Browse the file system"
 msgstr "Duyệt tập tin hệ thống"
 
@@ -3071,7 +3002,7 @@ msgstr "Mạng"
 msgid "Browse Network"
 msgstr "Duyệt mạng"
 
-#: ../thunar/thunar-shortcuts-model.c:1055 ../thunar/thunar-window.c:542
+#: ../thunar/thunar-shortcuts-model.c:1055 ../thunar/thunar-window.c:550
 msgid "Browse local network connections"
 msgstr "Duyệt các kết nối mạng cục bộ"
 
@@ -3087,7 +3018,7 @@ msgstr ""
 msgid "Open the desktop folder"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-model.c:1153 ../thunar/thunar-window.c:535
+#: ../thunar/thunar-shortcuts-model.c:1153 ../thunar/thunar-window.c:543
 #: ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr "Máy vi tính"
@@ -3096,7 +3027,7 @@ msgstr "Máy vi tính"
 msgid "Browse the computer"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-model.c:1166 ../thunar/thunar-window.c:536
+#: ../thunar/thunar-shortcuts-model.c:1166 ../thunar/thunar-window.c:544
 msgid "Recent"
 msgstr ""
 
@@ -3137,7 +3068,14 @@ msgstr "Đang tính..."
 msgid "Calculation aborted"
 msgstr "Đã ngừng tính toán"
 
-#: ../thunar/thunar-size-label.c:474
+#: ../thunar/thunar-size-label.c:471
+#: ../thunar/thunar-standard-view-model.c:518
+#, c-format
+msgid "%d folder"
+msgid_plural "%d folders"
+msgstr[0] ""
+
+#: ../thunar/thunar-size-label.c:473
 #, c-format
 msgid "%u item (%s, %s)"
 msgid_plural "%u items (%s, %s)"
@@ -3145,145 +3083,145 @@ msgstr[0] ""
 
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
-#: ../thunar/thunar-size-label.c:484
+#: ../thunar/thunar-size-label.c:483
 msgid "(some contents unreadable)"
 msgstr "(có vài thứ không đọc được)"
 
 #. nothing was readable, so permission was denied
-#: ../thunar/thunar-size-label.c:495
+#: ../thunar/thunar-size-label.c:494
 msgid "Permission denied"
 msgstr "Không có quyền thao tác"
 
-#: ../thunar/thunar-standard-view.c:404
+#: ../thunar/thunar-standard-view.c:376
 msgid "Select _all Files"
 msgstr "Chọn toàn bộ"
 
-#: ../thunar/thunar-standard-view.c:404
+#: ../thunar/thunar-standard-view.c:376
 msgid "Select all files in this window"
 msgstr "Chọn toàn bộ trong cửa sổ này"
 
-#: ../thunar/thunar-standard-view.c:405
+#: ../thunar/thunar-standard-view.c:377
 msgid "Select _by Pattern..."
 msgstr "Chọn bằng mẫu (pattern)..."
 
-#: ../thunar/thunar-standard-view.c:405
+#: ../thunar/thunar-standard-view.c:377
 msgid "Select all files that match a certain pattern"
 msgstr "Chọn toàn bộ mục phù hợp với mẫu"
 
-#: ../thunar/thunar-standard-view.c:406
+#: ../thunar/thunar-standard-view.c:378
 msgid "_Invert Selection"
 msgstr "Đảo ngược lựa chọn"
 
-#: ../thunar/thunar-standard-view.c:406
+#: ../thunar/thunar-standard-view.c:378
 msgid "Select all files but not those currently selected"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:407
+#: ../thunar/thunar-standard-view.c:379
 msgid "U_nselect all Files"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:407
+#: ../thunar/thunar-standard-view.c:379
 msgid "Unselect all files in this window"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:408
+#: ../thunar/thunar-standard-view.c:380
 msgid "Arran_ge Items"
 msgstr "_Sắp xếp các mục"
 
-#: ../thunar/thunar-standard-view.c:409
-msgid "T_oggle Sort Order"
+#: ../thunar/thunar-standard-view.c:381
+msgid "_Reversed Order"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:409
-msgid "Toggle ascending/descending sort order"
+#: ../thunar/thunar-standard-view.c:381
+msgid "Reverse the sort order"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:410
+#: ../thunar/thunar-standard-view.c:382
 msgid "By _Name"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:410
+#: ../thunar/thunar-standard-view.c:382
 msgid "Keep items sorted by their name"
 msgstr "Giữ các mục được sắp xếp theo tên"
 
-#: ../thunar/thunar-standard-view.c:411
+#: ../thunar/thunar-standard-view.c:383
 msgid "By _Size"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:411
+#: ../thunar/thunar-standard-view.c:383
 msgid "Keep items sorted by their size"
 msgstr "Giữ các mục được sắp xếp theo kích thước"
 
-#: ../thunar/thunar-standard-view.c:412
+#: ../thunar/thunar-standard-view.c:384
 msgid "By _Type"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:412
+#: ../thunar/thunar-standard-view.c:384
 msgid "Keep items sorted by their type"
 msgstr "Giữ các mục được sắp xếp theo loại"
 
-#: ../thunar/thunar-standard-view.c:413
+#: ../thunar/thunar-standard-view.c:385
 msgid "By Modification _Date"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:413
+#: ../thunar/thunar-standard-view.c:385
 msgid "Keep items sorted by their modification date"
 msgstr "Giữ các mục được sắp xếp theo ngày chỉnh sửa"
 
-#: ../thunar/thunar-standard-view.c:414
+#: ../thunar/thunar-standard-view.c:386
 msgid "By D_eletion Date"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:414
+#: ../thunar/thunar-standard-view.c:386
 msgid "Keep items sorted by their deletion date"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:415
+#: ../thunar/thunar-standard-view.c:387
 msgid "_Ascending"
 msgstr "Tăng dần"
 
-#: ../thunar/thunar-standard-view.c:415
+#: ../thunar/thunar-standard-view.c:387
 msgid "Sort items in ascending order"
 msgstr "Sắp xếp theo thứ tự tăng dần"
 
-#: ../thunar/thunar-standard-view.c:416
+#: ../thunar/thunar-standard-view.c:388
 msgid "_Descending"
 msgstr "Giảm dần"
 
-#: ../thunar/thunar-standard-view.c:416
+#: ../thunar/thunar-standard-view.c:388
 msgid "Sort items in descending order"
 msgstr "Sắp xếp theo thứ tự giảm dần"
 
-#: ../thunar/thunar-standard-view.c:1804
+#: ../thunar/thunar-standard-view.c:1730
 msgid "Loading folder contents..."
 msgstr "Đang đọc nội dung thư mục..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2381 ../thunar/thunar-window.c:4216
+#: ../thunar/thunar-standard-view.c:2323 ../thunar/thunar-window.c:4247
 msgid "Failed to open the home folder"
 msgstr "Không thể mở thư mục home"
 
-#: ../thunar/thunar-standard-view.c:2462
+#: ../thunar/thunar-standard-view.c:2401
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "Chọn bằng mẫu"
 
-#: ../thunar/thunar-standard-view.c:2467
+#: ../thunar/thunar-standard-view.c:2406
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "_Huỷ bỏ"
 
-#: ../thunar/thunar-standard-view.c:2469
+#: ../thunar/thunar-standard-view.c:2408
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "Chọn"
 
-#: ../thunar/thunar-standard-view.c:2482
+#: ../thunar/thunar-standard-view.c:2421
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "Mẫu:"
 
-#: ../thunar/thunar-standard-view.c:2483
+#: ../thunar/thunar-standard-view.c:2422
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3293,7 +3231,7 @@ msgstr ""
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: ../thunar/thunar-standard-view.c:2497
+#: ../thunar/thunar-standard-view.c:2436
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3304,24 +3242,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:2501
+#: ../thunar/thunar-standard-view.c:2440
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:2502
+#: ../thunar/thunar-standard-view.c:2441
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:2507
+#: ../thunar/thunar-standard-view.c:2446
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:2508
+#: ../thunar/thunar-standard-view.c:2447
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3330,24 +3268,84 @@ msgstr ""
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: ../thunar/thunar-standard-view.c:2894
+#: ../thunar/thunar-standard-view.c:2833
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Tên tập tin từ X Direct Save không hợp lệ"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:3088
+#: ../thunar/thunar-standard-view.c:3027
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Không tạo được liên kết cho URL \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3134
+#: ../thunar/thunar-standard-view.c:3073
 msgid "Untitled document"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:3639 ../thunar/thunar-window.c:4313
+#: ../thunar/thunar-standard-view.c:3539 ../thunar/thunar-window.c:4344
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Không mở được thư mục \"%s\""
+
+#: ../thunar/thunar-standard-view-model.c:506
+#, c-format
+msgid "%d file: %s"
+msgid_plural "%d files: %s"
+msgstr[0] ""
+
+#: ../thunar/thunar-standard-view-model.c:525
+#, c-format
+msgid "0 items"
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:535
+#: ../thunar/thunar-standard-view-model.c:722
+#, c-format
+msgid "Last Modified: %s"
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:626
+#, c-format
+msgid "Free space: %s"
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:650
+#, c-format
+msgid "\"%s\" (%s)"
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:652
+#, c-format
+msgid "\"%s\""
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:671
+msgid "broken link"
+msgstr "liên kết hỏng"
+
+#: ../thunar/thunar-standard-view-model.c:675
+msgid "shortcut"
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:677
+msgid "mountable"
+msgstr ""
+
+#: ../thunar/thunar-standard-view-model.c:681
+#, c-format
+msgid "%s"
+msgstr ""
+
+#. append the image dimensions to the statusbar text
+#: ../thunar/thunar-standard-view-model.c:711
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:153
+msgid "Image Size:"
+msgstr "Kích thước ảnh"
+
+#: ../thunar/thunar-standard-view-model.c:739
+#, c-format
+msgid "Selection: %s"
+msgstr ""
 
 #: ../thunar/thunar-statusbar.c:81
 msgid "Show size"
@@ -3467,550 +3465,538 @@ msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
 msgstr[0] "%lu giây nữa (%s/giây)"
 
-#: ../thunar/thunar-tree-model.c:637 ../thunar/thunar-tree-view-model.c:1005
-#: ../thunar/thunar-tree-view-model.c:1016
-#: ../thunar/thunar-tree-view-model.c:1027
-#: ../thunar/thunar-tree-view-model.c:1038
-#: ../thunar/thunar-tree-view-model.c:1049
-#: ../thunar/thunar-tree-view-model.c:1118
-#: ../thunar/thunar-tree-view-model.c:1126
-#: ../thunar/thunar-tree-view-model.c:1136
-#: ../thunar/thunar-tree-view-model.c:1165
-#: ../thunar/thunar-tree-view-model.c:1173
-#: ../thunar/thunar-tree-view-model.c:1183
-#: ../thunar/thunar-tree-view-model.c:1233
-#: ../thunar/thunar-tree-view-model.c:1243
-#: ../thunar/thunar-tree-view-model.c:1264
+#: ../thunar/thunar-tree-model.c:637 ../thunar/thunar-tree-view-model.c:1234
+#: ../thunar/thunar-tree-view-model.c:1362
 msgid "Loading..."
 msgstr "Đang đọc..."
 
-#: ../thunar/thunar-util.c:301
+#: ../thunar/thunar-util.c:304
 #, c-format
 msgid "Invalid path"
 msgstr "Đường dẫn không hợp lệ"
 
-#: ../thunar/thunar-util.c:335
+#: ../thunar/thunar-util.c:338
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "Không xác định người sử dụng \"%s\""
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:446
+#: ../thunar/thunar-util.c:449
 msgid "Today"
 msgstr "Hôm nay"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:451
+#: ../thunar/thunar-util.c:454
 #, c-format
 msgid "Today at %X"
 msgstr "Hôm nay, vào %X"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:459
+#: ../thunar/thunar-util.c:462
 msgid "Yesterday"
 msgstr "Hôm qua"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:464
+#: ../thunar/thunar-util.c:467
 #, c-format
 msgid "Yesterday at %X"
 msgstr "Hôm qua, vào %X"
 
 #. Days from last week
-#: ../thunar/thunar-util.c:482
+#: ../thunar/thunar-util.c:485
 #, c-format
 msgid "%A at %X"
 msgstr "%A vào %X"
 
 #. Any other date
-#: ../thunar/thunar-util.c:487
+#: ../thunar/thunar-util.c:490
 #, c-format
 msgid "%x at %X"
 msgstr "%x vào %X"
 
-#: ../thunar/thunar-util.c:753
+#: ../thunar/thunar-util.c:758
 #, c-format
 msgid "%.*s %u%s"
 msgstr ""
 
-#: ../thunar/thunar-util.c:755
+#: ../thunar/thunar-util.c:760
 #, c-format
 msgid "%.*s (copy %u)%s"
 msgstr ""
 
-#: ../thunar/thunar-util.c:760
+#: ../thunar/thunar-util.c:765
 #, c-format
 msgid "link to %.*s%s"
 msgstr ""
 
-#: ../thunar/thunar-util.c:765
+#: ../thunar/thunar-util.c:770
 #, c-format
 msgid "link %u to %.*s%s"
 msgstr ""
 
-#: ../thunar/thunar-util.c:786
+#: ../thunar/thunar-util.c:791
 msgid "Search: "
 msgstr ""
 
-#: ../thunar/thunar-window.c:487
+#: ../thunar/thunar-window.c:495
 msgid "_File"
 msgstr "_Tập tin"
 
-#: ../thunar/thunar-window.c:488
+#: ../thunar/thunar-window.c:496
 msgid "New _Tab"
 msgstr "Tab mới"
 
-#: ../thunar/thunar-window.c:488
+#: ../thunar/thunar-window.c:496
 msgid "Open a new tab for the displayed location"
 msgstr "Mở tab mới cho địa điểm hiện hành"
 
-#: ../thunar/thunar-window.c:489
+#: ../thunar/thunar-window.c:497
 msgid "New _Window"
 msgstr "Cửa sổ mới"
 
-#: ../thunar/thunar-window.c:489
+#: ../thunar/thunar-window.c:497
 msgid "Open a new Thunar window for the displayed location"
 msgstr "Mở một của sổ mới"
 
-#: ../thunar/thunar-window.c:490
+#: ../thunar/thunar-window.c:498
 msgid "Detac_h Tab"
 msgstr "Gỡ tab thành cửa sổ"
 
-#: ../thunar/thunar-window.c:490
+#: ../thunar/thunar-window.c:498
 msgid "Open current folder in a new window"
 msgstr "Mở thư mục hiện tại trong cửa sổ mới"
 
-#: ../thunar/thunar-window.c:491
+#: ../thunar/thunar-window.c:499
 msgid "C_lose Tab"
 msgstr "Đóng tab"
 
-#: ../thunar/thunar-window.c:491
+#: ../thunar/thunar-window.c:499
 msgid "Close this folder"
 msgstr "Đóng thư mục này"
 
-#: ../thunar/thunar-window.c:492
+#: ../thunar/thunar-window.c:500
 msgid "_Close Window"
 msgstr "Đóng cửa sổ"
 
-#: ../thunar/thunar-window.c:492
+#: ../thunar/thunar-window.c:500
 msgid "Close this window"
 msgstr "Đóng cửa sổ này"
 
-#: ../thunar/thunar-window.c:493
+#: ../thunar/thunar-window.c:501
 msgid "Close _All Windows"
 msgstr "Đóng tất cả cửa sổ"
 
-#: ../thunar/thunar-window.c:493
+#: ../thunar/thunar-window.c:501
 msgid "Close all Thunar windows"
 msgstr "Đóng toàn bộ cửa sổ Thunar"
 
-#: ../thunar/thunar-window.c:495
+#: ../thunar/thunar-window.c:503
 msgid "_Edit"
 msgstr "Sửa đổi"
 
-#: ../thunar/thunar-window.c:496
+#: ../thunar/thunar-window.c:504
 msgid "_Undo"
 msgstr ""
 
-#: ../thunar/thunar-window.c:497
+#: ../thunar/thunar-window.c:505
 msgid "_Redo"
 msgstr ""
 
-#: ../thunar/thunar-window.c:498
+#: ../thunar/thunar-window.c:506
 msgid "Pr_eferences..."
 msgstr "Tùy thích..."
 
-#: ../thunar/thunar-window.c:498
+#: ../thunar/thunar-window.c:506
 msgid "Edit Thunars Preferences"
 msgstr "Thay đổi tùy thích cho thunar"
 
-#: ../thunar/thunar-window.c:500
+#: ../thunar/thunar-window.c:508
 msgid "_View"
 msgstr "Hiển thị"
 
-#: ../thunar/thunar-window.c:501
+#: ../thunar/thunar-window.c:509
 msgid "_Reload"
 msgstr "Đọc lại"
 
-#: ../thunar/thunar-window.c:501
+#: ../thunar/thunar-window.c:509
 msgid "Reload the current folder"
 msgstr "Đọc lại thư mục hiện tại"
 
-#: ../thunar/thunar-window.c:503
+#: ../thunar/thunar-window.c:511
 msgid "Spl_it View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:503
+#: ../thunar/thunar-window.c:511
 msgid "Open/Close Split View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:504
+#: ../thunar/thunar-window.c:512
 msgid "Switch Focused Split View Pane"
 msgstr ""
 
-#: ../thunar/thunar-window.c:505
+#: ../thunar/thunar-window.c:513
 msgid "_Location Selector"
 msgstr "Thanh chọn địa điểm"
 
-#: ../thunar/thunar-window.c:506
-msgid "_Entry Style"
+#: ../thunar/thunar-window.c:514
+msgid "_Text Style"
 msgstr ""
 
-#: ../thunar/thunar-window.c:506
-msgid "Traditional entry showing the current path"
+#: ../thunar/thunar-window.c:514
+msgid "Traditional text box showing the current path"
 msgstr ""
 
-#: ../thunar/thunar-window.c:507
+#: ../thunar/thunar-window.c:515
 msgid "_Buttons Style"
 msgstr ""
 
-#: ../thunar/thunar-window.c:507
+#: ../thunar/thunar-window.c:515
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "Kiểu mới với một thư mục là một nút, dễ di chuyển"
 
-#: ../thunar/thunar-window.c:508
+#: ../thunar/thunar-window.c:516
 msgid "_Side Pane"
 msgstr "Pane trái"
 
-#: ../thunar/thunar-window.c:509
+#: ../thunar/thunar-window.c:517
 msgid "_Shortcuts"
 msgstr "Pane biểu tượng tắt"
 
-#: ../thunar/thunar-window.c:509
+#: ../thunar/thunar-window.c:517
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "Hiện/ẩn thanh biểu tượng tắt"
 
-#: ../thunar/thunar-window.c:510
+#: ../thunar/thunar-window.c:518
 msgid "_Tree"
 msgstr "Pane cây"
 
-#: ../thunar/thunar-window.c:510
+#: ../thunar/thunar-window.c:518
 msgid "Toggles the visibility of the tree pane"
 msgstr "Hiện/ẩn pane cây"
 
-#: ../thunar/thunar-window.c:512
+#: ../thunar/thunar-window.c:520
 msgid "Change the visibility of this window's image preview"
 msgstr ""
 
-#: ../thunar/thunar-window.c:513
+#: ../thunar/thunar-window.c:521
 msgid "St_atusbar"
 msgstr "Thanh trạng thái"
 
-#: ../thunar/thunar-window.c:513
+#: ../thunar/thunar-window.c:521
 msgid "Change the visibility of this window's statusbar"
 msgstr "Ẩn/hiện thanh trạng thái"
 
-#: ../thunar/thunar-window.c:514
+#: ../thunar/thunar-window.c:522
 msgid "_Menubar"
 msgstr "Thanh menu"
 
-#: ../thunar/thunar-window.c:514
+#: ../thunar/thunar-window.c:522
 msgid "Change the visibility of this window's menubar"
 msgstr "Ẩn/hiện thanh menu"
 
-#: ../thunar/thunar-window.c:515
+#: ../thunar/thunar-window.c:523
 msgid "Configure _Toolbar..."
 msgstr ""
 
-#: ../thunar/thunar-window.c:515
+#: ../thunar/thunar-window.c:523
 msgid "Configure the toolbar"
 msgstr ""
 
-#: ../thunar/thunar-window.c:516
+#: ../thunar/thunar-window.c:524
 msgid "Clear Saved _Folder View Settings"
 msgstr ""
 
-#: ../thunar/thunar-window.c:516
+#: ../thunar/thunar-window.c:524
 msgid "Delete saved view settings for this folder"
 msgstr ""
 
-#: ../thunar/thunar-window.c:517
+#: ../thunar/thunar-window.c:525
 msgid "Show _Hidden Files"
 msgstr "Hiện tập tin ẩn"
 
-#: ../thunar/thunar-window.c:517
+#: ../thunar/thunar-window.c:525
 msgid "Toggles the display of hidden files in the current window"
 msgstr "Hiện/ẩn những tập tin ẩn trong thư mục"
 
-#: ../thunar/thunar-window.c:518
+#: ../thunar/thunar-window.c:526
 msgid "Show File Hi_ghlight"
 msgstr ""
 
-#: ../thunar/thunar-window.c:518
+#: ../thunar/thunar-window.c:526
 msgid ""
 "Toggles the display of file highlight which can be configured in the file "
 "specific property dialog"
 msgstr ""
 
-#: ../thunar/thunar-window.c:519
+#: ../thunar/thunar-window.c:527
 msgid "Zoom I_n"
 msgstr "Phóng to"
 
-#: ../thunar/thunar-window.c:519
+#: ../thunar/thunar-window.c:527
 msgid "Show the contents in more detail"
 msgstr "Xem nội dung chi tiết hơn"
 
-#: ../thunar/thunar-window.c:522
+#: ../thunar/thunar-window.c:530
 msgid "Zoom _Out"
 msgstr "Thu nhỏ"
 
-#: ../thunar/thunar-window.c:522
+#: ../thunar/thunar-window.c:530
 msgid "Show the contents in less detail"
 msgstr "Xem nội dung ít chi tiết hơn"
 
-#: ../thunar/thunar-window.c:524
+#: ../thunar/thunar-window.c:532
 msgid "Normal Si_ze"
 msgstr "Cỡ bình thường"
 
-#: ../thunar/thunar-window.c:524
+#: ../thunar/thunar-window.c:532
 msgid "Show the contents at the normal size"
 msgstr "Xem nội dung ở cỡ bình thường"
 
-#: ../thunar/thunar-window.c:526
+#: ../thunar/thunar-window.c:534
 msgid "_Icon View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:526
+#: ../thunar/thunar-window.c:534
 msgid "Display folder content in an icon view"
 msgstr "Hiển thị các mục bằng biểu tượng lớn"
 
-#: ../thunar/thunar-window.c:527
+#: ../thunar/thunar-window.c:535
 msgid "_List View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:527
+#: ../thunar/thunar-window.c:535
 msgid "Display folder content in a detailed list view"
 msgstr "Xem các mục theo kiểu danh sách chi tiết"
 
-#: ../thunar/thunar-window.c:528
+#: ../thunar/thunar-window.c:536
 msgid "_Compact View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:528
+#: ../thunar/thunar-window.c:536
 msgid "Display folder content in a compact list view"
 msgstr "Xem các mục theo kiểu danh sách thu gọn"
 
-#: ../thunar/thunar-window.c:530
+#: ../thunar/thunar-window.c:538
 msgid "_Go"
 msgstr "Đi"
 
-#: ../thunar/thunar-window.c:531
+#: ../thunar/thunar-window.c:539
 msgid "_Bookmarks"
 msgstr ""
 
-#: ../thunar/thunar-window.c:533
+#: ../thunar/thunar-window.c:541
 msgid "_Home"
 msgstr "Home"
 
-#: ../thunar/thunar-window.c:533
+#: ../thunar/thunar-window.c:541
 msgid "Go to the home folder"
 msgstr "Đến thư mục home"
 
-#: ../thunar/thunar-window.c:534
+#: ../thunar/thunar-window.c:542
 msgid "Desktop"
 msgstr "Desktop"
 
-#: ../thunar/thunar-window.c:534
+#: ../thunar/thunar-window.c:542
 msgid "Go to the desktop folder"
 msgstr "Đến thư mục desktop"
 
-#: ../thunar/thunar-window.c:535
+#: ../thunar/thunar-window.c:543
 msgid ""
 "Browse all local and remote disks and folders accessible from this computer"
 msgstr ""
 
-#: ../thunar/thunar-window.c:536
+#: ../thunar/thunar-window.c:544
 msgid "Display recently used files"
 msgstr ""
 
-#: ../thunar/thunar-window.c:537
+#: ../thunar/thunar-window.c:545
 msgid "T_rash"
 msgstr "Thùng rác"
 
-#: ../thunar/thunar-window.c:537
+#: ../thunar/thunar-window.c:545
 msgid "Display the contents of the trash can"
 msgstr "Hiển thị nội dung của thùng rác"
 
-#: ../thunar/thunar-window.c:538
+#: ../thunar/thunar-window.c:546
 msgid "Open _Parent"
 msgstr "Mở thư mục cha"
 
-#: ../thunar/thunar-window.c:538
+#: ../thunar/thunar-window.c:546
 msgid "Open the parent folder"
 msgstr "Mở thư mục cha"
 
-#: ../thunar/thunar-window.c:539
+#: ../thunar/thunar-window.c:547
 msgid "_Open Location..."
 msgstr "Mở địa điểm..."
 
-#: ../thunar/thunar-window.c:539
+#: ../thunar/thunar-window.c:547
 msgid "Specify a location to open"
 msgstr "Chỉ ra một địa chỉ để mở"
 
-#: ../thunar/thunar-window.c:541
+#: ../thunar/thunar-window.c:549
 msgid "T_emplates"
 msgstr "Mẫu"
 
-#: ../thunar/thunar-window.c:541
+#: ../thunar/thunar-window.c:549
 msgid "Go to the templates folder"
 msgstr "Đến thư mục mẫu"
 
-#: ../thunar/thunar-window.c:542
+#: ../thunar/thunar-window.c:550
 msgid "B_rowse Network"
 msgstr "Duyệt mạng"
 
-#: ../thunar/thunar-window.c:545
+#: ../thunar/thunar-window.c:553
 msgid "_Contents"
 msgstr "Nội dung"
 
-#: ../thunar/thunar-window.c:545
+#: ../thunar/thunar-window.c:553
 msgid "Display Thunar user manual"
 msgstr "Xem hướng dẫn sửa dụng Thunar"
 
-#: ../thunar/thunar-window.c:546
+#: ../thunar/thunar-window.c:554
 msgid "Display information about Thunar"
 msgstr "Xem thông tin về thunar"
 
-#: ../thunar/thunar-window.c:547
+#: ../thunar/thunar-window.c:555
 msgid "Back"
 msgstr "Quay lui"
 
-#: ../thunar/thunar-window.c:547
+#: ../thunar/thunar-window.c:555
 msgid "Go to the previous visited folder"
 msgstr "Đến thư mục vừa vào trước đó"
 
-#: ../thunar/thunar-window.c:549
+#: ../thunar/thunar-window.c:557
 msgid "Forward"
 msgstr "Chuyển tiếp"
 
-#: ../thunar/thunar-window.c:549
+#: ../thunar/thunar-window.c:557
 msgid "Go to the next visited folder"
 msgstr "Nhảy đến thư mục vừa vào kế tiếp"
 
-#: ../thunar/thunar-window.c:550
+#: ../thunar/thunar-window.c:558
 msgid "_Previous Tab"
 msgstr "_Tab trước"
 
-#: ../thunar/thunar-window.c:550
+#: ../thunar/thunar-window.c:558
 msgid "Switch to Previous Tab"
 msgstr "Chuyển tới tab trước"
 
-#: ../thunar/thunar-window.c:551
+#: ../thunar/thunar-window.c:559
 msgid "_Next Tab"
 msgstr "_Tab tiếp theo"
 
-#: ../thunar/thunar-window.c:551
+#: ../thunar/thunar-window.c:559
 msgid "Switch to Next Tab"
 msgstr "Chuyển tới tab tiếp theo"
 
-#: ../thunar/thunar-window.c:552
+#: ../thunar/thunar-window.c:560
 msgid "_Search for Files..."
 msgstr ""
 
-#: ../thunar/thunar-window.c:552
+#: ../thunar/thunar-window.c:560
 msgid "Search for a specific file in the current folder and Recent"
 msgstr ""
 
-#: ../thunar/thunar-window.c:553
+#: ../thunar/thunar-window.c:561
 msgid "Cancel search for files"
 msgstr ""
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:898
+#: ../thunar/thunar-window.c:906
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr ""
 
-#: ../thunar/thunar-window.c:957
+#: ../thunar/thunar-window.c:965
 msgid "Size: "
 msgstr ""
 
 #. TRANSLATORS: `Catfish' is a software package, please don't translate it.
-#: ../thunar/thunar-window.c:1027
+#: ../thunar/thunar-window.c:1035
 msgid "Search with Catfish..."
 msgstr ""
 
-#: ../thunar/thunar-window.c:1038
+#: ../thunar/thunar-window.c:1046
 msgid "Restore Selected Items"
 msgstr ""
 
-#: ../thunar/thunar-window.c:2618
+#: ../thunar/thunar-window.c:2642
 msgid "Close tab"
 msgstr "Đóng tab"
 
-#: ../thunar/thunar-window.c:3077
+#: ../thunar/thunar-window.c:3101
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Mở địa điểm \"%s\""
 
-#: ../thunar/thunar-window.c:4156
+#: ../thunar/thunar-window.c:4187
 msgid "Failed to open parent folder"
 msgstr "Không thể mở thư mục cha"
 
-#: ../thunar/thunar-window.c:4287
+#: ../thunar/thunar-window.c:4318
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Thư mục \"%s\" không tồn tại. Bạn muốn tạo nó không?"
 
-#: ../thunar/thunar-window.c:4289
+#: ../thunar/thunar-window.c:4320
 msgid "Create directory"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4358
+#: ../thunar/thunar-window.c:4389
 msgid "Failed to browse the computer"
 msgstr ""
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4401
+#: ../thunar/thunar-window.c:4432
 msgid "About Templates"
 msgstr "Giới thiệu"
 
-#: ../thunar/thunar-window.c:4423
+#: ../thunar/thunar-window.c:4454
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Tất cả tập tin trong thư mục này sẽ hiện ở menu \"Tạo tài liệu\""
 
-#: ../thunar/thunar-window.c:4430
+#: ../thunar/thunar-window.c:4461
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Nếu bạn thường tạo một kiểu tài liệu nào đó, chép một bản sao vào thư mục này. Thunar sẽ thêm kiểu đó vào trong menu \"Tạo tài liệu\".\n\nSau đó bạn có thể chọn mở menu \"Tạo tài liệu\" và một bản sao của tài liệu bạn chọn lúc nãy sẽ được tạo ra trong thư mục bạn đang đứng."
 
-#: ../thunar/thunar-window.c:4442
+#: ../thunar/thunar-window.c:4473
 msgid "Do _not display this message again"
 msgstr "Không hiện lại"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4476
+#: ../thunar/thunar-window.c:4507
 msgid "Failed to open the file system root folder"
 msgstr "Không thể mở thư mục / của hệ thống"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4512
+#: ../thunar/thunar-window.c:4543
 msgid "Failed to display `Recent`"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4548
+#: ../thunar/thunar-window.c:4579
 msgid "Failed to display the contents of the trash can"
 msgstr "Không thể hiện nội dung của thùng rác"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4584
+#: ../thunar/thunar-window.c:4615
 msgid "Failed to browse the network"
 msgstr "Không thể thực hiện duyệt mạng"
 
-#: ../thunar/thunar-window.c:4727
+#: ../thunar/thunar-window.c:4758
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar là một trình duyệt tập tin nhanh và dễ dùng\ndành cho môi trường XFCE"
 
-#: ../thunar/thunar-window.c:5885
+#: ../thunar/thunar-window.c:5870
 msgid "Failed to launch search with Catfish"
 msgstr ""
 
-#: ../thunar/thunar-window.c:6154
+#: ../thunar/thunar-window.c:6180
 msgid "Location Bar"
 msgstr ""
 
@@ -4684,40 +4670,38 @@ msgid ""
 msgstr "Các tham số lệnh sau sẽ được thay thế khi thực hiện hành động:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:21
-msgid "the path to the first selected file or directory"
-msgstr "đường dẫn tới tập tin hoặc thư mục được chọn đầu tiên"
+msgid "file name of the selected file"
+msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:22
-msgid "the paths to all selected files and directories"
-msgstr "đường dẫn tới tất cả các tập tin và thư mục được chọn"
+msgid "file names of all selected files"
+msgstr ""
+
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:23
+msgid "path of the selected file's directory"
+msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:24
-#, no-c-format
-msgid "directory containing the file that is passed in %f"
-msgstr "thư mục chứa tập tin được chuyển vào trong %f"
+msgid "paths of all selected files' directories"
+msgstr ""
+
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:25
+msgid "path of the selected file including the file name"
+msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:26
-#, no-c-format
-msgid "directories containing the files that are passed in %F"
-msgstr "các thư mục chứa các tập tin được chuyển vào trong %F"
+msgid "paths of all selected files including the file names"
+msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:27
-msgid "the first selected filename (without path)"
-msgstr "tên tập tin được chọn đầu tiên (không có đường dẫn)"
-
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:28
-msgid "the selected filenames (without paths)"
-msgstr "các tập tin đã chọn (không có đường dẫn)"
-
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:29
 msgid "Basic"
 msgstr "Cơ bản"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:30
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:28
 msgid "_File Pattern:"
 msgstr "_Mẫu tập tin:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:31
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:29
 msgid ""
 "Enter a list of patterns that will be used to determine whether this action "
 "should be displayed for a selected file. If you specify more than one "
@@ -4725,56 +4709,56 @@ msgid ""
 "*.txt;*.doc)."
 msgstr "Nhập vào danh sách các mẫu sẽ được dùng để kiểm tra liệu tác vụ có được hiển thị cho tập tin đang chọn không. Nếu có nhiều hơn một mẫu,  các mẫu cần được tách biệt bằng dấu chấm phẩy (ví dụ: *.txt;*.doc)."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:32
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:30
 msgid "*"
 msgstr "*"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:33
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:31
 msgid "_Range (min-max):"
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:34
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:32
 msgid ""
 "If the command should operate on say two or three files, enter the numerical"
 " range 2-3. If there are no limits, this string should be empty."
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:35
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:33
 msgid "Appears if selection contains:"
 msgstr "Hiện ra nếu trong lựa chọn có chứa:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:36
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:34
 msgid "_Directories **"
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:37
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:35
 msgid "_Audio Files"
 msgstr "Các tập tin âm thanh"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:38
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:36
 msgid "_Image Files"
 msgstr "Các tập tin ảnh"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:39
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:37
 msgid "_Text Files"
 msgstr "Các tập tin văn bản"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:40
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:38
 msgid "_Video Files"
 msgstr "Các tập tin phim"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:41
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:39
 msgid "_Other Files"
 msgstr "Các tập tin khác"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:42
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:40
 msgid ""
 "This page lists the conditions under which the action will appear in the file managers context menus. The file patterns are specified as a list of simple file patterns separated by semicolons (e.g. *.txt;*.doc). For an action to appear in the context menu of a file or folder, at least one of these patterns must match the name of the file or folder. Additionally, you can specify that the action should only appear for certain kinds of files.\n"
 "\n"
 "** The custom action will be eligible to appear in the toolbar."
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:45
+#: ../plugins/thunar-uca/thunar-uca-editor.ui.h:43
 msgid "Appearance Conditions"
 msgstr "Các điều kiện xuất hiện"
 
