@@ -35,7 +35,6 @@ static void                thunar_thumbnail_size_from_icon_size (const GValue   
 static ThunarIconSize      thunar_zoom_level_to_icon_size       (ThunarZoomLevel zoom_level);
 
 
-
 gboolean
 transform_enum_value_to_index (GBinding     *binding,
                                const GValue *src_value,
