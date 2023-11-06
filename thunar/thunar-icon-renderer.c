@@ -663,7 +663,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
             }
 
           /* release the emblem name list */
-          g_list_free (emblems);
+          g_list_free_full (emblems, g_free);
         }
     }
 
