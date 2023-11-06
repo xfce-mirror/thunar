@@ -1290,8 +1290,8 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   guint64            fs_free;
   guint64            fs_size;
   gdouble            fs_fraction = 0.0;
-  const gchar       *background;
-  const gchar       *foreground;
+  gchar             *background;
+  gchar             *foreground;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) == 1);
@@ -1541,6 +1541,8 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
       background = thunar_file_get_metadata_setting (file, "highlight-color-background");
       foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
       thunar_properties_dialog_colorize_example_box (dialog, background, foreground);
+      g_free (foreground);
+      g_free (background);
     }
 
   /* cleanup */
@@ -2051,19 +2053,28 @@ thunar_properties_dialog_set_background (ThunarPropertiesDialog *dialog)
 static void
 thunar_properties_dialog_update_apply_button (ThunarPropertiesDialog *dialog)
 {
+  gchar *foreground;
+  gchar *background;
+
   for (GList *lp = dialog->files; lp != NULL; lp = lp->next)
     {
-      if (dialog->foreground_color != NULL && g_strcmp0 (dialog->foreground_color, thunar_file_get_metadata_setting (lp->data, "thunar-highlight-color-foreground")) != 0)
+      foreground = thunar_file_get_metadata_setting (lp->data, "thunar-highlight-color-foreground");
+      if (dialog->foreground_color != NULL && g_strcmp0 (dialog->foreground_color, foreground) != 0)
         {
+          g_free (foreground);
           gtk_widget_set_sensitive (dialog->highlight_apply_button, TRUE);
           return;
         }
+      g_free (foreground);
 
-      if (dialog->background_color != NULL && g_strcmp0 (dialog->background_color, thunar_file_get_metadata_setting (lp->data, "thunar-highlight-color-background")) != 0)
+      background = thunar_file_get_metadata_setting (lp->data, "thunar-highlight-color-background");
+      if (dialog->background_color != NULL && g_strcmp0 (dialog->background_color, background) != 0)
         {
+          g_free (background);
           gtk_widget_set_sensitive (dialog->highlight_apply_button, TRUE);
           return;
         }
+      g_free (background);
     }
 
   gtk_widget_set_sensitive (dialog->highlight_apply_button, FALSE);
