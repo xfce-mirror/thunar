@@ -1826,9 +1826,9 @@ static void
 thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *standard_view,
                                                         ThunarFile         *directory)
 {
-  const gchar *sort_column_name;
-  const gchar *sort_order_name;
-  const gchar *zoom_level_name;
+  gchar       *sort_column_name;
+  gchar       *sort_order_name;
+  gchar       *zoom_level_name;
   ThunarColumn sort_column;
   GtkSortType  sort_order;
   gint         zoom_level;
@@ -1852,6 +1852,7 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
   /* convert the sort column name to a value */
   if (sort_column_name != NULL)
     thunar_column_value_from_string (sort_column_name, &sort_column);
+  g_free (sort_column_name);
 
   /* Out of range ? Use the default value */
   if (sort_column >= THUNAR_N_VISIBLE_COLUMNS)
@@ -1866,6 +1867,7 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
         sort_order = GTK_SORT_ASCENDING;
       else
         sort_order = standard_view->priv->sort_order_default;
+      g_free (sort_order_name);
     }
 
   /* convert the zoom level name to a value */
@@ -1873,6 +1875,7 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
     {
       if (thunar_zoom_level_value_from_string (zoom_level_name, &zoom_level) == TRUE)
         thunar_standard_view_set_zoom_level (THUNAR_VIEW (standard_view), zoom_level);
+      g_free (zoom_level_name);
     }
 
   /* thunar_standard_view_sort_column_changed saves the directory specific settings to the directory, but we do not
@@ -4345,8 +4348,8 @@ thunar_standard_view_cell_layout_data_func (GtkCellLayout   *layout,
                                             gpointer         data)
 {
   ThunarFile  *file = THUNAR_FILE (thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), iter));
-  const gchar *background = NULL;
-  const gchar *foreground = NULL;
+  gchar       *background = NULL;
+  gchar       *foreground = NULL;
   GdkRGBA      foreground_rgba;
   GtkWidget   *view = GTK_WIDGET (data);
   GtkWidget   *toplevel;
@@ -4396,6 +4399,8 @@ thunar_standard_view_cell_layout_data_func (GtkCellLayout   *layout,
   else
     g_warn_if_reached ();
 
+  g_free (foreground);
+  g_free (background);
   g_object_unref (file);
 }
 

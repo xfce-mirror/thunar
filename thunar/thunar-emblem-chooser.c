@@ -386,7 +386,7 @@ thunar_emblem_chooser_file_changed (ThunarEmblemChooser *chooser)
 
   _thunar_return_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser));
 
-  emblem_names = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, g_free);
+  emblem_names = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 
   /* determine the emblems set for the files */
   for (lp = chooser->files; lp != NULL; lp = lp->next)
@@ -398,11 +398,12 @@ thunar_emblem_chooser_file_changed (ThunarEmblemChooser *chooser)
           if (count == NULL)
             {
               count = g_new0 (guint, 1);
-              g_hash_table_insert (emblem_names, li->data, count);
+              g_hash_table_insert (emblem_names, g_strdup (li->data), count);
             }
 
           *count = *count + 1;
         }
+      g_list_free_full (file_emblems, g_free);
 
       n_files++;
     }
