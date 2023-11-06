@@ -5650,11 +5650,12 @@ thunar_window_view_type_for_directory (ThunarWindow *window,
   /* if the  directory has a saved view type and directory specific view types are enabled, we use it */
   if (window->directory_specific_settings)
     {
-      const gchar *dir_spec_type_name;
+      gchar *dir_spec_type_name;
 
       dir_spec_type_name = thunar_file_get_metadata_setting (directory, "thunar-view-type");
       if (dir_spec_type_name != NULL)
         type = g_type_from_name (dir_spec_type_name);
+      g_free (dir_spec_type_name);
     }
 
   /* if there is no saved view type for the directory or directory specific view types are not enabled,

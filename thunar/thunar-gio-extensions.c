@@ -1655,6 +1655,39 @@ thunar_g_file_info_set_attribute (GFileInfo   *info,
 
 
 
+static gchar*
+thunar_g_file_info_get_attribute (GFileInfo   *info,
+                                  ThunarGType  type,
+                                  const gchar *setting_name)
+{
+  switch (type)
+    {
+      case THUNAR_GTYPE_STRING:
+        return g_strdup (g_file_info_get_attribute_string (info, setting_name));
+
+      case THUNAR_GTYPE_STRINGV:
+        gchar **stringv = g_file_info_get_attribute_stringv (info, setting_name);
+        GList  *string_list = NULL;
+        gchar  *joined_string = NULL;
+
+        if (stringv == NULL)
+          return NULL;
+
+        for (; *stringv != NULL; ++stringv)
+          string_list = g_list_append (string_list, *stringv);
+
+        joined_string = thunar_util_strjoin_list (string_list, THUNAR_METADATA_STRING_DELIMETER);
+        g_list_free (string_list);
+        return joined_string;
+
+      default:
+        g_warning ("ThunarGType not supported, skipping");
+        return NULL;
+    }
+}
+
+
+
 /**
  * thunar_g_file_set_metadata_setting:
  * @file          : a #GFile instance.
@@ -1754,20 +1787,23 @@ thunar_g_file_clear_metadata_setting (GFile       *file,
 /**
  * thunar_file_get_metadata_setting:
  * @file         : a #GFile instance.
+ * @info         : #GFileInfo instance to extract the setting
+ * @type         : #ThunarGType of the metadata
  * @setting_name : the name of the setting to get
  *
  * Gets the stored value of the metadata setting @setting_name for @file. Returns %NULL
- * if there is no stored setting.
+ * if there is no stored setting. After usage the returned string needs to be released with 'g_free'
  *
- * Return value: (transfer none): the stored value of the setting for @file, or %NULL
+ * Return value: (transfer full): the stored value of the setting for @file, or %NULL
  **/
-const gchar *
+gchar *
 thunar_g_file_get_metadata_setting (GFile       *file,
                                     GFileInfo   *info,
+                                    ThunarGType  type,
                                     const gchar *setting_name)
 {
-  gchar       *attr_name;
-  const gchar *attr_value;
+  gchar *attr_name;
+  gchar *attr_value;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
 
@@ -1783,7 +1819,7 @@ thunar_g_file_get_metadata_setting (GFile       *file,
       return NULL;
     }
 
-  attr_value = g_file_info_get_attribute_string (info, attr_name);
+  attr_value = thunar_g_file_info_get_attribute (info, type, attr_name);
   g_free (attr_name);
 
   return attr_value;

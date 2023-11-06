@@ -3588,14 +3588,7 @@ thunar_file_set_file_count (ThunarFile  *file,
  * @file : a #ThunarFile instance.
  *
  * Determines the names of the emblems that should be displayed for
- * @file. The returned list is owned by the caller, but the list
- * items - the name strings - are owned by @file. So the caller
- * must call g_list_free(), but don't g_free() the list items.
- *
- * Note that the strings contained in the returned list are
- * not garantied to exist over the next iteration of the main
- * loop. So in case you need the list of emblem names for
- * a longer time, you'll need to take a copy of the strings.
+ * @file. Sfter usage the returned list must released with g_list_free_full (list,g_free)
  *
  * Return value: the names of the emblems for @file.
  **/
@@ -3603,6 +3596,7 @@ GList*
 thunar_file_get_emblem_names (ThunarFile *file)
 {
   guint32   uid;
+  gchar    *emblem_names_joined;
   gchar   **emblem_names;
   GList    *emblems = NULL;
 
@@ -3612,16 +3606,23 @@ thunar_file_get_emblem_names (ThunarFile *file)
   if (file->info == NULL)
     return NULL;
 
-  /* determine the custom emblems */
-  emblem_names = g_file_info_get_attribute_stringv (file->info, "metadata::emblems");
-  if (G_UNLIKELY (emblem_names != NULL))
+  /* determine the custom emblems and transform them to a g_list */
+  emblem_names_joined = thunar_g_file_get_metadata_setting (file->gfile, file->info, THUNAR_GTYPE_STRINGV, "emblems");
+  if (emblem_names_joined != NULL)
     {
-      for (; *emblem_names != NULL; ++emblem_names)
-        emblems = g_list_append (emblems, *emblem_names);
+      emblem_names = g_strsplit (emblem_names_joined, THUNAR_METADATA_STRING_DELIMETER, 100);
+      g_free (emblem_names_joined);
+
+      if (G_LIKELY (emblem_names != NULL))
+        {
+          for (gchar **lp = emblem_names; *lp != NULL; ++lp)
+            emblems = g_list_append (emblems, g_strdup (*lp));
+        }
+      g_strfreev (emblem_names);
     }
 
   if (thunar_file_is_symlink (file))
-    emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK);
+    emblems = g_list_prepend (emblems, g_strdup (THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK));
 
   /* determine the user ID of the file owner */
   /* TODO what are we going to do here on non-UNIX systems? */
@@ -3638,14 +3639,14 @@ thunar_file_get_emblem_names (ThunarFile *file)
                                                          THUNAR_FILE_MODE_GRP_EXEC,
                                                          THUNAR_FILE_MODE_OTH_EXEC)))
     {
-      emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_CANT_READ);
+      emblems = g_list_prepend (emblems, g_strdup (THUNAR_FILE_EMBLEM_NAME_CANT_READ));
     }
   else if (G_UNLIKELY (uid == effective_user_id && !thunar_file_is_writable (file) && !thunar_file_is_trashed (file) && !thunar_file_is_in_recent (file)))
     {
       /* we own the file, but we cannot write to it, that's why we mark it as "cant-write", so
        * users won't be surprised when opening the file in a text editor, but are unable to save.
        */
-      emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_CANT_WRITE);
+      emblems = g_list_prepend (emblems, g_strdup (THUNAR_FILE_EMBLEM_NAME_CANT_WRITE));
     }
 
   return emblems;
@@ -4718,15 +4719,15 @@ thunar_file_list_to_thunar_g_file_list (GList *file_list)
  * @setting_name : the name of the setting to get
  *
  * Gets the stored value of the metadata setting @setting_name for @file. Returns %NULL
- * if there is no stored setting.
+ * if there is no stored setting. Release with g_free agfter usage.
  *
- * Return value: (transfer none): the stored value of the setting for @file, or %NULL
+ * Return value: (transfer full): the stored value of the setting for @file, or %NULL
  **/
-const gchar*
+gchar*
 thunar_file_get_metadata_setting (ThunarFile  *file,
                                   const gchar *setting_name)
 {
-  return thunar_g_file_get_metadata_setting (file->gfile, file->info, setting_name);
+  return thunar_g_file_get_metadata_setting (file->gfile, file->info, THUNAR_GTYPE_STRING, setting_name);
 }
 
 
