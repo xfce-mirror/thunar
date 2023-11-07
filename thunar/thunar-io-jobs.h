@@ -61,6 +61,7 @@ ThunarJob *thunar_io_jobs_search_directory (ThunarStandardViewModel *model,
 ThunarJob *thunar_io_jobs_clear_metadata_for_files (GList          *files,
                                                     ...);
 ThunarJob *thunar_io_jobs_set_metadata_for_files   (GList          *files,
+                                                    ThunarGType     type,
                                                     ...);
 ThunarJob *thunar_io_jobs_load_content_types(GList                  *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
