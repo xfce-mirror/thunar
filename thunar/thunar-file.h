@@ -271,13 +271,13 @@ gboolean          thunar_file_set_custom_icon            (ThunarFile            
                                                           const gchar             *custom_icon,
                                                           GError                 **error);
 
-const gchar         *thunar_file_get_thumbnail_path      (ThunarFile              *file,
+const gchar      *thunar_file_get_thumbnail_path         (ThunarFile              *file,
                                                           ThunarThumbnailSize      thumbnail_size);
-ThunarFileThumbState thunar_file_get_thumb_state         (const ThunarFile        *file,
-                                                          ThunarThumbnailSize      size);
-void                 thunar_file_set_thumb_state         (ThunarFile              *file,
-                                                          ThunarFileThumbState     state,
-                                                          ThunarThumbnailSize      size);
+gchar            *thunar_file_get_thumbnail_path_forced  (ThunarFile              *file,
+                                                          ThunarThumbnailSize      thumbnail_size);
+ThunarFileThumbState thunar_file_get_thumb_state         (const ThunarFile        *file);
+void             thunar_file_set_thumb_state             (ThunarFile              *file,
+                                                          ThunarFileThumbState     state);
 GIcon            *thunar_file_get_preview_icon           (const ThunarFile        *file);
 const gchar      *thunar_file_get_icon_name              (ThunarFile              *file,
                                                           ThunarFileIconState      icon_state,
@@ -324,6 +324,8 @@ void              thunar_file_move_thumbnail_cache_file  (GFile *old_file,
 
 void              thunar_file_replace_file               (ThunarFile *file,
                                                           GFile      *renamed_file);
+void              thunar_file_request_thumbnail          (ThunarFile          *file,
+                                                          ThunarThumbnailSize  size);
 gint              thunar_cmp_files_by_date                      (const ThunarFile   *a,
                                                                  const ThunarFile   *b,
                                                                  gboolean            case_sensitive,
