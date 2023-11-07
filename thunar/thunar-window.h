@@ -160,6 +160,7 @@ XfceGtkActionEntry*       thunar_window_get_action_entries                  (voi
 void                      thunar_window_reconnect_accelerators              (ThunarWindow        *window);
 void                      thunar_window_focus_view                          (ThunarWindow        *window,
                                                                              GtkWidget           *view);
+void                      thunar_window_queue_redraw                        (ThunarWindow        *window);
 
 
 G_END_DECLS;

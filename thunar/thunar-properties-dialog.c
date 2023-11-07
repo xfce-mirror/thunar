@@ -1290,8 +1290,8 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   guint64            fs_free;
   guint64            fs_size;
   gdouble            fs_fraction = 0.0;
-  const gchar       *background;
-  const gchar       *foreground;
+  gchar             *background;
+  gchar             *foreground;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) == 1);
@@ -1541,6 +1541,8 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
       background = thunar_file_get_metadata_setting (file, "highlight-color-background");
       foreground = thunar_file_get_metadata_setting (file, "highlight-color-foreground");
       thunar_properties_dialog_colorize_example_box (dialog, background, foreground);
+      g_free (foreground);
+      g_free (background);
     }
 
   /* cleanup */
@@ -1940,8 +1942,8 @@ thunar_properties_dialog_reset_highlight (ThunarPropertiesDialog *dialog)
   gtk_spinner_start (GTK_SPINNER (dialog->highlighting_spinner));
 
   dialog->highlight_change_job = thunar_io_jobs_clear_metadata_for_files (dialog->files,
-                                                                          "highlight-color-background",
-                                                                          "highlight-color-foreground", NULL);
+                                                                          "thunar-highlight-color-background",
+                                                                          "thunar-highlight-color-foreground", NULL);
 
   dialog->highlight_change_job_finish_signal =
     g_signal_connect_swapped (dialog->highlight_change_job, "finished",
@@ -1984,20 +1986,20 @@ thunar_properties_dialog_apply_highlight (ThunarPropertiesDialog *dialog)
 
   if (dialog->foreground_color != NULL && dialog->background_color != NULL)
     dialog->highlight_change_job =
-      thunar_io_jobs_set_metadata_for_files (dialog->files,
-                                             "highlight-color-foreground", dialog->foreground_color,
-                                             "highlight-color-background", dialog->background_color,
+      thunar_io_jobs_set_metadata_for_files (dialog->files, THUNAR_GTYPE_STRING,
+                                             "thunar-highlight-color-foreground", dialog->foreground_color,
+                                             "thunar-highlight-color-background", dialog->background_color,
                                              NULL);
   else if (dialog->background_color != NULL)
     dialog->highlight_change_job =
-      thunar_io_jobs_set_metadata_for_files (dialog->files,
-                                             "highlight-color-background", dialog->background_color,
+      thunar_io_jobs_set_metadata_for_files (dialog->files, THUNAR_GTYPE_STRING,
+                                             "thunar-highlight-color-background", dialog->background_color,
                                              NULL);
   /* we are sure that if we reach thus far foreground_color cannot be NULL */
   else
     dialog->highlight_change_job =
-      thunar_io_jobs_set_metadata_for_files (dialog->files,
-                                             "highlight-color-foreground", dialog->foreground_color,
+      thunar_io_jobs_set_metadata_for_files (dialog->files, THUNAR_GTYPE_STRING,
+                                             "thunar-highlight-color-foreground", dialog->foreground_color,
                                              NULL);
 
   dialog->highlight_change_job_finish_signal =
@@ -2051,19 +2053,28 @@ thunar_properties_dialog_set_background (ThunarPropertiesDialog *dialog)
 static void
 thunar_properties_dialog_update_apply_button (ThunarPropertiesDialog *dialog)
 {
+  gchar *foreground;
+  gchar *background;
+
   for (GList *lp = dialog->files; lp != NULL; lp = lp->next)
     {
-      if (dialog->foreground_color != NULL && g_strcmp0 (dialog->foreground_color, thunar_file_get_metadata_setting (lp->data, "highlight-color-foreground")) != 0)
+      foreground = thunar_file_get_metadata_setting (lp->data, "thunar-highlight-color-foreground");
+      if (dialog->foreground_color != NULL && g_strcmp0 (dialog->foreground_color, foreground) != 0)
         {
+          g_free (foreground);
           gtk_widget_set_sensitive (dialog->highlight_apply_button, TRUE);
           return;
         }
+      g_free (foreground);
 
-      if (dialog->background_color != NULL && g_strcmp0 (dialog->background_color, thunar_file_get_metadata_setting (lp->data, "highlight-color-background")) != 0)
+      background = thunar_file_get_metadata_setting (lp->data, "thunar-highlight-color-background");
+      if (dialog->background_color != NULL && g_strcmp0 (dialog->background_color, background) != 0)
         {
+          g_free (background);
           gtk_widget_set_sensitive (dialog->highlight_apply_button, TRUE);
           return;
         }
+      g_free (background);
     }
 
   gtk_widget_set_sensitive (dialog->highlight_apply_button, FALSE);
