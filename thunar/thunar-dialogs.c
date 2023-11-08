@@ -1124,7 +1124,7 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
                                    "%s", primary);
   gtk_window_set_title (GTK_WINDOW (dialog), _("Attention"));
   gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Launch Anyway"), GTK_RESPONSE_OK);
-  if (thunar_file_is_chmodable (file))
+  if (!thunar_file_is_trashed (file))
     gtk_dialog_add_button (GTK_DIALOG (dialog), _("Mark As _Secure And Launch"), GTK_RESPONSE_APPLY);
   gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Cancel"), GTK_RESPONSE_CANCEL);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);
