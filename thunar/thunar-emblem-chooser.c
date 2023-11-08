@@ -30,10 +30,13 @@
 
 #include <libxfce4util/libxfce4util.h>
 
+#include "thunar/thunar-application.h"
 #include "thunar/thunar-emblem-chooser.h"
 #include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-io-jobs.h"
 #include "thunar/thunar-private.h"
-
+#include "thunar/thunar-util.h"
+#include "thunar/thunar-window.h"
 
 
 /* Property identifiers */
@@ -85,6 +88,9 @@ struct _ThunarEmblemChooser
   GtkIconTheme *icon_theme;
   GList        *files;
   GtkWidget    *table;
+
+  ThunarJob    *emblem_change_job;
+  gulong        emblem_change_job_finish_signal;
 };
 
 
@@ -149,6 +155,9 @@ thunar_emblem_chooser_init (ThunarEmblemChooser *chooser)
   gtk_widget_show (chooser->table);
 
   g_signal_connect (G_OBJECT (chooser), "notify::scale-factor", G_CALLBACK (thunar_emblem_chooser_scale_changed), NULL);
+
+  chooser->emblem_change_job = NULL;
+  chooser->emblem_change_job_finish_signal = 0;
 }
 
 
@@ -157,6 +166,9 @@ static void
 thunar_emblem_chooser_dispose (GObject *object)
 {
   ThunarEmblemChooser *chooser = THUNAR_EMBLEM_CHOOSER (object);
+
+  if (chooser->emblem_change_job != NULL && chooser->emblem_change_job_finish_signal != 0)
+    g_signal_handler_disconnect (chooser->emblem_change_job, chooser->emblem_change_job_finish_signal);
 
   /* disconnect from the file */
   thunar_emblem_chooser_set_files (chooser, NULL);
@@ -263,15 +275,41 @@ thunar_emblem_chooser_unrealize (GtkWidget *widget)
 
 
 static void
+emblem_change_job_finished (gpointer data)
+{
+  ThunarEmblemChooser *chooser = THUNAR_EMBLEM_CHOOSER (data);
+  GList               *lp;
+  GList               *windows;
+  ThunarApplication   *application;
+
+  /* Re-enable listening to the "changed" signal of the files */
+  for (lp = chooser->files; lp != NULL; lp = lp->next)
+    g_signal_handlers_unblock_by_func (lp->data, thunar_emblem_chooser_file_changed, chooser);
+
+  /* redraw all windows in order to show emblem changes */
+  application = thunar_application_get ();
+  windows = thunar_application_get_windows (application);
+  for (lp = windows; lp != NULL; lp = lp->next)
+    thunar_window_queue_redraw (lp->data);
+  g_list_free (windows);
+
+  chooser->emblem_change_job = NULL;
+  chooser->emblem_change_job_finish_signal = 0;
+}
+
+
+
+static void
 thunar_emblem_chooser_button_toggled (GtkToggleButton     *button,
                                       ThunarEmblemChooser *chooser)
 {
   const gchar *emblem_name;
-  GList       *emblem_names;
+  GList       *emblem_names = NULL;
   GList       *lp;
-  GList       *delete_link;
-  gboolean     is_modified;
   GtkWidget   *box_child;
+  GList       *children;
+  GObject     *child;
+
 
   _thunar_return_if_fail (GTK_IS_TOGGLE_BUTTON (button));
   _thunar_return_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser));
@@ -280,47 +318,48 @@ thunar_emblem_chooser_button_toggled (GtkToggleButton     *button,
   if (G_LIKELY (chooser->files == NULL))
     return;
 
-  /* get the name of the toggled button */
-  emblem_name = g_object_get_data (G_OBJECT (button), I_("thunar-emblem"));
-  if (G_UNLIKELY (emblem_name == NULL))
-    return;
-
   /* once clicked, it is active or inactive */
   gtk_toggle_button_set_inconsistent (button, FALSE);
 
-  for (lp = chooser->files; lp != NULL; lp = lp->next)
+  children = gtk_container_get_children (GTK_CONTAINER (chooser->table));
+  for (lp = children; lp != NULL; lp = lp->next)
     {
-      emblem_names = thunar_file_get_emblem_names (THUNAR_FILE (lp->data));
-      is_modified = FALSE;
+      child = G_OBJECT (lp->data);
+      if (GTK_IS_FLOW_BOX_CHILD (child))
+        child = G_OBJECT (gtk_bin_get_child (GTK_BIN (child)));
 
-      if (gtk_toggle_button_get_active (button))
-        {
-          /* check if we need to add the new emblem */
-          if (g_list_find_custom (emblem_names, emblem_name, (GCompareFunc) (void (*)(void)) strcmp) == NULL)
-            {
-              emblem_names = g_list_append (emblem_names, (gchar *) emblem_name);
-              is_modified = TRUE;
-            }
-        }
-      else
-        {
-          delete_link = g_list_find_custom (emblem_names, emblem_name, (GCompareFunc) (void (*)(void)) strcmp);
-          if (delete_link != NULL)
-            {
-              emblem_names = g_list_delete_link (emblem_names, delete_link);
-              is_modified = TRUE;
-            }
-        }
+      emblem_name = g_object_get_data (child, I_("thunar-emblem"));
 
-      if (is_modified)
-      {
-        g_signal_handlers_block_by_func (lp->data, thunar_emblem_chooser_file_changed, chooser);
-        thunar_file_set_emblem_names (THUNAR_FILE (lp->data), emblem_names);
-        g_signal_handlers_unblock_by_func (lp->data, thunar_emblem_chooser_file_changed, chooser);
-      }
-
-      g_list_free (emblem_names);
+      if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (child)))
+        emblem_names = g_list_append (emblem_names, (gchar *) emblem_name);
     }
+  g_list_free (children);
+
+  /* Disable listening to the "changed" signal of the files to prevent lag */
+  for (lp = chooser->files; lp != NULL; lp = lp->next)
+    g_signal_handlers_block_by_func (lp->data, thunar_emblem_chooser_file_changed, chooser);
+
+  if (g_list_length (emblem_names) == 0)
+    {
+      chooser->emblem_change_job = thunar_io_jobs_clear_metadata_for_files (chooser->files,
+                                                                            "emblems", NULL);
+    }
+  else
+    {
+      gchar *emblem_names_joined = NULL;
+      emblem_names_joined = thunar_util_strjoin_list (emblem_names, THUNAR_METADATA_STRING_DELIMETER);
+      chooser->emblem_change_job = thunar_io_jobs_set_metadata_for_files (chooser->files, THUNAR_GTYPE_STRINGV,
+                                                                          "emblems", emblem_names_joined, NULL);
+      g_free (emblem_names_joined);
+    }
+
+  chooser->emblem_change_job_finish_signal =
+  g_signal_connect_swapped (chooser->emblem_change_job, "finished",
+                            G_CALLBACK (emblem_change_job_finished), chooser);
+
+  exo_job_launch (EXO_JOB (chooser->emblem_change_job));
+
+  g_list_free (emblem_names);
 
   /* select and give focus to the GtkFlowBox child containing the button */
   box_child = gtk_widget_get_parent (GTK_WIDGET (button));
@@ -347,7 +386,7 @@ thunar_emblem_chooser_file_changed (ThunarEmblemChooser *chooser)
 
   _thunar_return_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser));
 
-  emblem_names = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, g_free);
+  emblem_names = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 
   /* determine the emblems set for the files */
   for (lp = chooser->files; lp != NULL; lp = lp->next)
@@ -359,11 +398,12 @@ thunar_emblem_chooser_file_changed (ThunarEmblemChooser *chooser)
           if (count == NULL)
             {
               count = g_new0 (guint, 1);
-              g_hash_table_insert (emblem_names, li->data, count);
+              g_hash_table_insert (emblem_names, g_strdup (li->data), count);
             }
 
           *count = *count + 1;
         }
+      g_list_free_full (file_emblems, g_free);
 
       n_files++;
     }
