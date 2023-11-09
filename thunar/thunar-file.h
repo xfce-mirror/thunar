@@ -370,6 +370,8 @@ gint              thunar_cmp_files_by_size_and_items_count      (ThunarFile     
 gint              thunar_cmp_files_by_type                      (const ThunarFile   *a,
                                                                  const ThunarFile   *b,
                                                                  gboolean            case_sensitive);
+void              thunar_file_request_thumbnail                 (ThunarFile         *file,
+                                                                 ThunarThumbnailSize size);
 
 /**
  * thunar_file_is_root:
