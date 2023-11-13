@@ -258,8 +258,8 @@ msgstr "Tiedoston \"%s\" avaaminen epäonnistui"
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d tiedoston avaaminen epäonnistui"
+msgstr[1] "%d tiedoston avaaminen epäonnistui"
 
 #: ../thunar/thunar-action-manager.c:979
 msgid "Are you sure you want to open all folders?"
@@ -280,8 +280,8 @@ msgstr[1] ""
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Avaa %d uusi ikkuna"
+msgstr[1] "Avaa %d uutta ikkunaa"
 
 #. add the "Cancel" button
 #. append the cancel item
@@ -387,8 +387,8 @@ msgstr[1] "Luo symboliset linkit valittuihin tiedostoihin."
 #: ../thunar/thunar-action-manager.c:1644
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Nimeä uudelleen valittu tiedosto"
+msgstr[1] "Nimeä uudelleen valitut tiedostot"
 
 #: ../thunar/thunar-action-manager.c:1654
 msgid "Restore the selected file to its original location"
@@ -409,8 +409,8 @@ msgstr[1] ""
 #: ../thunar/thunar-action-manager.c:1683
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Siirrä valittu tiedosto roskakoriin"
+msgstr[1] "Siirrä valitut tiedostot roskakoriin"
 
 #: ../thunar/thunar-action-manager.c:1700
 msgid "Permanently delete the selected file"
@@ -445,14 +445,14 @@ msgstr "Liitä leikepöydän sisältö"
 #: ../thunar/thunar-action-manager.c:2057
 msgid "Side Pane (Add Bookmark)"
 msgid_plural "Side Pane (Add Bookmarks)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Sivupaneeli (Lisää kirjanmerkki)"
+msgstr[1] "Sivupaneeli (Lisää kirjanmerkit)"
 
 #: ../thunar/thunar-action-manager.c:2058
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Lisää valittu kansio kirjanmerkkipaneeliin."
+msgstr[1] "Lisää valitut kansiot kirjanmerkkipaneeliin."
 
 #: ../thunar/thunar-action-manager.c:2077
 msgid "Desktop (Create Link)"
@@ -471,8 +471,8 @@ msgstr[1] "Luo työpöydälle linkit valittuihin tiedostoihin."
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Lähetä valittu tiedosto kohteeseen \"%s\""
+msgstr[1] "Lähetä valitut tiedostot kohteeseen \"%s\""
 
 #. display an error message
 #: ../thunar/thunar-action-manager.c:2405 ../thunar/thunar-application.c:1855
@@ -536,8 +536,8 @@ msgstr "Kohteen \"%s\" irroittaminen epäonnistui"
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Käytä \"%s\" avataksesi valitun tiedoston"
+msgstr[1] "Käytä \"%s\" avataksesi valitut tiedostot"
 
 #: ../thunar/thunar-action-manager.c:3252
 #, c-format
@@ -1468,11 +1468,11 @@ msgstr ""
 
 #: ../thunar/thunar-enum-types.c:743
 msgid "Standalone"
-msgstr ""
+msgstr "Itsenäinen"
 
 #: ../thunar/thunar-enum-types.c:744
 msgid "Embedded"
-msgstr ""
+msgstr "Upotettu"
 
 #: ../thunar/thunar-enum-types.c:763
 msgid "Only for local files"
@@ -1791,8 +1791,8 @@ msgstr ""
 #, c-format
 msgid "%u item"
 msgid_plural "%u items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%u kohde"
+msgstr[1] "%u kohdetta"
 
 #: ../thunar/thunar-list-model.c:3195
 #, c-format
@@ -2677,11 +2677,11 @@ msgstr "Perutaan..."
 
 #: ../thunar/thunar-progress-view.c:603
 msgid "Job queued"
-msgstr ""
+msgstr "Työ jonossa"
 
 #: ../thunar/thunar-progress-view.c:622
 msgid "Resuming job..."
-msgstr ""
+msgstr "Jatketaan työtä..."
 
 #: ../thunar/thunar-progress-view.c:644
 msgid "Queued"
@@ -2855,12 +2855,16 @@ msgid ""
 "Click here to actually rename the files listed above to their new names and "
 "close the window."
 msgstr ""
+"Napsauta tästä nimetäksesi yllä luetellut tiedostot uudelleen niiden uusilla"
+" nimillä ja sulje ikkuna."
 
 #: ../thunar/thunar-renamer-dialog.c:376
 msgid ""
 "Click here to actually rename the files listed above to their new names and "
 "keep the window open."
 msgstr ""
+"Napsauta tästä nimetäksesi yllä luetellut tiedostot uudelleen niiden uusilla"
+" nimillä ja pidä ikkuna auki."
 
 #: ../thunar/thunar-renamer-dialog.c:446
 msgid "New Name"
@@ -2895,7 +2899,9 @@ msgstr[1] ""
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] ""
-msgstr[1] ""
+"Poista valittu tiedosto nimettävien tiedostojen listalta.\n"
+" "
+msgstr[1] "Poista valitut tiedostot nimettävien tiedostojen listalta."
 
 #. tell the user that we failed
 #: ../thunar/thunar-renamer-dialog.c:969
@@ -3072,8 +3078,8 @@ msgstr "Laskenta peruutettu"
 #, c-format
 msgid "%u item (%s, %s)"
 msgid_plural "%u items (%s, %s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%u kohde (%s, %s)"
+msgstr[1] "%u kohdetta (%s, %s)"
 
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
@@ -3112,11 +3118,11 @@ msgstr "Valitse kaikki muut paitsi parhaillaan valitut tiedostot"
 
 #: ../thunar/thunar-standard-view.c:398
 msgid "U_nselect all Files"
-msgstr ""
+msgstr "P_oista kaikkien tiedostojen valinta"
 
 #: ../thunar/thunar-standard-view.c:398
 msgid "Unselect all files in this window"
-msgstr ""
+msgstr "Poista kaikkien ikkunassa näkyvien tiedostojen valinta"
 
 #: ../thunar/thunar-standard-view.c:399
 msgid "Arran_ge Items"
@@ -4067,7 +4073,7 @@ msgstr "Turvallisuus:"
 #. same function as in thunar-permission-chooser.c
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:437
 msgid "Allow this file to _run as a .desktop file"
-msgstr ""
+msgstr "Salli tämän tiedoston _suorittaminen .desktop -tiedostona"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:438
 msgid ""
@@ -4393,8 +4399,8 @@ msgstr ""
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Lähetetäänkö %d tiedosto pakattuna arkistona?"
+msgstr[1] "Lähetetäänkö %d tiedostoa pakattuna arkistona?"
 
 #: ../plugins/thunar-sendto-email/main.c:245
 msgid "Send as _archive"
