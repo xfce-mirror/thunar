@@ -119,6 +119,9 @@ static gboolean           thunar_file_is_readable              (const ThunarFile
 static gboolean           thunar_file_same_filesystem          (const ThunarFile       *file_a,
                                                                 const ThunarFile       *file_b);
 static void               thunar_file_load_content_type        (ThunarFile             *file);
+static void               thunar_file_thumbnailing_finished    (ThunarFile             *file,
+                                                                guint                   request_id,
+                                                                ThunarThumbnailer      *thumbnailer);
                                                                 
 
 
@@ -184,6 +187,11 @@ struct _ThunarFile
   const gchar          *device_type;
   gchar                *thumbnail_path[N_THUMBNAIL_SIZES];
   ThunarFileThumbState  thumbnail_state[N_THUMBNAIL_SIZES];
+  
+  ThunarThumbnailer    *thumbnailer;
+  GMutex                thumbnailing_mutex;
+  guint                 thumbnail_request_id;
+  ThunarThumbnailSize   last_thumbnail_request_size;
 
   /* sorting */
   gchar                *collate_key;
@@ -404,8 +412,15 @@ thunar_file_init (ThunarFile *file)
       file->thumbnail_path[i] = NULL;
       file->thumbnail_state[i] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
     }
+  file->thumbnailer = thunar_thumbnailer_get ();
+  file->thumbnail_request_id = 0;
+  file->last_thumbnail_request_size = -1;
+
+  g_signal_connect_swapped (file->thumbnailer, "request-finished",
+                            G_CALLBACK (thunar_file_thumbnailing_finished), file);
 
   g_mutex_init (&file->content_type_mutex);
+  g_mutex_init (&file->thumbnailing_mutex);
 }
 
 
@@ -483,6 +498,10 @@ thunar_file_finalize (GObject *object)
   g_free (file->content_type);
   g_mutex_unlock (&file->content_type_mutex);
   g_mutex_clear (&file->content_type_mutex);
+
+  if (file->thumbnailer != NULL)
+    g_object_unref (file->thumbnailer);
+  g_mutex_clear (&file->thumbnailing_mutex);
 
   g_free (file->icon_name);
 
@@ -2456,9 +2475,9 @@ thunar_file_get_user (const ThunarFile *file)
 const gchar *
 thunar_file_get_content_type (ThunarFile *file)
 {
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-
   gboolean initialized = TRUE;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
   g_mutex_lock (&file->content_type_mutex);
   if (G_UNLIKELY (file->content_type == NULL))
@@ -5196,4 +5215,41 @@ thunar_cmp_files_by_type (const ThunarFile *a,
       return thunar_file_compare_by_name (a, b, case_sensitive);
   else
       return result;
+}
+
+
+
+static void
+thunar_file_thumbnailing_finished (ThunarFile        *file,
+                                   guint              request_id,
+                                   ThunarThumbnailer *thumbnailer)
+{
+  if (file->thumbnail_request_id != request_id)
+    return;
+  
+  file->thumbnail_request_id = 0;
+
+  thunar_icon_factory_clear_pixmap_cache (file);
+  thunar_file_monitor_file_changed (file);
+}
+
+
+
+void
+thunar_file_request_thumbnail (ThunarFile          *file,
+                               ThunarThumbnailSize  size)
+{
+  gboolean success;
+  
+  if (file->last_thumbnail_request_size == size || !g_mutex_trylock (&file->thumbnailing_mutex))
+    return;
+  
+  success = thunar_thumbnailer_queue_file (file->thumbnailer, file, &file->thumbnail_request_id, size);
+
+  if (!success)
+    file->thumbnail_request_id = 0;
+
+  file->last_thumbnail_request_size = size;
+
+  g_mutex_unlock (&file->thumbnailing_mutex);
 }
