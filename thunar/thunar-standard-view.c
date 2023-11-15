@@ -961,13 +961,6 @@ thunar_standard_view_dispose (GObject *object)
   if (G_UNLIKELY (standard_view->priv->drag_timer_id != 0))
     g_source_remove (standard_view->priv->drag_timer_id);
 
-  /* be sure to free any pending drag timer event */
-  if (G_UNLIKELY (standard_view->priv->drag_timer_event != NULL))
-    {
-      gdk_event_free (standard_view->priv->drag_timer_event);
-      standard_view->priv->drag_timer_event = NULL;
-    }
-
   /* disconnect from file */
   if (standard_view->priv->current_directory != NULL)
     {
@@ -2667,8 +2660,6 @@ thunar_standard_view_motion_notify_event (GtkWidget          *view,
     {
       /* cancel the drag timer, as we won't popup the menu anymore */
       g_source_remove (standard_view->priv->drag_timer_id);
-      gdk_event_free (standard_view->priv->drag_timer_event);
-      standard_view->priv->drag_timer_event = NULL;
 
       /* allocate the drag context */
       target_list = gtk_target_list_new (drag_targets, G_N_ELEMENTS (drag_targets));
@@ -3722,12 +3713,19 @@ thunar_standard_view_drag_timer (gpointer user_data)
 static void
 thunar_standard_view_drag_timer_destroy (gpointer user_data)
 {
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (user_data);
+
   /* unregister the motion notify and button release event handlers (thread-safe) */
   g_signal_handlers_disconnect_by_func (gtk_bin_get_child (GTK_BIN (user_data)), thunar_standard_view_button_release_event, user_data);
   g_signal_handlers_disconnect_by_func (gtk_bin_get_child (GTK_BIN (user_data)), thunar_standard_view_motion_notify_event, user_data);
 
-  /* reset the drag timer source id */
-  THUNAR_STANDARD_VIEW (user_data)->priv->drag_timer_id = 0;
+  /* reset drag data */
+  standard_view->priv->drag_timer_id = 0;
+  if (standard_view->priv->drag_timer_event != NULL)
+    {
+      gdk_event_free (standard_view->priv->drag_timer_event);
+      standard_view->priv->drag_timer_event = NULL;
+    }
 }
 
 
