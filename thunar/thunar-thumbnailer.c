@@ -413,7 +413,6 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
   guint                  n_items = 0;
   ThunarFileThumbState   thumb_state;
   const gchar           *thumbnail_path;
-  gint                   request_no;
   ThunarThumbnailSize    thumbnail_size;
 
   if (thumbnailer->proxy_state == THUNAR_THUMBNAILER_PROXY_WAITING)
@@ -492,17 +491,6 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
       /* NULL-terminate both arrays */
       uris[n] = NULL;
       mime_hints[n] = NULL;
-
-      /* queue a thumbnail request for the URIs from the wait queue */
-      /* compute the next request ID, making sure it's never 0 */
-      request_no = thumbnailer->last_request + 1;
-      request_no = MAX (request_no, 1);
-
-      /* remember the ID for the next request */
-      thumbnailer->last_request = request_no;
-
-      /* save the request number */
-      job->request = request_no;
 
       /* increase the reference count while the dbus call is running */
       g_object_ref (thumbnailer);
@@ -1136,6 +1124,7 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer   *thumbnailer,
 {
   gboolean               success = FALSE;
   ThunarThumbnailerJob  *job = NULL;
+  gint                   request_no;
 
   _thunar_return_val_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer), FALSE);
   _thunar_return_val_if_fail (files != NULL, FALSE);
@@ -1148,6 +1137,17 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer   *thumbnailer,
   job->thumbnailer = thumbnailer;
   job->files = g_list_copy_deep (files, (GCopyFunc) (void (*)(void)) g_object_ref, NULL);
   job->thumbnail_size = size;
+
+  /* queue a thumbnail request for the URIs from the wait queue */
+  /* compute the next request ID, making sure it's never 0 */
+  request_no = thumbnailer->last_request + 1;
+  request_no = MAX (request_no, 1);
+
+  /* remember the ID for the next request */
+  thumbnailer->last_request = request_no;
+
+  /* save the request number */
+  job->request = request_no;
 
   success = thunar_thumbnailer_begin_job (thumbnailer, job);
   if (success)
