@@ -1768,7 +1768,6 @@ thunar_standard_view_set_zoom_level (ThunarView     *view,
                                      ThunarZoomLevel zoom_level)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
-  gboolean            newThumbnailSize = FALSE;
   gchar              *zoom_level_attribute_name;
 
   /* check if we have a new zoom-level here */
@@ -1789,15 +1788,9 @@ thunar_standard_view_set_zoom_level (ThunarView     *view,
             }
         }
 
-      if (thunar_zoom_level_to_thumbnail_size (zoom_level) != thunar_zoom_level_to_thumbnail_size (standard_view->priv->zoom_level))
-        newThumbnailSize = TRUE;
-
       standard_view->priv->zoom_level = zoom_level;
 
       g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_ZOOM_LEVEL]);
-
-      if (newThumbnailSize)
-        thunar_standard_view_reload (view, TRUE);
     }
 }
 
