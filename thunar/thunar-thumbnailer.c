@@ -393,7 +393,6 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
   GList                 *supported_files = NULL;
   guint                  n;
   guint                  n_items = 0;
-  ThunarFileThumbState   thumb_state;
   const gchar           *thumbnail_path;
   ThunarThumbnailSize    thumbnail_size;
 
@@ -421,13 +420,7 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
           thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE, thumbnail_size);
           continue;
         }
-
-      /* get the current thumb state */
-      thumb_state = thunar_file_get_thumb_state (lp->data, thumbnail_size);
-
-      /* check if the file is supported, assume it is when the state was ready previously */
-      if (thumb_state == THUNAR_FILE_THUMB_STATE_READY
-          || thunar_thumbnailer_file_is_supported (thumbnailer, lp->data))
+      if (thunar_thumbnailer_file_is_supported (thumbnailer, lp->data))
         {
           guint max_size = thumbnailer->thumbnail_max_file_size;
 
@@ -462,9 +455,6 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
       /* fill URI and MIME hint arrays with items from the wait queue */
       for (lp = supported_files, n = 0; lp != NULL; lp = lp->next, ++n)
         {
-          /* set the thumbnail state to loading */
-          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_LOADING, thumbnail_size);
-
           /* save URI and MIME hint in the arrays */
           uris[n] = thunar_file_dup_uri (lp->data);
           mime_hints[n] = thunar_file_get_content_type (lp->data);
@@ -920,7 +910,6 @@ thunar_thumbnailer_thumbnailer_finished (GDBusProxy        *proxy,
 {
   ThunarThumbnailerJob *job;
   GSList               *lp;
-  GList                *files_to_reload = NULL;
 
   _thunar_return_if_fail (G_IS_DBUS_PROXY (proxy));
   _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
@@ -945,12 +934,6 @@ thunar_thumbnailer_thumbnailer_finished (GDBusProxy        *proxy,
           /* tell everybody we're done here */
           g_signal_emit (G_OBJECT (thumbnailer), thumbnailer_signals[REQUEST_FINISHED], 0, job->request);
 
-          for (GList *file_lp = job->files; file_lp != NULL; file_lp = file_lp->next)
-            {
-              if (thunar_file_get_thumb_state (file_lp->data, job->thumbnail_size) == THUNAR_FILE_THUMB_STATE_READY)
-                files_to_reload = g_list_append (files_to_reload, g_object_ref (file_lp->data));
-            }
-
           /* remove job from the list */
           thumbnailer->jobs = g_slist_delete_link (thumbnailer->jobs, lp);
 
@@ -960,13 +943,6 @@ thunar_thumbnailer_thumbnailer_finished (GDBusProxy        *proxy,
     }
 
   _thumbnailer_unlock (thumbnailer);
-
-  /* Do the reload outside of teh critical section in order to prevent a deadlock */
-  for (GList *file_lp = files_to_reload; file_lp != NULL; file_lp = file_lp->next)
-    thunar_file_reload (THUNAR_FILE (file_lp->data));
-  
-  if (files_to_reload != NULL)
-    g_list_free_full (files_to_reload, g_object_unref);
 }
 
 
