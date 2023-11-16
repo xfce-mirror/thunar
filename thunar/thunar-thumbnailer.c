@@ -192,8 +192,6 @@ struct _ThunarThumbnailerJob
   /* if this job is cancelled */
   guint              cancelled : 1;
 
-  guint              lazy_checks : 1;
-
   /* data is saved here in case the queueing is delayed */
   /* If this is NULL, the request has been sent off. */
   GList             *files; /* element type: ThunarFile */
@@ -445,15 +443,6 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
 
       /* get the current thumb state */
       thumb_state = thunar_file_get_thumb_state (lp->data, thumbnail_size);
-
-      if (job->lazy_checks)
-        {
-          /* in lazy mode, don't both for files that have already
-           * been loaded or are not supported */
-          if (thumb_state == THUNAR_FILE_THUMB_STATE_NONE
-              || thumb_state == THUNAR_FILE_THUMB_STATE_READY)
-            continue;
-        }
 
       /* check if the file is supported, assume it is when the state was ready previously */
       if (thumb_state == THUNAR_FILE_THUMB_STATE_READY
@@ -845,7 +834,7 @@ thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
   if (content_type == NULL)
     return FALSE;
 
-  /* lazy lookup the content type, no difficult parent type matching here */
+  /* lookup the content type, no difficult parent type matching here */
   schemes_array = g_hash_table_lookup (thumbnailer->supported, content_type);
   if (schemes_array != NULL)
     {
@@ -1134,14 +1123,13 @@ thunar_thumbnailer_queue_file (ThunarThumbnailer  *thumbnailer,
   files.prev = NULL;
 
   /* queue a thumbnail request for the file */
-  return thunar_thumbnailer_queue_files (thumbnailer, FALSE, &files, request, size);
+  return thunar_thumbnailer_queue_files (thumbnailer, &files, request, size);
 }
 
 
 
 gboolean
 thunar_thumbnailer_queue_files (ThunarThumbnailer   *thumbnailer,
-                                gboolean             lazy_checks,
                                 GList               *files,
                                 guint               *request,
                                 ThunarThumbnailSize  size)
@@ -1159,7 +1147,6 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer   *thumbnailer,
   job = g_slice_new0 (ThunarThumbnailerJob);
   job->thumbnailer = thumbnailer;
   job->files = g_list_copy_deep (files, (GCopyFunc) (void (*)(void)) g_object_ref, NULL);
-  job->lazy_checks = lazy_checks ? 1 : 0;
   job->thumbnail_size = size;
 
   success = thunar_thumbnailer_begin_job (thumbnailer, job);
