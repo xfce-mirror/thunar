@@ -95,7 +95,6 @@ typedef enum
 
 
 typedef struct _ThunarThumbnailerJob  ThunarThumbnailerJob;
-typedef struct _ThunarThumbnailerIdle ThunarThumbnailerIdle;
 
 /* Signal identifiers */
 enum
@@ -130,12 +129,6 @@ static void                   thunar_thumbnailer_thumbnailer_ready      (GDBusPr
                                                                          guint32                     handle,
                                                                          const gchar               **uris,
                                                                          ThunarThumbnailer          *thumbnailer);
-static void                   thunar_thumbnailer_idle                   (ThunarThumbnailer          *thumbnailer,
-                                                                         guint                       handle,
-                                                                         ThunarThumbnailerIdleType   type,
-                                                                         const gchar               **uris);
-static gboolean               thunar_thumbnailer_idle_func              (gpointer                    user_data);
-static void                   thunar_thumbnailer_idle_free              (gpointer                    data);
 static void                   thunar_thumbnailer_get_property           (GObject                    *object,
                                                                          guint                       prop_id,
                                                                          GValue                     *value,
@@ -181,8 +174,6 @@ struct _ThunarThumbnailer
   /* maximum file size (in bytes) allowed to be thumbnailed */
   guint64     thumbnail_max_file_size;
   
-  /* IDs of idle functions */
-  GSList     *idles;
 };
 
 struct _ThunarThumbnailerJob
@@ -205,15 +196,6 @@ struct _ThunarThumbnailerJob
   /* used to override the thumbnail size of ThunarThumbnailer */
   ThunarThumbnailSize thumbnail_size;
 };
-
-struct _ThunarThumbnailerIdle
-{
-  ThunarThumbnailerIdleType  type;
-  ThunarThumbnailer          *thumbnailer;
-  guint                       id;
-  gchar                     **uris;
-};
-
 
 static guint thumbnailer_signals[LAST_SIGNAL];
 
@@ -549,8 +531,6 @@ static void
 thunar_thumbnailer_finalize (GObject *object)
 {
   ThunarThumbnailer     *thumbnailer = THUNAR_THUMBNAILER (object);
-  ThunarThumbnailerIdle *idle;
-  GSList                *lp;
 
   /* acquire the thumbnailer lock */
   _thumbnailer_lock (thumbnailer);
@@ -562,14 +542,6 @@ thunar_thumbnailer_finalize (GObject *object)
                                             G_SIGNAL_MATCH_DATA, 0, 0,
                                             NULL, NULL, thumbnailer);
     }
-
-  /* abort all pending idle functions */
-  for (lp = thumbnailer->idles; lp != NULL; lp = lp->next)
-    {
-      idle = lp->data;
-      g_source_remove (idle->id);
-    }
-  g_slist_free (thumbnailer->idles);
 
   /* remove all jobs */
   g_slist_free_full (thumbnailer->jobs, (GDestroyNotify)thunar_thumbnailer_free_job);
@@ -749,13 +721,23 @@ thunar_thumbnailer_proxy_created (GObject       *object,
       return;
     }
 
-  /* setup signals */
+  /* More detailed information about the Thumbnailer sigbnals can be found here */
+  /* https://wiki.gnome.org/Attic/DraftThumbnailerSpec */
+
+  /* 'error' is signaled when thumnailing failed for some uris */
+  /* Note that 'finished' will still be signaled after the whole thumbnailing request finished */
   g_signal_connect (proxy, "error",
                     G_CALLBACK (thunar_thumbnailer_thumbnailer_error), thumbnailer);
+
+  /* 'finished' is signaled after a thumbnailing request finished .. no matter if sucessfull or not */
   g_signal_connect (proxy, "finished",
                     G_CALLBACK (thunar_thumbnailer_thumbnailer_finished), thumbnailer);
+
+  /* 'ready' is signaled when thumnailing was sucessfull for some uris */
+  /* Note that 'finished' will still be signaled after the whole thumbnailing request finished */
   g_signal_connect (proxy, "ready",
-                    G_CALLBACK (thunar_thumbnailer_thumbnailer_ready), thumbnailer);
+                   G_CALLBACK (thunar_thumbnailer_thumbnailer_ready), thumbnailer);
+
 
   /* begin retrieving supported file types */
 
@@ -849,14 +831,39 @@ thunar_thumbnailer_thumbnailer_error (GDBusProxy        *proxy,
                                       const gchar       *message,
                                       ThunarThumbnailer *thumbnailer)
 {
+  GFile                *gfile;
+  ThunarFile           *file;
+  ThunarThumbnailerJob *job;
+
   _thunar_return_if_fail (G_IS_DBUS_PROXY (proxy));
   _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
 
-  /* check if we have any ready URIs */
-  thunar_thumbnailer_idle (thumbnailer,
-                           handle,
-                           THUNAR_THUMBNAILER_IDLE_ERROR,
-                           uris);
+  _thumbnailer_lock (thumbnailer);
+  for (GSList *lp = thumbnailer->jobs; lp != NULL; lp = lp->next)
+    {
+      job = lp->data;
+      if (job->handle != handle)
+        {
+          for (const gchar **uri = uris; *uri != NULL; ++uri)
+            {
+              /* look up the corresponding ThunarFile from the cache */
+              gfile = g_file_new_for_uri (*uri);
+              file = thunar_file_cache_lookup (gfile);
+              g_object_unref (gfile);
+
+              /* check if we have a file for this URI in the cache */
+              if (file != NULL)
+                {
+                  /* tell everybody we're done here */
+                  thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_NONE, job->thumbnail_size);
+                  g_debug ("Failed to generate thumbnail for '%s': Error Code: %i - Error: %s\n", thunar_file_get_basename (file), code, message);
+                  g_object_unref (file);
+                }
+            }
+          break;
+        }
+    }
+   _thumbnailer_unlock (thumbnailer);
 }
 
 
@@ -867,13 +874,41 @@ thunar_thumbnailer_thumbnailer_ready (GDBusProxy        *proxy,
                                       const gchar      **uris,
                                       ThunarThumbnailer *thumbnailer)
 {
+  GFile                *gfile;
+  ThunarFile           *file;
+  ThunarThumbnailerJob *job;
+
   _thunar_return_if_fail (G_IS_DBUS_PROXY (proxy));
   _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
 
-  thunar_thumbnailer_idle (thumbnailer,
-                           handle,
-                           THUNAR_THUMBNAILER_IDLE_READY,
-                           uris);
+
+  _thumbnailer_lock (thumbnailer);
+  for (GSList *lp = thumbnailer->jobs; lp != NULL; lp = lp->next)
+    {
+      job = lp->data;
+      if (job->handle == handle)
+        {
+          for (const gchar **uri = uris; *uri != NULL; ++uri)
+            {
+              for (GList *lp_file = job->files; lp_file != NULL; lp_file = lp_file->next)
+                {
+                  /* look up the corresponding ThunarFile from the cache */
+                  gfile = g_file_new_for_uri (*uri);
+                  file = thunar_file_cache_lookup (gfile);
+                  g_object_unref (gfile);
+
+                  if (file != NULL)
+                    {
+                        // TODO: Check why we cannot rely on the 'ready' signal
+                        //thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_READY, job->thumbnail_size);
+                        g_object_unref (file);
+                    }
+
+                }
+            }
+        }
+    }
+      _thumbnailer_unlock (thumbnailer);
 }
 
 
@@ -932,137 +967,6 @@ thunar_thumbnailer_thumbnailer_finished (GDBusProxy        *proxy,
   
   if (files_to_reload != NULL)
     g_list_free_full (files_to_reload, g_object_unref);
-}
-
-
-
-static void
-thunar_thumbnailer_idle (ThunarThumbnailer          *thumbnailer,
-                         guint                       handle,
-                         ThunarThumbnailerIdleType   type,
-                         const gchar               **uris)
-{
-  GSList                *lp;
-  ThunarThumbnailerIdle *idle;
-  ThunarThumbnailerJob  *job;
-
-  /* leave if there are no uris */
-  if (G_UNLIKELY (uris == NULL))
-    return;
-
-  if (handle == 0)
-    {
-      g_printerr ("ThunarThumbnailer: got 0 handle (Error or Ready)\n");
-      return;
-    }
-
-  _thumbnailer_lock (thumbnailer);
-
-  /* look for the job so we don't emit unknown handles, the reason
-   * we do this is when you have multiple windows opened, you don't
-   * want each window (because they all have a connection to the
-   * same proxy) emit the file change, only the window that requested
-   * the data */
-  for (lp = thumbnailer->jobs; lp != NULL; lp = lp->next)
-    {
-      job = lp->data;
-
-      if (job->handle == handle)
-        {
-          /* allocate a new idle struct */
-          idle = g_slice_new0 (ThunarThumbnailerIdle);
-          idle->type = type;
-          idle->thumbnailer = thumbnailer;
-
-          /* copy the URI array because we need it in the idle function */
-          idle->uris = g_strdupv ((gchar **)uris);
-
-          /* remember the idle struct because we might have to remove it in finalize() */
-          thumbnailer->idles = g_slist_prepend (thumbnailer->idles, idle);
-
-          /* call the idle function when we have the time */
-          idle->id = g_idle_add_full (G_PRIORITY_LOW,
-                                      thunar_thumbnailer_idle_func, idle,
-                                      thunar_thumbnailer_idle_free);
-
-          break;
-        }
-    }
-
-  _thumbnailer_unlock (thumbnailer);
-}
-
-
-
-static gboolean
-thunar_thumbnailer_idle_func (gpointer user_data)
-{
-  ThunarThumbnailerIdle *idle = user_data;
-  ThunarFile            *file;
-  GFile                 *gfile;
-  guint                  n;
-
-  _thunar_return_val_if_fail (idle != NULL, FALSE);
-  _thunar_return_val_if_fail (THUNAR_IS_THUMBNAILER (idle->thumbnailer), FALSE);
-
-  /* iterate over all failed URIs */
-  for (n = 0; idle->uris != NULL && idle->uris[n] != NULL; ++n)
-    {
-      /* look up the corresponding ThunarFile from the cache */
-      gfile = g_file_new_for_uri (idle->uris[n]);
-      file = thunar_file_cache_lookup (gfile);
-      g_object_unref (gfile);
-
-      /* check if we have a file for this URI in the cache */
-      if (file != NULL)
-        {
-          if (idle->type == THUNAR_THUMBNAILER_IDLE_ERROR)
-            {
-              /* set thumbnail state to none unless the thumbnail has already been created.
-               * This is to prevent race conditions with the other idle functions */
-              if (thunar_file_get_thumb_state (file, idle->thumbnailer->thumbnail_size) != THUNAR_FILE_THUMB_STATE_READY)
-                thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_NONE, idle->thumbnailer->thumbnail_size);
-            }
-          else if (idle->type == THUNAR_THUMBNAILER_IDLE_READY)
-            {
-              /* set thumbnail state to ready - we now have a thumbnail */
-              thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_READY, idle->thumbnailer->thumbnail_size);
-            }
-          else
-            {
-              _thunar_assert_not_reached ();
-            }
-          g_object_unref (file);
-        }
-    }
-
-  /* remove the idle struct */
-  _thumbnailer_lock (idle->thumbnailer);
-  idle->thumbnailer->idles = g_slist_remove (idle->thumbnailer->idles, idle);
-  _thumbnailer_unlock (idle->thumbnailer);
-
-  /* remove the idle source, which also destroys the idle struct */
-  return FALSE;
-}
-
-
-
-static void
-thunar_thumbnailer_idle_free (gpointer data)
-{
-  ThunarThumbnailerIdle *idle = data;
-
-  _thunar_return_if_fail (idle != NULL);
-
-  /* free the URI array if necessary */
-  if (idle->type == THUNAR_THUMBNAILER_IDLE_READY
-      || idle->type == THUNAR_THUMBNAILER_IDLE_ERROR)
-    {
-      g_strfreev (idle->uris);
-    }
-
-  /* free the struct */
-  g_slice_free (ThunarThumbnailerIdle, idle);
 }
 
 
