@@ -119,7 +119,12 @@ static gboolean           thunar_file_is_readable              (const ThunarFile
 static gboolean           thunar_file_same_filesystem          (const ThunarFile       *file_a,
                                                                 const ThunarFile       *file_b);
 static void               thunar_file_load_content_type        (ThunarFile             *file);
-                                                                
+static void               thunar_file_thumbnailing_finished    (ThunarFile             *file,
+                                                                guint                   request_id,
+                                                                ThunarThumbnailer      *thumbnailer);
+static void               thunar_file_reset_thumbnail          (ThunarFile             *file,
+                                                                ThunarThumbnailSize     size);
+                                                  
 
 
 
@@ -184,6 +189,9 @@ struct _ThunarFile
   const gchar          *device_type;
   gchar                *thumbnail_path[N_THUMBNAIL_SIZES];
   ThunarFileThumbState  thumbnail_state[N_THUMBNAIL_SIZES];
+  guint                 thumbnail_request_id[N_THUMBNAIL_SIZES];
+
+  ThunarThumbnailer    *thumbnailer;
 
   /* sorting */
   gchar                *collate_key;
@@ -400,10 +408,11 @@ thunar_file_init (ThunarFile *file)
   file->file_count_timestamp = 0;
   file->display_name = NULL;
   for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
-    {
-      file->thumbnail_path[i] = NULL;
-      file->thumbnail_state[i] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
-    }
+    thunar_file_reset_thumbnail (file, i);
+
+  file->thumbnailer = thunar_thumbnailer_get ();
+  
+  g_signal_connect_swapped (file->thumbnailer, "request-finished", G_CALLBACK (thunar_file_thumbnailing_finished), file);
 
   g_mutex_init (&file->content_type_mutex);
 }
@@ -461,6 +470,11 @@ thunar_file_finalize (GObject *object)
                "watch count of %d", file_watch->watch_count);
     }
 #endif
+
+  g_signal_handlers_disconnect_by_func (G_OBJECT (file->thumbnailer), G_CALLBACK (thunar_file_thumbnailing_finished), file);
+
+  if (file->thumbnailer != NULL)
+    g_object_unref (file->thumbnailer);
 
   /* drop the entry from the cache */
   G_REC_LOCK (file_cache_mutex);
@@ -624,11 +638,7 @@ thunar_file_info_changed (ThunarxFileInfo *file_info)
   /* set the new thumbnail state manually, so we only emit file
    * changed once */
   for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
-    {
-      file->thumbnail_state[i] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
-      g_free (file->thumbnail_path[i]);
-      file->thumbnail_path[i] = NULL;
-    }
+    thunar_file_reset_thumbnail (file, i);
 
   /* tell the file monitor that this file changed */
   thunar_file_monitor_file_changed (file);
@@ -906,7 +916,7 @@ thunar_file_info_clear (ThunarFile *file)
 
   /* set thumb state to unknown */
   for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
-    file->thumbnail_state[i] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
+    thunar_file_reset_thumbnail (file, i);
 }
 
 
@@ -3843,8 +3853,6 @@ thunar_file_get_thumb_state (const ThunarFile   *file,
  * @thumb_size  : the required #ThunarThumbnailSize
  *
  * Sets the #ThunarFileThumbState for @file to @thumb_state.
- * This will cause a "file-changed" signal to be emitted from
- * #ThunarFileMonitor.
  **/
 void
 thunar_file_set_thumb_state (ThunarFile          *file,
@@ -3866,10 +3874,6 @@ thunar_file_set_thumb_state (ThunarFile          *file,
       g_free (file->thumbnail_path[size]);
       file->thumbnail_path[size] = NULL;
     }
-
-  /* if the file has a thumbnail, reload it */
-  if (state == THUNAR_FILE_THUMB_STATE_READY)
-    thunar_file_monitor_file_changed (file);
 }
 
 
@@ -5196,4 +5200,97 @@ thunar_cmp_files_by_type (const ThunarFile *a,
       return thunar_file_compare_by_name (a, b, case_sensitive);
   else
       return result;
+}
+
+
+
+static void
+thunar_file_thumbnailing_finished (ThunarFile        *file,
+                                   guint              request_id,
+                                   ThunarThumbnailer *thumbnailer)
+{
+  GList               *lp;
+  GList               *windows;
+  ThunarApplication   *application;
+
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
+    {
+      if (file->thumbnail_request_id[i] != request_id )
+        continue;
+
+      /* reset the request id */
+      file->thumbnail_request_id[i] = 0;
+
+      /* Either there was some thumbnailing error for that file, */
+      /* or thumbnailing is just not supported for it */
+      if (file->thumbnail_state[i] == THUNAR_FILE_THUMB_STATE_NONE)
+        break;
+
+      /* set the internal path, so the thumbnail can be loaded from it */
+      thunar_file_get_thumbnail_path (file, i);
+
+      if (file->thumbnail_path[i] == NULL)
+        {
+          // TODO: Check why that case can happen
+          //g_warning ("Thumbnailing for '%s' finished without error, but no thumbnail was generated", thunar_file_get_basename (file)); 
+
+          /* For some reason thumbnailing seems not to work reliably for e.g. some remote locations */
+          /* If theere was no thumbnailing error for the file (THUNAR_FILE_THUMB_STATE_NONE), allow to send another request */
+          thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_UNKNOWN, i );
+          break;
+        }
+
+      /* Thumbnailing finished without error and we have a thumbnail path ... lets flag it as ready */
+      thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_READY, i );
+      thunar_icon_factory_clear_pixmap_cache (file);
+
+      /* redraw all windows in order to update the thumbnail images */
+      /* TODO: It should be sufficient to redraw the view/widget which is holding the thumbnail instead of all windows */
+      /* More info here: https://gitlab.xfce.org/xfce/thunar/-/issues/1229 */
+      application = thunar_application_get ();
+      windows = thunar_application_get_windows (application);
+      for (lp = windows; lp != NULL; lp = lp->next)
+        thunar_window_queue_redraw (lp->data);
+      g_list_free (windows);
+    }
+}
+
+
+
+void
+thunar_file_request_thumbnail (ThunarFile          *file,
+                               ThunarThumbnailSize  size)
+{
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  /* For all other states, the thumbnailer already processed the file or is currently working on it */
+  if (file->thumbnail_state[size] != THUNAR_FILE_THUMB_STATE_UNKNOWN)
+    return;
+
+  if (file->thumbnail_request_id[size] != 0)
+    return;
+
+  thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_LOADING, size);
+
+  thunar_thumbnailer_queue_file (file->thumbnailer, file, &file->thumbnail_request_id[size], size);
+}
+
+
+
+static void
+thunar_file_reset_thumbnail (ThunarFile          *file,
+                             ThunarThumbnailSize  size)
+{
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  /* Dont do anything if the thumbnailer is still working on it */
+  if(file->thumbnail_request_id[size] != 0)
+   return;
+
+  thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_UNKNOWN, size);
+  g_free (file->thumbnail_path[size]);
+  file->thumbnail_path[size] = NULL;
+  file->thumbnail_request_id[size] = 0;
 }

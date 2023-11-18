@@ -44,7 +44,6 @@ gboolean           thunar_thumbnailer_queue_file      (ThunarThumbnailer        
                                                        guint                    *request,
                                                        ThunarThumbnailSize       size);
 gboolean           thunar_thumbnailer_queue_files     (ThunarThumbnailer        *thumbnailer,
-                                                       gboolean                  lazy_checks,
                                                        GList                    *files,
                                                        guint                    *request,
                                                        ThunarThumbnailSize       size);
