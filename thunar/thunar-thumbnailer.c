@@ -173,7 +173,12 @@ struct _ThunarThumbnailer
 
   /* maximum file size (in bytes) allowed to be thumbnailed */
   guint64     thumbnail_max_file_size;
-  
+
+  /* Agregated thumbnailing requests per size, to be queued on timeout */
+  ThunarThumbnailerJob* jobs_to_queue[N_THUMBNAIL_SIZES];
+
+  /* Id's of the timeout sources per size, used to agrregate requets */
+  guint                 jobs_to_queue_source_id[N_THUMBNAIL_SIZES];
 };
 
 struct _ThunarThumbnailerJob
@@ -417,7 +422,7 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
       /* the icon factory only loads icons for regular files and folders */
       if (!thunar_file_is_regular (lp->data) && !thunar_file_is_directory (lp->data))
         {
-          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE, thumbnail_size);
+          thunar_file_update_thumbnail (lp->data, THUNAR_FILE_THUMB_STATE_NONE, thumbnail_size);
           continue;
         }
       if (thunar_thumbnailer_file_is_supported (thumbnailer, lp->data))
@@ -439,9 +444,9 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
 
           /* test if a thumbnail can be found */
           if (thumbnail_path != NULL && g_file_test (thumbnail_path, G_FILE_TEST_EXISTS))
-            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_READY, thumbnail_size);
+            thunar_file_update_thumbnail (lp->data, THUNAR_FILE_THUMB_STATE_READY, thumbnail_size);
           else
-            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE, thumbnail_size);
+            thunar_file_update_thumbnail (lp->data, THUNAR_FILE_THUMB_STATE_NONE, thumbnail_size);
         }
     }
 
@@ -508,6 +513,12 @@ thunar_thumbnailer_init (ThunarThumbnailer *thumbnailer)
   /* grab a reference on the preferences */
   thumbnailer->preferences = thunar_preferences_get ();
 
+  for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
+    {
+      thumbnailer->jobs_to_queue[i] = NULL;
+      thumbnailer->jobs_to_queue_source_id[i] = 0;
+    }
+
   g_object_bind_property (G_OBJECT (thumbnailer->preferences),
                           "misc-thumbnail-max-file-size",
                           G_OBJECT (thumbnailer),
@@ -524,6 +535,17 @@ thunar_thumbnailer_finalize (GObject *object)
 
   /* acquire the thumbnailer lock */
   _thumbnailer_lock (thumbnailer);
+
+  for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
+    {
+      if (thumbnailer->jobs_to_queue_source_id[i] != 0)
+      {
+        g_source_remove (thumbnailer->jobs_to_queue_source_id[i]);
+        thunar_thumbnailer_free_job (thumbnailer->jobs_to_queue[i]);
+        thumbnailer->jobs_to_queue[i] = NULL;
+        thumbnailer->jobs_to_queue_source_id[i] = 0;
+      }
+    }
 
   if (thumbnailer->thumbnailer_proxy != NULL)
     {
@@ -845,7 +867,7 @@ thunar_thumbnailer_thumbnailer_error (GDBusProxy        *proxy,
               if (file != NULL)
                 {
                   /* tell everybody we're done here */
-                  thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_NONE, job->thumbnail_size);
+                  thunar_file_update_thumbnail (file, THUNAR_FILE_THUMB_STATE_NONE, job->thumbnail_size);
                   g_debug ("Failed to generate thumbnail for '%s': Error Code: %i - Error: %s\n", thunar_file_get_basename (file), code, message);
                   g_object_unref (file);
                 }
@@ -880,20 +902,15 @@ thunar_thumbnailer_thumbnailer_ready (GDBusProxy        *proxy,
         {
           for (const gchar **uri = uris; *uri != NULL; ++uri)
             {
-              for (GList *lp_file = job->files; lp_file != NULL; lp_file = lp_file->next)
+              /* look up the corresponding ThunarFile from the cache */
+              gfile = g_file_new_for_uri (*uri);
+              file = thunar_file_cache_lookup (gfile);
+              g_object_unref (gfile);
+
+              if (file != NULL)
                 {
-                  /* look up the corresponding ThunarFile from the cache */
-                  gfile = g_file_new_for_uri (*uri);
-                  file = thunar_file_cache_lookup (gfile);
-                  g_object_unref (gfile);
-
-                  if (file != NULL)
-                    {
-                        // TODO: Check why we cannot rely on the 'ready' signal
-                        //thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_READY, job->thumbnail_size);
-                        g_object_unref (file);
-                    }
-
+                    thunar_file_update_thumbnail (file, THUNAR_FILE_THUMB_STATE_READY, job->thumbnail_size);
+                    g_object_unref (file);
                 }
             }
         }
@@ -974,76 +991,95 @@ thunar_thumbnailer_get (void)
 
 
 
-gboolean
-thunar_thumbnailer_queue_file (ThunarThumbnailer  *thumbnailer,
-                               ThunarFile         *file,
-                               guint              *request,
-                               ThunarThumbnailSize size)
+static gboolean
+thunar_thumbnailer_queue_job_after_timeout (gpointer user_data)
 {
-  GList files;
+  ThunarThumbnailerJob *job = user_data;
+  ThunarThumbnailer    *thumbnailer = THUNAR_THUMBNAILER (job->thumbnailer);
+  ThunarThumbnailSize   thumbnail_size = job->thumbnail_size;
+  gboolean              success = FALSE;
 
-  _thunar_return_val_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer), FALSE);
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-
-  /* fake a file list */
-  files.data = file;
-  files.next = NULL;
-  files.prev = NULL;
-
-  /* queue a thumbnail request for the file */
-  return thunar_thumbnailer_queue_files (thumbnailer, &files, request, size);
-}
-
-
-
-gboolean
-thunar_thumbnailer_queue_files (ThunarThumbnailer   *thumbnailer,
-                                GList               *files,
-                                guint               *request,
-                                ThunarThumbnailSize  size)
-{
-  gboolean               success = FALSE;
-  ThunarThumbnailerJob  *job = NULL;
-  gint                   request_no;
-
-  _thunar_return_val_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer), FALSE);
-  _thunar_return_val_if_fail (files != NULL, FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer), G_SOURCE_REMOVE);
 
   /* acquire the thumbnailer lock */
   _thumbnailer_lock (thumbnailer);
-
-  /* allocate a job */
-  job = g_slice_new0 (ThunarThumbnailerJob);
-  job->thumbnailer = thumbnailer;
-  job->files = g_list_copy_deep (files, (GCopyFunc) (void (*)(void)) g_object_ref, NULL);
-  job->thumbnail_size = size;
-
-  /* queue a thumbnail request for the URIs from the wait queue */
-  /* compute the next request ID, making sure it's never 0 */
-  request_no = thumbnailer->last_request + 1;
-  request_no = MAX (request_no, 1);
-
-  /* remember the ID for the next request */
-  thumbnailer->last_request = request_no;
-
-  /* save the request number */
-  job->request = request_no;
 
   success = thunar_thumbnailer_begin_job (thumbnailer, job);
   if (success)
     {
       thumbnailer->jobs = g_slist_prepend (thumbnailer->jobs, job);
-      *request = job->request;
     }
   else
     {
+      for (GList* lp = job->files; lp != NULL; lp = lp->next)
+        {
+          /* This job failed .. inform all files which are waiting for the result */
+          thunar_file_update_thumbnail (lp->data, THUNAR_FILE_THUMB_STATE_NONE, job->thumbnail_size);
+        }
+
+      /* tell everybody we're done for that job */
+      g_signal_emit (G_OBJECT (thumbnailer), thumbnailer_signals[REQUEST_FINISHED], 0, job->request);
+
+      /* and drop it */
       thunar_thumbnailer_free_job (job);
     }
+
+  thumbnailer->jobs_to_queue[thumbnail_size] = NULL;
+  thumbnailer->jobs_to_queue_source_id[thumbnail_size] = 0;
 
   /* release the lock */
   _thumbnailer_unlock (thumbnailer);
 
-  return success;
+  return G_SOURCE_REMOVE;
+}
+
+
+
+void
+thunar_thumbnailer_queue_file (ThunarThumbnailer  *thumbnailer,
+                               ThunarFile         *file,
+                               guint              *request,
+                               ThunarThumbnailSize size)
+{
+  gint request_no;
+
+  _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  if (thumbnailer->jobs_to_queue_source_id[size] == 0 )
+    {
+      ThunarThumbnailerJob  *job;
+
+      /* allocate a job */
+      job = g_slice_new0 (ThunarThumbnailerJob);
+      job->thumbnailer = thumbnailer;
+      job->files =  g_list_append (job->files, g_object_ref (file));
+      job->thumbnail_size = size;
+
+      /* queue a thumbnail request for the URIs from the wait queue */
+      /* compute the next request ID, making sure it's never 0 */
+      request_no = thumbnailer->last_request + 1;
+      request_no = MAX (request_no, 1);
+
+      /* remember the ID for the next request */
+      thumbnailer->last_request = request_no;
+
+      /* save the request number */
+      job->request = request_no;
+
+      thumbnailer->jobs_to_queue[size] = job;
+      thumbnailer->jobs_to_queue_source_id[size] = g_timeout_add (100, thunar_thumbnailer_queue_job_after_timeout, job);
+    }
+  else
+    {
+      if (thumbnailer->jobs_to_queue[size]->files == NULL)
+        g_warn_if_reached();
+
+      thumbnailer->jobs_to_queue[size]->files =  g_list_prepend (thumbnailer->jobs_to_queue[size]->files, g_object_ref (file));
+    }
+
+  *request = thumbnailer->jobs_to_queue[size]->request;
+  return;
 }
 
 

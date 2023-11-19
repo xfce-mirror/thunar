@@ -370,6 +370,9 @@ gint              thunar_cmp_files_by_type                      (const ThunarFil
                                                                  gboolean            case_sensitive);
 void              thunar_file_request_thumbnail                 (ThunarFile         *file,
                                                                  ThunarThumbnailSize size);
+void              thunar_file_update_thumbnail                  (ThunarFile          *file,
+                                                                 ThunarFileThumbState state,
+                                                                 ThunarThumbnailSize  size);
 
 /**
  * thunar_file_is_root:
