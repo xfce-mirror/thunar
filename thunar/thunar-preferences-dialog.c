@@ -267,7 +267,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
   gtk_window_set_title (GTK_WINDOW (dialog), _("Thunar Preferences"));
 
+#if !LIBXFCE4UI_CHECK_VERSION (4, 19, 3)
   xfce_titled_dialog_create_action_area (XFCE_TITLED_DIALOG (dialog));
+#endif
 
   /* add the "Close" button */
   button = gtk_button_new_with_mnemonic (_("_Close"));
