@@ -3847,38 +3847,6 @@ thunar_file_get_thumb_state (const ThunarFile   *file,
 
 
 /**
- * thunar_file_set_thumb_state:
- * @file        : a #ThunarFile.
- * @thumb_state : the new #ThunarFileThumbState.
- * @thumb_size  : the required #ThunarThumbnailSize
- *
- * Sets the #ThunarFileThumbState for @file to @thumb_state.
- **/
-void
-thunar_file_set_thumb_state (ThunarFile          *file,
-                             ThunarFileThumbState state,
-                             ThunarThumbnailSize  size)
-{
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
-
-  /* check if the state changes */
-  if (thunar_file_get_thumb_state (file, size) == state)
-    return;
-
-  /* set the new thumbnail state */
-  file->thumbnail_state[size] = state;
-
-  /* remove path if the type is not supported */
-  if (state == THUNAR_FILE_THUMB_STATE_NONE)
-    {
-      g_free (file->thumbnail_path[size]);
-      file->thumbnail_path[size] = NULL;
-    }
-}
-
-
-
-/**
  * thunar_file_get_custom_icon:
  * @file : a #ThunarFile instance.
  *
@@ -5204,10 +5172,18 @@ thunar_cmp_files_by_type (const ThunarFile *a,
 
 
 
-static void
-thunar_file_thumbnailing_finished (ThunarFile        *file,
-                                   guint              request_id,
-                                   ThunarThumbnailer *thumbnailer)
+/**
+ * thunar_file_update_thumbnail:
+ * @file        : a #ThunarFile.
+ * @thumb_state : the new #ThunarFileThumbState.
+ * @thumb_size  : the required #ThunarThumbnailSize
+ *
+ * Sets the #ThunarFileThumbState for @file to @thumb_state, loads the thumbnail path and triggers a redraw, if required
+ **/
+void
+thunar_file_update_thumbnail (ThunarFile          *file,
+                              ThunarFileThumbState state,
+                              ThunarThumbnailSize  size)
 {
   GList               *lp;
   GList               *windows;
@@ -5215,45 +5191,61 @@ thunar_file_thumbnailing_finished (ThunarFile        *file,
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
+  /* check if the state changes */
+  if (thunar_file_get_thumb_state (file, size) == state)
+    return;
+
+  /* set the new thumbnail state */
+  file->thumbnail_state[size] = state;
+
+  /* Either there was some thumbnailing error for that file, or thumbnailing is just not supported for it */
+  if (state == THUNAR_FILE_THUMB_STATE_NONE)
+    {
+      g_free (file->thumbnail_path[size]);
+      file->thumbnail_path[size] = NULL;
+    }
+
+  if (state == THUNAR_FILE_THUMB_STATE_READY)
+    {
+      /* Try to set the internal path, so the thumbnail can be loaded from it */
+      thunar_file_get_thumbnail_path (file, size);
+
+      if (file->thumbnail_path[size] == NULL)
+        {
+          g_warning ("Error: Thumbnailing for '%s' signaled ready, but no thumbnail was generated", thunar_file_get_basename (file)); 
+          return;
+        }
+    }
+
+  thunar_icon_factory_clear_pixmap_cache (file);
+
+  /* redraw all windows in order to update the thumbnail images */
+  /* TODO: It should be sufficient to redraw the view/widget which is holding the thumbnail instead of all windows */
+  /* More info here: https://gitlab.xfce.org/xfce/thunar/-/issues/1229 */
+  application = thunar_application_get ();
+  windows = thunar_application_get_windows (application);
+  for (lp = windows; lp != NULL; lp = lp->next)
+    thunar_window_queue_redraw (lp->data);
+  g_list_free (windows);
+}
+
+
+
+static void
+thunar_file_thumbnailing_finished (ThunarFile        *file,
+                                   guint              request_id,
+                                   ThunarThumbnailer *thumbnailer)
+{
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
   for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
     {
-      if (file->thumbnail_request_id[i] != request_id )
-        continue;
-
-      /* reset the request id */
-      file->thumbnail_request_id[i] = 0;
-
-      /* Either there was some thumbnailing error for that file, */
-      /* or thumbnailing is just not supported for it */
-      if (file->thumbnail_state[i] == THUNAR_FILE_THUMB_STATE_NONE)
-        break;
-
-      /* set the internal path, so the thumbnail can be loaded from it */
-      thunar_file_get_thumbnail_path (file, i);
-
-      if (file->thumbnail_path[i] == NULL)
+      if (file->thumbnail_request_id[i] == request_id )
         {
-          // TODO: Check why that case can happen
-          //g_warning ("Thumbnailing for '%s' finished without error, but no thumbnail was generated", thunar_file_get_basename (file)); 
-
-          /* For some reason thumbnailing seems not to work reliably for e.g. some remote locations */
-          /* If theere was no thumbnailing error for the file (THUNAR_FILE_THUMB_STATE_NONE), allow to send another request */
-          thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_UNKNOWN, i );
+          /* reset the request id */
+          file->thumbnail_request_id[i] = 0;
           break;
         }
-
-      /* Thumbnailing finished without error and we have a thumbnail path ... lets flag it as ready */
-      thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_READY, i );
-      thunar_icon_factory_clear_pixmap_cache (file);
-
-      /* redraw all windows in order to update the thumbnail images */
-      /* TODO: It should be sufficient to redraw the view/widget which is holding the thumbnail instead of all windows */
-      /* More info here: https://gitlab.xfce.org/xfce/thunar/-/issues/1229 */
-      application = thunar_application_get ();
-      windows = thunar_application_get_windows (application);
-      for (lp = windows; lp != NULL; lp = lp->next)
-        thunar_window_queue_redraw (lp->data);
-      g_list_free (windows);
     }
 }
 
@@ -5272,7 +5264,7 @@ thunar_file_request_thumbnail (ThunarFile          *file,
   if (file->thumbnail_request_id[size] != 0)
     return;
 
-  thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_LOADING, size);
+  file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_LOADING;
 
   thunar_thumbnailer_queue_file (file->thumbnailer, file, &file->thumbnail_request_id[size], size);
 }
@@ -5289,7 +5281,7 @@ thunar_file_reset_thumbnail (ThunarFile          *file,
   if(file->thumbnail_request_id[size] != 0)
    return;
 
-  thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_UNKNOWN, size);
+  file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
   g_free (file->thumbnail_path[size]);
   file->thumbnail_path[size] = NULL;
   file->thumbnail_request_id[size] = 0;
