@@ -3847,38 +3847,6 @@ thunar_file_get_thumb_state (const ThunarFile   *file,
 
 
 /**
- * thunar_file_set_thumb_state:
- * @file        : a #ThunarFile.
- * @thumb_state : the new #ThunarFileThumbState.
- * @thumb_size  : the required #ThunarThumbnailSize
- *
- * Sets the #ThunarFileThumbState for @file to @thumb_state.
- **/
-void
-thunar_file_set_thumb_state (ThunarFile          *file,
-                             ThunarFileThumbState state,
-                             ThunarThumbnailSize  size)
-{
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
-
-  /* check if the state changes */
-  if (thunar_file_get_thumb_state (file, size) == state)
-    return;
-
-  /* set the new thumbnail state */
-  file->thumbnail_state[size] = state;
-
-  /* remove path if the type is not supported */
-  if (state == THUNAR_FILE_THUMB_STATE_NONE)
-    {
-      g_free (file->thumbnail_path[size]);
-      file->thumbnail_path[size] = NULL;
-    }
-}
-
-
-
-/**
  * thunar_file_get_custom_icon:
  * @file : a #ThunarFile instance.
  *
@@ -5204,6 +5172,14 @@ thunar_cmp_files_by_type (const ThunarFile *a,
 
 
 
+/**
+ * thunar_file_update_thumbnail:
+ * @file        : a #ThunarFile.
+ * @thumb_state : the new #ThunarFileThumbState.
+ * @thumb_size  : the required #ThunarThumbnailSize
+ *
+ * Sets the #ThunarFileThumbState for @file to @thumb_state, loads the thumbnail path and triggers a redraw, if required
+ **/
 void
 thunar_file_update_thumbnail (ThunarFile          *file,
                               ThunarFileThumbState state,
@@ -5290,7 +5266,7 @@ thunar_file_request_thumbnail (ThunarFile          *file,
   if (file->thumbnail_request_id[size] != 0)
     return;
 
-  thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_LOADING, size);
+  file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_LOADING;
 
   thunar_thumbnailer_queue_file (file->thumbnailer, file, &file->thumbnail_request_id[size], size);
 }
@@ -5307,7 +5283,7 @@ thunar_file_reset_thumbnail (ThunarFile          *file,
   if(file->thumbnail_request_id[size] != 0)
    return;
 
-  thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_UNKNOWN, size);
+  file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
   g_free (file->thumbnail_path[size]);
   file->thumbnail_path[size] = NULL;
   file->thumbnail_request_id[size] = 0;

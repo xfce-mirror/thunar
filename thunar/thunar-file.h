@@ -273,9 +273,6 @@ const gchar         *thunar_file_get_thumbnail_path      (ThunarFile            
                                                           ThunarThumbnailSize      thumbnail_size);
 ThunarFileThumbState thunar_file_get_thumb_state         (const ThunarFile        *file,
                                                           ThunarThumbnailSize      size);
-void                 thunar_file_set_thumb_state         (ThunarFile              *file,
-                                                          ThunarFileThumbState     state,
-                                                          ThunarThumbnailSize      size);
 GIcon            *thunar_file_get_preview_icon           (const ThunarFile        *file);
 const gchar      *thunar_file_get_icon_name              (ThunarFile              *file,
                                                           ThunarFileIconState      icon_state,
