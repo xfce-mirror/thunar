@@ -5212,10 +5212,8 @@ thunar_file_update_thumbnail (ThunarFile          *file,
 
       if (file->thumbnail_path[size] == NULL)
         {
-          g_warning ("Thumbnailing for '%s' signaled ready, but no thumbnail was generated", thunar_file_get_basename (file)); 
-
-          /* If theere was no thumbnailing error for the file (THUNAR_FILE_THUMB_STATE_NONE), allow to send another request */
-          file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
+          g_warning ("Error: Thumbnailing for '%s' signaled ready, but no thumbnail was generated", thunar_file_get_basename (file)); 
+          return;
         }
     }
 
