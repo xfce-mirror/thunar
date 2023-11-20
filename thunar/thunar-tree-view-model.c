@@ -1047,7 +1047,11 @@ thunar_tree_view_model_get_path (GtkTreeModel *model,
   _thunar_return_val_if_fail (iter->stamp == THUNAR_TREE_VIEW_MODEL (model)->stamp, NULL);
   _thunar_return_val_if_fail (iter->user_data != NULL, NULL);
 
-  g_assert (!g_sequence_iter_is_end (iter->user_data));
+  if (g_sequence_iter_is_end (iter->user_data))
+    {
+      g_warn_if_reached ();
+      return NULL;
+    }
 
   node = g_sequence_get (iter->user_data);
 
@@ -1386,7 +1390,12 @@ thunar_tree_view_model_iter_next (GtkTreeModel *model,
   _thunar_return_val_if_fail (iter->stamp == THUNAR_TREE_VIEW_MODEL (model)->stamp, FALSE);
   _thunar_return_val_if_fail (iter->user_data != NULL, FALSE);
 
-  g_assert (!g_sequence_iter_is_end (iter->user_data));
+  if (g_sequence_iter_is_end (iter->user_data))
+    {
+      g_warn_if_reached ();
+      return FALSE;
+    }
+
   ptr = g_sequence_iter_next (iter->user_data);
   if (g_sequence_iter_is_end (ptr))
     return FALSE;
@@ -1406,7 +1415,12 @@ thunar_tree_view_model_iter_previous (GtkTreeModel *model,
   _thunar_return_val_if_fail (iter->stamp == THUNAR_TREE_VIEW_MODEL (model)->stamp, FALSE);
   _thunar_return_val_if_fail (iter->user_data != NULL, FALSE);
 
-  g_assert (g_sequence_iter_is_begin (iter->user_data));
+  if (g_sequence_iter_is_begin (iter->user_data))
+    {
+      g_warn_if_reached ();
+      return FALSE;
+    }
+
   ptr = g_sequence_iter_prev (iter->user_data);
   if (g_sequence_iter_is_begin (ptr))
     return FALSE;
@@ -1436,7 +1450,11 @@ thunar_tree_view_model_iter_children (GtkTreeModel *model,
     return FALSE;
 
   ptr = g_sequence_get_iter_at_pos (node->children, 0);
-  g_assert (!g_sequence_iter_is_end (ptr));
+  if (g_sequence_iter_is_end (ptr))
+    {
+      g_warn_if_reached ();
+      return FALSE;
+    }
   GTK_TREE_ITER_INIT (*iter, THUNAR_TREE_VIEW_MODEL (model)->stamp, ptr);
 
   return TRUE;
@@ -1504,7 +1522,11 @@ thunar_tree_view_model_iter_nth_child (GtkTreeModel *model,
     return FALSE;
 
   ptr = g_sequence_get_iter_at_pos (node->children, n);
-  g_assert (!g_sequence_iter_is_end (ptr));
+  if (g_sequence_iter_is_end (ptr))
+    {
+      g_warn_if_reached ();
+      return FALSE;
+    }
   GTK_TREE_ITER_INIT (*iter, THUNAR_TREE_VIEW_MODEL (model)->stamp, ptr);
 
   return TRUE;
@@ -2030,7 +2052,11 @@ thunar_tree_view_model_new_node (ThunarFile *file)
 {
   Node *_node = g_malloc (sizeof (Node));
 
-  g_assert (file != NULL);
+  if (file == NULL)
+    {
+      g_warn_if_reached ();
+      return NULL;
+    }
   _node->file = g_object_ref (file);
 
   _node->dir = NULL;
@@ -2108,7 +2134,11 @@ thunar_tree_view_model_node_add_child (Node *node,
   GSequenceIter *iter;
   Node          *_child;
 
-  g_assert (child->file != NULL);
+  if (child->file == NULL)
+    {
+      g_warn_if_reached ();
+      return;
+    }
 
   child->depth = node->depth + 1;
   child->parent = node;
@@ -2118,11 +2148,21 @@ thunar_tree_view_model_node_add_child (Node *node,
     {
       /* replace the dummy node with the new child node */
       iter = g_sequence_get_iter_at_pos (node->children, 0);
-      g_assert (iter != NULL);
+      if (iter == NULL)
+        {
+          g_warn_if_reached ();
+          return;
+        }
+
       _child = g_sequence_get (iter);
       g_sequence_set (iter, child);
       child->ptr = iter;
-      g_assert (iter != NULL);
+      if (iter == NULL)
+        {
+          g_warn_if_reached ();
+          return;
+        }
+
 
       g_free (_child); /* free the dummy node */
 
@@ -2182,11 +2222,26 @@ thunar_tree_view_model_node_drop_dummy_child (Node *node)
 
   _thunar_return_if_fail (thunar_tree_view_model_node_has_dummy_child (node));
 
-  g_assert (node->n_children == 1);
+  if (node->n_children != 1)
+    {
+      g_warn_if_reached ();
+      return;
+    }
+
   iter = g_sequence_get_iter_at_pos (node->children, 0);
-  g_assert (!g_sequence_iter_is_end (iter));
+  if (g_sequence_iter_is_end (iter))
+    {
+      g_warn_if_reached ();
+      return;
+    }
+
   dummy = g_sequence_get (iter);
-  g_assert (iter != NULL && dummy->file == NULL);
+  if (iter == NULL || dummy->file != NULL)
+    {
+      g_warn_if_reached ();
+      return;
+    }
+
 
   GTK_TREE_ITER_INIT (tree_iter, node->model->stamp, dummy->ptr);
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (node->model), &tree_iter);
@@ -2194,7 +2249,12 @@ thunar_tree_view_model_node_drop_dummy_child (Node *node)
   gtk_tree_path_free (path);
 
   node->n_children--;
-  g_assert (node->n_children == 0);
+  if (node->n_children != 0)
+    {
+      g_warn_if_reached ();
+      return;
+    }
+
 
   g_sequence_remove (dummy->ptr);
   g_free (dummy);
@@ -2218,7 +2278,12 @@ thunar_tree_view_model_dir_add_file (Node       *node,
   GtkTreePath *path;
   Node        *child;
 
-  g_assert (!g_hash_table_contains (node->set, file));
+  if (g_hash_table_contains (node->set, file))
+    {
+      g_warn_if_reached ();
+      return;
+    }
+
 
   child = thunar_tree_view_model_new_node (file);
   thunar_tree_view_model_node_add_child (node, child);
@@ -2268,7 +2333,12 @@ thunar_tree_view_model_dir_remove_file (Node       *node,
   gtk_tree_model_row_deleted (GTK_TREE_MODEL (node->model), path);
   gtk_tree_path_free (path);
 
-  g_assert (node->n_children >= 0);
+  if (node->n_children < 0)
+    {
+      g_warn_if_reached ();
+      return;
+    }
+
 
   /* notify the model if all children have been deleted */
   if (node->ptr != NULL && node->n_children == 0)
@@ -2302,13 +2372,21 @@ thunar_tree_view_model_locate_file (ThunarTreeViewModel *model,
     return NULL;
 
   parent_node = g_hash_table_lookup (model->subdirs, parent);
-  g_assert (parent_node != NULL);
+  if (parent_node == NULL)
+    {
+      g_warn_if_reached ();
+      return NULL;
+    }
 
   if (!g_hash_table_contains (parent_node->set, file))
     return NULL;
 
   iter = g_hash_table_lookup (parent_node->set, file);
-  g_assert (iter != NULL);
+  if (iter == NULL)
+    {
+      g_warn_if_reached ();
+      return NULL;
+    }
 
   return g_sequence_get (iter);
 }
@@ -2479,7 +2557,7 @@ _thunar_tree_view_model_dir_files_added (Node  *node,
     {
       file = THUNAR_FILE (lp->data);
 
-      if (thunar_file_is_hidden (file))
+      if (thunar_file_is_hidden (file) && !g_hash_table_contains (node->hidden_files, file))
         {
           g_hash_table_add (node->hidden_files, g_object_ref (file));
 
@@ -2555,7 +2633,12 @@ thunar_tree_view_model_load_dir (Node *node)
   thunar_tree_view_model_set_loading (node->model, TRUE);
 
   node->dir = thunar_folder_get_for_file (node->file);
-  g_assert (node->dir != NULL);
+  if (node->dir == NULL)
+    {
+      g_warn_if_reached ();
+      return;
+    }
+
 
   g_signal_connect_swapped (G_OBJECT (node->dir), "destroy", G_CALLBACK (_thunar_tree_view_model_folder_destroy), node);
   g_signal_connect_swapped (G_OBJECT (node->dir), "error", G_CALLBACK (_thunar_tree_view_model_folder_error), node);
@@ -2607,7 +2690,12 @@ thunar_tree_view_model_cleanup_model (ThunarTreeViewModel *model)
   for (GList *dirs = values; dirs != NULL; dirs = dirs->next)
     {
       _node = dirs->data;
-      g_assert (_node != NULL && _node->dir != NULL);
+      if (_node == NULL || _node->dir == NULL)
+        {
+          g_warn_if_reached ();
+          return;
+        }
+
       g_signal_handlers_disconnect_matched (G_OBJECT (_node->dir), G_SIGNAL_MATCH_DATA,
                                             0, 0, NULL, NULL, _node);
       g_object_unref (_node->dir);
@@ -2661,12 +2749,22 @@ thunar_tree_view_model_node_destroy (Node *node)
       return;
     }
 
-  g_assert (node->file != NULL);
+  if (node->file == NULL)
+    {
+      g_warn_if_reached ();
+      return;
+    }
+
 
   if (node->dir != NULL)
     {
       g_signal_handlers_disconnect_by_data (G_OBJECT (node->dir), node);
-      g_assert (g_hash_table_contains (node->model->subdirs, node->file));
+      if (!g_hash_table_contains (node->model->subdirs, node->file))
+        {
+          g_warn_if_reached ();
+          return;
+        }
+
       g_hash_table_remove (node->model->subdirs, node->file);
       g_object_unref (node->dir);
     }
@@ -2809,9 +2907,19 @@ thunar_tree_view_model_load_subdir (ThunarTreeViewModel *model,
   _thunar_return_if_fail (iter->stamp == model->stamp);
   _thunar_return_if_fail (iter->user_data != NULL);
 
-  g_assert (!g_sequence_iter_is_end (iter->user_data));
+  if (g_sequence_iter_is_end (iter->user_data))
+    {
+      g_warn_if_reached ();
+      return;
+    }
+
   node = g_sequence_get (iter->user_data);
-  g_assert (node != NULL);
+  if (node == NULL)
+    {
+      g_warn_if_reached ();
+      return;
+    }
+
   node->expanded = TRUE;
   if (node->scheduled_unload_id != 0)
     g_source_remove (node->scheduled_unload_id);
@@ -2885,9 +2993,19 @@ thunar_tree_view_model_schedule_unload (ThunarTreeViewModel *model,
   _thunar_return_if_fail (iter->stamp == model->stamp);
   _thunar_return_if_fail (iter->user_data != NULL);
 
-  g_assert (!g_sequence_iter_is_end (iter->user_data));
+  if (g_sequence_iter_is_end (iter->user_data))
+    {
+      g_warn_if_reached ();
+      return;
+    }
+
   node = g_sequence_get (iter->user_data);
-  g_assert (node != NULL);
+  if (node == NULL)
+    {
+      g_warn_if_reached ();
+      return;
+    }
+
   node->expanded = FALSE;
   node->scheduled_unload_id = g_timeout_add_full (G_PRIORITY_LOW, CLEANUP_AFTER_COLLAPSE_DELAY,
                                                   G_SOURCE_FUNC (_thunar_tree_view_model_dir_unload_timeout),
@@ -2925,7 +3043,6 @@ thunar_tree_view_model_update_search_files (ThunarTreeViewModel *model)
   if (model->search_files != NULL)
     g_list_free (model->search_files);
   model->search_files = NULL;
-
   g_mutex_unlock (&model->mutex_add_search_files);
 
   return TRUE;
