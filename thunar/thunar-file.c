@@ -3421,41 +3421,6 @@ thunar_file_get_item_count (const ThunarFile *file)
 
 
 /**
- * thunar_file_is_chmodable:
- * @file : a #ThunarFile instance.
- *
- * Determines whether the owner of the current process is allowed
- * to changed the file mode of @file.
- *
- * Return value: %TRUE if the mode of @file can be changed.
- **/
-gboolean
-thunar_file_is_chmodable (const ThunarFile *file)
-{
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-
-  /* we can only change the mode if we the euid is
-   *   a) equal to the file owner id
-   * or
-   *   b) the super-user id
-   * and the file is not in the trash.
-   */
-  if (file->info == NULL)
-    {
-      return (effective_user_id == 0 && !thunar_file_is_trashed (file));
-    }
-  else
-    {
-      return ((effective_user_id == 0
-               || effective_user_id == g_file_info_get_attribute_uint32 (file->info,
-                                                                         G_FILE_ATTRIBUTE_UNIX_UID))
-              && !thunar_file_is_trashed (file));
-    }
-}
-
-
-
-/**
  * thunar_file_is_renameable:
  * @file : a #ThunarFile instance.
  *
