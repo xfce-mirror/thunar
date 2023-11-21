@@ -402,14 +402,14 @@ thunar_file_class_init (ThunarFileClass *klass)
                   G_TYPE_NONE, 0);
 
   /**
-   * ThunarFile::thumbnail_updated:
+   * ThunarFile::thumbnail-updated:
    * @file : the #ThunarFile instance.
    * @size : The #ThunarThumbnailSize for which the thumbnail was updated
    *
    * Emitted when the file got a new thumbnail, or the thumbnail was removed
    **/
   file_signals[THUMBNAIL_UPDATED] =
-    g_signal_new (I_("thumbnail_updated"),
+    g_signal_new (I_("thumbnail-updated"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_NO_HOOKS, 0,
                   NULL, NULL,
@@ -5237,7 +5237,7 @@ thunar_file_update_thumbnail (ThunarFile          *file,
 
   thunar_icon_factory_clear_pixmap_cache (file);
 
-  g_signal_emit (file, file_signals[THUMBNAIL_UPDATED], 0);
+  g_signal_emit (file, file_signals[THUMBNAIL_UPDATED], 0, size);
 
   /* redraw all windows in order to update the thumbnail images */
   /* TODO: It should be sufficient to redraw the view/widget which is holding the thumbnail instead of all windows */
