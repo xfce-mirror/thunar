@@ -82,6 +82,7 @@
 enum
 {
   DESTROY,
+  THUMBNAIL_UPDATED,
   LAST_SIGNAL,
 };
 
@@ -164,7 +165,9 @@ struct _ThunarFileClass
   GObjectClass __parent__;
 
   /* signals */
-  void (*destroy) (ThunarFile *file);
+  void (*destroy)           (ThunarFile         *file);
+  void (*thumbnail_updated) (ThunarFile         *file,
+                             ThunarThumbnailSize size);
 };
 
 struct _ThunarFile
@@ -397,6 +400,20 @@ thunar_file_class_init (ThunarFileClass *klass)
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
+
+  /**
+   * ThunarFile::destroy:
+   * @file : the #ThunarFile instance.
+   *
+   * Emitted when the file got a new thumbnail, or the thumbnail was removed
+   **/
+  file_signals[THUMBNAIL_UPDATED] =
+    g_signal_new (I_("thumbnail_updated"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0,
+                  NULL, NULL,
+                  g_cclosure_marshal_generic,
+                  G_TYPE_NONE, 1, G_TYPE_INT);
 }
 
 
@@ -5218,6 +5235,8 @@ thunar_file_update_thumbnail (ThunarFile          *file,
     }
 
   thunar_icon_factory_clear_pixmap_cache (file);
+
+  g_signal_emit (file, file_signals[THUMBNAIL_UPDATED], 0);
 
   /* redraw all windows in order to update the thumbnail images */
   /* TODO: It should be sufficient to redraw the view/widget which is holding the thumbnail instead of all windows */

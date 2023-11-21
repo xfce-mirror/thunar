@@ -732,6 +732,34 @@ static void thunar_dialogs_show_job_ask_replace_callback (GtkWidget *button,
 
 
 
+static void
+thunar_dialog_image_redraw (GtkWidget           *image,
+                            ThunarThumbnailSize  size,
+                            ThunarFile          *file)
+{
+  ThunarIconFactory *icon_factory;
+  GtkIconTheme      *icon_theme;
+  gint               scale_factor;
+  GdkPixbuf         *icon;
+  cairo_surface_t   *surface;
+
+  /* determine the icon factory to use */
+  icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (image));
+  icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
+
+  scale_factor = gtk_widget_get_scale_factor (image);
+  icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, 48, scale_factor);
+  surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, NULL);
+  gtk_image_set_from_surface (GTK_IMAGE (image), surface);
+
+  /* cleanup */
+  g_object_unref (G_OBJECT (icon));
+  cairo_surface_destroy (surface);
+  g_object_unref (G_OBJECT (icon_factory));
+}
+
+
+
 /**
  * thunar_dialogs_show_job_ask_replace:
  * @parent   : the parent #GtkWindow or %NULL.
@@ -755,7 +783,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   GtkIconTheme      *icon_theme;
   GtkWidget         *dialog;
   GtkWidget         *grid;
-  GtkWidget         *image;
+  GtkWidget         *image, *src_image, *dst_image;
   GtkWidget         *label;
   GtkWidget         *content_area;
   GtkWidget         *cancel_button;
@@ -918,15 +946,18 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
 
   icon = thunar_icon_factory_load_file_icon (icon_factory, dst_file, THUNAR_FILE_ICON_STATE_DEFAULT, 48, scale_factor);
   surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, NULL);
-  image = gtk_image_new_from_surface (surface);
-  gtk_widget_set_margin_start (GTK_WIDGET(image), 6);
-  gtk_widget_set_margin_end (GTK_WIDGET(image), 6);
-  gtk_widget_set_margin_top (GTK_WIDGET(image), 6);
-  gtk_widget_set_margin_bottom (GTK_WIDGET(image), 6);
-  gtk_grid_attach (GTK_GRID (grid), image, 1, row, 1, 1);
+  dst_image = gtk_image_new_from_surface (surface);
+  gtk_widget_set_margin_start (GTK_WIDGET(dst_image), 6);
+  gtk_widget_set_margin_end (GTK_WIDGET(dst_image), 6);
+  gtk_widget_set_margin_top (GTK_WIDGET(dst_image), 6);
+  gtk_widget_set_margin_bottom (GTK_WIDGET(dst_image), 6);
+  gtk_grid_attach (GTK_GRID (grid), dst_image, 1, row, 1, 1);
   g_object_unref (G_OBJECT (icon));
   cairo_surface_destroy (surface);
-  gtk_widget_show (image);
+  gtk_widget_show (dst_image);
+
+  g_signal_connect_swapped (G_OBJECT (dst_file), "thumbnail-updated", G_CALLBACK (thunar_dialog_image_redraw), dst_image);
+  thunar_file_request_thumbnail (dst_file, thunar_icon_size_to_thumbnail_size (48 * scale_factor));
 
   size_string = thunar_file_get_size_string_long (dst_file, file_size_binary);
   date_string = thunar_file_get_date_string (dst_file, THUNAR_FILE_DATE_MODIFIED, date_style, date_custom_style);
@@ -965,15 +996,18 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
 
   icon = thunar_icon_factory_load_file_icon (icon_factory, src_file, THUNAR_FILE_ICON_STATE_DEFAULT, 48, scale_factor);
   surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, NULL);
-  image = gtk_image_new_from_surface (surface);
-  gtk_widget_set_margin_start (GTK_WIDGET(image), 6);
-  gtk_widget_set_margin_end (GTK_WIDGET(image), 6);
-  gtk_widget_set_margin_top (GTK_WIDGET(image), 6);
-  gtk_widget_set_margin_bottom (GTK_WIDGET(image), 6);
-  gtk_grid_attach (GTK_GRID (grid), image, 1, row, 1, 1);
+  src_image = gtk_image_new_from_surface (surface);
+  gtk_widget_set_margin_start (GTK_WIDGET(src_image), 6);
+  gtk_widget_set_margin_end (GTK_WIDGET(src_image), 6);
+  gtk_widget_set_margin_top (GTK_WIDGET(src_image), 6);
+  gtk_widget_set_margin_bottom (GTK_WIDGET(src_image), 6);
+  gtk_grid_attach (GTK_GRID (grid), src_image, 1, row, 1, 1);
   g_object_unref (G_OBJECT (icon));
   cairo_surface_destroy (surface);
-  gtk_widget_show (image);
+  gtk_widget_show (src_image);
+
+  g_signal_connect_swapped (G_OBJECT (src_file), "thumbnail-updated", G_CALLBACK (thunar_dialog_image_redraw), src_image);
+  thunar_file_request_thumbnail (src_file, thunar_icon_size_to_thumbnail_size (48 * scale_factor));
 
   size_string = thunar_file_get_size_string_long (src_file, file_size_binary);
   date_string = thunar_file_get_date_string (src_file, THUNAR_FILE_DATE_MODIFIED, date_style, date_custom_style);
@@ -989,6 +1023,8 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
 
   /* run the dialog */
   response = gtk_dialog_run (GTK_DIALOG (dialog));
+  g_signal_handlers_disconnect_by_data (src_file, src_image);
+  g_signal_handlers_disconnect_by_data (dst_file, dst_image);
   gtk_widget_destroy (dialog);
 
   /* cleanup */
