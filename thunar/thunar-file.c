@@ -402,8 +402,9 @@ thunar_file_class_init (ThunarFileClass *klass)
                   G_TYPE_NONE, 0);
 
   /**
-   * ThunarFile::destroy:
+   * ThunarFile::thumbnail_updated:
    * @file : the #ThunarFile instance.
+   * @size : The #ThunarThumbnailSize for which the thumbnail was updated
    *
    * Emitted when the file got a new thumbnail, or the thumbnail was removed
    **/
