@@ -42,6 +42,7 @@ enum
   PROP_HIGHLIGHT_COLOR,
   PROP_ROUNDED_CORNERS,
   PROP_HIGHLIGHTING_ENABLED,
+  PROP_IMAGE_PREVIEW_ENABLED,
 };
 
 
@@ -198,6 +199,17 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                    g_param_spec_boolean ("highlighting-enabled", "highlighting-enabled", "highlighting-enabled",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
+                                               
+  /**
+   * ThunarIconRenderer:image-preview-enabled:
+   *
+   * Determines if as well xxl-thumbnails should be requested
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_IMAGE_PREVIEW_ENABLED,
+                                   g_param_spec_boolean ("image-preview-enabled", "image-preview-enabled", "image-preview-enabled",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 }
 
 
@@ -270,6 +282,10 @@ thunar_icon_renderer_get_property (GObject    *object,
       g_value_set_boolean (value, icon_renderer->highlighting_enabled);
       break;
 
+    case PROP_IMAGE_PREVIEW_ENABLED:
+      g_value_set_boolean (value, icon_renderer->highlighting_enabled);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -323,6 +339,10 @@ thunar_icon_renderer_set_property (GObject      *object,
 
     case PROP_HIGHLIGHTING_ENABLED:
       icon_renderer->highlighting_enabled = g_value_get_boolean (value);
+      break;
+
+    case PROP_IMAGE_PREVIEW_ENABLED:
+      icon_renderer->image_preview_enabled = g_value_get_boolean (value);
       break;
 
     default:
@@ -491,6 +511,10 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
   scale_factor = gtk_widget_get_scale_factor (widget);
   thunar_file_request_thumbnail (icon_renderer->file, thunar_icon_size_to_thumbnail_size (icon_renderer->size * scale_factor));
+
+  if (icon_renderer->image_preview_enabled)
+    thunar_file_request_thumbnail (icon_renderer->file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+
   icon = thunar_icon_factory_load_file_icon (icon_factory, icon_renderer->file, icon_state, icon_renderer->size, scale_factor);
   if (G_UNLIKELY (icon == NULL))
     {
