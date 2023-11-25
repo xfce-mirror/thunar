@@ -5230,7 +5230,11 @@ thunar_file_update_thumbnail (ThunarFile          *file,
 
       if (file->thumbnail_path[size] == NULL)
         {
-          g_warning ("Error: Thumbnailing for '%s' signaled ready, but no thumbnail was generated", thunar_file_get_basename (file)); 
+          g_warning ("Error: Thumbnailing for '%s' signaled ready, but no thumbnail was generated", thunar_file_get_basename (file));
+
+          /* For some reason thumbnailing seems not to always work reliably when multiple thumbnails are reqzested in parallel (e.g. in different size for the same file) */
+          /* If there was no thumbnailing error for the file (THUNAR_FILE_THUMB_STATE_NONE), allow to send another request for that file */
+          file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
           return;
         }
     }
