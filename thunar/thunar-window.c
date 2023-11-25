@@ -3844,6 +3844,9 @@ thunar_window_action_image_preview (ThunarWindow *window)
 
   g_object_set (G_OBJECT (window->preferences), "last-image-preview-visible", !image_preview_visible, NULL);
 
+  /* to directly trigger a preview, in case an image currently is selected */
+  thunar_window_selection_changed (window);
+
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
@@ -5820,10 +5823,11 @@ thunar_window_selection_changed (ThunarWindow *window)
         thunar_file_request_thumbnail (window->preview_image_file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
       else if (state == THUNAR_FILE_THUMB_STATE_READY)
         window->preview_image_pixbuf = gdk_pixbuf_new_from_file (thunar_file_get_thumbnail_path (window->preview_image_file, THUNAR_THUMBNAIL_SIZE_XX_LARGE), NULL);
+
+      thunar_window_update_embedded_image_preview (window);
+      thunar_window_update_standalone_image_preview (window);
     }
 
-    thunar_window_update_embedded_image_preview (window);
-    thunar_window_update_standalone_image_preview (window);
     return;
 }
 
