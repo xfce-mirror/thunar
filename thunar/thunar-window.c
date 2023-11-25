@@ -329,8 +329,8 @@ static void       thunar_window_update_embedded_image_preview            (Thunar
 static void       thunar_window_update_standalone_image_preview          (ThunarWindow           *window);
 static void       thunar_window_selection_changed                        (ThunarWindow           *window);
 static void       thunar_window_finished_thumbnailing                    (ThunarWindow           *window,
-                                                                          guint                   request,
-                                                                          ThunarThumbnailer      *thumbnailer);
+                                                                          ThunarThumbnailSize     size,
+                                                                          ThunarFile             *file);
 static void       thunar_window_recent_reload                            (GtkRecentManager       *recent_manager,
                                                                           ThunarWindow           *window);
 static void       thunar_window_catfish_dialog_configure                 (GtkWidget              *entry);
@@ -480,8 +480,7 @@ struct _ThunarWindow
   ThunarSidepaneType         sidepane_type;
 
   /* Image Preview thumbnail generation */
-  ThunarThumbnailer         *thumbnailer;
-  guint                      thumbnail_request;
+  ThunarFile                *preview_image_file;
   GdkPixbuf                 *preview_image_pixbuf;
 
   /* Reference to the global job operation history */
@@ -791,9 +790,6 @@ thunar_window_init (ThunarWindow *window)
   /* grab a reference on the preferences */
   window->preferences = thunar_preferences_get ();
 
-  window->thumbnailer = thunar_thumbnailer_get ();
-  g_signal_connect_swapped (G_OBJECT (window->thumbnailer), "request-finished", G_CALLBACK (thunar_window_finished_thumbnailing), window);
-
   window->accel_group = gtk_accel_group_new ();
   xfce_gtk_accel_map_add_entries (thunar_window_action_entries, G_N_ELEMENTS (thunar_window_action_entries));
   xfce_gtk_accel_group_connect_action_entries (window->accel_group,
@@ -949,7 +945,7 @@ thunar_window_init (ThunarWindow *window)
   gtk_paned_pack2 (GTK_PANED (window->paned_right), window->right_pane_box, TRUE, FALSE);
 
   window->right_pane_preview_image = gtk_image_new_from_file ("");
-  window->thumbnail_request = 0;
+
   gtk_widget_set_size_request (window->right_pane_preview_image, 276, -1); /* large thumbnail size + 20 */
   gtk_box_pack_start (GTK_BOX (window->right_pane_box), window->right_pane_preview_image, FALSE, TRUE, 0);
 
@@ -972,10 +968,10 @@ thunar_window_init (ThunarWindow *window)
     gtk_widget_hide(window->right_pane_box);
 
   g_signal_connect (G_OBJECT (window->right_pane_box), "size-allocate", G_CALLBACK (image_preview_update), window->right_pane_preview_image);
-
   g_signal_connect_swapped (window->preferences, "notify::misc-image-preview-mode", G_CALLBACK (thunar_window_image_preview_mode_changed), window);
 
   window->preview_image_pixbuf = NULL;
+  window->preview_image_file = NULL;
 
   /* split view: Create panes where the two notebooks */
   window->paned_notebooks = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
@@ -1602,6 +1598,21 @@ thunar_window_finalize (GObject *object)
   g_list_free_full (window->thunarx_preferences_providers, g_object_unref);
   g_free (window->search_query);
 
+  /* Disconnect from preview file */
+  if (window->preview_image_file != NULL)
+    {
+      g_signal_handlers_disconnect_by_data (window->preview_image_file, window); 
+      g_object_unref (window->preview_image_file);
+      window->preview_image_file = NULL;
+    }
+
+  /* clear image preview pixbuf */
+  if (window->preview_image_pixbuf != NULL)
+    {
+      g_object_unref (window->preview_image_pixbuf);
+      window->preview_image_pixbuf = NULL;
+    }
+
   /* disconnect from the volume monitor */
   g_signal_handlers_disconnect_matched (window->device_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
   g_object_unref (window->device_monitor);
@@ -1632,9 +1643,6 @@ thunar_window_finalize (GObject *object)
   /* release the preferences reference */
   g_signal_handlers_disconnect_by_data (window->preferences, window);
   g_object_unref (window->preferences);
-
-  g_signal_handlers_disconnect_by_data (window->thumbnailer, window);
-  g_object_unref (window->thumbnailer);
 
   /* disconnect signal from GtkRecentManager */
   g_signal_handlers_disconnect_by_data (G_OBJECT (gtk_recent_manager_get_default()), window);
@@ -5745,6 +5753,19 @@ static void thunar_window_update_standalone_image_preview (ThunarWindow *window)
 
 
 
+static void
+thunar_window_preview_file_destroyed (ThunarWindow *window)
+{
+  if (window->preview_image_file != NULL)
+    {
+      g_signal_handlers_disconnect_by_data (window->preview_image_file, window); 
+      g_object_unref (window->preview_image_file);
+      window->preview_image_file = NULL;
+    }
+}
+
+
+
 /**
  * thunar_window_selection_changed:
  * @window      : a #ThunarWindow instance.
@@ -5764,13 +5785,12 @@ thunar_window_selection_changed (ThunarWindow *window)
   else
     gtk_widget_set_sensitive (window->trash_infobar_restore_button, FALSE);
 
-  /* image preview sidepane */
-  /* check if we have a pending thumbnail request (for the image preview) */
-  if (window->thumbnail_request != 0)
+  /* Disconnect from previous file */
+  if (window->preview_image_file != NULL)
     {
-      /* cancel the request */
-      thunar_thumbnailer_dequeue (window->thumbnailer, window->thumbnail_request);
-      window->thumbnail_request = 0;
+      g_signal_handlers_disconnect_by_data (window->preview_image_file, window); 
+      g_object_unref (window->preview_image_file);
+      window->preview_image_file = NULL;
     }
 
   /* clear image previews */
@@ -5788,40 +5808,38 @@ thunar_window_selection_changed (ThunarWindow *window)
   /* get or request a thumbnail */
   if ((last_image_preview_visible == TRUE) && (g_list_length (selected_files) == 1))
     {
-      const gchar *path = thunar_file_get_thumbnail_path(selected_files->data, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
-      if (path == NULL) /* request the creation of the thumbnail if it doesn't exist */
-        thunar_thumbnailer_queue_file (window->thumbnailer, selected_files->data, &window->thumbnail_request, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
-      else /* display the thumbnail */
-        window->preview_image_pixbuf = gdk_pixbuf_new_from_file(path, NULL);
+      ThunarFileThumbState state;
+
+      window->preview_image_file = g_object_ref (selected_files->data);
+      g_signal_connect_swapped (G_OBJECT (window->preview_image_file), "thumbnail-updated", G_CALLBACK (thunar_window_finished_thumbnailing), window);
+      g_signal_connect_swapped (G_OBJECT (window->preview_image_file), "destroy", G_CALLBACK (thunar_window_preview_file_destroyed), window);
+
+      state = thunar_file_get_thumb_state (window->preview_image_file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+      
+      if (state == THUNAR_FILE_THUMB_STATE_UNKNOWN)
+        thunar_file_request_thumbnail (window->preview_image_file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+      else if (state == THUNAR_FILE_THUMB_STATE_READY)
+        window->preview_image_pixbuf = gdk_pixbuf_new_from_file (thunar_file_get_thumbnail_path (window->preview_image_file, THUNAR_THUMBNAIL_SIZE_XX_LARGE), NULL);
     }
 
-  /* update previews */
-  thunar_window_update_embedded_image_preview (window);
-  thunar_window_update_standalone_image_preview (window);
+    thunar_window_update_embedded_image_preview (window);
+    thunar_window_update_standalone_image_preview (window);
+    return;
 }
 
 
 
 static void
 thunar_window_finished_thumbnailing (ThunarWindow       *window,
-                                     guint               request,
-                                     ThunarThumbnailer  *thumbnailer)
+                                     ThunarThumbnailSize size,
+                                     ThunarFile         *file)
 {
-  GList *selected_files = NULL;
-
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  if (window->thumbnail_request != request)
-    return;
-
-  window->thumbnail_request = 0;
-
-  /* update image previews */
-  selected_files = thunar_view_get_selected_files (THUNAR_VIEW (window->view));
-  if (g_list_length (selected_files) == 1)
+  if (file == window->preview_image_file && size == THUNAR_THUMBNAIL_SIZE_XX_LARGE)
     {
       /* there is no guarantee that the thumbnail will exist, the type of the selected file might be unsupported by the thumbnailer */
-      const gchar *path = thunar_file_get_thumbnail_path (selected_files->data, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+      const gchar *path = thunar_file_get_thumbnail_path (file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
       if (path == NULL)
         return;
 
