@@ -409,7 +409,7 @@ thunar_transfer_job_collect_node (ThunarTransferJob  *job,
   if (G_UNLIKELY (info == NULL))
     return FALSE;
 
-  job->total_size += g_file_info_get_size (info);
+  job->total_size += g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_STANDARD_SIZE);
 
   /* check if we have a directory here */
   if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)

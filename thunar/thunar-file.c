@@ -2661,8 +2661,10 @@ thunar_file_get_size (const ThunarFile *file)
 
   if (file->info == NULL)
     return 0;
-
-  return g_file_info_get_size (file->info);
+  
+  /* The attribute 'standard::size' is not defined for locations like 'trash:///', */
+  /* 'computer:///' and others. So we would get GLib-GIO-CRITICALs when using 'g_file_info_get_size'  */
+  return g_file_info_get_attribute_uint64 (file->info, G_FILE_ATTRIBUTE_STANDARD_SIZE);
 }
 
 
