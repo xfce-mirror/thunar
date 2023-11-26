@@ -323,7 +323,7 @@ thunar_deep_count_job_process (ExoJob       *job,
       count_job->file_count++;
 
       /* add size of the file to the total size */
-      count_job->total_size += g_file_info_get_size (info);
+      count_job->total_size += g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_STANDARD_SIZE);
     }
 
   /* destroy the file info */
