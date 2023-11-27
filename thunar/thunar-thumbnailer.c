@@ -748,8 +748,6 @@ thunar_thumbnailer_proxy_created (GObject       *object,
 
       _thumbnailer_unlock (thumbnailer);
 
-      g_object_unref (thumbnailer);
-
       return;
     }
 
