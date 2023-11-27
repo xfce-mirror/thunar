@@ -1098,7 +1098,7 @@ thunar_properties_dialog_rename_finished (ExoJob                 *job,
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) == 1);
 
-  g_signal_handlers_disconnect_matched (job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, dialog);
+  g_signal_handlers_disconnect_by_data (job, dialog);
   g_object_unref (job);
 }
 

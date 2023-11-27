@@ -1614,7 +1614,7 @@ thunar_window_finalize (GObject *object)
     }
 
   /* disconnect from the volume monitor */
-  g_signal_handlers_disconnect_matched (window->device_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
+  g_signal_handlers_disconnect_by_data (window->device_monitor, window);
   g_object_unref (window->device_monitor);
 
   g_signal_handlers_disconnect_by_data (window->action_mgr, window);
@@ -2354,7 +2354,7 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
   _thunar_return_if_fail (window->notebook_left == notebook || window->notebook_right == notebook);
 
   /* drop connected signals */
-  g_signal_handlers_disconnect_matched (page, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
+  g_signal_handlers_disconnect_by_data (page, window);
 
   n_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook));
   if (n_pages == 0)

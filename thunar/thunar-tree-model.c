@@ -409,7 +409,7 @@ thunar_tree_model_finalize (GObject *object)
   g_node_destroy (model->root);
 
   /* disconnect from the volume monitor */
-  g_signal_handlers_disconnect_matched (model->device_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, model);
+  g_signal_handlers_disconnect_by_data (model->device_monitor, model);
   g_object_unref (model->device_monitor);
 
   (*G_OBJECT_CLASS (thunar_tree_model_parent_class)->finalize) (object);
@@ -1229,7 +1229,7 @@ thunar_tree_model_item_reset (ThunarTreeModelItem *item)
   /* disconnect from the folder */
   if (G_LIKELY (item->folder != NULL))
     {
-      g_signal_handlers_disconnect_matched (G_OBJECT (item->folder), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, item);
+      g_signal_handlers_disconnect_by_data (G_OBJECT (item->folder), item);
       g_object_unref (G_OBJECT (item->folder));
       item->folder = NULL;
     }
@@ -1560,7 +1560,7 @@ thunar_tree_model_node_traverse_cleanup (GNode    *node,
   if (item && item->folder != NULL && item->ref_count == 0)
     {
       /* disconnect from the folder */
-      g_signal_handlers_disconnect_matched (G_OBJECT (item->folder), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, item);
+      g_signal_handlers_disconnect_by_data (G_OBJECT (item->folder), item);
       g_object_unref (G_OBJECT (item->folder));
       item->folder = NULL;
 
