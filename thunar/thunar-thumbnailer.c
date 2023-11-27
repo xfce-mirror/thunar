@@ -662,11 +662,17 @@ thunar_thumbnailer_received_supported_types (ThunarThumbnailerDBus  *proxy,
       g_clear_error (&error);
 
       thumbnailer->proxy_state = THUNAR_THUMBNAILER_PROXY_FAILED;
-      g_object_unref (proxy);
+
+      /* disconnect from the thumbnailer proxy */
+      g_signal_handlers_disconnect_matched (thumbnailer->thumbnailer_proxy,
+                                            G_SIGNAL_MATCH_DATA, 0, 0,
+                                            NULL, NULL, thumbnailer);
+
+      g_object_unref (thumbnailer->thumbnailer_proxy);
+      thumbnailer->thumbnailer_proxy = NULL;
 
       _thumbnailer_unlock (thumbnailer);
 
-      g_object_unref (thumbnailer);
       return;
     }
 
@@ -702,7 +708,6 @@ thunar_thumbnailer_received_supported_types (ThunarThumbnailerDBus  *proxy,
     }
 
   thumbnailer->proxy_state = THUNAR_THUMBNAILER_PROXY_AVAILABLE;
-  thumbnailer->thumbnailer_proxy = proxy;
 
   /* now start delayed jobs */
   for (lp = thumbnailer->jobs; lp; lp = lp->next)
@@ -718,8 +723,6 @@ thunar_thumbnailer_received_supported_types (ThunarThumbnailerDBus  *proxy,
   g_clear_error (&error);
 
   _thumbnailer_unlock (thumbnailer);
-
-  g_object_unref (thumbnailer);
 }
 
 
@@ -731,11 +734,10 @@ thunar_thumbnailer_proxy_created (GObject       *object,
 {
   ThunarThumbnailer     *thumbnailer = THUNAR_THUMBNAILER (userdata);
   GError                *error = NULL;
-  ThunarThumbnailerDBus *proxy;
 
-  proxy = thunar_thumbnailer_dbus_proxy_new_finish (result, &error);
+  thumbnailer->thumbnailer_proxy = thunar_thumbnailer_dbus_proxy_new_finish (result, &error);
 
-  if (!proxy)
+  if (thumbnailer->thumbnailer_proxy == NULL)
     {
       _thumbnailer_lock (thumbnailer);
 
@@ -745,6 +747,11 @@ thunar_thumbnailer_proxy_created (GObject       *object,
 
       g_slist_free_full (thumbnailer->jobs, (GDestroyNotify)thunar_thumbnailer_free_job);
       thumbnailer->jobs = NULL;
+
+      /* disconnect from the thumbnailer proxy */
+      g_signal_handlers_disconnect_matched (thumbnailer->thumbnailer_proxy,
+                                            G_SIGNAL_MATCH_DATA, 0, 0,
+                                            NULL, NULL, thumbnailer);
 
       _thumbnailer_unlock (thumbnailer);
 
@@ -756,16 +763,16 @@ thunar_thumbnailer_proxy_created (GObject       *object,
 
   /* 'error' is signaled when thumnailing failed for some uris */
   /* Note that 'finished' will still be signaled after the whole thumbnailing request finished */
-  g_signal_connect (proxy, "error",
+  g_signal_connect (thumbnailer->thumbnailer_proxy, "error",
                     G_CALLBACK (thunar_thumbnailer_thumbnailer_error), thumbnailer);
 
   /* 'finished' is signaled after a thumbnailing request finished .. no matter if sucessfull or not */
-  g_signal_connect (proxy, "finished",
+  g_signal_connect (thumbnailer->thumbnailer_proxy, "finished",
                     G_CALLBACK (thunar_thumbnailer_thumbnailer_finished), thumbnailer);
 
   /* 'ready' is signaled when thumnailing was sucessfull for some uris */
   /* Note that 'finished' will still be signaled after the whole thumbnailing request finished */
-  g_signal_connect (proxy, "ready",
+  g_signal_connect (thumbnailer->thumbnailer_proxy, "ready",
                    G_CALLBACK (thunar_thumbnailer_thumbnailer_ready), thumbnailer);
 
 
@@ -780,7 +787,7 @@ thunar_thumbnailer_proxy_created (GObject       *object,
                                                   (GDestroyNotify) g_ptr_array_unref);
 
   /* request the supported types from the thumbnailer D-Bus service. */
-  thunar_thumbnailer_dbus_call_get_supported (proxy, NULL,
+  thunar_thumbnailer_dbus_call_get_supported (thumbnailer->thumbnailer_proxy, NULL,
                                               (GAsyncReadyCallback)thunar_thumbnailer_received_supported_types,
                                               thumbnailer);
 
