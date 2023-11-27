@@ -113,7 +113,7 @@ enum
 
 
 static void                   thunar_thumbnailer_finalize               (GObject                    *object);
-static void                   thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer          *thumbnailer);
+static gboolean               thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer          *thumbnailer);
 static gboolean               thunar_thumbnailer_file_is_supported      (ThunarThumbnailer          *thumbnailer,
                                                                          ThunarFile                 *file);
 static void                   thunar_thumbnailer_thumbnailer_finished   (GDBusProxy                 *proxy,
@@ -408,7 +408,23 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
     }
   else if (thumbnailer->proxy_state == THUNAR_THUMBNAILER_PROXY_FAILED)
     {
-      /* the job has no chance to be completed - ever */
+      /* give another chance to the proxy */
+      g_warning ("Thumbnailer Proxy Failed ... starting attempt to re-initialize");
+      
+      if (thumbnailer->thumbnailer_proxy != NULL)
+        {
+          /* disconnect from the thumbnailer proxy */
+          g_signal_handlers_disconnect_matched (thumbnailer->thumbnailer_proxy,
+                                                G_SIGNAL_MATCH_DATA, 0, 0,
+                                                NULL, NULL, thumbnailer);
+          thumbnailer->proxy_state = THUNAR_THUMBNAILER_PROXY_WAITING;
+          g_object_unref (thumbnailer->thumbnailer_proxy);
+          thumbnailer->thumbnailer_proxy = NULL;
+        }
+
+      /* Only try once a second, in order to prevent flooding in case the proxy always fails */
+      g_timeout_add_seconds (1, G_SOURCE_FUNC (thunar_thumbnailer_init_thumbnailer_proxy), thumbnailer);
+
       return FALSE;
     }
 
@@ -507,8 +523,12 @@ thunar_thumbnailer_init (ThunarThumbnailer *thumbnailer)
 {
   g_mutex_init (&thumbnailer->lock);
 
+  _thumbnailer_lock (thumbnailer);
+
   /* initialize the proxies */
   thunar_thumbnailer_init_thumbnailer_proxy (thumbnailer);
+
+  _thumbnailer_unlock (thumbnailer);
 
   /* grab a reference on the preferences */
   thumbnailer->preferences = thunar_preferences_get ();
@@ -771,11 +791,9 @@ thunar_thumbnailer_proxy_created (GObject       *object,
 
 
 
-static void
+static gboolean
 thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer)
 {
-  _thumbnailer_lock (thumbnailer);
-
   thumbnailer->thumbnailer_proxy = NULL;
   thumbnailer->proxy_state = THUNAR_THUMBNAILER_PROXY_WAITING;
 
@@ -788,7 +806,7 @@ thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer)
                                              (GAsyncReadyCallback)thunar_thumbnailer_proxy_created,
                                              thumbnailer);
 
-  _thumbnailer_unlock (thumbnailer);
+  return G_SOURCE_REMOVE;
 }
 
 
