@@ -1955,7 +1955,7 @@ thunar_list_model_cancel_search_job (ThunarListModel *model)
     {
       exo_job_cancel (EXO_JOB (model->recursive_search_job));
 
-      g_signal_handlers_disconnect_matched (model->recursive_search_job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, model);
+      g_signal_handlers_disconnect_by_data (model->recursive_search_job, model);
       g_object_unref (model->recursive_search_job);
       model->recursive_search_job = NULL;
     }
@@ -1977,7 +1977,7 @@ thunar_list_model_search_finished (ThunarJob       *job,
 {
   if (store->recursive_search_job)
     {
-      g_signal_handlers_disconnect_matched (store->recursive_search_job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
+      g_signal_handlers_disconnect_by_data (store->recursive_search_job, store);
       g_object_unref (store->recursive_search_job);
       store->recursive_search_job = NULL;
     }
@@ -2081,7 +2081,7 @@ thunar_list_model_set_folder (ThunarStandardViewModel *model,
       store->file_was_sorted = FALSE;
 
       /* unregister signals and drop the reference */
-      g_signal_handlers_disconnect_matched (G_OBJECT (store->folder), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, store);
+      g_signal_handlers_disconnect_by_data (G_OBJECT (store->folder), store);
       g_object_unref (G_OBJECT (store->folder));
     }
 

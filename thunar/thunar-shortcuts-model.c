@@ -353,7 +353,7 @@ thunar_shortcuts_model_finalize (GObject *object)
     g_object_unref (model->bookmarks_file);
 
   /* unlink from the device monitor */
-  g_signal_handlers_disconnect_matched (model->device_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, model);
+  g_signal_handlers_disconnect_by_data (model->device_monitor, model);
   g_object_unref (model->device_monitor);
 
   (*G_OBJECT_CLASS (thunar_shortcuts_model_parent_class)->finalize) (object);
