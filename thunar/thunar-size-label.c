@@ -212,7 +212,7 @@ thunar_size_label_finalize (GObject *object)
   /* cancel the pending job (if any) */
   if (G_UNLIKELY (size_label->job != NULL))
     {
-      g_signal_handlers_disconnect_matched (G_OBJECT (size_label->job), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, size_label);
+      g_signal_handlers_disconnect_by_data (G_OBJECT (size_label->job), size_label);
       exo_job_cancel (EXO_JOB (size_label->job));
       g_object_unref (size_label->job);
     }
@@ -299,7 +299,7 @@ thunar_size_label_button_press_event (GtkWidget       *ebox,
       /* cancel the pending job (if any) */
       if (G_UNLIKELY (size_label->job != NULL))
         {
-          g_signal_handlers_disconnect_matched (size_label->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, size_label);
+          g_signal_handlers_disconnect_by_data (size_label->job, size_label);
           exo_job_cancel (EXO_JOB (size_label->job));
           g_object_unref (size_label->job);
           size_label->job = NULL;
@@ -334,7 +334,7 @@ thunar_size_label_files_changed (ThunarSizeLabel *size_label)
   /* cancel the pending job (if any) */
   if (G_UNLIKELY (size_label->job != NULL))
     {
-      g_signal_handlers_disconnect_matched (size_label->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, size_label);
+      g_signal_handlers_disconnect_by_data (size_label->job, size_label);
       exo_job_cancel (EXO_JOB (size_label->job));
       g_object_unref (size_label->job);
       size_label->job = NULL;
@@ -415,7 +415,7 @@ thunar_size_label_finished (ExoJob          *job,
   gtk_widget_hide (size_label->spinner);
 
   /* disconnect from the job */
-  g_signal_handlers_disconnect_matched (size_label->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, size_label);
+  g_signal_handlers_disconnect_by_data (size_label->job, size_label);
   g_object_unref (size_label->job);
   size_label->job = NULL;
 }
