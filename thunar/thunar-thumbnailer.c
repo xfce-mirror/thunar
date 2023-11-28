@@ -742,9 +742,6 @@ thunar_thumbnailer_proxy_created (GObject       *object,
       g_slist_free_full (thumbnailer->jobs, (GDestroyNotify)thunar_thumbnailer_free_job);
       thumbnailer->jobs = NULL;
 
-      /* disconnect from the thumbnailer proxy */
-      g_signal_handlers_disconnect_by_data (thumbnailer->thumbnailer_proxy, thumbnailer);
-
       _thumbnailer_unlock (thumbnailer);
 
       return;
