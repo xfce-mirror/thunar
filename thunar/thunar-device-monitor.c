@@ -248,7 +248,7 @@ thunar_device_monitor_finalize (GObject *object)
   g_strfreev (monitor->hidden_devices);
 
   /* detatch from the monitor */
-  g_signal_handlers_disconnect_matched (monitor->volume_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, monitor);
+  g_signal_handlers_disconnect_by_data (monitor->volume_monitor, monitor);
   g_object_unref (monitor->volume_monitor);
 
   /* clear list of devices */

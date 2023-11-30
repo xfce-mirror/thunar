@@ -460,7 +460,7 @@ thunar_permissions_chooser_finalize (GObject *object)
       exo_job_cancel (EXO_JOB (chooser->job));
 
       /* disconnect from the job */
-      g_signal_handlers_disconnect_matched (chooser->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, chooser);
+      g_signal_handlers_disconnect_by_data (chooser->job, chooser);
       g_object_unref (chooser->job);
       chooser->job = NULL;
     }
@@ -1251,7 +1251,7 @@ thunar_permissions_chooser_job_cancel (ThunarPermissionsChooser *chooser)
   exo_job_cancel (EXO_JOB (chooser->job));
 
   /* disconnect from the job */
-  g_signal_handlers_disconnect_matched (chooser->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, chooser);
+  g_signal_handlers_disconnect_by_data (chooser->job, chooser);
   g_object_unref (G_OBJECT (chooser->job));
   chooser->job = NULL;
 
