@@ -311,13 +311,13 @@ thunar_folder_finalize (GObject *object)
     thunar_file_unwatch (folder->corresponding_file);
 
   /* disconnect from the ThunarFileMonitor instance */
-  g_signal_handlers_disconnect_matched (folder->file_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
+  g_signal_handlers_disconnect_by_data (folder->file_monitor, folder);
   g_object_unref (folder->file_monitor);
 
   /* disconnect from the file alteration monitor */
   if (G_LIKELY (folder->monitor != NULL))
     {
-      g_signal_handlers_disconnect_matched (folder->monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
+      g_signal_handlers_disconnect_by_data (folder->monitor, folder);
       g_file_monitor_cancel (folder->monitor);
       g_object_unref (folder->monitor);
     }
@@ -325,7 +325,7 @@ thunar_folder_finalize (GObject *object)
   /* cancel the pending job (if any) */
   if (G_UNLIKELY (folder->job != NULL))
     {
-      g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
+      g_signal_handlers_disconnect_by_data (folder->job, folder);
       g_object_unref (folder->job);
       folder->job = NULL;
     }
@@ -580,7 +580,7 @@ thunar_folder_finished (ExoJob       *job,
   /* we did it, the folder is loaded */
   if (G_LIKELY (folder->job != NULL))
     {
-      g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
+      g_signal_handlers_disconnect_by_data (folder->job, folder);
       g_object_unref (folder->job);
       folder->job = NULL;
     }
@@ -1011,7 +1011,7 @@ thunar_folder_reload (ThunarFolder *folder,
   if (G_UNLIKELY (folder->job != NULL))
     {
       /* disconnect from the job */
-      g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
+      g_signal_handlers_disconnect_by_data (folder->job, folder);
       g_object_unref (folder->job);
       folder->job = NULL;
     }

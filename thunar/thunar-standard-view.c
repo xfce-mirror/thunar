@@ -965,8 +965,7 @@ thunar_standard_view_dispose (GObject *object)
   /* disconnect from file */
   if (standard_view->priv->current_directory != NULL)
     {
-      g_signal_handlers_disconnect_matched (standard_view->priv->current_directory,
-                                            G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, standard_view);
+      g_signal_handlers_disconnect_by_data (standard_view->priv->current_directory, standard_view);
       g_object_unref (standard_view->priv->current_directory);
       standard_view->priv->current_directory = NULL;
     }
@@ -1029,7 +1028,7 @@ thunar_standard_view_finalize (GObject *object)
   g_object_unref (G_OBJECT (standard_view->preferences));
 
   /* disconnect from the list model */
-  g_signal_handlers_disconnect_matched (G_OBJECT (standard_view->model), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, standard_view);
+  g_signal_handlers_disconnect_by_data (G_OBJECT (standard_view->model), standard_view);
   g_object_unref (G_OBJECT (standard_view->model));
 
   /* remove selection restore timeout */
@@ -1515,8 +1514,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   /* release previous directory */
   if (standard_view->priv->current_directory != NULL)
     {
-      g_signal_handlers_disconnect_matched (standard_view->priv->current_directory,
-                                            G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, standard_view);
+      g_signal_handlers_disconnect_by_data (standard_view->priv->current_directory, standard_view);
       g_object_unref (standard_view->priv->current_directory);
     }
 
@@ -4406,7 +4404,7 @@ thunar_standard_view_set_model (ThunarStandardView *standard_view)
 
   if (standard_view->model != NULL)
     {
-      g_signal_handlers_disconnect_matched (G_OBJECT (standard_view->model), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, standard_view);
+      g_signal_handlers_disconnect_by_data (G_OBJECT (standard_view->model), standard_view);
       g_object_unref (G_OBJECT (standard_view->model));
       standard_view->model = NULL;
       if (G_LIKELY (standard_view->loading_binding != NULL))

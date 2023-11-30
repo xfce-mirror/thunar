@@ -1628,7 +1628,7 @@ _thunar_tree_view_model_search_finished (ThunarJob           *job,
 {
   if (model->search_job)
     {
-      g_signal_handlers_disconnect_matched (model->search_job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, model);
+      g_signal_handlers_disconnect_by_data (model->search_job, model);
       g_object_unref (model->search_job);
       model->search_job = NULL;
     }
@@ -1656,7 +1656,7 @@ _thunar_tree_view_model_cancel_search_job (ThunarTreeViewModel *model)
     {
       exo_job_cancel (EXO_JOB (model->search_job));
 
-      g_signal_handlers_disconnect_matched (model->search_job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, model);
+      g_signal_handlers_disconnect_by_data (model->search_job, model);
       g_object_unref (model->search_job);
       model->search_job = NULL;
     }
@@ -2608,8 +2608,7 @@ thunar_tree_view_model_cleanup_model (ThunarTreeViewModel *model)
     {
       _node = dirs->data;
       g_assert (_node != NULL && _node->dir != NULL);
-      g_signal_handlers_disconnect_matched (G_OBJECT (_node->dir), G_SIGNAL_MATCH_DATA,
-                                            0, 0, NULL, NULL, _node);
+      g_signal_handlers_disconnect_by_data (G_OBJECT (_node->dir), _node);
       g_object_unref (_node->dir);
       _node->dir = NULL;
     }
@@ -2833,8 +2832,7 @@ _thunar_tree_view_model_dir_unload_timeout (Node *node)
 
   if (node->dir != NULL)
     {
-      g_signal_handlers_disconnect_matched (G_OBJECT (node->dir), G_SIGNAL_MATCH_DATA,
-                                            0, 0, NULL, NULL, node);
+      g_signal_handlers_disconnect_by_data (G_OBJECT (node->dir), node);
       g_object_unref (node->dir);
       node->dir = NULL;
     }

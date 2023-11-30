@@ -414,9 +414,7 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
       if (thumbnailer->thumbnailer_proxy != NULL)
         {
           /* disconnect from the thumbnailer proxy */
-          g_signal_handlers_disconnect_matched (thumbnailer->thumbnailer_proxy,
-                                                G_SIGNAL_MATCH_DATA, 0, 0,
-                                                NULL, NULL, thumbnailer);
+          g_signal_handlers_disconnect_by_data (thumbnailer->thumbnailer_proxy, thumbnailer);
           thumbnailer->proxy_state = THUNAR_THUMBNAILER_PROXY_WAITING;
           g_object_unref (thumbnailer->thumbnailer_proxy);
           thumbnailer->thumbnailer_proxy = NULL;
@@ -570,9 +568,7 @@ thunar_thumbnailer_finalize (GObject *object)
   if (thumbnailer->thumbnailer_proxy != NULL)
     {
       /* disconnect from the thumbnailer proxy */
-      g_signal_handlers_disconnect_matched (thumbnailer->thumbnailer_proxy,
-                                            G_SIGNAL_MATCH_DATA, 0, 0,
-                                            NULL, NULL, thumbnailer);
+      g_signal_handlers_disconnect_by_data (thumbnailer->thumbnailer_proxy, thumbnailer);
     }
 
   /* remove all jobs */
@@ -664,9 +660,7 @@ thunar_thumbnailer_received_supported_types (ThunarThumbnailerDBus  *proxy,
       thumbnailer->proxy_state = THUNAR_THUMBNAILER_PROXY_FAILED;
 
       /* disconnect from the thumbnailer proxy */
-      g_signal_handlers_disconnect_matched (thumbnailer->thumbnailer_proxy,
-                                            G_SIGNAL_MATCH_DATA, 0, 0,
-                                            NULL, NULL, thumbnailer);
+      g_signal_handlers_disconnect_by_data (thumbnailer->thumbnailer_proxy, thumbnailer);
 
       g_object_unref (thumbnailer->thumbnailer_proxy);
       thumbnailer->thumbnailer_proxy = NULL;
