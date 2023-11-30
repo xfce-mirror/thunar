@@ -246,7 +246,7 @@ thunar_toolbar_editor_finalize (GObject *object)
   thunar_toolbar_editor_save_model (toolbar_editor);
 
   /* release our reference on the shared toolbar model */
-  g_signal_handlers_disconnect_matched (G_OBJECT (toolbar_editor->model), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, toolbar_editor);
+  g_signal_handlers_disconnect_by_data (G_OBJECT (toolbar_editor->model), toolbar_editor);
   g_object_unref (G_OBJECT (toolbar_editor->model));
 
   /* release our reference on the preferences */

@@ -404,7 +404,7 @@ thunar_column_editor_finalize (GObject *object)
   ThunarColumnEditor *column_editor = THUNAR_COLUMN_EDITOR (object);
 
   /* release our reference on the shared column model */
-  g_signal_handlers_disconnect_matched (G_OBJECT (column_editor->column_model), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, column_editor);
+  g_signal_handlers_disconnect_by_data (G_OBJECT (column_editor->column_model), column_editor);
   g_object_unref (G_OBJECT (column_editor->column_model));
 
   /* release our reference on the preferences */

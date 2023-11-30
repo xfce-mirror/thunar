@@ -214,7 +214,7 @@ thunar_column_model_finalize (GObject *object)
   ThunarColumnModel *column_model = THUNAR_COLUMN_MODEL (object);
 
   /* disconnect from the global preferences */
-  g_signal_handlers_disconnect_matched (G_OBJECT (column_model->preferences), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, column_model);
+  g_signal_handlers_disconnect_by_data (G_OBJECT (column_model->preferences), column_model);
   g_object_unref (G_OBJECT (column_model->preferences));
 
   /* drop any running "save width" timer */
