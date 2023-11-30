@@ -438,7 +438,7 @@ thunar_shortcuts_view_finalize (GObject *object)
   g_object_unref (view->action_mgr);
 
   /* disconnect from the preferences object */
-  g_signal_handlers_disconnect_matched (G_OBJECT (view->preferences), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, view);
+  g_signal_handlers_disconnect_by_data (G_OBJECT (view->preferences), view);
   g_object_unref (G_OBJECT (view->preferences));
 
   (*G_OBJECT_CLASS (thunar_shortcuts_view_parent_class)->finalize) (object);

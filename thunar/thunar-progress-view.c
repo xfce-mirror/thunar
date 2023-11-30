@@ -689,7 +689,7 @@ thunar_progress_view_set_job (ThunarProgressView *view,
   /* disconnect from the previous job */
   if (G_LIKELY (view->job != NULL))
     {
-      g_signal_handlers_disconnect_matched (view->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, view);
+      g_signal_handlers_disconnect_by_data (view->job, view);
       g_object_unref (G_OBJECT (view->job));
     }
 
