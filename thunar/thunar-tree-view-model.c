@@ -2449,18 +2449,21 @@ _thunar_tree_view_model_folder_error (Node         *node,
 {
   _thunar_return_if_fail (error != NULL);
 
-  if (node->parent == NULL && node->n_children > 0)
+  if (node->n_children > 0)
     {
-      /* set_folder func does not emit row-deleted signal instead relies
-       * on ThunarStandardView to disconnect & reconnect the view quickly update
-       * changes in current_directory. */
-      for (GList *lp = g_hash_table_get_keys (node->set); lp != NULL; lp = lp->next)
-        thunar_tree_view_model_dir_remove_file (node, THUNAR_FILE (lp->data));
-      /* reset the model if error is with the current directory */
-      thunar_tree_view_model_set_folder (THUNAR_STANDARD_VIEW_MODEL (node->model), NULL, NULL);
+      if (node->parent == NULL)
+        {
+          /* set_folder func does not emit row-deleted signal instead relies
+          * on ThunarStandardView to disconnect & reconnect the view quickly update
+          * changes in current_directory. */
+          for (GList *lp = g_hash_table_get_keys (node->set); lp != NULL; lp = lp->next)
+            thunar_tree_view_model_dir_remove_file (node, THUNAR_FILE (lp->data));
+          /* reset the model if error is with the current directory */
+          thunar_tree_view_model_set_folder (THUNAR_STANDARD_VIEW_MODEL (node->model), NULL, NULL);
+        }
+      else
+        thunar_tree_view_model_dir_remove_file (node->parent, node->file);
     }
-  else
-    thunar_tree_view_model_dir_remove_file (node->parent, node->file);
 
   /* forward the error signal */
   g_signal_emit (G_OBJECT (node->model), tree_model_signals[THUNAR_STANDARD_VIEW_MODEL_ERROR], 0, error);
