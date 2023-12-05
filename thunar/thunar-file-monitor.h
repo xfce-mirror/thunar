@@ -40,6 +40,7 @@ ThunarFileMonitor *thunar_file_monitor_get_default    (void);
 
 void               thunar_file_monitor_file_changed   (ThunarFile *file);
 void               thunar_file_monitor_file_destroyed (ThunarFile *file);
+void               thunar_file_monitor_thumbnail_updated (ThunarFile *file);
 
 G_END_DECLS;
 
