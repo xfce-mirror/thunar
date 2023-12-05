@@ -271,8 +271,8 @@ thunar_folder_class_init (ThunarFolderClass *klass)
 static void
 thunar_folder_init (ThunarFolder *folder)
 {
-  folder->files_map = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, NULL, g_object_unref);
-  folder->new_files_map = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, NULL, g_object_unref);
+  folder->files_map = g_hash_table_new_full (g_direct_hash, (GEqualFunc) g_direct_equal, NULL, g_object_unref);
+  folder->new_files_map = g_hash_table_new_full (g_direct_hash, (GEqualFunc) g_direct_equal, NULL, g_object_unref);
 
   /* connect to the ThunarFileMonitor instance */
   folder->file_monitor = thunar_file_monitor_get_default ();
@@ -435,7 +435,7 @@ thunar_folder_files_ready (ThunarJob    *job,
 
   /* merge the list with the existing list of new files */
   for (lp = files; lp != NULL; lp = lp->next)
-    g_hash_table_insert (folder->new_files_map, thunar_file_get_file (lp->data), g_object_ref (lp->data));
+    g_hash_table_insert (folder->new_files_map, lp->data, g_object_ref (lp->data));
 
   thunar_g_list_free_full (files);
 
@@ -491,14 +491,14 @@ thunar_folder_finished (ExoJob       *job,
   g_hash_table_iter_init (&iter, folder->new_files_map);
   while (g_hash_table_iter_next (&iter, &key, &value))
     {
-      if (value != NULL && !g_hash_table_contains (folder->files_map, thunar_file_get_file (THUNAR_FILE (value))))
+      if (value != NULL && !g_hash_table_contains (folder->files_map, value))
         {
           file = THUNAR_FILE (value);
 
           /* put the file on the added list */
           files = g_list_prepend (files, file);
 
-          g_hash_table_insert (folder->files_map, thunar_file_get_file (file), g_object_ref (file));
+          g_hash_table_insert (folder->files_map, file, g_object_ref (file));
         }
     }
 
@@ -527,7 +527,7 @@ thunar_folder_finished (ExoJob       *job,
           file = THUNAR_FILE (value);
 
           /* check if the file is not on new_files */
-          if (g_hash_table_contains (folder->new_files_map, thunar_file_get_file (file)))
+          if (g_hash_table_contains (folder->new_files_map, file))
             continue;
 
           /* put the file on the removed list (owns the reference now) */
@@ -540,7 +540,7 @@ thunar_folder_finished (ExoJob       *job,
       file = THUNAR_FILE (lp->data);
 
       /* remove from the hashmap too */
-      g_hash_table_remove (folder->files_map, thunar_file_get_file (file));
+      g_hash_table_remove (folder->files_map, file);
     }
 
   /* check if any files were removed */
@@ -628,7 +628,7 @@ thunar_folder_file_destroyed (ThunarFileMonitor *file_monitor,
       if (!folder->in_destruction)
         g_object_run_dispose (G_OBJECT (folder));
     }
-  else if (g_hash_table_contains (folder->files_map, thunar_file_get_file (file)))
+  else if (g_hash_table_contains (folder->files_map, file))
     {
       /* tell everybody that the file is gone */
       files.data = file;
@@ -636,7 +636,7 @@ thunar_folder_file_destroyed (ThunarFileMonitor *file_monitor,
       g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, &files);
 
       /* remove the file from our list */
-      g_hash_table_remove (folder->files_map, thunar_file_get_file (file));
+      g_hash_table_remove (folder->files_map, file);
     }
 }
 
@@ -727,7 +727,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
       return;
     }
 
-  file_in_map = g_hash_table_lookup (folder->files_map, event_file);
+  file_in_map = g_hash_table_lookup (folder->files_map, thunar_file_get (event_file, NULL));
 
   /* if we don't have it, add it if the event does not "delete" the "event_file" */
   if (file_in_map == NULL && event_type != G_FILE_MONITOR_EVENT_DELETED && event_type != G_FILE_MONITOR_EVENT_MOVED_OUT)
@@ -737,7 +737,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
           if (G_LIKELY (other_file != NULL))
             {
               ThunarFile *other_file_in_map;
-              other_file_in_map = g_hash_table_lookup (folder->files_map, other_file);
+              other_file_in_map = g_hash_table_lookup (folder->files_map, thunar_file_get (other_file, NULL));
 
               /* create a renamed file only if it doesn't exist */
               if (!other_file_in_map)
@@ -753,7 +753,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
       if (file != NULL)
         {
           /* add a mapping of (gfile -> ThunarFile) to the hashmap */
-          g_hash_table_insert (folder->files_map, thunar_file_get_file (file), g_object_ref (file));
+          g_hash_table_insert (folder->files_map, file, g_object_ref (file));
 
           /* tell others about the new file */
           list.data = file;
@@ -794,7 +794,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
               ThunarFile *dest_file_in_map;
 
               /* check if we already ship the destination file */
-              dest_file_in_map = g_hash_table_lookup (folder->files_map, other_file);
+              dest_file_in_map = g_hash_table_lookup (folder->files_map, thunar_file_get (other_file, NULL));
 
               if (dest_file_in_map)
                 {
@@ -816,13 +816,13 @@ thunar_folder_monitor (GFileMonitor     *monitor,
 
                   /* remove the old reference from the hash table before it becomes invalid;
                    * during thunar_file_replace_file call */
-                  g_hash_table_remove (folder->files_map, event_file);
+                  g_hash_table_remove (folder->files_map, thunar_file_get (event_file, NULL));
 
                   /* replace GFile in ThunarFile for the renamed file */
                   thunar_file_replace_file (file, other_file);
 
                   /* insert new mapping of (gfile, ThunarFile) for the newly renamed file */
-                  g_hash_table_insert (folder->files_map, other_file, g_object_ref (file));
+                  g_hash_table_insert (folder->files_map, thunar_file_get (other_file, NULL), g_object_ref (file));
 
 
                 }
