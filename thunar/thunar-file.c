@@ -5205,10 +5205,6 @@ thunar_file_update_thumbnail (ThunarFile          *file,
                               ThunarFileThumbState state,
                               ThunarThumbnailSize  size)
 {
-  GList               *lp;
-  GList               *windows;
-  ThunarApplication   *application;
-
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   /* check if the state changes */
@@ -5245,14 +5241,7 @@ thunar_file_update_thumbnail (ThunarFile          *file,
 
   g_signal_emit (file, file_signals[THUMBNAIL_UPDATED], 0, size);
 
-  /* redraw all windows in order to update the thumbnail images */
-  /* TODO: It should be sufficient to redraw the view/widget which is holding the thumbnail instead of all windows */
-  /* More info here: https://gitlab.xfce.org/xfce/thunar/-/issues/1229 */
-  application = thunar_application_get ();
-  windows = thunar_application_get_windows (application);
-  for (lp = windows; lp != NULL; lp = lp->next)
-    thunar_window_queue_redraw (lp->data);
-  g_list_free (windows);
+  thunar_file_monitor_thumbnail_updated (file);
 }
 
 
