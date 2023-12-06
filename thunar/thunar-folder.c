@@ -522,11 +522,14 @@ thunar_folder_finished (ExoJob       *job,
 
       /* put the file on the removed list (owns the reference now);
        * we need to ref inorder to keep the file alive since
-       * the following statement will unref the file */
+       * the following loop will unref this file */
       files = g_list_prepend (files, g_object_ref (key));
-      
-      g_hash_table_remove (folder->files_map, key);
     }
+
+  /* we can't remove while iterating over the hash table
+   * thus removing in a separate loop */
+  for (GList *lp = files; lp != NULL; lp = lp->next)
+    g_hash_table_remove (folder->files_map, lp->data);
 
   /* check if any files were removed */
   if (G_UNLIKELY (files != NULL))
