@@ -111,10 +111,8 @@ struct _ThunarFolder
 
   ThunarFile        *corresponding_file;
 
-  /* map of GFile --> ThunarFile */
+  /* the key is a ThunarFile; value is NULL (unimportant) */
   GHashTable        *new_files_map;
-
-  /* map of GFile --> ThunarFile */
   GHashTable        *files_map;
 
   gboolean           reload_info;
@@ -271,8 +269,10 @@ thunar_folder_class_init (ThunarFolderClass *klass)
 static void
 thunar_folder_init (ThunarFolder *folder)
 {
-  folder->files_map = g_hash_table_new_full (g_direct_hash, (GEqualFunc) g_direct_equal, NULL, g_object_unref);
-  folder->new_files_map = g_hash_table_new_full (g_direct_hash, (GEqualFunc) g_direct_equal, NULL, g_object_unref);
+  /* If hashtable is initialized without a key_equal_func (we'd use g_direct_equal here);
+   * then equality is checked similar to g_direct_equal but without the overhead of a function call */
+  folder->files_map = g_hash_table_new_full (g_direct_hash, NULL, g_object_unref, NULL);
+  folder->new_files_map = g_hash_table_new_full (g_direct_hash, NULL, g_object_unref, NULL);
 
   /* connect to the ThunarFileMonitor instance */
   folder->file_monitor = thunar_file_monitor_get_default ();
@@ -435,7 +435,7 @@ thunar_folder_files_ready (ThunarJob    *job,
 
   /* merge the list with the existing list of new files */
   for (lp = files; lp != NULL; lp = lp->next)
-    g_hash_table_insert (folder->new_files_map, lp->data, g_object_ref (lp->data));
+    g_hash_table_add (folder->new_files_map, g_object_ref (lp->data));
 
   thunar_g_list_free_full (files);
 
@@ -477,11 +477,9 @@ static void
 thunar_folder_finished (ExoJob       *job,
                         ThunarFolder *folder)
 {
-  ThunarFile     *file;
   GHashTableIter iter;
-  gpointer       key, value;
+  gpointer       key;
   GList          *files = NULL;
-  GList          *lp;
 
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
@@ -489,17 +487,15 @@ thunar_folder_finished (ExoJob       *job,
 
   /* determine all added files (files on new_files, but not on files) */
   g_hash_table_iter_init (&iter, folder->new_files_map);
-  while (g_hash_table_iter_next (&iter, &key, &value))
+  while (g_hash_table_iter_next (&iter, &key, NULL))
     {
-      if (value != NULL && !g_hash_table_contains (folder->files_map, value))
-        {
-          file = THUNAR_FILE (value);
+      if (g_hash_table_contains (folder->files_map, key))
+        continue;
 
-          /* put the file on the added list */
-          files = g_list_prepend (files, file);
+      /* preparing a list of newly added files to emit as "files-added" */
+      files = g_list_prepend (files, key);
 
-          g_hash_table_insert (folder->files_map, file, g_object_ref (file));
-        }
+      g_hash_table_add (folder->files_map, g_object_ref (key));
     }
 
   /* check if any files were added */
@@ -519,28 +515,17 @@ thunar_folder_finished (ExoJob       *job,
   /* this is to handle removed files after a folder reload */
   /* determine all removed files (files on files, but not on new_files) */
   g_hash_table_iter_init (&iter, folder->files_map);
-  while (g_hash_table_iter_next (&iter, &key, &value))
+  while (g_hash_table_iter_next (&iter, &key, NULL))
     {
-      if (value != NULL)
-        {
-          /* determine the file */
-          file = THUNAR_FILE (value);
+      if (key == NULL || g_hash_table_contains (folder->new_files_map, key))
+        continue;
 
-          /* check if the file is not on new_files */
-          if (g_hash_table_contains (folder->new_files_map, file))
-            continue;
-
-          /* put the file on the removed list (owns the reference now) */
-          files = g_list_prepend (files, g_object_ref (file));
-        }
-    }
-
-  for (lp = files; lp != NULL; lp = lp->next)
-    {
-      file = THUNAR_FILE (lp->data);
-
-      /* remove from the hashmap too */
-      g_hash_table_remove (folder->files_map, file);
+      /* put the file on the removed list (owns the reference now);
+       * we need to ref inorder to keep the file alive since
+       * the following statement will unref the file */
+      files = g_list_prepend (files, g_object_ref (key));
+      
+      g_hash_table_remove (folder->files_map, key);
     }
 
   /* check if any files were removed */
@@ -561,10 +546,11 @@ thunar_folder_finished (ExoJob       *job,
     {
       folder->reload_info = FALSE;
       g_hash_table_iter_init (&iter, folder->files_map);
-      while (g_hash_table_iter_next (&iter, &key, &value))
+      while (g_hash_table_iter_next (&iter, &key, NULL))
         {
-          if (value != NULL)
-            thunar_file_reload (THUNAR_FILE (value));
+          if (key == NULL)
+            continue;
+          thunar_file_reload (THUNAR_FILE (key));
         }
 
       /* block 'file-changed' signals of the folder itself until reload is done, in order to prevent recursion */
@@ -942,7 +928,7 @@ GList *
 thunar_folder_get_files (const ThunarFolder *folder)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), NULL);
-  return g_hash_table_get_values (folder->files_map);
+  return g_hash_table_get_keys (folder->files_map);
 }
 
 
