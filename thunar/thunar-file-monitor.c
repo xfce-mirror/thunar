@@ -33,6 +33,7 @@ enum
 {
   FILE_CHANGED,
   FILE_DESTROYED,
+  THUMBNAIL_UPDATED,
   LAST_SIGNAL,
 };
 
@@ -46,6 +47,9 @@ struct _ThunarFileMonitorClass
 struct _ThunarFileMonitor
 {
   GObject __parent__;
+  
+  GList *thumbnail_updated_files;
+  guint  thumbnail_updated_timeout;
 };
 
 
@@ -59,9 +63,17 @@ G_DEFINE_TYPE (ThunarFileMonitor, thunar_file_monitor, G_TYPE_OBJECT)
 
 
 
+static void thunar_file_monitor_finalize (GObject *object);
+
+
+
 static void
 thunar_file_monitor_class_init (ThunarFileMonitorClass *klass)
 {
+  GObjectClass   *gobject_class;
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunar_file_monitor_finalize;
+
   /**
    * ThunarFileMonitor::file-changed:
    * @file_monitor : the default #ThunarFileMonitor.
@@ -99,6 +111,23 @@ thunar_file_monitor_class_init (ThunarFileMonitorClass *klass)
                   0, NULL, NULL,
                   g_cclosure_marshal_VOID__OBJECT,
                   G_TYPE_NONE, 1, THUNAR_TYPE_FILE);
+
+  /**
+  * ThunarFileMonitor::thumbnail-updated:
+  * @file_monitor : the default #ThunarFileMonitor.
+  * @files        : GList of all #ThunarFile for which thumbnail changed.
+  *
+  * This signal is emitted on @file_monitor whenever for any of the currently
+  * existing #ThunarFile thumbnail status changes. @files identifies the
+  * GList of all the concerning files.
+  **/
+  file_monitor_signals[THUMBNAIL_UPDATED] =
+   g_signal_new (I_("thumbnail-updated"),
+                 G_TYPE_FROM_CLASS (klass),
+                 G_SIGNAL_NO_HOOKS,
+                 0, NULL, NULL,
+                 g_cclosure_marshal_VOID__OBJECT,
+                 G_TYPE_NONE, 1, G_TYPE_POINTER);
 }
 
 
@@ -106,7 +135,23 @@ thunar_file_monitor_class_init (ThunarFileMonitorClass *klass)
 static void
 thunar_file_monitor_init (ThunarFileMonitor *monitor)
 {
+  monitor->thumbnail_updated_files = NULL;
+  monitor->thumbnail_updated_timeout = 0;
 }
+
+
+
+static void
+thunar_file_monitor_finalize (GObject *object)
+{
+  ThunarFileMonitor *file_monitor = THUNAR_FILE_MONITOR (object);
+
+  thunar_g_list_free_full (file_monitor->thumbnail_updated_files);
+
+  (*G_OBJECT_CLASS (thunar_file_monitor_parent_class)->finalize) (object);
+}
+
+
 
 
 
@@ -180,6 +225,44 @@ thunar_file_monitor_file_destroyed (ThunarFile *file)
 
   if (G_LIKELY (file_monitor_default != NULL))
     g_signal_emit (G_OBJECT (file_monitor_default), file_monitor_signals[FILE_DESTROYED], 0, file);
+}
+
+
+
+static gboolean
+_thunar_file_monitor_thumbnail_updated_timeout (gpointer data)
+{
+  if (G_UNLIKELY (file_monitor_default == NULL))
+    return G_SOURCE_REMOVE;
+
+  g_signal_emit (G_OBJECT (file_monitor_default),
+                 file_monitor_signals[THUMBNAIL_UPDATED], 0,
+                 file_monitor_default->thumbnail_updated_files);
+
+  thunar_g_list_free_full (file_monitor_default->thumbnail_updated_files);
+  file_monitor_default->thumbnail_updated_files = NULL;
+
+  file_monitor_default->thumbnail_updated_timeout = 0;
+
+  return G_SOURCE_REMOVE;
+}
+
+
+
+void
+thunar_file_monitor_thumbnail_updated (ThunarFile *file)
+{
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  
+  if (G_UNLIKELY (file_monitor_default == NULL))
+    return;
+
+  file_monitor_default->thumbnail_updated_files =
+    g_list_prepend (file_monitor_default->thumbnail_updated_files, g_object_ref (file));
+
+  if (file_monitor_default->thumbnail_updated_timeout == 0)
+    file_monitor_default->thumbnail_updated_timeout =
+      g_timeout_add (25, (GSourceFunc) _thunar_file_monitor_thumbnail_updated_timeout, NULL);
 }
 
 
