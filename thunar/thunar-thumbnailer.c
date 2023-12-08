@@ -433,8 +433,8 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
    * processed (and awaiting to be refreshed) */
   for (lp = job->files; lp != NULL; lp = lp->next)
     {
-      /* the icon factory only loads icons for regular files and folders */
-      if (!thunar_file_is_regular (lp->data) && !thunar_file_is_directory (lp->data))
+      /* the icon factory only loads icons for regular files, symlinks and folders */
+      if (!thunar_file_is_regular (lp->data) && !thunar_file_is_directory (lp->data) && !thunar_file_is_symlink(lp->data))
         {
           thunar_file_update_thumbnail (lp->data, THUNAR_FILE_THUMB_STATE_NONE, thumbnail_size);
           continue;
@@ -822,7 +822,19 @@ thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
   _thunar_return_val_if_fail (thumbnailer->supported != NULL, FALSE);
 
   /* determine the content type of the passed file */
-  content_type = thunar_file_get_content_type (file);
+  if (thunar_file_is_symlink (file))
+    {
+      GFile *link_target;
+
+      link_target = thunar_g_file_new_for_symlink_target (thunar_file_get_file(file));
+      if (link_target == NULL)
+        return FALSE;
+
+      content_type = thunar_g_file_get_content_type (link_target);
+      g_object_unref (link_target);
+   }
+  else
+    content_type = thunar_file_get_content_type (file);
 
   /* abort if the content type is unknown */
   if (content_type == NULL)
