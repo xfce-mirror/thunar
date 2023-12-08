@@ -166,6 +166,7 @@ thunar_g_file_new_for_bookmarks (void)
  * @file : a #GFile.
  *
  * Returns the symlink target of @file as a GFile.
+ * If @file is not a symlink, @file will just be returned
  *
  * Return value: (nullable) (transfer full): A #GFile on success and %NULL on failure.
  **/
@@ -175,6 +176,7 @@ thunar_g_file_new_for_symlink_target (GFile *file)
   const gchar *target_path;
   gchar       *file_path;
   GFile       *file_parent = NULL;
+  GFile       *file_parent_resolved = NULL;
   GFile       *target_gfile = NULL;
   GFileInfo   *info = NULL;
   GError      *error = NULL;
@@ -198,17 +200,28 @@ thunar_g_file_new_for_symlink_target (GFile *file)
       return NULL;
     }
 
+  /* the file is no symlink --> just return the file itself */
+  if (!g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET))
+    return g_object_ref (file);
+
   target_path = g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET);
   file_parent = g_file_get_parent (file);
 
+  if (file_parent != NULL)
+    {
+      /* as well the parent fil might be a symlink .. try to resolve it */
+      file_parent_resolved = thunar_g_file_new_for_symlink_target (file_parent);
+      g_object_unref (file_parent);
+    }
+
   /* if target_path is an absolute path, the target_gfile is created using only the target_path
   ** else if target_path is relative then it is resolved with respect to the parent of the symlink (@file) */
-  if (G_LIKELY (target_path != NULL && file_parent != NULL))
-    target_gfile = g_file_resolve_relative_path (file_parent, target_path);
+  if (G_LIKELY (target_path != NULL && file_parent_resolved != NULL))
+    target_gfile = g_file_resolve_relative_path (file_parent_resolved, target_path);
 
   /* free allocated resources */
-  if (G_LIKELY (file_parent != NULL))
-    g_object_unref (file_parent);
+  if (G_LIKELY (file_parent_resolved != NULL))
+    g_object_unref (file_parent_resolved);
   g_object_unref (info);
 
   return target_gfile;
