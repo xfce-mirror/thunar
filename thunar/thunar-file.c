@@ -2508,7 +2508,7 @@ thunar_file_get_content_type (ThunarFile *file)
           is_symlink = thunar_file_is_symlink (file);
 
           if (G_UNLIKELY (is_symlink))
-            gfile = thunar_g_file_new_for_symlink_target (thunar_file_get_file (file));
+            gfile = thunar_g_file_resolve_symlink (thunar_file_get_file (file));
           else
             gfile = g_object_ref (file->gfile);
 
@@ -3013,7 +3013,7 @@ thunar_file_can_execute (ThunarFile *file)
 
   if (thunar_file_is_symlink (file))
     {
-      link_target = thunar_g_file_new_for_symlink_target (file->gfile);
+      link_target = thunar_g_file_resolve_symlink (file->gfile);
       if (link_target == NULL)
         return FALSE;
       file_to_check = thunar_file_get (link_target, NULL);

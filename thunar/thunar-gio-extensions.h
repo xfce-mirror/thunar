@@ -34,7 +34,7 @@ GFile       *thunar_g_file_new_for_computer         (void);
 GFile       *thunar_g_file_new_for_network          (void);
 GFile       *thunar_g_file_new_for_bookmarks        (void);
 
-GFile       *thunar_g_file_new_for_symlink_target   (GFile                *file);
+GFile       *thunar_g_file_resolve_symlink          (GFile                *file);
 
 gboolean     thunar_g_file_is_root                  (GFile                *file);
 gboolean     thunar_g_file_is_trashed               (GFile                *file);
