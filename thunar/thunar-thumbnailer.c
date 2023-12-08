@@ -826,7 +826,7 @@ thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
     {
       GFile *link_target;
 
-      link_target = thunar_g_file_new_for_symlink_target (thunar_file_get_file (file));
+      link_target = thunar_g_file_resolve_symlink (thunar_file_get_file (file));
       if (link_target == NULL)
         return FALSE;
 
