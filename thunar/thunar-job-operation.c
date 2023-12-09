@@ -687,14 +687,14 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation  *operation,
     /* (All files located in trash have symlinks resolved) */
     if (parent != NULL)
       {
-        gchar *real_path_parent = NULL;
+        GFile *parent_resolved = NULL;
         gchar *basename = g_file_get_basename (lp->data);
-        real_path_parent = thunar_g_file_get_resolved_path (parent);
+        parent_resolved = thunar_g_file_resolve_symlink (parent);
         g_object_unref (parent);
-        if (real_path_parent != NULL && basename != NULL)
-          real_path = g_build_filename (real_path_parent, basename, NULL);
+        if (parent_resolved != NULL && basename != NULL)
+          real_path = g_build_filename (g_file_get_path (parent_resolved), basename, NULL);
         g_free (basename);
-        g_free (real_path_parent);
+        g_object_unref (parent_resolved);
       }
 
     if (real_path != NULL)

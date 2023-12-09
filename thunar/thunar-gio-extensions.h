@@ -123,7 +123,6 @@ gboolean     thunar_g_file_is_in_xdg_data_dir          (GFile             *file)
 gboolean     thunar_g_file_is_desktop_file             (GFile             *file);
 char        *thunar_g_file_get_link_path_for_symlink   (GFile             *file_to_link,
                                                         GFile             *symlink);
-char        *thunar_g_file_get_resolved_path           (GFile             *file);
 G_END_DECLS
 
 #endif /* !__THUNAR_GIO_EXTENSIONS_H__ */
