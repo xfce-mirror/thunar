@@ -29,14 +29,6 @@
 #include <gio/gdesktopappinfo.h>
 #endif
 
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h> /* realpath */
-#endif
-
-#ifndef HAVE_REALPATH
-#define realpath(path, resolved_path) NULL
-#endif
-
 #include <libxfce4util/libxfce4util.h>
 
 #include "thunar/thunar-file.h"
@@ -162,56 +154,38 @@ thunar_g_file_new_for_bookmarks (void)
 
 
 /**
- * thunar_g_file_new_for_symlink_target:
+ * thunar_g_file_resolve_symlink:
  * @file : a #GFile.
  *
- * Returns the symlink target of @file as a GFile.
+ * Returns the resolved symlink target of @file as a new #GFile.
+ * If @file is not a symlink, @file will just be returned
  *
  * Return value: (nullable) (transfer full): A #GFile on success and %NULL on failure.
  **/
 GFile *
-thunar_g_file_new_for_symlink_target (GFile *file)
+thunar_g_file_resolve_symlink (GFile *file)
 {
-  const gchar *target_path;
-  gchar       *file_path;
-  GFile       *file_parent = NULL;
-  GFile       *target_gfile = NULL;
-  GFileInfo   *info = NULL;
-  GError      *error = NULL;
+  gchar       *basename;
+  GFile       *parent = NULL;
+  GFile       *target = NULL;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
 
-  /* Intialise the GFileInfo for querying symlink target */
-  info = g_file_query_info (file,
-                            G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET,
-                            G_FILE_QUERY_INFO_NONE,
-                            NULL, &error);
-
-  if (info == NULL)
+  parent = g_file_get_parent (file);
+  if (parent == NULL)
+    return NULL;
+  
+  basename = g_file_get_basename (file);
+  if (basename == NULL)
     {
-      file_path = g_file_get_path (file);
-      g_warning ("Symlink target loading failed for %s: %s",
-                 file_path,
-                 error->message);
-      g_free (file_path);
-      g_error_free (error);
+      g_object_unref (parent);
       return NULL;
     }
 
-  target_path = g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET);
-  file_parent = g_file_get_parent (file);
-
-  /* if target_path is an absolute path, the target_gfile is created using only the target_path
-  ** else if target_path is relative then it is resolved with respect to the parent of the symlink (@file) */
-  if (G_LIKELY (target_path != NULL && file_parent != NULL))
-    target_gfile = g_file_resolve_relative_path (file_parent, target_path);
-
-  /* free allocated resources */
-  if (G_LIKELY (file_parent != NULL))
-    g_object_unref (file_parent);
-  g_object_unref (info);
-
-  return target_gfile;
+  target = g_file_resolve_relative_path (parent, basename);
+  g_object_unref (parent);
+  g_free (basename);
+  return target;
 }
 
 
@@ -1435,43 +1409,6 @@ thunar_g_file_get_link_path_for_symlink (GFile *file_to_link,
 
 
 
-/**
- * thunar_g_file_get_resolved_path:
- * @file : #GFile for which the path will be resolved
- *
- * Gets the local pathname with resolved symlinks for GFile, if one exists.
- * If non-NULL, this is guaranteed to be an absolute, canonical path.
- *
- * This only will work if all components of the #GFile path actually do exist
- *
- * Return value: (nullable) (transfer full): A #gchar on success and %NULL on failure.
- * The returned string should be freed with g_free() when no longer needed.
- **/
-char*
-thunar_g_file_get_resolved_path (GFile *file)
-{
-  gchar *path;
-  gchar *real_path;
-
-  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
-
-  path = g_file_get_path (file);
-
-  /* No local path for file found */
-  if (path == NULL)
-    return NULL;
-
-  real_path = realpath (path, NULL);
-
-  if (real_path == NULL)
-    g_warning ("Failed to resolve path: '%s' Error: %s\n", path, strerror (errno));
-
-  g_free (path);
-  return real_path;
-}
-
-
-
 gboolean
 thunar_g_file_is_empty (GFile *file)
 {
@@ -1545,7 +1482,7 @@ thunar_g_file_get_content_type (GFile *gfile)
       is_symlink = g_file_info_get_attribute_boolean (info, G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK);
       if (is_symlink)
         {
-          GFile *link_target = thunar_g_file_new_for_symlink_target (gfile);
+          GFile *link_target = thunar_g_file_resolve_symlink (gfile);
           g_object_unref (info);
           info = NULL;
           if (link_target != NULL)

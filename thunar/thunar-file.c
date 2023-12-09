@@ -3003,7 +3003,7 @@ thunar_file_can_execute (ThunarFile *file,
 
   if (thunar_file_is_symlink (file))
     {
-      link_target = thunar_g_file_new_for_symlink_target (file->gfile);
+      link_target = thunar_g_file_resolve_symlink (file->gfile);
       if (link_target == NULL)
         return FALSE;
       file_to_check = thunar_file_get (link_target, NULL);

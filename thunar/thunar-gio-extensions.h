@@ -42,7 +42,7 @@ GFile       *thunar_g_file_new_for_computer         (void);
 GFile       *thunar_g_file_new_for_network          (void);
 GFile       *thunar_g_file_new_for_bookmarks        (void);
 
-GFile       *thunar_g_file_new_for_symlink_target   (GFile                *file);
+GFile       *thunar_g_file_resolve_symlink          (GFile                *file);
 
 gboolean     thunar_g_file_is_root                  (GFile                *file);
 gboolean     thunar_g_file_is_trashed               (GFile                *file);
@@ -132,7 +132,6 @@ gboolean     thunar_g_file_is_in_xdg_data_dir          (GFile             *file)
 gboolean     thunar_g_file_is_desktop_file             (GFile             *file);
 char        *thunar_g_file_get_link_path_for_symlink   (GFile             *file_to_link,
                                                         GFile             *symlink);
-char        *thunar_g_file_get_resolved_path           (GFile             *file);
 void         thunar_g_file_set_metadata_setting        (GFile             *file,
                                                         GFileInfo         *info,
                                                         ThunarGType        type,
