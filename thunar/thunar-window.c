@@ -5822,7 +5822,11 @@ thunar_window_selection_changed (ThunarWindow *window)
       if (state == THUNAR_FILE_THUMB_STATE_UNKNOWN)
         thunar_file_request_thumbnail (window->preview_image_file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
       else if (state == THUNAR_FILE_THUMB_STATE_READY)
-        window->preview_image_pixbuf = gdk_pixbuf_new_from_file (thunar_file_get_thumbnail_path (window->preview_image_file, THUNAR_THUMBNAIL_SIZE_XX_LARGE), NULL);
+        {
+          const gchar *thumbnail_path = thunar_file_get_thumbnail_path (window->preview_image_file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+          if (thumbnail_path != NULL)
+            window->preview_image_pixbuf = gdk_pixbuf_new_from_file (thumbnail_path, NULL);
+        }
 
       thunar_window_update_embedded_image_preview (window);
       thunar_window_update_standalone_image_preview (window);
