@@ -753,6 +753,20 @@ thunar_file_move_thumbnail_cache_file (GFile *old_file,
   thumbnail_cache = thunar_application_get_thumbnail_cache (application);
   thunar_thumbnail_cache_move_file (thumbnail_cache, old_file, new_file);
 
+  ThunarFile *file = thunar_file_get (new_file, NULL);
+
+  if(file ==NULL)
+    printf("thunar_file_move_thumbnail_cache_file - is NULL\n");
+  else
+    {
+      /* reset the thumbnail path of the file */
+      for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
+        {
+          g_free (file->thumbnail_path[i]);
+          file->thumbnail_path[i] = NULL;
+        }
+    }
+
   g_object_unref (thumbnail_cache);
   g_object_unref (application);
 }
