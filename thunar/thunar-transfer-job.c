@@ -1363,9 +1363,7 @@ thunar_transfer_job_move_file (ExoJob                *job,
       if (move_successful)
         {
           /* notify the thumbnail cache of the move operation */
-          thunar_thumbnail_cache_move_file (thumbnail_cache,
-                                            node->source_file,
-                                            tp->data);
+          thunar_file_move_thumbnail_cache_file (node->source_file, tp->data);
 
           /* add the target file to the new files list */
           *new_files_list_p = thunar_g_list_prepend_deep (*new_files_list_p, tp->data);
