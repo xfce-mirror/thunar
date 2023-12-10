@@ -74,6 +74,18 @@ G_STMT_START{                                                 \
 }G_STMT_END
 #endif
 
+/* support for the THUNAR_TREE_VIEW_MODEL */
+#define THUNAR_WARN_VOID_RETURN(expr)     \
+if (expr) {                               \
+  g_warn_if_reached();                    \
+  return;                                 \
+}
+#define THUNAR_WARN_RETURN_VAL(expr, val) \
+if (expr) {                               \
+  g_warn_if_reached();                    \
+  return val;                             \
+}
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_PRIVATE_H__ */
