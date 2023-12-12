@@ -707,8 +707,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
                        gpointer          user_data)
 {
   ThunarFolder *folder = THUNAR_FOLDER (user_data);
-  ThunarFile   *file = NULL;
-  ThunarFile   *file_in_map;
+  ThunarFile   *file = NULL, *event_thunar_file, *other_thunar_file;
   GList         list;
 
   _thunar_return_if_fail (G_IS_FILE_MONITOR (monitor));
