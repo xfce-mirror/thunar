@@ -1918,7 +1918,14 @@ thunar_application_rename_file (ThunarApplication      *application,
 
   if (thunar_file_is_desktop_file (file))
     {
-      response = thunar_dialog_show_rename_launcher_options (NULL);
+      response = xfce_message_dialog (NULL,
+                                      _("Rename Launcher Options"),
+                                      "dialog-question",
+                                      NULL,
+                                      _("Do you want to rename the launcher, or the file itself?"),
+                                      XFCE_BUTTON_TYPE_MIXED, NULL, _("Rename _Launcher"), THUNAR_RESPONSE_LAUNCHERNAME,
+                                      XFCE_BUTTON_TYPE_MIXED, NULL, _("Rename _File"), THUNAR_RESPONSE_FILENAME,
+                                      NULL);
       if (response == THUNAR_RESPONSE_LAUNCHERNAME)
         {
           thunar_dialog_show_launcher_props (file, screen);
