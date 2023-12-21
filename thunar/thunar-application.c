@@ -1923,8 +1923,8 @@ thunar_application_rename_file (ThunarApplication      *application,
                                       "dialog-question",
                                       NULL,
                                       _("Do you want to rename the launcher, or the file itself?"),
-                                      XFCE_BUTTON_TYPE_MIXED, NULL,_("Rename _Launcher"), THUNAR_RESPONSE_LAUNCHERNAME,
-                                      XFCE_BUTTON_TYPE_MIXED, NULL,_("Rename _File"), THUNAR_RESPONSE_FILENAME,
+                                      XFCE_BUTTON_TYPE_MIXED, NULL, _("Rename _Launcher"), THUNAR_RESPONSE_LAUNCHERNAME,
+                                      XFCE_BUTTON_TYPE_MIXED, NULL, _("Rename _File"), THUNAR_RESPONSE_FILENAME,
                                       NULL);
       if (response == THUNAR_RESPONSE_LAUNCHERNAME)
         {
