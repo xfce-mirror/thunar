@@ -1920,7 +1920,7 @@ thunar_application_rename_file (ThunarApplication      *application,
     {
       response = xfce_message_dialog (NULL,
                                       _("Rename Launcher Options"),
-                                      "gtk-dialog-question", /* same as GTK_STOCK_DIALOG_QUESTION to avoid deprecation warning */
+                                      "dialog-question",
                                       NULL,
                                       _("Do you want to rename the launcher, or the file itself?"),
                                       XFCE_BUTTON_TYPE_MIXED, NULL,_("Rename _Launcher"), THUNAR_RESPONSE_LAUNCHERNAME,
