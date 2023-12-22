@@ -1284,52 +1284,6 @@ thunar_dialog_confirm_close_split_pane_tabs (GtkWindow *parent)
 
 
 /**
- * thunar_dialog_show_rename_launcher_options:
- * @parent : a #GtkWidget on which the error dialog should be shown, or a #GdkScreen
- *           if no #GtkWidget is known. May also be %NULL, in which case the default
- *           #GdkScreen will be used.
- *
- * Shows a dialog where the user is asked if he wants to edit the launcher name or the actual filename.
- *
- * Return value: THUNAR_RESPONSE_FILENAME if the user chooses "Filename", THUNAR_RESPONSE_LAUNCHERNAME
- * if the user selects "Launchername" and GTK_RESPONSE_DELETE_EVENT if the user deletes the dialog.
- **/
-gint
-thunar_dialog_show_rename_launcher_options (GtkWindow *parent)
-{
-  gint       response;
-  GtkWidget *dialog;
-  GtkWidget *button;
-  
-  dialog = gtk_message_dialog_new (parent,
-                                   GTK_DIALOG_MODAL |
-                                   GTK_DIALOG_DESTROY_WITH_PARENT,
-                                   GTK_MESSAGE_QUESTION,
-                                   GTK_BUTTONS_NONE,
-                                   "%s", _("Do you want to rename the launcher, or the file itself?"));
-  
-  gtk_window_set_title (GTK_WINDOW (dialog), _("Rename Launcher Options"));
-  
-  button = gtk_button_new_with_mnemonic (_("Rename _File"));
-  gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, THUNAR_RESPONSE_FILENAME);
-  gtk_widget_show (button);
-  
-  button = gtk_button_new_with_mnemonic (_("Rename _Launcher"));
-  gtk_widget_set_can_default (button, TRUE);
-  gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, THUNAR_RESPONSE_LAUNCHERNAME);
-  gtk_widget_show (button);
-  gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_RESPONSE_LAUNCHERNAME);
-  
-  /* run the question dialog */
-  response = gtk_dialog_run (GTK_DIALOG (dialog));
-  gtk_widget_destroy (dialog);
-
-  return response;
-}
-
-
-
-/**
  * thunar_dialog_ask_execute:
  * @file        : a #ThunarFile pointer
  * @parent      : a #GtkWidget on which the error dialog should be shown, or a #GdkScreen
