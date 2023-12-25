@@ -1008,7 +1008,6 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   g_object_ref_sink (G_OBJECT (standard_view->icon_renderer));
   g_object_bind_property (G_OBJECT (standard_view), "zoom-level", G_OBJECT (standard_view->icon_renderer), "size", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-highlighting-enabled", G_OBJECT (standard_view->icon_renderer), "highlighting-enabled", G_BINDING_SYNC_CREATE);
-  g_object_bind_property (G_OBJECT (standard_view->preferences), "last-image-preview-visible", G_OBJECT (standard_view->icon_renderer), "image-preview-enabled", G_BINDING_SYNC_CREATE);
   g_signal_connect (G_OBJECT (standard_view), "notify::scale-factor", G_CALLBACK (thunar_standard_view_scale_changed), NULL);
 
   /* setup the name renderer */
