@@ -52,7 +52,6 @@ struct _ThunarIconRenderer
   gchar         *highlight_color;
   gboolean       rounded_corners;
   gboolean       highlighting_enabled;
-  gboolean       image_preview_enabled;
   gboolean       use_symbolic_icons;
 };
 

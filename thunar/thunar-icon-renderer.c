@@ -40,7 +40,6 @@ enum
   PROP_HIGHLIGHT_COLOR,
   PROP_ROUNDED_CORNERS,
   PROP_HIGHLIGHTING_ENABLED,
-  PROP_IMAGE_PREVIEW_ENABLED,
   PROP_USE_SYMBOLIC_ICONS,
 };
 
@@ -206,17 +205,6 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
-   * ThunarIconRenderer:image-preview-enabled:
-   *
-   * Determines if as well xxl-thumbnails should be requested
-   **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_IMAGE_PREVIEW_ENABLED,
-                                   g_param_spec_boolean ("image-preview-enabled", "image-preview-enabled", "image-preview-enabled",
-                                                         FALSE,
-                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-
-  /**
    * ThunarIconRenderer:use_symbolic_icons:
    *
    * Whether to use symbolic icons.
@@ -300,10 +288,6 @@ thunar_icon_renderer_get_property (GObject    *object,
       g_value_set_boolean (value, icon_renderer->highlighting_enabled);
       break;
 
-    case PROP_IMAGE_PREVIEW_ENABLED:
-      g_value_set_boolean (value, icon_renderer->highlighting_enabled);
-      break;
-
     case PROP_USE_SYMBOLIC_ICONS:
       g_value_set_boolean (value, icon_renderer->use_symbolic_icons);
       break;
@@ -361,10 +345,6 @@ thunar_icon_renderer_set_property (GObject      *object,
 
     case PROP_HIGHLIGHTING_ENABLED:
       icon_renderer->highlighting_enabled = g_value_get_boolean (value);
-      break;
-
-    case PROP_IMAGE_PREVIEW_ENABLED:
-      icon_renderer->image_preview_enabled = g_value_get_boolean (value);
       break;
 
     case PROP_USE_SYMBOLIC_ICONS:
@@ -538,16 +518,11 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   /* load the main icon */
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-
   scale_factor = gtk_widget_get_scale_factor (widget);
 
   /* load thumbnail for supported file type */
   if (thunar_icon_factory_get_show_thumbnail (icon_factory, icon_renderer->file))
     thunar_file_request_thumbnail (icon_renderer->file, thunar_icon_size_to_thumbnail_size (icon_renderer->size * scale_factor));
-
-  /* load additional thumbnail for image preview */
-  if (icon_renderer->image_preview_enabled)
-    thunar_file_request_thumbnail (icon_renderer->file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
 
   /* get style context for symbolic icon */
   if (icon_renderer->use_symbolic_icons)
@@ -556,6 +531,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   icon = thunar_icon_factory_load_file_icon (icon_factory, icon_renderer->file, icon_state,
                                              icon_renderer->size, scale_factor,
                                              icon_renderer->use_symbolic_icons, context);
+
   if (G_UNLIKELY (icon == NULL))
     {
       g_object_unref (G_OBJECT (icon_factory));
