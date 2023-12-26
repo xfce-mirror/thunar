@@ -2306,10 +2306,11 @@ thunar_tree_view_model_locate_file (ThunarTreeViewModel *model,
 
   parent = thunar_file_get_parent (file, NULL);
 
-  if (!g_hash_table_contains (model->subdirs, parent))
+  if (parent == NULL || !g_hash_table_contains (model->subdirs, parent))
     return NULL;
 
   parent_node = g_hash_table_lookup (model->subdirs, parent);
+  g_object_unref (parent);
   THUNAR_WARN_RETURN_VAL (parent_node == NULL, NULL);
 
   if (!g_hash_table_contains (parent_node->set, file))
@@ -2319,6 +2320,33 @@ thunar_tree_view_model_locate_file (ThunarTreeViewModel *model,
   THUNAR_WARN_RETURN_VAL (iter == NULL, NULL);
 
   return g_sequence_get (iter);
+}
+
+
+
+static Node *
+thunar_tree_view_model_locate_parent (ThunarTreeViewModel *model,
+                                      ThunarFile          *file)
+{
+  ThunarFile    *parent;
+  Node          *parent_node;
+
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  if (!thunar_file_has_parent (file))
+    return NULL;
+
+  parent = thunar_file_get_parent (file, NULL);
+
+  if (parent == NULL || !g_hash_table_contains (model->subdirs, parent))
+    return NULL;
+
+  parent_node = g_hash_table_lookup (model->subdirs, parent);
+  g_object_unref (parent);
+  THUNAR_WARN_RETURN_VAL (parent_node == NULL, NULL);
+
+  return parent_node;
 }
 
 
@@ -2711,7 +2739,7 @@ thunar_tree_view_model_file_changed (ThunarFileMonitor   *monitor,
   GSequenceIter *iter;
   GtkTreeIter    tree_iter;
   GtkTreePath   *path;
-  Node          *node;
+  Node          *node, *parent;
   gint           pos_after, pos_before = 0;
   gint          *new_order;
   gint           length;
@@ -2720,7 +2748,30 @@ thunar_tree_view_model_file_changed (ThunarFileMonitor   *monitor,
   node = thunar_tree_view_model_locate_file (model, file);
 
   if (node == NULL)
-    return;
+    {
+      parent = thunar_tree_view_model_locate_parent (model, file);
+
+      if (parent == NULL)
+        return;
+
+      /* two cases - file is hidden or not
+       * 1. if it is in hidden list but not hidden anymore then add the new file
+       * 2. if it is not hidden but has turned hidden hide it */
+      if (g_hash_table_contains (parent->hidden_files, file) && !thunar_file_is_hidden (file))
+        {
+          thunar_tree_view_model_dir_add_file (parent, file);
+          return;
+        }
+
+      if (g_hash_table_contains (parent->set, file) && thunar_file_is_hidden (file))
+        {
+          thunar_tree_view_model_dir_remove_file (parent, file);
+          g_hash_table_add (parent->hidden_files, g_object_ref (file));
+          return;
+        }
+
+      return;
+    }
 
   if (thunar_file_is_hidden (file))
     {
