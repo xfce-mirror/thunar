@@ -585,6 +585,8 @@ thunar_abstract_icon_view_key_press_event (ExoIconView            *view,
                                            GdkEventKey            *event,
                                            ThunarAbstractIconView *abstract_icon_view)
 {
+  GtkTreePath *path;
+
   abstract_icon_view->priv->button_pressed = FALSE;
 
   /* popup context menu if "Menu" or "<Shift>F10" is pressed */
@@ -594,6 +596,44 @@ thunar_abstract_icon_view_key_press_event (ExoIconView            *view,
       return TRUE;
     }
 
+  if (exo_icon_view_get_cursor (view, &path, NULL))
+    {
+      GtkTreeModel *model = THUNAR_STANDARD_VIEW (abstract_icon_view)->model;
+      GtkTreeIter   iter;
+      ThunarFile   *file = NULL;
+
+      switch (event->keyval)
+        {
+          case GDK_KEY_Left:
+          case GDK_KEY_KP_Left:
+            /* preload next thumbnail for image preview */
+            if (gtk_tree_model_get_iter (model, &iter, path))
+              {
+                if (gtk_tree_model_iter_previous (model, &iter) && gtk_tree_model_iter_previous (model, &iter))
+                  {
+                    gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE, &file, -1);
+                    if (file != NULL)
+                      thunar_file_request_thumbnail (file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+                  }
+              }
+            break;
+          case GDK_KEY_Right:
+          case GDK_KEY_KP_Right:
+            /* preload next thumbnail for image preview */
+            if (gtk_tree_model_get_iter (model, &iter, path))
+              {
+                if (gtk_tree_model_iter_next (model, &iter) && gtk_tree_model_iter_next (model, &iter))
+                  {
+                    gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE, &file, -1);
+                    if (file != NULL)
+                      thunar_file_request_thumbnail (file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+                  }
+              }
+            break;
+        }
+
+      gtk_tree_path_free (path);
+    }
   return FALSE;
 }
 
