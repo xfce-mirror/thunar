@@ -1108,10 +1108,6 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
       return TRUE;
     }
 
-  /* don't allow keyboard nav for tree-view if tree-view isn't allowed */
-  if (details_view->expandable_folders == FALSE)
-    return FALSE;
-
   /* Get path of currently highlighted item */
   gtk_tree_view_get_cursor(tree_view, &path, NULL);
 
@@ -1122,18 +1118,53 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
     {
     case GDK_KEY_Up:
     case GDK_KEY_KP_Up:
+      /* preload next thumbnail for image preview */
+      if (gtk_tree_model_get_iter (model, &iter, path))
+        {
+          if (gtk_tree_model_iter_previous (model, &iter) && gtk_tree_model_iter_previous (model, &iter))
+            {
+              gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE, &file, -1);
+              if (file != NULL)
+                thunar_file_request_thumbnail (file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+            }
+        }
+
+      /* don't allow keyboard nav for tree-view if tree-view isn't allowed */
+      if (details_view->expandable_folders == FALSE)
+        break;
+
       thunar_details_view_key_up_set_cursor (tree_view, model, path);
       stopPropagation = TRUE;
       break;
 
     case GDK_KEY_Down:
     case GDK_KEY_KP_Down:
+      /* preload next thumbnail for image preview */
+      if (gtk_tree_model_get_iter (model, &iter, path))
+        {
+          if (gtk_tree_model_iter_next (model, &iter) && gtk_tree_model_iter_next (model, &iter))
+            {
+              gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE, &file, -1);
+              if (file != NULL)
+                thunar_file_request_thumbnail (file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+            }
+        }
+
+      /* don't allow keyboard nav for tree-view if tree-view isn't allowed */
+      if (details_view->expandable_folders == FALSE)
+        break;
+
       thunar_details_view_key_down_set_cursor (tree_view, model, path);
       stopPropagation = TRUE;
       break;
 
     case GDK_KEY_Left:
     case GDK_KEY_KP_Left:
+
+      /* don't allow keyboard nav for tree-view if tree-view isn't allowed */
+      if (details_view->expandable_folders == FALSE)
+        break;
+
       /* if branch is expanded then collapse it */
       if (gtk_tree_view_row_expanded (tree_view, path))
         {
@@ -1153,6 +1184,11 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
 
     case GDK_KEY_Right:
     case GDK_KEY_KP_Right:
+
+      /* don't allow keyboard nav for tree-view if tree-view isn't allowed */
+      if (details_view->expandable_folders == FALSE)
+        break;
+
       /* if branch is not expanded then expand it */
       if (!gtk_tree_view_row_expanded (tree_view, path))
         {
