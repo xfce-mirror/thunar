@@ -1415,6 +1415,9 @@ thunar_list_model_file_changed (ThunarFileMonitor *file_monitor,
   gint           i, j;
   GtkTreePath   *path;
   GtkTreeIter    iter;
+  gboolean       found = FALSE;
+  GList          node;
+  GSList        *hidden_link = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor) || file_monitor == NULL);
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
@@ -1427,6 +1430,23 @@ thunar_list_model_file_changed (ThunarFileMonitor *file_monitor,
     {
       if (G_UNLIKELY (g_sequence_get (row) == file))
         {
+          found = TRUE;
+
+          /* this file is hidden now & show_hidden is FALSE
+           * so we should remove this file from the view and store
+           * it in the hidden list */
+          if (thunar_file_is_hidden (file) && !store->show_hidden)
+            {
+              hidden_link = g_slist_find (store->hidden, file);
+              if (hidden_link == NULL)
+                store->hidden = g_slist_prepend (store->hidden, g_object_ref (file));
+              node.data = file;
+              node.next = NULL;
+              node.prev = NULL;
+              thunar_list_model_files_removed (store->folder, &node, store);
+              return;
+            }
+
           /* generate the iterator for this row */
           GTK_TREE_ITER_INIT (iter, store->stamp, row);
 
@@ -1481,6 +1501,22 @@ thunar_list_model_file_changed (ThunarFileMonitor *file_monitor,
       row = g_sequence_iter_next (row);
       pos_before++;
     }
+
+  if (found)
+    return;
+
+  /* maybe this file was a hidden file but now it's not
+   * in such a case we need to emit a "files-added" for this file
+   * and remove it from the hidden list */
+  hidden_link = g_slist_find (store->hidden, file);
+  if (hidden_link == NULL || thunar_file_is_hidden (file))
+    return;
+  g_object_unref (hidden_link->data);
+  store->hidden = g_slist_delete_link (store->hidden, hidden_link);
+  node.data = file;
+  node.next = NULL;
+  node.prev = NULL;
+  thunar_list_model_files_added (store->folder, &node, store);
 }
 
 
