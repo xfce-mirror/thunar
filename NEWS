@@ -1,3 +1,50 @@
+4.19.1 (2023-12-28)
+======
+- Properly handle renaming of hidden files (#1259)
+- Use libxfce4ui API to create dialog when renaming launchers
+- Dont copy/move thumbnails for symlink which are copied/moved
+- Use ThunarFile as key instead of gFile (#1231)
+- Replace g_assert statements in tree-view-model
+- Remove configure~
+- Use g_file_get_basename over realpath (#1030)
+- Fix and simplify symlink resolver (#1260)
+- Fix thumbnailer symlink support (#1260)
+- Use file-monitor for thumb-updated signal (#1229)
+- Make sure parent exists before usage (#1256)
+- Use "g_signal_handlers_disconnect_by_data"
+- Fix reference counting for thumbnailer and proxy
+- Restart thumbnailer proxy after failure (#1252)
+- Prevent GLib GIO CRITICAL (#1204)
+- Preload image-preview thumbnails
+- Minor image-preview fixes
+- Unify way to request thumbnails for preview (#949)
+- Request thumbnails in replace dialog (#737)
+- Thumbnailer: Agregate requests and make use of READY signal
+- Thumbnailer: Simplify loading logic
+- Thumbnailer: Dont process ready/error in 'idle'
+- Thumbnailer: Always provide a request id
+- Thumbnailer: Remove unused "lazy" flag
+- prefs-dialog: Fix xfce_titled_dialog_create_action_area deprecation
+- standard-view: Reset drag data in one place
+- Allow to use stringv type via get_metadata_setting
+- Usage of io-jobs to set emblems (#892)
+- Dont force "thunar" prefix for metadata
+- Allow to use stringv type via set_metadata_setting
+- Improve UCA parameter description (#1235)
+- Prevent reload loop when thumnailing fails (#1225)
+- Bump min exo version to 4.19,0 (#1226)
+- Translation Updates:
+  Albanian, Arabic, Armenian, Armenian (Armenia), Asturian, Basque,
+  Bengali, Bulgarian, Chinese (China), Chinese (Hong Kong), Chinese
+  (Taiwan), Czech, Danish, Dutch, Eastern Armenian, English
+  (Australia), English (United Kingdom), Esperanto, Estonian, Finnish,
+  French, Galician, German, Greek, Hebrew, Hungarian, Icelandic,
+  Interlingue, Italian, Japanese, Kazakh, Latvian, Malay, Norwegian
+  Bokmål, Norwegian Nynorsk, Occitan (post 1500), Persian (Iran),
+  Polish, Portuguese, Portuguese (Brazil), Romanian, Serbian, Slovak,
+  Spanish, Swedish, Telugu, Thai, Turkish, Urdu, Urdu (Pakistan),
+  Uyghur, Vietnamese
+
 4.19.0 (2023-10-10)
 ======
 - thunar-settings: Let Thunar guess the right display to use
