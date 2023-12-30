@@ -3016,7 +3016,12 @@ thunar_file_can_execute (ThunarFile *file)
       link_target = thunar_g_file_resolve_symlink (file->gfile);
       if (link_target == NULL)
         return FALSE;
-      file_to_check = thunar_file_get (link_target, NULL);
+
+      if (g_file_equal (link_target, file->gfile))
+        file_to_check = g_object_ref (file);
+      else
+        file_to_check = thunar_file_get (link_target, NULL);
+
       g_object_unref (link_target);
       if (file_to_check == NULL)
         return FALSE;
