@@ -2230,8 +2230,10 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
                             G_CALLBACK (thunar_window_selection_changed), window);
 
   /* remember the last view type if directory specific settings are not enabled */
-  if (!window->directory_specific_settings && window->view_type != G_TYPE_NONE)
-    g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (window->view_type), NULL);
+  if (!window->directory_specific_settings &&
+      !window->is_searching &&
+       window->view_type != G_TYPE_NONE)
+     g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (window->view_type), NULL);
 
   /* connect to the new history */
   history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (window->view));
@@ -3245,6 +3247,7 @@ thunar_window_start_open_location (ThunarWindow *window,
       GType view_type;
       /* workaround the slowness of ExoIconView */
       view_type = window->view_type;
+      window->is_searching = TRUE;
       thunar_window_action_detailed_view (window);
       thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), view_type); /* save it in the new view */
 
@@ -3258,7 +3261,6 @@ thunar_window_start_open_location (ThunarWindow *window,
       thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text, FALSE);
 
       thunar_window_update_search (window);
-      window->is_searching = TRUE;
       thunar_action_manager_set_searching (window->action_mgr, TRUE);
 
       /* the check is useless as long as the workaround is in place */
@@ -4120,6 +4122,14 @@ thunar_window_replace_view (ThunarWindow *window,
   /* if we are replacing the active view, make the new view the active view */
   if (is_current_view)
     {
+      /* remember the last view type if this is the active view and directory specific settings are not enabled */
+      if (!window->directory_specific_settings &&
+          !window->is_searching &&
+          gtk_widget_get_visible (GTK_WIDGET (window)) &&
+          view_type != G_TYPE_NONE)
+        g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (view_type), NULL);
+
+
       /* switch to the new view */
       page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), new_view);
       thunar_window_notebook_set_current_tab (window, page_num);
@@ -4139,10 +4149,6 @@ thunar_window_replace_view (ThunarWindow *window,
   /* restore the file selection */
   thunar_component_set_selected_files (THUNAR_COMPONENT (new_view), selected_thunar_files);
   thunar_g_list_free_full (selected_thunar_files);
-
-  /* remember the last view type if this is the active view and directory specific settings are not enabled */
-  if (is_current_view && !window->directory_specific_settings && gtk_widget_get_visible (GTK_WIDGET (window)) && view_type != G_TYPE_NONE)
-    g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (view_type), NULL);
 
   /* release the file references */
   if (G_UNLIKELY (file != NULL))
@@ -5119,7 +5125,9 @@ thunar_window_set_directory_specific_settings (ThunarWindow *window,
       g_free (type_name);
 
       /* set the last view type */
-      if (!g_type_is_a (view_type, G_TYPE_NONE) && !g_type_is_a (view_type, G_TYPE_INVALID))
+      if (!g_type_is_a (view_type, G_TYPE_NONE) &&
+          !g_type_is_a (view_type, G_TYPE_INVALID) &&
+          !window->is_searching)
         g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (view_type), NULL);
     }
 
@@ -5220,7 +5228,9 @@ thunar_window_set_current_directory (ThunarWindow *window,
           g_free (type_name);
 
           /* set the last view type to the default view type if there is a default view type */
-          if (!g_type_is_a (type, G_TYPE_NONE) && !g_type_is_a (type, G_TYPE_INVALID))
+          if (!g_type_is_a (type, G_TYPE_NONE) &&
+              !g_type_is_a (type, G_TYPE_INVALID) &&
+              !window->is_searching)
             g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (type), NULL);
         }
 
