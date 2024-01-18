@@ -137,7 +137,9 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   gtk_widget_show (vbox);
 
   /* create the top label for the toolbar editor dialog */
-  label = gtk_label_new (_("Configure the order and visibility of toolbar items."));
+  label = gtk_label_new (_("Configure the order and visibility of toolbar items.\n"
+                           "Note that toolbar items are always executed for the current directory."));
+  gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_widget_set_hexpand (label, TRUE);
   gtk_widget_set_vexpand (label, FALSE);
