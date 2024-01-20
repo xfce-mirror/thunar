@@ -805,9 +805,13 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
   /* if the user clicked on a row with the left button */
   if (path != NULL && event->type == GDK_BUTTON_PRESS && event->button == 1)
     {
-      GtkTreePath       *cursor_path;
+      GtkTreePath *cursor_path;
+      gboolean     image_preview_enabled;
 
       details_view->button_pressed = TRUE;
+
+      g_object_get (THUNAR_STANDARD_VIEW (details_view)->preferences,
+                    "last-image-preview-visible", &image_preview_enabled, NULL);
 
       /* find out if the expander was clicked;
        * only needed if expandable folders is enabled */
@@ -823,6 +827,26 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
             on_expander = (event->x <= edge_to_expander_region_width);
           else
             on_expander = (rect.width - event->x <= edge_to_expander_region_width);
+        }
+
+      /* preload next and previous thumbnail for image preview */
+      if (image_preview_enabled && gtk_tree_model_get_iter (model, &iter, path))
+        {
+          if (gtk_tree_model_iter_previous (model, &iter))
+            {
+              gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE, &file, -1);
+              if (file != NULL)
+                thunar_file_request_thumbnail (file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+            }
+        }
+      if (image_preview_enabled && gtk_tree_model_get_iter (model, &iter, path))
+        {
+          if (gtk_tree_model_iter_next (model, &iter))
+            {
+              gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE, &file, -1);
+              if (file != NULL)
+                thunar_file_request_thumbnail (file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+            }
         }
 
       /* grab the tree view */
@@ -877,8 +901,9 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
               /* return FALSE to not abort dragging; when row was selected */
               return !row_selected;
             }
-          gtk_tree_path_free (path);
         }
+
+      gtk_tree_path_free (path);
     }
 
   /* open the context menu on right clicks */
@@ -1098,8 +1123,12 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
   GtkTreeModel     *model = gtk_tree_view_get_model (tree_view);
   GtkTreeIter       iter;
   ThunarFile       *file = NULL;
+  gboolean          image_preview_enabled;
 
   details_view->button_pressed = FALSE;
+
+  g_object_get (THUNAR_STANDARD_VIEW (details_view)->preferences,
+                "last-image-preview-visible", &image_preview_enabled, NULL);
 
   /* popup context menu if "Menu" or "<Shift>F10" is pressed */
   if (event->keyval == GDK_KEY_Menu || ((event->state & GDK_SHIFT_MASK) != 0 && event->keyval == GDK_KEY_F10))
@@ -1107,10 +1136,6 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
       thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (details_view));
       return TRUE;
     }
-
-  /* don't allow keyboard nav for tree-view if tree-view isn't allowed */
-  if (details_view->expandable_folders == FALSE)
-    return FALSE;
 
   /* Get path of currently highlighted item */
   gtk_tree_view_get_cursor(tree_view, &path, NULL);
@@ -1122,18 +1147,53 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
     {
     case GDK_KEY_Up:
     case GDK_KEY_KP_Up:
+      /* preload next thumbnail for image preview */
+      if (image_preview_enabled && gtk_tree_model_get_iter (model, &iter, path))
+        {
+          if (gtk_tree_model_iter_previous (model, &iter) && gtk_tree_model_iter_previous (model, &iter))
+            {
+              gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE, &file, -1);
+              if (file != NULL)
+                thunar_file_request_thumbnail (file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+            }
+        }
+
+      /* don't allow keyboard nav for tree-view if tree-view isn't allowed */
+      if (details_view->expandable_folders == FALSE)
+        break;
+
       thunar_details_view_key_up_set_cursor (tree_view, model, path);
       stopPropagation = TRUE;
       break;
 
     case GDK_KEY_Down:
     case GDK_KEY_KP_Down:
+      /* preload next thumbnail for image preview */
+      if (image_preview_enabled && gtk_tree_model_get_iter (model, &iter, path))
+        {
+          if (gtk_tree_model_iter_next (model, &iter) && gtk_tree_model_iter_next (model, &iter))
+            {
+              gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE, &file, -1);
+              if (file != NULL)
+                thunar_file_request_thumbnail (file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+            }
+        }
+
+      /* don't allow keyboard nav for tree-view if tree-view isn't allowed */
+      if (details_view->expandable_folders == FALSE)
+        break;
+
       thunar_details_view_key_down_set_cursor (tree_view, model, path);
       stopPropagation = TRUE;
       break;
 
     case GDK_KEY_Left:
     case GDK_KEY_KP_Left:
+
+      /* don't allow keyboard nav for tree-view if tree-view isn't allowed */
+      if (details_view->expandable_folders == FALSE)
+        break;
+
       /* if branch is expanded then collapse it */
       if (gtk_tree_view_row_expanded (tree_view, path))
         {
@@ -1153,6 +1213,11 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
 
     case GDK_KEY_Right:
     case GDK_KEY_KP_Right:
+
+      /* don't allow keyboard nav for tree-view if tree-view isn't allowed */
+      if (details_view->expandable_folders == FALSE)
+        break;
+
       /* if branch is not expanded then expand it */
       if (!gtk_tree_view_row_expanded (tree_view, path))
         {
