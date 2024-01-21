@@ -370,6 +370,7 @@ void              thunar_file_request_thumbnail                 (ThunarFile     
 void              thunar_file_update_thumbnail                  (ThunarFile          *file,
                                                                  ThunarFileThumbState state,
                                                                  ThunarThumbnailSize  size);
+void              thunar_file_changed                           (ThunarFile          *file);  
 
 /**
  * thunar_file_is_root:
@@ -413,19 +414,6 @@ void              thunar_file_update_thumbnail                  (ThunarFile     
  * Return value: TRUE, if the schemes match, FALSE otherwise.
  **/
 #define thunar_file_has_uri_scheme(file, uri_scheme) (g_file_has_uri_scheme (thunar_file_get_file (file), (uri_scheme)))
-
-/**
- * thunar_file_changed:
- * @file : a #ThunarFile instance.
- *
- * Emits the ::changed signal on @file. This function is meant to be called
- * by derived classes whenever they notice changes to the @file.
- **/
-#define thunar_file_changed(file)                         \
-G_STMT_START{                                             \
-  thunarx_file_info_changed (THUNARX_FILE_INFO ((file))); \
-}G_STMT_END
-
 
 G_END_DECLS;
 
