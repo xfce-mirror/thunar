@@ -1368,7 +1368,7 @@ thunar_preferences_get_property (GObject    *object,
       if (G_VALUE_TYPE (value) == G_VALUE_TYPE (&src))
         g_value_copy (&src, value);
       else if (!g_value_transform (&src, value))
-        g_printerr ("Thunar: Failed to transform property %s\n", prop_name);
+        g_warning ("Thunar: Failed to transform property %s", prop_name);
       g_value_unset (&src);
     }
   else

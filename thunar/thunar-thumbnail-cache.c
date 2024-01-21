@@ -155,7 +155,7 @@ thunar_thumbnail_cache_copy_async_reply (ThunarThumbnailCacheDBus *proxy,
 
   if (!thunar_thumbnail_cache_dbus_call_copy_finish (proxy, res, &error))
     {
-      g_printerr ("ThunarThumbnailCache: failed to call Copy(): %s\n", error->message);
+      g_warning ("ThunarThumbnailCache: failed to call Copy(): %s", error->message);
     }
   g_clear_error (&error);
 
@@ -189,7 +189,7 @@ thunar_thumbnail_cache_move_async_reply (ThunarThumbnailCacheDBus *proxy,
 
   if (!thunar_thumbnail_cache_dbus_call_move_finish (proxy, res, &error))
     {
-      g_printerr ("ThunarThumbnailCache: failed to call Move(): %s\n", error->message);
+      g_warning ("ThunarThumbnailCache: failed to call Move(): %s", error->message);
     }
   g_clear_error (&error);
 
@@ -741,7 +741,7 @@ thunar_thumbnail_cache_proxy_created (GObject      *source,
     {
       cache->proxy_state = THUNAR_THUMBNAIL_CACHE_PROXY_FAILED;
 
-      g_printerr ("ThunarThumbnailCache: Couldn't connect to bus service: %s\n", error->message);
+      g_warning ("ThunarThumbnailCache: Couldn't connect to bus service: %s", error->message);
     }
 
   g_clear_error (&error);

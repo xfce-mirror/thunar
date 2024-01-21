@@ -364,7 +364,7 @@ thunar_thumbnailer_queue_async_reply (GObject      *proxy,
     {
       if (handle == 0)
         {
-          g_printerr ("ThunarThumbnailer: got 0 handle (Queue)\n");
+          g_warning ("ThunarThumbnailer: got 0 handle (Queue)");
         }
       else
         {
@@ -374,7 +374,7 @@ thunar_thumbnailer_queue_async_reply (GObject      *proxy,
     }
   else
     {
-      g_printerr ("ThunarThumbnailer: Queue failed: %s\n", error->message);
+      g_warning ("ThunarThumbnailer: Queue failed: %s", error->message);
     }
 
   _thumbnailer_unlock (thumbnailer);
@@ -654,7 +654,7 @@ thunar_thumbnailer_received_supported_types (ThunarThumbnailerDBus  *proxy,
       g_slist_free_full (thumbnailer->jobs, (GDestroyNotify)thunar_thumbnailer_free_job);
       thumbnailer->jobs = NULL;
 
-      g_printerr ("ThunarThumbnailer: Failed to retrieve supported types: %s\n", error->message);
+      g_warning ("ThunarThumbnailer: Failed to retrieve supported types: %s", error->message);
       g_clear_error (&error);
 
       thumbnailer->proxy_state = THUNAR_THUMBNAILER_PROXY_FAILED;
@@ -736,7 +736,7 @@ thunar_thumbnailer_proxy_created (GObject       *object,
       _thumbnailer_lock (thumbnailer);
 
       thumbnailer->proxy_state = THUNAR_THUMBNAILER_PROXY_FAILED;
-      g_printerr ("ThunarThumbnailer: failed to create proxy: %s", error->message);
+      g_warning ("ThunarThumbnailer: failed to create proxy: %s", error->message);
       g_clear_error (&error);
 
       g_slist_free_full (thumbnailer->jobs, (GDestroyNotify)thunar_thumbnailer_free_job);
@@ -957,7 +957,7 @@ thunar_thumbnailer_thumbnailer_finished (GDBusProxy        *proxy,
 
   if (handle == 0)
     {
-      g_printerr ("ThunarThumbnailer: got 0 handle (Finished)\n");
+      g_warning ("ThunarThumbnailer: got 0 handle (Finished)");
       return;
     }
 

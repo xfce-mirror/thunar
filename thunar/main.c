@@ -66,7 +66,7 @@ main (int argc, char **argv)
   /* initialize xfconf */
   if (!xfconf_init (&error))
     {
-      g_printerr (PACKAGE_NAME ": Failed to initialize Xfconf: %s\n\n", error->message);
+      g_warning (PACKAGE_NAME ": Failed to initialize Xfconf: %s", error->message);
       g_clear_error (&error);
 
       /* disable get/set properties */
