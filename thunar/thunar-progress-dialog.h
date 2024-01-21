@@ -45,6 +45,7 @@ void       thunar_progress_dialog_add_job   (ThunarProgressDialog *dialog,
                                              const gchar          *icon_name,
                                              const gchar          *title);
 gboolean   thunar_progress_dialog_has_jobs  (ThunarProgressDialog *dialog);
+guint      thunar_progress_dialog_n_jobs    (ThunarProgressDialog *dialog);
 
 G_END_DECLS;
 

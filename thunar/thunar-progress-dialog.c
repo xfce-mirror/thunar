@@ -425,3 +425,13 @@ thunar_progress_dialog_has_jobs (ThunarProgressDialog *dialog)
 
   return has_jobs;
 }
+
+
+
+guint
+thunar_progress_dialog_n_jobs  (ThunarProgressDialog *dialog)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog), FALSE);
+
+  return g_list_length (dialog->views) + g_list_length (dialog->views_waiting);
+}

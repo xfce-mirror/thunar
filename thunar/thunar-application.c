@@ -172,8 +172,8 @@ static void           thunar_application_volman_watch           (GPid           
                                                                  gpointer                user_data);
 static void           thunar_application_volman_watch_destroy   (gpointer                user_data);
 #endif
-static gboolean       thunar_application_show_dialogs           (gpointer                user_data);
-static void           thunar_application_show_dialogs_destroy   (gpointer                user_data);
+static gboolean       thunar_application_show_progress_dialog_timeout         (gpointer                user_data);
+static void           thunar_application_show_progress_dialog_timeout_destroy (gpointer                user_data);
 static GtkWidget     *thunar_application_get_progress_dialog    (ThunarApplication      *application);
 static void           thunar_application_process_files          (ThunarApplication      *application);
 
@@ -204,7 +204,8 @@ struct _ThunarApplication
   guint                           accel_map_save_id;
   GtkAccelMap                    *accel_map;
 
-  guint                           show_dialogs_timer_id;
+  guint                           show_progress_dialog_n_jobs_before;
+  guint                           show_progress_dialog_timer_id;
 
 #ifdef HAVE_GUDEV
   GUdevClient                    *udev_client;
@@ -425,8 +426,8 @@ thunar_application_shutdown (GApplication *gapp)
 #endif
 
   /* drop any running "show dialogs" timer */
-  if (G_UNLIKELY (application->show_dialogs_timer_id != 0))
-    g_source_remove (application->show_dialogs_timer_id);
+  if (G_UNLIKELY (application->show_progress_dialog_timer_id != 0))
+    g_source_remove (application->show_progress_dialog_timer_id);
 
   /* drop ref on the thumbnailer */
   if (application->thumbnailer != NULL)
@@ -939,7 +940,6 @@ thunar_application_launch (ThunarApplication     *application,
   GdkScreen *screen;
   ThunarJob *job;
   GList     *parent_folder_list = NULL;
-  gboolean   has_jobs;
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
 
@@ -972,28 +972,20 @@ thunar_application_launch (ThunarApplication     *application,
   if (screen != NULL)
     gtk_window_set_screen (GTK_WINDOW (dialog), screen);
 
-  has_jobs = thunar_progress_dialog_has_jobs (THUNAR_PROGRESS_DIALOG (dialog));
+  application->show_progress_dialog_n_jobs_before = thunar_progress_dialog_n_jobs (THUNAR_PROGRESS_DIALOG (dialog));
 
   /* add the job to the dialog */
   thunar_progress_dialog_add_job (THUNAR_PROGRESS_DIALOG (dialog),
                                   job, icon_name, title);
 
-  if (has_jobs)
+  /* Set up a timer to show the dialog, to make sure we don't
+    * just popup and destroy a dialog for a very short job.
+    */
+  if (G_LIKELY (application->show_progress_dialog_timer_id == 0))
     {
-      /* show the dialog immediately */
-      thunar_application_show_dialogs (application);
-    }
-  else
-    {
-      /* Set up a timer to show the dialog, to make sure we don't
-       * just popup and destroy a dialog for a very short job.
-       */
-      if (G_LIKELY (application->show_dialogs_timer_id == 0))
-        {
-          application->show_dialogs_timer_id =
-            gdk_threads_add_timeout_full (G_PRIORITY_DEFAULT, 750, thunar_application_show_dialogs,
-                                          application, thunar_application_show_dialogs_destroy);
-        }
+      application->show_progress_dialog_timer_id =
+        gdk_threads_add_timeout_full (G_PRIORITY_DEFAULT, 500, thunar_application_show_progress_dialog_timeout,
+                                      application, thunar_application_show_progress_dialog_timeout_destroy);
     }
 
   /* drop our reference on the job */
@@ -1177,12 +1169,19 @@ thunar_application_volman_watch_destroy (gpointer user_data)
 
 
 static gboolean
-thunar_application_show_dialogs (gpointer user_data)
+thunar_application_show_progress_dialog_timeout (gpointer user_data)
 {
+  guint show_progress_dialog_n_jobs_now;
+
   ThunarApplication *application = THUNAR_APPLICATION (user_data);
 
-  /* show the progress dialog */
-  if (application->progress_dialog != NULL)
+  if (application->progress_dialog == NULL)
+    return FALSE;
+
+  show_progress_dialog_n_jobs_now = thunar_progress_dialog_n_jobs (THUNAR_PROGRESS_DIALOG (application->progress_dialog));
+
+  /* Only raise the dialog if the new job is still present after the timeout */
+  if (show_progress_dialog_n_jobs_now != application->show_progress_dialog_n_jobs_before)
     gtk_window_present (GTK_WINDOW (application->progress_dialog));
 
   return FALSE;
@@ -1191,9 +1190,9 @@ thunar_application_show_dialogs (gpointer user_data)
 
 
 static void
-thunar_application_show_dialogs_destroy (gpointer user_data)
+thunar_application_show_progress_dialog_timeout_destroy (gpointer user_data)
 {
-  THUNAR_APPLICATION (user_data)->show_dialogs_timer_id = 0;
+  THUNAR_APPLICATION (user_data)->show_progress_dialog_timer_id = 0;
 }
 
 
