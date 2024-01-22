@@ -1382,7 +1382,8 @@ thunar_window_update_view_menu (ThunarWindow *window,
   item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_MENU), G_OBJECT (window), GTK_MENU_SHELL (menu));
   sub_items =  gtk_menu_new();
   gtk_menu_set_accel_group (GTK_MENU (sub_items), window->accel_group);
-  g_object_get (window->preferences, "last-location-bar", &last_location_bar, NULL);
+  g_object_get (window->preferences, "last-location-bar", &last_location_bar,
+                                     "last-image-preview-visible", &image_preview_visible, NULL);
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_BUTTONS), G_OBJECT (window),
                                                    (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)) == 0), GTK_MENU_SHELL (sub_items));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_ENTRY), G_OBJECT (window),
@@ -1397,7 +1398,6 @@ thunar_window_update_view_menu (ThunarWindow *window,
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_TREE), G_OBJECT (window),
                                                    thunar_window_has_tree_view_sidepane (window), GTK_MENU_SHELL (sub_items));
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (sub_items));
-  image_preview_visible = gtk_widget_get_visible (window->right_pane_box) || gtk_widget_get_visible (window->sidepane_preview_image);
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_TOGGLE_IMAGE_PREVIEW), G_OBJECT (window),
                                                    image_preview_visible, GTK_MENU_SHELL (sub_items));
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (sub_items));
@@ -3772,9 +3772,8 @@ thunar_window_action_image_preview (ThunarWindow *window)
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  g_object_get (window->preferences, "misc-image-preview-mode", &misc_image_preview_mode, NULL);
-
-  image_preview_visible = gtk_widget_get_visible (window->right_pane_box) || gtk_widget_get_visible (window->sidepane_preview_image);
+  g_object_get (window->preferences, "misc-image-preview-mode", &misc_image_preview_mode, 
+                                     "last-image-preview-visible", &image_preview_visible, NULL);
 
   if (misc_image_preview_mode == THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED)
     {
