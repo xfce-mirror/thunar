@@ -56,7 +56,6 @@
 
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-file.h"
-#include "thunar/thunar-file-monitor.h"
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-tree-view-model.h"
 #include "thunar/thunar-preferences.h"
@@ -64,7 +63,6 @@
 #include "thunar/thunar-user.h"
 #include "thunar/thunar-simple-job.h"
 #include "thunar/thunar-util.h"
-#include "thunar/thunar-file-monitor.h"
 #include "thunar/thunar-io-jobs.h"
 #include "thunar/thunar-gio-extensions.h"
 
@@ -259,8 +257,7 @@ static void              thunar_tree_view_model_cleanup_model (ThunarTreeViewMod
 static void              thunar_tree_view_model_file_count_callback (ExoJob  *job,
                                                                      gpointer model);
 static void              thunar_tree_view_model_node_destroy (Node *node);
-static void              thunar_tree_view_model_file_changed (ThunarFileMonitor   *monitor,
-                                                              ThunarFile          *file,
+static void              thunar_tree_view_model_file_changed (ThunarFile          *file,
                                                               ThunarTreeViewModel *model);
 static void              thunar_tree_view_model_set_loading (ThunarTreeViewModel *model,
                                                              gboolean             loading);
@@ -298,8 +295,6 @@ struct _ThunarTreeViewModel
 
   Node                 *root;
   ThunarFolder         *dir;
-
-  ThunarFileMonitor    *monitor;
 
   /* Hashtable for quick access to all directories and sub-directories which are managed by this view
    * The key is the corresponding #ThunarFile of the directory, and the value is the #_Node of the directory */
@@ -502,10 +497,6 @@ thunar_tree_view_model_init (ThunarTreeViewModel *model)
   model->loading = 0;
 
   model->subdirs = g_hash_table_new (g_direct_hash, g_direct_equal);
-
-  model->monitor = thunar_file_monitor_get_default ();
-  g_signal_connect (G_OBJECT (model->monitor), "file-changed",
-                    G_CALLBACK (thunar_tree_view_model_file_changed), model);
 }
 
 
@@ -594,11 +585,6 @@ thunar_tree_view_model_finalize (GObject *object)
                                      NULL, NULL);
 
   g_mutex_clear (&model->mutex_add_search_files);
-
-  /* disconnect from the file monitor */
-  g_signal_handlers_disconnect_by_func (G_OBJECT (model->monitor),
-                                        thunar_tree_view_model_file_changed, model);
-  g_object_unref (G_OBJECT (model->monitor));
 
   g_free (model->date_custom_style);
   g_strfreev (model->search_terms);
@@ -1708,6 +1694,14 @@ thunar_tree_view_model_set_folder (ThunarStandardViewModel *model,
   _model->root = thunar_tree_view_model_new_node (thunar_folder_get_corresponding_file (_model->dir));
   _model->root->model = _model;
 
+// TODO: WHat about active search ?
+
+// - Should we still listen to file-changed of all files of the current folder ?
+// --- enable monitoring per file inside 'thunar_tree_view_model_dir_add_file'
+// --- Disable monitoring per file in 'thunar_tree_view_model_dir_remove_file'
+// --- If the file is a folder, we need to use folder-monitoring
+// --- If search is inactive, it should be sufficient to only rely on folder-monitoring
+
   if (search_query == NULL || strlen (g_strstrip (search_query)) == 0)
     thunar_tree_view_model_load_dir (_model->root);
   else
@@ -2526,7 +2520,8 @@ _thunar_tree_view_model_dir_files_added (Node  *node,
             continue;
         }
 
-      thunar_tree_view_model_dir_add_file (node, file);
+      if (!g_hash_table_contains (node->set, file))
+        thunar_tree_view_model_dir_add_file (node, file);
     }
 }
 
@@ -2678,7 +2673,7 @@ thunar_tree_view_model_file_count_callback (ExoJob  *job,
   if (file == NULL)
     return;
 
-  thunar_tree_view_model_file_changed (NULL, file, THUNAR_TREE_VIEW_MODEL (model));
+  thunar_tree_view_model_file_changed (file, THUNAR_TREE_VIEW_MODEL (model));
 }
 
 
@@ -2732,8 +2727,7 @@ thunar_tree_view_model_node_destroy (Node *node)
 
 
 static void
-thunar_tree_view_model_file_changed (ThunarFileMonitor   *monitor,
-                                     ThunarFile          *file,
+thunar_tree_view_model_file_changed (ThunarFile          *file,
                                      ThunarTreeViewModel *model)
 {
   GSequenceIter *iter;

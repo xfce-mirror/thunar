@@ -52,7 +52,6 @@
 #include "thunar/thunar-properties-dialog.h"
 #include "thunar/thunar-renamer-dialog.h"
 #include "thunar/thunar-simple-job.h"
-#include "thunar/thunar-file-monitor.h"
 #include "thunar/thunar-standard-view.h"
 #include "thunar/thunar-util.h"
 #include "thunar/thunar-details-view.h"
@@ -370,8 +369,6 @@ struct _ThunarStandardViewPrivate
   GtkCssProvider         *css_provider;
 
   GType                   model_type;
-
-  ThunarFileMonitor      *file_monitor;
 };
 
 static XfceGtkActionEntry thunar_standard_view_action_entries[] =
@@ -856,10 +853,6 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->type = 0;
 
   standard_view->priv->css_provider = NULL;
-
-  standard_view->priv->file_monitor = thunar_file_monitor_get_default ();
-  g_signal_connect_swapped (standard_view->priv->file_monitor, "thumbnail-updated",
-                            G_CALLBACK (thunar_standard_view_queue_redraw), standard_view);
 }
 
 static void thunar_standard_view_store_sort_column  (ThunarStandardView *standard_view)
@@ -972,6 +965,10 @@ thunar_standard_view_dispose (GObject *object)
   /* disconnect from file */
   if (standard_view->priv->current_directory != NULL)
     {
+      ThunarFolder *folder = thunar_folder_get_for_file (standard_view->priv->current_directory);
+      g_signal_handlers_disconnect_by_data (folder, standard_view);
+      g_object_unref (folder);
+
       g_signal_handlers_disconnect_by_data (standard_view->priv->current_directory, standard_view);
       g_object_unref (standard_view->priv->current_directory);
       standard_view->priv->current_directory = NULL;
@@ -1049,9 +1046,6 @@ thunar_standard_view_finalize (GObject *object)
 
   /* release the scroll_to_files hash table */
   g_hash_table_destroy (standard_view->priv->scroll_to_files);
-  
-  g_signal_handlers_disconnect_by_data (standard_view->priv->file_monitor, standard_view);
-  g_object_unref (standard_view->priv->file_monitor);
 
   (*G_OBJECT_CLASS (thunar_standard_view_parent_class)->finalize) (object);
 }
@@ -1524,7 +1518,10 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   /* release previous directory */
   if (standard_view->priv->current_directory != NULL)
     {
+      folder = thunar_folder_get_for_file (standard_view->priv->current_directory);
       g_signal_handlers_disconnect_by_data (standard_view->priv->current_directory, standard_view);
+      g_signal_handlers_disconnect_by_data (folder, standard_view);
+      g_object_unref (folder);
       g_object_unref (standard_view->priv->current_directory);
     }
 
@@ -1573,6 +1570,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 
   /* open the new directory as folder */
   folder = thunar_folder_get_for_file (current_directory);
+  g_signal_connect_swapped (folder, "thumbnails-updated", G_CALLBACK (thunar_standard_view_queue_redraw), standard_view);
 
   /* apply the new folder, ignore removal of any old files */
   g_signal_handler_block (standard_view->model, standard_view->priv->row_deleted_id);
