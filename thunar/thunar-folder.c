@@ -138,7 +138,7 @@ struct _ThunarFolder
   /* List of ThunarFiles for which the thumbnail got updated */
   GList             *thumbnail_updated_files;
 
-  /* timeout source ID, used for collecting files to update the shumbnail before sending 'thumbnail-updated' */
+  /* timeout source ID, used for collecting files for which to update the thumbnail before sending the 'thumbnail-updated' signal */
   guint              thumbnail_updated_timeout_source_id;
 };
 

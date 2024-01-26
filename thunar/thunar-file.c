@@ -75,7 +75,7 @@
 /* Dump the file cache every X second, set to 0 to disable */
 #define DUMP_FILE_CACHE 0
 
-/* Minimum delay between wo 'changed' signals of the same file */
+/* Minimum delay between two 'changed' signals of the same file */
 #define FILE_CHANGED_SIGNAL_RATE_LIMIT 100 /* in milliseconds */
 
 /* Signal identifiers */
