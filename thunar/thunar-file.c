@@ -814,6 +814,7 @@ thunar_file_monitor (GFileMonitor     *monitor,
       switch (event_type)
         {
         case G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
+          break;
         case G_FILE_MONITOR_EVENT_DELETED:
           thunar_file_destroy (file);
           return;
