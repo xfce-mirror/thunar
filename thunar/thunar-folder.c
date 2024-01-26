@@ -47,7 +47,7 @@ enum
   ERROR,
   FILES_ADDED,
   FILES_REMOVED,
-  FILE_CHANGED,
+  FILES_CHANGED,
   THUMBNAILS_UPDATED,
   LAST_SIGNAL,
 };
@@ -110,8 +110,8 @@ struct _ThunarFolderClass
                          GList        *files);
   void (*files_removed) (ThunarFolder *folder,
                          GList        *files);
-  void (*file_changed)  (ThunarFolder *folder,
-                         ThunarFile   *file);
+  void (*files_changed) (ThunarFolder *folder,
+                         GList        *files);
   void (*thumbnails_updated)  (ThunarFolder        *folder,
                                GList               *files);
 };
@@ -135,7 +135,13 @@ struct _ThunarFolder
 
   GFileMonitor      *monitor;
 
-  /* List of ThunarFiles for which the thumbnail got updated */
+  /* List of ThunarFiles which got changed recently */
+  GList             *changed_files;
+
+  /* timeout source ID, used for collecting changed files before sending the 'files-changed' signal */
+  guint              changed_files_timeout_source_id;
+
+  /* List of ThunarFiles for which the thumbnail got updated recently */
   GList             *thumbnail_updated_files;
 
   /* timeout source ID, used for collecting files for which to update the thumbnail before sending the 'thumbnail-updated' signal */
@@ -284,13 +290,13 @@ thunar_folder_class_init (ThunarFolderClass *klass)
   /**
    * ThunarFolder::file-changed:
    *
-   * Emitted by the #ThunarFolder whenever a  file in the folder has changed
+   * Emitted by the #ThunarFolder whenever at least one file in the folder has changed
    **/
-  folder_signals[FILE_CHANGED] =
-    g_signal_new (I_("file-changed"),
+  folder_signals[FILES_CHANGED] =
+    g_signal_new (I_("files-changed"),
                   G_TYPE_FROM_CLASS (gobject_class),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (ThunarFolderClass, file_changed),
+                  G_STRUCT_OFFSET (ThunarFolderClass, files_changed),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__POINTER,
                   G_TYPE_NONE, 1, G_TYPE_POINTER);
@@ -322,6 +328,8 @@ thunar_folder_init (ThunarFolder *folder)
   folder->new_files_map = g_hash_table_new_full (g_direct_hash, NULL, g_object_unref, NULL);
 
   folder->reload_info = FALSE;
+  folder->changed_files = NULL;
+  folder->changed_files_timeout_source_id = 0;
   folder->thumbnail_updated_files = NULL;
   folder->thumbnail_updated_timeout_source_id = 0;
 }
@@ -350,11 +358,15 @@ thunar_folder_finalize (GObject *object)
 {
   ThunarFolder   *folder = THUNAR_FOLDER (object);
   GHashTableIter  iter;
-  gpointer        key, value;
+  gpointer        key, file;
 
   /* stop any running tumbnailing timeout source */
   if (folder->thumbnail_updated_timeout_source_id != 0)
     g_source_remove (folder->thumbnail_updated_timeout_source_id);
+
+  /* stop any running changed_files timeout source */
+  if (folder->changed_files_timeout_source_id != 0)
+    g_source_remove (folder->changed_files_timeout_source_id);
 
   if (folder->monitor != NULL)
     g_signal_handlers_disconnect_by_data (folder->monitor, folder);
@@ -369,10 +381,14 @@ thunar_folder_finalize (GObject *object)
 
   /* disconnect ThunarFile signals from files inside the folder */
   g_hash_table_iter_init (&iter, folder->files_map);
-  while (g_hash_table_iter_next (&iter, &key, &value))
-    g_signal_handlers_disconnect_by_data (value, folder);
+  while (g_hash_table_iter_next (&iter, &key, &file))
+    {
+      thunar_file_unwatch (file);
+      g_signal_handlers_disconnect_by_data (file, folder);
+    }
 
-  /* release files to thumbnail if any */
+  /* release files to thumbnail and changed files if any */
+  thunar_g_list_free_full (folder->changed_files);
   thunar_g_list_free_full (folder->thumbnail_updated_files);
 
   /* cancel the pending job (if any) */
@@ -466,12 +482,13 @@ thunar_folder_add_file (ThunarFolder *folder,
   /* add the ThunarFile) to the hashmap and keep a reference to it */
   g_hash_table_add (folder->files_map, g_object_ref (file));
 
-  /* and connect relevant signals */
+  /* connect relevant signals */
   g_signal_connect_swapped (G_OBJECT (file), "changed", G_CALLBACK (thunar_folder_file_changed), folder);
   g_signal_connect_swapped (G_OBJECT (file), "destroy", G_CALLBACK (thunar_folder_file_destroyed), folder);
   g_signal_connect_swapped (G_OBJECT (file), "thumbnail-updated", G_CALLBACK (thunar_folder_thumbnail_updated), folder);
 
-  /* Do not enable monitoring for the ThunarFile .. we already have monitoring for the ThunarFolder) */
+  /* and enable monitoring for it */
+  thunar_file_watch (file);
 }
 
 
@@ -480,6 +497,9 @@ static void
 thunar_folder_remove_file (ThunarFolder *folder,
                            ThunarFile   *file)
 {
+  /* stop monitoring the file */
+  thunar_file_unwatch (file);
+
   /* disconnect all signals for the file */
   g_signal_handlers_disconnect_by_data (G_OBJECT (file), folder);
 
@@ -695,6 +715,22 @@ thunar_folder_destroyed (ThunarFile        *file,
 
 
 
+static gboolean
+_thunar_folder_changed_files_timeout (gpointer data)
+{
+  ThunarFolder *folder = THUNAR_FOLDER (data);
+
+  g_signal_emit (G_OBJECT (folder), folder_signals[FILES_CHANGED], 0, folder->changed_files);
+
+  thunar_g_list_free_full (folder->changed_files);
+  folder->changed_files = NULL;
+  folder->changed_files_timeout_source_id = 0;
+
+  return G_SOURCE_REMOVE;
+}
+
+
+
 static void
 thunar_folder_file_changed (ThunarFolder      *folder,
                             ThunarFile        *file)
@@ -702,8 +738,11 @@ thunar_folder_file_changed (ThunarFolder      *folder,
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
 
-  /* emit a "file-changed" signal for the folder */
-  g_signal_emit (G_OBJECT (folder), folder_signals[FILE_CHANGED], 0, file);
+  folder->changed_files = g_list_prepend (folder->changed_files, g_object_ref (file));
+
+  if (folder->changed_files_timeout_source_id == 0)
+    folder->changed_files_timeout_source_id = g_timeout_add (25, (GSourceFunc) _thunar_folder_changed_files_timeout, folder);
+
 }
 
 
