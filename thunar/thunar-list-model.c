@@ -134,8 +134,8 @@ static gint               thunar_list_model_cmp_func                    (gconstp
                                                                          gconstpointer                 b,
                                                                          gpointer                      user_data);
 static void               thunar_list_model_sort                        (ThunarListModel              *store);
-static void               thunar_list_model_file_changed                (ThunarFolder                 *folder,
-                                                                         ThunarFile                   *file,
+static void               thunar_list_model_files_changed               (ThunarFolder                 *folder,
+                                                                         GList                        *files,
                                                                          ThunarListModel              *store);
 static void               thunar_list_model_folder_destroy              (ThunarFolder                 *folder,
                                                                          ThunarListModel              *store);
@@ -1384,10 +1384,11 @@ thunar_list_model_sort (ThunarListModel *store)
 
 
 static void
-thunar_list_model_file_changed (ThunarFolder    *folder,
-                                ThunarFile      *file,
-                                ThunarListModel *store)
+thunar_list_model_files_changed (ThunarFolder    *folder,
+                                 GList           *files,
+                                 ThunarListModel *store)
 {
+  ThunarFile    *file;
   GSequenceIter *row;
   GSequenceIter *end;
   gint           pos_after;
@@ -1398,106 +1399,110 @@ thunar_list_model_file_changed (ThunarFolder    *folder,
   GtkTreePath   *path;
   GtkTreeIter    iter;
   gboolean       found = FALSE;
-  GList          node;
+  GList          node, *lp;
   GSList        *hidden_link = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  row = g_sequence_get_begin_iter (store->rows);
-  end = g_sequence_get_end_iter (store->rows);
-
-  while (row != end)
+  for (lp = files; lp != NULL; lp = lp->next)
     {
-      if (G_UNLIKELY (g_sequence_get (row) == file))
+      file = lp->data;
+      row = g_sequence_get_begin_iter (store->rows);
+      end = g_sequence_get_end_iter (store->rows);
+
+      while (row != end)
         {
-          found = TRUE;
-
-          /* this file is hidden now & show_hidden is FALSE
-           * so we should remove this file from the view and store
-           * it in the hidden list */
-          if (thunar_file_is_hidden (file) && !store->show_hidden)
+          pos_before = g_sequence_iter_get_position (row);
+          if (G_UNLIKELY (g_sequence_get (row) == file))
             {
-              hidden_link = g_slist_find (store->hidden, file);
-              if (hidden_link == NULL)
-                store->hidden = g_slist_prepend (store->hidden, g_object_ref (file));
-              node.data = file;
-              node.next = NULL;
-              node.prev = NULL;
-              thunar_list_model_files_removed (store->folder, &node, store);
-              return;
-            }
-
-          /* generate the iterator for this row */
-          GTK_TREE_ITER_INIT (iter, store->stamp, row);
-
-          _thunar_assert (pos_before == g_sequence_iter_get_position (row));
-
-          /* check if the sorting changed */
-          g_sequence_sort_changed (row, thunar_list_model_cmp_func, store);
-          pos_after = g_sequence_iter_get_position (row);
-          if (pos_after != pos_before)
-            {
-              /* do swap sorting here since its much faster than a complete sort */
-              length = g_sequence_get_length (store->rows);
-              if (G_LIKELY (length < STACK_ALLOC_LIMIT))
-                new_order = g_newa (gint, length);
-              else
-                new_order = g_new (gint, length);
-
-              /* new_order[newpos] = oldpos */
-              for (i = 0, j = 0; i < length; ++i)
+              found = TRUE;
+              /* this file is hidden now & show_hidden is FALSE
+              * so we should remove this file from the view and store
+              * it in the hidden list */
+              if (thunar_file_is_hidden (file) && !store->show_hidden)
                 {
-                  if (G_UNLIKELY (i == pos_after))
-                    {
-                      new_order[i] = pos_before;
-                    }
-                  else
-                    {
-                      if (G_UNLIKELY (j == pos_before))
-                        j++;
-                      new_order[i] = j++;
-                    }
+                  hidden_link = g_slist_find (store->hidden, file);
+                  if (hidden_link == NULL)
+                    store->hidden = g_slist_prepend (store->hidden, g_object_ref (file));
+                  node.data = file;
+                  node.next = NULL;
+                  node.prev = NULL;
+                  thunar_list_model_files_removed (store->folder, &node, store);
+                  return;
                 }
 
-              /* tell the view about the new item order */
-              path = gtk_tree_path_new_first ();
-              gtk_tree_model_rows_reordered (GTK_TREE_MODEL (store), path, NULL, new_order);
+              /* generate the iterator for this row */
+              GTK_TREE_ITER_INIT (iter, store->stamp, row);
+              
+              /* check if the sorting changed */
+              pos_before = g_sequence_iter_get_position (row);
+              g_sequence_sort_changed (row, thunar_list_model_cmp_func, store);
+              pos_after = g_sequence_iter_get_position (row);
+
+              /* if 'g_sequence_sort_changed' changed the sorting, the positions will differ now */
+              if (pos_after != pos_before)
+                {
+                  /* do swap sorting here since its much faster than a complete sort */
+                  length = g_sequence_get_length (store->rows);
+                  if (G_LIKELY (length < STACK_ALLOC_LIMIT))
+                    new_order = g_newa (gint, length);
+                  else
+                    new_order = g_new (gint, length);
+
+                  /* new_order[newpos] = oldpos */
+                  for (i = 0, j = 0; i < length; ++i)
+                    {
+                      if (G_UNLIKELY (i == pos_after))
+                        {
+                          new_order[i] = pos_before;
+                        }
+                      else
+                        {
+                          if (G_UNLIKELY (j == pos_before))
+                            j++;
+                          new_order[i] = j++;
+                        }
+                    }
+
+                  /* tell the view about the new item order */
+                  path = gtk_tree_path_new_first ();
+                  gtk_tree_model_rows_reordered (GTK_TREE_MODEL (store), path, NULL, new_order);
+                  gtk_tree_path_free (path);
+
+                  /* clean up if we used the heap */
+                  if (G_UNLIKELY (length >= STACK_ALLOC_LIMIT))
+                    g_free (new_order);
+
+                  store->file_was_sorted = TRUE;
+                }
+
+              /* notify the view that it has to redraw the file */
+              path = gtk_tree_path_new_from_indices (pos_before, -1);
+              gtk_tree_model_row_changed (GTK_TREE_MODEL (store), path, &iter);
               gtk_tree_path_free (path);
-
-              /* clean up if we used the heap */
-              if (G_UNLIKELY (length >= STACK_ALLOC_LIMIT))
-                g_free (new_order);
-
-              store->file_was_sorted = TRUE;
+              break;
             }
 
-          /* notify the view that it has to redraw the file */
-          path = gtk_tree_path_new_from_indices (pos_before, -1);
-          gtk_tree_model_row_changed (GTK_TREE_MODEL (store), path, &iter);
-          gtk_tree_path_free (path);
-          break;
-        }
+          row = g_sequence_iter_next (row);
+          pos_before++;
+        } /* end while loop */
 
-      row = g_sequence_iter_next (row);
-      pos_before++;
-    }
+      if (found)
+        continue;
 
-  if (found)
-    return;
-
-  /* maybe this file was a hidden file but now it's not
-   * in such a case we need to emit a "files-added" for this file
-   * and remove it from the hidden list */
-  hidden_link = g_slist_find (store->hidden, file);
-  if (hidden_link == NULL || thunar_file_is_hidden (file))
-    return;
-  g_object_unref (hidden_link->data);
-  store->hidden = g_slist_delete_link (store->hidden, hidden_link);
-  node.data = file;
-  node.next = NULL;
-  node.prev = NULL;
-  thunar_list_model_files_added (store->folder, &node, store);
+      /* maybe this file was a hidden file but now it's not
+      * in such a case we need to emit a "files-added" for this file
+      * and remove it from the hidden list */
+      hidden_link = g_slist_find (store->hidden, file);
+      if (hidden_link == NULL || thunar_file_is_hidden (file))
+        continue;
+      g_object_unref (hidden_link->data);
+      store->hidden = g_slist_delete_link (store->hidden, hidden_link);
+      node.data = file;
+      node.next = NULL;
+      node.prev = NULL;
+      thunar_list_model_files_added (store->folder, &node, store);
+   } /* end for loop */
 }
 
 
@@ -2171,7 +2176,7 @@ thunar_list_model_set_folder (ThunarStandardViewModel *model,
       g_signal_connect (G_OBJECT (store->folder), "error", G_CALLBACK (thunar_list_model_folder_error), store);
       g_signal_connect (G_OBJECT (store->folder), "files-added", G_CALLBACK (thunar_list_model_files_added), store);
       g_signal_connect (G_OBJECT (store->folder), "files-removed", G_CALLBACK (thunar_list_model_files_removed), store);
-      g_signal_connect (G_OBJECT (store->folder), "file-changed", G_CALLBACK (thunar_list_model_file_changed), store);
+      g_signal_connect (G_OBJECT (store->folder), "files-changed", G_CALLBACK (thunar_list_model_files_changed), store);
       g_signal_connect (G_OBJECT (store->folder), "notify::loading", G_CALLBACK (thunar_list_model_notify_loading), store);
 
       /* notify for "loading" if already loaded */
@@ -2590,6 +2595,7 @@ thunar_list_model_file_count_callback (ExoJob  *job,
 
   GArray     *param_values;
   ThunarFile *file;
+  GList      *files = NULL;
 
   if (job == NULL)
     return;
@@ -2600,5 +2606,7 @@ thunar_list_model_file_count_callback (ExoJob  *job,
   if (file == NULL)
     return;
 
-  thunar_list_model_file_changed (store->folder, file, store);
+  files = g_list_append (files, file);
+  thunar_list_model_files_changed (store->folder, files, store);
+  g_list_free (files);
 }
