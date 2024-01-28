@@ -1403,7 +1403,6 @@ thunar_list_model_files_changed (ThunarFolder    *folder,
   GSList        *hidden_link = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   for (lp = files; lp != NULL; lp = lp->next)
     {
@@ -1413,10 +1412,13 @@ thunar_list_model_files_changed (ThunarFolder    *folder,
 
       while (row != end)
         {
+          pos_before = g_sequence_iter_get_position (row);
+
           printf("row-file: %s\n", thunar_file_get_basename (g_sequence_get (row)) );
           printf("    file: %s\n", thunar_file_get_basename (file) );
           if (G_UNLIKELY (g_sequence_get (row) == file))
             {
+              printf("Found!!: \n" );
               found = TRUE;
               /* this file is hidden now & show_hidden is FALSE
               * so we should remove this file from the view and store
@@ -1435,12 +1437,13 @@ thunar_list_model_files_changed (ThunarFolder    *folder,
 
               /* generate the iterator for this row */
               GTK_TREE_ITER_INIT (iter, store->stamp, row);
-
-              _thunar_assert (pos_before == g_sequence_iter_get_position (row));
-
+              
               /* check if the sorting changed */
+              pos_before = g_sequence_iter_get_position (row);
               g_sequence_sort_changed (row, thunar_list_model_cmp_func, store);
               pos_after = g_sequence_iter_get_position (row);
+
+              /* if 'g_sequence_sort_changed' changed the sorting, the positions will differ now */
               if (pos_after != pos_before)
                 {
                   /* do swap sorting here since its much faster than a complete sort */
@@ -1486,7 +1489,7 @@ thunar_list_model_files_changed (ThunarFolder    *folder,
 
           row = g_sequence_iter_next (row);
           pos_before++;
-        }
+        } /* end while loop */
 
       if (found)
         continue;
@@ -1503,7 +1506,7 @@ thunar_list_model_files_changed (ThunarFolder    *folder,
       node.next = NULL;
       node.prev = NULL;
       thunar_list_model_files_added (store->folder, &node, store);
-   }
+   } /* end for loop */
 }
 
 
