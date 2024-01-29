@@ -815,6 +815,7 @@ thunar_file_monitor (GFileMonitor     *monitor,
         {
         case G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
         case G_FILE_MONITOR_EVENT_DELETED:
+         // printf("thunar_file_monitor - G_FILE_MONITOR_EVENT_DELETED %s\n", g_file_get_basename(event_path));
           thunar_file_destroy (file);
           return;
         case G_FILE_MONITOR_EVENT_CREATED:
@@ -4250,6 +4251,7 @@ thunar_file_reload (ThunarFile *file)
   if (!thunar_file_load (file, NULL, NULL))
     {
       /* destroy the file if we cannot query any file information */
+      printf("thunar_file_reload - destroy \n");
       thunar_file_destroy (file);
       return FALSE;
     }
@@ -4327,6 +4329,8 @@ void
 thunar_file_destroy (ThunarFile *file)
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  printf("thunar_file_reload - destroy: %s\n", g_file_get_basename (file->gfile));
 
   if (!FLAG_IS_SET (file, THUNAR_FILE_FLAG_IN_DESTRUCTION))
     {

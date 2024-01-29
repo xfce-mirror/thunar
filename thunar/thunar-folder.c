@@ -595,6 +595,7 @@ thunar_folder_finished (ExoJob       *job,
   g_hash_table_iter_init (&iter, folder->new_files_map);
   while (g_hash_table_iter_next (&iter, &key, NULL))
     {
+      printf("thunar_folder_finished - new files: %s\n", thunar_file_get_basename (key));
       if (g_hash_table_contains (folder->files_map, key))
         continue;
 
@@ -623,6 +624,7 @@ thunar_folder_finished (ExoJob       *job,
   g_hash_table_iter_init (&iter, folder->files_map);
   while (g_hash_table_iter_next (&iter, &key, NULL))
     {
+      printf("thunar_folder_finished - files: %s\n", thunar_file_get_basename (key));
       if (key == NULL || g_hash_table_contains (folder->new_files_map, key))
         continue;
 
@@ -640,6 +642,7 @@ thunar_folder_finished (ExoJob       *job,
   /* check if any files were removed */
   if (G_UNLIKELY (files != NULL))
     {
+      printf("thunar_folder_finished - sending files removed signal\n");
       /* emit a "files-removed" signal for the removed files */
       g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, files);
 
@@ -762,6 +765,8 @@ thunar_folder_file_destroyed (ThunarFolder      *folder,
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
 
+
+
   /* check if the corresponding file was destroyed */
   if (G_UNLIKELY (folder->corresponding_file == file))
     {
@@ -771,6 +776,8 @@ thunar_folder_file_destroyed (ThunarFolder      *folder,
     }
   else if (g_hash_table_contains (folder->files_map, file))
     {
+      printf("thunar_folder_file_destroyed for: %s\n", thunar_file_get_basename (file));
+
       /* tell everybody that the file is gone */
       files.data = file;
       files.next = files.prev = NULL;
@@ -858,17 +865,50 @@ thunar_folder_monitor (GFileMonitor     *monitor,
   _thunar_return_if_fail (THUNAR_IS_FILE (folder->corresponding_file));
   _thunar_return_if_fail (G_IS_FILE (event_file));
 
+  if (event_file != NULL)
+    printf("event_file: %s\n", g_file_get_basename(event_file));
+  if (other_file != NULL)
+    printf("other_file: %s\n", g_file_get_basename(other_file));
+    if (event_type == G_FILE_MONITOR_EVENT_UNMOUNTED)
+  {
+    printf("thunar_folder_monitor - G_FILE_MONITOR_EVENT_UNMOUNTED %s\n", g_file_get_basename(event_file));
+  }
+    if (event_type == G_FILE_MONITOR_EVENT_MOVED_OUT)
+  {
+    printf("thunar_folder_monitor - G_FILE_MONITOR_EVENT_MOVED_OUT %s\n", g_file_get_basename(event_file));
+  }
+    if (event_type == G_FILE_MONITOR_EVENT_CHANGED)
+  {
+    printf("thunar_folder_monitor - G_FILE_MONITOR_EVENT_CHANGED %s\n", g_file_get_basename(event_file));
+  }
+  if (event_type == G_FILE_MONITOR_EVENT_DELETED)
+  {
+    printf("thunar_folder_monitor - G_FILE_MONITOR_EVENT_DELETED %s\n", g_file_get_basename(event_file));
+  }
+    if (event_type == G_FILE_MONITOR_EVENT_CREATED)
+  {
+    printf("thunar_folder_monitor - G_FILE_MONITOR_EVENT_CREATED %s\n", g_file_get_basename(event_file));
+  }
+  if (event_type == G_FILE_MONITOR_EVENT_RENAMED)
+  {
+    printf("thunar_folder_monitor - G_FILE_MONITOR_EVENT_RENAMED %s --> %s\n", g_file_get_basename(event_file), g_file_get_basename(other_file));
+  }
+
   if (g_file_equal (event_file, thunar_file_get_file (folder->corresponding_file)))
     {
       /* update/destroy the corresponding file */
       if (event_type == G_FILE_MONITOR_EVENT_DELETED)
+      {
+        printf("thunar_folder_monitor - G_FILE_MONITOR_EVENT_DELETED1\n");
         thunar_file_destroy (folder->corresponding_file);
+      }
       else
         thunar_file_reload (folder->corresponding_file);
       return;
     }
 
   file_in_map = g_hash_table_lookup (folder->files_map, thunar_file_get (event_file, NULL));
+
 
   /* if we don't have it, add it if the event does not "delete" the "event_file" */
   if (file_in_map == NULL && event_type != G_FILE_MONITOR_EVENT_DELETED && event_type != G_FILE_MONITOR_EVENT_MOVED_OUT)
@@ -914,6 +954,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
     {
       if (event_type == G_FILE_MONITOR_EVENT_DELETED)
         {
+          printf("thunar_folder_monitor - G_FILE_MONITOR_EVENT_DELETED\n");
           /* destroy the file */
           thunar_file_destroy (file_in_map);
         }
@@ -926,6 +967,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
             }
           else if (event_type == G_FILE_MONITOR_EVENT_MOVED_OUT)
             {
+              printf("thunar_folder_monitor - G_FILE_MONITOR_EVENT_MOVED_OUT\n");
               /* destroy the old file */
               thunar_file_destroy (file_in_map);
             }
@@ -946,24 +988,24 @@ thunar_folder_monitor (GFileMonitor     *monitor,
                     }
                   else
                     {
+                      printf("thunar_folder_monitor - G_FILE_MONITOR_EVENT_RENAMED ??\n");
                       thunar_file_destroy (file_in_map);
                       file = dest_file_in_map;
                     }
                 }
-              else
-                {
-                  file = file_in_map;
 
-                  /* remove the old reference from the hash table before it becomes invalid;
-                   * during thunar_file_replace_file call */
-                  thunar_folder_remove_file (folder,  thunar_file_get (event_file, NULL));
+              file = file_in_map;
 
-                  /* replace GFile in ThunarFile for the renamed file */
-                  thunar_file_replace_file (file, other_file);
+              /* remove the old reference from the hash table before it becomes invalid;
+                * during thunar_file_replace_file call */
+              thunar_folder_remove_file (folder,  thunar_file_get (event_file, NULL));
 
-                  /* insert new mapping of (gfile, ThunarFile) for the newly renamed file */
-                  thunar_folder_add_file (folder, file);
-                }
+              /* replace GFile in ThunarFile for the renamed file */
+              thunar_file_replace_file (file, other_file);
+
+              /* insert new mapping of (gfile, ThunarFile) for the newly renamed file */
+              thunar_folder_add_file (folder, file);
+
 
               /* reload the renamed file */
               if (thunar_file_reload (file))
