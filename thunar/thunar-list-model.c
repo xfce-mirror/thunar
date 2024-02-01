@@ -1413,12 +1413,8 @@ thunar_list_model_files_changed (ThunarFolder    *folder,
       while (row != end)
         {
           pos_before = g_sequence_iter_get_position (row);
-
-          printf("row-file: %s\n", thunar_file_get_basename (g_sequence_get (row)) );
-          printf("    file: %s\n", thunar_file_get_basename (file) );
           if (G_UNLIKELY (g_sequence_get (row) == file))
             {
-              printf("Found!!: \n" );
               found = TRUE;
               /* this file is hidden now & show_hidden is FALSE
               * so we should remove this file from the view and store
@@ -1579,7 +1575,6 @@ thunar_list_model_files_added (ThunarFolder    *folder,
   filtered = NULL;
   for (lp = files; lp != NULL; lp = lp->next)
     {
-      printf("thunar_list_model_files_added: %s\n", thunar_file_get_basename (lp->data));
       /* take a reference on that file */
       file = THUNAR_FILE (g_object_ref (G_OBJECT (lp->data)));
       _thunar_return_if_fail (THUNAR_IS_FILE (file));
@@ -1685,7 +1680,6 @@ thunar_list_model_files_removed (ThunarFolder    *folder,
   search_mode = (store->search_terms != NULL);
   for (lp = files; lp != NULL; lp = lp->next)
     {
-      printf("thunar_list_model_files_removed: %s\n", thunar_file_get_basename (lp->data));
       row = g_sequence_get_begin_iter (store->rows);
       end = g_sequence_get_end_iter (store->rows);
 
