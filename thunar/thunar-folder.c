@@ -125,8 +125,9 @@ struct _ThunarFolder
 
   ThunarFile        *corresponding_file;
 
-  /* the key is a ThunarFile; value is NULL (unimportant) */
-  GHashTable        *new_files_map;
+  /* For all GHashTable: The key is a ThunarFile; value is NULL (unimportant) */
+  /* Files which were loaded*/
+  GHashTable        *loaded_files_map;
   GHashTable        *changed_files_map;
   GHashTable        *files_map;
 
@@ -323,7 +324,7 @@ thunar_folder_init (ThunarFolder *folder)
   /* If hashtable is initialized without a key_equal_func (we'd use g_direct_equal here);
    * then equality is checked similar to g_direct_equal but without the overhead of a function call */
   folder->files_map = g_hash_table_new_full (g_direct_hash, NULL, g_object_unref, NULL);
-  folder->new_files_map = g_hash_table_new_full (g_direct_hash, NULL, g_object_unref, NULL);
+  folder->loaded_files_map = g_hash_table_new_full (g_direct_hash, NULL, g_object_unref, NULL);
   folder->changed_files_map = g_hash_table_new_full (g_direct_hash, NULL, g_object_unref, NULL);
 
   folder->reload_info = FALSE;
@@ -406,7 +407,7 @@ thunar_folder_finalize (GObject *object)
 
   /* release references to the current files lists */
   g_hash_table_destroy (folder->files_map);
-  g_hash_table_destroy (folder->new_files_map);
+  g_hash_table_destroy (folder->loaded_files_map);
   g_hash_table_destroy (folder->changed_files_map);
 
   (*G_OBJECT_CLASS (thunar_folder_parent_class)->finalize) (object);
@@ -541,7 +542,7 @@ thunar_folder_files_ready (ThunarJob    *job,
 
   /* merge the list with the existing list of new files */
   for (lp = files; lp != NULL; lp = lp->next)
-    g_hash_table_add (folder->new_files_map, g_object_ref (lp->data));
+    g_hash_table_add (folder->loaded_files_map, g_object_ref (lp->data));
 
   thunar_g_list_free_full (files);
 
@@ -592,7 +593,7 @@ thunar_folder_finished (ExoJob       *job,
   _thunar_return_if_fail (THUNAR_IS_FILE (folder->corresponding_file));
 
   /* determine all added files (files on new_files, but not on files) */
-  g_hash_table_iter_init (&iter, folder->new_files_map);
+  g_hash_table_iter_init (&iter, folder->loaded_files_map);
   while (g_hash_table_iter_next (&iter, &key, NULL))
     {
       if (g_hash_table_contains (folder->files_map, key))
@@ -623,7 +624,7 @@ thunar_folder_finished (ExoJob       *job,
   g_hash_table_iter_init (&iter, folder->files_map);
   while (g_hash_table_iter_next (&iter, &key, NULL))
     {
-      if (key == NULL || g_hash_table_contains (folder->new_files_map, key))
+      if (key == NULL || g_hash_table_contains (folder->loaded_files_map, key))
         continue;
 
       /* put the file on the removed list (owns the reference now);
@@ -648,7 +649,7 @@ thunar_folder_finished (ExoJob       *job,
     }
 
   /* drop all mappings for new_files list too */
-  g_hash_table_remove_all (folder->new_files_map);
+  g_hash_table_remove_all (folder->loaded_files_map);
 
   /* schedule a reload of the file information of all files if requested */
   if (folder->reload_info)
@@ -1170,8 +1171,8 @@ thunar_folder_reload (ThunarFolder *folder,
       folder->job = NULL;
     }
 
-  /* reset the new_files list & new_files_map hash table */
-  g_hash_table_remove_all (folder->new_files_map);
+  /* reset the loaded_files_map hash table */
+  g_hash_table_remove_all (folder->loaded_files_map);
 
   /* start a new job */
   folder->job = thunar_io_jobs_list_directory (thunar_file_get_file (folder->corresponding_file));
