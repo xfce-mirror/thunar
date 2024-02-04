@@ -814,9 +814,12 @@ thunar_file_monitor (GFileMonitor     *monitor,
       switch (event_type)
         {
         case G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
+          printf("thunar_file_monitor - G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT %s\n", g_file_get_basename(event_path));
+          break;
         case G_FILE_MONITOR_EVENT_DELETED:
-         // printf("thunar_file_monitor - G_FILE_MONITOR_EVENT_DELETED %s\n", g_file_get_basename(event_path));
+          printf("thunar_file_monitor - G_FILE_MONITOR_EVENT_DELETED %s\n", g_file_get_basename(event_path));
           thunar_file_destroy (file);
+          //thunar_file_reload (file);
           return;
         case G_FILE_MONITOR_EVENT_CREATED:
         case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
@@ -864,11 +867,14 @@ thunar_file_watch_reconnect (ThunarFile *file)
 
   /* recreate the monitor without changing the watch_count for file renames */
   file_watch = g_object_get_qdata (G_OBJECT (file), thunar_file_watch_quark);
+  printf("thunar_file_watch_reconnect 1\n");
   if (file_watch != NULL)
     {
+      printf("thunar_file_watch_reconnect 2\n");
       /* reset the old monitor */
       if (G_LIKELY (file_watch->monitor != NULL))
         {
+          printf("thunar_file_watch_reconnect 3\n");
           g_file_monitor_cancel (file_watch->monitor);
           g_object_unref (file_watch->monitor);
         }
@@ -877,6 +883,7 @@ thunar_file_watch_reconnect (ThunarFile *file)
       file_watch->monitor = g_file_monitor (file->gfile, G_FILE_MONITOR_WATCH_MOUNTS, NULL, NULL);
       if (G_LIKELY (file_watch->monitor != NULL))
         {
+          printf("thunar_file_watch_reconnect 4\n");
           /* watch monitor for file changes */
           g_signal_connect (file_watch->monitor, "changed", G_CALLBACK (thunar_file_monitor), file);
         }
@@ -4330,7 +4337,7 @@ thunar_file_destroy (ThunarFile *file)
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  printf("thunar_file_reload - destroy: %s\n", g_file_get_basename (file->gfile));
+  printf("thunar_file_destroy: %s\n", g_file_get_basename (file->gfile));
 
   if (!FLAG_IS_SET (file, THUNAR_FILE_FLAG_IN_DESTRUCTION))
     {
