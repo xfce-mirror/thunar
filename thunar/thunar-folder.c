@@ -545,7 +545,6 @@ _thunar_folder_files_update_timeout (gpointer data)
   while (g_hash_table_iter_next (&iter, &key, NULL))
     {
       file = THUNAR_FILE (key);
-printf("_thunar_folder_files_update_timeout - removed: %s\n", thunar_file_get_basename (file));
       if (_thunar_folder_remove_file (folder, file))
         files = g_list_prepend (files, file);
     }
@@ -561,7 +560,6 @@ printf("_thunar_folder_files_update_timeout - removed: %s\n", thunar_file_get_ba
   while (g_hash_table_iter_next (&iter, &key, NULL))
     {
       file = THUNAR_FILE (key);
-      printf("_thunar_folder_files_update_timeout - added: %s\n", thunar_file_get_basename (file));
       if (_thunar_folder_add_file (folder, file))
         files = g_list_prepend (files, file);
     }
@@ -581,7 +579,7 @@ printf("_thunar_folder_files_update_timeout - removed: %s\n", thunar_file_get_ba
   {
     if (!g_hash_table_contains (folder->files_map, key))
       continue;
-    printf("_thunar_folder_files_update_timeout - changed: %s\n", thunar_file_get_basename (key));
+
     files = g_list_prepend (files, key);
   }
 
@@ -932,8 +930,8 @@ thunar_folder_monitor (GFileMonitor     *monitor,
     }
 
   event_file_thunar = thunar_file_get (event_file, NULL);
-  if (other_file != NULL)
-    other_file_thunar = thunar_file_get (other_file, NULL);
+  if (other_file != NULL) /* It is important to only do lookup here, no creation ! (due to rename) */
+    other_file_thunar = thunar_file_cache_lookup (other_file);
   file = g_hash_table_lookup (folder->files_map, event_file_thunar);
   event_file_thunar_in_map = (file != NULL) ? TRUE : FALSE;
   file = g_hash_table_lookup (folder->files_map, other_file_thunar);
@@ -942,7 +940,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
     {
       case G_FILE_MONITOR_EVENT_MOVED_IN:
       case G_FILE_MONITOR_EVENT_CREATED:
-      printf("G_FILE_MONITOR_EVENT_CREATED\n");
+
         if (!event_file_thunar_in_map)
           {
             thunar_folder_add_file (folder, event_file_thunar);
@@ -960,14 +958,10 @@ thunar_folder_monitor (GFileMonitor     *monitor,
 
       case G_FILE_MONITOR_EVENT_MOVED_OUT:
       case G_FILE_MONITOR_EVENT_DELETED:
-        printf("G_FILE_MONITOR_EVENT_DELETED 1 - thunar_folder_remove_file\n");
 
         /* Drop it from the map, if we still have it */
         if (event_file_thunar_in_map)
-        {
-          printf("G_FILE_MONITOR_EVENT_DELETED 2- thunar_folder_remove_file\n");
           thunar_folder_remove_file (folder, event_file_thunar);
-        }
 
         /* destroy the old file */
         thunar_file_destroy (event_file_thunar);
@@ -977,19 +971,17 @@ thunar_folder_monitor (GFileMonitor     *monitor,
         break;
 
       case G_FILE_MONITOR_EVENT_RENAMED:
+
         /* Source and destination file are in the map*/
         if (event_file_thunar_in_map && other_file_thunar_in_map)
           {
-            printf("G_FILE_MONITOR_EVENT_RENAMED 1\n");
             /* Drop and destroy source file if the destination file already exists to prevent duplicated file */
             if (event_file_thunar == other_file_thunar)
                 g_warning ("Same g_file for source and destination file during rename");
             else
               {
-                printf("G_FILE_MONITOR_EVENT_RENAMED - thunar_folder_remove_file\n");
                 thunar_folder_remove_file (folder, event_file_thunar);
                 thunar_file_destroy (event_file_thunar);
-                event_file_thunar_in_map = FALSE;
               }
             break;
           }
@@ -997,25 +989,18 @@ thunar_folder_monitor (GFileMonitor     *monitor,
         /* We only have the source file in the map */
         if (event_file_thunar_in_map && !other_file_thunar_in_map)
           {
-            break;
-            printf("G_FILE_MONITOR_EVENT_RENAMED 2\n");
             /* remove the old reference from the hash table before it becomes invalid;
               * during thunar_file_replace_file call */
-              g_object_ref(event_file_thunar);
-               g_object_ref(event_file_thunar);
-            _thunar_folder_remove_file (folder,  event_file_thunar);
+            _thunar_folder_remove_file (folder, event_file_thunar);
 
             /* replace GFile in ThunarFile for the renamed file */
             thunar_file_replace_file (event_file_thunar, other_file);
            
-            thunar_file_reload (event_file_thunar);
-             ThunarFile* test = thunar_file_get (other_file, NULL);
             /* insert new mapping of (gfile, ThunarFile) for the newly renamed file */
-           _thunar_folder_add_file (folder, test);
-          //  thunar_folder_file_changed (folder, event_file_thunar);
+           _thunar_folder_add_file (folder, event_file_thunar);
 
             /* reload the renamed file */
-           // if (thunar_file_reload (test))
+            if (thunar_file_reload (event_file_thunar))
               {
                 /* notify the thumbnail cache that we can now also move the thumbnail */
                 thunar_file_move_thumbnail_cache_file (event_file, other_file);
@@ -1026,20 +1011,14 @@ thunar_folder_monitor (GFileMonitor     *monitor,
         /* We only have the dest file in the map (might happen on move+replace) */
         if (!event_file_thunar_in_map && other_file_thunar_in_map)
           {
-
-
-
-            printf("G_FILE_MONITOR_EVENT_RENAMED 3\n");
             /* Remove the dest file from the map */
-           // _thunar_folder_remove_file (folder, other_file_thunar);
+            _thunar_folder_remove_file (folder, other_file_thunar);
 
             /* replace GFile in ThunarFile for the renamed file */
             thunar_file_replace_file (other_file_thunar, other_file);
 
-            thunar_folder_file_changed (folder, other_file_thunar);
-
             /* insert new mapping of (gfile, ThunarFile) for the newly renamed file */
-           // _thunar_folder_add_file (folder, other_file_thunar);
+            _thunar_folder_add_file (folder, other_file_thunar);
 
             /* reload the renamed file */
             if (thunar_file_reload (other_file_thunar))
