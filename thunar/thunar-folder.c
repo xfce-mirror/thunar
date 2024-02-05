@@ -30,7 +30,8 @@
 
 #define DEBUG_FILE_CHANGES FALSE
 
-
+/* The maximum throttle interval (in ms) in which files will be added, removed or notified to be changed */
+#define THUNAR_FOLDER_UPDATE_TIMEOUT (25)
 
 /* property identifiers */
 enum
@@ -607,7 +608,7 @@ thunar_folder_file_changed (ThunarFolder      *folder,
   g_hash_table_add (folder->changed_files_map, g_object_ref (file));
 
   if (folder->files_update_timeout_source_id == 0)
-    folder->files_update_timeout_source_id = g_timeout_add (25, (GSourceFunc) _thunar_folder_files_update_timeout, folder);
+    folder->files_update_timeout_source_id = g_timeout_add (THUNAR_FOLDER_UPDATE_TIMEOUT, (GSourceFunc) _thunar_folder_files_update_timeout, folder);
 
 }
 
@@ -617,10 +618,14 @@ static void
 thunar_folder_add_file (ThunarFolder *folder,
                         ThunarFile   *file)
 {
+  /* If it possibly was removed shortly before, just undo the "remove" */
+  if (g_hash_table_remove (folder->removed_files_map, file))
+    return;
+
   g_hash_table_add (folder->added_files_map, g_object_ref (file));
 
   if (folder->files_update_timeout_source_id == 0)
-    folder->files_update_timeout_source_id = g_timeout_add (25, (GSourceFunc) _thunar_folder_files_update_timeout, folder);
+    folder->files_update_timeout_source_id = g_timeout_add (THUNAR_FOLDER_UPDATE_TIMEOUT, (GSourceFunc) _thunar_folder_files_update_timeout, folder);
 }
 
 
@@ -629,10 +634,14 @@ static void
 thunar_folder_remove_file (ThunarFolder *folder,
                            ThunarFile   *file)
 {
+  /* If it possibly was added shortly before, just undo the "add" */
+  if (g_hash_table_remove (folder->added_files_map, file))
+    return;
+
   g_hash_table_add (folder->removed_files_map, g_object_ref (file));
 
   if (folder->files_update_timeout_source_id == 0)
-    folder->files_update_timeout_source_id = g_timeout_add (25, (GSourceFunc) _thunar_folder_files_update_timeout, folder);
+    folder->files_update_timeout_source_id = g_timeout_add (THUNAR_FOLDER_UPDATE_TIMEOUT, (GSourceFunc) _thunar_folder_files_update_timeout, folder);
 }
 
 
@@ -1268,5 +1277,5 @@ thunar_folder_thumbnail_updated (ThunarFolder        *folder,
     g_list_prepend (folder->thumbnail_updated_files, g_object_ref (file));
 
   if (folder->thumbnail_updated_timeout_source_id == 0)
-    folder->thumbnail_updated_timeout_source_id = g_timeout_add (25, (GSourceFunc) _thunar_folder_thumbnail_updated_timeout, folder);
+    folder->thumbnail_updated_timeout_source_id = g_timeout_add (THUNAR_FOLDER_UPDATE_TIMEOUT, (GSourceFunc) _thunar_folder_thumbnail_updated_timeout, folder);
 }
