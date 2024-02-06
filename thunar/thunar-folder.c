@@ -748,7 +748,6 @@ thunar_folder_finished (ExoJob       *job,
         continue;
 
       /* will mark them to be removed on next timeout */
-      printf("thunar_folder_finished - thunar_folder_remove_file\n");
       thunar_folder_remove_file (folder, THUNAR_FILE (key));
     }
 
@@ -823,12 +822,8 @@ static void
 thunar_folder_file_destroyed (ThunarFolder      *folder,
                               ThunarFile        *file)
 {
-  GList    files;
-
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
-
-
 
   /* check if the corresponding file was destroyed */
   if (G_UNLIKELY (folder->corresponding_file == file))
@@ -839,13 +834,7 @@ thunar_folder_file_destroyed (ThunarFolder      *folder,
     }
   else if (g_hash_table_contains (folder->files_map, file))
     {
-      /* tell everybody that the file is gone */
-      files.data = file;
-      files.next = files.prev = NULL;
-      g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, &files);
-
       /* remove the file from our list */
-      printf("thunar_folder_file_destroyed - thunar_folder_remove_file\n");
       thunar_folder_remove_file (folder, file);
     }
 }
@@ -920,7 +909,8 @@ thunar_folder_monitor (GFileMonitor     *monitor,
   ThunarFile   *file = NULL;
   ThunarFile   *event_file_thunar = NULL;
   ThunarFile   *other_file_thunar = NULL;
-  gboolean      event_file_thunar_in_map, other_file_thunar_in_map;
+  gboolean      event_file_thunar_in_map = FALSE;
+  gboolean      other_file_thunar_in_map = FALSE;
 
   _thunar_return_if_fail (G_IS_FILE_MONITOR (monitor));
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
@@ -938,17 +928,33 @@ thunar_folder_monitor (GFileMonitor     *monitor,
       return;
     }
 
-  event_file_thunar = thunar_file_get (event_file, NULL);
-  if (other_file != NULL) /* It is important to only do lookup here, no creation ! (due to rename) */
-    other_file_thunar = thunar_file_cache_lookup (other_file);
-  file = g_hash_table_lookup (folder->files_map, event_file_thunar);
-  event_file_thunar_in_map = (file != NULL) ? TRUE : FALSE;
-  file = g_hash_table_lookup (folder->files_map, other_file_thunar);
-  other_file_thunar_in_map = (file != NULL) ? TRUE : FALSE;
+  /* For rename/delete it is important to only do lookup here, no ThunarFile creation */
+  event_file_thunar = thunar_file_cache_lookup (event_file);
+  if (event_file_thunar != NULL)
+    {
+      file = g_hash_table_lookup (folder->files_map, event_file_thunar);
+      event_file_thunar_in_map = (file != NULL) ? TRUE : FALSE;
+    }
+  other_file_thunar = (other_file == NULL) ? NULL : thunar_file_cache_lookup (other_file);
+  if (other_file_thunar != NULL)
+    {
+      file = g_hash_table_lookup (folder->files_map, other_file_thunar);
+      other_file_thunar_in_map = (file != NULL) ? TRUE : FALSE;
+    }
+ 
   switch (event_type)
     {
       case G_FILE_MONITOR_EVENT_MOVED_IN:
       case G_FILE_MONITOR_EVENT_CREATED:
+        if (event_file_thunar == NULL)
+          {
+            event_file_thunar = thunar_file_get (event_file, NULL);
+            if (event_file_thunar == NULL)
+                {
+                  g_warning ("Failed to create ThunarFile for gfile");
+                  break;
+                }
+          }
 
         if (!event_file_thunar_in_map)
           {
@@ -968,6 +974,13 @@ thunar_folder_monitor (GFileMonitor     *monitor,
       case G_FILE_MONITOR_EVENT_MOVED_OUT:
       case G_FILE_MONITOR_EVENT_DELETED:
 
+        if (event_type == G_FILE_MONITOR_EVENT_MOVED_OUT && other_file != NULL)
+          thunar_file_move_thumbnail_cache_file (event_file, other_file);
+
+        /* If the ThunarFile is not known to us, than we cannot remove it */
+        if (event_file_thunar == NULL)
+          break;
+
         /* Drop it from the map, if we still have it */
         if (event_file_thunar_in_map)
           thunar_folder_remove_file (folder, event_file_thunar);
@@ -975,8 +988,6 @@ thunar_folder_monitor (GFileMonitor     *monitor,
         /* destroy the old file */
         thunar_file_destroy (event_file_thunar);
 
-        if (event_type == G_FILE_MONITOR_EVENT_MOVED_OUT && other_file != NULL)
-          thunar_file_move_thumbnail_cache_file (event_file, other_file);
         break;
 
       case G_FILE_MONITOR_EVENT_RENAMED:
