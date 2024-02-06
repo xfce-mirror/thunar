@@ -1019,6 +1019,14 @@ thunar_folder_monitor (GFileMonitor     *monitor,
             /* insert new mapping of (gfile, ThunarFile) for the newly renamed file */
            _thunar_folder_add_file (folder, event_file_thunar);
 
+
+            if (other_file_thunar != NULL)
+            {
+              /* even if it is not not in "files_map", it might already be on "added_files_map" */
+              thunar_folder_remove_file (folder, other_file_thunar);
+              thunar_file_destroy (other_file_thunar);
+            }
+
             /* reload the renamed file */
             if (thunar_file_reload (event_file_thunar))
               {
@@ -1039,6 +1047,13 @@ thunar_folder_monitor (GFileMonitor     *monitor,
 
             /* insert new mapping of (gfile, ThunarFile) for the newly renamed file */
             _thunar_folder_add_file (folder, other_file_thunar);
+
+            if (event_file_thunar != NULL)
+            {
+              /* even if it is not not in "files_map", it might already be on "added_files_map" */
+              thunar_folder_remove_file (folder, event_file_thunar);
+              thunar_file_destroy (event_file_thunar);
+            }
 
             /* reload the renamed file */
             if (thunar_file_reload (other_file_thunar))
