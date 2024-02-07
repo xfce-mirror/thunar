@@ -60,6 +60,8 @@
 #include <gdk/gdkx.h>
 #endif
 
+#define THUNAR_STANDARD_VIEW_SELECTION_CHANGED_DELAY_MS 10
+
 
 
 /* Property identifiers */
@@ -369,6 +371,9 @@ struct _ThunarStandardViewPrivate
   GtkCssProvider         *css_provider;
 
   GType                   model_type;
+  
+  /* Used in order to throttle selection changes to prevent lag */
+  guint                   selection_changed_timeout_source;
 };
 
 static XfceGtkActionEntry thunar_standard_view_action_entries[] =
@@ -794,6 +799,8 @@ static void
 thunar_standard_view_init (ThunarStandardView *standard_view)
 {
   standard_view->priv = thunar_standard_view_get_instance_private (standard_view);
+
+  standard_view->priv->selection_changed_timeout_source = 0;
 
   /* allocate the scroll_to_files mapping (directory GFile -> first visible child GFile) */
   standard_view->priv->scroll_to_files = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, g_object_unref, g_object_unref);
@@ -3860,29 +3867,19 @@ thunar_standard_view_queue_popup (ThunarStandardView *standard_view,
 
 
 
-/**
- * thunar_standard_view_selection_changed:
- * @standard_view : a #ThunarStandardView instance.
- *
- * Called by derived classes (and only by derived classes!) whenever the file
- * selection changes.
- *
- * Note, that this is also called internally whenever the number of
- * files in the @standard_view<!---->s model changes.
- **/
-void
-thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
+static gboolean
+_thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 {
   GtkTreeIter iter;
   GList      *lp, *selected_thunar_files;
   ThunarFile *file;
   gboolean    iter_is_valid;
 
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
   /* ignore while searching */
   if (standard_view->priv->active_search == TRUE)
-    return;
+    return FALSE;
 
   /* drop any existing "new-files" closure */
   if (G_UNLIKELY (standard_view->priv->new_files_closure != NULL))
@@ -3923,6 +3920,32 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 
   /* emit notification for "selected-files" */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_SELECTED_FILES]);
+
+  standard_view->priv->selection_changed_timeout_source = 0;
+
+  return FALSE;
+}
+
+
+
+/**
+ * thunar_standard_view_selection_changed:
+ * @standard_view : a #ThunarStandardView instance.
+ *
+ * Called by derived classes (and only by derived classes!) whenever the file
+ * selection changes.
+ *
+ * Note, that this is also called internally whenever the number of
+ * files in the @standard_view<!---->s model changes.
+ **/
+void
+thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
+{
+  if (standard_view->priv->selection_changed_timeout_source != 0)
+    return;
+
+  standard_view->priv->selection_changed_timeout_source =
+    g_timeout_add (THUNAR_STANDARD_VIEW_SELECTION_CHANGED_DELAY_MS, (GSourceFunc) _thunar_standard_view_selection_changed, standard_view);
 }
 
 
