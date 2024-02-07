@@ -998,6 +998,9 @@ thunar_standard_view_finalize (GObject *object)
   /* disconnect accelerators */
   thunar_standard_view_disconnect_accelerators (standard_view);
 
+  if (standard_view->priv->selection_changed_timeout_source != 0)
+    g_source_remove (standard_view->priv->selection_changed_timeout_source);
+
   /* release the scroll_to_file reference (if any) */
   if (G_UNLIKELY (standard_view->priv->scroll_to_file != NULL))
     g_object_unref (G_OBJECT (standard_view->priv->scroll_to_file));
