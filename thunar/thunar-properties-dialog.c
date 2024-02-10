@@ -1414,6 +1414,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     {
       display_name = g_file_get_parse_name (thunar_file_get_file (parent_file));
       gtk_label_set_text (GTK_LABEL (dialog->location_label), display_name);
+      gtk_widget_set_tooltip_text(dialog->location_label, display_name);
       gtk_widget_show (dialog->location_label);
       g_object_unref (G_OBJECT (parent_file));
       g_free (display_name);
@@ -1687,6 +1688,7 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
     {
       display_name = g_file_get_parse_name (thunar_file_get_file (parent_file));
       gtk_label_set_text (GTK_LABEL (dialog->location_label), display_name);
+      gtk_widget_set_tooltip_text(dialog->location_label, display_name);
       gtk_widget_show (dialog->location_label);
       g_object_unref (G_OBJECT (parent_file));
       g_free (display_name);
