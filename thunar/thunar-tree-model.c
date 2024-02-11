@@ -283,7 +283,6 @@ thunar_tree_model_init (ThunarTreeModel *model)
 {
   ThunarTreeModelItem *item;
   ThunarFile          *file;
-  GFile               *home;
   GList               *system_paths = NULL;
   GList               *devices;
   GList               *lp;
@@ -319,8 +318,7 @@ thunar_tree_model_init (ThunarTreeModel *model)
     system_paths = g_list_append (system_paths, thunar_g_file_new_for_computer());
 
   /* add the home folder to the system paths */
-  home = thunar_g_file_new_for_home ();
-  system_paths = g_list_append (system_paths, g_object_ref (home));
+  system_paths = g_list_append (system_paths, thunar_g_file_new_for_home ());
 
   if (thunar_g_vfs_is_uri_scheme_supported ("recent"))
     system_paths = g_list_append (system_paths, thunar_g_file_new_for_recent());
@@ -360,13 +358,9 @@ thunar_tree_model_init (ThunarTreeModel *model)
           /* add the dummy node */
           g_node_append_data (node, NULL);
         }
-
-      /* release the system defined path */
-      g_object_unref (lp->data);
     }
 
-  g_list_free (system_paths);
-  g_object_unref (home);
+  g_list_free_full (system_paths, g_object_unref);
 
   /* setup the initial devices */
   devices = thunar_device_monitor_get_devices (model->device_monitor);
@@ -1448,7 +1442,7 @@ thunar_tree_model_item_load_idle (gpointer user_data)
     }
 
   /* verify that we have a file */
-  if (G_LIKELY (item->file != NULL))
+  if (G_LIKELY (item->file != NULL) && item->folder == NULL)
     {
       /* open the folder for the item */
       item->folder = thunar_folder_get_for_file (item->file);
@@ -1467,10 +1461,6 @@ thunar_tree_model_item_load_idle (gpointer user_data)
               thunar_tree_model_item_files_added (item, files, item->folder);
               g_list_free (files);
             }
-
-          /* notify for "loading" if already loaded */
-          if (!thunar_folder_get_loading (item->folder))
-            g_object_notify (G_OBJECT (item->folder), "loading");
         }
     }
 
