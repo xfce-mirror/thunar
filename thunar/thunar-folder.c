@@ -690,6 +690,18 @@ thunar_folder_files_ready (ThunarJob    *job,
 
 
 
+static void
+_thunar_folder_load_content_types_finished (ThunarFolder *folder, ThunarJob* job)
+{
+  if (folder->content_type_job != NULL)
+    {
+      g_object_unref (folder->content_type_job);
+      folder->content_type_job = NULL;
+    }
+}
+
+
+
 /**
  * thunar_folder_load_content_types:
  * @folder : a #ThunarFolder instance.
@@ -713,6 +725,8 @@ thunar_folder_load_content_types (ThunarFolder *folder,
 
   /* start a new content_type_job */
   folder->content_type_job = thunar_io_jobs_load_content_types (files);
+  g_signal_connect_swapped (folder->content_type_job, "finished", G_CALLBACK (_thunar_folder_load_content_types_finished), folder);
+
   exo_job_launch (EXO_JOB (folder->content_type_job));
 }
 
