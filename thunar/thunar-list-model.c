@@ -2181,7 +2181,7 @@ thunar_list_model_set_folder (ThunarStandardViewModel *model,
 
       /* notify for "loading" if already loaded */
       if (!thunar_folder_get_loading (store->folder))
-          g_object_notify (G_OBJECT (store->folder), "loading");
+          g_object_notify (G_OBJECT (model), "loading");
     }
 
   /* notify listeners that we have a new folder */
