@@ -421,10 +421,6 @@ static void
 thunar_shortcuts_view_finalize (GObject *object)
 {
   ThunarShortcutsView  *view = THUNAR_SHORTCUTS_VIEW (object);
-  ThunarShortcutsModel *model = thunar_shortcuts_model_get_default ();
-
-  /* Disconnect from the model */
-  g_signal_handlers_disconnect_by_data (G_OBJECT (model), view);
 
   /* release drop path list (if drag_leave wasn't called) */
   thunar_g_list_free_full (view->drop_file_list);
