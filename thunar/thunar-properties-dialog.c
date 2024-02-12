@@ -1386,6 +1386,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     {
       display_name = g_filename_display_name (path);
       gtk_label_set_text (GTK_LABEL (dialog->link_label), display_name);
+      gtk_widget_set_tooltip_text(dialog->link_label, display_name);
       gtk_widget_show (dialog->link_label);
       g_free (display_name);
     }
@@ -1573,6 +1574,8 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
   ThunarFile  *parent_file = NULL;
   ThunarFile  *tmp_parent;
   gboolean     has_trashed_files = FALSE;
+  GString     *str_of_resolved_paths = g_string_new(NULL);
+  gchar       *resolved_path;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) > 1);
@@ -1589,7 +1592,6 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
   gtk_widget_hide (dialog->freespace_vbox);
   gtk_widget_hide (dialog->origin_label);
   gtk_widget_hide (dialog->openwith_chooser);
-  gtk_widget_hide (dialog->link_label);
 
   names_string = g_string_new (NULL);
 
@@ -1598,6 +1600,20 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
     {
       _thunar_assert (THUNAR_IS_FILE (lp->data));
       file = THUNAR_FILE (lp->data);
+
+      resolved_path = thunar_file_is_symlink (file) ? thunar_file_get_symlink_target (file) : NULL;
+      /* check if the file is a symlink, and get its resolved path*/
+      if (resolved_path != NULL) {
+        g_string_append(str_of_resolved_paths, thunar_file_get_basename (file));
+        g_string_append(str_of_resolved_paths, ": ");
+        g_string_append(str_of_resolved_paths, resolved_path);
+
+        if (lp->next != NULL) {
+          g_string_append(str_of_resolved_paths, ", ");
+        }
+
+        g_free (resolved_path);
+      }
 
       /* append the name */
       if (!first_file)
@@ -1682,6 +1698,19 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
     {
       gtk_label_set_text (GTK_LABEL (dialog->kind_label), _("mixed"));
     }
+
+  /* update the link target */
+  if (G_UNLIKELY (str_of_resolved_paths != NULL))
+    {
+      gtk_label_set_text (GTK_LABEL (dialog->link_label), str_of_resolved_paths->str);
+      gtk_widget_set_tooltip_text(dialog->link_label, str_of_resolved_paths->str);
+      gtk_widget_show (dialog->link_label);
+    }
+  else
+    {
+      gtk_widget_hide (dialog->link_label);
+    }
+  g_string_free (str_of_resolved_paths, TRUE);
 
   /* update the file or folder location (parent) */
   if (G_UNLIKELY (parent_file != NULL))
