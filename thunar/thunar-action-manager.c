@@ -3296,9 +3296,13 @@ thunar_action_manager_append_open_section (ThunarActionManager *action_mgr,
       thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW, FALSE);
     }
 
-  /* active while searching and while in 'recent:///' */
+  /* active while searching and while inside the 'recent:///' folder */
   if (action_mgr->n_files_to_process > 0 && (action_mgr->is_searching || thunar_file_is_recent (action_mgr->current_directory)))
-    thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_LOCATION, FALSE);
+  {
+    /* Dont show 'open location' on the recent folder shurtcut itself */
+    if (!thunar_file_is_recent (action_mgr->files_to_process->data))
+      thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_LOCATION, FALSE);
+  }
 
   if (G_LIKELY (applications != NULL))
     {
