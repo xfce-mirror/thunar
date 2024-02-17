@@ -1581,6 +1581,15 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   /* open the new directory as folder */
   folder = thunar_folder_get_for_file (current_directory);
   g_signal_connect_swapped (folder, "thumbnails-updated", G_CALLBACK (thunar_standard_view_queue_redraw), standard_view);
+  
+  /* connect to the loading property of the new directory */
+  standard_view->loading_binding =
+    g_object_bind_property_full (folder,        "loading",
+                                 standard_view, "loading",
+                                 G_BINDING_SYNC_CREATE,
+                                 NULL, NULL,
+                                 standard_view,
+                                 thunar_standard_view_loading_unbound);
 
   /* apply the new folder, ignore removal of any old files */
   g_signal_handler_block (standard_view->model, standard_view->priv->row_deleted_id);
@@ -4470,11 +4479,8 @@ thunar_standard_view_set_model (ThunarStandardView *standard_view)
   /* be sure to update the statusbar text whenever the file-size-binary property changes */
   g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::file-size-binary", G_CALLBACK (thunar_standard_view_update_statusbar_text), standard_view);
 
-  standard_view->loading_binding =
-    g_object_bind_property_full (standard_view->model, "loading",
-                                 standard_view,        "loading",
-                                 G_BINDING_SYNC_CREATE,
-                                 NULL, NULL,
-                                 standard_view,
-                                 thunar_standard_view_loading_unbound);
+  /* pass down the "loading" property into the new model */
+  g_object_bind_property (standard_view->model, "loading",
+                          standard_view,        "loading",
+                          G_BINDING_SYNC_CREATE);
 }

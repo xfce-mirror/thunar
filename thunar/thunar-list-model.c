@@ -2179,9 +2179,9 @@ thunar_list_model_set_folder (ThunarStandardViewModel *model,
       g_signal_connect (G_OBJECT (store->folder), "files-changed", G_CALLBACK (thunar_list_model_files_changed), store);
       g_signal_connect (G_OBJECT (store->folder), "notify::loading", G_CALLBACK (thunar_list_model_notify_loading), store);
 
-      /* notify for "loading" if already loaded */
+      /* If the folder is already loaded, directly update the loading state */
       if (!thunar_folder_get_loading (store->folder))
-          g_object_notify (G_OBJECT (model), "loading");
+        thunar_list_model_notify_loading (store->folder, NULL, store);
     }
 
   /* notify listeners that we have a new folder */

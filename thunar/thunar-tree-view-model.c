@@ -2570,8 +2570,9 @@ thunar_tree_view_model_load_dir (Node *node)
       g_list_free (files);
     }
 
+  /* If the folder is already loaded, directly update the loading state */
   if (!thunar_folder_get_loading (node->dir))
-    g_object_notify (G_OBJECT (node->dir), "loading");
+    _thunar_tree_view_model_dir_notify_loading (node, NULL, node->dir);
 
   g_hash_table_insert (node->model->subdirs, node->file, node);
 }

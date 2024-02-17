@@ -1454,6 +1454,10 @@ thunar_tree_model_item_load_idle (gpointer user_data)
           g_signal_connect_swapped (G_OBJECT (item->folder), "files-changed", G_CALLBACK (thunar_tree_model_item_files_changed), item);
           g_signal_connect_swapped (G_OBJECT (item->folder), "notify::loading", G_CALLBACK (thunar_tree_model_item_notify_loading), item);
 
+          /* If the folder is already loaded, directly update the loading state */
+          if (!thunar_folder_get_loading (item->folder))
+            thunar_tree_model_item_notify_loading (item, NULL, item->folder);
+
           /* load the initial set of files (if any) */
           files = thunar_folder_get_files (item->folder);
           if (G_UNLIKELY (files != NULL))
