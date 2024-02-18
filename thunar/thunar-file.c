@@ -3592,17 +3592,20 @@ thunar_file_get_file_count (ThunarFile   *file,
   job = thunar_io_jobs_count_files (file);
 
   /* set up the signal on finish to call the callback and keep a reference on the data */
-  if (callback != NULL)
+  if (callback != NULL && data != NULL && G_IS_OBJECT (data))
     {
       g_signal_connect_data (job,
                              "finished",
                              G_CALLBACK (callback),
-                             data,
+                             g_object_ref (G_OBJECT (data)),
                              (GClosureNotify) (void (*)(void)) g_object_unref,
                              G_CONNECT_AFTER);
     }
 
   exo_job_launch (EXO_JOB (job));
+
+  /* release our reference on the job (a ref is hold by itself, once it is launched) */
+  g_object_unref (job);
 
   return file->file_count;
 }

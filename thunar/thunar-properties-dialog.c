@@ -1925,6 +1925,7 @@ _make_highlight_buttons_sensitive (gpointer data)
 
   thunar_properties_dialog_update_apply_button (dialog);
 
+  g_object_unref (dialog->highlight_change_job);
   dialog->highlight_change_job = NULL;
   dialog->highlight_change_job_finish_signal = 0;
 }

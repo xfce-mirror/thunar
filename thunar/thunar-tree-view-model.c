@@ -254,8 +254,8 @@ static gint              thunar_tree_view_model_cmp_nodes (gconstpointer a,
 static void              thunar_tree_view_model_sort (ThunarTreeViewModel *model);
 static void              thunar_tree_view_model_load_dir (Node *node);
 static void              thunar_tree_view_model_cleanup_model (ThunarTreeViewModel *model);
-static void              thunar_tree_view_model_file_count_callback (ExoJob  *job,
-                                                                     gpointer node);
+static void              thunar_tree_view_model_file_count_callback (ExoJob              *job,
+                                                                     ThunarTreeViewModel *model);
 static void              thunar_tree_view_model_node_destroy (Node *node);
 static void              thunar_tree_view_model_dir_files_changed (Node  *node,
                                                                    GList *files);
@@ -1285,7 +1285,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
             /* If the option is set to always show folder sizes as item counts, then give the folder's item count */
             else if (THUNAR_TREE_VIEW_MODEL (model)->folder_item_count == THUNAR_FOLDER_ITEM_COUNT_ALWAYS)
               {
-                item_count = thunar_file_get_file_count (file, G_CALLBACK (thunar_tree_view_model_file_count_callback), node);
+                item_count = thunar_file_get_file_count (file, G_CALLBACK (thunar_tree_view_model_file_count_callback), model);
                 g_value_take_string (value, g_strdup_printf (ngettext ("%u item", "%u items", item_count), item_count));
               }
 
@@ -1295,7 +1295,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
               {
                 if (thunar_file_is_local (file))
                   {
-                    item_count = thunar_file_get_file_count (file, G_CALLBACK (thunar_tree_view_model_file_count_callback), node);
+                    item_count = thunar_file_get_file_count (file, G_CALLBACK (thunar_tree_view_model_file_count_callback), model);
                     g_value_take_string (value, g_strdup_printf (ngettext ("%u item", "%u items", item_count), item_count));
                   }
                 else
@@ -2292,8 +2292,14 @@ thunar_tree_view_model_locate_file (ThunarTreeViewModel *model,
 
   parent = thunar_file_get_parent (file, NULL);
 
-  if (parent == NULL || !g_hash_table_contains (model->subdirs, parent))
+  if (parent == NULL)
     return NULL;
+
+  if (!g_hash_table_contains (model->subdirs, parent))
+    {
+      g_object_unref (parent);
+      return NULL;
+    }
 
   parent_node = g_hash_table_lookup (model->subdirs, parent);
   g_object_unref (parent);
@@ -2625,12 +2631,14 @@ thunar_tree_view_model_cleanup_model (ThunarTreeViewModel *model)
 
 
 static void
-thunar_tree_view_model_file_count_callback (ExoJob  *job,
-                                            gpointer node)
+thunar_tree_view_model_file_count_callback (ExoJob              *job,
+                                            ThunarTreeViewModel *model)
 {
   GArray              *param_values;
   ThunarFile          *file;
+  ThunarFile          *parent;
   GList               *files = NULL;
+  Node                *parent_node;
 
   if (job == NULL)
     return;
@@ -2641,9 +2649,19 @@ thunar_tree_view_model_file_count_callback (ExoJob  *job,
   if (file == NULL)
     return;
 
-  files = g_list_append (files, file);
-  thunar_tree_view_model_dir_files_changed (node, files);
-  g_list_free (files);
+  parent = thunar_file_get_parent (file, NULL);
+  if (parent == NULL)
+    return;
+
+  parent_node = thunar_tree_view_model_locate_file (model, parent);
+  g_object_unref (parent);
+
+   if (parent_node == NULL)
+     return;
+
+   files = g_list_append (files, file);
+   thunar_tree_view_model_dir_files_changed (parent_node, files);
+   g_list_free (files);
 }
 
 

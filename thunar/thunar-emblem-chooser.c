@@ -293,6 +293,7 @@ emblem_change_job_finished (gpointer data)
     thunar_window_queue_redraw (lp->data);
   g_list_free (windows);
 
+  g_object_unref (chooser->emblem_change_job);
   chooser->emblem_change_job = NULL;
   chooser->emblem_change_job_finish_signal = 0;
 }
