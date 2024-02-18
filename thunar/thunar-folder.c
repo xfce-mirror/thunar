@@ -717,11 +717,7 @@ thunar_folder_load_content_types (ThunarFolder *folder,
 
   /* check if we are currently connect to a job */
   if (G_UNLIKELY (folder->content_type_job != NULL))
-    {
       exo_job_cancel (EXO_JOB (folder->content_type_job));
-      g_object_unref (folder->content_type_job);
-      folder->content_type_job = NULL;
-    }
 
   /* start a new content_type_job */
   folder->content_type_job = thunar_io_jobs_load_content_types (files);
@@ -1258,11 +1254,7 @@ thunar_folder_reload (ThunarFolder *folder,
 
   /* stop content type loading */
   if (G_UNLIKELY (folder->content_type_job != NULL))
-    {
-      exo_job_cancel (EXO_JOB (folder->content_type_job));
-      g_object_unref (folder->content_type_job);
-      folder->content_type_job = NULL;
-    }
+    exo_job_cancel (EXO_JOB (folder->content_type_job));
 
   /* check if we are currently connect to a job */
   if (G_UNLIKELY (folder->job != NULL))
