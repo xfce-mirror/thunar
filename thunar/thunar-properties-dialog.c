@@ -85,6 +85,8 @@ enum
   NOTEBOOK_PAGE_PERMISSIONS
 };
 
+GtkWidget *global_link_label = NULL;
+
 
 static void     thunar_properties_dialog_constructed          (GObject                     *object);
 static void     thunar_properties_dialog_dispose              (GObject                     *object);
@@ -458,6 +460,7 @@ thunar_properties_dialog_constructed (GObject *object)
   ++row;
 
   label = gtk_label_new (_("Link Target:"));
+  global_link_label = label;
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
@@ -1606,8 +1609,9 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
       /* check if the file is a symlink, and get its resolved path */
       if (resolved_path != NULL)
         {
-          /* If there is even a single symlink then make 'Link Targets' visible */
+          /* If there is even a single symlink then make 'Link Targets' visible and rename it to 'Link Targets' */
           gtk_widget_show (dialog->link_label);
+          gtk_label_set_text (GTK_LABEL (global_link_label), _("Link Targets:"));
 
           /* Add , only if there was a resolved path before*/
           if ((!first_file) && (str_of_resolved_paths->len != 0))
