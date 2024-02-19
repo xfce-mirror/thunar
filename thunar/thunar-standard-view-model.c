@@ -723,6 +723,8 @@ thunar_standard_view_model_get_statusbar_text (ThunarStandardViewModel *model,
           text_list = g_list_append (text_list, temp_string);
           g_free (date_string);
         }
+
+      g_object_unref (file);
     }
   else /* more than one item selected */
     {
