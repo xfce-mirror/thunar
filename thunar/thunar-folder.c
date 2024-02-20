@@ -371,6 +371,14 @@ thunar_folder_finalize (GObject *object)
   GHashTableIter  iter;
   gpointer        key, file;
 
+  /* stop content type loading */
+  if (G_UNLIKELY (folder->content_type_job != NULL))
+    {
+      exo_job_cancel (EXO_JOB (folder->content_type_job));
+      g_object_unref (folder->content_type_job);
+      folder->content_type_job = NULL;
+    }
+
   /* stop any running tumbnailing timeout source */
   if (folder->thumbnail_updated_timeout_source_id != 0)
     g_source_remove (folder->thumbnail_updated_timeout_source_id);
@@ -721,7 +729,7 @@ thunar_folder_load_content_types (ThunarFolder *folder,
 
   /* start a new content_type_job */
   folder->content_type_job = thunar_io_jobs_load_content_types (files);
-  g_signal_connect_swapped (folder->content_type_job, "finished", G_CALLBACK (_thunar_folder_load_content_types_finished), folder);
+  g_signal_connect_object (folder->content_type_job, "finished", G_CALLBACK (_thunar_folder_load_content_types_finished), folder, G_CONNECT_SWAPPED);
 
   exo_job_launch (EXO_JOB (folder->content_type_job));
 }
