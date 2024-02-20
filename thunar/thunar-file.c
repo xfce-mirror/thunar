@@ -204,9 +204,6 @@ struct _ThunarFile
   /* flags for thumbnail state etc */
   ThunarFileFlags       flags;
 
-  /* tells whether the file watch is not set */
-  gboolean              no_file_watch;
-
   /* event source id used to rate-limit file-changed signals */
   guint                 signal_changed_source_id;
 
@@ -4167,16 +4164,15 @@ thunar_file_watch (ThunarFile *file)
   if (file_watch == NULL)
     {
       file_watch = g_slice_new (ThunarFileWatch);
-      file_watch->watch_count = 1;
 
-      /* create a file or directory monitor */
+      /* try to create a file or directory monitor */
       file_watch->monitor = g_file_monitor (file->gfile, G_FILE_MONITOR_WATCH_MOUNTS, NULL, &error);
+      file_watch->watch_count = 0;
 
       if (G_UNLIKELY (file_watch->monitor == NULL))
         {
           g_debug ("Failed to create file monitor: %s", error->message);
           g_error_free (error);
-          file->no_file_watch = TRUE;
         }
       else
         {
@@ -4187,12 +4183,9 @@ thunar_file_watch (ThunarFile *file)
       /* attach to file */
       g_object_set_qdata_full (G_OBJECT (file), thunar_file_watch_quark, file_watch, thunar_file_watch_destroyed);
     }
-  else if (G_LIKELY (!file->no_file_watch))
-    {
-      /* increase watch count */
-      _thunar_return_if_fail (G_IS_FILE_MONITOR (file_watch->monitor));
-      file_watch->watch_count++;
-    }
+
+  /* increase watch count */
+  file_watch->watch_count++;
 }
 
 
@@ -4210,11 +4203,6 @@ thunar_file_unwatch (ThunarFile *file)
   ThunarFileWatch *file_watch;
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
-
-  if (G_UNLIKELY (file->no_file_watch))
-    {
-      return;
-    }
 
   file_watch = g_object_get_qdata (G_OBJECT (file), thunar_file_watch_quark);
   if (file_watch != NULL)
