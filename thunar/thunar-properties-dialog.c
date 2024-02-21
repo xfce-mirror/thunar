@@ -1707,7 +1707,7 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
     }
 
   /* update the link target */
-  if (G_UNLIKELY (str_of_resolved_paths->len))
+  if (G_LIKELY (str_of_resolved_paths->len > 0))
     {
       gtk_label_set_text (GTK_LABEL (dialog->link_label), str_of_resolved_paths->str);
       gtk_widget_set_tooltip_text(dialog->link_label, str_of_resolved_paths->str);
