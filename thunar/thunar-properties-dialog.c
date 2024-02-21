@@ -85,8 +85,6 @@ enum
   NOTEBOOK_PAGE_PERMISSIONS
 };
 
-GtkWidget *global_link_label = NULL;
-
 
 static void     thunar_properties_dialog_constructed          (GObject                     *object);
 static void     thunar_properties_dialog_dispose              (GObject                     *object);
@@ -157,6 +155,7 @@ struct _ThunarPropertiesDialog
   GtkWidget              *kind_label;
   GtkWidget              *openwith_chooser;
   GtkWidget              *link_label;
+  GtkWidget              *link_label_text;
   GtkWidget              *location_label;
   GtkWidget              *origin_label;
   GtkWidget              *created_label;
@@ -460,7 +459,7 @@ thunar_properties_dialog_constructed (GObject *object)
   ++row;
 
   label = gtk_label_new (_("Link Target:"));
-  global_link_label = label;
+  dialog->link_label_text = label;
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
@@ -1611,7 +1610,7 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
         {
           /* If there is even a single symlink then make 'Link Targets' visible and rename it to 'Link Targets' */
           gtk_widget_show (dialog->link_label);
-          gtk_label_set_text (GTK_LABEL (global_link_label), _("Link Targets:"));
+          gtk_label_set_text (GTK_LABEL (dialog->link_label_text), _("Link Targets:"));
 
           /* Add , only if there was a resolved path before*/
           if (str_of_resolved_paths->len != 0)
