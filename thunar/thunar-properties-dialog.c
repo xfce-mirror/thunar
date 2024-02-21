@@ -1614,7 +1614,7 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
           gtk_label_set_text (GTK_LABEL (global_link_label), _("Link Targets:"));
 
           /* Add , only if there was a resolved path before*/
-          if ((!first_file) && (str_of_resolved_paths->len != 0))
+          if (str_of_resolved_paths->len != 0)
               g_string_append (str_of_resolved_paths, ", ");
 
           g_string_append (str_of_resolved_paths, thunar_file_get_basename (file));
