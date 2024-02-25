@@ -222,7 +222,7 @@ static gboolean  thunar_window_action_icon_view           (ThunarWindow         
 static gboolean  thunar_window_action_compact_view        (ThunarWindow           *window);
 static gboolean  thunar_window_action_show_toolbar_editor (ThunarWindow           *window);
 static void      thunar_window_replace_view               (ThunarWindow           *window,
-                                                           GtkWidget              *view,
+                                                           GtkWidget              *view_to_replace,
                                                            GType                   view_type);
 static void      thunar_window_action_view_changed        (ThunarWindow           *window,
                                                            GType                   view_type);
@@ -2132,30 +2132,24 @@ thunar_window_binding_create (ThunarWindow *window,
 
 
 static void
-thunar_window_notebook_switch_page (GtkWidget    *notebook,
-                                    GtkWidget    *page,
-                                    guint         page_num,
-                                    ThunarWindow *window)
+thunar_window_switch_current_view (ThunarWindow *window,
+                                   GtkWidget    *new_view)
 {
   GSList        *view_bindings;
   ThunarFile    *current_directory;
   ThunarHistory *history;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
-  _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
-  _thunar_return_if_fail (THUNAR_IS_VIEW (page));
+  _thunar_return_if_fail (THUNAR_IS_VIEW (new_view));
 
-  /* leave if nothing changed or tab from other split-view is selected as
-   * thunar_window_notebook_select_current_page() is going to take care of that */
-  if ((window->view == page) || (window->notebook_selected != notebook))
+  if ((window->view == new_view))
     return;
-
-  /* Use accelerators only on the current active tab */
-  if (window->view != NULL)
-    g_object_set (G_OBJECT (window->view), "accel-group", NULL, NULL);
 
   if (G_LIKELY (window->view != NULL))
     {
+      /* Use accelerators only on the current active view */
+      g_object_set (G_OBJECT (window->view), "accel-group", NULL, NULL);
+
       /* disconnect from previous history */
       if (window->signal_handler_id_history_changed != 0)
         {
@@ -2163,6 +2157,8 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
           g_signal_handler_disconnect (history, window->signal_handler_id_history_changed);
           window->signal_handler_id_history_changed = 0;
         }
+
+      g_signal_handlers_disconnect_by_func (window->view, thunar_window_selection_changed, window);
 
       /* unset view during switch */
       window->view = NULL;
@@ -2174,20 +2170,20 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   g_slist_free_full (view_bindings, g_object_unref);
 
   /* update the directory of the current window */
-  current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (page));
+  current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (new_view));
   thunar_window_set_current_directory (window, current_directory);
 
   /* add stock bindings */
-  thunar_window_binding_create (window, window, "current-directory", page, "current-directory", G_BINDING_DEFAULT);
-  thunar_window_binding_create (window, page, "loading", window->spinner, "active", G_BINDING_SYNC_CREATE);
-  thunar_window_binding_create (window, page, "searching", window->spinner, "active", G_BINDING_SYNC_CREATE);
-  thunar_window_binding_create (window, page, "selected-files", window->action_mgr, "selected-files", G_BINDING_SYNC_CREATE);
-  thunar_window_binding_create (window, page, "zoom-level", window, "zoom-level", G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
+  thunar_window_binding_create (window, window, "current-directory", new_view, "current-directory", G_BINDING_DEFAULT);
+  thunar_window_binding_create (window, new_view, "loading", window->spinner, "active", G_BINDING_SYNC_CREATE);
+  thunar_window_binding_create (window, new_view, "searching", window->spinner, "active", G_BINDING_SYNC_CREATE);
+  thunar_window_binding_create (window, new_view, "selected-files", window->action_mgr, "selected-files", G_BINDING_SYNC_CREATE);
+  thunar_window_binding_create (window, new_view, "zoom-level", window, "zoom-level", G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
 
   /* connect to the sidepane (if any) */
   if (G_LIKELY (window->sidepane != NULL))
     {
-      thunar_window_binding_create (window, page, "selected-files",
+      thunar_window_binding_create (window, new_view, "selected-files",
                                     window->sidepane, "selected-files",
                                     G_BINDING_SYNC_CREATE);
     }
@@ -2195,17 +2191,14 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   /* connect to the statusbar (if any) */
   if (G_LIKELY (window->statusbar != NULL))
     {
-      thunar_window_binding_create (window, page, "statusbar-text",
+      thunar_window_binding_create (window, new_view, "statusbar-text",
                                     window->statusbar, "text",
                                     G_BINDING_SYNC_CREATE);
     }
 
-  if (window->view != NULL)
-    g_signal_handlers_disconnect_by_func (window->view, thunar_window_selection_changed, window);
-
   /* activate new view */
-  window->view = page;
-  window->view_type = G_TYPE_FROM_INSTANCE (page);
+  window->view = new_view;
+  window->view_type = G_TYPE_FROM_INSTANCE (new_view);
 
   /* before we can set which view button should be active we need to block the signals first */
   g_signal_handlers_block_by_func (window->location_toolbar_item_detailed_view, get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST)->callback, window);
@@ -2225,7 +2218,7 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
     
   /* connect accelerators for the view, we need to do this after window->view has been set,
    * see thunar_window_reconnect_accelerators and thunar_standard_view_connect_accelerators */
-  g_object_set (G_OBJECT (page), "accel-group", window->accel_group, NULL);
+  g_object_set (G_OBJECT (window->view), "accel-group", window->accel_group, NULL);
 
   g_signal_connect_swapped (G_OBJECT (window->view), "notify::selected-files",
                             G_CALLBACK (thunar_window_selection_changed), window);
@@ -2245,23 +2238,48 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
     }
 
   /* update the selection */
-  thunar_standard_view_selection_changed (THUNAR_STANDARD_VIEW (page));
-
-  gtk_widget_grab_focus (page);
+  thunar_standard_view_selection_changed (THUNAR_STANDARD_VIEW (window->view));
 
   /* Set trash infobar's `empty trash` button sensitivity, if required */
   if (thunar_file_is_trash (window->current_directory))
     gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_item_count (window->current_directory) > 0);
 
   /* if the view has an ongoing search operation take that into account, otherwise cancel the current search (if there is one) */
-  if (thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (page)) != NULL)
+  if (thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (window->view)) != NULL)
     {
-      gchar *str = g_strjoin (NULL, thunar_util_get_search_prefix (), thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (page)), NULL);
+      gchar *str = g_strjoin (NULL, thunar_util_get_search_prefix (), thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (window->view)), NULL);
       thunar_window_resume_search (window, str);
       g_free (str);
     }
   else if (window->search_query != NULL)
     thunar_window_action_cancel_search (window);
+
+  /* switch to the new view */
+  thunar_window_notebook_set_current_tab (window, gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), window->view));
+
+  /* take focus on the new view */
+  gtk_widget_grab_focus (window->view);
+}
+
+
+
+static void
+thunar_window_notebook_switch_page (GtkWidget    *notebook,
+                                    GtkWidget    *page,
+                                    guint         page_num,
+                                    ThunarWindow *window)
+{
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
+  _thunar_return_if_fail (THUNAR_IS_VIEW (page));
+
+  /* leave if nothing changed or tab from other split-view is selected as
+   * thunar_window_notebook_select_current_page() is going to take care of that */
+  if ((window->view == page) || (window->notebook_selected != notebook))
+    return;
+
+  /* switch ti the new view (will as well focus the new page) */
+  thunar_window_switch_current_view (window, page);
 }
 
 
@@ -4050,61 +4068,40 @@ thunar_window_action_compact_view (ThunarWindow *window)
 
 static void
 thunar_window_replace_view (ThunarWindow *window,
-                            GtkWidget    *view,
+                            GtkWidget    *view_to_replace,
                             GType         view_type)
 {
   ThunarFile     *file = NULL;
   ThunarFile     *current_directory = NULL;
   GtkWidget      *new_view;
-  ThunarHistory  *history = NULL;
-  ThunarJob      *job = NULL;
   GList          *selected_thunar_files = NULL;
   gint            page_num;
-  gboolean        is_current_view;
 
   _thunar_return_if_fail (view_type != G_TYPE_NONE);
 
   /* if the view already has the correct type then just return */
-  if (view != NULL && G_TYPE_FROM_INSTANCE (view) == view_type)
+  if (view_to_replace != NULL && G_TYPE_FROM_INSTANCE (view_to_replace) == view_type)
     return;
 
-  /* is the view we are replacing the active view?
-   * (note that this will be true if both view and window->view are NULL) */
-  is_current_view = (view == window->view);
-
   /* save some settings from the old view for the new view */
-  if (view != NULL)
+  if (view_to_replace != NULL)
     {
-      /* disconnect from previous history if the old view is the active view */
-      if (is_current_view && window->signal_handler_id_history_changed != 0)
-        {
-          history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (view));
-          g_signal_handler_disconnect (history, window->signal_handler_id_history_changed);
-          window->signal_handler_id_history_changed = 0;
-        }
-
       /* get first visible file in the old view */
-      if (!thunar_view_get_visible_range (THUNAR_VIEW (view), &file, NULL))
+      if (!thunar_view_get_visible_range (THUNAR_VIEW (view_to_replace), &file, NULL))
         file = NULL;
 
       /* store the active directory from the old view */
-      current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (view));
+      current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (view_to_replace));
       if (current_directory != NULL)
         g_object_ref (current_directory);
 
       /* remember the file selection from the old view */
-      selected_thunar_files = thunar_g_list_copy_deep (thunar_component_get_selected_files (THUNAR_COMPONENT (view)));
+      selected_thunar_files = thunar_g_list_copy_deep (thunar_component_get_selected_files (THUNAR_COMPONENT (view_to_replace)));
 
-      /* save the history of the current view */
-      if (THUNAR_IS_STANDARD_VIEW (view))
-        {
-          /* Transfer ownership of the search-job to the new view. It is the new view's responsibility to cancel the search. */
-          job = thunar_standard_view_model_get_job (THUNAR_STANDARD_VIEW (view)->model);
-        }
+      /* cancel any ongoing search in the old view */
+      if (thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (view_to_replace)) != NULL)
+          thunar_window_action_cancel_search (window);
     }
-
-  if (is_current_view)
-    window->view_type = view_type;
 
   /* if we have not got a current directory from the old view, use the window's current directory */
   if (current_directory == NULL && window->current_directory != NULL)
@@ -4113,8 +4110,8 @@ thunar_window_replace_view (ThunarWindow *window,
   _thunar_assert (current_directory != NULL);
 
   /* find where to insert the new view */
-  if (view != NULL)
-    page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), view);
+  if (view_to_replace != NULL)
+    page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), view_to_replace);
   else
     page_num = -1;
 
@@ -4122,32 +4119,18 @@ thunar_window_replace_view (ThunarWindow *window,
   new_view = thunar_window_create_view (window, current_directory, view_type);
   thunar_window_notebook_insert_page (window, page_num + 1, new_view);
 
-  /* if we are replacing the active view, make the new view the active view */
-  if (is_current_view)
-    {
-      /* remember the last view type if this is the active view and directory specific settings are not enabled */
-      if (!window->directory_specific_settings &&
-          !window->is_searching &&
-          gtk_widget_get_visible (GTK_WIDGET (window)) &&
-          view_type != G_TYPE_NONE)
-        g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (view_type), NULL);
-
-
-      /* switch to the new view */
-      page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), new_view);
-      thunar_window_notebook_set_current_tab (window, page_num);
-
-      /* take focus on the new view */
-      gtk_widget_grab_focus (new_view);
-    }
+  /* is the view we are replacing the active view?
+   * (note that this will be true if both view_to_replace and window->view are NULL) */
+  if (view_to_replace == window->view)
+    thunar_window_switch_current_view (window, new_view);
 
   /* scroll to the previously visible file in the old view */
   if (G_UNLIKELY (file != NULL))
     thunar_view_scroll_to_file (THUNAR_VIEW (new_view), file, FALSE, TRUE, 0.0f, 0.0f);
 
-  /* destroy the old view */
-  if (view != NULL)
-    gtk_widget_destroy (view);
+   /* unref the old view */
+   if (view_to_replace != NULL)
+     gtk_widget_destroy (view_to_replace);
 
   /* restore the file selection */
   thunar_component_set_selected_files (THUNAR_COMPONENT (new_view), selected_thunar_files);
@@ -4158,18 +4141,6 @@ thunar_window_replace_view (ThunarWindow *window,
     g_object_unref (G_OBJECT (file));
   if (G_UNLIKELY (current_directory != NULL))
     g_object_unref (G_OBJECT (current_directory));
-
-  /* connect to the new history if this is the active view */
-  if (is_current_view)
-    {
-      history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (new_view));
-      window->signal_handler_id_history_changed = g_signal_connect_swapped (G_OBJECT (history),
-                                                                            "history-changed",
-                                                                            G_CALLBACK (thunar_window_history_changed),
-                                                                            window);
-    }
-
-  thunar_standard_view_model_set_job (THUNAR_STANDARD_VIEW (new_view)->model, job);
 }
 
 
