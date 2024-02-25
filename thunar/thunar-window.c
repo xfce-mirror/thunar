@@ -163,12 +163,14 @@ static gpointer  thunar_window_notebook_create_window     (GtkWidget            
                                                            gint                    x,
                                                            gint                    y,
                                                            ThunarWindow           *window);
-static void      thunar_window_notebook_update_title       (GtkWidget              *label);
-static GtkWidget*thunar_window_notebook_insert_page       (ThunarWindow           *window,
+static void      thunar_window_notebook_update_title      (GtkWidget              *label);
+static GtkWidget*thunar_window_create_view                (ThunarWindow           *window,
                                                            ThunarFile             *directory,
                                                            GType                   view_type,
-                                                           gint                    position,
                                                            ThunarHistory          *history);
+static void      thunar_window_notebook_insert_page       (ThunarWindow           *window,
+                                                           gint                    position,
+                                                           GtkWidget              *view);
 static void      thunar_window_notebook_select_current_page(ThunarWindow           *window);
 
 static GtkWidget*thunar_window_paned_notebooks_add        (ThunarWindow           *window);
@@ -2571,27 +2573,20 @@ thunar_window_notebook_update_title (GtkWidget *label)
 
 
 static GtkWidget*
-thunar_window_notebook_insert_page (ThunarWindow  *window,
-                                    ThunarFile    *directory,
-                                    GType          view_type,
-                                    gint           position,
-                                    ThunarHistory *history)
+thunar_window_create_view (ThunarWindow  *window,
+                           ThunarFile    *directory,
+                           GType          view_type,
+                           ThunarHistory *history)
 {
-  GtkWidget      *view;
-  GtkWidget      *label;
-  GtkWidget      *label_box;
-  GtkWidget      *button;
-  GtkWidget      *spinner;
-  GtkWidget      *icon;
   ThunarColumn    sort_column;
   GtkSortType     sort_order;
+  GtkWidget      *view;
 
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), NULL);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (directory), NULL);
   _thunar_return_val_if_fail (view_type != G_TYPE_NONE, NULL);
   _thunar_return_val_if_fail (history == NULL || THUNAR_IS_HISTORY (history), NULL);
 
-  /* Figure out which sort settings to use */
+  /* If there is already an active view, inherit settings from that */
   if (window->view == NULL)
     g_object_get (G_OBJECT (window->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
   else
@@ -2603,13 +2598,27 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
                                   "sort-order-default", sort_order, NULL);
   thunar_view_set_show_hidden (THUNAR_VIEW (view), window->show_hidden);
 
-  gtk_widget_show (view);
-
   /* set the history of the view if a history is provided */
   if (history != NULL)
-    {
-      thunar_standard_view_set_history (THUNAR_STANDARD_VIEW (view), history);
-    }
+    thunar_standard_view_set_history (THUNAR_STANDARD_VIEW (view), history);
+
+  return view;
+}
+
+
+
+static void
+thunar_window_notebook_insert_page (ThunarWindow  *window,
+                                    gint           position,
+                                    GtkWidget     *view)
+{
+  GtkWidget      *label;
+  GtkWidget      *label_box;
+  GtkWidget      *button;
+  GtkWidget      *spinner;
+  GtkWidget      *icon;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   label_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
@@ -2665,7 +2674,7 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   gtk_notebook_set_tab_reorderable (GTK_NOTEBOOK (window->notebook_selected), view, TRUE);
   gtk_notebook_set_tab_detachable (GTK_NOTEBOOK (window->notebook_selected), view, TRUE);
 
-  return view;
+  gtk_widget_show (view);
 }
 
 
@@ -2849,7 +2858,8 @@ thunar_window_notebook_add_new_tab (ThunarWindow        *window,
 
   /* insert the new view */
   page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
-  view = thunar_window_notebook_insert_page (window, directory, view_type, page_num + 1, history);
+  view = thunar_window_create_view (window, directory, view_type, history);
+  thunar_window_notebook_insert_page (window, page_num + 1, view);
 
   /* switch to the new view */
   g_object_get (G_OBJECT (window->preferences), "misc-switch-to-new-tab", &switch_to_new_tab, NULL);
@@ -3667,6 +3677,7 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
   gint           page_num, last_splitview_separator_position;
   GType          view_type;
   GtkAllocation  allocation;
+  GtkWidget     *view;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
   _thunar_return_val_if_fail (window->view_type != G_TYPE_NONE, FALSE);
@@ -3707,7 +3718,8 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
 
       /* insert the new view */
       page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
-      thunar_window_notebook_insert_page (window, directory, view_type, page_num+1, history);
+      view = thunar_window_create_view (window, directory, view_type, history);
+      thunar_window_notebook_insert_page (window, page_num+1, view);
 
       /* Prevent notebook expand on tab creation */
       g_object_get (G_OBJECT (window->preferences), "last-splitview-separator-position", &last_splitview_separator_position, NULL);
@@ -4116,7 +4128,8 @@ thunar_window_replace_view (ThunarWindow *window,
     page_num = -1;
 
   /* insert the new view */
-  new_view = thunar_window_notebook_insert_page (window, current_directory, view_type, page_num + 1, history);
+  new_view = thunar_window_create_view (window, current_directory, view_type, history);
+  thunar_window_notebook_insert_page (window, page_num + 1, new_view);
 
   /* if we are replacing the active view, make the new view the active view */
   if (is_current_view)
