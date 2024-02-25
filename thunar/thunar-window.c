@@ -166,8 +166,7 @@ static gpointer  thunar_window_notebook_create_window     (GtkWidget            
 static void      thunar_window_notebook_update_title      (GtkWidget              *label);
 static GtkWidget*thunar_window_create_view                (ThunarWindow           *window,
                                                            ThunarFile             *directory,
-                                                           GType                   view_type,
-                                                           ThunarHistory          *history);
+                                                           GType                   view_type);
 static void      thunar_window_notebook_insert_page       (ThunarWindow           *window,
                                                            gint                    position,
                                                            GtkWidget              *view);
@@ -2575,22 +2574,26 @@ thunar_window_notebook_update_title (GtkWidget *label)
 static GtkWidget*
 thunar_window_create_view (ThunarWindow  *window,
                            ThunarFile    *directory,
-                           GType          view_type,
-                           ThunarHistory *history)
+                           GType          view_type)
 {
   ThunarColumn    sort_column;
   GtkSortType     sort_order;
+  ThunarHistory  *history = NULL;
   GtkWidget      *view;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (directory), NULL);
   _thunar_return_val_if_fail (view_type != G_TYPE_NONE, NULL);
-  _thunar_return_val_if_fail (history == NULL || THUNAR_IS_HISTORY (history), NULL);
 
-  /* If there is already an active view, inherit settings from that */
+  /* If there is already an active view, inherit settings and history from that */
   if (window->view == NULL)
-    g_object_get (G_OBJECT (window->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
+    {
+      g_object_get (G_OBJECT (window->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
+    }
   else
-    g_object_get (window->view, "sort-column", &sort_column, "sort-order", &sort_order, NULL);
+    {
+      g_object_get (window->view, "sort-column", &sort_column, "sort-order", &sort_order, NULL);
+      history = thunar_standard_view_copy_history (THUNAR_STANDARD_VIEW (window->view));
+    }
 
   /* allocate and setup a new view */
   view = g_object_new (view_type, "current-directory", directory,
@@ -2842,23 +2845,19 @@ thunar_window_notebook_add_new_tab (ThunarWindow        *window,
       return;
     }
 
-  /* save the history of the current view */
-  if (THUNAR_IS_STANDARD_VIEW (window->view))
-    {
-      history = thunar_standard_view_copy_history (THUNAR_STANDARD_VIEW (window->view));
-
-      /* history is updated only on 'change-directory' signal. */
-      /* For inserting a new tab, we need to update it manually */
-      if (G_LIKELY (history))
-        thunar_history_add (history, directory);
-    }
-
   /* find the correct view type */
   view_type = thunar_window_view_type_for_directory (window, directory);
 
   /* insert the new view */
   page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
-  view = thunar_window_create_view (window, directory, view_type, history);
+  view = thunar_window_create_view (window, directory, view_type);
+
+  /* history is updated only on 'change-directory' signal. */
+  /* For inserting a new tab, we need to update it manually */
+  history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (view));
+  if (G_LIKELY (history))
+    thunar_history_add (history, directory);
+
   thunar_window_notebook_insert_page (window, page_num + 1, view);
 
   /* switch to the new view */
@@ -3673,7 +3672,6 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
 {
 
   ThunarFile    *directory;
-  ThunarHistory *history = NULL;
   gint           page_num, last_splitview_separator_position;
   GType          view_type;
   GtkAllocation  allocation;
@@ -3709,16 +3707,12 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
       window->notebook_selected = thunar_window_paned_notebooks_add (window);
       directory = thunar_window_get_current_directory (window);
 
-      /* save the history of the current view */
-      if (THUNAR_IS_STANDARD_VIEW (window->view))
-        history = thunar_standard_view_copy_history (THUNAR_STANDARD_VIEW (window->view));
-
       /* find the correct view type */
       view_type = thunar_window_view_type_for_directory (window, directory);
 
       /* insert the new view */
       page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
-      view = thunar_window_create_view (window, directory, view_type, history);
+      view = thunar_window_create_view (window, directory, view_type);
       thunar_window_notebook_insert_page (window, page_num+1, view);
 
       /* Prevent notebook expand on tab creation */
@@ -4102,11 +4096,8 @@ thunar_window_replace_view (ThunarWindow *window,
       selected_thunar_files = thunar_g_list_copy_deep (thunar_component_get_selected_files (THUNAR_COMPONENT (view)));
 
       /* save the history of the current view */
-      history = NULL;
       if (THUNAR_IS_STANDARD_VIEW (view))
         {
-          history = thunar_standard_view_copy_history (THUNAR_STANDARD_VIEW (view));
-
           /* Transfer ownership of the search-job to the new view. It is the new view's responsibility to cancel the search. */
           job = thunar_standard_view_model_get_job (THUNAR_STANDARD_VIEW (view)->model);
         }
@@ -4127,8 +4118,8 @@ thunar_window_replace_view (ThunarWindow *window,
   else
     page_num = -1;
 
-  /* insert the new view */
-  new_view = thunar_window_create_view (window, current_directory, view_type, history);
+  /* create and insert the new view */
+  new_view = thunar_window_create_view (window, current_directory, view_type);
   thunar_window_notebook_insert_page (window, page_num + 1, new_view);
 
   /* if we are replacing the active view, make the new view the active view */
