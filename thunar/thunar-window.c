@@ -4128,9 +4128,9 @@ thunar_window_replace_view (ThunarWindow *window,
   if (G_UNLIKELY (file != NULL))
     thunar_view_scroll_to_file (THUNAR_VIEW (new_view), file, FALSE, TRUE, 0.0f, 0.0f);
 
-   /* unref the old view */
+   /* Remove the old page */
    if (view_to_replace != NULL)
-     gtk_widget_destroy (view_to_replace);
+     gtk_notebook_remove_page (GTK_NOTEBOOK (window->notebook_selected), page_num);   /* unref the old view */
 
   /* restore the file selection */
   thunar_component_set_selected_files (THUNAR_COMPONENT (new_view), selected_thunar_files);
@@ -4851,7 +4851,9 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_FILE (current_directory));
-  _thunar_return_if_fail (window->current_directory == current_directory);
+
+  if (window->current_directory == current_directory)
+    return;
 
   /* get name of directory or full path */
   g_object_get (G_OBJECT (window->preferences), "misc-window-title-style", &window_title_style, NULL);
@@ -5164,6 +5166,9 @@ thunar_window_set_current_directory (ThunarWindow *window,
 {
   gboolean is_trash;
   gboolean is_recent;
+  GType  type;
+  gchar *type_name;
+  gint   num_pages;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
@@ -5178,76 +5183,69 @@ thunar_window_set_current_directory (ThunarWindow *window,
       /* disconnect signals and release reference */
       g_signal_handlers_disconnect_by_func (G_OBJECT (window->current_directory), thunar_window_current_directory_changed, window);
       g_object_unref (G_OBJECT (window->current_directory));
+      window->current_directory = NULL;
     }
 
-  /* connect to the new directory */
-  if (G_LIKELY (current_directory != NULL))
-    {
-      GType  type;
-      gchar *type_name;
-      gint   num_pages;
-
-      /* take a reference on the file */
-      g_object_ref (G_OBJECT (current_directory));
-
-      num_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_selected));
-
-      /* if the window is new, get the default-view type and set it as the last-view type (if it is a valid type)
-       * so that it will be used as the initial view type for directories with no saved directory specific view type */
-      if (num_pages == 0)
-        {
-          /* determine the default view type */
-          g_object_get (G_OBJECT (window->preferences), "default-view", &type_name, NULL);
-          type = g_type_from_name (type_name);
-          g_free (type_name);
-
-          /* set the last view type to the default view type if there is a default view type */
-          if (!g_type_is_a (type, G_TYPE_NONE) &&
-              !g_type_is_a (type, G_TYPE_INVALID) &&
-              !window->is_searching)
-            g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (type), NULL);
-        }
-
-      type = thunar_window_view_type_for_directory (window, current_directory);
-
-      if (num_pages == 0) /* create a new view if the window is new */
-        {
-          window->current_directory = current_directory;
-          thunar_window_replace_view (window, window->view, type);
-        }
-      else /* change the view type if necessary, and set the current directory */
-        {
-          if (window->view != NULL && window->view_type != type)
-            thunar_window_replace_view (window, window->view, type);
-
-          window->current_directory = current_directory;
-        }
-
-      /* connect the "changed"/"destroy" signals */
-      g_signal_connect (G_OBJECT (current_directory), "changed", G_CALLBACK (thunar_window_current_directory_changed), window);
-
-      /* update window icon and title */
-      thunar_window_current_directory_changed (current_directory, window);
-
-      if (G_LIKELY (window->view != NULL))
-        {
-          /* grab the focus to the main view */
-          gtk_widget_grab_focus (window->view);
-        }
-
-      thunar_window_history_changed (window);
-      gtk_widget_set_sensitive (window->location_toolbar_item_parent, !thunar_g_file_is_root (thunar_file_get_file (current_directory)));
-    }
-
-  /* tell everybody that we have a new "current-directory",
-   * we do this first so other widgets display the new
-   * state already while the folder view is loading.
-   */
-  g_object_notify (G_OBJECT (window), "current-directory");
-
-  /* show/hide date_deleted column/sortBy in the trash directory */
+  /* not much to do in this case */
   if (current_directory == NULL)
     return;
+
+  /* take a reference on the file */
+  g_object_ref (G_OBJECT (current_directory));
+  window->current_directory = current_directory;
+
+  num_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_selected));
+
+  /* if the window is new, get the default-view type and set it as the last-view type (if it is a valid type)
+    * so that it will be used as the initial view type for directories with no saved directory specific view type */
+  if (num_pages == 0)
+    {
+      /* determine the default view type */
+      g_object_get (G_OBJECT (window->preferences), "default-view", &type_name, NULL);
+      type = g_type_from_name (type_name);
+      g_free (type_name);
+
+      /* set the last view type to the default view type if there is a default view type */
+      if (!g_type_is_a (type, G_TYPE_NONE) &&
+          !g_type_is_a (type, G_TYPE_INVALID) &&
+          !window->is_searching)
+        g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (type), NULL);
+    }
+
+  type = thunar_window_view_type_for_directory (window, current_directory);
+
+  if (num_pages == 0) /* create a new view if the window is new */
+    {
+        GtkWidget *new_view;
+        new_view = thunar_window_create_view (window, current_directory, type);
+        thunar_window_notebook_insert_page (window, 0, new_view);
+    }
+
+  /* connect the "changed"/"destroy" signals */
+  g_signal_connect (G_OBJECT (current_directory), "changed", G_CALLBACK (thunar_window_current_directory_changed), window);
+
+  /* update window icon and title */
+  thunar_window_current_directory_changed (current_directory, window);
+
+  if (G_LIKELY (window->view != NULL))
+    {
+      /* grab the focus to the main view */
+      gtk_widget_grab_focus (window->view);
+    }
+
+  thunar_window_history_changed (window);
+  gtk_widget_set_sensitive (window->location_toolbar_item_parent, !thunar_g_file_is_root (thunar_file_get_file (current_directory)));
+
+  /*
+  * tell everybody that we have a new "current-directory",
+  * we do this first so other widgets display the new
+  * state already while the folder view is loading.
+  */
+  g_object_notify (G_OBJECT (window), "current-directory");
+
+  /* change the view type if necessary */
+  if (window->view != NULL && window->view_type != type)
+    thunar_window_replace_view (window, window->view, type);
 
   is_trash = thunar_file_is_trash (current_directory);
   is_recent = thunar_file_is_recent (current_directory);
@@ -5258,6 +5256,8 @@ thunar_window_set_current_directory (ThunarWindow *window,
 
   if (THUNAR_IS_DETAILS_VIEW (window->view) == FALSE)
     return;
+
+  /* show/hide date_deleted column/sortBy in the trash directory */
   thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), is_trash);
   thunar_details_view_set_recency_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
   thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
