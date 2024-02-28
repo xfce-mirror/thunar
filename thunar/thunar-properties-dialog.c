@@ -1388,7 +1388,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     {
       display_name = g_filename_display_name (path);
       gtk_label_set_text (GTK_LABEL (dialog->link_label), display_name);
-      gtk_widget_set_tooltip_text(dialog->link_label, display_name);
+      gtk_widget_set_tooltip_text (dialog->link_label, display_name);
       gtk_widget_show (dialog->link_label);
       g_free (display_name);
     }
@@ -1417,7 +1417,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     {
       display_name = g_file_get_parse_name (thunar_file_get_file (parent_file));
       gtk_label_set_text (GTK_LABEL (dialog->location_label), display_name);
-      gtk_widget_set_tooltip_text(dialog->location_label, display_name);
+      gtk_widget_set_tooltip_text (dialog->location_label, display_name);
       gtk_widget_show (dialog->location_label);
       g_object_unref (G_OBJECT (parent_file));
       g_free (display_name);
@@ -1577,7 +1577,7 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
   ThunarFile  *tmp_parent;
   gboolean     has_trashed_files = FALSE;
   GString     *str_of_resolved_paths = g_string_new(NULL);
-  const gchar       *resolved_path;
+  const gchar *resolved_path;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) > 1);
@@ -1709,7 +1709,7 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
   if (G_LIKELY (str_of_resolved_paths->len > 0))
     {
       gtk_label_set_text (GTK_LABEL (dialog->link_label), str_of_resolved_paths->str);
-      gtk_widget_set_tooltip_text(dialog->link_label, str_of_resolved_paths->str);
+      gtk_widget_set_tooltip_text (dialog->link_label, str_of_resolved_paths->str);
       gtk_widget_show (dialog->link_label);
     }
   else
@@ -1723,7 +1723,7 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
     {
       display_name = g_file_get_parse_name (thunar_file_get_file (parent_file));
       gtk_label_set_text (GTK_LABEL (dialog->location_label), display_name);
-      gtk_widget_set_tooltip_text(dialog->location_label, display_name);
+      gtk_widget_set_tooltip_text (dialog->location_label, display_name);
       gtk_widget_show (dialog->location_label);
       g_object_unref (G_OBJECT (parent_file));
       g_free (display_name);
