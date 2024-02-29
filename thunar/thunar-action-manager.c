@@ -2784,6 +2784,7 @@ thunar_action_manager_create_document_submenu_templates (ThunarActionManager *ac
   GtkWidget         *submenu;
   GtkWidget         *image;
   GtkWidget         *item;
+  GList             *files_sorted;
   GList             *lp;
   GList             *dirs = NULL;
   GList             *items = NULL;
@@ -2801,9 +2802,9 @@ thunar_action_manager_create_document_submenu_templates (ThunarActionManager *ac
 
   /* sort items so that directories come before files and ancestors come
    * before descendants */
-  files = g_list_sort (files, (GCompareFunc) (void (*)(void)) thunar_file_compare_by_type);
+  files_sorted = g_list_sort (thunar_g_list_copy_deep (files), (GCompareFunc) (void (*)(void)) thunar_file_compare_by_type);
 
-  for (lp = g_list_first (files); lp != NULL; lp = lp->next)
+  for (lp = g_list_first (files_sorted); lp != NULL; lp = lp->next)
     {
       file = lp->data;
 
@@ -2847,6 +2848,8 @@ thunar_action_manager_create_document_submenu_templates (ThunarActionManager *ac
       g_object_unref (icon);
       cairo_surface_destroy (surface);
     }
+
+  g_list_free_full (files_sorted, g_object_unref);
 
   /* destroy lists */
   g_list_free (dirs);
