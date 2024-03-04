@@ -969,7 +969,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
             event_file_thunar = thunar_file_get (event_file, NULL);
             if (event_file_thunar == NULL)
                 {
-                  g_warning ("Failed to create ThunarFile for gfile");
+                  g_info ("Failed to create ThunarFile for gfile");
                   break;
                 }
           }
