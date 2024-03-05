@@ -71,6 +71,7 @@ enum
   PROP_CURRENT_DIRECTORY,
   PROP_LOADING,
   PROP_SEARCHING,
+  PROP_SEARCH_MODE_ACTIVE,
   PROP_DISPLAY_NAME,
   PROP_FULL_PARSED_PATH,
   PROP_SELECTED_FILES,
@@ -583,6 +584,19 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                                                    EXO_PARAM_READABLE));
 
   /**
+   * ThunarStandardView:search-mode-active:
+   *
+   * Whether the view currently is in search mode
+   **/
+  standard_view_props[PROP_SEARCH_MODE_ACTIVE] =
+      g_param_spec_override ("search-mode-active",
+                             g_param_spec_boolean ("search-mode-active",
+                                                   "search-mode-active",
+                                                   "search-mode-active",
+                                                   FALSE,
+                                                   EXO_PARAM_READABLE));
+
+  /**
    * ThunarStandardView:display-name:
    *
    * Display name of the current directory, for label text
@@ -1083,6 +1097,10 @@ thunar_standard_view_get_property (GObject    *object,
 
     case PROP_SEARCHING:
       g_value_set_boolean (value, thunar_standard_view_get_searching (THUNAR_VIEW (object)));
+      break;
+
+    case PROP_SEARCH_MODE_ACTIVE:
+      g_value_set_boolean (value, THUNAR_STANDARD_VIEW (object)->priv->search_query != NULL);
       break;
 
     case PROP_DISPLAY_NAME:
@@ -4277,6 +4295,7 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
 
   /* notify listeners */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_SEARCHING]);
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_SEARCH_MODE_ACTIVE]);
 }
 
 
