@@ -3907,6 +3907,8 @@ _thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
+  standard_view->priv->selection_changed_timeout_source = 0;
+
   /* ignore while searching */
   if (standard_view->priv->active_search == TRUE)
     return FALSE;
@@ -3950,8 +3952,6 @@ _thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 
   /* emit notification for "selected-files" */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_SELECTED_FILES]);
-
-  standard_view->priv->selection_changed_timeout_source = 0;
 
   return FALSE;
 }
