@@ -250,8 +250,7 @@ static gboolean  thunar_window_after_propagate_key_event  (GtkWindow            
                                                            GdkEvent               *key_event,
                                                            gpointer                user_data);
 static gboolean  thunar_window_action_open_file_menu      (ThunarWindow           *window);
-static void      thunar_window_current_directory_changed  (ThunarFile             *current_directory,
-                                                           ThunarWindow           *window);
+static void      thunar_window_update_title               (ThunarWindow           *window);
 static void      thunar_window_menu_item_selected         (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
 static void      thunar_window_menu_item_deselected       (ThunarWindow           *window,
@@ -4843,8 +4842,7 @@ thunar_window_action_open_file_menu (ThunarWindow *window)
 
 
 static void
-thunar_window_current_directory_changed (ThunarFile   *current_directory,
-                                         ThunarWindow *window)
+thunar_window_update_title (ThunarWindow *window)
 {
   ThunarWindowTitleStyle  window_title_style;
   gchar                  *title;
@@ -4852,17 +4850,13 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
   const gchar            *name;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
-  _thunar_return_if_fail (THUNAR_IS_FILE (current_directory));
-
-  if (window->current_directory == current_directory)
-    return;
 
   /* get name of directory or full path */
   g_object_get (G_OBJECT (window->preferences), "misc-window-title-style", &window_title_style, NULL);
   if (G_UNLIKELY (window_title_style == THUNAR_WINDOW_TITLE_STYLE_FULL_PATH_WITH_THUNAR_SUFFIX || window_title_style == THUNAR_WINDOW_TITLE_STYLE_FULL_PATH_WITHOUT_THUNAR_SUFFIX))
-    name = parse_name = g_file_get_parse_name (thunar_file_get_file (current_directory));
+    name = parse_name = g_file_get_parse_name (thunar_file_get_file (window->current_directory));
   else
-    name = thunar_file_get_display_name (current_directory);
+    name = thunar_file_get_display_name (window->current_directory);
 
   /* set window title */
   if (G_UNLIKELY (window_title_style == THUNAR_WINDOW_TITLE_STYLE_FOLDER_NAME_WITHOUT_THUNAR_SUFFIX || window_title_style == THUNAR_WINDOW_TITLE_STYLE_FULL_PATH_WITHOUT_THUNAR_SUFFIX))
@@ -4872,9 +4866,6 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
   gtk_window_set_title (GTK_WINDOW (window), title);
   g_free (title);
   g_free (parse_name);
-
-  /* set window icon */
-  thunar_window_update_window_icon (window);
 }
 
 
@@ -5182,8 +5173,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
   /* disconnect from the previously active directory */
   if (G_LIKELY (window->current_directory != NULL))
     {
-      /* disconnect signals and release reference */
-      g_signal_handlers_disconnect_by_func (G_OBJECT (window->current_directory), thunar_window_current_directory_changed, window);
+      /* release reference */
       g_object_unref (G_OBJECT (window->current_directory));
       window->current_directory = NULL;
     }
@@ -5223,11 +5213,8 @@ thunar_window_set_current_directory (ThunarWindow *window,
         thunar_window_notebook_insert_page (window, 0, new_view);
     }
 
-  /* connect the "changed"/"destroy" signals */
-  g_signal_connect (G_OBJECT (current_directory), "changed", G_CALLBACK (thunar_window_current_directory_changed), window);
-
-  /* update window icon and title */
-  thunar_window_current_directory_changed (current_directory, window);
+  thunar_window_update_title (window);
+  thunar_window_update_window_icon (window);
 
   if (G_LIKELY (window->view != NULL))
     {
