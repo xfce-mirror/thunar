@@ -116,7 +116,8 @@ static gchar                  *thunar_renamer_model_process_item        (ThunarR
                                                                          guint                    idx);
 static gboolean                thunar_renamer_model_update_idle         (gpointer                 user_data);
 static void                    thunar_renamer_model_update_idle_destroy (gpointer                 user_data);
-static ThunarRenamerModelItem *thunar_renamer_model_item_new            (ThunarFile              *file) G_GNUC_MALLOC;
+static ThunarRenamerModelItem *thunar_renamer_model_item_new            (ThunarRenamerModel      *renamer_model,
+                                                                         ThunarFile              *file) G_GNUC_MALLOC;
 static void                    thunar_renamer_model_release_item        (ThunarRenamerModel      *renamer_model,
                                                                          ThunarRenamerModelItem  *item);
 static gint                    thunar_renamer_model_cmp_array           (gconstpointer            pointer_a,
@@ -286,7 +287,7 @@ thunar_renamer_model_finalize (GObject *object)
   thunar_renamer_model_set_renamer (renamer_model, NULL);
 
   /* release all items */
-  for (lp = renamer_model->items; renamer_model->items != NULL; renamer_model->items = renamer_model->items->next)
+  for (lp = renamer_model->items; lp != NULL; lp = lp->next)
     thunar_renamer_model_release_item (renamer_model, lp->data);
  
   g_list_free (renamer_model->items);
@@ -961,7 +962,8 @@ thunar_renamer_model_update_idle_destroy (gpointer user_data)
 
 
 static ThunarRenamerModelItem*
-thunar_renamer_model_item_new (ThunarFile *file)
+thunar_renamer_model_item_new (ThunarRenamerModel *renamer_model,
+                               ThunarFile         *file)
 {
   ThunarRenamerModelItem *item;
 
@@ -969,6 +971,13 @@ thunar_renamer_model_item_new (ThunarFile *file)
   item->file = THUNAR_FILE (g_object_ref (G_OBJECT (file)));
   item->date_changed = thunar_file_get_date (file, THUNAR_FILE_DATE_CHANGED);
   item->dirty = TRUE;
+
+  /* enable file watch for the file */
+  thunar_file_watch (item->file);
+
+  /* subscribe to relevant signals */
+  g_signal_connect_swapped (G_OBJECT (item->file), "changed", G_CALLBACK (thunar_renamer_model_file_changed), renamer_model);
+  g_signal_connect_swapped (G_OBJECT (item->file), "destroy", G_CALLBACK (thunar_renamer_model_file_destroyed), renamer_model);
 
   return item;
 }
@@ -1289,20 +1298,13 @@ thunar_renamer_model_insert (ThunarRenamerModel *renamer_model,
       return;
 
   /* allocate a new item for the file */
-  item = thunar_renamer_model_item_new (file);
+  item = thunar_renamer_model_item_new (renamer_model, file);
 
   /* append the item to the model */
   renamer_model->items = g_list_insert (renamer_model->items, item, position);
 
   /* determine the iterator for the new item */
   GTK_TREE_ITER_INIT (iter, renamer_model->stamp, g_list_find (renamer_model->items, item));
-
-  /* enable file watch for the file */
-  thunar_file_watch (file);
-
-  /* subscribe to relevant signals */
-  g_signal_connect_swapped (G_OBJECT (file), "changed", G_CALLBACK (thunar_renamer_model_file_changed), renamer_model);
-  g_signal_connect_swapped (G_OBJECT (file), "destroy", G_CALLBACK (thunar_renamer_model_file_destroyed), renamer_model);
 
   /* emit the "row-inserted" signal */
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (renamer_model), &iter);
