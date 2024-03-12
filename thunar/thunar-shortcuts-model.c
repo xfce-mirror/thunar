@@ -1398,9 +1398,6 @@ thunar_shortcuts_model_reload_bookmarks (gpointer data)
 
   _thunar_return_val_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model), FALSE);
 
-  /* Reset idle ID */
-  model->bookmarks_idle_id = 0;
-
   /* Find all user-defined shortcuts (bookmarks) */
   for (lp = model->shortcuts; lp != NULL; lp = lp->next)
     {
@@ -1413,8 +1410,11 @@ thunar_shortcuts_model_reload_bookmarks (gpointer data)
   g_list_foreach (places_bookmarks, (GFunc) (void (*)(void)) thunar_shortcuts_model_remove_shortcut, model);
   g_list_free (places_bookmarks);
 
-  /* reload them from the bookmarks file when idle */
-  model->bookmarks_idle_id = g_idle_add_full (G_PRIORITY_DEFAULT, thunar_shortcuts_model_load_bookmarks, model, NULL);
+  /* reload them from the bookmarks file */
+  thunar_shortcuts_model_load_bookmarks (model);
+
+  /* reset the idle ID */
+  model->bookmarks_idle_id = 0;
 
   return FALSE;
 }
@@ -1743,8 +1743,9 @@ thunar_shortcuts_model_file_changed (ThunarFile             *file,
           gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
           gtk_tree_path_free (path);
 
-          /* Store the changed shortcut */
-          thunar_shortcuts_model_save_bookmarks (model);
+          /* If the changed shortcut is a bookmark, save the changes */
+          if (shortcut->group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
+            thunar_shortcuts_model_save_bookmarks (model);
         }
       break;
     }
