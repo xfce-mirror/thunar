@@ -823,6 +823,8 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
   gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_JOB_RESPONSE_REPLACE);
+  gtk_window_set_focus_on_map (GTK_WINDOW (dialog), FALSE);
+
   content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 
   if (parent != NULL)
