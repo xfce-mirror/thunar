@@ -360,7 +360,6 @@ G_DEFINE_TYPE_WITH_CODE (ThunarTreeViewModel, thunar_tree_view_model, G_TYPE_OBJ
 
 
 /* Reference to GParamSpec(s) of all the N_PROPERTIES */
-static guint       tree_model_signals[THUNAR_STANDARD_VIEW_MODEL_LAST_SIGNAL];
 static GParamSpec *tree_model_props[N_PROPERTIES] = {
   NULL,
 };
@@ -472,8 +471,6 @@ thunar_tree_view_model_class_init (ThunarTreeViewModelClass *klass)
 
   /* install properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, tree_model_props);
-
-  /* No need to install signals. Already done by the interface */
 }
 
 
@@ -2465,9 +2462,6 @@ _thunar_tree_view_model_folder_error (Node         *node,
       else
         thunar_tree_view_model_dir_remove_file (node->parent, node->file);
     }
-
-  /* forward the error signal */
-  g_signal_emit (G_OBJECT (node->model), tree_model_signals[THUNAR_STANDARD_VIEW_MODEL_ERROR], 0, error);
 }
 
 
