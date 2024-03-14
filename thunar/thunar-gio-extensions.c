@@ -1409,36 +1409,6 @@ thunar_g_file_get_link_path_for_symlink (GFile *file_to_link,
 
 
 
-gboolean
-thunar_g_file_is_empty (GFile *file)
-{
-  GFileEnumerator *enumerator;
-  GError          *err = NULL;
-  gboolean         is_empty = TRUE;
-  GFileInfo       *info;
-
-  _thunar_return_val_if_fail (G_IS_FILE (file), TRUE);
-
-  enumerator = g_file_enumerate_children (file, NULL,
-                                          G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                          NULL, &err);
-
-  if (err != NULL)
-    {
-      g_warning ("Failed to check if the file has any children!");
-      return TRUE;
-    }
-
-  if (g_file_enumerator_iterate (enumerator, &info, NULL, NULL, &err) && info != NULL)
-    is_empty = FALSE;
-
-  g_object_unref (enumerator);
-
-  return is_empty;
-}
-
-
-
 static GFileInfo*
 thunar_g_file_get_content_type_querry_info (GFile *gfile,
                                             GError *err)

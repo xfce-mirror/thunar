@@ -2834,6 +2834,53 @@ thunar_file_is_directory (const ThunarFile *file)
 
 
 /**
+ * thunar_g_file_is_empty_directory:
+ * @file : a #ThunarFile instance.
+ *
+ * Checks whether @file refers to an empty directory
+ * If the directory is not readable, the method will as well return TRUE
+ *
+ * Return value: %TRUE if @file is an empty directory.
+ **/
+gboolean
+thunar_file_is_empty_directory (const ThunarFile *file)
+{
+  GFileEnumerator *enumerator;
+  GError          *err = NULL;
+  gboolean         is_empty = TRUE;
+  GFileInfo       *info;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+
+  if (thunar_file_is_directory (file) == FALSE)
+    return FALSE;
+
+   /* Threat non-readable direcories like they were empty */
+  if (!thunar_file_is_readable (file))
+    return TRUE;
+
+  enumerator = g_file_enumerate_children (file->gfile, NULL,
+                                          G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                          NULL, &err);
+
+  if (err != NULL)
+    {
+      g_warning ("Failed to check if the file has any children! Reason: %s", err->message);
+      g_error_free (err);
+      return TRUE;
+    }
+
+  if (g_file_enumerator_iterate (enumerator, &info, NULL, NULL, &err) && info != NULL)
+    is_empty = FALSE;
+
+  g_object_unref (enumerator);
+
+  return is_empty;
+}
+
+
+
+/**
  * thunar_file_is_shortcut:
  * @file : a #ThunarFile instance.
  *

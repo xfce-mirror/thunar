@@ -220,6 +220,7 @@ ThunarFileMode    thunar_file_get_mode                   (const ThunarFile      
 gboolean          thunar_file_is_mounted                 (const ThunarFile       *file);
 gboolean          thunar_file_exists                     (const ThunarFile       *file);
 gboolean          thunar_file_is_directory               (const ThunarFile       *file) G_GNUC_PURE;
+gboolean          thunar_file_is_empty_directory         (const ThunarFile       *file) G_GNUC_PURE;
 gboolean          thunar_file_is_shortcut                (const ThunarFile       *file) G_GNUC_PURE;
 gboolean          thunar_file_is_mountable               (const ThunarFile       *file) G_GNUC_PURE;
 gboolean          thunar_file_is_local                   (const ThunarFile       *file);

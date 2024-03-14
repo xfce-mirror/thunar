@@ -2221,7 +2221,7 @@ thunar_tree_view_model_dir_add_file (Node       *node,
   thunar_tree_view_model_node_add_child (node, child);
 
   if (thunar_file_is_directory (file)
-      && !thunar_g_file_is_empty (thunar_file_get_file (file)))
+      && !thunar_file_is_empty_directory (file))
     thunar_tree_view_model_node_add_dummy_child (child);
 
   /* notify the model if a child has been added to previously empty folder */
@@ -2802,7 +2802,7 @@ thunar_tree_view_model_dir_files_changed (Node  *node_parent,
         }
 
       if (thunar_file_is_directory (file)
-          && !thunar_g_file_is_empty (thunar_file_get_file (file))
+          && !thunar_file_is_empty_directory (file)
           && !node->loaded
           && !thunar_tree_view_model_node_has_dummy_child (node))
         {
