@@ -203,6 +203,9 @@ struct _ThunarShortcutsView
   /* used to create menu items for the context menu */
   ThunarActionManager *action_mgr;
   ThunarFile          *current_directory;
+
+  /* reference to the underlying model */
+  ThunarShortcutsModel *model;
 };
 
 
@@ -421,6 +424,12 @@ static void
 thunar_shortcuts_view_finalize (GObject *object)
 {
   ThunarShortcutsView  *view = THUNAR_SHORTCUTS_VIEW (object);
+
+  /* Disconnect from the model */
+  g_signal_handlers_disconnect_by_data (G_OBJECT (view->model), view);
+
+  /* release our reference on the model */
+  g_object_unref (view->model);
 
   /* release drop path list (if drag_leave wasn't called) */
   thunar_g_list_free_full (view->drop_file_list);
@@ -1831,11 +1840,11 @@ thunar_shortcuts_view_new (void)
   gtk_tree_model_filter_set_visible_column (GTK_TREE_MODEL_FILTER (filter_model), THUNAR_SHORTCUTS_MODEL_COLUMN_VISIBLE);
 
   view = g_object_new (THUNAR_TYPE_SHORTCUTS_VIEW, "model", filter_model, NULL);
+  THUNAR_SHORTCUTS_VIEW (view)->model = model;
 
   /* redraw the view when the model changes */
   g_signal_connect_swapped (G_OBJECT (model), "row-changed", G_CALLBACK (gtk_widget_queue_draw), view);
 
-  g_object_unref (G_OBJECT (model));
   g_object_unref (G_OBJECT (filter_model));
 
   return view;
