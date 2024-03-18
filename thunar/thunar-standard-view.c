@@ -2245,7 +2245,7 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
 
   standard_view->priv->statusbar_text_idle_id = 0;
 
-  /* tell everybody that the statusbar text may have changed */
+  /* tell everybody that the statusbar text may have changed (This will trigger a "get" and as such an update of the string) */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_STATUSBAR_TEXT]);
 
   return FALSE;
@@ -2263,7 +2263,7 @@ thunar_standard_view_update_statusbar_text (ThunarStandardView *standard_view)
   /* restart a new one, this way we avoid multiple update when
    * the user is pressing a key to scroll */
   standard_view->priv->statusbar_text_idle_id =
-      g_timeout_add_full (G_PRIORITY_LOW, 50, thunar_standard_view_update_statusbar_text_idle,
+      g_timeout_add_full (G_PRIORITY_LOW, 500, thunar_standard_view_update_statusbar_text_idle,
                           standard_view, NULL);
 }
 
