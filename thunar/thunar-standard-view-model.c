@@ -602,18 +602,9 @@ thunar_standard_view_model_get_statusbar_text (ThunarStandardViewModel *model,
 
   if (selected_items == NULL) /* nothing selected */
     {
-      /* build a GList of all files */
-      has_next = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (model), &iter);
-      while (has_next)
-        {
-          _file = thunar_standard_view_model_get_file (model, &iter);
-          if (_file != NULL)
-            relevant_files = g_list_append (relevant_files, _file);
-          has_next = gtk_tree_model_iter_next (GTK_TREE_MODEL (model), &iter);
-        }
-
       /* try to determine a file for the current folder */
       folder = thunar_standard_view_model_get_folder (model);
+      relevant_files = thunar_folder_get_files (folder);
       file = (folder != NULL) ? thunar_folder_get_corresponding_file (folder) : NULL;
       temp_string = thunar_standard_view_model_get_statusbar_text_for_files (model, relevant_files, show_file_size_binary_format);
       text_list = g_list_append (text_list, temp_string);
@@ -628,7 +619,7 @@ thunar_standard_view_model_get_statusbar_text (ThunarStandardViewModel *model,
           g_free (size_string);
         }
 
-      g_list_free_full (relevant_files, g_object_unref);
+      g_list_free (relevant_files);
     }
   else if (selected_items->next == NULL) /* only one item selected */
     {
