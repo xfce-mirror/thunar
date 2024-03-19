@@ -59,7 +59,8 @@ gboolean    thunar_util_looks_like_an_uri        (const gchar    *string) G_GNUC
 gchar      *thunar_util_expand_filename          (const gchar    *filename,
                                                   GFile          *working_directory,
                                                   GError        **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-
+guint64     thunar_util_get_file_time            (GFileInfo         *file_info,
+                                                  ThunarFileDateType date_type);
 gchar      *thunar_util_humanize_file_time       (guint64         file_time,
                                                   ThunarDateStyle date_style,
                                                   const gchar    *date_custom_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
@@ -90,6 +91,10 @@ gchar     **thunar_util_split_search_query       (const gchar          *search_q
 gboolean    thunar_util_search_terms_match       (gchar               **terms,
                                                   gchar                *str);
 gboolean    thunar_util_save_geometry_timer      (gpointer user_data);
+gchar*      thunar_util_get_statusbar_text_for_files (GList           *files,
+                                                      gboolean         show_file_size_binary_format,
+                                                      ThunarDateStyle  date_style,
+                                                      const gchar     *date_custom_style);
 
 
 G_END_DECLS;
