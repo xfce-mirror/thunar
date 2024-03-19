@@ -2159,45 +2159,16 @@ guint64
 thunar_file_get_date (const ThunarFile  *file,
                       ThunarFileDateType date_type)
 {
-  const gchar *attribute;
-  GDateTime   *datetime;
-  gint64       date;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), 0);
 
   if (file->info == NULL)
     return 0;
 
-  switch (date_type)
-    {
-    case THUNAR_FILE_DATE_ACCESSED:
-      attribute = G_FILE_ATTRIBUTE_TIME_ACCESS;
-      break;
-    case THUNAR_FILE_DATE_CHANGED:
-      attribute = G_FILE_ATTRIBUTE_TIME_CHANGED;
-      break;
-    case THUNAR_FILE_DATE_CREATED:
-      attribute = G_FILE_ATTRIBUTE_TIME_CREATED;
-      break;
-    case THUNAR_FILE_DATE_MODIFIED:
-      attribute = G_FILE_ATTRIBUTE_TIME_MODIFIED;
-      break;
-    case THUNAR_FILE_DATE_DELETED:
-      datetime = g_file_info_get_deletion_date (file->info);
-      if (datetime == NULL)
-        return 0;
-      date = g_date_time_to_unix (datetime);
-      g_date_time_unref (datetime);
-      return date;
-    case THUNAR_FILE_RECENCY:
-      return g_file_info_get_attribute_int64 (file->recent_info ? file->recent_info : file->info, G_FILE_ATTRIBUTE_RECENT_MODIFIED);
+  if (date_type == THUNAR_FILE_RECENCY)
+    return g_file_info_get_attribute_int64 (file->recent_info ? file->recent_info : file->info, G_FILE_ATTRIBUTE_RECENT_MODIFIED);
 
-    default:
-      g_warn_if_reached ();
-      return 0;
-    }
-
-  return g_file_info_get_attribute_uint64 (file->info, attribute);
+  return thunar_util_get_file_time (file->info, date_type);
 }
 
 
