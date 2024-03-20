@@ -1891,3 +1891,150 @@ thunar_io_jobs_load_content_types (GList *files)
   g_signal_connect_swapped (job, "finished", G_CALLBACK (thunar_g_list_free_full), copy);
   return job;
 }
+
+
+
+static gboolean
+_thunar_job_load_statusbar_text (ThunarJob *job,
+                                 GArray    *param_values,
+                                 GError   **error)
+{
+  ThunarStandardView *standard_view;
+  ThunarFile         *thunar_folder;
+  GList              *thunar_files;
+  gboolean            show_file_size_binary_format;
+  ThunarDateStyle     date_style;
+  const gchar        *date_custom_style;
+  gchar              *text_for_files;
+  gchar              *temp_string;
+  GList              *text_list = NULL;
+  guint               status_bar_active_info;
+  guint64             size;
+
+  if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
+    return FALSE;
+
+  standard_view                = g_value_get_object  (&g_array_index (param_values, GValue, 0));
+  thunar_folder                = g_value_get_object  (&g_array_index (param_values, GValue, 1));
+  thunar_files                 = g_value_get_boxed   (&g_array_index (param_values, GValue, 2));
+  show_file_size_binary_format = g_value_get_boolean (&g_array_index (param_values, GValue, 3));
+  date_style                   = g_value_get_enum    (&g_array_index (param_values, GValue, 4));
+  date_custom_style            = g_value_get_string  (&g_array_index (param_values, GValue, 5));
+  status_bar_active_info       = g_value_get_uint    (&g_array_index (param_values, GValue, 6));
+
+  text_for_files = thunar_util_get_statusbar_text_for_files (thunar_files,
+                                                             show_file_size_binary_format,
+                                                             date_style,
+                                                             date_custom_style,
+                                                             status_bar_active_info);
+
+  /* the text is about a selection of files or about a folder */
+  if (thunar_folder == 0)
+    {
+      temp_string = g_strdup_printf (_ ("Selection: %s"), text_for_files);
+      text_list = g_list_append (text_list, temp_string);
+      g_free (text_for_files);
+    }
+  else
+    {
+      text_list = g_list_append (text_list, text_for_files);
+
+      /* check if we can determine the amount of free space for the volume */
+      if (thunar_g_file_get_free_space (thunar_file_get_file (thunar_folder), &size, NULL))
+        {
+          /* humanize the free space */
+          gchar *size_string = g_format_size_full (size, show_file_size_binary_format ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+          temp_string = g_strdup_printf (_ ("Free space: %s"), size_string);
+          text_list = g_list_append (text_list, temp_string);
+          g_free (size_string);
+        }
+    }
+
+  temp_string = thunar_util_strjoin_list (text_list, "  |  ");
+  g_list_free_full (text_list, g_free);
+
+  thunar_standard_view_set_statusbar_text (standard_view, temp_string);
+  g_free (temp_string);
+
+  return TRUE;
+}
+
+
+
+ThunarJob *
+thunar_io_jobs_load_statusbar_text_for_folder (ThunarStandardView *standard_view,
+                                               ThunarFolder       *folder)
+{
+  ThunarPreferences *preferences;
+  gboolean           show_file_size_binary_format;
+  ThunarDateStyle    date_style;
+  const gchar       *date_custom_style;
+  guint              status_bar_active_info;
+  GList             *files;
+  GList             *copy;
+  ThunarFile        *file;
+
+  preferences = thunar_preferences_get ();
+  g_object_get (G_OBJECT (preferences), "misc-date-style", &date_style, 
+                                        "misc_date-custom-style", &date_custom_style, 
+                                        "misc-file-size-binary", &show_file_size_binary_format,
+                                        "misc-status-bar-active-info", &status_bar_active_info, NULL);
+
+  files = thunar_folder_get_files (folder);
+  file = thunar_folder_get_corresponding_file (folder);
+
+  if (file == NULL)
+    return NULL;
+
+  /* This will increase the ref count on each ThunarFile */
+  copy = thunar_g_list_copy_deep (files);
+
+  ThunarJob *job = thunar_simple_job_new (_thunar_job_load_statusbar_text, 7,
+                                          THUNAR_TYPE_STANDARD_VIEW, g_object_ref (standard_view),
+                                          THUNAR_TYPE_FILE, g_object_ref (file),
+                                          THUNAR_TYPE_G_FILE_LIST, files,
+                                          G_TYPE_BOOLEAN, show_file_size_binary_format,
+                                          THUNAR_TYPE_DATE_STYLE, date_style,
+                                          G_TYPE_STRING, date_custom_style,
+                                          G_TYPE_UINT, status_bar_active_info);
+
+  g_signal_connect_swapped (job, "finished", G_CALLBACK (thunar_g_list_free_full), copy);
+  g_signal_connect_swapped (job, "finished", G_CALLBACK (g_object_unref), file);
+  g_signal_connect_swapped (job, "finished", G_CALLBACK (g_object_unref), standard_view);
+  return job;
+}
+
+
+
+ThunarJob *
+thunar_io_jobs_load_statusbar_text_for_selection (ThunarStandardView *standard_view, GList *selected_files)
+{
+  ThunarPreferences *preferences;
+  gboolean           show_file_size_binary_format;
+  ThunarDateStyle    date_style;
+  const gchar       *date_custom_style;
+  guint              status_bar_active_info;
+  GList             *copy;
+
+  preferences = thunar_preferences_get ();
+  g_object_get (G_OBJECT (preferences),"misc-date-style", &date_style, 
+                                       "misc_date-custom-style", &date_custom_style, 
+                                       "misc-file-size-binary", &show_file_size_binary_format,
+                                       "misc-status-bar-active-info", &status_bar_active_info, NULL);
+
+  /* This will increase the ref count on each ThunarFile */
+  copy = thunar_g_list_copy_deep (selected_files);
+
+  ThunarJob *job = thunar_simple_job_new (_thunar_job_load_statusbar_text, 7,
+                                          THUNAR_TYPE_STANDARD_VIEW, g_object_ref (standard_view),
+                                          THUNAR_TYPE_FILE, NULL,
+                                          THUNAR_TYPE_G_FILE_LIST, selected_files,
+                                          G_TYPE_BOOLEAN, show_file_size_binary_format,
+                                          THUNAR_TYPE_DATE_STYLE, date_style,
+                                          G_TYPE_STRING, date_custom_style,
+                                          G_TYPE_UINT, status_bar_active_info);
+
+  g_signal_connect_swapped (job, "finished", G_CALLBACK (thunar_g_list_free_full), copy);
+  g_signal_connect_swapped (job, "finished", G_CALLBACK (g_object_unref), standard_view);
+  return job;
+}

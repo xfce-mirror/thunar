@@ -40,8 +40,6 @@ struct _ThunarViewIface
 
   /* virtual methods */
   gboolean        (*get_loading)        (ThunarView     *view);
-  const gchar    *(*get_statusbar_text) (ThunarView     *view);
-
   gboolean        (*get_show_hidden)    (ThunarView     *view);
   void            (*set_show_hidden)    (ThunarView     *view,
                                          gboolean        show_hidden);
@@ -72,7 +70,6 @@ struct _ThunarViewIface
 GType           thunar_view_get_type            (void) G_GNUC_CONST;
 
 gboolean        thunar_view_get_loading         (ThunarView     *view);
-const gchar    *thunar_view_get_statusbar_text  (ThunarView     *view);
 
 gboolean        thunar_view_get_show_hidden     (ThunarView     *view);
 void            thunar_view_set_show_hidden     (ThunarView     *view,
