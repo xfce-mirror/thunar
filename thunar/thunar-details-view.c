@@ -773,7 +773,7 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
   GtkTreeModel      *model = gtk_tree_view_get_model (tree_view);
   GtkTreeIter        iter;
   ThunarFile        *file = NULL;
-  gboolean           row_selected;
+  gboolean           row_selected = FALSE;
   gint               expander_size, horizontal_separator;
   gboolean           on_expander = FALSE, activate_on_single_click = FALSE;
   GdkRectangle       rect;
