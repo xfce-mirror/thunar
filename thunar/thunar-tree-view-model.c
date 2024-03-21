@@ -2720,7 +2720,7 @@ thunar_tree_view_model_dir_files_changed (Node  *node_parent,
   gint           pos_after, pos_before;
   gint          *new_order;
   gint           length;
-  gboolean       dummy_added;
+  gboolean       dummy_added = FALSE;
   GList         *lp;
   ThunarFile    *file;
 
