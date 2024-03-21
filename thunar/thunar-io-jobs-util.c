@@ -63,7 +63,7 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob               *job,
   GFile       *parent_file = NULL;
   ThunarFile  *thunar_parent_file;
   ThunarFile  *thunar_file;
-  const gchar *old_filename;
+  gchar       *old_filename;
   gchar       *filename;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
@@ -76,7 +76,6 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob               *job,
     return NULL;
 
   parent_file = g_file_get_parent (file);
-  old_filename = g_file_get_basename (file);
   thunar_parent_file = thunar_file_get (parent_file, &err);
   if (thunar_parent_file == NULL)
     {
@@ -87,10 +86,13 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob               *job,
   thunar_file = thunar_file_get (file, &err);
   if (thunar_file == NULL)
     {
+      g_object_unref (parent_file);
+      g_object_unref (thunar_parent_file);
       g_propagate_error (error, err);
       return NULL;
     }
 
+  old_filename = g_file_get_basename (file);
   filename = thunar_util_next_new_file_name (thunar_parent_file,
                                              old_filename,
                                              name_mode,
@@ -104,6 +106,7 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob               *job,
 
   /* free resources */
   g_free (filename);
+  g_free (old_filename);
 
   return duplicate_file;
 }
