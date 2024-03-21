@@ -33,6 +33,8 @@
 #include "thunar/thunar-transfer-job.h"
 #include "thunar/thunar-progress-view.h"
 
+#include <libxfce4ui/libxfce4ui.h>
+
 
 
 enum
@@ -526,7 +528,7 @@ thunar_progress_view_error (ThunarProgressView *view,
   window = gtk_widget_get_toplevel (GTK_WIDGET (view));
 
   /* display the error message */
-  thunar_dialogs_show_job_error (window != NULL ? GTK_WINDOW (window) : NULL, error);
+  xfce_dialog_show_error (GTK_WINDOW (window), error, _("Error while processing file operation"));
 }
 
 

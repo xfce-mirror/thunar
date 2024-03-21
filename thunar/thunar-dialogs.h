@@ -47,8 +47,6 @@ ThunarJobResponse  thunar_dialogs_show_job_ask          (GtkWindow            *p
 ThunarJobResponse  thunar_dialogs_show_job_ask_replace  (GtkWindow            *parent,
                                                          ThunarFile           *src_file,
                                                          ThunarFile           *dst_file);
-void               thunar_dialogs_show_job_error        (GtkWindow            *parent,
-                                                         GError               *error);
 gboolean           thunar_dialogs_show_insecure_program (gpointer              parent,
                                                          const gchar          *title,
                                                          ThunarFile           *file,

@@ -1039,69 +1039,6 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
 
 
 
-/**
- * thunar_dialogs_show_job_error:
- * @parent : the parent #GtkWindow or %NULL.
- * @error  : the #GError provided by the #ThunarJob.
- *
- * Utility function to display a message dialog for the
- * ThunarJob::error signal.
- **/
-void
-thunar_dialogs_show_job_error (GtkWindow *parent,
-                               GError    *error)
-{
-  const gchar *separator;
-  GtkWidget   *message;
-  GString     *secondary = g_string_sized_new (256);
-  GString     *primary = g_string_sized_new (256);
-
-  _thunar_return_if_fail (parent == NULL || GTK_IS_WINDOW (parent));
-  _thunar_return_if_fail (error != NULL && error->message != NULL);
-
-  /* try to separate the message into primary and secondary parts */
-  separator = strstr (error->message, ": ");
-  if (G_LIKELY (separator > error->message))
-    {
-      /* primary is everything before the colon, plus a dot */
-      g_string_append_len (primary, error->message, separator - error->message);
-      g_string_append_c (primary, '.');
-
-      /* secondary is everything after the colon (plus a dot) */
-      do
-        ++separator;
-      while (g_ascii_isspace (*separator));
-      g_string_append (secondary, separator);
-      if (separator[strlen (separator - 1)] != '.')
-        g_string_append_c (secondary, '.');
-    }
-  else
-    {
-      /* primary is everything, secondary is empty */
-      g_string_append (primary, error->message);
-    }
-
-  /* allocate and display the error message dialog */
-  message = gtk_message_dialog_new (parent,
-                                    GTK_DIALOG_MODAL |
-                                    GTK_DIALOG_DESTROY_WITH_PARENT,
-                                    GTK_MESSAGE_ERROR,
-                                    GTK_BUTTONS_NONE,
-                                    "%s", primary->str);
-  gtk_window_set_title (GTK_WINDOW (message), _("Error"));
-  if (G_LIKELY (*secondary->str != '\0'))
-    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s", secondary->str);
-  gtk_dialog_add_button (GTK_DIALOG (message), _("_Close"), GTK_RESPONSE_CANCEL);
-  gtk_dialog_run (GTK_DIALOG (message));
-  gtk_widget_destroy (message);
-
-  /* cleanup */
-  g_string_free (secondary, TRUE);
-  g_string_free (primary, TRUE);
-}
-
-
-
 gboolean
 thunar_dialogs_show_insecure_program (gpointer     parent,
                                       const gchar *primary,

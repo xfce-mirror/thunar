@@ -46,6 +46,8 @@
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-user.h"
 
+#include <libxfce4ui/libxfce4ui.h>
+
 
 
 /* Use native strlcpy() if available */
@@ -1285,7 +1287,7 @@ thunar_permissions_chooser_job_error (ThunarPermissionsChooser *chooser,
     return;
 
   /* popup the error message dialog */
-  thunar_dialogs_show_job_error (GTK_WINDOW (toplevel), error);
+  xfce_dialog_show_error (GTK_WINDOW (toplevel), error, _("Error while changing file permissions"));
 }
 
 
