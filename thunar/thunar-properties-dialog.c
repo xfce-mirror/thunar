@@ -179,8 +179,10 @@ struct _ThunarPropertiesDialog
    * btns under highlights tab */
   GtkWidget              *highlight_buttons;
   GtkWidget              *highlighting_spinner;
-  ThunarJob              *highlight_change_job;
   gulong                  highlight_change_job_finish_signal;
+
+  ThunarJob              *highlight_change_job;
+  ThunarJob              *rename_job;
 
   GtkWidget              *highlight_apply_button;
   GtkWidget              *editor_button;
@@ -294,6 +296,8 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   dialog->provider_factory = thunarx_provider_factory_get_default ();
 
+
+  dialog->rename_job = NULL;
   dialog->highlight_change_job = NULL;
   dialog->highlight_change_job_finish_signal = 0;
 }
@@ -955,6 +959,13 @@ thunar_properties_dialog_finalize (GObject *object)
   if (dialog->highlight_change_job != NULL && dialog->highlight_change_job_finish_signal != 0)
     g_signal_handler_disconnect (dialog->highlight_change_job, dialog->highlight_change_job_finish_signal);
 
+  if (dialog->rename_job != NULL)
+    {
+      g_signal_handlers_disconnect_by_data (dialog->rename_job, dialog);
+      g_object_unref (dialog->rename_job);
+      dialog->rename_job = NULL;
+    }
+
   (*G_OBJECT_CLASS (thunar_properties_dialog_parent_class)->finalize) (object);
 }
 
@@ -1100,8 +1111,12 @@ thunar_properties_dialog_rename_finished (ExoJob                 *job,
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) == 1);
 
-  g_signal_handlers_disconnect_by_data (job, dialog);
-  g_object_unref (job);
+  if (dialog->rename_job != NULL)
+    {
+      g_signal_handlers_disconnect_by_data (job, dialog);
+      g_object_unref (dialog->rename_job);
+      dialog->rename_job = NULL;
+    }
 }
 
 
@@ -1112,7 +1127,6 @@ thunar_properties_dialog_name_activate (GtkWidget              *entry,
 {
   const gchar *old_name;
   const gchar *new_name;
-  ThunarJob   *job;
   ThunarFile  *file;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
@@ -1128,12 +1142,13 @@ thunar_properties_dialog_name_activate (GtkWidget              *entry,
   old_name = thunar_file_get_basename (file);
   if (g_utf8_collate (new_name, old_name) != 0)
     {
-      job = thunar_io_jobs_rename_file (file, new_name, THUNAR_OPERATION_LOG_OPERATIONS);
-      exo_job_launch (EXO_JOB (job));
-      if (job != NULL)
+      dialog->rename_job = thunar_io_jobs_rename_file (file, new_name, THUNAR_OPERATION_LOG_OPERATIONS);
+
+      if (dialog->rename_job != NULL)
         {
-          g_signal_connect (job, "error", G_CALLBACK (thunar_properties_dialog_rename_error), dialog);
-          g_signal_connect (job, "finished", G_CALLBACK (thunar_properties_dialog_rename_finished), dialog);
+          exo_job_launch (EXO_JOB (dialog->rename_job));
+          g_signal_connect (dialog->rename_job, "error", G_CALLBACK (thunar_properties_dialog_rename_error), dialog);
+          g_signal_connect (dialog->rename_job, "finished", G_CALLBACK (thunar_properties_dialog_rename_finished), dialog);
         }
     }
 }
