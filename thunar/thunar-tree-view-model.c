@@ -242,7 +242,7 @@ static void              thunar_tree_view_model_node_add_child (Node *node,
                                                                 Node *child);
 static void              thunar_tree_view_model_node_add_dummy_child (Node *node);
 static void              thunar_tree_view_model_node_drop_dummy_child (Node *node);
-static void              thunar_tree_view_model_dir_add_file (Node       *node,
+static Node             *thunar_tree_view_model_dir_add_file (Node       *node,
                                                               ThunarFile *file);
 static void              thunar_tree_view_model_dir_remove_file (Node       *node,
                                                                  ThunarFile *file);
@@ -338,7 +338,8 @@ struct _Node
   gint                 n_children;
   gboolean             loaded;
   gboolean             expanded;
-
+  gboolean             file_watch_active;
+ 
   /* set of all the children gfiles;
    * contains mappings of (gfile -> GSequenceIter *(_child_node->ptr)) */
   GHashTable          *set;
@@ -2036,6 +2037,8 @@ thunar_tree_view_model_new_node (ThunarFile *file)
 
   _node->scheduled_unload_id = 0;
 
+  _node->file_watch_active = FALSE;
+
   return _node;
 }
 
@@ -2204,7 +2207,7 @@ thunar_tree_view_model_node_drop_dummy_child (Node *node)
 
 
 
-static void
+static Node*
 thunar_tree_view_model_dir_add_file (Node       *node,
                                      ThunarFile *file)
 {
@@ -2212,7 +2215,7 @@ thunar_tree_view_model_dir_add_file (Node       *node,
   GtkTreePath *path;
   Node        *child;
 
-  THUNAR_WARN_VOID_RETURN (g_hash_table_contains (node->set, file));
+  THUNAR_WARN_RETURN_VAL (g_hash_table_contains (node->set, file), NULL);
 
   child = thunar_tree_view_model_new_node (file);
   thunar_tree_view_model_node_add_child (node, child);
@@ -2229,6 +2232,8 @@ thunar_tree_view_model_dir_add_file (Node       *node,
       gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (node->model), path, &tree_iter);
       gtk_tree_path_free (path);
     }
+
+  return child;
 }
 
 
@@ -2665,6 +2670,13 @@ thunar_tree_view_model_node_destroy (Node *node)
 {
   GSequenceIter *iter;
 
+  /* stop possible file-watch */
+  if (node->file != NULL && node->file_watch_active)
+    {
+      g_signal_handlers_disconnect_by_data (node->file, node);
+      thunar_file_unwatch (node->file);
+    }
+
   if (node->scheduled_unload_id != 0)
     {
       g_source_remove (node->scheduled_unload_id);
@@ -2932,11 +2944,55 @@ thunar_tree_view_model_schedule_unload (ThunarTreeViewModel *model,
 
 
 static gboolean
+_thunar_tree_view_model_matches_search_terms (ThunarTreeViewModel *model,
+                                             ThunarFile           *file)
+{
+  gboolean    matched;
+  gchar      *name_n;
+
+  name_n = (gchar *) thunar_file_get_display_name (file);
+  name_n = thunar_g_utf8_normalize_for_search (name_n, TRUE, TRUE);
+  matched = thunar_util_search_terms_match (model->search_terms, name_n);
+  g_free (name_n);
+
+  return matched;
+}
+
+
+
+static void
+_thunar_tree_view_model_search_file_destroyed (Node *node, ThunarFile *file)
+{
+  GList *files = NULL;
+
+  files = g_list_append (files, file);
+  _thunar_tree_view_model_dir_files_removed (node->model->root, files);
+
+  g_list_free (files);
+}
+
+
+
+static void
+_thunar_tree_view_model_search_file_changed (Node *node, ThunarFile *file)
+{
+  GList *files = NULL;
+  files = g_list_append (files, file);
+
+  if (_thunar_tree_view_model_matches_search_terms (node->model, node->file) == TRUE)
+    thunar_tree_view_model_dir_files_changed (node->model->root, files);
+  else
+    _thunar_tree_view_model_dir_files_removed (node->model->root, files);
+
+  g_list_free (files);
+}
+
+
+
+static gboolean
 thunar_tree_view_model_update_search_files (ThunarTreeViewModel *model)
 {
   ThunarFile *file;
-  gboolean    matched;
-  gchar      *name_n;
 
   g_mutex_lock (&model->mutex_add_search_files);
 
@@ -2951,13 +3007,20 @@ thunar_tree_view_model_update_search_files (ThunarTreeViewModel *model)
 
       /* take a reference on that file */
       g_object_ref (file);
-      name_n = (gchar *) thunar_file_get_display_name (file);
-      name_n = thunar_g_utf8_normalize_for_search (name_n, TRUE, TRUE);
-      matched = thunar_util_search_terms_match (model->search_terms, name_n);
-      g_free (name_n);
 
-      if (matched)
-        thunar_tree_view_model_dir_add_file (model->root, lp->data);
+      if (_thunar_tree_view_model_matches_search_terms (model, file))
+      {
+        Node *node;
+        node = thunar_tree_view_model_dir_add_file (model->root, lp->data);
+        if (node != NULL)
+          {
+            /* start watching the file */
+            g_signal_connect_swapped (file, "destroy", G_CALLBACK (_thunar_tree_view_model_search_file_destroyed), node);
+            g_signal_connect_swapped (file, "changed", G_CALLBACK (_thunar_tree_view_model_search_file_changed), node);
+            thunar_file_watch (file);
+            node->file_watch_active = TRUE;
+          }
+      }
 
       g_object_unref (file);
     }
