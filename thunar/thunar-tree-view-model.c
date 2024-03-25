@@ -2951,6 +2951,9 @@ _thunar_tree_view_model_matches_search_terms (ThunarTreeViewModel *model,
   gchar      *name_n;
 
   name_n = (gchar *) thunar_file_get_display_name (file);
+  if (name_n == NULL)
+    return FALSE;
+
   name_n = thunar_g_utf8_normalize_for_search (name_n, TRUE, TRUE);
   matched = thunar_util_search_terms_match (model->search_terms, name_n);
   g_free (name_n);

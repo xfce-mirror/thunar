@@ -769,6 +769,9 @@ _thunar_standard_view_model_match_pattern_foreach (GtkTreeModel *model,
     return FALSE;
 
   display_name = thunar_file_get_display_name (file);
+  if (display_name == NULL)
+    return FALSE;
+
   normalized_display_name = thunar_g_utf8_normalize_for_search (display_name,
                                                                 !mf->match_diacritics,
                                                                 !mf->case_sensitive);

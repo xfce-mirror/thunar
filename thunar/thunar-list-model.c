@@ -1575,11 +1575,24 @@ thunar_list_model_files_added (ThunarFolder    *folder,
   filtered = NULL;
   for (lp = files; lp != NULL; lp = lp->next)
     {
+      file = THUNAR_FILE (lp->data);
+      if (THUNAR_IS_FILE (file) == FALSE)
+        {
+          g_warning ("failed to add file to search results");
+          continue;
+        }
+
       /* take a reference on that file */
-      file = THUNAR_FILE (g_object_ref (G_OBJECT (lp->data)));
-      _thunar_return_if_fail (THUNAR_IS_FILE (file));
+      g_object_ref (file);
 
       name_n = (gchar *)thunar_file_get_display_name (file);
+      if (name_n == NULL)
+      {
+          g_warning ("failed to get display name");
+          g_object_unref (file);
+          continue;
+      }
+
       name_n = thunar_g_utf8_normalize_for_search (name_n, TRUE, TRUE);
       matched = thunar_util_search_terms_match (store->search_terms, name_n);
       g_free (name_n);

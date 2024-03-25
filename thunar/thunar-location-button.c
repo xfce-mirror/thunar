@@ -406,8 +406,12 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
     }
   else
     {
+      const gchar* diplay_name;
+
       /* set label to the file's display name and show the label */
-      gtk_label_set_text (GTK_LABEL (location_button->label), thunar_file_get_display_name (file));
+      diplay_name = thunar_file_get_display_name (file);
+      if (diplay_name != NULL)
+        gtk_label_set_text (GTK_LABEL (location_button->label), diplay_name);
 
       /* set the label's size request in such a way that a bold label will not change the button size */
       if (gtk_widget_get_mapped (GTK_WIDGET (location_button)))

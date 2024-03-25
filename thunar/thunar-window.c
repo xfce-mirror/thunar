@@ -5711,10 +5711,12 @@ static void thunar_window_update_standalone_image_preview (ThunarWindow *window)
 
   if (window->preview_image_pixbuf != NULL)
     {
-      gchar *file_size = thunar_file_get_size_string (selected_files->data);
+      gchar       *file_size = thunar_file_get_size_string (selected_files->data);
+      const gchar *display_name = thunar_file_get_display_name (selected_files->data);
 
       image_preview_update (window->right_pane_box, NULL, window->right_pane_preview_image);
-      gtk_label_set_text (GTK_LABEL (window->right_pane_image_label), thunar_file_get_display_name (selected_files->data));
+      if (display_name != NULL)
+        gtk_label_set_text (GTK_LABEL (window->right_pane_image_label), display_name);
       gtk_label_set_text (GTK_LABEL (window->right_pane_size_label), file_size);
 
       g_free (file_size);
