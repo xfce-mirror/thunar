@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-29 12:46+0100\n"
+"POT-Creation-Date: 2024-03-21 12:45+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>, 2012-2014,2017-2019,2021-2024\n"
 "Language-Team: Serbian (http://app.transifex.com/xfce/thunar/language/sr/)\n"
@@ -57,7 +57,7 @@ msgid "Open With Other _Application..."
 msgstr "Отвори другим _програмом..."
 
 #: ../thunar/thunar-action-manager.c:274
-#: ../thunar/thunar-action-manager.c:3308
+#: ../thunar/thunar-action-manager.c:3311
 msgid "Choose another application with which to open the selected file"
 msgstr "Изаберите други програм за отварање изабране датотеке"
 
@@ -294,9 +294,9 @@ msgstr[2] "Отвори %d нових прозора"
 #: ../thunar/thunar-chooser-dialog.c:838 ../thunar/thunar-chooser-dialog.c:889
 #: ../thunar/thunar-dialogs.c:112 ../thunar/thunar-dialogs.c:261
 #: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:847
-#: ../thunar/thunar-dialogs.c:1165 ../thunar/thunar-dialogs.c:1258
-#: ../thunar/thunar-dnd.c:173 ../thunar/thunar-permissions-chooser.c:559
-#: ../thunar/thunar-permissions-chooser.c:1170
+#: ../thunar/thunar-dialogs.c:1102 ../thunar/thunar-dialogs.c:1195
+#: ../thunar/thunar-dnd.c:173 ../thunar/thunar-permissions-chooser.c:561
+#: ../thunar/thunar-permissions-chooser.c:1172
 #: ../thunar/thunar-properties-dialog.c:1181
 #: ../thunar/thunar-renamer-dialog.c:1074
 #: ../thunar/thunar-renamer-progress.c:181
@@ -329,7 +329,7 @@ msgstr "Нисам успео да отворим „%s“"
 #. change the accept button label text
 #: ../thunar/thunar-action-manager.c:1574
 #: ../thunar/thunar-chooser-dialog.c:890
-#: ../thunar/thunar-chooser-dialog.c:1301 ../thunar/thunar-dialogs.c:1350
+#: ../thunar/thunar-chooser-dialog.c:1301 ../thunar/thunar-dialogs.c:1287
 #: ../thunar/thunar-renamer-dialog.c:1075
 #: ../plugins/thunar-uca/thunar-uca-editor.c:181
 msgid "_Open"
@@ -342,7 +342,7 @@ msgstr[0] "Отвори означену датотеку"
 msgstr[1] "Отвори означене датотеке"
 msgstr[2] "Отвори означене датотеке"
 
-#: ../thunar/thunar-action-manager.c:1578 ../thunar/thunar-dialogs.c:1344
+#: ../thunar/thunar-action-manager.c:1578 ../thunar/thunar-dialogs.c:1281
 msgid "_Execute"
 msgstr "_Изврши"
 
@@ -522,29 +522,29 @@ msgstr "Нова празна датотека"
 msgid "New Empty File..."
 msgstr "Нова празна датотека..."
 
-#: ../thunar/thunar-action-manager.c:2913
+#: ../thunar/thunar-action-manager.c:2916
 #, c-format
 msgid ""
 "No templates installed in\n"
 "\"%s\""
 msgstr "Нема уграђених образаца у\n„%s“"
 
-#: ../thunar/thunar-action-manager.c:2926
+#: ../thunar/thunar-action-manager.c:2929
 msgid "_Empty File"
 msgstr "Пра_зна датотека"
 
-#: ../thunar/thunar-action-manager.c:3066
+#: ../thunar/thunar-action-manager.c:3069
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Нисам успео да избацим „%s“"
 
-#: ../thunar/thunar-action-manager.c:3128
+#: ../thunar/thunar-action-manager.c:3131
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Нисам успео да откачим „%s“"
 
-#: ../thunar/thunar-action-manager.c:3191
-#: ../thunar/thunar-action-manager.c:3262
+#: ../thunar/thunar-action-manager.c:3194
+#: ../thunar/thunar-action-manager.c:3265
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
@@ -552,18 +552,18 @@ msgstr[0] "Користи „%s“ за отварање означене дат
 msgstr[1] "Користи „%s“ за отварање означених датотека"
 msgstr[2] "Користи „%s“ за отварање означених датотека"
 
-#: ../thunar/thunar-action-manager.c:3261
+#: ../thunar/thunar-action-manager.c:3264
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "О_твори помоћу „%s“"
 
 #. we can only show a generic "Open" action
-#: ../thunar/thunar-action-manager.c:3281
+#: ../thunar/thunar-action-manager.c:3284
 #, c-format
 msgid "_Open With Default Applications"
 msgstr "О_твори подразумеваним програмима"
 
-#: ../thunar/thunar-action-manager.c:3282
+#: ../thunar/thunar-action-manager.c:3285
 #, c-format
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
@@ -571,7 +571,7 @@ msgstr[0] "Отвори означену датотеку подразумева
 msgstr[1] "Отвори означене датотеке подразумеваним програмима"
 msgstr[2] "Отвори означене датотеке подразумеваним програмима"
 
-#: ../thunar/thunar-action-manager.c:3307
+#: ../thunar/thunar-action-manager.c:3310
 #: ../thunar/thunar-chooser-dialog.c:187
 msgid "Open With"
 msgstr "Отвори помоћу"
@@ -721,7 +721,7 @@ msgstr[1] "Да ли сигурно желите да трајно\nобрише
 msgstr[2] "Да ли сигурно желите да трајно\nобришете %u изабраних датотека?"
 
 #: ../thunar/thunar-application.c:2464 ../thunar/thunar-application.c:2525
-#: ../thunar/thunar-dialogs.c:616 ../thunar/thunar-dialogs.c:1161
+#: ../thunar/thunar-dialogs.c:616 ../thunar/thunar-dialogs.c:1098
 msgid "Attention"
 msgstr "Пажња"
 
@@ -866,7 +866,7 @@ msgstr "Постави као по_дразумевано за овакву вр
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1301
-#: ../thunar/thunar-properties-dialog.c:1182 ../thunar/thunar-window.c:4450
+#: ../thunar/thunar-properties-dialog.c:1182 ../thunar/thunar-window.c:4426
 #: ../plugins/thunar-uca/thunar-uca-editor.c:146
 #: ../plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -1038,7 +1038,7 @@ msgstr "Нема ништа међу исечцима за убацивање"
 #. add the "Close" button
 #. setup the dialog
 #. add a regular close button, the header bar already provides one
-#: ../thunar/thunar-column-editor.c:158 ../thunar/thunar-dialogs.c:1094
+#: ../thunar/thunar-column-editor.c:158
 #: ../thunar/thunar-preferences-dialog.c:275
 #: ../thunar/thunar-properties-dialog.c:323
 #: ../thunar/thunar-renamer-dialog.c:382
@@ -1127,7 +1127,7 @@ msgstr "Приказуј број садржаних ставки"
 #. tell the user that we're unable to determine the file info
 #: ../thunar/thunar-column-model.c:876 ../thunar/thunar-list-model.c:898
 #: ../thunar/thunar-list-model.c:934
-#: ../thunar/thunar-permissions-chooser.c:232
+#: ../thunar/thunar-permissions-chooser.c:234
 #: ../thunar/thunar-size-label.c:382 ../thunar/thunar-size-label.c:463
 #: ../thunar/thunar-util.c:428 ../thunar/thunar-util.c:431
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:711
@@ -1250,8 +1250,7 @@ msgstr "Унесите нов назив:"
 msgid "translator-credits"
 msgstr "Милош Поповић <gpopac@gmail.com>\nСаша Петровић <salepetronije@gmail.com>"
 
-#: ../thunar/thunar-dialogs.c:516 ../thunar/thunar-dialogs.c:1091
-#: ../thunar/thunar-renamer-progress.c:168
+#: ../thunar/thunar-dialogs.c:516 ../thunar/thunar-renamer-progress.c:168
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:826
 #: ../plugins/thunar-sendto-email/main.c:144
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:320
@@ -1259,7 +1258,7 @@ msgstr "Милош Поповић <gpopac@gmail.com>\nСаша Петровић 
 msgid "Error"
 msgstr "Грешка"
 
-#: ../thunar/thunar-dialogs.c:631 ../thunar/thunar-permissions-chooser.c:561
+#: ../thunar/thunar-dialogs.c:631 ../thunar/thunar-permissions-chooser.c:563
 msgid "_Yes"
 msgstr "_Да"
 
@@ -1291,7 +1290,7 @@ msgstr "Пре_именуј"
 msgid "Rena_me All"
 msgstr "Пре_именуј све"
 
-#: ../thunar/thunar-dialogs.c:663 ../thunar/thunar-permissions-chooser.c:560
+#: ../thunar/thunar-dialogs.c:663 ../thunar/thunar-permissions-chooser.c:562
 msgid "_No"
 msgstr "_Не"
 
@@ -1382,66 +1381,66 @@ msgstr "следећом датотеком?"
 #. second appearance of %s:
 #. * "The desktop file %s is in an insecure location and not marked as
 #. secure%s."
-#: ../thunar/thunar-dialogs.c:1135
+#: ../thunar/thunar-dialogs.c:1072
 msgid "/executable"
 msgstr "/извршна"
 
-#: ../thunar/thunar-dialogs.c:1141
+#: ../thunar/thunar-dialogs.c:1078
 #, c-format
 msgid ""
 "The desktop file %s is in an insecure location and not marked as secure%s. If you do not trust this program, click Cancel.\n"
 "\n"
 msgstr "Датотека радне површи %s је на небезбедном положају и није означена као безбедна%s. Уколико не верујете овом програму, кликните на откажи.\n\n"
 
-#: ../thunar/thunar-dialogs.c:1162
+#: ../thunar/thunar-dialogs.c:1099
 msgid "_Launch Anyway"
 msgstr "Ипак _покрени"
 
-#: ../thunar/thunar-dialogs.c:1164
+#: ../thunar/thunar-dialogs.c:1101
 msgid "Mark As _Secure And Launch"
 msgstr "Означи да буде _безбедна и покрени"
 
-#: ../thunar/thunar-dialogs.c:1247
+#: ../thunar/thunar-dialogs.c:1184
 msgid "Close split pane with multiple tabs?"
 msgstr "Да ли затворити подељену површ са више листова?"
 
-#: ../thunar/thunar-dialogs.c:1248
+#: ../thunar/thunar-dialogs.c:1185
 msgid ""
 "The other split pane has multiple open tabs. Closing it will close all these"
 " tabs."
 msgstr "Друга подељена површ има више отворених листова. Затварањем ће се затворити сви ти листови."
 
-#: ../thunar/thunar-dialogs.c:1254
+#: ../thunar/thunar-dialogs.c:1191
 msgid "Warning"
 msgstr "Упозорење"
 
-#: ../thunar/thunar-dialogs.c:1259
+#: ../thunar/thunar-dialogs.c:1196
 msgid "Close Pane"
 msgstr "Затвори површ"
 
-#: ../thunar/thunar-dialogs.c:1262 ../thunar/thunar-permissions-chooser.c:591
+#: ../thunar/thunar-dialogs.c:1199 ../thunar/thunar-permissions-chooser.c:593
 msgid "Do _not ask me again"
 msgstr "_Не питај ме поново"
 
-#: ../thunar/thunar-dialogs.c:1322
+#: ../thunar/thunar-dialogs.c:1259
 #, c-format
 msgid "The file \"%s\" seems to be executable. What do you want to do with it?"
 msgstr "Датотека „%s“ изгледа као извршна. Шта желите учинити са њоме?"
 
-#: ../thunar/thunar-dialogs.c:1327
+#: ../thunar/thunar-dialogs.c:1264
 msgid ""
 "The selected files seem to be executable. What do you want to do with them?"
 msgstr "Означене датотеке изгледа као да су извршне. Шта желите да учините са њима?"
 
-#: ../thunar/thunar-dialogs.c:1336
+#: ../thunar/thunar-dialogs.c:1273
 msgid "Open Shell Script"
 msgstr "Отвори скрипта љуске"
 
-#: ../thunar/thunar-dialogs.c:1340
+#: ../thunar/thunar-dialogs.c:1277
 msgid "Run In _Terminal"
 msgstr "Покрени у _терминалу"
 
-#: ../thunar/thunar-dialogs.c:1401
+#: ../thunar/thunar-dialogs.c:1338
 #, c-format
 msgid "Failed to edit launcher via command \"%s\""
 msgstr "Нисам успео да уредим покретач преко наредбе „%s“"
@@ -1750,11 +1749,11 @@ msgstr "%s на %s"
 msgid "%s used (%.0f%%)  |  %s free (%.0f%%)"
 msgstr "%s је коришћено (%.0f%%)  |  %s слободно је (%.0f%%)"
 
-#: ../thunar/thunar-history.c:297
+#: ../thunar/thunar-history.c:300
 msgid "The item will be removed from the history"
 msgstr "Ставка ће бити уклоњена из историје"
 
-#: ../thunar/thunar-history.c:309
+#: ../thunar/thunar-history.c:312
 #, c-format
 msgid "Could not find \"%s\""
 msgstr "Нисам успео да пронађем „%s“"
@@ -1967,8 +1966,8 @@ msgid "Redo the latest operation"
 msgstr "_Опозови последњу радњу"
 
 #: ../thunar/thunar-list-model.c:965 ../thunar/thunar-list-model.c:975
-#: ../thunar/thunar-tree-view-model.c:1289
-#: ../thunar/thunar-tree-view-model.c:1299
+#: ../thunar/thunar-tree-view-model.c:1286
+#: ../thunar/thunar-tree-view-model.c:1296
 #, c-format
 msgid "%u item"
 msgid_plural "%u items"
@@ -2038,139 +2037,144 @@ msgstr "Величина сличице"
 msgid "The icon size for the path entry"
 msgstr "Величина сличице у траци путање"
 
-#: ../thunar/thunar-permissions-chooser.c:221
+#: ../thunar/thunar-permissions-chooser.c:223
 msgid "Owner:"
 msgstr "Власник:"
 
-#: ../thunar/thunar-permissions-chooser.c:240
+#: ../thunar/thunar-permissions-chooser.c:242
 msgid "_Access:"
 msgstr "_Приступ:"
 
-#: ../thunar/thunar-permissions-chooser.c:268
+#: ../thunar/thunar-permissions-chooser.c:270
 msgid "Gro_up:"
 msgstr "Груп_а:"
 
-#: ../thunar/thunar-permissions-chooser.c:290
+#: ../thunar/thunar-permissions-chooser.c:292
 msgid "Acc_ess:"
 msgstr "_Приступ:"
 
-#: ../thunar/thunar-permissions-chooser.c:318
+#: ../thunar/thunar-permissions-chooser.c:320
 msgid "Others"
 msgstr "Остали"
 
-#: ../thunar/thunar-permissions-chooser.c:326
+#: ../thunar/thunar-permissions-chooser.c:328
 msgid "Acce_ss:"
 msgstr "При_ступ:"
 
-#: ../thunar/thunar-permissions-chooser.c:354
+#: ../thunar/thunar-permissions-chooser.c:356
 msgid "Program:"
 msgstr "Програм:"
 
-#: ../thunar/thunar-permissions-chooser.c:360
+#: ../thunar/thunar-permissions-chooser.c:362
 msgid "Allow this file to _run as a program"
 msgstr "До_зволи покретање датотеке као програма"
 
-#: ../thunar/thunar-permissions-chooser.c:388
+#: ../thunar/thunar-permissions-chooser.c:390
 #: ../thunar/thunar-preferences-dialog.c:1279
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "Дозволити извршавање непровереним програмима је безбедоносни ризик за систем."
 
-#: ../thunar/thunar-permissions-chooser.c:406
+#: ../thunar/thunar-permissions-chooser.c:408
 msgid ""
 "The folder permissions are inconsistent, you may not be able to work with "
 "files in this folder."
 msgstr "Овлашћења над фасциклама су недоследне, можда нећете моћи да радите са датотекама у овој фасцикли."
 
-#: ../thunar/thunar-permissions-chooser.c:422
+#: ../thunar/thunar-permissions-chooser.c:424
 msgid "Correct _folder permissions..."
 msgstr "Исправи овлашћења над _фасциклом..."
 
-#: ../thunar/thunar-permissions-chooser.c:423
+#: ../thunar/thunar-permissions-chooser.c:425
 msgid "Click here to automatically fix the folder permissions."
 msgstr "Кликните овде да самостално исправите овлашћења над фасциклом."
 
-#: ../thunar/thunar-permissions-chooser.c:436
+#: ../thunar/thunar-permissions-chooser.c:438
 msgid "Please wait..."
 msgstr "Сачекајте..."
 
-#: ../thunar/thunar-permissions-chooser.c:443
+#: ../thunar/thunar-permissions-chooser.c:445
 msgid "Stop applying permissions recursively."
 msgstr "Не примењуј овлашћења на све садржане датотеке."
 
 #. allocate the question dialog
-#: ../thunar/thunar-permissions-chooser.c:556
+#: ../thunar/thunar-permissions-chooser.c:558
 msgid "Question"
 msgstr "Питање"
 
-#: ../thunar/thunar-permissions-chooser.c:580
+#: ../thunar/thunar-permissions-chooser.c:582
 msgid "Apply recursively?"
 msgstr "Да применим на све садржане датотеке?"
 
-#: ../thunar/thunar-permissions-chooser.c:586
+#: ../thunar/thunar-permissions-chooser.c:588
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolders below the selected folder?"
 msgstr "Да ли желите да примените измене на све садржане\nдатотеке и подфасцикле унутар ове фасцикле?"
 
-#: ../thunar/thunar-permissions-chooser.c:592
+#: ../thunar/thunar-permissions-chooser.c:594
 msgid ""
 "If you select this option your choice will be remembered and you won't be "
 "asked again. You can use the preferences dialog to alter your choice "
 "afterwards."
 msgstr "Уколико укључите ову могућност ваш избор ће бити запамћен и програм вас неће питати поново за исту ствар. Можете изменити избор у прозору поставки програма."
 
-#: ../thunar/thunar-permissions-chooser.c:956
+#: ../thunar/thunar-permissions-chooser.c:958
 msgid "Mixed file owners"
 msgstr "Власништво више корисника"
 
-#: ../thunar/thunar-permissions-chooser.c:956
+#: ../thunar/thunar-permissions-chooser.c:958
 msgid "Unknown file owner"
 msgstr "Непознат власник датотеке"
 
-#: ../thunar/thunar-permissions-chooser.c:1036
+#: ../thunar/thunar-permissions-chooser.c:1038
 #: ../plugins/thunar-uca/thunar-uca-editor.c:415
 #: ../plugins/thunar-uca/thunar-uca-editor.c:627
 msgid "None"
 msgstr "Ништа"
 
 #. 0000
-#: ../thunar/thunar-permissions-chooser.c:1037
+#: ../thunar/thunar-permissions-chooser.c:1039
 msgid "Write only"
 msgstr "Само писање"
 
 #. 0002
-#: ../thunar/thunar-permissions-chooser.c:1038
+#: ../thunar/thunar-permissions-chooser.c:1040
 msgid "Read only"
 msgstr "Само читање"
 
 #. 0004
-#: ../thunar/thunar-permissions-chooser.c:1039
+#: ../thunar/thunar-permissions-chooser.c:1041
 msgid "Read & Write"
 msgstr "Читање и писање"
 
-#: ../thunar/thunar-permissions-chooser.c:1041
+#: ../thunar/thunar-permissions-chooser.c:1043
 msgid "Varying (no change)"
 msgstr "Променљива(без измена)"
 
-#: ../thunar/thunar-permissions-chooser.c:1168
+#: ../thunar/thunar-permissions-chooser.c:1170
 msgid "Correct folder permissions automatically?"
 msgstr "Да ли да сам исправим овлашћења над фасциклом?"
 
-#: ../thunar/thunar-permissions-chooser.c:1169
+#: ../thunar/thunar-permissions-chooser.c:1171
 msgid "Folder permissions"
 msgstr "Овлашћења над фасциклом"
 
-#: ../thunar/thunar-permissions-chooser.c:1171
+#: ../thunar/thunar-permissions-chooser.c:1173
 msgid "Correct _folder permissions"
 msgstr "Исправи овлашћења над _фасциклом"
 
-#: ../thunar/thunar-permissions-chooser.c:1173
+#: ../thunar/thunar-permissions-chooser.c:1175
 msgid ""
 "The folder permissions will be reset to a consistent state. Only users "
 "allowed to read the contents of this folder will be allowed to enter the "
 "folder afterwards."
 msgstr "Овлашћења над фасциклом ће бити уједначена. Само корисници са дозволама приступа ће моћи да приступају садржају ове фасцикле."
+
+#. popup the error message dialog
+#: ../thunar/thunar-permissions-chooser.c:1290
+msgid "Error while changing file permissions"
+msgstr "Десила се је грешка приликом измене овлашћења датотеке"
 
 #: ../thunar/thunar-preferences-dialog.c:268
 #: ../thunar/thunar-settings.desktop.in.h:1
@@ -2716,32 +2720,37 @@ msgstr "Нисам успео да прикажем подешавања за у
 msgid "File Operation Progress"
 msgstr "Напредак радњи над датотекама"
 
-#: ../thunar/thunar-progress-view.c:387
+#: ../thunar/thunar-progress-view.c:389
 msgid "Paused"
 msgstr "Заустављено"
 
-#: ../thunar/thunar-progress-view.c:409
+#: ../thunar/thunar-progress-view.c:411
 msgid "Starting... (User request)"
 msgstr "Покрећем... (кориснички захтев)"
 
-#: ../thunar/thunar-progress-view.c:412
+#: ../thunar/thunar-progress-view.c:414
 msgid "Resuming..."
 msgstr "Настављам..."
 
 #. update the status text
-#: ../thunar/thunar-progress-view.c:447
+#: ../thunar/thunar-progress-view.c:449
 msgid "Cancelling..."
 msgstr "Отказујем..."
 
-#: ../thunar/thunar-progress-view.c:603
+#. display the error message
+#: ../thunar/thunar-progress-view.c:531
+msgid "Error while processing file operation"
+msgstr "Десила се је грешка приликом обраде датотеке"
+
+#: ../thunar/thunar-progress-view.c:605
 msgid "Job queued"
 msgstr "Задатак је заказан"
 
-#: ../thunar/thunar-progress-view.c:622
+#: ../thunar/thunar-progress-view.c:624
 msgid "Resuming job..."
 msgstr "Настављам задатак..."
 
-#: ../thunar/thunar-progress-view.c:644
+#: ../thunar/thunar-progress-view.c:646
 msgid "Queued"
 msgstr "Заказано"
 
@@ -3091,38 +3100,38 @@ msgstr "Отвори личну фасциклу"
 msgid "Open the desktop folder"
 msgstr "Отвори радну површ"
 
-#: ../thunar/thunar-shortcuts-model.c:1140 ../thunar/thunar-window.c:542
+#: ../thunar/thunar-shortcuts-model.c:1141 ../thunar/thunar-window.c:542
 #: ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr "Рачунар"
 
-#: ../thunar/thunar-shortcuts-model.c:1141
+#: ../thunar/thunar-shortcuts-model.c:1142
 msgid "Browse the computer"
 msgstr "Прегледај рачунар"
 
-#: ../thunar/thunar-shortcuts-model.c:1153 ../thunar/thunar-window.c:543
+#: ../thunar/thunar-shortcuts-model.c:1154 ../thunar/thunar-window.c:543
 msgid "Recent"
 msgstr "Скорашње"
 
-#: ../thunar/thunar-shortcuts-model.c:1154
+#: ../thunar/thunar-shortcuts-model.c:1155
 msgid "Browse recently used files"
 msgstr "Прегледај недавно коришћене датотеке"
 
-#: ../thunar/thunar-shortcuts-view.c:230
+#: ../thunar/thunar-shortcuts-view.c:233
 msgid "Re_name Shortcut"
 msgstr "П_реименуј пречицу"
 
-#: ../thunar/thunar-shortcuts-view.c:231
+#: ../thunar/thunar-shortcuts-view.c:234
 msgid "_Remove Shortcut"
 msgstr "_Уклони пречицу"
 
-#: ../thunar/thunar-shortcuts-view.c:1651
+#: ../thunar/thunar-shortcuts-view.c:1660
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "Путања „%s“ се не односи на фасциклу"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1671
+#: ../thunar/thunar-shortcuts-view.c:1680
 msgid "Failed to add new shortcut"
 msgstr "Нисам успео да додам нову пречицу"
 
@@ -3169,136 +3178,136 @@ msgstr "(део садржаја није читљив)"
 msgid "Permission denied"
 msgstr "Приступ је одбијен"
 
-#: ../thunar/thunar-standard-view.c:381
+#: ../thunar/thunar-standard-view.c:382
 msgid "Select _all Files"
 msgstr "Изабери _све датотеке"
 
-#: ../thunar/thunar-standard-view.c:381
+#: ../thunar/thunar-standard-view.c:382
 msgid "Select all files in this window"
 msgstr "Бира све датотеке из овог прозора"
 
-#: ../thunar/thunar-standard-view.c:382
+#: ../thunar/thunar-standard-view.c:383
 msgid "Select _by Pattern..."
 msgstr "Изабери по _обрасцу..."
 
-#: ../thunar/thunar-standard-view.c:382
+#: ../thunar/thunar-standard-view.c:383
 msgid "Select all files that match a certain pattern"
 msgstr "Бира све датотеке које се поклапају са одређеном обрасцу"
 
-#: ../thunar/thunar-standard-view.c:383
+#: ../thunar/thunar-standard-view.c:384
 msgid "_Invert Selection"
 msgstr "Обрни _избор"
 
-#: ../thunar/thunar-standard-view.c:383
+#: ../thunar/thunar-standard-view.c:384
 msgid "Select all files but not those currently selected"
 msgstr "Означи све датотеке а одзначи тренутно означене"
 
-#: ../thunar/thunar-standard-view.c:384
+#: ../thunar/thunar-standard-view.c:385
 msgid "U_nselect all Files"
 msgstr "О_дзначи све датотеке"
 
-#: ../thunar/thunar-standard-view.c:384
+#: ../thunar/thunar-standard-view.c:385
 msgid "Unselect all files in this window"
 msgstr "Одзначи све датотеке у овом прозору"
 
-#: ../thunar/thunar-standard-view.c:385
+#: ../thunar/thunar-standard-view.c:386
 msgid "Arran_ge Items"
 msgstr "Ређа_ње ставки"
 
-#: ../thunar/thunar-standard-view.c:386
+#: ../thunar/thunar-standard-view.c:387
 msgid "_Reversed Order"
 msgstr "_Наопаки редослед"
 
-#: ../thunar/thunar-standard-view.c:386
+#: ../thunar/thunar-standard-view.c:387
 msgid "Reverse the sort order"
 msgstr "Обрни редослед"
 
-#: ../thunar/thunar-standard-view.c:387
+#: ../thunar/thunar-standard-view.c:388
 msgid "By _Name"
 msgstr "По _имену"
 
-#: ../thunar/thunar-standard-view.c:387
+#: ../thunar/thunar-standard-view.c:388
 msgid "Keep items sorted by their name"
 msgstr "Ређа ставке на основу њиховог назива"
 
-#: ../thunar/thunar-standard-view.c:388
+#: ../thunar/thunar-standard-view.c:389
 msgid "By _Size"
 msgstr "По _величини"
 
-#: ../thunar/thunar-standard-view.c:388
+#: ../thunar/thunar-standard-view.c:389
 msgid "Keep items sorted by their size"
 msgstr "Ређа ставке на основу величине датотека"
 
-#: ../thunar/thunar-standard-view.c:389
+#: ../thunar/thunar-standard-view.c:390
 msgid "By _Type"
 msgstr "По _врсти"
 
-#: ../thunar/thunar-standard-view.c:389
+#: ../thunar/thunar-standard-view.c:390
 msgid "Keep items sorted by their type"
 msgstr "Ређа ставке на основу врста датотека"
 
-#: ../thunar/thunar-standard-view.c:390
+#: ../thunar/thunar-standard-view.c:391
 msgid "By Modification _Date"
 msgstr "По _датуму измене"
 
-#: ../thunar/thunar-standard-view.c:390
+#: ../thunar/thunar-standard-view.c:391
 msgid "Keep items sorted by their modification date"
 msgstr "Ређа ставке на основу времена њихове последње измене"
 
-#: ../thunar/thunar-standard-view.c:391
+#: ../thunar/thunar-standard-view.c:392
 msgid "By D_eletion Date"
 msgstr "По времену б_рисања"
 
-#: ../thunar/thunar-standard-view.c:391
+#: ../thunar/thunar-standard-view.c:392
 msgid "Keep items sorted by their deletion date"
 msgstr "Задржи ставке распоређене по њиховом времену брисања"
 
-#: ../thunar/thunar-standard-view.c:392
+#: ../thunar/thunar-standard-view.c:393
 msgid "_Ascending"
 msgstr "_Растуће"
 
-#: ../thunar/thunar-standard-view.c:392
+#: ../thunar/thunar-standard-view.c:393
 msgid "Sort items in ascending order"
 msgstr "Ређа ставке у растућем редоследу"
 
-#: ../thunar/thunar-standard-view.c:393
+#: ../thunar/thunar-standard-view.c:394
 msgid "_Descending"
 msgstr "_Опадајуће"
 
-#: ../thunar/thunar-standard-view.c:393
+#: ../thunar/thunar-standard-view.c:394
 msgid "Sort items in descending order"
 msgstr "Ређа ставке у опадајућем редоследу"
 
-#: ../thunar/thunar-standard-view.c:1749
+#: ../thunar/thunar-standard-view.c:1767
 msgid "Loading folder contents..."
 msgstr "Учитавам садржај фасцикле..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2338 ../thunar/thunar-window.c:4263
+#: ../thunar/thunar-standard-view.c:2356 ../thunar/thunar-window.c:4239
 msgid "Failed to open the home folder"
 msgstr "Нисам успео да отворим личну фасциклу"
 
-#: ../thunar/thunar-standard-view.c:2416
+#: ../thunar/thunar-standard-view.c:2434
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "Изабери по обрасцу"
 
-#: ../thunar/thunar-standard-view.c:2421
+#: ../thunar/thunar-standard-view.c:2439
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "_Откажи"
 
-#: ../thunar/thunar-standard-view.c:2423
+#: ../thunar/thunar-standard-view.c:2441
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "_Изабери"
 
-#: ../thunar/thunar-standard-view.c:2436
+#: ../thunar/thunar-standard-view.c:2454
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "_Образац:"
 
-#: ../thunar/thunar-standard-view.c:2437
+#: ../thunar/thunar-standard-view.c:2455
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3308,7 +3317,7 @@ msgstr "Датотеке чија имена се поклапају са обр
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: ../thunar/thunar-standard-view.c:2451
+#: ../thunar/thunar-standard-view.c:2469
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3319,24 +3328,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr "? је поклапање са тачно са једним знаком,\n* је поклапање са било којим бројем знакова, укључујући нулу.\n\nНа пример: *.txt, датотека??.png, слика\n\nБез заменских знакова * или ?, образац ће се поклапати било где у имену. Са заменским знаковима, образац се мора поклапати са почетком и крајем имена."
 
-#: ../thunar/thunar-standard-view.c:2455
+#: ../thunar/thunar-standard-view.c:2473
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr "Осетљиво на в_еличину слова"
 
-#: ../thunar/thunar-standard-view.c:2456
+#: ../thunar/thunar-standard-view.c:2474
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr "Уколико је омогућено, величина слова се мора поклапати са обрасцем.\nПрим* се поклапа са Пример.txt а не са пример.txt"
 
-#: ../thunar/thunar-standard-view.c:2461
+#: ../thunar/thunar-standard-view.c:2479
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr "_Поклапање дијакритичких знакова"
 
-#: ../thunar/thunar-standard-view.c:2462
+#: ../thunar/thunar-standard-view.c:2480
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3345,21 +3354,21 @@ msgstr "Уколико је омогућено, захтева да се наг�
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: ../thunar/thunar-standard-view.c:2846
+#: ../thunar/thunar-standard-view.c:2864
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Неисправно име датотеке од стране ИксДС сајта"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:3040
+#: ../thunar/thunar-standard-view.c:3058
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Нисам успео да направим везу до адресе „%s“"
 
-#: ../thunar/thunar-standard-view.c:3086
+#: ../thunar/thunar-standard-view.c:3104
 msgid "Untitled document"
 msgstr "Безимени докуменат"
 
-#: ../thunar/thunar-standard-view.c:3552 ../thunar/thunar-window.c:4360
+#: ../thunar/thunar-standard-view.c:3570 ../thunar/thunar-window.c:4336
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Нисам успео да отворим фасциклу „%s“"
@@ -3552,8 +3561,8 @@ msgstr[0] "Преостаје још %lu секунда (%s/sec)"
 msgstr[1] "Преостају још %lu секунде (%s/sec)"
 msgstr[2] "Преостаје још %lu секунди (%s/sec)"
 
-#: ../thunar/thunar-tree-model.c:616 ../thunar/thunar-tree-view-model.c:1220
-#: ../thunar/thunar-tree-view-model.c:1348
+#: ../thunar/thunar-tree-model.c:616 ../thunar/thunar-tree-view-model.c:1217
+#: ../thunar/thunar-tree-view-model.c:1345
 msgid "Loading..."
 msgstr "Учитавам..."
 
@@ -4006,84 +4015,84 @@ msgstr "Претражи Сомом..."
 msgid "Restore Selected Items"
 msgstr "Поврати означене ставке"
 
-#: ../thunar/thunar-window.c:2652
+#: ../thunar/thunar-window.c:2683
 msgid "Close tab"
 msgstr "Затвори лист"
 
-#: ../thunar/thunar-window.c:3111
+#: ../thunar/thunar-window.c:3139
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Отвори место „%s“"
 
-#: ../thunar/thunar-window.c:4203
+#: ../thunar/thunar-window.c:4179
 msgid "Failed to open parent folder"
 msgstr "Нисам успео да отворим родитељску фасциклу"
 
-#: ../thunar/thunar-window.c:4334
+#: ../thunar/thunar-window.c:4310
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Фасцикла „%s“ не постоји. Да ли желите да је направите?"
 
-#: ../thunar/thunar-window.c:4336
+#: ../thunar/thunar-window.c:4312
 msgid "Create directory"
 msgstr "Образуј фасциклу"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4405
+#: ../thunar/thunar-window.c:4381
 msgid "Failed to browse the computer"
 msgstr "Нисам успео да прегледам рачунар"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:4448
+#: ../thunar/thunar-window.c:4424
 msgid "About Templates"
 msgstr "О обрасцима"
 
-#: ../thunar/thunar-window.c:4470
+#: ../thunar/thunar-window.c:4446
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Све датотеке из ове фасцикле ће се појавити у изборнику „Направи документ“."
 
-#: ../thunar/thunar-window.c:4477
+#: ../thunar/thunar-window.c:4453
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Уколико често радите са неким врстама докумената направите умножак једне и ставите је у ову фасциклу. Тунар ће додати унос за овај документ у изборнику „Направи документ“.\n\nКада изабрати ставку из изборника „Направи документ“ умножак документа ће бити направљена у фасцикли где се тренутно налазите."
 
-#: ../thunar/thunar-window.c:4489
+#: ../thunar/thunar-window.c:4465
 msgid "Do _not display this message again"
 msgstr "_Не приказуј поново ову поруку"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4523
+#: ../thunar/thunar-window.c:4499
 msgid "Failed to open the file system root folder"
 msgstr "Нисам успео да отворим корену фасциклу система датотека"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4559
+#: ../thunar/thunar-window.c:4535
 msgid "Failed to display `Recent`"
 msgstr "Нисам успео да прикажем „Скорашње“"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4595
+#: ../thunar/thunar-window.c:4571
 msgid "Failed to display the contents of the trash can"
 msgstr "Нисам успео да прикажем садржај смећа"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:4631
+#: ../thunar/thunar-window.c:4607
 msgid "Failed to browse the network"
 msgstr "Нисам успео да разгледам мрежу"
 
-#: ../thunar/thunar-window.c:4774
+#: ../thunar/thunar-window.c:4750
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Тунар је брз и лаган разгледач датотека за\nсучеље ИксФЦЕ-а."
 
-#: ../thunar/thunar-window.c:5906
+#: ../thunar/thunar-window.c:5870
 msgid "Failed to launch search with Catfish"
 msgstr "Нисам успео да покренем претрагу Сомом"
 
-#: ../thunar/thunar-window.c:6216
+#: ../thunar/thunar-window.c:6180
 msgid "Location Bar"
 msgstr "Трака места"
 
