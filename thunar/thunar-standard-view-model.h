@@ -141,9 +141,6 @@ GList           *thunar_standard_view_model_get_paths_for_pattern  (ThunarStanda
                                                                     const gchar              *pattern,
                                                                     gboolean                  case_sensitive,
                                                                     gboolean                  match_diacritics);
-
-gchar           *thunar_standard_view_model_get_statusbar_text     (ThunarStandardViewModel  *model,
-                                                                    GList                    *selected_items);
 ThunarJob       *thunar_standard_view_model_get_job                (ThunarStandardViewModel  *model);
 void             thunar_standard_view_model_set_job                (ThunarStandardViewModel  *model,
                                                                     ThunarJob                *job);

@@ -210,6 +210,8 @@ GType               thunar_standard_view_get_saved_view_type   (ThunarStandardVi
 XfceGtkActionEntry *thunar_standard_view_get_action_entries (void);
 
 void                thunar_standard_view_queue_redraw          (ThunarStandardView       *standard_view);
+void                thunar_standard_view_set_statusbar_text    (ThunarStandardView       *standard_view,
+                                                                const gchar*              text);
 
 
 G_END_DECLS;
