@@ -193,7 +193,6 @@ static void thunar_standard_view_model_class_init (gpointer klass)
                                 FALSE,
                                 EXO_PARAM_READABLE));
 
-
       /**
        * ThunarStandardViewModel::error:
        * @store : a #ThunarStandardViewModel.
