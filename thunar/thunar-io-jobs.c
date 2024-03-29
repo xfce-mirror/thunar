@@ -1908,7 +1908,7 @@ _thunar_job_load_statusbar_text (ThunarJob *job,
   gchar              *text_for_files;
   gchar              *temp_string;
   GList              *text_list = NULL;
-  guint              status_bar_active_info;
+  guint               status_bar_active_info;
   guint64             size;
 
   if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
@@ -1923,10 +1923,10 @@ _thunar_job_load_statusbar_text (ThunarJob *job,
   status_bar_active_info       = g_value_get_uint    (&g_array_index (param_values, GValue, 6));
 
   text_for_files = thunar_util_get_statusbar_text_for_files (thunar_files,
-                                                            show_file_size_binary_format,
-                                                            date_style,
-                                                            date_custom_style,
-                                                            status_bar_active_info);
+                                                             show_file_size_binary_format,
+                                                             date_style,
+                                                             date_custom_style,
+                                                             status_bar_active_info);
 
   /* the text is about a selection of files or about a folder */
   if (thunar_folder == 0)
@@ -1962,7 +1962,8 @@ _thunar_job_load_statusbar_text (ThunarJob *job,
 
 
 ThunarJob *
-thunar_io_jobs_load_statusbar_text_for_folder (ThunarStandardView *standard_view, ThunarFolder *folder)
+thunar_io_jobs_load_statusbar_text_for_folder (ThunarStandardView *standard_view,
+                                               ThunarFolder       *folder)
 {
   ThunarPreferences *preferences;
   gboolean           show_file_size_binary_format;
@@ -2017,9 +2018,9 @@ thunar_io_jobs_load_statusbar_text_for_selection (ThunarStandardView *standard_v
 
   preferences = thunar_preferences_get ();
   g_object_get (G_OBJECT (preferences),"misc-date-style", &date_style, 
-                                  "misc_date-custom-style", &date_custom_style, 
-                                  "misc-file-size-binary", &show_file_size_binary_format,
-                                  "misc-status-bar-active-info", &status_bar_active_info, NULL);
+                                       "misc_date-custom-style", &date_custom_style, 
+                                       "misc-file-size-binary", &show_file_size_binary_format,
+                                       "misc-status-bar-active-info", &status_bar_active_info, NULL);
 
   /* This will increase the ref count on each ThunarFile */
   copy = thunar_g_list_copy_deep (selected_files);

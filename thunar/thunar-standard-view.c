@@ -302,7 +302,7 @@ struct _ThunarStandardViewPrivate
   /* scroll_to_file support */
   GHashTable             *scroll_to_files;
 
-  /* statusbar */
+  /* statusbar text is mutex protected, since filled by a dedicated ThunarJob */
   gchar                  *statusbar_text;
   GMutex                  statusbar_text_mutex;
   guint                   statusbar_text_idle_id;
@@ -1088,8 +1088,9 @@ thunar_standard_view_finalize (GObject *object)
       exo_job_cancel (EXO_JOB (standard_view->priv->statusbar_job));
       g_object_unref (standard_view->priv->statusbar_job);
       standard_view->priv->statusbar_job = NULL;
-      g_mutex_clear (&standard_view->priv->statusbar_text_mutex);
     }
+
+  g_mutex_clear (&standard_view->priv->statusbar_text_mutex);
 
   /* release the scroll_to_files hash table */
   g_hash_table_destroy (standard_view->priv->scroll_to_files);
@@ -1721,8 +1722,11 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
    * scrolling after loading circumvents the scroll caused by gtk_tree_view_set_cell */
   if (THUNAR_IS_DETAILS_VIEW (standard_view))
     {
-      g_free (standard_view->priv->statusbar_text);
-      standard_view->priv->statusbar_text = g_strdup _("Loading folder contents...");
+      gchar *statusbar_text;
+
+      statusbar_text = g_strdup (_("Loading folder contents..."));
+      thunar_standard_view_set_statusbar_text (standard_view, statusbar_text);
+      g_free (statusbar_text);
       g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_STATUSBAR_TEXT]);
 
       if (G_UNLIKELY (!loading))
@@ -1776,7 +1780,8 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
 
 
 static void
-thunar_standard_view_load_statusbar_text_finished (ThunarJob *job, ThunarStandardView *standard_view)
+thunar_standard_view_load_statusbar_text_finished (ThunarJob          *job,
+                                                   ThunarStandardView *standard_view)
 {
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
@@ -1792,7 +1797,8 @@ thunar_standard_view_load_statusbar_text_finished (ThunarJob *job, ThunarStandar
 
 
 void
-thunar_standard_view_set_statusbar_text (ThunarStandardView *standard_view, const gchar* text)
+thunar_standard_view_set_statusbar_text (ThunarStandardView *standard_view,
+                                         const gchar        *text)
 {
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   
@@ -2280,11 +2286,9 @@ thunar_standard_view_get_drop_file (ThunarStandardView *standard_view,
 
 
 
-
-
-
 static void
-thunar_standard_view_update_statusbar_text_error (ThunarJob *job, ThunarStandardView *standard_view)
+thunar_standard_view_update_statusbar_text_error (ThunarJob          *job,
+                                                  ThunarStandardView *standard_view)
 {
   g_warning ("Error while updating statusbar");
 }
@@ -2320,10 +2324,11 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
   if (selected_items_tree_path_list == NULL) /* nothing selected */
     {
       standard_view->priv->statusbar_job = thunar_io_jobs_load_statusbar_text_for_folder (standard_view, thunar_standard_view_model_get_folder (standard_view->model));
-      exo_job_launch (EXO_JOB (standard_view->priv->statusbar_job));
 
       g_signal_connect (standard_view->priv->statusbar_job, "error", G_CALLBACK (thunar_standard_view_update_statusbar_text_error), standard_view);
       g_signal_connect (standard_view->priv->statusbar_job, "finished", G_CALLBACK (thunar_standard_view_load_statusbar_text_finished), standard_view);
+
+      exo_job_launch (EXO_JOB (standard_view->priv->statusbar_job));
     }
   else if (selected_items_tree_path_list->next == NULL) /* only one item selected */
     {
@@ -2339,7 +2344,6 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
         return FALSE;
 
       /* For s single file we load the text without using a separate job */
-
       statusbar_text = thunar_util_get_statusbar_text_for_single_file (file);
       if (statusbar_text != NULL)
         thunar_standard_view_set_statusbar_text (standard_view, statusbar_text);
@@ -2360,10 +2364,10 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
         }
 
       standard_view->priv->statusbar_job = thunar_io_jobs_load_statusbar_text_for_selection (standard_view, relevant_files);
-      exo_job_launch (EXO_JOB (standard_view->priv->statusbar_job));
-
       g_signal_connect (standard_view->priv->statusbar_job, "error", G_CALLBACK (thunar_standard_view_update_statusbar_text_error), standard_view);
       g_signal_connect (standard_view->priv->statusbar_job, "finished", G_CALLBACK (thunar_standard_view_load_statusbar_text_finished), standard_view);
+
+      exo_job_launch (EXO_JOB (standard_view->priv->statusbar_job));
     }
 
   g_list_free_full (selected_items_tree_path_list, (GDestroyNotify) gtk_tree_path_free);
