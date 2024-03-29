@@ -81,21 +81,6 @@ thunar_view_class_init (gpointer klass)
                                                              FALSE,
                                                              EXO_PARAM_READABLE));
 
-  /**
-   * ThunarView:statusbar-text:
-   *
-   * The text to be displayed in the status bar, which is associated
-   * with this #ThunarView instance. Implementations should invoke
-   * #g_object_notify() on this property, whenever they have a new
-   * text to be display in the status bar (e.g. the selection changed
-   * or similar).
-   **/
-  g_object_interface_install_property (klass,
-                                       g_param_spec_string ("statusbar-text",
-                                                            "statusbar-text",
-                                                            "statusbar-text",
-                                                            NULL,
-                                                            EXO_PARAM_READABLE));
 
   /**
    * ThunarView:show-hidden:
@@ -141,25 +126,6 @@ thunar_view_get_loading (ThunarView *view)
 {
   _thunar_return_val_if_fail (THUNAR_IS_VIEW (view), FALSE);
   return (*THUNAR_VIEW_GET_IFACE (view)->get_loading) (view);
-}
-
-
-
-/**
- * thunar_view_get_statusbar_text:
- * @view : a #ThunarView instance.
- *
- * Queries the text that should be displayed in the status bar
- * associated with @view.
- *
- * Return value: the text to be displayed in the status bar
- *               asssociated with @view.
- **/
-const gchar*
-thunar_view_get_statusbar_text (ThunarView *view)
-{
-  _thunar_return_val_if_fail (THUNAR_IS_VIEW (view), NULL);
-  return (*THUNAR_VIEW_GET_IFACE (view)->get_statusbar_text) (view);
 }
 
 
