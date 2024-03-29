@@ -1486,7 +1486,7 @@ thunar_tree_view_model_iter_nth_child (GtkTreeModel *model,
   else
     node = g_sequence_get (parent->user_data);
 
-  if (n >= node->n_children)
+  if (node == NULL || n >= node->n_children)
     return FALSE;
 
   ptr = g_sequence_get_iter_at_pos (node->children, n);
