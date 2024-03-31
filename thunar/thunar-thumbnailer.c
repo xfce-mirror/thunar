@@ -94,6 +94,21 @@ typedef enum
 
 
 
+enum
+{
+    TUMBLER_ERROR_UNSUPPORTED,
+    TUMBLER_ERROR_CONNECTION_ERROR,
+    TUMBLER_ERROR_INVALID_FORMAT,
+    TUMBLER_ERROR_IS_THUMBNAIL,
+    TUMBLER_ERROR_SAVE_FAILED,
+    TUMBLER_ERROR_UNSUPPORTED_FLAVOR,
+    TUMBLER_ERROR_NO_CONTENT,
+    TUMBLER_ERROR_SHUTTING_DOWN,
+    TUMBLER_ERROR_OTHER_ERROR_DOMAIN,
+};
+
+
+
 typedef struct _ThunarThumbnailerJob  ThunarThumbnailerJob;
 
 /* Signal identifiers */
@@ -878,7 +893,7 @@ thunar_thumbnailer_thumbnailer_error (GDBusProxy        *proxy,
   for (GSList *lp = thumbnailer->jobs; lp != NULL; lp = lp->next)
     {
       job = lp->data;
-      if (job->handle != handle)
+      if (job->handle == handle)
         {
           for (const gchar **uri = uris; *uri != NULL; ++uri)
             {
@@ -890,9 +905,19 @@ thunar_thumbnailer_thumbnailer_error (GDBusProxy        *proxy,
               /* check if we have a file for this URI in the cache */
               if (file != NULL)
                 {
-                  /* tell everybody we're done here */
-                  thunar_file_update_thumbnail (file, THUNAR_FILE_THUMB_STATE_NONE, job->thumbnail_size);
-                  g_debug ("Failed to generate thumbnail for '%s': Error Code: %i - Error: %s\n", thunar_file_get_basename (file), code, message);
+                  if (code == TUMBLER_ERROR_IS_THUMBNAIL)
+                    {
+                      /* the file itself is a thumbnail, so use it as a thumbnail */
+                      thunar_file_set_is_thumbnail (file, TRUE);
+                      thunar_file_update_thumbnail (file, THUNAR_FILE_THUMB_STATE_READY, job->thumbnail_size);
+                    }
+                  else
+                    {
+                      /* tell everybody we're done here */
+                      thunar_file_update_thumbnail (file, THUNAR_FILE_THUMB_STATE_NONE, job->thumbnail_size);
+                      g_debug ("Failed to generate thumbnail for '%s': Error Code: %i - Error: %s\n", thunar_file_get_basename (file), code, message);
+                    }
+
                   g_object_unref (file);
                 }
             }
