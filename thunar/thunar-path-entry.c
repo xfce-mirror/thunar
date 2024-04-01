@@ -725,14 +725,41 @@ thunar_path_entry_update_icon (ThunarPathEntry *path_entry)
   GtkIconTheme       *icon_theme;
   gint                icon_size;
   gint                scale_factor;
+  gchar              *tooltip = NULL;
 
   if (path_entry->search_mode == TRUE)
     {
+      tooltip = _(
+        "Search for matching file or folder names.\n\n"
+        "The search will show matches from all folders "
+        "under the current location. "
+        "Separate search terms with spaces.\n\n"
+        "Normally, all terms must match within the item’s name. "
+        "Prefix a search term with a “-” to exclude files and "
+        "folders matching that term from the results."
+      );
       gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry),
                                          GTK_ENTRY_ICON_PRIMARY,
                                          "system-search");
-      return;
     }
+  else
+    {
+      tooltip = _(
+        "The current location. Some examples:\n\n"
+        "/usr/share/doc\n"
+        "~/Pictures\n"
+        "sftp://[user@]server/[/]path\n"
+        "smb://[[domain;]user@]server/share/path\n"
+        "afp://[user@]server/path\n"
+        "trash://"
+      );
+    }
+
+  gtk_entry_set_icon_tooltip_text (GTK_ENTRY (path_entry),
+                                   GTK_ENTRY_ICON_PRIMARY,
+                                   tooltip);
+  if (path_entry->search_mode == TRUE)
+    return;
 
   if (path_entry->icon_factory == NULL)
     {
