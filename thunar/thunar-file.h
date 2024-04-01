@@ -270,6 +270,8 @@ gboolean          thunar_file_set_custom_icon            (ThunarFile            
                                                           const gchar             *custom_icon,
                                                           GError                 **error);
 
+void              thunar_file_set_is_thumbnail           (ThunarFile              *file,
+                                                          gboolean                 is_thumbnail);
 const gchar         *thunar_file_get_thumbnail_path      (ThunarFile              *file,
                                                           ThunarThumbnailSize      thumbnail_size);
 ThunarFileThumbState thunar_file_get_thumb_state         (const ThunarFile        *file,
