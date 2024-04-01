@@ -191,6 +191,7 @@ struct _ThunarFile
   gchar                *display_name;
   gchar                *basename;
   const gchar          *device_type;
+  gboolean              is_thumbnail;
   gchar                *thumbnail_path[N_THUMBNAIL_SIZES];
   ThunarFileThumbState  thumbnail_state[N_THUMBNAIL_SIZES];
   guint                 thumbnail_request_id[N_THUMBNAIL_SIZES];
@@ -425,6 +426,7 @@ thunar_file_init (ThunarFile *file)
   file->file_count = 0;
   file->file_count_timestamp = 0;
   file->display_name = NULL;
+  file->is_thumbnail = FALSE;
   for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
     thunar_file_reset_thumbnail (file, i);
 
@@ -927,6 +929,8 @@ thunar_file_info_clear (ThunarFile *file)
 
   g_free (file->collate_key);
   file->collate_key = NULL;
+
+  file->is_thumbnail = FALSE;
 
   /* free thumbnail path */
   for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
@@ -3815,6 +3819,15 @@ thunar_file_is_desktop (const ThunarFile *file)
 
 
 
+void
+thunar_file_set_is_thumbnail (ThunarFile *file,
+                              gboolean    is_thumbnail)
+{
+  file->is_thumbnail = is_thumbnail;
+}
+
+
+
 static gchar *
 thunar_file_get_thumbnail_path_real (ThunarFile         *file,
                                      ThunarThumbnailSize thumbnail_size)
@@ -3825,6 +3838,10 @@ thunar_file_get_thumbnail_path_real (ThunarFile         *file,
   gchar     *thumbnail_path = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  /* if the file is a thumbnail itself, use it as a thumbnail */
+  if (G_UNLIKELY (file->is_thumbnail))
+    return g_file_get_path (file->gfile);
 
   checksum = g_checksum_new (G_CHECKSUM_MD5);
   if (G_LIKELY (checksum != NULL))
