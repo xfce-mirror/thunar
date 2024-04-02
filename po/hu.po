@@ -13,6 +13,7 @@
 # saskadaniel, 2024
 # Egyember, 2024
 # Kempelen <xfcekmphu@netengine.hu>, 2024
+# Balázs Meskó <meskobalazs@mailbox.org>, 2024
 # 
 #, fuzzy
 msgid ""
@@ -21,7 +22,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-30 00:47+0200\n"
 "PO-Revision-Date: 2022-12-22 11:28+0000\n"
-"Last-Translator: Kempelen <xfcekmphu@netengine.hu>, 2024\n"
+"Last-Translator: Balázs Meskó <meskobalazs@mailbox.org>, 2024\n"
 "Language-Team: Hungarian (https://app.transifex.com/xfce/teams/16840/hu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -262,8 +263,8 @@ msgstr "A fájl („%s”) megnyitása meghiúsult"
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d fájl megnyitása sikertelen"
+msgstr[1] "%d fájl megnyitása sikertelen"
 
 #: ../thunar/thunar-action-manager.c:979
 msgid "Are you sure you want to open all folders?"
@@ -397,8 +398,8 @@ msgstr[1] ""
 #: ../thunar/thunar-action-manager.c:1654
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "A kijelölt fájl helyreállítása az eredeti helyén"
+msgstr[1] "A kijelölt fájlok helyreállítása az eredeti helyükön"
 
 #: ../thunar/thunar-action-manager.c:1666
 msgid ""
@@ -408,7 +409,11 @@ msgid_plural ""
 "Restore the selected files to their original locations and open the "
 "locations in a new window/tab"
 msgstr[0] ""
+"A kijelölt fájl helyreállítása az eredeti helyén, és megnyitás új "
+"ablakban/lapokon"
 msgstr[1] ""
+"A kijelölt fájlok helyreállítása az eredeti helyükön, és megnyitás új "
+"ablakban/lapokon"
 
 #: ../thunar/thunar-action-manager.c:1683
 msgid "Move the selected file to the Trash"
@@ -449,8 +454,8 @@ msgstr "A vágólap tartalmának beillesztése"
 #: ../thunar/thunar-action-manager.c:2057
 msgid "Side Pane (Add Bookmark)"
 msgid_plural "Side Pane (Add Bookmarks)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Oldalpanel (Könyvjelző hozzáadása)"
+msgstr[1] "Oldalpanel (Könyvjelzők hozzáadása)"
 
 #: ../thunar/thunar-action-manager.c:2058
 msgid "Add the selected folder to the shortcuts side pane"
@@ -467,16 +472,16 @@ msgstr[1] ""
 #: ../thunar/thunar-action-manager.c:2078
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Link létrehozása a kijelölt fájlhoz az Asztalon"
+msgstr[1] "Linkek létrehozása a kijelölt fájlokhoz az Asztalon"
 
 #: ../thunar/thunar-action-manager.c:2099
 #: ../thunar/thunar-action-manager.c:2137
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "A kijelölt fájl küldése ide: „%s”"
+msgstr[1] "A kijelölt fájlok küldése ide: „%s”"
 
 #. display an error message
 #: ../thunar/thunar-action-manager.c:2405 ../thunar/thunar-application.c:1855
@@ -542,8 +547,8 @@ msgstr "„%s” leválasztása meghiúsult"
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "A(z) „%s” használata a kijelölt fájl megnyitására"
+msgstr[1] "A(z) „%s” használata a kijelölt fájlok megnyitására"
 
 #: ../thunar/thunar-action-manager.c:3252
 #, c-format
@@ -560,8 +565,8 @@ msgstr "Megnyitás alapértelmezett alkalma_zásokkal"
 #, c-format
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "A kijelölt fájl megnyitása az alapértelmezett alkalmazással"
+msgstr[1] "A kijelölt fájlok megnyitása az alapértelmezett alkalmazásokkal"
 
 #: ../thunar/thunar-action-manager.c:3293
 #: ../thunar/thunar-chooser-dialog.c:187
@@ -671,7 +676,11 @@ msgid_plural ""
 "Are you sure that you want to permanently\n"
 "delete the %u selected files?"
 msgstr[0] ""
+"Biztos, hogy végleg törli\n"
+"a kijelölt fájlt?"
 msgstr[1] ""
+"Biztos, hogy végleg törli\n"
+"a kijelölt %u fájlt?"
 
 #: ../thunar/thunar-application.c:2421 ../thunar/thunar-dialogs.c:607
 #: ../thunar/thunar-dialogs.c:1082
@@ -1334,7 +1343,7 @@ msgstr "Név és kiterjesztés"
 
 #: ../thunar/thunar-enum-types.c:141
 msgid "Date Created"
-msgstr ""
+msgstr "Létrehozás dátuma"
 
 #: ../thunar/thunar-enum-types.c:142
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:137
@@ -1352,7 +1361,7 @@ msgstr "Létrehozás dátuma"
 
 #: ../thunar/thunar-enum-types.c:145
 msgid "Recency"
-msgstr ""
+msgstr "Frissesség"
 
 #: ../thunar/thunar-enum-types.c:146
 msgid "Location"
@@ -1440,7 +1449,7 @@ msgstr "Mappa létrehozása"
 
 #: ../thunar/thunar-enum-types.c:699
 msgid "Delete (opposite of create)"
-msgstr ""
+msgstr "Törlés (a létrehozás ellentettje)"
 
 #: ../thunar/thunar-enum-types.c:700 ../thunar/thunar-file.c:1083
 #: ../thunar/thunar-gio-extensions.c:490
@@ -1459,7 +1468,7 @@ msgstr "Hivatkozás"
 
 #: ../thunar/thunar-enum-types.c:703
 msgid "Unlink"
-msgstr ""
+msgstr "Link megszüntetése"
 
 #: ../thunar/thunar-enum-types.c:722
 msgid "Log operations"
@@ -1608,7 +1617,7 @@ msgstr "%s ezen: %s"
 #: ../thunar/thunar-gio-extensions.c:681
 #, c-format
 msgid "%s used (%.0f%%)  |  %s free (%.0f%%)"
-msgstr ""
+msgstr "%s használva (%.0f%%)  |  %s szabad (%.0f%%)"
 
 #: ../thunar/thunar-history.c:297
 msgid "The item will be removed from the history"
@@ -1725,21 +1734,25 @@ msgid ""
 "No operation which can be undone has been performed yet.\n"
 "(For some operations undo is not supported)"
 msgstr ""
+"Még semmilyen visszavonható műveletet nem végzett.\n"
+"(Egyes műveletek esetén a visszavonás nem támogatott)"
 
 #: ../thunar/thunar-job-operation-history.c:320
 msgid "There is no operation to undo"
-msgstr ""
+msgstr "Nincs visszavonható művelet"
 
 #: ../thunar/thunar-job-operation-history.c:337
 msgid ""
 "The operation you are trying to undo does not have any files associated with"
 " it, and thus cannot be undone. "
 msgstr ""
+"A művelethez, amelyet megpróbál visszavonni, nem tartozik egyetlen fájl sem,"
+" ezért vissza sem lehet vonni. "
 
 #: ../thunar/thunar-job-operation-history.c:339
 #, c-format
 msgid "%s operation cannot be undone"
-msgstr ""
+msgstr "A művelet nem vonható vissza: %s"
 
 #. one indexed for the dialog
 #: ../thunar/thunar-job-operation-history.c:351
@@ -1747,35 +1760,39 @@ msgid ""
 "The following files were overwritten in the operation you are trying to undo"
 " and cannot be restored:\n"
 msgstr ""
+"A következő fájlok felül lettek írva a visszavonandó művelet során, így nem "
+"állíthatók helyre:\n"
 
 #: ../thunar/thunar-job-operation-history.c:363
 #, c-format
 msgid "%s operation can only be partially undone"
-msgstr ""
+msgstr "A művelet csak részlegesen vonható vissza: %s"
 
 #: ../thunar/thunar-job-operation-history.c:380
 #, c-format
 msgid "Failed to undo operation '%s'"
-msgstr ""
+msgstr "A(z) „%s” visszavonása sikertelen"
 
 #: ../thunar/thunar-job-operation-history.c:415
 msgid "No operation which can be redone available.\n"
-msgstr ""
+msgstr "Nincs olyan művelet, melyet mégis végre lehetne hajtani.\n"
 
 #: ../thunar/thunar-job-operation-history.c:416
 msgid "There is no operation to redo"
-msgstr ""
+msgstr "Nincs mégis végrehajtandó művelet"
 
 #: ../thunar/thunar-job-operation-history.c:433
 msgid ""
 "The operation you are trying to redo does not have any files associated with"
 " it, and thus cannot be redone. "
 msgstr ""
+"A művelethez, amelyet megpróbál mégis végrehajtani, nem tartozik egyetlen "
+"fájl sem, ezért nem lehet mégis végrehajtani. "
 
 #: ../thunar/thunar-job-operation-history.c:435
 #, c-format
 msgid "%s operation cannot be redone"
-msgstr ""
+msgstr "A műveletet nem lehet mégis végrehajtani: %s"
 
 #. one indexed for the dialog
 #: ../thunar/thunar-job-operation-history.c:447
@@ -1783,23 +1800,25 @@ msgid ""
 "The following files were overwritten in the operation you are trying to redo"
 " and cannot be restored:\n"
 msgstr ""
+"A következő fájlok felül lettek írva a mégis végrehajtandó művelet során, "
+"így nem állíthatók helyre:\n"
 
 #: ../thunar/thunar-job-operation-history.c:459
 #, c-format
 msgid "%s operation can only be partially redone"
-msgstr ""
+msgstr "A művelet csak részlegesen hajtható végre mégis: %s"
 
 #: ../thunar/thunar-job-operation-history.c:474
 #, c-format
 msgid "Failed to redo operation '%s'"
-msgstr ""
+msgstr "A(z) „%s” végrehajtása mégis sikertelen"
 
 #: ../thunar/thunar-list-model.c:1007 ../thunar/thunar-list-model.c:1017
 #, c-format
 msgid "%u item"
 msgid_plural "%u items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%u elem"
+msgstr[1] "%u elem"
 
 #: ../thunar/thunar-list-model.c:3195
 #, c-format
@@ -1812,8 +1831,8 @@ msgstr[1] ""
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d fájl"
+msgstr[1] "%d fájl"
 
 #: ../thunar/thunar-list-model.c:3206 ../thunar/thunar-size-label.c:448
 #, c-format
@@ -1886,21 +1905,21 @@ msgstr "A fájl nem létezik"
 
 #: ../thunar/thunar-notify.c:189
 msgid "Undo performed"
-msgstr ""
+msgstr "Végrehajtott művelet visszavonása"
 
 #: ../thunar/thunar-notify.c:190
 #, c-format
 msgid "%s operation was undone"
-msgstr ""
+msgstr "A művelet vissza lett vonva: %s"
 
 #: ../thunar/thunar-notify.c:195
 msgid "Redo performed"
-msgstr ""
+msgstr "Művelet végrehajtása mégis"
 
 #: ../thunar/thunar-notify.c:196
 #, c-format
 msgid "%s operation was redone"
-msgstr ""
+msgstr "A művelet újból végre lett hajtva: %s"
 
 #: ../thunar/thunar-notify.c:280
 msgid "Unmounting device"
@@ -2078,7 +2097,7 @@ msgstr "Automatikusan javítja a mappajogosultságokat?"
 
 #: ../thunar/thunar-permissions-chooser.c:1169
 msgid "Folder permissions"
-msgstr ""
+msgstr "Mappajogosultságok"
 
 #: ../thunar/thunar-permissions-chooser.c:1171
 msgid "Correct _folder permissions"
@@ -3542,7 +3561,7 @@ msgstr ""
 
 #: ../thunar/thunar-window.c:498
 msgid "Undo the latest operation"
-msgstr ""
+msgstr "A legutóbbi művelet visszavonása"
 
 #: ../thunar/thunar-window.c:499
 msgid "_Redo"
@@ -3550,7 +3569,7 @@ msgstr ""
 
 #: ../thunar/thunar-window.c:499
 msgid "Redo the latest operation"
-msgstr ""
+msgstr "A legutóbbi művelet végrehajtása mégis"
 
 #: ../thunar/thunar-window.c:500
 msgid "Pr_eferences..."
