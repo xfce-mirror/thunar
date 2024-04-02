@@ -213,9 +213,9 @@ thunar_SOURCES =							\
 	thunar-window.c							\
 	thunar-window.h
 
-noinst_LIBRARIES = thunar.a
-thunar_a_SOURCES =
-thunar_a_LIBADD = 							\
+noinst_LIBRARIES = libthunar.a
+libthunar_a_SOURCES =
+libthunar_a_LIBADD = 							\
 	$(filter %.o, $(thunar_SOURCES:%.c=thunar-%.o))			\
 	$(wildcard $(top_builddir)/thunarx/.libs/*.o)
 
@@ -350,4 +350,4 @@ EXTRA_DIST =								\
 	thunar.gresource.xml					\
 	$(desktop_in_files)
 
-dist-hook: thunar.a
+dist-hook: libthunar.a
