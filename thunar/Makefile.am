@@ -213,9 +213,9 @@ thunar_SOURCES =							\
 	thunar-window.c							\
 	thunar-window.h
 
-noinst_LIBRARIES = thunar.a
-thunar_a_SOURCES =
-thunar_a_LIBADD = 							\
+noinst_LIBRARIES = libthunar.a
+libthunar_a_SOURCES =
+libthunar_a_LIBADD = 							\
 	$(filter %.o, $(thunar_SOURCES:%.c=thunar-%.o))			\
 	$(wildcard $(top_builddir)/thunarx/.libs/*.o)
 
@@ -266,7 +266,8 @@ endif
 desktopdir = $(datadir)/applications
 desktop_in_files = thunar-settings.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
-@INTLTOOL_DESKTOP_RULE@
+%.desktop: %.desktop.in Makefile
+	$(AM_V_GEN)$(MSGFMT) --desktop --template $< -d $(top_srcdir)/po -o $@
 
 # install symlink to 'thunar'
 install-exec-hook:
@@ -350,4 +351,4 @@ EXTRA_DIST =								\
 	thunar.gresource.xml					\
 	$(desktop_in_files)
 
-dist-hook: thunar.a
+dist-hook: libthunar.a
