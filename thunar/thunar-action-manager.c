@@ -2328,6 +2328,58 @@ thunar_action_manager_append_custom_actions (ThunarActionManager *action_mgr,
 
 
 
+static gboolean
+_thunar_action_manager_check_uca_key_activation_for_menu_items (GList       *thunarx_menu_items,
+                                                                GdkEventKey *key_event)
+{
+  GList       *lp_item;
+  GtkAccelKey  uca_key;
+  gchar       *name, *accel_path;
+  ThunarxMenu *submenu;
+  gboolean     uca_activated = FALSE;
+
+  for (lp_item = thunarx_menu_items; lp_item != NULL; lp_item = lp_item->next)
+    {
+      g_object_get (G_OBJECT (lp_item->data), "name", &name,"menu", &submenu, NULL);
+
+      if (submenu != NULL)
+        {
+          /* if this menu-item is a folder, recursivly traverse it */
+          GList *thunarx_submenu_items = thunarx_menu_get_items (submenu);
+          if (thunarx_submenu_items != NULL)
+            {
+              uca_activated |= _thunar_action_manager_check_uca_key_activation_for_menu_items (thunarx_submenu_items, key_event);
+              thunarx_menu_item_list_free (thunarx_submenu_items);
+            }
+          g_object_unref (submenu);
+        }
+      else
+        {
+          /* a simple menu-item, check if the key-combo matches */
+          accel_path = g_strconcat ("<Actions>/ThunarActions/", name, NULL);
+          if (gtk_accel_map_lookup_entry (accel_path, &uca_key) == TRUE)
+            {
+              /* The passed key_event can have <Shift> modifier AND upper-case keyval. So for comparison we need to lower the keyval */
+              if (g_unichar_tolower (key_event->keyval) == g_unichar_tolower (uca_key.accel_key))
+                {
+                  if ((key_event->state & gtk_accelerator_get_default_mod_mask ()) == uca_key.accel_mods)
+                    {
+                      thunarx_menu_item_activate (lp_item->data);
+                      uca_activated = TRUE;
+                    }
+                }
+            }
+          g_free (accel_path);
+        }
+
+      g_free (name);
+    }
+
+  return uca_activated;
+}
+
+
+
 gboolean
 thunar_action_manager_check_uca_key_activation (ThunarActionManager *action_mgr,
                                                 GdkEventKey         *key_event)
@@ -2337,9 +2389,6 @@ thunar_action_manager_check_uca_key_activation (ThunarActionManager *action_mgr,
   GList                  *providers;
   GList                  *thunarx_menu_items = NULL;
   GList                  *lp_provider;
-  GList                  *lp_item;
-  GtkAccelKey             uca_key;
-  gchar                  *name, *accel_path;
   gboolean                uca_activated = FALSE;
 
   /* determine the toplevel window we belong to */
@@ -2360,27 +2409,10 @@ thunar_action_manager_check_uca_key_activation (ThunarActionManager *action_mgr,
         thunarx_menu_items = thunarx_menu_provider_get_folder_menu_items (lp_provider->data, window, THUNARX_FILE_INFO (action_mgr->current_directory));
       else
         thunarx_menu_items = thunarx_menu_provider_get_file_menu_items (lp_provider->data, window, action_mgr->files_to_process);
-      for (lp_item = thunarx_menu_items; lp_item != NULL; lp_item = lp_item->next)
-        {
-          g_object_get (G_OBJECT (lp_item->data), "name", &name, NULL);
-          accel_path = g_strconcat ("<Actions>/ThunarActions/", name, NULL);
-          if (gtk_accel_map_lookup_entry (accel_path, &uca_key) == TRUE)
-            {
-              /* The passed key_event can have <Shift> modifier AND upper-case keyval. So for comparison we need to lower the keyval */
-              if (g_unichar_tolower (key_event->keyval) == g_unichar_tolower (uca_key.accel_key))
-                {
-                  if ((key_event->state & gtk_accelerator_get_default_mod_mask ()) == uca_key.accel_mods)
-                    {
-                      thunarx_menu_item_activate (lp_item->data);
-                      uca_activated = TRUE;
-                    }
-                }
-            }
-          g_free (name);
-          g_free (accel_path);
-          g_object_unref (lp_item->data);
-        }
-      g_list_free (thunarx_menu_items);
+
+      uca_activated = _thunar_action_manager_check_uca_key_activation_for_menu_items (thunarx_menu_items, key_event);
+      if (thunarx_menu_items != NULL)
+        thunarx_menu_item_list_free (thunarx_menu_items);
     }
   g_list_free_full (providers, g_object_unref);
   return uca_activated;
