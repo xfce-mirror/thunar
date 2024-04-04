@@ -85,8 +85,12 @@ polkit_in_files = $(polkit_in_in_files:.policy.in.in=.policy.in)
 %.policy.in: %.policy.in.in Makefile
 	sed -e "s,\@bindir\@,$(bindir),g" < $< > $@
 polkit_policy_DATA = $(polkit_in_files:.policy.in=.policy)
+# Not using HAVE_POLKIT because a lot of distributions put
+# polkit.{its,loc} in binary package instead of development package.
+# E.g. Debian puts in polkitd instead of libpolkit-gobject-1-dev
 %.policy: %.policy.in Makefile
-	$(AM_V_GEN)$(MSGFMT) --xml --template $< -d $(top_srcdir)/po -o $@
+	$(AM_V_GEN)$(MSGFMT) --xml --template $< -d $(top_srcdir)/po -o $@ || \
+		cp $< $@
 
 EXTRA_DIST =								\
 	FAQ								\
