@@ -68,13 +68,16 @@ thunar-uca.gresource.c: thunar-uca.gresource.xml $(resource_files)
 defaultsdir = $(sysconfdir)/xdg/Thunar
 defaults_in_files = uca.xml.in
 defaults_DATA = $(defaults_in_files:.xml.in=.xml)
-@INTLTOOL_XML_RULE@
+$(defaults_DATA): $(defaults_in_files) Makefile
+	$(AM_V_GEN)GETTEXTDATADIRS=$(srcdir) $(MSGFMT) --xml --template $< -d $(top_srcdir)/po -o $@
 
 EXTRA_DIST =								\
 	README.md								\
 	thunar-uca.gresource.xml					\
 	thunar-uca-editor.ui						\
 	thunar-uca-chooser.ui						\
+	its/xfce.loc							\
+	its/xfce.its							\
 	$(defaults_in_files)
 
 CLEANFILES =								\
