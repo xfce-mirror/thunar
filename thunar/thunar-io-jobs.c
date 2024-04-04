@@ -1581,7 +1581,9 @@ _thunar_search_folder (ThunarStandardViewModel           *model,
       /* handle directories */
       if (type == G_FILE_TYPE_DIRECTORY && search_type == THUNAR_STANDARD_VIEW_MODEL_SEARCH_RECURSIVE)
         {
-          _thunar_search_folder (model, job, g_file_get_uri (file), search_query_c_terms, search_type, show_hidden);
+          gchar *file_uri = g_file_get_uri (file);
+          _thunar_search_folder (model, job, file_uri, search_query_c_terms, search_type, show_hidden);
+          g_free (file_uri);
         }
 
       /* prepare entry display name */
