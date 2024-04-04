@@ -1108,6 +1108,7 @@ thunar_standard_view_get_property (GObject    *object,
 {
   ThunarFile *current_directory;
   gboolean thumbnail_draw_frames;
+  gchar *statusbar_text;
 
   switch (prop_id)
     {
@@ -1156,7 +1157,9 @@ thunar_standard_view_get_property (GObject    *object,
       break;
 
     case PROP_STATUSBAR_TEXT:
-      g_value_set_string (value, thunar_standard_view_get_statusbar_text (THUNAR_VIEW (object)));
+      statusbar_text = thunar_standard_view_get_statusbar_text (THUNAR_VIEW (object));
+      g_value_set_string (value, statusbar_text);
+      g_free (statusbar_text);
       break;
 
     case PROP_ZOOM_LEVEL:
