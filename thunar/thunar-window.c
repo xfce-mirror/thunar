@@ -2141,7 +2141,7 @@ thunar_window_switch_current_view (ThunarWindow *window,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_VIEW (new_view));
 
-  if ((window->view == new_view))
+  if (window->view == new_view)
     return;
 
   if (G_LIKELY (window->view != NULL))
