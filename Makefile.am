@@ -21,12 +21,12 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 
 SUBDIRS =								\
 	icons								\
-	po								\
 	thunarx								\
 	thunar								\
 	docs								\
 	examples							\
-	plugins
+	plugins                                                         \
+	po
 
 distclean-local:
 	rm -rf *.cache *~
@@ -53,15 +53,21 @@ desktop_in_files = $(desktop_in_in_files:.desktop.in.in=.desktop.in)
 %.desktop.in: %.desktop.in.in Makefile
 	$(AM_V_GEN) $(SED) -e "s,\@HELPERDIR\@,$(HELPER_PATH_PREFIX),g" < $< > $@
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
-@INTLTOOL_DESKTOP_RULE@
+%.desktop: %.desktop.in Makefile
+	$(AM_V_GEN)$(MSGFMT) --desktop --template $< -d $(top_srcdir)/po -o $@
 
 #
 # .appdata
 #
-@INTLTOOL_XML_RULE@
 appdatadir = $(datadir)/metainfo
 appdata_DATA = $(appdata_in_files:.xml.in=.xml)
 appdata_in_files = org.xfce.thunar.appdata.xml.in
+# Not using HAVE_APPSTREAM because a lot of distributions put
+# appdata.{its,loc} in binary package instead of development package.
+# E.g. Debian puts in appstream instead of libappstream-dev
+%.appdata.xml: %.appdata.xml.in Makefile
+	$(AM_V_GEN)$(MSGFMT) --xml --template $< -d $(top_srcdir)/po -o $@ || \
+		cp $< $@
 
 servicedir = $(datadir)/dbus-1/services
 service_in_files = org.xfce.FileManager.service.in	\
@@ -83,35 +89,35 @@ polkit_in_files = $(polkit_in_in_files:.policy.in.in=.policy.in)
 %.policy.in: %.policy.in.in Makefile
 	sed -e "s,\@bindir\@,$(bindir),g" < $< > $@
 polkit_policy_DATA = $(polkit_in_files:.policy.in=.policy)
-@INTLTOOL_POLICY_RULE@
+# Not using HAVE_POLKIT because a lot of distributions put
+# polkit.{its,loc} in binary package instead of development package.
+# E.g. Debian puts in polkitd instead of libpolkit-gobject-1-dev
+%.policy: %.policy.in Makefile
+	$(AM_V_GEN)$(MSGFMT) --xml --template $< -d $(top_srcdir)/po -o $@ || \
+		cp $< $@
 
 EXTRA_DIST =								\
 	FAQ								\
 	HACKING								\
 	README.md								\
-	intltool-extract.in						\
-	intltool-merge.in						\
-	intltool-update.in						\
 	$(desktop_in_in_files)						\
 	$(service_in_files)						\
 	$(systemd_user_in_files)					\
 	$(appdata_in_files)						\
 	$(polkit_in_in_files)					\
+	its/xfce.loc							\
+	its/xfce.its							\
 	m4/introspection.m4
 
 CLEANFILES		= $(appdata_DATA)
 
 DISTCLEANFILES =							\
-	intltool-extract						\
-	intltool-merge							\
-	intltool-update							\
 	$(desktop_in_files)						\
 	$(desktop_DATA)							\
 	$(service_DATA)							\
 	$(systemd_user_DATA)					\
 	$(polkit_in_files)						\
-	$(polkit_policy_DATA)					\
-	po/.intltool-merge-cache.lock
+	$(polkit_policy_DATA)
 
 DISTCHECK_CONFIGURE_FLAGS =						\
 	--enable-gtk-doc							\

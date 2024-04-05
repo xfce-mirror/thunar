@@ -62,7 +62,6 @@ AC_PROG_CC()
 LT_PATH_LD()
 AM_PROG_CC_C_O()
 AC_PROG_INSTALL()
-IT_PROG_INTLTOOL()
 AC_CHECK_PROGS([PERL], [perl5 perl])
 m4_ifdef([AC_PROG_SED], [AC_PROG_SED], [AC_CHECK_PROG(SED, sed, sed)])
 
@@ -139,7 +138,14 @@ AC_CHECK_FUNCS([localeconv mkdtemp pread pwrite sched_yield setgroupent \
 dnl ******************************
 dnl *** Check for i18n support ***
 dnl ******************************
-XDT_I18N()
+GETTEXT_PACKAGE="$PACKAGE"
+AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE], ["$GETTEXT_PACKAGE"], [Name of default gettext domain])
+AC_SUBST([GETTEXT_PACKAGE])
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.19.8])
+AC_SEARCH_LIBS([bind_textdomain_codeset], [intl],
+	       [AC_DEFINE([HAVE_BIND_TEXTDOMAIN_CODESET], [1], [Define to 1 if you have the 'bind_textdomain_codeset' function.])],
+	       [])
 
 dnl *********************
 dnl *** Check for X11 ***
@@ -166,6 +172,12 @@ XDT_CHECK_PACKAGE([LIBXFCE4UI], [libxfce4ui-2], [4.17.6])
 XDT_CHECK_PACKAGE([LIBXFCE4KBD_PRIVATE], [libxfce4kbd-private-3], [4.17.2])
 XDT_CHECK_PACKAGE([XFCONF], [libxfconf-0], [4.12.0])
 XDT_CHECK_PACKAGE([PANGO], [pango], [1.38.0])
+
+dnl ***********************************************************************
+dnl *** Only needs /usr/{,local/}gettext/its/{appdata,polkit}.{its,loc} ***
+dnl ***********************************************************************
+XDT_CHECK_OPTIONAL_PACKAGE([APPSTREAM], [appstream], [0.12.5], [appstream], [AppStream l10n support])
+XDT_CHECK_OPTIONAL_PACKAGE([POLKIT], [polkit-gobject-1], [0.102], [polkit], [Polkit l10n support])
 
 dnl ******************************
 dnl *** GObject Instrospection ***
