@@ -64,7 +64,7 @@ GTKDOC_CFLAGS =	 							\
 GTKDOC_LIBS =  								\
 	$(GTK_LIBS)							\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la	\
-	$(top_builddir)/thunar/thunar.a					\
+	$(top_builddir)/thunar/libthunar.a				\
 	$(EXO_LIBS)							\
 	$(GIO_LIBS)							\
 	$(GTHREAD_LIBS)							\
