@@ -195,6 +195,7 @@ struct _ThunarFile
   gchar                *thumbnail_path[N_THUMBNAIL_SIZES];
   ThunarFileThumbState  thumbnail_state[N_THUMBNAIL_SIZES];
   guint                 thumbnail_request_id[N_THUMBNAIL_SIZES];
+  gulong                thumbnail_finished_handler_id;
 
   ThunarThumbnailer    *thumbnailer;
 
@@ -432,7 +433,7 @@ thunar_file_init (ThunarFile *file)
 
   file->thumbnailer = thunar_thumbnailer_get ();
   
-  g_signal_connect_swapped (file->thumbnailer, "request-finished", G_CALLBACK (thunar_file_thumbnailing_finished), file);
+  file->thumbnail_finished_handler_id = g_signal_connect_swapped (file->thumbnailer, "request-finished", G_CALLBACK (thunar_file_thumbnailing_finished), file);
 
   g_mutex_init (&file->content_type_mutex);
 }
@@ -494,7 +495,7 @@ thunar_file_finalize (GObject *object)
     }
 #endif
 
-  g_signal_handlers_disconnect_by_func (G_OBJECT (file->thumbnailer), G_CALLBACK (thunar_file_thumbnailing_finished), file);
+  g_signal_handler_disconnect (G_OBJECT (file->thumbnailer), file->thumbnail_finished_handler_id);
 
   if (file->thumbnailer != NULL)
     g_object_unref (file->thumbnailer);
