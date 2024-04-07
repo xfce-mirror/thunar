@@ -1084,7 +1084,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
         g_value_init (value, G_TYPE_STRING);
         if (file == NULL)
           {
-            g_value_set_static_string (value, _ (""));
+            g_value_set_static_string (value, "");
             break;
           }
         str = thunar_file_get_date_string (file, THUNAR_FILE_DATE_CREATED, THUNAR_TREE_VIEW_MODEL (model)->date_style, THUNAR_TREE_VIEW_MODEL (model)->date_custom_style);
@@ -1095,7 +1095,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
         g_value_init (value, G_TYPE_STRING);
         if (file == NULL)
           {
-            g_value_set_static_string (value, _ (""));
+            g_value_set_static_string (value, "");
             break;
           }
         str = thunar_file_get_date_string (file, THUNAR_FILE_DATE_ACCESSED, THUNAR_TREE_VIEW_MODEL (model)->date_style, THUNAR_TREE_VIEW_MODEL (model)->date_custom_style);
@@ -1106,7 +1106,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
         g_value_init (value, G_TYPE_STRING);
         if (file == NULL)
           {
-            g_value_set_static_string (value, _ (""));
+            g_value_set_static_string (value, "");
             break;
           }
         str = thunar_file_get_date_string (file, THUNAR_FILE_DATE_MODIFIED, THUNAR_TREE_VIEW_MODEL (model)->date_style, THUNAR_TREE_VIEW_MODEL (model)->date_custom_style);
@@ -1117,7 +1117,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
         g_value_init (value, G_TYPE_STRING);
         if (file == NULL)
           {
-            g_value_set_static_string (value, _ (""));
+            g_value_set_static_string (value, "");
             break;
           }
         str = thunar_file_get_date_string (file, THUNAR_FILE_DATE_DELETED, THUNAR_TREE_VIEW_MODEL (model)->date_style, THUNAR_TREE_VIEW_MODEL (model)->date_custom_style);
@@ -1128,7 +1128,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
         g_value_init (value, G_TYPE_STRING);
         if (file == NULL)
           {
-            g_value_set_static_string (value, _ (""));
+            g_value_set_static_string (value, "");
             break;
           }
         str = thunar_file_get_date_string (file, THUNAR_FILE_RECENCY, THUNAR_TREE_VIEW_MODEL (model)->date_style, THUNAR_TREE_VIEW_MODEL (model)->date_custom_style);
@@ -1197,7 +1197,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
           }
         else
           {
-            g_value_set_static_string (value, _ (""));
+            g_value_set_static_string (value, "");
           }
         break;
 
@@ -1205,7 +1205,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
         g_value_init (value, G_TYPE_STRING);
         if (file == NULL)
           {
-            g_value_set_static_string (value, _ (""));
+            g_value_set_static_string (value, "");
             break;
           }
         g_value_set_static_string (value, thunar_file_get_content_type (file));
@@ -1244,7 +1244,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
           }
         else
           {
-            g_value_set_static_string (value, _ (""));
+            g_value_set_static_string (value, "");
           }
         break;
 
@@ -1252,7 +1252,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
         g_value_init (value, G_TYPE_STRING);
         if (file == NULL)
           {
-            g_value_set_static_string (value, _ (""));
+            g_value_set_static_string (value, "");
             break;
           }
         g_value_take_string (value, thunar_file_get_mode_string (file));
@@ -1262,7 +1262,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
         g_value_init (value, G_TYPE_STRING);
         if (file == NULL)
           {
-            g_value_set_static_string (value, _ (""));
+            g_value_set_static_string (value, "");
             break;
           }
         if (thunar_file_is_mountable (file))
@@ -1312,7 +1312,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
         g_value_init (value, G_TYPE_STRING);
         if (file == NULL)
           {
-            g_value_set_static_string (value, _ (""));
+            g_value_set_static_string (value, "");
             break;
           }
         g_value_take_string (value, thunar_file_get_size_in_bytes_string (file));
@@ -1322,7 +1322,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
         g_value_init (value, G_TYPE_STRING);
         if (file == NULL)
           {
-            g_value_set_static_string (value, _ (""));
+            g_value_set_static_string (value, "");
             break;
           }
         device_type = thunar_file_get_device_type (file);
