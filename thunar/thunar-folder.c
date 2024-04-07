@@ -401,10 +401,7 @@ thunar_folder_finalize (GObject *object)
   /* disconnect ThunarFile signals from files inside the folder */
   g_hash_table_iter_init (&iter, folder->files_map);
   while (g_hash_table_iter_next (&iter, &key, &file))
-    {
-      thunar_file_unwatch (file);
-      g_signal_handlers_disconnect_by_data (file, folder);
-    }
+    g_signal_handlers_disconnect_by_data (file, folder);
 
   /* release files to thumbnail if any */
   thunar_g_list_free_full (folder->thumbnail_updated_files);
@@ -503,9 +500,6 @@ _thunar_folder_remove_file (ThunarFolder *folder,
   if (!g_hash_table_contains (folder->files_map, file))
     return FALSE;
 
-  /* stop monitoring the file */
-  thunar_file_unwatch (file);
-
   /* disconnect all signals for the file */
   g_signal_handlers_disconnect_by_data (G_OBJECT (file), folder);
 
@@ -532,9 +526,6 @@ _thunar_folder_add_file (ThunarFolder *folder,
   g_signal_connect_swapped (G_OBJECT (file), "changed", G_CALLBACK (thunar_folder_file_changed), folder);
   g_signal_connect_swapped (G_OBJECT (file), "destroy", G_CALLBACK (thunar_folder_file_destroyed), folder);
   g_signal_connect_swapped (G_OBJECT (file), "thumbnail-updated", G_CALLBACK (thunar_folder_thumbnail_updated), folder);
-
-  /* and enable monitoring for it */
-  thunar_file_watch (file);
 
   return TRUE;
 }
