@@ -1398,24 +1398,22 @@ thunar_list_model_files_changed (ThunarFolder    *folder,
   gint           i, j;
   GtkTreePath   *path;
   GtkTreeIter    iter;
-  gboolean       found = FALSE;
   GList          node, *lp;
   GSList        *hidden_link = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
 
-  for (lp = files; lp != NULL; lp = lp->next)
+  row = g_sequence_get_begin_iter (store->rows);
+  end = g_sequence_get_end_iter (store->rows);
+  while (row != end)
     {
-      file = lp->data;
-      row = g_sequence_get_begin_iter (store->rows);
-      end = g_sequence_get_end_iter (store->rows);
+      pos_before = g_sequence_iter_get_position (row);
 
-      while (row != end)
+      for (lp = files; lp != NULL; lp = lp->next)
         {
-          pos_before = g_sequence_iter_get_position (row);
+          file = lp->data;
           if (G_UNLIKELY (g_sequence_get (row) == file))
             {
-              found = TRUE;
               /* this file is hidden now & show_hidden is FALSE
               * so we should remove this file from the view and store
               * it in the hidden list */
@@ -1483,26 +1481,24 @@ thunar_list_model_files_changed (ThunarFolder    *folder,
               break;
             }
 
-          row = g_sequence_iter_next (row);
-          pos_before++;
-        } /* end while loop */
+          /* maybe this file was a hidden file but now it's not
+          * in such a case we need to emit a "files-added" for this file
+          * and remove it from the hidden list */
+          hidden_link = g_slist_find (store->hidden, file);
+          if (hidden_link == NULL || thunar_file_is_hidden (file))
+            continue;
+          g_object_unref (hidden_link->data);
+          store->hidden = g_slist_delete_link (store->hidden, hidden_link);
+          node.data = file;
+          node.next = NULL;
+          node.prev = NULL;
+          thunar_list_model_files_added (store->folder, &node, store);
 
-      if (found)
-        continue;
+        } /* end for each file loop */
 
-      /* maybe this file was a hidden file but now it's not
-      * in such a case we need to emit a "files-added" for this file
-      * and remove it from the hidden list */
-      hidden_link = g_slist_find (store->hidden, file);
-      if (hidden_link == NULL || thunar_file_is_hidden (file))
-        continue;
-      g_object_unref (hidden_link->data);
-      store->hidden = g_slist_delete_link (store->hidden, hidden_link);
-      node.data = file;
-      node.next = NULL;
-      node.prev = NULL;
-      thunar_list_model_files_added (store->folder, &node, store);
-   } /* end for loop */
+      row = g_sequence_iter_next (row);
+      pos_before++;
+   } /* end while loop (for each row) */
 }
 
 
@@ -1662,7 +1658,7 @@ thunar_list_model_insert_files (ThunarListModel *store,
               GTK_TREE_ITER_INIT (iter, store->stamp, row);
 
               indices[0] = g_sequence_iter_get_position (row);
-              gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
+              //gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
             }
         }
     }
