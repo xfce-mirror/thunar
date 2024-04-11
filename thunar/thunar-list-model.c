@@ -1407,13 +1407,13 @@ thunar_list_model_files_changed (ThunarFolder    *folder,
   end = g_sequence_get_end_iter (store->rows);
   while (row != end)
     {
-      pos_before = g_sequence_iter_get_position (row);
-
       for (lp = files; lp != NULL; lp = lp->next)
         {
           file = lp->data;
           if (G_UNLIKELY (g_sequence_get (row) == file))
             {
+              pos_before = g_sequence_iter_get_position (row);
+
               /* this file is hidden now & show_hidden is FALSE
               * so we should remove this file from the view and store
               * it in the hidden list */
@@ -1433,7 +1433,6 @@ thunar_list_model_files_changed (ThunarFolder    *folder,
               GTK_TREE_ITER_INIT (iter, store->stamp, row);
               
               /* check if the sorting changed */
-              pos_before = g_sequence_iter_get_position (row);
               g_sequence_sort_changed (row, thunar_list_model_cmp_func, store);
               pos_after = g_sequence_iter_get_position (row);
 
@@ -1473,12 +1472,13 @@ thunar_list_model_files_changed (ThunarFolder    *folder,
 
                   store->file_was_sorted = TRUE;
                 }
-
-              /* notify the view that it has to redraw the file */
-              path = gtk_tree_path_new_from_indices (pos_before, -1);
-              gtk_tree_model_row_changed (GTK_TREE_MODEL (store), path, &iter);
-              gtk_tree_path_free (path);
-              break;
+              else
+                {
+                  /* just notify the view that it has to redraw the file */
+                  path = gtk_tree_path_new_from_indices (pos_before, -1);
+                  gtk_tree_model_row_changed (GTK_TREE_MODEL (store), path, &iter);//this line 
+                  gtk_tree_path_free (path);
+                }
             }
 
           /* maybe this file was a hidden file but now it's not
@@ -1497,7 +1497,6 @@ thunar_list_model_files_changed (ThunarFolder    *folder,
         } /* end for each file loop */
 
       row = g_sequence_iter_next (row);
-      pos_before++;
    } /* end while loop (for each row) */
 }
 
@@ -1658,7 +1657,7 @@ thunar_list_model_insert_files (ThunarListModel *store,
               GTK_TREE_ITER_INIT (iter, store->stamp, row);
 
               indices[0] = g_sequence_iter_get_position (row);
-              //gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
+              gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
             }
         }
     }
