@@ -140,6 +140,7 @@ typedef struct
   ThunarFileThumbState  thumb_state;
   gint                  icon_size;
   guint                 stamp;
+  gboolean              thumbnail_draw_frames;
   GdkPixbuf            *icon;
 }
 ThunarIconStore;
@@ -530,9 +531,7 @@ thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
       needs_frame = FALSE;
       if (factory->thumbnail_draw_frames)
         {
-          /* check if we want to add a frame to the image (we really don't
-           * want to do this for icons displayed in the details view).
-           * */
+          /* check if we want to add a frame to the image */
           needs_frame = (strstr (path, G_DIR_SEPARATOR_S ".cache/thumbnails" G_DIR_SEPARATOR_S) != NULL)
                 && (size >= 32) && thumbnail_needs_frame (pixbuf, width, height, size);
         }
@@ -927,6 +926,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
       && store->icon_state == icon_state
       && store->icon_size == icon_size
       && store->stamp == factory->theme_stamp
+      && store->thumbnail_draw_frames == factory->thumbnail_draw_frames
       && store->thumb_state == thunar_file_get_thumb_state (file, thunar_icon_size_to_thumbnail_size (icon_size * scale_factor)))
     {
       return g_object_ref (store->icon);
@@ -1023,6 +1023,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
       store->icon_size = icon_size;
       store->icon_state = icon_state;
       store->stamp = factory->theme_stamp;
+      store->thumbnail_draw_frames = factory->thumbnail_draw_frames;
       store->thumb_state = thunar_file_get_thumb_state (file, thunar_icon_size_to_thumbnail_size (icon_size * scale_factor));
       store->icon = g_object_ref (icon);
 

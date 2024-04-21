@@ -1227,7 +1227,6 @@ thunar_standard_view_set_property (GObject      *object,
 
     case PROP_THUMBNAIL_DRAW_FRAMES:
       g_object_set (G_OBJECT (standard_view->icon_factory), "thumbnail-draw-frames", g_value_get_boolean (value), NULL);
-      thunar_standard_view_reload(THUNAR_VIEW (object), TRUE);
       break;
 
     case PROP_SORT_COLUMN:
