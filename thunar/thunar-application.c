@@ -496,7 +496,7 @@ thunar_application_command_line (GApplication            *gapp,
   const char        *cwd          = g_application_command_line_get_cwd (command_line);
   GVariantDict      *options_dict = g_application_command_line_get_options_dict (command_line);
   GError            *error        = NULL;
-  gchar             *cwd_list[]   = { (gchar *)".", NULL };
+  gchar             *cwd_list[]   = { (gchar *)".", NULL }; //current working directory
 
   /* retrieve arguments */
   g_variant_dict_lookup (options_dict, "bulk-rename", "b", &bulk_rename);
@@ -527,35 +527,35 @@ thunar_application_command_line (GApplication            *gapp,
           /* FIXME? */
           g_application_command_line_printerr (command_line, "Thunar: Failed to open bulk rename: %s\n", error->message);
         }
+        goto out;
     }
-  else if (filenames != NULL)
-    {
-      if (!thunar_application_process_filenames (application, cwd, filenames, NULL, NULL, &error, THUNAR_APPLICATION_SELECT_FILES))
-        {
-          /* we failed to process the filenames or the bulk rename failed */
-          g_application_command_line_printerr (command_line, "Thunar: %s\n", error->message);
-        }
-    }
-  else if (!daemon)
-    {
-      GList        *window_list;
-      ThunarWindow *window;
-      gchar       **tabs_left;
-      gchar       **tabs_right;
-      gboolean      restore_tabs;
-      gboolean      has_left_tabs; /* used to check whether the split-view should be enabled */
-      gint          last_focused_tab;
 
-      if (!thunar_application_process_filenames (application, cwd, cwd_list, NULL, NULL, &error, THUNAR_APPLICATION_SELECT_FILES))
-        {
-          /* we failed to process the filenames or the bulk rename failed */
-          g_application_command_line_printerr (command_line, "Thunar: %s\n", error->message);
-        }
+    gboolean open_current_directory = FALSE;
 
-      /* reopen tabs */
-      g_object_get (G_OBJECT (application->preferences), "last-restore-tabs", &restore_tabs, NULL);
-      if (restore_tabs)
-        {
+    //if no filenames are provided, open current directory as default
+    if(filenames == NULL)
+      {
+        open_current_directory = TRUE;
+      }
+
+    if (!thunar_application_process_filenames(application, cwd, open_current_directory ? cwd_list : filenames, NULL, NULL, &error, THUNAR_APPLICATION_SELECT_FILES))
+      {
+        /* we failed to process the filenames or the bulk rename failed */
+        g_application_command_line_printerr (command_line, "Thunar: %s\n", error->message);
+      }
+
+    GList        *window_list;
+    ThunarWindow *window;
+    gchar       **tabs_left;
+    gchar       **tabs_right;
+    gboolean      restore_tabs;
+    gboolean      has_left_tabs; /* used to check whether the split-view should be enabled */
+    gint          last_focused_tab;
+
+    /* reopen tabs if daemon mode is not enabled */
+    g_object_get (G_OBJECT (application->preferences), "last-restore-tabs", &restore_tabs, NULL);
+    if (!daemon && restore_tabs)
+      {
           /* get ThunarWindow */
           window_list = thunar_application_get_windows (application);
           window_list = g_list_last (window_list); /* this will be the topmost Window */
@@ -572,13 +572,14 @@ thunar_application_command_line (GApplication            *gapp,
                   ThunarFile *directory = thunar_file_get_for_uri (tabs_left[i], NULL);
                   if (G_LIKELY (directory != NULL) && thunar_file_is_directory (directory))
                     {
-                      thunar_window_notebook_add_new_tab (window, directory, TRUE);
+                      thunar_window_notebook_add_new_tab (window, directory, THUNAR_NEW_TAB_BEHAVIOR_STAY);
                       n_tabs++;
                     }
                 }
 
-              if (n_tabs > 0)
-                thunar_window_notebook_remove_tab (window, 0); /* remove automatically opened tab */
+              //remove the first tab if it was opened by default
+              if (open_current_directory && n_tabs > 0)
+                thunar_window_notebook_remove_tab (window, 0);
               thunar_window_notebook_set_current_tab (window, last_focused_tab);
               has_left_tabs = TRUE;
             }
@@ -597,13 +598,13 @@ thunar_application_command_line (GApplication            *gapp,
                   ThunarFile *directory = thunar_file_get_for_uri (tabs_right[i], NULL);
                   if (G_LIKELY (directory != NULL) && thunar_file_is_directory (directory))
                     {
-                      thunar_window_notebook_add_new_tab (window, directory, TRUE);
+                      thunar_window_notebook_add_new_tab (window, directory, THUNAR_NEW_TAB_BEHAVIOR_STAY);
                       n_tabs++;
                     }
                 }
 
-              if (n_tabs > 0)
-                thunar_window_notebook_remove_tab (window, 0); /* remove automatically opened tab */
+              // if (n_tabs > 0)
+                // thunar_window_notebook_remove_tab (window, 0); /* remove automatically opened tab */
               thunar_window_notebook_set_current_tab (window, last_focused_tab);
             }
 
@@ -611,7 +612,6 @@ thunar_application_command_line (GApplication            *gapp,
           g_list_free (window_list);
           g_strfreev (tabs_left);
           g_strfreev (tabs_right);
-        }
     }
 
 out:
