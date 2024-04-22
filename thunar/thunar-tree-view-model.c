@@ -257,8 +257,8 @@ static void              thunar_tree_view_model_cleanup_model (ThunarTreeViewMod
 static void              thunar_tree_view_model_file_count_callback (ExoJob              *job,
                                                                      ThunarTreeViewModel *model);
 static void              thunar_tree_view_model_node_destroy (Node *node);
-static void              thunar_tree_view_model_dir_files_changed (Node  *node,
-                                                                   GList *files);
+static void              thunar_tree_view_model_dir_files_changed (Node          *node,
+                                                                   GHashTable    *files);
 static void              thunar_tree_view_model_set_loading (ThunarTreeViewModel *model,
                                                              gboolean             loading);
 static gboolean          thunar_tree_view_model_update_search_files (ThunarTreeViewModel *model);
@@ -2472,15 +2472,17 @@ _thunar_tree_view_model_folder_error (Node         *node,
 
 
 static void
-_thunar_tree_view_model_dir_files_added (Node  *node,
-                                         GList *files)
+_thunar_tree_view_model_dir_files_added (Node       *node,
+                                         GHashTable *files)
 {
-  ThunarFile *file;
-  GList      *lp;
+  ThunarFile    *file;
+  GHashTableIter iter;
+  gpointer       key;
 
-  for (lp = files; lp != NULL; lp = lp->next)
+  g_hash_table_iter_init (&iter, files);
+  while (g_hash_table_iter_next (&iter, &key, NULL))
     {
-      file = THUNAR_FILE (lp->data);
+      file = THUNAR_FILE (key);
 
       if (thunar_file_is_hidden (file) && !g_hash_table_contains (node->hidden_files, file))
         {
@@ -2498,15 +2500,17 @@ _thunar_tree_view_model_dir_files_added (Node  *node,
 
 
 static void
-_thunar_tree_view_model_dir_files_removed (Node  *node,
-                                           GList *files)
+_thunar_tree_view_model_dir_files_removed (Node       *node,
+                                           GHashTable *files)
 {
-  ThunarFile *file;
-  GList      *lp;
+  ThunarFile    *file;
+  GHashTableIter iter;
+  gpointer       key;
 
-  for (lp = files; lp != NULL; lp = lp->next)
+  g_hash_table_iter_init (&iter, files);
+  while (g_hash_table_iter_next (&iter, &key, NULL))
     {
-      file = THUNAR_FILE (lp->data);
+      file = THUNAR_FILE (key);
 
       /* we cannot trust thunar_file_is_hidden here;
        * don't know why. Maybe the file has gone through dispose */
@@ -2546,7 +2550,7 @@ _thunar_tree_view_model_dir_notify_loading (Node         *node,
 static void
 thunar_tree_view_model_load_dir (Node *node)
 {
-  GList *files;
+  GHashTable *files;
 
   _thunar_return_if_fail (node != NULL);
 
@@ -2570,10 +2574,7 @@ thunar_tree_view_model_load_dir (Node *node)
 
   files = thunar_folder_get_files (node->dir);
   if (files != NULL)
-    {
-      _thunar_tree_view_model_dir_files_added (node, files);
-      g_list_free (files);
-    }
+    _thunar_tree_view_model_dir_files_added (node, files);
 
   /* If the folder is already loaded, directly update the loading state */
   if (!thunar_folder_get_loading (node->dir))
@@ -2636,7 +2637,7 @@ thunar_tree_view_model_file_count_callback (ExoJob              *job,
   GArray              *param_values;
   ThunarFile          *file;
   ThunarFile          *parent;
-  GList               *files = NULL;
+  GHashTable          *files = g_hash_table_new (g_direct_hash, NULL);
   Node                *parent_node;
 
   if (job == NULL)
@@ -2658,9 +2659,9 @@ thunar_tree_view_model_file_count_callback (ExoJob              *job,
    if (parent_node == NULL)
      return;
 
-   files = g_list_append (files, file);
+   g_hash_table_add (files, file);
    thunar_tree_view_model_dir_files_changed (parent_node, files);
-   g_list_free (files);
+   g_hash_table_destroy (files);
 }
 
 
@@ -2721,24 +2722,26 @@ thunar_tree_view_model_node_destroy (Node *node)
 
 
 static void
-thunar_tree_view_model_dir_files_changed (Node  *node_parent,
-                                          GList *files)
+thunar_tree_view_model_dir_files_changed (Node       *node_parent,
+                                          GHashTable *files)
 {
   ThunarTreeViewModel *model = node_parent->model;
   GSequenceIter *iter;
   GtkTreeIter    tree_iter;
+  GHashTableIter files_iter;
   GtkTreePath   *path;
   Node          *node;
   gint           pos_after, pos_before;
   gint          *new_order;
   gint           length;
   gboolean       dummy_added = FALSE;
-  GList         *lp;
   ThunarFile    *file;
+  gpointer       key;
 
-  for (lp = files; lp != NULL; lp = lp->next)
+  g_hash_table_iter_init (&files_iter, files);
+  while (g_hash_table_iter_next (&files_iter, &key, NULL))
     {
-      file = lp->data;
+      file = THUNAR_FILE (key);
 
       /* two cases - file is hidden or not
       * 1. if it is in hidden list but not hidden anymore then add the new file
@@ -2966,12 +2969,11 @@ _thunar_tree_view_model_matches_search_terms (ThunarTreeViewModel *model,
 static void
 _thunar_tree_view_model_search_file_destroyed (Node *node, ThunarFile *file)
 {
-  GList *files = NULL;
+  GHashTable    *files = g_hash_table_new (g_direct_hash, NULL);
 
-  files = g_list_append (files, file);
+  g_hash_table_add (files, file);
   _thunar_tree_view_model_dir_files_removed (node->model->root, files);
-
-  g_list_free (files);
+  g_hash_table_destroy (files);
 }
 
 
@@ -2979,15 +2981,16 @@ _thunar_tree_view_model_search_file_destroyed (Node *node, ThunarFile *file)
 static void
 _thunar_tree_view_model_search_file_changed (Node *node, ThunarFile *file)
 {
-  GList *files = NULL;
-  files = g_list_append (files, file);
+  GHashTable *files = g_hash_table_new (g_direct_hash, NULL);
+
+  g_hash_table_add (files, file);
 
   if (_thunar_tree_view_model_matches_search_terms (node->model, node->file) == TRUE)
     thunar_tree_view_model_dir_files_changed (node->model->root, files);
   else
     _thunar_tree_view_model_dir_files_removed (node->model->root, files);
 
-  g_list_free (files);
+  g_hash_table_destroy (files);
 }
 
 

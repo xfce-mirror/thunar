@@ -687,6 +687,38 @@ thunar_g_file_list_get_type (void)
 
 
 
+static GHashTable*
+thunar_g_hastable_copy_deep (GHashTable *table)
+{
+  GHashTable    *copy = g_hash_table_new_full (g_direct_hash, NULL, g_object_unref, NULL);
+  GHashTableIter iter;
+  gpointer       key;
+
+  g_hash_table_iter_init (&iter, table);
+  while (g_hash_table_iter_next (&iter, &key, NULL))
+    g_hash_table_add (copy, g_object_ref (key));
+  return copy;
+}
+
+
+
+GType
+thunar_g_file_hastable_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      type = g_boxed_type_register_static (I_("ThunarGHashTableList"),
+                                           (GBoxedCopyFunc) thunar_g_hastable_copy_deep,
+                                           (GBoxedFreeFunc) g_hash_table_destroy);
+    }
+
+  return type;
+}
+
+
+
 /**
  * thunar_g_file_copy:
  * @source                 : input #GFile

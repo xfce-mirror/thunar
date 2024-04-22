@@ -734,11 +734,14 @@ thunar_util_next_new_file_name (ThunarFile            *dir,
   /* loop through the directory until new_name is unique */
   while (TRUE)
     {
-      GList *files = thunar_folder_get_files (folder);
+      GHashTableIter iter;
+      gpointer       key;
+
       found_duplicate = FALSE;
-      for (;files != NULL; files = files->next)
+      g_hash_table_iter_init (&iter, thunar_folder_get_files (folder));
+      while (g_hash_table_iter_next (&iter, &key, NULL))
         {
-          ThunarFile  *file = files->data;
+          ThunarFile  *file = THUNAR_FILE (key);
           gchar       *name = g_file_get_basename (thunar_file_get_file (file));
 
           if (g_strcmp0 (new_name, name) == 0)
@@ -749,7 +752,6 @@ thunar_util_next_new_file_name (ThunarFile            *dir,
             }
           g_free (name);
         }
-      g_list_free (files);
 
       if (!found_duplicate)
         break;
@@ -1205,7 +1207,7 @@ thunar_util_get_file_time (GFileInfo         *file_info,
  * Return value: the statusbar text with the given @files.
  **/
 gchar*
-thunar_util_get_statusbar_text_for_files (GList           *files,
+thunar_util_get_statusbar_text_for_files (GHashTable      *files,
                                           gboolean         show_file_size_binary_format,
                                           ThunarDateStyle  date_style,
                                           const gchar     *date_custom_style,
@@ -1214,7 +1216,6 @@ thunar_util_get_statusbar_text_for_files (GList           *files,
   guint64            size_summary = 0;
   gint               folder_count = 0;
   gint               non_folder_count = 0;
-  GList             *lp;
   GList             *text_list = NULL;
   gchar             *size_string = NULL;
   gchar             *temp_string = NULL;
@@ -1224,15 +1225,18 @@ thunar_util_get_statusbar_text_for_files (GList           *files,
   guint64            temp_last_modified_date;
   GFileInfo         *last_modified_file = NULL;
   gboolean           show_size, show_size_in_bytes, show_last_modified;
+  GHashTableIter     iter;
+  gpointer           key;
 
   show_size = thunar_status_bar_info_check_active (status_bar_actve_info, THUNAR_STATUS_BAR_INFO_SIZE);
   show_size_in_bytes = thunar_status_bar_info_check_active (status_bar_actve_info, THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES);
   show_last_modified = thunar_status_bar_info_check_active (status_bar_actve_info, THUNAR_STATUS_BAR_INFO_LAST_MODIFIED);
 
   /* analyze files */
-  for (lp = files; lp != NULL; lp = lp->next)
+  g_hash_table_iter_init (&iter, files);
+  while (g_hash_table_iter_next (&iter, &key, NULL))
     {
-      GFileInfo *file_info = g_file_query_info (thunar_file_get_file (lp->data),
+      GFileInfo *file_info = g_file_query_info (thunar_file_get_file (THUNAR_FILE (key)),
                                                 G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SIZE, 
                                                 G_FILE_QUERY_INFO_NONE, 
                                                 NULL, 

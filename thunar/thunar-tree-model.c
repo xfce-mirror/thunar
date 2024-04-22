@@ -133,13 +133,13 @@ static void                 thunar_tree_model_item_free               (ThunarTre
 static void                 thunar_tree_model_item_reset              (ThunarTreeModelItem    *item);
 static void                 thunar_tree_model_item_load_folder        (ThunarTreeModelItem    *item);
 static void                 thunar_tree_model_item_files_added        (ThunarTreeModelItem    *item,
-                                                                       GList                  *files,
+                                                                       GHashTable             *files,
                                                                        ThunarFolder           *folder);
 static void                 thunar_tree_model_item_files_removed      (ThunarTreeModelItem    *item,
-                                                                       GList                  *files,
+                                                                       GHashTable             *files,
                                                                        ThunarFolder           *folder);
 static void                 thunar_tree_model_item_files_changed      (ThunarTreeModelItem    *item,
-                                                                       GList                  *files,
+                                                                       GHashTable             *files,
                                                                        ThunarFolder           *folder);
 static gboolean             thunar_tree_model_item_load_idle          (gpointer                user_data);
 static void                 thunar_tree_model_item_load_idle_destroy  (gpointer                user_data);
@@ -938,18 +938,20 @@ thunar_tree_model_cleanup_idle_destroy (gpointer user_data)
 
 static void
 thunar_tree_model_item_files_changed (ThunarTreeModelItem *item,
-                                      GList               *files,
+                                      GHashTable          *files,
                                       ThunarFolder        *folder)
 {
-  GList *lp;
+  gpointer       key;
+  GHashTableIter iter;
 
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (item->folder == folder);
 
   /* traverse the model and emit "row-changed" for the file's nodes */
-  for (lp = files; lp != NULL; lp = lp->next)
+  g_hash_table_iter_init (&iter, files);
+  while (g_hash_table_iter_next (&iter, &key, NULL))
     {
-      ThunarFile *file = lp->data;
+      ThunarFile *file = THUNAR_FILE (key);
       if (thunar_file_is_directory (file))
         g_node_traverse (item->model->root, G_PRE_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_model_node_traverse_changed, file);
     }
@@ -1252,13 +1254,14 @@ thunar_tree_model_item_load_folder (ThunarTreeModelItem *item)
 
 static void
 thunar_tree_model_item_files_added (ThunarTreeModelItem *item,
-                                    GList               *files,
+                                    GHashTable          *files,
                                     ThunarFolder        *folder)
 {
   ThunarTreeModel     *model = THUNAR_TREE_MODEL (item->model);
   ThunarFile          *file;
   GNode               *node = NULL;
-  GList               *lp;
+  GHashTableIter       iter;
+  gpointer             key;
 
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (item->folder == folder);
@@ -1273,10 +1276,11 @@ thunar_tree_model_item_files_added (ThunarTreeModelItem *item,
     }
 
   /* process all specified files */
-  for (lp = files; lp != NULL; lp = lp->next)
+  g_hash_table_iter_init (&iter, files);
+  while (g_hash_table_iter_next (&iter, &key, NULL))
     {
       /* we don't care for anything except folders */
-      file = THUNAR_FILE (lp->data);
+      file = THUNAR_FILE (key);
       if (!thunar_file_is_directory (file))
         continue;
 
@@ -1306,7 +1310,7 @@ thunar_tree_model_item_files_added (ThunarTreeModelItem *item,
 
 static void
 thunar_tree_model_item_files_removed (ThunarTreeModelItem *item,
-                                      GList               *files,
+                                      GHashTable          *files,
                                       ThunarFolder        *folder)
 {
   ThunarTreeModel *model = item->model;
@@ -1314,8 +1318,9 @@ thunar_tree_model_item_files_removed (ThunarTreeModelItem *item,
   GtkTreeIter      iter;
   GNode           *child_node;
   GNode           *node;
-  GList           *lp;
   GSList          *inv_link;
+  GHashTableIter   file_iter;
+  gpointer         key;
 
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (item->folder == folder);
@@ -1335,11 +1340,14 @@ thunar_tree_model_item_files_removed (ThunarTreeModelItem *item,
   if (G_LIKELY (node->children != NULL))
     {
       /* process all files */
-      for (lp = files; lp != NULL; lp = lp->next)
+      g_hash_table_iter_init (&file_iter, files);
+      while (g_hash_table_iter_next (&file_iter, &key, NULL))
         {
+          ThunarFile *file = THUNAR_FILE (key);
+
           /* find the child node for the file */
           for (child_node = g_node_first_child (node); child_node != NULL; child_node = g_node_next_sibling (child_node))
-            if (child_node->data != NULL && THUNAR_TREE_MODEL_ITEM (child_node->data)->file == lp->data)
+            if (child_node->data != NULL && THUNAR_TREE_MODEL_ITEM (child_node->data)->file == file)
               break;
 
           /* drop the child node (and all descendant nodes) from the model */
@@ -1363,14 +1371,17 @@ thunar_tree_model_item_files_removed (ThunarTreeModelItem *item,
   /* we also need to release all the invisible folders */
   if (item->invisible_children != NULL)
     {
-      for (lp = files; lp != NULL; lp = lp->next)
+      g_hash_table_iter_init (&file_iter, files);
+      while (g_hash_table_iter_next (&file_iter, &key, NULL))
         {
+          ThunarFile *file = THUNAR_FILE (key);
+
           /* find the file in the hidden list */
-          inv_link = g_slist_find (item->invisible_children, lp->data);
+          inv_link = g_slist_find (item->invisible_children, file);
           if (inv_link != NULL)
             {
               /* release the file */
-              g_object_unref (G_OBJECT (lp->data));
+              g_object_unref (G_OBJECT (file));
 
               /* remove from the list */
               item->invisible_children = g_slist_delete_link (item->invisible_children, inv_link);
@@ -1412,7 +1423,7 @@ thunar_tree_model_item_load_idle (gpointer user_data)
 {
   ThunarTreeModelItem *item = user_data;
   GFile               *mount_point;
-  GList               *files;
+  GHashTable          *files;
 #ifndef NDEBUG
   GNode               *node;
 #endif
@@ -1461,10 +1472,7 @@ thunar_tree_model_item_load_idle (gpointer user_data)
           /* load the initial set of files (if any) */
           files = thunar_folder_get_files (item->folder);
           if (G_UNLIKELY (files != NULL))
-            {
-              thunar_tree_model_item_files_added (item, files, item->folder);
-              g_list_free (files);
-            }
+            thunar_tree_model_item_files_added (item, files, item->folder);
         }
     }
 

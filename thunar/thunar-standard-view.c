@@ -2354,8 +2354,8 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
     }
   else /* more than one item selected */
     {
-      GList       *selected_files = NULL;
-      GList       *lp;
+      GHashTable *selected_files = g_hash_table_new (g_direct_hash, NULL);;
+      GList      *lp;
 
       /* build GList of files from selection */
       for (lp = selected_items_tree_path_list; lp != NULL; lp = lp->next)
@@ -2363,13 +2363,16 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
           gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, lp->data);
           file = thunar_standard_view_model_get_file (standard_view->model, &iter);
           if (file != NULL)
-            selected_files = g_list_append (selected_files, file);
+            {
+              g_hash_table_add (selected_files, file);
+              g_object_unref (file);
+            }
         }
 
       standard_view->priv->statusbar_job = thunar_io_jobs_load_statusbar_text_for_selection (standard_view, selected_files);
       g_signal_connect (standard_view->priv->statusbar_job, "error", G_CALLBACK (thunar_standard_view_update_statusbar_text_error), standard_view);
       g_signal_connect (standard_view->priv->statusbar_job, "finished", G_CALLBACK (thunar_standard_view_load_statusbar_text_finished), standard_view);
-      g_list_free_full (selected_files, g_object_unref);
+      g_hash_table_destroy (selected_files);
 
       exo_job_launch (EXO_JOB (standard_view->priv->statusbar_job));
     }
