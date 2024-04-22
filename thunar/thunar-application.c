@@ -496,7 +496,7 @@ thunar_application_command_line (GApplication            *gapp,
   const char        *cwd          = g_application_command_line_get_cwd (command_line);
   GVariantDict      *options_dict = g_application_command_line_get_options_dict (command_line);
   GError            *error        = NULL;
-  gchar             *cwd_list[]   = { (gchar *)".", NULL }; //current working directory
+  gchar             *current_directory[]   = { (gchar *)".", NULL };
 
   /* retrieve arguments */
   g_variant_dict_lookup (options_dict, "bulk-rename", "b", &bulk_rename);
@@ -530,15 +530,8 @@ thunar_application_command_line (GApplication            *gapp,
         goto out;
     }
 
-    gboolean open_current_directory = FALSE;
-
-    //if no filenames are provided, open current directory as default
-    if(filenames == NULL)
-      {
-        open_current_directory = TRUE;
-      }
-
-    if (!thunar_application_process_filenames(application, cwd, open_current_directory ? cwd_list : filenames, NULL, NULL, &error, THUNAR_APPLICATION_SELECT_FILES))
+    /*if no filenames are provided, open current directory as default*/
+    if (!thunar_application_process_filenames(application, cwd, filenames == NULL ? current_directory : filenames, NULL, NULL, &error, THUNAR_APPLICATION_SELECT_FILES))
       {
         /* we failed to process the filenames or the bulk rename failed */
         g_application_command_line_printerr (command_line, "Thunar: %s\n", error->message);
@@ -577,8 +570,8 @@ thunar_application_command_line (GApplication            *gapp,
                     }
                 }
 
-              //remove the first tab if it was opened by default
-              if (open_current_directory && n_tabs > 0)
+              /*remove the first tab if it was opened by default*/
+              if (filenames == NULL && n_tabs > 0)
                 thunar_window_notebook_remove_tab (window, 0);
               thunar_window_notebook_set_current_tab (window, last_focused_tab);
               has_left_tabs = TRUE;
@@ -603,8 +596,6 @@ thunar_application_command_line (GApplication            *gapp,
                     }
                 }
 
-              // if (n_tabs > 0)
-                // thunar_window_notebook_remove_tab (window, 0); /* remove automatically opened tab */
               thunar_window_notebook_set_current_tab (window, last_focused_tab);
             }
 
