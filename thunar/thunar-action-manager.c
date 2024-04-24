@@ -268,6 +268,7 @@ static XfceGtkActionEntry thunar_action_manager_action_entries[] =
 {
     { THUNAR_ACTION_MANAGER_ACTION_OPEN,             "<Actions>/ThunarActionManager/open",                    "<Primary>O",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Open"),                           NULL,                                                                                            "document-open",        G_CALLBACK (thunar_action_manager_action_open),                },
     { THUNAR_ACTION_MANAGER_ACTION_EXECUTE,          "<Actions>/ThunarActionManager/execute",                 "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Execute"),                        NULL,                                                                                            "system-run",           G_CALLBACK (thunar_action_manager_action_open),                },
+    { THUNAR_ACTION_MANAGER_ACTION_EDIT_LAUNCHER,    NULL,                                                    "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Edit _Launcher"),                  N_ ("Edit the selected launcher"),                                                               "gtk-edit",             G_CALLBACK (thunar_action_manager_action_edit_launcher),       },
     { THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB,      "<Actions>/ThunarActionManager/open-in-new-tab",         "<Primary><shift>P", XFCE_GTK_MENU_ITEM,       N_ ("Open in new _Tab"),                NULL,                                                                                            NULL,                   G_CALLBACK (thunar_action_manager_action_open_in_new_tabs),    },
     { THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW,   "<Actions>/ThunarActionManager/open-in-new-window",      "<Primary><shift>O", XFCE_GTK_MENU_ITEM,       N_ ("Open in new _Window"),             NULL,                                                                                            NULL,                   G_CALLBACK (thunar_action_manager_action_open_in_new_windows), },
     { THUNAR_ACTION_MANAGER_ACTION_OPEN_LOCATION,    "<Actions>/ThunarActionManager/open-location",           "",                  XFCE_GTK_MENU_ITEM,       N_ ("Open Item _Location"),             NULL,                                                                                            NULL,                   G_CALLBACK (thunar_action_manager_action_open_location),       },
@@ -307,7 +308,6 @@ static XfceGtkActionEntry thunar_action_manager_action_entries[] =
     { THUNAR_ACTION_MANAGER_ACTION_MOUNT,            NULL,                                                   "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Mount"),                          N_ ("Mount the selected device"),                                                                NULL,                   G_CALLBACK (thunar_action_manager_action_mount),               },
     { THUNAR_ACTION_MANAGER_ACTION_UNMOUNT,          NULL,                                                   "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Unmount"),                        N_ ("Unmount the selected device"),                                                              NULL,                   G_CALLBACK (thunar_action_manager_action_unmount),             },
     { THUNAR_ACTION_MANAGER_ACTION_EJECT,            NULL,                                                   "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Eject"),                          N_ ("Eject the selected device"),                                                                NULL,                   G_CALLBACK (thunar_action_manager_action_eject),               },
-    { THUNAR_ACTION_MANAGER_ACTION_EDIT_LAUNCHER,    NULL,                                                   "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Edit _Launcher"),                  N_ ("Edit the selected launcher"),                                                               "gtk-edit",             G_CALLBACK (thunar_action_manager_action_edit_launcher),       },
 };
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_action_manager_action_entries,G_N_ELEMENTS(thunar_action_manager_action_entries),id)
@@ -1578,6 +1578,9 @@ thunar_action_manager_append_menu_item (ThunarActionManager       *action_mgr,
         return xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, ngettext ("Execute the selected file", "Execute the selected files", action_mgr->n_files_to_process),
                                                             action_entry->accel_path, action_entry->callback, G_OBJECT (action_mgr), action_entry->menu_item_icon_name, menu);
 
+      case THUNAR_ACTION_MANAGER_ACTION_EDIT_LAUNCHER:
+        return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
+
       case THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB:
         n = action_mgr->n_files_to_process > 0 ? action_mgr->n_files_to_process : 1;
         label_text = g_strdup_printf (ngettext (action_entry->menu_item_label_text, "Open in %d New _Tabs", n), n);
@@ -1606,12 +1609,6 @@ thunar_action_manager_append_menu_item (ThunarActionManager       *action_mgr,
         if (action_mgr->n_files_to_process != 1)
           return NULL;
         return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
-
-      case THUNAR_ACTION_MANAGER_ACTION_EDIT_LAUNCHER:
-        if (action_mgr->n_files_to_process == 1 && thunar_file_is_desktop_file (action_mgr->files_to_process->data))
-          return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
-        else
-          return NULL;
 
       case THUNAR_ACTION_MANAGER_ACTION_SENDTO_MENU:
         if (action_mgr->files_are_selected == FALSE)
@@ -3283,9 +3280,16 @@ thunar_action_manager_append_open_section (ThunarActionManager *action_mgr,
   /* determine the set of applications that work for all selected files */
   applications = thunar_file_list_get_applications (action_mgr->files_to_process);
 
-  /* Execute OR Open OR OpenWith */
+  /* Execute (and EditLauncher) OR Open OR OpenWith */
   if (G_UNLIKELY (action_mgr->files_are_all_executable))
-    thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_EXECUTE, FALSE);
+    {
+      thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_EXECUTE, FALSE);
+      if (action_mgr->n_files_to_process == 1 && thunar_file_is_desktop_file (action_mgr->files_to_process->data))
+        {
+          xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
+          thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_EDIT_LAUNCHER, FALSE);
+        }
+    }
   else if (G_LIKELY (action_mgr->n_directories_to_process >= 1))
     {
       if (support_change_directory)
