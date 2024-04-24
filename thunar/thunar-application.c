@@ -497,6 +497,7 @@ thunar_application_command_line (GApplication            *gapp,
   GVariantDict      *options_dict = g_application_command_line_get_options_dict (command_line);
   GError            *error        = NULL;
   gchar             *current_directory[]   = { (gchar *)".", NULL };
+  gboolean           restore_tabs;
 
   /* retrieve arguments */
   g_variant_dict_lookup (options_dict, "bulk-rename", "b", &bulk_rename);
@@ -530,80 +531,80 @@ thunar_application_command_line (GApplication            *gapp,
         goto out;
     }
 
-    /*if no filenames are provided, open current directory as default*/
-    if (!thunar_application_process_filenames(application, cwd, filenames == NULL ? current_directory : filenames, NULL, NULL, &error, THUNAR_APPLICATION_SELECT_FILES))
-      {
-        /* we failed to process the filenames or the bulk rename failed */
-        g_application_command_line_printerr (command_line, "Thunar: %s\n", error->message);
-      }
-
-    GList        *window_list;
-    ThunarWindow *window;
-    gchar       **tabs_left;
-    gchar       **tabs_right;
-    gboolean      restore_tabs;
-    gboolean      has_left_tabs; /* used to check whether the split-view should be enabled */
-    gint          last_focused_tab;
-
-    /* reopen tabs if daemon mode is not enabled */
-    g_object_get (G_OBJECT (application->preferences), "last-restore-tabs", &restore_tabs, NULL);
-    if (!daemon && restore_tabs)
-      {
-          /* get ThunarWindow */
-          window_list = thunar_application_get_windows (application);
-          window_list = g_list_last (window_list); /* this will be the topmost Window */
-          window = THUNAR_WINDOW (window_list->data);
-
-          /* restore left tabs */
-          has_left_tabs = FALSE;
-          g_object_get (G_OBJECT (application->preferences), "last-tabs-left", &tabs_left, "last-focused-tab-left", &last_focused_tab, NULL);
-          if (tabs_left != NULL && g_strv_length (tabs_left) > 0)
-            {
-              gint n_tabs = 0;
-              for (guint i = 0; i < g_strv_length (tabs_left); i++)
-                {
-                  ThunarFile *directory = thunar_file_get_for_uri (tabs_left[i], NULL);
-                  if (G_LIKELY (directory != NULL) && thunar_file_is_directory (directory))
-                    {
-                      thunar_window_notebook_add_new_tab (window, directory, THUNAR_NEW_TAB_BEHAVIOR_STAY);
-                      n_tabs++;
-                    }
-                }
-
-              /*remove the first tab if it was opened by default*/
-              if (filenames == NULL && n_tabs > 0)
-                thunar_window_notebook_remove_tab (window, 0);
-              thunar_window_notebook_set_current_tab (window, last_focused_tab);
-              has_left_tabs = TRUE;
-            }
-
-          /* restore right tabs */
-          /* (will be restored on the left if no left tabs are found) */
-          g_object_get (G_OBJECT (application->preferences), "last-tabs-right", &tabs_right, "last-focused-tab-right", &last_focused_tab, NULL);
-          if (tabs_right != NULL && g_strv_length (tabs_right) > 0)
-            {
-              gint n_tabs = 0;
-
-              if (has_left_tabs)
-                thunar_window_notebook_toggle_split_view (window); /* enabling the split view selects the new notebook */
-              for (guint i = 0; i < g_strv_length (tabs_right); i++)
-                {
-                  ThunarFile *directory = thunar_file_get_for_uri (tabs_right[i], NULL);
-                  if (G_LIKELY (directory != NULL) && thunar_file_is_directory (directory))
-                    {
-                      thunar_window_notebook_add_new_tab (window, directory, THUNAR_NEW_TAB_BEHAVIOR_STAY);
-                      n_tabs++;
-                    }
-                }
-
-              thunar_window_notebook_set_current_tab (window, last_focused_tab);
-            }
-
-          /* free memory */
-          g_list_free (window_list);
-          g_strfreev (tabs_left);
-          g_strfreev (tabs_right);
+    /* if no filenames are provided, open current directory as default */
+  if (!thunar_application_process_filenames (application, cwd, filenames == NULL ? current_directory : filenames, NULL, NULL, &error, THUNAR_APPLICATION_SELECT_FILES))
+    {
+      /* we failed to process the filenames or the bulk rename failed */
+      g_application_command_line_printerr (command_line, "Thunar: %s\n", error->message);
     }
+
+
+  /* reopen tabs if daemon mode is not enabled */
+  g_object_get (G_OBJECT (application->preferences), "last-restore-tabs", &restore_tabs, NULL);
+  if (!daemon && restore_tabs)
+    {
+      GList        *window_list;
+      ThunarWindow *window;
+      gchar       **tabs_left;
+      gchar       **tabs_right;
+      gboolean      has_left_tabs; /* used to check whether the split-view should be enabled */
+      gint          last_focused_tab;
+
+      /* get ThunarWindow */
+      window_list = thunar_application_get_windows (application);
+      window_list = g_list_last (window_list); /* this will be the topmost Window */
+      window = THUNAR_WINDOW (window_list->data);
+
+      /* restore left tabs */
+      has_left_tabs = FALSE;
+      g_object_get (G_OBJECT (application->preferences), "last-tabs-left", &tabs_left, "last-focused-tab-left", &last_focused_tab, NULL);
+      if (tabs_left != NULL && g_strv_length (tabs_left) > 0)
+        {
+          gint n_tabs = 0;
+          for (guint i = 0; i < g_strv_length (tabs_left); i++)
+            {
+              ThunarFile *directory = thunar_file_get_for_uri (tabs_left[i], NULL);
+              if (G_LIKELY (directory != NULL) && thunar_file_is_directory (directory))
+                {
+                  thunar_window_notebook_add_new_tab (window, directory, THUNAR_NEW_TAB_BEHAVIOR_STAY);
+                  n_tabs++;
+                }
+            }
+
+          /* remove the first tab if it was opened by default */
+          if (filenames == NULL && n_tabs > 0)
+            thunar_window_notebook_remove_tab (window, 0);
+          thunar_window_notebook_set_current_tab (window, last_focused_tab);
+          has_left_tabs = TRUE;
+        }
+
+      /* restore right tabs */
+      /* (will be restored on the left if no left tabs are found) */
+      g_object_get (G_OBJECT (application->preferences), "last-tabs-right", &tabs_right, "last-focused-tab-right", &last_focused_tab, NULL);
+      if (tabs_right != NULL && g_strv_length (tabs_right) > 0)
+        {
+          gint n_tabs = 0;
+
+          if (has_left_tabs)
+            thunar_window_notebook_toggle_split_view (window); /* enabling the split view selects the new notebook */
+          for (guint i = 0; i < g_strv_length (tabs_right); i++)
+            {
+              ThunarFile *directory = thunar_file_get_for_uri (tabs_right[i], NULL);
+              if (G_LIKELY (directory != NULL) && thunar_file_is_directory (directory))
+                {
+                  thunar_window_notebook_add_new_tab (window, directory, THUNAR_NEW_TAB_BEHAVIOR_STAY);
+                  n_tabs++;
+                }
+            }
+
+          thunar_window_notebook_set_current_tab (window, last_focused_tab);
+        }
+
+      /* free memory */
+      g_list_free (window_list);
+      g_strfreev (tabs_left);
+      g_strfreev (tabs_right);
+  }
 
 out:
   /* cleanup */
