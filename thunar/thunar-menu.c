@@ -311,6 +311,17 @@ thunar_menu_add_sections (ThunarMenu         *menu,
       if (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_EMPTY_TRASH, FALSE) != NULL )
          xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
     }
+
+  item_added = FALSE;
+  if (menu_sections & THUNAR_MENU_SECTION_DUPLICATE)
+    item_added |= (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_DUPLICATE, force) != NULL);
+  if (menu_sections & THUNAR_MENU_SECTION_MAKELINK)
+    item_added |= (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_MAKE_LINK, force) != NULL);
+  if (menu_sections & THUNAR_MENU_SECTION_RENAME)
+    item_added |= (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_RENAME, force) != NULL);
+  if (item_added)
+     xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
+
   if (menu_sections & THUNAR_MENU_SECTION_RESTORE)
     {
       item_added = FALSE;
@@ -324,16 +335,6 @@ thunar_menu_add_sections (ThunarMenu         *menu,
       if (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_REMOVE_FROM_RECENT, FALSE) != NULL)
         xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
     }
-
-  item_added = FALSE;
-  if (menu_sections & THUNAR_MENU_SECTION_DUPLICATE)
-    item_added |= (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_DUPLICATE, force) != NULL);
-  if (menu_sections & THUNAR_MENU_SECTION_MAKELINK)
-    item_added |= (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_MAKE_LINK, force) != NULL);
-  if (menu_sections & THUNAR_MENU_SECTION_RENAME)
-    item_added |= (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_RENAME, force) != NULL);
-  if (item_added)
-     xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
 
   if (menu_sections & THUNAR_MENU_SECTION_CUSTOM_ACTIONS)
     {
