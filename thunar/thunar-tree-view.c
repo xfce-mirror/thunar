@@ -1276,9 +1276,9 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
         }
       else
         {
-          thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_OPEN);
-          thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_SENDTO
-                                                | THUNAR_MENU_SECTION_CREATE_NEW_FILES
+          thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_OPEN
+                                                | THUNAR_MENU_SECTION_SENDTO);
+          thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_CREATE_NEW_FILES
                                                 | THUNAR_MENU_SECTION_CUT
                                                 | THUNAR_MENU_SECTION_COPY_PASTE
                                                 | THUNAR_MENU_SECTION_TRASH_DELETE
