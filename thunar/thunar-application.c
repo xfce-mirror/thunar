@@ -604,7 +604,7 @@ thunar_application_command_line (GApplication            *gapp,
       g_list_free (window_list);
       g_strfreev (tabs_left);
       g_strfreev (tabs_right);
-  }
+    }
 
 out:
   /* cleanup */
