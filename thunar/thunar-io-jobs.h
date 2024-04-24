@@ -64,11 +64,11 @@ ThunarJob *thunar_io_jobs_clear_metadata_for_files (GList          *files,
 ThunarJob *thunar_io_jobs_set_metadata_for_files   (GList          *files,
                                                     ThunarGType     type,
                                                     ...);
-ThunarJob *thunar_io_jobs_load_content_types                (GList                  *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *thunar_io_jobs_load_content_types                (GHashTable         *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 ThunarJob *thunar_io_jobs_load_statusbar_text_for_folder    (ThunarStandardView *standard_view,
                                                              ThunarFolder       *folder);
 ThunarJob *thunar_io_jobs_load_statusbar_text_for_selection (ThunarStandardView *standard_view,
-                                                             GList              *selected_files);
+                                                             GHashTable         *selected_files);
 G_END_DECLS
 
 #endif /* !__THUNAR_IO_JOBS_H__ */
