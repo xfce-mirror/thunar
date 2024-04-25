@@ -2215,7 +2215,11 @@ thunar_tree_view_model_dir_add_file (Node       *node,
   GtkTreePath *path;
   Node        *child;
 
-  THUNAR_WARN_RETURN_VAL (g_hash_table_contains (node->set, file), NULL);
+  if (g_hash_table_contains (node->set, file))
+    {
+      GSequenceIter *iter = g_hash_table_lookup (node->set, file);
+      return g_sequence_get (iter);
+    }
 
   child = thunar_tree_view_model_new_node (file);
   thunar_tree_view_model_node_add_child (node, child);
