@@ -526,16 +526,16 @@ thunar_device_get_eject_label (const ThunarDevice *device)
     switch (start_stop_type)
       {
       case G_DRIVE_START_STOP_TYPE_SHUTDOWN:
-        return _("_Safely Remove");
+        return _("Safely _Remove");
       case G_DRIVE_START_STOP_TYPE_NETWORK:
         return _("_Disconnect");
       case G_DRIVE_START_STOP_TYPE_MULTIDISK:
-        return _("_Stop the Multi-Disk Drive");
+        return _("Stop the _Multi-Disk Drive");
       case G_DRIVE_START_STOP_TYPE_PASSWORD:
         return _("_Lock");
       case G_DRIVE_START_STOP_TYPE_UNKNOWN:
       default:
-        return _("_Eject");
+        return _("E_ject");
       }
 }
 
