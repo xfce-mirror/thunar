@@ -517,6 +517,7 @@ thunar_application_command_line (GApplication            *gapp,
   if (G_UNLIKELY (daemon))
     {
         thunar_application_set_daemon (application, TRUE);
+        goto out;
     }
 
   /* check if we should open the bulk rename dialog */
@@ -531,17 +532,16 @@ thunar_application_command_line (GApplication            *gapp,
         goto out;
     }
 
-    /* if no filenames are provided, open current directory as default */
+  /* if no filenames are provided, open current directory as default */
   if (!thunar_application_process_filenames (application, cwd, filenames == NULL ? current_directory : filenames, NULL, NULL, &error, THUNAR_APPLICATION_SELECT_FILES))
     {
       /* we failed to process the filenames or the bulk rename failed */
       g_application_command_line_printerr (command_line, "Thunar: %s\n", error->message);
     }
 
-
-  /* reopen tabs if daemon mode is not enabled */
+  /* reopen tabs if desired */
   g_object_get (G_OBJECT (application->preferences), "last-restore-tabs", &restore_tabs, NULL);
-  if (!daemon && restore_tabs)
+  if (restore_tabs)
     {
       GList        *window_list;
       ThunarWindow *window;
