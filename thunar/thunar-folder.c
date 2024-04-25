@@ -88,7 +88,7 @@ static void           thunar_folder_monitor               (GFileMonitor         
                                                            GFileMonitorEvent      event_type,
                                                            gpointer               user_data);
 static void           thunar_folder_load_content_types    (ThunarFolder          *folder,
-                                                           GList                 *files);
+                                                           GHashTable            *files);
 static void           thunar_folder_add_file              (ThunarFolder          *folder,
                                                            ThunarFile            *file);
 static void           thunar_folder_remove_file           (ThunarFolder          *folder,
@@ -108,11 +108,11 @@ struct _ThunarFolderClass
   void (*error)         (ThunarFolder *folder,
                          const GError *error);
   void (*files_added)   (ThunarFolder *folder,
-                         GList        *files);
+                         GHashTable   *files);
   void (*files_removed) (ThunarFolder *folder,
-                         GList        *files);
+                         GHashTable   *files);
   void (*files_changed) (ThunarFolder *folder,
-                         GList        *files);
+                         GHashTable   *files);
   void (*thumbnails_updated)  (ThunarFolder        *folder,
                                GList               *files);
 };
@@ -536,7 +536,7 @@ _thunar_folder_files_update_timeout (gpointer data)
 {
   ThunarFolder  *folder = THUNAR_FOLDER (data);
   ThunarFile    *file;
-  GList         *files = NULL;
+  GHashTable    *files = g_hash_table_new (g_direct_hash, NULL);
   GHashTableIter iter;
   gpointer       key;
 
@@ -546,13 +546,12 @@ _thunar_folder_files_update_timeout (gpointer data)
     {
       file = THUNAR_FILE (key);
       if (_thunar_folder_remove_file (folder, file))
-        files = g_list_prepend (files, file);
+        g_hash_table_add (files, file);
     }
 
   g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, files);
 
-  g_list_free (files);
-  files = NULL;
+  g_hash_table_remove_all (files);
   g_hash_table_remove_all (folder->removed_files_map);
 
   /* send a 'files-added' signal for all files which were added */
@@ -561,7 +560,7 @@ _thunar_folder_files_update_timeout (gpointer data)
     {
       file = THUNAR_FILE (key);
       if (_thunar_folder_add_file (folder, file))
-        files = g_list_prepend (files, file);
+        g_hash_table_add (files, file);
     }
 
   /* start loading the content types of all added files */
@@ -569,8 +568,7 @@ _thunar_folder_files_update_timeout (gpointer data)
 
   g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, files);
 
-  g_list_free (files);
-  files = NULL;
+  g_hash_table_remove_all (files);
   g_hash_table_remove_all (folder->added_files_map);
 
   /* send a 'changed' signal for all files which changed */
@@ -580,13 +578,11 @@ _thunar_folder_files_update_timeout (gpointer data)
     if (!g_hash_table_contains (folder->files_map, key))
       continue;
 
-    files = g_list_prepend (files, key);
+    g_hash_table_add (files, key);
   }
 
   g_signal_emit (G_OBJECT (folder), folder_signals[FILES_CHANGED], 0, files);
-
-  g_list_free (files);
-  files = NULL;
+  g_hash_table_destroy (files);
   g_hash_table_remove_all (folder->changed_files_map);
 
 
@@ -710,7 +706,7 @@ _thunar_folder_load_content_types_finished (ThunarFolder *folder, ThunarJob* job
  **/
 void
 thunar_folder_load_content_types (ThunarFolder *folder,
-                                  GList        *files)
+                                  GHashTable   *files)
 {
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
 
@@ -1184,17 +1180,16 @@ thunar_folder_get_corresponding_file (const ThunarFolder *folder)
  * thunar_folder_get_files:
  * @folder : a #ThunarFolder instance.
  *
- * Returns the list of files currently known for @folder.
- * The content of the list is owned by the hash table and should not be modified or freed. Use g_list_free() when done using the list.
- * The caller of the function takes ownership of the data container, but not the data inside it.
+ * Returns the hashtable of files currently known for @folder.
+ * The data is owned by the #ThunarFile instance and should not be modified or freed.
  *
- * Returns: (transfer container): A GList containing all the #ThunarFiles inside the hash table. Use g_list_free() when done using the list.
+ * Returns: (transfer none): A GHashTable containing all the #ThunarFiles inside the folder.
  **/
-GList *
+GHashTable *
 thunar_folder_get_files (const ThunarFolder *folder)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), NULL);
-  return g_hash_table_get_keys (folder->files_map);
+  return  folder->files_map;
 }
 
 

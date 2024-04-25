@@ -91,7 +91,7 @@ gchar     **thunar_util_split_search_query       (const gchar          *search_q
 gboolean    thunar_util_search_terms_match       (gchar               **terms,
                                                   gchar                *str);
 gboolean    thunar_util_save_geometry_timer      (gpointer user_data);
-gchar*      thunar_util_get_statusbar_text_for_files (GList           *files,
+gchar*      thunar_util_get_statusbar_text_for_files (GHashTable      *files,
                                                       gboolean         show_file_size_binary_format,
                                                       ThunarDateStyle  date_style,
                                                       const gchar     *date_custom_style,

@@ -1850,21 +1850,26 @@ _thunar_job_load_content_types (ThunarJob *job,
                                 GArray    *param_values,
                                 GError   **error)
 {
-  GList *thunar_files;
+  GHashTable    *thunar_files;
+  ThunarFile    *file;
+  gpointer       key;
+  GHashTableIter iter;
 
   if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return FALSE;
 
   thunar_files = g_value_get_boxed (&g_array_index (param_values, GValue, 0));
 
-  for (GList *lp = thunar_files; lp != NULL; lp = lp->next)
+  g_hash_table_iter_init (&iter, thunar_files);
+  while (g_hash_table_iter_next (&iter, &key, NULL))
     {
       gchar *content_type;
       GFile       *g_file;
 
-      g_file = thunar_file_get_file (THUNAR_FILE (lp->data));
+      file = THUNAR_FILE (key);
+      g_file = thunar_file_get_file (file);
       content_type = thunar_g_file_get_content_type (g_file);
-      thunar_file_set_content_type (THUNAR_FILE (lp->data), content_type);
+      thunar_file_set_content_type (file, content_type);
       g_free (content_type);
     }
 
@@ -1884,13 +1889,10 @@ _thunar_job_load_content_types (ThunarJob *job,
  * Returns: (transfer none): the #ThunarJob which manages the separate thread
  **/
 ThunarJob *
-thunar_io_jobs_load_content_types (GList *files)
+thunar_io_jobs_load_content_types (GHashTable *files)
 {
-  GList     *copy = thunar_g_list_copy_deep (files);
   ThunarJob *job = thunar_simple_job_new (_thunar_job_load_content_types, 1,
-                                          THUNAR_TYPE_G_FILE_LIST, files);
-
-  g_signal_connect_swapped (job, "finished", G_CALLBACK (thunar_g_list_free_full), copy);
+                                          THUNAR_TYPE_G_FILE_HASH_TABLE, files);
   return job;
 }
 
@@ -1903,7 +1905,7 @@ _thunar_job_load_statusbar_text (ThunarJob *job,
 {
   ThunarStandardView *standard_view;
   ThunarFile         *thunar_folder;
-  GList              *thunar_files;
+  GHashTable         *thunar_files;
   gboolean            show_file_size_binary_format;
   ThunarDateStyle     date_style;
   const gchar        *date_custom_style;
@@ -1972,8 +1974,7 @@ thunar_io_jobs_load_statusbar_text_for_folder (ThunarStandardView *standard_view
   ThunarDateStyle    date_style;
   const gchar       *date_custom_style;
   guint              status_bar_active_info;
-  GList             *files;
-  GList             *copy;
+  GHashTable        *files;
   ThunarFile        *file;
 
   preferences = thunar_preferences_get ();
@@ -1988,19 +1989,15 @@ thunar_io_jobs_load_statusbar_text_for_folder (ThunarStandardView *standard_view
   if (file == NULL)
     return NULL;
 
-  /* This will increase the ref count on each ThunarFile */
-  copy = thunar_g_list_copy_deep (files);
-
   ThunarJob *job = thunar_simple_job_new (_thunar_job_load_statusbar_text, 7,
                                           THUNAR_TYPE_STANDARD_VIEW, g_object_ref (standard_view),
                                           THUNAR_TYPE_FILE, g_object_ref (file),
-                                          THUNAR_TYPE_G_FILE_LIST, files,
+                                          THUNAR_TYPE_G_FILE_HASH_TABLE, files,
                                           G_TYPE_BOOLEAN, show_file_size_binary_format,
                                           THUNAR_TYPE_DATE_STYLE, date_style,
                                           G_TYPE_STRING, date_custom_style,
                                           G_TYPE_UINT, status_bar_active_info);
 
-  g_signal_connect_swapped (job, "finished", G_CALLBACK (thunar_g_list_free_full), copy);
   g_signal_connect_swapped (job, "finished", G_CALLBACK (g_object_unref), file);
   g_signal_connect_swapped (job, "finished", G_CALLBACK (g_object_unref), standard_view);
   return job;
@@ -2009,14 +2006,13 @@ thunar_io_jobs_load_statusbar_text_for_folder (ThunarStandardView *standard_view
 
 
 ThunarJob *
-thunar_io_jobs_load_statusbar_text_for_selection (ThunarStandardView *standard_view, GList *selected_files)
+thunar_io_jobs_load_statusbar_text_for_selection (ThunarStandardView *standard_view, GHashTable *selected_files)
 {
   ThunarPreferences *preferences;
   gboolean           show_file_size_binary_format;
   ThunarDateStyle    date_style;
   const gchar       *date_custom_style;
   guint              status_bar_active_info;
-  GList             *copy;
 
   preferences = thunar_preferences_get ();
   g_object_get (G_OBJECT (preferences),"misc-date-style", &date_style, 
@@ -2024,19 +2020,16 @@ thunar_io_jobs_load_statusbar_text_for_selection (ThunarStandardView *standard_v
                                        "misc-file-size-binary", &show_file_size_binary_format,
                                        "misc-status-bar-active-info", &status_bar_active_info, NULL);
 
-  /* This will increase the ref count on each ThunarFile */
-  copy = thunar_g_list_copy_deep (selected_files);
 
   ThunarJob *job = thunar_simple_job_new (_thunar_job_load_statusbar_text, 7,
                                           THUNAR_TYPE_STANDARD_VIEW, g_object_ref (standard_view),
                                           THUNAR_TYPE_FILE, NULL,
-                                          THUNAR_TYPE_G_FILE_LIST, selected_files,
+                                          THUNAR_TYPE_G_FILE_HASH_TABLE, selected_files,
                                           G_TYPE_BOOLEAN, show_file_size_binary_format,
                                           THUNAR_TYPE_DATE_STYLE, date_style,
                                           G_TYPE_STRING, date_custom_style,
                                           G_TYPE_UINT, status_bar_active_info);
 
-  g_signal_connect_swapped (job, "finished", G_CALLBACK (thunar_g_list_free_full), copy);
   g_signal_connect_swapped (job, "finished", G_CALLBACK (g_object_unref), standard_view);
   return job;
 }
