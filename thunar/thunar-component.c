@@ -127,24 +127,3 @@ thunar_component_set_selected_files (ThunarComponent *component,
   if (THUNAR_COMPONENT_GET_IFACE (component)->set_selected_files != NULL)
     (*THUNAR_COMPONENT_GET_IFACE (component)->set_selected_files) (component, selected_files);
 }
-
-
-
-/**
- * thunar_component_restore_selection:
- * @component      : a #ThunarComponent instance.
- *
- * Make sure that the @selected_files stay selected when a @component
- * updates. This may be necessary on row changes etc.
- **/
-void
-thunar_component_restore_selection (ThunarComponent *component)
-{
-  GList           *selected_files;
-
-  _thunar_return_if_fail (THUNAR_IS_COMPONENT (component));
-
-  selected_files = thunar_g_list_copy_deep (thunar_component_get_selected_files (component));
-  thunar_component_set_selected_files (component, selected_files);
-  thunar_g_list_free_full (selected_files);
-}
