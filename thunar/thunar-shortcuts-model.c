@@ -1631,6 +1631,11 @@ thunar_shortcuts_model_device_changed (ThunarDeviceMonitor  *device_monitor,
           if (mount_point != NULL)
             {
               shortcut->file = thunar_file_get (mount_point, NULL);
+
+              /* enable monitoring for the file */
+              if (shortcut->file != NULL)
+                thunar_file_watch (shortcut->file);
+
               g_object_unref (mount_point);
             }
         }
