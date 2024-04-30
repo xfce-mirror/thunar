@@ -1232,7 +1232,8 @@ thunar_window_select_files (ThunarWindow *window,
 
   for (GList *lp = files_to_select; lp != NULL; lp = lp->next)
     thunar_files = g_list_append (thunar_files, thunar_file_get (G_FILE (lp->data), NULL));
-  thunar_view_set_selected_files (THUNAR_VIEW (window->view), thunar_files);
+  if (thunar_files != NULL)
+    thunar_view_set_selected_files (THUNAR_VIEW (window->view), thunar_files);
   g_list_free_full (thunar_files, g_object_unref);
 }
 
@@ -2237,9 +2238,6 @@ thunar_window_switch_current_view (ThunarWindow *window,
       window->signal_handler_id_history_changed = g_signal_connect_swapped (G_OBJECT (history), "history-changed", G_CALLBACK (thunar_window_history_changed), window);
       thunar_window_history_changed (window);
     }
-
-  /* update the selection */
-  thunar_standard_view_selection_changed (THUNAR_STANDARD_VIEW (window->view));
 
   /* Set trash infobar's `empty trash` button sensitivity, if required */
   if (thunar_file_is_trash (window->current_directory))
@@ -4075,7 +4073,6 @@ thunar_window_replace_view (ThunarWindow *window,
   ThunarFile     *file = NULL;
   ThunarFile     *current_directory = NULL;
   GtkWidget      *new_view;
-  GList          *selected_thunar_files = NULL;
   gint            page_num;
 
   _thunar_return_if_fail (view_type != G_TYPE_NONE);
@@ -4095,9 +4092,6 @@ thunar_window_replace_view (ThunarWindow *window,
       current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (view_to_replace));
       if (current_directory != NULL)
         g_object_ref (current_directory);
-
-      /* remember the file selection from the old view */
-      selected_thunar_files = thunar_g_list_copy_deep (thunar_component_get_selected_files (THUNAR_COMPONENT (view_to_replace)));
 
       /* cancel any ongoing search in the old view */
       if (thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (view_to_replace)) != NULL)
@@ -4120,6 +4114,10 @@ thunar_window_replace_view (ThunarWindow *window,
   new_view = thunar_window_create_view (window, current_directory, view_type);
   thunar_window_notebook_insert_page (window, page_num + 1, new_view);
 
+  /* use same selection than in the previous view */
+  if (view_to_replace != NULL && new_view != NULL)
+    thunar_standard_view_transfer_selection ( THUNAR_STANDARD_VIEW (new_view), THUNAR_STANDARD_VIEW (view_to_replace));
+
   /* is the view we are replacing the active view?
    * (note that this will be true if both view_to_replace and window->view are NULL) */
   if (view_to_replace == window->view)
@@ -4132,10 +4130,6 @@ thunar_window_replace_view (ThunarWindow *window,
    /* Remove the old page */
    if (view_to_replace != NULL)
      gtk_notebook_remove_page (GTK_NOTEBOOK (window->notebook_selected), page_num);   /* unref the old view */
-
-  /* restore the file selection */
-  thunar_component_set_selected_files (THUNAR_COMPONENT (new_view), selected_thunar_files);
-  thunar_g_list_free_full (selected_thunar_files);
 
   /* release the file references */
   if (G_UNLIKELY (file != NULL))
