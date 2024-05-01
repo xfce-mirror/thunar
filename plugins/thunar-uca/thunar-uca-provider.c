@@ -178,7 +178,7 @@ thunar_uca_provider_get_menu_items (ThunarxPreferencesProvider *preferences_prov
   ThunarxMenuItem *item;
   GClosure        *closure;
 
-  item = thunarx_menu_item_new ("ThunarUca::manage-actions", _("Configure c_ustom actions..."),
+  item = thunarx_menu_item_new ("ThunarUca::manage-actions", _("Confi_gure custom actions..."),
                                 _("Setup custom actions that will appear in the file managers context menus"), NULL);
   closure = g_cclosure_new_object_swap (G_CALLBACK (manage_menu_items), G_OBJECT (window));
   g_signal_connect_closure (G_OBJECT (item), "activate", closure, TRUE);
