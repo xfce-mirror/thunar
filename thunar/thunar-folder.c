@@ -155,6 +155,9 @@ struct _ThunarFolder
 
   /* timeout source ID, used for collecting files for which to update the thumbnail before sending the 'thumbnail-updated' signal */
   guint              thumbnail_updated_timeout_source_id;
+
+  /* True if all files of the directory are available as ThunarFiles */
+  gboolean           loaded;
 };
 
 
@@ -339,6 +342,7 @@ thunar_folder_init (ThunarFolder *folder)
   folder->removed_files_map = g_hash_table_new_full (g_direct_hash, NULL, g_object_unref, NULL);
   folder->changed_files_map = g_hash_table_new_full (g_direct_hash, NULL, g_object_unref, NULL);
 
+  folder->loaded = FALSE;
   folder->reload_info = FALSE;
   folder->files_update_timeout_source_id = 0;
   folder->thumbnail_updated_files = NULL;
@@ -585,6 +589,12 @@ _thunar_folder_files_update_timeout (gpointer data)
   g_hash_table_destroy (files);
   g_hash_table_remove_all (folder->changed_files_map);
 
+  /* Loading is done for this folder */
+  if (folder->loaded == FALSE && folder->job == NULL)
+    {
+      folder->loaded = TRUE;
+      g_object_notify (G_OBJECT (folder), "loading");
+    }
 
   folder->files_update_timeout_source_id = 0;
 
@@ -729,6 +739,7 @@ thunar_folder_finished (ExoJob       *job,
 {
   GHashTableIter iter;
   gpointer       key;
+  gboolean       file_list_changed = FALSE;
 
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
@@ -742,6 +753,7 @@ thunar_folder_finished (ExoJob       *job,
         continue;
 
       thunar_folder_add_file (folder, key);
+      file_list_changed = TRUE;
     }
 
   /* this is to handle removed files after a folder reload */
@@ -754,6 +766,7 @@ thunar_folder_finished (ExoJob       *job,
 
       /* will mark them to be removed on next timeout */
       thunar_folder_remove_file (folder, THUNAR_FILE (key));
+      file_list_changed = TRUE;
     }
 
   /* drop all mappings for new_files list too */
@@ -781,7 +794,6 @@ thunar_folder_finished (ExoJob       *job,
       g_signal_handlers_unblock_by_func (G_OBJECT (folder->corresponding_file), G_CALLBACK (thunar_folder_changed), folder);
     }
 
-  /* we did it, the folder is loaded */
   if (G_LIKELY (folder->job != NULL))
     {
       g_signal_handlers_disconnect_by_data (folder->job, folder);
@@ -789,8 +801,12 @@ thunar_folder_finished (ExoJob       *job,
       folder->job = NULL;
     }
 
-  /* tell the consumers that we have loaded the directory */
-  g_object_notify (G_OBJECT (folder), "loading");
+  /* notify finished loading already here, if the filelist is already correct */
+  if (file_list_changed == FALSE)
+    {
+      folder->loaded = TRUE;
+      g_object_notify (G_OBJECT (folder), "loading");
+    }
 }
 
 
@@ -1207,7 +1223,7 @@ gboolean
 thunar_folder_get_loading (const ThunarFolder *folder)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), FALSE);
-  return (folder->job != NULL);
+  return (!folder->loaded);
 }
 
 
@@ -1263,14 +1279,14 @@ thunar_folder_reload (ThunarFolder *folder,
   g_hash_table_remove_all (folder->loaded_files_map);
 
   /* start a new job */
+  folder->loaded = FALSE;
+  g_object_notify (G_OBJECT (folder), "loading");
+
   folder->job = thunar_io_jobs_list_directory (thunar_file_get_file (folder->corresponding_file));
-  exo_job_launch (EXO_JOB (folder->job));
   g_signal_connect (folder->job, "error", G_CALLBACK (thunar_folder_error), folder);
   g_signal_connect (folder->job, "finished", G_CALLBACK (thunar_folder_finished), folder);
   g_signal_connect (folder->job, "files-ready", G_CALLBACK (thunar_folder_files_ready), folder);
-
-  /* tell all consumers that we're loading */
-  g_object_notify (G_OBJECT (folder), "loading");
+  exo_job_launch (EXO_JOB (folder->job));
 }
 
 

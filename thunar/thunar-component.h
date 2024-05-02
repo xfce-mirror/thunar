@@ -48,8 +48,6 @@ GList        *thunar_component_get_selected_files  (ThunarComponent *component);
 void          thunar_component_set_selected_files  (ThunarComponent *component,
                                                     GList           *selected_files);
 
-void          thunar_component_restore_selection   (ThunarComponent *component);
-
 G_END_DECLS;
 
 #endif /* !__THUNAR_COMPONENT_H__ */
