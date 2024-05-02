@@ -1237,8 +1237,10 @@ thunar_util_get_statusbar_text_for_files (GHashTable      *files,
   while (g_hash_table_iter_next (&iter, &key, NULL))
     {
       GFileInfo *file_info = g_file_query_info (thunar_file_get_file (THUNAR_FILE (key)),
-                                                G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SIZE, 
-                                                G_FILE_QUERY_INFO_NONE, 
+                                                G_FILE_ATTRIBUTE_STANDARD_TYPE ","
+                                                G_FILE_ATTRIBUTE_STANDARD_SIZE ","
+                                                G_FILE_ATTRIBUTE_TIME_MODIFIED,
+                                                G_FILE_QUERY_INFO_NONE,
                                                 NULL, 
                                                 NULL);
       if (file_info == NULL)
