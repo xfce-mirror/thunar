@@ -283,7 +283,8 @@ static void                 thunar_standard_view_cell_layout_data_func          
                                                                                     GtkTreeModel             *model,
                                                                                     GtkTreeIter              *iter,
                                                                                     gpointer                  data);
-static void                 thunar_standard_view_set_model                  (ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_set_model                         (ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_update_selected_files             (ThunarStandardView       *standard_view);
 
 struct _ThunarStandardViewPrivate
 {
@@ -345,6 +346,9 @@ struct _ThunarStandardViewPrivate
   /* #GList of currently selected #ThunarFile<!---->s */
   GList                  *selected_files;
   guint                   restore_selection_idle_id;
+
+  /* #GList of #ThunarFile<!---->s which are to select when loading the folder finished */
+  GList                  *files_to_select;
 
   /* row insert and delete signal IDs, for blocking/unblocking */
   gulong                  row_deleted_id;
@@ -849,6 +853,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* The model will be set by the derived views.
    * i.e Abstract icon view or Details view */
   standard_view->model = NULL;
+  standard_view->priv->files_to_select = NULL;
 
   /* setup the icon renderer */
   standard_view->icon_renderer = thunar_icon_renderer_new ();
@@ -1037,8 +1042,9 @@ thunar_standard_view_finalize (GObject *object)
   if (G_UNLIKELY (standard_view->priv->css_provider != NULL))
     g_object_unref (G_OBJECT (standard_view->priv->css_provider));
 
-  /* release the selected_files list (if any) */
+  /* release the selected_files list and the files to select (if any) */
   thunar_g_list_free_full (standard_view->priv->selected_files);
+  thunar_g_list_free_full (standard_view->priv->files_to_select);
 
   /* release the drag path list (just in case the drag-end wasn't fired before) */
   thunar_g_list_free_full (standard_view->priv->drag_g_file_list);
@@ -1376,80 +1382,85 @@ thunar_standard_view_get_selected_files_view (ThunarView *view)
 }
 
 
+void
+thunar_standard_view_update_selected_files (ThunarStandardView *standard_view)
+{
+  GtkTreePath        *first_path = NULL;
+  GList              *paths;
+  GList              *lp;
+
+  /* verify that we have a valid model */
+  if (G_UNLIKELY (standard_view->model == NULL))
+    return;
+
+  /* unselect all previously selected files */
+  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unselect_all) (standard_view);
+
+  /* determine the tree paths for the given files */
+  paths = thunar_standard_view_model_get_paths_for_files (standard_view->model, standard_view->priv->files_to_select);
+  if (G_LIKELY (paths != NULL))
+    {
+      /* determine the first path */
+      for (first_path = paths->data, lp = paths; lp != NULL; lp = lp->next)
+        {
+          /* check if this path is located before the current first_path */
+          if (gtk_tree_path_compare (lp->data, first_path) < 0)
+            first_path = lp->data;
+        }
+
+      /* place the cursor on the first selected path (must be first for GtkTreeView) */
+      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->set_cursor) (standard_view, first_path, FALSE);
+
+      /* if we don't block the selection changed then for each new selection,
+        * selection_changed handler will be called. selection_changed handler
+        * runs in O(n) time where it iterates over all the n selected paths.
+        * Since we select each file one by one, we will have a worst case
+        * time complexity ~ O(n^2); but instead if we call the handler after
+        * all the necessary files have been selected then time comp = O(n) */
+      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->block_selection) (standard_view);
+
+      /* select the given tree paths paths */
+      for (first_path = paths->data, lp = paths; lp != NULL; lp = lp->next)
+        {
+          /* select the path */
+          (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->select_path) (standard_view, lp->data);
+        }
+
+      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unblock_selection) (standard_view);
+
+      /* call the selection_changed call since we had previously blocked selection */
+      thunar_standard_view_selection_changed (standard_view);
+
+      /* scroll to the first path (previously determined) */
+      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->scroll_to_path) (standard_view, first_path, FALSE, 0.0f, 0.0f);
+
+      /* release the tree paths */
+      g_list_free_full (paths, (GDestroyNotify) gtk_tree_path_free);
+    }
+
+  thunar_g_list_free_full (standard_view->priv->files_to_select);
+  standard_view->priv->files_to_select = NULL;
+}
+
+
 
 static void
 thunar_standard_view_set_selected_files_component (ThunarComponent *component,
                                                    GList           *selected_files)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (component);
-  GtkTreePath        *first_path = NULL;
-  GList              *paths;
-  GList              *lp;
+  
+  /* unselect only done via unselect all */
+  if (selected_files == NULL)
+    return;
+  
+  /* update the files which are to select */
+  thunar_g_list_free_full (standard_view->priv->files_to_select);
+  standard_view->priv->files_to_select = thunar_g_list_copy_deep (selected_files);
 
-  /* release the previous selected files list (if any) */
-  if (G_UNLIKELY (standard_view->priv->selected_files != NULL))
-    {
-      thunar_g_list_free_full (standard_view->priv->selected_files);
-      standard_view->priv->selected_files = NULL;
-    }
-
-  /* check if we're still loading */
-  if (thunar_view_get_loading (THUNAR_VIEW (standard_view)))
-    {
-      /* remember a copy of the list for later */
-      standard_view->priv->selected_files = thunar_g_list_copy_deep (selected_files);
-    }
-  else
-    {
-      /* verify that we have a valid model */
-      if (G_UNLIKELY (standard_view->model == NULL))
-        return;
-
-      /* unselect all previously selected files */
-      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unselect_all) (standard_view);
-
-      /* determine the tree paths for the given files */
-      paths = thunar_standard_view_model_get_paths_for_files (standard_view->model, selected_files);
-      if (G_LIKELY (paths != NULL))
-        {
-          /* determine the first path */
-          for (first_path = paths->data, lp = paths; lp != NULL; lp = lp->next)
-            {
-              /* check if this path is located before the current first_path */
-              if (gtk_tree_path_compare (lp->data, first_path) < 0)
-                first_path = lp->data;
-            }
-
-          /* place the cursor on the first selected path (must be first for GtkTreeView) */
-          (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->set_cursor) (standard_view, first_path, FALSE);
-
-          /* if we don't block the selection changed then for each new selection,
-           * selection_changed handler will be called. selection_changed handler
-           * runs in O(n) time where it iterates over all the n selected paths.
-           * Since we select each file one by one, we will have a worst case
-           * time complexity ~ O(n^2); but instead if we call the handler after
-           * all the necessary files have been selected then time comp = O(n) */
-          (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->block_selection) (standard_view);
-
-          /* select the given tree paths paths */
-          for (first_path = paths->data, lp = paths; lp != NULL; lp = lp->next)
-            {
-              /* select the path */
-              (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->select_path) (standard_view, lp->data);
-            }
-
-          (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unblock_selection) (standard_view);
-
-          /* call the selection_changed call since we had previously blocked selection */
-          thunar_standard_view_selection_changed (standard_view);
-
-          /* scroll to the first path (previously determined) */
-          (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->scroll_to_path) (standard_view, first_path, FALSE, 0.0f, 0.0f);
-
-          /* release the tree paths */
-          g_list_free_full (paths, (GDestroyNotify) gtk_tree_path_free);
-        }
-    }
+  /* The selection will either be updated directly, or after loading the folder got finished */
+  if (!thunar_view_get_loading (THUNAR_VIEW (standard_view)))
+    thunar_standard_view_update_selected_files (standard_view);
 }
 
 
@@ -1679,7 +1690,6 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
 {
   ThunarFile *file;
   GList      *new_files_path_list;
-  GList      *selected_files;
   GFile      *first_file;
   ThunarFile *current_directory;
 
@@ -1706,19 +1716,9 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
       thunar_g_list_free_full (new_files_path_list);
     }
 
-  /* check if we're done loading */
-  if (!loading)
-    {
-      /* remember and reset the file list */
-      selected_files = standard_view->priv->selected_files;
-      standard_view->priv->selected_files = NULL;
-
-      /* and try setting the selected files again */
-      thunar_component_set_selected_files (THUNAR_COMPONENT (standard_view), selected_files);
-
-      /* cleanup */
-      thunar_g_list_free_full (selected_files);
-    }
+  /* when  loading is finished, update the selection if required */
+  if (!loading && standard_view->priv->files_to_select != NULL)
+    thunar_standard_view_update_selected_files (standard_view);
 
   /* check if we're done loading and have a scheduled scroll_to_file
    * scrolling after loading circumvents the scroll caused by gtk_tree_view_set_cell */
@@ -1975,8 +1975,8 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
   standard_view->priv->sort_column = sort_column;
   standard_view->priv->sort_order = sort_order;
 
-  /* keep the currently selected files selected after the change */
-  thunar_component_restore_selection (THUNAR_COMPONENT (standard_view));
+  /* request a selection update */
+  thunar_standard_view_selection_changed (standard_view);
 
   /* reconnect the signal */
   g_signal_connect (G_OBJECT (standard_view->model),
@@ -3617,8 +3617,8 @@ thunar_standard_view_restore_selection_idle (gpointer user_data)
   g_object_set (G_OBJECT (hadjustment), "lower", h, "upper", h, NULL);
   g_object_set (G_OBJECT (vadjustment), "lower", v, "upper", v, NULL);
 
-  /* restore the selection */
-  thunar_component_restore_selection (THUNAR_COMPONENT (standard_view));
+  /* request a selection update */
+  thunar_standard_view_selection_changed (standard_view);
   standard_view->priv->restore_selection_idle_id = 0;
 
   /* unfreeze the scroll position */
@@ -3730,9 +3730,6 @@ thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
   _thunar_return_if_fail (GTK_IS_TREE_SORTABLE (tree_sortable));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-  /* keep the currently selected files selected after the change */
-  thunar_component_restore_selection (THUNAR_COMPONENT (standard_view));
-
   /* determine the new sort column and sort order, and save them */
   if (gtk_tree_sortable_get_sort_column_id (tree_sortable, &sort_column, &sort_order))
     {
@@ -3766,6 +3763,9 @@ thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
                         NULL);
         }
     }
+
+  /* request a selection update */
+  thunar_standard_view_selection_changed (standard_view);
 }
 
 
@@ -4633,4 +4633,26 @@ thunar_standard_view_set_model (ThunarStandardView *standard_view)
   g_object_bind_property (standard_view->model, "loading",
                           standard_view,        "loading",
                           G_BINDING_SYNC_CREATE);
+}
+
+
+
+void
+thunar_standard_view_transfer_selection (ThunarStandardView *standard_view,
+                                         ThunarStandardView *old_view)
+{
+  GList* files;
+
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (old_view));
+
+  if (standard_view->priv->files_to_select != NULL)
+    g_list_free_full (standard_view->priv->files_to_select, g_object_unref);
+
+  if (old_view->priv->files_to_select != NULL)
+    standard_view->priv->files_to_select = thunar_g_list_copy_deep (old_view->priv->files_to_select);
+
+  files = thunar_component_get_selected_files (THUNAR_COMPONENT (old_view));
+  if (files != NULL)
+    thunar_component_set_selected_files (THUNAR_COMPONENT (standard_view), files);
 }
