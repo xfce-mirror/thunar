@@ -212,6 +212,8 @@ XfceGtkActionEntry *thunar_standard_view_get_action_entries (void);
 void                thunar_standard_view_queue_redraw          (ThunarStandardView       *standard_view);
 void                thunar_standard_view_set_statusbar_text    (ThunarStandardView       *standard_view,
                                                                 const gchar*              text);
+void                thunar_standard_view_transfer_selection    (ThunarStandardView       *standard_view,
+                                                                ThunarStandardView       *old_view);
 
 
 G_END_DECLS;
