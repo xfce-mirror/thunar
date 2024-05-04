@@ -4649,7 +4649,9 @@ thunar_standard_view_transfer_selection (ThunarStandardView *standard_view,
   if (standard_view->priv->files_to_select != NULL)
     g_list_free_full (standard_view->priv->files_to_select, g_object_unref);
 
-  standard_view->priv->files_to_select =  old_view->priv->files_to_select;
+  if (old_view->priv->files_to_select != NULL)
+    standard_view->priv->files_to_select = thunar_g_list_copy_deep (old_view->priv->files_to_select);
+
   files = thunar_component_get_selected_files (THUNAR_COMPONENT (old_view));
   if (files != NULL)
     thunar_component_set_selected_files (THUNAR_COMPONENT (standard_view), files);
