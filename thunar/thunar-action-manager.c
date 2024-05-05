@@ -271,7 +271,7 @@ static XfceGtkActionEntry thunar_action_manager_action_entries[] =
     { THUNAR_ACTION_MANAGER_ACTION_EDIT_LAUNCHER,    NULL,                                                    "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Edit _Launcher"),                  N_ ("Edit the selected launcher"),                                                               "gtk-edit",             G_CALLBACK (thunar_action_manager_action_edit_launcher),       },
     { THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB,      "<Actions>/ThunarActionManager/open-in-new-tab",         "<Primary><shift>P", XFCE_GTK_MENU_ITEM,       N_ ("Open in new _Tab"),                NULL,                                                                                            NULL,                   G_CALLBACK (thunar_action_manager_action_open_in_new_tabs),    },
     { THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW,   "<Actions>/ThunarActionManager/open-in-new-window",      "<Primary><shift>O", XFCE_GTK_MENU_ITEM,       N_ ("Open in new _Window"),             NULL,                                                                                            NULL,                   G_CALLBACK (thunar_action_manager_action_open_in_new_windows), },
-    { THUNAR_ACTION_MANAGER_ACTION_OPEN_LOCATION,    "<Actions>/ThunarActionManager/open-location",           "",                  XFCE_GTK_MENU_ITEM,       N_ ("Open Item _Location"),             NULL,                                                                                            NULL,                   G_CALLBACK (thunar_action_manager_action_open_location),       },
+    { THUNAR_ACTION_MANAGER_ACTION_OPEN_LOCATION,    "<Actions>/ThunarActionManager/open-location",           "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Open Item _Location"),             N_ ("Navigate to the folder in which the selected file is located"),                             "go-jump",              G_CALLBACK (thunar_action_manager_action_open_location),       },
     { THUNAR_ACTION_MANAGER_ACTION_OPEN_WITH_OTHER,  "<Actions>/ThunarActionManager/open-with-other",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Ope_n With Other Application..."), N_ ("Choose another application with which to open the selected file"),                          NULL,                   G_CALLBACK (thunar_action_manager_action_open_with_other),     },
     { THUNAR_ACTION_MANAGER_ACTION_SET_DEFAULT_APP,  "<Actions>/ThunarStandardView/set-default-app",          "",                  XFCE_GTK_MENU_ITEM,       N_ ("Set Defa_ult Application..."),     N_ ("Choose an application which should be used by default to open the selected file"),          NULL,                   G_CALLBACK (thunar_action_manager_action_set_default_app),     },
 
@@ -3331,14 +3331,6 @@ thunar_action_manager_append_open_section (ThunarActionManager *action_mgr,
       thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW, FALSE);
     }
 
-  /* active while searching and while inside the 'recent:///' folder */
-  if (action_mgr->n_files_to_process > 0 && (action_mgr->is_searching || thunar_file_is_recent (action_mgr->current_directory)))
-  {
-    /* Dont show 'open location' on the recent folder shurtcut itself */
-    if (!thunar_file_is_recent (action_mgr->files_to_process->data))
-      thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_LOCATION, FALSE);
-  }
-
   if (G_LIKELY (applications != NULL))
     {
       xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
@@ -3356,6 +3348,17 @@ thunar_action_manager_append_open_section (ThunarActionManager *action_mgr,
         xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
         thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_SET_DEFAULT_APP, FALSE);
       }
+    }
+
+  /* active while searching and while inside the 'recent:///' folder */
+  if (action_mgr->n_files_to_process > 0 && (action_mgr->is_searching || thunar_file_is_recent (action_mgr->current_directory)))
+    {
+      /* Dont show 'open location' on the recent folder shortcut itself */
+      if (!thunar_file_is_recent (action_mgr->files_to_process->data))
+        {
+          xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
+          thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_LOCATION, FALSE);
+        }
     }
 
   g_list_free_full (applications, g_object_unref);
