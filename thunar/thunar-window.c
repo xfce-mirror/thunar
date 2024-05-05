@@ -1337,7 +1337,8 @@ thunar_window_update_edit_menu (ThunarWindow *window,
   thunar_menu_add_sections (THUNAR_MENU (menu), THUNAR_MENU_SECTION_DUPLICATE
                                               | THUNAR_MENU_SECTION_MAKELINK
                                               | THUNAR_MENU_SECTION_RENAME
-                                              | THUNAR_MENU_SECTION_RESTORE);
+                                              | THUNAR_MENU_SECTION_RESTORE
+                                              | THUNAR_MENU_SECTION_REMOVE_FROM_RECENT);
 
   /* determine the available preferences providers */
   if (G_LIKELY (window->thunarx_preferences_providers != NULL))
