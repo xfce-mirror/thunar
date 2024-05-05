@@ -1453,7 +1453,14 @@ thunar_standard_view_set_selected_files_component (ThunarComponent *component,
   /* unselect only done via unselect all */
   if (selected_files == NULL)
     return;
-  
+
+  /* clear the current selection */
+  if (standard_view->priv->selected_files != NULL)
+    {
+      thunar_g_list_free_full (standard_view->priv->selected_files);
+      standard_view->priv->selected_files = NULL;
+    }
+
   /* update the files which are to select */
   thunar_g_list_free_full (standard_view->priv->files_to_select);
   standard_view->priv->files_to_select = thunar_g_list_copy_deep (selected_files);
