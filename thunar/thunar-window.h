@@ -130,6 +130,7 @@ void                      thunar_window_notebook_remove_tab                 (Thu
                                                                              gint                 tab);
 void                      thunar_window_notebook_set_current_tab            (ThunarWindow        *window,
                                                                              gint                 tab);
+void                      thunar_window_paned_notebooks_switch              (ThunarWindow        *window);
 gboolean                  thunar_window_has_shortcut_sidepane               (ThunarWindow        *window);
 gboolean                  thunar_window_has_tree_view_sidepane              (ThunarWindow        *window);
 GtkWidget*                thunar_window_get_sidepane                        (ThunarWindow        *window);

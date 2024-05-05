@@ -173,7 +173,6 @@ static void      thunar_window_notebook_insert_page       (ThunarWindow         
 static void      thunar_window_notebook_select_current_page(ThunarWindow           *window);
 
 static GtkWidget*thunar_window_paned_notebooks_add        (ThunarWindow           *window);
-static void      thunar_window_paned_notebooks_switch     (ThunarWindow           *window);
 static void      thunar_window_paned_notebooks_indicate_focus (ThunarWindow       *window,
                                                            GtkWidget              *notebook);
 static gboolean  thunar_window_split_view_is_active       (ThunarWindow           *window);
@@ -2751,7 +2750,7 @@ thunar_window_paned_notebooks_add (ThunarWindow *window)
 
 
 
-static void
+void
 thunar_window_paned_notebooks_switch (ThunarWindow *window)
 {
   GtkWidget *new_curr_notebook = NULL;

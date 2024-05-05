@@ -560,20 +560,19 @@ thunar_application_command_line (GApplication            *gapp,
       g_object_get (G_OBJECT (application->preferences), "last-tabs-left", &tabs_left, "last-focused-tab-left", &last_focused_tab, NULL);
       if (tabs_left != NULL && g_strv_length (tabs_left) > 0)
         {
-          gint n_tabs = 0;
           for (guint i = 0; i < g_strv_length (tabs_left); i++)
             {
               ThunarFile *directory = thunar_file_get_for_uri (tabs_left[i], NULL);
               if (G_LIKELY (directory != NULL) && thunar_file_is_directory (directory))
                 {
-                  thunar_window_notebook_add_new_tab (window, directory, THUNAR_NEW_TAB_BEHAVIOR_STAY);
-                  n_tabs++;
+                  /* replace the first tab if opened by default */
+                  if (filenames == 0 && i == 0)
+                    thunar_window_set_current_directory (window, directory);
+                  else
+                    thunar_window_notebook_add_new_tab (window, directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
                 }
             }
 
-          /* remove the first tab if it was opened by default */
-          if (filenames == NULL && n_tabs > 0)
-            thunar_window_notebook_remove_tab (window, 0);
           thunar_window_notebook_set_current_tab (window, last_focused_tab);
           has_left_tabs = TRUE;
         }
@@ -583,17 +582,22 @@ thunar_application_command_line (GApplication            *gapp,
       g_object_get (G_OBJECT (application->preferences), "last-tabs-right", &tabs_right, "last-focused-tab-right", &last_focused_tab, NULL);
       if (tabs_right != NULL && g_strv_length (tabs_right) > 0)
         {
-          gint n_tabs = 0;
-
           if (has_left_tabs)
-            thunar_window_notebook_toggle_split_view (window); /* enabling the split view selects the new notebook */
+            {
+              thunar_window_notebook_toggle_split_view (window);
+              thunar_window_paned_notebooks_switch (window);
+            }
+
           for (guint i = 0; i < g_strv_length (tabs_right); i++)
             {
               ThunarFile *directory = thunar_file_get_for_uri (tabs_right[i], NULL);
               if (G_LIKELY (directory != NULL) && thunar_file_is_directory (directory))
                 {
-                  thunar_window_notebook_add_new_tab (window, directory, THUNAR_NEW_TAB_BEHAVIOR_STAY);
-                  n_tabs++;
+                  /* replace the first tab (opened by default via "thunar_window_notebook_toggle_split_view") */
+                  if (i == 0)
+                    thunar_window_set_current_directory (window, directory);
+                  else
+                    thunar_window_notebook_add_new_tab (window, directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
                 }
             }
 
