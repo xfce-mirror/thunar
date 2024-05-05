@@ -3314,12 +3314,11 @@ thunar_action_manager_append_open_section (ThunarActionManager *action_mgr,
       /* drop the default application from the list */
       applications = g_list_delete_link (applications, applications);
     }
-  else
+  else if (action_mgr->n_files_to_process > 1)
     {
       /* we can only show a generic "Open" action */
-      label_text   = g_strdup_printf (_("_Open With Default Applications"));
-      tooltip_text = g_strdup_printf (ngettext ("Open the selected file with the default application",
-                                                "Open the selected files with the default applications", action_mgr->n_files_to_process));
+      label_text   = g_strdup (_("_Open With Default Applications"));
+      tooltip_text = g_strdup (_("Open the selected files with the default applications"));
       xfce_gtk_menu_item_new (label_text, tooltip_text, NULL, G_CALLBACK (thunar_action_manager_menu_item_activated), G_OBJECT (action_mgr), menu);
       g_free (tooltip_text);
       g_free (label_text);
