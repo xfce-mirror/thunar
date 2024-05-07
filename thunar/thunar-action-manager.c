@@ -266,10 +266,10 @@ static GParamSpec *action_manager_props[N_PROPERTIES] = { NULL, };
 
 static XfceGtkActionEntry thunar_action_manager_action_entries[] =
 {
-    { THUNAR_ACTION_MANAGER_ACTION_OPEN,             "<Actions>/ThunarActionManager/open",                    "<Primary>O",        XFCE_GTK_IMAGE_MENU_ITEM, NULL,                                   NULL,                                                                                            "document-open",        G_CALLBACK (thunar_action_manager_action_open),                },
-    { THUNAR_ACTION_MANAGER_ACTION_EXECUTE,          "<Actions>/ThunarActionManager/execute",                 "",                  XFCE_GTK_IMAGE_MENU_ITEM, NULL,                                   NULL,                                                                                            "system-run",           G_CALLBACK (thunar_action_manager_action_open),                },
-    { THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB,      "<Actions>/ThunarActionManager/open-in-new-tab",         "<Primary><shift>P", XFCE_GTK_MENU_ITEM,       NULL,                                   NULL,                                                                                            NULL,                   G_CALLBACK (thunar_action_manager_action_open_in_new_tabs),    },
-    { THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW,   "<Actions>/ThunarActionManager/open-in-new-window",      "<Primary><shift>O", XFCE_GTK_MENU_ITEM,       NULL,                                   NULL,                                                                                            NULL,                   G_CALLBACK (thunar_action_manager_action_open_in_new_windows), },
+    { THUNAR_ACTION_MANAGER_ACTION_OPEN,             "<Actions>/ThunarActionManager/open",                    "<Primary>O",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Open"),                           NULL,                                                                                            "document-open",        G_CALLBACK (thunar_action_manager_action_open),                },
+    { THUNAR_ACTION_MANAGER_ACTION_EXECUTE,          "<Actions>/ThunarActionManager/execute",                 "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Execute"),                        NULL,                                                                                            "system-run",           G_CALLBACK (thunar_action_manager_action_open),                },
+    { THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB,      "<Actions>/ThunarActionManager/open-in-new-tab",         "<Primary><shift>P", XFCE_GTK_MENU_ITEM,       N_ ("Open in new _Tab"),                NULL,                                                                                            NULL,                   G_CALLBACK (thunar_action_manager_action_open_in_new_tabs),    },
+    { THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW,   "<Actions>/ThunarActionManager/open-in-new-window",      "<Primary><shift>O", XFCE_GTK_MENU_ITEM,       N_ ("Open in new _Window"),             NULL,                                                                                            NULL,                   G_CALLBACK (thunar_action_manager_action_open_in_new_windows), },
     { THUNAR_ACTION_MANAGER_ACTION_OPEN_LOCATION,    "<Actions>/ThunarActionManager/open-location",           "",                  XFCE_GTK_MENU_ITEM,       N_ ("Open Item _Location"),             NULL,                                                                                            NULL,                   G_CALLBACK (thunar_action_manager_action_open_location),       },
     { THUNAR_ACTION_MANAGER_ACTION_OPEN_WITH_OTHER,  "<Actions>/ThunarActionManager/open-with-other",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Ope_n With Other Application..."), N_ ("Choose another application with which to open the selected file"),                          NULL,                   G_CALLBACK (thunar_action_manager_action_open_with_other),     },
     { THUNAR_ACTION_MANAGER_ACTION_SET_DEFAULT_APP,  "<Actions>/ThunarStandardView/set-default-app",          "",                  XFCE_GTK_MENU_ITEM,       N_ ("Set Defa_ult Application..."),     N_ ("Choose an application which should be used by default to open the selected file"),          NULL,                   G_CALLBACK (thunar_action_manager_action_set_default_app),     },
@@ -280,7 +280,7 @@ static XfceGtkActionEntry thunar_action_manager_action_entries[] =
     {THUNAR_ACTION_MANAGER_ACTION_SENDTO_SHORTCUTS,   "<Actions>/ThunarShortcutsPane/sendto-shortcuts", "<Primary>D",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Add Bookmark"),       N_ ("Create bookmarks for all selected folders. If nothing is selected, the current folder is bookmarked."), "bookmark-new", G_CALLBACK (thunar_action_manager_action_add_shortcuts),       },
     {THUNAR_ACTION_MANAGER_ACTION_SENDTO_DESKTOP,     "<Actions>/ThunarActionManager/sendto-desktop",   "",                  XFCE_GTK_MENU_ITEM,       N_ ("Send to _Desktop"),    NULL,                                                                                            "user-desktop",                                G_CALLBACK (thunar_action_manager_action_sendto_desktop),      },
     {THUNAR_ACTION_MANAGER_ACTION_PROPERTIES,         "<Actions>/ThunarStandardView/properties",        "<Alt>Return",       XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Properties..."),      N_ ("View the properties of the selected file"),                                                 "document-properties",                         G_CALLBACK (thunar_action_manager_action_properties),          },
-    {THUNAR_ACTION_MANAGER_ACTION_MAKE_LINK,          "<Actions>/ThunarStandardView/make-link",         "",                  XFCE_GTK_MENU_ITEM,       NULL,                       NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_make_link),           },
+    {THUNAR_ACTION_MANAGER_ACTION_MAKE_LINK,          "<Actions>/ThunarStandardView/make-link",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Ma_ke Link"),          NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_make_link),           },
     {THUNAR_ACTION_MANAGER_ACTION_DUPLICATE,          "<Actions>/ThunarStandardView/duplicate",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Dup_licate"),          NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_duplicate),           },
     {THUNAR_ACTION_MANAGER_ACTION_RENAME,             "<Actions>/ThunarStandardView/rename",            "F2",                XFCE_GTK_MENU_ITEM,       N_ ("_Rename..."),          NULL,                                             NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_rename),              },
     {THUNAR_ACTION_MANAGER_ACTION_EMPTY_TRASH,        "<Actions>/ThunarWindow/empty-trash",             "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Empty Trash"),        N_ ("Delete all files and folders in the Trash"), NULL,                                                                                         G_CALLBACK (thunar_action_manager_action_empty_trash),         },
@@ -1571,16 +1571,16 @@ thunar_action_manager_append_menu_item (ThunarActionManager       *action_mgr,
   switch (action)
     {
       case THUNAR_ACTION_MANAGER_ACTION_OPEN: /* aka "activate" */
-        return xfce_gtk_image_menu_item_new_from_icon_name (_("_Open"), ngettext ("Open the selected file", "Open the selected files", action_mgr->n_files_to_process),
+        return xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, ngettext ("Open the selected file", "Open the selected files", action_mgr->n_files_to_process),
                                                             action_entry->accel_path, action_entry->callback, G_OBJECT (action_mgr), action_entry->menu_item_icon_name, menu);
 
       case THUNAR_ACTION_MANAGER_ACTION_EXECUTE:
-        return xfce_gtk_image_menu_item_new_from_icon_name (_("_Execute"), ngettext ("Execute the selected file", "Execute the selected files", action_mgr->n_files_to_process),
+        return xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, ngettext ("Execute the selected file", "Execute the selected files", action_mgr->n_files_to_process),
                                                             action_entry->accel_path, action_entry->callback, G_OBJECT (action_mgr), action_entry->menu_item_icon_name, menu);
 
       case THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB:
         n = action_mgr->n_files_to_process > 0 ? action_mgr->n_files_to_process : 1;
-        label_text = g_strdup_printf (ngettext ("Open in New _Tab", "Open in %d New _Tabs", n), n);
+        label_text = g_strdup_printf (ngettext (action_entry->menu_item_label_text, "Open in %d New _Tabs", n), n);
         tooltip_text = g_strdup_printf (ngettext ("Open the selected directory in new tab",
                                                   "Open the selected directories in %d new tabs", n), n);
         item = xfce_gtk_menu_item_new (label_text, tooltip_text, action_entry->accel_path, action_entry->callback, G_OBJECT (action_mgr), menu);
@@ -1590,7 +1590,7 @@ thunar_action_manager_append_menu_item (ThunarActionManager       *action_mgr,
 
       case THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW:
         n = action_mgr->n_files_to_process > 0 ? action_mgr->n_files_to_process : 1;
-        label_text = g_strdup_printf (ngettext ("Open in New _Window", "Open in %d New _Windows", n), n);
+        label_text = g_strdup_printf (ngettext (action_entry->menu_item_label_text, "Open in %d New _Windows", n), n);
         tooltip_text = g_strdup_printf (ngettext ("Open the selected directory in new window",
                                                   "Open the selected directories in %d new windows",n), n);
         item = xfce_gtk_menu_item_new (label_text, tooltip_text, action_entry->accel_path, action_entry->callback, G_OBJECT (action_mgr), menu);
@@ -1635,7 +1635,7 @@ thunar_action_manager_append_menu_item (ThunarActionManager       *action_mgr,
         if (!show_item && !force)
           return NULL;
 
-        label_text = ngettext ("Ma_ke Link", "Ma_ke Links", action_mgr->n_files_to_process);
+        label_text = ngettext (action_entry->menu_item_label_text, "Ma_ke Links", action_mgr->n_files_to_process);
         tooltip_text = ngettext ("Create a symbolic link for the selected file",
                                  "Create a symbolic link for each selected file", action_mgr->n_files_to_process);
         item = xfce_gtk_menu_item_new (label_text, tooltip_text, action_entry->accel_path, action_entry->callback,
