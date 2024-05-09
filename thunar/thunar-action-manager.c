@@ -3270,6 +3270,7 @@ thunar_action_manager_append_open_section (ThunarActionManager *action_mgr,
   GtkWidget *image;
   GtkWidget *menu_item;
   GtkWidget *submenu;
+  const XfceGtkActionEntry *action_entry;
 
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
@@ -3297,13 +3298,15 @@ thunar_action_manager_append_open_section (ThunarActionManager *action_mgr,
     }
   else if (G_LIKELY (applications != NULL))
     {
+      action_entry = get_action_entry (THUNAR_ACTION_MANAGER_ACTION_OPEN);
+
       label_text   = g_strdup_printf (_("_Open With \"%s\""), g_app_info_get_name (applications->data));
       tooltip_text = g_strdup_printf (ngettext ("Use \"%s\" to open the selected file",
                                                 "Use \"%s\" to open the selected files",
                                                 action_mgr->n_files_to_process), g_app_info_get_name (applications->data));
 
       image     = gtk_image_new_from_gicon (g_app_info_get_icon (applications->data), GTK_ICON_SIZE_MENU);
-      menu_item = xfce_gtk_image_menu_item_new (label_text, tooltip_text, NULL, G_CALLBACK (thunar_action_manager_menu_item_activated),
+      menu_item = xfce_gtk_image_menu_item_new (label_text, tooltip_text, action_entry->accel_path, G_CALLBACK (thunar_action_manager_menu_item_activated),
                                                 G_OBJECT (action_mgr), image, menu);
 
       /* remember the default application for the "Open" action as quark */
