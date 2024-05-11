@@ -1826,7 +1826,7 @@ thunar_action_manager_append_menu_item (ThunarActionManager       *action_mgr,
         return item;
 
       case THUNAR_ACTION_MANAGER_ACTION_PASTE_INTO_FOLDER:
-        if (!action_mgr->single_directory_to_process)
+        if (!(action_mgr->single_directory_to_process && action_mgr->files_are_selected))
           return NULL;
         clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (action_mgr->widget));
         item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
@@ -1847,8 +1847,6 @@ thunar_action_manager_append_menu_item (ThunarActionManager       *action_mgr,
           }
         else
           {
-            if (action_mgr->single_directory_to_process && action_mgr->files_are_selected)
-                return thunar_action_manager_append_menu_item (action_mgr, menu, THUNAR_ACTION_MANAGER_ACTION_PASTE_INTO_FOLDER, force);
             clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (action_mgr->widget));
             item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
             gtk_widget_set_sensitive (item, thunar_clipboard_manager_get_can_paste (clipboard)
