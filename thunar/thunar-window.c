@@ -1271,7 +1271,6 @@ thunar_window_update_file_menu (ThunarWindow *window,
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_NEW_WINDOW), G_OBJECT (window), GTK_MENU_SHELL (menu));
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
   thunar_menu_add_sections (THUNAR_MENU (menu), THUNAR_MENU_SECTION_OPEN
-                                              | THUNAR_MENU_SECTION_EDIT_LAUNCHER
                                               | THUNAR_MENU_SECTION_SENDTO
                                               | THUNAR_MENU_SECTION_CREATE_NEW_FILES
                                               | THUNAR_MENU_SECTION_EMPTY_TRASH
@@ -1338,7 +1337,8 @@ thunar_window_update_edit_menu (ThunarWindow *window,
   thunar_menu_add_sections (THUNAR_MENU (menu), THUNAR_MENU_SECTION_DUPLICATE
                                               | THUNAR_MENU_SECTION_MAKELINK
                                               | THUNAR_MENU_SECTION_RENAME
-                                              | THUNAR_MENU_SECTION_RESTORE);
+                                              | THUNAR_MENU_SECTION_RESTORE
+                                              | THUNAR_MENU_SECTION_REMOVE_FROM_RECENT);
 
   /* determine the available preferences providers */
   if (G_LIKELY (window->thunarx_preferences_providers != NULL))
