@@ -388,7 +388,7 @@ static XfceGtkActionEntry thunar_standard_view_action_entries[] =
 {
     { THUNAR_STANDARD_VIEW_ACTION_SELECT_ALL_FILES,   "<Actions>/ThunarStandardView/select-all-files",   "<Primary>a", XFCE_GTK_MENU_ITEM,       N_ ("Select _all Files"),     N_ ("Select all files in this window"),                   NULL, G_CALLBACK (thunar_standard_view_select_all_files),            },
     { THUNAR_STANDARD_VIEW_ACTION_SELECT_BY_PATTERN,  "<Actions>/ThunarStandardView/select-by-pattern",  "<Primary>s", XFCE_GTK_MENU_ITEM,       N_ ("Select _by Pattern..."), N_ ("Select all files that match a certain pattern"),     NULL, G_CALLBACK (thunar_standard_view_select_by_pattern),           },
-    { THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION,   "<Actions>/ThunarStandardView/invert-selection",   "",           XFCE_GTK_MENU_ITEM,       N_ ("_Invert Selection"),     N_ ("Select all files but not those currently selected"), NULL, G_CALLBACK (thunar_standard_view_selection_invert),            },
+    { THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION,   "<Actions>/ThunarStandardView/invert-selection",   "<Primary><shift>I", XFCE_GTK_MENU_ITEM,       N_ ("_Invert Selection"),     N_ ("Select all files but not those currently selected"), NULL, G_CALLBACK (thunar_standard_view_selection_invert),            },
     { THUNAR_STANDARD_VIEW_ACTION_UNSELECT_ALL_FILES, "<Actions>/ThunarStandardView/unselect-all-files", "Escape",     XFCE_GTK_MENU_ITEM,       N_ ("U_nselect all Files"),   N_ ("Unselect all files in this window"),                 NULL, G_CALLBACK (thunar_standard_view_unselect_all_files),          },
     { THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU, "<Actions>/ThunarStandardView/arrange-items-menu", "",           XFCE_GTK_MENU_ITEM,       N_ ("Arran_ge Items"),        NULL,                                                     NULL, G_CALLBACK (NULL),                                             },
     { THUNAR_STANDARD_VIEW_ACTION_SORT_ORDER_TOGGLE,  "<Actions>/ThunarStandardView/toggle-sort-order",  "",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Reversed Order"),        N_ ("Reverse the sort order"),                            NULL, G_CALLBACK (thunar_standard_view_toggle_sort_order),           },
@@ -3934,15 +3934,14 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view)
   if (selected_items != NULL)
     {
       thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_OPEN
-                                            | THUNAR_MENU_SECTION_EDIT_LAUNCHER
                                             | THUNAR_MENU_SECTION_SENDTO
                                             | THUNAR_MENU_SECTION_CUT
                                             | THUNAR_MENU_SECTION_COPY_PASTE
                                             | THUNAR_MENU_SECTION_TRASH_DELETE
                                             | THUNAR_MENU_SECTION_EMPTY_TRASH
-                                            | THUNAR_MENU_SECTION_REMOVE_FROM_RECENT
-                                            | THUNAR_MENU_SECTION_RESTORE
                                             | THUNAR_MENU_SECTION_RENAME
+                                            | THUNAR_MENU_SECTION_RESTORE
+                                            | THUNAR_MENU_SECTION_REMOVE_FROM_RECENT
                                             | THUNAR_MENU_SECTION_CUSTOM_ACTIONS
                                             | THUNAR_MENU_SECTION_PROPERTIES);
     }
