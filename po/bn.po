@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-05-08 00:47+0200\n"
+"POT-Creation-Date: 2024-05-15 00:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Ashraful Islam <rediancool@gmail.com>, 2019\n"
 "Language-Team: Bengali (http://app.transifex.com/xfce/thunar/language/bn/)\n"
@@ -38,30 +38,42 @@ msgid "_Execute"
 msgstr "চালানো (_E)"
 
 #: thunar/thunar-action-manager.c:271
-msgid "Open in new _Tab"
+msgid "Edit _Launcher"
+msgstr ""
+
+#: thunar/thunar-action-manager.c:271
+msgid "Edit the selected launcher"
 msgstr ""
 
 #: thunar/thunar-action-manager.c:272
-msgid "Open in new _Window"
+msgid "Open in new _Tab"
 msgstr ""
 
 #: thunar/thunar-action-manager.c:273
+msgid "Open in new _Window"
+msgstr ""
+
+#: thunar/thunar-action-manager.c:274
 msgid "Open Item _Location"
 msgstr ""
 
 #: thunar/thunar-action-manager.c:274
+msgid "Navigate to the folder in which the selected file is located"
+msgstr ""
+
+#: thunar/thunar-action-manager.c:275
 msgid "Ope_n With Other Application..."
 msgstr ""
 
-#: thunar/thunar-action-manager.c:274 thunar/thunar-action-manager.c:3343
+#: thunar/thunar-action-manager.c:275 thunar/thunar-action-manager.c:3339
 msgid "Choose another application with which to open the selected file"
 msgstr "নির্বাচিত ফাইলটি অন্য কোন অ্যাপ্লিকেশন দিয়ে খোলা যাবে তা নির্বাচন করুন"
 
-#: thunar/thunar-action-manager.c:275
+#: thunar/thunar-action-manager.c:276
 msgid "Set Defa_ult Application..."
 msgstr ""
 
-#: thunar/thunar-action-manager.c:275
+#: thunar/thunar-action-manager.c:276
 msgid ""
 "Choose an application which should be used by default to open the selected "
 "file"
@@ -71,151 +83,143 @@ msgstr ""
 #. possible to automatically migrate to new accel paths.
 #. Waiting for https://gitlab.gnome.org/GNOME/gtk/issues/2375 to be able to
 #. fix that
-#: thunar/thunar-action-manager.c:279
+#: thunar/thunar-action-manager.c:280
 msgid "_Send To"
 msgstr "যাকে পাঠানো হবে (_S)"
 
-#: thunar/thunar-action-manager.c:280
+#: thunar/thunar-action-manager.c:281
 msgid "_Add Bookmark"
 msgstr ""
 
-#: thunar/thunar-action-manager.c:280
+#: thunar/thunar-action-manager.c:281
 msgid ""
 "Create bookmarks for all selected folders. If nothing is selected, the "
 "current folder is bookmarked."
 msgstr ""
 
-#: thunar/thunar-action-manager.c:281
+#: thunar/thunar-action-manager.c:282
 msgid "Send to _Desktop"
 msgstr ""
 
-#: thunar/thunar-action-manager.c:282
+#: thunar/thunar-action-manager.c:283
 msgid "_Properties..."
 msgstr "বৈশিষ্ট্য...(_P)"
 
-#: thunar/thunar-action-manager.c:282
+#: thunar/thunar-action-manager.c:283
 msgid "View the properties of the selected file"
 msgstr "নির্বাচিত ফাইলের বৈশিষ্ট্যাবলী প্রদর্শন"
 
-#: thunar/thunar-action-manager.c:283
+#: thunar/thunar-action-manager.c:284
 msgid "Ma_ke Link"
 msgstr "লিংক তৈরি করুন (_k)"
 
-#: thunar/thunar-action-manager.c:284
+#: thunar/thunar-action-manager.c:285
 msgid "Dup_licate"
 msgstr ""
 
-#: thunar/thunar-action-manager.c:285
+#: thunar/thunar-action-manager.c:286
 msgid "_Rename..."
 msgstr "পুনরায় নামকরণ... (_R)"
 
 #. prepare the menu item
-#: thunar/thunar-action-manager.c:286 thunar/thunar-application.c:2712
+#: thunar/thunar-action-manager.c:287 thunar/thunar-application.c:2712
 #: plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "আবর্জনা বাক্স খালি করুন (_E)"
 
-#: thunar/thunar-action-manager.c:286
+#: thunar/thunar-action-manager.c:287
 msgid "Delete all files and folders in the Trash"
 msgstr "আবর্জনা বাক্সে রাখা সব ফাইল এবং ফোল্ডার মুছে ফেলুন"
 
-#: thunar/thunar-action-manager.c:287
+#: thunar/thunar-action-manager.c:288
 msgid "_Remove from Recent"
 msgstr ""
 
-#: thunar/thunar-action-manager.c:287
+#: thunar/thunar-action-manager.c:288
 msgid "Remove the selected files from Recent"
 msgstr ""
 
-#: thunar/thunar-action-manager.c:288
+#: thunar/thunar-action-manager.c:289
 msgid "Create _Folder..."
 msgstr "ফোল্ডার তৈরি... (_F)"
 
-#: thunar/thunar-action-manager.c:288
+#: thunar/thunar-action-manager.c:289
 msgid "Create an empty folder within the current folder"
 msgstr "বর্তমান ফোল্ডারে একটি খালি ফোল্ডার তৈরি করুন"
 
-#: thunar/thunar-action-manager.c:289
+#: thunar/thunar-action-manager.c:290
 msgid "Create _Document"
 msgstr "নথি তৈরি করুন (D)"
 
-#: thunar/thunar-action-manager.c:289
+#: thunar/thunar-action-manager.c:290
 msgid "Create a new document from a template"
 msgstr ""
 
-#: thunar/thunar-action-manager.c:291
+#: thunar/thunar-action-manager.c:292
 msgid "_Restore"
 msgstr "পূর্বাবস্থায় ফিরিয়ে নেয়া (_R)"
 
-#: thunar/thunar-action-manager.c:292
+#: thunar/thunar-action-manager.c:293
 msgid "Restore and S_how"
 msgstr ""
 
-#: thunar/thunar-action-manager.c:293
+#: thunar/thunar-action-manager.c:294
 msgid "Mo_ve to Trash"
 msgstr ""
 
-#: thunar/thunar-action-manager.c:294 thunar/thunar-application.c:2463
+#: thunar/thunar-action-manager.c:297 thunar/thunar-application.c:2463
 #: plugins/thunar-uca/thunar-uca-chooser.c:375
 msgid "_Delete"
 msgstr "মুছে ফেলুন (_D)"
 
-#: thunar/thunar-action-manager.c:299
+#: thunar/thunar-action-manager.c:300
 msgid "_Paste"
 msgstr "প্রতিলিপি (_P)"
 
-#: thunar/thunar-action-manager.c:299
+#: thunar/thunar-action-manager.c:300
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "কাট বা অনুলিপি কমান্ড দিয়ে আগে থেকে নির্বাচিত ফাইলগুলো সরানো বা অনুলিপি করা হবে"
 
-#: thunar/thunar-action-manager.c:301
+#: thunar/thunar-action-manager.c:302
 msgid "_Paste Into Folder"
 msgstr "ফোল্ডারে প্রতিলেপন করুন (_P)"
 
-#: thunar/thunar-action-manager.c:301
+#: thunar/thunar-action-manager.c:302
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
 msgstr "কাট বা অনুলিপি কমান্ড দিয়ে আগে থেকে নির্বাচিত ফাইলগুলো সরানো বা অনুলিপি করা হবে"
 
-#: thunar/thunar-action-manager.c:302
+#: thunar/thunar-action-manager.c:303
 msgid "_Copy"
 msgstr "অনুলিপি (_C)"
 
-#: thunar/thunar-action-manager.c:304
+#: thunar/thunar-action-manager.c:305
 msgid "Cu_t"
 msgstr "কাটুন (_t)"
 
-#: thunar/thunar-action-manager.c:307
+#: thunar/thunar-action-manager.c:308
 msgid "_Mount"
 msgstr ""
 
-#: thunar/thunar-action-manager.c:307
+#: thunar/thunar-action-manager.c:308
 msgid "Mount the selected device"
 msgstr ""
 
-#: thunar/thunar-action-manager.c:308
+#: thunar/thunar-action-manager.c:309
 msgid "_Unmount"
 msgstr ""
 
-#: thunar/thunar-action-manager.c:308
+#: thunar/thunar-action-manager.c:309
 msgid "Unmount the selected device"
 msgstr ""
 
-#: thunar/thunar-action-manager.c:309 thunar/thunar-device.c:538
+#: thunar/thunar-action-manager.c:310 thunar/thunar-device.c:538
 msgid "_Eject"
 msgstr ""
 
-#: thunar/thunar-action-manager.c:309
+#: thunar/thunar-action-manager.c:310
 msgid "Eject the selected device"
-msgstr ""
-
-#: thunar/thunar-action-manager.c:310
-msgid "Edit _Launcher"
-msgstr ""
-
-#: thunar/thunar-action-manager.c:310
-msgid "Edit the selected launcher"
 msgstr ""
 
 #: thunar/thunar-action-manager.c:802 thunar/thunar-dnd.c:272
@@ -286,7 +290,7 @@ msgstr[1] "%d টি নতুন উইন্ডো খোলে"
 msgid "_Cancel"
 msgstr "বাতিল (_C)"
 
-#: thunar/thunar-action-manager.c:1079 thunar/thunar-action-manager.c:1976
+#: thunar/thunar-action-manager.c:1079 thunar/thunar-action-manager.c:1971
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "\"%s\" মাউন্ট করতে ব্যর্থ"
@@ -312,43 +316,43 @@ msgid_plural "Execute the selected files"
 msgstr[0] "নির্বাচিত ফাইল চালান"
 msgstr[1] "নির্বাচিত ফাইল চালান"
 
-#: thunar/thunar-action-manager.c:1584
+#: thunar/thunar-action-manager.c:1587
 #, c-format
 msgid "Open the selected directory in new tab"
 msgid_plural "Open the selected directories in %d new tabs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: thunar/thunar-action-manager.c:1594
+#: thunar/thunar-action-manager.c:1597
 #, c-format
 msgid "Open the selected directory in new window"
 msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] ""
 msgstr[1] ""
 
-#: thunar/thunar-action-manager.c:1639
+#: thunar/thunar-action-manager.c:1636
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "প্রতিটি নির্বাচিত ফাইলের জন্য একটি প্রতীকি লিংক তৈরি করুন"
 msgstr[1] "প্রতিটি নির্বাচিত ফাইলের জন্য একটি প্রতীকি লিংক তৈরি করুন"
 
-#: thunar/thunar-action-manager.c:1669
+#: thunar/thunar-action-manager.c:1666
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "নির্বাচিত ফাইল পুনরায় নামকরণ করুন"
 msgstr[1] "নির্বাচিত ফাইল পুনরায় নামকরণ করুন"
 
-#: thunar/thunar-action-manager.c:1674
+#: thunar/thunar-action-manager.c:1671
 msgid "Bulk _Rename..."
 msgstr ""
 
-#: thunar/thunar-action-manager.c:1684
+#: thunar/thunar-action-manager.c:1681
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
 msgstr[0] ""
 msgstr[1] ""
 
-#: thunar/thunar-action-manager.c:1696
+#: thunar/thunar-action-manager.c:1693
 msgid ""
 "Restore the selected file to its original location and open the location in "
 "a new window/tab"
@@ -358,67 +362,67 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: thunar/thunar-action-manager.c:1713
+#: thunar/thunar-action-manager.c:1710
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] ""
 msgstr[1] ""
 
-#: thunar/thunar-action-manager.c:1730
+#: thunar/thunar-action-manager.c:1727
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: thunar/thunar-action-manager.c:1789
+#: thunar/thunar-action-manager.c:1786
 msgid "Cut the selection"
 msgstr ""
 
-#: thunar/thunar-action-manager.c:1799
+#: thunar/thunar-action-manager.c:1796
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "প্রতিলেপন কমান্ড দিয়ে সরানো হবে এমন নির্বাচিত ফাইল প্রস্তুত করুন"
 msgstr[1] "প্রতিলেপন কমান্ড দিয়ে সরানো হবে এমন নির্বাচিত ফাইলগুলো প্রস্তুত করুন"
 
-#: thunar/thunar-action-manager.c:1813
+#: thunar/thunar-action-manager.c:1810
 msgid "Copy the selection"
 msgstr ""
 
-#: thunar/thunar-action-manager.c:1823
+#: thunar/thunar-action-manager.c:1820
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "প্রতিলেপন কমান্ড দিয়ে অনুলিপি হবে এমন নির্বাচিত ফাইল প্রস্তুত করুন"
 msgstr[1] "প্রতিলেপন কমান্ড দিয়ে অনুলিপি হবে এমন নির্বাচিত ফাইলগুলো প্রস্তুত করুন"
 
-#: thunar/thunar-action-manager.c:1846
+#: thunar/thunar-action-manager.c:1843
 msgid "Paste the clipboard"
 msgstr ""
 
-#: thunar/thunar-action-manager.c:2087
+#: thunar/thunar-action-manager.c:2082
 msgid "Side Pane (Add Bookmark)"
 msgid_plural "Side Pane (Add Bookmarks)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: thunar/thunar-action-manager.c:2088
+#: thunar/thunar-action-manager.c:2083
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "শর্টকাট সাইড প্যানে নির্বাচিত ফোল্ডার যোগ করুন"
 msgstr[1] "শর্টকাট সাইড প্যানে নির্বাচিত ফোল্ডার যোগ করুন"
 
-#: thunar/thunar-action-manager.c:2107
+#: thunar/thunar-action-manager.c:2102
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "ডেস্কটপ (লিংক তৈরি)"
 msgstr[1] "ডেস্কটপ (লিংক তৈরি)"
 
-#: thunar/thunar-action-manager.c:2108
+#: thunar/thunar-action-manager.c:2103
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "ডেস্কটপের নির্বাচিত ফাইলের জন্য লিংক তৈরি"
 msgstr[1] "ডেস্কটপের নির্বাচিত ফাইলের জন্য লিংক তৈরি"
 
-#: thunar/thunar-action-manager.c:2129 thunar/thunar-action-manager.c:2167
+#: thunar/thunar-action-manager.c:2124 thunar/thunar-action-manager.c:2162
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
@@ -426,74 +430,72 @@ msgstr[0] "\"%s\" তে নির্বাচিত ফাইল পাঠা�
 msgstr[1] "\"%s\" তে নির্বাচিত ফাইল পাঠানো"
 
 #. ask the user to enter a name for the new folder
-#: thunar/thunar-action-manager.c:2653 thunar/thunar-application.c:1993
+#: thunar/thunar-action-manager.c:2648 thunar/thunar-application.c:1993
 msgid "New Folder"
 msgstr "নতুন ফোল্ডার"
 
-#: thunar/thunar-action-manager.c:2657 thunar/thunar-application.c:1994
+#: thunar/thunar-action-manager.c:2652 thunar/thunar-application.c:1994
 msgid "Create New Folder"
 msgstr "নতুন ফোল্ডার তৈরি করুন"
 
 #. generate a title for the create dialog
-#: thunar/thunar-action-manager.c:2709 thunar/thunar-application.c:2058
+#: thunar/thunar-action-manager.c:2704 thunar/thunar-application.c:2058
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "\"%s\" খসড়া থেকে নথি তৈরি করুন"
 
 #. ask the user to enter a name for the new empty file
-#: thunar/thunar-action-manager.c:2725
+#: thunar/thunar-action-manager.c:2720
 msgid "New Empty File"
 msgstr "নতুন খালি ফাইল"
 
-#: thunar/thunar-action-manager.c:2729
+#: thunar/thunar-action-manager.c:2724
 msgid "New Empty File..."
 msgstr "নতুন খালি ফাইল..."
 
-#: thunar/thunar-action-manager.c:2948
+#: thunar/thunar-action-manager.c:2943
 #, c-format
 msgid ""
 "No templates installed in\n"
 "\"%s\""
 msgstr ""
 
-#: thunar/thunar-action-manager.c:2961
+#: thunar/thunar-action-manager.c:2956
 msgid "_Empty File"
 msgstr "খালি ফাইল (_E)"
 
-#: thunar/thunar-action-manager.c:3101
+#: thunar/thunar-action-manager.c:3096
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "\"%s\" বের করতে ব্যর্থ"
 
-#: thunar/thunar-action-manager.c:3163
+#: thunar/thunar-action-manager.c:3158
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr ""
 
-#: thunar/thunar-action-manager.c:3226 thunar/thunar-action-manager.c:3297
+#: thunar/thunar-action-manager.c:3221 thunar/thunar-action-manager.c:3302
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "নির্বাচিত ফাইল খুলতে \"%s\" ব্যবহার করুন"
 msgstr[1] "নির্বাচিত ফাইল খুলতে \"%s\" ব্যবহার করুন"
 
-#: thunar/thunar-action-manager.c:3296
+#: thunar/thunar-action-manager.c:3301
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "\"%s\" দিয়ে খুলুন (_O)"
 
 #. we can only show a generic "Open" action
-#: thunar/thunar-action-manager.c:3316
+#: thunar/thunar-action-manager.c:3321
 msgid "_Open With Default Applications"
 msgstr "ডিফল্ট যে অ্যাপ্লিকেশন দিয়ে খোলা হবে... (_O)"
 
-#: thunar/thunar-action-manager.c:3317
-msgid "Open the selected file with the default application"
-msgid_plural "Open the selected files with the default applications"
-msgstr[0] "ডিফল্ট অ্যাপ্লিকেশন দিয়ে নির্বাচিত ফাইল খুলুন"
-msgstr[1] "ডিফল্ট অ্যাপ্লিকেশন দিয়ে নির্বাচিত ফাইল খুলুন"
+#: thunar/thunar-action-manager.c:3322
+msgid "Open the selected files with the default applications"
+msgstr "ডিফল্ট অ্যাপ্লিকেশন দিয়ে নির্বাচিত ফাইল খুলুন"
 
-#: thunar/thunar-action-manager.c:3342
+#: thunar/thunar-action-manager.c:3338
 msgid "Ope_n With"
 msgstr ""
 
