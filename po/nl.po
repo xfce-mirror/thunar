@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-05-08 00:47+0200\n"
+"POT-Creation-Date: 2024-05-15 00:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Pjotr <pjotrvertaalt@gmail.com>, 2013-2015,2017-2024\n"
 "Language-Team: Dutch (http://app.transifex.com/xfce/thunar/language/nl/)\n"
@@ -37,30 +37,42 @@ msgid "_Execute"
 msgstr "Uitvoer_en"
 
 #: thunar/thunar-action-manager.c:271
+msgid "Edit _Launcher"
+msgstr "Starter bewerken"
+
+#: thunar/thunar-action-manager.c:271
+msgid "Edit the selected launcher"
+msgstr "Bewerk de gekozen starter"
+
+#: thunar/thunar-action-manager.c:272
 msgid "Open in new _Tab"
 msgstr "Openen in nieuw _tabblad"
 
-#: thunar/thunar-action-manager.c:272
+#: thunar/thunar-action-manager.c:273
 msgid "Open in new _Window"
 msgstr "Openen in nieuw _venster"
 
-#: thunar/thunar-action-manager.c:273
+#: thunar/thunar-action-manager.c:274
 msgid "Open Item _Location"
 msgstr "_Locatie van element openen"
 
 #: thunar/thunar-action-manager.c:274
+msgid "Navigate to the folder in which the selected file is located"
+msgstr ""
+
+#: thunar/thunar-action-manager.c:275
 msgid "Ope_n With Other Application..."
 msgstr "Openen met andere toepassing..."
 
-#: thunar/thunar-action-manager.c:274 thunar/thunar-action-manager.c:3343
+#: thunar/thunar-action-manager.c:275 thunar/thunar-action-manager.c:3339
 msgid "Choose another application with which to open the selected file"
 msgstr "Kies een andere toepassing om het gekozen bestand mee te openen"
 
-#: thunar/thunar-action-manager.c:275
+#: thunar/thunar-action-manager.c:276
 msgid "Set Defa_ult Application..."
 msgstr "Standaardtoepassing instellen..."
 
-#: thunar/thunar-action-manager.c:275
+#: thunar/thunar-action-manager.c:276
 msgid ""
 "Choose an application which should be used by default to open the selected "
 "file"
@@ -70,152 +82,144 @@ msgstr "Kies een toepassing die standaard moet worden gebruikt om het gekozen be
 #. possible to automatically migrate to new accel paths.
 #. Waiting for https://gitlab.gnome.org/GNOME/gtk/issues/2375 to be able to
 #. fix that
-#: thunar/thunar-action-manager.c:279
+#: thunar/thunar-action-manager.c:280
 msgid "_Send To"
 msgstr "Ver_zenden naar"
 
-#: thunar/thunar-action-manager.c:280
+#: thunar/thunar-action-manager.c:281
 msgid "_Add Bookmark"
 msgstr "Bladwijzer _toevoegen"
 
-#: thunar/thunar-action-manager.c:280
+#: thunar/thunar-action-manager.c:281
 msgid ""
 "Create bookmarks for all selected folders. If nothing is selected, the "
 "current folder is bookmarked."
 msgstr "Bladwijzers maken voor alle gekozen mappen. Indien er niets wordt gekozen, zal er een bladwijzer worden gemaakt voor de huidige map."
 
-#: thunar/thunar-action-manager.c:281
+#: thunar/thunar-action-manager.c:282
 msgid "Send to _Desktop"
 msgstr "Stuur naar _bureaublad"
 
-#: thunar/thunar-action-manager.c:282
+#: thunar/thunar-action-manager.c:283
 msgid "_Properties..."
 msgstr "_Eigenschappen..."
 
-#: thunar/thunar-action-manager.c:282
+#: thunar/thunar-action-manager.c:283
 msgid "View the properties of the selected file"
 msgstr "Bekijk de eigenschappen van het gekozen bestand"
 
-#: thunar/thunar-action-manager.c:283
+#: thunar/thunar-action-manager.c:284
 msgid "Ma_ke Link"
 msgstr "M_aak koppeling"
 
-#: thunar/thunar-action-manager.c:284
+#: thunar/thunar-action-manager.c:285
 msgid "Dup_licate"
 msgstr "Dupliceren"
 
-#: thunar/thunar-action-manager.c:285
+#: thunar/thunar-action-manager.c:286
 msgid "_Rename..."
 msgstr "He_rnoemen..."
 
 #. prepare the menu item
-#: thunar/thunar-action-manager.c:286 thunar/thunar-application.c:2712
+#: thunar/thunar-action-manager.c:287 thunar/thunar-application.c:2712
 #: plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "Prullenbak _ledigen"
 
-#: thunar/thunar-action-manager.c:286
+#: thunar/thunar-action-manager.c:287
 msgid "Delete all files and folders in the Trash"
 msgstr "Verwijder alle bestanden en mappen in de prullenbak"
 
-#: thunar/thunar-action-manager.c:287
+#: thunar/thunar-action-manager.c:288
 msgid "_Remove from Recent"
 msgstr "Verwijderen uit Recent"
 
-#: thunar/thunar-action-manager.c:287
+#: thunar/thunar-action-manager.c:288
 msgid "Remove the selected files from Recent"
 msgstr "Verwijder de gekozen bestanden uit Recent"
 
-#: thunar/thunar-action-manager.c:288
+#: thunar/thunar-action-manager.c:289
 msgid "Create _Folder..."
 msgstr "_Maak map..."
 
-#: thunar/thunar-action-manager.c:288
+#: thunar/thunar-action-manager.c:289
 msgid "Create an empty folder within the current folder"
 msgstr "Maak een lege map in de huidige map"
 
-#: thunar/thunar-action-manager.c:289
+#: thunar/thunar-action-manager.c:290
 msgid "Create _Document"
 msgstr "_Document aanmaken"
 
-#: thunar/thunar-action-manager.c:289
+#: thunar/thunar-action-manager.c:290
 msgid "Create a new document from a template"
 msgstr "Maak een nieuw document vanuit een sjabloon"
 
-#: thunar/thunar-action-manager.c:291
+#: thunar/thunar-action-manager.c:292
 msgid "_Restore"
 msgstr "He_rstellen"
 
-#: thunar/thunar-action-manager.c:292
+#: thunar/thunar-action-manager.c:293
 msgid "Restore and S_how"
 msgstr "Terugzetten en tonen"
 
-#: thunar/thunar-action-manager.c:293
+#: thunar/thunar-action-manager.c:294
 msgid "Mo_ve to Trash"
 msgstr "_Verplaatsen naar prullenbak"
 
-#: thunar/thunar-action-manager.c:294 thunar/thunar-application.c:2463
+#: thunar/thunar-action-manager.c:297 thunar/thunar-application.c:2463
 #: plugins/thunar-uca/thunar-uca-chooser.c:375
 msgid "_Delete"
 msgstr "_Verwijderen"
 
-#: thunar/thunar-action-manager.c:299
+#: thunar/thunar-action-manager.c:300
 msgid "_Paste"
 msgstr "_Plakken"
 
-#: thunar/thunar-action-manager.c:299
+#: thunar/thunar-action-manager.c:300
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "Bestanden verplaatsen of kopiëren die eerder met een knip- of kopieeropdracht zijn gekozen"
 
-#: thunar/thunar-action-manager.c:301
+#: thunar/thunar-action-manager.c:302
 msgid "_Paste Into Folder"
 msgstr "_Plakken in map"
 
-#: thunar/thunar-action-manager.c:301
+#: thunar/thunar-action-manager.c:302
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
 msgstr "Verplaats bestanden die eerder met een knip- of kopieeropdracht zijn gekozen, naar de geselecteerde map"
 
-#: thunar/thunar-action-manager.c:302
+#: thunar/thunar-action-manager.c:303
 msgid "_Copy"
 msgstr "_Kopiëren"
 
-#: thunar/thunar-action-manager.c:304
+#: thunar/thunar-action-manager.c:305
 msgid "Cu_t"
 msgstr "K_nippen"
 
-#: thunar/thunar-action-manager.c:307
+#: thunar/thunar-action-manager.c:308
 msgid "_Mount"
 msgstr "_Aankoppelen"
 
-#: thunar/thunar-action-manager.c:307
+#: thunar/thunar-action-manager.c:308
 msgid "Mount the selected device"
 msgstr "Koppel het gekozen apparaat aan"
 
-#: thunar/thunar-action-manager.c:308
+#: thunar/thunar-action-manager.c:309
 msgid "_Unmount"
 msgstr "_Ontkoppelen"
 
-#: thunar/thunar-action-manager.c:308
+#: thunar/thunar-action-manager.c:309
 msgid "Unmount the selected device"
 msgstr "Ontkoppel het gekozen apparaat"
 
-#: thunar/thunar-action-manager.c:309 thunar/thunar-device.c:538
+#: thunar/thunar-action-manager.c:310 thunar/thunar-device.c:538
 msgid "_Eject"
 msgstr "_Uitwerpen"
 
-#: thunar/thunar-action-manager.c:309
+#: thunar/thunar-action-manager.c:310
 msgid "Eject the selected device"
 msgstr "Werp het gekozen apparaat uit"
-
-#: thunar/thunar-action-manager.c:310
-msgid "Edit _Launcher"
-msgstr "Starter bewerken"
-
-#: thunar/thunar-action-manager.c:310
-msgid "Edit the selected launcher"
-msgstr "Bewerk de gekozen starter"
 
 #: thunar/thunar-action-manager.c:802 thunar/thunar-dnd.c:272
 #, c-format
@@ -285,7 +289,7 @@ msgstr[1] "Open %d nieuwe vensters"
 msgid "_Cancel"
 msgstr "_Afbreken"
 
-#: thunar/thunar-action-manager.c:1079 thunar/thunar-action-manager.c:1976
+#: thunar/thunar-action-manager.c:1079 thunar/thunar-action-manager.c:1971
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Kon '%s' niet aankoppelen"
@@ -311,43 +315,43 @@ msgid_plural "Execute the selected files"
 msgstr[0] "Voer het geselecteerde bestand uit"
 msgstr[1] "Voer de gekozen bestanden uit"
 
-#: thunar/thunar-action-manager.c:1584
+#: thunar/thunar-action-manager.c:1587
 #, c-format
 msgid "Open the selected directory in new tab"
 msgid_plural "Open the selected directories in %d new tabs"
 msgstr[0] "Open de gekozen map in een nieuw tabblad"
 msgstr[1] "Open de gekozen mappen in %d nieuwe tabbladen"
 
-#: thunar/thunar-action-manager.c:1594
+#: thunar/thunar-action-manager.c:1597
 #, c-format
 msgid "Open the selected directory in new window"
 msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "Open de gekozen map in een nieuw venster"
 msgstr[1] "Open de gekozen mappen in %d nieuwe vensters"
 
-#: thunar/thunar-action-manager.c:1639
+#: thunar/thunar-action-manager.c:1636
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Maak een symbolische koppeling voor het geselecteerde bestand"
 msgstr[1] "Maak een symbolische koppeling voor elk gekozen bestand"
 
-#: thunar/thunar-action-manager.c:1669
+#: thunar/thunar-action-manager.c:1666
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Hernoem het geselecteerde bestand"
 msgstr[1] "Hernoem de gekozen bestanden"
 
-#: thunar/thunar-action-manager.c:1674
+#: thunar/thunar-action-manager.c:1671
 msgid "Bulk _Rename..."
 msgstr "Massaal _hernoemen..."
 
-#: thunar/thunar-action-manager.c:1684
+#: thunar/thunar-action-manager.c:1681
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
 msgstr[0] "Zet het gekozen bestand terug op zijn oorspronkelijke locatie"
 msgstr[1] "Zet de gekozen bestanden terug op hun oorspronkelijke locatie"
 
-#: thunar/thunar-action-manager.c:1696
+#: thunar/thunar-action-manager.c:1693
 msgid ""
 "Restore the selected file to its original location and open the location in "
 "a new window/tab"
@@ -357,67 +361,67 @@ msgid_plural ""
 msgstr[0] "Zet het gekozen bestand terug op zijn oorspronkelijke locatie en open die locatie in een nieuw venster of tabblad"
 msgstr[1] "Zet de gekozen bestanden terug op hun oorspronkelijke locaties en open die locaties in een nieuw venster of tabblad"
 
-#: thunar/thunar-action-manager.c:1713
+#: thunar/thunar-action-manager.c:1710
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "Verplaats het geselecteerde bestand naar de prullenbak"
 msgstr[1] "Verplaats de gekozen bestanden naar de prullenbak"
 
-#: thunar/thunar-action-manager.c:1730
+#: thunar/thunar-action-manager.c:1727
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "Verwijder het geselecteerde bestand blijvend"
 msgstr[1] "Verwijder de gekozen bestanden blijvend"
 
-#: thunar/thunar-action-manager.c:1789
+#: thunar/thunar-action-manager.c:1786
 msgid "Cut the selection"
 msgstr "Knip de selectie"
 
-#: thunar/thunar-action-manager.c:1799
+#: thunar/thunar-action-manager.c:1796
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Bereid het geselecteerde bestand voor om met een plakopdracht verplaatst te worden"
 msgstr[1] "Bereid de gekozen bestanden voor om met een plakopdracht verplaatst te worden"
 
-#: thunar/thunar-action-manager.c:1813
+#: thunar/thunar-action-manager.c:1810
 msgid "Copy the selection"
 msgstr "Kopieer de selectie"
 
-#: thunar/thunar-action-manager.c:1823
+#: thunar/thunar-action-manager.c:1820
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Bereid het geselecteerde bestand voor om met een plakopdracht gekopieerd te worden"
 msgstr[1] "Bereid de gekozen bestanden voor om met een plakopdracht gekopieerd te worden"
 
-#: thunar/thunar-action-manager.c:1846
+#: thunar/thunar-action-manager.c:1843
 msgid "Paste the clipboard"
 msgstr "Plak de klembordinhoud"
 
-#: thunar/thunar-action-manager.c:2087
+#: thunar/thunar-action-manager.c:2082
 msgid "Side Pane (Add Bookmark)"
 msgid_plural "Side Pane (Add Bookmarks)"
 msgstr[0] "Zijbalk (bladwijzer toevoegen)"
 msgstr[1] "Zijbalk (bladwijzers toevoegen)"
 
-#: thunar/thunar-action-manager.c:2088
+#: thunar/thunar-action-manager.c:2083
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "Voeg de geselecteerde map toe aan de sneltoetsen-zijbalk"
 msgstr[1] "Voeg de gekozen mappen toe aan de snelkoppelingen-zijbalk"
 
-#: thunar/thunar-action-manager.c:2107
+#: thunar/thunar-action-manager.c:2102
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "Bureaublad (koppeling maken)"
 msgstr[1] "Bureaublad (snelkoppelingen maken)"
 
-#: thunar/thunar-action-manager.c:2108
+#: thunar/thunar-action-manager.c:2103
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "Maak een koppeling op het bureaublad naar het geselecteerde bestand"
 msgstr[1] "Maak snelkoppelingen op het bureaublad naar de gekozen bestanden"
 
-#: thunar/thunar-action-manager.c:2129 thunar/thunar-action-manager.c:2167
+#: thunar/thunar-action-manager.c:2124 thunar/thunar-action-manager.c:2162
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
@@ -425,74 +429,72 @@ msgstr[0] "Stuur het geselecteerde bestand naar '%s'"
 msgstr[1] "Stuur de gekozen bestanden naar '%s'"
 
 #. ask the user to enter a name for the new folder
-#: thunar/thunar-action-manager.c:2653 thunar/thunar-application.c:1993
+#: thunar/thunar-action-manager.c:2648 thunar/thunar-application.c:1993
 msgid "New Folder"
 msgstr "Nieuwe map"
 
-#: thunar/thunar-action-manager.c:2657 thunar/thunar-application.c:1994
+#: thunar/thunar-action-manager.c:2652 thunar/thunar-application.c:1994
 msgid "Create New Folder"
 msgstr "Maak nieuwe map"
 
 #. generate a title for the create dialog
-#: thunar/thunar-action-manager.c:2709 thunar/thunar-application.c:2058
+#: thunar/thunar-action-manager.c:2704 thunar/thunar-application.c:2058
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Maak document volgens sjabloon '%s'"
 
 #. ask the user to enter a name for the new empty file
-#: thunar/thunar-action-manager.c:2725
+#: thunar/thunar-action-manager.c:2720
 msgid "New Empty File"
 msgstr "Nieuw leeg bestand"
 
-#: thunar/thunar-action-manager.c:2729
+#: thunar/thunar-action-manager.c:2724
 msgid "New Empty File..."
 msgstr "Nieuw leeg bestand..."
 
-#: thunar/thunar-action-manager.c:2948
+#: thunar/thunar-action-manager.c:2943
 #, c-format
 msgid ""
 "No templates installed in\n"
 "\"%s\""
 msgstr "Geen sjablonen geïnstalleerd in\n'%s'"
 
-#: thunar/thunar-action-manager.c:2961
+#: thunar/thunar-action-manager.c:2956
 msgid "_Empty File"
 msgstr "L_eeg bestand"
 
-#: thunar/thunar-action-manager.c:3101
+#: thunar/thunar-action-manager.c:3096
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Kon '%s' niet uitwerpen"
 
-#: thunar/thunar-action-manager.c:3163
+#: thunar/thunar-action-manager.c:3158
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Kon '%s' niet ontkoppelen"
 
-#: thunar/thunar-action-manager.c:3226 thunar/thunar-action-manager.c:3297
+#: thunar/thunar-action-manager.c:3221 thunar/thunar-action-manager.c:3302
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "Gebruik '%s' om het geselecteerde bestand te openen"
 msgstr[1] "Gebruik '%s' om de gekozen bestanden te openen"
 
-#: thunar/thunar-action-manager.c:3296
+#: thunar/thunar-action-manager.c:3301
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "_Open met '%s'"
 
 #. we can only show a generic "Open" action
-#: thunar/thunar-action-manager.c:3316
+#: thunar/thunar-action-manager.c:3321
 msgid "_Open With Default Applications"
 msgstr "_Open met standaardtoepassingen"
 
-#: thunar/thunar-action-manager.c:3317
-msgid "Open the selected file with the default application"
-msgid_plural "Open the selected files with the default applications"
-msgstr[0] "Open het geselecteerde bestand met de standaardtoepassing"
-msgstr[1] "Open de gekozen bestanden met de standaardtoepassingen"
+#: thunar/thunar-action-manager.c:3322
+msgid "Open the selected files with the default applications"
+msgstr "Open de gekozen bestanden met de standaardtoepassingen"
 
-#: thunar/thunar-action-manager.c:3342
+#: thunar/thunar-action-manager.c:3338
 msgid "Ope_n With"
 msgstr "Openen met"
 
