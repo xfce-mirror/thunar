@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-05-08 00:47+0200\n"
+"POT-Creation-Date: 2024-05-15 00:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: 黃柏諺 <s8321414@gmail.com>, 2019-2024\n"
 "Language-Team: Chinese (Taiwan) (http://app.transifex.com/xfce/thunar/language/zh_TW/)\n"
@@ -44,30 +44,42 @@ msgid "_Execute"
 msgstr "執行(_E)"
 
 #: thunar/thunar-action-manager.c:271
+msgid "Edit _Launcher"
+msgstr "編輯啟動器(_L)"
+
+#: thunar/thunar-action-manager.c:271
+msgid "Edit the selected launcher"
+msgstr "編輯選定的啟動器"
+
+#: thunar/thunar-action-manager.c:272
 msgid "Open in new _Tab"
 msgstr "在新分頁中開啟(_T)"
 
-#: thunar/thunar-action-manager.c:272
+#: thunar/thunar-action-manager.c:273
 msgid "Open in new _Window"
 msgstr "在新視窗中開啟(_W)"
 
-#: thunar/thunar-action-manager.c:273
+#: thunar/thunar-action-manager.c:274
 msgid "Open Item _Location"
 msgstr "開啟項目位置(_L)"
 
 #: thunar/thunar-action-manager.c:274
+msgid "Navigate to the folder in which the selected file is located"
+msgstr "導航到選定檔案所在的資料夾"
+
+#: thunar/thunar-action-manager.c:275
 msgid "Ope_n With Other Application..."
 msgstr "使用其他應用程式開啟(_N)……"
 
-#: thunar/thunar-action-manager.c:274 thunar/thunar-action-manager.c:3343
+#: thunar/thunar-action-manager.c:275 thunar/thunar-action-manager.c:3339
 msgid "Choose another application with which to open the selected file"
 msgstr "選擇其他應用程式來開啟所選的檔案"
 
-#: thunar/thunar-action-manager.c:275
+#: thunar/thunar-action-manager.c:276
 msgid "Set Defa_ult Application..."
 msgstr "設定預設應用程式(_U)……"
 
-#: thunar/thunar-action-manager.c:275
+#: thunar/thunar-action-manager.c:276
 msgid ""
 "Choose an application which should be used by default to open the selected "
 "file"
@@ -77,152 +89,144 @@ msgstr "選擇預設情況下要用來開啟選定檔案的應用程式"
 #. possible to automatically migrate to new accel paths.
 #. Waiting for https://gitlab.gnome.org/GNOME/gtk/issues/2375 to be able to
 #. fix that
-#: thunar/thunar-action-manager.c:279
+#: thunar/thunar-action-manager.c:280
 msgid "_Send To"
 msgstr "傳送至(_S)"
 
-#: thunar/thunar-action-manager.c:280
+#: thunar/thunar-action-manager.c:281
 msgid "_Add Bookmark"
 msgstr "新增書籤(_A)"
 
-#: thunar/thunar-action-manager.c:280
+#: thunar/thunar-action-manager.c:281
 msgid ""
 "Create bookmarks for all selected folders. If nothing is selected, the "
 "current folder is bookmarked."
 msgstr "為所有選定的資料夾建立書籤。若未選取任何東西，則會將目前的資料夾加入書籤。"
 
-#: thunar/thunar-action-manager.c:281
+#: thunar/thunar-action-manager.c:282
 msgid "Send to _Desktop"
 msgstr "傳送到桌面(_D)"
 
-#: thunar/thunar-action-manager.c:282
+#: thunar/thunar-action-manager.c:283
 msgid "_Properties..."
 msgstr "屬性(_P)..."
 
-#: thunar/thunar-action-manager.c:282
+#: thunar/thunar-action-manager.c:283
 msgid "View the properties of the selected file"
 msgstr "檢視所選檔案的屬性"
 
-#: thunar/thunar-action-manager.c:283
+#: thunar/thunar-action-manager.c:284
 msgid "Ma_ke Link"
 msgstr "建立連結(_K)"
 
-#: thunar/thunar-action-manager.c:284
+#: thunar/thunar-action-manager.c:285
 msgid "Dup_licate"
 msgstr "再製(_L)"
 
-#: thunar/thunar-action-manager.c:285
+#: thunar/thunar-action-manager.c:286
 msgid "_Rename..."
 msgstr "重新命名(_R)..."
 
 #. prepare the menu item
-#: thunar/thunar-action-manager.c:286 thunar/thunar-application.c:2712
+#: thunar/thunar-action-manager.c:287 thunar/thunar-application.c:2712
 #: plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "倒垃圾(_E)"
 
-#: thunar/thunar-action-manager.c:286
+#: thunar/thunar-action-manager.c:287
 msgid "Delete all files and folders in the Trash"
 msgstr "將垃圾桶中所有檔案及資料夾刪除？"
 
-#: thunar/thunar-action-manager.c:287
+#: thunar/thunar-action-manager.c:288
 msgid "_Remove from Recent"
 msgstr "從近期紀錄中移除(_R)"
 
-#: thunar/thunar-action-manager.c:287
+#: thunar/thunar-action-manager.c:288
 msgid "Remove the selected files from Recent"
 msgstr "從近期移除選定的檔案"
 
-#: thunar/thunar-action-manager.c:288
+#: thunar/thunar-action-manager.c:289
 msgid "Create _Folder..."
 msgstr "建立資料夾(_F)..."
 
-#: thunar/thunar-action-manager.c:288
+#: thunar/thunar-action-manager.c:289
 msgid "Create an empty folder within the current folder"
 msgstr "在目前的資料夾建立一個空白的資料夾"
 
-#: thunar/thunar-action-manager.c:289
+#: thunar/thunar-action-manager.c:290
 msgid "Create _Document"
 msgstr "建立文件(_D)"
 
-#: thunar/thunar-action-manager.c:289
+#: thunar/thunar-action-manager.c:290
 msgid "Create a new document from a template"
 msgstr "從模板建立新文件"
 
-#: thunar/thunar-action-manager.c:291
+#: thunar/thunar-action-manager.c:292
 msgid "_Restore"
 msgstr "還原(_R)"
 
-#: thunar/thunar-action-manager.c:292
+#: thunar/thunar-action-manager.c:293
 msgid "Restore and S_how"
 msgstr "還原並顯示(_H)"
 
-#: thunar/thunar-action-manager.c:293
+#: thunar/thunar-action-manager.c:294
 msgid "Mo_ve to Trash"
 msgstr "移至垃圾桶(_V)"
 
-#: thunar/thunar-action-manager.c:294 thunar/thunar-application.c:2463
+#: thunar/thunar-action-manager.c:297 thunar/thunar-application.c:2463
 #: plugins/thunar-uca/thunar-uca-chooser.c:375
 msgid "_Delete"
 msgstr "刪除(_D)"
 
-#: thunar/thunar-action-manager.c:299
+#: thunar/thunar-action-manager.c:300
 msgid "_Paste"
 msgstr "貼上(_P)"
 
-#: thunar/thunar-action-manager.c:299
+#: thunar/thunar-action-manager.c:300
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "將之前剪下或複製的檔案移動或複製"
 
-#: thunar/thunar-action-manager.c:301
+#: thunar/thunar-action-manager.c:302
 msgid "_Paste Into Folder"
 msgstr "貼到資料夾中(_P)"
 
-#: thunar/thunar-action-manager.c:301
+#: thunar/thunar-action-manager.c:302
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
 msgstr "將之前剪下或複製的檔案，移動或複製到目前所選的資料夾"
 
-#: thunar/thunar-action-manager.c:302
+#: thunar/thunar-action-manager.c:303
 msgid "_Copy"
 msgstr "複製(_C)"
 
-#: thunar/thunar-action-manager.c:304
+#: thunar/thunar-action-manager.c:305
 msgid "Cu_t"
 msgstr "剪下(_T)"
 
-#: thunar/thunar-action-manager.c:307
+#: thunar/thunar-action-manager.c:308
 msgid "_Mount"
 msgstr "掛載(_M)"
 
-#: thunar/thunar-action-manager.c:307
+#: thunar/thunar-action-manager.c:308
 msgid "Mount the selected device"
 msgstr "掛載選定的裝置"
 
-#: thunar/thunar-action-manager.c:308
+#: thunar/thunar-action-manager.c:309
 msgid "_Unmount"
 msgstr "卸載(_U)"
 
-#: thunar/thunar-action-manager.c:308
+#: thunar/thunar-action-manager.c:309
 msgid "Unmount the selected device"
 msgstr "解除掛載選定的裝置"
 
-#: thunar/thunar-action-manager.c:309 thunar/thunar-device.c:538
+#: thunar/thunar-action-manager.c:310 thunar/thunar-device.c:538
 msgid "_Eject"
 msgstr "退出(_E)"
 
-#: thunar/thunar-action-manager.c:309
+#: thunar/thunar-action-manager.c:310
 msgid "Eject the selected device"
 msgstr "退出選定的裝置"
-
-#: thunar/thunar-action-manager.c:310
-msgid "Edit _Launcher"
-msgstr "編輯啟動器(_L)"
-
-#: thunar/thunar-action-manager.c:310
-msgid "Edit the selected launcher"
-msgstr "編輯選定的啟動器"
 
 #: thunar/thunar-action-manager.c:802 thunar/thunar-dnd.c:272
 #, c-format
@@ -289,7 +293,7 @@ msgstr[0] "開啟 %d 個新視窗"
 msgid "_Cancel"
 msgstr "取消(_C)"
 
-#: thunar/thunar-action-manager.c:1079 thunar/thunar-action-manager.c:1976
+#: thunar/thunar-action-manager.c:1079 thunar/thunar-action-manager.c:1971
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "無法掛載「%s」"
@@ -313,38 +317,38 @@ msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "執行所選的檔案"
 
-#: thunar/thunar-action-manager.c:1584
+#: thunar/thunar-action-manager.c:1587
 #, c-format
 msgid "Open the selected directory in new tab"
 msgid_plural "Open the selected directories in %d new tabs"
 msgstr[0] "在 %d 新分頁中開啟選定的目錄"
 
-#: thunar/thunar-action-manager.c:1594
+#: thunar/thunar-action-manager.c:1597
 #, c-format
 msgid "Open the selected directory in new window"
 msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "在 %d 新視窗中開啟選定的目錄"
 
-#: thunar/thunar-action-manager.c:1639
+#: thunar/thunar-action-manager.c:1636
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "為所選的檔案建立符號連結"
 
-#: thunar/thunar-action-manager.c:1669
+#: thunar/thunar-action-manager.c:1666
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "重新命名所選的檔案"
 
-#: thunar/thunar-action-manager.c:1674
+#: thunar/thunar-action-manager.c:1671
 msgid "Bulk _Rename..."
 msgstr "批次重新命名……"
 
-#: thunar/thunar-action-manager.c:1684
+#: thunar/thunar-action-manager.c:1681
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
 msgstr[0] "將所選檔案復原到其原始位置"
 
-#: thunar/thunar-action-manager.c:1696
+#: thunar/thunar-action-manager.c:1693
 msgid ""
 "Restore the selected file to its original location and open the location in "
 "a new window/tab"
@@ -353,131 +357,130 @@ msgid_plural ""
 "locations in a new window/tab"
 msgstr[0] "將選定的檔案復原到其原始位置並在新視窗／分頁中開啟這些位置"
 
-#: thunar/thunar-action-manager.c:1713
+#: thunar/thunar-action-manager.c:1710
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "將所選的檔案丟至垃圾桶"
 
-#: thunar/thunar-action-manager.c:1730
+#: thunar/thunar-action-manager.c:1727
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "永久刪除所選檔案"
 
-#: thunar/thunar-action-manager.c:1789
+#: thunar/thunar-action-manager.c:1786
 msgid "Cut the selection"
 msgstr "剪下選擇"
 
-#: thunar/thunar-action-manager.c:1799
+#: thunar/thunar-action-manager.c:1796
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "準備將選取的檔案以貼上指令移動"
 
-#: thunar/thunar-action-manager.c:1813
+#: thunar/thunar-action-manager.c:1810
 msgid "Copy the selection"
 msgstr "複製選擇"
 
-#: thunar/thunar-action-manager.c:1823
+#: thunar/thunar-action-manager.c:1820
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "準備所選的檔案將被複製到緩衝區以便於貼上"
 
-#: thunar/thunar-action-manager.c:1846
+#: thunar/thunar-action-manager.c:1843
 msgid "Paste the clipboard"
 msgstr "貼上剪貼簿"
 
-#: thunar/thunar-action-manager.c:2087
+#: thunar/thunar-action-manager.c:2082
 msgid "Side Pane (Add Bookmark)"
 msgid_plural "Side Pane (Add Bookmarks)"
 msgstr[0] "側邊面板（新增標籤）"
 
-#: thunar/thunar-action-manager.c:2088
+#: thunar/thunar-action-manager.c:2083
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "將選取的資料夾加入捷徑側窗格中"
 
-#: thunar/thunar-action-manager.c:2107
+#: thunar/thunar-action-manager.c:2102
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "桌面 (建立連結)"
 
-#: thunar/thunar-action-manager.c:2108
+#: thunar/thunar-action-manager.c:2103
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "在桌面為所選的檔案建立連結"
 
-#: thunar/thunar-action-manager.c:2129 thunar/thunar-action-manager.c:2167
+#: thunar/thunar-action-manager.c:2124 thunar/thunar-action-manager.c:2162
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "傳送所選的檔案至「%s」"
 
 #. ask the user to enter a name for the new folder
-#: thunar/thunar-action-manager.c:2653 thunar/thunar-application.c:1993
+#: thunar/thunar-action-manager.c:2648 thunar/thunar-application.c:1993
 msgid "New Folder"
 msgstr "新資料夾"
 
-#: thunar/thunar-action-manager.c:2657 thunar/thunar-application.c:1994
+#: thunar/thunar-action-manager.c:2652 thunar/thunar-application.c:1994
 msgid "Create New Folder"
 msgstr "建立新資料夾"
 
 #. generate a title for the create dialog
-#: thunar/thunar-action-manager.c:2709 thunar/thunar-application.c:2058
+#: thunar/thunar-action-manager.c:2704 thunar/thunar-application.c:2058
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "從「%s」模板建立文件"
 
 #. ask the user to enter a name for the new empty file
-#: thunar/thunar-action-manager.c:2725
+#: thunar/thunar-action-manager.c:2720
 msgid "New Empty File"
 msgstr "新建空白檔案"
 
-#: thunar/thunar-action-manager.c:2729
+#: thunar/thunar-action-manager.c:2724
 msgid "New Empty File..."
 msgstr "新建空白檔案..."
 
-#: thunar/thunar-action-manager.c:2948
+#: thunar/thunar-action-manager.c:2943
 #, c-format
 msgid ""
 "No templates installed in\n"
 "\"%s\""
 msgstr "未在「%s」中安裝範本"
 
-#: thunar/thunar-action-manager.c:2961
+#: thunar/thunar-action-manager.c:2956
 msgid "_Empty File"
 msgstr "空白檔案(_E)"
 
-#: thunar/thunar-action-manager.c:3101
+#: thunar/thunar-action-manager.c:3096
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "無法退出「%s」"
 
-#: thunar/thunar-action-manager.c:3163
+#: thunar/thunar-action-manager.c:3158
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "無法卸載「%s」"
 
-#: thunar/thunar-action-manager.c:3226 thunar/thunar-action-manager.c:3297
+#: thunar/thunar-action-manager.c:3221 thunar/thunar-action-manager.c:3302
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "以「%s」開啟所選的檔案"
 
-#: thunar/thunar-action-manager.c:3296
+#: thunar/thunar-action-manager.c:3301
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "以「%s」開啟(_O)"
 
 #. we can only show a generic "Open" action
-#: thunar/thunar-action-manager.c:3316
+#: thunar/thunar-action-manager.c:3321
 msgid "_Open With Default Applications"
 msgstr "以預設應用程式開啟(_O)"
 
-#: thunar/thunar-action-manager.c:3317
-msgid "Open the selected file with the default application"
-msgid_plural "Open the selected files with the default applications"
-msgstr[0] "以預設的應用程式開啟所選的檔案"
+#: thunar/thunar-action-manager.c:3322
+msgid "Open the selected files with the default applications"
+msgstr "以預設的應用程式開啟所選的檔案"
 
-#: thunar/thunar-action-manager.c:3342
+#: thunar/thunar-action-manager.c:3338
 msgid "Ope_n With"
 msgstr "開啟程式(_N)"
 
