@@ -21,12 +21,12 @@
 # saskadaniel, 2024
 # SZERVÁC  Libre art  Attila  Libre art, 2022
 # SZERVÁC  Libre art  Attila  Libre art, 2022
-# Omega <ors0092@gmail.com>, 2024
+# 4b7bd6efadf10ad8d619f0732513f8d4_63f0d06 <6c82134afff501a5b58c68bd654d5ced_1121043>, 2024
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-05-08 00:47+0200\n"
+"POT-Creation-Date: 2024-05-15 00:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Balázs Meskó <meskobalazs@mailbox.org>, 2020,2024\n"
 "Language-Team: Hungarian (http://app.transifex.com/xfce/thunar/language/hu/)\n"
@@ -54,30 +54,42 @@ msgid "_Execute"
 msgstr "_Végrehajtás"
 
 #: thunar/thunar-action-manager.c:271
+msgid "Edit _Launcher"
+msgstr "_Indítóikon szerkesztése"
+
+#: thunar/thunar-action-manager.c:271
+msgid "Edit the selected launcher"
+msgstr "A kiválasztott indító szerkesztése"
+
+#: thunar/thunar-action-manager.c:272
 msgid "Open in new _Tab"
 msgstr "Megnyitás új _lapon"
 
-#: thunar/thunar-action-manager.c:272
+#: thunar/thunar-action-manager.c:273
 msgid "Open in new _Window"
 msgstr "Megnyitás új _ablakban"
 
-#: thunar/thunar-action-manager.c:273
+#: thunar/thunar-action-manager.c:274
 msgid "Open Item _Location"
 msgstr "Elem _helyének megnyitása"
 
 #: thunar/thunar-action-manager.c:274
+msgid "Navigate to the folder in which the selected file is located"
+msgstr ""
+
+#: thunar/thunar-action-manager.c:275
 msgid "Ope_n With Other Application..."
 msgstr "Megnyitás _más alkalmazással…"
 
-#: thunar/thunar-action-manager.c:274 thunar/thunar-action-manager.c:3343
+#: thunar/thunar-action-manager.c:275 thunar/thunar-action-manager.c:3339
 msgid "Choose another application with which to open the selected file"
 msgstr "Másik alkalmazás választása a kijelölt fájl megnyitásához"
 
-#: thunar/thunar-action-manager.c:275
+#: thunar/thunar-action-manager.c:276
 msgid "Set Defa_ult Application..."
 msgstr "_Alapértelmezett alkalmazás beállítása…"
 
-#: thunar/thunar-action-manager.c:275
+#: thunar/thunar-action-manager.c:276
 msgid ""
 "Choose an application which should be used by default to open the selected "
 "file"
@@ -87,152 +99,144 @@ msgstr "Válasszon egy alapértelmezett alkalmazást a kiválasztott fájl megny
 #. possible to automatically migrate to new accel paths.
 #. Waiting for https://gitlab.gnome.org/GNOME/gtk/issues/2375 to be able to
 #. fix that
-#: thunar/thunar-action-manager.c:279
+#: thunar/thunar-action-manager.c:280
 msgid "_Send To"
 msgstr "_Küldés"
 
-#: thunar/thunar-action-manager.c:280
+#: thunar/thunar-action-manager.c:281
 msgid "_Add Bookmark"
 msgstr "_Könyvjelző hozzáadása"
 
-#: thunar/thunar-action-manager.c:280
+#: thunar/thunar-action-manager.c:281
 msgid ""
 "Create bookmarks for all selected folders. If nothing is selected, the "
 "current folder is bookmarked."
 msgstr "Könyvjelző létrehozása a kijelölt mappákhoz. Ha semmi sincs kiválasztva, akkor ez a mappa lesz könyvjelzőzve."
 
-#: thunar/thunar-action-manager.c:281
+#: thunar/thunar-action-manager.c:282
 msgid "Send to _Desktop"
 msgstr "Küldés az _asztalra"
 
-#: thunar/thunar-action-manager.c:282
+#: thunar/thunar-action-manager.c:283
 msgid "_Properties..."
 msgstr "T_ulajdonságok…"
 
-#: thunar/thunar-action-manager.c:282
+#: thunar/thunar-action-manager.c:283
 msgid "View the properties of the selected file"
 msgstr "A kiválasztott fájl tulajdonságainak megjelenítése"
 
-#: thunar/thunar-action-manager.c:283
+#: thunar/thunar-action-manager.c:284
 msgid "Ma_ke Link"
 msgstr "_Link létrehozása"
 
-#: thunar/thunar-action-manager.c:284
+#: thunar/thunar-action-manager.c:285
 msgid "Dup_licate"
 msgstr "Meg_kettőzés"
 
-#: thunar/thunar-action-manager.c:285
+#: thunar/thunar-action-manager.c:286
 msgid "_Rename..."
 msgstr "Á_tnevezés…"
 
 #. prepare the menu item
-#: thunar/thunar-action-manager.c:286 thunar/thunar-application.c:2712
+#: thunar/thunar-action-manager.c:287 thunar/thunar-application.c:2712
 #: plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "_Kuka ürítése"
 
-#: thunar/thunar-action-manager.c:286
+#: thunar/thunar-action-manager.c:287
 msgid "Delete all files and folders in the Trash"
 msgstr "Az összes fájl és mappa törlése a Kukából"
 
-#: thunar/thunar-action-manager.c:287
+#: thunar/thunar-action-manager.c:288
 msgid "_Remove from Recent"
 msgstr "_Eltávolítás a legutóbbiak közül"
 
-#: thunar/thunar-action-manager.c:287
+#: thunar/thunar-action-manager.c:288
 msgid "Remove the selected files from Recent"
 msgstr "A kijelölt fájlok eltávolítása a legutóbbiak közül"
 
-#: thunar/thunar-action-manager.c:288
+#: thunar/thunar-action-manager.c:289
 msgid "Create _Folder..."
 msgstr "M_appa létrehozása…"
 
-#: thunar/thunar-action-manager.c:288
+#: thunar/thunar-action-manager.c:289
 msgid "Create an empty folder within the current folder"
 msgstr "Üres mappa létrehozása a jelenlegi mappában"
 
-#: thunar/thunar-action-manager.c:289
+#: thunar/thunar-action-manager.c:290
 msgid "Create _Document"
 msgstr "_Dokumentum létrehozása"
 
-#: thunar/thunar-action-manager.c:289
+#: thunar/thunar-action-manager.c:290
 msgid "Create a new document from a template"
 msgstr "Új dokumentum létrehozása sablonból"
 
-#: thunar/thunar-action-manager.c:291
+#: thunar/thunar-action-manager.c:292
 msgid "_Restore"
 msgstr "_Helyreállítás"
 
-#: thunar/thunar-action-manager.c:292
+#: thunar/thunar-action-manager.c:293
 msgid "Restore and S_how"
 msgstr "_Helyreállítás és megjelenítés"
 
-#: thunar/thunar-action-manager.c:293
+#: thunar/thunar-action-manager.c:294
 msgid "Mo_ve to Trash"
 msgstr "Áthelyezés a K_ukába"
 
-#: thunar/thunar-action-manager.c:294 thunar/thunar-application.c:2463
+#: thunar/thunar-action-manager.c:297 thunar/thunar-application.c:2463
 #: plugins/thunar-uca/thunar-uca-chooser.c:375
 msgid "_Delete"
 msgstr "_Törlés"
 
-#: thunar/thunar-action-manager.c:299
+#: thunar/thunar-action-manager.c:300
 msgid "_Paste"
 msgstr "_Beillesztés"
 
-#: thunar/thunar-action-manager.c:299
+#: thunar/thunar-action-manager.c:300
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "Kivágás vagy Másolás parancsokkal kiválasztott fájlok áthelyezése vagy másolása"
 
-#: thunar/thunar-action-manager.c:301
+#: thunar/thunar-action-manager.c:302
 msgid "_Paste Into Folder"
 msgstr "_Beillesztés a mappába"
 
-#: thunar/thunar-action-manager.c:301
+#: thunar/thunar-action-manager.c:302
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
 msgstr "Kivágás vagy Másolás paranccsal kiválasztott fájlok áthelyezése vagy másolása a kijelölt mappába"
 
-#: thunar/thunar-action-manager.c:302
+#: thunar/thunar-action-manager.c:303
 msgid "_Copy"
 msgstr "_Másolás"
 
-#: thunar/thunar-action-manager.c:304
+#: thunar/thunar-action-manager.c:305
 msgid "Cu_t"
 msgstr "_Kivágás"
 
-#: thunar/thunar-action-manager.c:307
+#: thunar/thunar-action-manager.c:308
 msgid "_Mount"
 msgstr "Kötet _csatolása"
 
-#: thunar/thunar-action-manager.c:307
+#: thunar/thunar-action-manager.c:308
 msgid "Mount the selected device"
 msgstr "A kiválasztott eszköz csatolása"
 
-#: thunar/thunar-action-manager.c:308
+#: thunar/thunar-action-manager.c:309
 msgid "_Unmount"
 msgstr "_Leválasztás"
 
-#: thunar/thunar-action-manager.c:308
+#: thunar/thunar-action-manager.c:309
 msgid "Unmount the selected device"
 msgstr "A kiválasztott eszköz eltávolítása"
 
-#: thunar/thunar-action-manager.c:309 thunar/thunar-device.c:538
+#: thunar/thunar-action-manager.c:310 thunar/thunar-device.c:538
 msgid "_Eject"
 msgstr "_Kiadás"
 
-#: thunar/thunar-action-manager.c:309
+#: thunar/thunar-action-manager.c:310
 msgid "Eject the selected device"
 msgstr "A kiválasztott eszköz kiadása"
-
-#: thunar/thunar-action-manager.c:310
-msgid "Edit _Launcher"
-msgstr "_Indítóikon szerkesztése"
-
-#: thunar/thunar-action-manager.c:310
-msgid "Edit the selected launcher"
-msgstr "A kiválasztott indító szerkesztése"
 
 #: thunar/thunar-action-manager.c:802 thunar/thunar-dnd.c:272
 #, c-format
@@ -302,7 +306,7 @@ msgstr[1] "%d új ablak megnyitása"
 msgid "_Cancel"
 msgstr "Mé_gse"
 
-#: thunar/thunar-action-manager.c:1079 thunar/thunar-action-manager.c:1976
+#: thunar/thunar-action-manager.c:1079 thunar/thunar-action-manager.c:1971
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "A(z) „%s” csatolása sikertelen"
@@ -328,43 +332,43 @@ msgid_plural "Execute the selected files"
 msgstr[0] "A kijelölt fájl végrehajtása"
 msgstr[1] "A kijelölt fájlok végrehajtása"
 
-#: thunar/thunar-action-manager.c:1584
+#: thunar/thunar-action-manager.c:1587
 #, c-format
 msgid "Open the selected directory in new tab"
 msgid_plural "Open the selected directories in %d new tabs"
 msgstr[0] "A kiválasztott könyvtár megnyitása új lapon"
 msgstr[1] "A kiválasztott könyvtárak megnyitása %d új lapon"
 
-#: thunar/thunar-action-manager.c:1594
+#: thunar/thunar-action-manager.c:1597
 #, c-format
 msgid "Open the selected directory in new window"
 msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "Kijelölt mappa megnyitás új ablakban"
 msgstr[1] "Kijelölt mappák megnyitása %d új ablakban"
 
-#: thunar/thunar-action-manager.c:1639
+#: thunar/thunar-action-manager.c:1636
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Szimbolikus link létrehozása a kijelölt fájlra"
 msgstr[1] "Szimbolikus linkek létrehozása a kijelölt fájlokra"
 
-#: thunar/thunar-action-manager.c:1669
+#: thunar/thunar-action-manager.c:1666
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "A kijelölt fájl átnevezése"
 msgstr[1] "A kijelölt fájlok átnevezése"
 
-#: thunar/thunar-action-manager.c:1674
+#: thunar/thunar-action-manager.c:1671
 msgid "Bulk _Rename..."
 msgstr "_Csoportos átnevezés…"
 
-#: thunar/thunar-action-manager.c:1684
+#: thunar/thunar-action-manager.c:1681
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
 msgstr[0] "A kijelölt fájl helyreállítása az eredeti helyén"
 msgstr[1] "A kijelölt fájlok helyreállítása az eredeti helyükön"
 
-#: thunar/thunar-action-manager.c:1696
+#: thunar/thunar-action-manager.c:1693
 msgid ""
 "Restore the selected file to its original location and open the location in "
 "a new window/tab"
@@ -374,67 +378,67 @@ msgid_plural ""
 msgstr[0] "A kijelölt fájl helyreállítása az eredeti helyén, és megnyitás új ablakban/lapokon"
 msgstr[1] "A kijelölt fájlok helyreállítása az eredeti helyükön, és megnyitás új ablakban/lapokon"
 
-#: thunar/thunar-action-manager.c:1713
+#: thunar/thunar-action-manager.c:1710
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "A kijelölt fájl áthelyezése a Kukába"
 msgstr[1] "A kijelölt fájlok áthelyezése a Kukába"
 
-#: thunar/thunar-action-manager.c:1730
+#: thunar/thunar-action-manager.c:1727
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "A kijelölt fájl végleges törlése"
 msgstr[1] "A kijelölt fájlok végleges törlése"
 
-#: thunar/thunar-action-manager.c:1789
+#: thunar/thunar-action-manager.c:1786
 msgid "Cut the selection"
 msgstr "Kijelölés kivágása"
 
-#: thunar/thunar-action-manager.c:1799
+#: thunar/thunar-action-manager.c:1796
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "A kijelölt fájl előkészítése áthelyezésre a Beillesztés paranccsal"
 msgstr[1] "A kijelölt fájlok előkészítése áthelyezésre a Beillesztés paranccsal"
 
-#: thunar/thunar-action-manager.c:1813
+#: thunar/thunar-action-manager.c:1810
 msgid "Copy the selection"
 msgstr "Kijelölés másolása"
 
-#: thunar/thunar-action-manager.c:1823
+#: thunar/thunar-action-manager.c:1820
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "A kijelölt fájl előkészítése másolásra a Beillesztés paranccsal"
 msgstr[1] "A kijelölt fájlok előkészítése másolásra a Beillesztés paranccsal"
 
-#: thunar/thunar-action-manager.c:1846
+#: thunar/thunar-action-manager.c:1843
 msgid "Paste the clipboard"
 msgstr "Vágólap tartalmának beillesztése"
 
-#: thunar/thunar-action-manager.c:2087
+#: thunar/thunar-action-manager.c:2082
 msgid "Side Pane (Add Bookmark)"
 msgid_plural "Side Pane (Add Bookmarks)"
 msgstr[0] "Oldalpanel (Könyvjelző hozzáadása)"
 msgstr[1] "Oldalpanel (Könyvjelzők hozzáadása)"
 
-#: thunar/thunar-action-manager.c:2088
+#: thunar/thunar-action-manager.c:2083
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "A kiválasztott mappa hozzáadása a könyvjelzők oldalsávhoz"
 msgstr[1] "A kiválasztott mappák hozzáadása a könyvjelzők oldalsávhoz"
 
-#: thunar/thunar-action-manager.c:2107
+#: thunar/thunar-action-manager.c:2102
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "Asztal (link létrehozása)"
 msgstr[1] "Asztal (linkek létrehozása)"
 
-#: thunar/thunar-action-manager.c:2108
+#: thunar/thunar-action-manager.c:2103
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "Link létrehozása a kijelölt fájlhoz az Asztalon"
 msgstr[1] "Linkek létrehozása a kijelölt fájlokhoz az Asztalon"
 
-#: thunar/thunar-action-manager.c:2129 thunar/thunar-action-manager.c:2167
+#: thunar/thunar-action-manager.c:2124 thunar/thunar-action-manager.c:2162
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
@@ -442,74 +446,72 @@ msgstr[0] "A kijelölt fájl küldése ide: „%s”"
 msgstr[1] "A kijelölt fájlok küldése ide: „%s”"
 
 #. ask the user to enter a name for the new folder
-#: thunar/thunar-action-manager.c:2653 thunar/thunar-application.c:1993
+#: thunar/thunar-action-manager.c:2648 thunar/thunar-application.c:1993
 msgid "New Folder"
 msgstr "Új mappa"
 
-#: thunar/thunar-action-manager.c:2657 thunar/thunar-application.c:1994
+#: thunar/thunar-action-manager.c:2652 thunar/thunar-application.c:1994
 msgid "Create New Folder"
 msgstr "Új mappa létrehozása"
 
 #. generate a title for the create dialog
-#: thunar/thunar-action-manager.c:2709 thunar/thunar-application.c:2058
+#: thunar/thunar-action-manager.c:2704 thunar/thunar-application.c:2058
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Dokumentum létrehozása a(z) „%s” sablonból"
 
 #. ask the user to enter a name for the new empty file
-#: thunar/thunar-action-manager.c:2725
+#: thunar/thunar-action-manager.c:2720
 msgid "New Empty File"
 msgstr "Új üres fájl"
 
-#: thunar/thunar-action-manager.c:2729
+#: thunar/thunar-action-manager.c:2724
 msgid "New Empty File..."
 msgstr "Új üres fájl…"
 
-#: thunar/thunar-action-manager.c:2948
+#: thunar/thunar-action-manager.c:2943
 #, c-format
 msgid ""
 "No templates installed in\n"
 "\"%s\""
 msgstr "Nincsenek telepített sablonok itt:\n„%s”"
 
-#: thunar/thunar-action-manager.c:2961
+#: thunar/thunar-action-manager.c:2956
 msgid "_Empty File"
 msgstr "Ü_res fájl"
 
-#: thunar/thunar-action-manager.c:3101
+#: thunar/thunar-action-manager.c:3096
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "A(z) „%s” kiadása sikertelen"
 
-#: thunar/thunar-action-manager.c:3163
+#: thunar/thunar-action-manager.c:3158
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "A(z) „%s” leválasztása sikertelen"
 
-#: thunar/thunar-action-manager.c:3226 thunar/thunar-action-manager.c:3297
+#: thunar/thunar-action-manager.c:3221 thunar/thunar-action-manager.c:3302
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "A(z) „%s” használata a kijelölt fájl megnyitására"
 msgstr[1] "A(z) „%s” használata a kijelölt fájlok megnyitására"
 
-#: thunar/thunar-action-manager.c:3296
+#: thunar/thunar-action-manager.c:3301
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "Megnyitás e_zzel: „%s”"
 
 #. we can only show a generic "Open" action
-#: thunar/thunar-action-manager.c:3316
+#: thunar/thunar-action-manager.c:3321
 msgid "_Open With Default Applications"
 msgstr "Megnyitás alapértelmezett alkalma_zásokkal"
 
-#: thunar/thunar-action-manager.c:3317
-msgid "Open the selected file with the default application"
-msgid_plural "Open the selected files with the default applications"
-msgstr[0] "A kijelölt fájl megnyitása az alapértelmezett alkalmazással"
-msgstr[1] "A kijelölt fájlok megnyitása az alapértelmezett alkalmazásokkal"
+#: thunar/thunar-action-manager.c:3322
+msgid "Open the selected files with the default applications"
+msgstr "A kijelölt fájlok megnyitása az alapértelmezett alkalmazásokkal"
 
-#: thunar/thunar-action-manager.c:3342
+#: thunar/thunar-action-manager.c:3338
 msgid "Ope_n With"
 msgstr "Megnyitás _ezzel…"
 
