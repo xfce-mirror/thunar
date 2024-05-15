@@ -255,15 +255,15 @@ GType thunar_recursive_permissions_get_type (void) G_GNUC_CONST;
 
 /**
  * ThunarRecursiveSearchMode:
- * @THUNAR_RECURSIVE_SEARCH_LOCAL       : do recursive search only locally.
  * @THUNAR_RECURSIVE_SEARCH_ALWAYS      : always do recursive search.
+ * @THUNAR_RECURSIVE_SEARCH_LOCAL       : do recursive search only locally.
  * @THUNAR_RECURSIVE_SEARCH_NEVER       : never do recursive search.
  *
  **/
 typedef enum
 {
-  THUNAR_RECURSIVE_SEARCH_LOCAL,
   THUNAR_RECURSIVE_SEARCH_ALWAYS,
+  THUNAR_RECURSIVE_SEARCH_LOCAL,
   THUNAR_RECURSIVE_SEARCH_NEVER,
 } ThunarRecursiveSearchMode;
 
