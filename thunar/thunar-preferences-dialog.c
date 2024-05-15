@@ -1055,7 +1055,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                         "Indicates the behavior during multiple copies:\n"
                                         "- Always: all copies are done simultaneously\n"
                                         "- Local Files Only: simultaneous copies for local (not remote, not attached) files\n"
-                                        "- Local Files On Same Devices Only: if all files are locals but on different devices (disks, mount points), copies will be sequential\n"
+                                        "- Local Files Only (Same Devices): if all files are local but on different devices (disks, mount points), copies will be sequential\n"
+                                        "- Local Files Only (Idle Devices): if all files are local but on busy devices (disks, mount points), copies will be sequential\n"
                                         "- Never: all copies are done sequentially"
                                       ));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
@@ -1065,8 +1066,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   combo = gtk_combo_box_text_new ();
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Always"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Local Files Only"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Local Files On Same Devices Only"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Local Files On Idle Devices Only"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Local Files Only (Same Devices)"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Local Files Only (Idle Devices)"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Never"));
   g_object_bind_property_full (G_OBJECT (dialog->preferences),
                                "misc-parallel-copy-mode",
