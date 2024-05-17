@@ -658,11 +658,13 @@ thunar_application_load_css (void)
     ".shortcuts-pane { border-right-width: 0px; }"
     /* add missing top border to side pane */
     ".shortcuts-pane { border-top-style: solid; }"
+    /* remove extra border from preview pane */
+    ".preview-pane { border-left-width: 0px; border-right-width: 0px; border-bottom-width: 0px;}"
     /* make border thicker during DnD */
     ".standard-view { border-left-width: 0px; border-right-width: 0px; }"
+    ".standard-view:drop(active) { border-width: 2px; }"
     /* for the example box in properties dialog > highlight tab */ 
-    "#example { border-radius: 10px; }"
-    ".standard-view:drop(active) { border-width: 2px; }", -1, NULL);
+    "#example { border-radius: 10px; }", -1, NULL);
   screen = gdk_screen_get_default ();
   gtk_style_context_add_provider_for_screen (screen, GTK_STYLE_PROVIDER (css_provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
   g_object_unref (css_provider);
