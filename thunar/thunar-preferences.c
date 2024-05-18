@@ -134,6 +134,7 @@ enum
   PROP_MISC_MAX_NUMBER_OF_TEMPLATES,
   PROP_SHOW_LAUNCHER_NAMES_INSTEAD_REAL_FILENAMES,
   PROP_MISC_EXPANDABLE_FOLDERS,
+  PROP_MISC_USE_SYMBOLIC_ICONS_IN_TOOLBAR,
   N_PROPERTIES,
 };
 
@@ -1286,6 +1287,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                              NULL,
                              TRUE,
                              EXO_PARAM_READWRITE);
+
+   /**
+   * ThunarPreferences:misc-use-symbolic-icons-in-toolbar:
+   *
+   * If true if symbolic icons should be used in the toolbar
+   **/
+  preferences_props[PROP_MISC_USE_SYMBOLIC_ICONS_IN_TOOLBAR] =
+      g_param_spec_boolean ("misc-use-symbolic-icons-in-toolbar",
+                            "MiscUseSymbolicIconsInToolbar",
+                            NULL,
+                            TRUE,
+                            EXO_PARAM_READWRITE);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
