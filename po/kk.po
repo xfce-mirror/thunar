@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-05-15 00:46+0200\n"
+"POT-Creation-Date: 2024-05-18 00:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Baurzhan Muftakhidinov <baurthefirst@gmail.com>, 2009,2013-2015,2017-2024\n"
 "Language-Team: Kazakh (http://app.transifex.com/xfce/thunar/language/kk/)\n"
@@ -1442,21 +1442,21 @@ msgstr "Файл аты"
 
 #: thunar/thunar-enum-types.c:636 thunar/thunar-enum-types.c:659
 #: thunar/thunar-enum-types.c:785 thunar/thunar-preferences-dialog.c:418
-#: thunar/thunar-preferences-dialog.c:1070
-#: thunar/thunar-preferences-dialog.c:1176
-#: thunar/thunar-preferences-dialog.c:1264
+#: thunar/thunar-preferences-dialog.c:1071
+#: thunar/thunar-preferences-dialog.c:1177
+#: thunar/thunar-preferences-dialog.c:1265
 msgid "Never"
 msgstr "Ешқашан"
 
 #: thunar/thunar-enum-types.c:637 thunar/thunar-enum-types.c:660
-msgid "Only for remote location"
-msgstr "Тек қашықтағы орналасулар үшін"
+msgid "Only For Remote Location"
+msgstr ""
 
 #: thunar/thunar-enum-types.c:638 thunar/thunar-enum-types.c:661
 #: thunar/thunar-enum-types.c:787 thunar/thunar-preferences-dialog.c:420
-#: thunar/thunar-preferences-dialog.c:1066
+#: thunar/thunar-preferences-dialog.c:1067
 #: thunar/thunar-preferences-dialog.c:1175
-#: thunar/thunar-preferences-dialog.c:1265
+#: thunar/thunar-preferences-dialog.c:1266
 msgid "Always"
 msgstr "Әрқашан"
 
@@ -1976,7 +1976,7 @@ msgid "Allow this file to _run as a program"
 msgstr "Бұл файлға бағда_рлама ретінде орындалуға рұқсат ету"
 
 #: thunar/thunar-permissions-chooser.c:390
-#: thunar/thunar-preferences-dialog.c:1279
+#: thunar/thunar-preferences-dialog.c:1280
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "Сенімсіз бағдарламаларға орындалуды рұқсат ету жүйеңізге қауіпсіздік тәуекелін туғызады."
@@ -2157,8 +2157,8 @@ msgid "Show thumbnails:"
 msgstr "Үлгілерін көрсету:"
 
 #: thunar/thunar-preferences-dialog.c:419
-#: thunar/thunar-preferences-dialog.c:1067
-#: thunar/thunar-preferences-dialog.c:1174
+#: thunar/thunar-preferences-dialog.c:1068
+#: thunar/thunar-preferences-dialog.c:1176
 msgid "Local Files Only"
 msgstr "Тек жергілікті файлдар"
 
@@ -2492,100 +2492,101 @@ msgid ""
 "Indicates the behavior during multiple copies:\n"
 "- Always: all copies are done simultaneously\n"
 "- Local Files Only: simultaneous copies for local (not remote, not attached) files\n"
-"- Local Files On Same Devices Only: if all files are locals but on different devices (disks, mount points), copies will be sequential\n"
+"- Local Files Only (Same Devices): if all files are local but on different devices (disks, mount points), copies will be sequential\n"
+"- Local Files Only (Idle Devices): if all files are local but on busy devices (disks, mount points), copies will be sequential\n"
 "- Never: all copies are done sequentially"
-msgstr "Бірнеше көшірме кезінде мінез-құлықты көрсетеді:\n- Әрқашан: барлық көшірмелер бір уақытта жасалады\n- Тек жергілікті файлдар: жергілікті (қашықтағы және салынған емес) файлдарды бір уақытта көшіру\n- Тек бірдей құрылғылардағы жергілікті файлдар: егер барлық файлдар жергілікті болса, бірақ әр түрлі құрылғыларда (дискілер, тіркеу нүктелері) болса, көшірмелер кезекпен болады\n- Ешқашан: барлық көшірмелер кезекпен жасалады"
-
-#: thunar/thunar-preferences-dialog.c:1068
-msgid "Local Files On Same Devices Only"
-msgstr "Тек бірдей құрылғылардағы жергілікті файлдар"
-
-#: thunar/thunar-preferences-dialog.c:1069
-msgid "Local Files On Idle Devices Only"
 msgstr ""
 
-#: thunar/thunar-preferences-dialog.c:1088
+#: thunar/thunar-preferences-dialog.c:1069
+msgid "Local Files Only (Same Devices)"
+msgstr ""
+
+#: thunar/thunar-preferences-dialog.c:1070
+msgid "Local Files Only (Idle Devices)"
+msgstr ""
+
+#: thunar/thunar-preferences-dialog.c:1089
 msgid "Use intermediate file on copy:"
 msgstr "Көшіргенде, аралық файлды қолдану:"
 
-#: thunar/thunar-preferences-dialog.c:1092
+#: thunar/thunar-preferences-dialog.c:1093
 msgid ""
 "Use intermediate file '*.partial~' to copy files. This will prevent "
 "fragmented files. The new file will only be shown after the copy was "
 "successfully finished."
 msgstr "Файлдарды көшіру үшін '*.partial~' аралық файлын пайдаланыу. Бұл фрагменттелген файлдарды болдырмайды. Жаңа файл көшіру сәтті аяқталғаннан кейін ғана көрсетіледі."
 
-#: thunar/thunar-preferences-dialog.c:1119
+#: thunar/thunar-preferences-dialog.c:1120
 msgid "Verify file checksum on copy:"
 msgstr "Көшіру кезінде файлдың бақылау сомасын тексеру:"
 
-#: thunar/thunar-preferences-dialog.c:1123
+#: thunar/thunar-preferences-dialog.c:1124
 msgid ""
 "Compare original file and copy with checksum. This will prevent corrupted "
 "files. Enabling this option will largely increase copy time."
 msgstr "Түпнұсқа мен көшірме файлдарын бақылау сомасымен тексеру. Бұл зақымдалған файлдарға жол бермейді. Бұл опцияны іске қосу көшіру уақытын арттырады."
 
-#: thunar/thunar-preferences-dialog.c:1151
+#: thunar/thunar-preferences-dialog.c:1152
 msgid "Search"
 msgstr "Іздеу"
 
-#: thunar/thunar-preferences-dialog.c:1168
+#: thunar/thunar-preferences-dialog.c:1169
 msgid "Include subfolders:"
 msgstr "Ішкі бумаларды қоса:"
 
-#: thunar/thunar-preferences-dialog.c:1192
+#: thunar/thunar-preferences-dialog.c:1193
 msgid "Folder Permissions"
 msgstr "Бума рұқсаттары"
 
-#: thunar/thunar-preferences-dialog.c:1208
+#: thunar/thunar-preferences-dialog.c:1209
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "Бума рұқсаттарын ауыстырған кезде, өзгерістерді\nсол буманың құрамасына да іске асыра аласыз.\nНегізгі ретінде біреуін таңдаңыз:"
 
-#: thunar/thunar-preferences-dialog.c:1220
-#: thunar/thunar-preferences-dialog.c:1266
+#: thunar/thunar-preferences-dialog.c:1221
+#: thunar/thunar-preferences-dialog.c:1267
 msgid "Ask every time"
 msgstr "Әрқашан сұрау"
 
-#: thunar/thunar-preferences-dialog.c:1221
+#: thunar/thunar-preferences-dialog.c:1222
 msgid "Apply to Folder and Contents"
 msgstr "Бумалар мен құрамасы үшін іске асыру"
 
-#: thunar/thunar-preferences-dialog.c:1222
+#: thunar/thunar-preferences-dialog.c:1223
 msgid "Apply to Folder Only"
 msgstr "Тек бумалар үшін іске асыру"
 
-#: thunar/thunar-preferences-dialog.c:1237
+#: thunar/thunar-preferences-dialog.c:1238
 msgid "Security"
 msgstr "Қауіпсіздік"
 
-#: thunar/thunar-preferences-dialog.c:1254
+#: thunar/thunar-preferences-dialog.c:1255
 msgid "Execute shell scripts:"
 msgstr "Қоршам скрипттерін орындау:"
 
-#: thunar/thunar-preferences-dialog.c:1289
+#: thunar/thunar-preferences-dialog.c:1290
 msgid "Volume Management"
 msgstr "Бөлімдерді басқару"
 
 #. add check button to enable/disable auto mounting
-#: thunar/thunar-preferences-dialog.c:1306
+#: thunar/thunar-preferences-dialog.c:1307
 msgid "Enable _Volume Management"
 msgstr "Бөлі_мдерді басқаруды іске қосу"
 
-#: thunar/thunar-preferences-dialog.c:1325
+#: thunar/thunar-preferences-dialog.c:1326
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">Осында</a> сіз ауыстырмалы тасушылар,\nқұрылғылар және медианы баптай аласыз."
 
-#: thunar/thunar-preferences-dialog.c:1340
+#: thunar/thunar-preferences-dialog.c:1341
 #: thunar/thunar-properties-dialog.c:810
 msgid "Missing dependencies"
 msgstr "Жоқ болып тұрған тәуелділіктер"
 
-#: thunar/thunar-preferences-dialog.c:1348
+#: thunar/thunar-preferences-dialog.c:1349
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2594,30 +2595,30 @@ msgid ""
 msgstr "<a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> қолжетерсіз сияқты.\nҚоқыс шелегі, ауыстырмалы тасушылар\nжәне қашықтағы орналасуларды шолу\nсияқты мүмкіндіктер жасамайды.\n<a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Көбірек білу]</a>"
 
 #. Shortcuts
-#: thunar/thunar-preferences-dialog.c:1363
+#: thunar/thunar-preferences-dialog.c:1364
 msgid "Shortcuts"
 msgstr "Жарлықтар"
 
-#: thunar/thunar-preferences-dialog.c:1374
+#: thunar/thunar-preferences-dialog.c:1375
 msgid "Window"
 msgstr "Терезе"
 
-#: thunar/thunar-preferences-dialog.c:1375
+#: thunar/thunar-preferences-dialog.c:1376
 msgid "View"
 msgstr "Түрі"
 
-#: thunar/thunar-preferences-dialog.c:1376
+#: thunar/thunar-preferences-dialog.c:1377
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:532
 msgid "Launcher"
 msgstr "Жөнелткіш"
 
-#: thunar/thunar-preferences-dialog.c:1377
+#: thunar/thunar-preferences-dialog.c:1378
 msgid "Status Bar"
 msgstr "Қалып-күй жолағы"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: thunar/thunar-preferences-dialog.c:1441
+#: thunar/thunar-preferences-dialog.c:1442
 msgid "Failed to display the volume management settings"
 msgstr "Бөлімдерді басқару баптауларын көрсету сәтсіз аяқталды"
 
