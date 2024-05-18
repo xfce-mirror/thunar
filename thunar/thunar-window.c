@@ -2826,12 +2826,12 @@ thunar_window_paned_notebooks_indicate_focus (ThunarWindow *window,
   _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
   _thunar_return_if_fail (thunar_window_split_view_is_active (window));
 
-  gtk_notebook_set_show_border (GTK_NOTEBOOK (notebook), TRUE);
+  /* add style class to inactive pane */
+  gtk_style_context_remove_class (gtk_widget_get_style_context (notebook), "split-view-inactive-pane");
   if (notebook == window->notebook_left)
-    gtk_notebook_set_show_border (GTK_NOTEBOOK (window->notebook_right), FALSE);
-
+    gtk_style_context_add_class (gtk_widget_get_style_context (window->notebook_right), "split-view-inactive-pane");
   if (notebook == window->notebook_right)
-    gtk_notebook_set_show_border (GTK_NOTEBOOK (window->notebook_left), FALSE);
+    gtk_style_context_add_class (gtk_widget_get_style_context (window->notebook_left), "split-view-inactive-pane");
 
   gtk_widget_grab_focus (notebook);
 }
