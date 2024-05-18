@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-05-15 00:46+0200\n"
+"POT-Creation-Date: 2024-05-18 00:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Balázs Meskó <meskobalazs@mailbox.org>, 2020,2024\n"
 "Language-Team: Hungarian (http://app.transifex.com/xfce/thunar/language/hu/)\n"
@@ -1460,21 +1460,21 @@ msgstr "Fájlnév"
 
 #: thunar/thunar-enum-types.c:636 thunar/thunar-enum-types.c:659
 #: thunar/thunar-enum-types.c:785 thunar/thunar-preferences-dialog.c:418
-#: thunar/thunar-preferences-dialog.c:1070
-#: thunar/thunar-preferences-dialog.c:1176
-#: thunar/thunar-preferences-dialog.c:1264
+#: thunar/thunar-preferences-dialog.c:1071
+#: thunar/thunar-preferences-dialog.c:1177
+#: thunar/thunar-preferences-dialog.c:1265
 msgid "Never"
 msgstr "Soha"
 
 #: thunar/thunar-enum-types.c:637 thunar/thunar-enum-types.c:660
-msgid "Only for remote location"
-msgstr "Csak távoli helyekre"
+msgid "Only For Remote Location"
+msgstr ""
 
 #: thunar/thunar-enum-types.c:638 thunar/thunar-enum-types.c:661
 #: thunar/thunar-enum-types.c:787 thunar/thunar-preferences-dialog.c:420
-#: thunar/thunar-preferences-dialog.c:1066
+#: thunar/thunar-preferences-dialog.c:1067
 #: thunar/thunar-preferences-dialog.c:1175
-#: thunar/thunar-preferences-dialog.c:1265
+#: thunar/thunar-preferences-dialog.c:1266
 msgid "Always"
 msgstr "Mindig"
 
@@ -1994,7 +1994,7 @@ msgid "Allow this file to _run as a program"
 msgstr "A fájl f_uttatható programként"
 
 #: thunar/thunar-permissions-chooser.c:390
-#: thunar/thunar-preferences-dialog.c:1279
+#: thunar/thunar-preferences-dialog.c:1280
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "A nem megbízható programok futtatása biztonsági kockázatot jelent a rendszer számára."
@@ -2175,8 +2175,8 @@ msgid "Show thumbnails:"
 msgstr "Bélyegképek megjelenítése:"
 
 #: thunar/thunar-preferences-dialog.c:419
-#: thunar/thunar-preferences-dialog.c:1067
-#: thunar/thunar-preferences-dialog.c:1174
+#: thunar/thunar-preferences-dialog.c:1068
+#: thunar/thunar-preferences-dialog.c:1176
 msgid "Local Files Only"
 msgstr "Csak helyi fájlok"
 
@@ -2510,100 +2510,101 @@ msgid ""
 "Indicates the behavior during multiple copies:\n"
 "- Always: all copies are done simultaneously\n"
 "- Local Files Only: simultaneous copies for local (not remote, not attached) files\n"
-"- Local Files On Same Devices Only: if all files are locals but on different devices (disks, mount points), copies will be sequential\n"
+"- Local Files Only (Same Devices): if all files are local but on different devices (disks, mount points), copies will be sequential\n"
+"- Local Files Only (Idle Devices): if all files are local but on busy devices (disks, mount points), copies will be sequential\n"
 "- Never: all copies are done sequentially"
-msgstr "A viselkedést jelzi több egyidejű másolás esetén:\n- Mindig: az összes másolás egyszerre történik\n- Csak helyi fájlok: egyidejű másolás csak a helyi (nem távoli, nem csatolt) fájlok esetén\n- Csak helyi fájlok, ugyanazon az eszközön: ha az összes fájl helyi, de másik eszközön található (lemezen, csatolási ponton), a másolások egymás után fognak történni\n- Soha: az összes másolás sorban fog történni"
-
-#: thunar/thunar-preferences-dialog.c:1068
-msgid "Local Files On Same Devices Only"
-msgstr "Csak helyi fájlok, ugyanazon az eszközön"
+msgstr ""
 
 #: thunar/thunar-preferences-dialog.c:1069
-msgid "Local Files On Idle Devices Only"
-msgstr "Csak helyi fájlok, tétlen eszközökön"
+msgid "Local Files Only (Same Devices)"
+msgstr ""
 
-#: thunar/thunar-preferences-dialog.c:1088
+#: thunar/thunar-preferences-dialog.c:1070
+msgid "Local Files Only (Idle Devices)"
+msgstr ""
+
+#: thunar/thunar-preferences-dialog.c:1089
 msgid "Use intermediate file on copy:"
 msgstr "Ideiglenes fájl használata másoláskor:"
 
-#: thunar/thunar-preferences-dialog.c:1092
+#: thunar/thunar-preferences-dialog.c:1093
 msgid ""
 "Use intermediate file '*.partial~' to copy files. This will prevent "
 "fragmented files. The new file will only be shown after the copy was "
 "successfully finished."
 msgstr "Ideiglenes „*.partial~” fájl használata a fájlok másolásához. Ez megakadályozza a töredezett fájlokat. Az új fájl csak akkor fog megjelenni, ha a másolás sikeresen befejeződött."
 
-#: thunar/thunar-preferences-dialog.c:1119
+#: thunar/thunar-preferences-dialog.c:1120
 msgid "Verify file checksum on copy:"
 msgstr "Fájl ellenőrzőösszegének ellenőrzése másoláskor:"
 
-#: thunar/thunar-preferences-dialog.c:1123
+#: thunar/thunar-preferences-dialog.c:1124
 msgid ""
 "Compare original file and copy with checksum. This will prevent corrupted "
 "files. Enabling this option will largely increase copy time."
 msgstr "Az eredeti fájl és a másolat ellenőrzőösszegének összehasonlítása. Ez megakadályozza a sérült fájlokat. A beállítás engedélyezése jelentősen megnöveli a másolás idejét."
 
-#: thunar/thunar-preferences-dialog.c:1151
+#: thunar/thunar-preferences-dialog.c:1152
 msgid "Search"
 msgstr "Keresés"
 
-#: thunar/thunar-preferences-dialog.c:1168
+#: thunar/thunar-preferences-dialog.c:1169
 msgid "Include subfolders:"
 msgstr "Almappák belevétele:"
 
-#: thunar/thunar-preferences-dialog.c:1192
+#: thunar/thunar-preferences-dialog.c:1193
 msgid "Folder Permissions"
 msgstr "Mappajogosultságok"
 
-#: thunar/thunar-preferences-dialog.c:1208
+#: thunar/thunar-preferences-dialog.c:1209
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "Mappa jogosultságainak módosításakor a\nmódosításokat a mappa tartalmára is alkalmazhatja.\nAlább kiválaszthatja az alapértelmezett viselkedést:"
 
-#: thunar/thunar-preferences-dialog.c:1220
-#: thunar/thunar-preferences-dialog.c:1266
+#: thunar/thunar-preferences-dialog.c:1221
+#: thunar/thunar-preferences-dialog.c:1267
 msgid "Ask every time"
 msgstr "Rákérdezés mindig"
 
-#: thunar/thunar-preferences-dialog.c:1221
+#: thunar/thunar-preferences-dialog.c:1222
 msgid "Apply to Folder and Contents"
 msgstr "Alkalmazás a mappára és tartalmára"
 
-#: thunar/thunar-preferences-dialog.c:1222
+#: thunar/thunar-preferences-dialog.c:1223
 msgid "Apply to Folder Only"
 msgstr "Alkalmazás csak a mappára"
 
-#: thunar/thunar-preferences-dialog.c:1237
+#: thunar/thunar-preferences-dialog.c:1238
 msgid "Security"
 msgstr "Biztonság"
 
-#: thunar/thunar-preferences-dialog.c:1254
+#: thunar/thunar-preferences-dialog.c:1255
 msgid "Execute shell scripts:"
 msgstr "Parancsfájlok végrehajtása:"
 
-#: thunar/thunar-preferences-dialog.c:1289
+#: thunar/thunar-preferences-dialog.c:1290
 msgid "Volume Management"
 msgstr "Kötetkezelés"
 
 #. add check button to enable/disable auto mounting
-#: thunar/thunar-preferences-dialog.c:1306
+#: thunar/thunar-preferences-dialog.c:1307
 msgid "Enable _Volume Management"
 msgstr "_Kötetkezelés engedélyezése"
 
-#: thunar/thunar-preferences-dialog.c:1325
+#: thunar/thunar-preferences-dialog.c:1326
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">Állítsa be</a> a cserélhető meghajtók, eszközök\nés adathordozók kezelését."
 
-#: thunar/thunar-preferences-dialog.c:1340
+#: thunar/thunar-preferences-dialog.c:1341
 #: thunar/thunar-properties-dialog.c:810
 msgid "Missing dependencies"
 msgstr "Hiányzó függőségek"
 
-#: thunar/thunar-preferences-dialog.c:1348
+#: thunar/thunar-preferences-dialog.c:1349
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2612,30 +2613,30 @@ msgid ""
 msgstr "Úgy néz ki, hogy a <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> nem érhető el.\nFontos funkciók, köztük a Kuka támogatása,\na cserélhető adathordozók és a távoli helyek böngészése\nnem fog működni. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[További részletek]</a>"
 
 #. Shortcuts
-#: thunar/thunar-preferences-dialog.c:1363
+#: thunar/thunar-preferences-dialog.c:1364
 msgid "Shortcuts"
 msgstr "Gyorsbillentyűk"
 
-#: thunar/thunar-preferences-dialog.c:1374
+#: thunar/thunar-preferences-dialog.c:1375
 msgid "Window"
 msgstr "Ablak"
 
-#: thunar/thunar-preferences-dialog.c:1375
+#: thunar/thunar-preferences-dialog.c:1376
 msgid "View"
 msgstr "Nézet"
 
-#: thunar/thunar-preferences-dialog.c:1376
+#: thunar/thunar-preferences-dialog.c:1377
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:532
 msgid "Launcher"
 msgstr "Indító"
 
-#: thunar/thunar-preferences-dialog.c:1377
+#: thunar/thunar-preferences-dialog.c:1378
 msgid "Status Bar"
 msgstr "Állapotsor"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: thunar/thunar-preferences-dialog.c:1441
+#: thunar/thunar-preferences-dialog.c:1442
 msgid "Failed to display the volume management settings"
 msgstr "A kötetkezelési beállítások megjelenítése sikertelen"
 
