@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-05-15 00:46+0200\n"
+"POT-Creation-Date: 2024-05-18 00:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Emanuele Petriglia <transifex@emanuelepetriglia.com>, 2019-2024\n"
 "Language-Team: Italian (http://app.transifex.com/xfce/thunar/language/it/)\n"
@@ -1474,21 +1474,21 @@ msgstr "Nome del file"
 
 #: thunar/thunar-enum-types.c:636 thunar/thunar-enum-types.c:659
 #: thunar/thunar-enum-types.c:785 thunar/thunar-preferences-dialog.c:418
-#: thunar/thunar-preferences-dialog.c:1070
-#: thunar/thunar-preferences-dialog.c:1176
-#: thunar/thunar-preferences-dialog.c:1264
+#: thunar/thunar-preferences-dialog.c:1071
+#: thunar/thunar-preferences-dialog.c:1177
+#: thunar/thunar-preferences-dialog.c:1265
 msgid "Never"
 msgstr "Mai"
 
 #: thunar/thunar-enum-types.c:637 thunar/thunar-enum-types.c:660
-msgid "Only for remote location"
-msgstr "Solo per posizione remota"
+msgid "Only For Remote Location"
+msgstr ""
 
 #: thunar/thunar-enum-types.c:638 thunar/thunar-enum-types.c:661
 #: thunar/thunar-enum-types.c:787 thunar/thunar-preferences-dialog.c:420
-#: thunar/thunar-preferences-dialog.c:1066
+#: thunar/thunar-preferences-dialog.c:1067
 #: thunar/thunar-preferences-dialog.c:1175
-#: thunar/thunar-preferences-dialog.c:1265
+#: thunar/thunar-preferences-dialog.c:1266
 msgid "Always"
 msgstr "Sempre"
 
@@ -2010,7 +2010,7 @@ msgid "Allow this file to _run as a program"
 msgstr "Permetti di _eseguire il file come un programma"
 
 #: thunar/thunar-permissions-chooser.c:390
-#: thunar/thunar-preferences-dialog.c:1279
+#: thunar/thunar-preferences-dialog.c:1280
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "Permettere l'esecuzione di programmi non sicuri rappresenta un rischio di sicurezza per il proprio sistema."
@@ -2191,8 +2191,8 @@ msgid "Show thumbnails:"
 msgstr "Mostra miniature:"
 
 #: thunar/thunar-preferences-dialog.c:419
-#: thunar/thunar-preferences-dialog.c:1067
-#: thunar/thunar-preferences-dialog.c:1174
+#: thunar/thunar-preferences-dialog.c:1068
+#: thunar/thunar-preferences-dialog.c:1176
 msgid "Local Files Only"
 msgstr "Solo file locali"
 
@@ -2526,100 +2526,101 @@ msgid ""
 "Indicates the behavior during multiple copies:\n"
 "- Always: all copies are done simultaneously\n"
 "- Local Files Only: simultaneous copies for local (not remote, not attached) files\n"
-"- Local Files On Same Devices Only: if all files are locals but on different devices (disks, mount points), copies will be sequential\n"
+"- Local Files Only (Same Devices): if all files are local but on different devices (disks, mount points), copies will be sequential\n"
+"- Local Files Only (Idle Devices): if all files are local but on busy devices (disks, mount points), copies will be sequential\n"
 "- Never: all copies are done sequentially"
-msgstr "Indica il comportamento durante le copie multiple:\n- Sempre: tutte le copie sono eseguite contemporaneamente\n- Solo i file locali: copie simultanee per i file locali (non remoti, non collegati)\n- Solo i file locali sugli stessi dispositivi: se tutti i file sono locali, ma su dispositivi diversi (dischi, punti di montaggio), le copie saranno sequenziali\n- Mai: tutte le copie sono eseguite in modo sequenziale"
-
-#: thunar/thunar-preferences-dialog.c:1068
-msgid "Local Files On Same Devices Only"
-msgstr "Solo file locali sugli stessi dispositivi"
+msgstr ""
 
 #: thunar/thunar-preferences-dialog.c:1069
-msgid "Local Files On Idle Devices Only"
-msgstr "Solo file locali su dispositivi inattivi"
+msgid "Local Files Only (Same Devices)"
+msgstr ""
 
-#: thunar/thunar-preferences-dialog.c:1088
+#: thunar/thunar-preferences-dialog.c:1070
+msgid "Local Files Only (Idle Devices)"
+msgstr ""
+
+#: thunar/thunar-preferences-dialog.c:1089
 msgid "Use intermediate file on copy:"
 msgstr "Usa un file intermedio durante la copia:"
 
-#: thunar/thunar-preferences-dialog.c:1092
+#: thunar/thunar-preferences-dialog.c:1093
 msgid ""
 "Use intermediate file '*.partial~' to copy files. This will prevent "
 "fragmented files. The new file will only be shown after the copy was "
 "successfully finished."
 msgstr "Usa file intermedi '*.partial~' per copiare i file. Questo permette di identificare i file copiati parzialmente nel caso si annulli la copia. Il nuovo file verrà mostrato solo al termine della copia."
 
-#: thunar/thunar-preferences-dialog.c:1119
+#: thunar/thunar-preferences-dialog.c:1120
 msgid "Verify file checksum on copy:"
 msgstr "Controlla l'integrità del file nella copia:"
 
-#: thunar/thunar-preferences-dialog.c:1123
+#: thunar/thunar-preferences-dialog.c:1124
 msgid ""
 "Compare original file and copy with checksum. This will prevent corrupted "
 "files. Enabling this option will largely increase copy time."
 msgstr "Verifica l'integrità del file originale e della copia. Se abilitata previene i file corrotti, a costo di un tempo di copia maggiore."
 
-#: thunar/thunar-preferences-dialog.c:1151
+#: thunar/thunar-preferences-dialog.c:1152
 msgid "Search"
 msgstr "Cerca"
 
-#: thunar/thunar-preferences-dialog.c:1168
+#: thunar/thunar-preferences-dialog.c:1169
 msgid "Include subfolders:"
 msgstr "Includi sottocartelle:"
 
-#: thunar/thunar-preferences-dialog.c:1192
+#: thunar/thunar-preferences-dialog.c:1193
 msgid "Folder Permissions"
 msgstr "Permessi della cartella"
 
-#: thunar/thunar-preferences-dialog.c:1208
+#: thunar/thunar-preferences-dialog.c:1209
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "Quando si modificano i permessi di una cartella,\nè possibile applicare i cambiamenti anche al suo\ncontenuto. Selezionare il comportamento predefinito:"
 
-#: thunar/thunar-preferences-dialog.c:1220
-#: thunar/thunar-preferences-dialog.c:1266
+#: thunar/thunar-preferences-dialog.c:1221
+#: thunar/thunar-preferences-dialog.c:1267
 msgid "Ask every time"
 msgstr "Chiedi ogni volta"
 
-#: thunar/thunar-preferences-dialog.c:1221
+#: thunar/thunar-preferences-dialog.c:1222
 msgid "Apply to Folder and Contents"
 msgstr "Applica alla cartella ed al contenuto"
 
-#: thunar/thunar-preferences-dialog.c:1222
+#: thunar/thunar-preferences-dialog.c:1223
 msgid "Apply to Folder Only"
 msgstr "Applica solo alla cartella"
 
-#: thunar/thunar-preferences-dialog.c:1237
+#: thunar/thunar-preferences-dialog.c:1238
 msgid "Security"
 msgstr "Sicurezza"
 
-#: thunar/thunar-preferences-dialog.c:1254
+#: thunar/thunar-preferences-dialog.c:1255
 msgid "Execute shell scripts:"
 msgstr "Eseguire gli script della shell:"
 
-#: thunar/thunar-preferences-dialog.c:1289
+#: thunar/thunar-preferences-dialog.c:1290
 msgid "Volume Management"
 msgstr "Gestione dei volumi"
 
 #. add check button to enable/disable auto mounting
-#: thunar/thunar-preferences-dialog.c:1306
+#: thunar/thunar-preferences-dialog.c:1307
 msgid "Enable _Volume Management"
 msgstr "Abilita la gestione dei _volumi"
 
-#: thunar/thunar-preferences-dialog.c:1325
+#: thunar/thunar-preferences-dialog.c:1326
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">Configura</a> la gestione delle unità rimovibili,\ndispositivi e supporti."
 
-#: thunar/thunar-preferences-dialog.c:1340
+#: thunar/thunar-preferences-dialog.c:1341
 #: thunar/thunar-properties-dialog.c:810
 msgid "Missing dependencies"
 msgstr "Dipendenze mancanti"
 
-#: thunar/thunar-preferences-dialog.c:1348
+#: thunar/thunar-preferences-dialog.c:1349
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2628,30 +2629,30 @@ msgid ""
 msgstr "Sembra che <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> non sia disponibile.\nFunzionalità importanti quali supporto al cestino, dispositivi rimovibili e esplorazione di posizioni remote non funzioneranno. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Più informazioni]</a>"
 
 #. Shortcuts
-#: thunar/thunar-preferences-dialog.c:1363
+#: thunar/thunar-preferences-dialog.c:1364
 msgid "Shortcuts"
 msgstr "Scorciatoie"
 
-#: thunar/thunar-preferences-dialog.c:1374
+#: thunar/thunar-preferences-dialog.c:1375
 msgid "Window"
 msgstr "Finestra"
 
-#: thunar/thunar-preferences-dialog.c:1375
+#: thunar/thunar-preferences-dialog.c:1376
 msgid "View"
 msgstr "Vista"
 
-#: thunar/thunar-preferences-dialog.c:1376
+#: thunar/thunar-preferences-dialog.c:1377
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:532
 msgid "Launcher"
 msgstr "Avviatore"
 
-#: thunar/thunar-preferences-dialog.c:1377
+#: thunar/thunar-preferences-dialog.c:1378
 msgid "Status Bar"
 msgstr "Barra di stato"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: thunar/thunar-preferences-dialog.c:1441
+#: thunar/thunar-preferences-dialog.c:1442
 msgid "Failed to display the volume management settings"
 msgstr "Impossibile mostrare le impostazioni della gestione dei volumi"
 
