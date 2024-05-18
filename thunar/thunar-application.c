@@ -657,7 +657,6 @@ thunar_application_load_css (void)
     /* add missing top border to side pane */
     ".shortcuts-pane { border-top-style: solid; }"
     /* remove extra borders */
-    ".shortcuts-pane { border-right-width: 0px; }"
     ".preview-pane { border-left-width: 0px; border-right-width: 0px; border-bottom-width: 0px; }"
     ".standard-view { border-left-width: 0px; border-right-width: 0px; }"
     /* make border thicker during DnD */
