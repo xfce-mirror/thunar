@@ -661,6 +661,8 @@ thunar_application_load_css (void)
     ".standard-view { border-left-width: 0px; border-right-width: 0px; }"
     /* make border thicker during DnD */
     ".standard-view:drop(active) { border-width: 2px; }"
+    /* change background color of inactive split view pane */
+    ".split-view-inactive-pane .view { background-color: @theme_unfocused_bg_color; }"
     /* for the example box in properties dialog > highlight tab */ 
     "#example { border-radius: 10px; }", -1, NULL);
   screen = gdk_screen_get_default ();
