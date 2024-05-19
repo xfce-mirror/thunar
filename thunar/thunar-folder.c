@@ -996,14 +996,14 @@ thunar_folder_monitor (GFileMonitor     *monitor,
 
       case G_FILE_MONITOR_EVENT_RENAMED:
 
-        /* In case source and dest are already the same ThunarFile, just assume we have no source ThunarFile */
+        /* in case source and dest are already the same ThunarFile, just assume we have no source ThunarFile */
         if (event_file_thunar != NULL && event_file_thunar == other_file_thunar)
           {
               g_object_unref (event_file_thunar);
               event_file_thunar = NULL;
           }
 
-        /* If we dont have any of the two files in the cache yet, try to create the renamed file */
+        /* if we dont have any of the two files in the cache yet, try to create the renamed file */
         if (event_file_thunar == NULL && other_file_thunar == NULL)
           {
             other_file_thunar = thunar_file_get (other_file, NULL);
@@ -1014,14 +1014,14 @@ thunar_folder_monitor (GFileMonitor     *monitor,
               }
           }
 
-        /* If we already ship the new file as a ThunarFile, make use of it */
+        /* if we already ship the new file as a ThunarFile, make use of it */
         if (other_file_thunar != NULL)
           renamed_file = other_file_thunar;
         else
           renamed_file = event_file_thunar;
 
-        /* remove both files from the internal maps. */
-        /* Trigger the timeout manually, so that connected models will get updated (required for move+replace use-case) */
+        /* remove both files from the internal maps */
+        /* trigger the timeout manually, so that connected models will get updated (required for move+replace use-case) */
         if (event_file_thunar != NULL)
           {
             thunar_folder_remove_file (folder, event_file_thunar);
@@ -1039,7 +1039,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
         /* re-add the renamed file into our internal map (this time we can use the timeout source) */
         thunar_folder_add_file (folder, renamed_file);
 
-        /* clear the old ThunarFile, if we have two of them */
+        /* destroy the old ThunarFile, if we have two of them */
         if (event_file_thunar != NULL && other_file_thunar != NULL)
           thunar_file_destroy (event_file_thunar);
 
@@ -1057,7 +1057,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
       case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
         if (event_file_thunar != NULL)
           {
-            /* If we have that file in our internal map, rekoad it and send a file-changed signal */
+            /* If we have that file in our internal map, reload it and send a file-changed signal */
             if (g_hash_table_lookup (folder->files_map, event_file_thunar) != NULL)
               {
                 thunar_folder_file_changed (folder, event_file_thunar);
