@@ -396,16 +396,49 @@ thunar_abstract_icon_view_button_press_event (ExoIconView            *view,
                                               GdkEventButton         *event,
                                               ThunarAbstractIconView *abstract_icon_view)
 {
-  GtkTreePath       *path;
-  GtkWidget         *window;
+  GtkTreePath *path;
+  GtkWidget   *window;
+  gboolean     image_preview_enabled;
 
   abstract_icon_view->priv->button_pressed = TRUE;
+
+  g_object_get (THUNAR_STANDARD_VIEW (abstract_icon_view)->preferences,
+                "last-image-preview-visible", &image_preview_enabled, NULL);
 
   /* give focus to the clicked view */
   window = gtk_widget_get_toplevel (GTK_WIDGET (abstract_icon_view));
   thunar_window_focus_view (THUNAR_WINDOW (window), GTK_WIDGET (abstract_icon_view));
 
-  if (event->type == GDK_BUTTON_PRESS && event->button == 3)
+  if (image_preview_enabled && event->type == GDK_BUTTON_PRESS && event->button == 1)
+    {
+      /* Preload surounding preview thumbnails */
+      if (exo_icon_view_get_item_at_pos (view, event->x, event->y, &path, NULL))
+        {
+          GtkTreeModel *model = GTK_TREE_MODEL (THUNAR_STANDARD_VIEW (abstract_icon_view)->model);
+          GtkTreeIter   iter;
+          ThunarFile   *file = NULL;
+
+          if (gtk_tree_model_get_iter (model, &iter, path))
+              {
+                if (gtk_tree_model_iter_previous (model, &iter))
+                  {
+                    gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE, &file, -1);
+                    if (file != NULL)
+                      thunar_file_request_thumbnail (file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+                  }
+              }
+          if (gtk_tree_model_get_iter (model, &iter, path))
+              {
+                if (gtk_tree_model_iter_next (model, &iter))
+                  {
+                    gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE, &file, -1);
+                    if (file != NULL)
+                      thunar_file_request_thumbnail (file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+                  }
+              }
+        }
+    }        
+  else if (event->type == GDK_BUTTON_PRESS && event->button == 3)
     {
       /* open the context menu on right clicks */
       if (exo_icon_view_get_item_at_pos (view, event->x, event->y, &path, NULL))
@@ -585,7 +618,13 @@ thunar_abstract_icon_view_key_press_event (ExoIconView            *view,
                                            GdkEventKey            *event,
                                            ThunarAbstractIconView *abstract_icon_view)
 {
+  GtkTreePath *path;
+  gboolean     image_preview_enabled;
+
   abstract_icon_view->priv->button_pressed = FALSE;
+
+  g_object_get (THUNAR_STANDARD_VIEW (abstract_icon_view)->preferences,
+                "last-image-preview-visible", &image_preview_enabled, NULL);
 
   /* popup context menu if "Menu" or "<Shift>F10" is pressed */
   if (event->keyval == GDK_KEY_Menu || ((event->state & GDK_SHIFT_MASK) != 0 && event->keyval == GDK_KEY_F10))
@@ -594,6 +633,44 @@ thunar_abstract_icon_view_key_press_event (ExoIconView            *view,
       return TRUE;
     }
 
+  if (image_preview_enabled && exo_icon_view_get_cursor (view, &path, NULL))
+    {
+      GtkTreeModel *model = GTK_TREE_MODEL (THUNAR_STANDARD_VIEW (abstract_icon_view)->model);
+      GtkTreeIter   iter;
+      ThunarFile   *file = NULL;
+
+      switch (event->keyval)
+        {
+          case GDK_KEY_Left:
+          case GDK_KEY_KP_Left:
+            /* preload next thumbnail for image preview */
+            if (gtk_tree_model_get_iter (model, &iter, path))
+              {
+                if (gtk_tree_model_iter_previous (model, &iter) && gtk_tree_model_iter_previous (model, &iter))
+                  {
+                    gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE, &file, -1);
+                    if (file != NULL)
+                      thunar_file_request_thumbnail (file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+                  }
+              }
+            break;
+          case GDK_KEY_Right:
+          case GDK_KEY_KP_Right:
+            /* preload next thumbnail for image preview */
+            if (gtk_tree_model_get_iter (model, &iter, path))
+              {
+                if (gtk_tree_model_iter_next (model, &iter) && gtk_tree_model_iter_next (model, &iter))
+                  {
+                    gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE, &file, -1);
+                    if (file != NULL)
+                      thunar_file_request_thumbnail (file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+                  }
+              }
+            break;
+        }
+
+      gtk_tree_path_free (path);
+    }
   return FALSE;
 }
 
