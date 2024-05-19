@@ -927,11 +927,9 @@ thunar_folder_monitor (GFileMonitor     *monitor,
                        gpointer          user_data)
 {
   ThunarFolder *folder = THUNAR_FOLDER (user_data);
-  ThunarFile   *file = NULL;
+  ThunarFile   *renamed_file = NULL;
   ThunarFile   *event_file_thunar = NULL;
   ThunarFile   *other_file_thunar = NULL;
-  gboolean      event_file_thunar_in_map = FALSE;
-  gboolean      other_file_thunar_in_map = FALSE;
 
   _thunar_return_if_fail (G_IS_FILE_MONITOR (monitor));
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
@@ -951,18 +949,8 @@ thunar_folder_monitor (GFileMonitor     *monitor,
 
   /* For rename/delete it is important to only do lookup here, no ThunarFile creation */
   event_file_thunar = thunar_file_cache_lookup (event_file);
-  if (event_file_thunar != NULL)
-    {
-      file = g_hash_table_lookup (folder->files_map, event_file_thunar);
-      event_file_thunar_in_map = (file != NULL) ? TRUE : FALSE;
-    }
   other_file_thunar = (other_file == NULL) ? NULL : thunar_file_cache_lookup (other_file);
-  if (other_file_thunar != NULL)
-    {
-      file = g_hash_table_lookup (folder->files_map, other_file_thunar);
-      other_file_thunar_in_map = (file != NULL) ? TRUE : FALSE;
-    }
- 
+
   switch (event_type)
     {
       case G_FILE_MONITOR_EVENT_MOVED_IN:
@@ -977,15 +965,12 @@ thunar_folder_monitor (GFileMonitor     *monitor,
                 }
           }
 
-        if (!event_file_thunar_in_map)
-          {
-            thunar_folder_add_file (folder, event_file_thunar);
-          }
-        else
-          {
-            /* if we already ship it, just reload it */
-            thunar_file_reload (event_file_thunar);
-          }
+        /* Add the file to our map via the timeout source */
+        thunar_folder_add_file (folder, event_file_thunar);
+
+        /* if we already ship the ThunarFile, reload it */
+        if (g_hash_table_lookup (folder->files_map, event_file_thunar) != NULL)
+          thunar_file_reload (event_file_thunar);
 
         /* notify the thumbnail cache that we can now also move the thumbnail */
         if (event_type == G_FILE_MONITOR_EVENT_MOVED_IN && other_file != NULL)
@@ -994,7 +979,6 @@ thunar_folder_monitor (GFileMonitor     *monitor,
 
       case G_FILE_MONITOR_EVENT_MOVED_OUT:
       case G_FILE_MONITOR_EVENT_DELETED:
-
         if (event_type == G_FILE_MONITOR_EVENT_MOVED_OUT && other_file != NULL)
           thunar_file_move_thumbnail_cache_file (event_file, other_file);
 
@@ -1003,8 +987,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
           break;
 
         /* Drop it from the map, if we still have it */
-        if (event_file_thunar_in_map)
-          thunar_folder_remove_file (folder, event_file_thunar);
+        thunar_folder_remove_file (folder, event_file_thunar);
 
         /* destroy the old file */
         thunar_file_destroy (event_file_thunar);
@@ -1013,88 +996,77 @@ thunar_folder_monitor (GFileMonitor     *monitor,
 
       case G_FILE_MONITOR_EVENT_RENAMED:
 
-        /* Source and destination file are in the map*/
-        if (event_file_thunar_in_map && other_file_thunar_in_map)
+        /* in case source and dest are already the same ThunarFile, just assume we have no source ThunarFile */
+        if (event_file_thunar != NULL && event_file_thunar == other_file_thunar)
           {
-            /* Drop and destroy source file if the destination file already exists to prevent duplicated file */
-            if (event_file_thunar == other_file_thunar)
-                g_warning ("Same g_file for source and destination file during rename");
-            else
-              {
-                thunar_folder_remove_file (folder, event_file_thunar);
-                thunar_file_destroy (event_file_thunar);
-              }
-            break;
+              g_object_unref (event_file_thunar);
+              event_file_thunar = NULL;
           }
 
-        /* We only have the source file in the map */
-        if (event_file_thunar_in_map && !other_file_thunar_in_map)
+        /* if we dont have any of the two files in the cache yet, try to create the renamed file */
+        if (event_file_thunar == NULL && other_file_thunar == NULL)
           {
-            /* remove the old reference from the hash table before it becomes invalid;
-              * during thunar_file_replace_file call */
-            _thunar_folder_remove_file (folder, event_file_thunar);
-
-            /* replace GFile in ThunarFile for the renamed file */
-            thunar_file_replace_file (event_file_thunar, other_file);
-           
-            /* insert new mapping of (gfile, ThunarFile) for the newly renamed file */
-           _thunar_folder_add_file (folder, event_file_thunar);
-
-
-            if (other_file_thunar != NULL)
-            {
-              /* even if it is not not in "files_map", it might already be on "added_files_map" */
-              thunar_folder_remove_file (folder, other_file_thunar);
-              thunar_file_destroy (other_file_thunar);
-            }
-
-            /* reload the renamed file */
-            if (thunar_file_reload (event_file_thunar))
+            other_file_thunar = thunar_file_get (other_file, NULL);
+            if (other_file_thunar == NULL)
               {
-                /* notify the thumbnail cache that we can now also move the thumbnail */
-                thunar_file_move_thumbnail_cache_file (event_file, other_file);
+                g_info ("Failed to create ThunarFile for gfile");
+                break;
               }
-            break;
-           }
+          }
 
-        /* We only have the dest file in the map (might happen on move+replace) */
-        if (!event_file_thunar_in_map && other_file_thunar_in_map)
+        /* if we already ship the new file as a ThunarFile, make use of it */
+        if (other_file_thunar != NULL)
+          renamed_file = other_file_thunar;
+        else
+          renamed_file = event_file_thunar;
+
+        /* remove both files from the internal maps */
+        /* trigger the timeout manually, so that connected models will get updated (required for move+replace use-case) */
+        if (event_file_thunar != NULL)
           {
-            /* Remove the dest file from the map */
-            _thunar_folder_remove_file (folder, other_file_thunar);
+            thunar_folder_remove_file (folder, event_file_thunar);
+            _thunar_folder_files_update_timeout (folder);
+          }
+        if (other_file_thunar != NULL)
+          {
+            thunar_folder_remove_file (folder, other_file_thunar);
+            _thunar_folder_files_update_timeout (folder);
+          }
 
-            /* replace GFile in ThunarFile for the renamed file */
-            thunar_file_replace_file (other_file_thunar, other_file);
+        /* replace the GFile in the ThunarFile for the renamed file with the new gfile */
+        thunar_file_replace_file (renamed_file, other_file);
 
-            /* insert new mapping of (gfile, ThunarFile) for the newly renamed file */
-            _thunar_folder_add_file (folder, other_file_thunar);
+        /* re-add the renamed file into our internal map (this time we can use the timeout source) */
+        thunar_folder_add_file (folder, renamed_file);
 
-            if (event_file_thunar != NULL)
-            {
-              /* even if it is not not in "files_map", it might already be on "added_files_map" */
-              thunar_folder_remove_file (folder, event_file_thunar);
-              thunar_file_destroy (event_file_thunar);
-            }
+        /* destroy the old ThunarFile, if we have two of them */
+        if (event_file_thunar != NULL && other_file_thunar != NULL)
+          thunar_file_destroy (event_file_thunar);
 
-            /* reload the renamed file */
-            if (thunar_file_reload (other_file_thunar))
-              {
-                /* notify the thumbnail cache that we can now also move the thumbnail */
-                thunar_file_move_thumbnail_cache_file (event_file, other_file);
-              }
-           }
+        /* reload the renamed file */
+        if (thunar_file_reload (renamed_file))
+          {
+            /* notify the thumbnail cache that we can now also move the thumbnail */
+            thunar_file_move_thumbnail_cache_file (event_file, other_file);
+          }
+
         break;
 
       case G_FILE_MONITOR_EVENT_CHANGED:
       case G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
       case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
-        if (event_file_thunar_in_map)
+        if (event_file_thunar != NULL)
           {
-            thunar_folder_file_changed (folder, event_file_thunar);
+            /* If we have that file in our internal map, reload it and send a file-changed signal */
+            if (g_hash_table_lookup (folder->files_map, event_file_thunar) != NULL)
+              {
+                thunar_folder_file_changed (folder, event_file_thunar);
+
 #if DEBUG_FILE_CHANGES
-            thunar_file_infos_equal (event_file_thunar, event_file);
+                thunar_file_infos_equal (event_file_thunar, event_file);
 #endif
-            thunar_file_reload (event_file_thunar);
+                thunar_file_reload (event_file_thunar);
+              }
           }
 
        default:
