@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-05-18 00:46+0200\n"
+"POT-Creation-Date: 2024-05-19 00:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Besnik Bleta <besnik@programeshqip.org>, 2020-2024\n"
 "Language-Team: Albanian (http://app.transifex.com/xfce/thunar/language/sq/)\n"
@@ -702,7 +702,7 @@ msgstr "Po krijohen drejtori…"
 msgid "Remove all files and folders from the Trash?"
 msgstr "Të hiqen tërë kartelat dhe dosjet prej Hedhurinave?"
 
-#: thunar/thunar-application.c:2709 thunar/thunar-window.c:1042
+#: thunar/thunar-application.c:2709 thunar/thunar-window.c:1063
 msgid "Empty Trash"
 msgstr "Zbraz Hedhurinat"
 
@@ -792,7 +792,7 @@ msgstr "Përdore si parazgjedhje për këtë lloj kartelash"
 
 #. add the "Ok"/"Open" button
 #: thunar/thunar-chooser-dialog.c:296 thunar/thunar-chooser-dialog.c:1301
-#: thunar/thunar-properties-dialog.c:1197 thunar/thunar-window.c:4419
+#: thunar/thunar-properties-dialog.c:1197 thunar/thunar-window.c:4440
 #: plugins/thunar-uca/thunar-uca-editor.c:146
 #: plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -977,7 +977,7 @@ msgstr "Formësoni Shtyllat e Pamjes Listë e Hollësishme"
 #. add the "Help" button
 #: thunar/thunar-column-editor.c:164 thunar/thunar-preferences-dialog.c:283
 #: thunar/thunar-properties-dialog.c:326 thunar/thunar-toolbar-editor.c:128
-#: thunar/thunar-window.c:550
+#: thunar/thunar-window.c:552
 msgid "_Help"
 msgstr "_Ndihmë"
 
@@ -1866,7 +1866,7 @@ msgstr "S’u arrit të ribëhej veprimi “%s”"
 msgid "Undo the latest '%s' operation (%s)"
 msgstr "Zhbëj veprimin e fundit '%s' (%s)"
 
-#: thunar/thunar-job-operation-history.c:566 thunar/thunar-window.c:502
+#: thunar/thunar-job-operation-history.c:566 thunar/thunar-window.c:504
 msgid "Undo the latest operation"
 msgstr "Zhbë veprimin e fundit"
 
@@ -1876,7 +1876,7 @@ msgstr "Zhbë veprimin e fundit"
 msgid "Redo the latest '%s' operation (%s)"
 msgstr "Ribëj veprimin e fundit '%s' (%s)"
 
-#: thunar/thunar-job-operation-history.c:591 thunar/thunar-window.c:503
+#: thunar/thunar-job-operation-history.c:591 thunar/thunar-window.c:505
 msgid "Redo the latest operation"
 msgstr "Ribëj veprimin e fundit"
 
@@ -2839,7 +2839,7 @@ msgstr "Spastroje"
 msgid "Clear the file list below"
 msgstr "Spastro listën e mëposhtme të kartelave"
 
-#: thunar/thunar-renamer-dialog.c:203 thunar/thunar-window.c:552
+#: thunar/thunar-renamer-dialog.c:203 thunar/thunar-window.c:554
 msgid "_About"
 msgstr "_Rreth"
 
@@ -2957,7 +2957,7 @@ msgid ""
 msgstr "Doni të anashkalohet kjo kartelë dhe të vazhdohet me riemërtimin e kartelave të mbetura?"
 
 #: thunar/thunar-shortcuts-model.c:633 thunar/thunar-shortcuts-model.c:997
-#: thunar/thunar-window.c:538
+#: thunar/thunar-window.c:540
 msgid "Browse the file system"
 msgstr "Shfleto sistemin e kartelave"
 
@@ -2989,7 +2989,7 @@ msgstr "Rrjet"
 msgid "Browse Network"
 msgstr "Shfletoni Rrjetin"
 
-#: thunar/thunar-shortcuts-model.c:1042 thunar/thunar-window.c:548
+#: thunar/thunar-shortcuts-model.c:1042 thunar/thunar-window.c:550
 msgid "Browse local network connections"
 msgstr "Shfleto lidhje rrjeti vendor"
 
@@ -3184,7 +3184,7 @@ msgid "Loading folder contents..."
 msgstr "Po ngarkohet lëndë dosjeje…"
 
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2494 thunar/thunar-window.c:4232
+#: thunar/thunar-standard-view.c:2494 thunar/thunar-window.c:4253
 msgid "Failed to open the home folder"
 msgstr "S’u arrit të hapej dosja shtëpi"
 
@@ -3269,7 +3269,7 @@ msgstr "S’u arrit të krijohej një lidhje për URL-në \"%s\""
 msgid "Untitled document"
 msgstr "Dokument pa titull"
 
-#: thunar/thunar-standard-view.c:3708 thunar/thunar-window.c:4329
+#: thunar/thunar-standard-view.c:3708 thunar/thunar-window.c:4350
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "S’u arrit të hapej drejtoria \"%s\""
@@ -3517,481 +3517,485 @@ msgstr "%s"
 msgid "Image Size:"
 msgstr "Madhësi Figure:"
 
-#: thunar/thunar-window.c:493
+#: thunar/thunar-window.c:495
 msgid "_File"
 msgstr "_Kartelë"
 
-#: thunar/thunar-window.c:494
+#: thunar/thunar-window.c:496
 msgid "New _Tab"
 msgstr "_Skedë e Re"
 
-#: thunar/thunar-window.c:494
+#: thunar/thunar-window.c:496
 msgid "Open a new tab for the displayed location"
 msgstr "Hapni një skedë të re për vendndodhjen e shfaqur"
 
-#: thunar/thunar-window.c:495
+#: thunar/thunar-window.c:497
 msgid "New _Window"
 msgstr "_Dritare e Re"
 
-#: thunar/thunar-window.c:495
+#: thunar/thunar-window.c:497
 msgid "Open a new Thunar window for the displayed location"
 msgstr "Hap një dritare të re Thunar për vendndodhjen e shfaqur"
 
-#: thunar/thunar-window.c:496
+#: thunar/thunar-window.c:498
 msgid "Detac_h Tab"
 msgstr "Shkëp_ute Skedën"
 
-#: thunar/thunar-window.c:496
+#: thunar/thunar-window.c:498
 msgid "Open current folder in a new window"
 msgstr "Hapeni dosjen e tanishme në një dritare të re"
 
-#: thunar/thunar-window.c:497
+#: thunar/thunar-window.c:499
 msgid "Close Ta_b"
 msgstr "Mbylle _Skedën"
 
-#: thunar/thunar-window.c:497
+#: thunar/thunar-window.c:499
 msgid "Close this folder"
 msgstr "Mbyll këtë kartelë"
 
-#: thunar/thunar-window.c:498
+#: thunar/thunar-window.c:500
 msgid "_Close Window"
 msgstr "_Mbylle Dritaren"
 
-#: thunar/thunar-window.c:498
+#: thunar/thunar-window.c:500
 msgid "Close this window"
 msgstr "Mbyll këtë dritare"
 
-#: thunar/thunar-window.c:499
+#: thunar/thunar-window.c:501
 msgid "Close _All Windows"
 msgstr "Mbylli _Krejt Dritaret"
 
-#: thunar/thunar-window.c:499
+#: thunar/thunar-window.c:501
 msgid "Close all Thunar windows"
 msgstr "Mbylli tërë dritaret Thunar"
 
-#: thunar/thunar-window.c:501
+#: thunar/thunar-window.c:503
 msgid "_Edit"
 msgstr "_Përpunim"
 
-#: thunar/thunar-window.c:502
+#: thunar/thunar-window.c:504
 msgid "_Undo"
 msgstr "_Zhbëje"
 
-#: thunar/thunar-window.c:503
+#: thunar/thunar-window.c:505
 msgid "Red_o"
 msgstr "_Ribëje"
 
-#: thunar/thunar-window.c:504
+#: thunar/thunar-window.c:506
 msgid "Pr_eferences..."
 msgstr "_Parapëlqime…"
 
-#: thunar/thunar-window.c:504
+#: thunar/thunar-window.c:506
 msgid "Edit Thunars Preferences"
 msgstr "Përpunoni Parapëlqime për Thunar-in"
 
-#: thunar/thunar-window.c:506
+#: thunar/thunar-window.c:508
 msgid "_View"
 msgstr "_Parje"
 
-#: thunar/thunar-window.c:507
+#: thunar/thunar-window.c:509
 msgid "_Reload"
 msgstr "_Ringarkoje"
 
-#: thunar/thunar-window.c:507
+#: thunar/thunar-window.c:509
 msgid "Reload the current folder"
 msgstr "Ringarko dosjen e tanishme"
 
-#: thunar/thunar-window.c:509
+#: thunar/thunar-window.c:511
 msgid "S_plit View"
 msgstr "Pamje e _Ndarë"
 
-#: thunar/thunar-window.c:509
+#: thunar/thunar-window.c:511
 msgid "Open/Close Split View"
 msgstr "Hap/Mbyll Pamje të Ndarë"
 
-#: thunar/thunar-window.c:510
+#: thunar/thunar-window.c:512
 msgid "Switch Focused Split View Pane"
 msgstr ""
 
-#: thunar/thunar-window.c:511
+#: thunar/thunar-window.c:513
 msgid "Locatio_n Selector"
 msgstr "Përzgjedhës _Vendndodhjesh"
 
-#: thunar/thunar-window.c:512
+#: thunar/thunar-window.c:514
 msgid "_Text Style"
 msgstr "Stil _Teksti"
 
-#: thunar/thunar-window.c:512
+#: thunar/thunar-window.c:514
 msgid "Traditional text box showing the current path"
 msgstr "Kuadrat tradicional teksti që shfaq shtegun e tanishëm"
 
-#: thunar/thunar-window.c:513
+#: thunar/thunar-window.c:515
 msgid "_Buttons Style"
 msgstr "Stil _Butonash"
 
-#: thunar/thunar-window.c:513
+#: thunar/thunar-window.c:515
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "Mënyrë moderne, me butona që u përgjigjen dosjeve"
 
-#: thunar/thunar-window.c:514
+#: thunar/thunar-window.c:516
 msgid "_Side Pane"
 msgstr "Kuadrat _Anësor"
 
-#: thunar/thunar-window.c:515
+#: thunar/thunar-window.c:517
 msgid "_Shortcuts"
 msgstr "_Shkurtore"
 
-#: thunar/thunar-window.c:515
+#: thunar/thunar-window.c:517
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "Këmben dukshmërinë ose jo të kuadratit të shkurtoreve"
 
-#: thunar/thunar-window.c:516
+#: thunar/thunar-window.c:518
 msgid "_Tree"
 msgstr "_Pema"
 
-#: thunar/thunar-window.c:516
+#: thunar/thunar-window.c:518
 msgid "Toggles the visibility of the tree pane"
 msgstr "Këmben dukshmërinë ose jo të kuadratit të pemës"
 
-#: thunar/thunar-window.c:518
+#: thunar/thunar-window.c:520
 msgid "_Image Preview"
 msgstr "Paraparje _Figure"
 
-#: thunar/thunar-window.c:518
+#: thunar/thunar-window.c:520
 msgid "Change the visibility of this window's image preview"
 msgstr "Ndryshoni dukshmërinë e paraparjes së figurës së kësaj dritareje"
 
-#: thunar/thunar-window.c:519
+#: thunar/thunar-window.c:521
 msgid "St_atusbar"
 msgstr "Shtyllë _gjendjeje"
 
-#: thunar/thunar-window.c:519
+#: thunar/thunar-window.c:521
 msgid "Change the visibility of this window's statusbar"
 msgstr "Ndrysho dukshmërinë e shtyllës së gjendjeve për këtë dritare"
 
-#: thunar/thunar-window.c:520
+#: thunar/thunar-window.c:522
 msgid "_Menubar"
 msgstr "Shtyllë _menuje"
 
-#: thunar/thunar-window.c:520
+#: thunar/thunar-window.c:522
 msgid "Change the visibility of this window's menubar"
 msgstr "Ndrysho dukshmërinë e shtyllës së menuve për këtë dritare"
 
-#: thunar/thunar-window.c:521
+#: thunar/thunar-window.c:523
 msgid "Configure _Toolbar..."
 msgstr "Formësoni _Panel…"
 
-#: thunar/thunar-window.c:521
+#: thunar/thunar-window.c:523
 msgid "Configure the toolbar"
 msgstr "Formësoni panelin"
 
-#: thunar/thunar-window.c:522
+#: thunar/thunar-window.c:524
 msgid "Cl_ear Saved Folder View Settings"
 msgstr "_Spastro Rregullime Parjeje Dosjesh të Ruajtura"
 
-#: thunar/thunar-window.c:522
+#: thunar/thunar-window.c:524
 msgid "Delete saved view settings for this folder"
 msgstr "Fshi rregullime të ruajtura parjeje për këtë dosje"
 
-#: thunar/thunar-window.c:523
+#: thunar/thunar-window.c:525
 msgid "Show _Hidden Files"
 msgstr "Shfaq Kartela të _Padukshme"
 
-#: thunar/thunar-window.c:523
+#: thunar/thunar-window.c:525
 msgid "Toggles the display of hidden files in the current window"
 msgstr "Këmben shfaqjen ose jo të kartelave të fshehura në dritaren e çastit"
 
-#: thunar/thunar-window.c:524
+#: thunar/thunar-window.c:526
 msgid "Show _File Highlight"
 msgstr "Shfaq Theksues _Kartelash"
 
-#: thunar/thunar-window.c:524
+#: thunar/thunar-window.c:526
 msgid ""
 "Toggles the display of file highlight which can be configured in the file "
 "specific property dialog"
 msgstr "Aktivizon/çaktivizon shfaqjen e theksimit të kartelës, që mund të formësohet te dialogu i vetive të kartelës së dhënë"
 
-#: thunar/thunar-window.c:525
+#: thunar/thunar-window.c:527
 msgid "Zoom I_n"
 msgstr "Z_madhoje"
 
-#: thunar/thunar-window.c:525
+#: thunar/thunar-window.c:527
 msgid "Show the contents in more detail"
 msgstr "Shfaq më tepër hollësi rreth lëndës"
 
-#: thunar/thunar-window.c:528
+#: thunar/thunar-window.c:530
 msgid "Zoom _Out"
 msgstr "Z_vogëloje"
 
-#: thunar/thunar-window.c:528
+#: thunar/thunar-window.c:530
 msgid "Show the contents in less detail"
 msgstr "Shfaq më pak hollësi rreth lëndës"
 
-#: thunar/thunar-window.c:530
+#: thunar/thunar-window.c:532
 msgid "Normal Si_ze"
 msgstr "Ma_dhësi Normale"
 
-#: thunar/thunar-window.c:530
+#: thunar/thunar-window.c:532
 msgid "Show the contents at the normal size"
 msgstr "Shfaqe lëndën në madhësi normale"
 
-#: thunar/thunar-window.c:532
+#: thunar/thunar-window.c:534
 msgid "_Icon View"
 msgstr "Pamje _Ikona"
 
-#: thunar/thunar-window.c:532
+#: thunar/thunar-window.c:534
 msgid "Display folder content in an icon view"
 msgstr "Shfaqe lëndën e dosjes si pamje ikonë"
 
-#: thunar/thunar-window.c:533
+#: thunar/thunar-window.c:535
 msgid "_List View"
 msgstr "Pamje _Listë"
 
-#: thunar/thunar-window.c:533
+#: thunar/thunar-window.c:535
 msgid "Display folder content in a detailed list view"
 msgstr "Shfaqe lëndën e dosjes si pamje listë e hollësishme"
 
-#: thunar/thunar-window.c:534
+#: thunar/thunar-window.c:536
 msgid "_Compact View"
 msgstr "Pamje _Kompakte"
 
-#: thunar/thunar-window.c:534
+#: thunar/thunar-window.c:536
 msgid "Display folder content in a compact list view"
 msgstr "Shfaqe lëndën e dosjes si pamje listë e ngjeshur"
 
-#: thunar/thunar-window.c:536
+#: thunar/thunar-window.c:538
 msgid "_Go"
 msgstr "_Shko"
 
-#: thunar/thunar-window.c:537
+#: thunar/thunar-window.c:539
 msgid "_Bookmarks"
 msgstr "_Faqerojtës"
 
-#: thunar/thunar-window.c:538
+#: thunar/thunar-window.c:540
 msgid "F_ile System"
 msgstr "S_istem Kartelash"
 
-#: thunar/thunar-window.c:539
+#: thunar/thunar-window.c:541
 msgid "_Home"
 msgstr "_Kreu"
 
-#: thunar/thunar-window.c:539
+#: thunar/thunar-window.c:541
 msgid "Go to the home folder"
 msgstr "Shko tek dosja krye"
 
-#: thunar/thunar-window.c:540
+#: thunar/thunar-window.c:542
 msgid "_Desktop"
 msgstr "_Desktop"
 
-#: thunar/thunar-window.c:540
+#: thunar/thunar-window.c:542
 msgid "Go to the desktop folder"
 msgstr "Shko tek dosja e desktopit"
 
-#: thunar/thunar-window.c:541
+#: thunar/thunar-window.c:543
 msgid "_Computer"
 msgstr "_Komputer"
 
-#: thunar/thunar-window.c:541
+#: thunar/thunar-window.c:543
 msgid ""
 "Browse all local and remote disks and folders accessible from this computer"
 msgstr "Shfletoni krejt disqet dhe dosjet vendore dhe të largëta ku mund të hyhet prej këtij kompjuteri"
 
-#: thunar/thunar-window.c:542
+#: thunar/thunar-window.c:544
 msgid "_Recent"
 msgstr "Së _Fundi"
 
-#: thunar/thunar-window.c:542
+#: thunar/thunar-window.c:544
 msgid "Display recently used files"
 msgstr "Shfaq kartela të përdorura së fundi"
 
-#: thunar/thunar-window.c:543
+#: thunar/thunar-window.c:545
 msgid "_Trash"
 msgstr "_Hedhurina"
 
-#: thunar/thunar-window.c:543
+#: thunar/thunar-window.c:545
 msgid "Display the contents of the trash can"
 msgstr "Shfaq lëndën e koshit të hedhurinave"
 
-#: thunar/thunar-window.c:544
+#: thunar/thunar-window.c:546
 msgid "Open _Parent"
 msgstr "Hap _Mëmën"
 
-#: thunar/thunar-window.c:544
+#: thunar/thunar-window.c:546
 msgid "Open the parent folder"
 msgstr "Hap dosjen mëmë"
 
-#: thunar/thunar-window.c:545
+#: thunar/thunar-window.c:547
 msgid "_Open Location..."
 msgstr "_Hapni Vendndodhje…"
 
-#: thunar/thunar-window.c:545
+#: thunar/thunar-window.c:547
 msgid "Specify a location to open"
 msgstr "Tregoni një vendndodhje për hapje"
 
-#: thunar/thunar-window.c:547
+#: thunar/thunar-window.c:549
 msgid "T_emplates"
 msgstr "_Gjedhe"
 
-#: thunar/thunar-window.c:547
+#: thunar/thunar-window.c:549
 msgid "Go to the templates folder"
 msgstr "Shko tek dosja e gjedheve"
 
-#: thunar/thunar-window.c:548
+#: thunar/thunar-window.c:550
 msgid "Browse _Network"
 msgstr "Shfletoni _Rrjetin"
 
-#: thunar/thunar-window.c:551
+#: thunar/thunar-window.c:553
 msgid "_Contents"
 msgstr "_Lëndë"
 
-#: thunar/thunar-window.c:551
+#: thunar/thunar-window.c:553
 msgid "Display Thunar user manual"
 msgstr "Shfaq doracak përdoruesi për Thunar-in"
 
-#: thunar/thunar-window.c:552
+#: thunar/thunar-window.c:554
 msgid "Display information about Thunar"
 msgstr "Shfaq të dhëna rreth Thunar-it"
 
-#: thunar/thunar-window.c:553
+#: thunar/thunar-window.c:555
 msgid "_Back"
 msgstr "_Mbrapsht"
 
-#: thunar/thunar-window.c:553
+#: thunar/thunar-window.c:555
 msgid "Go to the previous visited folder"
 msgstr "Kalo tek dosja e mëparshme e vizituar"
 
-#: thunar/thunar-window.c:555
+#: thunar/thunar-window.c:557
 msgid "_Forward"
 msgstr "_Para"
 
-#: thunar/thunar-window.c:555
+#: thunar/thunar-window.c:557
 msgid "Go to the next visited folder"
 msgstr "Kalo tek dosja pasuese e vizituar"
 
-#: thunar/thunar-window.c:556
+#: thunar/thunar-window.c:558
 msgid "_Previous Tab"
 msgstr "Skeda e _Mëparshme"
 
-#: thunar/thunar-window.c:556
+#: thunar/thunar-window.c:558
 msgid "Switch to Previous Tab"
 msgstr "Kaloni te Skeda e Mëparshme"
 
-#: thunar/thunar-window.c:557
+#: thunar/thunar-window.c:559
 msgid "_Next Tab"
 msgstr "Skeda _Pasuese"
 
-#: thunar/thunar-window.c:557
+#: thunar/thunar-window.c:559
 msgid "Switch to Next Tab"
 msgstr "Kaloni te Skeda Pasuese"
 
-#: thunar/thunar-window.c:558
+#: thunar/thunar-window.c:560
 msgid "_Search for Files..."
 msgstr "_Kërkoni për Kartela…"
 
-#: thunar/thunar-window.c:558
+#: thunar/thunar-window.c:560
 msgid "Search for a specific file in the current folder and Recent"
 msgstr "Kërkoni për një kartelë të dhënë, te dosja e tanishme dhe te Së Fundi "
 
-#: thunar/thunar-window.c:559
+#: thunar/thunar-window.c:561
 msgid "Cancel search for files"
 msgstr "Anuloje kërkimin për kartela"
 
 #. add the label with the root warning
-#: thunar/thunar-window.c:901
+#: thunar/thunar-window.c:903
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "Kujdes: po përdorni llogarinë rrënjë. Mund të dëmtoni sistemin tuaj."
 
-#: thunar/thunar-window.c:960
+#: thunar/thunar-window.c:976
 msgid "Size: "
 msgstr "Madhësi:"
 
 #. TRANSLATORS: `Catfish' is a software package, please don't translate it.
-#: thunar/thunar-window.c:1030
+#: thunar/thunar-window.c:1051
 msgid "Search with Catfish..."
 msgstr "Kërkoni me Catfish…"
 
-#: thunar/thunar-window.c:1041
+#: thunar/thunar-window.c:1062
 msgid "Restore Selected Items"
 msgstr "Rikthe Objektet e Përzgjedhur"
 
-#: thunar/thunar-window.c:2680
+#: thunar/thunar-window.c:2701
 msgid "Close tab"
 msgstr "Mbylle skedën"
 
-#: thunar/thunar-window.c:3136
+#: thunar/thunar-window.c:3157
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Hap vendodhjen \"%s\""
 
-#: thunar/thunar-window.c:4172
+#: thunar/thunar-window.c:4193
 msgid "Failed to open parent folder"
 msgstr "S’u arrit të hapej dosje mëmë"
 
-#: thunar/thunar-window.c:4303
+#: thunar/thunar-window.c:4324
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Drejtoria \"%s\" s’ekziston. Doni të krijohet?"
 
-#: thunar/thunar-window.c:4305
+#: thunar/thunar-window.c:4326
 msgid "Create directory"
 msgstr "Krijo drejtori"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4374
+#: thunar/thunar-window.c:4395
 msgid "Failed to browse the computer"
 msgstr "S’u arrit të shfletohej në kompjuter"
 
 #. display the "About Templates" dialog
-#: thunar/thunar-window.c:4417
+#: thunar/thunar-window.c:4438
 msgid "About Templates"
 msgstr "Rreth Gjedhesh"
 
-#: thunar/thunar-window.c:4439
+#: thunar/thunar-window.c:4460
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Tërë kartelat në këtë dosje do të duken te menuja \"Krijo Dokument\"."
 
-#: thunar/thunar-window.c:4446
+#: thunar/thunar-window.c:4467
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Nëse krijoni shpesh disa lloje të caktuar dokumentesh, bëni një kopje të njërit dhe vendoseni në këtë dosje. Thunar-i do të shtojë një zë për këtë dokument, te menuja \"Krijo Dokument\".\n\nMundeni mandej të përzgjidhni zërin prej menusë \"Krijo Dokument\" dhe një kopje e dokumentit do të krijohet te drejtoria që po shihni."
 
-#: thunar/thunar-window.c:4458
+#: thunar/thunar-window.c:4479
 msgid "Do _not display this message again"
 msgstr "Mos e shfaq _sërish këtë mesazh"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4492
+#: thunar/thunar-window.c:4513
 msgid "Failed to open the file system root folder"
 msgstr "S’u arrit të hapej dosja rrënjë e sistemit të kartelave"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4528
+#: thunar/thunar-window.c:4549
 msgid "Failed to display `Recent`"
 msgstr "S’u arrit të shfaqej `Së fundi`"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4564
+#: thunar/thunar-window.c:4585
 msgid "Failed to display the contents of the trash can"
 msgstr "S’u arrit të shfaqej lënda e koshit të hedhurinave"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4600
+#: thunar/thunar-window.c:4621
 msgid "Failed to browse the network"
 msgstr "S’u arrit të shfletohej rrjeti"
 
-#: thunar/thunar-window.c:4743
+#: thunar/thunar-window.c:4764
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar-i është një përgjegjës kartelash për Mjedisin\nDesktop Xfce, i shpejtë dhe i lehtë në përdorim."
 
-#: thunar/thunar-window.c:5865
+#: thunar/thunar-window.c:5745
+msgid "Select an image to preview"
+msgstr "Përzgjidhni një figurë për paraparje"
+
+#: thunar/thunar-window.c:5894
 msgid "Failed to launch search with Catfish"
 msgstr "S’u arrit të nisej kërkim me Catfish"
 
-#: thunar/thunar-window.c:6197
+#: thunar/thunar-window.c:6226
 msgid "Location Bar"
 msgstr "Shtyllë Vendndodhjesh"
 
