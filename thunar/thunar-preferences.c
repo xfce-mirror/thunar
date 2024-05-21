@@ -135,6 +135,7 @@ enum
   PROP_SHOW_LAUNCHER_NAMES_INSTEAD_REAL_FILENAMES,
   PROP_MISC_EXPANDABLE_FOLDERS,
   PROP_MISC_USE_SYMBOLIC_ICONS_IN_TOOLBAR,
+  PROP_MISC_USE_SYMBOLIC_ICONS_IN_SIDEPANE,
   N_PROPERTIES,
 };
 
@@ -1298,6 +1299,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             "MiscUseSymbolicIconsInToolbar",
                             NULL,
                             TRUE,
+                            EXO_PARAM_READWRITE);
+
+   /**
+   * ThunarPreferences:misc-use-symbolic-icons-in-sidepane:
+   *
+   * If true if symbolic icons should be used in the sidepane
+   **/
+  preferences_props[PROP_MISC_USE_SYMBOLIC_ICONS_IN_SIDEPANE] =
+      g_param_spec_boolean ("misc-use-symbolic-icons-in-sidepane",
+                            "MiscUseSymbolicIconsInSidepane",
+                            NULL,
+                            FALSE,
                             EXO_PARAM_READWRITE);
 
   /* install all properties */

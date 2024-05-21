@@ -1792,6 +1792,6 @@ thunar_g_themed_icon_new (const char *iconname,
   name = g_strjoin (NULL, iconname, "-symbolic", NULL);
   icon = g_themed_icon_new (name);
   g_free (name);
-  return icon
+  return icon;
 }
 
