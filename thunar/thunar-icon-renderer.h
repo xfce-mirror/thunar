@@ -53,6 +53,7 @@ struct _ThunarIconRenderer
   gboolean       rounded_corners;
   gboolean       highlighting_enabled;
   gboolean       image_preview_enabled;
+  gboolean       use_symbolic_icons;
 };
 
 GType            thunar_icon_renderer_get_type (void) G_GNUC_CONST;

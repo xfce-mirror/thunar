@@ -2123,7 +2123,7 @@ thunar_action_manager_build_sendto_submenu (ThunarActionManager *action_mgr)
       label_text   = thunar_device_get_name (lp->data);
       tooltip_text = g_strdup_printf (ngettext ("Send the selected file to \"%s\"",
                                                 "Send the selected files to \"%s\"", action_mgr->n_files_to_process), label_text);
-      icon  = thunar_device_get_icon (lp->data);
+      icon  = thunar_device_get_icon (lp->data, FALSE);
       image = NULL;
       if (G_LIKELY (icon != NULL))
         {
@@ -2845,7 +2845,8 @@ thunar_action_manager_create_document_submenu_templates (ThunarActionManager *ac
                                                  file,
                                                  THUNAR_FILE_ICON_STATE_DEFAULT,
                                                  16,
-                                                 scale_factor);
+                                                 scale_factor,
+                                                 FALSE);
       surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, NULL);
 
       /* allocate an image based on the icon */

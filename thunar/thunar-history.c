@@ -572,7 +572,7 @@ thunar_history_show_menu (ThunarHistory         *history,
       if (file != NULL)
         {
           /* load the icon for the file */
-          icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, 16, scale_factor);
+          icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, 16, scale_factor, FALSE);
           if (icon != NULL)
             {
               /* setup the image for the file */
