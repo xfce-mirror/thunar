@@ -1767,3 +1767,31 @@ thunar_g_file_get_metadata_setting (GFile       *file,
 
   return attr_value;
 }
+
+
+
+/**
+ * thunar_g_themed_icon_new:
+ * @iconname     : A string containing an icon name.
+ * @symbolic     : True to use the symbolic version the icon
+ *
+ * Creates a new themed icon for iconname. Uses the symbolic version of the icon, if desired.
+ *
+ * Return value: (transfer full): A new GThemedIcon. The caller of the function takes ownership of the data, and is responsible for freeing it.
+ **/
+GIcon*
+thunar_g_themed_icon_new (const char *iconname,
+                          gboolean    symbolic)
+{
+  GIcon* icon;
+  gchar *name = NULL;
+
+  if (!symbolic)
+    return g_themed_icon_new (iconname);
+
+  name = g_strjoin (NULL, iconname, "-symbolic", NULL);
+  icon = g_themed_icon_new (name);
+  g_free (name);
+  return icon
+}
+
