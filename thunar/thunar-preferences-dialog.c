@@ -273,7 +273,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   /* add the "Close" button */
   button = gtk_button_new_with_mnemonic (_("_Close"));
-  image = gtk_image_new_from_icon_name ("window-close", GTK_ICON_SIZE_BUTTON);
+  image = gtk_image_new_from_icon_name ("window-close-symbolic", GTK_ICON_SIZE_BUTTON);
   gtk_button_set_image (GTK_BUTTON (button), image);
   xfce_titled_dialog_add_action_widget (XFCE_TITLED_DIALOG (dialog), button, GTK_RESPONSE_CLOSE);
 
