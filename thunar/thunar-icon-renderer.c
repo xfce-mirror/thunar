@@ -43,6 +43,7 @@ enum
   PROP_ROUNDED_CORNERS,
   PROP_HIGHLIGHTING_ENABLED,
   PROP_IMAGE_PREVIEW_ENABLED,
+  PROP_USE_SYMBOLIC_ICONS,
 };
 
 
@@ -210,6 +211,19 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                    g_param_spec_boolean ("image-preview-enabled", "image-preview-enabled", "image-preview-enabled",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarIconRenderer:use_symbolic_icons:
+   *
+   * Whether to use a symbolic icons
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_USE_SYMBOLIC_ICONS,
+                                   g_param_spec_boolean ("use-symbolic-icons",
+                                                         "UseSymbolicIcons",
+                                                         NULL,
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 }
 
 
@@ -285,6 +299,10 @@ thunar_icon_renderer_get_property (GObject    *object,
     case PROP_IMAGE_PREVIEW_ENABLED:
       g_value_set_boolean (value, icon_renderer->highlighting_enabled);
       break;
+ 
+    case PROP_USE_SYMBOLIC_ICONS:
+      g_value_set_boolean (value, icon_renderer->use_symbolic_icons);
+      break;
 
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -343,6 +361,10 @@ thunar_icon_renderer_set_property (GObject      *object,
 
     case PROP_IMAGE_PREVIEW_ENABLED:
       icon_renderer->image_preview_enabled = g_value_get_boolean (value);
+      break;
+
+    case PROP_USE_SYMBOLIC_ICONS:
+      icon_renderer->use_symbolic_icons = g_value_get_boolean (value);
       break;
 
     default:
@@ -515,7 +537,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   if (icon_renderer->image_preview_enabled)
     thunar_file_request_thumbnail (icon_renderer->file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
 
-  icon = thunar_icon_factory_load_file_icon (icon_factory, icon_renderer->file, icon_state, icon_renderer->size, scale_factor);
+  icon = thunar_icon_factory_load_file_icon (icon_factory, icon_renderer->file, icon_state, icon_renderer->size, scale_factor, icon_renderer->use_symbolic_icons);
   if (G_UNLIKELY (icon == NULL))
     {
       g_object_unref (G_OBJECT (icon_factory));
@@ -608,7 +630,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
               emblem_size = MIN ((2 * icon_renderer->size) / 3, 32);
 
               /* check if we have the emblem in the icon theme */
-              emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, emblem_size, scale_factor, FALSE);
+              emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, emblem_size, scale_factor, FALSE, icon_renderer->use_symbolic_icons);
               if (G_UNLIKELY (emblem == NULL))
                 continue;
 
