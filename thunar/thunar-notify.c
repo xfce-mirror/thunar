@@ -82,7 +82,7 @@ thunar_get_device_icon (ThunarDevice *device)
   const gchar* const *icon_names;
 
   /* get suitable icon for the device */
-  icon = thunar_device_get_icon (device);
+  icon = thunar_device_get_icon (device, FALSE);
   if (icon != NULL)
     {
       if (G_IS_THEMED_ICON (icon))
