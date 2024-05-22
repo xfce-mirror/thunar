@@ -235,7 +235,7 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
       if (shortcuts_icon_renderer->gicon != NULL)
         gicon = g_object_ref (shortcuts_icon_renderer->gicon);
       else
-        gicon = thunar_device_get_icon (shortcuts_icon_renderer->device);
+        gicon = thunar_device_get_icon (shortcuts_icon_renderer->device, THUNAR_ICON_RENDERER(renderer)->use_symbolic_icons);
 
       scale_factor = gtk_widget_get_scale_factor (widget);
       icon_info = gtk_icon_theme_lookup_by_gicon_for_scale (icon_theme, gicon,
