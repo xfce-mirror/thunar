@@ -376,14 +376,25 @@ thunar_device_get_name (const ThunarDevice *device)
 
 
 GIcon *
-thunar_device_get_icon (const ThunarDevice *device)
+thunar_device_get_icon (const ThunarDevice *device,
+                        gboolean            symbolic)
 {
   _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device), NULL);
 
   if (G_IS_VOLUME (device->device))
-    return g_volume_get_icon (device->device);
+    {
+      if (symbolic)
+        return g_volume_get_symbolic_icon (device->device);
+      else
+        return g_volume_get_icon (device->device);
+    }
   else if (G_IS_MOUNT (device->device))
-   return g_mount_get_icon (device->device);
+    {
+      if (symbolic)
+        return g_mount_get_symbolic_icon (device->device);
+      else
+        return g_mount_get_icon (device->device);
+    }
   else
     _thunar_assert_not_reached ();
 
