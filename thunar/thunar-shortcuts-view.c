@@ -292,7 +292,6 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   GtkTreeViewColumn *column;
   GtkCellRenderer   *renderer;
   GtkTreeSelection  *selection;
-  gboolean           use_symbolic_icons;
 
   /* configure the tree view */
   gtk_tree_view_set_enable_search (GTK_TREE_VIEW (view), FALSE);
@@ -306,7 +305,6 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
    * whenever the "shortcuts-icon-emblems" preference changes.
    */
   view->preferences = thunar_preferences_get ();
-  g_object_get (G_OBJECT (view->preferences), "misc-use-symbolic-icons-in-sidepane", &use_symbolic_icons, NULL);
   g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::shortcuts-icon-emblems", G_CALLBACK (gtk_widget_queue_draw), view);
 
   /* allocate a single column for our renderers */
@@ -345,7 +343,8 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
 
   /* allocate the special icon renderer */
   view->icon_renderer = thunar_shortcuts_icon_renderer_new ();
-  g_object_set (G_OBJECT (view->icon_renderer), "use-symbolic-icons", use_symbolic_icons, NULL);
+  g_object_bind_property (G_OBJECT (view->preferences), "misc-use-symbolic-icons-in-sidepane", G_OBJECT (view->icon_renderer), "use-symbolic-icons", G_BINDING_SYNC_CREATE);
+
   gtk_tree_view_column_pack_start (column, view->icon_renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, view->icon_renderer,
                                        "gicon", THUNAR_SHORTCUTS_MODEL_COLUMN_GICON,
