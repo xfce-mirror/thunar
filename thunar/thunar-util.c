@@ -1441,3 +1441,21 @@ thunar_util_get_statusbar_text_for_single_file (ThunarFile *file)
   g_object_unref (preferences);
   return text;
 }
+
+
+
+gchar*
+thunar_util_accel_path_to_id (const gchar *accel_path)
+{
+  const char *p;
+
+  if (accel_path == NULL)
+    return NULL;
+
+  /* Example: "<Actions>/ThunarWindow/reload" -> "reload" */
+  p = g_strrstr (accel_path, "/");
+  if (*p++ == '\0')
+    return NULL;
+
+  return g_strdup (p);
+}
