@@ -343,6 +343,7 @@ static void       thunar_window_update_location_toolbar                  (GFileM
 static void       thunar_window_location_toolbar_add_ucas                (ThunarWindow           *window);
 GtkWidget*        thunar_window_location_toolbar_add_uca                 (ThunarWindow           *window,
                                                                           GObject                *thunarx_menu_item);
+static void       thunar_window_location_toolbar_load_items              (ThunarWindow           *window);
 static void       thunar_window_location_toolbar_load_last_order         (ThunarWindow           *window);
 static gboolean   thunar_window_location_toolbar_load_visibility         (ThunarWindow           *window);
 static guint      thunar_window_toolbar_item_count                       (ThunarWindow           *window);
@@ -445,20 +446,20 @@ struct _ThunarWindow
   GFile                     *uca_file;
 
   /* we need to maintain pointers to be able to toggle sensitivity and activity */
+  GtkWidget                 *location_toolbar_item_view_menubar;
   GtkWidget                 *location_toolbar_item_back;
   GtkWidget                 *location_toolbar_item_forward;
   GtkWidget                 *location_toolbar_item_parent;
   GtkWidget                 *location_toolbar_item_home;
+  GtkWidget                 *location_toolbar_item_split_view;
   GtkWidget                 *location_toolbar_item_undo;
   GtkWidget                 *location_toolbar_item_redo;
   GtkWidget                 *location_toolbar_item_zoom_in;
   GtkWidget                 *location_toolbar_item_zoom_out;
-  GtkWidget                 *location_toolbar_item_search;
-  GtkWidget                 *location_toolbar_item_view_menubar;
   GtkWidget                 *location_toolbar_item_icon_view;
   GtkWidget                 *location_toolbar_item_detailed_view;
   GtkWidget                 *location_toolbar_item_compact_view;
-  GtkWidget                 *location_toolbar_item_split_view;
+  GtkWidget                 *location_toolbar_item_search;
 
   ThunarActionManager       *action_mgr;
 
@@ -6099,6 +6100,7 @@ thunar_window_create_toolbar_item_from_action (ThunarWindow       *window,
     }
 
   toolbar_item = xfce_gtk_tool_button_new_from_action_entry (&entry, G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
+  g_object_set_data_full (G_OBJECT (toolbar_item), "id", thunar_util_accel_path_to_id (entry.accel_path), g_free);
   g_object_set_data_full (G_OBJECT (toolbar_item), "label", g_strdup (entry.menu_item_label_text), g_free);
   g_object_set_data_full (G_OBJECT (toolbar_item), "icon", g_strdup (entry.menu_item_icon_name), g_free);
 
@@ -6133,6 +6135,7 @@ thunar_window_create_toolbar_toggle_item_from_action (ThunarWindow           *wi
     }
 
   toolbar_item = xfce_gtk_toggle_tool_button_new_from_action_entry (&entry, G_OBJECT (window), active, GTK_TOOLBAR (window->location_toolbar));
+  g_object_set_data_full (G_OBJECT (toolbar_item), "id", thunar_util_accel_path_to_id (entry.accel_path), g_free);
   g_object_set_data_full (G_OBJECT (toolbar_item), "label", g_strdup (entry.menu_item_label_text), g_free);
   g_object_set_data_full (G_OBJECT (toolbar_item), "icon", g_strdup (entry.menu_item_icon_name), g_free);
   g_signal_connect_after (G_OBJECT (toolbar_item), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
@@ -6178,10 +6181,11 @@ thunar_window_create_toolbar_radio_item_from_action (ThunarWindow       *window,
 
   /* 'gtk_check_menu_item_set_active' has to be done before 'g_signal_connect_swapped', to don't trigger the callback */
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (toolbar_item), active);
-  
+
+  g_object_set_data_full (G_OBJECT (toolbar_item), "id", thunar_util_accel_path_to_id (entry.accel_path), g_free);
   g_object_set_data_full (G_OBJECT (toolbar_item), "label", g_strdup (entry.menu_item_label_text), g_free);
   g_object_set_data_full (G_OBJECT (toolbar_item), "icon", g_strdup (entry.menu_item_icon_name), g_free);
-  g_signal_connect_after (toolbar_item, "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), window);
+  g_signal_connect_after (G_OBJECT (toolbar_item), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), window);
 
   thunar_g_object_set_guint_data (G_OBJECT (toolbar_item), "default-order", item_order);
 
@@ -6222,6 +6226,9 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   window->location_toolbar_item_forward       = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_FORWARD, item_order++);
   window->location_toolbar_item_parent        = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_OPEN_PARENT, item_order++);
   window->location_toolbar_item_home          = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_OPEN_HOME, item_order++);
+                                                thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_NEW_TAB, item_order++);
+                                                thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_NEW_WINDOW, item_order++);
+  window->location_toolbar_item_split_view    = thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_SPLIT, thunar_window_split_view_is_active (window), item_order++);
   window->location_toolbar_item_undo          = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_UNDO, item_order++);
   window->location_toolbar_item_redo          = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_REDO, item_order++);
   window->location_toolbar_item_zoom_out      = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_ZOOM_OUT, item_order++);
@@ -6230,13 +6237,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   window->location_toolbar_item_icon_view     = thunar_window_create_toolbar_radio_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_ICONS, window->view_type == THUNAR_TYPE_ICON_VIEW, NULL, item_order++);
   window->location_toolbar_item_detailed_view = thunar_window_create_toolbar_radio_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST, window->view_type == THUNAR_TYPE_DETAILS_VIEW, GTK_RADIO_TOOL_BUTTON (window->location_toolbar_item_icon_view), item_order++);
   window->location_toolbar_item_compact_view  = thunar_window_create_toolbar_radio_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST, window->view_type == THUNAR_TYPE_COMPACT_VIEW, GTK_RADIO_TOOL_BUTTON (window->location_toolbar_item_icon_view), item_order++);
-  window->location_toolbar_item_split_view    = thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_SPLIT, thunar_window_split_view_is_active (window), item_order++);
-                                                thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_NEW_TAB, item_order++);
-                                                thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_NEW_WINDOW, item_order++);
 
-  g_signal_connect_swapped (window->location_toolbar_item_icon_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_ICONS)->callback, window);
-  g_signal_connect_swapped (window->location_toolbar_item_detailed_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST)->callback, window);
-  g_signal_connect_swapped (window->location_toolbar_item_compact_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST)->callback, window);
   g_signal_connect (window->location_toolbar_item_back, "button-press-event", G_CALLBACK (thunar_window_history_clicked), window);
   g_signal_connect (window->location_toolbar_item_forward, "button-press-event", G_CALLBACK (thunar_window_history_clicked), window);
   g_signal_connect (window->location_toolbar_item_parent, "button-press-event", G_CALLBACK (thunar_window_open_parent_clicked), window);
@@ -6244,26 +6245,32 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   g_signal_connect (window, "button-press-event", G_CALLBACK (thunar_window_button_press_event), window);
   window->signal_handler_id_history_changed = 0;
 
+  g_signal_connect_swapped (window->location_toolbar_item_icon_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_ICONS)->callback, window);
+  g_signal_connect_swapped (window->location_toolbar_item_detailed_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST)->callback, window);
+  g_signal_connect_swapped (window->location_toolbar_item_compact_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST)->callback, window);
+
   g_object_bind_property (window->job_operation_history, "can-undo", window->location_toolbar_item_undo, "sensitive", G_BINDING_SYNC_CREATE);
   g_object_bind_property (window->job_operation_history, "can-redo", window->location_toolbar_item_redo, "sensitive", G_BINDING_SYNC_CREATE);
-
-  /* The UCA shortcuts need to be checked 'by hand', since we dont want to permanently keep menu items for them */
-  g_signal_connect (window, "key-press-event", G_CALLBACK (thunar_window_check_uca_key_activation), NULL);
 
   /* add the location bar to the toolbar */
   tool_item = gtk_tool_item_new ();
   gtk_tool_item_set_expand (tool_item, TRUE);
   gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), tool_item, -1);
   gtk_toolbar_set_show_arrow (GTK_TOOLBAR (window->location_toolbar), FALSE);
+  g_object_set_data_full (G_OBJECT (tool_item), "id", g_strdup ("location-bar"), g_free);
   g_object_set_data_full (G_OBJECT (tool_item), "label", g_strdup (_("Location Bar")), g_free);
   g_object_set_data_full (G_OBJECT (tool_item), "icon", g_strdup(""), g_free);
   thunar_g_object_set_guint_data (G_OBJECT (tool_item), "default-order", item_order++);
 
-  thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_RELOAD, item_order++);
-  window->location_toolbar_item_search = thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_SEARCH, window->is_searching, item_order++);
+  /* add remaining toolbar items */
+                                          thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_RELOAD, item_order++);
+  window->location_toolbar_item_search  = thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_SEARCH, window->is_searching, item_order++);
 
   /* add custom actions to the toolbar */
   thunar_window_location_toolbar_add_ucas (window);
+
+  /* The UCA shortcuts need to be checked 'by hand', since we dont want to permanently keep menu items for them */
+  g_signal_connect (window, "key-press-event", G_CALLBACK (thunar_window_check_uca_key_activation), NULL);
 
   /* display the toolbar */
   gtk_widget_show_all (window->location_toolbar);
@@ -6274,11 +6281,8 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   /* add the location bar itself after gtk_widget_show_all to not mess with the visibility of the location buttons */
   gtk_container_add (GTK_CONTAINER (tool_item), window->location_bar);
 
-  /* load the correct order of items in the toolbar */
-  thunar_window_location_toolbar_load_last_order (window);
-
-  /* load the correct visibility of items in the toolbar */
-  thunar_window_location_toolbar_load_visibility (window);
+  /* load the correct order and visibility of items in the toolbar */
+  thunar_window_location_toolbar_load_items (window);
 
   /* attach the toolbar to the window */
   gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 1, 1);
@@ -6331,6 +6335,7 @@ _thunar_window_location_toolbar_add_ucas_menu_items (ThunarWindow *window,
               guint *item_order;
 
               toolbar_item = thunar_window_location_toolbar_add_uca (window, lp_item->data);
+              g_object_set_data_full (G_OBJECT (toolbar_item), "id", g_strdup (name), g_free);
               g_object_set_data_full (G_OBJECT (toolbar_item), "label", g_strdup (label_text), g_free);
               g_object_set_data_full (G_OBJECT (toolbar_item), "icon", g_strdup (icon_name), g_free);
               item_order = g_malloc (sizeof (gint));
@@ -6396,6 +6401,91 @@ thunar_window_location_toolbar_add_ucas (ThunarWindow *window)
 
 
 
+static void
+thunar_window_location_toolbar_load_items (ThunarWindow *window)
+{
+  GList  *toolbar_items;
+  gchar **items;
+  guint   items_length;
+  gchar  *tmp;
+
+  /* read and migrate old settings */
+  /* TODO: drop this code block and the called functions */
+  /*       after the 4.20 release, or later if desired */
+  if (!thunar_preferences_has_property (window->preferences, "/last-toolbar-items")
+      && thunar_preferences_has_property (window->preferences, "/last-toolbar-item-order"))
+    {
+      /* load the correct order of items in the toolbar */
+      thunar_window_location_toolbar_load_last_order (window);
+
+      /* load the correct visibility of items in the toolbar */
+      thunar_window_location_toolbar_load_visibility (window);
+
+      /* save configuration */
+      thunar_save_toolbar_configuration (window->location_toolbar);
+
+      return;
+    }
+
+  if (thunar_window_toolbar_item_count (window) == 0)
+    return;
+
+  /* get all toolbar items */
+  toolbar_items = gtk_container_get_children (GTK_CONTAINER (window->location_toolbar));
+
+  /* determine the order from the preferences */
+  g_object_get (G_OBJECT (window->preferences), "last-toolbar-items", &tmp, NULL);
+  items = g_strsplit (tmp, ",", -1);
+  items_length = g_strv_length (items);
+  g_free (tmp);
+
+  /* now rearrange the toolbar items according to the saved order */
+  for (guint i = 0; i < items_length; i++)
+    {
+      GList  *lp;
+      gchar **item_data = g_strsplit (items[i], ":", -1); /* id:visible */
+
+      /* find matching toolbar item in the list */
+      for (lp = toolbar_items; lp != NULL; lp = lp->next)
+        {
+          GtkWidget *item = lp->data;
+          gchar     *id = g_object_get_data (G_OBJECT (item), "id");
+
+          /* update the toolbar item */
+          if (g_strcmp0 (item_data[0], id) == 0)
+            {
+              gboolean hidden;
+
+              /* set its position */
+              g_object_ref (item);
+              gtk_container_remove (GTK_CONTAINER (window->location_toolbar), item);
+              gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), GTK_TOOL_ITEM (item), i);
+              g_object_unref (item);
+
+              /* set its visibility */
+              hidden = (g_strcmp0 (item_data[1], "0") == 0);
+              if (hidden)
+                thunar_window_toolbar_toggle_item_visibility (window, i);
+
+              /* remove it from the list */
+              toolbar_items = g_list_remove (toolbar_items, item);
+
+              break;
+            }
+        }
+
+      g_strfreev (item_data);
+    }
+
+  /* hide remaining toolbar items which are not present in the saved order */
+  g_list_foreach (toolbar_items, (GFunc) (void (*)(void)) gtk_widget_hide, NULL);
+  g_list_free (toolbar_items);
+
+  g_strfreev (items);
+}
+
+
+
 /**
  * thunar_window_location_toolbar_load_last_order:
  * @window            : a #ThunarWindow instance.
@@ -6418,9 +6508,50 @@ thunar_window_location_toolbar_load_last_order (ThunarWindow *window)
   item_order_length = g_strv_length (item_order);
   g_free (tmp);
 
-  /* for this to work the toolbar must be in the default order */
-  for (guint i = 0; i < item_count; i++)
-    current_order[i] = i;
+  /* restore the default toolbar item order from version 4.18 to make this work */
+  if (item_count > 0)
+    {
+      GList *toolbar_items = gtk_container_get_children (GTK_CONTAINER (window->location_toolbar));
+      GList *lp;
+      gchar *old_default_order[17] = { "view-menubar", "back", "forward", "open-parent", "open-home",
+                                       "undo", "redo", "zoom-in", "zoom-out", "zoom-reset",
+                                       "view-as-icons", "view-as-detailed-list", "view-as-compact-list",
+                                       "toggle-split-view", "location-bar", "reload", "search" };
+      guint  uca_count = 0;  /* custom actions count */
+      guint  uca_index = 17; /* custom actions will be added after the default items */
+      guint  new_index;      /* toolbar items added after 4.18 will be appended */
+
+      for (lp = toolbar_items; lp != NULL; lp = lp->next)
+        {
+          gchar *id = g_object_get_data (G_OBJECT (lp->data), "id");
+          if (g_str_has_prefix (id, "uca-action"))
+            uca_count++;
+        }
+
+      new_index = uca_index + uca_count;
+
+      for (lp = toolbar_items; lp != NULL; lp = lp->next)
+        {
+          gchar *id = g_object_get_data (G_OBJECT (lp->data), "id");
+          guint *pos = g_object_get_data (G_OBJECT (lp->data), "default-order");
+          guint  i = 0;
+
+          for (; i < 17; i++)
+            {
+              if (g_strcmp0 (old_default_order[i], id) == 0)
+                break;
+            }
+
+          if (i < 17)
+            current_order[*pos] = i; /* old default item */
+          else if (g_str_has_prefix (id, "uca-action"))
+            current_order[*pos] = uca_index++; /* custom action */
+          else
+            current_order[*pos] = new_index++; /* new toolbar item */
+        }
+
+      g_list_free (toolbar_items);
+    }
 
   for (guint i = 0; i < item_count; i++)
     target_order[i] = i;
