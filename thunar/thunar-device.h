@@ -52,7 +52,8 @@ const gchar         *thunar_device_get_eject_label  (const ThunarDevice   *devic
 
 gchar               *thunar_device_get_name         (const ThunarDevice   *device) G_GNUC_MALLOC;
 
-GIcon               *thunar_device_get_icon         (const ThunarDevice   *device);
+GIcon               *thunar_device_get_icon         (const ThunarDevice   *device,
+                                                     gboolean              symbolic);
 
 ThunarDeviceKind     thunar_device_get_kind         (const ThunarDevice   *device) G_GNUC_PURE;
 
