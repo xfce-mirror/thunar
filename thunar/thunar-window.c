@@ -6091,7 +6091,7 @@ thunar_window_create_toolbar_item_from_action (ThunarWindow       *window,
   gboolean            use_symbolic_icons;
   gchar              *menu_item_icon_name = NULL;
 
-  g_object_get (G_OBJECT (window->preferences), "misc-use-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
+  g_object_get (G_OBJECT (window->preferences), "misc-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
   if (use_symbolic_icons)
     {
       menu_item_icon_name = g_strjoin (NULL, get_action_entry (action)->menu_item_icon_name, "-symbolic", NULL);
@@ -6125,7 +6125,7 @@ thunar_window_create_toolbar_toggle_item_from_action (ThunarWindow           *wi
   gboolean            use_symbolic_icons;
   gchar              *menu_item_icon_name = NULL;
 
-  g_object_get (G_OBJECT (window->preferences), "misc-use-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
+  g_object_get (G_OBJECT (window->preferences), "misc-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
   if (use_symbolic_icons)
     {
       menu_item_icon_name = g_strjoin (NULL, get_action_entry (action)->menu_item_icon_name, "-symbolic", NULL);
@@ -6159,7 +6159,7 @@ thunar_window_create_toolbar_radio_item_from_action (ThunarWindow       *window,
   gboolean            use_symbolic_icons;
   gchar              *menu_item_icon_name = NULL;
 
-  g_object_get (G_OBJECT (window->preferences), "misc-use-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
+  g_object_get (G_OBJECT (window->preferences), "misc-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
   if (use_symbolic_icons)
     {
       menu_item_icon_name = g_strjoin (NULL, get_action_entry (action)->menu_item_icon_name, "-symbolic", NULL);

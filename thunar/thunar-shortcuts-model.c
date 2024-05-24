@@ -307,7 +307,7 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
                           model,              "file-size-binary",
                           G_BINDING_SYNC_CREATE);
 
-  g_object_bind_property (model->preferences, "misc-use-symbolic-icons-in-sidepane",
+  g_object_bind_property (model->preferences, "misc-symbolic-icons-in-sidepane",
                           model,              "use-symbolic-icons",
                           G_BINDING_SYNC_CREATE);
 

@@ -134,8 +134,8 @@ enum
   PROP_MISC_MAX_NUMBER_OF_TEMPLATES,
   PROP_SHOW_LAUNCHER_NAMES_INSTEAD_REAL_FILENAMES,
   PROP_MISC_EXPANDABLE_FOLDERS,
-  PROP_MISC_USE_SYMBOLIC_ICONS_IN_TOOLBAR,
-  PROP_MISC_USE_SYMBOLIC_ICONS_IN_SIDEPANE,
+  PROP_MISC_SYMBOLIC_ICONS_IN_TOOLBAR,
+  PROP_MISC_SYMBOLIC_ICONS_IN_SIDEPANE,
   N_PROPERTIES,
 };
 
@@ -1290,25 +1290,25 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                              EXO_PARAM_READWRITE);
 
    /**
-   * ThunarPreferences:misc-use-symbolic-icons-in-toolbar:
+   * ThunarPreferences:misc-symbolic-icons-in-toolbar:
    *
-   * If true if symbolic icons should be used in the toolbar
+   * If true symbolic icons should be used in the toolbar
    **/
-  preferences_props[PROP_MISC_USE_SYMBOLIC_ICONS_IN_TOOLBAR] =
-      g_param_spec_boolean ("misc-use-symbolic-icons-in-toolbar",
-                            "MiscUseSymbolicIconsInToolbar",
+  preferences_props[PROP_MISC_SYMBOLIC_ICONS_IN_TOOLBAR] =
+      g_param_spec_boolean ("misc-symbolic-icons-in-toolbar",
+                            "MiscSymbolicIconsInToolbar",
                             NULL,
                             TRUE,
                             EXO_PARAM_READWRITE);
 
    /**
-   * ThunarPreferences:misc-use-symbolic-icons-in-sidepane:
+   * ThunarPreferences:misc-symbolic-icons-in-sidepane:
    *
-   * If true if symbolic icons should be used in the sidepane
+   * If true symbolic icons should be used in the sidepane
    **/
-  preferences_props[PROP_MISC_USE_SYMBOLIC_ICONS_IN_SIDEPANE] =
-      g_param_spec_boolean ("misc-use-symbolic-icons-in-sidepane",
-                            "MiscUseSymbolicIconsInSidepane",
+  preferences_props[PROP_MISC_SYMBOLIC_ICONS_IN_SIDEPANE] =
+      g_param_spec_boolean ("misc-symbolic-icons-in-sidepane",
+                            "MiscSymbolicIconsInSidepane",
                             NULL,
                             FALSE,
                             EXO_PARAM_READWRITE);
