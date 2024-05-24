@@ -2609,6 +2609,7 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
   ThunarFile*file;
   GList     *file_list = NULL;
   GList     *lp;
+  GtkWidget *window;
   GtkWidget *source_view;
   GFile     *parent_file;
   gboolean   belongs_here;
@@ -2652,6 +2653,10 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
 
           /* release the file list */
           g_list_free_full (file_list, g_object_unref);
+
+          /* if split view is active, give focus to the pane containing the view */
+          window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
+          thunar_window_focus_view (THUNAR_WINDOW (window), GTK_WIDGET (standard_view));
 
           /* grab the focus to the view widget */
           gtk_widget_grab_focus (gtk_bin_get_child (GTK_BIN (standard_view)));
