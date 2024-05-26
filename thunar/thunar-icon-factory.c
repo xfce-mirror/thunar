@@ -697,6 +697,8 @@ thunar_icon_key_equal (gconstpointer a,
     return FALSE;
   if (a_key->scale_factor != b_key->scale_factor)
     return FALSE;
+  if (a_key->symbolic != b_key->symbolic)
+    return FALSE;
 
   /* do a full string comparison on the names */
   return (g_strcmp0 (a_key->name, b_key->name) == 0);
@@ -1044,6 +1046,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
       store->stamp = factory->theme_stamp;
       store->thumbnail_draw_frames = factory->thumbnail_draw_frames;
       store->thumb_state = thunar_file_get_thumb_state (file, thunar_icon_size_to_thumbnail_size (icon_size * scale_factor));
+      store->symbolic = symbolic;
       store->icon = g_object_ref (icon);
 
       g_object_set_qdata_full (G_OBJECT (file), thunar_icon_factory_store_quark,
