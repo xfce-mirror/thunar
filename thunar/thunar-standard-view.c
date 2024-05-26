@@ -259,6 +259,8 @@ static void                 thunar_standard_view_sort_column_changed        (Gtk
 static void                 thunar_standard_view_loading_unbound            (gpointer                  user_data);
 static gboolean             thunar_standard_view_drag_scroll_timer          (gpointer                  user_data);
 static void                 thunar_standard_view_drag_scroll_timer_destroy  (gpointer                  user_data);
+static gboolean             thunar_standard_view_drag_enter_timer           (gpointer                  user_data);
+static void                 thunar_standard_view_drag_enter_timer_destroy   (gpointer                  user_data);
 static gboolean             thunar_standard_view_drag_timer                 (gpointer                  user_data);
 static void                 thunar_standard_view_drag_timer_destroy (gpointer user_data);
 static void                 thunar_standard_view_connect_accelerators       (ThunarStandardView       *standard_view);
@@ -309,9 +311,17 @@ struct _ThunarStandardViewPrivate
   guint                   statusbar_text_idle_id;
   ThunarJob              *statusbar_job;
 
-  /* right-click drag/popup support */
+  /* drag path list */
   GList                  *drag_g_file_list;
+
+  /* autoscroll during drag timer source */
   guint                   drag_scroll_timer_id;
+
+  /* enter drag target folder timer source */
+  guint                   drag_enter_timer_id;
+  ThunarFile             *drag_enter_target;
+
+  /* right-click drag/popup support */
   guint                   drag_timer_id;
   GdkEvent               *drag_timer_event;
   gint                    drag_x;
@@ -997,6 +1007,10 @@ thunar_standard_view_dispose (GObject *object)
   /* be sure to cancel any pending drag autoscroll timer */
   if (G_UNLIKELY (standard_view->priv->drag_scroll_timer_id != 0))
     g_source_remove (standard_view->priv->drag_scroll_timer_id);
+
+  /* be sure to cancel any pending drag enter timer */
+  if (G_UNLIKELY (standard_view->priv->drag_enter_timer_id != 0))
+    g_source_remove (standard_view->priv->drag_enter_timer_id);
 
   /* be sure to cancel any pending drag timer */
   if (G_UNLIKELY (standard_view->priv->drag_timer_id != 0))
@@ -2209,6 +2223,24 @@ thunar_standard_view_get_dest_actions (ThunarStandardView *standard_view,
   /* do the item highlighting */
   (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->highlight_path) (standard_view, path);
 
+  /* stop any running drag enter timer */
+  if (G_UNLIKELY (standard_view->priv->drag_enter_timer_id != 0))
+    g_source_remove (standard_view->priv->drag_enter_timer_id);
+
+  /* skip if the drag target is the current directory */
+  if (action != 0 && file != standard_view->priv->current_directory)
+    {
+      gint delay = 1000;
+
+      /* remember the drag target */
+      standard_view->priv->drag_enter_target = g_object_ref (file);
+
+      /* schedule the drag enter timer */
+      standard_view->priv->drag_enter_timer_id = g_timeout_add_full (G_PRIORITY_LOW, delay,
+                                                                     thunar_standard_view_drag_enter_timer, standard_view,
+                                                                     thunar_standard_view_drag_enter_timer_destroy);
+    }
+
   /* tell Gdk whether we can drop here */
   gdk_drag_status (context, action, timestamp);
 
@@ -3403,6 +3435,10 @@ thunar_standard_view_drag_leave (GtkWidget          *widget,
   if (G_UNLIKELY (standard_view->priv->drag_scroll_timer_id != 0))
     g_source_remove (standard_view->priv->drag_scroll_timer_id);
 
+  /* stop any running drag enter timer */
+  if (G_UNLIKELY (standard_view->priv->drag_enter_timer_id != 0))
+    g_source_remove (standard_view->priv->drag_enter_timer_id);
+
   /* disable the drop highlighting around the view */
   if (G_LIKELY (standard_view->priv->drop_highlight))
     {
@@ -3868,6 +3904,47 @@ static void
 thunar_standard_view_drag_scroll_timer_destroy (gpointer user_data)
 {
   THUNAR_STANDARD_VIEW (user_data)->priv->drag_scroll_timer_id = 0;
+}
+
+
+
+static gboolean
+thunar_standard_view_drag_enter_timer (gpointer user_data)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (user_data);
+  GtkWidget          *window;
+
+  /* cancel any pending drag autoscroll timer */
+  if (G_UNLIKELY (standard_view->priv->drag_scroll_timer_id != 0))
+    g_source_remove (standard_view->priv->drag_scroll_timer_id);
+
+  if (standard_view->priv->drag_enter_target != NULL)
+    {
+      /* if split view is active, give focus to the pane containing the view */
+      window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
+      thunar_window_focus_view (THUNAR_WINDOW (window), GTK_WIDGET (standard_view));
+
+      /* open the drag target folder */
+      thunar_navigator_change_directory (THUNAR_NAVIGATOR (standard_view), standard_view->priv->drag_enter_target);
+    }
+
+  return FALSE;
+}
+
+
+
+static void
+thunar_standard_view_drag_enter_timer_destroy (gpointer user_data)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (user_data);
+
+  if (standard_view->priv->drag_enter_target != NULL)
+    {
+      g_object_unref (standard_view->priv->drag_enter_target);
+      standard_view->priv->drag_enter_target = NULL;
+    }
+
+  standard_view->priv->drag_enter_timer_id = 0;
 }
 
 
