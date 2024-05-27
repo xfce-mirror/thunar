@@ -1036,7 +1036,7 @@ thunar_tree_view_model_get_path (GtkTreeModel *model,
   node = g_sequence_get (iter->user_data);
 
   depth = node->depth;
-  indices = g_malloc_n (sizeof (gint), depth);
+  indices = g_malloc_n (depth, sizeof (gint));
 
   for (gint d = depth - 1; d >= 0; --d)
     {
@@ -2780,7 +2780,7 @@ thunar_tree_view_model_dir_files_changed (Node       *node_parent,
       if (pos_before != pos_after)
         {
           length = node_parent->n_children;
-          new_order = g_malloc_n (sizeof (gint), length);
+          new_order = g_malloc_n (length, sizeof (gint));
 
           /* new_order[newpos] = oldpos */
           for (gint i = 0, j = 0; i < length; ++i)
