@@ -623,8 +623,20 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
           icon_info = gtk_icon_theme_lookup_icon_for_scale (factory->icon_theme, name, size, scale_factor, lookup_flags);
           if (G_LIKELY (icon_info != NULL))
             {
-              /* try to load the pixbuf from the icon info */
-              pixbuf = gtk_icon_info_load_icon (icon_info, NULL);
+              if (wants_symbolic)
+                {
+                  GtkWidget *tmp = gtk_button_new ();
+                  GtkStyleContext *context = gtk_widget_get_style_context (tmp);
+                  gtk_widget_destroy (tmp);
+
+                  /* try to load symbolic icon that matches the GTK theme */
+                  pixbuf = gtk_icon_info_load_symbolic_for_context (icon_info, context, NULL, NULL);
+                }
+              else
+                {
+                  /* try to load the pixbuf from the icon info */
+                  pixbuf = gtk_icon_info_load_icon (icon_info, NULL);
+                }
 
               /* cleanup */
               g_object_unref (icon_info);
