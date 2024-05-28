@@ -344,11 +344,8 @@ thunar_tree_view_init (ThunarTreeView *view)
   /* grab a reference on the provider factory */
   view->provider_factory = thunarx_provider_factory_get_default ();
 
-  /* grab a reference on the preferences; be sure to redraw the view
-   * whenever the "tree-icon-emblems" preference changes.
-   */
+  /* grab a reference on the preferences */
   view->preferences = thunar_preferences_get ();
-  g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::tree-icon-emblems", G_CALLBACK (gtk_widget_queue_draw), view);
 
   /* Create a tree model for this tree view */
   view->model = g_object_new (THUNAR_TYPE_TREE_MODEL, NULL);
@@ -379,8 +376,6 @@ thunar_tree_view_init (ThunarTreeView *view)
 
   /* allocate the special icon renderer */
   view->icon_renderer = thunar_shortcuts_icon_renderer_new ();
-  g_object_bind_property (G_OBJECT (view->preferences), "misc-symbolic-icons-in-sidepane", G_OBJECT (view->icon_renderer), "use-symbolic-icons", G_BINDING_SYNC_CREATE);
-
   gtk_tree_view_column_pack_start (column, view->icon_renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, view->icon_renderer,
                                        "file", THUNAR_TREE_MODEL_COLUMN_FILE,
@@ -393,6 +388,12 @@ thunar_tree_view_init (ThunarTreeView *view)
    */
   g_object_bind_property (G_OBJECT (view->preferences), "tree-icon-size", G_OBJECT (view->icon_renderer), "size", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (view->preferences), "tree-icon-emblems", G_OBJECT (view->icon_renderer), "emblems", G_BINDING_SYNC_CREATE);
+
+  g_object_bind_property (G_OBJECT (view->preferences), "misc-symbolic-icons-in-sidepane", G_OBJECT (view->icon_renderer), "use-symbolic-icons", G_BINDING_SYNC_CREATE);
+
+  /* redraw the view when these preferences change */
+  g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::tree-icon-emblems", G_CALLBACK (gtk_widget_queue_draw), view);
+  g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::misc-symbolic-icons-in-sidepane", G_CALLBACK (gtk_widget_queue_draw), view);
 
   /* allocate the text renderer */
   renderer = gtk_cell_renderer_text_new ();

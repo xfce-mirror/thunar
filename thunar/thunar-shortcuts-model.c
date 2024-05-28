@@ -453,6 +453,34 @@ thunar_shortcuts_model_set_property (GObject      *object,
 
     case PROP_USE_SYMBOLIC_ICONS:
       model->use_symbolic_icons = g_value_get_boolean (value);
+
+      /* update shortcuts */
+      for (lp = model->shortcuts, idx = 0; lp != NULL; lp = lp->next, idx++)
+        {
+          shortcut = lp->data;
+
+          /* refresh themed icons */
+          if (G_IS_THEMED_ICON (shortcut->gicon))
+            {
+              const gchar  *icon_name = g_themed_icon_get_names (G_THEMED_ICON (shortcut->gicon))[0];
+              gchar       **array = g_strsplit (icon_name, "-symbolic", 2);
+
+              g_object_unref (shortcut->gicon);
+              shortcut->gicon = thunar_g_themed_icon_new (array[0], model->use_symbolic_icons);
+
+              g_strfreev (array);
+            }
+
+          /* skip headers*/
+          if ((shortcut->group & THUNAR_SHORTCUT_GROUP_HEADER) != 0)
+            continue;
+
+          GTK_TREE_ITER_INIT (iter, model->stamp, lp);
+
+          path = gtk_tree_path_new_from_indices (idx, -1);
+          gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
+          gtk_tree_path_free (path);
+        }
       break;
 
     default:
