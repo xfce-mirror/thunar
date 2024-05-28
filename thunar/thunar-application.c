@@ -655,7 +655,7 @@ thunar_application_load_css (void)
     /* for the location-buttons any margin looks ugly */
     ".location-button { margin-right: 0; }"
     /* add missing top border to side pane */
-    ".shortcuts-pane { border-top-style: solid; }"
+    ".sidebar { border-top-style: solid; }"
     /* remove extra borders */
     ".preview-pane { border-left-width: 0px; border-right-width: 0px; border-bottom-width: 0px; }"
     ".standard-view { border-left-width: 0px; border-right-width: 0px; }"
