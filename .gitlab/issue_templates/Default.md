@@ -2,7 +2,7 @@
 <!-- For enhancements and new features only the section 'Version information' might be relevant -->
 
 ## Version information
-<!-- Which version of Thunar you are using? -->
+<!-- Which version of this software are you using? -->
 <!-- Which distribution are you using? -->
 
 ## Steps to reproduce
@@ -22,7 +22,7 @@
 <!--
 For crashes, it's best to get a backtrace to see which method failed to execute.
 
-To get a meaningful backtrace, you will need to install Thunar debug symbols. Check the Xfce wiki to see how to do so:
+To get a meaningful backtrace, you will need to install debug symbols. Check the Xfce wiki to see how to do so:
 https://docs.xfce.org/contribute/bugs/start#backtraces
 
 It's basically `ulimit -c unlimited` to produce coredumps on crashes and then using gdb on it to get the backtrace out of the coredump.
