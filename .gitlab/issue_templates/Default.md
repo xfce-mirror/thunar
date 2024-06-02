@@ -1,6 +1,6 @@
 ## Version information
 <!-- Which version of Thunar you are using? -->
-<!-- Which Linux distribution you are using? -->
+<!-- Which distribution are you using? -->
 
 ## Steps to reproduce
 <!-- Please, explain as detailed as possible the sequence of actions necessary to reproduce the bug -->
