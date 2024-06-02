@@ -1,9 +1,12 @@
+<!-- Please drop all sections which are not relevant for your concrete use-case -->
+<!-- For enhancements and new features only the section 'Version information' might be relevant -->
+
 ## Version information
 <!-- Which version of Thunar you are using? -->
 <!-- Which distribution are you using? -->
 
 ## Steps to reproduce
-<!-- Please, explain as detailed as possible the sequence of actions necessary to reproduce the bug -->
+<!-- Please, explain as detailed as possible the sequence of actions necessary to reproduce the issue -->
 
  1. ...
  2. ...
