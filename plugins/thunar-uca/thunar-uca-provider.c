@@ -306,7 +306,7 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
               else
                 {
                   /* Not found, we create a new submenu */
-                  menu_item = thunarx_menu_item_new (sub_menu_path, sub_menus_as_array[i], "", "inode-directory");
+                  menu_item = thunarx_menu_item_new (sub_menu_path, sub_menus_as_array[i], "", "folder");
 
                   /* Only add base-submenus to the returned list */
                   if (parent_menu == NULL)

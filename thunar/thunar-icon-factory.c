@@ -612,10 +612,6 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
         {
           GtkIconLookupFlags lookup_flags = GTK_ICON_LOOKUP_FORCE_SIZE;
 
-          /* FIXME: is there a better approach? */
-          if (g_strcmp0 (name, "inode-directory") == 0)
-            name = "folder";
-
           if (wants_symbolic)
             lookup_flags |= GTK_ICON_LOOKUP_FORCE_SYMBOLIC;
 

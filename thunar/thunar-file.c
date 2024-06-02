@@ -4097,6 +4097,13 @@ thunar_file_get_icon_name (ThunarFile          *file,
         }
     }
 
+  /* no special icon required and we have a folder? --> use the default folder icon */
+  if (file->kind == G_FILE_TYPE_DIRECTORY && gtk_icon_theme_has_icon (icon_theme, "folder"))
+    {
+      file->icon_name = g_strdup ("folder");
+      return thunar_file_get_icon_name_for_state (file->icon_name, icon_state);
+    }
+
   /* try again later */
   if (file->info == NULL)
     return NULL;
@@ -4134,13 +4141,10 @@ thunar_file_get_icon_name (ThunarFile          *file,
         g_object_unref (icon);
     }
 
-  /* store new name, fallback to legacy names, or empty string to avoid recursion */
+  /* store new name, fallback to empty string to avoid recursion */
   g_free (file->icon_name);
   if (G_LIKELY (icon_name != NULL))
     file->icon_name = icon_name;
-  else if (file->kind == G_FILE_TYPE_DIRECTORY
-           && gtk_icon_theme_has_icon (icon_theme, "folder"))
-    file->icon_name = g_strdup ("folder");
   else
     file->icon_name = g_strdup ("");
 
