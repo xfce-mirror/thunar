@@ -1069,12 +1069,14 @@ thunar_folder_monitor (GFileMonitor     *monitor,
               }
           }
 
-       default:
-         /*
+      default:
+        /*
           G_FILE_MONITOR_EVENT_PRE_UNMOUNT
           G_FILE_MONITOR_EVENT_UNMOUNTED
           G_FILE_MONITOR_EVENT_MOVED (deprecated/unused)
-         */
+        */
+        break;
+
     } /* end switch */
 
   if (event_file_thunar != NULL)
