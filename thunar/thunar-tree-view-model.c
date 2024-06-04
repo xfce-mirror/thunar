@@ -1600,6 +1600,7 @@ thunar_tree_view_model_get_job (ThunarStandardViewModel *model)
 
 
 
+G_NORETURN
 static void
 _thunar_tree_view_model_search_error (ThunarJob *job)
 {
