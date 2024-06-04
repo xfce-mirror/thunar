@@ -246,8 +246,8 @@ struct _ThunarListModel
   guint          row_inserted_id;
   guint          row_deleted_id;
 
-  gboolean       sort_case_sensitive : 1;
-  gboolean       sort_folders_first : 1;
+  guint          sort_case_sensitive : 1;
+  guint          sort_folders_first : 1;
   gint           sort_sign;   /* 1 = ascending, -1 descending */
   ThunarSortFunc sort_func;
 
@@ -2002,6 +2002,7 @@ thunar_list_model_cancel_search_job (ThunarListModel *model)
 
 
 
+G_NORETURN
 static void
 thunar_list_model_search_error (ThunarJob *job)
 {
