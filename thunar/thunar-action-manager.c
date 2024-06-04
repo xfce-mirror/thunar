@@ -2846,7 +2846,8 @@ thunar_action_manager_create_document_submenu_templates (ThunarActionManager *ac
                                                  THUNAR_FILE_ICON_STATE_DEFAULT,
                                                  16,
                                                  scale_factor,
-                                                 FALSE);
+                                                 FALSE,
+                                                 NULL);
       surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, NULL);
 
       /* allocate an image based on the icon */
