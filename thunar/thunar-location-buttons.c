@@ -144,7 +144,7 @@ struct _ThunarLocationButtons
   ThunarFile          *current_directory;
 
   gint                 slider_width;
-  gboolean             ignore_click : 1;
+  guint                ignore_click : 1;
 
   ThunarActionManager *action_mgr;
   GList               *list;
