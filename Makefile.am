@@ -115,7 +115,7 @@ DISTCLEANFILES =							\
 	$(polkit_in_files)						\
 	$(polkit_policy_DATA)
 
-DISTCHECK_CONFIGURE_FLAGS =						\
+AM_DISTCHECK_CONFIGURE_FLAGS =						\
 	--enable-gtk-doc							\
 	--enable-gen-doc							\
 	--enable-introspection
