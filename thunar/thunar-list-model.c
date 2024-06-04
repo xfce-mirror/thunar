@@ -2002,6 +2002,7 @@ thunar_list_model_cancel_search_job (ThunarListModel *model)
 
 
 
+G_NORETURN
 static void
 thunar_list_model_search_error (ThunarJob *job)
 {
