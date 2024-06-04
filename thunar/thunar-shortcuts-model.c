@@ -63,8 +63,7 @@ enum
 {
   PROP_0,
   PROP_HIDDEN_BOOKMARKS,
-  PROP_FILE_SIZE_BINARY,
-  PROP_USE_SYMBOLIC_ICONS
+  PROP_FILE_SIZE_BINARY
 };
 
 
@@ -182,8 +181,6 @@ struct _ThunarShortcutsModel
   guint                 bookmarks_idle_id;
 
   guint                 busy_timeout_id;
-  
-  gboolean              use_symbolic_icons;
 };
 
 struct _ThunarShortcut
@@ -243,19 +240,6 @@ thunar_shortcuts_model_class_init (ThunarShortcutsModelClass *klass)
                                                          NULL,
                                                          TRUE,
                                                          EXO_PARAM_READWRITE));
-
-  /**
-   * ThunarPropertiesDialog:use_symbolic_icons:
-   *
-   * Whether the file size should be shown in binary or decimal.
-   **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_USE_SYMBOLIC_ICONS,
-                                   g_param_spec_boolean ("use-symbolic-icons",
-                                                         "UseSymbolicIcons",
-                                                         NULL,
-                                                         FALSE,
-                                                         EXO_PARAM_READWRITE));
 }
 
 
@@ -307,10 +291,6 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
                           model,              "file-size-binary",
                           G_BINDING_SYNC_CREATE);
 
-  g_object_bind_property (model->preferences, "misc-symbolic-icons-in-sidepane",
-                          model,              "use-symbolic-icons",
-                          G_BINDING_SYNC_CREATE);
-
   /* load volumes */
   thunar_shortcuts_model_shortcut_devices (model);
 
@@ -319,7 +299,6 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
 
   /* add bookmarks */
   thunar_shortcuts_model_shortcut_places (model);
-  
 }
 
 
@@ -387,10 +366,6 @@ thunar_shortcuts_model_get_property (GObject    *object,
       g_value_set_boolean (value, model->file_size_binary);
       break;
 
-    case PROP_USE_SYMBOLIC_ICONS:
-      g_value_set_boolean (value, model->use_symbolic_icons);
-      break;
-
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -449,10 +424,6 @@ thunar_shortcuts_model_set_property (GObject      *object,
 
     case PROP_FILE_SIZE_BINARY:
       model->file_size_binary = g_value_get_boolean (value);
-      break;
-
-    case PROP_USE_SYMBOLIC_ICONS:
-      model->use_symbolic_icons = g_value_get_boolean (value);
       break;
 
     default:
@@ -1025,7 +996,7 @@ thunar_shortcuts_model_shortcut_devices (ThunarShortcutsModel *model)
   shortcut->name = g_strdup (_("File System"));
   shortcut->tooltip = g_strdup (_("Browse the file system"));
   shortcut->file = thunar_file_get_for_uri ("file:///", NULL);
-  shortcut->gicon = thunar_g_themed_icon_new ("drive-harddisk", model->use_symbolic_icons);
+  shortcut->gicon = g_themed_icon_new ("drive-harddisk");
   shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
   thunar_shortcuts_model_add_shortcut (model, shortcut);
 
@@ -1070,7 +1041,7 @@ thunar_shortcuts_model_shortcut_network (ThunarShortcutsModel *model)
       shortcut->name = g_strdup (_("Browse Network"));
       shortcut->tooltip = g_strdup (_("Browse local network connections"));
       shortcut->location = thunar_g_file_new_for_network();
-      shortcut->gicon = thunar_g_themed_icon_new ("network-workgroup", model->use_symbolic_icons);
+      shortcut->gicon = g_themed_icon_new ("network-workgroup");
       shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
       thunar_shortcuts_model_add_shortcut (model, shortcut);
     }
@@ -1104,7 +1075,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
       shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_DEFAULT;
       shortcut->tooltip = g_strdup (_("Open the home folder"));
       shortcut->file = file;
-      shortcut->gicon = thunar_g_themed_icon_new ("go-home", model->use_symbolic_icons);
+      shortcut->gicon = g_themed_icon_new ("go-home");
       shortcut->sort_id = 0;
       shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
       thunar_shortcuts_model_add_shortcut (model, shortcut);
@@ -1170,7 +1141,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
       shortcut->name = g_strdup (_("Computer"));
       shortcut->tooltip = g_strdup (_("Browse the computer"));
       shortcut->location = thunar_g_file_new_for_computer();
-      shortcut->gicon = thunar_g_themed_icon_new ("computer", model->use_symbolic_icons);
+      shortcut->gicon = g_themed_icon_new ("computer");
       shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
       thunar_shortcuts_model_add_shortcut (model, shortcut);
     }
@@ -1183,7 +1154,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
       shortcut->name = g_strdup (_("Recent"));
       shortcut->tooltip = g_strdup (_("Browse recently used files"));
       shortcut->location = thunar_g_file_new_for_recent();
-      shortcut->gicon = thunar_g_themed_icon_new ("document-open-recent", model->use_symbolic_icons);
+      shortcut->gicon = g_themed_icon_new ("document-open-recent");
       shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
       thunar_shortcuts_model_add_shortcut (model, shortcut);
     }
@@ -1377,13 +1348,13 @@ thunar_shortcuts_model_load_line (GFile       *file_path,
       /* try to open the file corresponding to the uri */
       file = thunar_file_get (file_path, NULL);
       if (G_UNLIKELY (file == NULL))
-          shortcut->gicon = thunar_g_themed_icon_new ("folder", model->use_symbolic_icons);
+          shortcut->gicon = g_themed_icon_new ("folder");
       else
           shortcut->file = file;
     }
   else
     {
-      shortcut->gicon = thunar_g_themed_icon_new ("folder-remote", model->use_symbolic_icons);
+      shortcut->gicon = g_themed_icon_new ("folder-remote");
     }
 
   shortcut->sort_id = row_num;
@@ -1723,9 +1694,9 @@ thunar_shortcuts_model_file_destroyed (ThunarFile             *file,
           if (shortcut->gicon == NULL)
           {
             if (thunar_shortcuts_model_local_file (shortcut->location))
-              shortcut->gicon = thunar_g_themed_icon_new ("folder", model->use_symbolic_icons);
+              shortcut->gicon = g_themed_icon_new ("folder");
             else
-              shortcut->gicon = thunar_g_themed_icon_new ("folder-remote", model->use_symbolic_icons);
+              shortcut->gicon = g_themed_icon_new ("folder-remote");
           }
 
           /* generate an iterator for the path */
@@ -2088,7 +2059,7 @@ thunar_shortcuts_model_add (ThunarShortcutsModel *model,
   if (thunar_shortcuts_model_local_file (location))
       shortcut->file = thunar_file_get (location, NULL);
   else
-      shortcut->gicon = thunar_g_themed_icon_new ("folder-remote", model->use_symbolic_icons);
+      shortcut->gicon = g_themed_icon_new ("folder-remote");
 
   /* if no position was given, place the shortcut at the bottom */
   if (dst_path == NULL)
