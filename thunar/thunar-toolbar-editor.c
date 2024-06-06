@@ -55,6 +55,7 @@ static void     thunar_toolbar_editor_toggle_visibility                  (Thunar
 static void     thunar_toolbar_editor_update_buttons                     (ThunarToolbarEditor      *toolbar_editor);
 static void     thunar_toolbar_editor_use_defaults                       (ThunarToolbarEditor      *toolbar_editor,
                                                                           GtkWidget                *button);
+static void     thunar_toolbar_editor_toggle_symbolic_icons              (ThunarToolbarEditor      *toolbar_editor);
 static void     thunar_toolbar_editor_save_model                         (ThunarToolbarEditor      *toolbar_editor);
 static void     thunar_toolbar_editor_populate_model                     (ThunarToolbarEditor      *toolbar_editor);
 
@@ -109,6 +110,7 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   GtkWidget              *vbox;
   GtkWidget              *hbox;
   GtkWidget              *vbox_buttons;
+  GtkWidget              *separator;
   GtkWidget              *swin;
 
   /* grab a reference on the preferences */
@@ -232,11 +234,35 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   gtk_button_set_image (GTK_BUTTON (toolbar_editor->down_button), image);
   gtk_widget_show (image);
 
+  /* add separator */
+  separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+  gtk_box_pack_start (GTK_BOX (vbox_buttons), separator, FALSE, FALSE, 0);
+  gtk_widget_show (separator);
+
   /* create the "Use Default" button */
   button = gtk_button_new_with_mnemonic (_("De_fault Order"));
   g_signal_connect_swapped (G_OBJECT (button), "clicked", G_CALLBACK (thunar_toolbar_editor_use_defaults), toolbar_editor);
   gtk_box_pack_start (GTK_BOX (vbox_buttons), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
+
+  /* add separator */
+  separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+  gtk_box_pack_start (GTK_BOX (vbox_buttons), separator, FALSE, FALSE, 0);
+  gtk_widget_show (separator);
+
+  /* create the "Symbolic Icons" checkbox */
+  button = gtk_check_button_new_with_mnemonic (_("_Regular Icons"));
+  g_object_bind_property (G_OBJECT (toolbar_editor->preferences),
+                          "misc-symbolic-icons-in-toolbar",
+                          G_OBJECT (button),
+                          "active",
+                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE | G_BINDING_INVERT_BOOLEAN);
+  gtk_widget_set_tooltip_text (button, _("Use regular icons instead of symbolic ones (if available)."));
+  gtk_box_pack_start (GTK_BOX (vbox_buttons), button, FALSE, FALSE, 0);
+  gtk_widget_show (button);
+
+  g_signal_connect_swapped (G_OBJECT (toolbar_editor->preferences), "notify::misc-symbolic-icons-in-toolbar",
+                            G_CALLBACK (thunar_toolbar_editor_toggle_symbolic_icons), toolbar_editor);
 
   /* grab focus to the tree view */
   gtk_widget_grab_focus (toolbar_editor->tree_view);
@@ -249,13 +275,12 @@ thunar_toolbar_editor_finalize (GObject *object)
 {
   ThunarToolbarEditor *toolbar_editor = THUNAR_TOOLBAR_EDITOR (object);
 
-  thunar_toolbar_editor_save_model (toolbar_editor);
-
   /* release our reference on the shared toolbar model */
   g_signal_handlers_disconnect_by_data (G_OBJECT (toolbar_editor->model), toolbar_editor);
   g_object_unref (G_OBJECT (toolbar_editor->model));
 
   /* release our reference on the preferences */
+  g_signal_handlers_disconnect_by_data (G_OBJECT (toolbar_editor->preferences), toolbar_editor);
   g_object_unref (G_OBJECT (toolbar_editor->preferences));
 
   (*G_OBJECT_CLASS (thunar_toolbar_editor_parent_class)->finalize) (object);
@@ -542,6 +567,19 @@ thunar_toolbar_editor_use_defaults (ThunarToolbarEditor *toolbar_editor,
 
 
 static void
+thunar_toolbar_editor_toggle_symbolic_icons (ThunarToolbarEditor *toolbar_editor)
+{
+  /* clear the tree view */
+  gtk_list_store_clear (toolbar_editor->model);
+  g_signal_handlers_disconnect_by_data (G_OBJECT (toolbar_editor->model), toolbar_editor);
+
+  /* populate the tree view */
+  thunar_toolbar_editor_populate_model (toolbar_editor);
+}
+
+
+
+static void
 thunar_toolbar_editor_save_model (ThunarToolbarEditor *toolbar_editor)
 {
   GString *items;
@@ -694,6 +732,9 @@ thunar_show_toolbar_editor (GtkWidget *window,
   /* run the dialog */
   gtk_dialog_run (GTK_DIALOG (dialog));
 
+  /* save the toolbar configuration */
+  thunar_toolbar_editor_save_model (THUNAR_TOOLBAR_EDITOR (dialog));
+
   /* destroy the dialog */
   g_object_unref (window_toolbar);
   gtk_widget_destroy (dialog);
@@ -720,6 +761,9 @@ thunar_save_toolbar_configuration (GtkWidget *toolbar)
 
   /* now that the toolbar is set, populate the tree view */
   thunar_toolbar_editor_populate_model (THUNAR_TOOLBAR_EDITOR (dialog));
+
+  /* save the toolbar configuration */
+  thunar_toolbar_editor_save_model (THUNAR_TOOLBAR_EDITOR (dialog));
 
   /* destroy the dialog */
   gtk_widget_destroy (dialog);

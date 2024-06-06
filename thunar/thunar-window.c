@@ -334,8 +334,10 @@ static void       thunar_window_recent_reload                            (GtkRec
                                                                           ThunarWindow           *window);
 static void       thunar_window_catfish_dialog_configure                 (GtkWidget              *entry);
 static gboolean   thunar_window_paned_notebooks_update_orientation       (ThunarWindow           *window);
+static void       thunar_window_location_bar_create                      (ThunarWindow           *window);
 static void       thunar_window_location_toolbar_create                  (ThunarWindow           *window);
 static void       thunar_window_update_location_toolbar                  (ThunarWindow           *window);
+static void       thunar_window_update_location_toolbar_icons            (ThunarWindow           *window);
 static void       thunar_window_location_toolbar_add_ucas                (ThunarWindow           *window);
 GtkWidget*        thunar_window_location_toolbar_add_uca                 (ThunarWindow           *window,
                                                                           GObject                *thunarx_menu_item);
@@ -343,6 +345,8 @@ static void       thunar_window_location_toolbar_load_items              (Thunar
 static void       thunar_window_location_toolbar_load_last_order         (ThunarWindow           *window);
 static gboolean   thunar_window_location_toolbar_load_visibility         (ThunarWindow           *window);
 static guint      thunar_window_toolbar_item_count                       (ThunarWindow           *window);
+static gchar*     thunar_window_toolbar_get_icon_name                    (ThunarWindow           *window,
+                                                                          const gchar            *icon_name);
 static GtkWidget* thunar_window_create_toolbar_item_from_action          (ThunarWindow           *window,
                                                                           ThunarWindowAction      action,
                                                                           guint                   item_order);
@@ -1028,7 +1032,7 @@ thunar_window_init (ThunarWindow *window)
     g_signal_connect_swapped (window->uca_file_monitor, "changed", G_CALLBACK (thunar_window_update_location_toolbar), window);
   g_free (uca_path);
 
-  g_signal_connect_swapped (G_OBJECT (window->preferences), "notify::misc-symbolic-icons-in-toolbar", G_CALLBACK (thunar_window_update_location_toolbar), window);
+  g_signal_connect_swapped (G_OBJECT (window->preferences), "notify::misc-symbolic-icons-in-toolbar", G_CALLBACK (thunar_window_update_location_toolbar_icons), window);
 
   /* setup setting the location bar visibility on-demand */
   g_signal_connect_object (G_OBJECT (window->preferences), "notify::last-location-bar", G_CALLBACK (thunar_window_update_location_bar_visible), window, G_CONNECT_SWAPPED);
@@ -6081,34 +6085,57 @@ thunar_window_location_toolbar_add_uca (ThunarWindow *window,
 
 
 
+static gchar*
+thunar_window_toolbar_get_icon_name (ThunarWindow *window,
+                                     const gchar  *icon_name)
+{
+  gboolean use_symbolic_icons;
+
+  if (icon_name == NULL)
+    return NULL;
+
+  g_object_get (G_OBJECT (window->preferences), "misc-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
+
+  /* create symbolic icon name */
+  if (use_symbolic_icons && !g_str_has_suffix (icon_name, "-symbolic"))
+    return g_strjoin (NULL, icon_name, use_symbolic_icons ? "-symbolic" : "", NULL);
+
+  /* create regular icon name */
+  if (!use_symbolic_icons && g_str_has_suffix (icon_name, "-symbolic"))
+    return g_strndup (icon_name, strlen (icon_name) - 9);
+
+  return g_strdup (icon_name);
+}
+
+
+
 static GtkWidget*
 thunar_window_create_toolbar_item_from_action (ThunarWindow       *window,
                                                ThunarWindowAction  action,
                                                guint               item_order)
 {
-  GtkWidget          *toolbar_item;
-  XfceGtkActionEntry  entry = *(get_action_entry (action));
-  gboolean            use_symbolic_icons;
-  gchar              *menu_item_icon_name = NULL;
+  const XfceGtkActionEntry *entry = get_action_entry (action);
+  GtkWidget                *toolbar_item;
+  GtkWidget                *image;
+  gchar                    *icon_name;
 
-  g_object_get (G_OBJECT (window->preferences), "misc-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
-  if (use_symbolic_icons)
-    {
-      menu_item_icon_name = g_strjoin (NULL, get_action_entry (action)->menu_item_icon_name, "-symbolic", NULL);
-      entry.menu_item_icon_name = menu_item_icon_name;
-    }
+  /* FIXME extend function by adding symbolic icon paramter or
+           copy code here (see thunar_window_create_toolbar_radio_item_from_action)? */
+  toolbar_item = xfce_gtk_tool_button_new_from_action_entry (entry, G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
 
-  toolbar_item = xfce_gtk_tool_button_new_from_action_entry (&entry, G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
-  g_object_set_data_full (G_OBJECT (toolbar_item), "id", thunar_util_accel_path_to_id (entry.accel_path), g_free);
-  g_object_set_data_full (G_OBJECT (toolbar_item), "label", g_strdup (entry.menu_item_label_text), g_free);
-  g_object_set_data_full (G_OBJECT (toolbar_item), "icon", g_strdup (entry.menu_item_icon_name), g_free);
+  /* update icon */
+  icon_name = thunar_window_toolbar_get_icon_name (window, entry->menu_item_icon_name);
+  image = gtk_image_new_from_icon_name (icon_name, gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (toolbar_item)));
+  gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (toolbar_item), image);
+  gtk_widget_show (image);
 
   if (action != THUNAR_WINDOW_ACTION_BACK && action != THUNAR_WINDOW_ACTION_FORWARD)
     g_signal_connect_after (G_OBJECT (toolbar_item), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
 
+  g_object_set_data_full (G_OBJECT (toolbar_item), "id", thunar_util_accel_path_to_id (entry->accel_path), g_free);
+  g_object_set_data_full (G_OBJECT (toolbar_item), "label", g_strdup (entry->menu_item_label_text), g_free);
+  g_object_set_data_full (G_OBJECT (toolbar_item), "icon", icon_name, g_free);
   thunar_g_object_set_guint_data (G_OBJECT (toolbar_item), "default-order", item_order);
-
-  g_free (menu_item_icon_name);
 
   return toolbar_item;
 }
@@ -6116,32 +6143,32 @@ thunar_window_create_toolbar_item_from_action (ThunarWindow       *window,
 
 
 static GtkWidget*
-thunar_window_create_toolbar_toggle_item_from_action (ThunarWindow           *window,
-                                                      ThunarWindowAction      action,
-                                                      gboolean                active,
-                                                      guint                   item_order)
+thunar_window_create_toolbar_toggle_item_from_action (ThunarWindow       *window,
+                                                      ThunarWindowAction  action,
+                                                      gboolean            active,
+                                                      guint               item_order)
 {
-  GtkWidget          *toolbar_item;
-  XfceGtkActionEntry  entry = *(get_action_entry (action));
-  gboolean            use_symbolic_icons;
-  gchar              *menu_item_icon_name = NULL;
+  const XfceGtkActionEntry *entry = get_action_entry (action);
+  GtkWidget                *toolbar_item;
+  GtkWidget                *image;
+  gchar                    *icon_name;
 
-  g_object_get (G_OBJECT (window->preferences), "misc-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
-  if (use_symbolic_icons)
-    {
-      menu_item_icon_name = g_strjoin (NULL, get_action_entry (action)->menu_item_icon_name, "-symbolic", NULL);
-      entry.menu_item_icon_name = menu_item_icon_name;
-    }
+  /* FIXME extend function by adding symbolic icon paramter or 
+           copy code here (see thunar_window_create_toolbar_radio_item_from_action)? */
+  toolbar_item = xfce_gtk_toggle_tool_button_new_from_action_entry (entry, G_OBJECT (window), active, GTK_TOOLBAR (window->location_toolbar));
 
-  toolbar_item = xfce_gtk_toggle_tool_button_new_from_action_entry (&entry, G_OBJECT (window), active, GTK_TOOLBAR (window->location_toolbar));
-  g_object_set_data_full (G_OBJECT (toolbar_item), "id", thunar_util_accel_path_to_id (entry.accel_path), g_free);
-  g_object_set_data_full (G_OBJECT (toolbar_item), "label", g_strdup (entry.menu_item_label_text), g_free);
-  g_object_set_data_full (G_OBJECT (toolbar_item), "icon", g_strdup (entry.menu_item_icon_name), g_free);
+  /* update icon */
+  icon_name = thunar_window_toolbar_get_icon_name (window, entry->menu_item_icon_name);
+  image = gtk_image_new_from_icon_name (icon_name, gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (toolbar_item)));
+  gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (toolbar_item), image);
+  gtk_widget_show (image);
+
   g_signal_connect_after (G_OBJECT (toolbar_item), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
 
+  g_object_set_data_full (G_OBJECT (toolbar_item), "id", thunar_util_accel_path_to_id (entry->accel_path), g_free);
+  g_object_set_data_full (G_OBJECT (toolbar_item), "label", g_strdup (entry->menu_item_label_text), g_free);
+  g_object_set_data_full (G_OBJECT (toolbar_item), "icon", icon_name, g_free);
   thunar_g_object_set_guint_data (G_OBJECT (toolbar_item), "default-order", item_order);
-
-  g_free (menu_item_icon_name);
 
   return toolbar_item;
 }
@@ -6155,42 +6182,51 @@ thunar_window_create_toolbar_radio_item_from_action (ThunarWindow       *window,
                                                      GtkRadioToolButton *group,
                                                      guint               item_order)
 {
-  GtkToolItem        *toolbar_item;
-  GtkWidget          *image;
-  XfceGtkActionEntry  entry = *(get_action_entry (action));
-  gboolean            use_symbolic_icons;
-  gchar              *menu_item_icon_name = NULL;
-
-  g_object_get (G_OBJECT (window->preferences), "misc-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
-  if (use_symbolic_icons)
-    {
-      menu_item_icon_name = g_strjoin (NULL, get_action_entry (action)->menu_item_icon_name, "-symbolic", NULL);
-      entry.menu_item_icon_name = menu_item_icon_name;
-    }
+  const XfceGtkActionEntry *entry = get_action_entry (action);
+  GtkToolItem              *toolbar_item;
+  GtkWidget                *image;
+  gchar                    *icon_name;
 
   if (group == NULL)
     toolbar_item = gtk_radio_tool_button_new (NULL);
   else
     toolbar_item = gtk_radio_tool_button_new_from_widget (group);
-  image = gtk_image_new_from_icon_name (entry.menu_item_icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
-  gtk_tool_button_set_label (GTK_TOOL_BUTTON (toolbar_item), entry.menu_item_label_text);
+  icon_name = thunar_window_toolbar_get_icon_name (window, entry->menu_item_icon_name);
+  image = gtk_image_new_from_icon_name (icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
+  gtk_tool_button_set_label (GTK_TOOL_BUTTON (toolbar_item), entry->menu_item_label_text);
   gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (toolbar_item), image);
-  gtk_widget_set_tooltip_text (GTK_WIDGET (toolbar_item), entry.menu_item_tooltip_text);
+  gtk_widget_set_tooltip_text (GTK_WIDGET (toolbar_item), entry->menu_item_tooltip_text);
   gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), GTK_TOOL_ITEM (toolbar_item), -1);
 
   /* 'gtk_check_menu_item_set_active' has to be done before 'g_signal_connect_swapped', to don't trigger the callback */
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (toolbar_item), active);
 
-  g_object_set_data_full (G_OBJECT (toolbar_item), "id", thunar_util_accel_path_to_id (entry.accel_path), g_free);
-  g_object_set_data_full (G_OBJECT (toolbar_item), "label", g_strdup (entry.menu_item_label_text), g_free);
-  g_object_set_data_full (G_OBJECT (toolbar_item), "icon", g_strdup (entry.menu_item_icon_name), g_free);
   g_signal_connect_after (G_OBJECT (toolbar_item), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), window);
 
+  g_object_set_data_full (G_OBJECT (toolbar_item), "id", thunar_util_accel_path_to_id (entry->accel_path), g_free);
+  g_object_set_data_full (G_OBJECT (toolbar_item), "label", g_strdup (entry->menu_item_label_text), g_free);
+  g_object_set_data_full (G_OBJECT (toolbar_item), "icon", icon_name, g_free);
   thunar_g_object_set_guint_data (G_OBJECT (toolbar_item), "default-order", item_order);
 
-  g_free (menu_item_icon_name);
-
   return GTK_WIDGET (toolbar_item);
+}
+
+
+
+static void
+thunar_window_location_bar_create (ThunarWindow *window)
+{
+  /* destroy current widget if present */
+  if (window->location_bar != NULL)
+    gtk_widget_destroy (window->location_bar);
+
+  /* allocate the new location bar widget */
+  window->location_bar = thunar_location_bar_new ();
+  g_object_bind_property (G_OBJECT (window), "current-directory", G_OBJECT (window->location_bar), "current-directory", G_BINDING_SYNC_CREATE);
+  g_signal_connect_swapped (G_OBJECT (window->location_bar), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
+  g_signal_connect_swapped (G_OBJECT (window->location_bar), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
+  g_signal_connect_swapped (G_OBJECT (window->location_bar), "entry-done", G_CALLBACK (thunar_window_update_location_bar_visible), window);
+  gtk_widget_show (window->location_bar);
 }
 
 
@@ -6204,13 +6240,8 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
 
   g_object_get (G_OBJECT (window->preferences), "misc-small-toolbar-icons", &small_icons, NULL);
 
-  /* allocate the new location bar widget */
-  window->location_bar = thunar_location_bar_new ();
-  g_object_bind_property (G_OBJECT (window), "current-directory", G_OBJECT (window->location_bar), "current-directory", G_BINDING_SYNC_CREATE);
-  g_signal_connect_swapped (G_OBJECT (window->location_bar), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
-  g_signal_connect_swapped (G_OBJECT (window->location_bar), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
-  g_signal_connect_swapped (G_OBJECT (window->location_bar), "entry-done", G_CALLBACK (thunar_window_update_location_bar_visible), window);
-  gtk_widget_show (window->location_bar);
+  /* create the location bar */
+  thunar_window_location_bar_create (window);
 
   /* setup the toolbar for the location bar */
   window->location_toolbar = gtk_toolbar_new ();
@@ -6294,6 +6325,55 @@ thunar_window_update_location_toolbar (ThunarWindow *window)
 {
   gtk_widget_destroy (window->location_toolbar);
   thunar_window_location_toolbar_create (window);
+}
+
+
+
+static void
+thunar_window_update_location_toolbar_icons (ThunarWindow *window)
+{
+  GtkWidget *parent;
+  GList     *toolbar_items;
+  GList     *lp;
+
+  toolbar_items = gtk_container_get_children (GTK_CONTAINER (window->location_toolbar));
+
+  for (lp = toolbar_items; lp != NULL; lp = lp->next)
+    {
+      GtkWidget *item = lp->data;
+      gchar     *icon = g_object_get_data (G_OBJECT (item), "icon");
+      gchar     *id = g_object_get_data (G_OBJECT (item), "id");
+
+      /* skip custom actions */
+      if (g_str_has_prefix (id, "uca-action"))
+        continue;
+
+      if (GTK_IS_TOOL_BUTTON (item))
+        {
+          GtkWidget *image;
+          gchar     *icon_name;
+
+          /* update icon */
+          icon_name = thunar_window_toolbar_get_icon_name (window, icon);
+          image = gtk_image_new_from_icon_name (icon_name, gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (item)));
+          gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (item), image);
+          gtk_widget_show (image);
+
+          g_object_set_data_full (G_OBJECT (item), "icon", icon_name, g_free);
+        }
+    }
+
+  /* get the toolbar item containing the location bar */
+  parent = gtk_widget_get_parent (window->location_bar);
+  if (parent != NULL)
+    {
+      /* rebuild the location bar */
+      thunar_window_location_bar_create (window);
+
+      gtk_container_add (GTK_CONTAINER (parent), window->location_bar);
+    }
+
+  g_list_free (toolbar_items);
 }
 
 
