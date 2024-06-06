@@ -110,7 +110,7 @@ thunar_gtk_menu_thunarx_menu_item_new (GObject      *thunarx_menu_item,
                                                 G_CALLBACK (thunarx_menu_item_activate),
                                                 G_OBJECT (thunarx_menu_item), image, menu_to_append_item);
 
-  gtk_widget_set_sensitive(GTK_WIDGET (gtk_menu_item), sensitive);
+  gtk_widget_set_sensitive (GTK_WIDGET (gtk_menu_item), sensitive);
 
   /* recursively add submenu items if any */
   if (gtk_menu_item != NULL && thunarx_menu != NULL)
