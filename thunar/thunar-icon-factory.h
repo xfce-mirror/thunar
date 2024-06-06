@@ -49,14 +49,16 @@ GdkPixbuf             *thunar_icon_factory_load_icon          (ThunarIconFactory
                                                                gint                      size,
                                                                gint                      scale_factor,
                                                                gboolean                  wants_default,
-                                                               gboolean                  wants_symbolic);
+                                                               gboolean                  symbolic,
+                                                               GtkStyleContext          *context);
 
 GdkPixbuf             *thunar_icon_factory_load_file_icon     (ThunarIconFactory        *factory,
                                                                ThunarFile               *file,
                                                                ThunarFileIconState       icon_state,
                                                                gint                      icon_size,
                                                                gint                      scale_factor,
-                                                               gboolean                  symbolic);
+                                                               gboolean                  symbolic,
+                                                               GtkStyleContext          *context);
 
 void                   thunar_icon_factory_clear_pixmap_cache (ThunarFile               *file);
 
