@@ -36,6 +36,7 @@ GType      thunar_toolbar_editor_get_type (void) G_GNUC_CONST;
 
 void       thunar_show_toolbar_editor     (GtkWidget *window,
                                            GtkWidget *window_toolbar);
+void       thunar_save_toolbar_configuration (GtkWidget *toolbar);
 
 G_END_DECLS;
 

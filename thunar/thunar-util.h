@@ -42,7 +42,6 @@ typedef enum
   THUNAR_NEXT_FILE_NAME_MODE_LINK,
 } ThunarNextFileNameMode;
 
-
 typedef void (*ThunarBookmarksFunc) (GFile       *file,
                                      const gchar *name,
                                      gint         row_num,
@@ -73,7 +72,7 @@ time_t      thunar_util_time_from_rfc3339        (const gchar    *date_string) G
 gchar      *thunar_util_change_working_directory (const gchar    *new_directory) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 void        thunar_setup_display_cb              (gpointer        data);
-gchar*      thunar_util_next_new_file_name       (ThunarFile            *dir,
+gchar      *thunar_util_next_new_file_name       (ThunarFile            *dir,
                                                   const gchar           *file_name,
                                                   ThunarNextFileNameMode name_mode,
                                                   gboolean               is_directory);
@@ -91,13 +90,13 @@ gchar     **thunar_util_split_search_query       (const gchar          *search_q
 gboolean    thunar_util_search_terms_match       (gchar               **terms,
                                                   gchar                *str);
 gboolean    thunar_util_save_geometry_timer      (gpointer user_data);
-gchar*      thunar_util_get_statusbar_text_for_files (GHashTable      *files,
+gchar      *thunar_util_get_statusbar_text_for_files (GHashTable      *files,
                                                       gboolean         show_file_size_binary_format,
                                                       ThunarDateStyle  date_style,
                                                       const gchar     *date_custom_style,
                                                       guint            status_bar_actve_info);
-gchar*      thunar_util_get_statusbar_text_for_single_file (ThunarFile *file);
-
+gchar      *thunar_util_get_statusbar_text_for_single_file (ThunarFile *file);
+gchar      *thunar_util_accel_path_to_id         (const gchar    *accel_path);
 
 G_END_DECLS;
 
