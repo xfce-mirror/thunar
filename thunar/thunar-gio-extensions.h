@@ -153,8 +153,6 @@ void         thunar_g_file_clear_metadata_setting      (GFile             *file,
                                                         ThunarGType        type,
                                                         const gchar       *setting_name);
 char        *thunar_g_file_get_content_type            (GFile             *file);
-GIcon       *thunar_g_themed_icon_new                  (const char        *iconname,
-                                                        gboolean           symbolic);
 
 G_END_DECLS
 
