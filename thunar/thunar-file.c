@@ -1034,7 +1034,7 @@ thunar_file_info_reload (ThunarFile   *file,
           /* read the display name from the .desktop file (will be overwritten later
            * if it's undefined here) */
           preferences = thunar_preferences_get ();
-          g_object_get (preferences, "show-launcher-names-instead-real-filenames", &launcher_name, NULL);
+          g_object_get (preferences, "misc-display-launcher-name-as-filename", &launcher_name, NULL);
           g_object_unref (preferences);
           if (thunar_g_vfs_metadata_is_supported () && xfce_g_file_is_trusted (file->gfile, NULL, NULL) && launcher_name == TRUE)
             {
