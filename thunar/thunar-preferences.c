@@ -132,7 +132,7 @@ enum
   PROP_MISC_UNDO_REDO_HISTORY_SIZE,
   PROP_MISC_CONFIRM_MOVE_TO_TRASH,
   PROP_MISC_MAX_NUMBER_OF_TEMPLATES,
-  PROP_SHOW_LAUNCHER_NAMES_INSTEAD_REAL_FILENAMES,
+  PROP_MISC_DISPLAY_LAUNCHER_NAME_AS_FILENAME,
   PROP_MISC_EXPANDABLE_FOLDERS,
   PROP_MISC_SYMBOLIC_ICONS_IN_TOOLBAR,
   PROP_MISC_SYMBOLIC_ICONS_IN_SIDEPANE,
@@ -1278,13 +1278,13 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:show-launcher-names-instead-real-filenames:
+   * ThunarPreferences:misc-display-launcher-name-as-filename:
    *
-   * Wheter to show real file names or launcher names for .desktop files
+   * Whether to show real file names or launcher names for .desktop files
    **/
-  preferences_props[PROP_SHOW_LAUNCHER_NAMES_INSTEAD_REAL_FILENAMES] =
-       g_param_spec_boolean ("show-launcher-names-instead-real-filenames",
-                             "ShowLauncherNamesInsteadRealFilenames",
+  preferences_props[PROP_MISC_DISPLAY_LAUNCHER_NAME_AS_FILENAME] =
+       g_param_spec_boolean ("misc-display-launcher-name-as-filename",
+                             "MiscDisplayLauncherNameAsFilename",
                              NULL,
                              TRUE,
                              EXO_PARAM_READWRITE);
