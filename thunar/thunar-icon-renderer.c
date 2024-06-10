@@ -502,7 +502,6 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   GList                  *emblems;
   GList                  *lp;
   gint                    scale_factor;
-  gint                    max_emblems;
   gint                    position;
   gdouble                 alpha;
   gint                    emblem_size;
@@ -620,11 +619,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       emblems = thunar_file_get_emblem_names (icon_renderer->file);
       if (G_UNLIKELY (emblems != NULL))
         {
-          /* render up to four emblems for sizes from 48 onwards, else up to 2 emblems */
-          max_emblems = (icon_renderer->size < 48) ? 2 : 4;
-
-          /* render the emblems */
-          for (lp = emblems, position = 0; lp != NULL && position < max_emblems; lp = lp->next)
+          /* render up to 4 emblems */
+          for (lp = emblems, position = 0; lp != NULL && position < 4; lp = lp->next)
             {
               /* calculate the emblem size */
               emblem_size = MIN ((2 * icon_renderer->size) / 4, 32);
