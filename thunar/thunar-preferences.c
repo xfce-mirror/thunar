@@ -1284,7 +1284,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    **/
   preferences_props[PROP_MISC_DISPLAY_LAUNCHER_NAME_AS_FILENAME] =
        g_param_spec_boolean ("misc-display-launcher-name-as-filename",
-                             "DisplayLauncherNameAsFilename",
+                             "MiscDisplayLauncherNameAsFilename",
                              NULL,
                              TRUE,
                              EXO_PARAM_READWRITE);
