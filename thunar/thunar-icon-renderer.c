@@ -627,7 +627,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
           for (lp = emblems, position = 0; lp != NULL && position < max_emblems; lp = lp->next)
             {
               /* calculate the emblem size */
-              emblem_size = MIN ((2 * icon_renderer->size) / 3, 32);
+              emblem_size = MIN ((2 * icon_renderer->size) / 4, 32);
 
               /* check if we have the emblem in the icon theme */
               emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, emblem_size, scale_factor, FALSE, icon_renderer->use_symbolic_icons);
