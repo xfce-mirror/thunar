@@ -83,7 +83,8 @@ enum
   PROP_LAST_RENAMER_DIALOG_WIDTH,
   PROP_LAST_RENAMER_DIALOG_FULLSCREEN,
   PROP_LAST_TOOLBAR_VISIBLE_BUTTONS,
-  PROP_LAST_TOOLBAR_BUTTON_ORDER,
+  PROP_LAST_TOOLBAR_ITEM_ORDER,
+  PROP_LAST_TOOLBAR_ITEMS,
   PROP_MISC_DIRECTORY_SPECIFIC_SETTINGS,
   PROP_MISC_ALWAYS_SHOW_TABS,
   PROP_MISC_VOLUME_MANAGEMENT,
@@ -459,26 +460,31 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * ThunarPreferences:last-toolbar-visible-buttons:
    *
    * The comma separated list that specifies the visibility of toolbar items.
-   * The order of the default value corresponds to the order in which the buttons are added inside 'thunar_window_location_toolbar_create'
+   * The order of the default value corresponds to the order in which the buttons
+   * are added inside 'thunar_window_location_toolbar_create'.
+   *
+   * This property is only read during the migration to "last-toolbar-items".
    **/
     preferences_props[PROP_LAST_TOOLBAR_VISIBLE_BUTTONS] =
         g_param_spec_string ("last-toolbar-visible-buttons",
                              "LastToolbarVisibleButtons",
                              NULL,
-                             "0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1",
-                             EXO_PARAM_READWRITE);
+                             NULL,
+                             EXO_PARAM_READABLE);
 
   /**
-   * ThunarPreferences:last-toolbar-button-order:
+   * ThunarPreferences:last-toolbar-item-order:
    *
    * The comma separated list that specifies the order of toolbar items.
+   *
+   * This property is only read during the migration to "last-toolbar-items".
    **/
-    preferences_props[PROP_LAST_TOOLBAR_BUTTON_ORDER] =
+    preferences_props[PROP_LAST_TOOLBAR_ITEM_ORDER] =
         g_param_spec_string ("last-toolbar-item-order",
-                             "LastToolbarButtonOrder",
+                             "LastToolbarItemOrder",
                              NULL,
-                             "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18",
-                             EXO_PARAM_READWRITE);
+                             NULL,
+                             EXO_PARAM_READABLE);
 
   /**
    * ThunarPreferences:misc-directory-specific-settings:
@@ -644,6 +650,22 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             NULL,
                             FALSE,
                             EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-toolbar-items:
+   *
+   * The comma separated list that specifies the order and visibility of toolbar items.
+   **/
+    preferences_props[PROP_LAST_TOOLBAR_ITEMS] =
+        g_param_spec_string ("last-toolbar-items",
+                             "LastToolbarItems",
+                             NULL,
+                             "view-menubar:0,back:1,forward:1,open-parent:1,open-home:1,"
+                             "new-tab:0,new-window:0,toggle-split-view:0,"
+                             "undo:0,redo:0,zoom-out:0,zoom-in:0,zoom-reset:0,"
+                             "view-as-icons:0,view-as-detailed-list:0,view-as-compact-list:0,"
+                             "location-bar:1,reload:0,search:1",
+                             EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-always-show-tabs:
@@ -1452,6 +1474,25 @@ thunar_preferences_set_property (GObject      *object,
 
   /* thaw */
   g_signal_handler_unblock (preferences->channel, preferences->property_changed_id);
+}
+
+
+
+/**
+ * thunar_preferences_has_property:
+ * @preferences : the #ThunarPreferences instance.
+ * @prop_name   : a property name.
+ *
+ * Return value: %TRUE if @prop_name exists, %FALSE otherwise.
+ **/
+gboolean
+thunar_preferences_has_property (ThunarPreferences *preferences,
+                                 const gchar       *prop_name)
+{
+  if (G_UNLIKELY (preferences->channel == NULL))
+    return FALSE;
+
+  return xfconf_channel_has_property (preferences->channel, prop_name);
 }
 
 

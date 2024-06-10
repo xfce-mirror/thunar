@@ -40,6 +40,9 @@ ThunarPreferences *thunar_preferences_get                (void);
 
 void               thunar_preferences_xfconf_init_failed (void);
 
+gboolean           thunar_preferences_has_property       (ThunarPreferences *preferences,
+                                                          const gchar       *prop_name);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_PREFERENCES_H__ */
