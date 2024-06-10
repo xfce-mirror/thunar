@@ -498,6 +498,8 @@ thunar_application_command_line (GApplication            *gapp,
   GError            *error        = NULL;
   gchar             *current_directory[]   = { (gchar *)".", NULL };
   gboolean           restore_tabs;
+  gboolean           open_first_window = TRUE;
+  GList             *window_list;
 
   /* retrieve arguments */
   g_variant_dict_lookup (options_dict, "bulk-rename", "b", &bulk_rename);
@@ -520,6 +522,13 @@ thunar_application_command_line (GApplication            *gapp,
         goto out;
     }
 
+  window_list = thunar_application_get_windows (application);
+  if (window_list != NULL)
+    {
+      open_first_window = FALSE;
+      g_list_free (window_list);
+    }
+
   /* check if we should open the bulk rename dialog */
   if (G_UNLIKELY (bulk_rename))
     {
@@ -539,11 +548,10 @@ thunar_application_command_line (GApplication            *gapp,
       g_application_command_line_printerr (command_line, "Thunar: %s\n", error->message);
     }
 
-  /* reopen tabs if desired */
+  /* reopen tabs if desired and this is the first thunar window we open */
   g_object_get (G_OBJECT (application->preferences), "last-restore-tabs", &restore_tabs, NULL);
-  if (restore_tabs)
+  if (restore_tabs && open_first_window)
     {
-      GList        *window_list;
       ThunarWindow *window;
       gchar       **tabs_left;
       gchar       **tabs_right;
