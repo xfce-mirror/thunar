@@ -215,13 +215,13 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
   /**
    * ThunarIconRenderer:use_symbolic_icons:
    *
-   * Whether to use a symbolic icons
+   * Whether to use symbolic icons.
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_USE_SYMBOLIC_ICONS,
                                    g_param_spec_boolean ("use-symbolic-icons",
-                                                         "UseSymbolicIcons",
-                                                         NULL,
+                                                         "use-symbolic-icons",
+                                                         "use-symbolic-icons",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
 }
@@ -493,6 +493,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   ThunarIconRenderer     *icon_renderer = THUNAR_ICON_RENDERER (renderer);
   ThunarIconFactory      *icon_factory;
   GtkIconTheme           *icon_theme;
+  GtkStyleContext        *context = NULL;
   GdkRectangle            emblem_area;
   GdkRectangle            icon_area;
   GdkRectangle            clip_area;
@@ -530,13 +531,22 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   /* load the main icon */
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
+
   scale_factor = gtk_widget_get_scale_factor (widget);
+
   thunar_file_request_thumbnail (icon_renderer->file, thunar_icon_size_to_thumbnail_size (icon_renderer->size * scale_factor));
 
+  /* load additional thumbnail for image preview */
   if (icon_renderer->image_preview_enabled)
     thunar_file_request_thumbnail (icon_renderer->file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
 
-  icon = thunar_icon_factory_load_file_icon (icon_factory, icon_renderer->file, icon_state, icon_renderer->size, scale_factor, icon_renderer->use_symbolic_icons);
+  /* get style context for symbolic icon */
+  if (icon_renderer->use_symbolic_icons)
+    context = gtk_widget_get_style_context (widget);
+
+  icon = thunar_icon_factory_load_file_icon (icon_factory, icon_renderer->file, icon_state,
+                                             icon_renderer->size, scale_factor,
+                                             icon_renderer->use_symbolic_icons, context);
   if (G_UNLIKELY (icon == NULL))
     {
       g_object_unref (G_OBJECT (icon_factory));
@@ -626,7 +636,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
               emblem_size = MIN ((2 * icon_renderer->size) / 4, 32);
 
               /* check if we have the emblem in the icon theme */
-              emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, emblem_size, scale_factor, FALSE, icon_renderer->use_symbolic_icons);
+              emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, emblem_size, scale_factor, FALSE,
+                                                      icon_renderer->use_symbolic_icons, context);
               if (G_UNLIKELY (emblem == NULL))
                 continue;
 
