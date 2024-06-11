@@ -336,6 +336,16 @@ thunar_emblem_chooser_button_toggled (GtkToggleButton     *button,
     }
   g_list_free (children);
 
+  if (g_list_length (emblem_names) > MAX_EMBLEMS_PER_FILE)
+    {
+      gchar* message = g_strdup_printf (_("A maximum of %u emblems is supported per file."), MAX_EMBLEMS_PER_FILE);
+      xfce_dialog_show_warning (NULL, message, _("Too many emblems selected"));
+      gtk_toggle_button_set_active (button, FALSE);
+      g_list_free (emblem_names);
+      g_free (message);
+      return;
+    }
+
   /* Disable listening to the "changed" signal of the files to prevent lag */
   for (lp = chooser->files; lp != NULL; lp = lp->next)
     g_signal_handlers_block_by_func (lp->data, thunar_emblem_chooser_file_changed, chooser);
