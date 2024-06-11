@@ -1080,9 +1080,28 @@ gboolean
 thunar_util_search_terms_match (gchar **terms,
                                 gchar  *str)
 {
+  gchar *term = NULL;
   for (gint i = 0; terms[i] != NULL; i++)
-    if (g_strrstr (str, terms[i]) == NULL)
-      return FALSE;
+    {
+      term = terms[i];
+      if (g_str_has_prefix (term, "-"))
+        {
+          /* negative search term - must NOT match */
+          term++;
+          if (xfce_str_is_empty (term))
+            continue;
+          if (g_strrstr (str, term) != NULL)
+            return FALSE;
+        }
+      else
+        {
+          /* implicitly positive search term - must match */
+          if (xfce_str_is_empty (term))
+            continue;
+          if (g_strrstr (str, term) == NULL)
+            return FALSE;
+        }
+    }
   return TRUE;
 }
 
