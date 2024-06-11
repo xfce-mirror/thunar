@@ -335,11 +335,7 @@ static void       thunar_window_recent_reload                            (GtkRec
 static void       thunar_window_catfish_dialog_configure                 (GtkWidget              *entry);
 static gboolean   thunar_window_paned_notebooks_update_orientation       (ThunarWindow           *window);
 static void       thunar_window_location_toolbar_create                  (ThunarWindow           *window);
-static void       thunar_window_update_location_toolbar                  (GFileMonitor           *monitor,
-                                                                          GFile                  *file,
-                                                                          GFile                  *other_file,
-                                                                          GFileMonitorEvent       event_type,
-                                                                          ThunarWindow           *window);
+static void       thunar_window_update_location_toolbar                  (ThunarWindow           *window);
 static void       thunar_window_location_toolbar_add_ucas                (ThunarWindow           *window);
 GtkWidget*        thunar_window_location_toolbar_add_uca                 (ThunarWindow           *window,
                                                                           GObject                *thunarx_menu_item);
@@ -1021,6 +1017,7 @@ thunar_window_init (ThunarWindow *window)
   /* get a reference of the global job operation history */
   window->job_operation_history = thunar_job_operation_history_get_default ();
 
+  /* add location toolbar */
   window->location_toolbar = NULL;
   thunar_window_location_toolbar_create (window);
 
@@ -1028,8 +1025,10 @@ thunar_window_init (ThunarWindow *window)
   window->uca_file         = g_file_new_for_path (uca_path);
   window->uca_file_monitor = g_file_monitor_file (window->uca_file, G_FILE_MONITOR_NONE, NULL, NULL);
   if (G_LIKELY (window->uca_file_monitor != NULL))
-    g_signal_connect (window->uca_file_monitor, "changed", G_CALLBACK (thunar_window_update_location_toolbar), window);
+    g_signal_connect_swapped (window->uca_file_monitor, "changed", G_CALLBACK (thunar_window_update_location_toolbar), window);
   g_free (uca_path);
+
+  g_signal_connect_swapped (G_OBJECT (window->preferences), "notify::misc-symbolic-icons-in-toolbar", G_CALLBACK (thunar_window_update_location_toolbar), window);
 
   /* setup setting the location bar visibility on-demand */
   g_signal_connect_object (G_OBJECT (window->preferences), "notify::last-location-bar", G_CALLBACK (thunar_window_update_location_bar_visible), window, G_CONNECT_SWAPPED);
@@ -6291,11 +6290,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
 
 
 static void
-thunar_window_update_location_toolbar (GFileMonitor     *monitor,
-                                       GFile            *file,
-                                       GFile            *other_file,
-                                       GFileMonitorEvent event_type,
-                                       ThunarWindow     *window)
+thunar_window_update_location_toolbar (ThunarWindow *window)
 {
   gtk_widget_destroy (window->location_toolbar);
   thunar_window_location_toolbar_create (window);
