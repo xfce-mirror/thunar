@@ -212,6 +212,8 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
 {
   ThunarShortcutsIconRenderer *shortcuts_icon_renderer = THUNAR_SHORTCUTS_ICON_RENDERER (renderer);
   GtkIconTheme                *icon_theme;
+  GtkIconLookupFlags           lookup_flags;
+  GtkStyleContext             *context;
   GdkRectangle                 icon_area;
   GdkRectangle                 clip_area;
   GtkIconInfo                 *icon_info;
@@ -220,14 +222,17 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
   GIcon                       *gicon;
   gdouble                      alpha;
   gint                         scale_factor;
+  gboolean                     use_symbolic_icons;
 
   if (!gdk_cairo_get_clip_rectangle (cr, &clip_area))
     return;
 
-  /* check if we have a volume set */
+  /* check if we have a gicon or volume set */
   if (G_UNLIKELY (shortcuts_icon_renderer->gicon != NULL
-      ||  shortcuts_icon_renderer->device != NULL))
+      || shortcuts_icon_renderer->device != NULL))
     {
+      use_symbolic_icons = THUNAR_ICON_RENDERER (renderer)->use_symbolic_icons;
+
       /* load the volume icon */
       icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
 
@@ -235,19 +240,31 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
       if (shortcuts_icon_renderer->gicon != NULL)
         gicon = g_object_ref (shortcuts_icon_renderer->gicon);
       else
-        gicon = thunar_device_get_icon (shortcuts_icon_renderer->device, THUNAR_ICON_RENDERER(renderer)->use_symbolic_icons);
+        gicon = thunar_device_get_icon (shortcuts_icon_renderer->device, use_symbolic_icons);
 
       scale_factor = gtk_widget_get_scale_factor (widget);
-      icon_info = gtk_icon_theme_lookup_by_gicon_for_scale (icon_theme, gicon,
-                                                            cell_area->width, scale_factor,
-                                                            GTK_ICON_LOOKUP_USE_BUILTIN |
-                                                            GTK_ICON_LOOKUP_FORCE_SIZE);
+
+      lookup_flags = GTK_ICON_LOOKUP_USE_BUILTIN | GTK_ICON_LOOKUP_FORCE_SIZE;
+      if (use_symbolic_icons)
+        lookup_flags |= GTK_ICON_LOOKUP_FORCE_SYMBOLIC;
+
+      icon_info = gtk_icon_theme_lookup_by_gicon_for_scale (icon_theme, gicon, cell_area->width,
+                                                            scale_factor, lookup_flags);
       g_object_unref (gicon);
 
       /* try to load the icon */
       if (G_LIKELY (icon_info != NULL))
         {
-          icon = gtk_icon_info_load_icon (icon_info, NULL);
+          if (use_symbolic_icons)
+            {
+              context = gtk_widget_get_style_context (widget);
+
+              /* load symbolic icon that matches the theme */
+              icon = gtk_icon_info_load_symbolic_for_context (icon_info, context, NULL, NULL);
+            }
+          else
+            icon = gtk_icon_info_load_icon (icon_info, NULL);
+
           g_object_unref (icon_info);
         }
 

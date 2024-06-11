@@ -471,7 +471,8 @@ thunar_path_entry_motion_notify_event (GtkWidget      *widget,
       icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory,
                                                  path_entry->current_file,
                                                  THUNAR_FILE_ICON_STATE_DEFAULT,
-                                                 MAX (size, 16), scale_factor, FALSE);
+                                                 MAX (size, 16), scale_factor,
+                                                 FALSE, NULL);
       if (G_LIKELY (icon != NULL))
         {
           surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, gtk_widget_get_window (widget));
@@ -748,14 +749,16 @@ thunar_path_entry_update_icon (ThunarPathEntry *path_entry)
       icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory,
                                                  path_entry->current_file,
                                                  THUNAR_FILE_ICON_STATE_DEFAULT,
-                                                 icon_size, scale_factor, FALSE);
+                                                 icon_size, scale_factor,
+                                                 FALSE, NULL);
     }
   else if (G_LIKELY (path_entry->current_folder != NULL))
     {
       icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory,
                                                  path_entry->current_folder,
                                                  THUNAR_FILE_ICON_STATE_DEFAULT,
-                                                 icon_size, scale_factor, FALSE);
+                                                 icon_size, scale_factor,
+                                                 FALSE, NULL);
     }
 
   if (icon != NULL)
