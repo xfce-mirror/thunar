@@ -35,6 +35,9 @@ G_BEGIN_DECLS;
  * than this threshold; we'll use heap */
 #define STACK_ALLOC_LIMIT 2000
 
+/* Maximum number of emblems which can be used per file */
+#define MAX_EMBLEMS_PER_FILE 4
+
 typedef enum
 {
   THUNAR_NEXT_FILE_NAME_MODE_NEW,
