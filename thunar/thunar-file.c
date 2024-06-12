@@ -3309,6 +3309,30 @@ thunar_file_is_in_recent (const ThunarFile *file)
 
 
 /**
+ * thunar_file_add_to_recent:
+ * @file : a #ThunarFile instance.
+ *
+ * Adds the file to recent:/// if it is not a directory
+ **/
+void
+thunar_file_add_to_recent (const ThunarFile *file)
+{
+  gchar *uri;
+
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  /* dont add directories to recent */
+  if (thunar_file_is_directory (file))
+    return;
+
+  uri = g_file_get_uri (file->gfile);
+  gtk_recent_manager_add_item (gtk_recent_manager_get_default (), uri);
+  g_free (uri);
+}
+
+
+
+/**
  * thunar_file_is_desktop_file:
  * @file      : a #ThunarFile.
  *

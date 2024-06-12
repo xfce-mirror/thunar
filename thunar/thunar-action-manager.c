@@ -790,10 +790,9 @@ thunar_action_manager_execute_files (ThunarActionManager *action_mgr,
   for (lp = files; lp != NULL; lp = lp->next)
     {
       ThunarFile  *file   = lp->data;
-      GFile       *gfile  = thunar_file_get_file (file);
 
       working_directory = thunar_file_get_file (action_mgr->current_directory);
-      gtk_recent_manager_add_item (gtk_recent_manager_get_default(), g_file_get_uri (gfile));
+      thunar_file_add_to_recent (file);
 
       if (!thunar_file_execute (lp->data, working_directory, action_mgr->widget, in_terminal, NULL, NULL, &error))
         {
@@ -1159,10 +1158,7 @@ thunar_action_manager_poke_files_finish (ThunarBrowser *browser,
   if (error == NULL)
     {
       /* add opened file to `recent:///` */
-      GFile *gfile = thunar_file_get_file (target_file);
-      gchar *uri = g_file_get_uri (gfile);
-      gtk_recent_manager_add_item (gtk_recent_manager_get_default (), uri);
-      g_free (uri);
+      thunar_file_add_to_recent (file);
 
       /* add the resolved file to the list of file to be opened/executed later */
       poke_data->files_poked = g_list_prepend (poke_data->files_poked,g_object_ref (target_file));
