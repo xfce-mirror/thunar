@@ -337,7 +337,7 @@ thunar_emblem_chooser_button_toggled (GtkToggleButton     *button,
           n_emblems_selected++;
           if (n_emblems_selected > MAX_EMBLEMS_PER_FILE)
             {
-              /* migration: unselect all emblems which anyhow will not be shown. Prevent recursion by blocking this handler */
+              /* unselect all emblems which anyhow will not be shown. Prevent recursion by blocking this handler */
               g_signal_handlers_block_by_func (G_OBJECT (child), thunar_emblem_chooser_button_toggled, chooser);
               gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (child), FALSE);
               g_signal_handlers_unblock_by_func (G_OBJECT (child), thunar_emblem_chooser_button_toggled, chooser);
