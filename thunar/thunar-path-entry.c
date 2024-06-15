@@ -43,6 +43,7 @@
 #include "thunar/thunar-icon-renderer.h"
 #include "thunar/thunar-list-model.h"
 #include "thunar/thunar-path-entry.h"
+#include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-util.h"
 #include "thunar/thunar-window.h"
@@ -722,16 +723,21 @@ thunar_path_entry_changed (GtkEditable *editable)
 static void
 thunar_path_entry_update_icon (ThunarPathEntry *path_entry)
 {
-  GdkPixbuf          *icon = NULL;
-  GtkIconTheme       *icon_theme;
-  gint                icon_size;
-  gint                scale_factor;
+  ThunarPreferences *preferences;
+  GdkPixbuf         *icon = NULL;
+  GtkIconTheme      *icon_theme;
+  gint               icon_size;
+  gint               scale_factor;
+  gboolean           use_symbolic_icons;
+
+  preferences = thunar_preferences_get ();
+  g_object_get (G_OBJECT (preferences), "misc-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
+  g_object_unref (G_OBJECT (preferences));
 
   if (path_entry->search_mode == TRUE)
     {
-      gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry),
-                                         GTK_ENTRY_ICON_PRIMARY,
-                                         "system-search");
+      gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_PRIMARY,
+                                         use_symbolic_icons ? "system-search-symbolic" : "system-search");
       return;
     }
 
@@ -770,9 +776,8 @@ thunar_path_entry_update_icon (ThunarPathEntry *path_entry)
     }
   else
     {
-      gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry),
-                                         GTK_ENTRY_ICON_PRIMARY,
-                                         "dialog-error-symbolic");
+      gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_PRIMARY,
+                                         use_symbolic_icons ? "dialog-error-symbolic" : "dialog-error");
     }
 }
 
