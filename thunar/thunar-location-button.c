@@ -386,9 +386,11 @@ static void
 thunar_location_button_file_changed (ThunarLocationButton *location_button,
                                      ThunarFile           *file)
 {
+  ThunarPreferences *preferences;
   GtkIconTheme      *icon_theme;
   gchar             *icon_name;
   const gchar       *dnd_icon_name;
+  gboolean           use_symbolic_icons;
 
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
   _thunar_return_if_fail (location_button->file == file);
@@ -423,9 +425,12 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
   /* the image is only visible for certain special paths */
   if (thunar_file_is_home (file) || thunar_file_is_desktop (file) || thunar_file_is_root (file))
     {
-      icon_name = g_strdup_printf ("%s-symbolic", thunar_file_get_icon_name (file,
-                                                                             location_button->file_icon_state,
-                                                                             icon_theme));
+      preferences = thunar_preferences_get ();
+      g_object_get (G_OBJECT (preferences), "misc-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
+      g_object_unref (G_OBJECT (preferences));
+
+      icon_name = g_strdup_printf ("%s%s", thunar_file_get_icon_name (file,location_button->file_icon_state, icon_theme),
+                                           use_symbolic_icons ? "-symbolic" : "");
 
       /* update the icon for the image */
       gtk_image_set_from_icon_name (GTK_IMAGE (location_button->image), icon_name, GTK_ICON_SIZE_BUTTON);
