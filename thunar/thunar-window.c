@@ -3486,6 +3486,7 @@ thunar_window_action_open_new_window (ThunarWindow *window,
   ThunarWindow      *new_window;
   ThunarFile        *start_file;
   gboolean           misc_open_new_windows_in_split_view;
+  gboolean           restore_tabs;
 
   /* popup a new window */
   application = thunar_application_get ();
@@ -3493,8 +3494,10 @@ thunar_window_action_open_new_window (ThunarWindow *window,
                                                               gtk_widget_get_screen (GTK_WIDGET (window)), NULL, TRUE));
   g_object_unref (G_OBJECT (application));
 
-  g_object_get (G_OBJECT (window->preferences), "misc-open-new-windows-in-split-view", &misc_open_new_windows_in_split_view, NULL);
-  if (misc_open_new_windows_in_split_view)
+  g_object_get (G_OBJECT (window->preferences),
+                "misc-open-new-windows-in-split-view", &misc_open_new_windows_in_split_view,
+                "last-restore-tabs", &restore_tabs, NULL);
+  if (misc_open_new_windows_in_split_view && restore_tabs)
     thunar_window_notebook_toggle_split_view (new_window);
 
   /* if we have no origin view we are done */
