@@ -34,6 +34,7 @@
 #include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-location-button.h"
 #include "thunar/thunar-location-buttons.h"
+#include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-properties-dialog.h"
 
@@ -232,7 +233,13 @@ thunar_location_buttons_on_filler_clicked (ThunarLocationButtons *buttons)
 static void
 thunar_location_buttons_init (ThunarLocationButtons *buttons)
 {
-  GtkWidget       *icon;
+  ThunarPreferences *preferences;
+  GtkWidget         *icon;
+  gboolean           use_symbolic_icons;
+
+  preferences = thunar_preferences_get ();
+  g_object_get (G_OBJECT (preferences), "misc-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
+  g_object_unref (G_OBJECT (preferences));
 
   gtk_widget_set_has_window (GTK_WIDGET (buttons), FALSE);
   gtk_widget_set_redraw_on_allocate (GTK_WIDGET (buttons), FALSE);
@@ -244,7 +251,7 @@ thunar_location_buttons_init (ThunarLocationButtons *buttons)
   gtk_container_add (GTK_CONTAINER (buttons), buttons->left_slider);
   gtk_widget_show (buttons->left_slider);
 
-  icon = gtk_image_new_from_icon_name ("pan-start-symbolic", GTK_ICON_SIZE_BUTTON);
+  icon = gtk_image_new_from_icon_name (use_symbolic_icons ? "pan-start-symbolic" : "pan-start", GTK_ICON_SIZE_BUTTON);
   gtk_container_add (GTK_CONTAINER (buttons->left_slider), icon);
   gtk_widget_show (icon);
 
@@ -255,14 +262,14 @@ thunar_location_buttons_init (ThunarLocationButtons *buttons)
   gtk_container_add (GTK_CONTAINER (buttons), buttons->right_slider);
   gtk_widget_show (buttons->right_slider);
 
-  icon = gtk_image_new_from_icon_name ("pan-end-symbolic", GTK_ICON_SIZE_BUTTON);
+  icon = gtk_image_new_from_icon_name (use_symbolic_icons ? "pan-end-symbolic" : "pan-end", GTK_ICON_SIZE_BUTTON);
   gtk_container_add (GTK_CONTAINER (buttons->right_slider), icon);
   gtk_widget_show (icon);
 
   buttons->filler_widget = gtk_button_new ();
   g_signal_connect_swapped (buttons->filler_widget, "clicked", G_CALLBACK (thunar_location_buttons_on_filler_clicked), buttons);
 
-  icon = gtk_image_new_from_icon_name ("document-edit-symbolic", GTK_ICON_SIZE_BUTTON);
+  icon = gtk_image_new_from_icon_name (use_symbolic_icons ? "document-edit-symbolic" : "document-edit", GTK_ICON_SIZE_BUTTON);
   gtk_widget_set_halign (icon, GTK_ALIGN_END);
   gtk_container_add (GTK_CONTAINER (buttons->filler_widget), icon);
   gtk_widget_show (icon);

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-05-19 00:46+0200\n"
+"POT-Creation-Date: 2024-06-19 00:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Baurzhan Muftakhidinov <baurthefirst@gmail.com>, 2009,2013-2015,2017-2024\n"
 "Language-Team: Kazakh (http://app.transifex.com/xfce/thunar/language/kk/)\n"
@@ -24,8 +24,8 @@ msgid "Thunar"
 msgstr "Thunar"
 
 #. change the accept button label text
-#: thunar/thunar-action-manager.c:269 thunar/thunar-chooser-dialog.c:890
-#: thunar/thunar-chooser-dialog.c:1301 thunar/thunar-dialogs.c:1287
+#: thunar/thunar-action-manager.c:269 thunar/thunar-chooser-dialog.c:884
+#: thunar/thunar-chooser-dialog.c:1295 thunar/thunar-dialogs.c:1287
 #: thunar/thunar-renamer-dialog.c:1075
 #: plugins/thunar-uca/thunar-uca-editor.c:181
 msgid "_Open"
@@ -63,7 +63,7 @@ msgstr "Таңдалған файл орналасқан буманы ашу"
 msgid "Ope_n With Other Application..."
 msgstr "Басқа қолданбамен а_шу..."
 
-#: thunar/thunar-action-manager.c:275 thunar/thunar-action-manager.c:3339
+#: thunar/thunar-action-manager.c:275 thunar/thunar-action-manager.c:3337
 msgid "Choose another application with which to open the selected file"
 msgstr "Ерекшеленген файлды ашу үшін басқа қолданбаны таңдау"
 
@@ -120,7 +120,7 @@ msgid "_Rename..."
 msgstr "Атын ауысты_ру..."
 
 #. prepare the menu item
-#: thunar/thunar-action-manager.c:287 thunar/thunar-application.c:2712
+#: thunar/thunar-action-manager.c:287 thunar/thunar-application.c:2722
 #: plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "Қ_оқыс шелегін тазарту"
@@ -165,7 +165,7 @@ msgstr "Қалпына келтіру және кө_рсету"
 msgid "Mo_ve to Trash"
 msgstr "Қ_оқыс шелегіне тастау"
 
-#: thunar/thunar-action-manager.c:297 thunar/thunar-application.c:2463
+#: thunar/thunar-action-manager.c:297 thunar/thunar-application.c:2473
 #: plugins/thunar-uca/thunar-uca-chooser.c:375
 msgid "_Delete"
 msgstr "Ө_шіру"
@@ -212,7 +212,7 @@ msgstr "Тіркеуден _босату"
 msgid "Unmount the selected device"
 msgstr "Таңдалған құрылғыны тіркеуден босату"
 
-#: thunar/thunar-action-manager.c:310 thunar/thunar-device.c:538
+#: thunar/thunar-action-manager.c:310 thunar/thunar-device.c:549
 msgid "_Eject"
 msgstr "_Шығару"
 
@@ -220,45 +220,45 @@ msgstr "_Шығару"
 msgid "Eject the selected device"
 msgstr "Таңдалған құрылғыны шығару"
 
-#: thunar/thunar-action-manager.c:802 thunar/thunar-dnd.c:272
+#: thunar/thunar-action-manager.c:801 thunar/thunar-dnd.c:272
 #, c-format
 msgid "Failed to execute file \"%s\" (%s)"
 msgstr "\"%s\" файлын орындау қатесі (%s)"
 
-#: thunar/thunar-action-manager.c:804 thunar/thunar-dnd.c:274
+#: thunar/thunar-action-manager.c:803 thunar/thunar-dnd.c:274
 #, c-format
 msgid "Failed to execute file \"%s\""
 msgstr "\"%s\" файлын орындау қатесі"
 
-#: thunar/thunar-action-manager.c:940
+#: thunar/thunar-action-manager.c:939
 #, c-format
 msgid "Failed to open file \"%s\""
 msgstr "\"%s\" файлын ашу сәтсіз"
 
 #. we can just tell that n files failed to open
-#: thunar/thunar-action-manager.c:946
+#: thunar/thunar-action-manager.c:945
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
 msgstr[0] "%d файлды ашу сәтсіз"
 msgstr[1] "%d файлды ашу сәтсіз"
 
-#: thunar/thunar-action-manager.c:985
+#: thunar/thunar-action-manager.c:984
 msgid "Are you sure you want to open all folders?"
 msgstr "Барлық бумаларды ашуды шынымен қалайсыз ба?"
 
-#: thunar/thunar-action-manager.c:986
+#: thunar/thunar-action-manager.c:985
 msgid "Open folders"
 msgstr "Бумаларды ашу"
 
-#: thunar/thunar-action-manager.c:988
+#: thunar/thunar-action-manager.c:987
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
 msgstr[0] "Бұл әрекет нәтижесінде файл басқарушысының %d жаңа терезесі ашылады."
 msgstr[1] "Бұл әрекет нәтижесінде файл басқарушысының %d жаңа терезесі ашылады."
 
-#: thunar/thunar-action-manager.c:991
+#: thunar/thunar-action-manager.c:990
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
@@ -267,10 +267,10 @@ msgstr[1] "Жаңа %d терезені ашу"
 
 #. add the "Cancel" button
 #. configure the dialog properties
-#: thunar/thunar-action-manager.c:992 thunar/thunar-application.c:2462
-#: thunar/thunar-application.c:2523 thunar/thunar-application.c:2711
-#: thunar/thunar-chooser-dialog.c:293 thunar/thunar-chooser-dialog.c:763
-#: thunar/thunar-chooser-dialog.c:838 thunar/thunar-chooser-dialog.c:889
+#: thunar/thunar-action-manager.c:991 thunar/thunar-application.c:2472
+#: thunar/thunar-application.c:2533 thunar/thunar-application.c:2721
+#: thunar/thunar-chooser-dialog.c:293 thunar/thunar-chooser-dialog.c:757
+#: thunar/thunar-chooser-dialog.c:832 thunar/thunar-chooser-dialog.c:883
 #: thunar/thunar-dialogs.c:112 thunar/thunar-dialogs.c:261
 #: thunar/thunar-dialogs.c:698 thunar/thunar-dialogs.c:847
 #: thunar/thunar-dialogs.c:1102 thunar/thunar-dialogs.c:1195
@@ -288,69 +288,69 @@ msgstr[1] "Жаңа %d терезені ашу"
 msgid "_Cancel"
 msgstr "Ба_с тарту"
 
-#: thunar/thunar-action-manager.c:1079 thunar/thunar-action-manager.c:1971
+#: thunar/thunar-action-manager.c:1078 thunar/thunar-action-manager.c:1967
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "\"%s\" тіркеу қатесі"
 
 #. tell the user that we were unable to launch the file specified
-#: thunar/thunar-action-manager.c:1127 thunar/thunar-application.c:1641
-#: thunar/thunar-application.c:1801 thunar/thunar-location-entry.c:345
+#: thunar/thunar-action-manager.c:1126 thunar/thunar-application.c:1651
+#: thunar/thunar-application.c:1811 thunar/thunar-location-entry.c:345
 #: thunar/thunar-location-entry.c:373
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "\"%s\" ашу сәтсіз аяқталды "
 
 #. aka "activate"
-#: thunar/thunar-action-manager.c:1574
+#: thunar/thunar-action-manager.c:1570
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "Ерекшеленген файл(дар)ды ашу"
 msgstr[1] "Ерекшеленген файл(дар)ды ашу"
 
-#: thunar/thunar-action-manager.c:1578
+#: thunar/thunar-action-manager.c:1574
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "Ерекшеленген файл(дар)ды орындау"
 msgstr[1] "Ерекшеленген файл(дар)ды орындау"
 
-#: thunar/thunar-action-manager.c:1587
+#: thunar/thunar-action-manager.c:1583
 #, c-format
 msgid "Open the selected directory in new tab"
 msgid_plural "Open the selected directories in %d new tabs"
 msgstr[0] "Таңдалған буманы жаңа бетте ашу"
 msgstr[1] "Таңдалған бумаларды жаңа %d бетте ашу"
 
-#: thunar/thunar-action-manager.c:1597
+#: thunar/thunar-action-manager.c:1593
 #, c-format
 msgid "Open the selected directory in new window"
 msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "Таңдалған буманы жаңа терезеде ашу"
 msgstr[1] "Таңдалған бумаларды жаңа %d терезеде ашу"
 
-#: thunar/thunar-action-manager.c:1636
+#: thunar/thunar-action-manager.c:1632
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Ерекшеленген файл(дар)ға символдық сілтеме жасау"
 msgstr[1] "Ерекшеленген файл(дар)ға символдық сілтеме жасау"
 
-#: thunar/thunar-action-manager.c:1666
+#: thunar/thunar-action-manager.c:1662
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Ерекшеленген файл(дар)дың атын ауыстыру"
 msgstr[1] "Ерекшеленген файл(дар)дың атын ауыстыру"
 
-#: thunar/thunar-action-manager.c:1671
+#: thunar/thunar-action-manager.c:1667
 msgid "Bulk _Rename..."
 msgstr "Топтап атын ауысты_ру..."
 
-#: thunar/thunar-action-manager.c:1681
+#: thunar/thunar-action-manager.c:1677
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
 msgstr[0] "Таңдалған файлды бастапқы орынына қалпына келтіру"
 msgstr[1] "Таңдалған файлдарды бастапқы орындарына қалпына келтіру"
 
-#: thunar/thunar-action-manager.c:1693
+#: thunar/thunar-action-manager.c:1689
 msgid ""
 "Restore the selected file to its original location and open the location in "
 "a new window/tab"
@@ -360,67 +360,67 @@ msgid_plural ""
 msgstr[0] "Таңдалған файлды бастапқы орындарына қалпына келтіріп, орналасуын жаңа терезеде/бетте ашу"
 msgstr[1] "Таңдалған файлдарды бастапқы орындарына қалпына келтіріп, орналасуларын жаңа терезеде/бетте ашу"
 
-#: thunar/thunar-action-manager.c:1710
+#: thunar/thunar-action-manager.c:1706
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "Таңдалған файл(дар)ды қоқыс шелегіне тастау"
 msgstr[1] "Таңдалған файл(дар)ды қоқыс шелегіне тастау"
 
-#: thunar/thunar-action-manager.c:1727
+#: thunar/thunar-action-manager.c:1723
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "Таңдалған файл(дар)ды өшіру"
 msgstr[1] "Таңдалған файл(дар)ды өшіру"
 
-#: thunar/thunar-action-manager.c:1786
+#: thunar/thunar-action-manager.c:1782
 msgid "Cut the selection"
 msgstr "Таңдалғанды қиып алу"
 
-#: thunar/thunar-action-manager.c:1796
+#: thunar/thunar-action-manager.c:1792
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Ерекшеленген файл(дар)ды Кірістіру командасы көмегімен жылжытуға дайындайды"
 msgstr[1] "Ерекшеленген файл(дар)ды Кірістіру командасы көмегімен жылжытуға дайындайды"
 
-#: thunar/thunar-action-manager.c:1810
+#: thunar/thunar-action-manager.c:1806
 msgid "Copy the selection"
 msgstr "Таңдалғанды көшіріп алу"
 
-#: thunar/thunar-action-manager.c:1820
+#: thunar/thunar-action-manager.c:1816
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Ерекшеленген файл(дар)ды Кірістіру командасы көмегімен көшіруге дайындайды"
 msgstr[1] "Ерекшеленген файл(дар)ды Кірістіру командасы көмегімен көшіруге дайындайды"
 
-#: thunar/thunar-action-manager.c:1843
+#: thunar/thunar-action-manager.c:1839
 msgid "Paste the clipboard"
 msgstr "Алмасу буферін кірістіру"
 
-#: thunar/thunar-action-manager.c:2082
+#: thunar/thunar-action-manager.c:2078
 msgid "Side Pane (Add Bookmark)"
 msgid_plural "Side Pane (Add Bookmarks)"
 msgstr[0] "Бүйір панелі (Бетбелгіні қосу)"
 msgstr[1] "Бүйір панелі (Бетбелгілерді қосу)"
 
-#: thunar/thunar-action-manager.c:2083
+#: thunar/thunar-action-manager.c:2079
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "Ерекшеленген бума(лар)ды бүйір бетбелгілерге қосу"
 msgstr[1] "Ерекшеленген бума(лар)ды бүйір бетбелгілерге қосу"
 
-#: thunar/thunar-action-manager.c:2102
+#: thunar/thunar-action-manager.c:2098
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "Жұмыс үстелі (Сілтеме жасау)"
 msgstr[1] "Жұмыс үстелі (Сілтеме жасау)"
 
-#: thunar/thunar-action-manager.c:2103
+#: thunar/thunar-action-manager.c:2099
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "Ерекшеленген файл(дар) үшін жұмыс үстелінде жарлықтарды жасау"
 msgstr[1] "Ерекшеленген файл(дар) үшін жұмыс үстелінде жарлықтарды жасау"
 
-#: thunar/thunar-action-manager.c:2124 thunar/thunar-action-manager.c:2162
+#: thunar/thunar-action-manager.c:2120 thunar/thunar-action-manager.c:2158
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
@@ -428,72 +428,72 @@ msgstr[0] "Ерекшелеген файл(дар)ды жіберу: \"%s\""
 msgstr[1] "Ерекшелеген файл(дар)ды жіберу: \"%s\""
 
 #. ask the user to enter a name for the new folder
-#: thunar/thunar-action-manager.c:2648 thunar/thunar-application.c:1993
+#: thunar/thunar-action-manager.c:2644 thunar/thunar-application.c:2003
 msgid "New Folder"
 msgstr "Жаңа бума"
 
-#: thunar/thunar-action-manager.c:2652 thunar/thunar-application.c:1994
+#: thunar/thunar-action-manager.c:2648 thunar/thunar-application.c:2004
 msgid "Create New Folder"
 msgstr "Жаңа буманы жасау"
 
 #. generate a title for the create dialog
-#: thunar/thunar-action-manager.c:2704 thunar/thunar-application.c:2058
+#: thunar/thunar-action-manager.c:2700 thunar/thunar-application.c:2068
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Жаңа құжатты \"%s\" үлгісінен жасау"
 
 #. ask the user to enter a name for the new empty file
-#: thunar/thunar-action-manager.c:2720
+#: thunar/thunar-action-manager.c:2716
 msgid "New Empty File"
 msgstr "Жаңа бос файл"
 
-#: thunar/thunar-action-manager.c:2724
+#: thunar/thunar-action-manager.c:2720
 msgid "New Empty File..."
 msgstr "Жаңа бос файл..."
 
-#: thunar/thunar-action-manager.c:2943
+#: thunar/thunar-action-manager.c:2941
 #, c-format
 msgid ""
 "No templates installed in\n"
 "\"%s\""
 msgstr "\"%s\" ішінде үлгілер орнатылмаған"
 
-#: thunar/thunar-action-manager.c:2956
+#: thunar/thunar-action-manager.c:2954
 msgid "_Empty File"
 msgstr "_Бос файл"
 
-#: thunar/thunar-action-manager.c:3096
+#: thunar/thunar-action-manager.c:3094
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "\"%s\" шығару сәтсіз аяқталды"
 
-#: thunar/thunar-action-manager.c:3158
+#: thunar/thunar-action-manager.c:3156
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "\"%s\" тіркеуден босату сәтсіз аяқталды"
 
-#: thunar/thunar-action-manager.c:3221 thunar/thunar-action-manager.c:3302
+#: thunar/thunar-action-manager.c:3219 thunar/thunar-action-manager.c:3300
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "Ерекшеленген файл(дар)ды ашу үшін \"%s\" қолдану"
 msgstr[1] "Ерекшеленген файл(дар)ды ашу үшін \"%s\" қолдану"
 
-#: thunar/thunar-action-manager.c:3301
+#: thunar/thunar-action-manager.c:3299
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "\"%s\" _көмегімен ашу "
 
 #. we can only show a generic "Open" action
-#: thunar/thunar-action-manager.c:3321
+#: thunar/thunar-action-manager.c:3319
 msgid "_Open With Default Applications"
 msgstr "Бас_тапқы қолданбамен ашу"
 
-#: thunar/thunar-action-manager.c:3322
+#: thunar/thunar-action-manager.c:3320
 msgid "Open the selected files with the default applications"
 msgstr "Ерекшеленген файл(дар)ды бастапқы қолданбамен ашу"
 
-#: thunar/thunar-action-manager.c:3338
+#: thunar/thunar-action-manager.c:3336
 msgid "Ope_n With"
 msgstr "Көмегімен а_шу"
 
@@ -542,92 +542,92 @@ msgid "Please report bugs to <%s>."
 msgstr "Ақаулықтар жөнінде хабарласыңыз: <%s>."
 
 #. display an error message to the user
-#: thunar/thunar-application.c:864
+#: thunar/thunar-application.c:874
 msgid "Failed to launch operation"
 msgstr "Әрекетті жөнелту сәтсіз аяқталды"
 
-#: thunar/thunar-application.c:1637
+#: thunar/thunar-application.c:1647
 #, c-format
 msgid "Failed to open \"%s\" (%s)"
 msgstr "\"%s\" ашу сәтсіз аяқталды (%s)"
 
-#: thunar/thunar-application.c:1805
+#: thunar/thunar-application.c:1815
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "\"%s\" ашу сәтсіз аяқталды: %s"
 
-#: thunar/thunar-application.c:1864 thunar/thunar-properties-dialog.c:1096
+#: thunar/thunar-application.c:1874 thunar/thunar-properties-dialog.c:1096
 #, c-format
 msgid "Failed to rename \"%s\" (%s)"
 msgstr "\"%s\" атын қзгерту сәтсіз аяқталды (%s)"
 
-#: thunar/thunar-application.c:1868 thunar/thunar-properties-dialog.c:1100
+#: thunar/thunar-application.c:1878 thunar/thunar-properties-dialog.c:1100
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "\"%s\" атын ауыстыру қатесі"
 
-#: thunar/thunar-application.c:1917
+#: thunar/thunar-application.c:1927
 msgid "Rename Launcher Options"
 msgstr "Атын өзгерту жөнелткішінің баптаулары"
 
-#: thunar/thunar-application.c:1920
+#: thunar/thunar-application.c:1930
 msgid "Do you want to rename the launcher, or the file itself?"
 msgstr "Жөнелткіш атын немесе файл атын өзгерту керек пе?"
 
-#: thunar/thunar-application.c:1921
+#: thunar/thunar-application.c:1931
 msgid "Rename _Launcher"
 msgstr "Жөне_лткіш атын өзгерту"
 
-#: thunar/thunar-application.c:1922
+#: thunar/thunar-application.c:1932
 msgid "Rename _File"
 msgstr "_Файл атын өзгерту"
 
-#: thunar/thunar-application.c:1998
+#: thunar/thunar-application.c:2008
 msgid "New File"
 msgstr "Жаңа файл"
 
-#: thunar/thunar-application.c:1999
+#: thunar/thunar-application.c:2009
 msgid "Create New File"
 msgstr "Жаңа файлды жасау"
 
-#: thunar/thunar-application.c:2124
+#: thunar/thunar-application.c:2134
 msgid "Copying files..."
 msgstr "Файлдарды көшіру..."
 
-#: thunar/thunar-application.c:2184
+#: thunar/thunar-application.c:2194
 #, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "Файлдарды \"%s\" ішіне көшіру..."
 
-#: thunar/thunar-application.c:2240
+#: thunar/thunar-application.c:2250
 #, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "\"%s\" ішінде символдық сілтемелерді жасау..."
 
-#: thunar/thunar-application.c:2309
+#: thunar/thunar-application.c:2319
 #, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "Файлдарды \"%s\" ішіне жылжыту..."
 
-#: thunar/thunar-application.c:2354
+#: thunar/thunar-application.c:2364
 msgid "Moving files ..."
 msgstr "Файлдарды жылжыту..."
 
-#: thunar/thunar-application.c:2437
+#: thunar/thunar-application.c:2447
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\" (%s)?"
 msgstr "\"%s\" (%s) толығымен өшіруді\nшынымен қалайсыз ба?"
 
-#: thunar/thunar-application.c:2441
+#: thunar/thunar-application.c:2451
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr "\"%s\" толығымен өшіруді\nшынымен қалайсыз ба?"
 
-#: thunar/thunar-application.c:2446
+#: thunar/thunar-application.c:2456
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -638,34 +638,34 @@ msgid_plural ""
 msgstr[0] "Ерекшеленген %u файлды толығымен\nөшіруді шынымен қалайсыз ба?"
 msgstr[1] "Ерекшеленген %u файлды толығымен\nөшіруді шынымен қалайсыз ба?"
 
-#: thunar/thunar-application.c:2460 thunar/thunar-application.c:2521
+#: thunar/thunar-application.c:2470 thunar/thunar-application.c:2531
 #: thunar/thunar-dialogs.c:616 thunar/thunar-dialogs.c:1098
 msgid "Attention"
 msgstr "Назар аударыңыз"
 
-#: thunar/thunar-application.c:2467
+#: thunar/thunar-application.c:2477
 msgid "If you delete a file, it is permanently lost."
 msgstr "Файлды өшірсеңіз, ол толығымен жойылады."
 
-#: thunar/thunar-application.c:2477 thunar/thunar-application.c:2486
+#: thunar/thunar-application.c:2487 thunar/thunar-application.c:2496
 msgid "Deleting files..."
 msgstr "Файлдарды өшіру..."
 
-#: thunar/thunar-application.c:2498
+#: thunar/thunar-application.c:2508
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "move \"%s\" (%s) to trash ?"
 msgstr "\"%s\" (%s) қоқыс шелегіне тастауды\nшынымен қалайсыз ба?"
 
-#: thunar/thunar-application.c:2502
+#: thunar/thunar-application.c:2512
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "move \"%s\" to trash ?"
 msgstr "\"%s\" қоқыс шелегіне тастауды\nшынымен қалайсыз ба?"
 
-#: thunar/thunar-application.c:2507
+#: thunar/thunar-application.c:2517
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -676,61 +676,61 @@ msgid_plural ""
 msgstr[0] "Таңдалған файлды қоқыс шелегіне\nтастауды шынымен қалайсыз ба?"
 msgstr[1] "Таңдалған %u файлды қоқыс шелегіне\nтастауды шынымен қалайсыз ба?"
 
-#: thunar/thunar-application.c:2524
+#: thunar/thunar-application.c:2534
 msgid "Move to Trash"
 msgstr "Қоқыс шелегіне тастау"
 
-#: thunar/thunar-application.c:2577
+#: thunar/thunar-application.c:2587
 msgid "Moving files into the trash..."
 msgstr "Файлдарды қоқыс шелегіне жылжыту..."
 
-#: thunar/thunar-application.c:2625
+#: thunar/thunar-application.c:2635
 msgid "Creating files..."
 msgstr "Файлдарды жасау..."
 
-#: thunar/thunar-application.c:2666
+#: thunar/thunar-application.c:2676
 msgid "Creating directories..."
 msgstr "Бумаларды жасау..."
 
-#: thunar/thunar-application.c:2705
+#: thunar/thunar-application.c:2715
 msgid "Remove all files and folders from the Trash?"
 msgstr "Қоқыс шелегінен барлық файлдар мен бумаларды өшіру керек пе?"
 
-#: thunar/thunar-application.c:2709 thunar/thunar-window.c:1063
+#: thunar/thunar-application.c:2719 thunar/thunar-window.c:1063
 msgid "Empty Trash"
 msgstr "Қоқыс шелегін тазарту"
 
-#: thunar/thunar-application.c:2716
+#: thunar/thunar-application.c:2726
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr "Қоқыс шелегін тазартуды таңдасаңыз, құрамасы жойылады. Оларды жеке-жеке өшіруге болатынын есте сақтаңыз."
 
-#: thunar/thunar-application.c:2733
+#: thunar/thunar-application.c:2743
 msgid "Emptying the Trash..."
 msgstr "Қоқыс шелегін тазарту..."
 
-#: thunar/thunar-application.c:2780
+#: thunar/thunar-application.c:2790
 #, c-format
 msgid "Failed to determine the original path for \"%s\" (%s)"
 msgstr "\"%s\" (%s) үшін бастапқы орналасуды анықтау мүмкін емес"
 
-#: thunar/thunar-application.c:2785
+#: thunar/thunar-application.c:2795
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "\"%s\" үшін бастапқы орналасуды анықтау мүмкін емес"
 
-#: thunar/thunar-application.c:2803
+#: thunar/thunar-application.c:2813
 #, c-format
 msgid "Could not restore \"%s\" (%s)"
 msgstr "\"%s\" (%s) қалпына келтіру мүмкін емес"
 
-#: thunar/thunar-application.c:2807
+#: thunar/thunar-application.c:2817
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "\"%s\" қалпына келтіру мүмкін емес"
 
-#: thunar/thunar-application.c:2815
+#: thunar/thunar-application.c:2825
 msgid "Restoring files..."
 msgstr "Файлдарды қалпына келтіру..."
 
@@ -785,7 +785,7 @@ msgid "Use as _default for this kind of file"
 msgstr "Файлд_ардың осы түрі үшін негізгі ретінде қылу"
 
 #. add the "Ok"/"Open" button
-#: thunar/thunar-chooser-dialog.c:296 thunar/thunar-chooser-dialog.c:1301
+#: thunar/thunar-chooser-dialog.c:296 thunar/thunar-chooser-dialog.c:1295
 #: thunar/thunar-properties-dialog.c:1197 thunar/thunar-window.c:4440
 #: plugins/thunar-uca/thunar-uca-editor.c:146
 #: plugins/thunar-uca/thunar-uca-editor.c:439
@@ -798,59 +798,59 @@ msgstr "_ОК"
 msgid "Failed to add new application \"%s\""
 msgstr "Жаңа \"%s\" қолданбасын қосу сәтсіз аяқталды"
 
-#: thunar/thunar-chooser-dialog.c:538
+#: thunar/thunar-chooser-dialog.c:532
 #, c-format
 msgid "Failed to execute application \"%s\""
 msgstr "\"%s\" қолданбасын орындау сәтсіз аяқталды"
 
 #. append the "Remove Launcher" item
-#: thunar/thunar-chooser-dialog.c:607
+#: thunar/thunar-chooser-dialog.c:601
 msgid "_Remove Launcher"
 msgstr "Жөнелткішті өші_ру"
 
 #. append the "Forget Association" item
-#: thunar/thunar-chooser-dialog.c:614
+#: thunar/thunar-chooser-dialog.c:608
 msgid "_Forget Association"
 msgstr "Сәйкестікті ұ_мыту"
 
-#: thunar/thunar-chooser-dialog.c:695
+#: thunar/thunar-chooser-dialog.c:689
 #, c-format
 msgid "Open <i>%s (%s)</i> and other files of type \"%s\" with:"
 msgstr "<i>%s(%s)</i> және \"%s\" түріндегі файлдарды көмегімен ашу:"
 
-#: thunar/thunar-chooser-dialog.c:700
+#: thunar/thunar-chooser-dialog.c:694
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr "<i>%s</i> және \"%s\" түрдегі барлық файлдарды көмегімен ашу:"
 
-#: thunar/thunar-chooser-dialog.c:708
+#: thunar/thunar-chooser-dialog.c:702
 #, c-format
 msgid ""
 "Browse the file system to select an application to open files of type "
 "\"%s\"."
 msgstr "\"%s\" түріндегі файлдарды ашатын қолданбаны табу үшін файлдық жүйені қарап шығу."
 
-#: thunar/thunar-chooser-dialog.c:714
+#: thunar/thunar-chooser-dialog.c:708
 #, c-format
 msgid ""
 "Change the default application for files of type \"%s\" to the selected "
 "application."
 msgstr "\"%s\" түрдегі файлдар үшін негізгі ретінде ерекшеленген қолданбаны орнату."
 
-#: thunar/thunar-chooser-dialog.c:760
+#: thunar/thunar-chooser-dialog.c:754
 #, c-format
 msgid "Are you sure that you want to remove \"%s\"?"
 msgstr "\"%s\" өшіруді шынымен қалайсыз ба?"
 
-#: thunar/thunar-chooser-dialog.c:761
+#: thunar/thunar-chooser-dialog.c:755
 msgid "Remove application launcher"
 msgstr "Қолданба жөнелткішін өшіру"
 
-#: thunar/thunar-chooser-dialog.c:764
+#: thunar/thunar-chooser-dialog.c:758
 msgid "_Remove"
 msgstr "Өші_ру"
 
-#: thunar/thunar-chooser-dialog.c:767
+#: thunar/thunar-chooser-dialog.c:761
 msgid ""
 "This will remove the application launcher that appears in the file context menu, but will not uninstall the application itself.\n"
 "\n"
@@ -858,72 +858,72 @@ msgid ""
 msgstr "Бұл әрекет файлдың контекст мәзірінде пайда болатын қолданба жөнелткішін ғана өшіреді, қолданбаның өзіне әсері жоқ.\n\nСіз файлдар басқарушысының \"Көмегімен ашу\" сұхбат терезесінде қолмен көрсетілген қолданба жөнелткіштерін ғана өшіре аласыз."
 
 #. display an error to the user
-#: thunar/thunar-chooser-dialog.c:782
+#: thunar/thunar-chooser-dialog.c:776
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "\"%s\" өшіру сәтсіз аяқталды"
 
-#: thunar/thunar-chooser-dialog.c:835
+#: thunar/thunar-chooser-dialog.c:829
 #, c-format
 msgid "Are you sure that you want to forget \"%s\"?"
 msgstr "\"%s\" ұмытуды шынымен қалайсыз ба?"
 
-#: thunar/thunar-chooser-dialog.c:836
+#: thunar/thunar-chooser-dialog.c:830
 msgid "Forget application launcher"
 msgstr "Қолданба жөнелткішін ұмыту"
 
-#: thunar/thunar-chooser-dialog.c:839
+#: thunar/thunar-chooser-dialog.c:833
 msgid "_Forget"
 msgstr "Ұ_мыту"
 
-#: thunar/thunar-chooser-dialog.c:842
+#: thunar/thunar-chooser-dialog.c:836
 msgid ""
 "This will dissociate the application launcher for this file type, but will "
 "not uninstall or remove the application launcher itself."
 msgstr "Бұл осы файл түріне арналған қолданба жөнелткіші сәйкестігін өшіреді, бірақ қолданба жөнелткішінің өзін өшірмейді."
 
 #. display an error to the user
-#: thunar/thunar-chooser-dialog.c:859
+#: thunar/thunar-chooser-dialog.c:853
 #, c-format
 msgid "Failed to forget \"%s\""
 msgstr "\"%s\" ұмыту сәтсіз аяқталды"
 
-#: thunar/thunar-chooser-dialog.c:886
+#: thunar/thunar-chooser-dialog.c:880
 #: plugins/thunar-uca/thunar-uca-editor.c:177
 msgid "Select an Application"
 msgstr "Қолданбаны таңдау"
 
-#: thunar/thunar-chooser-dialog.c:896 thunar/thunar-renamer-dialog.c:1082
+#: thunar/thunar-chooser-dialog.c:890 thunar/thunar-renamer-dialog.c:1082
 #: plugins/thunar-uca/thunar-uca-editor.c:188
 msgid "All Files"
 msgstr "Барлық файлдар"
 
-#: thunar/thunar-chooser-dialog.c:901
+#: thunar/thunar-chooser-dialog.c:895
 #: plugins/thunar-uca/thunar-uca-editor.c:193
 msgid "Executable Files"
 msgstr "Орындалатын файлдар"
 
-#: thunar/thunar-chooser-dialog.c:916
+#: thunar/thunar-chooser-dialog.c:910
 #: plugins/thunar-uca/thunar-uca-editor.c:208
 msgid "Perl Scripts"
 msgstr "Perl скриптері"
 
-#: thunar/thunar-chooser-dialog.c:922
+#: thunar/thunar-chooser-dialog.c:916
 #: plugins/thunar-uca/thunar-uca-editor.c:214
 msgid "Python Scripts"
 msgstr "Python скриптері"
 
-#: thunar/thunar-chooser-dialog.c:928
+#: thunar/thunar-chooser-dialog.c:922
 #: plugins/thunar-uca/thunar-uca-editor.c:220
 msgid "Ruby Scripts"
 msgstr "Ruby скриптері"
 
-#: thunar/thunar-chooser-dialog.c:934
+#: thunar/thunar-chooser-dialog.c:928
 #: plugins/thunar-uca/thunar-uca-editor.c:226
 msgid "Shell Scripts"
 msgstr "Shell скриптері"
 
-#: thunar/thunar-chooser-dialog.c:1369
+#: thunar/thunar-chooser-dialog.c:1363
 msgid "Set Default Application"
 msgstr "Бастапқы қолданбаны орнату"
 
@@ -955,11 +955,15 @@ msgstr "Кірістіру үшін алмасу буферінде ешнәрс
 
 #. setup the dialog
 #. add the "Close" button
+#. action id
+#. visibility
+#. icon name
+#. label
 #. setup the dialog
 #. add a regular close button, the header bar already provides one
 #: thunar/thunar-column-editor.c:158 thunar/thunar-preferences-dialog.c:275
 #: thunar/thunar-properties-dialog.c:327 thunar/thunar-renamer-dialog.c:382
-#: thunar/thunar-renamer-progress.c:198 thunar/thunar-toolbar-editor.c:121
+#: thunar/thunar-renamer-progress.c:198 thunar/thunar-toolbar-editor.c:125
 #: plugins/thunar-uca/thunar-uca-chooser.c:132
 msgid "_Close"
 msgstr "_Жабу"
@@ -970,8 +974,8 @@ msgstr "Толық тізім көрінісі үшін бағандарды т�
 
 #. add the "Help" button
 #: thunar/thunar-column-editor.c:164 thunar/thunar-preferences-dialog.c:283
-#: thunar/thunar-properties-dialog.c:326 thunar/thunar-toolbar-editor.c:128
-#: thunar/thunar-window.c:552
+#: thunar/thunar-properties-dialog.c:326 thunar/thunar-toolbar-editor.c:132
+#: thunar/thunar-window.c:549
 msgid "_Help"
 msgstr "Кө_мек"
 
@@ -987,12 +991,12 @@ msgid ""
 msgstr "Толық тізім көрінісі үшін көрсетілетін ақпараттың\nретін таңдаңыз."
 
 #. create the "Move Up" button
-#: thunar/thunar-column-editor.c:238 thunar/thunar-toolbar-editor.c:210
+#: thunar/thunar-column-editor.c:238 thunar/thunar-toolbar-editor.c:214
 msgid "Move _Up"
 msgstr "Ж_оғары апару"
 
 #. create the "Move Down" button
-#: thunar/thunar-column-editor.c:252 thunar/thunar-toolbar-editor.c:221
+#: thunar/thunar-column-editor.c:252 thunar/thunar-toolbar-editor.c:225
 msgid "Move Dow_n"
 msgstr "Тө_мен апару"
 
@@ -1110,19 +1114,19 @@ msgstr "Буманың толық көрінісі"
 msgid "Details view"
 msgstr "Толық көрінісі"
 
-#: thunar/thunar-device.c:529
+#: thunar/thunar-device.c:540
 msgid "Safely _Remove"
 msgstr "Қауіпсіз шыға_ру"
 
-#: thunar/thunar-device.c:531
+#: thunar/thunar-device.c:542
 msgid "_Disconnect"
 msgstr "Байланысын а_жырату"
 
-#: thunar/thunar-device.c:533
+#: thunar/thunar-device.c:544
 msgid "Stop the _Multi-Disk Drive"
 msgstr "Кө_пдискті жетекті тоқтату"
 
-#: thunar/thunar-device.c:535
+#: thunar/thunar-device.c:546
 msgid "_Lock"
 msgstr "Құ_лыптау"
 
@@ -1359,6 +1363,15 @@ msgstr "Осында жы_лжыту"
 #: thunar/thunar-dnd.c:72
 msgid "_Link Here"
 msgstr "Осында _сілтеме жасау"
+
+#: thunar/thunar-emblem-chooser.c:346
+#, c-format
+msgid "A maximum of %u emblems is supported per file."
+msgstr ""
+
+#: thunar/thunar-emblem-chooser.c:347
+msgid "Too many emblems selected"
+msgstr ""
 
 #: thunar/thunar-enum-types.c:87
 msgid "Name only"
@@ -1860,7 +1873,7 @@ msgstr "'%s' әрекетін қайталау сәтсіз аяқталды"
 msgid "Undo the latest '%s' operation (%s)"
 msgstr "Соңғы '%s' әрекетті болдырмау (%s)"
 
-#: thunar/thunar-job-operation-history.c:566 thunar/thunar-window.c:504
+#: thunar/thunar-job-operation-history.c:566 thunar/thunar-window.c:501
 msgid "Undo the latest operation"
 msgstr "Соңғы әрекетті болдырмау"
 
@@ -1870,7 +1883,7 @@ msgstr "Соңғы әрекетті болдырмау"
 msgid "Redo the latest '%s' operation (%s)"
 msgstr "Соңғы '%s' әрекетті қайталау (%s)"
 
-#: thunar/thunar-job-operation-history.c:591 thunar/thunar-window.c:505
+#: thunar/thunar-job-operation-history.c:591 thunar/thunar-window.c:502
 msgid "Redo the latest operation"
 msgstr "Соңғы әрекетті қайталау"
 
@@ -1935,11 +1948,11 @@ msgstr "Құрылғыны шығару"
 msgid "The device \"%s\" is being ejected. This may take some time"
 msgstr "\"%s\" құрылғысы шығарылуда. Бұл әрекет біраз уақытты алуы мүмкін"
 
-#: thunar/thunar-path-entry.c:211
+#: thunar/thunar-path-entry.c:212
 msgid "Icon size"
 msgstr "Таңбаша өлшемі"
 
-#: thunar/thunar-path-entry.c:212
+#: thunar/thunar-path-entry.c:213
 msgid "The icon size for the path entry"
 msgstr "Жол үшін таңбашалар өлшемі"
 
@@ -2833,7 +2846,7 @@ msgstr "Тазарту"
 msgid "Clear the file list below"
 msgstr "Төмендегі файлдар тізімін тазарту"
 
-#: thunar/thunar-renamer-dialog.c:203 thunar/thunar-window.c:554
+#: thunar/thunar-renamer-dialog.c:203 thunar/thunar-window.c:551
 msgid "_About"
 msgstr "Осы т_уралы"
 
@@ -2951,7 +2964,7 @@ msgid ""
 msgstr "Осы файлды аттап өтіп, қалған файлдардың аттарын ауыстыруды қалайсыз ба?"
 
 #: thunar/thunar-shortcuts-model.c:633 thunar/thunar-shortcuts-model.c:997
-#: thunar/thunar-window.c:540
+#: thunar/thunar-window.c:537
 msgid "Browse the file system"
 msgstr "Файлдық жүйені шолу"
 
@@ -2983,7 +2996,7 @@ msgstr "Желі"
 msgid "Browse Network"
 msgstr "Желіні шолу"
 
-#: thunar/thunar-shortcuts-model.c:1042 thunar/thunar-window.c:550
+#: thunar/thunar-shortcuts-model.c:1042 thunar/thunar-window.c:547
 msgid "Browse local network connections"
 msgstr "Жергілікті желілік байланыстарын шолу"
 
@@ -3023,13 +3036,13 @@ msgstr "Жар_лық атын ауыстыру"
 msgid "_Remove Shortcut"
 msgstr "Жарлықты ө_шіру"
 
-#: thunar/thunar-shortcuts-view.c:1660
+#: thunar/thunar-shortcuts-view.c:1664
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "\"%s\" жолы бумаға сілтеп тұрған жоқ"
 
 #. display an error message to the user
-#: thunar/thunar-shortcuts-view.c:1680
+#: thunar/thunar-shortcuts-view.c:1684
 msgid "Failed to add new shortcut"
 msgstr "Жаңа жарлықты қосу сәтсіз аяқталды"
 
@@ -3073,136 +3086,136 @@ msgstr "(кейбір құраманы оқу мүмкін емес)"
 msgid "Permission denied"
 msgstr "Рұқсат жоқ"
 
-#: thunar/thunar-standard-view.c:389
+#: thunar/thunar-standard-view.c:399
 msgid "Select _all Files"
 msgstr "Б_арлық файлдарды таңдау"
 
-#: thunar/thunar-standard-view.c:389
+#: thunar/thunar-standard-view.c:399
 msgid "Select all files in this window"
 msgstr "Терезедегі барлық файлдарды таңдау"
 
-#: thunar/thunar-standard-view.c:390
+#: thunar/thunar-standard-view.c:400
 msgid "Select _by Pattern..."
 msgstr "Үл_гі бойынша таңдау..."
 
-#: thunar/thunar-standard-view.c:390
+#: thunar/thunar-standard-view.c:400
 msgid "Select all files that match a certain pattern"
 msgstr "Көрсетілген үлгіге сай барлық файлдарды таңдау"
 
-#: thunar/thunar-standard-view.c:391
+#: thunar/thunar-standard-view.c:401
 msgid "_Invert Selection"
 msgstr "Таңдауды тері_стеу"
 
-#: thunar/thunar-standard-view.c:391
+#: thunar/thunar-standard-view.c:401
 msgid "Select all files but not those currently selected"
 msgstr "Ағымдағы таңдалған файлдардан басқа барлық файлдарды таңдау"
 
-#: thunar/thunar-standard-view.c:392
+#: thunar/thunar-standard-view.c:402
 msgid "U_nselect all Files"
 msgstr "Барлық файлдан таңдауды а_лып тастау"
 
-#: thunar/thunar-standard-view.c:392
+#: thunar/thunar-standard-view.c:402
 msgid "Unselect all files in this window"
 msgstr "Бұл терезедегі барлық файлдан таңдауды алып тастау"
 
-#: thunar/thunar-standard-view.c:393
+#: thunar/thunar-standard-view.c:403
 msgid "Arran_ge Items"
 msgstr "Элементтерді ре_ттеу"
 
-#: thunar/thunar-standard-view.c:394
+#: thunar/thunar-standard-view.c:404
 msgid "_Reversed Order"
 msgstr "Ке_рі ретпен"
 
-#: thunar/thunar-standard-view.c:394
+#: thunar/thunar-standard-view.c:404
 msgid "Reverse the sort order"
 msgstr "Кері ретпен сұрыптау"
 
-#: thunar/thunar-standard-view.c:395
+#: thunar/thunar-standard-view.c:405
 msgid "By _Name"
 msgstr "Аты бойы_нша"
 
-#: thunar/thunar-standard-view.c:395
+#: thunar/thunar-standard-view.c:405
 msgid "Keep items sorted by their name"
 msgstr "Элементтерді аттары бойынша сұрыптау"
 
-#: thunar/thunar-standard-view.c:396
+#: thunar/thunar-standard-view.c:406
 msgid "By _Size"
 msgstr "Ө_лшемі бойынша"
 
-#: thunar/thunar-standard-view.c:396
+#: thunar/thunar-standard-view.c:406
 msgid "Keep items sorted by their size"
 msgstr "Элементтерді өлшемдері бойынша сұрыптау"
 
-#: thunar/thunar-standard-view.c:397
+#: thunar/thunar-standard-view.c:407
 msgid "By _Type"
 msgstr "_Түрі бойынша"
 
-#: thunar/thunar-standard-view.c:397
+#: thunar/thunar-standard-view.c:407
 msgid "Keep items sorted by their type"
 msgstr "Элементтерді түрлері бойынша сұрыптау"
 
-#: thunar/thunar-standard-view.c:398
+#: thunar/thunar-standard-view.c:408
 msgid "By _Modification Date"
 msgstr "Түз_ету уақыты бойынша"
 
-#: thunar/thunar-standard-view.c:398
+#: thunar/thunar-standard-view.c:408
 msgid "Keep items sorted by their modification date"
 msgstr "Элементтерді түзетілген уақыты бойынша сұрыптау"
 
-#: thunar/thunar-standard-view.c:399
+#: thunar/thunar-standard-view.c:409
 msgid "By D_eletion Date"
 msgstr "Ө_шіру уақыты бойынша"
 
-#: thunar/thunar-standard-view.c:399
+#: thunar/thunar-standard-view.c:409
 msgid "Keep items sorted by their deletion date"
 msgstr "Нәрселерді өшірілген уақыты бойынша сұрыптау"
 
-#: thunar/thunar-standard-view.c:400
+#: thunar/thunar-standard-view.c:410
 msgid "_Ascending"
 msgstr "Өс_у ретімен"
 
-#: thunar/thunar-standard-view.c:400
+#: thunar/thunar-standard-view.c:410
 msgid "Sort items in ascending order"
 msgstr "Элементтерді өсу ретімен реттеу"
 
-#: thunar/thunar-standard-view.c:401
+#: thunar/thunar-standard-view.c:411
 msgid "_Descending"
 msgstr "Ке_му ретімен"
 
-#: thunar/thunar-standard-view.c:401
+#: thunar/thunar-standard-view.c:411
 msgid "Sort items in descending order"
 msgstr "Элементтерді кему ретімен реттеу"
 
-#: thunar/thunar-standard-view.c:1736
+#: thunar/thunar-standard-view.c:1750
 msgid "Loading folder contents..."
 msgstr "Бума құрамасын оқу..."
 
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2494 thunar/thunar-window.c:4253
+#: thunar/thunar-standard-view.c:2526 thunar/thunar-window.c:4253
 msgid "Failed to open the home folder"
 msgstr "Үй бумасын ашу сәтсіз аяқталды"
 
-#: thunar/thunar-standard-view.c:2572
+#: thunar/thunar-standard-view.c:2604
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "Үлгі бойынша таңдау"
 
-#: thunar/thunar-standard-view.c:2577
+#: thunar/thunar-standard-view.c:2609
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "Ба_с тарту"
 
-#: thunar/thunar-standard-view.c:2579
+#: thunar/thunar-standard-view.c:2611
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "Таң_дау"
 
-#: thunar/thunar-standard-view.c:2592
+#: thunar/thunar-standard-view.c:2624
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "Ү_лгі:"
 
-#: thunar/thunar-standard-view.c:2593
+#: thunar/thunar-standard-view.c:2625
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3212,7 +3225,7 @@ msgstr "Басты терезеде атаулары сіз енгізген ү�
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: thunar/thunar-standard-view.c:2607
+#: thunar/thunar-standard-view.c:2639
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3223,24 +3236,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr "? дәл бір таңбаға сәйкес келеді,\n* кез келген таңбалар санына, соның ішінде нөлге сәйкес келеді.\n\nМысалы: *.txt, file??.png, pict\n\nЕшбір * немесе ? маскасы жоқ болса, бұл үлгі атаудың кез келген жеріне сәйкес келеді. Маскасы бар болса, бұл үлгі атаудың басында да, соңында да сәйкес болуы тиіс."
 
-#: thunar/thunar-standard-view.c:2611
+#: thunar/thunar-standard-view.c:2643
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr "Р_егистрге тәуелді"
 
-#: thunar/thunar-standard-view.c:2612
+#: thunar/thunar-standard-view.c:2644
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr "Іске қосылған болса, әріп регистрі үлгіге сәйкес келуі керек.\nМысал* үлгісі мысал.txt емес, Мысал.txt атауына сәйкес келеді"
 
-#: thunar/thunar-standard-view.c:2617
+#: thunar/thunar-standard-view.c:2649
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr "Диакритиканы сә_йкестеу"
 
-#: thunar/thunar-standard-view.c:2618
+#: thunar/thunar-standard-view.c:2650
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3249,21 +3262,21 @@ msgstr "Іске қосылған болса, екпіндер де үлгіге
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: thunar/thunar-standard-view.c:3002
+#: thunar/thunar-standard-view.c:3039
 msgid "Invalid filename provided by XDS drag site"
 msgstr "XDS drag site ұсынған файл аты қате"
 
 #. display an error dialog to the user
-#: thunar/thunar-standard-view.c:3196
+#: thunar/thunar-standard-view.c:3233
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "URL \"%s\" үшін сілтемені жасау сәтсіз"
 
-#: thunar/thunar-standard-view.c:3242
+#: thunar/thunar-standard-view.c:3279
 msgid "Untitled document"
 msgstr "Атаусыз құжат"
 
-#: thunar/thunar-standard-view.c:3708 thunar/thunar-window.c:4350
+#: thunar/thunar-standard-view.c:3751 thunar/thunar-window.c:4350
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "\"%s\" бумасын ашу сәтсіз"
@@ -3304,19 +3317,19 @@ msgstr "Соңғы өзгертілген"
 msgid "Show last modified"
 msgstr "Соңғы өзгертілген уақытын көрсету"
 
-#: thunar/thunar-toolbar-editor.c:125
+#: thunar/thunar-toolbar-editor.c:129
 msgid "Configure the Toolbar"
 msgstr "Құралдар панелін баптау"
 
 #. create the top label for the toolbar editor dialog
-#: thunar/thunar-toolbar-editor.c:140
+#: thunar/thunar-toolbar-editor.c:144
 msgid ""
 "Configure the order and visibility of toolbar items.\n"
 "Note that toolbar items are always executed for the current directory."
 msgstr "Құралдар панелі элементтерінің ретін және көрінуін баптау.\nҚұралдар панелінің элементтері әрқашан ағымдағы бумада орындалатынын ескеріңіз."
 
 #. create the "Use Default" button
-#: thunar/thunar-toolbar-editor.c:232
+#: thunar/thunar-toolbar-editor.c:236
 msgid "De_fault Order"
 msgstr "Бас_тапқы реті"
 
@@ -3511,391 +3524,391 @@ msgstr "%s"
 msgid "Image Size:"
 msgstr "Сурет өлшемі:"
 
-#: thunar/thunar-window.c:495
+#: thunar/thunar-window.c:492
 msgid "_File"
 msgstr "_Файл"
 
-#: thunar/thunar-window.c:496
+#: thunar/thunar-window.c:493
 msgid "New _Tab"
 msgstr "Жаңа _бет"
 
-#: thunar/thunar-window.c:496
+#: thunar/thunar-window.c:493
 msgid "Open a new tab for the displayed location"
 msgstr "Көрсетілген орналасуды жаңа бетте ашу"
 
-#: thunar/thunar-window.c:497
+#: thunar/thunar-window.c:494
 msgid "New _Window"
 msgstr "Жаңа _терезе"
 
-#: thunar/thunar-window.c:497
+#: thunar/thunar-window.c:494
 msgid "Open a new Thunar window for the displayed location"
 msgstr "Көрсетілген жол үшін жаңа Thunar терезесін ашу"
 
-#: thunar/thunar-window.c:498
+#: thunar/thunar-window.c:495
 msgid "Detac_h Tab"
 msgstr "Бетті бө_ліп жіберу"
 
-#: thunar/thunar-window.c:498
+#: thunar/thunar-window.c:495
 msgid "Open current folder in a new window"
 msgstr "Ағымдағы буманы жаңа терезеде ашу"
 
-#: thunar/thunar-window.c:499
+#: thunar/thunar-window.c:496
 msgid "Close Ta_b"
 msgstr "_Бетті жабу"
 
-#: thunar/thunar-window.c:499
+#: thunar/thunar-window.c:496
 msgid "Close this folder"
 msgstr "Бұл буманы жабу"
 
-#: thunar/thunar-window.c:500
+#: thunar/thunar-window.c:497
 msgid "_Close Window"
 msgstr "_Терезені жабу"
 
-#: thunar/thunar-window.c:500
+#: thunar/thunar-window.c:497
 msgid "Close this window"
 msgstr "Бұл терезені жабу"
 
-#: thunar/thunar-window.c:501
+#: thunar/thunar-window.c:498
 msgid "Close _All Windows"
 msgstr "Б_арлық терезелерді жабу"
 
-#: thunar/thunar-window.c:501
+#: thunar/thunar-window.c:498
 msgid "Close all Thunar windows"
 msgstr "Барлық Thunar терезелерін жабу"
 
-#: thunar/thunar-window.c:503
+#: thunar/thunar-window.c:500
 msgid "_Edit"
 msgstr "Түз_ету"
 
-#: thunar/thunar-window.c:504
+#: thunar/thunar-window.c:501
 msgid "_Undo"
 msgstr "Болд_ырмау"
 
-#: thunar/thunar-window.c:505
+#: thunar/thunar-window.c:502
 msgid "Red_o"
 msgstr "Қа_йталау"
 
-#: thunar/thunar-window.c:506
+#: thunar/thunar-window.c:503
 msgid "Pr_eferences..."
 msgstr "Ба_птаулар..."
 
-#: thunar/thunar-window.c:506
+#: thunar/thunar-window.c:503
 msgid "Edit Thunars Preferences"
 msgstr "Thunar баптауларын түзету"
 
-#: thunar/thunar-window.c:508
+#: thunar/thunar-window.c:505
 msgid "_View"
 msgstr "Тү_рі"
 
-#: thunar/thunar-window.c:509
+#: thunar/thunar-window.c:506
 msgid "_Reload"
 msgstr "Қа_йта жүктеу"
 
-#: thunar/thunar-window.c:509
+#: thunar/thunar-window.c:506
 msgid "Reload the current folder"
 msgstr "Ағымдағы буманы қайта жүктеу"
 
-#: thunar/thunar-window.c:511
+#: thunar/thunar-window.c:508
 msgid "S_plit View"
 msgstr "Бөлін_ген көрініс"
 
-#: thunar/thunar-window.c:511
+#: thunar/thunar-window.c:508
 msgid "Open/Close Split View"
 msgstr "Бөлінген көріністі ашу/жабу"
 
-#: thunar/thunar-window.c:512
+#: thunar/thunar-window.c:509
 msgid "Switch Focused Split View Pane"
 msgstr "Фокусталған бөлінген көрініс панель күйін ауыстыру"
 
-#: thunar/thunar-window.c:513
+#: thunar/thunar-window.c:510
 msgid "Locatio_n Selector"
 msgstr "Ор_наласуды таңдау"
 
-#: thunar/thunar-window.c:514
+#: thunar/thunar-window.c:511
 msgid "_Text Style"
 msgstr "Мә_тін стилі"
 
-#: thunar/thunar-window.c:514
+#: thunar/thunar-window.c:511
 msgid "Traditional text box showing the current path"
 msgstr "Ағымдағы орналасуды көрсететін әдеттегі мәтіндік өріс"
 
-#: thunar/thunar-window.c:515
+#: thunar/thunar-window.c:512
 msgid "_Buttons Style"
 msgstr "_Батырмалар стилі"
 
-#: thunar/thunar-window.c:515
+#: thunar/thunar-window.c:512
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "Бумаларды белгілейтін батырмалары бар жаңа көрінісі"
 
-#: thunar/thunar-window.c:516
+#: thunar/thunar-window.c:513
 msgid "_Side Pane"
 msgstr "_Бүйір панелі"
 
-#: thunar/thunar-window.c:517
+#: thunar/thunar-window.c:514
 msgid "_Shortcuts"
 msgstr "Жар_лықтар"
 
-#: thunar/thunar-window.c:517
+#: thunar/thunar-window.c:514
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "Жарлықтар панелін көрсету/жасыру"
 
-#: thunar/thunar-window.c:518
+#: thunar/thunar-window.c:515
 msgid "_Tree"
 msgstr "_Ағаш"
 
-#: thunar/thunar-window.c:518
+#: thunar/thunar-window.c:515
 msgid "Toggles the visibility of the tree pane"
 msgstr "Бүйір панеліндегі ағашты қосып/өшіреді"
 
-#: thunar/thunar-window.c:520
+#: thunar/thunar-window.c:517
 msgid "_Image Preview"
 msgstr "С_уретті алдын ала қарау"
 
-#: thunar/thunar-window.c:520
+#: thunar/thunar-window.c:517
 msgid "Change the visibility of this window's image preview"
 msgstr "Бұл терезенің суреттің алдын ала қарауые іске қосып/өшіреді"
 
-#: thunar/thunar-window.c:521
+#: thunar/thunar-window.c:518
 msgid "St_atusbar"
 msgstr "Қал_ып-күй жолағы"
 
-#: thunar/thunar-window.c:521
+#: thunar/thunar-window.c:518
 msgid "Change the visibility of this window's statusbar"
 msgstr "Бұл терезенің қалып-күй жолағын қосып/өшіреді"
 
-#: thunar/thunar-window.c:522
+#: thunar/thunar-window.c:519
 msgid "_Menubar"
 msgstr "_Мәзір жолағы"
 
-#: thunar/thunar-window.c:522
+#: thunar/thunar-window.c:519
 msgid "Change the visibility of this window's menubar"
 msgstr "Бұл терезенің мәзір жолағын іске қосып/өшіреді"
 
-#: thunar/thunar-window.c:523
+#: thunar/thunar-window.c:520
 msgid "Configure _Toolbar..."
 msgstr "Құра_лдар панелін баптау..."
 
-#: thunar/thunar-window.c:523
+#: thunar/thunar-window.c:520
 msgid "Configure the toolbar"
 msgstr "Құралдар панелін баптау"
 
-#: thunar/thunar-window.c:524
+#: thunar/thunar-window.c:521
 msgid "Cl_ear Saved Folder View Settings"
 msgstr "Сақталған бума көрініс баптауларын та_зарту"
 
-#: thunar/thunar-window.c:524
+#: thunar/thunar-window.c:521
 msgid "Delete saved view settings for this folder"
 msgstr "Бұл бума үшін сақталған көрініс баптауларын өшіру"
 
-#: thunar/thunar-window.c:525
+#: thunar/thunar-window.c:522
 msgid "Show _Hidden Files"
 msgstr "Жас_ырын файлдарды көрсету"
 
-#: thunar/thunar-window.c:525
+#: thunar/thunar-window.c:522
 msgid "Toggles the display of hidden files in the current window"
 msgstr "Ағымдағы терезеде жасырын файлдарды көрсету/жасыру"
 
-#: thunar/thunar-window.c:526
+#: thunar/thunar-window.c:523
 msgid "Show _File Highlight"
 msgstr "_Файл ерекшелеуін көрсету"
 
-#: thunar/thunar-window.c:526
+#: thunar/thunar-window.c:523
 msgid ""
 "Toggles the display of file highlight which can be configured in the file "
 "specific property dialog"
 msgstr "Файлға тән қасиеттер сұхбатында баптауға болатын файл ерекшелеуін іске қосу/сөндіру"
 
-#: thunar/thunar-window.c:527
+#: thunar/thunar-window.c:524
 msgid "Zoom I_n"
 msgstr "Ү_лкейту"
 
-#: thunar/thunar-window.c:527
+#: thunar/thunar-window.c:524
 msgid "Show the contents in more detail"
 msgstr "Құрамасы туралы көбірек ақпарат"
 
-#: thunar/thunar-window.c:530
+#: thunar/thunar-window.c:527
 msgid "Zoom _Out"
 msgstr "Кі_шірейту"
 
-#: thunar/thunar-window.c:530
+#: thunar/thunar-window.c:527
 msgid "Show the contents in less detail"
 msgstr "Құрамасы туралы азырақ ақпарат"
 
-#: thunar/thunar-window.c:532
+#: thunar/thunar-window.c:529
 msgid "Normal Si_ze"
 msgstr "Қал_ыпты өлшемі"
 
-#: thunar/thunar-window.c:532
+#: thunar/thunar-window.c:529
 msgid "Show the contents at the normal size"
 msgstr "Құрамасын қалыпты өлшемімен көрсету"
 
-#: thunar/thunar-window.c:534
+#: thunar/thunar-window.c:531
 msgid "_Icon View"
 msgstr "Таңба_ша көрінісі"
 
-#: thunar/thunar-window.c:534
+#: thunar/thunar-window.c:531
 msgid "Display folder content in an icon view"
 msgstr "Бума құрамасын таңбашалар түрінде көрсету"
 
-#: thunar/thunar-window.c:535
+#: thunar/thunar-window.c:532
 msgid "_List View"
 msgstr "_Тізім көрінісі"
 
-#: thunar/thunar-window.c:535
+#: thunar/thunar-window.c:532
 msgid "Display folder content in a detailed list view"
 msgstr "Бума құрамасын толық тізім түрінде көрсету"
 
-#: thunar/thunar-window.c:536
+#: thunar/thunar-window.c:533
 msgid "_Compact View"
 msgstr "_Ықшам көрінісі"
 
-#: thunar/thunar-window.c:536
+#: thunar/thunar-window.c:533
 msgid "Display folder content in a compact list view"
 msgstr "Бума құрамасын ықшам тізім түрінде көрсету"
 
-#: thunar/thunar-window.c:538
+#: thunar/thunar-window.c:535
 msgid "_Go"
 msgstr "Ө_ту"
 
-#: thunar/thunar-window.c:539
+#: thunar/thunar-window.c:536
 msgid "_Bookmarks"
 msgstr "_Бетбелгілер"
 
-#: thunar/thunar-window.c:540
+#: thunar/thunar-window.c:537
 msgid "F_ile System"
 msgstr "Фа_йлдық жүйе"
 
-#: thunar/thunar-window.c:541
+#: thunar/thunar-window.c:538
 msgid "_Home"
 msgstr "Ү_й бумасы"
 
-#: thunar/thunar-window.c:541
+#: thunar/thunar-window.c:538
 msgid "Go to the home folder"
 msgstr "Үй бумасына өту"
 
-#: thunar/thunar-window.c:542
+#: thunar/thunar-window.c:539
 msgid "_Desktop"
 msgstr "_Жұмыс үстелі"
 
-#: thunar/thunar-window.c:542
+#: thunar/thunar-window.c:539
 msgid "Go to the desktop folder"
 msgstr "Жұмыс үстелі бумасына өту"
 
-#: thunar/thunar-window.c:543
+#: thunar/thunar-window.c:540
 msgid "_Computer"
 msgstr "_Компьютер"
 
-#: thunar/thunar-window.c:543
+#: thunar/thunar-window.c:540
 msgid ""
 "Browse all local and remote disks and folders accessible from this computer"
 msgstr "Осы компьютерден қол жетімді барлық жергілікті және қашықтағы дискілер мен бумаларды шолу"
 
-#: thunar/thunar-window.c:544
+#: thunar/thunar-window.c:541
 msgid "_Recent"
 msgstr "Жу_ырдағы"
 
-#: thunar/thunar-window.c:544
+#: thunar/thunar-window.c:541
 msgid "Display recently used files"
 msgstr "Жуырда қолданылған файлдарды көрсету"
 
-#: thunar/thunar-window.c:545
+#: thunar/thunar-window.c:542
 msgid "_Trash"
 msgstr "Қ_оқыс шелегі"
 
-#: thunar/thunar-window.c:545
+#: thunar/thunar-window.c:542
 msgid "Display the contents of the trash can"
 msgstr "Қоқыс шелегінің құрамасын көрсету"
 
-#: thunar/thunar-window.c:546
+#: thunar/thunar-window.c:543
 msgid "Open _Parent"
 msgstr "А_талық бумасын ашу"
 
-#: thunar/thunar-window.c:546
+#: thunar/thunar-window.c:543
 msgid "Open the parent folder"
 msgstr "Аталық бумасын ашу"
 
-#: thunar/thunar-window.c:547
+#: thunar/thunar-window.c:544
 msgid "_Open Location..."
 msgstr "Ж_олды ашу..."
 
-#: thunar/thunar-window.c:547
+#: thunar/thunar-window.c:544
 msgid "Specify a location to open"
 msgstr "Ашу үшін жолды көрсетіңіз"
 
-#: thunar/thunar-window.c:549
+#: thunar/thunar-window.c:546
 msgid "T_emplates"
 msgstr "Үлгіл_ер"
 
-#: thunar/thunar-window.c:549
+#: thunar/thunar-window.c:546
 msgid "Go to the templates folder"
 msgstr "Үлгілер бумасына өту"
 
-#: thunar/thunar-window.c:550
+#: thunar/thunar-window.c:547
 msgid "Browse _Network"
 msgstr "Желі_ні шолу"
 
-#: thunar/thunar-window.c:553
+#: thunar/thunar-window.c:550
 msgid "_Contents"
 msgstr "Құрама_сы"
 
-#: thunar/thunar-window.c:553
+#: thunar/thunar-window.c:550
 msgid "Display Thunar user manual"
 msgstr "Thunar пайдаланушы нұсқауын көрсету"
 
-#: thunar/thunar-window.c:554
+#: thunar/thunar-window.c:551
 msgid "Display information about Thunar"
 msgstr "Thunar туралы ақпаратты көрсету"
 
-#: thunar/thunar-window.c:555
+#: thunar/thunar-window.c:552
 msgid "_Back"
 msgstr "А_ртқа"
 
-#: thunar/thunar-window.c:555
+#: thunar/thunar-window.c:552
 msgid "Go to the previous visited folder"
 msgstr "Алдыңғы бумаға өту"
 
-#: thunar/thunar-window.c:557
+#: thunar/thunar-window.c:554
 msgid "_Forward"
 msgstr "А_лға"
 
-#: thunar/thunar-window.c:557
+#: thunar/thunar-window.c:554
 msgid "Go to the next visited folder"
 msgstr "Келесі бумаға өту"
 
-#: thunar/thunar-window.c:558
+#: thunar/thunar-window.c:555
 msgid "_Previous Tab"
 msgstr "А_лдыңғы бет"
 
-#: thunar/thunar-window.c:558
+#: thunar/thunar-window.c:555
 msgid "Switch to Previous Tab"
 msgstr "Алдыңғы бетке ауысу"
 
-#: thunar/thunar-window.c:559
+#: thunar/thunar-window.c:556
 msgid "_Next Tab"
 msgstr "_Келесі бет"
 
-#: thunar/thunar-window.c:559
+#: thunar/thunar-window.c:556
 msgid "Switch to Next Tab"
 msgstr "Келесі бетке ауысу"
 
-#: thunar/thunar-window.c:560
+#: thunar/thunar-window.c:557
 msgid "_Search for Files..."
 msgstr "Файлдарды і_здеу..."
 
-#: thunar/thunar-window.c:560
+#: thunar/thunar-window.c:557
 msgid "Search for a specific file in the current folder and Recent"
 msgstr "Белгілі бір файлды ағымдағы бумадан және жуырдағы тізімінен іздеу"
 
-#: thunar/thunar-window.c:561
+#: thunar/thunar-window.c:558
 msgid "Cancel search for files"
 msgstr "Файлдарды іздеуден бас тарту"
 
 #. add the label with the root warning
-#: thunar/thunar-window.c:903
+#: thunar/thunar-window.c:900
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "Ескерту, root тіркелгісін қолданудасыз. Жүйеңізге зиян келтіре аласыз."
 
-#: thunar/thunar-window.c:976
+#: thunar/thunar-window.c:973
 msgid "Size: "
 msgstr "Өлшемі:"
 
@@ -3989,7 +4002,7 @@ msgstr "Алдын ала қарау үшін суретті таңдаңыз"
 msgid "Failed to launch search with Catfish"
 msgstr "Catfish көмегімен іздеуді жөнелту сәтсіз аяқталды"
 
-#: thunar/thunar-window.c:6226
+#: thunar/thunar-window.c:6260
 msgid "Location Bar"
 msgstr "Орналасулар панелі"
 
@@ -4751,28 +4764,29 @@ msgstr "Пайдаланушы әрекеттері"
 
 #: plugins/thunar-uca/thunar-uca-chooser.ui:32
 msgid ""
-"You can configure custom actions that will appear in the file managers context menus for certain kinds of files.\n"
+"Configure custom actions that will appear in the file manager's context menus and/or toolbar.\n"
+"These actions are applicable to folders or certain kinds of files.\n"
 "\n"
-"Check the <a href=\"https://docs.xfce.org/xfce/thunar/custom-actions\">documentation</a> for a collection of custom action samples."
-msgstr "Файлдардың белгілі бір түрлері үшін файл басқарушысының контекст мәзірлерінде пайда болатын таңдауыңызша әрекеттерді баптауға болады.\n\nТаңдауыңызша әрекеттер мысалдарының жинағы үшін <a href=\"https://docs.xfce.org/xfce/thunar/custom-actions\">documentation</a> құжаттамасын қараңыз."
+"Check the <a href=\"https://docs.xfce.org/xfce/thunar/custom-actions\">documentation</a> for a collection of custom action examples."
+msgstr ""
 
-#: plugins/thunar-uca/thunar-uca-chooser.ui:87
+#: plugins/thunar-uca/thunar-uca-chooser.ui:88
 msgid "Add a new custom action."
 msgstr "Жаңа таңдауыңызша әрекетті қосу."
 
-#: plugins/thunar-uca/thunar-uca-chooser.ui:96
+#: plugins/thunar-uca/thunar-uca-chooser.ui:97
 msgid "Edit the currently selected action."
 msgstr "Ерекшеленіп тұрған әрекетті түзету."
 
-#: plugins/thunar-uca/thunar-uca-chooser.ui:105
+#: plugins/thunar-uca/thunar-uca-chooser.ui:106
 msgid "Delete the currently selected action."
 msgstr "Ерекшеленіп тұрған әрекетті өшіру."
 
-#: plugins/thunar-uca/thunar-uca-chooser.ui:114
+#: plugins/thunar-uca/thunar-uca-chooser.ui:115
 msgid "Move the currently selected action up by one row."
 msgstr "Ерекшеленіп тұрған әрекетті бір жолға жоғары көтеру."
 
-#: plugins/thunar-uca/thunar-uca-chooser.ui:123
+#: plugins/thunar-uca/thunar-uca-chooser.ui:124
 msgid "Move the currently selected action down by one row."
 msgstr "Ерекшеленіп тұрған әрекетті бір жолға төмен түсіру."
 
