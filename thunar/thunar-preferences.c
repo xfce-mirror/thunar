@@ -127,7 +127,8 @@ enum
   PROP_TREE_ICON_SIZE,
   PROP_MISC_SWITCH_TO_NEW_TAB,
   PROP_MISC_VERTICAL_SPLIT_PANE,
-  PROP_MISC_OPEN_NEW_WINDOWS_IN_SPLIT_VIEW,
+  PROP_MISC_OPEN_NEW_WINDOWS_IN_SPLIT_VIEW, // Drop for or after 4.22
+  PROP_MISC_ALWAYS_ENABLE_SPLIT_VIEW,
   PROP_MISC_COMPACT_VIEW_MAX_CHARS,
   PROP_MISC_HIGHLIGHTING_ENABLED,
   PROP_MISC_UNDO_REDO_HISTORY_SIZE,
@@ -1212,11 +1213,26 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   /**
    * ThunarPreferences:misc-open-new-windows-in-split-view:
    *
+   * DEPRECIATED for 4.20. Should be removed for 4.22 or later versions, together with
+   * the migration code in "thunar_application_open_window()"
+   *
    * If true, all thunar windows will have split view enabled.
    **/
   preferences_props[PROP_MISC_OPEN_NEW_WINDOWS_IN_SPLIT_VIEW] =
     g_param_spec_boolean ("misc-open-new-windows-in-split-view",
                           "MiscOpenNewWindowsInSplitView",
+                          NULL,
+                          FALSE,
+                          EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-always-enable-split-view:
+   *
+   * If true, all thunar windows will have split view enabled.
+   **/
+  preferences_props[PROP_MISC_ALWAYS_ENABLE_SPLIT_VIEW] =
+    g_param_spec_boolean ("misc-always-enable-split-view",
+                          "MiscAlwaysEnableSplitView",
                           NULL,
                           FALSE,
                           EXO_PARAM_READWRITE);
