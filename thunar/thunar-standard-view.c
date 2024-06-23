@@ -3345,6 +3345,10 @@ thunar_standard_view_receive_text_uri_list (GdkDragContext     *context,
   actions = thunar_standard_view_get_dest_actions (standard_view, context, x, y, timestamp, &file);
   if (G_LIKELY ((actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK)) != 0))
     {
+      /* stop any running drag enter timer */
+      if (G_UNLIKELY (standard_view->priv->drag_enter_timer_id != 0))
+        g_source_remove (standard_view->priv->drag_enter_timer_id);
+
       /* ask the user what to do with the drop data */
       action = (gdk_drag_context_get_selected_action (context) == GDK_ACTION_ASK)
               ? thunar_dnd_ask (GTK_WIDGET (standard_view), file, standard_view->priv->drop_file_list, actions)
