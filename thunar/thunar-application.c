@@ -1423,7 +1423,7 @@ thunar_application_open_window (ThunarApplication *application,
   gchar     *role;
   gboolean   open_new_window_as_tab;
   gboolean   misc_always_enable_split_view;
-  gboolean   misc_open_new_windows_in_split_view; // Drop for or after 4.22 along with migration code bellow
+  gboolean   misc_open_new_windows_in_split_view;
   gboolean   restore_tabs;
 
   _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), NULL);
@@ -1500,6 +1500,8 @@ thunar_application_open_window (ThunarApplication *application,
   g_object_get (G_OBJECT (application->preferences),
                 "misc-always-enable-split-view", &misc_always_enable_split_view,
                 "last-restore-tabs", &restore_tabs, NULL);
+
+  /* Dont force split view for the first window if tabs restore is active */
   if (misc_always_enable_split_view && (window_list != NULL || !restore_tabs))
     thunar_window_notebook_toggle_split_view (THUNAR_WINDOW (window));
 
