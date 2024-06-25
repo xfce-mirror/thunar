@@ -1405,7 +1405,7 @@ thunar_application_open_window (ThunarApplication *application,
                                 const gchar       *startup_id,
                                 gboolean           force_new_window)
 {
-  GList*     list;
+  GList*     window_list;
   GtkWidget *window;
   gchar     *role;
   gboolean   open_new_window_as_tab;
@@ -1416,6 +1416,8 @@ thunar_application_open_window (ThunarApplication *application,
   _thunar_return_val_if_fail (directory == NULL || THUNAR_IS_FILE (directory), NULL);
   _thunar_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), NULL);
 
+  window_list = thunar_application_get_windows (application);
+
   if (G_UNLIKELY (screen == NULL))
     screen = gdk_screen_get_default ();
 
@@ -1423,15 +1425,14 @@ thunar_application_open_window (ThunarApplication *application,
   g_object_get (G_OBJECT (application->preferences), "misc-open-new-window-as-tab", &open_new_window_as_tab, NULL);
   if (G_UNLIKELY (!force_new_window && open_new_window_as_tab))
     {
-      list = thunar_application_get_windows (application);
-      if (list != NULL)  
+      if (window_list != NULL)
         {
-          GList     *lp = list;
+          GList     *lp = window_list;
           GtkWidget *data;
 
           /* this will be the topmost Window */
-          list = g_list_last (list);
-          data = list->data;
+          window_list = g_list_last (window_list);
+          data = window_list->data;
 
           if (directory != NULL)
               thunar_window_notebook_add_new_tab (THUNAR_WINDOW (data), directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
@@ -1475,7 +1476,7 @@ thunar_application_open_window (ThunarApplication *application,
   g_object_get (G_OBJECT (application->preferences),
                 "misc-open-new-windows-in-split-view", &misc_open_new_windows_in_split_view,
                 "last-restore-tabs", &restore_tabs, NULL);
-  if (misc_open_new_windows_in_split_view && !restore_tabs)
+  if (misc_open_new_windows_in_split_view && (window_list != NULL || !restore_tabs))
     thunar_window_notebook_toggle_split_view (THUNAR_WINDOW (window));
 
   return window;
