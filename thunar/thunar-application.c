@@ -579,6 +579,9 @@ thunar_application_command_line (GApplication            *gapp,
                   else
                     thunar_window_notebook_add_new_tab (window, directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
                 }
+
+              if (G_LIKELY (directory != NULL))
+                g_object_unref (directory);
             }
 
           thunar_window_notebook_set_current_tab (window, last_focused_tab);
@@ -607,6 +610,9 @@ thunar_application_command_line (GApplication            *gapp,
                   else
                     thunar_window_notebook_add_new_tab (window, directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
                 }
+
+              if (G_LIKELY (directory != NULL))
+                g_object_unref (directory);
             }
 
           thunar_window_notebook_set_current_tab (window, last_focused_tab);
