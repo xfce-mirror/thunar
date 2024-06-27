@@ -3353,7 +3353,7 @@ thunar_action_manager_append_open_section (ThunarActionManager *action_mgr,
   if (action_mgr->n_files_to_process > 0 && (action_mgr->is_searching || thunar_file_is_recent (action_mgr->current_directory)))
     {
       /* Dont show 'open location' on the recent folder shortcut itself */
-      if (!thunar_file_is_recent (action_mgr->files_to_process->data))
+      if (!thunar_file_is_recent (action_mgr->files_to_process->data) && !THUNAR_IS_TREE_VIEW (action_mgr->widget))
         {
           xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
           thunar_action_manager_append_menu_item (action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_LOCATION, FALSE);
