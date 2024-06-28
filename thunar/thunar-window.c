@@ -580,7 +580,6 @@ thunar_window_class_init (ThunarWindowClass *klass)
   GtkWidgetClass *gtkwidget_class;
   GtkBindingSet  *binding_set;
   GObjectClass   *gobject_class;
-  guint           i;
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_window_dispose;
@@ -730,7 +729,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
   binding_set = gtk_binding_set_by_class (klass);
 
   /* setup the key bindings for Alt+N */
-  for (i = 0; i < 10; i++)
+  for (guint i = 0; i < 10; i++)
     {
       gtk_binding_entry_add_signal (binding_set, GDK_KEY_0 + i, GDK_MOD1_MASK,
                                     "tab-change", 1, G_TYPE_UINT, i - 1);
@@ -1021,24 +1020,38 @@ thunar_window_init (ThunarWindow *window)
   window->location_toolbar = NULL;
   thunar_window_location_toolbar_create (window);
 
+  /* setup setting the location bar visibility on-demand */
+  g_signal_connect_swapped (G_OBJECT (window->preferences), "notify::last-location-bar", G_CALLBACK (thunar_window_update_location_bar_visible), window);
+  thunar_window_update_location_bar_visible (window);
+
+  /* update the location toolbar when symbolic icons setting is toggled */
+  g_signal_connect_swapped (G_OBJECT (window->preferences), "notify::misc-symbolic-icons-in-toolbar", G_CALLBACK (thunar_window_update_location_toolbar_icons), window);
+
+  /* update the location toolbar when custom actions are changed */
   uca_path = xfce_resource_save_location (XFCE_RESOURCE_CONFIG, "Thunar/uca.xml", TRUE);
   window->uca_file         = g_file_new_for_path (uca_path);
   window->uca_file_monitor = g_file_monitor_file (window->uca_file, G_FILE_MONITOR_NONE, NULL, NULL);
   if (G_LIKELY (window->uca_file_monitor != NULL))
     g_signal_connect_swapped (window->uca_file_monitor, "changed", G_CALLBACK (thunar_window_update_location_toolbar), window);
   g_free (uca_path);
+  
+  /* the UCA shortcuts need to be checked 'by hand', since we dont want to permanently keep menu items for them */
+  g_signal_connect (window, "key-press-event", G_CALLBACK (thunar_window_check_uca_key_activation), NULL);
 
-  g_signal_connect_swapped (G_OBJECT (window->preferences), "notify::misc-symbolic-icons-in-toolbar", G_CALLBACK (thunar_window_update_location_toolbar_icons), window);
-
-  /* setup setting the location bar visibility on-demand */
-  g_signal_connect_object (G_OBJECT (window->preferences), "notify::last-location-bar", G_CALLBACK (thunar_window_update_location_bar_visible), window, G_CONNECT_SWAPPED);
-  thunar_window_update_location_bar_visible (window);
-
-  /* update window icon whenever preferences change */
-  g_signal_connect_object (G_OBJECT (window->preferences), "notify::misc-change-window-icon", G_CALLBACK (thunar_window_update_window_icon), window, G_CONNECT_SWAPPED);
+  /* handle the "back" and "forward" buttons */
+  g_signal_connect (window, "button-press-event", G_CALLBACK (thunar_window_button_press_event), window);
+  window->signal_handler_id_history_changed = 0;
 
   /* set the selected side pane */
   thunar_window_install_sidepane (window, last_side_pane);
+
+  /* ensure that all the view types are registered */
+  g_type_ensure (THUNAR_TYPE_ICON_VIEW);
+  g_type_ensure (THUNAR_TYPE_DETAILS_VIEW);
+  g_type_ensure (THUNAR_TYPE_COMPACT_VIEW);
+
+  /* update window icon whenever preferences change */
+  g_signal_connect_swapped (G_OBJECT (window->preferences), "notify::misc-change-window-icon", G_CALLBACK (thunar_window_update_window_icon), window);
 
   /* synchronise the "directory-specific-settings" property with the global "misc-directory-specific-settings" property */
   g_object_bind_property (G_OBJECT (window->preferences), "misc-directory-specific-settings", G_OBJECT (window), "directory-specific-settings", G_BINDING_SYNC_CREATE);
@@ -1057,6 +1070,7 @@ thunar_window_init (ThunarWindow *window)
   else
     window->catfish_search_button = NULL;
 
+  /* setup the trash infobar */
   window->trash_infobar = gtk_info_bar_new ();
   gtk_grid_attach (GTK_GRID (window->view_box), window->trash_infobar, 0, 2, 1, 1);
   window->trash_infobar_restore_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), _("Restore Selected Items"), RESTORE);
@@ -2602,8 +2616,6 @@ thunar_window_notebook_update_title (GtkWidget *label)
     }
 
   g_object_set_data (G_OBJECT (label), "binding", binding);
-
-  return;
 }
 
 
@@ -5826,8 +5838,6 @@ thunar_window_selection_changed (ThunarWindow *window)
       thunar_window_update_embedded_image_preview (window);
       thunar_window_update_standalone_image_preview (window);
     }
-
-  return;
 }
 
 
@@ -6190,10 +6200,11 @@ thunar_window_create_toolbar_radio_item_from_action (ThunarWindow       *window,
   gtk_tool_button_set_label (GTK_TOOL_BUTTON (toolbar_item), entry->menu_item_label_text);
   gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (toolbar_item), image);
   gtk_widget_set_tooltip_text (GTK_WIDGET (toolbar_item), entry->menu_item_tooltip_text);
-  gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), GTK_TOOL_ITEM (toolbar_item), -1);
+  gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), toolbar_item, -1);
 
-  /* 'gtk_check_menu_item_set_active' has to be done before 'g_signal_connect_swapped', to don't trigger the callback */
+  /* 'gtk_toggle_tool_button_set_active' has to be done before 'g_signal_connect_swapped' to not trigger the callback */
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (toolbar_item), active);
+  g_signal_connect_swapped (G_OBJECT (toolbar_item), "toggled", entry->callback, window);
 
   g_signal_connect_after (G_OBJECT (toolbar_item), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), window);
 
@@ -6268,12 +6279,6 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   g_signal_connect (window->location_toolbar_item_forward, "button-press-event", G_CALLBACK (thunar_window_history_clicked), window);
   g_signal_connect (window->location_toolbar_item_parent, "button-press-event", G_CALLBACK (thunar_window_open_parent_clicked), window);
   g_signal_connect (window->location_toolbar_item_home, "button-press-event", G_CALLBACK (thunar_window_open_home_clicked), window);
-  g_signal_connect (window, "button-press-event", G_CALLBACK (thunar_window_button_press_event), window);
-  window->signal_handler_id_history_changed = 0;
-
-  g_signal_connect_swapped (window->location_toolbar_item_icon_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_ICONS)->callback, window);
-  g_signal_connect_swapped (window->location_toolbar_item_detailed_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST)->callback, window);
-  g_signal_connect_swapped (window->location_toolbar_item_compact_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST)->callback, window);
 
   g_object_bind_property (window->job_operation_history, "can-undo", window->location_toolbar_item_undo, "sensitive", G_BINDING_SYNC_CREATE);
   g_object_bind_property (window->job_operation_history, "can-redo", window->location_toolbar_item_redo, "sensitive", G_BINDING_SYNC_CREATE);
@@ -6294,9 +6299,6 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
 
   /* add custom actions to the toolbar */
   thunar_window_location_toolbar_add_ucas (window);
-
-  /* The UCA shortcuts need to be checked 'by hand', since we dont want to permanently keep menu items for them */
-  g_signal_connect (window, "key-press-event", G_CALLBACK (thunar_window_check_uca_key_activation), NULL);
 
   /* display the toolbar */
   gtk_widget_show_all (window->location_toolbar);
