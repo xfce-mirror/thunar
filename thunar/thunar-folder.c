@@ -540,7 +540,7 @@ _thunar_folder_files_update_timeout (gpointer data)
 {
   ThunarFolder  *folder = THUNAR_FOLDER (data);
   ThunarFile    *file;
-  GHashTable    *files = g_hash_table_new (g_direct_hash, NULL);
+  GHashTable    *files = g_hash_table_new_full (g_direct_hash, NULL, g_object_unref, NULL);
   GHashTableIter iter;
   gpointer       key;
 
@@ -548,9 +548,11 @@ _thunar_folder_files_update_timeout (gpointer data)
   g_hash_table_iter_init (&iter, folder->removed_files_map);
   while (g_hash_table_iter_next (&iter, &key, NULL))
     {
-      file = THUNAR_FILE (key);
+      /* prevent destruction by adding a temporary reference to the file */
+      file = g_object_ref (THUNAR_FILE (key));
       if (_thunar_folder_remove_file (folder, file))
-        g_hash_table_add (files, file);
+        g_hash_table_add (files, g_object_ref (file));
+      g_object_unref (file);
     }
 
   g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, files);
@@ -564,7 +566,7 @@ _thunar_folder_files_update_timeout (gpointer data)
     {
       file = THUNAR_FILE (key);
       if (_thunar_folder_add_file (folder, file))
-        g_hash_table_add (files, file);
+        g_hash_table_add (files, g_object_ref (file));
     }
 
   /* start loading the content types of all added files */
@@ -582,7 +584,7 @@ _thunar_folder_files_update_timeout (gpointer data)
     if (!g_hash_table_contains (folder->files_map, key))
       continue;
 
-    g_hash_table_add (files, key);
+    g_hash_table_add (files, g_object_ref (key));
   }
 
   g_signal_emit (G_OBJECT (folder), folder_signals[FILES_CHANGED], 0, files);
