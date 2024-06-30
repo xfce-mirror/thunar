@@ -79,6 +79,11 @@ gchar      *thunar_util_next_new_file_name       (ThunarFile            *dir,
                                                   const gchar           *file_name,
                                                   ThunarNextFileNameMode name_mode,
                                                   gboolean               is_directory);
+gchar      *thunar_util_next_new_file_name_raw   (GList                 *file_list,
+                                                  const gchar           *file_name,
+                                                  ThunarNextFileNameMode name_mode,
+                                                  gboolean               is_directory);
+                                                  
 const char *thunar_util_get_search_prefix        (void);
 gboolean    thunar_util_is_a_search_query        (const gchar    *string);
 gchar*      thunar_util_strjoin_list             (GList       *string_list,
