@@ -59,6 +59,7 @@
 #include "thunar/thunar-folder.h"
 #include "thunar/thunar-text-renderer.h"
 #include "thunar/thunar-icon-renderer.h"
+#include "thunar/thunar-io-scan-directory.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-renamer-dialog.h"
 #include "thunar/thunar-window.h"
@@ -686,9 +687,39 @@ thunar_setup_display_cb (gpointer data)
 
 
 
-/**
+/*
  * thunar_util_next_new_file_name
- * @dir : the directory to search for a free filename
+ *
+ * Simplification of "thunar_util_next_new_file_name_raw" by using a ThunarFolder
+ */
+gchar*
+thunar_util_next_new_file_name (ThunarFile            *dir,
+                                const gchar           *file_name,
+                                ThunarNextFileNameMode name_mode,
+                                gboolean               is_directory)
+{
+  gchar*         new_name = NULL;
+  ThunarFolder  *folder;
+  GList         *files_in_folder = NULL;
+  GHashTableIter iter;
+  gpointer       key;
+
+  folder = thunar_folder_get_for_file (dir);
+  g_hash_table_iter_init (&iter, thunar_folder_get_files (folder));
+  while (g_hash_table_iter_next (&iter, &key, NULL))
+    files_in_folder = g_list_append (files_in_folder, thunar_file_get_file (key));
+  new_name = thunar_util_next_new_file_name_raw (files_in_folder, file_name, name_mode, is_directory);
+  g_list_free (files_in_folder);
+  g_object_unref (folder);
+
+  return new_name;
+}
+
+
+
+/**
+ * thunar_util_next_new_file_name_raw
+ * @file_list List of GFiles to check for the name
  * @file_name : the filename which will be used as the basis/default
  * @ThunarNextFileNameMode: To decide if the naming should follow "file copy","file link" or "new file" syntax
  * @is_directory: TRUE, if @file_name is supposed to be the name of a directory
@@ -711,12 +742,11 @@ thunar_setup_display_cb (gpointer data)
  * Return value: pointer to the new filename.
 **/
 gchar*
-thunar_util_next_new_file_name (ThunarFile            *dir,
-                                const gchar           *file_name,
-                                ThunarNextFileNameMode name_mode,
-                                gboolean               is_directory)
+thunar_util_next_new_file_name_raw (GList                 *file_list,
+                                    const gchar           *file_name,
+                                    ThunarNextFileNameMode name_mode,
+                                    gboolean               is_directory)
 {
-  ThunarFolder   *folder          = thunar_folder_get_for_file (dir);
   unsigned long   file_name_size  = strlen (file_name);
   unsigned        count           = 0;
   gboolean        found_duplicate = FALSE;
@@ -734,23 +764,17 @@ thunar_util_next_new_file_name (ThunarFile            *dir,
   /* loop through the directory until new_name is unique */
   while (TRUE)
     {
-      GHashTableIter iter;
-      gpointer       key;
-
       found_duplicate = FALSE;
-      g_hash_table_iter_init (&iter, thunar_folder_get_files (folder));
-      while (g_hash_table_iter_next (&iter, &key, NULL))
+      for (GList *lp = file_list; lp != NULL; lp = lp->next)
         {
-          ThunarFile  *file = THUNAR_FILE (key);
-          gchar       *name = g_file_get_basename (thunar_file_get_file (file));
-
+          gchar *name = g_file_get_basename (lp->data);
           if (g_strcmp0 (new_name, name) == 0)
-            {
-              found_duplicate = TRUE;
-              g_free (name);
-              break;
-            }
-          g_free (name);
+              {
+                found_duplicate = TRUE;
+                g_free (name);
+                break;
+              }
+            g_free (name);
         }
 
       if (!found_duplicate)
@@ -775,7 +799,6 @@ thunar_util_next_new_file_name (ThunarFile            *dir,
       else
         g_assert("should not be reached");
     }
-  g_object_unref (G_OBJECT (folder));
 
   return new_name;
 }

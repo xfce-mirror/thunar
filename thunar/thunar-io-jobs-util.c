@@ -26,6 +26,7 @@
 
 #include "thunar/thunar-gio-extensions.h"
 #include "thunar/thunar-io-jobs-util.h"
+#include "thunar/thunar-io-scan-directory.h"
 #include "thunar/thunar-job.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-util.h"
@@ -61,7 +62,7 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob               *job,
   GError      *err = NULL;
   GFile       *duplicate_file = NULL;
   GFile       *parent_file = NULL;
-  ThunarFile  *thunar_parent_file;
+  GList       *file_list;
   ThunarFile  *thunar_file;
   gchar       *old_filename;
   gchar       *filename;
@@ -76,28 +77,21 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob               *job,
     return NULL;
 
   parent_file = g_file_get_parent (file);
-  thunar_parent_file = thunar_file_get (parent_file, &err);
-  if (thunar_parent_file == NULL)
-    {
-      g_object_unref (parent_file);
-      g_propagate_error (error, err);
-      return NULL;
-    }
   thunar_file = thunar_file_get (file, &err);
   if (thunar_file == NULL)
     {
       g_object_unref (parent_file);
-      g_object_unref (thunar_parent_file);
       g_propagate_error (error, err);
       return NULL;
     }
 
   old_filename = g_file_get_basename (file);
-  filename = thunar_util_next_new_file_name (thunar_parent_file,
-                                             old_filename,
-                                             name_mode,
-                                             thunar_file_is_directory (thunar_file));
-  g_object_unref (thunar_parent_file);
+  file_list = thunar_io_scan_directory (NULL, parent_file, G_FILE_QUERY_INFO_NONE, FALSE, FALSE, FALSE, NULL, NULL);
+  filename = thunar_util_next_new_file_name_raw (file_list,
+                                                 old_filename,
+                                                 name_mode,
+                                                 thunar_file_is_directory (thunar_file));
+  thunar_g_list_free_full (file_list);
   g_object_unref (thunar_file);
 
   /* create the GFile for the copy/link */
