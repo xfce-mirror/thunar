@@ -6131,6 +6131,9 @@ thunar_window_create_toolbar_item_from_action (ThunarWindow       *window,
   gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (toolbar_item), image);
   gtk_widget_show (image);
 
+  /* update label to handle mnemonics in the overflow menu */
+  gtk_tool_button_set_label_widget (GTK_TOOL_BUTTON (toolbar_item), gtk_label_new_with_mnemonic (entry->menu_item_label_text));
+
   if (action != THUNAR_WINDOW_ACTION_BACK && action != THUNAR_WINDOW_ACTION_FORWARD)
     g_signal_connect_after (G_OBJECT (toolbar_item), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
 
@@ -6165,6 +6168,9 @@ thunar_window_create_toolbar_toggle_item_from_action (ThunarWindow       *window
   gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (toolbar_item), image);
   gtk_widget_show (image);
 
+  /* update label to handle mnemonics in the overflow menu */
+  gtk_tool_button_set_label_widget (GTK_TOOL_BUTTON (toolbar_item), gtk_label_new_with_mnemonic (entry->menu_item_label_text));
+
   g_signal_connect_after (G_OBJECT (toolbar_item), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
 
   g_object_set_data_full (G_OBJECT (toolbar_item), "id", thunar_util_accel_path_to_id (entry->accel_path), g_free);
@@ -6197,8 +6203,8 @@ thunar_window_create_toolbar_radio_item_from_action (ThunarWindow       *window,
     toolbar_item = gtk_radio_tool_button_new_from_widget (group);
   icon_name = thunar_window_toolbar_get_icon_name (window, entry->menu_item_icon_name);
   image = gtk_image_new_from_icon_name (icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
-  gtk_tool_button_set_label (GTK_TOOL_BUTTON (toolbar_item), entry->menu_item_label_text);
   gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (toolbar_item), image);
+  gtk_tool_button_set_label_widget (GTK_TOOL_BUTTON (toolbar_item), gtk_label_new_with_mnemonic (entry->menu_item_label_text));
   gtk_widget_set_tooltip_text (GTK_WIDGET (toolbar_item), entry->menu_item_tooltip_text);
   gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), toolbar_item, -1);
 
@@ -6242,6 +6248,7 @@ static void
 thunar_window_location_toolbar_create (ThunarWindow *window)
 {
   GtkToolItem *tool_item;
+  GtkWidget   *menu_item;
   guint        item_order = 0;
   gboolean     small_icons;
 
@@ -6287,11 +6294,15 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   tool_item = gtk_tool_item_new ();
   gtk_tool_item_set_expand (tool_item, TRUE);
   gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), tool_item, -1);
-  gtk_toolbar_set_show_arrow (GTK_TOOLBAR (window->location_toolbar), FALSE);
   g_object_set_data_full (G_OBJECT (tool_item), "id", g_strdup ("location-bar"), g_free);
   g_object_set_data_full (G_OBJECT (tool_item), "label", g_strdup (_("Location Bar")), g_free);
   g_object_set_data_full (G_OBJECT (tool_item), "icon", g_strdup(""), g_free);
   thunar_g_object_set_guint_data (G_OBJECT (tool_item), "default-order", item_order++);
+
+  /* add a proxy menu item for the location bar to represent the bar in the overflow menu */
+  menu_item = gtk_menu_item_new_with_label (_("Location Bar"));
+  gtk_tool_item_set_proxy_menu_item (tool_item, "location-toolbar-menu-id", menu_item);
+  gtk_widget_set_sensitive (GTK_WIDGET (menu_item), FALSE);
 
   /* add remaining toolbar items */
                                          thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_RELOAD, item_order++);
