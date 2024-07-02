@@ -1693,14 +1693,15 @@ static gboolean thunar_window_delete (GtkWidget *widget,
                                       GdkEvent  *event,
                                       gpointer   data )
 {
-  gboolean      confirm_close_multiple_tabs, do_not_ask_again, restore_tabs;
-  gint          response, n_tabs, n_tabsl = 0, n_tabsr = 0;
-  gint          current_page_left = 0, current_page_right = 0;
-  ThunarWindow *window = THUNAR_WINDOW (widget);
-  gchar       **tab_uris_left;
-  gchar       **tab_uris_right;
+  ThunarWindow  *window = THUNAR_WINDOW (widget);
+  gchar        **tab_uris_left;
+  gchar        **tab_uris_right;
+  gint           response, n_tabs, n_tabsl = 0, n_tabsr = 0;
+  gint           current_page_left = 0, current_page_right = 0;
+  gboolean       restore_tabs, always_show_tabs;
+  gboolean       confirm_close_multiple_tabs, do_not_ask_again;
 
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (widget),FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (widget), FALSE);
 
   if (window->is_searching == TRUE)
     thunar_window_action_cancel_search (window);
@@ -1761,6 +1762,16 @@ static gboolean thunar_window_delete (GtkWidget *widget,
     {
       if (n_tabs < 3)
         return FALSE;
+
+      g_object_get (G_OBJECT (window->preferences), "misc-always-show-tabs", &always_show_tabs, NULL);
+      if (!always_show_tabs)
+        {
+          /* subtract single tabs from total count shown in the confirmation dialog */
+          if (n_tabsl == 1)
+            n_tabs--;
+          if (n_tabsr == 1)
+            n_tabs--;
+        }
     }
   else
     {
@@ -2320,8 +2331,7 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
 static void
 thunar_window_notebook_show_tabs (ThunarWindow *window)
 {
-  gboolean   always_show_tabs;
-  gint       n_pages = 0;
+  gboolean always_show_tabs;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (window->notebook_left || window->notebook_right);
@@ -2330,17 +2340,17 @@ thunar_window_notebook_show_tabs (ThunarWindow *window)
 
   /* check both notebooks, maybe not the selected one get clicked */
   if (window->notebook_left)
-    n_pages += gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_left));
-  if (window->notebook_right)
-    n_pages += gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_right));
-
-  if (thunar_window_split_view_is_active (window))
     {
-      gtk_notebook_set_show_tabs (GTK_NOTEBOOK (window->notebook_left), n_pages > 2 || always_show_tabs);
-      gtk_notebook_set_show_tabs (GTK_NOTEBOOK (window->notebook_right), n_pages > 2 || always_show_tabs);
+      gtk_notebook_set_show_tabs (GTK_NOTEBOOK (window->notebook_left),
+                                  gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_left)) > 1
+                                  || always_show_tabs);
     }
-  else
-    gtk_notebook_set_show_tabs (GTK_NOTEBOOK (window->notebook_selected), n_pages > 1 || always_show_tabs);
+  if (window->notebook_right)
+    {
+      gtk_notebook_set_show_tabs (GTK_NOTEBOOK (window->notebook_right),
+                                  gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_right)) > 1
+                                  || always_show_tabs);
+    }
 }
 
 
