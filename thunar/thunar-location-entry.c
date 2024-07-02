@@ -314,9 +314,6 @@ thunar_location_entry_open_or_launch (ThunarLocationEntry *location_entry,
   /* check if the file is mounted */
   if (thunar_file_is_mounted (file))
     {
-      /* add opened file to `recent:///` */
-      thunar_file_add_to_recent (file);
-
       /* check if we have a new directory or a file to launch */
       if (thunar_file_is_directory (file))
         {
@@ -348,6 +345,11 @@ thunar_location_entry_open_or_launch (ThunarLocationEntry *location_entry,
                                  _("Failed to open \"%s\""),
                                  thunar_file_get_display_name (file));
       g_error_free (error);
+    }
+  else
+    {
+      /* add opened file to `recent:///` */
+      thunar_file_add_to_recent (file);
     }
 }
 
