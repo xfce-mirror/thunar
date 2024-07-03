@@ -2769,7 +2769,6 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
   ThunarFile*file;
   GList     *file_list = NULL;
   GList     *lp;
-  GtkWidget *window;
   GtkWidget *source_view;
   GFile     *parent_file;
   gboolean   belongs_here;
@@ -2813,10 +2812,6 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
 
           /* release the file list */
           g_list_free_full (file_list, g_object_unref);
-
-          /* if split view is active, give focus to the pane containing the view */
-          window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
-          thunar_window_focus_view (THUNAR_WINDOW (window), GTK_WIDGET (standard_view));
 
           /* grab the focus to the view widget */
           gtk_widget_grab_focus (gtk_bin_get_child (GTK_BIN (standard_view)));
@@ -3337,9 +3332,10 @@ thunar_standard_view_receive_text_uri_list (GdkDragContext     *context,
   GdkDragAction actions;
   GdkDragAction action;
   ThunarFile   *file = NULL;
-  gboolean      succeed = FALSE;
+  GtkWidget    *window;
   GtkWidget    *source_widget;
   GtkWidget    *source_view = NULL;
+  gboolean      succeed = FALSE;
 
   /* determine the drop position */
   actions = thunar_standard_view_get_dest_actions (standard_view, context, x, y, timestamp, &file);
@@ -3357,6 +3353,14 @@ thunar_standard_view_receive_text_uri_list (GdkDragContext     *context,
       /* perform the requested action */
       if (G_LIKELY (action != 0))
         {
+          /* move the focus to the target widget */
+          window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
+          if (GTK_IS_WINDOW (window))
+            {
+              /* if split view is active, give focus to the pane containing the view */
+              thunar_window_focus_view (THUNAR_WINDOW (window), GTK_WIDGET (standard_view));
+            }
+
           /* look if we can find the drag source widget */
           source_widget = gtk_drag_get_source_widget (context);
           if (source_widget != NULL)
