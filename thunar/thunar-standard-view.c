@@ -2893,6 +2893,7 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
 {
   GdkScrollDirection scrolling_direction;
   gboolean           misc_horizontal_wheel_navigates;
+  gboolean           misc_ctrl_scroll_wheel_to_zoom;
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
@@ -2928,11 +2929,16 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
   /* zoom-in/zoom-out on control+mouse wheel */
   if ((event->state & GDK_CONTROL_MASK) != 0 && (scrolling_direction == GDK_SCROLL_UP || scrolling_direction == GDK_SCROLL_DOWN))
     {
-      thunar_view_set_zoom_level (THUNAR_VIEW (standard_view),
-          (scrolling_direction == GDK_SCROLL_UP)
-          ? MIN (standard_view->priv->zoom_level + 1, THUNAR_ZOOM_N_LEVELS - 1)
-          : MAX (standard_view->priv->zoom_level, 1) - 1);
-      return TRUE;
+      /* check if we should use ctrl + scroll to zoom */
+      g_object_get (G_OBJECT (standard_view->preferences), "misc-ctrl-scroll-wheel-to-zoom", &misc_ctrl_scroll_wheel_to_zoom, NULL);
+      if (misc_ctrl_scroll_wheel_to_zoom)
+        {
+          thunar_view_set_zoom_level (THUNAR_VIEW (standard_view),
+              (scrolling_direction == GDK_SCROLL_UP)
+              ? MIN (standard_view->priv->zoom_level + 1, THUNAR_ZOOM_N_LEVELS - 1)
+              : MAX (standard_view->priv->zoom_level, 1) - 1);
+          return TRUE;
+        }
     }
 
   /* next please... */
