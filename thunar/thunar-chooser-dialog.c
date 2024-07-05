@@ -522,8 +522,6 @@ thunar_chooser_dialog_response (GtkDialog *widget,
       list.data = thunar_file_get_file (dialog->file);
       list.next = list.prev = NULL;
 
-      thunar_file_add_to_recent (dialog->file);
-
       if (!g_app_info_launch (app_info, &list, G_APP_LAUNCH_CONTEXT (context), &error))
         {
           /* display an error to the user */
@@ -534,6 +532,11 @@ thunar_chooser_dialog_response (GtkDialog *widget,
 
           /* release the error */
           g_error_free (error);
+        }
+      else
+        {
+          /* add opened file to `recent:///` */
+          thunar_file_add_to_recent (dialog->file);
         }
 
       /* destroy the launch context */
