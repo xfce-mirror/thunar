@@ -1095,11 +1095,6 @@ thunar_window_init (ThunarWindow *window)
   if (G_LIKELY (window->view != NULL))
     thunar_window_binding_create (window, THUNAR_STANDARD_VIEW (window->view), "statusbar-text", window->statusbar, "text", G_BINDING_SYNC_CREATE);
 
-  /* ensure that all the view types are registered */
-  g_type_ensure (THUNAR_TYPE_ICON_VIEW);
-  g_type_ensure (THUNAR_TYPE_DETAILS_VIEW);
-  g_type_ensure (THUNAR_TYPE_COMPACT_VIEW);
-
   /* load the bookmarks file and monitor */
   window->bookmarks = NULL;
   window->bookmark_file = thunar_g_file_new_for_bookmarks ();
