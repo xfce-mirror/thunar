@@ -346,6 +346,11 @@ thunar_location_entry_open_or_launch (ThunarLocationEntry *location_entry,
                                  thunar_file_get_display_name (file));
       g_error_free (error);
     }
+  else
+    {
+      /* add opened file to `recent:///` */
+      thunar_file_add_to_recent (file);
+    }
 }
 
 
