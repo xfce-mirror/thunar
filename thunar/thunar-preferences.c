@@ -138,6 +138,7 @@ enum
   PROP_MISC_EXPANDABLE_FOLDERS,
   PROP_MISC_SYMBOLIC_ICONS_IN_TOOLBAR,
   PROP_MISC_SYMBOLIC_ICONS_IN_SIDEPANE,
+  PROP_MISC_CTRL_SCROLL_WHEEL_TO_ZOOM,
   N_PROPERTIES,
 };
 
@@ -1345,11 +1346,23 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * If true symbolic icons should be used in the sidepane
    **/
   preferences_props[PROP_MISC_SYMBOLIC_ICONS_IN_SIDEPANE] =
-      g_param_spec_boolean ("misc-symbolic-icons-in-sidepane",
-                            "MiscSymbolicIconsInSidepane",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+      g_param_spec_boolean("misc-symbolic-icons-in-sidepane",
+                           "MiscSymbolicIconsInSidepane",
+                           NULL,
+                           FALSE,
+                           EXO_PARAM_READWRITE);
+
+   /**
+    * ThunarPreferences:misc-ctrl-scroll-wheel-to-zoom:
+    *
+    * If true, Ctrl + Scroll Wheel to Zoom is enabled
+    **/
+  preferences_props[PROP_MISC_CTRL_SCROLL_WHEEL_TO_ZOOM] =
+      g_param_spec_boolean("misc-ctrl-scroll-wheel-to-zoom",
+                           "MiscCtrlScrollWheelToZoom",
+                           NULL,
+                           TRUE,
+                           EXO_PARAM_READWRITE);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
