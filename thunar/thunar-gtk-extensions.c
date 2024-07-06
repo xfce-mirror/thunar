@@ -374,3 +374,22 @@ thunar_gtk_editable_can_paste (GtkEditable *editable)
 {
   return gtk_editable_get_editable (editable);
 }
+
+
+
+/**
+ * thunar_gtk_orientable_get_center_pos:
+ *
+ * Return value: The pixel corrsponding to the center of the orientable widget (either in height or in width) 
+ **/
+gint
+thunar_gtk_orientable_get_center_pos (GtkOrientable *orientable)
+{
+  GtkAllocation allocation;
+
+  gtk_widget_get_allocation (GTK_WIDGET (orientable), &allocation);
+  if (gtk_orientable_get_orientation (orientable) == GTK_ORIENTATION_HORIZONTAL)
+    return (gint)(allocation.width/2);
+  else
+    return (gint)(allocation.height/2);
+}
