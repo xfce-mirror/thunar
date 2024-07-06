@@ -47,6 +47,7 @@ GtkWidget       *thunar_gtk_get_focused_widget                (void);
 gboolean         thunar_gtk_editable_can_cut                  (GtkEditable        *editable);
 gboolean         thunar_gtk_editable_can_copy                 (GtkEditable        *editable);
 gboolean         thunar_gtk_editable_can_paste                (GtkEditable        *editable);
+gint             thunar_gtk_widget_get_center_pos             (GtkWidget          *widget);
 
 G_END_DECLS;
 
