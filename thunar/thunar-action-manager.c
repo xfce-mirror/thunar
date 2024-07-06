@@ -789,10 +789,9 @@ thunar_action_manager_execute_files (ThunarActionManager *action_mgr,
   /* execute all selected files */
   for (lp = files; lp != NULL; lp = lp->next)
     {
-      ThunarFile  *file   = lp->data;
+      ThunarFile *file = lp->data;
 
       working_directory = thunar_file_get_file (action_mgr->current_directory);
-      thunar_file_add_to_recent (file);
 
       if (!thunar_file_execute (lp->data, working_directory, action_mgr->widget, in_terminal, NULL, NULL, &error))
         {
@@ -803,6 +802,11 @@ thunar_action_manager_execute_files (ThunarActionManager *action_mgr,
             thunar_dialogs_show_error (action_mgr->widget, error, _("Failed to execute file \"%s\""), thunar_file_get_display_name (lp->data));
           g_error_free (error);
           break;
+        }
+      else
+        {
+          /* add executed file to `recent:///` */
+          thunar_file_add_to_recent (file);
         }
     }
 }
@@ -910,6 +914,7 @@ thunar_action_manager_open_paths (GAppInfo            *app_info,
   GdkScreen           *screen;
   GError              *error = NULL;
   GFile               *working_directory = NULL;
+  GList               *lp;
   gchar               *message;
   gchar               *name;
   guint                n;
@@ -949,6 +954,19 @@ thunar_action_manager_open_paths (GAppInfo            *app_info,
       thunar_dialogs_show_error (action_mgr->widget, error, "%s", message);
       g_error_free (error);
       g_free (message);
+    }
+  else
+    {
+      /* add opened file(s) to `recent:///` */
+      for (lp = path_list; lp != NULL; lp = lp->next)
+        {
+          ThunarFile *file = thunar_file_get (G_FILE (lp->data), NULL);
+          if (file != NULL)
+            {
+              thunar_file_add_to_recent (file);
+              g_object_unref (file);
+            }
+        }
     }
 
   /* destroy the launch context */
@@ -1102,6 +1120,9 @@ static void thunar_action_manager_poke_device_finish (ThunarBrowser *browser,
       thunar_navigator_change_directory (THUNAR_NAVIGATOR (browser), mount_point);
     }
 
+  /* add device to `recent:///` */
+  thunar_file_add_to_recent (mount_point);
+
   g_signal_emit (browser, action_manager_signals[DEVICE_OPERATION_FINISHED], 0, volume);
   thunar_action_manager_poke_data_free (poke_data);
 }
@@ -1157,9 +1178,6 @@ thunar_action_manager_poke_files_finish (ThunarBrowser *browser,
   /* check if poking succeeded */
   if (error == NULL)
     {
-      /* add opened file to `recent:///` */
-      thunar_file_add_to_recent (file);
-
       /* add the resolved file to the list of file to be opened/executed later */
       poke_data->files_poked = g_list_prepend (poke_data->files_poked,g_object_ref (target_file));
     }
@@ -1177,6 +1195,9 @@ thunar_action_manager_poke_files_finish (ThunarBrowser *browser,
             {
               /* add to our directory list */
               directories = g_list_prepend (directories, lp->data);
+
+              /* add directory to `recent:///` */
+              thunar_file_add_to_recent (lp->data);
             }
           else
             {
@@ -1226,7 +1247,7 @@ thunar_action_manager_poke_files_finish (ThunarBrowser *browser,
               // nothing to do
             }
           else
-              g_warning("'folder_open_action' was not defined");
+            g_warning ("'folder_open_action' was not defined");
           g_list_free (directories);
         }
 
