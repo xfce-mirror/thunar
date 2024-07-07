@@ -265,8 +265,7 @@ static void      thunar_window_device_changed             (ThunarDeviceMonitor  
 static gboolean  thunar_window_save_paned                 (ThunarWindow           *window);
 static gboolean  thunar_window_save_paned_notebooks       (ThunarWindow           *window);
 static gboolean  thunar_window_paned_notebooks_button_press_event (GtkWidget              *paned,
-                                                           GdkEventButton         *event,
-                                                           ThunarWindow           *window);
+                                                           GdkEventButton         *event);
 static void      thunar_window_save_geometry_timer_destroy(gpointer                user_data);
 static void      thunar_window_set_zoom_level             (ThunarWindow           *window,
                                                            ThunarZoomLevel         zoom_level);
@@ -5062,20 +5061,18 @@ thunar_window_save_paned_notebooks (ThunarWindow *window)
 
 static gboolean
 thunar_window_paned_notebooks_button_press_event (GtkWidget      *paned,
-                                                  GdkEventButton *event,
-                                                  ThunarWindow   *window)
+                                                  GdkEventButton *event)
 {
   gint center_pos;
 
   _thunar_return_val_if_fail (GTK_IS_WIDGET (paned), FALSE);
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* reset the separator position on double click */
   if (event->button == 1 && event->type == GDK_2BUTTON_PRESS)
     {
       /* calculate the position manually because `gtk_paned_set_position (paned, -1)`
        * does not divide the panes equally when tabs are created or removed */
-      center_pos = thunar_gtk_orientable_get_center_pos (GTK_ORIENTABLE (window->paned_notebooks));
+      center_pos = thunar_gtk_orientable_get_center_pos (GTK_ORIENTABLE (paned));
       gtk_paned_set_position (GTK_PANED (paned), center_pos);
 
       return TRUE;
