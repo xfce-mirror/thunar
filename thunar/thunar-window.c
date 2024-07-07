@@ -3750,7 +3750,7 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
       gtk_notebook_set_show_border (GTK_NOTEBOOK (window->notebook_selected), FALSE);
 
       g_signal_handlers_disconnect_by_func (window->paned_notebooks, thunar_window_save_paned_notebooks, window);
-      g_signal_handlers_disconnect_by_func (window->paned_notebooks, thunar_window_paned_notebooks_button_press_event, window);
+      g_signal_handlers_disconnect_by_func (window->paned_notebooks, thunar_window_paned_notebooks_button_press_event, NULL);
     }
   else
     {
@@ -3779,7 +3779,7 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
 
       g_signal_connect_swapped (window->paned_notebooks, "accept-position", G_CALLBACK (thunar_window_save_paned_notebooks), window);
       g_signal_connect_swapped (window->paned_notebooks, "button-release-event", G_CALLBACK (thunar_window_save_paned_notebooks), window);
-      g_signal_connect (window->paned_notebooks, "button-press-event", G_CALLBACK (thunar_window_paned_notebooks_button_press_event), window);
+      g_signal_connect (window->paned_notebooks, "button-press-event", G_CALLBACK (thunar_window_paned_notebooks_button_press_event), NULL);
     }
 
   if (thunar_window_split_view_is_active (window) != gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_split_view)))
