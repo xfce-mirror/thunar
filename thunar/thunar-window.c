@@ -3771,7 +3771,7 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
       if (last_splitview_separator_position <= 0)
         {
           /* prevent notebook expand on tab creation */
-          last_splitview_separator_position = thunar_gtk_widget_get_center_pos (window->paned_notebooks);
+          last_splitview_separator_position = thunar_gtk_orientable_get_center_pos (GTK_ORIENTABLE (window->paned_notebooks));
         }
       gtk_paned_set_position (GTK_PANED (window->paned_notebooks), last_splitview_separator_position);
 
@@ -5049,7 +5049,7 @@ thunar_window_save_paned_notebooks (ThunarWindow *window)
   /* save the separator position, use -1 (= unset) for 'center position' */
   g_object_set (G_OBJECT (window->preferences),
                 "last-splitview-separator-position",
-                gtk_paned_get_position (GTK_PANED (window->paned_notebooks)) == thunar_gtk_widget_get_center_pos (window->paned_notebooks)
+                gtk_paned_get_position (GTK_PANED (window->paned_notebooks)) == thunar_gtk_orientable_get_center_pos (GTK_ORIENTABLE (window->paned_notebooks))
                  ? -1
                  : gtk_paned_get_position (GTK_PANED (window->paned_notebooks)),
                 NULL);
@@ -5075,7 +5075,7 @@ thunar_window_paned_notebooks_button_press_event (GtkWidget      *paned,
     {
       /* calculate the position manually because `gtk_paned_set_position (paned, -1)`
        * does not divide the panes equally when tabs are created or removed */
-      center_pos = thunar_gtk_widget_get_center_pos (window->paned_notebooks);
+      center_pos = thunar_gtk_orientable_get_center_pos (GTK_ORIENTABLE (window->paned_notebooks));
       gtk_paned_set_position (GTK_PANED (paned), center_pos);
 
       return TRUE;
