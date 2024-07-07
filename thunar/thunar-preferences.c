@@ -443,7 +443,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
       g_param_spec_int ("last-splitview-separator-position",
                         "LastSplitviewSeparatorPosition",
                         NULL,
-                        0, G_MAXINT, 0,
+                        -1, G_MAXINT, -1,
                         EXO_PARAM_READWRITE);
 
   /**
