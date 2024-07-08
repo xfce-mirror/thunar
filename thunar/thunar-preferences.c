@@ -138,6 +138,7 @@ enum
   PROP_MISC_EXPANDABLE_FOLDERS,
   PROP_MISC_SYMBOLIC_ICONS_IN_TOOLBAR,
   PROP_MISC_SYMBOLIC_ICONS_IN_SIDEPANE,
+  PROP_MISC_CTRL_SCROLL_WHEEL_TO_ZOOM,
   N_PROPERTIES,
 };
 
@@ -442,7 +443,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
       g_param_spec_int ("last-splitview-separator-position",
                         "LastSplitviewSeparatorPosition",
                         NULL,
-                        0, G_MAXINT, 0,
+                        -1, G_MAXINT, -1,
                         EXO_PARAM_READWRITE);
 
   /**
@@ -1349,6 +1350,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             "MiscSymbolicIconsInSidepane",
                             NULL,
                             FALSE,
+                            EXO_PARAM_READWRITE);
+
+   /**
+    * ThunarPreferences:misc-ctrl-scroll-wheel-to-zoom:
+    *
+    * If true, Ctrl + Scroll Wheel to Zoom is enabled
+    **/
+  preferences_props[PROP_MISC_CTRL_SCROLL_WHEEL_TO_ZOOM] =
+      g_param_spec_boolean ("misc-ctrl-scroll-wheel-to-zoom",
+                            "MiscCtrlScrollWheelToZoom",
+                            NULL,
+                            TRUE,
                             EXO_PARAM_READWRITE);
 
   /* install all properties */

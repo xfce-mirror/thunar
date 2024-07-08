@@ -2769,7 +2769,6 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
   ThunarFile*file;
   GList     *file_list = NULL;
   GList     *lp;
-  GtkWidget *window;
   GtkWidget *source_view;
   GFile     *parent_file;
   gboolean   belongs_here;
@@ -2813,10 +2812,6 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
 
           /* release the file list */
           g_list_free_full (file_list, g_object_unref);
-
-          /* if split view is active, give focus to the pane containing the view */
-          window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
-          thunar_window_focus_view (THUNAR_WINDOW (window), GTK_WIDGET (standard_view));
 
           /* grab the focus to the view widget */
           gtk_widget_grab_focus (gtk_bin_get_child (GTK_BIN (standard_view)));
@@ -2898,6 +2893,7 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
 {
   GdkScrollDirection scrolling_direction;
   gboolean           misc_horizontal_wheel_navigates;
+  gboolean           misc_ctrl_scroll_wheel_to_zoom;
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
@@ -2933,11 +2929,16 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
   /* zoom-in/zoom-out on control+mouse wheel */
   if ((event->state & GDK_CONTROL_MASK) != 0 && (scrolling_direction == GDK_SCROLL_UP || scrolling_direction == GDK_SCROLL_DOWN))
     {
-      thunar_view_set_zoom_level (THUNAR_VIEW (standard_view),
-          (scrolling_direction == GDK_SCROLL_UP)
-          ? MIN (standard_view->priv->zoom_level + 1, THUNAR_ZOOM_N_LEVELS - 1)
-          : MAX (standard_view->priv->zoom_level, 1) - 1);
-      return TRUE;
+      /* check if we should use ctrl + scroll to zoom */
+      g_object_get (G_OBJECT (standard_view->preferences), "misc-ctrl-scroll-wheel-to-zoom", &misc_ctrl_scroll_wheel_to_zoom, NULL);
+      if (misc_ctrl_scroll_wheel_to_zoom)
+        {
+          thunar_view_set_zoom_level (THUNAR_VIEW (standard_view),
+              (scrolling_direction == GDK_SCROLL_UP)
+              ? MIN (standard_view->priv->zoom_level + 1, THUNAR_ZOOM_N_LEVELS - 1)
+              : MAX (standard_view->priv->zoom_level, 1) - 1);
+          return TRUE;
+        }
     }
 
   /* next please... */
@@ -3337,14 +3338,19 @@ thunar_standard_view_receive_text_uri_list (GdkDragContext     *context,
   GdkDragAction actions;
   GdkDragAction action;
   ThunarFile   *file = NULL;
-  gboolean      succeed = FALSE;
+  GtkWidget    *window;
   GtkWidget    *source_widget;
   GtkWidget    *source_view = NULL;
+  gboolean      succeed = FALSE;
 
   /* determine the drop position */
   actions = thunar_standard_view_get_dest_actions (standard_view, context, x, y, timestamp, &file);
   if (G_LIKELY ((actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK)) != 0))
     {
+      /* stop any running drag enter timer */
+      if (G_UNLIKELY (standard_view->priv->drag_enter_timer_id != 0))
+        g_source_remove (standard_view->priv->drag_enter_timer_id);
+
       /* ask the user what to do with the drop data */
       action = (gdk_drag_context_get_selected_action (context) == GDK_ACTION_ASK)
               ? thunar_dnd_ask (GTK_WIDGET (standard_view), file, standard_view->priv->drop_file_list, actions)
@@ -3353,6 +3359,14 @@ thunar_standard_view_receive_text_uri_list (GdkDragContext     *context,
       /* perform the requested action */
       if (G_LIKELY (action != 0))
         {
+          /* move the focus to the target widget */
+          window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
+          if (GTK_IS_WINDOW (window))
+            {
+              /* if split view is active, give focus to the pane containing the view */
+              thunar_window_focus_view (THUNAR_WINDOW (window), GTK_WIDGET (standard_view));
+            }
+
           /* look if we can find the drag source widget */
           source_widget = gtk_drag_get_source_widget (context);
           if (source_widget != NULL)
