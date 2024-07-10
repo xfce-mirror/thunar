@@ -534,7 +534,9 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
 
   scale_factor = gtk_widget_get_scale_factor (widget);
 
-  thunar_file_request_thumbnail (icon_renderer->file, thunar_icon_size_to_thumbnail_size (icon_renderer->size * scale_factor));
+  /* load thumbnail for supported file type */
+  if (thunar_icon_factory_get_show_thumbnail (icon_factory, icon_renderer->file))
+    thunar_file_request_thumbnail (icon_renderer->file, thunar_icon_size_to_thumbnail_size (icon_renderer->size * scale_factor));
 
   /* load additional thumbnail for image preview */
   if (icon_renderer->image_preview_enabled)
