@@ -1181,7 +1181,8 @@ thunar_file_load (ThunarFile   *file,
                   GCancellable *cancellable,
                   GError      **error)
 {
-  GError *err = NULL;
+  GError    *err = NULL;
+  GFileInfo *info = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -1193,14 +1194,11 @@ thunar_file_load (ThunarFile   *file,
   /* remove the file from cache */
   g_hash_table_remove (file_cache, file->gfile);
 
-  /* reset the file */
-  thunar_file_info_clear (file);
-
   /* query a new file info */
-  file->info = g_file_query_info (file->gfile,
-                                  THUNARX_FILE_INFO_NAMESPACE,
-                                  G_FILE_QUERY_INFO_NONE,
-                                  cancellable, &err);
+  info = g_file_query_info (file->gfile,
+                            THUNARX_FILE_INFO_NAMESPACE,
+                            G_FILE_QUERY_INFO_NONE,
+                            cancellable, &err);
 
   /* update the mounted info */
   if (err != NULL
@@ -1213,10 +1211,24 @@ thunar_file_load (ThunarFile   *file,
 
   if (err != NULL)
     {
+      if (info != NULL)
+        g_object_unref (info);
+
       g_propagate_error (error, err);
+
+      /* even if we failed to load it, re-add the file into the cache */
+      g_hash_table_insert (file_cache,
+                           g_object_ref (file->gfile),
+                           weak_ref_new (G_OBJECT (file)));
       G_REC_UNLOCK (file_cache_mutex);
       return FALSE;
     }
+
+  /* reset the file */
+  thunar_file_info_clear (file);
+
+  /* update the file with the new info */
+  file->info = info;
 
   /* update the file from the information */
   thunar_file_info_reload (file, cancellable);
