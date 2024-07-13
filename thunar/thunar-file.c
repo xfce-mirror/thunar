@@ -3595,9 +3595,11 @@ thunar_file_can_be_trashed (const ThunarFile *file)
  * Will use cached data to do calculations only when the file has
  * been modified since the last time its contents were counted.
  *
+ * Will return -1 if the file info cannot be loaded
+ *
  * Return value: Number of files in a folder
  **/
-guint
+gint
 thunar_file_get_file_count (ThunarFile   *file,
                             GCallback     callback,
                             gpointer      data)
@@ -3619,10 +3621,13 @@ thunar_file_get_file_count (ThunarFile   *file,
                             NULL,
                             &err);
 
+  /* If the file info cannot be loaded, return -1 */
   if (err != NULL)
     {
-      g_warning ("An error occurred while trying to get file counts.");
-      return file->file_count;
+      if (info != NULL)
+        g_object_unref (info);
+      g_error_free (err);
+      return -1;
     }
 
   last_modified = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_MODIFIED);
@@ -5192,11 +5197,11 @@ thunar_cmp_files_by_size_in_bytes (const ThunarFile *a,
 
 gint
 thunar_cmp_files_by_size_and_items_count (ThunarFile *a,
-                                        ThunarFile *b,
-                                        gboolean    case_sensitive)
+                                          ThunarFile *b,
+                                          gboolean    case_sensitive)
 {
-  guint32       count_a;
-  guint32       count_b;
+  gint32       count_a;
+  gint32       count_b;
 
   if (thunar_file_is_directory (a) && thunar_file_is_directory (b))
     {
