@@ -769,12 +769,12 @@ thunar_util_next_new_file_name_raw (GList                 *file_list,
         {
           gchar *name = g_file_get_basename (lp->data);
           if (g_strcmp0 (new_name, name) == 0)
-              {
-                found_duplicate = TRUE;
-                g_free (name);
-                break;
-              }
-            g_free (name);
+            {
+              found_duplicate = TRUE;
+              g_free (name);
+              break;
+            }
+          g_free (name);
         }
 
       if (!found_duplicate)
