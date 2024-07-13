@@ -855,7 +855,7 @@ thunar_folder_file_destroyed (ThunarFolder      *folder,
       if (!folder->in_destruction)
         g_object_run_dispose (G_OBJECT (folder));
     }
-  else if (g_hash_table_contains (folder->files_map, file))
+  else
     {
       /* remove the file from our list */
       thunar_folder_remove_file (folder, file);
