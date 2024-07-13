@@ -4388,8 +4388,6 @@ thunar_file_reload_idle_unref (ThunarFile *file)
  * Emits the ::destroy signal notifying all reference holders
  * that they should release their references to the @file.
  *
- * This method is very similar to what gtk_object_destroy()
- * does for #GtkObject<!---->s.
  **/
 void
 thunar_file_destroy (ThunarFile *file)
@@ -4397,18 +4395,7 @@ thunar_file_destroy (ThunarFile *file)
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   if (!FLAG_IS_SET (file, THUNAR_FILE_FLAG_IN_DESTRUCTION))
-    {
-      /* take an additional reference on the file, as the file-destroyed
-       * invocation may already release the last reference.
-       */
-      g_object_ref (G_OBJECT (file));
-
-      /* run the dispose handler */
-      g_object_run_dispose (G_OBJECT (file));
-
-      /* release our reference */
-      g_object_unref (G_OBJECT (file));
-    }
+    g_signal_emit (file, file_signals[DESTROY], 0);
 }
 
 
