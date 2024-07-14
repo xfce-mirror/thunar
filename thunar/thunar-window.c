@@ -293,10 +293,10 @@ static void      thunar_window_binding_create             (ThunarWindow         
                                                            gpointer                dst_object,
                                                            const                   gchar *dst_prop,
                                                            GBindingFlags           flags);
-static gboolean  thunar_window_history_clicked            (GtkWidget              *button,
+static gboolean  thunar_window_button_press_event         (GtkWidget              *view,
                                                            GdkEventButton         *event,
                                                            ThunarWindow           *window);
-static gboolean  thunar_window_toolbar_button_clicked     (GtkWidget              *button,
+static gboolean  thunar_window_history_clicked            (GtkWidget              *button,
                                                            GdkEventButton         *event,
                                                            ThunarWindow           *window);
 static gboolean  thunar_window_open_parent_clicked        (GtkWidget              *button,
@@ -305,7 +305,7 @@ static gboolean  thunar_window_open_parent_clicked        (GtkWidget            
 static gboolean  thunar_window_open_home_clicked          (GtkWidget              *button,
                                                            GdkEventButton         *event,
                                                            ThunarWindow           *window);
-static gboolean  thunar_window_button_press_event         (GtkWidget              *view,
+static gboolean  thunar_window_toolbar_button_press_event (GtkWidget              *widget,
                                                            GdkEventButton         *event,
                                                            ThunarWindow           *window);
 static void      thunar_window_history_changed            (ThunarWindow           *window);
@@ -5580,28 +5580,6 @@ thunar_window_history_clicked (GtkWidget      *button,
 
 
 static gboolean
-thunar_window_toolbar_button_clicked (GtkWidget      *button,
-                                      GdkEventButton *event,
-                                      ThunarWindow   *window)
-{
-  GtkWidget *menu;
-
-  if (event->button == 3)
-    {
-      menu = gtk_menu_new ();
-      xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR), G_OBJECT (window), GTK_MENU_SHELL (menu));
-      gtk_widget_show_all (menu);
-
-      /* run the menu (takes over the floating of menu) */
-      thunar_gtk_menu_run (GTK_MENU (menu));
-    }
-
-  return TRUE;
-}
-
-
-
-static gboolean
 thunar_window_open_parent_clicked (GtkWidget      *button,
                                    GdkEventButton *event,
                                    ThunarWindow   *window)
@@ -5669,6 +5647,32 @@ thunar_window_open_home_clicked   (GtkWidget      *button,
    }
 
  return FALSE;
+}
+
+
+
+static gboolean
+thunar_window_toolbar_button_press_event (GtkWidget      *widget,
+                                          GdkEventButton *event,
+                                          ThunarWindow   *window)
+{
+  GtkWidget *menu;
+
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  if (event->button == 3)
+    {
+      menu = gtk_menu_new ();
+      xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR), G_OBJECT (window), GTK_MENU_SHELL (menu));
+      gtk_widget_show_all (menu);
+
+      /* run the menu (takes over the floating of menu) */
+      thunar_gtk_menu_run (GTK_MENU (menu));
+
+      return TRUE;
+    }
+
+  return FALSE;
 }
 
 
@@ -6170,9 +6174,6 @@ thunar_window_create_toolbar_item_from_action (ThunarWindow       *window,
   /* update label to handle mnemonics in the overflow menu */
   gtk_tool_button_set_label_widget (GTK_TOOL_BUTTON (toolbar_item), gtk_label_new_with_mnemonic (entry->menu_item_label_text));
 
-  if (action != THUNAR_WINDOW_ACTION_BACK && action != THUNAR_WINDOW_ACTION_FORWARD)
-    g_signal_connect_after (G_OBJECT (toolbar_item), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
-
   g_object_set_data_full (G_OBJECT (toolbar_item), "id", thunar_util_accel_path_to_id (entry->accel_path), g_free);
   g_object_set_data_full (G_OBJECT (toolbar_item), "label", g_strdup (entry->menu_item_label_text), g_free);
   g_object_set_data_full (G_OBJECT (toolbar_item), "icon", g_strdup (icon_name), g_free);
@@ -6206,8 +6207,6 @@ thunar_window_create_toolbar_toggle_item_from_action (ThunarWindow       *window
 
   /* update label to handle mnemonics in the overflow menu */
   gtk_tool_button_set_label_widget (GTK_TOOL_BUTTON (toolbar_item), gtk_label_new_with_mnemonic (entry->menu_item_label_text));
-
-  g_signal_connect_after (G_OBJECT (toolbar_item), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
 
   g_object_set_data_full (G_OBJECT (toolbar_item), "id", thunar_util_accel_path_to_id (entry->accel_path), g_free);
   g_object_set_data_full (G_OBJECT (toolbar_item), "label", g_strdup (entry->menu_item_label_text), g_free);
@@ -6247,8 +6246,6 @@ thunar_window_create_toolbar_radio_item_from_action (ThunarWindow       *window,
   /* 'gtk_toggle_tool_button_set_active' has to be done before 'g_signal_connect_swapped' to not trigger the callback */
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (toolbar_item), active);
   g_signal_connect_swapped (G_OBJECT (toolbar_item), "toggled", entry->callback, window);
-
-  g_signal_connect_after (G_OBJECT (toolbar_item), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), window);
 
   g_object_set_data_full (G_OBJECT (toolbar_item), "id", thunar_util_accel_path_to_id (entry->accel_path), g_free);
   g_object_set_data_full (G_OBJECT (toolbar_item), "label", g_strdup (entry->menu_item_label_text), g_free);
@@ -6299,6 +6296,8 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   gtk_toolbar_set_icon_size (GTK_TOOLBAR (window->location_toolbar),
                              small_icons ? GTK_ICON_SIZE_SMALL_TOOLBAR : GTK_ICON_SIZE_LARGE_TOOLBAR);
   gtk_widget_set_hexpand (window->location_toolbar, TRUE);
+
+  g_signal_connect (G_OBJECT (window->location_toolbar), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_press_event), window);
 
   /* The first toolbar item must always be THUNAR_WINDOW_ACTION_VIEW_MENUBAR which we hide by default */
   window->location_toolbar_item_view_menubar  = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_MENUBAR, item_order++);
@@ -6463,7 +6462,6 @@ _thunar_window_location_toolbar_add_ucas_menu_items (ThunarWindow *window,
               item_order = g_malloc (sizeof (gint));
               *item_order = (*item_count)++;
               g_object_set_data_full (G_OBJECT (toolbar_item), "default-order", item_order, g_free);
-              g_signal_connect (G_OBJECT (toolbar_item), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_clicked), G_OBJECT (window));
             }
         }
 
