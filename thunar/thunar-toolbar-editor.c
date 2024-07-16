@@ -36,10 +36,20 @@
 
 
 
+enum
+{
+  COL_ID,
+  COL_VISIBILITY,
+  COL_CHECKBOX_VISIBLE,
+  COL_ICON,
+  COL_LABEL,
+  COL_TOOLTIP,
+  N_COLS
+};
+
+
+
 static void     thunar_toolbar_editor_finalize                           (GObject                  *object);
-static gboolean thunar_toolbar_editor_visible_func                       (GtkTreeModel             *model,
-                                                                          GtkTreeIter              *iter,
-                                                                          gpointer                  data);
 static void     thunar_toolbar_editor_help_clicked                       (ThunarToolbarEditor      *toolbar_editor,
                                                                           GtkWidget                *button);
 static void     thunar_toolbar_editor_swap_toolbar_items_for_all_windows (GtkListStore             *model,
@@ -117,11 +127,13 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   toolbar_editor->preferences = thunar_preferences_get ();
 
   /* grab a reference on the shared toolbar model */
-  toolbar_editor->model = gtk_list_store_new (4,
+  toolbar_editor->model = gtk_list_store_new (N_COLS,
                                               G_TYPE_STRING,  /* action id */
                                               G_TYPE_BOOLEAN, /* visibility */
-                                              G_TYPE_STRING,  /* icon name */
-                                              G_TYPE_STRING); /* label */
+                                              G_TYPE_BOOLEAN, /* checkbox visible */
+                                              G_TYPE_STRING,  /* icon */
+                                              G_TYPE_STRING,  /* label */
+                                              G_TYPE_STRING); /* tooltip */
 
   /* setup the dialog */
   gtk_dialog_add_button (GTK_DIALOG (toolbar_editor), _("_Close"), GTK_RESPONSE_CLOSE);
@@ -167,14 +179,12 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
 
   /* create a filter from the shared column model */
   toolbar_editor->filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (toolbar_editor->model), NULL);
-  gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (toolbar_editor->filter),
-                                          (GtkTreeModelFilterVisibleFunc) thunar_toolbar_editor_visible_func,
-                                          NULL, NULL);
 
   /* create the tree view */
   toolbar_editor->tree_view = gtk_tree_view_new_with_model (toolbar_editor->filter);
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (toolbar_editor->tree_view), FALSE);
-  gtk_tree_view_set_search_column (GTK_TREE_VIEW (toolbar_editor->tree_view), 3);
+  gtk_tree_view_set_search_column (GTK_TREE_VIEW (toolbar_editor->tree_view), COL_LABEL);
+  gtk_tree_view_set_tooltip_column (GTK_TREE_VIEW (toolbar_editor->tree_view), COL_TOOLTIP);
   gtk_container_add (GTK_CONTAINER (swin), toolbar_editor->tree_view);
   gtk_widget_show (toolbar_editor->tree_view);
 
@@ -185,7 +195,8 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
                                                -1,
                                                "Active",
                                                renderer,
-                                               "active", 1,
+                                               "active", COL_VISIBILITY,
+                                               "visible", COL_CHECKBOX_VISIBLE,
                                                NULL);
 
   /* append the icon column */
@@ -194,16 +205,16 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
                                                -1,
                                                "Icon",
                                                renderer,
-                                               "icon-name", 2,
+                                               "icon-name", COL_ICON,
                                                NULL);
 
-  /* append the name column */
+  /* append the label column */
   renderer = gtk_cell_renderer_text_new ();
   gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (toolbar_editor->tree_view),
                                                -1,
-                                               "Name",
+                                               "Label",
                                                renderer,
-                                               "text", 3,
+                                               "text", COL_LABEL,
                                                NULL);
 
   /* Create the buttons vbox container */
@@ -281,27 +292,6 @@ thunar_toolbar_editor_finalize (GObject *object)
   g_object_unref (G_OBJECT (toolbar_editor->preferences));
 
   (*G_OBJECT_CLASS (thunar_toolbar_editor_parent_class)->finalize) (object);
-}
-
-
-
-static gboolean
-thunar_toolbar_editor_visible_func (GtkTreeModel *model,
-                                    GtkTreeIter  *iter,
-                                    gpointer      data)
-{
-  gboolean  visible = TRUE;
-  gchar    *id;
-
-  gtk_tree_model_get (model, iter, 0, &id, -1);
-
-  /* Always hide THUNAR_WINDOW_ACTION_VIEW_MENUBAR */
-  if (g_strcmp0 (id, "view-menubar") == 0)
-    visible = FALSE;
-
-  g_free (id);
-
-  return visible;
 }
 
 
@@ -600,7 +590,7 @@ thunar_toolbar_editor_save_model (ThunarToolbarEditor *toolbar_editor)
       g_free (path);
 
       /* get the id value of the entry */
-      gtk_tree_model_get (GTK_TREE_MODEL (toolbar_editor->model), &iter, 0, &id, -1);
+      gtk_tree_model_get (GTK_TREE_MODEL (toolbar_editor->model), &iter, COL_ID, &id, -1);
       if (id == NULL)
         continue;
 
@@ -616,7 +606,7 @@ thunar_toolbar_editor_save_model (ThunarToolbarEditor *toolbar_editor)
       g_string_append_c (items, ':');
 
       /* get the visibility value of the entry and store it */
-      gtk_tree_model_get (GTK_TREE_MODEL (toolbar_editor->model), &iter, 1, &visible, -1);
+      gtk_tree_model_get (GTK_TREE_MODEL (toolbar_editor->model), &iter, COL_VISIBILITY, &visible, -1);
       g_string_append_printf (items, "%i", visible);
     }
 
@@ -645,6 +635,8 @@ thunar_toolbar_editor_populate_model (ThunarToolbarEditor *toolbar_editor)
       gchar     *id = NULL;
       gchar     *icon = NULL;
       gchar     *label_with_mnemonic = NULL;
+      gchar     *tooltip = NULL;
+      gboolean   checkbox_visible = TRUE;
 
       id = g_object_get_data (G_OBJECT (item), "id");
       icon = g_object_get_data (G_OBJECT (item), "icon");
@@ -653,12 +645,20 @@ thunar_toolbar_editor_populate_model (ThunarToolbarEditor *toolbar_editor)
       widget = gtk_label_new_with_mnemonic (label_with_mnemonic);
       g_object_ref_sink (widget);
 
+      if (g_strcmp0 (id, "menu") == 0)
+        {
+          checkbox_visible = FALSE;
+          tooltip = _("Only visible when the menubar is hidden");
+        }
+
       gtk_list_store_append (toolbar_editor->model, &iter);
       gtk_list_store_set (toolbar_editor->model, &iter,
-                          0, id,
-                          1, gtk_widget_is_visible (item),
-                          2, icon,
-                          3, gtk_label_get_text (GTK_LABEL (widget)),
+                          COL_ID, id,
+                          COL_VISIBILITY, gtk_widget_is_visible (item),
+                          COL_CHECKBOX_VISIBLE, checkbox_visible,
+                          COL_ICON, icon,
+                          COL_LABEL, gtk_label_get_text (GTK_LABEL (widget)),
+                          COL_TOOLTIP, tooltip,
                           -1);
 
       g_object_unref (widget);
