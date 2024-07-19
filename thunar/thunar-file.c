@@ -1181,7 +1181,8 @@ thunar_file_load (ThunarFile   *file,
                   GCancellable *cancellable,
                   GError      **error)
 {
-  GError *err = NULL;
+  GError    *err = NULL;
+  GFileInfo *info = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -1193,14 +1194,11 @@ thunar_file_load (ThunarFile   *file,
   /* remove the file from cache */
   g_hash_table_remove (file_cache, file->gfile);
 
-  /* reset the file */
-  thunar_file_info_clear (file);
-
   /* query a new file info */
-  file->info = g_file_query_info (file->gfile,
-                                  THUNARX_FILE_INFO_NAMESPACE,
-                                  G_FILE_QUERY_INFO_NONE,
-                                  cancellable, &err);
+  info = g_file_query_info (file->gfile,
+                            THUNARX_FILE_INFO_NAMESPACE,
+                            G_FILE_QUERY_INFO_NONE,
+                            cancellable, &err);
 
   /* update the mounted info */
   if (err != NULL
@@ -1213,10 +1211,24 @@ thunar_file_load (ThunarFile   *file,
 
   if (err != NULL)
     {
+      if (info != NULL)
+        g_object_unref (info);
+
       g_propagate_error (error, err);
+
+      /* even if we failed to load it, re-add the file into the cache */
+      g_hash_table_insert (file_cache,
+                           g_object_ref (file->gfile),
+                           weak_ref_new (G_OBJECT (file)));
       G_REC_UNLOCK (file_cache_mutex);
       return FALSE;
     }
+
+  /* reset the file */
+  thunar_file_info_clear (file);
+
+  /* update the file with the new info */
+  file->info = info;
 
   /* update the file from the information */
   thunar_file_info_reload (file, cancellable);
@@ -3583,9 +3595,11 @@ thunar_file_can_be_trashed (const ThunarFile *file)
  * Will use cached data to do calculations only when the file has
  * been modified since the last time its contents were counted.
  *
+ * Will return -1 if the file info cannot be loaded
+ *
  * Return value: Number of files in a folder
  **/
-guint
+gint
 thunar_file_get_file_count (ThunarFile   *file,
                             GCallback     callback,
                             gpointer      data)
@@ -3607,10 +3621,13 @@ thunar_file_get_file_count (ThunarFile   *file,
                             NULL,
                             &err);
 
+  /* If the file info cannot be loaded, return -1 */
   if (err != NULL)
     {
-      g_warning ("An error occurred while trying to get file counts.");
-      return file->file_count;
+      if (info != NULL)
+        g_object_unref (info);
+      g_error_free (err);
+      return -1;
     }
 
   last_modified = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_MODIFIED);
@@ -4376,8 +4393,6 @@ thunar_file_reload_idle_unref (ThunarFile *file)
  * Emits the ::destroy signal notifying all reference holders
  * that they should release their references to the @file.
  *
- * This method is very similar to what gtk_object_destroy()
- * does for #GtkObject<!---->s.
  **/
 void
 thunar_file_destroy (ThunarFile *file)
@@ -4385,18 +4400,7 @@ thunar_file_destroy (ThunarFile *file)
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   if (!FLAG_IS_SET (file, THUNAR_FILE_FLAG_IN_DESTRUCTION))
-    {
-      /* take an additional reference on the file, as the file-destroyed
-       * invocation may already release the last reference.
-       */
-      g_object_ref (G_OBJECT (file));
-
-      /* run the dispose handler */
-      g_object_run_dispose (G_OBJECT (file));
-
-      /* release our reference */
-      g_object_unref (G_OBJECT (file));
-    }
+    g_signal_emit (file, file_signals[DESTROY], 0);
 }
 
 
@@ -5193,11 +5197,11 @@ thunar_cmp_files_by_size_in_bytes (const ThunarFile *a,
 
 gint
 thunar_cmp_files_by_size_and_items_count (ThunarFile *a,
-                                        ThunarFile *b,
-                                        gboolean    case_sensitive)
+                                          ThunarFile *b,
+                                          gboolean    case_sensitive)
 {
-  guint32       count_a;
-  guint32       count_b;
+  gint32       count_a;
+  gint32       count_b;
 
   if (thunar_file_is_directory (a) && thunar_file_is_directory (b))
     {
