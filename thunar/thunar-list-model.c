@@ -767,7 +767,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
   ThunarFile   *file;
   ThunarFolder *folder;
   gchar        *str;
-  guint32       item_count;
+  gint32        item_count;
   GFile        *g_file;
   GFile        *g_file_parent;
 
@@ -963,7 +963,10 @@ thunar_list_model_get_value (GtkTreeModel *model,
           else if (THUNAR_LIST_MODEL (model)->folder_item_count == THUNAR_FOLDER_ITEM_COUNT_ALWAYS)
             {
               item_count = thunar_file_get_file_count (file, G_CALLBACK (thunar_list_model_file_count_callback), model);
-              g_value_take_string (value, g_strdup_printf (ngettext ("%u item", "%u items", item_count), item_count));
+              if (item_count < 0)
+                g_value_take_string (value, g_strdup (_("unknown")));
+              else
+                g_value_take_string (value, g_strdup_printf (ngettext ("%u item", "%u items", item_count), item_count));
             }
 
           /* If the option is set to always show folder sizes as item counts only for local files,
@@ -973,7 +976,10 @@ thunar_list_model_get_value (GtkTreeModel *model,
               if (thunar_file_is_local (file))
                 {
                   item_count = thunar_file_get_file_count (file, G_CALLBACK (thunar_list_model_file_count_callback), model);
-                  g_value_take_string (value, g_strdup_printf (ngettext ("%u item", "%u items", item_count), item_count));
+                  if (item_count < 0)
+                    g_value_take_string (value, g_strdup (_("unknown")));
+                  else
+                    g_value_take_string (value, g_strdup_printf (ngettext ("%u item", "%u items", item_count), item_count));
                 }
               else
                 g_value_take_string (value, thunar_file_get_size_string_formatted (file, THUNAR_LIST_MODEL (model)->file_size_binary));
