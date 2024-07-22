@@ -258,7 +258,7 @@ gboolean          thunar_file_is_renameable              (const ThunarFile      
 gboolean          thunar_file_can_be_trashed             (const ThunarFile       *file);
 
 
-guint             thunar_file_get_file_count             (ThunarFile             *file,
+gint             thunar_file_get_file_count              (ThunarFile             *file,
                                                           GCallback               callback,
                                                           gpointer                data);
 void              thunar_file_set_file_count             (ThunarFile             *file,
