@@ -1950,9 +1950,6 @@ thunar_file_rename (ThunarFile   *file,
                     GError      **error)
 {
   GFile                *renamed_file;
-  ThunarFile           *parent_thunar_file;
-  ThunarFolder         *parent_thunar_folder;
-  gboolean              reload_file = FALSE;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (g_utf8_validate (name, -1, NULL), FALSE);
@@ -1965,33 +1962,16 @@ thunar_file_rename (ThunarFile   *file,
   /* check if we succeeded */
   if (renamed_file != NULL)
     {
-      parent_thunar_file = thunar_file_get_parent (file, NULL);
-      if (parent_thunar_file != NULL)
+      /* replace GFile in ThunarFile for the renamed file */
+      thunar_file_replace_file (file, renamed_file);
+
+      /* reload file information */
+      thunar_file_load (file, NULL, NULL);
+
+      if (!called_from_job)
         {
-          parent_thunar_folder = thunar_folder_get_for_file (parent_thunar_file);
-          if (parent_thunar_folder != NULL)
-            {
-              /* reload file here only if folder doesn't have a monitor */
-              if (!thunar_folder_has_folder_monitor (parent_thunar_folder))
-                reload_file = TRUE;
-              g_object_unref (parent_thunar_folder);
-            }
-          g_object_unref (parent_thunar_file);
-        }
-
-      if (reload_file)
-        {
-          /* replace GFile in ThunarFile for the renamed file */
-          thunar_file_replace_file (file, renamed_file);
-
-          /* reload file information */
-          thunar_file_load (file, NULL, NULL);
-
-          if (!called_from_job)
-            {
-              /* emit the file changed signal */
-              thunar_file_changed (file);
-            }
+          /* emit the file changed signal */
+          thunar_file_changed (file);
         }
 
       g_object_unref (renamed_file);
