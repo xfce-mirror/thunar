@@ -3658,7 +3658,7 @@ static gboolean
 thunar_window_action_undo (ThunarWindow *window,
                            GtkWidget    *menu_item)
 {
-  thunar_job_operation_history_undo ();
+  thunar_job_operation_history_undo (GTK_WINDOW (window));
   return TRUE; /* return value required in case of shortcut activation, in order to signal that the accel key got handled */
 }
 
@@ -3668,7 +3668,7 @@ static gboolean
 thunar_window_action_redo (ThunarWindow *window,
                            GtkWidget    *menu_item)
 {
-  thunar_job_operation_history_redo ();
+  thunar_job_operation_history_redo (GTK_WINDOW (window));
   return TRUE; /* return value required in case of shortcut activation, in order to signal that the accel key got handled */
 }
 

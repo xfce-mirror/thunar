@@ -295,11 +295,12 @@ thunar_job_operation_history_update_trash_timestamps (ThunarJobOperation *job_op
 
 /**
  * thunar_job_operation_history_undo:
+ * @parent: the parent #GtkWindow
  *
  * Undoes the latest job operation, by executing its inverse
  **/
 void
-thunar_job_operation_history_undo (void)
+thunar_job_operation_history_undo (GtkWindow *parent)
 {
   ThunarJobOperation *operation_marker;
   ThunarJobOperation *inverted_operation;
@@ -314,7 +315,7 @@ thunar_job_operation_history_undo (void)
   /* Show a warning in case there is no operation to undo */
   if (job_operation_history->lp_undo == NULL)
     {
-      xfce_dialog_show_warning (NULL,
+      xfce_dialog_show_warning (parent,
                                 _("No operation which can be undone has been performed yet.\n"
                                   "(For some operations undo is not supported)"),
                                 _("There is no operation to undo"));
@@ -333,7 +334,7 @@ thunar_job_operation_history_undo (void)
   if (thunar_job_operation_empty (operation_marker))
     {
 
-      xfce_dialog_show_warning (NULL,
+      xfce_dialog_show_warning (parent,
                                 _("The operation you are trying to undo does not have any files "
                                   "associated with it, and thus cannot be undone. "),
                                 _("%s operation cannot be undone"), thunar_job_operation_get_kind_nick (operation_marker));
@@ -358,7 +359,7 @@ thunar_job_operation_history_undo (void)
             g_free (file_uri);
           }
 
-        xfce_dialog_show_warning (NULL,
+        xfce_dialog_show_warning (parent,
                                   warning_body->str,
                                   _("%s operation can only be partially undone"),
                                   thunar_job_operation_get_kind_nick (operation_marker));
@@ -375,7 +376,7 @@ thunar_job_operation_history_undo (void)
 
     if (err != NULL)
       {
-        xfce_dialog_show_warning (NULL,
+        xfce_dialog_show_warning (parent,
                                   err->message,
                                   _("Failed to undo operation '%s'"),
                                   thunar_job_operation_get_kind_nick (operation_marker));
@@ -393,11 +394,12 @@ thunar_job_operation_history_undo (void)
 
 /**
  * thunar_job_operation_history_redo:
+ * @parent: the parent #GtkWindow
  *
  * Redoes the last job operation which had been undone (if any)
  **/
 void
-thunar_job_operation_history_redo (void)
+thunar_job_operation_history_redo (GtkWindow *parent)
 {
   ThunarJobOperation *operation_marker;
   GString            *warning_body;
@@ -411,7 +413,7 @@ thunar_job_operation_history_redo (void)
   /* Show a warning in case there is no operation to undo */
   if (job_operation_history->lp_redo == NULL)
     {
-      xfce_dialog_show_warning (NULL,
+      xfce_dialog_show_warning (parent,
                                 _("No operation which can be redone available.\n"),
                                 _("There is no operation to redo"));
       g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
@@ -429,7 +431,7 @@ thunar_job_operation_history_redo (void)
   if (thunar_job_operation_empty (operation_marker))
     {
 
-      xfce_dialog_show_warning (NULL,
+      xfce_dialog_show_warning (parent,
                                 _("The operation you are trying to redo does not have any files "
                                   "associated with it, and thus cannot be redone. "),
                                 _("%s operation cannot be redone"), thunar_job_operation_get_kind_nick (operation_marker));
@@ -454,7 +456,7 @@ thunar_job_operation_history_redo (void)
             g_free (file_uri);
           }
 
-        xfce_dialog_show_warning (NULL,
+        xfce_dialog_show_warning (parent,
                                   warning_body->str,
                                   _("%s operation can only be partially redone"),
                                   thunar_job_operation_get_kind_nick (operation_marker));
@@ -469,7 +471,7 @@ thunar_job_operation_history_redo (void)
 
     if (err != NULL)
       {
-        xfce_dialog_show_warning (NULL,
+        xfce_dialog_show_warning (parent,
                                   err->message,
                                   _("Failed to redo operation '%s'"),
                                   thunar_job_operation_get_kind_nick (operation_marker));
