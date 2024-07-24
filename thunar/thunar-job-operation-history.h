@@ -30,8 +30,8 @@ G_DECLARE_FINAL_TYPE (ThunarJobOperationHistory, thunar_job_operation_history, T
 ThunarJobOperationHistory* thunar_job_operation_history_get_default             (void);
 void                       thunar_job_operation_history_commit                  (ThunarJobOperation    *job_operation);
 void                       thunar_job_operation_history_update_trash_timestamps (ThunarJobOperation    *job_operation);
-void                       thunar_job_operation_history_undo                    (void);
-void                       thunar_job_operation_history_redo                    (void);
+void                       thunar_job_operation_history_undo                    (GtkWindow             *parent);
+void                       thunar_job_operation_history_redo                    (GtkWindow             *parent);
 gboolean                   thunar_job_operation_history_can_undo                (void);
 gboolean                   thunar_job_operation_history_can_redo                (void);
 
