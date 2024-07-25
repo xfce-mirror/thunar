@@ -339,12 +339,20 @@ thunar_emblem_chooser_button_toggled (GtkToggleButton     *button,
   /* limit the number of selectable emblems */
   if (g_list_length (emblem_names) > MAX_EMBLEMS_PER_FILE)
     {
+      GtkWidget *toplevel;
+      GtkWindow *window = NULL;
+
+      /* determine the toplevel window for the chooser */
+      toplevel = gtk_widget_get_toplevel (GTK_WIDGET (chooser));
+      if (toplevel != NULL)
+        window = GTK_WINDOW (toplevel);
+
       g_signal_handlers_block_by_func (G_OBJECT (button), thunar_emblem_chooser_button_toggled, chooser);
       gtk_toggle_button_set_active (button, FALSE);
       g_signal_handlers_unblock_by_func (G_OBJECT (button), thunar_emblem_chooser_button_toggled, chooser);
 
       gchar* message = g_strdup_printf (_("A maximum of %u emblems is supported per file."), MAX_EMBLEMS_PER_FILE);
-      xfce_dialog_show_warning (NULL, message, _("Too many emblems selected"));
+      xfce_dialog_show_warning (window, message, _("Too many emblems selected"));
       g_free (message);
       g_list_free (emblem_names);
       return;
