@@ -63,6 +63,7 @@
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-renamer-dialog.h"
 #include "thunar/thunar-window.h"
+#include "thunar/thunar-application.h"
 
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -583,7 +584,25 @@ thunar_util_parse_parent (gpointer    parent,
 
   /* check if we should return the window */
   if (G_LIKELY (window_return != NULL))
-    *window_return = (GtkWindow *) window;
+    {
+      /* If we dont know the toplevel window, try to return the topmost thunar window */
+      if (window == NULL)
+        {
+          ThunarApplication *application;
+          GList             *window_list;
+
+          application = thunar_application_get ();
+          window_list = thunar_application_get_windows (application);
+          if (window_list != NULL)
+            {
+              window = g_list_last (window_list)->data; /* this will be the topmost Window */
+              g_list_free (window_list);
+            }
+          g_object_unref (G_OBJECT (application));
+        }
+
+      *window_return = (GtkWindow *) window;
+    }
 
   return screen;
 }
