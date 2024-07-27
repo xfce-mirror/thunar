@@ -125,6 +125,7 @@ enum
   PROP_SHORTCUTS_ICON_SIZE,
   PROP_TREE_ICON_EMBLEMS,
   PROP_TREE_ICON_SIZE,
+  PROP_TREE_LINES,
   PROP_MISC_SWITCH_TO_NEW_TAB,
   PROP_MISC_VERTICAL_SPLIT_PANE,
   PROP_MISC_OPEN_NEW_WINDOWS_IN_SPLIT_VIEW, // Drop for or after 4.22
@@ -1185,6 +1186,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          EXO_PARAM_READWRITE);
 
   /**
+   * ThunarPreferences:misc-tree-lines-in-tree-sidepane:
+   *
+   * Whether to show tree lines or not in the tree side pane.
+   **/
+  preferences_props[PROP_TREE_LINES] =
+      g_param_spec_boolean ("misc-tree-lines-in-tree-sidepane",
+                            "TreeLines",
+                            NULL,
+                            FALSE,
+                            EXO_PARAM_READWRITE);
+
+ /**
  * ThunarPreferences:misc-switch-to-new-tab:
  *
  * Whether to switch to the new tab after opening a folder in a new tab.
