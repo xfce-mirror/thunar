@@ -390,6 +390,10 @@ thunar_tree_view_init (ThunarTreeView *view)
   g_object_bind_property (G_OBJECT (view->preferences), "tree-icon-emblems", G_OBJECT (view->icon_renderer), "emblems", G_BINDING_SYNC_CREATE);
   g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::tree-icon-emblems", G_CALLBACK (gtk_widget_queue_draw), view);
 
+  /* optional tree lines */
+  g_object_bind_property (G_OBJECT (view->preferences), "tree-lines", G_OBJECT (view), "enable-tree-lines", G_BINDING_SYNC_CREATE);
+  g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::tree-lines", G_CALLBACK (gtk_widget_queue_draw), view);
+
   /* optional symbolic icons */
   g_object_bind_property (G_OBJECT (view->preferences), "misc-symbolic-icons-in-sidepane", G_OBJECT (view->icon_renderer), "use-symbolic-icons", G_BINDING_SYNC_CREATE);
   g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::misc-symbolic-icons-in-sidepane", G_CALLBACK (gtk_widget_queue_draw), view);
