@@ -358,7 +358,7 @@ thunar_tree_view_init (ThunarTreeView *view)
   gtk_tree_view_set_model (GTK_TREE_VIEW (view), GTK_TREE_MODEL (view->model));
 
   /* configure the tree view */
-  gtk_tree_view_set_enable_search (GTK_TREE_VIEW (view), FALSE);
+  gtk_tree_view_set_enable_search (GTK_TREE_VIEW (view), TRUE);
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (view), FALSE);
 
   /* allocate a single column for our renderers */
@@ -1155,6 +1155,9 @@ thunar_tree_view_row_activated (GtkTreeView       *tree_view,
           thunar_tree_view_action_open (THUNAR_TREE_VIEW (tree_view));
         }
     }
+    /* Using TREE_SEARCH and <Return> opens a folder, but also our treeview
+     * looses the focus. Get the focus back: */
+    gtk_widget_grab_focus (GTK_WIDGET (tree_view));
 }
 
 
