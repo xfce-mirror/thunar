@@ -1152,9 +1152,10 @@ thunar_tree_view_row_activated (GtkTreeView       *tree_view,
           thunar_tree_view_action_open (THUNAR_TREE_VIEW (tree_view));
         }
     }
-    /* Using TREE_SEARCH and <Return> opens a folder, but also our treeview
-     * looses the focus. Get the focus back: */
-    gtk_widget_grab_focus (GTK_WIDGET (tree_view));
+
+  /* Using TREE_SEARCH and <Return> opens a folder, but also our treeview
+   * looses the focus. Get the focus back: */
+  gtk_widget_grab_focus (GTK_WIDGET (tree_view));
 }
 
 
