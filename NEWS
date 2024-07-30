@@ -1,3 +1,153 @@
+4.19.3 (2024-07-30)
+======
+- Allow type ahead search the treeview sidepane
+- Added a hidden setting to toggle tree-lines
+- Pass toplevel window to emblem chooser error dialog  (#1393)
+- Use parent windows for undo/redo dialog (#1393)
+- Simplify reload after rename (#1395)
+- Dont destroy ThunarFiles on request (#1357)
+- Always re-add files to cache on reload (#1357)
+- Rework event handling for toolbar context menu
+- Don't work with ThunarFolder in separate jobs
+- Do not request thumbnails unconditionally (#1385)
+- Add default bindings for special keys (#1386)
+- Prevent preleminary destruction of ThunarFiles
+- Only add successfully opened files to Recent
+- Add files opened via the location entry to Recent (#1349)
+- Improve behavior of split view separator (#1107)
+- Option to disable ctrl+scroll to zoom (#1379)
+- Hide single tab in split view
+- Immediately focus split view pane on DnD events
+- Re-enable toolbar overflow menu (#1240)
+- Adding an default issue template
+- Reduce width of the toolbar editor
+- Hide OpenItemLocation/Restore menu entry in tree view
+- Fix leaking ThunarFile (#573)
+- Add preferences settings for usage of symbolic icons
+- Do not enter folder when DnD menu is shown
+- Fix for "misc_open_new_windows_in_split_view" (#889)
+- thunar-uca: Use regular icons in editor
+- thunar-uca: Update info text in chooser dialog
+- Optionally use symbolic icons in location bar
+- Show warn on selecting too many emblems (#1368)
+- Dont add directories to recent:/// (#1372)
+- Update the sidepane/toolbar when toggling symbolic icons
+- Make symbolic icons in sidepane theme-color aware
+- Rework toolbar configuration storage (#1028)
+- Always render up to 4 emblems (#1368)
+- Prevent icon emblems from overlapping (#1368)
+- Prevent double-restore (#1369)
+- Fix ThunarxMenuItem sensitive property
+- clang build Fixes
+- build: Use AM_DISTCHECK_CONFIGURE_FLAGS
+- Fix workaround for icon "inode-directory"
+- Add missing top border to tree pane
+- Prevent g_malloc_n build warnings (#1362)
+- Add "symbolic" value to cached icons (#1363)
+- Enter folders automatically while dragging files (#5)
+- Focus split view pane on DnD events (#1243)
+- Shorten symbolic xfconf property names
+- Optionally use symbolic icons in the sidepane (#252)
+- Usage of window-close-symbolic (#960)
+- Use symbolic insons only for the toolbar
+- Fix several out of sync bugs (#1326)
+- Rework focus indicator for split view (#730)
+- Improve various aspects of the Image Preview pane (#932)
+- prefs-dialog: Change order of RECURSIVE_SEARCH options
+- prefs-dialog: Improve PARALLEL_COPY_MODE strings
+- Move TRASH_DELETE keyboard shortcuts to MOVE_TO_TRASH section
+- Always show "Paste" entry in Edit menu
+- Reveal keyboard shortcut for "Open with Application" menu entry
+- Add keyboard shortcut for "Invert Selection"
+- Add "Remove from Recent" to Edit menu
+- Improve "Open Item Location" menu entry
+- Show "Open With Default Applications" entry only for multiple files
+- Move "Edit Launcher" menu entry into "Open" section
+- Fix location of "Create" menu section in Location Bar / Side Pane
+- Fix location of "Restore" menu section
+- Fix Regression: Tabs order on restore (#1341)
+- Clear current selection when requesting a new one (#1338)
+- Refactor "select after reload" mechanics (#1338)
+- Resolve conflicting mnemonics and add missing ones
+- Statusbar: re-add last-modified time for folders (#1348)
+- Fix regression during device eject (#1347)
+- Use GHashTable to store files (#1337)
+- Restore tabs when launched with uri arg. (#1233)
+- Dont reload folder when "draw_frames" is set (#1337)
+- Add New Tab and New Window icons to toolbar (#1263)
+- Fix icon view regression (#1315)
+- Improve icon view performance (#1315)
+- Performance improvements (#1315)
+- tree-view-model: Fix gettext warning about empty string
+- build: Optional require polkit for l10n xml files
+- build: Get rid of intltool
+- po/sl.po: Fix unmatched format specifier
+- build: fix automake non standard library name
+- Fix leak during search
+- Fix a leak in statusbar code
+- Fix parentheses-equality warning
+- Allow sumenu UCAs in toolbar (#780)
+- Fix shortcuts for ucas in subfolders (#1043)
+- Display cached thumbnails as themselves (#1331)
+- Load statusbar text in separate job (#1315)
+- Move statusbar text method to thunar-util
+- Improve statusbar performance (#1315)
+- Fix possible NULL pointer dereference (#1330)
+- Consider display_name=NULL cases (#1329)
+- re-enable file monitor for search files (#1320)
+- Fix possible deadlock during search (#1321)
+- Initialize variable in thunar_details_view_button_press_event
+- Prevent use after free (#1325)
+- Initialize variable in thunar_tree_view_model_dir_files_changed
+- Fix leaks during file duplication (#1322)
+- Use xfce_dialog_show_error (#1320)
+- Disconnect ShortcutModel on finalize (#1314)
+- Prevent crash on open non-readable folder
+- Prevent warning in tree-view
+- Dont save bookmarks on trash change (#141)
+- Fix support for bookmark reloading
+- Fix bulk renamer crash on close (#1307)
+- Prevent CRITICAL when leaving search
+- Fix regression: Missing window icon
+- No view-switch while searching (#1293)
+- Fix mem leak in action-manager (#573)
+- Fix memory leak in thunar-history (#573)
+- Various Refactorings in "ThunarWindow"
+- Show complete file paths in tooltips (#1213)
+- Fix bug in file_watch (#1300)
+- Prevent double-free for ThunarJob (#1299)
+- Fix memory leak in statusbar (#573)
+- Fix various memory leaks on ThunarJobs
+- Fix possible double-free on thunar job (#1299)
+- Improve handling of "loading" property (#1296)
+- Dont show 'open location' on recent icon(#1297)
+- Simplify ThunarFile destruction in shortcut-model
+- Prevent re-creation of shortcut model on exit
+- Minor simplification for tree-view pane
+- Properly release job when finished (#1192)
+- Fix "files-changed" handling for tree-pane (#1292)
+- Properly remove timeout source (#1077)
+- Throttle selection changed (#1077)
+- Refactored "thunar_folder_monitor"
+- move file-monitoring into thunar-folder
+- Fix for image preview visibility (#1285)
+- Dont raise progress dialog for short jobs (#35)
+- Prevent focus stealing of file transfer dialog (#643)
+- Add text to toolbar config dialog (#1282)
+- Dont update "last-view" when searching (#1278)
+- Wrapping labels containing local variable definitions to its own scope
+- Translation Updates:
+  , Albanian, Arabic, Armenian, Armenian (Armenia), Asturian, Basque,
+  Bengali, Bulgarian, Chinese (China), Chinese (Hong Kong), Chinese
+  (Taiwan), Czech, Danish, Dutch, Eastern Armenian, English
+  (Australia), English (United Kingdom), Esperanto, Estonian, Finnish,
+  French, Galician, German, Greek, Hebrew, Hungarian, Icelandic,
+  Interlingue, Italian, Japanese, Kazakh, Latvian, Malay, Norwegian
+  Bokmål, Norwegian Nynorsk, Occitan (post 1500), Persian (Iran),
+  Polish, Portuguese, Portuguese (Brazil), Romanian, Serbian, Slovak,
+  Slovenian, Spanish, Swedish, Telugu, Thai, Turkish, Urdu, Urdu
+  (Pakistan), Uyghur, Vietnamese
+
 4.19.2 (2023-12-30)
 ======
 - Prevent infinite reload loop for symlinks (#1270)

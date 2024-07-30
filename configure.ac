@@ -25,7 +25,7 @@ dnl ***************************
 m4_define([thunarx_verinfo], [0:0:0])
 m4_define([thunarx_version_api], [3])
 
-XDT_VERSION_INIT([4.19.2], [git])
+XDT_VERSION_INIT([4.19.3])
 
 dnl ***************************
 dnl *** Initialize autoconf ***
