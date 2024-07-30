@@ -246,6 +246,7 @@ static gboolean  thunar_window_propagate_key_event        (GtkWindow            
 static gboolean  thunar_window_after_propagate_key_event  (GtkWindow              *window,
                                                            GdkEvent               *key_event,
                                                            gpointer                user_data);
+static gboolean  thunar_window_action_menu                (ThunarWindow           *window);
 static gboolean  thunar_window_action_open_file_menu      (ThunarWindow           *window);
 static void      thunar_window_update_title               (ThunarWindow           *window);
 static void      thunar_window_menu_item_selected         (ThunarWindow           *window,
@@ -272,7 +273,8 @@ static void      thunar_window_set_zoom_level             (ThunarWindow         
 static void      thunar_window_update_window_icon         (ThunarWindow           *window);
 static void      thunar_window_create_menu                (ThunarWindow           *window,
                                                            ThunarWindowAction      action,
-                                                           GCallback               cb_update_menu);
+                                                           GCallback               cb_update_menu,
+                                                           GtkWidget              *menu);
 static void      thunar_window_select_files               (ThunarWindow           *window,
                                                            GList                  *files_to_select);
 static void      thunar_window_update_file_menu           (ThunarWindow           *window,
@@ -446,7 +448,7 @@ struct _ThunarWindow
   GFile                     *uca_file;
 
   /* we need to maintain pointers to be able to toggle sensitivity and activity */
-  GtkWidget                 *location_toolbar_item_view_menubar;
+  GtkWidget                 *location_toolbar_item_menu;
   GtkWidget                 *location_toolbar_item_back;
   GtkWidget                 *location_toolbar_item_forward;
   GtkWidget                 *location_toolbar_item_parent;
@@ -538,7 +540,6 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST,           "<Actions>/ThunarWindow/view-as-compact-list",            "<Primary>3",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Compact View"),          N_ ("Display folder content in a compact list view"),                                "view-compact",            G_CALLBACK (thunar_window_action_compact_view),       },
 
     { THUNAR_WINDOW_ACTION_GO_MENU,                        "<Actions>/ThunarWindow/go-menu",                         "",                     XFCE_GTK_MENU_ITEM,       N_ ("_Go"),                    NULL,                                                                                NULL,                      NULL                                                  },
-    { THUNAR_WINDOW_ACTION_BOOKMARKS_MENU,                 "<Actions>/ThunarWindow/bookmarks-menu",                  "",                     XFCE_GTK_MENU_ITEM,       N_ ("_Bookmarks"),             NULL,                                                                                NULL,                      NULL                                                  },
     { THUNAR_WINDOW_ACTION_OPEN_FILE_SYSTEM,               "<Actions>/ThunarWindow/open-file-system",                "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("F_ile System"),           N_ ("Browse the file system"),                                                       "drive-harddisk",          G_CALLBACK (thunar_window_action_open_file_system),   },
     { THUNAR_WINDOW_ACTION_OPEN_HOME,                      "<Actions>/ThunarWindow/open-home",                       "<Alt>Home",            XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Home"),                  N_ ("Go to the home folder"),                                                        "go-home",                 G_CALLBACK (thunar_window_action_open_home),          },
     { THUNAR_WINDOW_ACTION_OPEN_DESKTOP,                   "<Actions>/ThunarWindow/open-desktop",                    "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Desktop"),               N_ ("Go to the desktop folder"),                                                     "user-desktop",            G_CALLBACK (thunar_window_action_open_desktop),       },
@@ -551,9 +552,12 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_OPEN_TEMPLATES,                 "<Actions>/ThunarWindow/open-templates",                  "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_("T_emplates"),              N_ ("Go to the templates folder"),                                                   "text-x-generic-template", G_CALLBACK (thunar_window_action_open_templates),     },
     { THUNAR_WINDOW_ACTION_OPEN_NETWORK,                   "<Actions>/ThunarWindow/open-network",                    "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_("Browse _Network"),         N_ ("Browse local network connections"),                                             "network-workgroup",       G_CALLBACK (thunar_window_action_open_network),       },
 
+    { THUNAR_WINDOW_ACTION_BOOKMARKS_MENU,                 "<Actions>/ThunarWindow/bookmarks-menu",                  "",                     XFCE_GTK_MENU_ITEM,       N_ ("_Bookmarks"),             NULL,                                                                                NULL,                      NULL                                                  },
+
     { THUNAR_WINDOW_ACTION_HELP_MENU,                      "<Actions>/ThunarWindow/contents/help-menu",              "",                     XFCE_GTK_MENU_ITEM      , N_ ("_Help"),                  NULL, NULL, NULL},
     { THUNAR_WINDOW_ACTION_CONTENTS,                       "<Actions>/ThunarWindow/contents",                        "F1",                   XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Contents"),              N_ ("Display Thunar user manual"),                                                   "help-browser",            G_CALLBACK (thunar_window_action_contents),            },
     { THUNAR_WINDOW_ACTION_ABOUT,                          "<Actions>/ThunarWindow/about",                           "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_About"),                 N_ ("Display information about Thunar"),                                             "help-about",              G_CALLBACK (thunar_window_action_about),               },
+
     { THUNAR_WINDOW_ACTION_BACK,                           "<Actions>/ThunarStandardView/back",                      "<Alt>Left",            XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Back"),                  N_ ("Go to the previous visited folder"),                                            "go-previous",             G_CALLBACK (thunar_window_action_back),                },
     { THUNAR_WINDOW_ACTION_BACK_ALT_1,                     "<Actions>/ThunarStandardView/back-alt1",                 "BackSpace",            XFCE_GTK_IMAGE_MENU_ITEM, NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_action_back),                },
     { THUNAR_WINDOW_ACTION_BACK_ALT_2,                     "<Actions>/ThunarStandardView/back-alt2",                 "Back",                 XFCE_GTK_IMAGE_MENU_ITEM, NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_action_back),                },
@@ -561,9 +565,12 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_FORWARD_ALT,                    "<Actions>/ThunarStandardView/forward-alt",               "Forward",              XFCE_GTK_IMAGE_MENU_ITEM, NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_action_forward),             },
     { THUNAR_WINDOW_ACTION_SWITCH_PREV_TAB,                "<Actions>/ThunarWindow/switch-previous-tab",             "<Primary>Page_Up",     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Previous Tab"),          N_ ("Switch to Previous Tab"),                                                       "go-previous",             G_CALLBACK (thunar_window_action_switch_previous_tab), },
     { THUNAR_WINDOW_ACTION_SWITCH_NEXT_TAB,                "<Actions>/ThunarWindow/switch-next-tab",                 "<Primary>Page_Down",   XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Next Tab"),              N_ ("Switch to Next Tab"),                                                           "go-next",                 G_CALLBACK (thunar_window_action_switch_next_tab),     },
+
     { THUNAR_WINDOW_ACTION_SEARCH,                         "<Actions>/ThunarWindow/search",                          "<Primary>f",           XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Search for Files..."),   N_ ("Search for a specific file in the current folder and Recent"),                  "system-search",           G_CALLBACK (thunar_window_action_search),              },
     { THUNAR_WINDOW_ACTION_SEARCH_ALT,                     "<Actions>/ThunarWindow/search-alt",                      "Search",               XFCE_GTK_IMAGE_MENU_ITEM, NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_action_search),              },
     { THUNAR_WINDOW_ACTION_CANCEL_SEARCH,                  "<Actions>/ThunarWindow/cancel-search",                   "Escape",               XFCE_GTK_MENU_ITEM,       N_ ("Cancel search for files"),NULL,                                                                                "",                        G_CALLBACK (thunar_window_action_cancel_search),       },
+
+    { THUNAR_WINDOW_ACTION_MENU,                           "<Actions>/Thunarwindow/menu",                            "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Menu"),                   N_ ("Show the menu"),                                                                "open-menu",               G_CALLBACK (thunar_window_action_menu),                },
     { 0,                                                   "<Actions>/ThunarWindow/open-file-menu",                  "F10",                  0,                        NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_action_open_file_menu),      },
 };
 
@@ -864,12 +871,12 @@ thunar_window_init (ThunarWindow *window)
 
   /* build the menubar */
   window->menubar = gtk_menu_bar_new ();
-  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_FILE_MENU, G_CALLBACK (thunar_window_update_file_menu));
-  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_EDIT_MENU, G_CALLBACK (thunar_window_update_edit_menu));
-  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_VIEW_MENU, G_CALLBACK (thunar_window_update_view_menu));
-  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_GO_MENU, G_CALLBACK (thunar_window_update_go_menu));
-  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_BOOKMARKS_MENU, G_CALLBACK (thunar_window_update_bookmarks_menu));
-  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_HELP_MENU, G_CALLBACK (thunar_window_update_help_menu));
+  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_FILE_MENU, G_CALLBACK (thunar_window_update_file_menu), window->menubar);
+  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_EDIT_MENU, G_CALLBACK (thunar_window_update_edit_menu), window->menubar);
+  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_VIEW_MENU, G_CALLBACK (thunar_window_update_view_menu), window->menubar);
+  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_GO_MENU, G_CALLBACK (thunar_window_update_go_menu), window->menubar);
+  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_BOOKMARKS_MENU, G_CALLBACK (thunar_window_update_bookmarks_menu), window->menubar);
+  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_HELP_MENU, G_CALLBACK (thunar_window_update_help_menu), window->menubar);
   gtk_widget_show_all (window->menubar);
 
   window->menubar_visible = last_menubar_visible;
@@ -1277,14 +1284,15 @@ thunar_window_select_files (ThunarWindow *window,
 static void
 thunar_window_create_menu (ThunarWindow       *window,
                            ThunarWindowAction  action,
-                           GCallback           cb_update_menu)
+                           GCallback           cb_update_menu,
+                           GtkWidget          *menu)
 {
   GtkWidget *item;
   GtkWidget *submenu;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (action), G_OBJECT (window), GTK_MENU_SHELL (window->menubar));
+  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (action), G_OBJECT (window), GTK_MENU_SHELL (menu));
 
   submenu = g_object_new (THUNAR_TYPE_MENU, "menu-type", THUNAR_MENU_TYPE_WINDOW, "action_mgr", window->action_mgr, NULL);
   gtk_menu_set_accel_group (GTK_MENU (submenu), window->accel_group);
@@ -4020,7 +4028,7 @@ thunar_window_action_menubar_changed (ThunarWindow *window)
   window->menubar_visible = !window->menubar_visible;
 
   gtk_widget_set_visible (window->menubar, window->menubar_visible);
-  gtk_widget_set_visible (window->location_toolbar_item_view_menubar, !window->menubar_visible);
+  gtk_widget_set_visible (window->location_toolbar_item_menu, !window->menubar_visible);
 
   g_object_set (G_OBJECT (window->preferences), "last-menubar-visible", window->menubar_visible, NULL);
 
@@ -4851,6 +4859,59 @@ thunar_window_action_search (ThunarWindow *window)
 
 
 static gboolean
+thunar_window_action_menu_deactivate (ThunarWindow *window,
+                                      GtkWidget    *menu)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+  _thunar_return_val_if_fail (GTK_IS_WIDGET (menu), FALSE);
+
+  /* toggle off the toolbar button */
+  g_signal_handlers_block_by_func (window->location_toolbar_item_menu, get_action_entry (THUNAR_WINDOW_ACTION_MENU)->callback, window);
+  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_menu), FALSE);
+  g_signal_handlers_unblock_by_func (window->location_toolbar_item_menu, get_action_entry (THUNAR_WINDOW_ACTION_MENU)->callback, window);
+
+  /* release the menu reference */
+  g_object_ref_sink (G_OBJECT (menu));
+  g_object_unref (G_OBJECT (menu));
+
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_window_action_menu (ThunarWindow *window)
+{
+  GtkWidget *menu;
+
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  /* build the menu */
+  menu = gtk_menu_new ();
+  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_FILE_MENU, G_CALLBACK (thunar_window_update_file_menu), menu);
+  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_EDIT_MENU, G_CALLBACK (thunar_window_update_edit_menu), menu);
+  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_VIEW_MENU, G_CALLBACK (thunar_window_update_view_menu), menu);
+  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_GO_MENU, G_CALLBACK (thunar_window_update_go_menu), menu);
+  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_BOOKMARKS_MENU, G_CALLBACK (thunar_window_update_bookmarks_menu), menu);
+  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_HELP_MENU, G_CALLBACK (thunar_window_update_help_menu), menu);
+  gtk_widget_show_all (menu);
+
+  g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (thunar_window_action_menu_deactivate), window);
+
+  /* show the menu below its toolbar button */
+  gtk_menu_popup_at_widget (GTK_MENU (menu),
+                            window->location_toolbar_item_menu,
+                            GDK_GRAVITY_SOUTH_WEST,
+                            GDK_GRAVITY_NORTH_WEST,
+                            NULL);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
+}
+
+
+
+static gboolean
 thunar_window_action_open_file_menu (ThunarWindow *window)
 {
   gboolean  ret;
@@ -5664,6 +5725,7 @@ thunar_window_toolbar_button_press_event (GtkWidget      *toolbar,
     {
       menu = gtk_menu_new ();
       xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR), G_OBJECT (window), GTK_MENU_SHELL (menu));
+      xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_MENUBAR), G_OBJECT (window), window->menubar_visible, GTK_MENU_SHELL (menu));
       gtk_widget_show_all (menu);
 
       /* run the menu (takes over the floating of menu) */
@@ -6299,8 +6361,8 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
 
   g_signal_connect (G_OBJECT (window->location_toolbar), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_press_event), window);
 
-  /* The first toolbar item must always be THUNAR_WINDOW_ACTION_VIEW_MENUBAR which we hide by default */
-  window->location_toolbar_item_view_menubar  = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_MENUBAR, item_order++);
+  /* add toolbar items */
+  window->location_toolbar_item_menu          = thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_MENU, FALSE, item_order++);
   window->location_toolbar_item_back          = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_BACK, item_order++);
   window->location_toolbar_item_forward       = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_FORWARD, item_order++);
   window->location_toolbar_item_parent        = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_OPEN_PARENT, item_order++);
@@ -6349,8 +6411,8 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   /* display the toolbar */
   gtk_widget_show_all (window->location_toolbar);
 
-  /* view_menubar is only visible when the menu is hidden */
-  gtk_widget_set_visible (window->location_toolbar_item_view_menubar, !window->menubar_visible);
+  /* only show the menu button when the menubar is hidden */
+  gtk_widget_set_visible (window->location_toolbar_item_menu, !window->menubar_visible);
 
   /* add the location bar itself after gtk_widget_show_all to not mess with the visibility of the location buttons */
   gtk_container_add (GTK_CONTAINER (tool_item), window->location_bar);
@@ -6633,7 +6695,7 @@ thunar_window_location_toolbar_load_last_order (ThunarWindow *window)
     {
       GList *toolbar_items = gtk_container_get_children (GTK_CONTAINER (window->location_toolbar));
       GList *lp;
-      gchar *old_default_order[17] = { "view-menubar", "back", "forward", "open-parent", "open-home",
+      gchar *old_default_order[17] = { "menu", "back", "forward", "open-parent", "open-home",
                                        "undo", "redo", "zoom-in", "zoom-out", "zoom-reset",
                                        "view-as-icons", "view-as-detailed-list", "view-as-compact-list",
                                        "toggle-split-view", "location-bar", "reload", "search" };
@@ -6812,7 +6874,7 @@ thunar_window_toolbar_toggle_item_visibility (ThunarWindow *window,
       GtkWidget *item = lp->data;
 
       /* visibility of this item is only controlled by 'window->menubar_visible' */
-      if (item == window->location_toolbar_item_view_menubar)
+      if (item == window->location_toolbar_item_menu)
         continue;
 
       if (index == i)
