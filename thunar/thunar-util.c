@@ -1218,7 +1218,8 @@ thunar_util_get_file_time (GFileInfo         *file_info,
 /**
  * thunar_util_get_statusbar_text_for_files:
  * @files                        : list of ThunarFiles for which a text is requested
- * @show_file_size_binary_format : weather the file size should be displayed in binary format
+ * @show_hidden                  : whether hidden files are shown
+ * @show_file_size_binary_format : whether the file size should be displayed in binary format
  * @date_style        : the #ThunarDateFormat used to humanize the @file_time.
  * @date_custom_style : custom style to apply, if @date_style is set to custom
  *
@@ -1231,26 +1232,28 @@ thunar_util_get_file_time (GFileInfo         *file_info,
  **/
 gchar*
 thunar_util_get_statusbar_text_for_files (GHashTable      *files,
+                                          gboolean         show_hidden,
                                           gboolean         show_file_size_binary_format,
                                           ThunarDateStyle  date_style,
                                           const gchar     *date_custom_style,
                                           guint            status_bar_actve_info)
 {
   guint64            size_summary = 0;
-  gint               folder_count = 0;
-  gint               non_folder_count = 0;
+  gint               folder_count = 0, hidden_folder_count = 0;
+  gint               file_count = 0, hidden_file_count = 0;
   GList             *text_list = NULL;
   gchar             *size_string = NULL;
   gchar             *temp_string = NULL;
   gchar             *folder_text = NULL;
-  gchar             *non_folder_text = NULL;
+  gchar             *file_text = NULL;
   guint64            last_modified_date = 0;
   guint64            temp_last_modified_date;
   GFileInfo         *last_modified_file = NULL;
-  gboolean           show_size, show_size_in_bytes, show_last_modified;
+  gboolean           show_hidden_count, show_size, show_size_in_bytes, show_last_modified;
   GHashTableIter     iter;
   gpointer           key;
 
+  show_hidden_count = thunar_status_bar_info_check_active (status_bar_actve_info, THUNAR_STATUS_BAR_INFO_HIDDEN_COUNT);
   show_size = thunar_status_bar_info_check_active (status_bar_actve_info, THUNAR_STATUS_BAR_INFO_SIZE);
   show_size_in_bytes = thunar_status_bar_info_check_active (status_bar_actve_info, THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES);
   show_last_modified = thunar_status_bar_info_check_active (status_bar_actve_info, THUNAR_STATUS_BAR_INFO_LAST_MODIFIED);
@@ -1262,6 +1265,7 @@ thunar_util_get_statusbar_text_for_files (GHashTable      *files,
       GFileInfo *file_info = g_file_query_info (thunar_file_get_file (THUNAR_FILE (key)),
                                                 G_FILE_ATTRIBUTE_STANDARD_TYPE ","
                                                 G_FILE_ATTRIBUTE_STANDARD_SIZE ","
+                                                G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN ","
                                                 G_FILE_ATTRIBUTE_TIME_MODIFIED,
                                                 G_FILE_QUERY_INFO_NONE,
                                                 NULL, 
@@ -1272,13 +1276,18 @@ thunar_util_get_statusbar_text_for_files (GHashTable      *files,
       if (g_file_info_get_file_type (file_info) == G_FILE_TYPE_DIRECTORY)
         {
           folder_count++;
+          if (g_file_info_get_is_hidden (file_info))
+            hidden_folder_count++;
         }
       else
         {
-          non_folder_count++;
-          if (g_file_info_get_file_type (file_info) == G_FILE_TYPE_REGULAR) g_file_info_get_size(file_info);
+          file_count++;
+          if (g_file_info_get_is_hidden (file_info))
+            hidden_file_count++;
+          if (g_file_info_get_file_type (file_info) == G_FILE_TYPE_REGULAR) g_file_info_get_size (file_info);
             size_summary += g_file_info_get_attribute_uint64 (file_info, G_FILE_ATTRIBUTE_STANDARD_SIZE);
         }
+
       temp_last_modified_date = thunar_util_get_file_time (file_info, THUNAR_FILE_DATE_MODIFIED);
       if (last_modified_date <= temp_last_modified_date)
         {
@@ -1293,27 +1302,34 @@ thunar_util_get_statusbar_text_for_files (GHashTable      *files,
       g_object_unref (file_info);
     }
 
-  if (non_folder_count > 0)
+  if (file_count > 0)
     {
+      file_text = g_strdup_printf (ngettext ("%d file", "%d files", file_count), file_count);
+
+      if (show_hidden_count == TRUE && show_hidden == FALSE && hidden_file_count > 0)
+        {
+          temp_string = g_strdup_printf (_ ("%s (%d hidden)"), file_text, hidden_file_count);
+          g_free (file_text);
+          file_text = temp_string;
+        }
+
       if (show_size == TRUE)
         {
           if (show_size_in_bytes == TRUE)
             {
               size_string = g_format_size_full (size_summary, G_FORMAT_SIZE_LONG_FORMAT
-                                                                | (show_file_size_binary_format ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT));
+                                                              | (show_file_size_binary_format ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT));
             }
           else
             {
               size_string = g_format_size_full (size_summary, show_file_size_binary_format ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
             }
-          non_folder_text = g_strdup_printf (ngettext ("%d file: %s",
-                                                       "%d files: %s",
-                                                       non_folder_count),
-                                                       non_folder_count, size_string);
+
+          temp_string = g_strdup_printf (_ ("%s: %s"), file_text, size_string);
+          g_free (file_text);
           g_free (size_string);
+          file_text = temp_string;
         }
-      else
-        non_folder_text = g_strdup_printf (ngettext ("%d file", "%d files", non_folder_count), non_folder_count);
     }
 
   if (folder_count > 0)
@@ -1322,14 +1338,21 @@ thunar_util_get_statusbar_text_for_files (GHashTable      *files,
                                                "%d folders",
                                                folder_count),
                                                folder_count);
+
+      if (show_hidden_count == TRUE && show_hidden == FALSE && hidden_folder_count > 0)
+        {
+          temp_string = g_strdup_printf (_ ("%s (%d hidden)"), folder_text, hidden_folder_count);
+          g_free (folder_text);
+          folder_text = temp_string;
+        }
     }
 
-  if (non_folder_text == NULL && folder_text == NULL)
+  if (file_text == NULL && folder_text == NULL)
     text_list = g_list_append (text_list, g_strdup_printf (_ ("0 items")));
   if (folder_text != NULL)
     text_list = g_list_append (text_list, folder_text);
-  if (non_folder_text != NULL)
-    text_list = g_list_append (text_list, non_folder_text);
+  if (file_text != NULL)
+    text_list = g_list_append (text_list, file_text);
 
   if (show_last_modified && last_modified_file != NULL)
     {
