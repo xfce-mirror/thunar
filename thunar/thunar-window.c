@@ -883,7 +883,6 @@ thunar_window_init (ThunarWindow *window)
   if (last_menubar_visible == FALSE)
     gtk_widget_hide (window->menubar);
   gtk_widget_set_hexpand (window->menubar, TRUE);
-  gtk_grid_attach (GTK_GRID (window->grid), window->menubar, 0, 0, 1, 1);
 
   /* append the menu item for the spinner */
   item = gtk_menu_item_new ();
@@ -1032,6 +1031,37 @@ thunar_window_init (ThunarWindow *window)
   /* add location toolbar */
   window->location_toolbar = NULL;
   thunar_window_location_toolbar_create (window);
+
+  gboolean use_csd, menubar_in_csd;
+
+  g_object_get (G_OBJECT (window->preferences), "use-csd", &use_csd,
+                                                "menubar-in-csd", &menubar_in_csd, NULL);
+
+  /* attach the toolbar to the window */
+  if (use_csd)
+    {
+      GtkWidget *header_bar = gtk_header_bar_new ();
+      gtk_window_set_titlebar (GTK_WINDOW (window), header_bar);
+
+      if (menubar_in_csd)
+        {
+          gtk_header_bar_set_custom_title (GTK_HEADER_BAR (header_bar), window->menubar);
+          gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 0, 1, 1);
+        }
+      else
+        {
+          gtk_header_bar_set_custom_title (GTK_HEADER_BAR (header_bar), window->location_toolbar);
+          gtk_grid_attach (GTK_GRID (window->grid), window->menubar, 0, 0, 1, 1);
+        }
+
+      gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (header_bar),TRUE);
+      gtk_widget_show (header_bar);
+    }
+  else
+    {
+      gtk_grid_attach (GTK_GRID (window->grid), window->menubar, 0, 0, 1, 1);
+      gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 1, 1);
+    }
 
   /* setup setting the location bar visibility on-demand */
   g_signal_connect_swapped (G_OBJECT (window->preferences), "notify::last-location-bar", G_CALLBACK (thunar_window_update_location_bar_visible), window);
@@ -6419,9 +6449,6 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
 
   /* load the correct order and visibility of items in the toolbar */
   thunar_window_location_toolbar_load_items (window);
-
-  /* attach the toolbar to the window */
-  gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 1, 1);
 }
 
 
