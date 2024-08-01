@@ -1455,7 +1455,7 @@ thunar_preferences_get_property (GObject    *object,
 {
   ThunarPreferences  *preferences = THUNAR_PREFERENCES (object);
   GValue              src = { 0, };
-  gchar               prop_name[65];
+  gchar               prop_name[64];
   gchar             **array;
 
   /* only set defaults if channel is not set */
