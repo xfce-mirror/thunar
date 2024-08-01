@@ -2210,11 +2210,11 @@ thunar_standard_view_get_dest_actions (ThunarStandardView *standard_view,
     }
 
   /* setup the drop-file for the icon renderer, so the user
-   * gets good visual feedback for the drop target.
-   */
+   * gets good visual feedback for the drop target */
   g_object_set (G_OBJECT (standard_view->icon_renderer), "drop-file", (action != 0) ? file : NULL, NULL);
 
-  /* check if we are dragging files within the same folder */
+  /* check if we are dragging files within the same folder and
+   * only highlight the view for possible actions (copy or link) */
   if (action == GDK_ACTION_MOVE && standard_view->priv->drop_file_list != NULL)
     {
       GFile *drop_file = standard_view->priv->drop_file_list->data;
