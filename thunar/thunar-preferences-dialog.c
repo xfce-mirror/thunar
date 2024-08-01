@@ -337,7 +337,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_set_hexpand (button, TRUE);
   gtk_widget_set_halign  (button, GTK_ALIGN_END);
   gtk_widget_set_tooltip_text (button,
-                               _("Set on to use client side decorations instead of server side decorations. - Requires Restart"));
+                               _("Don't use the decorations provided by the window manager, instead use a custom decoration style - Only applied to new Thunar windows"));
 
   gtk_grid_attach (GTK_GRID (grid), button, 1, 0, 1, 1);
   gtk_widget_show (button);
