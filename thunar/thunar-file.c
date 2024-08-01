@@ -2010,7 +2010,6 @@ thunar_file_accepts_drop (ThunarFile     *file,
   GdkDragAction suggested_action;
   GdkDragAction actions;
   ThunarFile   *ofile;
-  GFile        *parent_file;
   ThunarFile   *parent_thunar_file;
   GList        *lp;
 
@@ -2046,19 +2045,6 @@ thunar_file_accepts_drop (ThunarFile     *file,
           /* we cannot drop a file on itself */
           if (G_UNLIKELY (g_file_equal (file->gfile, lp->data)))
             return 0;
-
-          /* check whether source and destination are the same */
-          parent_file = g_file_get_parent (lp->data);
-          if (G_LIKELY (parent_file != NULL))
-            {
-              if (g_file_equal (file->gfile, parent_file))
-                {
-                  g_object_unref (parent_file);
-                  return 0;
-                }
-              else
-                g_object_unref (parent_file);
-            }
 
           /* copy/move/link within the trash not possible */
           if (G_UNLIKELY (thunar_g_file_is_trashed (lp->data) && thunar_file_is_trashed (file)))

@@ -2184,6 +2184,7 @@ thunar_standard_view_get_dest_actions (ThunarStandardView *standard_view,
   GdkDragAction action = 0;
   GtkTreePath  *path;
   ThunarFile   *file;
+  gboolean      skip_drop_highlight = FALSE;
 
   /* determine the file and path for the given coordinates */
   file = thunar_standard_view_get_drop_file (standard_view, x, y, &path);
@@ -2209,14 +2210,27 @@ thunar_standard_view_get_dest_actions (ThunarStandardView *standard_view,
     }
 
   /* setup the drop-file for the icon renderer, so the user
-   * gets good visual feedback for the drop target.
-   */
+   * gets good visual feedback for the drop target */
   g_object_set (G_OBJECT (standard_view->icon_renderer), "drop-file", (action != 0) ? file : NULL, NULL);
 
-  /* do the view highlighting */
-  if (standard_view->priv->drop_highlight != (path == NULL && action != 0))
+  /* check if we are dragging files within the same folder and
+   * only highlight the view for possible actions (copy or link) */
+  if (action == GDK_ACTION_MOVE && standard_view->priv->drop_file_list != NULL)
     {
-      standard_view->priv->drop_highlight = (path == NULL && action != 0);
+      GFile *drop_file = standard_view->priv->drop_file_list->data;
+      GFile *parent_file = g_file_get_parent (drop_file);
+
+      if (parent_file != NULL)
+        {
+          skip_drop_highlight = g_file_equal (parent_file, thunar_file_get_file (standard_view->priv->current_directory));
+          g_object_unref (parent_file);
+        }
+    }
+
+  /* do the view highlighting */
+  if (standard_view->priv->drop_highlight != (path == NULL && action != 0 && !skip_drop_highlight))
+    {
+      standard_view->priv->drop_highlight = (path == NULL && action != 0 && !skip_drop_highlight);
       gtk_widget_queue_draw (GTK_WIDGET (standard_view));
     }
 
