@@ -323,56 +323,57 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
 
-  label = gtk_label_new (_("Draw custom window decorations"));
-  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
-  gtk_widget_show (label);
+  row = 0;
 
-  button = gtk_switch_new ();
+  button = gtk_check_button_new_with_mnemonic (_("Draw custom window decorations"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "use-csd",
                           G_OBJECT (button),
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
-  gtk_widget_set_hexpand (button, TRUE);
-  gtk_widget_set_halign  (button, GTK_ALIGN_END);
   gtk_widget_set_tooltip_text (button,
                                _("Don't use the decorations provided by the window manager, instead use a custom decoration style - Only applied to new Thunar windows"));
 
-  gtk_grid_attach (GTK_GRID (grid), button, 1, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
 
-  label = gtk_label_new (_("Menubar in CSD:"));
-  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
-  gtk_widget_show (label);
+  /* next row */
+  row++;
 
-  button = gtk_switch_new ();
+  button = gtk_check_button_new_with_mnemonic (_("Display the menubar in custom window decoration"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "menubar-in-csd",
                           G_OBJECT (button),
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
-  gtk_widget_set_halign  (button, GTK_ALIGN_END);
-  gtk_widget_set_hexpand (button, TRUE);
   gtk_widget_set_tooltip_text (button,
-                               _("Set on to show menubar in client side decoration. - Requires Restart"));
+                               _("Display the menubar in the custom window decoration, instead of the toolbar - Only applied to new Thunar windows"));
   gtk_widget_show (button);
 
-  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
-  gtk_widget_show (hbox);
-
   revealer = gtk_revealer_new ();
-  g_object_bind_property (G_OBJECT (gtk_grid_get_child_at (GTK_GRID (grid), 1, 0)),
+  g_object_bind_property (G_OBJECT (gtk_grid_get_child_at (GTK_GRID (grid), 0, 0)),
                           "active",
                           G_OBJECT (revealer),
                           "reveal-child",
                           G_BINDING_SYNC_CREATE);
   gtk_widget_show (revealer);
 
-  gtk_grid_attach (GTK_GRID (grid), revealer, 0, 1, 2, 1);
-  gtk_container_add (GTK_CONTAINER (revealer), hbox);
-  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, TRUE, 0);
-  gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, TRUE, 0);
+  gtk_grid_attach (GTK_GRID (grid), revealer, 0, row, 1, 1);
+  gtk_container_add (GTK_CONTAINER (revealer), button);
+
+    /* next row */
+  row++;
+
+  button = gtk_check_button_new_with_mnemonic (_("Use current folder icon"));
+  g_object_bind_property (G_OBJECT (dialog->preferences),
+                          "misc-change-window-icon",
+                          G_OBJECT (button),
+                          "active",
+                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  gtk_widget_set_tooltip_text (button, _("Select this option to use the current folder icon as window icon"));
+
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
+  gtk_widget_show (button);
 
   label = gtk_label_new (_("View Settings"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
@@ -574,34 +575,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_set_tooltip_text (button, _("Select this option to place the icon captions for items "
                                          "beside the icon rather than below the icon."));
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
-  gtk_widget_show (button);
-
-  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
-  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
-  gtk_widget_show (frame);
-
-  label = gtk_label_new (_("Window Icon"));
-  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
-  gtk_widget_show (label);
-
-  grid = gtk_grid_new ();
-  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
-  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
-  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
-  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
-  gtk_container_add (GTK_CONTAINER (frame), grid);
-  gtk_widget_show (grid);
-
-  button = gtk_check_button_new_with_mnemonic (_("Use current folder icon"));
-  g_object_bind_property (G_OBJECT (dialog->preferences),
-                          "misc-change-window-icon",
-                          G_OBJECT (button),
-                          "active",
-                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
-  gtk_widget_set_tooltip_text (button, _("Select this option to use the current folder icon as window icon"));
-
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
 
