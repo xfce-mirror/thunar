@@ -129,6 +129,7 @@ static void      thunar_window_set_property               (GObject              
                                                            guint                   prop_id,
                                                            const GValue           *value,
                                                            GParamSpec             *pspec);
+static gboolean  thunar_window_csd_update                 (ThunarWindow           *window);
 static gboolean  thunar_window_reload                     (ThunarWindow           *window,
                                                            gboolean                reload_info);
 static gboolean  thunar_window_toggle_sidepane            (ThunarWindow           *window);
@@ -791,6 +792,7 @@ thunar_window_init (ThunarWindow *window)
   ThunarImagePreviewMode misc_image_preview_mode;
   gint                   max_paned_position;
   GtkStyleContext       *context;
+  gboolean               misc_use_csd;
 
   /* unset the view type */
   window->view_type = G_TYPE_NONE;
@@ -824,6 +826,7 @@ thunar_window_init (ThunarWindow *window)
                 "last-statusbar-visible", &last_statusbar_visible,
                 "last-image-preview-visible", &last_image_preview_visible,
                 "misc-image-preview-mode", &misc_image_preview_mode,
+                "misc-use-csd", &misc_use_csd,
                 NULL);
 
   /* update the visual on screen_changed events */
@@ -883,7 +886,6 @@ thunar_window_init (ThunarWindow *window)
   if (last_menubar_visible == FALSE)
     gtk_widget_hide (window->menubar);
   gtk_widget_set_hexpand (window->menubar, TRUE);
-  gtk_grid_attach (GTK_GRID (window->grid), window->menubar, 0, 0, 1, 1);
 
   /* append the menu item for the spinner */
   item = gtk_menu_item_new ();
@@ -1032,6 +1034,24 @@ thunar_window_init (ThunarWindow *window)
   /* add location toolbar */
   window->location_toolbar = NULL;
   thunar_window_location_toolbar_create (window);
+
+  /* Create client-side decoration if needed and add menubar and toolbar */
+  if (misc_use_csd)
+    {
+      GtkWidget *header_bar = gtk_header_bar_new ();
+      gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (header_bar), TRUE);
+      gtk_window_set_titlebar (GTK_WINDOW (window), header_bar);
+
+      thunar_window_csd_update (window);
+      g_signal_connect_swapped (window->preferences, "notify::misc-menubar-in-csd", G_CALLBACK (thunar_window_csd_update), window);
+
+      gtk_widget_show (header_bar);
+    }
+  else
+    {
+      gtk_grid_attach (GTK_GRID (window->grid), window->menubar, 0, 0, 1, 1);
+      gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 1, 1);
+    }
 
   /* setup setting the location bar visibility on-demand */
   g_signal_connect_swapped (G_OBJECT (window->preferences), "notify::last-location-bar", G_CALLBACK (thunar_window_update_location_bar_visible), window);
@@ -1856,6 +1876,50 @@ thunar_window_set_property (GObject            *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static gboolean
+thunar_window_csd_update (ThunarWindow *window)
+{
+  GtkWidget *header_bar, *in_header_bar, *below_header_bar;
+  gboolean   menubar_in_csd;
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  header_bar = gtk_window_get_titlebar (GTK_WINDOW (window));
+
+  g_object_get (G_OBJECT (window->preferences), "misc-menubar-in-csd", &menubar_in_csd, NULL);
+
+  if (menubar_in_csd)
+    {
+      in_header_bar = window->menubar;
+      below_header_bar = window->location_toolbar;
+    }
+  else
+    {
+      in_header_bar = window->location_toolbar;
+      below_header_bar = window->menubar;
+    }
+
+  g_object_ref (in_header_bar);
+  g_object_ref (below_header_bar);
+
+  gtk_widget_set_margin_start (in_header_bar, 10);
+  gtk_widget_set_margin_end   (in_header_bar, 10);
+  gtk_widget_set_margin_start (below_header_bar, 0);
+  gtk_widget_set_margin_end   (below_header_bar, 0);
+
+  gtk_container_remove (GTK_CONTAINER (header_bar), below_header_bar);
+  gtk_container_remove (GTK_CONTAINER (window->grid), in_header_bar);
+
+  gtk_header_bar_set_custom_title (GTK_HEADER_BAR (header_bar), in_header_bar);
+  gtk_grid_attach (GTK_GRID (window->grid), below_header_bar, 0, 0, 1, 1);
+
+  g_object_unref (in_header_bar);
+  g_object_unref (below_header_bar);
+
+  return TRUE;
 }
 
 
@@ -6419,9 +6483,6 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
 
   /* load the correct order and visibility of items in the toolbar */
   thunar_window_location_toolbar_load_items (window);
-
-  /* attach the toolbar to the window */
-  gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 1, 1);
 }
 
 
