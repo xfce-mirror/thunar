@@ -255,7 +255,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   GtkWidget      *ibox;
   GtkWidget      *vbox;
   GtkWidget      *infobar;
-  GtkWidget      *revealer;
   GEnumClass     *type;
   gchar          *date;
   gint            row = 0;
@@ -348,18 +347,14 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button,
                                _("Display the menubar in the custom window decoration, instead of the toolbar."));
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
 
-  revealer = gtk_revealer_new ();
-  g_object_bind_property (G_OBJECT (gtk_grid_get_child_at (GTK_GRID (grid), 0, 0)),
+  g_object_bind_property (G_OBJECT (gtk_grid_get_child_at (GTK_GRID (grid), 0, row - 1)),
                           "active",
-                          G_OBJECT (revealer),
-                          "reveal-child",
+                          G_OBJECT (button),
+                          "sensitive",
                           G_BINDING_SYNC_CREATE);
-  gtk_widget_show (revealer);
-
-  gtk_grid_attach (GTK_GRID (grid), revealer, 0, row, 1, 1);
-  gtk_container_add (GTK_CONTAINER (revealer), button);
 
     /* next row */
   row++;
