@@ -332,7 +332,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button,
-                               _("Don't use the decorations provided by the window manager, instead use a custom decoration style - Only applied to new Thunar windows"));
+                               _("Don't use the decorations provided by the window manager, instead use a custom decoration style. - Only applied to new Thunar windows"));
 
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
@@ -347,7 +347,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button,
-                               _("Display the menubar in the custom window decoration, instead of the toolbar - Only applied to new Thunar windows"));
+                               _("Display the menubar in the custom window decoration, instead of the toolbar."));
   gtk_widget_show (button);
 
   revealer = gtk_revealer_new ();
