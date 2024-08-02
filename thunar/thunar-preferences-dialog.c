@@ -346,7 +346,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button,
-                               _("Display the menubar in the custom window decoration, instead of the toolbar."));
+                               _("Instead of the toolbar display the menubar in the windows's header bar."));
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
 
