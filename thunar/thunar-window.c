@@ -1033,11 +1033,12 @@ thunar_window_init (ThunarWindow *window)
   window->location_toolbar = NULL;
   thunar_window_location_toolbar_create (window);
 
+  /* get all properties for init */
   gboolean use_csd;
 
-  g_object_get (G_OBJECT (window->preferences), "use-csd", &use_csd, NULL);
+  g_object_get (G_OBJECT (window->preferences), "misc-use-csd", &use_csd, NULL);
 
-  /* attach the toolbar to the window */
+  /* Create client-side decoration if needed and add menubar and toolbar */
   if (use_csd)
     {
       GtkWidget *header_bar = gtk_header_bar_new ();
@@ -1045,7 +1046,7 @@ thunar_window_init (ThunarWindow *window)
       gtk_window_set_titlebar (GTK_WINDOW (window), header_bar);
 
       thunar_window_csd_update (window);
-      g_signal_connect_swapped (window->preferences, "notify::menubar-in-csd", G_CALLBACK (thunar_window_csd_update), window);
+      g_signal_connect_swapped (window->preferences, "notify::misc-menubar-in-csd", G_CALLBACK (thunar_window_csd_update), window);
 
       gtk_widget_show (header_bar);
     }
@@ -1885,38 +1886,41 @@ thunar_window_set_property (GObject            *object,
 static gboolean
 thunar_window_csd_update (ThunarWindow *window)
 {
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
-  GtkWidget *header_bar, *in_titlebar, *bellow_titlebar;
+  GtkWidget *header_bar, *in_header_bar, *below_header_bar;
   gboolean   menubar_in_csd;
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   header_bar = gtk_window_get_titlebar (GTK_WINDOW (window));
 
-  g_object_get (G_OBJECT (window->preferences), "menubar-in-csd", &menubar_in_csd, NULL);
+  g_object_get (G_OBJECT (window->preferences), "misc-menubar-in-csd", &menubar_in_csd, NULL);
 
   if (menubar_in_csd)
     {
-      in_titlebar = window->menubar;
-      bellow_titlebar = window->location_toolbar;
+      in_header_bar = window->menubar;
+      below_header_bar = window->location_toolbar;
     }
   else
     {
-      in_titlebar = window->location_toolbar;
-      bellow_titlebar = window->menubar;
+      in_header_bar = window->location_toolbar;
+      below_header_bar = window->menubar;
     }
 
-  g_object_ref (in_titlebar);
-  g_object_ref (bellow_titlebar);
+  g_object_ref (in_header_bar);
+  g_object_ref (below_header_bar);
 
-  gtk_widget_set_margin_start (in_titlebar, 10);
-  gtk_widget_set_margin_end   (in_titlebar, 10);
-  gtk_widget_set_margin_start (bellow_titlebar, 0);
-  gtk_widget_set_margin_end   (bellow_titlebar, 0);
+  gtk_widget_set_margin_start (in_header_bar, 10);
+  gtk_widget_set_margin_end   (in_header_bar, 10);
+  gtk_widget_set_margin_start (below_header_bar, 0);
+  gtk_widget_set_margin_end   (below_header_bar, 0);
 
-  gtk_container_remove (GTK_CONTAINER (header_bar), bellow_titlebar);
-  gtk_container_remove (GTK_CONTAINER (window->grid), in_titlebar);
+  gtk_container_remove (GTK_CONTAINER (header_bar), below_header_bar);
+  gtk_container_remove (GTK_CONTAINER (window->grid), in_header_bar);
 
-  gtk_header_bar_set_custom_title (GTK_HEADER_BAR (header_bar), in_titlebar);
-  gtk_grid_attach (GTK_GRID (window->grid), bellow_titlebar, 0, 0, 1, 1);
+  gtk_header_bar_set_custom_title (GTK_HEADER_BAR (header_bar), in_header_bar);
+  gtk_grid_attach (GTK_GRID (window->grid), below_header_bar, 0, 0, 1, 1);
+
+  g_object_unref (in_header_bar);
+  g_object_unref (below_header_bar);
 
   return TRUE;
 }
