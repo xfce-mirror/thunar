@@ -50,6 +50,8 @@
 enum
 {
   PROP_0,
+  PROP_USE_CSD,
+  PROP_MENUBAR_IN_CSD,
   PROP_DEFAULT_VIEW,
   PROP_HIDDEN_DEVICES,
   PROP_HIDDEN_BOOKMARKS,
@@ -200,6 +202,25 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   gobject_class->finalize = thunar_preferences_finalize;
   gobject_class->get_property = thunar_preferences_get_property;
   gobject_class->set_property = thunar_preferences_set_property;
+
+  /**
+   * ThunarPreferences:last-restore-tabs:
+   *
+   * %TRUE to restore the tabs as they were before closing Thunar.
+   **/
+  preferences_props[PROP_USE_CSD] =
+      g_param_spec_boolean ("use-csd",
+                            "UseCSD",
+                            NULL,
+                            FALSE,
+                            EXO_PARAM_READWRITE);
+
+    preferences_props[PROP_MENUBAR_IN_CSD] =
+      g_param_spec_boolean ("menubar-in-csd",
+                            "MenubarInCSD",
+                            NULL,
+                            FALSE,
+                            EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:default-view:
