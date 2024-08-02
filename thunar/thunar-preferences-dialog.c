@@ -340,7 +340,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /* next row */
   row++;
 
-  button = gtk_check_button_new_with_mnemonic (_("Display the menubar in custom window decoration"));
+  button = gtk_check_button_new_with_mnemonic (_("Menubar in the custom window decoration"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "menubar-in-csd",
                           G_OBJECT (button),
