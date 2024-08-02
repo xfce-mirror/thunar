@@ -1041,7 +1041,7 @@ thunar_window_init (ThunarWindow *window)
   if (use_csd)
     {
       GtkWidget *header_bar = gtk_header_bar_new ();
-      gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (header_bar),TRUE);
+      gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (header_bar), TRUE);
       gtk_window_set_titlebar (GTK_WINDOW (window), header_bar);
 
       thunar_window_csd_update (window);
