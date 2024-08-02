@@ -331,7 +331,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button,
-                               _("Don't use the decorations provided by the window manager, instead use a custom decoration style. - Only applied to new Thunar windows"));
+                               _("Use client-side decorations instead of server-side ones provided by the window manager. - Only applied to new Thunar windows"));
 
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
