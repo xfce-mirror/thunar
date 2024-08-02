@@ -324,14 +324,14 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   row = 0;
 
-  button = gtk_check_button_new_with_mnemonic (_("Draw custom window decorations"));
+  button = gtk_check_button_new_with_mnemonic (_("Use modern (client-side) decorations"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
-                          "use-csd",
+                          "misc-use-csd",
                           G_OBJECT (button),
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button,
-                               _("Use client-side decorations instead of server-side ones provided by the window manager. - Only applied to new Thunar windows"));
+                               _("Use modern (client-side) decorations instead of classic (server-side) ones. - Only applied to new Thunar windows"));
 
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
@@ -341,7 +341,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   button = gtk_check_button_new_with_mnemonic (_("Move the menubar next to the window buttons"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
-                          "menubar-in-csd",
+                          "misc-menubar-in-csd",
                           G_OBJECT (button),
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
