@@ -129,6 +129,7 @@ static void      thunar_window_set_property               (GObject              
                                                            guint                   prop_id,
                                                            const GValue           *value,
                                                            GParamSpec             *pspec);
+static gboolean  thunar_window_csd_update                 (ThunarWindow           *window);
 static gboolean  thunar_window_reload                     (ThunarWindow           *window,
                                                            gboolean                reload_info);
 static gboolean  thunar_window_toggle_sidepane            (ThunarWindow           *window);
@@ -1032,29 +1033,20 @@ thunar_window_init (ThunarWindow *window)
   window->location_toolbar = NULL;
   thunar_window_location_toolbar_create (window);
 
-  gboolean use_csd, menubar_in_csd;
+  gboolean use_csd;
 
-  g_object_get (G_OBJECT (window->preferences), "use-csd", &use_csd,
-                                                "menubar-in-csd", &menubar_in_csd, NULL);
+  g_object_get (G_OBJECT (window->preferences), "use-csd", &use_csd, NULL);
 
   /* attach the toolbar to the window */
   if (use_csd)
     {
       GtkWidget *header_bar = gtk_header_bar_new ();
+      gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (header_bar),TRUE);
       gtk_window_set_titlebar (GTK_WINDOW (window), header_bar);
 
-      if (menubar_in_csd)
-        {
-          gtk_header_bar_set_custom_title (GTK_HEADER_BAR (header_bar), window->menubar);
-          gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 0, 1, 1);
-        }
-      else
-        {
-          gtk_header_bar_set_custom_title (GTK_HEADER_BAR (header_bar), window->location_toolbar);
-          gtk_grid_attach (GTK_GRID (window->grid), window->menubar, 0, 0, 1, 1);
-        }
+      thunar_window_csd_update (window);
+      g_signal_connect_swapped (window->preferences, "notify::menubar-in-csd", G_CALLBACK (thunar_window_csd_update), window);
 
-      gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (header_bar),TRUE);
       gtk_widget_show (header_bar);
     }
   else
@@ -1886,6 +1878,47 @@ thunar_window_set_property (GObject            *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static gboolean
+thunar_window_csd_update (ThunarWindow *window)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+  GtkWidget *header_bar, *in_titlebar, *bellow_titlebar;
+  gboolean   menubar_in_csd;
+
+  header_bar = gtk_window_get_titlebar (GTK_WINDOW (window));
+
+  g_object_get (G_OBJECT (window->preferences), "menubar-in-csd", &menubar_in_csd, NULL);
+
+  if (menubar_in_csd)
+    {
+      in_titlebar = window->menubar;
+      bellow_titlebar = window->location_toolbar;
+    }
+  else
+    {
+      in_titlebar = window->location_toolbar;
+      bellow_titlebar = window->menubar;
+    }
+
+  g_object_ref (in_titlebar);
+  g_object_ref (bellow_titlebar);
+
+  gtk_widget_set_margin_start (in_titlebar, 10);
+  gtk_widget_set_margin_end   (in_titlebar, 10);
+  gtk_widget_set_margin_start (bellow_titlebar, 0);
+  gtk_widget_set_margin_end   (bellow_titlebar, 0);
+
+  gtk_container_remove (GTK_CONTAINER (header_bar), bellow_titlebar);
+  gtk_container_remove (GTK_CONTAINER (window->grid), in_titlebar);
+
+  gtk_header_bar_set_custom_title (GTK_HEADER_BAR (header_bar), in_titlebar);
+  gtk_grid_attach (GTK_GRID (window->grid), bellow_titlebar, 0, 0, 1, 1);
+
+  return TRUE;
 }
 
 
