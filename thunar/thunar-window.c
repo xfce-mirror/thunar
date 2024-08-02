@@ -792,6 +792,7 @@ thunar_window_init (ThunarWindow *window)
   ThunarImagePreviewMode misc_image_preview_mode;
   gint                   max_paned_position;
   GtkStyleContext       *context;
+  gboolean               misc_use_csd;
 
   /* unset the view type */
   window->view_type = G_TYPE_NONE;
@@ -825,6 +826,7 @@ thunar_window_init (ThunarWindow *window)
                 "last-statusbar-visible", &last_statusbar_visible,
                 "last-image-preview-visible", &last_image_preview_visible,
                 "misc-image-preview-mode", &misc_image_preview_mode,
+                "misc-use-csd", &misc_use_csd,
                 NULL);
 
   /* update the visual on screen_changed events */
@@ -1033,13 +1035,8 @@ thunar_window_init (ThunarWindow *window)
   window->location_toolbar = NULL;
   thunar_window_location_toolbar_create (window);
 
-  /* get all properties for init */
-  gboolean use_csd;
-
-  g_object_get (G_OBJECT (window->preferences), "misc-use-csd", &use_csd, NULL);
-
   /* Create client-side decoration if needed and add menubar and toolbar */
-  if (use_csd)
+  if (misc_use_csd)
     {
       GtkWidget *header_bar = gtk_header_bar_new ();
       gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (header_bar), TRUE);
