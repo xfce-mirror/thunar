@@ -1043,7 +1043,6 @@ thunar_window_init (ThunarWindow *window)
       gtk_window_set_titlebar (GTK_WINDOW (window), header_bar);
 
       thunar_window_csd_update (window);
-      g_signal_connect_swapped (window->preferences, "notify::misc-menubar-in-csd", G_CALLBACK (thunar_window_csd_update), window);
 
       gtk_widget_show (header_bar);
     }
@@ -1884,14 +1883,14 @@ static gboolean
 thunar_window_csd_update (ThunarWindow *window)
 {
   GtkWidget *header_bar, *in_header_bar, *below_header_bar;
-  gboolean   menubar_in_csd;
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   header_bar = gtk_window_get_titlebar (GTK_WINDOW (window));
 
-  g_object_get (G_OBJECT (window->preferences), "misc-menubar-in-csd", &menubar_in_csd, NULL);
+  if (header_bar == NULL)
+    return FALSE;
 
-  if (menubar_in_csd)
+  if (window->menubar_visible)
     {
       in_header_bar = window->menubar;
       below_header_bar = window->location_toolbar;
@@ -4095,6 +4094,8 @@ thunar_window_action_menubar_changed (ThunarWindow *window)
   gtk_widget_set_visible (window->location_toolbar_item_menu, !window->menubar_visible);
 
   g_object_set (G_OBJECT (window->preferences), "last-menubar-visible", window->menubar_visible, NULL);
+
+  thunar_window_csd_update (window);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
