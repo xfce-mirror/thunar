@@ -140,7 +140,8 @@ enum
   PROP_MISC_SYMBOLIC_ICONS_IN_TOOLBAR,
   PROP_MISC_SYMBOLIC_ICONS_IN_SIDEPANE,
   PROP_MISC_CTRL_SCROLL_WHEEL_TO_ZOOM,
-  N_PROPERTIES,
+  PROP_MISC_USE_CSD,
+  N_PROPERTIES
 };
 
 
@@ -1376,6 +1377,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             NULL,
                             TRUE,
                             EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-use-csd:
+   *
+   * %TRUE to draw client-side decorations.
+   **/
+  preferences_props[PROP_MISC_USE_CSD] =
+    g_param_spec_boolean ("misc-use-csd",
+                          "MiscUseCSD",
+                          NULL,
+                          FALSE,
+                          EXO_PARAM_READWRITE);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
