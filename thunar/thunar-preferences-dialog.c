@@ -324,14 +324,14 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   row = 0;
 
-  button = gtk_check_button_new_with_mnemonic (_("Use modern (client-side) decorations"));
+  button = gtk_check_button_new_with_mnemonic (_("Use custom window decorations (only applied to new windows)"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "misc-use-csd",
                           G_OBJECT (button),
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button,
-                               _("Use modern (client-side) decorations instead of classic (server-side) ones. - Only applied to new Thunar windows"));
+                               _("Use custom, client-side window decorations instead of global, server-side ones. - Only applied to new Thunar windows"));
 
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
