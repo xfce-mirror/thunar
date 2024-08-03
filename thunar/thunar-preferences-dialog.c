@@ -339,7 +339,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
     /* next row */
   row++;
 
-  button = gtk_check_button_new_with_mnemonic (_("Use current folder icon"));
+  button = gtk_check_button_new_with_mnemonic (_("Use current folder icon as window icon"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "misc-change-window-icon",
                           G_OBJECT (button),
