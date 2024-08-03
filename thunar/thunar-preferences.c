@@ -141,8 +141,7 @@ enum
   PROP_MISC_SYMBOLIC_ICONS_IN_SIDEPANE,
   PROP_MISC_CTRL_SCROLL_WHEEL_TO_ZOOM,
   PROP_MISC_USE_CSD,
-  PROP_MISC_MENUBAR_IN_CSD,
-  N_PROPERTIES,
+  N_PROPERTIES
 };
 
 
@@ -1387,18 +1386,6 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   preferences_props[PROP_MISC_USE_CSD] =
     g_param_spec_boolean ("misc-use-csd",
                           "MiscUseCSD",
-                          NULL,
-                          FALSE,
-                          EXO_PARAM_READWRITE);
-
-  /**
-   * ThunarPreferences:misc-menubar-in-csd:
-   *
-   * %TRUE to draw menubar in client-side decorations.
-   **/
-  preferences_props[PROP_MISC_MENUBAR_IN_CSD] =
-    g_param_spec_boolean ("misc-menubar-in-csd",
-                          "MiscMenubarInCSD",
                           NULL,
                           FALSE,
                           EXO_PARAM_READWRITE);
