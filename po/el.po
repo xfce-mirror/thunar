@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-08-01 00:46+0200\n"
+"POT-Creation-Date: 2024-08-04 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Ioannis LM, 2021-2024\n"
 "Language-Team: Greek (http://app.transifex.com/xfce/thunar/language/el/)\n"
@@ -707,7 +707,7 @@ msgstr "Δημιουργία καταλόγων..."
 msgid "Remove all files and folders from the Trash?"
 msgstr "Να αφαιρεθούν όλα τα αρχεία και οι φάκελοι από τα απορρίμματα;"
 
-#: thunar/thunar-application.c:2739 thunar/thunar-window.c:1090
+#: thunar/thunar-application.c:2739 thunar/thunar-window.c:1109
 msgid "Empty Trash"
 msgstr "Άδειασμα απορριμμάτων"
 
@@ -797,7 +797,7 @@ msgstr "Ορισμός πρ_οεπιλογής για αυτό αυτό το ε�
 
 #. add the "Ok"/"Open" button
 #: thunar/thunar-chooser-dialog.c:296 thunar/thunar-chooser-dialog.c:1298
-#: thunar/thunar-properties-dialog.c:1197 thunar/thunar-window.c:4465
+#: thunar/thunar-properties-dialog.c:1197 thunar/thunar-window.c:4530
 #: plugins/thunar-uca/thunar-uca-editor.c:146
 #: plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -988,7 +988,7 @@ msgstr "Ρύθμιση στηλών στην προβολή λίστας"
 #. add the "Help" button
 #: thunar/thunar-column-editor.c:164 thunar/thunar-preferences-dialog.c:283
 #: thunar/thunar-properties-dialog.c:326 thunar/thunar-toolbar-editor.c:146
-#: thunar/thunar-window.c:557
+#: thunar/thunar-window.c:558
 msgid "_Help"
 msgstr "_Βοήθεια"
 
@@ -1060,7 +1060,7 @@ msgstr "Εμφάνιση του αριθμού των περιεχομένων"
 #: thunar/thunar-column-model.c:876 thunar/thunar-list-model.c:899
 #: thunar/thunar-list-model.c:935 thunar/thunar-permissions-chooser.c:234
 #: thunar/thunar-size-label.c:382 thunar/thunar-size-label.c:463
-#: thunar/thunar-util.c:429 thunar/thunar-util.c:432
+#: thunar/thunar-util.c:430 thunar/thunar-util.c:433
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:711
 #: plugins/thunar-apr/thunar-apr-image-page.c:293
 #: plugins/thunar-apr/thunar-apr-image-page.c:294
@@ -1467,10 +1467,10 @@ msgid "File Name"
 msgstr "Όνομα αρχείου"
 
 #: thunar/thunar-enum-types.c:636 thunar/thunar-enum-types.c:659
-#: thunar/thunar-enum-types.c:785 thunar/thunar-preferences-dialog.c:418
-#: thunar/thunar-preferences-dialog.c:1102
-#: thunar/thunar-preferences-dialog.c:1208
-#: thunar/thunar-preferences-dialog.c:1296
+#: thunar/thunar-enum-types.c:785 thunar/thunar-preferences-dialog.c:463
+#: thunar/thunar-preferences-dialog.c:1119
+#: thunar/thunar-preferences-dialog.c:1225
+#: thunar/thunar-preferences-dialog.c:1313
 msgid "Never"
 msgstr "Ποτέ"
 
@@ -1479,10 +1479,10 @@ msgid "Only For Remote Location"
 msgstr "Μόνο για απομακρυσμένη τοποθεσία"
 
 #: thunar/thunar-enum-types.c:638 thunar/thunar-enum-types.c:661
-#: thunar/thunar-enum-types.c:787 thunar/thunar-preferences-dialog.c:420
-#: thunar/thunar-preferences-dialog.c:1098
-#: thunar/thunar-preferences-dialog.c:1206
-#: thunar/thunar-preferences-dialog.c:1297
+#: thunar/thunar-enum-types.c:787 thunar/thunar-preferences-dialog.c:465
+#: thunar/thunar-preferences-dialog.c:1115
+#: thunar/thunar-preferences-dialog.c:1223
+#: thunar/thunar-preferences-dialog.c:1314
 msgid "Always"
 msgstr "Πάντα"
 
@@ -1589,7 +1589,7 @@ msgstr "Δεν έχει καθοριστεί το πεδίο διεύθυνση�
 msgid "Invalid desktop file"
 msgstr "Μη έγκυρο αρχείο συντόμευσης"
 
-#: thunar/thunar-file.c:2528 thunar/thunar-util.c:1432
+#: thunar/thunar-file.c:2514 thunar/thunar-util.c:1451
 #, c-format
 msgid "link to %s"
 msgstr "δεσμός προς το %s"
@@ -1799,7 +1799,7 @@ msgid ""
 msgstr "Δεν υπάρχει αρκετός διαθέσιμος χώρος στο προορισμό. Προσπαθήστε να αφαιρέσετε αρχεία για να δημιουργήσετε ελεύθερο χώρο."
 
 #: thunar/thunar-job-operation.c:782 thunar/thunar-size-label.c:472
-#: thunar/thunar-util.c:1307
+#: thunar/thunar-util.c:1326
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -1886,7 +1886,7 @@ msgstr "Απέτυχε η ενέργεια επαναφοράς '%s'"
 msgid "Undo the latest '%s' operation (%s)"
 msgstr "Αναίρεση της τελευταίας ενέργειας '%s' (%s)"
 
-#: thunar/thunar-job-operation-history.c:568 thunar/thunar-window.c:507
+#: thunar/thunar-job-operation-history.c:568 thunar/thunar-window.c:508
 msgid "Undo the latest operation"
 msgstr "Αναίρεση της τελευταίας ενέργειας"
 
@@ -1896,7 +1896,7 @@ msgstr "Αναίρεση της τελευταίας ενέργειας"
 msgid "Redo the latest '%s' operation (%s)"
 msgstr "Επαναφορά της τελευταίας ενέργειας '%s' (%s)"
 
-#: thunar/thunar-job-operation-history.c:593 thunar/thunar-window.c:508
+#: thunar/thunar-job-operation-history.c:593 thunar/thunar-window.c:509
 msgid "Redo the latest operation"
 msgstr "Επαναφορά της τελευταίας ενέργειας"
 
@@ -2008,7 +2008,7 @@ msgid "Allow this file to _run as a program"
 msgstr "Να επιτρέπεται αυτό το αρχείο να ε_κτελείται ως πρόγραμμα"
 
 #: thunar/thunar-permissions-chooser.c:390
-#: thunar/thunar-preferences-dialog.c:1311
+#: thunar/thunar-preferences-dialog.c:1328
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "Το να επιτρέπετε την εκτέλεση μη αξιόπιστων προγραμμάτων αποτελεί κίνδυνο για την ασφάλεια του συστήματός σας."
@@ -2124,159 +2124,169 @@ msgid "Display"
 msgstr "Εμφάνιση"
 
 #: thunar/thunar-preferences-dialog.c:308
+msgid "Window Settings"
+msgstr ""
+
+#: thunar/thunar-preferences-dialog.c:327
+msgid "Use custom window decorations (only applied to new windows)"
+msgstr ""
+
+#: thunar/thunar-preferences-dialog.c:334
+msgid ""
+"Use custom, client-side window decorations instead of global, server-side "
+"ones. - Only applied to new Thunar windows"
+msgstr ""
+
+#: thunar/thunar-preferences-dialog.c:342
+msgid "Use current folder icon as window icon"
+msgstr ""
+
+#: thunar/thunar-preferences-dialog.c:348
+msgid "Select this option to use the current folder icon as window icon"
+msgstr "Επιλέξτε το για να χρησιμοποιήσετε το εικονίδιο του τρέχοντος φακέλου ως εικονίδιο παραθύρου."
+
+#: thunar/thunar-preferences-dialog.c:353
 msgid "View Settings"
 msgstr "Ρυθμίσεις εμφάνισης"
 
-#: thunar/thunar-preferences-dialog.c:321
+#: thunar/thunar-preferences-dialog.c:366
 msgid "View _new folders using:"
 msgstr "Προβολή _νέων φακέλων με:"
 
-#: thunar/thunar-preferences-dialog.c:327
-#: thunar/thunar-preferences-dialog.c:483
+#: thunar/thunar-preferences-dialog.c:372
+#: thunar/thunar-preferences-dialog.c:528
 msgid "Icon View"
 msgstr "Εμφάνιση εικονιδίων"
 
-#: thunar/thunar-preferences-dialog.c:328
+#: thunar/thunar-preferences-dialog.c:373
 msgid "List View"
 msgstr "Εμφάνιση λίστας"
 
-#: thunar/thunar-preferences-dialog.c:329
+#: thunar/thunar-preferences-dialog.c:374
 msgid "Compact View"
 msgstr "Συμπαγή εμφάνιση"
 
-#: thunar/thunar-preferences-dialog.c:330
+#: thunar/thunar-preferences-dialog.c:375
 msgid "Last Active View"
 msgstr "Τελευταία ενεργή προβολή"
 
-#: thunar/thunar-preferences-dialog.c:346
+#: thunar/thunar-preferences-dialog.c:391
 msgid "_Remember view settings for each folder"
 msgstr "Εν_θύμηση των ρυθμίσεων εμφάνισης κάθε φακέλου"
 
-#: thunar/thunar-preferences-dialog.c:353
+#: thunar/thunar-preferences-dialog.c:398
 msgid ""
 "Select this option to remember view type, zoom level, sort column, and sort "
 "order individually for each folder"
 msgstr "Επιλέξτε το για την ενθύμηση του τύπου εμφάνισης, ταξινόμησης και του επιπέδου μεγέθυνσης για κάθε φάκελο."
 
-#: thunar/thunar-preferences-dialog.c:361
+#: thunar/thunar-preferences-dialog.c:406
 msgid "gvfs metadata support is required"
 msgstr "απαιτείται υποστήριξη για gvfs metadata"
 
-#: thunar/thunar-preferences-dialog.c:367
+#: thunar/thunar-preferences-dialog.c:412
 msgid "Sort _folders before files"
 msgstr "Ταξινόμηση _φακέλων πριν τα αρχεία"
 
-#: thunar/thunar-preferences-dialog.c:373
+#: thunar/thunar-preferences-dialog.c:418
 msgid ""
 "Select this option to list folders before files when you sort a folder."
 msgstr "Επιλέξτε το για να τοποθετούνται οι φάκελοι πριν από τα αρχεία στη ταξινόμηση ενός φακέλου."
 
-#: thunar/thunar-preferences-dialog.c:381
+#: thunar/thunar-preferences-dialog.c:426
 msgid "Show file size in binary format"
 msgstr "Εμφάνιση μεγέθους αρχείου σε δυαδική μορφή"
 
-#: thunar/thunar-preferences-dialog.c:387
+#: thunar/thunar-preferences-dialog.c:432
 msgid ""
 "Select this option to show file size in binary format instead of decimal."
 msgstr "Επιλέξτε το για να εμφανίζεται το μέγεθος αρχείου σε δυαδική μορφή αντί για δεκαδική."
 
-#: thunar/thunar-preferences-dialog.c:396
+#: thunar/thunar-preferences-dialog.c:441
 msgid "Thumbnails"
 msgstr "Μικρογραφίες"
 
-#: thunar/thunar-preferences-dialog.c:412
+#: thunar/thunar-preferences-dialog.c:457
 msgid "Show thumbnails:"
 msgstr "Εμφάνιση μικρογραφιών:"
 
-#: thunar/thunar-preferences-dialog.c:419
-#: thunar/thunar-preferences-dialog.c:1099
-#: thunar/thunar-preferences-dialog.c:1207
+#: thunar/thunar-preferences-dialog.c:464
+#: thunar/thunar-preferences-dialog.c:1116
+#: thunar/thunar-preferences-dialog.c:1224
 msgid "Local Files Only"
 msgstr "Μόνο τοπικά αρχεία"
 
-#: thunar/thunar-preferences-dialog.c:438
+#: thunar/thunar-preferences-dialog.c:483
 msgid "Only show thumbnails for files smaller than:"
 msgstr "Εμφάνιση μικρογραφιών μόνο για αρχεία μικρότερα από:"
 
-#: thunar/thunar-preferences-dialog.c:444
+#: thunar/thunar-preferences-dialog.c:489
 msgid "512KiB"
 msgstr "512KiB"
 
-#: thunar/thunar-preferences-dialog.c:445
+#: thunar/thunar-preferences-dialog.c:490
 msgid "1MiB"
 msgstr "1MiB"
 
-#: thunar/thunar-preferences-dialog.c:446
+#: thunar/thunar-preferences-dialog.c:491
 msgid "10MiB"
 msgstr "10MiB"
 
-#: thunar/thunar-preferences-dialog.c:447
+#: thunar/thunar-preferences-dialog.c:492
 msgid "100MiB"
 msgstr "100MiB"
 
-#: thunar/thunar-preferences-dialog.c:448
+#: thunar/thunar-preferences-dialog.c:493
 msgid "1GiB"
 msgstr "1GiB"
 
-#: thunar/thunar-preferences-dialog.c:449
+#: thunar/thunar-preferences-dialog.c:494
 msgid "10GiB"
 msgstr "10GiB"
 
-#: thunar/thunar-preferences-dialog.c:450
+#: thunar/thunar-preferences-dialog.c:495
 msgid "Unlimited"
 msgstr "Χωρίς όριο"
 
-#: thunar/thunar-preferences-dialog.c:468
+#: thunar/thunar-preferences-dialog.c:513
 msgid "Draw frames around thumbnails"
 msgstr "Εμφάνιση πλαισίου γύρω από τις μικρογραφίες"
 
-#: thunar/thunar-preferences-dialog.c:474
+#: thunar/thunar-preferences-dialog.c:519
 msgid "Select this option to draw black frames around thumbnails."
 msgstr "Επιλέξτε το για να εμφανίζεται ένα μαύρο πλαίσιο γύρω από τις μικρογραφίες."
 
-#: thunar/thunar-preferences-dialog.c:499
+#: thunar/thunar-preferences-dialog.c:544
 msgid "_Text beside icons"
 msgstr "Κεί_μενο δίπλα στα εικονίδια"
 
-#: thunar/thunar-preferences-dialog.c:505
+#: thunar/thunar-preferences-dialog.c:550
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
 msgstr "Επιλέξτε το για να προβάλλεται το κείμενο δίπλα στα εικονίδια και όχι από κάτω."
 
-#: thunar/thunar-preferences-dialog.c:515
-msgid "Window Icon"
-msgstr "Εικονίδιο παραθύρου"
-
-#: thunar/thunar-preferences-dialog.c:528
-msgid "Use current folder icon"
-msgstr "Χρήση του τρέχοντος εικονιδίου του φακέλου"
-
-#: thunar/thunar-preferences-dialog.c:534
-msgid "Select this option to use the current folder icon as window icon"
-msgstr "Επιλέξτε το για να χρησιμοποιήσετε το εικονίδιο του τρέχοντος φακέλου ως εικονίδιο παραθύρου."
-
-#: thunar/thunar-preferences-dialog.c:543
+#: thunar/thunar-preferences-dialog.c:560
 msgid "Date"
 msgstr "Ημερομηνία"
 
-#: thunar/thunar-preferences-dialog.c:556
+#: thunar/thunar-preferences-dialog.c:573
 #: plugins/thunar-sbr/thunar-sbr-date-renamer.c:216
 msgid "_Format:"
 msgstr "Μορ_φή:"
 
 #. TRANSLATORS: custom date format
-#: thunar/thunar-preferences-dialog.c:569
+#: thunar/thunar-preferences-dialog.c:586
 msgid "Custom"
 msgstr "Προσαρμοσμένη"
 
-#: thunar/thunar-preferences-dialog.c:570
+#: thunar/thunar-preferences-dialog.c:587
 msgid "Today / Custom"
 msgstr "Σήμερα / Προσαρμογή"
 
 #. TRANSLATORS: Please do not translate the first column (specifiers),
 #. 'strftime' and of course '\n'
-#: thunar/thunar-preferences-dialog.c:587
+#: thunar/thunar-preferences-dialog.c:604
 msgid ""
 "Custom date format to apply.\n"
 "\n"
@@ -2292,154 +2302,154 @@ msgid ""
 msgstr "Προσαρμογή μορφής ημερομηνίας.\n\nΟι πιο συνηθισμένοι τελεστές είναι:\n%d ημέρα του μήνα\n%m μήνας\n%Y έτος\n%H ώρα\n%M λεπτά\n%S δευτερόλεπτα\n\nΓια τη πλήρη λίστα τελεστών, αναζητήστε 'Glib.DateTime.format'."
 
 #. Side Pane
-#: thunar/thunar-preferences-dialog.c:609
+#: thunar/thunar-preferences-dialog.c:626
 msgid "Side Pane"
 msgstr "Πλευρικό ταμπλό"
 
-#: thunar/thunar-preferences-dialog.c:619
+#: thunar/thunar-preferences-dialog.c:636
 msgid "Shortcuts Pane"
 msgstr "Πλευρικό ταμπλό συντομεύσεων"
 
-#: thunar/thunar-preferences-dialog.c:635
+#: thunar/thunar-preferences-dialog.c:652
 msgid "_Icon Size:"
 msgstr "Μέγεθος ε_ικονιδίων:"
 
-#: thunar/thunar-preferences-dialog.c:640
-#: thunar/thunar-preferences-dialog.c:706
+#: thunar/thunar-preferences-dialog.c:657
+#: thunar/thunar-preferences-dialog.c:723
 msgid "16px"
 msgstr "16px"
 
-#: thunar/thunar-preferences-dialog.c:641
-#: thunar/thunar-preferences-dialog.c:707
+#: thunar/thunar-preferences-dialog.c:658
+#: thunar/thunar-preferences-dialog.c:724
 msgid "24px"
 msgstr "24px"
 
-#: thunar/thunar-preferences-dialog.c:642
-#: thunar/thunar-preferences-dialog.c:708
+#: thunar/thunar-preferences-dialog.c:659
+#: thunar/thunar-preferences-dialog.c:725
 msgid "32px"
 msgstr "32px"
 
-#: thunar/thunar-preferences-dialog.c:643
-#: thunar/thunar-preferences-dialog.c:709
+#: thunar/thunar-preferences-dialog.c:660
+#: thunar/thunar-preferences-dialog.c:726
 msgid "48px"
 msgstr "48px"
 
-#: thunar/thunar-preferences-dialog.c:644
-#: thunar/thunar-preferences-dialog.c:710
+#: thunar/thunar-preferences-dialog.c:661
+#: thunar/thunar-preferences-dialog.c:727
 msgid "64px"
 msgstr "64px"
 
-#: thunar/thunar-preferences-dialog.c:645
-#: thunar/thunar-preferences-dialog.c:711
+#: thunar/thunar-preferences-dialog.c:662
+#: thunar/thunar-preferences-dialog.c:728
 msgid "96px"
 msgstr "96px"
 
-#: thunar/thunar-preferences-dialog.c:646
-#: thunar/thunar-preferences-dialog.c:712
+#: thunar/thunar-preferences-dialog.c:663
+#: thunar/thunar-preferences-dialog.c:729
 msgid "128px"
 msgstr "128px"
 
-#: thunar/thunar-preferences-dialog.c:647
-#: thunar/thunar-preferences-dialog.c:713
+#: thunar/thunar-preferences-dialog.c:664
+#: thunar/thunar-preferences-dialog.c:730
 msgid "160px"
 msgstr "160px"
 
-#: thunar/thunar-preferences-dialog.c:648
-#: thunar/thunar-preferences-dialog.c:714
+#: thunar/thunar-preferences-dialog.c:665
+#: thunar/thunar-preferences-dialog.c:731
 msgid "192px"
 msgstr "192px"
 
-#: thunar/thunar-preferences-dialog.c:649
-#: thunar/thunar-preferences-dialog.c:715
+#: thunar/thunar-preferences-dialog.c:666
+#: thunar/thunar-preferences-dialog.c:732
 msgid "256px"
 msgstr "256px"
 
-#: thunar/thunar-preferences-dialog.c:650
-#: thunar/thunar-preferences-dialog.c:716
+#: thunar/thunar-preferences-dialog.c:667
+#: thunar/thunar-preferences-dialog.c:733
 msgid "512px"
 msgstr "512px"
 
-#: thunar/thunar-preferences-dialog.c:651
-#: thunar/thunar-preferences-dialog.c:717
+#: thunar/thunar-preferences-dialog.c:668
+#: thunar/thunar-preferences-dialog.c:734
 msgid "1024px"
 msgstr "1024px"
 
-#: thunar/thunar-preferences-dialog.c:669
+#: thunar/thunar-preferences-dialog.c:686
 msgid "Show Icon _Emblems"
 msgstr "Εμφάνιση ε_μβλημάτων εικονιδίων"
 
-#: thunar/thunar-preferences-dialog.c:675
+#: thunar/thunar-preferences-dialog.c:692
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties "
 "dialog."
 msgstr "Επιλέξτε το για να εμφανίζονται τα εμβλήματα των εικονιδίων στο πλευρικό ταμπλό συντομεύσεων, για όσους φακέλους έχουν τεθεί μέσω των ιδιοτήτων τους."
 
-#: thunar/thunar-preferences-dialog.c:685
+#: thunar/thunar-preferences-dialog.c:702
 msgid "Tree Pane"
 msgstr "Πλευρικό ταμπλό δενδρικής δομής"
 
-#: thunar/thunar-preferences-dialog.c:701
+#: thunar/thunar-preferences-dialog.c:718
 msgid "Icon _Size:"
 msgstr "_Μέγεθος εικονιδίου:"
 
-#: thunar/thunar-preferences-dialog.c:735
+#: thunar/thunar-preferences-dialog.c:752
 msgid "Show Icon E_mblems"
 msgstr "Εμφάνιση ε_μβλημάτων εικονιδίων"
 
-#: thunar/thunar-preferences-dialog.c:741
+#: thunar/thunar-preferences-dialog.c:758
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
 msgstr "Επιλέξτε το για να εμφανίζονται τα εμβλήματα των εικονιδίων στο πλευρικό ταμπλό της δενδρικής δομής, για όσους φακέλους έχουν τεθεί μέσω των ιδιοτήτων τους."
 
-#: thunar/thunar-preferences-dialog.c:751
+#: thunar/thunar-preferences-dialog.c:768
 msgid "Icon Style"
 msgstr ""
 
-#: thunar/thunar-preferences-dialog.c:767
+#: thunar/thunar-preferences-dialog.c:784
 msgid "Use symbolic folder icons"
 msgstr "Χρήση συμβολικών εικονιδίων φακέλων"
 
-#: thunar/thunar-preferences-dialog.c:773
+#: thunar/thunar-preferences-dialog.c:790
 msgid ""
 "Select this option to use symbolic folder icons instead of regular ones."
 msgstr "Επιλέξτε το για να χρησιμοποιήσετε τα συμβολικά εικονίδια των φακέλων αντί των κανονικών."
 
-#: thunar/thunar-preferences-dialog.c:782
+#: thunar/thunar-preferences-dialog.c:799
 msgid "Image Preview"
 msgstr "Προβολή εικόνας"
 
-#: thunar/thunar-preferences-dialog.c:798
+#: thunar/thunar-preferences-dialog.c:815
 msgid "Image Preview Mode:"
 msgstr "Λειτουργία προβολής εικόνας:"
 
-#: thunar/thunar-preferences-dialog.c:800
+#: thunar/thunar-preferences-dialog.c:817
 msgid ""
 "- Standalone: Image Preview uses a separate pane\n"
 "- Embedded: Image Preview is embedded in the left sidepane\n"
 msgstr "- Αυτόνομη: Για τη προβολή εικόνας χρησιμοποιείται ένα αυτόνομο ταμπλό\n- Ενσωματωμένη: Η προβολή εικόνας ενσωματώνεται στο αριστερό πλευρικό ταμπλό\n"
 
 #. Behavior
-#: thunar/thunar-preferences-dialog.c:830
+#: thunar/thunar-preferences-dialog.c:847
 msgid "Behavior"
 msgstr "Συμπεριφορά"
 
-#: thunar/thunar-preferences-dialog.c:840
+#: thunar/thunar-preferences-dialog.c:857
 msgid "Navigation"
 msgstr "Περιήγηση"
 
-#: thunar/thunar-preferences-dialog.c:856
+#: thunar/thunar-preferences-dialog.c:873
 msgid "_Single click to activate items"
 msgstr "_Μονό κλικ για την ενεργοποίηση αντικειμένων"
 
-#: thunar/thunar-preferences-dialog.c:881
+#: thunar/thunar-preferences-dialog.c:898
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
 msgstr "Καθορισμός του _χρόνου καθυστέρησης πριν από την επιλογή ενός \nαντικειμένου όταν σταματήσει ο δείκτης του ποντικιού επάνω του:"
 
-#: thunar/thunar-preferences-dialog.c:894
+#: thunar/thunar-preferences-dialog.c:911
 msgid ""
 "When single-click activation is enabled, pausing the mouse pointer over an "
 "item will automatically select that item after the chosen delay. You can "
@@ -2448,91 +2458,91 @@ msgid ""
 "to select the item without activating it."
 msgstr "Όταν είναι ενεργή η περιήγηση με μονό κλικ, το σταμάτημα του δείκτη του ποντικιού επάνω από ένα αντικείμενο θα το επιλέξει αυτόματα μετά τον επιλεγμένο χρόνο. Μπορείτε να απενεργοποιήσετε αυτή τη λειτουργία μετακινώντας τον ολισθητή εντελώς αριστερά. Αυτό είναι χρήσιμο όταν, το μονό κλικ ενεργοποιεί τα αντικείμενα και εσείς θέλετε μόνο να τα επιλέξετε."
 
-#: thunar/thunar-preferences-dialog.c:917
+#: thunar/thunar-preferences-dialog.c:934
 msgid "Disabled"
 msgstr "Απενεργοποίηση"
 
-#: thunar/thunar-preferences-dialog.c:923
+#: thunar/thunar-preferences-dialog.c:940
 msgid "Medium"
 msgstr "Μεσαίος"
 
-#: thunar/thunar-preferences-dialog.c:928
+#: thunar/thunar-preferences-dialog.c:945
 msgid "Long"
 msgstr "Μεγάλος"
 
-#: thunar/thunar-preferences-dialog.c:937
+#: thunar/thunar-preferences-dialog.c:954
 msgid "_Double click to activate items"
 msgstr "_Διπλό κλικ για την ενεργοποίηση αντικειμένων"
 
-#: thunar/thunar-preferences-dialog.c:952
+#: thunar/thunar-preferences-dialog.c:969
 msgid "Tabs and Windows"
 msgstr "Καρτέλες και παράθυρα"
 
-#: thunar/thunar-preferences-dialog.c:968
+#: thunar/thunar-preferences-dialog.c:985
 msgid "Open folders in new tabs on middle click"
 msgstr "Άνοιγμα φακέλων σε νέες καρτέλες με μεσαίο κλικ"
 
-#: thunar/thunar-preferences-dialog.c:974
+#: thunar/thunar-preferences-dialog.c:991
 msgid ""
 "Select this option to open a new tab on middle click instead of a new window"
 msgstr "Επιλέξτε το για να ανοίγετε με το μεσαίο κλικ νέα καρτέλα αντί για νέο παράθυρο."
 
-#: thunar/thunar-preferences-dialog.c:981
+#: thunar/thunar-preferences-dialog.c:998
 msgid "Open new thunar instances as tabs"
 msgstr "Άνοιγμα του thunar με καρτέλες"
 
-#: thunar/thunar-preferences-dialog.c:987
+#: thunar/thunar-preferences-dialog.c:1004
 msgid ""
 "Select this option to open new thunar instances as tabs in an existing "
 "thunar window"
 msgstr "Επιλέξτε το για να ανοίγει ο thunar με καρτέλες σε ένα υφιστάμενο παράθυρο."
 
-#: thunar/thunar-preferences-dialog.c:995
+#: thunar/thunar-preferences-dialog.c:1012
 msgid "Show full directory paths in tab titles"
 msgstr "Εμφάνιση της πλήρους διαδρομής του καταλόγου στους τίτλους των καρτελών"
 
-#: thunar/thunar-preferences-dialog.c:1001
+#: thunar/thunar-preferences-dialog.c:1018
 msgid ""
 "Select this option to show the full directory path in the tab title instead "
 "of only the directory name"
 msgstr "Επιλέξτε το για να εμφανίζεται στον τίτλο της καρτέλας, η πλήρης διαδρομή του καταλόγου αντί μόνο για το όνομα του."
 
-#: thunar/thunar-preferences-dialog.c:1008
+#: thunar/thunar-preferences-dialog.c:1025
 msgid "Restore tabs on startup"
 msgstr "Επαναφορά καρτελών κατά την εκκίνηση"
 
-#: thunar/thunar-preferences-dialog.c:1014
+#: thunar/thunar-preferences-dialog.c:1031
 msgid ""
 "Select this option to restore your tabs as they were last time you used "
 "Thunar"
 msgstr "Επιλέξτε το για να επαναφέρετε τις καρτέλες σας, όπως ήταν τη τελευταία φορά που χρησιμοποιήσατε το Thunar."
 
-#: thunar/thunar-preferences-dialog.c:1025
+#: thunar/thunar-preferences-dialog.c:1042
 msgid "Context Menu"
 msgstr "Μενού επιλογών"
 
-#: thunar/thunar-preferences-dialog.c:1041
+#: thunar/thunar-preferences-dialog.c:1058
 msgid "Show action to permanently delete files and folders"
 msgstr "Εμφάνιση της ενέργειας για την οριστική διαγραφή αρχείων και φακέλων"
 
-#: thunar/thunar-preferences-dialog.c:1047
+#: thunar/thunar-preferences-dialog.c:1064
 msgid "Select this option to show the 'Delete' action in the context menu"
 msgstr "Επιλέξτε το για να εμφανίζεται στο μενού επιλογών η ενέργεια 'Διαγραφή'."
 
 #. Advanced
-#: thunar/thunar-preferences-dialog.c:1057
+#: thunar/thunar-preferences-dialog.c:1074
 msgid "Advanced"
 msgstr "Για προχωρημένους"
 
-#: thunar/thunar-preferences-dialog.c:1067
+#: thunar/thunar-preferences-dialog.c:1084
 msgid "File Transfer"
 msgstr "Μεταφορά αρχείου"
 
-#: thunar/thunar-preferences-dialog.c:1084
+#: thunar/thunar-preferences-dialog.c:1101
 msgid "Transfer files in parallel:"
 msgstr "Παράλληλη μεταφορά αρχείων:"
 
-#: thunar/thunar-preferences-dialog.c:1086
+#: thunar/thunar-preferences-dialog.c:1103
 msgid ""
 "Indicates the behavior during multiple copies:\n"
 "- Always: all copies are done simultaneously\n"
@@ -2542,96 +2552,96 @@ msgid ""
 "- Never: all copies are done sequentially"
 msgstr "Καθορίζεται η συμπεριφορά κατά τη διάρκεια πολλαπλών αντιγραφών:\n- Πάντα: όλες οι αντιγραφές γίνονται ταυτόχρονα\n- Μόνο τοπικά αρχεία: ταυτόχρονες αντιγραφές για τα τοπικά αρχεία (όχι απομακρυσμένα, όχι συνδεδεμένα)\n- Μόνο τοπικά αρχεία (Ίδιες συσκευές): οι αντιγραφές θα γίνονται διαδοχικά όταν όλα τα αρχεία είναι τοπικά αλλά σε διαφορετικές συσκευές (δίσκοι, σημεία προσάρτησης)\n- Μόνο τοπικά αρχεία (Αδρανείς συσκευές): οι αντιγραφές θα γίνονται διαδοχικά όταν όλα τα αρχεία είναι τοπικά αλλά σε απασχολημένες συσκευές (δίσκοι, σημεία προσάρτησης)\n- Ποτέ: όλες οι αντιγραφές γίνονται διαδοχικά"
 
-#: thunar/thunar-preferences-dialog.c:1100
+#: thunar/thunar-preferences-dialog.c:1117
 msgid "Local Files Only (Same Devices)"
 msgstr "Μόνο τοπικά αρχεία (Ίδιες συσκευές)"
 
-#: thunar/thunar-preferences-dialog.c:1101
+#: thunar/thunar-preferences-dialog.c:1118
 msgid "Local Files Only (Idle Devices)"
 msgstr "Μόνο τοπικά αρχεία (Αδρανείς συσκευές)"
 
-#: thunar/thunar-preferences-dialog.c:1120
+#: thunar/thunar-preferences-dialog.c:1137
 msgid "Use intermediate file on copy:"
 msgstr "Χρήση ενδιάμεσου αρχείου στην αντιγραφή:"
 
-#: thunar/thunar-preferences-dialog.c:1124
+#: thunar/thunar-preferences-dialog.c:1141
 msgid ""
 "Use intermediate file '*.partial~' to copy files. This will prevent "
 "fragmented files. The new file will only be shown after the copy was "
 "successfully finished."
 msgstr "Κατά την αντιγραφή, η χρήση του ενδιάμεσου αρχείου '*.partial~' θα αποτρέψει τον κατακερματισμό των αρχείων. Μόνο μετά την επιτυχή ολοκλήρωση της θα εμφανιστεί το νέο αρχείο."
 
-#: thunar/thunar-preferences-dialog.c:1151
+#: thunar/thunar-preferences-dialog.c:1168
 msgid "Verify file checksum on copy:"
 msgstr "Επαλήθευση του αθροίσματος ελέγχου στο αντίγραφο:"
 
-#: thunar/thunar-preferences-dialog.c:1155
+#: thunar/thunar-preferences-dialog.c:1172
 msgid ""
 "Compare original file and copy with checksum. This will prevent corrupted "
 "files. Enabling this option will largely increase copy time."
 msgstr "Σύγκριση του αρχείου και του αντιγράφου του με το άθροισμα ελέγχου. Αυτό θα αποτρέψει αλλοιώσεις αρχείων. Η ενεργοποίηση αυτής της επιλογής θα αυξήσει πολύ το χρόνο της αντιγραφής."
 
-#: thunar/thunar-preferences-dialog.c:1183
+#: thunar/thunar-preferences-dialog.c:1200
 msgid "Search"
 msgstr "Αναζήτηση"
 
-#: thunar/thunar-preferences-dialog.c:1200
+#: thunar/thunar-preferences-dialog.c:1217
 msgid "Include subfolders:"
 msgstr "Συμπερίληψη υποφακέλων"
 
-#: thunar/thunar-preferences-dialog.c:1224
+#: thunar/thunar-preferences-dialog.c:1241
 msgid "Folder Permissions"
 msgstr "Δικαιώματα φακέλου"
 
-#: thunar/thunar-preferences-dialog.c:1240
+#: thunar/thunar-preferences-dialog.c:1257
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "Κατά την αλλαγή δικαιωμάτων ενός φακέλου, μπορείτε να εφαρμόσετε τις αλλαγές και στα περιεχόμενά του.\nΕπιλέξτε παρακάτω την εξ ορισμού συμπεριφορά:"
 
-#: thunar/thunar-preferences-dialog.c:1252
-#: thunar/thunar-preferences-dialog.c:1298
+#: thunar/thunar-preferences-dialog.c:1269
+#: thunar/thunar-preferences-dialog.c:1315
 msgid "Ask every time"
 msgstr "Να γίνεται πάντα ερώτηση"
 
-#: thunar/thunar-preferences-dialog.c:1253
+#: thunar/thunar-preferences-dialog.c:1270
 msgid "Apply to Folder and Contents"
 msgstr "Εφαρμογή στο φάκελο και τα περιεχόμενα"
 
-#: thunar/thunar-preferences-dialog.c:1254
+#: thunar/thunar-preferences-dialog.c:1271
 msgid "Apply to Folder Only"
 msgstr "Εφαρμογή μόνο στο φάκελο"
 
-#: thunar/thunar-preferences-dialog.c:1269
+#: thunar/thunar-preferences-dialog.c:1286
 msgid "Security"
 msgstr "Ασφάλεια"
 
-#: thunar/thunar-preferences-dialog.c:1286
+#: thunar/thunar-preferences-dialog.c:1303
 msgid "Execute shell scripts:"
 msgstr "Εκτέλεση σεναρίων κελύφους:"
 
-#: thunar/thunar-preferences-dialog.c:1321
+#: thunar/thunar-preferences-dialog.c:1338
 msgid "Volume Management"
 msgstr "Διαχείριση τόμων"
 
 #. add check button to enable/disable auto mounting
-#: thunar/thunar-preferences-dialog.c:1338
+#: thunar/thunar-preferences-dialog.c:1355
 msgid "Enable _Volume Management"
 msgstr "Ενεργοποίηση διαχείρισης _τόμων"
 
-#: thunar/thunar-preferences-dialog.c:1357
+#: thunar/thunar-preferences-dialog.c:1374
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">Ρύθμιση</a> της διαχείρισης των αφαιρούμενων δίσκων, συσκευών και μέσων."
 
-#: thunar/thunar-preferences-dialog.c:1372
+#: thunar/thunar-preferences-dialog.c:1389
 #: thunar/thunar-properties-dialog.c:810
 msgid "Missing dependencies"
 msgstr "Λείπουν εξαρτήσεις"
 
-#: thunar/thunar-preferences-dialog.c:1380
+#: thunar/thunar-preferences-dialog.c:1397
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2640,30 +2650,30 @@ msgid ""
 msgstr "Φαίνεται σαν να μην υπάρχει το <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a>.\nΣημαντικά χαρακτηριστικά όπως, απορρίμματα\nαφαιρούμενα μέσα και η περιήγηση απομακρυσμένης\nτοποθεσίας δεν θα λειτουργήσουν. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Περισσότερα]</a>"
 
 #. Shortcuts
-#: thunar/thunar-preferences-dialog.c:1395
+#: thunar/thunar-preferences-dialog.c:1412
 msgid "Shortcuts"
 msgstr "Συντομεύσεις"
 
-#: thunar/thunar-preferences-dialog.c:1406
+#: thunar/thunar-preferences-dialog.c:1423
 msgid "Window"
 msgstr "Παράθυρο"
 
-#: thunar/thunar-preferences-dialog.c:1407
+#: thunar/thunar-preferences-dialog.c:1424
 msgid "View"
 msgstr "Προβολή"
 
-#: thunar/thunar-preferences-dialog.c:1408
+#: thunar/thunar-preferences-dialog.c:1425
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:532
 msgid "Launcher"
 msgstr "Εκκινητής"
 
-#: thunar/thunar-preferences-dialog.c:1409
+#: thunar/thunar-preferences-dialog.c:1426
 msgid "Status Bar"
 msgstr "Γραμμή κατάστασης"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: thunar/thunar-preferences-dialog.c:1473
+#: thunar/thunar-preferences-dialog.c:1490
 msgid "Failed to display the volume management settings"
 msgstr "Απέτυχε το άνοιγμα ρύθμισης της διαχείρισης τόμων"
 
@@ -2736,7 +2746,7 @@ msgstr "Προορισμός δεσμού:"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: thunar/thunar-properties-dialog.c:487 thunar/thunar-util.c:1452
+#: thunar/thunar-properties-dialog.c:487 thunar/thunar-util.c:1471
 msgid "Original Path:"
 msgstr "Αρχική διαδρομή:"
 
@@ -2874,7 +2884,7 @@ msgstr "Εκκαθάριση"
 msgid "Clear the file list below"
 msgstr "Εκκαθάριση της παρακάτω λίστας αρχείων"
 
-#: thunar/thunar-renamer-dialog.c:203 thunar/thunar-window.c:559
+#: thunar/thunar-renamer-dialog.c:203 thunar/thunar-window.c:560
 msgid "_About"
 msgstr "Π_ερί"
 
@@ -2992,7 +3002,7 @@ msgid ""
 msgstr "Θέλετε να παραλείψετε αυτό το αρχείο και να συνεχίσετε τη μετονομασία των υπόλοιπων;"
 
 #: thunar/thunar-shortcuts-model.c:633 thunar/thunar-shortcuts-model.c:997
-#: thunar/thunar-window.c:543
+#: thunar/thunar-window.c:544
 msgid "Browse the file system"
 msgstr "Περιήγηση στο σύστημα αρχείων"
 
@@ -3024,7 +3034,7 @@ msgstr "Δίκτυο"
 msgid "Browse Network"
 msgstr "Περιήγηση δικτύου"
 
-#: thunar/thunar-shortcuts-model.c:1042 thunar/thunar-window.c:553
+#: thunar/thunar-shortcuts-model.c:1042 thunar/thunar-window.c:554
 msgid "Browse local network connections"
 msgstr "Περιήγηση τοπικών συνδέσεων δικτύου"
 
@@ -3089,7 +3099,7 @@ msgstr "Επεξεργασία..."
 msgid "Calculation aborted"
 msgstr "Ο υπολογισμός ακυρώθηκε"
 
-#: thunar/thunar-size-label.c:471 thunar/thunar-util.c:1337
+#: thunar/thunar-size-label.c:471 thunar/thunar-util.c:1356
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -3219,31 +3229,31 @@ msgid "Loading folder contents..."
 msgstr "Φόρτωμα περιεχομένων φακέλου..."
 
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2526 thunar/thunar-window.c:4278
+#: thunar/thunar-standard-view.c:2540 thunar/thunar-window.c:4343
 msgid "Failed to open the home folder"
 msgstr "Απέτυχε το άνοιγμα του αρχικού φακέλου"
 
-#: thunar/thunar-standard-view.c:2604
+#: thunar/thunar-standard-view.c:2618
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "Επιλογή βάσει μοτίβου"
 
-#: thunar/thunar-standard-view.c:2609
+#: thunar/thunar-standard-view.c:2623
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "Άκ_υρο"
 
-#: thunar/thunar-standard-view.c:2611
+#: thunar/thunar-standard-view.c:2625
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "Επιλο_γή"
 
-#: thunar/thunar-standard-view.c:2624
+#: thunar/thunar-standard-view.c:2638
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "_Μοτίβο:"
 
-#: thunar/thunar-standard-view.c:2625
+#: thunar/thunar-standard-view.c:2639
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3253,7 +3263,7 @@ msgstr "Θα επιλεχθούν τα αρχεία στο κυρίως παρά
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: thunar/thunar-standard-view.c:2639
+#: thunar/thunar-standard-view.c:2653
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3264,24 +3274,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr "? ταιριάζει μόνο ένα χαρακτήρα,\n* ταιριάζει όλους τους χαρακτήρες, συμπεριλαμβανομένου του μηδενός.\n\nΓια παράδειγμα: *.txt, file??.png, pict\n\nΤο μοτίβο χωρίς κάποιο από τα σύμβολα * ή ?, ταιριάζει οπουδήποτε σε ένα όνομα. Με τα σύμβολα ταιριάζει στην αρχή αλλά και στο τέλος του ονόματος."
 
-#: thunar/thunar-standard-view.c:2643
+#: thunar/thunar-standard-view.c:2657
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr "_Διάκριση πεζών/κεφαλαίων"
 
-#: thunar/thunar-standard-view.c:2644
+#: thunar/thunar-standard-view.c:2658
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr "Εάν το επιλέξετε, η κατάσταση των γραμμάτων ταιριάζει με το μοτίβο.\nΤο Examp* θα ταιριάζει το Example.txt και όχι το example.txt"
 
-#: thunar/thunar-standard-view.c:2649
+#: thunar/thunar-standard-view.c:2663
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr "Ταί_ριασμα τόνων"
 
-#: thunar/thunar-standard-view.c:2650
+#: thunar/thunar-standard-view.c:2664
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3290,21 +3300,21 @@ msgstr "Εάν το επιλέξετε, απαιτεί να ταιριάζουν
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: thunar/thunar-standard-view.c:3040
+#: thunar/thunar-standard-view.c:3054
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Το XDS παρέδωσε ένα μη έγκυρο όνομα αρχείου"
 
 #. display an error dialog to the user
-#: thunar/thunar-standard-view.c:3234
+#: thunar/thunar-standard-view.c:3248
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Απέτυχε η δημιουργία δεσμού για τη διεύθυνση \"%s\""
 
-#: thunar/thunar-standard-view.c:3280
+#: thunar/thunar-standard-view.c:3294
 msgid "Untitled document"
 msgstr "Έγγραφο χωρίς όνομα"
 
-#: thunar/thunar-standard-view.c:3765 thunar/thunar-window.c:4375
+#: thunar/thunar-standard-view.c:3779 thunar/thunar-window.c:4440
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Απέτυχε το άνοιγμα του καταλόγου \"%s\""
@@ -3458,613 +3468,613 @@ msgstr[1] "Απομένουν %lu δευτερόλεπτα  (%s/sec)"
 msgid "Loading..."
 msgstr "Φόρτωση..."
 
-#: thunar/thunar-util.c:305
+#: thunar/thunar-util.c:306
 msgid "Invalid path"
 msgstr "Μη έγκυρη διαδρομή"
 
-#: thunar/thunar-util.c:339
+#: thunar/thunar-util.c:340
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "Άγνωστος χρήστης \"%s\""
 
 #. TRANSLATORS: file was modified less than one day ago
-#: thunar/thunar-util.c:450
+#: thunar/thunar-util.c:451
 msgid "Today"
 msgstr "Σήμερα"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: thunar/thunar-util.c:455
+#: thunar/thunar-util.c:456
 #, c-format
 msgid "Today at %X"
 msgstr "Σήμερα στις %X"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: thunar/thunar-util.c:463
+#: thunar/thunar-util.c:464
 msgid "Yesterday"
 msgstr "Χτές"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: thunar/thunar-util.c:468
+#: thunar/thunar-util.c:469
 #, c-format
 msgid "Yesterday at %X"
 msgstr "Χθες στις %X"
 
 #. Days from last week
-#: thunar/thunar-util.c:486
+#: thunar/thunar-util.c:487
 #, c-format
 msgid "%A at %X"
 msgstr "%A στις %X"
 
 #. Any other date
-#: thunar/thunar-util.c:491
+#: thunar/thunar-util.c:492
 #, c-format
 msgid "%x at %X"
 msgstr "%x στις %X"
 
-#: thunar/thunar-util.c:784
+#: thunar/thunar-util.c:803
 #, c-format
 msgid "%.*s %u%s"
 msgstr "%.*s %u %s"
 
-#: thunar/thunar-util.c:786
+#: thunar/thunar-util.c:805
 #, c-format
 msgid "%.*s (copy %u)%s"
 msgstr "%.*s (αντιγραφή %u)%s"
 
-#: thunar/thunar-util.c:791
+#: thunar/thunar-util.c:810
 #, c-format
 msgid "link to %.*s%s"
 msgstr "δεσμός προς το %.*s%s"
 
-#: thunar/thunar-util.c:796
+#: thunar/thunar-util.c:815
 #, c-format
 msgid "link %u to %.*s%s"
 msgstr "δεσμός %u προς το %.*s%s"
 
-#: thunar/thunar-util.c:816
+#: thunar/thunar-util.c:835
 msgid "Search: "
 msgstr "Αναζήτηση:"
 
-#: thunar/thunar-util.c:1311 thunar/thunar-util.c:1344
+#: thunar/thunar-util.c:1330 thunar/thunar-util.c:1363
 #, c-format
 msgid "%s (%d hidden)"
 msgstr ""
 
-#: thunar/thunar-util.c:1328
+#: thunar/thunar-util.c:1347
 #, c-format
 msgid "%s: %s"
 msgstr ""
 
-#: thunar/thunar-util.c:1351
+#: thunar/thunar-util.c:1370
 msgid "0 items"
 msgstr "0 αντικείμενα"
 
-#: thunar/thunar-util.c:1360 thunar/thunar-util.c:1480
+#: thunar/thunar-util.c:1379 thunar/thunar-util.c:1499
 #, c-format
 msgid "Last Modified: %s"
 msgstr "Τελευταία τροποποίηση: %s"
 
-#: thunar/thunar-util.c:1409
+#: thunar/thunar-util.c:1428
 #, c-format
 msgid "\"%s\" (%s)"
 msgstr "\"%s\" (%s)"
 
-#: thunar/thunar-util.c:1411
+#: thunar/thunar-util.c:1430
 #, c-format
 msgid "\"%s\""
 msgstr "\"%s\""
 
-#: thunar/thunar-util.c:1430
+#: thunar/thunar-util.c:1449
 msgid "broken link"
 msgstr "σπασμένος δεσμός"
 
-#: thunar/thunar-util.c:1434
+#: thunar/thunar-util.c:1453
 msgid "shortcut"
 msgstr "συντόμευση"
 
-#: thunar/thunar-util.c:1436
+#: thunar/thunar-util.c:1455
 msgid "mountable"
 msgstr "προσαρτήσιμο"
 
-#: thunar/thunar-util.c:1440
+#: thunar/thunar-util.c:1459
 #, c-format
 msgid "%s"
 msgstr "%s"
 
 #. append the image dimensions to the statusbar text
-#: thunar/thunar-util.c:1470 plugins/thunar-apr/thunar-apr-image-page.c:153
+#: thunar/thunar-util.c:1489 plugins/thunar-apr/thunar-apr-image-page.c:153
 msgid "Image Size:"
 msgstr "Μέγεθος εικόνας:"
 
-#: thunar/thunar-window.c:498
+#: thunar/thunar-window.c:499
 msgid "_File"
 msgstr "_Αρχείο"
 
-#: thunar/thunar-window.c:499
+#: thunar/thunar-window.c:500
 msgid "New _Tab"
 msgstr "Νέα _καρτέλα"
 
-#: thunar/thunar-window.c:499
+#: thunar/thunar-window.c:500
 msgid "Open a new tab for the displayed location"
 msgstr "Άνοιγμα νέας καρτέλας για την εμφανιζόμενη τοποθεσία"
 
-#: thunar/thunar-window.c:500
+#: thunar/thunar-window.c:501
 msgid "New _Window"
 msgstr "Νέο _παράθυρο"
 
-#: thunar/thunar-window.c:500
+#: thunar/thunar-window.c:501
 msgid "Open a new Thunar window for the displayed location"
 msgstr "Άνοιγμα νέου παραθύρου για την εμφανιζόμενη τοποθεσία"
 
-#: thunar/thunar-window.c:501
+#: thunar/thunar-window.c:502
 msgid "Detac_h Tab"
 msgstr "_Αποκόλληση καρτέλας"
 
-#: thunar/thunar-window.c:501
+#: thunar/thunar-window.c:502
 msgid "Open current folder in a new window"
 msgstr "Άνοιγμα του τρέχοντος φακέλου σε νέο παράθυρο"
 
-#: thunar/thunar-window.c:502
+#: thunar/thunar-window.c:503
 msgid "Close Ta_b"
 msgstr "Κλείσιμο κα_ρτέλας"
 
-#: thunar/thunar-window.c:502
+#: thunar/thunar-window.c:503
 msgid "Close this folder"
 msgstr "Κλείσιμο αυτού του φακέλου"
 
-#: thunar/thunar-window.c:503
+#: thunar/thunar-window.c:504
 msgid "_Close Window"
 msgstr "Κλεί_σιμο παράθυρου"
 
-#: thunar/thunar-window.c:503
+#: thunar/thunar-window.c:504
 msgid "Close this window"
 msgstr "Κλείσιμο αυτού του παραθύρου"
 
-#: thunar/thunar-window.c:504
+#: thunar/thunar-window.c:505
 msgid "Close _All Windows"
 msgstr "Κλείσιμο όλ_ων των παραθύρων"
 
-#: thunar/thunar-window.c:504
+#: thunar/thunar-window.c:505
 msgid "Close all Thunar windows"
 msgstr "Κλείσιμο όλων των παραθύρων του Thunar"
 
-#: thunar/thunar-window.c:506
+#: thunar/thunar-window.c:507
 msgid "_Edit"
 msgstr "_Επεξεργασία"
 
-#: thunar/thunar-window.c:507
+#: thunar/thunar-window.c:508
 msgid "_Undo"
 msgstr "Αναί_ρεση"
 
-#: thunar/thunar-window.c:508
+#: thunar/thunar-window.c:509
 msgid "Red_o"
 msgstr "Επανάλη_ψη"
 
-#: thunar/thunar-window.c:509
+#: thunar/thunar-window.c:510
 msgid "Pr_eferences..."
 msgstr "_Προτιμήσεις..."
 
-#: thunar/thunar-window.c:509
+#: thunar/thunar-window.c:510
 msgid "Edit Thunars Preferences"
 msgstr "Επεξεργασία προτιμήσεων του Thunar"
 
-#: thunar/thunar-window.c:511
+#: thunar/thunar-window.c:512
 msgid "_View"
 msgstr "_Προβολή"
 
-#: thunar/thunar-window.c:512
+#: thunar/thunar-window.c:513
 msgid "_Reload"
 msgstr "_Ανανέωση"
 
-#: thunar/thunar-window.c:512
+#: thunar/thunar-window.c:513
 msgid "Reload the current folder"
 msgstr "Ανανέωση του τρέχοντος φακέλου"
 
-#: thunar/thunar-window.c:515
+#: thunar/thunar-window.c:516
 msgid "S_plit View"
 msgstr "_Διαχωρισμένη προβολή"
 
-#: thunar/thunar-window.c:515
+#: thunar/thunar-window.c:516
 msgid "Open/Close Split View"
 msgstr "Άνοιγμα/Κλείσιμο διαχωρισμένης προβολής"
 
-#: thunar/thunar-window.c:516
+#: thunar/thunar-window.c:517
 msgid "Switch Focused Split View Pane"
 msgstr "Εναλλαγή εστίασης του πεδίου διαχωρισμένης προβολής"
 
-#: thunar/thunar-window.c:517
+#: thunar/thunar-window.c:518
 msgid "Locatio_n Selector"
 msgstr "_Εργαλειοθήκη τοποθεσίας"
 
-#: thunar/thunar-window.c:518
+#: thunar/thunar-window.c:519
 msgid "_Text Style"
 msgstr "_Στυλ κειμένου"
 
-#: thunar/thunar-window.c:518
+#: thunar/thunar-window.c:519
 msgid "Traditional text box showing the current path"
 msgstr "Παραδοσιακό πλαίσιο κειμένου που δείχνει την τρέχουσα διαδρομή"
 
-#: thunar/thunar-window.c:519
+#: thunar/thunar-window.c:520
 msgid "_Buttons Style"
 msgstr "_Κουμπιά διαδρομής"
 
-#: thunar/thunar-window.c:519
+#: thunar/thunar-window.c:520
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "Σύγχρονη εμφάνιση με κουμπιά που αντιστοιχούν σε φακέλους"
 
-#: thunar/thunar-window.c:520
+#: thunar/thunar-window.c:521
 msgid "_Side Pane"
 msgstr "_Πλευρικό ταμπλό"
 
-#: thunar/thunar-window.c:521
+#: thunar/thunar-window.c:522
 msgid "_Shortcuts"
 msgstr "_Συντομεύσεις"
 
-#: thunar/thunar-window.c:521
+#: thunar/thunar-window.c:522
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "Εναλλάσει τη προβολή του πλευρικού ταμπλό συντομεύσεων"
 
-#: thunar/thunar-window.c:522
+#: thunar/thunar-window.c:523
 msgid "_Tree"
 msgstr "_Δενδρική δομή"
 
-#: thunar/thunar-window.c:522
+#: thunar/thunar-window.c:523
 msgid "Toggles the visibility of the tree pane"
 msgstr "Εναλλάσει τη προβολή του πλευρικού ταμπλό δενδρικής δομής"
 
-#: thunar/thunar-window.c:524
+#: thunar/thunar-window.c:525
 msgid "_Image Preview"
 msgstr "Προ_βολή εικόνας"
 
-#: thunar/thunar-window.c:524
+#: thunar/thunar-window.c:525
 msgid "Change the visibility of this window's image preview"
 msgstr "Αλλαγή προβολής της εικόνας προεπισκόπισης στο παράθυρο"
 
-#: thunar/thunar-window.c:525
+#: thunar/thunar-window.c:526
 msgid "St_atusbar"
 msgstr "_Γραμμή κατάστασης"
 
-#: thunar/thunar-window.c:525
+#: thunar/thunar-window.c:526
 msgid "Change the visibility of this window's statusbar"
 msgstr "Αλλαγή προβολής της γραμμής κατάστασης στο παράθυρο"
 
-#: thunar/thunar-window.c:526
+#: thunar/thunar-window.c:527
 msgid "_Menubar"
 msgstr "Μπάρα με_νού"
 
-#: thunar/thunar-window.c:526
+#: thunar/thunar-window.c:527
 msgid "Change the visibility of this window's menubar"
 msgstr "Αλλαγή προβολής της μπάρας μενού στο παράθυρο"
 
-#: thunar/thunar-window.c:527
+#: thunar/thunar-window.c:528
 msgid "Configure _Toolbar..."
 msgstr "Ρύθμιση εργα_λειοθήκης..."
 
-#: thunar/thunar-window.c:527
+#: thunar/thunar-window.c:528
 msgid "Configure the toolbar"
 msgstr "Ρύθμιση της εργα_λειοθήκης"
 
-#: thunar/thunar-window.c:528
+#: thunar/thunar-window.c:529
 msgid "Cl_ear Saved Folder View Settings"
 msgstr "Εκκαθάριση αποθηκευμένων ρυθμίσεων εμφάνισης του _φακέλου"
 
-#: thunar/thunar-window.c:528
+#: thunar/thunar-window.c:529
 msgid "Delete saved view settings for this folder"
 msgstr "Διαγραφή των αποθηκευμένων ρυθμίσεων εμφάνισης για αυτόν το φάκελο"
 
-#: thunar/thunar-window.c:529
+#: thunar/thunar-window.c:530
 msgid "Show _Hidden Files"
 msgstr "Εμφάνιση κ_ρυφών αρχείων"
 
-#: thunar/thunar-window.c:529
+#: thunar/thunar-window.c:530
 msgid "Toggles the display of hidden files in the current window"
 msgstr "Εναλλάσει τη προβολή των κρυφών αρχείων στο τρέχον παράθυρο"
 
-#: thunar/thunar-window.c:530
+#: thunar/thunar-window.c:531
 msgid "Show _File Highlight"
 msgstr "Εμ_φάνιση επισήμανσης αρχείου"
 
-#: thunar/thunar-window.c:530
+#: thunar/thunar-window.c:531
 msgid ""
 "Toggles the display of file highlight which can be configured in the file "
 "specific property dialog"
 msgstr "Εναλλάσει τη προβολή επισήμανσης που ρυθμίζεται από τις ειδικές ιδιότητες κάθε αρχείου"
 
-#: thunar/thunar-window.c:531
+#: thunar/thunar-window.c:532
 msgid "Zoom I_n"
 msgstr "_Μεγέθυνση"
 
-#: thunar/thunar-window.c:531
+#: thunar/thunar-window.c:532
 msgid "Show the contents in more detail"
 msgstr "Εμφάνιση των περιεχομένων με μεγαλύτερη λεπτομέρεια"
 
-#: thunar/thunar-window.c:534
+#: thunar/thunar-window.c:535
 msgid "Zoom _Out"
 msgstr "_Σμίκρυνση"
 
-#: thunar/thunar-window.c:534
+#: thunar/thunar-window.c:535
 msgid "Show the contents in less detail"
 msgstr "Εμφάνιση των περιεχομένων με λιγότερη λεπτομέρεια"
 
-#: thunar/thunar-window.c:536
+#: thunar/thunar-window.c:537
 msgid "Normal Si_ze"
 msgstr "_Κανονικό μέγεθος"
 
-#: thunar/thunar-window.c:536
+#: thunar/thunar-window.c:537
 msgid "Show the contents at the normal size"
 msgstr "Εμφάνιση των περιεχομένων στο κανονικό μέγεθος"
 
-#: thunar/thunar-window.c:538
+#: thunar/thunar-window.c:539
 msgid "_Icon View"
 msgstr "Εμφάνιση _εικονιδίων"
 
-#: thunar/thunar-window.c:538
+#: thunar/thunar-window.c:539
 msgid "Display folder content in an icon view"
 msgstr "Εμφάνιση περιεχομένων φακέλου σε προβολή εικονιδίων"
 
-#: thunar/thunar-window.c:539
+#: thunar/thunar-window.c:540
 msgid "_List View"
 msgstr "Εμφάνιση _λίστας"
 
-#: thunar/thunar-window.c:539
+#: thunar/thunar-window.c:540
 msgid "Display folder content in a detailed list view"
 msgstr "Εμφάνιση περιεχομένων φακέλου σε λεπτομερή προβολή λίστας"
 
-#: thunar/thunar-window.c:540
+#: thunar/thunar-window.c:541
 msgid "_Compact View"
 msgstr "Σ_υμπαγής εμφάνιση"
 
-#: thunar/thunar-window.c:540
+#: thunar/thunar-window.c:541
 msgid "Display folder content in a compact list view"
 msgstr "Εμφάνιση περιεχομένων φακέλου σε συμπαγή προβολή λίστας"
 
-#: thunar/thunar-window.c:542
+#: thunar/thunar-window.c:543
 msgid "_Go"
 msgstr "_Μετάβαση"
 
-#: thunar/thunar-window.c:543
+#: thunar/thunar-window.c:544
 msgid "F_ile System"
 msgstr "Σύστημα αρ_χείων"
 
-#: thunar/thunar-window.c:544
+#: thunar/thunar-window.c:545
 msgid "_Home"
 msgstr "_Αρχικός φάκελος"
 
-#: thunar/thunar-window.c:544
+#: thunar/thunar-window.c:545
 msgid "Go to the home folder"
 msgstr "Μετάβαση στον αρχικό φάκελο"
 
-#: thunar/thunar-window.c:545
+#: thunar/thunar-window.c:546
 msgid "_Desktop"
 msgstr "Επι_φάνεια εργασίας"
 
-#: thunar/thunar-window.c:545
+#: thunar/thunar-window.c:546
 msgid "Go to the desktop folder"
 msgstr "Μετάβαση στην επιφάνεια εργασίας"
 
-#: thunar/thunar-window.c:546
+#: thunar/thunar-window.c:547
 msgid "_Computer"
 msgstr "Υπο_λογιστής"
 
-#: thunar/thunar-window.c:546
+#: thunar/thunar-window.c:547
 msgid ""
 "Browse all local and remote disks and folders accessible from this computer"
 msgstr "Περιήγηση σε όλους τους τοπικούς και απομακρυσμένους δίσκους και φακέλους που είναι προσβάσιμοι από αυτόν τον υπολογιστή"
 
-#: thunar/thunar-window.c:547
+#: thunar/thunar-window.c:548
 msgid "_Recent"
 msgstr "Πρό_σφατα"
 
-#: thunar/thunar-window.c:547
+#: thunar/thunar-window.c:548
 msgid "Display recently used files"
 msgstr "Εμφάνιση πρόσφατων αρχείων"
 
-#: thunar/thunar-window.c:548
+#: thunar/thunar-window.c:549
 msgid "_Trash"
 msgstr "Απο_ρρίμματα "
 
-#: thunar/thunar-window.c:548
+#: thunar/thunar-window.c:549
 msgid "Display the contents of the trash can"
 msgstr "Εμφάνιση περιεχομένων του κάδου απορριμμάτων"
 
-#: thunar/thunar-window.c:549
+#: thunar/thunar-window.c:550
 msgid "Open _Parent"
 msgstr "Άνοιγμα _γονικού"
 
-#: thunar/thunar-window.c:549
+#: thunar/thunar-window.c:550
 msgid "Open the parent folder"
 msgstr "Άνοιγμα του γονικού φακέλου"
 
-#: thunar/thunar-window.c:550
+#: thunar/thunar-window.c:551
 msgid "_Open Location..."
 msgstr "Άνοι_γμα τοποθεσίας..."
 
-#: thunar/thunar-window.c:550
+#: thunar/thunar-window.c:551
 msgid "Specify a location to open"
 msgstr "Καθορίστε τοποθεσία για άνοιγμα"
 
-#: thunar/thunar-window.c:552
+#: thunar/thunar-window.c:553
 msgid "T_emplates"
 msgstr "_Πρότυπα"
 
-#: thunar/thunar-window.c:552
+#: thunar/thunar-window.c:553
 msgid "Go to the templates folder"
 msgstr "Μετάβαση στο φάκελο προτύπων"
 
-#: thunar/thunar-window.c:553
+#: thunar/thunar-window.c:554
 msgid "Browse _Network"
 msgstr "Περιήγηση _δικτύου"
 
-#: thunar/thunar-window.c:555
+#: thunar/thunar-window.c:556
 msgid "_Bookmarks"
 msgstr "_Συντομεύσεις"
 
-#: thunar/thunar-window.c:558
+#: thunar/thunar-window.c:559
 msgid "_Contents"
 msgstr "_Περιεχόμενα"
 
-#: thunar/thunar-window.c:558
+#: thunar/thunar-window.c:559
 msgid "Display Thunar user manual"
 msgstr "Εμφάνιση εγχειριδίου χρήσης του Thunar"
 
-#: thunar/thunar-window.c:559
+#: thunar/thunar-window.c:560
 msgid "Display information about Thunar"
 msgstr "Εμφάνιση πληροφοριών σχετικά με το Thunar"
 
-#: thunar/thunar-window.c:561
+#: thunar/thunar-window.c:562
 msgid "_Back"
 msgstr "_Πίσω"
 
-#: thunar/thunar-window.c:561
+#: thunar/thunar-window.c:562
 msgid "Go to the previous visited folder"
 msgstr "Μετάβαση στο προηγούμενο φάκελο που είχατε επισκεφθεί"
 
-#: thunar/thunar-window.c:564
+#: thunar/thunar-window.c:565
 msgid "_Forward"
 msgstr "_Εμπρός"
 
-#: thunar/thunar-window.c:564
+#: thunar/thunar-window.c:565
 msgid "Go to the next visited folder"
 msgstr "Μετάβαση στον επόμενο φάκελο που είχατε επισκεφθεί"
 
-#: thunar/thunar-window.c:566
+#: thunar/thunar-window.c:567
 msgid "_Previous Tab"
 msgstr "_Προηγούμενη καρτέλα"
 
-#: thunar/thunar-window.c:566
+#: thunar/thunar-window.c:567
 msgid "Switch to Previous Tab"
 msgstr "Μετάβαση στη προηγούμενη καρτέλα"
 
-#: thunar/thunar-window.c:567
+#: thunar/thunar-window.c:568
 msgid "_Next Tab"
 msgstr "_Επόμενη καρτέλα"
 
-#: thunar/thunar-window.c:567
+#: thunar/thunar-window.c:568
 msgid "Switch to Next Tab"
 msgstr "Μετάβαση στην επόμενη καρτέλα"
 
-#: thunar/thunar-window.c:569
+#: thunar/thunar-window.c:570
 msgid "_Search for Files..."
 msgstr "Ανα_ζήτηση αρχείων..."
 
-#: thunar/thunar-window.c:569
+#: thunar/thunar-window.c:570
 msgid "Search for a specific file in the current folder and Recent"
 msgstr "Αναζήτηση αρχείου στο τρέχοντα φάκελο και στα πρόσφατα"
 
-#: thunar/thunar-window.c:571
+#: thunar/thunar-window.c:572
 msgid "Cancel search for files"
 msgstr "Ακύρωση αναζήτησης αρχείων"
 
-#: thunar/thunar-window.c:573
+#: thunar/thunar-window.c:574
 msgid "Menu"
 msgstr "Μενού"
 
-#: thunar/thunar-window.c:573
+#: thunar/thunar-window.c:574
 msgid "Show the menu"
 msgstr ""
 
 #. add the label with the root warning
-#: thunar/thunar-window.c:914
+#: thunar/thunar-window.c:916
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "Προσοχή: Χρησιμοποιείτε το λογαριασμό διαχειριστή. Μπορεί να προκαλέσετε βλάβη στο σύστημα σας."
 
-#: thunar/thunar-window.c:987
+#: thunar/thunar-window.c:989
 msgid "Size: "
 msgstr "Μέγεθος: "
 
 #. TRANSLATORS: `Catfish' is a software package, please don't translate it.
-#: thunar/thunar-window.c:1077
+#: thunar/thunar-window.c:1096
 msgid "Search with Catfish..."
 msgstr "Αναζήτηση με το Catfish..."
 
-#: thunar/thunar-window.c:1089
+#: thunar/thunar-window.c:1108
 msgid "Restore Selected Items"
 msgstr "Επαναφορά των επιλεγμένων αντικειμένων"
 
-#: thunar/thunar-window.c:2726
+#: thunar/thunar-window.c:2789
 msgid "Close tab"
 msgstr "Κλείσιμο καρτέλας"
 
-#: thunar/thunar-window.c:3185
+#: thunar/thunar-window.c:3248
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Άνοιγμα τοποθεσίας \"%s\""
 
-#: thunar/thunar-window.c:4218
+#: thunar/thunar-window.c:4283
 msgid "Failed to open parent folder"
 msgstr "Απέτυχε το άνοιγμα του γονικού φακέλου"
 
-#: thunar/thunar-window.c:4349
+#: thunar/thunar-window.c:4414
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Ο κατάλογος \"%s\" δεν υπάρχει. Θέλετε να το δημιουργήσετε;"
 
-#: thunar/thunar-window.c:4351
+#: thunar/thunar-window.c:4416
 msgid "Create directory"
 msgstr "Δημιουργία καταλόγου"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4420
+#: thunar/thunar-window.c:4485
 msgid "Failed to browse the computer"
 msgstr "Απέτυχε η περιήγηση στον υπολογιστή"
 
 #. display the "About Templates" dialog
-#: thunar/thunar-window.c:4463
+#: thunar/thunar-window.c:4528
 msgid "About Templates"
 msgstr "Περί προτύπων"
 
-#: thunar/thunar-window.c:4485
+#: thunar/thunar-window.c:4550
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Όλα τα αρχεία σε αυτόν το φάκελο θα εμφανιστούν στο μενού \"Δημιουργία εγγράφου\"."
 
-#: thunar/thunar-window.c:4492
+#: thunar/thunar-window.c:4557
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Εάν δημιουργείτε συχνά συγκεκριμένους τύπους εγγράφων, αντιγράψτε ένα μέσα σε αυτό το φάκελο. \nΟ Thunar θα προσθέσει μια επιλογή για αυτό το έγγραφο στο μενού \"Δημιουργία εγγράφου\".\n\nΌταν το επιλέξετε, από το μενού \"Δημιουργία εγγράφου\", θα δημιουργηθεί ένα αντίγραφο του στον κατάλογο που βλέπετε."
 
-#: thunar/thunar-window.c:4504
+#: thunar/thunar-window.c:4569
 msgid "Do _not display this message again"
 msgstr "_Να μην εμφανιστεί ξανά αυτό το μήνυμα"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4538
+#: thunar/thunar-window.c:4603
 msgid "Failed to open the file system root folder"
 msgstr "Απέτυχε το άνοιγμα του ριζικού φακέλου του συστήματος αρχείων"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4574
+#: thunar/thunar-window.c:4639
 msgid "Failed to display `Recent`"
 msgstr "Απέτυχε η εμφάνιση `Πρόσφατα`"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4610
+#: thunar/thunar-window.c:4675
 msgid "Failed to display the contents of the trash can"
 msgstr "Απέτυχε η εμφάνιση περιεχομένου του κάδου απορριμμάτων"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4646
+#: thunar/thunar-window.c:4711
 msgid "Failed to browse the network"
 msgstr "Απέτυχε η περιήγηση στο δίκτυο"
 
-#: thunar/thunar-window.c:4789
+#: thunar/thunar-window.c:4854
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Ο Thunar είναι γρήγορος και εύκολος διαχειριστής αρχείων\nγια το περιβάλλον εργασίας Xfce."
 
-#: thunar/thunar-window.c:5857
+#: thunar/thunar-window.c:5922
 msgid "Select an image to preview"
 msgstr ""
 
-#: thunar/thunar-window.c:6004
+#: thunar/thunar-window.c:6069
 msgid "Failed to launch search with Catfish"
 msgstr "Απέτυχε η εκκίνηση αναζήτησης με το Catfish"
 
 #. add a proxy menu item for the location bar to represent the bar in the
 #. overflow menu
-#: thunar/thunar-window.c:6395 thunar/thunar-window.c:6400
+#: thunar/thunar-window.c:6460 thunar/thunar-window.c:6465
 msgid "Location Bar"
 msgstr "Μπάρα διαδρομής"
 
