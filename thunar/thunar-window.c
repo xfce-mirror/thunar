@@ -68,6 +68,10 @@
 
 
 
+#define DEFAULT_LOCATION_BAR_MARGIN 5
+
+
+
 /* Property identifiers */
 enum
 {
@@ -1887,6 +1891,7 @@ static gboolean
 thunar_window_csd_update (ThunarWindow *window)
 {
   GtkWidget *header_bar, *in_header_bar, *below_header_bar, *grid_child;
+
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   header_bar = gtk_window_get_titlebar (GTK_WINDOW (window));
@@ -1908,17 +1913,20 @@ thunar_window_csd_update (ThunarWindow *window)
     {
       in_header_bar = window->menubar;
       below_header_bar = window->location_toolbar;
+
+      /* restore default location bar margins */
+      gtk_widget_set_margin_start (window->location_bar, DEFAULT_LOCATION_BAR_MARGIN);
+      gtk_widget_set_margin_end (window->location_bar, DEFAULT_LOCATION_BAR_MARGIN);
     }
   else
     {
       in_header_bar = window->location_toolbar;
       below_header_bar = window->menubar;
-    }
 
-  gtk_widget_set_margin_start (in_header_bar, 10);
-  gtk_widget_set_margin_end   (in_header_bar, 10);
-  gtk_widget_set_margin_start (below_header_bar, 0);
-  gtk_widget_set_margin_end   (below_header_bar, 0);
+      /* add extra space around the location bar to function as window drag area */
+      gtk_widget_set_margin_start (window->location_bar, 15);
+      gtk_widget_set_margin_end (window->location_bar, 15);
+    }
 
   gtk_header_bar_set_custom_title (GTK_HEADER_BAR (header_bar), in_header_bar);
   gtk_grid_attach (GTK_GRID (window->grid), below_header_bar, 0, 0, 1, 1);
@@ -6525,6 +6533,8 @@ thunar_window_location_bar_create (ThunarWindow *window)
 {
   /* allocate the new location bar widget */
   window->location_bar = thunar_location_bar_new ();
+  gtk_widget_set_margin_start (window->location_bar, DEFAULT_LOCATION_BAR_MARGIN);
+  gtk_widget_set_margin_end (window->location_bar, DEFAULT_LOCATION_BAR_MARGIN);
   g_object_bind_property (G_OBJECT (window), "current-directory", G_OBJECT (window->location_bar), "current-directory", G_BINDING_SYNC_CREATE);
   g_signal_connect_swapped (G_OBJECT (window->location_bar), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
   g_signal_connect_swapped (G_OBJECT (window->location_bar), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
