@@ -6461,6 +6461,24 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   g_object_set_data_full (G_OBJECT (tool_item), "icon", g_strdup(""), g_free);
   thunar_g_object_set_guint_data (G_OBJECT (tool_item), "default-order", item_order++);
 
+  /* add view switcher */
+  GtkToolItem *view_switch_tool_item = gtk_tool_item_new ();
+
+  gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), view_switch_tool_item, -1);
+  g_object_set_data_full (G_OBJECT (view_switch_tool_item), "id", g_strdup ("view-switcher"), g_free);
+  g_object_set_data_full (G_OBJECT (view_switch_tool_item), "label", g_strdup (_("View Switcher")), g_free);
+  g_object_set_data_full (G_OBJECT (view_switch_tool_item), "icon", g_strdup("view-grid"), g_free);
+  thunar_g_object_set_guint_data (G_OBJECT (view_switch_tool_item), "default-order", item_order++);
+
+  GMenu *view_switch_model = g_menu_new ();
+  g_menu_append (view_switch_model, "123", "view-grid");
+  g_menu_append (view_switch_model, "234", "view-list");
+  g_menu_append (view_switch_model, "456", "view-compact");
+
+  GtkWidget *menubutton = gtk_menu_button_new ();
+  gtk_menu_button_set_menu_model (GTK_MENU_BUTTON(menubutton), G_MENU_MODEL (view_switch_model));
+  gtk_container_add (GTK_CONTAINER (view_switch_tool_item), menubutton);
+
   /* add a proxy menu item for the location bar to represent the bar in the overflow menu */
   menu_item = gtk_menu_item_new_with_label (_("Location Bar"));
   gtk_tool_item_set_proxy_menu_item (tool_item, "location-toolbar-menu-id", menu_item);
@@ -7015,4 +7033,5 @@ thunar_window_queue_redraw (ThunarWindow *window)
 
   // TODO: Redraw as well all other parts of the window
 }
+
 
