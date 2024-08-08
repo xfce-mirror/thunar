@@ -1883,6 +1883,7 @@ static gboolean
 thunar_window_csd_update (ThunarWindow *window)
 {
   GtkWidget *header_bar, *in_header_bar, *below_header_bar;
+
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   header_bar = gtk_window_get_titlebar (GTK_WINDOW (window));
@@ -1894,20 +1895,23 @@ thunar_window_csd_update (ThunarWindow *window)
     {
       in_header_bar = window->menubar;
       below_header_bar = window->location_toolbar;
+
+      /* remove extra space around the location bar */ // TODO use 10 instead 0 for a nicer look?
+      gtk_widget_set_margin_start (window->location_bar, 10);
+      gtk_widget_set_margin_end (window->location_bar, 10);
     }
   else
     {
       in_header_bar = window->location_toolbar;
       below_header_bar = window->menubar;
+
+      /* add extra space around the location bar to function as window drag area */
+      gtk_widget_set_margin_start (window->location_bar, 20);
+      gtk_widget_set_margin_end (window->location_bar, 20);
     }
 
   g_object_ref (in_header_bar);
   g_object_ref (below_header_bar);
-
-  gtk_widget_set_margin_start (in_header_bar, 10);
-  gtk_widget_set_margin_end   (in_header_bar, 10);
-  gtk_widget_set_margin_start (below_header_bar, 0);
-  gtk_widget_set_margin_end   (below_header_bar, 0);
 
   gtk_container_remove (GTK_CONTAINER (header_bar), below_header_bar);
   gtk_container_remove (GTK_CONTAINER (window->grid), in_header_bar);
