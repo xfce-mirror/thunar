@@ -339,6 +339,7 @@ static void       thunar_window_catfish_dialog_configure                 (GtkWid
 static gboolean   thunar_window_paned_notebooks_update_orientation       (ThunarWindow           *window);
 static void       thunar_window_location_bar_create                      (ThunarWindow           *window);
 static void       thunar_window_location_toolbar_create                  (ThunarWindow           *window);
+static void       thunar_window_view_switcher_update                     (ThunarWindow           *window);
 static void       thunar_window_update_location_toolbar                  (ThunarWindow           *window);
 static void       thunar_window_update_location_toolbar_icons            (ThunarWindow           *window);
 static void       thunar_window_location_toolbar_add_ucas                (ThunarWindow           *window);
@@ -356,11 +357,6 @@ static GtkWidget* thunar_window_create_toolbar_item_from_action          (Thunar
 static GtkWidget* thunar_window_create_toolbar_toggle_item_from_action   (ThunarWindow           *window,
                                                                           ThunarWindowAction      action,
                                                                           gboolean                active,
-                                                                          guint                   item_order);
-static GtkWidget* thunar_window_create_toolbar_radio_item_from_action    (ThunarWindow           *window,
-                                                                          ThunarWindowAction      action,
-                                                                          gboolean                active,
-                                                                          GtkRadioToolButton     *group,
                                                                           guint                   item_order);
 static gboolean   thunar_window_image_preview_mode_changed               (ThunarWindow           *window);
 static void       image_preview_update                                   (GtkWidget              *parent,
@@ -459,9 +455,7 @@ struct _ThunarWindow
   GtkWidget                 *location_toolbar_item_redo;
   GtkWidget                 *location_toolbar_item_zoom_in;
   GtkWidget                 *location_toolbar_item_zoom_out;
-  GtkWidget                 *location_toolbar_item_icon_view;
-  GtkWidget                 *location_toolbar_item_detailed_view;
-  GtkWidget                 *location_toolbar_item_compact_view;
+  GtkWidget                 *location_toolbar_item_view_switcher;
   GtkWidget                 *location_toolbar_item_search;
 
   ThunarActionManager       *action_mgr;
@@ -2283,8 +2277,7 @@ thunar_window_switch_current_view (ThunarWindow *window,
   thunar_window_binding_create (window, window, "current-directory", new_view, "current-directory", G_BINDING_DEFAULT);
   thunar_window_binding_create (window, new_view, "loading", window->spinner, "active", G_BINDING_SYNC_CREATE);
   thunar_window_binding_create (window, new_view, "searching", window->spinner, "active", G_BINDING_SYNC_CREATE);
-  thunar_window_binding_create (window, new_view, "search-mode-active", window->location_toolbar_item_icon_view, "sensitive", G_BINDING_SYNC_CREATE | G_BINDING_INVERT_BOOLEAN);
-  thunar_window_binding_create (window, new_view, "search-mode-active", window->location_toolbar_item_compact_view, "sensitive", G_BINDING_SYNC_CREATE | G_BINDING_INVERT_BOOLEAN);
+  thunar_window_binding_create (window, new_view, "search-mode-active", window->location_toolbar_item_view_switcher, "sensitive", G_BINDING_SYNC_CREATE | G_BINDING_INVERT_BOOLEAN);
   thunar_window_binding_create (window, new_view, "selected-files", window->action_mgr, "selected-files", G_BINDING_SYNC_CREATE);
   thunar_window_binding_create (window, new_view, "zoom-level", window, "zoom-level", G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
 
@@ -2308,22 +2301,8 @@ thunar_window_switch_current_view (ThunarWindow *window,
   window->view = new_view;
   window->view_type = G_TYPE_FROM_INSTANCE (new_view);
 
-  /* before we can set which view button should be active we need to block the signals first */
-  g_signal_handlers_block_by_func (window->location_toolbar_item_detailed_view, get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST)->callback, window);
-  g_signal_handlers_block_by_func (window->location_toolbar_item_compact_view, get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST)->callback, window);
-  g_signal_handlers_block_by_func (window->location_toolbar_item_icon_view, get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_ICONS)->callback, window);
+  thunar_window_view_switcher_update (window);
 
-  if (window->view_type == THUNAR_TYPE_DETAILS_VIEW)
-    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_detailed_view), TRUE);
-  else if (window->view_type == THUNAR_TYPE_COMPACT_VIEW)
-    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_compact_view), TRUE);
-  else if (window->view_type == THUNAR_TYPE_ICON_VIEW)
-    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_icon_view), TRUE);
-
-  g_signal_handlers_unblock_by_func (window->location_toolbar_item_detailed_view, get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST)->callback, window);
-  g_signal_handlers_unblock_by_func (window->location_toolbar_item_compact_view, get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST)->callback, window);
-  g_signal_handlers_unblock_by_func (window->location_toolbar_item_icon_view, get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_ICONS)->callback, window);
-    
   /* connect accelerators for the view, we need to do this after window->view has been set,
    * see thunar_window_reconnect_accelerators and thunar_standard_view_connect_accelerators */
   g_object_set (G_OBJECT (window->view), "accel-group", window->accel_group, NULL);
@@ -3546,6 +3525,8 @@ thunar_window_action_cancel_search (ThunarWindow *window)
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_search), FALSE);
   g_signal_handlers_unblock_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
 
+  gtk_widget_set_sensitive (window->location_toolbar_item_view_switcher,TRUE);
+
   /* bring back the original location bar style (relevant if the bar is hidden) */
   thunar_window_update_location_bar_visible (window);
 
@@ -4256,6 +4237,8 @@ thunar_window_action_view_changed (ThunarWindow *window,
 {
   thunar_window_replace_view (window, window->view, view_type);
 
+  thunar_window_view_switcher_update (window);
+
   /* if directory specific settings are enabled, save the view type for this directory */
   if (window->directory_specific_settings)
     thunar_file_set_metadata_setting (window->current_directory, "thunar-view-type", g_type_name (view_type), TRUE);
@@ -4913,6 +4896,7 @@ thunar_window_action_search (ThunarWindow *window)
       g_signal_handlers_block_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
       gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_search), TRUE);
       g_signal_handlers_unblock_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
+      gtk_widget_set_sensitive (window->location_toolbar_item_view_switcher,FALSE);
     }
   else
     thunar_window_action_cancel_search (window);
@@ -6347,45 +6331,6 @@ thunar_window_create_toolbar_toggle_item_from_action (ThunarWindow       *window
 
 
 
-static GtkWidget*
-thunar_window_create_toolbar_radio_item_from_action (ThunarWindow       *window,
-                                                     ThunarWindowAction  action,
-                                                     gboolean            active,
-                                                     GtkRadioToolButton *group,
-                                                     guint               item_order)
-{
-  const XfceGtkActionEntry *entry = get_action_entry (action);
-  GtkToolItem              *toolbar_item;
-  GtkWidget                *image;
-  gchar                    *icon_name;
-
-  if (group == NULL)
-    toolbar_item = gtk_radio_tool_button_new (NULL);
-  else
-    toolbar_item = gtk_radio_tool_button_new_from_widget (group);
-  icon_name = thunar_window_toolbar_get_icon_name (window, entry->menu_item_icon_name);
-  image = gtk_image_new_from_icon_name (icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
-  gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (toolbar_item), image);
-  gtk_tool_button_set_label_widget (GTK_TOOL_BUTTON (toolbar_item), gtk_label_new_with_mnemonic (entry->menu_item_label_text));
-  gtk_widget_set_tooltip_text (GTK_WIDGET (toolbar_item), entry->menu_item_tooltip_text);
-  gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), toolbar_item, -1);
-
-  /* 'gtk_toggle_tool_button_set_active' has to be done before 'g_signal_connect_swapped' to not trigger the callback */
-  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (toolbar_item), active);
-  g_signal_connect_swapped (G_OBJECT (toolbar_item), "toggled", entry->callback, window);
-
-  g_object_set_data_full (G_OBJECT (toolbar_item), "id", thunar_util_accel_path_to_id (entry->accel_path), g_free);
-  g_object_set_data_full (G_OBJECT (toolbar_item), "label", g_strdup (entry->menu_item_label_text), g_free);
-  g_object_set_data_full (G_OBJECT (toolbar_item), "icon", g_strdup (icon_name), g_free);
-  thunar_g_object_set_guint_data (G_OBJECT (toolbar_item), "default-order", item_order);
-
-  g_free (icon_name);
-
-  return GTK_WIDGET (toolbar_item);
-}
-
-
-
 static void
 thunar_window_location_bar_create (ThunarWindow *window)
 {
@@ -6440,9 +6385,6 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   window->location_toolbar_item_zoom_out      = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_ZOOM_OUT, item_order++);
   window->location_toolbar_item_zoom_in       = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_ZOOM_IN, item_order++);
                                                 thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_ZOOM_RESET, item_order++);
-  window->location_toolbar_item_icon_view     = thunar_window_create_toolbar_radio_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_ICONS, window->view_type == THUNAR_TYPE_ICON_VIEW, NULL, item_order++);
-  window->location_toolbar_item_detailed_view = thunar_window_create_toolbar_radio_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST, window->view_type == THUNAR_TYPE_DETAILS_VIEW, GTK_RADIO_TOOL_BUTTON (window->location_toolbar_item_icon_view), item_order++);
-  window->location_toolbar_item_compact_view  = thunar_window_create_toolbar_radio_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST, window->view_type == THUNAR_TYPE_COMPACT_VIEW, GTK_RADIO_TOOL_BUTTON (window->location_toolbar_item_icon_view), item_order++);
 
   g_signal_connect (window->location_toolbar_item_back, "button-press-event", G_CALLBACK (thunar_window_history_clicked), window);
   g_signal_connect (window->location_toolbar_item_forward, "button-press-event", G_CALLBACK (thunar_window_history_clicked), window);
@@ -6466,6 +6408,33 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   gtk_tool_item_set_proxy_menu_item (tool_item, "location-toolbar-menu-id", menu_item);
   gtk_widget_set_sensitive (GTK_WIDGET (menu_item), FALSE);
 
+  /* add view switcher */
+  window->location_toolbar_item_view_switcher = GTK_WIDGET (gtk_tool_item_new ());
+
+  gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), GTK_TOOL_ITEM (window->location_toolbar_item_view_switcher), -1);
+  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_view_switcher), "id", g_strdup ("view-switcher"), g_free);
+  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_view_switcher), "label", g_strdup (_("View switcher")), g_free);
+  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_view_switcher), "icon", g_strdup("view-grid"), g_free);
+  thunar_g_object_set_guint_data (G_OBJECT (window->location_toolbar_item_view_switcher), "default-order", item_order++);
+
+  GtkWidget *menu_button = gtk_menu_button_new ();
+  GtkWidget *box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 1);
+  GtkWidget *image = gtk_image_new ();
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+  GtkWidget *arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
+G_GNUC_END_IGNORE_DEPRECATIONS
+
+  gtk_box_pack_start (GTK_BOX (box), image, TRUE, TRUE, 1);
+  gtk_box_pack_end (GTK_BOX (box), arrow, FALSE, TRUE, 1);
+
+  gtk_container_remove (GTK_CONTAINER (menu_button), gtk_bin_get_child (GTK_BIN (menu_button)));
+  gtk_container_add (GTK_CONTAINER (menu_button), box);
+  gtk_widget_show_all (box);
+
+  gtk_container_add (GTK_CONTAINER (window->location_toolbar_item_view_switcher), menu_button);
+
+  thunar_window_view_switcher_update (window);
+
   /* add remaining toolbar items */
                                          thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_RELOAD, item_order++);
   window->location_toolbar_item_search = thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_SEARCH, window->is_searching, item_order++);
@@ -6484,6 +6453,63 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
 
   /* load the correct order and visibility of items in the toolbar */
   thunar_window_location_toolbar_load_items (window);
+}
+
+
+
+static void
+thunar_window_view_switcher_update (ThunarWindow           *window)
+{
+  GtkWidget           *menu_button, *box, *image, *view_switcher_menu, *view_switcher_item;
+  XfceGtkActionEntry   action_entry;
+  GList               *children;
+
+  menu_button = gtk_bin_get_child (GTK_BIN (window->location_toolbar_item_view_switcher));
+  box = gtk_bin_get_child (GTK_BIN (menu_button));
+  children = gtk_container_get_children (GTK_CONTAINER (box));
+  image = g_list_nth_data (children, 0);
+  view_switcher_menu = gtk_menu_new ();
+  gtk_widget_set_halign (view_switcher_menu, GTK_ALIGN_CENTER);
+
+  if (window->view_type == THUNAR_TYPE_ICON_VIEW)
+    gtk_image_set_from_icon_name (GTK_IMAGE (image),
+                                  thunar_window_toolbar_get_icon_name (window, "view-grid"),
+                                  gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (window->location_toolbar_item_view_switcher)));
+
+  if (window->view_type == THUNAR_TYPE_DETAILS_VIEW)
+    gtk_image_set_from_icon_name (GTK_IMAGE (image),
+                                  thunar_window_toolbar_get_icon_name (window, "view-list"),
+                                  gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (window->location_toolbar_item_view_switcher)));
+
+  if (window->view_type == THUNAR_TYPE_COMPACT_VIEW)
+    gtk_image_set_from_icon_name (GTK_IMAGE (image),
+                                  thunar_window_toolbar_get_icon_name (window, "view-compact"),
+                                  gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (window->location_toolbar_item_view_switcher)));
+
+  gtk_menu_button_set_popup (GTK_MENU_BUTTON (menu_button), NULL);
+
+  action_entry = *(get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_ICONS));
+  action_entry.menu_item_type = XFCE_GTK_IMAGE_MENU_ITEM;
+  action_entry.menu_item_icon_name = thunar_window_toolbar_get_icon_name (window, "view-grid");
+  view_switcher_item = xfce_gtk_menu_item_new_from_action_entry (&action_entry, G_OBJECT(window), GTK_MENU_SHELL (view_switcher_menu));
+  gtk_widget_show (view_switcher_item);
+
+  action_entry = *(get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST));
+  action_entry.menu_item_type = XFCE_GTK_IMAGE_MENU_ITEM;
+
+  view_switcher_item = xfce_gtk_menu_item_new_from_action_entry (&action_entry, G_OBJECT(window),
+                                                                 GTK_MENU_SHELL (view_switcher_menu));
+  gtk_widget_show (view_switcher_item);
+
+  action_entry = *(get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST));
+  action_entry.menu_item_type = XFCE_GTK_IMAGE_MENU_ITEM;
+
+  view_switcher_item = xfce_gtk_menu_item_new_from_action_entry (&action_entry, G_OBJECT(window),
+                                                                 GTK_MENU_SHELL (view_switcher_menu));
+  gtk_widget_show (view_switcher_item);
+
+  gtk_menu_button_set_popup (GTK_MENU_BUTTON (menu_button), view_switcher_menu);
+  g_list_free (children);
 }
 
 
@@ -6542,6 +6568,8 @@ thunar_window_update_location_toolbar_icons (ThunarWindow *window)
 
       gtk_container_add (GTK_CONTAINER (parent), window->location_bar);
     }
+
+  thunar_window_view_switcher_update (window);
 
   g_list_free (toolbar_items);
 }
@@ -7015,4 +7043,6 @@ thunar_window_queue_redraw (ThunarWindow *window)
 
   // TODO: Redraw as well all other parts of the window
 }
+
+
 
