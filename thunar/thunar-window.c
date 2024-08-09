@@ -3552,8 +3552,6 @@ thunar_window_action_cancel_search (ThunarWindow *window)
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_search), FALSE);
   g_signal_handlers_unblock_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
 
-  gtk_widget_set_sensitive (window->location_toolbar_item_view_switcher,TRUE);
-
   /* bring back the original location bar style (relevant if the bar is hidden) */
   thunar_window_update_location_bar_visible (window);
 
@@ -4923,7 +4921,6 @@ thunar_window_action_search (ThunarWindow *window)
       g_signal_handlers_block_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
       gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_search), TRUE);
       g_signal_handlers_unblock_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
-      gtk_widget_set_sensitive (window->location_toolbar_item_view_switcher,FALSE);
     }
   else
     thunar_window_action_cancel_search (window);
