@@ -1890,6 +1890,13 @@ thunar_window_csd_update (ThunarWindow *window)
   if (header_bar == NULL)
     return FALSE;
 
+  g_object_ref (window->menubar);
+  g_object_ref (window->location_toolbar);
+
+  if (GTK_IS_WIDGET(gtk_grid_get_child_at (GTK_GRID(window->grid), 0, 0)))
+    gtk_container_remove (GTK_CONTAINER (window->grid), gtk_grid_get_child_at (GTK_GRID(window->grid), 0, 0));
+  gtk_header_bar_set_custom_title (GTK_HEADER_BAR (header_bar), NULL);
+
   if (window->menubar_visible)
     {
       in_header_bar = window->menubar;
@@ -1901,16 +1908,10 @@ thunar_window_csd_update (ThunarWindow *window)
       below_header_bar = window->menubar;
     }
 
-  g_object_ref (in_header_bar);
-  g_object_ref (below_header_bar);
-
   gtk_widget_set_margin_start (in_header_bar, 10);
   gtk_widget_set_margin_end   (in_header_bar, 10);
   gtk_widget_set_margin_start (below_header_bar, 0);
   gtk_widget_set_margin_end   (below_header_bar, 0);
-
-  gtk_container_remove (GTK_CONTAINER (header_bar), below_header_bar);
-  gtk_container_remove (GTK_CONTAINER (window->grid), in_header_bar);
 
   gtk_header_bar_set_custom_title (GTK_HEADER_BAR (header_bar), in_header_bar);
   gtk_grid_attach (GTK_GRID (window->grid), below_header_bar, 0, 0, 1, 1);
@@ -6389,10 +6390,6 @@ thunar_window_create_toolbar_radio_item_from_action (ThunarWindow       *window,
 static void
 thunar_window_location_bar_create (ThunarWindow *window)
 {
-  /* destroy current widget if present */
-  if (window->location_bar != NULL)
-    gtk_widget_destroy (window->location_bar);
-
   /* allocate the new location bar widget */
   window->location_bar = thunar_location_bar_new ();
   g_object_bind_property (G_OBJECT (window), "current-directory", G_OBJECT (window->location_bar), "current-directory", G_BINDING_SYNC_CREATE);
@@ -6493,6 +6490,7 @@ thunar_window_update_location_toolbar (ThunarWindow *window)
 {
   gtk_widget_destroy (window->location_toolbar);
   thunar_window_location_toolbar_create (window);
+  thunar_window_csd_update (window);
 }
 
 
@@ -6538,6 +6536,10 @@ thunar_window_update_location_toolbar_icons (ThunarWindow *window)
   if (parent != NULL)
     {
       /* rebuild the location bar */
+
+      if (window->location_bar != NULL)
+        gtk_widget_destroy (window->location_bar);
+
       thunar_window_location_bar_create (window);
 
       gtk_container_add (GTK_CONTAINER (parent), window->location_bar);
