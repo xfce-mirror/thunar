@@ -1882,7 +1882,7 @@ thunar_window_set_property (GObject            *object,
 static gboolean
 thunar_window_csd_update (ThunarWindow *window)
 {
-  GtkWidget *header_bar, *in_header_bar, *below_header_bar;
+  GtkWidget *header_bar, *in_header_bar, *below_header_bar, *grid_child;
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   header_bar = gtk_window_get_titlebar (GTK_WINDOW (window));
@@ -1893,8 +1893,10 @@ thunar_window_csd_update (ThunarWindow *window)
   g_object_ref (window->menubar);
   g_object_ref (window->location_toolbar);
 
-  if (GTK_IS_WIDGET(gtk_grid_get_child_at (GTK_GRID(window->grid), 0, 0)))
-    gtk_container_remove (GTK_CONTAINER (window->grid), gtk_grid_get_child_at (GTK_GRID(window->grid), 0, 0));
+  grid_child = gtk_grid_get_child_at (GTK_GRID(window->grid), 0, 0);
+
+  if (GTK_IS_WIDGET (grid_child))
+    gtk_container_remove (GTK_CONTAINER (window->grid), grid_child);
   gtk_header_bar_set_custom_title (GTK_HEADER_BAR (header_bar), NULL);
 
   if (window->menubar_visible)
