@@ -6562,8 +6562,7 @@ thunar_window_view_switcher_update (ThunarWindow           *window)
   action_entry = *(get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST));
   action_entry.menu_item_type = XFCE_GTK_IMAGE_MENU_ITEM;
   action_entry.menu_item_icon_name = thunar_window_toolbar_get_icon_name (window, "view-list");
-  view_switcher_item = xfce_gtk_menu_item_new_from_action_entry (&action_entry, G_OBJECT(window),
-                                                                 GTK_MENU_SHELL (view_switcher_menu));
+  view_switcher_item = xfce_gtk_menu_item_new_from_action_entry (&action_entry, G_OBJECT (window), GTK_MENU_SHELL (view_switcher_menu));
   gtk_widget_show (view_switcher_item);
 
   action_entry = *(get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST));
