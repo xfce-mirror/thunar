@@ -1893,7 +1893,7 @@ thunar_window_csd_update (ThunarWindow *window)
   g_object_ref (window->menubar);
   g_object_ref (window->location_toolbar);
 
-  grid_child = gtk_grid_get_child_at (GTK_GRID(window->grid), 0, 0);
+  grid_child = gtk_grid_get_child_at (GTK_GRID (window->grid), 0, 0);
 
   if (GTK_IS_WIDGET (grid_child))
     gtk_container_remove (GTK_CONTAINER (window->grid), grid_child);
