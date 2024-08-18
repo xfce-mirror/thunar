@@ -6416,6 +6416,10 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
 {
   GtkToolItem *tool_item;
   GtkWidget   *menu_item;
+  GtkWidget   *menu_button;
+  GtkWidget   *image;
+  GtkWidget   *box;
+  GtkWidget   *arrow;
   guint        item_order = 0;
   gboolean     small_icons;
 
@@ -6475,23 +6479,24 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
 
   /* add view switcher */
   window->location_toolbar_item_view_switcher = GTK_WIDGET (gtk_tool_item_new ());
-
+  gtk_widget_set_tooltip_markup (window->location_toolbar_item_view_switcher, _("Change the active view type"));
   gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), GTK_TOOL_ITEM (window->location_toolbar_item_view_switcher), -1);
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_view_switcher), "id", g_strdup ("view-switcher"), g_free);
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_view_switcher), "label", g_strdup (_("View Switcher")), g_free);
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_view_switcher), "icon", g_strdup("view-grid"), g_free);
+  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_view_switcher), "icon", g_strdup ("view-grid"), g_free);
   thunar_g_object_set_guint_data (G_OBJECT (window->location_toolbar_item_view_switcher), "default-order", item_order++);
 
-  GtkWidget *menu_button = gtk_menu_button_new ();
-  GtkWidget *box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 1);
-  GtkWidget *image = gtk_image_new ();
+  menu_button = gtk_menu_button_new ();
+  box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 1);
+  image = gtk_image_new ();
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  GtkWidget *arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
+  arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
 G_GNUC_END_IGNORE_DEPRECATIONS
 
   gtk_box_pack_start (GTK_BOX (box), image, TRUE, TRUE, 1);
   gtk_box_pack_end (GTK_BOX (box), arrow, FALSE, TRUE, 1);
 
+  // remove menu_button arrow and add box to hold icon and arrow
   gtk_container_remove (GTK_CONTAINER (menu_button), gtk_bin_get_child (GTK_BIN (menu_button)));
   gtk_container_add (GTK_CONTAINER (menu_button), box);
   gtk_widget_show_all (box);
@@ -6551,24 +6556,25 @@ thunar_window_view_switcher_update (ThunarWindow           *window)
                                   thunar_window_toolbar_get_icon_name (window, "view-compact"),
                                   gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (window->location_toolbar_item_view_switcher)));
 
-  gtk_menu_button_set_popup (GTK_MENU_BUTTON (menu_button), NULL);
-
   action_entry = *(get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_ICONS));
   action_entry.menu_item_type = XFCE_GTK_IMAGE_MENU_ITEM;
   action_entry.menu_item_icon_name = thunar_window_toolbar_get_icon_name (window, "view-grid");
   view_switcher_item = xfce_gtk_menu_item_new_from_action_entry (&action_entry, G_OBJECT (window), GTK_MENU_SHELL (view_switcher_menu));
+  gtk_widget_set_tooltip_markup (view_switcher_item, action_entry.menu_item_tooltip_text);
   gtk_widget_show (view_switcher_item);
 
   action_entry = *(get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST));
   action_entry.menu_item_type = XFCE_GTK_IMAGE_MENU_ITEM;
   action_entry.menu_item_icon_name = thunar_window_toolbar_get_icon_name (window, "view-list");
   view_switcher_item = xfce_gtk_menu_item_new_from_action_entry (&action_entry, G_OBJECT (window), GTK_MENU_SHELL (view_switcher_menu));
+  gtk_widget_set_tooltip_markup (view_switcher_item, action_entry.menu_item_tooltip_text);
   gtk_widget_show (view_switcher_item);
 
   action_entry = *(get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST));
   action_entry.menu_item_type = XFCE_GTK_IMAGE_MENU_ITEM;
   action_entry.menu_item_icon_name = thunar_window_toolbar_get_icon_name (window, "view-compact");
   view_switcher_item = xfce_gtk_menu_item_new_from_action_entry (&action_entry, G_OBJECT (window), GTK_MENU_SHELL (view_switcher_menu));
+  gtk_widget_set_tooltip_markup (view_switcher_item, action_entry.menu_item_tooltip_text);
   gtk_widget_show (view_switcher_item);
 
   gtk_menu_button_set_popup (GTK_MENU_BUTTON (menu_button), view_switcher_menu);
