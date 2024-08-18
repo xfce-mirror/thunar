@@ -6538,7 +6538,7 @@ thunar_window_update_location_toolbar_icons (ThunarWindow *window)
   if (parent != NULL)
     {
       /* rebuild the location bar */
-
+      /* rebuild the location bar */
       if (window->location_bar != NULL)
         gtk_widget_destroy (window->location_bar);
 
