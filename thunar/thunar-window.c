@@ -6478,7 +6478,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
 
   gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), GTK_TOOL_ITEM (window->location_toolbar_item_view_switcher), -1);
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_view_switcher), "id", g_strdup ("view-switcher"), g_free);
-  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_view_switcher), "label", g_strdup (_("View switcher")), g_free);
+  g_object_set_data_full (G_OBJECT (window->location_toolbar_item_view_switcher), "label", g_strdup (_("View Switcher")), g_free);
   g_object_set_data_full (G_OBJECT (window->location_toolbar_item_view_switcher), "icon", g_strdup("view-grid"), g_free);
   thunar_g_object_set_guint_data (G_OBJECT (window->location_toolbar_item_view_switcher), "default-order", item_order++);
 
