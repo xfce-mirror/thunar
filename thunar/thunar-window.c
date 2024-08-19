@@ -6493,6 +6493,8 @@ thunar_window_update_location_toolbar (ThunarWindow *window)
 {
   gtk_widget_destroy (window->location_toolbar);
   thunar_window_location_toolbar_create (window);
+  if (gtk_window_get_titlebar (GTK_WINDOW (window)) == NULL)
+    gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 0, 1, 1);
   thunar_window_csd_update (window);
 }
 
