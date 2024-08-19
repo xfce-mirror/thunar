@@ -6505,6 +6505,11 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
   thunar_window_view_switcher_update (window);
 
+  /* add a proxy menu item for the view switcher to represent the bar in the overflow menu */
+  menu_item = gtk_menu_item_new_with_label (_("View Switcher"));
+  gtk_tool_item_set_proxy_menu_item (GTK_TOOL_ITEM (window->location_toolbar_item_view_switcher), "view-switcher-menu-id", menu_item);
+  gtk_widget_set_sensitive (GTK_WIDGET (menu_item), FALSE);
+
   /* add remaining toolbar items */
                                          thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_RELOAD, item_order++);
   window->location_toolbar_item_search = thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_SEARCH, window->is_searching, item_order++);
@@ -7112,3 +7117,4 @@ thunar_window_queue_redraw (ThunarWindow *window)
 
   // TODO: Redraw as well all other parts of the window
 }
+
