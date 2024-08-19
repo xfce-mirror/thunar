@@ -6496,7 +6496,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   gtk_box_pack_start (GTK_BOX (box), image, TRUE, TRUE, 1);
   gtk_box_pack_end (GTK_BOX (box), arrow, FALSE, TRUE, 1);
 
-  // remove menu_button arrow and add box to hold icon and arrow
+  /* remove menu_button arrow and add box to hold icon and arrow */
   gtk_container_remove (GTK_CONTAINER (menu_button), gtk_bin_get_child (GTK_BIN (menu_button)));
   gtk_container_add (GTK_CONTAINER (menu_button), box);
   gtk_widget_show_all (box);
