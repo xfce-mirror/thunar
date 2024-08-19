@@ -6528,11 +6528,11 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
 
 static void
-thunar_window_view_switcher_update (ThunarWindow           *window)
+thunar_window_view_switcher_update (ThunarWindow *window)
 {
-  GtkWidget           *menu_button, *box, *image, *view_switcher_menu, *view_switcher_item;
-  XfceGtkActionEntry   action_entry;
-  GList               *children;
+  GtkWidget          *menu_button, *box, *image, *view_switcher_menu, *view_switcher_item;
+  XfceGtkActionEntry  action_entry;
+  GList              *children;
 
   menu_button = gtk_bin_get_child (GTK_BIN (window->location_toolbar_item_view_switcher));
   box = gtk_bin_get_child (GTK_BIN (menu_button));
