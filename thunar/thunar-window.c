@@ -6502,7 +6502,7 @@ thunar_window_view_switcher_update (ThunarWindow *window)
       gtk_widget_show (view_switcher_item);
     }
 
-    if (window->view_type != THUNAR_TYPE_COMPACT_VIEW)
+  if (window->view_type != THUNAR_TYPE_COMPACT_VIEW)
     {
       action_entry = *(get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST));
       action_entry.menu_item_type = XFCE_GTK_IMAGE_MENU_ITEM;
