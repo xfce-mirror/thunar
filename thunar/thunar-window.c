@@ -6468,21 +6468,6 @@ thunar_window_view_switcher_update (ThunarWindow *window)
   view_switcher_menu = gtk_menu_new ();
   gtk_widget_set_halign (view_switcher_menu, GTK_ALIGN_CENTER);
 
-  if (window->view_type == THUNAR_TYPE_ICON_VIEW)
-    gtk_image_set_from_icon_name (GTK_IMAGE (image),
-                                  thunar_window_toolbar_get_icon_name (window, "view-grid"),
-                                  gtk_tool_item_get_icon_size (toolbar_item));
-
-  if (window->view_type == THUNAR_TYPE_DETAILS_VIEW)
-    gtk_image_set_from_icon_name (GTK_IMAGE (image),
-                                  thunar_window_toolbar_get_icon_name (window, "view-list"),
-                                  gtk_tool_item_get_icon_size (toolbar_item));
-
-  if (window->view_type == THUNAR_TYPE_COMPACT_VIEW)
-    gtk_image_set_from_icon_name (GTK_IMAGE (image),
-                                  thunar_window_toolbar_get_icon_name (window, "view-compact"),
-                                  gtk_tool_item_get_icon_size (toolbar_item));
-
   action_entry = *(get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_ICONS));
   action_entry.menu_item_type = XFCE_GTK_IMAGE_MENU_ITEM;
   action_entry.menu_item_icon_name = thunar_window_toolbar_get_icon_name (window, "view-grid");
@@ -6491,7 +6476,12 @@ thunar_window_view_switcher_update (ThunarWindow *window)
   gtk_widget_show (view_switcher_item);
 
   if (window->view_type == THUNAR_TYPE_ICON_VIEW)
-    gtk_widget_set_sensitive (view_switcher_item, FALSE);
+    {
+      gtk_widget_set_sensitive (view_switcher_item, FALSE);
+      gtk_image_set_from_icon_name (GTK_IMAGE (image),
+                                    thunar_window_toolbar_get_icon_name (window, "view-grid"),
+                                    gtk_tool_item_get_icon_size (toolbar_item));
+    }
 
   action_entry = *(get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST));
   action_entry.menu_item_type = XFCE_GTK_IMAGE_MENU_ITEM;
@@ -6501,7 +6491,12 @@ thunar_window_view_switcher_update (ThunarWindow *window)
   gtk_widget_show (view_switcher_item);
 
   if (window->view_type == THUNAR_TYPE_DETAILS_VIEW)
-    gtk_widget_set_sensitive (view_switcher_item, FALSE);
+    {
+      gtk_widget_set_sensitive (view_switcher_item, FALSE);
+      gtk_image_set_from_icon_name (GTK_IMAGE (image),
+                              thunar_window_toolbar_get_icon_name (window, "view-list"),
+                              gtk_tool_item_get_icon_size (toolbar_item));
+    }
 
   action_entry = *(get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST));
   action_entry.menu_item_type = XFCE_GTK_IMAGE_MENU_ITEM;
@@ -6511,7 +6506,12 @@ thunar_window_view_switcher_update (ThunarWindow *window)
   gtk_widget_show (view_switcher_item);
 
   if (window->view_type == THUNAR_TYPE_COMPACT_VIEW)
-    gtk_widget_set_sensitive (view_switcher_item, FALSE);
+    {
+      gtk_widget_set_sensitive (view_switcher_item, FALSE);
+      gtk_image_set_from_icon_name (GTK_IMAGE (image),
+                              thunar_window_toolbar_get_icon_name (window, "view-compact"),
+                              gtk_tool_item_get_icon_size (toolbar_item));
+    }
 
   gtk_menu_button_set_popup (GTK_MENU_BUTTON (menu_button), view_switcher_menu);
 
