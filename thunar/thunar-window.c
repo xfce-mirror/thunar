@@ -6450,11 +6450,17 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 static void
 thunar_window_view_switcher_update (ThunarWindow *window)
 {
-  GtkWidget          *menu_button, *box, *image, *view_switcher_menu, *view_switcher_item;
+  GtkToolItem        *toolbar_item;
+  GtkWidget          *menu_button, \
+                     *box, *image, \
+                     *view_switcher_menu, \
+                     *view_switcher_item;
+
   XfceGtkActionEntry  action_entry;
   GList              *children;
 
-  menu_button = gtk_bin_get_child (GTK_BIN (window->location_toolbar_item_view_switcher));
+  toolbar_item = GTK_TOOL_ITEM (window->location_toolbar_item_view_switcher);
+  menu_button = gtk_bin_get_child (GTK_BIN (toolbar_item));
   box = gtk_bin_get_child (GTK_BIN (menu_button));
   children = gtk_container_get_children (GTK_CONTAINER (box));
   image = g_list_nth_data (children, 0);
@@ -6464,17 +6470,17 @@ thunar_window_view_switcher_update (ThunarWindow *window)
   if (window->view_type == THUNAR_TYPE_ICON_VIEW)
     gtk_image_set_from_icon_name (GTK_IMAGE (image),
                                   thunar_window_toolbar_get_icon_name (window, "view-grid"),
-                                  gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (window->location_toolbar_item_view_switcher)));
+                                  gtk_tool_item_get_icon_size (toolbar_item));
 
   if (window->view_type == THUNAR_TYPE_DETAILS_VIEW)
     gtk_image_set_from_icon_name (GTK_IMAGE (image),
                                   thunar_window_toolbar_get_icon_name (window, "view-list"),
-                                  gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (window->location_toolbar_item_view_switcher)));
+                                  gtk_tool_item_get_icon_size (toolbar_item));
 
   if (window->view_type == THUNAR_TYPE_COMPACT_VIEW)
     gtk_image_set_from_icon_name (GTK_IMAGE (image),
                                   thunar_window_toolbar_get_icon_name (window, "view-compact"),
-                                  gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (window->location_toolbar_item_view_switcher)));
+                                  gtk_tool_item_get_icon_size (toolbar_item));
 
   action_entry = *(get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_ICONS));
   action_entry.menu_item_type = XFCE_GTK_IMAGE_MENU_ITEM;
