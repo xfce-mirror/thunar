@@ -1289,6 +1289,7 @@ static void
 thunar_details_view_columns_changed (ThunarColumnModel *column_model,
                                      ThunarDetailsView *details_view)
 {
+  ThunarFile         *current_directory;
   const ThunarColumn *column_order;
   ThunarColumn        column;
 
@@ -1296,14 +1297,33 @@ thunar_details_view_columns_changed (ThunarColumnModel *column_model,
   _thunar_return_if_fail (THUNAR_IS_COLUMN_MODEL (column_model));
   _thunar_return_if_fail (details_view->column_model == column_model);
 
+  /* look up current directory */
+  current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (details_view));
+
   /* determine the new column order */
   column_order = thunar_column_model_get_column_order (column_model);
 
   /* apply new order and visibility */
   for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; ++column)
     {
+      gboolean visible = thunar_column_model_get_column_visible (column_model, column);
+
+      /* hide special columns outside of special locations and search mode */
+      if (current_directory != NULL)
+        {
+          if (column == THUNAR_COLUMN_DATE_DELETED)
+            visible = thunar_file_is_trash (current_directory);
+          else if (column == THUNAR_COLUMN_RECENCY)
+            visible = thunar_file_is_recent (current_directory);
+          else if (column == THUNAR_COLUMN_LOCATION)
+            {
+              visible = thunar_file_is_recent (current_directory)
+                        || (thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (details_view)) != NULL);
+            }
+        }
+
       /* apply the new visibility for the tree view column */
-      gtk_tree_view_column_set_visible (details_view->columns[column], thunar_column_model_get_column_visible (column_model, column));
+      gtk_tree_view_column_set_visible (details_view->columns[column], visible);
 
       /* change the order of the column relative to its predecessor */
       if (G_LIKELY (column > 0))
