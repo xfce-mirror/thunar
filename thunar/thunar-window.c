@@ -1927,8 +1927,8 @@ thunar_window_csd_update (ThunarWindow *window)
   gtk_header_bar_set_custom_title (GTK_HEADER_BAR (header_bar), in_header_bar);
   gtk_grid_attach (GTK_GRID (window->grid), below_header_bar, 0, 0, 1, 1);
 
-  g_object_unref (in_header_bar);
-  g_object_unref (below_header_bar);
+  g_object_unref (window->menubar);
+  g_object_unref (window->location_toolbar);
 
   return TRUE;
 }
