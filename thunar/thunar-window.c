@@ -1066,7 +1066,7 @@ thunar_window_init (ThunarWindow *window)
   /* update the location toolbar when custom actions are changed */
   uca_path = xfce_resource_save_location (XFCE_RESOURCE_CONFIG, "Thunar/uca.xml", TRUE);
   window->uca_file         = g_file_new_for_path (uca_path);
-  window->uca_file_monitor = g_file_monitor_file (window->uca_file, G_FILE_MONITOR_NONE, NULL, NULL);
+  window->uca_file_monitor = g_file_monitor_file (window->uca_file, G_FILE_MONITOR_WATCH_MOVES, NULL, NULL);
   if (G_LIKELY (window->uca_file_monitor != NULL))
     g_signal_connect_swapped (window->uca_file_monitor, "changed", G_CALLBACK (thunar_window_update_location_toolbar), window);
   g_free (uca_path);
