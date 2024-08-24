@@ -2371,13 +2371,14 @@ thunar_action_manager_append_custom_actions (ThunarActionManager *action_mgr,
 
 static gboolean
 _thunar_action_manager_check_uca_key_activation_for_menu_items (GList       *thunarx_menu_items,
-                                                                GdkEventKey *key_event)
+                                                                GdkEventKey *key_event,
+                                                                gboolean     do_activate)
 {
   GList       *lp_item;
   GtkAccelKey  uca_key;
   gchar       *name, *accel_path;
   ThunarxMenu *submenu;
-  gboolean     uca_activated = FALSE;
+  gboolean     matching_uca_shortcut_found = FALSE;
 
   for (lp_item = thunarx_menu_items; lp_item != NULL; lp_item = lp_item->next)
     {
@@ -2389,7 +2390,7 @@ _thunar_action_manager_check_uca_key_activation_for_menu_items (GList       *thu
           GList *thunarx_submenu_items = thunarx_menu_get_items (submenu);
           if (thunarx_submenu_items != NULL)
             {
-              uca_activated |= _thunar_action_manager_check_uca_key_activation_for_menu_items (thunarx_submenu_items, key_event);
+              matching_uca_shortcut_found |= _thunar_action_manager_check_uca_key_activation_for_menu_items (thunarx_submenu_items, key_event, do_activate);
               thunarx_menu_item_list_free (thunarx_submenu_items);
             }
           g_object_unref (submenu);
@@ -2405,8 +2406,9 @@ _thunar_action_manager_check_uca_key_activation_for_menu_items (GList       *thu
                 {
                   if ((key_event->state & gtk_accelerator_get_default_mod_mask ()) == uca_key.accel_mods)
                     {
-                      thunarx_menu_item_activate (lp_item->data);
-                      uca_activated = TRUE;
+                      if (do_activate)
+                        thunarx_menu_item_activate (lp_item->data);
+                      matching_uca_shortcut_found = TRUE;
                     }
                 }
             }
@@ -2416,7 +2418,7 @@ _thunar_action_manager_check_uca_key_activation_for_menu_items (GList       *thu
       g_free (name);
     }
 
-  return uca_activated;
+  return matching_uca_shortcut_found;
 }
 
 
@@ -2428,9 +2430,10 @@ thunar_action_manager_check_uca_key_activation (ThunarActionManager *action_mgr,
   GtkWidget              *window;
   ThunarxProviderFactory *provider_factory;
   GList                  *providers;
-  GList                  *thunarx_menu_items = NULL;
+  GList                  *thunarx_file_menu_items = NULL;
+  GList                  *thunarx_folder_menu_items = NULL;
   GList                  *lp_provider;
-  gboolean                uca_activated = FALSE;
+  gboolean                matching_uca_shortcut_found = FALSE;
 
   /* determine the toplevel window we belong to */
   window = gtk_widget_get_toplevel (action_mgr->widget);
@@ -2441,22 +2444,30 @@ thunar_action_manager_check_uca_key_activation (ThunarActionManager *action_mgr,
   g_object_unref (provider_factory);
 
   if (G_UNLIKELY (providers == NULL))
-    return uca_activated;
+    return matching_uca_shortcut_found;
 
   /* load the menu items offered by the menu providers */
   for (lp_provider = providers; lp_provider != NULL; lp_provider = lp_provider->next)
     {
-      if (action_mgr->files_are_selected == FALSE)
-        thunarx_menu_items = thunarx_menu_provider_get_folder_menu_items (lp_provider->data, window, THUNARX_FILE_INFO (action_mgr->current_directory));
-      else
-        thunarx_menu_items = thunarx_menu_provider_get_file_menu_items (lp_provider->data, window, action_mgr->files_to_process);
+      thunarx_file_menu_items = thunarx_menu_provider_get_folder_menu_items (lp_provider->data, window, THUNARX_FILE_INFO (action_mgr->current_directory));
+      thunarx_folder_menu_items = thunarx_menu_provider_get_file_menu_items (lp_provider->data, window, action_mgr->files_to_process);
+      
+      /* Check if we processed the shortcut sucesfully */
+      matching_uca_shortcut_found |= _thunar_action_manager_check_uca_key_activation_for_menu_items (thunarx_file_menu_items, key_event, FALSE);
+      matching_uca_shortcut_found |= _thunar_action_manager_check_uca_key_activation_for_menu_items (thunarx_folder_menu_items, key_event, FALSE);
 
-      uca_activated = _thunar_action_manager_check_uca_key_activation_for_menu_items (thunarx_menu_items, key_event);
-      if (thunarx_menu_items != NULL)
-        thunarx_menu_item_list_free (thunarx_menu_items);
+      if (action_mgr->files_are_selected == FALSE)
+        _thunar_action_manager_check_uca_key_activation_for_menu_items (thunarx_file_menu_items, key_event, TRUE);
+      else
+        _thunar_action_manager_check_uca_key_activation_for_menu_items (thunarx_folder_menu_items, key_event, TRUE);
+
+      if (thunarx_file_menu_items != NULL)
+        thunarx_menu_item_list_free (thunarx_file_menu_items);
+      if (thunarx_folder_menu_items != NULL)
+        thunarx_menu_item_list_free (thunarx_folder_menu_items);
     }
   g_list_free_full (providers, g_object_unref);
-  return uca_activated;
+  return matching_uca_shortcut_found;
 }
 
 
