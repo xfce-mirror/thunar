@@ -1805,6 +1805,13 @@ thunar_action_manager_append_menu_item (ThunarActionManager       *action_mgr,
                           G_OBJECT (focused_widget), action_entry->menu_item_icon_name, menu);
             gtk_widget_set_sensitive (item, thunar_gtk_editable_can_cut (GTK_EDITABLE (focused_widget)));
           }
+        else if (THUNAR_IS_TREE_VIEW (focused_widget))
+          {
+            item = xfce_gtk_image_menu_item_new_from_icon_name (
+                          action_entry->menu_item_label_text, N_ ("Cut current tree selection"), action_entry->accel_path,
+                          action_entry->callback, G_OBJECT (action_mgr), action_entry->menu_item_icon_name, menu);
+            gtk_widget_set_sensitive (item, TRUE);
+          }
         else
           {
             show_item = action_mgr->files_are_selected;
@@ -1828,6 +1835,13 @@ thunar_action_manager_append_menu_item (ThunarActionManager       *action_mgr,
                           action_entry->accel_path,G_CALLBACK (gtk_editable_copy_clipboard),
                           G_OBJECT (focused_widget), action_entry->menu_item_icon_name, menu);
             gtk_widget_set_sensitive (item, thunar_gtk_editable_can_copy (GTK_EDITABLE (focused_widget)));
+          }
+        else if (THUNAR_IS_TREE_VIEW (focused_widget))
+          {
+            item = xfce_gtk_image_menu_item_new_from_icon_name (
+                          action_entry->menu_item_label_text, N_ ("Copy current tree selection"), action_entry->accel_path,
+                          action_entry->callback, G_OBJECT (action_mgr), action_entry->menu_item_icon_name, menu);
+            gtk_widget_set_sensitive (item, TRUE);
           }
         else
           {
@@ -3010,12 +3024,28 @@ thunar_action_manager_action_cut (ThunarActionManager *action_mgr)
 
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
-  if (action_mgr->files_are_selected == FALSE || action_mgr->parent_folder == NULL)
-    return TRUE;
-
   clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (action_mgr->widget));
-  thunar_clipboard_manager_cut_files (clipboard, action_mgr->files_to_process);
-  g_object_unref (G_OBJECT (clipboard));
+  if (THUNAR_IS_TREE_VIEW (thunar_gtk_get_focused_widget()))
+    {
+      if (!action_mgr->current_directory)
+        return TRUE;
+
+      GList * directories = NULL;
+      directories = g_list_append (directories, g_object_ref (action_mgr->current_directory));
+
+      thunar_clipboard_manager_cut_files (clipboard, directories);
+      g_object_unref (G_OBJECT (clipboard));
+
+      g_list_free (directories);
+    } 
+  else 
+    {
+      if (action_mgr->files_are_selected == FALSE || action_mgr->parent_folder == NULL)
+        return TRUE;
+
+      thunar_clipboard_manager_cut_files (clipboard, action_mgr->files_to_process);
+      g_object_unref (G_OBJECT (clipboard));
+    }
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -3030,12 +3060,28 @@ thunar_action_manager_action_copy (ThunarActionManager *action_mgr)
 
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
-  if (action_mgr->files_are_selected == FALSE)
-    return TRUE;
-
   clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (action_mgr->widget));
-  thunar_clipboard_manager_copy_files (clipboard, action_mgr->files_to_process);
-  g_object_unref (G_OBJECT (clipboard));
+  if (THUNAR_IS_TREE_VIEW (thunar_gtk_get_focused_widget()))
+    {
+      if (!action_mgr->current_directory)
+        return FALSE;
+
+      GList * directories = NULL;
+      directories = g_list_append (directories, g_object_ref (action_mgr->current_directory));
+
+      thunar_clipboard_manager_copy_files (clipboard, directories);
+      g_object_unref (G_OBJECT (clipboard));
+
+      g_list_free (directories);
+    }
+  else 
+    {
+      if (action_mgr->files_are_selected == FALSE)
+        return TRUE;
+
+      thunar_clipboard_manager_copy_files (clipboard, action_mgr->files_to_process);
+      g_object_unref (G_OBJECT (clipboard));
+    }
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
