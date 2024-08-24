@@ -1883,6 +1883,7 @@ static gboolean
 thunar_window_csd_update (ThunarWindow *window)
 {
   GtkWidget *header_bar, *in_header_bar, *below_header_bar, *grid_child;
+
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   header_bar = gtk_window_get_titlebar (GTK_WINDOW (window));
@@ -1904,17 +1905,20 @@ thunar_window_csd_update (ThunarWindow *window)
     {
       in_header_bar = window->menubar;
       below_header_bar = window->location_toolbar;
+
+      /* slightly increase the space around the location bar from 5 to 10 */
+      gtk_widget_set_margin_start (window->location_bar, 10);
+      gtk_widget_set_margin_end (window->location_bar, 10);
     }
   else
     {
       in_header_bar = window->location_toolbar;
       below_header_bar = window->menubar;
-    }
 
-  gtk_widget_set_margin_start (in_header_bar, 10);
-  gtk_widget_set_margin_end   (in_header_bar, 10);
-  gtk_widget_set_margin_start (below_header_bar, 0);
-  gtk_widget_set_margin_end   (below_header_bar, 0);
+      /* add extra space around the location bar to function as window drag area */
+      gtk_widget_set_margin_start (window->location_bar, 20);
+      gtk_widget_set_margin_end (window->location_bar, 20);
+    }
 
   gtk_header_bar_set_custom_title (GTK_HEADER_BAR (header_bar), in_header_bar);
   gtk_grid_attach (GTK_GRID (window->grid), below_header_bar, 0, 0, 1, 1);
@@ -6423,6 +6427,8 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
   gtk_toolbar_set_icon_size (GTK_TOOLBAR (window->location_toolbar),
                              small_icons ? GTK_ICON_SIZE_SMALL_TOOLBAR : GTK_ICON_SIZE_LARGE_TOOLBAR);
   gtk_widget_set_hexpand (window->location_toolbar, TRUE);
+  gtk_widget_set_margin_start (window->location_bar, 5);
+  gtk_widget_set_margin_end (window->location_bar, 5);
 
   g_signal_connect (G_OBJECT (window->location_toolbar), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_press_event), window);
 
