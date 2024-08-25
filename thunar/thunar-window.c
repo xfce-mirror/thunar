@@ -6391,9 +6391,9 @@ thunar_window_create_toolbar_radio_item_from_action (ThunarWindow       *window,
   gtk_widget_set_tooltip_text (GTK_WIDGET (toolbar_item), entry->menu_item_tooltip_text);
   gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), toolbar_item, -1);
 
-  /* 'gtk_toggle_tool_button_set_active' has to be done before 'g_signal_connect_swapped' to not trigger the callback */
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (toolbar_item), active);
-  g_signal_connect_swapped (G_OBJECT (toolbar_item), "toggled", entry->callback, window);
+
+  /* Note: set up "toggled" signal handler after all buttons inside the radio button group have been created */
 
   g_object_set_data_full (G_OBJECT (toolbar_item), "id", thunar_util_accel_path_to_id (entry->accel_path), g_free);
   g_object_set_data_full (G_OBJECT (toolbar_item), "label", g_strdup (entry->menu_item_label_text), g_free);
@@ -6592,6 +6592,10 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
 
   g_object_bind_property (window->job_operation_history, "can-undo", window->location_toolbar_item_undo, "sensitive", G_BINDING_SYNC_CREATE);
   g_object_bind_property (window->job_operation_history, "can-redo", window->location_toolbar_item_redo, "sensitive", G_BINDING_SYNC_CREATE);
+
+  g_signal_connect_swapped (window->location_toolbar_item_icon_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_ICONS)->callback, window);
+  g_signal_connect_swapped (window->location_toolbar_item_detailed_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST)->callback, window);
+  g_signal_connect_swapped (window->location_toolbar_item_compact_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST)->callback, window);
 
   thunar_window_view_switcher_update (window);
 
