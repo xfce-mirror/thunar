@@ -818,7 +818,8 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   g_object_unref (G_OBJECT (preferences));
 
   /* setup the confirmation dialog */
-  dialog = gtk_dialog_new();
+  dialog = gtk_dialog_new ();
+  gtk_widget_set_size_request (GTK_WIDGET (dialog), 480, 380);
   gtk_window_set_title (GTK_WINDOW (dialog), _("Confirm to replace files"));
   gtk_window_set_transient_for (GTK_WINDOW (dialog), parent);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
@@ -843,12 +844,14 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_widget_show (grid);
 
   /* set up the action area buttons ourself */
-  button_box = gtk_button_box_new (GTK_ORIENTATION_HORIZONTAL);
+  button_box = gtk_grid_new ();
 
   cancel_button     = gtk_button_new_with_mnemonic (_("_Cancel"));
   skip_button       = gtk_button_new_with_mnemonic (_("_Skip"));
   replace_button    = gtk_button_new_with_mnemonic (_("_Replace"));
   rename_button     = gtk_button_new_with_mnemonic (_("Re_name"));
+
+  gtk_widget_set_margin_end (cancel_button, 6);
 
   g_signal_connect (cancel_button,      "clicked", G_CALLBACK (thunar_dialogs_show_job_ask_replace_callback), dialog);
   g_signal_connect (skip_button,        "clicked", G_CALLBACK (thunar_dialogs_show_job_ask_replace_callback), dialog);
@@ -860,10 +863,10 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   g_object_set_data (G_OBJECT (replace_button),    "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_REPLACE));
   g_object_set_data (G_OBJECT (rename_button),     "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_RENAME));
 
-  gtk_container_add (GTK_CONTAINER (button_box), cancel_button);
-  gtk_container_add (GTK_CONTAINER (button_box), skip_button);
-  gtk_container_add (GTK_CONTAINER (button_box), replace_button);
-  gtk_container_add (GTK_CONTAINER (button_box), rename_button);
+  gtk_grid_attach (GTK_GRID (button_box), cancel_button, 0, 0, 1,1);
+  gtk_grid_attach (GTK_GRID (button_box), skip_button, 1, 0, 1,1);
+  gtk_grid_attach (GTK_GRID (button_box), replace_button, 2, 0, 1,1);
+  gtk_grid_attach (GTK_GRID (button_box), rename_button, 3, 0, 1,1);
 
   if (multiple_files)
     {
@@ -879,15 +882,15 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
       g_object_set_data (G_OBJECT (replaceall_button), "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_REPLACE_ALL));
       g_object_set_data (G_OBJECT (renameall_button),  "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_RENAME_ALL));
 
-      gtk_container_add (GTK_CONTAINER (button_box), skipall_button);
-      gtk_container_add (GTK_CONTAINER (button_box), replaceall_button);
-
-      gtk_container_add (GTK_CONTAINER (button_box), renameall_button);
+      gtk_grid_attach (GTK_GRID (button_box), skipall_button, 1, 1, 1,1);
+      gtk_grid_attach (GTK_GRID (button_box), replaceall_button, 2, 1, 1,1);
+      gtk_grid_attach (GTK_GRID (button_box), renameall_button, 3, 1, 1,1);
     }
 
   gtk_container_add (GTK_CONTAINER (content_area), button_box);
-  gtk_widget_set_halign (button_box, GTK_ALIGN_CENTER);
-  gtk_box_set_spacing (GTK_BOX (button_box), 5);
+  gtk_grid_set_row_spacing (GTK_GRID (button_box), 5);
+  gtk_grid_set_column_spacing (GTK_GRID (button_box), 5);
+
   gtk_widget_show_all (button_box);
 
   image = gtk_image_new_from_icon_name ("stock_folder-copy", GTK_ICON_SIZE_BUTTON);
@@ -1351,4 +1354,5 @@ thunar_dialog_show_launcher_props (ThunarFile *launcher,
   g_free (uri);
   g_clear_error (&error);
 }
+
 
