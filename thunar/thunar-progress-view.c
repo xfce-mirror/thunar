@@ -491,9 +491,9 @@ thunar_progress_view_ask_replace (ThunarProgressView *view,
                                   ThunarFile         *dst_file,
                                   ThunarJob          *job)
 {
-  GtkWidget         *window;
-  gboolean           multiple_files = FALSE;
-  guint              n_total_files;
+  GtkWidget *window;
+  gboolean   multiple_files = FALSE;
+  guint      n_total_files;
 
   _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_VIEW (view), THUNAR_JOB_RESPONSE_CANCEL);
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), THUNAR_JOB_RESPONSE_CANCEL);
