@@ -873,7 +873,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_grid_attach (GTK_GRID (button_grid), rename_button, 3, 0, 1,1);
 
   gtk_box_pack_start (GTK_BOX (button_box), cancel_button, FALSE, TRUE, 0);
-  gtk_box_pack_end   (GTK_BOX (button_box), button_grid,   FALSE, FALSE,  0);
+  gtk_box_pack_end (GTK_BOX (button_box), button_grid, FALSE, FALSE, 0);
 
   if (multiple_files)
     {
