@@ -819,7 +819,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   g_object_unref (G_OBJECT (preferences));
 
   /* setup the confirmation dialog */
-  dialog = gtk_dialog_new ();
+  dialog = xfce_titled_dialog_new ();
   gtk_window_set_resizable (GTK_WINDOW (dialog) , FALSE);
   gtk_window_set_title (GTK_WINDOW (dialog), _("Confirm to replace files"));
   gtk_window_set_transient_for (GTK_WINDOW (dialog), parent);
