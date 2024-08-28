@@ -868,9 +868,9 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   g_object_set_data (G_OBJECT (replace_button),    "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_REPLACE));
   g_object_set_data (G_OBJECT (rename_button),     "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_RENAME));
 
-  gtk_grid_attach (GTK_GRID (button_grid), skip_button, 1, 0, 1,1);
-  gtk_grid_attach (GTK_GRID (button_grid), replace_button, 2, 0, 1,1);
-  gtk_grid_attach (GTK_GRID (button_grid), rename_button, 3, 0, 1,1);
+  gtk_grid_attach (GTK_GRID (button_grid), skip_button, 1, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (button_grid), replace_button, 2, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (button_grid), rename_button, 3, 0, 1, 1);
 
   gtk_box_pack_start (GTK_BOX (button_box), cancel_button, FALSE, TRUE, 0);
   gtk_box_pack_end (GTK_BOX (button_box), button_grid, FALSE, FALSE, 0);
