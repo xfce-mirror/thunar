@@ -106,6 +106,7 @@ struct _ThunarProgressView
   GtkWidget *unpause_button;
 
   gboolean   launched;
+  guint      n_asks_answered;
 
   gchar     *icon_name;
   gchar     *title;
@@ -278,6 +279,8 @@ thunar_progress_view_init (ThunarProgressView *view)
   g_object_bind_property (G_OBJECT (view), "title",
                           G_OBJECT (label), "label",
                           G_BINDING_SYNC_CREATE);
+
+  view->n_asks_answered = 0;
 }
 
 
@@ -488,7 +491,9 @@ thunar_progress_view_ask_replace (ThunarProgressView *view,
                                   ThunarFile         *dst_file,
                                   ThunarJob          *job)
 {
-  GtkWidget *window;
+  GtkWidget         *window;
+  gboolean           multiple_files = FALSE;
+  guint              n_total_files;
 
   _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_VIEW (view), THUNAR_JOB_RESPONSE_CANCEL);
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), THUNAR_JOB_RESPONSE_CANCEL);
@@ -502,9 +507,18 @@ thunar_progress_view_ask_replace (ThunarProgressView *view,
   /* determine the toplevel window of the view */
   window = gtk_widget_get_toplevel (GTK_WIDGET (view));
 
+  n_total_files = thunar_job_get_n_total_files (job);
+  view->n_asks_answered++;
+
+  if (n_total_files > 1)
+      multiple_files = TRUE;
+
+  if (n_total_files == view->n_asks_answered)
+      multiple_files = FALSE;
+
   /* display the question view */
   return thunar_dialogs_show_job_ask_replace (window != NULL ? GTK_WINDOW (window) : NULL,
-                                              src_file, dst_file);
+                                              src_file, dst_file, multiple_files);
 }
 
 
@@ -768,3 +782,4 @@ thunar_progress_view_launch_job (ThunarProgressView *view)
   gtk_widget_hide (view->unpause_button);
   gtk_widget_show (view->pause_button);
 }
+
