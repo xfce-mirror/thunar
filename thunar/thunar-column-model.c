@@ -256,6 +256,9 @@ thunar_column_model_get_column_type (GtkTreeModel *tree_model,
 
     case THUNAR_COLUMN_MODEL_COLUMN_VISIBLE:
       return G_TYPE_BOOLEAN;
+
+    case THUNAR_COLUMN_MODEL_COLUMN_TOOLTIP:
+      return G_TYPE_STRING;
     }
 
   _thunar_assert_not_reached ();
@@ -333,6 +336,12 @@ thunar_column_model_get_value (GtkTreeModel *tree_model,
     case THUNAR_COLUMN_MODEL_COLUMN_VISIBLE:
       g_value_init (value, G_TYPE_BOOLEAN);
       g_value_set_boolean (value, thunar_column_model_get_column_visible (column_model, column));
+      break;
+
+    case THUNAR_COLUMN_MODEL_COLUMN_TOOLTIP:
+      g_value_init (value, G_TYPE_STRING);
+      if (thunar_column_is_special (column))
+        g_value_set_static_string (value, _("This column is reserved for special locations"));
       break;
 
     default:
