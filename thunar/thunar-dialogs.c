@@ -787,8 +787,8 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   GtkWidget         *image, *src_image, *dst_image;
   GtkWidget         *label;
   GtkWidget         *content_area;
+  GtkWidget         *action_area;
   GtkWidget         *cancel_button;
-  GtkWidget         *button_box;
   GtkWidget         *button_grid;
   GtkWidget         *skipall_button;
   GtkWidget         *skip_button;
@@ -827,6 +827,9 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_JOB_RESPONSE_REPLACE);
   content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+  G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+  action_area = gtk_dialog_get_action_area (GTK_DIALOG (dialog));
+  G_GNUC_END_IGNORE_DEPRECATIONS
   gtk_widget_set_valign (content_area, GTK_ALIGN_START);
 
   if (parent != NULL)
@@ -846,10 +849,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_widget_show (grid);
 
   /* set up the action area buttons ourself */
-  button_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 5);
   button_grid = gtk_grid_new ();
-
-  gtk_container_set_border_width (GTK_CONTAINER (button_box), 10);
 
   cancel_button     = gtk_button_new_with_mnemonic (_("_Cancel"));
   skip_button       = gtk_button_new_with_mnemonic (_("_Skip"));
@@ -872,9 +872,6 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_grid_attach (GTK_GRID (button_grid), replace_button, 2, 0, 1, 1);
   gtk_grid_attach (GTK_GRID (button_grid), rename_button, 3, 0, 1, 1);
 
-  gtk_box_pack_start (GTK_BOX (button_box), cancel_button, FALSE, TRUE, 0);
-  gtk_box_pack_end (GTK_BOX (button_box), button_grid, FALSE, FALSE, 0);
-
   if (multiple_files)
     {
       skipall_button    = gtk_button_new_with_mnemonic (_("S_kip All"));
@@ -893,12 +890,16 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
       gtk_grid_attach (GTK_GRID (button_grid), replaceall_button, 2, 1, 1, 1);
       gtk_grid_attach (GTK_GRID (button_grid), renameall_button, 3, 1, 1, 1);
     }
+  gtk_container_set_border_width (GTK_CONTAINER (action_area), 10);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (action_area), GTK_BUTTONBOX_EDGE);
+      
+  gtk_box_pack_start (GTK_BOX (action_area), cancel_button, FALSE, FALSE, 0);
+  gtk_box_pack_end   (GTK_BOX (action_area), button_grid,   FALSE, FALSE, 0);
 
-  gtk_container_add (GTK_CONTAINER (content_area), button_box);
   gtk_grid_set_row_spacing (GTK_GRID (button_grid), 5);
   gtk_grid_set_column_spacing (GTK_GRID (button_grid), 5);
-  gtk_widget_set_hexpand (button_box, TRUE);
-  gtk_widget_show_all (button_box);
+
+  gtk_widget_show_all (action_area);
 
   image = gtk_image_new_from_icon_name ("stock_folder-copy", GTK_ICON_SIZE_BUTTON);
   gtk_widget_set_halign (image, GTK_ALIGN_CENTER);
@@ -1361,6 +1362,4 @@ thunar_dialog_show_launcher_props (ThunarFile *launcher,
   g_free (uri);
   g_clear_error (&error);
 }
-
-
 
