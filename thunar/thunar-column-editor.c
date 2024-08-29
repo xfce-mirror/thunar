@@ -173,9 +173,9 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_widget_show (swin);
 
   /* create the tree view */
-  column_editor->tree_view = gtk_tree_view_new ();
+  column_editor->tree_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL (column_editor->column_model));
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (column_editor->tree_view), FALSE);
-  gtk_tree_view_set_model (GTK_TREE_VIEW (column_editor->tree_view), GTK_TREE_MODEL (column_editor->column_model));
+  gtk_tree_view_set_tooltip_column (GTK_TREE_VIEW (column_editor->tree_view), THUNAR_COLUMN_MODEL_COLUMN_TOOLTIP);
   gtk_container_add (GTK_CONTAINER (swin), column_editor->tree_view);
   gtk_widget_show (column_editor->tree_view);
 
