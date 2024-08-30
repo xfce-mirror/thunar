@@ -39,6 +39,7 @@ typedef struct _ThunarColumnModel      ThunarColumnModel;
  * @THUNAR_COLUMN_MODEL_COLUMN_NAME    : the name of the column.
  * @THUNAR_COLUMN_MODEL_COLUMN_MUTABLE : TRUE if the visibility can be changed.
  * @THUNAR_COLUMN_MODEL_COLUMN_VISIBLE : whether the column is visible.
+ * @THUNAR_COLUMN_MODEL_COLUMN_TOOLTIP : the tooltip for the column line.
  *
  * The #ThunarColumnModel columns used by the #ThunarColumnEditor.
  **/
@@ -47,6 +48,7 @@ typedef enum
   THUNAR_COLUMN_MODEL_COLUMN_NAME,
   THUNAR_COLUMN_MODEL_COLUMN_MUTABLE,
   THUNAR_COLUMN_MODEL_COLUMN_VISIBLE,
+  THUNAR_COLUMN_MODEL_COLUMN_TOOLTIP,
   THUNAR_COLUMN_MODEL_N_COLUMNS,
 } ThunarColumnModelColumn;
 
