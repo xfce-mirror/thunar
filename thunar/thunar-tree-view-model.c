@@ -1276,12 +1276,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
           }
         else if (thunar_file_is_directory (file))
           {
-            /* If the option is set to never show folder sizes as item counts, then just give the folder's binary size */
-            if (THUNAR_TREE_VIEW_MODEL (model)->folder_item_count == THUNAR_FOLDER_ITEM_COUNT_NEVER)
-              g_value_take_string (value, thunar_file_get_size_string_formatted (file, THUNAR_TREE_VIEW_MODEL (model)->file_size_binary));
-
-            /* If the option is set to always show folder sizes as item counts, then give the folder's item count */
-            else if (THUNAR_TREE_VIEW_MODEL (model)->folder_item_count == THUNAR_FOLDER_ITEM_COUNT_ALWAYS)
+            if (THUNAR_TREE_VIEW_MODEL (model)->folder_item_count == THUNAR_FOLDER_ITEM_COUNT_ALWAYS)
               {
                 item_count = thunar_file_get_file_count (file, G_CALLBACK (thunar_tree_view_model_file_count_callback), model);
                 if (item_count < 0)
@@ -1305,7 +1300,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
                 else
                   g_value_take_string (value, thunar_file_get_size_string_formatted (file, THUNAR_TREE_VIEW_MODEL (model)->file_size_binary));
               }
-            else
+            else if (THUNAR_TREE_VIEW_MODEL (model)->folder_item_count != THUNAR_FOLDER_ITEM_COUNT_ALWAYS)
               g_warning ("Error, unknown enum value for folder_item_count in the list model");
           }
         else
