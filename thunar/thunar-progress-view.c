@@ -106,7 +106,6 @@ struct _ThunarProgressView
   GtkWidget *unpause_button;
 
   gboolean   launched;
-  guint      n_asks_answered;
 
   gchar     *icon_name;
   gchar     *title;
@@ -279,8 +278,6 @@ thunar_progress_view_init (ThunarProgressView *view)
   g_object_bind_property (G_OBJECT (view), "title",
                           G_OBJECT (label), "label",
                           G_BINDING_SYNC_CREATE);
-
-  view->n_asks_answered = 0;
 }
 
 
@@ -779,4 +776,3 @@ thunar_progress_view_launch_job (ThunarProgressView *view)
   gtk_widget_hide (view->unpause_button);
   gtk_widget_show (view->pause_button);
 }
-
