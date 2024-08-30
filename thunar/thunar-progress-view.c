@@ -510,7 +510,7 @@ thunar_progress_view_ask_replace (ThunarProgressView *view,
   n_total_files = thunar_job_get_n_total_files (job);
   view->n_asks_answered++;
 
-  if (n_total_files > 1 && n_total_files != view->n_asks_answered)
+  if (n_total_files > 1)
     multiple_files = TRUE;
 
   /* display the question view */
