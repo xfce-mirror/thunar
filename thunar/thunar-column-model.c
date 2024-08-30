@@ -256,6 +256,9 @@ thunar_column_model_get_column_type (GtkTreeModel *tree_model,
 
     case THUNAR_COLUMN_MODEL_COLUMN_VISIBLE:
       return G_TYPE_BOOLEAN;
+
+    case THUNAR_COLUMN_MODEL_COLUMN_TOOLTIP:
+      return G_TYPE_STRING;
     }
 
   _thunar_assert_not_reached ();
@@ -327,12 +330,18 @@ thunar_column_model_get_value (GtkTreeModel *tree_model,
 
     case THUNAR_COLUMN_MODEL_COLUMN_MUTABLE:
       g_value_init (value, G_TYPE_BOOLEAN);
-      g_value_set_boolean (value, (column != THUNAR_COLUMN_NAME));
+      g_value_set_boolean (value, (column != THUNAR_COLUMN_NAME && !thunar_column_is_special (column)));
       break;
 
     case THUNAR_COLUMN_MODEL_COLUMN_VISIBLE:
       g_value_init (value, G_TYPE_BOOLEAN);
       g_value_set_boolean (value, thunar_column_model_get_column_visible (column_model, column));
+      break;
+
+    case THUNAR_COLUMN_MODEL_COLUMN_TOOLTIP:
+      g_value_init (value, G_TYPE_STRING);
+      if (thunar_column_is_special (column))
+        g_value_set_static_string (value, _("This column is reserved for special locations"));
       break;
 
     default:
@@ -675,6 +684,10 @@ thunar_column_model_save_visible_columns (ThunarColumnModel *column_model)
   for (n = 0; n < THUNAR_N_VISIBLE_COLUMNS; ++n)
     if (column_model->visible[klass->values[n].value])
       {
+        /* skip special columns */
+        if (thunar_column_is_special (klass->values[n].value))
+          continue;
+
         /* append a comma if not empty */
         if (*visible_columns->str != '\0')
           g_string_append_c (visible_columns, ',');
@@ -927,6 +940,7 @@ thunar_column_model_set_column_visible (ThunarColumnModel *column_model,
                                         ThunarColumn       column,
                                         gboolean           visible)
 {
+  ThunarColumn column_real = 0;
   GtkTreePath *path;
   GtkTreeIter  iter;
   gint         n;
@@ -942,7 +956,7 @@ thunar_column_model_set_column_visible (ThunarColumnModel *column_model,
   visible = !!visible;
 
   /* check if we have a new value */
-  if (G_LIKELY (column_model->visible[column] != visible))
+  if (G_LIKELY (column_model->visible[column] != visible) || thunar_column_is_special (column))
     {
       /* apply the new value */
       column_model->visible[column] = visible;
@@ -951,12 +965,12 @@ thunar_column_model_set_column_visible (ThunarColumnModel *column_model,
       for (n = 0; n < THUNAR_N_VISIBLE_COLUMNS; ++n)
         if (column_model->order[n] == column)
           {
-            column = n;
+            column_real = n;
             break;
           }
 
       /* emit "row-changed" */
-      path = gtk_tree_path_new_from_indices (column, -1);
+      path = gtk_tree_path_new_from_indices (column_real, -1);
       if (gtk_tree_model_get_iter (GTK_TREE_MODEL (column_model), &iter, path))
         gtk_tree_model_row_changed (GTK_TREE_MODEL (column_model), path, &iter);
       gtk_tree_path_free (path);
@@ -964,8 +978,9 @@ thunar_column_model_set_column_visible (ThunarColumnModel *column_model,
       /* emit "columns-changed" */
       g_signal_emit (G_OBJECT (column_model), column_model_signals[COLUMNS_CHANGED], 0);
 
-      /* save the list of visible columns */
-      thunar_column_model_save_visible_columns (column_model);
+      /* save the list of visible columns (excluding special columns) */
+      if (!thunar_column_is_special (column))
+        thunar_column_model_save_visible_columns (column_model);
     }
 }
 
