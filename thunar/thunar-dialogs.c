@@ -892,7 +892,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
     }
   gtk_container_set_border_width (GTK_CONTAINER (action_area), 10);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (action_area), GTK_BUTTONBOX_EDGE);
-      
+
   gtk_box_pack_start (GTK_BOX (action_area), cancel_button, FALSE, FALSE, 0);
   gtk_box_pack_end   (GTK_BOX (action_area), button_grid,   FALSE, FALSE, 0);
 
@@ -1362,4 +1362,3 @@ thunar_dialog_show_launcher_props (ThunarFile *launcher,
   g_free (uri);
   g_clear_error (&error);
 }
-
