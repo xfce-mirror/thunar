@@ -204,6 +204,16 @@ thunar_column_value_from_string (const gchar  *value_string,
 
 
 
+gboolean
+thunar_column_is_special (ThunarColumn value)
+{
+  return (value == THUNAR_COLUMN_DATE_DELETED
+          || value == THUNAR_COLUMN_RECENCY
+          || value == THUNAR_COLUMN_LOCATION);
+}
+
+
+
 GType
 thunar_icon_size_get_type (void)
 {
