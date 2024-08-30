@@ -489,6 +489,8 @@ thunar_progress_view_ask_replace (ThunarProgressView *view,
                                   ThunarJob          *job)
 {
   GtkWidget *window;
+  gboolean   multiple_files = FALSE;
+  guint      n_total_files;
 
   _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_VIEW (view), THUNAR_JOB_RESPONSE_CANCEL);
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), THUNAR_JOB_RESPONSE_CANCEL);
@@ -502,9 +504,14 @@ thunar_progress_view_ask_replace (ThunarProgressView *view,
   /* determine the toplevel window of the view */
   window = gtk_widget_get_toplevel (GTK_WIDGET (view));
 
+  n_total_files = thunar_job_get_n_total_files (job);
+
+  if (n_total_files > 1)
+    multiple_files = TRUE;
+
   /* display the question view */
   return thunar_dialogs_show_job_ask_replace (window != NULL ? GTK_WINDOW (window) : NULL,
-                                              src_file, dst_file);
+                                              src_file, dst_file, multiple_files);
 }
 
 
