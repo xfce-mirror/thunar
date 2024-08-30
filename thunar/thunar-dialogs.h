@@ -63,4 +63,3 @@ void               thunar_dialog_show_launcher_props    (ThunarFile           *l
 G_END_DECLS;
 
 #endif /* !__THUNAR_DIALOGS_H__ */
-
