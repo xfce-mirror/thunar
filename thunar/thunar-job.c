@@ -696,6 +696,14 @@ thunar_job_new_files (ThunarJob   *job,
 
 
 
+guint
+thunar_job_get_n_total_files (ThunarJob *job)
+{
+  return job->priv->n_total_files;
+}
+
+
+
 void
 thunar_job_set_total_files (ThunarJob *job,
                             GList     *total_files)
