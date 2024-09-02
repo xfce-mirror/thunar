@@ -52,7 +52,7 @@ enum
 static void     thunar_toolbar_editor_finalize                           (GObject                  *object);
 static void     thunar_toolbar_editor_help_clicked                       (ThunarToolbarEditor      *toolbar_editor,
                                                                           GtkWidget                *button);
-static void     thunar_toolbar_editor_swap_toolbar_items_for_all_windows (GtkListStore             *model,
+static void     thunar_toolbar_editor_swap_toolbar_items_for_all_windows (ThunarToolbarEditor      *editor,
                                                                           GtkTreeIter              *item1,
                                                                           GtkTreeIter              *item2);
 static void     thunar_toolbar_editor_move_down                          (ThunarToolbarEditor      *toolbar_editor,
@@ -83,7 +83,6 @@ struct _ThunarToolbarEditor
   ThunarPreferences *preferences;
 
   GtkListStore      *model;
-  GtkTreeModel      *filter;
 
   /* Used to get information about the toolbar items, it is used as a reference. All the toolbars are changed, not just this one. */
   GtkWidget         *toolbar;
@@ -177,11 +176,8 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   gtk_box_pack_start (GTK_BOX (hbox), swin, TRUE, TRUE, 0);
   gtk_widget_show (swin);
 
-  /* create a filter from the shared column model */
-  toolbar_editor->filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (toolbar_editor->model), NULL);
-
   /* create the tree view */
-  toolbar_editor->tree_view = gtk_tree_view_new_with_model (toolbar_editor->filter);
+  toolbar_editor->tree_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL (toolbar_editor->model));
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (toolbar_editor->tree_view), FALSE);
   gtk_tree_view_set_search_column (GTK_TREE_VIEW (toolbar_editor->tree_view), COL_LABEL);
   gtk_tree_view_set_tooltip_column (GTK_TREE_VIEW (toolbar_editor->tree_view), COL_TOOLTIP);
@@ -313,17 +309,17 @@ thunar_toolbar_editor_help_clicked (ThunarToolbarEditor *toolbar_editor,
 
 
 static void
-thunar_toolbar_editor_swap_toolbar_items_for_all_windows (GtkListStore *model,
-                                                          GtkTreeIter  *item1,
-                                                          GtkTreeIter  *item2)
+thunar_toolbar_editor_swap_toolbar_items_for_all_windows (ThunarToolbarEditor *editor,
+                                                          GtkTreeIter         *item1,
+                                                          GtkTreeIter         *item2)
 {
   ThunarApplication *application;
   GList             *windows;
   GtkTreePath       *path1;
   GtkTreePath       *path2;
 
-  path1 = gtk_tree_model_get_path (GTK_TREE_MODEL (model), item1);
-  path2 = gtk_tree_model_get_path (GTK_TREE_MODEL (model), item2);
+  path1 = gtk_tree_model_get_path (GTK_TREE_MODEL (editor->model), item1);
+  path2 = gtk_tree_model_get_path (GTK_TREE_MODEL (editor->model), item2);
 
   application = thunar_application_get ();
   windows = thunar_application_get_windows (application);
@@ -347,11 +343,8 @@ thunar_toolbar_editor_move_down (ThunarToolbarEditor *toolbar_editor,
 {
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
-  GtkTreeModel     *childModel;
   GtkTreeIter       iter1;
   GtkTreeIter       iter2;
-  GtkTreeIter       childIter1;
-  GtkTreeIter       childIter2;
 
   _thunar_return_if_fail (THUNAR_IS_TOOLBAR_EDITOR (toolbar_editor));
   _thunar_return_if_fail (GTK_IS_BUTTON (button));
@@ -363,28 +356,20 @@ thunar_toolbar_editor_move_down (ThunarToolbarEditor *toolbar_editor,
   if (gtk_tree_model_iter_next (model, &iter2) == FALSE)
     return;
 
-  /* tree view's model is made from GTK_TREE_MODEL_FILTER, hence fetching child model and child iter's */
-  gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (model), &childIter1, &iter1);
-  gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (model), &childIter2, &iter2);
-  childModel = gtk_tree_model_filter_get_model(GTK_TREE_MODEL_FILTER (model));
-
-  gtk_list_store_swap (GTK_LIST_STORE (childModel), &childIter1, &childIter2);
-  thunar_toolbar_editor_swap_toolbar_items_for_all_windows (GTK_LIST_STORE (childModel), &childIter1, &childIter2);
+  gtk_list_store_swap (GTK_LIST_STORE (model), &iter1, &iter2);
+  thunar_toolbar_editor_swap_toolbar_items_for_all_windows (toolbar_editor, &iter1, &iter2);
 }
 
 
 
 static void
 thunar_toolbar_editor_move_up (ThunarToolbarEditor *toolbar_editor,
-                               GtkWidget          *button)
+                               GtkWidget           *button)
 {
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
-  GtkTreeModel     *childModel;
   GtkTreeIter       iter1;
   GtkTreeIter       iter2;
-  GtkTreeIter       childIter1;
-  GtkTreeIter       childIter2;
 
   _thunar_return_if_fail (THUNAR_IS_TOOLBAR_EDITOR (toolbar_editor));
   _thunar_return_if_fail (GTK_IS_BUTTON (button));
@@ -396,13 +381,8 @@ thunar_toolbar_editor_move_up (ThunarToolbarEditor *toolbar_editor,
   if (gtk_tree_model_iter_previous (model, &iter2) == FALSE)
     return;
 
-  /* tree view's model is made from GTK_TREE_MODEL_FILTER, hence fetching child model and child iter's */
-  gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (model), &childIter1, &iter1);
-  gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (model), &childIter2, &iter2);
-  childModel = gtk_tree_model_filter_get_model(GTK_TREE_MODEL_FILTER (model));
-
-  gtk_list_store_swap (GTK_LIST_STORE (childModel), &childIter1, &childIter2);
-  thunar_toolbar_editor_swap_toolbar_items_for_all_windows (GTK_LIST_STORE (childModel), &childIter1, &childIter2);
+  gtk_list_store_swap (GTK_LIST_STORE (model), &iter1, &iter2);
+  thunar_toolbar_editor_swap_toolbar_items_for_all_windows (toolbar_editor, &iter1, &iter2);
 }
 
 
@@ -415,7 +395,6 @@ thunar_toolbar_editor_toggle_visibility (ThunarToolbarEditor    *toolbar_editor,
   ThunarApplication *application;
   GList             *windows;
   GtkTreePath       *path;
-  GtkTreePath       *child_path;
   GtkTreeIter        iter;
   gboolean           visible;
 
@@ -425,16 +404,7 @@ thunar_toolbar_editor_toggle_visibility (ThunarToolbarEditor    *toolbar_editor,
 
   /* determine the tree path for the string */
   path = gtk_tree_path_new_from_string (path_string);
-
-  child_path = gtk_tree_model_filter_convert_path_to_child_path (GTK_TREE_MODEL_FILTER (toolbar_editor->filter), path);
-
-  if (child_path == NULL)
-    {
-      gtk_tree_path_free (path);
-      return;
-    }
-
-  if (gtk_tree_model_get_iter (GTK_TREE_MODEL (toolbar_editor->model), &iter, child_path))
+  if (gtk_tree_model_get_iter (GTK_TREE_MODEL (toolbar_editor->model), &iter, path))
     {
       gtk_tree_model_get (GTK_TREE_MODEL (toolbar_editor->model), &iter, 1, &visible, -1);
       gtk_list_store_set (toolbar_editor->model, &iter, 1, !visible, -1);
@@ -445,13 +415,12 @@ thunar_toolbar_editor_toggle_visibility (ThunarToolbarEditor    *toolbar_editor,
   for (GList *lp = windows; lp != NULL; lp = lp->next)
     {
       ThunarWindow *window = lp->data;
-      thunar_window_toolbar_toggle_item_visibility (window, gtk_tree_path_get_indices (child_path)[0]);
+      thunar_window_toolbar_toggle_item_visibility (window, gtk_tree_path_get_indices (path)[0]);
     }
   g_object_unref (application);
   g_list_free (windows);
 
   gtk_tree_path_free (path);
-  gtk_tree_path_free (child_path);
 }
 
 
@@ -535,7 +504,7 @@ thunar_toolbar_editor_use_defaults (ThunarToolbarEditor *toolbar_editor,
               gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (toolbar_editor->model), &iter_i, path_i);
               gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (toolbar_editor->model), &iter_j, path_j);
               gtk_list_store_swap (GTK_LIST_STORE (toolbar_editor->model), &iter_i, &iter_j);
-              thunar_toolbar_editor_swap_toolbar_items_for_all_windows (toolbar_editor->model, &iter_i, &iter_j);
+              thunar_toolbar_editor_swap_toolbar_items_for_all_windows (toolbar_editor, &iter_i, &iter_j);
 
               y = current_order[i];
               current_order[i] = target_order[i];
@@ -675,7 +644,7 @@ thunar_toolbar_editor_populate_model (ThunarToolbarEditor *toolbar_editor)
   g_signal_connect_swapped (G_OBJECT (selection), "changed", G_CALLBACK (thunar_toolbar_editor_update_buttons), toolbar_editor);
 
   /* select the first item */
-  if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (toolbar_editor->filter), &iter))
+  if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (toolbar_editor->model), &iter))
     gtk_tree_selection_select_iter (selection, &iter);
 
   g_list_free (toolbar_items);
