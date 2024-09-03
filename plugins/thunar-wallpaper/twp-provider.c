@@ -337,6 +337,9 @@ twp_get_active_workspace_number (GdkScreen *screen)
   gint       format_ret;
   gint       ws_num = 0;
 
+  if (!GDK_IS_X11_DISPLAY (gdk_display_get_default ()))
+    return 0;
+
   gdk_x11_display_error_trap_push (gdk_display_get_default ());
 
   root = gdk_screen_get_root_window (screen);
