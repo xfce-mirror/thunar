@@ -344,8 +344,9 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
                                  G_CONNECT_SWAPPED);
 
           /* set the action path */
-          g_object_set_data (G_OBJECT (item), "action_path",
-                             g_strconcat ("<Actions>/ThunarActions/", name, NULL));
+          gchar *action_path = g_strconcat ("<Actions>/ThunarActions/", name, NULL);
+          g_object_set_data (G_OBJECT (item), "action_path", action_path);
+          g_free (action_path);
 
           /* add only base menu items to the return list */
           if(parent_menu == NULL)
