@@ -42,15 +42,12 @@
 
 
 
-#define THUNAR_LOCATION_BUTTON_MAX_WIDTH 250
-
-
-
 /* Property identifiers */
 enum
 {
   PROP_0,
   PROP_FILE,
+  PROP_MAX_WIDTH,
 };
 
 /* Signal identifiers */
@@ -145,6 +142,7 @@ struct _ThunarLocationButton
 
   /* public properties */
   ThunarFile         *file;
+  gint                max_width;
 };
 
 
@@ -189,6 +187,21 @@ thunar_location_button_class_init (ThunarLocationButtonClass *klass)
                                                         "file",
                                                         THUNAR_TYPE_FILE,
                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarLocationButton:max-width:
+   *
+   * The desired maximum width of the button, in pixels. If this property
+   * is set to -1, the width will be calculated automatically.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_MAX_WIDTH,
+                                   g_param_spec_int ("max-width",
+                                                     "max-width",
+                                                     "max-width",
+                                                     -1, G_MAXINT,
+                                                     -1,
+                                                     EXO_PARAM_READWRITE));
 
   /**
    * ThunarLocationButton::location-button-clicked:
@@ -308,6 +321,10 @@ thunar_location_button_get_property (GObject    *object,
       g_value_set_object (value, thunar_location_button_get_file (location_button));
       break;
 
+    case PROP_MAX_WIDTH:
+      g_value_set_int (value, thunar_location_button_get_max_width (location_button));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -328,6 +345,10 @@ thunar_location_button_set_property (GObject      *object,
     {
     case PROP_FILE:
       thunar_location_button_set_file (location_button, g_value_get_object (value));
+      break;
+
+    case PROP_MAX_WIDTH:
+      thunar_location_button_set_max_width (location_button, g_value_get_int (value));
       break;
 
     default:
@@ -415,6 +436,9 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
       if (diplay_name != NULL)
         gtk_label_set_text (GTK_LABEL (location_button->label), diplay_name);
 
+      /* reset the size request before applying the new label size so that the button can shrink */
+      gtk_widget_set_size_request (location_button->label, -1, -1);
+
       /* set the label's size request in such a way that a bold label will not change the button size */
       if (gtk_widget_get_mapped (GTK_WIDGET (location_button)))
         thunar_location_button_apply_label_size (location_button);
@@ -457,10 +481,6 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
       dnd_icon_name = thunar_file_get_icon_name (file, location_button->file_icon_state, icon_theme);
       gtk_drag_source_set_icon_name (GTK_WIDGET (location_button), dnd_icon_name);
     }
-
-  /* recalculate the required size in case the filename changed */
-  gtk_widget_set_size_request (GTK_WIDGET (location_button->label), -1, -1);
-
 }
 
 
@@ -503,11 +523,11 @@ thunar_location_button_apply_label_size (ThunarLocationButton *location_button)
   width = MAX (normal_size.width, bold_size.width);
   height = MAX (normal_size.height, bold_size.height);
 
-  if (width >= THUNAR_LOCATION_BUTTON_MAX_WIDTH)
+  if (width > location_button->max_width)
     {
       /* if the size is too big, enable ellipsizing */
       gtk_label_set_ellipsize (GTK_LABEL (location_button->label), PANGO_ELLIPSIZE_MIDDLE);
-      gtk_widget_set_size_request (GTK_WIDGET (location_button->label), THUNAR_LOCATION_BUTTON_MAX_WIDTH, height);
+      gtk_widget_set_size_request (location_button->label, location_button->max_width, height);
 
       /* and set a tooltip */
       gtk_widget_set_tooltip_text (location_button->label, text);
@@ -517,7 +537,7 @@ thunar_location_button_apply_label_size (ThunarLocationButton *location_button)
       /* don't enable ellipsizing: In some borderline cases, the size calculated
        * is actually off by 1 or 2 pixels and the label will ellipsize unnecessarily
        * TODO: check what we did wrong */
-      gtk_widget_set_size_request (GTK_WIDGET (location_button->label), width, height);
+      gtk_widget_set_size_request (location_button->label, width, height);
       gtk_widget_set_tooltip_text (location_button->label, NULL);
     }
 }
@@ -944,6 +964,51 @@ thunar_location_button_set_file (ThunarLocationButton *location_button,
 
   /* notify listeners */
   g_object_notify (G_OBJECT (location_button), "file");
+}
+
+
+
+/**
+ * thunar_location_button_get_max_width:
+ * @location_button : a #ThunarLocationButton.
+ *
+ * Retrieves the maximum width of @location_button, in pixels.
+ *
+ * Return value: the maximum width of @location_button in pixels.
+ **/
+gint
+thunar_location_button_get_max_width (ThunarLocationButton *location_button)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button), -1);
+
+  return location_button->max_width;
+}
+
+
+
+/**
+ * thunar_location_button_set_max_width:
+ * @location_button : a #ThunarLocationButton.
+ * @max_width       : the new maximum width, in pixels.
+ *
+ * Sets the maximum width in pixels of @location_button to @max_width.
+ **/
+void
+thunar_location_button_set_max_width (ThunarLocationButton *location_button,
+                                      gint                  max_width)
+{
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
+
+  if (location_button->max_width != max_width)
+    {
+      location_button->max_width = max_width;
+
+      /* update the label size */
+      thunar_location_button_apply_label_size (location_button);
+
+      /* notify listeners */
+      g_object_notify (G_OBJECT (location_button), "max-width");
+    }
 }
 
 
