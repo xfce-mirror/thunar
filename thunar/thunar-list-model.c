@@ -1402,6 +1402,7 @@ thunar_list_model_files_changed (ThunarFolder    *folder,
   GtkTreePath   *path;
   GtkTreeIter    iter;
   GSList        *hidden_link = NULL;
+  GSList        *lp;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
 
@@ -1490,20 +1491,30 @@ thunar_list_model_files_changed (ThunarFolder    *folder,
   /* maybe this file was a hidden file but now it's not
   * in such a case we need to emit a "files-added" for this file
   * and remove it from the hidden list */
-  for (GSList *lp = store->hidden; lp != NULL; lp = g_slist_next (lp))
+  lp = store->hidden;
+  while (lp != NULL)
     {
+      GSList     *next = lp->next;
       GHashTable *hidden_files;
 
       hidden_link = g_hash_table_lookup (files, lp->data);
       if (hidden_link == NULL || thunar_file_is_hidden (THUNAR_FILE (hidden_link)))
-        continue;
+        {
+          lp = next;
+          continue;
+        }
 
-      g_object_unref (hidden_link->data);
-      store->hidden = g_slist_delete_link (store->hidden, hidden_link);
+      /* remove the file from our internal hidden-list, if it is not hidden any more */
+      g_object_unref (lp->data);
+      store->hidden = g_slist_delete_link (store->hidden, lp);
+
+      /* emit "files-added" for the file */
       hidden_files = g_hash_table_new (g_direct_hash, NULL);
       g_hash_table_add (hidden_files, hidden_link);
       thunar_list_model_files_added (store->folder, hidden_files, store);
       g_hash_table_destroy (hidden_files);
+
+      lp = next;
     }
 }
 
