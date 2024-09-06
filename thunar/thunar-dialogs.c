@@ -778,6 +778,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   GtkWidget         *check_button;
   GdkPixbuf         *icon;
   cairo_surface_t   *surface;
+  PangoAttrList     *attr_list;
   gchar             *date_custom_style;
   gchar             *date_string;
   gchar             *size_string;
@@ -786,6 +787,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gboolean           file_size_binary;
   gint               row = 0;
   gint               scale_factor;
+  gint               width, height;
 
   _thunar_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), THUNAR_JOB_RESPONSE_CANCEL);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (src_file), THUNAR_JOB_RESPONSE_CANCEL);
@@ -807,15 +809,13 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
                                         _("Re_name"), THUNAR_JOB_RESPONSE_RENAME,
                                         _("_Replace"), THUNAR_JOB_RESPONSE_REPLACE,
                                         NULL);
-
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_JOB_RESPONSE_REPLACE);
 
   content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
-  gtk_widget_set_valign (content_area, GTK_ALIGN_START);
 
-  G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   action_area = gtk_dialog_get_action_area (GTK_DIALOG (dialog));
-  G_GNUC_END_IGNORE_DEPRECATIONS
+G_GNUC_END_IGNORE_DEPRECATIONS
   gtk_button_box_set_layout (GTK_BUTTON_BOX (action_area), GTK_BUTTONBOX_SPREAD);
   gtk_container_set_border_width (GTK_CONTAINER (action_area), 10);
 
@@ -848,30 +848,37 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
 
   if (thunar_file_is_symlink (dst_file))
     {
-      text = g_strdup_printf (_("This folder already contains a symbolic link:\n\"%s\"."),
+      text = g_strdup_printf (_("This folder already contains a symbolic link \"%s\"."),
                               thunar_file_get_display_name (dst_file));
     }
   else if (thunar_file_is_directory (dst_file))
     {
-      text = g_strdup_printf (_("This folder already contains a folder:\n\"%s\"."),
+      text = g_strdup_printf (_("This folder already contains a folder \"%s\"."),
                               thunar_file_get_display_name (dst_file));
     }
   else
     {
       if (g_strcmp0 (thunar_file_get_display_name (dst_file), thunar_file_get_basename (dst_file)) != 0)
-        text = g_strdup_printf (_("This folder already contains a file:\n\"%s\" (%s)."),
+        text = g_strdup_printf (_("This folder already contains a file \"%s\" (%s)."),
                                 thunar_file_get_display_name (dst_file),
                                 thunar_file_get_basename (dst_file));
       else
-        text = g_strdup_printf (_("This folder already contains a file:\n\"%s\"."),
+        text = g_strdup_printf (_("This folder already contains a file \"%s\"."),
                                 thunar_file_get_display_name (dst_file));
     }
 
   label = gtk_label_new (text);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big ());
+#ifdef PANGO_VERSION_1_44
+  attr_list = gtk_label_get_attributes (GTK_LABEL (label));
+  pango_attr_list_insert (attr_list, pango_attr_insert_hyphens_new (FALSE)); /* do not insert hyphens */
+  gtk_label_set_attributes (GTK_LABEL (label), attr_list);
+#endif
+  gtk_label_set_line_wrap_mode (GTK_LABEL (label), PANGO_WRAP_CHAR);
+  gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+  gtk_label_set_selectable (GTK_LABEL (label), TRUE);
   gtk_widget_set_hexpand (label, TRUE);
-  gtk_label_set_selectable(GTK_LABEL (label), TRUE);
   gtk_grid_attach (GTK_GRID (grid), label, 1, row, 2, 1);
   gtk_widget_show (label);
   g_free (text);
@@ -982,19 +989,24 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
       row++;
 
       check_button = gtk_check_button_new_with_mnemonic (_("_Apply the action to all files and folders"));
-      gtk_grid_attach (GTK_GRID (grid), check_button, 0, row, 3, 1);
+      gtk_grid_attach (GTK_GRID (grid), check_button, 1, row, 2, 1);
       gtk_widget_show (check_button);
     }
+
+  /* prevent long file names from pushing the dialog width over a certain value */
+  gtk_window_get_size (GTK_WINDOW (dialog), &width, &height);
+  if (width > 600)
+    gtk_window_resize (GTK_WINDOW (dialog), 600, 1);
 
   /* run the dialog */
   response = gtk_dialog_run (GTK_DIALOG (dialog));
 
+  /* translate GTK responses */
+  if (G_UNLIKELY (response < 0))
+    response = THUNAR_JOB_RESPONSE_CANCEL;
+
   if (multiple_files)
     {
-      /* translate GTK responses */
-      if (G_UNLIKELY (response < 0))
-        response = THUNAR_JOB_RESPONSE_CANCEL;
-
       if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (check_button)))
         {
           if (response == THUNAR_JOB_RESPONSE_SKIP)
