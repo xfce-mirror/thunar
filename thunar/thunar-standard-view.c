@@ -4157,10 +4157,6 @@ _thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 
   standard_view->priv->selection_changed_timeout_source = 0;
 
-  /* ignore while searching */
-  if (standard_view->priv->active_search == TRUE)
-    return FALSE;
-
   /* drop any existing "new-files" closure */
   if (G_UNLIKELY (standard_view->priv->new_files_closure != NULL))
     {
