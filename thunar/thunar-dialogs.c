@@ -989,7 +989,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
       row++;
 
       check_button = gtk_check_button_new_with_mnemonic (_("_Apply the action to all files and folders"));
-      gtk_grid_attach (GTK_GRID (grid), check_button, 0, row, 3, 1);
+      gtk_grid_attach (GTK_GRID (grid), check_button, 1, row, 2, 1);
       gtk_widget_show (check_button);
     }
 
