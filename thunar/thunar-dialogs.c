@@ -817,7 +817,8 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   action_area = gtk_dialog_get_action_area (GTK_DIALOG (dialog));
 G_GNUC_END_IGNORE_DEPRECATIONS
   gtk_button_box_set_layout (GTK_BUTTON_BOX (action_area), GTK_BUTTONBOX_SPREAD);
-  gtk_container_set_border_width (GTK_CONTAINER (action_area), 10);
+  gtk_container_set_border_width (GTK_CONTAINER (action_area), 5);
+  gtk_widget_set_margin_top (GTK_WIDGET (action_area), 5);
 
   if (parent != NULL)
     scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (parent));
