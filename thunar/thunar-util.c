@@ -1292,18 +1292,18 @@ thunar_util_get_statusbar_text_for_files (GHashTable      *files,
       if (file_info == NULL)
         continue;
 
-      if (g_file_info_get_file_type (file_info) == G_FILE_TYPE_DIRECTORY)
+      if (g_file_info_get_attribute_uint32 (file_info, G_FILE_ATTRIBUTE_STANDARD_TYPE) == G_FILE_TYPE_DIRECTORY)
         {
           folder_count++;
-          if (g_file_info_get_is_hidden (file_info))
+          if (g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN))
             hidden_folder_count++;
         }
       else
         {
           file_count++;
-          if (g_file_info_get_is_hidden (file_info))
+          if (g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN))
             hidden_file_count++;
-          if (g_file_info_get_file_type (file_info) == G_FILE_TYPE_REGULAR) g_file_info_get_size (file_info);
+          if (g_file_info_get_attribute_uint32 (file_info, G_FILE_ATTRIBUTE_STANDARD_TYPE) == G_FILE_TYPE_REGULAR) g_file_info_get_attribute_uint64 (file_info, G_FILE_ATTRIBUTE_STANDARD_SIZE);
             size_summary += g_file_info_get_attribute_uint64 (file_info, G_FILE_ATTRIBUTE_STANDARD_SIZE);
         }
 
