@@ -311,6 +311,23 @@ thunar_g_file_is_network (GFile *file)
 
 
 
+gboolean
+thunar_g_file_is_admin (GFile *file)
+{
+  char *uri;
+  gboolean is_admin = FALSE;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+
+  uri = g_file_get_uri (file);
+  is_admin = g_strcmp0 (uri, "admin:///") == 0;
+  g_free (uri);
+
+  return is_admin;
+}
+
+
+
 GKeyFile *
 thunar_g_file_query_key_file (GFile              *file,
                               GCancellable       *cancellable,
