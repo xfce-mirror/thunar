@@ -1284,6 +1284,7 @@ thunar_util_get_statusbar_text_for_files (GHashTable      *files,
       GFileInfo *file_info = g_file_query_info (thunar_file_get_file (THUNAR_FILE (key)),
                                                 G_FILE_ATTRIBUTE_STANDARD_TYPE ","
                                                 G_FILE_ATTRIBUTE_STANDARD_SIZE ","
+                                                G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP ","
                                                 G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN ","
                                                 G_FILE_ATTRIBUTE_TIME_MODIFIED,
                                                 G_FILE_QUERY_INFO_NONE,
@@ -1295,13 +1296,13 @@ thunar_util_get_statusbar_text_for_files (GHashTable      *files,
       if (g_file_info_get_attribute_uint32 (file_info, G_FILE_ATTRIBUTE_STANDARD_TYPE) == G_FILE_TYPE_DIRECTORY)
         {
           folder_count++;
-          if (g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN))
+          if (g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN) || g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP))
             hidden_folder_count++;
         }
       else
         {
           file_count++;
-          if (g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN))
+          if (g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN) || g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP))
             hidden_file_count++;
           if (g_file_info_get_attribute_uint32 (file_info, G_FILE_ATTRIBUTE_STANDARD_TYPE) == G_FILE_TYPE_REGULAR) g_file_info_get_attribute_uint64 (file_info, G_FILE_ATTRIBUTE_STANDARD_SIZE);
             size_summary += g_file_info_get_attribute_uint64 (file_info, G_FILE_ATTRIBUTE_STANDARD_SIZE);
