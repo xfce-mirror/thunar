@@ -391,6 +391,7 @@ struct _ThunarStandardViewPrivate
   GType                   model_type;
   
   /* Used in order to throttle selection changes to prevent lag */
+  gboolean                selection_changed_requested;
   guint                   selection_changed_timeout_source;
 };
 
@@ -4146,16 +4147,14 @@ thunar_standard_view_queue_popup (ThunarStandardView *standard_view,
 
 
 
-static gboolean
+static void
 _thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 {
   GtkTreeIter iter;
   GList      *lp, *selected_thunar_files;
   ThunarFile *file;
 
-  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
-
-  standard_view->priv->selection_changed_timeout_source = 0;
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* drop any existing "new-files" closure */
   if (G_UNLIKELY (standard_view->priv->new_files_closure != NULL))
@@ -4197,7 +4196,20 @@ _thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 
   /* emit notification for "selected-files" */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_SELECTED_FILES]);
+}
 
+
+
+static gboolean
+thunar_standard_view_selection_changed_timeout (ThunarStandardView *standard_view)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
+
+  if (standard_view->priv->selection_changed_requested)
+    _thunar_standard_view_selection_changed (standard_view);
+
+  standard_view->priv->selection_changed_timeout_source = 0;
+  standard_view->priv->selection_changed_requested = FALSE;
   return FALSE;
 }
 
@@ -4216,11 +4228,18 @@ _thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 void
 thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 {
+  /* in case a timeout is running, the selection-change will be delayed (performance) */
   if (standard_view->priv->selection_changed_timeout_source != 0)
-    return;
+    {
+      standard_view->priv->selection_changed_requested = TRUE;
+      return;
+    }
+
+  /* The first call be executed directly */
+  _thunar_standard_view_selection_changed (standard_view);
 
   standard_view->priv->selection_changed_timeout_source =
-    g_timeout_add (THUNAR_STANDARD_VIEW_SELECTION_CHANGED_DELAY_MS, (GSourceFunc) _thunar_standard_view_selection_changed, standard_view);
+    g_timeout_add (THUNAR_STANDARD_VIEW_SELECTION_CHANGED_DELAY_MS, (GSourceFunc) thunar_standard_view_selection_changed_timeout, standard_view);
 }
 
 
