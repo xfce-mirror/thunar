@@ -4235,7 +4235,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
       return;
     }
 
-  /* The first call be executed directly */
+  /* The first call will be executed directly */
   _thunar_standard_view_selection_changed (standard_view);
 
   standard_view->priv->selection_changed_timeout_source =
