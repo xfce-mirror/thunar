@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-09-04 00:46+0200\n"
+"POT-Creation-Date: 2024-09-10 00:47+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Mutaz ismail, 2022\n"
 "Language-Team: Arabic (http://app.transifex.com/xfce/thunar/language/ar/)\n"
@@ -38,13 +38,13 @@ msgstr "ثونار"
 
 #. change the accept button label text
 #: thunar/thunar-action-manager.c:269 thunar/thunar-chooser-dialog.c:887
-#: thunar/thunar-chooser-dialog.c:1298 thunar/thunar-dialogs.c:1266
+#: thunar/thunar-chooser-dialog.c:1298 thunar/thunar-dialogs.c:1279
 #: thunar/thunar-renamer-dialog.c:1075
 #: plugins/thunar-uca/thunar-uca-editor.c:181
 msgid "_Open"
 msgstr "_فتح"
 
-#: thunar/thunar-action-manager.c:270 thunar/thunar-dialogs.c:1260
+#: thunar/thunar-action-manager.c:270 thunar/thunar-dialogs.c:1273
 msgid "_Execute"
 msgstr "_نفذ"
 
@@ -297,8 +297,8 @@ msgstr[5] "فتح %d نوافذ جديدة"
 #: thunar/thunar-chooser-dialog.c:293 thunar/thunar-chooser-dialog.c:760
 #: thunar/thunar-chooser-dialog.c:835 thunar/thunar-chooser-dialog.c:886
 #: thunar/thunar-dialogs.c:112 thunar/thunar-dialogs.c:261
-#: thunar/thunar-dialogs.c:698 thunar/thunar-dialogs.c:805
-#: thunar/thunar-dialogs.c:1081 thunar/thunar-dialogs.c:1174
+#: thunar/thunar-dialogs.c:698 thunar/thunar-dialogs.c:807
+#: thunar/thunar-dialogs.c:1094 thunar/thunar-dialogs.c:1187
 #: thunar/thunar-dnd.c:173 thunar/thunar-permissions-chooser.c:561
 #: thunar/thunar-permissions-chooser.c:1172
 #: thunar/thunar-properties-dialog.c:1196 thunar/thunar-renamer-dialog.c:1074
@@ -740,7 +740,7 @@ msgstr[4] "هل انت متاكد من أنك تريد حذف\nالملفات ا
 msgstr[5] "هل انت متاكد من أنك تريد حذف\nالملفات الـ%u المحددة نهائيا؟"
 
 #: thunar/thunar-application.c:2490 thunar/thunar-application.c:2551
-#: thunar/thunar-dialogs.c:616 thunar/thunar-dialogs.c:1077
+#: thunar/thunar-dialogs.c:616 thunar/thunar-dialogs.c:1090
 msgid "Attention"
 msgstr ""
 
@@ -1290,7 +1290,7 @@ msgstr "_نعم"
 msgid "Yes to _all"
 msgstr "نعم لل_جميع"
 
-#: thunar/thunar-dialogs.c:639 thunar/thunar-dialogs.c:808
+#: thunar/thunar-dialogs.c:639 thunar/thunar-dialogs.c:810
 msgid "_Replace"
 msgstr "_إستبدل"
 
@@ -1298,7 +1298,7 @@ msgstr "_إستبدل"
 msgid "Replace _All"
 msgstr "إست_بدل الكل"
 
-#: thunar/thunar-dialogs.c:647 thunar/thunar-dialogs.c:806
+#: thunar/thunar-dialogs.c:647 thunar/thunar-dialogs.c:808
 msgid "_Skip"
 msgstr "_تجاهل"
 
@@ -1306,7 +1306,7 @@ msgstr "_تجاهل"
 msgid "S_kip All"
 msgstr "تخ_طى الكل"
 
-#: thunar/thunar-dialogs.c:655 thunar/thunar-dialogs.c:807
+#: thunar/thunar-dialogs.c:655 thunar/thunar-dialogs.c:809
 msgid "Re_name"
 msgstr "إعادة _التسمية"
 
@@ -1331,80 +1331,72 @@ msgid "Copy _Anyway"
 msgstr "انسخ على أي حال"
 
 #. setup the confirmation dialog
-#: thunar/thunar-dialogs.c:802
+#: thunar/thunar-dialogs.c:804
 msgid "Confirm to replace files"
 msgstr "تأكيد إستبدال الملفات"
 
 #: thunar/thunar-dialogs.c:851
 #, c-format
-msgid ""
-"This folder already contains a symbolic link:\n"
-"\"%s\"."
-msgstr ""
+msgid "This folder already contains a symbolic link \"%s\"."
+msgstr "هذا المجلد يحتوي حاليا على وصلة رمزية \"%s\"."
 
 #: thunar/thunar-dialogs.c:856
 #, c-format
-msgid ""
-"This folder already contains a folder:\n"
-"\"%s\"."
-msgstr ""
+msgid "This folder already contains a folder \"%s\"."
+msgstr "هذا المجلد يحتوي على المجلد \"%s\"."
 
 #: thunar/thunar-dialogs.c:862
 #, c-format
-msgid ""
-"This folder already contains a file:\n"
-"\"%s\" (%s)."
+msgid "This folder already contains a file \"%s\" (%s)."
 msgstr ""
 
 #: thunar/thunar-dialogs.c:866
 #, c-format
-msgid ""
-"This folder already contains a file:\n"
-"\"%s\"."
-msgstr ""
+msgid "This folder already contains a file \"%s\"."
+msgstr "هذا المجلد يحتوي على ملف \"%s\"."
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: thunar/thunar-dialogs.c:881
+#: thunar/thunar-dialogs.c:888
 msgid "Do you want to replace the link"
 msgstr "هل تريد استبدال الرابط"
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: thunar/thunar-dialogs.c:884
+#: thunar/thunar-dialogs.c:891
 msgid "Do you want to replace the existing folder"
 msgstr "هل تريد استبدال المجلد الموجود"
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: thunar/thunar-dialogs.c:887
+#: thunar/thunar-dialogs.c:894
 msgid "Do you want to replace the existing file"
 msgstr "هل تريد استبدال الملف الموجود"
 
 #. Fourth box (size)
-#: thunar/thunar-dialogs.c:919 thunar/thunar-dialogs.c:969
+#: thunar/thunar-dialogs.c:926 thunar/thunar-dialogs.c:976
 #: thunar/thunar-properties-dialog.c:644
 msgid "Size:"
 msgstr "حجم:"
 
-#: thunar/thunar-dialogs.c:919 thunar/thunar-dialogs.c:969
+#: thunar/thunar-dialogs.c:926 thunar/thunar-dialogs.c:976
 #: thunar/thunar-properties-dialog.c:597
 msgid "Modified:"
 msgstr "محرر:"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: thunar/thunar-dialogs.c:931
+#: thunar/thunar-dialogs.c:938
 msgid "with the following link?"
 msgstr "مع الرابط التالي؟"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: thunar/thunar-dialogs.c:934
+#: thunar/thunar-dialogs.c:941
 msgid "with the following folder?"
 msgstr "مع المجلد التالي؟"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: thunar/thunar-dialogs.c:937
+#: thunar/thunar-dialogs.c:944
 msgid "with the following file?"
 msgstr "مع الملف التالي؟"
 
-#: thunar/thunar-dialogs.c:984
+#: thunar/thunar-dialogs.c:991
 msgid "_Apply the action to all files and folders"
 msgstr ""
 
@@ -1412,66 +1404,66 @@ msgstr ""
 #. second appearance of %s:
 #. * "The desktop file %s is in an insecure location and not marked as
 #. secure%s."
-#: thunar/thunar-dialogs.c:1051
+#: thunar/thunar-dialogs.c:1064
 msgid "/executable"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1057
+#: thunar/thunar-dialogs.c:1070
 #, c-format
 msgid ""
 "The desktop file %s is in an insecure location and not marked as secure%s. If you do not trust this program, click Cancel.\n"
 "\n"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1078
+#: thunar/thunar-dialogs.c:1091
 msgid "_Launch Anyway"
 msgstr "_أطلق على أي حال"
 
-#: thunar/thunar-dialogs.c:1080
+#: thunar/thunar-dialogs.c:1093
 msgid "Mark As _Secure And Launch"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1163
+#: thunar/thunar-dialogs.c:1176
 msgid "Close split pane with multiple tabs?"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1164
+#: thunar/thunar-dialogs.c:1177
 msgid ""
 "The other split pane has multiple open tabs. Closing it will close all these"
 " tabs."
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1170
+#: thunar/thunar-dialogs.c:1183
 msgid "Warning"
 msgstr "تحذير"
 
-#: thunar/thunar-dialogs.c:1175
+#: thunar/thunar-dialogs.c:1188
 msgid "Close Pane"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1178 thunar/thunar-permissions-chooser.c:593
+#: thunar/thunar-dialogs.c:1191 thunar/thunar-permissions-chooser.c:593
 msgid "Do _not ask me again"
 msgstr "ﻻ تسألني المرة الأخرة"
 
-#: thunar/thunar-dialogs.c:1238
+#: thunar/thunar-dialogs.c:1251
 #, c-format
 msgid "The file \"%s\" seems to be executable. What do you want to do with it?"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1243
+#: thunar/thunar-dialogs.c:1256
 msgid ""
 "The selected files seem to be executable. What do you want to do with them?"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1252
+#: thunar/thunar-dialogs.c:1265
 msgid "Open Shell Script"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1256
+#: thunar/thunar-dialogs.c:1269
 msgid "Run In _Terminal"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1317
+#: thunar/thunar-dialogs.c:1330
 #, c-format
 msgid "Failed to edit launcher via command \"%s\""
 msgstr ""
@@ -1700,7 +1692,7 @@ msgstr "لم يتم تحديد حقل المسار"
 msgid "Invalid desktop file"
 msgstr "ملف سطح المكتب غير سليم"
 
-#: thunar/thunar-file.c:2514 thunar/thunar-util.c:1451
+#: thunar/thunar-file.c:2514 thunar/thunar-util.c:1452
 #, c-format
 msgid "link to %s"
 msgstr "وصلة إلى %s"
@@ -1910,7 +1902,7 @@ msgid ""
 msgstr "لا توجد مساحة كافية على الوجهة. حاول إزالة ملفات لتوفير مساحة."
 
 #: thunar/thunar-job-operation.c:782 thunar/thunar-size-label.c:472
-#: thunar/thunar-util.c:1326
+#: thunar/thunar-util.c:1327
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -2865,7 +2857,7 @@ msgstr "هدف الوصلة:"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: thunar/thunar-properties-dialog.c:487 thunar/thunar-util.c:1471
+#: thunar/thunar-properties-dialog.c:487 thunar/thunar-util.c:1472
 msgid "Original Path:"
 msgstr "المسار الأصلي:"
 
@@ -3230,7 +3222,7 @@ msgstr "حساب..."
 msgid "Calculation aborted"
 msgstr "عملية الحساب ألغيت"
 
-#: thunar/thunar-size-label.c:471 thunar/thunar-util.c:1356
+#: thunar/thunar-size-label.c:471 thunar/thunar-util.c:1357
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -3686,54 +3678,54 @@ msgstr ""
 msgid "Search: "
 msgstr ""
 
-#: thunar/thunar-util.c:1330 thunar/thunar-util.c:1363
+#: thunar/thunar-util.c:1331 thunar/thunar-util.c:1364
 #, c-format
 msgid "%s (%d hidden)"
 msgstr ""
 
-#: thunar/thunar-util.c:1347
+#: thunar/thunar-util.c:1348
 #, c-format
 msgid "%s: %s"
 msgstr ""
 
-#: thunar/thunar-util.c:1370
+#: thunar/thunar-util.c:1371
 msgid "0 items"
 msgstr "لا يوجد عناصر"
 
-#: thunar/thunar-util.c:1379 thunar/thunar-util.c:1499
+#: thunar/thunar-util.c:1380 thunar/thunar-util.c:1500
 #, c-format
 msgid "Last Modified: %s"
 msgstr ""
 
-#: thunar/thunar-util.c:1428
+#: thunar/thunar-util.c:1429
 #, c-format
 msgid "\"%s\" (%s)"
 msgstr ""
 
-#: thunar/thunar-util.c:1430
+#: thunar/thunar-util.c:1431
 #, c-format
 msgid "\"%s\""
 msgstr ""
 
-#: thunar/thunar-util.c:1449
+#: thunar/thunar-util.c:1450
 msgid "broken link"
 msgstr "وصلة مكسورة"
 
-#: thunar/thunar-util.c:1453
+#: thunar/thunar-util.c:1454
 msgid "shortcut"
 msgstr ""
 
-#: thunar/thunar-util.c:1455
+#: thunar/thunar-util.c:1456
 msgid "mountable"
 msgstr ""
 
-#: thunar/thunar-util.c:1459
+#: thunar/thunar-util.c:1460
 #, c-format
 msgid "%s"
 msgstr ""
 
 #. append the image dimensions to the statusbar text
-#: thunar/thunar-util.c:1489 plugins/thunar-apr/thunar-apr-image-page.c:153
+#: thunar/thunar-util.c:1490 plugins/thunar-apr/thunar-apr-image-page.c:153
 msgid "Image Size:"
 msgstr "حجم الصورة:"
 
@@ -4235,7 +4227,7 @@ msgstr ""
 
 #. add a proxy menu item for the location bar to represent the bar in the
 #. overflow menu
-#: thunar/thunar-window.c:6607 thunar/thunar-window.c:6612
+#: thunar/thunar-window.c:6614 thunar/thunar-window.c:6619
 msgid "Location Bar"
 msgstr ""
 
