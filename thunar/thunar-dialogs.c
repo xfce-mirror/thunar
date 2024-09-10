@@ -777,7 +777,6 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   GtkWidget         *check_button;
   GdkPixbuf         *icon;
   cairo_surface_t   *surface;
-  PangoAttrList     *attr_list;
   gchar             *date_custom_style;
   gchar             *date_string;
   gchar             *size_string;
@@ -869,14 +868,10 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   label = gtk_label_new (text);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big ());
-#ifdef PANGO_VERSION_1_44
-  attr_list = gtk_label_get_attributes (GTK_LABEL (label));
-  pango_attr_list_insert (attr_list, pango_attr_insert_hyphens_new (FALSE)); /* do not insert hyphens */
-  gtk_label_set_attributes (GTK_LABEL (label), attr_list);
-#endif
-  gtk_label_set_line_wrap_mode (GTK_LABEL (label), PANGO_WRAP_CHAR);
-  gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
   gtk_label_set_selectable (GTK_LABEL (label), TRUE);
+  gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+  gtk_label_set_line_wrap_mode (GTK_LABEL (label), PANGO_WRAP_CHAR);
+  thunar_gtk_label_disable_hyphens (GTK_LABEL (label));
   gtk_widget_set_hexpand (label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), label, 1, row, 2, 1);
   gtk_widget_show (label);
