@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-09-04 00:46+0200\n"
+"POT-Creation-Date: 2024-09-10 00:47+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Ḷḷumex03, 2014\n"
 "Language-Team: Asturian (http://app.transifex.com/xfce/thunar/language/ast/)\n"
@@ -28,13 +28,13 @@ msgstr "Thunar"
 
 #. change the accept button label text
 #: thunar/thunar-action-manager.c:269 thunar/thunar-chooser-dialog.c:887
-#: thunar/thunar-chooser-dialog.c:1298 thunar/thunar-dialogs.c:1266
+#: thunar/thunar-chooser-dialog.c:1298 thunar/thunar-dialogs.c:1279
 #: thunar/thunar-renamer-dialog.c:1075
 #: plugins/thunar-uca/thunar-uca-editor.c:181
 msgid "_Open"
 msgstr "_Abrir"
 
-#: thunar/thunar-action-manager.c:270 thunar/thunar-dialogs.c:1260
+#: thunar/thunar-action-manager.c:270 thunar/thunar-dialogs.c:1273
 msgid "_Execute"
 msgstr "_Executar"
 
@@ -275,8 +275,8 @@ msgstr[1] "Abrir %d nueves ventanes"
 #: thunar/thunar-chooser-dialog.c:293 thunar/thunar-chooser-dialog.c:760
 #: thunar/thunar-chooser-dialog.c:835 thunar/thunar-chooser-dialog.c:886
 #: thunar/thunar-dialogs.c:112 thunar/thunar-dialogs.c:261
-#: thunar/thunar-dialogs.c:698 thunar/thunar-dialogs.c:805
-#: thunar/thunar-dialogs.c:1081 thunar/thunar-dialogs.c:1174
+#: thunar/thunar-dialogs.c:698 thunar/thunar-dialogs.c:807
+#: thunar/thunar-dialogs.c:1094 thunar/thunar-dialogs.c:1187
 #: thunar/thunar-dnd.c:173 thunar/thunar-permissions-chooser.c:561
 #: thunar/thunar-permissions-chooser.c:1172
 #: thunar/thunar-properties-dialog.c:1196 thunar/thunar-renamer-dialog.c:1074
@@ -642,7 +642,7 @@ msgstr[0] "¿De xuru que quies desaniciar dafechu'l\nficheru esbilláu?"
 msgstr[1] "¿De xuru que quies desaniciar dafechu los\n%u ficheros esbillaos?"
 
 #: thunar/thunar-application.c:2490 thunar/thunar-application.c:2551
-#: thunar/thunar-dialogs.c:616 thunar/thunar-dialogs.c:1077
+#: thunar/thunar-dialogs.c:616 thunar/thunar-dialogs.c:1090
 msgid "Attention"
 msgstr "Avisu"
 
@@ -1188,7 +1188,7 @@ msgstr "_Sí"
 msgid "Yes to _all"
 msgstr "Sí a _too"
 
-#: thunar/thunar-dialogs.c:639 thunar/thunar-dialogs.c:808
+#: thunar/thunar-dialogs.c:639 thunar/thunar-dialogs.c:810
 msgid "_Replace"
 msgstr "_Trocar"
 
@@ -1196,7 +1196,7 @@ msgstr "_Trocar"
 msgid "Replace _All"
 msgstr "Trocar _too"
 
-#: thunar/thunar-dialogs.c:647 thunar/thunar-dialogs.c:806
+#: thunar/thunar-dialogs.c:647 thunar/thunar-dialogs.c:808
 msgid "_Skip"
 msgstr "_Saltar"
 
@@ -1204,7 +1204,7 @@ msgstr "_Saltar"
 msgid "S_kip All"
 msgstr "Sa_ltar too"
 
-#: thunar/thunar-dialogs.c:655 thunar/thunar-dialogs.c:807
+#: thunar/thunar-dialogs.c:655 thunar/thunar-dialogs.c:809
 msgid "Re_name"
 msgstr "Re_nomar"
 
@@ -1229,80 +1229,72 @@ msgid "Copy _Anyway"
 msgstr "Copiar de _toes toes"
 
 #. setup the confirmation dialog
-#: thunar/thunar-dialogs.c:802
+#: thunar/thunar-dialogs.c:804
 msgid "Confirm to replace files"
 msgstr "Confirmar pa trocar ficheros"
 
 #: thunar/thunar-dialogs.c:851
 #, c-format
-msgid ""
-"This folder already contains a symbolic link:\n"
-"\"%s\"."
-msgstr ""
+msgid "This folder already contains a symbolic link \"%s\"."
+msgstr "Esta carpeta yá contién un enllaz simbólicu \"%s\"."
 
 #: thunar/thunar-dialogs.c:856
 #, c-format
-msgid ""
-"This folder already contains a folder:\n"
-"\"%s\"."
-msgstr ""
+msgid "This folder already contains a folder \"%s\"."
+msgstr "Esta carpeta yá contién una carpeta «%s»."
 
 #: thunar/thunar-dialogs.c:862
 #, c-format
-msgid ""
-"This folder already contains a file:\n"
-"\"%s\" (%s)."
-msgstr ""
+msgid "This folder already contains a file \"%s\" (%s)."
+msgstr "Esta carpeta yá contién una carpeta «%s» (%s)."
 
 #: thunar/thunar-dialogs.c:866
 #, c-format
-msgid ""
-"This folder already contains a file:\n"
-"\"%s\"."
-msgstr ""
+msgid "This folder already contains a file \"%s\"."
+msgstr "Esta carpeta yá contién un ficheru «%s»."
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: thunar/thunar-dialogs.c:881
+#: thunar/thunar-dialogs.c:888
 msgid "Do you want to replace the link"
 msgstr "Quies trocar l'enllaz"
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: thunar/thunar-dialogs.c:884
+#: thunar/thunar-dialogs.c:891
 msgid "Do you want to replace the existing folder"
 msgstr "Quies trocar el direutoriu esistente"
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: thunar/thunar-dialogs.c:887
+#: thunar/thunar-dialogs.c:894
 msgid "Do you want to replace the existing file"
 msgstr "Quies trocar el ficheru esistente"
 
 #. Fourth box (size)
-#: thunar/thunar-dialogs.c:919 thunar/thunar-dialogs.c:969
+#: thunar/thunar-dialogs.c:926 thunar/thunar-dialogs.c:976
 #: thunar/thunar-properties-dialog.c:644
 msgid "Size:"
 msgstr "Tamañu:"
 
-#: thunar/thunar-dialogs.c:919 thunar/thunar-dialogs.c:969
+#: thunar/thunar-dialogs.c:926 thunar/thunar-dialogs.c:976
 #: thunar/thunar-properties-dialog.c:597
 msgid "Modified:"
 msgstr "Camudáu:"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: thunar/thunar-dialogs.c:931
+#: thunar/thunar-dialogs.c:938
 msgid "with the following link?"
 msgstr "col postreru enllaz?"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: thunar/thunar-dialogs.c:934
+#: thunar/thunar-dialogs.c:941
 msgid "with the following folder?"
 msgstr "cola postrera carpeta?"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: thunar/thunar-dialogs.c:937
+#: thunar/thunar-dialogs.c:944
 msgid "with the following file?"
 msgstr "con el postreru ficheru?"
 
-#: thunar/thunar-dialogs.c:984
+#: thunar/thunar-dialogs.c:991
 msgid "_Apply the action to all files and folders"
 msgstr ""
 
@@ -1310,66 +1302,66 @@ msgstr ""
 #. second appearance of %s:
 #. * "The desktop file %s is in an insecure location and not marked as
 #. secure%s."
-#: thunar/thunar-dialogs.c:1051
+#: thunar/thunar-dialogs.c:1064
 msgid "/executable"
 msgstr "/executable"
 
-#: thunar/thunar-dialogs.c:1057
+#: thunar/thunar-dialogs.c:1070
 #, c-format
 msgid ""
 "The desktop file %s is in an insecure location and not marked as secure%s. If you do not trust this program, click Cancel.\n"
 "\n"
 msgstr "L'archivu d'escritoriu %s tan nuna llocalización non segura ya nun ta marcáu comu seguru. %s. Si nun te fíes d'esti programa, calca Encaboxar.\n\n"
 
-#: thunar/thunar-dialogs.c:1078
+#: thunar/thunar-dialogs.c:1091
 msgid "_Launch Anyway"
 msgstr "_Llanzar de toes toes"
 
-#: thunar/thunar-dialogs.c:1080
+#: thunar/thunar-dialogs.c:1093
 msgid "Mark As _Secure And Launch"
 msgstr "Marcar comu _Seguru ya executar"
 
-#: thunar/thunar-dialogs.c:1163
+#: thunar/thunar-dialogs.c:1176
 msgid "Close split pane with multiple tabs?"
 msgstr "¿Pesllar panel dixebráu con múltiples llingüetes?"
 
-#: thunar/thunar-dialogs.c:1164
+#: thunar/thunar-dialogs.c:1177
 msgid ""
 "The other split pane has multiple open tabs. Closing it will close all these"
 " tabs."
 msgstr "L'otru panel dixebráu tien varies llingüetes abiertes. Pesllalo va zarrar toles llingüetes."
 
-#: thunar/thunar-dialogs.c:1170
+#: thunar/thunar-dialogs.c:1183
 msgid "Warning"
 msgstr "Avisu"
 
-#: thunar/thunar-dialogs.c:1175
+#: thunar/thunar-dialogs.c:1188
 msgid "Close Pane"
 msgstr "Pesllar panel"
 
-#: thunar/thunar-dialogs.c:1178 thunar/thunar-permissions-chooser.c:593
+#: thunar/thunar-dialogs.c:1191 thunar/thunar-permissions-chooser.c:593
 msgid "Do _not ask me again"
 msgstr "_Nun entrugame más"
 
-#: thunar/thunar-dialogs.c:1238
+#: thunar/thunar-dialogs.c:1251
 #, c-format
 msgid "The file \"%s\" seems to be executable. What do you want to do with it?"
 msgstr "L'archivu \"%s\" paez que ye un executable. ¿Que quies facer con elli?"
 
-#: thunar/thunar-dialogs.c:1243
+#: thunar/thunar-dialogs.c:1256
 msgid ""
 "The selected files seem to be executable. What do you want to do with them?"
 msgstr "Paez que los archivos \"%s\" son executables. ¿Que quies facer con ellos?"
 
-#: thunar/thunar-dialogs.c:1252
+#: thunar/thunar-dialogs.c:1265
 msgid "Open Shell Script"
 msgstr "Abrir script de terminal"
 
-#: thunar/thunar-dialogs.c:1256
+#: thunar/thunar-dialogs.c:1269
 msgid "Run In _Terminal"
 msgstr "Executar en _terminal"
 
-#: thunar/thunar-dialogs.c:1317
+#: thunar/thunar-dialogs.c:1330
 #, c-format
 msgid "Failed to edit launcher via command \"%s\""
 msgstr "Nun se pudo modificar el llanzador col comandu \"%s\""
@@ -1598,7 +1590,7 @@ msgstr "Campu URL non especificáu"
 msgid "Invalid desktop file"
 msgstr "Ficheru d'escritoriu non válidu"
 
-#: thunar/thunar-file.c:2514 thunar/thunar-util.c:1451
+#: thunar/thunar-file.c:2514 thunar/thunar-util.c:1452
 #, c-format
 msgid "link to %s"
 msgstr "enllaz a %s"
@@ -1808,7 +1800,7 @@ msgid ""
 msgstr "Nun hai espaciu abondo nel destín. Prueba a desaniciar ficheros pa llibrerar espaciu."
 
 #: thunar/thunar-job-operation.c:782 thunar/thunar-size-label.c:472
-#: thunar/thunar-util.c:1326
+#: thunar/thunar-util.c:1327
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -2755,7 +2747,7 @@ msgstr "Destín del enllaz:"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: thunar/thunar-properties-dialog.c:487 thunar/thunar-util.c:1471
+#: thunar/thunar-properties-dialog.c:487 thunar/thunar-util.c:1472
 msgid "Original Path:"
 msgstr "Camín orixinal:"
 
@@ -3108,7 +3100,7 @@ msgstr "Calculando..."
 msgid "Calculation aborted"
 msgstr "Cálculu albortáu"
 
-#: thunar/thunar-size-label.c:471 thunar/thunar-util.c:1356
+#: thunar/thunar-size-label.c:471 thunar/thunar-util.c:1357
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -3544,54 +3536,54 @@ msgstr "enllazar %u con %.*s%s"
 msgid "Search: "
 msgstr "Guetar: "
 
-#: thunar/thunar-util.c:1330 thunar/thunar-util.c:1363
+#: thunar/thunar-util.c:1331 thunar/thunar-util.c:1364
 #, c-format
 msgid "%s (%d hidden)"
 msgstr ""
 
-#: thunar/thunar-util.c:1347
+#: thunar/thunar-util.c:1348
 #, c-format
 msgid "%s: %s"
 msgstr ""
 
-#: thunar/thunar-util.c:1370
+#: thunar/thunar-util.c:1371
 msgid "0 items"
 msgstr "0 elementos"
 
-#: thunar/thunar-util.c:1379 thunar/thunar-util.c:1499
+#: thunar/thunar-util.c:1380 thunar/thunar-util.c:1500
 #, c-format
 msgid "Last Modified: %s"
 msgstr "Cabera modificación: %s"
 
-#: thunar/thunar-util.c:1428
+#: thunar/thunar-util.c:1429
 #, c-format
 msgid "\"%s\" (%s)"
 msgstr "\"%s\" (%s)"
 
-#: thunar/thunar-util.c:1430
+#: thunar/thunar-util.c:1431
 #, c-format
 msgid "\"%s\""
 msgstr "\"%s\""
 
-#: thunar/thunar-util.c:1449
+#: thunar/thunar-util.c:1450
 msgid "broken link"
 msgstr "enllaz frañáu"
 
-#: thunar/thunar-util.c:1453
+#: thunar/thunar-util.c:1454
 msgid "shortcut"
 msgstr "atayu"
 
-#: thunar/thunar-util.c:1455
+#: thunar/thunar-util.c:1456
 msgid "mountable"
 msgstr "montable"
 
-#: thunar/thunar-util.c:1459
+#: thunar/thunar-util.c:1460
 #, c-format
 msgid "%s"
 msgstr "%s"
 
 #. append the image dimensions to the statusbar text
-#: thunar/thunar-util.c:1489 plugins/thunar-apr/thunar-apr-image-page.c:153
+#: thunar/thunar-util.c:1490 plugins/thunar-apr/thunar-apr-image-page.c:153
 msgid "Image Size:"
 msgstr "Tamañu d'imaxe:"
 
@@ -4093,7 +4085,7 @@ msgstr ""
 
 #. add a proxy menu item for the location bar to represent the bar in the
 #. overflow menu
-#: thunar/thunar-window.c:6607 thunar/thunar-window.c:6612
+#: thunar/thunar-window.c:6614 thunar/thunar-window.c:6619
 msgid "Location Bar"
 msgstr "Barra d'allugamientu"
 
