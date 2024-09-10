@@ -67,6 +67,28 @@ thunar_gtk_label_set_a11y_relation (GtkLabel  *label,
 
 
 /**
+ * thunar_gtk_label_disable_hyphens:
+ * @label : a #GtkLabel.
+ *
+ * Tells @label to not insert hyphens by adding the attribute to its #PangoAttrList.
+ **/
+void
+thunar_gtk_label_disable_hyphens (GtkLabel *label)
+{
+#ifdef PANGO_VERSION_1_44
+  PangoAttrList *attr_list;
+
+  _thunar_return_if_fail (GTK_IS_LABEL (label));
+
+  attr_list = gtk_label_get_attributes (label);
+  pango_attr_list_insert (attr_list, pango_attr_insert_hyphens_new (FALSE));
+  gtk_label_set_attributes (label, attr_list);
+#endif
+}
+
+
+
+/**
  * thunar_gtk_menu_thunarx_menu_item_new:
  * @thunarx_menu_item   : a #ThunarxMenuItem
  * @menu_to_append_item : #GtkMenuShell on which the item should be appended, or NULL
