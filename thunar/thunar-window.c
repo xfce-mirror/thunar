@@ -3221,22 +3221,16 @@ thunar_window_install_sidepane (ThunarWindow       *window,
 static gchar*
 thunar_window_bookmark_get_accel_path (GFile *bookmark_file)
 {
-  GChecksum    *checksum;
   gchar        *uri;
   gchar        *accel_path;
-  const gchar  *unique_name;
 
   _thunar_return_val_if_fail (G_IS_FILE (bookmark_file), NULL);
 
-  /* create unique id based on the uri */
+  /* create accel path based on the uri */
   uri = g_file_get_uri (bookmark_file);
-  checksum = g_checksum_new (G_CHECKSUM_MD5);
-  g_checksum_update (checksum, (const guchar *) uri, strlen (uri));
-  unique_name = g_checksum_get_string (checksum);
-  accel_path = g_strconcat("<Actions>/ThunarBookmarks/", unique_name, NULL);
+  accel_path = g_strconcat("<Actions>/ThunarBookmarks/", uri, NULL);
 
   g_free (uri);
-  g_checksum_free (checksum);
   return accel_path;
 }
 
@@ -3340,6 +3334,42 @@ thunar_window_free_bookmarks (ThunarWindow *window)
 
 
 static void
+thunar_bookmark_migrate_accels (GFile *bookmark_file)
+{
+  GChecksum    *checksum;
+  gchar        *uri;
+  gchar        *uri_path;
+  gchar        *checksum_path;
+  const gchar  *unique_name;
+  GtkAccelKey   key;
+
+  /* create unique id based on the uri */
+  uri = g_file_get_uri (bookmark_file);
+  checksum = g_checksum_new (G_CHECKSUM_MD5);
+  g_checksum_update (checksum, (const guchar *) uri, strlen (uri));
+  unique_name = g_checksum_get_string (checksum);
+
+  checksum_path = g_strconcat("<Actions>/ThunarBookmarks/", unique_name, NULL);
+  uri_path = g_strconcat("<Actions>/ThunarBookmarks/", uri, NULL);
+
+  /* find the accel key for the particular bookmark and assign it to new accel path*/
+  if (gtk_accel_map_lookup_entry (checksum_path, &key) == TRUE)
+  {
+    if(g_strcmp0 (gtk_accelerator_get_label (key.accel_key, key.accel_mods), "") != 0)
+    {
+      gtk_accel_map_change_entry (uri_path, key.accel_key, key.accel_mods, TRUE);
+      gtk_accel_map_change_entry (checksum_path, 0, 0, TRUE);
+    }
+  }
+  g_free (uri);
+  g_free (uri_path);
+  g_free (checksum_path);
+  g_checksum_free (checksum);
+}
+
+
+
+static void
 thunar_window_update_bookmark (GFile       *g_file,
                                const gchar *name,
                                gint         line_num,
@@ -3367,6 +3397,7 @@ thunar_window_update_bookmark (GFile       *g_file,
 
   /* Add entry, so that the bookmark can loaded/saved to acceels.scm (will be skipped if already available)*/
   xfce_gtk_accel_map_add_entries (entry, G_N_ELEMENTS (entry));
+  thunar_bookmark_migrate_accels (g_file);
 
   /* Link action with callback */
   xfce_gtk_accel_group_disconnect_action_entries (window->accel_group, entry, G_N_ELEMENTS (entry));
