@@ -230,17 +230,16 @@ thunar_dialogs_show_rename_file (gpointer               parent,
   GtkWidget         *label;
   GtkWidget         *image;
   GtkWidget         *grid;
+  XfceFilenameInput *filename_input;
+  GtkEntry          *filename_input_entry;
   GtkWindow         *window;
+  GdkScreen         *screen;
   GdkPixbuf         *icon;
   cairo_surface_t   *surface;
-  GdkScreen         *screen;
   gchar             *title;
   gint               response;
-  PangoLayout       *layout;
-  gint               layout_width;
-  gint               layout_offset;
+  gint               dialog_width;
   gint               parent_width = 500;
-  XfceFilenameInput *filename_input;
   gint               row = 0;
 
   _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WINDOW (parent), FALSE);
@@ -305,6 +304,7 @@ thunar_dialogs_show_rename_file (gpointer               parent,
 
   /* set up the widget for entering the filename */
   filename_input = g_object_new (XFCE_TYPE_FILENAME_INPUT, "original-filename", filename, NULL);
+  filename_input_entry = xfce_filename_input_get_entry (filename_input);
   gtk_widget_set_hexpand (GTK_WIDGET (filename_input), TRUE);
   gtk_widget_set_valign (GTK_WIDGET (filename_input), GTK_ALIGN_CENTER);
 
@@ -314,40 +314,39 @@ thunar_dialogs_show_rename_file (gpointer               parent,
                             gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
   g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (xfce_filename_input_sensitise_widget),
                             gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
-                          
-                            /* next row */
+
+  /* next row */
   row++;
 
   gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (filename_input), 1, row, 1, 1);
-  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label),
-                                      GTK_WIDGET (xfce_filename_input_get_entry (filename_input)));
-  gtk_widget_show_all ( GTK_WIDGET (filename_input));
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), GTK_WIDGET (filename_input_entry));
+  gtk_widget_show_all (GTK_WIDGET (filename_input));
 
   /* ensure that the sensitivity of the Create button is set correctly */
   xfce_filename_input_check (filename_input);
 
   /* If it is no directory, select the filename without the extension */
   if (thunar_file_is_directory (file))
-    gtk_editable_select_region (GTK_EDITABLE (xfce_filename_input_get_entry (filename_input)), 0, -1);
+    gtk_editable_select_region (GTK_EDITABLE (filename_input_entry), 0, -1);
   else
-    thunar_dialogs_select_filename (GTK_WIDGET (xfce_filename_input_get_entry (filename_input)));
+    thunar_dialogs_select_filename (GTK_WIDGET (filename_input_entry));
 
-  /* get the size the entry requires to render the full text */
-  layout = gtk_entry_get_layout (xfce_filename_input_get_entry (filename_input));
-  pango_layout_get_pixel_size (layout, &layout_width, NULL);
-  gtk_entry_get_layout_offsets (xfce_filename_input_get_entry (filename_input), &layout_offset, NULL);
-  layout_width += (layout_offset * 2) + (12 * 4) + 48; /* 12px free space in entry */
+  /* change the width of the input entry to be about the right size for N chars (filename length) */
+  gtk_entry_set_max_width_chars (filename_input_entry, g_utf8_strlen (filename, -1));
+
+  /* dialog window width */
+  gtk_window_get_size (GTK_WINDOW (dialog), &dialog_width, NULL);
 
   /* parent window width */
   if (G_LIKELY (window != NULL))
     {
       /* keep below 90% of the parent window width */
-      gtk_window_get_size (GTK_WINDOW (window), &parent_width, NULL);
+      gtk_window_get_size (window, &parent_width, NULL);
       parent_width *= 0.90f;
     }
 
   /* resize the dialog to make long names fit as much as possible */
-  gtk_window_set_default_size (GTK_WINDOW (dialog), CLAMP (layout_width, 300, parent_width), -1);
+  gtk_window_set_default_size (GTK_WINDOW (dialog), CLAMP (dialog_width, 300, parent_width), -1);
 
   /* automatically close the dialog when the file is destroyed */
   g_signal_connect_swapped (G_OBJECT (file), "destroy",
