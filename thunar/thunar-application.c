@@ -77,6 +77,7 @@ static gchar   *opt_sm_client_id = NULL;
 static const GOptionEntry option_entries[] =
 {
   { "bulk-rename", 'B', 0, G_OPTION_ARG_NONE, NULL, N_ ("Open the bulk rename dialog"), NULL, },
+  { "window", 'w', 0, G_OPTION_ARG_NONE, NULL, N_ ("Force open in a new window"), NULL, },
   { "daemon", 0, 0, G_OPTION_ARG_NONE, NULL, N_ ("Run in daemon mode"), NULL, },
   { "sm-client-id", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_STRING, &opt_sm_client_id, NULL, NULL, },
   { "quit", 'q', 0, G_OPTION_ARG_NONE, NULL, N_ ("Quit a running Thunar instance"), NULL, },
@@ -199,6 +200,7 @@ struct _ThunarApplication
   ThunarDBusService              *dbus_service;
 
   gboolean                        daemon;
+  gboolean                        force_new_window;
 
   guint                           accel_map_load_id;
   guint                           accel_map_save_id;
@@ -285,6 +287,7 @@ thunar_application_init (ThunarApplication *application)
   /* we do most initialization in GApplication::startup since it is only needed
    * in the primary instance anyways */
 
+  application->force_new_window = FALSE;
   application->files_to_launch = NULL;
   application->process_file_action = THUNAR_APPLICATION_SELECT_FILES;
   application->progress_dialog = NULL;
@@ -503,6 +506,7 @@ thunar_application_command_line (GApplication            *gapp,
 
   /* retrieve arguments */
   g_variant_dict_lookup (options_dict, "bulk-rename", "b", &bulk_rename);
+  g_variant_dict_lookup (options_dict, "window", "b", &application->force_new_window);
   g_variant_dict_lookup (options_dict, "quit", "b", &quit);
   g_variant_dict_lookup (options_dict, "daemon", "b", &daemon);
   g_variant_dict_lookup (options_dict, G_OPTION_REMAINING, "^aay", &filenames);
@@ -1685,7 +1689,7 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
         }
       else if (thunar_file_is_directory (file))
         {
-          thunar_application_open_window (application, file, screen, startup_id, FALSE);
+          thunar_application_open_window (application, file, screen, startup_id, application->force_new_window);
         }
       else
         {
@@ -1698,7 +1702,7 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
               GList* files = NULL;
               GtkWidget *window;
 
-              window = thunar_application_open_window (application, parent, screen, startup_id, FALSE);
+              window = thunar_application_open_window (application, parent, screen, startup_id, application->force_new_window);
               g_object_unref (parent);
 
               files = g_list_append (files, thunar_file_get_file (file));
@@ -1717,6 +1721,8 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
           /* continue processing the next file */
           thunar_application_process_files (application);
         }
+
+      application->force_new_window = FALSE;
     }
 
   /* unset the startup id */
