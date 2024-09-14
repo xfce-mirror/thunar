@@ -767,6 +767,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   ThunarIconFactory *icon_factory;
   ThunarPreferences *preferences;
   ThunarDateStyle    date_style;
+  ThunarFile        *parent_file;
   GtkIconTheme      *icon_theme;
   GtkWidget         *dialog;
   GtkWidget         *grid;
@@ -778,6 +779,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   GdkPixbuf         *icon;
   cairo_surface_t   *surface;
   PangoAttrList     *attr_list;
+  const gchar       *parent_string = "";
   gchar             *date_custom_style;
   gchar             *date_string;
   gchar             *size_string;
@@ -920,11 +922,18 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   g_signal_connect_swapped (G_OBJECT (dst_file), "thumbnail-updated", G_CALLBACK (thunar_dialog_image_redraw), dst_image);
   thunar_file_request_thumbnail (dst_file, thunar_icon_size_to_thumbnail_size (48 * scale_factor));
 
+  parent_file = thunar_file_get_parent (dst_file, NULL);
+  if (parent_file != NULL)
+    {
+      parent_string = thunar_file_get_basename (parent_file);
+      g_object_unref (parent_file);
+    }
   size_string = thunar_file_get_size_string_long (dst_file, file_size_binary);
   date_string = thunar_file_get_date_string (dst_file, THUNAR_FILE_DATE_MODIFIED, date_style, date_custom_style);
-  text = g_strdup_printf ("%s %s\n%s %s", _("Size:"), size_string, _("Modified:"), date_string);
+  text = g_strdup_printf ("%s %s\n%s %s\n%s %s", _("Folder:"), parent_string, _("Size:"), size_string, _("Modified:"), date_string);
   label = gtk_label_new (text);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
+  gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_MIDDLE);
   gtk_widget_set_hexpand (label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), label, 2, row, 1, 1);
   gtk_widget_show (label);
