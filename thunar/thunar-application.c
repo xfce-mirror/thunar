@@ -50,6 +50,7 @@
 #include "thunar/thunar-dialogs.h"
 #include "thunar/thunar-gdk-extensions.h"
 #include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-io-jobs.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
@@ -2432,10 +2433,12 @@ thunar_application_unlink_files (ThunarApplication            *application,
                                  const ThunarOperationLogMode  log_mode)
 {
   GtkWidget *dialog;
+  GtkWidget *message_area;
   GtkWindow *window;
   GdkScreen *screen;
   GList     *path_list = NULL;
   GList     *lp;
+  GList     *children;
   gchar     *message;
   guint      n_path_list = 0;
   gint       response;
@@ -2501,6 +2504,17 @@ thunar_application_unlink_files (ThunarApplication            *application,
       gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
       gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
                                                 _("If you delete a file, it is permanently lost."));
+
+      /* additionally wrap long single-word filenames at character boundaries */
+      message_area = gtk_message_dialog_get_message_area (GTK_MESSAGE_DIALOG (dialog));
+      children = gtk_container_get_children (GTK_CONTAINER (message_area));
+      if (children != NULL && GTK_IS_LABEL (children->data))
+        {
+          gtk_label_set_line_wrap_mode (GTK_LABEL (children->data), PANGO_WRAP_WORD_CHAR);
+          thunar_gtk_label_disable_hyphens (GTK_LABEL (children->data));
+        }
+      g_list_free (children);
+
       response = gtk_dialog_run (GTK_DIALOG (dialog));
       gtk_widget_destroy (dialog);
       g_free (message);
