@@ -1540,7 +1540,10 @@ _thunar_search_folder (ThunarStandardViewModel           *model,
    * which allows them to appear in the search results. */
   enumerator = g_file_enumerate_children (directory, namespace, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, cancellable, NULL);
   if (enumerator == NULL)
-    return;
+    {
+      g_object_unref (directory);
+      return;
+    }
 
   /* go through every file in the folder and check if it matches */
   while (exo_job_is_cancelled (EXO_JOB (job)) == FALSE)
@@ -1560,7 +1563,10 @@ _thunar_search_folder (ThunarStandardViewModel           *model,
           g_object_unref (info);
           info = g_file_query_info (file, namespace, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, cancellable, NULL);
           if (G_UNLIKELY (info == NULL))
-            break;
+            {
+              g_object_unref (file);
+              break;
+            }
         }
       else
         file = g_file_get_child (directory, g_file_info_get_name (info));
