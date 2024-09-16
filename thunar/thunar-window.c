@@ -787,7 +787,6 @@ thunar_window_init (ThunarWindow *window)
   GtkWidget             *item;
   GtkWidget             *event_box;
   gboolean               last_menubar_visible;
-  gchar                 *last_location_bar;
   ThunarSidepaneType     last_side_pane;
   gchar                 *uca_path;
   gchar                 *catfish_path;
@@ -829,7 +828,6 @@ thunar_window_init (ThunarWindow *window)
                 "last-window-maximized", &last_window_maximized,
                 "last-menubar-visible", &last_menubar_visible,
                 "last-separator-position", &last_separator_position,
-                "last-location-bar", &last_location_bar,
                 "last-side-pane", &last_side_pane,
                 "last-statusbar-visible", &last_statusbar_visible,
                 "last-image-preview-visible", &last_image_preview_visible,
