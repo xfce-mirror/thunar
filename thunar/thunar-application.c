@@ -560,14 +560,13 @@ thunar_application_command_line (GApplication            *gapp,
   if (restore_tabs && open_first_window && window_list != NULL)
     {
       ThunarWindow *window;
-      GList        *lp;
       gchar       **tabs_left;
       gchar       **tabs_right;
       gboolean      has_left_tabs; /* used to check whether the split-view should be enabled */
       gint          last_focused_tab;
 
-      lp = g_list_last (window_list); /* this will be the topmost Window */
-      window = THUNAR_WINDOW (lp->data);
+      /* this will be the topmost Window */
+      window = THUNAR_WINDOW (g_list_last (window_list)->data);
 
       /* restore left tabs */
       has_left_tabs = FALSE;
