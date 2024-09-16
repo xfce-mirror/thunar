@@ -1978,7 +1978,7 @@ thunar_io_jobs_load_statusbar_text_for_folder (ThunarStandardView *standard_view
   gboolean           show_hidden;
   gboolean           show_file_size_binary_format;
   ThunarDateStyle    date_style;
-  const gchar       *date_custom_style;
+  gchar             *date_custom_style;
   guint              status_bar_active_info;
   GHashTable        *files;
   ThunarFile        *file;
@@ -2005,6 +2005,7 @@ thunar_io_jobs_load_statusbar_text_for_folder (ThunarStandardView *standard_view
                                           THUNAR_TYPE_DATE_STYLE, date_style,
                                           G_TYPE_STRING, date_custom_style,
                                           G_TYPE_UINT, status_bar_active_info);
+  g_free (date_custom_style);
 
   g_signal_connect_swapped (job, "finished", G_CALLBACK (g_object_unref), file);
   g_signal_connect_swapped (job, "finished", G_CALLBACK (g_object_unref), standard_view);
@@ -2020,7 +2021,7 @@ thunar_io_jobs_load_statusbar_text_for_selection (ThunarStandardView *standard_v
   gboolean           show_hidden;
   gboolean           show_file_size_binary_format;
   ThunarDateStyle    date_style;
-  const gchar       *date_custom_style;
+  gchar             *date_custom_style;
   guint              status_bar_active_info;
 
   preferences = thunar_preferences_get ();
@@ -2039,6 +2040,7 @@ thunar_io_jobs_load_statusbar_text_for_selection (ThunarStandardView *standard_v
                                           THUNAR_TYPE_DATE_STYLE, date_style,
                                           G_TYPE_STRING, date_custom_style,
                                           G_TYPE_UINT, status_bar_active_info);
+  g_free (date_custom_style);
 
   g_signal_connect_swapped (job, "finished", G_CALLBACK (g_object_unref), standard_view);
   return job;
