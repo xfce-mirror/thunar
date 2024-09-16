@@ -1612,7 +1612,10 @@ _thunar_search_folder (ThunarStandardViewModel           *model,
   g_object_unref (directory);
 
   if (exo_job_is_cancelled (EXO_JOB (job)))
-    return;
+    {
+      g_list_free (files_found);
+      return;
+    }
 
   thunar_standard_view_model_add_search_files (model, files_found);
 }
