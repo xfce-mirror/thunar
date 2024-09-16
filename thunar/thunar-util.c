@@ -1501,6 +1501,7 @@ thunar_util_get_statusbar_text_for_single_file (ThunarFile *file)
       text_list = g_list_append (text_list, temp_string);
       g_free (date_string);
     }
+  g_free (date_custom_style);
 
   text = thunar_util_strjoin_list (text_list, "  |  ");
   g_list_free_full (text_list, g_free);
