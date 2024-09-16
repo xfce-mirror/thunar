@@ -792,6 +792,7 @@ thunar_application_accel_map_init (gpointer user_data)
       ThunarWindow *window = lp->data;
       thunar_window_reconnect_accelerators (window);
     }
+  g_list_free (windows);
 
   /* watch for thunar-internal accelerator changes, in order to write changes to file if required */
   application->accel_map = gtk_accel_map_get ();
