@@ -1517,6 +1517,8 @@ thunar_application_open_window (ThunarApplication *application,
   if (misc_always_enable_split_view && (window_list != NULL || !restore_tabs))
     thunar_window_notebook_toggle_split_view (THUNAR_WINDOW (window));
 
+  g_list_free (window_list);
+
   return window;
 }
 
