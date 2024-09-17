@@ -1110,6 +1110,8 @@ thunar_standard_view_finalize (GObject *object)
       standard_view->priv->statusbar_job = NULL;
     }
 
+  g_free (standard_view->priv->search_query);
+
   g_mutex_clear (&standard_view->priv->statusbar_text_mutex);
 
   /* release the scroll_to_files hash table */
