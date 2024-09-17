@@ -1260,6 +1260,7 @@ thunar_window_open_files_in_location (ThunarWindow *window,
         {
           GList *list = g_hash_table_lookup (restore_show_table, original_dir_path);
           list = g_list_append (list, g_file_new_for_commandline_arg (original_uri));
+          g_free (original_dir_path);
         }
 
       g_free (original_uri);
