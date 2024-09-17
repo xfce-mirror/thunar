@@ -1453,12 +1453,10 @@ thunar_application_open_window (ThunarApplication *application,
     {
       if (window_list != NULL)
         {
-          GList     *lp = window_list;
           GtkWidget *data;
 
           /* this will be the topmost Window */
-          window_list = g_list_last (window_list);
-          data = window_list->data;
+          data = g_list_last (window_list)->data;
 
           if (directory != NULL)
               thunar_window_notebook_add_new_tab (THUNAR_WINDOW (data), directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
@@ -1466,7 +1464,7 @@ thunar_application_open_window (ThunarApplication *application,
           /* bring the window to front */
           gtk_window_present (GTK_WINDOW (data));
 
-          g_list_free (lp);
+          g_list_free (window_list);
 
           return data;
         }
