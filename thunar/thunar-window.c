@@ -1183,8 +1183,8 @@ hash_table_entry_show_and_select_files (gpointer key, gpointer list, gpointer ap
 
   /* select files */
   window_list = thunar_application_get_windows (application);
-  window_list = g_list_last (window_list); /* this will be the topmost Window */
-  thunar_window_select_files (THUNAR_WINDOW (window_list->data), list);
+  /* this will be the topmost Window */
+  thunar_window_select_files (THUNAR_WINDOW (g_list_last (window_list)->data), list);
 
   /* free memory */
   g_list_free (window_list);
