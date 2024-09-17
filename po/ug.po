@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-09-10 00:47+0200\n"
+"POT-Creation-Date: 2024-09-17 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Uyghur (http://app.transifex.com/xfce/thunar/language/ug/)\n"
@@ -24,13 +24,13 @@ msgstr "سۇنار(Thunar)"
 
 #. change the accept button label text
 #: thunar/thunar-action-manager.c:269 thunar/thunar-chooser-dialog.c:887
-#: thunar/thunar-chooser-dialog.c:1298 thunar/thunar-dialogs.c:1279
+#: thunar/thunar-chooser-dialog.c:1298 thunar/thunar-dialogs.c:1273
 #: thunar/thunar-renamer-dialog.c:1075
 #: plugins/thunar-uca/thunar-uca-editor.c:181
 msgid "_Open"
 msgstr "ئاچ(_O)"
 
-#: thunar/thunar-action-manager.c:270 thunar/thunar-dialogs.c:1273
+#: thunar/thunar-action-manager.c:270 thunar/thunar-dialogs.c:1267
 msgid "_Execute"
 msgstr "ئىجرا قىل(_E)"
 
@@ -119,7 +119,7 @@ msgid "_Rename..."
 msgstr "ئات ئۆزگەرت(_R)..."
 
 #. prepare the menu item
-#: thunar/thunar-action-manager.c:287 thunar/thunar-application.c:2742
+#: thunar/thunar-action-manager.c:287 thunar/thunar-application.c:2763
 #: plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "ئەخلەتخانىنى قۇرۇقدا(_E)"
@@ -164,7 +164,7 @@ msgstr ""
 msgid "Mo_ve to Trash"
 msgstr ""
 
-#: thunar/thunar-action-manager.c:297 thunar/thunar-application.c:2493
+#: thunar/thunar-action-manager.c:297 thunar/thunar-application.c:2503
 #: plugins/thunar-uca/thunar-uca-chooser.c:375
 msgid "_Delete"
 msgstr "ئۆچۈر(_D)"
@@ -266,13 +266,13 @@ msgstr[1] "%d دانە كۆزنەك ئاچ"
 
 #. add the "Cancel" button
 #. configure the dialog properties
-#: thunar/thunar-action-manager.c:1009 thunar/thunar-application.c:2492
-#: thunar/thunar-application.c:2553 thunar/thunar-application.c:2741
+#: thunar/thunar-action-manager.c:1009 thunar/thunar-application.c:2502
+#: thunar/thunar-application.c:2574 thunar/thunar-application.c:2762
 #: thunar/thunar-chooser-dialog.c:293 thunar/thunar-chooser-dialog.c:760
 #: thunar/thunar-chooser-dialog.c:835 thunar/thunar-chooser-dialog.c:886
-#: thunar/thunar-dialogs.c:112 thunar/thunar-dialogs.c:261
-#: thunar/thunar-dialogs.c:698 thunar/thunar-dialogs.c:807
-#: thunar/thunar-dialogs.c:1094 thunar/thunar-dialogs.c:1187
+#: thunar/thunar-dialogs.c:112 thunar/thunar-dialogs.c:260
+#: thunar/thunar-dialogs.c:697 thunar/thunar-dialogs.c:805
+#: thunar/thunar-dialogs.c:1088 thunar/thunar-dialogs.c:1181
 #: thunar/thunar-dnd.c:173 thunar/thunar-permissions-chooser.c:561
 #: thunar/thunar-permissions-chooser.c:1172
 #: thunar/thunar-properties-dialog.c:1196 thunar/thunar-renamer-dialog.c:1074
@@ -293,8 +293,8 @@ msgid "Failed to mount \"%s\""
 msgstr "«%s» نى ئېگەرلەش مەغلۇپ بولدى"
 
 #. tell the user that we were unable to launch the file specified
-#: thunar/thunar-action-manager.c:1147 thunar/thunar-application.c:1671
-#: thunar/thunar-application.c:1831 thunar/thunar-location-entry.c:345
+#: thunar/thunar-action-manager.c:1147 thunar/thunar-application.c:1677
+#: thunar/thunar-application.c:1839 thunar/thunar-location-entry.c:345
 #: thunar/thunar-location-entry.c:378
 #, c-format
 msgid "Failed to open \"%s\""
@@ -427,16 +427,16 @@ msgstr[0] ""
 msgstr[1] "تاللانغان ھۆججەت «%s» گە ئەۋەت"
 
 #. ask the user to enter a name for the new folder
-#: thunar/thunar-action-manager.c:2676 thunar/thunar-application.c:2023
+#: thunar/thunar-action-manager.c:2676 thunar/thunar-application.c:2031
 msgid "New Folder"
 msgstr "يېڭى مۇندەرىجە"
 
-#: thunar/thunar-action-manager.c:2680 thunar/thunar-application.c:2024
+#: thunar/thunar-action-manager.c:2680 thunar/thunar-application.c:2032
 msgid "Create New Folder"
 msgstr "يېڭى مۇندەرىجە قۇر"
 
 #. generate a title for the create dialog
-#: thunar/thunar-action-manager.c:2732 thunar/thunar-application.c:2088
+#: thunar/thunar-action-manager.c:2732 thunar/thunar-application.c:2096
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "قېلىپ «%s» غا ئاساسەن پۈتۈك قۇر"
@@ -496,137 +496,141 @@ msgstr "تاللانغان ھۆججەتنى كۆڭۈلدىكى پروگرامم�
 msgid "Ope_n With"
 msgstr ""
 
-#: thunar/thunar-application.c:79
+#: thunar/thunar-application.c:80
 msgid "Open the bulk rename dialog"
 msgstr "بىراقلا ئات ئۆزگەرتىش كۆزنىكىنى ئاچ"
 
-#: thunar/thunar-application.c:80
+#: thunar/thunar-application.c:81
+msgid "Force open in a new window"
+msgstr ""
+
+#: thunar/thunar-application.c:82
 msgid "Run in daemon mode"
 msgstr "مۇئەككەل ھالىتىدە ئىجرا قىل"
 
-#: thunar/thunar-application.c:82
+#: thunar/thunar-application.c:84
 msgid "Quit a running Thunar instance"
 msgstr "ئىجرا قىلىنىۋاتقان سۇنار(Thunar) نىڭ ئۈلگىسىنى ئاخىرلاشتۇر"
 
-#: thunar/thunar-application.c:83
+#: thunar/thunar-application.c:85
 msgid "Print version information and exit"
 msgstr "نەشر ئۇچۇرىنى كۆرسىتىپ ئاخىرلاشتۇرۇش"
 
-#: thunar/thunar-application.c:303
+#: thunar/thunar-application.c:307
 #, c-format
 msgid "Acquired the session message bus '%s'\n"
 msgstr ""
 
-#: thunar/thunar-application.c:313
+#: thunar/thunar-application.c:317
 #, c-format
 msgid "Acquired the name '%s' on the session message bus\n"
 msgstr ""
 
-#: thunar/thunar-application.c:323
+#: thunar/thunar-application.c:327
 #, c-format
 msgid "Name '%s' lost on the message dbus."
 msgstr ""
 
-#: thunar/thunar-application.c:474
+#: thunar/thunar-application.c:478
 msgid "The Thunar development team. All rights reserved."
 msgstr "سۇنار(Thunar) ئىجادىيەت گۇرۇپپىسى. نەشر ھوقۇقى ئۆزىمىزگە تەۋە."
 
-#: thunar/thunar-application.c:475
+#: thunar/thunar-application.c:479
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
 msgstr "ئىجادىيەتچى: Benedikt Meurer <benny@xfce.org>"
 
-#: thunar/thunar-application.c:476
+#: thunar/thunar-application.c:480
 #, c-format
 msgid "Please report bugs to <%s>."
 msgstr "كەمتۈكنى <%s> غا دوكلات قىلىڭ."
 
 #. display an error message to the user
-#: thunar/thunar-application.c:880
+#: thunar/thunar-application.c:886
 msgid "Failed to launch operation"
 msgstr "مەشغۇلاتنى ئىجرا قىلىش مەغلۇپ بولدى"
 
-#: thunar/thunar-application.c:1667
+#: thunar/thunar-application.c:1673
 #, c-format
 msgid "Failed to open \"%s\" (%s)"
 msgstr ""
 
-#: thunar/thunar-application.c:1835
+#: thunar/thunar-application.c:1843
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "«%s» نى ئېچىش مەغلۇپ بولدى: %s"
 
-#: thunar/thunar-application.c:1894 thunar/thunar-properties-dialog.c:1096
+#: thunar/thunar-application.c:1902 thunar/thunar-properties-dialog.c:1096
 #, c-format
 msgid "Failed to rename \"%s\" (%s)"
 msgstr ""
 
-#: thunar/thunar-application.c:1898 thunar/thunar-properties-dialog.c:1100
+#: thunar/thunar-application.c:1906 thunar/thunar-properties-dialog.c:1100
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "«%s» نىڭ ئاتىنى ئۆزگەرتىش مەغلۇپ بولدى"
 
-#: thunar/thunar-application.c:1947
+#: thunar/thunar-application.c:1955
 msgid "Rename Launcher Options"
 msgstr ""
 
-#: thunar/thunar-application.c:1950
+#: thunar/thunar-application.c:1958
 msgid "Do you want to rename the launcher, or the file itself?"
 msgstr ""
 
-#: thunar/thunar-application.c:1951
+#: thunar/thunar-application.c:1959
 msgid "Rename _Launcher"
 msgstr ""
 
-#: thunar/thunar-application.c:1952
+#: thunar/thunar-application.c:1960
 msgid "Rename _File"
 msgstr ""
 
-#: thunar/thunar-application.c:2028
+#: thunar/thunar-application.c:2036
 msgid "New File"
 msgstr "يېڭى ھۆججەت"
 
-#: thunar/thunar-application.c:2029
+#: thunar/thunar-application.c:2037
 msgid "Create New File"
 msgstr "يېڭى ھۆججەت قۇرۇش"
 
-#: thunar/thunar-application.c:2154
+#: thunar/thunar-application.c:2162
 msgid "Copying files..."
 msgstr "ھۆججەتلەرنى كۆچۈرۈۋاتىدۇ..."
 
-#: thunar/thunar-application.c:2214
+#: thunar/thunar-application.c:2222
 #, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "ھۆججەتلەرنى «%s» گە كۆچۈرۈۋاتىدۇ..."
 
-#: thunar/thunar-application.c:2270
+#: thunar/thunar-application.c:2278
 #, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "«%s» نىڭ ئىچىگە بەلگىلىك(symbolic) ئۇلانما قۇرۇۋاتىدۇ..."
 
-#: thunar/thunar-application.c:2339
+#: thunar/thunar-application.c:2347
 #, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "ھۆججەتلەرنى «%s» گە يۆتكەۋاتىدۇ..."
 
-#: thunar/thunar-application.c:2384
+#: thunar/thunar-application.c:2392
 msgid "Moving files ..."
 msgstr ""
 
-#: thunar/thunar-application.c:2467
+#: thunar/thunar-application.c:2477
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\" (%s)?"
 msgstr ""
 
-#: thunar/thunar-application.c:2471
+#: thunar/thunar-application.c:2481
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr "راستلا «%s» نى مەڭگۈلۈككە \nئۆچۈرەمسىز؟"
 
-#: thunar/thunar-application.c:2476
+#: thunar/thunar-application.c:2486
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -637,34 +641,34 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] "تاللانغان %u دانە ھۆججەتنى\nراستلا ئۆچۈرەمسىز؟"
 
-#: thunar/thunar-application.c:2490 thunar/thunar-application.c:2551
-#: thunar/thunar-dialogs.c:616 thunar/thunar-dialogs.c:1090
+#: thunar/thunar-application.c:2500 thunar/thunar-application.c:2572
+#: thunar/thunar-dialogs.c:615 thunar/thunar-dialogs.c:1084
 msgid "Attention"
 msgstr ""
 
-#: thunar/thunar-application.c:2497
+#: thunar/thunar-application.c:2507
 msgid "If you delete a file, it is permanently lost."
 msgstr "ھۆججەتنى ئۆچۈرسىڭىز، ئۇ مەڭگۈلۈككە يوقىلىدۇ."
 
-#: thunar/thunar-application.c:2507 thunar/thunar-application.c:2516
+#: thunar/thunar-application.c:2528 thunar/thunar-application.c:2537
 msgid "Deleting files..."
 msgstr "ھۆججەتلەرنى ئۆچۈرۈۋاتىدۇ..."
 
-#: thunar/thunar-application.c:2528
+#: thunar/thunar-application.c:2549
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "move \"%s\" (%s) to trash ?"
 msgstr ""
 
-#: thunar/thunar-application.c:2532
+#: thunar/thunar-application.c:2553
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "move \"%s\" to trash ?"
 msgstr ""
 
-#: thunar/thunar-application.c:2537
+#: thunar/thunar-application.c:2558
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -675,61 +679,61 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: thunar/thunar-application.c:2554
+#: thunar/thunar-application.c:2575
 msgid "Move to Trash"
 msgstr ""
 
-#: thunar/thunar-application.c:2607
+#: thunar/thunar-application.c:2628
 msgid "Moving files into the trash..."
 msgstr "ھۆججەتلەرنى ئەخلەتخانىغا يۆتكەۋاتىدۇ..."
 
-#: thunar/thunar-application.c:2655
+#: thunar/thunar-application.c:2676
 msgid "Creating files..."
 msgstr "ھۆججەتلەرنى قۇرۇۋاتىدۇ..."
 
-#: thunar/thunar-application.c:2696
+#: thunar/thunar-application.c:2717
 msgid "Creating directories..."
 msgstr "مۇندەرىجىلەرنى قۇرۇۋاتىدۇ..."
 
-#: thunar/thunar-application.c:2735
+#: thunar/thunar-application.c:2756
 msgid "Remove all files and folders from the Trash?"
 msgstr "ئەخلەتخانىدىكى ھەممە ھۆججەت ۋە مۇندەرىجىنى ئۆچۈرسۇنمۇ؟"
 
-#: thunar/thunar-application.c:2739 thunar/thunar-window.c:1117
+#: thunar/thunar-application.c:2760 thunar/thunar-window.c:1115
 msgid "Empty Trash"
 msgstr ""
 
-#: thunar/thunar-application.c:2746
+#: thunar/thunar-application.c:2767
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr "ئەخلەتخانىنى قۇرۇقدىسىڭىز ئۇنىڭدىكى ھەممە نەرسە يوقىلىدۇ، قەتئىي ئەسلىگە كەلمەيدۇ. ئەخلەتخانىدىكى تۈرلەرنى ئايرىم-ئايرىممۇ ئۆچۈرگىلى بولىدۇ جۇمۇ."
 
-#: thunar/thunar-application.c:2763
+#: thunar/thunar-application.c:2784
 msgid "Emptying the Trash..."
 msgstr "ئەخلەتخانىنى قۇرۇقداۋاتىدۇ..."
 
-#: thunar/thunar-application.c:2810
+#: thunar/thunar-application.c:2831
 #, c-format
 msgid "Failed to determine the original path for \"%s\" (%s)"
 msgstr ""
 
-#: thunar/thunar-application.c:2815
+#: thunar/thunar-application.c:2836
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "«%s» نىڭ ئەسلىدىكى يولىنى ئېنىقلاش مەغلۇپ بولدى"
 
-#: thunar/thunar-application.c:2833
+#: thunar/thunar-application.c:2854
 #, c-format
 msgid "Could not restore \"%s\" (%s)"
 msgstr ""
 
-#: thunar/thunar-application.c:2837
+#: thunar/thunar-application.c:2858
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "«%s» نى ئەسلىگە كەلتۈرگىلى بولمىدى"
 
-#: thunar/thunar-application.c:2845
+#: thunar/thunar-application.c:2866
 msgid "Restoring files..."
 msgstr "ھۆججەتلەرنى ئەسلگە كەلتۈرۈۋاتىدۇ..."
 
@@ -785,7 +789,7 @@ msgstr "مۇشۇ تىپتىكى ھۆججەتكە نىسبەتەن كۆڭۈلدى
 
 #. add the "Ok"/"Open" button
 #: thunar/thunar-chooser-dialog.c:296 thunar/thunar-chooser-dialog.c:1298
-#: thunar/thunar-properties-dialog.c:1197 thunar/thunar-window.c:4551
+#: thunar/thunar-properties-dialog.c:1197 thunar/thunar-window.c:4549
 #: plugins/thunar-uca/thunar-uca-editor.c:146
 #: plugins/thunar-uca/thunar-uca-editor.c:439
 msgid "_OK"
@@ -1150,25 +1154,25 @@ msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "ھۆججەت ئاتى«%s» نى يەرلىك كودلاشقا ئايلاندۇرغىلى بولمىدى"
 
 #. create a new dialog window
-#: thunar/thunar-dialogs.c:256
+#: thunar/thunar-dialogs.c:255
 #, c-format
 msgid "Rename \"%s\""
 msgstr "«%s» نىڭ ئاتىنى ئۆزگەرتىش"
 
 #. add the "Rename" button
-#: thunar/thunar-dialogs.c:262 thunar/thunar-renamer-dialog.c:386
+#: thunar/thunar-dialogs.c:261 thunar/thunar-renamer-dialog.c:386
 msgid "_Rename"
 msgstr "ئاتىنى ئۆزگەرت(_R)"
 
-#: thunar/thunar-dialogs.c:300
+#: thunar/thunar-dialogs.c:299
 msgid "Enter the new name:"
 msgstr "يېڭى ئات:"
 
-#: thunar/thunar-dialogs.c:454
+#: thunar/thunar-dialogs.c:453
 msgid "translator-credits"
 msgstr "غەيرەت ت.كەنجى <gheyret@gmail.com>"
 
-#: thunar/thunar-dialogs.c:516 thunar/thunar-renamer-progress.c:168
+#: thunar/thunar-dialogs.c:515 thunar/thunar-renamer-progress.c:168
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:826
 #: plugins/thunar-sendto-email/main.c:144
 #: plugins/thunar-uca/thunar-uca-chooser.c:320
@@ -1176,121 +1180,121 @@ msgstr "غەيرەت ت.كەنجى <gheyret@gmail.com>"
 msgid "Error"
 msgstr "خاتالىق"
 
-#: thunar/thunar-dialogs.c:631 thunar/thunar-permissions-chooser.c:563
+#: thunar/thunar-dialogs.c:630 thunar/thunar-permissions-chooser.c:563
 msgid "_Yes"
 msgstr "ھەئە(_Y)"
 
-#: thunar/thunar-dialogs.c:635
+#: thunar/thunar-dialogs.c:634
 msgid "Yes to _all"
 msgstr "ھەممىسىگە ھەئە(_A)"
 
-#: thunar/thunar-dialogs.c:639 thunar/thunar-dialogs.c:810
+#: thunar/thunar-dialogs.c:638 thunar/thunar-dialogs.c:808
 msgid "_Replace"
 msgstr "ئالماشتۇر(_R)"
 
-#: thunar/thunar-dialogs.c:643
+#: thunar/thunar-dialogs.c:642
 msgid "Replace _All"
 msgstr "ھەممىنى ئالماشتۇر(_A)"
 
-#: thunar/thunar-dialogs.c:647 thunar/thunar-dialogs.c:808
+#: thunar/thunar-dialogs.c:646 thunar/thunar-dialogs.c:806
 msgid "_Skip"
 msgstr "ئۆتكۈزۈۋەت(_S)"
 
-#: thunar/thunar-dialogs.c:651
+#: thunar/thunar-dialogs.c:650
 msgid "S_kip All"
 msgstr "ھەممىسىنى ئۆتكۈزۈۋەت(_K)"
 
-#: thunar/thunar-dialogs.c:655 thunar/thunar-dialogs.c:809
+#: thunar/thunar-dialogs.c:654 thunar/thunar-dialogs.c:807
 msgid "Re_name"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:659
+#: thunar/thunar-dialogs.c:658
 msgid "Rena_me All"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:663 thunar/thunar-permissions-chooser.c:562
+#: thunar/thunar-dialogs.c:662 thunar/thunar-permissions-chooser.c:562
 msgid "_No"
 msgstr "ياق(_N)"
 
-#: thunar/thunar-dialogs.c:667
+#: thunar/thunar-dialogs.c:666
 msgid "N_o to all"
 msgstr "ھەممىسىگە ياق(_O)"
 
-#: thunar/thunar-dialogs.c:671
+#: thunar/thunar-dialogs.c:670
 msgid "_Retry"
 msgstr "قايتا(_R)"
 
-#: thunar/thunar-dialogs.c:675
+#: thunar/thunar-dialogs.c:674
 msgid "Copy _Anyway"
 msgstr ""
 
 #. setup the confirmation dialog
-#: thunar/thunar-dialogs.c:804
+#: thunar/thunar-dialogs.c:802
 msgid "Confirm to replace files"
 msgstr "ھۆججەتلەرنى ئالماشتۇرۇشنى جەزملەش"
 
-#: thunar/thunar-dialogs.c:851
+#: thunar/thunar-dialogs.c:849
 #, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
 msgstr "قىسقۇچتا بەلگىلىك(symbolic) ئۇلانما «%s» بار."
 
-#: thunar/thunar-dialogs.c:856
+#: thunar/thunar-dialogs.c:854
 #, c-format
 msgid "This folder already contains a folder \"%s\"."
 msgstr "قىسقۇچتا «%s» دېگەن قىسقۇچ بار"
 
-#: thunar/thunar-dialogs.c:862
+#: thunar/thunar-dialogs.c:860
 #, c-format
 msgid "This folder already contains a file \"%s\" (%s)."
 msgstr ""
 
-#: thunar/thunar-dialogs.c:866
+#: thunar/thunar-dialogs.c:864
 #, c-format
 msgid "This folder already contains a file \"%s\"."
 msgstr "مەزكۇر مۇندەرىجىدە ھۆججەت «%s» بار ئىكەن."
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: thunar/thunar-dialogs.c:888
+#: thunar/thunar-dialogs.c:882
 msgid "Do you want to replace the link"
 msgstr ""
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: thunar/thunar-dialogs.c:891
+#: thunar/thunar-dialogs.c:885
 msgid "Do you want to replace the existing folder"
 msgstr ""
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: thunar/thunar-dialogs.c:894
+#: thunar/thunar-dialogs.c:888
 msgid "Do you want to replace the existing file"
 msgstr ""
 
 #. Fourth box (size)
-#: thunar/thunar-dialogs.c:926 thunar/thunar-dialogs.c:976
+#: thunar/thunar-dialogs.c:920 thunar/thunar-dialogs.c:970
 #: thunar/thunar-properties-dialog.c:644
 msgid "Size:"
 msgstr "چوڭلۇقى:"
 
-#: thunar/thunar-dialogs.c:926 thunar/thunar-dialogs.c:976
+#: thunar/thunar-dialogs.c:920 thunar/thunar-dialogs.c:970
 #: thunar/thunar-properties-dialog.c:597
 msgid "Modified:"
 msgstr "ئۆزگەرتىلگەن ۋاقىت:"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: thunar/thunar-dialogs.c:938
+#: thunar/thunar-dialogs.c:932
 msgid "with the following link?"
 msgstr ""
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: thunar/thunar-dialogs.c:941
+#: thunar/thunar-dialogs.c:935
 msgid "with the following folder?"
 msgstr ""
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: thunar/thunar-dialogs.c:944
+#: thunar/thunar-dialogs.c:938
 msgid "with the following file?"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:991
+#: thunar/thunar-dialogs.c:985
 msgid "_Apply the action to all files and folders"
 msgstr ""
 
@@ -1298,66 +1302,66 @@ msgstr ""
 #. second appearance of %s:
 #. * "The desktop file %s is in an insecure location and not marked as
 #. secure%s."
-#: thunar/thunar-dialogs.c:1064
+#: thunar/thunar-dialogs.c:1058
 msgid "/executable"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1070
+#: thunar/thunar-dialogs.c:1064
 #, c-format
 msgid ""
 "The desktop file %s is in an insecure location and not marked as secure%s. If you do not trust this program, click Cancel.\n"
 "\n"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1091
+#: thunar/thunar-dialogs.c:1085
 msgid "_Launch Anyway"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1093
+#: thunar/thunar-dialogs.c:1087
 msgid "Mark As _Secure And Launch"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1176
+#: thunar/thunar-dialogs.c:1170
 msgid "Close split pane with multiple tabs?"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1177
+#: thunar/thunar-dialogs.c:1171
 msgid ""
 "The other split pane has multiple open tabs. Closing it will close all these"
 " tabs."
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1183
+#: thunar/thunar-dialogs.c:1177
 msgid "Warning"
 msgstr "دىققەت"
 
-#: thunar/thunar-dialogs.c:1188
+#: thunar/thunar-dialogs.c:1182
 msgid "Close Pane"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1191 thunar/thunar-permissions-chooser.c:593
+#: thunar/thunar-dialogs.c:1185 thunar/thunar-permissions-chooser.c:593
 msgid "Do _not ask me again"
 msgstr "قايتا سورىما(_N)"
 
-#: thunar/thunar-dialogs.c:1251
+#: thunar/thunar-dialogs.c:1245
 #, c-format
 msgid "The file \"%s\" seems to be executable. What do you want to do with it?"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1256
+#: thunar/thunar-dialogs.c:1250
 msgid ""
 "The selected files seem to be executable. What do you want to do with them?"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1265
+#: thunar/thunar-dialogs.c:1259
 msgid "Open Shell Script"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1269
+#: thunar/thunar-dialogs.c:1263
 msgid "Run In _Terminal"
 msgstr ""
 
-#: thunar/thunar-dialogs.c:1330
+#: thunar/thunar-dialogs.c:1324
 #, c-format
 msgid "Failed to edit launcher via command \"%s\""
 msgstr ""
@@ -1508,7 +1512,7 @@ msgid "Delete (opposite of create)"
 msgstr ""
 
 #: thunar/thunar-enum-types.c:733 thunar/thunar-file.c:1065
-#: thunar/thunar-gio-extensions.c:469 thunar/thunar-shortcuts-model.c:1114
+#: thunar/thunar-gio-extensions.c:479 thunar/thunar-shortcuts-model.c:1114
 #: thunar.desktop.in.in:25
 msgid "Trash"
 msgstr "ئەخلەتخانا"
@@ -1550,7 +1554,7 @@ msgstr ""
 msgid "Only for local files"
 msgstr ""
 
-#: thunar/thunar-file.c:1072 thunar/thunar-gio-extensions.c:467
+#: thunar/thunar-file.c:1072 thunar/thunar-gio-extensions.c:477
 #: thunar/thunar-shortcuts-model.c:996
 msgid "File System"
 msgstr "ھۆججەت سىستېمىسى"
@@ -1662,12 +1666,12 @@ msgid "Phone"
 msgstr "تېلېفون"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: thunar/thunar-gio-extensions.c:549
+#: thunar/thunar-gio-extensions.c:559
 #, c-format
 msgid "%s on %s"
 msgstr ""
 
-#: thunar/thunar-gio-extensions.c:660
+#: thunar/thunar-gio-extensions.c:670
 #, c-format
 msgid "%s used (%.0f%%)  |  %s free (%.0f%%)"
 msgstr ""
@@ -1735,12 +1739,12 @@ msgstr "«%s» نىڭ گۇرۇپپىسىنى ئۆزگەرتىش مەغلۇپ ب�
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "«%s» نىڭ ھوقۇقلىرىنى ئۆزگەرتىش مەغلۇپ بولدى: %s"
 
-#: thunar/thunar-io-jobs.c:1943
+#: thunar/thunar-io-jobs.c:1949
 #, c-format
 msgid "Selection: %s"
 msgstr ""
 
-#: thunar/thunar-io-jobs.c:1956
+#: thunar/thunar-io-jobs.c:1962
 #, c-format
 msgid "Free space: %s"
 msgstr ""
@@ -3226,7 +3230,7 @@ msgid "Loading folder contents..."
 msgstr "مۇندەرىجە مەزمۇنى ئوقۇۋاتىدۇ..."
 
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2540 thunar/thunar-window.c:4364
+#: thunar/thunar-standard-view.c:2540 thunar/thunar-window.c:4362
 msgid "Failed to open the home folder"
 msgstr "ماكان مۇندەرىجىسى ئېچىش مەغلۇپ بولدى"
 
@@ -3311,7 +3315,7 @@ msgstr "تور ئادرېسى(URL) «%s» نىڭ ئۇلانمىسىنى ياسا
 msgid "Untitled document"
 msgstr ""
 
-#: thunar/thunar-standard-view.c:3779 thunar/thunar-window.c:4461
+#: thunar/thunar-standard-view.c:3779 thunar/thunar-window.c:4459
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "مۇندەرىجە «%s» نى ئېچىش مەغلۇپ بولدى"
@@ -3652,8 +3656,8 @@ msgid "Pr_eferences..."
 msgstr "تەڭشەك(_E)..."
 
 #: thunar/thunar-window.c:518
-msgid "Edit Thunars Preferences"
-msgstr "سۇنار(Thunar)نىڭ تەڭشىكىنى تەھرىرلەش"
+msgid "Edit Thunar's Preferences"
+msgstr ""
 
 #: thunar/thunar-window.c:520
 msgid "_View"
@@ -3971,117 +3975,117 @@ msgid "Show the menu"
 msgstr ""
 
 #. add the label with the root warning
-#: thunar/thunar-window.c:924
+#: thunar/thunar-window.c:922
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr ""
 
-#: thunar/thunar-window.c:997
+#: thunar/thunar-window.c:995
 msgid "Size: "
 msgstr ""
 
 #. TRANSLATORS: `Catfish' is a software package, please don't translate it.
-#: thunar/thunar-window.c:1104
+#: thunar/thunar-window.c:1102
 msgid "Search with Catfish..."
 msgstr ""
 
-#: thunar/thunar-window.c:1116
+#: thunar/thunar-window.c:1114
 msgid "Restore Selected Items"
 msgstr ""
 
-#: thunar/thunar-window.c:2808
+#: thunar/thunar-window.c:2806
 msgid "Close tab"
 msgstr ""
 
-#: thunar/thunar-window.c:3267
+#: thunar/thunar-window.c:3265
 #, c-format
 msgid "Open the location \"%s\""
 msgstr ""
 
-#: thunar/thunar-window.c:4304
+#: thunar/thunar-window.c:4302
 msgid "Failed to open parent folder"
 msgstr "ئاتا مۇندەرىجىنى ئېچىش مەغلۇپ بولدى"
 
-#: thunar/thunar-window.c:4435
+#: thunar/thunar-window.c:4433
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr ""
 
-#: thunar/thunar-window.c:4437
+#: thunar/thunar-window.c:4435
 msgid "Create directory"
 msgstr ""
 
 #. display an error to the user
-#: thunar/thunar-window.c:4506
+#: thunar/thunar-window.c:4504
 msgid "Failed to browse the computer"
 msgstr ""
 
 #. display the "About Templates" dialog
-#: thunar/thunar-window.c:4549
+#: thunar/thunar-window.c:4547
 msgid "About Templates"
 msgstr "قېلىپلار ھەققىدە"
 
-#: thunar/thunar-window.c:4571
+#: thunar/thunar-window.c:4569
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "بۇ مۇندەرىجىدىكى بارلىق ھۆججەتلەر «پۈتۈك قۇر»تىزىملىكىدە كۆرۈنىدۇ"
 
-#: thunar/thunar-window.c:4578
+#: thunar/thunar-window.c:4576
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "مەلۇم تىپتىكى پۈتۈكلەرنى ھەمىشە قۇرماقچى بولسىڭىز، ئۇنىڭ كۆچۈرۈلمىسىنى بۇ قىسقۇچقا قويۇڭ. شۇنىڭ بىلەن تىزىملىكنىڭ «پۈتۈك قۇر» دېگەن يېرىگە ماس تىزىملىك قوشۇلىدۇ.\n\nئاندىن كېيىن تىزىملىكنىڭ «پۈتۈك قۇر» دىن قوشۇلغان تىزىملىكنى تاللاش ئارقىلىقلا كۆرسىتىلگەن قىسقۇچقا پۈتۈكنى كۆچۈرۈپ ئەكەلگىلى(قۇرغىلى) بولىدۇ."
 
-#: thunar/thunar-window.c:4590
+#: thunar/thunar-window.c:4588
 msgid "Do _not display this message again"
 msgstr "بۇ ئۇچۇرنى بۇنىڭدىن كېيىن كۆرسەتمە(_N)"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4624
+#: thunar/thunar-window.c:4622
 msgid "Failed to open the file system root folder"
 msgstr "ھۆججەت سىستېمىسىنىڭ غول قىسقۇچىنى ئېچىش مەغلۇپ بولدى"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4660
+#: thunar/thunar-window.c:4658
 msgid "Failed to display `Recent`"
 msgstr ""
 
 #. display an error to the user
-#: thunar/thunar-window.c:4696
+#: thunar/thunar-window.c:4694
 msgid "Failed to display the contents of the trash can"
 msgstr "ئەخلەتخانىنىڭ مەزمۇنىنى كۆرسىتىش مەغلۇپ بولدى"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4732
+#: thunar/thunar-window.c:4730
 msgid "Failed to browse the network"
 msgstr "تورنى كۆرۈش مەغلۇپ بولدى"
 
-#: thunar/thunar-window.c:4875
+#: thunar/thunar-window.c:4873
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "سۇنار(Thunar) بولسا Xfce ئۈستەلئۈستى سىستېمىسىدىكى ئىشلىتىش ئاددىي\nسۈرىتى تېز بولغان ھۆججەت باشقۇرغۇ."
 
-#: thunar/thunar-window.c:5943
+#: thunar/thunar-window.c:5941
 msgid "Select an image to preview"
 msgstr ""
 
-#: thunar/thunar-window.c:6090
+#: thunar/thunar-window.c:6088
 msgid "Failed to launch search with Catfish"
 msgstr ""
 
-#: thunar/thunar-window.c:6421
+#: thunar/thunar-window.c:6419
 msgid "Change the active view type"
 msgstr ""
 
 #. add a proxy menu item for the view switcher to be represent in the overflow
 #. menu
-#: thunar/thunar-window.c:6424 thunar/thunar-window.c:6449
+#: thunar/thunar-window.c:6422 thunar/thunar-window.c:6447
 msgid "View Switcher"
 msgstr ""
 
 #. add a proxy menu item for the location bar to represent the bar in the
 #. overflow menu
-#: thunar/thunar-window.c:6614 thunar/thunar-window.c:6619
+#: thunar/thunar-window.c:6612 thunar/thunar-window.c:6617
 msgid "Location Bar"
 msgstr ""
 
