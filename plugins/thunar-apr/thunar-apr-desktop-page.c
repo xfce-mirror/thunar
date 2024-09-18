@@ -267,6 +267,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
+  g_object_unref (relations);
 
   row++;
 
@@ -292,6 +293,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
+  g_object_unref (relations);
 
   row++;
 
@@ -317,6 +319,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
+  g_object_unref (relations);
 
   row++;
 
@@ -342,6 +345,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
+  g_object_unref (relations);
 
   row++;
 
@@ -369,6 +373,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
+  g_object_unref (relations);
 
   row++;
 
@@ -406,6 +411,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
+  g_object_unref (relations);
 
   row++;
 
@@ -424,6 +430,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
+  g_object_unref (relations);
 
   row++;
 
