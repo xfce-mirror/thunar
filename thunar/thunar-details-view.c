@@ -927,27 +927,30 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
     }
   else if (event->type == GDK_BUTTON_PRESS && event->button == 2)
     {
+      GtkTreePath *mc_path = NULL;
+
       /* determine the path to the item that was middle-clicked */
-      if (gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y, &path, NULL, NULL, NULL))
+      if (gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y, &mc_path, NULL, NULL, NULL))
         {
           /* select only the path to the item on which the user clicked */
           gtk_tree_selection_unselect_all (selection);
-          if (gtk_tree_model_get_iter (model, &iter, path))
+          if (gtk_tree_model_get_iter (model, &iter, mc_path))
             {
               file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &iter);
               if (file != NULL)
                 {
                   g_object_unref (file);
-                  gtk_tree_selection_select_path (selection, path);
+                  gtk_tree_selection_select_path (selection, mc_path);
                   /* try to open the path as new window/tab, if possible */
-                  _thunar_standard_view_open_on_middle_click (THUNAR_STANDARD_VIEW (details_view), path, event->state);
+                  _thunar_standard_view_open_on_middle_click (THUNAR_STANDARD_VIEW (details_view), mc_path, event->state);
                 }
             }
 
           /* cleanup */
-          gtk_tree_path_free (path);
+          gtk_tree_path_free (mc_path);
         }
 
+      gtk_tree_path_free (path);
       return TRUE;
     }
 
