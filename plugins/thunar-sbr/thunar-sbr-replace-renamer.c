@@ -227,6 +227,7 @@ thunar_sbr_replace_renamer_init (ThunarSbrReplaceRenamer *replace_renamer)
   relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
+  g_object_unref (relations);
 
   button = gtk_check_button_new_with_mnemonic (_("Regular _Expression"));
   g_object_bind_property (G_OBJECT (button), "active", G_OBJECT (replace_renamer), "regexp", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
@@ -257,6 +258,7 @@ thunar_sbr_replace_renamer_init (ThunarSbrReplaceRenamer *replace_renamer)
   relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
+  g_object_unref (relations);
 
   button = gtk_check_button_new_with_mnemonic (_("C_ase Sensitive Search"));
   g_object_bind_property (G_OBJECT (button), "active", G_OBJECT (replace_renamer), "case-sensitive", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
