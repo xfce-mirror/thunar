@@ -879,6 +879,7 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
               return !row_selected;
             }
           gtk_tree_path_free (path);
+          return FALSE;
         }
     }
 
@@ -955,6 +956,7 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
       return TRUE;
     }
 
+  gtk_tree_path_free (path);
   return FALSE;
 }
 
