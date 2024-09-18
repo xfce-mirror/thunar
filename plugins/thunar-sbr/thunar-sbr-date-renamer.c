@@ -212,6 +212,7 @@ thunar_sbr_date_renamer_init (ThunarSbrDateRenamer *date_renamer)
   relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
+  g_object_unref (relations);
 
   label = gtk_label_new_with_mnemonic (_("_Format:"));
   gtk_grid_attach (GTK_GRID (grid), label, 2, 0, 1, 1);
@@ -236,6 +237,7 @@ thunar_sbr_date_renamer_init (ThunarSbrDateRenamer *date_renamer)
   relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
+  g_object_unref (relations);
 
   label = gtk_label_new_with_mnemonic (_("_At position:"));
   gtk_grid_attach (GTK_GRID (grid), label, 0, 1, 1, 1);
