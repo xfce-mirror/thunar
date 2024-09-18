@@ -156,6 +156,8 @@ thunar_statusbar_finalize (GObject *object)
   ThunarStatusbar *statusbar = THUNAR_STATUSBAR (object);
 
   g_object_unref (statusbar->preferences);
+
+  (*G_OBJECT_CLASS (thunar_statusbar_parent_class)->finalize) (object);
 }
 
 
