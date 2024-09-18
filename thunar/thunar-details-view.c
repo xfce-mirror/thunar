@@ -848,6 +848,7 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
               else
                 gtk_tree_view_expand_row (tree_view, path, FALSE);
 
+              gtk_tree_path_free (path);
               return TRUE;
             }
 
