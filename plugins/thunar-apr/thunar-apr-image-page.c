@@ -149,6 +149,7 @@ thunar_apr_image_page_init (ThunarAprImagePage *image_page)
   relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
+  g_object_unref (relations);
 
   label = gtk_label_new (_("Image Size:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
@@ -170,6 +171,7 @@ thunar_apr_image_page_init (ThunarAprImagePage *image_page)
   relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
+  g_object_unref (relations);
 
 #ifdef HAVE_EXIF
   /* some spacing between the General info and the Exif info */
@@ -202,6 +204,7 @@ thunar_apr_image_page_init (ThunarAprImagePage *image_page)
       relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
       atk_relation_set_add (relations, relation);
       g_object_unref (G_OBJECT (relation));
+      g_object_unref (relations);
     }
 #endif
 
