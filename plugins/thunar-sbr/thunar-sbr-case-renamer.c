@@ -134,6 +134,7 @@ thunar_sbr_case_renamer_init (ThunarSbrCaseRenamer *case_renamer)
   relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
+  g_object_unref (relations);
 }
 
 
