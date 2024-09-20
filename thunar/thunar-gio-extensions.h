@@ -52,7 +52,6 @@ gboolean     thunar_g_file_is_trash                 (GFile                *file)
 gboolean     thunar_g_file_is_recent                (GFile                *file);
 gboolean     thunar_g_file_is_computer              (GFile                *file);
 gboolean     thunar_g_file_is_network               (GFile                *file);
-gboolean     thunar_g_file_is_admin                 (GFile                *file);
 
 GKeyFile    *thunar_g_file_query_key_file           (GFile                *file,
                                                      GCancellable         *cancellable,
