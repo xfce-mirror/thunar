@@ -246,8 +246,13 @@ thunar_apr_image_page_file_changed (ThunarAprAbstractPage *abstract_page,
       if (G_LIKELY (format != NULL))
         {
           /* update the "Image Type" label */
-          text = g_strdup_printf ("%s (%s)", gdk_pixbuf_format_get_name (format), gdk_pixbuf_format_get_description (format));
+          gchar *name = gdk_pixbuf_format_get_name (format);
+          gchar *desc = gdk_pixbuf_format_get_description (format);
+          text = g_strdup_printf ("%s (%s)", name, desc);
+
           gtk_label_set_text (GTK_LABEL (image_page->type_label), text);
+          g_free (name);
+          g_free (desc);
           g_free (text);
 
           /* update the "Image Size" label */
