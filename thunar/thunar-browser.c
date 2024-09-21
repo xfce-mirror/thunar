@@ -475,7 +475,7 @@ thunar_browser_poke_file_internal (ThunarBrowser                *browser,
           g_object_unref (mount_operation);
         }
     }
-  else if (!thunar_file_is_mounted (file) || thunar_g_file_is_admin (thunar_file_get_file (file)))
+  else if (!thunar_file_is_mounted (file) || !thunar_file_is_local(file))
     {
       poke_data = thunar_browser_poke_file_data_new (browser, location, source,
                                                      file, func, location_func, user_data);
