@@ -671,11 +671,14 @@ thunar_thumbnailer_received_supported_types (ThunarThumbnailerDBus  *proxy,
 
       thumbnailer->proxy_state = THUNAR_THUMBNAILER_PROXY_FAILED;
 
-      /* disconnect from the thumbnailer proxy */
-      g_signal_handlers_disconnect_by_data (thumbnailer->thumbnailer_proxy, thumbnailer);
+      if (thumbnailer->thumbnailer_proxy != NULL)
+        {
+          /* disconnect from the thumbnailer proxy */
+          g_signal_handlers_disconnect_by_data (thumbnailer->thumbnailer_proxy, thumbnailer);
 
-      g_object_unref (thumbnailer->thumbnailer_proxy);
-      thumbnailer->thumbnailer_proxy = NULL;
+          g_object_unref (thumbnailer->thumbnailer_proxy);
+          thumbnailer->thumbnailer_proxy = NULL;
+        }
 
       _thumbnailer_unlock (thumbnailer);
 
