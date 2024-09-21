@@ -976,6 +976,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   g_free (size_string);
   g_free (date_string);
   g_free (text);
+  g_free (date_custom_style);
 
   if (multiple_files)
     {
