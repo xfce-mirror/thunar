@@ -1347,6 +1347,7 @@ thunar_uca_model_remove (ThunarUcaModel *uca_model,
                       THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, &unique_id, 
                       -1);
   accel_path = g_strdup_printf ("<Actions>/ThunarActions/uca-action-%s", unique_id);
+  g_free (unique_id);
 
   if (gtk_accel_map_lookup_entry (accel_path, &key) && key.accel_key != 0)
     gtk_accel_map_change_entry (accel_path, 0, 0, TRUE);
