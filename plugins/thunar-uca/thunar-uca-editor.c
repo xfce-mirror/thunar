@@ -49,6 +49,7 @@ static void           thunar_uca_editor_shortcut_clicked       (ThunarUcaEditor 
 static void           thunar_uca_editor_shortcut_clear_clicked (ThunarUcaEditor        *uca_editor);
 static void           thunar_uca_editor_icon_clicked           (ThunarUcaEditor        *uca_editor);
 static void           thunar_uca_editor_constructed            (GObject                *object);
+static void           thunar_uca_editor_finalize               (GObject                *object);
 
 
 
@@ -105,6 +106,7 @@ thunar_uca_editor_class_init (ThunarUcaEditorClass *klass)
 
   /* vfuncs */
   object_class->constructed = thunar_uca_editor_constructed;
+  object_class->finalize = thunar_uca_editor_finalize;
 
   /* Setup the template xml */
   gtk_widget_class_set_template_from_resource (widget_class, "/org/xfce/thunar/uca/editor.ui");
@@ -160,6 +162,16 @@ thunar_uca_editor_constructed (GObject *object)
   g_object_set (gtk_dialog_get_content_area (GTK_DIALOG (editor)), "border-width", 0, NULL);
 }
 
+
+static void
+thunar_uca_editor_finalize (GObject *object)
+{
+  ThunarUcaEditor *editor = THUNAR_UCA_EDITOR (object);
+
+  g_free (editor->accel_path);
+
+  (*G_OBJECT_CLASS (thunar_uca_editor_parent_class)->finalize) (object);
+}
 
 
 static void
