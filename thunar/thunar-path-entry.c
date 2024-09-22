@@ -602,9 +602,7 @@ thunar_path_entry_changed (GtkEditable *editable)
       path_entry->search_mode = TRUE;
       update_icon = TRUE;
       if (GTK_IS_WINDOW (window))
-        {
-          thunar_window_update_search (THUNAR_WINDOW (window));
-        }
+        thunar_window_update_search (THUNAR_WINDOW (window));
     }
   else
     {
