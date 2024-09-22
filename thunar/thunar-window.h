@@ -156,7 +156,8 @@ gboolean                  thunar_window_action_cancel_search                (Thu
 gboolean                  thunar_window_action_search                       (ThunarWindow        *window);
 void                      thunar_window_update_statusbar                    (ThunarWindow        *window);
 void                      thunar_window_toolbar_toggle_item_visibility      (ThunarWindow        *window,
-                                                                             gint                 index);
+                                                                             gint                 index,
+                                                                             gboolean             visible);
 void                      thunar_window_toolbar_swap_items                  (ThunarWindow        *window,
                                                                              gint                 index_a,
                                                                              gint                 index_b);

@@ -6516,7 +6516,7 @@ thunar_window_view_switcher_update (ThunarWindow *window)
   action_entry.menu_item_icon_name = icon_name;
   view_switcher_item = xfce_gtk_menu_item_new_from_action_entry (&action_entry, G_OBJECT (window), GTK_MENU_SHELL (view_switcher_menu));
   gtk_widget_set_tooltip_markup (view_switcher_item, action_entry.menu_item_tooltip_text);
-  gtk_widget_show (view_switcher_item);
+  gtk_widget_show_all (view_switcher_item);
 
   if (window->view_type == THUNAR_TYPE_COMPACT_VIEW)
     {
@@ -6572,71 +6572,17 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
 
   g_signal_connect (G_OBJECT (window->location_toolbar), "button-press-event", G_CALLBACK (thunar_window_toolbar_button_press_event), window);
 
-  /* add toolbar items */
-  window->location_toolbar_item_menu          = thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_MENU, FALSE, item_order++);
-  window->location_toolbar_item_back          = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_BACK, item_order++);
-  window->location_toolbar_item_forward       = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_FORWARD, item_order++);
-  window->location_toolbar_item_parent        = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_OPEN_PARENT, item_order++);
-  window->location_toolbar_item_home          = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_OPEN_HOME, item_order++);
-                                                thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_NEW_TAB, item_order++);
-                                                thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_NEW_WINDOW, item_order++);
-  window->location_toolbar_item_split_view    = thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_SPLIT, thunar_window_split_view_is_active (window), item_order++);
-  window->location_toolbar_item_undo          = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_UNDO, item_order++);
-  window->location_toolbar_item_redo          = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_REDO, item_order++);
-  window->location_toolbar_item_zoom_out      = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_ZOOM_OUT, item_order++);
-  window->location_toolbar_item_zoom_in       = thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_ZOOM_IN, item_order++);
-                                                thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_ZOOM_RESET, item_order++);
-  window->location_toolbar_item_icon_view     = thunar_window_create_toolbar_radio_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_ICONS, window->view_type == THUNAR_TYPE_ICON_VIEW, NULL, item_order++);
-  window->location_toolbar_item_detailed_view = thunar_window_create_toolbar_radio_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST, window->view_type == THUNAR_TYPE_DETAILS_VIEW, GTK_RADIO_TOOL_BUTTON (window->location_toolbar_item_icon_view), item_order++);
-  window->location_toolbar_item_compact_view  = thunar_window_create_toolbar_radio_item_from_action (window, THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST, window->view_type == THUNAR_TYPE_COMPACT_VIEW, GTK_RADIO_TOOL_BUTTON (window->location_toolbar_item_icon_view), item_order++);
-  window->location_toolbar_item_view_switcher = thunar_window_create_toolbar_view_switcher (window, item_order++);
+  /* display the toolbar */
+  gtk_widget_show (window->location_toolbar);
 
-  g_signal_connect (window->location_toolbar_item_back, "button-press-event", G_CALLBACK (thunar_window_history_clicked), window);
-  g_signal_connect (window->location_toolbar_item_forward, "button-press-event", G_CALLBACK (thunar_window_history_clicked), window);
-  g_signal_connect (window->location_toolbar_item_parent, "button-press-event", G_CALLBACK (thunar_window_open_parent_clicked), window);
-  g_signal_connect (window->location_toolbar_item_home, "button-press-event", G_CALLBACK (thunar_window_open_home_clicked), window);
-
-  g_object_bind_property (window->job_operation_history, "can-undo", window->location_toolbar_item_undo, "sensitive", G_BINDING_SYNC_CREATE);
-  g_object_bind_property (window->job_operation_history, "can-redo", window->location_toolbar_item_redo, "sensitive", G_BINDING_SYNC_CREATE);
-
-  g_signal_connect_swapped (window->location_toolbar_item_icon_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_ICONS)->callback, window);
-  g_signal_connect_swapped (window->location_toolbar_item_detailed_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST)->callback, window);
-  g_signal_connect_swapped (window->location_toolbar_item_compact_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST)->callback, window);
-
-  thunar_window_view_switcher_update (window);
-
-  /* add the location bar to the toolbar */
-  tool_item = gtk_tool_item_new ();
-  gtk_tool_item_set_expand (tool_item, TRUE);
-  gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), tool_item, -1);
-  g_object_set_data_full (G_OBJECT (tool_item), "id", g_strdup ("location-bar"), g_free);
-  g_object_set_data_full (G_OBJECT (tool_item), "label", g_strdup (_("Location Bar")), g_free);
-  g_object_set_data_full (G_OBJECT (tool_item), "icon", g_strdup(""), g_free);
-  thunar_g_object_set_guint_data (G_OBJECT (tool_item), "default-order", item_order++);
-
-  /* add a proxy menu item for the location bar to represent the bar in the overflow menu */
-  menu_item = gtk_menu_item_new_with_label (_("Location Bar"));
-  gtk_tool_item_set_proxy_menu_item (tool_item, "location-toolbar-menu-id", menu_item);
-  gtk_widget_set_sensitive (GTK_WIDGET (menu_item), FALSE);
-
-  /* add remaining toolbar items */
-                                         thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_RELOAD, item_order++);
-  window->location_toolbar_item_search = thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_SEARCH, window->is_searching, item_order++);
+  /* load the correct order and visibility of items in the toolbar */
+  thunar_window_location_toolbar_load_items (window);
 
   /* add custom actions to the toolbar */
   thunar_window_location_toolbar_add_ucas (window);
 
-  /* display the toolbar */
-  gtk_widget_show_all (window->location_toolbar);
-
   /* only show the menu button when the menubar is hidden */
   gtk_widget_set_visible (window->location_toolbar_item_menu, !window->menubar_visible);
-
-  /* add the location bar itself after gtk_widget_show_all to not mess with the visibility of the location buttons */
-  gtk_container_add (GTK_CONTAINER (tool_item), window->location_bar);
-
-  /* load the correct order and visibility of items in the toolbar */
-  thunar_window_location_toolbar_load_items (window);
 }
 
 
@@ -6809,10 +6755,13 @@ thunar_window_location_toolbar_add_ucas (ThunarWindow *window)
 static void
 thunar_window_location_toolbar_load_items (ThunarWindow *window)
 {
-  GList  *toolbar_items;
   gchar **items;
   guint   items_length;
   gchar  *tmp;
+  gboolean hidden;
+  guint        item_order = 0;
+  GtkWidget   *menu_item;
+  GtkToolItem   *tool_item;
 
   /* read and migrate old settings */
   // TODO: drop this code block and the called functions
@@ -6832,11 +6781,9 @@ thunar_window_location_toolbar_load_items (ThunarWindow *window)
       return;
     }
 
-  if (thunar_window_toolbar_item_count (window) == 0)
+  if (window->location_toolbar == NULL)
     return;
 
-  /* get all toolbar items */
-  toolbar_items = gtk_container_get_children (GTK_CONTAINER (window->location_toolbar));
 
   /* determine the order from the preferences */
   g_object_get (G_OBJECT (window->preferences), "last-toolbar-items", &tmp, NULL);
@@ -6850,41 +6797,177 @@ thunar_window_location_toolbar_load_items (ThunarWindow *window)
       GList  *lp;
       gchar **item_data = g_strsplit (items[i], ":", -1); /* id:visible */
 
-      /* find matching toolbar item in the list */
-      for (lp = toolbar_items; lp != NULL; lp = lp->next)
+      gchar     *id = item_data[0];
+
+      /* Create the tool items */
+      if (g_strcmp0 (id, "menu") == 0)
         {
-          GtkWidget *item = lp->data;
-          gchar     *id = g_object_get_data (G_OBJECT (item), "id");
-
-          /* update the toolbar item */
-          if (g_strcmp0 (item_data[0], id) == 0)
-            {
-              gboolean hidden;
-
-              /* set its position */
-              g_object_ref (item);
-              gtk_container_remove (GTK_CONTAINER (window->location_toolbar), item);
-              gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), GTK_TOOL_ITEM (item), i);
-              g_object_unref (item);
-
-              /* set its visibility */
-              hidden = (g_strcmp0 (item_data[1], "0") == 0);
-              if (hidden)
-                thunar_window_toolbar_toggle_item_visibility (window, i);
-
-              /* remove it from the list */
-              toolbar_items = g_list_remove (toolbar_items, item);
-
-              break;
-            }
+          window->location_toolbar_item_menu = thunar_window_create_toolbar_toggle_item_from_action (window,
+                                                                                                     THUNAR_WINDOW_ACTION_MENU,
+                                                                                                     FALSE,
+                                                                                                     item_order++);
         }
+      else if (g_strcmp0 (id, "back") == 0)
+        {
+          window->location_toolbar_item_back = thunar_window_create_toolbar_item_from_action (window,
+                                                                                              THUNAR_WINDOW_ACTION_BACK,
+                                                                                              item_order++);
+
+          g_signal_connect (window->location_toolbar_item_back, "button-press-event", G_CALLBACK (thunar_window_history_clicked), window);
+        }
+      else if (g_strcmp0 (id, "forward") == 0)
+        {
+          window->location_toolbar_item_forward = thunar_window_create_toolbar_item_from_action (window,
+                                                                                                 THUNAR_WINDOW_ACTION_FORWARD,
+                                                                                                 item_order++);
+
+          g_signal_connect (window->location_toolbar_item_forward, "button-press-event", G_CALLBACK (thunar_window_history_clicked), window);
+        }
+      else if (g_strcmp0 (id, "open-parent") == 0)
+        {
+          window->location_toolbar_item_parent = thunar_window_create_toolbar_item_from_action (window,
+                                                                                                THUNAR_WINDOW_ACTION_OPEN_PARENT,
+                                                                                                item_order++);
+
+          g_signal_connect (window->location_toolbar_item_parent, "button-press-event", G_CALLBACK (thunar_window_open_parent_clicked), window);
+        }
+      else if (g_strcmp0 (id, "open-home") == 0)
+        {
+          window->location_toolbar_item_home =  thunar_window_create_toolbar_item_from_action (window,
+                                                                                               THUNAR_WINDOW_ACTION_OPEN_HOME,
+                                                                                               item_order++);
+
+          g_signal_connect (window->location_toolbar_item_home, "button-press-event", G_CALLBACK (thunar_window_open_home_clicked), window);
+        }
+      else if (g_strcmp0 (id, "new-tab") == 0)
+        {
+          thunar_window_create_toolbar_item_from_action (window,
+                                                         THUNAR_WINDOW_ACTION_NEW_TAB,
+                                                         item_order++);
+        }
+      else if (g_strcmp0 (id, "new-window") == 0)
+        {
+          thunar_window_create_toolbar_item_from_action (window,
+                                                         THUNAR_WINDOW_ACTION_NEW_WINDOW,
+                                                         item_order++);
+        }
+      else if (g_strcmp0 (id, "toggle-split-view") == 0)
+        {
+          window->location_toolbar_item_split_view    = thunar_window_create_toolbar_toggle_item_from_action (window,
+                                                                                                              THUNAR_WINDOW_ACTION_VIEW_SPLIT,
+                                                                                                              thunar_window_split_view_is_active (window),
+                                                                                                              item_order++);
+        }
+      else if (g_strcmp0 (id, "undo") == 0)
+        {
+          window->location_toolbar_item_undo = thunar_window_create_toolbar_item_from_action (window,
+                                                                                              THUNAR_WINDOW_ACTION_UNDO,
+                                                                                              item_order++);
+
+          g_object_bind_property (window->job_operation_history, "can-undo", window->location_toolbar_item_undo, "sensitive", G_BINDING_SYNC_CREATE);
+        }
+      else if (g_strcmp0 (id, "redo") == 0)
+        {
+          window->location_toolbar_item_redo          = thunar_window_create_toolbar_item_from_action (window,
+                                                                                                       THUNAR_WINDOW_ACTION_REDO,
+                                                                                                       item_order++);
+
+          g_object_bind_property (window->job_operation_history, "can-redo", window->location_toolbar_item_redo, "sensitive", G_BINDING_SYNC_CREATE);
+        }
+      else if (g_strcmp0 (id, "zoom-out") == 0)
+        {
+          window->location_toolbar_item_zoom_out = thunar_window_create_toolbar_item_from_action (window,
+                                                                                                  THUNAR_WINDOW_ACTION_ZOOM_OUT,
+                                                                                                  item_order++);
+        }
+      else if (g_strcmp0 (id, "zoom-in") == 0)
+        {
+          window->location_toolbar_item_zoom_in = thunar_window_create_toolbar_item_from_action (window,
+                                                                                                 THUNAR_WINDOW_ACTION_ZOOM_IN,
+                                                                                                 item_order++);
+        }
+      else if (g_strcmp0 (id, "zoom-reset") == 0)
+        {
+          thunar_window_create_toolbar_item_from_action (window,
+                                                         THUNAR_WINDOW_ACTION_ZOOM_RESET,
+                                                         item_order++);
+        }
+      else if (g_strcmp0 (id, "view-as-icons") == 0)
+        {
+          window->location_toolbar_item_icon_view = thunar_window_create_toolbar_radio_item_from_action (window,
+                                                                                                         THUNAR_WINDOW_ACTION_VIEW_AS_ICONS,
+                                                                                                         window->view_type == THUNAR_TYPE_ICON_VIEW, NULL,
+                                                                                                         item_order++);
+
+          g_signal_connect_swapped (window->location_toolbar_item_icon_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_ICONS)->callback, window);
+        }
+      else if (g_strcmp0 (id, "view-as-detailed-list") == 0)
+        {
+          window->location_toolbar_item_detailed_view = thunar_window_create_toolbar_radio_item_from_action (window,
+                                                                                                             THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST,
+                                                                                                             window->view_type == THUNAR_TYPE_DETAILS_VIEW,
+                                                                                                             GTK_RADIO_TOOL_BUTTON (window->location_toolbar_item_icon_view),
+                                                                                                             item_order++);
+
+          g_signal_connect_swapped (window->location_toolbar_item_detailed_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST)->callback, window);
+        }
+      else if (g_strcmp0 (id, "view-as-compact-list") == 0)
+        {
+          window->location_toolbar_item_compact_view = thunar_window_create_toolbar_radio_item_from_action (window,
+                                                                                                            THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST,
+                                                                                                            window->view_type == THUNAR_TYPE_COMPACT_VIEW,
+                                                                                                            GTK_RADIO_TOOL_BUTTON (window->location_toolbar_item_icon_view),
+                                                                                                            item_order++);
+
+          g_signal_connect_swapped (window->location_toolbar_item_compact_view, "toggled", get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST)->callback, window);
+        }
+      else if (g_strcmp0 (id, "view-switcher") == 0)
+        {
+          window->location_toolbar_item_view_switcher = thunar_window_create_toolbar_view_switcher (window, item_order++);
+
+          thunar_window_view_switcher_update (window);
+        }
+      else if (g_strcmp0 (id, "location-bar") == 0)
+        {
+          /* add the location bar to the toolbar */
+          tool_item = gtk_tool_item_new ();
+          gtk_tool_item_set_expand (tool_item, TRUE);
+          gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), tool_item, -1);
+          g_object_set_data_full (G_OBJECT (tool_item), "id", g_strdup ("location-bar"), g_free);
+          g_object_set_data_full (G_OBJECT (tool_item), "label", g_strdup (_("Location Bar")), g_free);
+          g_object_set_data_full (G_OBJECT (tool_item), "icon", g_strdup(""), g_free);
+          thunar_g_object_set_guint_data (G_OBJECT (tool_item), "default-order", item_order++);
+
+          /* add a proxy menu item for the location bar to represent the bar in the overflow menu */
+          menu_item = gtk_menu_item_new_with_label (_("Location Bar"));
+          gtk_tool_item_set_proxy_menu_item (tool_item, "location-toolbar-menu-id", menu_item);
+          gtk_widget_set_sensitive (GTK_WIDGET (menu_item), FALSE);
+
+          gtk_container_add (GTK_CONTAINER (tool_item), window->location_bar);
+        }
+      else if (g_strcmp0 (id, "reload") == 0)
+        {
+          thunar_window_create_toolbar_item_from_action (window,
+                                                         THUNAR_WINDOW_ACTION_RELOAD,
+                                                         item_order++);
+        }
+      else if (g_strcmp0 (id, "search") == 0)
+        {
+          thunar_window_create_toolbar_toggle_item_from_action (window,
+                                                                THUNAR_WINDOW_ACTION_SEARCH,
+                                                                window->is_searching,
+                                                                item_order++);
+        }
+
+      /* set its visibility */
+      hidden = (g_strcmp0 (item_data[1], "0") == 0);
+      if (hidden)
+        thunar_window_toolbar_toggle_item_visibility (window, i, FALSE);
+      else
+        thunar_window_toolbar_toggle_item_visibility (window, i, TRUE);
 
       g_strfreev (item_data);
     }
-
-  /* hide remaining toolbar items which are not present in the saved order */
-  g_list_foreach (toolbar_items, (GFunc) (void (*)(void)) gtk_widget_hide, NULL);
-  g_list_free (toolbar_items);
 
   g_strfreev (items);
 }
@@ -7045,8 +7128,7 @@ thunar_window_location_toolbar_load_visibility (ThunarWindow *window)
     {
       guint visible = target_order[i];
 
-      if (visible == 0)
-        thunar_window_toolbar_toggle_item_visibility (window, i);
+      thunar_window_toolbar_toggle_item_visibility (window, i,visible);
     }
 
   /* release the column order */
@@ -7079,7 +7161,8 @@ thunar_window_toolbar_item_count (ThunarWindow *window)
 
 void
 thunar_window_toolbar_toggle_item_visibility (ThunarWindow *window,
-                                              gint          index)
+                                              gint          index,
+                                              gboolean      visible)
 {
   GList *toolbar_items, *lp;
 
@@ -7102,7 +7185,11 @@ thunar_window_toolbar_toggle_item_visibility (ThunarWindow *window,
 
       if (index == i)
         {
-          gtk_widget_set_visible (item, !gtk_widget_is_visible (item));
+          if (visible)
+            gtk_widget_show_all (item);
+          else
+            gtk_widget_hide (item);
+
           break;
         }
     }
