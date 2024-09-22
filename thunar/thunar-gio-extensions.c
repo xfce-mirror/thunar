@@ -842,7 +842,10 @@ thunar_g_file_copy (GFile                *source,
   if (success)
     {
       /* rename .partial if done without problem */
-      success = (g_file_set_display_name (partial, base_name, NULL, error) != NULL);
+      GFile *renamed_file = g_file_set_display_name (partial, base_name, NULL, error);
+      success = (renamed_file != NULL);
+      if (success)
+         g_object_unref (renamed_file);
     }
 
   if (!success)
