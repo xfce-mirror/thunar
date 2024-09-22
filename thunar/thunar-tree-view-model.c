@@ -2643,7 +2643,7 @@ thunar_tree_view_model_file_count_callback (ExoJob              *job,
   GArray              *param_values;
   ThunarFile          *file;
   ThunarFile          *parent;
-  GHashTable          *files = g_hash_table_new (g_direct_hash, NULL);
+  GHashTable          *files;
   Node                *parent_node;
 
   if (job == NULL)
@@ -2665,6 +2665,7 @@ thunar_tree_view_model_file_count_callback (ExoJob              *job,
    if (parent_node == NULL)
      return;
 
+   files = g_hash_table_new (g_direct_hash, NULL);
    g_hash_table_add (files, file);
    thunar_tree_view_model_dir_files_changed (parent_node, files);
    g_hash_table_destroy (files);
