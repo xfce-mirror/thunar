@@ -136,7 +136,7 @@ thunar_io_jobs_util_next_renamed_file (ThunarJob *job,
   GError      *err = NULL;
   GFile       *renamed_file = NULL;
   GFile       *parent_file = NULL;
-  const gchar *old_filename;
+  gchar       *old_filename;
   gchar       *filename;
   gchar       *file_basename;
   gchar       *extension = NULL;
@@ -192,6 +192,7 @@ thunar_io_jobs_util_next_renamed_file (ThunarJob *job,
   /* free resources */
   g_object_unref (info);
   g_free (filename);
+  g_free (old_filename);
 
   return renamed_file;
 }
