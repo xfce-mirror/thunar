@@ -311,16 +311,6 @@ thunar_g_file_is_network (GFile *file)
 
 
 
-gboolean
-thunar_g_file_is_admin (GFile *file)
-{
-  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
-
-  return g_file_has_uri_scheme (file, "admin");
-}
-
-
-
 GKeyFile *
 thunar_g_file_query_key_file (GFile              *file,
                               GCancellable       *cancellable,
