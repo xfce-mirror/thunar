@@ -767,6 +767,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   ThunarIconFactory *icon_factory;
   ThunarPreferences *preferences;
   ThunarDateStyle    date_style;
+  ThunarFile        *parent_file;
   GtkIconTheme      *icon_theme;
   GtkWidget         *dialog;
   GtkWidget         *grid;
@@ -777,6 +778,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   GtkWidget         *check_button;
   GdkPixbuf         *icon;
   cairo_surface_t   *surface;
+  const gchar       *parent_string = "";
   gchar             *date_custom_style;
   gchar             *date_string;
   gchar             *size_string;
@@ -867,7 +869,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
   label = gtk_label_new (text);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
-  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big ());
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big_bold ());
   gtk_label_set_selectable (GTK_LABEL (label), TRUE);
   gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
   gtk_label_set_line_wrap_mode (GTK_LABEL (label), PANGO_WRAP_CHAR);
@@ -877,21 +879,29 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   gtk_widget_show (label);
   g_free (text);
 
+  parent_file = thunar_file_get_parent (dst_file, NULL);
+  if (parent_file != NULL)
+    {
+      parent_string = thunar_file_get_basename (parent_file);
+      g_object_unref (parent_file);
+    }
+
   if (thunar_file_is_symlink (dst_file))
     /* TRANSLATORS: First part of replace dialog sentence */
-    text = g_strdup_printf (_("Do you want to replace the link"));
+    text = g_strdup_printf (_("Replace the link in \"%s\""), parent_string);
   else if (thunar_file_is_directory (dst_file))
     /* TRANSLATORS: First part of replace dialog sentence */
-    text = g_strdup_printf (_("Do you want to replace the existing folder"));
+    text = g_strdup_printf (_("Replace the existing folder in \"%s\""), parent_string);
   else
     /* TRANSLATORS: First part of replace dialog sentence */
-    text = g_strdup_printf (_("Do you want to replace the existing file"));
+    text = g_strdup_printf (_("Replace the existing file in \"%s\""), parent_string);
 
   /* next row */
   row++;
 
   label = gtk_label_new (text);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
+  gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_MIDDLE);
   gtk_widget_set_hexpand (label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), label, 1, row, 2, 1);
   gtk_widget_show (label);
