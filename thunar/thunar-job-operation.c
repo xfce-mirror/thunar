@@ -695,7 +695,11 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation  *operation,
         parent_resolved = thunar_g_file_resolve_symlink (parent);
         g_object_unref (parent);
         if (parent_resolved != NULL && basename != NULL)
-          real_path = g_build_filename (g_file_get_path (parent_resolved), basename, NULL);
+          {
+            gchar *parent_path = g_file_get_path (parent_resolved);
+            real_path = g_build_filename (parent_path, basename, NULL);
+            g_free (parent_path);
+          }
         g_free (basename);
         g_object_unref (parent_resolved);
       }
