@@ -41,6 +41,9 @@ GtkWidget  *thunar_location_button_new        (void) G_GNUC_MALLOC;
 ThunarFile *thunar_location_button_get_file   (ThunarLocationButton *location_button);
 void        thunar_location_button_set_file   (ThunarLocationButton *location_button,
                                                ThunarFile           *file);
+gint        thunar_location_button_get_max_width (ThunarLocationButton *location_button);
+void        thunar_location_button_set_max_width (ThunarLocationButton *location_button,
+                                                  gint                  max_width);
 
 G_END_DECLS;
 
