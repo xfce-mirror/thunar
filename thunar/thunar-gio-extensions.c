@@ -1119,7 +1119,7 @@ thunar_g_app_info_launch (GAppInfo          *info,
                   if (g_app_info_equal (info, recommended_app_infos->data))
                     update_app_info = FALSE;
 
-                  g_list_free (recommended_app_infos);
+                  g_list_free_full (recommended_app_infos, g_object_unref);
                 }
             }
 
