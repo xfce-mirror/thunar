@@ -1273,12 +1273,16 @@ thunar_transfer_job_move_file_with_rename (ExoJob             *job,
                                             exo_job_get_cancellable (job),
                                             NULL, NULL, error);
       if (!move_rename_successful && !exo_job_is_cancelled (job) && ((*error)->code == G_IO_ERROR_EXISTS))
-        continue;
+        {
+          g_object_unref (renamed_file);
+          continue;
+        }
 
       /* Log the operation if the move and rename were successful and logging is enabled */
       if (operation != NULL)
         thunar_job_operation_add (operation, node->source_file, renamed_file);
 
+      g_object_unref (renamed_file);
       return move_rename_successful;
     }
 }
