@@ -749,6 +749,7 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation  *operation,
 
         }
 
+      g_object_unref (info);
       g_object_unref (original_file);
     }
 
