@@ -2465,8 +2465,13 @@ _thunar_tree_view_model_folder_error (Node         *node,
           /* set_folder func does not emit row-deleted signal instead relies
           * on ThunarStandardView to disconnect & reconnect the view quickly update
           * changes in current_directory. */
-          for (GList *lp = g_hash_table_get_keys (node->set); lp != NULL; lp = lp->next)
+          GList *keys = g_hash_table_get_keys (node->set);
+
+          for (GList *lp = keys; lp != NULL; lp = lp->next)
             thunar_tree_view_model_dir_remove_file (node, THUNAR_FILE (lp->data));
+
+          g_list_free (keys);
+
           /* reset the model if error is with the current directory */
           thunar_tree_view_model_set_folder (THUNAR_STANDARD_VIEW_MODEL (node->model), NULL, NULL);
         }
