@@ -415,7 +415,7 @@ thunar_toolbar_editor_toggle_visibility (ThunarToolbarEditor    *toolbar_editor,
   for (GList *lp = windows; lp != NULL; lp = lp->next)
     {
       ThunarWindow *window = lp->data;
-      thunar_window_toolbar_toggle_item_visibility (window, gtk_tree_path_get_indices (path)[0]);
+      thunar_window_toolbar_toggle_item_visibility (window, gtk_tree_path_get_indices (path)[0], !visible);
     }
   g_object_unref (application);
   g_list_free (windows);
@@ -614,7 +614,7 @@ thunar_toolbar_editor_populate_model (ThunarToolbarEditor *toolbar_editor)
       widget = gtk_label_new_with_mnemonic (label_with_mnemonic);
       g_object_ref_sink (widget);
 
-      if (g_strcmp0 (id, "menu") == 0)
+      if (g_strcmp0 (id, "menu") == 0 || g_strcmp0 (id, "location-bar") == 0)
         {
           checkbox_visible = FALSE;
           tooltip = _("Only visible when the menubar is hidden");
