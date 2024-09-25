@@ -747,6 +747,7 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation  *operation,
           source_file_list = thunar_g_list_append_deep (source_file_list, trashed_file);
           target_file_list = thunar_g_list_append_deep (target_file_list, original_file);
 
+          g_object_unref (trashed_file);
         }
 
       g_object_unref (info);
