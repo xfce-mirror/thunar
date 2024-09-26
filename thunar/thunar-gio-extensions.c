@@ -311,16 +311,6 @@ thunar_g_file_is_network (GFile *file)
 
 
 
-gboolean
-thunar_g_file_is_admin (GFile *file)
-{
-  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
-
-  return g_file_has_uri_scheme (file, "admin");
-}
-
-
-
 GKeyFile *
 thunar_g_file_query_key_file (GFile              *file,
                               GCancellable       *cancellable,
@@ -842,7 +832,10 @@ thunar_g_file_copy (GFile                *source,
   if (success)
     {
       /* rename .partial if done without problem */
-      success = (g_file_set_display_name (partial, base_name, NULL, error) != NULL);
+      GFile *renamed_file = g_file_set_display_name (partial, base_name, NULL, error);
+      success = (renamed_file != NULL);
+      if (success)
+         g_object_unref (renamed_file);
     }
 
   if (!success)
@@ -1126,7 +1119,7 @@ thunar_g_app_info_launch (GAppInfo          *info,
                   if (g_app_info_equal (info, recommended_app_infos->data))
                     update_app_info = FALSE;
 
-                  g_list_free (recommended_app_infos);
+                  g_list_free_full (recommended_app_infos, g_object_unref);
                 }
             }
 

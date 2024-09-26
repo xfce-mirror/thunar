@@ -695,7 +695,11 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation  *operation,
         parent_resolved = thunar_g_file_resolve_symlink (parent);
         g_object_unref (parent);
         if (parent_resolved != NULL && basename != NULL)
-          real_path = g_build_filename (g_file_get_path (parent_resolved), basename, NULL);
+          {
+            gchar *parent_path = g_file_get_path (parent_resolved);
+            real_path = g_build_filename (parent_path, basename, NULL);
+            g_free (parent_path);
+          }
         g_free (basename);
         g_object_unref (parent_resolved);
       }
@@ -743,8 +747,10 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation  *operation,
           source_file_list = thunar_g_list_append_deep (source_file_list, trashed_file);
           target_file_list = thunar_g_list_append_deep (target_file_list, original_file);
 
+          g_object_unref (trashed_file);
         }
 
+      g_object_unref (info);
       g_object_unref (original_file);
     }
 

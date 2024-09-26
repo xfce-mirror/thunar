@@ -2378,6 +2378,9 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
 
   if (selected_items_tree_path_list == NULL) /* nothing selected */
     {
+      if (thunar_standard_view_model_get_folder (standard_view->model) == NULL)
+        return FALSE;
+
       standard_view->priv->statusbar_job = thunar_io_jobs_load_statusbar_text_for_folder (standard_view, thunar_standard_view_model_get_folder (standard_view->model));
 
       g_signal_connect (standard_view->priv->statusbar_job, "error", G_CALLBACK (thunar_standard_view_update_statusbar_text_error), standard_view);

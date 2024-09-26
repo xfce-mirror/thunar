@@ -118,6 +118,7 @@ thunar_renamer_progress_finalize (GObject *object)
 
   /* release the pairs */
   thunar_renamer_pair_list_free (renamer_progress->pairs_renamed_current_run);
+  thunar_renamer_pair_list_free (renamer_progress->pairs_renamed_all_runs);
   thunar_renamer_pair_list_free (renamer_progress->pairs_pending_current_run);
 
   (*G_OBJECT_CLASS (thunar_renamer_progress_parent_class)->finalize) (object);

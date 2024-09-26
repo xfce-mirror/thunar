@@ -601,7 +601,8 @@ thunar_path_entry_changed (GtkEditable *editable)
       GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (editable));
       path_entry->search_mode = TRUE;
       update_icon = TRUE;
-      thunar_window_update_search (THUNAR_WINDOW (window));
+      if (GTK_IS_WINDOW (window))
+        thunar_window_update_search (THUNAR_WINDOW (window));
     }
   else
     {
