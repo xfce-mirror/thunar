@@ -959,6 +959,9 @@ thunar_properties_dialog_finalize (GObject *object)
   if (dialog->highlight_change_job != NULL && dialog->highlight_change_job_finish_signal != 0)
     g_signal_handler_disconnect (dialog->highlight_change_job, dialog->highlight_change_job_finish_signal);
 
+  g_free (dialog->foreground_color);
+  g_free (dialog->background_color);
+
   if (dialog->rename_job != NULL)
     {
       g_signal_handlers_disconnect_by_data (dialog->rename_job, dialog);
@@ -2077,7 +2080,6 @@ thunar_properties_dialog_set_foreground (ThunarPropertiesDialog *dialog)
   color_str = gdk_rgba_to_string (&color);
   thunar_properties_dialog_colorize_example_box (dialog, NULL, color_str);
   g_free (dialog->foreground_color);
-  dialog->foreground_color = NULL;
   dialog->foreground_color = color_str;
   thunar_properties_dialog_update_apply_button (dialog);
 }
@@ -2096,7 +2098,6 @@ thunar_properties_dialog_set_background (ThunarPropertiesDialog *dialog)
   color_str = gdk_rgba_to_string (&color);
   thunar_properties_dialog_colorize_example_box (dialog, color_str, NULL);
   g_free (dialog->background_color);
-  dialog->background_color = NULL;
   dialog->background_color = color_str;
   thunar_properties_dialog_update_apply_button (dialog);
 }
