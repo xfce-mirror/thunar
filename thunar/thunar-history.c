@@ -304,13 +304,13 @@ thunar_history_error_not_found (GFile    *goto_file,
     {
       path = g_file_get_uri (goto_file);
       parse_name = g_uri_unescape_string (path, NULL);
-      g_free (path);
     }
   else
     parse_name = g_file_get_parse_name (goto_file);
 
   thunar_dialogs_show_error (parent, error, _("Could not find \"%s\""), parse_name);
   g_free (parse_name);
+  g_free (path);
 
   g_error_free (error);
 }
