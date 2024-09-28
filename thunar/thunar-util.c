@@ -1059,6 +1059,9 @@ thunar_util_clip_view_background (GtkCellRenderer      *cell,
         gtk_style_context_lookup_color (context, "theme_unfocused_selected_bg_color", &highlight_color_rgba);
       else
         gtk_style_context_lookup_color (context, "theme_selected_bg_color", &highlight_color_rgba);
+
+      if (color)
+        gdk_rgba_free (color);
       color = gdk_rgba_copy (&highlight_color_rgba);
     }
 
