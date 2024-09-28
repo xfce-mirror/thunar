@@ -2003,7 +2003,10 @@ thunar_io_jobs_load_statusbar_text_for_folder (ThunarStandardView *standard_view
   file = thunar_folder_get_corresponding_file (folder);
 
   if (file == NULL)
-    return NULL;
+    {
+      g_free (date_custom_style);
+      return NULL;
+    }
 
   ThunarJob *job = thunar_simple_job_new (_thunar_job_load_statusbar_text, 8,
                                           THUNAR_TYPE_STANDARD_VIEW, g_object_ref (standard_view),
