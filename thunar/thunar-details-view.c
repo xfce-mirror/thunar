@@ -152,9 +152,6 @@ struct _ThunarDetailsView
   /* whether to use fixed column widths */
   gboolean           fixed_columns;
 
-  /* whether the most recent item activation used a mouse button press */
-  gboolean           button_pressed;
-
   /* event source id for thunar_details_view_zoom_level_changed_reload_fixed_height */
   guint idle_id;
 
@@ -807,8 +804,6 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
     {
       GtkTreePath       *cursor_path;
 
-      details_view->button_pressed = TRUE;
-
       /* find out if the expander was clicked;
        * only needed if expandable folders is enabled */
       if (gtk_tree_view_get_show_expanders (tree_view))
@@ -1105,8 +1100,6 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
   GtkTreeIter       iter;
   ThunarFile       *file = NULL;
 
-  details_view->button_pressed = FALSE;
-
   /* popup context menu if "Menu" or "<Shift>F10" is pressed */
   if (event->keyval == GDK_KEY_Menu || ((event->state & GDK_SHIFT_MASK) != 0 && event->keyval == GDK_KEY_F10))
     {
@@ -1201,19 +1194,10 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
                                    GtkTreeViewColumn *column,
                                    ThunarDetailsView *details_view)
 {
-  GtkTreeSelection    *selection;
   ThunarActionManager *action_mgr;
   GtkWidget           *window;
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
-
-  /* be sure to have only the clicked item selected */
-  if (details_view->button_pressed)
-    {
-      selection = gtk_tree_view_get_selection (tree_view);
-      gtk_tree_selection_unselect_all (selection);
-      gtk_tree_selection_select_path (selection, path);
-    }
 
   window = gtk_widget_get_toplevel (GTK_WIDGET (details_view));
   action_mgr = thunar_window_get_action_manager (THUNAR_WINDOW (window));
