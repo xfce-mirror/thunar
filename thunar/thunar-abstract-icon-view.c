@@ -96,8 +96,6 @@ struct _ThunarAbstractIconViewPrivate
   gulong gesture_expose_id;
   gulong gesture_motion_id;
   gulong gesture_release_id;
-
-  gboolean button_pressed;
 };
 
 
@@ -399,8 +397,6 @@ thunar_abstract_icon_view_button_press_event (ExoIconView            *view,
   GtkTreePath       *path;
   GtkWidget         *window;
 
-  abstract_icon_view->priv->button_pressed = TRUE;
-
   /* give focus to the clicked view */
   window = gtk_widget_get_toplevel (GTK_WIDGET (abstract_icon_view));
   thunar_window_focus_view (THUNAR_WINDOW (window), GTK_WIDGET (abstract_icon_view));
@@ -585,8 +581,6 @@ thunar_abstract_icon_view_key_press_event (ExoIconView            *view,
                                            GdkEventKey            *event,
                                            ThunarAbstractIconView *abstract_icon_view)
 {
-  abstract_icon_view->priv->button_pressed = FALSE;
-
   /* popup context menu if "Menu" or "<Shift>F10" is pressed */
   if (event->keyval == GDK_KEY_Menu || ((event->state & GDK_SHIFT_MASK) != 0 && event->keyval == GDK_KEY_F10))
     {
@@ -645,13 +639,6 @@ thunar_abstract_icon_view_item_activated (ExoIconView            *view,
   GtkWidget *window;
 
   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
-
-  /* be sure to have only the clicked item selected */
-  if (abstract_icon_view->priv->button_pressed)
-    {
-      exo_icon_view_unselect_all (view);
-      exo_icon_view_select_path (view, path);
-    }
 
   window = gtk_widget_get_toplevel (GTK_WIDGET (abstract_icon_view));
   thunar_action_manager_activate_selected_files (thunar_window_get_action_manager (THUNAR_WINDOW (window)), THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL);
