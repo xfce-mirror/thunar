@@ -4463,19 +4463,24 @@ _thunar_standard_view_open_on_middle_click (ThunarStandardView *standard_view,
                                             guint               event_state)
 {
   GtkTreeIter          iter;
-  ThunarFile          *file;
+  GList                selected_files;
   gboolean             in_tab;
   GtkWidget           *window;
   ThunarActionManager *action_mgr;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
+  /* init the selected files list */
+  selected_files.data = NULL;
+  selected_files.prev = NULL;
+  selected_files.next = NULL;
+
   /* determine the file for the path */
   gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, tree_path);
-  file = thunar_standard_view_model_get_file (standard_view->model, &iter);
-  if (G_LIKELY (file != NULL))
+  selected_files.data = thunar_standard_view_model_get_file (standard_view->model, &iter);
+  if (G_LIKELY (selected_files.data != NULL))
     {
-      if (thunar_file_is_directory (file))
+      if (thunar_file_is_directory (selected_files.data))
         {
           /* lookup setting if we should open in a tab or a window */
           g_object_get (G_OBJECT (standard_view->preferences), "misc-middle-click-in-tab", &in_tab, NULL);
@@ -4486,10 +4491,12 @@ _thunar_standard_view_open_on_middle_click (ThunarStandardView *standard_view,
 
           window     = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
           action_mgr = thunar_window_get_action_manager (THUNAR_WINDOW (window));
+          thunar_action_manager_set_selection (action_mgr, &selected_files, NULL, NULL);
           thunar_action_manager_open_selected_folders (action_mgr, in_tab);
         }
+
       /* release the file reference */
-      g_object_unref (G_OBJECT (file));
+      g_object_unref (G_OBJECT (selected_files.data));
     }
 }
 
