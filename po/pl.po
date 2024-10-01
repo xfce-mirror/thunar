@@ -23,7 +23,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
 "POT-Creation-Date: 2024-09-24 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
-"Last-Translator: Piotr Sokół <psokol.l10n@gmail.com>, 2019,2022-2024\n"
+"Last-Translator: Marek Adamski, 2021-2024\n"
 "Language-Team: Polish (http://app.transifex.com/xfce/thunar/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -575,17 +575,17 @@ msgstr "Wyświetla informacje o wersji i kończy"
 #: thunar/thunar-application.c:307
 #, c-format
 msgid "Acquired the session message bus '%s'\n"
-msgstr "Uzyskanie magistrali wiadomości sesji '%s'\n"
+msgstr "Uzyskanie magistrali komunikatów sesji „%s”\n"
 
 #: thunar/thunar-application.c:317
 #, c-format
 msgid "Acquired the name '%s' on the session message bus\n"
-msgstr "Osiągnięto nazwę '%s' na magistrali wiadomości sesji\n"
+msgstr "Osiągnięto nazwę „%s” w magistrali komunikatów sesji\n"
 
 #: thunar/thunar-application.c:327
 #, c-format
 msgid "Name '%s' lost on the message dbus."
-msgstr "Nazwa '%s' nie znajduje się w dbusie wiadomości."
+msgstr "Nazwa „%s” utracona w magistrali komunikatów sesji."
 
 #: thunar/thunar-application.c:478
 msgid "The Thunar development team. All rights reserved."
@@ -1153,7 +1153,7 @@ msgstr "Należy określić co najmniej jeden plik źródłowy"
 
 #: thunar/thunar-dbus-service.c:1175
 msgid "The number of source and target filenames must be the same"
-msgstr "Ilość plików źródłowych i docelowych musi być taka sama"
+msgstr "Liczba plików źródłowych i docelowych musi być taka sama"
 
 #: thunar/thunar-dbus-service.c:1184
 msgid "A destination directory must be specified"
@@ -1359,7 +1359,7 @@ msgstr "następującym plikiem?"
 
 #: thunar/thunar-dialogs.c:996
 msgid "_Apply the action to all files and folders"
-msgstr "Zastosuj _działanie do wszystkich plików i katalogów"
+msgstr "Zastosuj czynność _do wszystkich plików i katalogów"
 
 #. TRANSLATORS: This string will be inserted in the following sentence in the
 #. second appearance of %s:
@@ -1830,7 +1830,7 @@ msgid ""
 "The file \"%s\" (%s) already exists. Would you like to replace it?\n"
 "\n"
 "If you replace an existing file, its contents will be overwritten."
-msgstr "Plik „%s” (%s) już istnieje. Czy chcesz go zastąpić?\n\nPo zastąpieniu istniejącego pliku, jego zawartość zostanie nadpisana."
+msgstr "Plik „%s” (%s) już istnieje. Czy chcesz go zastąpić?\n\nJeśli zastąpisz istniejący plik, jego zawartość zostanie nadpisana."
 
 #: thunar/thunar-job.c:296
 #, c-format
@@ -1838,7 +1838,7 @@ msgid ""
 "The file \"%s\" already exists. Would you like to replace it?\n"
 "\n"
 "If you replace an existing file, its contents will be overwritten."
-msgstr "Plik „%s” już istnieje. Zastąpić go?\n\nPo zastąpieniu istniejącego pliku, jego zawartość zostanie zmieniona."
+msgstr "Plik „%s” już istnieje. Czy chcesz go zastąpić?\n\nJeśli zastąpisz istniejący plik, jego zawartość zostanie nadpisana."
 
 #: thunar/thunar-job.c:378
 msgid "Do you want to overwrite it?"
@@ -1860,7 +1860,7 @@ msgstr "Pominąć go?"
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
-msgstr "Brak przestrzeni w miejscu docelowym. Spróbuj usunąć pliki aby uzyskać przestrzeń."
+msgstr "Brak przestrzeni w miejscu docelowym. Spróbuj usunąć pliki, aby uzyskać przestrzeń."
 
 #: thunar/thunar-job-operation.c:782 thunar/thunar-size-label.c:472
 #: thunar/thunar-util.c:1327
@@ -1950,7 +1950,7 @@ msgstr "Nie udało się ponowić operacji „%s”"
 #: thunar/thunar-job-operation-history.c:563
 #, c-format
 msgid "Undo the latest '%s' operation (%s)"
-msgstr "Cofnij ostatnią operację '%s' (%s)"
+msgstr "Cofnij ostatnią operację „%s” (%s)"
 
 #: thunar/thunar-job-operation-history.c:568 thunar/thunar-window.c:516
 msgid "Undo the latest operation"
@@ -1960,7 +1960,7 @@ msgstr "Cofa ostatnią akcję"
 #: thunar/thunar-job-operation-history.c:588
 #, c-format
 msgid "Redo the latest '%s' operation (%s)"
-msgstr "Ponów ostatnią operację '%s' (%s)"
+msgstr "Ponów ostatnią operację „%s” (%s)"
 
 #: thunar/thunar-job-operation-history.c:593 thunar/thunar-window.c:517
 msgid "Redo the latest operation"
@@ -2013,7 +2013,7 @@ msgstr "Odmontowywanie nośnika"
 msgid ""
 "The device \"%s\" is being unmounted by the system. Please do not remove the"
 " media or disconnect the drive"
-msgstr "Trwa odmontowywanie nośnika „%s”. Proszę nie wysuwać nośnika, bądź odłączać napędu."
+msgstr "Trwa odmontowywanie nośnika „%s”. Proszę nie wysuwać nośnika lub odłączać napędu."
 
 #: thunar/thunar-notify.c:287 thunar/thunar-notify.c:326
 msgid "Writing data to device"
@@ -2024,7 +2024,7 @@ msgstr "Zapisywanie danych na nośniku"
 msgid ""
 "There is data that needs to be written to the device \"%s\" before it can be"
 " removed. Please do not remove the media or disconnect the drive"
-msgstr "Pewne dane muszą zostać zapisane na nośniku „%s” przed jego wysunięciem. Proszę nie wysuwać nośnika bądź odłączać napędu."
+msgstr "Pewne dane muszą zostać zapisane na nośniku „%s” przed jego wysunięciem. Proszę nie wysuwać nośnika lub odłączać napędu."
 
 #: thunar/thunar-notify.c:320
 msgid "Ejecting device"
@@ -2175,7 +2175,7 @@ msgid ""
 "The folder permissions will be reset to a consistent state. Only users "
 "allowed to read the contents of this folder will be allowed to enter the "
 "folder afterwards."
-msgstr "Ustawia uprawnienia do katalogu na normalne. Tylko użytkownicy mogący czytać zawartość katalogu będą mogły wejść do niego."
+msgstr "Ustawia uprawnienia do katalogu na normalne. Tylko użytkownicy uprawnieni do odczytu zawartości tego katalogu będą mogli do niego wejść."
 
 #. popup the error message dialog
 #: thunar/thunar-permissions-chooser.c:1290
@@ -2268,7 +2268,7 @@ msgstr "Rozmiar pliku w formacie binarnym"
 #: thunar/thunar-preferences-dialog.c:432
 msgid ""
 "Select this option to show file size in binary format instead of decimal."
-msgstr "Wyświetla rozmiar pliku w formacie binarnym, zamiast dziesiętnego"
+msgstr "Wyświetla rozmiar pliku w formacie binarnym, a nie dziesiętnym."
 
 #: thunar/thunar-preferences-dialog.c:441
 msgid "Thumbnails"
@@ -2515,7 +2515,7 @@ msgstr "Zaznaczanie _jednokrotnym kliknięciem"
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
-msgstr "Proszę wprowadzić wartość _opóźnienia, niezbędnego\ndo zaznaczenia  elementu po umieszczeniu nad nim\nkursora myszy:"
+msgstr "Określ _opóźnienie przed zaznaczeniem elementu\npo umieszczeniu nad nim kursora myszy:"
 
 #: thunar/thunar-preferences-dialog.c:911
 msgid ""
@@ -2524,7 +2524,7 @@ msgid ""
 "disable this behavior by moving the slider to the left-most position. This "
 "behavior may be useful when single clicks activate items, and you want only "
 "to select the item without activating it."
-msgstr "Wprowadza wartość czasu po upływie, którego element zostanie zaznaczony. Przesunięcie suwaka do lewej skrajnej pozycji, wyłącza tą cechę. Przydatne do zaznaczania elementów gdy wybrano aktywację pojedynczym kliknięciem."
+msgstr "Wprowadza wartość czasu po upływie, którego element zostanie zaznaczony. Przesunięcie suwaka do lewej skrajnej pozycji, wyłącza tą cechę. Przydatne do zaznaczania elementów, gdy wybrano aktywację pojedynczym kliknięciem."
 
 #: thunar/thunar-preferences-dialog.c:934
 msgid "Disabled"
@@ -2637,7 +2637,7 @@ msgid ""
 "Use intermediate file '*.partial~' to copy files. This will prevent "
 "fragmented files. The new file will only be shown after the copy was "
 "successfully finished."
-msgstr "Używa pliku pośredniego '*.partial~' do kopiowania plików. Zapobiega to fragmentacji plików. Nowy plik zostanie wyświetlony dopiero po pomyślnym zakończeniu kopiowania."
+msgstr "Używa pliku pośredniego „*.partial~” do kopiowania plików. Zapobiega to fragmentacji plików. Nowy plik zostanie wyświetlony dopiero po pomyślnym zakończeniu kopiowania."
 
 #: thunar/thunar-preferences-dialog.c:1168
 msgid "Verify file checksum on copy:"
@@ -3740,7 +3740,7 @@ msgstr "P_referencje..."
 
 #: thunar/thunar-window.c:518
 msgid "Edit Thunar's Preferences"
-msgstr "Edytowanie preferencji Thunara"
+msgstr "Edytowanie preferencji programu Thunar"
 
 #: thunar/thunar-window.c:520
 msgid "_View"
@@ -4385,7 +4385,7 @@ msgstr "Zamienianie na wielkie/małe litery"
 
 #: plugins/thunar-sbr/thunar-sbr-date-renamer.c:195
 msgid "Insert _time:"
-msgstr "_Czas:"
+msgstr "_Godzina:"
 
 #: plugins/thunar-sbr/thunar-sbr-date-renamer.c:226
 msgid ""
@@ -4393,7 +4393,7 @@ msgid ""
 "For example, %Y will be substituted with the year, %m with the month and %d "
 "with the day. See the documentation of the date utility for additional "
 "information."
-msgstr "Określa format daty i czasu wstawianych do nazw plików. Przykładowo, %Y zostanie zastąpione rokiem, %m miesiącem a %d dniem. Szczegóły zawiera dokumentacja date."
+msgstr "Określa format daty i godziny wstawianych do nazw plików. Przykładowo, %Y zostanie zastąpione rokiem, %m miesiącem a %d dniem. Szczegóły zawiera dokumentacja „date”."
 
 #: plugins/thunar-sbr/thunar-sbr-date-renamer.c:242
 #: plugins/thunar-sbr/thunar-sbr-insert-renamer.c:199
@@ -4402,7 +4402,7 @@ msgstr "_Numer pozycji:"
 
 #: plugins/thunar-sbr/thunar-sbr-date-renamer.c:595
 msgid "Insert Date / Time"
-msgstr "Wstawianie daty/czasu"
+msgstr "Wstawianie daty / godziny"
 
 #: plugins/thunar-sbr/thunar-sbr-enum-types.c:93
 msgid "lowercase"
@@ -4711,7 +4711,7 @@ msgstr "Czynność zostanie trwale usunięta."
 #: plugins/thunar-uca/thunar-uca-editor.c:369
 #, c-format
 msgid "This keyboard shortcut is currently used by: '%s'"
-msgstr "Ten skrót klawiszowy jest obecnie używany przez: '%s'"
+msgstr "Ten skrót klawiszowy jest obecnie używany przez: „%s”"
 
 #: plugins/thunar-uca/thunar-uca-editor.c:372
 msgid "Keyboard shortcut already in use"
@@ -4766,7 +4766,7 @@ msgstr "_Opis:"
 msgid ""
 "The description of the action that will be displayed as tooltip in the "
 "statusbar when selecting the item from the context menu."
-msgstr "Wprowadza opis czynności wyświetlany na pasku stanu, podczas wybierania polecenia z menu podręcznego"
+msgstr "Wprowadza opis czynności wyświetlany na pasku stanu podczas wybierania polecenia z menu podręcznego"
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:106
 msgid "_Submenu:"
@@ -4790,7 +4790,7 @@ msgid ""
 "case letters (e.g. %F, %D, %N) are used, the action will be applicable even "
 "if more than one item is selected. Else the action will only be applicable "
 "if exactly one item is selected."
-msgstr "Wprowadza polecenie (wraz z koniecznymi parametrami) do wykonania czynności. W opisie poniżej znajduje się lista obsługiwanych parametrów. Użycie wielkich liter parametrów (np. %F, %D, %N), umożliwia wykonanie czynności w odniesieniu do wielu plików. W przeciwnym wypadku, polecenie uruchomione będzie tylko dla jednego pliku."
+msgstr "Wprowadza polecenie (wraz z koniecznymi parametrami) do wykonania czynności. W opisie poniżej znajduje się lista obsługiwanych parametrów. Użycie wielkich liter parametrów (np. %F, %D, %N) umożliwia wykonanie czynności w odniesieniu do wielu plików. W przeciwnym razie czynność zostanie zastosowana tylko dla jednego pliku."
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:172
 msgid ""
@@ -4803,11 +4803,11 @@ msgstr "_Skrót klawiszowy:"
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:219
 msgid "The keyboard shortcut for the action."
-msgstr "Skrót klawiszowy do tej akcji."
+msgstr "Skrót klawiszowy do tej czynności."
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:234
 msgid "Clear the keyboard shortcut for this action."
-msgstr "Wyczyść skrót klawiszowy do tej akcji."
+msgstr "Wyczyść skrót klawiszowy do tej czynności."
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:263
 msgid "_Icon:"
@@ -4940,7 +4940,7 @@ msgid ""
 "These actions are applicable to folders or certain kinds of files.\n"
 "\n"
 "Check the <a href=\"https://docs.xfce.org/xfce/thunar/custom-actions\">documentation</a> for a collection of custom action examples."
-msgstr "Skonfiguruj niestandardowe czynności, które będą wyświetlane w menu kontekstowym i/lub na pasku narzędzi menedżera plików.\nDziałania te dotyczą folderów lub niektórych rodzajów plików.\n\nSprawdź <a href=\"https://docs.xfce.org/xfce/thunar/custom-actions\">dokumentację</a>, aby zapoznać się z kolekcją przykładów działań niestandardowych."
+msgstr "Skonfiguruj niestandardowe czynności, które będą wyświetlane w menu kontekstowym i/lub na pasku narzędzi menedżera plików.\nCzynności te dotyczą folderów lub niektórych rodzajów plików.\n\nSprawdź <a href=\"https://docs.xfce.org/xfce/thunar/custom-actions\">dokumentację</a>, aby zapoznać się z kolekcją przykładów czynności niestandardowych."
 
 #: plugins/thunar-uca/thunar-uca-chooser.ui:88
 msgid "Add a new custom action."
