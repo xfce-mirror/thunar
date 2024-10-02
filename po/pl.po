@@ -5,10 +5,10 @@
 # 
 # Translators:
 # Nick Schermer <nick@xfce.org>, 2022
-# hoek <hoek@tuta.io>, 2022
+# d703b7c9f8279b67f8ff243fa8f12e4a_ead0287 <01cbd6dcada4ad6beac99d868e1751df_141855>, 2022
 # Piotr Sokół <psokol.l10n@gmail.com>, 2022
 # Xfce Bot <transifex@xfce.org>, 2022
-# Marek Adamski, 2023
+# Marek Adamski, 2024
 # 
 #, fuzzy
 msgid ""
@@ -17,7 +17,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-30 00:47+0200\n"
 "PO-Revision-Date: 2022-12-22 11:28+0000\n"
-"Last-Translator: Marek Adamski, 2023\n"
+"Last-Translator: Marek Adamski, 2024\n"
 "Language-Team: Polish (https://app.transifex.com/xfce/teams/16840/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -554,7 +554,7 @@ msgstr "Nowy katalog"
 
 #: ../thunar/thunar-action-manager.c:2625 ../thunar/thunar-application.c:1962
 msgid "Create New Folder"
-msgstr "Utwórz nowy folder"
+msgstr "Tworzy nowy katalog"
 
 #. generate a title for the create dialog
 #: ../thunar/thunar-action-manager.c:2677 ../thunar/thunar-application.c:2026
@@ -653,17 +653,17 @@ msgstr "Wypisuje informacje o wersji i kończy"
 #: ../thunar/thunar-application.c:302
 #, c-format
 msgid "Acquired the session message bus '%s'\n"
-msgstr "Uzyskanie magistrali wiadomości sesji '%s'\n"
+msgstr "Uzyskanie magistrali komunikatów sesji „%s”\n"
 
 #: ../thunar/thunar-application.c:312
 #, c-format
 msgid "Acquired the name '%s' on the session message bus\n"
-msgstr "Osiągnięto nazwę '%s' na magistrali wiadomości sesji\n"
+msgstr "Osiągnięto nazwę „%s” w magistrali komunikatów sesji\n"
 
 #: ../thunar/thunar-application.c:322
 #, c-format
 msgid "Name '%s' lost on the message dbus."
-msgstr "Nazwa '%s' nie znajduje się w dbusie wiadomości."
+msgstr "Nazwa „%s” utracona w magistrali komunikatów sesji."
 
 #: ../thunar/thunar-application.c:473
 msgid "The Thunar development team. All rights reserved."
@@ -1101,7 +1101,7 @@ msgstr "Automatyczne _skalowanie"
 
 #: ../thunar/thunar-column-editor.c:343
 msgid "Size Column of Folders"
-msgstr "Kolumna rozmiaru folderów"
+msgstr "Kolumna rozmiaru katalogów"
 
 #. explain what it does
 #: ../thunar/thunar-column-editor.c:356
@@ -1154,7 +1154,7 @@ msgstr "Należy określić co najmniej jeden plik źródłowy"
 #: ../thunar/thunar-dbus-service.c:1209
 #, c-format
 msgid "The number of source and target filenames must be the same"
-msgstr "Ilość plików źródłowych i docelowych musi być taka sama"
+msgstr "Liczba plików źródłowych i docelowych musi być taka sama"
 
 #: ../thunar/thunar-dbus-service.c:1218
 #, c-format
@@ -1752,9 +1752,9 @@ msgid ""
 "\n"
 "If you replace an existing file, its contents will be overwritten."
 msgstr ""
-"Plik „%s” już istnieje. Zastąpić go?\n"
+"Plik „%s” już istnieje. Czy chcesz go zastąpić?\n"
 "\n"
-"Po zastąpieniu istniejącego pliku, jego zawartość zostanie zmieniona."
+"Jeśli zastąpisz istniejący plik, jego zawartość zostanie nadpisana."
 
 #: ../thunar/thunar-job.c:372
 msgid "Do you want to overwrite it?"
@@ -1990,7 +1990,7 @@ msgid ""
 "The device \"%s\" is being unmounted by the system. Please do not remove the"
 " media or disconnect the drive"
 msgstr ""
-"Trwa odmontowywanie nośnika „%s”. Proszę nie wysuwać nośnika, bądź odłączać "
+"Trwa odmontowywanie nośnika „%s”. Proszę nie wysuwać nośnika lub odłączać "
 "napędu."
 
 #: ../thunar/thunar-notify.c:287 ../thunar/thunar-notify.c:326
@@ -2004,7 +2004,7 @@ msgid ""
 " removed. Please do not remove the media or disconnect the drive"
 msgstr ""
 "Pewne dane muszą zostać zapisane na nośniku „%s” przed jego wysunięciem."
-" Proszę nie wysuwać nośnika bądź odłączać napędu."
+" Proszę nie wysuwać nośnika lub odłączać napędu."
 
 #: ../thunar/thunar-notify.c:320
 msgid "Ejecting device"
@@ -2168,12 +2168,12 @@ msgid ""
 "allowed to read the contents of this folder will be allowed to enter the "
 "folder afterwards."
 msgstr ""
-"Ustawia uprawnienia do katalogu na normalne. Tylko użytkownicy mogący czytać"
-" zawartość katalogu będą mogły wejść do niego."
+"Ustawia uprawnienia do katalogu na normalne. Tylko użytkownicy uprawnieni do"
+" odczytu zawartości tego katalogu będą mogli do niego wejść."
 
 #: ../thunar/thunar-preferences-dialog.c:254
 msgid "File Manager Preferences"
-msgstr "Preferencje"
+msgstr "Preferencje menedżera plików"
 
 #. Display
 #: ../thunar/thunar-preferences-dialog.c:282
@@ -2237,7 +2237,7 @@ msgstr "Rozmiar pliku w formacie binarnym"
 #: ../thunar/thunar-preferences-dialog.c:371
 msgid ""
 "Select this option to show file size in binary format instead of decimal."
-msgstr "Wyświetla rozmiar pliku w formacie binarnym, zamiast dziesiętnego"
+msgstr "Wyświetla rozmiar pliku w formacie binarnym, a nie dziesiętnym."
 
 #: ../thunar/thunar-preferences-dialog.c:380
 msgid "Thumbnails"
@@ -2497,9 +2497,8 @@ msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
 msgstr ""
-"Proszę wprowadzić wartość _opóźnienia, niezbędnego\n"
-"do zaznaczenia  elementu po umieszczeniu nad nim\n"
-"kursora myszy:"
+"Określ _opóźnienie przed zaznaczeniem elementu\n"
+"po umieszczeniu nad nim kursora myszy:"
 
 #: ../thunar/thunar-preferences-dialog.c:847
 msgid ""
@@ -2511,7 +2510,7 @@ msgid ""
 msgstr ""
 "Wprowadza wartość czasu po upływie, którego element zostanie zaznaczony. "
 "Przesunięcie suwaka do lewej skrajnej pozycji, wyłącza tą cechę. Przydatne "
-"do zaznaczania elementów gdy wybrano aktywację pojedynczym kliknięciem."
+"do zaznaczania elementów, gdy wybrano aktywację pojedynczym kliknięciem."
 
 #: ../thunar/thunar-preferences-dialog.c:870
 msgid "Disabled"
@@ -2632,7 +2631,7 @@ msgid ""
 "fragmented files. The new file will only be shown after the copy was "
 "successfully finished."
 msgstr ""
-"Używa pliku pośredniego '*.partial~' do kopiowania plików. Zapobiega to "
+"Używa pliku pośredniego „*.partial~” do kopiowania plików. Zapobiega to "
 "fragmentacji plików. Nowy plik zostanie wyświetlony dopiero po pomyślnym "
 "zakończeniu kopiowania."
 
@@ -3303,7 +3302,7 @@ msgstr "Wczytywanie zawartości katalogu..."
 #. display an error to the user
 #: ../thunar/thunar-standard-view.c:2364 ../thunar/thunar-window.c:4197
 msgid "Failed to open the home folder"
-msgstr "Nie udało się otworzyć katalogu domowego"
+msgstr "Nie udało się otworzyć katalogu użytkownika"
 
 #: ../thunar/thunar-standard-view.c:2445
 msgctxt "Select by Pattern dialog: title"
@@ -3681,7 +3680,7 @@ msgstr "P_referencje..."
 
 #: ../thunar/thunar-window.c:500
 msgid "Edit Thunars Preferences"
-msgstr "Otwiera okno preferencji programu"
+msgstr "Edytowanie preferencji programu Thunar"
 
 #: ../thunar/thunar-window.c:502
 msgid "_View"
@@ -4304,7 +4303,7 @@ msgstr "Zamienianie na wielkie/małe litery"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:195
 msgid "Insert _time:"
-msgstr "_Czas:"
+msgstr "_Godzina:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:225
 msgid ""
@@ -4313,9 +4312,9 @@ msgid ""
 "with the day. See the documentation of the date utility for additional "
 "information."
 msgstr ""
-"Określa format daty i czasu wstawianych do nazw plików. Przykładowo, %Y "
+"Określa format daty i godziny wstawianych do nazw plików. Przykładowo, %Y "
 "zostanie zastąpione rokiem, %m miesiącem a %d dniem. Szczegóły zawiera "
-"dokumentacja date."
+"dokumentacja „date”."
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:240
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:198
@@ -4324,7 +4323,7 @@ msgstr "_Numer pozycji:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:593
 msgid "Insert Date / Time"
-msgstr "Wstawianie daty/czasu"
+msgstr "Wstawianie daty / godziny"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:93
 msgid "lowercase"
@@ -4646,7 +4645,7 @@ msgstr "Czynność zostanie trwale usunięta."
 #: ../plugins/thunar-uca/thunar-uca-editor.c:357
 #, c-format
 msgid "This keyboard shortcut is currently used by: '%s'"
-msgstr "Ten skrót klawiszowy jest obecnie używany przez: '%s'"
+msgstr "Ten skrót klawiszowy jest obecnie używany przez: „%s”"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:360
 msgid "Keyboard shortcut already in use"
@@ -4713,7 +4712,7 @@ msgid ""
 "The description of the action that will be displayed as tooltip in the "
 "statusbar when selecting the item from the context menu."
 msgstr ""
-"Wprowadza opis czynności wyświetlany na pasku stanu, podczas wybierania "
+"Wprowadza opis czynności wyświetlany na pasku stanu podczas wybierania "
 "polecenia z menu podręcznego"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:6
@@ -4744,9 +4743,9 @@ msgid ""
 msgstr ""
 "Wprowadza polecenie (wraz z koniecznymi parametrami) do wykonania czynności."
 " W opisie poniżej znajduje się lista obsługiwanych parametrów. Użycie "
-"wielkich liter parametrów (np. %F, %D, %N), umożliwia wykonanie czynności w "
-"odniesieniu do wielu plików. W przeciwnym wypadku, polecenie uruchomione "
-"będzie tylko dla jednego pliku."
+"wielkich liter parametrów (np. %F, %D, %N) umożliwia wykonanie czynności w "
+"odniesieniu do wielu plików. W przeciwnym razie czynność zostanie "
+"zastosowana tylko dla jednego pliku."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:11
 msgid ""
@@ -4760,11 +4759,11 @@ msgstr "_Skrót klawiszowy:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:13
 msgid "The keyboard shortcut for the action."
-msgstr "Skrót klawiszowy do tej akcji."
+msgstr "Skrót klawiszowy do tej czynności."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:14
 msgid "Clear the keyboard shortcut for this action."
-msgstr "Wyczyść skrót klawiszowy do tej akcji."
+msgstr "Wyczyść skrót klawiszowy do tej czynności."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:15
 msgid "Use Startup Notification"
