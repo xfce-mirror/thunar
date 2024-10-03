@@ -881,10 +881,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
   parent_file = thunar_file_get_parent (dst_file, NULL);
   if (parent_file != NULL)
-    {
-      parent_string = thunar_file_get_basename (parent_file);
-      g_object_unref (parent_file);
-    }
+    parent_string = thunar_file_get_basename (parent_file);
 
   if (thunar_file_is_symlink (dst_file))
     /* TRANSLATORS: First part of replace dialog sentence */
@@ -895,6 +892,9 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   else
     /* TRANSLATORS: First part of replace dialog sentence */
     text = g_strdup_printf (_("Replace the existing file in \"%s\""), parent_string);
+
+  if (parent_file != NULL)
+    g_object_unref (parent_file);
 
   /* next row */
   row++;
