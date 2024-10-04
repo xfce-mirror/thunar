@@ -32,7 +32,7 @@ dnl *** Initialize autoconf ***
 dnl ***************************
 AC_COPYRIGHT([Copyright (c) 2004-2022 The Thunar development team. All rights reserved.])
 AC_INIT([thunar], [xdt_version], [https://gitlab.xfce.org/xfce/thunar], [thunar])
-AC_PREREQ([2.60])
+AC_PREREQ([2.69])
 AC_CONFIG_MACRO_DIRS([m4])
 AC_CANONICAL_TARGET()
 AC_REVISION([xdt_version_build])
@@ -161,12 +161,12 @@ dnl ***********************************
 dnl *** Check for required packages ***
 dnl ***********************************
 XDT_CHECK_PACKAGE([EXO], [exo-2], [4.19.0])
-XDT_CHECK_PACKAGE([GLIB], [glib-2.0], [2.70.0])
-XDT_CHECK_PACKAGE([GIO], [gio-2.0], [2.70.0])
-XDT_CHECK_PACKAGE([GTHREAD], [gthread-2.0], [2.70.0])
-XDT_CHECK_PACKAGE([GMODULE], [gmodule-2.0], [2.70.0])
+XDT_CHECK_PACKAGE([GLIB], [glib-2.0], [2.72.0])
+XDT_CHECK_PACKAGE([GIO], [gio-2.0], [2.72.0])
+XDT_CHECK_PACKAGE([GTHREAD], [gthread-2.0], [2.72.0])
+XDT_CHECK_PACKAGE([GMODULE], [gmodule-2.0], [2.72.0])
 XDT_CHECK_PACKAGE([GTK], [gtk+-3.0], [3.24.0])
-XDT_CHECK_PACKAGE([GDK_PIXBUF], [gdk-pixbuf-2.0], [2.40.0])
+XDT_CHECK_PACKAGE([GDK_PIXBUF], [gdk-pixbuf-2.0], [2.42.8])
 XDT_CHECK_PACKAGE([LIBXFCE4UTIL], [libxfce4util-1.0], [4.17.2])
 XDT_CHECK_PACKAGE([LIBXFCE4UI], [libxfce4ui-2], [4.17.6])
 XDT_CHECK_PACKAGE([LIBXFCE4KBD_PRIVATE], [libxfce4kbd-private-3], [4.17.2])
@@ -181,7 +181,7 @@ XDT_CHECK_OPTIONAL_PACKAGE([POLKIT], [polkit-gobject-1], [0.102], [polkit], [Pol
 dnl ******************************
 dnl *** GObject Instrospection ***
 dnl ******************************
-GOBJECT_INTROSPECTION_CHECK([1.66.0])
+GOBJECT_INTROSPECTION_CHECK([1.72.0])
 
 dnl ********************************************
 dnl *** Check for session management support ***
@@ -192,7 +192,7 @@ dnl **********************************
 dnl *** Optional GIO UNIX features ***
 dnl **********************************
 XDT_CHECK_OPTIONAL_PACKAGE([GIO_UNIX], [gio-unix-2.0],
-                           [2.70.0], [gio-unix], [GIO UNIX features])
+                           [2.72.0], [gio-unix], [GIO UNIX features])
 
 dnl ***************************************************************
 dnl *** Optional support for GUDev (required for thunar-volman) ***
