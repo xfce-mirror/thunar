@@ -137,7 +137,7 @@ static gboolean       thunar_application_dbus_register          (GApplication   
 static void           thunar_application_load_css               (void);
 static void           thunar_application_accel_map_changed      (ThunarApplication      *application);
 static gboolean       thunar_application_accel_map_save         (gpointer                user_data);
-static gboolean       thunar_application_accel_map_init         (gpointer                user_data);
+static gboolean       thunar_application_accel_map_init         (ThunarApplication      *application);
 static void           thunar_application_collect_and_launch     (ThunarApplication      *application,
                                                                  gpointer                parent,
                                                                  const gchar            *icon_name,
@@ -203,7 +203,6 @@ struct _ThunarApplication
   gboolean                        daemon;
   gboolean                        force_new_window;
 
-  guint                           accel_map_load_id;
   guint                           accel_map_save_id;
   GtkAccelMap                    *accel_map;
 
@@ -384,9 +383,8 @@ thunar_application_startup (GApplication *gapp)
   /* connect to the session manager */
   application->session_client = thunar_session_client_new (opt_sm_client_id);
 
-  /* schedule accel map init and update windows when finished */
-  application->accel_map_load_id = gdk_threads_add_idle_full (G_PRIORITY_LOW, thunar_application_accel_map_init, application, NULL);
-
+  /* Will be loaded when the first window is opened */
+  application->accel_map = NULL;
   thunar_application_load_css ();
 }
 
@@ -406,9 +404,6 @@ thunar_application_shutdown (GApplication *gapp)
       g_source_remove (application->accel_map_save_id);
       thunar_application_accel_map_save (application);
     }
-
-  if (G_UNLIKELY (application->accel_map_load_id != 0))
-    g_source_remove (application->accel_map_load_id);
 
   if (application->accel_map != NULL)
     g_object_unref (G_OBJECT (application->accel_map));
@@ -770,11 +765,13 @@ thunar_application_accel_map_save (gpointer user_data)
 
 
 static gboolean
-thunar_application_accel_map_init (gpointer user_data)
+thunar_application_accel_map_init (ThunarApplication *application)
 {
-  ThunarApplication *application = user_data;
-  gchar             *path;
-  GList             *windows;
+  gchar *path;
+
+  /* no need to initialize the map twice */
+  if (application->accel_map != NULL)
+    return FALSE;
 
   /* check if we have a saved accel map and load it, if found */
   path = xfce_resource_lookup (XFCE_RESOURCE_CONFIG, ACCEL_MAP_PATH);
@@ -785,22 +782,11 @@ thunar_application_accel_map_init (gpointer user_data)
       g_free (path);
     }
 
-  /* update the accelerators for each window */
-  windows = thunar_application_get_windows (application);
-  for (GList *lp = windows; lp != NULL; lp = lp->next)
-    {
-      ThunarWindow *window = lp->data;
-      thunar_window_reconnect_accelerators (window);
-    }
-  g_list_free (windows);
-
   /* watch for thunar-internal accelerator changes, in order to write changes to file if required */
   application->accel_map = gtk_accel_map_get ();
   g_signal_connect_swapped (G_OBJECT (application->accel_map), "changed", G_CALLBACK (thunar_application_accel_map_changed), application);
 
-  application->accel_map_load_id = 0;
-
-  return FALSE;
+  return TRUE;
 }
 
 
@@ -1478,6 +1464,12 @@ thunar_application_open_window (ThunarApplication *application,
                          "role", role,
                          "screen", screen,
                          NULL);
+
+  /* The accel map will be loaded after the first window is created */
+  /* For some reason it is important to do so only AFTER creation of the window! */
+  /* When loaded, the accelerators of the first window need to be reconnected */
+  if (thunar_application_accel_map_init (application))
+    thunar_window_reconnect_accelerators (THUNAR_WINDOW (window));
 
   /* cleanup */
   g_free (role);
