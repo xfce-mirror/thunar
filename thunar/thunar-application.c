@@ -137,7 +137,6 @@ static gboolean       thunar_application_dbus_register          (GApplication   
 static void           thunar_application_load_css               (void);
 static void           thunar_application_accel_map_changed      (ThunarApplication      *application);
 static gboolean       thunar_application_accel_map_save         (gpointer                user_data);
-static gboolean       thunar_application_accel_map_init         (ThunarApplication      *application);
 static void           thunar_application_collect_and_launch     (ThunarApplication      *application,
                                                                  gpointer                parent,
                                                                  const gchar            *icon_name,
@@ -764,7 +763,7 @@ thunar_application_accel_map_save (gpointer user_data)
 
 
 
-static gboolean
+gboolean
 thunar_application_accel_map_init (ThunarApplication *application)
 {
   gchar *path;
