@@ -310,6 +310,12 @@ thunar_session_client_restore (ThunarSessionClient *session_client)
           gtk_widget_destroy (window);
         }
 
+      /* The accel map will be loaded after the first window is created */
+      /* For some reason it is important to do so only AFTER creation of the window! */
+      /* When loaded, the accelerators of the first window need to be reconnected */
+      if (thunar_application_accel_map_init (application))
+        thunar_window_reconnect_accelerators (THUNAR_WINDOW (window));
+
       /* cleanup */
       g_strfreev (uris);
     }
