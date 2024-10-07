@@ -382,8 +382,9 @@ thunar_application_startup (GApplication *gapp)
   /* connect to the session manager */
   application->session_client = thunar_session_client_new (opt_sm_client_id);
 
-  /* Will be loaded when the first window is opened */
+  /* will be loaded when the first window is opened */
   application->accel_map = NULL;
+
   thunar_application_load_css ();
 }
 
