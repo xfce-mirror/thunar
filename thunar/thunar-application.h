@@ -175,7 +175,7 @@ void                  thunar_application_restore_files             (ThunarApplic
 
 ThunarThumbnailCache *thunar_application_get_thumbnail_cache       (ThunarApplication *application);
 
-gboolean              thunar_application_accel_map_init            (ThunarApplication  *application);
+gboolean              thunar_application_accel_map_init            (ThunarApplication *application);
 
 G_END_DECLS;
 
