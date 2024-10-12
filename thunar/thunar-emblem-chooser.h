@@ -27,16 +27,18 @@ G_BEGIN_DECLS;
 typedef struct _ThunarEmblemChooserClass ThunarEmblemChooserClass;
 typedef struct _ThunarEmblemChooser      ThunarEmblemChooser;
 
-#define THUNAR_TYPE_EMBLEM_CHOOSER            (thunar_emblem_chooser_get_type ())
-#define THUNAR_EMBLEM_CHOOSER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_EMBLEM_CHOOSER, ThunarEmblemChooser))
-#define THUNAR_EMBLEM_CHOOSER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_EMBLEM_CHOOSER, ThunarEmblemChooserClass))
-#define THUNAR_IS_EMBLEM_CHOOSER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_EMBLEM_CHOOSER))
+#define THUNAR_TYPE_EMBLEM_CHOOSER (thunar_emblem_chooser_get_type ())
+#define THUNAR_EMBLEM_CHOOSER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_EMBLEM_CHOOSER, ThunarEmblemChooser))
+#define THUNAR_EMBLEM_CHOOSER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_EMBLEM_CHOOSER, ThunarEmblemChooserClass))
+#define THUNAR_IS_EMBLEM_CHOOSER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_EMBLEM_CHOOSER))
 #define THUNAR_IS_EMBLEM_CHOOSER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_EMBLEM_CHOOSER))
-#define THUNAR_EMBLEM_CHOOSER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_EMBLEM_CHOOSER, ThunarEmblemChooserClass))
+#define THUNAR_EMBLEM_CHOOSER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_EMBLEM_CHOOSER, ThunarEmblemChooserClass))
 
-GType       thunar_emblem_chooser_get_type  (void) G_GNUC_CONST;
+GType
+thunar_emblem_chooser_get_type (void) G_GNUC_CONST;
 
-GtkWidget  *thunar_emblem_chooser_new       (void) G_GNUC_MALLOC;
+GtkWidget *
+thunar_emblem_chooser_new (void) G_GNUC_MALLOC;
 
 G_END_DECLS;
 

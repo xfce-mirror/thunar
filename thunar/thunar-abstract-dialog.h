@@ -27,12 +27,12 @@ G_BEGIN_DECLS;
 typedef struct _ThunarAbstractDialogClass ThunarAbstractDialogClass;
 typedef struct _ThunarAbstractDialog      ThunarAbstractDialog;
 
-#define THUNAR_TYPE_ABSTRACT_DIALOG             (thunar_abstract_dialog_get_type ())
-#define THUNAR_ABSTRACT_DIALOG(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_ABSTRACT_DIALOG, ThunarAbstractDialog))
-#define THUNAR_ABSTRACT_DIALOG_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_ABSTRACT_DIALOG, ThunarAbstractDialogClass))
-#define THUNAR_IS_ABSTRACT_DIALOG(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_ABSTRACT_DIALOG))
-#define THUNAR_IS_ABSTRACT_DIALOG_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_ABSTRACT_DIALOG))
-#define THUNAR_ABSTRACT_DIALOG_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_ABSTRACT_DIALOG, ThunarAbstractDialog))
+#define THUNAR_TYPE_ABSTRACT_DIALOG (thunar_abstract_dialog_get_type ())
+#define THUNAR_ABSTRACT_DIALOG(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_ABSTRACT_DIALOG, ThunarAbstractDialog))
+#define THUNAR_ABSTRACT_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_ABSTRACT_DIALOG, ThunarAbstractDialogClass))
+#define THUNAR_IS_ABSTRACT_DIALOG(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_ABSTRACT_DIALOG))
+#define THUNAR_IS_ABSTRACT_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_ABSTRACT_DIALOG))
+#define THUNAR_ABSTRACT_DIALOG_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_ABSTRACT_DIALOG, ThunarAbstractDialog))
 
 struct _ThunarAbstractDialogClass
 {
@@ -44,7 +44,8 @@ struct _ThunarAbstractDialog
   GtkDialog __parent__;
 };
 
-GType thunar_abstract_dialog_get_type (void) G_GNUC_CONST;
+GType
+thunar_abstract_dialog_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS;
 

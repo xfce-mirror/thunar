@@ -28,12 +28,12 @@ typedef struct _ThunarAbstractIconViewPrivate ThunarAbstractIconViewPrivate;
 typedef struct _ThunarAbstractIconViewClass   ThunarAbstractIconViewClass;
 typedef struct _ThunarAbstractIconView        ThunarAbstractIconView;
 
-#define THUNAR_TYPE_ABSTRACT_ICON_VIEW             (thunar_abstract_icon_view_get_type ())
-#define THUNAR_ABSTRACT_ICON_VIEW(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_ABSTRACT_ICON_VIEW, ThunarAbstractIconView))
-#define THUNAR_ABSTRACT_ICON_VIEW_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_ABSTRACT_ICON_VIEW, ThunarAbstractIconViewClass))
-#define THUNAR_IS_ABSTRACT_ICON_VIEW(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_ABSTRACT_ICON_VIEW))
-#define THUNAR_IS_ABSTRACT_ICON_VIEW_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((obj), THUNAR_TYPE_ABSTRACT_ICON_VIEW))
-#define THUNAR_ABSTRACT_ICON_VIEW_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_ABSTRACT_ICON_VIEW, ThunarAbstractIconViewClass))
+#define THUNAR_TYPE_ABSTRACT_ICON_VIEW (thunar_abstract_icon_view_get_type ())
+#define THUNAR_ABSTRACT_ICON_VIEW(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_ABSTRACT_ICON_VIEW, ThunarAbstractIconView))
+#define THUNAR_ABSTRACT_ICON_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_ABSTRACT_ICON_VIEW, ThunarAbstractIconViewClass))
+#define THUNAR_IS_ABSTRACT_ICON_VIEW(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_ABSTRACT_ICON_VIEW))
+#define THUNAR_IS_ABSTRACT_ICON_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), THUNAR_TYPE_ABSTRACT_ICON_VIEW))
+#define THUNAR_ABSTRACT_ICON_VIEW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_ABSTRACT_ICON_VIEW, ThunarAbstractIconViewClass))
 
 struct _ThunarAbstractIconViewClass
 {
@@ -46,7 +46,8 @@ struct _ThunarAbstractIconView
   ThunarAbstractIconViewPrivate *priv;
 };
 
-GType thunar_abstract_icon_view_get_type (void) G_GNUC_CONST;
+GType
+thunar_abstract_icon_view_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS;
 

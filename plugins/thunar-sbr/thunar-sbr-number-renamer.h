@@ -28,33 +28,44 @@ G_BEGIN_DECLS;
 typedef struct _ThunarSbrNumberRenamerClass ThunarSbrNumberRenamerClass;
 typedef struct _ThunarSbrNumberRenamer      ThunarSbrNumberRenamer;
 
-#define THUNAR_SBR_TYPE_NUMBER_RENAMER            (thunar_sbr_number_renamer_get_type ())
-#define THUNAR_SBR_NUMBER_RENAMER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_SBR_TYPE_NUMBER_RENAMER, ThunarSbrNumberRenamer))
-#define THUNAR_SBR_NUMBER_RENAMER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_SBR_TYPE_NUMBER_RENAMER, ThunarSbrNumberRenamerClass))
-#define THUNAR_SBR_IS_NUMBER_RENAMER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_SBR_TYPE_NUMBER_RENAMER))
+#define THUNAR_SBR_TYPE_NUMBER_RENAMER (thunar_sbr_number_renamer_get_type ())
+#define THUNAR_SBR_NUMBER_RENAMER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_SBR_TYPE_NUMBER_RENAMER, ThunarSbrNumberRenamer))
+#define THUNAR_SBR_NUMBER_RENAMER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_SBR_TYPE_NUMBER_RENAMER, ThunarSbrNumberRenamerClass))
+#define THUNAR_SBR_IS_NUMBER_RENAMER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_SBR_TYPE_NUMBER_RENAMER))
 #define THUNAR_SBR_IS_NUMBER_RENAMER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_SBR_TYPE_NUMBER_RENAMER))
-#define THUNAR_SBR_NUMBER_RENAMER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_SBR_TYPE_NUMBER_RENAMER, ThunarSbrNumberRenamerClass))
+#define THUNAR_SBR_NUMBER_RENAMER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_SBR_TYPE_NUMBER_RENAMER, ThunarSbrNumberRenamerClass))
 
-GType                   thunar_sbr_number_renamer_get_type        (void) G_GNUC_CONST;
-void                    thunar_sbr_number_renamer_register_type   (ThunarxProviderPlugin  *plugin);
+GType
+thunar_sbr_number_renamer_get_type (void) G_GNUC_CONST;
+void
+thunar_sbr_number_renamer_register_type (ThunarxProviderPlugin *plugin);
 
-ThunarSbrNumberRenamer *thunar_sbr_number_renamer_new             (void) G_GNUC_MALLOC;
+ThunarSbrNumberRenamer *
+thunar_sbr_number_renamer_new (void) G_GNUC_MALLOC;
 
-ThunarSbrNumberMode     thunar_sbr_number_renamer_get_mode        (ThunarSbrNumberRenamer *number_renamer);
-void                    thunar_sbr_number_renamer_set_mode        (ThunarSbrNumberRenamer *number_renamer,
-                                                                   ThunarSbrNumberMode     mode);
+ThunarSbrNumberMode
+thunar_sbr_number_renamer_get_mode (ThunarSbrNumberRenamer *number_renamer);
+void
+thunar_sbr_number_renamer_set_mode (ThunarSbrNumberRenamer *number_renamer,
+                                    ThunarSbrNumberMode     mode);
 
-const gchar            *thunar_sbr_number_renamer_get_start        (ThunarSbrNumberRenamer *number_renamer);
-void                    thunar_sbr_number_renamer_set_start        (ThunarSbrNumberRenamer *number_renamer,
-                                                                   const gchar            *start);
+const gchar *
+thunar_sbr_number_renamer_get_start (ThunarSbrNumberRenamer *number_renamer);
+void
+thunar_sbr_number_renamer_set_start (ThunarSbrNumberRenamer *number_renamer,
+                                     const gchar            *start);
 
-const gchar            *thunar_sbr_number_renamer_get_text        (ThunarSbrNumberRenamer *number_renamer);
-void                    thunar_sbr_number_renamer_set_text        (ThunarSbrNumberRenamer *number_renamer,
-                                                                   const gchar            *text);
+const gchar *
+thunar_sbr_number_renamer_get_text (ThunarSbrNumberRenamer *number_renamer);
+void
+thunar_sbr_number_renamer_set_text (ThunarSbrNumberRenamer *number_renamer,
+                                    const gchar            *text);
 
-ThunarSbrTextMode       thunar_sbr_number_renamer_get_text_mode   (ThunarSbrNumberRenamer *number_renamer);
-void                    thunar_sbr_number_renamer_set_text_mode   (ThunarSbrNumberRenamer *number_renamer,
-                                                                   ThunarSbrTextMode       text_mode);
+ThunarSbrTextMode
+thunar_sbr_number_renamer_get_text_mode (ThunarSbrNumberRenamer *number_renamer);
+void
+thunar_sbr_number_renamer_set_text_mode (ThunarSbrNumberRenamer *number_renamer,
+                                         ThunarSbrTextMode       text_mode);
 
 G_END_DECLS;
 

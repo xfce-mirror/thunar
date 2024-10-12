@@ -28,22 +28,26 @@ G_BEGIN_DECLS;
 typedef struct _ThunarUcaEditorClass ThunarUcaEditorClass;
 typedef struct _ThunarUcaEditor      ThunarUcaEditor;
 
-#define THUNAR_UCA_TYPE_EDITOR            (thunar_uca_editor_get_type ())
-#define THUNAR_UCA_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_UCA_TYPE_EDITOR, ThunarUcaEditor))
-#define THUNAR_UCA_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_UCA_TYPE_EDITOR, ThunarUcaEditorwClass))
-#define THUNAR_UCA_IS_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_UCA_TYPE_EDITOR))
+#define THUNAR_UCA_TYPE_EDITOR (thunar_uca_editor_get_type ())
+#define THUNAR_UCA_EDITOR(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_UCA_TYPE_EDITOR, ThunarUcaEditor))
+#define THUNAR_UCA_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_UCA_TYPE_EDITOR, ThunarUcaEditorwClass))
+#define THUNAR_UCA_IS_EDITOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_UCA_TYPE_EDITOR))
 #define THUNAR_UCA_IS_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_UCA_TYPE_EDITOR))
-#define THUNAR_UCA_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_UCA_TYPE_EDITOR, ThunarUcaEditorwClass))
+#define THUNAR_UCA_EDITOR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_UCA_TYPE_EDITOR, ThunarUcaEditorwClass))
 
-GType thunar_uca_editor_get_type      (void) G_GNUC_CONST;
-void  thunar_uca_editor_register_type (ThunarxProviderPlugin  *plugin);
+GType
+thunar_uca_editor_get_type (void) G_GNUC_CONST;
+void
+thunar_uca_editor_register_type (ThunarxProviderPlugin *plugin);
 
-void  thunar_uca_editor_load          (ThunarUcaEditor        *uca_editor,
-                                       ThunarUcaModel         *uca_model,
-                                       GtkTreeIter            *iter);
-void  thunar_uca_editor_save          (ThunarUcaEditor        *uca_editor,
-                                       ThunarUcaModel         *uca_model,
-                                       GtkTreeIter            *iter);
+void
+thunar_uca_editor_load (ThunarUcaEditor *uca_editor,
+                        ThunarUcaModel  *uca_model,
+                        GtkTreeIter     *iter);
+void
+thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
+                        ThunarUcaModel  *uca_model,
+                        GtkTreeIter     *iter);
 
 G_END_DECLS;
 

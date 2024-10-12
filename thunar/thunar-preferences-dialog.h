@@ -27,16 +27,18 @@ G_BEGIN_DECLS;
 typedef struct _ThunarPreferencesDialogClass ThunarPreferencesDialogClass;
 typedef struct _ThunarPreferencesDialog      ThunarPreferencesDialog;
 
-#define THUNAR_TYPE_PREFERENCES_DIALOG            (thunar_preferences_dialog_get_type ())
-#define THUNAR_PREFERENCES_DIALOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_PREFERENCES_DIALOG, ThunarPreferencesDialog))
-#define THUNAR_PREFERENCES_DIALOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_PREFERENCES_DIALOG, ThunarPreferencesDialogClass))
-#define THUNAR_IS_PREFERENCES_DIALOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_PREFERENCES_DIALOG))
+#define THUNAR_TYPE_PREFERENCES_DIALOG (thunar_preferences_dialog_get_type ())
+#define THUNAR_PREFERENCES_DIALOG(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_PREFERENCES_DIALOG, ThunarPreferencesDialog))
+#define THUNAR_PREFERENCES_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_PREFERENCES_DIALOG, ThunarPreferencesDialogClass))
+#define THUNAR_IS_PREFERENCES_DIALOG(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_PREFERENCES_DIALOG))
 #define THUNAR_IS_PREFERENCES_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_PREFERENCES_DIALOG))
-#define THUNAR_PREFERENCES_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_PREFERENCES_DIALOG, ThunarPreferencesDialogClass))
+#define THUNAR_PREFERENCES_DIALOG_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_PREFERENCES_DIALOG, ThunarPreferencesDialogClass))
 
-GType      thunar_preferences_dialog_get_type (void) G_GNUC_CONST;
+GType
+thunar_preferences_dialog_get_type (void) G_GNUC_CONST;
 
-GtkWidget *thunar_preferences_dialog_new      (GtkWindow *parent) G_GNUC_MALLOC;
+GtkWidget *
+thunar_preferences_dialog_new (GtkWindow *parent) G_GNUC_MALLOC;
 
 G_END_DECLS;
 

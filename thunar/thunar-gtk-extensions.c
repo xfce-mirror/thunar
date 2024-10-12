@@ -25,14 +25,12 @@
 #include <stdarg.h>
 #endif
 
-#include <exo/exo.h>
-
 #include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-util.h"
-
 #include "thunarx/thunarx.h"
 
+#include <exo/exo.h>
 #include <libxfce4ui/libxfce4ui.h>
 
 
@@ -99,19 +97,19 @@ thunar_gtk_label_disable_hyphens (GtkLabel *label)
  *
  * Return value: (transfer full): The new #GtkImageMenuItem.
  **/
-GtkWidget*
+GtkWidget *
 thunar_gtk_menu_thunarx_menu_item_new (GObject      *thunarx_menu_item,
                                        GtkMenuShell *menu_to_append_item)
 {
-  gchar        *name, *label_text, *tooltip_text, *icon_name, *accel_path;
-  gboolean      sensitive;
-  GtkWidget    *gtk_menu_item;
-  ThunarxMenu  *thunarx_menu;
-  GList        *children;
-  GList        *lp;
-  GtkWidget    *submenu;
-  GtkWidget    *image = NULL;
-  GIcon        *icon = NULL;
+  gchar       *name, *label_text, *tooltip_text, *icon_name, *accel_path;
+  gboolean     sensitive;
+  GtkWidget   *gtk_menu_item;
+  ThunarxMenu *thunarx_menu;
+  GList       *children;
+  GList       *lp;
+  GtkWidget   *submenu;
+  GtkWidget   *image = NULL;
+  GIcon       *icon = NULL;
 
   g_return_val_if_fail (THUNARX_IS_MENU_ITEM (thunarx_menu_item), NULL);
 
@@ -128,7 +126,7 @@ thunar_gtk_menu_thunarx_menu_item_new (GObject      *thunarx_menu_item,
   if (icon_name != NULL)
     icon = g_icon_new_for_string (icon_name, NULL);
   if (icon != NULL)
-    image = gtk_image_new_from_gicon (icon,GTK_ICON_SIZE_MENU);
+    image = gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_MENU);
   gtk_menu_item = xfce_gtk_image_menu_item_new (label_text, tooltip_text, accel_path,
                                                 G_CALLBACK (thunarx_menu_item_activate),
                                                 G_OBJECT (thunarx_menu_item), image, menu_to_append_item);
@@ -137,14 +135,14 @@ thunar_gtk_menu_thunarx_menu_item_new (GObject      *thunarx_menu_item,
 
   /* recursively add submenu items if any */
   if (gtk_menu_item != NULL && thunarx_menu != NULL)
-  {
-    children = thunarx_menu_get_items (thunarx_menu);
-    submenu = gtk_menu_new ();
-    for (lp = children; lp != NULL; lp = lp->next)
-      thunar_gtk_menu_thunarx_menu_item_new (lp->data, GTK_MENU_SHELL (submenu));
-    gtk_menu_item_set_submenu (GTK_MENU_ITEM (gtk_menu_item), submenu);
-    thunarx_menu_item_list_free (children);
-  }
+    {
+      children = thunarx_menu_get_items (thunarx_menu);
+      submenu = gtk_menu_new ();
+      for (lp = children; lp != NULL; lp = lp->next)
+        thunar_gtk_menu_thunarx_menu_item_new (lp->data, GTK_MENU_SHELL (submenu));
+      gtk_menu_item_set_submenu (GTK_MENU_ITEM (gtk_menu_item), submenu);
+      thunarx_menu_item_list_free (children);
+    }
 
   g_free (name);
   g_free (accel_path);
@@ -292,8 +290,8 @@ thunar_gtk_widget_set_tooltip (GtkWidget   *widget,
                                const gchar *format,
                                ...)
 {
-  va_list  var_args;
-  gchar   *tooltip;
+  va_list var_args;
+  gchar  *tooltip;
 
   _thunar_return_if_fail (GTK_IS_WIDGET (widget));
   _thunar_return_if_fail (g_utf8_validate (format, -1, NULL));
@@ -316,7 +314,7 @@ thunar_gtk_widget_set_tooltip (GtkWidget   *widget,
  * thunar_gtk_get_focused_widget:
  * Return value: (transfer none): currently focused widget or NULL, if there is none.
  **/
-GtkWidget*
+GtkWidget *
 thunar_gtk_get_focused_widget (void)
 {
   GtkApplication *app;
@@ -366,8 +364,7 @@ thunar_gtk_mount_operation_new (gpointer parent)
 gboolean
 thunar_gtk_editable_can_cut (GtkEditable *editable)
 {
-  return gtk_editable_get_editable (editable) &&
-         thunar_gtk_editable_can_copy (editable);
+  return gtk_editable_get_editable (editable) && thunar_gtk_editable_can_copy (editable);
 }
 
 
@@ -381,7 +378,7 @@ thunar_gtk_editable_can_cut (GtkEditable *editable)
 gboolean
 thunar_gtk_editable_can_copy (GtkEditable *editable)
 {
-  return gtk_editable_get_selection_bounds (editable, NULL,NULL);
+  return gtk_editable_get_selection_bounds (editable, NULL, NULL);
 }
 
 
@@ -403,7 +400,7 @@ thunar_gtk_editable_can_paste (GtkEditable *editable)
 /**
  * thunar_gtk_orientable_get_center_pos:
  *
- * Return value: The pixel corrsponding to the center of the orientable widget (either in height or in width) 
+ * Return value: The pixel corrsponding to the center of the orientable widget (either in height or in width)
  **/
 gint
 thunar_gtk_orientable_get_center_pos (GtkOrientable *orientable)
@@ -412,7 +409,7 @@ thunar_gtk_orientable_get_center_pos (GtkOrientable *orientable)
 
   gtk_widget_get_allocation (GTK_WIDGET (orientable), &allocation);
   if (gtk_orientable_get_orientation (orientable) == GTK_ORIENTATION_HORIZONTAL)
-    return (gint)(allocation.width/2);
+    return (gint) (allocation.width / 2);
   else
-    return (gint)(allocation.height/2);
+    return (gint) (allocation.height / 2);
 }

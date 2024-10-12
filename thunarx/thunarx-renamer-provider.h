@@ -32,9 +32,9 @@ G_BEGIN_DECLS
 typedef struct _ThunarxRenamerProviderIface ThunarxRenamerProviderIface;
 typedef struct _ThunarxRenamerProvider      ThunarxRenamerProvider;
 
-#define THUNARX_TYPE_RENAMER_PROVIDER           (thunarx_renamer_provider_get_type ())
-#define THUNARX_RENAMER_PROVIDER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_RENAMER_PROVIDER, ThunarxRenamerProvider))
-#define THUNARX_IS_RENAMER_PROVIDER(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_RENAMER_PROVIDER))
+#define THUNARX_TYPE_RENAMER_PROVIDER (thunarx_renamer_provider_get_type ())
+#define THUNARX_RENAMER_PROVIDER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_RENAMER_PROVIDER, ThunarxRenamerProvider))
+#define THUNARX_IS_RENAMER_PROVIDER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_RENAMER_PROVIDER))
 #define THUNARX_RENAMER_PROVIDER_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNARX_TYPE_RENAMER_PROVIDER, ThunarxRenamerProviderIface))
 
 /**
@@ -61,9 +61,11 @@ struct _ThunarxRenamerProviderIface
   void (*reserved5) (void);
 };
 
-GType  thunarx_renamer_provider_get_type     (void) G_GNUC_CONST;
+GType
+thunarx_renamer_provider_get_type (void) G_GNUC_CONST;
 
-GList *thunarx_renamer_provider_get_renamers (ThunarxRenamerProvider *provider) G_GNUC_MALLOC;
+GList *
+thunarx_renamer_provider_get_renamers (ThunarxRenamerProvider *provider) G_GNUC_MALLOC;
 
 G_END_DECLS
 

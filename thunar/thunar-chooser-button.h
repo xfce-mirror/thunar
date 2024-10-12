@@ -27,19 +27,22 @@ G_BEGIN_DECLS;
 typedef struct _ThunarChooserButtonClass ThunarChooserButtonClass;
 typedef struct _ThunarChooserButton      ThunarChooserButton;
 
-#define THUNAR_TYPE_CHOOSER_BUTTON            (thunar_chooser_button_get_type ())
-#define THUNAR_CHOOSER_BUTTON(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_CHOOSER_BUTTON, ThunarChooserButton))
-#define THUNAR_CHOOSER_BUTTON_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_CHOOSER_BUTTON, ThunarChooserButtonClass))
-#define THUNAR_IS_CHOOSER_BUTTON(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_CHOOSER_BUTTON))
+#define THUNAR_TYPE_CHOOSER_BUTTON (thunar_chooser_button_get_type ())
+#define THUNAR_CHOOSER_BUTTON(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_CHOOSER_BUTTON, ThunarChooserButton))
+#define THUNAR_CHOOSER_BUTTON_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_CHOOSER_BUTTON, ThunarChooserButtonClass))
+#define THUNAR_IS_CHOOSER_BUTTON(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_CHOOSER_BUTTON))
 #define THUNAR_IS_CHOOSER_BUTTON_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_CHOOSER_BUTTON))
-#define THUNAR_CHOOSER_BUTTON_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_CHOOSER_BUTTON, ThunarChooserButtonClass))
+#define THUNAR_CHOOSER_BUTTON_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_CHOOSER_BUTTON, ThunarChooserButtonClass))
 
-GType       thunar_chooser_button_get_type (void) G_GNUC_CONST;
+GType
+thunar_chooser_button_get_type (void) G_GNUC_CONST;
 
-GtkWidget  *thunar_chooser_button_new      (void) G_GNUC_MALLOC;
+GtkWidget *
+thunar_chooser_button_new (void) G_GNUC_MALLOC;
 
-void        thunar_chooser_button_set_file (ThunarChooserButton *chooser_button,
-                                            ThunarFile          *file);
+void
+thunar_chooser_button_set_file (ThunarChooserButton *chooser_button,
+                                ThunarFile          *file);
 
 G_END_DECLS;
 

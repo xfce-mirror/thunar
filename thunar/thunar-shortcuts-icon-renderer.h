@@ -27,16 +27,18 @@ G_BEGIN_DECLS;
 typedef struct _ThunarShortcutsIconRendererClass ThunarShortcutsIconRendererClass;
 typedef struct _ThunarShortcutsIconRenderer      ThunarShortcutsIconRenderer;
 
-#define THUNAR_TYPE_SHORTCUTS_ICON_RENDERER             (thunar_shortcuts_icon_renderer_get_type ())
-#define THUNAR_SHORTCUTS_ICON_RENDERER(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_SHORTCUTS_ICON_RENDERER, ThunarShortcutsIconRenderer))
-#define THUNAR_SHORTCUTS_ICON_RENDERER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_SHORTCUTS_ICON_RENDERER, ThunarShortcutsIconRendererClass))
-#define THUNAR_IS_SHORTCUTS_ICON_RENDERER(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_SHORTCUTS_ICON_RENDERER))
-#define THUNAR_IS_SHORTCUTS_ICON_RENDERER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_SHORTCUTS_ICON_RENDERER))
-#define THUNAR_SHORTCUTS_ICON_RENDERER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SHORTCUTS_ICON_RENDERER, ThunarShortcutsIconRendererClass))
+#define THUNAR_TYPE_SHORTCUTS_ICON_RENDERER (thunar_shortcuts_icon_renderer_get_type ())
+#define THUNAR_SHORTCUTS_ICON_RENDERER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_SHORTCUTS_ICON_RENDERER, ThunarShortcutsIconRenderer))
+#define THUNAR_SHORTCUTS_ICON_RENDERER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_SHORTCUTS_ICON_RENDERER, ThunarShortcutsIconRendererClass))
+#define THUNAR_IS_SHORTCUTS_ICON_RENDERER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_SHORTCUTS_ICON_RENDERER))
+#define THUNAR_IS_SHORTCUTS_ICON_RENDERER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_SHORTCUTS_ICON_RENDERER))
+#define THUNAR_SHORTCUTS_ICON_RENDERER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SHORTCUTS_ICON_RENDERER, ThunarShortcutsIconRendererClass))
 
-GType            thunar_shortcuts_icon_renderer_get_type (void) G_GNUC_CONST;
+GType
+thunar_shortcuts_icon_renderer_get_type (void) G_GNUC_CONST;
 
-GtkCellRenderer *thunar_shortcuts_icon_renderer_new      (void) G_GNUC_MALLOC;
+GtkCellRenderer *
+thunar_shortcuts_icon_renderer_new (void) G_GNUC_MALLOC;
 
 G_END_DECLS;
 

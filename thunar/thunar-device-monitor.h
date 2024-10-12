@@ -27,22 +27,26 @@ G_BEGIN_DECLS
 typedef struct _ThunarDeviceMonitorClass ThunarDeviceMonitorClass;
 typedef struct _ThunarDeviceMonitor      ThunarDeviceMonitor;
 
-#define THUNAR_TYPE_DEVICE_MONITOR             (thunar_device_monitor_get_type ())
-#define THUNAR_DEVICE_MONITOR(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_DEVICE_MONITOR, ThunarDeviceMonitor))
-#define THUNAR_DEVICE_MONITOR_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_DEVICE_MONITOR, ThunarDeviceMonitorClass))
-#define THUNAR_IS_DEVICE_MONITOR(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_DEVICE_MONITOR))
-#define THUNAR_IS_DEVICE_MONITOR_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((obj), THUNAR_TYPE_DEVICE_MONITOR))
-#define THUNAR_DEVICE_MONITOR_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_DEVICE_MONITOR, ThunarDeviceMonitorClass))
+#define THUNAR_TYPE_DEVICE_MONITOR (thunar_device_monitor_get_type ())
+#define THUNAR_DEVICE_MONITOR(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_DEVICE_MONITOR, ThunarDeviceMonitor))
+#define THUNAR_DEVICE_MONITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_DEVICE_MONITOR, ThunarDeviceMonitorClass))
+#define THUNAR_IS_DEVICE_MONITOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_DEVICE_MONITOR))
+#define THUNAR_IS_DEVICE_MONITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), THUNAR_TYPE_DEVICE_MONITOR))
+#define THUNAR_DEVICE_MONITOR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_DEVICE_MONITOR, ThunarDeviceMonitorClass))
 
-GType                thunar_device_monitor_get_type    (void) G_GNUC_CONST;
+GType
+thunar_device_monitor_get_type (void) G_GNUC_CONST;
 
-ThunarDeviceMonitor *thunar_device_monitor_get         (void);
+ThunarDeviceMonitor *
+thunar_device_monitor_get (void);
 
-GList               *thunar_device_monitor_get_devices (ThunarDeviceMonitor *monitor);
+GList *
+thunar_device_monitor_get_devices (ThunarDeviceMonitor *monitor);
 
-void                 thunar_device_monitor_set_hidden  (ThunarDeviceMonitor *monitor,
-                                                        ThunarDevice        *device,
-                                                        gboolean             hidden);
+void
+thunar_device_monitor_set_hidden (ThunarDeviceMonitor *monitor,
+                                  ThunarDevice        *device,
+                                  gboolean             hidden);
 
 G_END_DECLS
 

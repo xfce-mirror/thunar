@@ -27,27 +27,31 @@ G_BEGIN_DECLS;
 typedef struct _ThunarSizeLabelClass ThunarSizeLabelClass;
 typedef struct _ThunarSizeLabel      ThunarSizeLabel;
 
-#define THUNAR_TYPE_SIZE_LABEL            (thunar_size_label_get_type ())
-#define THUNAR_SIZE_LABEL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_SIZE_LABEL, ThunarSizeLabel))
-#define THUNAR_SIZE_LABEL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_SIZE_LABEL, ThunarSizeLabelClass))
-#define THUNAR_IS_SIZE_LABEL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_SIZE_LABEL))
+#define THUNAR_TYPE_SIZE_LABEL (thunar_size_label_get_type ())
+#define THUNAR_SIZE_LABEL(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_SIZE_LABEL, ThunarSizeLabel))
+#define THUNAR_SIZE_LABEL_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_SIZE_LABEL, ThunarSizeLabelClass))
+#define THUNAR_IS_SIZE_LABEL(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_SIZE_LABEL))
 #define THUNAR_IS_SIZE_LABEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_SIZE_LABEL))
-#define THUNAR_SIZE_LABEL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SIZE_LABEL, ThunarSizeLabelClass))
+#define THUNAR_SIZE_LABEL_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SIZE_LABEL, ThunarSizeLabelClass))
 
 typedef enum
 {
-    THUNAR_SIZE_LABEL_SIZE,
-    THUNAR_SIZE_LABEL_CONTENT,
-    THUNAR_SIZE_LABEL_SIZE_ON_DISK,
-    N_THUNAR_SIZE_LABEL
+  THUNAR_SIZE_LABEL_SIZE,
+  THUNAR_SIZE_LABEL_CONTENT,
+  THUNAR_SIZE_LABEL_SIZE_ON_DISK,
+  N_THUNAR_SIZE_LABEL
 } ThunarSizeLabelType;
 
 
-GType       thunar_size_label_get_type  (void) G_GNUC_CONST;
+GType
+thunar_size_label_get_type (void) G_GNUC_CONST;
 
-GtkWidget  *thunar_size_label_new       (void) G_GNUC_MALLOC;
-GtkWidget  *thunar_content_label_new    (void) G_GNUC_MALLOC;
-GtkWidget  *thunar_size_on_disk_label_new (void) G_GNUC_MALLOC;
+GtkWidget *
+thunar_size_label_new (void) G_GNUC_MALLOC;
+GtkWidget *
+thunar_content_label_new (void) G_GNUC_MALLOC;
+GtkWidget *
+thunar_size_on_disk_label_new (void) G_GNUC_MALLOC;
 
 G_END_DECLS;
 

@@ -29,11 +29,12 @@
 
 
 
-static PangoAttrList *thunar_pango_attr_list_wrap (PangoAttribute *attribute, ...) G_GNUC_MALLOC;
+static PangoAttrList *
+thunar_pango_attr_list_wrap (PangoAttribute *attribute, ...) G_GNUC_MALLOC;
 
 
 
-static PangoAttrList*
+static PangoAttrList *
 thunar_pango_attr_list_wrap (PangoAttribute *attribute, ...)
 {
   PangoAttrList *attr_list;
@@ -67,7 +68,7 @@ thunar_pango_attr_list_wrap (PangoAttribute *attribute, ...)
  *
  * Return value: a #PangoAttrList for rendering big text.
  **/
-PangoAttrList*
+PangoAttrList *
 thunar_pango_attr_list_big (void)
 {
   static PangoAttrList *attr_list = NULL;
@@ -87,7 +88,7 @@ thunar_pango_attr_list_big (void)
  *
  * Return value: a #PangoAttrList for rendering big bold text.
  **/
-PangoAttrList*
+PangoAttrList *
 thunar_pango_attr_list_big_bold (void)
 {
   static PangoAttrList *attr_list = NULL;
@@ -107,7 +108,7 @@ thunar_pango_attr_list_big_bold (void)
  *
  * Return value: a #PangoAttrList for rendering bold text.
  **/
-PangoAttrList*
+PangoAttrList *
 thunar_pango_attr_list_bold (void)
 {
   static PangoAttrList *attr_list = NULL;
@@ -128,8 +129,8 @@ thunar_pango_attr_list_bold (void)
  * Return value: a #PangoAttrList for not inserting hyphens at intra-word line
  *               breaks.
  **/
-#if PANGO_VERSION_CHECK (1, 44, 0)
-PangoAttrList*
+#if PANGO_VERSION_CHECK(1, 44, 0)
+PangoAttrList *
 thunar_pango_attr_disable_hyphens (void)
 {
   static PangoAttrList *attr_list = NULL;
@@ -152,7 +153,7 @@ thunar_pango_attr_disable_hyphens (void)
  *
  * Return value: a #PangoAttrList for rendering italic text.
  **/
-PangoAttrList*
+PangoAttrList *
 thunar_pango_attr_list_italic (void)
 {
   static PangoAttrList *attr_list = NULL;
@@ -172,7 +173,7 @@ thunar_pango_attr_list_italic (void)
  *
  * Return value: a #PangoAttrList for rendering small italic text.
  **/
-PangoAttrList*
+PangoAttrList *
 thunar_pango_attr_list_small_italic (void)
 {
   static PangoAttrList *attr_list = NULL;
@@ -192,7 +193,7 @@ thunar_pango_attr_list_small_italic (void)
  *
  * Return value: a #PangoAttrList for rendering small text.
  **/
-PangoAttrList*
+PangoAttrList *
 thunar_pango_attr_list_small (void)
 {
   static PangoAttrList *attr_list = NULL;
@@ -212,7 +213,7 @@ thunar_pango_attr_list_small (void)
  *
  * Return value: a #PangoAttrList for underlining text using a single line.
  **/
-PangoAttrList*
+PangoAttrList *
 thunar_pango_attr_list_underline_single (void)
 {
   static PangoAttrList *attr_list = NULL;

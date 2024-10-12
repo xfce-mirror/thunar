@@ -21,10 +21,6 @@
 #include "config.h"
 #endif
 
-#include <exo/exo.h>
-
-#include <libxfce4ui/libxfce4ui.h>
-
 #include "thunar/thunar-abstract-dialog.h"
 #include "thunar/thunar-column-editor.h"
 #include "thunar/thunar-dialogs.h"
@@ -33,23 +29,34 @@
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 
+#include <exo/exo.h>
+#include <libxfce4ui/libxfce4ui.h>
 
 
-static void thunar_column_editor_finalize           (GObject                  *object);
-static void thunar_column_editor_help_clicked       (ThunarColumnEditor       *column_editor,
-                                                     GtkWidget                *button);
-static void thunar_column_editor_move_down          (ThunarColumnEditor       *column_editor,
-                                                     GtkWidget                *button);
-static void thunar_column_editor_move_up            (ThunarColumnEditor       *column_editor,
-                                                     GtkWidget                *button);
-static void thunar_column_editor_toggled            (ThunarColumnEditor       *column_editor,
-                                                     const gchar              *path_string,
-                                                     GtkCellRendererToggle    *cell_renderer);
-static void thunar_column_editor_toggle_visibility  (ThunarColumnEditor       *column_editor,
-                                                     GtkWidget                *button);
-static void thunar_column_editor_update_buttons     (ThunarColumnEditor       *column_editor);
-static void thunar_column_editor_use_defaults       (ThunarColumnEditor       *column_editor,
-                                                     GtkWidget                *button);
+
+static void
+thunar_column_editor_finalize (GObject *object);
+static void
+thunar_column_editor_help_clicked (ThunarColumnEditor *column_editor,
+                                   GtkWidget          *button);
+static void
+thunar_column_editor_move_down (ThunarColumnEditor *column_editor,
+                                GtkWidget          *button);
+static void
+thunar_column_editor_move_up (ThunarColumnEditor *column_editor,
+                              GtkWidget          *button);
+static void
+thunar_column_editor_toggled (ThunarColumnEditor    *column_editor,
+                              const gchar           *path_string,
+                              GtkCellRendererToggle *cell_renderer);
+static void
+thunar_column_editor_toggle_visibility (ThunarColumnEditor *column_editor,
+                                        GtkWidget          *button);
+static void
+thunar_column_editor_update_buttons (ThunarColumnEditor *column_editor);
+static void
+thunar_column_editor_use_defaults (ThunarColumnEditor *column_editor,
+                                   GtkWidget          *button);
 
 
 
@@ -66,11 +73,11 @@ struct _ThunarColumnEditor
 
   ThunarColumnModel *column_model;
 
-  GtkWidget         *tree_view;
-  GtkWidget         *up_button;
-  GtkWidget         *down_button;
-  GtkWidget         *show_button;
-  GtkWidget         *hide_button;
+  GtkWidget *tree_view;
+  GtkWidget *up_button;
+  GtkWidget *down_button;
+  GtkWidget *show_button;
+  GtkWidget *hide_button;
 };
 
 
@@ -523,9 +530,9 @@ thunar_column_editor_update_buttons (ThunarColumnEditor *column_editor)
   GtkTreeModel     *model;
   GtkTreePath      *path;
   GtkTreeIter       iter;
-  gboolean          mutable;
-  gboolean          visible;
-  gint              idx;
+  gboolean mutable;
+  gboolean visible;
+  gint     idx;
 
   /* determine the selected row */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (column_editor->tree_view));
@@ -566,8 +573,7 @@ static void
 thunar_column_editor_use_defaults (ThunarColumnEditor *column_editor,
                                    GtkWidget          *button)
 {
-  static const gchar *PROPERTY_NAMES[] =
-  {
+  static const gchar *PROPERTY_NAMES[] = {
     "last-details-view-column-order",
     "last-details-view-visible-columns",
   };
@@ -659,4 +665,3 @@ thunar_show_column_editor (gpointer parent)
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
 }
-

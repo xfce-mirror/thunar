@@ -21,14 +21,15 @@
 #include "config.h"
 #endif
 
-#include <libxfce4util/libxfce4util.h>
-
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-side-pane.h"
 
+#include <libxfce4util/libxfce4util.h>
 
 
-static void thunar_side_pane_class_init (gpointer klass);
+
+static void
+thunar_side_pane_class_init (gpointer klass);
 
 
 
@@ -41,9 +42,9 @@ thunar_side_pane_get_type (void)
   if (g_once_init_enter (&type__static))
     {
       type = g_type_register_static_simple (G_TYPE_INTERFACE,
-                                            I_("ThunarSidePane"),
+                                            I_ ("ThunarSidePane"),
                                             sizeof (ThunarSidePaneIface),
-                                            (GClassInitFunc) (void (*)(void)) thunar_side_pane_class_init,
+                                            (GClassInitFunc) (void (*) (void)) thunar_side_pane_class_init,
                                             0,
                                             NULL,
                                             0);
@@ -116,4 +117,3 @@ thunar_side_pane_set_show_hidden (ThunarSidePane *side_pane,
   if (THUNAR_SIDE_PANE_GET_IFACE (side_pane)->set_show_hidden != NULL)
     (*THUNAR_SIDE_PANE_GET_IFACE (side_pane)->set_show_hidden) (side_pane, show_hidden);
 }
-

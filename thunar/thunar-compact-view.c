@@ -25,7 +25,8 @@
 
 
 
-static AtkObject   *thunar_compact_view_get_accessible (GtkWidget               *widget);
+static AtkObject *
+thunar_compact_view_get_accessible (GtkWidget *widget);
 
 
 
@@ -58,14 +59,14 @@ thunar_compact_view_class_init (ThunarCompactViewClass *klass)
   thunarstandard_view_class->zoom_level_property_name = "last-compact-view-zoom-level";
 
   /* override ThunarAbstractIconView default row spacing */
-  gtk_widget_class_install_style_property(gtkwidget_class, g_param_spec_int (
-          "row-spacing",                //name
-          "row-spacing",                //nick
-          "space between rows in px",   //blurb
-          0,                            //min
-          100,                          //max
-          0,                            //default
-          G_PARAM_READWRITE));         //flags
+  gtk_widget_class_install_style_property (gtkwidget_class, g_param_spec_int (
+                                                            "row-spacing",              // name
+                                                            "row-spacing",              // nick
+                                                            "space between rows in px", // blurb
+                                                            0,                          // min
+                                                            100,                        // max
+                                                            0,                          // default
+                                                            G_PARAM_READWRITE));        // flags
 }
 
 
@@ -75,7 +76,7 @@ thunar_compact_view_init (ThunarCompactView *compact_view)
 {
   gboolean max_chars;
 
- /* initialize the icon view properties */
+  /* initialize the icon view properties */
   exo_icon_view_set_margin (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (compact_view))), 3);
   exo_icon_view_set_layout_mode (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (compact_view))), EXO_ICON_VIEW_LAYOUT_COLS);
   exo_icon_view_set_orientation (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (compact_view))), GTK_ORIENTATION_HORIZONTAL);
@@ -103,7 +104,7 @@ thunar_compact_view_init (ThunarCompactView *compact_view)
 
 
 
-static AtkObject*
+static AtkObject *
 thunar_compact_view_get_accessible (GtkWidget *widget)
 {
   AtkObject *object;
@@ -121,6 +122,3 @@ thunar_compact_view_get_accessible (GtkWidget *widget)
 
   return object;
 }
-
-
-

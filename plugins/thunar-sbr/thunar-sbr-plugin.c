@@ -23,19 +23,22 @@
 #endif
 
 #include <thunar-sbr/thunar-sbr-case-renamer.h>
+#include <thunar-sbr/thunar-sbr-date-renamer.h>
 #include <thunar-sbr/thunar-sbr-insert-renamer.h>
 #include <thunar-sbr/thunar-sbr-number-renamer.h>
 #include <thunar-sbr/thunar-sbr-provider.h>
 #include <thunar-sbr/thunar-sbr-remove-renamer.h>
 #include <thunar-sbr/thunar-sbr-replace-renamer.h>
-#include <thunar-sbr/thunar-sbr-date-renamer.h>
 
 
 
-G_MODULE_EXPORT void thunar_extension_initialize (ThunarxProviderPlugin  *plugin);
-G_MODULE_EXPORT void thunar_extension_shutdown   (void);
-G_MODULE_EXPORT void thunar_extension_list_types (const GType           **types,
-                                                  gint                   *n_types);
+G_MODULE_EXPORT void
+thunar_extension_initialize (ThunarxProviderPlugin *plugin);
+G_MODULE_EXPORT void
+thunar_extension_shutdown (void);
+G_MODULE_EXPORT void
+thunar_extension_list_types (const GType **types,
+                             gint         *n_types);
 
 
 
@@ -95,5 +98,3 @@ thunar_extension_list_types (const GType **types,
   *types = type_list;
   *n_types = G_N_ELEMENTS (type_list);
 }
-
-

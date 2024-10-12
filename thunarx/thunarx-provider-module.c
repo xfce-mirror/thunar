@@ -22,11 +22,11 @@
 #include "config.h"
 #endif
 
-#include <gmodule.h>
-
 #include "thunarx/thunarx-private.h"
 #include "thunarx/thunarx-provider-module.h"
 #include "thunarx/thunarx-provider-plugin.h"
+
+#include <gmodule.h>
 
 
 
@@ -39,20 +39,27 @@ enum
 
 
 
-static void     thunarx_provider_module_plugin_init   (ThunarxProviderPluginIface  *iface);
-static void     thunarx_provider_module_get_property  (GObject                     *object,
-                                                       guint                        prop_id,
-                                                       GValue                      *value,
-                                                       GParamSpec                  *pspec);
-static void     thunarx_provider_module_set_property  (GObject                     *object,
-                                                       guint                        prop_id,
-                                                       const GValue                *value,
-                                                       GParamSpec                  *pspec);
-static gboolean thunarx_provider_module_load          (GTypeModule                 *type_module);
-static void     thunarx_provider_module_unload        (GTypeModule                 *type_module);
-static gboolean thunarx_provider_module_get_resident  (const ThunarxProviderPlugin *plugin);
-static void     thunarx_provider_module_set_resident  (ThunarxProviderPlugin       *plugin,
-                                                       gboolean                     resident);
+static void
+thunarx_provider_module_plugin_init (ThunarxProviderPluginIface *iface);
+static void
+thunarx_provider_module_get_property (GObject    *object,
+                                      guint       prop_id,
+                                      GValue     *value,
+                                      GParamSpec *pspec);
+static void
+thunarx_provider_module_set_property (GObject      *object,
+                                      guint         prop_id,
+                                      const GValue *value,
+                                      GParamSpec   *pspec);
+static gboolean
+thunarx_provider_module_load (GTypeModule *type_module);
+static void
+thunarx_provider_module_unload (GTypeModule *type_module);
+static gboolean
+thunarx_provider_module_get_resident (const ThunarxProviderPlugin *plugin);
+static void
+thunarx_provider_module_set_resident (ThunarxProviderPlugin *plugin,
+                                      gboolean               resident);
 
 
 
@@ -69,7 +76,7 @@ struct _ThunarxProviderModule
   gboolean resident;
 
   void (*initialize) (ThunarxProviderModule *module);
-  void (*shutdown)   (void);
+  void (*shutdown) (void);
   void (*list_types) (const GType **types,
                       gint         *n_types);
 };
@@ -107,7 +114,6 @@ static void
 thunarx_provider_module_init (ThunarxProviderModule *module)
 {
 }
-
 
 
 
@@ -281,7 +287,7 @@ thunarx_provider_module_set_resident (ThunarxProviderPlugin *plugin,
  *
  * Return value: the newly allocated #ThunarxProviderModule.
  **/
-ThunarxProviderModule*
+ThunarxProviderModule *
 thunarx_provider_module_new (const gchar *filename)
 {
   ThunarxProviderModule *module;
@@ -323,7 +329,6 @@ thunarx_provider_module_list_types (const ThunarxProviderModule *module,
 
   (*module->list_types) (types, n_types);
 }
-
 
 
 

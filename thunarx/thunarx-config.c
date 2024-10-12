@@ -116,7 +116,7 @@ const guint thunarx_micro_version = THUNARX_MICRO_VERSION;
  *               string is owned by the library and must not be freed or
  *               modified by the caller.
  **/
-const gchar*
+const gchar *
 thunarx_check_version (guint required_major,
                        guint required_minor,
                        guint required_micro)

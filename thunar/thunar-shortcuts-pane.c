@@ -40,27 +40,40 @@ enum
 
 
 
-static void          thunar_shortcuts_pane_component_init        (ThunarComponentIface     *iface);
-static void          thunar_shortcuts_pane_navigator_init        (ThunarNavigatorIface     *iface);
-static void          thunar_shortcuts_pane_side_pane_init        (ThunarSidePaneIface      *iface);
-static void          thunar_shortcuts_pane_dispose               (GObject                  *object);
-static void          thunar_shortcuts_pane_finalize              (GObject                  *object);
-static void          thunar_shortcuts_pane_get_property          (GObject                  *object,
-                                                                  guint                     prop_id,
-                                                                  GValue                   *value,
-                                                                  GParamSpec               *pspec);
-static void          thunar_shortcuts_pane_set_property          (GObject                  *object,
-                                                                  guint                     prop_id,
-                                                                  const GValue             *value,
-                                                                  GParamSpec               *pspec);
-static ThunarFile   *thunar_shortcuts_pane_get_current_directory (ThunarNavigator          *navigator);
-static void          thunar_shortcuts_pane_set_current_directory (ThunarNavigator          *navigator,
-                                                                  ThunarFile               *current_directory);
-static GList        *thunar_shortcuts_pane_get_selected_files    (ThunarComponent          *component);
-static void          thunar_shortcuts_pane_set_selected_files    (ThunarComponent          *component,
-                                                                  GList                    *selected_files);
-static void          thunar_shortcuts_pane_show_shortcuts_view_padding (GtkWidget          *widget);
-static void          thunar_shortcuts_pane_hide_shortcuts_view_padding (GtkWidget          *widget);
+static void
+thunar_shortcuts_pane_component_init (ThunarComponentIface *iface);
+static void
+thunar_shortcuts_pane_navigator_init (ThunarNavigatorIface *iface);
+static void
+thunar_shortcuts_pane_side_pane_init (ThunarSidePaneIface *iface);
+static void
+thunar_shortcuts_pane_dispose (GObject *object);
+static void
+thunar_shortcuts_pane_finalize (GObject *object);
+static void
+thunar_shortcuts_pane_get_property (GObject    *object,
+                                    guint       prop_id,
+                                    GValue     *value,
+                                    GParamSpec *pspec);
+static void
+thunar_shortcuts_pane_set_property (GObject      *object,
+                                    guint         prop_id,
+                                    const GValue *value,
+                                    GParamSpec   *pspec);
+static ThunarFile *
+thunar_shortcuts_pane_get_current_directory (ThunarNavigator *navigator);
+static void
+thunar_shortcuts_pane_set_current_directory (ThunarNavigator *navigator,
+                                             ThunarFile      *current_directory);
+static GList *
+thunar_shortcuts_pane_get_selected_files (ThunarComponent *component);
+static void
+thunar_shortcuts_pane_set_selected_files (ThunarComponent *component,
+                                          GList           *selected_files);
+static void
+thunar_shortcuts_pane_show_shortcuts_view_padding (GtkWidget *widget);
+static void
+thunar_shortcuts_pane_hide_shortcuts_view_padding (GtkWidget *widget);
 
 
 
@@ -73,14 +86,14 @@ struct _ThunarShortcutsPane
 {
   GtkScrolledWindow __parent__;
 
-  ThunarFile       *current_directory;
+  ThunarFile *current_directory;
 
   /* #GList of currently selected #ThunarFile<!---->s */
-  GList            *selected_files;
+  GList *selected_files;
 
-  GtkWidget        *view;
+  GtkWidget *view;
 
-  guint             idle_select_directory;
+  guint idle_select_directory;
 };
 
 
@@ -253,7 +266,7 @@ thunar_shortcuts_pane_set_property (GObject      *object,
 
 
 
-static ThunarFile*
+static ThunarFile *
 thunar_shortcuts_pane_get_current_directory (ThunarNavigator *navigator)
 {
   return THUNAR_SHORTCUTS_PANE (navigator)->current_directory;
@@ -309,8 +322,8 @@ thunar_shortcuts_pane_set_current_directory (ThunarNavigator *navigator,
       /* start idle to select item in sidepane (this to also make
        * the selection work when the bookmarks are loaded idle) */
       shortcuts_pane->idle_select_directory =
-        g_idle_add_full (G_PRIORITY_LOW, thunar_shortcuts_pane_set_current_directory_idle,
-                         shortcuts_pane, NULL);
+      g_idle_add_full (G_PRIORITY_LOW, thunar_shortcuts_pane_set_current_directory_idle,
+                       shortcuts_pane, NULL);
     }
 
   /* notify listeners */
@@ -319,7 +332,7 @@ thunar_shortcuts_pane_set_current_directory (ThunarNavigator *navigator,
 
 
 
-static GList*
+static GList *
 thunar_shortcuts_pane_get_selected_files (ThunarComponent *component)
 {
   return THUNAR_SHORTCUTS_PANE (component)->selected_files;

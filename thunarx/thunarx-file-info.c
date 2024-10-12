@@ -23,10 +23,10 @@
 #include "config.h"
 #endif
 
-#include <libxfce4util/libxfce4util.h>
-
 #include "thunarx/thunarx-file-info.h"
 #include "thunarx/thunarx-private.h"
+
+#include <libxfce4util/libxfce4util.h>
 
 
 
@@ -62,7 +62,7 @@ thunarx_file_info_get_type (void)
   if (g_once_init_enter (&type__static))
     {
       type = g_type_register_static_simple (G_TYPE_INTERFACE,
-                                            I_("ThunarxFileInfo"),
+                                            I_ ("ThunarxFileInfo"),
                                             sizeof (ThunarxFileInfoIface),
                                             NULL,
                                             0,
@@ -83,13 +83,13 @@ thunarx_file_info_get_type (void)
        * it's user interface whenever a change is noticed on @file_info.
        **/
       file_info_signals[CHANGED] =
-        g_signal_new (I_("changed"),
-                      type,
-                      G_SIGNAL_RUN_FIRST,
-                      G_STRUCT_OFFSET (ThunarxFileInfoIface, changed),
-                      NULL, NULL,
-                      g_cclosure_marshal_VOID__VOID,
-                      G_TYPE_NONE, 0);
+      g_signal_new (I_ ("changed"),
+                    type,
+                    G_SIGNAL_RUN_FIRST,
+                    G_STRUCT_OFFSET (ThunarxFileInfoIface, changed),
+                    NULL, NULL,
+                    g_cclosure_marshal_VOID__VOID,
+                    G_TYPE_NONE, 0);
 
       /**
        * ThunarxFileInfo::renamed:
@@ -103,13 +103,13 @@ thunarx_file_info_get_type (void)
        * the corresponding file was renamed.
        **/
       file_info_signals[RENAMED] =
-        g_signal_new (I_("renamed"),
-                      type,
-                      G_SIGNAL_RUN_FIRST,
-                      G_STRUCT_OFFSET (ThunarxFileInfoIface, renamed),
-                      NULL, NULL,
-                      g_cclosure_marshal_VOID__VOID,
-                      G_TYPE_NONE, 0);
+      g_signal_new (I_ ("renamed"),
+                    type,
+                    G_SIGNAL_RUN_FIRST,
+                    G_STRUCT_OFFSET (ThunarxFileInfoIface, renamed),
+                    NULL, NULL,
+                    g_cclosure_marshal_VOID__VOID,
+                    G_TYPE_NONE, 0);
 
       g_once_init_leave (&type__static, type);
     }
@@ -136,7 +136,7 @@ thunarx_file_info_get_type (void)
  * Return value: the real name of the file represented
  *               by @file_info.
  **/
-gchar*
+gchar *
 thunarx_file_info_get_name (ThunarxFileInfo *file_info)
 {
   g_return_val_if_fail (THUNARX_IS_FILE_INFO (file_info), NULL);
@@ -159,7 +159,7 @@ thunarx_file_info_get_name (ThunarxFileInfo *file_info)
  *
  * Return value: the fully qualified URI of @file_info.
  **/
-gchar*
+gchar *
 thunarx_file_info_get_uri (ThunarxFileInfo *file_info)
 {
   g_return_val_if_fail (THUNARX_IS_FILE_INFO (file_info), NULL);
@@ -186,7 +186,7 @@ thunarx_file_info_get_uri (ThunarxFileInfo *file_info)
  * Return value: the parent URI for @file_info
  *               or %NULL.
  **/
-gchar*
+gchar *
 thunarx_file_info_get_parent_uri (ThunarxFileInfo *file_info)
 {
   g_return_val_if_fail (THUNARX_IS_FILE_INFO (file_info), NULL);
@@ -209,7 +209,7 @@ thunarx_file_info_get_parent_uri (ThunarxFileInfo *file_info)
  *
  * Return value: the URI scheme for @file_info.
  **/
-gchar*
+gchar *
 thunarx_file_info_get_uri_scheme (ThunarxFileInfo *file_info)
 {
   g_return_val_if_fail (THUNARX_IS_FILE_INFO (file_info), NULL);
@@ -232,7 +232,7 @@ thunarx_file_info_get_uri_scheme (ThunarxFileInfo *file_info)
  * Return value: the MIME-type for @file_info or
  *               %NULL.
  **/
-gchar*
+gchar *
 thunarx_file_info_get_mime_type (ThunarxFileInfo *file_info)
 {
   g_return_val_if_fail (THUNARX_IS_FILE_INFO (file_info), NULL);
@@ -308,7 +308,7 @@ thunarx_file_info_is_directory (ThunarxFileInfo *file_info)
  * Returns: (transfer full): the #GFileInfo object associated with @file_info,
  *          which MUST be freed using g_object_unref().
  **/
-GFileInfo*
+GFileInfo *
 thunarx_file_info_get_file_info (ThunarxFileInfo *file_info)
 {
   g_return_val_if_fail (THUNARX_IS_FILE_INFO (file_info), NULL);
@@ -330,7 +330,7 @@ thunarx_file_info_get_file_info (ThunarxFileInfo *file_info)
  *          filesystem of @file_info or %NULL if no filesystem information is
  *          available. It MUST be released using g_object_unref().
  **/
-GFileInfo*
+GFileInfo *
 thunarx_file_info_get_filesystem_info (ThunarxFileInfo *file_info)
 {
   g_return_val_if_fail (THUNARX_IS_FILE_INFO (file_info), NULL);
@@ -351,7 +351,7 @@ thunarx_file_info_get_filesystem_info (ThunarxFileInfo *file_info)
  * Returns: (transfer full): the #GFile to which @file_info points. It MUST be
  *          released using g_object_unref().
  **/
-GFile*
+GFile *
 thunarx_file_info_get_location (ThunarxFileInfo *file_info)
 {
   g_return_val_if_fail (THUNARX_IS_FILE_INFO (file_info), NULL);
@@ -406,7 +406,7 @@ thunarx_file_info_list_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      type = g_boxed_type_register_static (I_("ThunarxFileInfoList"),
+      type = g_boxed_type_register_static (I_ ("ThunarxFileInfoList"),
                                            (GBoxedCopyFunc) thunarx_file_info_list_copy,
                                            (GBoxedFreeFunc) thunarx_file_info_list_free);
     }
@@ -425,10 +425,10 @@ thunarx_file_info_list_get_type (void)
  *
  * Returns: (transfer full) (element-type ThunarxFileInfo): a copy of @file_infos.
  **/
-GList*
+GList *
 thunarx_file_info_list_copy (GList *file_infos)
 {
-  return g_list_copy_deep (file_infos, (GCopyFunc) (void (*)(void)) g_object_ref, NULL);
+  return g_list_copy_deep (file_infos, (GCopyFunc) (void (*) (void)) g_object_ref, NULL);
 }
 
 

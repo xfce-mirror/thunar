@@ -32,19 +32,22 @@ G_BEGIN_DECLS
 typedef struct _ThunarxProviderFactoryClass ThunarxProviderFactoryClass;
 typedef struct _ThunarxProviderFactory      ThunarxProviderFactory;
 
-#define THUNARX_TYPE_PROVIDER_FACTORY             (thunarx_provider_factory_get_type ())
-#define THUNARX_PROVIDER_FACTORY(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_PROVIDER_FACTORY, ThunarxProviderFactory))
-#define THUNARX_PROVIDER_FACTORY_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNARX_TYPE_PROVIDER_FACTORY, ThunarxProviderFactoryClass))
-#define THUNARX_IS_PROVIDER_FACTORY(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_PROVIDER_FACTORY))
-#define THUNARX_IS_PROVIDER_FACTORY_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNARX_TYPE_PROVIDER_FACTORY))
-#define THUNARX_PROVIDER_FACTORY_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNARX_TYPE_PROVIDER_FACTORY, ThunarxProviderFactoryClass))
+#define THUNARX_TYPE_PROVIDER_FACTORY (thunarx_provider_factory_get_type ())
+#define THUNARX_PROVIDER_FACTORY(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_PROVIDER_FACTORY, ThunarxProviderFactory))
+#define THUNARX_PROVIDER_FACTORY_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNARX_TYPE_PROVIDER_FACTORY, ThunarxProviderFactoryClass))
+#define THUNARX_IS_PROVIDER_FACTORY(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_PROVIDER_FACTORY))
+#define THUNARX_IS_PROVIDER_FACTORY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNARX_TYPE_PROVIDER_FACTORY))
+#define THUNARX_PROVIDER_FACTORY_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNARX_TYPE_PROVIDER_FACTORY, ThunarxProviderFactoryClass))
 
-GType                   thunarx_provider_factory_get_type       (void) G_GNUC_CONST;
+GType
+thunarx_provider_factory_get_type (void) G_GNUC_CONST;
 
-ThunarxProviderFactory *thunarx_provider_factory_get_default    (void);
+ThunarxProviderFactory *
+thunarx_provider_factory_get_default (void);
 
-GList                  *thunarx_provider_factory_list_providers (ThunarxProviderFactory *factory,
-                                                                 GType                   type) G_GNUC_MALLOC;
+GList *
+thunarx_provider_factory_list_providers (ThunarxProviderFactory *factory,
+                                         GType                   type) G_GNUC_MALLOC;
 
 G_END_DECLS
 

@@ -37,27 +37,30 @@ G_BEGIN_DECLS
  *
  * Return value: %TRUE on success, %FALSE in case of an error.
  **/
-typedef gboolean (*ThunarSimpleJobFunc) (ThunarJob  *job,
-                                         GArray     *param_values,
-                                         GError    **error);
+typedef gboolean (*ThunarSimpleJobFunc) (ThunarJob *job,
+                                         GArray    *param_values,
+                                         GError   **error);
 
 
 typedef struct _ThunarSimpleJobClass ThunarSimpleJobClass;
 typedef struct _ThunarSimpleJob      ThunarSimpleJob;
 
-#define THUNAR_TYPE_SIMPLE_JOB            (thunar_simple_job_get_type ())
-#define THUNAR_SIMPLE_JOB(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_SIMPLE_JOB, ThunarSimpleJob))
-#define THUNAR_SIMPLE_JOB_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_SIMPLE_JOB, ThunarSimpleJobClass))
-#define THUNAR_IS_SIMPLE_JOB(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_SIMPLE_JOB))
+#define THUNAR_TYPE_SIMPLE_JOB (thunar_simple_job_get_type ())
+#define THUNAR_SIMPLE_JOB(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_SIMPLE_JOB, ThunarSimpleJob))
+#define THUNAR_SIMPLE_JOB_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_SIMPLE_JOB, ThunarSimpleJobClass))
+#define THUNAR_IS_SIMPLE_JOB(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_SIMPLE_JOB))
 #define THUNAR_IS_SIMPLE_JOB_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_SIMPLE_JOB))
-#define THUNAR_SIMPLE_JOB_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SIMPLE_JOB, ThunarSimpleJobClass))
+#define THUNAR_SIMPLE_JOB_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SIMPLE_JOB, ThunarSimpleJobClass))
 
-GType      thunar_simple_job_get_type           (void) G_GNUC_CONST;
+GType
+thunar_simple_job_get_type (void) G_GNUC_CONST;
 
-ThunarJob *thunar_simple_job_new                (ThunarSimpleJobFunc func,
-                                                 guint               n_param_values,
-                                                 ...) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-GArray    *thunar_simple_job_get_param_values   (ThunarSimpleJob    *job);
+ThunarJob *
+thunar_simple_job_new (ThunarSimpleJobFunc func,
+                       guint               n_param_values,
+                       ...) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+GArray *
+thunar_simple_job_get_param_values (ThunarSimpleJob *job);
 
 G_END_DECLS
 

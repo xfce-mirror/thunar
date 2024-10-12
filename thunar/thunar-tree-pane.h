@@ -27,14 +27,15 @@ G_BEGIN_DECLS;
 typedef struct _ThunarTreePaneClass ThunarTreePaneClass;
 typedef struct _ThunarTreePane      ThunarTreePane;
 
-#define THUNAR_TYPE_TREE_PANE             (thunar_tree_pane_get_type ())
-#define THUNAR_TREE_PANE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_TREE_PANE, ThunarTreePane))
-#define THUNAR_TREE_PANE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_TREE_PANE, ThunarTreePaneClass))
-#define THUNAR_IS_TREE_PANE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_TREE_PANE))
-#define THUNAR_IS_TREE_PANE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_TREE_PANE))
-#define THUNAR_TREE_PANE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_TREE_PANE, ThunarTreePaneClass))
+#define THUNAR_TYPE_TREE_PANE (thunar_tree_pane_get_type ())
+#define THUNAR_TREE_PANE(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_TREE_PANE, ThunarTreePane))
+#define THUNAR_TREE_PANE_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_TREE_PANE, ThunarTreePaneClass))
+#define THUNAR_IS_TREE_PANE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_TREE_PANE))
+#define THUNAR_IS_TREE_PANE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_TREE_PANE))
+#define THUNAR_TREE_PANE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_TREE_PANE, ThunarTreePaneClass))
 
-GType      thunar_tree_pane_get_type (void) G_GNUC_CONST;
+GType
+thunar_tree_pane_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS;
 

@@ -27,15 +27,17 @@ G_BEGIN_DECLS;
 typedef struct _ThunarSessionClientClass ThunarSessionClientClass;
 typedef struct _ThunarSessionClient      ThunarSessionClient;
 
-#define THUNAR_TYPE_SESSION_CLIENT            (thunar_session_client_get_type ())
-#define THUNAR_SESSION_CLIENT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_SESSION_CLIENT, ThunarSessionClient))
-#define THUNAR_SESSION_CLIENT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_SESSION_CLIENT, ThunarSessionClientClass))
-#define THUNAR_IS_SESSION_CLIENT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_SESSION_CLIENT))
+#define THUNAR_TYPE_SESSION_CLIENT (thunar_session_client_get_type ())
+#define THUNAR_SESSION_CLIENT(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_SESSION_CLIENT, ThunarSessionClient))
+#define THUNAR_SESSION_CLIENT_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_SESSION_CLIENT, ThunarSessionClientClass))
+#define THUNAR_IS_SESSION_CLIENT(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_SESSION_CLIENT))
 #define THUNAR_IS_SESSION_CLIENT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_SESSION_CLIENT))
-#define THUNAR_SESSION_CLIENT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SESSION_CLIENT, ThunarSessionClientClass))
+#define THUNAR_SESSION_CLIENT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SESSION_CLIENT, ThunarSessionClientClass))
 
-GType                thunar_session_client_get_type (void) G_GNUC_CONST;
-ThunarSessionClient *thunar_session_client_new      (const gchar *session_id) G_GNUC_MALLOC;
+GType
+thunar_session_client_get_type (void) G_GNUC_CONST;
+ThunarSessionClient *
+thunar_session_client_new (const gchar *session_id) G_GNUC_MALLOC;
 
 G_END_DECLS;
 

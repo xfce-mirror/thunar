@@ -28,15 +28,17 @@ G_BEGIN_DECLS;
 typedef struct _ThunarAprProviderClass ThunarAprProviderClass;
 typedef struct _ThunarAprProvider      ThunarAprProvider;
 
-#define THUNAR_APR_TYPE_PROVIDER            (thunar_apr_provider_get_type ())
-#define THUNAR_APR_PROVIDER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_APR_TYPE_PROVIDER, ThunarAprProvider))
-#define THUNAR_APR_PROVIDER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_APR_TYPE_PROVIDER, ThunarAprProviderClass))
-#define THUNAR_APR_IS_PROVIDER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_APR_TYPE_PROVIDER))
+#define THUNAR_APR_TYPE_PROVIDER (thunar_apr_provider_get_type ())
+#define THUNAR_APR_PROVIDER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_APR_TYPE_PROVIDER, ThunarAprProvider))
+#define THUNAR_APR_PROVIDER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_APR_TYPE_PROVIDER, ThunarAprProviderClass))
+#define THUNAR_APR_IS_PROVIDER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_APR_TYPE_PROVIDER))
 #define THUNAR_APR_IS_PROVIDER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_APR_TYPE_PROVIDER))
-#define THUNAR_APR_PROVIDER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_APR_TYPE_PROVIDER, ThunarAprProviderClass))
+#define THUNAR_APR_PROVIDER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_APR_TYPE_PROVIDER, ThunarAprProviderClass))
 
-GType thunar_apr_provider_get_type      (void) G_GNUC_CONST;
-void  thunar_apr_provider_register_type (ThunarxProviderPlugin *plugin);
+GType
+thunar_apr_provider_get_type (void) G_GNUC_CONST;
+void
+thunar_apr_provider_register_type (ThunarxProviderPlugin *plugin);
 
 G_END_DECLS;
 

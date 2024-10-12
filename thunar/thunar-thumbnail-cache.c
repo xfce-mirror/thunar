@@ -22,22 +22,22 @@
 #include "config.h"
 #endif
 
-#include "thunar/thunar-thumbnail-cache-proxy.h"
-
-#include <glib.h>
-#include <glib-object.h>
-#include <gio/gio.h>
-
-#include "thunar/thunar-private.h"
-#include "thunar/thunar-thumbnail-cache.h"
 #include "thunar/thunar-file.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-thumbnail-cache-proxy.h"
+#include "thunar/thunar-thumbnail-cache.h"
 
-#define _thumbnail_cache_lock(cache)   g_mutex_lock (&((cache)->lock))
+#include <gio/gio.h>
+#include <glib-object.h>
+#include <glib.h>
+
+#define _thumbnail_cache_lock(cache) g_mutex_lock (&((cache)->lock))
 #define _thumbnail_cache_unlock(cache) g_mutex_unlock (&((cache)->lock))
 
 
 
-static void thunar_thumbnail_cache_finalize (GObject *object);
+static void
+thunar_thumbnail_cache_finalize (GObject *object);
 
 
 
@@ -55,26 +55,26 @@ struct _ThunarThumbnailCacheClass
 
 struct _ThunarThumbnailCache
 {
-  GObject     __parent__;
+  GObject __parent__;
 
   ThunarThumbnailCacheDBus *cache_proxy;
   int                       proxy_state;
 
-  GList      *move_source_queue;
-  GList      *move_target_queue;
-  guint       move_queue_idle_id;
+  GList *move_source_queue;
+  GList *move_target_queue;
+  guint  move_queue_idle_id;
 
-  GList      *copy_source_queue;
-  GList      *copy_target_queue;
-  guint       copy_queue_idle_id;
+  GList *copy_source_queue;
+  GList *copy_target_queue;
+  guint  copy_queue_idle_id;
 
-  GList      *delete_queue;
-  guint       delete_queue_idle_id;
+  GList *delete_queue;
+  guint  delete_queue_idle_id;
 
-  GList      *cleanup_queue;
-  guint       cleanup_queue_idle_id;
+  GList *cleanup_queue;
+  guint  cleanup_queue_idle_id;
 
-  GMutex      lock;
+  GMutex lock;
 };
 
 
@@ -224,7 +224,7 @@ thunar_thumbnail_cache_move_async (ThunarThumbnailCache *cache,
   thunar_thumbnail_cache_dbus_call_move (cache->cache_proxy,
                                          source_uris, target_uris,
                                          NULL,
-                                         (GAsyncReadyCallback)thunar_thumbnail_cache_move_async_reply,
+                                         (GAsyncReadyCallback) thunar_thumbnail_cache_move_async_reply,
                                          user_data);
 }
 
@@ -244,7 +244,7 @@ thunar_thumbnail_cache_copy_async (ThunarThumbnailCache *cache,
   thunar_thumbnail_cache_dbus_call_copy (cache->cache_proxy,
                                          source_uris, target_uris,
                                          NULL,
-                                         (GAsyncReadyCallback)thunar_thumbnail_cache_copy_async_reply,
+                                         (GAsyncReadyCallback) thunar_thumbnail_cache_copy_async_reply,
                                          user_data);
 }
 
@@ -266,14 +266,14 @@ thunar_thumbnail_cache_delete_async (ThunarThumbnailCache *cache,
 
 static void
 thunar_thumbnail_cache_cleanup_async (ThunarThumbnailCache *cache,
-                                      const gchar *const    *base_uris)
+                                      const gchar *const   *base_uris)
 {
   _thunar_return_if_fail (THUNAR_IS_THUMBNAIL_CACHE (cache));
   _thunar_return_if_fail (base_uris != NULL);
 
   /* request a thumbnail cache update asynchronously */
   thunar_thumbnail_cache_dbus_call_cleanup (cache->cache_proxy,
-                                            (const gchar **)base_uris, 0,
+                                            (const gchar **) base_uris, 0,
                                             NULL, NULL, NULL);
 }
 
@@ -322,8 +322,8 @@ thunar_thumbnail_cache_process_queue (ThunarThumbnailCache *cache,
 
   /* fill URI array with file URIs from the move queue */
   for (n = 0,
-       sp = g_list_last (source_queue),
-       tp = g_list_last (target_queue);
+      sp = g_list_last (source_queue),
+      tp = g_list_last (target_queue);
        sp != NULL && tp != NULL;
        sp = sp->prev, tp = tp->prev, ++n)
     {
@@ -342,16 +342,16 @@ thunar_thumbnail_cache_process_queue (ThunarThumbnailCache *cache,
     {
       /* asynchronously copy the thumbnails */
       thunar_thumbnail_cache_copy_async (cache,
-                                         (const gchar **)source_uris,
-                                         (const gchar **)target_uris,
+                                         (const gchar **) source_uris,
+                                         (const gchar **) target_uris,
                                          target_queue);
     }
   else
     {
       /* asynchronously move the thumbnails */
       thunar_thumbnail_cache_move_async (cache,
-                                         (const gchar **)source_uris,
-                                         (const gchar **)target_uris,
+                                         (const gchar **) source_uris,
+                                         (const gchar **) target_uris,
                                          target_queue);
     }
 
@@ -406,10 +406,10 @@ static gboolean
 thunar_thumbnail_cache_process_delete_queue (gpointer user_data)
 {
   ThunarThumbnailCache *cache = user_data;
-  GList  *lp;
-  gchar **uris;
-  guint   n_uris;
-  guint   n;
+  GList                *lp;
+  gchar               **uris;
+  guint                 n_uris;
+  guint                 n;
 
   _thunar_return_val_if_fail (THUNAR_IS_THUMBNAIL_CACHE (cache), FALSE);
 
@@ -435,7 +435,7 @@ thunar_thumbnail_cache_process_delete_queue (gpointer user_data)
   uris[n] = NULL;
 
   /* asynchronously delete the thumbnails */
-  thunar_thumbnail_cache_delete_async (cache, (const gchar **)uris);
+  thunar_thumbnail_cache_delete_async (cache, (const gchar **) uris);
 
   /* free the URI array */
   g_strfreev (uris);
@@ -459,10 +459,10 @@ static gboolean
 thunar_thumbnail_cache_process_cleanup_queue (gpointer user_data)
 {
   ThunarThumbnailCache *cache = user_data;
-  GList  *lp;
-  gchar **uris;
-  guint   n_uris;
-  guint   n;
+  GList                *lp;
+  gchar               **uris;
+  guint                 n_uris;
+  guint                 n;
 
   _thunar_return_val_if_fail (THUNAR_IS_THUMBNAIL_CACHE (cache), FALSE);
 
@@ -496,7 +496,7 @@ thunar_thumbnail_cache_process_cleanup_queue (gpointer user_data)
   uris[n] = NULL;
 
   /* asynchronously cleanup the thumbnails */
-  thunar_thumbnail_cache_cleanup_async (cache, (const gchar *const *)uris);
+  thunar_thumbnail_cache_cleanup_async (cache, (const gchar *const *) uris);
 
   /* free the URI array */
   g_strfreev (uris);
@@ -577,8 +577,8 @@ thunar_thumbnail_cache_move_file (ThunarThumbnailCache *cache,
 
       /* process the move queue in a 250ms timeout */
       cache->move_queue_idle_id =
-        g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE, 250, thunar_thumbnail_cache_process_move_queue,
-                            cache, thunar_thumbnail_cache_process_move_queue_destroy);
+      g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE, 250, thunar_thumbnail_cache_process_move_queue,
+                          cache, thunar_thumbnail_cache_process_move_queue_destroy);
     }
 
   /* release the cache lock */
@@ -637,8 +637,8 @@ thunar_thumbnail_cache_copy_file (ThunarThumbnailCache *cache,
 
       /* process the copy queue in a 250ms timeout */
       cache->copy_queue_idle_id =
-        g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE, 500, thunar_thumbnail_cache_process_copy_queue,
-                            cache, thunar_thumbnail_cache_process_copy_queue_destroy);
+      g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE, 500, thunar_thumbnail_cache_process_copy_queue,
+                          cache, thunar_thumbnail_cache_process_copy_queue_destroy);
     }
 
   /* release the cache lock */
@@ -675,7 +675,7 @@ thunar_thumbnail_cache_delete_file (ThunarThumbnailCache *cache,
 
       /* process the delete queue in a 250ms timeout */
       cache->delete_queue_idle_id =
-        g_timeout_add (500, thunar_thumbnail_cache_process_delete_queue, cache);
+      g_timeout_add (500, thunar_thumbnail_cache_process_delete_queue, cache);
     }
 
   /* release the cache lock */
@@ -712,7 +712,7 @@ thunar_thumbnail_cache_cleanup_file (ThunarThumbnailCache *cache,
 
       /* process the cleanup queue in a 250ms timeout */
       cache->cleanup_queue_idle_id =
-        g_timeout_add (1000, thunar_thumbnail_cache_process_cleanup_queue, cache);
+      g_timeout_add (1000, thunar_thumbnail_cache_process_cleanup_queue, cache);
     }
 
   /* release the cache lock */
@@ -748,25 +748,25 @@ thunar_thumbnail_cache_proxy_created (GObject      *source,
 
   /* process the move queue in a 250ms timeout */
   if (cache->move_source_queue)
-      cache->move_queue_idle_id =
-        g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE, 250, thunar_thumbnail_cache_process_move_queue,
-                            cache, thunar_thumbnail_cache_process_move_queue_destroy);
+    cache->move_queue_idle_id =
+    g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE, 250, thunar_thumbnail_cache_process_move_queue,
+                        cache, thunar_thumbnail_cache_process_move_queue_destroy);
 
   /* process the copy queue in a 250ms timeout */
   if (cache->copy_source_queue)
-      cache->copy_queue_idle_id =
-        g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE, 500, thunar_thumbnail_cache_process_copy_queue,
-                            cache, thunar_thumbnail_cache_process_copy_queue_destroy);
+    cache->copy_queue_idle_id =
+    g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE, 500, thunar_thumbnail_cache_process_copy_queue,
+                        cache, thunar_thumbnail_cache_process_copy_queue_destroy);
 
   /* process the delete queue in a 250ms timeout */
   if (cache->delete_queue)
-      cache->delete_queue_idle_id =
-        g_timeout_add (500, thunar_thumbnail_cache_process_delete_queue, cache);
+    cache->delete_queue_idle_id =
+    g_timeout_add (500, thunar_thumbnail_cache_process_delete_queue, cache);
 
   /* process the cleanup queue in a 250ms timeout */
   if (cache->cleanup_queue)
-      cache->cleanup_queue_idle_id =
-        g_timeout_add (1000, thunar_thumbnail_cache_process_cleanup_queue, cache);
+    cache->cleanup_queue_idle_id =
+    g_timeout_add (1000, thunar_thumbnail_cache_process_cleanup_queue, cache);
 
   _thumbnail_cache_unlock (cache);
 
@@ -795,5 +795,3 @@ thunar_thumbnail_cache_init (ThunarThumbnailCache *cache)
                                                  thunar_thumbnail_cache_proxy_created,
                                                  cache);
 }
-
-

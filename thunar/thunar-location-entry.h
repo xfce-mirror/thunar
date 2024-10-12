@@ -27,20 +27,25 @@ G_BEGIN_DECLS;
 typedef struct _ThunarLocationEntryClass ThunarLocationEntryClass;
 typedef struct _ThunarLocationEntry      ThunarLocationEntry;
 
-#define THUNAR_TYPE_LOCATION_ENTRY            (thunar_location_entry_get_type ())
-#define THUNAR_LOCATION_ENTRY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_LOCATION_ENTRY, ThunarLocationEntry))
-#define THUNAR_LOCATION_ENTRY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_LOCATION_ENTRY, ThunarLocationEntryClass))
-#define THUNAR_IS_LOCATION_ENTRY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_LOCATION_ENTRY))
+#define THUNAR_TYPE_LOCATION_ENTRY (thunar_location_entry_get_type ())
+#define THUNAR_LOCATION_ENTRY(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_LOCATION_ENTRY, ThunarLocationEntry))
+#define THUNAR_LOCATION_ENTRY_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_LOCATION_ENTRY, ThunarLocationEntryClass))
+#define THUNAR_IS_LOCATION_ENTRY(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_LOCATION_ENTRY))
 #define THUNAR_IS_LOCATION_ENTRY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_LOCATION_ENTRY))
-#define THUNAR_LOCATION_ENTRY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_LOCATION_ENTRY, ThunarLocationEntryClass))
+#define THUNAR_LOCATION_ENTRY_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_LOCATION_ENTRY, ThunarLocationEntryClass))
 
-GType      thunar_location_entry_get_type              (void) G_GNUC_CONST;
+GType
+thunar_location_entry_get_type (void) G_GNUC_CONST;
 
-void       thunar_location_entry_accept_focus          (ThunarLocationEntry *entry,
-                                                        const gchar         *initial_text);
-void       thunar_location_entry_cancel_search         (ThunarLocationEntry *entry);
-gchar     *thunar_location_entry_get_search_query      (ThunarLocationEntry *entry);
-void       thunar_location_entry_enable_edit_done_once (ThunarLocationEntry *location_entry);
+void
+thunar_location_entry_accept_focus (ThunarLocationEntry *entry,
+                                    const gchar         *initial_text);
+void
+thunar_location_entry_cancel_search (ThunarLocationEntry *entry);
+gchar *
+thunar_location_entry_get_search_query (ThunarLocationEntry *entry);
+void
+thunar_location_entry_enable_edit_done_once (ThunarLocationEntry *location_entry);
 
 G_END_DECLS;
 

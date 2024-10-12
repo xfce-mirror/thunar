@@ -27,20 +27,22 @@ G_BEGIN_DECLS;
 typedef struct _ThunarRenamerDialogClass ThunarRenamerDialogClass;
 typedef struct _ThunarRenamerDialog      ThunarRenamerDialog;
 
-#define THUNAR_TYPE_RENAMER_DIALOG            (thunar_renamer_dialog_get_type ())
-#define THUNAR_RENAMER_DIALOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_RENAMER_DIALOG, ThunarRenamerDialog))
-#define THUNAR_RENAMER_DIALOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_RENAMER_DIALOG, ThunarRenamerDialogClass))
-#define THUNAR_IS_RENAMER_DIALOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_RENAMER_DIALOG))
+#define THUNAR_TYPE_RENAMER_DIALOG (thunar_renamer_dialog_get_type ())
+#define THUNAR_RENAMER_DIALOG(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_RENAMER_DIALOG, ThunarRenamerDialog))
+#define THUNAR_RENAMER_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_RENAMER_DIALOG, ThunarRenamerDialogClass))
+#define THUNAR_IS_RENAMER_DIALOG(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_RENAMER_DIALOG))
 #define THUNAR_IS_RENAMER_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_RENAMER_DIALOG))
-#define THUNAR_RENAMER_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_RENAMER_DIALOG, ThunarRenamerDialogClass))
+#define THUNAR_RENAMER_DIALOG_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_RENAMER_DIALOG, ThunarRenamerDialogClass))
 
-GType       thunar_renamer_dialog_get_type              (void) G_GNUC_CONST;
+GType
+thunar_renamer_dialog_get_type (void) G_GNUC_CONST;
 
-void        thunar_show_renamer_dialog                  (gpointer             parent,
-                                                         ThunarFile          *current_directory,
-                                                         GList               *files,
-                                                         gboolean             standalone,
-                                                         const gchar         *startup_id);
+void
+thunar_show_renamer_dialog (gpointer     parent,
+                            ThunarFile  *current_directory,
+                            GList       *files,
+                            gboolean     standalone,
+                            const gchar *startup_id);
 
 G_END_DECLS;
 
