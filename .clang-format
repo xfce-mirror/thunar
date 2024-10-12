@@ -1,136 +1,35 @@
 ---
-Language:        Cpp
-# BasedOnStyle:  Mozilla
-AccessModifierOffset: -2
-AlignAfterOpenBracket: Align
-AlignArrayOfStructures: Right
-AlignConsecutiveMacros: Consecutive
-AlignConsecutiveAssignments: false
-AlignConsecutiveBitFields: Consecutive
-AlignConsecutiveDeclarations: AcrossEmptyLinesAndComments
-AlignEscapedNewlines: Right
-AlignOperands:   Align
-AlignTrailingComments: true
-AllowAllArgumentsOnNextLine: false
-AllowAllParametersOfDeclarationOnNextLine: false
-AllowShortEnumsOnASingleLine: true
-AllowShortBlocksOnASingleLine: Always
-AllowShortCaseLabelsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: None
-AllowShortLambdasOnASingleLine: All
-AllowShortIfStatementsOnASingleLine: Never
-AllowShortLoopsOnASingleLine: false
-AlwaysBreakAfterDefinitionReturnType: None
-AlwaysBreakAfterReturnType: TopLevelDefinitions
-AlwaysBreakBeforeMultilineStrings: false
-# AlwaysBreakTemplateDeclarations: Yes
-# AttributeMacros:
-#   - __capability
-BinPackArguments: true
-BinPackParameters: false
-BreakBeforeBinaryOperators: NonAssignment
-BreakBeforeConceptDeclarations: true
-BreakBeforeBraces: Custom
-BraceWrapping:
-  AfterCaseLabel: true
-  AfterClass: true
-  AfterControlStatement: Always
-  AfterEnum: true
-  AfterFunction: true
-  AfterStruct: true
-  AfterUnion: true
-  AfterExternBlock: true
-  BeforeElse: true
-  BeforeWhile: true
-  IndentBraces: true
-  SplitEmptyFunction: true
-BreakBeforeInheritanceComma: false
-BreakInheritanceList: BeforeComma
-BreakBeforeTernaryOperators: false
-BreakStringLiterals: true
-# BracedInitializerIndentWidth: 2
-ColumnLimit:     0
-QualifierAlignment: Leave
-CompactNamespaces: false
-ConstructorInitializerIndentWidth: 2
-ContinuationIndentWidth: 2
-Cpp11BracedListStyle: false
-DeriveLineEnding: true
-DerivePointerAlignment: false
-DisableFormat:   false
-BasedOnStyle:    ''
-IncludeBlocks:   Preserve
-IndentCaseLabels: true
-IndentCaseBlocks: true
-IndentGotoLabels: true
-IndentPPDirectives: None
-IndentExternBlock: AfterExternBlock
-IndentRequires:  false
-IndentWidth:     2
-IndentWrappedFunctionNames: false
-InsertTrailingCommas: None
-JavaScriptQuotes: Leave
-JavaScriptWrapImports: true
-KeepEmptyLinesAtTheStartOfBlocks: true
-LambdaBodyIndentation: Signature
-MacroBlockBegin: ''
-MacroBlockEnd:   ''
-MaxEmptyLinesToKeep: 3
-NamespaceIndentation: None
-PenaltyBreakAssignment: 2
-PenaltyBreakBeforeFirstCallParameter: 19
-PenaltyBreakComment: 300
-PenaltyBreakFirstLessLess: 120
-PenaltyBreakOpenParenthesis: 0
-PenaltyBreakString: 1000
-PenaltyBreakTemplateDeclaration: 10
-PenaltyExcessCharacter: 1000000
-PenaltyReturnTypeOnItsOwnLine: 200
-PenaltyIndentedWhitespace: 0
-PointerAlignment: Right
-PPIndentWidth:   0
-ReferenceAlignment: Pointer
-ReflowComments:  true
-RemoveBracesLLVM: false
-SeparateDefinitionBlocks: Leave
-ShortNamespaceLines: 1
-SortIncludes:    Never
-SortJavaStaticImport: Before
-SortUsingDeclarations: true
-SpaceAfterCStyleCast: true
-SpaceAfterLogicalNot: false
-SpaceAfterTemplateKeyword: false
-SpaceBeforeAssignmentOperators: true
-SpaceBeforeCaseColon: false
-SpaceBeforeCpp11BracedList: false
-SpaceBeforeCtorInitializerColon: true
-SpaceBeforeInheritanceColon: true
-SpaceBeforeParens: Always
-SpaceAroundPointerQualifiers: Default
-SpaceBeforeRangeBasedForLoopColon: true
-SpaceInEmptyBlock: false
-SpaceInEmptyParentheses: false
-SpacesBeforeTrailingComments: 1
-SpacesInAngles:  Never
-SpacesInConditionalStatement: false
-SpacesInContainerLiterals: true
-SpacesInCStyleCastParentheses: false
-SpacesInLineCommentPrefix:
-  Minimum:         1
-  Maximum:         -1
-SpacesInParentheses: false
-SpacesInSquareBrackets: false
-SpaceBeforeSquareBrackets: false
-BitFieldColonSpacing: Both
-Standard:        Latest
-TabWidth:        2
-UseCRLF:         false
-UseTab:          Never
-WhitespaceSensitiveMacros:
-  - STRINGIZE
-  - PP_STRINGIZE
-  - BOOST_PP_STRINGIZE
-  - NS_SWIFT_NAME
-  - CF_SWIFT_NAME
-...
+Language: Cpp
+BasedOnStyle: GNU
 
+AlignEscapedNewlines: DontAlign
+AlignTrailingComments: false
+AlignConsecutiveDeclarations: true
+AllowAllParametersOfDeclarationOnNextLine: false
+AlwaysBreakAfterReturnType: All
+BinPackParameters: false
+AlignAfterOpenBracket: true
+BreakBeforeBinaryOperators: NonAssignment
+ColumnLimit: 0
+ContinuationIndentWidth: 0
+IncludeBlocks: Regroup
+IndentGotoLabels: false
+InsertNewlineAtEOF: true
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 3
+SpaceAfterCStyleCast: true
+
+WhitespaceSensitiveMacros:
+  # Avoid breaking formatting in the code parameter
+  - G_DEFINE_TYPE_WITH_CODE
+  - G_DEFINE_TYPE_EXTENDED
+  # Buggy workaround to add exceptions to 'SpaceBeforeParens: Always' (see below)
+  - _
+# Workaround to avoid some alignment bugs when adding a macro to WhitespaceSensitiveMacros,
+# see https://github.com/llvm/llvm-project/issues/55443#issuecomment-1953268337
+# This doesn't fix all alignment bugs though, so I'd rather make an exception only for '_',
+# and not also for 'N_' or 'I_' for example.
+# See also https://github.com/llvm/llvm-project/issues/82288
+#Macros:
+#  - _(x)=x
+...
