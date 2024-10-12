@@ -558,7 +558,7 @@ thunar_chooser_dialog_selection_func (GtkTreeSelection *selection,
 {
   GtkTreeIter iter;
   gboolean    permitted = TRUE;
-  GValue      value = { 0, };
+  GValue      value = G_VALUE_INIT;
 
   /* we can always change the selection if the path is already selected */
   if (G_UNLIKELY (!path_currently_selected))
@@ -633,7 +633,7 @@ thunar_chooser_dialog_update_accept (ThunarChooserDialog *dialog)
   GtkTreeIter       iter;
   const gchar      *text;
   gboolean          sensitive = FALSE;
-  GValue            value = { 0, };
+  GValue            value = G_VALUE_INIT;
 
   _thunar_return_if_fail (THUNAR_IS_CHOOSER_DIALOG (dialog));
 
@@ -1113,7 +1113,7 @@ thunar_chooser_dialog_row_activated (GtkTreeView         *treeview,
 {
   GtkTreeModel *model;
   GtkTreeIter   iter;
-  GValue        value = { 0, };
+  GValue        value = G_VALUE_INIT;
 
   _thunar_return_if_fail (THUNAR_IS_CHOOSER_DIALOG (dialog));
   _thunar_return_if_fail (GTK_IS_TREE_VIEW (treeview));

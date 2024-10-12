@@ -88,6 +88,8 @@ thunar_sbr_date_mode_get_type (void)
 void
 thunar_sbr_register_enum_types (ThunarxProviderPlugin *plugin)
 {
+  /* clang-format off */
+
   static const GEnumValue case_renamer_mode_values[] =
   {
     { THUNAR_SBR_CASE_RENAMER_MODE_LOWER,       "THUNAR_SBR_CASE_RENAMER_MODE_LOWER",       N_ ("lowercase"),                 },
@@ -141,6 +143,8 @@ thunar_sbr_register_enum_types (ThunarxProviderPlugin *plugin)
 #endif
     { 0,                           NULL,                         NULL,                      },
   };
+
+  /* clang-format on */
 
   case_renamer_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrCaseRenamerMode", case_renamer_mode_values);
   insert_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrInsertMode", insert_mode_values);

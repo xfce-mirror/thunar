@@ -42,7 +42,10 @@ static const struct
 {
   const gchar *name;
   ExifTag      tag;
-} TAIP_EXIF[] =
+}
+
+/* clang-format off */
+TAIP_EXIF[] =
 {
   { N_ ("Date Taken:"),        EXIF_TAG_DATE_TIME_ORIGINAL,  },
   { N_ ("Camera Brand:"),      EXIF_TAG_MAKE,                },
@@ -59,6 +62,7 @@ static const struct
   { N_ ("Description:"),       EXIF_TAG_IMAGE_DESCRIPTION,   },
   { N_ ("Comment:"),           EXIF_TAG_USER_COMMENT,        },
 };
+/* clang-format on */
 #endif
 
 

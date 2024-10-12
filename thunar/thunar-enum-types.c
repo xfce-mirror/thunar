@@ -82,6 +82,7 @@ thunar_renamer_mode_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
       {
         { THUNAR_RENAMER_MODE_NAME,      "THUNAR_RENAMER_MODE_NAME",      N_ ("Name only"),       },
@@ -89,6 +90,7 @@ thunar_renamer_mode_get_type (void)
         { THUNAR_RENAMER_MODE_BOTH,      "THUNAR_RENAMER_MODE_BOTH",      N_ ("Name and Extension"), },
         { 0,                             NULL,                            NULL,                   },
       };
+      /* clang-format on */
 
       type = g_enum_register_static (I_("ThunarRenamerMode"), values);
     }
@@ -105,6 +107,7 @@ thunar_date_style_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
       {
         { THUNAR_DATE_STYLE_SIMPLE,         "THUNAR_DATE_STYLE_SIMPLE",         "simple",         },
@@ -119,6 +122,7 @@ thunar_date_style_get_type (void)
         { THUNAR_DATE_STYLE_YYYYMMDD,       "THUNAR_DATE_STYLE_ISO",            "iso",            },
         { 0,                                NULL,                               NULL,             },
       };
+      /* clang-format on */
 
       type = g_enum_register_static (I_("ThunarDateStyle"), values);
     }
@@ -135,6 +139,7 @@ thunar_column_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
       {
         { THUNAR_COLUMN_DATE_CREATED,  "THUNAR_COLUMN_DATE_CREATED",  N_ ("Date Created"),  },
@@ -155,6 +160,7 @@ thunar_column_get_type (void)
         { THUNAR_COLUMN_FILE_NAME,     "THUNAR_COLUMN_FILE_NAME",     N_ ("File Name"),     },
         { 0,                           NULL,                          NULL,                 },
       };
+      /* clang-format on */
 
       type = g_enum_register_static (I_("ThunarColumn"), values);
     }
@@ -221,6 +227,7 @@ thunar_icon_size_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
       {
         { THUNAR_ICON_SIZE_16,   "THUNAR_ICON_SIZE_16",        "16px",   },
@@ -248,6 +255,7 @@ thunar_icon_size_get_type (void)
         { THUNAR_ICON_SIZE_48,   "*",                          "*",      },
         { 0,                     NULL,                         NULL,     },
       };
+      /* clang-format on */
 
       type = g_enum_register_static (I_("ThunarIconSize"), values);
 
@@ -267,6 +275,7 @@ thunar_recursive_permissions_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
       {
         { THUNAR_RECURSIVE_PERMISSIONS_ASK,    "THUNAR_RECURSIVE_PERMISSIONS_ASK",    "ask",    },
@@ -274,6 +283,7 @@ thunar_recursive_permissions_get_type (void)
         { THUNAR_RECURSIVE_PERMISSIONS_NEVER,  "THUNAR_RECURSIVE_PERMISSIONS_NEVER",  "never",  },
         { 0,                                   NULL,                                  NULL,     },
       };
+      /* clang-format on */
 
       type = g_enum_register_static (I_("ThunarRecursivePermissions"), values);
     }
@@ -288,6 +298,7 @@ thunar_recursive_search_get_type (void)
   static GType type = G_TYPE_INVALID;
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
         {
           { THUNAR_RECURSIVE_SEARCH_LOCAL,    "THUNAR_RECURSIVE_SEARCH_LOCAL",        "local",    },
@@ -295,6 +306,7 @@ thunar_recursive_search_get_type (void)
           { THUNAR_RECURSIVE_SEARCH_NEVER,    "THUNAR_RECURSIVE_SEARCH_NEVER",        "never",    },
           { 0,                                NULL,                                    NULL,      },
         };
+      /* clang-format on */
 
       type = g_enum_register_static (I_("ThunarRecursiveSearch"), values);
     }
@@ -310,6 +322,7 @@ thunar_zoom_level_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
       {
         { THUNAR_ZOOM_LEVEL_25_PERCENT,   "THUNAR_ZOOM_LEVEL_25_PERCENT",    "25%",  },
@@ -337,6 +350,7 @@ thunar_zoom_level_get_type (void)
         { THUNAR_ZOOM_LEVEL_100_PERCENT,  "*",                               "*",    },
         { 0,                              NULL,                              NULL,   },
       };
+      /* clang-format on */
 
       type = g_enum_register_static (I_("ThunarZoomLevel"), values);
 
@@ -405,6 +419,7 @@ thunar_thumbnail_mode_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
       {
         { THUNAR_THUMBNAIL_MODE_NEVER,      "THUNAR_THUMBNAIL_MODE_NEVER",      "never",      },
@@ -412,6 +427,7 @@ thunar_thumbnail_mode_get_type (void)
         { THUNAR_THUMBNAIL_MODE_ALWAYS,     "THUNAR_THUMBNAIL_MODE_ALWAYS",     "always",     },
         { 0,                                NULL,                               NULL,         },
       };
+      /* clang-format on */
 
       type = g_enum_register_static (I_("ThunarThumbnailMode"), values);
     }
@@ -428,6 +444,7 @@ thunar_thumbnail_size_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
       {
         { THUNAR_THUMBNAIL_SIZE_NORMAL,     "THUNAR_THUMBNAIL_SIZE_NORMAL",   "normal",   },
@@ -436,6 +453,7 @@ thunar_thumbnail_size_get_type (void)
         { THUNAR_THUMBNAIL_SIZE_XX_LARGE,   "THUNAR_THUMBNAIL_SIZE_XX_LARGE", "xx-large", },
         { 0,                             NULL,                           NULL,     },
       };
+      /* clang-format on */
 
       type = g_enum_register_static (I_("ThunarThumbnailSize"), values);
     }
@@ -461,6 +479,7 @@ thunar_parallel_copy_mode_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
       {
         { THUNAR_PARALLEL_COPY_MODE_ALWAYS,                  "THUNAR_PARALLEL_COPY_MODE_ALWAYS",                  "always",                  },
@@ -470,6 +489,7 @@ thunar_parallel_copy_mode_get_type (void)
         { THUNAR_PARALLEL_COPY_MODE_NEVER,                   "THUNAR_PARALLEL_COPY_MODE_NEVER",                   "never",                   },
         { 0,                                                 NULL,                                                NULL,                      },
       };
+      /* clang-format on */
 
       type = g_enum_register_static (I_("ThunarParallelCopyMode"), values);
     }
@@ -574,6 +594,7 @@ thunar_job_response_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GFlagsValue values[] =
       {
         { THUNAR_JOB_RESPONSE_YES,         "THUNAR_JOB_RESPONSE_YES",         "yes"         },
@@ -591,6 +612,7 @@ thunar_job_response_get_type (void)
         { THUNAR_JOB_RESPONSE_RENAME_ALL,  "THUNAR_JOB_RESPONSE_RENAME_ALL",  "rename-all " },
         { 0,                               NULL,                              NULL          }
       };
+      /* clang-format on */
 
       type = g_flags_register_static (I_("ThunarJobResponse"), values);
     }
@@ -607,6 +629,7 @@ thunar_file_mode_get_type (void)
 
   if (type == G_TYPE_INVALID)
     {
+      /* clang-format off */
       static const GFlagsValue values[] =
       {
         { THUNAR_FILE_MODE_SUID,      "THUNAR_FILE_MODE_SUID",      "suid"      },
@@ -626,6 +649,7 @@ thunar_file_mode_get_type (void)
         { THUNAR_FILE_MODE_OTH_EXEC,  "THUNAR_FILE_MODE_OTH_EXEC",  "oth-exec"  },
         { 0,                          NULL,                         NULL        }
       };
+      /* clang-format on */
 
       type = g_flags_register_static ("ThunarFileMode", values);
     }
@@ -641,6 +665,7 @@ thunar_use_partial_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
       {
         { THUNAR_USE_PARTIAL_MODE_DISABLED,    "THUNAR_USE_PARTIAL_MODE_NEVER",    N_("Never"),},
@@ -648,6 +673,7 @@ thunar_use_partial_get_type (void)
         { THUNAR_USE_PARTIAL_MODE_ALWAYS,      "THUNAR_USE_PARTIAL_MODE_ALWAYS",   N_("Always"),},
         { 0,                                NULL,                               NULL,},
       };
+      /* clang-format on */
 
       type = g_enum_register_static (I_("ThunarUsePartialMode"), values);
     }
@@ -664,6 +690,7 @@ thunar_verify_file_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
       {
         { THUNAR_VERIFY_FILE_MODE_DISABLED,    "THUNAR_VERIFY_FILE_MODE_NEVER",    N_("Never"),},
@@ -671,6 +698,7 @@ thunar_verify_file_get_type (void)
         { THUNAR_VERIFY_FILE_MODE_ALWAYS,      "THUNAR_VERIFY_FILE_MODE_ALWAYS",   N_("Always"),},
         { 0,                                   NULL,                               NULL,},
       };
+      /* clang-format on */
 
       type = g_enum_register_static (I_("ThunarVerifyFileMode"), values);
     }
@@ -722,6 +750,7 @@ thunar_job_operation_kind_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
       {
         { THUNAR_JOB_OPERATION_KIND_COPY,         "THUNAR_JOB_OPERATION_KIND_COPY",          N_("Copy"),  },
@@ -736,6 +765,7 @@ thunar_job_operation_kind_get_type (void)
         { THUNAR_JOB_OPERATION_KIND_UNLINK,       "THUNAR_JOB_OPERATION_KIND_UNLINK",        N_("Unlink") },
         { 0,                                      NULL,                                      NULL }
       };
+      /* clang-format on */
 
       type = g_enum_register_static ("ThunarJobOperationKind", values);
     }
@@ -750,6 +780,7 @@ thunar_operation_log_mode_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
       {
         { THUNAR_OPERATION_LOG_OPERATIONS,      "THUNAR_OPERATION_LOG_OPERATIONS",      N_("Log operations") },
@@ -757,6 +788,7 @@ thunar_operation_log_mode_get_type (void)
         { THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS, "THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS", N_("Log only timestamps") },
         { 0,                                    NULL,                                   NULL }
       };
+      /* clang-format on */
 
       type = g_enum_register_static ("ThunarOperationLogMode", values);
     }
@@ -771,12 +803,14 @@ thunar_image_preview_mode_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
       {
         { THUNAR_IMAGE_PREVIEW_MODE_STANDALONE, "THUNAR_IMAGE_PREVIEW_MODE_STANDALONE", N_("Standalone") },
         { THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED,   "THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED",   N_("Embedded") },
         { 0,                                    NULL,                                   NULL }
       };
+      /* clang-format on */
 
       type = g_enum_register_static ("ThunarImagePreviewMode", values);
     }
@@ -790,6 +824,7 @@ GType thunar_folder_item_count_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
       {
         { THUNAR_FOLDER_ITEM_COUNT_NEVER,       "THUNAR_FOLDER_ITEM_COUNT_NEVER",       N_("Never") },
@@ -797,6 +832,7 @@ GType thunar_folder_item_count_get_type (void)
         { THUNAR_FOLDER_ITEM_COUNT_ALWAYS,      "THUNAR_FOLDER_ITEM_COUNT_ALWAYS",      N_("Always") },
         { 0,                                    NULL,                                   NULL }
       };
+      /* clang-format on */
 
       type = g_enum_register_static ("ThunarFolderItemCount", values);
     }
@@ -810,6 +846,7 @@ GType thunar_window_title_style_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
       {
         { THUNAR_WINDOW_TITLE_STYLE_FOLDER_NAME_WITH_THUNAR_SUFFIX,    "THUNAR_WINDOW_TITLE_STYLE_FOLDER_NAME_WITH_THUNAR_SUFFIX",    "folder-name-with-suffix" },
@@ -818,6 +855,7 @@ GType thunar_window_title_style_get_type (void)
         { THUNAR_WINDOW_TITLE_STYLE_FULL_PATH_WITHOUT_THUNAR_SUFFIX,   "THUNAR_WINDOW_TITLE_STYLE_FULL_PATH_WITHOUT_THUNAR_SUFFIX",   "full-path-without-suffix" },
         { 0,                                                           NULL,                                                          NULL }
       };
+      /* clang-format on */
 
       type = g_enum_register_static ("ThunarWindowTitleStyle", values);
     }
@@ -831,6 +869,7 @@ GType thunar_sidepane_type_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
       {
         { THUNAR_SIDEPANE_TYPE_SHORTCUTS,       "THUNAR_SIDEPANE_TYPE_SHORTCUTS",        ("Shurtcuts sidepane") },
@@ -844,6 +883,7 @@ GType thunar_sidepane_type_get_type (void)
 
         { 0,                                    NULL,                                    NULL }
       };
+      /* clang-format on */
 
       type = g_enum_register_static ("ThunarSidepaneType", values);
     }
@@ -857,6 +897,7 @@ GType thunar_execute_shell_script_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
+      /* clang-format off */
       static const GEnumValue values[] =
       {
         { THUNAR_EXECUTE_SHELL_SCRIPT_NEVER,  "THUNAR_EXECUTE_SHELL_SCRIPT_NEVER",  ("Never") },
@@ -865,6 +906,7 @@ GType thunar_execute_shell_script_get_type (void)
 
         { 0,                                  NULL,                                 NULL }
       };
+      /* clang-format on */
 
       type = g_enum_register_static ("ThunarExecuteShellScript", values);
     }

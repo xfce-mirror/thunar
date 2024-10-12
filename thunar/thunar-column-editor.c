@@ -574,7 +574,7 @@ thunar_column_editor_use_defaults (ThunarColumnEditor *column_editor,
 
   GtkTreeSelection *selection;
   GParamSpec       *pspec;
-  GValue            value = { 0, };
+  GValue            value = G_VALUE_INIT;
   guint             n;
 
   /* reset the given properties to its default values */

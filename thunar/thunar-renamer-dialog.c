@@ -195,6 +195,7 @@ struct _ThunarRenamerDialog
 
 
 
+/* clang-format off */
 static XfceGtkActionEntry thunar_renamer_action_entries[] =
 {
     { THUNAR_RENAMER_ACTION_ADD_FILES,    "<Actions>/ThunarRenamerDialog/add-files",    "", XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Add Files..."), N_ ("Include additional files in the list of files to be renamed"), "list-add",    G_CALLBACK (thunar_renamer_dialog_action_add_files),   },
@@ -202,6 +203,7 @@ static XfceGtkActionEntry thunar_renamer_action_entries[] =
     { THUNAR_RENAMER_ACTION_CLEAR,        "",                                           "", XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Clear"),         N_ ("Clear the file list below"),                                   "edit-clear",  G_CALLBACK (thunar_renamer_dialog_action_clear),       },
     { THUNAR_RENAMER_ACTION_ABOUT,        "",                                           "", XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_About"),        N_ ("Display information about Thunar Bulk Rename"),                "help-about",  G_CALLBACK (thunar_renamer_dialog_action_about),       },
 };
+/* clang-format on */
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_renamer_action_entries,G_N_ELEMENTS(thunar_renamer_action_entries),id)
 
