@@ -502,6 +502,7 @@ struct _ThunarWindow
 
 
 
+/* clang-format off */
 static XfceGtkActionEntry thunar_window_action_entries[] =
 {
     { THUNAR_WINDOW_ACTION_FILE_MENU,                      "<Actions>/ThunarWindow/file-menu",                       "",                     XFCE_GTK_MENU_ITEM,       N_ ("_File"),                  NULL, NULL, NULL,},
@@ -582,6 +583,7 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_MENU,                           "<Actions>/Thunarwindow/menu",                            "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Menu"),                   N_ ("Show the menu"),                                                                "open-menu",               G_CALLBACK (thunar_window_action_menu),                },
     { 0,                                                   "<Actions>/ThunarWindow/open-file-menu",                  "F10",                  0,                        NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_action_open_file_menu),      },
 };
+/* clang-format on */
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_window_action_entries,G_N_ELEMENTS(thunar_window_action_entries),id)
 

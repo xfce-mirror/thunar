@@ -77,6 +77,7 @@ struct _ThunarStatusbar
   ThunarPreferences *preferences;
 };
 
+/* clang-format off */
 static XfceGtkActionEntry thunar_status_bar_action_entries[] =
     {
         { THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE,           "<Actions>/ThunarStatusBar/toggle-size",             "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Size"),          N_ ("Show size"),               NULL, G_CALLBACK (thunar_statusbar_action_show_size),            },
@@ -86,6 +87,7 @@ static XfceGtkActionEntry thunar_status_bar_action_entries[] =
         { THUNAR_STATUS_BAR_ACTION_TOGGLE_LAST_MODIFIED,  "<Actions>/ThunarStatusBar/toggle-last-modified",    "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Last Modified"), N_ ("Show last modified"),      NULL, G_CALLBACK (thunar_statusbar_action_show_last_modified),   },
         { THUNAR_STATUS_BAR_ACTION_TOGGLE_HIDDEN_COUNT,   "<Actions>/ThunarStatusBar/toggle-hidden-count",     "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Hidden Files Count"), N_ ("Show hidden files count"), NULL, G_CALLBACK (thunar_statusbar_action_show_hidden_count),    },
     };
+/* clang-format on */
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id (thunar_status_bar_action_entries, G_N_ELEMENTS (thunar_status_bar_action_entries) ,id)
 

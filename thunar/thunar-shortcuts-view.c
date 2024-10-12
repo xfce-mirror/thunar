@@ -228,11 +228,13 @@ typedef enum
   THUNAR_SHORTCUTS_VIEW_ACTION_REMOVE_BOOKMARK,
 } ThunarShortcutsViewAction;
 
+/* clang-format off */
 static XfceGtkActionEntry thunar_shortcuts_view_action_entries[] =
 {
     { THUNAR_SHORTCUTS_VIEW_ACTION_RENAME_BOOKMARK, "<Actions>/ThunarShortcutsView/rename-bookmark", "", XFCE_GTK_MENU_ITEM,       N_("Re_name Shortcut"), NULL, "",            G_CALLBACK (thunar_shortcuts_view_rename_activated), },
     { THUNAR_SHORTCUTS_VIEW_ACTION_REMOVE_BOOKMARK, "<Actions>/ThunarShortcutsView/remove-bookmark", "", XFCE_GTK_IMAGE_MENU_ITEM, N_("_Remove Shortcut"), NULL, "list-remove", G_CALLBACK (thunar_shortcuts_view_remove_activated), },
 };
+/* clang-format on */
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_shortcuts_view_action_entries,G_N_ELEMENTS(thunar_shortcuts_view_action_entries),id)
 

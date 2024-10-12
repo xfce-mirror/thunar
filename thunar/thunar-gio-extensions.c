@@ -46,6 +46,8 @@ static struct
   const gchar *icon_name;
   const gchar *type;
 }
+
+/* clang-format off */
 device_icon_name [] =
 {
   /* Implementation specific */
@@ -71,6 +73,7 @@ device_icon_name [] =
   { "phone*"                 , N_("Phone") },
   { NULL                     , NULL }
 };
+/* clang-format on */
 
 
 

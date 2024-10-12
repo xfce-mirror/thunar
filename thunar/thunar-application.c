@@ -74,6 +74,7 @@ static gboolean opt_version = FALSE;
  * and will be silently ignored on every other invocation */
 static gchar   *opt_sm_client_id = NULL;
 
+/* clang-format off */
 /* option entries */
 static const GOptionEntry option_entries[] =
 {
@@ -86,7 +87,7 @@ static const GOptionEntry option_entries[] =
   { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, NULL, NULL, NULL, },
   { NULL, },
 };
-
+/* clang-format on */
 
 
 /* Prototype for the Thunar job launchers */

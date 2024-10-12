@@ -264,6 +264,7 @@ struct _ThunarActionManagerPokeData
 
 static GParamSpec *action_manager_props[N_PROPERTIES] = { NULL, };
 
+/* clang-format off */
 static XfceGtkActionEntry thunar_action_manager_action_entries[] =
 {
     { THUNAR_ACTION_MANAGER_ACTION_OPEN,             "<Actions>/ThunarActionManager/open",                    "<Primary>O",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Open"),                           NULL,                                                                                            "document-open",        G_CALLBACK (thunar_action_manager_action_open),                },
@@ -309,6 +310,7 @@ static XfceGtkActionEntry thunar_action_manager_action_entries[] =
     { THUNAR_ACTION_MANAGER_ACTION_UNMOUNT,          NULL,                                                   "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Unmount"),                        N_ ("Unmount the selected device"),                                                              NULL,                   G_CALLBACK (thunar_action_manager_action_unmount),             },
     { THUNAR_ACTION_MANAGER_ACTION_EJECT,            NULL,                                                   "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Eject"),                          N_ ("Eject the selected device"),                                                                NULL,                   G_CALLBACK (thunar_action_manager_action_eject),               },
 };
+/* clang-format on */
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_action_manager_action_entries,G_N_ELEMENTS(thunar_action_manager_action_entries),id)
 
