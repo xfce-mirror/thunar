@@ -28,23 +28,27 @@ G_BEGIN_DECLS
 typedef struct _ThunarThumbnailerClass ThunarThumbnailerClass;
 typedef struct _ThunarThumbnailer      ThunarThumbnailer;
 
-#define THUNAR_TYPE_THUMBNAILER            (thunar_thumbnailer_get_type ())
-#define THUNAR_THUMBNAILER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_THUMBNAILER, ThunarThumbnailer))
-#define THUNAR_THUMBNAILER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_THUMBNAILER, ThunarThumbnailerClass))
-#define THUNAR_IS_THUMBNAILER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_THUMBNAILER))
+#define THUNAR_TYPE_THUMBNAILER (thunar_thumbnailer_get_type ())
+#define THUNAR_THUMBNAILER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_THUMBNAILER, ThunarThumbnailer))
+#define THUNAR_THUMBNAILER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_THUMBNAILER, ThunarThumbnailerClass))
+#define THUNAR_IS_THUMBNAILER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_THUMBNAILER))
 #define THUNAR_IS_THUMBNAILER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_THUMBNAILER))
-#define THUNAR_THUMBNAILER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_THUMBNAILER, ThunarThumbnailerClass))
+#define THUNAR_THUMBNAILER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_THUMBNAILER, ThunarThumbnailerClass))
 
-GType              thunar_thumbnailer_get_type        (void) G_GNUC_CONST;
+GType
+thunar_thumbnailer_get_type (void) G_GNUC_CONST;
 
-ThunarThumbnailer *thunar_thumbnailer_get             (void) G_GNUC_MALLOC;
+ThunarThumbnailer *
+thunar_thumbnailer_get (void) G_GNUC_MALLOC;
 
-void               thunar_thumbnailer_queue_file      (ThunarThumbnailer        *thumbnailer,
-                                                       ThunarFile               *file,
-                                                       guint                    *request,
-                                                       ThunarThumbnailSize       size);
-void               thunar_thumbnailer_dequeue         (ThunarThumbnailer        *thumbnailer,
-                                                       guint                     request);
+void
+thunar_thumbnailer_queue_file (ThunarThumbnailer  *thumbnailer,
+                               ThunarFile         *file,
+                               guint              *request,
+                               ThunarThumbnailSize size);
+void
+thunar_thumbnailer_dequeue (ThunarThumbnailer *thumbnailer,
+                            guint              request);
 
 G_END_DECLS
 

@@ -27,20 +27,24 @@ G_BEGIN_DECLS;
 typedef struct _ThunarTreeViewModelClass ThunarTreeViewModelClass;
 typedef struct _ThunarTreeViewModel      ThunarTreeViewModel;
 
-#define THUNAR_TYPE_TREE_VIEW_MODEL            (thunar_tree_view_model_get_type ())
-#define THUNAR_TREE_VIEW_MODEL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_TREE_VIEW_MODEL, ThunarTreeViewModel))
-#define THUNAR_TREE_VIEW_MODEL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_TREE_VIEW_MODEL, ThunarTreeViewModelClass))
-#define THUNAR_IS_TREE_VIEW_MODEL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_TREE_VIEW_MODEL))
+#define THUNAR_TYPE_TREE_VIEW_MODEL (thunar_tree_view_model_get_type ())
+#define THUNAR_TREE_VIEW_MODEL(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_TREE_VIEW_MODEL, ThunarTreeViewModel))
+#define THUNAR_TREE_VIEW_MODEL_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_TREE_VIEW_MODEL, ThunarTreeViewModelClass))
+#define THUNAR_IS_TREE_VIEW_MODEL(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_TREE_VIEW_MODEL))
 #define THUNAR_IS_TREE_VIEW_MODEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_TREE_VIEW_MODEL))
-#define THUNAR_TREE_VIEW_MODEL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_TREE_VIEW_MODEL, ThunarTreeViewModelClass))
+#define THUNAR_TREE_VIEW_MODEL_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_TREE_VIEW_MODEL, ThunarTreeViewModelClass))
 
-GType                    thunar_tree_view_model_get_type               (void) G_GNUC_CONST;
+GType
+thunar_tree_view_model_get_type (void) G_GNUC_CONST;
 
-ThunarStandardViewModel *thunar_tree_view_model_new (void);
-void                     thunar_tree_view_model_load_subdir (ThunarTreeViewModel *model,
-                                                             GtkTreeIter         *iter);
-void                     thunar_tree_view_model_schedule_unload (ThunarTreeViewModel *model,
-                                                                  GtkTreeIter         *iter);
+ThunarStandardViewModel *
+thunar_tree_view_model_new (void);
+void
+thunar_tree_view_model_load_subdir (ThunarTreeViewModel *model,
+                                    GtkTreeIter         *iter);
+void
+thunar_tree_view_model_schedule_unload (ThunarTreeViewModel *model,
+                                        GtkTreeIter         *iter);
 G_END_DECLS;
 
 #endif /* !__THUNAR_TREE_VIEW_MODEL_H__ */

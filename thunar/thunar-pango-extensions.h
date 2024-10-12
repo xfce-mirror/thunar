@@ -24,16 +24,24 @@
 
 G_BEGIN_DECLS;
 
-PangoAttrList *thunar_pango_attr_list_big               (void) G_GNUC_CONST;
-PangoAttrList *thunar_pango_attr_list_big_bold          (void) G_GNUC_CONST;
-PangoAttrList *thunar_pango_attr_list_bold              (void) G_GNUC_CONST;
-#if PANGO_VERSION_CHECK (1, 44, 0)
-PangoAttrList *thunar_pango_attr_disable_hyphens        (void) G_GNUC_CONST;
+PangoAttrList *
+thunar_pango_attr_list_big (void) G_GNUC_CONST;
+PangoAttrList *
+thunar_pango_attr_list_big_bold (void) G_GNUC_CONST;
+PangoAttrList *
+thunar_pango_attr_list_bold (void) G_GNUC_CONST;
+#if PANGO_VERSION_CHECK(1, 44, 0)
+PangoAttrList *
+thunar_pango_attr_disable_hyphens (void) G_GNUC_CONST;
 #endif
-PangoAttrList *thunar_pango_attr_list_italic            (void) G_GNUC_CONST;
-PangoAttrList *thunar_pango_attr_list_small_italic      (void) G_GNUC_CONST;
-PangoAttrList *thunar_pango_attr_list_small             (void) G_GNUC_CONST;
-PangoAttrList *thunar_pango_attr_list_underline_single  (void) G_GNUC_CONST;
+PangoAttrList *
+thunar_pango_attr_list_italic (void) G_GNUC_CONST;
+PangoAttrList *
+thunar_pango_attr_list_small_italic (void) G_GNUC_CONST;
+PangoAttrList *
+thunar_pango_attr_list_small (void) G_GNUC_CONST;
+PangoAttrList *
+thunar_pango_attr_list_underline_single (void) G_GNUC_CONST;
 
 G_END_DECLS;
 

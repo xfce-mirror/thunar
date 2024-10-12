@@ -23,13 +23,13 @@
 #include "config.h"
 #endif
 
-#include <libxfce4util/libxfce4util.h>
-
-#include "thunar/thunar-thumbnailer-proxy.h"
 #include "thunar/thunar-marshal.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
+#include "thunar/thunar-thumbnailer-proxy.h"
 #include "thunar/thunar-thumbnailer.h"
+
+#include <libxfce4util/libxfce4util.h>
 
 
 
@@ -96,17 +96,17 @@ typedef enum
 
 enum
 {
-    DBUS_THUMBNAIL_ERROR_UNSUPPORTED,
-    DBUS_THUMBNAIL_ERROR_CONNECTION_ERROR,
-    DBUS_THUMBNAIL_ERROR_INVALID_FORMAT,
-    DBUS_THUMBNAIL_ERROR_IS_THUMBNAIL,
-    DBUS_THUMBNAIL_ERROR_SAVE_FAILED,
-    DBUS_THUMBNAIL_ERROR_UNSUPPORTED_FLAVOR,
+  DBUS_THUMBNAIL_ERROR_UNSUPPORTED,
+  DBUS_THUMBNAIL_ERROR_CONNECTION_ERROR,
+  DBUS_THUMBNAIL_ERROR_INVALID_FORMAT,
+  DBUS_THUMBNAIL_ERROR_IS_THUMBNAIL,
+  DBUS_THUMBNAIL_ERROR_SAVE_FAILED,
+  DBUS_THUMBNAIL_ERROR_UNSUPPORTED_FLAVOR,
 };
 
 
 
-typedef struct _ThunarThumbnailerJob  ThunarThumbnailerJob;
+typedef struct _ThunarThumbnailerJob ThunarThumbnailerJob;
 
 /* Signal identifiers */
 enum
@@ -124,34 +124,42 @@ enum
 };
 
 
-static void                   thunar_thumbnailer_finalize               (GObject                    *object);
-static gboolean               thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer          *thumbnailer);
-static gboolean               thunar_thumbnailer_file_is_supported      (ThunarThumbnailer          *thumbnailer,
-                                                                         ThunarFile                 *file);
-static void                   thunar_thumbnailer_thumbnailer_finished   (GDBusProxy                 *proxy,
-                                                                         guint                       handle,
-                                                                         ThunarThumbnailer          *thumbnailer);
-static void                   thunar_thumbnailer_thumbnailer_error      (GDBusProxy                 *proxy,
-                                                                         guint                       handle,
-                                                                         const gchar               **uris,
-                                                                         gint                        code,
-                                                                         const gchar                *message,
-                                                                         ThunarThumbnailer          *thumbnailer);
-static void                   thunar_thumbnailer_thumbnailer_ready      (GDBusProxy                 *proxy,
-                                                                         guint32                     handle,
-                                                                         const gchar               **uris,
-                                                                         ThunarThumbnailer          *thumbnailer);
-static void                   thunar_thumbnailer_get_property           (GObject                    *object,
-                                                                         guint                       prop_id,
-                                                                         GValue                     *value,
-                                                                         GParamSpec                 *pspec);
-static void                   thunar_thumbnailer_set_property           (GObject                    *object,
-                                                                         guint                       prop_id,
-                                                                         const GValue               *value,
-                                                                         GParamSpec                 *pspec);
+static void
+thunar_thumbnailer_finalize (GObject *object);
+static gboolean
+thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer);
+static gboolean
+thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
+                                      ThunarFile        *file);
+static void
+thunar_thumbnailer_thumbnailer_finished (GDBusProxy        *proxy,
+                                         guint              handle,
+                                         ThunarThumbnailer *thumbnailer);
+static void
+thunar_thumbnailer_thumbnailer_error (GDBusProxy        *proxy,
+                                      guint              handle,
+                                      const gchar      **uris,
+                                      gint               code,
+                                      const gchar       *message,
+                                      ThunarThumbnailer *thumbnailer);
+static void
+thunar_thumbnailer_thumbnailer_ready (GDBusProxy        *proxy,
+                                      guint32            handle,
+                                      const gchar      **uris,
+                                      ThunarThumbnailer *thumbnailer);
+static void
+thunar_thumbnailer_get_property (GObject    *object,
+                                 guint       prop_id,
+                                 GValue     *value,
+                                 GParamSpec *pspec);
+static void
+thunar_thumbnailer_set_property (GObject      *object,
+                                 guint         prop_id,
+                                 const GValue *value,
+                                 GParamSpec   *pspec);
 
-#define _thumbnailer_lock(thumbnailer)    g_mutex_lock (&((thumbnailer)->lock))
-#define _thumbnailer_unlock(thumbnailer)  g_mutex_unlock (&((thumbnailer)->lock))
+#define _thumbnailer_lock(thumbnailer) g_mutex_lock (&((thumbnailer)->lock))
+#define _thumbnailer_unlock(thumbnailer) g_mutex_unlock (&((thumbnailer)->lock))
 
 
 struct _ThunarThumbnailerClass
@@ -170,27 +178,27 @@ struct _ThunarThumbnailer
   ThunarPreferences *preferences;
 
   /* running jobs */
-  GSList     *jobs;
+  GSList *jobs;
 
-  GMutex      lock;
+  GMutex lock;
 
   /* cached MIME types -> URI schemes for which thumbs can be generated */
   GHashTable *supported;
 
   /* last ThunarThumbnailer request ID */
-  guint       last_request;
+  guint last_request;
 
   /* size to use to store thumbnails */
   ThunarThumbnailSize thumbnail_size;
 
   /* maximum file size (in bytes) allowed to be thumbnailed */
-  guint64     thumbnail_max_file_size;
+  guint64 thumbnail_max_file_size;
 
   /* Agregated thumbnailing requests per size, to be queued on timeout */
-  ThunarThumbnailerJob* jobs_to_queue[N_THUMBNAIL_SIZES];
+  ThunarThumbnailerJob *jobs_to_queue[N_THUMBNAIL_SIZES];
 
   /* Id's of the timeout sources per size, used to agrregate requets */
-  guint                 jobs_to_queue_source_id[N_THUMBNAIL_SIZES];
+  guint jobs_to_queue_source_id[N_THUMBNAIL_SIZES];
 };
 
 struct _ThunarThumbnailerJob
@@ -198,17 +206,17 @@ struct _ThunarThumbnailerJob
   ThunarThumbnailer *thumbnailer;
 
   /* if this job is cancelled */
-  guint              cancelled : 1;
+  guint cancelled : 1;
 
   /* data is saved here in case the queueing is delayed */
   /* If this is NULL, the request has been sent off. */
-  GList             *files; /* element type: ThunarFile */
+  GList *files; /* element type: ThunarFile */
 
   /* request number returned by ThunarThumbnailer */
-  guint              request;
+  guint request;
 
   /* handle returned by the tumbler dbus service */
-  guint              handle;
+  guint handle;
 
   /* used to override the thumbnail size of ThunarThumbnailer */
   ThunarThumbnailSize thumbnail_size;
@@ -241,12 +249,12 @@ thunar_thumbnailer_class_init (ThunarThumbnailerClass *klass)
    * by the thumbnail generator
    **/
   thumbnailer_signals[REQUEST_FINISHED] =
-    g_signal_new (I_("request-finished"),
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_LAST,
-                  0, NULL, NULL,
-                  g_cclosure_marshal_VOID__UINT,
-                  G_TYPE_NONE, 1, G_TYPE_UINT);
+  g_signal_new (I_ ("request-finished"),
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST,
+                0, NULL, NULL,
+                g_cclosure_marshal_VOID__UINT,
+                G_TYPE_NONE, 1, G_TYPE_UINT);
 
   /**
    * ThunarThumbnailer:thumbnail-size:
@@ -400,18 +408,18 @@ thunar_thumbnailer_queue_async_reply (GObject      *proxy,
 
 /* NOTE: assumes that the lock is held by the caller */
 static gboolean
-thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
+thunar_thumbnailer_begin_job (ThunarThumbnailer    *thumbnailer,
                               ThunarThumbnailerJob *job)
 {
-  gboolean               success = FALSE;
-  const gchar          **mime_hints;
-  gchar                **uris;
-  GList                 *lp;
-  GList                 *supported_files = NULL;
-  guint                  n;
-  guint                  n_items = 0;
-  const gchar           *thumbnail_path;
-  ThunarThumbnailSize    thumbnail_size;
+  gboolean            success = FALSE;
+  const gchar       **mime_hints;
+  gchar             **uris;
+  GList              *lp;
+  GList              *supported_files = NULL;
+  guint               n;
+  guint               n_items = 0;
+  const gchar        *thumbnail_path;
+  ThunarThumbnailSize thumbnail_size;
 
   if (thumbnailer->proxy_state == THUNAR_THUMBNAILER_PROXY_WAITING)
     {
@@ -422,7 +430,7 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
     {
       /* give another chance to the proxy */
       g_warning ("Thumbnailer Proxy Failed ... starting attempt to re-initialize");
-      
+
       if (thumbnailer->thumbnailer_proxy != NULL)
         {
           /* disconnect from the thumbnailer proxy */
@@ -500,8 +508,8 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
 
       /* queue the request - asynchronously, of course */
       thunar_thumbnailer_dbus_call_queue (thumbnailer->thumbnailer_proxy,
-                                          (const gchar *const *)uris,
-                                          (const gchar *const *)mime_hints,
+                                          (const gchar *const *) uris,
+                                          (const gchar *const *) mime_hints,
                                           thunar_thumbnail_size_get_nick (thumbnail_size),
                                           "foreground", 0,
                                           NULL,
@@ -561,7 +569,7 @@ thunar_thumbnailer_init (ThunarThumbnailer *thumbnailer)
 static void
 thunar_thumbnailer_finalize (GObject *object)
 {
-  ThunarThumbnailer     *thumbnailer = THUNAR_THUMBNAILER (object);
+  ThunarThumbnailer *thumbnailer = THUNAR_THUMBNAILER (object);
 
   /* acquire the thumbnailer lock */
   _thumbnailer_lock (thumbnailer);
@@ -569,12 +577,12 @@ thunar_thumbnailer_finalize (GObject *object)
   for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
     {
       if (thumbnailer->jobs_to_queue_source_id[i] != 0)
-      {
-        g_source_remove (thumbnailer->jobs_to_queue_source_id[i]);
-        thunar_thumbnailer_free_job (thumbnailer->jobs_to_queue[i]);
-        thumbnailer->jobs_to_queue[i] = NULL;
-        thumbnailer->jobs_to_queue_source_id[i] = 0;
-      }
+        {
+          g_source_remove (thumbnailer->jobs_to_queue_source_id[i]);
+          thunar_thumbnailer_free_job (thumbnailer->jobs_to_queue[i]);
+          thumbnailer->jobs_to_queue[i] = NULL;
+          thumbnailer->jobs_to_queue_source_id[i] = 0;
+        }
     }
 
   if (thumbnailer->thumbnailer_proxy != NULL)
@@ -584,7 +592,7 @@ thunar_thumbnailer_finalize (GObject *object)
     }
 
   /* remove all jobs */
-  g_slist_free_full (thumbnailer->jobs, (GDestroyNotify)thunar_thumbnailer_free_job);
+  g_slist_free_full (thumbnailer->jobs, (GDestroyNotify) thunar_thumbnailer_free_job);
 
   /* release the thumbnailer proxy */
   if (thumbnailer->thumbnailer_proxy != NULL)
@@ -644,16 +652,16 @@ thunar_thumbnailer_file_sort_schemes (gpointer mime_type,
 
 
 static void
-thunar_thumbnailer_received_supported_types (ThunarThumbnailerDBus  *proxy,
-                                             GAsyncResult           *result,
-                                             ThunarThumbnailer      *thumbnailer)
+thunar_thumbnailer_received_supported_types (ThunarThumbnailerDBus *proxy,
+                                             GAsyncResult          *result,
+                                             ThunarThumbnailer     *thumbnailer)
 {
-  guint       n;
-  gchar     **schemes = NULL;
-  gchar     **types = NULL;
-  GPtrArray  *schemes_array;
-  GSList     *lp = NULL;
-  GError     *error = NULL;
+  guint      n;
+  gchar    **schemes = NULL;
+  gchar    **types = NULL;
+  GPtrArray *schemes_array;
+  GSList    *lp = NULL;
+  GError    *error = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
   _thunar_return_if_fail (THUNAR_IS_THUMBNAILER_DBUS (proxy));
@@ -663,7 +671,7 @@ thunar_thumbnailer_received_supported_types (ThunarThumbnailerDBus  *proxy,
 
   if (!thunar_thumbnailer_dbus_call_get_supported_finish (proxy, &schemes, &types, result, &error))
     {
-      g_slist_free_full (thumbnailer->jobs, (GDestroyNotify)thunar_thumbnailer_free_job);
+      g_slist_free_full (thumbnailer->jobs, (GDestroyNotify) thunar_thumbnailer_free_job);
       thumbnailer->jobs = NULL;
 
       g_warning ("ThunarThumbnailer: Failed to retrieve supported types: %s", error->message);
@@ -737,12 +745,12 @@ thunar_thumbnailer_received_supported_types (ThunarThumbnailerDBus  *proxy,
 
 
 static void
-thunar_thumbnailer_proxy_created (GObject       *object,
-                                  GAsyncResult  *result,
-                                  gpointer       userdata)
+thunar_thumbnailer_proxy_created (GObject      *object,
+                                  GAsyncResult *result,
+                                  gpointer      userdata)
 {
-  ThunarThumbnailer     *thumbnailer = THUNAR_THUMBNAILER (userdata);
-  GError                *error = NULL;
+  ThunarThumbnailer *thumbnailer = THUNAR_THUMBNAILER (userdata);
+  GError            *error = NULL;
 
   thumbnailer->thumbnailer_proxy = thunar_thumbnailer_dbus_proxy_new_finish (result, &error);
 
@@ -754,7 +762,7 @@ thunar_thumbnailer_proxy_created (GObject       *object,
       g_warning ("ThunarThumbnailer: failed to create proxy: %s", error->message);
       g_clear_error (&error);
 
-      g_slist_free_full (thumbnailer->jobs, (GDestroyNotify)thunar_thumbnailer_free_job);
+      g_slist_free_full (thumbnailer->jobs, (GDestroyNotify) thunar_thumbnailer_free_job);
       thumbnailer->jobs = NULL;
 
       _thumbnailer_unlock (thumbnailer);
@@ -777,7 +785,7 @@ thunar_thumbnailer_proxy_created (GObject       *object,
   /* 'ready' is signaled when thumnailing was sucessfull for some uris */
   /* Note that 'finished' will still be signaled after the whole thumbnailing request finished */
   g_signal_connect (thumbnailer->thumbnailer_proxy, "ready",
-                   G_CALLBACK (thunar_thumbnailer_thumbnailer_ready), thumbnailer);
+                    G_CALLBACK (thunar_thumbnailer_thumbnailer_ready), thumbnailer);
 
 
   /* begin retrieving supported file types */
@@ -792,7 +800,7 @@ thunar_thumbnailer_proxy_created (GObject       *object,
 
   /* request the supported types from the thumbnailer D-Bus service. */
   thunar_thumbnailer_dbus_call_get_supported (thumbnailer->thumbnailer_proxy, NULL,
-                                              (GAsyncReadyCallback)thunar_thumbnailer_received_supported_types,
+                                              (GAsyncReadyCallback) thunar_thumbnailer_received_supported_types,
                                               thumbnailer);
 
   _thumbnailer_unlock (thumbnailer);
@@ -812,7 +820,7 @@ thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer)
                                              "org.freedesktop.thumbnails.Thumbnailer1",
                                              "/org/freedesktop/thumbnails/Thumbnailer1",
                                              NULL,
-                                             (GAsyncReadyCallback)thunar_thumbnailer_proxy_created,
+                                             (GAsyncReadyCallback) thunar_thumbnailer_proxy_created,
                                              thumbnailer);
 
   return G_SOURCE_REMOVE;
@@ -847,7 +855,7 @@ thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
 
       content_type = thunar_g_file_get_content_type (link_target);
       g_object_unref (link_target);
-   }
+    }
   else
     content_type = thunar_file_get_content_type (file);
 
@@ -924,7 +932,7 @@ thunar_thumbnailer_thumbnailer_error (GDBusProxy        *proxy,
           break;
         }
     }
-   _thumbnailer_unlock (thumbnailer);
+  _thumbnailer_unlock (thumbnailer);
 }
 
 
@@ -958,13 +966,13 @@ thunar_thumbnailer_thumbnailer_ready (GDBusProxy        *proxy,
 
               if (file != NULL)
                 {
-                    thunar_file_update_thumbnail (file, THUNAR_FILE_THUMB_STATE_READY, job->thumbnail_size);
-                    g_object_unref (file);
+                  thunar_file_update_thumbnail (file, THUNAR_FILE_THUMB_STATE_READY, job->thumbnail_size);
+                  g_object_unref (file);
                 }
             }
         }
     }
-      _thumbnailer_unlock (thumbnailer);
+  _thumbnailer_unlock (thumbnailer);
 }
 
 
@@ -1024,7 +1032,7 @@ thunar_thumbnailer_thumbnailer_finished (GDBusProxy        *proxy,
  *
  * Return value: a #ThunarThumbnailer.
  **/
-ThunarThumbnailer*
+ThunarThumbnailer *
 thunar_thumbnailer_get (void)
 {
   static ThunarThumbnailer *thumbnailer = NULL;
@@ -1060,7 +1068,7 @@ thunar_thumbnailer_queue_job_after_timeout (gpointer user_data)
     }
   else
     {
-      for (GList* lp = job->files; lp != NULL; lp = lp->next)
+      for (GList *lp = job->files; lp != NULL; lp = lp->next)
         {
           /* This job failed .. inform all files which are waiting for the result */
           thunar_file_update_thumbnail (lp->data, THUNAR_FILE_THUMB_STATE_NONE, job->thumbnail_size);
@@ -1095,14 +1103,14 @@ thunar_thumbnailer_queue_file (ThunarThumbnailer  *thumbnailer,
   _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  if (thumbnailer->jobs_to_queue_source_id[size] == 0 )
+  if (thumbnailer->jobs_to_queue_source_id[size] == 0)
     {
-      ThunarThumbnailerJob  *job;
+      ThunarThumbnailerJob *job;
 
       /* allocate a job */
       job = g_slice_new0 (ThunarThumbnailerJob);
       job->thumbnailer = thumbnailer;
-      job->files =  g_list_append (job->files, g_object_ref (file));
+      job->files = g_list_append (job->files, g_object_ref (file));
       job->thumbnail_size = size;
 
       /* queue a thumbnail request for the URIs from the wait queue */
@@ -1122,9 +1130,9 @@ thunar_thumbnailer_queue_file (ThunarThumbnailer  *thumbnailer,
   else
     {
       if (thumbnailer->jobs_to_queue[size]->files == NULL)
-        g_warn_if_reached();
+        g_warn_if_reached ();
 
-      thumbnailer->jobs_to_queue[size]->files =  g_list_prepend (thumbnailer->jobs_to_queue[size]->files, g_object_ref (file));
+      thumbnailer->jobs_to_queue[size]->files = g_list_prepend (thumbnailer->jobs_to_queue[size]->files, g_object_ref (file));
     }
 
   *request = thumbnailer->jobs_to_queue[size]->request;

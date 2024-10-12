@@ -22,10 +22,10 @@
 #include "config.h"
 #endif
 
-#include <libxfce4util/libxfce4util.h>
-
 #include "thunarx/thunarx-private.h"
 #include "thunarx/thunarx-property-page-provider.h"
+
+#include <libxfce4util/libxfce4util.h>
 
 /**
  * SECTION: thunarx-property-page-provider
@@ -49,7 +49,7 @@ thunarx_property_page_provider_get_type (void)
   if (g_once_init_enter (&type__static))
     {
       type = g_type_register_static_simple (G_TYPE_INTERFACE,
-                                            I_("ThunarxPropertyPageProvider"),
+                                            I_ ("ThunarxPropertyPageProvider"),
                                             sizeof (ThunarxPropertyPageProviderIface),
                                             NULL,
                                             0,
@@ -114,7 +114,7 @@ thunarx_property_page_provider_get_type (void)
  * Returns: (transfer full) (element-type ThunarxPropertyPage): the list of
  *          #ThunarxPropertyPage<!---->s that @provider has to offer for @files.
  **/
-GList*
+GList *
 thunarx_property_page_provider_get_pages (ThunarxPropertyPageProvider *provider,
                                           GList                       *files)
 {

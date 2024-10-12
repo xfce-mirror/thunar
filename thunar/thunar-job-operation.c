@@ -16,9 +16,10 @@
  * this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "thunar/thunar-job-operation.h"
+
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-io-jobs.h"
-#include "thunar/thunar-job-operation.h"
 #include "thunar/thunar-private.h"
 
 /**
@@ -31,31 +32,34 @@
  *
  */
 
-static void                   thunar_job_operation_finalize           (GObject            *object);
-static gint                   thunar_job_operation_is_ancestor        (gconstpointer       descendant,
-                                                                       gconstpointer       ancestor);
-static void                   thunar_job_operation_restore_from_trash (ThunarJobOperation *operation,
-                                                                       GError            **error);
+static void
+thunar_job_operation_finalize (GObject *object);
+static gint
+thunar_job_operation_is_ancestor (gconstpointer descendant,
+                                  gconstpointer ancestor);
+static void
+thunar_job_operation_restore_from_trash (ThunarJobOperation *operation,
+                                         GError            **error);
 
 
 
 struct _ThunarJobOperation
 {
-  GObject                 __parent__;
+  GObject __parent__;
 
-  ThunarJobOperationKind  operation_kind;
-  GList                  *source_file_list;
-  GList                  *target_file_list;
+  ThunarJobOperationKind operation_kind;
+  GList                 *source_file_list;
+  GList                 *target_file_list;
 
   /* Files overwritten as a part of an operation */
-  GList                  *overwritten_files;
+  GList *overwritten_files;
 
   /**
    * Optional timestamps (in seconds) which tell when the operation was started and ended.
    * Only used for trash/restore operations.
    **/
-  gint64                  start_timestamp;
-  gint64                  end_timestamp;
+  gint64 start_timestamp;
+  gint64 end_timestamp;
 };
 
 G_DEFINE_TYPE (ThunarJobOperation, thunar_job_operation, G_TYPE_OBJECT)
@@ -65,7 +69,7 @@ G_DEFINE_TYPE (ThunarJobOperation, thunar_job_operation, G_TYPE_OBJECT)
 static void
 thunar_job_operation_class_init (ThunarJobOperationClass *klass)
 {
-  GObjectClass      *gobject_class;
+  GObjectClass *gobject_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_job_operation_finalize;
@@ -117,7 +121,7 @@ thunar_job_operation_new (ThunarJobOperationKind kind)
   operation->operation_kind = kind;
 
   /* we store the start timestamp in seconds, so we need to divide by 1e6 */
-  operation->start_timestamp = g_get_real_time () / (gint64) 1e6 ;
+  operation->start_timestamp = g_get_real_time () / (gint64) 1e6;
 
   return operation;
 }
@@ -137,7 +141,6 @@ thunar_job_operation_add (ThunarJobOperation *job_operation,
                           GFile              *source_file,
                           GFile              *target_file)
 {
-
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
   _thunar_return_if_fail (source_file == NULL || G_IS_FILE (source_file));
   _thunar_return_if_fail (target_file == NULL || G_IS_FILE (target_file));
@@ -249,7 +252,7 @@ ThunarJobOperationKind
 thunar_job_operation_get_kind (ThunarJobOperation *job_operation)
 {
   _thunar_return_val_if_fail (THUNAR_IS_JOB_OPERATION (job_operation), THUNAR_JOB_OPERATION_KIND_COPY);
-   return job_operation->operation_kind;
+  return job_operation->operation_kind;
 }
 
 
@@ -261,11 +264,11 @@ thunar_job_operation_get_kind (ThunarJobOperation *job_operation)
  *
  * Return value: The overwritten_files of the operation
  **/
-const GList*
+const GList *
 thunar_job_operation_get_overwritten_files (ThunarJobOperation *job_operation)
 {
   _thunar_return_val_if_fail (THUNAR_IS_JOB_OPERATION (job_operation), NULL);
-   return job_operation->overwritten_files;
+  return job_operation->overwritten_files;
 }
 
 
@@ -292,8 +295,8 @@ thunar_job_operation_empty (ThunarJobOperation *job_operation)
 const gchar *
 thunar_job_operation_get_kind_nick (ThunarJobOperation *job_operation)
 {
-  GEnumClass         *enum_class;
-  GEnumValue         *enum_value;
+  GEnumClass *enum_class;
+  GEnumValue *enum_value;
 
   /* the enum value of the operation kind, which will be used to get its nick name */
   enum_class = g_type_class_ref (THUNAR_TYPE_JOB_OPERATION_KIND);
@@ -321,51 +324,51 @@ thunar_job_operation_new_invert (ThunarJobOperation *job_operation)
 
   switch (job_operation->operation_kind)
     {
-      case THUNAR_JOB_OPERATION_KIND_COPY:
-        inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
-        inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_DELETE;
-        inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
-        break;
+    case THUNAR_JOB_OPERATION_KIND_COPY:
+      inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
+      inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_DELETE;
+      inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
+      break;
 
-      case THUNAR_JOB_OPERATION_KIND_MOVE:
-        inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
-        inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_MOVE;
-        inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
-        inverted_operation->target_file_list = thunar_g_list_copy_deep (job_operation->source_file_list);
-        break;
+    case THUNAR_JOB_OPERATION_KIND_MOVE:
+      inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
+      inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_MOVE;
+      inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
+      inverted_operation->target_file_list = thunar_g_list_copy_deep (job_operation->source_file_list);
+      break;
 
-      case THUNAR_JOB_OPERATION_KIND_RENAME:
-        inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
-        inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_RENAME;
-        inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
-        inverted_operation->target_file_list = thunar_g_list_copy_deep (job_operation->source_file_list);
-        break;
+    case THUNAR_JOB_OPERATION_KIND_RENAME:
+      inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
+      inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_RENAME;
+      inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
+      inverted_operation->target_file_list = thunar_g_list_copy_deep (job_operation->source_file_list);
+      break;
 
-      case THUNAR_JOB_OPERATION_KIND_TRASH:
-        inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
-        inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_RESTORE;
-        inverted_operation->target_file_list = thunar_g_list_copy_deep (job_operation->source_file_list);
-        inverted_operation->start_timestamp = job_operation->start_timestamp;
-        inverted_operation->end_timestamp = job_operation->end_timestamp;
-        break;
+    case THUNAR_JOB_OPERATION_KIND_TRASH:
+      inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
+      inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_RESTORE;
+      inverted_operation->target_file_list = thunar_g_list_copy_deep (job_operation->source_file_list);
+      inverted_operation->start_timestamp = job_operation->start_timestamp;
+      inverted_operation->end_timestamp = job_operation->end_timestamp;
+      break;
 
-      case THUNAR_JOB_OPERATION_KIND_CREATE_FILE:
-      case THUNAR_JOB_OPERATION_KIND_CREATE_FOLDER:
-        inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
-        inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_DELETE;
-        inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
-        break;
+    case THUNAR_JOB_OPERATION_KIND_CREATE_FILE:
+    case THUNAR_JOB_OPERATION_KIND_CREATE_FOLDER:
+      inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
+      inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_DELETE;
+      inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
+      break;
 
-      case THUNAR_JOB_OPERATION_KIND_LINK:
-        inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
-        inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_UNLINK;
-        inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
-        inverted_operation->target_file_list = thunar_g_list_copy_deep (job_operation->source_file_list);
-        break;
+    case THUNAR_JOB_OPERATION_KIND_LINK:
+      inverted_operation = g_object_new (THUNAR_TYPE_JOB_OPERATION, NULL);
+      inverted_operation->operation_kind = THUNAR_JOB_OPERATION_KIND_UNLINK;
+      inverted_operation->source_file_list = thunar_g_list_copy_deep (job_operation->target_file_list);
+      inverted_operation->target_file_list = thunar_g_list_copy_deep (job_operation->source_file_list);
+      break;
 
-      default:
-        g_assert_not_reached ();
-        break;
+    default:
+      g_assert_not_reached ();
+      break;
     }
 
   return inverted_operation;
@@ -387,8 +390,8 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
 {
   ThunarApplication *application;
   GList             *thunar_file_list = NULL;
-  GError            *err              = NULL;
-  ThunarJob         *job              = NULL;
+  GError            *err = NULL;
+  ThunarJob         *job = NULL;
   ThunarFile        *thunar_file;
   GFile             *parent_dir;
   gchar             *display_name;
@@ -401,56 +404,56 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
 
   switch (job_operation->operation_kind)
     {
-      case THUNAR_JOB_OPERATION_KIND_DELETE:
-      case THUNAR_JOB_OPERATION_KIND_UNLINK:
-        for (GList *lp = job_operation->source_file_list; lp != NULL; lp = lp->next)
-          {
-            if (!G_IS_FILE (lp->data))
-              {
-                g_warning ("One of the files in the job operation list was not a valid GFile");
-                continue;
-              }
+    case THUNAR_JOB_OPERATION_KIND_DELETE:
+    case THUNAR_JOB_OPERATION_KIND_UNLINK:
+      for (GList *lp = job_operation->source_file_list; lp != NULL; lp = lp->next)
+        {
+          if (!G_IS_FILE (lp->data))
+            {
+              g_warning ("One of the files in the job operation list was not a valid GFile");
+              continue;
+            }
 
-            thunar_file = thunar_file_get (lp->data, &err);
+          thunar_file = thunar_file_get (lp->data, &err);
 
-            if (err != NULL)
-              {
-                g_warning ("Failed to convert GFile to ThunarFile: %s", err->message);
-                g_clear_error (&err);
-              }
+          if (err != NULL)
+            {
+              g_warning ("Failed to convert GFile to ThunarFile: %s", err->message);
+              g_clear_error (&err);
+            }
 
-            if (!THUNAR_IS_FILE (thunar_file))
-              {
-                g_warning ("One of the files in the job operation list did not convert to a valid ThunarFile");
-                continue;
-              }
+          if (!THUNAR_IS_FILE (thunar_file))
+            {
+              g_warning ("One of the files in the job operation list did not convert to a valid ThunarFile");
+              continue;
+            }
 
-            thunar_file_list = g_list_append (thunar_file_list, thunar_file);
-          }
+          thunar_file_list = g_list_append (thunar_file_list, thunar_file);
+        }
 
-        if (thunar_file_list == NULL)
-          {
-            *error = g_error_new (G_FILE_ERROR,
-                                  G_FILE_ERROR_NOENT,
-                                  "No files for deletion found.");
-          }
-        else
-          {
-            operation_canceled = thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE, TRUE, THUNAR_OPERATION_LOG_OPERATIONS);
-            g_list_free_full (thunar_file_list, g_object_unref);
-          }
+      if (thunar_file_list == NULL)
+        {
+          *error = g_error_new (G_FILE_ERROR,
+                                G_FILE_ERROR_NOENT,
+                                "No files for deletion found.");
+        }
+      else
+        {
+          operation_canceled = thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE, TRUE, THUNAR_OPERATION_LOG_OPERATIONS);
+          g_list_free_full (thunar_file_list, g_object_unref);
+        }
 
-        break;
+      break;
 
-      case THUNAR_JOB_OPERATION_KIND_MOVE:
-        /* ensure that all the targets have parent directories which exist */
-        for (GList *lp = job_operation->target_file_list; lp != NULL; lp = lp->next)
-          {
-            parent_dir = g_file_get_parent (lp->data);
-            g_file_make_directory_with_parents (parent_dir, NULL, &err);
-            g_object_unref (parent_dir);
+    case THUNAR_JOB_OPERATION_KIND_MOVE:
+      /* ensure that all the targets have parent directories which exist */
+      for (GList *lp = job_operation->target_file_list; lp != NULL; lp = lp->next)
+        {
+          parent_dir = g_file_get_parent (lp->data);
+          g_file_make_directory_with_parents (parent_dir, NULL, &err);
+          g_object_unref (parent_dir);
 
-            if (err != NULL)
+          if (err != NULL)
             {
               /* there is no issue if the target directory already exists */
               if (err->code == G_IO_ERROR_EXISTS)
@@ -467,99 +470,99 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
               g_object_unref (application);
               return operation_canceled;
             }
-          }
+        }
 
-        thunar_application_move_files (application, NULL,
-                                       job_operation->source_file_list, job_operation->target_file_list,
-                                       THUNAR_OPERATION_LOG_NO_OPERATIONS, NULL);
-        break;
+      thunar_application_move_files (application, NULL,
+                                     job_operation->source_file_list, job_operation->target_file_list,
+                                     THUNAR_OPERATION_LOG_NO_OPERATIONS, NULL);
+      break;
 
-      case THUNAR_JOB_OPERATION_KIND_RENAME:
-        for (GList *slp = job_operation->source_file_list, *tlp = job_operation->target_file_list;
-             slp != NULL && tlp != NULL;
-             slp = slp->next, tlp = tlp->next)
-          {
-            display_name = thunar_g_file_get_display_name (tlp->data);
-            thunar_file = thunar_file_get (slp->data, &err);
+    case THUNAR_JOB_OPERATION_KIND_RENAME:
+      for (GList *slp = job_operation->source_file_list, *tlp = job_operation->target_file_list;
+           slp != NULL && tlp != NULL;
+           slp = slp->next, tlp = tlp->next)
+        {
+          display_name = thunar_g_file_get_display_name (tlp->data);
+          thunar_file = thunar_file_get (slp->data, &err);
 
-            if (err != NULL)
-              {
-                g_warning ("Error while renaming files: %s\n", err->message);
-                g_propagate_error (error, err);
+          if (err != NULL)
+            {
+              g_warning ("Error while renaming files: %s\n", err->message);
+              g_propagate_error (error, err);
 
-                g_free (display_name);
-                if (thunar_file)
-                  g_object_unref (thunar_file);
+              g_free (display_name);
+              if (thunar_file)
+                g_object_unref (thunar_file);
 
-                continue;
-              }
+              continue;
+            }
 
-            job = thunar_io_jobs_rename_file (thunar_file, display_name, THUNAR_OPERATION_LOG_NO_OPERATIONS);
-            exo_job_launch (EXO_JOB (job));
+          job = thunar_io_jobs_rename_file (thunar_file, display_name, THUNAR_OPERATION_LOG_NO_OPERATIONS);
+          exo_job_launch (EXO_JOB (job));
 
-            /* release our reference on the job (a ref is hold by itself, once it is launched) */
-            g_object_unref (job);
+          /* release our reference on the job (a ref is hold by itself, once it is launched) */
+          g_object_unref (job);
 
-            g_free (display_name);
-            g_object_unref (thunar_file);
-          }
-        break;
+          g_free (display_name);
+          g_object_unref (thunar_file);
+        }
+      break;
 
-      case THUNAR_JOB_OPERATION_KIND_RESTORE:
-        thunar_job_operation_restore_from_trash (job_operation, &err);
+    case THUNAR_JOB_OPERATION_KIND_RESTORE:
+      thunar_job_operation_restore_from_trash (job_operation, &err);
 
-        if (err != NULL)
-          {
-            g_warning ("Error while restoring files: %s\n", err->message);
-            g_propagate_error (error, err);
-          }
-        break;
+      if (err != NULL)
+        {
+          g_warning ("Error while restoring files: %s\n", err->message);
+          g_propagate_error (error, err);
+        }
+      break;
 
-      case THUNAR_JOB_OPERATION_KIND_COPY:
-        thunar_application_copy_to (application, NULL,
-                                   job_operation->source_file_list, job_operation->target_file_list,
-                                   THUNAR_OPERATION_LOG_NO_OPERATIONS, NULL);
-        break;
+    case THUNAR_JOB_OPERATION_KIND_COPY:
+      thunar_application_copy_to (application, NULL,
+                                  job_operation->source_file_list, job_operation->target_file_list,
+                                  THUNAR_OPERATION_LOG_NO_OPERATIONS, NULL);
+      break;
 
-      case THUNAR_JOB_OPERATION_KIND_CREATE_FILE:
-        template_file = NULL;
-        if (job_operation->source_file_list != NULL)
-          template_file = job_operation->source_file_list->data;
-        thunar_application_creat (application, NULL,
-                                  job_operation->target_file_list,
-                                  template_file,
-                                  NULL, THUNAR_OPERATION_LOG_NO_OPERATIONS);
-        break;
+    case THUNAR_JOB_OPERATION_KIND_CREATE_FILE:
+      template_file = NULL;
+      if (job_operation->source_file_list != NULL)
+        template_file = job_operation->source_file_list->data;
+      thunar_application_creat (application, NULL,
+                                job_operation->target_file_list,
+                                template_file,
+                                NULL, THUNAR_OPERATION_LOG_NO_OPERATIONS);
+      break;
 
-      case THUNAR_JOB_OPERATION_KIND_CREATE_FOLDER:
-        thunar_application_mkdir (application, NULL,
-                                  job_operation->target_file_list,
-                                  NULL,  THUNAR_OPERATION_LOG_NO_OPERATIONS);
-        break;
+    case THUNAR_JOB_OPERATION_KIND_CREATE_FOLDER:
+      thunar_application_mkdir (application, NULL,
+                                job_operation->target_file_list,
+                                NULL, THUNAR_OPERATION_LOG_NO_OPERATIONS);
+      break;
 
-      case THUNAR_JOB_OPERATION_KIND_TRASH:
-        /* Special case: 'THUNAR_JOB_OPERATION_KIND_TRASH' only can be triggered by redo */
-        /* Since we as well need to update the timestamps, we have to use THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS */
-        /* 'thunar_job_operation_history_update_trash_timestamps' will then take care on update the existing job operation instead of adding a new one */
-        thunar_application_trash (application, NULL,
-                                  job_operation->source_file_list,
-                                  THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS);
-        break;
+    case THUNAR_JOB_OPERATION_KIND_TRASH:
+      /* Special case: 'THUNAR_JOB_OPERATION_KIND_TRASH' only can be triggered by redo */
+      /* Since we as well need to update the timestamps, we have to use THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS */
+      /* 'thunar_job_operation_history_update_trash_timestamps' will then take care on update the existing job operation instead of adding a new one */
+      thunar_application_trash (application, NULL,
+                                job_operation->source_file_list,
+                                THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS);
+      break;
 
-      case THUNAR_JOB_OPERATION_KIND_LINK:
-        for (GList* target_file = job_operation->target_file_list; target_file != NULL; target_file = target_file->next)
-          {
-            GFile* target_folder = g_file_get_parent (target_file->data);
-            thunar_application_link_into (application, NULL,
-                                          job_operation->source_file_list, target_folder,
-                                          THUNAR_OPERATION_LOG_NO_OPERATIONS, NULL);
-            g_object_unref (target_folder);
-          }
-        break;
+    case THUNAR_JOB_OPERATION_KIND_LINK:
+      for (GList *target_file = job_operation->target_file_list; target_file != NULL; target_file = target_file->next)
+        {
+          GFile *target_folder = g_file_get_parent (target_file->data);
+          thunar_application_link_into (application, NULL,
+                                        job_operation->source_file_list, target_folder,
+                                        THUNAR_OPERATION_LOG_NO_OPERATIONS, NULL);
+          g_object_unref (target_folder);
+        }
+      break;
 
-      default:
-        _thunar_assert_not_reached ();
-        break;
+    default:
+      _thunar_assert_not_reached ();
+      break;
     }
 
   g_object_unref (application);
@@ -613,18 +616,18 @@ thunar_job_operation_compare (ThunarJobOperation *operation1,
     return 1;
 
   for (GList *lp1 = operation1->source_file_list, *lp2 = operation2->source_file_list;
-      lp1 != NULL && lp2 != NULL;
-      lp1 = lp1->next, lp2 = lp2->next)
+       lp1 != NULL && lp2 != NULL;
+       lp1 = lp1->next, lp2 = lp2->next)
     {
-      if (!g_file_equal (lp1->data,lp2->data))
+      if (!g_file_equal (lp1->data, lp2->data))
         return 1;
     }
 
-  for (GList *lp1 =operation1->target_file_list, *lp2 = operation2->target_file_list;
-      lp1 != NULL && lp2 != NULL;
-      lp1 = lp1->next, lp2 = lp2->next)
+  for (GList *lp1 = operation1->target_file_list, *lp2 = operation2->target_file_list;
+       lp1 != NULL && lp2 != NULL;
+       lp1 = lp1->next, lp2 = lp2->next)
     {
-      if (!g_file_equal (lp1->data,lp2->data))
+      if (!g_file_equal (lp1->data, lp2->data))
         return 1;
     }
   return 0;
@@ -639,8 +642,8 @@ thunar_job_operation_compare (ThunarJobOperation *operation1,
  * Helper function to restore files based on the given @operation
  **/
 static void
-thunar_job_operation_restore_from_trash (ThunarJobOperation  *operation,
-                                         GError             **error)
+thunar_job_operation_restore_from_trash (ThunarJobOperation *operation,
+                                         GError            **error)
 {
   GFileEnumerator   *enumerator;
   GFileInfo         *info;
@@ -661,9 +664,7 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation  *operation,
   /* enumerate over the files in the trash */
   trash = g_file_new_for_uri ("trash:///");
   enumerator = g_file_enumerate_children (trash,
-                                          G_FILE_ATTRIBUTE_STANDARD_NAME ","
-                                          G_FILE_ATTRIBUTE_TRASH_DELETION_DATE ","
-                                          G_FILE_ATTRIBUTE_TRASH_ORIG_PATH,
+                                          G_FILE_ATTRIBUTE_STANDARD_NAME "," G_FILE_ATTRIBUTE_TRASH_DELETION_DATE "," G_FILE_ATTRIBUTE_TRASH_ORIG_PATH,
                                           G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                                           NULL, &err);
 
@@ -682,34 +683,34 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation  *operation,
   /* add all the files that were deleted in the hash table so we can check if a file
    * was deleted as a part of this operation or not in constant time. */
   for (GList *lp = operation->target_file_list; lp != NULL; lp = lp->next)
-  {
-    GFile *parent = g_file_get_parent (lp->data);
-    gchar *real_path = NULL;
-    
-    /* Try to resolve symlinks, otherwise Gfiles wont match */
-    /* (All files located in trash have symlinks resolved) */
-    if (parent != NULL)
-      {
-        GFile *parent_resolved = NULL;
-        gchar *basename = g_file_get_basename (lp->data);
-        parent_resolved = thunar_g_file_resolve_symlink (parent);
-        g_object_unref (parent);
-        if (parent_resolved != NULL && basename != NULL)
-          {
-            gchar *parent_path = g_file_get_path (parent_resolved);
-            real_path = g_build_filename (parent_path, basename, NULL);
-            g_free (parent_path);
-          }
-        g_free (basename);
-        g_object_unref (parent_resolved);
-      }
+    {
+      GFile *parent = g_file_get_parent (lp->data);
+      gchar *real_path = NULL;
 
-    if (real_path != NULL)
-      g_hash_table_add (files_trashed, g_file_new_for_path (real_path));
-    else
-      g_hash_table_add (files_trashed, g_object_ref (lp->data));
-    g_free (real_path);
-  }
+      /* Try to resolve symlinks, otherwise Gfiles wont match */
+      /* (All files located in trash have symlinks resolved) */
+      if (parent != NULL)
+        {
+          GFile *parent_resolved = NULL;
+          gchar *basename = g_file_get_basename (lp->data);
+          parent_resolved = thunar_g_file_resolve_symlink (parent);
+          g_object_unref (parent);
+          if (parent_resolved != NULL && basename != NULL)
+            {
+              gchar *parent_path = g_file_get_path (parent_resolved);
+              real_path = g_build_filename (parent_path, basename, NULL);
+              g_free (parent_path);
+            }
+          g_free (basename);
+          g_object_unref (parent_resolved);
+        }
+
+      if (real_path != NULL)
+        g_hash_table_add (files_trashed, g_file_new_for_path (real_path));
+      else
+        g_hash_table_add (files_trashed, g_object_ref (lp->data));
+      g_free (real_path);
+    }
 
   /* iterate over the files in the trash, adding them to source and target lists of
    * the files which are to be restored and their original paths */
@@ -776,14 +777,14 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation  *operation,
 /* thunar_job_operation_get_action_text:
  * @operation: Instance of #ThunarJobOperation
  *
- * Returns a text describing the current operation 
+ * Returns a text describing the current operation
  * The caller is responsible to free the returned string using g_free() when no longer needed.
  *
  * Return value: pointer to the text string
  **/
-gchar*
+gchar *
 thunar_job_operation_get_action_text (ThunarJobOperation *job_operation)
 {
-  guint  files_count = job_operation->source_file_list == NULL ? 0 : g_list_length (job_operation->source_file_list);
+  guint files_count = job_operation->source_file_list == NULL ? 0 : g_list_length (job_operation->source_file_list);
   return g_strdup_printf (ngettext ("%d file", "%d files", files_count), files_count);
 }

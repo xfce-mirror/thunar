@@ -34,20 +34,28 @@ struct _ThunarRenamerPair
   gchar      *name;
 };
 
-GType              thunar_renamer_pair_get_type           (void)                                 G_GNUC_CONST;
+GType
+thunar_renamer_pair_get_type (void) G_GNUC_CONST;
 
-ThunarRenamerPair *thunar_renamer_pair_new                (ThunarFile        *file,
-                                                           const gchar       *name)              G_GNUC_MALLOC;
-ThunarRenamerPair *thunar_renamer_pair_copy               (ThunarRenamerPair *renamer_pair)      G_GNUC_MALLOC;
+ThunarRenamerPair *
+thunar_renamer_pair_new (ThunarFile  *file,
+                         const gchar *name) G_GNUC_MALLOC;
+ThunarRenamerPair *
+thunar_renamer_pair_copy (ThunarRenamerPair *renamer_pair) G_GNUC_MALLOC;
 
-void               thunar_renamer_pair_free               (gpointer           data);
+void
+thunar_renamer_pair_free (gpointer data);
 
-GList             *thunar_renamer_pair_list_copy          (GList             *renamer_pair_list) G_GNUC_MALLOC;
-void               thunar_renamer_pair_list_free          (GList             *renamer_pair_list);
-int                thunar_renamer_pair_compare_ascending  (const void        *pair_a,
-                                                           const void        *pair_b);
-int                thunar_renamer_pair_compare_descending (const void        *pair_a,
-                                                           const void        *pair_b);
+GList *
+thunar_renamer_pair_list_copy (GList *renamer_pair_list) G_GNUC_MALLOC;
+void
+thunar_renamer_pair_list_free (GList *renamer_pair_list);
+int
+thunar_renamer_pair_compare_ascending (const void *pair_a,
+                                       const void *pair_b);
+int
+thunar_renamer_pair_compare_descending (const void *pair_a,
+                                        const void *pair_b);
 
 G_END_DECLS;
 

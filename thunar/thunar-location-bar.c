@@ -22,11 +22,11 @@
 #endif
 
 #include "thunar/thunar-location-bar.h"
-#include "thunar/thunar-private.h"
-#include "thunar/thunar-navigator.h"
-#include "thunar/thunar-location-entry.h"
 #include "thunar/thunar-location-buttons.h"
+#include "thunar/thunar-location-entry.h"
+#include "thunar/thunar-navigator.h"
 #include "thunar/thunar-preferences.h"
+#include "thunar/thunar-private.h"
 #include "thunar/thunar-util.h"
 #include "thunar/thunar-window.h"
 
@@ -49,10 +49,10 @@ struct _ThunarLocationBar
 
   ThunarFile *current_directory;
 
-  GtkWidget  *locationEntry;
-  GtkWidget  *locationButtons;
+  GtkWidget *locationEntry;
+  GtkWidget *locationButtons;
 
-  gboolean    is_searching;
+  gboolean is_searching;
 };
 
 
@@ -64,26 +64,36 @@ enum
 };
 
 
-static void         thunar_location_bar_navigator_init             (ThunarNavigatorIface *iface);
-static void         thunar_location_bar_finalize                   (GObject              *object);
-static void         thunar_location_bar_get_property               (GObject              *object,
-                                                                    guint                 prop_id,
-                                                                    GValue               *value,
-                                                                    GParamSpec           *pspec);
-static void         thunar_location_bar_set_property               (GObject              *object,
-                                                                    guint                 prop_id,
-                                                                    const GValue         *value,
-                                                                    GParamSpec           *pspec);
-static ThunarFile  *thunar_location_bar_get_current_directory      (ThunarNavigator      *navigator);
-static void         thunar_location_bar_set_current_directory      (ThunarNavigator      *navigator,
-                                                                    ThunarFile           *current_directory);
-static GtkWidget   *thunar_location_bar_install_widget             (ThunarLocationBar    *bar,
-                                                                    GType                 type);
-static void         thunar_location_bar_settings_changed           (ThunarLocationBar    *bar);
-static void         thunar_location_bar_on_enry_edit_done          (ThunarLocationEntry  *entry,
-                                                                    ThunarLocationBar    *bar);
-static void         thunar_location_bar_request_temp_entry         (ThunarLocationBar    *bar,
-                                                                    const gchar          *initial_text);
+static void
+thunar_location_bar_navigator_init (ThunarNavigatorIface *iface);
+static void
+thunar_location_bar_finalize (GObject *object);
+static void
+thunar_location_bar_get_property (GObject    *object,
+                                  guint       prop_id,
+                                  GValue     *value,
+                                  GParamSpec *pspec);
+static void
+thunar_location_bar_set_property (GObject      *object,
+                                  guint         prop_id,
+                                  const GValue *value,
+                                  GParamSpec   *pspec);
+static ThunarFile *
+thunar_location_bar_get_current_directory (ThunarNavigator *navigator);
+static void
+thunar_location_bar_set_current_directory (ThunarNavigator *navigator,
+                                           ThunarFile      *current_directory);
+static GtkWidget *
+thunar_location_bar_install_widget (ThunarLocationBar *bar,
+                                    GType              type);
+static void
+thunar_location_bar_settings_changed (ThunarLocationBar *bar);
+static void
+thunar_location_bar_on_enry_edit_done (ThunarLocationEntry *entry,
+                                       ThunarLocationBar   *bar);
+static void
+thunar_location_bar_request_temp_entry (ThunarLocationBar *bar,
+                                        const gchar       *initial_text);
 
 
 G_DEFINE_TYPE_WITH_CODE (ThunarLocationBar, thunar_location_bar, GTK_TYPE_BIN,
@@ -183,10 +193,10 @@ thunar_location_bar_navigator_init (ThunarNavigatorIface *iface)
 
 
 static void
-thunar_location_bar_get_property (GObject              *object,
-                                  guint                 prop_id,
-                                  GValue               *value,
-                                  GParamSpec           *pspec)
+thunar_location_bar_get_property (GObject    *object,
+                                  guint       prop_id,
+                                  GValue     *value,
+                                  GParamSpec *pspec)
 {
   switch (prop_id)
     {
@@ -202,10 +212,11 @@ thunar_location_bar_get_property (GObject              *object,
 
 
 
-static void thunar_location_bar_set_property   (GObject              *object,
-                                                guint                 prop_id,
-                                                const GValue         *value,
-                                                GParamSpec           *pspec)
+static void
+thunar_location_bar_set_property (GObject      *object,
+                                  guint         prop_id,
+                                  const GValue *value,
+                                  GParamSpec   *pspec)
 {
   switch (prop_id)
     {
@@ -230,16 +241,18 @@ thunar_location_bar_get_current_directory (ThunarNavigator *navigator)
 
 
 static void
-thunar_location_bar_set_current_directory (ThunarNavigator      *navigator,
-                                           ThunarFile           *current_directory)
+thunar_location_bar_set_current_directory (ThunarNavigator *navigator,
+                                           ThunarFile      *current_directory)
 {
   ThunarLocationBar *bar = THUNAR_LOCATION_BAR (navigator);
   GtkWidget         *child;
 
-  if (bar->current_directory) g_object_unref (bar->current_directory);
+  if (bar->current_directory)
+    g_object_unref (bar->current_directory);
   bar->current_directory = current_directory;
 
-  if (current_directory) g_object_ref (current_directory);
+  if (current_directory)
+    g_object_ref (current_directory);
 
   if ((child = gtk_bin_get_child (GTK_BIN (bar))) && THUNAR_IS_NAVIGATOR (child))
     thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (child), current_directory);
@@ -250,8 +263,8 @@ thunar_location_bar_set_current_directory (ThunarNavigator      *navigator,
 
 
 static GtkWidget *
-thunar_location_bar_install_widget (ThunarLocationBar    *bar,
-                                    GType                 type)
+thunar_location_bar_install_widget (ThunarLocationBar *bar,
+                                    GType              type)
 {
   GtkWidget *installedWidget, *child;
 
@@ -395,7 +408,7 @@ thunar_location_bar_cancel_search (ThunarLocationBar *bar)
 {
   if (bar->locationEntry != NULL)
     thunar_location_entry_cancel_search (THUNAR_LOCATION_ENTRY (bar->locationEntry));
-  
+
   /* Recover the previous location bar style (BUTTONS/ENTRY) after search is done */
   thunar_location_bar_settings_changed (bar);
 }
@@ -411,12 +424,8 @@ thunar_location_bar_cancel_search (ThunarLocationBar *bar)
  *
  * It's the responsibility of the caller to free the returned string using `g_free`.
  **/
-gchar*
+gchar *
 thunar_location_bar_get_search_query (ThunarLocationBar *entry)
 {
   return (entry->locationEntry != NULL) ? thunar_location_entry_get_search_query (THUNAR_LOCATION_ENTRY (entry->locationEntry)) : g_strdup ("");
 }
-
-
-
-

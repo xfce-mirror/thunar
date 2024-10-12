@@ -30,13 +30,13 @@
 #include <string.h>
 #endif
 
-#include <libxfce4util/libxfce4util.h>
-
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-clipboard-manager.h"
 #include "thunar/thunar-dialogs.h"
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-private.h"
+
+#include <libxfce4util/libxfce4util.h>
 
 
 
@@ -61,32 +61,42 @@ enum
 
 
 
-static void thunar_clipboard_manager_finalize           (GObject                     *object);
-static void thunar_clipboard_manager_dispose            (GObject                     *object);
-static void thunar_clipboard_manager_get_property       (GObject                     *object,
-                                                         guint                        prop_id,
-                                                         GValue                      *value,
-                                                         GParamSpec                  *pspec);
-static void thunar_clipboard_manager_file_destroyed     (ThunarFile                  *file,
-                                                         ThunarClipboardManager      *manager);
-static void thunar_clipboard_manager_owner_changed      (GtkClipboard                *clipboard,
-                                                         GdkEventOwnerChange         *event,
-                                                         ThunarClipboardManager      *manager);
-static void thunar_clipboard_manager_contents_received  (GtkClipboard                *clipboard,
-                                                         GtkSelectionData            *selection_data,
-                                                         gpointer                     user_data);
-static void thunar_clipboard_manager_targets_received   (GtkClipboard                *clipboard,
-                                                         GtkSelectionData            *selection_data,
-                                                         gpointer                     user_data);
-static void thunar_clipboard_manager_get_callback       (GtkClipboard                *clipboard,
-                                                         GtkSelectionData            *selection_data,
-                                                         guint                        info,
-                                                         gpointer                     user_data);
-static void thunar_clipboard_manager_clear_callback     (GtkClipboard                *clipboard,
-                                                         gpointer                     user_data);
-static void thunar_clipboard_manager_transfer_files     (ThunarClipboardManager      *manager,
-                                                         gboolean                     copy,
-                                                         GList                       *files);
+static void
+thunar_clipboard_manager_finalize (GObject *object);
+static void
+thunar_clipboard_manager_dispose (GObject *object);
+static void
+thunar_clipboard_manager_get_property (GObject    *object,
+                                       guint       prop_id,
+                                       GValue     *value,
+                                       GParamSpec *pspec);
+static void
+thunar_clipboard_manager_file_destroyed (ThunarFile             *file,
+                                         ThunarClipboardManager *manager);
+static void
+thunar_clipboard_manager_owner_changed (GtkClipboard           *clipboard,
+                                        GdkEventOwnerChange    *event,
+                                        ThunarClipboardManager *manager);
+static void
+thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
+                                            GtkSelectionData *selection_data,
+                                            gpointer          user_data);
+static void
+thunar_clipboard_manager_targets_received (GtkClipboard     *clipboard,
+                                           GtkSelectionData *selection_data,
+                                           gpointer          user_data);
+static void
+thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
+                                       GtkSelectionData *selection_data,
+                                       guint             info,
+                                       gpointer          user_data);
+static void
+thunar_clipboard_manager_clear_callback (GtkClipboard *clipboard,
+                                         gpointer      user_data);
+static void
+thunar_clipboard_manager_transfer_files (ThunarClipboardManager *manager,
+                                         gboolean                copy,
+                                         GList                  *files);
 
 
 
@@ -105,8 +115,8 @@ struct _ThunarClipboardManager
   gboolean      can_paste;
   GdkAtom       x_special_gnome_copied_files;
 
-  gboolean      files_cutted;
-  GList        *files;
+  gboolean files_cutted;
+  GList   *files;
 };
 
 typedef struct
@@ -119,8 +129,7 @@ typedef struct
 
 
 
-static const GtkTargetEntry clipboard_targets[] =
-{
+static const GtkTargetEntry clipboard_targets[] = {
   { "text/uri-list", 0, TARGET_TEXT_URI_LIST },
   { "x-special/gnome-copied-files", 0, TARGET_GNOME_COPIED_FILES },
   { "UTF8_STRING", 0, TARGET_UTF8_STRING }
@@ -166,13 +175,13 @@ thunar_clipboard_manager_class_init (ThunarClipboardManagerClass *klass)
    * clipboard associated with @manager changes.
    **/
   manager_signals[CHANGED] =
-    g_signal_new (I_("changed"),
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (ThunarClipboardManagerClass, changed),
-                  NULL, NULL,
-                  g_cclosure_marshal_VOID__VOID,
-                  G_TYPE_NONE, 0);
+  g_signal_new (I_ ("changed"),
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_FIRST,
+                G_STRUCT_OFFSET (ThunarClipboardManagerClass, changed),
+                NULL, NULL,
+                g_cclosure_marshal_VOID__VOID,
+                G_TYPE_NONE, 0);
 }
 
 
@@ -449,12 +458,12 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
                                        guint             target_info,
                                        gpointer          user_data)
 {
-  ThunarClipboardManager  *manager = THUNAR_CLIPBOARD_MANAGER (user_data);
-  GList                   *file_list;
-  gchar                   *str;
-  gchar                  **uris;
-  const gchar             *prefix;
-  gsize                    len;
+  ThunarClipboardManager *manager = THUNAR_CLIPBOARD_MANAGER (user_data);
+  GList                  *file_list;
+  gchar                  *str;
+  gchar                 **uris;
+  const gchar            *prefix;
+  gsize                   len;
 
   _thunar_return_if_fail (GTK_IS_CLIPBOARD (clipboard));
   _thunar_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
@@ -570,7 +579,7 @@ thunar_clipboard_manager_transfer_files (ThunarClipboardManager *manager,
  *
  * Return value: the #ThunarClipboardManager for @display.
  **/
-ThunarClipboardManager*
+ThunarClipboardManager *
 thunar_clipboard_manager_get_for_display (GdkDisplay *display)
 {
   ThunarClipboardManager *manager;
@@ -739,4 +748,3 @@ thunar_clipboard_manager_paste_files (ThunarClipboardManager *manager,
   gtk_clipboard_request_contents (manager->clipboard, manager->x_special_gnome_copied_files,
                                   thunar_clipboard_manager_contents_received, request);
 }
-

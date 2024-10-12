@@ -19,11 +19,11 @@
 #include "config.h"
 #endif
 
-#include <glib/gi18n-lib.h>
-
-#include "thunarx/thunarx-private.h"
 #include "thunarx/thunarx-menu-item.h"
 #include "thunarx/thunarx-menu.h"
+#include "thunarx/thunarx-private.h"
+
+#include <glib/gi18n-lib.h>
 
 
 
@@ -62,15 +62,18 @@ enum
 
 
 
-static void thunarx_menu_item_get_property (GObject      *object,
-                                            guint         param_id,
-                                            GValue       *value,
-                                            GParamSpec   *pspec);
-static void thunarx_menu_item_set_property (GObject      *object,
-                                            guint         param_id,
-                                            const GValue *value,
-                                            GParamSpec   *pspec);
-static void thunarx_menu_item_finalize     (GObject      *object);
+static void
+thunarx_menu_item_get_property (GObject    *object,
+                                guint       param_id,
+                                GValue     *value,
+                                GParamSpec *pspec);
+static void
+thunarx_menu_item_set_property (GObject      *object,
+                                guint         param_id,
+                                const GValue *value,
+                                GParamSpec   *pspec);
+static void
+thunarx_menu_item_finalize (GObject *object);
 
 
 
@@ -106,14 +109,14 @@ thunarx_menu_item_class_init (ThunarxMenuItemClass *klass)
   gobject_class->set_property = thunarx_menu_item_set_property;
 
   signals[ACTIVATE] =
-      g_signal_new ("activate",
-                    G_TYPE_FROM_CLASS (klass),
-                    G_SIGNAL_RUN_LAST,
-                    G_STRUCT_OFFSET (ThunarxMenuItemClass,
-                                     activate),
-                    NULL, NULL,
-                    g_cclosure_marshal_VOID__VOID,
-                    G_TYPE_NONE, 0);
+  g_signal_new ("activate",
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST,
+                G_STRUCT_OFFSET (ThunarxMenuItemClass,
+                                 activate),
+                NULL, NULL,
+                g_cclosure_marshal_VOID__VOID,
+                G_TYPE_NONE, 0);
 
   g_object_class_install_property (gobject_class,
                                    PROP_NAME,
@@ -190,38 +193,38 @@ thunarx_menu_item_get_property (GObject    *object,
 
   switch (param_id)
     {
-      case PROP_NAME:
-        g_value_set_string (value, item->priv->name);
-        break;
+    case PROP_NAME:
+      g_value_set_string (value, item->priv->name);
+      break;
 
-      case PROP_LABEL:
-        g_value_set_string (value, item->priv->label);
-        break;
+    case PROP_LABEL:
+      g_value_set_string (value, item->priv->label);
+      break;
 
-      case PROP_TOOLTIP:
-        g_value_set_string (value, item->priv->tooltip);
-        break;
+    case PROP_TOOLTIP:
+      g_value_set_string (value, item->priv->tooltip);
+      break;
 
-      case PROP_ICON:
-        g_value_set_string (value, item->priv->icon);
-        break;
+    case PROP_ICON:
+      g_value_set_string (value, item->priv->icon);
+      break;
 
-      case PROP_SENSITIVE:
-        g_value_set_boolean (value, item->priv->sensitive);
-        break;
+    case PROP_SENSITIVE:
+      g_value_set_boolean (value, item->priv->sensitive);
+      break;
 
-      case PROP_PRIORITY:
-        g_value_set_boolean (value, item->priv->priority);
-        break;
+    case PROP_PRIORITY:
+      g_value_set_boolean (value, item->priv->priority);
+      break;
 
-      case PROP_MENU:
-        g_value_set_object (value, item->priv->menu);
-        break;
+    case PROP_MENU:
+      g_value_set_object (value, item->priv->menu);
+      break;
 
-      default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
-        break;
-     }
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
+      break;
+    }
 }
 
 
@@ -236,50 +239,50 @@ thunarx_menu_item_set_property (GObject      *object,
 
   switch (param_id)
     {
-      case PROP_NAME:
-        g_free (item->priv->name);
-        item->priv->name = g_strdup (g_value_get_string (value));
-        g_object_notify (object, "name");
-        break;
+    case PROP_NAME:
+      g_free (item->priv->name);
+      item->priv->name = g_strdup (g_value_get_string (value));
+      g_object_notify (object, "name");
+      break;
 
-      case PROP_LABEL:
-        g_free (item->priv->label);
-        item->priv->label = g_strdup (g_value_get_string (value));
-        g_object_notify (object, "label");
-        break;
+    case PROP_LABEL:
+      g_free (item->priv->label);
+      item->priv->label = g_strdup (g_value_get_string (value));
+      g_object_notify (object, "label");
+      break;
 
-      case PROP_TOOLTIP:
-        g_free (item->priv->tooltip);
-        item->priv->tooltip = g_strdup (g_value_get_string (value));
-        g_object_notify (object, "tooltip");
-        break;
+    case PROP_TOOLTIP:
+      g_free (item->priv->tooltip);
+      item->priv->tooltip = g_strdup (g_value_get_string (value));
+      g_object_notify (object, "tooltip");
+      break;
 
-      case PROP_ICON:
-        g_free (item->priv->icon);
-        item->priv->icon = g_strdup (g_value_get_string (value));
-        g_object_notify (object, "icon");
-        break;
+    case PROP_ICON:
+      g_free (item->priv->icon);
+      item->priv->icon = g_strdup (g_value_get_string (value));
+      g_object_notify (object, "icon");
+      break;
 
-      case PROP_SENSITIVE:
-        item->priv->sensitive = g_value_get_boolean (value);
-        g_object_notify (object, "sensitive");
-        break;
+    case PROP_SENSITIVE:
+      item->priv->sensitive = g_value_get_boolean (value);
+      g_object_notify (object, "sensitive");
+      break;
 
-      case PROP_PRIORITY:
-        item->priv->priority = g_value_get_boolean (value);
-        g_object_notify (object, "priority");
-        break;
+    case PROP_PRIORITY:
+      item->priv->priority = g_value_get_boolean (value);
+      g_object_notify (object, "priority");
+      break;
 
-      case PROP_MENU:
-        if (item->priv->menu)
-          g_object_unref (item->priv->menu);
-        item->priv->menu = g_object_ref (g_value_get_object (value));
-        g_object_notify (object, "menu");
-        break;
+    case PROP_MENU:
+      if (item->priv->menu)
+        g_object_unref (item->priv->menu);
+      item->priv->menu = g_object_ref (g_value_get_object (value));
+      g_object_notify (object, "menu");
+      break;
 
-      default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
-        break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
+      break;
     }
 }
 
@@ -410,6 +413,6 @@ thunarx_menu_item_list_free (GList *items)
 {
   g_return_if_fail (items != NULL);
 
-  g_list_foreach (items, (GFunc) (void (*)(void)) g_object_unref, NULL);
+  g_list_foreach (items, (GFunc) (void (*) (void)) g_object_unref, NULL);
   g_list_free (items);
 }

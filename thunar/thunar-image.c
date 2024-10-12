@@ -22,13 +22,13 @@
 #include "config.h"
 #endif
 
-#include <glib.h>
-#include <glib-object.h>
-
 #include "thunar/thunar-application.h"
-#include "thunar/thunar-image.h"
 #include "thunar/thunar-icon-factory.h"
+#include "thunar/thunar-image.h"
 #include "thunar/thunar-private.h"
+
+#include <glib-object.h>
+#include <glib.h>
 
 
 
@@ -41,21 +41,27 @@ enum
 
 
 
-static void thunar_image_finalize             (GObject           *object);
-static void thunar_image_get_property         (GObject           *object,
-                                               guint              prop_id,
-                                               GValue            *value,
-                                               GParamSpec        *pspec);
-static void thunar_image_set_property         (GObject           *object,
-                                               guint              prop_id,
-                                               const GValue      *value,
-                                               GParamSpec        *pspec);
-static void thunar_image_scale_changed        (GObject           *object,
-                                               GParamSpec        *pspec,
-                                               gpointer           user_data);
-static void thunar_image_file_changed         (ThunarFile        *file,
-                                               ThunarImage       *image);
-static void thunar_image_update               (ThunarImage       *image);
+static void
+thunar_image_finalize (GObject *object);
+static void
+thunar_image_get_property (GObject    *object,
+                           guint       prop_id,
+                           GValue     *value,
+                           GParamSpec *pspec);
+static void
+thunar_image_set_property (GObject      *object,
+                           guint         prop_id,
+                           const GValue *value,
+                           GParamSpec   *pspec);
+static void
+thunar_image_scale_changed (GObject    *object,
+                            GParamSpec *pspec,
+                            gpointer    user_data);
+static void
+thunar_image_file_changed (ThunarFile  *file,
+                           ThunarImage *image);
+static void
+thunar_image_update (ThunarImage *image);
 
 
 
@@ -73,7 +79,7 @@ struct _ThunarImage
 
 struct _ThunarImagePrivate
 {
-  ThunarFile        *file;
+  ThunarFile *file;
 };
 
 
@@ -172,7 +178,7 @@ thunar_image_scale_changed (GObject    *object,
                             GParamSpec *pspec,
                             gpointer    user_data)
 {
-    thunar_image_update (THUNAR_IMAGE (object));
+  thunar_image_update (THUNAR_IMAGE (object));
 }
 
 
@@ -212,8 +218,8 @@ thunar_image_update (ThunarImage *image)
 
 
 static void
-thunar_image_file_changed (ThunarFile        *file,
-                           ThunarImage       *image)
+thunar_image_file_changed (ThunarFile  *file,
+                           ThunarImage *image)
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (THUNAR_IS_IMAGE (image));

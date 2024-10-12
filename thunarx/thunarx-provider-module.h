@@ -30,20 +30,24 @@
 typedef struct _ThunarxProviderModuleClass ThunarxProviderModuleClass;
 typedef struct _ThunarxProviderModule      ThunarxProviderModule;
 
-#define THUNARX_TYPE_PROVIDER_MODULE            (thunarx_provider_module_get_type ())
-#define THUNARX_PROVIDER_MODULE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_PROVIDER_MODULE, ThunarxProviderModule))
-#define THUNARX_PROVIDER_MODULE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNARX_TYPE_PROVIDER_MODULE, ThunarxProviderModuleClass))
-#define THUNARX_IS_PROVIDER_MODULE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_PROVIDER_MODULE))
+#define THUNARX_TYPE_PROVIDER_MODULE (thunarx_provider_module_get_type ())
+#define THUNARX_PROVIDER_MODULE(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_PROVIDER_MODULE, ThunarxProviderModule))
+#define THUNARX_PROVIDER_MODULE_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNARX_TYPE_PROVIDER_MODULE, ThunarxProviderModuleClass))
+#define THUNARX_IS_PROVIDER_MODULE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_PROVIDER_MODULE))
 #define THUNARX_IS_PROVIDER_MODULE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNARX_TYPE_PROVIDER_MODULE))
-#define THUNARX_PROVIDER_MODULE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNARX_TYPE_PROVIDER_MODULE, ThunarxProviderModuleClass))
+#define THUNARX_PROVIDER_MODULE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNARX_TYPE_PROVIDER_MODULE, ThunarxProviderModuleClass))
 
-GType                  thunarx_provider_module_get_type   (void) G_GNUC_CONST;
+GType
+thunarx_provider_module_get_type (void) G_GNUC_CONST;
 
-ThunarxProviderModule *thunarx_provider_module_new        (const gchar                 *filename) G_GNUC_MALLOC;
+ThunarxProviderModule *
+thunarx_provider_module_new (const gchar *filename) G_GNUC_MALLOC;
 
-void                   thunarx_provider_module_list_types (const ThunarxProviderModule *module,
-                                                           const GType                **types,
-                                                           gint                        *n_types);
-void                   thunarx_provider_module_unuse      (ThunarxProviderModule       *module);
+void
+thunarx_provider_module_list_types (const ThunarxProviderModule *module,
+                                    const GType                **types,
+                                    gint                        *n_types);
+void
+thunarx_provider_module_unuse (ThunarxProviderModule *module);
 
 #endif /* !__THUNARX_PROVIDER_MODULE_H__ */

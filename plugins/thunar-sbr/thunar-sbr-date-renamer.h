@@ -29,34 +29,45 @@ G_BEGIN_DECLS;
 typedef struct _ThunarSbrDateRenamerClass ThunarSbrDateRenamerClass;
 typedef struct _ThunarSbrDateRenamer      ThunarSbrDateRenamer;
 
-#define THUNAR_SBR_TYPE_DATE_RENAMER            (thunar_sbr_date_renamer_get_type ())
-#define THUNAR_SBR_DATE_RENAMER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_SBR_TYPE_DATE_RENAMER, ThunarSbrDateRenamer))
-#define THUNAR_SBR_DATE_RENAMER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_SBR_TYPE_DATE_RENAMER, ThunarSbrDateRenamerClass))
-#define THUNAR_SBR_IS_DATE_RENAMER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_SBR_TYPE_DATE_RENAMER))
+#define THUNAR_SBR_TYPE_DATE_RENAMER (thunar_sbr_date_renamer_get_type ())
+#define THUNAR_SBR_DATE_RENAMER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_SBR_TYPE_DATE_RENAMER, ThunarSbrDateRenamer))
+#define THUNAR_SBR_DATE_RENAMER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_SBR_TYPE_DATE_RENAMER, ThunarSbrDateRenamerClass))
+#define THUNAR_SBR_IS_DATE_RENAMER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_SBR_TYPE_DATE_RENAMER))
 #define THUNAR_SBR_IS_DATE_RENAMER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_SBR_TYPE_DATE_RENAMER))
-#define THUNAR_SBR_DATE_RENAMER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_SBR_TYPE_DATE_RENAMER, ThunarSbrDateRenamerClass))
+#define THUNAR_SBR_DATE_RENAMER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_SBR_TYPE_DATE_RENAMER, ThunarSbrDateRenamerClass))
 
-GType                 thunar_sbr_date_renamer_get_type        (void) G_GNUC_CONST;
+GType
+thunar_sbr_date_renamer_get_type (void) G_GNUC_CONST;
 
-void                  thunar_sbr_date_renamer_register_type   (ThunarxProviderPlugin  *plugin);
+void
+thunar_sbr_date_renamer_register_type (ThunarxProviderPlugin *plugin);
 
-ThunarSbrDateRenamer *thunar_sbr_date_renamer_new             (void) G_GNUC_MALLOC;
+ThunarSbrDateRenamer *
+thunar_sbr_date_renamer_new (void) G_GNUC_MALLOC;
 
-ThunarSbrDateMode     thunar_sbr_date_renamer_get_mode        (ThunarSbrDateRenamer *date_renamer);
-void                  thunar_sbr_date_renamer_set_mode        (ThunarSbrDateRenamer *date_renamer,
-                                                               ThunarSbrDateMode     mode);
+ThunarSbrDateMode
+thunar_sbr_date_renamer_get_mode (ThunarSbrDateRenamer *date_renamer);
+void
+thunar_sbr_date_renamer_set_mode (ThunarSbrDateRenamer *date_renamer,
+                                  ThunarSbrDateMode     mode);
 
-const gchar          *thunar_sbr_date_renamer_get_format      (ThunarSbrDateRenamer *date_renamer);
-void                  thunar_sbr_date_renamer_set_format      (ThunarSbrDateRenamer *date_renamer,
-                                                               const gchar          *format);
+const gchar *
+thunar_sbr_date_renamer_get_format (ThunarSbrDateRenamer *date_renamer);
+void
+thunar_sbr_date_renamer_set_format (ThunarSbrDateRenamer *date_renamer,
+                                    const gchar          *format);
 
-guint                 thunar_sbr_date_renamer_get_offset      (ThunarSbrDateRenamer *date_renamer);
-void                  thunar_sbr_date_renamer_set_offset      (ThunarSbrDateRenamer *date_renamer,
-                                                               guint                 offset);
+guint
+thunar_sbr_date_renamer_get_offset (ThunarSbrDateRenamer *date_renamer);
+void
+thunar_sbr_date_renamer_set_offset (ThunarSbrDateRenamer *date_renamer,
+                                    guint                 offset);
 
-ThunarSbrOffsetMode   thunar_sbr_date_renamer_get_offset_mode (ThunarSbrDateRenamer *date_renamer);
-void                  thunar_sbr_date_renamer_set_offset_mode (ThunarSbrDateRenamer *date_renamer,
-                                                               ThunarSbrOffsetMode   offset_mode);
+ThunarSbrOffsetMode
+thunar_sbr_date_renamer_get_offset_mode (ThunarSbrDateRenamer *date_renamer);
+void
+thunar_sbr_date_renamer_set_offset_mode (ThunarSbrDateRenamer *date_renamer,
+                                         ThunarSbrOffsetMode   offset_mode);
 
 G_END_DECLS;
 

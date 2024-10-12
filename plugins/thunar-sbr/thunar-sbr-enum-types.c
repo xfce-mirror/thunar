@@ -23,7 +23,6 @@
 #endif
 
 #include <glib/gi18n-lib.h>
-
 #include <thunar-sbr/thunar-sbr-enum-types.h>
 
 
@@ -153,7 +152,3 @@ thunar_sbr_register_enum_types (ThunarxProviderPlugin *plugin)
   text_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrTextMode", text_mode_values);
   date_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrDateMode", date_mode_values);
 }
-
-
-
-

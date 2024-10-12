@@ -24,7 +24,8 @@
 
 G_BEGIN_DECLS;
 
-void thunar_ice_init (void);
+void
+thunar_ice_init (void);
 
 G_END_DECLS;
 

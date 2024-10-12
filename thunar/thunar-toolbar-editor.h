@@ -25,18 +25,21 @@ G_BEGIN_DECLS;
 typedef struct _ThunarToolbarEditorClass ThunarToolbarEditorClass;
 typedef struct _ThunarToolbarEditor      ThunarToolbarEditor;
 
-#define THUNAR_TYPE_TOOLBAR_EDITOR             (thunar_toolbar_editor_get_type ())
-#define THUNAR_TOOLBAR_EDITOR(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_TOOLBAR_EDITOR, ThunarToolbarEditor))
-#define THUNAR_TOOLBAR_EDITOR_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_TOOLBAR_EDITOR, ThunarToolbarEditorClass))
-#define THUNAR_IS_TOOLBAR_EDITOR(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_TOOLBAR_EDITOR))
-#define THUNAR_IS_TOOLBAR_EDITOR_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_TOOLBAR_EDITOR))
-#define THUNAR_TOOLBAR_EDITOR_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_TOOLBAR_EDITOR, ThunarToolbarEditorClass))
+#define THUNAR_TYPE_TOOLBAR_EDITOR (thunar_toolbar_editor_get_type ())
+#define THUNAR_TOOLBAR_EDITOR(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_TOOLBAR_EDITOR, ThunarToolbarEditor))
+#define THUNAR_TOOLBAR_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_TOOLBAR_EDITOR, ThunarToolbarEditorClass))
+#define THUNAR_IS_TOOLBAR_EDITOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_TOOLBAR_EDITOR))
+#define THUNAR_IS_TOOLBAR_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_TOOLBAR_EDITOR))
+#define THUNAR_TOOLBAR_EDITOR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_TOOLBAR_EDITOR, ThunarToolbarEditorClass))
 
-GType      thunar_toolbar_editor_get_type (void) G_GNUC_CONST;
+GType
+thunar_toolbar_editor_get_type (void) G_GNUC_CONST;
 
-void       thunar_show_toolbar_editor     (GtkWidget *window,
-                                           GtkWidget *window_toolbar);
-void       thunar_save_toolbar_configuration (GtkWidget *toolbar);
+void
+thunar_show_toolbar_editor (GtkWidget *window,
+                            GtkWidget *window_toolbar);
+void
+thunar_save_toolbar_configuration (GtkWidget *toolbar);
 
 G_END_DECLS;
 

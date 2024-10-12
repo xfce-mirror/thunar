@@ -29,9 +29,8 @@
 #include <locale.h>
 #endif
 
-#include <thunar-uca/thunar-uca-private.h>
-
 #include <exo/exo.h>
+#include <thunar-uca/thunar-uca-private.h>
 
 
 
@@ -48,6 +47,3 @@ thunar_uca_i18n_init (void)
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 #endif
 }
-
-
-
