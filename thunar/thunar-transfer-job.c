@@ -860,6 +860,7 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
   if (fs_info != NULL)
     {
       fs_type = g_file_info_get_attribute_string (fs_info, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE);
+      /* clang-format off */
       use_fat_name_scheme =
         !g_strcmp0 (fs_type, "fat")   ||
         !g_strcmp0 (fs_type, "vfat")  ||
@@ -867,6 +868,7 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
         !g_strcmp0 (fs_type, "ntfs")  ||
         !g_strcmp0 (fs_type, "msdos") ||
         !g_strcmp0 (fs_type, "msdosfs");
+      /* clang-format on */
     }
   else
     {

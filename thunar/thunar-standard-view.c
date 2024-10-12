@@ -395,6 +395,7 @@ struct _ThunarStandardViewPrivate
   guint                   selection_changed_timeout_source;
 };
 
+/* clang-format off */
 static XfceGtkActionEntry thunar_standard_view_action_entries[] =
 {
     { THUNAR_STANDARD_VIEW_ACTION_SELECT_ALL_FILES,   "<Actions>/ThunarStandardView/select-all-files",   "<Primary>a", XFCE_GTK_MENU_ITEM,       N_ ("Select _all Files"),     N_ ("Select all files in this window"),                   NULL, G_CALLBACK (thunar_standard_view_select_all_files),            },
@@ -428,6 +429,7 @@ static const GtkTargetEntry drop_targets[] =
   { "XdndDirectSave0", 0, TARGET_XDND_DIRECT_SAVE0, },
   { "_NETSCAPE_URL", 0, TARGET_NETSCAPE_URL, },
 };
+/* clang-format on */
 
 
 
@@ -436,11 +438,13 @@ static GParamSpec *standard_view_props[N_PROPERTIES] = { NULL, };
 
 
 
+/* clang-format off */
 G_DEFINE_ABSTRACT_TYPE_WITH_CODE (ThunarStandardView, thunar_standard_view, GTK_TYPE_SCROLLED_WINDOW,
     G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR, thunar_standard_view_navigator_init)
     G_IMPLEMENT_INTERFACE (THUNAR_TYPE_COMPONENT, thunar_standard_view_component_init)
     G_IMPLEMENT_INTERFACE (THUNAR_TYPE_VIEW, thunar_standard_view_view_init)
     G_ADD_PRIVATE (ThunarStandardView))
+/* clang-format on */
 
 
 static gboolean
