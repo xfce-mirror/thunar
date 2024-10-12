@@ -27,14 +27,15 @@ G_BEGIN_DECLS;
 typedef struct _ThunarIconViewClass ThunarIconViewClass;
 typedef struct _ThunarIconView      ThunarIconView;
 
-#define THUNAR_TYPE_ICON_VIEW             (thunar_icon_view_get_type ())
-#define THUNAR_ICON_VIEW(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_ICON_VIEW, ThunarIconView))
-#define THUNAR_ICON_VIEW_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_ICON_VIEW, ThunarIconViewClass))
-#define THUNAR_IS_ICON_VIEW(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_ICON_VIEW))
-#define THUNAR_IS_ICON_VIEW_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((obj), THUNAR_TYPE_ICON_VIEW))
-#define THUNAR_ICON_VIEW_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_ICON_VIEW, ThunarIconViewClass))
+#define THUNAR_TYPE_ICON_VIEW (thunar_icon_view_get_type ())
+#define THUNAR_ICON_VIEW(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_ICON_VIEW, ThunarIconView))
+#define THUNAR_ICON_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_ICON_VIEW, ThunarIconViewClass))
+#define THUNAR_IS_ICON_VIEW(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_ICON_VIEW))
+#define THUNAR_IS_ICON_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), THUNAR_TYPE_ICON_VIEW))
+#define THUNAR_ICON_VIEW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_ICON_VIEW, ThunarIconViewClass))
 
-GType thunar_icon_view_get_type (void) G_GNUC_CONST;
+GType
+thunar_icon_view_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS;
 

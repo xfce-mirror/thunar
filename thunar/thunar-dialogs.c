@@ -32,8 +32,6 @@
 #include <string.h>
 #endif
 
-#include <libxfce4ui/libxfce4ui.h>
-
 #include "thunar/thunar-dialogs.h"
 #include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-icon-factory.h"
@@ -44,10 +42,14 @@
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-util.h"
 
+#include <libxfce4ui/libxfce4ui.h>
 
 
-static void          thunar_dialogs_select_filename      (GtkWidget *entry);
-static void          thunar_dialogs_shrink_height        (GtkWidget *dialog);
+
+static void
+thunar_dialogs_select_filename (GtkWidget *entry);
+static void
+thunar_dialogs_shrink_height (GtkWidget *dialog);
 
 
 
@@ -81,7 +83,7 @@ thunar_dialogs_shrink_height (GtkWidget *dialog)
  * Return value: the filename entered by the user or %NULL if the user
  *               cancelled the dialog.
  **/
-gchar*
+gchar *
 thunar_dialogs_show_create (gpointer     parent,
                             const gchar *content_type,
                             const gchar *filename,
@@ -110,7 +112,7 @@ thunar_dialogs_show_create (gpointer     parent,
                                         GTK_DIALOG_MODAL
                                         | GTK_DIALOG_DESTROY_WITH_PARENT,
                                         _("_Cancel"), GTK_RESPONSE_CANCEL,
-                                        _("C_reate"), GTK_RESPONSE_OK,
+                                          _("C_reate"), GTK_RESPONSE_OK,
                                         NULL);
 
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
@@ -161,7 +163,7 @@ thunar_dialogs_show_create (gpointer     parent,
   gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (filename_input), 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label),
                                       GTK_WIDGET (xfce_filename_input_get_entry (filename_input)));
-  gtk_widget_show_all ( GTK_WIDGET (filename_input));
+  gtk_widget_show_all (GTK_WIDGET (filename_input));
 
   /* ensure that the sensitivity of the Create button is set correctly */
   xfce_filename_input_check (filename_input);
@@ -177,7 +179,7 @@ thunar_dialogs_show_create (gpointer     parent,
 
   /* shrink the dialog again, after some filename error was fixed */
   g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (thunar_dialogs_shrink_height), dialog);
- 
+
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
     {
       /* determine the chosen filename */
@@ -258,7 +260,7 @@ thunar_dialogs_show_rename_file (gpointer               parent,
                                         GTK_DIALOG_MODAL
                                         | GTK_DIALOG_DESTROY_WITH_PARENT,
                                         _("_Cancel"), GTK_RESPONSE_CANCEL,
-                                        _("_Rename"), GTK_RESPONSE_OK,
+                                          _("_Rename"), GTK_RESPONSE_OK,
                                         NULL);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
   g_free (title);
@@ -354,7 +356,7 @@ thunar_dialogs_show_rename_file (gpointer               parent,
 
   /* shrink the dialog again, after some filename error was fixed */
   g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (thunar_dialogs_shrink_height), dialog);
- 
+
   /* run the dialog */
   response = gtk_dialog_run (GTK_DIALOG (dialog));
   if (G_LIKELY (response == GTK_RESPONSE_OK))
@@ -403,30 +405,27 @@ thunar_dialogs_show_about (GtkWindow   *parent,
                            const gchar *format,
                            ...)
 {
-  static const gchar *artists[] =
-  {
+  static const gchar *artists[] = {
     "Young Hahn <youngjin.hahn@gmail.com>",
     NULL,
   };
 
-  static const gchar *authors[] =
-  {
+  static const gchar *authors[] = {
     "Benedikt Meurer <benny@xfce.org>",
     "Jannis Pohlmann <jannis@xfce.org>",
     "Nick Schermer <nick@xfce.org>",
     NULL,
   };
 
-  static const gchar *documenters[] =
-  {
+  static const gchar *documenters[] = {
     "Benedikt Meurer <benny@xfce.org>",
     "Jannis Pohlmann <jannis@xfce.org>",
     "Nick Schermer <nick@xfce.org>",
     NULL,
   };
 
-  va_list    args;
-  gchar     *comments;
+  va_list args;
+  gchar  *comments;
 
   _thunar_return_if_fail (parent == NULL || GTK_IS_WINDOW (parent));
 
@@ -523,7 +522,7 @@ thunar_dialogs_show_error (gpointer      parent,
     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s.", error->message);
 
   children = gtk_container_get_children (
-    GTK_CONTAINER (gtk_message_dialog_get_message_area (GTK_MESSAGE_DIALOG (dialog))));
+  GTK_CONTAINER (gtk_message_dialog_get_message_area (GTK_MESSAGE_DIALOG (dialog))));
 
   /* enable wrap for labels */
   for (lp = children; lp != NULL; lp = lp->next)
@@ -607,8 +606,7 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
 
   /* allocate the question message dialog */
   message = gtk_message_dialog_new (parent,
-                                    GTK_DIALOG_MODAL |
-                                    GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                                     GTK_MESSAGE_QUESTION,
                                     GTK_BUTTONS_NONE,
                                     "%s", primary->str);
@@ -719,9 +717,9 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
 
 
 static void
-thunar_dialog_image_redraw (GtkWidget           *image,
-                            ThunarThumbnailSize  size,
-                            ThunarFile          *file)
+thunar_dialog_image_redraw (GtkWidget          *image,
+                            ThunarThumbnailSize size,
+                            ThunarFile         *file)
 {
   ThunarIconFactory *icon_factory;
   GtkIconTheme      *icon_theme;
@@ -804,18 +802,18 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   dialog = gtk_dialog_new_with_buttons (_("Confirm to replace files"),
                                         parent,
                                         GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                        _("_Cancel"), THUNAR_JOB_RESPONSE_CANCEL,
-                                        _("_Skip"), THUNAR_JOB_RESPONSE_SKIP,
-                                        _("Re_name"), THUNAR_JOB_RESPONSE_RENAME,
-                                        _("_Replace"), THUNAR_JOB_RESPONSE_REPLACE,
+                                          _("_Cancel"), THUNAR_JOB_RESPONSE_CANCEL,
+                                            _("_Skip"), THUNAR_JOB_RESPONSE_SKIP,
+                                              _("Re_name"), THUNAR_JOB_RESPONSE_RENAME,
+                                                _("_Replace"), THUNAR_JOB_RESPONSE_REPLACE,
                                         NULL);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_JOB_RESPONSE_REPLACE);
 
   content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+  G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   action_area = gtk_dialog_get_action_area (GTK_DIALOG (dialog));
-G_GNUC_END_IGNORE_DEPRECATIONS
+  G_GNUC_END_IGNORE_DEPRECATIONS
   gtk_button_box_set_layout (GTK_BUTTON_BOX (action_area), GTK_BUTTONBOX_SPREAD);
   gtk_widget_set_margin_bottom (GTK_WIDGET (action_area), 3);
 
@@ -838,10 +836,10 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   image = gtk_image_new_from_icon_name ("stock_folder-copy", GTK_ICON_SIZE_BUTTON);
   gtk_widget_set_halign (image, GTK_ALIGN_CENTER);
   gtk_widget_set_valign (image, GTK_ALIGN_START);
-  gtk_widget_set_margin_start (GTK_WIDGET(image), 6);
-  gtk_widget_set_margin_end (GTK_WIDGET(image), 6);
-  gtk_widget_set_margin_top (GTK_WIDGET(image), 6);
-  gtk_widget_set_margin_bottom (GTK_WIDGET(image), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (image), 6);
+  gtk_widget_set_margin_end (GTK_WIDGET (image), 6);
+  gtk_widget_set_margin_top (GTK_WIDGET (image), 6);
+  gtk_widget_set_margin_bottom (GTK_WIDGET (image), 6);
   gtk_widget_set_vexpand (image, TRUE);
   gtk_grid_attach (GTK_GRID (grid), image, 0, row, 1, 1);
   gtk_widget_show (image);
@@ -913,10 +911,10 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   icon = thunar_icon_factory_load_file_icon (icon_factory, dst_file, THUNAR_FILE_ICON_STATE_DEFAULT, 48, scale_factor, FALSE, NULL);
   surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, NULL);
   dst_image = gtk_image_new_from_surface (surface);
-  gtk_widget_set_margin_start (GTK_WIDGET(dst_image), 6);
-  gtk_widget_set_margin_end (GTK_WIDGET(dst_image), 6);
-  gtk_widget_set_margin_top (GTK_WIDGET(dst_image), 6);
-  gtk_widget_set_margin_bottom (GTK_WIDGET(dst_image), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (dst_image), 6);
+  gtk_widget_set_margin_end (GTK_WIDGET (dst_image), 6);
+  gtk_widget_set_margin_top (GTK_WIDGET (dst_image), 6);
+  gtk_widget_set_margin_bottom (GTK_WIDGET (dst_image), 6);
   gtk_grid_attach (GTK_GRID (grid), dst_image, 1, row, 1, 1);
   g_object_unref (G_OBJECT (icon));
   cairo_surface_destroy (surface);
@@ -963,10 +961,10 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   icon = thunar_icon_factory_load_file_icon (icon_factory, src_file, THUNAR_FILE_ICON_STATE_DEFAULT, 48, scale_factor, FALSE, NULL);
   surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, NULL);
   src_image = gtk_image_new_from_surface (surface);
-  gtk_widget_set_margin_start (GTK_WIDGET(src_image), 6);
-  gtk_widget_set_margin_end (GTK_WIDGET(src_image), 6);
-  gtk_widget_set_margin_top (GTK_WIDGET(src_image), 6);
-  gtk_widget_set_margin_bottom (GTK_WIDGET(src_image), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (src_image), 6);
+  gtk_widget_set_margin_end (GTK_WIDGET (src_image), 6);
+  gtk_widget_set_margin_top (GTK_WIDGET (src_image), 6);
+  gtk_widget_set_margin_bottom (GTK_WIDGET (src_image), 6);
   gtk_grid_attach (GTK_GRID (grid), src_image, 1, row, 1, 1);
   g_object_unref (G_OBJECT (icon));
   cairo_surface_destroy (surface);
@@ -1042,14 +1040,14 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
                                       ThunarFile  *file,
                                       const gchar *command)
 {
-  GdkScreen      *screen;
-  GtkWindow      *window;
-  gint            response;
-  GtkWidget      *dialog;
-  GString        *secondary;
-  GError         *err = NULL;
-  gchar          *file_name;
-  gchar          *executable;
+  GdkScreen *screen;
+  GtkWindow *window;
+  gint       response;
+  GtkWidget *dialog;
+  GString   *secondary;
+  GError    *err = NULL;
+  gchar     *file_name;
+  gchar     *executable;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (g_utf8_validate (command, -1, NULL), FALSE);
@@ -1062,33 +1060,32 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
     file_name = g_strdup_printf ("\"%s\" (%s)", thunar_file_get_display_name (file), thunar_file_get_basename (file));
   else
     file_name = g_strdup_printf ("\"%s\"", thunar_file_get_display_name (file));
-    
+
   if (g_file_info_get_attribute_boolean (thunar_file_get_info (file), G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE) == FALSE)
     /* TRANSLATORS: This string will be inserted in the following sentence in the second appearance of %s:
      * "The desktop file %s is in an insecure location and not marked as secure%s." */
     executable = g_strdup (_("/executable"));
   else
     executable = g_strdup ("");
-    
+
   secondary = g_string_new (NULL);
   g_string_printf (secondary,
                    _("The desktop file %s is in an insecure location and not marked as secure%s. "
                      "If you do not trust this program, click Cancel.\n\n"),
                    file_name,
                    executable);
-  
+
   g_free (file_name);
   g_free (executable);
-  
+
   if (g_uri_is_valid (command, G_URI_FLAGS_NONE, NULL))
-    g_string_append_printf (secondary, G_KEY_FILE_DESKTOP_KEY_URL"=%s", command);
+    g_string_append_printf (secondary, G_KEY_FILE_DESKTOP_KEY_URL "=%s", command);
   else
-    g_string_append_printf (secondary, G_KEY_FILE_DESKTOP_KEY_EXEC"=%s", command);
+    g_string_append_printf (secondary, G_KEY_FILE_DESKTOP_KEY_EXEC "=%s", command);
 
   /* allocate and display the error message dialog */
   dialog = gtk_message_dialog_new (window,
-                                   GTK_DIALOG_MODAL |
-                                   GTK_DIALOG_DESTROY_WITH_PARENT,
+                                   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                                    GTK_MESSAGE_WARNING,
                                    GTK_BUTTONS_NONE,
                                    "%s", primary);
@@ -1130,12 +1127,13 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
 
 
 
-static void thunar_dialogs_select_filename (GtkWidget *entry)
+static void
+thunar_dialogs_select_filename (GtkWidget *entry)
 {
   const gchar    *filename;
   const gchar    *ext;
   glong           offset;
-  GtkEntryBuffer* buffer;
+  GtkEntryBuffer *buffer;
 
   buffer = gtk_entry_get_buffer (GTK_ENTRY (entry));
   filename = gtk_entry_buffer_get_text (buffer);
@@ -1209,7 +1207,7 @@ thunar_dialog_confirm_close_split_pane_tabs (GtkWindow *parent)
       g_object_set (G_OBJECT (preferences), "misc-confirm-close-multiple-tabs", FALSE, NULL);
       g_object_unref (G_OBJECT (preferences));
     }
-    
+
   gtk_widget_destroy (dialog);
   g_free (secondary_text);
   return response;
@@ -1318,14 +1316,14 @@ thunar_dialog_show_launcher_props (ThunarFile *launcher,
                                    gpointer    parent)
 {
   const gchar *display_name;
-  gchar       *cmd   = NULL,
-              *uri   = NULL;
-  GError      *error = NULL;
-  GdkScreen   *screen;
+  gchar       *cmd = NULL,
+        *uri = NULL;
+  GError    *error = NULL;
+  GdkScreen *screen;
 
   _thunar_return_if_fail (launcher == NULL || THUNAR_IS_FILE (launcher));
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
-  
+
   screen = thunar_util_parse_parent (parent, NULL);
   uri = thunar_file_dup_uri (launcher);
   display_name = gdk_display_get_name (gdk_screen_get_display (screen));

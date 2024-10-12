@@ -22,17 +22,16 @@
 #include "config.h"
 #endif
 
-#include <exo/exo.h>
-
 #include "thunar/thunar-dialogs.h"
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-job.h"
 #include "thunar/thunar-pango-extensions.h"
 #include "thunar/thunar-private.h"
-#include "thunar/thunar-util.h"
-#include "thunar/thunar-transfer-job.h"
 #include "thunar/thunar-progress-view.h"
+#include "thunar/thunar-transfer-job.h"
+#include "thunar/thunar-util.h"
 
+#include <exo/exo.h>
 #include <libxfce4ui/libxfce4ui.h>
 
 
@@ -47,44 +46,60 @@ enum
 
 
 
-static void              thunar_progress_view_finalize     (GObject            *object);
-static void              thunar_progress_view_dispose      (GObject            *object);
-static void              thunar_progress_view_get_property (GObject            *object,
-                                                            guint               prop_id,
-                                                            GValue             *value,
-                                                            GParamSpec         *pspec);
-static void              thunar_progress_view_set_property (GObject            *object,
-                                                            guint               prop_id,
-                                                            const GValue       *value,
-                                                            GParamSpec         *pspec);
-static void              thunar_progress_view_pause_job    (ThunarProgressView *view);
-static void              thunar_progress_view_unpause_job  (ThunarProgressView *view);
-static void              thunar_progress_view_cancel_job   (ThunarProgressView *view);
-static ThunarJobResponse thunar_progress_view_ask          (ThunarProgressView *view,
-                                                            const gchar        *message,
-                                                            ThunarJobResponse   choices,
-                                                            ThunarJob          *job);
-static ThunarJobResponse thunar_progress_view_ask_replace  (ThunarProgressView *view,
-                                                            ThunarFile         *src_file,
-                                                            ThunarFile         *dst_file,
-                                                            ThunarJob          *job);
-static void              thunar_progress_view_error        (ThunarProgressView *view,
-                                                            GError             *error,
-                                                            ExoJob             *job);
-static void              thunar_progress_view_finished     (ThunarProgressView *view,
-                                                            ExoJob             *job);
-static void              thunar_progress_view_info_message (ThunarProgressView *view,
-                                                            const gchar        *message,
-                                                            ExoJob             *job);
-static void              thunar_progress_view_percent      (ThunarProgressView *view,
-                                                            gdouble             percent,
-                                                            ExoJob             *job);
-static void              thunar_progress_view_frozen       (ThunarProgressView *view,
-                                                            ExoJob             *job);
-static void              thunar_progress_view_unfrozen     (ThunarProgressView *view,
-                                                            ExoJob             *job);
-static void              thunar_progress_view_set_job      (ThunarProgressView *view,
-                                                            ThunarJob          *job);
+static void
+thunar_progress_view_finalize (GObject *object);
+static void
+thunar_progress_view_dispose (GObject *object);
+static void
+thunar_progress_view_get_property (GObject    *object,
+                                   guint       prop_id,
+                                   GValue     *value,
+                                   GParamSpec *pspec);
+static void
+thunar_progress_view_set_property (GObject      *object,
+                                   guint         prop_id,
+                                   const GValue *value,
+                                   GParamSpec   *pspec);
+static void
+thunar_progress_view_pause_job (ThunarProgressView *view);
+static void
+thunar_progress_view_unpause_job (ThunarProgressView *view);
+static void
+thunar_progress_view_cancel_job (ThunarProgressView *view);
+static ThunarJobResponse
+thunar_progress_view_ask (ThunarProgressView *view,
+                          const gchar        *message,
+                          ThunarJobResponse   choices,
+                          ThunarJob          *job);
+static ThunarJobResponse
+thunar_progress_view_ask_replace (ThunarProgressView *view,
+                                  ThunarFile         *src_file,
+                                  ThunarFile         *dst_file,
+                                  ThunarJob          *job);
+static void
+thunar_progress_view_error (ThunarProgressView *view,
+                            GError             *error,
+                            ExoJob             *job);
+static void
+thunar_progress_view_finished (ThunarProgressView *view,
+                               ExoJob             *job);
+static void
+thunar_progress_view_info_message (ThunarProgressView *view,
+                                   const gchar        *message,
+                                   ExoJob             *job);
+static void
+thunar_progress_view_percent (ThunarProgressView *view,
+                              gdouble             percent,
+                              ExoJob             *job);
+static void
+thunar_progress_view_frozen (ThunarProgressView *view,
+                             ExoJob             *job);
+static void
+thunar_progress_view_unfrozen (ThunarProgressView *view,
+                               ExoJob             *job);
+static void
+thunar_progress_view_set_job (ThunarProgressView *view,
+                              ThunarJob          *job);
 
 
 
@@ -95,7 +110,7 @@ struct _ThunarProgressViewClass
 
 struct _ThunarProgressView
 {
-  GtkVBox  __parent__;
+  GtkVBox __parent__;
 
   ThunarJob *job;
 
@@ -105,10 +120,10 @@ struct _ThunarProgressView
   GtkWidget *pause_button;
   GtkWidget *unpause_button;
 
-  gboolean   launched;
+  gboolean launched;
 
-  gchar     *icon_name;
-  gchar     *title;
+  gchar *icon_name;
+  gchar *title;
 };
 
 
@@ -213,9 +228,9 @@ thunar_progress_view_init (ThunarProgressView *view)
   gtk_widget_show (hbox);
 
   image = g_object_new (GTK_TYPE_IMAGE, "icon-size", GTK_ICON_SIZE_DND, NULL);
-  gtk_image_set_pixel_size (GTK_IMAGE(image), 32);
+  gtk_image_set_pixel_size (GTK_IMAGE (image), 32);
   gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, TRUE, 0);
-  g_object_bind_property (G_OBJECT (view),  "icon-name",
+  g_object_bind_property (G_OBJECT (view), "icon-name",
                           G_OBJECT (image), "icon-name",
                           G_BINDING_SYNC_CREATE);
   gtk_widget_show (image);
@@ -344,9 +359,9 @@ thunar_progress_view_get_property (GObject    *object,
 
 static void
 thunar_progress_view_set_property (GObject      *object,
-                                     guint         prop_id,
-                                     const GValue *value,
-                                     GParamSpec   *pspec)
+                                   guint         prop_id,
+                                   const GValue *value,
+                                   GParamSpec   *pspec)
 {
   ThunarProgressView *view = THUNAR_PROGRESS_VIEW (object);
 
@@ -635,7 +650,7 @@ thunar_progress_view_unfrozen (ThunarProgressView *view,
  *
  * Return value: the newly allocated #ThunarProgressView.
  **/
-GtkWidget*
+GtkWidget *
 thunar_progress_view_new_with_job (ThunarJob *job)
 {
   ThunarProgressView *view;

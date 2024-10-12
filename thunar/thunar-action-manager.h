@@ -27,17 +27,17 @@
 G_BEGIN_DECLS;
 
 /* avoid including libxfce4ui.h */
-typedef struct _XfceGtkActionEntry  XfceGtkActionEntry;
+typedef struct _XfceGtkActionEntry XfceGtkActionEntry;
 
 typedef struct _ThunarActionManagerClass ThunarActionManagerClass;
 typedef struct _ThunarActionManager      ThunarActionManager;
 
-#define THUNAR_TYPE_ACTION_MANAGER            (thunar_action_manager_get_type ())
-#define THUNAR_ACTION_MANAGER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj),  THUNAR_TYPE_ACTION_MANAGER, ThunarActionManager))
-#define THUNAR_ACTION_MANAGER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST    ((klass),THUNAR_TYPE_ACTION_MANAGER, ThunarActionManagerClass))
-#define THUNAR_IS_ACTION_MANAGER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj),  THUNAR_TYPE_ACTION_MANAGER))
-#define THUNAR_IS_ACTION_MANAGER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE    ((klass),THUNAR_TYPE_ACTION_MANAGER))
-#define THUNAR_ACTION_MANAGER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS  ((obj),  THUNAR_TYPE_ACTION_MANAGER, ThunarActionManagerClass))
+#define THUNAR_TYPE_ACTION_MANAGER (thunar_action_manager_get_type ())
+#define THUNAR_ACTION_MANAGER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_ACTION_MANAGER, ThunarActionManager))
+#define THUNAR_ACTION_MANAGER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_ACTION_MANAGER, ThunarActionManagerClass))
+#define THUNAR_IS_ACTION_MANAGER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_ACTION_MANAGER))
+#define THUNAR_IS_ACTION_MANAGER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_ACTION_MANAGER))
+#define THUNAR_ACTION_MANAGER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_ACTION_MANAGER, ThunarActionManagerClass))
 
 /* #XfceGtkActionEntrys provided by this widget */
 typedef enum
@@ -91,43 +91,62 @@ typedef enum
   THUNAR_ACTION_MANAGER_NO_ACTION,
 } ThunarActionManagerFolderOpenAction;
 
-GType               thunar_action_manager_get_type                       (void) G_GNUC_CONST;
-void                thunar_action_manager_activate_selected_files        (ThunarActionManager                 *action_mgr,
-                                                                          ThunarActionManagerFolderOpenAction  action,
-                                                                          GAppInfo                            *app_info);
-void                thunar_action_manager_open_selected_folders          (ThunarActionManager                 *action_mgr,
-                                                                          gboolean                             open_in_tabs);
-void                thunar_action_manager_set_widget                     (ThunarActionManager                 *action_mgr,
-                                                                          GtkWidget                           *widget);
-GtkWidget          *thunar_action_manager_get_widget                     (ThunarActionManager                 *action_mgr);
-void                thunar_action_manager_append_accelerators            (ThunarActionManager                 *action_mgr,
-                                                                          GtkAccelGroup                       *accel_group);
-GtkWidget          *thunar_action_manager_append_menu_item               (ThunarActionManager                 *action_mgr,
-                                                                          GtkMenuShell                        *menu,
-                                                                          ThunarActionManagerAction            action,
-                                                                          gboolean                             force);
-gboolean            thunar_action_manager_append_open_section            (ThunarActionManager                 *action_mgr,
-                                                                          GtkMenuShell                        *menu,
-                                                                          gboolean                             support_tabs,
-                                                                          gboolean                             support_change_directory,
-                                                                          gboolean                             force);
-gboolean            thunar_action_manager_append_custom_actions          (ThunarActionManager                 *action_mgr,
-                                                                          GtkMenuShell                        *menu);
-gboolean            thunar_action_manager_check_uca_key_activation       (ThunarActionManager                 *action_mgr,
-                                                                          GdkEventKey                         *key_event);
-void                thunar_action_manager_action_mount                   (ThunarActionManager                 *action_mgr);
-gboolean            thunar_action_manager_action_unmount                 (ThunarActionManager                 *action_mgr);
-gboolean            thunar_action_manager_action_eject                   (ThunarActionManager                 *action_mgr);
-void                thunar_action_manager_set_selection                  (ThunarActionManager                 *action_mgr,
-                                                                          GList                               *selected_thunar_files,
-                                                                          ThunarDevice                        *selected_device,
-                                                                          GFile                               *selected_location);
-gboolean            thunar_action_manager_action_empty_trash             (ThunarActionManager                 *action_mgr);
-gboolean            thunar_action_manager_action_restore                 (ThunarActionManager                 *action_mgr);
-gboolean            thunar_action_manager_action_restore_and_show        (ThunarActionManager                 *action_mgr);
-void                thunar_action_manager_set_searching                  (ThunarActionManager                 *action_mgr,
-                                                                          gboolean                             b);
-XfceGtkActionEntry *thunar_action_manager_get_action_entries             (void);
+GType
+thunar_action_manager_get_type (void) G_GNUC_CONST;
+void
+thunar_action_manager_activate_selected_files (ThunarActionManager                *action_mgr,
+                                               ThunarActionManagerFolderOpenAction action,
+                                               GAppInfo                           *app_info);
+void
+thunar_action_manager_open_selected_folders (ThunarActionManager *action_mgr,
+                                             gboolean             open_in_tabs);
+void
+thunar_action_manager_set_widget (ThunarActionManager *action_mgr,
+                                  GtkWidget           *widget);
+GtkWidget *
+thunar_action_manager_get_widget (ThunarActionManager *action_mgr);
+void
+thunar_action_manager_append_accelerators (ThunarActionManager *action_mgr,
+                                           GtkAccelGroup       *accel_group);
+GtkWidget *
+thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
+                                        GtkMenuShell             *menu,
+                                        ThunarActionManagerAction action,
+                                        gboolean                  force);
+gboolean
+thunar_action_manager_append_open_section (ThunarActionManager *action_mgr,
+                                           GtkMenuShell        *menu,
+                                           gboolean             support_tabs,
+                                           gboolean             support_change_directory,
+                                           gboolean             force);
+gboolean
+thunar_action_manager_append_custom_actions (ThunarActionManager *action_mgr,
+                                             GtkMenuShell        *menu);
+gboolean
+thunar_action_manager_check_uca_key_activation (ThunarActionManager *action_mgr,
+                                                GdkEventKey         *key_event);
+void
+thunar_action_manager_action_mount (ThunarActionManager *action_mgr);
+gboolean
+thunar_action_manager_action_unmount (ThunarActionManager *action_mgr);
+gboolean
+thunar_action_manager_action_eject (ThunarActionManager *action_mgr);
+void
+thunar_action_manager_set_selection (ThunarActionManager *action_mgr,
+                                     GList               *selected_thunar_files,
+                                     ThunarDevice        *selected_device,
+                                     GFile               *selected_location);
+gboolean
+thunar_action_manager_action_empty_trash (ThunarActionManager *action_mgr);
+gboolean
+thunar_action_manager_action_restore (ThunarActionManager *action_mgr);
+gboolean
+thunar_action_manager_action_restore_and_show (ThunarActionManager *action_mgr);
+void
+thunar_action_manager_set_searching (ThunarActionManager *action_mgr,
+                                     gboolean             b);
+XfceGtkActionEntry *
+thunar_action_manager_get_action_entries (void);
 
 G_END_DECLS;
 

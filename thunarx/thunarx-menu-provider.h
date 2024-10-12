@@ -25,18 +25,18 @@
 #ifndef __THUNARX_MENU_PROVIDER_H__
 #define __THUNARX_MENU_PROVIDER_H__
 
-#include <gtk/gtk.h>
-
 #include "thunarx/thunarx-file-info.h"
+
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 
 typedef struct _ThunarxMenuProviderIface ThunarxMenuProviderIface;
 typedef struct _ThunarxMenuProvider      ThunarxMenuProvider;
 
-#define THUNARX_TYPE_MENU_PROVIDER           (thunarx_menu_provider_get_type ())
-#define THUNARX_MENU_PROVIDER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_MENU_PROVIDER, ThunarxMenuProvider))
-#define THUNARX_IS_MENU_PROVIDER(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_MENU_PROVIDER))
+#define THUNARX_TYPE_MENU_PROVIDER (thunarx_menu_provider_get_type ())
+#define THUNARX_MENU_PROVIDER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_MENU_PROVIDER, ThunarxMenuProvider))
+#define THUNARX_IS_MENU_PROVIDER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_MENU_PROVIDER))
 #define THUNARX_MENU_PROVIDER_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNARX_TYPE_MENU_PROVIDER, ThunarxMenuProviderIface))
 
 /**
@@ -57,18 +57,18 @@ struct _ThunarxMenuProviderIface
   GTypeInterface __parent__;
 
   /*< public >*/
-  GList *(*get_file_menu_items)    (ThunarxMenuProvider *provider,
-                                    GtkWidget           *window,
-                                    GList               *files);
+  GList *(*get_file_menu_items) (ThunarxMenuProvider *provider,
+                                 GtkWidget           *window,
+                                 GList               *files);
 
-  GList *(*get_folder_menu_items)  (ThunarxMenuProvider *provider,
-                                    GtkWidget           *window,
-                                    ThunarxFileInfo     *folder);
+  GList *(*get_folder_menu_items) (ThunarxMenuProvider *provider,
+                                   GtkWidget           *window,
+                                   ThunarxFileInfo     *folder);
 
-  GList *(*get_dnd_menu_items)     (ThunarxMenuProvider *provider,
-                                    GtkWidget           *window,
-                                    ThunarxFileInfo     *folder,
-                                    GList               *files);
+  GList *(*get_dnd_menu_items) (ThunarxMenuProvider *provider,
+                                GtkWidget           *window,
+                                ThunarxFileInfo     *folder,
+                                GList               *files);
 
   /*< private >*/
   void (*reserved1) (void);
@@ -76,20 +76,24 @@ struct _ThunarxMenuProviderIface
   void (*reserved3) (void);
 };
 
-GType  thunarx_menu_provider_get_type           (void) G_GNUC_CONST;
+GType
+thunarx_menu_provider_get_type (void) G_GNUC_CONST;
 
-GList *thunarx_menu_provider_get_file_menu_items   (ThunarxMenuProvider *provider,
-                                                    GtkWidget           *window,
-                                                    GList               *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+GList *
+thunarx_menu_provider_get_file_menu_items (ThunarxMenuProvider *provider,
+                                           GtkWidget           *window,
+                                           GList               *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-GList *thunarx_menu_provider_get_folder_menu_items (ThunarxMenuProvider *provider,
-                                                    GtkWidget           *window,
-                                                    ThunarxFileInfo     *folder) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+GList *
+thunarx_menu_provider_get_folder_menu_items (ThunarxMenuProvider *provider,
+                                             GtkWidget           *window,
+                                             ThunarxFileInfo     *folder) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-GList *thunarx_menu_provider_get_dnd_menu_items    (ThunarxMenuProvider *provider,
-                                                    GtkWidget           *window,
-                                                    ThunarxFileInfo     *folder,
-                                                    GList               *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+GList *
+thunarx_menu_provider_get_dnd_menu_items (ThunarxMenuProvider *provider,
+                                          GtkWidget           *window,
+                                          ThunarxFileInfo     *folder,
+                                          GList               *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS
 

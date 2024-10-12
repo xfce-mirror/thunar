@@ -31,12 +31,12 @@ G_BEGIN_DECLS;
 typedef struct _ThunarWindowClass ThunarWindowClass;
 typedef struct _ThunarWindow      ThunarWindow;
 
-#define THUNAR_TYPE_WINDOW            (thunar_window_get_type ())
-#define THUNAR_WINDOW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_WINDOW, ThunarWindow))
-#define THUNAR_WINDOW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_WINDOW, ThunarWindowClass))
-#define THUNAR_IS_WINDOW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_WINDOW))
+#define THUNAR_TYPE_WINDOW (thunar_window_get_type ())
+#define THUNAR_WINDOW(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_WINDOW, ThunarWindow))
+#define THUNAR_WINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_WINDOW, ThunarWindowClass))
+#define THUNAR_IS_WINDOW(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_WINDOW))
 #define THUNAR_IS_WINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_WINDOW))
-#define THUNAR_WINDOW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_WINDOW, ThunarWindowClass))
+#define THUNAR_WINDOW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_WINDOW, ThunarWindowClass))
 
 /* #XfceGtkActionEntrys provided by this widget */
 typedef enum
@@ -113,60 +113,91 @@ typedef enum
   THUNAR_WINDOW_N_ACTIONS
 } ThunarWindowAction;
 
-GType                     thunar_window_get_type                            (void) G_GNUC_CONST;
-ThunarFile               *thunar_window_get_current_directory               (ThunarWindow        *window);
-void                      thunar_window_set_current_directory               (ThunarWindow        *window,
-                                                                             ThunarFile          *current_directory);
-GList                    *thunar_window_get_directories                     (ThunarWindow        *window,
-                                                                             gint                *active_page);
-gboolean                  thunar_window_set_directories                     (ThunarWindow        *window,
-                                                                             gchar              **uris,
-                                                                             gint                 active_page);
-void                      thunar_window_update_directories                  (ThunarWindow        *window,
-                                                                             ThunarFile          *old_directory,
-                                                                             ThunarFile          *new_directory);
-void                      thunar_window_notebook_toggle_split_view          (ThunarWindow        *window);
-void                      thunar_window_notebook_open_new_tab               (ThunarWindow        *window,
-                                                                             ThunarFile          *directory);
-void                      thunar_window_notebook_add_new_tab                (ThunarWindow        *window,
-                                                                             ThunarFile          *directory,
-                                                                             ThunarNewTabBehavior behavior);
-void                      thunar_window_notebook_remove_tab                 (ThunarWindow        *window,
-                                                                             gint                 tab);
-void                      thunar_window_notebook_set_current_tab            (ThunarWindow        *window,
-                                                                             gint                 tab);
-void                      thunar_window_paned_notebooks_switch              (ThunarWindow        *window);
-gboolean                  thunar_window_has_shortcut_sidepane               (ThunarWindow        *window);
-gboolean                  thunar_window_has_tree_view_sidepane              (ThunarWindow        *window);
-GtkWidget*                thunar_window_get_sidepane                        (ThunarWindow        *window);
-void                      thunar_window_append_menu_item                    (ThunarWindow        *window,
-                                                                             GtkMenuShell        *menu,
-                                                                             ThunarWindowAction   action);
-ThunarActionManager*      thunar_window_get_action_manager                  (ThunarWindow        *window);
-void                      thunar_window_redirect_menu_tooltips_to_statusbar (ThunarWindow        *window,
-                                                                             GtkMenu             *menu);
-const XfceGtkActionEntry* thunar_window_get_action_entry                    (ThunarWindow        *window,
-                                                                             ThunarWindowAction   action);
-void                      thunar_window_open_files_in_location              (ThunarWindow        *window,
-                                                                             GList               *files_to_select);
-void                      thunar_window_show_and_select_files               (ThunarWindow        *window,
-                                                                             GList               *files_to_select);
-void                      thunar_window_update_search                       (ThunarWindow        *window);
-gboolean                  thunar_window_action_cancel_search                (ThunarWindow        *window);
-gboolean                  thunar_window_action_search                       (ThunarWindow        *window);
-void                      thunar_window_update_statusbar                    (ThunarWindow        *window);
-void                      thunar_window_toolbar_toggle_item_visibility      (ThunarWindow        *window,
-                                                                             gint                 index);
-void                      thunar_window_toolbar_swap_items                  (ThunarWindow        *window,
-                                                                             gint                 index_a,
-                                                                             gint                 index_b);
+GType
+thunar_window_get_type (void) G_GNUC_CONST;
+ThunarFile *
+thunar_window_get_current_directory (ThunarWindow *window);
+void
+thunar_window_set_current_directory (ThunarWindow *window,
+                                     ThunarFile   *current_directory);
+GList *
+thunar_window_get_directories (ThunarWindow *window,
+                               gint         *active_page);
+gboolean
+thunar_window_set_directories (ThunarWindow *window,
+                               gchar       **uris,
+                               gint          active_page);
+void
+thunar_window_update_directories (ThunarWindow *window,
+                                  ThunarFile   *old_directory,
+                                  ThunarFile   *new_directory);
+void
+thunar_window_notebook_toggle_split_view (ThunarWindow *window);
+void
+thunar_window_notebook_open_new_tab (ThunarWindow *window,
+                                     ThunarFile   *directory);
+void
+thunar_window_notebook_add_new_tab (ThunarWindow        *window,
+                                    ThunarFile          *directory,
+                                    ThunarNewTabBehavior behavior);
+void
+thunar_window_notebook_remove_tab (ThunarWindow *window,
+                                   gint          tab);
+void
+thunar_window_notebook_set_current_tab (ThunarWindow *window,
+                                        gint          tab);
+void
+thunar_window_paned_notebooks_switch (ThunarWindow *window);
+gboolean
+thunar_window_has_shortcut_sidepane (ThunarWindow *window);
+gboolean
+thunar_window_has_tree_view_sidepane (ThunarWindow *window);
+GtkWidget *
+thunar_window_get_sidepane (ThunarWindow *window);
+void
+thunar_window_append_menu_item (ThunarWindow      *window,
+                                GtkMenuShell      *menu,
+                                ThunarWindowAction action);
+ThunarActionManager *
+thunar_window_get_action_manager (ThunarWindow *window);
+void
+thunar_window_redirect_menu_tooltips_to_statusbar (ThunarWindow *window,
+                                                   GtkMenu      *menu);
+const XfceGtkActionEntry *
+thunar_window_get_action_entry (ThunarWindow      *window,
+                                ThunarWindowAction action);
+void
+thunar_window_open_files_in_location (ThunarWindow *window,
+                                      GList        *files_to_select);
+void
+thunar_window_show_and_select_files (ThunarWindow *window,
+                                     GList        *files_to_select);
+void
+thunar_window_update_search (ThunarWindow *window);
+gboolean
+thunar_window_action_cancel_search (ThunarWindow *window);
+gboolean
+thunar_window_action_search (ThunarWindow *window);
+void
+thunar_window_update_statusbar (ThunarWindow *window);
+void
+thunar_window_toolbar_toggle_item_visibility (ThunarWindow *window,
+                                              gint          index);
+void
+thunar_window_toolbar_swap_items (ThunarWindow *window,
+                                  gint          index_a,
+                                  gint          index_b);
 
-XfceGtkActionEntry*       thunar_window_get_action_entries                  (void);
+XfceGtkActionEntry *
+thunar_window_get_action_entries (void);
 
-void                      thunar_window_reconnect_accelerators              (ThunarWindow        *window);
-void                      thunar_window_focus_view                          (ThunarWindow        *window,
-                                                                             GtkWidget           *view);
-void                      thunar_window_queue_redraw                        (ThunarWindow        *window);
+void
+thunar_window_reconnect_accelerators (ThunarWindow *window);
+void
+thunar_window_focus_view (ThunarWindow *window,
+                          GtkWidget    *view);
+void
+thunar_window_queue_redraw (ThunarWindow *window);
 
 
 G_END_DECLS;

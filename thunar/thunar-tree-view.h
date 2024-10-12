@@ -27,16 +27,18 @@ G_BEGIN_DECLS;
 typedef struct _ThunarTreeViewClass ThunarTreeViewClass;
 typedef struct _ThunarTreeView      ThunarTreeView;
 
-#define THUNAR_TYPE_TREE_VIEW             (thunar_tree_view_get_type ())
-#define THUNAR_TREE_VIEW(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_TREE_VIEW, ThunarTreeView))
-#define THUNAR_TREE_VIEW_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_TREE_VIEW, ThunarTreeViewClass))
-#define THUNAR_IS_TREE_VIEW(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_TREE_VIEW))
-#define THUNAR_IS_TREE_VIEW_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_TREE_VIEW))
-#define THUNAR_TREE_VIEW_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_TREE_VIEW, ThunarTreeViewClass))
+#define THUNAR_TYPE_TREE_VIEW (thunar_tree_view_get_type ())
+#define THUNAR_TREE_VIEW(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_TREE_VIEW, ThunarTreeView))
+#define THUNAR_TREE_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_TREE_VIEW, ThunarTreeViewClass))
+#define THUNAR_IS_TREE_VIEW(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_TREE_VIEW))
+#define THUNAR_IS_TREE_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_TREE_VIEW))
+#define THUNAR_TREE_VIEW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_TREE_VIEW, ThunarTreeViewClass))
 
-GType      thunar_tree_view_get_type        (void) G_GNUC_CONST;
+GType
+thunar_tree_view_get_type (void) G_GNUC_CONST;
 
-GtkWidget *thunar_tree_view_new             (void) G_GNUC_MALLOC;
+GtkWidget *
+thunar_tree_view_new (void) G_GNUC_MALLOC;
 
 G_END_DECLS;
 

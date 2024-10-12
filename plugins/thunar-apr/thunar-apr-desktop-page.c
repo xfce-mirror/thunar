@@ -49,30 +49,41 @@
 
 
 
-static void     thunar_apr_desktop_page_finalize         (GObject                    *object);
-static void     thunar_apr_desktop_page_file_changed     (ThunarAprAbstractPage      *abstract_page,
-                                                          ThunarxFileInfo            *file);
-static void     thunar_apr_desktop_page_save             (ThunarAprDesktopPage       *desktop_page,
-                                                          GtkWidget                  *widget);
-static void     thunar_apr_desktop_page_save_widget      (ThunarAprDesktopPage       *desktop_page,
-                                                          GtkWidget                  *widget,
-                                                          GKeyFile                   *key_file);
-static void     thunar_apr_desktop_page_activated        (GtkWidget                  *entry,
-                                                          ThunarAprDesktopPage       *desktop_page);
-static gboolean thunar_apr_desktop_page_focus_out_event  (GtkWidget                  *entry,
-                                                          GdkEventFocus              *event,
-                                                          ThunarAprDesktopPage       *desktop_page);
-static void     thunar_apr_desktop_page_toggled          (GtkWidget                  *button,
-                                                          ThunarAprDesktopPage       *desktop_page);
-static void     thunar_apr_desktop_page_program_toggled  (GtkWidget                  *button,
-                                                          ThunarAprDesktopPage       *desktop_page);
-static void     thunar_apr_desktop_page_trusted_toggled  (GtkWidget                  *button,
-                                                          ThunarAprDesktopPage       *desktop_page);
-static gboolean is_executable                            (GFile    *gfile,
-                                                          GError  **error);
-static gboolean set_executable                           (GFile    *gfile,
-                                                          gboolean  executable,
-                                                          GError  **error);
+static void
+thunar_apr_desktop_page_finalize (GObject *object);
+static void
+thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
+                                      ThunarxFileInfo       *file);
+static void
+thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
+                              GtkWidget            *widget);
+static void
+thunar_apr_desktop_page_save_widget (ThunarAprDesktopPage *desktop_page,
+                                     GtkWidget            *widget,
+                                     GKeyFile             *key_file);
+static void
+thunar_apr_desktop_page_activated (GtkWidget            *entry,
+                                   ThunarAprDesktopPage *desktop_page);
+static gboolean
+thunar_apr_desktop_page_focus_out_event (GtkWidget            *entry,
+                                         GdkEventFocus        *event,
+                                         ThunarAprDesktopPage *desktop_page);
+static void
+thunar_apr_desktop_page_toggled (GtkWidget            *button,
+                                 ThunarAprDesktopPage *desktop_page);
+static void
+thunar_apr_desktop_page_program_toggled (GtkWidget            *button,
+                                         ThunarAprDesktopPage *desktop_page);
+static void
+thunar_apr_desktop_page_trusted_toggled (GtkWidget            *button,
+                                         ThunarAprDesktopPage *desktop_page);
+static gboolean
+is_executable (GFile   *gfile,
+               GError **error);
+static gboolean
+set_executable (GFile   *gfile,
+                gboolean executable,
+                GError **error);
 
 
 
@@ -85,15 +96,15 @@ struct _ThunarAprDesktopPage
 {
   ThunarAprAbstractPage __parent__;
 
-  GtkWidget            *description_entry;
-  GtkWidget            *command_entry;
-  GtkWidget            *path_entry;
-  GtkWidget            *url_entry;
-  GtkWidget            *comment_entry;
-  GtkWidget            *snotify_button;
-  GtkWidget            *terminal_button;
-  GtkWidget            *program_button;
-  GtkWidget            *trusted_button;
+  GtkWidget *description_entry;
+  GtkWidget *command_entry;
+  GtkWidget *path_entry;
+  GtkWidget *url_entry;
+  GtkWidget *comment_entry;
+  GtkWidget *snotify_button;
+  GtkWidget *terminal_button;
+  GtkWidget *program_button;
+  GtkWidget *trusted_button;
 
   /* the values of the entries remember when
    * the file was saved last time to avoid a
@@ -103,11 +114,11 @@ struct _ThunarAprDesktopPage
    * ride the (possibly changed) values of the
    * entries.
    */
-  gchar                *description_text;
-  gchar                *command_text;
-  gchar                *path_text;
-  gchar                *url_text;
-  gchar                *comment_text;
+  gchar *description_text;
+  gchar *command_text;
+  gchar *path_text;
+  gchar *url_text;
+  gchar *comment_text;
 };
 
 
@@ -127,7 +138,7 @@ is_executable (GFile   *gfile,
   gboolean   executable;
 
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-  g_return_val_if_fail (G_IS_FILE (gfile),               FALSE);
+  g_return_val_if_fail (G_IS_FILE (gfile), FALSE);
 
   info = g_file_query_info (gfile,
                             G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE,
@@ -150,17 +161,17 @@ is_executable (GFile   *gfile,
 
 /* copied from exo-die-utils.c */
 static gboolean
-set_executable (GFile    *gfile,
-                gboolean  executable,
-                GError  **error)
+set_executable (GFile   *gfile,
+                gboolean executable,
+                GError **error)
 {
-  GError *error_local = NULL;
-  guint32 mode = 0111, mask = 0111;
-  guint32 old_mode, new_mode;
+  GError    *error_local = NULL;
+  guint32    mode = 0111, mask = 0111;
+  guint32    old_mode, new_mode;
   GFileInfo *info;
 
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-  g_return_val_if_fail (G_IS_FILE (gfile),               FALSE);
+  g_return_val_if_fail (G_IS_FILE (gfile), FALSE);
 
 
   info = g_file_query_info (gfile,
@@ -178,13 +189,14 @@ set_executable (GFile    *gfile,
   old_mode = g_file_info_get_attribute_uint32 (info, G_FILE_ATTRIBUTE_UNIX_MODE);
   new_mode = executable ? ((old_mode & ~mask) | mode) : (old_mode & ~mask);
 
-  if (old_mode != new_mode) {
-    g_file_set_attribute_uint32 (gfile,
-                                 G_FILE_ATTRIBUTE_UNIX_MODE, new_mode,
-                                 G_FILE_QUERY_INFO_NONE,
-                                 NULL,
-                                 &error_local);
-  }
+  if (old_mode != new_mode)
+    {
+      g_file_set_attribute_uint32 (gfile,
+                                   G_FILE_ATTRIBUTE_UNIX_MODE, new_mode,
+                                   G_FILE_QUERY_INFO_NONE,
+                                   NULL,
+                                   &error_local);
+    }
   g_object_unref (info);
 
   if (error_local != NULL)
@@ -210,7 +222,6 @@ thunar_apr_desktop_page_class_init (ThunarAprDesktopPageClass *klass)
   thunarapr_abstract_page_class = THUNAR_APR_ABSTRACT_PAGE_CLASS (klass);
   thunarapr_abstract_page_class->file_changed = thunar_apr_desktop_page_file_changed;
 }
-
 
 
 
@@ -791,7 +802,7 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
         {
           trusted = FALSE;
           if (desktop_page->trusted_button != NULL)
-            trusted  = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button));
+            trusted = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button));
 
           /* try to save the key file content to disk */
           fp = fopen (filename, "w");
@@ -876,8 +887,8 @@ thunar_apr_desktop_page_save_widget (ThunarAprDesktopPage *desktop_page,
                                      GtkWidget            *widget,
                                      GKeyFile             *key_file)
 {
-  const gchar * const *locale;
-  gchar               *key;
+  const gchar *const *locale;
+  gchar              *key;
 
   if (widget == desktop_page->description_entry)
     {
@@ -1070,7 +1081,7 @@ thunar_apr_desktop_page_program_toggled (GtkWidget            *button,
       return;
     }
 
-  trusted  = (desktop_page->trusted_button != NULL) ? gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button)) : FALSE;
+  trusted = (desktop_page->trusted_button != NULL) ? gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button)) : FALSE;
   /* if the executable flag is unset, that will as well unset the trusted flag */
   if (!executable && trusted)
     if (desktop_page->trusted_button != NULL)
@@ -1093,7 +1104,7 @@ thunar_apr_desktop_page_trusted_toggled (GtkWidget            *button,
 
   gfile = thunarx_file_info_get_location (THUNAR_APR_ABSTRACT_PAGE (desktop_page)->file);
 
-  trusted  = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button));
+  trusted = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button));
   xfce_g_file_set_trusted (gfile, trusted, NULL, &error);
 
   g_object_unref (gfile);

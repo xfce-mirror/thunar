@@ -25,18 +25,17 @@
 #include <gio/gio.h>
 
 #ifdef HAVE_GIO_UNIX
-#include <gio/gunixmounts.h>
 #include <gio/gdesktopappinfo.h>
+#include <gio/gunixmounts.h>
 #endif
-
-#include <libxfce4util/libxfce4util.h>
 
 #include "thunar/thunar-file.h"
 #include "thunar/thunar-gio-extensions.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-util.h"
-#include "thunar/thunar-file.h"
+
+#include <libxfce4util/libxfce4util.h>
 
 
 
@@ -46,6 +45,8 @@ static struct
   const gchar *icon_name;
   const gchar *type;
 }
+
+/* clang-format off */
 device_icon_name [] =
 {
   /* Implementation specific */
@@ -71,16 +72,20 @@ device_icon_name [] =
   { "phone*"                 , N_("Phone") },
   { NULL                     , NULL }
 };
+/* clang-format on */
 
 
 
-static const gchar     *guess_device_type_from_icon_name           (const gchar *icon_name);
-static       GFileInfo *thunar_g_file_get_content_type_querry_info (GFile       *gfile,
-                                                                    GError      *err);
-static       void       thunar_g_file_info_set_attribute           (GFileInfo   *info,
-                                                                    ThunarGType  type,
-                                                                    const gchar *setting_name,
-                                                                    const gchar *setting_value);
+static const gchar *
+guess_device_type_from_icon_name (const gchar *icon_name);
+static GFileInfo *
+thunar_g_file_get_content_type_querry_info (GFile  *gfile,
+                                            GError *err);
+static void
+thunar_g_file_info_set_attribute (GFileInfo   *info,
+                                  ThunarGType  type,
+                                  const gchar *setting_name,
+                                  const gchar *setting_value);
 
 GFile *
 thunar_g_file_new_for_home (void)
@@ -165,16 +170,16 @@ thunar_g_file_new_for_bookmarks (void)
 GFile *
 thunar_g_file_resolve_symlink (GFile *file)
 {
-  gchar       *basename;
-  GFile       *parent = NULL;
-  GFile       *target = NULL;
+  gchar *basename;
+  GFile *parent = NULL;
+  GFile *target = NULL;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
 
   parent = g_file_get_parent (file);
   if (parent == NULL)
     return NULL;
-  
+
   basename = g_file_get_basename (file);
   if (basename == NULL)
     {
@@ -246,7 +251,7 @@ thunar_g_file_is_home (GFile *file)
 gboolean
 thunar_g_file_is_trash (GFile *file)
 {
-  char *uri;
+  char    *uri;
   gboolean is_trash = FALSE;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
@@ -263,7 +268,7 @@ thunar_g_file_is_trash (GFile *file)
 gboolean
 thunar_g_file_is_recent (GFile *file)
 {
-  char *uri;
+  char    *uri;
   gboolean is_recent = FALSE;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
@@ -280,7 +285,7 @@ thunar_g_file_is_recent (GFile *file)
 gboolean
 thunar_g_file_is_computer (GFile *file)
 {
-  char *uri;
+  char    *uri;
   gboolean is_computer = FALSE;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
@@ -297,7 +302,7 @@ thunar_g_file_is_computer (GFile *file)
 gboolean
 thunar_g_file_is_network (GFile *file)
 {
-  char *uri;
+  char    *uri;
   gboolean is_network = FALSE;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
@@ -312,9 +317,9 @@ thunar_g_file_is_network (GFile *file)
 
 
 GKeyFile *
-thunar_g_file_query_key_file (GFile              *file,
-                              GCancellable       *cancellable,
-                              GError            **error)
+thunar_g_file_query_key_file (GFile        *file,
+                              GCancellable *cancellable,
+                              GError      **error)
 {
   GKeyFile *key_file;
   gchar    *contents = NULL;
@@ -333,10 +338,10 @@ thunar_g_file_query_key_file (GFile              *file,
 
   /* try to parse the key file from the contents of the file */
   if (G_LIKELY (length == 0
-      || g_key_file_load_from_data (key_file, contents, length,
-                                    G_KEY_FILE_KEEP_COMMENTS
-                                    | G_KEY_FILE_KEEP_TRANSLATIONS,
-                                    error)))
+                || g_key_file_load_from_data (key_file, contents, length,
+                                              G_KEY_FILE_KEEP_COMMENTS
+                                              | G_KEY_FILE_KEEP_TRANSLATIONS,
+                                              error)))
     {
       g_free (contents);
       return key_file;
@@ -357,9 +362,9 @@ thunar_g_file_write_key_file (GFile        *file,
                               GCancellable *cancellable,
                               GError      **error)
 {
-  gchar    *contents;
-  gsize     length;
-  gboolean  result = TRUE;
+  gchar   *contents;
+  gsize    length;
+  gboolean result = TRUE;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (key_file != NULL, FALSE);
@@ -402,9 +407,9 @@ thunar_g_file_get_location (GFile *file)
 
 
 static const gchar *
-guess_device_type_from_icon_name (const gchar * icon_name)
+guess_device_type_from_icon_name (const gchar *icon_name)
 {
-  for (int i = 0; device_icon_name[i].type != NULL ; i++)
+  for (int i = 0; device_icon_name[i].type != NULL; i++)
     {
       if (g_pattern_match_simple (device_icon_name[i].icon_name, icon_name))
         return g_dgettext (NULL, device_icon_name[i].type);
@@ -423,10 +428,10 @@ guess_device_type_from_icon_name (const gchar * icon_name)
 const gchar *
 thunar_g_file_guess_device_type (GFile *file)
 {
-  GFileInfo         *fileinfo    = NULL;
-  GIcon             *icon        = NULL;
-  const gchar       *icon_name   = NULL;
-  const gchar       *device_type = NULL;
+  GFileInfo   *fileinfo = NULL;
+  GIcon       *icon = NULL;
+  const gchar *icon_name = NULL;
+  const gchar *device_type = NULL;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
 
@@ -473,11 +478,11 @@ thunar_g_file_get_display_name (GFile *file)
         display_name = g_uri_escape_string (base_name, G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, TRUE);
 
       g_free (base_name);
-   }
- else
-   {
-     display_name = g_strdup ("?");
-   }
+    }
+  else
+    {
+      display_name = g_strdup ("?");
+    }
 
   return display_name;
 }
@@ -525,8 +530,8 @@ thunar_g_file_get_display_name_remote (GFile *mount_point)
                 {
                   skip = strchr (p, skip_chars[n]);
                   if (skip != NULL
-                       && (path == NULL || skip < path)
-                       && (skip < firstdot))
+                      && (path == NULL || skip < path)
+                      && (skip < firstdot))
                     p = skip + 1;
                 }
             }
@@ -569,10 +574,10 @@ thunar_g_file_get_display_name_remote (GFile *mount_point)
 gboolean
 thunar_g_vfs_is_uri_scheme_supported (const gchar *scheme)
 {
-  const gchar * const *supported_schemes;
-  gboolean             supported = FALSE;
-  guint                n;
-  GVfs                *gvfs;
+  const gchar *const *supported_schemes;
+  gboolean            supported = FALSE;
+  guint               n;
+  GVfs               *gvfs;
 
   _thunar_return_val_if_fail (scheme != NULL && *scheme != '\0', FALSE);
 
@@ -644,11 +649,11 @@ thunar_g_file_get_free_space (GFile   *file,
 gchar *
 thunar_g_file_get_free_space_string (GFile *file, gboolean file_size_binary)
 {
-  gchar             *fs_size_free_str;
-  gchar             *fs_size_used_str;
-  guint64            fs_size_free;
-  guint64            fs_size_total;
-  gchar             *free_space_string = NULL;
+  gchar  *fs_size_free_str;
+  gchar  *fs_size_used_str;
+  guint64 fs_size_free;
+  guint64 fs_size_total;
+  gchar  *free_space_string = NULL;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
 
@@ -658,8 +663,8 @@ thunar_g_file_get_free_space_string (GFile *file, gboolean file_size_binary)
       fs_size_used_str = g_format_size_full (fs_size_total - fs_size_free, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
 
       free_space_string = g_strdup_printf (_("%s used (%.0f%%)  |  %s free (%.0f%%)"),
-                                   fs_size_used_str, ((fs_size_total - fs_size_free) * 100.0 / fs_size_total),
-                                   fs_size_free_str, (fs_size_free * 100.0 / fs_size_total));
+                                           fs_size_used_str, ((fs_size_total - fs_size_free) * 100.0 / fs_size_total),
+                                           fs_size_free_str, (fs_size_free * 100.0 / fs_size_total));
 
       g_free (fs_size_free_str);
       g_free (fs_size_used_str);
@@ -677,7 +682,7 @@ thunar_g_file_list_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      type = g_boxed_type_register_static (I_("ThunarGFileList"),
+      type = g_boxed_type_register_static (I_ ("ThunarGFileList"),
                                            (GBoxedCopyFunc) thunar_g_list_copy_deep,
                                            (GBoxedFreeFunc) thunar_g_list_free_full);
     }
@@ -687,7 +692,7 @@ thunar_g_file_list_get_type (void)
 
 
 
-static GHashTable*
+static GHashTable *
 thunar_g_hastable_copy_deep (GHashTable *table)
 {
   GHashTable    *copy = g_hash_table_new_full (g_direct_hash, NULL, g_object_unref, NULL);
@@ -709,7 +714,7 @@ thunar_g_file_hastable_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      type = g_boxed_type_register_static (I_("ThunarGHashTableList"),
+      type = g_boxed_type_register_static (I_ ("ThunarGHashTableList"),
                                            (GBoxedCopyFunc) thunar_g_hastable_copy_deep,
                                            (GBoxedFreeFunc) g_hash_table_destroy);
     }
@@ -807,7 +812,7 @@ thunar_g_file_copy (GFile                *source,
     }
 
   /* generate partial file name */
-  base_name    = g_file_get_basename (destination);
+  base_name = g_file_get_basename (destination);
   if (base_name == NULL)
     {
       base_name = g_strdup ("UNNAMED");
@@ -815,10 +820,10 @@ thunar_g_file_copy (GFile                *source,
 
   /* limit filename length */
   partial_name = g_strdup_printf ("%.100s.partial~", base_name);
-  parent       = g_file_get_parent (destination);
+  parent = g_file_get_parent (destination);
 
   /* parent can't be NULL since destination must be a file */
-  partial      = g_file_get_child (parent, partial_name);
+  partial = g_file_get_child (parent, partial_name);
   g_clear_object (&parent);
   g_free (partial_name);
 
@@ -835,7 +840,7 @@ thunar_g_file_copy (GFile                *source,
       GFile *renamed_file = g_file_set_display_name (partial, base_name, NULL, error);
       success = (renamed_file != NULL);
       if (success)
-         g_object_unref (renamed_file);
+        g_object_unref (renamed_file);
     }
 
   if (!success)
@@ -953,7 +958,7 @@ thunar_g_file_list_to_stringv (GList *list)
       else
         {
           uris[n++] = g_filename_to_uri (path, NULL, NULL);
-          g_free(path);
+          g_free (path);
         }
     }
 
@@ -972,14 +977,14 @@ thunar_g_file_list_to_stringv (GList *list)
  *
  * Return value: A list of #GFile<!---->s of all parent folders. Free the returned list with calling g_object_unref() on each element
  **/
-GList*
+GList *
 thunar_g_file_list_get_parents (GList *file_list)
 {
-  GList    *lp_file_list;
-  GList    *lp_parent_folder_list;
-  GFile    *parent_folder;
-  GList    *parent_folder_list = NULL;
-  gboolean  folder_already_added;
+  GList   *lp_file_list;
+  GList   *lp_parent_folder_list;
+  GFile   *parent_folder;
+  GList   *parent_folder_list = NULL;
+  gboolean folder_already_added;
 
   for (lp_file_list = file_list; lp_file_list != NULL; lp_file_list = lp_file_list->next)
     {
@@ -1024,7 +1029,7 @@ thunar_g_file_is_descendant (GFile *descendant,
                              GFile *ancestor)
 {
   _thunar_return_val_if_fail (descendant != NULL && G_IS_FILE (descendant), FALSE);
-  _thunar_return_val_if_fail (ancestor   != NULL && G_IS_FILE (ancestor),   FALSE);
+  _thunar_return_val_if_fail (ancestor != NULL && G_IS_FILE (ancestor), FALSE);
 
   for (GFile *parent = g_object_ref (descendant), *temp;
        parent != NULL;
@@ -1049,15 +1054,15 @@ thunar_g_app_info_launch (GAppInfo          *info,
                           GAppLaunchContext *context,
                           GError           **error)
 {
-  ThunarFile   *file;
-  GAppInfo     *default_app_info;
-  GList        *recommended_app_infos;
-  GList        *lp;
-  const gchar  *content_type;
-  gboolean      result = FALSE;
-  gchar        *new_path = NULL;
-  gchar        *old_path = NULL;
-  gboolean      skip_app_info_update;
+  ThunarFile  *file;
+  GAppInfo    *default_app_info;
+  GList       *recommended_app_infos;
+  GList       *lp;
+  const gchar *content_type;
+  gboolean     result = FALSE;
+  gchar       *new_path = NULL;
+  gchar       *old_path = NULL;
+  gboolean     skip_app_info_update;
 
   _thunar_return_val_if_fail (G_IS_APP_INFO (info), FALSE);
   _thunar_return_val_if_fail (working_directory == NULL || G_IS_FILE (working_directory), FALSE);
@@ -1223,19 +1228,19 @@ thunar_g_vfs_metadata_is_supported (void)
 gboolean
 thunar_g_file_is_on_local_device (GFile *file)
 {
-  gboolean  is_local = FALSE;
-  GFile    *target_file;
-  GFile    *target_parent;
-  GMount   *file_mount;
+  gboolean is_local = FALSE;
+  GFile   *target_file;
+  GFile   *target_parent;
+  GMount  *file_mount;
 
   _thunar_return_val_if_fail (file != NULL, TRUE);
   _thunar_return_val_if_fail (G_IS_FILE (file), TRUE);
 
   if (g_file_has_uri_scheme (file, "file") == FALSE)
     return FALSE;
-  for (target_file  = g_object_ref (file);
+  for (target_file = g_object_ref (file);
        target_file != NULL;
-       target_file  = target_parent)
+       target_file = target_parent)
     {
       if (g_file_query_exists (target_file, NULL))
         break;
@@ -1259,7 +1264,7 @@ thunar_g_file_is_on_local_device (GFile *file)
       /* mountpoints which cannot be unmounted are local devices.
        * attached devices like USB key/disk, fuse mounts, Samba shares,
        * PTP devices can always be unmounted and are considered remote/slow. */
-      is_local = ! g_mount_can_unmount (file_mount);
+      is_local = !g_mount_can_unmount (file_mount);
       g_object_unref (file_mount);
     }
 
@@ -1280,9 +1285,9 @@ gboolean
 thunar_g_file_set_executable_flags (GFile   *file,
                                     GError **error)
 {
-  ThunarFileMode  old_mode;
-  ThunarFileMode  new_mode;
-  GFileInfo      *info;
+  ThunarFileMode old_mode;
+  ThunarFileMode new_mode;
+  GFileInfo     *info;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -1335,10 +1340,10 @@ thunar_g_file_set_executable_flags (GFile   *file,
 gboolean
 thunar_g_file_is_in_xdg_data_dir (GFile *file)
 {
-    const gchar * const *data_dirs;
-    guint                i;
-    gchar               *path;
-    gboolean             found = FALSE;
+  const gchar *const *data_dirs;
+  guint               i;
+  gchar              *path;
+  gboolean            found = FALSE;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
 
@@ -1351,15 +1356,15 @@ thunar_g_file_is_in_xdg_data_dir (GFile *file)
           for (i = 0; data_dirs[i] != NULL; i++)
             {
               if (g_str_has_prefix (path, data_dirs[i]))
-              {
-                found = TRUE;
-                break;
-              }
+                {
+                  found = TRUE;
+                  break;
+                }
             }
           g_free (path);
         }
     }
-    return found;
+  return found;
 }
 
 
@@ -1391,7 +1396,7 @@ thunar_g_file_is_desktop_file (GFile *file)
         is_desktop_file = TRUE;
       g_object_unref (info);
     }
-  
+
   g_free (basename);
   return is_desktop_file;
 }
@@ -1412,49 +1417,46 @@ char *
 thunar_g_file_get_link_path_for_symlink (GFile *file_to_link,
                                          GFile *symlink)
 {
-    GFile *root;
-    GFile *parent;
-    char  *relative_path;
-    char  *link_path;
+  GFile *root;
+  GFile *parent;
+  char  *relative_path;
+  char  *link_path;
 
   _thunar_return_val_if_fail (G_IS_FILE (file_to_link), NULL);
   _thunar_return_val_if_fail (G_IS_FILE (symlink), NULL);
 
-    /* */
-    if (g_file_is_native (file_to_link) || g_file_is_native (symlink))
+  /* */
+  if (g_file_is_native (file_to_link) || g_file_is_native (symlink))
     {
-        return g_file_get_path (file_to_link);
+      return g_file_get_path (file_to_link);
     }
 
-    /* Search for the filesystem root */
-    root = g_object_ref (file_to_link);
-    while ((parent = g_file_get_parent (root)) != NULL)
+  /* Search for the filesystem root */
+  root = g_object_ref (file_to_link);
+  while ((parent = g_file_get_parent (root)) != NULL)
     {
-        g_object_unref (root);
-        root = parent;
+      g_object_unref (root);
+      root = parent;
     }
 
-    /* Build a absolute path, using the relative path up to the filesystem root */
-    relative_path = g_file_get_relative_path (root, file_to_link);
-    g_object_unref (root);
-    link_path = g_strconcat ("/", relative_path, NULL);
-    g_free (relative_path);
-    return link_path;
+  /* Build a absolute path, using the relative path up to the filesystem root */
+  relative_path = g_file_get_relative_path (root, file_to_link);
+  g_object_unref (root);
+  link_path = g_strconcat ("/", relative_path, NULL);
+  g_free (relative_path);
+  return link_path;
 }
 
 
 
-static GFileInfo*
-thunar_g_file_get_content_type_querry_info (GFile *gfile,
+static GFileInfo *
+thunar_g_file_get_content_type_querry_info (GFile  *gfile,
                                             GError *err)
 {
-  GFileInfo   *info = NULL;
+  GFileInfo *info = NULL;
 
   info = g_file_query_info (gfile,
-                            G_FILE_ATTRIBUTE_STANDARD_TYPE ","
-                            G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK ","
-                            G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
-                            G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+                            G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK "," G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE "," G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
                             G_FILE_QUERY_INFO_NONE,
                             NULL, &err);
   return info;
@@ -1468,16 +1470,16 @@ thunar_g_file_get_content_type_querry_info (GFile *gfile,
  *
  * Gets the content type of the passed #GFile. Will always return a valid string.
  *
- * Return value: (transfer full): The content type as #gchar 
+ * Return value: (transfer full): The content type as #gchar
  * The returned string should be freed with g_free() when no longer needed.
  **/
-char*
+char *
 thunar_g_file_get_content_type (GFile *gfile)
 {
-  gboolean     is_symlink = FALSE;
-  GFileInfo   *info = NULL;
-  GError      *err = NULL;
-  gchar       *content_type = NULL;
+  gboolean   is_symlink = FALSE;
+  GFileInfo *info = NULL;
+  GError    *err = NULL;
+  gchar     *content_type = NULL;
 
   info = thunar_g_file_get_content_type_querry_info (gfile, err);
 
@@ -1515,17 +1517,17 @@ thunar_g_file_get_content_type (GFile *gfile)
   else
     {
       /* If gfile retrieved above is NULL, then g_file_query_info won't be called, thus keeping info NULL.
-        * In this case, err will also be NULL. So it will fallback to "unknown" mime-type */
+       * In this case, err will also be NULL. So it will fallback to "unknown" mime-type */
       if (G_LIKELY (err != NULL))
         {
           /* The mime-type 'inode/symlink' is  only used for broken links.
-            * When the link is functional, the mime-type of the link target will be used */
+           * When the link is functional, the mime-type of the link target will be used */
           if (G_LIKELY (is_symlink && err->code == G_IO_ERROR_NOT_FOUND))
-              content_type = g_strdup ("inode/symlink");
+            content_type = g_strdup ("inode/symlink");
           else
-              g_warning ("Content type loading failed for %s: %s",
-                          g_file_get_uri (gfile),
-                          err->message);
+            g_warning ("Content type loading failed for %s: %s",
+                       g_file_get_uri (gfile),
+                       err->message);
           g_error_free (err);
         }
     }
@@ -1578,11 +1580,11 @@ thunar_g_file_info_set_attribute (GFileInfo   *info,
 {
   switch (type)
     {
-      case THUNAR_GTYPE_STRING:
-        g_file_info_set_attribute_string (info, setting_name, setting_value);
-        break;
+    case THUNAR_GTYPE_STRING:
+      g_file_info_set_attribute_string (info, setting_name, setting_value);
+      break;
 
-      case THUNAR_GTYPE_STRINGV:
+    case THUNAR_GTYPE_STRINGV:
       {
         gchar **setting_values;
         setting_values = g_strsplit (setting_value, THUNAR_METADATA_STRING_DELIMETER, 100);
@@ -1591,25 +1593,25 @@ thunar_g_file_info_set_attribute (GFileInfo   *info,
         break;
       }
 
-      default:
-        g_warning ("ThunarGType not supported, skipping");
-        break;
+    default:
+      g_warning ("ThunarGType not supported, skipping");
+      break;
     }
 }
 
 
 
-static gchar*
+static gchar *
 thunar_g_file_info_get_attribute (GFileInfo   *info,
                                   ThunarGType  type,
                                   const gchar *setting_name)
 {
   switch (type)
     {
-      case THUNAR_GTYPE_STRING:
-        return g_strdup (g_file_info_get_attribute_string (info, setting_name));
+    case THUNAR_GTYPE_STRING:
+      return g_strdup (g_file_info_get_attribute_string (info, setting_name));
 
-      case THUNAR_GTYPE_STRINGV:
+    case THUNAR_GTYPE_STRINGV:
       {
         gchar **stringv = g_file_info_get_attribute_stringv (info, setting_name);
         GList  *string_list = NULL;
@@ -1626,9 +1628,9 @@ thunar_g_file_info_get_attribute (GFileInfo   *info,
         return joined_string;
       }
 
-      default:
-        g_warning ("ThunarGType not supported, skipping");
-        return NULL;
+    default:
+      g_warning ("ThunarGType not supported, skipping");
+      return NULL;
     }
 }
 

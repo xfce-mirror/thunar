@@ -35,15 +35,20 @@ enum
 
 
 
-static void         thunar_icon_view_set_property           (GObject             *object,
-                                                             guint                prop_id,
-                                                             const GValue        *value,
-                                                             GParamSpec          *pspec);
-static AtkObject   *thunar_icon_view_get_accessible         (GtkWidget           *widget);
-static void         thunar_icon_view_style_set              (GtkWidget           *widget,
-                                                             GtkStyle            *previous_style);
-static void         thunar_icon_view_set_consistent_horizontal_spacing (ThunarIconView *icon_view);
-static void         thunar_icon_view_zoom_level_changed     (ThunarStandardView  *standard_view);
+static void
+thunar_icon_view_set_property (GObject      *object,
+                               guint         prop_id,
+                               const GValue *value,
+                               GParamSpec   *pspec);
+static AtkObject *
+thunar_icon_view_get_accessible (GtkWidget *widget);
+static void
+thunar_icon_view_style_set (GtkWidget *widget,
+                            GtkStyle  *previous_style);
+static void
+thunar_icon_view_set_consistent_horizontal_spacing (ThunarIconView *icon_view);
+static void
+thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view);
 
 
 
@@ -161,7 +166,7 @@ thunar_icon_view_set_property (GObject      *object,
 
 
 
-static AtkObject*
+static AtkObject *
 thunar_icon_view_get_accessible (GtkWidget *widget)
 {
   AtkObject *object;
@@ -217,7 +222,7 @@ thunar_icon_view_set_consistent_horizontal_spacing (ThunarIconView *icon_view)
   column_spacing = exo_icon_view_get_column_spacing (exo_icon_view);
 
   /* set consistent horizontal spacing */
-  exo_icon_view_set_item_width (exo_icon_view, wrap_width + MAX(0, xpad * 2 - column_spacing));
+  exo_icon_view_set_item_width (exo_icon_view, wrap_width + MAX (0, xpad * 2 - column_spacing));
 }
 
 
@@ -267,9 +272,4 @@ thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view)
   /* Like that rubber band selection can be done properly on high zoom levels */
   /* Without margin adjustment it would be almost impossible to start the selection on the left */
   exo_icon_view_set_margin (exo_icon_view, thunar_zoom_level_to_view_margin (zoom_level));
-
 }
-
-
-
-

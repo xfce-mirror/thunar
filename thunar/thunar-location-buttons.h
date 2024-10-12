@@ -27,14 +27,15 @@ G_BEGIN_DECLS;
 typedef struct _ThunarLocationButtonsClass ThunarLocationButtonsClass;
 typedef struct _ThunarLocationButtons      ThunarLocationButtons;
 
-#define THUNAR_TYPE_LOCATION_BUTTONS            (thunar_location_buttons_get_type ())
-#define THUNAR_LOCATION_BUTTONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_LOCATION_BUTTONS, ThunarLocationButtons))
-#define THUNAR_LOCATION_BUTTONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_LOCATION_BUTTONS, ThunarLocationButtonsClass))
-#define THUNAR_IS_LOCATION_BUTTONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_LOCATION_BUTTONS))
+#define THUNAR_TYPE_LOCATION_BUTTONS (thunar_location_buttons_get_type ())
+#define THUNAR_LOCATION_BUTTONS(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_LOCATION_BUTTONS, ThunarLocationButtons))
+#define THUNAR_LOCATION_BUTTONS_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_LOCATION_BUTTONS, ThunarLocationButtonsClass))
+#define THUNAR_IS_LOCATION_BUTTONS(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_LOCATION_BUTTONS))
 #define THUNAR_IS_LOCATION_BUTTONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_LOCATION_BUTTONS))
-#define THUNAR_LOCATION_BUTTONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_LOCATION_BUTTONS, ThunarLocationButtonsClass))
+#define THUNAR_LOCATION_BUTTONS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_LOCATION_BUTTONS, ThunarLocationButtonsClass))
 
-GType      thunar_location_buttons_get_type (void) G_GNUC_CONST;
+GType
+thunar_location_buttons_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS;
 

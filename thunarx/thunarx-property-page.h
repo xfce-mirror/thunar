@@ -33,12 +33,12 @@ typedef struct _ThunarxPropertyPagePrivate ThunarxPropertyPagePrivate;
 typedef struct _ThunarxPropertyPageClass   ThunarxPropertyPageClass;
 typedef struct _ThunarxPropertyPage        ThunarxPropertyPage;
 
-#define THUNARX_TYPE_PROPERTY_PAGE            (thunarx_property_page_get_type ())
-#define THUNARX_PROPERTY_PAGE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_PROPERTY_PAGE, ThunarxPropertyPage))
-#define THUNARX_PROPERTY_PAGE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNARX_TYPE_PROPERTY_PAGE, ThunarxPropertyPageClass))
-#define THUNARX_IS_PROPERTY_PAGE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_PROPERTY_PAGE))
+#define THUNARX_TYPE_PROPERTY_PAGE (thunarx_property_page_get_type ())
+#define THUNARX_PROPERTY_PAGE(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_PROPERTY_PAGE, ThunarxPropertyPage))
+#define THUNARX_PROPERTY_PAGE_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNARX_TYPE_PROPERTY_PAGE, ThunarxPropertyPageClass))
+#define THUNARX_IS_PROPERTY_PAGE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_PROPERTY_PAGE))
 #define THUNARX_IS_PROPERTY_PAGE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNARX_TYPE_PROPERTY_PAGE))
-#define THUNARX_PROPERTY_PAGE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNARX_TYPE_PROPERTY_PAGE))
+#define THUNARX_PROPERTY_PAGE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNARX_TYPE_PROPERTY_PAGE))
 
 struct _ThunarxPropertyPageClass
 {
@@ -59,18 +59,25 @@ struct _ThunarxPropertyPage
   ThunarxPropertyPagePrivate *priv;
 };
 
-GType        thunarx_property_page_get_type              (void) G_GNUC_CONST;
+GType
+thunarx_property_page_get_type (void) G_GNUC_CONST;
 
-GtkWidget   *thunarx_property_page_new                   (const gchar         *label) G_GNUC_MALLOC;
-GtkWidget   *thunarx_property_page_new_with_label_widget (GtkWidget           *label_widget) G_GNUC_MALLOC;
+GtkWidget *
+thunarx_property_page_new (const gchar *label) G_GNUC_MALLOC;
+GtkWidget *
+thunarx_property_page_new_with_label_widget (GtkWidget *label_widget) G_GNUC_MALLOC;
 
-const gchar *thunarx_property_page_get_label             (ThunarxPropertyPage *property_page);
-void         thunarx_property_page_set_label             (ThunarxPropertyPage *property_page,
-                                                          const gchar         *label);
+const gchar *
+thunarx_property_page_get_label (ThunarxPropertyPage *property_page);
+void
+thunarx_property_page_set_label (ThunarxPropertyPage *property_page,
+                                 const gchar         *label);
 
-GtkWidget   *thunarx_property_page_get_label_widget      (ThunarxPropertyPage *property_page);
-void         thunarx_property_page_set_label_widget      (ThunarxPropertyPage *property_page,
-                                                          GtkWidget           *label_widget);
+GtkWidget *
+thunarx_property_page_get_label_widget (ThunarxPropertyPage *property_page);
+void
+thunarx_property_page_set_label_widget (ThunarxPropertyPage *property_page,
+                                        GtkWidget           *label_widget);
 
 G_END_DECLS
 

@@ -22,10 +22,10 @@
 #include "config.h"
 #endif
 
-#include <glib/gi18n-lib.h>
-
 #include "thunarx/thunarx-private.h"
 #include "thunarx/thunarx-property-page.h"
+
+#include <glib/gi18n-lib.h>
 
 
 
@@ -64,15 +64,18 @@ enum
 
 
 
-static void thunarx_property_page_get_property  (GObject                  *object,
-                                                 guint                     prop_id,
-                                                 GValue                   *value,
-                                                 GParamSpec               *pspec);
-static void thunarx_property_page_set_property  (GObject                  *object,
-                                                 guint                     prop_id,
-                                                 const GValue             *value,
-                                                 GParamSpec               *pspec);
-static void thunarx_property_page_destroy       (GtkWidget                *object);
+static void
+thunarx_property_page_get_property (GObject    *object,
+                                    guint       prop_id,
+                                    GValue     *value,
+                                    GParamSpec *pspec);
+static void
+thunarx_property_page_set_property (GObject      *object,
+                                    guint         prop_id,
+                                    const GValue *value,
+                                    GParamSpec   *pspec);
+static void
+thunarx_property_page_destroy (GtkWidget *object);
 
 
 
@@ -109,7 +112,7 @@ thunarx_property_page_class_init (ThunarxPropertyPageClass *klass)
                                    PROP_LABEL,
                                    g_param_spec_string ("label",
                                                         _("Label"),
-                                                        _("Text of the page's label"),
+                                                          _("Text of the page's label"),
                                                         NULL,
                                                         G_PARAM_READWRITE));
 
@@ -122,7 +125,7 @@ thunarx_property_page_class_init (ThunarxPropertyPageClass *klass)
                                    PROP_LABEL_WIDGET,
                                    g_param_spec_object ("label-widget",
                                                         _("Label widget"),
-                                                        _("A widget to display in place of the usual page label"),
+                                                          _("A widget to display in place of the usual page label"),
                                                         GTK_TYPE_WIDGET,
                                                         G_PARAM_READWRITE));
 }
@@ -217,7 +220,7 @@ thunarx_property_page_destroy (GtkWidget *object)
  * Return value: the newly allocated #ThunarxPropertyPage
  *               widget.
  **/
-GtkWidget*
+GtkWidget *
 thunarx_property_page_new (const gchar *label)
 {
   return g_object_new (THUNARX_TYPE_PROPERTY_PAGE, "label", label, NULL);
@@ -234,7 +237,7 @@ thunarx_property_page_new (const gchar *label)
  *
  * Return value: the newly allocated #ThunarxPropertyPage widget.
  **/
-GtkWidget*
+GtkWidget *
 thunarx_property_page_new_with_label_widget (GtkWidget *label_widget)
 {
   return g_object_new (THUNARX_TYPE_PROPERTY_PAGE, "label-widget", label_widget, NULL);
@@ -254,7 +257,7 @@ thunarx_property_page_new_with_label_widget (GtkWidget *label_widget)
  *               the label widget was not a #GtkLabel. The returned string is
  *               owned by the @property_page and must not be modified or freed.
  **/
-const gchar*
+const gchar *
 thunarx_property_page_get_label (ThunarxPropertyPage *property_page)
 {
   g_return_val_if_fail (THUNARX_IS_PROPERTY_PAGE (property_page), NULL);
@@ -306,7 +309,7 @@ thunarx_property_page_set_label (ThunarxPropertyPage *property_page,
  *
  * Returns: (transfer none): the label widget or %NULL if there is none.
  **/
-GtkWidget*
+GtkWidget *
 thunarx_property_page_get_label_widget (ThunarxPropertyPage *property_page)
 {
   g_return_val_if_fail (THUNARX_IS_PROPERTY_PAGE (property_page), NULL);

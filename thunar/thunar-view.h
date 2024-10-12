@@ -29,73 +29,85 @@ G_BEGIN_DECLS;
 typedef struct _ThunarViewIface ThunarViewIface;
 typedef struct _ThunarView      ThunarView;
 
-#define THUNAR_TYPE_VIEW            (thunar_view_get_type ())
-#define THUNAR_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_VIEW, ThunarView))
-#define THUNAR_IS_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_VIEW))
-#define THUNAR_VIEW_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNAR_TYPE_VIEW, ThunarViewIface))
+#define THUNAR_TYPE_VIEW (thunar_view_get_type ())
+#define THUNAR_VIEW(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_VIEW, ThunarView))
+#define THUNAR_IS_VIEW(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_VIEW))
+#define THUNAR_VIEW_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNAR_TYPE_VIEW, ThunarViewIface))
 
 struct _ThunarViewIface
 {
   GTypeInterface __parent__;
 
   /* virtual methods */
-  gboolean        (*get_loading)        (ThunarView     *view);
-  gboolean        (*get_show_hidden)    (ThunarView     *view);
-  void            (*set_show_hidden)    (ThunarView     *view,
-                                         gboolean        show_hidden);
+  gboolean (*get_loading) (ThunarView *view);
+  gboolean (*get_show_hidden) (ThunarView *view);
+  void (*set_show_hidden) (ThunarView *view,
+                           gboolean    show_hidden);
 
-  ThunarZoomLevel (*get_zoom_level)     (ThunarView     *view);
-  void            (*set_zoom_level)     (ThunarView     *view,
-                                         ThunarZoomLevel zoom_level);
-  void            (*reset_zoom_level)   (ThunarView     *view);
+  ThunarZoomLevel (*get_zoom_level) (ThunarView *view);
+  void (*set_zoom_level) (ThunarView     *view,
+                          ThunarZoomLevel zoom_level);
+  void (*reset_zoom_level) (ThunarView *view);
 
-  void            (*reload)             (ThunarView     *view,
-                                         gboolean        reload_info);
+  void (*reload) (ThunarView *view,
+                  gboolean    reload_info);
 
-  gboolean        (*get_visible_range)  (ThunarView     *view,
-                                         ThunarFile    **start_file,
-                                         ThunarFile    **end_file);
+  gboolean (*get_visible_range) (ThunarView  *view,
+                                 ThunarFile **start_file,
+                                 ThunarFile **end_file);
 
-  void            (*scroll_to_file)     (ThunarView     *view,
-                                         ThunarFile     *file,
-                                         gboolean        select,
-                                         gboolean        use_align,
-                                         gfloat          row_align,
-                                         gfloat          col_align);
-  GList*          (*get_selected_files) (ThunarView     *view);
-  void            (*set_selected_files) (ThunarView     *view,
-                                         GList          *path_list);
+  void (*scroll_to_file) (ThunarView *view,
+                          ThunarFile *file,
+                          gboolean    select,
+                          gboolean    use_align,
+                          gfloat      row_align,
+                          gfloat      col_align);
+  GList *(*get_selected_files) (ThunarView *view);
+  void (*set_selected_files) (ThunarView *view,
+                              GList      *path_list);
 };
 
-GType           thunar_view_get_type            (void) G_GNUC_CONST;
+GType
+thunar_view_get_type (void) G_GNUC_CONST;
 
-gboolean        thunar_view_get_loading         (ThunarView     *view);
+gboolean
+thunar_view_get_loading (ThunarView *view);
 
-gboolean        thunar_view_get_show_hidden     (ThunarView     *view);
-void            thunar_view_set_show_hidden     (ThunarView     *view,
-                                                 gboolean        show_hidden);
+gboolean
+thunar_view_get_show_hidden (ThunarView *view);
+void
+thunar_view_set_show_hidden (ThunarView *view,
+                             gboolean    show_hidden);
 
-ThunarZoomLevel thunar_view_get_zoom_level      (ThunarView     *view);
-void            thunar_view_set_zoom_level      (ThunarView     *view,
-                                                 ThunarZoomLevel zoom_level);
-void            thunar_view_reset_zoom_level    (ThunarView     *view);
+ThunarZoomLevel
+thunar_view_get_zoom_level (ThunarView *view);
+void
+thunar_view_set_zoom_level (ThunarView     *view,
+                            ThunarZoomLevel zoom_level);
+void
+thunar_view_reset_zoom_level (ThunarView *view);
 
-void            thunar_view_reload              (ThunarView     *view,
-                                                 gboolean        reload_info);
+void
+thunar_view_reload (ThunarView *view,
+                    gboolean    reload_info);
 
-gboolean        thunar_view_get_visible_range   (ThunarView     *view,
-                                                 ThunarFile    **start_file,
-                                                 ThunarFile    **end_file);
+gboolean
+thunar_view_get_visible_range (ThunarView  *view,
+                               ThunarFile **start_file,
+                               ThunarFile **end_file);
 
-void            thunar_view_scroll_to_file      (ThunarView     *view,
-                                                 ThunarFile     *file,
-                                                 gboolean        select_file,
-                                                 gboolean        use_align,
-                                                 gfloat          row_align,
-                                                 gfloat          col_align);
-GList*          thunar_view_get_selected_files  (ThunarView     *view);
-void            thunar_view_set_selected_files  (ThunarView     *view,
-                                                 GList          *path_list);
+void
+thunar_view_scroll_to_file (ThunarView *view,
+                            ThunarFile *file,
+                            gboolean    select_file,
+                            gboolean    use_align,
+                            gfloat      row_align,
+                            gfloat      col_align);
+GList *
+thunar_view_get_selected_files (ThunarView *view);
+void
+thunar_view_set_selected_files (ThunarView *view,
+                                GList      *path_list);
 
 G_END_DECLS;
 

@@ -18,7 +18,7 @@
  */
 
 /*
- 
+
                          +--------------------------------------------+
                          |                                            |
                          |                                            |
@@ -60,9 +60,9 @@ typedef struct _ThunarStandardViewModel      ThunarStandardViewModel;
 
 typedef enum ThunarStandardViewModelSearch
 {
-    THUNAR_STANDARD_VIEW_MODEL_SEARCH_RECURSIVE,
-    THUNAR_STANDARD_VIEW_MODEL_SEARCH_NON_RECURSIVE
-}  ThunarStandardViewModelSearch;
+  THUNAR_STANDARD_VIEW_MODEL_SEARCH_RECURSIVE,
+  THUNAR_STANDARD_VIEW_MODEL_SEARCH_NON_RECURSIVE
+} ThunarStandardViewModelSearch;
 
 /* Signal identifiers */
 typedef enum ThunarStandardViewModelSignals
@@ -76,10 +76,10 @@ typedef gint (*ThunarSortFunc) (const ThunarFile *a,
                                 const ThunarFile *b,
                                 gboolean          case_sensitive);
 
-#define THUNAR_TYPE_STANDARD_VIEW_MODEL            (thunar_standard_view_model_get_type ())
-#define THUNAR_STANDARD_VIEW_MODEL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_STANDARD_VIEW_MODEL, ThunarStandardViewModel))
-#define THUNAR_IS_STANDARD_VIEW_MODEL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_STANDARD_VIEW_MODEL))
-#define THUNAR_STANDARD_VIEW_MODEL_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNAR_TYPE_STANDARD_VIEW_MODEL, ThunarStandardViewModelIface))
+#define THUNAR_TYPE_STANDARD_VIEW_MODEL (thunar_standard_view_model_get_type ())
+#define THUNAR_STANDARD_VIEW_MODEL(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_STANDARD_VIEW_MODEL, ThunarStandardViewModel))
+#define THUNAR_IS_STANDARD_VIEW_MODEL(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_STANDARD_VIEW_MODEL))
+#define THUNAR_STANDARD_VIEW_MODEL_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNAR_TYPE_STANDARD_VIEW_MODEL, ThunarStandardViewModelIface))
 
 struct _ThunarStandardViewModelIface
 {
@@ -90,62 +90,76 @@ struct _ThunarStandardViewModelIface
   void (*search_done) (void);
 
   /* virtual methods */
-  ThunarFolder    *(*get_folder)             (ThunarStandardViewModel  *model);
-  void             (*set_folder)             (ThunarStandardViewModel  *model,
-                                              ThunarFolder             *folder,
-                                              gchar                    *search_query);
-  void             (*set_folders_first)      (ThunarStandardViewModel  *model,
-                                              gboolean                  folders_first);
-  gboolean         (*get_show_hidden)        (ThunarStandardViewModel  *model);
-  void             (*set_show_hidden)        (ThunarStandardViewModel  *model,
-                                              gboolean                  show_hidden);
-  gboolean         (*get_file_size_binary)   (ThunarStandardViewModel  *model);
-  void             (*set_file_size_binary)   (ThunarStandardViewModel  *model,
-                                              gboolean                  file_size_binary);
-  ThunarFile      *(*get_file)               (ThunarStandardViewModel  *model,
-                                              GtkTreeIter              *iter);
-  GList           *(*get_paths_for_files)    (ThunarStandardViewModel  *model,
-                                              GList                    *files);
-  ThunarJob       *(*get_job)                (ThunarStandardViewModel  *model);
-  void             (*set_job)                (ThunarStandardViewModel  *model,
-                                              ThunarJob                *job);
-  void             (*add_search_files)       (ThunarStandardViewModel  *model,
-                                              GList                    *files);
+  ThunarFolder *(*get_folder) (ThunarStandardViewModel *model);
+  void (*set_folder) (ThunarStandardViewModel *model,
+                      ThunarFolder            *folder,
+                      gchar                   *search_query);
+  void (*set_folders_first) (ThunarStandardViewModel *model,
+                             gboolean                 folders_first);
+  gboolean (*get_show_hidden) (ThunarStandardViewModel *model);
+  void (*set_show_hidden) (ThunarStandardViewModel *model,
+                           gboolean                 show_hidden);
+  gboolean (*get_file_size_binary) (ThunarStandardViewModel *model);
+  void (*set_file_size_binary) (ThunarStandardViewModel *model,
+                                gboolean                 file_size_binary);
+  ThunarFile *(*get_file) (ThunarStandardViewModel *model,
+                           GtkTreeIter             *iter);
+  GList *(*get_paths_for_files) (ThunarStandardViewModel *model,
+                                 GList                   *files);
+  ThunarJob *(*get_job) (ThunarStandardViewModel *model);
+  void (*set_job) (ThunarStandardViewModel *model,
+                   ThunarJob               *job);
+  void (*add_search_files) (ThunarStandardViewModel *model,
+                            GList                   *files);
 };
 
-GType            thunar_standard_view_model_get_type               (void) G_GNUC_CONST;
+GType
+thunar_standard_view_model_get_type (void) G_GNUC_CONST;
 
-ThunarFolder    *thunar_standard_view_model_get_folder             (ThunarStandardViewModel  *model);
-void             thunar_standard_view_model_set_folder             (ThunarStandardViewModel  *model,
-                                                                    ThunarFolder             *folder,
-                                                                    gchar                    *search_query);
+ThunarFolder *
+thunar_standard_view_model_get_folder (ThunarStandardViewModel *model);
+void
+thunar_standard_view_model_set_folder (ThunarStandardViewModel *model,
+                                       ThunarFolder            *folder,
+                                       gchar                   *search_query);
 
-void             thunar_standard_view_model_set_folders_first      (ThunarStandardViewModel  *model,
-                                                                    gboolean                  folders_first);
+void
+thunar_standard_view_model_set_folders_first (ThunarStandardViewModel *model,
+                                              gboolean                 folders_first);
 
-gboolean         thunar_standard_view_model_get_show_hidden        (ThunarStandardViewModel  *model);
-void             thunar_standard_view_model_set_show_hidden        (ThunarStandardViewModel  *model,
-                                                                    gboolean                  show_hidden);
+gboolean
+thunar_standard_view_model_get_show_hidden (ThunarStandardViewModel *model);
+void
+thunar_standard_view_model_set_show_hidden (ThunarStandardViewModel *model,
+                                            gboolean                 show_hidden);
 
-gboolean         thunar_standard_view_model_get_file_size_binary   (ThunarStandardViewModel  *model);
-void             thunar_standard_view_model_set_file_size_binary   (ThunarStandardViewModel  *model,
-                                                                    gboolean                  file_size_binary);
+gboolean
+thunar_standard_view_model_get_file_size_binary (ThunarStandardViewModel *model);
+void
+thunar_standard_view_model_set_file_size_binary (ThunarStandardViewModel *model,
+                                                 gboolean                 file_size_binary);
 
-ThunarFile      *thunar_standard_view_model_get_file               (ThunarStandardViewModel  *model,
-                                                                    GtkTreeIter              *iter);
+ThunarFile *
+thunar_standard_view_model_get_file (ThunarStandardViewModel *model,
+                                     GtkTreeIter             *iter);
 
 
-GList           *thunar_standard_view_model_get_paths_for_files    (ThunarStandardViewModel  *model,
-                                                                    GList                    *files);
-GList           *thunar_standard_view_model_get_paths_for_pattern  (ThunarStandardViewModel  *model,
-                                                                    const gchar              *pattern,
-                                                                    gboolean                  case_sensitive,
-                                                                    gboolean                  match_diacritics);
-ThunarJob       *thunar_standard_view_model_get_job                (ThunarStandardViewModel  *model);
-void             thunar_standard_view_model_set_job                (ThunarStandardViewModel  *model,
-                                                                    ThunarJob                *job);
-void             thunar_standard_view_model_add_search_files       (ThunarStandardViewModel  *model,
-                                                                    GList                    *files);
+GList *
+thunar_standard_view_model_get_paths_for_files (ThunarStandardViewModel *model,
+                                                GList                   *files);
+GList *
+thunar_standard_view_model_get_paths_for_pattern (ThunarStandardViewModel *model,
+                                                  const gchar             *pattern,
+                                                  gboolean                 case_sensitive,
+                                                  gboolean                 match_diacritics);
+ThunarJob *
+thunar_standard_view_model_get_job (ThunarStandardViewModel *model);
+void
+thunar_standard_view_model_set_job (ThunarStandardViewModel *model,
+                                    ThunarJob               *job);
+void
+thunar_standard_view_model_add_search_files (ThunarStandardViewModel *model,
+                                             GList                   *files);
 
 G_END_DECLS;
 

@@ -23,16 +23,16 @@
 #include "config.h"
 #endif
 
-#include <exo/exo.h>
-#include <libxfce4ui/libxfce4ui.h>
-
+#include "thunar/thunar-application.h"
 #include "thunar/thunar-gobject-extensions.h"
-#include "thunar/thunar-private.h"
-#include "thunar/thunar-statusbar.h"
 #include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-preferences.h"
-#include "thunar/thunar-application.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-statusbar.h"
 #include "thunar/thunar-window.h"
+
+#include <exo/exo.h>
+#include <libxfce4ui/libxfce4ui.h>
 
 
 
@@ -44,24 +44,36 @@ enum
 
 
 
-static void         thunar_statusbar_finalize                   (GObject              *object);
-static void         thunar_statusbar_set_property               (GObject              *object,
-                                                                 guint                 prop_id,
-                                                                 const GValue         *value,
-                                                                 GParamSpec           *pspec);
-static void         thunar_statusbar_set_text                   (ThunarStatusbar      *statusbar,
-                                                                 const gchar          *text);
-static GtkWidget*   thunar_statusbar_context_menu               (ThunarStatusbar      *statusbar);
-static gboolean     thunar_statusbar_button_press_event         (GtkWidget            *widget,
-                                                                 GdkEventButton       *event,
-                                                                 ThunarStatusbar      *statusbar);
-static gboolean     thunar_statusbar_action_show_size           (ThunarStatusbar      *statusbar);
-static gboolean     thunar_statusbar_action_show_size_bytes     (ThunarStatusbar      *statusbar);
-static gboolean     thunar_statusbar_action_show_filetype       (ThunarStatusbar      *statusbar);
-static gboolean     thunar_statusbar_action_show_display_name   (ThunarStatusbar      *statusbar);
-static gboolean     thunar_statusbar_action_show_last_modified  (ThunarStatusbar      *statusbar);
-static gboolean     thunar_statusbar_action_show_hidden_count   (ThunarStatusbar      *statusbar);
-static void         thunar_statusbar_update_all                 (void);
+static void
+thunar_statusbar_finalize (GObject *object);
+static void
+thunar_statusbar_set_property (GObject      *object,
+                               guint         prop_id,
+                               const GValue *value,
+                               GParamSpec   *pspec);
+static void
+thunar_statusbar_set_text (ThunarStatusbar *statusbar,
+                           const gchar     *text);
+static GtkWidget *
+thunar_statusbar_context_menu (ThunarStatusbar *statusbar);
+static gboolean
+thunar_statusbar_button_press_event (GtkWidget       *widget,
+                                     GdkEventButton  *event,
+                                     ThunarStatusbar *statusbar);
+static gboolean
+thunar_statusbar_action_show_size (ThunarStatusbar *statusbar);
+static gboolean
+thunar_statusbar_action_show_size_bytes (ThunarStatusbar *statusbar);
+static gboolean
+thunar_statusbar_action_show_filetype (ThunarStatusbar *statusbar);
+static gboolean
+thunar_statusbar_action_show_display_name (ThunarStatusbar *statusbar);
+static gboolean
+thunar_statusbar_action_show_last_modified (ThunarStatusbar *statusbar);
+static gboolean
+thunar_statusbar_action_show_hidden_count (ThunarStatusbar *statusbar);
+static void
+thunar_statusbar_update_all (void);
 
 
 struct _ThunarStatusbarClass
@@ -71,12 +83,13 @@ struct _ThunarStatusbarClass
 
 struct _ThunarStatusbar
 {
-  GtkStatusbar       __parent__;
-  guint              context_id;
+  GtkStatusbar __parent__;
+  guint        context_id;
 
   ThunarPreferences *preferences;
 };
 
+/* clang-format off */
 static XfceGtkActionEntry thunar_status_bar_action_entries[] =
     {
         { THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE,           "<Actions>/ThunarStatusBar/toggle-size",             "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Size"),          N_ ("Show size"),               NULL, G_CALLBACK (thunar_statusbar_action_show_size),            },
@@ -86,8 +99,9 @@ static XfceGtkActionEntry thunar_status_bar_action_entries[] =
         { THUNAR_STATUS_BAR_ACTION_TOGGLE_LAST_MODIFIED,  "<Actions>/ThunarStatusBar/toggle-last-modified",    "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Last Modified"), N_ ("Show last modified"),      NULL, G_CALLBACK (thunar_statusbar_action_show_last_modified),   },
         { THUNAR_STATUS_BAR_ACTION_TOGGLE_HIDDEN_COUNT,   "<Actions>/ThunarStatusBar/toggle-hidden-count",     "", XFCE_GTK_CHECK_MENU_ITEM,       N_ ("Hidden Files Count"), N_ ("Show hidden files count"), NULL, G_CALLBACK (thunar_statusbar_action_show_hidden_count),    },
     };
+/* clang-format on */
 
-#define get_action_entry(id) xfce_gtk_get_action_entry_by_id (thunar_status_bar_action_entries, G_N_ELEMENTS (thunar_status_bar_action_entries) ,id)
+#define get_action_entry(id) xfce_gtk_get_action_entry_by_id (thunar_status_bar_action_entries, G_N_ELEMENTS (thunar_status_bar_action_entries), id)
 
 
 G_DEFINE_TYPE (ThunarStatusbar, thunar_statusbar, GTK_TYPE_STATUSBAR)
@@ -121,14 +135,14 @@ thunar_statusbar_class_init (ThunarStatusbarClass *klass)
 
   if (!style_initialized)
     {
-        gtk_widget_class_install_style_property (GTK_WIDGET_CLASS (gobject_class),
-          g_param_spec_enum (
-            "shadow-type",                //name
-            "shadow-type",                //nick
-            "type of shadow",             //blurb
-            gtk_shadow_type_get_type(),   //type
-            GTK_SHADOW_NONE,              //default
-            G_PARAM_READWRITE ));         //flags
+      gtk_widget_class_install_style_property (GTK_WIDGET_CLASS (gobject_class),
+                                               g_param_spec_enum (
+                                               "shadow-type",               // name
+                                               "shadow-type",               // nick
+                                               "type of shadow",            // blurb
+                                               gtk_shadow_type_get_type (), // type
+                                               GTK_SHADOW_NONE,             // default
+                                               G_PARAM_READWRITE));         // flags
     }
 
   xfce_gtk_translate_action_entries (thunar_status_bar_action_entries, G_N_ELEMENTS (thunar_status_bar_action_entries));
@@ -179,9 +193,9 @@ thunar_statusbar_setup_event (ThunarStatusbar *statusbar,
 
 
 static gboolean
-thunar_statusbar_button_press_event (GtkWidget        *widget,
-                                     GdkEventButton   *event,
-                                     ThunarStatusbar  *statusbar)
+thunar_statusbar_button_press_event (GtkWidget       *widget,
+                                     GdkEventButton  *event,
+                                     ThunarStatusbar *statusbar)
 {
   if (event->type == GDK_BUTTON_PRESS && event->button == 3)
     {
@@ -236,10 +250,10 @@ thunar_statusbar_set_text (ThunarStatusbar *statusbar,
 
 
 
-static GtkWidget*
+static GtkWidget *
 thunar_statusbar_context_menu (ThunarStatusbar *statusbar)
 {
-  GtkWidget *context_menu = gtk_menu_new();
+  GtkWidget *context_menu = gtk_menu_new ();
   GtkWidget *widget;
   guint      active;
   gboolean   show_display_name, show_size, show_size_in_bytes, show_filetype, show_last_modified, show_hidden_count;
@@ -362,7 +376,7 @@ thunar_statusbar_action_show_hidden_count (ThunarStatusbar *statusbar)
 static void
 thunar_statusbar_update_all (void)
 {
-  ThunarApplication *app     = thunar_application_get ();
+  ThunarApplication *app = thunar_application_get ();
   GList             *windows = thunar_application_get_windows (app);
   GList             *lp;
 
@@ -383,7 +397,7 @@ thunar_statusbar_update_all (void)
  *
  * Return value: the newly allocated #ThunarStatusbar instance.
  **/
-GtkWidget*
+GtkWidget *
 thunar_statusbar_new (void)
 {
   return g_object_new (THUNAR_TYPE_STATUSBAR, NULL);
@@ -391,7 +405,7 @@ thunar_statusbar_new (void)
 
 
 
-XfceGtkActionEntry*
+XfceGtkActionEntry *
 thunar_statusbar_get_action_entries (void)
 {
   return thunar_status_bar_action_entries;
@@ -406,8 +420,9 @@ thunar_statusbar_get_action_entries (void)
  *
  * Connects all accelerators and corresponding default keys of this widget to the global accelerator list
  **/
-void thunar_statusbar_append_accelerators (ThunarStatusbar *statusbar,
-                                           GtkAccelGroup   *accel_group)
+void
+thunar_statusbar_append_accelerators (ThunarStatusbar *statusbar,
+                                      GtkAccelGroup   *accel_group)
 {
   _thunar_return_if_fail (THUNAR_IS_STATUSBAR (statusbar));
 

@@ -27,23 +27,29 @@ G_BEGIN_DECLS;
 typedef struct _ThunarLocationButtonClass ThunarLocationButtonClass;
 typedef struct _ThunarLocationButton      ThunarLocationButton;
 
-#define THUNAR_TYPE_LOCATION_BUTTON             (thunar_location_button_get_type ())
-#define THUNAR_LOCATION_BUTTON(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_LOCATION_BUTTON, ThunarLocationButton))
-#define THUNAR_LOCATION_BUTTON_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_LOCATION_BUTTON, ThunarLocationButtonClass))
-#define THUNAR_IS_LOCATION_BUTTON(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_LOCATION_BUTTON))
-#define THUNAR_IS_LOCATION_BUTTON_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_LOCATION_BUTTON))
-#define THUNAR_LOCATION_BUTTON_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_LOCATION_BUTTON, ThunarLocationButtonClass))
+#define THUNAR_TYPE_LOCATION_BUTTON (thunar_location_button_get_type ())
+#define THUNAR_LOCATION_BUTTON(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_LOCATION_BUTTON, ThunarLocationButton))
+#define THUNAR_LOCATION_BUTTON_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_LOCATION_BUTTON, ThunarLocationButtonClass))
+#define THUNAR_IS_LOCATION_BUTTON(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_LOCATION_BUTTON))
+#define THUNAR_IS_LOCATION_BUTTON_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_LOCATION_BUTTON))
+#define THUNAR_LOCATION_BUTTON_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_LOCATION_BUTTON, ThunarLocationButtonClass))
 
-GType       thunar_location_button_get_type   (void) G_GNUC_CONST;
+GType
+thunar_location_button_get_type (void) G_GNUC_CONST;
 
-GtkWidget  *thunar_location_button_new        (void) G_GNUC_MALLOC;
+GtkWidget *
+thunar_location_button_new (void) G_GNUC_MALLOC;
 
-ThunarFile *thunar_location_button_get_file   (ThunarLocationButton *location_button);
-void        thunar_location_button_set_file   (ThunarLocationButton *location_button,
-                                               ThunarFile           *file);
-gint        thunar_location_button_get_max_width (ThunarLocationButton *location_button);
-void        thunar_location_button_set_max_width (ThunarLocationButton *location_button,
-                                                  gint                  max_width);
+ThunarFile *
+thunar_location_button_get_file (ThunarLocationButton *location_button);
+void
+thunar_location_button_set_file (ThunarLocationButton *location_button,
+                                 ThunarFile           *file);
+gint
+thunar_location_button_get_max_width (ThunarLocationButton *location_button);
+void
+thunar_location_button_set_max_width (ThunarLocationButton *location_button,
+                                      gint                  max_width);
 
 G_END_DECLS;
 

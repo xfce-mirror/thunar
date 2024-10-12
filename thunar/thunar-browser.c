@@ -22,15 +22,14 @@
 #include "config.h"
 #endif
 
-#include <glib-object.h>
-
-#include <libxfce4util/libxfce4util.h>
-
 #include "thunar/thunar-browser.h"
 #include "thunar/thunar-file.h"
+#include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-util.h"
-#include "thunar/thunar-gtk-extensions.h"
+
+#include <glib-object.h>
+#include <libxfce4util/libxfce4util.h>
 
 
 
@@ -39,14 +38,15 @@ typedef struct _PokeDeviceData PokeDeviceData;
 
 
 
-static void thunar_browser_poke_file_internal (ThunarBrowser                *browser,
-                                               GFile                        *location,
-                                               ThunarFile                   *source,
-                                               ThunarFile                   *file,
-                                               gpointer                      widget,
-                                               ThunarBrowserPokeFileFunc     func,
-                                               ThunarBrowserPokeLocationFunc location_func,
-                                               gpointer                      user_data);
+static void
+thunar_browser_poke_file_internal (ThunarBrowser                *browser,
+                                   GFile                        *location,
+                                   ThunarFile                   *source,
+                                   ThunarFile                   *file,
+                                   gpointer                      widget,
+                                   ThunarBrowserPokeFileFunc     func,
+                                   ThunarBrowserPokeLocationFunc location_func,
+                                   gpointer                      user_data);
 
 
 
@@ -81,7 +81,7 @@ thunar_browser_get_type (void)
   if (g_once_init_enter (&type__static))
     {
       type = g_type_register_static_simple (G_TYPE_INTERFACE,
-                                            I_("ThunarBrowser"),
+                                            I_ ("ThunarBrowser"),
                                             sizeof (ThunarBrowserIface),
                                             NULL,
                                             0,
@@ -366,10 +366,10 @@ thunar_browser_poke_file_finish (GObject      *object,
 
 
 static void
-thunar_browser_poke_shortcut_file_finish (GFile *location,
+thunar_browser_poke_shortcut_file_finish (GFile      *location,
                                           ThunarFile *file,
-                                          GError *error,
-                                          gpointer user_data)
+                                          GError     *error,
+                                          gpointer    user_data)
 {
   PokeFileData *poke_data = user_data;
 
@@ -475,7 +475,7 @@ thunar_browser_poke_file_internal (ThunarBrowser                *browser,
           g_object_unref (mount_operation);
         }
     }
-  else if (!thunar_file_is_mounted (file) || !thunar_file_is_local(file))
+  else if (!thunar_file_is_mounted (file) || !thunar_file_is_local (file))
     {
       poke_data = thunar_browser_poke_file_data_new (browser, location, source,
                                                      file, func, location_func, user_data);
@@ -600,13 +600,13 @@ thunar_browser_poke_device_finish (ThunarDevice *device,
       return;
     }
 
-    if (poke_data->func != NULL)
-      {
-        (poke_data->func) (poke_data->browser, poke_data->device, NULL,
-                           (GError *) error, poke_data->user_data, cancelled);
-      }
+  if (poke_data->func != NULL)
+    {
+      (poke_data->func) (poke_data->browser, poke_data->device, NULL,
+                         (GError *) error, poke_data->user_data, cancelled);
+    }
 
-    thunar_browser_poke_device_data_free (poke_data);
+  thunar_browser_poke_device_data_free (poke_data);
 }
 
 

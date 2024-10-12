@@ -20,19 +20,21 @@
 #ifndef __THUNAR_GDK_EXTENSIONS_H__
 #define __THUNAR_GDK_EXTENSIONS_H__
 
-#include <gdk/gdk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
+#include <gdk/gdk.h>
 
 G_BEGIN_DECLS;
 
-GdkScreen *thunar_gdk_screen_open             (const gchar *display_name,
-                                               GError     **error);
+GdkScreen *
+thunar_gdk_screen_open (const gchar *display_name,
+                        GError     **error);
 
-void       thunar_gdk_cairo_set_source_pixbuf (cairo_t     *cr,
-                                               GdkPixbuf   *pixbuf,
-                                               gdouble      pixbuf_x,
-                                               gdouble      pixbuf_y,
-                                               gint         scale_factor);
+void
+thunar_gdk_cairo_set_source_pixbuf (cairo_t   *cr,
+                                    GdkPixbuf *pixbuf,
+                                    gdouble    pixbuf_x,
+                                    gdouble    pixbuf_y,
+                                    gint       scale_factor);
 
 G_END_DECLS;
 

@@ -16,12 +16,14 @@
  * this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "thunar/thunar-job-operation-history.h"
+
 #include "thunar/thunar-dialogs.h"
 #include "thunar/thunar-enum-types.h"
-#include "thunar/thunar-job-operation-history.h"
 #include "thunar/thunar-notify.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
+
 #include <libxfce4ui/libxfce4ui.h>
 
 /**
@@ -41,31 +43,33 @@ enum
 };
 
 
-static void thunar_job_operation_history_finalize     (GObject    *object);
-static void thunar_job_operation_history_get_property (GObject    *object,
-                                                       guint       prop_id,
-                                                       GValue     *value,
-                                                       GParamSpec *pspec);
+static void
+thunar_job_operation_history_finalize (GObject *object);
+static void
+thunar_job_operation_history_get_property (GObject    *object,
+                                           guint       prop_id,
+                                           GValue     *value,
+                                           GParamSpec *pspec);
 
 
 
 struct _ThunarJobOperationHistory
 {
-  GObject  __parent__;
+  GObject __parent__;
 
   /* List of job operations which were logged */
-  GList   *job_operation_list;
-  gint     job_operation_list_max_size;
+  GList *job_operation_list;
+  gint   job_operation_list_max_size;
 
   /* since the job operation list, lp_undo and lp_redo all refer to the same memory locations,
    * which may be accessed by different threads, we need to protect this memory with a mutex */
-  GMutex   job_operation_list_mutex;
+  GMutex job_operation_list_mutex;
 
   /* List pointer to the operation which can be undone */
-  GList   *lp_undo;
+  GList *lp_undo;
 
   /* List pointer to the operation which can be redone */
-  GList   *lp_redo;
+  GList *lp_redo;
 };
 
 static ThunarJobOperationHistory *job_operation_history;
@@ -77,7 +81,7 @@ G_DEFINE_TYPE (ThunarJobOperationHistory, thunar_job_operation_history, G_TYPE_O
 static void
 thunar_job_operation_history_class_init (ThunarJobOperationHistoryClass *klass)
 {
-  GObjectClass      *gobject_class;
+  GObjectClass *gobject_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->get_property = thunar_job_operation_history_get_property;
@@ -171,7 +175,7 @@ thunar_job_operation_history_get_property (GObject    *object,
  *
  * Return value: the default #ThunarJobOperationHistory instance.
  **/
-ThunarJobOperationHistory*
+ThunarJobOperationHistory *
 thunar_job_operation_history_get_default (void)
 {
   if (G_UNLIKELY (job_operation_history == NULL))
@@ -202,7 +206,7 @@ thunar_job_operation_history_get_default (void)
 void
 thunar_job_operation_history_commit (ThunarJobOperation *job_operation)
 {
-  GList* new_list = NULL;
+  GList *new_list = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_JOB_OPERATION (job_operation));
 
@@ -218,7 +222,7 @@ thunar_job_operation_history_commit (ThunarJobOperation *job_operation)
   /* When a new operation is added, drop all previous operations which were undone from the list */
   if (job_operation_history->lp_redo != NULL)
     {
-      for (GList* lp = job_operation_history->job_operation_list;
+      for (GList *lp = job_operation_history->job_operation_list;
            lp != NULL && lp != job_operation_history->lp_redo;
            lp = lp->next)
         new_list = g_list_append (new_list, g_object_ref (lp->data));
@@ -234,9 +238,9 @@ thunar_job_operation_history_commit (ThunarJobOperation *job_operation)
   job_operation_history->lp_redo = NULL;
 
   /* Limit the size of the list */
-  if (job_operation_history->job_operation_list_max_size != -1 && g_list_length (job_operation_history->job_operation_list) > (guint)(job_operation_history->job_operation_list_max_size))
+  if (job_operation_history->job_operation_list_max_size != -1 && g_list_length (job_operation_history->job_operation_list) > (guint) (job_operation_history->job_operation_list_max_size))
     {
-      GList* first = g_list_first (job_operation_history->job_operation_list);
+      GList *first = g_list_first (job_operation_history->job_operation_list);
       job_operation_history->job_operation_list = g_list_remove_link (job_operation_history->job_operation_list, first);
       g_list_free_full (first, g_object_unref);
     }
@@ -274,7 +278,7 @@ thunar_job_operation_history_update_trash_timestamps (ThunarJobOperation *job_op
       return;
     }
 
-  if (thunar_job_operation_compare ( THUNAR_JOB_OPERATION (job_operation_history->lp_undo->data), job_operation) == 0)
+  if (thunar_job_operation_compare (THUNAR_JOB_OPERATION (job_operation_history->lp_undo->data), job_operation) == 0)
     {
       gint64 start_timestamp, end_timestamp;
 
@@ -318,7 +322,7 @@ thunar_job_operation_history_undo (GtkWindow *parent)
       xfce_dialog_show_warning (parent,
                                 _("No operation which can be undone has been performed yet.\n"
                                   "(For some operations undo is not supported)"),
-                                _("There is no operation to undo"));
+                                  _("There is no operation to undo"));
       g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
       return;
     }
@@ -333,61 +337,60 @@ thunar_job_operation_history_undo (GtkWindow *parent)
   /* warn the user if the previous operation is empty, since then there is nothing to undo */
   if (thunar_job_operation_empty (operation_marker))
     {
-
       xfce_dialog_show_warning (parent,
                                 _("The operation you are trying to undo does not have any files "
                                   "associated with it, and thus cannot be undone. "),
-                                _("%s operation cannot be undone"), thunar_job_operation_get_kind_nick (operation_marker));
+                                  _("%s operation cannot be undone"), thunar_job_operation_get_kind_nick (operation_marker));
       g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
       return;
     }
 
-    /* if there were files overwritten in the operation, warn about them */
-    overwritten_files = thunar_job_operation_get_overwritten_files (operation_marker);
-    if (overwritten_files != NULL)
-      {
-        gint index;
+  /* if there were files overwritten in the operation, warn about them */
+  overwritten_files = thunar_job_operation_get_overwritten_files (operation_marker);
+  if (overwritten_files != NULL)
+    {
+      gint index;
 
-        index = 1; /* one indexed for the dialog */
-        warning_body = g_string_new (_("The following files were overwritten in the operation "
+      index = 1; /* one indexed for the dialog */
+      warning_body = g_string_new (_("The following files were overwritten in the operation "
                                        "you are trying to undo and cannot be restored:\n"));
 
-        for (const GList *lp = overwritten_files; lp != NULL; lp = lp->next, index++)
-          {
-            file_uri = g_file_get_uri (lp->data);
-            g_string_append_printf (warning_body, "%d. %s\n", index, file_uri);
-            g_free (file_uri);
-          }
+      for (const GList *lp = overwritten_files; lp != NULL; lp = lp->next, index++)
+        {
+          file_uri = g_file_get_uri (lp->data);
+          g_string_append_printf (warning_body, "%d. %s\n", index, file_uri);
+          g_free (file_uri);
+        }
 
-        xfce_dialog_show_warning (parent,
-                                  warning_body->str,
-                                  _("%s operation can only be partially undone"),
-                                  thunar_job_operation_get_kind_nick (operation_marker));
+      xfce_dialog_show_warning (parent,
+                                warning_body->str,
+                                _("%s operation can only be partially undone"),
+                                thunar_job_operation_get_kind_nick (operation_marker));
 
-        g_string_free (warning_body, TRUE);
-      }
+      g_string_free (warning_body, TRUE);
+    }
 
-    inverted_operation = thunar_job_operation_new_invert (operation_marker);
-    operation_canceled = thunar_job_operation_execute (inverted_operation, &err);
-    g_object_unref (inverted_operation);
+  inverted_operation = thunar_job_operation_new_invert (operation_marker);
+  operation_canceled = thunar_job_operation_execute (inverted_operation, &err);
+  g_object_unref (inverted_operation);
 
-    if (err == NULL && !operation_canceled)
-      thunar_notify_undo (operation_marker);
+  if (err == NULL && !operation_canceled)
+    thunar_notify_undo (operation_marker);
 
-    if (err != NULL)
-      {
-        xfce_dialog_show_warning (parent,
-                                  err->message,
-                                  _("Failed to undo operation '%s'"),
-                                  thunar_job_operation_get_kind_nick (operation_marker));
-        g_clear_error (&err);
-      }
+  if (err != NULL)
+    {
+      xfce_dialog_show_warning (parent,
+                                err->message,
+                                _("Failed to undo operation '%s'"),
+                                thunar_job_operation_get_kind_nick (operation_marker));
+      g_clear_error (&err);
+    }
 
-    g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
+  g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
 
-    /* Notify all subscribers of our properties */
-    g_object_notify (G_OBJECT (job_operation_history), "can-undo");
-    g_object_notify (G_OBJECT (job_operation_history), "can-redo");
+  /* Notify all subscribers of our properties */
+  g_object_notify (G_OBJECT (job_operation_history), "can-undo");
+  g_object_notify (G_OBJECT (job_operation_history), "can-redo");
 }
 
 
@@ -415,7 +418,7 @@ thunar_job_operation_history_redo (GtkWindow *parent)
     {
       xfce_dialog_show_warning (parent,
                                 _("No operation which can be redone available.\n"),
-                                _("There is no operation to redo"));
+                                  _("There is no operation to redo"));
       g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
       return;
     }
@@ -430,59 +433,58 @@ thunar_job_operation_history_redo (GtkWindow *parent)
   /* warn the user if the previous operation is empty, since then there is nothing to undo */
   if (thunar_job_operation_empty (operation_marker))
     {
-
       xfce_dialog_show_warning (parent,
                                 _("The operation you are trying to redo does not have any files "
                                   "associated with it, and thus cannot be redone. "),
-                                _("%s operation cannot be redone"), thunar_job_operation_get_kind_nick (operation_marker));
+                                  _("%s operation cannot be redone"), thunar_job_operation_get_kind_nick (operation_marker));
       g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
       return;
     }
 
-    /* if there were files overwritten in the operation, warn about them */
-    overwritten_files = thunar_job_operation_get_overwritten_files (operation_marker);
-    if (overwritten_files != NULL)
-      {
-        gint index;
+  /* if there were files overwritten in the operation, warn about them */
+  overwritten_files = thunar_job_operation_get_overwritten_files (operation_marker);
+  if (overwritten_files != NULL)
+    {
+      gint index;
 
-        index = 1; /* one indexed for the dialog */
-        warning_body = g_string_new (_("The following files were overwritten in the operation "
+      index = 1; /* one indexed for the dialog */
+      warning_body = g_string_new (_("The following files were overwritten in the operation "
                                        "you are trying to redo and cannot be restored:\n"));
 
-        for (const GList *lp = overwritten_files; lp != NULL; lp = lp->next, index++)
-          {
-            file_uri = g_file_get_uri (lp->data);
-            g_string_append_printf (warning_body, "%d. %s\n", index, file_uri);
-            g_free (file_uri);
-          }
+      for (const GList *lp = overwritten_files; lp != NULL; lp = lp->next, index++)
+        {
+          file_uri = g_file_get_uri (lp->data);
+          g_string_append_printf (warning_body, "%d. %s\n", index, file_uri);
+          g_free (file_uri);
+        }
 
-        xfce_dialog_show_warning (parent,
-                                  warning_body->str,
-                                  _("%s operation can only be partially redone"),
-                                  thunar_job_operation_get_kind_nick (operation_marker));
+      xfce_dialog_show_warning (parent,
+                                warning_body->str,
+                                _("%s operation can only be partially redone"),
+                                thunar_job_operation_get_kind_nick (operation_marker));
 
-        g_string_free (warning_body, TRUE);
-      }
+      g_string_free (warning_body, TRUE);
+    }
 
-    operation_canceled = thunar_job_operation_execute (operation_marker, &err);
+  operation_canceled = thunar_job_operation_execute (operation_marker, &err);
 
-    if (err == NULL && !operation_canceled)
-      thunar_notify_undo (operation_marker);
+  if (err == NULL && !operation_canceled)
+    thunar_notify_undo (operation_marker);
 
-    if (err != NULL)
-      {
-        xfce_dialog_show_warning (parent,
-                                  err->message,
-                                  _("Failed to redo operation '%s'"),
-                                  thunar_job_operation_get_kind_nick (operation_marker));
-        g_clear_error (&err);
-      }
+  if (err != NULL)
+    {
+      xfce_dialog_show_warning (parent,
+                                err->message,
+                                _("Failed to redo operation '%s'"),
+                                thunar_job_operation_get_kind_nick (operation_marker));
+      g_clear_error (&err);
+    }
 
-    g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
+  g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
 
-    /* Notify all subscribers of our properties */
-    g_object_notify (G_OBJECT (job_operation_history), "can-undo");
-    g_object_notify (G_OBJECT (job_operation_history), "can-redo");
+  /* Notify all subscribers of our properties */
+  g_object_notify (G_OBJECT (job_operation_history), "can-undo");
+  g_object_notify (G_OBJECT (job_operation_history), "can-redo");
 }
 
 
@@ -553,18 +555,18 @@ thunar_job_operation_history_can_redo (void)
  *
  * Return value: a newly-allocated string holding the text
  **/
-gchar*
+gchar *
 thunar_job_operation_history_get_undo_text (void)
 {
   if (thunar_job_operation_history_can_undo ())
     {
       gchar *action_text = thunar_job_operation_get_action_text (job_operation_history->lp_undo->data);
       /* TRANSLATORS: An example: 'Undo the latest 'copy' operation (2 files) */
-      gchar *final_text = g_strdup_printf (_("Undo the latest '%s' operation (%s)"),  thunar_job_operation_get_kind_nick (job_operation_history->lp_undo->data), action_text);
+      gchar *final_text = g_strdup_printf (_("Undo the latest '%s' operation (%s)"), thunar_job_operation_get_kind_nick (job_operation_history->lp_undo->data), action_text);
       g_free (action_text);
       return final_text;
     }
-  
+
   return g_strdup (gettext ("Undo the latest operation"));
 }
 
@@ -572,23 +574,23 @@ thunar_job_operation_history_get_undo_text (void)
 
 /**
  * thunar_job_operation_history_get_redo_text
- * 
- * Returns the description of the redo action. 
+ *
+ * Returns the description of the redo action.
  * The returned string should be freed with g_free() when no longer needed.
  *
  * Return value: a newly-allocated string holding the text
  **/
-gchar*
+gchar *
 thunar_job_operation_history_get_redo_text (void)
 {
   if (thunar_job_operation_history_can_redo ())
     {
       gchar *action_text = thunar_job_operation_get_action_text (job_operation_history->lp_redo->data);
       /* TRANSLATORS: An example: 'Redo the latest 'copy' operation (2 files) */
-      gchar *final_text = g_strdup_printf (_("Redo the latest '%s' operation (%s)"),  thunar_job_operation_get_kind_nick (job_operation_history->lp_redo->data), action_text);
+      gchar *final_text = g_strdup_printf (_("Redo the latest '%s' operation (%s)"), thunar_job_operation_get_kind_nick (job_operation_history->lp_redo->data), action_text);
       g_free (action_text);
       return final_text;
     }
-  
+
   return g_strdup (gettext ("Redo the latest operation"));
 }

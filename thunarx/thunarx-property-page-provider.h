@@ -32,9 +32,9 @@ G_BEGIN_DECLS
 typedef struct _ThunarxPropertyPageProviderIface ThunarxPropertyPageProviderIface;
 typedef struct _ThunarxPropertyPageProvider      ThunarxPropertyPageProvider;
 
-#define THUNARX_TYPE_PROPERTY_PAGE_PROVIDER           (thunarx_property_page_provider_get_type ())
-#define THUNARX_PROPERTY_PAGE_PROVIDER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_PROPERTY_PAGE_PROVIDER, ThunarxPropertyPageProvider))
-#define THUNARX_IS_PROPERTY_PAGE_PROVIDER(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_PROPERTY_PAGE_PROVIDER))
+#define THUNARX_TYPE_PROPERTY_PAGE_PROVIDER (thunarx_property_page_provider_get_type ())
+#define THUNARX_PROPERTY_PAGE_PROVIDER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_PROPERTY_PAGE_PROVIDER, ThunarxPropertyPageProvider))
+#define THUNARX_IS_PROPERTY_PAGE_PROVIDER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_PROPERTY_PAGE_PROVIDER))
 #define THUNARX_PROPERTY_PAGE_PROVIDER_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNARX_TYPE_PROPERTY_PAGE_PROVIDER, ThunarxPropertyPageProviderIface))
 
 /**
@@ -61,10 +61,12 @@ struct _ThunarxPropertyPageProviderIface
   void (*reserved5) (void);
 };
 
-GType  thunarx_property_page_provider_get_type  (void) G_GNUC_CONST;
+GType
+thunarx_property_page_provider_get_type (void) G_GNUC_CONST;
 
-GList *thunarx_property_page_provider_get_pages (ThunarxPropertyPageProvider *provider,
-                                                 GList                       *files);
+GList *
+thunarx_property_page_provider_get_pages (ThunarxPropertyPageProvider *provider,
+                                          GList                       *files);
 
 G_END_DECLS
 

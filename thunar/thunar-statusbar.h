@@ -25,42 +25,47 @@
 G_BEGIN_DECLS;
 
 /* avoid including libxfce4ui.h */
-typedef struct _XfceGtkActionEntry   XfceGtkActionEntry;
+typedef struct _XfceGtkActionEntry XfceGtkActionEntry;
 
 typedef struct _ThunarStatusbarClass ThunarStatusbarClass;
 typedef struct _ThunarStatusbar      ThunarStatusbar;
 
-#define THUNAR_TYPE_STATUSBAR             (thunar_statusbar_get_type ())
-#define THUNAR_STATUSBAR(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_STATUSBAR, ThunarStatusbar))
-#define THUNAR_STATUSBAR_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_STATUSBAR, ThunarStatusbarClass))
-#define THUNAR_IS_STATUSBAR(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_STATUSBAR))
-#define THUNAR_IS_STATUSBAR_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_STATUSBAR))
-#define THUNAR_STATUSBAR_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_STATUSBAR, ThunarStatusbarClass))
+#define THUNAR_TYPE_STATUSBAR (thunar_statusbar_get_type ())
+#define THUNAR_STATUSBAR(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_STATUSBAR, ThunarStatusbar))
+#define THUNAR_STATUSBAR_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_STATUSBAR, ThunarStatusbarClass))
+#define THUNAR_IS_STATUSBAR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_STATUSBAR))
+#define THUNAR_IS_STATUSBAR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_STATUSBAR))
+#define THUNAR_STATUSBAR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_STATUSBAR, ThunarStatusbarClass))
 
 /* #XfceGtkActionEntrys provided by this widget */
 typedef enum
 {
-    THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE,
-    THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE_IN_BYTES,
-    THUNAR_STATUS_BAR_ACTION_TOGGLE_FILETYPE,
-    THUNAR_STATUS_BAR_ACTION_TOGGLE_DISPLAY_NAME,
-    THUNAR_STATUS_BAR_ACTION_TOGGLE_LAST_MODIFIED,
-    THUNAR_STATUS_BAR_ACTION_TOGGLE_HIDDEN_COUNT,
+  THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE,
+  THUNAR_STATUS_BAR_ACTION_TOGGLE_SIZE_IN_BYTES,
+  THUNAR_STATUS_BAR_ACTION_TOGGLE_FILETYPE,
+  THUNAR_STATUS_BAR_ACTION_TOGGLE_DISPLAY_NAME,
+  THUNAR_STATUS_BAR_ACTION_TOGGLE_LAST_MODIFIED,
+  THUNAR_STATUS_BAR_ACTION_TOGGLE_HIDDEN_COUNT,
 
-    THUNAR_STATUS_BAR_N_ACTIONS
+  THUNAR_STATUS_BAR_N_ACTIONS
 } ThunarStatusBarAction;
 
-GType               thunar_statusbar_get_type            (void) G_GNUC_CONST;
+GType
+thunar_statusbar_get_type (void) G_GNUC_CONST;
 
-GtkWidget          *thunar_statusbar_new                 (void);
+GtkWidget *
+thunar_statusbar_new (void);
 
-void                thunar_statusbar_setup_event         (ThunarStatusbar *statusbar,
-                                                          GtkWidget       *event_box);
+void
+thunar_statusbar_setup_event (ThunarStatusbar *statusbar,
+                              GtkWidget       *event_box);
 
-void                thunar_statusbar_append_accelerators (ThunarStatusbar *statusbar,
-                                                          GtkAccelGroup   *accel_group);
+void
+thunar_statusbar_append_accelerators (ThunarStatusbar *statusbar,
+                                      GtkAccelGroup   *accel_group);
 
-XfceGtkActionEntry *thunar_statusbar_get_action_entries  (void);
+XfceGtkActionEntry *
+thunar_statusbar_get_action_entries (void);
 
 G_END_DECLS;
 

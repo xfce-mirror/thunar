@@ -27,9 +27,9 @@ G_BEGIN_DECLS;
 typedef struct _ThunarNavigatorIface ThunarNavigatorIface;
 typedef struct _ThunarNavigator      ThunarNavigator;
 
-#define THUNAR_TYPE_NAVIGATOR           (thunar_navigator_get_type ())
-#define THUNAR_NAVIGATOR(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_NAVIGATOR, ThunarNavigator))
-#define THUNAR_IS_NAVIGATOR(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_NAVIGATOR))
+#define THUNAR_TYPE_NAVIGATOR (thunar_navigator_get_type ())
+#define THUNAR_NAVIGATOR(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_NAVIGATOR, ThunarNavigator))
+#define THUNAR_IS_NAVIGATOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_NAVIGATOR))
 #define THUNAR_NAVIGATOR_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNAR_TYPE_NAVIGATOR, ThunarNavigatorIface))
 
 struct _ThunarNavigatorIface
@@ -38,27 +38,32 @@ struct _ThunarNavigatorIface
 
   /* methods */
   ThunarFile *(*get_current_directory) (ThunarNavigator *navigator);
-  void        (*set_current_directory) (ThunarNavigator *navigator,
-                                        ThunarFile      *current_directory);
+  void (*set_current_directory) (ThunarNavigator *navigator,
+                                 ThunarFile      *current_directory);
 
   /* signals */
-  void        (*change_directory)      (ThunarNavigator *navigator,
-                                        ThunarFile      *directory);
-  void        (*open_new_tab)          (ThunarNavigator *navigator,
-                                        ThunarFile      *directory);
+  void (*change_directory) (ThunarNavigator *navigator,
+                            ThunarFile      *directory);
+  void (*open_new_tab) (ThunarNavigator *navigator,
+                        ThunarFile      *directory);
 };
 
-GType       thunar_navigator_get_type              (void) G_GNUC_CONST;
+GType
+thunar_navigator_get_type (void) G_GNUC_CONST;
 
-ThunarFile *thunar_navigator_get_current_directory (ThunarNavigator *navigator);
-void        thunar_navigator_set_current_directory (ThunarNavigator *navigator,
-                                                    ThunarFile      *current_directory);
+ThunarFile *
+thunar_navigator_get_current_directory (ThunarNavigator *navigator);
+void
+thunar_navigator_set_current_directory (ThunarNavigator *navigator,
+                                        ThunarFile      *current_directory);
 
-void        thunar_navigator_change_directory      (ThunarNavigator *navigator,
-                                                    ThunarFile      *directory);
+void
+thunar_navigator_change_directory (ThunarNavigator *navigator,
+                                   ThunarFile      *directory);
 
-void        thunar_navigator_open_new_tab          (ThunarNavigator *navigator,
-                                                    ThunarFile      *directory);
+void
+thunar_navigator_open_new_tab (ThunarNavigator *navigator,
+                               ThunarFile      *directory);
 
 G_END_DECLS;
 

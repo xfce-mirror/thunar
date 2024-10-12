@@ -28,15 +28,17 @@ G_BEGIN_DECLS;
 typedef struct _ThunarUcaChooserClass ThunarUcaChooserClass;
 typedef struct _ThunarUcaChooser      ThunarUcaChooser;
 
-#define THUNAR_UCA_TYPE_CHOOSER             (thunar_uca_chooser_get_type ())
-#define THUNAR_UCA_CHOOSER(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_UCA_TYPE_CHOOSER, ThunarUcaChooser))
-#define THUNAR_UCA_CHOOSER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_UCA_TYPE_CHOOSER, ThunarUcaChooserClass))
-#define THUNAR_UCA_IS_CHOOSER(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_UCA_TYPE_CHOOSER))
-#define THUNAR_UCA_IS_CHOOSER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_UCA_TYPE_CHOOSER))
-#define THUNAR_UCA_CHOOSER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_UCA_TYPE_CHOOSER, ThunarUcaChooserClass))
+#define THUNAR_UCA_TYPE_CHOOSER (thunar_uca_chooser_get_type ())
+#define THUNAR_UCA_CHOOSER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_UCA_TYPE_CHOOSER, ThunarUcaChooser))
+#define THUNAR_UCA_CHOOSER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_UCA_TYPE_CHOOSER, ThunarUcaChooserClass))
+#define THUNAR_UCA_IS_CHOOSER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_UCA_TYPE_CHOOSER))
+#define THUNAR_UCA_IS_CHOOSER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_UCA_TYPE_CHOOSER))
+#define THUNAR_UCA_CHOOSER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_UCA_TYPE_CHOOSER, ThunarUcaChooserClass))
 
-GType      thunar_uca_chooser_get_type      (void) G_GNUC_CONST;
-void       thunar_uca_chooser_register_type (ThunarxProviderPlugin *plugin);
+GType
+thunar_uca_chooser_get_type (void) G_GNUC_CONST;
+void
+thunar_uca_chooser_register_type (ThunarxProviderPlugin *plugin);
 
 G_END_DECLS;
 

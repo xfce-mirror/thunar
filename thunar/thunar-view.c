@@ -21,14 +21,15 @@
 #include "config.h"
 #endif
 
-#include <libxfce4util/libxfce4util.h>
-
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-view.h"
 
+#include <libxfce4util/libxfce4util.h>
 
 
-static void thunar_view_class_init (gpointer klass);
+
+static void
+thunar_view_class_init (gpointer klass);
 
 
 
@@ -41,9 +42,9 @@ thunar_view_get_type (void)
   if (g_once_init_enter (&type__static))
     {
       type = g_type_register_static_simple (G_TYPE_INTERFACE,
-                                            I_("ThunarView"),
+                                            I_ ("ThunarView"),
                                             sizeof (ThunarViewIface),
-                                            (GClassInitFunc) (void (*)(void)) thunar_view_class_init,
+                                            (GClassInitFunc) (void (*) (void)) thunar_view_class_init,
                                             0,
                                             NULL,
                                             0);
@@ -293,7 +294,7 @@ thunar_view_scroll_to_file (ThunarView *view,
 
 
 
-GList*
+GList *
 thunar_view_get_selected_files (ThunarView *view)
 {
   _thunar_return_val_if_fail (THUNAR_IS_VIEW (view), NULL);

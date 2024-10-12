@@ -28,15 +28,17 @@ G_BEGIN_DECLS;
 typedef struct _ThunarSbrProviderClass ThunarSbrProviderClass;
 typedef struct _ThunarSbrProvider      ThunarSbrProvider;
 
-#define THUNAR_SBR_TYPE_PROVIDER            (thunar_sbr_provider_get_type ())
-#define THUNAR_SBR_PROVIDER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_SBR_TYPE_PROVIDER, ThunarSbrProvider))
-#define THUNAR_SBR_PROVIDER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_SBR_TYPE_PROVIDER, ThunarSbrProviderClass))
-#define THUNAR_SBR_IS_PROVIDER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_SBR_TYPE_PROVIDER))
+#define THUNAR_SBR_TYPE_PROVIDER (thunar_sbr_provider_get_type ())
+#define THUNAR_SBR_PROVIDER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_SBR_TYPE_PROVIDER, ThunarSbrProvider))
+#define THUNAR_SBR_PROVIDER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_SBR_TYPE_PROVIDER, ThunarSbrProviderClass))
+#define THUNAR_SBR_IS_PROVIDER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_SBR_TYPE_PROVIDER))
 #define THUNAR_SBR_IS_PROVIDER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_SBR_TYPE_PROVIDER))
-#define THUNAR_SBR_PROVIDER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_SBR_TYPE_PROVIDER, ThunarSbrProviderClass))
+#define THUNAR_SBR_PROVIDER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_SBR_TYPE_PROVIDER, ThunarSbrProviderClass))
 
-GType thunar_sbr_provider_get_type      (void) G_GNUC_CONST;
-void  thunar_sbr_provider_register_type (ThunarxProviderPlugin *plugin);
+GType
+thunar_sbr_provider_get_type (void) G_GNUC_CONST;
+void
+thunar_sbr_provider_register_type (ThunarxProviderPlugin *plugin);
 
 G_END_DECLS;
 

@@ -34,19 +34,26 @@ G_BEGIN_DECLS;
  */
 #ifndef G_ENABLE_DEBUG
 #undef G_OBJECT_WARN_INVALID_PROPERTY_ID
-#define G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec) G_STMT_START{ (void)0; }G_STMT_END
+#define G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec) \
+  G_STMT_START { (void) 0; } \
+  G_STMT_END
 #endif
 
-void     thunar_g_initialize_transformations (void);
-gchar*   thunar_g_strescape                  (const gchar *source);
-gchar*   thunar_g_utf8_normalize_for_search  (const gchar *str,
-                                              gboolean     strip_diacritics,
-                                              gboolean     casefold);
-gboolean thunar_g_app_info_equal             (gpointer     appinfo1,
-                                              gpointer     appinfo2);
-void     thunar_g_object_set_guint_data      (GObject     *object,
-                                              const gchar *key,
-                                              guint        data);
+void
+thunar_g_initialize_transformations (void);
+gchar *
+thunar_g_strescape (const gchar *source);
+gchar *
+thunar_g_utf8_normalize_for_search (const gchar *str,
+                                    gboolean     strip_diacritics,
+                                    gboolean     casefold);
+gboolean
+thunar_g_app_info_equal (gpointer appinfo1,
+                         gpointer appinfo2);
+void
+thunar_g_object_set_guint_data (GObject     *object,
+                                const gchar *key,
+                                guint        data);
 
 G_END_DECLS;
 
