@@ -1923,7 +1923,7 @@ thunar_standard_view_reset_zoom_level (ThunarView *view)
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
   const gchar        *property_name;
   GParamSpec         *pspec;
-  GValue              value = { 0, };
+  GValue              value = G_VALUE_INIT;
 
   /* determine the default zoom level from the preferences */
   property_name = THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->zoom_level_property_name;
