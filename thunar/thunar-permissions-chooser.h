@@ -27,16 +27,18 @@ G_BEGIN_DECLS;
 typedef struct _ThunarPermissionsChooserClass ThunarPermissionsChooserClass;
 typedef struct _ThunarPermissionsChooser      ThunarPermissionsChooser;
 
-#define THUNAR_TYPE_PERMISSIONS_CHOOSER             (thunar_permissions_chooser_get_type ())
-#define THUNAR_PERMISSIONS_CHOOSER(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_PERMISSIONS_CHOOSER, ThunarPermissionsChooser))
-#define THUNAR_PERMISSIONS_CHOOSER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_PERMISSIONS_CHOOSER, ThunarPermissionsChooserClass))
-#define THUNAR_IS_PERMISSIONS_CHOOSER(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_PERMISSIONS_CHOOSER))
-#define THUNAR_IS_PERMISSIONS_CHOOSER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_PERMISSIONS_CHOOSER))
-#define THUNAR_PERMISSIONS_CHOOSER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_PERMISSIONS_CHOOSER, ThunarPermissionsChooserClass))
+#define THUNAR_TYPE_PERMISSIONS_CHOOSER (thunar_permissions_chooser_get_type ())
+#define THUNAR_PERMISSIONS_CHOOSER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_PERMISSIONS_CHOOSER, ThunarPermissionsChooser))
+#define THUNAR_PERMISSIONS_CHOOSER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_PERMISSIONS_CHOOSER, ThunarPermissionsChooserClass))
+#define THUNAR_IS_PERMISSIONS_CHOOSER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_PERMISSIONS_CHOOSER))
+#define THUNAR_IS_PERMISSIONS_CHOOSER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_PERMISSIONS_CHOOSER))
+#define THUNAR_PERMISSIONS_CHOOSER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_PERMISSIONS_CHOOSER, ThunarPermissionsChooserClass))
 
-GType       thunar_permissions_chooser_get_type  (void) G_GNUC_CONST;
+GType
+thunar_permissions_chooser_get_type (void) G_GNUC_CONST;
 
-GtkWidget  *thunar_permissions_chooser_new       (void) G_GNUC_MALLOC;
+GtkWidget *
+thunar_permissions_chooser_new (void) G_GNUC_MALLOC;
 
 G_END_DECLS;
 

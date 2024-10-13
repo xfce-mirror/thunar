@@ -27,40 +27,47 @@ G_BEGIN_DECLS;
 typedef struct _ThunarIconFactoryClass ThunarIconFactoryClass;
 typedef struct _ThunarIconFactory      ThunarIconFactory;
 
-#define THUNAR_TYPE_ICON_FACTORY            (thunar_icon_factory_get_type ())
-#define THUNAR_ICON_FACTORY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_ICON_FACTORY, ThunarIconFactory))
-#define THUNAR_ICON_FACTORY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_ICON_FACTORY, ThunarIconFactoryClass))
-#define THUNAR_IS_ICON_FACTORY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_ICON_FACTORY))
+#define THUNAR_TYPE_ICON_FACTORY (thunar_icon_factory_get_type ())
+#define THUNAR_ICON_FACTORY(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_ICON_FACTORY, ThunarIconFactory))
+#define THUNAR_ICON_FACTORY_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_ICON_FACTORY, ThunarIconFactoryClass))
+#define THUNAR_IS_ICON_FACTORY(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_ICON_FACTORY))
 #define THUNAR_IS_ICON_FACTORY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_ICON_FACTORY))
-#define THUNAR_ICON_FACTORY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_ICON_FACTORY, ThunarIconFactoryClass))
+#define THUNAR_ICON_FACTORY_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_ICON_FACTORY, ThunarIconFactoryClass))
 
 
 
-GType                  thunar_icon_factory_get_type           (void) G_GNUC_CONST;
+GType
+thunar_icon_factory_get_type (void) G_GNUC_CONST;
 
-ThunarIconFactory     *thunar_icon_factory_get_default        (void);
-ThunarIconFactory     *thunar_icon_factory_get_for_icon_theme (GtkIconTheme             *icon_theme);
+ThunarIconFactory *
+thunar_icon_factory_get_default (void);
+ThunarIconFactory *
+thunar_icon_factory_get_for_icon_theme (GtkIconTheme *icon_theme);
 
-gboolean               thunar_icon_factory_get_show_thumbnail (const ThunarIconFactory  *factory,
-                                                               const ThunarFile         *file);
+gboolean
+thunar_icon_factory_get_show_thumbnail (const ThunarIconFactory *factory,
+                                        const ThunarFile        *file);
 
-GdkPixbuf             *thunar_icon_factory_load_icon          (ThunarIconFactory        *factory,
-                                                               const gchar              *name,
-                                                               gint                      size,
-                                                               gint                      scale_factor,
-                                                               gboolean                  wants_default,
-                                                               gboolean                  symbolic,
-                                                               GtkStyleContext          *context);
+GdkPixbuf *
+thunar_icon_factory_load_icon (ThunarIconFactory *factory,
+                               const gchar       *name,
+                               gint               size,
+                               gint               scale_factor,
+                               gboolean           wants_default,
+                               gboolean           symbolic,
+                               GtkStyleContext   *context);
 
-GdkPixbuf             *thunar_icon_factory_load_file_icon     (ThunarIconFactory        *factory,
-                                                               ThunarFile               *file,
-                                                               ThunarFileIconState       icon_state,
-                                                               gint                      icon_size,
-                                                               gint                      scale_factor,
-                                                               gboolean                  symbolic,
-                                                               GtkStyleContext          *context);
+GdkPixbuf *
+thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
+                                    ThunarFile         *file,
+                                    ThunarFileIconState icon_state,
+                                    gint                icon_size,
+                                    gint                scale_factor,
+                                    gboolean            symbolic,
+                                    GtkStyleContext    *context);
 
-void                   thunar_icon_factory_clear_pixmap_cache (ThunarFile               *file);
+void
+thunar_icon_factory_clear_pixmap_cache (ThunarFile *file);
 
 G_END_DECLS;
 

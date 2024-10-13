@@ -21,18 +21,17 @@
 #include "config.h"
 #endif
 
-#include <exo/exo.h>
-
-#include <libxfce4ui/libxfce4ui.h>
-
 #include "thunar/thunar-abstract-dialog.h"
-#include "thunar/thunar-toolbar-editor.h"
+#include "thunar/thunar-application.h"
 #include "thunar/thunar-dialogs.h"
 #include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-pango-extensions.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
-#include "thunar/thunar-application.h"
+#include "thunar/thunar-toolbar-editor.h"
+
+#include <exo/exo.h>
+#include <libxfce4ui/libxfce4ui.h>
 
 
 
@@ -49,25 +48,36 @@ enum
 
 
 
-static void     thunar_toolbar_editor_finalize                           (GObject                  *object);
-static void     thunar_toolbar_editor_help_clicked                       (ThunarToolbarEditor      *toolbar_editor,
-                                                                          GtkWidget                *button);
-static void     thunar_toolbar_editor_swap_toolbar_items_for_all_windows (ThunarToolbarEditor      *editor,
-                                                                          GtkTreeIter              *item1,
-                                                                          GtkTreeIter              *item2);
-static void     thunar_toolbar_editor_move_down                          (ThunarToolbarEditor      *toolbar_editor,
-                                                                          GtkWidget                *button);
-static void     thunar_toolbar_editor_move_up                            (ThunarToolbarEditor      *toolbar_editor,
-                                                                          GtkWidget                *button);
-static void     thunar_toolbar_editor_toggle_visibility                  (ThunarToolbarEditor      *toolbar_editor,
-                                                                          const gchar              *path_string,
-                                                                          GtkCellRendererToggle    *cell_renderer);
-static void     thunar_toolbar_editor_update_buttons                     (ThunarToolbarEditor      *toolbar_editor);
-static void     thunar_toolbar_editor_use_defaults                       (ThunarToolbarEditor      *toolbar_editor,
-                                                                          GtkWidget                *button);
-static void     thunar_toolbar_editor_toggle_symbolic_icons              (ThunarToolbarEditor      *toolbar_editor);
-static void     thunar_toolbar_editor_save_model                         (ThunarToolbarEditor      *toolbar_editor);
-static void     thunar_toolbar_editor_populate_model                     (ThunarToolbarEditor      *toolbar_editor);
+static void
+thunar_toolbar_editor_finalize (GObject *object);
+static void
+thunar_toolbar_editor_help_clicked (ThunarToolbarEditor *toolbar_editor,
+                                    GtkWidget           *button);
+static void
+thunar_toolbar_editor_swap_toolbar_items_for_all_windows (ThunarToolbarEditor *editor,
+                                                          GtkTreeIter         *item1,
+                                                          GtkTreeIter         *item2);
+static void
+thunar_toolbar_editor_move_down (ThunarToolbarEditor *toolbar_editor,
+                                 GtkWidget           *button);
+static void
+thunar_toolbar_editor_move_up (ThunarToolbarEditor *toolbar_editor,
+                               GtkWidget           *button);
+static void
+thunar_toolbar_editor_toggle_visibility (ThunarToolbarEditor   *toolbar_editor,
+                                         const gchar           *path_string,
+                                         GtkCellRendererToggle *cell_renderer);
+static void
+thunar_toolbar_editor_update_buttons (ThunarToolbarEditor *toolbar_editor);
+static void
+thunar_toolbar_editor_use_defaults (ThunarToolbarEditor *toolbar_editor,
+                                    GtkWidget           *button);
+static void
+thunar_toolbar_editor_toggle_symbolic_icons (ThunarToolbarEditor *toolbar_editor);
+static void
+thunar_toolbar_editor_save_model (ThunarToolbarEditor *toolbar_editor);
+static void
+thunar_toolbar_editor_populate_model (ThunarToolbarEditor *toolbar_editor);
 
 
 
@@ -82,14 +92,14 @@ struct _ThunarToolbarEditor
 
   ThunarPreferences *preferences;
 
-  GtkListStore      *model;
+  GtkListStore *model;
 
   /* Used to get information about the toolbar items, it is used as a reference. All the toolbars are changed, not just this one. */
-  GtkWidget         *toolbar;
+  GtkWidget *toolbar;
 
-  GtkWidget         *tree_view;
-  GtkWidget         *up_button;
-  GtkWidget         *down_button;
+  GtkWidget *tree_view;
+  GtkWidget *up_button;
+  GtkWidget *down_button;
 };
 
 
@@ -112,15 +122,15 @@ thunar_toolbar_editor_class_init (ThunarToolbarEditorClass *klass)
 static void
 thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
 {
-  GtkCellRenderer        *renderer;
-  GtkWidget              *button;
-  GtkWidget              *image;
-  GtkWidget              *label;
-  GtkWidget              *vbox;
-  GtkWidget              *hbox;
-  GtkWidget              *vbox_buttons;
-  GtkWidget              *separator;
-  GtkWidget              *swin;
+  GtkCellRenderer *renderer;
+  GtkWidget       *button;
+  GtkWidget       *image;
+  GtkWidget       *label;
+  GtkWidget       *vbox;
+  GtkWidget       *hbox;
+  GtkWidget       *vbox_buttons;
+  GtkWidget       *separator;
+  GtkWidget       *swin;
 
   /* grab a reference on the preferences */
   toolbar_editor->preferences = thunar_preferences_get ();
@@ -294,7 +304,7 @@ thunar_toolbar_editor_finalize (GObject *object)
 
 static void
 thunar_toolbar_editor_help_clicked (ThunarToolbarEditor *toolbar_editor,
-                                    GtkWidget          *button)
+                                    GtkWidget           *button)
 {
   _thunar_return_if_fail (THUNAR_IS_TOOLBAR_EDITOR (toolbar_editor));
   _thunar_return_if_fail (GTK_IS_BUTTON (button));
@@ -388,9 +398,9 @@ thunar_toolbar_editor_move_up (ThunarToolbarEditor *toolbar_editor,
 
 
 static void
-thunar_toolbar_editor_toggle_visibility (ThunarToolbarEditor    *toolbar_editor,
-                                         const gchar            *path_string,
-                                         GtkCellRendererToggle  *cell_renderer)
+thunar_toolbar_editor_toggle_visibility (ThunarToolbarEditor   *toolbar_editor,
+                                         const gchar           *path_string,
+                                         GtkCellRendererToggle *cell_renderer)
 {
   ThunarApplication *application;
   GList             *windows;
@@ -466,10 +476,10 @@ thunar_toolbar_editor_use_defaults (ThunarToolbarEditor *toolbar_editor,
                                     GtkWidget           *button)
 {
   GList *toolbar_items;
-  guint item_count = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (toolbar_editor->model), NULL);
-  guint target_order[item_count];
-  guint current_order[item_count];
-  guint index;
+  guint  item_count = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (toolbar_editor->model), NULL);
+  guint  target_order[item_count];
+  guint  current_order[item_count];
+  guint  index;
 
   toolbar_items = gtk_container_get_children (GTK_CONTAINER (toolbar_editor->toolbar));
 
@@ -477,7 +487,7 @@ thunar_toolbar_editor_use_defaults (ThunarToolbarEditor *toolbar_editor,
   for (GList *lp = toolbar_items; lp != NULL; lp = lp->next)
     {
       GtkWidget *item = lp->data;
-      gint *order = NULL;
+      gint      *order = NULL;
 
       order = g_object_get_data (G_OBJECT (item), "default-order");
       current_order[index] = *order;
@@ -495,7 +505,7 @@ thunar_toolbar_editor_use_defaults (ThunarToolbarEditor *toolbar_editor,
           if (x == y && i != j)
             {
               GtkTreeIter iter_i, iter_j;
-              gchar *path_i, *path_j;
+              gchar      *path_i, *path_j;
 
               path_i = g_strdup_printf ("%i", i);
               path_j = g_strdup_printf ("%i", j);
@@ -548,10 +558,10 @@ thunar_toolbar_editor_save_model (ThunarToolbarEditor *toolbar_editor)
   /* read the internal id and visibility column values and store them */
   for (guint i = 0; i < item_count; i++)
     {
-      GtkTreeIter  iter;
-      gchar       *path;
-      gchar       *id;
-      gboolean     visible;
+      GtkTreeIter iter;
+      gchar      *path;
+      gchar      *id;
+      gboolean    visible;
 
       /* get iterator for the ith item */
       path = g_strdup_printf ("%i", i);

@@ -27,12 +27,12 @@ G_BEGIN_DECLS;
 typedef struct _ThunarDetailsViewClass ThunarDetailsViewClass;
 typedef struct _ThunarDetailsView      ThunarDetailsView;
 
-#define THUNAR_TYPE_DETAILS_VIEW            (thunar_details_view_get_type ())
-#define THUNAR_DETAILS_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_DETAILS_VIEW, ThunarDetailsView))
-#define THUNAR_DETAILS_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_DETAILS_VIEW, ThunarDetailsViewClass))
-#define THUNAR_IS_DETAILS_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_DETAILS_VIEW))
+#define THUNAR_TYPE_DETAILS_VIEW (thunar_details_view_get_type ())
+#define THUNAR_DETAILS_VIEW(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_DETAILS_VIEW, ThunarDetailsView))
+#define THUNAR_DETAILS_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_DETAILS_VIEW, ThunarDetailsViewClass))
+#define THUNAR_IS_DETAILS_VIEW(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_DETAILS_VIEW))
 #define THUNAR_IS_DETAILS_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_DETAILS_VIEW))
-#define THUNAR_DETAILS_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_DETAILS_VIEW, ThunarDetailsViewClass))
+#define THUNAR_DETAILS_VIEW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_DETAILS_VIEW, ThunarDetailsViewClass))
 
 /* #XfceGtkActionEntrys provided by this widget */
 typedef enum
@@ -41,10 +41,14 @@ typedef enum
   THUNAR_DETAILS_VIEW_ACTION_TOGGLE_EXPANDABLE_FOLDERS,
 } ThunarDetailsViewAction;
 
-GType      thunar_details_view_get_type                         (void) G_GNUC_CONST;
-void       thunar_details_view_set_date_deleted_column_visible  (ThunarDetailsView*, gboolean);
-void       thunar_details_view_set_recency_column_visible       (ThunarDetailsView*, gboolean);
-void       thunar_details_view_set_location_column_visible      (ThunarDetailsView*, gboolean);
+GType
+thunar_details_view_get_type (void) G_GNUC_CONST;
+void
+thunar_details_view_set_date_deleted_column_visible (ThunarDetailsView *, gboolean);
+void
+thunar_details_view_set_recency_column_visible (ThunarDetailsView *, gboolean);
+void
+thunar_details_view_set_location_column_visible (ThunarDetailsView *, gboolean);
 
 G_END_DECLS;
 

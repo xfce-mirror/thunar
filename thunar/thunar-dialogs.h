@@ -26,39 +26,49 @@
 
 G_BEGIN_DECLS;
 
-gchar             *thunar_dialogs_show_create           (gpointer              parent,
-                                                         const gchar          *content_type,
-                                                         const gchar          *filename,
-                                                         const gchar          *title);
-ThunarJob         *thunar_dialogs_show_rename_file      (gpointer               parent,
-                                                         ThunarFile            *file,
-                                                         ThunarOperationLogMode log_mode);
-void               thunar_dialogs_show_about            (GtkWindow            *parent,
-                                                         const gchar          *title,
-                                                         const gchar          *format,
-                                                         ...) G_GNUC_PRINTF (3, 4);
-void               thunar_dialogs_show_error            (gpointer              parent,
-                                                         const GError         *error,
-                                                         const gchar          *format,
-                                                         ...) G_GNUC_PRINTF (3, 4);
-ThunarJobResponse  thunar_dialogs_show_job_ask          (GtkWindow            *parent,
-                                                         const gchar          *question,
-                                                         ThunarJobResponse     choices);
-ThunarJobResponse  thunar_dialogs_show_job_ask_replace  (GtkWindow            *parent,
-                                                         ThunarFile           *src_file,
-                                                         ThunarFile           *dst_file,
-                                                         gboolean              multiple_files);
-gboolean           thunar_dialogs_show_insecure_program (gpointer              parent,
-                                                         const gchar          *title,
-                                                         ThunarFile           *file,
-                                                         const gchar          *command);
-gint               thunar_dialog_confirm_close_split_pane_tabs (GtkWindow     *parent);
-gint               thunar_dialog_ask_execute            (const ThunarFile     *file,
-                                                         gpointer              parent,
-                                                         gboolean              allow_open,
-                                                         gboolean              single_file);
-void               thunar_dialog_show_launcher_props    (ThunarFile           *launcher,
-                                                         gpointer              parent);
+gchar *
+thunar_dialogs_show_create (gpointer     parent,
+                            const gchar *content_type,
+                            const gchar *filename,
+                            const gchar *title);
+ThunarJob *
+thunar_dialogs_show_rename_file (gpointer               parent,
+                                 ThunarFile            *file,
+                                 ThunarOperationLogMode log_mode);
+void
+thunar_dialogs_show_about (GtkWindow   *parent,
+                           const gchar *title,
+                           const gchar *format,
+                           ...) G_GNUC_PRINTF (3, 4);
+void
+thunar_dialogs_show_error (gpointer      parent,
+                           const GError *error,
+                           const gchar  *format,
+                           ...) G_GNUC_PRINTF (3, 4);
+ThunarJobResponse
+thunar_dialogs_show_job_ask (GtkWindow        *parent,
+                             const gchar      *question,
+                             ThunarJobResponse choices);
+ThunarJobResponse
+thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
+                                     ThunarFile *src_file,
+                                     ThunarFile *dst_file,
+                                     gboolean    multiple_files);
+gboolean
+thunar_dialogs_show_insecure_program (gpointer     parent,
+                                      const gchar *title,
+                                      ThunarFile  *file,
+                                      const gchar *command);
+gint
+thunar_dialog_confirm_close_split_pane_tabs (GtkWindow *parent);
+gint
+thunar_dialog_ask_execute (const ThunarFile *file,
+                           gpointer          parent,
+                           gboolean          allow_open,
+                           gboolean          single_file);
+void
+thunar_dialog_show_launcher_props (ThunarFile *launcher,
+                                   gpointer    parent);
 
 G_END_DECLS;
 

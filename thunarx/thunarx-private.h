@@ -28,23 +28,25 @@
 #include <glib-object.h>
 
 #define THUNAR_THREADS_ENTER \
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS \
-  gdk_threads_enter(); \
-G_GNUC_END_IGNORE_DEPRECATIONS
+  G_GNUC_BEGIN_IGNORE_DEPRECATIONS \
+  gdk_threads_enter (); \
+  G_GNUC_END_IGNORE_DEPRECATIONS
 
 #define THUNAR_THREADS_LEAVE \
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS \
+  G_GNUC_BEGIN_IGNORE_DEPRECATIONS \
   gdk_threads_leave (); \
-G_GNUC_END_IGNORE_DEPRECATIONS
+  G_GNUC_END_IGNORE_DEPRECATIONS
 
 G_BEGIN_DECLS
 
 G_GNUC_INTERNAL
-void   thunarx_object_list_take_reference (GList      *object_list,
-                                           gpointer    target);
+void
+thunarx_object_list_take_reference (GList   *object_list,
+                                    gpointer target);
 
 G_GNUC_INTERNAL
-gchar *thunarx_param_spec_get_option_name (GParamSpec *pspec) G_GNUC_MALLOC;
+gchar *
+thunarx_param_spec_get_option_name (GParamSpec *pspec) G_GNUC_MALLOC;
 
 G_END_DECLS
 

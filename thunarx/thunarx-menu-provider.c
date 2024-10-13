@@ -22,10 +22,10 @@
 #include "config.h"
 #endif
 
-#include <libxfce4util/libxfce4util.h>
-
 #include "thunarx/thunarx-menu-provider.h"
 #include "thunarx/thunarx-private.h"
+
+#include <libxfce4util/libxfce4util.h>
 
 
 /**
@@ -64,7 +64,7 @@ thunarx_menu_provider_get_type (void)
   if (g_once_init_enter (&type__static))
     {
       type = g_type_register_static_simple (G_TYPE_INTERFACE,
-                                            I_("ThunarxMenuProvider"),
+                                            I_ ("ThunarxMenuProvider"),
                                             sizeof (ThunarxMenuProviderIface),
                                             NULL,
                                             0,
@@ -108,7 +108,7 @@ thunarx_menu_provider_get_type (void)
  * Returns: (transfer full) (element-type ThunarxMenuItem): the list of #ThunarxMenuItem<!---->s
  *          that @provider has to offer for @files.
  **/
-GList*
+GList *
 thunarx_menu_provider_get_file_menu_items (ThunarxMenuProvider *provider,
                                            GtkWidget           *window,
                                            GList               *files)
@@ -163,7 +163,7 @@ thunarx_menu_provider_get_file_menu_items (ThunarxMenuProvider *provider,
  * Returns: (transfer full) (element-type ThunarxMenuItem): the list of #ThunarxMenuItem<!---->s
  *          that @provider has to offer for @folder.
  **/
-GList*
+GList *
 thunarx_menu_provider_get_folder_menu_items (ThunarxMenuProvider *provider,
                                              GtkWidget           *window,
                                              ThunarxFileInfo     *folder)
@@ -225,7 +225,7 @@ thunarx_menu_provider_get_folder_menu_items (ThunarxMenuProvider *provider,
  *
  * Since: 0.4.1
  **/
-GList*
+GList *
 thunarx_menu_provider_get_dnd_menu_items (ThunarxMenuProvider *provider,
                                           GtkWidget           *window,
                                           ThunarxFileInfo     *folder,

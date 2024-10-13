@@ -28,12 +28,12 @@ G_BEGIN_DECLS;
 typedef struct _ThunarIconRendererClass ThunarIconRendererClass;
 typedef struct _ThunarIconRenderer      ThunarIconRenderer;
 
-#define THUNAR_TYPE_ICON_RENDERER            (thunar_icon_renderer_get_type ())
-#define THUNAR_ICON_RENDERER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_ICON_RENDERER, ThunarIconRenderer))
-#define THUNAR_ICON_RENDERER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_ICON_RENDERER, ThunarIconRendererClass))
-#define THUNAR_IS_ICON_RENDERER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_ICON_RENDERER))
+#define THUNAR_TYPE_ICON_RENDERER (thunar_icon_renderer_get_type ())
+#define THUNAR_ICON_RENDERER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_ICON_RENDERER, ThunarIconRenderer))
+#define THUNAR_ICON_RENDERER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_ICON_RENDERER, ThunarIconRendererClass))
+#define THUNAR_IS_ICON_RENDERER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_ICON_RENDERER))
 #define THUNAR_IS_ICON_RENDERER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_ICON_RENDERER))
-#define THUNAR_ICON_RENDERER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_ICON_RENDERER, ThunarIconRendererClass))
+#define THUNAR_ICON_RENDERER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_ICON_RENDERER, ThunarIconRendererClass))
 
 struct _ThunarIconRendererClass
 {
@@ -56,9 +56,11 @@ struct _ThunarIconRenderer
   gboolean       use_symbolic_icons;
 };
 
-GType            thunar_icon_renderer_get_type (void) G_GNUC_CONST;
+GType
+thunar_icon_renderer_get_type (void) G_GNUC_CONST;
 
-GtkCellRenderer *thunar_icon_renderer_new      (void) G_GNUC_MALLOC;
+GtkCellRenderer *
+thunar_icon_renderer_new (void) G_GNUC_MALLOC;
 
 G_END_DECLS;
 

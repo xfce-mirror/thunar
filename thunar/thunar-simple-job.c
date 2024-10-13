@@ -33,17 +33,19 @@
 #include <string.h>
 #endif
 
-#include <gobject/gvaluecollector.h>
-
 #include "thunar/thunar-job.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-simple-job.h"
 
+#include <gobject/gvaluecollector.h>
 
 
-static void     thunar_simple_job_finalize   (GObject              *object);
-static gboolean thunar_simple_job_execute    (ExoJob               *job,
-                                              GError              **error);
+
+static void
+thunar_simple_job_finalize (GObject *object);
+static gboolean
+thunar_simple_job_execute (ExoJob  *job,
+                           GError **error);
 
 
 
@@ -56,8 +58,8 @@ struct _ThunarSimpleJob
 {
   ThunarJob __parent__;
 
-  ThunarSimpleJobFunc  func;
-  GArray              *param_values;
+  ThunarSimpleJobFunc func;
+  GArray             *param_values;
 };
 
 
@@ -176,9 +178,11 @@ thunar_simple_job_new (ThunarSimpleJobFunc func,
 {
   ThunarSimpleJob *simple_job;
   va_list          var_args;
-  GValue           value = { 0, };
-  gchar           *error_message;
-  guint            n;
+  GValue           value = {
+    0,
+  };
+  gchar *error_message;
+  guint  n;
 
   /* allocate and initialize the simple job */
   simple_job = g_object_new (THUNAR_TYPE_SIMPLE_JOB, NULL);

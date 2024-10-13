@@ -27,16 +27,18 @@ G_BEGIN_DECLS;
 typedef struct _ThunarColumnEditorClass ThunarColumnEditorClass;
 typedef struct _ThunarColumnEditor      ThunarColumnEditor;
 
-#define THUNAR_TYPE_COLUMN_EDITOR             (thunar_column_editor_get_type ())
-#define THUNAR_COLUMN_EDITOR(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_COLUMN_EDITOR, ThunarColumnEditor))
-#define THUNAR_COLUMN_EDITOR_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_COLUMN_EDITOR, ThunarColumnEditorClass))
-#define THUNAR_IS_COLUMN_EDITOR(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_COLUMN_EDITOR))
-#define THUNAR_IS_COLUMN_EDITOR_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_COLUMN_EDITOR))
-#define THUNAR_COLUMN_EDITOR_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_COLUMN_EDITOR, ThunarColumnEditorClass))
+#define THUNAR_TYPE_COLUMN_EDITOR (thunar_column_editor_get_type ())
+#define THUNAR_COLUMN_EDITOR(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_COLUMN_EDITOR, ThunarColumnEditor))
+#define THUNAR_COLUMN_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_COLUMN_EDITOR, ThunarColumnEditorClass))
+#define THUNAR_IS_COLUMN_EDITOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_COLUMN_EDITOR))
+#define THUNAR_IS_COLUMN_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_COLUMN_EDITOR))
+#define THUNAR_COLUMN_EDITOR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_COLUMN_EDITOR, ThunarColumnEditorClass))
 
-GType      thunar_column_editor_get_type (void) G_GNUC_CONST;
+GType
+thunar_column_editor_get_type (void) G_GNUC_CONST;
 
-gboolean   thunar_show_column_editor     (gpointer parent);
+gboolean
+thunar_show_column_editor (gpointer parent);
 
 G_END_DECLS;
 

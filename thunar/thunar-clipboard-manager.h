@@ -28,30 +28,37 @@ G_BEGIN_DECLS;
 typedef struct _ThunarClipboardManagerClass ThunarClipboardManagerClass;
 typedef struct _ThunarClipboardManager      ThunarClipboardManager;
 
-#define THUNAR_TYPE_CLIPBOARD_MANAGER             (thunar_clipboard_manager_get_type ())
-#define THUNAR_CLIPBOARD_MANAGER(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_CLIPBOARD_MANAGER, ThunarClipboardManager))
-#define THUNAR_CLIPBOARD_MANAGER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((obj), THUNAR_TYPE_CLIPBOARD_MANAGER, ThunarClipboardManagerClass))
-#define THUNAR_IS_CLIPBOARD_MANAGER(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_CLIPBOARD_MANAGER))
-#define THUNAR_IS_CLIPBOARD_MANAGER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_CLIPBOARD_MANAGER))
-#define THUNAR_CLIPBOARD_MANAGER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_CLIPBOARD_MANAGER, ThunarClipboardManagerClass))
+#define THUNAR_TYPE_CLIPBOARD_MANAGER (thunar_clipboard_manager_get_type ())
+#define THUNAR_CLIPBOARD_MANAGER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_CLIPBOARD_MANAGER, ThunarClipboardManager))
+#define THUNAR_CLIPBOARD_MANAGER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((obj), THUNAR_TYPE_CLIPBOARD_MANAGER, ThunarClipboardManagerClass))
+#define THUNAR_IS_CLIPBOARD_MANAGER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_CLIPBOARD_MANAGER))
+#define THUNAR_IS_CLIPBOARD_MANAGER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_CLIPBOARD_MANAGER))
+#define THUNAR_CLIPBOARD_MANAGER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_CLIPBOARD_MANAGER, ThunarClipboardManagerClass))
 
-GType                   thunar_clipboard_manager_get_type        (void) G_GNUC_CONST;
+GType
+thunar_clipboard_manager_get_type (void) G_GNUC_CONST;
 
-ThunarClipboardManager *thunar_clipboard_manager_get_for_display (GdkDisplay             *display);
+ThunarClipboardManager *
+thunar_clipboard_manager_get_for_display (GdkDisplay *display);
 
-gboolean                thunar_clipboard_manager_get_can_paste   (ThunarClipboardManager *manager);
+gboolean
+thunar_clipboard_manager_get_can_paste (ThunarClipboardManager *manager);
 
-gboolean                thunar_clipboard_manager_has_cutted_file (ThunarClipboardManager *manager,
-                                                                  const ThunarFile       *file);
+gboolean
+thunar_clipboard_manager_has_cutted_file (ThunarClipboardManager *manager,
+                                          const ThunarFile       *file);
 
-void                    thunar_clipboard_manager_copy_files      (ThunarClipboardManager *manager,
-                                                                  GList                  *files);
-void                    thunar_clipboard_manager_cut_files       (ThunarClipboardManager *manager,
-                                                                  GList                  *files);
-void                    thunar_clipboard_manager_paste_files     (ThunarClipboardManager *manager,
-                                                                  GFile                  *target_file,
-                                                                  GtkWidget              *widget,
-                                                                  GClosure               *new_files_closure);
+void
+thunar_clipboard_manager_copy_files (ThunarClipboardManager *manager,
+                                     GList                  *files);
+void
+thunar_clipboard_manager_cut_files (ThunarClipboardManager *manager,
+                                    GList                  *files);
+void
+thunar_clipboard_manager_paste_files (ThunarClipboardManager *manager,
+                                      GFile                  *target_file,
+                                      GtkWidget              *widget,
+                                      GClosure               *new_files_closure);
 
 G_END_DECLS;
 

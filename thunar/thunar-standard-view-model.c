@@ -21,13 +21,14 @@
 #include "config.h"
 #endif
 
+#include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-standard-view-model.h"
-#include "thunar/thunar-preferences.h"
 #include "thunar/thunar-util.h"
-#include "thunar/thunar-gobject-extensions.h"
 
-static void thunar_standard_view_model_class_init (gpointer klass);
+static void
+thunar_standard_view_model_class_init (gpointer klass);
 
 GType
 thunar_standard_view_model_get_type (void)
@@ -38,9 +39,9 @@ thunar_standard_view_model_get_type (void)
   if (g_once_init_enter (&type__static))
     {
       type = g_type_register_static_simple (G_TYPE_INTERFACE,
-                                            I_("ThunarStandardViewModel"),
+                                            I_ ("ThunarStandardViewModel"),
                                             sizeof (ThunarStandardViewModelIface),
-                                            (GClassInitFunc) (void (*)(void)) thunar_standard_view_model_class_init,
+                                            (GClassInitFunc) (void (*) (void)) thunar_standard_view_model_class_init,
                                             0,
                                             NULL,
                                             0);
@@ -63,13 +64,14 @@ struct _MatchForeach
   gboolean      case_sensitive;
 };
 
-static guint       model_signals[THUNAR_STANDARD_VIEW_MODEL_LAST_SIGNAL];
+static guint model_signals[THUNAR_STANDARD_VIEW_MODEL_LAST_SIGNAL];
 
-static void thunar_standard_view_model_class_init (gpointer klass)
+static void
+thunar_standard_view_model_class_init (gpointer klass)
 {
   static gboolean initialized = FALSE;
 
-  if (! initialized)
+  if (!initialized)
     {
       /**
        * ThunarStandardViewModel:case-sensitive:
@@ -77,11 +79,11 @@ static void thunar_standard_view_model_class_init (gpointer klass)
        * Tells whether the sorting should be case sensitive.
        **/
       g_object_interface_install_property (klass,
-          g_param_spec_boolean ("case-sensitive",
-                                "case-sensitive",
-                                "case-sensitive",
-                                TRUE,
-                                EXO_PARAM_READWRITE));
+                                           g_param_spec_boolean ("case-sensitive",
+                                                                 "case-sensitive",
+                                                                 "case-sensitive",
+                                                                 TRUE,
+                                                                 EXO_PARAM_READWRITE));
 
       /**
        * ThunarStandardViewModel:date-style:
@@ -89,12 +91,12 @@ static void thunar_standard_view_model_class_init (gpointer klass)
        * The style used to format dates.
        **/
       g_object_interface_install_property (klass,
-          g_param_spec_enum ("date-style",
-                             "date-style",
-                             "date-style",
-                             THUNAR_TYPE_DATE_STYLE,
-                             THUNAR_DATE_STYLE_SIMPLE,
-                             EXO_PARAM_READWRITE));
+                                           g_param_spec_enum ("date-style",
+                                                              "date-style",
+                                                              "date-style",
+                                                              THUNAR_TYPE_DATE_STYLE,
+                                                              THUNAR_DATE_STYLE_SIMPLE,
+                                                              EXO_PARAM_READWRITE));
 
       /**
        * ThunarStandardViewModel:date-custom-style:
@@ -102,11 +104,11 @@ static void thunar_standard_view_model_class_init (gpointer klass)
        * The style used for custom format of dates.
        **/
       g_object_interface_install_property (klass,
-          g_param_spec_string ("date-custom-style",
-                               "DateCustomStyle",
-                               NULL,
-                               "%Y-%m-%d %H:%M:%S",
-                               EXO_PARAM_READWRITE));
+                                           g_param_spec_string ("date-custom-style",
+                                                                "DateCustomStyle",
+                                                                NULL,
+                                                                "%Y-%m-%d %H:%M:%S",
+                                                                EXO_PARAM_READWRITE));
 
       /**
        * ThunarStandardViewModel:folder:
@@ -114,11 +116,11 @@ static void thunar_standard_view_model_class_init (gpointer klass)
        * The folder presented by this #ThunarStandardViewModel.
        **/
       g_object_interface_install_property (klass,
-          g_param_spec_object ("folder",
-                               "folder",
-                               "folder",
-                               THUNAR_TYPE_FOLDER,
-                               EXO_PARAM_READWRITE));
+                                           g_param_spec_object ("folder",
+                                                                "folder",
+                                                                "folder",
+                                                                THUNAR_TYPE_FOLDER,
+                                                                EXO_PARAM_READWRITE));
 
       /**
        * ThunarStandardViewModel::folders-first:
@@ -126,11 +128,11 @@ static void thunar_standard_view_model_class_init (gpointer klass)
        * Tells whether to always sort folders before other files.
        **/
       g_object_interface_install_property (klass,
-          g_param_spec_boolean ("folders-first",
-                                "folders-first",
-                                "folders-first",
-                                TRUE,
-                                EXO_PARAM_READWRITE));
+                                           g_param_spec_boolean ("folders-first",
+                                                                 "folders-first",
+                                                                 "folders-first",
+                                                                 TRUE,
+                                                                 EXO_PARAM_READWRITE));
 
       /**
        * ThunarStandardViewModel::num-files:
@@ -138,11 +140,11 @@ static void thunar_standard_view_model_class_init (gpointer klass)
        * The number of files in the folder presented by this #ThunarStandardViewModel.
        **/
       g_object_interface_install_property (klass,
-          g_param_spec_uint ("num-files",
-                             "num-files",
-                             "num-files",
-                             0, G_MAXUINT, 0,
-                             EXO_PARAM_READABLE));
+                                           g_param_spec_uint ("num-files",
+                                                              "num-files",
+                                                              "num-files",
+                                                              0, G_MAXUINT, 0,
+                                                              EXO_PARAM_READABLE));
 
       /**
        * ThunarStandardViewModel::show-hidden:
@@ -150,11 +152,11 @@ static void thunar_standard_view_model_class_init (gpointer klass)
        * Tells whether to include hidden (and backup) files.
        **/
       g_object_interface_install_property (klass,
-          g_param_spec_boolean ("show-hidden",
-                                "show-hidden",
-                                "show-hidden",
-                                FALSE,
-                                EXO_PARAM_READWRITE));
+                                           g_param_spec_boolean ("show-hidden",
+                                                                 "show-hidden",
+                                                                 "show-hidden",
+                                                                 FALSE,
+                                                                 EXO_PARAM_READWRITE));
 
       /**
        * ThunarStandardViewModel::misc-file-size-binary:
@@ -162,11 +164,11 @@ static void thunar_standard_view_model_class_init (gpointer klass)
        * Tells whether to format file size in binary.
        **/
       g_object_interface_install_property (klass,
-          g_param_spec_boolean ("file-size-binary",
-                                "file-size-binary",
-                                "file-size-binary",
-                                TRUE,
-                                EXO_PARAM_READWRITE));
+                                           g_param_spec_boolean ("file-size-binary",
+                                                                 "file-size-binary",
+                                                                 "file-size-binary",
+                                                                 TRUE,
+                                                                 EXO_PARAM_READWRITE));
 
       /**
        * ThunarStandardViewModel:folder-item-count:
@@ -174,12 +176,12 @@ static void thunar_standard_view_model_class_init (gpointer klass)
        * Tells when the size column of folders should show the number of containing files
        **/
       g_object_interface_install_property (klass,
-          g_param_spec_enum ("folder-item-count",
-                             "folder-item-count",
-                             "folder-item-count",
-                             THUNAR_TYPE_FOLDER_ITEM_COUNT,
-                             TRUE,
-                             EXO_PARAM_READWRITE));
+                                           g_param_spec_enum ("folder-item-count",
+                                                              "folder-item-count",
+                                                              "folder-item-count",
+                                                              THUNAR_TYPE_FOLDER_ITEM_COUNT,
+                                                              TRUE,
+                                                              EXO_PARAM_READWRITE));
 
       /**
        * ThunarStandardViewModel:loading:
@@ -187,11 +189,11 @@ static void thunar_standard_view_model_class_init (gpointer klass)
        * Tells if the model is yet loading a folder
        **/
       g_object_interface_install_property (klass,
-          g_param_spec_boolean ("loading",
-                                "loading",
-                                "loading",
-                                FALSE,
-                                EXO_PARAM_READABLE));
+                                           g_param_spec_boolean ("loading",
+                                                                 "loading",
+                                                                 "loading",
+                                                                 FALSE,
+                                                                 EXO_PARAM_READABLE));
 
       /**
        * ThunarStandardViewModel::error:
@@ -202,13 +204,13 @@ static void thunar_standard_view_model_class_init (gpointer klass)
        * @store content.
        **/
       model_signals[THUNAR_STANDARD_VIEW_MODEL_ERROR] =
-        g_signal_new (I_("error"),
-            G_TYPE_FROM_INTERFACE (klass),
-            G_SIGNAL_RUN_LAST,
-            G_STRUCT_OFFSET(ThunarStandardViewModelIface, error),
-            NULL, NULL,
-            g_cclosure_marshal_VOID__POINTER,
-            G_TYPE_NONE, 1, G_TYPE_POINTER);
+      g_signal_new (I_ ("error"),
+                    G_TYPE_FROM_INTERFACE (klass),
+                    G_SIGNAL_RUN_LAST,
+                    G_STRUCT_OFFSET (ThunarStandardViewModelIface, error),
+                    NULL, NULL,
+                    g_cclosure_marshal_VOID__POINTER,
+                    G_TYPE_NONE, 1, G_TYPE_POINTER);
 
       /**
        * ThunarStandardViewModel::search-done:
@@ -218,14 +220,13 @@ static void thunar_standard_view_model_class_init (gpointer klass)
        * Emitted when a recursive search finishes.
        **/
       model_signals[THUNAR_STANDARD_VIEW_MODEL_SEARCH_DONE] =
-        g_signal_new (I_("search-done"),
-            G_TYPE_FROM_CLASS (klass),
-            G_SIGNAL_RUN_LAST,
-            G_STRUCT_OFFSET(ThunarStandardViewModelIface, search_done),
-            NULL, NULL,
-            NULL,
-            G_TYPE_NONE, 0);
-
+      g_signal_new (I_ ("search-done"),
+                    G_TYPE_FROM_CLASS (klass),
+                    G_SIGNAL_RUN_LAST,
+                    G_STRUCT_OFFSET (ThunarStandardViewModelIface, search_done),
+                    NULL, NULL,
+                    NULL,
+                    G_TYPE_NONE, 0);
     }
 }
 
@@ -240,7 +241,7 @@ static void thunar_standard_view_model_class_init (gpointer klass)
  * Return value: the #ThunarFolder @store is associated with
  *               or %NULL if @store has no folder.
  **/
-ThunarFolder*
+ThunarFolder *
 thunar_standard_view_model_get_folder (ThunarStandardViewModel *model)
 {
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model), NULL);
@@ -256,9 +257,9 @@ thunar_standard_view_model_get_folder (ThunarStandardViewModel *model)
  * @search_query                : a #string or %NULL.
  **/
 void
-thunar_standard_view_model_set_folder (ThunarStandardViewModel  *model,
-                                       ThunarFolder             *folder,
-                                       gchar                    *search_query)
+thunar_standard_view_model_set_folder (ThunarStandardViewModel *model,
+                                       ThunarFolder            *folder,
+                                       gchar                   *search_query)
 {
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model));
   _thunar_return_if_fail (folder == NULL || THUNAR_IS_FOLDER (folder));
@@ -273,12 +274,11 @@ thunar_standard_view_model_set_folder (ThunarStandardViewModel  *model,
  * @folders_first : %TRUE to let @store list folders first.
  **/
 void
-thunar_standard_view_model_set_folders_first (ThunarStandardViewModel  *model,
-                                              gboolean                  folders_first)
+thunar_standard_view_model_set_folders_first (ThunarStandardViewModel *model,
+                                              gboolean                 folders_first)
 {
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model));
   return (*THUNAR_STANDARD_VIEW_MODEL_GET_IFACE (model)->set_folders_first) (model, folders_first);
-
 }
 
 
@@ -290,7 +290,7 @@ thunar_standard_view_model_set_folders_first (ThunarStandardViewModel  *model,
  * Return value: %TRUE if hidden files will be shown, else %FALSE.
  **/
 gboolean
-thunar_standard_view_model_get_show_hidden (ThunarStandardViewModel  *model)
+thunar_standard_view_model_get_show_hidden (ThunarStandardViewModel *model)
 {
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model), FALSE);
   return (*THUNAR_STANDARD_VIEW_MODEL_GET_IFACE (model)->get_show_hidden) (model);
@@ -304,8 +304,8 @@ thunar_standard_view_model_get_show_hidden (ThunarStandardViewModel  *model)
  * @show_hidden : %TRUE if hidden files should be shown, else %FALSE.
  **/
 void
-thunar_standard_view_model_set_show_hidden (ThunarStandardViewModel  *model,
-                                            gboolean                  show_hidden)
+thunar_standard_view_model_set_show_hidden (ThunarStandardViewModel *model,
+                                            gboolean                 show_hidden)
 {
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model));
   return (*THUNAR_STANDARD_VIEW_MODEL_GET_IFACE (model)->set_show_hidden) (model, show_hidden);
@@ -323,7 +323,7 @@ thunar_standard_view_model_set_show_hidden (ThunarStandardViewModel  *model,
  * Return value: %TRUE if file size format is binary.
  **/
 gboolean
-thunar_standard_view_model_get_file_size_binary (ThunarStandardViewModel  *model)
+thunar_standard_view_model_get_file_size_binary (ThunarStandardViewModel *model)
 {
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model), FALSE);
   return (*THUNAR_STANDARD_VIEW_MODEL_GET_IFACE (model)->get_file_size_binary) (model);
@@ -340,8 +340,8 @@ thunar_standard_view_model_get_file_size_binary (ThunarStandardViewModel  *model
  * formatted as binary.
  **/
 void
-thunar_standard_view_model_set_file_size_binary (ThunarStandardViewModel  *model,
-                                                 gboolean                  file_size_binary)
+thunar_standard_view_model_set_file_size_binary (ThunarStandardViewModel *model,
+                                                 gboolean                 file_size_binary)
 {
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model));
   return (*THUNAR_STANDARD_VIEW_MODEL_GET_IFACE (model)->set_file_size_binary) (model, file_size_binary);
@@ -360,9 +360,9 @@ thunar_standard_view_model_set_file_size_binary (ThunarStandardViewModel  *model
  *
  * Return value: the #ThunarFile.
  **/
-ThunarFile*
-thunar_standard_view_model_get_file (ThunarStandardViewModel  *model,
-                                     GtkTreeIter              *iter)
+ThunarFile *
+thunar_standard_view_model_get_file (ThunarStandardViewModel *model,
+                                     GtkTreeIter             *iter)
 {
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model), NULL);
   return (*THUNAR_STANDARD_VIEW_MODEL_GET_IFACE (model)->get_file) (model, iter);
@@ -388,9 +388,9 @@ thunar_standard_view_model_get_file (ThunarStandardViewModel  *model,
  *
  * Return value: the list of #GtkTreePath<!---->s for @files.
  **/
-GList*
-thunar_standard_view_model_get_paths_for_files (ThunarStandardViewModel  *model,
-                                                GList                    *files)
+GList *
+thunar_standard_view_model_get_paths_for_files (ThunarStandardViewModel *model,
+                                                GList                   *files)
 {
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model), NULL);
   return (*THUNAR_STANDARD_VIEW_MODEL_GET_IFACE (model)->get_paths_for_files) (model, files);

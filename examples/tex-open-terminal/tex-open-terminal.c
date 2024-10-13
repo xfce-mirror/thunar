@@ -34,15 +34,19 @@
 
 
 
-static void   tex_open_terminal_menu_provider_init    (ThunarxMenuProviderIface *iface);
-static GList *tex_open_terminal_get_file_menu_items   (ThunarxMenuProvider      *provider,
-                                                       GtkWidget                *window,
-                                                       GList                    *files);
-static GList *tex_open_terminal_get_folder_menu_items (ThunarxMenuProvider      *provider,
-                                                       GtkWidget                *window,
-                                                       ThunarxFileInfo          *folder);
-static void   tex_open_terminal_activated             (ThunarxMenuItem          *item,
-                                                       GtkWidget                *window);
+static void
+tex_open_terminal_menu_provider_init (ThunarxMenuProviderIface *iface);
+static GList *
+tex_open_terminal_get_file_menu_items (ThunarxMenuProvider *provider,
+                                       GtkWidget           *window,
+                                       GList               *files);
+static GList *
+tex_open_terminal_get_folder_menu_items (ThunarxMenuProvider *provider,
+                                         GtkWidget           *window,
+                                         ThunarxFileInfo     *folder);
+static void
+tex_open_terminal_activated (ThunarxMenuItem *item,
+                             GtkWidget       *window);
 
 
 
@@ -91,7 +95,7 @@ tex_open_terminal_menu_provider_init (ThunarxMenuProviderIface *iface)
 
 
 
-static GList*
+static GList *
 tex_open_terminal_get_file_menu_items (ThunarxMenuProvider *provider,
                                        GtkWidget           *window,
                                        GList               *files)
@@ -105,7 +109,7 @@ tex_open_terminal_get_file_menu_items (ThunarxMenuProvider *provider,
 
 
 
-static GList*
+static GList *
 tex_open_terminal_get_folder_menu_items (ThunarxMenuProvider *provider,
                                          GtkWidget           *window,
                                          ThunarxFileInfo     *folder)

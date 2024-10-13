@@ -30,9 +30,9 @@
 typedef struct _ThunarxProviderPluginIface ThunarxProviderPluginIface;
 typedef struct _ThunarxProviderPlugin      ThunarxProviderPlugin;
 
-#define THUNARX_TYPE_PROVIDER_PLUGIN           (thunarx_provider_plugin_get_type ())
-#define THUNARX_PROVIDER_PLUGIN(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_PROVIDER_PLUGIN, ThunarxProviderPlugin))
-#define THUNARX_IS_PROVIDER_PLUGIN(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_PROVIDER_PLUGIN))
+#define THUNARX_TYPE_PROVIDER_PLUGIN (thunarx_provider_plugin_get_type ())
+#define THUNARX_PROVIDER_PLUGIN(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_PROVIDER_PLUGIN, ThunarxProviderPlugin))
+#define THUNARX_IS_PROVIDER_PLUGIN(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_PROVIDER_PLUGIN))
 #define THUNARX_PROVIDER_PLUGIN_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNARX_TYPE_PROVIDER_PLUGIN, ThunarxProviderPluginIface))
 
 /**
@@ -54,25 +54,25 @@ struct _ThunarxProviderPluginIface
   GTypeInterface __parent__;
 
   /*< public >*/
-  gboolean (*get_resident)    (const ThunarxProviderPlugin *plugin);
-  void     (*set_resident)    (ThunarxProviderPlugin       *plugin,
-                               gboolean                     resident);
+  gboolean (*get_resident) (const ThunarxProviderPlugin *plugin);
+  void (*set_resident) (ThunarxProviderPlugin *plugin,
+                        gboolean               resident);
 
-  GType    (*register_type)   (ThunarxProviderPlugin       *plugin,
-                               GType                        type_parent,
-                               const gchar                 *type_name,
-                               const GTypeInfo             *type_info,
-                               GTypeFlags                   type_flags);
-  void     (*add_interface)   (ThunarxProviderPlugin       *plugin,
-                               GType                        instance_type,
-                               GType                        interface_type,
-                               const GInterfaceInfo        *interface_info);
-  GType    (*register_enum)   (ThunarxProviderPlugin       *plugin,
-                               const gchar                 *name,
-                               const GEnumValue            *const_static_values);
-  GType    (*register_flags)  (ThunarxProviderPlugin       *plugin,
-                               const gchar                 *name,
-                               const GFlagsValue           *const_static_values);
+  GType (*register_type) (ThunarxProviderPlugin *plugin,
+                          GType                  type_parent,
+                          const gchar           *type_name,
+                          const GTypeInfo       *type_info,
+                          GTypeFlags             type_flags);
+  void (*add_interface) (ThunarxProviderPlugin *plugin,
+                         GType                  instance_type,
+                         GType                  interface_type,
+                         const GInterfaceInfo  *interface_info);
+  GType (*register_enum) (ThunarxProviderPlugin *plugin,
+                          const gchar           *name,
+                          const GEnumValue      *const_static_values);
+  GType (*register_flags) (ThunarxProviderPlugin *plugin,
+                           const gchar           *name,
+                           const GFlagsValue     *const_static_values);
 
   /*< private >*/
   void (*reserved1) (void);
@@ -81,26 +81,33 @@ struct _ThunarxProviderPluginIface
   void (*reserved4) (void);
 };
 
-GType     thunarx_provider_plugin_get_type       (void) G_GNUC_CONST;
+GType
+thunarx_provider_plugin_get_type (void) G_GNUC_CONST;
 
-gboolean  thunarx_provider_plugin_get_resident   (const ThunarxProviderPlugin *plugin);
-void      thunarx_provider_plugin_set_resident   (ThunarxProviderPlugin       *plugin,
-                                                  gboolean                     resident);
+gboolean
+thunarx_provider_plugin_get_resident (const ThunarxProviderPlugin *plugin);
+void
+thunarx_provider_plugin_set_resident (ThunarxProviderPlugin *plugin,
+                                      gboolean               resident);
 
-GType     thunarx_provider_plugin_register_type  (ThunarxProviderPlugin *plugin,
-                                                  GType                  type_parent,
-                                                  const gchar           *type_name,
-                                                  const GTypeInfo       *type_info,
-                                                  GTypeFlags             type_flags);
-void      thunarx_provider_plugin_add_interface  (ThunarxProviderPlugin *plugin,
-                                                  GType                  instance_type,
-                                                  GType                  interface_type,
-                                                  const GInterfaceInfo  *interface_info);
-GType     thunarx_provider_plugin_register_enum  (ThunarxProviderPlugin *plugin,
-                                                  const gchar           *name,
-                                                  const GEnumValue      *const_static_values);
-GType     thunarx_provider_plugin_register_flags (ThunarxProviderPlugin *plugin,
-                                                  const gchar           *name,
-                                                  const GFlagsValue     *const_static_values);
+GType
+thunarx_provider_plugin_register_type (ThunarxProviderPlugin *plugin,
+                                       GType                  type_parent,
+                                       const gchar           *type_name,
+                                       const GTypeInfo       *type_info,
+                                       GTypeFlags             type_flags);
+void
+thunarx_provider_plugin_add_interface (ThunarxProviderPlugin *plugin,
+                                       GType                  instance_type,
+                                       GType                  interface_type,
+                                       const GInterfaceInfo  *interface_info);
+GType
+thunarx_provider_plugin_register_enum (ThunarxProviderPlugin *plugin,
+                                       const gchar           *name,
+                                       const GEnumValue      *const_static_values);
+GType
+thunarx_provider_plugin_register_flags (ThunarxProviderPlugin *plugin,
+                                        const gchar           *name,
+                                        const GFlagsValue     *const_static_values);
 
 #endif /* !__THUNARX_PROVIDER_PLUGIN_H__ */

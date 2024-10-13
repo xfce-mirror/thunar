@@ -22,12 +22,11 @@
 #include "config.h"
 #endif
 
-#include <glib/gi18n-lib.h>
-
-#include <libxfce4util/libxfce4util.h>
-
-#include "thunarx/thunarx-renamer.h"
 #include "thunarx/thunarx-private.h"
+#include "thunarx/thunarx-renamer.h"
+
+#include <glib/gi18n-lib.h>
+#include <libxfce4util/libxfce4util.h>
 
 
 
@@ -74,29 +73,37 @@ enum
  * button which opens a dialog with the additional settings.
  */
 
-static void     thunarx_renamer_finalize             (GObject                *object);
-static GObject *thunarx_renamer_constructor          (GType                   type,
-                                                      guint                   n_construct_properties,
-                                                      GObjectConstructParam  *construct_properties);
-static void     thunarx_renamer_get_property         (GObject                *object,
-                                                      guint                   prop_id,
-                                                      GValue                 *value,
-                                                      GParamSpec             *pspec);
-static void     thunarx_renamer_set_property         (GObject                *object,
-                                                      guint                   prop_id,
-                                                      const GValue           *value,
-                                                      GParamSpec             *pspec);
-static gchar   *thunarx_renamer_real_process         (ThunarxRenamer         *renamer,
-                                                      ThunarxFileInfo        *file,
-                                                      const gchar            *text,
-                                                      guint                   num);
-static void     thunarx_renamer_real_load            (ThunarxRenamer         *renamer,
-                                                      GHashTable             *settings);
-static void     thunarx_renamer_real_save            (ThunarxRenamer         *renamer,
-                                                      GHashTable             *settings);
-static GList   *thunarx_renamer_real_get_menu_items  (ThunarxRenamer         *renamer,
-                                                      GtkWindow              *window,
-                                                      GList                  *files);
+static void
+thunarx_renamer_finalize (GObject *object);
+static GObject *
+thunarx_renamer_constructor (GType                  type,
+                             guint                  n_construct_properties,
+                             GObjectConstructParam *construct_properties);
+static void
+thunarx_renamer_get_property (GObject    *object,
+                              guint       prop_id,
+                              GValue     *value,
+                              GParamSpec *pspec);
+static void
+thunarx_renamer_set_property (GObject      *object,
+                              guint         prop_id,
+                              const GValue *value,
+                              GParamSpec   *pspec);
+static gchar *
+thunarx_renamer_real_process (ThunarxRenamer  *renamer,
+                              ThunarxFileInfo *file,
+                              const gchar     *text,
+                              guint            num);
+static void
+thunarx_renamer_real_load (ThunarxRenamer *renamer,
+                           GHashTable     *settings);
+static void
+thunarx_renamer_real_save (ThunarxRenamer *renamer,
+                           GHashTable     *settings);
+static GList *
+thunarx_renamer_real_get_menu_items (ThunarxRenamer *renamer,
+                                     GtkWindow      *window,
+                                     GList          *files);
 
 
 
@@ -149,7 +156,7 @@ thunarx_renamer_class_init (ThunarxRenamerClass *klass)
                                    PROP_HELP_URL,
                                    g_param_spec_string ("help-url",
                                                         _("Help URL"),
-                                                        _("The URL to the documentation of the renamer"),
+                                                          _("The URL to the documentation of the renamer"),
                                                         NULL,
                                                         G_PARAM_READWRITE));
 
@@ -164,7 +171,7 @@ thunarx_renamer_class_init (ThunarxRenamerClass *klass)
                                    PROP_NAME,
                                    g_param_spec_string ("name",
                                                         _("Name"),
-                                                        _("The user visible name of the renamer"),
+                                                          _("The user visible name of the renamer"),
                                                         NULL,
                                                         G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 
@@ -180,13 +187,13 @@ thunarx_renamer_class_init (ThunarxRenamerClass *klass)
    * for all files that should be renamed and update the preview.
    **/
   renamer_signals[CHANGED] =
-    g_signal_new (I_("changed"),
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (ThunarxRenamerClass, changed),
-                  NULL, NULL,
-                  g_cclosure_marshal_VOID__VOID,
-                  G_TYPE_NONE, 0);
+  g_signal_new (I_ ("changed"),
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_FIRST,
+                G_STRUCT_OFFSET (ThunarxRenamerClass, changed),
+                NULL, NULL,
+                g_cclosure_marshal_VOID__VOID,
+                G_TYPE_NONE, 0);
 }
 
 
@@ -220,7 +227,7 @@ thunarx_renamer_finalize (GObject *object)
 
 
 
-static GObject*
+static GObject *
 thunarx_renamer_constructor (GType                  type,
                              guint                  n_construct_properties,
                              GObjectConstructParam *construct_properties)
@@ -291,7 +298,7 @@ thunarx_renamer_set_property (GObject      *object,
 
 
 
-static gchar*
+static gchar *
 thunarx_renamer_real_process (ThunarxRenamer  *renamer,
                               ThunarxFileInfo *file,
                               const gchar     *text,
@@ -309,11 +316,15 @@ thunarx_renamer_real_load (ThunarxRenamer *renamer,
 {
   const gchar *setting;
   GParamSpec **specs;
-  GValue       value = { 0, };
-  GValue       tmp = { 0, };
-  gchar       *key;
-  guint        n_specs;
-  guint        n;
+  GValue       value = {
+    0,
+  };
+  GValue tmp = {
+    0,
+  };
+  gchar *key;
+  guint  n_specs;
+  guint  n;
 
   /* determine the parameters provided this class (and superclasses) */
   specs = g_object_class_list_properties (G_OBJECT_GET_CLASS (renamer), &n_specs);
@@ -363,10 +374,14 @@ thunarx_renamer_real_save (ThunarxRenamer *renamer,
                            GHashTable     *settings)
 {
   GParamSpec **specs;
-  GValue       value = { 0, };
-  GValue       tmp = { 0, };
-  guint        n_specs;
-  guint        n;
+  GValue       value = {
+    0,
+  };
+  GValue tmp = {
+    0,
+  };
+  guint n_specs;
+  guint n;
 
   /* determine the parameters provided this class (and superclasses) */
   specs = g_object_class_list_properties (G_OBJECT_GET_CLASS (renamer), &n_specs);
@@ -400,7 +415,7 @@ thunarx_renamer_real_save (ThunarxRenamer *renamer,
 
 
 
-static GList*
+static GList *
 thunarx_renamer_real_get_menu_items (ThunarxRenamer *renamer,
                                      GtkWindow      *window,
                                      GList          *files)
@@ -422,7 +437,7 @@ thunarx_renamer_real_get_menu_items (ThunarxRenamer *renamer,
  *
  * Return value: the URL of the documentation for @renamer.
  **/
-const gchar*
+const gchar *
 thunarx_renamer_get_help_url (ThunarxRenamer *renamer)
 {
   g_return_val_if_fail (THUNARX_IS_RENAMER (renamer), NULL);
@@ -473,7 +488,7 @@ thunarx_renamer_set_help_url (ThunarxRenamer *renamer,
  *
  * Return value: the user visible name for @renamer.
  **/
-const gchar*
+const gchar *
 thunarx_renamer_get_name (ThunarxRenamer *renamer)
 {
   g_return_val_if_fail (THUNARX_IS_RENAMER (renamer), NULL);
@@ -529,7 +544,7 @@ thunarx_renamer_set_name (ThunarxRenamer *renamer,
  *
  * Return value: the string with which to replace @text.
  **/
-gchar*
+gchar *
 thunarx_renamer_process (ThunarxRenamer  *renamer,
                          ThunarxFileInfo *file,
                          const gchar     *text,
@@ -691,7 +706,7 @@ thunarx_renamer_save (ThunarxRenamer *renamer,
  *          #ThunarxMenuItem<!---->s provided by @renamer for the given list of
  *          @files.
  **/
-GList*
+GList *
 thunarx_renamer_get_menu_items (ThunarxRenamer *renamer,
                                 GtkWindow      *window,
                                 GList          *files)

@@ -26,26 +26,30 @@
 #include <libnotify/notify.h>
 #endif
 
-#include <libxfce4util/libxfce4util.h>
-
-#include "thunar/thunar-notify.h"
 #include "thunar/thunar-device.h"
+#include "thunar/thunar-notify.h"
 #include "thunar/thunar-private.h"
 
+#include <libxfce4util/libxfce4util.h>
 
 
 
 #ifdef HAVE_LIBNOTIFY
 static gboolean thunar_notify_initted = FALSE;
 
-static gboolean thunar_notify_init            (void);
-static gchar*   thunar_get_device_icon        (ThunarDevice       *device);
-static void     thunar_notify_show            (ThunarDevice       *device,
-                                               const gchar        *summary,
-                                               const gchar        *message);
-static gboolean thunar_notify_device_readonly (ThunarDevice       *device);
-static void     thunar_notify_undo_or_redo    (ThunarJobOperation *operation,
-                                               gboolean            undo);
+static gboolean
+thunar_notify_init (void);
+static gchar *
+thunar_get_device_icon (ThunarDevice *device);
+static void
+thunar_notify_show (ThunarDevice *device,
+                    const gchar  *summary,
+                    const gchar  *message);
+static gboolean
+thunar_notify_device_readonly (ThunarDevice *device);
+static void
+thunar_notify_undo_or_redo (ThunarJobOperation *operation,
+                            gboolean            undo);
 
 
 
@@ -73,13 +77,13 @@ thunar_notify_init (void)
 
 
 
-static gchar*
+static gchar *
 thunar_get_device_icon (ThunarDevice *device)
 {
   GIcon              *icon;
   gchar              *icon_name = NULL;
   GFile              *icon_file;
-  const gchar* const *icon_names;
+  const gchar *const *icon_names;
 
   /* get suitable icon for the device */
   icon = thunar_device_get_icon (device, FALSE);
@@ -120,7 +124,7 @@ thunar_notify_show (ThunarDevice *device,
 
   /* create notification */
 #ifdef NOTIFY_CHECK_VERSION
-#if NOTIFY_CHECK_VERSION (0, 7, 0)
+#if NOTIFY_CHECK_VERSION(0, 7, 0)
   notification = notify_notification_new (summary, message, icon_name);
 #else
   notification = notify_notification_new (summary, message, icon_name, NULL);
@@ -134,7 +138,7 @@ thunar_notify_show (ThunarDevice *device,
   notify_notification_show (notification, NULL);
 
   /* attach to object for finalize */
-  g_object_set_data_full (G_OBJECT (device), I_("thunar-notification"),
+  g_object_set_data_full (G_OBJECT (device), I_ ("thunar-notification"),
                           notification, g_object_unref);
 
   g_free (icon_name);
@@ -198,9 +202,9 @@ thunar_notify_undo_or_redo (ThunarJobOperation *operation,
     }
 
 
-  /* create notification */
+    /* create notification */
 #ifdef NOTIFY_CHECK_VERSION
-#if NOTIFY_CHECK_VERSION (0, 7, 0)
+#if NOTIFY_CHECK_VERSION(0, 7, 0)
   notification = notify_notification_new (summary, message, icon_name);
 #else
   notification = notify_notification_new (summary, message, icon_name, NULL);
@@ -223,14 +227,14 @@ thunar_notify_undo_or_redo (ThunarJobOperation *operation,
 
 void
 thunar_notify_progress (ThunarDevice *device,
-                         const gchar *message)
+                        const gchar  *message)
 {
 #ifdef HAVE_LIBNOTIFY
   NotifyNotification *notification;
 
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
 
-  notification = g_object_get_data (G_OBJECT (device), I_("thunar-notification"));
+  notification = g_object_get_data (G_OBJECT (device), I_ ("thunar-notification"));
   if (notification != NULL)
     {
       gchar *icon_name;
@@ -280,7 +284,8 @@ thunar_notify_unmount (ThunarDevice *device)
       summary = _("Unmounting device");
       message = g_strdup_printf (_("The device \"%s\" is being unmounted by the system. "
                                    "Please do not remove the media or disconnect the "
-                                   "drive"), name);
+                                   "drive"),
+                                 name);
     }
   else
     {
@@ -288,7 +293,7 @@ thunar_notify_unmount (ThunarDevice *device)
       message = g_strdup_printf (_("There is data that needs to be written to the "
                                    "device \"%s\" before it can be removed. Please "
                                    "do not remove the media or disconnect the drive"),
-                                   name);
+                                 name);
     }
 
   thunar_notify_show (device, summary, message);
@@ -319,7 +324,8 @@ thunar_notify_eject (ThunarDevice *device)
     {
       summary = _("Ejecting device");
       message = g_strdup_printf (_("The device \"%s\" is being ejected. "
-                                   "This may take some time"), name);
+                                   "This may take some time"),
+                                 name);
     }
   else
     {
@@ -327,7 +333,7 @@ thunar_notify_eject (ThunarDevice *device)
       message = g_strdup_printf (_("There is data that needs to be written to the "
                                    "device \"%s\" before it can be removed. Please "
                                    "do not remove the media or disconnect the drive"),
-                                   name);
+                                 name);
     }
 
   thunar_notify_show (device, summary, message);
@@ -347,14 +353,14 @@ thunar_notify_finish (ThunarDevice *device)
 
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
 
-  notification = g_object_get_data (G_OBJECT (device), I_("thunar-notification"));
+  notification = g_object_get_data (G_OBJECT (device), I_ ("thunar-notification"));
   if (notification != NULL)
     {
       notify_notification_set_urgency (notification, NOTIFY_URGENCY_NORMAL);
       notify_notification_set_timeout (notification, 5000);
       notify_notification_show (notification, NULL);
 
-      g_object_set_data (G_OBJECT (device), I_("thunar-notification"), NULL);
+      g_object_set_data (G_OBJECT (device), I_ ("thunar-notification"), NULL);
     }
 #endif
 }

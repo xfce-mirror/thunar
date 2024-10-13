@@ -22,9 +22,8 @@
 #include <config.h>
 #endif
 
-#include <thunarx/thunarx.h>
-
 #include <thunar-uca/thunar-uca-context.h>
+#include <thunarx/thunarx.h>
 
 
 
@@ -50,7 +49,7 @@ struct _ThunarUcaContext
  *
  * Return value: the newly allocated #ThunarUcaContext.
  **/
-ThunarUcaContext*
+ThunarUcaContext *
 thunar_uca_context_new (GtkWidget *window,
                         GList     *files)
 {
@@ -78,7 +77,7 @@ thunar_uca_context_new (GtkWidget *window,
  *
  * Return value: reference to @context.
  **/
-ThunarUcaContext*
+ThunarUcaContext *
 thunar_uca_context_ref (ThunarUcaContext *context)
 {
   context->ref_count += 1;
@@ -120,7 +119,7 @@ thunar_uca_context_unref (ThunarUcaContext *context)
  *
  * Return value: the #ThunarxFileInfo<!---->s for @context.
  **/
-GList*
+GList *
 thunar_uca_context_get_files (const ThunarUcaContext *context)
 {
   return context->files;
@@ -137,10 +136,8 @@ thunar_uca_context_get_files (const ThunarUcaContext *context)
  *
  * Return value: the #GtkWindow for @context.
  **/
-GtkWidget*
+GtkWidget *
 thunar_uca_context_get_window (const ThunarUcaContext *context)
 {
   return context->window;
 }
-
-

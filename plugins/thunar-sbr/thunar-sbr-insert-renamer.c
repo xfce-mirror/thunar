@@ -22,9 +22,8 @@
 #include <config.h>
 #endif
 
-#include <thunar-sbr/thunar-sbr-insert-renamer.h>
-
 #include <libxfce4util/libxfce4util.h>
+#include <thunar-sbr/thunar-sbr-insert-renamer.h>
 
 
 
@@ -40,19 +39,23 @@ enum
 
 
 
-static void   thunar_sbr_insert_renamer_finalize      (GObject                      *object);
-static void   thunar_sbr_insert_renamer_get_property  (GObject                      *object,
-                                                       guint                         prop_id,
-                                                       GValue                       *value,
-                                                       GParamSpec                   *pspec);
-static void   thunar_sbr_insert_renamer_set_property  (GObject                      *object,
-                                                       guint                         prop_id,
-                                                       const GValue                 *value,
-                                                       GParamSpec                   *pspec);
-static gchar *thunar_sbr_insert_renamer_process       (ThunarxRenamer               *renamer,
-                                                       ThunarxFileInfo              *file,
-                                                       const gchar                  *text,
-                                                       guint                         idx);
+static void
+thunar_sbr_insert_renamer_finalize (GObject *object);
+static void
+thunar_sbr_insert_renamer_get_property (GObject    *object,
+                                        guint       prop_id,
+                                        GValue     *value,
+                                        GParamSpec *pspec);
+static void
+thunar_sbr_insert_renamer_set_property (GObject      *object,
+                                        guint         prop_id,
+                                        const GValue *value,
+                                        GParamSpec   *pspec);
+static gchar *
+thunar_sbr_insert_renamer_process (ThunarxRenamer  *renamer,
+                                   ThunarxFileInfo *file,
+                                   const gchar     *text,
+                                   guint            idx);
 
 
 
@@ -320,7 +323,7 @@ thunar_sbr_insert_renamer_set_property (GObject      *object,
 
 
 
-static gchar*
+static gchar *
 thunar_sbr_insert_renamer_process (ThunarxRenamer  *renamer,
                                    ThunarxFileInfo *file,
                                    const gchar     *text,
@@ -381,7 +384,7 @@ thunar_sbr_insert_renamer_process (ThunarxRenamer  *renamer,
  *
  * Return value: the newly allocated #ThunarSbrInsertRenamer.
  **/
-ThunarSbrInsertRenamer*
+ThunarSbrInsertRenamer *
 thunar_sbr_insert_renamer_new (void)
 {
   return g_object_new (THUNAR_SBR_TYPE_INSERT_RENAMER,
@@ -537,7 +540,7 @@ thunar_sbr_insert_renamer_set_offset_mode (ThunarSbrInsertRenamer *insert_rename
  *
  * Return value: the text for @insert_renamer.
  **/
-const gchar*
+const gchar *
 thunar_sbr_insert_renamer_get_text (ThunarSbrInsertRenamer *insert_renamer)
 {
   g_return_val_if_fail (THUNAR_SBR_IS_INSERT_RENAMER (insert_renamer), NULL);
@@ -573,5 +576,3 @@ thunar_sbr_insert_renamer_set_text (ThunarSbrInsertRenamer *insert_renamer,
       g_object_notify (G_OBJECT (insert_renamer), "text");
     }
 }
-
-

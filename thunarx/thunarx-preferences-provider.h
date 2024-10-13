@@ -32,9 +32,9 @@ G_BEGIN_DECLS
 typedef struct _ThunarxPreferencesProviderIface ThunarxPreferencesProviderIface;
 typedef struct _ThunarxPreferencesProvider      ThunarxPreferencesProvider;
 
-#define THUNARX_TYPE_PREFERENCES_PROVIDER           (thunarx_preferences_provider_get_type ())
-#define THUNARX_PREFERENCES_PROVIDER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_PREFERENCES_PROVIDER, ThunarxPreferencesProvider))
-#define THUNARX_IS_PREFERENCES_PROVIDER(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_PREFERENCES_PROVIDER))
+#define THUNARX_TYPE_PREFERENCES_PROVIDER (thunarx_preferences_provider_get_type ())
+#define THUNARX_PREFERENCES_PROVIDER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_PREFERENCES_PROVIDER, ThunarxPreferencesProvider))
+#define THUNARX_IS_PREFERENCES_PROVIDER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_PREFERENCES_PROVIDER))
 #define THUNARX_PREFERENCES_PROVIDER_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNARX_TYPE_PREFERENCES_PROVIDER, ThunarxPreferencesProviderIface))
 
 /**
@@ -64,10 +64,12 @@ struct _ThunarxPreferencesProviderIface
   void (*reserved5) (void);
 };
 
-GType  thunarx_preferences_provider_get_type    (void) G_GNUC_CONST;
+GType
+thunarx_preferences_provider_get_type (void) G_GNUC_CONST;
 
-GList *thunarx_preferences_provider_get_menu_items (ThunarxPreferencesProvider *provider,
-                                                    GtkWidget                  *window);
+GList *
+thunarx_preferences_provider_get_menu_items (ThunarxPreferencesProvider *provider,
+                                             GtkWidget                  *window);
 
 G_END_DECLS
 

@@ -22,30 +22,29 @@
 #include "config.h"
 #endif
 
-#include <gio/gio.h>
-
-#include <exo/exo.h>
-
 #include "thunar/thunar-gio-extensions.h"
+#include "thunar/thunar-io-scan-directory.h"
 #include "thunar/thunar-job.h"
 #include "thunar/thunar-private.h"
-#include "thunar/thunar-io-scan-directory.h"
+
+#include <exo/exo.h>
+#include <gio/gio.h>
 
 
 /**
  * thunar_io_scan_directory:
  * @job                 : a #ThunarJob instance
- * @file                : The folder to scan 
+ * @file                : The folder to scan
  * @flags               : @GFileQueryInfoFlags to consider during scan
  * @recursively         : Wheather as well subfolders should be scanned
  * @unlinking           : ???
- * @return_thunar_files : TRUE in order to return the result as a list of #ThunarFile's, FALSE to return a list of #GFile's  
+ * @return_thunar_files : TRUE in order to return the result as a list of #ThunarFile's, FALSE to return a list of #GFile's
  * @n_files_max         : Maximum number of files to scan, NULL for unlimited
  * @error               : Will be se on any error
  *
  * Scans the passed folder for files and returns them as a #GList
  *
- * Return value: (transfer full): the #GLIst of #GFiles or #ThunarFiles, to be released with e.g. 'g_list_free_full' 
+ * Return value: (transfer full): the #GLIst of #GFiles or #ThunarFiles, to be released with e.g. 'g_list_free_full'
  **/
 GList *
 thunar_io_scan_directory (ThunarJob          *job,
@@ -65,10 +64,10 @@ thunar_io_scan_directory (ThunarJob          *job,
   GFile           *child_file;
   GList           *child_files = NULL;
   GList           *files = NULL;
-  const gchar     *namespace;
-  ThunarFile      *thunar_file;
-  gboolean         is_mounted;
-  GCancellable    *cancellable = NULL;
+  const gchar *namespace;
+  ThunarFile   *thunar_file;
+  gboolean      is_mounted;
+  GCancellable *cancellable = NULL;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
@@ -105,10 +104,8 @@ thunar_io_scan_directory (ThunarJob          *job,
 
   /* determine the namespace */
   if (return_thunar_files)
-    namespace = THUNARX_FILE_INFO_NAMESPACE;
-  else
-    namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE ","
-                G_FILE_ATTRIBUTE_STANDARD_NAME ", recent::*";
+  namespace = THUNARX_FILE_INFO_NAMESPACE;
+  else namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_NAME ", recent::*";
 
   /* try to read from the direectory */
   enumerator = g_file_enumerate_children (file, namespace,
@@ -154,11 +151,11 @@ thunar_io_scan_directory (ThunarJob          *job,
               else
                 g_warning ("Error while scanning directory: %s : %s", g_file_get_uri (file), err->message);
 
-              if (g_error_matches(err, G_IO_ERROR, G_IO_ERROR_FAILED))
+              if (g_error_matches (err, G_IO_ERROR, G_IO_ERROR_FAILED))
                 {
                   /* ignore any other IO error and continue processing the
                    * remaining files */
-                  g_clear_error(&err);
+                  g_clear_error (&err);
                   continue;
                 }
               else

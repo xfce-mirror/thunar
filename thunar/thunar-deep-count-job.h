@@ -21,9 +21,9 @@
 #ifndef __THUNAR_DEEP_COUNT_JOB_H__
 #define __THUNAR_DEEP_COUNT_JOB_H__
 
-#include <gio/gio.h>
-
 #include "thunar/thunar-job.h"
+
+#include <gio/gio.h>
 
 G_BEGIN_DECLS;
 
@@ -31,17 +31,19 @@ typedef struct _ThunarDeepCountJobPrivate ThunarDeepCountJobPrivate;
 typedef struct _ThunarDeepCountJobClass   ThunarDeepCountJobClass;
 typedef struct _ThunarDeepCountJob        ThunarDeepCountJob;
 
-#define THUNAR_TYPE_DEEP_COUNT_JOB            (thunar_deep_count_job_get_type ())
-#define THUNAR_DEEP_COUNT_JOB(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_DEEP_COUNT_JOB, ThunarDeepCountJob))
-#define THUNAR_DEEP_COUNT_JOB_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_DEEP_COUNT_JOB, ThunarDeepCountJobClass))
-#define THUNAR_IS_DEEP_COUNT_JOB(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_DEEP_COUNT_JOB))
+#define THUNAR_TYPE_DEEP_COUNT_JOB (thunar_deep_count_job_get_type ())
+#define THUNAR_DEEP_COUNT_JOB(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_DEEP_COUNT_JOB, ThunarDeepCountJob))
+#define THUNAR_DEEP_COUNT_JOB_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_DEEP_COUNT_JOB, ThunarDeepCountJobClass))
+#define THUNAR_IS_DEEP_COUNT_JOB(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_DEEP_COUNT_JOB))
 #define THUNAR_IS_DEEP_COUNT_JOB_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_DEEP_COUNT_JOB)
-#define THUNAR_DEEP_COUNT_JOB_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_DEEP_COUNT_JOB, ThunarDeepCountJobClass))
+#define THUNAR_DEEP_COUNT_JOB_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_DEEP_COUNT_JOB, ThunarDeepCountJobClass))
 
-GType               thunar_deep_count_job_get_type (void) G_GNUC_CONST;
+GType
+thunar_deep_count_job_get_type (void) G_GNUC_CONST;
 
-ThunarDeepCountJob *thunar_deep_count_job_new      (GList              *files,
-                                                    GFileQueryInfoFlags flags) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarDeepCountJob *
+thunar_deep_count_job_new (GList              *files,
+                           GFileQueryInfoFlags flags) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 

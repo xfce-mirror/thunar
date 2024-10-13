@@ -54,16 +54,16 @@
 #include <glib/gwin32.h>
 #endif
 
-#include "thunar/thunar-private.h"
-#include "thunar/thunar-util.h"
+#include "thunar/thunar-application.h"
 #include "thunar/thunar-folder.h"
-#include "thunar/thunar-text-renderer.h"
 #include "thunar/thunar-icon-renderer.h"
 #include "thunar/thunar-io-scan-directory.h"
 #include "thunar/thunar-preferences.h"
+#include "thunar/thunar-private.h"
 #include "thunar/thunar-renamer-dialog.h"
+#include "thunar/thunar-text-renderer.h"
+#include "thunar/thunar-util.h"
 #include "thunar/thunar-window.h"
-#include "thunar/thunar-application.h"
 
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -130,7 +130,7 @@ thunar_util_strrchr_offset (const gchar *str,
  *
  * Return value: pointer to the extension in @filename
  *               or NULL.
-**/
+ **/
 gchar *
 thunar_util_str_get_extension (const gchar *filename)
 {
@@ -200,9 +200,9 @@ thunar_util_str_get_extension (const gchar *filename)
 
 
 void
-thunar_util_load_bookmarks (GFile               *bookmarks_file,
-                            ThunarBookmarksFunc  foreach_func,
-                            gpointer             user_data)
+thunar_util_load_bookmarks (GFile              *bookmarks_file,
+                            ThunarBookmarksFunc foreach_func,
+                            gpointer            user_data)
 {
   gchar       *bookmarks_path;
   gchar        line[1024];
@@ -226,8 +226,8 @@ thunar_util_load_bookmarks (GFile               *bookmarks_file,
   if (G_UNLIKELY (fp == NULL))
     {
       bookmarks_path = g_build_filename (g_get_home_dir (), ".gtk-bookmarks", NULL);
-      fp = fopen(bookmarks_path, "r");
-      g_free(bookmarks_path);
+      fp = fopen (bookmarks_path, "r");
+      g_free (bookmarks_path);
     }
 
   if (G_LIKELY (fp != NULL))
@@ -264,7 +264,6 @@ thunar_util_load_bookmarks (GFile               *bookmarks_file,
 
       fclose (fp);
     }
-
 }
 
 
@@ -285,9 +284,9 @@ thunar_util_load_bookmarks (GFile               *bookmarks_file,
  * Return value: the expanded @filename or %NULL on error.
  **/
 gchar *
-thunar_util_expand_filename (const gchar  *filename,
-                             GFile        *working_directory,
-                             GError      **error)
+thunar_util_expand_filename (const gchar *filename,
+                             GFile       *working_directory,
+                             GError     **error)
 {
   struct passwd *passwd;
   const gchar   *replacement;
@@ -318,7 +317,8 @@ thunar_util_expand_filename (const gchar  *filename,
         return g_strdup (xfce_get_homedir ());
 
       /* lookup the slash */
-      for (slash = remainder; *slash != '\0' && *slash != G_DIR_SEPARATOR; ++slash);
+      for (slash = remainder; *slash != '\0' && *slash != G_DIR_SEPARATOR; ++slash)
+        ;
 
       /* check if a username was given after the '~' */
       if (G_LIKELY (slash == remainder))
@@ -355,7 +355,8 @@ thunar_util_expand_filename (const gchar  *filename,
       remainder = filename + 1;
 
       /* lookup the slash at the end of the variable */
-      for (slash = remainder; *slash != '\0' && *slash != G_DIR_SEPARATOR; ++slash);
+      for (slash = remainder; *slash != '\0' && *slash != G_DIR_SEPARATOR; ++slash)
+        ;
 
       /* get the variable for replacement */
       variable = g_strndup (remainder, slash - remainder);
@@ -413,10 +414,10 @@ thunar_util_expand_filename (const gchar  *filename,
  * Return value: a human readable date representation of @file_time
  *               according to the @date_format.
  **/
-gchar*
-thunar_util_humanize_file_time (guint64          file_time,
-                                ThunarDateStyle  date_style,
-                                const gchar     *date_custom_style)
+gchar *
+thunar_util_humanize_file_time (guint64         file_time,
+                                ThunarDateStyle date_style,
+                                const gchar    *date_custom_style)
 {
   const gchar *date_format;
   gchar       *time_str;
@@ -434,8 +435,8 @@ thunar_util_humanize_file_time (guint64          file_time,
 
   /* check which style to use to format the time */
   if (date_style == THUNAR_DATE_STYLE_SIMPLE
-   || date_style == THUNAR_DATE_STYLE_SHORT
-   || date_style == THUNAR_DATE_STYLE_CUSTOM_SIMPLE)
+      || date_style == THUNAR_DATE_STYLE_SHORT
+      || date_style == THUNAR_DATE_STYLE_CUSTOM_SIMPLE)
     {
       /* setup the dates for the time values */
       g_date_set_time_t (&dfile, (time_t) file_time);
@@ -476,7 +477,7 @@ thunar_util_humanize_file_time (guint64          file_time,
               if (date_custom_style == NULL)
                 time_str = g_strdup ("");
               else
-              /* use custom date formatting */
+                /* use custom date formatting */
                 time_str = g_date_time_format (dt_file, date_custom_style);
             }
           else
@@ -542,7 +543,7 @@ thunar_util_humanize_file_time (guint64          file_time,
  *
  * Return value: the #GdkScreen for the @parent.
  **/
-GdkScreen*
+GdkScreen *
 thunar_util_parse_parent (gpointer    parent,
                           GtkWindow **window_return)
 {
@@ -683,7 +684,7 @@ thunar_util_change_working_directory (const gchar *new_directory)
   _thunar_return_val_if_fail (new_directory != NULL && *new_directory != '\0', NULL);
 
   /* try to determine the current working directory */
-  old_directory = g_get_current_dir();
+  old_directory = g_get_current_dir ();
 
   /* try switching to the new working directory */
   if (g_chdir (new_directory) != 0)
@@ -711,13 +712,13 @@ thunar_setup_display_cb (gpointer data)
  *
  * Simplification of "thunar_util_next_new_file_name_raw" by using a ThunarFolder
  */
-gchar*
+gchar *
 thunar_util_next_new_file_name (ThunarFile            *dir,
                                 const gchar           *file_name,
                                 ThunarNextFileNameMode name_mode,
                                 gboolean               is_directory)
 {
-  gchar*         new_name = NULL;
+  gchar         *new_name = NULL;
   ThunarFolder  *folder;
   GList         *files_in_folder = NULL;
   GHashTableIter iter;
@@ -759,18 +760,18 @@ thunar_util_next_new_file_name (ThunarFile            *dir,
  * The caller is responsible to free the returned string using g_free() when no longer needed.
  *
  * Return value: pointer to the new filename.
-**/
-gchar*
+ **/
+gchar *
 thunar_util_next_new_file_name_raw (GList                 *file_list,
                                     const gchar           *file_name,
                                     ThunarNextFileNameMode name_mode,
                                     gboolean               is_directory)
 {
-  unsigned long   file_name_size  = strlen (file_name);
-  unsigned        count           = 0;
-  gboolean        found_duplicate = FALSE;
-  gchar          *extension       = NULL;
-  gchar          *new_name        = g_strdup (file_name);
+  unsigned long file_name_size = strlen (file_name);
+  unsigned      count = 0;
+  gboolean      found_duplicate = FALSE;
+  gchar        *extension = NULL;
+  gchar        *new_name = g_strdup (file_name);
 
   /* get file extension if file is not a directory */
   if (!is_directory)
@@ -816,7 +817,7 @@ thunar_util_next_new_file_name_raw (GList                 *file_list,
             }
         }
       else
-        g_assert("should not be reached");
+        g_assert ("should not be reached");
     }
 
   return new_name;
@@ -828,8 +829,8 @@ thunar_util_next_new_file_name_raw (GList                 *file_list,
  * thunar_util_get_search_prefix
  *
  * Return value: The localized search prefix
-**/
-const char*
+ **/
+const char *
 thunar_util_get_search_prefix (void)
 {
   return _("Search: ");
@@ -842,7 +843,7 @@ thunar_util_get_search_prefix (void)
  * @string : the string to check
  *
  * Return value: a boolean that is TRUE if @string starts with 'Search: '.
-**/
+ **/
 gboolean
 thunar_util_is_a_search_query (const gchar *string)
 {
@@ -865,7 +866,7 @@ thunar_util_is_a_search_query (const gchar *string)
  *
  * Return value: the concatenated string
  **/
-gchar*
+gchar *
 thunar_util_strjoin_list (GList       *string_list,
                           const gchar *separator)
 {
@@ -949,10 +950,10 @@ thunar_util_draw_rounded_corners (cairo_t            *cr,
                                   gint                side)
 {
   gdouble *corner_radius;
-  gdouble  draw_round_corners_on_left[4]      = { 0,      0,      radius, radius };
-  gdouble  draw_round_corners_on_right[4]     = { radius, radius, 0,      0      };
-  gdouble  draw_round_corners_on_top[4]       = { radius, 0,      0,      radius };
-  gdouble  draw_round_corners_on_bottom[4]    = { 0,      radius, radius, 0      };
+  gdouble  draw_round_corners_on_left[4] = { 0, 0, radius, radius };
+  gdouble  draw_round_corners_on_right[4] = { radius, radius, 0, 0 };
+  gdouble  draw_round_corners_on_top[4] = { radius, 0, 0, radius };
+  gdouble  draw_round_corners_on_bottom[4] = { 0, radius, radius, 0 };
   gdouble  draw_round_corners_on_all_sides[4] = { radius, radius, radius, radius };
   gdouble  degrees = G_PI / 180.0;
 
@@ -1002,24 +1003,24 @@ thunar_util_draw_rounded_corners (cairo_t            *cr,
 
 
 void
-thunar_util_clip_view_background (GtkCellRenderer      *cell,
-                                  cairo_t              *cr,
-                                  const GdkRectangle   *background_area,
-                                  GtkWidget            *widget,
-                                  GtkCellRendererState  flags)
+thunar_util_clip_view_background (GtkCellRenderer     *cell,
+                                  cairo_t             *cr,
+                                  const GdkRectangle  *background_area,
+                                  GtkWidget           *widget,
+                                  GtkCellRendererState flags)
 {
-  GtkStyleContext  *context;
-  GdkRGBA          *color = NULL;
-  GdkRGBA           highlight_color_rgba;
-  gboolean          color_selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0;
-  gboolean          rounded_corners;
-  gchar            *highlight_color;
-  gdouble           radius = 0.0;
-  gint              side = DRAW_ON_ALL_SIDES;
-  GtkWidget        *toplevel;
-  gboolean          window_is_backdrop = TRUE;
+  GtkStyleContext *context;
+  GdkRGBA         *color = NULL;
+  GdkRGBA          highlight_color_rgba;
+  gboolean         color_selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0;
+  gboolean         rounded_corners;
+  gchar           *highlight_color;
+  gdouble          radius = 0.0;
+  gint             side = DRAW_ON_ALL_SIDES;
+  GtkWidget       *toplevel;
+  gboolean         window_is_backdrop = TRUE;
 
-  g_object_get (G_OBJECT (cell), 
+  g_object_get (G_OBJECT (cell),
                 "highlight-color", &highlight_color,
                 "rounded-corners", &rounded_corners,
                 NULL);
@@ -1136,15 +1137,15 @@ thunar_util_search_terms_match (gchar **terms,
 gboolean
 thunar_util_save_geometry_timer (gpointer user_data)
 {
-  GdkWindowState         state;
-  ThunarPreferences     *preferences;
-  gboolean               remember_geometry;
-  gint                   width;
-  gint                   height;
-  
+  GdkWindowState     state;
+  ThunarPreferences *preferences;
+  gboolean           remember_geometry;
+  gint               width;
+  gint               height;
+
   preferences = thunar_preferences_get ();
   g_object_get (G_OBJECT (preferences), "misc-remember-geometry", &remember_geometry, NULL);
-  
+
   /* check if we should remember the window geometry */
   if (G_LIKELY (remember_geometry))
     {
@@ -1178,7 +1179,7 @@ thunar_util_save_geometry_timer (gpointer user_data)
             }
         }
     }
-    g_object_unref(preferences);
+  g_object_unref (preferences);
 
   return G_SOURCE_REMOVE;
 }
@@ -1252,28 +1253,28 @@ thunar_util_get_file_time (GFileInfo         *file_info,
  *
  * Return value: the statusbar text with the given @files.
  **/
-gchar*
-thunar_util_get_statusbar_text_for_files (GHashTable      *files,
-                                          gboolean         show_hidden,
-                                          gboolean         show_file_size_binary_format,
-                                          ThunarDateStyle  date_style,
-                                          const gchar     *date_custom_style,
-                                          guint            status_bar_actve_info)
+gchar *
+thunar_util_get_statusbar_text_for_files (GHashTable     *files,
+                                          gboolean        show_hidden,
+                                          gboolean        show_file_size_binary_format,
+                                          ThunarDateStyle date_style,
+                                          const gchar    *date_custom_style,
+                                          guint           status_bar_actve_info)
 {
-  guint64            size_summary = 0;
-  gint               folder_count = 0, hidden_folder_count = 0;
-  gint               file_count = 0, hidden_file_count = 0;
-  GList             *text_list = NULL;
-  gchar             *size_string = NULL;
-  gchar             *temp_string = NULL;
-  gchar             *folder_text = NULL;
-  gchar             *file_text = NULL;
-  guint64            last_modified_date = 0;
-  guint64            temp_last_modified_date;
-  GFileInfo         *last_modified_file = NULL;
-  gboolean           show_hidden_count, show_size, show_size_in_bytes, show_last_modified;
-  GHashTableIter     iter;
-  gpointer           key;
+  guint64        size_summary = 0;
+  gint           folder_count = 0, hidden_folder_count = 0;
+  gint           file_count = 0, hidden_file_count = 0;
+  GList         *text_list = NULL;
+  gchar         *size_string = NULL;
+  gchar         *temp_string = NULL;
+  gchar         *folder_text = NULL;
+  gchar         *file_text = NULL;
+  guint64        last_modified_date = 0;
+  guint64        temp_last_modified_date;
+  GFileInfo     *last_modified_file = NULL;
+  gboolean       show_hidden_count, show_size, show_size_in_bytes, show_last_modified;
+  GHashTableIter iter;
+  gpointer       key;
 
   show_hidden_count = thunar_status_bar_info_check_active (status_bar_actve_info, THUNAR_STATUS_BAR_INFO_HIDDEN_COUNT);
   show_size = thunar_status_bar_info_check_active (status_bar_actve_info, THUNAR_STATUS_BAR_INFO_SIZE);
@@ -1285,13 +1286,9 @@ thunar_util_get_statusbar_text_for_files (GHashTable      *files,
   while (g_hash_table_iter_next (&iter, &key, NULL))
     {
       GFileInfo *file_info = g_file_query_info (thunar_file_get_file (THUNAR_FILE (key)),
-                                                G_FILE_ATTRIBUTE_STANDARD_TYPE ","
-                                                G_FILE_ATTRIBUTE_STANDARD_SIZE ","
-                                                G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP ","
-                                                G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN ","
-                                                G_FILE_ATTRIBUTE_TIME_MODIFIED,
+                                                G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SIZE "," G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP "," G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN "," G_FILE_ATTRIBUTE_TIME_MODIFIED,
                                                 G_FILE_QUERY_INFO_NONE,
-                                                NULL, 
+                                                NULL,
                                                 NULL);
       if (file_info == NULL)
         continue;
@@ -1307,8 +1304,9 @@ thunar_util_get_statusbar_text_for_files (GHashTable      *files,
           file_count++;
           if (g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN) || g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP))
             hidden_file_count++;
-          if (g_file_info_get_attribute_uint32 (file_info, G_FILE_ATTRIBUTE_STANDARD_TYPE) == G_FILE_TYPE_REGULAR) g_file_info_get_attribute_uint64 (file_info, G_FILE_ATTRIBUTE_STANDARD_SIZE);
-            size_summary += g_file_info_get_attribute_uint64 (file_info, G_FILE_ATTRIBUTE_STANDARD_SIZE);
+          if (g_file_info_get_attribute_uint32 (file_info, G_FILE_ATTRIBUTE_STANDARD_TYPE) == G_FILE_TYPE_REGULAR)
+            g_file_info_get_attribute_uint64 (file_info, G_FILE_ATTRIBUTE_STANDARD_SIZE);
+          size_summary += g_file_info_get_attribute_uint64 (file_info, G_FILE_ATTRIBUTE_STANDARD_SIZE);
         }
 
       temp_last_modified_date = thunar_util_get_file_time (file_info, THUNAR_FILE_DATE_MODIFIED);
@@ -1360,7 +1358,7 @@ thunar_util_get_statusbar_text_for_files (GHashTable      *files,
       folder_text = g_strdup_printf (ngettext ("%d folder",
                                                "%d folders",
                                                folder_count),
-                                               folder_count);
+                                     folder_count);
 
       if (show_hidden_count == TRUE && show_hidden == FALSE && hidden_folder_count > 0)
         {
@@ -1393,7 +1391,7 @@ thunar_util_get_statusbar_text_for_files (GHashTable      *files,
 
 
 
-gchar*
+gchar *
 thunar_util_get_statusbar_text_for_single_file (ThunarFile *file)
 {
   const gchar       *content_type;
@@ -1413,10 +1411,10 @@ thunar_util_get_statusbar_text_for_single_file (ThunarFile *file)
   gchar             *date_string;
 
   preferences = thunar_preferences_get ();
-  g_object_get (G_OBJECT (preferences), "misc-date-style", &date_style, 
-                                        "misc_date-custom-style", &date_custom_style, 
-                                        "misc-status-bar-active-info", &active,
-                                        "misc-file-size-binary", &show_file_size_binary_format, NULL);
+  g_object_get (G_OBJECT (preferences), "misc-date-style", &date_style,
+                "misc_date-custom-style", &date_custom_style,
+                "misc-status-bar-active-info", &active,
+                "misc-file-size-binary", &show_file_size_binary_format, NULL);
   show_size = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE);
   show_size_in_bytes = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES);
   show_filetype = thunar_status_bar_info_check_active (active, THUNAR_STATUS_BAR_INFO_FILETYPE);
@@ -1477,11 +1475,11 @@ thunar_util_get_statusbar_text_for_single_file (ThunarFile *file)
       g_free (original_path_string);
     }
   else if (thunar_file_is_local (file)
-            && thunar_file_is_regular (file)
-            && g_str_has_prefix (content_type, "image/")) /* bug #2913 */
+           && thunar_file_is_regular (file)
+           && g_str_has_prefix (content_type, "image/")) /* bug #2913 */
     {
       /* check if the size should be visible in the statusbar, disabled by
-        * default to avoid high i/o  */
+       * default to avoid high i/o  */
       g_object_get (preferences, "misc-image-size-in-statusbar", &show_image_size, NULL);
       if (show_image_size)
         {
@@ -1514,7 +1512,7 @@ thunar_util_get_statusbar_text_for_single_file (ThunarFile *file)
 
 
 
-gchar*
+gchar *
 thunar_util_accel_path_to_id (const gchar *accel_path)
 {
   const char *p;
