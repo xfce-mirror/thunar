@@ -138,4 +138,3 @@ thunar_ice_init (void)
     }
 #endif /* !HAVE_LIBSM */
 }
-

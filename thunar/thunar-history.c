@@ -21,13 +21,13 @@
 #include "config.h"
 #endif
 
+#include "thunar/thunar-dialogs.h"
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-history.h"
 #include "thunar/thunar-icon-factory.h"
 #include "thunar/thunar-navigator.h"
 #include "thunar/thunar-private.h"
-#include "thunar/thunar-dialogs.h"
 
 #include <libxfce4ui/libxfce4ui.h>
 #include <libxfce4util/libxfce4util.h>
@@ -50,27 +50,37 @@ enum
 
 
 
-static void            thunar_history_navigator_init         (ThunarNavigatorIface *iface);
-static void            thunar_history_finalize               (GObject              *object);
-static void            thunar_history_get_property           (GObject              *object,
-                                                              guint                 prop_id,
-                                                              GValue               *value,
-                                                              GParamSpec           *pspec);
-static void            thunar_history_set_property           (GObject              *object,
-                                                              guint                 prop_id,
-                                                              const GValue         *value,
-                                                              GParamSpec           *pspec);
-static ThunarFile     *thunar_history_get_current_directory  (ThunarNavigator      *navigator);
-static void            thunar_history_set_current_directory  (ThunarNavigator      *navigator,
-                                                              ThunarFile           *current_directory);
-static void            thunar_history_go_back                (ThunarHistory        *history,
-                                                              GFile                *goto_file);
-static void            thunar_history_go_forward             (ThunarHistory        *history,
-                                                              GFile                *goto_file);
-static void            thunar_history_action_back_nth        (GtkWidget            *item,
-                                                              ThunarHistory        *history);
-static void            thunar_history_action_forward_nth     (GtkWidget            *item,
-                                                              ThunarHistory        *history);
+static void
+thunar_history_navigator_init (ThunarNavigatorIface *iface);
+static void
+thunar_history_finalize (GObject *object);
+static void
+thunar_history_get_property (GObject    *object,
+                             guint       prop_id,
+                             GValue     *value,
+                             GParamSpec *pspec);
+static void
+thunar_history_set_property (GObject      *object,
+                             guint         prop_id,
+                             const GValue *value,
+                             GParamSpec   *pspec);
+static ThunarFile *
+thunar_history_get_current_directory (ThunarNavigator *navigator);
+static void
+thunar_history_set_current_directory (ThunarNavigator *navigator,
+                                      ThunarFile      *current_directory);
+static void
+thunar_history_go_back (ThunarHistory *history,
+                        GFile         *goto_file);
+static void
+thunar_history_go_forward (ThunarHistory *history,
+                           GFile         *goto_file);
+static void
+thunar_history_action_back_nth (GtkWidget     *item,
+                                ThunarHistory *history);
+static void
+thunar_history_action_forward_nth (GtkWidget     *item,
+                                   ThunarHistory *history);
 
 
 
@@ -78,10 +88,10 @@ struct _ThunarHistory
 {
   GObject __parent__;
 
-  ThunarFile     *current_directory;
+  ThunarFile *current_directory;
 
-  GSList         *back_list;
-  GSList         *forward_list;
+  GSList *back_list;
+  GSList *forward_list;
 };
 
 static guint history_signals[LAST_SIGNAL];
@@ -119,13 +129,13 @@ thunar_history_class_init (ThunarHistoryClass *klass)
                                     "current-directory");
 
   history_signals[HISTORY_CHANGED] =
-    g_signal_new (I_("history-changed"),
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (ThunarHistoryClass, history_changed),
-                  NULL, NULL,
-                  g_cclosure_marshal_VOID__STRING,
-                  G_TYPE_NONE, 1, G_TYPE_STRING);
+  g_signal_new (I_ ("history-changed"),
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST,
+                G_STRUCT_OFFSET (ThunarHistoryClass, history_changed),
+                NULL, NULL,
+                g_cclosure_marshal_VOID__STRING,
+                G_TYPE_NONE, 1, G_TYPE_STRING);
 }
 
 
@@ -142,7 +152,6 @@ thunar_history_navigator_init (ThunarNavigatorIface *iface)
 static void
 thunar_history_init (ThunarHistory *history)
 {
-
 }
 
 
@@ -208,7 +217,7 @@ thunar_history_set_property (GObject      *object,
 
 
 
-static ThunarFile*
+static ThunarFile *
 thunar_history_get_current_directory (ThunarNavigator *navigator)
 {
   return THUNAR_HISTORY (navigator)->current_directory;
@@ -289,8 +298,8 @@ thunar_history_set_current_directory (ThunarNavigator *navigator,
 
 
 static void
-thunar_history_error_not_found (GFile    *goto_file,
-                                gpointer  parent)
+thunar_history_error_not_found (GFile   *goto_file,
+                                gpointer parent)
 {
   gchar  *parse_name;
   gchar  *path;
@@ -318,8 +327,8 @@ thunar_history_error_not_found (GFile    *goto_file,
 
 
 static void
-thunar_history_go_back (ThunarHistory  *history,
-                        GFile          *goto_file)
+thunar_history_go_back (ThunarHistory *history,
+                        GFile         *goto_file)
 {
   GFile      *gfile;
   GSList     *lp;
@@ -331,7 +340,7 @@ thunar_history_go_back (ThunarHistory  *history,
 
   /* check if the directory still exists */
   directory = thunar_file_get (goto_file, NULL);
-  if (directory == NULL || ! thunar_file_is_mounted (directory))
+  if (directory == NULL || !thunar_file_is_mounted (directory))
     {
       thunar_history_error_not_found (goto_file, NULL);
 
@@ -392,8 +401,8 @@ thunar_history_go_back (ThunarHistory  *history,
 
 
 static void
-thunar_history_go_forward (ThunarHistory  *history,
-                           GFile          *goto_file)
+thunar_history_go_forward (ThunarHistory *history,
+                           GFile         *goto_file)
 {
   GFile      *gfile;
   GSList     *lnext;
@@ -405,7 +414,7 @@ thunar_history_go_forward (ThunarHistory  *history,
 
   /* check if the directory still exists */
   directory = thunar_file_get (goto_file, NULL);
-  if (directory == NULL || ! thunar_file_is_mounted (directory))
+  if (directory == NULL || !thunar_file_is_mounted (directory))
     {
       thunar_history_error_not_found (goto_file, NULL);
 
@@ -520,9 +529,9 @@ thunar_history_action_forward_nth (GtkWidget     *item,
 
 
 void
-thunar_history_show_menu (ThunarHistory         *history,
-                          ThunarHistoryMenuType  type,
-                          GtkWidget             *parent)
+thunar_history_show_menu (ThunarHistory        *history,
+                          ThunarHistoryMenuType type,
+                          GtkWidget            *parent)
 {
   ThunarIconFactory *icon_factory;
   GtkIconTheme      *icon_theme;
@@ -564,7 +573,7 @@ thunar_history_show_menu (ThunarHistory         *history,
     }
 
   /* add menu items for all list items */
-  for (;lp != NULL; lp = lp->next)
+  for (; lp != NULL; lp = lp->next)
     {
       parse_name = g_file_get_parse_name (lp->data);
       file = thunar_file_cache_lookup (lp->data);
@@ -639,11 +648,11 @@ thunar_history_copy (ThunarHistory *history)
 
   /* copy the back list */
   for (lp = history->back_list; lp != NULL; lp = lp->next)
-      copy->back_list = g_slist_append (copy->back_list, g_object_ref (G_OBJECT (lp->data)));
+    copy->back_list = g_slist_append (copy->back_list, g_object_ref (G_OBJECT (lp->data)));
 
   /* copy the forward list */
   for (lp = history->forward_list; lp != NULL; lp = lp->next)
-      copy->forward_list = g_slist_append (copy->forward_list, g_object_ref (G_OBJECT (lp->data)));
+    copy->forward_list = g_slist_append (copy->forward_list, g_object_ref (G_OBJECT (lp->data)));
 
   return copy;
 }
@@ -663,7 +672,6 @@ thunar_history_has_back (ThunarHistory *history)
 
   return history->back_list != NULL;
 }
-
 
 
 
@@ -749,4 +757,3 @@ thunar_history_add (ThunarHistory *history,
 {
   thunar_history_set_current_directory (THUNAR_NAVIGATOR (history), directory);
 }
-

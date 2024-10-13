@@ -28,12 +28,12 @@ G_BEGIN_DECLS;
 typedef struct _ThunarChooserModelClass ThunarChooserModelClass;
 typedef struct _ThunarChooserModel      ThunarChooserModel;
 
-#define THUNAR_TYPE_CHOOSER_MODEL            (thunar_chooser_model_get_type ())
-#define THUNAR_CHOOSER_MODEL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_CHOOSER_MODEL, ThunarChooserModel))
-#define THUNAR_CHOOSER_MODEL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_CHOOSER_MODEL, ThunarChooserModelClass))
-#define THUNAR_IS_CHOOSER_MODEL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_CHOOSER_MODEL))
+#define THUNAR_TYPE_CHOOSER_MODEL (thunar_chooser_model_get_type ())
+#define THUNAR_CHOOSER_MODEL(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_CHOOSER_MODEL, ThunarChooserModel))
+#define THUNAR_CHOOSER_MODEL_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_CHOOSER_MODEL, ThunarChooserModelClass))
+#define THUNAR_IS_CHOOSER_MODEL(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_CHOOSER_MODEL))
 #define THUNAR_IS_CHOOSER_MODEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_CHOOSER_MODEL))
-#define THUNAR_CHOOSER_MODEL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_CHOOSER_MODEL, ThunarChooserModelClass))
+#define THUNAR_CHOOSER_MODEL_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_CHOOSER_MODEL, ThunarChooserModelClass))
 
 /**
  * ThunarChooserModelColumn:
@@ -55,14 +55,18 @@ typedef enum
   THUNAR_CHOOSER_MODEL_N_COLUMNS,
 } ThunarChooserModelColumn;
 
-GType               thunar_chooser_model_get_type         (void) G_GNUC_CONST;
+GType
+thunar_chooser_model_get_type (void) G_GNUC_CONST;
 
-ThunarChooserModel *thunar_chooser_model_new              (const gchar        *content_type) G_GNUC_MALLOC;
-const gchar        *thunar_chooser_model_get_content_type (ThunarChooserModel *model);
-gboolean            thunar_chooser_model_remove           (ThunarChooserModel *model,
-                                                           GtkTreeIter        *iter,
-                                                           gboolean            delete,
-                                                           GError            **error);
+ThunarChooserModel *
+thunar_chooser_model_new (const gchar *content_type) G_GNUC_MALLOC;
+const gchar *
+thunar_chooser_model_get_content_type (ThunarChooserModel *model);
+gboolean
+thunar_chooser_model_remove (ThunarChooserModel *model,
+                             GtkTreeIter        *iter,
+                             gboolean delete,
+                             GError **error);
 
 G_END_DECLS;
 

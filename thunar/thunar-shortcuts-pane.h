@@ -27,16 +27,18 @@ G_BEGIN_DECLS;
 typedef struct _ThunarShortcutsPaneClass ThunarShortcutsPaneClass;
 typedef struct _ThunarShortcutsPane      ThunarShortcutsPane;
 
-#define THUNAR_TYPE_SHORTCUTS_PANE             (thunar_shortcuts_pane_get_type ())
-#define THUNAR_SHORTCUTS_PANE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_SHORTCUTS_PANE, ThunarShortcutsPane))
-#define THUNAR_SHORTCUTS_PANE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_SHORTCUTS_PANE, ThunarShortcutsPaneClass))
-#define THUNAR_IS_SHORTCUTS_PANE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_SHORTCUTS_PANE))
-#define THUNAR_IS_SHORTCUTS_PANE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_SHORTCUTS_PANE))
-#define THUNAR_SHORTCUTS_PANE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SHORTCUTS_PANE, ThunarShortcutsPaneClass))
+#define THUNAR_TYPE_SHORTCUTS_PANE (thunar_shortcuts_pane_get_type ())
+#define THUNAR_SHORTCUTS_PANE(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_SHORTCUTS_PANE, ThunarShortcutsPane))
+#define THUNAR_SHORTCUTS_PANE_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_SHORTCUTS_PANE, ThunarShortcutsPaneClass))
+#define THUNAR_IS_SHORTCUTS_PANE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_SHORTCUTS_PANE))
+#define THUNAR_IS_SHORTCUTS_PANE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_SHORTCUTS_PANE))
+#define THUNAR_SHORTCUTS_PANE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SHORTCUTS_PANE, ThunarShortcutsPaneClass))
 
-GType      thunar_shortcuts_pane_get_type     (void) G_GNUC_CONST;
-void       thunar_shortcuts_pane_add_shortcut (ThunarShortcutsPane *shortcuts_pane,
-                                               ThunarFile          *file);
+GType
+thunar_shortcuts_pane_get_type (void) G_GNUC_CONST;
+void
+thunar_shortcuts_pane_add_shortcut (ThunarShortcutsPane *shortcuts_pane,
+                                    ThunarFile          *file);
 
 G_END_DECLS;
 

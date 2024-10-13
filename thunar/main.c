@@ -33,22 +33,22 @@
 #include <gio/gdesktopappinfo.h>
 #endif
 
-#include <xfconf/xfconf.h>
-
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-gobject-extensions.h"
-#include "thunar/thunar-private.h"
 #include "thunar/thunar-notify.h"
-#include "thunar/thunar-session-client.h"
 #include "thunar/thunar-preferences.h"
+#include "thunar/thunar-private.h"
+#include "thunar/thunar-session-client.h"
+
+#include <xfconf/xfconf.h>
 
 
 
 int
 main (int argc, char **argv)
 {
-  ThunarApplication   *application;
-  GError              *error = NULL;
+  ThunarApplication *application;
+  GError            *error = NULL;
 
   /* setup translation domain */
   xfce_textdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR, "UTF-8");

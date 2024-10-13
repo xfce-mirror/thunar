@@ -23,35 +23,37 @@
 #include <config.h>
 #endif
 
-#include <gio/gio.h>
-
-#include <gdk/gdkx.h>
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-
-#include <glib/gi18n-lib.h>
-
-#include <xfconf/xfconf.h>
-
 #include "twp-provider.h"
+
+#include <X11/Xatom.h>
+#include <X11/Xlib.h>
+#include <gdk/gdkx.h>
+#include <gio/gio.h>
+#include <glib/gi18n-lib.h>
+#include <xfconf/xfconf.h>
 
 
 #define XFDESKTOP_SELECTION_FMT "XFDESKTOP_SELECTION_%d"
-#define NAUTILUS_SELECTION_FMT  "NAUTILUS_DESKTOP_WINDOW_ID"
+#define NAUTILUS_SELECTION_FMT "NAUTILUS_DESKTOP_WINDOW_ID"
 
 
 
-static void   twp_menu_provider_init            (ThunarxMenuProviderIface *iface);
-static void   twp_provider_finalize             (GObject                  *object);
-static GList *twp_provider_get_file_menu_items  (ThunarxMenuProvider      *menu_provider,
-                                                 GtkWidget                *window,
-                                                 GList                    *files);
-static void   twp_action_set_wallpaper          (ThunarxMenuItem          *item,
-                                                 gpointer                  user_data);
-static gint   twp_get_active_workspace_number   (GdkScreen *screen);
+static void
+twp_menu_provider_init (ThunarxMenuProviderIface *iface);
+static void
+twp_provider_finalize (GObject *object);
+static GList *
+twp_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
+                                  GtkWidget           *window,
+                                  GList               *files);
+static void
+twp_action_set_wallpaper (ThunarxMenuItem *item,
+                          gpointer         user_data);
+static gint
+twp_get_active_workspace_number (GdkScreen *screen);
 
-static gboolean    _has_gsettings = FALSE;
-static GtkWidget   *main_window = NULL;
+static gboolean   _has_gsettings = FALSE;
+static GtkWidget *main_window = NULL;
 
 struct _TwpProviderClass
 {
@@ -60,17 +62,15 @@ struct _TwpProviderClass
 
 struct _TwpProvider
 {
-  GObject         __parent__;
+  GObject __parent__;
 
-  gchar          *child_watch_path;
-  gint            child_watch_id;
+  gchar *child_watch_path;
+  gint   child_watch_id;
 };
 
 
 
-THUNARX_DEFINE_TYPE_WITH_CODE (TwpProvider, twp_provider, G_TYPE_OBJECT,
-                               THUNARX_IMPLEMENT_INTERFACE (THUNARX_TYPE_MENU_PROVIDER,
-                                                            twp_menu_provider_init));
+THUNARX_DEFINE_TYPE_WITH_CODE (TwpProvider, twp_provider, G_TYPE_OBJECT, THUNARX_IMPLEMENT_INTERFACE (THUNARX_TYPE_MENU_PROVIDER, twp_menu_provider_init));
 
 static void
 twp_menu_provider_init (ThunarxMenuProviderIface *iface)
@@ -112,7 +112,7 @@ twp_provider_finalize (GObject *object)
 
 
 
-static GList*
+static GList *
 twp_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
                                   GtkWidget           *window,
                                   GList               *files)
@@ -156,7 +156,7 @@ twp_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
 
               items = g_list_append (items, item);
             }
-          g_free(mime_type);
+          g_free (mime_type);
         }
     }
 
@@ -168,7 +168,7 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
                           gpointer         user_data)
 {
   ThunarxFileInfo *file_info = user_data;
-  GdkDisplay      *display = gdk_display_get_default();
+  GdkDisplay      *display = gdk_display_get_default ();
   gint             screen_nr = 0;
   gint             n_monitors;
   gint             monitor_nr = 0;
@@ -231,9 +231,9 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
       channel = xfconf_channel_get ("xfce4-desktop");
 
       /* This is the format for xfdesktop before 4.11 */
-      image_path_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-path", screen_nr, monitor_nr);
-      image_show_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-show", screen_nr, monitor_nr);
-      image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-style", screen_nr, monitor_nr);
+      image_path_prop = g_strdup_printf ("/backdrop/screen%d/monitor%d/image-path", screen_nr, monitor_nr);
+      image_show_prop = g_strdup_printf ("/backdrop/screen%d/monitor%d/image-show", screen_nr, monitor_nr);
+      image_style_prop = g_strdup_printf ("/backdrop/screen%d/monitor%d/image-style", screen_nr, monitor_nr);
 
       /* Set the wallpaper and ensure that it's set to show */
       xfconf_channel_set_string (channel, image_path_prop, file_name);
@@ -241,15 +241,15 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
 
       /* If there isn't a wallpaper style set (-1), or it is set to 'None' (which is 0) then set one */
       current_image_style = xfconf_channel_get_int (channel, image_style_prop, -1);
-      if (current_image_style <= 0 )
+      if (current_image_style <= 0)
         {
           /* Lets hope that 5 = 'Zoomed' works fine for the selected picture */
           xfconf_channel_set_int (channel, image_style_prop, 5);
         }
 
-      g_free(image_path_prop);
-      g_free(image_show_prop);
-      g_free(image_style_prop);
+      g_free (image_path_prop);
+      g_free (image_show_prop);
+      g_free (image_style_prop);
 
 
       /* Xfdesktop 4.11+ has a concept of a single-workspace-mode where
@@ -268,16 +268,16 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
        * that it works as the user expects. */
       if (monitor_name)
         {
-          image_path_prop = g_strdup_printf("/backdrop/screen%d/monitor%s/workspace%d/last-image", screen_nr, monitor_name, workspace);
-          image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%s/workspace%d/image-style", screen_nr, monitor_name, workspace);
+          image_path_prop = g_strdup_printf ("/backdrop/screen%d/monitor%s/workspace%d/last-image", screen_nr, monitor_name, workspace);
+          image_style_prop = g_strdup_printf ("/backdrop/screen%d/monitor%s/workspace%d/image-style", screen_nr, monitor_name, workspace);
         }
       else
         {
           /* gdk_screen_get_monitor_plug_name can return NULL, in those
            * instances we fallback to monitor number but still include the
            * workspace number */
-          image_path_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/workspace%d/last-image", screen_nr, monitor_nr, workspace);
-          image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/workspace%d/image-style", screen_nr, monitor_nr, workspace);
+          image_path_prop = g_strdup_printf ("/backdrop/screen%d/monitor%d/workspace%d/last-image", screen_nr, monitor_nr, workspace);
+          image_style_prop = g_strdup_printf ("/backdrop/screen%d/monitor%d/workspace%d/image-style", screen_nr, monitor_nr, workspace);
         }
 
       xfconf_channel_set_string (channel, image_path_prop, file_name);
@@ -290,8 +290,8 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
           xfconf_channel_set_int (channel, image_style_prop, 5);
         }
 
-      g_free(image_path_prop);
-      g_free(image_style_prop);
+      g_free (image_path_prop);
+      g_free (image_style_prop);
     }
   else if (g_strcmp0 (desktop_type, "GNOME") == 0)
     {
@@ -301,7 +301,8 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
 
           command = g_strdup_printf ("gsettings set "
                                      "org.gnome.desktop.background picture-uri "
-                                     "'%s'", file_uri);
+                                     "'%s'",
+                                     file_uri);
           g_spawn_command_line_async (command, NULL);
           g_free (command);
         }
@@ -349,16 +350,18 @@ twp_get_active_workspace_number (GdkScreen *screen)
   _WIN_WORKSPACE = XInternAtom (GDK_WINDOW_XDISPLAY (root), "_WIN_WORKSPACE", False);
 
   if (XGetWindowProperty (GDK_WINDOW_XDISPLAY (root),
-                          gdk_x11_get_default_root_xwindow(),
+                          gdk_x11_get_default_root_xwindow (),
                           _NET_CURRENT_DESKTOP, 0, 32, False, XA_CARDINAL,
                           &type_ret, &format_ret, &nitems_ret, &bytes_after_ret,
-                          (gpointer) &prop_ret) != Success)
+                          (gpointer) &prop_ret)
+      != Success)
     {
       if (XGetWindowProperty (GDK_WINDOW_XDISPLAY (root),
-                              gdk_x11_get_default_root_xwindow(),
+                              gdk_x11_get_default_root_xwindow (),
                               _WIN_WORKSPACE, 0, 32, False, XA_CARDINAL,
                               &type_ret, &format_ret, &nitems_ret, &bytes_after_ret,
-                              (gpointer) &prop_ret) != Success)
+                              (gpointer) &prop_ret)
+          != Success)
         {
           if (G_UNLIKELY (prop_ret != NULL))
             {

@@ -21,10 +21,10 @@
 #include "config.h"
 #endif
 
-#include <libxfce4util/libxfce4util.h>
-
 #include "thunar/thunar-navigator.h"
 #include "thunar/thunar-private.h"
+
+#include <libxfce4util/libxfce4util.h>
 
 
 
@@ -37,8 +37,10 @@ enum
 
 
 
-static void thunar_navigator_base_init  (gpointer klass);
-static void thunar_navigator_class_init (gpointer klass);
+static void
+thunar_navigator_base_init (gpointer klass);
+static void
+thunar_navigator_class_init (gpointer klass);
 
 
 
@@ -54,12 +56,11 @@ thunar_navigator_get_type (void)
 
   if (g_once_init_enter (&type__static))
     {
-      static const GTypeInfo info =
-      {
+      static const GTypeInfo info = {
         sizeof (ThunarNavigatorIface),
         (GBaseInitFunc) thunar_navigator_base_init,
         NULL,
-        (GClassInitFunc) (void (*)(void)) thunar_navigator_class_init,
+        (GClassInitFunc) (void (*) (void)) thunar_navigator_class_init,
         NULL,
         NULL,
         0,
@@ -67,7 +68,7 @@ thunar_navigator_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarNavigator"), &info, 0);
+      type = g_type_register_static (G_TYPE_INTERFACE, I_ ("ThunarNavigator"), &info, 0);
       g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
 
       g_once_init_leave (&type__static, type);
@@ -105,22 +106,22 @@ thunar_navigator_base_init (gpointer klass)
        * or the "current-directory" property.
        **/
       navigator_signals[CHANGE_DIRECTORY] =
-        g_signal_new (I_("change-directory"),
-                      G_TYPE_FROM_INTERFACE (klass),
-                      G_SIGNAL_RUN_LAST,
-                      G_STRUCT_OFFSET (ThunarNavigatorIface, change_directory),
-                      NULL, NULL,
-                      g_cclosure_marshal_VOID__OBJECT,
-                      G_TYPE_NONE, 1, THUNAR_TYPE_FILE);
+      g_signal_new (I_ ("change-directory"),
+                    G_TYPE_FROM_INTERFACE (klass),
+                    G_SIGNAL_RUN_LAST,
+                    G_STRUCT_OFFSET (ThunarNavigatorIface, change_directory),
+                    NULL, NULL,
+                    g_cclosure_marshal_VOID__OBJECT,
+                    G_TYPE_NONE, 1, THUNAR_TYPE_FILE);
 
       navigator_signals[OPEN_NEW_TAB] =
-        g_signal_new (I_("open-new-tab"),
-                      G_TYPE_FROM_INTERFACE (klass),
-                      G_SIGNAL_RUN_LAST,
-                      G_STRUCT_OFFSET (ThunarNavigatorIface, open_new_tab),
-                      NULL, NULL,
-                      g_cclosure_marshal_VOID__OBJECT,
-                      G_TYPE_NONE, 1, THUNAR_TYPE_FILE);
+      g_signal_new (I_ ("open-new-tab"),
+                    G_TYPE_FROM_INTERFACE (klass),
+                    G_SIGNAL_RUN_LAST,
+                    G_STRUCT_OFFSET (ThunarNavigatorIface, open_new_tab),
+                    NULL, NULL,
+                    g_cclosure_marshal_VOID__OBJECT,
+                    G_TYPE_NONE, 1, THUNAR_TYPE_FILE);
 
       initialized = TRUE;
     }
@@ -167,7 +168,7 @@ thunar_navigator_class_init (gpointer klass)
  *
  * Return value: the current directory of @navigator or %NULL.
  **/
-ThunarFile*
+ThunarFile *
 thunar_navigator_get_current_directory (ThunarNavigator *navigator)
 {
   _thunar_return_val_if_fail (THUNAR_IS_NAVIGATOR (navigator), NULL);

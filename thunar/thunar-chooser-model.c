@@ -45,18 +45,22 @@ enum
 
 
 
-
-static void     thunar_chooser_model_constructed    (GObject                  *object);
-static void     thunar_chooser_model_finalize       (GObject                  *object);
-static void     thunar_chooser_model_get_property   (GObject                  *object,
-                                                     guint                     prop_id,
-                                                     GValue                   *value,
-                                                     GParamSpec               *pspec);
-static void     thunar_chooser_model_set_property   (GObject                  *object,
-                                                     guint                     prop_id,
-                                                     const GValue             *value,
-                                                     GParamSpec               *pspec);
-static void     thunar_chooser_model_reload         (ThunarChooserModel       *model);
+static void
+thunar_chooser_model_constructed (GObject *object);
+static void
+thunar_chooser_model_finalize (GObject *object);
+static void
+thunar_chooser_model_get_property (GObject    *object,
+                                   guint       prop_id,
+                                   GValue     *value,
+                                   GParamSpec *pspec);
+static void
+thunar_chooser_model_set_property (GObject      *object,
+                                   guint         prop_id,
+                                   const GValue *value,
+                                   GParamSpec   *pspec);
+static void
+thunar_chooser_model_reload (ThunarChooserModel *model);
 
 
 
@@ -100,8 +104,7 @@ thunar_chooser_model_class_init (ThunarChooserModelClass *klass)
                                                         "content-type",
                                                         "content-type",
                                                         NULL,
-                                                        G_PARAM_CONSTRUCT_ONLY |
-                                                        EXO_PARAM_READWRITE));
+                                                        G_PARAM_CONSTRUCT_ONLY | EXO_PARAM_READWRITE));
 }
 
 
@@ -110,8 +113,7 @@ static void
 thunar_chooser_model_init (ThunarChooserModel *model)
 {
   /* allocate the types array for the columns */
-  GType column_types[THUNAR_CHOOSER_MODEL_N_COLUMNS] =
-  {
+  GType column_types[THUNAR_CHOOSER_MODEL_N_COLUMNS] = {
     G_TYPE_STRING,
     G_TYPE_ICON,
     G_TYPE_APP_INFO,
@@ -317,7 +319,8 @@ thunar_chooser_model_reload (ThunarChooserModel *model)
     {
       if (g_list_find_custom (recommended,
                               lp->data,
-                              compare_app_infos) == NULL)
+                              compare_app_infos)
+          == NULL)
         {
           other = g_list_prepend (other, lp->data);
         }
@@ -392,8 +395,8 @@ thunar_chooser_model_get_content_type (ThunarChooserModel *model)
 gboolean
 thunar_chooser_model_remove (ThunarChooserModel *model,
                              GtkTreeIter        *iter,
-                             gboolean            delete,
-                             GError            **error)
+                             gboolean delete,
+                             GError **error)
 {
   GAppInfo *app_info;
   gboolean  succeed;
@@ -417,7 +420,7 @@ thunar_chooser_model_remove (ThunarChooserModel *model,
                                              error);
 
   /* try to delete the file */
-  if (delete && succeed && g_app_info_delete (app_info))
+  if (delete &&succeed && g_app_info_delete (app_info))
     {
       g_set_error (error, G_IO_ERROR,
                    G_IO_ERROR_FAILED,
@@ -434,5 +437,3 @@ thunar_chooser_model_remove (ThunarChooserModel *model,
 
   return succeed;
 }
-
-

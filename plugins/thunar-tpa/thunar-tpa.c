@@ -23,16 +23,11 @@
 #endif
 
 #include <glib.h>
-
 #include <gtk/gtk.h>
-
-#include <libxfce4util/libxfce4util.h>
-
-#include <libxfce4ui/libxfce4ui.h>
-
 #include <libxfce4panel/libxfce4panel.h>
 #include <libxfce4panel/xfce-panel-macros.h>
-
+#include <libxfce4ui/libxfce4ui.h>
+#include <libxfce4util/libxfce4util.h>
 #include <thunar-tpa/thunar-tpa-bindings.h>
 
 typedef struct _ThunarTpaClass ThunarTpaClass;
@@ -40,58 +35,77 @@ typedef struct _ThunarTpa      ThunarTpa;
 
 
 
-#define THUNAR_TYPE_TPA            (thunar_tpa_get_type ())
-#define THUNAR_TPA(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_TPA, ThunarTpa))
-#define THUNAR_TPA_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_TPA, ThunarTpaClass))
-#define THUNAR_IS_TPA(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_TPA))
+#define THUNAR_TYPE_TPA (thunar_tpa_get_type ())
+#define THUNAR_TPA(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_TPA, ThunarTpa))
+#define THUNAR_TPA_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_TPA, ThunarTpaClass))
+#define THUNAR_IS_TPA(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_TPA))
 #define THUNAR_IS_TPA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_TPA))
-#define THUNAR_TPA_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_TPA, ThunarTpaClass))
+#define THUNAR_TPA_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_TPA, ThunarTpaClass))
 
 
 
-GType           thunar_tpa_get_type            (void);
-void            thunar_tpa_register_type       (XfcePanelTypeModule *type_module);
-static void     thunar_tpa_finalize            (GObject             *object);
-static void     thunar_tpa_construct           (XfcePanelPlugin     *panel_plugin);
-static gboolean thunar_tpa_size_changed        (XfcePanelPlugin     *panel_plugin,
-                                                gint                 size);
-static void     thunar_tpa_error               (ThunarTpa           *plugin,
-                                                GError              *error);
-static void     thunar_tpa_state               (ThunarTpa           *plugin,
-                                                gboolean             full);
-static void     thunar_tpa_display_trash_reply (GObject             *source_object,
-                                                GAsyncResult        *result,
-                                                gpointer             user_data);
-static void     thunar_tpa_empty_trash_reply   (GObject             *source_object,
-                                                GAsyncResult        *result,
-                                                gpointer             user_data);
-static void     thunar_tpa_move_to_trash_reply (GObject             *source_object,
-                                                GAsyncResult        *result,
-                                                gpointer             user_data);
-static void     thunar_tpa_query_trash_reply   (GObject             *source_object,
-                                                GAsyncResult        *result,
-                                                gpointer             user_data);
-static void     thunar_tpa_drag_data_received  (GtkWidget           *button,
-                                                GdkDragContext      *context,
-                                                gint                 x,
-                                                gint                 y,
-                                                GtkSelectionData    *selection_data,
-                                                guint                info,
-                                                guint                time,
-                                                ThunarTpa           *plugin);
-static gboolean thunar_tpa_enter_notify_event  (GtkWidget           *button,
-                                                GdkEventCrossing    *event,
-                                                ThunarTpa           *plugin);
-static gboolean thunar_tpa_leave_notify_event  (GtkWidget           *button,
-                                                GdkEventCrossing    *event,
-                                                ThunarTpa           *plugin);
-static void     thunar_tpa_on_trash_changed    (thunarTPATrash      *proxy,
-                                                gpointer             user_data);
-static void     thunar_tpa_display_trash       (ThunarTpa           *plugin);
-static void     thunar_tpa_empty_trash         (ThunarTpa           *plugin);
-static gboolean thunar_tpa_move_to_trash       (ThunarTpa           *plugin,
-                                                const gchar        **uri_list);
-static void     thunar_tpa_query_trash         (ThunarTpa           *plugin);
+GType
+thunar_tpa_get_type (void);
+void
+thunar_tpa_register_type (XfcePanelTypeModule *type_module);
+static void
+thunar_tpa_finalize (GObject *object);
+static void
+thunar_tpa_construct (XfcePanelPlugin *panel_plugin);
+static gboolean
+thunar_tpa_size_changed (XfcePanelPlugin *panel_plugin,
+                         gint             size);
+static void
+thunar_tpa_error (ThunarTpa *plugin,
+                  GError    *error);
+static void
+thunar_tpa_state (ThunarTpa *plugin,
+                  gboolean   full);
+static void
+thunar_tpa_display_trash_reply (GObject      *source_object,
+                                GAsyncResult *result,
+                                gpointer      user_data);
+static void
+thunar_tpa_empty_trash_reply (GObject      *source_object,
+                              GAsyncResult *result,
+                              gpointer      user_data);
+static void
+thunar_tpa_move_to_trash_reply (GObject      *source_object,
+                                GAsyncResult *result,
+                                gpointer      user_data);
+static void
+thunar_tpa_query_trash_reply (GObject      *source_object,
+                              GAsyncResult *result,
+                              gpointer      user_data);
+static void
+thunar_tpa_drag_data_received (GtkWidget        *button,
+                               GdkDragContext   *context,
+                               gint              x,
+                               gint              y,
+                               GtkSelectionData *selection_data,
+                               guint             info,
+                               guint             time,
+                               ThunarTpa        *plugin);
+static gboolean
+thunar_tpa_enter_notify_event (GtkWidget        *button,
+                               GdkEventCrossing *event,
+                               ThunarTpa        *plugin);
+static gboolean
+thunar_tpa_leave_notify_event (GtkWidget        *button,
+                               GdkEventCrossing *event,
+                               ThunarTpa        *plugin);
+static void
+thunar_tpa_on_trash_changed (thunarTPATrash *proxy,
+                             gpointer        user_data);
+static void
+thunar_tpa_display_trash (ThunarTpa *plugin);
+static void
+thunar_tpa_empty_trash (ThunarTpa *plugin);
+static gboolean
+thunar_tpa_move_to_trash (ThunarTpa    *plugin,
+                          const gchar **uri_list);
+static void
+thunar_tpa_query_trash (ThunarTpa *plugin);
 
 
 
@@ -105,9 +119,9 @@ struct _ThunarTpa
   XfcePanelPlugin __parent__;
 
   /* widgets */
-  GtkWidget      *button;
-  GtkWidget      *image;
-  GtkWidget      *mi;
+  GtkWidget *button;
+  GtkWidget *image;
+  GtkWidget *mi;
 
   thunarTPATrash *proxy;
   GCancellable   *cancellable_display_trash;
@@ -122,9 +136,12 @@ enum
   TARGET_TEXT_URI_LIST,
 };
 
-static const GtkTargetEntry drop_targets[] =
-{
-  { "text/uri-list", 0, TARGET_TEXT_URI_LIST, },
+static const GtkTargetEntry drop_targets[] = {
+  {
+  "text/uri-list",
+  0,
+  TARGET_TEXT_URI_LIST,
+  },
 };
 
 
@@ -177,13 +194,13 @@ thunar_tpa_init (ThunarTpa *plugin)
   gtk_widget_show (plugin->mi);
 
   plugin->cancellable_display_trash = g_cancellable_new ();
-  plugin->cancellable_empty_trash   = g_cancellable_new ();
+  plugin->cancellable_empty_trash = g_cancellable_new ();
   plugin->cancellable_move_to_trash = g_cancellable_new ();
-  plugin->cancellable_query_trash   = g_cancellable_new ();
+  plugin->cancellable_query_trash = g_cancellable_new ();
 
   plugin->proxy = thunar_tpa_trash_proxy_new_for_bus_sync (G_BUS_TYPE_SESSION, G_DBUS_PROXY_FLAGS_NONE, "org.xfce.FileManager", "/org/xfce/FileManager", NULL, &error);
 
-  if(error != NULL)
+  if (error != NULL)
     thunar_tpa_error (plugin, error);
 
   g_signal_connect (plugin->proxy, "trash_changed", G_CALLBACK (thunar_tpa_on_trash_changed), plugin);
@@ -206,7 +223,7 @@ thunar_tpa_finalize (GObject *object)
 
   /* release the proxy object */
   if (G_LIKELY (plugin->proxy != NULL))
-      g_object_unref (G_OBJECT (plugin->proxy));
+    g_object_unref (G_OBJECT (plugin->proxy));
 
   (*G_OBJECT_CLASS (thunar_tpa_parent_class)->finalize) (object);
 }
@@ -241,7 +258,7 @@ thunar_tpa_size_changed (XfcePanelPlugin *panel_plugin,
   size /= xfce_panel_plugin_get_nrows (panel_plugin);
   gtk_widget_set_size_request (GTK_WIDGET (panel_plugin), size, size);
 
-#if LIBXFCE4PANEL_CHECK_VERSION (4,13,0)
+#if LIBXFCE4PANEL_CHECK_VERSION(4, 13, 0)
   image_size = xfce_panel_plugin_get_icon_size (panel_plugin);
 #else
   image_size = size - 2; // fall-back for older panel versions
@@ -297,11 +314,11 @@ thunar_tpa_display_trash_reply (GObject      *source_object,
                                 GAsyncResult *result,
                                 gpointer      user_data)
 {
-  thunarTPATrash *proxy   = THUNAR_TPA_TRASH (source_object);
+  thunarTPATrash *proxy = THUNAR_TPA_TRASH (source_object);
   gboolean        success = FALSE;
-  GError         *error   = NULL;
+  GError         *error = NULL;
 
-  success =  thunar_tpa_trash_call_display_trash_finish (proxy, result, &error);
+  success = thunar_tpa_trash_call_display_trash_finish (proxy, result, &error);
   if (G_UNLIKELY (success != TRUE))
     {
       /* display an error message to the user */
@@ -318,10 +335,10 @@ thunar_tpa_empty_trash_reply (GObject      *source_object,
                               GAsyncResult *result,
                               gpointer      user_data)
 {
-  thunarTPATrash *proxy   = THUNAR_TPA_TRASH (source_object);
-  ThunarTpa      *plugin  = THUNAR_TPA (user_data);
+  thunarTPATrash *proxy = THUNAR_TPA_TRASH (source_object);
+  ThunarTpa      *plugin = THUNAR_TPA (user_data);
   gboolean        success = FALSE;
-  GError         *error   = NULL;
+  GError         *error = NULL;
 
   success = thunar_tpa_trash_call_empty_trash_finish (proxy, result, &error);
   if (G_LIKELY (success))
@@ -345,10 +362,10 @@ thunar_tpa_move_to_trash_reply (GObject      *source_object,
                                 GAsyncResult *result,
                                 gpointer      user_data)
 {
-  thunarTPATrash *proxy   = THUNAR_TPA_TRASH (source_object);
-  ThunarTpa      *plugin  = THUNAR_TPA (user_data);
+  thunarTPATrash *proxy = THUNAR_TPA_TRASH (source_object);
+  ThunarTpa      *plugin = THUNAR_TPA (user_data);
   gboolean        success = FALSE;
-  GError         *error   = NULL;
+  GError         *error = NULL;
 
   success = thunar_tpa_trash_call_move_to_trash_finish (proxy, result, &error);
   if (G_LIKELY (success))
@@ -372,14 +389,14 @@ thunar_tpa_query_trash_reply (GObject      *source_object,
                               GAsyncResult *result,
                               gpointer      user_data)
 {
-  thunarTPATrash *proxy   = THUNAR_TPA_TRASH (source_object);
-  ThunarTpa      *plugin  = THUNAR_TPA (user_data);
+  thunarTPATrash *proxy = THUNAR_TPA_TRASH (source_object);
+  ThunarTpa      *plugin = THUNAR_TPA (user_data);
   gboolean        success = FALSE;
-  GError         *error   = NULL;
+  GError         *error = NULL;
   gboolean        full;
 
   success = thunar_tpa_trash_call_query_trash_finish (proxy, &full, result, &error);
-  if(G_LIKELY (success))
+  if (G_LIKELY (success))
     {
       /* update the tooltip/plugin accordingly */
       thunar_tpa_state (plugin, full);
@@ -576,6 +593,6 @@ thunar_tpa_query_trash (ThunarTpa *plugin)
       g_cancellable_reset (plugin->cancellable_query_trash);
 
       /* schedule a new call */
-      thunar_tpa_trash_call_query_trash (plugin->proxy, plugin->cancellable_query_trash, thunar_tpa_query_trash_reply,plugin);
+      thunar_tpa_trash_call_query_trash (plugin->proxy, plugin->cancellable_query_trash, thunar_tpa_query_trash_reply, plugin);
     }
 }

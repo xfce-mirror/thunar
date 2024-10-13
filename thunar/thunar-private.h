@@ -25,6 +25,7 @@
 
 G_BEGIN_DECLS;
 
+/* clang-format off */
 /* support macros for debugging */
 #ifndef NDEBUG
 #define _thunar_assert(expr)                  g_assert (expr)
@@ -85,6 +86,7 @@ if (expr) {                               \
   g_warn_if_reached();                    \
   return val;                             \
 }
+/* clang-format on */
 
 G_END_DECLS;
 

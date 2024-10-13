@@ -27,21 +27,25 @@ G_BEGIN_DECLS;
 typedef struct _ThunarPreferencesClass ThunarPreferencesClass;
 typedef struct _ThunarPreferences      ThunarPreferences;
 
-#define THUNAR_TYPE_PREFERENCES             (thunar_preferences_get_type ())
-#define THUNAR_PREFERENCES(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_PREFERENCES, ThunarPreferences))
-#define THUNAR_PREFERENCES_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_PREFERENCES, ThunarPreferencesClass))
-#define THUNAR_IS_PREFERENCES(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_PREFERENCES))
-#define THUNAR_IS_PREFERENCES_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_PREFERENCES))
-#define THUNAR_PREFERENCES_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_PREFERENCES, ThunarPreferencesClass))
+#define THUNAR_TYPE_PREFERENCES (thunar_preferences_get_type ())
+#define THUNAR_PREFERENCES(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_PREFERENCES, ThunarPreferences))
+#define THUNAR_PREFERENCES_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_PREFERENCES, ThunarPreferencesClass))
+#define THUNAR_IS_PREFERENCES(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_PREFERENCES))
+#define THUNAR_IS_PREFERENCES_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_PREFERENCES))
+#define THUNAR_PREFERENCES_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_PREFERENCES, ThunarPreferencesClass))
 
-GType              thunar_preferences_get_type           (void) G_GNUC_CONST;
+GType
+thunar_preferences_get_type (void) G_GNUC_CONST;
 
-ThunarPreferences *thunar_preferences_get                (void);
+ThunarPreferences *
+thunar_preferences_get (void);
 
-void               thunar_preferences_xfconf_init_failed (void);
+void
+thunar_preferences_xfconf_init_failed (void);
 
-gboolean           thunar_preferences_has_property       (ThunarPreferences *preferences,
-                                                          const gchar       *prop_name);
+gboolean
+thunar_preferences_has_property (ThunarPreferences *preferences,
+                                 const gchar       *prop_name);
 
 G_END_DECLS;
 

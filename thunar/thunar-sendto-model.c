@@ -38,13 +38,16 @@
 
 
 
-static void thunar_sendto_model_finalize   (GObject                *object);
-static void thunar_sendto_model_load       (ThunarSendtoModel      *sendto_model);
-static void thunar_sendto_model_event      (GFileMonitor           *monitor,
-                                            GFile                  *file,
-                                            GFile                  *other_file,
-                                            GFileMonitorEvent       event_type,
-                                            gpointer                user_data);
+static void
+thunar_sendto_model_finalize (GObject *object);
+static void
+thunar_sendto_model_load (ThunarSendtoModel *sendto_model);
+static void
+thunar_sendto_model_event (GFileMonitor     *monitor,
+                           GFile            *file,
+                           GFile            *other_file,
+                           GFileMonitorEvent event_type,
+                           gpointer          user_data);
 
 
 
@@ -124,11 +127,11 @@ thunar_sendto_model_load (ThunarSendtoModel *sendto_model)
 #ifdef HAVE_GIO_UNIX
   GDesktopAppInfo *app_info = NULL;
 #endif
-  gchar          **specs;
-  gchar           *path;
-  guint            n;
-  GKeyFile        *key_file;
-  gchar          **mime_types;
+  gchar   **specs;
+  gchar    *path;
+  guint     n;
+  GKeyFile *key_file;
+  gchar   **mime_types;
 
   /* lookup all sendto .desktop files */
   specs = xfce_resource_match (XFCE_RESOURCE_DATA, "Thunar/sendto/*.desktop", TRUE);
@@ -154,7 +157,7 @@ thunar_sendto_model_load (ThunarSendtoModel *sendto_model)
               /* add to our handler list, sorted by their desktop-ids (reverse order) */
               sendto_model->handlers = g_list_insert_sorted (sendto_model->handlers,
                                                              G_APP_INFO (app_info),
-                                                             (GCompareFunc) (void (*)(void)) g_app_info_compare);
+                                                             (GCompareFunc) (void (*) (void)) g_app_info_compare);
 
               /* attach the mime-types to the object */
               mime_types = g_key_file_get_string_list (key_file,
@@ -165,7 +168,7 @@ thunar_sendto_model_load (ThunarSendtoModel *sendto_model)
                 g_object_set_data_full (G_OBJECT (app_info), "mime-types", mime_types, (GDestroyNotify) g_strfreev);
             }
 #else
-          /* FIXME try to create the app info ourselves in a platform independent way */
+            /* FIXME try to create the app info ourselves in a platform independent way */
 #endif
 
           g_key_file_free (key_file);
@@ -211,7 +214,7 @@ thunar_sendto_model_event (GFileMonitor     *monitor,
  *
  * Return value: reference to the default sendto model.
  **/
-ThunarSendtoModel*
+ThunarSendtoModel *
 thunar_sendto_model_get_default (void)
 {
   static ThunarSendtoModel *sendto_model = NULL;
@@ -248,7 +251,7 @@ thunar_sendto_model_get_default (void)
  * Return value: a #GList of supported #GAppInfo<!---->s as
  *               "Send To" targets for the specified @files.
  **/
-GList*
+GList *
 thunar_sendto_model_get_matching (ThunarSendtoModel *sendto_model,
                                   GList             *files)
 {
@@ -346,5 +349,3 @@ thunar_sendto_model_get_matching (ThunarSendtoModel *sendto_model,
 
   return handlers;
 }
-
-

@@ -1,0 +1,36 @@
+---
+Language: Cpp
+BasedOnStyle: GNU
+
+AlignEscapedNewlines: DontAlign
+AlignTrailingComments: true
+AlignConsecutiveDeclarations: true
+AllowAllParametersOfDeclarationOnNextLine: false
+AlwaysBreakAfterReturnType: All
+BinPackParameters: false
+AlignAfterOpenBracket: true
+BreakBeforeBinaryOperators: NonAssignment
+ColumnLimit: 0
+ContinuationIndentWidth: 0
+IncludeBlocks: Regroup
+IndentGotoLabels: false
+InsertNewlineAtEOF: true
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 3
+SpaceAfterCStyleCast: true
+
+WhitespaceSensitiveMacros:
+  # Avoid breaking formatting in the code parameter
+  - G_DEFINE_TYPE_WITH_CODE
+  - G_DEFINE_TYPE_EXTENDED
+  - G_DEFINE_ABSTRACT_TYPE_WITH_CODE
+  # Buggy workaround to add exceptions to 'SpaceBeforeParens: Always' (see below)
+  - _
+# Workaround to avoid some alignment bugs when adding a macro to WhitespaceSensitiveMacros,
+# see https://github.com/llvm/llvm-project/issues/55443#issuecomment-1953268337
+# This doesn't fix all alignment bugs though, so I'd rather make an exception only for '_',
+# and not also for 'N_' or 'I_' for example.
+# See also https://github.com/llvm/llvm-project/issues/82288
+Macros:
+  - _(x)=x
+...

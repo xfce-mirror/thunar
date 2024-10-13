@@ -21,21 +21,22 @@
 #ifndef __THUNAR_IO_SCAN_DIRECTORY_H__
 #define __THUNAR_IO_SCAN_DIRECTORY_H__
 
-#include <exo/exo.h>
-
 #include "thunar/thunar-job.h"
 #include "thunar/thunar-private.h"
 
+#include <exo/exo.h>
+
 G_BEGIN_DECLS
 
-GList *thunar_io_scan_directory (ThunarJob          *job,
-                                 GFile              *file,
-                                 GFileQueryInfoFlags flags,
-                                 gboolean            recursively,
-                                 gboolean            unlinking,
-                                 gboolean            return_thunar_files,
-                                 guint              *n_files_max,
-                                 GError            **error);
+GList *
+thunar_io_scan_directory (ThunarJob          *job,
+                          GFile              *file,
+                          GFileQueryInfoFlags flags,
+                          gboolean            recursively,
+                          gboolean            unlinking,
+                          gboolean            return_thunar_files,
+                          guint              *n_files_max,
+                          GError            **error);
 
 G_END_DECLS
 

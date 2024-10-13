@@ -28,12 +28,12 @@ G_BEGIN_DECLS;
 typedef struct _ThunarAprAbstractPageClass ThunarAprAbstractPageClass;
 typedef struct _ThunarAprAbstractPage      ThunarAprAbstractPage;
 
-#define THUNAR_APR_TYPE_ABSTRACT_PAGE            (thunar_apr_abstract_page_get_type ())
-#define THUNAR_APR_ABSTRACT_PAGE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_APR_TYPE_ABSTRACT_PAGE, ThunarAprAbstractPage))
-#define THUNAR_APR_ABSTRACT_PAGE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_APR_TYPE_ABSTRACT_PAGE, ThunarAprAbstractPageClass))
-#define THUNAR_APR_IS_ABSTRACT_PAGE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_APR_TYPE_ABSTRACT_PAGE))
+#define THUNAR_APR_TYPE_ABSTRACT_PAGE (thunar_apr_abstract_page_get_type ())
+#define THUNAR_APR_ABSTRACT_PAGE(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_APR_TYPE_ABSTRACT_PAGE, ThunarAprAbstractPage))
+#define THUNAR_APR_ABSTRACT_PAGE_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_APR_TYPE_ABSTRACT_PAGE, ThunarAprAbstractPageClass))
+#define THUNAR_APR_IS_ABSTRACT_PAGE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_APR_TYPE_ABSTRACT_PAGE))
 #define THUNAR_APR_IS_ABSTRACT_PAGE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_APR_TYPE_ABSTRACT_PAGE))
-#define THUNAR_APR_ABSTRACT_PAGE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_APR_TYPE_ABSTRACT_PAGE, ThunarAprAbstractPageClass))
+#define THUNAR_APR_ABSTRACT_PAGE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_APR_TYPE_ABSTRACT_PAGE, ThunarAprAbstractPageClass))
 
 struct _ThunarAprAbstractPageClass
 {
@@ -50,12 +50,16 @@ struct _ThunarAprAbstractPage
   ThunarxFileInfo    *file;
 };
 
-GType            thunar_apr_abstract_page_get_type      (void) G_GNUC_CONST;
-void             thunar_apr_abstract_page_register_type (ThunarxProviderPlugin *plugin);
+GType
+thunar_apr_abstract_page_get_type (void) G_GNUC_CONST;
+void
+thunar_apr_abstract_page_register_type (ThunarxProviderPlugin *plugin);
 
-ThunarxFileInfo *thunar_apr_abstract_page_get_file      (ThunarAprAbstractPage *abstract_page);
-void             thunar_apr_abstract_page_set_file      (ThunarAprAbstractPage *abstract_page,
-                                                         ThunarxFileInfo       *file);
+ThunarxFileInfo *
+thunar_apr_abstract_page_get_file (ThunarAprAbstractPage *abstract_page);
+void
+thunar_apr_abstract_page_set_file (ThunarAprAbstractPage *abstract_page,
+                                   ThunarxFileInfo       *file);
 
 G_END_DECLS;
 

@@ -19,23 +19,33 @@
 #ifndef __THUNAR_JOB_OPERATION_HISTORY_H__
 #define __THUNAR_JOB_OPERATION_HISTORY_H__
 
-#include <glib.h>
 #include "thunar-job-operation.h"
+
+#include <glib.h>
 
 G_BEGIN_DECLS
 
 #define THUNAR_TYPE_JOB_OPERATION_HISTORY (thunar_job_operation_history_get_type ())
 G_DECLARE_FINAL_TYPE (ThunarJobOperationHistory, thunar_job_operation_history, THUNAR, JOB_OPERATION_HISTORY, GObject)
 
-ThunarJobOperationHistory* thunar_job_operation_history_get_default             (void);
-void                       thunar_job_operation_history_commit                  (ThunarJobOperation    *job_operation);
-void                       thunar_job_operation_history_update_trash_timestamps (ThunarJobOperation    *job_operation);
-void                       thunar_job_operation_history_undo                    (GtkWindow             *parent);
-void                       thunar_job_operation_history_redo                    (GtkWindow             *parent);
-gboolean                   thunar_job_operation_history_can_undo                (void);
-gboolean                   thunar_job_operation_history_can_redo                (void);
-gchar*                     thunar_job_operation_history_get_undo_text           (void);
-gchar*                     thunar_job_operation_history_get_redo_text           (void);
+ThunarJobOperationHistory *
+thunar_job_operation_history_get_default (void);
+void
+thunar_job_operation_history_commit (ThunarJobOperation *job_operation);
+void
+thunar_job_operation_history_update_trash_timestamps (ThunarJobOperation *job_operation);
+void
+thunar_job_operation_history_undo (GtkWindow *parent);
+void
+thunar_job_operation_history_redo (GtkWindow *parent);
+gboolean
+thunar_job_operation_history_can_undo (void);
+gboolean
+thunar_job_operation_history_can_redo (void);
+gchar *
+thunar_job_operation_history_get_undo_text (void);
+gchar *
+thunar_job_operation_history_get_redo_text (void);
 
 G_END_DECLS
 

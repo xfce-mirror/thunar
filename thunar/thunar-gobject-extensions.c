@@ -39,10 +39,14 @@
 
 
 
-static void transform_string_to_boolean (const GValue *src, GValue *dst);
-static void transform_string_to_enum    (const GValue *src, GValue *dst);
-static void transform_string_to_int     (const GValue *src, GValue *dst);
-static void transform_string_to_uint    (const GValue *src, GValue *dst);
+static void
+transform_string_to_boolean (const GValue *src, GValue *dst);
+static void
+transform_string_to_enum (const GValue *src, GValue *dst);
+static void
+transform_string_to_int (const GValue *src, GValue *dst);
+static void
+transform_string_to_uint (const GValue *src, GValue *dst);
 
 
 
@@ -132,11 +136,11 @@ thunar_g_initialize_transformations (void)
  *
  * Return value: (transfer full): The new string. Has to be freed with g_free after usage.
  **/
-gchar*
+gchar *
 thunar_g_strescape (const gchar *source)
 {
-  gchar*       g_escaped;
-  gchar*       result;
+  gchar       *g_escaped;
+  gchar       *result;
   unsigned int j = 0;
   unsigned int new_size = 0;
 
@@ -198,7 +202,7 @@ thunar_g_strescape (const gchar *source)
  * Return value: (transfer full): The normalized string, or NULL. Free non-NULL values with g_free() after use.
  **/
 
-gchar*
+gchar *
 thunar_g_utf8_normalize_for_search (const gchar *str,
                                     gboolean     strip_diacritics,
                                     gboolean     casefold)
@@ -235,7 +239,7 @@ thunar_g_utf8_normalize_for_search (const gchar *str,
       normalized = g_utf8_normalize (tmp, -1, G_NORMALIZE_ALL_COMPOSE);
       g_free (tmp);
     }
-  else  /* strip_diacritics == FALSE */
+  else /* strip_diacritics == FALSE */
     {
       normalized = g_utf8_normalize (str, -1, G_NORMALIZE_ALL_COMPOSE);
     }
@@ -280,7 +284,8 @@ thunar_g_app_info_equal (gpointer appinfo1,
                          gpointer appinfo2)
 {
   return g_utf8_collate (g_app_info_get_name (appinfo1),
-                         g_app_info_get_name (appinfo2)) == 0;
+                         g_app_info_get_name (appinfo2))
+         == 0;
 }
 
 /**

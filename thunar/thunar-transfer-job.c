@@ -23,18 +23,18 @@
 #include "config.h"
 #endif
 
-#include <gio/gio.h>
-
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-gio-extensions.h"
-#include "thunar/thunar-io-scan-directory.h"
 #include "thunar/thunar-io-jobs-util.h"
-#include "thunar/thunar-job.h"
+#include "thunar/thunar-io-scan-directory.h"
 #include "thunar/thunar-job-operation-history.h"
+#include "thunar/thunar-job.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-thumbnail-cache.h"
 #include "thunar/thunar-transfer-job.h"
+
+#include <gio/gio.h>
 
 
 
@@ -59,20 +59,25 @@ typedef struct _ThunarTransferNode ThunarTransferNode;
 
 
 
-static void     thunar_transfer_job_get_property (GObject    *object,
-                                                  guint       prop_id,
-                                                  GValue     *value,
-                                                  GParamSpec *pspec);
+static void
+thunar_transfer_job_get_property (GObject    *object,
+                                  guint       prop_id,
+                                  GValue     *value,
+                                  GParamSpec *pspec);
 
-static void     thunar_transfer_job_set_property (GObject      *object,
-                                                  guint         prop_id,
-                                                  const GValue *value,
-                                                  GParamSpec   *pspec);
+static void
+thunar_transfer_job_set_property (GObject      *object,
+                                  guint         prop_id,
+                                  const GValue *value,
+                                  GParamSpec   *pspec);
 
-static void     thunar_transfer_job_finalize     (GObject                *object);
-static gboolean thunar_transfer_job_execute      (ExoJob                 *job,
-                                                  GError                **error);
-static void     thunar_transfer_node_free        (gpointer                data);
+static void
+thunar_transfer_job_finalize (GObject *object);
+static gboolean
+thunar_transfer_job_execute (ExoJob  *job,
+                             GError **error);
+static void
+thunar_transfer_node_free (gpointer data);
 
 
 
@@ -83,30 +88,30 @@ struct _ThunarTransferJobClass
 
 struct _ThunarTransferJob
 {
-  ThunarJob               __parent__;
+  ThunarJob __parent__;
 
-  ThunarTransferJobType   type;
-  GList                  *source_node_list;
-  gchar                  *source_device_fs_id;
-  gboolean                is_source_device_local;
-  GList                  *target_file_list;
-  gchar                  *target_device_fs_id;
-  gboolean                is_target_device_local;
+  ThunarTransferJobType type;
+  GList                *source_node_list;
+  gchar                *source_device_fs_id;
+  gboolean              is_source_device_local;
+  GList                *target_file_list;
+  gchar                *target_device_fs_id;
+  gboolean              is_target_device_local;
 
-  gint64                  start_time;              /* us(microseconds) */
-  gint64                  last_update_time;        /* us */
-  guint64                 last_total_progress;     /* byte */
+  gint64  start_time;          /* us(microseconds) */
+  gint64  last_update_time;    /* us */
+  guint64 last_total_progress; /* byte */
 
-  guint64                 total_size;              /* byte */
-  guint64                 total_progress;          /* byte */
-  guint64                 file_progress;           /* byte */
-  guint64                 transfer_rate;           /* byte/s */
+  guint64 total_size;     /* byte */
+  guint64 total_progress; /* byte */
+  guint64 file_progress;  /* byte */
+  guint64 transfer_rate;  /* byte/s */
 
-  ThunarPreferences      *preferences;
-  gboolean                file_size_binary;
-  ThunarParallelCopyMode  parallel_copy_mode;
-  ThunarUsePartialMode    transfer_use_partial;
-  ThunarVerifyFileMode    transfer_verify_file;
+  ThunarPreferences     *preferences;
+  gboolean               file_size_binary;
+  ThunarParallelCopyMode parallel_copy_mode;
+  ThunarUsePartialMode   transfer_use_partial;
+  ThunarVerifyFileMode   transfer_verify_file;
 };
 
 struct _ThunarTransferNode
@@ -202,16 +207,16 @@ thunar_transfer_job_init (ThunarTransferJob *job)
 {
   job->preferences = thunar_preferences_get ();
   g_object_bind_property (job->preferences, "misc-file-size-binary",
-                          job,              "file-size-binary",
+                          job, "file-size-binary",
                           G_BINDING_SYNC_CREATE);
   g_object_bind_property (job->preferences, "misc-parallel-copy-mode",
-                          job,              "parallel-copy-mode",
+                          job, "parallel-copy-mode",
                           G_BINDING_SYNC_CREATE);
   g_object_bind_property (job->preferences, "misc-transfer-use-partial",
-                          job,              "transfer-use-partial",
+                          job, "transfer-use-partial",
                           G_BINDING_SYNC_CREATE);
   g_object_bind_property (job->preferences, "misc-transfer-verify-file",
-                          job,              "transfer-verify-file",
+                          job, "transfer-verify-file",
                           G_BINDING_SYNC_CREATE);
 
   job->type = 0;
@@ -252,10 +257,10 @@ thunar_transfer_job_finalize (GObject *object)
 
 
 static void
-thunar_transfer_job_get_property (GObject     *object,
-                                  guint        prop_id,
-                                  GValue      *value,
-                                  GParamSpec  *pspec)
+thunar_transfer_job_get_property (GObject    *object,
+                                  guint       prop_id,
+                                  GValue     *value,
+                                  GParamSpec *pspec)
 {
   ThunarTransferJob *job = THUNAR_TRANSFER_JOB (object);
 
@@ -400,8 +405,7 @@ thunar_transfer_job_collect_node (ThunarTransferJob  *job,
     return FALSE;
 
   info = g_file_query_info (node->source_file,
-                            G_FILE_ATTRIBUTE_STANDARD_SIZE ","
-                            G_FILE_ATTRIBUTE_STANDARD_TYPE,
+                            G_FILE_ATTRIBUTE_STANDARD_SIZE "," G_FILE_ATTRIBUTE_STANDARD_TYPE,
                             G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                             exo_job_get_cancellable (EXO_JOB (job)),
                             &err);
@@ -697,13 +701,13 @@ ttj_copy_file (ThunarTransferJob  *job,
  *               on error or cancellation.
  **/
 static GFile *
-thunar_transfer_job_copy_file (ThunarTransferJob     *job,
-                               ThunarJobOperation    *operation,
-                               GFile                 *source_file,
-                               GFile                 *target_file,
-                               gboolean               replace_confirmed,
-                               gboolean               rename_confirmed,
-                               GError               **error)
+thunar_transfer_job_copy_file (ThunarTransferJob  *job,
+                               ThunarJobOperation *operation,
+                               GFile              *source_file,
+                               GFile              *target_file,
+                               gboolean            replace_confirmed,
+                               gboolean            rename_confirmed,
+                               GError            **error)
 {
   ThunarJobResponse response;
   GFile            *dest_file = target_file;
@@ -860,6 +864,7 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
   if (fs_info != NULL)
     {
       fs_type = g_file_info_get_attribute_string (fs_info, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE);
+      /* clang-format off */
       use_fat_name_scheme =
         !g_strcmp0 (fs_type, "fat")   ||
         !g_strcmp0 (fs_type, "vfat")  ||
@@ -867,6 +872,7 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
         !g_strcmp0 (fs_type, "ntfs")  ||
         !g_strcmp0 (fs_type, "msdos") ||
         !g_strcmp0 (fs_type, "msdosfs");
+      /* clang-format on */
     }
   else
     {
@@ -990,8 +996,8 @@ retry_copy:
               if (G_LIKELY (target_file_list_return != NULL))
                 {
                   *target_file_list_return =
-                    thunar_g_list_prepend_deep (*target_file_list_return,
-                                                real_target_file);
+                  thunar_g_list_prepend_deep (*target_file_list_return,
+                                              real_target_file);
                 }
 
 retry_remove:
@@ -1067,17 +1073,17 @@ retry_remove:
 
 
 static gboolean
-thunar_transfer_job_verify_destination (ThunarTransferJob  *transfer_job,
-                                        GError            **error)
+thunar_transfer_job_verify_destination (ThunarTransferJob *transfer_job,
+                                        GError           **error)
 {
-  GFileInfo         *filesystem_info;
-  guint64            free_space;
-  GFile             *dest;
-  GFileInfo         *dest_info;
-  gchar             *dest_name = NULL;
-  gchar             *base_name;
-  gboolean           succeed = TRUE;
-  gchar             *size_string;
+  GFileInfo *filesystem_info;
+  guint64    free_space;
+  GFile     *dest;
+  GFileInfo *dest_info;
+  gchar     *dest_name = NULL;
+  gchar     *base_name;
+  gboolean   succeed = TRUE;
+  gchar     *size_string;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (transfer_job), FALSE);
 
@@ -1130,7 +1136,7 @@ thunar_transfer_job_verify_destination (ThunarTransferJob  *transfer_job,
           size_string = g_format_size_full (transfer_job->total_size - free_space,
                                             transfer_job->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
           succeed = thunar_job_ask_no_size (THUNAR_JOB (transfer_job),
-                                             _("Error while copying to \"%s\": %s more space is "
+                                            _("Error while copying to \"%s\": %s more space is "
                                                "required to copy to the destination"),
                                             dest_name, size_string);
           g_free (size_string);
@@ -1152,16 +1158,16 @@ thunar_transfer_job_verify_destination (ThunarTransferJob  *transfer_job,
 
 
 static gboolean
-thunar_transfer_job_prepare_untrash_file (ExoJob     *job,
-                                          GFileInfo  *info,
-                                          GFile      *file,
-                                          GError    **error)
+thunar_transfer_job_prepare_untrash_file (ExoJob    *job,
+                                          GFileInfo *info,
+                                          GFile     *file,
+                                          GError   **error)
 {
-  ThunarJobResponse  response;
-  GFile             *target_parent;
-  gboolean           parent_exists;
-  gchar             *base_name;
-  gchar             *parent_display_name;
+  ThunarJobResponse response;
+  GFile            *target_parent;
+  gboolean          parent_exists;
+  gchar            *base_name;
+  gchar            *parent_display_name;
 
   /* update progress information */
   exo_job_info_message (job, _("Trying to restore \"%s\""),
@@ -1249,9 +1255,9 @@ thunar_transfer_job_move_file_with_rename (ExoJob             *job,
                                            GFileCopyFlags      flags,
                                            GError            **error)
 {
-  gboolean  move_rename_successful = FALSE;
-  gint      n_rename = 1;
-  GFile    *renamed_file;
+  gboolean move_rename_successful = FALSE;
+  gint     n_rename = 1;
+  GFile   *renamed_file;
 
   node->rename_confirmed = TRUE;
   while (TRUE)
@@ -1262,7 +1268,7 @@ thunar_transfer_job_move_file_with_rename (ExoJob             *job,
                                                             tp->data,
                                                             n_rename++, error);
       if (renamed_file == NULL)
-          return FALSE;
+        return FALSE;
 
       /* Try to move it again to the new renamed file.
        * Directly try to move, because it is racy to first check for file existence
@@ -1289,16 +1295,16 @@ thunar_transfer_job_move_file_with_rename (ExoJob             *job,
 
 
 static gboolean
-thunar_transfer_job_move_file (ExoJob                *job,
-                               ThunarJobOperation    *operation,
-                               GFileInfo             *info,
-                               GList                 *sp,
-                               ThunarTransferNode    *node,
-                               GList                 *tp,
-                               GFileCopyFlags         move_flags,
-                               ThunarThumbnailCache  *thumbnail_cache,
-                               GList                **new_files_list_p,
-                               GError               **error)
+thunar_transfer_job_move_file (ExoJob               *job,
+                               ThunarJobOperation   *operation,
+                               GFileInfo            *info,
+                               GList                *sp,
+                               ThunarTransferNode   *node,
+                               GList                *tp,
+                               GFileCopyFlags        move_flags,
+                               ThunarThumbnailCache *thumbnail_cache,
+                               GList               **new_files_list_p,
+                               GError              **error)
 {
   ThunarTransferJob *transfer_job = THUNAR_TRANSFER_JOB (job);
   ThunarJobResponse  response;
@@ -1334,7 +1340,6 @@ thunar_transfer_job_move_file (ExoJob                *job,
               thunar_job_operation_overwrite (operation, tp->data);
               thunar_job_operation_add (operation, node->source_file, tp->data);
             }
-
         }
       /* if the user chose to rename then try to do so */
       else if (response == THUNAR_JOB_RESPONSE_RENAME)
@@ -1348,7 +1353,7 @@ thunar_transfer_job_move_file (ExoJob                *job,
           g_list_free_full (transfer_job->source_node_list, thunar_transfer_node_free);
           transfer_job->source_node_list = NULL;
           g_list_free_full (transfer_job->target_file_list, g_object_unref);
-          transfer_job->target_file_list= NULL;
+          transfer_job->target_file_list = NULL;
           return FALSE;
         }
       /* if the user chose not to replace nor rename the file, so that response == THUNAR_JOB_RESPONSE_SKIP,
@@ -1384,12 +1389,7 @@ thunar_transfer_job_move_file (ExoJob                *job,
       transfer_job->target_file_list = g_list_delete_link (transfer_job->target_file_list, tp);
     }
   /* prepare for the fallback copy and delete if appropriate */
-  else if (!exo_job_is_cancelled (job) &&
-           (
-            ((*error)->code == G_IO_ERROR_NOT_SUPPORTED) ||
-            ((*error)->code == G_IO_ERROR_WOULD_MERGE) ||
-            ((*error)->code == G_IO_ERROR_WOULD_RECURSE))
-           )
+  else if (!exo_job_is_cancelled (job) && (((*error)->code == G_IO_ERROR_NOT_SUPPORTED) || ((*error)->code == G_IO_ERROR_WOULD_MERGE) || ((*error)->code == G_IO_ERROR_WOULD_RECURSE)))
     {
       g_clear_error (error);
 
@@ -1510,8 +1510,8 @@ thunar_transfer_job_determine_copy_behavior (ThunarTransferJob *transfer_job,
        * - target device is local
        */
       *always_parallel_copy_p = transfer_job->is_source_device_local && transfer_job->is_target_device_local;
-      *freeze_if_src_busy_p = ! transfer_job->is_source_device_local;
-      *freeze_if_tgt_busy_p = ! transfer_job->is_target_device_local;
+      *freeze_if_src_busy_p = !transfer_job->is_source_device_local;
+      *freeze_if_tgt_busy_p = !transfer_job->is_target_device_local;
     }
   else if (transfer_job->parallel_copy_mode == THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_SAME_DEVICES)
     {
@@ -1539,8 +1539,8 @@ thunar_transfer_job_determine_copy_behavior (ThunarTransferJob *transfer_job,
       else /* same as THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL */
         {
           *always_parallel_copy_p = transfer_job->is_source_device_local && transfer_job->is_target_device_local;
-          *freeze_if_src_busy_p = ! transfer_job->is_source_device_local;
-          *freeze_if_tgt_busy_p = ! transfer_job->is_target_device_local;
+          *freeze_if_src_busy_p = !transfer_job->is_source_device_local;
+          *freeze_if_tgt_busy_p = !transfer_job->is_target_device_local;
         }
     }
   else if (transfer_job->parallel_copy_mode == THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_IDLE_DEVICE)
@@ -1587,7 +1587,7 @@ thunar_transfer_job_can_start (ThunarTransferJob *transfer_job,
   if (transfer_job->source_node_list == NULL || transfer_job->target_file_list == NULL)
     return TRUE;
   /* first source file */
-  thunar_transfer_job_fill_source_device_info (transfer_job, ((ThunarTransferNode*) transfer_job->source_node_list->data)->source_file);
+  thunar_transfer_job_fill_source_device_info (transfer_job, ((ThunarTransferNode *) transfer_job->source_node_list->data)->source_file);
   /* first target file */
   thunar_transfer_job_fill_target_device_info (transfer_job, G_FILE (transfer_job->target_file_list->data));
   thunar_transfer_job_determine_copy_behavior (transfer_job,
@@ -1843,11 +1843,11 @@ thunar_transfer_job_new (GList                *source_node_list,
 gchar *
 thunar_transfer_job_get_status (ThunarTransferJob *job)
 {
-  gchar             *total_size_str;
-  gchar             *total_progress_str;
-  gchar             *transfer_rate_str;
-  GString           *status;
-  gulong             remaining_time;
+  gchar   *total_size_str;
+  gchar   *total_progress_str;
+  gchar   *transfer_rate_str;
+  GString *status;
+  gulong   remaining_time;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), NULL);
 
@@ -1876,25 +1876,19 @@ thunar_transfer_job_get_status (ThunarTransferJob *job)
           if (remaining_time > 60 * 60)
             {
               remaining_time = (gulong) (remaining_time / (60 * 60));
-              g_string_append_printf (status, ngettext ("%lu hour remaining (%s/sec)",
-                                                        "%lu hours remaining (%s/sec)",
-                                                        remaining_time),
-                                                        remaining_time, transfer_rate_str);
+              g_string_append_printf (status, ngettext ("%lu hour remaining (%s/sec)", "%lu hours remaining (%s/sec)", remaining_time),
+                                      remaining_time, transfer_rate_str);
             }
           else if (remaining_time > 60)
             {
               remaining_time = (gulong) (remaining_time / 60);
-              g_string_append_printf (status, ngettext ("%lu minute remaining (%s/sec)",
-                                                        "%lu minutes remaining (%s/sec)",
-                                                        remaining_time),
-                                                        remaining_time, transfer_rate_str);
+              g_string_append_printf (status, ngettext ("%lu minute remaining (%s/sec)", "%lu minutes remaining (%s/sec)", remaining_time),
+                                      remaining_time, transfer_rate_str);
             }
           else
             {
-              g_string_append_printf (status, ngettext ("%lu second remaining (%s/sec)",
-                                                        "%lu seconds remaining (%s/sec)",
-                                                        remaining_time),
-                                                        remaining_time, transfer_rate_str);
+              g_string_append_printf (status, ngettext ("%lu second remaining (%s/sec)", "%lu seconds remaining (%s/sec)", remaining_time),
+                                      remaining_time, transfer_rate_str);
             }
         }
 

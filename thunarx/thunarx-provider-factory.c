@@ -22,12 +22,12 @@
 #include "config.h"
 #endif
 
-#include <gdk/gdk.h>
-
 #include "thunarx/thunarx-private.h"
 #include "thunarx/thunarx-provider-factory.h"
 #include "thunarx/thunarx-provider-module.h"
 #include "thunarx/thunarx-provider-plugin.h"
+
+#include <gdk/gdk.h>
 
 
 
@@ -36,12 +36,17 @@
 
 
 
-static void     thunarx_provider_factory_finalize       (GObject                     *object);
-static void     thunarx_provider_factory_add            (ThunarxProviderFactory      *factory,
-                                                         ThunarxProviderModule       *module);
-static void     thunarx_provider_factory_create_modules (ThunarxProviderFactory      *factory);
-static gboolean thunarx_provider_factory_timer          (gpointer                     user_data);
-static void     thunarx_provider_factory_timer_destroy  (gpointer                     user_data);
+static void
+thunarx_provider_factory_finalize (GObject *object);
+static void
+thunarx_provider_factory_add (ThunarxProviderFactory *factory,
+                              ThunarxProviderModule  *module);
+static void
+thunarx_provider_factory_create_modules (ThunarxProviderFactory *factory);
+static gboolean
+thunarx_provider_factory_timer (gpointer user_data);
+static void
+thunarx_provider_factory_timer_destroy (gpointer user_data);
 
 /**
  * SECTION: thunarx-provider-factory
@@ -56,8 +61,8 @@ static void     thunarx_provider_factory_timer_destroy  (gpointer               
 
 typedef struct
 {
-  GObject *provider;  /* cached provider reference or %NULL */
-  GType    type;      /* provider GType */
+  GObject *provider; /* cached provider reference or %NULL */
+  GType    type;     /* provider GType */
 } ThunarxProviderInfo;
 
 struct _ThunarxProviderFactoryClass
@@ -69,19 +74,18 @@ struct _ThunarxProviderFactory
 {
   GObject __parent__;
 
-  ThunarxProviderInfo *infos;     /* provider types and cached provider references */
-  gint                 n_infos;   /* number of items in the infos array */
+  ThunarxProviderInfo *infos;   /* provider types and cached provider references */
+  gint                 n_infos; /* number of items in the infos array */
 
-  guint                timer_id;  /* GSource timer to cleanup cached providers */
+  guint timer_id; /* GSource timer to cleanup cached providers */
 
-  gint                 initialized;
-
+  gint initialized;
 };
 
 static gboolean thunarx_provider_modules_created = FALSE;
-static GList *thunarx_provider_modules            = NULL; /* list of all active provider modules */
-static GList *thunarx_persistent_provider_modules = NULL; /* list of active persistent provider modules */
-static GList *thunarx_volatile_provider_modules   = NULL; /* list of active volatile provider modules */
+static GList   *thunarx_provider_modules = NULL;            /* list of all active provider modules */
+static GList   *thunarx_persistent_provider_modules = NULL; /* list of active persistent provider modules */
+static GList   *thunarx_volatile_provider_modules = NULL;   /* list of active volatile provider modules */
 
 
 G_DEFINE_TYPE (ThunarxProviderFactory, thunarx_provider_factory, G_TYPE_OBJECT)
@@ -174,7 +178,6 @@ thunarx_provider_factory_create_modules (ThunarxProviderFactory *factory)
 
   for (int i = 0; dirs[i] != NULL; i++)
     {
-
       dp = g_dir_open (dirs[i], 0, NULL);
 
       if (G_LIKELY (dp != NULL))
@@ -222,10 +225,10 @@ thunarx_provider_factory_timer (gpointer user_data)
   ThunarxProviderInfo    *info;
   gint                    n;
 
-THUNAR_THREADS_ENTER
+  THUNAR_THREADS_ENTER
 
   /* drop all providers for which only we keep a reference */
-  for (n = factory->n_infos; --n >= 0; )
+  for (n = factory->n_infos; --n >= 0;)
     {
       info = factory->infos + n;
       if (info->provider != NULL && info->provider->ref_count == 1)
@@ -235,7 +238,7 @@ THUNAR_THREADS_ENTER
         }
     }
 
-THUNAR_THREADS_LEAVE
+  THUNAR_THREADS_LEAVE
 
   return TRUE;
 }
@@ -262,7 +265,7 @@ thunarx_provider_factory_timer_destroy (gpointer user_data)
  * Returns: (transfer full): a reference to the default #ThunarxProviderFactory
  *          instance.
  **/
-ThunarxProviderFactory*
+ThunarxProviderFactory *
 thunarx_provider_factory_get_default (void)
 {
   static ThunarxProviderFactory *factory = NULL;
@@ -299,7 +302,7 @@ thunarx_provider_factory_get_default (void)
  *
  * Returns: (transfer full) (element-type GObject): the of providers for @type.
  **/
-GList*
+GList *
 thunarx_provider_factory_list_providers (ThunarxProviderFactory *factory,
                                          GType                   type)
 {
@@ -318,9 +321,9 @@ thunarx_provider_factory_list_providers (ThunarxProviderFactory *factory,
         {
           g_type_module_use (G_TYPE_MODULE (lp->data));
           if (thunarx_provider_plugin_get_resident (THUNARX_PROVIDER_PLUGIN (lp->data)))
-              thunarx_persistent_provider_modules = g_list_prepend (thunarx_persistent_provider_modules, lp->data);
+            thunarx_persistent_provider_modules = g_list_prepend (thunarx_persistent_provider_modules, lp->data);
           else
-              thunarx_volatile_provider_modules = g_list_prepend (thunarx_volatile_provider_modules, lp->data);
+            thunarx_volatile_provider_modules = g_list_prepend (thunarx_volatile_provider_modules, lp->data);
         }
 
       thunarx_provider_modules_created = TRUE;

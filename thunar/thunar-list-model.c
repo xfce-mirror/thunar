@@ -30,19 +30,19 @@
 #include <string.h>
 #endif
 
-#include <libxfce4util/libxfce4util.h>
-
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-file.h"
 #include "thunar/thunar-gobject-extensions.h"
+#include "thunar/thunar-io-jobs.h"
 #include "thunar/thunar-list-model.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
-#include "thunar/thunar-user.h"
 #include "thunar/thunar-simple-job.h"
-#include "thunar/thunar-util.h"
 #include "thunar/thunar-standard-view-model.h"
-#include "thunar/thunar-io-jobs.h"
+#include "thunar/thunar-user.h"
+#include "thunar/thunar-util.h"
+
+#include <libxfce4util/libxfce4util.h>
 
 
 
@@ -65,143 +65,208 @@ enum
 
 
 
-static void               thunar_list_model_standard_view_model_init    (ThunarStandardViewModelIface *iface);
-static void               thunar_list_model_tree_model_init             (GtkTreeModelIface            *iface);
-static void               thunar_list_model_drag_dest_init              (GtkTreeDragDestIface         *iface);
-static void               thunar_list_model_sortable_init               (GtkTreeSortableIface         *iface);
-static void               thunar_list_model_dispose                     (GObject                      *object);
-static void               thunar_list_model_finalize                    (GObject                      *object);
-static void               thunar_list_model_get_property                (GObject                      *object,
-                                                                         guint                         prop_id,
-                                                                         GValue                       *value,
-                                                                         GParamSpec                   *pspec);
-static void               thunar_list_model_set_property                (GObject                      *object,
-                                                                         guint                         prop_id,
-                                                                         const GValue                 *value,
-                                                                         GParamSpec                   *pspec);
-static GtkTreeModelFlags  thunar_list_model_get_flags                   (GtkTreeModel                 *model);
-static gint               thunar_list_model_get_n_columns               (GtkTreeModel                 *model);
-static GType              thunar_list_model_get_column_type             (GtkTreeModel                 *model,
-                                                                         gint                          idx);
-static gboolean           thunar_list_model_get_iter                    (GtkTreeModel                 *model,
-                                                                         GtkTreeIter                  *iter,
-                                                                         GtkTreePath                  *path);
-static GtkTreePath       *thunar_list_model_get_path                    (GtkTreeModel                 *model,
-                                                                         GtkTreeIter                  *iter);
-static void               thunar_list_model_get_value                   (GtkTreeModel                 *model,
-                                                                         GtkTreeIter                  *iter,
-                                                                         gint                          column,
-                                                                         GValue                       *value);
-static gboolean           thunar_list_model_iter_next                   (GtkTreeModel                 *model,
-                                                                         GtkTreeIter                  *iter);
-static gboolean           thunar_list_model_iter_children               (GtkTreeModel                 *model,
-                                                                         GtkTreeIter                  *iter,
-                                                                         GtkTreeIter                  *parent);
-static gboolean           thunar_list_model_iter_has_child              (GtkTreeModel                 *model,
-                                                                         GtkTreeIter                  *iter);
-static gint               thunar_list_model_iter_n_children             (GtkTreeModel                 *model,
-                                                                         GtkTreeIter                  *iter);
-static gboolean           thunar_list_model_iter_nth_child              (GtkTreeModel                 *model,
-                                                                         GtkTreeIter                  *iter,
-                                                                         GtkTreeIter                  *parent,
-                                                                         gint                          n);
-static gboolean           thunar_list_model_iter_parent                 (GtkTreeModel                 *model,
-                                                                         GtkTreeIter                  *iter,
-                                                                         GtkTreeIter                  *child);
-static gboolean           thunar_list_model_drag_data_received          (GtkTreeDragDest              *dest,
-                                                                         GtkTreePath                  *path,
-                                                                         GtkSelectionData             *data);
-static gboolean           thunar_list_model_row_drop_possible           (GtkTreeDragDest              *dest,
-                                                                         GtkTreePath                  *path,
-                                                                         GtkSelectionData             *data);
-static gboolean           thunar_list_model_get_sort_column_id          (GtkTreeSortable              *sortable,
-                                                                         gint                         *sort_column_id,
-                                                                         GtkSortType                  *order);
-static void               thunar_list_model_set_sort_column_id          (GtkTreeSortable              *sortable,
-                                                                         gint                          sort_column_id,
-                                                                         GtkSortType                   order);
-static void               thunar_list_model_set_default_sort_func       (GtkTreeSortable              *sortable,
-                                                                         GtkTreeIterCompareFunc        func,
-                                                                         gpointer                      data,
-                                                                         GDestroyNotify                destroy);
-static void               thunar_list_model_set_sort_func               (GtkTreeSortable              *sortable,
-                                                                         gint                          sort_column_id,
-                                                                         GtkTreeIterCompareFunc        func,
-                                                                         gpointer                      data,
-                                                                         GDestroyNotify                destroy);
-static gboolean           thunar_list_model_has_default_sort_func       (GtkTreeSortable              *sortable);
-static gint               thunar_list_model_cmp_func                    (gconstpointer                 a,
-                                                                         gconstpointer                 b,
-                                                                         gpointer                      user_data);
-static void               thunar_list_model_sort                        (ThunarListModel              *store);
-static void               thunar_list_model_files_changed               (ThunarFolder                 *folder,
-                                                                         GHashTable                   *files,
-                                                                         ThunarListModel              *store);
-static void               thunar_list_model_folder_destroy              (ThunarFolder                 *folder,
-                                                                         ThunarListModel              *store);
-static void               thunar_list_model_folder_error                (ThunarFolder                 *folder,
-                                                                         const GError                 *error,
-                                                                         ThunarListModel              *store);
-static void               thunar_list_model_notify_loading              (ThunarFolder                 *folder,
-                                                                         GParamSpec                   *pspec,
-                                                                         ThunarListModel              *model);
-static void               thunar_list_model_files_added                 (ThunarFolder                 *folder,
-                                                                         GHashTable                   *files,
-                                                                         ThunarListModel              *store);
-static void               thunar_list_model_files_removed               (ThunarFolder                 *folder,
-                                                                         GHashTable                   *files,
-                                                                         ThunarListModel              *store);
-static void               thunar_list_model_insert_files                (ThunarListModel              *store,
-                                                                         GHashTable                   *files);
+static void
+thunar_list_model_standard_view_model_init (ThunarStandardViewModelIface *iface);
+static void
+thunar_list_model_tree_model_init (GtkTreeModelIface *iface);
+static void
+thunar_list_model_drag_dest_init (GtkTreeDragDestIface *iface);
+static void
+thunar_list_model_sortable_init (GtkTreeSortableIface *iface);
+static void
+thunar_list_model_dispose (GObject *object);
+static void
+thunar_list_model_finalize (GObject *object);
+static void
+thunar_list_model_get_property (GObject    *object,
+                                guint       prop_id,
+                                GValue     *value,
+                                GParamSpec *pspec);
+static void
+thunar_list_model_set_property (GObject      *object,
+                                guint         prop_id,
+                                const GValue *value,
+                                GParamSpec   *pspec);
+static GtkTreeModelFlags
+thunar_list_model_get_flags (GtkTreeModel *model);
+static gint
+thunar_list_model_get_n_columns (GtkTreeModel *model);
+static GType
+thunar_list_model_get_column_type (GtkTreeModel *model,
+                                   gint          idx);
+static gboolean
+thunar_list_model_get_iter (GtkTreeModel *model,
+                            GtkTreeIter  *iter,
+                            GtkTreePath  *path);
+static GtkTreePath *
+thunar_list_model_get_path (GtkTreeModel *model,
+                            GtkTreeIter  *iter);
+static void
+thunar_list_model_get_value (GtkTreeModel *model,
+                             GtkTreeIter  *iter,
+                             gint          column,
+                             GValue       *value);
+static gboolean
+thunar_list_model_iter_next (GtkTreeModel *model,
+                             GtkTreeIter  *iter);
+static gboolean
+thunar_list_model_iter_children (GtkTreeModel *model,
+                                 GtkTreeIter  *iter,
+                                 GtkTreeIter  *parent);
+static gboolean
+thunar_list_model_iter_has_child (GtkTreeModel *model,
+                                  GtkTreeIter  *iter);
+static gint
+thunar_list_model_iter_n_children (GtkTreeModel *model,
+                                   GtkTreeIter  *iter);
+static gboolean
+thunar_list_model_iter_nth_child (GtkTreeModel *model,
+                                  GtkTreeIter  *iter,
+                                  GtkTreeIter  *parent,
+                                  gint          n);
+static gboolean
+thunar_list_model_iter_parent (GtkTreeModel *model,
+                               GtkTreeIter  *iter,
+                               GtkTreeIter  *child);
+static gboolean
+thunar_list_model_drag_data_received (GtkTreeDragDest  *dest,
+                                      GtkTreePath      *path,
+                                      GtkSelectionData *data);
+static gboolean
+thunar_list_model_row_drop_possible (GtkTreeDragDest  *dest,
+                                     GtkTreePath      *path,
+                                     GtkSelectionData *data);
+static gboolean
+thunar_list_model_get_sort_column_id (GtkTreeSortable *sortable,
+                                      gint            *sort_column_id,
+                                      GtkSortType     *order);
+static void
+thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
+                                      gint             sort_column_id,
+                                      GtkSortType      order);
+static void
+thunar_list_model_set_default_sort_func (GtkTreeSortable       *sortable,
+                                         GtkTreeIterCompareFunc func,
+                                         gpointer               data,
+                                         GDestroyNotify         destroy);
+static void
+thunar_list_model_set_sort_func (GtkTreeSortable       *sortable,
+                                 gint                   sort_column_id,
+                                 GtkTreeIterCompareFunc func,
+                                 gpointer               data,
+                                 GDestroyNotify         destroy);
+static gboolean
+thunar_list_model_has_default_sort_func (GtkTreeSortable *sortable);
+static gint
+thunar_list_model_cmp_func (gconstpointer a,
+                            gconstpointer b,
+                            gpointer      user_data);
+static void
+thunar_list_model_sort (ThunarListModel *store);
+static void
+thunar_list_model_files_changed (ThunarFolder    *folder,
+                                 GHashTable      *files,
+                                 ThunarListModel *store);
+static void
+thunar_list_model_folder_destroy (ThunarFolder    *folder,
+                                  ThunarListModel *store);
+static void
+thunar_list_model_folder_error (ThunarFolder    *folder,
+                                const GError    *error,
+                                ThunarListModel *store);
+static void
+thunar_list_model_notify_loading (ThunarFolder    *folder,
+                                  GParamSpec      *pspec,
+                                  ThunarListModel *model);
+static void
+thunar_list_model_files_added (ThunarFolder    *folder,
+                               GHashTable      *files,
+                               ThunarListModel *store);
+static void
+thunar_list_model_files_removed (ThunarFolder    *folder,
+                                 GHashTable      *files,
+                                 ThunarListModel *store);
+static void
+thunar_list_model_insert_files (ThunarListModel *store,
+                                GHashTable      *files);
 
-static gboolean           thunar_list_model_get_case_sensitive          (ThunarListModel              *store);
-static void               thunar_list_model_set_case_sensitive          (ThunarListModel              *store,
-                                                                         gboolean                      case_sensitive);
-static ThunarDateStyle    thunar_list_model_get_date_style              (ThunarListModel              *store);
-static void               thunar_list_model_set_date_style              (ThunarListModel              *store,
-                                                                         ThunarDateStyle               date_style);
-static const char*        thunar_list_model_get_date_custom_style       (ThunarListModel              *store);
-static void               thunar_list_model_set_date_custom_style       (ThunarListModel              *store,
-                                                                         const char                   *date_custom_style);
-static gint               thunar_list_model_get_num_files               (ThunarListModel              *store);
-static gboolean           thunar_list_model_get_folders_first           (ThunarListModel              *store);
-static void               thunar_list_model_cancel_search_job (ThunarListModel *model);
+static gboolean
+thunar_list_model_get_case_sensitive (ThunarListModel *store);
+static void
+thunar_list_model_set_case_sensitive (ThunarListModel *store,
+                                      gboolean         case_sensitive);
+static ThunarDateStyle
+thunar_list_model_get_date_style (ThunarListModel *store);
+static void
+thunar_list_model_set_date_style (ThunarListModel *store,
+                                  ThunarDateStyle  date_style);
+static const char *
+thunar_list_model_get_date_custom_style (ThunarListModel *store);
+static void
+thunar_list_model_set_date_custom_style (ThunarListModel *store,
+                                         const char      *date_custom_style);
+static gint
+thunar_list_model_get_num_files (ThunarListModel *store);
+static gboolean
+thunar_list_model_get_folders_first (ThunarListModel *store);
+static void
+thunar_list_model_cancel_search_job (ThunarListModel *model);
 
-static void               thunar_list_model_search_error                (ThunarJob                    *job);
-static void               thunar_list_model_search_finished             (ThunarJob                    *job,
-                                                                         ThunarListModel              *store);
-static void               thunar_list_model_add_search_files (ThunarStandardViewModel *model,
-                                                              GList                   *files);
-static gboolean           thunar_list_model_update_search_files (ThunarListModel *model);
+static void
+thunar_list_model_search_error (ThunarJob *job);
+static void
+thunar_list_model_search_finished (ThunarJob       *job,
+                                   ThunarListModel *store);
+static void
+thunar_list_model_add_search_files (ThunarStandardViewModel *model,
+                                    GList                   *files);
+static gboolean
+thunar_list_model_update_search_files (ThunarListModel *model);
 
-static gint               thunar_list_model_get_folder_item_count       (ThunarListModel              *store);
-static void               thunar_list_model_set_folder_item_count       (ThunarListModel              *store,
-                                                                         ThunarFolderItemCount         count_as_dir_size);
-static gboolean           thunar_list_model_get_loading                 (ThunarListModel              *store);
-static void               thunar_list_model_set_loading                 (ThunarListModel              *store,
-                                                                         gboolean                      loading);
+static gint
+thunar_list_model_get_folder_item_count (ThunarListModel *store);
+static void
+thunar_list_model_set_folder_item_count (ThunarListModel      *store,
+                                         ThunarFolderItemCount count_as_dir_size);
+static gboolean
+thunar_list_model_get_loading (ThunarListModel *store);
+static void
+thunar_list_model_set_loading (ThunarListModel *store,
+                               gboolean         loading);
 
-static void               thunar_list_model_file_count_callback         (ExoJob                       *job,
-                                                                         gpointer                      model);
-static ThunarFolder      *thunar_list_model_get_folder                  (ThunarStandardViewModel      *store);
-static void               thunar_list_model_set_folder                  (ThunarStandardViewModel      *store,
-                                                                         ThunarFolder                 *folder,
-                                                                         gchar                        *search_query);
-static void               thunar_list_model_set_folders_first           (ThunarStandardViewModel      *store,
-                                                                         gboolean                      folders_first);
-static gboolean           thunar_list_model_get_show_hidden             (ThunarStandardViewModel      *store);
-static void               thunar_list_model_set_show_hidden             (ThunarStandardViewModel      *store,
-                                                                         gboolean                      show_hidden);
-static gboolean           thunar_list_model_get_file_size_binary        (ThunarStandardViewModel      *store);
-static void               thunar_list_model_set_file_size_binary        (ThunarStandardViewModel      *store,
-                                                                         gboolean                      file_size_binary);
-static ThunarFile        *thunar_list_model_get_file                    (ThunarStandardViewModel      *store,
-                                                                         GtkTreeIter                  *iter);
-static GList             *thunar_list_model_get_paths_for_files (ThunarStandardViewModel *store,
-                                                                 GList                   *files);
-static ThunarJob         *thunar_list_model_get_job                     (ThunarStandardViewModel      *store);
-static void               thunar_list_model_set_job                     (ThunarStandardViewModel      *store,
-                                                                         ThunarJob                    *job);
+static void
+thunar_list_model_file_count_callback (ExoJob  *job,
+                                       gpointer model);
+static ThunarFolder *
+thunar_list_model_get_folder (ThunarStandardViewModel *store);
+static void
+thunar_list_model_set_folder (ThunarStandardViewModel *store,
+                              ThunarFolder            *folder,
+                              gchar                   *search_query);
+static void
+thunar_list_model_set_folders_first (ThunarStandardViewModel *store,
+                                     gboolean                 folders_first);
+static gboolean
+thunar_list_model_get_show_hidden (ThunarStandardViewModel *store);
+static void
+thunar_list_model_set_show_hidden (ThunarStandardViewModel *store,
+                                   gboolean                 show_hidden);
+static gboolean
+thunar_list_model_get_file_size_binary (ThunarStandardViewModel *store);
+static void
+thunar_list_model_set_file_size_binary (ThunarStandardViewModel *store,
+                                        gboolean                 file_size_binary);
+static ThunarFile *
+thunar_list_model_get_file (ThunarStandardViewModel *store,
+                            GtkTreeIter             *iter);
+static GList *
+thunar_list_model_get_paths_for_files (ThunarStandardViewModel *store,
+                                       GList                   *files);
+static ThunarJob *
+thunar_list_model_get_job (ThunarStandardViewModel *store);
+static void
+thunar_list_model_set_job (ThunarStandardViewModel *store,
+                           ThunarJob               *job);
 
 struct _ThunarListModelClass
 {
@@ -222,17 +287,17 @@ struct _ThunarListModel
    * generated by another model.
    */
 #ifndef NDEBUG
-  gint           stamp;
+  gint stamp;
 #endif
 
-  GSequence               *rows;
-  GSList                  *hidden;
-  ThunarFolder            *folder;
-  gboolean                 show_hidden : 1;
-  ThunarFolderItemCount    folder_item_count;
-  gboolean                 file_size_binary : 1;
-  ThunarDateStyle          date_style;
-  char                    *date_custom_style;
+  GSequence            *rows;
+  GSList               *hidden;
+  ThunarFolder         *folder;
+  gboolean              show_hidden : 1;
+  ThunarFolderItemCount folder_item_count;
+  gboolean              file_size_binary : 1;
+  ThunarDateStyle       date_style;
+  char                 *date_custom_style;
 
   /* Normalized current search terms.
    * NULL if not presenting a search's results.
@@ -243,12 +308,12 @@ struct _ThunarListModel
   /* ids for the "row-inserted" and "row-deleted" signals
    * of GtkTreeModel to speed up folder changing.
    */
-  guint          row_inserted_id;
-  guint          row_deleted_id;
+  guint row_inserted_id;
+  guint row_deleted_id;
 
   guint          sort_case_sensitive : 1;
   guint          sort_folders_first : 1;
-  gint           sort_sign;   /* 1 = ascending, -1 descending */
+  gint           sort_sign; /* 1 = ascending, -1 descending */
   ThunarSortFunc sort_func;
 
   /* searching runs in a separate thread which incrementally inserts results (files)
@@ -256,28 +321,30 @@ struct _ThunarListModel
    * Periodically the main thread takes all the files in the files_to_add list
    * and adds them in the model. The list is then emptied.
    */
-  ThunarJob     *recursive_search_job;
-  GHashTable    *files_to_add;
-  GMutex         mutex_files_to_add;
+  ThunarJob  *recursive_search_job;
+  GHashTable *files_to_add;
+  GMutex      mutex_files_to_add;
 
   /* used to stop the periodic call to thunar_list_model_add_search_files when the search is finished/canceled */
-  guint          update_search_results_timeout_id;
+  guint update_search_results_timeout_id;
 
   /* Tells if the model is yet loading the set folder */
-  gboolean       loading;
+  gboolean loading;
 
   /* indicates that file was removed or sorted */
-  gboolean       file_was_removed;
-  gboolean       file_was_sorted;
+  gboolean file_was_removed;
+  gboolean file_was_sorted;
 
   /* tells is workaround for removed file should be used */
-  gboolean       check_file_in_model_before_use;
+  gboolean check_file_in_model_before_use;
 };
 
 
 
 static guint       list_model_signals[THUNAR_STANDARD_VIEW_MODEL_LAST_SIGNAL];
-static GParamSpec *list_model_props[N_PROPERTIES] = { NULL, };
+static GParamSpec *list_model_props[N_PROPERTIES] = {
+  NULL,
+};
 
 
 
@@ -295,9 +362,9 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
   GObjectClass *gobject_class;
   gpointer      g_iface;
 
-  gobject_class               = G_OBJECT_CLASS (klass);
-  gobject_class->dispose      = thunar_list_model_dispose;
-  gobject_class->finalize     = thunar_list_model_finalize;
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->dispose = thunar_list_model_dispose;
+  gobject_class->finalize = thunar_list_model_finalize;
   gobject_class->get_property = thunar_list_model_get_property;
   gobject_class->set_property = thunar_list_model_set_property;
 
@@ -308,8 +375,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * Tells whether the sorting should be case sensitive.
    **/
   list_model_props[PROP_CASE_SENSITIVE] =
-    g_param_spec_override ("case-sensitive",
-                           g_object_interface_find_property (g_iface, "case-sensitive"));
+  g_param_spec_override ("case-sensitive",
+                         g_object_interface_find_property (g_iface, "case-sensitive"));
 
   /**
    * ThunarListModel:date-style:
@@ -317,8 +384,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * The style used to format dates.
    **/
   list_model_props[PROP_DATE_STYLE] =
-    g_param_spec_override ("date-style",
-                           g_object_interface_find_property (g_iface, "date-style"));
+  g_param_spec_override ("date-style",
+                         g_object_interface_find_property (g_iface, "date-style"));
 
   /**
    * ThunarListModel:date-custom-style:
@@ -326,8 +393,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * The style used for custom format of dates.
    **/
   list_model_props[PROP_DATE_CUSTOM_STYLE] =
-    g_param_spec_override ("date-custom-style",
-                           g_object_interface_find_property (g_iface, "date-custom-style"));
+  g_param_spec_override ("date-custom-style",
+                         g_object_interface_find_property (g_iface, "date-custom-style"));
 
   /**
    * ThunarListModel:folder:
@@ -335,8 +402,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * The folder presented by this #ThunarListModel.
    **/
   list_model_props[PROP_FOLDER] =
-    g_param_spec_override ("folder",
-                           g_object_interface_find_property (g_iface, "folder"));
+  g_param_spec_override ("folder",
+                         g_object_interface_find_property (g_iface, "folder"));
 
   /**
    * ThunarListModel::folders-first:
@@ -344,8 +411,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * Tells whether to always sort folders before other files.
    **/
   list_model_props[PROP_FOLDERS_FIRST] =
-    g_param_spec_override ("folders-first",
-                           g_object_interface_find_property (g_iface, "folders-first"));
+  g_param_spec_override ("folders-first",
+                         g_object_interface_find_property (g_iface, "folders-first"));
 
   /**
    * ThunarListModel::num-files:
@@ -353,8 +420,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * The number of files in the folder presented by this #ThunarListModel.
    **/
   list_model_props[PROP_NUM_FILES] =
-    g_param_spec_override ("num-files",
-                           g_object_interface_find_property (g_iface, "num-files"));
+  g_param_spec_override ("num-files",
+                         g_object_interface_find_property (g_iface, "num-files"));
 
   /**
    * ThunarListModel::show-hidden:
@@ -362,8 +429,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * Tells whether to include hidden (and backup) files.
    **/
   list_model_props[PROP_SHOW_HIDDEN] =
-    g_param_spec_override ("show-hidden",
-                           g_object_interface_find_property (g_iface, "show-hidden"));
+  g_param_spec_override ("show-hidden",
+                         g_object_interface_find_property (g_iface, "show-hidden"));
 
   /**
    * ThunarListModel::misc-file-size-binary:
@@ -371,8 +438,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * Tells whether to format file size in binary.
    **/
   list_model_props[PROP_FILE_SIZE_BINARY] =
-    g_param_spec_override ("file-size-binary",
-                           g_object_interface_find_property (g_iface, "file-size-binary"));
+  g_param_spec_override ("file-size-binary",
+                         g_object_interface_find_property (g_iface, "file-size-binary"));
 
   /**
    * ThunarListModel:folder-item-count:
@@ -380,8 +447,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * Tells when the size column of folders should show the number of containing files
    **/
   list_model_props[PROP_FOLDER_ITEM_COUNT] =
-    g_param_spec_override ("folder-item-count",
-                           g_object_interface_find_property (g_iface, "folder-item-count"));
+  g_param_spec_override ("folder-item-count",
+                         g_object_interface_find_property (g_iface, "folder-item-count"));
 
   /**
    * ThunarListModel:loading:
@@ -389,8 +456,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * Tells if the model is yet loading a folder
    **/
   list_model_props[PROP_LOADING] =
-    g_param_spec_override ("loading",
-                           g_object_interface_find_property (g_iface, "loading"));
+  g_param_spec_override ("loading",
+                         g_object_interface_find_property (g_iface, "loading"));
 
   /* install properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, list_model_props);
@@ -422,18 +489,18 @@ thunar_list_model_standard_view_model_init (ThunarStandardViewModelIface *iface)
 static void
 thunar_list_model_tree_model_init (GtkTreeModelIface *iface)
 {
-  iface->get_flags        = thunar_list_model_get_flags;
-  iface->get_n_columns    = thunar_list_model_get_n_columns;
-  iface->get_column_type  = thunar_list_model_get_column_type;
-  iface->get_iter         = thunar_list_model_get_iter;
-  iface->get_path         = thunar_list_model_get_path;
-  iface->get_value        = thunar_list_model_get_value;
-  iface->iter_next        = thunar_list_model_iter_next;
-  iface->iter_children    = thunar_list_model_iter_children;
-  iface->iter_has_child   = thunar_list_model_iter_has_child;
-  iface->iter_n_children  = thunar_list_model_iter_n_children;
-  iface->iter_nth_child   = thunar_list_model_iter_nth_child;
-  iface->iter_parent      = thunar_list_model_iter_parent;
+  iface->get_flags = thunar_list_model_get_flags;
+  iface->get_n_columns = thunar_list_model_get_n_columns;
+  iface->get_column_type = thunar_list_model_get_column_type;
+  iface->get_iter = thunar_list_model_get_iter;
+  iface->get_path = thunar_list_model_get_path;
+  iface->get_value = thunar_list_model_get_value;
+  iface->iter_next = thunar_list_model_iter_next;
+  iface->iter_children = thunar_list_model_iter_children;
+  iface->iter_has_child = thunar_list_model_iter_has_child;
+  iface->iter_n_children = thunar_list_model_iter_n_children;
+  iface->iter_nth_child = thunar_list_model_iter_nth_child;
+  iface->iter_parent = thunar_list_model_iter_parent;
 }
 
 
@@ -450,11 +517,11 @@ thunar_list_model_drag_dest_init (GtkTreeDragDestIface *iface)
 static void
 thunar_list_model_sortable_init (GtkTreeSortableIface *iface)
 {
-  iface->get_sort_column_id     = thunar_list_model_get_sort_column_id;
-  iface->set_sort_column_id     = thunar_list_model_set_sort_column_id;
-  iface->set_sort_func          = thunar_list_model_set_sort_func;
-  iface->set_default_sort_func  = thunar_list_model_set_default_sort_func;
-  iface->has_default_sort_func  = thunar_list_model_has_default_sort_func;
+  iface->get_sort_column_id = thunar_list_model_get_sort_column_id;
+  iface->set_sort_column_id = thunar_list_model_set_sort_column_id;
+  iface->set_sort_func = thunar_list_model_set_sort_func;
+  iface->set_default_sort_func = thunar_list_model_set_default_sort_func;
+  iface->has_default_sort_func = thunar_list_model_has_default_sort_func;
 }
 
 
@@ -735,7 +802,7 @@ thunar_list_model_get_iter (GtkTreeModel *model,
 
 
 
-static GtkTreePath*
+static GtkTreePath *
 thunar_list_model_get_path (GtkTreeModel *model,
                             GtkTreeIter  *iter)
 {
@@ -777,9 +844,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
   /* WORKAROUND: if file was removed from the completion model and files was sorted in
    * "thunar_list_model_file_changed", sometimes the view is trying to access the removed
    * data, so check if the requested item is in the model. */
-  if (THUNAR_LIST_MODEL (model)->check_file_in_model_before_use &&
-      THUNAR_LIST_MODEL (model)->file_was_removed &&
-      THUNAR_LIST_MODEL (model)->file_was_sorted)
+  if (THUNAR_LIST_MODEL (model)->check_file_in_model_before_use && THUNAR_LIST_MODEL (model)->file_was_removed && THUNAR_LIST_MODEL (model)->file_was_sorted)
     {
       GSequenceIter *row = g_sequence_get_begin_iter (THUNAR_LIST_MODEL (model)->rows);
       GSequenceIter *end = g_sequence_get_end_iter (THUNAR_LIST_MODEL (model)->rows);
@@ -857,8 +922,8 @@ thunar_list_model_get_value (GtkTreeModel *model,
       folder = THUNAR_LIST_MODEL (model)->folder;
       if (G_LIKELY (folder != NULL))
         {
-          const gchar *folder_basename = thunar_file_get_basename( thunar_folder_get_corresponding_file (folder));
-          GFile *g_folder = thunar_file_get_file (thunar_folder_get_corresponding_file (folder));
+          const gchar *folder_basename = thunar_file_get_basename (thunar_folder_get_corresponding_file (folder));
+          GFile       *g_folder = thunar_file_get_file (thunar_folder_get_corresponding_file (folder));
           if (g_file_equal (g_folder, g_file_parent))
             {
               /* commonest non-prefix case: item location is directly inside the search folder */
@@ -918,9 +983,9 @@ thunar_list_model_get_value (GtkTreeModel *model,
           /* determine sane display name for the owner */
           name = thunar_user_get_name (user);
           real_name = thunar_user_get_real_name (user);
-          if(G_LIKELY (real_name != NULL))
+          if (G_LIKELY (real_name != NULL))
             {
-              if(strcmp (name, real_name) == 0)
+              if (strcmp (name, real_name) == 0)
                 str = g_strdup (name);
               else
                 str = g_strdup_printf ("%s (%s)", real_name, name);
@@ -981,7 +1046,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
                 g_value_take_string (value, thunar_file_get_size_string_formatted (file, THUNAR_LIST_MODEL (model)->file_size_binary));
             }
           else if (THUNAR_LIST_MODEL (model)->folder_item_count != THUNAR_FOLDER_ITEM_COUNT_NEVER)
-              g_warning ("Error, unknown enum value for folder_item_count in the list model");
+            g_warning ("Error, unknown enum value for folder_item_count in the list model");
         }
       else
         {
@@ -1046,7 +1111,7 @@ thunar_list_model_iter_children (GtkTreeModel *model,
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
 
   if (G_LIKELY (parent == NULL
-      && g_sequence_get_length (store->rows) > 0))
+                && g_sequence_get_length (store->rows) > 0))
     {
       GTK_TREE_ITER_INIT (*iter, store->stamp, g_sequence_get_begin_iter (store->rows));
       return TRUE;
@@ -1408,18 +1473,18 @@ thunar_list_model_files_changed (ThunarFolder    *folder,
 
   row = g_sequence_get_begin_iter (store->rows);
   end = g_sequence_get_end_iter (store->rows);
-  for (;row != end; row = g_sequence_iter_next (row))
+  for (; row != end; row = g_sequence_iter_next (row))
     {
       /* check if that file was changed */
       file = g_hash_table_lookup (files, g_sequence_get (row));
       if (file == NULL)
         continue;
-        
+
       pos_before = g_sequence_iter_get_position (row);
 
       /* this file is hidden now & show_hidden is FALSE
-      * so we should remove this file from the view and store
-      * it in the hidden list */
+       * so we should remove this file from the view and store
+       * it in the hidden list */
       if (thunar_file_is_hidden (file) && !store->show_hidden)
         {
           GHashTable *hidden_files;
@@ -1436,7 +1501,7 @@ thunar_list_model_files_changed (ThunarFolder    *folder,
 
       /* generate the iterator for this row */
       GTK_TREE_ITER_INIT (iter, store->stamp, row);
-      
+
       /* check if the sorting changed */
       g_sequence_sort_changed (row, thunar_list_model_cmp_func, store);
       pos_after = g_sequence_iter_get_position (row);
@@ -1481,16 +1546,16 @@ thunar_list_model_files_changed (ThunarFolder    *folder,
         {
           /* just notify the view that it has to redraw the file */
           path = gtk_tree_path_new_from_indices (pos_before, -1);
-          gtk_tree_model_row_changed (GTK_TREE_MODEL (store), path, &iter);//this line 
+          gtk_tree_model_row_changed (GTK_TREE_MODEL (store), path, &iter); // this line
           gtk_tree_path_free (path);
         }
 
-   } /* end while loop (for each row) */
+    } /* end while loop (for each row) */
 
 
   /* maybe this file was a hidden file but now it's not
-  * in such a case we need to emit a "files-added" for this file
-  * and remove it from the hidden list */
+   * in such a case we need to emit a "files-added" for this file
+   * and remove it from the hidden list */
   lp = store->hidden;
   while (lp != NULL)
     {
@@ -1598,12 +1663,12 @@ thunar_list_model_files_added (ThunarFolder    *folder,
           continue;
         }
 
-      name_n = (gchar *)thunar_file_get_display_name (file);
+      name_n = (gchar *) thunar_file_get_display_name (file);
       if (name_n == NULL)
-      {
+        {
           g_warning ("failed to get display name");
           continue;
-      }
+        }
 
       name_n = thunar_g_utf8_normalize_for_search (name_n, TRUE, TRUE);
       matched = thunar_util_search_terms_match (store->search_terms, name_n);
@@ -1771,7 +1836,7 @@ thunar_list_model_files_removed (ThunarFolder    *folder,
  *
  * Return value: the newly allocated #ThunarListModel.
  **/
-ThunarStandardViewModel*
+ThunarStandardViewModel *
 thunar_list_model_new (void)
 {
   return g_object_new (THUNAR_TYPE_LIST_MODEL, NULL);
@@ -1842,7 +1907,7 @@ thunar_list_model_set_case_sensitive (ThunarListModel *store,
       /* emit a "changed" signal for each row, so the display is
          reloaded with the new case-sensitive setting */
       gtk_tree_model_foreach (GTK_TREE_MODEL (store),
-                              (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed,
+                              (GtkTreeModelForeachFunc) (void (*) (void)) gtk_tree_model_row_changed,
                               NULL);
     }
 }
@@ -1891,7 +1956,7 @@ thunar_list_model_set_date_style (ThunarListModel *store,
 
       /* emit a "changed" signal for each row, so the display is reloaded with the new date style */
       gtk_tree_model_foreach (GTK_TREE_MODEL (store),
-                              (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed,
+                              (GtkTreeModelForeachFunc) (void (*) (void)) gtk_tree_model_row_changed,
                               NULL);
     }
 }
@@ -1904,7 +1969,7 @@ thunar_list_model_set_date_style (ThunarListModel *store,
  *
  * Return value: the style used to format customdates in the given @store.
  **/
-static const char*
+static const char *
 thunar_list_model_get_date_custom_style (ThunarListModel *store)
 {
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
@@ -1939,27 +2004,27 @@ thunar_list_model_set_date_custom_style (ThunarListModel *store,
 
       /* emit a "changed" signal for each row, so the display is reloaded with the new date style */
       gtk_tree_model_foreach (GTK_TREE_MODEL (store),
-                              (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed,
+                              (GtkTreeModelForeachFunc) (void (*) (void)) gtk_tree_model_row_changed,
                               NULL);
     }
 }
 
 
 
-static ThunarJob*
-thunar_list_model_get_job (ThunarStandardViewModel  *model)
+static ThunarJob *
+thunar_list_model_get_job (ThunarStandardViewModel *model)
 {
-  ThunarListModel   *store = THUNAR_LIST_MODEL (model);
+  ThunarListModel *store = THUNAR_LIST_MODEL (model);
   return store->recursive_search_job;
 }
 
 
 
 static void
-thunar_list_model_set_job (ThunarStandardViewModel  *model,
-                           ThunarJob                *job)
+thunar_list_model_set_job (ThunarStandardViewModel *model,
+                           ThunarJob               *job)
 {
-  ThunarListModel   *store = THUNAR_LIST_MODEL (model);
+  ThunarListModel *store = THUNAR_LIST_MODEL (model);
   store->recursive_search_job = job;
 }
 
@@ -1972,7 +2037,7 @@ thunar_list_model_add_search_files (ThunarStandardViewModel *model,
   ThunarListModel *_model = THUNAR_LIST_MODEL (model);
 
   g_mutex_lock (&_model->mutex_files_to_add);
-  
+
   for (GList *lp = files; lp != NULL; lp = g_list_next (lp))
     g_hash_table_add (_model->files_to_add, lp->data);
 
@@ -2056,10 +2121,10 @@ thunar_list_model_search_finished (ThunarJob       *job,
  * Return value: the #ThunarFolder @store is associated with
  *               or %NULL if @store has no folder.
  **/
-static ThunarFolder*
+static ThunarFolder *
 thunar_list_model_get_folder (ThunarStandardViewModel *model)
 {
-  ThunarListModel   *store = THUNAR_LIST_MODEL (model);
+  ThunarListModel *store = THUNAR_LIST_MODEL (model);
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
   return store->folder;
 }
@@ -2077,13 +2142,13 @@ thunar_list_model_set_folder (ThunarStandardViewModel *model,
                               ThunarFolder            *folder,
                               gchar                   *search_query)
 {
-  ThunarListModel   *store = THUNAR_LIST_MODEL (model);
-  GtkTreePath   *path;
-  gboolean       has_handler;
-  GHashTable    *files;
-  GSequenceIter *row;
-  GSequenceIter *end;
-  GSequenceIter *next;
+  ThunarListModel *store = THUNAR_LIST_MODEL (model);
+  GtkTreePath     *path;
+  gboolean         has_handler;
+  GHashTable      *files;
+  GSequenceIter   *row;
+  GSequenceIter   *end;
+  GSequenceIter   *next;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
   _thunar_return_if_fail (folder == NULL || THUNAR_IS_FOLDER (folder));
@@ -2171,7 +2236,7 @@ thunar_list_model_set_folder (ThunarStandardViewModel *model,
         }
       else
         {
-          gchar *search_query_c;  /* normalized */
+          gchar *search_query_c; /* normalized */
 
           search_query_c = thunar_g_utf8_normalize_for_search (search_query, TRUE, TRUE);
           g_strfreev (store->search_terms);
@@ -2244,12 +2309,12 @@ static void
 thunar_list_model_set_folders_first (ThunarStandardViewModel *model,
                                      gboolean                 folders_first)
 {
-  ThunarListModel   *store = THUNAR_LIST_MODEL (model);
+  ThunarListModel *store = THUNAR_LIST_MODEL (model);
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
 
   /* check if the new setting differs */
   if ((store->sort_folders_first && folders_first)
-   || (!store->sort_folders_first && !folders_first))
+      || (!store->sort_folders_first && !folders_first))
     return;
 
   /* apply the new setting (re-sorting the store) */
@@ -2260,7 +2325,7 @@ thunar_list_model_set_folders_first (ThunarStandardViewModel *model,
   /* emit a "changed" signal for each row, so the display is
      reloaded with the new folders first setting */
   gtk_tree_model_foreach (GTK_TREE_MODEL (store),
-                          (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed,
+                          (GtkTreeModelForeachFunc) (void (*) (void)) gtk_tree_model_row_changed,
                           NULL);
 }
 
@@ -2275,7 +2340,7 @@ thunar_list_model_set_folders_first (ThunarStandardViewModel *model,
 static gboolean
 thunar_list_model_get_show_hidden (ThunarStandardViewModel *model)
 {
-  ThunarListModel   *store = THUNAR_LIST_MODEL (model);
+  ThunarListModel *store = THUNAR_LIST_MODEL (model);
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
   return store->show_hidden;
 }
@@ -2291,14 +2356,14 @@ static void
 thunar_list_model_set_show_hidden (ThunarStandardViewModel *model,
                                    gboolean                 show_hidden)
 {
-  ThunarListModel   *store = THUNAR_LIST_MODEL (model);
-  GtkTreePath   *path;
-  GtkTreeIter    iter;
-  ThunarFile    *file;
-  GSList        *lp;
-  GSequenceIter *row;
-  GSequenceIter *next;
-  GSequenceIter *end;
+  ThunarListModel *store = THUNAR_LIST_MODEL (model);
+  GtkTreePath     *path;
+  GtkTreeIter      iter;
+  ThunarFile      *file;
+  GSList          *lp;
+  GSequenceIter   *row;
+  GSequenceIter   *next;
+  GSequenceIter   *end;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
 
@@ -2383,7 +2448,7 @@ thunar_list_model_set_show_hidden (ThunarStandardViewModel *model,
 static gboolean
 thunar_list_model_get_file_size_binary (ThunarStandardViewModel *model)
 {
-  ThunarListModel   *store = THUNAR_LIST_MODEL (model);
+  ThunarListModel *store = THUNAR_LIST_MODEL (model);
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
   return store->file_size_binary;
 }
@@ -2402,7 +2467,7 @@ static void
 thunar_list_model_set_file_size_binary (ThunarStandardViewModel *model,
                                         gboolean                 file_size_binary)
 {
-  ThunarListModel   *store = THUNAR_LIST_MODEL (model);
+  ThunarListModel *store = THUNAR_LIST_MODEL (model);
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
 
   /* normalize the setting */
@@ -2423,7 +2488,7 @@ thunar_list_model_set_file_size_binary (ThunarStandardViewModel *model,
       /* emit a "changed" signal for each row, so the display is
          reloaded with the new binary file size setting */
       gtk_tree_model_foreach (GTK_TREE_MODEL (store),
-                              (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed,
+                              (GtkTreeModelForeachFunc) (void (*) (void)) gtk_tree_model_row_changed,
                               NULL);
     }
 }
@@ -2490,8 +2555,8 @@ thunar_list_model_set_loading (ThunarListModel *store,
  * @count_as_dir_size : a value of the enum #ThunarFolderItemCount
  **/
 static void
-thunar_list_model_set_folder_item_count (ThunarListModel         *store,
-                                         ThunarFolderItemCount    count_as_dir_size)
+thunar_list_model_set_folder_item_count (ThunarListModel      *store,
+                                         ThunarFolderItemCount count_as_dir_size)
 {
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
 
@@ -2502,14 +2567,14 @@ thunar_list_model_set_folder_item_count (ThunarListModel         *store,
   store->folder_item_count = count_as_dir_size;
   g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_FOLDER_ITEM_COUNT]);
 
-  gtk_tree_model_foreach (GTK_TREE_MODEL (store), (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed, NULL);
+  gtk_tree_model_foreach (GTK_TREE_MODEL (store), (GtkTreeModelForeachFunc) (void (*) (void)) gtk_tree_model_row_changed, NULL);
 
   /* re-sorting the store if needed */
   if (store->sort_func == thunar_cmp_files_by_size || store->sort_func == (ThunarSortFunc) thunar_cmp_files_by_size_and_items_count)
-  {
-    store->sort_func = (store->folder_item_count != THUNAR_FOLDER_ITEM_COUNT_NEVER) ? (ThunarSortFunc) thunar_cmp_files_by_size_and_items_count : thunar_cmp_files_by_size;
-    thunar_list_model_sort (store);
-  }
+    {
+      store->sort_func = (store->folder_item_count != THUNAR_FOLDER_ITEM_COUNT_NEVER) ? (ThunarSortFunc) thunar_cmp_files_by_size_and_items_count : thunar_cmp_files_by_size;
+      thunar_list_model_sort (store);
+    }
 }
 
 
@@ -2525,11 +2590,11 @@ thunar_list_model_set_folder_item_count (ThunarListModel         *store,
  *
  * Returns : (transfer full) (nullable): The #ThunarFile, or NULL if no file is set for @iter
  **/
-static ThunarFile*
+static ThunarFile *
 thunar_list_model_get_file (ThunarStandardViewModel *model,
                             GtkTreeIter             *iter)
 {
-  ThunarFile* file;
+  ThunarFile *file;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (model), NULL);
   _thunar_return_val_if_fail (iter->stamp == THUNAR_LIST_MODEL (model)->stamp, NULL);
@@ -2580,15 +2645,15 @@ thunar_list_model_get_num_files (ThunarListModel *store)
  *
  * Return value: the list of #GtkTreePath<!---->s for @files.
  **/
-static GList*
+static GList *
 thunar_list_model_get_paths_for_files (ThunarStandardViewModel *model,
                                        GList                   *files)
 {
-  ThunarListModel   *store = THUNAR_LIST_MODEL (model);
-  GList         *paths = NULL;
-  GSequenceIter *row;
-  GSequenceIter *end;
-  gint           i = 0;
+  ThunarListModel *store = THUNAR_LIST_MODEL (model);
+  GList           *paths = NULL;
+  GSequenceIter   *row;
+  GSequenceIter   *end;
+  gint             i = 0;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
 

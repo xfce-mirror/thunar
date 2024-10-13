@@ -27,9 +27,9 @@ G_BEGIN_DECLS;
 typedef struct _ThunarSidePaneIface ThunarSidePaneIface;
 typedef struct _ThunarSidePane      ThunarSidePane;
 
-#define THUNAR_TYPE_SIDE_PANE           (thunar_side_pane_get_type ())
-#define THUNAR_SIDE_PANE(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_SIDE_PANE, ThunarSidePane))
-#define THUNAR_IS_SIDE_PANE(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_SIDE_PANE))
+#define THUNAR_TYPE_SIDE_PANE (thunar_side_pane_get_type ())
+#define THUNAR_SIDE_PANE(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_SIDE_PANE, ThunarSidePane))
+#define THUNAR_IS_SIDE_PANE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_SIDE_PANE))
 #define THUNAR_SIDE_PANE_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNAR_TYPE_SIDE_PANE, ThunarSidePaneIface))
 
 struct _ThunarSidePaneIface
@@ -38,15 +38,18 @@ struct _ThunarSidePaneIface
 
   /* virtual methods */
   gboolean (*get_show_hidden) (ThunarSidePane *side_pane);
-  void     (*set_show_hidden) (ThunarSidePane *side_pane,
-                               gboolean        show_hidden);
+  void (*set_show_hidden) (ThunarSidePane *side_pane,
+                           gboolean        show_hidden);
 };
 
-GType    thunar_side_pane_get_type        (void) G_GNUC_CONST;
+GType
+thunar_side_pane_get_type (void) G_GNUC_CONST;
 
-gboolean thunar_side_pane_get_show_hidden (ThunarSidePane *side_pane);
-void     thunar_side_pane_set_show_hidden (ThunarSidePane *side_pane,
-                                           gboolean        show_hidden);
+gboolean
+thunar_side_pane_get_show_hidden (ThunarSidePane *side_pane);
+void
+thunar_side_pane_set_show_hidden (ThunarSidePane *side_pane,
+                                  gboolean        show_hidden);
 
 G_END_DECLS;
 

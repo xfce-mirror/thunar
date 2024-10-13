@@ -43,17 +43,21 @@ enum
 
 
 
-static void thunar_apr_abstract_page_dispose      (GObject                    *object);
-static void thunar_apr_abstract_page_get_property (GObject                    *object,
-                                                   guint                       prop_id,
-                                                   GValue                     *value,
-                                                   GParamSpec                 *pspec);
-static void thunar_apr_abstract_page_set_property (GObject                    *object,
-                                                   guint                       prop_id,
-                                                   const GValue               *value,
-                                                   GParamSpec                 *pspec);
-static void thunar_apr_abstract_page_file_changed (ThunarAprAbstractPage      *abstract_page,
-                                                   ThunarxFileInfo            *file);
+static void
+thunar_apr_abstract_page_dispose (GObject *object);
+static void
+thunar_apr_abstract_page_get_property (GObject    *object,
+                                       guint       prop_id,
+                                       GValue     *value,
+                                       GParamSpec *pspec);
+static void
+thunar_apr_abstract_page_set_property (GObject      *object,
+                                       guint         prop_id,
+                                       const GValue *value,
+                                       GParamSpec   *pspec);
+static void
+thunar_apr_abstract_page_file_changed (ThunarAprAbstractPage *abstract_page,
+                                       ThunarxFileInfo       *file);
 
 
 
@@ -98,14 +102,14 @@ thunar_apr_abstract_page_class_init (ThunarAprAbstractPageClass *klass)
    * @file changes.
    **/
   abstract_page_signals[FILE_CHANGED] =
-    g_signal_new ("file-changed",
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (ThunarAprAbstractPageClass, file_changed),
-                  NULL, NULL,
-                  g_cclosure_marshal_VOID__OBJECT,
-                  G_TYPE_NONE, 1,
-                  THUNARX_TYPE_FILE_INFO);
+  g_signal_new ("file-changed",
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST,
+                G_STRUCT_OFFSET (ThunarAprAbstractPageClass, file_changed),
+                NULL, NULL,
+                g_cclosure_marshal_VOID__OBJECT,
+                G_TYPE_NONE, 1,
+                THUNARX_TYPE_FILE_INFO);
 }
 
 
@@ -195,7 +199,7 @@ thunar_apr_abstract_page_file_changed (ThunarAprAbstractPage *abstract_page,
  *
  * Return value: the file for @abstract_page.
  **/
-ThunarxFileInfo*
+ThunarxFileInfo *
 thunar_apr_abstract_page_get_file (ThunarAprAbstractPage *abstract_page)
 {
   g_return_val_if_fail (THUNAR_APR_IS_ABSTRACT_PAGE (abstract_page), NULL);
@@ -248,8 +252,3 @@ thunar_apr_abstract_page_set_file (ThunarAprAbstractPage *abstract_page,
   /* notify listeners */
   g_object_notify (G_OBJECT (abstract_page), "file");
 }
-
-
-
-
-

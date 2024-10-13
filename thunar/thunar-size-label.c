@@ -49,34 +49,44 @@ enum
 
 
 
-static void     thunar_size_label_finalize              (GObject              *object);
-static void     thunar_size_label_get_property          (GObject              *object,
-                                                         guint                 prop_id,
-                                                         GValue               *value,
-                                                         GParamSpec           *pspec);
-static void     thunar_size_label_set_property          (GObject              *object,
-                                                         guint                 prop_id,
-                                                         const GValue         *value,
-                                                         GParamSpec           *pspec);
-static gboolean thunar_size_label_button_press_event    (GtkWidget            *ebox,
-                                                         GdkEventButton       *event,
-                                                         ThunarSizeLabel      *size_label);
-static void     thunar_size_label_files_changed         (ThunarSizeLabel      *size_label);
-static void     thunar_size_label_error                 (ExoJob               *job,
-                                                         const GError         *error,
-                                                         ThunarSizeLabel      *size_label);
-static void     thunar_size_label_finished              (ExoJob               *job,
-                                                         ThunarSizeLabel      *size_label);
-static void     thunar_size_label_status_update         (ThunarDeepCountJob   *job,
-                                                         guint64               total_size,
-                                                         guint64               total_size_on_disk,
-                                                         guint                 file_count,
-                                                         guint                 directory_count,
-                                                         guint                 unreadable_directory_count,
-                                                         ThunarSizeLabel      *size_label);
-static GList   *thunar_size_label_get_files             (ThunarSizeLabel      *size_label);
-static void     thunar_size_label_set_files             (ThunarSizeLabel      *size_label,
-                                                         GList                *files);
+static void
+thunar_size_label_finalize (GObject *object);
+static void
+thunar_size_label_get_property (GObject    *object,
+                                guint       prop_id,
+                                GValue     *value,
+                                GParamSpec *pspec);
+static void
+thunar_size_label_set_property (GObject      *object,
+                                guint         prop_id,
+                                const GValue *value,
+                                GParamSpec   *pspec);
+static gboolean
+thunar_size_label_button_press_event (GtkWidget       *ebox,
+                                      GdkEventButton  *event,
+                                      ThunarSizeLabel *size_label);
+static void
+thunar_size_label_files_changed (ThunarSizeLabel *size_label);
+static void
+thunar_size_label_error (ExoJob          *job,
+                         const GError    *error,
+                         ThunarSizeLabel *size_label);
+static void
+thunar_size_label_finished (ExoJob          *job,
+                            ThunarSizeLabel *size_label);
+static void
+thunar_size_label_status_update (ThunarDeepCountJob *job,
+                                 guint64             total_size,
+                                 guint64             total_size_on_disk,
+                                 guint               file_count,
+                                 guint               directory_count,
+                                 guint               unreadable_directory_count,
+                                 ThunarSizeLabel    *size_label);
+static GList *
+thunar_size_label_get_files (ThunarSizeLabel *size_label);
+static void
+thunar_size_label_set_files (ThunarSizeLabel *size_label,
+                             GList           *files);
 
 
 
@@ -87,16 +97,16 @@ struct _ThunarSizeLabelClass
 
 struct _ThunarSizeLabel
 {
-  GtkHBox             __parent__;
+  GtkHBox __parent__;
 
   ThunarDeepCountJob *job;
   ThunarPreferences  *preferences;
 
-  GList              *files;
-  gboolean            file_size_binary;
+  GList   *files;
+  gboolean file_size_binary;
 
-  GtkWidget          *label;
-  GtkWidget          *spinner;
+  GtkWidget *label;
+  GtkWidget *spinner;
 
   /* detailed type of the thunar size label */
   ThunarSizeLabelType type;
@@ -324,8 +334,8 @@ thunar_size_label_button_press_event (GtkWidget       *ebox,
 static void
 thunar_size_label_files_changed (ThunarSizeLabel *size_label)
 {
-  gchar             *size_string;
-  guint64            size;
+  gchar  *size_string;
+  guint64 size;
 
   _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
   _thunar_return_if_fail (size_label->files != NULL);
@@ -376,10 +386,10 @@ thunar_size_label_files_changed (ThunarSizeLabel *size_label)
         }
 
       /* setup the new label */
-      if (size != (guint64)-1)
+      if (size != (guint64) -1)
         size_string = g_format_size_full (size, size_label->file_size_binary ? G_FORMAT_SIZE_LONG_FORMAT | G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_LONG_FORMAT);
       else
-        size_string = g_strdup_printf("%s", _("Unknown"));
+        size_string = g_strdup_printf ("%s", _("Unknown"));
       gtk_label_set_text (GTK_LABEL (size_label->label), size_string);
       g_free (size_string);
     }
@@ -431,12 +441,12 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
                                  guint               unreadable_directory_count,
                                  ThunarSizeLabel    *size_label)
 {
-  gchar             *size_string;
-  gchar             *folder_size_string;
-  gchar             *file_size_string;
-  gchar             *text;
-  guint              n;
-  gchar             *unreable_text;
+  gchar *size_string;
+  gchar *folder_size_string;
+  gchar *file_size_string;
+  gchar *text;
+  guint  n;
+  gchar *unreable_text;
 
   _thunar_return_if_fail (THUNAR_IS_DEEP_COUNT_JOB (job));
   _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
@@ -457,10 +467,10 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
         }
       else if (size_label->type == THUNAR_SIZE_LABEL_SIZE_ON_DISK)
         {
-          if (total_size_on_disk != (guint64)-1)
+          if (total_size_on_disk != (guint64) -1)
             size_string = g_format_size_full (total_size_on_disk, G_FORMAT_SIZE_LONG_FORMAT | (size_label->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT));
           else
-            size_string = g_strdup_printf("%s", _("Unknown"));
+            size_string = g_strdup_printf ("%s", _("Unknown"));
           text = g_strdup_printf ("%s", size_string);
 
           gtk_label_set_text (GTK_LABEL (size_label->label), text);
@@ -468,7 +478,7 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
         }
       else /* if (size_label->type == THUNAR_SIZE_LABEL_CONTENT) */
         {
-          folder_size_string = g_strdup_printf (ngettext ("%d folder", "%d folders", directory_count ), directory_count);
+          folder_size_string = g_strdup_printf (ngettext ("%d folder", "%d folders", directory_count), directory_count);
           file_size_string = g_strdup_printf (ngettext ("%d file", "%d files", file_count), file_count);
           text = g_strdup_printf (ngettext ("%u item (%s, %s)", "%u items (%s, %s)", n), n, file_size_string, folder_size_string);
 
@@ -503,7 +513,7 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
  *
  * Get the files displayed by the @size_label.
  **/
-static GList*
+static GList *
 thunar_size_label_get_files (ThunarSizeLabel *size_label)
 {
   _thunar_return_val_if_fail (THUNAR_IS_SIZE_LABEL (size_label), NULL);
@@ -565,7 +575,7 @@ thunar_size_label_set_files (ThunarSizeLabel *size_label,
  *
  * Return value: the newly allocated #ThunarSizeLabel.
  **/
-GtkWidget*
+GtkWidget *
 thunar_size_label_new (void)
 {
   return g_object_new (THUNAR_TYPE_SIZE_LABEL, "label-type", THUNAR_SIZE_LABEL_SIZE, NULL);
@@ -580,7 +590,7 @@ thunar_size_label_new (void)
  *
  * Return value: the newly allocated #ThunarSizeLabel.
  **/
-GtkWidget*
+GtkWidget *
 thunar_size_on_disk_label_new (void)
 {
   return g_object_new (THUNAR_TYPE_SIZE_LABEL, "label-type", THUNAR_SIZE_LABEL_SIZE_ON_DISK, NULL);
@@ -595,7 +605,7 @@ thunar_size_on_disk_label_new (void)
  *
  * Return value: the newly allocated #ThunarSizeLabel.
  **/
-GtkWidget*
+GtkWidget *
 thunar_content_label_new (void)
 {
   return g_object_new (THUNAR_TYPE_SIZE_LABEL, "label-type", THUNAR_SIZE_LABEL_CONTENT, NULL);
