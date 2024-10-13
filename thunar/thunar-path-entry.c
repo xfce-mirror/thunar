@@ -74,19 +74,13 @@ static void     thunar_path_entry_set_property                  (GObject        
                                                                  GParamSpec           *pspec);
 static gboolean thunar_path_entry_focus                         (GtkWidget            *widget,
                                                                  GtkDirectionType      direction);
-static void     thunar_path_entry_icon_press_event              (GtkEntry            *entry,
-                                                                 GtkEntryIconPosition icon_pos,
-                                                                 GdkEventButton      *event,
-                                                                 gpointer             userdata);
-static void     thunar_path_entry_icon_release_event            (GtkEntry            *entry,
-                                                                 GtkEntryIconPosition icon_pos,
-                                                                 GdkEventButton      *event,
-                                                                 gpointer             user_data);
 static void     thunar_path_entry_scale_changed                 (GObject              *object,
                                                                  GParamSpec           *pspec,
                                                                  gpointer              user_data);
-static gboolean thunar_path_entry_motion_notify_event           (GtkWidget            *widget,
-                                                                 GdkEventMotion       *event);
+static gboolean thunar_path_entry_icon_press_event              (GtkEntry             *entry,
+                                                                 GtkEntryIconPosition  icon_pos,
+                                                                 GdkEventButton       *event,
+                                                                 gpointer              user_data);
 static gboolean thunar_path_entry_key_press_event               (GtkWidget            *widget,
                                                                  GdkEventKey          *event);
 static void     thunar_path_entry_drag_data_get                 (GtkWidget            *widget,
@@ -94,6 +88,8 @@ static void     thunar_path_entry_drag_data_get                 (GtkWidget      
                                                                  GtkSelectionData     *selection_data,
                                                                  guint                 info,
                                                                  guint                 timestamp);
+static void     thunar_path_entry_drag_end                      (GtkWidget            *widget,
+                                                                 GdkDragContext       *context);
 static void     thunar_path_entry_activate                      (GtkEntry             *entry);
 static void     thunar_path_entry_changed                       (GtkEditable          *editable);
 static void     thunar_path_entry_update_icon                   (ThunarPathEntry      *path_entry);
@@ -140,8 +136,6 @@ struct _ThunarPathEntry
   GFile             *working_directory;
 
   guint              drag_button;
-  gint               drag_x;
-  gint               drag_y;
 
   /* auto completion support */
   guint              in_change : 1;
@@ -183,8 +177,8 @@ thunar_path_entry_class_init (ThunarPathEntryClass *klass)
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->focus = thunar_path_entry_focus;
-  gtkwidget_class->motion_notify_event = thunar_path_entry_motion_notify_event;
   gtkwidget_class->drag_data_get = thunar_path_entry_drag_data_get;
+  gtkwidget_class->drag_end = thunar_path_entry_drag_end;
 
   gtkentry_class = GTK_ENTRY_CLASS (klass);
   gtkentry_class->activate = thunar_path_entry_activate;
@@ -279,7 +273,6 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
 
   /* connect the icon signals */
   g_signal_connect (G_OBJECT (path_entry), "icon-press", G_CALLBACK (thunar_path_entry_icon_press_event), NULL);
-  g_signal_connect (G_OBJECT (path_entry), "icon-release", G_CALLBACK (thunar_path_entry_icon_release_event), NULL);
   g_signal_connect (G_OBJECT (path_entry), "notify::scale-factor", G_CALLBACK (thunar_path_entry_scale_changed), NULL);
 
   /* disabled initially */
@@ -395,42 +388,6 @@ thunar_path_entry_focus (GtkWidget       *widget,
 
 
 static void
-thunar_path_entry_icon_press_event (GtkEntry            *entry,
-                                    GtkEntryIconPosition icon_pos,
-                                    GdkEventButton      *event,
-                                    gpointer             userdata)
-{
-  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (entry);
-
-  if (event->button == 1 && icon_pos == GTK_ENTRY_ICON_PRIMARY)
-    {
-      /* consume the event */
-      path_entry->drag_button = event->button;
-      path_entry->drag_x = event->x;
-      path_entry->drag_y = event->y;
-    }
-}
-
-
-
-static void
-thunar_path_entry_icon_release_event (GtkEntry            *entry,
-                                      GtkEntryIconPosition icon_pos,
-                                      GdkEventButton      *event,
-                                      gpointer             user_data)
-{
-  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (entry);
-
-  if (event->button == path_entry->drag_button && icon_pos == GTK_ENTRY_ICON_PRIMARY)
-    {
-      /* reset the drag button state */
-      path_entry->drag_button = 0;
-    }
-}
-
-
-
-static void
 thunar_path_entry_scale_changed (GObject    *object,
                                  GParamSpec *pspec,
                                  gpointer    user_data)
@@ -441,10 +398,12 @@ thunar_path_entry_scale_changed (GObject    *object,
 
 
 static gboolean
-thunar_path_entry_motion_notify_event (GtkWidget      *widget,
-                                       GdkEventMotion *event)
+thunar_path_entry_icon_press_event (GtkEntry             *entry,
+                                    GtkEntryIconPosition  icon_pos,
+                                    GdkEventButton       *event,
+                                    gpointer              user_data)
 {
-  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
+  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (entry);
   GdkDragContext  *context;
   GtkTargetList   *target_list;
   GdkPixbuf       *icon;
@@ -452,23 +411,26 @@ thunar_path_entry_motion_notify_event (GtkWidget      *widget,
   gint             size;
   gint             scale_factor;
 
-  if (path_entry->drag_button > 0
-      && path_entry->current_file != NULL
-      /*FIXME && event->window == gtk_entry_get_icon_window (GTK_ENTRY (widget), GTK_ENTRY_ICON_PRIMARY)*/
-      && gtk_drag_check_threshold (widget, path_entry->drag_x, path_entry->drag_y, event->x, event->y))
+  if (path_entry->current_file == NULL)
+    return FALSE;
+
+  if (event->button == 1 && icon_pos == GTK_ENTRY_ICON_PRIMARY)
     {
-      /* create the drag context */
+      /* save the drag button state */
+      path_entry->drag_button = event->button;
+
+      /* create a drag context */
       target_list = gtk_target_list_new (drag_targets, G_N_ELEMENTS (drag_targets));
-      context = gtk_drag_begin_with_coordinates (widget, target_list,
+      context = gtk_drag_begin_with_coordinates (GTK_WIDGET (entry), target_list,
                                                  GDK_ACTION_COPY |
                                                  GDK_ACTION_LINK,
-                                                 path_entry->drag_button,
+                                                 event->button,
                                                  (GdkEvent *) event, -1, -1);
       gtk_target_list_unref (target_list);
 
       /* setup the drag icon (atleast 24px) */
-      gtk_widget_style_get (widget, "icon-size", &size, NULL);
-      scale_factor = gtk_widget_get_scale_factor (widget);
+      gtk_widget_style_get (GTK_WIDGET (entry), "icon-size", &size, NULL);
+      scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (entry));
       icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory,
                                                  path_entry->current_file,
                                                  THUNAR_FILE_ICON_STATE_DEFAULT,
@@ -476,19 +438,16 @@ thunar_path_entry_motion_notify_event (GtkWidget      *widget,
                                                  FALSE, NULL);
       if (G_LIKELY (icon != NULL))
         {
-          surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, gtk_widget_get_window (widget));
+          surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, gtk_widget_get_window (GTK_WIDGET (entry)));
           g_object_unref (G_OBJECT (icon));
           gtk_drag_set_icon_surface (context, surface);
           cairo_surface_destroy (surface);
         }
 
-      /* reset the drag button state */
-      path_entry->drag_button = 0;
-
       return TRUE;
     }
 
-  return (*GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->motion_notify_event) (widget, event);
+  return FALSE;
 }
 
 
@@ -539,8 +498,8 @@ thunar_path_entry_drag_data_get (GtkWidget        *widget,
   GList             file_list;
   gchar           **uris;
 
-  /* verify that we actually display a path */
-  if (G_LIKELY (path_entry->current_file != NULL))
+  /* check if the icon was clicked and verify that we actually display a path */
+  if (path_entry->drag_button > 0 && path_entry->current_file != NULL)
     {
       /* transform the path for the current file into an uri string list */
       file_list.next = file_list.prev = NULL;
@@ -550,7 +509,25 @@ thunar_path_entry_drag_data_get (GtkWidget        *widget,
       uris = thunar_g_file_list_to_stringv (&file_list);
       gtk_selection_data_set_uris (selection_data, uris);
       g_strfreev (uris);
+
+      return;
     }
+
+  (*GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->drag_data_get) (widget, context, selection_data, info, timestamp);
+}
+
+
+
+static void
+thunar_path_entry_drag_end (GtkWidget      *widget,
+                            GdkDragContext *context)
+{
+  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
+
+  /* reset the drag button state */
+  path_entry->drag_button = 0;
+
+  (*GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->drag_end) (widget, context);
 }
 
 
