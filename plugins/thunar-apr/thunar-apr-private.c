@@ -29,9 +29,8 @@
 #include <locale.h>
 #endif
 
-#include <thunar-apr/thunar-apr-private.h>
-
 #include <exo/exo.h>
+#include <thunar-apr/thunar-apr-private.h>
 
 
 
@@ -48,6 +47,3 @@ thunar_apr_i18n_init (void)
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 #endif
 }
-
-
-

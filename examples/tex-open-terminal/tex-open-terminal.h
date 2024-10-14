@@ -28,15 +28,17 @@ G_BEGIN_DECLS;
 typedef struct _TexOpenTerminalClass TexOpenTerminalClass;
 typedef struct _TexOpenTerminal      TexOpenTerminal;
 
-#define TEX_TYPE_OPEN_TERMINAL            (tex_open_terminal_get_type ())
-#define TEX_OPEN_TERMINAL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TEX_TYPE_OPEN_TERMINAL, TexOpenTerminal))
-#define TEX_OPEN_TERMINAL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TEX_TYPE_OPEN_TERMINAL, TexOpenTerminalClass))
-#define TEX_IS_OPEN_TERMINAL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TEX_TYPE_OPEN_TERMINAL))
+#define TEX_TYPE_OPEN_TERMINAL (tex_open_terminal_get_type ())
+#define TEX_OPEN_TERMINAL(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TEX_TYPE_OPEN_TERMINAL, TexOpenTerminal))
+#define TEX_OPEN_TERMINAL_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), TEX_TYPE_OPEN_TERMINAL, TexOpenTerminalClass))
+#define TEX_IS_OPEN_TERMINAL(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TEX_TYPE_OPEN_TERMINAL))
 #define TEX_IS_OPEN_TERMINAL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TEX_TYPE_OPEN_TERMINAL))
-#define TEX_OPEN_TERMINAL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), TEX_TYPE_OPEN_TERMINAL, TexOpenTerminalClass))
+#define TEX_OPEN_TERMINAL_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), TEX_TYPE_OPEN_TERMINAL, TexOpenTerminalClass))
 
-GType tex_open_terminal_get_type      (void) G_GNUC_CONST;
-void  tex_open_terminal_register_type (ThunarxProviderPlugin *plugin);
+GType
+tex_open_terminal_get_type (void) G_GNUC_CONST;
+void
+tex_open_terminal_register_type (ThunarxProviderPlugin *plugin);
 
 G_END_DECLS;
 

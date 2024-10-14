@@ -21,14 +21,15 @@
 #include "config.h"
 #endif
 
-#include <exo/exo.h>
-
 #include "thunar/thunar-component.h"
 #include "thunar/thunar-private.h"
 
+#include <exo/exo.h>
 
 
-static void thunar_component_class_init (gpointer klass);
+
+static void
+thunar_component_class_init (gpointer klass);
 
 
 
@@ -41,9 +42,9 @@ thunar_component_get_type (void)
   if (g_once_init_enter (&type__static))
     {
       type = g_type_register_static_simple (G_TYPE_INTERFACE,
-                                            I_("ThunarComponent"),
+                                            I_ ("ThunarComponent"),
                                             sizeof (ThunarComponentIface),
-                                            (GClassInitFunc) (void (*)(void)) thunar_component_class_init,
+                                            (GClassInitFunc) (void (*) (void)) thunar_component_class_init,
                                             0,
                                             NULL,
                                             0);
@@ -98,7 +99,7 @@ thunar_component_class_init (gpointer klass)
  *
  * Return value: the set of selected #ThunarFile<!---->s.
  **/
-GList*
+GList *
 thunar_component_get_selected_files (ThunarComponent *component)
 {
   _thunar_return_val_if_fail (THUNAR_IS_COMPONENT (component), NULL);

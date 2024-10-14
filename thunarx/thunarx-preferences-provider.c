@@ -22,10 +22,10 @@
 #include "config.h"
 #endif
 
-#include <libxfce4util/libxfce4util.h>
-
 #include "thunarx/thunarx-preferences-provider.h"
 #include "thunarx/thunarx-private.h"
+
+#include <libxfce4util/libxfce4util.h>
 
 /**
  * SECTION: thunarx-preferences-provider
@@ -60,7 +60,7 @@ thunarx_preferences_provider_get_type (void)
   if (g_once_init_enter (&type__static))
     {
       type = g_type_register_static_simple (G_TYPE_INTERFACE,
-                                            I_("ThunarxPreferencesProvider"),
+                                            I_ ("ThunarxPreferencesProvider"),
                                             sizeof (ThunarxPreferencesProviderIface),
                                             NULL,
                                             0,
@@ -103,7 +103,7 @@ thunarx_preferences_provider_get_type (void)
  *          #ThunarxMenuItem<!---->s that @provider has to offer as preferences
  *          within @window.
  **/
-GList*
+GList *
 thunarx_preferences_provider_get_menu_items (ThunarxPreferencesProvider *provider,
                                              GtkWidget                  *window)
 {

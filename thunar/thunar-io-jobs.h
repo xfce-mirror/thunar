@@ -21,54 +21,72 @@
 #ifndef __THUNAR_IO_JOBS_H__
 #define __THUNAR_IO_JOBS_H__
 
-#include "thunar/thunar-job.h"
 #include "thunar/thunar-enum-types.h"
+#include "thunar/thunar-job.h"
 #include "thunar/thunar-standard-view-model.h"
 #include "thunar/thunar-standard-view.h"
-#include "thunar/thunar-job.h"
 
 G_BEGIN_DECLS
 
-ThunarJob *thunar_io_jobs_create_files     (GList                 *file_list,
-                                            GFile                 *template_file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-ThunarJob *thunar_io_jobs_make_directories (GList                 *file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-ThunarJob *thunar_io_jobs_unlink_files     (GList                 *file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-ThunarJob *thunar_io_jobs_move_files       (GList                 *source_file_list,
-                                            GList                 *target_file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-ThunarJob *thunar_io_jobs_copy_files       (GList                 *source_file_list,
-                                            GList                 *target_file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-ThunarJob *thunar_io_jobs_link_files       (GList                 *source_file_list,
-                                            GList                 *target_file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-ThunarJob *thunar_io_jobs_trash_files      (GList                 *file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-ThunarJob *thunar_io_jobs_restore_files    (GList                 *source_file_list,
-                                            GList                 *target_file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-ThunarJob *thunar_io_jobs_change_group     (GList                 *files,
-                                            guint32                gid,
-                                            gboolean               recursive) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-ThunarJob *thunar_io_jobs_change_mode      (GList                 *files,
-                                            ThunarFileMode         dir_mask,
-                                            ThunarFileMode         dir_mode,
-                                            ThunarFileMode         file_mask,
-                                            ThunarFileMode         file_mode,
-                                            gboolean               recursive) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-ThunarJob *thunar_io_jobs_list_directory   (GFile                 *directory) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-ThunarJob *thunar_io_jobs_rename_file      (ThunarFile            *file,
-                                            const gchar           *display_name,
-                                            ThunarOperationLogMode log_mode) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-ThunarJob *thunar_io_jobs_count_files      (ThunarFile            *file);
-ThunarJob *thunar_io_jobs_search_directory (ThunarStandardViewModel *model,
-                                            const gchar             *search_query,
-                                            ThunarFile              *directory);
-ThunarJob *thunar_io_jobs_clear_metadata_for_files (GList          *files,
-                                                    ...);
-ThunarJob *thunar_io_jobs_set_metadata_for_files   (GList          *files,
-                                                    ThunarGType     type,
-                                                    ...);
-ThunarJob *thunar_io_jobs_load_content_types                (GHashTable         *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-ThunarJob *thunar_io_jobs_load_statusbar_text_for_folder    (ThunarStandardView *standard_view,
-                                                             ThunarFolder       *folder);
-ThunarJob *thunar_io_jobs_load_statusbar_text_for_selection (ThunarStandardView *standard_view,
-                                                             GHashTable         *selected_files);
+ThunarJob *
+thunar_io_jobs_create_files (GList *file_list,
+                             GFile *template_file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *
+thunar_io_jobs_make_directories (GList *file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *
+thunar_io_jobs_unlink_files (GList *file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *
+thunar_io_jobs_move_files (GList *source_file_list,
+                           GList *target_file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *
+thunar_io_jobs_copy_files (GList *source_file_list,
+                           GList *target_file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *
+thunar_io_jobs_link_files (GList *source_file_list,
+                           GList *target_file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *
+thunar_io_jobs_trash_files (GList *file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *
+thunar_io_jobs_restore_files (GList *source_file_list,
+                              GList *target_file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *
+thunar_io_jobs_change_group (GList   *files,
+                             guint32  gid,
+                             gboolean recursive) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *
+thunar_io_jobs_change_mode (GList         *files,
+                            ThunarFileMode dir_mask,
+                            ThunarFileMode dir_mode,
+                            ThunarFileMode file_mask,
+                            ThunarFileMode file_mode,
+                            gboolean       recursive) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *
+thunar_io_jobs_list_directory (GFile *directory) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *
+thunar_io_jobs_rename_file (ThunarFile            *file,
+                            const gchar           *display_name,
+                            ThunarOperationLogMode log_mode) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *
+thunar_io_jobs_count_files (ThunarFile *file);
+ThunarJob *
+thunar_io_jobs_search_directory (ThunarStandardViewModel *model,
+                                 const gchar             *search_query,
+                                 ThunarFile              *directory);
+ThunarJob *
+thunar_io_jobs_clear_metadata_for_files (GList *files,
+                                         ...);
+ThunarJob *
+thunar_io_jobs_set_metadata_for_files (GList      *files,
+                                       ThunarGType type,
+                                       ...);
+ThunarJob *
+thunar_io_jobs_load_content_types (GHashTable *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *
+thunar_io_jobs_load_statusbar_text_for_folder (ThunarStandardView *standard_view,
+                                               ThunarFolder       *folder);
+ThunarJob *
+thunar_io_jobs_load_statusbar_text_for_selection (ThunarStandardView *standard_view,
+                                                  GHashTable         *selected_files);
 G_END_DECLS
 
 #endif /* !__THUNAR_IO_JOBS_H__ */

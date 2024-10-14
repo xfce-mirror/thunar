@@ -19,11 +19,11 @@
 #include "config.h"
 #endif
 
-#include <glib/gi18n-lib.h>
-
-#include "thunarx/thunarx-private.h"
 #include "thunarx/thunarx-menu-item.h"
 #include "thunarx/thunarx-menu.h"
+#include "thunarx/thunarx-private.h"
+
+#include <glib/gi18n-lib.h>
 
 
 
@@ -40,7 +40,8 @@
 
 
 
-static void thunarx_menu_finalize (GObject      *object);
+static void
+thunarx_menu_finalize (GObject *object);
 
 
 
@@ -150,7 +151,7 @@ thunarx_menu_get_items (ThunarxMenu *menu)
   g_return_val_if_fail (menu != NULL, NULL);
 
   items = g_list_copy (menu->priv->items);
-  g_list_foreach (items, (GFunc) (void (*)(void)) g_object_ref, NULL);
+  g_list_foreach (items, (GFunc) (void (*) (void)) g_object_ref, NULL);
 
   return items;
 }

@@ -34,9 +34,8 @@
 #include <pcre2.h>
 #endif
 
-#include <thunar-sbr/thunar-sbr-replace-renamer.h>
-
 #include <libxfce4util/libxfce4util.h>
+#include <thunar-sbr/thunar-sbr-replace-renamer.h>
 
 
 
@@ -52,24 +51,31 @@ enum
 
 
 
-static void   thunar_sbr_replace_renamer_finalize     (GObject                      *object);
-static void   thunar_sbr_replace_renamer_get_property (GObject                      *object,
-                                                       guint                         prop_id,
-                                                       GValue                       *value,
-                                                       GParamSpec                   *pspec);
-static void   thunar_sbr_replace_renamer_set_property (GObject                      *object,
-                                                       guint                         prop_id,
-                                                       const GValue                 *value,
-                                                       GParamSpec                   *pspec);
-static void   thunar_sbr_replace_renamer_realize      (GtkWidget                    *widget);
-static gchar *thunar_sbr_replace_renamer_process      (ThunarxRenamer               *renamer,
-                                                       ThunarxFileInfo              *file,
-                                                       const gchar                  *text,
-                                                       guint                         idx);
+static void
+thunar_sbr_replace_renamer_finalize (GObject *object);
+static void
+thunar_sbr_replace_renamer_get_property (GObject    *object,
+                                         guint       prop_id,
+                                         GValue     *value,
+                                         GParamSpec *pspec);
+static void
+thunar_sbr_replace_renamer_set_property (GObject      *object,
+                                         guint         prop_id,
+                                         const GValue *value,
+                                         GParamSpec   *pspec);
+static void
+thunar_sbr_replace_renamer_realize (GtkWidget *widget);
+static gchar *
+thunar_sbr_replace_renamer_process (ThunarxRenamer  *renamer,
+                                    ThunarxFileInfo *file,
+                                    const gchar     *text,
+                                    guint            idx);
 #ifdef HAVE_PCRE2
-static gchar *thunar_sbr_replace_renamer_pcre_exec    (ThunarSbrReplaceRenamer      *replace_renamer,
-                                                       const gchar                  *text);
-static void   thunar_sbr_replace_renamer_pcre_update  (ThunarSbrReplaceRenamer      *replace_renamer);
+static gchar *
+thunar_sbr_replace_renamer_pcre_exec (ThunarSbrReplaceRenamer *replace_renamer,
+                                      const gchar             *text);
+static void
+thunar_sbr_replace_renamer_pcre_update (ThunarSbrReplaceRenamer *replace_renamer);
 #endif
 
 
@@ -89,12 +95,12 @@ struct _ThunarSbrReplaceRenamer
   gchar         *replacement;
 
   /* TRUE if PCRE is available and supports UTF-8 */
-  gint           utf8_regexp_supported;
+  gint utf8_regexp_supported;
 
   /* PCRE compiled pattern */
 #ifdef HAVE_PCRE2
-  pcre2_code    *pcre_pattern;
-  gint           pcre_capture_count;
+  pcre2_code *pcre_pattern;
+  gint        pcre_capture_count;
 #endif
 };
 
@@ -194,11 +200,11 @@ thunar_sbr_replace_renamer_init (ThunarSbrReplaceRenamer *replace_renamer)
 #ifdef HAVE_PCRE2
   /* check if PCRE supports UTF-8 */
   if (pcre2_config (PCRE2_CONFIG_COMPILED_WIDTHS, &pcre2_compiled_widths) >= 0)
-  {
-    /* bit0 indicates 8-bit support. bit1 and bit2 indicate 16-bit and 32-bit support respectively. */
-    if ((pcre2_compiled_widths & (1 << 0)) != 0)
-      replace_renamer->utf8_regexp_supported = TRUE;
-  }
+    {
+      /* bit0 indicates 8-bit support. bit1 and bit2 indicate 16-bit and 32-bit support respectively. */
+      if ((pcre2_compiled_widths & (1 << 0)) != 0)
+        replace_renamer->utf8_regexp_supported = TRUE;
+    }
 #endif
 
   grid = gtk_grid_new ();
@@ -372,7 +378,7 @@ thunar_sbr_replace_renamer_realize (GtkWidget *widget)
 
 
 
-static gchar*
+static gchar *
 tsrr_replace (const gchar *text,
               const gchar *pattern,
               const gchar *replacement,
@@ -420,7 +426,7 @@ tsrr_replace (const gchar *text,
 
 
 
-static gchar*
+static gchar *
 thunar_sbr_replace_renamer_process (ThunarxRenamer  *renamer,
                                     ThunarxFileInfo *file,
                                     const gchar     *text,
@@ -452,21 +458,21 @@ thunar_sbr_replace_renamer_process (ThunarxRenamer  *renamer,
 
 
 #ifdef HAVE_PCRE2
-static gchar*
+static gchar *
 thunar_sbr_replace_renamer_pcre_exec (ThunarSbrReplaceRenamer *replace_renamer,
                                       const gchar             *subject)
 {
-  GString     *result;
-  int          error;
-  PCRE2_SIZE   erroffset;
-  gchar        output[1024];
-  pcre2_code  *compiled_pattern;
-  PCRE2_SIZE   outlen;
-  int          n_substitutions;  /* number of substitutions that were carried out */
+  GString    *result;
+  int         error;
+  PCRE2_SIZE  erroffset;
+  gchar       output[1024];
+  pcre2_code *compiled_pattern;
+  PCRE2_SIZE  outlen;
+  int         n_substitutions; /* number of substitutions that were carried out */
 
   result = g_string_sized_new (32);
 
-  compiled_pattern = pcre2_compile_8 ((PCRE2_SPTR)replace_renamer->pattern,
+  compiled_pattern = pcre2_compile_8 ((PCRE2_SPTR) replace_renamer->pattern,
                                       PCRE2_ZERO_TERMINATED,
                                       0,
                                       &error,
@@ -477,25 +483,25 @@ thunar_sbr_replace_renamer_pcre_exec (ThunarSbrReplaceRenamer *replace_renamer,
 
   pcre2_jit_compile (compiled_pattern, PCRE2_JIT_COMPLETE);
 
-  outlen = sizeof (output) / sizeof(PCRE2_UCHAR);
-  
+  outlen = sizeof (output) / sizeof (PCRE2_UCHAR);
+
   n_substitutions = pcre2_substitute (compiled_pattern,
-                                      (PCRE2_SPTR)subject,
+                                      (PCRE2_SPTR) subject,
                                       PCRE2_ZERO_TERMINATED,
                                       0,
                                       PCRE2_SUBSTITUTE_GLOBAL | PCRE2_SUBSTITUTE_EXTENDED,
                                       0,
                                       0,
-                                      (PCRE2_SPTR)replace_renamer->replacement,
+                                      (PCRE2_SPTR) replace_renamer->replacement,
                                       PCRE2_ZERO_TERMINATED,
-                                      (PCRE2_UCHAR *)output,
+                                      (PCRE2_UCHAR *) output,
                                       &outlen);
 
   if (n_substitutions < 0)
     {
       PCRE2_UCHAR buffer[256];
-      pcre2_get_error_message (error, buffer, sizeof(buffer));
-      g_warning ("PCRE2 substitution failed at offset %d: %s\n", (int)erroffset, buffer);
+      pcre2_get_error_message (error, buffer, sizeof (buffer));
+      g_warning ("PCRE2 substitution failed at offset %d: %s\n", (int) erroffset, buffer);
       return g_strdup (subject);
     }
 
@@ -528,13 +534,13 @@ thunar_sbr_replace_renamer_pcre_update (ThunarSbrReplaceRenamer *replace_renamer
         pcre2_code_free (replace_renamer->pcre_pattern);
 
       /* try to compile the new pattern */
-      replace_renamer->pcre_pattern = pcre2_compile ((PCRE2_SPTR)replace_renamer->pattern, PCRE2_ZERO_TERMINATED, 0, &error, &erroffset, 0);
+      replace_renamer->pcre_pattern = pcre2_compile ((PCRE2_SPTR) replace_renamer->pattern, PCRE2_ZERO_TERMINATED, 0, &error, &erroffset, 0);
 
       if (replace_renamer->pcre_pattern == NULL)
         {
           PCRE2_UCHAR buffer[256];
-          pcre2_get_error_message (error, buffer, sizeof(buffer));
-          g_warning ("PCRE2 compilation failed at offset %d: %s\n", (int)erroffset, buffer);
+          pcre2_get_error_message (error, buffer, sizeof (buffer));
+          g_warning ("PCRE2 compilation failed at offset %d: %s\n", (int) erroffset, buffer);
         }
     }
 
@@ -586,7 +592,7 @@ thunar_sbr_replace_renamer_pcre_update (ThunarSbrReplaceRenamer *replace_renamer
  *
  * Return value: the newly allocated #ThunarSbrReplaceRenamer.
  **/
-ThunarSbrReplaceRenamer*
+ThunarSbrReplaceRenamer *
 thunar_sbr_replace_renamer_new (void)
 {
   return g_object_new (THUNAR_SBR_TYPE_REPLACE_RENAMER,
@@ -660,7 +666,7 @@ thunar_sbr_replace_renamer_set_case_sensitive (ThunarSbrReplaceRenamer *replace_
  *
  * Return value: the search pattern for @replace_renamer.
  **/
-const gchar*
+const gchar *
 thunar_sbr_replace_renamer_get_pattern (ThunarSbrReplaceRenamer *replace_renamer)
 {
   g_return_val_if_fail (THUNAR_SBR_IS_REPLACE_RENAMER (replace_renamer), NULL);
@@ -769,7 +775,7 @@ thunar_sbr_replace_renamer_set_regexp (ThunarSbrReplaceRenamer *replace_renamer,
  *
  * Return value: the replacement for @replace_renamer.
  **/
-const gchar*
+const gchar *
 thunar_sbr_replace_renamer_get_replacement (ThunarSbrReplaceRenamer *replace_renamer)
 {
   g_return_val_if_fail (THUNAR_SBR_IS_REPLACE_RENAMER (replace_renamer), NULL);
@@ -806,6 +812,3 @@ thunar_sbr_replace_renamer_set_replacement (ThunarSbrReplaceRenamer *replace_ren
       g_object_notify (G_OBJECT (replace_renamer), "replacement");
     }
 }
-
-
-

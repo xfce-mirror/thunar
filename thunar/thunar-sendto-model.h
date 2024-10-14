@@ -27,19 +27,22 @@ G_BEGIN_DECLS;
 typedef struct _ThunarSendtoModelClass ThunarSendtoModelClass;
 typedef struct _ThunarSendtoModel      ThunarSendtoModel;
 
-#define THUNAR_TYPE_SENDTO_MODEL            (thunar_sendto_model_get_type ())
-#define THUNAR_SENDTO_MODEL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_SENDTO_MODEL, ThunarSendtoModel))
-#define THUNAR_SENDTO_MODEL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_SENDTO_MODEL, ThunarSendtoModelClass))
-#define THUNAR_IS_SENDTO_MODEL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_SENDTO_MODEL))
+#define THUNAR_TYPE_SENDTO_MODEL (thunar_sendto_model_get_type ())
+#define THUNAR_SENDTO_MODEL(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_SENDTO_MODEL, ThunarSendtoModel))
+#define THUNAR_SENDTO_MODEL_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_SENDTO_MODEL, ThunarSendtoModelClass))
+#define THUNAR_IS_SENDTO_MODEL(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_SENDTO_MODEL))
 #define THUNAR_IS_SENDTO_MODEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_SENDTO_MODEL))
-#define THUNAR_SENDTO_MODEL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SENDTO_MODEL))
+#define THUNAR_SENDTO_MODEL_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SENDTO_MODEL))
 
-GType              thunar_sendto_model_get_type     (void) G_GNUC_CONST;
+GType
+thunar_sendto_model_get_type (void) G_GNUC_CONST;
 
-ThunarSendtoModel *thunar_sendto_model_get_default  (void) G_GNUC_WARN_UNUSED_RESULT;
+ThunarSendtoModel *
+thunar_sendto_model_get_default (void) G_GNUC_WARN_UNUSED_RESULT;
 
-GList             *thunar_sendto_model_get_matching (ThunarSendtoModel *sendto_model,
-                                                     GList             *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+GList *
+thunar_sendto_model_get_matching (ThunarSendtoModel *sendto_model,
+                                  GList             *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 

@@ -23,7 +23,6 @@
 #endif
 
 #include <glib/gi18n-lib.h>
-
 #include <thunar-sbr/thunar-sbr-enum-types.h>
 
 
@@ -88,6 +87,8 @@ thunar_sbr_date_mode_get_type (void)
 void
 thunar_sbr_register_enum_types (ThunarxProviderPlugin *plugin)
 {
+  /* clang-format off */
+
   static const GEnumValue case_renamer_mode_values[] =
   {
     { THUNAR_SBR_CASE_RENAMER_MODE_LOWER,       "THUNAR_SBR_CASE_RENAMER_MODE_LOWER",       N_ ("lowercase"),                 },
@@ -142,6 +143,8 @@ thunar_sbr_register_enum_types (ThunarxProviderPlugin *plugin)
     { 0,                           NULL,                         NULL,                      },
   };
 
+  /* clang-format on */
+
   case_renamer_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrCaseRenamerMode", case_renamer_mode_values);
   insert_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrInsertMode", insert_mode_values);
   number_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrNumberMode", number_mode_values);
@@ -149,7 +152,3 @@ thunar_sbr_register_enum_types (ThunarxProviderPlugin *plugin)
   text_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrTextMode", text_mode_values);
   date_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrDateMode", date_mode_values);
 }
-
-
-
-

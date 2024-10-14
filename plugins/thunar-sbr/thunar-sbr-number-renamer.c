@@ -32,9 +32,8 @@
 #include <string.h>
 #endif
 
-#include <thunar-sbr/thunar-sbr-number-renamer.h>
-
 #include <libxfce4util/libxfce4util.h>
+#include <thunar-sbr/thunar-sbr-number-renamer.h>
 
 
 
@@ -50,21 +49,27 @@ enum
 
 
 
-static void   thunar_sbr_number_renamer_finalize      (GObject                      *object);
-static void   thunar_sbr_number_renamer_get_property  (GObject                      *object,
-                                                       guint                         prop_id,
-                                                       GValue                       *value,
-                                                       GParamSpec                   *pspec);
-static void   thunar_sbr_number_renamer_set_property  (GObject                      *object,
-                                                       guint                         prop_id,
-                                                       const GValue                 *value,
-                                                       GParamSpec                   *pspec);
-static void   thunar_sbr_number_renamer_realize       (GtkWidget                    *widget);
-static gchar *thunar_sbr_number_renamer_process       (ThunarxRenamer               *renamer,
-                                                       ThunarxFileInfo              *file,
-                                                       const gchar                  *text,
-                                                       guint                         idx);
-static void   thunar_sbr_number_renamer_update        (ThunarSbrNumberRenamer       *number_renamer);
+static void
+thunar_sbr_number_renamer_finalize (GObject *object);
+static void
+thunar_sbr_number_renamer_get_property (GObject    *object,
+                                        guint       prop_id,
+                                        GValue     *value,
+                                        GParamSpec *pspec);
+static void
+thunar_sbr_number_renamer_set_property (GObject      *object,
+                                        guint         prop_id,
+                                        const GValue *value,
+                                        GParamSpec   *pspec);
+static void
+thunar_sbr_number_renamer_realize (GtkWidget *widget);
+static gchar *
+thunar_sbr_number_renamer_process (ThunarxRenamer  *renamer,
+                                   ThunarxFileInfo *file,
+                                   const gchar     *text,
+                                   guint            idx);
+static void
+thunar_sbr_number_renamer_update (ThunarSbrNumberRenamer *number_renamer);
 
 
 
@@ -75,9 +80,9 @@ struct _ThunarSbrNumberRenamerClass
 
 struct _ThunarSbrNumberRenamer
 {
-  ThunarxRenamer      __parent__;
+  ThunarxRenamer __parent__;
 
-  GtkWidget          *start_entry;
+  GtkWidget *start_entry;
 
   ThunarSbrNumberMode mode;
   gchar              *start;
@@ -368,7 +373,7 @@ thunar_sbr_number_renamer_realize (GtkWidget *widget)
 
 
 
-static gchar*
+static gchar *
 thunar_sbr_number_renamer_process (ThunarxRenamer  *renamer,
                                    ThunarxFileInfo *file,
                                    const gchar     *text,
@@ -393,8 +398,8 @@ thunar_sbr_number_renamer_process (ThunarxRenamer  *renamer,
       /* "start" property must be 'a', 'b', 'c', etc. */
       start = *number_renamer->start;
       invalid = (strlen (number_renamer->start) != 1
-              || g_unichar_tolower (start) < 'a'
-              || g_unichar_tolower (start) > 'z');
+                 || g_unichar_tolower (start) < 'a'
+                 || g_unichar_tolower (start) > 'z');
     }
 
   /* check if we have invalid settings */
@@ -474,8 +479,8 @@ thunar_sbr_number_renamer_process (ThunarxRenamer  *renamer,
 static void
 thunar_sbr_number_renamer_update (ThunarSbrNumberRenamer *number_renamer)
 {
-  gboolean  invalid = TRUE;
-  gchar    *endp;
+  gboolean invalid = TRUE;
+  gchar   *endp;
 
   /* check whether "start" is valid for the "mode" */
   if (number_renamer->mode < THUNAR_SBR_NUMBER_MODE_ABC)
@@ -488,8 +493,8 @@ thunar_sbr_number_renamer_update (ThunarSbrNumberRenamer *number_renamer)
     {
       /* "start" property must be 'a', 'b', 'c', etc. */
       invalid = (strlen (number_renamer->start) != 1
-              || g_unichar_tolower (*number_renamer->start) < 'a'
-              || g_unichar_tolower (*number_renamer->start) > 'z');
+                 || g_unichar_tolower (*number_renamer->start) < 'a'
+                 || g_unichar_tolower (*number_renamer->start) > 'z');
     }
 
   /* check if the start entry is realized */
@@ -497,9 +502,9 @@ thunar_sbr_number_renamer_update (ThunarSbrNumberRenamer *number_renamer)
     {
       /* highlight invalid input by using theme specific colors */
       if (G_UNLIKELY (invalid))
-          gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (number_renamer->start_entry)), "error");
+        gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (number_renamer->start_entry)), "error");
       else
-          gtk_style_context_remove_class (gtk_widget_get_style_context (GTK_WIDGET (number_renamer->start_entry)), "error");
+        gtk_style_context_remove_class (gtk_widget_get_style_context (GTK_WIDGET (number_renamer->start_entry)), "error");
     }
 
   /* notify everybody that we have a new state */
@@ -515,7 +520,7 @@ thunar_sbr_number_renamer_update (ThunarSbrNumberRenamer *number_renamer)
  *
  * Return value: the newly allocated #ThunarSbrNumberRenamer.
  **/
-ThunarSbrNumberRenamer*
+ThunarSbrNumberRenamer *
 thunar_sbr_number_renamer_new (void)
 {
   return g_object_new (THUNAR_SBR_TYPE_NUMBER_RENAMER,
@@ -579,7 +584,7 @@ thunar_sbr_number_renamer_set_mode (ThunarSbrNumberRenamer *number_renamer,
  *
  * Return value: the start for @number_renamer.
  **/
-const gchar*
+const gchar *
 thunar_sbr_number_renamer_get_start (ThunarSbrNumberRenamer *number_renamer)
 {
   g_return_val_if_fail (THUNAR_SBR_IS_NUMBER_RENAMER (number_renamer), NULL);
@@ -626,7 +631,7 @@ thunar_sbr_number_renamer_set_start (ThunarSbrNumberRenamer *number_renamer,
  *
  * Return value: the text for @number_renamer.
  **/
-const gchar*
+const gchar *
 thunar_sbr_number_renamer_get_text (ThunarSbrNumberRenamer *number_renamer)
 {
   g_return_val_if_fail (THUNAR_SBR_IS_NUMBER_RENAMER (number_renamer), NULL);
@@ -708,7 +713,3 @@ thunar_sbr_number_renamer_set_text_mode (ThunarSbrNumberRenamer *number_renamer,
       g_object_notify (G_OBJECT (number_renamer), "text-mode");
     }
 }
-
-
-
-

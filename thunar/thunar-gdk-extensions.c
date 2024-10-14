@@ -111,7 +111,13 @@ thunar_gdk_cairo_create_surface (const GdkPixbuf *pixbuf,
     }
   else
     {
-#define MULT(d,c,a) G_STMT_START { guint t = c * a + 0x7f; d = ((t >> 8) + t) >> 8; } G_STMT_END
+#define MULT(d, c, a) \
+  G_STMT_START \
+  { \
+    guint t = c * a + 0x7f; \
+    d = ((t >> 8) + t) >> 8; \
+  } \
+  G_STMT_END
       for (j = height; j; j--)
         {
           p = gdk_pixels;
@@ -121,15 +127,15 @@ thunar_gdk_cairo_create_surface (const GdkPixbuf *pixbuf,
           while (p < end)
             {
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-              MULT(q[0], p[2], p[3]);
-              MULT(q[1], p[1], p[3]);
-              MULT(q[2], p[0], p[3]);
+              MULT (q[0], p[2], p[3]);
+              MULT (q[1], p[1], p[3]);
+              MULT (q[2], p[0], p[3]);
               q[3] = p[3];
 #else
               q[0] = p[3];
-              MULT(q[1], p[0], p[3]);
-              MULT(q[2], p[1], p[3]);
-              MULT(q[3], p[2], p[3]);
+              MULT (q[1], p[0], p[3]);
+              MULT (q[2], p[1], p[3]);
+              MULT (q[3], p[2], p[3]);
 #endif
 
               p += 4;
@@ -167,7 +173,7 @@ thunar_gdk_cairo_create_surface (const GdkPixbuf *pixbuf,
  * Return value: the #GdkScreen for @display_name or %NULL if
  *               @display_name could not be opened.
  **/
-GdkScreen*
+GdkScreen *
 thunar_gdk_screen_open (const gchar *display_name,
                         GError     **error)
 {

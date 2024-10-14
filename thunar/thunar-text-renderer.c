@@ -36,21 +36,25 @@ enum
 
 
 
-static void thunar_text_renderer_finalize       (GObject               *object);
-static void thunar_text_renderer_get_property   (GObject               *object,
-                                                 guint                  prop_id,
-                                                 GValue                *value,
-                                                 GParamSpec            *pspec);
-static void thunar_text_renderer_set_property   (GObject               *object,
-                                                 guint                  prop_id,
-                                                 const GValue          *value,
-                                                 GParamSpec            *pspec);
-static void thunar_text_renderer_render         (GtkCellRenderer       *renderer,
-                                                 cairo_t               *cr,
-                                                 GtkWidget             *widget,
-                                                 const GdkRectangle    *background_area,
-                                                 const GdkRectangle    *cell_area,
-                                                 GtkCellRendererState   flags);
+static void
+thunar_text_renderer_finalize (GObject *object);
+static void
+thunar_text_renderer_get_property (GObject    *object,
+                                   guint       prop_id,
+                                   GValue     *value,
+                                   GParamSpec *pspec);
+static void
+thunar_text_renderer_set_property (GObject      *object,
+                                   guint         prop_id,
+                                   const GValue *value,
+                                   GParamSpec   *pspec);
+static void
+thunar_text_renderer_render (GtkCellRenderer     *renderer,
+                             cairo_t             *cr,
+                             GtkWidget           *widget,
+                             const GdkRectangle  *background_area,
+                             const GdkRectangle  *cell_area,
+                             GtkCellRendererState flags);
 
 
 
@@ -58,21 +62,21 @@ struct _ThunarTextRendererClass
 {
   GtkCellRendererTextClass __parent__;
 
-  void (*default_render_function) (GtkCellRenderer      *cell,
-                                   cairo_t              *cr,
-                                   GtkWidget            *widget,
-                                   const GdkRectangle   *background_area,
-                                   const GdkRectangle   *cell_area,
-                                   GtkCellRendererState  flags);
+  void (*default_render_function) (GtkCellRenderer     *cell,
+                                   cairo_t             *cr,
+                                   GtkWidget           *widget,
+                                   const GdkRectangle  *background_area,
+                                   const GdkRectangle  *cell_area,
+                                   GtkCellRendererState flags);
 };
 
 struct _ThunarTextRenderer
 {
-  GtkCellRendererText  __parent__;
+  GtkCellRendererText __parent__;
 
-  gchar               *highlight_color;
-  gboolean             rounded_corners;
-  gboolean             highlighting_enabled;
+  gchar   *highlight_color;
+  gboolean rounded_corners;
+  gboolean highlighting_enabled;
 };
 
 
@@ -84,7 +88,7 @@ G_DEFINE_TYPE (ThunarTextRenderer, thunar_text_renderer, GTK_TYPE_CELL_RENDERER_
 static void
 thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
 {
-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GObjectClass         *object_class = G_OBJECT_CLASS (klass);
   GtkCellRendererClass *cell_class = GTK_CELL_RENDERER_CLASS (klass);
 
   object_class->finalize = thunar_text_renderer_finalize;
@@ -227,7 +231,7 @@ thunar_text_renderer_set_property (GObject      *object,
  *
  * Return value: (transfer full) The newly allocated #ThunarTextRenderer.
  **/
-GtkCellRenderer*
+GtkCellRenderer *
 thunar_text_renderer_new (void)
 {
   return g_object_new (THUNAR_TYPE_TEXT_RENDERER, NULL);
@@ -236,12 +240,12 @@ thunar_text_renderer_new (void)
 
 
 static void
-thunar_text_renderer_render (GtkCellRenderer      *cell,
-                             cairo_t              *cr,
-                             GtkWidget            *widget,
-                             const GdkRectangle   *background_area,
-                             const GdkRectangle   *cell_area,
-                             GtkCellRendererState  flags)
+thunar_text_renderer_render (GtkCellRenderer     *cell,
+                             cairo_t             *cr,
+                             GtkWidget           *widget,
+                             const GdkRectangle  *background_area,
+                             const GdkRectangle  *cell_area,
+                             GtkCellRendererState flags)
 {
   if (THUNAR_TEXT_RENDERER (cell)->highlighting_enabled)
     thunar_util_clip_view_background (cell, cr, background_area, widget, flags);
@@ -249,5 +253,5 @@ thunar_text_renderer_render (GtkCellRenderer      *cell,
   /* we only needed to manipulate the background_area, otherwise everything remains the same.
      Hence, we are simply running the original render function now */
   THUNAR_TEXT_RENDERER_GET_CLASS (THUNAR_TEXT_RENDERER (cell))
-    ->default_render_function (cell, cr, widget, background_area, cell_area, flags);
+  ->default_render_function (cell, cr, widget, background_area, cell_area, flags);
 }

@@ -21,25 +21,33 @@
 #ifndef __THUNAR_NOTIFY_H__
 #define __THUNAR_NOTIFY_H__
 
-#include <glib.h>
 #include "thunar/thunar-device.h"
 #include "thunar/thunar-job-operation.h"
 
+#include <glib.h>
+
 G_BEGIN_DECLS
 
-void     thunar_notify_unmount     (ThunarDevice *device);
+void
+thunar_notify_unmount (ThunarDevice *device);
 
-void     thunar_notify_eject       (ThunarDevice *device);
+void
+thunar_notify_eject (ThunarDevice *device);
 
-void     thunar_notify_progress    (ThunarDevice *device, const gchar *message_to_show);
+void
+thunar_notify_progress (ThunarDevice *device, const gchar *message_to_show);
 
-void     thunar_notify_finish      (ThunarDevice *device);
+void
+thunar_notify_finish (ThunarDevice *device);
 
-void     thunar_notify_undo        (ThunarJobOperation *operation);
+void
+thunar_notify_undo (ThunarJobOperation *operation);
 
-void     thunar_notify_redo        (ThunarJobOperation *operation);
+void
+thunar_notify_redo (ThunarJobOperation *operation);
 
-void     thunar_notify_uninit      (void);
+void
+thunar_notify_uninit (void);
 
 G_END_DECLS
 

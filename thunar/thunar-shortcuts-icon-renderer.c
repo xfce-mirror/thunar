@@ -22,14 +22,14 @@
 #include "config.h"
 #endif
 
-#include <gio/gio.h>
-
+#include "thunar/thunar-device.h"
+#include "thunar/thunar-gdk-extensions.h"
 #include "thunar/thunar-gio-extensions.h"
 #include "thunar/thunar-gobject-extensions.h"
-#include "thunar/thunar-gdk-extensions.h"
 #include "thunar/thunar-icon-factory.h"
 #include "thunar/thunar-shortcuts-icon-renderer.h"
-#include "thunar/thunar-device.h"
+
+#include <gio/gio.h>
 
 
 
@@ -43,21 +43,25 @@ enum
 
 
 
-static void thunar_shortcuts_icon_renderer_finalize     (GObject                          *object);
-static void thunar_shortcuts_icon_renderer_get_property (GObject                          *object,
-                                                         guint                             prop_id,
-                                                         GValue                           *value,
-                                                         GParamSpec                       *pspec);
-static void thunar_shortcuts_icon_renderer_set_property (GObject                          *object,
-                                                         guint                             prop_id,
-                                                         const GValue                     *value,
-                                                         GParamSpec                       *pspec);
-static void thunar_shortcuts_icon_renderer_render       (GtkCellRenderer                  *renderer,
-                                                         cairo_t                          *cr,
-                                                         GtkWidget                        *widget,
-                                                         const GdkRectangle               *background_area,
-                                                         const GdkRectangle               *cell_area,
-                                                         GtkCellRendererState              flags);
+static void
+thunar_shortcuts_icon_renderer_finalize (GObject *object);
+static void
+thunar_shortcuts_icon_renderer_get_property (GObject    *object,
+                                             guint       prop_id,
+                                             GValue     *value,
+                                             GParamSpec *pspec);
+static void
+thunar_shortcuts_icon_renderer_set_property (GObject      *object,
+                                             guint         prop_id,
+                                             const GValue *value,
+                                             GParamSpec   *pspec);
+static void
+thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
+                                       cairo_t             *cr,
+                                       GtkWidget           *widget,
+                                       const GdkRectangle  *background_area,
+                                       const GdkRectangle  *cell_area,
+                                       GtkCellRendererState flags);
 
 
 
@@ -70,8 +74,8 @@ struct _ThunarShortcutsIconRenderer
 {
   ThunarIconRenderer __parent__;
 
-  ThunarDevice      *device;
-  GIcon             *gicon;
+  ThunarDevice *device;
+  GIcon        *gicon;
 };
 
 
@@ -229,7 +233,7 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
 
   /* check if we have a gicon or volume set */
   if (G_UNLIKELY (shortcuts_icon_renderer->gicon != NULL
-      || shortcuts_icon_renderer->device != NULL))
+                  || shortcuts_icon_renderer->device != NULL))
     {
       use_symbolic_icons = THUNAR_ICON_RENDERER (renderer)->use_symbolic_icons;
 
@@ -327,9 +331,8 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
  *
  * Return value: the newly allocated #ThunarShortcutsIconRenderer.
  **/
-GtkCellRenderer*
+GtkCellRenderer *
 thunar_shortcuts_icon_renderer_new (void)
 {
   return g_object_new (THUNAR_TYPE_SHORTCUTS_ICON_RENDERER, NULL);
 }
-

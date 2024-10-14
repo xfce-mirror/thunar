@@ -30,20 +30,19 @@
 #include <string.h>
 #endif
 
-#include <glib/gstdio.h>
-
-#include <libxfce4util/libxfce4util.h>
-
 #include "thunar/thunar-application.h"
-#include "thunar/thunar-preferences.h"
 #include "thunar/thunar-chooser-dialog.h"
 #include "thunar/thunar-dbus-service.h"
 #include "thunar/thunar-file.h"
 #include "thunar/thunar-gdk-extensions.h"
 #include "thunar/thunar-preferences-dialog.h"
+#include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-properties-dialog.h"
 #include "thunar/thunar-util.h"
+
+#include <glib/gstdio.h>
+#include <libxfce4util/libxfce4util.h>
 
 
 
@@ -62,182 +61,212 @@ typedef enum
 } ThunarDBusTransferMode;
 
 
-static void     thunar_dbus_service_finalize                    (GObject                *object);
-static gboolean thunar_dbus_service_connect_trash_bin           (ThunarDBusService      *dbus_service,
-                                                                 GError                **error);
-static gboolean thunar_dbus_service_parse_uri_and_display       (ThunarDBusService      *dbus_service,
-                                                                 const gchar            *uri,
-                                                                 const gchar            *display,
-                                                                 ThunarFile            **file_return,
-                                                                 GdkScreen             **screen_return,
-                                                                 GError                **error);
-static gboolean thunar_dbus_service_transfer_files              (ThunarDBusTransferMode  transfer_mode,
-                                                                 const gchar            *working_directory,
-                                                                 const gchar * const    *source_filenames,
-                                                                 const gchar * const    *target_filenames,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 GError                **error);
-static void     thunar_dbus_service_trash_bin_changed           (ThunarDBusService      *dbus_service,
-                                                                 ThunarFile             *trash_bin);
-static gboolean thunar_dbus_service_display_app_chooser_dialog  (ThunarDBusFileManager  *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *uri,
-                                                                 gboolean                open,
-                                                                 gboolean                preselect_default_checkbox,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_display_folder              (ThunarDBusFileManager  *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *uri,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_display_folder_and_select   (ThunarDBusFileManager  *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *uri,
-                                                                 const gchar            *filename,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_display_file_properties     (ThunarDBusFileManager  *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *uri,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_launch                      (ThunarDBusFileManager  *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *uri,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_execute                     (ThunarDBusFileManager  *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *working_directory,
-                                                                 const gchar            *uri,
-                                                                 const gchar           **files,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_display_preferences_dialog  (ThunarDBusFileManager  *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_display_trash               (ThunarDBusTrash        *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_empty_trash                 (ThunarDBusTrash        *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_move_to_trash               (ThunarDBusTrash        *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 gchar                 **filenames,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_query_trash                 (ThunarDBusTrash        *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_bulk_rename                 (ThunarDBusThunar  *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *working_directory,
-                                                                 gchar                 **filenames,
-                                                                 gboolean                standalone,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_launch_files                (ThunarDBusFileManager  *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *working_directory,
-                                                                 gchar                 **filenames,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_rename_file                 (ThunarDBusFileManager  *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *uri,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_create_file                 (ThunarDBusFileManager  *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *parent_directory,
-                                                                 const gchar            *content_type,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_create_file_from_template   (ThunarDBusFileManager  *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *parent_directory,
-                                                                 const gchar            *template_uri,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_copy_to                     (ThunarDBusFileManager  *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *working_directory,
-                                                                 gchar                 **source_filenames,
-                                                                 gchar                 **target_filenames,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_copy_into                   (ThunarDBusFileManager  *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *working_directory,
-                                                                 gchar                 **source_filenames,
-                                                                 const gchar            *target_filename,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_move_into                   (ThunarDBusFileManager  *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *working_directory,
-                                                                 gchar                 **source_filenames,
-                                                                 const gchar            *target_filenames,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_link_into                   (ThunarDBusFileManager  *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *working_directory,
-                                                                 gchar                 **source_filenames,
-                                                                 const gchar            *target_filename,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_unlink_files                (ThunarDBusFileManager  *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 const gchar            *working_directory,
-                                                                 gchar                 **filenames,
-                                                                 const gchar            *display,
-                                                                 const gchar            *startup_id,
-                                                                 ThunarDBusService      *dbus_service);
-static gboolean thunar_dbus_service_terminate                   (ThunarDBusThunar       *object,
-                                                                 GDBusMethodInvocation  *invocation,
-                                                                 ThunarDBusService      *dbus_service);
+static void
+thunar_dbus_service_finalize (GObject *object);
+static gboolean
+thunar_dbus_service_connect_trash_bin (ThunarDBusService *dbus_service,
+                                       GError           **error);
+static gboolean
+thunar_dbus_service_parse_uri_and_display (ThunarDBusService *dbus_service,
+                                           const gchar       *uri,
+                                           const gchar       *display,
+                                           ThunarFile       **file_return,
+                                           GdkScreen        **screen_return,
+                                           GError           **error);
+static gboolean
+thunar_dbus_service_transfer_files (ThunarDBusTransferMode transfer_mode,
+                                    const gchar           *working_directory,
+                                    const gchar *const    *source_filenames,
+                                    const gchar *const    *target_filenames,
+                                    const gchar           *display,
+                                    const gchar           *startup_id,
+                                    GError               **error);
+static void
+thunar_dbus_service_trash_bin_changed (ThunarDBusService *dbus_service,
+                                       ThunarFile        *trash_bin);
+static gboolean
+thunar_dbus_service_display_app_chooser_dialog (ThunarDBusFileManager *object,
+                                                GDBusMethodInvocation *invocation,
+                                                const gchar           *uri,
+                                                gboolean               open,
+                                                gboolean               preselect_default_checkbox,
+                                                const gchar           *display,
+                                                const gchar           *startup_id,
+                                                ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_display_folder (ThunarDBusFileManager *object,
+                                    GDBusMethodInvocation *invocation,
+                                    const gchar           *uri,
+                                    const gchar           *display,
+                                    const gchar           *startup_id,
+                                    ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_display_folder_and_select (ThunarDBusFileManager *object,
+                                               GDBusMethodInvocation *invocation,
+                                               const gchar           *uri,
+                                               const gchar           *filename,
+                                               const gchar           *display,
+                                               const gchar           *startup_id,
+                                               ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_display_file_properties (ThunarDBusFileManager *object,
+                                             GDBusMethodInvocation *invocation,
+                                             const gchar           *uri,
+                                             const gchar           *display,
+                                             const gchar           *startup_id,
+                                             ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_launch (ThunarDBusFileManager *object,
+                            GDBusMethodInvocation *invocation,
+                            const gchar           *uri,
+                            const gchar           *display,
+                            const gchar           *startup_id,
+                            ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_execute (ThunarDBusFileManager *object,
+                             GDBusMethodInvocation *invocation,
+                             const gchar           *working_directory,
+                             const gchar           *uri,
+                             const gchar          **files,
+                             const gchar           *display,
+                             const gchar           *startup_id,
+                             ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_display_preferences_dialog (ThunarDBusFileManager *object,
+                                                GDBusMethodInvocation *invocation,
+                                                const gchar           *display,
+                                                const gchar           *startup_id,
+                                                ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_display_trash (ThunarDBusTrash       *object,
+                                   GDBusMethodInvocation *invocation,
+                                   const gchar           *display,
+                                   const gchar           *startup_id,
+                                   ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_empty_trash (ThunarDBusTrash       *object,
+                                 GDBusMethodInvocation *invocation,
+                                 const gchar           *display,
+                                 const gchar           *startup_id,
+                                 ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_move_to_trash (ThunarDBusTrash       *object,
+                                   GDBusMethodInvocation *invocation,
+                                   gchar                **filenames,
+                                   const gchar           *display,
+                                   const gchar           *startup_id,
+                                   ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_query_trash (ThunarDBusTrash       *object,
+                                 GDBusMethodInvocation *invocation,
+                                 ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_bulk_rename (ThunarDBusThunar      *object,
+                                 GDBusMethodInvocation *invocation,
+                                 const gchar           *working_directory,
+                                 gchar                **filenames,
+                                 gboolean               standalone,
+                                 const gchar           *display,
+                                 const gchar           *startup_id,
+                                 ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_launch_files (ThunarDBusFileManager *object,
+                                  GDBusMethodInvocation *invocation,
+                                  const gchar           *working_directory,
+                                  gchar                **filenames,
+                                  const gchar           *display,
+                                  const gchar           *startup_id,
+                                  ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_rename_file (ThunarDBusFileManager *object,
+                                 GDBusMethodInvocation *invocation,
+                                 const gchar           *uri,
+                                 const gchar           *display,
+                                 const gchar           *startup_id,
+                                 ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_create_file (ThunarDBusFileManager *object,
+                                 GDBusMethodInvocation *invocation,
+                                 const gchar           *parent_directory,
+                                 const gchar           *content_type,
+                                 const gchar           *display,
+                                 const gchar           *startup_id,
+                                 ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_create_file_from_template (ThunarDBusFileManager *object,
+                                               GDBusMethodInvocation *invocation,
+                                               const gchar           *parent_directory,
+                                               const gchar           *template_uri,
+                                               const gchar           *display,
+                                               const gchar           *startup_id,
+                                               ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_copy_to (ThunarDBusFileManager *object,
+                             GDBusMethodInvocation *invocation,
+                             const gchar           *working_directory,
+                             gchar                **source_filenames,
+                             gchar                **target_filenames,
+                             const gchar           *display,
+                             const gchar           *startup_id,
+                             ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_copy_into (ThunarDBusFileManager *object,
+                               GDBusMethodInvocation *invocation,
+                               const gchar           *working_directory,
+                               gchar                **source_filenames,
+                               const gchar           *target_filename,
+                               const gchar           *display,
+                               const gchar           *startup_id,
+                               ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_move_into (ThunarDBusFileManager *object,
+                               GDBusMethodInvocation *invocation,
+                               const gchar           *working_directory,
+                               gchar                **source_filenames,
+                               const gchar           *target_filenames,
+                               const gchar           *display,
+                               const gchar           *startup_id,
+                               ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_link_into (ThunarDBusFileManager *object,
+                               GDBusMethodInvocation *invocation,
+                               const gchar           *working_directory,
+                               gchar                **source_filenames,
+                               const gchar           *target_filename,
+                               const gchar           *display,
+                               const gchar           *startup_id,
+                               ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_unlink_files (ThunarDBusFileManager *object,
+                                  GDBusMethodInvocation *invocation,
+                                  const gchar           *working_directory,
+                                  gchar                **filenames,
+                                  const gchar           *display,
+                                  const gchar           *startup_id,
+                                  ThunarDBusService     *dbus_service);
+static gboolean
+thunar_dbus_service_terminate (ThunarDBusThunar      *object,
+                               GDBusMethodInvocation *invocation,
+                               ThunarDBusService     *dbus_service);
 
-static gboolean thunar_dbus_freedesktop_show_folders            (ThunarOrgFreedesktopFileManager1 *object,
-                                                                 GDBusMethodInvocation            *invocation,
-                                                                 gchar                           **uris,
-                                                                 const gchar                      *startup_id,
-                                                                 ThunarDBusService                *dbus_service);
-static gboolean thunar_dbus_freedesktop_show_items              (ThunarOrgFreedesktopFileManager1 *object,
-                                                                 GDBusMethodInvocation            *invocation,
-                                                                 gchar                           **uris,
-                                                                 const gchar                      *startup_id,
-                                                                 ThunarDBusService                *dbus_service);
-static gboolean thunar_dbus_freedesktop_show_item_properties    (ThunarOrgFreedesktopFileManager1 *object,
-                                                                 GDBusMethodInvocation            *invocation,
-                                                                 gchar                           **uris,
-                                                                 const gchar                      *startup_id,
-                                                                 ThunarDBusService                *dbus_service);
+static gboolean
+thunar_dbus_freedesktop_show_folders (ThunarOrgFreedesktopFileManager1 *object,
+                                      GDBusMethodInvocation            *invocation,
+                                      gchar                           **uris,
+                                      const gchar                      *startup_id,
+                                      ThunarDBusService                *dbus_service);
+static gboolean
+thunar_dbus_freedesktop_show_items (ThunarOrgFreedesktopFileManager1 *object,
+                                    GDBusMethodInvocation            *invocation,
+                                    gchar                           **uris,
+                                    const gchar                      *startup_id,
+                                    ThunarDBusService                *dbus_service);
+static gboolean
+thunar_dbus_freedesktop_show_item_properties (ThunarOrgFreedesktopFileManager1 *object,
+                                              GDBusMethodInvocation            *invocation,
+                                              gchar                           **uris,
+                                              const gchar                      *startup_id,
+                                              ThunarDBusService                *dbus_service);
 
 
 struct _ThunarDBusServiceClass
@@ -254,7 +283,7 @@ struct _ThunarDBusService
   ThunarDBusThunar                 *thunar;
   ThunarOrgFreedesktopFileManager1 *file_manager_fdo;
 
-  ThunarFile      *trash_bin;
+  ThunarFile *trash_bin;
 };
 
 
@@ -274,9 +303,10 @@ thunar_dbus_service_class_init (ThunarDBusServiceClass *klass)
 
 
 
-static void connect_signals_multiple (gpointer object,
-                                      gpointer data,
-                                      ...)
+static void
+connect_signals_multiple (gpointer object,
+                          gpointer data,
+                          ...)
 {
   va_list ap;
 
@@ -300,10 +330,10 @@ static void connect_signals_multiple (gpointer object,
 static void
 thunar_dbus_service_init (ThunarDBusService *dbus_service)
 {
-  dbus_service->file_manager      = thunar_dbus_file_manager_skeleton_new ();
-  dbus_service->trash             = thunar_dbus_trash_skeleton_new ();
-  dbus_service->thunar            = thunar_dbus_thunar_skeleton_new ();
-  dbus_service->file_manager_fdo  = thunar_org_freedesktop_file_manager1_skeleton_new ();
+  dbus_service->file_manager = thunar_dbus_file_manager_skeleton_new ();
+  dbus_service->trash = thunar_dbus_trash_skeleton_new ();
+  dbus_service->thunar = thunar_dbus_thunar_skeleton_new ();
+  dbus_service->file_manager_fdo = thunar_org_freedesktop_file_manager1_skeleton_new ();
 
   connect_signals_multiple (dbus_service->file_manager, dbus_service,
                             "handle-display-application-chooser-dialog", thunar_dbus_service_display_app_chooser_dialog,
@@ -435,14 +465,14 @@ thunar_dbus_service_trash_bin_changed (ThunarDBusService *dbus_service,
 
 
 static gboolean
-thunar_dbus_service_display_app_chooser_dialog (ThunarDBusFileManager  *object,
-                                                GDBusMethodInvocation  *invocation,
-                                                const gchar            *uri,
-                                                gboolean                open,
-                                                gboolean                preselect_default_checkbox,
-                                                const gchar            *display,
-                                                const gchar            *startup_id,
-                                                ThunarDBusService      *dbus_service)
+thunar_dbus_service_display_app_chooser_dialog (ThunarDBusFileManager *object,
+                                                GDBusMethodInvocation *invocation,
+                                                const gchar           *uri,
+                                                gboolean               open,
+                                                gboolean               preselect_default_checkbox,
+                                                const gchar           *display,
+                                                const gchar           *startup_id,
+                                                ThunarDBusService     *dbus_service)
 {
   ThunarFile *file;
   GdkScreen  *screen;
@@ -472,12 +502,12 @@ out:
 
 
 static gboolean
-thunar_dbus_service_display_folder (ThunarDBusFileManager  *object,
-                                    GDBusMethodInvocation  *invocation,
-                                    const gchar            *uri,
-                                    const gchar            *display,
-                                    const gchar            *startup_id,
-                                    ThunarDBusService      *dbus_service)
+thunar_dbus_service_display_folder (ThunarDBusFileManager *object,
+                                    GDBusMethodInvocation *invocation,
+                                    const gchar           *uri,
+                                    const gchar           *display,
+                                    const gchar           *startup_id,
+                                    ThunarDBusService     *dbus_service)
 {
   ThunarApplication *application;
   ThunarFile        *file;
@@ -508,13 +538,13 @@ thunar_dbus_service_display_folder (ThunarDBusFileManager  *object,
 
 
 static gboolean
-thunar_dbus_service_display_folder_and_select (ThunarDBusFileManager  *object,
-                                               GDBusMethodInvocation  *invocation,
-                                               const gchar            *uri,
-                                               const gchar            *filename,
-                                               const gchar            *display,
-                                               const gchar            *startup_id,
-                                               ThunarDBusService      *dbus_service)
+thunar_dbus_service_display_folder_and_select (ThunarDBusFileManager *object,
+                                               GDBusMethodInvocation *invocation,
+                                               const gchar           *uri,
+                                               const gchar           *filename,
+                                               const gchar           *display,
+                                               const gchar           *startup_id,
+                                               ThunarDBusService     *dbus_service)
 {
   ThunarApplication *application;
   ThunarFile        *folder;
@@ -566,12 +596,12 @@ out:
 
 
 static gboolean
-thunar_dbus_service_display_file_properties (ThunarDBusFileManager  *object,
-                                             GDBusMethodInvocation  *invocation,
-                                             const gchar            *uri,
-                                             const gchar            *display,
-                                             const gchar            *startup_id,
-                                             ThunarDBusService      *dbus_service)
+thunar_dbus_service_display_file_properties (ThunarDBusFileManager *object,
+                                             GDBusMethodInvocation *invocation,
+                                             const gchar           *uri,
+                                             const gchar           *display,
+                                             const gchar           *startup_id,
+                                             ThunarDBusService     *dbus_service)
 {
   ThunarApplication *application;
   ThunarFile        *file;
@@ -611,12 +641,12 @@ out:
 
 
 static gboolean
-thunar_dbus_service_launch (ThunarDBusFileManager  *object,
-                            GDBusMethodInvocation  *invocation,
-                            const gchar            *uri,
-                            const gchar            *display,
-                            const gchar            *startup_id,
-                            ThunarDBusService      *dbus_service)
+thunar_dbus_service_launch (ThunarDBusFileManager *object,
+                            GDBusMethodInvocation *invocation,
+                            const gchar           *uri,
+                            const gchar           *display,
+                            const gchar           *startup_id,
+                            ThunarDBusService     *dbus_service)
 {
   ThunarFile *file;
   GdkScreen  *screen;
@@ -644,14 +674,14 @@ thunar_dbus_service_launch (ThunarDBusFileManager  *object,
 
 
 static gboolean
-thunar_dbus_service_execute (ThunarDBusFileManager  *object,
-                             GDBusMethodInvocation  *invocation,
-                             const gchar            *working_directory,
-                             const gchar            *uri,
-                             const gchar           **files,
-                             const gchar            *display,
-                             const gchar            *startup_id,
-                             ThunarDBusService      *dbus_service)
+thunar_dbus_service_execute (ThunarDBusFileManager *object,
+                             GDBusMethodInvocation *invocation,
+                             const gchar           *working_directory,
+                             const gchar           *uri,
+                             const gchar          **files,
+                             const gchar           *display,
+                             const gchar           *startup_id,
+                             ThunarDBusService     *dbus_service)
 {
   ThunarFile *file;
   GdkScreen  *screen;
@@ -702,11 +732,11 @@ thunar_dbus_service_execute (ThunarDBusFileManager  *object,
 
 
 static gboolean
-thunar_dbus_service_display_preferences_dialog (ThunarDBusFileManager  *object,
-                                                GDBusMethodInvocation  *invocation,
-                                                const gchar            *display,
-                                                const gchar            *startup_id,
-                                                ThunarDBusService      *dbus_service)
+thunar_dbus_service_display_preferences_dialog (ThunarDBusFileManager *object,
+                                                GDBusMethodInvocation *invocation,
+                                                const gchar           *display,
+                                                const gchar           *startup_id,
+                                                ThunarDBusService     *dbus_service)
 {
   ThunarApplication *application;
   GdkScreen         *screen;
@@ -744,11 +774,11 @@ out:
 
 
 static gboolean
-thunar_dbus_service_display_trash (ThunarDBusTrash        *object,
-                                   GDBusMethodInvocation  *invocation,
-                                   const gchar            *display,
-                                   const gchar            *startup_id,
-                                   ThunarDBusService      *dbus_service)
+thunar_dbus_service_display_trash (ThunarDBusTrash       *object,
+                                   GDBusMethodInvocation *invocation,
+                                   const gchar           *display,
+                                   const gchar           *startup_id,
+                                   ThunarDBusService     *dbus_service)
 {
   ThunarApplication *application;
   GdkScreen         *screen;
@@ -783,11 +813,11 @@ out:
 
 
 static gboolean
-thunar_dbus_service_empty_trash (ThunarDBusTrash        *object,
-                                 GDBusMethodInvocation  *invocation,
-                                 const gchar            *display,
-                                 const gchar            *startup_id,
-                                 ThunarDBusService      *dbus_service)
+thunar_dbus_service_empty_trash (ThunarDBusTrash       *object,
+                                 GDBusMethodInvocation *invocation,
+                                 const gchar           *display,
+                                 const gchar           *startup_id,
+                                 ThunarDBusService     *dbus_service)
 {
   ThunarApplication *application;
   GdkScreen         *screen;
@@ -817,12 +847,12 @@ thunar_dbus_service_empty_trash (ThunarDBusTrash        *object,
 
 
 static gboolean
-thunar_dbus_service_move_to_trash (ThunarDBusTrash        *object,
-                                   GDBusMethodInvocation  *invocation,
-                                   gchar                 **filenames,
-                                   const gchar            *display,
-                                   const gchar            *startup_id,
-                                   ThunarDBusService      *dbus_service)
+thunar_dbus_service_move_to_trash (ThunarDBusTrash       *object,
+                                   GDBusMethodInvocation *invocation,
+                                   gchar                **filenames,
+                                   const gchar           *display,
+                                   const gchar           *startup_id,
+                                   ThunarDBusService     *dbus_service)
 {
   ThunarApplication *application;
   ThunarPreferences *preferences;
@@ -867,7 +897,7 @@ thunar_dbus_service_move_to_trash (ThunarDBusTrash        *object,
           preferences = thunar_preferences_get ();
           g_object_get (G_OBJECT (preferences), "misc-confirm-move-to-trash", &warn, NULL);
           g_object_unref (G_OBJECT (preferences));
-          
+
           /* tell the application to move the specified files to the trash */
           application = thunar_application_get ();
           thunar_application_unlink_files (application, screen, file_list, FALSE, warn, THUNAR_OPERATION_LOG_NO_OPERATIONS);
@@ -891,11 +921,11 @@ thunar_dbus_service_move_to_trash (ThunarDBusTrash        *object,
 
 
 static gboolean
-thunar_dbus_service_query_trash (ThunarDBusTrash        *object,
-                                 GDBusMethodInvocation  *invocation,
-                                 ThunarDBusService      *dbus_service)
+thunar_dbus_service_query_trash (ThunarDBusTrash       *object,
+                                 GDBusMethodInvocation *invocation,
+                                 ThunarDBusService     *dbus_service)
 {
-  GError *error = NULL;
+  GError  *error = NULL;
   gboolean full = FALSE;
 
   /* connect to the trash bin on-demand */
@@ -916,14 +946,14 @@ thunar_dbus_service_query_trash (ThunarDBusTrash        *object,
 
 
 static gboolean
-thunar_dbus_service_bulk_rename (ThunarDBusThunar  *object,
-                                 GDBusMethodInvocation  *invocation,
-                                 const gchar            *working_directory,
-                                 gchar                 **filenames,
-                                 gboolean                standalone,
-                                 const gchar            *display,
-                                 const gchar            *startup_id,
-                                 ThunarDBusService      *dbus_service)
+thunar_dbus_service_bulk_rename (ThunarDBusThunar      *object,
+                                 GDBusMethodInvocation *invocation,
+                                 const gchar           *working_directory,
+                                 gchar                **filenames,
+                                 gboolean               standalone,
+                                 const gchar           *display,
+                                 const gchar           *startup_id,
+                                 ThunarDBusService     *dbus_service)
 {
   ThunarApplication *application;
   GdkScreen         *screen;
@@ -932,8 +962,8 @@ thunar_dbus_service_bulk_rename (ThunarDBusThunar  *object,
 
   /* determine a proper working directory */
   cwd = (working_directory != NULL && *working_directory != '\0')
-      ? g_strdup (working_directory)
-      : g_get_current_dir ();
+        ? g_strdup (working_directory)
+        : g_get_current_dir ();
 
   /* try to open the screen for the display name */
   screen = thunar_gdk_screen_open (display, &error);
@@ -962,13 +992,13 @@ thunar_dbus_service_bulk_rename (ThunarDBusThunar  *object,
 
 
 static gboolean
-thunar_dbus_service_launch_files (ThunarDBusFileManager  *object,
-                                  GDBusMethodInvocation  *invocation,
-                                  const gchar            *working_directory,
-                                  gchar                 **filenames,
-                                  const gchar            *display,
-                                  const gchar            *startup_id,
-                                  ThunarDBusService      *dbus_service)
+thunar_dbus_service_launch_files (ThunarDBusFileManager *object,
+                                  GDBusMethodInvocation *invocation,
+                                  const gchar           *working_directory,
+                                  gchar                **filenames,
+                                  const gchar           *display,
+                                  const gchar           *startup_id,
+                                  ThunarDBusService     *dbus_service)
 {
   ThunarApplication *application;
   GdkScreen         *screen;
@@ -1015,12 +1045,12 @@ out:
 
 
 static gboolean
-thunar_dbus_service_rename_file (ThunarDBusFileManager  *object,
-                                 GDBusMethodInvocation  *invocation,
-                                 const gchar            *uri,
-                                 const gchar            *display,
-                                 const gchar            *startup_id,
-                                 ThunarDBusService      *dbus_service)
+thunar_dbus_service_rename_file (ThunarDBusFileManager *object,
+                                 GDBusMethodInvocation *invocation,
+                                 const gchar           *uri,
+                                 const gchar           *display,
+                                 const gchar           *startup_id,
+                                 ThunarDBusService     *dbus_service)
 {
   ThunarApplication *application;
   ThunarFile        *file;
@@ -1052,13 +1082,13 @@ out:
 
 
 static gboolean
-thunar_dbus_service_create_file (ThunarDBusFileManager  *object,
-                                 GDBusMethodInvocation  *invocation,
-                                 const gchar            *parent_directory,
-                                 const gchar            *content_type,
-                                 const gchar            *display,
-                                 const gchar            *startup_id,
-                                 ThunarDBusService      *dbus_service)
+thunar_dbus_service_create_file (ThunarDBusFileManager *object,
+                                 GDBusMethodInvocation *invocation,
+                                 const gchar           *parent_directory,
+                                 const gchar           *content_type,
+                                 const gchar           *display,
+                                 const gchar           *startup_id,
+                                 ThunarDBusService     *dbus_service)
 {
   ThunarApplication *application;
   ThunarFile        *file;
@@ -1094,13 +1124,13 @@ out:
 
 
 static gboolean
-thunar_dbus_service_create_file_from_template (ThunarDBusFileManager  *object,
-                                               GDBusMethodInvocation  *invocation,
-                                               const gchar            *parent_directory,
-                                               const gchar            *template_uri,
-                                               const gchar            *display,
-                                               const gchar            *startup_id,
-                                               ThunarDBusService      *dbus_service)
+thunar_dbus_service_create_file_from_template (ThunarDBusFileManager *object,
+                                               GDBusMethodInvocation *invocation,
+                                               const gchar           *parent_directory,
+                                               const gchar           *template_uri,
+                                               const gchar           *display,
+                                               const gchar           *startup_id,
+                                               ThunarDBusService     *dbus_service)
 {
   ThunarApplication *application;
   ThunarFile        *file;
@@ -1114,7 +1144,7 @@ thunar_dbus_service_create_file_from_template (ThunarDBusFileManager  *object,
 
   /* try to determine the file for the template URI */
   template_file = thunar_file_get_for_uri (template_uri, &error);
-  if(template_file == NULL)
+  if (template_file == NULL)
     goto out;
 
   /* popup a new window for the folder */
@@ -1141,8 +1171,8 @@ out:
 static gboolean
 thunar_dbus_service_transfer_files (ThunarDBusTransferMode transfer_mode,
                                     const gchar           *working_directory,
-                                    const gchar * const   *source_filenames,
-                                    const gchar * const   *target_filenames,
+                                    const gchar *const    *source_filenames,
+                                    const gchar *const    *target_filenames,
                                     const gchar           *display,
                                     const gchar           *startup_id,
                                     GError               **error)
@@ -1169,7 +1199,7 @@ thunar_dbus_service_transfer_files (ThunarDBusTransferMode transfer_mode,
   /* verify that the target filename is set / enough target filenames are given */
   if (transfer_mode == THUNAR_DBUS_TRANSFER_MODE_COPY_TO)
     {
-      if (g_strv_length ((gchar **)source_filenames) != g_strv_length ((gchar **)target_filenames))
+      if (g_strv_length ((gchar **) source_filenames) != g_strv_length ((gchar **) target_filenames))
         {
           g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL,
                        _("The number of source and target filenames must be the same"));
@@ -1282,21 +1312,21 @@ thunar_dbus_service_transfer_files (ThunarDBusTransferMode transfer_mode,
 
 
 static gboolean
-thunar_dbus_service_copy_to (ThunarDBusFileManager  *object,
-                             GDBusMethodInvocation  *invocation,
-                             const gchar            *working_directory,
-                             gchar                 **source_filenames,
-                             gchar                 **target_filenames,
-                             const gchar            *display,
-                             const gchar            *startup_id,
-                             ThunarDBusService      *dbus_service)
+thunar_dbus_service_copy_to (ThunarDBusFileManager *object,
+                             GDBusMethodInvocation *invocation,
+                             const gchar           *working_directory,
+                             gchar                **source_filenames,
+                             gchar                **target_filenames,
+                             const gchar           *display,
+                             const gchar           *startup_id,
+                             ThunarDBusService     *dbus_service)
 {
   GError *error = NULL;
 
   thunar_dbus_service_transfer_files (THUNAR_DBUS_TRANSFER_MODE_COPY_TO,
                                       working_directory,
-                                      (const gchar * const *)source_filenames,
-                                      (const gchar * const *)target_filenames,
+                                      (const gchar *const *) source_filenames,
+                                      (const gchar *const *) target_filenames,
                                       display,
                                       startup_id,
                                       &error);
@@ -1312,21 +1342,21 @@ thunar_dbus_service_copy_to (ThunarDBusFileManager  *object,
 
 
 static gboolean
-thunar_dbus_service_copy_into (ThunarDBusFileManager  *object,
-                               GDBusMethodInvocation  *invocation,
-                               const gchar            *working_directory,
-                               gchar                 **source_filenames,
-                               const gchar            *target_filename,
-                               const gchar            *display,
-                               const gchar            *startup_id,
-                               ThunarDBusService      *dbus_service)
+thunar_dbus_service_copy_into (ThunarDBusFileManager *object,
+                               GDBusMethodInvocation *invocation,
+                               const gchar           *working_directory,
+                               gchar                **source_filenames,
+                               const gchar           *target_filename,
+                               const gchar           *display,
+                               const gchar           *startup_id,
+                               ThunarDBusService     *dbus_service)
 {
   const gchar *target_filenames[2] = { target_filename, NULL };
-  GError *error = NULL;
+  GError      *error = NULL;
 
   thunar_dbus_service_transfer_files (THUNAR_DBUS_TRANSFER_MODE_COPY_INTO,
                                       working_directory,
-                                      (const gchar * const *)source_filenames,
+                                      (const gchar *const *) source_filenames,
                                       target_filenames,
                                       display,
                                       startup_id,
@@ -1343,21 +1373,21 @@ thunar_dbus_service_copy_into (ThunarDBusFileManager  *object,
 
 
 static gboolean
-thunar_dbus_service_move_into (ThunarDBusFileManager  *object,
-                               GDBusMethodInvocation  *invocation,
-                               const gchar            *working_directory,
-                               gchar                 **source_filenames,
-                               const gchar            *target_filename,
-                               const gchar            *display,
-                               const gchar            *startup_id,
-                               ThunarDBusService      *dbus_service)
+thunar_dbus_service_move_into (ThunarDBusFileManager *object,
+                               GDBusMethodInvocation *invocation,
+                               const gchar           *working_directory,
+                               gchar                **source_filenames,
+                               const gchar           *target_filename,
+                               const gchar           *display,
+                               const gchar           *startup_id,
+                               ThunarDBusService     *dbus_service)
 {
   const gchar *target_filenames[2] = { target_filename, NULL };
-  GError *error = NULL;
+  GError      *error = NULL;
 
   thunar_dbus_service_transfer_files (THUNAR_DBUS_TRANSFER_MODE_MOVE_INTO,
                                       working_directory,
-                                      (const gchar * const *)source_filenames,
+                                      (const gchar *const *) source_filenames,
                                       target_filenames,
                                       display,
                                       startup_id,
@@ -1374,21 +1404,21 @@ thunar_dbus_service_move_into (ThunarDBusFileManager  *object,
 
 
 static gboolean
-thunar_dbus_service_link_into (ThunarDBusFileManager  *object,
-                               GDBusMethodInvocation  *invocation,
-                               const gchar            *working_directory,
-                               gchar                 **source_filenames,
-                               const gchar            *target_filename,
-                               const gchar            *display,
-                               const gchar            *startup_id,
-                               ThunarDBusService      *dbus_service)
+thunar_dbus_service_link_into (ThunarDBusFileManager *object,
+                               GDBusMethodInvocation *invocation,
+                               const gchar           *working_directory,
+                               gchar                **source_filenames,
+                               const gchar           *target_filename,
+                               const gchar           *display,
+                               const gchar           *startup_id,
+                               ThunarDBusService     *dbus_service)
 {
   const gchar *target_filenames[2] = { target_filename, NULL };
-  GError *error = NULL;
+  GError      *error = NULL;
 
   thunar_dbus_service_transfer_files (THUNAR_DBUS_TRANSFER_MODE_LINK_INTO,
                                       working_directory,
-                                      (const gchar * const *)source_filenames,
+                                      (const gchar *const *) source_filenames,
                                       target_filenames,
                                       display,
                                       startup_id,
@@ -1404,13 +1434,13 @@ thunar_dbus_service_link_into (ThunarDBusFileManager  *object,
 
 
 static gboolean
-thunar_dbus_service_unlink_files (ThunarDBusFileManager  *object,
-                                  GDBusMethodInvocation  *invocation,
-                                  const gchar            *working_directory,
-                                  gchar                 **filenames,
-                                  const gchar            *display,
-                                  const gchar            *startup_id,
-                                  ThunarDBusService      *dbus_service)
+thunar_dbus_service_unlink_files (ThunarDBusFileManager *object,
+                                  GDBusMethodInvocation *invocation,
+                                  const gchar           *working_directory,
+                                  gchar                **filenames,
+                                  const gchar           *display,
+                                  const gchar           *startup_id,
+                                  ThunarDBusService     *dbus_service)
 {
   ThunarApplication *application;
   ThunarFile        *thunar_file;
@@ -1493,9 +1523,9 @@ out:
 
 
 static gboolean
-thunar_dbus_service_terminate (ThunarDBusThunar       *object,
-                               GDBusMethodInvocation  *invocation,
-                               ThunarDBusService      *dbus_service)
+thunar_dbus_service_terminate (ThunarDBusThunar      *object,
+                               GDBusMethodInvocation *invocation,
+                               ThunarDBusService     *dbus_service)
 {
   /* leave the Gtk main loop as soon as possible */
   ThunarApplication *app = thunar_application_get ();
@@ -1662,9 +1692,10 @@ thunar_dbus_freedesktop_show_item_properties (ThunarOrgFreedesktopFileManager1 *
 
 
 
-gboolean thunar_dbus_service_export_on_connection (ThunarDBusService *service,
-                                                   GDBusConnection   *connection,
-                                                   GError           **error)
+gboolean
+thunar_dbus_service_export_on_connection (ThunarDBusService *service,
+                                          GDBusConnection   *connection,
+                                          GError           **error)
 {
   if (!g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (service->file_manager),
                                          connection,

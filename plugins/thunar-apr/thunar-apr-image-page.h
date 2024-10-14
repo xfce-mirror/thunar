@@ -28,15 +28,17 @@ G_BEGIN_DECLS;
 typedef struct _ThunarAprImagePageClass ThunarAprImagePageClass;
 typedef struct _ThunarAprImagePage      ThunarAprImagePage;
 
-#define THUNAR_APR_TYPE_IMAGE_PAGE            (thunar_apr_image_page_get_type ())
-#define THUNAR_APR_IMAGE_PAGE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_APR_TYPE_IMAGE_PAGE, ThunarAprImagePage))
-#define THUNAR_APR_IMAGE_PAGE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_APR_TYPE_IMAGE_PAGE, ThunarAprImagePageClass))
-#define THUNAR_APR_IS_IMAGE_PAGE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_APR_TYPE_IMAGE_PAGE))
+#define THUNAR_APR_TYPE_IMAGE_PAGE (thunar_apr_image_page_get_type ())
+#define THUNAR_APR_IMAGE_PAGE(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_APR_TYPE_IMAGE_PAGE, ThunarAprImagePage))
+#define THUNAR_APR_IMAGE_PAGE_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_APR_TYPE_IMAGE_PAGE, ThunarAprImagePageClass))
+#define THUNAR_APR_IS_IMAGE_PAGE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_APR_TYPE_IMAGE_PAGE))
 #define THUNAR_APR_IS_IMAGE_PAGE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_APR_TYPE_IMAGE_PAGE))
-#define THUNAR_APR_IMAGE_PAGE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_APR_TYPE_IMAGE_PAGE, ThunarAprImagePageClass))
+#define THUNAR_APR_IMAGE_PAGE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_APR_TYPE_IMAGE_PAGE, ThunarAprImagePageClass))
 
-GType thunar_apr_image_page_get_type      (void) G_GNUC_CONST;
-void  thunar_apr_image_page_register_type (ThunarxProviderPlugin *plugin);
+GType
+thunar_apr_image_page_get_type (void) G_GNUC_CONST;
+void
+thunar_apr_image_page_register_type (ThunarxProviderPlugin *plugin);
 
 G_END_DECLS;
 

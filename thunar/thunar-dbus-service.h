@@ -27,18 +27,20 @@ G_BEGIN_DECLS;
 typedef struct _ThunarDBusServiceClass ThunarDBusServiceClass;
 typedef struct _ThunarDBusService      ThunarDBusService;
 
-#define THUNAR_TYPE_DBUS_SERVICE             (thunar_dbus_service_get_type ())
-#define THUNAR_DBUS_SERVICE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_DBUS_SERVICE, ThunarDBusService))
-#define THUNAR_DBUS_SERVICE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_DBUS_SERVICE, ThunarDBusServiceClass))
-#define THUNAR_IS_DBUS_SERVICE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_DBUS_SERVICE))
-#define THUNAR_IS_DBUS_SERVICE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_DBUS_BRIGDE))
-#define THUNAR_DBUS_SERVICE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_DBUS_SERVICE, ThunarDBusServicetClass))
+#define THUNAR_TYPE_DBUS_SERVICE (thunar_dbus_service_get_type ())
+#define THUNAR_DBUS_SERVICE(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_DBUS_SERVICE, ThunarDBusService))
+#define THUNAR_DBUS_SERVICE_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_DBUS_SERVICE, ThunarDBusServiceClass))
+#define THUNAR_IS_DBUS_SERVICE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_DBUS_SERVICE))
+#define THUNAR_IS_DBUS_SERVICE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_DBUS_BRIGDE))
+#define THUNAR_DBUS_SERVICE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_DBUS_SERVICE, ThunarDBusServicetClass))
 
-GType    thunar_dbus_service_get_type       (void) G_GNUC_CONST;
+GType
+thunar_dbus_service_get_type (void) G_GNUC_CONST;
 
-gboolean thunar_dbus_service_export_on_connection (ThunarDBusService *service,
-                                                   GDBusConnection   *connection,
-                                                   GError           **error);
+gboolean
+thunar_dbus_service_export_on_connection (ThunarDBusService *service,
+                                          GDBusConnection   *connection,
+                                          GError           **error);
 
 G_END_DECLS;
 

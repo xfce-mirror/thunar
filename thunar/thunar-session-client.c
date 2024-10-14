@@ -36,34 +36,41 @@
 #include <X11/SM/SMlib.h>
 #endif
 
-#include <glib/gstdio.h>
-#include <gdk/gdkx.h>
-
 #include "thunar/thunar-application.h"
+#include "thunar/thunar-file.h"
 #include "thunar/thunar-ice.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-session-client.h"
-#include "thunar/thunar-file.h"
+
+#include <gdk/gdkx.h>
+#include <glib/gstdio.h>
 
 
 
-static void     thunar_session_client_finalize            (GObject                  *object);
+static void
+thunar_session_client_finalize (GObject *object);
 #ifdef HAVE_LIBSM
-static gboolean thunar_session_client_connect             (ThunarSessionClient      *session_client,
-                                                           const gchar              *previous_id);
-static void     thunar_session_client_restore             (ThunarSessionClient      *session_client);
-static void     thunar_session_client_die                 (SmcConn                   connection,
-                                                           ThunarSessionClient      *session_client);
-static void     thunar_session_client_save_complete       (SmcConn                   connection,
-                                                           ThunarSessionClient      *session_client);
-static void     thunar_session_client_save_yourself       (SmcConn                   connection,
-                                                           ThunarSessionClient      *session_client,
-                                                           gint                      save_type,
-                                                           Bool                      shutdown,
-                                                           gint                      interact_style,
-                                                           Bool                      fast);
-static void     thunar_session_client_shutdown_cancelled  (SmcConn                   connection,
-                                                           ThunarSessionClient      *session_client);
+static gboolean
+thunar_session_client_connect (ThunarSessionClient *session_client,
+                               const gchar         *previous_id);
+static void
+thunar_session_client_restore (ThunarSessionClient *session_client);
+static void
+thunar_session_client_die (SmcConn              connection,
+                           ThunarSessionClient *session_client);
+static void
+thunar_session_client_save_complete (SmcConn              connection,
+                                     ThunarSessionClient *session_client);
+static void
+thunar_session_client_save_yourself (SmcConn              connection,
+                                     ThunarSessionClient *session_client,
+                                     gint                 save_type,
+                                     Bool                 shutdown,
+                                     gint                 interact_style,
+                                     Bool                 fast);
+static void
+thunar_session_client_shutdown_cancelled (SmcConn              connection,
+                                          ThunarSessionClient *session_client);
 #endif /* !HAVE_LIBSM */
 
 
@@ -77,8 +84,8 @@ struct _ThunarSessionClient
 {
   GObject __parent__;
 
-  gchar  *path;
-  gchar  *id;
+  gchar *path;
+  gchar *id;
 
 #ifdef HAVE_LIBSM
   SmcConn connection;
@@ -163,9 +170,7 @@ thunar_session_client_connect (ThunarSessionClient *session_client,
   session_callbacks.shutdown_cancelled.client_data = session_client;
 
   /* try to establish a connection to the session manager */
-  session_client->connection = SmcOpenConnection (NULL, NULL, SmProtoMajor, SmProtoMinor, SmcDieProcMask
-                                                  | SmcSaveCompleteProcMask | SmcSaveYourselfProcMask
-                                                  | SmcShutdownCancelledProcMask, &session_callbacks,
+  session_client->connection = SmcOpenConnection (NULL, NULL, SmProtoMajor, SmProtoMinor, SmcDieProcMask | SmcSaveCompleteProcMask | SmcSaveYourselfProcMask | SmcShutdownCancelledProcMask, &session_callbacks,
                                                   (gchar *) previous_id, &id, sizeof (error_string), error_string);
   if (G_UNLIKELY (session_client->connection == NULL))
     return FALSE;
@@ -332,7 +337,7 @@ static void
 thunar_session_client_die (SmcConn              connection,
                            ThunarSessionClient *session_client)
 {
-  ThunarApplication* application;
+  ThunarApplication *application;
 
   _thunar_return_if_fail (THUNAR_IS_SESSION_CLIENT (session_client));
   _thunar_return_if_fail (session_client->connection == connection);
@@ -403,7 +408,7 @@ thunar_session_client_save_yourself (SmcConn              connection,
                   fprintf (fp, "URI=");
                   for (uri = uris; uri != NULL; uri = uri->next)
                     {
-                      gchar* uri_string = uri->data;
+                      gchar *uri_string = uri->data;
                       fprintf (fp, "%s", uri_string);
                       if (G_LIKELY (uri->next != NULL))
                         fprintf (fp, ";");
@@ -457,7 +462,7 @@ thunar_session_client_shutdown_cancelled (SmcConn              connection,
  *
  * Return value: the newly allocated #ThunarSessionClient.
  **/
-ThunarSessionClient*
+ThunarSessionClient *
 thunar_session_client_new (const gchar *session_id)
 {
   ThunarSessionClient *session_client;
@@ -473,4 +478,3 @@ thunar_session_client_new (const gchar *session_id)
 
   return session_client;
 }
-
