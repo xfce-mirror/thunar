@@ -25,22 +25,25 @@
 
 G_BEGIN_DECLS;
 
-#define THUNAR_TYPE_IMAGE            (thunar_image_get_type ())
-#define THUNAR_IMAGE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_IMAGE, ThunarImage))
-#define THUNAR_IMAGE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_IMAGE, ThunarImageClass))
-#define THUNAR_IS_IMAGE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_IMAGE))
+#define THUNAR_TYPE_IMAGE (thunar_image_get_type ())
+#define THUNAR_IMAGE(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_IMAGE, ThunarImage))
+#define THUNAR_IMAGE_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_IMAGE, ThunarImageClass))
+#define THUNAR_IS_IMAGE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_IMAGE))
 #define THUNAR_IS_IMAGE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_IMAGE)
-#define THUNAR_IMAGE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_IMAGE, ThunarImageClass))
+#define THUNAR_IMAGE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_IMAGE, ThunarImageClass))
 
 typedef struct _ThunarImagePrivate ThunarImagePrivate;
 typedef struct _ThunarImageClass   ThunarImageClass;
 typedef struct _ThunarImage        ThunarImage;
 
-GType      thunar_image_get_type (void) G_GNUC_CONST;
+GType
+thunar_image_get_type (void) G_GNUC_CONST;
 
-GtkWidget *thunar_image_new      (void) G_GNUC_MALLOC;
-void       thunar_image_set_file (ThunarImage *image,
-                                  ThunarFile  *file);
+GtkWidget *
+thunar_image_new (void) G_GNUC_MALLOC;
+void
+thunar_image_set_file (ThunarImage *image,
+                       ThunarFile  *file);
 
 G_END_DECLS;
 

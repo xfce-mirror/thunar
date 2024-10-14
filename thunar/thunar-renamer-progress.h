@@ -27,23 +27,28 @@ G_BEGIN_DECLS;
 typedef struct _ThunarRenamerProgressClass ThunarRenamerProgressClass;
 typedef struct _ThunarRenamerProgress      ThunarRenamerProgress;
 
-#define THUNAR_TYPE_RENAMER_PROGRESS            (thunar_renamer_progress_get_type ())
-#define THUNAR_RENAMER_PROGRESS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_RENAMER_PROGRESS, ThunarRenamerProgress))
-#define THUNAR_RENAMER_PROGRESS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_RENAMER_PROGRESS, ThunarRenamerProgressClass))
-#define THUNAR_IS_RENAMER_PROGRESS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_RENAMER_PROGRESS))
+#define THUNAR_TYPE_RENAMER_PROGRESS (thunar_renamer_progress_get_type ())
+#define THUNAR_RENAMER_PROGRESS(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_RENAMER_PROGRESS, ThunarRenamerProgress))
+#define THUNAR_RENAMER_PROGRESS_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_RENAMER_PROGRESS, ThunarRenamerProgressClass))
+#define THUNAR_IS_RENAMER_PROGRESS(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_RENAMER_PROGRESS))
 #define THUNAR_IS_RENAMER_PROGRESS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_RENAMER_PROGRESS))
-#define THUNAR_RENAMER_PROGRESS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_RENAMER_PROGRESS, ThunarRenamerProgressClass))
+#define THUNAR_RENAMER_PROGRESS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_RENAMER_PROGRESS, ThunarRenamerProgressClass))
 
-GType      thunar_renamer_progress_get_type (void) G_GNUC_CONST;
+GType
+thunar_renamer_progress_get_type (void) G_GNUC_CONST;
 
-GtkWidget *thunar_renamer_progress_new      (void) G_GNUC_MALLOC;
+GtkWidget *
+thunar_renamer_progress_new (void) G_GNUC_MALLOC;
 
-void       thunar_renamer_progress_cancel   (ThunarRenamerProgress *renamer_progress);
+void
+thunar_renamer_progress_cancel (ThunarRenamerProgress *renamer_progress);
 
-gboolean   thunar_renamer_progress_running  (ThunarRenamerProgress *renamer_progress);
+gboolean
+thunar_renamer_progress_running (ThunarRenamerProgress *renamer_progress);
 
-void       thunar_renamer_progress_run      (ThunarRenamerProgress *renamer_progress,
-                                             GList                 *pair_list);
+void
+thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
+                             GList                 *pair_list);
 
 G_END_DECLS;
 

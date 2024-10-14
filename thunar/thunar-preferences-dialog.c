@@ -21,10 +21,6 @@
 #include "config.h"
 #endif
 
-#include <libxfce4ui/libxfce4ui.h>
-#include <libxfce4kbd-private/xfce-shortcuts-editor.h>
-#include <libxfce4kbd-private/xfce-shortcuts-editor-dialog.h>
-
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-compact-view.h"
 #include "thunar/thunar-details-view.h"
@@ -37,18 +33,25 @@
 #include "thunar/thunar-preferences-dialog.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
+#include "thunar/thunar-renamer-dialog.h"
+#include "thunar/thunar-shortcuts-view.h"
+#include "thunar/thunar-statusbar.h"
 #include "thunar/thunar-util.h"
 #include "thunar/thunar-window.h"
-#include "thunar/thunar-shortcuts-view.h"
-#include "thunar/thunar-renamer-dialog.h"
-#include "thunar/thunar-statusbar.h"
+
+#include <libxfce4kbd-private/xfce-shortcuts-editor-dialog.h>
+#include <libxfce4kbd-private/xfce-shortcuts-editor.h>
+#include <libxfce4ui/libxfce4ui.h>
 
 
 
-static void thunar_preferences_dialog_finalize   (GObject                      *object);
-static void thunar_preferences_dialog_response   (GtkDialog                    *dialog,
-                                                  gint                          response);
-static void thunar_preferences_dialog_configure  (ThunarPreferencesDialog     *dialog);
+static void
+thunar_preferences_dialog_finalize (GObject *object);
+static void
+thunar_preferences_dialog_response (GtkDialog *dialog,
+                                    gint       response);
+static void
+thunar_preferences_dialog_configure (ThunarPreferencesDialog *dialog);
 
 
 
@@ -267,7 +270,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
   gtk_window_set_title (GTK_WINDOW (dialog), _("Thunar Preferences"));
 
-#if !LIBXFCE4UI_CHECK_VERSION (4, 19, 3)
+#if !LIBXFCE4UI_CHECK_VERSION(4, 19, 3)
   xfce_titled_dialog_create_action_area (XFCE_TITLED_DIALOG (dialog));
 #endif
 
@@ -336,7 +339,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
 
-    /* next row */
+  /* next row */
   row++;
 
   button = gtk_check_button_new_with_mnemonic (_("Use current folder icon as window icon"));
@@ -889,7 +892,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_set_margin_start (ibox, 12);
   gtk_widget_set_margin_bottom (ibox, 6);
   g_object_bind_property (G_OBJECT (button), "active",
-                          G_OBJECT (ibox),   "sensitive",
+                          G_OBJECT (ibox), "sensitive",
                           G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (ibox, TRUE);
   gtk_grid_attach (GTK_GRID (grid), ibox, 0, row, 1, 1);
@@ -956,7 +959,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           "misc-single-click",
                           G_OBJECT (button),
                           "active",
-                          G_BINDING_INVERT_BOOLEAN  | G_BINDING_SYNC_CREATE);
+                          G_BINDING_INVERT_BOOLEAN | G_BINDING_SYNC_CREATE);
   g_signal_connect (G_OBJECT (button), "toggled", G_CALLBACK (g_object_notify), "active");
   gtk_widget_set_hexpand (button, TRUE);
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
@@ -1368,7 +1371,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   label = gtk_label_new (NULL);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   g_object_bind_property (G_OBJECT (button), "active",
-                          G_OBJECT (label),  "sensitive",
+                          G_OBJECT (label), "sensitive",
                           G_BINDING_SYNC_CREATE);
   g_signal_connect_swapped (G_OBJECT (label), "activate-link", G_CALLBACK (thunar_preferences_dialog_configure), dialog);
   gtk_label_set_markup (GTK_LABEL (label), _("<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
@@ -1378,9 +1381,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_show (label);
 
   /* check the most important gvfs-backends, and inform if they are missing */
-  if (!thunar_g_vfs_is_uri_scheme_supported ("trash")    ||
-      !thunar_g_vfs_is_uri_scheme_supported ("computer") || /* support for removable media */
-      !thunar_g_vfs_is_uri_scheme_supported ("sftp") )
+  if (!thunar_g_vfs_is_uri_scheme_supported ("trash") || !thunar_g_vfs_is_uri_scheme_supported ("computer") || /* support for removable media */
+      !thunar_g_vfs_is_uri_scheme_supported ("sftp"))
     {
       frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
       gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
@@ -1420,11 +1422,10 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_show (frame);
 
   grid = xfce_shortcuts_editor_new (13,
-                                    _("Window"), thunar_window_get_action_entries (), (size_t)THUNAR_WINDOW_N_ACTIONS,
-                                    _("View"), thunar_standard_view_get_action_entries (), (size_t)THUNAR_STANDARD_VIEW_N_ACTIONS,
-                                    _("Launcher"), thunar_action_manager_get_action_entries (), (size_t)THUNAR_ACTION_MANAGER_N_ACTIONS,
-                                    _("Status Bar"), thunar_statusbar_get_action_entries (), (size_t)THUNAR_STATUS_BAR_N_ACTIONS
-                                    );
+                                    _("Window"), thunar_window_get_action_entries (), (size_t) THUNAR_WINDOW_N_ACTIONS,
+                                      _("View"), thunar_standard_view_get_action_entries (), (size_t) THUNAR_STANDARD_VIEW_N_ACTIONS,
+                                        _("Launcher"), thunar_action_manager_get_action_entries (), (size_t) THUNAR_ACTION_MANAGER_N_ACTIONS,
+                                          _("Status Bar"), thunar_statusbar_get_action_entries (), (size_t) THUNAR_STATUS_BAR_N_ACTIONS);
   gtk_container_add (GTK_CONTAINER (frame), grid);
   gtk_widget_show (grid);
 }
@@ -1504,16 +1505,16 @@ thunar_preferences_dialog_configure (ThunarPreferencesDialog *dialog)
  *
  * Return value: the newly allocated #ThunarPreferencesDialog.
  **/
-GtkWidget*
+GtkWidget *
 thunar_preferences_dialog_new (GtkWindow *parent)
 {
-  GtkWidget    *dialog;
-  gint          root_x, root_y;
-  gint          window_width, window_height;
-  gint          dialog_width, dialog_height;
-  GdkMonitor *  monitor;
-  GdkRectangle  geometry;
-  GdkScreen    *screen;
+  GtkWidget   *dialog;
+  gint         root_x, root_y;
+  gint         window_width, window_height;
+  gint         dialog_width, dialog_height;
+  GdkMonitor  *monitor;
+  GdkRectangle geometry;
+  GdkScreen   *screen;
 
   dialog = g_object_new (THUNAR_TYPE_PREFERENCES_DIALOG, NULL);
 

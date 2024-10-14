@@ -26,23 +26,23 @@
 #include <errno.h>
 #endif
 
-#include <gio/gio.h>
-#include <glib/gstdio.h>
-
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-enum-types.h"
 #include "thunar/thunar-file.h"
 #include "thunar/thunar-gio-extensions.h"
+#include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-io-jobs-util.h"
 #include "thunar/thunar-io-jobs.h"
 #include "thunar/thunar-io-scan-directory.h"
 #include "thunar/thunar-job.h"
+#include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-simple-job.h"
 #include "thunar/thunar-thumbnail-cache.h"
 #include "thunar/thunar-transfer-job.h"
-#include "thunar/thunar-preferences.h"
-#include "thunar/thunar-gobject-extensions.h"
+
+#include <gio/gio.h>
+#include <glib/gstdio.h>
 
 
 
@@ -120,23 +120,23 @@ _tij_delete_file (GFile        *file,
 
 
 static gboolean
-_thunar_io_jobs_create (ThunarJob  *job,
-                        GArray     *param_values,
-                        GError    **error)
+_thunar_io_jobs_create (ThunarJob *job,
+                        GArray    *param_values,
+                        GError   **error)
 {
-  GFileOutputStream      *stream;
-  ThunarJobResponse       response = THUNAR_JOB_RESPONSE_CANCEL;
-  GFileInfo              *info;
-  GError                 *err = NULL;
-  GList                  *file_list;
-  GList                  *lp;
-  gchar                  *base_name;
-  gchar                  *display_name;
-  guint                   n_processed = 0;
-  GFile                  *template_file;
-  GFileInputStream       *template_stream = NULL;
-  ThunarJobOperation     *operation = NULL;
-  ThunarOperationLogMode  log_mode;
+  GFileOutputStream     *stream;
+  ThunarJobResponse      response = THUNAR_JOB_RESPONSE_CANCEL;
+  GFileInfo             *info;
+  GError                *err = NULL;
+  GList                 *file_list;
+  GList                 *lp;
+  gchar                 *base_name;
+  gchar                 *display_name;
+  guint                  n_processed = 0;
+  GFile                 *template_file;
+  GFileInputStream      *template_stream = NULL;
+  ThunarJobOperation    *operation = NULL;
+  ThunarOperationLogMode log_mode;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -177,7 +177,7 @@ _thunar_io_jobs_create (ThunarJob  *job,
       /* update progress information */
       thunar_job_processing_file (THUNAR_JOB (job), lp, n_processed);
 
-    again:
+again:
       /* try to create the file */
       stream = g_file_create (lp->data,
                               G_FILE_CREATE_NONE,
@@ -257,10 +257,9 @@ _thunar_io_jobs_create (ThunarJob  *job,
         }
       else
         {
-
           /* remember the file for possible undo */
           if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
-               thunar_job_operation_add (operation, template_file, lp->data);
+            thunar_job_operation_add (operation, template_file, lp->data);
 
           if (template_stream != NULL)
             {
@@ -322,20 +321,20 @@ thunar_io_jobs_create_files (GList *file_list,
 
 
 static gboolean
-_thunar_io_jobs_mkdir (ThunarJob  *job,
-                       GArray     *param_values,
-                       GError    **error)
+_thunar_io_jobs_mkdir (ThunarJob *job,
+                       GArray    *param_values,
+                       GError   **error)
 {
-  ThunarJobResponse       response;
-  GFileInfo              *info;
-  GError                 *err = NULL;
-  GList                  *file_list;
-  GList                  *lp;
-  gchar                  *base_name;
-  gchar                  *display_name;
+  ThunarJobResponse      response;
+  GFileInfo             *info;
+  GError                *err = NULL;
+  GList                 *file_list;
+  GList                 *lp;
+  gchar                 *base_name;
+  gchar                 *display_name;
   guint                  n_processed = 0;
-  ThunarJobOperation     *operation = NULL;
-  ThunarOperationLogMode  log_mode;
+  ThunarJobOperation    *operation = NULL;
+  ThunarOperationLogMode log_mode;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -354,14 +353,14 @@ _thunar_io_jobs_mkdir (ThunarJob  *job,
 
   for (lp = file_list;
        err == NULL && lp != NULL && !exo_job_is_cancelled (EXO_JOB (job));
-       lp = lp->next,  n_processed++)
+       lp = lp->next, n_processed++)
     {
       g_assert (G_IS_FILE (lp->data));
 
       /* update progress information */
       thunar_job_processing_file (THUNAR_JOB (job), lp, n_processed);
 
-    again:
+again:
       /* try to create the directory */
       if (!g_file_make_directory (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
         {
@@ -438,7 +437,7 @@ _thunar_io_jobs_mkdir (ThunarJob  *job,
 
       /* remember the file for possible undo */
       if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
-          thunar_job_operation_add (operation, NULL, lp->data);
+        thunar_job_operation_add (operation, NULL, lp->data);
 
     } /* end for all files */
 
@@ -483,9 +482,9 @@ thunar_io_jobs_make_directories (GList *file_list)
 
 
 static gboolean
-_thunar_io_jobs_unlink (ThunarJob  *job,
-                        GArray     *param_values,
-                        GError    **error)
+_thunar_io_jobs_unlink (ThunarJob *job,
+                        GArray    *param_values,
+                        GError   **error)
 {
   ThunarThumbnailCache *thumbnail_cache;
   ThunarApplication    *application;
@@ -546,7 +545,7 @@ _thunar_io_jobs_unlink (ThunarJob  *job,
       /* update progress information */
       thunar_job_processing_file (THUNAR_JOB (job), lp, n_processed);
 
-    again:
+again:
       /* try to delete the file */
       if (_tij_delete_file (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
         {
@@ -667,9 +666,9 @@ _thunar_io_jobs_link_file (ThunarJob *job,
                            GFile     *target_file,
                            GError   **error)
 {
-  ThunarJobResponse  response;
-  GError            *err = NULL;
-  gchar             *symlink_target;
+  ThunarJobResponse response;
+  GError           *err = NULL;
+  gchar            *symlink_target;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
   _thunar_return_val_if_fail (G_IS_FILE (source_file), NULL);
@@ -745,22 +744,22 @@ _thunar_io_jobs_link_file (ThunarJob *job,
 
 
 static gboolean
-_thunar_io_jobs_link (ThunarJob  *job,
-                      GArray     *param_values,
-                      GError    **error)
+_thunar_io_jobs_link (ThunarJob *job,
+                      GArray    *param_values,
+                      GError   **error)
 {
-  ThunarThumbnailCache   *thumbnail_cache;
-  ThunarApplication      *application;
-  GError                 *err = NULL;
-  GFile                  *real_target_file;
-  GList                  *new_files_list = NULL;
-  GList                  *source_file_list;
-  GList                  *sp;
-  GList                  *target_file_list;
-  GList                  *tp;
-  guint                   n_processed = 0;
-  ThunarJobOperation     *operation = NULL;
-  ThunarOperationLogMode  log_mode;
+  ThunarThumbnailCache  *thumbnail_cache;
+  ThunarApplication     *application;
+  GError                *err = NULL;
+  GFile                 *real_target_file;
+  GList                 *new_files_list = NULL;
+  GList                 *source_file_list;
+  GList                 *sp;
+  GList                 *target_file_list;
+  GList                 *tp;
+  guint                  n_processed = 0;
+  ThunarJobOperation    *operation = NULL;
+  ThunarOperationLogMode log_mode;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -860,18 +859,18 @@ thunar_io_jobs_link_files (GList *source_file_list,
 
 
 static gboolean
-_thunar_io_jobs_trash (ThunarJob  *job,
-                       GArray     *param_values,
-                       GError    **error)
+_thunar_io_jobs_trash (ThunarJob *job,
+                       GArray    *param_values,
+                       GError   **error)
 {
-  ThunarThumbnailCache   *thumbnail_cache;
-  ThunarApplication      *application;
-  ThunarJobOperation     *operation = NULL;
-  ThunarJobResponse       response;
-  ThunarOperationLogMode  log_mode;
-  GError                 *err = NULL;
-  GList                  *file_list;
-  GList                  *lp;
+  ThunarThumbnailCache  *thumbnail_cache;
+  ThunarApplication     *application;
+  ThunarJobOperation    *operation = NULL;
+  ThunarJobResponse      response;
+  ThunarOperationLogMode log_mode;
+  GError                *err = NULL;
+  GList                 *file_list;
+  GList                 *lp;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -914,7 +913,7 @@ _thunar_io_jobs_trash (ThunarJob  *job,
         }
 
       if (err == NULL && log_mode != THUNAR_OPERATION_LOG_NO_OPERATIONS)
-          thunar_job_operation_add (operation, lp->data, NULL);
+        thunar_job_operation_add (operation, lp->data, NULL);
 
       /* update the thumbnail cache */
       thunar_thumbnail_cache_cleanup_file (thumbnail_cache, lp->data);
@@ -978,9 +977,9 @@ thunar_io_jobs_restore_files (GList *source_file_list,
 
 
 static gboolean
-_thunar_io_jobs_chown (ThunarJob  *job,
-                       GArray     *param_values,
-                       GError    **error)
+_thunar_io_jobs_chown (ThunarJob *job,
+                       GArray    *param_values,
+                       GError   **error)
 {
   ThunarJobResponse response;
   const gchar      *message;
@@ -1036,7 +1035,7 @@ _thunar_io_jobs_chown (ThunarJob  *job,
       if (err != NULL)
         break;
 
-    retry_chown:
+retry_chown:
       if (uid >= 0)
         {
           /* try to change the owner UID */
@@ -1061,7 +1060,7 @@ _thunar_io_jobs_chown (ThunarJob  *job,
         {
           /* generate a useful error message */
           message = G_LIKELY (uid >= 0) ? _("Failed to change the owner of \"%s\": %s")
-            : _("Failed to change the group of \"%s\": %s");
+                                        : _("Failed to change the group of \"%s\": %s");
 
           /* ask the user whether to skip/retry this file */
           response = thunar_job_ask_skip (THUNAR_JOB (job), message,
@@ -1097,14 +1096,14 @@ _thunar_io_jobs_chown (ThunarJob  *job,
 
 
 ThunarJob *
-thunar_io_jobs_change_group (GList    *files,
-                             guint32   gid,
-                             gboolean  recursive)
+thunar_io_jobs_change_group (GList   *files,
+                             guint32  gid,
+                             gboolean recursive)
 {
   _thunar_return_val_if_fail (files != NULL, NULL);
 
   /* files are released when the list if destroyed */
-  g_list_foreach (files, (GFunc) (void (*)(void)) g_object_ref, NULL);
+  g_list_foreach (files, (GFunc) (void (*) (void)) g_object_ref, NULL);
 
   return thunar_simple_job_new (_thunar_io_jobs_chown, 4,
                                 THUNAR_TYPE_G_FILE_LIST, files,
@@ -1116,9 +1115,9 @@ thunar_io_jobs_change_group (GList    *files,
 
 
 static gboolean
-_thunar_io_jobs_chmod (ThunarJob  *job,
-                       GArray     *param_values,
-                       GError    **error)
+_thunar_io_jobs_chmod (ThunarJob *job,
+                       GArray    *param_values,
+                       GError   **error)
 {
   ThunarJobResponse response;
   GFileInfo        *info;
@@ -1171,9 +1170,7 @@ _thunar_io_jobs_chmod (ThunarJob  *job,
 
       /* try to query information about the file */
       info = g_file_query_info (lp->data,
-                                G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
-                                G_FILE_ATTRIBUTE_STANDARD_TYPE ","
-                                G_FILE_ATTRIBUTE_UNIX_MODE,
+                                G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME "," G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_UNIX_MODE,
                                 G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                                 exo_job_get_cancellable (EXO_JOB (job)),
                                 &err);
@@ -1181,7 +1178,7 @@ _thunar_io_jobs_chmod (ThunarJob  *job,
       if (err != NULL)
         break;
 
-    retry_chown:
+retry_chown:
       /* different actions depending on the type of the file */
       if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
         {
@@ -1260,7 +1257,7 @@ thunar_io_jobs_change_mode (GList         *files,
   _thunar_return_val_if_fail (files != NULL, NULL);
 
   /* files are released when the list if destroyed */
-  g_list_foreach (files, (GFunc) (void (*)(void)) g_object_ref, NULL);
+  g_list_foreach (files, (GFunc) (void (*) (void)) g_object_ref, NULL);
 
   return thunar_simple_job_new (_thunar_io_jobs_chmod, 6,
                                 THUNAR_TYPE_G_FILE_LIST, files,
@@ -1274,9 +1271,9 @@ thunar_io_jobs_change_mode (GList         *files,
 
 
 static gboolean
-_thunar_io_jobs_ls (ThunarJob  *job,
-                    GArray     *param_values,
-                    GError    **error)
+_thunar_io_jobs_ls (ThunarJob *job,
+                    GArray    *param_values,
+                    GError   **error)
 {
   GError *err = NULL;
   GFile  *directory;
@@ -1367,16 +1364,16 @@ _thunar_io_jobs_rename_notify (gpointer user_data)
 
 
 static gboolean
-_thunar_io_jobs_rename (ThunarJob  *job,
-                        GArray     *param_values,
-                        GError    **error)
+_thunar_io_jobs_rename (ThunarJob *job,
+                        GArray    *param_values,
+                        GError   **error)
 {
   const gchar           *display_name;
   ThunarFile            *file;
   GError                *err = NULL;
   gchar                 *old_file_uri;
   ThunarOperationLogMode log_mode;
-  ThunarJobOperation     *operation;
+  ThunarJobOperation    *operation;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -1525,12 +1522,7 @@ _thunar_search_folder (ThunarStandardViewModel           *model,
 
   cancellable = exo_job_get_cancellable (EXO_JOB (job));
   directory = g_file_new_for_uri (uri);
-  namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE ","
-              G_FILE_ATTRIBUTE_STANDARD_TARGET_URI ","
-              G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
-              G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP ","
-              G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN ","
-              G_FILE_ATTRIBUTE_STANDARD_NAME ", recent::*";
+  namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_TARGET_URI "," G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME "," G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP "," G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN "," G_FILE_ATTRIBUTE_STANDARD_NAME ", recent::*";
 
   /* The directory enumerator MUST NOT follow symlinks itself, meaning that any symlinks that
    * g_file_enumerator_next_file() emits are the actual symlink entries. This prevents one
@@ -1739,10 +1731,10 @@ ThunarJob *
 thunar_io_jobs_clear_metadata_for_files (GList *files,
                                          ...)
 {
-  va_list    list;
-  GList     *setting_names = NULL;
-  gchar     *str;
-  GList     *gfiles = NULL, *infos = NULL;
+  va_list list;
+  GList  *setting_names = NULL;
+  gchar  *str;
+  GList  *gfiles = NULL, *infos = NULL;
 
   va_start (list, files);
   str = va_arg (list, gchar *);
@@ -1771,9 +1763,9 @@ _thunar_io_jobs_set_metadata_for_files (ThunarJob *job,
                                         GArray    *param_values,
                                         GError   **error)
 {
-  GList       *gfiles, *infos;
-  ThunarGType  type;
-  GList       *setting_value_pairs;
+  GList      *gfiles, *infos;
+  ThunarGType type;
+  GList      *setting_value_pairs;
 
   gfiles = g_value_get_pointer (&g_array_index (param_values, GValue, 0));
   infos = g_value_get_pointer (&g_array_index (param_values, GValue, 1));
@@ -1813,15 +1805,15 @@ _thunar_io_jobs_set_metadata_for_files (ThunarJob *job,
  * callback.
  **/
 ThunarJob *
-thunar_io_jobs_set_metadata_for_files (GList       *files,
-                                       ThunarGType  type,
+thunar_io_jobs_set_metadata_for_files (GList      *files,
+                                       ThunarGType type,
                                        ...)
 {
-  va_list    list;
-  GList     *setting_value_pairs = NULL;
-  gchar     *str, *val;
-  gchar    **sn_val_pair;
-  GList     *gfiles = NULL, *infos = NULL;
+  va_list list;
+  GList  *setting_value_pairs = NULL;
+  gchar  *str, *val;
+  gchar **sn_val_pair;
+  GList  *gfiles = NULL, *infos = NULL;
 
   /* this func accepts a variable length setting_name, setting_value pair*/
   va_start (list, type);
@@ -1875,7 +1867,7 @@ _thunar_job_load_content_types (ThunarJob *job,
   while (g_hash_table_iter_next (&iter, &key, NULL))
     {
       gchar *content_type;
-      GFile       *g_file;
+      GFile *g_file;
 
       file = THUNAR_FILE (key);
       g_file = thunar_file_get_file (file);
@@ -1930,14 +1922,14 @@ _thunar_job_load_statusbar_text (ThunarJob *job,
   if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return FALSE;
 
-  standard_view                = g_value_get_object  (&g_array_index (param_values, GValue, 0));
-  thunar_folder                = g_value_get_object  (&g_array_index (param_values, GValue, 1));
-  thunar_files                 = g_value_get_boxed   (&g_array_index (param_values, GValue, 2));
-  show_hidden                  = g_value_get_boolean (&g_array_index (param_values, GValue, 3));
+  standard_view = g_value_get_object (&g_array_index (param_values, GValue, 0));
+  thunar_folder = g_value_get_object (&g_array_index (param_values, GValue, 1));
+  thunar_files = g_value_get_boxed (&g_array_index (param_values, GValue, 2));
+  show_hidden = g_value_get_boolean (&g_array_index (param_values, GValue, 3));
   show_file_size_binary_format = g_value_get_boolean (&g_array_index (param_values, GValue, 4));
-  date_style                   = g_value_get_enum    (&g_array_index (param_values, GValue, 5));
-  date_custom_style            = g_value_get_string  (&g_array_index (param_values, GValue, 6));
-  status_bar_active_info       = g_value_get_uint    (&g_array_index (param_values, GValue, 7));
+  date_style = g_value_get_enum (&g_array_index (param_values, GValue, 5));
+  date_custom_style = g_value_get_string (&g_array_index (param_values, GValue, 6));
+  status_bar_active_info = g_value_get_uint (&g_array_index (param_values, GValue, 7));
 
   text_for_files = thunar_util_get_statusbar_text_for_files (thunar_files,
                                                              show_hidden,
@@ -1994,10 +1986,10 @@ thunar_io_jobs_load_statusbar_text_for_folder (ThunarStandardView *standard_view
 
   preferences = thunar_preferences_get ();
   g_object_get (G_OBJECT (preferences), "last-show-hidden", &show_hidden,
-                                        "misc-date-style", &date_style,
-                                        "misc-date-custom-style", &date_custom_style,
-                                        "misc-file-size-binary", &show_file_size_binary_format,
-                                        "misc-status-bar-active-info", &status_bar_active_info, NULL);
+                "misc-date-style", &date_style,
+                "misc-date-custom-style", &date_custom_style,
+                "misc-file-size-binary", &show_file_size_binary_format,
+                "misc-status-bar-active-info", &status_bar_active_info, NULL);
 
   files = thunar_folder_get_files (folder);
   file = thunar_folder_get_corresponding_file (folder);
@@ -2038,10 +2030,10 @@ thunar_io_jobs_load_statusbar_text_for_selection (ThunarStandardView *standard_v
 
   preferences = thunar_preferences_get ();
   g_object_get (G_OBJECT (preferences), "last-show-hidden", &show_hidden,
-                                        "misc-date-style", &date_style,
-                                        "misc-date-custom-style", &date_custom_style,
-                                        "misc-file-size-binary", &show_file_size_binary_format,
-                                        "misc-status-bar-active-info", &status_bar_active_info, NULL);
+                "misc-date-style", &date_style,
+                "misc-date-custom-style", &date_custom_style,
+                "misc-file-size-binary", &show_file_size_binary_format,
+                "misc-status-bar-active-info", &status_bar_active_info, NULL);
 
   ThunarJob *job = thunar_simple_job_new (_thunar_job_load_statusbar_text, 8,
                                           THUNAR_TYPE_STANDARD_VIEW, g_object_ref (standard_view),

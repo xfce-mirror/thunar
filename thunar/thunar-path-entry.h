@@ -29,24 +29,31 @@ G_BEGIN_DECLS;
 typedef struct _ThunarPathEntryClass ThunarPathEntryClass;
 typedef struct _ThunarPathEntry      ThunarPathEntry;
 
-#define THUNAR_TYPE_PATH_ENTRY            (thunar_path_entry_get_type ())
-#define THUNAR_PATH_ENTRY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_PATH_ENTRY, ThunarPathEntry))
-#define THUNAR_PATH_ENTRY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_PATH_ENTRY, ThunarPathEntryClass))
-#define THUNAR_IS_PATH_ENTRY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_PATH_ENTRY))
+#define THUNAR_TYPE_PATH_ENTRY (thunar_path_entry_get_type ())
+#define THUNAR_PATH_ENTRY(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_PATH_ENTRY, ThunarPathEntry))
+#define THUNAR_PATH_ENTRY_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_PATH_ENTRY, ThunarPathEntryClass))
+#define THUNAR_IS_PATH_ENTRY(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_PATH_ENTRY))
 #define THUNAR_IS_PATH_ENTRY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_PATH_ENTRY))
-#define THUNAR_PATH_ENTRY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_PATH_ENTRY, ThunarPathEntryClass))
+#define THUNAR_PATH_ENTRY_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_PATH_ENTRY, ThunarPathEntryClass))
 
-GType       thunar_path_entry_get_type              (void) G_GNUC_CONST;
+GType
+thunar_path_entry_get_type (void) G_GNUC_CONST;
 
-GtkWidget  *thunar_path_entry_new                   (void);
+GtkWidget *
+thunar_path_entry_new (void);
 
-ThunarFile *thunar_path_entry_get_current_file      (ThunarPathEntry *path_entry);
-void        thunar_path_entry_set_current_file      (ThunarPathEntry *path_entry,
-                                                     ThunarFile      *current_file);
-void        thunar_path_entry_set_working_directory (ThunarPathEntry *path_entry,
-                                                     ThunarFile      *directory);
-gchar      *thunar_path_entry_get_search_query      (ThunarPathEntry *path_entry);
-void        thunar_path_entry_cancel_search         (ThunarPathEntry *path_entry);
+ThunarFile *
+thunar_path_entry_get_current_file (ThunarPathEntry *path_entry);
+void
+thunar_path_entry_set_current_file (ThunarPathEntry *path_entry,
+                                    ThunarFile      *current_file);
+void
+thunar_path_entry_set_working_directory (ThunarPathEntry *path_entry,
+                                         ThunarFile      *directory);
+gchar *
+thunar_path_entry_get_search_query (ThunarPathEntry *path_entry);
+void
+thunar_path_entry_cancel_search (ThunarPathEntry *path_entry);
 
 G_END_DECLS;
 

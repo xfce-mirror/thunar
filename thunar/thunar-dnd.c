@@ -23,15 +23,14 @@
 #include "config.h"
 #endif
 
-#include <libxfce4util/libxfce4util.h>
-
-#include "thunarx/thunarx.h"
-
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-dialogs.h"
 #include "thunar/thunar-dnd.h"
 #include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-private.h"
+#include "thunarx/thunarx.h"
+
+#include <libxfce4util/libxfce4util.h>
 
 
 
@@ -98,10 +97,10 @@ thunar_dnd_ask (GtkWidget    *widget,
   for (n = 0; n < G_N_ELEMENTS (dnd_action_items); ++n)
     if (G_LIKELY ((dnd_actions & dnd_action_items[n]) != 0))
       {
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         item = gtk_image_menu_item_new_with_mnemonic (_(dnd_action_names[n]));
-G_GNUC_END_IGNORE_DEPRECATIONS
-        g_object_set_data (G_OBJECT (item), I_("dnd-action"), GUINT_TO_POINTER (dnd_action_items[n]));
+        G_GNUC_END_IGNORE_DEPRECATIONS
+        g_object_set_data (G_OBJECT (item), I_ ("dnd-action"), GUINT_TO_POINTER (dnd_action_items[n]));
         g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (dnd_action_selected), &dnd_action);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
         gtk_widget_show (item);
@@ -110,9 +109,9 @@ G_GNUC_END_IGNORE_DEPRECATIONS
         if (G_LIKELY (dnd_action_icons[n] != NULL))
           {
             image = gtk_image_new_from_icon_name (dnd_action_icons[n], GTK_ICON_SIZE_MENU);
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+            G_GNUC_BEGIN_IGNORE_DEPRECATIONS
             gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-G_GNUC_END_IGNORE_DEPRECATIONS
+            G_GNUC_END_IGNORE_DEPRECATIONS
           }
       }
 
@@ -169,10 +168,10 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* append the cancel item */
   image = gtk_image_new_from_icon_name ("gtk-cancel", GTK_ICON_SIZE_MENU);
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+  G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   item = gtk_image_menu_item_new_with_mnemonic (_("_Cancel"));
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-G_GNUC_END_IGNORE_DEPRECATIONS
+  G_GNUC_END_IGNORE_DEPRECATIONS
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);
 
@@ -232,7 +231,7 @@ thunar_dnd_perform (GtkWidget    *widget,
       switch (action)
         {
         case GDK_ACTION_COPY:
-          thunar_application_copy_into (application, widget, file_list, thunar_file_get_file (file), THUNAR_OPERATION_LOG_OPERATIONS,  new_files_closure);
+          thunar_application_copy_into (application, widget, file_list, thunar_file_get_file (file), THUNAR_OPERATION_LOG_OPERATIONS, new_files_closure);
           break;
 
         case GDK_ACTION_MOVE:
@@ -259,8 +258,7 @@ thunar_dnd_perform (GtkWidget    *widget,
             in_terminal = TRUE;
         }
 
-      if (ask_execute_response == THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN_IN_TERMINAL ||
-          ask_execute_response == THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN)
+      if (ask_execute_response == THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN_IN_TERMINAL || ask_execute_response == THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN)
         {
           /* TODO any chance to determine the working dir here? */
           succeed = thunar_file_execute (file, NULL, widget, in_terminal, file_list, NULL, &error);
@@ -287,6 +285,3 @@ thunar_dnd_perform (GtkWidget    *widget,
 
   return succeed;
 }
-
-
-

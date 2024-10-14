@@ -22,14 +22,14 @@
 #include "config.h"
 #endif
 
-#include <gio/gio.h>
-
 #include "thunar/thunar-gio-extensions.h"
 #include "thunar/thunar-io-jobs-util.h"
 #include "thunar/thunar-io-scan-directory.h"
 #include "thunar/thunar-job.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-util.h"
+
+#include <gio/gio.h>
 
 
 
@@ -53,19 +53,19 @@
  * Return value: the #GFile referencing the @n<!---->th copy or link
  *               of @file or %NULL on error/cancellation.
  **/
-GFile*
-thunar_io_jobs_util_next_duplicate_file (ThunarJob               *job,
-                                         GFile                   *file,
-                                         ThunarNextFileNameMode   name_mode,
-                                         GError                 **error)
+GFile *
+thunar_io_jobs_util_next_duplicate_file (ThunarJob             *job,
+                                         GFile                 *file,
+                                         ThunarNextFileNameMode name_mode,
+                                         GError               **error)
 {
-  GError      *err = NULL;
-  GFile       *duplicate_file = NULL;
-  GFile       *parent_file = NULL;
-  GList       *file_list;
-  ThunarFile  *thunar_file;
-  gchar       *old_filename;
-  gchar       *filename;
+  GError     *err = NULL;
+  GFile      *duplicate_file = NULL;
+  GFile      *parent_file = NULL;
+  GList      *file_list;
+  ThunarFile *thunar_file;
+  gchar      *old_filename;
+  gchar      *filename;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
@@ -132,14 +132,14 @@ thunar_io_jobs_util_next_renamed_file (ThunarJob *job,
                                        guint      n,
                                        GError   **error)
 {
-  GFileInfo   *info;
-  GError      *err = NULL;
-  GFile       *renamed_file = NULL;
-  GFile       *parent_file = NULL;
-  gchar       *old_filename;
-  gchar       *filename;
-  gchar       *file_basename;
-  gchar       *extension = NULL;
+  GFileInfo *info;
+  GError    *err = NULL;
+  GFile     *renamed_file = NULL;
+  GFile     *parent_file = NULL;
+  gchar     *old_filename;
+  gchar     *filename;
+  gchar     *file_basename;
+  gchar     *extension = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
   _thunar_return_val_if_fail (G_IS_FILE (src_file), NULL);
@@ -154,8 +154,7 @@ thunar_io_jobs_util_next_renamed_file (ThunarJob *job,
     return NULL;
 
   /* query the source file info / display name */
-  info = g_file_query_info (src_file, G_FILE_ATTRIBUTE_STANDARD_TYPE ","
-                            G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
+  info = g_file_query_info (src_file, G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
                             G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                             exo_job_get_cancellable (EXO_JOB (job)), &err);
 
@@ -176,7 +175,7 @@ thunar_io_jobs_util_next_renamed_file (ThunarJob *job,
       file_basename = g_strndup (old_filename, extension - old_filename);
       /* I18N: put " (copy #)" between basename and extension */
       filename = g_strdup_printf (_("%s (copy %u)%s"), file_basename, n, extension);
-      g_free(file_basename);
+      g_free (file_basename);
     }
   else
     {

@@ -36,15 +36,21 @@ enum
 
 
 
-static void     thunar_renamer_progress_finalize          (GObject               *object);
-static void     thunar_renamer_progress_destroy           (GtkWidget             *object);
-static gboolean thunar_renamer_progress_next_idle         (gpointer               user_data);
-static void     thunar_renamer_progress_next_idle_destroy (gpointer               user_data);
-static void     thunar_renamer_progress_run_helper        (ThunarRenamerProgress *renamer_progress,
-                                                           GList                 *pairs);
-static void     thunar_renamer_progress_run_error_dialog  (ThunarRenamerProgress *renamer_progress,
-                                                           ThunarRenamerPair     *pair,
-                                                           GError                *error);
+static void
+thunar_renamer_progress_finalize (GObject *object);
+static void
+thunar_renamer_progress_destroy (GtkWidget *object);
+static gboolean
+thunar_renamer_progress_next_idle (gpointer user_data);
+static void
+thunar_renamer_progress_next_idle_destroy (gpointer user_data);
+static void
+thunar_renamer_progress_run_helper (ThunarRenamerProgress *renamer_progress,
+                                    GList                 *pairs);
+static void
+thunar_renamer_progress_run_error_dialog (ThunarRenamerProgress *renamer_progress,
+                                          ThunarRenamerPair     *pair,
+                                          GError                *error);
 
 
 
@@ -58,19 +64,19 @@ struct _ThunarRenamerProgress
   GtkAlignment __parent__;
   GtkWidget   *bar;
 
-  GList       *pairs_renamed_current_run; /* list of pairs renamed in a given run */
-  GList       *pairs_renamed_all_runs;    /* list of pairs renamed across all runs */
-  GList       *pairs_failed_current_run;
-  GList       *pairs_pending_current_run;
-  gboolean     show_dialog_on_error;
-  gboolean     pairs_undo;                /* whether we're undoing previous changes */
+  GList   *pairs_renamed_current_run; /* list of pairs renamed in a given run */
+  GList   *pairs_renamed_all_runs;    /* list of pairs renamed across all runs */
+  GList   *pairs_failed_current_run;
+  GList   *pairs_pending_current_run;
+  gboolean show_dialog_on_error;
+  gboolean pairs_undo; /* whether we're undoing previous changes */
 
   /* the user may cancel the renaming operation while there are still failed pairs and runs remaining */
-  gboolean     cancel_all_remaining_runs;
+  gboolean cancel_all_remaining_runs;
 
   /* internal main loop for the _rename() method */
-  guint        next_idle_id;
-  GMainLoop   *next_idle_loop;
+  guint      next_idle_id;
+  GMainLoop *next_idle_loop;
 };
 
 
@@ -149,7 +155,7 @@ thunar_renamer_progress_run_error_dialog (ThunarRenamerProgress *renamer_progres
   GtkWidget *message;
   gint       response;
 
-  if (g_strcmp0(thunar_file_get_display_name (pair->file), thunar_file_get_basename (pair->file)) != 0)
+  if (g_strcmp0 (thunar_file_get_display_name (pair->file), thunar_file_get_basename (pair->file)) != 0)
     oldname = g_strconcat (thunar_file_get_display_name (pair->file), " (", thunar_file_get_basename (pair->file), ")", NULL);
   else
     oldname = g_strdup (thunar_file_get_display_name (pair->file));
@@ -307,7 +313,7 @@ thunar_renamer_progress_next_idle_destroy (gpointer user_data)
  *
  * Return value: the newly allocated #ThunarRenamerProgress.
  **/
-GtkWidget*
+GtkWidget *
 thunar_renamer_progress_new (void)
 {
   return g_object_new (THUNAR_TYPE_RENAMER_PROGRESS, NULL);
@@ -372,7 +378,7 @@ thunar_renamer_progress_run_helper (ThunarRenamerProgress *renamer_progress,
 
   /* make sure we're not already renaming */
   if (G_UNLIKELY (renamer_progress->next_idle_id != 0
-      || renamer_progress->next_idle_loop != NULL))
+                  || renamer_progress->next_idle_loop != NULL))
     return;
 
   /* make sure to release the list of completed items */
@@ -435,7 +441,7 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
 
   /* make sure we're not already renaming */
   if (G_UNLIKELY (renamer_progress->next_idle_id != 0
-      || renamer_progress->next_idle_loop != NULL))
+                  || renamer_progress->next_idle_loop != NULL))
     return;
 
   /* take an additional reference on the progress */
@@ -487,5 +493,3 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
   /* release the additional reference on the progress */
   g_object_unref (G_OBJECT (renamer_progress));
 }
-
-

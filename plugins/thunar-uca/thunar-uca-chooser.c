@@ -22,36 +22,45 @@
 #include <config.h>
 #endif
 
-#include <glib/gi18n-lib.h>
-
 #include <gdk/gdkkeysyms.h>
-
+#include <glib/gi18n-lib.h>
 #include <thunar-uca/thunar-uca-chooser.h>
 #include <thunar-uca/thunar-uca-editor.h>
 #include <thunar-uca/thunar-uca-model.h>
 
 
 
-static gboolean thunar_uca_chooser_key_press_event    (GtkWidget              *widget,
-                                                       GdkEventKey            *event);
-static void     thunar_uca_chooser_response           (GtkDialog              *dialog,
-                                                       gint                    response);
-static void     thunar_uca_chooser_exchange           (ThunarUcaChooser       *uca_chooser,
-                                                       GtkTreeSelection       *selection,
-                                                       GtkTreeModel           *model,
-                                                       GtkTreeIter            *iter_a,
-                                                       GtkTreeIter            *iter_b);
-static void     thunar_uca_chooser_open_editor        (ThunarUcaChooser       *uca_chooser,
-                                                       gboolean                edit);
-static void     thunar_uca_chooser_save               (ThunarUcaChooser       *uca_chooser,
-                                                       ThunarUcaModel         *uca_model);
-static void     thunar_uca_chooser_selection_changed  (ThunarUcaChooser       *uca_chooser,
-                                                       GtkTreeSelection       *selection);
-static void     thunar_uca_chooser_add_clicked        (ThunarUcaChooser       *uca_chooser);
-static void     thunar_uca_chooser_edit_clicked       (ThunarUcaChooser       *uca_chooser);
-static void     thunar_uca_chooser_delete_clicked     (ThunarUcaChooser       *uca_chooser);
-static void     thunar_uca_chooser_up_clicked         (ThunarUcaChooser       *uca_chooser);
-static void     thunar_uca_chooser_down_clicked       (ThunarUcaChooser       *uca_chooser);
+static gboolean
+thunar_uca_chooser_key_press_event (GtkWidget   *widget,
+                                    GdkEventKey *event);
+static void
+thunar_uca_chooser_response (GtkDialog *dialog,
+                             gint       response);
+static void
+thunar_uca_chooser_exchange (ThunarUcaChooser *uca_chooser,
+                             GtkTreeSelection *selection,
+                             GtkTreeModel     *model,
+                             GtkTreeIter      *iter_a,
+                             GtkTreeIter      *iter_b);
+static void
+thunar_uca_chooser_open_editor (ThunarUcaChooser *uca_chooser,
+                                gboolean          edit);
+static void
+thunar_uca_chooser_save (ThunarUcaChooser *uca_chooser,
+                         ThunarUcaModel   *uca_model);
+static void
+thunar_uca_chooser_selection_changed (ThunarUcaChooser *uca_chooser,
+                                      GtkTreeSelection *selection);
+static void
+thunar_uca_chooser_add_clicked (ThunarUcaChooser *uca_chooser);
+static void
+thunar_uca_chooser_edit_clicked (ThunarUcaChooser *uca_chooser);
+static void
+thunar_uca_chooser_delete_clicked (ThunarUcaChooser *uca_chooser);
+static void
+thunar_uca_chooser_up_clicked (ThunarUcaChooser *uca_chooser);
+static void
+thunar_uca_chooser_down_clicked (ThunarUcaChooser *uca_chooser);
 
 
 
@@ -64,12 +73,12 @@ struct _ThunarUcaChooser
 {
   GtkDialog __parent__;
 
-  GtkWidget   *treeview;
-  GtkWidget   *add_button;
-  GtkWidget   *edit_button;
-  GtkWidget   *delete_button;
-  GtkWidget   *up_button;
-  GtkWidget   *down_button;
+  GtkWidget *treeview;
+  GtkWidget *add_button;
+  GtkWidget *edit_button;
+  GtkWidget *delete_button;
+  GtkWidget *up_button;
+  GtkWidget *down_button;
 };
 
 
@@ -101,12 +110,12 @@ thunar_uca_chooser_class_init (ThunarUcaChooserClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ThunarUcaChooser, up_button);
   gtk_widget_class_bind_template_child (widget_class, ThunarUcaChooser, down_button);
 
-  gtk_widget_class_bind_template_callback(widget_class, thunar_uca_chooser_add_clicked);
-  gtk_widget_class_bind_template_callback(widget_class, thunar_uca_chooser_edit_clicked);
-  gtk_widget_class_bind_template_callback(widget_class, thunar_uca_chooser_delete_clicked);
-  gtk_widget_class_bind_template_callback(widget_class, thunar_uca_chooser_up_clicked);
-  gtk_widget_class_bind_template_callback(widget_class, thunar_uca_chooser_down_clicked);
-  gtk_widget_class_bind_template_callback(widget_class, thunar_uca_chooser_selection_changed);
+  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_chooser_add_clicked);
+  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_chooser_edit_clicked);
+  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_chooser_delete_clicked);
+  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_chooser_up_clicked);
+  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_chooser_down_clicked);
+  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_chooser_selection_changed);
 }
 
 
@@ -371,8 +380,7 @@ thunar_uca_chooser_delete_clicked (ThunarUcaChooser *uca_chooser)
                                        _("Are you sure that you want to delete\naction \"%s\"?"), name);
       gtk_window_set_title (GTK_WINDOW (dialog), _("Delete action"));
       gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("If you delete a custom action, it is permanently lost."));
-      gtk_dialog_add_buttons (GTK_DIALOG (dialog), _("_Cancel"), GTK_RESPONSE_CANCEL,
-                              _("_Delete"), GTK_RESPONSE_YES, NULL);
+      gtk_dialog_add_buttons (GTK_DIALOG (dialog), _("_Cancel"), GTK_RESPONSE_CANCEL, _("_Delete"), GTK_RESPONSE_YES, NULL);
       gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
       g_free (name);
       response = gtk_dialog_run (GTK_DIALOG (dialog));
@@ -444,7 +452,3 @@ thunar_uca_chooser_down_clicked (ThunarUcaChooser *uca_chooser)
         thunar_uca_chooser_exchange (uca_chooser, selection, model, &iter_a, &iter_b);
     }
 }
-
-
-
-

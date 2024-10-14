@@ -22,16 +22,16 @@
 #include "config.h"
 #endif
 
-#include <glib/gi18n-lib.h>
-
-#include <libxfce4util/libxfce4util.h>
-
 #include "thunarx/thunarx-private.h"
 #include "thunarx/thunarx-provider-plugin.h"
 
+#include <glib/gi18n-lib.h>
+#include <libxfce4util/libxfce4util.h>
 
 
-static void thunarx_provider_plugin_class_init (gpointer klass);
+
+static void
+thunarx_provider_plugin_class_init (gpointer klass);
 
 /**
  * SECTION: thunarx-provider-plugin
@@ -53,9 +53,9 @@ thunarx_provider_plugin_get_type (void)
   if (g_once_init_enter (&type__static))
     {
       type = g_type_register_static_simple (G_TYPE_INTERFACE,
-                                            I_("ThunarxProviderPlugin"),
+                                            I_ ("ThunarxProviderPlugin"),
                                             sizeof (ThunarxProviderPluginIface),
-                                            (GClassInitFunc) (void (*)(void)) thunarx_provider_plugin_class_init,
+                                            (GClassInitFunc) (void (*) (void)) thunarx_provider_plugin_class_init,
                                             0,
                                             NULL,
                                             0);
@@ -81,7 +81,7 @@ thunarx_provider_plugin_class_init (gpointer klass)
   g_object_interface_install_property (klass,
                                        g_param_spec_boolean ("resident",
                                                              _("Resident"),
-                                                             _("Don't unload the plugin from memory"),
+                                                               _("Don't unload the plugin from memory"),
                                                              FALSE,
                                                              G_PARAM_READWRITE));
 }

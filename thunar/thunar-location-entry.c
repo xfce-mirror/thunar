@@ -23,12 +23,9 @@
 #include "config.h"
 #endif
 
-#include <gdk/gdkkeysyms.h>
-
-#include <libxfce4util/libxfce4util.h>
-
 #include "thunar/thunar-browser.h"
 #include "thunar/thunar-dialogs.h"
+#include "thunar/thunar-folder.h"
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-icon-factory.h"
@@ -38,8 +35,10 @@
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-shortcuts-model.h"
 #include "thunar/thunar-util.h"
-#include "thunar/thunar-folder.h"
 #include "thunar/thunar-window.h"
+
+#include <gdk/gdkkeysyms.h>
+#include <libxfce4util/libxfce4util.h>
 
 
 
@@ -52,26 +51,36 @@ enum
 
 
 
-static void        thunar_location_entry_navigator_init           (ThunarNavigatorIface     *iface);
-static void        thunar_location_entry_finalize                 (GObject                  *object);
-static void        thunar_location_entry_get_property             (GObject                  *object,
-                                                                   guint                     prop_id,
-                                                                   GValue                   *value,
-                                                                   GParamSpec               *pspec);
-static void        thunar_location_entry_set_property             (GObject                  *object,
-                                                                   guint                     prop_id,
-                                                                   const GValue             *value,
-                                                                   GParamSpec               *pspec);
-static ThunarFile *thunar_location_entry_get_current_directory    (ThunarNavigator          *navigator);
-static void        thunar_location_entry_set_current_directory    (ThunarNavigator          *navigator,
-                                                                   ThunarFile               *current_directory);
-static void        thunar_location_entry_activate                 (GtkWidget                *path_entry,
-                                                                   ThunarLocationEntry      *location_entry);
-static gboolean    thunar_location_entry_button_press_event       (GtkWidget                *path_entry,
-                                                                   GdkEventButton           *event,
-                                                                   ThunarLocationEntry      *location_entry);
-static gboolean    thunar_location_entry_reset                    (ThunarLocationEntry      *location_entry);
-static void        thunar_location_entry_emit_edit_done           (ThunarLocationEntry      *entry);
+static void
+thunar_location_entry_navigator_init (ThunarNavigatorIface *iface);
+static void
+thunar_location_entry_finalize (GObject *object);
+static void
+thunar_location_entry_get_property (GObject    *object,
+                                    guint       prop_id,
+                                    GValue     *value,
+                                    GParamSpec *pspec);
+static void
+thunar_location_entry_set_property (GObject      *object,
+                                    guint         prop_id,
+                                    const GValue *value,
+                                    GParamSpec   *pspec);
+static ThunarFile *
+thunar_location_entry_get_current_directory (ThunarNavigator *navigator);
+static void
+thunar_location_entry_set_current_directory (ThunarNavigator *navigator,
+                                             ThunarFile      *current_directory);
+static void
+thunar_location_entry_activate (GtkWidget           *path_entry,
+                                ThunarLocationEntry *location_entry);
+static gboolean
+thunar_location_entry_button_press_event (GtkWidget           *path_entry,
+                                          GdkEventButton      *event,
+                                          ThunarLocationEntry *location_entry);
+static gboolean
+thunar_location_entry_reset (ThunarLocationEntry *location_entry);
+static void
+thunar_location_entry_emit_edit_done (ThunarLocationEntry *entry);
 
 
 
@@ -83,17 +92,17 @@ struct _ThunarLocationEntryClass
   gboolean (*reset) (ThunarLocationEntry *location_entry);
 
   /* externally visible signals */
-  void (*edit_done)     (void);
+  void (*edit_done) (void);
 };
 
 struct _ThunarLocationEntry
 {
   GtkHBox __parent__;
 
-  ThunarFile   *current_directory;
-  GtkWidget    *path_entry;
+  ThunarFile *current_directory;
+  GtkWidget  *path_entry;
 
-  gboolean      right_click_occurred;
+  gboolean right_click_occurred;
 };
 
 
@@ -128,7 +137,7 @@ thunar_location_entry_class_init (ThunarLocationEntryClass *klass)
    * reset the @location_entry contents to the current directory.
    * This is an internal signal used to bind the action to keys.
    **/
-  g_signal_new (I_("reset"),
+  g_signal_new (I_ ("reset"),
                 G_TYPE_FROM_CLASS (klass),
                 G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
                 G_STRUCT_OFFSET (ThunarLocationEntryClass, reset),
@@ -246,7 +255,7 @@ thunar_location_entry_set_property (GObject      *object,
 
 
 
-static ThunarFile*
+static ThunarFile *
 thunar_location_entry_get_current_directory (ThunarNavigator *navigator)
 {
   return THUNAR_LOCATION_ENTRY (navigator)->current_directory;
@@ -499,11 +508,8 @@ thunar_location_entry_cancel_search (ThunarLocationEntry *entry)
  *
  * It's the responsibility of the caller to free the returned string using `g_free`.
  **/
-gchar*
+gchar *
 thunar_location_entry_get_search_query (ThunarLocationEntry *entry)
 {
   return thunar_path_entry_get_search_query (THUNAR_PATH_ENTRY (entry->path_entry));
 }
-
-
-

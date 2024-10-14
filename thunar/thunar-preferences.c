@@ -146,20 +146,25 @@ enum
 
 
 
-static void     thunar_preferences_finalize           (GObject                *object);
-static void     thunar_preferences_get_property       (GObject                *object,
-                                                       guint                   prop_id,
-                                                       GValue                 *value,
-                                                       GParamSpec             *pspec);
-static void     thunar_preferences_set_property       (GObject                *object,
-                                                       guint                   prop_id,
-                                                       const GValue           *value,
-                                                       GParamSpec             *pspec);
-static void     thunar_preferences_prop_changed       (XfconfChannel          *channel,
-                                                       const gchar            *prop_name,
-                                                       const GValue           *value,
-                                                       ThunarPreferences      *preferences);
-static void     thunar_preferences_load_rc_file       (ThunarPreferences      *preferences);
+static void
+thunar_preferences_finalize (GObject *object);
+static void
+thunar_preferences_get_property (GObject    *object,
+                                 guint       prop_id,
+                                 GValue     *value,
+                                 GParamSpec *pspec);
+static void
+thunar_preferences_set_property (GObject      *object,
+                                 guint         prop_id,
+                                 const GValue *value,
+                                 GParamSpec   *pspec);
+static void
+thunar_preferences_prop_changed (XfconfChannel     *channel,
+                                 const gchar       *prop_name,
+                                 const GValue      *value,
+                                 ThunarPreferences *preferences);
+static void
+thunar_preferences_load_rc_file (ThunarPreferences *preferences);
 
 
 
@@ -174,7 +179,7 @@ struct _ThunarPreferences
 
   XfconfChannel *channel;
 
-  gulong         property_changed_id;
+  gulong property_changed_id;
 };
 
 
@@ -188,7 +193,9 @@ G_DEFINE_TYPE (ThunarPreferences, thunar_preferences, G_TYPE_OBJECT)
 
 
 
-static GParamSpec *preferences_props[N_PROPERTIES] = { NULL, };
+static GParamSpec *preferences_props[N_PROPERTIES] = {
+  NULL,
+};
 
 
 
@@ -210,11 +217,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * last selected view from the "last-view" preference.
    **/
   preferences_props[PROP_DEFAULT_VIEW] =
-      g_param_spec_string ("default-view",
-                           "DefaultView",
-                           NULL,
-                           "void",
-                           EXO_PARAM_READWRITE);
+  g_param_spec_string ("default-view",
+                       "DefaultView",
+                       NULL,
+                       "void",
+                       EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:hidden-bookmarks:
@@ -223,11 +230,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * If an URI is not in the bookmarks file it will be removed from this list.
    **/
   preferences_props[PROP_HIDDEN_BOOKMARKS] =
-      g_param_spec_boxed ("hidden-bookmarks",
-                          NULL,
-                          NULL,
-                          G_TYPE_STRV,
-                          EXO_PARAM_READWRITE);
+  g_param_spec_boxed ("hidden-bookmarks",
+                      NULL,
+                      NULL,
+                      G_TYPE_STRV,
+                      EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:hidden-devices:
@@ -237,11 +244,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * thunar_device_get_hidden().
    **/
   preferences_props[PROP_HIDDEN_DEVICES] =
-      g_param_spec_boxed ("hidden-devices",
-                          NULL,
-                          NULL,
-                          G_TYPE_STRV,
-                          EXO_PARAM_READWRITE);
+  g_param_spec_boxed ("hidden-devices",
+                      NULL,
+                      NULL,
+                      G_TYPE_STRV,
+                      EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-restore-tabs:
@@ -249,11 +256,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * %TRUE to restore the tabs as they were before closing Thunar.
    **/
   preferences_props[PROP_LAST_RESTORE_TABS] =
-      g_param_spec_boolean ("last-restore-tabs",
-                            "LastRestoreTabs",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("last-restore-tabs",
+                        "LastRestoreTabs",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-tabs-left:
@@ -262,11 +269,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * of the last program exit. This preference holds the tabs of the default view (or the left split-view).
    **/
   preferences_props[PROP_LAST_TABS_LEFT] =
-      g_param_spec_boxed ("last-tabs-left",
-                          NULL,
-                          NULL,
-                          G_TYPE_STRV,
-                          EXO_PARAM_READWRITE);
+  g_param_spec_boxed ("last-tabs-left",
+                      NULL,
+                      NULL,
+                      G_TYPE_STRV,
+                      EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-tabs-right:
@@ -275,11 +282,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * of the last program exit. This preference holds the tabs of the right split-view.
    **/
   preferences_props[PROP_LAST_TABS_RIGHT] =
-        g_param_spec_boxed ("last-tabs-right",
-                            NULL,
-                            NULL,
-                            G_TYPE_STRV,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boxed ("last-tabs-right",
+                      NULL,
+                      NULL,
+                      G_TYPE_STRV,
+                      EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-focused-tab-left:
@@ -287,11 +294,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * The index (starting from 0) of the last focused tab in left split-view
    **/
   preferences_props[PROP_LAST_FOCUSED_TAB_LEFT] =
-      g_param_spec_int ("last-focused-tab-left",
-                         "LastFocusedTabLeft",
-                         NULL,
-                         0, G_MAXINT, 0,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_int ("last-focused-tab-left",
+                    "LastFocusedTabLeft",
+                    NULL,
+                    0, G_MAXINT, 0,
+                    EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-focused-tab-right:
@@ -299,11 +306,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * The index (starting from 0) of the last focused tab in right split-view
    **/
   preferences_props[PROP_LAST_FOCUSED_TAB_RIGHT] =
-      g_param_spec_int ("last-focused-tab-right",
-                         "LastFocusedTabRight",
-                         NULL,
-                         0, G_MAXINT, 0,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_int ("last-focused-tab-right",
+                    "LastFocusedTabRight",
+                    NULL,
+                    0, G_MAXINT, 0,
+                    EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-compact-view-zoom-level:
@@ -311,12 +318,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * The last selected #ThunarZoomLevel for the #ThunarCompactView.
    **/
   preferences_props[PROP_LAST_COMPACT_VIEW_ZOOM_LEVEL] =
-      g_param_spec_enum ("last-compact-view-zoom-level",
-                         "LastCompactViewZoomLevel",
-                         NULL,
-                         THUNAR_TYPE_ZOOM_LEVEL,
-                         THUNAR_ZOOM_LEVEL_25_PERCENT,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_enum ("last-compact-view-zoom-level",
+                     "LastCompactViewZoomLevel",
+                     NULL,
+                     THUNAR_TYPE_ZOOM_LEVEL,
+                     THUNAR_ZOOM_LEVEL_25_PERCENT,
+                     EXO_PARAM_READWRITE);
 
 
   /**
@@ -326,11 +333,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * columns in the #ThunarDetailsView.
    **/
   preferences_props[PROP_LAST_DETAILS_VIEW_COLUMN_ORDER] =
-      g_param_spec_string ("last-details-view-column-order",
-                           "LastDetailsViewColumnOrder",
-                           NULL,
-                           "THUNAR_COLUMN_NAME,THUNAR_COLUMN_SIZE,THUNAR_COLUMN_SIZE_IN_BYTES,THUNAR_COLUMN_TYPE,THUNAR_COLUMN_DATE_MODIFIED",
-                           EXO_PARAM_READWRITE);
+  g_param_spec_string ("last-details-view-column-order",
+                       "LastDetailsViewColumnOrder",
+                       NULL,
+                       "THUNAR_COLUMN_NAME,THUNAR_COLUMN_SIZE,THUNAR_COLUMN_SIZE_IN_BYTES,THUNAR_COLUMN_TYPE,THUNAR_COLUMN_DATE_MODIFIED",
+                       EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-details-view-column-widths:
@@ -339,11 +346,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * #ThunarDetailsView<!---->s.
    **/
   preferences_props[PROP_LAST_DETAILS_VIEW_COLUMN_WIDTHS] =
-      g_param_spec_string ("last-details-view-column-widths",
-                           "LastDetailsViewColumnWidths",
-                           NULL,
-                           "",
-                           EXO_PARAM_READWRITE);
+  g_param_spec_string ("last-details-view-column-widths",
+                       "LastDetailsViewColumnWidths",
+                       NULL,
+                       "",
+                       EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-details-view-fixed-columns:
@@ -352,11 +359,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * column widths will be automatically determined from the model contents.
    **/
   preferences_props[PROP_LAST_DETAILS_VIEW_FIXED_COLUMNS] =
-      g_param_spec_boolean ("last-details-view-fixed-columns",
-                            "LastDetailsViewFixedColumns",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("last-details-view-fixed-columns",
+                        "LastDetailsViewFixedColumns",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-details-view-visible-columns:
@@ -364,11 +371,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * The comma separated list of visible columns in the #ThunarDetailsView.
    **/
   preferences_props[PROP_LAST_DETAILS_VIEW_VISIBLE_COLUMNS] =
-      g_param_spec_string ("last-details-view-visible-columns",
-                           "LastDetailsViewVisibleColumns",
-                           NULL,
-                           "THUNAR_COLUMN_DATE_MODIFIED,THUNAR_COLUMN_NAME,THUNAR_COLUMN_SIZE,THUNAR_COLUMN_TYPE",
-                           EXO_PARAM_READWRITE);
+  g_param_spec_string ("last-details-view-visible-columns",
+                       "LastDetailsViewVisibleColumns",
+                       NULL,
+                       "THUNAR_COLUMN_DATE_MODIFIED,THUNAR_COLUMN_NAME,THUNAR_COLUMN_SIZE,THUNAR_COLUMN_TYPE",
+                       EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-details-view-zoom-level:
@@ -376,12 +383,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * The last selected #ThunarZoomLevel for the #ThunarDetailsView.
    **/
   preferences_props[PROP_LAST_DETAILS_VIEW_ZOOM_LEVEL] =
-      g_param_spec_enum ("last-details-view-zoom-level",
-                         "LastDetailsViewZoomLevel",
-                         NULL,
-                         THUNAR_TYPE_ZOOM_LEVEL,
-                         THUNAR_ZOOM_LEVEL_38_PERCENT,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_enum ("last-details-view-zoom-level",
+                     "LastDetailsViewZoomLevel",
+                     NULL,
+                     THUNAR_TYPE_ZOOM_LEVEL,
+                     THUNAR_ZOOM_LEVEL_38_PERCENT,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-icon-view-zoom-level:
@@ -389,12 +396,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * The last selected #ThunarZoomLevel for the #ThunarIconView.
    **/
   preferences_props[PROP_LAST_ICON_VIEW_ZOOM_LEVEL] =
-      g_param_spec_enum ("last-icon-view-zoom-level",
-                         "LastIconViewZoomLevel",
-                         NULL,
-                         THUNAR_TYPE_ZOOM_LEVEL,
-                         THUNAR_ZOOM_LEVEL_100_PERCENT,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_enum ("last-icon-view-zoom-level",
+                     "LastIconViewZoomLevel",
+                     NULL,
+                     THUNAR_TYPE_ZOOM_LEVEL,
+                     THUNAR_ZOOM_LEVEL_100_PERCENT,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-location-bar:
@@ -404,11 +411,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * location bar.
    **/
   preferences_props[PROP_LAST_LOCATION_BAR] =
-      g_param_spec_string ("last-location-bar",
-                           "LastLocationBar",
-                           NULL,
-                           "ThunarLocationEntry",
-                           EXO_PARAM_READWRITE);
+  g_param_spec_string ("last-location-bar",
+                       "LastLocationBar",
+                       NULL,
+                       "ThunarLocationEntry",
+                       EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-menubar-visible:
@@ -416,11 +423,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Whether to display a menubar in new windows by default.
    **/
   preferences_props[PROP_LAST_MENUBAR_VISIBLE] =
-      g_param_spec_boolean ("last-menubar-visible",
-                            "LastMenubarVisible",
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("last-menubar-visible",
+                        "LastMenubarVisible",
+                        NULL,
+                        TRUE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-separator-position:
@@ -429,11 +436,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * which separates the side pane from the main view.
    **/
   preferences_props[PROP_LAST_SEPARATOR_POSITION] =
-      g_param_spec_int ("last-separator-position",
-                        "LastSeparatorPosition",
-                        NULL,
-                        0, G_MAXINT, 170,
-                        EXO_PARAM_READWRITE);
+  g_param_spec_int ("last-separator-position",
+                    "LastSeparatorPosition",
+                    NULL,
+                    0, G_MAXINT, 170,
+                    EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-splitview-separator-position:
@@ -442,11 +449,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * which separates the notebooks in split-view.
    **/
   preferences_props[PROP_LAST_SPLITVIEW_SEPARATOR_POSITION] =
-      g_param_spec_int ("last-splitview-separator-position",
-                        "LastSplitviewSeparatorPosition",
-                        NULL,
-                        -1, G_MAXINT, -1,
-                        EXO_PARAM_READWRITE);
+  g_param_spec_int ("last-splitview-separator-position",
+                    "LastSplitviewSeparatorPosition",
+                    NULL,
+                    -1, G_MAXINT, -1,
+                    EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-show-hidden:
@@ -454,11 +461,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Whether to show hidden files by default in new windows.
    **/
   preferences_props[PROP_LAST_SHOW_HIDDEN] =
-      g_param_spec_boolean ("last-show-hidden",
-                            "LastShowHidden",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("last-show-hidden",
+                        "LastShowHidden",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-toolbar-visible-buttons:
@@ -469,12 +476,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    *
    * This property is only read during the migration to "last-toolbar-items".
    **/
-    preferences_props[PROP_LAST_TOOLBAR_VISIBLE_BUTTONS] =
-        g_param_spec_string ("last-toolbar-visible-buttons",
-                             "LastToolbarVisibleButtons",
-                             NULL,
-                             NULL,
-                             EXO_PARAM_READABLE);
+  preferences_props[PROP_LAST_TOOLBAR_VISIBLE_BUTTONS] =
+  g_param_spec_string ("last-toolbar-visible-buttons",
+                       "LastToolbarVisibleButtons",
+                       NULL,
+                       NULL,
+                       EXO_PARAM_READABLE);
 
   /**
    * ThunarPreferences:last-toolbar-item-order:
@@ -483,12 +490,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    *
    * This property is only read during the migration to "last-toolbar-items".
    **/
-    preferences_props[PROP_LAST_TOOLBAR_ITEM_ORDER] =
-        g_param_spec_string ("last-toolbar-item-order",
-                             "LastToolbarItemOrder",
-                             NULL,
-                             NULL,
-                             EXO_PARAM_READABLE);
+  preferences_props[PROP_LAST_TOOLBAR_ITEM_ORDER] =
+  g_param_spec_string ("last-toolbar-item-order",
+                       "LastToolbarItemOrder",
+                       NULL,
+                       NULL,
+                       EXO_PARAM_READABLE);
 
   /**
    * ThunarPreferences:misc-directory-specific-settings:
@@ -496,11 +503,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Whether to use directory specific settings.
    **/
   preferences_props[PROP_MISC_DIRECTORY_SPECIFIC_SETTINGS] =
-      g_param_spec_boolean ("misc-directory-specific-settings",
-                            "MiscDirectorySpecificSettings",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-directory-specific-settings",
+                        "MiscDirectorySpecificSettings",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-side-pane:
@@ -508,12 +515,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * The side pane type which should be used.
    **/
   preferences_props[PROP_LAST_SIDE_PANE] =
-      g_param_spec_enum ("last-side-pane",
-                         "LastSidePane",
-                         NULL,
-                         THUNAR_TYPE_SIDEPANE_TYPE,
-                         THUNAR_SIDEPANE_TYPE_SHORTCUTS,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_enum ("last-side-pane",
+                     "LastSidePane",
+                     NULL,
+                     THUNAR_TYPE_SIDEPANE_TYPE,
+                     THUNAR_SIDEPANE_TYPE_SHORTCUTS,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-sort-column:
@@ -521,12 +528,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * The default sort column for new views.
    **/
   preferences_props[PROP_LAST_SORT_COLUMN] =
-      g_param_spec_enum ("last-sort-column",
-                         "LastSortColumn",
-                         NULL,
-                         THUNAR_TYPE_COLUMN,
-                         THUNAR_COLUMN_NAME,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_enum ("last-sort-column",
+                     "LastSortColumn",
+                     NULL,
+                     THUNAR_TYPE_COLUMN,
+                     THUNAR_COLUMN_NAME,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-sort-order:
@@ -534,23 +541,23 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * The default sort order for new views.
    **/
   preferences_props[PROP_LAST_SORT_ORDER] =
-      g_param_spec_enum ("last-sort-order",
-                         "LastSortOrder",
-                         NULL,
-                         GTK_TYPE_SORT_TYPE,
-                         GTK_SORT_ASCENDING,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_enum ("last-sort-order",
+                     "LastSortOrder",
+                     NULL,
+                     GTK_TYPE_SORT_TYPE,
+                     GTK_SORT_ASCENDING,
+                     EXO_PARAM_READWRITE);
   /**
    * ThunarPreferences:last-statusbar-visible:
    *
    * Whether to display a statusbar in new windows by default.
    **/
   preferences_props[PROP_LAST_STATUSBAR_VISIBLE] =
-      g_param_spec_boolean ("last-statusbar-visible",
-                            "LastStatusbarVisible",
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("last-statusbar-visible",
+                        "LastStatusbarVisible",
+                        NULL,
+                        TRUE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-image-preview-visible:
@@ -558,11 +565,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Whether to display an image preview in new windows by default.
    **/
   preferences_props[PROP_LAST_IMAGE_PREVIEW_VISIBLE] =
-      g_param_spec_boolean ("last-image-preview-visible",
-                            "LastImagePreviewVisible",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("last-image-preview-visible",
+                        "LastImagePreviewVisible",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-view:
@@ -571,11 +578,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * main view component in #ThunarWindow<!---->s.
    **/
   preferences_props[PROP_LAST_VIEW] =
-      g_param_spec_string ("last-view",
-                           "LastView",
-                           NULL,
-                           "ThunarIconView",
-                           EXO_PARAM_READWRITE);
+  g_param_spec_string ("last-view",
+                       "LastView",
+                       NULL,
+                       "ThunarIconView",
+                       EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-window-height:
@@ -584,11 +591,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * default height for newly created windows.
    **/
   preferences_props[PROP_LAST_WINDOW_HEIGHT] =
-      g_param_spec_int ("last-window-height",
-                        "LastWindowHeight",
-                        NULL,
-                        1, G_MAXINT, 480,
-                        EXO_PARAM_READWRITE);
+  g_param_spec_int ("last-window-height",
+                    "LastWindowHeight",
+                    NULL,
+                    1, G_MAXINT, 480,
+                    EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-window-width:
@@ -597,11 +604,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * default width for newly created windows.
    **/
   preferences_props[PROP_LAST_WINDOW_WIDTH] =
-      g_param_spec_int ("last-window-width",
-                        "LastWindowWidth",
-                        NULL,
-                        1, G_MAXINT, 640,
-                        EXO_PARAM_READWRITE);
+  g_param_spec_int ("last-window-width",
+                    "LastWindowWidth",
+                    NULL,
+                    1, G_MAXINT, 640,
+                    EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-window-maximized:
@@ -610,11 +617,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * default width for newly created windows.
    **/
   preferences_props[PROP_LAST_WINDOW_FULLSCREEN] =
-      g_param_spec_boolean ("last-window-maximized",
-                            "LastWindowMaximized",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("last-window-maximized",
+                        "LastWindowMaximized",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-renamer-dialog-height:
@@ -623,11 +630,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * default height for newly created dialgogs.
    **/
   preferences_props[PROP_LAST_RENAMER_DIALOG_HEIGHT] =
-      g_param_spec_int ("last-renamer-dialog-height",
-                        "LastRenamerDialogHeight",
-                        NULL,
-                        1, G_MAXINT, 490,
-                        EXO_PARAM_READWRITE);
+  g_param_spec_int ("last-renamer-dialog-height",
+                    "LastRenamerDialogHeight",
+                    NULL,
+                    1, G_MAXINT, 490,
+                    EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-renamer-dialog-width:
@@ -636,11 +643,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * default width for newly created dialgogs.
    **/
   preferences_props[PROP_LAST_RENAMER_DIALOG_WIDTH] =
-      g_param_spec_int ("last-renamer-dialog-width",
-                        "LastRenamerDialogWidth",
-                        NULL,
-                        1, G_MAXINT, 510,
-                        EXO_PARAM_READWRITE);
+  g_param_spec_int ("last-renamer-dialog-width",
+                    "LastRenamerDialogWidth",
+                    NULL,
+                    1, G_MAXINT, 510,
+                    EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-renamer-dialog-maximized:
@@ -649,27 +656,27 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * default width for newly created dialgogs.
    **/
   preferences_props[PROP_LAST_RENAMER_DIALOG_FULLSCREEN] =
-      g_param_spec_boolean ("last-renamer-dialog-maximized",
-                            "LastRenamerDialogMaximized",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("last-renamer-dialog-maximized",
+                        "LastRenamerDialogMaximized",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-toolbar-items:
    *
    * The comma separated list that specifies the order and visibility of toolbar items.
    **/
-    preferences_props[PROP_LAST_TOOLBAR_ITEMS] =
-        g_param_spec_string ("last-toolbar-items",
-                             "LastToolbarItems",
-                             NULL,
-                             "menu:0,back:1,forward:1,open-parent:1,open-home:1,"
-                             "new-tab:0,new-window:0,toggle-split-view:0,"
-                             "undo:0,redo:0,zoom-out:0,zoom-in:0,zoom-reset:0,"
-                             "view-as-icons:0,view-as-detailed-list:0,view-as-compact-list:0,view-switcher:0,"
-                             "location-bar:1,reload:0,search:1",
-                             EXO_PARAM_READWRITE);
+  preferences_props[PROP_LAST_TOOLBAR_ITEMS] =
+  g_param_spec_string ("last-toolbar-items",
+                       "LastToolbarItems",
+                       NULL,
+                       "menu:0,back:1,forward:1,open-parent:1,open-home:1,"
+                       "new-tab:0,new-window:0,toggle-split-view:0,"
+                       "undo:0,redo:0,zoom-out:0,zoom-in:0,zoom-reset:0,"
+                       "view-as-icons:0,view-as-detailed-list:0,view-as-compact-list:0,view-switcher:0,"
+                       "location-bar:1,reload:0,search:1",
+                       EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-always-show-tabs:
@@ -677,11 +684,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * If the view tabs should always be visible.
    **/
   preferences_props[PROP_MISC_ALWAYS_SHOW_TABS] =
-      g_param_spec_boolean ("misc-always-show-tabs",
-                            NULL,
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-always-show-tabs",
+                        NULL,
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-volume-management:
@@ -690,11 +697,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * thunar-volman package).
    **/
   preferences_props[PROP_MISC_VOLUME_MANAGEMENT] =
-      g_param_spec_boolean ("misc-volume-management",
-                            "MiscVolumeManagement",
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-volume-management",
+                        "MiscVolumeManagement",
+                        NULL,
+                        TRUE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-case-sensitive:
@@ -702,11 +709,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Whether to use case-sensitive sort.
    **/
   preferences_props[PROP_MISC_CASE_SENSITIVE] =
-      g_param_spec_boolean ("misc-case-sensitive",
-                            "MiscCaseSensitive",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-case-sensitive",
+                        "MiscCaseSensitive",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-date-style:
@@ -714,12 +721,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * The style used to display dates in the user interface.
    **/
   preferences_props[PROP_MISC_DATE_STYLE] =
-      g_param_spec_enum ("misc-date-style",
-                         "MiscDateStyle",
-                         NULL,
-                         THUNAR_TYPE_DATE_STYLE,
-                         THUNAR_DATE_STYLE_SIMPLE,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_enum ("misc-date-style",
+                     "MiscDateStyle",
+                     NULL,
+                     THUNAR_TYPE_DATE_STYLE,
+                     THUNAR_DATE_STYLE_SIMPLE,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-date-custom-style:
@@ -727,11 +734,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * If 'custom' is selected as date format, this date-style will be used
    **/
   preferences_props[PROP_MISC_DATE_CUSTOM_STYLE] =
-      g_param_spec_string ("misc-date-custom-style",
-                           "MiscDateCustomStyle",
-                           NULL,
-                           "%Y-%m-%d %H:%M:%S",
-                           EXO_PARAM_READWRITE);
+  g_param_spec_string ("misc-date-custom-style",
+                       "MiscDateCustomStyle",
+                       NULL,
+                       "%Y-%m-%d %H:%M:%S",
+                       EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-execute-shell-scripts-by-default:
@@ -743,12 +750,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * binaries, by default. See bug #7596.
    **/
   preferences_props[PROP_EXEC_SHELL_SCRIPTS_BY_DEFAULT] =
-      g_param_spec_enum ("misc-exec-shell-scripts-by-default",
-                         "MiscExecShellScriptsByDefault",
-                         NULL,
-                         THUNAR_TYPE_EXECUTE_SHELL_SCRIPT,
-                         THUNAR_EXECUTE_SHELL_SCRIPT_NEVER,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_enum ("misc-exec-shell-scripts-by-default",
+                     "MiscExecShellScriptsByDefault",
+                     NULL,
+                     THUNAR_TYPE_EXECUTE_SHELL_SCRIPT,
+                     THUNAR_EXECUTE_SHELL_SCRIPT_NEVER,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-folders-first:
@@ -756,11 +763,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Whether to sort folders before files.
    **/
   preferences_props[PROP_MISC_FOLDERS_FIRST] =
-      g_param_spec_boolean ("misc-folders-first",
-                            "MiscFoldersFirst",
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-folders-first",
+                        "MiscFoldersFirst",
+                        NULL,
+                        TRUE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-folder-item-count:
@@ -768,12 +775,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Tells when the size column of folders should show the number of containing files
    **/
   preferences_props[PROP_MISC_FOLDER_ITEM_COUNT] =
-      g_param_spec_enum ("misc-folder-item-count",
-                         "MiscFolderItemCount",
-                         NULL,
-                         THUNAR_TYPE_FOLDER_ITEM_COUNT,
-                         THUNAR_FOLDER_ITEM_COUNT_NEVER,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_enum ("misc-folder-item-count",
+                     "MiscFolderItemCount",
+                     NULL,
+                     THUNAR_TYPE_FOLDER_ITEM_COUNT,
+                     THUNAR_FOLDER_ITEM_COUNT_NEVER,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-full-path-in-tab-title:
@@ -782,11 +789,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * only the directory name.
    **/
   preferences_props[PROP_MISC_FULL_PATH_IN_TAB_TITLE] =
-      g_param_spec_boolean ("misc-full-path-in-tab-title",
-                            "MiscFullPathInTabTitle",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-full-path-in-tab-title",
+                        "MiscFullPathInTabTitle",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-window-title-style:
@@ -795,12 +802,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * of only the directory name and with or without the application name appended.
    **/
   preferences_props[PROP_MISC_WINDOW_TITLE_STYLE] =
-      g_param_spec_enum ("misc-window-title-style",
-                         "MiscWindowTitleStyle",
-                         NULL,
-                         THUNAR_TYPE_WINDOW_TITLE_STYLE,
-                         THUNAR_WINDOW_TITLE_STYLE_FOLDER_NAME_WITH_THUNAR_SUFFIX,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_enum ("misc-window-title-style",
+                     "MiscWindowTitleStyle",
+                     NULL,
+                     THUNAR_TYPE_WINDOW_TITLE_STYLE,
+                     THUNAR_WINDOW_TITLE_STYLE_FOLDER_NAME_WITH_THUNAR_SUFFIX,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-horizontal-wheel-navigates:
@@ -809,11 +816,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * forth and back within a Thunar view.
    **/
   preferences_props[PROP_MISC_HORIZONTAL_WHEEL_NAVIGATES] =
-      g_param_spec_boolean ("misc-horizontal-wheel-navigates",
-                            "MiscHorizontalWheelNavigates",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-horizontal-wheel-navigates",
+                        "MiscHorizontalWheelNavigates",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-image-size-in-statusbar:
@@ -823,11 +830,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * folders when moving the selection across files.
    **/
   preferences_props[PROP_MISC_IMAGE_SIZE_IN_STATUSBAR] =
-      g_param_spec_boolean ("misc-image-size-in-statusbar",
-                            "MiscImageSizeInStatusbar",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-image-size-in-statusbar",
+                        "MiscImageSizeInStatusbar",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-middle-click-in-tab:
@@ -835,11 +842,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * If middle click opens a folder in a new window (FALSE) or in a new window (TRUE);
    **/
   preferences_props[PROP_MISC_MIDDLE_CLICK_IN_TAB] =
-      g_param_spec_boolean ("misc-middle-click-in-tab",
-                            NULL,
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-middle-click-in-tab",
+                        NULL,
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-open-new-window-as_tab:
@@ -848,11 +855,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * if a thunar windows already is present
    **/
   preferences_props[PROP_MISC_OPEN_NEW_WINDOW_AS_TAB] =
-      g_param_spec_boolean ("misc-open-new-window-as-tab",
-                            "MiscOpenNewWindowAsTab",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-open-new-window-as-tab",
+                        "MiscOpenNewWindowAsTab",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-recursive-permissions:
@@ -861,25 +868,25 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * permissions are altered by the user.
    **/
   preferences_props[PROP_MISC_RECURSIVE_PERMISSIONS] =
-      g_param_spec_enum ("misc-recursive-permissions",
-                         "MiscRecursivePermissions",
-                         NULL,
-                         THUNAR_TYPE_RECURSIVE_PERMISSIONS,
-                         THUNAR_RECURSIVE_PERMISSIONS_ASK,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_enum ("misc-recursive-permissions",
+                     "MiscRecursivePermissions",
+                     NULL,
+                     THUNAR_TYPE_RECURSIVE_PERMISSIONS,
+                     THUNAR_RECURSIVE_PERMISSIONS_ASK,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-recursive-search:
    *
    * Whether to search only in the current folder or recursively
-  **/
+   **/
   preferences_props[PROP_MISC_RECURSIVE_SEARCH] =
-       g_param_spec_enum ("misc-recursive-search",
-                          "MiscRecursiveSearch",
-                          NULL,
-                          THUNAR_TYPE_RECURSIVE_SEARCH,
-                          THUNAR_RECURSIVE_SEARCH_ALWAYS,
-                          EXO_PARAM_READWRITE);
+  g_param_spec_enum ("misc-recursive-search",
+                     "MiscRecursiveSearch",
+                     NULL,
+                     THUNAR_TYPE_RECURSIVE_SEARCH,
+                     THUNAR_RECURSIVE_SEARCH_ALWAYS,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-remember-geometry:
@@ -891,11 +898,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * and "last-window-height".
    **/
   preferences_props[PROP_MISC_REMEMBER_GEOMETRY] =
-      g_param_spec_boolean ("misc-remember-geometry",
-                            "MiscRememberGeometry",
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-remember-geometry",
+                        "MiscRememberGeometry",
+                        NULL,
+                        TRUE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-show-about-templates:
@@ -904,24 +911,24 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Templates folder from the Go menu.
    **/
   preferences_props[PROP_MISC_SHOW_ABOUT_TEMPLATES] =
-      g_param_spec_boolean ("misc-show-about-templates",
-                            "MiscShowAboutTemplates",
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-show-about-templates",
+                        "MiscShowAboutTemplates",
+                        NULL,
+                        TRUE,
+                        EXO_PARAM_READWRITE);
 
- /**
+  /**
    * ThunarPreferences:misc-show-delete-action:
    *
    * Whether to display a "delete" action to permanently delete files and folders
    * If trash is not supported, "delete" is displayed by default.
    **/
   preferences_props[PROP_MISC_SHOW_DELETE_ACTION] =
-      g_param_spec_boolean ("misc-show-delete-action",
-                            "MiscShowDeleteAction",
-                            NULL,
-                            !thunar_g_vfs_is_uri_scheme_supported ("trash"),
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-show-delete-action",
+                        "MiscShowDeleteAction",
+                        NULL,
+                        !thunar_g_vfs_is_uri_scheme_supported ("trash"),
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-single-click:
@@ -929,11 +936,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Whether to use single click navigation.
    **/
   preferences_props[PROP_MISC_SINGLE_CLICK] =
-      g_param_spec_boolean ("misc-single-click",
-                            "MiscSingleClick",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-single-click",
+                        "MiscSingleClick",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-single-click-timeout:
@@ -944,11 +951,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * automatic selection.
    **/
   preferences_props[PROP_MISC_SINGLE_CLICK_TIMEOUT] =
-      g_param_spec_uint ("misc-single-click-timeout",
-                         "MiscSingleClickTimeout",
-                         NULL,
-                         0u, G_MAXUINT, 500u,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_uint ("misc-single-click-timeout",
+                     "MiscSingleClickTimeout",
+                     NULL,
+                     0u, G_MAXUINT, 500u,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-small-toolbar-icons:
@@ -956,11 +963,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Use small icons on the toolbar instead of the default toolbar size.
    **/
   preferences_props[PROP_MISC_SMALL_TOOLBAR_ICONS] =
-      g_param_spec_boolean ("misc-small-toolbar-icons",
-                            NULL,
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-small-toolbar-icons",
+                        NULL,
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-tab-close-middle-click:
@@ -969,11 +976,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * mouse button.
    **/
   preferences_props[PROP_MISC_TAB_CLOSE_MIDDLE_CLICK] =
-      g_param_spec_boolean ("misc-tab-close-middle-click",
-                            NULL,
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-tab-close-middle-click",
+                        NULL,
+                        NULL,
+                        TRUE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-text-beside-icons:
@@ -982,11 +989,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * file icons instead of below the file icons.
    **/
   preferences_props[PROP_MISC_TEXT_BESIDE_ICONS] =
-      g_param_spec_boolean ("misc-text-beside-icons",
-                            "MiscTextBesideIcons",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-text-beside-icons",
+                        "MiscTextBesideIcons",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-thumbnail-mode:
@@ -994,12 +1001,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Whether to generate and display thumbnails for previewable files.
    **/
   preferences_props[PROP_MISC_THUMBNAIL_MODE] =
-      g_param_spec_enum ("misc-thumbnail-mode",
-                         NULL,
-                         NULL,
-                         THUNAR_TYPE_THUMBNAIL_MODE,
-                         THUNAR_THUMBNAIL_MODE_ONLY_LOCAL,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_enum ("misc-thumbnail-mode",
+                     NULL,
+                     NULL,
+                     THUNAR_TYPE_THUMBNAIL_MODE,
+                     THUNAR_THUMBNAIL_MODE_ONLY_LOCAL,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-thumbnail-draw-frames:
@@ -1009,11 +1016,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * May have an impact on older systems, on folders with many pictures.
    **/
   preferences_props[PROP_MISC_THUMBNAIL_DRAW_FRAMES] =
-      g_param_spec_boolean ("misc-thumbnail-draw-frames",
-                            NULL,
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-thumbnail-draw-frames",
+                        NULL,
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-thumbnail-max-file-size:
@@ -1022,11 +1029,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * 0 means no limit is in place.
    **/
   preferences_props[PROP_MISC_THUMBNAIL_MAX_FILE_SIZE] =
-      g_param_spec_uint64 ("misc-thumbnail-max-file-size",
-                           NULL,
-                           NULL,
-                           0, G_MAXUINT64, 0,
-                           EXO_PARAM_READWRITE);
+  g_param_spec_uint64 ("misc-thumbnail-max-file-size",
+                       NULL,
+                       NULL,
+                       0, G_MAXUINT64, 0,
+                       EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-file-size-binary:
@@ -1034,11 +1041,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Show file size in binary format instead of decimal.
    **/
   preferences_props[PROP_MISC_FILE_SIZE_BINARY] =
-      g_param_spec_boolean ("misc-file-size-binary",
-                            "MiscFileSizeBinary",
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-file-size-binary",
+                        "MiscFileSizeBinary",
+                        NULL,
+                        TRUE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-parallel-copy-mode:
@@ -1046,12 +1053,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Do parallel copy (or not) on files copy.
    **/
   preferences_props[PROP_MISC_PARALLEL_COPY_MODE] =
-      g_param_spec_enum ("misc-parallel-copy-mode",
-                         "MiscParallelCopyMode",
-                         NULL,
-                         THUNAR_TYPE_PARALLEL_COPY_MODE,
-                         THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_IDLE_DEVICE,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_enum ("misc-parallel-copy-mode",
+                     "MiscParallelCopyMode",
+                     NULL,
+                     THUNAR_TYPE_PARALLEL_COPY_MODE,
+                     THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_IDLE_DEVICE,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-change-window-icon:
@@ -1059,11 +1066,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Whether to change the window icon to the folder's icon.
    **/
   preferences_props[PROP_MISC_WINDOW_ICON] =
-      g_param_spec_boolean ("misc-change-window-icon",
-                            "MiscChangeWindowIcon",
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-change-window-icon",
+                        "MiscChangeWindowIcon",
+                        NULL,
+                        TRUE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-transfer-use-partial:
@@ -1071,12 +1078,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Whether to use intermediate file(*.partial~) to copy.
    **/
   preferences_props[PROP_MISC_TRANSFER_USE_PARTIAL] =
-    g_param_spec_enum ("misc-transfer-use-partial",
-                       "MiscTransferUsePartial",
-                       NULL,
-                       THUNAR_TYPE_USE_PARTIAL_MODE,
-                       THUNAR_USE_PARTIAL_MODE_DISABLED,
-                       EXO_PARAM_READWRITE);
+  g_param_spec_enum ("misc-transfer-use-partial",
+                     "MiscTransferUsePartial",
+                     NULL,
+                     THUNAR_TYPE_USE_PARTIAL_MODE,
+                     THUNAR_USE_PARTIAL_MODE_DISABLED,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-transfer-verify-file:
@@ -1084,12 +1091,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Whether to verify copied file with checksum.
    **/
   preferences_props[PROP_MISC_TRANSFER_VERIFY_FILE] =
-    g_param_spec_enum ("misc-transfer-verify-file",
-                       "MiscTransferVerifyFile",
-                       NULL,
-                       THUNAR_TYPE_VERIFY_FILE_MODE,
-                       THUNAR_VERIFY_FILE_MODE_DISABLED,
-                       EXO_PARAM_READWRITE);
+  g_param_spec_enum ("misc-transfer-verify-file",
+                     "MiscTransferVerifyFile",
+                     NULL,
+                     THUNAR_TYPE_VERIFY_FILE_MODE,
+                     THUNAR_VERIFY_FILE_MODE_DISABLED,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-image-preview-mode:
@@ -1098,12 +1105,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * in the left sidepane.
    **/
   preferences_props[PROP_MISC_IMAGE_PREVIEW_FULL] =
-    g_param_spec_enum ("misc-image-preview-mode",
-                       "MiscImagePreviewMode",
-                       NULL,
-                       THUNAR_TYPE_IMAGE_PREVIEW_MODE,
-                       THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED,
-                       EXO_PARAM_READWRITE);
+  g_param_spec_enum ("misc-image-preview-mode",
+                     "MiscImagePreviewMode",
+                     NULL,
+                     THUNAR_TYPE_IMAGE_PREVIEW_MODE,
+                     THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-confirm-close-multiple-tabs:
@@ -1112,11 +1119,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * multiple tabs.
    **/
   preferences_props[PROP_MISC_CONFIRM_CLOSE_MULTIPLE_TABS] =
-      g_param_spec_boolean ("misc-confirm-close-multiple-tabs",
-                            "ConfirmCloseMultipleTabs",
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-confirm-close-multiple-tabs",
+                        "ConfirmCloseMultipleTabs",
+                        NULL,
+                        TRUE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-status-bar-active-info:
@@ -1124,13 +1131,13 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * What kind of info is presented in the statusbar..
    **/
   preferences_props[PROP_MISC_STATUS_BAR_ACTIVE_INFO] =
-      g_param_spec_uint ("misc-status-bar-active-info",
-                         "MiscStatusBarActiveInfo",
-                         NULL,
-                         0, G_MAXUINT,
-                         THUNAR_STATUS_BAR_INFO_DISPLAY_NAME | THUNAR_STATUS_BAR_INFO_FILETYPE | THUNAR_STATUS_BAR_INFO_SIZE
-                         | THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_uint ("misc-status-bar-active-info",
+                     "MiscStatusBarActiveInfo",
+                     NULL,
+                     0, G_MAXUINT,
+                     THUNAR_STATUS_BAR_INFO_DISPLAY_NAME | THUNAR_STATUS_BAR_INFO_FILETYPE | THUNAR_STATUS_BAR_INFO_SIZE
+                     | THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:shortcuts-icon-emblems:
@@ -1139,11 +1146,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * shortcuts side pane.
    **/
   preferences_props[PROP_SHORTCUTS_ICON_EMBLEMS] =
-      g_param_spec_boolean ("shortcuts-icon-emblems",
-                            "ShortcutsIconEmblems",
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("shortcuts-icon-emblems",
+                        "ShortcutsIconEmblems",
+                        NULL,
+                        TRUE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:shortcuts-icon-size:
@@ -1152,12 +1159,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * shortcuts side pane.
    **/
   preferences_props[PROP_SHORTCUTS_ICON_SIZE] =
-      g_param_spec_enum ("shortcuts-icon-size",
-                         "ShortcutsIconSize",
-                         NULL,
-                         THUNAR_TYPE_ICON_SIZE,
-                         THUNAR_ICON_SIZE_24,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_enum ("shortcuts-icon-size",
+                     "ShortcutsIconSize",
+                     NULL,
+                     THUNAR_TYPE_ICON_SIZE,
+                     THUNAR_ICON_SIZE_24,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:tree-icon-emblems:
@@ -1166,11 +1173,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * tree side pane.
    **/
   preferences_props[PROP_TREE_ICON_EMBLEMS] =
-      g_param_spec_boolean ("tree-icon-emblems",
-                            "TreeIconEmblems",
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("tree-icon-emblems",
+                        "TreeIconEmblems",
+                        NULL,
+                        TRUE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:tree-icon-size:
@@ -1179,12 +1186,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * tree side pane.
    **/
   preferences_props[PROP_TREE_ICON_SIZE] =
-      g_param_spec_enum ("tree-icon-size",
-                         "TreeIconSize",
-                         NULL,
-                         THUNAR_TYPE_ICON_SIZE,
-                         THUNAR_ICON_SIZE_16,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_enum ("tree-icon-size",
+                     "TreeIconSize",
+                     NULL,
+                     THUNAR_TYPE_ICON_SIZE,
+                     THUNAR_ICON_SIZE_16,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-tree-lines-in-tree-sidepane:
@@ -1192,23 +1199,23 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Whether to show tree lines or not in the tree side pane.
    **/
   preferences_props[PROP_TREE_LINES] =
-      g_param_spec_boolean ("misc-tree-lines-in-tree-sidepane",
-                            "TreeLines",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-tree-lines-in-tree-sidepane",
+                        "TreeLines",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
- /**
- * ThunarPreferences:misc-switch-to-new-tab:
- *
- * Whether to switch to the new tab after opening a folder in a new tab.
- **/
+  /**
+   * ThunarPreferences:misc-switch-to-new-tab:
+   *
+   * Whether to switch to the new tab after opening a folder in a new tab.
+   **/
   preferences_props[PROP_MISC_SWITCH_TO_NEW_TAB] =
-      g_param_spec_boolean ("misc-switch-to-new-tab",
-                            "SwitchToNewTab",
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-switch-to-new-tab",
+                        "SwitchToNewTab",
+                        NULL,
+                        TRUE,
+                        EXO_PARAM_READWRITE);
 
 
 
@@ -1219,11 +1226,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * when splitting the thunar window into two panes.
    **/
   preferences_props[PROP_MISC_VERTICAL_SPLIT_PANE] =
-    g_param_spec_boolean ("misc-vertical-split-pane",
-                          "MiscVerticalSplitPane",
-                          NULL,
-                          FALSE,
-                          EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-vertical-split-pane",
+                        "MiscVerticalSplitPane",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-open-new-windows-in-split-view:
@@ -1234,11 +1241,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * If true, all thunar windows will have split view enabled.
    **/
   preferences_props[PROP_MISC_OPEN_NEW_WINDOWS_IN_SPLIT_VIEW] =
-    g_param_spec_boolean ("misc-open-new-windows-in-split-view",
-                          "MiscOpenNewWindowsInSplitView",
-                          NULL,
-                          FALSE,
-                          EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-open-new-windows-in-split-view",
+                        "MiscOpenNewWindowsInSplitView",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-always-enable-split-view:
@@ -1246,11 +1253,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * If true, all thunar windows will have split view enabled.
    **/
   preferences_props[PROP_MISC_ALWAYS_ENABLE_SPLIT_VIEW] =
-    g_param_spec_boolean ("misc-always-enable-split-view",
-                          "MiscAlwaysEnableSplitView",
-                          NULL,
-                          FALSE,
-                          EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-always-enable-split-view",
+                        "MiscAlwaysEnableSplitView",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:compact-view-max-chars:
@@ -1258,12 +1265,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * The ellipsization threshold for compact view. Negative values disable ellipsization.
    **/
   preferences_props[PROP_MISC_COMPACT_VIEW_MAX_CHARS] =
-      g_param_spec_int ("misc-compact-view-max-chars",
-                        "MiscCompactViewMaxChars",
-                        NULL,
-                        G_MININT, G_MAXINT,
-                        100,
-                        EXO_PARAM_READWRITE);
+  g_param_spec_int ("misc-compact-view-max-chars",
+                    "MiscCompactViewMaxChars",
+                    NULL,
+                    G_MININT, G_MAXINT,
+                    100,
+                    EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-highlighting-enabled:
@@ -1272,11 +1279,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Can be toggled using the View > Show File Highlight.
    **/
   preferences_props[PROP_MISC_HIGHLIGHTING_ENABLED] =
-      g_param_spec_boolean ("misc-highlighting-enabled",
-                            "MiscHighlightingEnabled",
-                            NULL,
-                            thunar_g_vfs_metadata_is_supported (),
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-highlighting-enabled",
+                        "MiscHighlightingEnabled",
+                        NULL,
+                        thunar_g_vfs_metadata_is_supported (),
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-undo-redo-history-size:
@@ -1285,12 +1292,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * -1 for unlimited
    **/
   preferences_props[PROP_MISC_UNDO_REDO_HISTORY_SIZE] =
-      g_param_spec_int ("misc-undo-redo-history-size",
-                        "MiscUndoRedoHistorySize",
-                        NULL,
-                        -1, G_MAXINT,
-                        10,
-                        EXO_PARAM_READWRITE);
+  g_param_spec_int ("misc-undo-redo-history-size",
+                    "MiscUndoRedoHistorySize",
+                    NULL,
+                    -1, G_MAXINT,
+                    10,
+                    EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-confirm-move-to-trash:
@@ -1298,11 +1305,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * If true enables a confirmation to move files to trash (similar to permanently delete)
    **/
   preferences_props[PROP_MISC_CONFIRM_MOVE_TO_TRASH] =
-      g_param_spec_boolean ("misc-confirm-move-to-trash",
-                            "MiscConfirmMoveToTrash",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-confirm-move-to-trash",
+                        "MiscConfirmMoveToTrash",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-max-number-of-templates:
@@ -1311,12 +1318,12 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Required to prevent possible lag when the context menu is opened
    **/
   preferences_props[PROP_MISC_MAX_NUMBER_OF_TEMPLATES] =
-      g_param_spec_uint ("misc-max-number-of-templates",
-                         "MiscMaxNumberOfTemplates",
-                         NULL,
-                         0, G_MAXUINT,
-                         100,
-                         EXO_PARAM_READWRITE);
+  g_param_spec_uint ("misc-max-number-of-templates",
+                     "MiscMaxNumberOfTemplates",
+                     NULL,
+                     0, G_MAXUINT,
+                     100,
+                     EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-expandable-folders:
@@ -1324,11 +1331,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * If true details-view opens with expandable folders.
    **/
   preferences_props[PROP_MISC_EXPANDABLE_FOLDERS] =
-      g_param_spec_boolean ("misc-expandable-folders",
-                            "MiscEnableExpandableFolders",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-expandable-folders",
+                        "MiscEnableExpandableFolders",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-display-launcher-name-as-filename:
@@ -1336,47 +1343,47 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * Whether to show real file names or launcher names for .desktop files
    **/
   preferences_props[PROP_MISC_DISPLAY_LAUNCHER_NAME_AS_FILENAME] =
-       g_param_spec_boolean ("misc-display-launcher-name-as-filename",
-                             "MiscDisplayLauncherNameAsFilename",
-                             NULL,
-                             TRUE,
-                             EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-display-launcher-name-as-filename",
+                        "MiscDisplayLauncherNameAsFilename",
+                        NULL,
+                        TRUE,
+                        EXO_PARAM_READWRITE);
 
-   /**
+  /**
    * ThunarPreferences:misc-symbolic-icons-in-toolbar:
    *
    * If true symbolic icons should be used in the toolbar
    **/
   preferences_props[PROP_MISC_SYMBOLIC_ICONS_IN_TOOLBAR] =
-      g_param_spec_boolean ("misc-symbolic-icons-in-toolbar",
-                            "MiscSymbolicIconsInToolbar",
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-symbolic-icons-in-toolbar",
+                        "MiscSymbolicIconsInToolbar",
+                        NULL,
+                        TRUE,
+                        EXO_PARAM_READWRITE);
 
-   /**
+  /**
    * ThunarPreferences:misc-symbolic-icons-in-sidepane:
    *
    * If true symbolic icons should be used in the sidepane
    **/
   preferences_props[PROP_MISC_SYMBOLIC_ICONS_IN_SIDEPANE] =
-      g_param_spec_boolean ("misc-symbolic-icons-in-sidepane",
-                            "MiscSymbolicIconsInSidepane",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-symbolic-icons-in-sidepane",
+                        "MiscSymbolicIconsInSidepane",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
-   /**
-    * ThunarPreferences:misc-ctrl-scroll-wheel-to-zoom:
-    *
-    * If true, Ctrl + Scroll Wheel to Zoom is enabled
-    **/
+  /**
+   * ThunarPreferences:misc-ctrl-scroll-wheel-to-zoom:
+   *
+   * If true, Ctrl + Scroll Wheel to Zoom is enabled
+   **/
   preferences_props[PROP_MISC_CTRL_SCROLL_WHEEL_TO_ZOOM] =
-      g_param_spec_boolean ("misc-ctrl-scroll-wheel-to-zoom",
-                            "MiscCtrlScrollWheelToZoom",
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-ctrl-scroll-wheel-to-zoom",
+                        "MiscCtrlScrollWheelToZoom",
+                        NULL,
+                        TRUE,
+                        EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-use-csd:
@@ -1384,11 +1391,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * %TRUE to draw client-side decorations.
    **/
   preferences_props[PROP_MISC_USE_CSD] =
-    g_param_spec_boolean ("misc-use-csd",
-                          "MiscUseCSD",
-                          NULL,
-                          FALSE,
-                          EXO_PARAM_READWRITE);
+  g_param_spec_boolean ("misc-use-csd",
+                        "MiscUseCSD",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
@@ -1420,8 +1427,8 @@ thunar_preferences_init (ThunarPreferences *preferences)
     }
 
   preferences->property_changed_id =
-    g_signal_connect (G_OBJECT (preferences->channel), "property-changed",
-                      G_CALLBACK (thunar_preferences_prop_changed), preferences);
+  g_signal_connect (G_OBJECT (preferences->channel), "property-changed",
+                    G_CALLBACK (thunar_preferences_prop_changed), preferences);
 }
 
 
@@ -1445,10 +1452,12 @@ thunar_preferences_get_property (GObject    *object,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-  ThunarPreferences  *preferences = THUNAR_PREFERENCES (object);
-  GValue              src = { 0, };
-  gchar               prop_name[64];
-  gchar             **array;
+  ThunarPreferences *preferences = THUNAR_PREFERENCES (object);
+  GValue             src = {
+    0,
+  };
+  gchar   prop_name[64];
+  gchar **array;
 
   /* only set defaults if channel is not set */
   if (G_UNLIKELY (preferences->channel == NULL))
@@ -1489,10 +1498,12 @@ thunar_preferences_set_property (GObject      *object,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-  ThunarPreferences  *preferences = THUNAR_PREFERENCES (object);
-  GValue              dst = { 0, };
-  gchar               prop_name[64];
-  gchar             **array;
+  ThunarPreferences *preferences = THUNAR_PREFERENCES (object);
+  GValue             dst = {
+    0,
+  };
+  gchar   prop_name[64];
+  gchar **array;
 
   /* leave if the channel is not set */
   if (G_UNLIKELY (preferences->channel == NULL))
@@ -1517,7 +1528,7 @@ thunar_preferences_set_property (GObject      *object,
       /* convert to a GValue GPtrArray in xfconf */
       array = g_value_get_boxed (value);
       if (array != NULL && *array != NULL)
-        xfconf_channel_set_string_list (preferences->channel, prop_name, (const gchar * const *) array);
+        xfconf_channel_set_string_list (preferences->channel, prop_name, (const gchar *const *) array);
       else
         xfconf_channel_reset_property (preferences->channel, prop_name, FALSE);
     }
@@ -1571,16 +1582,20 @@ thunar_preferences_prop_changed (XfconfChannel     *channel,
 static void
 thunar_preferences_load_rc_file (ThunarPreferences *preferences)
 {
-  GParamSpec  **pspecs;
-  GParamSpec   *pspec;
-  XfceRc       *rc;
-  guint         nspecs, n;
-  const gchar  *string;
-  GValue        dst = { 0, };
-  GValue        src = { 0, };
-  gchar         prop_name[64];
-  const gchar  *nick;
-  gchar        *filename;
+  GParamSpec **pspecs;
+  GParamSpec  *pspec;
+  XfceRc      *rc;
+  guint        nspecs, n;
+  const gchar *string;
+  GValue       dst = {
+    0,
+  };
+  GValue src = {
+    0,
+  };
+  gchar        prop_name[64];
+  const gchar *nick;
+  gchar       *filename;
 
   /* find file */
   filename = xfce_resource_lookup (XFCE_RESOURCE_CONFIG, "Thunar/thunarrc");
@@ -1652,7 +1667,8 @@ thunar_preferences_load_rc_file (ThunarPreferences *preferences)
   g_print ("\n\n"
            "Your Thunar settings have been migrated to Xfconf.\n"
            "The config file \"%s\"\n"
-           "is not used anymore.\n\n", filename);
+           "is not used anymore.\n\n",
+           filename);
 
   g_free (filename);
 }
@@ -1669,7 +1685,7 @@ thunar_preferences_load_rc_file (ThunarPreferences *preferences)
  *
  * Return value: the global #ThunarPreferences instance.
  **/
-ThunarPreferences*
+ThunarPreferences *
 thunar_preferences_get (void)
 {
   static ThunarPreferences *preferences = NULL;

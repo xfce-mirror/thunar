@@ -23,17 +23,19 @@
 #endif
 
 #include <thunar-sbr/thunar-sbr-case-renamer.h>
+#include <thunar-sbr/thunar-sbr-date-renamer.h>
 #include <thunar-sbr/thunar-sbr-insert-renamer.h>
 #include <thunar-sbr/thunar-sbr-number-renamer.h>
 #include <thunar-sbr/thunar-sbr-provider.h>
 #include <thunar-sbr/thunar-sbr-remove-renamer.h>
 #include <thunar-sbr/thunar-sbr-replace-renamer.h>
-#include <thunar-sbr/thunar-sbr-date-renamer.h>
 
 
 
-static void   thunar_sbr_provider_renamer_provider_init (ThunarxRenamerProviderIface *iface);
-static GList *thunar_sbr_provider_get_renamers          (ThunarxRenamerProvider      *renamer_provider);
+static void
+thunar_sbr_provider_renamer_provider_init (ThunarxRenamerProviderIface *iface);
+static GList *
+thunar_sbr_provider_get_renamers (ThunarxRenamerProvider *renamer_provider);
 
 
 
@@ -79,7 +81,7 @@ thunar_sbr_provider_init (ThunarSbrProvider *sbr_provider)
 
 
 
-static GList*
+static GList *
 thunar_sbr_provider_get_renamers (ThunarxRenamerProvider *renamer_provider)
 {
   GList *renamers = NULL;

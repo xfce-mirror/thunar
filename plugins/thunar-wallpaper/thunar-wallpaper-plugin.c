@@ -22,16 +22,19 @@
 #include <config.h>
 #endif
 
-#include <exo/exo.h>
-
 #include "twp-provider.h"
 
+#include <exo/exo.h>
 
 
-G_MODULE_EXPORT void thunar_extension_initialize (ThunarxProviderPlugin  *plugin);
-G_MODULE_EXPORT void thunar_extension_shutdown   (void);
-G_MODULE_EXPORT void thunar_extension_list_types (const GType           **types,
-                                                  gint                   *n_types);
+
+G_MODULE_EXPORT void
+thunar_extension_initialize (ThunarxProviderPlugin *plugin);
+G_MODULE_EXPORT void
+thunar_extension_shutdown (void);
+G_MODULE_EXPORT void
+thunar_extension_list_types (const GType **types,
+                             gint         *n_types);
 
 
 
@@ -81,4 +84,3 @@ thunar_extension_list_types (const GType **types,
   *types = type_list;
   *n_types = G_N_ELEMENTS (type_list);
 }
-

@@ -25,30 +25,44 @@
 G_BEGIN_DECLS;
 
 
-void             thunar_gtk_label_set_a11y_relation           (GtkLabel           *label,
-                                                               GtkWidget          *widget);
-void             thunar_gtk_label_disable_hyphens             (GtkLabel           *label);
+void
+thunar_gtk_label_set_a11y_relation (GtkLabel  *label,
+                                    GtkWidget *widget);
+void
+thunar_gtk_label_disable_hyphens (GtkLabel *label);
 
-void             thunar_gtk_menu_clean                        (GtkMenu            *menu);
-void             thunar_gtk_menu_run                          (GtkMenu            *menu);
-void             thunar_gtk_menu_run_at_event                 (GtkMenu            *menu,
-                                                               GdkEvent           *event);
-void             thunar_gtk_menu_hide_accel_labels            (GtkMenu            *menu);
+void
+thunar_gtk_menu_clean (GtkMenu *menu);
+void
+thunar_gtk_menu_run (GtkMenu *menu);
+void
+thunar_gtk_menu_run_at_event (GtkMenu  *menu,
+                              GdkEvent *event);
+void
+thunar_gtk_menu_hide_accel_labels (GtkMenu *menu);
 
-void             thunar_gtk_widget_set_tooltip                (GtkWidget          *widget,
-                                                               const gchar        *format,
-                                                               ...) G_GNUC_PRINTF (2, 3);
-GtkWidget       *thunar_gtk_menu_thunarx_menu_item_new        (GObject            *thunarx_menu_item,
-                                                               GtkMenuShell       *menu_to_append_item);
+void
+thunar_gtk_widget_set_tooltip (GtkWidget   *widget,
+                               const gchar *format,
+                               ...) G_GNUC_PRINTF (2, 3);
+GtkWidget *
+thunar_gtk_menu_thunarx_menu_item_new (GObject      *thunarx_menu_item,
+                                       GtkMenuShell *menu_to_append_item);
 
-GMountOperation *thunar_gtk_mount_operation_new               (gpointer            parent);
+GMountOperation *
+thunar_gtk_mount_operation_new (gpointer parent);
 
-GtkWidget       *thunar_gtk_get_focused_widget                (void);
+GtkWidget *
+thunar_gtk_get_focused_widget (void);
 
-gboolean         thunar_gtk_editable_can_cut                  (GtkEditable        *editable);
-gboolean         thunar_gtk_editable_can_copy                 (GtkEditable        *editable);
-gboolean         thunar_gtk_editable_can_paste                (GtkEditable        *editable);
-gint             thunar_gtk_orientable_get_center_pos         (GtkOrientable      *orientable);
+gboolean
+thunar_gtk_editable_can_cut (GtkEditable *editable);
+gboolean
+thunar_gtk_editable_can_copy (GtkEditable *editable);
+gboolean
+thunar_gtk_editable_can_paste (GtkEditable *editable);
+gint
+thunar_gtk_orientable_get_center_pos (GtkOrientable *orientable);
 
 G_END_DECLS;
 

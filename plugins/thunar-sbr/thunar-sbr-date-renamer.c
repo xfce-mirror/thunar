@@ -34,9 +34,8 @@
 #include <stdio.h>
 #endif
 
-#include <thunar-sbr/thunar-sbr-date-renamer.h>
-
 #include <libxfce4util/libxfce4util.h>
+#include <thunar-sbr/thunar-sbr-date-renamer.h>
 
 
 
@@ -58,26 +57,33 @@ enum
 
 
 
-static void    thunar_sbr_date_renamer_finalize     (GObject                   *object);
-static void    thunar_sbr_date_renamer_get_property (GObject                   *object,
-                                                     guint                      prop_id,
-                                                     GValue                    *value,
-                                                     GParamSpec                *pspec);
-static void    thunar_sbr_date_renamer_set_property (GObject                   *object,
-                                                     guint                      prop_id,
-                                                     const GValue              *value,
-                                                     GParamSpec                *pspec);
-static gchar  *thunar_sbr_get_time_string           (guint64                    file_time,
-                                                     const gchar               *custom_format);
+static void
+thunar_sbr_date_renamer_finalize (GObject *object);
+static void
+thunar_sbr_date_renamer_get_property (GObject    *object,
+                                      guint       prop_id,
+                                      GValue     *value,
+                                      GParamSpec *pspec);
+static void
+thunar_sbr_date_renamer_set_property (GObject      *object,
+                                      guint         prop_id,
+                                      const GValue *value,
+                                      GParamSpec   *pspec);
+static gchar *
+thunar_sbr_get_time_string (guint64      file_time,
+                            const gchar *custom_format);
 #ifdef HAVE_EXIF
-static guint64 thunar_sbr_get_time_from_string      (const gchar               *string);
+static guint64
+thunar_sbr_get_time_from_string (const gchar *string);
 #endif
-static guint64 thunar_sbr_get_time                  (ThunarxFileInfo           *file,
-                                                     ThunarSbrDateMode          mode);
-static gchar  *thunar_sbr_date_renamer_process      (ThunarxRenamer            *renamer,
-                                                     ThunarxFileInfo           *file,
-                                                     const gchar               *text,
-                                                     guint                      idx);
+static guint64
+thunar_sbr_get_time (ThunarxFileInfo  *file,
+                     ThunarSbrDateMode mode);
+static gchar *
+thunar_sbr_date_renamer_process (ThunarxRenamer  *renamer,
+                                 ThunarxFileInfo *file,
+                                 const gchar     *text,
+                                 guint            idx);
 
 
 
@@ -415,7 +421,7 @@ thunar_sbr_get_time_from_string (const gchar *string)
       tm.tm_mday = day;
 
       /* set the time */
-      tm.tm_hour = result >= 4? hour : 0;
+      tm.tm_hour = result >= 4 ? hour : 0;
       tm.tm_min = result >= 5 ? min : 0;
       tm.tm_sec = result >= 6 ? sec : 0;
     }
@@ -432,17 +438,16 @@ thunar_sbr_get_time_from_string (const gchar *string)
 
 
 static guint64
-thunar_sbr_get_time (ThunarxFileInfo   *file,
-                     ThunarSbrDateMode  mode)
+thunar_sbr_get_time (ThunarxFileInfo  *file,
+                     ThunarSbrDateMode mode)
 {
-
   GFileInfo *file_info;
   guint64    file_time = 0;
 #ifdef HAVE_EXIF
   gchar     *uri, *filename;
   ExifEntry *exif_entry;
   ExifData  *exif_data;
-  gchar     exif_buffer[128];
+  gchar      exif_buffer[128];
 #endif
 
   switch (mode)
@@ -524,7 +529,7 @@ thunar_sbr_get_time (ThunarxFileInfo   *file,
 
 
 
-static gchar*
+static gchar *
 thunar_sbr_date_renamer_process (ThunarxRenamer  *renamer,
                                  ThunarxFileInfo *file,
                                  const gchar     *text,
@@ -588,7 +593,7 @@ thunar_sbr_date_renamer_process (ThunarxRenamer  *renamer,
  *
  * Return value: the newly allocated #ThunarSbrDateRenamer.
  **/
-ThunarSbrDateRenamer*
+ThunarSbrDateRenamer *
 thunar_sbr_date_renamer_new (void)
 {
   return g_object_new (THUNAR_SBR_TYPE_DATE_RENAMER,
@@ -653,7 +658,7 @@ thunar_sbr_date_renamer_set_mode (ThunarSbrDateRenamer *date_renamer,
  *
  * Return value: the format for @date_renamer.
  **/
-const gchar*
+const gchar *
 thunar_sbr_date_renamer_get_format (ThunarSbrDateRenamer *date_renamer)
 {
   g_return_val_if_fail (THUNAR_SBR_IS_DATE_RENAMER (date_renamer), NULL);

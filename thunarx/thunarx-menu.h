@@ -39,79 +39,94 @@ typedef struct _ThunarxMenuItem        ThunarxMenuItem;
 
 
 
-
 /* ThunarxMenu defines */
-#define THUNARX_TYPE_MENU            (thunarx_menu_get_type ())
-#define THUNARX_MENU(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_MENU, ThunarxMenu))
-#define THUNARX_MENU_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNARX_TYPE_MENU, ThunarxMenuClass))
-#define THUNARX_IS_MENU(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_MENU))
+#define THUNARX_TYPE_MENU (thunarx_menu_get_type ())
+#define THUNARX_MENU(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_MENU, ThunarxMenu))
+#define THUNARX_MENU_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNARX_TYPE_MENU, ThunarxMenuClass))
+#define THUNARX_IS_MENU(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_MENU))
 #define THUNARX_IS_MENU_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), THUNARX_TYPE_MENU))
-#define THUNARX_MENU_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), THUNARX_TYPE_MENU))
+#define THUNARX_MENU_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNARX_TYPE_MENU))
 
 /* ThunarxMenuItem defines */
-#define THUNARX_TYPE_MENU_ITEM            (thunarx_menu_item_get_type ())
-#define THUNARX_MENU_ITEM(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_MENU_ITEM, ThunarxMenuItem))
-#define THUNARX_MENU_ITEM_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNARX_TYPE_MENU_ITEM, ThunarxMenuItemClass))
-#define THUNARX_IS_MENU_ITEM(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_MENU_ITEM))
+#define THUNARX_TYPE_MENU_ITEM (thunarx_menu_item_get_type ())
+#define THUNARX_MENU_ITEM(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_MENU_ITEM, ThunarxMenuItem))
+#define THUNARX_MENU_ITEM_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNARX_TYPE_MENU_ITEM, ThunarxMenuItemClass))
+#define THUNARX_IS_MENU_ITEM(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_MENU_ITEM))
 #define THUNARX_IS_MENU_ITEM_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), THUNARX_TYPE_MENU_ITEM))
-#define THUNARX_MENU_ITEM_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), THUNARX_TYPE_MENU_ITEM))
+#define THUNARX_MENU_ITEM_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNARX_TYPE_MENU_ITEM))
 
 
 
 /* ThunarxMenu structs */
-struct _ThunarxMenuClass {
+struct _ThunarxMenuClass
+{
   GObjectClass __parent__;
 };
 
-struct _ThunarxMenu {
-  GObject __parent__;
+struct _ThunarxMenu
+{
+  GObject             __parent__;
   ThunarxMenuPrivate *priv;
 };
 
 /* ThunarxMenuItem structs */
-struct _ThunarxMenuItemClass {
+struct _ThunarxMenuItemClass
+{
   GObjectClass __parent__;
   void (*activate) (ThunarxMenuItem *item);
 };
 
-struct _ThunarxMenuItem {
-  GObject __parent__;
+struct _ThunarxMenuItem
+{
+  GObject                 __parent__;
   ThunarxMenuItemPrivate *priv;
 };
 
 
 
 /* ThunarxMenu methods */
-GType         thunarx_menu_get_type       (void) G_GNUC_CONST;
+GType
+thunarx_menu_get_type (void) G_GNUC_CONST;
 
-ThunarxMenu  *thunarx_menu_new            (void) G_GNUC_MALLOC;
+ThunarxMenu *
+thunarx_menu_new (void) G_GNUC_MALLOC;
 
-void          thunarx_menu_append_item    (ThunarxMenu     *menu,
-                                           ThunarxMenuItem *item);
+void
+thunarx_menu_append_item (ThunarxMenu     *menu,
+                          ThunarxMenuItem *item);
 
-void          thunarx_menu_prepend_item   (ThunarxMenu     *menu,
-                                           ThunarxMenuItem *item);
+void
+thunarx_menu_prepend_item (ThunarxMenu     *menu,
+                           ThunarxMenuItem *item);
 
-GList*        thunarx_menu_get_items      (ThunarxMenu     *menu);
+GList *
+thunarx_menu_get_items (ThunarxMenu *menu);
 
 /* ThunarxMenuItem methods */
-GType             thunarx_menu_item_get_type      (void) G_GNUC_CONST;
+GType
+thunarx_menu_item_get_type (void) G_GNUC_CONST;
 
-ThunarxMenuItem  *thunarx_menu_item_new           (const gchar     *name,
-                                                   const gchar     *label,
-                                                   const gchar     *tooltip,
-                                                   const gchar     *icon) G_GNUC_MALLOC;
+ThunarxMenuItem *
+thunarx_menu_item_new (const gchar *name,
+                       const gchar *label,
+                       const gchar *tooltip,
+                       const gchar *icon) G_GNUC_MALLOC;
 
-gboolean          thunarx_menu_item_activate      (ThunarxMenuItem *item);
+gboolean
+thunarx_menu_item_activate (ThunarxMenuItem *item);
 
-gboolean          thunarx_menu_item_get_sensitive (ThunarxMenuItem *item);
-void              thunarx_menu_item_set_sensitive (ThunarxMenuItem *item,
-                                                   gboolean         sensitive);
+gboolean
+thunarx_menu_item_get_sensitive (ThunarxMenuItem *item);
+void
+thunarx_menu_item_set_sensitive (ThunarxMenuItem *item,
+                                 gboolean         sensitive);
 
-void              thunarx_menu_item_list_free     (GList           *items);
+void
+thunarx_menu_item_list_free (GList *items);
 
-void              thunarx_menu_item_set_menu      (ThunarxMenuItem *item,
-                                                   ThunarxMenu     *menu);
+void
+thunarx_menu_item_set_menu (ThunarxMenuItem *item,
+                            ThunarxMenu     *menu);
 
 G_END_DECLS
 

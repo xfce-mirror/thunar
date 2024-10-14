@@ -23,7 +23,6 @@
 #endif
 
 #include <exo/exo.h>
-
 #include <thunar-sbr/thunar-sbr-remove-renamer.h>
 
 
@@ -40,20 +39,25 @@ enum
 
 
 
-static void   thunar_sbr_remove_renamer_get_property  (GObject                      *object,
-                                                       guint                         prop_id,
-                                                       GValue                       *value,
-                                                       GParamSpec                   *pspec);
-static void   thunar_sbr_remove_renamer_set_property  (GObject                      *object,
-                                                       guint                         prop_id,
-                                                       const GValue                 *value,
-                                                       GParamSpec                   *pspec);
-static void   thunar_sbr_remove_renamer_realize       (GtkWidget                    *widget);
-static gchar *thunar_sbr_remove_renamer_process       (ThunarxRenamer               *renamer,
-                                                       ThunarxFileInfo              *file,
-                                                       const gchar                  *text,
-                                                       guint                         idx);
-static void   thunar_sbr_remove_renamer_update        (ThunarSbrRemoveRenamer       *remove_renamer);
+static void
+thunar_sbr_remove_renamer_get_property (GObject    *object,
+                                        guint       prop_id,
+                                        GValue     *value,
+                                        GParamSpec *pspec);
+static void
+thunar_sbr_remove_renamer_set_property (GObject      *object,
+                                        guint         prop_id,
+                                        const GValue *value,
+                                        GParamSpec   *pspec);
+static void
+thunar_sbr_remove_renamer_realize (GtkWidget *widget);
+static gchar *
+thunar_sbr_remove_renamer_process (ThunarxRenamer  *renamer,
+                                   ThunarxFileInfo *file,
+                                   const gchar     *text,
+                                   guint            idx);
+static void
+thunar_sbr_remove_renamer_update (ThunarSbrRemoveRenamer *remove_renamer);
 
 
 
@@ -327,7 +331,7 @@ thunar_sbr_remove_renamer_realize (GtkWidget *widget)
 
 
 
-static gchar*
+static gchar *
 thunar_sbr_remove_renamer_process (ThunarxRenamer  *renamer,
                                    ThunarxFileInfo *file,
                                    const gchar     *text,
@@ -346,9 +350,11 @@ thunar_sbr_remove_renamer_process (ThunarxRenamer  *renamer,
 
   /* determine the offsets for this file name */
   end_offset = (remove_renamer->end_offset_mode == THUNAR_SBR_OFFSET_MODE_LEFT)
-             ? remove_renamer->end_offset : (text_length - remove_renamer->end_offset);
+               ? remove_renamer->end_offset
+               : (text_length - remove_renamer->end_offset);
   start_offset = (remove_renamer->start_offset_mode == THUNAR_SBR_OFFSET_MODE_LEFT)
-               ? remove_renamer->start_offset : (text_length - remove_renamer->start_offset);
+                 ? remove_renamer->start_offset
+                 : (text_length - remove_renamer->start_offset);
 
   /* check if anything should be removed */
   if (G_UNLIKELY (start_offset >= end_offset || end_offset > text_length))
@@ -378,9 +384,11 @@ thunar_sbr_remove_renamer_update (ThunarSbrRemoveRenamer *remove_renamer)
     {
       /* check if start and end offset make sense */
       end_offset = (remove_renamer->end_offset_mode == THUNAR_SBR_OFFSET_MODE_LEFT)
-                 ? remove_renamer->end_offset : (G_MAXUINT - remove_renamer->end_offset);
+                   ? remove_renamer->end_offset
+                   : (G_MAXUINT - remove_renamer->end_offset);
       start_offset = (remove_renamer->start_offset_mode == THUNAR_SBR_OFFSET_MODE_LEFT)
-                   ? remove_renamer->start_offset : (G_MAXUINT - remove_renamer->start_offset);
+                     ? remove_renamer->start_offset
+                     : (G_MAXUINT - remove_renamer->start_offset);
 
       /* highlight invalid input by using theme specific colors */
       if (G_UNLIKELY (start_offset >= end_offset))
@@ -408,7 +416,7 @@ thunar_sbr_remove_renamer_update (ThunarSbrRemoveRenamer *remove_renamer)
  *
  * Return value: the newly allocated #ThunarSbrRemoveRenamer.
  **/
-ThunarSbrRemoveRenamer*
+ThunarSbrRemoveRenamer *
 thunar_sbr_remove_renamer_new (void)
 {
   return g_object_new (THUNAR_SBR_TYPE_REMOVE_RENAMER,
@@ -599,5 +607,3 @@ thunar_sbr_remove_renamer_set_start_offset_mode (ThunarSbrRemoveRenamer *remove_
       g_object_notify (G_OBJECT (remove_renamer), "start-offset-mode");
     }
 }
-
-

@@ -24,16 +24,18 @@
 
 G_BEGIN_DECLS;
 
-GdkDragAction thunar_dnd_ask     (GtkWidget    *widget,
-                                  ThunarFile   *folder,
-                                  GList        *path_list,
-                                  GdkDragAction actions);
+GdkDragAction
+thunar_dnd_ask (GtkWidget    *widget,
+                ThunarFile   *folder,
+                GList        *path_list,
+                GdkDragAction actions);
 
-gboolean      thunar_dnd_perform (GtkWidget    *widget,
-                                  ThunarFile   *file,
-                                  GList        *uri_list,
-                                  GdkDragAction action,
-                                  GClosure     *new_files_closure);
+gboolean
+thunar_dnd_perform (GtkWidget    *widget,
+                    ThunarFile   *file,
+                    GList        *uri_list,
+                    GdkDragAction action,
+                    GClosure     *new_files_closure);
 
 G_END_DECLS;
 

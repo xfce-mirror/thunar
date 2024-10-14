@@ -42,15 +42,11 @@
 #include <unistd.h>
 #endif
 
+#include <gio/gio.h>
 #include <glib/gi18n-lib.h>
 #include <glib/gstdio.h>
-
-#include <gio/gio.h>
-
 #include <gtk/gtk.h>
-
 #include <libxfce4util/libxfce4util.h>
-
 #include <thunar-uca/thunar-uca-model.h>
 
 
@@ -91,57 +87,77 @@ typedef enum
 
 
 
-static void               thunar_uca_model_tree_model_init  (GtkTreeModelIface    *iface);
-static void               thunar_uca_model_finalize         (GObject              *object);
-static GtkTreeModelFlags  thunar_uca_model_get_flags        (GtkTreeModel         *tree_model);
-static gint               thunar_uca_model_get_n_columns    (GtkTreeModel         *tree_model);
-static GType              thunar_uca_model_get_column_type  (GtkTreeModel         *tree_model,
-                                                             gint                  column);
-static gboolean           thunar_uca_model_get_iter         (GtkTreeModel         *tree_model,
-                                                             GtkTreeIter          *iter,
-                                                             GtkTreePath          *path);
-static GtkTreePath       *thunar_uca_model_get_path         (GtkTreeModel         *tree_model,
-                                                             GtkTreeIter          *iter);
-static void               thunar_uca_model_get_value        (GtkTreeModel         *tree_model,
-                                                             GtkTreeIter          *iter,
-                                                             gint                  column,
-                                                             GValue               *value);
-static gboolean           thunar_uca_model_iter_next        (GtkTreeModel         *tree_model,
-                                                             GtkTreeIter          *iter);
-static gboolean           thunar_uca_model_iter_children    (GtkTreeModel         *tree_model,
-                                                             GtkTreeIter          *iter,
-                                                             GtkTreeIter          *parent);
-static gboolean           thunar_uca_model_iter_has_child   (GtkTreeModel         *tree_model,
-                                                             GtkTreeIter          *iter);
-static gint               thunar_uca_model_iter_n_children  (GtkTreeModel         *tree_model,
-                                                             GtkTreeIter          *iter);
-static gboolean           thunar_uca_model_iter_nth_child   (GtkTreeModel         *tree_model,
-                                                             GtkTreeIter          *iter,
-                                                             GtkTreeIter          *parent,
-                                                             gint                  n);
-static gboolean           thunar_uca_model_iter_parent      (GtkTreeModel         *tree_model,
-                                                             GtkTreeIter          *iter,
-                                                             GtkTreeIter          *child);
-static gboolean           thunar_uca_model_load_from_file   (ThunarUcaModel       *uca_model,
-                                                             const gchar          *filename,
-                                                             GError              **error);
-static void               thunar_uca_model_item_reset       (ThunarUcaModelItem   *item);
-static void               thunar_uca_model_item_free        (gpointer              data);
-static void               start_element_handler             (GMarkupParseContext  *context,
-                                                             const gchar          *element_name,
-                                                             const gchar         **attribute_names,
-                                                             const gchar         **attribute_values,
-                                                             gpointer              user_data,
-                                                             GError              **error);
-static void               end_element_handler               (GMarkupParseContext  *context,
-                                                             const gchar          *element_name,
-                                                             gpointer              user_data,
-                                                             GError              **error);
-static void               text_handler                      (GMarkupParseContext  *context,
-                                                             const gchar          *text,
-                                                             gsize                 text_len,
-                                                             gpointer              user_data,
-                                                             GError              **error);
+static void
+thunar_uca_model_tree_model_init (GtkTreeModelIface *iface);
+static void
+thunar_uca_model_finalize (GObject *object);
+static GtkTreeModelFlags
+thunar_uca_model_get_flags (GtkTreeModel *tree_model);
+static gint
+thunar_uca_model_get_n_columns (GtkTreeModel *tree_model);
+static GType
+thunar_uca_model_get_column_type (GtkTreeModel *tree_model,
+                                  gint          column);
+static gboolean
+thunar_uca_model_get_iter (GtkTreeModel *tree_model,
+                           GtkTreeIter  *iter,
+                           GtkTreePath  *path);
+static GtkTreePath *
+thunar_uca_model_get_path (GtkTreeModel *tree_model,
+                           GtkTreeIter  *iter);
+static void
+thunar_uca_model_get_value (GtkTreeModel *tree_model,
+                            GtkTreeIter  *iter,
+                            gint          column,
+                            GValue       *value);
+static gboolean
+thunar_uca_model_iter_next (GtkTreeModel *tree_model,
+                            GtkTreeIter  *iter);
+static gboolean
+thunar_uca_model_iter_children (GtkTreeModel *tree_model,
+                                GtkTreeIter  *iter,
+                                GtkTreeIter  *parent);
+static gboolean
+thunar_uca_model_iter_has_child (GtkTreeModel *tree_model,
+                                 GtkTreeIter  *iter);
+static gint
+thunar_uca_model_iter_n_children (GtkTreeModel *tree_model,
+                                  GtkTreeIter  *iter);
+static gboolean
+thunar_uca_model_iter_nth_child (GtkTreeModel *tree_model,
+                                 GtkTreeIter  *iter,
+                                 GtkTreeIter  *parent,
+                                 gint          n);
+static gboolean
+thunar_uca_model_iter_parent (GtkTreeModel *tree_model,
+                              GtkTreeIter  *iter,
+                              GtkTreeIter  *child);
+static gboolean
+thunar_uca_model_load_from_file (ThunarUcaModel *uca_model,
+                                 const gchar    *filename,
+                                 GError        **error);
+static void
+thunar_uca_model_item_reset (ThunarUcaModelItem *item);
+static void
+thunar_uca_model_item_free (gpointer data);
+static void
+start_element_handler (GMarkupParseContext *context,
+                       const gchar         *element_name,
+                       const gchar        **attribute_names,
+                       const gchar        **attribute_values,
+                       gpointer             user_data,
+                       GError             **error);
+static void
+end_element_handler (GMarkupParseContext *context,
+                     const gchar         *element_name,
+                     gpointer             user_data,
+                     GError             **error);
+static void
+text_handler (GMarkupParseContext *context,
+              const gchar         *text,
+              gsize                text_len,
+              gpointer             user_data,
+              GError             **error);
 
 
 
@@ -154,8 +170,8 @@ struct _ThunarUcaModel
 {
   GObject __parent__;
 
-  GList          *items;
-  gint            stamp;
+  GList *items;
+  gint   stamp;
 };
 
 struct _ThunarUcaModelItem
@@ -173,10 +189,10 @@ struct _ThunarUcaModelItem
   ThunarUcaTypes types;
 
   /* derived attributes */
-  guint          multiple_selection : 1;
+  guint multiple_selection : 1;
 };
 
-typedef XFCE_GENERIC_STACK(ParserState) ParserStack;
+typedef XFCE_GENERIC_STACK (ParserState) ParserStack;
 
 typedef struct
 {
@@ -202,8 +218,7 @@ typedef struct
 
 
 
-static const GMarkupParser markup_parser =
-{
+static const GMarkupParser markup_parser = {
   start_element_handler,
   end_element_handler,
   text_handler,
@@ -375,7 +390,7 @@ thunar_uca_model_get_iter (GtkTreeModel *tree_model,
 
 
 
-static GtkTreePath*
+static GtkTreePath *
 thunar_uca_model_get_path (GtkTreeModel *tree_model,
                            GtkTreeIter  *iter)
 {
@@ -602,7 +617,7 @@ thunar_uca_model_load_from_file (ThunarUcaModel *uca_model,
   /* parse the file */
   context = g_markup_parse_context_new (&markup_parser, 0, &parser, NULL);
   succeed = g_markup_parse_context_parse (context, content, content_len, error)
-         && g_markup_parse_context_end_parse (context, error);
+            && g_markup_parse_context_end_parse (context, error);
 
   /* cleanup */
   g_markup_parse_context_free (context);
@@ -1052,7 +1067,7 @@ thunar_uca_model_get_unique_id (void)
  * Return value: a reference to the default
  *               #ThunarUcaModel instance.
  **/
-ThunarUcaModel*
+ThunarUcaModel *
 thunar_uca_model_get_default (void)
 {
   static ThunarUcaModel *model = NULL;
@@ -1124,14 +1139,14 @@ types_from_mime_type (const gchar *mime_type)
  * Return value: the list of #GtkTreePath<!---->s to items
  *               that match @file_infos.
  **/
-GList*
+GList *
 thunar_uca_model_match (ThunarUcaModel *uca_model,
                         GList          *file_infos)
 {
   typedef struct
   {
-    gchar          *name;
-    ThunarUcaTypes  types;
+    gchar         *name;
+    ThunarUcaTypes types;
   } ThunarUcaFile;
 
   ThunarUcaModelItem *item;
@@ -1344,7 +1359,7 @@ thunar_uca_model_remove (ThunarUcaModel *uca_model,
 
   /* clear any accelerator associated to the item */
   gtk_tree_model_get (GTK_TREE_MODEL (uca_model), iter,
-                      THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, &unique_id, 
+                      THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, &unique_id,
                       -1);
   accel_path = g_strdup_printf ("<Actions>/ThunarActions/uca-action-%s", unique_id);
   g_free (unique_id);
@@ -1451,10 +1466,7 @@ thunar_uca_model_update (ThunarUcaModel *uca_model,
   item->patterns[n] = NULL;
 
   /* check if this item will work for multiple files */
-  item->multiple_selection = (command != NULL && (strstr (command, "%F") != NULL
-                                               || strstr (command, "%D") != NULL
-                                               || strstr (command, "%N") != NULL
-                                               || strstr (command, "%U") != NULL));
+  item->multiple_selection = (command != NULL && (strstr (command, "%F") != NULL || strstr (command, "%D") != NULL || strstr (command, "%N") != NULL || strstr (command, "%U") != NULL));
 
   /* notify listeners about the changed item */
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (uca_model), iter);
@@ -1735,5 +1747,3 @@ error:
   g_string_free (command_line, TRUE);
   return FALSE;
 }
-
-

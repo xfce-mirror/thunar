@@ -28,33 +28,44 @@ G_BEGIN_DECLS;
 typedef struct _ThunarSbrReplaceRenamerClass ThunarSbrReplaceRenamerClass;
 typedef struct _ThunarSbrReplaceRenamer      ThunarSbrReplaceRenamer;
 
-#define THUNAR_SBR_TYPE_REPLACE_RENAMER            (thunar_sbr_replace_renamer_get_type ())
-#define THUNAR_SBR_REPLACE_RENAMER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_SBR_TYPE_REPLACE_RENAMER, ThunarSbrReplaceRenamer))
-#define THUNAR_SBR_REPLACE_RENAMER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_SBR_TYPE_REPLACE_RENAMER, ThunarSbrReplaceRenamerClass))
-#define THUNAR_SBR_IS_REPLACE_RENAMER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_SBR_TYPE_REPLACE_RENAMER))
+#define THUNAR_SBR_TYPE_REPLACE_RENAMER (thunar_sbr_replace_renamer_get_type ())
+#define THUNAR_SBR_REPLACE_RENAMER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_SBR_TYPE_REPLACE_RENAMER, ThunarSbrReplaceRenamer))
+#define THUNAR_SBR_REPLACE_RENAMER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_SBR_TYPE_REPLACE_RENAMER, ThunarSbrReplaceRenamerClass))
+#define THUNAR_SBR_IS_REPLACE_RENAMER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_SBR_TYPE_REPLACE_RENAMER))
 #define THUNAR_SBR_IS_REPLACE_RENAMER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_SBR_TYPE_REPLACE_RENAMER))
-#define THUNAR_SBR_REPLACE_RENAMER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_SBR_TYPE_REPLACE_RENAMER, ThunarSbrReplaceRenamerClass))
+#define THUNAR_SBR_REPLACE_RENAMER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_SBR_TYPE_REPLACE_RENAMER, ThunarSbrReplaceRenamerClass))
 
-GType                    thunar_sbr_replace_renamer_get_type            (void) G_GNUC_CONST;
-void                     thunar_sbr_replace_renamer_register_type       (ThunarxProviderPlugin   *plugin);
+GType
+thunar_sbr_replace_renamer_get_type (void) G_GNUC_CONST;
+void
+thunar_sbr_replace_renamer_register_type (ThunarxProviderPlugin *plugin);
 
-ThunarSbrReplaceRenamer *thunar_sbr_replace_renamer_new                 (void) G_GNUC_MALLOC;
+ThunarSbrReplaceRenamer *
+thunar_sbr_replace_renamer_new (void) G_GNUC_MALLOC;
 
-gboolean                 thunar_sbr_replace_renamer_get_case_sensitive  (ThunarSbrReplaceRenamer *replace_renamer);
-void                     thunar_sbr_replace_renamer_set_case_sensitive  (ThunarSbrReplaceRenamer *replace_renamer,
-                                                                         gboolean                 case_sensitive);
+gboolean
+thunar_sbr_replace_renamer_get_case_sensitive (ThunarSbrReplaceRenamer *replace_renamer);
+void
+thunar_sbr_replace_renamer_set_case_sensitive (ThunarSbrReplaceRenamer *replace_renamer,
+                                               gboolean                 case_sensitive);
 
-const gchar             *thunar_sbr_replace_renamer_get_pattern         (ThunarSbrReplaceRenamer *replace_renamer);
-void                     thunar_sbr_replace_renamer_set_pattern         (ThunarSbrReplaceRenamer *replace_renamer,
-                                                                         const gchar             *pattern);
+const gchar *
+thunar_sbr_replace_renamer_get_pattern (ThunarSbrReplaceRenamer *replace_renamer);
+void
+thunar_sbr_replace_renamer_set_pattern (ThunarSbrReplaceRenamer *replace_renamer,
+                                        const gchar             *pattern);
 
-gboolean                 thunar_sbr_replace_renamer_get_regexp          (ThunarSbrReplaceRenamer *replace_renamer);
-void                     thunar_sbr_replace_renamer_set_regexp          (ThunarSbrReplaceRenamer *replace_renamer,
-                                                                         gboolean                 regexp);
+gboolean
+thunar_sbr_replace_renamer_get_regexp (ThunarSbrReplaceRenamer *replace_renamer);
+void
+thunar_sbr_replace_renamer_set_regexp (ThunarSbrReplaceRenamer *replace_renamer,
+                                       gboolean                 regexp);
 
-const gchar             *thunar_sbr_replace_renamer_get_replacement     (ThunarSbrReplaceRenamer *replace_renamer);
-void                     thunar_sbr_replace_renamer_set_replacement     (ThunarSbrReplaceRenamer *replace_renamer,
-                                                                         const gchar             *replacement);
+const gchar *
+thunar_sbr_replace_renamer_get_replacement (ThunarSbrReplaceRenamer *replace_renamer);
+void
+thunar_sbr_replace_renamer_set_replacement (ThunarSbrReplaceRenamer *replace_renamer,
+                                            const gchar             *replacement);
 
 G_END_DECLS;
 
