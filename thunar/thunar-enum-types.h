@@ -423,9 +423,9 @@ thunar_use_partial_get_type (void) G_GNUC_CONST;
 
 /**
  * ThunarUsePartialMode:
- * @THUNAR_VERIFY_FILE_MODE_DISABLED    : Disable file checksum
+ * @THUNAR_VERIFY_FILE_MODE_DISABLED    : Disable file verification
  * @THUNAR_VERIFY_FILE_MODE_REMOTE_ONLY : Only when src/dst is remote
- * @THUNAR_VERIFY_FILE_MODE_ALWAYS      : Always verify file checksum
+ * @THUNAR_VERIFY_FILE_MODE_ALWAYS      : Always verify file contents
  **/
 typedef enum
 {
