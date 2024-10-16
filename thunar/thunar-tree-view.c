@@ -1343,8 +1343,7 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
       thunar_action_manager_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW, TRUE);
       xfce_gtk_menu_append_separator (GTK_MENU_SHELL (context_menu));
       thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_MOUNTABLE);
-      if (thunar_device_is_mounted (device))
-        thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_PROPERTIES);
+      thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_PROPERTIES);
     }
 
   thunar_gtk_menu_hide_accel_labels (GTK_MENU (context_menu));
