@@ -546,7 +546,7 @@ ttj_copy_file (ThunarTransferJob  *job,
     {
       gboolean is_equal;
       exo_job_info_message (EXO_JOB (job), _("Comparing checksums..."));
-      is_equal = thunar_g_file_compare_checksum (source_file, target_file,
+      is_equal = thunar_g_file_compare_contents (source_file, target_file,
                                                  exo_job_get_cancellable (EXO_JOB (job)), &err);
 
       /* if the copied file is corrupted and yet no error*/

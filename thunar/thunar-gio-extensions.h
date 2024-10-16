@@ -86,7 +86,7 @@ gboolean     thunar_g_file_copy                     (GFile                *sourc
                                                      gpointer              progress_callback_data,
                                                      GError              **error);
 
-gboolean     thunar_g_file_compare_checksum         (GFile                *file_a,
+gboolean     thunar_g_file_compare_contents         (GFile                *file_a,
                                                      GFile                *file_b,
                                                      GCancellable         *cancellable,
                                                      GError              **error);

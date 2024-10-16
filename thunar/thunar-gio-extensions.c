@@ -22,6 +22,14 @@
 #include "config.h"
 #endif
 
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h>
+#endif
+
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+
 #include <gio/gio.h>
 
 #ifdef HAVE_GIO_UNIX
@@ -37,6 +45,9 @@
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-util.h"
 #include "thunar/thunar-file.h"
+
+#define CMP_BUF_ALIGN (16)
+#define CMP_BUF_SIZE (1024 * 64)
 
 
 
@@ -855,37 +866,98 @@ thunar_g_file_copy (GFile                *source,
 
 
 /**
- * thunar_g_file_compare_checksum:
+ * thunar_g_file_compare_contents:
  * @file_a      : a #GFile
  * @file_b      : a #GFile
  * @cancellable : (nullalble): optional #GCancellable object
  * @error       : (nullalble): optional #GError
  *
- * Compare @file_a and @file_b with checksum.
+ * Compares the contents of @file_a and @file_b.
  *
- * Return value: %TRUE if a checksum matches, %FALSE if not.
+ * Return value: %TRUE if the files match, %FALSE if not.
  **/
 gboolean
-thunar_g_file_compare_checksum (GFile        *file_a,
+thunar_g_file_compare_contents (GFile        *file_a,
                                 GFile        *file_b,
                                 GCancellable *cancellable,
                                 GError      **error)
 {
-  gchar   *str_a;
-  gchar   *str_b;
-  gboolean is_equal;
+  GFileInputStream *inp_a;
+  GFileInputStream *inp_b;
+  void *buf_a = NULL;
+  void *buf_b = NULL;
+  gboolean is_equal = FALSE;
 
+  g_return_val_if_fail (G_IS_FILE (file_a), FALSE);
+  g_return_val_if_fail (G_IS_FILE (file_b), FALSE);
+  g_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  str_a = xfce_g_file_create_checksum (file_a, cancellable, error);
-  str_b = xfce_g_file_create_checksum (file_b, cancellable, error);
+  inp_a = g_file_read (file_a, cancellable, error);
+  if (inp_a == NULL)
+    {
+      goto out;
+    }
+  inp_b = g_file_read (file_b, cancellable, error);
+  if (inp_b == NULL)
+    {
+      goto out;
+    }
 
-  is_equal = g_strcmp0 (str_a, str_b) == 0;
+  if (posix_memalign (&buf_a, CMP_BUF_ALIGN, CMP_BUF_SIZE) != 0)
+    {
+      g_set_error(error, G_IO_ERROR, g_io_error_from_errno(errno), "Failed to allocate aligned memory: %s", strerror(errno));
+      goto out;
+    }
+  if (posix_memalign (&buf_b, CMP_BUF_ALIGN, CMP_BUF_SIZE) != 0)
+    {
+      g_set_error(error, G_IO_ERROR, g_io_error_from_errno(errno), "Failed to allocate aligned memory: %s", strerror(errno));
+      goto out;
+    }
 
-  g_free (str_a);
-  g_free (str_b);
+  for (;;) {
+    gssize bytes_read_a = g_input_stream_read (G_INPUT_STREAM (inp_a), buf_a, CMP_BUF_SIZE, cancellable, error);
+    if (bytes_read_a < 0)
+      {
+        break;
+      }
+    gssize bytes_read_b = g_input_stream_read (G_INPUT_STREAM (inp_b), buf_b, CMP_BUF_SIZE, cancellable, error);
+    if (bytes_read_b < 0)
+      {
+        break;
+      }
+
+    if (bytes_read_a == 0 && bytes_read_b == 0)
+      {
+        is_equal = TRUE;
+        break;
+      }
+    else if (bytes_read_a != bytes_read_b)
+      {
+        break;
+      }
+    else if (memcmp (buf_a, buf_b, bytes_read_a) != 0)
+      {
+        break;
+      }
+  }
+
+out:
+
+  if (inp_a != NULL)
+    {
+      g_object_unref (inp_a);
+    }
+  if (inp_b != NULL)
+    {
+      g_object_unref (inp_b);
+    }
+
+  free (buf_a);
+  free (buf_b);
 
   return is_equal;
+
 }
 
 
