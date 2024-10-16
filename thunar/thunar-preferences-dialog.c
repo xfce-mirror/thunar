@@ -1168,11 +1168,11 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /* next row */
   row++;
 
-  label = gtk_label_new_with_mnemonic (_("Verify file checksum on copy:"));
+  label = gtk_label_new_with_mnemonic (_("Verify file contents on copy:"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
-  gtk_widget_set_tooltip_text (label, _("Compare original file and copy with checksum. "
+  gtk_widget_set_tooltip_text (label, _("Compare contents of original file and copy. "
                                         "This will prevent corrupted files. "
                                         "Enabling this option will largely increase copy time."));
 

@@ -188,7 +188,7 @@ thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
   /**
    * ThunarPropertiesdialog:transfer_verify_file:
    *
-   * Whether to verify copied file with checksum
+   * Whether to verify copied file contents
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_TRANSFER_VERIFY_FILE,
@@ -549,8 +549,8 @@ ttj_copy_file (ThunarTransferJob  *job,
   if (verify_file && err == NULL)
     {
       gboolean is_equal;
-      exo_job_info_message (EXO_JOB (job), _("Comparing checksums..."));
-      is_equal = thunar_g_file_compare_checksum (source_file, target_file,
+      exo_job_info_message (EXO_JOB (job), _("Verifying file contents..."));
+      is_equal = thunar_g_file_compare_contents (source_file, target_file,
                                                  exo_job_get_cancellable (EXO_JOB (job)), &err);
 
       /* if the copied file is corrupted and yet no error*/
