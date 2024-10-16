@@ -1088,7 +1088,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   /**
    * ThunarPreferences:misc-transfer-verify-file:
    *
-   * Whether to verify copied file with checksum.
+   * Whether to verify copied file contents.
    **/
   preferences_props[PROP_MISC_TRANSFER_VERIFY_FILE] =
   g_param_spec_enum ("misc-transfer-verify-file",
