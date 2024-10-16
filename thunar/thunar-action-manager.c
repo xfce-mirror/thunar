@@ -1946,6 +1946,12 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
       gtk_menu_item_set_label (GTK_MENU_ITEM (item), eject_label);
       return item;
 
+    case THUNAR_ACTION_MANAGER_ACTION_PROPERTIES:
+      item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
+      if (action_mgr->device_to_process != NULL)
+        gtk_widget_set_sensitive (item, thunar_device_is_mounted (action_mgr->device_to_process));
+      return item;
+
     default:
       return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
     }
