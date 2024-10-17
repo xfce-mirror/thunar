@@ -1174,7 +1174,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_show (label);
   gtk_widget_set_tooltip_text (label, _("Compare contents of original file and copy. "
                                         "This will prevent corrupted files. "
-                                        "Enabling this option will largely increase copy time."));
+                                        "Enabling this option will slightly increase copy time."));
 
   combo = gtk_combo_box_text_new ();
   type = g_type_class_ref (THUNAR_TYPE_VERIFY_FILE_MODE);
