@@ -114,7 +114,7 @@ thunar_g_file_copy (GFile                *source,
                     GError              **error);
 
 gboolean
-thunar_g_file_compare_checksum (GFile        *file_a,
+thunar_g_file_compare_contents (GFile        *file_a,
                                 GFile        *file_b,
                                 GCancellable *cancellable,
                                 GError      **error);
