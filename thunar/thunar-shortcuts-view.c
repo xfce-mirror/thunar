@@ -1307,8 +1307,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
       thunar_action_manager_append_menu_item (view->action_mgr, GTK_MENU_SHELL (context_menu), THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW, TRUE);
       xfce_gtk_menu_append_separator (GTK_MENU_SHELL (context_menu));
       thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_MOUNTABLE);
-      if (thunar_device_is_mounted (device))
-        thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_PROPERTIES);
+      thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_PROPERTIES);
     }
   else if (file != NULL)
     {
