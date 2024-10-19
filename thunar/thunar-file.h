@@ -239,6 +239,8 @@ const gchar *
 thunar_file_get_basename (const ThunarFile *file) G_GNUC_CONST;
 gboolean
 thunar_file_is_symlink (const ThunarFile *file);
+gboolean
+thunar_file_is_mountpoint (const ThunarFile *file);
 guint64
 thunar_file_get_size (const ThunarFile *file);
 guint64
