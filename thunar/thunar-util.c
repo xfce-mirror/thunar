@@ -1447,7 +1447,7 @@ thunar_util_get_statusbar_text_for_single_file (ThunarFile *file)
 
   if (show_filetype == TRUE)
     {
-      if (G_UNLIKELY (content_type != NULL && g_str_equal (content_type, "inode/symlink")))
+      if (G_UNLIKELY (g_str_equal (content_type, "inode/symlink")))
         temp_string = g_strdup (_ ("broken link"));
       else if (G_UNLIKELY (thunar_file_is_symlink (file)))
         temp_string = g_strdup_printf (_ ("link to %s"), thunar_file_get_symlink_target (file));
@@ -1455,10 +1455,12 @@ thunar_util_get_statusbar_text_for_single_file (ThunarFile *file)
         temp_string = g_strdup (_ ("shortcut"));
       else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_MOUNTABLE))
         temp_string = g_strdup (_ ("mountable"));
+      else if (G_UNLIKELY (thunar_file_is_mountpoint (file)))
+        temp_string = g_strdup (_ ("mount point"));
       else
         {
           gchar *description = g_content_type_get_description (content_type);
-          temp_string = g_strdup_printf (_ ("%s"), description);
+          temp_string = g_strdup (description);
           g_free (description);
         }
       text_list = g_list_append (text_list, temp_string);

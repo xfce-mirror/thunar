@@ -2528,20 +2528,31 @@ thunar_file_get_content_type_desc (ThunarFile *file)
   /* thunar_file_get_content_type always provides fallback, hence no NULL check needed */
   content_type = thunar_file_get_content_type (file);
 
-  if (G_LIKELY (!thunar_file_is_symlink (file)))
-    return g_content_type_get_description (content_type);
-
   /* handle broken symlink */
   if (G_UNLIKELY (g_content_type_equals (content_type, "inode/symlink")))
-    return g_strdup ("broken link");
+    return g_strdup (_("broken link"));
 
   /* append " (link to <target>)" to description if link is not broken */
-  type_text = g_content_type_get_description (content_type);
-  link_text = g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (file));
-  description = g_strdup_printf ("%s (%s)", type_text, link_text);
-  g_free (link_text);
-  g_free (type_text);
-  return description;
+  if (G_UNLIKELY (thunar_file_is_symlink (file)))
+    {
+      type_text = g_content_type_get_description (content_type);
+      link_text = g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (file));
+      description = g_strdup_printf ("%s (%s)", type_text, link_text);
+      g_free (link_text);
+      g_free (type_text);
+      return description;
+    }
+
+  /* append " (mount point)" to description if folder is a mount point */
+  if (G_UNLIKELY (thunar_file_is_mountpoint (file)))
+    {
+      type_text = g_content_type_get_description (content_type);
+      description = g_strdup_printf (_("%s (mount point)"), type_text);
+      g_free (type_text);
+      return description;
+    }
+
+  return g_content_type_get_description (content_type);
 }
 
 
@@ -2890,6 +2901,27 @@ thunar_file_is_mountable (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   return file->kind == G_FILE_TYPE_MOUNTABLE;
+}
+
+
+
+/**
+ * thunar_file_is_mountpoint:
+ * @file : a #ThunarFile.
+ *
+ * Returns %TRUE if @file is a mount point.
+ *
+ * Return value: %TRUE if @file is a mount point.
+ **/
+gboolean
+thunar_file_is_mountpoint (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+
+  if (file->info == NULL)
+    return FALSE;
+
+  return g_file_info_get_attribute_boolean (file->info, G_FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT);
 }
 
 
@@ -3743,6 +3775,22 @@ thunar_file_get_emblem_names (ThunarFile *file)
        * users won't be surprised when opening the file in a text editor, but are unable to save.
        */
       emblems = g_list_prepend (emblems, g_strdup (THUNAR_FILE_EMBLEM_NAME_CANT_WRITE));
+    }
+
+  /* add mount icon as emblem to mount points */
+  if (thunar_file_is_mountpoint (file))
+    {
+      GMount *mount = g_file_find_enclosing_mount (file->gfile, NULL, NULL);
+      if (mount != NULL)
+        {
+          GIcon       *icon = g_mount_get_icon (mount);
+          const gchar *icon_name = g_themed_icon_get_names (G_THEMED_ICON (icon))[0];
+
+          if (icon_name != NULL)
+            emblems = g_list_prepend (emblems, g_strdup (icon_name));
+
+          g_object_unref (icon);
+        }
     }
 
   return emblems;
