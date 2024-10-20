@@ -18,6 +18,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#ifdef __linux__
+#define _GNU_SOURCE
+#endif
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -33,9 +37,26 @@
 #include <gio/gio.h>
 
 #ifdef HAVE_GIO_UNIX
+
+#ifdef __linux__
+
+#define USE_DIRECT_IO 1
+#include <fcntl.h>
+#include <gio/gunixinputstream.h>
+
+#if HAVE_STATX
+#include <sys/stat.h>
+#ifdef STATX_DIOALIGN
+#define USE_STATX_ALIGN 1
+#endif /* STATX_DIOALIGN */
+#endif /* HAVE_STATX */
+
+#endif /* __linux__ */
+
 #include <gio/gdesktopappinfo.h>
 #include <gio/gunixmounts.h>
-#endif
+
+#endif /* HAVE_GIO_UNIX */
 
 #include "thunar/thunar-file.h"
 #include "thunar/thunar-gio-extensions.h"
@@ -45,8 +66,12 @@
 
 #include <libxfce4util/libxfce4util.h>
 
-#define CMP_BUF_ALIGN (16)
+#define CMP_BUF_MIN_ALIGN (16)
 #define CMP_BUF_SIZE (1024 * 64)
+
+#ifndef O_BINARY
+#define O_BINARY (0)
+#endif
 
 
 
@@ -870,6 +895,183 @@ thunar_g_file_copy (GFile                *source,
 
 
 
+#ifdef USE_DIRECT_IO
+static GInputStream *
+open_file_and_buffer_for_direct_io (GFile        *file,
+                                    GCancellable *cancellable,
+                                    void        **buf_out,
+                                    unsigned int *buf_align_out,
+                                    size_t       *buf_size_out)
+{
+  int    fd = -1;
+  size_t buf_align;
+  size_t offset_align;
+  size_t buf_size;
+  void  *buf = NULL;
+#ifdef USE_STATX_ALIGN
+  struct statx statx_buf;
+
+  // First we use statx () to ask the filesystem the required buffer alignment
+  // for direct I/O (stx_dio_mem_align), as well as what the file offset
+  // alignment (stx_dio_offset_align), which tells us what the buffer size is
+  // required to be a multiple of.
+  DBG ("Trying statx ()");
+  if (statx (-1, g_file_peek_path (file), AT_STATX_SYNC_AS_STAT, STATX_DIOALIGN, &statx_buf) == 0)
+    {
+      if (statx_buf.stx_dio_mem_align > 0 && statx_buf.stx_dio_offset_align > 0)
+        {
+          DBG ("statx () succeeded, direct I/O align=%u, offset_align=%u",
+               statx_buf.stx_dio_mem_align,
+               statx_buf.stx_dio_offset_align);
+          // Ensure alignment is at least 16, which is required for most SIMD
+          // operations.  If somehow the required filesystem alignment/offset
+          // alignment is lower than 16, it's always safe to go higher.
+          buf_align = MAX (CMP_BUF_MIN_ALIGN, statx_buf.stx_dio_mem_align);
+          offset_align = MAX (CMP_BUF_MIN_ALIGN, statx_buf.stx_dio_offset_align);
+        }
+      else
+        {
+          DBG ("statx () succeeded, but direct I/O not supported");
+          buf_align = 0;
+          offset_align = 0;
+        }
+    }
+  else
+#endif
+    {
+      DBG ("Using alignment/offset alignment fallback of 512");
+      // Generally this fallback value should work on linux 2.4 & above.
+      buf_align = 512;
+      offset_align = 512;
+    }
+
+  // Since we're using blocking stdio operations and not cancellable GIO
+  // operations, we should check the cancellable periodically.
+  if (cancellable != NULL && g_cancellable_is_cancelled (cancellable))
+    {
+      goto out_err;
+    }
+
+  if (buf_align == 0 || offset_align == 0)
+    {
+      // If either of these are zero, statx () reports that direct I/O is not
+      // supported on the file's device.
+      goto out_err;
+    }
+
+  if ((offset_align & (offset_align - 1)) == 0)
+    {
+      // offset_align is a power of two, so it's easy to "round" CMF_BUF_SIZE
+      // down to the nearest multiple of offset_align.
+      buf_size = (CMP_BUF_SIZE) & ~(offset_align - 1);
+    }
+  else
+    {
+      // I wouldn't expct this to ever not be a power of two, but we can still
+      // do something useful here to get a multiple of offset_align.
+      buf_size = (CMP_BUF_SIZE / offset_align) * offset_align;
+    }
+  DBG ("buf_size will be %" G_GSIZE_FORMAT " based on offset_align", buf_size);
+
+  if (buf_size == 0)
+    {
+      // This shouldn't happen, but if somehow we get a truly bizarre
+      // offst_align value that is larger than CMP_BUF_SIZE, we'll just bail.
+      goto out_err;
+    }
+
+  // Open using the same flags g_file_read () uses, plus O_DIRECT.
+  fd = open (g_file_peek_path (file), O_RDONLY | O_BINARY | O_CLOEXEC | O_DIRECT, 0);
+  if (fd == -1 || (cancellable != NULL && g_cancellable_is_cancelled (cancellable)))
+    {
+      goto out_err;
+    }
+  DBG ("Successfully opened file with O_DIRECT");
+
+  // Create a buffer to read data into, with the required alignment and size.
+  if (posix_memalign (&buf, buf_align, buf_size) != 0)
+    {
+      goto out_err;
+    }
+  DBG ("Successfully allocated memory for direct I/O buffers");
+
+  // Even if we've successfully opened the file for direct I/O and have
+  // allocated our buffer, it's still possible that there's something wrong
+  // with our buffer size or alignment.  So do a test read to see if it
+  // succeeds, and if so, seek back to the beginning of the file.
+  if (read (fd, buf, buf_size) == -1
+      || lseek (fd, 0, SEEK_SET) == (off_t) -1
+      || (cancellable != NULL && g_cancellable_is_cancelled (cancellable)))
+    {
+      goto out_err;
+    }
+  DBG ("Direct I/O is available and seems to be working");
+
+  *buf_out = buf;
+  *buf_align_out = buf_align;
+  *buf_size_out = buf_size;
+
+  return g_unix_input_stream_new (fd, TRUE);
+
+out_err:
+
+  if (fd >= 0)
+    {
+      close (fd);
+    }
+  free (buf);
+
+  return NULL;
+}
+#endif
+
+
+
+static GInputStream *
+open_file_and_buffer_for_simd (GFile        *file,
+                               GCancellable *cancellable,
+                               void        **buf_out,
+                               unsigned int *buf_align_out,
+                               size_t       *buf_size_out,
+                               GError      **error)
+{
+  GFileInputStream *finp;
+  void             *buf = NULL;
+
+  finp = g_file_read (file, cancellable, error);
+  if (finp == NULL)
+    {
+      goto out_err;
+    }
+
+  /* Use 16-byte aligned allocations (rather than allocating on the stack), as
+     that's usually a requirement for any SIMD optimizations the compiler might
+     be able to do. */
+  if (posix_memalign (&buf, CMP_BUF_MIN_ALIGN, CMP_BUF_SIZE) != 0)
+    {
+      g_set_error (error, G_IO_ERROR, g_io_error_from_errno (errno), "Failed to allocate aligned memory: %s", strerror (errno));
+      goto out_err;
+    }
+
+  *buf_out = buf;
+  *buf_align_out = CMP_BUF_MIN_ALIGN;
+  *buf_size_out = CMP_BUF_SIZE;
+
+  return G_INPUT_STREAM (finp);
+
+out_err:
+
+  if (finp != NULL)
+    {
+      g_object_unref (finp);
+    }
+  free (buf);
+
+  return FALSE;
+}
+
+
+
 /**
  * thunar_g_file_compare_contents:
  * @file_a      : a #GFile
@@ -888,9 +1090,11 @@ thunar_g_file_compare_contents (GFile        *file_a,
                                 GError      **error)
 {
   GFileInputStream *inp_a = NULL;
-  GFileInputStream *inp_b = NULL;
+  GInputStream     *inp_b = NULL;
   void             *buf_a = NULL;
   void             *buf_b = NULL;
+  unsigned int      buf_align = 0;
+  size_t            buf_size = 0;
   gboolean          is_equal = FALSE;
 
   g_return_val_if_fail (G_IS_FILE (file_a), FALSE);
@@ -898,60 +1102,70 @@ thunar_g_file_compare_contents (GFile        *file_a,
   g_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
+  // We assume that file_b is the destination file, and that's the one that
+  // really needs to be opened using O_DIRECT, as it's just been written, and
+  // some (or even all) of it will still be in the kernel's buffer cache.
+  // file_a can be opened normally, and will hopefully/likely be read from
+  // buffer cache, which is both fine and faster.
+
   inp_a = g_file_read (file_a, cancellable, error);
-  if (inp_a == NULL)
-    {
-      goto out;
-    }
-  inp_b = g_file_read (file_b, cancellable, error);
-  if (inp_b == NULL)
-    {
-      goto out;
-    }
 
-  /* Use 16-byte aligned allocations (rather than allocating on the stack), as
-     that's usually a requirement for any SIMD optimizations the compiler might
-     be able to do. */
-  if (posix_memalign (&buf_a, CMP_BUF_ALIGN, CMP_BUF_SIZE) != 0)
+  if (inp_a != NULL)
     {
-      g_set_error (error, G_IO_ERROR, g_io_error_from_errno (errno), "Failed to allocate aligned memory: %s", strerror (errno));
-      goto out;
-    }
-  if (posix_memalign (&buf_b, CMP_BUF_ALIGN, CMP_BUF_SIZE) != 0)
-    {
-      g_set_error (error, G_IO_ERROR, g_io_error_from_errno (errno), "Failed to allocate aligned memory: %s", strerror (errno));
-      goto out;
-    }
+#ifdef USE_DIRECT_IO
+      if (g_file_has_uri_scheme (file_b, "file"))
+        {
+          DBG ("Attempting direct I/O for destination file");
+          inp_b = open_file_and_buffer_for_direct_io (file_b, cancellable, &buf_b, &buf_align, &buf_size);
+        }
+#endif
 
-  for (;;)
-    {
-      gssize bytes_read_a = g_input_stream_read (G_INPUT_STREAM (inp_a), buf_a, CMP_BUF_SIZE, cancellable, error);
-      if (bytes_read_a < 0)
+      if (inp_b == NULL)
         {
-          break;
-        }
-      gssize bytes_read_b = g_input_stream_read (G_INPUT_STREAM (inp_b), buf_b, CMP_BUF_SIZE, cancellable, error);
-      if (bytes_read_b < 0)
-        {
-          break;
-        }
-
-      if (bytes_read_a == 0 && bytes_read_b == 0)
-        {
-          is_equal = TRUE;
-          break;
-        }
-      else if (bytes_read_a != bytes_read_b)
-        {
-          break;
-        }
-      else if (memcmp (buf_a, buf_b, bytes_read_a) != 0)
-        {
-          break;
+          inp_b = open_file_and_buffer_for_simd (file_b, cancellable, &buf_b, &buf_align, &buf_size, error);
         }
     }
 
-out:
+  if (inp_b != NULL)
+    {
+      // Now that we know the alignment and size needed for file_b, we can also
+      // allocate the buffer for file_a.
+      if (posix_memalign (&buf_a, buf_align, buf_size) != 0)
+        {
+          g_set_error (error, G_IO_ERROR, g_io_error_from_errno (errno), "Failed to allocate aligned memory: %s", strerror (errno));
+        }
+    }
+
+  if (inp_a != NULL && inp_b != NULL && buf_a != NULL)
+    {
+      for (;;)
+        {
+          gssize bytes_read_a = g_input_stream_read (G_INPUT_STREAM (inp_a), buf_a, buf_size, cancellable, error);
+          if (bytes_read_a < 0)
+            {
+              break;
+            }
+          gssize bytes_read_b = g_input_stream_read (G_INPUT_STREAM (inp_b), buf_b, buf_size, cancellable, error);
+          if (bytes_read_b < 0)
+            {
+              break;
+            }
+
+          if (bytes_read_a == 0 && bytes_read_b == 0)
+            {
+              is_equal = TRUE;
+              break;
+            }
+          else if (bytes_read_a != bytes_read_b)
+            {
+              break;
+            }
+          else if (memcmp (buf_a, buf_b, bytes_read_a) != 0)
+            {
+              break;
+            }
+        }
+    }
 
   if (inp_a != NULL)
     {
