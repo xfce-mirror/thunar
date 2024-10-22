@@ -264,6 +264,8 @@ thunar_file_is_shortcut (const ThunarFile *file) G_GNUC_PURE;
 gboolean
 thunar_file_is_mountable (const ThunarFile *file) G_GNUC_PURE;
 gboolean
+thunar_file_is_mountpoint (const ThunarFile *file);
+gboolean
 thunar_file_is_local (const ThunarFile *file);
 gboolean
 thunar_file_is_parent (const ThunarFile *file,

@@ -1455,10 +1455,12 @@ thunar_util_get_statusbar_text_for_single_file (ThunarFile *file)
         temp_string = g_strdup (_ ("shortcut"));
       else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_MOUNTABLE))
         temp_string = g_strdup (_ ("mountable"));
-      else
+      else if (G_UNLIKELY (thunar_file_is_mountpoint (file)))
+        temp_string = g_strdup (_ ("mount point"));
+      else if (G_LIKELY (content_type != NULL))
         {
           gchar *description = g_content_type_get_description (content_type);
-          temp_string = g_strdup_printf (_ ("%s"), description);
+          temp_string = g_strdup (description);
           g_free (description);
         }
       text_list = g_list_append (text_list, temp_string);
