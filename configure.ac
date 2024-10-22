@@ -133,7 +133,8 @@ dnl *** Check for standard functions ***
 dnl ************************************
 AC_FUNC_MMAP()
 AC_CHECK_FUNCS([localeconv mkdtemp pread pwrite sched_yield setgroupent \
-                setpassent strcoll strlcpy strptime symlink atexit realpath])
+                setpassent strcoll strlcpy strptime symlink atexit realpath \
+                statx])
 
 dnl ******************************
 dnl *** Check for i18n support ***
