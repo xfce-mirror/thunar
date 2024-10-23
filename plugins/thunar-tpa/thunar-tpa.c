@@ -213,13 +213,25 @@ thunar_tpa_finalize (GObject *object)
 
   /* cancel any pending calls */
   if (G_LIKELY (plugin->cancellable_display_trash != NULL))
-    g_cancellable_cancel (plugin->cancellable_display_trash);
+    {
+      g_cancellable_cancel (plugin->cancellable_display_trash);
+      g_object_unref (plugin->cancellable_display_trash);
+    }
   if (G_LIKELY (plugin->cancellable_empty_trash != NULL))
-    g_cancellable_cancel (plugin->cancellable_empty_trash);
+    {
+      g_cancellable_cancel (plugin->cancellable_empty_trash);
+      g_object_unref (plugin->cancellable_empty_trash);
+    }
   if (G_LIKELY (plugin->cancellable_move_to_trash != NULL))
-    g_cancellable_cancel (plugin->cancellable_move_to_trash);
+    {
+      g_cancellable_cancel (plugin->cancellable_move_to_trash);
+      g_object_unref (plugin->cancellable_move_to_trash);
+    }
   if (G_LIKELY (plugin->cancellable_query_trash != NULL))
-    g_cancellable_cancel (plugin->cancellable_query_trash);
+    {
+      g_cancellable_cancel (plugin->cancellable_query_trash);
+      g_object_unref (plugin->cancellable_query_trash);
+    }
 
   /* release the proxy object */
   if (G_LIKELY (plugin->proxy != NULL))
