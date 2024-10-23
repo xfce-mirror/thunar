@@ -2,7 +2,7 @@
 #-
 # Copyright (c) 2004-2007 Benedikt Meurer <benny@xfce.org>
 # Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
-# Copyright (c) 2004-2015 Xfce Development Team <xfce4-dev@xfce.org>
+# Copyright (c) 2004-2024 Xfce Development Team <xfce4-dev@xfce.org>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -30,7 +30,7 @@ XDT_VERSION_INIT([4.19.3], [git])
 dnl ***************************
 dnl *** Initialize autoconf ***
 dnl ***************************
-AC_COPYRIGHT([Copyright (c) 2004-2022 The Thunar development team. All rights reserved.])
+AC_COPYRIGHT([Copyright (c) 2004-2024 The Thunar development team. All rights reserved.])
 AC_INIT([thunar], [xdt_version], [https://gitlab.xfce.org/xfce/thunar], [thunar])
 AC_PREREQ([2.69])
 AC_CONFIG_MACRO_DIRS([m4])
