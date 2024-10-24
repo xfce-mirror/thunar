@@ -1172,9 +1172,11 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
-  gtk_widget_set_tooltip_text (label, _("Compare contents of original file and copy. "
-                                        "This will prevent corrupted files. "
-                                        "Enabling this option will slightly increase copy time."));
+  gtk_widget_set_tooltip_text (label, _("Compare contents of original file and copy in order to detect corruption. "
+                                        "While this will attempt to compare the actual contents that are on the "
+                                        "destination media, Thunar may be unable to bypass filesystem caches, so "
+                                        "this comparison may not detect all instances of corruption. "
+                                        "Enabling this option will increase copy time."));
 
   combo = gtk_combo_box_text_new ();
   type = g_type_class_ref (THUNAR_TYPE_VERIFY_FILE_MODE);
