@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-10-23 00:45+0200\n"
+"POT-Creation-Date: 2024-10-25 12:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Pjotr <pjotrvertaalt@gmail.com>, 2013-2015,2017-2024\n"
 "Language-Team: Dutch (http://app.transifex.com/xfce/thunar/language/nl/)\n"
@@ -1475,8 +1475,8 @@ msgstr "Bestandnaam"
 #: thunar/thunar-enum-types.c:700 thunar/thunar-enum-types.c:725
 #: thunar/thunar-enum-types.c:860 thunar/thunar-preferences-dialog.c:466
 #: thunar/thunar-preferences-dialog.c:1122
-#: thunar/thunar-preferences-dialog.c:1228
-#: thunar/thunar-preferences-dialog.c:1316
+#: thunar/thunar-preferences-dialog.c:1230
+#: thunar/thunar-preferences-dialog.c:1318
 msgid "Never"
 msgstr "Nooit"
 
@@ -1487,8 +1487,8 @@ msgstr "Alleen voor locatie op afstand"
 #: thunar/thunar-enum-types.c:702 thunar/thunar-enum-types.c:727
 #: thunar/thunar-enum-types.c:862 thunar/thunar-preferences-dialog.c:468
 #: thunar/thunar-preferences-dialog.c:1118
-#: thunar/thunar-preferences-dialog.c:1226
-#: thunar/thunar-preferences-dialog.c:1317
+#: thunar/thunar-preferences-dialog.c:1228
+#: thunar/thunar-preferences-dialog.c:1319
 msgid "Always"
 msgstr "Altijd"
 
@@ -1517,7 +1517,7 @@ msgid "Delete (opposite of create)"
 msgstr "Verwijderen (tegengestelde van maken)"
 
 #: thunar/thunar-enum-types.c:791 thunar/thunar-file.c:1086
-#: thunar/thunar-gio-extensions.c:485 thunar/thunar-shortcuts-model.c:1150
+#: thunar/thunar-gio-extensions.c:510 thunar/thunar-shortcuts-model.c:1150
 #: thunar.desktop.in.in:25
 msgid "Trash"
 msgstr "Prullenbak"
@@ -1559,7 +1559,7 @@ msgstr "Ingebed"
 msgid "Only for local files"
 msgstr "Slechts voor plaatselijke bestanden"
 
-#: thunar/thunar-file.c:1093 thunar/thunar-gio-extensions.c:483
+#: thunar/thunar-file.c:1093 thunar/thunar-gio-extensions.c:508
 #: thunar/thunar-shortcuts-model.c:1032
 msgid "File System"
 msgstr "Bestandssysteem"
@@ -1610,82 +1610,82 @@ msgid "%s (mount point)"
 msgstr "%s (aankoppelpunt)"
 
 #. Implementation specific
-#: thunar/thunar-gio-extensions.c:64
+#: thunar/thunar-gio-extensions.c:89
 msgid "iPod touch"
 msgstr "iPod touch"
 
-#: thunar/thunar-gio-extensions.c:65
+#: thunar/thunar-gio-extensions.c:90
 msgid "iPad"
 msgstr "iPad"
 
-#: thunar/thunar-gio-extensions.c:66
+#: thunar/thunar-gio-extensions.c:91
 msgid "iPhone"
 msgstr "iPhone"
 
-#: thunar/thunar-gio-extensions.c:67
+#: thunar/thunar-gio-extensions.c:92
 msgid "Solid State Drive"
 msgstr "SSD"
 
-#: thunar/thunar-gio-extensions.c:68
+#: thunar/thunar-gio-extensions.c:93
 msgid "System Drive"
 msgstr "Systeemschijf"
 
-#: thunar/thunar-gio-extensions.c:69 thunar/thunar-gio-extensions.c:70
+#: thunar/thunar-gio-extensions.c:94 thunar/thunar-gio-extensions.c:95
 msgid "USB Drive"
 msgstr "USB-schijf"
 
 #. Freedesktop icon-naming-spec
-#: thunar/thunar-gio-extensions.c:73
+#: thunar/thunar-gio-extensions.c:98
 msgid "Camera"
 msgstr "Camera"
 
-#: thunar/thunar-gio-extensions.c:74
+#: thunar/thunar-gio-extensions.c:99
 msgid "Harddisk"
 msgstr "Harde schijf"
 
-#: thunar/thunar-gio-extensions.c:75
+#: thunar/thunar-gio-extensions.c:100
 msgid "Optical Drive"
 msgstr "Optisch station"
 
-#: thunar/thunar-gio-extensions.c:76
+#: thunar/thunar-gio-extensions.c:101
 msgid "Removable Drive"
 msgstr "Verwijderbare schijf"
 
-#: thunar/thunar-gio-extensions.c:77
+#: thunar/thunar-gio-extensions.c:102
 msgid "Flash Drive"
 msgstr "Geheugenstaafje"
 
-#: thunar/thunar-gio-extensions.c:78
+#: thunar/thunar-gio-extensions.c:103
 msgid "Floppy"
 msgstr "Diskette"
 
-#: thunar/thunar-gio-extensions.c:79
+#: thunar/thunar-gio-extensions.c:104
 msgid "Optical Media"
 msgstr "Optische media"
 
-#: thunar/thunar-gio-extensions.c:80
+#: thunar/thunar-gio-extensions.c:105
 msgid "Tape"
 msgstr "Band"
 
-#: thunar/thunar-gio-extensions.c:81
+#: thunar/thunar-gio-extensions.c:106
 msgid "Multimedia Player"
 msgstr "Multimediaspeler"
 
-#: thunar/thunar-gio-extensions.c:82
+#: thunar/thunar-gio-extensions.c:107
 msgid "PDA"
 msgstr "PDA"
 
-#: thunar/thunar-gio-extensions.c:83
+#: thunar/thunar-gio-extensions.c:108
 msgid "Phone"
 msgstr "Telefoon"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: thunar/thunar-gio-extensions.c:565
+#: thunar/thunar-gio-extensions.c:590
 #, c-format
 msgid "%s on %s"
 msgstr "%s op %s"
 
-#: thunar/thunar-gio-extensions.c:676
+#: thunar/thunar-gio-extensions.c:701
 #, c-format
 msgid "%s used (%.0f%%)  |  %s free (%.0f%%)"
 msgstr "%s gebruikt (%.0f%%)  |  %s vrij (%.0f%%)"
@@ -2023,7 +2023,7 @@ msgid "Allow this file to _run as a program"
 msgstr "Sta toe dat dit bestand wordt _uitgevoerd als een programma"
 
 #: thunar/thunar-permissions-chooser.c:409
-#: thunar/thunar-preferences-dialog.c:1331
+#: thunar/thunar-preferences-dialog.c:1333
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "Het is gevaarlijk voor uw systeem om niet-vertrouwde programma's toe te staan om te draaien."
@@ -2227,7 +2227,7 @@ msgstr "Miniaturen weergeven:"
 
 #: thunar/thunar-preferences-dialog.c:467
 #: thunar/thunar-preferences-dialog.c:1119
-#: thunar/thunar-preferences-dialog.c:1227
+#: thunar/thunar-preferences-dialog.c:1229
 msgid "Local Files Only"
 msgstr "Alleen plaatselijke bestanden"
 
@@ -2592,71 +2592,74 @@ msgstr "Verifieer de bestandinhoud bij kopiëren:"
 
 #: thunar/thunar-preferences-dialog.c:1175
 msgid ""
-"Compare contents of original file and copy. This will prevent corrupted "
-"files. Enabling this option will slightly increase copy time."
-msgstr "Vergelijk de inhoud van het oorspronkelijke bestand met die van de kopie. Dit voorkomt corrupte bestanden. Het inschakelen van deze optie zal de kopieertijd iets verlengen."
+"Compare contents of original file and copy in order to detect corruption. "
+"While this will attempt to compare the actual contents that are on the "
+"destination media, Thunar may be unable to bypass filesystem caches, so this"
+" comparison may not detect all instances of corruption. Enabling this option"
+" will increase copy time."
+msgstr "Vergelijk de inhoud van het oorspronkelijke bestand met die van de kopie om corruptie te voorkomen. Hoewel dit poogt om de feitelijke inhoud op het bestemmingsmedium te verifiëren, zou het kunnen dat Thunar niet in staat is om tijdelijke opslag van het bestandssysteem te omzeilen, dus deze vergelijking zou mogelijk niet alle vormen van corruptie kunnen bespeuren. Het inschakelen van deze optie zal de kopieertijd doen toenemen."
 
-#: thunar/thunar-preferences-dialog.c:1203
+#: thunar/thunar-preferences-dialog.c:1205
 msgid "Search"
 msgstr "Zoeken"
 
-#: thunar/thunar-preferences-dialog.c:1220
+#: thunar/thunar-preferences-dialog.c:1222
 msgid "Include subfolders:"
 msgstr "Submappen opnemen:"
 
-#: thunar/thunar-preferences-dialog.c:1244
+#: thunar/thunar-preferences-dialog.c:1246
 msgid "Folder Permissions"
 msgstr "Maprechten"
 
-#: thunar/thunar-preferences-dialog.c:1260
+#: thunar/thunar-preferences-dialog.c:1262
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "Wanneer u de rechten van een map verandert, kunt\nu die veranderingen ook op de inhoud van die map\ntoepassen. Kies hieronder het standaardgedrag:"
 
-#: thunar/thunar-preferences-dialog.c:1272
-#: thunar/thunar-preferences-dialog.c:1318
+#: thunar/thunar-preferences-dialog.c:1274
+#: thunar/thunar-preferences-dialog.c:1320
 msgid "Ask every time"
 msgstr "Telkens vragen"
 
-#: thunar/thunar-preferences-dialog.c:1273
+#: thunar/thunar-preferences-dialog.c:1275
 msgid "Apply to Folder and Contents"
 msgstr "Toepassen op map en inhoud"
 
-#: thunar/thunar-preferences-dialog.c:1274
+#: thunar/thunar-preferences-dialog.c:1276
 msgid "Apply to Folder Only"
 msgstr "Alleen op map toepassen"
 
-#: thunar/thunar-preferences-dialog.c:1289
+#: thunar/thunar-preferences-dialog.c:1291
 msgid "Security"
 msgstr "Veiligheid"
 
-#: thunar/thunar-preferences-dialog.c:1306
+#: thunar/thunar-preferences-dialog.c:1308
 msgid "Execute shell scripts:"
 msgstr "Shellscripts uitvoeren:"
 
-#: thunar/thunar-preferences-dialog.c:1341
+#: thunar/thunar-preferences-dialog.c:1343
 msgid "Volume Management"
 msgstr "Opslagmediumbeheer"
 
 #. add check button to enable/disable auto mounting
-#: thunar/thunar-preferences-dialog.c:1358
+#: thunar/thunar-preferences-dialog.c:1360
 msgid "Enable _Volume Management"
 msgstr "Schakel opslag_mediumbeheer in"
 
-#: thunar/thunar-preferences-dialog.c:1377
+#: thunar/thunar-preferences-dialog.c:1379
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">Configureer</a> het beheer van verwijderbare stations,\napparaten en media."
 
-#: thunar/thunar-preferences-dialog.c:1391
+#: thunar/thunar-preferences-dialog.c:1393
 #: thunar/thunar-properties-dialog.c:831
 msgid "Missing dependencies"
 msgstr "Ontbrekende afhankelijkheden"
 
-#: thunar/thunar-preferences-dialog.c:1399
+#: thunar/thunar-preferences-dialog.c:1401
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2665,30 +2668,30 @@ msgid ""
 msgstr "Het ziet ernaar uit dat <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> niet beschikbaar is.\nBelangrijke functies zoals prullenbakondersteuning,\nverwijderbare media en het verkennen van locaties\nop afstand, zullen niet werken. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Lees meer]</a>"
 
 #. Shortcuts
-#: thunar/thunar-preferences-dialog.c:1414
+#: thunar/thunar-preferences-dialog.c:1416
 msgid "Shortcuts"
 msgstr "Sneltoetsen"
 
-#: thunar/thunar-preferences-dialog.c:1425
+#: thunar/thunar-preferences-dialog.c:1427
 msgid "Window"
 msgstr "Venster"
 
-#: thunar/thunar-preferences-dialog.c:1426
+#: thunar/thunar-preferences-dialog.c:1428
 msgid "View"
 msgstr "Tonen"
 
-#: thunar/thunar-preferences-dialog.c:1427
+#: thunar/thunar-preferences-dialog.c:1429
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:550
 msgid "Launcher"
 msgstr "Starter"
 
-#: thunar/thunar-preferences-dialog.c:1428
+#: thunar/thunar-preferences-dialog.c:1430
 msgid "Status Bar"
 msgstr "Statusbalk"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: thunar/thunar-preferences-dialog.c:1491
+#: thunar/thunar-preferences-dialog.c:1493
 msgid "Failed to display the volume management settings"
 msgstr "Kon de instellingen voor opslagmediumbeheer niet weergeven"
 
@@ -3026,7 +3029,7 @@ msgstr "Verken het bestandssysteem"
 msgid "Mount and open %s (%s)"
 msgstr "%s (%s) aankoppelen en openen"
 
-#: thunar/thunar-shortcuts-model.c:715 plugins/thunar-tpa/thunar-tpa.c:301
+#: thunar/thunar-shortcuts-model.c:715 plugins/thunar-tpa/thunar-tpa.c:313
 msgid "Trash is empty"
 msgstr "Prullenbak is leeg"
 
@@ -4586,13 +4589,13 @@ msgid "Mail Recipient"
 msgstr "E-mailontvanger"
 
 #. tell the user that we failed to connect to the trash
-#: plugins/thunar-tpa/thunar-tpa.c:286 plugins/thunar-tpa/thunar-tpa.c:326
-#: plugins/thunar-tpa/thunar-tpa.c:353 plugins/thunar-tpa/thunar-tpa.c:380
+#: plugins/thunar-tpa/thunar-tpa.c:298 plugins/thunar-tpa/thunar-tpa.c:338
+#: plugins/thunar-tpa/thunar-tpa.c:365 plugins/thunar-tpa/thunar-tpa.c:392
 msgid "Failed to connect to the Trash"
 msgstr "Kon geen verbinding maken met de prullenbak"
 
 #. tell the user whether the trash is full or empty
-#: plugins/thunar-tpa/thunar-tpa.c:301
+#: plugins/thunar-tpa/thunar-tpa.c:313
 msgid "Trash contains files"
 msgstr "Prullenbak bevat bestanden"
 
