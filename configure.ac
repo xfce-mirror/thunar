@@ -173,11 +173,6 @@ XDT_CHECK_PACKAGE([LIBXFCE4KBD_PRIVATE], [libxfce4kbd-private-3], [4.17.2])
 XDT_CHECK_PACKAGE([XFCONF], [libxfconf-0], [4.12.0])
 XDT_CHECK_PACKAGE([PANGO], [pango], [1.38.0])
 
-dnl ***********************************************************************
-dnl *** Only needs /usr/{,local/}gettext/its/polkit.{its,loc} ***
-dnl ***********************************************************************
-XDT_CHECK_OPTIONAL_PACKAGE([POLKIT], [polkit-gobject-1], [0.102], [polkit], [Polkit l10n support])
-
 dnl ******************************
 dnl *** GObject Instrospection ***
 dnl ******************************
