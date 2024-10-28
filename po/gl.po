@@ -4,7 +4,7 @@
 # 
 # Translators:
 # Daniel Muñiz Fontoira <dani@damufo.eu>, 2017-2021
-# Daniel Muñiz Fontoira <dani@damufo.eu>, 2015,2021
+# Daniel Muñiz Fontoira <dani@damufo.eu>, 2015,2021,2024
 # Daniel Muñiz Fontoira <dani@damufo.eu>, 2015
 # Iván Seoane Pardo <talivan.ivan@gmail.com>, 2006
 # Leandro Regueiro <leandro.regueiro@gmail.com>, 2008-2009,2013
@@ -13,9 +13,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-10-23 00:45+0200\n"
+"POT-Creation-Date: 2024-10-25 12:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
-"Last-Translator: Iván Seoane Pardo <talivan.ivan@gmail.com>, 2006\n"
+"Last-Translator: Daniel Muñiz Fontoira <dani@damufo.eu>, 2015,2021,2024\n"
 "Language-Team: Galician (http://app.transifex.com/xfce/thunar/language/gl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -42,7 +42,7 @@ msgstr "_Executar"
 
 #: thunar/thunar-action-manager.c:324
 msgid "Edit _Launcher"
-msgstr ""
+msgstr "Modificar o _lanzador"
 
 #: thunar/thunar-action-manager.c:324
 msgid "Edit the selected launcher"
@@ -66,7 +66,7 @@ msgstr ""
 
 #: thunar/thunar-action-manager.c:328
 msgid "Ope_n With Other Application..."
-msgstr ""
+msgstr "Abrir con _outra aplicación..."
 
 #: thunar/thunar-action-manager.c:328 thunar/thunar-action-manager.c:3433
 msgid "Choose another application with which to open the selected file"
@@ -74,7 +74,7 @@ msgstr "Escoller outra aplicación para abrir o ficheiro seleccionado"
 
 #: thunar/thunar-action-manager.c:329
 msgid "Set Defa_ult Application..."
-msgstr ""
+msgstr "Establecer a aplicación _predeterminada..."
 
 #: thunar/thunar-action-manager.c:329
 msgid ""
@@ -245,8 +245,8 @@ msgstr "Non se puido abrir o ficheiro «%s»"
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
-msgstr[0] "Non se puido abrir %d ficheiro"
-msgstr[1] "Non se puido abrir %d ficheiros"
+msgstr[0] "Produciuse un fallo ao abrir %d ficheiro"
+msgstr[1] "Produciuse un fallo ao abrir %d ficheiros"
 
 #: thunar/thunar-action-manager.c:1056
 msgid "Are you sure you want to open all folders?"
@@ -500,7 +500,7 @@ msgstr "Abrir os ficheiros seleccionados coas aplicacións predeterminadas"
 
 #: thunar/thunar-action-manager.c:3432
 msgid "Ope_n With"
-msgstr ""
+msgstr "Abrir co_n"
 
 #: thunar/thunar-application.c:81
 msgid "Open the bulk rename dialog"
@@ -1139,7 +1139,7 @@ msgstr "_Desconetar"
 
 #: thunar/thunar-device.c:546
 msgid "Stop the _Multi-Disk Drive"
-msgstr ""
+msgstr "Deter a unidade _multi-disco"
 
 #: thunar/thunar-device.c:548
 msgid "_Lock"
@@ -1479,8 +1479,8 @@ msgstr "Nome de ficheiro"
 #: thunar/thunar-enum-types.c:700 thunar/thunar-enum-types.c:725
 #: thunar/thunar-enum-types.c:860 thunar/thunar-preferences-dialog.c:466
 #: thunar/thunar-preferences-dialog.c:1122
-#: thunar/thunar-preferences-dialog.c:1228
-#: thunar/thunar-preferences-dialog.c:1316
+#: thunar/thunar-preferences-dialog.c:1230
+#: thunar/thunar-preferences-dialog.c:1318
 msgid "Never"
 msgstr "Nunca"
 
@@ -1491,8 +1491,8 @@ msgstr ""
 #: thunar/thunar-enum-types.c:702 thunar/thunar-enum-types.c:727
 #: thunar/thunar-enum-types.c:862 thunar/thunar-preferences-dialog.c:468
 #: thunar/thunar-preferences-dialog.c:1118
-#: thunar/thunar-preferences-dialog.c:1226
-#: thunar/thunar-preferences-dialog.c:1317
+#: thunar/thunar-preferences-dialog.c:1228
+#: thunar/thunar-preferences-dialog.c:1319
 msgid "Always"
 msgstr "Sempre"
 
@@ -1521,7 +1521,7 @@ msgid "Delete (opposite of create)"
 msgstr "Eliminar (antónimo de crear)"
 
 #: thunar/thunar-enum-types.c:791 thunar/thunar-file.c:1086
-#: thunar/thunar-gio-extensions.c:485 thunar/thunar-shortcuts-model.c:1150
+#: thunar/thunar-gio-extensions.c:510 thunar/thunar-shortcuts-model.c:1150
 #: thunar.desktop.in.in:25
 msgid "Trash"
 msgstr "Enviar ao lixo"
@@ -1563,7 +1563,7 @@ msgstr ""
 msgid "Only for local files"
 msgstr "Só para ficheiros locais"
 
-#: thunar/thunar-file.c:1093 thunar/thunar-gio-extensions.c:483
+#: thunar/thunar-file.c:1093 thunar/thunar-gio-extensions.c:508
 #: thunar/thunar-shortcuts-model.c:1032
 msgid "File System"
 msgstr "Sistema de ficheiros"
@@ -1614,82 +1614,82 @@ msgid "%s (mount point)"
 msgstr ""
 
 #. Implementation specific
-#: thunar/thunar-gio-extensions.c:64
+#: thunar/thunar-gio-extensions.c:89
 msgid "iPod touch"
 msgstr "iPod touch"
 
-#: thunar/thunar-gio-extensions.c:65
+#: thunar/thunar-gio-extensions.c:90
 msgid "iPad"
 msgstr "iPad"
 
-#: thunar/thunar-gio-extensions.c:66
+#: thunar/thunar-gio-extensions.c:91
 msgid "iPhone"
 msgstr "iPhone"
 
-#: thunar/thunar-gio-extensions.c:67
+#: thunar/thunar-gio-extensions.c:92
 msgid "Solid State Drive"
 msgstr "Unidade de estado sólido"
 
-#: thunar/thunar-gio-extensions.c:68
+#: thunar/thunar-gio-extensions.c:93
 msgid "System Drive"
 msgstr "Unidade do sistema"
 
-#: thunar/thunar-gio-extensions.c:69 thunar/thunar-gio-extensions.c:70
+#: thunar/thunar-gio-extensions.c:94 thunar/thunar-gio-extensions.c:95
 msgid "USB Drive"
 msgstr "Unidade USB"
 
 #. Freedesktop icon-naming-spec
-#: thunar/thunar-gio-extensions.c:73
+#: thunar/thunar-gio-extensions.c:98
 msgid "Camera"
 msgstr "Cámara"
 
-#: thunar/thunar-gio-extensions.c:74
+#: thunar/thunar-gio-extensions.c:99
 msgid "Harddisk"
 msgstr "Disco duro"
 
-#: thunar/thunar-gio-extensions.c:75
+#: thunar/thunar-gio-extensions.c:100
 msgid "Optical Drive"
 msgstr "Unidade óptica"
 
-#: thunar/thunar-gio-extensions.c:76
+#: thunar/thunar-gio-extensions.c:101
 msgid "Removable Drive"
 msgstr "Unidade extraíbel"
 
-#: thunar/thunar-gio-extensions.c:77
+#: thunar/thunar-gio-extensions.c:102
 msgid "Flash Drive"
 msgstr "Unidade flash"
 
-#: thunar/thunar-gio-extensions.c:78
+#: thunar/thunar-gio-extensions.c:103
 msgid "Floppy"
 msgstr "Disqueteira"
 
-#: thunar/thunar-gio-extensions.c:79
+#: thunar/thunar-gio-extensions.c:104
 msgid "Optical Media"
 msgstr "Soporte óptico"
 
-#: thunar/thunar-gio-extensions.c:80
+#: thunar/thunar-gio-extensions.c:105
 msgid "Tape"
 msgstr "Casete"
 
-#: thunar/thunar-gio-extensions.c:81
+#: thunar/thunar-gio-extensions.c:106
 msgid "Multimedia Player"
 msgstr "Reprodutor multimedia"
 
-#: thunar/thunar-gio-extensions.c:82
+#: thunar/thunar-gio-extensions.c:107
 msgid "PDA"
 msgstr "PDA"
 
-#: thunar/thunar-gio-extensions.c:83
+#: thunar/thunar-gio-extensions.c:108
 msgid "Phone"
 msgstr "Teléfono"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: thunar/thunar-gio-extensions.c:565
+#: thunar/thunar-gio-extensions.c:590
 #, c-format
 msgid "%s on %s"
 msgstr "%s en %s"
 
-#: thunar/thunar-gio-extensions.c:676
+#: thunar/thunar-gio-extensions.c:701
 #, c-format
 msgid "%s used (%.0f%%)  |  %s free (%.0f%%)"
 msgstr ""
@@ -2027,7 +2027,7 @@ msgid "Allow this file to _run as a program"
 msgstr "Permitirlle a este ficheiro executa_rse como un programa"
 
 #: thunar/thunar-permissions-chooser.c:409
-#: thunar/thunar-preferences-dialog.c:1331
+#: thunar/thunar-preferences-dialog.c:1333
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "Permitir a execución de programas non fiábeis é un risco para a seguranza do sistema."
@@ -2231,7 +2231,7 @@ msgstr "Amosar miniaturas:"
 
 #: thunar/thunar-preferences-dialog.c:467
 #: thunar/thunar-preferences-dialog.c:1119
-#: thunar/thunar-preferences-dialog.c:1227
+#: thunar/thunar-preferences-dialog.c:1229
 msgid "Local Files Only"
 msgstr "Só en ficheiros locais"
 
@@ -2596,71 +2596,74 @@ msgstr ""
 
 #: thunar/thunar-preferences-dialog.c:1175
 msgid ""
-"Compare contents of original file and copy. This will prevent corrupted "
-"files. Enabling this option will slightly increase copy time."
+"Compare contents of original file and copy in order to detect corruption. "
+"While this will attempt to compare the actual contents that are on the "
+"destination media, Thunar may be unable to bypass filesystem caches, so this"
+" comparison may not detect all instances of corruption. Enabling this option"
+" will increase copy time."
 msgstr ""
 
-#: thunar/thunar-preferences-dialog.c:1203
+#: thunar/thunar-preferences-dialog.c:1205
 msgid "Search"
 msgstr "Buscar"
 
-#: thunar/thunar-preferences-dialog.c:1220
+#: thunar/thunar-preferences-dialog.c:1222
 msgid "Include subfolders:"
 msgstr "Incluír subcartafoles:"
 
-#: thunar/thunar-preferences-dialog.c:1244
+#: thunar/thunar-preferences-dialog.c:1246
 msgid "Folder Permissions"
 msgstr "Permisos do cartafol"
 
-#: thunar/thunar-preferences-dialog.c:1260
+#: thunar/thunar-preferences-dialog.c:1262
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "Ao modificar os permisos dun cartafol, tamén\npode aplicar as modificacións ao que haxa dentro.\nSeleccione embaixo o comportamento predeterminado:"
 
-#: thunar/thunar-preferences-dialog.c:1272
-#: thunar/thunar-preferences-dialog.c:1318
+#: thunar/thunar-preferences-dialog.c:1274
+#: thunar/thunar-preferences-dialog.c:1320
 msgid "Ask every time"
 msgstr "Preguntar cada vez"
 
-#: thunar/thunar-preferences-dialog.c:1273
+#: thunar/thunar-preferences-dialog.c:1275
 msgid "Apply to Folder and Contents"
 msgstr "Aplicar ao cartafol e ao seu contido"
 
-#: thunar/thunar-preferences-dialog.c:1274
+#: thunar/thunar-preferences-dialog.c:1276
 msgid "Apply to Folder Only"
 msgstr "Aplicar só ao cartafol"
 
-#: thunar/thunar-preferences-dialog.c:1289
+#: thunar/thunar-preferences-dialog.c:1291
 msgid "Security"
 msgstr "Seguranza"
 
-#: thunar/thunar-preferences-dialog.c:1306
+#: thunar/thunar-preferences-dialog.c:1308
 msgid "Execute shell scripts:"
 msgstr ""
 
-#: thunar/thunar-preferences-dialog.c:1341
+#: thunar/thunar-preferences-dialog.c:1343
 msgid "Volume Management"
 msgstr "Xestión de volumes"
 
 #. add check button to enable/disable auto mounting
-#: thunar/thunar-preferences-dialog.c:1358
+#: thunar/thunar-preferences-dialog.c:1360
 msgid "Enable _Volume Management"
 msgstr "Activar a xestión de volumes"
 
-#: thunar/thunar-preferences-dialog.c:1377
+#: thunar/thunar-preferences-dialog.c:1379
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">Configura</a> o manexo de unidades,\ndispositivos e soportes extraíbeis."
 
-#: thunar/thunar-preferences-dialog.c:1391
+#: thunar/thunar-preferences-dialog.c:1393
 #: thunar/thunar-properties-dialog.c:831
 msgid "Missing dependencies"
 msgstr "Faltan dependencias"
 
-#: thunar/thunar-preferences-dialog.c:1399
+#: thunar/thunar-preferences-dialog.c:1401
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2669,30 +2672,30 @@ msgid ""
 msgstr "Parece que <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> non está dispoñíbel.\nAs funcións importantes que inclúen a compatibilidade coa papeleira,\na navegación por medios extraíbeis e a posición remota\nnon funcionarán. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Ler máis]</a>"
 
 #. Shortcuts
-#: thunar/thunar-preferences-dialog.c:1414
+#: thunar/thunar-preferences-dialog.c:1416
 msgid "Shortcuts"
 msgstr "Atallos"
 
-#: thunar/thunar-preferences-dialog.c:1425
+#: thunar/thunar-preferences-dialog.c:1427
 msgid "Window"
 msgstr "Xanela"
 
-#: thunar/thunar-preferences-dialog.c:1426
+#: thunar/thunar-preferences-dialog.c:1428
 msgid "View"
 msgstr "Ver"
 
-#: thunar/thunar-preferences-dialog.c:1427
+#: thunar/thunar-preferences-dialog.c:1429
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:550
 msgid "Launcher"
 msgstr "Iniciador"
 
-#: thunar/thunar-preferences-dialog.c:1428
+#: thunar/thunar-preferences-dialog.c:1430
 msgid "Status Bar"
 msgstr "Barra de estado"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: thunar/thunar-preferences-dialog.c:1491
+#: thunar/thunar-preferences-dialog.c:1493
 msgid "Failed to display the volume management settings"
 msgstr "Non se puido amosar a configuración da xestión de volumes"
 
@@ -3030,7 +3033,7 @@ msgstr "Explorar o sistema de ficheiros"
 msgid "Mount and open %s (%s)"
 msgstr "Montar e abrir %s (%s)"
 
-#: thunar/thunar-shortcuts-model.c:715 plugins/thunar-tpa/thunar-tpa.c:301
+#: thunar/thunar-shortcuts-model.c:715 plugins/thunar-tpa/thunar-tpa.c:313
 msgid "Trash is empty"
 msgstr "A papeleira está baleira"
 
@@ -4590,13 +4593,13 @@ msgid "Mail Recipient"
 msgstr "Destinatario"
 
 #. tell the user that we failed to connect to the trash
-#: plugins/thunar-tpa/thunar-tpa.c:286 plugins/thunar-tpa/thunar-tpa.c:326
-#: plugins/thunar-tpa/thunar-tpa.c:353 plugins/thunar-tpa/thunar-tpa.c:380
+#: plugins/thunar-tpa/thunar-tpa.c:298 plugins/thunar-tpa/thunar-tpa.c:338
+#: plugins/thunar-tpa/thunar-tpa.c:365 plugins/thunar-tpa/thunar-tpa.c:392
 msgid "Failed to connect to the Trash"
 msgstr "Produciuse un fallo ao conectar coa papeleira"
 
 #. tell the user whether the trash is full or empty
-#: plugins/thunar-tpa/thunar-tpa.c:301
+#: plugins/thunar-tpa/thunar-tpa.c:313
 msgid "Trash contains files"
 msgstr "Hai ficheiros na papeleira"
 
