@@ -5830,6 +5830,8 @@ thunar_window_history_clicked (GtkWidget      *button,
         thunar_history_show_menu (history, THUNAR_HISTORY_MENU_FORWARD, button);
       else
         g_warning ("This button is not able to spawn a history menu");
+
+      return TRUE;
     }
   else if (event->button == 2)
     {
@@ -5852,6 +5854,8 @@ thunar_window_history_clicked (GtkWidget      *button,
           g_object_unref (G_OBJECT (application));
         }
       g_object_unref (directory);
+
+      return TRUE;
     }
 
   return FALSE;
@@ -5887,6 +5891,8 @@ thunar_window_open_parent_clicked (GtkWidget      *button,
           g_object_unref (G_OBJECT (application));
         }
       g_object_unref (directory);
+
+      return TRUE;
     }
 
   return FALSE;
@@ -5924,6 +5930,8 @@ thunar_window_open_home_clicked (GtkWidget      *button,
           thunar_window_action_open_home (newWindow);
           g_object_unref (G_OBJECT (application));
         }
+
+      return TRUE;
     }
 
   return FALSE;
