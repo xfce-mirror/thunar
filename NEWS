@@ -1,3 +1,115 @@
+4.19.4 (2024-11-01)
+======
+- Add missing return statements (#1480)
+- Verify copied destination file using direct I/O (#1471)
+- Drop optional POLKIT dependency (#1403)
+- Fix GCancellable leaks in trash applet
+- Add emblem and type description to mount points (#1388)
+- Show "Properties" menu entry for unmounted devices
+- Support second shortcut for tab switch (#1472)
+- Verify by compare instead of checksum (#1471)
+- Fix path entry DnD code (#1470)
+- Apply .clang-format to all *.c and *.h files
+- Use G_VALUE_INIT over custom initializer
+- adding .clang-format file
+- Fix accel map loading (#1047)
+- build: Bump requirements for Xfce 4.20
+- Fix use-after-free in thunar_dialogs_show_job_ask_replace (#1466)
+- Regression: Fix "middle click open" (#1455)
+- Dont change selection on activate
+- Fix selection changed throttle (#1429)
+- Increase location button max with (#1430)
+- Rework handling of location buttons (#951)
+- Fix string leak in thunar_io_jobs_load_statusbar_text_for_folder
+- Fix color string leaks in properties dialog
+- Fix color leak in thunar_util_clip_view_background
+- Fix string leak in thunar_history_error_not_found
+- Fix GFile leak in thunar_job_operation_restore_from_trash
+- Fix string leak in thunar_emblem_chooser_file_changed
+- Fix GFile leak in thunar_transfer_job_move_file_with_rename
+- Fix GFileInfo leak in thunar_job_operation_restore_from_trash
+- Fix GAppInfo leaks in thunar_g_app_info_launch
+- Fix string leak in thunar_job_operation_restore_from_trash
+- Add NULL check before folder usage
+- Fix g_hash_table_get_keys leak
+- Fix ThunarRenamerPair leak when using bulk renamer
+- Fix string leak in thunar_uca_editor_load
+- Show name of parent folder in replace dialog (#62)
+- Fix crash when connecting via gvfs (#1450)
+- Fix GHashTable leak in thunar_tree_view_model_file_count_callback
+- Fix string leak in thunar_io_jobs_util_next_renamed_file
+- Add check that widget is a window as expected (#1454)
+- Fix GFile leak when using intermediate file on copy setting
+- Fix string leak in thunar_dialogs_show_job_ask_replace
+- Fix string leak in thunar_uca_model_remove
+- Avoid critical when thumbnailer_proxy is NULL
+- Fix leaks in thunar_apr_image_page_file_changed
+- Fix AtkRelationSet leaks in bulk renamer dialog
+- Fix AtkRelationSet leaks in apr plug-in
+- Fix leak in thunar_details_view_button_press_event
+- Fix leak in thunar_window_open_files_in_location
+- Call ThunarStatusbar's parent finalizer to prevent leaks
+- Fix leak in thunar_details_view_button_press_event
+- Fix leak when middle-clicking on directory row
+- Fix leaks when using Open Item Location menu item
+- Fix leak in _thunar_search_folder
+- Fix leak of search_query string
+- Fix leaks in thunar_application_command_line
+- Fix leak in thunar-gtk-extensions (#1451)
+- Fix leak in thunar_application_accel_map_init
+- Fix typo in status bar text for Edit > Preferences menu item
+- Fix g_object_get leak in thunar_window_init
+- Fix two leaks in _thunar_search_folder
+- Fix g_object_get leaks in status bar code
+- Wrap single-word filenames in delete dialog (#1412)
+- Add command line option to force new window
+- Change width calculation of rename dialog (#1392)
+- Make location "admin:///" work again
+- Rework padding in replace dialog
+- Improve handling of long filenames in replace dialog
+- Statusbar: Count "backup" files as hidden files
+- Fix criticals about unset GIO attributes (#1063)
+- Show full context menu during search (#837)
+- Prevent double free for hidden files (#1438)
+- Fix icon-name leaks in thunar_window_view_switcher_update
+- Fix minor memory leak in uca provider
+- twp: Prevent crash in wayland (#1437)
+- Transfer files dialog use less buttons (#58)
+- Remove filter model in toolbar editor code
+- Revert "Increase max location selector button size (#1430)"
+- Increase max location selector button size (#1430)
+- List view: Empty size column for directories (#543)
+- Add tooltip to special columns in column editor
+- Fix handling of special columns in list view
+- Revert "Remove 'Date Deleted' from 'Configure Column' List (#750)"
+- Fix overlapping UCA editor dialog widgets (startup notification)
+- Revert signal handler setup for RadioToolButtons (#1426)
+- Use unique enum names for alternative shortcuts (#1421)
+- Use initial widget variables when calling unref
+- Tweak header bar margins
+- Add View Switcher item to toolbar
+- UCA - improve shortcuts handling (#1410)
+- Reduce events monitored by UCA file monitor
+- Fix Toolbar bug when CSD is used (#1414)
+- I18n: Update po/LINGUAS list
+- Fix CSD label text
+- Option to use client side decorations (CSD)
+- Use top-window as fallback for dialogs (#1398)
+- Support copy/link within a folder via CTRL+drag (#63)
+- Rework the "Show Menubar" toolbar button (#936)
+- Optionally show hidden files count in statusbar (#1387)
+- Translation Updates:
+  Albanian, Arabic, Armenian, Armenian (Armenia), Asturian, Basque,
+  Belarusian, Bengali, Bulgarian, Catalan, Chinese (China), Chinese
+  (Hong Kong), Chinese (Taiwan), Czech, Danish, Dutch, Eastern
+  Armenian, English (Australia), English (United Kingdom), Esperanto,
+  Estonian, Finnish, French, Galician, German, Greek, Hebrew,
+  Hungarian, Icelandic, Interlingue, Italian, Japanese, Kazakh,
+  Latvian, Malay, Norwegian Bokmål, Norwegian Nynorsk, Occitan (post
+  1500), Persian (Iran), Polish, Portuguese, Portuguese (Brazil),
+  Romanian, Serbian, Slovak, Slovenian, Spanish, Swedish, Thai,
+  Turkish, Uyghur, Vietnamese
+
 4.19.3 (2024-07-30)
 ======
 - Allow type ahead search the treeview sidepane
