@@ -2,24 +2,29 @@
 <!-- Copyright 2014 Ryan Lerch <rlerch@redhat.com> -->
 
 <component type="desktop-application">
-  <id type="desktop">org.xfce.Thunar</id>
+  <id>org.xfce.thunar</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0</project_license>
+  <launchable type="desktop-id">thunar.desktop</launchable>
   <name>Thunar</name>
   <summary>File Browser</summary>
   <description>
     <p>
-      Thunar is a file browser specifically designed for the Xfce Desktop, but also can
-      serve as an alternate file browser for other Desktop environments. It has a simple,
-      clean two-pane design for browsing all your files.
+      Thunar is a modern file manager for the Xfce Desktop Environment. Thunar has been designed from the ground up to be fast and easy to use.
+      Its user interface is clean and intuitive and does not include any confusing or useless options by default.
+      Thunar starts up quickly and navigating through files and folders is fast and responsive.
     </p>
   </description>
-  <url type="homepage">https://xfce.org/projects</url>
+  <url type="homepage">https://xfce.org</url>
   <url type="bugtracker">https://gitlab.xfce.org/xfce/thunar</url>
   <url type="help">https://docs.xfce.org/xfce/thunar/start</url>
+  <url type="contact">https://docs.xfce.org/contribute/dev/start#communication_with_the_xfce_development_team</url>
 
   <screenshots>
-    <screenshot type="default">https://docs.xfce.org/_media/xfce/thunar/file-manager-window.png</screenshot>
+    <screenshot type="default">
+      <image width="759" height="424">https://docs.xfce.org/_media/xfce/thunar/file-manager-window.png</image>
+      <caption>Screenshot of the XFCE Thunar File Browser User Interface</caption>
+    </screenshot>
   </screenshots>
 
   <categories>
@@ -27,6 +32,7 @@
   </categories>
 
   <project_group>Xfce</project_group>
-  <updatecontact>xfce4-dev@xfce.org</updatecontact>
+  <update_contact>xfce4-dev@xfce.org</update_contact>
   <translation type="gettext">Thunar</translation>
+  <content_rating type="oars-1.1"/>
 </component>
