@@ -13,7 +13,7 @@
 # hsn <kolar.radim@gmail.com>, 2013
 # b537cbea55af75c3f49fe8b21c4cf8ea_f0ce149, 2023
 # Martin Šiška <martin-siska@email.cz>, 2024
-# Michal Várady <miko.vaji@gmail.com>, 2013-2015,2017-2022
+# Michal Várady <miko.vaji@gmail.com>, 2013-2015,2017-2022,2024
 # Pavel Borecki <pavel.borecki@gmail.com>, 2018
 # Pavel Pernička <pernicka.pa@gmail.com>, 2019-2020
 # Tomas Brabenec <tomas@brabenec.net>, 2013
@@ -21,9 +21,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-10-23 00:45+0200\n"
+"POT-Creation-Date: 2024-10-25 12:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
-"Last-Translator: knedl1k <knedl1k@tuta.io>, 2024\n"
+"Last-Translator: Michal Várady <miko.vaji@gmail.com>, 2013-2015,2017-2022,2024\n"
 "Language-Team: Czech (http://app.transifex.com/xfce/thunar/language/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -558,7 +558,7 @@ msgstr "Otevřít dialogové okno pro hromadné přejmenování"
 
 #: thunar/thunar-application.c:82
 msgid "Force open in a new window"
-msgstr ""
+msgstr "Vynutit otevření v novém okně"
 
 #: thunar/thunar-application.c:83
 msgid "Run in daemon mode"
@@ -1035,7 +1035,7 @@ msgstr "_Zavřít"
 
 #: thunar/thunar-column-editor.c:133
 msgid "Configure Columns in the Detailed List View"
-msgstr "Konfigurovat sloupce v pohledu podrobného výpisu"
+msgstr "Konfigurovat sloupce ve zobrazení podrobného výpisu"
 
 #. add the "Help" button
 #: thunar/thunar-column-editor.c:136 thunar/thunar-preferences-dialog.c:286
@@ -1109,7 +1109,7 @@ msgstr "Zobrazit počet obsažených položek"
 
 #: thunar/thunar-column-model.c:368
 msgid "This column is reserved for special locations"
-msgstr ""
+msgstr "Tento sloupec je vyhrazen pro speciální umístění."
 
 #. reset page title
 #. tell the user that we're unable to determine the file info
@@ -1130,7 +1130,7 @@ msgstr "Stručný výpis adresáře"
 
 #: thunar/thunar-compact-view.c:119
 msgid "Compact view"
-msgstr "Stručný pohled"
+msgstr "Kompaktní zobrazení"
 
 #: thunar/thunar-dbus-service.c:560
 #, c-format
@@ -1165,7 +1165,7 @@ msgstr "Konfigurovat sloup_ce..."
 
 #: thunar/thunar-details-view.c:207
 msgid "Configure the columns in the detailed list view"
-msgstr "Konfigurovat sloupce v pohledu podrobného výpisu"
+msgstr "Konfigurovat sloupce ve zobrazení podrobného výpisu"
 
 #: thunar/thunar-details-view.c:208
 msgid "E_xpandable Folders"
@@ -1317,19 +1317,19 @@ msgstr "Tato složka již obsahuje soubor \"%s\"."
 #: thunar/thunar-dialogs.c:886
 #, c-format
 msgid "Replace the link in \"%s\""
-msgstr ""
+msgstr "Nahradit odkaz v „%s“"
 
 #. TRANSLATORS: First part of replace dialog sentence
 #: thunar/thunar-dialogs.c:889
 #, c-format
 msgid "Replace the existing folder in \"%s\""
-msgstr ""
+msgstr "Nahradit existující složku v „%s“"
 
 #. TRANSLATORS: First part of replace dialog sentence
 #: thunar/thunar-dialogs.c:892
 #, c-format
 msgid "Replace the existing file in \"%s\""
-msgstr ""
+msgstr "Nahradit existující soubor v „%s“"
 
 #. Fourth box (size)
 #: thunar/thunar-dialogs.c:928 thunar/thunar-dialogs.c:978
@@ -1359,7 +1359,7 @@ msgstr "následujícím souborem?"
 
 #: thunar/thunar-dialogs.c:994
 msgid "_Apply the action to all files and folders"
-msgstr ""
+msgstr "_Použít akci na všechny soubory a složky"
 
 #. TRANSLATORS: This string will be inserted in the following sentence in the
 #. second appearance of %s:
@@ -1533,8 +1533,8 @@ msgstr "Název souboru"
 #: thunar/thunar-enum-types.c:700 thunar/thunar-enum-types.c:725
 #: thunar/thunar-enum-types.c:860 thunar/thunar-preferences-dialog.c:466
 #: thunar/thunar-preferences-dialog.c:1122
-#: thunar/thunar-preferences-dialog.c:1228
-#: thunar/thunar-preferences-dialog.c:1316
+#: thunar/thunar-preferences-dialog.c:1230
+#: thunar/thunar-preferences-dialog.c:1318
 msgid "Never"
 msgstr "Nikdy"
 
@@ -1545,8 +1545,8 @@ msgstr "Pouze pro vzdálené umístění"
 #: thunar/thunar-enum-types.c:702 thunar/thunar-enum-types.c:727
 #: thunar/thunar-enum-types.c:862 thunar/thunar-preferences-dialog.c:468
 #: thunar/thunar-preferences-dialog.c:1118
-#: thunar/thunar-preferences-dialog.c:1226
-#: thunar/thunar-preferences-dialog.c:1317
+#: thunar/thunar-preferences-dialog.c:1228
+#: thunar/thunar-preferences-dialog.c:1319
 msgid "Always"
 msgstr "Vždy"
 
@@ -1575,7 +1575,7 @@ msgid "Delete (opposite of create)"
 msgstr "Smazat (opak vytvoření)"
 
 #: thunar/thunar-enum-types.c:791 thunar/thunar-file.c:1086
-#: thunar/thunar-gio-extensions.c:485 thunar/thunar-shortcuts-model.c:1150
+#: thunar/thunar-gio-extensions.c:510 thunar/thunar-shortcuts-model.c:1150
 #: thunar.desktop.in.in:25
 msgid "Trash"
 msgstr "Koš"
@@ -1617,7 +1617,7 @@ msgstr "Vložený"
 msgid "Only for local files"
 msgstr "Pouze pro místní soubory"
 
-#: thunar/thunar-file.c:1093 thunar/thunar-gio-extensions.c:483
+#: thunar/thunar-file.c:1093 thunar/thunar-gio-extensions.c:508
 #: thunar/thunar-shortcuts-model.c:1032
 msgid "File System"
 msgstr "Systém souborů"
@@ -1660,90 +1660,90 @@ msgstr "neplatný odkaz"
 #: thunar/thunar-file.c:2540
 #, c-format
 msgid "%s (link to %s)"
-msgstr ""
+msgstr "%s (odkaz na %s)"
 
 #: thunar/thunar-file.c:2549
 #, c-format
 msgid "%s (mount point)"
-msgstr ""
+msgstr "%s (připojovací bod)"
 
 #. Implementation specific
-#: thunar/thunar-gio-extensions.c:64
+#: thunar/thunar-gio-extensions.c:89
 msgid "iPod touch"
 msgstr "iPod touch"
 
-#: thunar/thunar-gio-extensions.c:65
+#: thunar/thunar-gio-extensions.c:90
 msgid "iPad"
 msgstr "iPad"
 
-#: thunar/thunar-gio-extensions.c:66
+#: thunar/thunar-gio-extensions.c:91
 msgid "iPhone"
 msgstr "iPhone"
 
-#: thunar/thunar-gio-extensions.c:67
+#: thunar/thunar-gio-extensions.c:92
 msgid "Solid State Drive"
 msgstr "Jednotka SSD"
 
-#: thunar/thunar-gio-extensions.c:68
+#: thunar/thunar-gio-extensions.c:93
 msgid "System Drive"
 msgstr "Systémová jednotka"
 
-#: thunar/thunar-gio-extensions.c:69 thunar/thunar-gio-extensions.c:70
+#: thunar/thunar-gio-extensions.c:94 thunar/thunar-gio-extensions.c:95
 msgid "USB Drive"
 msgstr "Jednotka USB"
 
 #. Freedesktop icon-naming-spec
-#: thunar/thunar-gio-extensions.c:73
+#: thunar/thunar-gio-extensions.c:98
 msgid "Camera"
 msgstr "Fotoaparát"
 
-#: thunar/thunar-gio-extensions.c:74
+#: thunar/thunar-gio-extensions.c:99
 msgid "Harddisk"
 msgstr "Pevný disk"
 
-#: thunar/thunar-gio-extensions.c:75
+#: thunar/thunar-gio-extensions.c:100
 msgid "Optical Drive"
 msgstr "Optická jednotka"
 
-#: thunar/thunar-gio-extensions.c:76
+#: thunar/thunar-gio-extensions.c:101
 msgid "Removable Drive"
 msgstr "Vyměnitelná jednotka"
 
-#: thunar/thunar-gio-extensions.c:77
+#: thunar/thunar-gio-extensions.c:102
 msgid "Flash Drive"
 msgstr "Jednotka typu paměť flash"
 
-#: thunar/thunar-gio-extensions.c:78
+#: thunar/thunar-gio-extensions.c:103
 msgid "Floppy"
 msgstr "Disketa"
 
-#: thunar/thunar-gio-extensions.c:79
+#: thunar/thunar-gio-extensions.c:104
 msgid "Optical Media"
 msgstr "Optické médium"
 
-#: thunar/thunar-gio-extensions.c:80
+#: thunar/thunar-gio-extensions.c:105
 msgid "Tape"
 msgstr "Páska"
 
-#: thunar/thunar-gio-extensions.c:81
+#: thunar/thunar-gio-extensions.c:106
 msgid "Multimedia Player"
 msgstr "Multimediální přehrávač"
 
-#: thunar/thunar-gio-extensions.c:82
+#: thunar/thunar-gio-extensions.c:107
 msgid "PDA"
 msgstr "PDA"
 
-#: thunar/thunar-gio-extensions.c:83
+#: thunar/thunar-gio-extensions.c:108
 msgid "Phone"
 msgstr "Telefon"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: thunar/thunar-gio-extensions.c:565
+#: thunar/thunar-gio-extensions.c:590
 #, c-format
 msgid "%s on %s"
 msgstr "%s na %s"
 
-#: thunar/thunar-gio-extensions.c:676
+#: thunar/thunar-gio-extensions.c:701
 #, c-format
 msgid "%s used (%.0f%%)  |  %s free (%.0f%%)"
 msgstr "%s použito (%.0f%%)  |  %s volných (%.0f%%)"
@@ -2085,7 +2085,7 @@ msgid "Allow this file to _run as a program"
 msgstr "Povolit tomuto _souboru spuštění"
 
 #: thunar/thunar-permissions-chooser.c:409
-#: thunar/thunar-preferences-dialog.c:1331
+#: thunar/thunar-preferences-dialog.c:1333
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "Umožnění spouštění nedůvěryhodných programů představuje bezpečnostní riziko pro váš systém."
@@ -2245,7 +2245,7 @@ msgstr "Úsporné zobrazení"
 
 #: thunar/thunar-preferences-dialog.c:378
 msgid "Last Active View"
-msgstr "Poslední aktivní pohled"
+msgstr "Poslední aktivní zobrazení"
 
 #: thunar/thunar-preferences-dialog.c:394
 msgid "_Remember view settings for each folder"
@@ -2289,7 +2289,7 @@ msgstr "Zobrazovat náhledy:"
 
 #: thunar/thunar-preferences-dialog.c:467
 #: thunar/thunar-preferences-dialog.c:1119
-#: thunar/thunar-preferences-dialog.c:1227
+#: thunar/thunar-preferences-dialog.c:1229
 msgid "Local Files Only"
 msgstr "Pouze místní soubory"
 
@@ -2650,75 +2650,78 @@ msgstr "Použije zprostředkující soubor .partial ke zkopírování souborů, 
 
 #: thunar/thunar-preferences-dialog.c:1171
 msgid "Verify file contents on copy:"
-msgstr ""
+msgstr "Při kopírování ověřit obsah souboru:"
 
 #: thunar/thunar-preferences-dialog.c:1175
 msgid ""
-"Compare contents of original file and copy. This will prevent corrupted "
-"files. Enabling this option will slightly increase copy time."
-msgstr ""
+"Compare contents of original file and copy in order to detect corruption. "
+"While this will attempt to compare the actual contents that are on the "
+"destination media, Thunar may be unable to bypass filesystem caches, so this"
+" comparison may not detect all instances of corruption. Enabling this option"
+" will increase copy time."
+msgstr "Porovnává obsah původního souboru a kopie za účelem detekce poškození. Přestože se pokusí porovnat skutečný obsah na cílovém médiu, Thunar nemusí být schopen obejít cache souborového systému, takže toto porovnání nemusí odhalit všechny případy poškození. Povolení této možnosti prodlouží dobu kopírování."
 
-#: thunar/thunar-preferences-dialog.c:1203
+#: thunar/thunar-preferences-dialog.c:1205
 msgid "Search"
 msgstr "Hledat"
 
-#: thunar/thunar-preferences-dialog.c:1220
+#: thunar/thunar-preferences-dialog.c:1222
 msgid "Include subfolders:"
 msgstr "Zahrnout podsložky:"
 
-#: thunar/thunar-preferences-dialog.c:1244
+#: thunar/thunar-preferences-dialog.c:1246
 msgid "Folder Permissions"
 msgstr "Oprávnění složky"
 
-#: thunar/thunar-preferences-dialog.c:1260
+#: thunar/thunar-preferences-dialog.c:1262
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "Při úpravách oprávnění ke složce můžete tyto\nzměny použít také pro obsah složky.\nVýchozí chování zvolte níže:"
 
-#: thunar/thunar-preferences-dialog.c:1272
-#: thunar/thunar-preferences-dialog.c:1318
+#: thunar/thunar-preferences-dialog.c:1274
+#: thunar/thunar-preferences-dialog.c:1320
 msgid "Ask every time"
 msgstr "Vždy se ptát"
 
-#: thunar/thunar-preferences-dialog.c:1273
+#: thunar/thunar-preferences-dialog.c:1275
 msgid "Apply to Folder and Contents"
 msgstr "Použít na složku a její obsah"
 
-#: thunar/thunar-preferences-dialog.c:1274
+#: thunar/thunar-preferences-dialog.c:1276
 msgid "Apply to Folder Only"
 msgstr "Použít pouze na složku"
 
-#: thunar/thunar-preferences-dialog.c:1289
+#: thunar/thunar-preferences-dialog.c:1291
 msgid "Security"
 msgstr "Zabezpečení"
 
-#: thunar/thunar-preferences-dialog.c:1306
+#: thunar/thunar-preferences-dialog.c:1308
 msgid "Execute shell scripts:"
 msgstr "Spustit shellové skripty"
 
-#: thunar/thunar-preferences-dialog.c:1341
+#: thunar/thunar-preferences-dialog.c:1343
 msgid "Volume Management"
 msgstr "Správa svazků"
 
 #. add check button to enable/disable auto mounting
-#: thunar/thunar-preferences-dialog.c:1358
+#: thunar/thunar-preferences-dialog.c:1360
 msgid "Enable _Volume Management"
 msgstr "Zapnout _Správu svazků"
 
-#: thunar/thunar-preferences-dialog.c:1377
+#: thunar/thunar-preferences-dialog.c:1379
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">Konfigurujte</a> správu vyměnitelných jednotek, zařízení a médií."
 
-#: thunar/thunar-preferences-dialog.c:1391
+#: thunar/thunar-preferences-dialog.c:1393
 #: thunar/thunar-properties-dialog.c:831
 msgid "Missing dependencies"
 msgstr "Chybí součásti, na kterých závisí"
 
-#: thunar/thunar-preferences-dialog.c:1399
+#: thunar/thunar-preferences-dialog.c:1401
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2727,30 +2730,30 @@ msgid ""
 msgstr "<a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> pravděpodobně není dostupný.\nDůležité funkce, včetně podpory pro Koš,\nvyjímatelných médií a procházení vzdálených\numístění nebudou pracovat. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Přečíst si více]</a>"
 
 #. Shortcuts
-#: thunar/thunar-preferences-dialog.c:1414
+#: thunar/thunar-preferences-dialog.c:1416
 msgid "Shortcuts"
 msgstr "Klávesové zkratky"
 
-#: thunar/thunar-preferences-dialog.c:1425
+#: thunar/thunar-preferences-dialog.c:1427
 msgid "Window"
 msgstr "Okno"
 
-#: thunar/thunar-preferences-dialog.c:1426
+#: thunar/thunar-preferences-dialog.c:1428
 msgid "View"
 msgstr "Zobrazit"
 
-#: thunar/thunar-preferences-dialog.c:1427
+#: thunar/thunar-preferences-dialog.c:1429
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:550
 msgid "Launcher"
 msgstr "Spouštěč"
 
-#: thunar/thunar-preferences-dialog.c:1428
+#: thunar/thunar-preferences-dialog.c:1430
 msgid "Status Bar"
 msgstr "Stavový řádek"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: thunar/thunar-preferences-dialog.c:1491
+#: thunar/thunar-preferences-dialog.c:1493
 msgid "Failed to display the volume management settings"
 msgstr "Nepodařilo se zobrazit nastavení správy svazků"
 
@@ -3092,7 +3095,7 @@ msgstr "Procházet systém souborů"
 msgid "Mount and open %s (%s)"
 msgstr "Připojit a otevřít %s (%s)"
 
-#: thunar/thunar-shortcuts-model.c:715 plugins/thunar-tpa/thunar-tpa.c:301
+#: thunar/thunar-shortcuts-model.c:715 plugins/thunar-tpa/thunar-tpa.c:313
 msgid "Trash is empty"
 msgstr "Koš je prázdný"
 
@@ -3481,7 +3484,7 @@ msgstr "Viditelné pouze v případě, že je panel nabídek skrytý"
 
 #: thunar/thunar-transfer-job.c:552
 msgid "Verifying file contents..."
-msgstr ""
+msgstr "Ověřování obsahu souboru..."
 
 #: thunar/thunar-transfer-job.c:1139
 #, c-format
@@ -3672,7 +3675,7 @@ msgstr "připojitelné"
 
 #: thunar/thunar-util.c:1459
 msgid "mount point"
-msgstr ""
+msgstr "připojovací bod"
 
 #. append the image dimensions to the statusbar text
 #: thunar/thunar-util.c:1493 plugins/thunar-apr/thunar-apr-image-page.c:158
@@ -3749,7 +3752,7 @@ msgstr "V_lastnosti..."
 
 #: thunar/thunar-window.c:659
 msgid "Edit Thunar's Preferences"
-msgstr ""
+msgstr "Upravit předvolby Thunaru"
 
 #: thunar/thunar-window.c:661
 msgid "_View"
@@ -3765,15 +3768,15 @@ msgstr "Znovu načte aktuální složku"
 
 #: thunar/thunar-window.c:665
 msgid "S_plit View"
-msgstr "_Rozdělený pohled"
+msgstr "_Rozdělené zobrazení"
 
 #: thunar/thunar-window.c:665
 msgid "Open/Close Split View"
-msgstr "Otevře/Zavře rozdělený pohled"
+msgstr "Otevře/Zavře rozdělené zobrazení"
 
 #: thunar/thunar-window.c:666
 msgid "Switch Focused Split View Pane"
-msgstr "Přepnout zaměřené okno rozděleného pohledu"
+msgstr "Přepnout zaměřené okno rozděleného zobrazení"
 
 #: thunar/thunar-window.c:667
 msgid "Locatio_n Selector"
@@ -3915,7 +3918,7 @@ msgstr "Zobrazí složky a soubory včetně jejich podrobných popisů"
 
 #: thunar/thunar-window.c:690
 msgid "_Compact View"
-msgstr "S_tručný pohled"
+msgstr "_Kompaktní"
 
 #: thunar/thunar-window.c:690
 msgid "Display folder content in a compact list view"
@@ -4167,13 +4170,13 @@ msgstr "Nepodařilo se spustit hledání aplikací Catfish"
 
 #: thunar/thunar-window.c:6556
 msgid "Change the active view type"
-msgstr ""
+msgstr "Změnit typ aktivního zobrazení"
 
 #. add a proxy menu item for the view switcher to be represent in the overflow
 #. menu
 #: thunar/thunar-window.c:6559 thunar/thunar-window.c:6584
 msgid "View Switcher"
-msgstr ""
+msgstr "Přepínač zobrazení"
 
 #. add a proxy menu item for the location bar to represent the bar in the
 #. overflow menu
@@ -4670,13 +4673,13 @@ msgid "Mail Recipient"
 msgstr "Příjemce elektronické pošty"
 
 #. tell the user that we failed to connect to the trash
-#: plugins/thunar-tpa/thunar-tpa.c:286 plugins/thunar-tpa/thunar-tpa.c:326
-#: plugins/thunar-tpa/thunar-tpa.c:353 plugins/thunar-tpa/thunar-tpa.c:380
+#: plugins/thunar-tpa/thunar-tpa.c:298 plugins/thunar-tpa/thunar-tpa.c:338
+#: plugins/thunar-tpa/thunar-tpa.c:365 plugins/thunar-tpa/thunar-tpa.c:392
 msgid "Failed to connect to the Trash"
 msgstr "Nepodařilo se připojit ke koši"
 
 #. tell the user whether the trash is full or empty
-#: plugins/thunar-tpa/thunar-tpa.c:301
+#: plugins/thunar-tpa/thunar-tpa.c:313
 msgid "Trash contains files"
 msgstr "Koš obsahuje soubory"
 
