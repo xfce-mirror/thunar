@@ -5,17 +5,17 @@
 # 
 # Translators:
 # Xfce Bot <transifex@xfce.org>, 2021
-# Quentin PAGÈS, 2022
+# Quentin PAGÈS, 2024
 # 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-15 00:45+0200\n"
+"POT-Creation-Date: 2023-05-30 00:47+0200\n"
 "PO-Revision-Date: 2020-12-28 17:42+0000\n"
-"Last-Translator: Quentin PAGÈS, 2022\n"
-"Language-Team: Occitan (post 1500) (https://www.transifex.com/xfce/teams/16840/oc/)\n"
+"Last-Translator: Quentin PAGÈS, 2024\n"
+"Language-Team: Occitan (post 1500) (https://app.transifex.com/xfce/teams/16840/oc/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -132,7 +132,7 @@ msgstr "Impossible d'aviar l'operacion"
 #: ../thunar/thunar-application.c:1507 ../thunar/thunar-application.c:1667
 #: ../thunar/thunar-location-entry.c:366 ../thunar/thunar-location-entry.c:394
 #: ../thunar/thunar-shortcuts-view.c:1706
-#: ../thunar/thunar-shortcuts-view.c:1734 ../thunar/thunar-window.c:2426
+#: ../thunar/thunar-shortcuts-view.c:1734 ../thunar/thunar-window.c:2440
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Impossible de dobrir « %s »"
@@ -358,7 +358,7 @@ msgstr "Utilizar aquesta accion per _defaut per aqueste tipe de fichièr"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:291
 #: ../thunar/thunar-chooser-dialog.c:1173
-#: ../thunar/thunar-properties-dialog.c:828 ../thunar/thunar-window.c:3171
+#: ../thunar/thunar-properties-dialog.c:828 ../thunar/thunar-window.c:3185
 #: ../plugins/thunar-uca/thunar-uca-editor.c:142
 #: ../plugins/thunar-uca/thunar-uca-editor.c:435
 msgid "_OK"
@@ -896,12 +896,12 @@ msgid "File Name"
 msgstr "Nom del fichièr"
 
 #: ../thunar/thunar-file.c:1058 ../thunar/thunar-gio-extensions.c:289
-#: ../thunar/thunar-shortcuts-model.c:1108 ../thunar.desktop.in.in.h:7
+#: ../thunar/thunar-shortcuts-model.c:1125 ../thunar.desktop.in.in.h:7
 msgid "Trash"
 msgstr "Escobilhièr"
 
 #: ../thunar/thunar-file.c:1065 ../thunar/thunar-gio-extensions.c:287
-#: ../thunar/thunar-shortcuts-model.c:990 ../thunar/thunar-window.c:400
+#: ../thunar/thunar-shortcuts-model.c:1007 ../thunar/thunar-window.c:400
 msgid "File System"
 msgstr "Sistèma de fichièrs"
 
@@ -946,7 +946,7 @@ msgid "%s on %s"
 msgstr "%s sus %s"
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:480
+#: ../thunar/thunar-gio-extensions.c:481
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr "%s de %s (%d%% utilizat)"
@@ -1315,8 +1315,8 @@ msgstr[1] "Renomenar los fichièrs seleccionats"
 #: ../thunar/thunar-launcher.c:1400
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Restablir lo fichièr seleccionat a son emplaçament d’origina"
+msgstr[1] "Restablir los fichièrs seleccionats a lor emplaçament d’origina"
 
 #: ../thunar/thunar-launcher.c:1417
 msgid "Move the selected file to the Trash"
@@ -2435,62 +2435,62 @@ msgstr ""
 "Volètz ignorar aqueste fichièr e contunhar de renomenar los fichièrs "
 "restants ?"
 
-#: ../thunar/thunar-shortcuts-model.c:627
-#: ../thunar/thunar-shortcuts-model.c:991 ../thunar/thunar-window.c:400
+#: ../thunar/thunar-shortcuts-model.c:644
+#: ../thunar/thunar-shortcuts-model.c:1008 ../thunar/thunar-window.c:400
 msgid "Browse the file system"
 msgstr "Percórrer lo sistèma de fichièrs"
 
-#: ../thunar/thunar-shortcuts-model.c:661
+#: ../thunar/thunar-shortcuts-model.c:678
 #, c-format
 msgid "Mount and open %s (%s)"
 msgstr "Montar e dobrir %s (%s)"
 
-#: ../thunar/thunar-shortcuts-model.c:674
+#: ../thunar/thunar-shortcuts-model.c:691
 #: ../plugins/thunar-tpa/thunar-tpa.c:284
 msgid "Trash is empty"
 msgstr "Escobilhièr void"
 
-#: ../thunar/thunar-shortcuts-model.c:678
+#: ../thunar/thunar-shortcuts-model.c:695
 #, c-format
 msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
 msgstr[0] "L'escobilhièr conten %d fichièr"
 msgstr[1] "L'escobilhièr conten %d fichièrs"
 
-#: ../thunar/thunar-shortcuts-model.c:984
+#: ../thunar/thunar-shortcuts-model.c:1001
 msgid "Devices"
 msgstr "Periferics"
 
-#: ../thunar/thunar-shortcuts-model.c:1027
+#: ../thunar/thunar-shortcuts-model.c:1044
 msgid "Network"
 msgstr "Ret"
 
-#: ../thunar/thunar-shortcuts-model.c:1035
+#: ../thunar/thunar-shortcuts-model.c:1052
 msgid "Browse Network"
 msgstr "Percórrer la ret"
 
-#: ../thunar/thunar-shortcuts-model.c:1036 ../thunar/thunar-window.c:410
+#: ../thunar/thunar-shortcuts-model.c:1053 ../thunar/thunar-window.c:410
 msgid "Browse local network connections"
 msgstr "Percórrer las connexions de la ret locala"
 
-#: ../thunar/thunar-shortcuts-model.c:1058
+#: ../thunar/thunar-shortcuts-model.c:1075
 msgid "Places"
 msgstr "Emplaçaments"
 
-#: ../thunar/thunar-shortcuts-model.c:1070
+#: ../thunar/thunar-shortcuts-model.c:1087
 msgid "Open the home folder"
 msgstr "Dobrir lo repertòri personal"
 
-#: ../thunar/thunar-shortcuts-model.c:1087
+#: ../thunar/thunar-shortcuts-model.c:1104
 msgid "Open the desktop folder"
 msgstr "Dobrir lo repertòri del burèu"
 
-#: ../thunar/thunar-shortcuts-model.c:1134 ../thunar/thunar-window.c:401
+#: ../thunar/thunar-shortcuts-model.c:1151 ../thunar/thunar-window.c:401
 #: ../thunar/thunar-window.c:404 ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr "Ordinator"
 
-#: ../thunar/thunar-shortcuts-model.c:1135
+#: ../thunar/thunar-shortcuts-model.c:1152
 msgid "Browse the computer"
 msgstr "Percórrer l’ordenador"
 
@@ -2589,7 +2589,7 @@ msgid "Loading folder contents..."
 msgstr "Cargament del contengut del dorsièr..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2000 ../thunar/thunar-window.c:2993
+#: ../thunar/thunar-standard-view.c:2000 ../thunar/thunar-window.c:3007
 msgid "Failed to open the home folder"
 msgstr "Impossible de dobrir lo dorsièr personal"
 
@@ -2621,7 +2621,7 @@ msgstr "Nom de fichièr invalid provesit pel lisat del site XDS"
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Impossible de crear un ligam per l'URL « %s »"
 
-#: ../thunar/thunar-standard-view.c:3037 ../thunar/thunar-window.c:3087
+#: ../thunar/thunar-standard-view.c:3037 ../thunar/thunar-window.c:3101
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Impossible de dobrir lo repertòri « %s »"
@@ -3054,46 +3054,46 @@ msgstr "Passar a l'onglet seguent"
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr ""
 
-#: ../thunar/thunar-window.c:2010
+#: ../thunar/thunar-window.c:2024
 msgid "Close tab"
 msgstr "Tampar l'onglet"
 
-#: ../thunar/thunar-window.c:2254
+#: ../thunar/thunar-window.c:2268
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Dobrissètz l'emplaçament « %s »"
 
-#: ../thunar/thunar-window.c:2400
+#: ../thunar/thunar-window.c:2414
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Impossible d'aviar « %s »"
 
-#: ../thunar/thunar-window.c:2942
+#: ../thunar/thunar-window.c:2956
 msgid "Failed to open parent folder"
 msgstr "Impossible de dobrir lo dorsièr parent"
 
-#: ../thunar/thunar-window.c:3062
+#: ../thunar/thunar-window.c:3076
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Lo repertòri « %s » existís pas. Lo volètz crear ?"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3129
+#: ../thunar/thunar-window.c:3143
 msgid "Failed to browse the computer"
 msgstr ""
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:3169
+#: ../thunar/thunar-window.c:3183
 msgid "About Templates"
 msgstr "A prepaus dels modèls"
 
-#: ../thunar/thunar-window.c:3191
+#: ../thunar/thunar-window.c:3205
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 "Totes los fichièrs dins aqueste dorsièr apareisseràn dins lo menú « Crear un"
 " document »"
 
-#: ../thunar/thunar-window.c:3198
+#: ../thunar/thunar-window.c:3212
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
@@ -3104,26 +3104,26 @@ msgstr ""
 "\n"
 "Podètz seleccionar aquesta entrada dins lo menú « Crear un document » e una còpia d'aqueste document serà creada dins lo dorsièr en cors."
 
-#: ../thunar/thunar-window.c:3210
+#: ../thunar/thunar-window.c:3224
 msgid "Do _not display this message again"
 msgstr "A_fichar pas mai aqueste message"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3241
+#: ../thunar/thunar-window.c:3255
 msgid "Failed to open the file system root folder"
 msgstr "Impossible de dobrir lo dorsièr raiç del sistèma de fichièrs"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3274
+#: ../thunar/thunar-window.c:3288
 msgid "Failed to display the contents of the trash can"
 msgstr "Impossible d'afichar lo contengut de l'escobilhièr"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3307
+#: ../thunar/thunar-window.c:3321
 msgid "Failed to browse the network"
 msgstr "Impossible de percórrer la ret"
 
-#: ../thunar/thunar-window.c:3411
+#: ../thunar/thunar-window.c:3425
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
