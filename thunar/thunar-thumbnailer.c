@@ -833,7 +833,7 @@ static gboolean
 thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
                                       ThunarFile        *file)
 {
-  const gchar *content_type;
+  gchar       *content_type;
   gboolean     supported = FALSE;
   guint        n;
   GPtrArray   *schemes_array;
@@ -857,7 +857,7 @@ thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
       g_object_unref (link_target);
     }
   else
-    content_type = thunar_file_get_content_type (file);
+    content_type = g_strdup (thunar_file_get_content_type (file));
 
   /* abort if the content type is unknown */
   if (content_type == NULL)
@@ -877,6 +877,7 @@ thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
         }
     }
 
+  g_free (content_type);
   return supported;
 }
 
