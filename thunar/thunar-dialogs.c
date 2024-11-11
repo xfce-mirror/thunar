@@ -879,7 +879,10 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
 
   parent_file = thunar_file_get_parent (dst_file, NULL);
   if (parent_file != NULL)
-    parent_string = thunar_file_get_basename (parent_file);
+    {
+      parent_string = thunar_file_get_basename (parent_file);
+      multiple_files = TRUE;
+    }
 
   if (thunar_file_is_symlink (dst_file))
     /* TRANSLATORS: First part of replace dialog sentence */
