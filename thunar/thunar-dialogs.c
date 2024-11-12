@@ -881,6 +881,9 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   if (parent_file != NULL)
     parent_string = thunar_file_get_basename (parent_file);
 
+  if (!thunar_file_is_empty_directory (parent_file))
+    multiple_files = TRUE;
+
   if (thunar_file_is_symlink (dst_file))
     /* TRANSLATORS: First part of replace dialog sentence */
     text = g_strdup_printf (_("Replace the link in \"%s\""), parent_string);
