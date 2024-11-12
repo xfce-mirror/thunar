@@ -519,7 +519,7 @@ thunar_progress_view_ask_replace (ThunarProgressView *view,
 
   /* display the question view */
   return thunar_dialogs_show_job_ask_replace (window != NULL ? GTK_WINDOW (window) : NULL,
-                                              src_file, dst_file, thunar_job_get_n_total_files (job) > 1);
+                                              src_file, dst_file, TRUE);
 }
 
 
