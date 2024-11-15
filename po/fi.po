@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-10-23 00:45+0200\n"
+"POT-Creation-Date: 2024-10-25 12:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Ammuu5, 2017-2021,2023-2024\n"
 "Language-Team: Finnish (http://app.transifex.com/xfce/thunar/language/fi/)\n"
@@ -1478,8 +1478,8 @@ msgstr "Tiedostonimi"
 #: thunar/thunar-enum-types.c:700 thunar/thunar-enum-types.c:725
 #: thunar/thunar-enum-types.c:860 thunar/thunar-preferences-dialog.c:466
 #: thunar/thunar-preferences-dialog.c:1122
-#: thunar/thunar-preferences-dialog.c:1228
-#: thunar/thunar-preferences-dialog.c:1316
+#: thunar/thunar-preferences-dialog.c:1230
+#: thunar/thunar-preferences-dialog.c:1318
 msgid "Never"
 msgstr "Ei koskaan"
 
@@ -1490,8 +1490,8 @@ msgstr ""
 #: thunar/thunar-enum-types.c:702 thunar/thunar-enum-types.c:727
 #: thunar/thunar-enum-types.c:862 thunar/thunar-preferences-dialog.c:468
 #: thunar/thunar-preferences-dialog.c:1118
-#: thunar/thunar-preferences-dialog.c:1226
-#: thunar/thunar-preferences-dialog.c:1317
+#: thunar/thunar-preferences-dialog.c:1228
+#: thunar/thunar-preferences-dialog.c:1319
 msgid "Always"
 msgstr "Aina"
 
@@ -1520,7 +1520,7 @@ msgid "Delete (opposite of create)"
 msgstr ""
 
 #: thunar/thunar-enum-types.c:791 thunar/thunar-file.c:1086
-#: thunar/thunar-gio-extensions.c:485 thunar/thunar-shortcuts-model.c:1150
+#: thunar/thunar-gio-extensions.c:510 thunar/thunar-shortcuts-model.c:1150
 #: thunar.desktop.in.in:25
 msgid "Trash"
 msgstr "Roskakori"
@@ -1562,7 +1562,7 @@ msgstr "Upotettu"
 msgid "Only for local files"
 msgstr "Vain paikallisille tiedostoille"
 
-#: thunar/thunar-file.c:1093 thunar/thunar-gio-extensions.c:483
+#: thunar/thunar-file.c:1093 thunar/thunar-gio-extensions.c:508
 #: thunar/thunar-shortcuts-model.c:1032
 msgid "File System"
 msgstr "Tiedostojärjestelmä"
@@ -1613,85 +1613,85 @@ msgid "%s (mount point)"
 msgstr ""
 
 #. Implementation specific
-#: thunar/thunar-gio-extensions.c:64
+#: thunar/thunar-gio-extensions.c:89
 msgid "iPod touch"
 msgstr "iPod touch"
 
-#: thunar/thunar-gio-extensions.c:65
+#: thunar/thunar-gio-extensions.c:90
 msgid "iPad"
 msgstr "iPad"
 
-#: thunar/thunar-gio-extensions.c:66
+#: thunar/thunar-gio-extensions.c:91
 msgid "iPhone"
 msgstr "iPhone"
 
-#: thunar/thunar-gio-extensions.c:67
+#: thunar/thunar-gio-extensions.c:92
 msgid "Solid State Drive"
 msgstr ""
 
-#: thunar/thunar-gio-extensions.c:68
+#: thunar/thunar-gio-extensions.c:93
 msgid "System Drive"
 msgstr ""
 
-#: thunar/thunar-gio-extensions.c:69 thunar/thunar-gio-extensions.c:70
+#: thunar/thunar-gio-extensions.c:94 thunar/thunar-gio-extensions.c:95
 msgid "USB Drive"
 msgstr ""
 
 #. Freedesktop icon-naming-spec
-#: thunar/thunar-gio-extensions.c:73
+#: thunar/thunar-gio-extensions.c:98
 msgid "Camera"
 msgstr "Kamera"
 
-#: thunar/thunar-gio-extensions.c:74
+#: thunar/thunar-gio-extensions.c:99
 msgid "Harddisk"
 msgstr ""
 
-#: thunar/thunar-gio-extensions.c:75
+#: thunar/thunar-gio-extensions.c:100
 msgid "Optical Drive"
 msgstr ""
 
-#: thunar/thunar-gio-extensions.c:76
+#: thunar/thunar-gio-extensions.c:101
 msgid "Removable Drive"
 msgstr ""
 
-#: thunar/thunar-gio-extensions.c:77
+#: thunar/thunar-gio-extensions.c:102
 msgid "Flash Drive"
 msgstr ""
 
-#: thunar/thunar-gio-extensions.c:78
+#: thunar/thunar-gio-extensions.c:103
 msgid "Floppy"
 msgstr ""
 
-#: thunar/thunar-gio-extensions.c:79
+#: thunar/thunar-gio-extensions.c:104
 msgid "Optical Media"
 msgstr ""
 
-#: thunar/thunar-gio-extensions.c:80
+#: thunar/thunar-gio-extensions.c:105
 msgid "Tape"
 msgstr ""
 
-#: thunar/thunar-gio-extensions.c:81
+#: thunar/thunar-gio-extensions.c:106
 msgid "Multimedia Player"
 msgstr ""
 
-#: thunar/thunar-gio-extensions.c:82
+#: thunar/thunar-gio-extensions.c:107
 msgid "PDA"
 msgstr "Kämmenmikro"
 
-#: thunar/thunar-gio-extensions.c:83
+#: thunar/thunar-gio-extensions.c:108
 msgid "Phone"
 msgstr "Puhelin"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: thunar/thunar-gio-extensions.c:565
+#: thunar/thunar-gio-extensions.c:590
 #, c-format
 msgid "%s on %s"
 msgstr "%s koneella %s"
 
-#: thunar/thunar-gio-extensions.c:676
+#: thunar/thunar-gio-extensions.c:701
 #, c-format
 msgid "%s used (%.0f%%)  |  %s free (%.0f%%)"
-msgstr "%skäytetty (%.0f %%) | %s vapaata (%.0f%%) "
+msgstr "%s käytetty (%.0f %%) | %s vapaata (%.0f%%) "
 
 #: thunar/thunar-history.c:309
 msgid "The item will be removed from the history"
@@ -1821,8 +1821,8 @@ msgstr "Kohteessa ei ole tarpeeksi tilaa. Koeta poistaa tiedostoja."
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d tiedosto"
+msgstr[1] "%d tiedostoa"
 
 #: thunar/thunar-job-operation-history.c:323
 msgid ""
@@ -2026,7 +2026,7 @@ msgid "Allow this file to _run as a program"
 msgstr "Salli tiedoston _suorittaminen sovelluksena"
 
 #: thunar/thunar-permissions-chooser.c:409
-#: thunar/thunar-preferences-dialog.c:1331
+#: thunar/thunar-preferences-dialog.c:1333
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "Muiden kuin luotettavien sovellusten suorituksen salliminen vaarantaa järjestelmäsi turvallisuuden."
@@ -2143,7 +2143,7 @@ msgstr "Näkymät"
 
 #: thunar/thunar-preferences-dialog.c:311
 msgid "Window Settings"
-msgstr ""
+msgstr "Ikkunan asetukset"
 
 #: thunar/thunar-preferences-dialog.c:330
 msgid "Use custom window decorations (only applied to new windows)"
@@ -2230,7 +2230,7 @@ msgstr "Näytä pienoiskuvat:"
 
 #: thunar/thunar-preferences-dialog.c:467
 #: thunar/thunar-preferences-dialog.c:1119
-#: thunar/thunar-preferences-dialog.c:1227
+#: thunar/thunar-preferences-dialog.c:1229
 msgid "Local Files Only"
 msgstr "Vain paikallisista tiedostoista"
 
@@ -2595,71 +2595,74 @@ msgstr ""
 
 #: thunar/thunar-preferences-dialog.c:1175
 msgid ""
-"Compare contents of original file and copy. This will prevent corrupted "
-"files. Enabling this option will slightly increase copy time."
+"Compare contents of original file and copy in order to detect corruption. "
+"While this will attempt to compare the actual contents that are on the "
+"destination media, Thunar may be unable to bypass filesystem caches, so this"
+" comparison may not detect all instances of corruption. Enabling this option"
+" will increase copy time."
 msgstr ""
 
-#: thunar/thunar-preferences-dialog.c:1203
+#: thunar/thunar-preferences-dialog.c:1205
 msgid "Search"
 msgstr "Etsi"
 
-#: thunar/thunar-preferences-dialog.c:1220
+#: thunar/thunar-preferences-dialog.c:1222
 msgid "Include subfolders:"
 msgstr "Sisällytä alikansiot:"
 
-#: thunar/thunar-preferences-dialog.c:1244
+#: thunar/thunar-preferences-dialog.c:1246
 msgid "Folder Permissions"
 msgstr "Kansion käyttöoikeudet"
 
-#: thunar/thunar-preferences-dialog.c:1260
+#: thunar/thunar-preferences-dialog.c:1262
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "Muuttaessasi Kansion käyttöoikeuksia voit\nasettaa samat oikeudet myös sen sisällölle.\nAlta voit valita oletustoimintatavan."
 
-#: thunar/thunar-preferences-dialog.c:1272
-#: thunar/thunar-preferences-dialog.c:1318
+#: thunar/thunar-preferences-dialog.c:1274
+#: thunar/thunar-preferences-dialog.c:1320
 msgid "Ask every time"
 msgstr "Kysy aina"
 
-#: thunar/thunar-preferences-dialog.c:1273
+#: thunar/thunar-preferences-dialog.c:1275
 msgid "Apply to Folder and Contents"
 msgstr "Aseta myös kansion sisällölle"
 
-#: thunar/thunar-preferences-dialog.c:1274
+#: thunar/thunar-preferences-dialog.c:1276
 msgid "Apply to Folder Only"
 msgstr "Aseta vain kansioille"
 
-#: thunar/thunar-preferences-dialog.c:1289
+#: thunar/thunar-preferences-dialog.c:1291
 msgid "Security"
 msgstr "Turvallisuus"
 
-#: thunar/thunar-preferences-dialog.c:1306
+#: thunar/thunar-preferences-dialog.c:1308
 msgid "Execute shell scripts:"
 msgstr ""
 
-#: thunar/thunar-preferences-dialog.c:1341
+#: thunar/thunar-preferences-dialog.c:1343
 msgid "Volume Management"
 msgstr "Taltionhallinta"
 
 #. add check button to enable/disable auto mounting
-#: thunar/thunar-preferences-dialog.c:1358
+#: thunar/thunar-preferences-dialog.c:1360
 msgid "Enable _Volume Management"
 msgstr "Käytä _taltionhallintaa"
 
-#: thunar/thunar-preferences-dialog.c:1377
+#: thunar/thunar-preferences-dialog.c:1379
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">Muokkaa</a> irrotettavien asemien, laitteiden ja median hallinnan asetuksia."
 
-#: thunar/thunar-preferences-dialog.c:1391
+#: thunar/thunar-preferences-dialog.c:1393
 #: thunar/thunar-properties-dialog.c:831
 msgid "Missing dependencies"
 msgstr "Puuttuvat riippuvuudet"
 
-#: thunar/thunar-preferences-dialog.c:1399
+#: thunar/thunar-preferences-dialog.c:1401
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2668,30 +2671,30 @@ msgid ""
 msgstr "Näyttää siltä, että <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> ei ole saatavilla.\nTärkeät ominaisuudet, kuten roskakori tuki,\nirrotettavat tietovälineet, ja etäsijainnin selaaminen\neivät toimi. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Lue lisää]</a>"
 
 #. Shortcuts
-#: thunar/thunar-preferences-dialog.c:1414
+#: thunar/thunar-preferences-dialog.c:1416
 msgid "Shortcuts"
 msgstr "Pikanäppäimet"
 
-#: thunar/thunar-preferences-dialog.c:1425
+#: thunar/thunar-preferences-dialog.c:1427
 msgid "Window"
 msgstr "Ikkuna"
 
-#: thunar/thunar-preferences-dialog.c:1426
+#: thunar/thunar-preferences-dialog.c:1428
 msgid "View"
 msgstr "Näytä"
 
-#: thunar/thunar-preferences-dialog.c:1427
+#: thunar/thunar-preferences-dialog.c:1429
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:550
 msgid "Launcher"
 msgstr "Käynnistin"
 
-#: thunar/thunar-preferences-dialog.c:1428
+#: thunar/thunar-preferences-dialog.c:1430
 msgid "Status Bar"
 msgstr "Tilapalkki"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: thunar/thunar-preferences-dialog.c:1491
+#: thunar/thunar-preferences-dialog.c:1493
 msgid "Failed to display the volume management settings"
 msgstr "Taltionhallinnan asetusten näyttäminen epäonnistui."
 
@@ -3029,7 +3032,7 @@ msgstr "Selaa tiedostojärjestelmää."
 msgid "Mount and open %s (%s)"
 msgstr "Liitä ja avaa %s (%s)"
 
-#: thunar/thunar-shortcuts-model.c:715 plugins/thunar-tpa/thunar-tpa.c:301
+#: thunar/thunar-shortcuts-model.c:715 plugins/thunar-tpa/thunar-tpa.c:313
 msgid "Trash is empty"
 msgstr "Roskakori on tyhjä."
 
@@ -3180,7 +3183,7 @@ msgstr "Jä_rjestä"
 
 #: thunar/thunar-standard-view.c:489
 msgid "_Reversed Order"
-msgstr ""
+msgstr "_Käänteinen järjestys"
 
 #: thunar/thunar-standard-view.c:489
 msgid "Reverse the sort order"
@@ -3375,11 +3378,11 @@ msgstr "Näytä viimeksi muokattu"
 
 #: thunar/thunar-statusbar.c:100
 msgid "Hidden Files Count"
-msgstr ""
+msgstr "Piilotettujen tiedostojen määrä"
 
 #: thunar/thunar-statusbar.c:100
 msgid "Show hidden files count"
-msgstr ""
+msgstr "Näytä piilotettujen tiedostojen määrä"
 
 #: thunar/thunar-toolbar-editor.c:152
 msgid "Configure the Toolbar"
@@ -3575,7 +3578,7 @@ msgstr "Viimeksi muokattu: %s"
 #: thunar/thunar-util.c:1430
 #, c-format
 msgid "\"%s\" (%s)"
-msgstr ""
+msgstr "\"%s\" (%s)"
 
 #: thunar/thunar-util.c:1432
 #, c-format
@@ -3634,7 +3637,7 @@ msgstr "Avaa nykyinen kansio uudessa ikkunassa"
 
 #: thunar/thunar-window.c:652
 msgid "Close Ta_b"
-msgstr ""
+msgstr "Sulje _välilehti"
 
 #: thunar/thunar-window.c:652
 msgid "Close this folder"
@@ -3742,7 +3745,7 @@ msgstr "Näyttä tai piilota kansiopuupaneeli."
 
 #: thunar/thunar-window.c:674
 msgid "_Image Preview"
-msgstr ""
+msgstr "_Kuvan esikatselu"
 
 #: thunar/thunar-window.c:674
 msgid "Change the visibility of this window's image preview"
@@ -3852,7 +3855,7 @@ msgstr "_Siirry"
 
 #: thunar/thunar-window.c:693
 msgid "F_ile System"
-msgstr ""
+msgstr "T_iedostojärjestelmä"
 
 #: thunar/thunar-window.c:694
 msgid "_Home"
@@ -3921,7 +3924,7 @@ msgstr "Näytä asiakirjamallikansio."
 
 #: thunar/thunar-window.c:703
 msgid "Browse _Network"
-msgstr ""
+msgstr "Selaa _Verkkoa"
 
 #: thunar/thunar-window.c:705
 msgid "_Bookmarks"
@@ -3941,7 +3944,7 @@ msgstr "Näytä tietoja Thunarista."
 
 #: thunar/thunar-window.c:711
 msgid "_Back"
-msgstr ""
+msgstr "_Edellinen"
 
 #: thunar/thunar-window.c:711
 msgid "Go to the previous visited folder"
@@ -3949,7 +3952,7 @@ msgstr "Palaa edelliseen vierailtuun kansioon"
 
 #: thunar/thunar-window.c:714
 msgid "_Forward"
-msgstr ""
+msgstr "_Seuraava"
 
 #: thunar/thunar-window.c:714
 msgid "Go to the next visited folder"
@@ -3989,7 +3992,7 @@ msgstr "Valikko"
 
 #: thunar/thunar-window.c:725
 msgid "Show the menu"
-msgstr ""
+msgstr "Näytä valikko"
 
 #. add the label with the root warning
 #: thunar/thunar-window.c:1066
@@ -4589,13 +4592,13 @@ msgid "Mail Recipient"
 msgstr "Postin vastaanottaja"
 
 #. tell the user that we failed to connect to the trash
-#: plugins/thunar-tpa/thunar-tpa.c:286 plugins/thunar-tpa/thunar-tpa.c:326
-#: plugins/thunar-tpa/thunar-tpa.c:353 plugins/thunar-tpa/thunar-tpa.c:380
+#: plugins/thunar-tpa/thunar-tpa.c:298 plugins/thunar-tpa/thunar-tpa.c:338
+#: plugins/thunar-tpa/thunar-tpa.c:365 plugins/thunar-tpa/thunar-tpa.c:392
 msgid "Failed to connect to the Trash"
 msgstr "Roskakoriin yhdistäminen epäonnistui."
 
 #. tell the user whether the trash is full or empty
-#: plugins/thunar-tpa/thunar-tpa.c:301
+#: plugins/thunar-tpa/thunar-tpa.c:313
 msgid "Trash contains files"
 msgstr "Roskakorissa on tiedostoja."
 
@@ -4629,7 +4632,7 @@ msgstr "Haluatko varmasti poistaa\ntoiminnon \"%s\"?"
 
 #: plugins/thunar-uca/thunar-uca-chooser.c:381
 msgid "Delete action"
-msgstr ""
+msgstr "Poista toiminto"
 
 #: plugins/thunar-uca/thunar-uca-chooser.c:382
 msgid "If you delete a custom action, it is permanently lost."
@@ -4670,7 +4673,7 @@ msgstr "Komentoa ei ole asetettu"
 
 #: plugins/thunar-uca/thunar-uca-provider.c:188
 msgid "Confi_gure custom actions..."
-msgstr ""
+msgstr "Muok_kaa mukautettuja toimintoja..."
 
 #: plugins/thunar-uca/thunar-uca-provider.c:188
 msgid ""
@@ -4825,7 +4828,7 @@ msgstr "Näytetään, jos valittuna on:"
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:709
 msgid "_Directories **"
-msgstr ""
+msgstr "_Kansiot **"
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:724
 msgid "_Audio Files"
@@ -4932,7 +4935,7 @@ msgstr ""
 
 #: org.xfce.thunar.appdata.xml.in:9
 msgid "File Browser"
-msgstr ""
+msgstr "Tiedostoselain"
 
 #: org.xfce.thunar.appdata.xml.in:11
 msgid ""
