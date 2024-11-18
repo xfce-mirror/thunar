@@ -1117,13 +1117,14 @@ thunar_g_file_compare_contents (GFile        *file_a,
     {
       for (;;)
         {
-          gssize bytes_read_a = g_input_stream_read (G_INPUT_STREAM (inp_a), buf_a, buf_size, cancellable, error);
-          if (bytes_read_a < 0)
+          gsize bytes_read_a;
+          gsize bytes_read_b;
+
+          if (!g_input_stream_read_all (G_INPUT_STREAM (inp_a), buf_a, buf_size, &bytes_read_a, cancellable, error))
             {
               break;
             }
-          gssize bytes_read_b = g_input_stream_read (G_INPUT_STREAM (inp_b), buf_b, buf_size, cancellable, error);
-          if (bytes_read_b < 0)
+          if (!g_input_stream_read_all (G_INPUT_STREAM (inp_b), buf_b, buf_size, &bytes_read_b, cancellable, error))
             {
               break;
             }
