@@ -442,8 +442,8 @@ thunar_dialogs_show_about (GtkWindow   *parent,
                          "copyright", "Copyright \302\251 2004-2011 Benedikt Meurer\n"
                                       "Copyright \302\251 2009-2011 Jannis Pohlmann\n"
                                       "Copyright \302\251 2009-2012 Nick Schermer\n"
-                                      "Copyright \302\251 2017-2022 Alexander Schwinn\n"
-                                      "Copyright \302\251 2017-2022 Andre Miranda",
+                                      "Copyright \302\251 2017-2022 Andre Miranda\n"
+                                      "Copyright \302\251 2017-2024 Alexander Schwinn",
                          "destroy-with-parent", TRUE,
                          "documenters", documenters,
                          "license", XFCE_LICENSE_GPL,
