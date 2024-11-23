@@ -96,6 +96,9 @@ struct _ThunarStandardViewModelIface
                       gchar                   *search_query);
   void (*set_folders_first) (ThunarStandardViewModel *model,
                              gboolean                 folders_first);
+  void (*set_hidden_last) (ThunarStandardViewModel *model,
+                           gboolean                 hidden_last);
+
   gboolean (*get_show_hidden) (ThunarStandardViewModel *model);
   void (*set_show_hidden) (ThunarStandardViewModel *model,
                            gboolean                 show_hidden);
@@ -126,7 +129,9 @@ thunar_standard_view_model_set_folder (ThunarStandardViewModel *model,
 void
 thunar_standard_view_model_set_folders_first (ThunarStandardViewModel *model,
                                               gboolean                 folders_first);
-
+void
+thunar_standard_view_model_set_hidden_last (ThunarStandardViewModel *model,
+                                            gboolean                 hidden_last);
 gboolean
 thunar_standard_view_model_get_show_hidden (ThunarStandardViewModel *model);
 void
