@@ -345,6 +345,8 @@ endif
 EXTRA_DIST =								\
 	thunar-dbus-freedesktop-interfaces.xml	\
 	thunar-dbus-service-infos.xml			\
+	thunar-thumbnailer-dbus.xml				\
+	thunar-thumbnail-cache-dbus.xml			\
 	thunar-marshal.list						\
 	thunar-thumbnail-frame.png				\
 	thunar-settings							\
