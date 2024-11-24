@@ -42,7 +42,7 @@ dnl *** Initialize automake ***
 dnl ***************************
 AM_INIT_AUTOMAKE([1.11 dist-bzip2 tar-ustar no-dist-gzip foreign])
 AC_CONFIG_HEADERS([config.h])
-AM_MAINTAINER_MODE()
+AM_MAINTAINER_MODE([ifelse(xdt_version_tag(), [git], [enable], [disable])])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 dnl *******************************
