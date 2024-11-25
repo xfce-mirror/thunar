@@ -118,4 +118,5 @@ DISTCLEANFILES =							\
 AM_DISTCHECK_CONFIGURE_FLAGS =						\
 	--enable-gtk-doc							\
 	--enable-gen-doc							\
-	--enable-introspection
+	--enable-introspection						\
+	--disable-maintainer-mode
