@@ -3544,15 +3544,13 @@ thunar_window_start_open_location (ThunarWindow *window,
   if (initial_text != NULL && thunar_util_is_a_search_query (initial_text) == TRUE)
     {
       GType view_type;
+
+      window->is_searching = TRUE;
+
       /* workaround the slowness of ExoIconView */
       view_type = window->view_type;
-      window->is_searching = TRUE;
       thunar_window_action_detailed_view (window);
       thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), view_type); /* save it in the new view */
-
-      /* if directory specific settings are enabled, save the view type for this directory */
-      if (window->directory_specific_settings)
-        thunar_file_set_metadata_setting (window->current_directory, "thunar-view-type", g_type_name (view_type), TRUE);
       /* end of workaround */
 
       /* temporary show the location toolbar, even if it is normally hidden */
@@ -4415,7 +4413,7 @@ thunar_window_action_view_changed (ThunarWindow *window,
   thunar_window_view_switcher_update (window);
 
   /* if directory specific settings are enabled, save the view type for this directory */
-  if (window->directory_specific_settings)
+  if (window->directory_specific_settings && !window->is_searching)
     thunar_file_set_metadata_setting (window->current_directory, "thunar-view-type", g_type_name (view_type), TRUE);
 }
 
