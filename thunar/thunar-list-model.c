@@ -2408,7 +2408,7 @@ thunar_list_model_set_hidden_last (ThunarStandardViewModel *model,
   thunar_list_model_sort (store);
 
   /* emit a "changed" signal for each row, so the display is
-     reloaded with the new folders first setting */
+     reloaded with the new hidden last setting */
   gtk_tree_model_foreach (GTK_TREE_MODEL (store),
                           (GtkTreeModelForeachFunc) (void (*) (void)) gtk_tree_model_row_changed,
                           NULL);
