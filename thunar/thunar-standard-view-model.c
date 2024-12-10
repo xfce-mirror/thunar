@@ -133,6 +133,17 @@ thunar_standard_view_model_class_init (gpointer klass)
                                                                  "folders-first",
                                                                  TRUE,
                                                                  EXO_PARAM_READWRITE));
+      /**
+       * ThunarStandardViewModel::hidden-last:
+       *
+       * Tells whether to always sort hidden files after other files.
+       **/
+      g_object_interface_install_property (klass,
+                                           g_param_spec_boolean ("hidden-last",
+                                                                 "hidden-last",
+                                                                 "hidden-last",
+                                                                 FALSE,
+                                                                 EXO_PARAM_READWRITE));
 
       /**
        * ThunarStandardViewModel::num-files:
@@ -281,6 +292,18 @@ thunar_standard_view_model_set_folders_first (ThunarStandardViewModel *model,
   return (*THUNAR_STANDARD_VIEW_MODEL_GET_IFACE (model)->set_folders_first) (model, folders_first);
 }
 
+/**
+ * thunar_standard_view_model_set_hidden_last:
+ * @store         : a #ThunarStandardViewModel.
+ * @folders_first : %TRUE to let @store list hidden files last.
+ **/
+void
+thunar_standard_view_model_set_hidden_last (ThunarStandardViewModel *model,
+                                            gboolean                 hidden_last)
+{
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model));
+  return (*THUNAR_STANDARD_VIEW_MODEL_GET_IFACE (model)->set_hidden_last) (model, hidden_last);
+}
 
 
 /**

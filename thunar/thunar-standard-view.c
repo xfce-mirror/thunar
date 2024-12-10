@@ -4843,6 +4843,7 @@ thunar_standard_view_set_model (ThunarStandardView *standard_view)
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-style", G_OBJECT (standard_view->model), "date-style", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-custom-style", G_OBJECT (standard_view->model), "date-custom-style", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-folders-first", G_OBJECT (standard_view->model), "folders-first", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-hidden-last", G_OBJECT (standard_view->model), "hidden-last", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-file-size-binary", G_OBJECT (standard_view->model), "file-size-binary", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-folder-item-count", G_OBJECT (standard_view->model), "folder-item-count", G_BINDING_SYNC_CREATE);
 

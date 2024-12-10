@@ -93,6 +93,7 @@ enum
   PROP_MISC_DATE_CUSTOM_STYLE,
   PROP_EXEC_SHELL_SCRIPTS_BY_DEFAULT,
   PROP_MISC_FOLDERS_FIRST,
+  PROP_MISC_HIDDEN_LAST,
   PROP_MISC_FOLDER_ITEM_COUNT,
   PROP_MISC_FULL_PATH_IN_TAB_TITLE,
   PROP_MISC_WINDOW_TITLE_STYLE,
@@ -768,6 +769,20 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         NULL,
                         TRUE,
                         EXO_PARAM_READWRITE);
+
+
+  /**
+   * ThunarPreferences:misc-hidden-last:
+   *
+   * Whether to sort hidden files after non-hidden files.
+   **/
+  preferences_props[PROP_MISC_HIDDEN_LAST] =
+  g_param_spec_boolean ("misc-hidden-last",
+                        "MiscHiddenLast",
+                        NULL,
+                        FALSE,
+                        EXO_PARAM_READWRITE);
+
 
   /**
    * ThunarPreferences:misc-folder-item-count:
