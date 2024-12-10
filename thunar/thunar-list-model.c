@@ -2387,7 +2387,7 @@ thunar_list_model_get_hidden_last (ThunarListModel *store)
 
 /**
  * thunar_list_model_set_hidden_last:
- * @store         : a #ThunarListModel.
+ * @store       : a #ThunarListModel.
  * @hidden_last : %TRUE to let @store list hidden files last.
  **/
 static void
