@@ -339,7 +339,7 @@ thunar_job_operation_history_undo (GtkWindow *parent)
     {
       xfce_dialog_show_warning (parent,
                                 _("The operation you are trying to undo does not have any files "
-                                  "associated with it, and thus cannot be undone. "),
+                                  "associated with it, and thus cannot be undone."),
                                   _("%s operation cannot be undone"), thunar_job_operation_get_kind_nick (operation_marker));
       g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
       return;
@@ -435,7 +435,7 @@ thunar_job_operation_history_redo (GtkWindow *parent)
     {
       xfce_dialog_show_warning (parent,
                                 _("The operation you are trying to redo does not have any files "
-                                  "associated with it, and thus cannot be redone. "),
+                                  "associated with it, and thus cannot be redone."),
                                   _("%s operation cannot be redone"), thunar_job_operation_get_kind_nick (operation_marker));
       g_mutex_unlock (&job_operation_history->job_operation_list_mutex);
       return;
