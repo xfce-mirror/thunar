@@ -87,6 +87,7 @@ enum
   PROP_DATE_CUSTOM_STYLE,
   PROP_FOLDER,
   PROP_FOLDERS_FIRST,
+  PROP_HIDDEN_LAST,
   PROP_NUM_FILES,
   PROP_SHOW_HIDDEN,
   PROP_FOLDER_ITEM_COUNT,
@@ -243,6 +244,11 @@ thunar_tree_view_model_set_show_hidden (ThunarStandardViewModel *model,
 static void
 thunar_tree_view_model_set_folders_first (ThunarStandardViewModel *model,
                                           gboolean                 folders_first);
+
+static void
+thunar_tree_view_model_set_hidden_last (ThunarStandardViewModel *model,
+                                        gboolean                 hidden_last);
+
 static void
 thunar_tree_view_model_set_file_size_binary (ThunarStandardViewModel *model,
                                              gboolean                 file_size_binary);
@@ -265,6 +271,8 @@ static gint
 thunar_tree_view_model_get_num_files (ThunarTreeViewModel *model);
 static gboolean
 thunar_tree_view_model_get_folders_first (ThunarTreeViewModel *model);
+static gboolean
+thunar_tree_view_model_get_hidden_last (ThunarTreeViewModel *model);
 static gint
 thunar_tree_view_model_get_folder_item_count (ThunarTreeViewModel *model);
 static gboolean
@@ -371,6 +379,7 @@ struct _ThunarTreeViewModel
 
   gboolean       sort_case_sensitive : 1;
   gboolean       sort_folders_first : 1;
+  gboolean       sort_hidden_last : 1;
   gint           sort_sign; /* 1 = ascending, -1 descending */
   ThunarSortFunc sort_func;
 
@@ -495,6 +504,15 @@ thunar_tree_view_model_class_init (ThunarTreeViewModelClass *klass)
                          g_object_interface_find_property (g_iface, "folders-first"));
 
   /**
+   * ThunarTreeViewModel::hidden-last:
+   *
+   * Tells whether to always sort non hidden files before other files.
+   **/
+  tree_model_props[PROP_HIDDEN_LAST] =
+  g_param_spec_override ("hidden-last",
+                         g_object_interface_find_property (g_iface, "hidden-last"));
+
+  /**
    * ThunarTreeViewModel::num-files:
    *
    * The number of files in the folder presented by this #ThunarTreeViewModel.
@@ -603,6 +621,7 @@ thunar_tree_view_model_standard_view_model_init (ThunarStandardViewModelIface *i
   iface->get_file_size_binary = thunar_tree_view_model_get_file_size_binary;
   iface->set_file_size_binary = thunar_tree_view_model_set_file_size_binary;
   iface->set_folders_first = thunar_tree_view_model_set_folders_first;
+  iface->set_hidden_last = thunar_tree_view_model_set_hidden_last;
   iface->add_search_files = thunar_tree_view_model_add_search_files;
 }
 
@@ -693,6 +712,10 @@ thunar_tree_view_model_get_property (GObject    *object,
       g_value_set_boolean (value, thunar_tree_view_model_get_folders_first (model));
       break;
 
+    case PROP_HIDDEN_LAST:
+      g_value_set_boolean (value, thunar_tree_view_model_get_hidden_last (model));
+      break;
+
     case PROP_NUM_FILES:
       g_value_set_uint (value, thunar_tree_view_model_get_num_files (model));
       break;
@@ -749,6 +772,10 @@ thunar_tree_view_model_set_property (GObject      *object,
 
     case PROP_FOLDERS_FIRST:
       thunar_tree_view_model_set_folders_first (THUNAR_STANDARD_VIEW_MODEL (model), g_value_get_boolean (value));
+      break;
+
+    case PROP_HIDDEN_LAST:
+      thunar_tree_view_model_set_hidden_last (THUNAR_STANDARD_VIEW_MODEL (model), g_value_get_boolean (value));
       break;
 
     case PROP_SHOW_HIDDEN:
@@ -1870,6 +1897,33 @@ thunar_tree_view_model_set_folders_first (ThunarStandardViewModel *model,
 
 
 static void
+thunar_tree_view_model_set_hidden_last (ThunarStandardViewModel *model,
+                                        gboolean                 hidden_last)
+{
+  ThunarTreeViewModel *_model;
+
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model));
+
+  _model = THUNAR_TREE_VIEW_MODEL (model);
+
+  /* check if the setting differs */
+  if ((_model->sort_hidden_last && hidden_last)
+      || (!_model->sort_hidden_last && !hidden_last))
+    return;
+
+  /* apply the new setting (re-sort the _model) */
+  _model->sort_hidden_last = hidden_last;
+  g_object_notify_by_pspec (G_OBJECT (_model), tree_model_props[PROP_HIDDEN_LAST]);
+  thunar_tree_view_model_sort (_model);
+
+  /* emit a "changed" signal for each row, so the display is
+     reloaded with the new hidden last setting */
+  gtk_tree_model_foreach (GTK_TREE_MODEL (_model),
+                          (GtkTreeModelForeachFunc) (void (*) (void)) gtk_tree_model_row_changed,
+                          NULL);
+}
+
+static void
 thunar_tree_view_model_set_file_size_binary (ThunarStandardViewModel *model,
                                              gboolean                 file_size_binary)
 {
@@ -1955,6 +2009,15 @@ thunar_tree_view_model_get_folders_first (ThunarTreeViewModel *model)
 {
   _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), FALSE);
   return model->sort_folders_first;
+}
+
+
+
+static gboolean
+thunar_tree_view_model_get_hidden_last (ThunarTreeViewModel *model)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW_MODEL (model), FALSE);
+  return model->sort_hidden_last;
 }
 
 
@@ -2401,6 +2464,8 @@ thunar_tree_view_model_cmp_nodes (gconstpointer a,
   ThunarTreeViewModel *model = THUNAR_TREE_VIEW_MODEL (data);
   gboolean             isdir_a;
   gboolean             isdir_b;
+  gboolean             is_hidden_a;
+  gboolean             is_hidden_b;
 
   a = ((Node *) a)->file;
   b = ((Node *) b)->file;
@@ -2414,6 +2479,14 @@ thunar_tree_view_model_cmp_nodes (gconstpointer a,
       isdir_b = thunar_file_is_directory (b);
       if (isdir_a != isdir_b)
         return isdir_a ? -1 : 1;
+    }
+
+  if (model->sort_hidden_last)
+    {
+      is_hidden_a = thunar_file_is_hidden (a);
+      is_hidden_b = thunar_file_is_hidden (b);
+      if (is_hidden_a != is_hidden_b)
+        return is_hidden_a ? 1 : -1;
     }
 
   return (*model->sort_func) (a, b, model->sort_case_sensitive) * model->sort_sign;
