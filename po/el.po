@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-12-17 00:45+0100\n"
+"POT-Creation-Date: 2024-12-19 00:45+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Ioannis LM, 2021-2024\n"
 "Language-Team: Greek (http://app.transifex.com/xfce/thunar/language/el/)\n"
@@ -31,7 +31,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. setup application name
-#: thunar/main.c:57 org.xfce.thunar.appdata.xml.in:8
+#: thunar/main.c:57 org.xfce.thunar.appdata.xml.in:9
 msgid "Thunar"
 msgstr "Thunar"
 
@@ -1846,7 +1846,7 @@ msgstr "Δεν υπάρχει ενέργεια για αναίρεση"
 msgid ""
 "The operation you are trying to undo does not have any files associated with"
 " it, and thus cannot be undone."
-msgstr ""
+msgstr "Η ενέργεια που προσπαθείτε να αναιρέσετε δεν έχει κανένα αρχείο που να σχετίζεται με αυτή και συνεπώς, δεν μπορεί να αναιρεθεί."
 
 #: thunar/thunar-job-operation-history.c:343
 #, c-format
@@ -1872,7 +1872,7 @@ msgstr "Απέτυχε η ενέργεια αναίρεσης '%s'"
 
 #: thunar/thunar-job-operation-history.c:420
 msgid "No operation which can be redone available.\n"
-msgstr "Δεν υπάρχει διαθέσιμη ενέργεια που μπορεί να επαναφερθεί.\n"
+msgstr "Δεν υπάρχει διαθέσιμη ενέργεια που μπορεί να επανέρθει.\n"
 
 #: thunar/thunar-job-operation-history.c:421
 msgid "There is no operation to redo"
@@ -1882,24 +1882,24 @@ msgstr "Δεν υπάρχει ενέργεια για επαναφορά"
 msgid ""
 "The operation you are trying to redo does not have any files associated with"
 " it, and thus cannot be redone."
-msgstr ""
+msgstr "Η ενέργεια που προσπαθείτε να επαναφέρετε δεν έχει κανένα αρχείο που να σχετίζεται με αυτήν και συνεπώς, δεν μπορεί να επανέρθει."
 
 #: thunar/thunar-job-operation-history.c:439
 #, c-format
 msgid "%s operation cannot be redone"
-msgstr "Η ενέργεια %s δεν μπορεί να επαναφερθεί"
+msgstr "Η ενέργεια %s δεν μπορεί να επανέρθει"
 
 #. one indexed for the dialog
 #: thunar/thunar-job-operation-history.c:451
 msgid ""
 "The following files were overwritten in the operation you are trying to redo"
 " and cannot be restored:\n"
-msgstr "Τα ακόλουθα αρχεία αντικαταστάθηκαν κατά την ενέργεια που προσπαθείτε να επαναφέρετε και δεν μπορούν να αποκατασταθούν:\n"
+msgstr "Τα ακόλουθα αρχεία αντικαταστάθηκαν στην ενέργεια που προσπαθείτε να επαναφέρετε και δεν μπορούν να αποκατασταθούν:\n"
 
 #: thunar/thunar-job-operation-history.c:463
 #, c-format
 msgid "%s operation can only be partially redone"
-msgstr "Η ενέργεια %s μπορεί μόνο να επαναφερθεί μερικώς"
+msgstr "Η ενέργεια %s μπορεί μόνο να επανέλθει μερικώς"
 
 #: thunar/thunar-job-operation-history.c:478
 #, c-format
@@ -1960,7 +1960,7 @@ msgstr "Έγινε επαναφορά"
 #: thunar/thunar-notify.c:200
 #, c-format
 msgid "%s operation was redone"
-msgstr "Η ενέργεια %s επανεφέρθηκε"
+msgstr "Η ενέργεια %s επανήλθε"
 
 #: thunar/thunar-notify.c:284
 msgid "Unmounting device"
@@ -2161,7 +2161,7 @@ msgstr "Χρήση διακοσμήσεων παραθύρων από τον χ�
 msgid ""
 "Use custom, client-side window decorations instead of global, server-side "
 "ones. - Only applied to new Thunar windows"
-msgstr ""
+msgstr "Χρήση διακόσμησης παραθύρων client-side αντί της γενικής του διακομιστή. - Εφαρμόζεται μόνο σε νέα παράθυρα στο Thunar"
 
 #: thunar/thunar-preferences-dialog.c:345
 msgid "Use current folder icon as window icon"
@@ -2473,7 +2473,7 @@ msgstr "_Μονό κλικ για την ενεργοποίηση αντικει
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
-msgstr "Καθορισμός του _χρόνου καθυστέρησης πριν από την επιλογή ενός \nαντικειμένου όταν σταματήσει ο δείκτης του ποντικιού επάνω του:"
+msgstr "Καθορισμός του _χρόνου καθυστέρησης πριν την επιλογή ενός αντικειμένου\nόταν σταματήσει ο δείκτης του ποντικιού επάνω του:"
 
 #: thunar/thunar-preferences-dialog.c:914
 msgid ""
@@ -2576,7 +2576,7 @@ msgid ""
 "- Local Files Only (Same Devices): if all files are local but on different devices (disks, mount points), copies will be sequential\n"
 "- Local Files Only (Idle Devices): if all files are local but on busy devices (disks, mount points), copies will be sequential\n"
 "- Never: all copies are done sequentially"
-msgstr "Καθορίζεται η συμπεριφορά κατά τη διάρκεια πολλαπλών αντιγραφών:\n- Πάντα: όλες οι αντιγραφές γίνονται ταυτόχρονα\n- Μόνο τοπικά αρχεία: ταυτόχρονες αντιγραφές για τα τοπικά αρχεία (όχι απομακρυσμένα, όχι συνδεδεμένα)\n- Μόνο τοπικά αρχεία (Ίδιες συσκευές): οι αντιγραφές θα γίνονται διαδοχικά όταν όλα τα αρχεία είναι τοπικά αλλά σε διαφορετικές συσκευές (δίσκοι, σημεία προσάρτησης)\n- Μόνο τοπικά αρχεία (Αδρανείς συσκευές): οι αντιγραφές θα γίνονται διαδοχικά όταν όλα τα αρχεία είναι τοπικά αλλά σε απασχολημένες συσκευές (δίσκοι, σημεία προσάρτησης)\n- Ποτέ: όλες οι αντιγραφές γίνονται διαδοχικά"
+msgstr "Καθορίζεται η συμπεριφορά κατά τη διάρκεια πολλαπλών αντιγραφών:\n- Πάντα: όλες οι αντιγραφές γίνονται ταυτόχρονα\n- Μόνο τοπικά αρχεία: ταυτόχρονες αντιγραφές για τοπικά (όχι απομακρυσμένα, όχι συνδεδεμένα) αρχεία\n- Μόνο τοπικά αρχεία (Ίδιες συσκευές): διαδοχικές αντιγραφές όταν όλα τα αρχεία είναι τοπικά αλλά σε διαφορετικές συσκευές (δίσκοι, σημεία προσάρτησης)\n- Μόνο τοπικά αρχεία (Αδρανείς συσκευές): διαδοχικές αντιγραφές όταν όλα τα αρχεία είναι τοπικά αλλά σε απασχολημένες συσκευές (δίσκοι, σημεία προσάρτησης)\n- Ποτέ: όλες οι αντιγραφές γίνονται διαδοχικά"
 
 #: thunar/thunar-preferences-dialog.c:1120
 msgid "Local Files Only (Same Devices)"
@@ -4879,7 +4879,7 @@ msgid ""
 "These actions are applicable to folders or certain kinds of files.\n"
 "\n"
 "Check the <a href=\"https://docs.xfce.org/xfce/thunar/custom-actions\">documentation</a> for a collection of custom action examples."
-msgstr "Διαμόρφωση προσαρμοσμένων ενεργειών που θα εμφανίζονται στο μενού και/ή στην εργαλειοθήκη του διαχειριστή αρχείων.\nΑυτές οι ενέργειες εφαρμόζονται σε φακέλους ή σε ορισμένα είδη αρχείων.\nΑνατρέξτε στην <a href=\"https://docs.xfce.org/xfce/thunar/custom-actions\">τεκμηρίωση</a>για δείγματα προσαρμοσμένων ενεργειών. "
+msgstr "Διαμόρφωση προσαρμοσμένων ενεργειών που θα εμφανίζονται στο μενού και/ή στην εργαλειοθήκη του διαχειριστή αρχείων.\nΑυτές οι ενέργειες εφαρμόζονται σε φακέλους ή σε ορισμένα είδη αρχείων.\nΑνατρέξτε στη <a href=\"https://docs.xfce.org/xfce/thunar/custom-actions\">τεκμηρίωση</a> για μια συλλογή προσαρμοσμένων ενεργειών. "
 
 #: plugins/thunar-uca/thunar-uca-chooser.ui:88
 msgid "Add a new custom action."
@@ -4941,16 +4941,20 @@ msgid ""
 "format;shortcuts pane;tree view;tabs;"
 msgstr "thunar;ρυθμίσεις;προτιμήσεις;διαμόρφωση;μικρογραφίες;μέγεθος αρχείου;ημερομηνία ;μορφή;πλευρικό ταμπλό συντομεύσεων;εμφάνιση δενδρικής δομής;καρτέλες;"
 
-#: org.xfce.thunar.appdata.xml.in:9
+#: org.xfce.thunar.appdata.xml.in:10
 msgid "File Browser"
 msgstr "Διαχειριστής αρχείων"
 
-#: org.xfce.thunar.appdata.xml.in:11
+#: org.xfce.thunar.appdata.xml.in:12
 msgid ""
 "Thunar is a file browser specifically designed for the Xfce Desktop, but "
 "also can serve as an alternate file browser for other Desktop environments. "
 "It has a simple, clean two-pane design for browsing all your files."
 msgstr "Ο Thunar είναι διαχειριστής αρχείων ειδικά σχεδιασμένος για το περιβάλλον εργασίας Xfce, μπορεί όμως να χρησιμοποιηθεί και ως εναλλακτικός διαχειριστής αρχείων σε άλλα περιβάλλοντα εργασίας. Έχει απλή και καθαρή σχεδίαση 2 τμημάτων για τη περιήγηση όλων των αρχείων σας."
+
+#: org.xfce.thunar.appdata.xml.in:26
+msgid "Screenshot of the XFCE Thunar File Browser User Interface"
+msgstr "Στιγμιότυπο οθόνης του διαχειριστή αρχείων XFCE Thunar"
 
 #. SECURITY:
 #. - A normal active user can run thunar without elevated rights. They
