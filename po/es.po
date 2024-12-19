@@ -35,7 +35,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-12-17 00:45+0100\n"
+"POT-Creation-Date: 2024-12-19 00:45+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Ignacio Poggi <ignaciop.3@gmail.com>, 2020,2023-2024\n"
 "Language-Team: Spanish (http://app.transifex.com/xfce/thunar/language/es/)\n"
@@ -46,7 +46,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 #. setup application name
-#: thunar/main.c:57 org.xfce.thunar.appdata.xml.in:8
+#: thunar/main.c:57 org.xfce.thunar.appdata.xml.in:9
 msgid "Thunar"
 msgstr "Thunar"
 
@@ -1885,7 +1885,7 @@ msgstr "No hay operaciones que cancelar"
 msgid ""
 "The operation you are trying to undo does not have any files associated with"
 " it, and thus cannot be undone."
-msgstr ""
+msgstr "La operación que está intentando deshacer no tiene ningún archivo asociado y, por lo tanto, no se puede revertir."
 
 #: thunar/thunar-job-operation-history.c:343
 #, c-format
@@ -1921,7 +1921,7 @@ msgstr "No hay ninguna operación que rehacer"
 msgid ""
 "The operation you are trying to redo does not have any files associated with"
 " it, and thus cannot be redone."
-msgstr ""
+msgstr "La operación que está intentando rehacer no tiene ningún archivo asociado y, por lo tanto, no se puede volver a realizar."
 
 #: thunar/thunar-job-operation-history.c:439
 #, c-format
@@ -3615,7 +3615,7 @@ msgstr "Buscar:"
 #: thunar/thunar-util.c:1332 thunar/thunar-util.c:1365
 #, c-format
 msgid "%s (%d hidden)"
-msgstr "%s (%d oculto)"
+msgstr "%s (%d ocultos)"
 
 #: thunar/thunar-util.c:1349
 #, c-format
@@ -3855,7 +3855,7 @@ msgstr "Mostrar resaltado de archi_vos"
 msgid ""
 "Toggles the display of file highlight which can be configured in the file "
 "specific property dialog"
-msgstr "Conmuta la visualización del resaltado de archivos que se puede configurar en el diálogo de propiedades específicas del archivo"
+msgstr "Cambia la visualización del resaltado de archivos que se puede configurar en el diálogo de propiedades específicas del archivo"
 
 #: thunar/thunar-window.c:681
 msgid "Zoom I_n"
@@ -4992,16 +4992,20 @@ msgid ""
 "format;shortcuts pane;tree view;tabs;"
 msgstr "Thunar;ajustes;preferencias;configurar;miniaturas;tamaño;formato;fecha;atajos;panel;vista;árbol;pestañas;"
 
-#: org.xfce.thunar.appdata.xml.in:9
+#: org.xfce.thunar.appdata.xml.in:10
 msgid "File Browser"
 msgstr "Navegador de archivos"
 
-#: org.xfce.thunar.appdata.xml.in:11
+#: org.xfce.thunar.appdata.xml.in:12
 msgid ""
 "Thunar is a file browser specifically designed for the Xfce Desktop, but "
 "also can serve as an alternate file browser for other Desktop environments. "
 "It has a simple, clean two-pane design for browsing all your files."
 msgstr "Thunar es un navegador de archivos diseñado específicamente para el escritorio Xfce, pero también se puede usar en otros entornos de escritorio. Su diseño de doble panel es sencillo y claro."
+
+#: org.xfce.thunar.appdata.xml.in:26
+msgid "Screenshot of the XFCE Thunar File Browser User Interface"
+msgstr "Captura de pantalla de la interfaz de usuario del navegador de archivos Thunar"
 
 #. SECURITY:
 #. - A normal active user can run thunar without elevated rights. They
