@@ -55,6 +55,7 @@ enum
   PROP_DATE_CUSTOM_STYLE,
   PROP_FOLDER,
   PROP_FOLDERS_FIRST,
+  PROP_HIDDEN_LAST,
   PROP_NUM_FILES,
   PROP_SHOW_HIDDEN,
   PROP_FOLDER_ITEM_COUNT,
@@ -209,6 +210,8 @@ static gint
 thunar_list_model_get_num_files (ThunarListModel *store);
 static gboolean
 thunar_list_model_get_folders_first (ThunarListModel *store);
+static gboolean
+thunar_list_model_get_hidden_last (ThunarListModel *store);
 static void
 thunar_list_model_cancel_search_job (ThunarListModel *model);
 
@@ -246,6 +249,9 @@ thunar_list_model_set_folder (ThunarStandardViewModel *store,
 static void
 thunar_list_model_set_folders_first (ThunarStandardViewModel *store,
                                      gboolean                 folders_first);
+static void
+thunar_list_model_set_hidden_last (ThunarStandardViewModel *store,
+                                   gboolean                 hidden_last);
 static gboolean
 thunar_list_model_get_show_hidden (ThunarStandardViewModel *store);
 static void
@@ -313,6 +319,7 @@ struct _ThunarListModel
 
   guint          sort_case_sensitive : 1;
   guint          sort_folders_first : 1;
+  guint          sort_hidden_last : 1;
   gint           sort_sign; /* 1 = ascending, -1 descending */
   ThunarSortFunc sort_func;
 
@@ -415,6 +422,16 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
                          g_object_interface_find_property (g_iface, "folders-first"));
 
   /**
+   * ThunarListModel::hidden-last:
+   *
+   * Tells whether to always sort hidden files after other files.
+   **/
+
+  list_model_props[PROP_HIDDEN_LAST] =
+  g_param_spec_override ("hidden-last",
+                         g_object_interface_find_property (g_iface, "hidden-last"));
+
+  /**
    * ThunarListModel::num-files:
    *
    * The number of files in the folder presented by this #ThunarListModel.
@@ -481,6 +498,7 @@ thunar_list_model_standard_view_model_init (ThunarStandardViewModelIface *iface)
   iface->get_file_size_binary = thunar_list_model_get_file_size_binary;
   iface->set_file_size_binary = thunar_list_model_set_file_size_binary;
   iface->set_folders_first = thunar_list_model_set_folders_first;
+  iface->set_hidden_last = thunar_list_model_set_hidden_last;
   iface->add_search_files = thunar_list_model_add_search_files;
 }
 
@@ -541,6 +559,7 @@ thunar_list_model_init (ThunarListModel *store)
 
   store->sort_case_sensitive = TRUE;
   store->sort_folders_first = TRUE;
+  store->sort_hidden_last = FALSE;
   store->sort_sign = 1;
   store->sort_func = thunar_file_compare_by_name;
   store->rows = g_sequence_new (g_object_unref);
@@ -620,6 +639,10 @@ thunar_list_model_get_property (GObject    *object,
       g_value_set_boolean (value, thunar_list_model_get_folders_first (store));
       break;
 
+    case PROP_HIDDEN_LAST:
+      g_value_set_boolean (value, thunar_list_model_get_hidden_last (store));
+      break;
+
     case PROP_NUM_FILES:
       g_value_set_uint (value, thunar_list_model_get_num_files (store));
       break;
@@ -677,6 +700,11 @@ thunar_list_model_set_property (GObject      *object,
     case PROP_FOLDERS_FIRST:
       thunar_list_model_set_folders_first (THUNAR_STANDARD_VIEW_MODEL (store), g_value_get_boolean (value));
       break;
+
+    case PROP_HIDDEN_LAST:
+      thunar_list_model_set_hidden_last (THUNAR_STANDARD_VIEW_MODEL (store), g_value_get_boolean (value));
+      break;
+
 
     case PROP_SHOW_HIDDEN:
       thunar_list_model_set_show_hidden (THUNAR_STANDARD_VIEW_MODEL (store), g_value_get_boolean (value));
@@ -1376,6 +1404,8 @@ thunar_list_model_cmp_func (gconstpointer a,
   ThunarListModel *store = THUNAR_LIST_MODEL (user_data);
   gboolean         isdir_a;
   gboolean         isdir_b;
+  gboolean         is_hidden_a;
+  gboolean         is_hidden_b;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (a), 0);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (b), 0);
@@ -1386,6 +1416,14 @@ thunar_list_model_cmp_func (gconstpointer a,
       isdir_b = thunar_file_is_directory (b);
       if (isdir_a != isdir_b)
         return isdir_a ? -1 : 1;
+    }
+
+  if (store->sort_hidden_last)
+    {
+      is_hidden_a = thunar_file_is_hidden (a);
+      is_hidden_b = thunar_file_is_hidden (b);
+      if (is_hidden_a != is_hidden_b)
+        return is_hidden_a ? 1 : -1;
     }
 
   return (*store->sort_func) (a, b, store->sort_case_sensitive) * store->sort_sign;
@@ -2324,6 +2362,53 @@ thunar_list_model_set_folders_first (ThunarStandardViewModel *model,
 
   /* emit a "changed" signal for each row, so the display is
      reloaded with the new folders first setting */
+  gtk_tree_model_foreach (GTK_TREE_MODEL (store),
+                          (GtkTreeModelForeachFunc) (void (*) (void)) gtk_tree_model_row_changed,
+                          NULL);
+}
+
+
+/**
+ * thunar_list_model_get_hidden_last:
+ * @store : a #ThunarListModel.
+ *
+ * Determines whether @store lists hidden files last.
+ *
+ * Return value: %TRUE if @store lists hidden files last.
+ **/
+static gboolean
+thunar_list_model_get_hidden_last (ThunarListModel *store)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
+  return store->sort_hidden_last;
+}
+
+
+
+/**
+ * thunar_list_model_set_hidden_last:
+ * @store       : a #ThunarListModel.
+ * @hidden_last : %TRUE to let @store list hidden files last.
+ **/
+static void
+thunar_list_model_set_hidden_last (ThunarStandardViewModel *model,
+                                   gboolean                 hidden_last)
+{
+  ThunarListModel *store = THUNAR_LIST_MODEL (model);
+  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
+
+  /* check if the new setting differs */
+  if ((store->sort_hidden_last && hidden_last)
+      || (!store->sort_hidden_last && !hidden_last))
+    return;
+
+  /* apply the new setting (re-sorting the store) */
+  store->sort_hidden_last = hidden_last;
+  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_HIDDEN_LAST]);
+  thunar_list_model_sort (store);
+
+  /* emit a "changed" signal for each row, so the display is
+     reloaded with the new hidden last setting */
   gtk_tree_model_foreach (GTK_TREE_MODEL (store),
                           (GtkTreeModelForeachFunc) (void (*) (void)) gtk_tree_model_row_changed,
                           NULL);
