@@ -382,8 +382,6 @@ thunar_location_entry_open_or_highlight (ThunarLocationEntry *location_entry,
       /* add opened file to `recent:///` */
       thunar_file_add_to_recent (file);
     }
-
-  // g_object_unref(gfile);
 }
 
 
