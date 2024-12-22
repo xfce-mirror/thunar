@@ -312,18 +312,20 @@ thunar_location_entry_accept_focus (ThunarLocationEntry *location_entry,
 
 
 static void
-thunar_location_entry_open_or_launch (ThunarLocationEntry *location_entry,
-                                      ThunarFile          *file)
+thunar_location_entry_open_or_highlight (ThunarLocationEntry *location_entry,
+                                         ThunarFile          *file)
 {
   GError *error = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_LOCATION_ENTRY (location_entry));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
+  GFile *gfile = thunar_file_get_file(file);
+
   /* check if the file is mounted */
   if (thunar_file_is_mounted (file))
     {
-      /* check if we have a new directory or a file to launch */
+      /* check if we have a new directory or a file to highlight */
       if (thunar_file_is_directory (file))
         {
           /* open the new directory */
@@ -331,15 +333,35 @@ thunar_location_entry_open_or_launch (ThunarLocationEntry *location_entry,
         }
       else
         {
-          /* try to launch the selected file */
-          thunar_file_launch (file, location_entry->path_entry, NULL, &error);
+          /* check if the file has a parent to which we can navigate to */
+          ThunarFile *parent = thunar_file_get_parent(file, &error);
+          if (parent != NULL)
+          {
+              // get the parent window first
+              GtkWidget *window = gtk_widget_get_toplevel(GTK_WIDGET(location_entry));
 
-          /* be sure to reset the current file of the path entry */
-          if (G_LIKELY (location_entry->current_directory != NULL))
-            {
-              thunar_path_entry_set_current_file (THUNAR_PATH_ENTRY (location_entry->path_entry),
-                                                  location_entry->current_directory);
-            }
+              /* change to the parent directory */
+              thunar_navigator_change_directory(THUNAR_NAVIGATOR(location_entry), parent);
+
+              if (GTK_IS_WINDOW(window) && gtk_window_has_toplevel_focus(GTK_WINDOW(window)) == TRUE)
+              {
+                  GList *selected = NULL;
+
+                  /* ensure gfile is not NULL and is a valid GFile before appending */
+                  if (gfile != NULL && G_IS_FILE(gfile))
+                  {
+                      selected = g_list_append(selected, gfile);
+
+                      if (selected != NULL)
+                      {
+                          thunar_window_show_and_select_files(THUNAR_WINDOW(window), selected);
+                          g_list_free(selected); 
+                      }
+                  }
+              }
+
+              g_object_unref(parent);
+          }
         }
     }
   else
@@ -360,6 +382,8 @@ thunar_location_entry_open_or_launch (ThunarLocationEntry *location_entry,
       /* add opened file to `recent:///` */
       thunar_file_add_to_recent (file);
     }
+
+  // g_object_unref(gfile);
 }
 
 
@@ -377,7 +401,7 @@ thunar_location_entry_poke_file_finish (ThunarBrowser *browser,
   if (error == NULL)
     {
       /* try to open or launch the target file */
-      thunar_location_entry_open_or_launch (THUNAR_LOCATION_ENTRY (browser),
+      thunar_location_entry_open_or_highlight (THUNAR_LOCATION_ENTRY (browser),
                                             target_file);
     }
   else
