@@ -706,6 +706,8 @@ thunar_application_load_css (void)
                                    ".standard-view:drop(active) { border-width: 2px; }"
                                    /* change background color of inactive split view pane */
                                    ".split-view-inactive-pane .view { background-color: @theme_unfocused_bg_color; }"
+                                   /* for the toorbar in headerbar looks ugly */
+                                   "headerbar toolbar { background: none; }"
                                    /* for the example box in properties dialog > highlight tab */
                                    "#example { border-radius: 10px; }",
                                    -1, NULL);
