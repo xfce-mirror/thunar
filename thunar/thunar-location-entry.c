@@ -313,7 +313,7 @@ thunar_location_entry_accept_focus (ThunarLocationEntry *location_entry,
 
 static void
 thunar_location_entry_open_or_highlight (ThunarLocationEntry *location_entry,
-                                      ThunarFile          *file)
+                                         ThunarFile          *file)
 {
   GError *error = NULL;
 
@@ -406,7 +406,7 @@ thunar_location_entry_poke_file_finish (ThunarBrowser *browser,
     {
       /* try to open or highlight the target file */
       thunar_location_entry_open_or_highlight (THUNAR_LOCATION_ENTRY (browser),
-                                            target_file);
+                                               target_file);
     }
   else
     {
