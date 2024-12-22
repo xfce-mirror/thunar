@@ -320,7 +320,7 @@ thunar_location_entry_open_or_highlight (ThunarLocationEntry *location_entry,
   _thunar_return_if_fail (THUNAR_IS_LOCATION_ENTRY (location_entry));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  GFile *gfile = thunar_file_get_file(file);
+  GFile *gfile = thunar_file_get_file (file);
 
   /* check if the file is mounted */
   if (thunar_file_is_mounted (file))
@@ -334,34 +334,34 @@ thunar_location_entry_open_or_highlight (ThunarLocationEntry *location_entry,
       else
         {
           /* check if the file has a parent to which we can navigate to */
-          ThunarFile *parent = thunar_file_get_parent(file, &error);
+          ThunarFile *parent = thunar_file_get_parent (file, &error);
           if (parent != NULL)
-          {
+            {
               // get the parent window first
-              GtkWidget *window = gtk_widget_get_toplevel(GTK_WIDGET(location_entry));
+              GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (location_entry));
 
               /* change to the parent directory */
-              thunar_navigator_change_directory(THUNAR_NAVIGATOR(location_entry), parent);
+              thunar_navigator_change_directory (THUNAR_NAVIGATOR (location_entry), parent);
 
-              if (GTK_IS_WINDOW(window) && gtk_window_has_toplevel_focus(GTK_WINDOW(window)) == TRUE)
-              {
+              if (GTK_IS_WINDOW (window) && gtk_window_has_toplevel_focus (GTK_WINDOW (window)) == TRUE)
+                {
                   GList *selected = NULL;
 
                   /* ensure gfile is not NULL and is a valid GFile before appending */
-                  if (gfile != NULL && G_IS_FILE(gfile))
-                  {
-                      selected = g_list_append(selected, gfile);
+                  if (gfile != NULL && G_IS_FILE (gfile))
+                    {
+                      selected = g_list_append (selected, gfile);
 
                       if (selected != NULL)
-                      {
-                          thunar_window_show_and_select_files(THUNAR_WINDOW(window), selected);
-                          g_list_free(selected); 
-                      }
-                  }
-              }
+                        {
+                          thunar_window_show_and_select_files (THUNAR_WINDOW (window), selected);
+                          g_list_free (selected);
+                        }
+                    }
+                }
 
-              g_object_unref(parent);
-          }
+              g_object_unref (parent);
+            }
         }
     }
   else
@@ -400,7 +400,7 @@ thunar_location_entry_poke_file_finish (ThunarBrowser *browser,
     {
       /* try to open or launch the target file */
       thunar_location_entry_open_or_highlight (THUNAR_LOCATION_ENTRY (browser),
-                                            target_file);
+                                               target_file);
     }
   else
     {
