@@ -320,8 +320,6 @@ thunar_location_entry_open_or_select (ThunarLocationEntry *location_entry,
   _thunar_return_if_fail (THUNAR_IS_LOCATION_ENTRY (location_entry));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  GFile *gfile = thunar_file_get_file (file);
-
   /* check if the file is mounted */
   if (thunar_file_is_mounted (file))
     {
@@ -344,19 +342,10 @@ thunar_location_entry_open_or_select (ThunarLocationEntry *location_entry,
               thunar_navigator_change_directory (THUNAR_NAVIGATOR (location_entry), parent);
 
               GList *selected = NULL;
+              selected = g_list_append (selected, thunar_file_get_file(file));
+              thunar_window_show_and_select_files (THUNAR_WINDOW (window), selected);
 
-              /* ensure gfile is not NULL and is a valid GFile before appending */
-              if (gfile != NULL && G_IS_FILE (gfile))
-                {
-                  selected = g_list_append (selected, gfile);
-
-                  if (selected != NULL)
-                    {
-                      thunar_window_show_and_select_files (THUNAR_WINDOW (window), selected);
-                      g_list_free (selected);
-                    }
-                }
-
+              g_list_free (selected);
               g_object_unref (parent);
             }
           /* be sure to reset the current file of the path entry */
