@@ -312,7 +312,7 @@ thunar_location_entry_accept_focus (ThunarLocationEntry *location_entry,
 
 
 static void
-thunar_location_entry_open_or_highlight (ThunarLocationEntry *location_entry,
+thunar_location_entry_open_or_select (ThunarLocationEntry *location_entry,
                                          ThunarFile          *file)
 {
   GError *error = NULL;
@@ -325,7 +325,7 @@ thunar_location_entry_open_or_highlight (ThunarLocationEntry *location_entry,
   /* check if the file is mounted */
   if (thunar_file_is_mounted (file))
     {
-      /* check if we have a new directory or a file to highlight */
+      /* check if we have a new directory or a file to select */
       if (thunar_file_is_directory (file))
         {
           /* open the new directory */
@@ -337,7 +337,7 @@ thunar_location_entry_open_or_highlight (ThunarLocationEntry *location_entry,
           ThunarFile *parent = thunar_file_get_parent (file, &error);
           if (parent != NULL)
             {
-              // get the parent window first
+              /* get the parent window first */
               GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (location_entry));
 
               /* change to the parent directory */
@@ -404,8 +404,8 @@ thunar_location_entry_poke_file_finish (ThunarBrowser *browser,
 
   if (error == NULL)
     {
-      /* try to open or highlight the target file */
-      thunar_location_entry_open_or_highlight (THUNAR_LOCATION_ENTRY (browser),
+      /* try to open or select the target file */
+      thunar_location_entry_open_or_select (THUNAR_LOCATION_ENTRY (browser),
                                                target_file);
     }
   else
