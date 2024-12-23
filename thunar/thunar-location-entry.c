@@ -343,20 +343,17 @@ thunar_location_entry_open_or_select (ThunarLocationEntry *location_entry,
               /* change to the parent directory */
               thunar_navigator_change_directory (THUNAR_NAVIGATOR (location_entry), parent);
 
-              if (GTK_IS_WINDOW (window) && gtk_window_has_toplevel_focus (GTK_WINDOW (window)) == TRUE)
+              GList *selected = NULL;
+
+              /* ensure gfile is not NULL and is a valid GFile before appending */
+              if (gfile != NULL && G_IS_FILE (gfile))
                 {
-                  GList *selected = NULL;
+                  selected = g_list_append (selected, gfile);
 
-                  /* ensure gfile is not NULL and is a valid GFile before appending */
-                  if (gfile != NULL && G_IS_FILE (gfile))
+                  if (selected != NULL)
                     {
-                      selected = g_list_append (selected, gfile);
-
-                      if (selected != NULL)
-                        {
-                          thunar_window_show_and_select_files (THUNAR_WINDOW (window), selected);
-                          g_list_free (selected);
-                        }
+                      thunar_window_show_and_select_files (THUNAR_WINDOW (window), selected);
+                      g_list_free (selected);
                     }
                 }
 
