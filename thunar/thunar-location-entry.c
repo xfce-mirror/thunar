@@ -313,7 +313,7 @@ thunar_location_entry_accept_focus (ThunarLocationEntry *location_entry,
 
 static void
 thunar_location_entry_open_or_select (ThunarLocationEntry *location_entry,
-                                         ThunarFile          *file)
+                                      ThunarFile          *file)
 {
   GError *error = NULL;
 
@@ -342,7 +342,7 @@ thunar_location_entry_open_or_select (ThunarLocationEntry *location_entry,
               thunar_navigator_change_directory (THUNAR_NAVIGATOR (location_entry), parent);
 
               GList *selected = NULL;
-              selected = g_list_append (selected, thunar_file_get_file(file));
+              selected = g_list_append (selected, thunar_file_get_file (file));
               thunar_window_show_and_select_files (THUNAR_WINDOW (window), selected);
 
               g_list_free (selected);
@@ -392,7 +392,7 @@ thunar_location_entry_poke_file_finish (ThunarBrowser *browser,
     {
       /* try to open or select the target file */
       thunar_location_entry_open_or_select (THUNAR_LOCATION_ENTRY (browser),
-                                               target_file);
+                                            target_file);
     }
   else
     {
