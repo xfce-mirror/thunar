@@ -928,6 +928,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv = thunar_standard_view_get_instance_private (standard_view);
 
   standard_view->priv->selection_changed_timeout_source = 0;
+  standard_view->priv->selection_changed_requested = FALSE;
 
   /* allocate the scroll_to_files mapping (directory GFile -> first visible child GFile) */
   standard_view->priv->scroll_to_files = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, g_object_unref, g_object_unref);
@@ -4324,11 +4325,15 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
       return;
     }
 
-  /* The first call will be executed directly */
+  /* handle the first request directly */
   _thunar_standard_view_selection_changed (standard_view);
 
-  standard_view->priv->selection_changed_timeout_source =
-  g_timeout_add (THUNAR_STANDARD_VIEW_SELECTION_CHANGED_DELAY_MS, (GSourceFunc) thunar_standard_view_selection_changed_timeout, standard_view);
+  /* throttle consecutive requests if multiple files are selected */
+  if (standard_view->priv->selected_files != NULL && g_list_length (standard_view->priv->selected_files) > 1)
+    {
+      standard_view->priv->selection_changed_timeout_source =
+      g_timeout_add (THUNAR_STANDARD_VIEW_SELECTION_CHANGED_DELAY_MS, (GSourceFunc) thunar_standard_view_selection_changed_timeout, standard_view);
+    }
 }
 
 
