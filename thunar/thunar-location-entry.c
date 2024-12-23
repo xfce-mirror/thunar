@@ -312,7 +312,7 @@ thunar_location_entry_accept_focus (ThunarLocationEntry *location_entry,
 
 
 static void
-thunar_location_entry_open_or_launch (ThunarLocationEntry *location_entry,
+thunar_location_entry_open_or_select (ThunarLocationEntry *location_entry,
                                       ThunarFile          *file)
 {
   GError *error = NULL;
@@ -323,7 +323,7 @@ thunar_location_entry_open_or_launch (ThunarLocationEntry *location_entry,
   /* check if the file is mounted */
   if (thunar_file_is_mounted (file))
     {
-      /* check if we have a new directory or a file to launch */
+      /* check if we have a new directory or a file to select */
       if (thunar_file_is_directory (file))
         {
           /* open the new directory */
@@ -331,9 +331,23 @@ thunar_location_entry_open_or_launch (ThunarLocationEntry *location_entry,
         }
       else
         {
-          /* try to launch the selected file */
-          thunar_file_launch (file, location_entry->path_entry, NULL, &error);
+          /* check if the file has a parent to which we can navigate to */
+          ThunarFile *parent = thunar_file_get_parent (file, &error);
+          if (parent != NULL)
+            {
+              /* get the parent window first */
+              GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (location_entry));
 
+              /* change to the parent directory */
+              thunar_navigator_change_directory (THUNAR_NAVIGATOR (location_entry), parent);
+
+              GList *selected = NULL;
+              selected = g_list_append (selected, thunar_file_get_file (file));
+              thunar_window_show_and_select_files (THUNAR_WINDOW (window), selected);
+
+              g_list_free (selected);
+              g_object_unref (parent);
+            }
           /* be sure to reset the current file of the path entry */
           if (G_LIKELY (location_entry->current_directory != NULL))
             {
@@ -376,8 +390,8 @@ thunar_location_entry_poke_file_finish (ThunarBrowser *browser,
 
   if (error == NULL)
     {
-      /* try to open or launch the target file */
-      thunar_location_entry_open_or_launch (THUNAR_LOCATION_ENTRY (browser),
+      /* try to open or select the target file */
+      thunar_location_entry_open_or_select (THUNAR_LOCATION_ENTRY (browser),
                                             target_file);
     }
   else
