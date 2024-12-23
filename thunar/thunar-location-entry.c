@@ -337,11 +337,11 @@ thunar_location_entry_open_or_select (ThunarLocationEntry *location_entry,
             {
               /* get the parent window first */
               GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (location_entry));
+              GList     *selected = NULL;
 
               /* change to the parent directory */
               thunar_navigator_change_directory (THUNAR_NAVIGATOR (location_entry), parent);
 
-              GList *selected = NULL;
               selected = g_list_append (selected, thunar_file_get_file (file));
               thunar_window_show_and_select_files (THUNAR_WINDOW (window), selected);
 
