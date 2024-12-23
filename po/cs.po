@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-12-17 00:45+0100\n"
+"POT-Creation-Date: 2024-12-19 00:45+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Michal Várady <miko.vaji@gmail.com>, 2013-2015,2017-2022,2024\n"
 "Language-Team: Czech (http://app.transifex.com/xfce/thunar/language/cs/)\n"
@@ -32,7 +32,7 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
 
 #. setup application name
-#: thunar/main.c:57 org.xfce.thunar.appdata.xml.in:8
+#: thunar/main.c:57 org.xfce.thunar.appdata.xml.in:9
 msgid "Thunar"
 msgstr "Thunar"
 
@@ -1895,7 +1895,7 @@ msgstr "Žádná operace k vrácení zpět"
 msgid ""
 "The operation you are trying to undo does not have any files associated with"
 " it, and thus cannot be undone."
-msgstr ""
+msgstr "Operace, kterou se snažíte vrátit zpět, nemá žádné přidružené soubory, a proto ji nelze vrátit zpět."
 
 #: thunar/thunar-job-operation-history.c:343
 #, c-format
@@ -1931,7 +1931,7 @@ msgstr "Žádná operace k provedení znovu"
 msgid ""
 "The operation you are trying to redo does not have any files associated with"
 " it, and thus cannot be redone."
-msgstr ""
+msgstr "Operace, kterou se snažíte provést znovu, nemá žádné přidružené soubory, a proto ji nelze provést znovu."
 
 #: thunar/thunar-job-operation-history.c:439
 #, c-format
@@ -5014,16 +5014,20 @@ msgid ""
 "format;shortcuts pane;tree view;tabs;"
 msgstr "thunar;nastavení;předvolby;konfigurace;náhledy;velikost souboru;formát data;formát datumu;panel klávesových zkratek;stromové zobrazení;stromový pohled;stromy;taby;tab;karty;karta;panely;panel;"
 
-#: org.xfce.thunar.appdata.xml.in:9
+#: org.xfce.thunar.appdata.xml.in:10
 msgid "File Browser"
 msgstr "Prohlížeč souborů"
 
-#: org.xfce.thunar.appdata.xml.in:11
+#: org.xfce.thunar.appdata.xml.in:12
 msgid ""
 "Thunar is a file browser specifically designed for the Xfce Desktop, but "
 "also can serve as an alternate file browser for other Desktop environments. "
 "It has a simple, clean two-pane design for browsing all your files."
 msgstr "Thunar je správce souborů specificky navržený pro prostředí Xfce, ale může také sloužit jako alternativní aplikace pro procházení souborů v jiných desktopových prostředích. Má jednoduchý čistý dvoupanelový design pro procházení všech Vašich souborů."
+
+#: org.xfce.thunar.appdata.xml.in:26
+msgid "Screenshot of the XFCE Thunar File Browser User Interface"
+msgstr "Snímek obrazovky uživatelského rozhraní aplikace Thunar - správce souborů pro XFCE"
 
 #. SECURITY:
 #. - A normal active user can run thunar without elevated rights. They
