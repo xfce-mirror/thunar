@@ -6,7 +6,7 @@
 # Translators:
 # Duy Truong Nguyen <truongap.ars@gmail.com>, 2022
 # Xfce Bot <transifex@xfce.org>, 2022
-# Cas Pascal, 2024
+# Cas Pascal <casboi86@gmail.com>, 2024
 # 
 #, fuzzy
 msgid ""
@@ -15,7 +15,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-30 00:47+0200\n"
 "PO-Revision-Date: 2022-12-22 11:28+0000\n"
-"Last-Translator: Cas Pascal, 2024\n"
+"Last-Translator: Cas Pascal <casboi86@gmail.com>, 2024\n"
 "Language-Team: Vietnamese (https://app.transifex.com/xfce/teams/16840/vi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1688,10 +1688,12 @@ msgid ""
 "No operation which can be undone has been performed yet.\n"
 "(For some operations undo is not supported)"
 msgstr ""
+"Chưa thể hoàn tác\n"
+"(Có một số thao thác không hoàn tác được)"
 
 #: ../thunar/thunar-job-operation-history.c:320
 msgid "There is no operation to undo"
-msgstr ""
+msgstr "Chưa có thao tác để hoàn tác"
 
 #: ../thunar/thunar-job-operation-history.c:337
 msgid ""
@@ -1702,7 +1704,7 @@ msgstr ""
 #: ../thunar/thunar-job-operation-history.c:339
 #, c-format
 msgid "%s operation cannot be undone"
-msgstr ""
+msgstr "Thao tác %s không thể hoàn tác"
 
 #. one indexed for the dialog
 #: ../thunar/thunar-job-operation-history.c:351
@@ -1710,24 +1712,26 @@ msgid ""
 "The following files were overwritten in the operation you are trying to undo"
 " and cannot be restored:\n"
 msgstr ""
+"Các tập tin dưới đây đã bị ghi đè bởi thao tác trước và không thể hoàn tác: "
+"\n"
 
 #: ../thunar/thunar-job-operation-history.c:363
 #, c-format
 msgid "%s operation can only be partially undone"
-msgstr ""
+msgstr "Thao tác %s có thể được hoàn tác một phần"
 
 #: ../thunar/thunar-job-operation-history.c:380
 #, c-format
 msgid "Failed to undo operation '%s'"
-msgstr ""
+msgstr "Không thể hoàn tác '%s'"
 
 #: ../thunar/thunar-job-operation-history.c:415
 msgid "No operation which can be redone available.\n"
-msgstr ""
+msgstr "Không có thao tác có thể thực hiện lại. \n"
 
 #: ../thunar/thunar-job-operation-history.c:416
 msgid "There is no operation to redo"
-msgstr ""
+msgstr "Chưa có thao tác để thực hiện lại"
 
 #: ../thunar/thunar-job-operation-history.c:433
 msgid ""
@@ -1738,7 +1742,7 @@ msgstr ""
 #: ../thunar/thunar-job-operation-history.c:435
 #, c-format
 msgid "%s operation cannot be redone"
-msgstr ""
+msgstr "Thao tác %s không thể thực hiện lại được"
 
 #. one indexed for the dialog
 #: ../thunar/thunar-job-operation-history.c:447
@@ -1746,22 +1750,24 @@ msgid ""
 "The following files were overwritten in the operation you are trying to redo"
 " and cannot be restored:\n"
 msgstr ""
+"Các tập tin dưới đây đã bị ghi đè bởi thao tác bạn đang hiện lại và không "
+"thể được khôi phục: \n"
 
 #: ../thunar/thunar-job-operation-history.c:459
 #, c-format
 msgid "%s operation can only be partially redone"
-msgstr ""
+msgstr "Thao tác %s chỉ có thể được thực hiện lại một phần"
 
 #: ../thunar/thunar-job-operation-history.c:474
 #, c-format
 msgid "Failed to redo operation '%s'"
-msgstr ""
+msgstr "Không thể thực hiện lại thao tác '%s'"
 
 #: ../thunar/thunar-list-model.c:1007 ../thunar/thunar-list-model.c:1017
 #, c-format
 msgid "%u item"
 msgid_plural "%u items"
-msgstr[0] ""
+msgstr[0] "%u mục"
 
 #: ../thunar/thunar-list-model.c:3195
 #, c-format
@@ -1773,7 +1779,7 @@ msgstr[0] ""
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
-msgstr[0] ""
+msgstr[0] "%d tập tin"
 
 #: ../thunar/thunar-list-model.c:3206 ../thunar/thunar-size-label.c:448
 #, c-format
@@ -1845,21 +1851,21 @@ msgstr "Tập tin không tồn tại"
 
 #: ../thunar/thunar-notify.c:189
 msgid "Undo performed"
-msgstr ""
+msgstr "Đã hoàn tác"
 
 #: ../thunar/thunar-notify.c:190
 #, c-format
 msgid "%s operation was undone"
-msgstr ""
+msgstr "Thao tác %s bị hoàn tác"
 
 #: ../thunar/thunar-notify.c:195
 msgid "Redo performed"
-msgstr ""
+msgstr "Đã thực hiện lại"
 
 #: ../thunar/thunar-notify.c:196
 #, c-format
 msgid "%s operation was redone"
-msgstr ""
+msgstr "%s được thực hiện lại"
 
 #: ../thunar/thunar-notify.c:280
 msgid "Unmounting device"
@@ -1917,11 +1923,11 @@ msgstr "Nhóm:"
 
 #: ../thunar/thunar-permissions-chooser.c:290
 msgid "Acc_ess:"
-msgstr ""
+msgstr "Tuy cập:"
 
 #: ../thunar/thunar-permissions-chooser.c:318
 msgid "Others"
-msgstr ""
+msgstr "Khác"
 
 #: ../thunar/thunar-permissions-chooser.c:326
 msgid "Acce_ss:"
@@ -1940,12 +1946,15 @@ msgstr "Cho phép tập tin này chạy như một chương trình"
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr ""
+"Việc cho phép các ứng dụng lạ thực thi sẽ gây rủi ro cho hệ thống của bạn"
 
 #: ../thunar/thunar-permissions-chooser.c:406
 msgid ""
 "The folder permissions are inconsistent, you may not be able to work with "
 "files in this folder."
 msgstr ""
+"Các quyền hạn thư mục hiện không nhất quán, bạn có thể không làm việc được "
+"với các tập tin trong thư mục này."
 
 #: ../thunar/thunar-permissions-chooser.c:422
 msgid "Correct _folder permissions..."
@@ -2033,7 +2042,7 @@ msgstr "Sửa quyền thư mục tự động?"
 
 #: ../thunar/thunar-permissions-chooser.c:1169
 msgid "Folder permissions"
-msgstr ""
+msgstr "Quyền hạn thư mục"
 
 #: ../thunar/thunar-permissions-chooser.c:1171
 msgid "Correct _folder permissions"
@@ -2059,7 +2068,7 @@ msgstr "Hiển thị"
 
 #: ../thunar/thunar-preferences-dialog.c:292
 msgid "View Settings"
-msgstr ""
+msgstr "Xem tuỳ chọn"
 
 #: ../thunar/thunar-preferences-dialog.c:305
 msgid "View _new folders using:"
@@ -2072,11 +2081,11 @@ msgstr "Kiểu biểu tượng"
 
 #: ../thunar/thunar-preferences-dialog.c:312
 msgid "List View"
-msgstr ""
+msgstr "Xem dạng danh sách"
 
 #: ../thunar/thunar-preferences-dialog.c:313
 msgid "Compact View"
-msgstr ""
+msgstr "Xem dạng gọn"
 
 #: ../thunar/thunar-preferences-dialog.c:314
 msgid "Last Active View"
@@ -2084,17 +2093,19 @@ msgstr "Kiểu lần trước xem"
 
 #: ../thunar/thunar-preferences-dialog.c:330
 msgid "_Remember view settings for each folder"
-msgstr ""
+msgstr "Ghi nhớ kiểu xem cho từng thư mục"
 
 #: ../thunar/thunar-preferences-dialog.c:337
 msgid ""
 "Select this option to remember view type, zoom level, sort column, and sort "
 "order individually for each folder"
 msgstr ""
+"Chọn mục này để ghi nhớ kiểu xem, độ phóng to, cột sắp xếp và thứ tự sắp xếp"
+" cho từng thư mục"
 
 #: ../thunar/thunar-preferences-dialog.c:345
 msgid "gvfs metadata support is required"
-msgstr ""
+msgstr "Cần phải hỗ trợ gvfs metadata"
 
 #: ../thunar/thunar-preferences-dialog.c:351
 msgid "Sort _folders before files"
@@ -2118,7 +2129,7 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:380
 msgid "Thumbnails"
-msgstr ""
+msgstr "Hình thu nhỏ"
 
 #: ../thunar/thunar-preferences-dialog.c:396
 msgid "Show thumbnails:"
@@ -2132,7 +2143,7 @@ msgstr "Chỉ tập tin trên máy"
 
 #: ../thunar/thunar-preferences-dialog.c:422
 msgid "Only show thumbnails for files smaller than:"
-msgstr ""
+msgstr "Chỉ hiện hình thu nhỏ cho các tập tin nhỏ hơn:"
 
 #: ../thunar/thunar-preferences-dialog.c:428
 msgid "512KiB"
@@ -2160,15 +2171,15 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:434
 msgid "Unlimited"
-msgstr ""
+msgstr "Không giới hạn"
 
 #: ../thunar/thunar-preferences-dialog.c:452
 msgid "Draw frames around thumbnails"
-msgstr ""
+msgstr "Thêm khung hình vào các hình thu nhỏ"
 
 #: ../thunar/thunar-preferences-dialog.c:458
 msgid "Select this option to draw black frames around thumbnails."
-msgstr ""
+msgstr "Chọn mục này để thêm khung hình đen lên các hình thu nhỏ"
 
 #: ../thunar/thunar-preferences-dialog.c:483
 msgid "_Text beside icons"
@@ -2193,6 +2204,7 @@ msgstr ""
 #: ../thunar/thunar-preferences-dialog.c:518
 msgid "Select this option to use the current folder icon as window icon"
 msgstr ""
+"Chọn mục này để sử dụng biểu tượng thư mục hiện tại làm biểu tượng cửa sổ"
 
 #: ../thunar/thunar-preferences-dialog.c:527
 msgid "Date"
@@ -2210,7 +2222,7 @@ msgstr "Tùy chỉnh"
 
 #: ../thunar/thunar-preferences-dialog.c:554
 msgid "Today / Custom"
-msgstr ""
+msgstr "Hôm nay / Tuỳ chỉnh"
 
 #. TRANSLATORS: Please do not translate the first column (specifiers),
 #. 'strftime' and of course '\n'
@@ -2228,6 +2240,17 @@ msgid ""
 "\n"
 "For a complete list, search 'Glib.DateTime.format'."
 msgstr ""
+"Định dạng tuỳ chỉnh để áp dụng.\n"
+"\n"
+"Các chỉ định phổ biến là:\n"
+"%d ngày trong tháng\n"
+"%m month\n"
+"%Y năm đầy đủ\n"
+"%H giờ\n"
+"%M phút\n"
+"%S giây\n"
+"\n"
+"Để xem thêm, tìm trong 'Glib.DateTime.format'."
 
 #. Side Pane
 #: ../thunar/thunar-preferences-dialog.c:593
@@ -2325,7 +2348,7 @@ msgstr "Cỡ biểu tượng:"
 
 #: ../thunar/thunar-preferences-dialog.c:720 ../thunar/thunar-window.c:513
 msgid "Image Preview"
-msgstr ""
+msgstr "Xem trước hình ảnh"
 
 #: ../thunar/thunar-preferences-dialog.c:728
 msgid "Show Icon E_mblems"
@@ -2341,13 +2364,15 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:751
 msgid "Image Preview Mode:"
-msgstr ""
+msgstr "Chế độ xem trước hình ảnh"
 
 #: ../thunar/thunar-preferences-dialog.c:753
 msgid ""
 "- Standalone: Image Preview uses a separate pane\n"
 "- Embedded: Image Preview is embedded in the left sidepane\n"
 msgstr ""
+"- Standalone: xem trước hình ảnh sử dụng khung riêng\n"
+"- Embedded: xem trước hình ảnh được nhúng trong khung bên\n"
 
 #. Behavior
 #: ../thunar/thunar-preferences-dialog.c:783
@@ -2402,7 +2427,7 @@ msgstr "Double click để mở biểu tượng"
 
 #: ../thunar/thunar-preferences-dialog.c:905
 msgid "Tabs and Windows"
-msgstr ""
+msgstr "Thẻ và cửa sổ"
 
 #: ../thunar/thunar-preferences-dialog.c:921
 msgid "Open folders in new tabs on middle click"
@@ -2428,23 +2453,25 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:948
 msgid "Show full directory paths in tab titles"
-msgstr ""
+msgstr "Hiển thị đường đi đầy đủ trong tiêu đề thẻ"
 
 #: ../thunar/thunar-preferences-dialog.c:954
 msgid ""
 "Select this option to show the full directory path in the tab title instead "
 "of only the directory name"
 msgstr ""
+"Chọn mục này để hiển thị đường đi đầy đủ trong tiêu đề thẻ thay vì chỉ có "
+"tên thư mục"
 
 #: ../thunar/thunar-preferences-dialog.c:961
 msgid "Restore tabs on startup"
-msgstr ""
+msgstr "Khôi phục các thẻ khi khởi động"
 
 #: ../thunar/thunar-preferences-dialog.c:967
 msgid ""
 "Select this option to restore your tabs as they were last time you used "
 "Thunar"
-msgstr ""
+msgstr "Chọn mục này để khôi phục các thẻ từ lần sử dụng Thunar trước"
 
 #: ../thunar/thunar-preferences-dialog.c:978
 msgid "Context Menu"
@@ -2465,11 +2492,11 @@ msgstr "Nâng cao"
 
 #: ../thunar/thunar-preferences-dialog.c:1020
 msgid "File Transfer"
-msgstr ""
+msgstr "Chuyển tập tin"
 
 #: ../thunar/thunar-preferences-dialog.c:1037
 msgid "Transfer files in parallel:"
-msgstr ""
+msgstr "Chuyển các tập tin song song với nhau:"
 
 #: ../thunar/thunar-preferences-dialog.c:1039
 msgid ""
@@ -2507,11 +2534,11 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:1134
 msgid "Search"
-msgstr ""
+msgstr "Tìm kiếm"
 
 #: ../thunar/thunar-preferences-dialog.c:1151
 msgid "Include subfolders:"
-msgstr ""
+msgstr "Bao gồm các thư mục con:"
 
 #: ../thunar/thunar-preferences-dialog.c:1175
 msgid "Folder Permissions"
@@ -2541,7 +2568,7 @@ msgstr "Chỉ áp dụng cho thư mục đó"
 
 #: ../thunar/thunar-preferences-dialog.c:1220
 msgid "Security"
-msgstr ""
+msgstr "An ninh"
 
 #: ../thunar/thunar-preferences-dialog.c:1240
 msgid "Execute shell scripts"
@@ -2583,15 +2610,15 @@ msgstr ""
 #. Shortcuts
 #: ../thunar/thunar-preferences-dialog.c:1332
 msgid "Shortcuts"
-msgstr ""
+msgstr "Lối tắt"
 
 #: ../thunar/thunar-preferences-dialog.c:1343
 msgid "Window"
-msgstr ""
+msgstr "Cửa sổ"
 
 #: ../thunar/thunar-preferences-dialog.c:1344
 msgid "View"
-msgstr ""
+msgstr "Xem"
 
 #: ../thunar/thunar-preferences-dialog.c:1345
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:532
@@ -2600,7 +2627,7 @@ msgstr "Trình gọi"
 
 #: ../thunar/thunar-preferences-dialog.c:1346
 msgid "Status Bar"
-msgstr ""
+msgstr "Thanh trạng thái"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
@@ -2614,15 +2641,15 @@ msgstr "Tiến trình tác vụ tập tin"
 
 #: ../thunar/thunar-progress-view.c:387
 msgid "Paused"
-msgstr ""
+msgstr "Đã tạm dừng"
 
 #: ../thunar/thunar-progress-view.c:409
 msgid "Starting... (User request)"
-msgstr ""
+msgstr "Đang khởi động... (yêu cầu từ người dùng)"
 
 #: ../thunar/thunar-progress-view.c:412
 msgid "Resuming..."
-msgstr ""
+msgstr "Đang tiếp tục..."
 
 #. update the status text
 #: ../thunar/thunar-progress-view.c:447
@@ -2631,15 +2658,15 @@ msgstr "Đang hủy..."
 
 #: ../thunar/thunar-progress-view.c:603
 msgid "Job queued"
-msgstr ""
+msgstr "Công việc đã chuẩn bị"
 
 #: ../thunar/thunar-progress-view.c:622
 msgid "Resuming job..."
-msgstr ""
+msgstr "Đang tiếp tục công việc..."
 
 #: ../thunar/thunar-progress-view.c:644
 msgid "Queued"
-msgstr ""
+msgstr "Đã xếp hàng"
 
 #: ../thunar/thunar-properties-dialog.c:329
 msgid "General"
@@ -2678,7 +2705,7 @@ msgstr "Đã xoá"
 
 #: ../thunar/thunar-properties-dialog.c:540
 msgid "Created:"
-msgstr ""
+msgstr "Đã tạo:"
 
 #: ../thunar/thunar-properties-dialog.c:574
 msgid "Accessed:"
@@ -2686,7 +2713,7 @@ msgstr "Đã truy xuất:"
 
 #: ../thunar/thunar-properties-dialog.c:620
 msgid "Content:"
-msgstr ""
+msgstr "Nội dung:"
 
 #: ../thunar/thunar-properties-dialog.c:638
 msgid "Volume:"
@@ -2694,7 +2721,7 @@ msgstr "Ổ đĩa"
 
 #: ../thunar/thunar-properties-dialog.c:669
 msgid "Capacity:"
-msgstr ""
+msgstr "Dung lượng"
 
 #: ../thunar/thunar-properties-dialog.c:691
 msgid "Usage:"
@@ -2714,6 +2741,8 @@ msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "This feature will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
+"Có vẻ như <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> không có sẵn.\n"
+"Tính năng này sẽ không hoạt động được. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Xem thêm]</a>"
 
 #: ../thunar/thunar-properties-dialog.c:810
 msgid "Example.txt"
@@ -2723,19 +2752,19 @@ msgstr ""
 #: ../thunar/thunar-properties-dialog.c:827
 #: ../thunar/thunar-renamer-dialog.c:371
 msgid "_Apply"
-msgstr ""
+msgstr "Áp dụng"
 
 #: ../thunar/thunar-properties-dialog.c:839
 msgid "_Reset"
-msgstr ""
+msgstr "Đặt lại"
 
 #: ../thunar/thunar-properties-dialog.c:847
 msgid "Set _Foreground"
-msgstr ""
+msgstr "Đặt tiền cảnh"
 
 #: ../thunar/thunar-properties-dialog.c:855
 msgid "Set _Background"
-msgstr ""
+msgstr "Đặt nền"
 
 #. allocate the icon chooser
 #. allocate the chooser dialog
@@ -3482,7 +3511,7 @@ msgstr ""
 
 #: ../thunar/thunar-window.c:498
 msgid "Undo the latest operation"
-msgstr ""
+msgstr "Hoàn tác thao tác vừa rồi"
 
 #: ../thunar/thunar-window.c:499
 msgid "_Redo"
@@ -3490,7 +3519,7 @@ msgstr ""
 
 #: ../thunar/thunar-window.c:499
 msgid "Redo the latest operation"
-msgstr ""
+msgstr "Thực hiện lại thao tác vừa rồi"
 
 #: ../thunar/thunar-window.c:500
 msgid "Pr_eferences..."
