@@ -1952,7 +1952,13 @@ static void
 thunar_standard_view_set_show_hidden (ThunarView *view,
                                       gboolean    show_hidden)
 {
-  thunar_standard_view_model_set_show_hidden (THUNAR_STANDARD_VIEW (view)->model, show_hidden);
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
+
+  /* set new value without triggering thunar_standard_view_select_after_row_deleted
+   * to prevent selection changes */
+  g_signal_handler_block (standard_view->model, standard_view->priv->row_deleted_id);
+  thunar_standard_view_model_set_show_hidden (standard_view->model, show_hidden);
+  g_signal_handler_unblock (standard_view->model, standard_view->priv->row_deleted_id);
 }
 
 
