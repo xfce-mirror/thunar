@@ -1267,6 +1267,10 @@ thunar_location_buttons_gone (ThunarLocationButton  *button,
 
   /* drop the button itself */
   gtk_widget_destroy (GTK_WIDGET (button));
+
+  /* clear both scroll positions */
+  buttons->first_visible_button = NULL;
+  buttons->last_visible_button = NULL;
 }
 
 
