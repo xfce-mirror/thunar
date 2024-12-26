@@ -35,9 +35,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-12-17 00:45+0100\n"
+"POT-Creation-Date: 2024-12-19 00:45+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
-"Last-Translator: Franck Guadagnini, 2024\n"
+"Last-Translator: David D, 2018,2022,2024\n"
 "Language-Team: French (http://app.transifex.com/xfce/thunar/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -46,7 +46,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 #. setup application name
-#: thunar/main.c:57 org.xfce.thunar.appdata.xml.in:8
+#: thunar/main.c:57 org.xfce.thunar.appdata.xml.in:9
 msgid "Thunar"
 msgstr "Thunar"
 
@@ -1885,7 +1885,7 @@ msgstr "Il n’y a pas d’opération à annuler"
 msgid ""
 "The operation you are trying to undo does not have any files associated with"
 " it, and thus cannot be undone."
-msgstr ""
+msgstr "L’opération que vous essayez d’annuler n’a pas de fichiers associés et ne peut donc pas être annulée."
 
 #: thunar/thunar-job-operation-history.c:343
 #, c-format
@@ -1921,7 +1921,7 @@ msgstr "Il n’y a pas d’opération à refaire"
 msgid ""
 "The operation you are trying to redo does not have any files associated with"
 " it, and thus cannot be redone."
-msgstr ""
+msgstr "L’opération que vous essayez de refaire n’est associée à aucun fichier et ne peut donc pas être refaite."
 
 #: thunar/thunar-job-operation-history.c:439
 #, c-format
@@ -4992,16 +4992,20 @@ msgid ""
 "format;shortcuts pane;tree view;tabs;"
 msgstr "thunar;paramètres;préférences;configurer;miniatures;taille de fichier;format de date;panneau de raccourcis;arborescence;onglets;"
 
-#: org.xfce.thunar.appdata.xml.in:9
+#: org.xfce.thunar.appdata.xml.in:10
 msgid "File Browser"
 msgstr "Gestionnaire de fichiers"
 
-#: org.xfce.thunar.appdata.xml.in:11
+#: org.xfce.thunar.appdata.xml.in:12
 msgid ""
 "Thunar is a file browser specifically designed for the Xfce Desktop, but "
 "also can serve as an alternate file browser for other Desktop environments. "
 "It has a simple, clean two-pane design for browsing all your files."
 msgstr "Thunar est un gestionnaire de fichiers conçu spécifiquement pour le bureau Xfce, mais peut aussi servir comme gestionnaire de fichiers alternatif pour d’autres environnements de bureau. Il a une interface à deux panneaux simple et épurée pour parcourir tous vos fichiers."
+
+#: org.xfce.thunar.appdata.xml.in:26
+msgid "Screenshot of the XFCE Thunar File Browser User Interface"
+msgstr "Capture d’écran de l’interface utilisateur du navigateur de fichiers Thunar de XFCE"
 
 #. SECURITY:
 #. - A normal active user can run thunar without elevated rights. They
