@@ -1048,7 +1048,6 @@ thunar_folder_monitor (GFileMonitor     *monitor,
       if (other_file_thunar != NULL)
         {
           thunar_folder_remove_file (folder, other_file_thunar);
-          _thunar_folder_files_update_timeout (folder);
         }
 
       /* replace the GFile in the ThunarFile for the renamed file with the new gfile */
