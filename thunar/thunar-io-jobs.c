@@ -1561,7 +1561,7 @@ _thunar_search_folder (ThunarStandardViewModel           *model,
             }
         }
       else
-        file = g_file_get_child (directory, g_file_info_get_name (info));
+        file = g_file_get_child (directory, g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_STANDARD_NAME));
 
       /* respect last-show-hidden */
       if (show_hidden == FALSE)
