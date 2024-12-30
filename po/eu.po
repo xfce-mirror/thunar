@@ -6,9 +6,9 @@
 # Translators:
 # Nick Schermer <nick@xfce.org>, 2022
 # Dabid Martinez <dabid@laborategia.eus>, 2022
-# Xfce Bot <transifex@xfce.org>, 2022
 # beriain, 2023
 # Eder Etxebarria Rojo, 2024
+# Xfce Bot <transifex@xfce.org>, 2024
 # 
 #, fuzzy
 msgid ""
@@ -17,7 +17,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-30 00:47+0200\n"
 "PO-Revision-Date: 2022-12-22 11:28+0000\n"
-"Last-Translator: Eder Etxebarria Rojo, 2024\n"
+"Last-Translator: Xfce Bot <transifex@xfce.org>, 2024\n"
 "Language-Team: Basque (https://app.transifex.com/xfce/teams/16840/eu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -259,8 +259,8 @@ msgstr "Huts \"%s\" fitxategia irekitzerakoan"
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Huts fitxategi %d irekitzerakoan"
+msgstr[1] "Huts %d fitxategi irekitzerakoan"
 
 #: ../thunar/thunar-action-manager.c:979
 msgid "Are you sure you want to open all folders?"
@@ -274,15 +274,15 @@ msgstr "Karpetak ireki"
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Honek bereiziriko fitxategi kudeatzaile leiho %d irekiko du"
+msgstr[1] "Honek bereiziriko fitxategi %d kudeatzaile leiho irekiko ditu"
 
 #: ../thunar/thunar-action-manager.c:985
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Ireki leiho berri %d"
+msgstr[1] "Ireki %d leiho berri"
 
 #. add the "Cancel" button
 #. append the cancel item
@@ -338,8 +338,8 @@ msgstr "_Ireki"
 #: ../thunar/thunar-action-manager.c:1549
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Ireki aukeraturiko fitxategia"
+msgstr[1] "Ireki aukeraturiko fitxategiak"
 
 #: ../thunar/thunar-action-manager.c:1553
 msgid "_Execute"
@@ -348,8 +348,8 @@ msgstr "_Exekutatu"
 #: ../thunar/thunar-action-manager.c:1553
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Exekutatu aukeratutako fitxategia"
+msgstr[1] "Exekutatu aukeratutako fitxategiak"
 
 #: ../thunar/thunar-action-manager.c:1558
 #, c-format
@@ -362,8 +362,8 @@ msgstr[1] ""
 #, c-format
 msgid "Open the selected directory in new tab"
 msgid_plural "Open the selected directories in %d new tabs"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Ireki hautatutako direktorioa fitxa berri batean"
+msgstr[1] "Ireki hautatutako direktorioak %d fitxa berritan"
 
 #: ../thunar/thunar-action-manager.c:1568
 #, c-format
@@ -376,26 +376,26 @@ msgstr[1] ""
 #, c-format
 msgid "Open the selected directory in new window"
 msgid_plural "Open the selected directories in %d new windows"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Ireki hautaturiko direktorioa leiho berri batean"
+msgstr[1] "Ireki aukeraturiko direktorioak %d leiho berrietan"
 
 #: ../thunar/thunar-action-manager.c:1614
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Hautatutako fitxategiarentzat lotura sinboliko bat sortu"
+msgstr[1] "Hautatutako fitxategi bakoitzarentzat lotura sinboliko bat sortu"
 
 #: ../thunar/thunar-action-manager.c:1644
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Hautatutako fitxategia berrizendatu"
+msgstr[1] "Hautatutako fitxategiak berrizendatu"
 
 #: ../thunar/thunar-action-manager.c:1654
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Berreskuratu hautatutako fitxategia bere jatorrizko kokapenera"
+msgstr[1] "Berreskuratu hautatutako fitxategiak bere jatorrizko kokapenera"
 
 #: ../thunar/thunar-action-manager.c:1666
 msgid ""
@@ -405,19 +405,23 @@ msgid_plural ""
 "Restore the selected files to their original locations and open the "
 "locations in a new window/tab"
 msgstr[0] ""
+"Hautatutako fitxategia bere jatorrizko kokapenean leheneratu eta kokapen "
+"hori leiho/fitxa berri batean ireki"
 msgstr[1] ""
+"Hautatutako fitxategiak haien jatorrizko kokapenetan leheneratu eta kokapen "
+"horiek leiho/fitxa berri batean ireki"
 
 #: ../thunar/thunar-action-manager.c:1683
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Bota hautatutako fitxategia zakarrontzira"
+msgstr[1] "Bota hautatutako fitxategiak zakarrontzira"
 
 #: ../thunar/thunar-action-manager.c:1700
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Ezabatu hautatutako fitxategia behin betiko"
+msgstr[1] "Ezabatu hautatutako fitxategiak behin betiko"
 
 #: ../thunar/thunar-action-manager.c:1759
 msgid "Cut the selection"
@@ -426,8 +430,8 @@ msgstr "Moztu aukeraketa"
 #: ../thunar/thunar-action-manager.c:1769
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Hautatutako fitxategia itsatsi komandoaz mugitzeko prestatu"
+msgstr[1] "Hautatutako fitxategiak itsatsi komandoaz mugitzeko prestatu"
 
 #: ../thunar/thunar-action-manager.c:1783
 msgid "Copy the selection"
@@ -437,7 +441,9 @@ msgstr "Kopiatu aukeraketa"
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] ""
+"Hautatutako fitxategia itsatsi komando bitartez kopiatzeko prestatu"
 msgstr[1] ""
+"Hautatutako fitxategiak itsatsi komando bitartez kopiatzeko prestatu"
 
 #: ../thunar/thunar-action-manager.c:1816
 msgid "Paste the clipboard"
@@ -446,34 +452,34 @@ msgstr "Itsatsi arbeletik"
 #: ../thunar/thunar-action-manager.c:2057
 msgid "Side Pane (Add Bookmark)"
 msgid_plural "Side Pane (Add Bookmarks)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Alboko panela (laster-marka gehitu)"
+msgstr[1] "Alboko panela (laster-markak gehitu)"
 
 #: ../thunar/thunar-action-manager.c:2058
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Hautatutako karpeta alboko paneleko loturetara gehitu"
+msgstr[1] "Hautatutako karpetak alboko paneleko loturetara gehitu"
 
 #: ../thunar/thunar-action-manager.c:2077
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Mahaigainera (sortu lotura)"
+msgstr[1] "Mahaigainera (sortu loturak)"
 
 #: ../thunar/thunar-action-manager.c:2078
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Hautatutako fitxategiarentzat lotura bat sortu"
+msgstr[1] "Hautatutako fitxategi bakoitzarentzat lotura bat sortu"
 
 #: ../thunar/thunar-action-manager.c:2099
 #: ../thunar/thunar-action-manager.c:2137
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Hautaturiko fitxategia \"%s\"-ra bidali"
+msgstr[1] "Hautaturiko fitxategiak \"%s\"-ra bidali"
 
 #. display an error message
 #: ../thunar/thunar-action-manager.c:2405 ../thunar/thunar-application.c:1855
@@ -539,8 +545,8 @@ msgstr "Huts \"%s\" desmuntatzerakoan"
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "\"%s\" erabili aukeratutako fitxategia irekitzeko"
+msgstr[1] "\"%s\" erabili aukeratutako fitxategiak irekitzeko"
 
 #: ../thunar/thunar-action-manager.c:3252
 #, c-format
@@ -668,7 +674,11 @@ msgid_plural ""
 "Are you sure that you want to permanently\n"
 "delete the %u selected files?"
 msgstr[0] ""
+"Guztiz ziur zaude hautaturiko fitxategia\n"
+"betirako ezabatu nahi duzula?"
 msgstr[1] ""
+"Guztiz ziur zaude hautaturiko %u fitxategiak\n"
+"betirako ezabatu nahi dituzula?"
 
 #: ../thunar/thunar-application.c:2421 ../thunar/thunar-dialogs.c:607
 #: ../thunar/thunar-dialogs.c:1082
@@ -1810,15 +1820,15 @@ msgstr[1] ""
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Fitxategi %d"
+msgstr[1] "%d fitxategi"
 
 #: ../thunar/thunar-list-model.c:3206 ../thunar/thunar-size-label.c:448
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Karpeta %d"
+msgstr[1] "%d karpeta"
 
 #: ../thunar/thunar-list-model.c:3212
 #, c-format
@@ -2927,14 +2937,16 @@ msgstr ""
 #: ../thunar/thunar-renamer-dialog.c:872
 msgid "Remove File"
 msgid_plural "Remove Files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Fitxategia ezabatu"
+msgstr[1] "Fitxategiak ezabatu"
 
 #: ../thunar/thunar-renamer-dialog.c:873
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] ""
+"Ezabatu hautaturiko fitxategia berrizendatzeko fitxategi zerrendatik"
 msgstr[1] ""
+"Ezabatu hautaturiko fitxategiak berrizendatzeko fitxategi zerrendatik"
 
 #. tell the user that we failed
 #: ../thunar/thunar-renamer-dialog.c:969
@@ -3027,8 +3039,8 @@ msgstr "Zakarrontzia hutsik dago"
 #, c-format
 msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Zakarrontziak fitxategi %d du"
+msgstr[1] "Zakarrontziak %d fitxategi ditu"
 
 #: ../thunar/thunar-shortcuts-model.c:1003
 msgid "Devices"
@@ -3112,8 +3124,8 @@ msgstr "Kalkulua utzia"
 #, c-format
 msgid "%u item (%s, %s)"
 msgid_plural "%u items (%s, %s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Elementu %u (%s, %s)"
+msgstr[1] "%u elementu (%s, %s)"
 
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
@@ -3429,22 +3441,22 @@ msgstr "%s  %s-tik"
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "ordu %lu falta da (%s/seg)"
+msgstr[1] "%lu ordu falta dira (%s/seg)"
 
 #: ../thunar/thunar-transfer-job.c:1866
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "minutu %lu falta da (%s/seg)"
+msgstr[1] "%lu minutu falta dira (%s/seg)"
 
 #: ../thunar/thunar-transfer-job.c:1873
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "segundo %lu falta da (%s/seg)"
+msgstr[1] "%lu segundo falta dira (%s/seg)"
 
 #: ../thunar/thunar-tree-model.c:637
 msgid "Loading..."
@@ -4200,8 +4212,8 @@ msgstr "Irudi mota:"
 #, c-format
 msgid "%dx%d pixel"
 msgid_plural "%dx%d pixels"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%dx%d pixel"
+msgstr[1] "%dx%d pixel"
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:117
 msgid "Con_vert to:"
@@ -4441,8 +4453,8 @@ msgstr ""
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d fitxategia pakete konprimitu bat bezala bidali?"
+msgstr[1] "%d fitxategiak pakete konprimitu bat bezala bidali?"
 
 #: ../plugins/thunar-sendto-email/main.c:245
 msgid "Send as _archive"
@@ -4488,8 +4500,8 @@ msgstr "Huts \"%s\" lotura sinbolikoa sortzerakoan"
 #, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Huts fitxategi %d konprimitzerakoan"
+msgstr[1] "Huts %d fitxategi konprimitzerakoan"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:693
