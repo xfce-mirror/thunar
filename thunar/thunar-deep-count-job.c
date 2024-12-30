@@ -293,7 +293,7 @@ thunar_deep_count_job_process (ExoJob      *job,
                   if (!exo_job_is_cancelled (job))
                     {
                       /* generate a GFile for the child */
-                      child = g_file_resolve_relative_path (file, g_file_info_get_name (child_info));
+                      child = g_file_resolve_relative_path (file, g_file_info_get_attribute_byte_string (child_info, G_FILE_ATTRIBUTE_STANDARD_NAME));
 
                       /* recurse unless the job was cancelled before */
                       thunar_deep_count_job_process (job, child, child_info, toplevel_fs_id, error);
