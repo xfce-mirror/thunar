@@ -743,7 +743,7 @@ thunar_job_operation_restore_from_trash (ThunarJobOperation *operation,
        * during the time the operation occurred, we conclude we found the right file */
       if (lookup != NULL && operation->start_timestamp <= deletion_time && deletion_time <= operation->end_timestamp)
         {
-          trashed_file = g_file_get_child (trash, g_file_info_get_name (info));
+          trashed_file = g_file_get_child (trash, g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_STANDARD_NAME));
 
           source_file_list = thunar_g_list_append_deep (source_file_list, trashed_file);
           target_file_list = thunar_g_list_append_deep (target_file_list, original_file);

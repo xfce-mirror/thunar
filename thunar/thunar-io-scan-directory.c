@@ -185,7 +185,7 @@ thunar_io_scan_directory (ThunarJob          *job,
       else
         {
           /* create GFile for the child */
-          child_file = g_file_get_child (file, g_file_info_get_name (info));
+          child_file = g_file_get_child (file, g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_STANDARD_NAME));
           recent_info = NULL;
         }
 
