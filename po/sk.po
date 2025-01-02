@@ -2353,7 +2353,7 @@ msgstr "Vlastné"
 
 #: thunar/thunar-preferences-dialog.c:590
 msgid "Today / Custom"
-msgstr ""
+msgstr "Dnes / Vlastné"
 
 #. TRANSLATORS: Please do not translate the first column (specifiers),
 #. 'strftime' and of course '\n'
@@ -2370,7 +2370,7 @@ msgid ""
 "%S second\n"
 "\n"
 "For a complete list, search 'Glib.DateTime.format'."
-msgstr ""
+msgstr "Vlastný formát dátumu.\n\nNajčastejšie špecifikátory sú:\n%d deň mesiaca\n%m mesiac\n%Y rok, vrátane storočia\n%H hodina\n%M minúta\n%S sekunda\n\nÚplný zoznam hľadajte v „Glib.DateTime.format”."
 
 #. Side Pane
 #: thunar/thunar-preferences-dialog.c:629
@@ -2644,7 +2644,7 @@ msgstr "Pri kopírovaní súborov použiť dočasné súbory „'*.partial~”. 
 
 #: thunar/thunar-preferences-dialog.c:1171
 msgid "Verify file contents on copy:"
-msgstr ""
+msgstr "Pri kopírovaní overiť obsah:"
 
 #: thunar/thunar-preferences-dialog.c:1175
 msgid ""
@@ -2653,7 +2653,7 @@ msgid ""
 "destination media, Thunar may be unable to bypass filesystem caches, so this"
 " comparison may not detect all instances of corruption. Enabling this option"
 " will increase copy time."
-msgstr ""
+msgstr "Porovná obsah pôvodného súboru a kópie, kvôli detekcii poškodenia. Hoci sa pokúsi porovnať aktuálny obsah na cieľovom médiu, Thunar nemusí dokázať obísť vyrovnávacie pamäte súborového systému, takže toto porovnanie nemusí detegovať všetky možné poškodenia. Zapnutie tejto voľby zvýši dobu kopírovania."
 
 #: thunar/thunar-preferences-dialog.c:1205
 msgid "Search"
@@ -2761,7 +2761,7 @@ msgstr "Pozastavené"
 
 #: thunar/thunar-progress-view.c:426
 msgid "Starting... (User request)"
-msgstr ""
+msgstr "Začínam... (požiadavka používateľa)"
 
 #: thunar/thunar-progress-view.c:429
 msgid "Resuming..."
@@ -2900,7 +2900,7 @@ msgstr "Nastaviť pozadie"
 #: thunar/thunar-properties-dialog.c:1216
 #, c-format
 msgid "Select an Icon for \"%s\" (%s)"
-msgstr ""
+msgstr "Vyberte ikonu pre „%s” (%s)"
 
 #. allocate the chooser dialog
 #: thunar/thunar-properties-dialog.c:1218
@@ -2922,7 +2922,7 @@ msgstr "Nepodarilo sa zmeniť ikonu „%s”"
 #: thunar/thunar-properties-dialog.c:1356
 #, c-format
 msgid "%s (%s) - Properties"
-msgstr ""
+msgstr "%s (%s) – vlastnosti"
 
 #: thunar/thunar-properties-dialog.c:1358
 #, c-format
@@ -2977,7 +2977,7 @@ msgstr "Zatvorte toto okno, zrušte ďalšie zmeny."
 
 #: thunar/thunar-renamer-dialog.c:424
 msgid "Rename items listed above, keep this window open."
-msgstr ""
+msgstr "Premenovať vyššie uvedené položky, ponechať toto okno otvorené."
 
 #: thunar/thunar-renamer-dialog.c:494
 msgid "New Name"
@@ -3192,10 +3192,10 @@ msgstr[3] "%d priečinkov"
 #, c-format
 msgid "%u item (%s, %s)"
 msgid_plural "%u items (%s, %s)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "%u položka (%s, %s)"
+msgstr[1] "%u položky (%s, %s)"
+msgstr[2] "%u položiek (%s, %s)"
+msgstr[3] "%u položky (%s, %s)"
 
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
@@ -3234,11 +3234,11 @@ msgstr "Vybrať všetky, ale len tie, ktoré nie sú aktuálne vybrané"
 
 #: thunar/thunar-standard-view.c:487
 msgid "U_nselect all Files"
-msgstr ""
+msgstr "Z_rušiť výber všetkých súborov"
 
 #: thunar/thunar-standard-view.c:487
 msgid "Unselect all files in this window"
-msgstr ""
+msgstr "Zruší výber všetkých súborov v tomto okne"
 
 #: thunar/thunar-standard-view.c:488
 msgid "Arran_ge Items"
@@ -3246,11 +3246,11 @@ msgstr "_Usporiadať položky"
 
 #: thunar/thunar-standard-view.c:489
 msgid "_Reversed Order"
-msgstr ""
+msgstr "Opačné po_radie"
 
 #: thunar/thunar-standard-view.c:489
 msgid "Reverse the sort order"
-msgstr ""
+msgstr "Radiť v opačnom poradí"
 
 #: thunar/thunar-standard-view.c:490
 msgid "By _Name"
@@ -3278,7 +3278,7 @@ msgstr "Udržiavať položky zoradené podľa ich typu"
 
 #: thunar/thunar-standard-view.c:493
 msgid "By _Modification Date"
-msgstr ""
+msgstr "Podľa dátu_mu zmeny"
 
 #: thunar/thunar-standard-view.c:493
 msgid "Keep items sorted by their modification date"
@@ -3286,11 +3286,11 @@ msgstr "Udržiavať položky zoradené podľa ich času ich poslednej zmeny"
 
 #: thunar/thunar-standard-view.c:494
 msgid "By D_eletion Date"
-msgstr ""
+msgstr "Podľa _dátumu odstránenia"
 
 #: thunar/thunar-standard-view.c:494
 msgid "Keep items sorted by their deletion date"
-msgstr ""
+msgstr "Radiť položky podľa ich dátumu odstránenia"
 
 #: thunar/thunar-standard-view.c:495
 msgid "_Ascending"
@@ -3343,7 +3343,7 @@ msgctxt ""
 msgid ""
 "Files whose name matches the wildcard pattern you enter will be selected in "
 "the main window."
-msgstr ""
+msgstr "Súbory, ktorých meno zodpovedá zadanému žolíkovému vzoru budú vybraté v hlavnom okne."
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
@@ -3356,31 +3356,31 @@ msgid ""
 "For example: *.txt, file??.png, pict\n"
 "\n"
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
-msgstr ""
+msgstr "? zodpovedá práve jednému znaku,\n* zodpovedá ľubovoľnému počtu znakov, vrátane žiadneho.\n\nNapríklad: *.txt, súbor??.png, obr\n\nBez žolíkov * a ?, bude vzor vyhovovať kdekoľvek v mene. So žolíkmi musí vzor vyhovovať obom, začiatku a koncu mena."
 
 #: thunar/thunar-standard-view.c:2751
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
-msgstr ""
+msgstr "Rozlišovať _veľkosť písmen"
 
 #: thunar/thunar-standard-view.c:2752
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
-msgstr ""
+msgstr "Ak je zapnuté, vzor musí vyhovovať aj veľkosti písmen.\nExamp* nájde Example.txt, ale nie example.txt"
 
 #: thunar/thunar-standard-view.c:2757
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
-msgstr ""
+msgstr "Rozlišovať _diakritiku"
 
 #: thunar/thunar-standard-view.c:2758
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
 "Rés* would match Résumé.txt and not Resume.txt"
-msgstr ""
+msgstr "Ak je zapnuté, vzor musí vyhovovať aj diakritike písmen.\nŽltý* nájde Žltý.txt, ale nie Zlty.txt"
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
@@ -3449,36 +3449,36 @@ msgstr "Zobraziť počet skrytých súborov"
 
 #: thunar/thunar-toolbar-editor.c:152
 msgid "Configure the Toolbar"
-msgstr ""
+msgstr "Nastaviť panel nástrojov"
 
 #. create the top label for the toolbar editor dialog
 #: thunar/thunar-toolbar-editor.c:167
 msgid ""
 "Configure the order and visibility of toolbar items.\n"
 "Note that toolbar items are always executed for the current directory."
-msgstr ""
+msgstr "Nastavenie poradia a viditeľnosti položiek panela nástrojov.\nPozor, položky panela nástrojov sú vždy spúšťané pre aktuálny priečinok."
 
 #. create the "Use Default" button
 #: thunar/thunar-toolbar-editor.c:260
 msgid "De_fault Order"
-msgstr ""
+msgstr "_Predvolené poradie"
 
 #. create the "Symbolic Icons" checkbox
 #: thunar/thunar-toolbar-editor.c:266
 msgid "_Symbolic Icons"
-msgstr ""
+msgstr "_Symbolické ikony"
 
 #: thunar/thunar-toolbar-editor.c:272
 msgid "Use symbolic icons instead of regular ones (if available)."
-msgstr ""
+msgstr "Použiť symbolické ikony namiesto bežných (ak sú dostupné)."
 
 #: thunar/thunar-toolbar-editor.c:630
 msgid "Only visible when the menubar is hidden"
-msgstr ""
+msgstr "Viditeľné len keď je panel menu skrytý"
 
 #: thunar/thunar-transfer-job.c:552
 msgid "Verifying file contents..."
-msgstr ""
+msgstr "Overovanie obsahu súboru–."
 
 #: thunar/thunar-transfer-job.c:1139
 #, c-format
@@ -3604,22 +3604,22 @@ msgstr "%x na %X"
 #: thunar/thunar-util.c:804
 #, c-format
 msgid "%.*s %u%s"
-msgstr ""
+msgstr "%.*s %u%s"
 
 #: thunar/thunar-util.c:806
 #, c-format
 msgid "%.*s (copy %u)%s"
-msgstr ""
+msgstr "%.*s (kópia %u)%s"
 
 #: thunar/thunar-util.c:811
 #, c-format
 msgid "link to %.*s%s"
-msgstr ""
+msgstr "odkaz na %.*s%s"
 
 #: thunar/thunar-util.c:816
 #, c-format
 msgid "link %u to %.*s%s"
-msgstr ""
+msgstr "odkaz %u na %.*s%s"
 
 #: thunar/thunar-util.c:836
 msgid "Search: "
@@ -3633,7 +3633,7 @@ msgstr "%s (%d skryté)"
 #: thunar/thunar-util.c:1349
 #, c-format
 msgid "%s: %s"
-msgstr ""
+msgstr "%s: %s"
 
 #: thunar/thunar-util.c:1372
 msgid "0 items"
@@ -3762,11 +3762,11 @@ msgstr "Znovunačítať obsah aktuálneho priečinka"
 
 #: thunar/thunar-window.c:665
 msgid "S_plit View"
-msgstr ""
+msgstr "_Rozdelené zobrazenie"
 
 #: thunar/thunar-window.c:665
 msgid "Open/Close Split View"
-msgstr ""
+msgstr "Otvorí/Zatvorí rozdelené zobrazenie"
 
 #: thunar/thunar-window.c:666
 msgid "Switch Focused Split View Pane"
@@ -3774,11 +3774,11 @@ msgstr ""
 
 #: thunar/thunar-window.c:667
 msgid "Locatio_n Selector"
-msgstr ""
+msgstr "_Panel umiestnenia"
 
 #: thunar/thunar-window.c:668
 msgid "_Text Style"
-msgstr ""
+msgstr "_Textový štýl"
 
 #: thunar/thunar-window.c:668
 msgid "Traditional text box showing the current path"
@@ -3786,7 +3786,7 @@ msgstr ""
 
 #: thunar/thunar-window.c:669
 msgid "_Buttons Style"
-msgstr ""
+msgstr "Tlači_dlový štýl"
 
 #: thunar/thunar-window.c:669
 msgid "Modern approach with buttons that correspond to folders"
@@ -3814,7 +3814,7 @@ msgstr "Prepne viditeľnosť panela stromu"
 
 #: thunar/thunar-window.c:674
 msgid "_Image Preview"
-msgstr ""
+msgstr "Ukážka _obrázka"
 
 #: thunar/thunar-window.c:674
 msgid "Change the visibility of this window's image preview"
@@ -3838,11 +3838,11 @@ msgstr "Zmení viditeľnosť panela menu tohoto okna"
 
 #: thunar/thunar-window.c:677
 msgid "Configure _Toolbar..."
-msgstr ""
+msgstr "Nastaviť panel _nástrojov…"
 
 #: thunar/thunar-window.c:677
 msgid "Configure the toolbar"
-msgstr ""
+msgstr "Nastavenie panel nástrojov"
 
 #: thunar/thunar-window.c:678
 msgid "Cl_ear Saved Folder View Settings"
@@ -3924,7 +3924,7 @@ msgstr "_Prejsť"
 
 #: thunar/thunar-window.c:693
 msgid "F_ile System"
-msgstr ""
+msgstr "Sú_borový systém"
 
 #: thunar/thunar-window.c:694
 msgid "_Home"
@@ -3936,7 +3936,7 @@ msgstr "Prejsť do domovského priečinka"
 
 #: thunar/thunar-window.c:695
 msgid "_Desktop"
-msgstr ""
+msgstr "_Plocha"
 
 #: thunar/thunar-window.c:695
 msgid "Go to the desktop folder"
@@ -3944,7 +3944,7 @@ msgstr "Prejsť do priečinka pracovnej plochy"
 
 #: thunar/thunar-window.c:696
 msgid "_Computer"
-msgstr ""
+msgstr "Počí_tač"
 
 #: thunar/thunar-window.c:696
 msgid ""
@@ -3961,7 +3961,7 @@ msgstr "Zobraziť nedávno použité súbory"
 
 #: thunar/thunar-window.c:698
 msgid "_Trash"
-msgstr ""
+msgstr "_Kôš"
 
 #: thunar/thunar-window.c:698
 msgid "Display the contents of the trash can"
@@ -3993,11 +3993,11 @@ msgstr "Prejsť do priečinka šablón"
 
 #: thunar/thunar-window.c:703
 msgid "Browse _Network"
-msgstr ""
+msgstr "Prechádzať _sieť"
 
 #: thunar/thunar-window.c:705
 msgid "_Bookmarks"
-msgstr ""
+msgstr "_Záložky"
 
 #: thunar/thunar-window.c:708
 msgid "_Contents"
@@ -4013,7 +4013,7 @@ msgstr "Zobraziť informáciu o správcovi súborov Thunar"
 
 #: thunar/thunar-window.c:711
 msgid "_Back"
-msgstr ""
+msgstr "_Späť"
 
 #: thunar/thunar-window.c:711
 msgid "Go to the previous visited folder"
@@ -4021,7 +4021,7 @@ msgstr "Prejsť na predchádzajúci navštívený priečinok"
 
 #: thunar/thunar-window.c:714
 msgid "_Forward"
-msgstr ""
+msgstr "_Vpred"
 
 #: thunar/thunar-window.c:714
 msgid "Go to the next visited folder"
@@ -4045,7 +4045,7 @@ msgstr "Prepne na nasledujúcu kartu"
 
 #: thunar/thunar-window.c:721
 msgid "_Search for Files..."
-msgstr ""
+msgstr "_Hľadať súbory"
 
 #: thunar/thunar-window.c:721
 msgid "Search for a specific file in the current folder and Recent"
@@ -4053,7 +4053,7 @@ msgstr "Hľadať zadaný súbor v aktuálnom priečinku a v nedávno použitých
 
 #: thunar/thunar-window.c:723
 msgid "Cancel search for files"
-msgstr ""
+msgstr "Zrušiť hľadanie súborov"
 
 #: thunar/thunar-window.c:725
 msgid "Menu"
@@ -4061,7 +4061,7 @@ msgstr "Ponuka"
 
 #: thunar/thunar-window.c:725
 msgid "Show the menu"
-msgstr ""
+msgstr "Zobraziť menu"
 
 #. add the label with the root warning
 #: thunar/thunar-window.c:1066
@@ -4070,16 +4070,16 @@ msgstr "Upozornenie: používate účet správcu. Môžete si poškodiť systém
 
 #: thunar/thunar-window.c:1139
 msgid "Size: "
-msgstr ""
+msgstr "Veľkosť:"
 
 #. TRANSLATORS: `Catfish' is a software package, please don't translate it.
 #: thunar/thunar-window.c:1246
 msgid "Search with Catfish..."
-msgstr ""
+msgstr "Hľadať pomocou Catfish…"
 
 #: thunar/thunar-window.c:1258
 msgid "Restore Selected Items"
-msgstr ""
+msgstr "Obnoviť vybrané súbory"
 
 #: thunar/thunar-window.c:2951
 msgid "Close tab"
@@ -4101,7 +4101,7 @@ msgstr "Priečinok „%s” neexistuje. Chcete ho vytvoriť?"
 
 #: thunar/thunar-window.c:4574
 msgid "Create directory"
-msgstr ""
+msgstr "Vytvoriť priečinok"
 
 #. display an error to the user
 #: thunar/thunar-window.c:4643
@@ -4156,7 +4156,7 @@ msgstr "Thunar je rýchly a ľahký správca súborov\npre prostredie Xfce"
 
 #: thunar/thunar-window.c:6086
 msgid "Select an image to preview"
-msgstr ""
+msgstr "Zvoliť obrázok na ukážku"
 
 #: thunar/thunar-window.c:6233
 msgid "Failed to launch search with Catfish"
@@ -4164,19 +4164,19 @@ msgstr "Nepodarilo sa spustiť hľadanie pomocou Catfish"
 
 #: thunar/thunar-window.c:6564
 msgid "Change the active view type"
-msgstr ""
+msgstr "Zmeniť aktívny typ pohľadu"
 
 #. add a proxy menu item for the view switcher to be represent in the overflow
 #. menu
 #: thunar/thunar-window.c:6567 thunar/thunar-window.c:6592
 msgid "View Switcher"
-msgstr ""
+msgstr "Zobraziť prepínač"
 
 #. add a proxy menu item for the location bar to represent the bar in the
 #. overflow menu
 #: thunar/thunar-window.c:6757 thunar/thunar-window.c:6762
 msgid "Location Bar"
-msgstr ""
+msgstr "Umiestnenia"
 
 #: thunarx/thunarx-property-page.c:114
 msgid "Label"
@@ -4285,22 +4285,22 @@ msgstr "Výberom tejto voľby bude príkaz spustený v okne terminálu."
 
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:448
 msgid "Security:"
-msgstr ""
+msgstr "Bezpečnosť:"
 
 #. same function as in thunar-permission-chooser.c
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:455
 msgid "Allow this file to _run as a .desktop file"
-msgstr ""
+msgstr "_Povoliť _spustiť tento súbor ako súbor .desktop"
 
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:456
 msgid ""
 "Select this to enable executable permission bit(+x). Thunar will not launch "
 "the .desktop file if not set."
-msgstr ""
+msgstr "Týmto zapnete spustiteľný bit  (+x). Thunar nebude spúšťať súbory .desktop bez tohoto bitu."
 
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:473
 msgid "Set this file as trusted"
-msgstr ""
+msgstr "Nastaviť tento súbor ako dôveryhodný"
 
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:474
 msgid ""
@@ -4585,7 +4585,7 @@ msgstr "Poslať \"%s\" ako komprimovaný archív?"
 #: plugins/thunar-sendto-email/main.c:219
 #: plugins/thunar-sendto-email/main.c:239
 msgid "Send email"
-msgstr ""
+msgstr "Poslať email"
 
 #: plugins/thunar-sendto-email/main.c:221
 #: plugins/thunar-sendto-email/main.c:241
@@ -4707,7 +4707,7 @@ msgstr "Naozaj chcete zmazať\nakciu \"%s\"?"
 
 #: plugins/thunar-uca/thunar-uca-chooser.c:381
 msgid "Delete action"
-msgstr ""
+msgstr "Odstrániť akciu"
 
 #: plugins/thunar-uca/thunar-uca-chooser.c:382
 msgid "If you delete a custom action, it is permanently lost."
@@ -4748,7 +4748,7 @@ msgstr "Príkaz nie je nastavený"
 
 #: plugins/thunar-uca/thunar-uca-provider.c:188
 msgid "Confi_gure custom actions..."
-msgstr ""
+msgstr "Nastaviť vlastné _akcie…"
 
 #: plugins/thunar-uca/thunar-uca-provider.c:188
 msgid ""
@@ -4776,7 +4776,7 @@ msgstr "Popis akcie, ktorý sa zobrazí ako tooltip v stavovom riadku pri vybrat
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:106
 msgid "_Submenu:"
-msgstr ""
+msgstr "_Podmenu:"
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:123
 msgid ""
@@ -4844,27 +4844,27 @@ msgstr "nasledujúce parametre príkazu budú pri vyvolaní akcie nahradené:"
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:461
 msgid "file name of the selected file"
-msgstr ""
+msgstr "meno zvoleného súboru"
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:477
 msgid "file names of all selected files"
-msgstr ""
+msgstr "mená všetkých zvolených súborov"
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:492
 msgid "path of the selected file's directory"
-msgstr ""
+msgstr "cesta priečinka zvoleného súboru"
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:507
 msgid "paths of all selected files' directories"
-msgstr ""
+msgstr "cesty priečinka všetkých zvolených súborov"
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:522
 msgid "path of the selected file including the file name"
-msgstr ""
+msgstr "celá cesta zvoleného súboru"
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:537
 msgid "paths of all selected files including the file names"
-msgstr ""
+msgstr "celé cesty všetkých zvolených súborov"
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:609
 msgid "Basic"
@@ -4889,13 +4889,13 @@ msgstr "*"
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:658
 msgid "_Range (min-max):"
-msgstr ""
+msgstr "_Rozsah (min-max):"
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:675
 msgid ""
 "If the command should operate on say two or three files, enter the numerical"
 " range 2-3. If there are no limits, this string should be empty."
-msgstr ""
+msgstr "Ak má program pracovať povedzme s dvoma alebo troma súbormi, zadajte číselný rozsah 2-3. Ak počet nemá byť limitovaný, toto pole má byť prázdne."
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:689
 msgid "Appears if selection contains:"
@@ -4903,7 +4903,7 @@ msgstr "Zobrazí sa, ak výber obsahuje:"
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:709
 msgid "_Directories **"
-msgstr ""
+msgstr "_Priečinky **"
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:724
 msgid "_Audio Files"
@@ -5010,7 +5010,7 @@ msgstr "thunar;nastavenia;predvoľby;konfigurovať;miniatúry;veľkosť súboru;
 
 #: org.xfce.thunar.appdata.xml.in:10
 msgid "File Browser"
-msgstr ""
+msgstr "Správca súborov"
 
 #: org.xfce.thunar.appdata.xml.in:12
 msgid ""
@@ -5021,7 +5021,7 @@ msgstr "Thunar je správca súborov navrhnutý špeciálne pre Xfce Desktop, ale
 
 #: org.xfce.thunar.appdata.xml.in:26
 msgid "Screenshot of the XFCE Thunar File Browser User Interface"
-msgstr ""
+msgstr "Snímka používateľského rozhrania správcu súborov XFCE Thunar"
 
 #. SECURITY:
 #. - A normal active user can run thunar without elevated rights. They
