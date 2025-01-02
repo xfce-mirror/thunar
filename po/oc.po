@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2024-10-25 12:46+0200\n"
+"POT-Creation-Date: 2024-12-19 00:45+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Quentin PAGÈS, 2021-2022,2024\n"
 "Language-Team: Occitan (post 1500) (http://app.transifex.com/xfce/thunar/language/oc/)\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #. setup application name
-#: thunar/main.c:57 org.xfce.thunar.appdata.xml.in:8
+#: thunar/main.c:57 org.xfce.thunar.appdata.xml.in:9
 msgid "Thunar"
 msgstr "Thunar"
 
@@ -720,7 +720,7 @@ msgstr "L'escobilhièr se voida..."
 #: thunar/thunar-application.c:2853
 #, c-format
 msgid "Failed to determine the original path for \"%s\" (%s)"
-msgstr ""
+msgstr "Impossible de determinar l’emplaçament d'origina per « %s » (%s)"
 
 #: thunar/thunar-application.c:2858
 #, c-format
@@ -744,7 +744,7 @@ msgstr "Restabliment dels fichièrs..."
 #: thunar/thunar-chooser-button.c:320 thunar/thunar-chooser-dialog.c:503
 #, c-format
 msgid "Failed to set default application for \"%s\" (%s)"
-msgstr ""
+msgstr "Impossible de definir l'aplicacion per defaut per « %s » (%s)"
 
 #: thunar/thunar-chooser-button.c:325 thunar/thunar-chooser-dialog.c:509
 #, c-format
@@ -823,7 +823,7 @@ msgstr "_Desfar l'associacion"
 #: thunar/thunar-chooser-dialog.c:713
 #, c-format
 msgid "Open <i>%s (%s)</i> and other files of type \"%s\" with:"
-msgstr ""
+msgstr "Dobrir <i>%s(%s)</i> e los autres fichièrs de tipe « %s » amb :"
 
 #: thunar/thunar-chooser-dialog.c:718
 #, c-format
@@ -1261,19 +1261,19 @@ msgstr "Aqueste dorsièr conten ja un fichièr « %s »."
 #: thunar/thunar-dialogs.c:886
 #, c-format
 msgid "Replace the link in \"%s\""
-msgstr ""
+msgstr "Remplaçar lo ligam dins « %s »"
 
 #. TRANSLATORS: First part of replace dialog sentence
 #: thunar/thunar-dialogs.c:889
 #, c-format
 msgid "Replace the existing folder in \"%s\""
-msgstr ""
+msgstr "Remplaçar lo dorsièr existent dins « %s »"
 
 #. TRANSLATORS: First part of replace dialog sentence
 #: thunar/thunar-dialogs.c:892
 #, c-format
 msgid "Replace the existing file in \"%s\""
-msgstr ""
+msgstr "Remplaçar lo fichièr existent dins « %s »"
 
 #. Fourth box (size)
 #: thunar/thunar-dialogs.c:928 thunar/thunar-dialogs.c:978
@@ -1303,7 +1303,7 @@ msgstr "per lo fichièr seguent ?"
 
 #: thunar/thunar-dialogs.c:994
 msgid "_Apply the action to all files and folders"
-msgstr ""
+msgstr "_Aplicar l’accion a totes los fichièrs e dorsièrs"
 
 #. TRANSLATORS: This string will be inserted in the following sentence in the
 #. second appearance of %s:
@@ -1311,14 +1311,14 @@ msgstr ""
 #. secure%s."
 #: thunar/thunar-dialogs.c:1067
 msgid "/executable"
-msgstr ""
+msgstr "/executable"
 
 #: thunar/thunar-dialogs.c:1073
 #, c-format
 msgid ""
 "The desktop file %s is in an insecure location and not marked as secure%s. If you do not trust this program, click Cancel.\n"
 "\n"
-msgstr ""
+msgstr "Lo fichièr de burèu « %s » es dins un emplaçament pas securizat e pas marcat coma %s segurament. Se vos fisatz pas d'aqueste programa, clicatz sus Anullar.\n"
 
 #: thunar/thunar-dialogs.c:1093
 msgid "_Launch Anyway"
@@ -1330,7 +1330,7 @@ msgstr "Marcar coma _segur e lançar"
 
 #: thunar/thunar-dialogs.c:1179
 msgid "Close split pane with multiple tabs?"
-msgstr ""
+msgstr "Tampar lo panèl amb mantun onglet ?"
 
 #: thunar/thunar-dialogs.c:1180
 msgid ""
@@ -1836,7 +1836,7 @@ msgstr "I a pas cap d’accion d’anullar"
 #: thunar/thunar-job-operation-history.c:341
 msgid ""
 "The operation you are trying to undo does not have any files associated with"
-" it, and thus cannot be undone. "
+" it, and thus cannot be undone."
 msgstr ""
 
 #: thunar/thunar-job-operation-history.c:343
@@ -1872,7 +1872,7 @@ msgstr ""
 #: thunar/thunar-job-operation-history.c:437
 msgid ""
 "The operation you are trying to redo does not have any files associated with"
-" it, and thus cannot be redone. "
+" it, and thus cannot be redone."
 msgstr ""
 
 #: thunar/thunar-job-operation-history.c:439
@@ -3854,7 +3854,7 @@ msgstr "A_nar"
 
 #: thunar/thunar-window.c:693
 msgid "F_ile System"
-msgstr ""
+msgstr "F_ichièr sistèma"
 
 #: thunar/thunar-window.c:694
 msgid "_Home"
@@ -4084,29 +4084,29 @@ msgid ""
 "for the Xfce Desktop Environment."
 msgstr "Thunar es un gestionari de fichièrs rapid e aisit\nd'utilizacion per l'environament de burèu Xfce."
 
-#: thunar/thunar-window.c:6078
+#: thunar/thunar-window.c:6086
 msgid "Select an image to preview"
 msgstr ""
 
-#: thunar/thunar-window.c:6225
+#: thunar/thunar-window.c:6233
 msgid "Failed to launch search with Catfish"
 msgstr ""
 
-#: thunar/thunar-window.c:6556
+#: thunar/thunar-window.c:6564
 msgid "Change the active view type"
 msgstr ""
 
 #. add a proxy menu item for the view switcher to be represent in the overflow
 #. menu
-#: thunar/thunar-window.c:6559 thunar/thunar-window.c:6584
+#: thunar/thunar-window.c:6567 thunar/thunar-window.c:6592
 msgid "View Switcher"
 msgstr ""
 
 #. add a proxy menu item for the location bar to represent the bar in the
 #. overflow menu
-#: thunar/thunar-window.c:6749 thunar/thunar-window.c:6754
+#: thunar/thunar-window.c:6757 thunar/thunar-window.c:6762
 msgid "Location Bar"
-msgstr ""
+msgstr "Barra d’adreça"
 
 #: thunarx/thunarx-property-page.c:114
 msgid "Label"
@@ -4932,16 +4932,20 @@ msgid ""
 "format;shortcuts pane;tree view;tabs;"
 msgstr "thunar;paramètres;reglatges;preferéncias;configurar;vinhetas;miniaturas;talha de fichièr;format de data;acorchi;panèl;arbre;onglets;"
 
-#: org.xfce.thunar.appdata.xml.in:9
+#: org.xfce.thunar.appdata.xml.in:10
 msgid "File Browser"
 msgstr "Navegador de fichièrs"
 
-#: org.xfce.thunar.appdata.xml.in:11
+#: org.xfce.thunar.appdata.xml.in:12
 msgid ""
 "Thunar is a file browser specifically designed for the Xfce Desktop, but "
 "also can serve as an alternate file browser for other Desktop environments. "
 "It has a simple, clean two-pane design for browsing all your files."
 msgstr "Thunar es un gestionari de fichièrs concebut especificament pel burèu Xfce, mas pòt tanben servir coma gestionari de fichièrs alternatiu per d’autres environaments de burèu. Dispausa d’una interfàcia de dos panèls simpla e epurada per percórrer totes vòstres fichièrs."
+
+#: org.xfce.thunar.appdata.xml.in:26
+msgid "Screenshot of the XFCE Thunar File Browser User Interface"
+msgstr "Captura d’ecran de l’interfàcia utilizaire del gestionari de fichièrs XFCE Thunar"
 
 #. SECURITY:
 #. - A normal active user can run thunar without elevated rights. They
