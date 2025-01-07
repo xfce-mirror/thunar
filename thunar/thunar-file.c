@@ -1997,7 +1997,6 @@ thunar_file_rename (ThunarFile   *file,
       /* reload file information */
       thunar_file_load (file, NULL, NULL);
 
-      file->icon_name = old_icon;
 
       /* get the config file */
       config_file = g_build_filename (g_get_user_config_dir (), "user-dirs.dirs", NULL);
@@ -2044,13 +2043,13 @@ thunar_file_rename (ThunarFile   *file,
           /* emit the file changed signal */
           thunar_file_changed (file);
         }
+      file->icon_name = old_icon;
 
       g_object_unref (renamed_file);
       g_strfreev (lines);
       g_free (contents);
       g_free (config_file);
       g_free (old_name);
-      g_free (old_icon);
       return TRUE;
     }
   g_free (old_name);
