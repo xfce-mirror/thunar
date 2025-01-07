@@ -1310,8 +1310,6 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
       thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_CREATE_NEW_FILES
                                               | THUNAR_MENU_SECTION_COPY_PASTE
                                               | THUNAR_MENU_SECTION_EMPTY_TRASH
-                                              | THUNAR_MENU_SECTION_RENAME
-                                              | THUNAR_MENU_SECTION_RESTORE
                                               | THUNAR_MENU_SECTION_CUSTOM_ACTIONS
                                               | THUNAR_MENU_SECTION_PROPERTIES);
     }
@@ -1321,9 +1319,6 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
       thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_OPEN
                                               | THUNAR_MENU_SECTION_SENDTO
                                               | THUNAR_MENU_SECTION_COPY_PASTE
-                                              | THUNAR_MENU_SECTION_EMPTY_TRASH
-                                              | THUNAR_MENU_SECTION_RENAME
-                                              | THUNAR_MENU_SECTION_RESTORE
                                               | THUNAR_MENU_SECTION_CUSTOM_ACTIONS
                                               | THUNAR_MENU_SECTION_PROPERTIES);
     }
