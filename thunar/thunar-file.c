@@ -66,6 +66,7 @@
 #include "thunarx/thunarx.h"
 
 #include <gio/gio.h>
+#include <glib.h>
 #include <libxfce4ui/libxfce4ui.h>
 #include <libxfce4util/libxfce4util.h>
 
@@ -505,7 +506,7 @@ thunar_file_finalize (GObject *object)
   if (file->signal_changed_source_id != 0)
     g_source_remove (file->signal_changed_source_id);
 
-    /* verify that nobody's watching the file anymore */
+  /* verify that nobody's watching the file anymore */
 #ifdef G_ENABLE_DEBUG
   ThunarFileWatch *file_watch = g_object_get_qdata (G_OBJECT (file), thunar_file_watch_quark);
   if (file_watch != NULL)
@@ -1978,27 +1979,81 @@ thunar_file_rename (ThunarFile   *file,
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* try to rename the file */
+  gchar *old_name = g_strconcat ("/", thunar_file_get_basename (file), "\"", NULL);
+  gchar *old_icon = strdup (file->icon_name);
   renamed_file = g_file_set_display_name (file->gfile, name, cancellable, error);
 
   /* check if we succeeded */
   if (renamed_file != NULL)
     {
+      gchar  *config_file = NULL;
+      gchar  *contents = NULL;
+      gchar **lines = NULL;
+      gsize   length;
+
       /* replace GFile in ThunarFile for the renamed file */
       thunar_file_replace_file (file, renamed_file);
 
       /* reload file information */
       thunar_file_load (file, NULL, NULL);
 
+
+      /* get the config file */
+      config_file = g_build_filename (g_get_user_config_dir (), "user-dirs.dirs", NULL);
+      if (g_file_get_contents (config_file, &contents, &length, NULL))
+        {
+          gchar *new_contents = NULL;
+          lines = g_strsplit (contents, "\n", -1);
+
+          for (int i = 0; lines[i] != NULL; i++)
+            {
+              /* if the current line has old_name mentioned, then replace it with new one */
+              if (g_str_has_suffix (lines[i], old_name))
+                {
+                  GString *line = g_string_new (lines[i]);
+                  gchar   *replace = g_strconcat ("/", name, "\"", NULL);
+
+                  g_string_replace (line, old_name, replace, 0);
+
+                  g_free (lines[i]);
+                  lines[i] = g_strdup (line->str);
+
+                  g_free (replace);
+                  g_string_free (line, TRUE);
+
+                  break;
+                }
+            }
+
+          /* reassemble the contents with the modified lines */
+          new_contents = g_strjoinv ("\n", lines);
+
+          /* write the new contents back to the config file */
+          if (!g_file_set_contents (config_file, new_contents, -1, NULL))
+            {
+              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, "Failed to write modified contents to %s", config_file);
+            }
+
+          g_free (new_contents);
+        }
+
+
       if (!called_from_job)
         {
           /* emit the file changed signal */
           thunar_file_changed (file);
         }
+      file->icon_name = old_icon;
 
       g_object_unref (renamed_file);
+      g_strfreev (lines);
+      g_free (contents);
+      g_free (config_file);
+      g_free (old_name);
       return TRUE;
     }
-
+  g_free (old_name);
+  g_free (old_icon);
   return FALSE;
 }
 
