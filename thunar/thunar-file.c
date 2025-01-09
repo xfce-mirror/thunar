@@ -2021,6 +2021,8 @@ thunar_file_rename (ThunarFile   *file,
 
       g_object_unref (renamed_file);
       g_free (new_path);
+      g_free (dir_name);
+      g_free (old_path);
       return TRUE;
     }
   return FALSE;
