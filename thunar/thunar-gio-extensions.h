@@ -69,6 +69,12 @@ gboolean
 thunar_g_file_is_computer (GFile *file);
 gboolean
 thunar_g_file_is_network (GFile *file);
+void
+thunar_cache_user_dirs_paths ();
+gchar *
+thunar_get_user_dir_name (const gchar *dir_path);
+void
+thunar_user_dir_map_update (gchar *dir_name, gchar *new_path);
 
 GKeyFile *
 thunar_g_file_query_key_file (GFile        *file,

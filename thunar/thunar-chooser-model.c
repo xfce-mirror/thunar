@@ -420,7 +420,7 @@ thunar_chooser_model_remove (ThunarChooserModel *model,
                                              error);
 
   /* try to delete the file */
-  if (delete &&succeed && g_app_info_delete (app_info))
+  if (delete && succeed && g_app_info_delete (app_info))
     {
       g_set_error (error, G_IO_ERROR,
                    G_IO_ERROR_FAILED,

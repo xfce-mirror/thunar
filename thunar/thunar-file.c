@@ -66,7 +66,6 @@
 #include "thunarx/thunarx.h"
 
 #include <gio/gio.h>
-#include <glib.h>
 #include <libxfce4ui/libxfce4ui.h>
 #include <libxfce4util/libxfce4util.h>
 
@@ -1116,6 +1115,12 @@ thunar_file_info_reload (ThunarFile   *file,
 
   /* cleanup */
   g_free (casefold);
+
+  /* restore icon name if needed */
+  if (file->icon_name == NULL)
+    {
+      thunar_file_get_icon_name (file, THUNAR_FILE_ICON_STATE_DEFAULT, gtk_icon_theme_get_default ());
+    }
 }
 
 
@@ -1979,17 +1984,19 @@ thunar_file_rename (ThunarFile   *file,
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* try to rename the file */
-  gchar *old_name = g_strconcat ("/", thunar_file_get_basename (file), "\"", NULL);
-  gchar *old_icon = strdup (file->icon_name);
   renamed_file = g_file_set_display_name (file->gfile, name, cancellable, error);
 
   /* check if we succeeded */
   if (renamed_file != NULL)
     {
-      gchar  *config_file = NULL;
-      gchar  *contents = NULL;
-      gchar **lines = NULL;
-      gsize   length;
+      gchar *new_path;
+      gchar *old_path;
+      gchar *dir_name;
+      char   command[256];
+
+
+      old_path = g_file_get_path (thunar_file_get_file (file));
+      dir_name = thunar_get_user_dir_name (old_path);
 
       /* replace GFile in ThunarFile for the renamed file */
       thunar_file_replace_file (file, renamed_file);
@@ -1997,63 +2004,25 @@ thunar_file_rename (ThunarFile   *file,
       /* reload file information */
       thunar_file_load (file, NULL, NULL);
 
+      new_path = g_file_get_path (thunar_file_get_file (file));
 
-      /* get the config file */
-      config_file = g_build_filename (g_get_user_config_dir (), "user-dirs.dirs", NULL);
-      if (g_file_get_contents (config_file, &contents, &length, NULL))
-        {
-          gchar *new_contents = NULL;
-          lines = g_strsplit (contents, "\n", -1);
+      /* update the config file */
+      snprintf (command, sizeof (command), "xdg-user-dirs-update --set %s %s", dir_name, new_path);
+      system (command);
 
-          for (int i = 0; lines[i] != NULL; i++)
-            {
-              /* if the current line has old_name mentioned, then replace it with new one */
-              if (g_str_has_suffix (lines[i], old_name))
-                {
-                  GString *line = g_string_new (lines[i]);
-                  gchar   *replace = g_strconcat ("/", name, "\"", NULL);
-
-                  g_string_replace (line, old_name, replace, 0);
-
-                  g_free (lines[i]);
-                  lines[i] = g_strdup (line->str);
-
-                  g_free (replace);
-                  g_string_free (line, TRUE);
-
-                  break;
-                }
-            }
-
-          /* reassemble the contents with the modified lines */
-          new_contents = g_strjoinv ("\n", lines);
-
-          /* write the new contents back to the config file */
-          if (!g_file_set_contents (config_file, new_contents, -1, NULL))
-            {
-              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, "Failed to write modified contents to %s", config_file);
-            }
-
-          g_free (new_contents);
-        }
-
+      /* Update the path in our hashtable */
+      thunar_user_dir_map_update (g_strdup (dir_name), g_strdup (new_path));
 
       if (!called_from_job)
         {
           /* emit the file changed signal */
           thunar_file_changed (file);
         }
-      file->icon_name = old_icon;
 
       g_object_unref (renamed_file);
-      g_strfreev (lines);
-      g_free (contents);
-      g_free (config_file);
-      g_free (old_name);
+      g_free (new_path);
       return TRUE;
     }
-  g_free (old_name);
-  g_free (old_icon);
   return FALSE;
 }
 
@@ -4172,6 +4141,8 @@ thunar_file_get_icon_name (ThunarFile         *file,
                 {
                   for (i = 0; i < G_N_ELEMENTS (thunar_file_dirs); i++)
                     {
+                      /* ensure latest cache */
+                      g_reload_user_special_dirs_cache ();
                       special_dir = g_get_user_special_dir (thunar_file_dirs[i].type);
                       if (special_dir != NULL
                           && strcmp (path, special_dir) == 0)
