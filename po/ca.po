@@ -2573,7 +2573,7 @@ msgid ""
 "- Local Files Only (Same Devices): if all files are local but on different devices (disks, mount points), copies will be sequential\n"
 "- Local Files Only (Idle Devices): if all files are local but on busy devices (disks, mount points), copies will be sequential\n"
 "- Never: all copies are done sequentially"
-msgstr ""
+msgstr "Indica el comportament durant còpies múltiples:\n- Sempre: totes les còpies es fan simultàniament\n- Només fitxers locals: còpies simultànies per a fitxers locals (no remots, no adjunts).\n- Només fitxers locals (els mateixos dispositius): si tots els fitxers són locals però en dispositius diferents (discs, punts de muntatge), les còpies seran seqüencials\n- Només fitxers locals (dispositius inactius): si tots els fitxers són locals però en dispositius ocupats (discs, punts de muntatge), les còpies seran seqüencials\n- Mai: totes les còpies es fan seqüencialment"
 
 #: thunar/thunar-preferences-dialog.c:1120
 msgid "Local Files Only (Same Devices)"
@@ -2605,7 +2605,7 @@ msgid ""
 "destination media, Thunar may be unable to bypass filesystem caches, so this"
 " comparison may not detect all instances of corruption. Enabling this option"
 " will increase copy time."
-msgstr ""
+msgstr "Compara el contingut del fitxer original i el copia per detectar si hi ha corrupció. Tot i que això intentarà comparar el contingut real que hi ha al suport de destinació, és possible que el Thunar no pugui passar per alt la memòria cau del sistema de fitxers, de manera que aquesta comparació pot no detectar tots els casos de corrupció. Activar aquesta opció augmentarà el temps de còpia."
 
 #: thunar/thunar-preferences-dialog.c:1205
 msgid "Search"
@@ -3058,11 +3058,11 @@ msgstr "Xarxa"
 
 #: thunar/thunar-shortcuts-model.c:1077
 msgid "Browse Network"
-msgstr "Navega per la xarxa"
+msgstr "Navegueu per la xarxa"
 
 #: thunar/thunar-shortcuts-model.c:1078 thunar/thunar-window.c:703
 msgid "Browse local network connections"
-msgstr "Navega per les connexions de la xarxa local"
+msgstr "Navegueu per les connexions de la xarxa local"
 
 #: thunar/thunar-shortcuts-model.c:1100
 msgid "Places"
@@ -3710,7 +3710,7 @@ msgstr "Alterna el tauler dividit de fusta seleccionat"
 
 #: thunar/thunar-window.c:667
 msgid "Locatio_n Selector"
-msgstr ""
+msgstr "Selector d'_ubicació"
 
 #: thunar/thunar-window.c:668
 msgid "_Text Style"
@@ -3750,7 +3750,7 @@ msgstr "Commuta la visibilitat del plafó d'arbre"
 
 #: thunar/thunar-window.c:674
 msgid "_Image Preview"
-msgstr ""
+msgstr "Previsualització d'_imatges"
 
 #: thunar/thunar-window.c:674
 msgid "Change the visibility of this window's image preview"
@@ -3782,7 +3782,7 @@ msgstr "Configura la barra d'eines"
 
 #: thunar/thunar-window.c:678
 msgid "Cl_ear Saved Folder View Settings"
-msgstr ""
+msgstr "N_eteja la configuració desada de la visualització de la carpeta"
 
 #: thunar/thunar-window.c:678
 msgid "Delete saved view settings for this folder"
@@ -3798,7 +3798,7 @@ msgstr "Commuta la visibilitat dels fitxers ocults en la finestra actual"
 
 #: thunar/thunar-window.c:680
 msgid "Show _File Highlight"
-msgstr ""
+msgstr "Mostra el ressaltat del _fitxer"
 
 #: thunar/thunar-window.c:680
 msgid ""
@@ -3860,7 +3860,7 @@ msgstr "Vé_s"
 
 #: thunar/thunar-window.c:693
 msgid "F_ile System"
-msgstr ""
+msgstr "Sistema de f_itxers"
 
 #: thunar/thunar-window.c:694
 msgid "_Home"
@@ -3872,7 +3872,7 @@ msgstr "Vés a la carpeta de l'usuari"
 
 #: thunar/thunar-window.c:695
 msgid "_Desktop"
-msgstr ""
+msgstr "_Escriptori"
 
 #: thunar/thunar-window.c:695
 msgid "Go to the desktop folder"
@@ -3880,7 +3880,7 @@ msgstr "Vés a la carpeta de l'escriptori"
 
 #: thunar/thunar-window.c:696
 msgid "_Computer"
-msgstr ""
+msgstr "_Ordinador"
 
 #: thunar/thunar-window.c:696
 msgid ""
@@ -3889,7 +3889,7 @@ msgstr "Navega per tots els discs i carpetes locals i remots accessibles des d'a
 
 #: thunar/thunar-window.c:697
 msgid "_Recent"
-msgstr ""
+msgstr "_Recent"
 
 #: thunar/thunar-window.c:697
 msgid "Display recently used files"
@@ -3897,7 +3897,7 @@ msgstr "Mostra els arxius recentment usats"
 
 #: thunar/thunar-window.c:698
 msgid "_Trash"
-msgstr ""
+msgstr "_Paperera"
 
 #: thunar/thunar-window.c:698
 msgid "Display the contents of the trash can"
@@ -3929,7 +3929,7 @@ msgstr "Vés a la carpeta de les plantilles"
 
 #: thunar/thunar-window.c:703
 msgid "Browse _Network"
-msgstr ""
+msgstr "Navegueu per la _xarxa"
 
 #: thunar/thunar-window.c:705
 msgid "_Bookmarks"
@@ -3949,7 +3949,7 @@ msgstr "Mostra la informació quant a Thunar"
 
 #: thunar/thunar-window.c:711
 msgid "_Back"
-msgstr ""
+msgstr "E_nrere"
 
 #: thunar/thunar-window.c:711
 msgid "Go to the previous visited folder"
@@ -3957,7 +3957,7 @@ msgstr "Vés a la carpeta visitada anteriorment"
 
 #: thunar/thunar-window.c:714
 msgid "_Forward"
-msgstr ""
+msgstr "En_davant"
 
 #: thunar/thunar-window.c:714
 msgid "Go to the next visited folder"
@@ -3997,7 +3997,7 @@ msgstr "Menú"
 
 #: thunar/thunar-window.c:725
 msgid "Show the menu"
-msgstr ""
+msgstr "Mostra el menú"
 
 #. add the label with the root warning
 #: thunar/thunar-window.c:1066
@@ -4082,7 +4082,7 @@ msgstr "Ha fallat la visualització del contingut de la paperera"
 #. display an error to the user
 #: thunar/thunar-window.c:4869
 msgid "Failed to browse the network"
-msgstr "Ha fallat la navegació per la xarxa"
+msgstr "Ha fallat la navegació per la xarxa."
 
 #: thunar/thunar-window.c:5012
 msgid ""
@@ -4092,7 +4092,7 @@ msgstr "Thunar és un gestor de fitxers senzill i ràpid\nper a l'entorn d'escri
 
 #: thunar/thunar-window.c:6086
 msgid "Select an image to preview"
-msgstr ""
+msgstr "Seleccioneu una imatge per previsualitzar"
 
 #: thunar/thunar-window.c:6233
 msgid "Failed to launch search with Catfish"
@@ -4100,13 +4100,13 @@ msgstr "Ha fallat el llançament de la cerca amb el Catfish"
 
 #: thunar/thunar-window.c:6564
 msgid "Change the active view type"
-msgstr ""
+msgstr "Canvia el tipus de vista activa"
 
 #. add a proxy menu item for the view switcher to be represent in the overflow
 #. menu
 #: thunar/thunar-window.c:6567 thunar/thunar-window.c:6592
 msgid "View Switcher"
-msgstr ""
+msgstr "Canviador de visualització"
 
 #. add a proxy menu item for the location bar to represent the bar in the
 #. overflow menu
@@ -4678,7 +4678,7 @@ msgstr "Ordre no configurada"
 
 #: plugins/thunar-uca/thunar-uca-provider.c:188
 msgid "Confi_gure custom actions..."
-msgstr ""
+msgstr "Confi_gura les accions personalitzades…"
 
 #: plugins/thunar-uca/thunar-uca-provider.c:188
 msgid ""
@@ -4876,7 +4876,7 @@ msgid ""
 "These actions are applicable to folders or certain kinds of files.\n"
 "\n"
 "Check the <a href=\"https://docs.xfce.org/xfce/thunar/custom-actions\">documentation</a> for a collection of custom action examples."
-msgstr ""
+msgstr "Configureu accions personalitzades que apareixeran als menús contextuals i/o a la barra d'eines del gestor de fitxers.\nAquestes accions són aplicables a carpetes o a determinats tipus de fitxers.\n\nConsulteu la <a href=\"https://docs.xfce.org/xfce/thunar/custom-actions\">documentació</a> per obtenir una col·lecció d'exemples d'accions personalitzades."
 
 #: plugins/thunar-uca/thunar-uca-chooser.ui:88
 msgid "Add a new custom action."
@@ -4940,7 +4940,7 @@ msgstr "thunar;ajusts;preferències;configurar;miniatures;mida;format;data;drece
 
 #: org.xfce.thunar.appdata.xml.in:10
 msgid "File Browser"
-msgstr ""
+msgstr "Navegador de fitxers"
 
 #: org.xfce.thunar.appdata.xml.in:12
 msgid ""
@@ -4951,7 +4951,7 @@ msgstr "Thunar és un navegador de fitxers que està dissenyat especialment per 
 
 #: org.xfce.thunar.appdata.xml.in:26
 msgid "Screenshot of the XFCE Thunar File Browser User Interface"
-msgstr ""
+msgstr "Captura de pantalla de la interfície d'usuari del navegador de fitxers Thunar de l'XFCE"
 
 #. SECURITY:
 #. - A normal active user can run thunar without elevated rights. They
