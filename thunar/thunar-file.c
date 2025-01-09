@@ -505,7 +505,7 @@ thunar_file_finalize (GObject *object)
   if (file->signal_changed_source_id != 0)
     g_source_remove (file->signal_changed_source_id);
 
-    /* verify that nobody's watching the file anymore */
+  /* verify that nobody's watching the file anymore */
 #ifdef G_ENABLE_DEBUG
   ThunarFileWatch *file_watch = g_object_get_qdata (G_OBJECT (file), thunar_file_watch_quark);
   if (file_watch != NULL)
@@ -1113,14 +1113,14 @@ thunar_file_info_reload (ThunarFile   *file,
   else
     file->collate_key_nocase = file->collate_key;
 
-  /* cleanup */
-  g_free (casefold);
-
   /* restore icon name if needed */
   if (file->icon_name == NULL)
     {
       thunar_file_get_icon_name (file, THUNAR_FILE_ICON_STATE_DEFAULT, gtk_icon_theme_get_default ());
     }
+
+  /* cleanup */
+  g_free (casefold);
 }
 
 
@@ -2007,7 +2007,7 @@ thunar_file_rename (ThunarFile   *file,
       new_path = g_file_get_path (thunar_file_get_file (file));
 
       /* update the config file */
-      snprintf (command, sizeof (command), "xdg-user-dirs-update --set %s %s", dir_name, new_path);
+      snprintf (command, sizeof (command), "xdg-user-dirs-update --set %s \"%s\"", dir_name, new_path);
       system (command);
 
       /* Update the path in our hashtable */
@@ -4141,10 +4141,10 @@ thunar_file_get_icon_name (ThunarFile         *file,
                 *special_names = "user-home";
               else
                 {
+                  /* ensure latest cache */
+                  g_reload_user_special_dirs_cache ();
                   for (i = 0; i < G_N_ELEMENTS (thunar_file_dirs); i++)
                     {
-                      /* ensure latest cache */
-                      g_reload_user_special_dirs_cache ();
                       special_dir = g_get_user_special_dir (thunar_file_dirs[i].type);
                       if (special_dir != NULL
                           && strcmp (path, special_dir) == 0)

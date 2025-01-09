@@ -111,6 +111,7 @@ device_icon_name [] =
 /* clang-format on */
 
 
+static GHashTable *user_dirs_map = NULL;
 
 static const gchar *
 guess_device_type_from_icon_name (const gchar *icon_name);
@@ -351,8 +352,6 @@ thunar_g_file_is_network (GFile *file)
 }
 
 
-static GHashTable *user_dirs_map = NULL;
-
 /*
  * thunar_user_dir_map_update:
  * @dir_name: user dir name to change the path
@@ -364,22 +363,29 @@ thunar_user_dir_map_update (gchar *dir_name, gchar *new_path)
   g_hash_table_replace (user_dirs_map, dir_name, new_path);
 }
 
+static void
+thunar_user_dir_map_init (void)
+{
+  thunar_cache_user_dirs_paths ();
+}
+
 /* Cache the XDG directories with their names as keys and paths as values */
 void
 thunar_cache_user_dirs_paths (void)
 {
+  gchar *config_file = g_build_filename (g_get_user_config_dir (), "user-dirs.dirs", NULL);
+  gchar *contents = NULL;
+  gsize  length;
+
   if (user_dirs_map == NULL)
     {
       user_dirs_map = g_hash_table_new (g_str_hash, g_str_equal);
     }
 
-  gchar *config_file = g_build_filename (g_get_user_config_dir (), "user-dirs.dirs", NULL);
-  gchar *contents = NULL;
-  gsize  length;
-
   if (g_file_get_contents (config_file, &contents, &length, NULL))
     {
       gchar **lines = g_strsplit (contents, "\n", -1);
+
       for (int i = 0; lines[i] != NULL; i++)
         {
           if (g_str_has_prefix (lines[i], "XDG_"))
@@ -390,16 +396,20 @@ thunar_cache_user_dirs_paths (void)
               /* split xdg-dir by _ */
               gchar **full_name = g_strsplit (split[0], "_", 3);
 
-              /* get the name */
+              /* get the name an path*/
               gchar *key = g_strdup (full_name[1]);
               gchar *path = g_strdup (split[1]);
 
-              /* Remove quotes and replace $HOME with the actual home directory */
-              path = g_strndup (path + 1, strlen (path) - 2);
               const gchar *home_dir = g_get_home_dir ();
 
+              gchar *temp;
+
+              /* Remove quotes and replace $HOME with the actual home directory */
+              path = g_strndup (path + 1, strlen (path) - 2);
+
               /* Replace $HOME */
-              gchar *temp = g_strdup_printf ("%s%s", home_dir, path + 5);
+              temp = g_strdup_printf ("%s%s", home_dir, path + 5);
+
               g_free (path);
               path = temp;
 
@@ -424,12 +434,7 @@ thunar_cache_user_dirs_paths (void)
 gchar *
 thunar_get_user_dir_name (const gchar *dir_path)
 {
-  /* Initilize the map */
-  if (user_dirs_map == NULL)
-    {
-      thunar_cache_user_dirs_paths ();
-    }
-
+  thunar_user_dir_map_init ();
   GList *keys = g_hash_table_get_keys (user_dirs_map);
 
   for (GList *iter = keys; iter != NULL; iter = iter->next)
