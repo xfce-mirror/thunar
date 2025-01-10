@@ -1039,16 +1039,10 @@ thunar_folder_monitor (GFileMonitor     *monitor,
         renamed_file = event_file_thunar;
 
       /* remove both files from the internal maps */
-      /* trigger the timeout manually, so that connected models will get updated (required for move+replace use-case) */
       if (event_file_thunar != NULL)
-        {
-          thunar_folder_remove_file (folder, event_file_thunar);
-          _thunar_folder_files_update_timeout (folder);
-        }
+        thunar_folder_remove_file (folder, event_file_thunar);
       if (other_file_thunar != NULL)
-        {
-          thunar_folder_remove_file (folder, other_file_thunar);
-        }
+        thunar_folder_remove_file (folder, other_file_thunar);
 
       /* replace the GFile in the ThunarFile for the renamed file with the new gfile */
       thunar_file_replace_file (renamed_file, other_file);
