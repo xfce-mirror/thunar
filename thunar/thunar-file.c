@@ -505,7 +505,7 @@ thunar_file_finalize (GObject *object)
   if (file->signal_changed_source_id != 0)
     g_source_remove (file->signal_changed_source_id);
 
-    /* verify that nobody's watching the file anymore */
+  /* verify that nobody's watching the file anymore */
 #ifdef G_ENABLE_DEBUG
   ThunarFileWatch *file_watch = g_object_get_qdata (G_OBJECT (file), thunar_file_watch_quark);
   if (file_watch != NULL)
@@ -1950,7 +1950,84 @@ thunar_file_launch (ThunarFile  *file,
   return succeed;
 }
 
+static gboolean
+thunar_g_is_user_special_dir (const gchar *path)
+{
+  g_return_val_if_fail (path != NULL, FALSE);
+  const gchar *special_dir;
 
+  /* ensure latest cache */
+  g_reload_user_special_dirs_cache ();
+
+  /* check all special directories */
+  for (guint i = 0; i < G_N_ELEMENTS (thunar_file_dirs); i++)
+    {
+      special_dir = g_get_user_special_dir (thunar_file_dirs[i].type);
+      if (special_dir != NULL && strcmp (path, special_dir) == 0)
+        return TRUE;
+    }
+
+  return FALSE;
+}
+
+static void
+thunar_g_update_user_special_dir (const gchar *old_path, const gchar *new_path)
+{
+  g_return_if_fail (old_path != NULL);
+  g_return_if_fail (new_path != NULL);
+  const gchar *special_dir;
+  gchar       *command;
+
+  /* ensure latest cache */
+  g_reload_user_special_dirs_cache ();
+
+  for (guint i = 0; i < G_N_ELEMENTS (thunar_file_dirs); i++)
+    {
+      special_dir = g_get_user_special_dir (thunar_file_dirs[i].type);
+      if (special_dir != NULL && strcmp (old_path, special_dir) == 0)
+        {
+          /* map the GUserDirectory type to XDG name */
+          const gchar *xdg_name;
+          switch (thunar_file_dirs[i].type)
+            {
+            case G_USER_DIRECTORY_DESKTOP:
+              xdg_name = "DESKTOP";
+              break;
+            case G_USER_DIRECTORY_DOCUMENTS:
+              xdg_name = "DOCUMENTS";
+              break;
+            case G_USER_DIRECTORY_DOWNLOAD:
+              xdg_name = "DOWNLOAD";
+              break;
+            case G_USER_DIRECTORY_MUSIC:
+              xdg_name = "MUSIC";
+              break;
+            case G_USER_DIRECTORY_PICTURES:
+              xdg_name = "PICTURES";
+              break;
+            case G_USER_DIRECTORY_PUBLIC_SHARE:
+              xdg_name = "PUBLICSHARE";
+              break;
+            case G_USER_DIRECTORY_TEMPLATES:
+              xdg_name = "TEMPLATES";
+              break;
+            case G_USER_DIRECTORY_VIDEOS:
+              xdg_name = "VIDEOS";
+              break;
+            default:
+              continue;
+            }
+
+          command = g_strdup_printf ("xdg-user-dirs-update --set %s \"%s\"",
+                                     xdg_name, new_path);
+          if (g_spawn_command_line_sync (command, NULL, NULL, NULL, NULL))
+            g_reload_user_special_dirs_cache ();
+
+          g_free (command);
+          break;
+        }
+    }
+}
 
 /**
  * thunar_file_rename:
@@ -1991,12 +2068,8 @@ thunar_file_rename (ThunarFile   *file,
     {
       gchar *new_path;
       gchar *old_path;
-      gchar *dir_name;
-      char   command[256];
-
 
       old_path = g_file_get_path (thunar_file_get_file (file));
-      dir_name = thunar_get_user_dir_name (old_path);
 
       /* replace GFile in ThunarFile for the renamed file */
       thunar_file_replace_file (file, renamed_file);
@@ -2006,12 +2079,8 @@ thunar_file_rename (ThunarFile   *file,
 
       new_path = g_file_get_path (thunar_file_get_file (file));
 
-      /* update the config file */
-      snprintf (command, sizeof (command), "xdg-user-dirs-update --set %s \"%s\"", dir_name, new_path);
-      system (command);
-
-      /* Update the path in our hashtable */
-      thunar_user_dir_map_update (g_strdup (dir_name), g_strdup (new_path));
+      if (thunar_g_is_user_special_dir (old_path))
+        thunar_g_update_user_special_dir (old_path, new_path);
 
       if (!called_from_job)
         {
@@ -2021,7 +2090,6 @@ thunar_file_rename (ThunarFile   *file,
 
       g_object_unref (renamed_file);
       g_free (new_path);
-      g_free (dir_name);
       g_free (old_path);
       return TRUE;
     }
