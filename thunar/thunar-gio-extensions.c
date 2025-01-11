@@ -111,6 +111,7 @@ device_icon_name [] =
 /* clang-format on */
 
 
+
 static const gchar *
 guess_device_type_from_icon_name (const gchar *icon_name);
 static GFileInfo *
