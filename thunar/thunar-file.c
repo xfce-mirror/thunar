@@ -1950,10 +1950,20 @@ thunar_file_launch (ThunarFile  *file,
   return succeed;
 }
 
-static gboolean
-thunar_g_is_user_special_dir (const gchar *path)
+
+/**
+ * thunar_g_get_user_special_dir_type:
+ * @path: a file path to check.
+ *
+ * Returns the #GUserDirectory type for the given @path if it matches a known
+ * user-special directory (e.g., Desktop, Documents). If no match is found,
+ * returns %G_USER_N_DIRECTORIES.
+ */
+
+static GUserDirectory
+thunar_g_get_user_special_dir_type (const gchar *path)
 {
-  g_return_val_if_fail (path != NULL, FALSE);
+  g_return_val_if_fail (path != NULL, G_USER_N_DIRECTORIES);
   const gchar *special_dir;
 
   /* ensure latest cache */
@@ -1964,69 +1974,71 @@ thunar_g_is_user_special_dir (const gchar *path)
     {
       special_dir = g_get_user_special_dir (thunar_file_dirs[i].type);
       if (special_dir != NULL && strcmp (path, special_dir) == 0)
-        return TRUE;
+        return thunar_file_dirs[i].type;
     }
 
-  return FALSE;
+  return G_USER_N_DIRECTORIES;
 }
 
+
+/**
+ * thunar_g_update_user_special_dir:
+ * @old_path: the current path of the special directory.
+ * @new_path: the new path to set.
+ * @dir_type: the #GUserDirectory type.
+ *
+ * Updates the user-special directory of @dir_type to @new_path and reloads
+ * the cache.
+ */
 static void
-thunar_g_update_user_special_dir (const gchar *old_path, const gchar *new_path)
+thunar_g_update_user_special_dir (const gchar   *old_path,
+                                  const gchar   *new_path,
+                                  GUserDirectory dir_type)
 {
   g_return_if_fail (old_path != NULL);
   g_return_if_fail (new_path != NULL);
-  const gchar *special_dir;
+  g_return_if_fail (dir_type < G_USER_N_DIRECTORIES);
+
+  const gchar *xdg_name;
   gchar       *command;
 
-  /* ensure latest cache */
-  g_reload_user_special_dirs_cache ();
-
-  for (guint i = 0; i < G_N_ELEMENTS (thunar_file_dirs); i++)
+  /* map the GUserDirectory type to XDG name */
+  switch (dir_type)
     {
-      special_dir = g_get_user_special_dir (thunar_file_dirs[i].type);
-      if (special_dir != NULL && strcmp (old_path, special_dir) == 0)
-        {
-          /* map the GUserDirectory type to XDG name */
-          const gchar *xdg_name;
-          switch (thunar_file_dirs[i].type)
-            {
-            case G_USER_DIRECTORY_DESKTOP:
-              xdg_name = "DESKTOP";
-              break;
-            case G_USER_DIRECTORY_DOCUMENTS:
-              xdg_name = "DOCUMENTS";
-              break;
-            case G_USER_DIRECTORY_DOWNLOAD:
-              xdg_name = "DOWNLOAD";
-              break;
-            case G_USER_DIRECTORY_MUSIC:
-              xdg_name = "MUSIC";
-              break;
-            case G_USER_DIRECTORY_PICTURES:
-              xdg_name = "PICTURES";
-              break;
-            case G_USER_DIRECTORY_PUBLIC_SHARE:
-              xdg_name = "PUBLICSHARE";
-              break;
-            case G_USER_DIRECTORY_TEMPLATES:
-              xdg_name = "TEMPLATES";
-              break;
-            case G_USER_DIRECTORY_VIDEOS:
-              xdg_name = "VIDEOS";
-              break;
-            default:
-              continue;
-            }
-
-          command = g_strdup_printf ("xdg-user-dirs-update --set %s \"%s\"",
-                                     xdg_name, new_path);
-          if (g_spawn_command_line_sync (command, NULL, NULL, NULL, NULL))
-            g_reload_user_special_dirs_cache ();
-
-          g_free (command);
-          break;
-        }
+    case G_USER_DIRECTORY_DESKTOP:
+      xdg_name = "DESKTOP";
+      break;
+    case G_USER_DIRECTORY_DOCUMENTS:
+      xdg_name = "DOCUMENTS";
+      break;
+    case G_USER_DIRECTORY_DOWNLOAD:
+      xdg_name = "DOWNLOAD";
+      break;
+    case G_USER_DIRECTORY_MUSIC:
+      xdg_name = "MUSIC";
+      break;
+    case G_USER_DIRECTORY_PICTURES:
+      xdg_name = "PICTURES";
+      break;
+    case G_USER_DIRECTORY_PUBLIC_SHARE:
+      xdg_name = "PUBLICSHARE";
+      break;
+    case G_USER_DIRECTORY_TEMPLATES:
+      xdg_name = "TEMPLATES";
+      break;
+    case G_USER_DIRECTORY_VIDEOS:
+      xdg_name = "VIDEOS";
+      break;
+    default:
+      return;
     }
+
+  command = g_strdup_printf ("xdg-user-dirs-update --set %s \"%s\"",
+                             xdg_name, new_path);
+  if (g_spawn_command_line_sync (command, NULL, NULL, NULL, NULL))
+    g_reload_user_special_dirs_cache ();
+
+  g_free (command);
 }
 
 /**
@@ -2079,8 +2091,9 @@ thunar_file_rename (ThunarFile   *file,
 
       new_path = g_file_get_path (thunar_file_get_file (file));
 
-      if (thunar_g_is_user_special_dir (old_path))
-        thunar_g_update_user_special_dir (old_path, new_path);
+      GUserDirectory dir_type = thunar_g_get_user_special_dir_type (old_path);
+      if (dir_type != G_USER_N_DIRECTORIES)
+        thunar_g_update_user_special_dir (old_path, new_path, dir_type);
 
       if (!called_from_job)
         {
