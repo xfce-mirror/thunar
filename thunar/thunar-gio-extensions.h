@@ -69,6 +69,7 @@ gboolean
 thunar_g_file_is_computer (GFile *file);
 gboolean
 thunar_g_file_is_network (GFile *file);
+
 GKeyFile *
 thunar_g_file_query_key_file (GFile        *file,
                               GCancellable *cancellable,
