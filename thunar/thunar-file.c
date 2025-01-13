@@ -2059,13 +2059,13 @@ thunar_file_rename (ThunarFile   *file,
           const gchar *xdg_name = thunar_g_get_user_special_dir_type (old_path);
           if (xdg_name != NULL)
             thunar_g_update_user_special_dir (new_path, xdg_name);
-
-          if (!called_from_job)
-            {
-              /* emit the file changed signal */
-              thunar_file_changed (file);
-            }
           g_free (new_path);
+        }
+
+      if (!called_from_job)
+        {
+          /* emit the file changed signal */
+          thunar_file_changed (file);
         }
 
       g_object_unref (renamed_file);
