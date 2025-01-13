@@ -1981,7 +1981,6 @@ thunar_g_get_user_special_dir_type (const gchar *path)
 
 /**
  * thunar_g_update_user_special_dir:
- * @old_path: the current path of the special directory.
  * @new_path: the new path to set.
  * @dir_type: the #GUserDirectory type.
  *
