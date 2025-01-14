@@ -2660,7 +2660,7 @@ static gboolean
 thunar_action_manager_action_trash_delete (ThunarActionManager *action_mgr)
 {
   GdkModifierType event_state;
-  gboolean parent_is_trash = FALSE;
+  gboolean        parent_is_trash = FALSE;
 
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
