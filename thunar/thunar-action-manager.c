@@ -2660,17 +2660,13 @@ static gboolean
 thunar_action_manager_action_trash_delete (ThunarActionManager *action_mgr)
 {
   GdkModifierType event_state;
-  gboolean        parent_is_trash = FALSE;
 
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
-
-  if (action_mgr->parent_folder != NULL && thunar_g_file_is_trash (thunar_file_get_file (action_mgr->parent_folder)))
-    parent_is_trash = TRUE;
 
   /* when shift modifier is pressed, we delete (as well via context menu) */
   if (gtk_get_current_event_state (&event_state) && (event_state & GDK_SHIFT_MASK) != 0)
     thunar_action_manager_action_delete (action_mgr);
-  else if (thunar_g_vfs_is_uri_scheme_supported ("trash") && !parent_is_trash)
+  else if (thunar_g_vfs_is_uri_scheme_supported ("trash") && !thunar_file_is_trash (action_mgr->current_directory))
     thunar_action_manager_action_move_to_trash (action_mgr);
   else
     thunar_action_manager_action_delete (action_mgr);
