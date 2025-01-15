@@ -1895,19 +1895,19 @@ _thunar_job_load_content_types (ThunarJob *job,
 ThunarJob *
 thunar_io_jobs_load_content_types (GHashTable *files)
 {
-  GHashTable     *g_files = g_hash_table_new_full (g_direct_hash, NULL, g_object_unref, NULL);
+  GHashTable     *g_files = g_hash_table_new (g_direct_hash, NULL);
   GHashTableIter  iter;
   gpointer        key;
 
   /* We store the g_files separately, since they can be replaced during runtime */
   g_hash_table_iter_init (&iter, files);
   while (g_hash_table_iter_next (&iter, &key, NULL))
-    g_hash_table_add (g_files, g_object_ref (thunar_file_get_file (THUNAR_FILE (key))));
+    g_hash_table_add (g_files, thunar_file_get_file (THUNAR_FILE (key)));
 
   ThunarJob *job = thunar_simple_job_new (_thunar_job_load_content_types, 2,
                                           THUNAR_TYPE_G_FILE_HASH_TABLE, g_files,
                                           THUNAR_TYPE_G_FILE_HASH_TABLE, files);
-  g_hash_table_remove_all (g_files);
+  g_hash_table_destroy (g_files);
 
   return job;
 }
