@@ -1921,7 +1921,7 @@ _thunar_job_load_statusbar_text (ThunarJob *job,
 {
   ThunarStandardView *standard_view;
   ThunarFile         *thunar_folder;
-  GHashTable         *thunar_files;
+  GHashTable         *g_files;
   gboolean            show_hidden;
   gboolean            show_file_size_binary_format;
   ThunarDateStyle     date_style;
@@ -1937,14 +1937,14 @@ _thunar_job_load_statusbar_text (ThunarJob *job,
 
   standard_view = g_value_get_object (&g_array_index (param_values, GValue, 0));
   thunar_folder = g_value_get_object (&g_array_index (param_values, GValue, 1));
-  thunar_files = g_value_get_boxed (&g_array_index (param_values, GValue, 2));
+  g_files = g_value_get_boxed (&g_array_index (param_values, GValue, 2));
   show_hidden = g_value_get_boolean (&g_array_index (param_values, GValue, 3));
   show_file_size_binary_format = g_value_get_boolean (&g_array_index (param_values, GValue, 4));
   date_style = g_value_get_enum (&g_array_index (param_values, GValue, 5));
   date_custom_style = g_value_get_string (&g_array_index (param_values, GValue, 6));
   status_bar_active_info = g_value_get_uint (&g_array_index (param_values, GValue, 7));
 
-  text_for_files = thunar_util_get_statusbar_text_for_files (thunar_files,
+  text_for_files = thunar_util_get_statusbar_text_for_files (g_files,
                                                              show_hidden,
                                                              show_file_size_binary_format,
                                                              date_style,
@@ -1994,7 +1994,10 @@ thunar_io_jobs_load_statusbar_text_for_folder (ThunarStandardView *standard_view
   ThunarDateStyle    date_style;
   gchar             *date_custom_style;
   guint              status_bar_active_info;
-  GHashTable        *files;
+  GHashTable        *thunar_files;
+  GHashTable        *g_files = g_hash_table_new (g_direct_hash, NULL);
+  GHashTableIter     iter;
+  gpointer           key;
   ThunarFile        *file;
 
   preferences = thunar_preferences_get ();
@@ -2004,7 +2007,12 @@ thunar_io_jobs_load_statusbar_text_for_folder (ThunarStandardView *standard_view
                 "misc-file-size-binary", &show_file_size_binary_format,
                 "misc-status-bar-active-info", &status_bar_active_info, NULL);
 
-  files = thunar_folder_get_files (folder);
+  thunar_files = thunar_folder_get_files (folder);
+
+  g_hash_table_iter_init (&iter, thunar_files);
+  while (g_hash_table_iter_next (&iter, &key, NULL))
+    g_hash_table_add (g_files, thunar_file_get_file (THUNAR_FILE (key)));
+
   file = thunar_folder_get_corresponding_file (folder);
 
   if (file == NULL)
@@ -2016,13 +2024,14 @@ thunar_io_jobs_load_statusbar_text_for_folder (ThunarStandardView *standard_view
   ThunarJob *job = thunar_simple_job_new (_thunar_job_load_statusbar_text, 8,
                                           THUNAR_TYPE_STANDARD_VIEW, g_object_ref (standard_view),
                                           THUNAR_TYPE_FILE, g_object_ref (file),
-                                          THUNAR_TYPE_G_FILE_HASH_TABLE, files,
+                                          THUNAR_TYPE_G_FILE_HASH_TABLE, g_files,
                                           G_TYPE_BOOLEAN, show_hidden,
                                           G_TYPE_BOOLEAN, show_file_size_binary_format,
                                           THUNAR_TYPE_DATE_STYLE, date_style,
                                           G_TYPE_STRING, date_custom_style,
                                           G_TYPE_UINT, status_bar_active_info);
   g_free (date_custom_style);
+  g_hash_table_destroy (g_files);
 
   g_signal_connect_swapped (job, "finished", G_CALLBACK (g_object_unref), file);
   g_signal_connect_swapped (job, "finished", G_CALLBACK (g_object_unref), standard_view);
@@ -2032,7 +2041,7 @@ thunar_io_jobs_load_statusbar_text_for_folder (ThunarStandardView *standard_view
 
 
 ThunarJob *
-thunar_io_jobs_load_statusbar_text_for_selection (ThunarStandardView *standard_view, GHashTable *selected_files)
+thunar_io_jobs_load_statusbar_text_for_selection (ThunarStandardView *standard_view, GHashTable *selected_g_files)
 {
   ThunarPreferences *preferences;
   gboolean           show_hidden;
@@ -2051,7 +2060,7 @@ thunar_io_jobs_load_statusbar_text_for_selection (ThunarStandardView *standard_v
   ThunarJob *job = thunar_simple_job_new (_thunar_job_load_statusbar_text, 8,
                                           THUNAR_TYPE_STANDARD_VIEW, g_object_ref (standard_view),
                                           THUNAR_TYPE_FILE, NULL,
-                                          THUNAR_TYPE_G_FILE_HASH_TABLE, selected_files,
+                                          THUNAR_TYPE_G_FILE_HASH_TABLE, selected_g_files,
                                           G_TYPE_BOOLEAN, show_hidden,
                                           G_TYPE_BOOLEAN, show_file_size_binary_format,
                                           THUNAR_TYPE_DATE_STYLE, date_style,

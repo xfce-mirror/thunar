@@ -1240,7 +1240,7 @@ thunar_util_get_file_time (GFileInfo         *file_info,
 
 /**
  * thunar_util_get_statusbar_text_for_files:
- * @files                        : list of ThunarFiles for which a text is requested
+ * @files                        : list of #GFile's for which a text is requested
  * @show_hidden                  : whether hidden files are shown
  * @show_file_size_binary_format : whether the file size should be displayed in binary format
  * @date_style        : the #ThunarDateFormat used to humanize the @file_time.
@@ -1285,7 +1285,7 @@ thunar_util_get_statusbar_text_for_files (GHashTable     *files,
   g_hash_table_iter_init (&iter, files);
   while (g_hash_table_iter_next (&iter, &key, NULL))
     {
-      GFileInfo *file_info = g_file_query_info (thunar_file_get_file (THUNAR_FILE (key)),
+      GFileInfo *file_info = g_file_query_info (G_FILE (key),
                                                 G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SIZE "," G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP "," G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN "," G_FILE_ATTRIBUTE_TIME_MODIFIED,
                                                 G_FILE_QUERY_INFO_NONE,
                                                 NULL,
