@@ -172,8 +172,7 @@ struct _ThunarPropertiesDialog
   GtkWidget *icon_image;
   GtkWidget *names_label;
   GtkWidget *single_box;
-  GtkWidget *kind_ebox;
-  GtkWidget *kind_label;
+  GtkWidget *kind_entry;
   GtkWidget *openwith_chooser;
   GtkWidget *link_entry;
   GtkWidget *link_entry_text;
@@ -448,21 +447,11 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
-  dialog->kind_ebox = gtk_event_box_new ();
-  gtk_event_box_set_above_child (GTK_EVENT_BOX (dialog->kind_ebox), TRUE);
-  gtk_event_box_set_visible_window (GTK_EVENT_BOX (dialog->kind_ebox), FALSE);
-  g_object_bind_property (G_OBJECT (dialog->kind_ebox), "visible",
-                          G_OBJECT (label), "visible",
-                          G_BINDING_SYNC_CREATE);
-  gtk_widget_set_hexpand (dialog->kind_ebox, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), dialog->kind_ebox, 1, row, 1, 1);
-  gtk_widget_show (dialog->kind_ebox);
-
-  dialog->kind_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
-  gtk_label_set_selectable (GTK_LABEL (dialog->kind_label), TRUE);
-  gtk_label_set_ellipsize (GTK_LABEL (dialog->kind_label), PANGO_ELLIPSIZE_END);
-  gtk_container_add (GTK_CONTAINER (dialog->kind_ebox), dialog->kind_label);
-  gtk_widget_show (dialog->kind_label);
+  dialog->kind_entry = g_object_new (GTK_TYPE_ENTRY, NULL);
+  gtk_editable_set_editable (GTK_EDITABLE (dialog->kind_entry), FALSE);
+  gtk_entry_set_has_frame (GTK_ENTRY (dialog->kind_entry), FALSE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->kind_entry, 1, row, 1, 1);
+  gtk_widget_show (dialog->kind_entry);
 
   ++row;
 
@@ -496,7 +485,6 @@ thunar_properties_dialog_constructed (GObject *object)
   g_object_bind_property (G_OBJECT (dialog->link_entry), "visible",
                           G_OBJECT (label), "visible",
                           G_BINDING_SYNC_CREATE);
-  gtk_widget_set_hexpand (dialog->link_entry, TRUE);
   gtk_grid_attach (GTK_GRID (grid), dialog->link_entry, 1, row, 1, 1);
   gtk_widget_show (dialog->link_entry);
 
@@ -535,7 +523,6 @@ thunar_properties_dialog_constructed (GObject *object)
   g_object_bind_property (G_OBJECT (dialog->location_entry), "visible",
                           G_OBJECT (label), "visible",
                           G_BINDING_SYNC_CREATE);
-  gtk_widget_set_hexpand (dialog->location_entry, TRUE);
   gtk_grid_attach (GTK_GRID (grid), dialog->location_entry, 1, row, 1, 1);
   gtk_widget_show (dialog->location_entry);
 
@@ -1408,13 +1395,13 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   if (content_type != NULL)
     {
       content_type_desc = thunar_file_get_content_type_desc (file);
-      gtk_widget_set_tooltip_text (dialog->kind_ebox, content_type);
-      gtk_label_set_text (GTK_LABEL (dialog->kind_label), content_type_desc);
+      gtk_widget_set_tooltip_text (dialog->kind_entry, content_type);
+      gtk_entry_set_text (GTK_ENTRY (dialog->kind_entry), content_type_desc);
       g_free (content_type_desc);
     }
   else
     {
-      gtk_label_set_text (GTK_LABEL (dialog->kind_label), _("unknown"));
+      gtk_entry_set_text (GTK_ENTRY (dialog->kind_entry), _("unknown"));
     }
 
   /* update the application chooser (shown only for non-executable regular files!) */
@@ -1429,7 +1416,6 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     {
       display_name = g_filename_display_name (path);
       gtk_entry_set_text (GTK_ENTRY (dialog->link_entry), display_name);
-      gtk_editable_set_position (GTK_EDITABLE (dialog->link_entry), -1);
       gtk_widget_set_tooltip_text (dialog->link_entry, display_name);
       gtk_widget_show (dialog->link_entry);
       g_free (display_name);
@@ -1459,7 +1445,6 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     {
       display_name = g_file_get_parse_name (thunar_file_get_file (parent_file));
       gtk_entry_set_text (GTK_ENTRY (dialog->location_entry), display_name);
-      gtk_editable_set_position (GTK_EDITABLE (dialog->location_entry), -1);
       gtk_widget_set_tooltip_text (GTK_WIDGET (dialog->location_entry), display_name);
       gtk_widget_show (GTK_WIDGET (dialog->location_entry));
       g_object_unref (G_OBJECT (parent_file));
@@ -1739,20 +1724,19 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
       && !g_content_type_equals (content_type, "inode/symlink"))
     {
       str = g_content_type_get_description (content_type);
-      gtk_widget_set_tooltip_text (dialog->kind_ebox, content_type);
-      gtk_label_set_text (GTK_LABEL (dialog->kind_label), str);
+      gtk_widget_set_tooltip_text (dialog->kind_entry, content_type);
+      gtk_entry_set_text (GTK_ENTRY (dialog->kind_entry), str);
       g_free (str);
     }
   else
     {
-      gtk_label_set_text (GTK_LABEL (dialog->kind_label), _("mixed"));
+      gtk_entry_set_text (GTK_ENTRY (dialog->kind_entry), _("mixed"));
     }
 
   /* update the link target */
   if (G_LIKELY (str_of_resolved_paths->len > 0))
     {
       gtk_entry_set_text (GTK_ENTRY (dialog->link_entry), str_of_resolved_paths->str);
-      gtk_editable_set_position (GTK_EDITABLE (dialog->link_entry), -1);
       gtk_widget_set_tooltip_text (dialog->link_entry, str_of_resolved_paths->str);
       gtk_widget_show (dialog->link_entry);
     }
@@ -1767,7 +1751,6 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
     {
       display_name = g_file_get_parse_name (thunar_file_get_file (parent_file));
       gtk_entry_set_text (GTK_ENTRY (dialog->location_entry), display_name);
-      gtk_editable_set_position (GTK_EDITABLE (dialog->location_entry), -1);
       gtk_widget_set_tooltip_text (dialog->location_entry, display_name);
       gtk_widget_show (dialog->location_entry);
       g_object_unref (G_OBJECT (parent_file));
