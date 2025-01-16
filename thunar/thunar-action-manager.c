@@ -2666,7 +2666,7 @@ thunar_action_manager_action_trash_delete (ThunarActionManager *action_mgr)
   /* when shift modifier is pressed, we delete (as well via context menu) */
   if (gtk_get_current_event_state (&event_state) && (event_state & GDK_SHIFT_MASK) != 0)
     thunar_action_manager_action_delete (action_mgr);
-  else if (thunar_g_vfs_is_uri_scheme_supported ("trash") && !thunar_file_is_trash (action_mgr->current_directory))
+  else if (thunar_g_vfs_is_uri_scheme_supported ("trash") && !thunar_file_is_trashed (action_mgr->current_directory))
     thunar_action_manager_action_move_to_trash (action_mgr);
   else
     thunar_action_manager_action_delete (action_mgr);
