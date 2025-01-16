@@ -1114,12 +1114,6 @@ thunar_file_info_reload (ThunarFile   *file,
   else
     file->collate_key_nocase = file->collate_key;
 
-  /* restore icon name if needed */
-  if (file->icon_name == NULL)
-    {
-      thunar_file_get_icon_name (file, THUNAR_FILE_ICON_STATE_DEFAULT, gtk_icon_theme_get_default ());
-    }
-
   /* cleanup */
   g_free (casefold);
 }
