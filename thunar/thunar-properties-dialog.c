@@ -1445,14 +1445,14 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     {
       display_name = g_file_get_parse_name (thunar_file_get_file (parent_file));
       gtk_entry_set_text (GTK_ENTRY (dialog->location_entry), display_name);
-      gtk_widget_set_tooltip_text (GTK_WIDGET (dialog->location_entry), display_name);
-      gtk_widget_show (GTK_WIDGET (dialog->location_entry));
+      gtk_widget_set_tooltip_text (dialog->location_entry, display_name);
+      gtk_widget_show (dialog->location_entry);
       g_object_unref (G_OBJECT (parent_file));
       g_free (display_name);
     }
   else
     {
-      gtk_widget_hide (GTK_WIDGET (dialog->location_entry));
+      gtk_widget_hide (dialog->location_entry);
     }
 
   /* update the volume */
