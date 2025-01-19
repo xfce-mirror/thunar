@@ -86,7 +86,7 @@ thunar_io_jobs_load_statusbar_text_for_folder (ThunarStandardView *standard_view
                                                ThunarFolder       *folder);
 ThunarJob *
 thunar_io_jobs_load_statusbar_text_for_selection (ThunarStandardView *standard_view,
-                                                  GHashTable         *selected_files);
+                                                  GHashTable         *selected_g_files);
 G_END_DECLS
 
 #endif /* !__THUNAR_IO_JOBS_H__ */
