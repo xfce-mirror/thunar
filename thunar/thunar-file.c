@@ -3837,13 +3837,12 @@ thunar_file_get_emblem_names (ThunarFile *file)
               if (G_IS_THEMED_ICON (icon))
                 {
                   const gchar *icon_name = g_themed_icon_get_names (G_THEMED_ICON (icon))[0];
-
                   if (icon_name != NULL)
                     emblems = g_list_prepend (emblems, g_strdup (icon_name));
                 }
-
               g_object_unref (icon);
             }
+          g_object_unref (mount);
         }
     }
 
