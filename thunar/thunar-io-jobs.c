@@ -1925,7 +1925,7 @@ thunar_io_jobs_load_content_types (GHashTable *files)
     g_hash_table_add (g_files, g_object_ref (thunar_file_get_file (THUNAR_FILE (key))));
 
   ThunarJob *job = thunar_simple_job_new (_thunar_job_load_content_types, 1,
-                                           THUNAR_TYPE_G_FILE_HASH_TABLE, g_files);
+                                          THUNAR_TYPE_G_FILE_HASH_TABLE, g_files);
 
   g_signal_connect (job, "finished", G_CALLBACK (thunar_io_jobs_load_content_types_finished), g_files);
 
