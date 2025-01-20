@@ -1909,7 +1909,7 @@ thunar_io_jobs_load_content_types_finished (ThunarJob  *job,
  * @files: a #GList of #ThunarFiles
  *
  * Loads the content types of the passed #ThunarFiles in a separate thread.
- * After loaded loaded,'thunar_file_set_content_type' is called for each #ThunarFile.
+ * After loaded, 'thunar_file_set_content_type' is called for each #ThunarFile.
  *
  * Returns: (transfer none): the #ThunarJob which manages the separate thread
  **/
