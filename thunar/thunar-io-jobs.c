@@ -1894,7 +1894,7 @@ thunar_io_jobs_load_content_types_finished (ThunarJob  *job,
         {
           content_type = g_object_get_data (G_OBJECT (g_file), "content-type");
           if (content_type != NULL)
-            thunar_file_set_content_type (THUNAR_FILE (thunar_file), content_type);
+            thunar_file_set_content_type (thunar_file, content_type);
           g_object_unref (thunar_file);
         }
     }
