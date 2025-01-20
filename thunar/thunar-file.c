@@ -205,9 +205,7 @@ struct _ThunarFile
   GFileType  kind;
   GFile     *gfile;
 
-  /* The content type can be loaded as separate job or directly */
   gchar *content_type;
-  GMutex content_type_mutex;
 
   gchar *icon_name;
 
@@ -455,8 +453,6 @@ thunar_file_init (ThunarFile *file)
   file->thumbnailer = thunar_thumbnailer_get ();
 
   file->thumbnail_finished_handler_id = g_signal_connect_swapped (file->thumbnailer, "request-finished", G_CALLBACK (thunar_file_thumbnailing_finished), file);
-
-  g_mutex_init (&file->content_type_mutex);
 }
 
 
@@ -539,10 +535,7 @@ thunar_file_finalize (GObject *object)
   g_free (file->custom_icon_name);
 
   /* content type info */
-  g_mutex_lock (&file->content_type_mutex);
   g_free (file->content_type);
-  g_mutex_unlock (&file->content_type_mutex);
-  g_mutex_clear (&file->content_type_mutex);
 
   g_free (file->icon_name);
 
@@ -934,10 +927,8 @@ thunar_file_info_clear (ThunarFile *file)
   file->basename = NULL;
 
   /* content type */
-  g_mutex_lock (&file->content_type_mutex);
   g_free (file->content_type);
   file->content_type = NULL;
-  g_mutex_unlock (&file->content_type_mutex);
 
   g_free (file->icon_name);
   file->icon_name = NULL;
@@ -2539,14 +2530,7 @@ thunar_file_get_content_type (ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
-  gboolean initialized = TRUE;
-
-  g_mutex_lock (&file->content_type_mutex);
   if (G_UNLIKELY (file->content_type == NULL))
-    initialized = FALSE;
-  g_mutex_unlock (&file->content_type_mutex);
-
-  if (!initialized)
     thunar_file_load_content_type (file);
 
   return file->content_type;
@@ -2567,10 +2551,8 @@ thunar_file_set_content_type (ThunarFile  *file,
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  g_mutex_lock (&file->content_type_mutex);
   if (G_LIKELY (file->content_type == NULL))
     file->content_type = g_strdup (content_type);
-  g_mutex_unlock (&file->content_type_mutex);
 }
 
 
