@@ -1937,19 +1937,14 @@ thunar_file_launch (ThunarFile  *file,
 }
 
 
-/**
- * thunar_g_get_user_special_dir_type:
- * @path: a file path to check.
- *
- * Returns the xdg_name for the given @path if it matches a known
- * user-special directory (e.g., Desktop, Documents). If no match is found,
- * returns NULL.
- */
+
 static const gchar *
-thunar_g_get_user_special_dir_type (const gchar *path)
+thunar_file_dirs_get_xdg_name (const gchar *path)
 {
-  g_return_val_if_fail (path != NULL, NULL);
   const gchar *special_dir;
+
+  if (path == NULL)
+    return NULL;
 
   /* check all special directories */
   for (guint i = 0; i < G_N_ELEMENTS (thunar_file_dirs); i++)
@@ -1963,30 +1958,6 @@ thunar_g_get_user_special_dir_type (const gchar *path)
 }
 
 
-/**
- * thunar_g_update_user_special_dir:
- * @new_path: the new path to set.
- * @xdg_name: the XDG name of the directory
- *
- * Updates the user-special directory of @dir_type to @new_path and reloads
- * the cache.
- */
-static void
-thunar_g_update_user_special_dir (const gchar *new_path,
-                                  const gchar *xdg_name)
-{
-  g_return_if_fail (new_path != NULL);
-
-  gchar *command;
-
-  command = g_strdup_printf ("xdg-user-dirs-update --set %s \"%s\"",
-                             xdg_name, new_path);
-  if (g_spawn_command_line_sync (command, NULL, NULL, NULL, NULL))
-    /* reload the cache to reflect changes */
-    g_reload_user_special_dirs_cache ();
-
-  g_free (command);
-}
 
 /**
  * thunar_file_rename:
@@ -2025,10 +1996,10 @@ thunar_file_rename (ThunarFile   *file,
   /* check if we succeeded */
   if (renamed_file != NULL)
     {
-      gchar *new_path;
       gchar *old_path;
 
-      old_path = g_file_get_path (thunar_file_get_file (file));
+      /* store old file path */
+      old_path = g_file_get_path (file->gfile);
 
       /* replace GFile in ThunarFile for the renamed file */
       thunar_file_replace_file (file, renamed_file);
@@ -2036,24 +2007,29 @@ thunar_file_rename (ThunarFile   *file,
       /* reload file information */
       thunar_file_load (file, NULL, NULL);
 
-      new_path = g_file_get_path (thunar_file_get_file (file));
-
-      if (new_path != NULL && old_path != NULL)
-        {
-          const gchar *xdg_name = thunar_g_get_user_special_dir_type (old_path);
-          if (xdg_name != NULL)
-            thunar_g_update_user_special_dir (new_path, xdg_name);
-        }
-
       if (!called_from_job)
         {
           /* emit the file changed signal */
           thunar_file_changed (file);
         }
 
+      /* if file is a XDG user dir, update its configuration */
+      if (old_path != NULL)
+        {
+          const gchar *xdg_name = thunar_file_dirs_get_xdg_name (old_path);
+          if (xdg_name != NULL)
+            {
+              gchar *new_path = g_file_get_path (file->gfile);
+              if (new_path != NULL)
+                {
+                  thunar_g_update_user_special_dir (xdg_name, new_path);
+                  g_free (new_path);
+                }
+            }
+          g_free (old_path);
+        }
+
       g_object_unref (renamed_file);
-      g_free (new_path);
-      g_free (old_path);
       return TRUE;
     }
 
