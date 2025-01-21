@@ -348,7 +348,6 @@ struct _ThunarListModel
 
 
 
-static guint       list_model_signals[THUNAR_STANDARD_VIEW_MODEL_LAST_SIGNAL];
 static GParamSpec *list_model_props[N_PROPERTIES] = {
   NULL,
 };
@@ -1650,7 +1649,7 @@ thunar_list_model_folder_error (ThunarFolder    *folder,
   thunar_list_model_set_folder (THUNAR_STANDARD_VIEW_MODEL (store), NULL, NULL);
 
   /* forward the error signal */
-  g_signal_emit (G_OBJECT (store), list_model_signals[THUNAR_STANDARD_VIEW_MODEL_ERROR], 0, error);
+  g_signal_emit_by_name (G_OBJECT (store), "error", error);
 }
 
 
