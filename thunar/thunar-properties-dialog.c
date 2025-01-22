@@ -450,6 +450,9 @@ thunar_properties_dialog_constructed (GObject *object)
   dialog->kind_entry = g_object_new (GTK_TYPE_ENTRY, NULL);
   gtk_editable_set_editable (GTK_EDITABLE (dialog->kind_entry), FALSE);
   gtk_entry_set_has_frame (GTK_ENTRY (dialog->kind_entry), FALSE);
+  g_object_bind_property (G_OBJECT (dialog->kind_entry), "visible",
+                          G_OBJECT (label), "visible",
+                          G_BINDING_SYNC_CREATE);
   gtk_grid_attach (GTK_GRID (grid), dialog->kind_entry, 1, row, 1, 1);
   gtk_widget_show (dialog->kind_entry);
 
@@ -500,8 +503,9 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
-  dialog->origin_label = g_object_new (GTK_TYPE_LABEL, "ellipsize", PANGO_ELLIPSIZE_START, "xalign", 0.0f, NULL);
-  gtk_label_set_selectable (GTK_LABEL (dialog->origin_label), TRUE);
+  dialog->origin_label = g_object_new (GTK_TYPE_ENTRY, NULL);
+  gtk_editable_set_editable (GTK_EDITABLE (dialog->origin_label), FALSE);
+  gtk_entry_set_has_frame (GTK_ENTRY (dialog->origin_label), FALSE);
   g_object_bind_property (G_OBJECT (dialog->origin_label), "visible",
                           G_OBJECT (label), "visible",
                           G_BINDING_SYNC_CREATE);
@@ -1430,7 +1434,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   if (G_UNLIKELY (path != NULL))
     {
       display_name = g_filename_display_name (path);
-      gtk_label_set_text (GTK_LABEL (dialog->origin_label), display_name);
+      gtk_entry_set_text (GTK_ENTRY (dialog->origin_label), display_name);
       gtk_widget_show (dialog->origin_label);
       g_free (display_name);
     }
