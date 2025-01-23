@@ -506,9 +506,6 @@ thunar_properties_dialog_constructed (GObject *object)
   dialog->origin_label = g_object_new (GTK_TYPE_ENTRY, NULL);
   gtk_editable_set_editable (GTK_EDITABLE (dialog->origin_label), FALSE);
   gtk_entry_set_has_frame (GTK_ENTRY (dialog->origin_label), FALSE);
-  g_object_bind_property (G_OBJECT (dialog->origin_label), "visible",
-                          G_OBJECT (label), "visible",
-                          G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (dialog->origin_label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), dialog->origin_label, 1, row, 1, 1);
   gtk_widget_show (dialog->origin_label);
