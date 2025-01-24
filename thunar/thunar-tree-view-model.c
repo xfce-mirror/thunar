@@ -1794,6 +1794,9 @@ thunar_tree_view_model_set_folder (ThunarStandardViewModel *model,
     thunar_tree_view_model_load_dir (_model->root);
   else
     {
+      /* mark the current folder as ready */
+      _model->root->loaded = TRUE;
+
       search_query_normalized = thunar_g_utf8_normalize_for_search (search_query, TRUE, TRUE);
       g_strfreev (_model->search_terms);
       _model->search_terms = thunar_util_split_search_query (search_query_normalized, NULL);
