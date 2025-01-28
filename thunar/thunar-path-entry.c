@@ -575,6 +575,32 @@ thunar_path_entry_activate (GtkEntry *entry)
 
 
 
+static gboolean
+thunar_path_entry_file_exists (GFile *file)
+{
+  gchar   *path;
+  gboolean result = FALSE;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+
+  /* support for locations like 'admin://' and 'network://' */
+  if (!g_file_is_native (file))
+    return TRUE;
+
+  /* check if native file exists */
+  path = g_file_get_path (file);
+  if (path != NULL)
+    {
+      if (g_file_test (path, G_FILE_TEST_EXISTS))
+        result = TRUE;
+      g_free (path);
+    }
+
+  return result;
+}
+
+
+
 static void
 thunar_path_entry_changed (GtkEditable *editable)
 {
@@ -584,8 +610,8 @@ thunar_path_entry_changed (GtkEditable *editable)
   GtkTreeModel       *model;
   const gchar        *text;
   gchar              *scheme;
-  ThunarFile         *current_folder;
-  ThunarFile         *current_file;
+  ThunarFile         *current_folder = NULL;
+  ThunarFile         *current_file = NULL;
   GFile              *folder_path = NULL;
   GFile              *file_path = NULL;
   gchar              *folder_part = NULL;
@@ -648,8 +674,10 @@ thunar_path_entry_changed (GtkEditable *editable)
     }
 
   /* determine new current file/folder from the paths */
-  current_folder = (folder_path != NULL) ? thunar_file_get (folder_path, NULL) : NULL;
-  current_file = (file_path != NULL) ? thunar_file_get (file_path, NULL) : NULL;
+  if (folder_path != NULL && thunar_path_entry_file_exists (folder_path))
+    current_folder = thunar_file_get (folder_path, NULL);
+  if (file_path != NULL && thunar_path_entry_file_exists (file_path))
+    current_file = thunar_file_get (file_path, NULL);
 
   /* determine the entry completion */
   completion = gtk_entry_get_completion (GTK_ENTRY (path_entry));
