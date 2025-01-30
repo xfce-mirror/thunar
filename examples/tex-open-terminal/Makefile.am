@@ -30,7 +30,7 @@ tex_open_terminal_la_LIBADD =						\
 tex_open_terminal_la_LDFLAGS =						\
 	-avoid-version							\
 	-export-dynamic							\
-	-export-symbols-regex="^thunar_extension_(shutdown|initialize|list_types)" \
+	-export-symbols-regex "^thunar_extension_(shutdown|initialize|list_types)" \
 	-module								\
 	$(PLATFORM_LDFLAGS)
 
