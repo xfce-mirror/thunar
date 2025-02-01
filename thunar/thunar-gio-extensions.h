@@ -199,6 +199,9 @@ thunar_g_file_get_metadata_setting (GFile       *file,
                                     const gchar *setting_name);
 char *
 thunar_g_file_get_content_type (GFile *file);
+void
+thunar_g_update_user_special_dir (GFile       *file,
+                                  const gchar *xdg_name);
 
 G_END_DECLS
 
