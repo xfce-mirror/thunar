@@ -1570,7 +1570,7 @@ thunar_standard_view_set_selected_files_component (ThunarComponent *component,
   else
     {
       thunar_standard_view_update_selected_files (standard_view, selected_files);
-   }
+    }
 }
 
 
