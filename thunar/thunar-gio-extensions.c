@@ -2039,3 +2039,42 @@ thunar_g_file_get_metadata_setting (GFile       *file,
 
   return attr_value;
 }
+
+
+
+/**
+ * thunar_g_update_user_special_dir:
+ * @file     : a #GFile.
+ * @xdg_name : the XDG name of the directory
+ *
+ * Sets the XDG special user directory of @xdg_name to @file path
+ * and reloads the cache.
+ */
+void
+thunar_g_update_user_special_dir (GFile       *file,
+                                  const gchar *xdg_name)
+{
+  gchar *path;
+  gchar *command;
+
+  _thunar_return_if_fail (G_IS_FILE (file));
+
+  path = g_file_get_path (file);
+  if (path == NULL)
+    return;
+
+  command = g_strdup_printf ("xdg-user-dirs-update --set %s \"%s\"",
+                             xdg_name, path);
+  if (g_spawn_command_line_sync (command, NULL, NULL, NULL, NULL))
+    {
+      /* reload the cache to reflect changes */
+      g_reload_user_special_dirs_cache ();
+    }
+  else
+    {
+      g_warning ("Failed to run xdg-user-dirs-update for %s", xdg_name);
+    }
+
+  g_free (command);
+  g_free (path);
+}
