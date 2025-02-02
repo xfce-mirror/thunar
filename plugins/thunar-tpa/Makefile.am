@@ -39,7 +39,6 @@ desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 %.desktop: %.desktop.in Makefile
 	$(AM_V_GEN)$(MSGFMT) --desktop --template $< -d $(top_srcdir)/po -o $@
 
-if MAINTAINER_MODE
 BUILT_SOURCES =								\
 	thunar-tpa-bindings.c					\
 	thunar-tpa-bindings.h
@@ -50,7 +49,6 @@ DISTCLEANFILES =							\
 
 thunar-tpa-bindings.c thunar-tpa-bindings.h: $(srcdir)/thunar-tpa-bindings.xml Makefile
 	$(AM_V_GEN) gdbus-codegen --generate-c-code thunar-tpa-bindings --c-namespace thunarTPA --interface-prefix org.xfce. $(srcdir)/thunar-tpa-bindings.xml
-endif
 
 EXTRA_DIST =								\
 	$(desktop_in_files)						\
