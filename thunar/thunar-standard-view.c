@@ -3791,8 +3791,20 @@ thunar_standard_view_restore_selection_idle (gpointer user_data)
   g_object_set (G_OBJECT (hadjustment), "lower", h, "upper", h, NULL);
   g_object_set (G_OBJECT (vadjustment), "lower", v, "upper", v, NULL);
 
-  /* request a selection update */
-  thunar_standard_view_selection_changed (standard_view);
+  /* restore the selection */
+  if (THUNAR_IS_DETAILS_VIEW (standard_view))
+    {
+      /* keep the currently selected files selected after the change.
+       * this may be necessary on row changes etc. */
+      GList *selected_files = thunar_g_list_copy_deep (thunar_component_get_selected_files (THUNAR_COMPONENT (standard_view)));
+      thunar_component_set_selected_files (THUNAR_COMPONENT (standard_view), selected_files);
+      thunar_g_list_free_full (selected_files);
+    }
+  else
+    {
+      /* request a selection update */
+      thunar_standard_view_selection_changed (standard_view);
+    }
   standard_view->priv->restore_selection_idle_id = 0;
 
   /* unfreeze the scroll position */
