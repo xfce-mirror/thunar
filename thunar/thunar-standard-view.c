@@ -369,7 +369,8 @@ thunar_standard_view_cell_layout_data_func (GtkCellLayout   *layout,
 static void
 thunar_standard_view_set_model (ThunarStandardView *standard_view);
 static void
-thunar_standard_view_update_selected_files (ThunarStandardView *standard_view);
+thunar_standard_view_update_selected_files (ThunarStandardView *standard_view,
+                                            GList              *files_to_select);
 
 struct _ThunarStandardViewPrivate
 {
@@ -1486,7 +1487,8 @@ thunar_standard_view_get_selected_files_view (ThunarView *view)
 
 
 void
-thunar_standard_view_update_selected_files (ThunarStandardView *standard_view)
+thunar_standard_view_update_selected_files (ThunarStandardView *standard_view,
+                                            GList              *files_to_select)
 {
   GtkTreePath *first_path = NULL;
   GList       *paths;
@@ -1496,11 +1498,8 @@ thunar_standard_view_update_selected_files (ThunarStandardView *standard_view)
   if (G_UNLIKELY (standard_view->model == NULL))
     return;
 
-  /* unselect all previously selected files */
-  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unselect_all) (standard_view);
-
   /* determine the tree paths for the given files */
-  paths = thunar_standard_view_model_get_paths_for_files (standard_view->model, standard_view->priv->files_to_select);
+  paths = thunar_standard_view_model_get_paths_for_files (standard_view->model, files_to_select);
   if (G_LIKELY (paths != NULL))
     {
       /* determine the first path */
@@ -1540,9 +1539,6 @@ thunar_standard_view_update_selected_files (ThunarStandardView *standard_view)
       /* release the tree paths */
       g_list_free_full (paths, (GDestroyNotify) gtk_tree_path_free);
     }
-
-  thunar_g_list_free_full (standard_view->priv->files_to_select);
-  standard_view->priv->files_to_select = NULL;
 }
 
 
@@ -1564,13 +1560,17 @@ thunar_standard_view_set_selected_files_component (ThunarComponent *component,
       standard_view->priv->selected_files = NULL;
     }
 
-  /* update the files which are to select */
-  thunar_g_list_free_full (standard_view->priv->files_to_select);
-  standard_view->priv->files_to_select = thunar_g_list_copy_deep (selected_files);
-
   /* The selection will either be updated directly, or after loading the folder got finished */
-  if (!thunar_view_get_loading (THUNAR_VIEW (standard_view)))
-    thunar_standard_view_update_selected_files (standard_view);
+  if (thunar_view_get_loading (THUNAR_VIEW (standard_view)))
+    {
+      /* update the files which are to select */
+      thunar_g_list_free_full (standard_view->priv->files_to_select);
+      standard_view->priv->files_to_select = thunar_g_list_copy_deep (selected_files);
+    }
+  else
+    {
+      thunar_standard_view_update_selected_files (standard_view, selected_files);
+    }
 }
 
 
@@ -1828,7 +1828,11 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
 
   /* when  loading is finished, update the selection if required */
   if (!loading && standard_view->priv->files_to_select != NULL)
-    thunar_standard_view_update_selected_files (standard_view);
+    {
+      thunar_standard_view_update_selected_files (standard_view, standard_view->priv->files_to_select);
+      thunar_g_list_free_full (standard_view->priv->files_to_select);
+      standard_view->priv->files_to_select = NULL;
+    }
 
   /* check if we're done loading and have a scheduled scroll_to_file
    * scrolling after loading circumvents the scroll caused by gtk_tree_view_set_cell */
@@ -3791,8 +3795,9 @@ thunar_standard_view_restore_selection_idle (gpointer user_data)
   g_object_set (G_OBJECT (hadjustment), "lower", h, "upper", h, NULL);
   g_object_set (G_OBJECT (vadjustment), "lower", v, "upper", v, NULL);
 
-  /* request a selection update */
-  thunar_standard_view_selection_changed (standard_view);
+  /* restore the selected files */
+  thunar_standard_view_update_selected_files (standard_view, standard_view->priv->selected_files);
+
   standard_view->priv->restore_selection_idle_id = 0;
 
   /* unfreeze the scroll position */
