@@ -177,7 +177,7 @@ struct _ThunarPropertiesDialog
   GtkWidget *link_entry;
   GtkWidget *link_entry_text;
   GtkWidget *location_entry;
-  GtkWidget *origin_label;
+  GtkWidget *origin_entry;
   GtkWidget *created_label;
   GtkWidget *deleted_label;
   GtkWidget *modified_label;
@@ -500,15 +500,15 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
-  dialog->origin_label = g_object_new (GTK_TYPE_ENTRY, NULL);
-  gtk_editable_set_editable (GTK_EDITABLE (dialog->origin_label), FALSE);
-  gtk_entry_set_has_frame (GTK_ENTRY (dialog->origin_label), FALSE);
-  g_object_bind_property (G_OBJECT (dialog->origin_label), "visible",
+  dialog->origin_entry = g_object_new (GTK_TYPE_ENTRY, NULL);
+  gtk_editable_set_editable (GTK_EDITABLE (dialog->origin_entry), FALSE);
+  gtk_entry_set_has_frame (GTK_ENTRY (dialog->origin_entry), FALSE);
+  g_object_bind_property (G_OBJECT (dialog->origin_entry), "visible",
                           G_OBJECT (label), "visible",
                           G_BINDING_SYNC_CREATE);
-  gtk_widget_set_hexpand (dialog->origin_label, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), dialog->origin_label, 1, row, 1, 1);
-  gtk_widget_show (dialog->origin_label);
+  gtk_widget_set_hexpand (dialog->origin_entry, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->origin_entry, 1, row, 1, 1);
+  gtk_widget_show (dialog->origin_entry);
 
   ++row;
 
@@ -1431,13 +1431,13 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   if (G_UNLIKELY (path != NULL))
     {
       display_name = g_filename_display_name (path);
-      gtk_entry_set_text (GTK_ENTRY (dialog->origin_label), display_name);
-      gtk_widget_show (dialog->origin_label);
+      gtk_entry_set_text (GTK_ENTRY (dialog->origin_entry), display_name);
+      gtk_widget_show (dialog->origin_entry);
       g_free (display_name);
     }
   else
     {
-      gtk_widget_hide (dialog->origin_label);
+      gtk_widget_hide (dialog->origin_entry);
     }
 
   /* update the file or folder location (parent) */
@@ -1621,7 +1621,7 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
   gtk_widget_hide (dialog->accessed_label);
   gtk_widget_hide (dialog->capacity_vbox);
   gtk_widget_hide (dialog->freespace_vbox);
-  gtk_widget_hide (dialog->origin_label);
+  gtk_widget_hide (dialog->origin_entry);
   gtk_widget_hide (dialog->openwith_chooser);
   gtk_widget_hide (dialog->link_entry);
 
