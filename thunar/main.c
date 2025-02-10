@@ -80,7 +80,7 @@ main (int argc, char **argv)
   application = thunar_application_get ();
 
   /* use the Thunar icon as default for new windows */
-  gtk_window_set_default_icon_name ("Thunar");
+  gtk_window_set_default_icon_name ("org.xfce.thunar");
 
   /* do further processing inside gapplication */
   g_application_run (G_APPLICATION (application), argc, argv);
