@@ -2548,16 +2548,16 @@ thunar_file_get_content_type_desc (ThunarFile *file)
   if (G_UNLIKELY (g_content_type_equals (content_type, "inode/symlink")))
     return g_strdup (_("broken link"));
 
-  /* append " (link to <target>)" to description if link is not broken */
+  /* prepend "Link to " to description if link is not broken */
   if (G_UNLIKELY (thunar_file_is_symlink (file)))
     {
       type_text = g_content_type_get_description (content_type);
-      description = g_strdup_printf (_("%s (link to %s)"), type_text, thunar_file_get_symlink_target (file));
+      description = g_strdup_printf (_("Link to %s"), type_text);
       g_free (type_text);
       return description;
     }
 
-  /* append " (mount point)" to description if folder is a mount point */
+  /* append " (mount point)" to description if file is a mount point */
   if (G_UNLIKELY (thunar_file_is_mountpoint (file)))
     {
       type_text = g_content_type_get_description (content_type);

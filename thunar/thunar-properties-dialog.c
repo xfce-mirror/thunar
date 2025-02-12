@@ -172,7 +172,7 @@ struct _ThunarPropertiesDialog
   GtkWidget *icon_image;
   GtkWidget *names_label;
   GtkWidget *single_box;
-  GtkWidget *kind_entry;
+  GtkWidget *kind_label;
   GtkWidget *openwith_chooser;
   GtkWidget *link_entry;
   GtkWidget *origin_entry;
@@ -446,11 +446,11 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
-  dialog->kind_entry = g_object_new (GTK_TYPE_ENTRY, NULL);
-  gtk_editable_set_editable (GTK_EDITABLE (dialog->kind_entry), FALSE);
-  gtk_entry_set_has_frame (GTK_ENTRY (dialog->kind_entry), FALSE);
-  gtk_grid_attach (GTK_GRID (grid), dialog->kind_entry, 1, row, 1, 1);
-  gtk_widget_show (dialog->kind_entry);
+  dialog->kind_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->kind_label), TRUE);
+  gtk_label_set_ellipsize (GTK_LABEL (dialog->kind_label), PANGO_ELLIPSIZE_END);
+  gtk_grid_attach (GTK_GRID (grid), dialog->kind_label, 1, row, 1, 1);
+  gtk_widget_show (dialog->kind_label);
 
   ++row;
 
@@ -1397,13 +1397,13 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   if (content_type != NULL)
     {
       content_type_desc = thunar_file_get_content_type_desc (file);
-      gtk_widget_set_tooltip_text (dialog->kind_entry, content_type);
-      gtk_entry_set_text (GTK_ENTRY (dialog->kind_entry), content_type_desc);
+      gtk_widget_set_tooltip_text (dialog->kind_label, content_type);
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), content_type_desc);
       g_free (content_type_desc);
     }
   else
     {
-      gtk_entry_set_text (GTK_ENTRY (dialog->kind_entry), _("unknown"));
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), _("unknown"));
     }
 
   /* update the application chooser (shown only for non-executable regular files!) */
@@ -1707,13 +1707,13 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
       && !g_content_type_equals (content_type, "inode/symlink"))
     {
       str = g_content_type_get_description (content_type);
-      gtk_widget_set_tooltip_text (dialog->kind_entry, content_type);
-      gtk_entry_set_text (GTK_ENTRY (dialog->kind_entry), str);
+      gtk_widget_set_tooltip_text (dialog->kind_label, content_type);
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), str);
       g_free (str);
     }
   else
     {
-      gtk_entry_set_text (GTK_ENTRY (dialog->kind_entry), _("mixed"));
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), _("mixed"));
     }
 
   /* update the file or folder location (parent) */
