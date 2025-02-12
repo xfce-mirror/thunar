@@ -113,8 +113,8 @@ typedef enum
 
 
 #define THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK "emblem-symbolic-link"
-#define THUNAR_FILE_EMBLEM_NAME_CANT_READ "emblem-noread"
-#define THUNAR_FILE_EMBLEM_NAME_CANT_WRITE "emblem-nowrite"
+#define THUNAR_FILE_EMBLEM_NAME_CANT_READ "emblem-unreadable"
+#define THUNAR_FILE_EMBLEM_NAME_CANT_WRITE "emblem-readonly"
 #define THUNAR_FILE_EMBLEM_NAME_DESKTOP "emblem-desktop"
 
 #define DEFAULT_CONTENT_TYPE "application/octet-stream"
