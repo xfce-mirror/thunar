@@ -2524,8 +2524,9 @@ thunar_file_set_content_type (ThunarFile  *file,
 
 
 /**
- * thunar_file_get_content_type_description:
- * @file : a #ThunarFile.
+ * thunar_file_get_content_type_desc:
+ * @file            : a #ThunarFile.
+ * @add_link_target : if the target path of a link should be added.
  *
  * Returns the content type description of @file.
  * Free the returned string with g_free().
@@ -2533,7 +2534,8 @@ thunar_file_set_content_type (ThunarFile  *file,
  * Return value: (non-nullable) (transfer full): content type description of @file.
  **/
 gchar *
-thunar_file_get_content_type_desc (ThunarFile *file)
+thunar_file_get_content_type_desc (ThunarFile *file,
+                                   gboolean    add_link_target)
 {
   const gchar *content_type;
   gchar       *description;
@@ -2552,12 +2554,15 @@ thunar_file_get_content_type_desc (ThunarFile *file)
   if (G_UNLIKELY (thunar_file_is_symlink (file)))
     {
       type_text = g_content_type_get_description (content_type);
-      description = g_strdup_printf (_("%s (link to %s)"), type_text, thunar_file_get_symlink_target (file));
+      if (add_link_target)
+        description = g_strdup_printf (_("%s (link to %s)"), type_text, thunar_file_get_symlink_target (file));
+      else
+        description = g_strdup_printf (_("%s (link)"), type_text);
       g_free (type_text);
       return description;
     }
 
-  /* append " (mount point)" to description if folder is a mount point */
+  /* append " (mount point)" to description if file is a mount point */
   if (G_UNLIKELY (thunar_file_is_mountpoint (file)))
     {
       type_text = g_content_type_get_description (content_type);
@@ -5285,12 +5290,9 @@ thunar_cmp_files_by_type (const ThunarFile *a,
   gchar *description_b = NULL;
   gint   result;
 
-  /* we alter the description of symlinks here because they are
-   * displayed as "... (link)" in the detailed list view as well */
-
   /* fetch the content type description for @file(s) a & b */
-  description_a = thunar_file_get_content_type_desc (THUNAR_FILE (a));
-  description_b = thunar_file_get_content_type_desc (THUNAR_FILE (b));
+  description_a = thunar_file_get_content_type_desc (THUNAR_FILE (a), TRUE);
+  description_b = thunar_file_get_content_type_desc (THUNAR_FILE (b), TRUE);
 
   /* avoid calling strcasecmp with NULL parameters */
   if (description_a == NULL || description_b == NULL)
