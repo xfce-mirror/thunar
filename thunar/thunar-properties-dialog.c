@@ -175,9 +175,8 @@ struct _ThunarPropertiesDialog
   GtkWidget *kind_entry;
   GtkWidget *openwith_chooser;
   GtkWidget *link_entry;
-  GtkWidget *link_entry_text;
-  GtkWidget *location_entry;
   GtkWidget *origin_entry;
+  GtkWidget *location_entry;
   GtkWidget *created_label;
   GtkWidget *deleted_label;
   GtkWidget *modified_label;
@@ -473,7 +472,6 @@ thunar_properties_dialog_constructed (GObject *object)
   ++row;
 
   label = gtk_label_new (_("Link Target:"));
-  dialog->link_entry_text = label;
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
@@ -1608,8 +1606,6 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
   ThunarFile  *parent_file = NULL;
   ThunarFile  *tmp_parent;
   gboolean     has_trashed_files = FALSE;
-  GString     *str_of_resolved_paths = g_string_new (NULL);
-  const gchar *resolved_path;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) > 1);
@@ -1635,23 +1631,6 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
     {
       _thunar_assert (THUNAR_IS_FILE (lp->data));
       file = THUNAR_FILE (lp->data);
-
-      resolved_path = thunar_file_is_symlink (file) ? thunar_file_get_symlink_target (file) : NULL;
-      /* check if the file is a symlink, and get its resolved path */
-      if (resolved_path != NULL)
-        {
-          /* If there is even a single symlink then make 'Link Targets' visible and rename it to 'Link Targets' */
-          gtk_widget_show (dialog->link_entry);
-          gtk_label_set_text (GTK_LABEL (dialog->link_entry_text), _("Link Targets:"));
-
-          /* Add , only if there was a resolved path before*/
-          if (str_of_resolved_paths->len != 0)
-            g_string_append (str_of_resolved_paths, ", ");
-
-          g_string_append (str_of_resolved_paths, thunar_file_get_basename (file));
-          g_string_append (str_of_resolved_paths, ": ");
-          g_string_append (str_of_resolved_paths, resolved_path);
-        }
 
       /* append the name */
       if (!first_file)
@@ -1736,19 +1715,6 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
     {
       gtk_entry_set_text (GTK_ENTRY (dialog->kind_entry), _("mixed"));
     }
-
-  /* update the link target */
-  if (G_LIKELY (str_of_resolved_paths->len > 0))
-    {
-      gtk_entry_set_text (GTK_ENTRY (dialog->link_entry), str_of_resolved_paths->str);
-      gtk_widget_set_tooltip_text (dialog->link_entry, str_of_resolved_paths->str);
-      gtk_widget_show (dialog->link_entry);
-    }
-  else
-    {
-      gtk_widget_hide (dialog->link_entry);
-    }
-  g_string_free (str_of_resolved_paths, TRUE);
 
   /* update the file or folder location (parent) */
   if (G_UNLIKELY (parent_file != NULL))
