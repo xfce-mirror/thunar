@@ -1433,6 +1433,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     {
       display_name = g_filename_display_name (path);
       gtk_entry_set_text (GTK_ENTRY (dialog->origin_entry), display_name);
+      gtk_widget_set_tooltip_text (dialog->origin_entry, display_name);
       gtk_widget_show (dialog->origin_entry);
       g_free (display_name);
     }
