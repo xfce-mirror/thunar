@@ -178,9 +178,9 @@ struct _ThunarPropertiesDialog
   GtkWidget *origin_entry;
   GtkWidget *location_entry;
   GtkWidget *created_label;
-  GtkWidget *deleted_label;
   GtkWidget *modified_label;
   GtkWidget *accessed_label;
+  GtkWidget *deleted_label;
   GtkWidget *capacity_vbox;
   GtkWidget *capacity_label;
   GtkWidget *freespace_vbox;
@@ -567,25 +567,8 @@ thunar_properties_dialog_constructed (GObject *object)
 
 
   /*
-     Third box (deleted, modified, accessed)
+     Third box (created, modified, accessed, deleted)
    */
-  label = gtk_label_new (_("Deleted:"));
-  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
-  gtk_widget_show (label);
-
-  dialog->deleted_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
-  gtk_label_set_selectable (GTK_LABEL (dialog->deleted_label), TRUE);
-  g_object_bind_property (G_OBJECT (dialog->deleted_label), "visible",
-                          G_OBJECT (label), "visible",
-                          G_BINDING_SYNC_CREATE);
-  gtk_widget_set_hexpand (dialog->deleted_label, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), dialog->deleted_label, 1, row, 1, 1);
-  gtk_widget_show (dialog->deleted_label);
-
-  ++row;
-
   label = gtk_label_new (_("Created:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
@@ -634,6 +617,23 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_widget_set_hexpand (dialog->accessed_label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), dialog->accessed_label, 1, row, 1, 1);
   gtk_widget_show (dialog->accessed_label);
+
+  ++row;
+
+  label = gtk_label_new (_("Deleted:"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
+  gtk_widget_show (label);
+
+  dialog->deleted_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->deleted_label), TRUE);
+  g_object_bind_property (G_OBJECT (dialog->deleted_label), "visible",
+                          G_OBJECT (label), "visible",
+                          G_BINDING_SYNC_CREATE);
+  gtk_widget_set_hexpand (dialog->deleted_label, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->deleted_label, 1, row, 1, 1);
+  gtk_widget_show (dialog->deleted_label);
 
   ++row;
 
