@@ -1341,6 +1341,9 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   g_object_get (G_OBJECT (dialog->preferences), "misc-date-style", &date_style, NULL);
   g_object_get (G_OBJECT (dialog->preferences), "misc-date-custom-style", &date_custom_style, NULL);
 
+  /* update the properties dialog icon */
+  gtk_window_set_icon_name (GTK_WINDOW (dialog), thunar_file_get_icon_name (file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_theme));
+
   /* update the properties dialog title */
   if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
     str = g_strdup_printf (_("%s (%s) - Properties"), thunar_file_get_display_name (file), thunar_file_get_basename (file));
