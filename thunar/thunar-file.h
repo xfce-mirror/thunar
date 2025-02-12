@@ -232,7 +232,8 @@ void
 thunar_file_set_content_type (ThunarFile  *file,
                               const gchar *content_type);
 gchar *
-thunar_file_get_content_type_desc (ThunarFile *file);
+thunar_file_get_content_type_desc (ThunarFile *file,
+                                   gboolean    add_link_target);
 const gchar *
 thunar_file_get_symlink_target (const ThunarFile *file);
 const gchar *
