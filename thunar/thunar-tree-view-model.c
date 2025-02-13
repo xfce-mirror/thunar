@@ -1717,6 +1717,9 @@ _thunar_tree_view_model_cancel_search_job (ThunarTreeViewModel *model)
       g_object_unref (model->search_job);
       model->search_job = NULL;
     }
+
+  thunar_g_list_free_full (model->search_files);
+  model->search_files = NULL;
 }
 
 
