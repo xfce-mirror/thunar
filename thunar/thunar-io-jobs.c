@@ -1605,7 +1605,7 @@ _thunar_search_folder (ThunarStandardViewModel           *model,
 
   if (exo_job_is_cancelled (EXO_JOB (job)))
     {
-      g_list_free (files_found);
+      thunar_g_list_free_full (files_found);
       return;
     }
 
