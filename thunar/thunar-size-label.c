@@ -389,8 +389,9 @@ thunar_size_label_files_changed (ThunarSizeLabel *size_label)
       if (size != (guint64) -1)
         size_string = g_format_size_full (size, size_label->file_size_binary ? G_FORMAT_SIZE_LONG_FORMAT | G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_LONG_FORMAT);
       else
-        size_string = g_strdup_printf ("%s", _("Unknown"));
+        size_string = g_strdup (_("unknown"));
       gtk_label_set_text (GTK_LABEL (size_label->label), size_string);
+      gtk_widget_set_tooltip_text (size_label->label, NULL);
       g_free (size_string);
     }
 }
@@ -406,8 +407,9 @@ thunar_size_label_error (ExoJob          *job,
   _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
   _thunar_return_if_fail (size_label->job == THUNAR_DEEP_COUNT_JOB (job));
 
-  /* setup the error text as label */
-  gtk_label_set_text (GTK_LABEL (size_label->label), error->message);
+  /* setup the error text and tooltip */
+  gtk_label_set_text (GTK_LABEL (size_label->label), _("unreadable"));
+  gtk_widget_set_tooltip_text (size_label->label, error->message);
 }
 
 
@@ -470,7 +472,7 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
           if (total_size_on_disk != (guint64) -1)
             size_string = g_format_size_full (total_size_on_disk, G_FORMAT_SIZE_LONG_FORMAT | (size_label->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT));
           else
-            size_string = g_strdup_printf ("%s", _("Unknown"));
+            size_string = g_strdup (_("unknown"));
           text = g_strdup_printf ("%s", size_string);
 
           gtk_label_set_text (GTK_LABEL (size_label->label), text);
@@ -500,8 +502,8 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
     }
   else
     {
-      /* nothing was readable, so permission was denied */
-      gtk_label_set_text (GTK_LABEL (size_label->label), _("Permission denied"));
+      /* nothing was readable */
+      gtk_label_set_text (GTK_LABEL (size_label->label), _("unreadable")); // TODO is this ever run?
     }
 }
 
