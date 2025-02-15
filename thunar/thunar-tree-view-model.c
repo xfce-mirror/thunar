@@ -2626,6 +2626,9 @@ _thunar_tree_view_model_folder_error (Node         *node,
       else
         thunar_tree_view_model_dir_remove_file (node->parent, node->file);
     }
+
+  /* forward the error signal */
+  g_signal_emit_by_name (G_OBJECT (node->model), "error", error);
 }
 
 
