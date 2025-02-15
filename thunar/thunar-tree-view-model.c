@@ -3191,7 +3191,7 @@ thunar_tree_view_model_update_search_files (ThunarTreeViewModel *model)
     }
 
   if (model->search_files != NULL)
-    g_list_free (model->search_files);
+    thunar_g_list_free_full (model->search_files);
   model->search_files = NULL;
   g_mutex_unlock (&model->mutex_add_search_files);
 
