@@ -2920,7 +2920,7 @@ thunar_application_get_thumbnail_cache (ThunarApplication *application)
 static gboolean
 thunar_application_malloc_trim_idle (gpointer application_ptr)
 {
-   _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application_ptr), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application_ptr), FALSE);
 
   ThunarApplication *application = THUNAR_APPLICATION (application_ptr);
 
@@ -2940,7 +2940,7 @@ thunar_application_malloc_trim_idle (gpointer application_ptr)
 void
 thunar_application_malloc_trim_on_idle (ThunarApplication *application)
 {
-    _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   if (application->malloc_trim_idle_id == 0)
     {
