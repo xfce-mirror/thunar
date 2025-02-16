@@ -205,6 +205,9 @@ thunar_application_get_thumbnail_cache (ThunarApplication *application);
 gboolean
 thunar_application_accel_map_init (ThunarApplication *application);
 
+void
+thunar_application_malloc_trim_on_idle (ThunarApplication *application);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_APPLICATION_H__ */
