@@ -1094,7 +1094,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
           g_value_take_string (value, g_strdup (device_type));
           break;
         }
-      g_value_take_string (value, thunar_file_get_content_type_desc (file));
+      g_value_take_string (value, thunar_file_get_content_type_desc (file, TRUE));
       break;
 
     case THUNAR_COLUMN_FILE:

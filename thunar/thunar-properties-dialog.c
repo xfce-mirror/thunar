@@ -172,16 +172,15 @@ struct _ThunarPropertiesDialog
   GtkWidget *icon_image;
   GtkWidget *names_label;
   GtkWidget *single_box;
-  GtkWidget *kind_entry;
+  GtkWidget *kind_label;
   GtkWidget *openwith_chooser;
   GtkWidget *link_entry;
-  GtkWidget *link_entry_text;
-  GtkWidget *location_entry;
   GtkWidget *origin_entry;
+  GtkWidget *location_entry;
   GtkWidget *created_label;
-  GtkWidget *deleted_label;
   GtkWidget *modified_label;
   GtkWidget *accessed_label;
+  GtkWidget *deleted_label;
   GtkWidget *capacity_vbox;
   GtkWidget *capacity_label;
   GtkWidget *freespace_vbox;
@@ -447,11 +446,11 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
-  dialog->kind_entry = g_object_new (GTK_TYPE_ENTRY, NULL);
-  gtk_editable_set_editable (GTK_EDITABLE (dialog->kind_entry), FALSE);
-  gtk_entry_set_has_frame (GTK_ENTRY (dialog->kind_entry), FALSE);
-  gtk_grid_attach (GTK_GRID (grid), dialog->kind_entry, 1, row, 1, 1);
-  gtk_widget_show (dialog->kind_entry);
+  dialog->kind_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->kind_label), TRUE);
+  gtk_label_set_ellipsize (GTK_LABEL (dialog->kind_label), PANGO_ELLIPSIZE_END);
+  gtk_grid_attach (GTK_GRID (grid), dialog->kind_label, 1, row, 1, 1);
+  gtk_widget_show (dialog->kind_label);
 
   ++row;
 
@@ -473,7 +472,6 @@ thunar_properties_dialog_constructed (GObject *object)
   ++row;
 
   label = gtk_label_new (_("Link Target:"));
-  dialog->link_entry_text = label;
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
@@ -569,25 +567,8 @@ thunar_properties_dialog_constructed (GObject *object)
 
 
   /*
-     Third box (deleted, modified, accessed)
+     Third box (created, modified, accessed, deleted)
    */
-  label = gtk_label_new (_("Deleted:"));
-  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
-  gtk_widget_show (label);
-
-  dialog->deleted_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
-  gtk_label_set_selectable (GTK_LABEL (dialog->deleted_label), TRUE);
-  g_object_bind_property (G_OBJECT (dialog->deleted_label), "visible",
-                          G_OBJECT (label), "visible",
-                          G_BINDING_SYNC_CREATE);
-  gtk_widget_set_hexpand (dialog->deleted_label, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), dialog->deleted_label, 1, row, 1, 1);
-  gtk_widget_show (dialog->deleted_label);
-
-  ++row;
-
   label = gtk_label_new (_("Created:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
@@ -636,6 +617,23 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_widget_set_hexpand (dialog->accessed_label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), dialog->accessed_label, 1, row, 1, 1);
   gtk_widget_show (dialog->accessed_label);
+
+  ++row;
+
+  label = gtk_label_new (_("Deleted:"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
+  gtk_widget_show (label);
+
+  dialog->deleted_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->deleted_label), TRUE);
+  g_object_bind_property (G_OBJECT (dialog->deleted_label), "visible",
+                          G_OBJECT (label), "visible",
+                          G_BINDING_SYNC_CREATE);
+  gtk_widget_set_hexpand (dialog->deleted_label, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->deleted_label, 1, row, 1, 1);
+  gtk_widget_show (dialog->deleted_label);
 
   ++row;
 
@@ -1398,14 +1396,14 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   content_type = thunar_file_get_content_type (file);
   if (content_type != NULL)
     {
-      content_type_desc = thunar_file_get_content_type_desc (file);
-      gtk_widget_set_tooltip_text (dialog->kind_entry, content_type);
-      gtk_entry_set_text (GTK_ENTRY (dialog->kind_entry), content_type_desc);
+      content_type_desc = thunar_file_get_content_type_desc (file, FALSE);
+      gtk_widget_set_tooltip_text (dialog->kind_label, content_type);
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), content_type_desc);
       g_free (content_type_desc);
     }
   else
     {
-      gtk_entry_set_text (GTK_ENTRY (dialog->kind_entry), _("unknown"));
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), _("unknown"));
     }
 
   /* update the application chooser (shown only for non-executable regular files!) */
@@ -1435,6 +1433,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     {
       display_name = g_filename_display_name (path);
       gtk_entry_set_text (GTK_ENTRY (dialog->origin_entry), display_name);
+      gtk_widget_set_tooltip_text (dialog->origin_entry, display_name);
       gtk_widget_show (dialog->origin_entry);
       g_free (display_name);
     }
@@ -1608,8 +1607,6 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
   ThunarFile  *parent_file = NULL;
   ThunarFile  *tmp_parent;
   gboolean     has_trashed_files = FALSE;
-  GString     *str_of_resolved_paths = g_string_new (NULL);
-  const gchar *resolved_path;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) > 1);
@@ -1635,23 +1632,6 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
     {
       _thunar_assert (THUNAR_IS_FILE (lp->data));
       file = THUNAR_FILE (lp->data);
-
-      resolved_path = thunar_file_is_symlink (file) ? thunar_file_get_symlink_target (file) : NULL;
-      /* check if the file is a symlink, and get its resolved path */
-      if (resolved_path != NULL)
-        {
-          /* If there is even a single symlink then make 'Link Targets' visible and rename it to 'Link Targets' */
-          gtk_widget_show (dialog->link_entry);
-          gtk_label_set_text (GTK_LABEL (dialog->link_entry_text), _("Link Targets:"));
-
-          /* Add , only if there was a resolved path before*/
-          if (str_of_resolved_paths->len != 0)
-            g_string_append (str_of_resolved_paths, ", ");
-
-          g_string_append (str_of_resolved_paths, thunar_file_get_basename (file));
-          g_string_append (str_of_resolved_paths, ": ");
-          g_string_append (str_of_resolved_paths, resolved_path);
-        }
 
       /* append the name */
       if (!first_file)
@@ -1728,27 +1708,14 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
       && !g_content_type_equals (content_type, "inode/symlink"))
     {
       str = g_content_type_get_description (content_type);
-      gtk_widget_set_tooltip_text (dialog->kind_entry, content_type);
-      gtk_entry_set_text (GTK_ENTRY (dialog->kind_entry), str);
+      gtk_widget_set_tooltip_text (dialog->kind_label, content_type);
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), str);
       g_free (str);
     }
   else
     {
-      gtk_entry_set_text (GTK_ENTRY (dialog->kind_entry), _("mixed"));
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), _("mixed"));
     }
-
-  /* update the link target */
-  if (G_LIKELY (str_of_resolved_paths->len > 0))
-    {
-      gtk_entry_set_text (GTK_ENTRY (dialog->link_entry), str_of_resolved_paths->str);
-      gtk_widget_set_tooltip_text (dialog->link_entry, str_of_resolved_paths->str);
-      gtk_widget_show (dialog->link_entry);
-    }
-  else
-    {
-      gtk_widget_hide (dialog->link_entry);
-    }
-  g_string_free (str_of_resolved_paths, TRUE);
 
   /* update the file or folder location (parent) */
   if (G_UNLIKELY (parent_file != NULL))
