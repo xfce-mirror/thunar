@@ -2920,9 +2920,11 @@ thunar_application_get_thumbnail_cache (ThunarApplication *application)
 static gboolean
 thunar_application_malloc_trim_idle (gpointer application_ptr)
 {
+  ThunarApplication *application;
+
   _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application_ptr), FALSE);
 
-  ThunarApplication *application = THUNAR_APPLICATION (application_ptr);
+  application = THUNAR_APPLICATION (application_ptr);
 
 #ifdef __GLIBC__
   /* Workaround to make the kernel reclaim memory which is not used by Thunar anymore. */

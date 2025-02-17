@@ -3670,10 +3670,10 @@ thunar_window_reset_view_type_idle_destroyed (gpointer data)
 gboolean
 thunar_window_action_cancel_search (ThunarWindow *window)
 {
+  ThunarApplication *application;
+
   _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BAR (window->location_bar), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
-
-  ThunarApplication *application;
 
   if (window->is_searching == FALSE)
     return FALSE;
