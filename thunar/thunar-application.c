@@ -253,8 +253,6 @@ struct _ThunarApplication
 
   guint dbus_owner_id_xfce;
   guint dbus_owner_id_fdo;
-
-  guint malloc_trim_idle_id;
 };
 
 
@@ -325,7 +323,6 @@ thunar_application_init (ThunarApplication *application)
   application->process_file_action = THUNAR_APPLICATION_SELECT_FILES;
   application->progress_dialog = NULL;
   application->preferences = NULL;
-  application->malloc_trim_idle_id = 0;
 
   g_application_set_flags (G_APPLICATION (application), G_APPLICATION_HANDLES_COMMAND_LINE);
   g_application_add_main_option_entries (G_APPLICATION (application), option_entries);
@@ -2920,11 +2917,6 @@ thunar_application_get_thumbnail_cache (ThunarApplication *application)
 static gboolean
 thunar_application_malloc_trim_idle (gpointer application_ptr)
 {
-  ThunarApplication *application;
-
-  _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application_ptr), FALSE);
-
-  application = THUNAR_APPLICATION (application_ptr);
 
 #ifdef __GLIBC__
   /* Workaround to make the kernel reclaim memory which is not used by Thunar anymore. */
@@ -2933,7 +2925,6 @@ thunar_application_malloc_trim_idle (gpointer application_ptr)
   malloc_trim (0);
 #endif
 
-  application->malloc_trim_idle_id = 0;
   return FALSE;
 }
 
@@ -2944,8 +2935,5 @@ thunar_application_malloc_trim_on_idle (ThunarApplication *application)
 {
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
-  if (application->malloc_trim_idle_id == 0)
-    {
-      application->malloc_trim_idle_id = g_idle_add (thunar_application_malloc_trim_idle, application);
-    }
+  g_idle_add (thunar_application_malloc_trim_idle, application);
 }
