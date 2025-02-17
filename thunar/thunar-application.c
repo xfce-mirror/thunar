@@ -2925,7 +2925,7 @@ thunar_application_malloc_trim_idle (gpointer application_ptr)
   ThunarApplication *application = THUNAR_APPLICATION (application_ptr);
 
 #ifdef __GLIBC__
-  /* Workaround to make the kernel reclaim memory which is not used by us anymore. */
+  /* Workaround to make the kernel reclaim memory which is not used by Thunar anymore. */
   /* When using glibc, after releasing bigger memory chunks it seems to be required to call that 'garbage collector'. */
   /* More info here: https://gitlab.xfce.org/xfce/thunar/-/issues/1552#note_101990 for more information */
   malloc_trim (0);
