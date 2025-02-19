@@ -1238,6 +1238,9 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
+  /* ensure that the path is selected on double-click events */
+  thunar_details_view_select_path (THUNAR_STANDARD_VIEW (details_view), path);
+
   window = gtk_widget_get_toplevel (GTK_WIDGET (details_view));
   action_mgr = thunar_window_get_action_manager (THUNAR_WINDOW (window));
   thunar_action_manager_activate_selected_files (action_mgr, THUNAR_ACTION_MANAGER_CHANGE_DIRECTORY, NULL);
