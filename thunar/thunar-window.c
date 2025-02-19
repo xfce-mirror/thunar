@@ -3670,6 +3670,8 @@ thunar_window_reset_view_type_idle_destroyed (gpointer data)
 gboolean
 thunar_window_action_cancel_search (ThunarWindow *window)
 {
+  ThunarApplication *application;
+
   _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BAR (window->location_bar), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
@@ -3707,6 +3709,11 @@ thunar_window_action_cancel_search (ThunarWindow *window)
 
   /* bring back the original location bar style (relevant if the bar is hidden) */
   thunar_window_update_location_bar_visible (window);
+
+  /* tidy up memory after a search */
+  application = thunar_application_get ();
+  thunar_application_malloc_trim_on_idle (application);
+  g_object_unref (application);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;

@@ -123,7 +123,7 @@ AC_SYS_LARGEFILE()
 dnl **********************************
 dnl *** Check for standard headers ***
 dnl **********************************
-AC_CHECK_HEADERS([ctype.h errno.h fcntl.h grp.h limits.h locale.h memory.h \
+AC_CHECK_HEADERS([ctype.h errno.h fcntl.h grp.h limits.h locale.h malloc.h memory.h \
                   paths.h pwd.h sched.h signal.h stdarg.h stdlib.h string.h \
                   sys/mman.h sys/param.h sys/stat.h sys/time.h sys/types.h \
                   sys/uio.h sys/wait.h time.h])

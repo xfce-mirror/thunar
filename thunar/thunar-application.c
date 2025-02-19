@@ -27,6 +27,9 @@
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif
+#ifdef HAVE_MALLOC_H
+#include <malloc.h>
+#endif
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
@@ -2907,4 +2910,29 @@ thunar_application_get_thumbnail_cache (ThunarApplication *application)
     application->thumbnail_cache = thunar_thumbnail_cache_new ();
 
   return g_object_ref (application->thumbnail_cache);
+}
+
+
+
+static gboolean
+thunar_application_malloc_trim_idle (gpointer application_ptr)
+{
+#ifdef __GLIBC__
+  /* Workaround to make the kernel reclaim memory which is not used by Thunar anymore. */
+  /* When using glibc, after releasing bigger memory chunks it seems to be required to call that 'garbage collector'. */
+  /* More information here: https://gitlab.xfce.org/xfce/thunar/-/issues/1552#note_101990 */
+  malloc_trim (0);
+#endif
+
+  return FALSE;
+}
+
+
+
+void
+thunar_application_malloc_trim_on_idle (ThunarApplication *application)
+{
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+
+  g_idle_add (thunar_application_malloc_trim_idle, application);
 }
