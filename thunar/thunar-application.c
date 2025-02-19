@@ -2917,7 +2917,6 @@ thunar_application_get_thumbnail_cache (ThunarApplication *application)
 static gboolean
 thunar_application_malloc_trim_idle (gpointer application_ptr)
 {
-
 #ifdef __GLIBC__
   /* Workaround to make the kernel reclaim memory which is not used by Thunar anymore. */
   /* When using glibc, after releasing bigger memory chunks it seems to be required to call that 'garbage collector'. */
