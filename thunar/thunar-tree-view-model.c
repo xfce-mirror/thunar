@@ -2584,6 +2584,8 @@ _thunar_tree_view_model_dir_files_added (Node       *node,
       if (!g_hash_table_contains (node->set, file))
         thunar_tree_view_model_dir_add_file (node, file);
     }
+
+  g_object_notify_by_pspec (G_OBJECT (node->model), tree_model_props[PROP_NUM_FILES]);
 }
 
 
@@ -2613,6 +2615,8 @@ _thunar_tree_view_model_dir_files_removed (Node       *node,
 
       thunar_tree_view_model_dir_remove_file (node, file);
     }
+
+  g_object_notify_by_pspec (G_OBJECT (node->model), tree_model_props[PROP_NUM_FILES]);
 }
 
 
