@@ -1426,7 +1426,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   grid = xfce_shortcuts_editor_new (16,
                                     _("Window"), thunar_window_get_action_entries (), (size_t) THUNAR_WINDOW_N_ACTIONS,
                                       _("View"), thunar_standard_view_get_action_entries (), (size_t) THUNAR_STANDARD_VIEW_N_ACTIONS,
-                                        _("Details View"), thunar_details_view_get_action_entries (), (size_t) THUNAR_DETAILS_VIEW_N_ACTIONS,
+                                        _("List View"), thunar_details_view_get_action_entries (), (size_t) THUNAR_DETAILS_VIEW_N_ACTIONS,
                                           _("Launcher"), thunar_action_manager_get_action_entries (), (size_t) THUNAR_ACTION_MANAGER_N_ACTIONS,
                                             _("Status Bar"), thunar_statusbar_get_action_entries (), (size_t) THUNAR_STATUS_BAR_N_ACTIONS);
   gtk_container_add (GTK_CONTAINER (frame), grid);
