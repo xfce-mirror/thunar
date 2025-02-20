@@ -39,6 +39,8 @@ typedef enum
 {
   THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS,
   THUNAR_DETAILS_VIEW_ACTION_TOGGLE_EXPANDABLE_FOLDERS,
+
+  THUNAR_DETAILS_VIEW_N_ACTIONS
 } ThunarDetailsViewAction;
 
 GType
@@ -49,7 +51,8 @@ void
 thunar_details_view_set_recency_column_visible (ThunarDetailsView *, gboolean);
 void
 thunar_details_view_set_location_column_visible (ThunarDetailsView *, gboolean);
-
+XfceGtkActionEntry *
+thunar_details_view_get_action_entries (void);
 G_END_DECLS;
 
 #endif /* !__THUNAR_DETAILS_VIEW_H__ */
