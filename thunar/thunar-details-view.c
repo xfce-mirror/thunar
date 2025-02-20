@@ -1495,6 +1495,14 @@ thunar_details_view_get_fixed_columns (ThunarDetailsView *details_view)
 
 
 
+XfceGtkActionEntry *
+thunar_details_view_get_action_entries (void)
+{
+  return thunar_details_view_action_entries;
+}
+
+
+
 /**
  * thunar_details_view_set_fixed_columns:
  * @details_view  : a #ThunarDetailsView.
