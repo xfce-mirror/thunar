@@ -1136,9 +1136,11 @@ thunar_window_init (ThunarWindow *window)
 
   window->right_pane_size_label = gtk_label_new (_("Size: "));
   gtk_label_set_xalign (GTK_LABEL (window->right_pane_size_label), 1.0);
+  gtk_label_set_attributes (GTK_LABEL (window->right_pane_size_label), thunar_pango_attr_list_small_italic ());
   gtk_grid_attach (GTK_GRID (window->right_pane_grid), window->right_pane_size_label, 0, 2, 1, 1);
   window->right_pane_size_value = gtk_label_new ("");
   gtk_label_set_xalign (GTK_LABEL (window->right_pane_size_value), 0.0);
+  gtk_label_set_attributes (GTK_LABEL (window->right_pane_size_value), thunar_pango_attr_list_small_italic ());
   gtk_grid_attach (GTK_GRID (window->right_pane_grid), window->right_pane_size_value, 1, 2, 1, 1);
 
   /* right sidepane - setup */
