@@ -502,7 +502,7 @@ thunar_file_finalize (GObject *object)
   if (file->signal_changed_source_id != 0)
     g_source_remove (file->signal_changed_source_id);
 
-    /* verify that nobody's watching the file anymore */
+  /* verify that nobody's watching the file anymore */
 #ifdef G_ENABLE_DEBUG
   ThunarFileWatch *file_watch = g_object_get_qdata (G_OBJECT (file), thunar_file_watch_quark);
   if (file_watch != NULL)
@@ -5394,34 +5394,37 @@ thunar_file_request_thumbnail (ThunarFile         *file,
                                ThunarThumbnailSize size)
 {
   ThunarPreferences *preferences;
-  gchar      **mime_allowlist;
-  gchar       *tmp;
+  gchar            **mime_allowlist;
+  gchar             *tmp;
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
-  
-  preferences = thunar_preferences_get();
-  g_object_get(preferences, "misc-thumbnail-allowlist", &tmp, NULL);
-  g_object_unref(preferences);
 
-  mime_allowlist = g_strsplit(tmp, ",", -1);
-  g_free(tmp);
+  preferences = thunar_preferences_get ();
+  g_object_get (preferences, "misc-thumbnail-allowlist", &tmp, NULL);
+  g_object_unref (preferences);
 
-  if (g_strv_length(mime_allowlist) != 0) {
-    gboolean should_thumbail = gtk_false();
-    for (size_t i = 0; i < g_strv_length(mime_allowlist); i++) {
-      if(g_strcmp0(thunar_file_get_content_type(file), mime_allowlist[i]) == 0) {
-        should_thumbail = gtk_true();
-      }
+  mime_allowlist = g_strsplit (tmp, ",", -1);
+  g_free (tmp);
+
+  if (g_strv_length (mime_allowlist) != 0)
+    {
+      gboolean should_thumbail = gtk_false ();
+      for (size_t i = 0; i < g_strv_length (mime_allowlist); i++)
+        {
+          if (g_strcmp0 (thunar_file_get_content_type (file), mime_allowlist[i]) == 0)
+            {
+              should_thumbail = gtk_true ();
+            }
+        }
+
+      if (should_thumbail == gtk_false ())
+        {
+          file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_NONE;
+        }
     }
 
-    if (should_thumbail == gtk_false()) {
-      file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_NONE;
-    }
+  g_strfreev (mime_allowlist);
 
-  }
-
-  g_strfreev(mime_allowlist);
-  
 
   /* For all other states, the thumbnailer already processed the file or is currently working on it */
   if (file->thumbnail_state[size] != THUNAR_FILE_THUMB_STATE_UNKNOWN)

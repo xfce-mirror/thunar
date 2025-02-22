@@ -1053,16 +1053,17 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
 
   /**
    * ThunarPreferences:misc-thumbnail-allowlist
-   * 
+   *
    * A comma seperated list of mime types which are allowed to be thumbnailed
    * "" means all files are thumbnailed
    **/
   preferences_props[PROP_MISC_THUMBNAIL_ALLOWLIST] =
-  g_param_spec_string("misc-thumbnail-allowlist",
-                      "MiscThumbnailAllowlist",
-                      NULL,
-                      "",
-                      EXO_PARAM_READWRITE);
+  g_param_spec_string ("misc-thumbnail-allowlist",
+                       "MiscThumbnailAllowlist",
+                       NULL,
+                       "",
+                       EXO_PARAM_READWRITE);
+
   /**
    * ThunarPreferences:misc-file-size-binary:
    *
