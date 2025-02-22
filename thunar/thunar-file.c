@@ -5411,7 +5411,7 @@ thunar_file_request_thumbnail (ThunarFile         *file,
       gboolean should_thumbail = gtk_false ();
       for (size_t i = 0; i < g_strv_length (mime_allowlist); i++)
         {
-          if (g_strcmp0 (thunar_file_get_content_type (file), mime_allowlist[i]) == 0)
+          if (strncmp (thunar_file_get_content_type (file), mime_allowlist[i], g_utf8_strlen (mime_allowlist[i], 53)) == 0)
             {
               should_thumbail = gtk_true ();
             }

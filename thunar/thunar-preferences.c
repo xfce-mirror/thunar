@@ -1061,7 +1061,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_param_spec_string ("misc-thumbnail-allowlist",
                        "MiscThumbnailAllowlist",
                        NULL,
-                       "",
+                       "image/",
                        EXO_PARAM_READWRITE);
 
   /**
