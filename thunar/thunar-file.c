@@ -5408,16 +5408,16 @@ thunar_file_request_thumbnail (ThunarFile         *file,
 
   if (g_strv_length (mime_types_whitelist) != 0)
     {
-      gboolean should_thumbail = gtk_false ();
+      gboolean should_thumbail = FALSE;
       for (size_t i = 0; i < g_strv_length (mime_types_whitelist); i++)
         {
           if (strncmp (thunar_file_get_content_type (file), mime_types_whitelist[i], g_utf8_strlen (mime_types_whitelist[i], 53)) == 0)
             {
-              should_thumbail = gtk_true ();
+              should_thumbail = TRUE;
             }
         }
 
-      if (should_thumbail == gtk_false ())
+      if (should_thumbail == FALSE)
         {
           file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_NONE;
         }
