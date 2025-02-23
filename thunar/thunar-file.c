@@ -5391,9 +5391,38 @@ thunar_file_thumbnailing_finished (ThunarFile        *file,
 
 void
 thunar_file_request_thumbnail (ThunarFile         *file,
-                               ThunarThumbnailSize size)
+                               ThunarThumbnailSize size,
+                               gboolean            skip_whitelist)
 {
+  ThunarPreferences *preferences;
+  gchar            **mime_types_whitelist;
+  gchar             *tmp;
+
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  preferences = thunar_preferences_get ();
+  g_object_get (preferences, "misc-thumbnail-mime-types-whitelist", &tmp, NULL);
+  g_object_unref (preferences);
+
+  mime_types_whitelist = g_strsplit (tmp, ",", -1);
+  g_free (tmp);
+
+  if (g_strv_length (mime_types_whitelist) != 0 && skip_whitelist != TRUE)
+    {
+      gboolean request_thumbnail = FALSE;
+      for (size_t i = 0; i < g_strv_length (mime_types_whitelist); i++)
+        {
+          /* Here we compare the first n characters of the content type with the whitelist so that we can compare just the category like image/ */
+          if (strncmp (thunar_file_get_content_type (file), mime_types_whitelist[i], g_utf8_strlen (mime_types_whitelist[i], 64)) == 0)
+            request_thumbnail = TRUE;
+        }
+
+      if (request_thumbnail == FALSE)
+        file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_NONE;
+    }
+
+  g_strfreev (mime_types_whitelist);
+
 
   /* For all other states, the thumbnailer already processed the file or is currently working on it */
   if (file->thumbnail_state[size] != THUNAR_FILE_THUMB_STATE_UNKNOWN)

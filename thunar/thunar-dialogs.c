@@ -921,7 +921,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_widget_show (dst_image);
 
   g_signal_connect_swapped (G_OBJECT (dst_file), "thumbnail-updated", G_CALLBACK (thunar_dialog_image_redraw), dst_image);
-  thunar_file_request_thumbnail (dst_file, thunar_icon_size_to_thumbnail_size (48 * scale_factor));
+  thunar_file_request_thumbnail (dst_file, thunar_icon_size_to_thumbnail_size (48 * scale_factor), TRUE);
 
   size_string = thunar_file_get_size_string_long (dst_file, file_size_binary);
   date_string = thunar_file_get_date_string (dst_file, THUNAR_FILE_DATE_MODIFIED, date_style, date_custom_style);
@@ -971,7 +971,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_widget_show (src_image);
 
   g_signal_connect_swapped (G_OBJECT (src_file), "thumbnail-updated", G_CALLBACK (thunar_dialog_image_redraw), src_image);
-  thunar_file_request_thumbnail (src_file, thunar_icon_size_to_thumbnail_size (48 * scale_factor));
+  thunar_file_request_thumbnail (src_file, thunar_icon_size_to_thumbnail_size (48 * scale_factor), TRUE);
 
   size_string = thunar_file_get_size_string_long (src_file, file_size_binary);
   date_string = thunar_file_get_date_string (src_file, THUNAR_FILE_DATE_MODIFIED, date_style, date_custom_style);

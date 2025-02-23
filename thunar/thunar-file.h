@@ -482,7 +482,8 @@ thunar_cmp_files_by_type (const ThunarFile *a,
                           gboolean          case_sensitive);
 void
 thunar_file_request_thumbnail (ThunarFile         *file,
-                               ThunarThumbnailSize size);
+                               ThunarThumbnailSize size,
+                               gboolean            skip_whitelist);
 void
 thunar_file_update_thumbnail (ThunarFile          *file,
                               ThunarFileThumbState state,
