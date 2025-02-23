@@ -114,7 +114,7 @@ enum
   PROP_MISC_THUMBNAIL_MODE,
   PROP_MISC_THUMBNAIL_DRAW_FRAMES,
   PROP_MISC_THUMBNAIL_MAX_FILE_SIZE,
-  PROP_MISC_THUMBNAIL_ALLOWLIST,
+  PROP_MISC_THUMBNAIL_MIME_TYPES_WHITELIST,
   PROP_MISC_FILE_SIZE_BINARY,
   PROP_MISC_CONFIRM_CLOSE_MULTIPLE_TABS,
   PROP_MISC_STATUS_BAR_ACTIVE_INFO,
@@ -1052,14 +1052,14 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                        EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:misc-thumbnail-allowlist
+   * ThunarPreferences:misc-thumbnail-mime-types-whitelist
    *
-   * A comma seperated list of mime types which are allowed to be thumbnailed
-   * "" means all files are thumbnailed
+   * A comma seperated list of mime types which are to be thumbnailed;
+   * an empty string ("") means all files are thumbnailed.
    **/
-  preferences_props[PROP_MISC_THUMBNAIL_ALLOWLIST] =
-  g_param_spec_string ("misc-thumbnail-allowlist",
-                       "MiscThumbnailAllowlist",
+  preferences_props[PROP_MISC_THUMBNAIL_MIME_TYPES_WHITELIST] =
+  g_param_spec_string ("misc-thumbnail-mime-types-whitelist",
+                       "MiscThumbnailMimeTypesWhitelist",
                        NULL,
                        "",
                        EXO_PARAM_READWRITE);
