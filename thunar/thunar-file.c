@@ -5392,7 +5392,7 @@ thunar_file_thumbnailing_finished (ThunarFile        *file,
 void
 thunar_file_request_thumbnail (ThunarFile         *file,
                                ThunarThumbnailSize size,
-                               gboolean skip_whitelist)
+                               gboolean            skip_whitelist)
 {
   ThunarPreferences *preferences;
   gchar            **mime_types_whitelist;
