@@ -5391,7 +5391,8 @@ thunar_file_thumbnailing_finished (ThunarFile        *file,
 
 void
 thunar_file_request_thumbnail (ThunarFile         *file,
-                               ThunarThumbnailSize size)
+                               ThunarThumbnailSize size,
+                               gboolean skip_whitelist)
 {
   ThunarPreferences *preferences;
   gchar            **mime_types_whitelist;
@@ -5406,7 +5407,7 @@ thunar_file_request_thumbnail (ThunarFile         *file,
   mime_types_whitelist = g_strsplit (tmp, ",", -1);
   g_free (tmp);
 
-  if (g_strv_length (mime_types_whitelist) != 0)
+  if (g_strv_length (mime_types_whitelist) != 0 && skip_whitelist != TRUE)
     {
       gboolean request_thumbnail = FALSE;
       for (size_t i = 0; i < g_strv_length (mime_types_whitelist); i++)
