@@ -1146,6 +1146,7 @@ thunar_window_init (ThunarWindow *window)
   window->preview_image_file = NULL;
   window->preview_image_pixbuf = NULL;
 
+  g_signal_connect_swapped (window->preferences, "notify::last-image-preview-visible", G_CALLBACK (thunar_window_image_preview_mode_changed), window);
   g_signal_connect_swapped (window->preferences, "notify::misc-image-preview-mode", G_CALLBACK (thunar_window_image_preview_mode_changed), window);
   thunar_window_image_preview_mode_changed (window);
 
