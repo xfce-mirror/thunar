@@ -5396,6 +5396,15 @@ thunar_file_request_thumbnail (ThunarFile         *file,
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
+    /* For all other states, the thumbnailer already processed the file or is currently working on it */
+  if (file->thumbnail_state[size] != THUNAR_FILE_THUMB_STATE_UNKNOWN)
+    return;
+
+  if (file->thumbnail_request_id[size] != 0)
+    return;
+
+  file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_LOADING;
+
   if (skip_whitelist == FALSE)
     {
       ThunarPreferences *preferences;
@@ -5426,15 +5435,6 @@ thunar_file_request_thumbnail (ThunarFile         *file,
 
       g_strfreev (mime_types_whitelist);
     }
-
-  /* For all other states, the thumbnailer already processed the file or is currently working on it */
-  if (file->thumbnail_state[size] != THUNAR_FILE_THUMB_STATE_UNKNOWN)
-    return;
-
-  if (file->thumbnail_request_id[size] != 0)
-    return;
-
-  file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_LOADING;
 
   thunar_thumbnailer_queue_file (file->thumbnailer, file, &file->thumbnail_request_id[size], size);
 }
