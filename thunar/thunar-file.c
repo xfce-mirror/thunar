@@ -5407,7 +5407,7 @@ thunar_file_request_thumbnail (ThunarFile         *file,
   mime_types_whitelist = g_strsplit (tmp, ",", -1);
   g_free (tmp);
 
-  if (g_strv_length (mime_types_whitelist) != 0 && skip_whitelist != TRUE)
+  if (g_strv_length (mime_types_whitelist) != 0 && skip_whitelist == FALSE)
     {
       gboolean request_thumbnail = FALSE;
       for (size_t i = 0; i < g_strv_length (mime_types_whitelist); i++)
