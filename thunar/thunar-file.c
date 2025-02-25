@@ -502,7 +502,7 @@ thunar_file_finalize (GObject *object)
   if (file->signal_changed_source_id != 0)
     g_source_remove (file->signal_changed_source_id);
 
-    /* verify that nobody's watching the file anymore */
+  /* verify that nobody's watching the file anymore */
 #ifdef G_ENABLE_DEBUG
   ThunarFileWatch *file_watch = g_object_get_qdata (G_OBJECT (file), thunar_file_watch_quark);
   if (file_watch != NULL)
@@ -5403,8 +5403,6 @@ thunar_file_request_thumbnail (ThunarFile         *file,
   if (file->thumbnail_request_id[size] != 0)
     return;
 
-  file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_LOADING;
-
   if (skip_whitelist == FALSE)
     {
       ThunarPreferences *preferences;
@@ -5435,6 +5433,8 @@ thunar_file_request_thumbnail (ThunarFile         *file,
 
       g_strfreev (mime_types_whitelist);
     }
+
+  file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_LOADING;
 
   thunar_thumbnailer_queue_file (file->thumbnailer, file, &file->thumbnail_request_id[size], size);
 }
