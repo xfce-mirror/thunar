@@ -505,7 +505,7 @@ thunar_window_create_toolbar_view_switcher (ThunarWindow *window,
                                             guint         item_order);
 static void
 thunar_window_view_switcher_update (ThunarWindow *window);
-static gboolean
+static void
 thunar_window_image_preview_mode_changed (ThunarWindow *window);
 static void
 image_preview_update (GtkWidget     *parent,
@@ -556,6 +556,11 @@ struct _ThunarWindow
   GtkWidget *sidepane;
   GtkWidget *sidepane_box;
   GtkWidget *sidepane_preview_image;
+  GtkWidget *view_box;
+  GtkWidget *view;
+  GtkWidget *statusbar;
+
+  /* image preview pane */
   GtkWidget *right_pane;
   GtkWidget *right_pane_box;
   GtkWidget *right_pane_grid;
@@ -563,10 +568,7 @@ struct _ThunarWindow
   GtkWidget *right_pane_image_label;
   GtkWidget *right_pane_size_label;
   GtkWidget *right_pane_size_value;
-  GtkWidget *view_box;
-  GtkWidget *trash_infobar;
-  GtkWidget *trash_infobar_restore_button;
-  GtkWidget *trash_infobar_empty_button;
+  gboolean   image_preview_visible;
 
   /* split view panes */
   GtkWidget *paned_notebooks;
@@ -574,14 +576,16 @@ struct _ThunarWindow
   GtkWidget *notebook_left;
   GtkWidget *notebook_right;
 
-  GtkWidget *view;
-  GtkWidget *statusbar;
-
   /* search */
   GtkWidget *catfish_search_button;
   gchar     *search_query;
   gboolean   is_searching;
   gboolean   ignore_next_search_update;
+
+  /* trash */
+  GtkWidget *trash_infobar;
+  GtkWidget *trash_infobar_restore_button;
+  GtkWidget *trash_infobar_empty_button;
 
   GType   view_type;
   GSList *view_bindings;
@@ -937,6 +941,7 @@ thunar_window_init (ThunarWindow *window)
   gint                   last_window_height;
   gboolean               last_window_maximized;
   gboolean               last_statusbar_visible;
+  gboolean               last_image_preview_visible;
   gint                   max_paned_position;
   GtkStyleContext       *context;
   gboolean               misc_use_csd;
@@ -970,6 +975,7 @@ thunar_window_init (ThunarWindow *window)
                 "last-separator-position", &last_separator_position,
                 "last-side-pane", &last_side_pane,
                 "last-statusbar-visible", &last_statusbar_visible,
+                "last-image-preview-visible", &last_image_preview_visible,
                 "misc-use-csd", &misc_use_csd,
                 NULL);
 
@@ -1141,6 +1147,7 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect (G_OBJECT (window->right_pane_box), "size-allocate", G_CALLBACK (image_preview_update), window->right_pane_preview_image);
 
   /* initialize the image preview */
+  window->image_preview_visible = last_image_preview_visible;
   window->preview_image_file = NULL;
   window->preview_image_pixbuf = NULL;
 
@@ -1581,10 +1588,11 @@ thunar_window_update_view_menu (ThunarWindow *window,
   GtkWidget *item;
   GtkWidget *sub_items;
   gchar     *last_location_bar;
-  gboolean   image_preview_visible;
   gboolean   highlight_enabled;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  g_object_get (window->preferences, "last-location-bar", &last_location_bar, NULL);
 
   thunar_gtk_menu_clean (GTK_MENU (menu));
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_RELOAD), G_OBJECT (window), GTK_MENU_SHELL (menu));
@@ -1594,8 +1602,6 @@ thunar_window_update_view_menu (ThunarWindow *window,
   item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_MENU), G_OBJECT (window), GTK_MENU_SHELL (menu));
   sub_items = gtk_menu_new ();
   gtk_menu_set_accel_group (GTK_MENU (sub_items), window->accel_group);
-  g_object_get (window->preferences, "last-location-bar", &last_location_bar,
-                "last-image-preview-visible", &image_preview_visible, NULL);
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_BUTTONS), G_OBJECT (window),
                                                    (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)) == 0), GTK_MENU_SHELL (sub_items));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_ENTRY), G_OBJECT (window),
@@ -1611,7 +1617,7 @@ thunar_window_update_view_menu (ThunarWindow *window,
                                                    thunar_window_has_tree_view_sidepane (window), GTK_MENU_SHELL (sub_items));
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (sub_items));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_TOGGLE_IMAGE_PREVIEW), G_OBJECT (window),
-                                                   image_preview_visible, GTK_MENU_SHELL (sub_items));
+                                                   window->image_preview_visible, GTK_MENU_SHELL (sub_items));
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (sub_items));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_STATUSBAR), G_OBJECT (window),
                                                    gtk_widget_get_visible (window->statusbar), GTK_MENU_SHELL (menu));
@@ -4111,28 +4117,14 @@ thunar_window_action_tree_changed (ThunarWindow *window)
 static gboolean
 thunar_window_action_image_preview (ThunarWindow *window)
 {
-  ThunarImagePreviewMode misc_image_preview_mode;
-  gboolean               image_preview_visible;
-
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  g_object_get (window->preferences, "misc-image-preview-mode", &misc_image_preview_mode,
-                "last-image-preview-visible", &image_preview_visible, NULL);
+  window->image_preview_visible = !window->image_preview_visible;
+  thunar_window_image_preview_mode_changed (window);
 
-  if (misc_image_preview_mode == THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED)
-    {
-      gtk_widget_set_visible (window->sidepane_preview_image, !image_preview_visible);
-      gtk_widget_set_visible (window->right_pane, FALSE);
-    }
-  else
-    {
-      gtk_widget_set_visible (window->sidepane_preview_image, FALSE);
-      gtk_widget_set_visible (window->right_pane, !image_preview_visible);
-    }
+  g_object_set (G_OBJECT (window->preferences), "last-image-preview-visible", window->image_preview_visible, NULL);
 
-  g_object_set (G_OBJECT (window->preferences), "last-image-preview-visible", !image_preview_visible, NULL);
-
-  /* to directly trigger a preview, in case an image currently is selected */
+  /* directly trigger a preview, in case an image currently is selected */
   thunar_window_selection_changed (window);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
@@ -4141,27 +4133,20 @@ thunar_window_action_image_preview (ThunarWindow *window)
 
 
 
-gboolean
+static void
 thunar_window_image_preview_mode_changed (ThunarWindow *window)
 {
   ThunarImagePreviewMode misc_image_preview_mode;
-  gboolean               last_image_preview_visible;
 
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  g_object_get (window->preferences,
-                "last-image-preview-visible", &last_image_preview_visible,
-                "misc-image-preview-mode", &misc_image_preview_mode,
-                NULL);
+  g_object_get (G_OBJECT (window->preferences), "misc-image-preview-mode", &misc_image_preview_mode, NULL);
 
-  gtk_widget_set_visible (window->sidepane_preview_image, last_image_preview_visible && misc_image_preview_mode == THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED);
-  gtk_widget_set_visible (window->right_pane, last_image_preview_visible && misc_image_preview_mode == THUNAR_IMAGE_PREVIEW_MODE_STANDALONE);
+  gtk_widget_set_visible (window->sidepane_preview_image, window->image_preview_visible && misc_image_preview_mode == THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED);
+  gtk_widget_set_visible (window->right_pane, window->image_preview_visible && misc_image_preview_mode == THUNAR_IMAGE_PREVIEW_MODE_STANDALONE);
 
   /* update the image preview */
   thunar_window_update_image_preview (window);
-
-  /* required in case of shortcut activation, in order to signal that the accel key got handled */
-  return TRUE;
 }
 
 
@@ -6038,6 +6023,9 @@ thunar_window_update_image_preview (ThunarWindow *window)
 {
   ThunarImagePreviewMode misc_image_preview_mode;
 
+  if (window->image_preview_visible == FALSE)
+    return;
+
   g_object_get (G_OBJECT (window->preferences), "misc-image-preview-mode", &misc_image_preview_mode, NULL);
 
   if (misc_image_preview_mode == THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED)
@@ -6107,8 +6095,7 @@ thunar_window_preview_file_destroyed (ThunarWindow *window)
 static void
 thunar_window_selection_changed (ThunarWindow *window)
 {
-  GList   *selected_files = thunar_view_get_selected_files (THUNAR_VIEW (window->view));
-  gboolean last_image_preview_visible;
+  GList *selected_files = thunar_view_get_selected_files (THUNAR_VIEW (window->view));
 
   /* butttons specific to the Trash location */
   if (g_list_length (selected_files) > 0)
@@ -6131,13 +6118,8 @@ thunar_window_selection_changed (ThunarWindow *window)
       window->preview_image_pixbuf = NULL;
     }
 
-  /* only request new preview thumbnails if the user wants image previews */
-  g_object_get (G_OBJECT (window->preferences),
-                "last-image-preview-visible", &last_image_preview_visible,
-                NULL);
-
   /* get or request a thumbnail */
-  if (last_image_preview_visible == TRUE)
+  if (window->image_preview_visible == TRUE)
     {
       if (g_list_length (selected_files) >= 1)
         {
