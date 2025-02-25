@@ -5402,6 +5402,8 @@ thunar_file_request_thumbnail (ThunarFile         *file,
 
   if (file->thumbnail_request_id[size] != 0)
     return;
+  
+  file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_LOADING;
 
   if (skip_whitelist == FALSE)
     {
@@ -5433,8 +5435,6 @@ thunar_file_request_thumbnail (ThunarFile         *file,
 
       g_strfreev (mime_types_whitelist);
     }
-
-  file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_LOADING;
 
   thunar_thumbnailer_queue_file (file->thumbnailer, file, &file->thumbnail_request_id[size], size);
 }
