@@ -1056,8 +1056,9 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    *
    * A comma seperated list of mime types which are to be thumbnailed;
    * an empty string ("") means all files are thumbnailed.
-   * having image/ will whitelist all images and the same applies
-   * for the rest of the categories.
+   * Only the first characters of each mime type will be matched.
+   * E.g. the value "image/" will whitelist all sort of image mime-types.
+   * The same can be done for other categories.
    **/
   preferences_props[PROP_MISC_THUMBNAIL_MIME_TYPES_WHITELIST] =
   g_param_spec_string ("misc-thumbnail-mime-types-whitelist",
