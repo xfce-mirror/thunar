@@ -5412,7 +5412,7 @@ thunar_file_request_thumbnail (ThunarFile         *file,
       gboolean request_thumbnail = FALSE;
       for (size_t i = 0; i < g_strv_length (mime_types_whitelist); i++)
         {
-          /* Here we compare the first n characters of the content type with the whitelist so that we can compare just the category like image/ */
+          /* Compare the first n characters of the content type with the whitelist so that we can compare against a category like "image/" */
           if (strncmp (thunar_file_get_content_type (file), mime_types_whitelist[i], g_utf8_strlen (mime_types_whitelist[i], 64)) == 0)
             request_thumbnail = TRUE;
         }
