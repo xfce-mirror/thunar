@@ -502,7 +502,7 @@ thunar_file_finalize (GObject *object)
   if (file->signal_changed_source_id != 0)
     g_source_remove (file->signal_changed_source_id);
 
-  /* verify that nobody's watching the file anymore */
+    /* verify that nobody's watching the file anymore */
 #ifdef G_ENABLE_DEBUG
   ThunarFileWatch *file_watch = g_object_get_qdata (G_OBJECT (file), thunar_file_watch_quark);
   if (file_watch != NULL)
