@@ -5402,7 +5402,7 @@ thunar_file_request_thumbnail (ThunarFile         *file,
 
   if (file->thumbnail_request_id[size] != 0)
     return;
-  
+
   file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_LOADING;
 
   if (skip_whitelist == FALSE)
