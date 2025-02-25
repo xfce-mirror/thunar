@@ -5396,7 +5396,7 @@ thunar_file_request_thumbnail (ThunarFile         *file,
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-    /* For all other states, the thumbnailer already processed the file or is currently working on it */
+  /* For all other states, the thumbnailer already processed the file or is currently working on it */
   if (file->thumbnail_state[size] != THUNAR_FILE_THUMB_STATE_UNKNOWN)
     return;
 
