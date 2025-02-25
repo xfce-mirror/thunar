@@ -6162,7 +6162,7 @@ thunar_window_selection_changed (ThunarWindow *window)
           state = thunar_file_get_thumb_state (window->preview_image_file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
 
           if (state == THUNAR_FILE_THUMB_STATE_UNKNOWN)
-            thunar_file_request_thumbnail (window->preview_image_file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+            thunar_file_request_thumbnail (window->preview_image_file, THUNAR_THUMBNAIL_SIZE_XX_LARGE, TRUE);
           else if (state == THUNAR_FILE_THUMB_STATE_READY)
             {
               const gchar *thumbnail_path = thunar_file_get_thumbnail_path (window->preview_image_file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);

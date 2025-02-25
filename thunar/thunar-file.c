@@ -5391,7 +5391,8 @@ thunar_file_thumbnailing_finished (ThunarFile        *file,
 
 void
 thunar_file_request_thumbnail (ThunarFile         *file,
-                               ThunarThumbnailSize size)
+                               ThunarThumbnailSize size,
+                               gboolean            skip_whitelist)
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
@@ -5403,6 +5404,37 @@ thunar_file_request_thumbnail (ThunarFile         *file,
     return;
 
   file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_LOADING;
+
+  if (skip_whitelist == FALSE)
+    {
+      ThunarPreferences *preferences;
+      gchar            **mime_types_whitelist;
+      gchar             *tmp;
+
+
+      preferences = thunar_preferences_get ();
+      g_object_get (preferences, "misc-thumbnail-mime-types-whitelist", &tmp, NULL);
+      g_object_unref (preferences);
+
+      mime_types_whitelist = g_strsplit (tmp, ",", -1);
+      g_free (tmp);
+
+      if (g_strv_length (mime_types_whitelist) != 0)
+        {
+          gboolean request_thumbnail = FALSE;
+          for (size_t i = 0; i < g_strv_length (mime_types_whitelist); i++)
+            {
+              /* Compare the first n characters of the content type with the whitelist so that we can compare against a category like "image/" */
+              if (strncmp (thunar_file_get_content_type (file), mime_types_whitelist[i], g_utf8_strlen (mime_types_whitelist[i], -1)) == 0)
+                request_thumbnail = TRUE;
+            }
+
+          if (request_thumbnail == FALSE)
+            file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_NONE;
+        }
+
+      g_strfreev (mime_types_whitelist);
+    }
 
   thunar_thumbnailer_queue_file (file->thumbnailer, file, &file->thumbnail_request_id[size], size);
 }
