@@ -5396,6 +5396,11 @@ thunar_file_request_thumbnail (ThunarFile         *file,
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
+  /* If thumbnail is none and whitelist is being bypassed, the whitelist might have assigned the none state*/
+  if(file->thumbnail_state[size] == THUNAR_FILE_THUMB_STATE_NONE && skip_whitelist == TRUE) {
+    file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
+  }
+
   /* For all other states, the thumbnailer already processed the file or is currently working on it */
   if (file->thumbnail_state[size] != THUNAR_FILE_THUMB_STATE_UNKNOWN)
     return;
