@@ -5411,7 +5411,6 @@ thunar_file_request_thumbnail (ThunarFile         *file,
       gchar            **mime_types_whitelist;
       gchar             *tmp;
 
-
       preferences = thunar_preferences_get ();
       g_object_get (preferences, "misc-thumbnail-mime-types-whitelist", &tmp, NULL);
       g_object_unref (preferences);
