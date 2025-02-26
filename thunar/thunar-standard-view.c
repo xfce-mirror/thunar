@@ -2456,6 +2456,7 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
   GList              *selected_items_tree_path_list;
   GtkTreeIter         iter;
   ThunarFile         *file;
+  gchar              *statusbar_text;
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
@@ -2478,6 +2479,22 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
       if (thunar_standard_view_model_get_folder (standard_view->model) == NULL)
         return FALSE;
 
+      /* search mode active */
+      if (standard_view->priv->search_query != NULL)
+        {
+          gint num_files;
+
+          g_object_get (G_OBJECT (standard_view->model), "num-files", &num_files, NULL);
+
+          statusbar_text = g_strdup_printf (ngettext ("%d file found", "%d files found", num_files), num_files);
+          thunar_standard_view_set_statusbar_text (standard_view, statusbar_text);
+          g_free (statusbar_text);
+
+          g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_STATUSBAR_TEXT]);
+
+          return FALSE;
+        }
+
       standard_view->priv->statusbar_job = thunar_io_jobs_load_statusbar_text_for_folder (standard_view, thunar_standard_view_model_get_folder (standard_view->model));
 
       g_signal_connect (standard_view->priv->statusbar_job, "error", G_CALLBACK (thunar_standard_view_update_statusbar_text_error), standard_view);
@@ -2487,8 +2504,6 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
     }
   else if (selected_items_tree_path_list->next == NULL) /* only one item selected */
     {
-      gchar *statusbar_text;
-
       /* resolve the iter for the single path */
       gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, selected_items_tree_path_list->data);
 
@@ -2549,7 +2564,7 @@ thunar_standard_view_update_statusbar_text (ThunarStandardView *standard_view)
   /* restart a new one, this way we avoid multiple update when
    * the user is pressing a key to scroll */
   standard_view->priv->statusbar_text_idle_id =
-  g_timeout_add_full (G_PRIORITY_LOW, 50, thunar_standard_view_update_statusbar_text_idle,
+  g_timeout_add_full (G_PRIORITY_DEFAULT, 50, thunar_standard_view_update_statusbar_text_idle,
                       standard_view, NULL);
 }
 

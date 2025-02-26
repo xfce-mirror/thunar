@@ -3197,9 +3197,12 @@ thunar_tree_view_model_update_search_files (ThunarTreeViewModel *model)
       g_object_unref (file);
     }
 
+  g_object_notify_by_pspec (G_OBJECT (model), tree_model_props[PROP_NUM_FILES]);
+
   if (model->search_files != NULL)
     thunar_g_list_free_full (model->search_files);
   model->search_files = NULL;
+
   g_mutex_unlock (&model->mutex_add_search_files);
 
   return TRUE;
