@@ -5429,7 +5429,11 @@ thunar_file_request_thumbnail (ThunarFile         *file,
             }
 
           if (request_thumbnail == FALSE)
-            file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_NONE;
+            {
+              file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_NONE;
+              g_strfreev (mime_types_whitelist);
+              return;
+            }
         }
 
       g_strfreev (mime_types_whitelist);
