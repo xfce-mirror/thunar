@@ -490,7 +490,7 @@ thunar_thumbnail_purpose_get_type (void)
       };
       /* clang-format on */
 
-      type = g_enum_register_static(I_("ThunarThumbnailPurpose"), values);
+      type = g_enum_register_static (I_ ("ThunarThumbnailPurpose"), values);
     }
   return type;
 }
