@@ -545,11 +545,11 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
 
   /* load thumbnail for supported file type */
   if (thunar_icon_factory_get_show_thumbnail (icon_factory, icon_renderer->file))
-    thunar_file_request_thumbnail (icon_renderer->file, thunar_icon_size_to_thumbnail_size (icon_renderer->size * scale_factor), FALSE);
+    thunar_file_request_thumbnail (icon_renderer->file, thunar_icon_size_to_thumbnail_size (icon_renderer->size * scale_factor), THUNAR_THUMBNAIL_PURPOSE_DEFAULT);
 
   /* load additional thumbnail for image preview */
   if (icon_renderer->image_preview_enabled)
-    thunar_file_request_thumbnail (icon_renderer->file, THUNAR_THUMBNAIL_SIZE_XX_LARGE, TRUE);
+    thunar_file_request_thumbnail (icon_renderer->file, THUNAR_THUMBNAIL_SIZE_XX_LARGE, THUNAR_THUMBNAIL_PURPOSE_PREVIEW);
 
   /* get style context for symbolic icon */
   if (icon_renderer->use_symbolic_icons)
