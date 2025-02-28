@@ -222,6 +222,24 @@ thunar_thumbnail_size_get_nick (ThunarThumbnailSize thumbnail_size) G_GNUC_CONST
 ThunarThumbnailSize
 thunar_icon_size_to_thumbnail_size (ThunarIconSize icon_size);
 
+#define THUNAR_TYPE_THUMBNAIL_PURPOSE (thunar_thumbnail_purpose_get_type ())
+
+/**
+ * ThunarThumbnailPurpose
+ * @THUNAR_THUMBNAIL_PURPOSE_DEFAULT    : Thumbnail to be used for icons
+ * @THUNAR_THUMBNAIL_PURPOSE_DIALOG     : Thumbnail to be used for a dialog
+ * @THUNAR_THUMBNAIL_PURPOSE_PREVIEW    : Thumbnail to be used for a preview
+ *
+ */
+typedef enum
+{
+  THUNAR_THUMBNAIL_PURPOSE_DEFAULT,
+  THUNAR_THUMBNAIL_PURPOSE_DIALOG,
+  THUNAR_THUMBNAIL_PURPOSE_PREVIEW
+} ThunarThumbnailPurpose;
+
+GType
+thunar_thumbnail_purpose_get_type (void) G_GNUC_CONST;
 
 #define THUNAR_TYPE_PARALLEL_COPY_MODE (thunar_parallel_copy_mode_get_type ())
 
