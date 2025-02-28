@@ -5392,17 +5392,12 @@ thunar_file_thumbnailing_finished (ThunarFile        *file,
 void
 thunar_file_request_thumbnail (ThunarFile         *file,
                                ThunarThumbnailSize size,
-                               gboolean            skip_whitelist)
+                               ThunarThumbnailPurpose purpose)
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  /* If thumbnail is none and whitelist is being bypassed, the whitelist might have assigned the none state*/
-  if(file->thumbnail_state[size] == THUNAR_FILE_THUMB_STATE_NONE && skip_whitelist == TRUE) {
-    file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
-  }
-
   /* For all other states, the thumbnailer already processed the file or is currently working on it */
-  if (file->thumbnail_state[size] != THUNAR_FILE_THUMB_STATE_UNKNOWN)
+  if (file->thumbnail_state[size] != THUNAR_FILE_THUMB_STATE_UNKNOWN && purpose == THUNAR_THUMBNAIL_PURPOSE_DEFAULT)
     return;
 
   if (file->thumbnail_request_id[size] != 0)
@@ -5410,7 +5405,7 @@ thunar_file_request_thumbnail (ThunarFile         *file,
 
   file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_LOADING;
 
-  if (skip_whitelist == FALSE)
+  if (purpose == THUNAR_THUMBNAIL_PURPOSE_DEFAULT)
     {
       ThunarPreferences *preferences;
       gchar            **mime_types_whitelist;
