@@ -226,7 +226,7 @@ thunar_icon_size_to_thumbnail_size (ThunarIconSize icon_size);
 
 /**
  * ThunarThumbnailPurpose
- * @THUNAR_THUMBNAIL_PURPOSE_DEFAULT    : Thumbnail to be used for icons
+ * @THUNAR_THUMBNAIL_PURPOSE_DEFAULT    : Thumbnail to be used in the main view
  * @THUNAR_THUMBNAIL_PURPOSE_DIALOG     : Thumbnail to be used for a dialog
  * @THUNAR_THUMBNAIL_PURPOSE_PREVIEW    : Thumbnail to be used for a preview
  *
