@@ -5409,6 +5409,7 @@ thunar_file_request_thumbnail (ThunarFile            *file,
 
   file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_LOADING;
 
+  /* For dialog and preview thumbnails, the mime types whitelist is ignored */
   if (purpose == THUNAR_THUMBNAIL_PURPOSE_DEFAULT)
     {
       ThunarPreferences *preferences;
