@@ -5396,6 +5396,7 @@ thunar_file_request_thumbnail (ThunarFile            *file,
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
+  /* Force generation of dialog and preview thumbnails. E.g. required if the same thumbnail is not used for the main view */
   if (file->thumbnail_state[size] == THUNAR_FILE_THUMB_STATE_NONE && purpose != THUNAR_THUMBNAIL_PURPOSE_DEFAULT)
     file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
 
