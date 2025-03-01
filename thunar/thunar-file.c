@@ -5397,9 +5397,7 @@ thunar_file_request_thumbnail (ThunarFile            *file,
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   if (file->thumbnail_state[size] == THUNAR_FILE_THUMB_STATE_NONE && purpose != THUNAR_THUMBNAIL_PURPOSE_DEFAULT)
-    {
-      file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
-    }
+    file->thumbnail_state[size] = THUNAR_FILE_THUMB_STATE_UNKNOWN;
 
   /* For all other states, the thumbnailer already processed the file or is currently working on it */
   if (file->thumbnail_state[size] != THUNAR_FILE_THUMB_STATE_UNKNOWN)
