@@ -55,6 +55,7 @@ GTKDOC_CFLAGS =	 							\
 	$(GUDEV_CFLAGS)							\
 	$(LIBNOTIFY_CFLAGS)						\
 	$(LIBSM_CFLAGS)							\
+	$(LIBICE_CFLAGS)							\
 	$(LIBXFCE4UI_CFLAGS)						\
 	$(LIBXFCE4KBD_PRIVATE_CFLAGS) 					\
 	$(XFCONF_CFLAGS)						\
@@ -72,6 +73,7 @@ GTKDOC_LIBS =  								\
 	$(GUDEV_LIBS)							\
 	$(LIBNOTIFY_LIBS)						\
 	$(LIBSM_LIBS)							\
+	$(LIBICE_LIBS)							\
 	$(LIBXFCE4UI_LIBS)						\
 	$(LIBXFCE4KBD_PRIVATE_LIBS)					\
 	$(XFCONF_LIBS)							\

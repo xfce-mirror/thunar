@@ -143,11 +143,6 @@ AC_SEARCH_LIBS([bind_textdomain_codeset], [intl],
 	       [AC_DEFINE([HAVE_BIND_TEXTDOMAIN_CODESET], [1], [Define to 1 if you have the 'bind_textdomain_codeset' function.])],
 	       [])
 
-dnl *********************
-dnl *** Check for X11 ***
-dnl *********************
-XDT_CHECK_LIBX11_REQUIRE()
-
 dnl *************************
 dnl *** Check for gtk-doc ***
 dnl *************************
@@ -174,10 +169,27 @@ dnl *** GObject Instrospection ***
 dnl ******************************
 GOBJECT_INTROSPECTION_CHECK([1.72.0])
 
-dnl ********************************************
-dnl *** Check for session management support ***
-dnl ********************************************
-XDT_CHECK_LIBSM()
+dnl **********************************
+dnl *** Optional X11 dependencies  ***
+dnl **********************************
+XDT_CHECK_OPTIONAL_FEATURE([X11],
+                           [x11],
+                           [
+                             XDT_FEATURE_DEPENDENCY([GDK_X11], [gdk-x11-3.0], [3.24.0])
+                             XDT_FEATURE_DEPENDENCY([LIBX11], [x11], [1.6.7])
+                           ],
+                           [the X11 windowing system])
+if test x"$ENABLE_X11" != x"yes"; then
+  dnl Do not check for optional X11 packages if X11 is disabled
+  enable_libsm=no
+fi
+XDT_CHECK_OPTIONAL_FEATURE([LIBSM],
+                           [libsm],
+                           [
+                             XDT_FEATURE_DEPENDENCY([LIBICE], [ice], [1.0.10])
+                             XDT_FEATURE_DEPENDENCY([LIBSM], [sm], [1.2.3])
+                           ],
+                           [session management library])
 
 dnl **********************************
 dnl *** Optional GIO UNIX features ***
