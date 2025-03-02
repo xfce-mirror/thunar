@@ -25,6 +25,7 @@
 
 #include "thunarx/thunarx-file-info.h"
 #include "thunarx/thunarx-private.h"
+#include "thunarx/thunarx-visibility.h"
 
 #include <libxfce4util/libxfce4util.h>
 
@@ -446,3 +447,6 @@ thunarx_file_info_list_free (GList *file_infos)
 {
   g_list_free_full (file_infos, g_object_unref);
 }
+
+#define __THUNARX_FILE_INFO_C__
+#include "thunarx-visibility.c"

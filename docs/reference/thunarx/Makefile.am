@@ -21,7 +21,7 @@ HFILE_GLOB=
 CFILE_GLOB=
 
 # Header files to ignore when scanning
-IGNORE_HFILES=thunarx-alias.h
+IGNORE_HFILES=thunarx-visibility.h
 
 # Extra files to add when scanning (relative to $srcdir)
 EXTRA_HFILES=
