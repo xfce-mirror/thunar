@@ -49,13 +49,6 @@
 
 
 
-/* Use native strlcpy() if available */
-#if defined(HAVE_STRLCPY)
-#define g_strlcpy(dst, src, size) (strlcpy ((dst), (src), (size)))
-#endif
-
-
-
 /* Property identifiers */
 enum
 {

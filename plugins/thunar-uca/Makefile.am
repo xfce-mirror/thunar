@@ -54,9 +54,6 @@ thunar_uca_la_LIBADD =							\
 thunar_uca_la_DEPENDENCIES =						\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
 
-thunar_uca_templates =							\
-	thunar-uca-ui.xml
-
 GLIB_COMPILE_RESOURCES = $(shell $(PKG_CONFIG) --variable=glib_compile_resources gio-2.0)
 
 resource_files = $(shell $(GLIB_COMPILE_RESOURCES) --sourcedir=$(srcdir) --generate-dependencies $(srcdir)/thunar-uca.gresource.xml)
