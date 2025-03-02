@@ -24,6 +24,7 @@
 
 #include "thunarx/thunarx-private.h"
 #include "thunarx/thunarx-renamer.h"
+#include "thunarx/thunarx-visibility.h"
 
 #include <glib/gi18n-lib.h>
 #include <libxfce4util/libxfce4util.h>
@@ -742,3 +743,6 @@ thunarx_renamer_changed (ThunarxRenamer *renamer)
   g_return_if_fail (THUNARX_IS_RENAMER (renamer));
   g_signal_emit (G_OBJECT (renamer), renamer_signals[CHANGED], 0);
 }
+
+#define __THUNARX_RENAMER_C__
+#include "thunarx-visibility.c"

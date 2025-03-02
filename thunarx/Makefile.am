@@ -6,6 +6,10 @@ AM_CPPFLAGS =								\
 	-DTHUNARX_ENABLE_CUSTOM_DIRS=\"$(CUSTOM_THUNARX_DIRS_ENABLED)\"	\
 	$(PLATFORM_CPPFLAGS)
 
+thunarx_built_sources = \
+	thunarx-visibility.c \
+	thunarx-visibility.h
+
 libthunarx_headers =							\
 	thunarx.h							\
 	thunarx-config.h						\
@@ -33,6 +37,7 @@ lib_LTLIBRARIES =							\
 
 libthunarx_3_la_SOURCES =						\
 	$(libthunarx_headers)						\
+	$(thunarx_built_sources)						\
 	thunarx-config.c						\
 	thunarx-file-info.c						\
 	thunarx-menu.c							\
@@ -75,7 +80,6 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = thunarx-3.pc
 
 EXTRA_DIST =								\
-	abicheck.sh							\
 	thunarx.symbols
 
 CLEANFILES = $(NULL)
@@ -90,12 +94,18 @@ CLEANFILES = $(NULL)
 ## files as part of the dist tarball.
 ##
 if MAINTAINER_MODE
-CLEANFILES +=								\
-	actual-abi							\
-	expected-abi
 
-TESTS =									\
-	abicheck.sh
+thunarx-visibility.h: thunarx.symbols Makefile
+	$(AM_V_GEN) $(XDT_GEN_VISIBILITY) --kind=header $< $@
+
+thunarx-visibility.c: thunarx.symbols Makefile
+	$(AM_V_GEN) $(XDT_GEN_VISIBILITY) --kind=source $< $@
+
+DISTCLEANFILES = \
+	$(thunarx_built_sources)
+
+BUILT_SOURCES = \
+	$(thunarx_built_sources)
 
 endif
 

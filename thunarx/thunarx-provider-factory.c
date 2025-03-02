@@ -26,6 +26,7 @@
 #include "thunarx/thunarx-provider-factory.h"
 #include "thunarx/thunarx-provider-module.h"
 #include "thunarx/thunarx-provider-plugin.h"
+#include "thunarx/thunarx-visibility.h"
 
 #include <gdk/gdk.h>
 
@@ -375,3 +376,6 @@ thunarx_provider_factory_list_providers (ThunarxProviderFactory *factory,
 
   return providers;
 }
+
+#define __THUNARX_PROVIDER_FACTORY_C__
+#include "thunarx-visibility.c"
