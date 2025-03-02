@@ -46,12 +46,9 @@ ChangeLog: Makefile
 dist-hook: ChangeLog
 
 desktopdir = $(datadir)/applications
-desktop_in_in_files = 							\
-	thunar.desktop.in.in						\
-	thunar-bulk-rename.desktop.in.in
-desktop_in_files = $(desktop_in_in_files:.desktop.in.in=.desktop.in)
-%.desktop.in: %.desktop.in.in Makefile
-	$(AM_V_GEN) $(SED) -e "s,\@HELPERDIR\@,$(HELPER_PATH_PREFIX),g" < $< > $@
+desktop_in_files = 							\
+	thunar.desktop.in						\
+	thunar-bulk-rename.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 %.desktop: %.desktop.in Makefile
 	$(AM_V_GEN)$(MSGFMT) --desktop --template $< -d $(top_srcdir)/po -o $@
@@ -96,7 +93,7 @@ EXTRA_DIST =								\
 	FAQ								\
 	HACKING								\
 	README.md								\
-	$(desktop_in_in_files)						\
+	$(desktop_in_files)						\
 	$(service_in_files)						\
 	$(systemd_user_in_files)					\
 	$(appdata_in_files)						\
@@ -108,7 +105,6 @@ EXTRA_DIST =								\
 CLEANFILES		= $(appdata_DATA)
 
 DISTCLEANFILES =							\
-	$(desktop_in_files)						\
 	$(desktop_DATA)							\
 	$(service_DATA)							\
 	$(systemd_user_DATA)					\
