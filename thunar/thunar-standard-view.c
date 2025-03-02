@@ -56,7 +56,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <libxfce4util/libxfce4util.h>
 
-#if defined(GDK_WINDOWING_X11)
+#ifdef ENABLE_X11
 #include <gdk/gdkx.h>
 #endif
 
@@ -3290,7 +3290,6 @@ thunar_standard_view_receive_netscape_url (GtkWidget          *view,
   gint        pid;
   gint        n = 0;
   GError     *error = NULL;
-  GtkWidget  *toplevel;
   GdkScreen  *screen;
   char       *display = NULL;
   gboolean    succeed = FALSE;
@@ -3326,17 +3325,20 @@ thunar_standard_view_receive_netscape_url (GtkWidget          *view,
           argv[n++] = "--name";
           argv[n++] = bits[1];
 
-          /* determine the toplevel window */
-          toplevel = gtk_widget_get_toplevel (view);
-          if (toplevel != NULL && gtk_widget_is_toplevel (toplevel))
+#ifdef ENABLE_X11
+          /* on X11, we can supply the parent window id here */
+          if (GDK_IS_X11_DISPLAY (gdk_display_get_default ()))
             {
-#if defined(GDK_WINDOWING_X11)
-              /* on X11, we can supply the parent window id here */
-              argv[n++] = "--xid";
-              argv[n++] = g_newa (gchar, 32);
-              g_snprintf (argv[n - 1], 32, "%ld", (glong) GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (toplevel))));
-#endif
+              /* determine the toplevel window */
+              GtkWidget *toplevel = gtk_widget_get_toplevel (view);
+              if (toplevel != NULL && gtk_widget_is_toplevel (toplevel))
+                {
+                  argv[n++] = "--xid";
+                  argv[n++] = g_newa (gchar, 32);
+                  g_snprintf (argv[n - 1], 32, "%ld", (glong) GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (toplevel))));
+                }
             }
+#endif
 
           /* terminate the parameter list */
           argv[n++] = "--create-new";

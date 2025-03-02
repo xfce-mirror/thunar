@@ -226,6 +226,7 @@ thunar_CFLAGS =								\
 	$(GUDEV_CFLAGS)							\
 	$(LIBNOTIFY_CFLAGS)						\
 	$(LIBSM_CFLAGS)							\
+	$(LIBICE_CFLAGS)							\
 	$(LIBXFCE4UI_CFLAGS)						\
 	$(LIBXFCE4UTIL_CFLAGS)						\
 	$(LIBXFCE4KBD_PRIVATE_CFLAGS) \
@@ -235,7 +236,6 @@ thunar_CFLAGS =								\
 
 thunar_LDFLAGS =							\
 	-no-undefined							\
-	$(LIBSM_LDFLAGS)						\
 	$(PLATFORM_LDFLAGS)
 
 thunar_LDADD =								\
@@ -246,6 +246,7 @@ thunar_LDADD =								\
 	$(GUDEV_LIBS)							\
 	$(LIBNOTIFY_LIBS)						\
 	$(LIBSM_LIBS)							\
+	$(LIBICE_LIBS)							\
 	$(LIBXFCE4UI_LIBS)						\
 	$(LIBXFCE4UTIL_LIBS)						\
 	$(LIBXFCE4KBD_PRIVATE_LIBS) \
