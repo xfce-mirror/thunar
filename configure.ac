@@ -49,11 +49,6 @@ dnl *******************************
 dnl *** Check for UNIX variants ***
 dnl *******************************
 AC_USE_SYSTEM_EXTENSIONS
-AC_SEARCH_LIBS([strerror],[cposix])
-
-if test "x$target_os" = "xlinux-gnu"; then
-  AC_DEFINE([HAVE_LINUX], [], [Whether we are building on Linux or not])
-fi
 
 dnl ********************************
 dnl *** Check for basic programs ***
@@ -246,7 +241,6 @@ docs/design/Makefile
 docs/papers/Makefile
 docs/reference/Makefile
 docs/reference/thunarx/Makefile
-docs/reference/thunarx/version.xml
 docs/reference/thunar/Makefile
 docs/reference/thunar/version.xml
 examples/Makefile
