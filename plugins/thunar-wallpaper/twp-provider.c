@@ -25,9 +25,12 @@
 
 #include "twp-provider.h"
 
+#ifdef ENABLE_X11
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
 #include <gdk/gdkx.h>
+#endif
+
 #include <gio/gio.h>
 #include <glib/gi18n-lib.h>
 #include <xfconf/xfconf.h>
@@ -328,6 +331,7 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
 static gint
 twp_get_active_workspace_number (GdkScreen *screen)
 {
+#ifdef ENABLE_X11
   GdkWindow *root;
   gulong     bytes_after_ret = 0;
   gulong     nitems_ret = 0;
@@ -381,4 +385,7 @@ twp_get_active_workspace_number (GdkScreen *screen)
   gdk_x11_display_error_trap_pop_ignored (gdk_display_get_default ());
 
   return ws_num;
+#else
+  return 0;
+#endif
 }
