@@ -172,16 +172,16 @@ struct _ThunarPropertiesDialog
   GtkWidget *icon_image;
   GtkWidget *names_label;
   GtkWidget *single_box;
-  GtkWidget *kind_entry;
+  GtkWidget *kind_label;
   GtkWidget *openwith_chooser;
   GtkWidget *link_entry;
   GtkWidget *link_entry_text;
   GtkWidget *location_entry;
   GtkWidget *origin_entry;
   GtkWidget *created_label;
-  GtkWidget *deleted_label;
   GtkWidget *modified_label;
   GtkWidget *accessed_label;
+  GtkWidget *deleted_label;
   GtkWidget *capacity_vbox;
   GtkWidget *capacity_label;
   GtkWidget *freespace_vbox;
@@ -447,11 +447,11 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
-  dialog->kind_entry = g_object_new (GTK_TYPE_ENTRY, NULL);
-  gtk_editable_set_editable (GTK_EDITABLE (dialog->kind_entry), FALSE);
-  gtk_entry_set_has_frame (GTK_ENTRY (dialog->kind_entry), FALSE);
-  gtk_grid_attach (GTK_GRID (grid), dialog->kind_entry, 1, row, 1, 1);
-  gtk_widget_show (dialog->kind_entry);
+  dialog->kind_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->kind_label), TRUE);
+  gtk_label_set_ellipsize (GTK_LABEL (dialog->kind_label), PANGO_ELLIPSIZE_END);
+  gtk_grid_attach (GTK_GRID (grid), dialog->kind_label, 1, row, 1, 1);
+  gtk_widget_show (dialog->kind_label);
 
   ++row;
 
@@ -569,25 +569,8 @@ thunar_properties_dialog_constructed (GObject *object)
 
 
   /*
-     Third box (deleted, modified, accessed)
+     Third box (created, modified, accessed, deleted)
    */
-  label = gtk_label_new (_("Deleted:"));
-  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
-  gtk_widget_show (label);
-
-  dialog->deleted_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
-  gtk_label_set_selectable (GTK_LABEL (dialog->deleted_label), TRUE);
-  g_object_bind_property (G_OBJECT (dialog->deleted_label), "visible",
-                          G_OBJECT (label), "visible",
-                          G_BINDING_SYNC_CREATE);
-  gtk_widget_set_hexpand (dialog->deleted_label, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), dialog->deleted_label, 1, row, 1, 1);
-  gtk_widget_show (dialog->deleted_label);
-
-  ++row;
-
   label = gtk_label_new (_("Created:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
@@ -636,6 +619,23 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_widget_set_hexpand (dialog->accessed_label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), dialog->accessed_label, 1, row, 1, 1);
   gtk_widget_show (dialog->accessed_label);
+
+  ++row;
+
+  label = gtk_label_new (_("Deleted:"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
+  gtk_widget_show (label);
+
+  dialog->deleted_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->deleted_label), TRUE);
+  g_object_bind_property (G_OBJECT (dialog->deleted_label), "visible",
+                          G_OBJECT (label), "visible",
+                          G_BINDING_SYNC_CREATE);
+  gtk_widget_set_hexpand (dialog->deleted_label, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->deleted_label, 1, row, 1, 1);
+  gtk_widget_show (dialog->deleted_label);
 
   ++row;
 
@@ -1398,14 +1398,14 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   content_type = thunar_file_get_content_type (file);
   if (content_type != NULL)
     {
-      content_type_desc = thunar_file_get_content_type_desc (file);
-      gtk_widget_set_tooltip_text (dialog->kind_entry, content_type);
-      gtk_entry_set_text (GTK_ENTRY (dialog->kind_entry), content_type_desc);
+      content_type_desc = thunar_file_get_content_type_desc (file, FALSE);
+      gtk_widget_set_tooltip_text (dialog->kind_label, content_type);
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), content_type_desc);
       g_free (content_type_desc);
     }
   else
     {
-      gtk_entry_set_text (GTK_ENTRY (dialog->kind_entry), _("unknown"));
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), _("unknown"));
     }
 
   /* update the application chooser (shown only for non-executable regular files!) */
@@ -1435,6 +1435,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     {
       display_name = g_filename_display_name (path);
       gtk_entry_set_text (GTK_ENTRY (dialog->origin_entry), display_name);
+      gtk_widget_set_tooltip_text (dialog->origin_entry, display_name);
       gtk_widget_show (dialog->origin_entry);
       g_free (display_name);
     }
@@ -1728,13 +1729,13 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
       && !g_content_type_equals (content_type, "inode/symlink"))
     {
       str = g_content_type_get_description (content_type);
-      gtk_widget_set_tooltip_text (dialog->kind_entry, content_type);
-      gtk_entry_set_text (GTK_ENTRY (dialog->kind_entry), str);
+      gtk_widget_set_tooltip_text (dialog->kind_label, content_type);
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), str);
       g_free (str);
     }
   else
     {
-      gtk_entry_set_text (GTK_ENTRY (dialog->kind_entry), _("mixed"));
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), _("mixed"));
     }
 
   /* update the link target */
