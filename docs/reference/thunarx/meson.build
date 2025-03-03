@@ -10,13 +10,22 @@ configure_file(
   output: 'gtkdocentities.ent',
 )
 
+configure_file(
+  configuration: configuration_data({
+    'COPYRIGHT_YEAR': copyright_year,
+  }),
+  input: 'thunarx-docs.xml.in',
+  output: 'thunarx-docs.xml',
+  install: false,
+)
+
 gnome.gtkdoc(
   thunarx_doc_name,
   src_dir: 'thunarx',
   ignore_headers: [
     'thunarx-visibility.h',
   ],
-  main_xml: 'thunarx-docs.xml',
+  main_xml: meson.project_build_root() / 'docs' / 'reference' / 'thunarx' / 'thunarx-docs.xml',
   html_assets: [
     'images' / 'abstraction.png',
     'images' / 'bulk-rename.png',
