@@ -1,0 +1,125 @@
+option(
+  'gtk-doc',
+  type: 'boolean',
+  value: false,
+  description: 'Build gtk-doc HTML',
+)
+
+option(
+  'introspection',
+  type: 'boolean',
+  value: true,
+  description: 'Build gobject-introspection files',
+)
+
+option(
+  'visibility',
+  type: 'boolean',
+  value: true,
+  description: 'Build with GNU symbol visibility',
+)
+
+option(
+  'x11',
+  type: 'feature',
+  value: 'auto',
+  description: 'Support for the X11 windowing system',
+)
+
+option(
+  'session-management',
+  type: 'feature',
+  value: 'auto',
+  description: 'Session management support (X11 only)',
+)
+
+option(
+  'gio-unix',
+  type: 'feature',
+  value: 'auto',
+  description: 'GIO-Unix support',
+)
+
+option(
+  'gudev',
+  type: 'feature',
+  value: 'auto',
+  description: 'GUDev support (required for thunar-volman)',
+)
+
+option(
+  'libnotify',
+  type: 'feature',
+  value: 'auto',
+  description: 'Libnotify support (required for mount notifications)',
+)
+
+option(
+  'thunar-apr',
+  type: 'feature',
+  value: 'auto',
+  description: 'Build the thunar-apr plugin, see plugins/thunar-apr/README.md',
+)
+
+option(
+  'thunar-sbr',
+  type: 'feature',
+  value: 'auto',
+  description: 'Build the thunar-sbr plugin, see plugins/thunar-sbr/README.md',
+)
+
+option(
+  'exif',
+  type: 'feature',
+  value: 'auto',
+  description: 'Exif support (optional for thunar-apr and thunar-sbr plugins)',
+)
+
+option(
+  'pcre2',
+  type: 'feature',
+  value: 'auto',
+  description: 'Pcre2 support (optional for the thunar-sbr plugin)',
+)
+
+option(
+  'thunar-tpa',
+  type: 'feature',
+  value: 'auto',
+  description: 'Build the thunar-tpa plugin, see plugins/thunar-tpa/README.md',
+)
+
+option(
+  'thunar-uca',
+  type: 'feature',
+  value: 'auto',
+  description: 'Build the thunar-uca plugin, see plugins/thunar-uca/README.md',
+)
+
+option(
+  'thunar-wallpaper',
+  type: 'feature',
+  value: 'auto',
+  description: 'Build the thunar-wallpaper plugin, see plugins/thunar-wallpaper/README.md',
+)
+
+option(
+  'helper-path-prefix',
+  type: 'string',
+  value: '',
+  description: 'Path prefix under which helper executables will be installed (default: $libdir)',
+)
+
+option(
+  'thunarx-dirs',
+  type: 'string',
+  value: '',
+  description: 'Used to set different default paths (separated by colon) for thunarx plugin lookup (default: $libdir/thunarx-$THUNARX_VERSION_API)',
+)
+
+option(
+  'thunarx-dirs-envvar',
+  type: 'boolean',
+  value: false,
+  description: 'Enables the posibillity to set custom thunarx directories by using the environment variable THUNARX_DIRS',
+)

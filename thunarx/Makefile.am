@@ -80,7 +80,9 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = thunarx-3.pc
 
 EXTRA_DIST =								\
-	thunarx.symbols
+	thunarx.symbols \
+	meson.build \
+	$(NULL)
 
 CLEANFILES = $(NULL)
 

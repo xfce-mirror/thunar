@@ -73,7 +73,9 @@ EXTRA_DIST =								\
 	thunar-uca.gresource.xml					\
 	thunar-uca-editor.ui						\
 	thunar-uca-chooser.ui						\
-	$(defaults_in_files)
+	$(defaults_in_files) \
+	meson.build \
+	$(NULL)
 
 CLEANFILES =								\
 	$(defaults_DATA)
