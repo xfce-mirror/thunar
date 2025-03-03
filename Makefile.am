@@ -100,7 +100,12 @@ EXTRA_DIST =								\
 	$(polkit_in_in_files)					\
 	its/xfce.loc							\
 	its/xfce.its							\
-	m4/introspection.m4
+	m4/introspection.m4 \
+	po/meson.build \
+	meson_options.txt \
+	meson.build \
+	xfce-revision.h.in \
+	$(NULL)
 
 CLEANFILES		= $(appdata_DATA)
 
