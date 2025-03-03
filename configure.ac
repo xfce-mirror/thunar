@@ -287,8 +287,6 @@ docs/design/Makefile
 docs/papers/Makefile
 docs/reference/Makefile
 docs/reference/thunarx/Makefile
-docs/reference/thunar/Makefile
-docs/reference/thunar/version.xml
 examples/Makefile
 examples/tex-open-terminal/Makefile
 icons/Makefile
