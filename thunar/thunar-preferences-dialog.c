@@ -259,6 +259,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   GtkWidget      *vbox;
   GtkWidget      *infobar;
   GEnumClass     *type;
+  GList          *windows;
   gchar          *date;
   gint            row = 0;
 
@@ -1420,16 +1421,29 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_show (vbox);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_IN, NULL);
-  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
-  grid = xfce_shortcuts_editor_new (13,
-                                    _("Window"), thunar_window_get_action_entries (), (size_t) THUNAR_WINDOW_N_ACTIONS,
-                                      _("View"), thunar_standard_view_get_action_entries (), (size_t) THUNAR_STANDARD_VIEW_N_ACTIONS,
-                                        _("Launcher"), thunar_action_manager_get_action_entries (), (size_t) THUNAR_ACTION_MANAGER_N_ACTIONS,
-                                          _("Status Bar"), thunar_statusbar_get_action_entries (), (size_t) THUNAR_STATUS_BAR_N_ACTIONS);
-  gtk_container_add (GTK_CONTAINER (frame), grid);
-  gtk_widget_show (grid);
+  /* check if the accel map has been initialized which is done in thunar-window.c */
+  windows = thunar_application_get_windows (thunar_application_get ());
+  if (windows != NULL)
+    {
+      grid = xfce_shortcuts_editor_new (13,
+                                        _("Window"), thunar_window_get_action_entries (), (size_t) THUNAR_WINDOW_N_ACTIONS,
+                                          _("View"), thunar_standard_view_get_action_entries (), (size_t) THUNAR_STANDARD_VIEW_N_ACTIONS,
+                                            _("Launcher"), thunar_action_manager_get_action_entries (), (size_t) THUNAR_ACTION_MANAGER_N_ACTIONS,
+                                              _("Status Bar"), thunar_statusbar_get_action_entries (), (size_t) THUNAR_STATUS_BAR_N_ACTIONS);
+      gtk_container_add (GTK_CONTAINER (frame), grid);
+      gtk_widget_show (grid);
+
+      g_list_free (windows);
+    }
+  else
+    {
+      label = gtk_label_new (_("The Shorcuts Editor requires a Thunar window to be present."));
+      gtk_container_add (GTK_CONTAINER (frame), label);
+      gtk_widget_show (label);
+    }
 }
 
 
