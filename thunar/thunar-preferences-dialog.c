@@ -844,7 +844,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
 
-
   /*
      Behavior
    */
@@ -1074,7 +1073,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /*
      Advanced
    */
-
   label = gtk_label_new (_("Advanced"));
   vbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "border-width", 12, "spacing", 18, NULL);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
@@ -1412,7 +1410,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
     }
 
   /*
-   Shortcuts
+    Shortcuts
   */
   label = gtk_label_new (_("Shortcuts"));
   vbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "border-width", 12, "spacing", 18, NULL);
