@@ -24,19 +24,23 @@ dnl *** Version information ***
 dnl ***************************
 m4_define([thunarx_verinfo], [0:0:0])
 m4_define([thunarx_version_api], [3])
+m4_define([copyright_year], [2025])
 
 XDT_VERSION_INIT([4.20.0], [git])
 
 dnl ***************************
 dnl *** Initialize autoconf ***
 dnl ***************************
-AC_COPYRIGHT([Copyright (c) 2004-2024 The Thunar development team. All rights reserved.])
+AC_COPYRIGHT([Copyright (c) 2004-copyright_year() The Thunar development team. All rights reserved.])
 AC_INIT([thunar], [xdt_version], [https://gitlab.xfce.org/xfce/thunar], [thunar])
 AC_PREREQ([2.69])
 AC_CONFIG_MACRO_DIRS([m4])
 AC_CANONICAL_TARGET()
 AC_REVISION([xdt_version_build])
 AC_DEFINE([VERSION_FULL], [PACKAGE_VERSION], [Alias for VERSION and PACKAGE_VERSION for meson compatibility])
+COPYRIGHT_YEAR=copyright_year()
+AC_DEFINE_UNQUOTED([COPYRIGHT_YEAR], ["$COPYRIGHT_YEAR"], [Copyright year])
+AC_SUBST([COPYRIGHT_YEAR])
 
 dnl ***************************
 dnl *** Initialize automake ***

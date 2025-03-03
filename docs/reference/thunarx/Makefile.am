@@ -50,9 +50,17 @@ GTKDOC_LIBS =  								\
 
 include $(top_srcdir)/gtk-doc.make
 
+$(top_builddir)/docs/reference/$(DOC_MODULE)-docs.xml: $(DOC_MODULE)-docs.xml.in
+	$(AM_V_GEN) $(SED) -e "s,\@COPYRIGHT_YEAR\@,@COPYRIGHT_YEAR@,g" $< >$@
+
 EXTRA_DIST += \
 	gtkdocentities.ent.in \
+	$(DOC_MODULE)-docs.xml.in \
 	meson.build \
+	$(NULL)
+
+DISTCLEANFILES = \
+	$(DOC_MODULE)-docs.xml \
 	$(NULL)
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:
