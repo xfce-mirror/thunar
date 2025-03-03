@@ -344,4 +344,6 @@ EXTRA_DIST =								\
 	thunar-thumbnail-frame.png				\
 	thunar-settings							\
 	thunar.gresource.xml					\
-	$(desktop_in_files)
+	$(desktop_in_files) \
+	meson.build \
+	$(NULL)

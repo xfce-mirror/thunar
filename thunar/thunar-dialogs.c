@@ -21,6 +21,9 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#ifdef HAVE_XFCE_REVISION_H
+#include "xfce-revision.h"
+#endif
 
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
@@ -450,7 +453,7 @@ thunar_dialogs_show_about (GtkWindow   *parent,
                          "logo-icon-name", "org.xfce.thunar",
                          "program-name", title,
                          "translator-credits", _("translator-credits"),
-                         "version", PACKAGE_VERSION,
+                         "version", VERSION_FULL,
                          "website", "https://docs.xfce.org/xfce/thunar/start",
                          NULL);
 

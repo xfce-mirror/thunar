@@ -53,7 +53,9 @@ thunar-tpa-bindings.c thunar-tpa-bindings.h: $(srcdir)/thunar-tpa-bindings.xml M
 EXTRA_DIST =								\
 	$(desktop_in_files)						\
 	thunar-tpa-bindings.xml					\
-	README.md
+	README.md \
+	meson.build \
+	$(NULL)
 
 CLEANFILES =								\
 	$(desktop_DATA)
