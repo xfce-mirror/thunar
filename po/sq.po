@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-03-01 00:46+0100\n"
+"POT-Creation-Date: 2025-03-04 00:46+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Besnik Bleta <besnik@programeshqip.org>, 2018,2020-2025\n"
 "Language-Team: Albanian (http://app.transifex.com/xfce/thunar/language/sq/)\n"
@@ -1063,7 +1063,6 @@ msgstr "Kjo shtyllë është e rezervuar për vendndodhje speciale"
 #. tell the user that we're unable to determine the file info
 #: thunar/thunar-column-model.c:913 thunar/thunar-list-model.c:991
 #: thunar/thunar-list-model.c:1027 thunar/thunar-permissions-chooser.c:253
-#: thunar/thunar-size-label.c:392 thunar/thunar-size-label.c:473
 #: thunar/thunar-util.c:431 thunar/thunar-util.c:434
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:729
 #: plugins/thunar-apr/thunar-apr-image-page.c:305
@@ -1286,7 +1285,7 @@ msgid "Size:"
 msgstr "Madhësi:"
 
 #: thunar/thunar-dialogs.c:928 thunar/thunar-dialogs.c:978
-#: thunar/thunar-properties-dialog.c:608
+#: thunar/thunar-properties-dialog.c:591
 msgid "Modified:"
 msgstr "Ndryshuar më:"
 
@@ -1601,16 +1600,21 @@ msgstr "Pa përcaktim fushe URL-je"
 msgid "Invalid desktop file"
 msgstr "Kartelë e pavlefshme desktopi"
 
-#: thunar/thunar-file.c:2549 thunar/thunar-util.c:1451
+#: thunar/thunar-file.c:2551 thunar/thunar-util.c:1451
 msgid "broken link"
 msgstr "lidhje e dëmtuar"
 
-#: thunar/thunar-file.c:2555
+#: thunar/thunar-file.c:2558
 #, c-format
 msgid "%s (link to %s)"
 msgstr "%s (lidhje për te %s)"
 
-#: thunar/thunar-file.c:2564
+#: thunar/thunar-file.c:2560
+#, c-format
+msgid "%s (link)"
+msgstr "%s (lidhje)"
+
+#: thunar/thunar-file.c:2569
 #, c-format
 msgid "%s (mount point)"
 msgstr "%s (pikë montimi)"
@@ -1819,7 +1823,7 @@ msgid ""
 "space."
 msgstr "S’ka hapësirë ​​të mjaftueshme në vendmbërritje. Provoni të hiqni kartela për të liruar vend."
 
-#: thunar/thunar-job-operation.c:789 thunar/thunar-size-label.c:482
+#: thunar/thunar-job-operation.c:789 thunar/thunar-size-label.c:486
 #: thunar/thunar-util.c:1328
 #, c-format
 msgid "%d file"
@@ -1922,7 +1926,8 @@ msgid "Redo the latest operation"
 msgstr "Ribëj veprimin e fundit"
 
 #: thunar/thunar-list-model.c:1055 thunar/thunar-list-model.c:1068
-#: thunar/thunar-properties-dialog.c:1408 thunar/thunar-tree-view-model.c:1379
+#: thunar/thunar-properties-dialog.c:1408 thunar/thunar-size-label.c:392
+#: thunar/thunar-size-label.c:477 thunar/thunar-tree-view-model.c:1379
 #: thunar/thunar-tree-view-model.c:1392
 msgid "unknown"
 msgstr "e panjohur"
@@ -2783,18 +2788,18 @@ msgstr "Vendndodhje:"
 msgid "Volume:"
 msgstr "Vëllim:"
 
-#. Third box (deleted, modified, accessed)
+#. Third box (created, modified, accessed, deleted)
 #: thunar/thunar-properties-dialog.c:574
-msgid "Deleted:"
-msgstr "Fshirë më:"
-
-#: thunar/thunar-properties-dialog.c:591
 msgid "Created:"
 msgstr "Krijuar më:"
 
-#: thunar/thunar-properties-dialog.c:625
+#: thunar/thunar-properties-dialog.c:608
 msgid "Accessed:"
 msgstr "Hapur më:"
+
+#: thunar/thunar-properties-dialog.c:625
+msgid "Deleted:"
+msgstr "Fshirë më:"
 
 #: thunar/thunar-properties-dialog.c:671
 msgid "Size on Disk:"
@@ -2881,15 +2886,15 @@ msgid "%s - Properties"
 msgstr "%s - Veti"
 
 #. update the properties dialog title
-#: thunar/thunar-properties-dialog.c:1618
+#: thunar/thunar-properties-dialog.c:1619
 msgid "Properties"
 msgstr "Veti"
 
-#: thunar/thunar-properties-dialog.c:1645
+#: thunar/thunar-properties-dialog.c:1646
 msgid "Link Targets:"
 msgstr "Objektiva Lidhjesh:"
 
-#: thunar/thunar-properties-dialog.c:1737
+#: thunar/thunar-properties-dialog.c:1738
 msgid "mixed"
 msgstr "të përziera"
 
@@ -3124,14 +3129,20 @@ msgstr "Po llogaritet…"
 msgid "Calculation aborted"
 msgstr "Llogaritja dështoi"
 
-#: thunar/thunar-size-label.c:481 thunar/thunar-util.c:1358
+#. setup the error text and tooltip
+#. nothing was readable
+#: thunar/thunar-size-label.c:413 thunar/thunar-size-label.c:508
+msgid "unreadable"
+msgstr "e palexueshme"
+
+#: thunar/thunar-size-label.c:485 thunar/thunar-util.c:1358
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
 msgstr[0] "%d dosje"
 msgstr[1] "%d dosje"
 
-#: thunar/thunar-size-label.c:483
+#: thunar/thunar-size-label.c:487
 #, c-format
 msgid "%u item (%s, %s)"
 msgid_plural "%u items (%s, %s)"
@@ -3140,14 +3151,9 @@ msgstr[1] "%u objekte (%s, %s)"
 
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
-#: thunar/thunar-size-label.c:493
+#: thunar/thunar-size-label.c:497
 msgid "(some contents unreadable)"
 msgstr "(ca lëndë e palexueshme)"
-
-#. nothing was readable, so permission was denied
-#: thunar/thunar-size-label.c:504
-msgid "Permission denied"
-msgstr "Leje e mohuar"
 
 #: thunar/thunar-standard-view.c:485
 msgid "Select _all Files"
