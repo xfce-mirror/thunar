@@ -24,6 +24,7 @@
 
 #include "thunarx/thunarx-private.h"
 #include "thunarx/thunarx-property-page.h"
+#include "thunarx/thunarx-visibility.h"
 
 #include <glib/gi18n-lib.h>
 
@@ -353,3 +354,6 @@ thunarx_property_page_set_label_widget (ThunarxPropertyPage *property_page,
   g_object_notify (G_OBJECT (property_page), "label-widget");
   g_object_thaw_notify (G_OBJECT (property_page));
 }
+
+#define __THUNARX_PROPERTY_PAGE_C__
+#include "thunarx-visibility.c"

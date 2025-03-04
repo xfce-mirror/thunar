@@ -24,6 +24,7 @@
 
 #include "thunarx/thunarx-preferences-provider.h"
 #include "thunarx/thunarx-private.h"
+#include "thunarx/thunarx-visibility.h"
 
 #include <libxfce4util/libxfce4util.h>
 
@@ -127,3 +128,6 @@ thunarx_preferences_provider_get_menu_items (ThunarxPreferencesProvider *provide
 
   return items;
 }
+
+#define __THUNARX_PREFERENCES_PROVIDER_C__
+#include "thunarx-visibility.c"

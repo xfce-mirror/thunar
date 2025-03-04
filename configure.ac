@@ -24,18 +24,23 @@ dnl *** Version information ***
 dnl ***************************
 m4_define([thunarx_verinfo], [0:0:0])
 m4_define([thunarx_version_api], [3])
+m4_define([copyright_year], [2025])
 
 XDT_VERSION_INIT([4.20.0], [git])
 
 dnl ***************************
 dnl *** Initialize autoconf ***
 dnl ***************************
-AC_COPYRIGHT([Copyright (c) 2004-2024 The Thunar development team. All rights reserved.])
+AC_COPYRIGHT([Copyright (c) 2004-copyright_year() The Thunar development team. All rights reserved.])
 AC_INIT([thunar], [xdt_version], [https://gitlab.xfce.org/xfce/thunar], [thunar])
 AC_PREREQ([2.69])
 AC_CONFIG_MACRO_DIRS([m4])
 AC_CANONICAL_TARGET()
 AC_REVISION([xdt_version_build])
+AC_DEFINE([VERSION_FULL], [PACKAGE_VERSION], [Alias for VERSION and PACKAGE_VERSION for meson compatibility])
+COPYRIGHT_YEAR=copyright_year()
+AC_DEFINE_UNQUOTED([COPYRIGHT_YEAR], ["$COPYRIGHT_YEAR"], [Copyright year])
+AC_SUBST([COPYRIGHT_YEAR])
 
 dnl ***************************
 dnl *** Initialize automake ***
@@ -49,11 +54,6 @@ dnl *******************************
 dnl *** Check for UNIX variants ***
 dnl *******************************
 AC_USE_SYSTEM_EXTENSIONS
-AC_SEARCH_LIBS([strerror],[cposix])
-
-if test "x$target_os" = "xlinux-gnu"; then
-  AC_DEFINE([HAVE_LINUX], [], [Whether we are building on Linux or not])
-fi
 
 dnl ********************************
 dnl *** Check for basic programs ***
@@ -62,7 +62,7 @@ AC_PROG_CC()
 LT_PATH_LD()
 AM_PROG_CC_C_O()
 AC_PROG_INSTALL()
-AC_CHECK_PROGS([PERL], [perl5 perl])
+AC_PATH_PROG([XDT_GEN_VISIBILITY], [xdt-gen-visibility])
 m4_ifdef([AC_PROG_SED], [AC_PROG_SED], [AC_CHECK_PROG(SED, sed, sed)])
 
 dnl **************************
@@ -148,11 +148,6 @@ AC_SEARCH_LIBS([bind_textdomain_codeset], [intl],
 	       [AC_DEFINE([HAVE_BIND_TEXTDOMAIN_CODESET], [1], [Define to 1 if you have the 'bind_textdomain_codeset' function.])],
 	       [])
 
-dnl *********************
-dnl *** Check for X11 ***
-dnl *********************
-XDT_CHECK_LIBX11_REQUIRE()
-
 dnl *************************
 dnl *** Check for gtk-doc ***
 dnl *************************
@@ -179,10 +174,27 @@ dnl *** GObject Instrospection ***
 dnl ******************************
 GOBJECT_INTROSPECTION_CHECK([1.72.0])
 
-dnl ********************************************
-dnl *** Check for session management support ***
-dnl ********************************************
-XDT_CHECK_LIBSM()
+dnl **********************************
+dnl *** Optional X11 dependencies  ***
+dnl **********************************
+XDT_CHECK_OPTIONAL_FEATURE([X11],
+                           [x11],
+                           [
+                             XDT_FEATURE_DEPENDENCY([GDK_X11], [gdk-x11-3.0], [3.24.0])
+                             XDT_FEATURE_DEPENDENCY([LIBX11], [x11], [1.6.7])
+                           ],
+                           [the X11 windowing system])
+if test x"$ENABLE_X11" != x"yes"; then
+  dnl Do not check for optional X11 packages if X11 is disabled
+  enable_libsm=no
+fi
+XDT_CHECK_OPTIONAL_FEATURE([LIBSM],
+                           [libsm],
+                           [
+                             XDT_FEATURE_DEPENDENCY([LIBICE], [ice], [1.0.10])
+                             XDT_FEATURE_DEPENDENCY([LIBSM], [sm], [1.2.3])
+                           ],
+                           [session management library])
 
 dnl **********************************
 dnl *** Optional GIO UNIX features ***
@@ -215,7 +227,41 @@ XDT_FEATURE_LINKER_OPTS()
 dnl dnl ****************************************
 dnl dnl *** Check for ELF visibility support ***
 dnl dnl ****************************************
-dnl XDT_FEATURE_VISIBILITY()
+AC_ARG_ENABLE([visibility],
+              AS_HELP_STRING([--disable-visibility],
+                             [Do not use ELF visibility attributes]),
+              [enable_visibility=$enableval], [enable_visibility=yes])
+have_gnuc_visibility=no
+if test "x$enable_visibility" != "xno"; then
+  XDT_SUPPORTED_FLAGS([xdt_vis_test_cflags], [-Wall -Werror -Wno-unused-parameter -fvisibility=hidden])
+  saved_CFLAGS="$CFLAGS"
+  CFLAGS="$CFLAGS $xdt_vis_test_cflags"
+  AC_MSG_CHECKING([whether $CC supports the GNUC visibility attribute])
+  AC_COMPILE_IFELSE([AC_LANG_SOURCE(
+  [
+    void test_default(void);
+    void test_hidden(void);
+    void __attribute__((visibility("default"))) test_default(void) {}
+    void __attribute__((visibility("hidden"))) test_hidden(void) {}
+    int main(int argc, char **argv) {
+      test_default();
+      test_hidden();
+      return 0;
+    }
+  ])],
+  [
+    have_gnuc_visibility=yes
+    AC_MSG_RESULT([yes])
+  ],
+  [
+    AC_MSG_RESULT([no])
+  ])
+  CFLAGS="$saved_CFLAGS"
+fi
+if test "x$have_gnuc_visibility" = "xyes"; then
+  CPPFLAGS="$CPPFLAGS -DENABLE_SYMBOL_VISIBILITY=1"
+  CFLAGS="$CFLAGS -fvisibility=hidden"
+fi
 
 dnl *********************************
 dnl *** Substitute platform flags ***
@@ -246,9 +292,6 @@ docs/design/Makefile
 docs/papers/Makefile
 docs/reference/Makefile
 docs/reference/thunarx/Makefile
-docs/reference/thunarx/version.xml
-docs/reference/thunar/Makefile
-docs/reference/thunar/version.xml
 examples/Makefile
 examples/tex-open-terminal/Makefile
 icons/Makefile

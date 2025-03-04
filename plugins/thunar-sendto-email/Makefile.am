@@ -37,7 +37,9 @@ desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 
 EXTRA_DIST =								\
 	$(desktop_in_in_files)						\
-	README.md
+	README.md \
+	meson.build \
+	$(NULL)
 
 DISTCLEANFILES =							\
 	$(desktop_in_files)						\

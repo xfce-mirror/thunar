@@ -28,7 +28,7 @@
 #include <unistd.h>
 #endif
 
-#ifdef HAVE_LIBSM
+#ifdef ENABLE_LIBSM
 #include <X11/ICE/ICElib.h>
 #endif
 
@@ -36,7 +36,7 @@
 
 
 
-#ifdef HAVE_LIBSM
+#ifdef ENABLE_LIBSM
 static void
 thunar_ice_error_handler (IceConn connection)
 {
@@ -108,7 +108,7 @@ thunar_ice_connection_watch (IceConn     connection,
       g_source_remove (watch_id);
     }
 }
-#endif /* !HAVE_LIBSM */
+#endif /* !ENABLE_LIBSM */
 
 
 
@@ -123,7 +123,7 @@ thunar_ice_connection_watch (IceConn     connection,
 void
 thunar_ice_init (void)
 {
-#ifdef HAVE_LIBSM
+#ifdef ENABLE_LIBSM
   static gboolean initialized = FALSE;
 
   if (G_LIKELY (!initialized))
@@ -136,5 +136,5 @@ thunar_ice_init (void)
 
       initialized = TRUE;
     }
-#endif /* !HAVE_LIBSM */
+#endif /* !ENABLE_LIBSM */
 }

@@ -44,7 +44,7 @@
 #include <fcntl.h>
 #include <gio/gunixinputstream.h>
 
-#if HAVE_STATX
+#ifdef HAVE_STATX
 #include <sys/stat.h>
 #ifdef STATX_DIOALIGN
 #define HAVE_STATX_DIOALIGN 1
@@ -1023,7 +1023,7 @@ open_file_and_buffer_fallback (GFile        *file,
          be able to do. */
       if (posix_memalign (&buf, CMP_BUF_MIN_ALIGN, CMP_BUF_SIZE) != 0)
         {
-          g_set_error (error, G_IO_ERROR, g_io_error_from_errno (errno), "Failed to allocate aligned memory: %s", strerror (errno));
+          g_set_error (error, G_IO_ERROR, g_io_error_from_errno (errno), "Failed to allocate aligned memory: %s", g_strerror (errno));
         }
     }
 
@@ -1109,7 +1109,7 @@ thunar_g_file_compare_contents (GFile        *file_a,
       // allocate the buffer for file_a.
       if (posix_memalign (&buf_a, buf_align, buf_size) != 0)
         {
-          g_set_error (error, G_IO_ERROR, g_io_error_from_errno (errno), "Failed to allocate aligned memory: %s", strerror (errno));
+          g_set_error (error, G_IO_ERROR, g_io_error_from_errno (errno), "Failed to allocate aligned memory: %s", g_strerror (errno));
         }
     }
 

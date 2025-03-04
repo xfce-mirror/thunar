@@ -24,6 +24,7 @@
 
 #include "thunarx/thunarx-private.h"
 #include "thunarx/thunarx-property-page-provider.h"
+#include "thunarx/thunarx-visibility.h"
 
 #include <libxfce4util/libxfce4util.h>
 
@@ -138,3 +139,6 @@ thunarx_property_page_provider_get_pages (ThunarxPropertyPageProvider *provider,
 
   return pages;
 }
+
+#define __THUNARX_PROPERTY_PAGE_PROVIDER_C__
+#include "thunarx-visibility.c"

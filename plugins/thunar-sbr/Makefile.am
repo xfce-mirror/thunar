@@ -55,6 +55,8 @@ thunar_sbr_la_DEPENDENCIES =						\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
 
 EXTRA_DIST =								\
-	README.md
+	README.md \
+	meson.build \
+	$(NULL)
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:

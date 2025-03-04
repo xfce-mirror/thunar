@@ -22,6 +22,7 @@
 #include "thunarx/thunarx-menu-item.h"
 #include "thunarx/thunarx-menu.h"
 #include "thunarx/thunarx-private.h"
+#include "thunarx/thunarx-visibility.h"
 
 #include <glib/gi18n-lib.h>
 
@@ -155,3 +156,6 @@ thunarx_menu_get_items (ThunarxMenu *menu)
 
   return items;
 }
+
+#define __THUNARX_MENU_C__
+#include "thunarx-visibility.c"

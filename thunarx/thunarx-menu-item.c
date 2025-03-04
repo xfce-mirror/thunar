@@ -22,6 +22,7 @@
 #include "thunarx/thunarx-menu-item.h"
 #include "thunarx/thunarx-menu.h"
 #include "thunarx/thunarx-private.h"
+#include "thunarx/thunarx-visibility.h"
 
 #include <glib/gi18n-lib.h>
 
@@ -416,3 +417,6 @@ thunarx_menu_item_list_free (GList *items)
   g_list_foreach (items, (GFunc) (void (*) (void)) g_object_unref, NULL);
   g_list_free (items);
 }
+
+#define __THUNARX_MENU_ITEM_C__
+#include "thunarx-visibility.c"

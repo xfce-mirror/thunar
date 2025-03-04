@@ -24,6 +24,7 @@
 
 #include "thunarx/thunarx-private.h"
 #include "thunarx/thunarx-provider-plugin.h"
+#include "thunarx/thunarx-visibility.h"
 
 #include <glib/gi18n-lib.h>
 #include <libxfce4util/libxfce4util.h>
@@ -252,3 +253,6 @@ thunarx_provider_plugin_register_flags (ThunarxProviderPlugin *plugin,
 
   return (*THUNARX_PROVIDER_PLUGIN_GET_IFACE (plugin)->register_flags) (plugin, name, const_static_values);
 }
+
+#define __THUNARX_PROVIDER_PLUGIN_C__
+#include "thunarx-visibility.c"

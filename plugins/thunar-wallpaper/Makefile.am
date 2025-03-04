@@ -42,4 +42,9 @@ thunar_wallpaper_plugin_la_LIBADD =					\
 thunar_wallpaper_plugin_la_DEPENDENCIES =				\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
 
+EXTRA_DIST =								\
+	README.md \
+	meson.build \
+	$(NULL)
+
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:

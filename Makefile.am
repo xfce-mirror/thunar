@@ -46,12 +46,9 @@ ChangeLog: Makefile
 dist-hook: ChangeLog
 
 desktopdir = $(datadir)/applications
-desktop_in_in_files = 							\
-	thunar.desktop.in.in						\
-	thunar-bulk-rename.desktop.in.in
-desktop_in_files = $(desktop_in_in_files:.desktop.in.in=.desktop.in)
-%.desktop.in: %.desktop.in.in Makefile
-	$(AM_V_GEN) $(SED) -e "s,\@HELPERDIR\@,$(HELPER_PATH_PREFIX),g" < $< > $@
+desktop_in_files = 							\
+	thunar.desktop.in						\
+	thunar-bulk-rename.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 %.desktop: %.desktop.in Makefile
 	$(AM_V_GEN)$(MSGFMT) --desktop --template $< -d $(top_srcdir)/po -o $@
@@ -96,19 +93,23 @@ EXTRA_DIST =								\
 	FAQ								\
 	HACKING								\
 	README.md								\
-	$(desktop_in_in_files)						\
+	$(desktop_in_files)						\
 	$(service_in_files)						\
 	$(systemd_user_in_files)					\
 	$(appdata_in_files)						\
 	$(polkit_in_in_files)					\
 	its/xfce.loc							\
 	its/xfce.its							\
-	m4/introspection.m4
+	m4/introspection.m4 \
+	po/meson.build \
+	meson_options.txt \
+	meson.build \
+	xfce-revision.h.in \
+	$(NULL)
 
 CLEANFILES		= $(appdata_DATA)
 
 DISTCLEANFILES =							\
-	$(desktop_in_files)						\
 	$(desktop_DATA)							\
 	$(service_DATA)							\
 	$(systemd_user_DATA)					\

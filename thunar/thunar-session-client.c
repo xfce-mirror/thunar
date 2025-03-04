@@ -32,7 +32,7 @@
 #include <string.h>
 #endif
 
-#ifdef HAVE_LIBSM
+#ifdef ENABLE_LIBSM
 #include <X11/SM/SMlib.h>
 #endif
 
@@ -49,7 +49,7 @@
 
 static void
 thunar_session_client_finalize (GObject *object);
-#ifdef HAVE_LIBSM
+#ifdef ENABLE_LIBSM
 static gboolean
 thunar_session_client_connect (ThunarSessionClient *session_client,
                                const gchar         *previous_id);
@@ -71,7 +71,7 @@ thunar_session_client_save_yourself (SmcConn              connection,
 static void
 thunar_session_client_shutdown_cancelled (SmcConn              connection,
                                           ThunarSessionClient *session_client);
-#endif /* !HAVE_LIBSM */
+#endif /* !ENABLE_LIBSM */
 
 
 
@@ -87,7 +87,7 @@ struct _ThunarSessionClient
   gchar *path;
   gchar *id;
 
-#ifdef HAVE_LIBSM
+#ifdef ENABLE_LIBSM
   SmcConn connection;
 #endif
 };
@@ -123,11 +123,11 @@ thunar_session_client_finalize (GObject *object)
 {
   ThunarSessionClient *session_client = THUNAR_SESSION_CLIENT (object);
 
-#ifdef HAVE_LIBSM
+#ifdef ENABLE_LIBSM
   /* disconnect from the session manager */
   if (G_LIKELY (session_client->connection != NULL))
     SmcCloseConnection (session_client->connection, 0, NULL);
-#endif /* !HAVE_LIBSM */
+#endif /* !ENABLE_LIBSM */
 
   /* release internal state */
   g_free (session_client->path);
@@ -138,7 +138,7 @@ thunar_session_client_finalize (GObject *object)
 
 
 
-#ifdef HAVE_LIBSM
+#ifdef ENABLE_LIBSM
 static gboolean
 thunar_session_client_connect (ThunarSessionClient *session_client,
                                const gchar         *previous_id)
@@ -447,7 +447,7 @@ thunar_session_client_shutdown_cancelled (SmcConn              connection,
   _thunar_return_if_fail (THUNAR_IS_SESSION_CLIENT (session_client));
   _thunar_return_if_fail (session_client->connection == connection);
 }
-#endif /* !HAVE_LIBSM */
+#endif /* !ENABLE_LIBSM */
 
 
 
@@ -470,11 +470,11 @@ thunar_session_client_new (const gchar *session_id)
   /* allocate a new session client */
   session_client = g_object_new (THUNAR_TYPE_SESSION_CLIENT, NULL);
 
-#ifdef HAVE_LIBSM
+#ifdef ENABLE_LIBSM
   /* try to connect to the session manager and restore the previous session */
   if (thunar_session_client_connect (session_client, session_id) && session_id != NULL)
     thunar_session_client_restore (session_client);
-#endif /* !HAVE_LIBSM */
+#endif /* !ENABLE_LIBSM */
 
   return session_client;
 }
