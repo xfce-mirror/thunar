@@ -1530,6 +1530,11 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
 
   /* wrap the file descriptor into a file pointer */
   fp = fdopen (fd, "w");
+  if (G_UNLIKELY (fp == NULL))
+    {
+      g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), "%s", g_strerror (errno));
+      goto done;
+    }
 
   /* write the header */
   fprintf (fp, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<actions>\n");
