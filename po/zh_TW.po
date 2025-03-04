@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-03-01 00:46+0100\n"
+"POT-Creation-Date: 2025-03-04 00:46+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: 黃柏諺 <s8321414@gmail.com>, 2019-2025\n"
 "Language-Team: Chinese (Taiwan) (http://app.transifex.com/xfce/thunar/language/zh_TW/)\n"
@@ -1041,7 +1041,6 @@ msgstr "此欄位是為特殊位置保留的"
 #. tell the user that we're unable to determine the file info
 #: thunar/thunar-column-model.c:913 thunar/thunar-list-model.c:991
 #: thunar/thunar-list-model.c:1027 thunar/thunar-permissions-chooser.c:253
-#: thunar/thunar-size-label.c:392 thunar/thunar-size-label.c:473
 #: thunar/thunar-util.c:431 thunar/thunar-util.c:434
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:729
 #: plugins/thunar-apr/thunar-apr-image-page.c:305
@@ -1264,7 +1263,7 @@ msgid "Size:"
 msgstr "大小："
 
 #: thunar/thunar-dialogs.c:928 thunar/thunar-dialogs.c:978
-#: thunar/thunar-properties-dialog.c:608
+#: thunar/thunar-properties-dialog.c:591
 msgid "Modified:"
 msgstr "最後修改日期："
 
@@ -1579,16 +1578,21 @@ msgstr "URL 欄並未指定"
 msgid "Invalid desktop file"
 msgstr "無效的桌面檔案"
 
-#: thunar/thunar-file.c:2549 thunar/thunar-util.c:1451
+#: thunar/thunar-file.c:2551 thunar/thunar-util.c:1451
 msgid "broken link"
 msgstr "連結失效"
 
-#: thunar/thunar-file.c:2555
+#: thunar/thunar-file.c:2558
 #, c-format
 msgid "%s (link to %s)"
 msgstr "%s（連結至 %s）"
 
-#: thunar/thunar-file.c:2564
+#: thunar/thunar-file.c:2560
+#, c-format
+msgid "%s (link)"
+msgstr "%s（連結）"
+
+#: thunar/thunar-file.c:2569
 #, c-format
 msgid "%s (mount point)"
 msgstr "%s（掛載點）"
@@ -1797,7 +1801,7 @@ msgid ""
 "space."
 msgstr "目的地空間不足。請試著移除些檔案以挪出空間。"
 
-#: thunar/thunar-job-operation.c:789 thunar/thunar-size-label.c:482
+#: thunar/thunar-job-operation.c:789 thunar/thunar-size-label.c:486
 #: thunar/thunar-util.c:1328
 #, c-format
 msgid "%d file"
@@ -1899,7 +1903,8 @@ msgid "Redo the latest operation"
 msgstr "重做最新操作"
 
 #: thunar/thunar-list-model.c:1055 thunar/thunar-list-model.c:1068
-#: thunar/thunar-properties-dialog.c:1408 thunar/thunar-tree-view-model.c:1379
+#: thunar/thunar-properties-dialog.c:1408 thunar/thunar-size-label.c:392
+#: thunar/thunar-size-label.c:477 thunar/thunar-tree-view-model.c:1379
 #: thunar/thunar-tree-view-model.c:1392
 msgid "unknown"
 msgstr "未知"
@@ -2759,18 +2764,18 @@ msgstr "位置："
 msgid "Volume:"
 msgstr "儲存裝置："
 
-#. Third box (deleted, modified, accessed)
+#. Third box (created, modified, accessed, deleted)
 #: thunar/thunar-properties-dialog.c:574
-msgid "Deleted:"
-msgstr "刪除時間："
-
-#: thunar/thunar-properties-dialog.c:591
 msgid "Created:"
 msgstr "建立："
 
-#: thunar/thunar-properties-dialog.c:625
+#: thunar/thunar-properties-dialog.c:608
 msgid "Accessed:"
 msgstr "最後存取日期："
+
+#: thunar/thunar-properties-dialog.c:625
+msgid "Deleted:"
+msgstr "刪除時間："
 
 #: thunar/thunar-properties-dialog.c:671
 msgid "Size on Disk:"
@@ -2857,15 +2862,15 @@ msgid "%s - Properties"
 msgstr "%s - 屬性"
 
 #. update the properties dialog title
-#: thunar/thunar-properties-dialog.c:1618
+#: thunar/thunar-properties-dialog.c:1619
 msgid "Properties"
 msgstr "屬性"
 
-#: thunar/thunar-properties-dialog.c:1645
+#: thunar/thunar-properties-dialog.c:1646
 msgid "Link Targets:"
 msgstr "連結目標："
 
-#: thunar/thunar-properties-dialog.c:1737
+#: thunar/thunar-properties-dialog.c:1738
 msgid "mixed"
 msgstr "混合"
 
@@ -3097,13 +3102,19 @@ msgstr "計算中..."
 msgid "Calculation aborted"
 msgstr "計算過程中斷"
 
-#: thunar/thunar-size-label.c:481 thunar/thunar-util.c:1358
+#. setup the error text and tooltip
+#. nothing was readable
+#: thunar/thunar-size-label.c:413 thunar/thunar-size-label.c:508
+msgid "unreadable"
+msgstr "無法讀取"
+
+#: thunar/thunar-size-label.c:485 thunar/thunar-util.c:1358
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
 msgstr[0] "%d 個資料夾"
 
-#: thunar/thunar-size-label.c:483
+#: thunar/thunar-size-label.c:487
 #, c-format
 msgid "%u item (%s, %s)"
 msgid_plural "%u items (%s, %s)"
@@ -3111,14 +3122,9 @@ msgstr[0] "%u 個項目 (%s, %s)"
 
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
-#: thunar/thunar-size-label.c:493
+#: thunar/thunar-size-label.c:497
 msgid "(some contents unreadable)"
 msgstr "(無法讀取某些內容)"
-
-#. nothing was readable, so permission was denied
-#: thunar/thunar-size-label.c:504
-msgid "Permission denied"
-msgstr "權限不足"
 
 #: thunar/thunar-standard-view.c:485
 msgid "Select _all Files"
