@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-03-01 00:46+0100\n"
+"POT-Creation-Date: 2025-03-04 00:46+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Michal Várady <miko.vaji@gmail.com>, 2013-2015,2017-2022,2024-2025\n"
 "Language-Team: Czech (http://app.transifex.com/xfce/thunar/language/cs/)\n"
@@ -1115,7 +1115,6 @@ msgstr "Tento sloupec je vyhrazen pro speciální umístění."
 #. tell the user that we're unable to determine the file info
 #: thunar/thunar-column-model.c:913 thunar/thunar-list-model.c:991
 #: thunar/thunar-list-model.c:1027 thunar/thunar-permissions-chooser.c:253
-#: thunar/thunar-size-label.c:392 thunar/thunar-size-label.c:473
 #: thunar/thunar-util.c:431 thunar/thunar-util.c:434
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:729
 #: plugins/thunar-apr/thunar-apr-image-page.c:305
@@ -1338,7 +1337,7 @@ msgid "Size:"
 msgstr "Velikost:"
 
 #: thunar/thunar-dialogs.c:928 thunar/thunar-dialogs.c:978
-#: thunar/thunar-properties-dialog.c:608
+#: thunar/thunar-properties-dialog.c:591
 msgid "Modified:"
 msgstr "Změněno:"
 
@@ -1653,19 +1652,24 @@ msgstr "Nebyla zadána adresa URL"
 msgid "Invalid desktop file"
 msgstr "Neplatný soubor pracovní plochy"
 
-#: thunar/thunar-file.c:2549 thunar/thunar-util.c:1451
+#: thunar/thunar-file.c:2551 thunar/thunar-util.c:1451
 msgid "broken link"
 msgstr "neplatný odkaz"
 
-#: thunar/thunar-file.c:2555
+#: thunar/thunar-file.c:2558
 #, c-format
 msgid "%s (link to %s)"
 msgstr "%s (odkaz na %s)"
 
-#: thunar/thunar-file.c:2564
+#: thunar/thunar-file.c:2560
+#, c-format
+msgid "%s (link)"
+msgstr "%s (odkaz)"
+
+#: thunar/thunar-file.c:2569
 #, c-format
 msgid "%s (mount point)"
-msgstr "%s (připojovací bod)"
+msgstr "%s (bod připojení)"
 
 #. Implementation specific
 #: thunar/thunar-gio-extensions.c:89
@@ -1871,7 +1875,7 @@ msgid ""
 "space."
 msgstr "V cílovém umístění není dostatek místa. Pro zvětšení dostupného místa odeberte některé soubory."
 
-#: thunar/thunar-job-operation.c:789 thunar/thunar-size-label.c:482
+#: thunar/thunar-job-operation.c:789 thunar/thunar-size-label.c:486
 #: thunar/thunar-util.c:1328
 #, c-format
 msgid "%d file"
@@ -1976,7 +1980,8 @@ msgid "Redo the latest operation"
 msgstr "Provést znovu poslední operaci"
 
 #: thunar/thunar-list-model.c:1055 thunar/thunar-list-model.c:1068
-#: thunar/thunar-properties-dialog.c:1408 thunar/thunar-tree-view-model.c:1379
+#: thunar/thunar-properties-dialog.c:1408 thunar/thunar-size-label.c:392
+#: thunar/thunar-size-label.c:477 thunar/thunar-tree-view-model.c:1379
 #: thunar/thunar-tree-view-model.c:1392
 msgid "unknown"
 msgstr "neznámý"
@@ -2628,7 +2633,7 @@ msgid ""
 "- Local Files Only (Same Devices): if all files are local but on different devices (disks, mount points), copies will be sequential\n"
 "- Local Files Only (Idle Devices): if all files are local but on busy devices (disks, mount points), copies will be sequential\n"
 "- Never: all copies are done sequentially"
-msgstr "Označuje chování během více kopií:\n- Vždy: všechny kopie jsou vytvářeny současně\n- Pouze místní soubory: kopie jsou vytvářeny současně pro místní (ne vzdálené, nepřipojené) soubory\n- Pouze místní soubory (stejná zařízení): pokud jsou všechny soubory místní, ale na různých zařízeních (disky, přípojné body), kopie budou vytvářeny postupně\n- Pouze místní soubory (nečinná zařízení): pokud jsou všechny soubory místní, ale na zaneprázdněných zařízeních (disky, přípojné body), kopie budou vytvářeny postupně\n- Nikdy: všechny kopie jsou vytvářeny postupně"
+msgstr "Označuje chování během více kopií:\n- Vždy: všechny kopie jsou vytvářeny současně\n- Pouze místní soubory: kopie jsou vytvářeny současně pro místní (ne vzdálené, nepřipojené) soubory\n- Pouze místní soubory (stejná zařízení): pokud jsou všechny soubory místní, ale na různých zařízeních (disky, přípojné body), kopie budou vytvářeny postupně\n- Pouze místní soubory (nečinná zařízení): pokud jsou všechny soubory místní, ale na zaneprázdněných zařízeních (disky, body připojení), kopie budou vytvářeny postupně\n- Nikdy: všechny kopie jsou vytvářeny postupně"
 
 #: thunar/thunar-preferences-dialog.c:1120
 msgid "Local Files Only (Same Devices)"
@@ -2839,18 +2844,18 @@ msgstr "Umístění:"
 msgid "Volume:"
 msgstr "Svazek:"
 
-#. Third box (deleted, modified, accessed)
+#. Third box (created, modified, accessed, deleted)
 #: thunar/thunar-properties-dialog.c:574
-msgid "Deleted:"
-msgstr "Smazáno:"
-
-#: thunar/thunar-properties-dialog.c:591
 msgid "Created:"
 msgstr "Vytvořeno:"
 
-#: thunar/thunar-properties-dialog.c:625
+#: thunar/thunar-properties-dialog.c:608
 msgid "Accessed:"
 msgstr "Poslední přístup:"
+
+#: thunar/thunar-properties-dialog.c:625
+msgid "Deleted:"
+msgstr "Smazáno:"
 
 #: thunar/thunar-properties-dialog.c:671
 msgid "Size on Disk:"
@@ -2937,15 +2942,15 @@ msgid "%s - Properties"
 msgstr "%s - Vlastnosti"
 
 #. update the properties dialog title
-#: thunar/thunar-properties-dialog.c:1618
+#: thunar/thunar-properties-dialog.c:1619
 msgid "Properties"
 msgstr "Vlastnosti"
 
-#: thunar/thunar-properties-dialog.c:1645
+#: thunar/thunar-properties-dialog.c:1646
 msgid "Link Targets:"
 msgstr "Cíle odkazu:"
 
-#: thunar/thunar-properties-dialog.c:1737
+#: thunar/thunar-properties-dialog.c:1738
 msgid "mixed"
 msgstr "smíšené"
 
@@ -3186,7 +3191,13 @@ msgstr "Zjišťování velikosti..."
 msgid "Calculation aborted"
 msgstr "Výpočet zrušen"
 
-#: thunar/thunar-size-label.c:481 thunar/thunar-util.c:1358
+#. setup the error text and tooltip
+#. nothing was readable
+#: thunar/thunar-size-label.c:413 thunar/thunar-size-label.c:508
+msgid "unreadable"
+msgstr "nečitelné"
+
+#: thunar/thunar-size-label.c:485 thunar/thunar-util.c:1358
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -3195,7 +3206,7 @@ msgstr[1] "%d složky"
 msgstr[2] "%d složek"
 msgstr[3] "%d složek"
 
-#: thunar/thunar-size-label.c:483
+#: thunar/thunar-size-label.c:487
 #, c-format
 msgid "%u item (%s, %s)"
 msgid_plural "%u items (%s, %s)"
@@ -3206,14 +3217,9 @@ msgstr[3] "%u položek (%s, %s)"
 
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
-#: thunar/thunar-size-label.c:493
+#: thunar/thunar-size-label.c:497
 msgid "(some contents unreadable)"
 msgstr "(část obsahu je nečitelná)"
-
-#. nothing was readable, so permission was denied
-#: thunar/thunar-size-label.c:504
-msgid "Permission denied"
-msgstr "Přístup zamítnut"
 
 #: thunar/thunar-standard-view.c:485
 msgid "Select _all Files"
@@ -3685,7 +3691,7 @@ msgstr "připojitelné"
 
 #: thunar/thunar-util.c:1459
 msgid "mount point"
-msgstr "připojovací bod"
+msgstr "bod připojení"
 
 #. append the image dimensions to the statusbar text
 #: thunar/thunar-util.c:1493 plugins/thunar-apr/thunar-apr-image-page.c:158
