@@ -54,6 +54,9 @@ void
 thunar_path_entry_cancel_search (ThunarPathEntry *path_entry);
 gchar *
 thunar_path_entry_get_search_query (ThunarPathEntry *path_entry);
+void
+thunar_path_entry_set_searching (ThunarPathEntry *path_entry,
+                                 gboolean         searching);
 
 G_END_DECLS;
 

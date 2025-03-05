@@ -427,3 +427,14 @@ thunar_location_bar_get_search_query (ThunarLocationBar *bar)
 {
   return (bar->locationEntry != NULL) ? thunar_location_entry_get_search_query (THUNAR_LOCATION_ENTRY (bar->locationEntry)) : g_strdup ("");
 }
+
+
+
+// TODO
+void
+thunar_location_bar_set_searching (ThunarLocationBar *bar,
+                                   gboolean           searching)
+{
+  if (bar->locationEntry != NULL)
+    thunar_location_entry_set_searching (THUNAR_LOCATION_ENTRY (bar->locationEntry), searching);
+}
