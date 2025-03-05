@@ -1396,11 +1396,29 @@ thunar_path_entry_set_working_directory (ThunarPathEntry *path_entry,
 
 
 /**
- * thunar_path_entry_get_search_query:
- * @path_entry        : a #ThunarPathEntry.
+ * thunar_path_entry_cancel_search:
+ * @path_entry : a #ThunarPathEntry.
  *
- * Returns a copy of the search query in the text field of the @path_entry or "" if the path_entry doesn't contain
- * a search query.
+ * Cancels the search for the path entry.
+ */
+void
+thunar_path_entry_cancel_search (ThunarPathEntry *path_entry)
+{
+  _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
+
+  path_entry->search_mode = FALSE;
+
+  gtk_widget_grab_focus (gtk_widget_get_parent (GTK_WIDGET (path_entry)));
+}
+
+
+
+/**
+ * thunar_path_entry_get_search_query:
+ * @path_entry : a #ThunarPathEntry.
+ *
+ * Returns a copy of the search query in the text field of the @path_entry or an empty string
+ * if the @path_entry doesn't contain a search query.
  *
  * It's the responsibility of the caller to free the returned string using `g_free`.
  **/
@@ -1415,16 +1433,4 @@ thunar_path_entry_get_search_query (ThunarPathEntry *path_entry)
   _thunar_return_val_if_fail (strncmp (text, thunar_util_get_search_prefix (), search_prefix_length) == 0, NULL);
 
   return strlen (text) > search_prefix_length ? g_strdup (&text[search_prefix_length]) : g_strdup ("");
-}
-
-
-
-void
-thunar_path_entry_cancel_search (ThunarPathEntry *path_entry)
-{
-  _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
-
-  path_entry->search_mode = FALSE;
-
-  gtk_widget_grab_focus (gtk_widget_get_parent (GTK_WIDGET (path_entry)));
 }
