@@ -1,0 +1,20 @@
+# action_mgr->n_files_to_process > 0 ensures that action_mgr->files_to_process != NULL
+thunar-action-manager.c:[0-9]+:[0-9]+: warning: dereference of NULL .+\*action_mgr.files_to_process.+ \[CWE-476\] \[-Wanalyzer-null-dereference\]
+
+# perhaps a bit questionable, but it's been working for a long time, and it seems
+# a bit pointless to add a lot of cast to silence this warning
+thunar-dbus-service.c:[0-9]+:[0-9]+: warning: .+va_arg.+ expected .+void \*\*.+ but received .+gboolean \(\*\)\(ThunarDBusFileManager \*, GDBusMethodInvocation \*, const gchar \*, gboolean,  gboolean,  const gchar \*, const gchar \*, ThunarDBusService \*\).+ \{aka .+int \(\*\)\(struct _ThunarDBusFileManager \*, struct _GDBusMethodInvocation \*, const char \*, int,  int,  const char \*, const char \*, struct _ThunarDBusService \*\).+\} for variadic argument 2 of .+ap.+ \[CWE-686\] \[-Wanalyzer-va-arg-type-mismatch\]
+thunar-dbus-service.c:[0-9]+:[0-9]+: warning: .+va_arg.+ expected .+void \*\*.+ but received .+gboolean \(\*\)\(ThunarDBusTrash \*, GDBusMethodInvocation \*, const gchar \*, const gchar \*, ThunarDBusService \*\).+ \{aka .+int \(\*\)\(struct _ThunarDBusTrash \*, struct _GDBusMethodInvocation \*, const char \*, const char \*, struct _ThunarDBusService \*\).+\} for variadic argument 2 of .+ap.+ \[CWE-686\] \[-Wanalyzer-va-arg-type-mismatch\]
+thunar-dbus-service.c:[0-9]+:[0-9]+: warning: .+va_arg.+ expected .+void \*\*.+ but received .+gboolean \(\*\)\(ThunarDBusThunar \*, GDBusMethodInvocation \*, const gchar \*, gchar \*\*, gboolean,  const gchar \*, const gchar \*, ThunarDBusService \*\).+ \{aka .+int \(\*\)\(struct _ThunarDBusThunar \*, struct _GDBusMethodInvocation \*, const char \*, char \*\*, int,  const char \*, const char \*, struct _ThunarDBusService \*\).+\} for variadic argument 2 of .+ap.+ \[CWE-686\] \[-Wanalyzer-va-arg-type-mismatch\]
+thunar-dbus-service.c:[0-9]+:[0-9]+: warning: .+va_arg.+ expected .+void \*\*.+ but received .+gboolean \(\*\)\(ThunarOrgFreedesktopFileManager1 \*, GDBusMethodInvocation \*, gchar \*\*, const gchar \*, ThunarDBusService \*\).+ \{aka .+int \(\*\)\(struct _ThunarOrgFreedesktopFileManager1 \*, struct _GDBusMethodInvocation \*, char \*\*, const char \*, struct _ThunarDBusService \*\).+\} for variadic argument 2 of .+ap.+ \[CWE-686\] \[-Wanalyzer-va-arg-type-mismatch\]
+
+# not super obvious, but if we get there and err == NULL then target_filenames[0] != NULL
+# and there is at least one file in target_file_list
+thunar-dbus-service.c:[0-9]+:[0-9]+: warning: dereference of NULL .+target_file_list.+ \[CWE-476\] \[-Wanalyzer-null-dereference\]
+thunar-dbus-service.c:[0-9]+:[0-9]+: warning: dereference of NULL .+target_file_list.+ \[CWE-476\] \[-Wanalyzer-null-dereference\]
+thunar-dbus-service.c:[0-9]+:[0-9]+: warning: dereference of NULL .+target_file_list.+ \[CWE-476\] \[-Wanalyzer-null-dereference\]
+
+# this is from plugins/thunar-uca/thunar-uca-model.c:285:11:
+# g_warning ("Failed to load `%s': %s", filename, error->message);
+# in normal operating mode (i.e. no g_return_val_if_fail()) error is set
+glib-2.0/glib/gmessages.h:[0-9]+:[0-9]+: warning: dereference of NULL .+error.+ \[CWE-476\] \[-Wanalyzer-null-dereference\]

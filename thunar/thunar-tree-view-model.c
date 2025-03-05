@@ -2237,7 +2237,7 @@ thunar_tree_view_model_node_add_child (Node *node,
   GSequenceIter *iter;
   Node          *_child;
 
-  THUNAR_WARN_VOID_RETURN (child->file == NULL);
+  THUNAR_WARN_VOID_RETURN (child == NULL || child->file == NULL);
 
   child->depth = node->depth + 1;
   child->parent = node;
@@ -2288,6 +2288,8 @@ thunar_tree_view_model_node_add_dummy_child (Node *node)
   GtkTreeIter  tree_iter;
   GtkTreePath *path;
   Node        *dummy;
+
+  THUNAR_WARN_VOID_RETURN (node == NULL);
 
   dummy = thunar_tree_view_model_new_dummy_node ();
   dummy->depth = node->depth + 1;

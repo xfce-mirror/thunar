@@ -2158,8 +2158,8 @@ thunar_action_manager_build_sendto_submenu (ThunarActionManager *action_mgr)
               label_text = ngettext ("Side Pane (Add Bookmark)", "Side Pane (Add Bookmarks)", action_mgr->n_files_to_process);
               tooltip_text = ngettext ("Add the selected folder to the shortcuts side pane",
                                        "Add the selected folders to the shortcuts side pane", action_mgr->n_files_to_process);
-              item = xfce_gtk_image_menu_item_new_from_icon_name (label_text, tooltip_text, action_entry->accel_path, action_entry->callback,
-                                                                  G_OBJECT (action_mgr), action_entry->menu_item_icon_name, GTK_MENU_SHELL (submenu));
+              xfce_gtk_image_menu_item_new_from_icon_name (label_text, tooltip_text, action_entry->accel_path, action_entry->callback,
+                                                           G_OBJECT (action_mgr), action_entry->menu_item_icon_name, GTK_MENU_SHELL (submenu));
             }
         }
     }
@@ -2178,8 +2178,8 @@ thunar_action_manager_build_sendto_submenu (ThunarActionManager *action_mgr)
           label_text = ngettext ("Desktop (Create Link)", "Desktop (Create Links)", action_mgr->n_files_to_process);
           tooltip_text = ngettext ("Create a link to the selected file on the desktop",
                                    "Create links to the selected files on the desktop", action_mgr->n_files_to_process);
-          item = xfce_gtk_image_menu_item_new_from_icon_name (label_text, tooltip_text, action_entry->accel_path, action_entry->callback,
-                                                              G_OBJECT (action_mgr), action_entry->menu_item_icon_name, GTK_MENU_SHELL (submenu));
+          xfce_gtk_image_menu_item_new_from_icon_name (label_text, tooltip_text, action_entry->accel_path, action_entry->callback,
+                                                       G_OBJECT (action_mgr), action_entry->menu_item_icon_name, GTK_MENU_SHELL (submenu));
         }
     }
 

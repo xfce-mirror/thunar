@@ -1,0 +1,34 @@
+# generated code
+Thunarx-3.0.c:[0-9]+:[0-9]+: warning: Access to field 'message' results in a dereference of a null pointer \(loaded from variable 'error'\) \[core.NullDereference\]
+thunar-tpa-bindings.c:[0-9]+:[0-9]+: warning: Value stored to 'skeleton' during its initialization is never read \[deadcode.DeadStores\]
+thunar-dbus-freedesktop-interfaces.c:[0-9]+:[0-9]+: warning: Value stored to 'skeleton' during its initialization is never read \[deadcode.DeadStores\]
+thunar-thumbnailer-proxy.c:[0-9]+:[0-9]+: warning: Value stored to 'skeleton' during its initialization is never read \[deadcode.DeadStores\]
+thunar-dbus-service-infos.c:[0-9]+:[0-9]+: warning: Value stored to 'skeleton' during its initialization is never read \[deadcode.DeadStores\]
+thunar-dbus-service-infos.c:[0-9]+:[0-9]+: warning: Value stored to 'skeleton' during its initialization is never read \[deadcode.DeadStores\]
+thunar-dbus-service-infos.c:[0-9]+:[0-9]+: warning: Value stored to 'skeleton' during its initialization is never read \[deadcode.DeadStores\]
+thunar-thumbnail-cache-proxy.c:[0-9]+:[0-9]+: warning: Value stored to 'skeleton' during its initialization is never read \[deadcode.DeadStores\]
+
+# n_files = g_list_length (file_infos) so files[n] is initialized for all n
+thunar-uca-model.c:[0-9]+:[0-9]+: warning: The left operand of '&' is a garbage value \[core.UndefinedBinaryOperatorResult\]
+thunar-uca-model.c:[0-9]+:[0-9]+: warning: 1st function call argument is an uninitialized value \[core.CallAndMessage\]
+
+# not super obvious, but if we get there and err == NULL then target_filenames[0] != NULL
+# and there is at least one file in target_file_list
+thunar-dbus-service.c:[0-9]+:[0-9]+: warning: Access to field 'data' results in a dereference of a null pointer \(loaded from variable 'target_file_list'\) \[core.NullDereference\]
+
+# item_count = g_list_length (toolbar_items) so target_order[i] and current_order[j] are initialized for all i,j
+thunar-toolbar-editor.c:[0-9]+:[0-9]+: warning: Assigned value is garbage or undefined \[core.uninitialized.Assign\]
+thunar-toolbar-editor.c:[0-9]+:[0-9]+: warning: Assigned value is garbage or undefined \[core.uninitialized.Assign\]
+
+# the only case where new_name isn't reassigned is the else branch, where there is a g_assert
+thunar-util.c:[0-9]+:[0-9]+: warning: Use of memory after it is freed \[unix.Malloc\]
+
+# needed to avoid -Wunused-result
+thunar-window.c:[0-9]+:[0-9]+: warning: Value stored to 'list' is never read \[deadcode.DeadStores\]
+
+# zero size array is a legal thing and is consistent with i < item_count in for loops
+thunar-window.c:[0-9]+:[0-9]+: warning: Declared variable-length array \(VLA\) has zero size \[core.VLASize\]
+thunar-window.c:[0-9]+:[0-9]+: warning: Declared variable-length array \(VLA\) has zero size \[core.VLASize\]
+
+# item_count = g_list_length (toolbar_items) so current_order[j] is initialized for all j
+thunar-window.c:[0-9]+:[0-9]+: warning: Assigned value is garbage or undefined \[core.uninitialized.Assign\]

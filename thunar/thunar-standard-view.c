@@ -3944,7 +3944,7 @@ thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
           /* convert the sort order to a string */
           if (sort_order == GTK_SORT_ASCENDING)
             sort_order_name = "GTK_SORT_ASCENDING";
-          if (sort_order == GTK_SORT_DESCENDING)
+          else /* GTK_SORT_DESCENDING */
             sort_order_name = "GTK_SORT_DESCENDING";
 
           /* save the sort order */

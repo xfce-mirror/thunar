@@ -1401,7 +1401,7 @@ thunar_util_get_statusbar_text_for_single_file (ThunarFile *file)
   const gchar       *original_path;
   GList             *text_list = NULL;
   gchar             *temp_string = NULL;
-  gchar             *text = "";
+  gchar             *text;
   gint               height;
   gint               width;
   ThunarPreferences *preferences;
