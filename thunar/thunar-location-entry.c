@@ -527,3 +527,13 @@ thunar_location_entry_get_search_query (ThunarLocationEntry *entry)
 {
   return thunar_path_entry_get_search_query (THUNAR_PATH_ENTRY (entry->path_entry));
 }
+
+
+
+// TODO
+void
+thunar_location_entry_set_searching (ThunarLocationEntry *entry,
+                                     gboolean             searching)
+{
+  thunar_path_entry_set_searching (THUNAR_PATH_ENTRY (entry->path_entry), searching);
+}

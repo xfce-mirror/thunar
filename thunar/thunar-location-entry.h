@@ -46,6 +46,9 @@ void
 thunar_location_entry_cancel_search (ThunarLocationEntry *entry);
 gchar *
 thunar_location_entry_get_search_query (ThunarLocationEntry *entry);
+void
+thunar_location_entry_set_searching (ThunarLocationEntry *entry,
+                                     gboolean             searching);
 
 G_END_DECLS;
 
