@@ -157,7 +157,7 @@ thunar_g_strescape (const gchar *source)
 
   /* strlen() does not include the \0 character, add an extra slot for it */
   new_size++;
-  result = malloc (new_size * sizeof (gchar));
+  result = g_new (gchar, new_size);
 
   for (unsigned int i = 0; i < strlen (g_escaped); i++)
     {

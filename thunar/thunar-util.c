@@ -42,6 +42,9 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
 #ifdef HAVE_TIME_H
 #include <time.h>
 #endif
@@ -1398,7 +1401,7 @@ thunar_util_get_statusbar_text_for_single_file (ThunarFile *file)
   const gchar       *original_path;
   GList             *text_list = NULL;
   gchar             *temp_string = NULL;
-  gchar             *text = "";
+  gchar             *text;
   gint               height;
   gint               width;
   ThunarPreferences *preferences;

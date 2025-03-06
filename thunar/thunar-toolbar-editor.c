@@ -475,15 +475,12 @@ static void
 thunar_toolbar_editor_use_defaults (ThunarToolbarEditor *toolbar_editor,
                                     GtkWidget           *button)
 {
-  GList *toolbar_items;
-  guint  item_count = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (toolbar_editor->model), NULL);
+  GList *toolbar_items = gtk_container_get_children (GTK_CONTAINER (toolbar_editor->toolbar));
+  guint  item_count = g_list_length (toolbar_items);
   guint  target_order[item_count];
   guint  current_order[item_count];
-  guint  index;
+  guint  index = 0;
 
-  toolbar_items = gtk_container_get_children (GTK_CONTAINER (toolbar_editor->toolbar));
-
-  index = 0;
   for (GList *lp = toolbar_items; lp != NULL; lp = lp->next)
     {
       GtkWidget *item = lp->data;

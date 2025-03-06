@@ -49,13 +49,6 @@
 
 
 
-/* Use native strlcpy() if available */
-#if defined(HAVE_STRLCPY)
-#define g_strlcpy(dst, src, size) (strlcpy ((dst), (src), (size)))
-#endif
-
-
-
 /* Property identifiers */
 enum
 {
@@ -918,6 +911,7 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser)
   GtkListStore *access_store;
 
   _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+  _thunar_return_if_fail (chooser->files != NULL);
 
   /* compare multiple files */
   for (lp = chooser->files; lp != NULL; lp = lp->next)

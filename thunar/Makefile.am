@@ -213,12 +213,6 @@ thunar_SOURCES =							\
 	thunar-window.c							\
 	thunar-window.h
 
-noinst_LIBRARIES = libthunar.a
-libthunar_a_SOURCES =
-libthunar_a_LIBADD = 							\
-	$(filter %.o, $(thunar_SOURCES:%.c=thunar-%.o))			\
-	$(wildcard $(top_builddir)/thunarx/.libs/*.o)
-
 thunar_CFLAGS =								\
 	$(EXO_CFLAGS)							\
 	$(GIO_CFLAGS)							\
@@ -226,6 +220,7 @@ thunar_CFLAGS =								\
 	$(GUDEV_CFLAGS)							\
 	$(LIBNOTIFY_CFLAGS)						\
 	$(LIBSM_CFLAGS)							\
+	$(LIBICE_CFLAGS)							\
 	$(LIBXFCE4UI_CFLAGS)						\
 	$(LIBXFCE4UTIL_CFLAGS)						\
 	$(LIBXFCE4KBD_PRIVATE_CFLAGS) \
@@ -235,7 +230,6 @@ thunar_CFLAGS =								\
 
 thunar_LDFLAGS =							\
 	-no-undefined							\
-	$(LIBSM_LDFLAGS)						\
 	$(PLATFORM_LDFLAGS)
 
 thunar_LDADD =								\
@@ -246,6 +240,7 @@ thunar_LDADD =								\
 	$(GUDEV_LIBS)							\
 	$(LIBNOTIFY_LIBS)						\
 	$(LIBSM_LIBS)							\
+	$(LIBICE_LIBS)							\
 	$(LIBXFCE4UI_LIBS)						\
 	$(LIBXFCE4UTIL_LIBS)						\
 	$(LIBXFCE4KBD_PRIVATE_LIBS) \
@@ -349,6 +344,6 @@ EXTRA_DIST =								\
 	thunar-thumbnail-frame.png				\
 	thunar-settings							\
 	thunar.gresource.xml					\
-	$(desktop_in_files)
-
-dist-hook: libthunar.a
+	$(desktop_in_files) \
+	meson.build \
+	$(NULL)

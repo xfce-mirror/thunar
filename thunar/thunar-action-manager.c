@@ -1594,7 +1594,7 @@ thunar_action_manager_append_accelerators (ThunarActionManager *action_mgr,
 
 
 static gboolean
-thunar_action_manager_show_trash (ThunarActionManager *action_mgr)
+thunar_action_manager_can_trash_selection (ThunarActionManager *action_mgr)
 {
   if (action_mgr->parent_folder == NULL)
     return FALSE;
@@ -1771,7 +1771,7 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
       return NULL;
 
     case THUNAR_ACTION_MANAGER_ACTION_MOVE_TO_TRASH:
-      if (!thunar_action_manager_show_trash (action_mgr))
+      if (!thunar_action_manager_can_trash_selection (action_mgr))
         return NULL;
 
       show_item = action_mgr->files_are_selected;
@@ -1788,7 +1788,7 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
 
     case THUNAR_ACTION_MANAGER_ACTION_DELETE:
       g_object_get (G_OBJECT (action_mgr->preferences), "misc-show-delete-action", &show_delete_item, NULL);
-      if (thunar_action_manager_show_trash (action_mgr) && !show_delete_item)
+      if (thunar_action_manager_can_trash_selection (action_mgr) && !show_delete_item)
         return NULL;
 
       show_item = action_mgr->files_are_selected;
@@ -2158,8 +2158,8 @@ thunar_action_manager_build_sendto_submenu (ThunarActionManager *action_mgr)
               label_text = ngettext ("Side Pane (Add Bookmark)", "Side Pane (Add Bookmarks)", action_mgr->n_files_to_process);
               tooltip_text = ngettext ("Add the selected folder to the shortcuts side pane",
                                        "Add the selected folders to the shortcuts side pane", action_mgr->n_files_to_process);
-              item = xfce_gtk_image_menu_item_new_from_icon_name (label_text, tooltip_text, action_entry->accel_path, action_entry->callback,
-                                                                  G_OBJECT (action_mgr), action_entry->menu_item_icon_name, GTK_MENU_SHELL (submenu));
+              xfce_gtk_image_menu_item_new_from_icon_name (label_text, tooltip_text, action_entry->accel_path, action_entry->callback,
+                                                           G_OBJECT (action_mgr), action_entry->menu_item_icon_name, GTK_MENU_SHELL (submenu));
             }
         }
     }
@@ -2178,8 +2178,8 @@ thunar_action_manager_build_sendto_submenu (ThunarActionManager *action_mgr)
           label_text = ngettext ("Desktop (Create Link)", "Desktop (Create Links)", action_mgr->n_files_to_process);
           tooltip_text = ngettext ("Create a link to the selected file on the desktop",
                                    "Create links to the selected files on the desktop", action_mgr->n_files_to_process);
-          item = xfce_gtk_image_menu_item_new_from_icon_name (label_text, tooltip_text, action_entry->accel_path, action_entry->callback,
-                                                              G_OBJECT (action_mgr), action_entry->menu_item_icon_name, GTK_MENU_SHELL (submenu));
+          xfce_gtk_image_menu_item_new_from_icon_name (label_text, tooltip_text, action_entry->accel_path, action_entry->callback,
+                                                       G_OBJECT (action_mgr), action_entry->menu_item_icon_name, GTK_MENU_SHELL (submenu));
         }
     }
 
@@ -2666,7 +2666,7 @@ thunar_action_manager_action_trash_delete (ThunarActionManager *action_mgr)
   /* when shift modifier is pressed, we delete (as well via context menu) */
   if (gtk_get_current_event_state (&event_state) && (event_state & GDK_SHIFT_MASK) != 0)
     thunar_action_manager_action_delete (action_mgr);
-  else if (thunar_action_manager_show_trash (action_mgr))
+  else if (thunar_action_manager_can_trash_selection (action_mgr))
     thunar_action_manager_action_move_to_trash (action_mgr);
   else
     thunar_action_manager_action_delete (action_mgr);

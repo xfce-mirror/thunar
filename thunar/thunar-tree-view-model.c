@@ -1428,7 +1428,7 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
           g_value_take_string (value, g_strdup (device_type));
           break;
         }
-      g_value_take_string (value, thunar_file_get_content_type_desc (file));
+      g_value_take_string (value, thunar_file_get_content_type_desc (file, TRUE));
       break;
 
     case THUNAR_COLUMN_FILE:
@@ -2237,7 +2237,7 @@ thunar_tree_view_model_node_add_child (Node *node,
   GSequenceIter *iter;
   Node          *_child;
 
-  THUNAR_WARN_VOID_RETURN (child->file == NULL);
+  THUNAR_WARN_VOID_RETURN (child == NULL || child->file == NULL);
 
   child->depth = node->depth + 1;
   child->parent = node;
@@ -2288,6 +2288,8 @@ thunar_tree_view_model_node_add_dummy_child (Node *node)
   GtkTreeIter  tree_iter;
   GtkTreePath *path;
   Node        *dummy;
+
+  THUNAR_WARN_VOID_RETURN (node == NULL);
 
   dummy = thunar_tree_view_model_new_dummy_node ();
   dummy->depth = node->depth + 1;
@@ -3197,9 +3199,12 @@ thunar_tree_view_model_update_search_files (ThunarTreeViewModel *model)
       g_object_unref (file);
     }
 
+  g_object_notify_by_pspec (G_OBJECT (model), tree_model_props[PROP_NUM_FILES]);
+
   if (model->search_files != NULL)
     thunar_g_list_free_full (model->search_files);
   model->search_files = NULL;
+
   g_mutex_unlock (&model->mutex_add_search_files);
 
   return TRUE;

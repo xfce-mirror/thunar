@@ -35,7 +35,9 @@ tex_open_terminal_la_LDFLAGS =						\
 	$(PLATFORM_LDFLAGS)
 
 EXTRA_DIST =								\
-	README.md
+	README.md \
+	meson.build \
+	$(NULL)
 
 # Don't install/uninstall examples by default
 install:

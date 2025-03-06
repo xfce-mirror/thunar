@@ -25,6 +25,7 @@
 #include "thunarx/thunarx-private.h"
 #include "thunarx/thunarx-provider-module.h"
 #include "thunarx/thunarx-provider-plugin.h"
+#include "thunarx/thunarx-visibility.h"
 
 #include <gmodule.h>
 
@@ -346,3 +347,6 @@ thunarx_provider_module_unuse (ThunarxProviderModule *module)
   if (G_TYPE_MODULE (module)->use_count > 0)
     g_type_module_unuse (G_TYPE_MODULE (module));
 }
+
+#define __THUNARX_PROVIDER_MODULE_C__
+#include "thunarx-visibility.c"

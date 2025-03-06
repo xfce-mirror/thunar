@@ -56,7 +56,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <libxfce4util/libxfce4util.h>
 
-#if defined(GDK_WINDOWING_X11)
+#ifdef ENABLE_X11
 #include <gdk/gdkx.h>
 #endif
 
@@ -2456,6 +2456,7 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
   GList              *selected_items_tree_path_list;
   GtkTreeIter         iter;
   ThunarFile         *file;
+  gchar              *statusbar_text;
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
@@ -2478,6 +2479,22 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
       if (thunar_standard_view_model_get_folder (standard_view->model) == NULL)
         return FALSE;
 
+      /* search mode active */
+      if (standard_view->priv->search_query != NULL)
+        {
+          gint num_files;
+
+          g_object_get (G_OBJECT (standard_view->model), "num-files", &num_files, NULL);
+
+          statusbar_text = g_strdup_printf (ngettext ("%d file found", "%d files found", num_files), num_files);
+          thunar_standard_view_set_statusbar_text (standard_view, statusbar_text);
+          g_free (statusbar_text);
+
+          g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_STATUSBAR_TEXT]);
+
+          return FALSE;
+        }
+
       standard_view->priv->statusbar_job = thunar_io_jobs_load_statusbar_text_for_folder (standard_view, thunar_standard_view_model_get_folder (standard_view->model));
 
       g_signal_connect (standard_view->priv->statusbar_job, "error", G_CALLBACK (thunar_standard_view_update_statusbar_text_error), standard_view);
@@ -2487,8 +2504,6 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
     }
   else if (selected_items_tree_path_list->next == NULL) /* only one item selected */
     {
-      gchar *statusbar_text;
-
       /* resolve the iter for the single path */
       gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, selected_items_tree_path_list->data);
 
@@ -2549,7 +2564,7 @@ thunar_standard_view_update_statusbar_text (ThunarStandardView *standard_view)
   /* restart a new one, this way we avoid multiple update when
    * the user is pressing a key to scroll */
   standard_view->priv->statusbar_text_idle_id =
-  g_timeout_add_full (G_PRIORITY_LOW, 50, thunar_standard_view_update_statusbar_text_idle,
+  g_timeout_add_full (G_PRIORITY_DEFAULT, 50, thunar_standard_view_update_statusbar_text_idle,
                       standard_view, NULL);
 }
 
@@ -3275,7 +3290,6 @@ thunar_standard_view_receive_netscape_url (GtkWidget          *view,
   gint        pid;
   gint        n = 0;
   GError     *error = NULL;
-  GtkWidget  *toplevel;
   GdkScreen  *screen;
   char       *display = NULL;
   gboolean    succeed = FALSE;
@@ -3311,17 +3325,20 @@ thunar_standard_view_receive_netscape_url (GtkWidget          *view,
           argv[n++] = "--name";
           argv[n++] = bits[1];
 
-          /* determine the toplevel window */
-          toplevel = gtk_widget_get_toplevel (view);
-          if (toplevel != NULL && gtk_widget_is_toplevel (toplevel))
+#ifdef ENABLE_X11
+          /* on X11, we can supply the parent window id here */
+          if (GDK_IS_X11_DISPLAY (gdk_display_get_default ()))
             {
-#if defined(GDK_WINDOWING_X11)
-              /* on X11, we can supply the parent window id here */
-              argv[n++] = "--xid";
-              argv[n++] = g_newa (gchar, 32);
-              g_snprintf (argv[n - 1], 32, "%ld", (glong) GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (toplevel))));
-#endif
+              /* determine the toplevel window */
+              GtkWidget *toplevel = gtk_widget_get_toplevel (view);
+              if (toplevel != NULL && gtk_widget_is_toplevel (toplevel))
+                {
+                  argv[n++] = "--xid";
+                  argv[n++] = g_newa (gchar, 32);
+                  g_snprintf (argv[n - 1], 32, "%ld", (glong) GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (toplevel))));
+                }
             }
+#endif
 
           /* terminate the parameter list */
           argv[n++] = "--create-new";
@@ -3927,7 +3944,7 @@ thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
           /* convert the sort order to a string */
           if (sort_order == GTK_SORT_ASCENDING)
             sort_order_name = "GTK_SORT_ASCENDING";
-          if (sort_order == GTK_SORT_DESCENDING)
+          else /* GTK_SORT_DESCENDING */
             sort_order_name = "GTK_SORT_DESCENDING";
 
           /* save the sort order */

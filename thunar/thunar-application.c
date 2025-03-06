@@ -23,6 +23,9 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#ifdef HAVE_XFCE_REVISION_H
+#include "xfce-revision.h"
+#endif
 
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
@@ -500,8 +503,8 @@ thunar_application_handle_local_options (GApplication *gapp,
   /* check if we should print version information */
   if (G_UNLIKELY (opt_version))
     {
-      g_print ("%s %s (Xfce %s)\n\n", PACKAGE_NAME, PACKAGE_VERSION, xfce_version_string ());
-      g_print ("%s\n", "Copyright (c) 2004-2024");
+      g_print ("%s %s (Xfce %s)\n\n", PACKAGE_NAME, VERSION_FULL, xfce_version_string ());
+      g_print ("%s\n", "Copyright (c) 2004-" COPYRIGHT_YEAR);
       g_print ("\t%s\n\n", _("The Thunar development team. All rights reserved."));
       g_print ("%s\n\n", _("Written by Benedikt Meurer <benny@xfce.org>."));
       g_print (_("Please report bugs to <%s>."), PACKAGE_BUGREPORT);
