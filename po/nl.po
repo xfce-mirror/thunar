@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-03-04 00:46+0100\n"
+"POT-Creation-Date: 2025-03-06 12:46+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Pjotr <pjotrvertaalt@gmail.com>, 2013-2015,2017-2025\n"
 "Language-Team: Dutch (http://app.transifex.com/xfce/thunar/language/nl/)\n"
@@ -26,13 +26,13 @@ msgstr "Thunar"
 
 #. change the accept button label text
 #: thunar/thunar-action-manager.c:322 thunar/thunar-chooser-dialog.c:907
-#: thunar/thunar-chooser-dialog.c:1318 thunar/thunar-dialogs.c:1282
+#: thunar/thunar-chooser-dialog.c:1318 thunar/thunar-dialogs.c:1285
 #: thunar/thunar-renamer-dialog.c:1108
 #: plugins/thunar-uca/thunar-uca-editor.c:203
 msgid "_Open"
 msgstr "_Openen"
 
-#: thunar/thunar-action-manager.c:323 thunar/thunar-dialogs.c:1276
+#: thunar/thunar-action-manager.c:323 thunar/thunar-dialogs.c:1279
 msgid "_Execute"
 msgstr "Uitvoer_en"
 
@@ -121,7 +121,7 @@ msgid "_Rename..."
 msgstr "He_rnoemen..."
 
 #. prepare the menu item
-#: thunar/thunar-action-manager.c:340 thunar/thunar-application.c:2790
+#: thunar/thunar-action-manager.c:340 thunar/thunar-application.c:2793
 #: plugins/thunar-tpa/thunar-tpa.c:191
 msgid "_Empty Trash"
 msgstr "Prullenbak _ledigen"
@@ -166,7 +166,7 @@ msgstr "Terugzetten en tonen"
 msgid "Mo_ve to Trash"
 msgstr "_Verplaatsen naar prullenbak"
 
-#: thunar/thunar-action-manager.c:350 thunar/thunar-application.c:2530
+#: thunar/thunar-action-manager.c:350 thunar/thunar-application.c:2533
 #: plugins/thunar-uca/thunar-uca-chooser.c:383
 msgid "_Delete"
 msgstr "_Verwijderen"
@@ -268,15 +268,15 @@ msgstr[1] "Open %d nieuwe vensters"
 
 #. add the "Cancel" button
 #. configure the dialog properties
-#: thunar/thunar-action-manager.c:1064 thunar/thunar-application.c:2529
-#: thunar/thunar-application.c:2601 thunar/thunar-application.c:2789
+#: thunar/thunar-action-manager.c:1064 thunar/thunar-application.c:2532
+#: thunar/thunar-application.c:2604 thunar/thunar-application.c:2792
 #: thunar/thunar-chooser-dialog.c:315 thunar/thunar-chooser-dialog.c:781
 #: thunar/thunar-chooser-dialog.c:856 thunar/thunar-chooser-dialog.c:906
-#: thunar/thunar-dialogs.c:114 thunar/thunar-dialogs.c:262
-#: thunar/thunar-dialogs.c:695 thunar/thunar-dialogs.c:805
-#: thunar/thunar-dialogs.c:1096 thunar/thunar-dialogs.c:1190
-#: thunar/thunar-dnd.c:172 thunar/thunar-permissions-chooser.c:580
-#: thunar/thunar-permissions-chooser.c:1194
+#: thunar/thunar-dialogs.c:117 thunar/thunar-dialogs.c:265
+#: thunar/thunar-dialogs.c:698 thunar/thunar-dialogs.c:808
+#: thunar/thunar-dialogs.c:1099 thunar/thunar-dialogs.c:1193
+#: thunar/thunar-dnd.c:172 thunar/thunar-permissions-chooser.c:573
+#: thunar/thunar-permissions-chooser.c:1188
 #: thunar/thunar-properties-dialog.c:1210 thunar/thunar-renamer-dialog.c:1107
 #: thunar/thunar-renamer-progress.c:188 thunar/thunar-renamer-progress.c:198
 #: plugins/thunar-sendto-email/main.c:220
@@ -295,8 +295,8 @@ msgid "Failed to mount \"%s\""
 msgstr "Kon '%s' niet aankoppelen"
 
 #. tell the user that we were unable to launch the file specified
-#: thunar/thunar-action-manager.c:1203 thunar/thunar-application.c:1704
-#: thunar/thunar-application.c:1866 thunar/thunar-location-entry.c:368
+#: thunar/thunar-action-manager.c:1203 thunar/thunar-application.c:1707
+#: thunar/thunar-application.c:1869 thunar/thunar-location-entry.c:368
 #: thunar/thunar-location-entry.c:401
 #, c-format
 msgid "Failed to open \"%s\""
@@ -429,16 +429,16 @@ msgstr[0] "Stuur het geselecteerde bestand naar '%s'"
 msgstr[1] "Stuur de gekozen bestanden naar '%s'"
 
 #. ask the user to enter a name for the new folder
-#: thunar/thunar-action-manager.c:2737 thunar/thunar-application.c:2058
+#: thunar/thunar-action-manager.c:2737 thunar/thunar-application.c:2061
 msgid "New Folder"
 msgstr "Nieuwe map"
 
-#: thunar/thunar-action-manager.c:2741 thunar/thunar-application.c:2059
+#: thunar/thunar-action-manager.c:2741 thunar/thunar-application.c:2062
 msgid "Create New Folder"
 msgstr "Maak nieuwe map"
 
 #. generate a title for the create dialog
-#: thunar/thunar-action-manager.c:2793 thunar/thunar-application.c:2123
+#: thunar/thunar-action-manager.c:2793 thunar/thunar-application.c:2126
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Maak document volgens sjabloon '%s'"
@@ -498,141 +498,141 @@ msgstr "Open de gekozen bestanden met de standaardtoepassingen"
 msgid "Ope_n With"
 msgstr "Openen met"
 
-#: thunar/thunar-application.c:84
+#: thunar/thunar-application.c:87
 msgid "Open the bulk rename dialog"
 msgstr "Open het dialoogvenster voor massaal hernoemen"
 
-#: thunar/thunar-application.c:85
+#: thunar/thunar-application.c:88
 msgid "Force open in a new window"
 msgstr "Openen in een nieuw venster afdwingen"
 
-#: thunar/thunar-application.c:86
+#: thunar/thunar-application.c:89
 msgid "Run in daemon mode"
 msgstr "Voer uit in achtergrondmodus"
 
-#: thunar/thunar-application.c:88
+#: thunar/thunar-application.c:91
 msgid "Quit a running Thunar instance"
 msgstr "Sluit een draaiende Thunar-instantie"
 
-#: thunar/thunar-application.c:89
+#: thunar/thunar-application.c:92
 msgid "Print version information and exit"
 msgstr "Druk versie-informatie af en sluit af"
 
-#: thunar/thunar-application.c:337
+#: thunar/thunar-application.c:340
 #, c-format
 msgid "Acquired the session message bus '%s'\n"
 msgstr "Session message bus '%s' verkregen\n"
 
-#: thunar/thunar-application.c:347
+#: thunar/thunar-application.c:350
 #, c-format
 msgid "Acquired the name '%s' on the session message bus\n"
 msgstr "Naam '%s' verkregen op de session message bus\n"
 
-#: thunar/thunar-application.c:357
+#: thunar/thunar-application.c:360
 #, c-format
 msgid "Name '%s' lost on the message dbus."
 msgstr "Naam '%s' is verloren gegaan op de message dbus."
 
-#: thunar/thunar-application.c:505
+#: thunar/thunar-application.c:508
 msgid "The Thunar development team. All rights reserved."
 msgstr "De Thunar-ontwikkelploeg. Alle rechten voorbehouden."
 
-#: thunar/thunar-application.c:506
+#: thunar/thunar-application.c:509
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
 msgstr "Geschreven door Benedikt Meurer <benny@xfce.org>."
 
-#: thunar/thunar-application.c:507
+#: thunar/thunar-application.c:510
 #, c-format
 msgid "Please report bugs to <%s>."
 msgstr "Meld fouten a.u.b. aan <%s>."
 
 #. display an error message to the user
-#: thunar/thunar-application.c:907
+#: thunar/thunar-application.c:910
 msgid "Failed to launch operation"
 msgstr "Kon bewerking niet starten"
 
-#: thunar/thunar-application.c:1700
+#: thunar/thunar-application.c:1703
 #, c-format
 msgid "Failed to open \"%s\" (%s)"
 msgstr "Kon '%s' niet openen (%s)"
 
-#: thunar/thunar-application.c:1870
+#: thunar/thunar-application.c:1873
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "Kon '%s' niet openen: %s"
 
-#: thunar/thunar-application.c:1929 thunar/thunar-properties-dialog.c:1110
+#: thunar/thunar-application.c:1932 thunar/thunar-properties-dialog.c:1110
 #, c-format
 msgid "Failed to rename \"%s\" (%s)"
 msgstr "Kon '%s' niet hernoemen (%s)"
 
-#: thunar/thunar-application.c:1933 thunar/thunar-properties-dialog.c:1114
+#: thunar/thunar-application.c:1936 thunar/thunar-properties-dialog.c:1114
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Kon '%s' niet hernoemen"
 
-#: thunar/thunar-application.c:1982
+#: thunar/thunar-application.c:1985
 msgid "Rename Launcher Options"
 msgstr "Opties voor hernoemen van starter"
 
-#: thunar/thunar-application.c:1985
+#: thunar/thunar-application.c:1988
 msgid "Do you want to rename the launcher, or the file itself?"
 msgstr "Wilt u de starter hernoemen, of het bestand zelf?"
 
-#: thunar/thunar-application.c:1986
+#: thunar/thunar-application.c:1989
 msgid "Rename _Launcher"
 msgstr "_Starter hernoemen"
 
-#: thunar/thunar-application.c:1987
+#: thunar/thunar-application.c:1990
 msgid "Rename _File"
 msgstr "_Bestand hernoemen"
 
-#: thunar/thunar-application.c:2063
+#: thunar/thunar-application.c:2066
 msgid "New File"
 msgstr "Nieuw bestand"
 
-#: thunar/thunar-application.c:2064
+#: thunar/thunar-application.c:2067
 msgid "Create New File"
 msgstr "Maak nieuw bestand"
 
-#: thunar/thunar-application.c:2189
+#: thunar/thunar-application.c:2192
 msgid "Copying files..."
 msgstr "Bestanden kopiëren..."
 
-#: thunar/thunar-application.c:2249
+#: thunar/thunar-application.c:2252
 #, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "Bestanden kopiëren naar '%s'..."
 
-#: thunar/thunar-application.c:2305
+#: thunar/thunar-application.c:2308
 #, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "Symbolische koppelingen maken in '%s'..."
 
-#: thunar/thunar-application.c:2374
+#: thunar/thunar-application.c:2377
 #, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "Bestanden verplaatsen naar '%s'..."
 
-#: thunar/thunar-application.c:2419
+#: thunar/thunar-application.c:2422
 msgid "Moving files ..."
 msgstr "Bestanden verplaatsen..."
 
-#: thunar/thunar-application.c:2504
+#: thunar/thunar-application.c:2507
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\" (%s)?"
 msgstr "Weet u zeker dat u '%s' blijvend\nwilt verwijderen (%s)?"
 
-#: thunar/thunar-application.c:2508
+#: thunar/thunar-application.c:2511
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr "Weet u zeker dat u\n'%s' voorgoed wilt verwijderen?"
 
-#: thunar/thunar-application.c:2513
+#: thunar/thunar-application.c:2516
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -643,34 +643,34 @@ msgid_plural ""
 msgstr[0] "Weet u zeker dat u het geselecteerde\nbestand voorgoed wil verwijderen?"
 msgstr[1] "Weet u zeker dat u de %u geselecteerde\nbestanden voorgoed wilt verwijderen?"
 
-#: thunar/thunar-application.c:2527 thunar/thunar-application.c:2599
-#: thunar/thunar-dialogs.c:613 thunar/thunar-dialogs.c:1092
+#: thunar/thunar-application.c:2530 thunar/thunar-application.c:2602
+#: thunar/thunar-dialogs.c:616 thunar/thunar-dialogs.c:1095
 msgid "Attention"
 msgstr "Attentie"
 
-#: thunar/thunar-application.c:2534
+#: thunar/thunar-application.c:2537
 msgid "If you delete a file, it is permanently lost."
 msgstr "Als u een bestand verwijdert, is het voorgoed verloren."
 
-#: thunar/thunar-application.c:2555 thunar/thunar-application.c:2564
+#: thunar/thunar-application.c:2558 thunar/thunar-application.c:2567
 msgid "Deleting files..."
 msgstr "Bestanden verwijderen..."
 
-#: thunar/thunar-application.c:2576
+#: thunar/thunar-application.c:2579
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "move \"%s\" (%s) to trash ?"
 msgstr "Weet u zeker dat u '%s' in de\nprullenbak wilt gooien (%s)?"
 
-#: thunar/thunar-application.c:2580
+#: thunar/thunar-application.c:2583
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "move \"%s\" to trash ?"
 msgstr "Weet u zeker dat u '%s' in\nde prullenbak wilt gooien?"
 
-#: thunar/thunar-application.c:2585
+#: thunar/thunar-application.c:2588
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -681,61 +681,61 @@ msgid_plural ""
 msgstr[0] "Weet u zeker dat u het\ngekozen bestand in de\nprullenbak wilt gooien?"
 msgstr[1] "Weet u zeker dat u de %u\ngekozen bestanden in de prullenbak\nwilt gooien?"
 
-#: thunar/thunar-application.c:2602
+#: thunar/thunar-application.c:2605
 msgid "Move to Trash"
 msgstr "Naar de prullenbak verplaatsen"
 
-#: thunar/thunar-application.c:2655
+#: thunar/thunar-application.c:2658
 msgid "Moving files into the trash..."
 msgstr "Bestanden verplaatsen naar de prullenbak..."
 
-#: thunar/thunar-application.c:2703
+#: thunar/thunar-application.c:2706
 msgid "Creating files..."
 msgstr "Bestanden maken..."
 
-#: thunar/thunar-application.c:2744
+#: thunar/thunar-application.c:2747
 msgid "Creating directories..."
 msgstr "Mappen maken..."
 
-#: thunar/thunar-application.c:2783
+#: thunar/thunar-application.c:2786
 msgid "Remove all files and folders from the Trash?"
 msgstr "Alle bestanden en mappen uit de prullenbak verwijderen?"
 
-#: thunar/thunar-application.c:2787 thunar/thunar-window.c:1259
+#: thunar/thunar-application.c:2790 thunar/thunar-window.c:1259
 msgid "Empty Trash"
 msgstr "Prullenbak ledigen"
 
-#: thunar/thunar-application.c:2794
+#: thunar/thunar-application.c:2797
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr "Als u ervoor kiest om de prullenbak te ledigen, zullen alle bestanden daarin blijvend verloren gaan. U kunt er ook voor kiezen om hen één voor één te verwijderen."
 
-#: thunar/thunar-application.c:2811
+#: thunar/thunar-application.c:2814
 msgid "Emptying the Trash..."
 msgstr "Prullenbak ledigen..."
 
-#: thunar/thunar-application.c:2858
+#: thunar/thunar-application.c:2861
 #, c-format
 msgid "Failed to determine the original path for \"%s\" (%s)"
 msgstr "Kon het oorspronkelijke pad niet bepalen voor '%s' (%s)"
 
-#: thunar/thunar-application.c:2863
+#: thunar/thunar-application.c:2866
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "Kon het oorspronkelijke pad voor '%s' niet vaststellen"
 
-#: thunar/thunar-application.c:2881
+#: thunar/thunar-application.c:2884
 #, c-format
 msgid "Could not restore \"%s\" (%s)"
 msgstr "Kon '%s' niet terugzetten (%s)"
 
-#: thunar/thunar-application.c:2885
+#: thunar/thunar-application.c:2888
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "Kon '%s' niet herstellen"
 
-#: thunar/thunar-application.c:2893
+#: thunar/thunar-application.c:2896
 msgid "Restoring files..."
 msgstr "Bestanden herstellen..."
 
@@ -968,7 +968,7 @@ msgstr "Er staat niets op het klembord om te plakken"
 #. tooltip
 #. setup the dialog
 #. add a regular close button, the header bar already provides one
-#: thunar/thunar-column-editor.c:130 thunar/thunar-preferences-dialog.c:278
+#: thunar/thunar-column-editor.c:130 thunar/thunar-preferences-dialog.c:279
 #: thunar/thunar-properties-dialog.c:347 thunar/thunar-renamer-dialog.c:415
 #: thunar/thunar-renamer-progress.c:205 thunar/thunar-toolbar-editor.c:148
 #: plugins/thunar-uca/thunar-uca-chooser.c:141
@@ -980,7 +980,7 @@ msgid "Configure Columns in the Detailed List View"
 msgstr "Configureer kolommen in de gedetailleerde lijstweergave"
 
 #. add the "Help" button
-#: thunar/thunar-column-editor.c:136 thunar/thunar-preferences-dialog.c:286
+#: thunar/thunar-column-editor.c:136 thunar/thunar-preferences-dialog.c:287
 #: thunar/thunar-properties-dialog.c:346 thunar/thunar-toolbar-editor.c:155
 #: thunar/thunar-window.c:709
 msgid "_Help"
@@ -1056,8 +1056,8 @@ msgstr "Deze kolom is gereserveerd voor bijzondere locaties"
 #. reset page title
 #. tell the user that we're unable to determine the file info
 #: thunar/thunar-column-model.c:913 thunar/thunar-list-model.c:991
-#: thunar/thunar-list-model.c:1027 thunar/thunar-permissions-chooser.c:253
-#: thunar/thunar-util.c:431 thunar/thunar-util.c:434
+#: thunar/thunar-list-model.c:1027 thunar/thunar-permissions-chooser.c:246
+#: thunar/thunar-util.c:434 thunar/thunar-util.c:437
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:729
 #: plugins/thunar-apr/thunar-apr-image-page.c:305
 #: plugins/thunar-apr/thunar-apr-image-page.c:306
@@ -1140,40 +1140,40 @@ msgstr "Multischijfstation stilzetten"
 msgid "_Lock"
 msgstr "Ver_grendelen"
 
-#: thunar/thunar-dialogs.c:115
+#: thunar/thunar-dialogs.c:118
 msgid "C_reate"
 msgstr "_Maken"
 
-#: thunar/thunar-dialogs.c:144
+#: thunar/thunar-dialogs.c:147
 msgid "Enter the name:"
 msgstr "Voer de naam in:"
 
 #. display an error message
-#: thunar/thunar-dialogs.c:193
+#: thunar/thunar-dialogs.c:196
 #, c-format
 msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "Kan bestandnaam '%s' niet omzetten naar de lokale codering"
 
 #. create a new dialog window
-#: thunar/thunar-dialogs.c:257
+#: thunar/thunar-dialogs.c:260
 #, c-format
 msgid "Rename \"%s\""
 msgstr "Hernoem '%s'"
 
 #. add the "Rename" button
-#: thunar/thunar-dialogs.c:263 thunar/thunar-renamer-dialog.c:419
+#: thunar/thunar-dialogs.c:266 thunar/thunar-renamer-dialog.c:419
 msgid "_Rename"
 msgstr "He_rnoemen"
 
-#: thunar/thunar-dialogs.c:301
+#: thunar/thunar-dialogs.c:304
 msgid "Enter the new name:"
 msgstr "Voer de nieuwe naam in:"
 
-#: thunar/thunar-dialogs.c:452
+#: thunar/thunar-dialogs.c:455
 msgid "translator-credits"
 msgstr "Vincent Tunru <imnotb@gmail.com>\nStephan Arts <stephan@xfce.org>\nPeter Maassen <p.maassen@chello.nl>\nPjotr <pjotrvertaalt@gmail.com>"
 
-#: thunar/thunar-dialogs.c:514 thunar/thunar-renamer-progress.c:175
+#: thunar/thunar-dialogs.c:517 thunar/thunar-renamer-progress.c:175
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:844
 #: plugins/thunar-sendto-email/main.c:141
 #: plugins/thunar-uca/thunar-uca-chooser.c:329
@@ -1181,124 +1181,124 @@ msgstr "Vincent Tunru <imnotb@gmail.com>\nStephan Arts <stephan@xfce.org>\nPeter
 msgid "Error"
 msgstr "Fout"
 
-#: thunar/thunar-dialogs.c:628 thunar/thunar-permissions-chooser.c:582
+#: thunar/thunar-dialogs.c:631 thunar/thunar-permissions-chooser.c:575
 msgid "_Yes"
 msgstr "_Ja"
 
-#: thunar/thunar-dialogs.c:632
+#: thunar/thunar-dialogs.c:635
 msgid "Yes to _all"
 msgstr "Ja op _alles"
 
-#: thunar/thunar-dialogs.c:636 thunar/thunar-dialogs.c:808
+#: thunar/thunar-dialogs.c:639 thunar/thunar-dialogs.c:811
 msgid "_Replace"
 msgstr "_Vervangen"
 
-#: thunar/thunar-dialogs.c:640
+#: thunar/thunar-dialogs.c:643
 msgid "Replace _All"
 msgstr "_Alles vervangen"
 
-#: thunar/thunar-dialogs.c:644 thunar/thunar-dialogs.c:806
+#: thunar/thunar-dialogs.c:647 thunar/thunar-dialogs.c:809
 msgid "_Skip"
 msgstr "Over_slaan"
 
-#: thunar/thunar-dialogs.c:648
+#: thunar/thunar-dialogs.c:651
 msgid "S_kip All"
 msgstr "Alles over_slaan"
 
-#: thunar/thunar-dialogs.c:652 thunar/thunar-dialogs.c:807
+#: thunar/thunar-dialogs.c:655 thunar/thunar-dialogs.c:810
 msgid "Re_name"
 msgstr "Her_noemen"
 
-#: thunar/thunar-dialogs.c:656
+#: thunar/thunar-dialogs.c:659
 msgid "Rena_me All"
 msgstr "Alles hernoemen"
 
-#: thunar/thunar-dialogs.c:660 thunar/thunar-permissions-chooser.c:581
+#: thunar/thunar-dialogs.c:663 thunar/thunar-permissions-chooser.c:574
 msgid "_No"
 msgstr "_Nee"
 
-#: thunar/thunar-dialogs.c:664
+#: thunar/thunar-dialogs.c:667
 msgid "N_o to all"
 msgstr "Nee _op alles"
 
-#: thunar/thunar-dialogs.c:668
+#: thunar/thunar-dialogs.c:671
 msgid "_Retry"
 msgstr "_Opnieuw proberen"
 
-#: thunar/thunar-dialogs.c:672
+#: thunar/thunar-dialogs.c:675
 msgid "Copy _Anyway"
 msgstr "_Toch kopiëren"
 
 #. setup the confirmation dialog
-#: thunar/thunar-dialogs.c:802
+#: thunar/thunar-dialogs.c:805
 msgid "Confirm to replace files"
 msgstr "Vraag bevestiging voor het vervangen van bestanden"
 
-#: thunar/thunar-dialogs.c:849
+#: thunar/thunar-dialogs.c:852
 #, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
 msgstr "Deze map bevat al een symbolische koppeling '%s'."
 
-#: thunar/thunar-dialogs.c:854
+#: thunar/thunar-dialogs.c:857
 #, c-format
 msgid "This folder already contains a folder \"%s\"."
 msgstr "Deze map bevat al een map met de naam '%s'."
 
-#: thunar/thunar-dialogs.c:860
+#: thunar/thunar-dialogs.c:863
 #, c-format
 msgid "This folder already contains a file \"%s\" (%s)."
 msgstr "Deze map bevat al een bestand genaamd '%s' (%s)."
 
-#: thunar/thunar-dialogs.c:864
+#: thunar/thunar-dialogs.c:867
 #, c-format
 msgid "This folder already contains a file \"%s\"."
 msgstr "Deze map bevat al een bestand met de naam '%s'."
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: thunar/thunar-dialogs.c:886
+#: thunar/thunar-dialogs.c:889
 #, c-format
 msgid "Replace the link in \"%s\""
 msgstr "Vervang de koppeling in '%s'"
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: thunar/thunar-dialogs.c:889
+#: thunar/thunar-dialogs.c:892
 #, c-format
 msgid "Replace the existing folder in \"%s\""
 msgstr "Vervang de bestaande map in '%s'"
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: thunar/thunar-dialogs.c:892
+#: thunar/thunar-dialogs.c:895
 #, c-format
 msgid "Replace the existing file in \"%s\""
 msgstr "Vervang het bestaande bestand in '%s'"
 
 #. Fourth box (size)
-#: thunar/thunar-dialogs.c:928 thunar/thunar-dialogs.c:978
+#: thunar/thunar-dialogs.c:931 thunar/thunar-dialogs.c:981
 #: thunar/thunar-properties-dialog.c:655
 msgid "Size:"
 msgstr "Grootte:"
 
-#: thunar/thunar-dialogs.c:928 thunar/thunar-dialogs.c:978
+#: thunar/thunar-dialogs.c:931 thunar/thunar-dialogs.c:981
 #: thunar/thunar-properties-dialog.c:591
 msgid "Modified:"
 msgstr "Gewijzigd:"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: thunar/thunar-dialogs.c:940
+#: thunar/thunar-dialogs.c:943
 msgid "with the following link?"
 msgstr "door de volgende koppeling?"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: thunar/thunar-dialogs.c:943
+#: thunar/thunar-dialogs.c:946
 msgid "with the following folder?"
 msgstr "door de volgende map?"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: thunar/thunar-dialogs.c:946
+#: thunar/thunar-dialogs.c:949
 msgid "with the following file?"
 msgstr "door het volgende bestand?"
 
-#: thunar/thunar-dialogs.c:994
+#: thunar/thunar-dialogs.c:997
 msgid "_Apply the action to all files and folders"
 msgstr "Pas de actie toe op alle bestanden en mappen"
 
@@ -1306,66 +1306,66 @@ msgstr "Pas de actie toe op alle bestanden en mappen"
 #. second appearance of %s:
 #. * "The desktop file %s is in an insecure location and not marked as
 #. secure%s."
-#: thunar/thunar-dialogs.c:1067
+#: thunar/thunar-dialogs.c:1070
 msgid "/executable"
 msgstr "/uitvoerbaar"
 
-#: thunar/thunar-dialogs.c:1073
+#: thunar/thunar-dialogs.c:1076
 #, c-format
 msgid ""
 "The desktop file %s is in an insecure location and not marked as secure%s. If you do not trust this program, click Cancel.\n"
 "\n"
 msgstr "Het bureaubladbestand %s staat op een onveilige locatie en  is niet gemarkeerd als veilig %s. Als u dit programma niet vertrouwt, klik dan op Afbreken.\n\n"
 
-#: thunar/thunar-dialogs.c:1093
+#: thunar/thunar-dialogs.c:1096
 msgid "_Launch Anyway"
 msgstr "Toch starten"
 
-#: thunar/thunar-dialogs.c:1095
+#: thunar/thunar-dialogs.c:1098
 msgid "Mark As _Secure And Launch"
 msgstr "Markeer als _veilig en start het"
 
-#: thunar/thunar-dialogs.c:1179
+#: thunar/thunar-dialogs.c:1182
 msgid "Close split pane with multiple tabs?"
 msgstr "Gesplitst paneel met meerdere tabbladen sluiten?"
 
-#: thunar/thunar-dialogs.c:1180
+#: thunar/thunar-dialogs.c:1183
 msgid ""
 "The other split pane has multiple open tabs. Closing it will close all these"
 " tabs."
 msgstr "Het andere gesplitste paneel heeft meerdere open tabbladen. Al deze tabbladen zullen worden gesloten wanneer u het sluit."
 
-#: thunar/thunar-dialogs.c:1186
+#: thunar/thunar-dialogs.c:1189
 msgid "Warning"
 msgstr "Waarschuwing"
 
-#: thunar/thunar-dialogs.c:1191
+#: thunar/thunar-dialogs.c:1194
 msgid "Close Pane"
 msgstr "Paneel sluiten"
 
-#: thunar/thunar-dialogs.c:1194 thunar/thunar-permissions-chooser.c:612
+#: thunar/thunar-dialogs.c:1197 thunar/thunar-permissions-chooser.c:605
 msgid "Do _not ask me again"
 msgstr "Vraag me dit _niet opnieuw"
 
-#: thunar/thunar-dialogs.c:1254
+#: thunar/thunar-dialogs.c:1257
 #, c-format
 msgid "The file \"%s\" seems to be executable. What do you want to do with it?"
 msgstr "Het bestand '%s' lijkt uitvoerbaar te zijn. Wat wilt u ermee doen?"
 
-#: thunar/thunar-dialogs.c:1259
+#: thunar/thunar-dialogs.c:1262
 msgid ""
 "The selected files seem to be executable. What do you want to do with them?"
 msgstr "De gekozen bestanden lijken uitvoerbaar te zijn. Wat wilt u ermee doen?"
 
-#: thunar/thunar-dialogs.c:1268
+#: thunar/thunar-dialogs.c:1271
 msgid "Open Shell Script"
 msgstr "Shellscript openen"
 
-#: thunar/thunar-dialogs.c:1272
+#: thunar/thunar-dialogs.c:1275
 msgid "Run In _Terminal"
 msgstr "Draaien in _terminalvenster"
 
-#: thunar/thunar-dialogs.c:1333
+#: thunar/thunar-dialogs.c:1336
 #, c-format
 msgid "Failed to edit launcher via command \"%s\""
 msgstr "Kon starter niet bewerken met opdracht '%s'"
@@ -1438,7 +1438,7 @@ msgid "MIME Type"
 msgstr "Bestandssoort"
 
 #: thunar/thunar-enum-types.c:156 thunar/thunar-renamer-dialog.c:476
-#: thunarx/thunarx-renamer.c:173
+#: thunarx/thunarx-renamer.c:174
 msgid "Name"
 msgstr "Naam"
 
@@ -1472,10 +1472,10 @@ msgid "File Name"
 msgstr "Bestandnaam"
 
 #: thunar/thunar-enum-types.c:700 thunar/thunar-enum-types.c:725
-#: thunar/thunar-enum-types.c:860 thunar/thunar-preferences-dialog.c:466
-#: thunar/thunar-preferences-dialog.c:1122
-#: thunar/thunar-preferences-dialog.c:1230
-#: thunar/thunar-preferences-dialog.c:1318
+#: thunar/thunar-enum-types.c:860 thunar/thunar-preferences-dialog.c:467
+#: thunar/thunar-preferences-dialog.c:1121
+#: thunar/thunar-preferences-dialog.c:1229
+#: thunar/thunar-preferences-dialog.c:1317
 msgid "Never"
 msgstr "Nooit"
 
@@ -1484,10 +1484,10 @@ msgid "Only For Remote Location"
 msgstr "Alleen voor locatie op afstand"
 
 #: thunar/thunar-enum-types.c:702 thunar/thunar-enum-types.c:727
-#: thunar/thunar-enum-types.c:862 thunar/thunar-preferences-dialog.c:468
-#: thunar/thunar-preferences-dialog.c:1118
-#: thunar/thunar-preferences-dialog.c:1228
-#: thunar/thunar-preferences-dialog.c:1319
+#: thunar/thunar-enum-types.c:862 thunar/thunar-preferences-dialog.c:469
+#: thunar/thunar-preferences-dialog.c:1117
+#: thunar/thunar-preferences-dialog.c:1227
+#: thunar/thunar-preferences-dialog.c:1318
 msgid "Always"
 msgstr "Altijd"
 
@@ -1515,9 +1515,9 @@ msgstr "Map maken"
 msgid "Delete (opposite of create)"
 msgstr "Verwijderen (tegengestelde van maken)"
 
-#: thunar/thunar-enum-types.c:791 thunar/thunar-file.c:1078
+#: thunar/thunar-enum-types.c:791 thunar/thunar-file.c:1081
 #: thunar/thunar-gio-extensions.c:510 thunar/thunar-shortcuts-model.c:1150
-#: thunar.desktop.in.in:25
+#: thunar.desktop.in:25
 msgid "Trash"
 msgstr "Prullenbak"
 
@@ -1558,57 +1558,57 @@ msgstr "Ingebed"
 msgid "Only for local files"
 msgstr "Slechts voor plaatselijke bestanden"
 
-#: thunar/thunar-file.c:1085 thunar/thunar-gio-extensions.c:508
+#: thunar/thunar-file.c:1088 thunar/thunar-gio-extensions.c:508
 #: thunar/thunar-shortcuts-model.c:1032
 msgid "File System"
 msgstr "Bestandssysteem"
 
-#: thunar/thunar-file.c:1554
+#: thunar/thunar-file.c:1557
 msgid "The root folder has no parent"
 msgstr "De hoofdmap heeft geen bovenliggende map"
 
-#: thunar/thunar-file.c:1652
+#: thunar/thunar-file.c:1655
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "Kon het bureaubladbestand niet lezen: %s"
 
 #. if the .desktop file is not secure, ask user what to do
-#: thunar/thunar-file.c:1665
+#: thunar/thunar-file.c:1668
 msgid "Untrusted application launcher"
 msgstr "Niet-vertrouwde toepassingstarter"
 
-#: thunar/thunar-file.c:1696
+#: thunar/thunar-file.c:1699
 msgid "No Exec field specified"
 msgstr "Geen Exec-veld opgegeven"
 
 #. if the .desktop file is not secure, ask user what to do
-#: thunar/thunar-file.c:1705
+#: thunar/thunar-file.c:1708
 msgid "Untrusted link launcher"
 msgstr "Niet-vertrouwde koppelingstarter"
 
-#: thunar/thunar-file.c:1721
+#: thunar/thunar-file.c:1724
 msgid "No URL field specified"
 msgstr "Geen URL-veld opgegeven"
 
-#: thunar/thunar-file.c:1726
+#: thunar/thunar-file.c:1729
 msgid "Invalid desktop file"
 msgstr "Ongeldig bureaubladbestand"
 
-#: thunar/thunar-file.c:2551 thunar/thunar-util.c:1451
+#: thunar/thunar-file.c:2554 thunar/thunar-util.c:1454
 msgid "broken link"
 msgstr "kapotte koppeling"
 
-#: thunar/thunar-file.c:2558
+#: thunar/thunar-file.c:2561
 #, c-format
 msgid "%s (link to %s)"
 msgstr "%s (koppeling met %s)"
 
-#: thunar/thunar-file.c:2560
+#: thunar/thunar-file.c:2563
 #, c-format
 msgid "%s (link)"
 msgstr "%s (koppeling)"
 
-#: thunar/thunar-file.c:2569
+#: thunar/thunar-file.c:2572
 #, c-format
 msgid "%s (mount point)"
 msgstr "%s (aankoppelpunt)"
@@ -1818,7 +1818,7 @@ msgid ""
 msgstr "Er is niet genoeg ruimte op de bestemming. Probeer bestanden te verwijderen om plek te maken."
 
 #: thunar/thunar-job-operation.c:789 thunar/thunar-size-label.c:486
-#: thunar/thunar-util.c:1328
+#: thunar/thunar-util.c:1331
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -1995,134 +1995,134 @@ msgstr "Pictogramgrootte"
 msgid "The icon size for the path entry"
 msgstr "Pictogramgrootte voor het padveld"
 
-#: thunar/thunar-permissions-chooser.c:242
+#: thunar/thunar-permissions-chooser.c:235
 msgid "Owner:"
 msgstr "Eigenaar:"
 
-#: thunar/thunar-permissions-chooser.c:261
+#: thunar/thunar-permissions-chooser.c:254
 msgid "_Access:"
 msgstr "_Toegang:"
 
-#: thunar/thunar-permissions-chooser.c:289
+#: thunar/thunar-permissions-chooser.c:282
 msgid "Gro_up:"
 msgstr "_Groep:"
 
-#: thunar/thunar-permissions-chooser.c:311
+#: thunar/thunar-permissions-chooser.c:304
 msgid "Acc_ess:"
 msgstr "Toegang:"
 
-#: thunar/thunar-permissions-chooser.c:339
+#: thunar/thunar-permissions-chooser.c:332
 msgid "Others"
 msgstr "Anderen"
 
-#: thunar/thunar-permissions-chooser.c:347
+#: thunar/thunar-permissions-chooser.c:340
 msgid "Acce_ss:"
 msgstr "Toegang:"
 
-#: thunar/thunar-permissions-chooser.c:375
+#: thunar/thunar-permissions-chooser.c:368
 msgid "Program:"
 msgstr "Programma:"
 
-#: thunar/thunar-permissions-chooser.c:381
+#: thunar/thunar-permissions-chooser.c:374
 msgid "Allow this file to _run as a program"
 msgstr "Sta toe dat dit bestand wordt _uitgevoerd als een programma"
 
-#: thunar/thunar-permissions-chooser.c:409
-#: thunar/thunar-preferences-dialog.c:1333
+#: thunar/thunar-permissions-chooser.c:402
+#: thunar/thunar-preferences-dialog.c:1332
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "Het is gevaarlijk voor uw systeem om niet-vertrouwde programma's toe te staan om te draaien."
 
-#: thunar/thunar-permissions-chooser.c:427
+#: thunar/thunar-permissions-chooser.c:420
 msgid ""
 "The folder permissions are inconsistent, you may not be able to work with "
 "files in this folder."
 msgstr "De maprechten zijn onsamenhangend ingesteld, waardoor u wellicht niet zult kunnen werken met bestanden in deze map."
 
-#: thunar/thunar-permissions-chooser.c:443
+#: thunar/thunar-permissions-chooser.c:436
 msgid "Correct _folder permissions..."
 msgstr "Maprechten corrigeren..."
 
-#: thunar/thunar-permissions-chooser.c:444
+#: thunar/thunar-permissions-chooser.c:437
 msgid "Click here to automatically fix the folder permissions."
 msgstr "Klik hier om de maprechten automatisch te herstellen."
 
-#: thunar/thunar-permissions-chooser.c:457
+#: thunar/thunar-permissions-chooser.c:450
 msgid "Please wait..."
 msgstr "Even geduld a.u.b..."
 
-#: thunar/thunar-permissions-chooser.c:464
+#: thunar/thunar-permissions-chooser.c:457
 msgid "Stop applying permissions recursively."
 msgstr "Staak het recursief toepassen van rechten."
 
 #. allocate the question dialog
-#: thunar/thunar-permissions-chooser.c:577
+#: thunar/thunar-permissions-chooser.c:570
 msgid "Question"
 msgstr "Vraag"
 
-#: thunar/thunar-permissions-chooser.c:601
+#: thunar/thunar-permissions-chooser.c:594
 msgid "Apply recursively?"
 msgstr "Recursief toepassen?"
 
-#: thunar/thunar-permissions-chooser.c:607
+#: thunar/thunar-permissions-chooser.c:600
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolders below the selected folder?"
 msgstr "Wilt u uw veranderingen recursief op alle bestanden\nen mappen in de gekozen map toepassen?"
 
-#: thunar/thunar-permissions-chooser.c:613
+#: thunar/thunar-permissions-chooser.c:606
 msgid ""
 "If you select this option your choice will be remembered and you won't be "
 "asked again. You can use the preferences dialog to alter your choice "
 "afterwards."
 msgstr "Als u deze optie kiest, wordt uw keuze onthouden en wordt u dit niet weer gevraagd. U kunt de voorkeurendialoog gebruiken om uw keuze later te wijzigen."
 
-#: thunar/thunar-permissions-chooser.c:980
+#: thunar/thunar-permissions-chooser.c:974
 msgid "Mixed file owners"
 msgstr "Verschillende bestandeigenaren"
 
-#: thunar/thunar-permissions-chooser.c:980
+#: thunar/thunar-permissions-chooser.c:974
 msgid "Unknown file owner"
 msgstr "Onbekende bestandeigenaar"
 
-#: thunar/thunar-permissions-chooser.c:1060
+#: thunar/thunar-permissions-chooser.c:1054
 #: plugins/thunar-uca/thunar-uca-editor.c:432
 #: plugins/thunar-uca/thunar-uca-editor.c:644
 msgid "None"
 msgstr "Geen"
 
 #. 0000
-#: thunar/thunar-permissions-chooser.c:1061
+#: thunar/thunar-permissions-chooser.c:1055
 msgid "Write only"
 msgstr "Alleen-schrijven"
 
 #. 0002
-#: thunar/thunar-permissions-chooser.c:1062
+#: thunar/thunar-permissions-chooser.c:1056
 msgid "Read only"
 msgstr "Alleen-lezen"
 
 #. 0004
-#: thunar/thunar-permissions-chooser.c:1063
+#: thunar/thunar-permissions-chooser.c:1057
 msgid "Read & Write"
 msgstr "Lezen en schrijven"
 
-#: thunar/thunar-permissions-chooser.c:1065
+#: thunar/thunar-permissions-chooser.c:1059
 msgid "Varying (no change)"
 msgstr "Variërend (geen verandering)"
 
-#: thunar/thunar-permissions-chooser.c:1192
+#: thunar/thunar-permissions-chooser.c:1186
 msgid "Correct folder permissions automatically?"
 msgstr "Maprechten automatisch corrigeren?"
 
-#: thunar/thunar-permissions-chooser.c:1193
+#: thunar/thunar-permissions-chooser.c:1187
 msgid "Folder permissions"
 msgstr "Maprechten"
 
-#: thunar/thunar-permissions-chooser.c:1195
+#: thunar/thunar-permissions-chooser.c:1189
 msgid "Correct _folder permissions"
 msgstr "Maprechten corrigeren"
 
-#: thunar/thunar-permissions-chooser.c:1197
+#: thunar/thunar-permissions-chooser.c:1191
 msgid ""
 "The folder permissions will be reset to a consistent state. Only users "
 "allowed to read the contents of this folder will be allowed to enter the "
@@ -2130,184 +2130,184 @@ msgid ""
 msgstr "De maprechten zullen tot een samenhangende staat worden teruggebracht. Alleen gebruikers met toestemming voor het lezen van de inhoud van deze map zullen daarna toegang tot deze map hebben."
 
 #. popup the error message dialog
-#: thunar/thunar-permissions-chooser.c:1312
+#: thunar/thunar-permissions-chooser.c:1306
 msgid "Error while changing file permissions"
 msgstr "Fout bij het wijzigen van bestandsrechten"
 
-#: thunar/thunar-preferences-dialog.c:271 thunar/thunar-settings.desktop.in:4
+#: thunar/thunar-preferences-dialog.c:272 thunar/thunar-settings.desktop.in:4
 msgid "Thunar Preferences"
 msgstr "Voorkeuren van Thunar"
 
 #. Display
-#: thunar/thunar-preferences-dialog.c:301
+#: thunar/thunar-preferences-dialog.c:302
 msgid "Display"
 msgstr "Weergave"
 
-#: thunar/thunar-preferences-dialog.c:311
+#: thunar/thunar-preferences-dialog.c:312
 msgid "Window Settings"
 msgstr "Vensterinstellingen"
 
-#: thunar/thunar-preferences-dialog.c:330
+#: thunar/thunar-preferences-dialog.c:331
 msgid "Use custom window decorations (only applied to new windows)"
 msgstr "Aangepaste vensterdecoraties gebruiken (alleen toegepast op nieuwe vensters)"
 
-#: thunar/thunar-preferences-dialog.c:337
+#: thunar/thunar-preferences-dialog.c:338
 msgid ""
 "Use custom, client-side window decorations instead of global, server-side "
 "ones. - Only applied to new Thunar windows"
 msgstr "Gebruik aangepaste eigen vensterdecoraties in plaats van wat er algemeen systeembreed geldt. Wordt alleen toegepast op nieuwe Thunarvensters"
 
-#: thunar/thunar-preferences-dialog.c:345
+#: thunar/thunar-preferences-dialog.c:346
 msgid "Use current folder icon as window icon"
 msgstr "Huidige mappictogram gebruiken als vensterpictogram"
 
-#: thunar/thunar-preferences-dialog.c:351
+#: thunar/thunar-preferences-dialog.c:352
 msgid "Select this option to use the current folder icon as window icon"
 msgstr "Kies deze optie om het pictogram van de huidige map te gebruiken als vensterpictogram"
 
-#: thunar/thunar-preferences-dialog.c:356
+#: thunar/thunar-preferences-dialog.c:357
 msgid "View Settings"
 msgstr "Weergave-instellingen"
 
-#: thunar/thunar-preferences-dialog.c:369
+#: thunar/thunar-preferences-dialog.c:370
 msgid "View _new folders using:"
 msgstr "Toon _nieuwe mappen met:"
 
-#: thunar/thunar-preferences-dialog.c:375
-#: thunar/thunar-preferences-dialog.c:531
+#: thunar/thunar-preferences-dialog.c:376
+#: thunar/thunar-preferences-dialog.c:532
 msgid "Icon View"
 msgstr "Pictogramweergave"
 
-#: thunar/thunar-preferences-dialog.c:376
-#: thunar/thunar-preferences-dialog.c:1429
+#: thunar/thunar-preferences-dialog.c:377
+#: thunar/thunar-preferences-dialog.c:1432
 msgid "List View"
 msgstr "Lijstweergave"
 
-#: thunar/thunar-preferences-dialog.c:377
+#: thunar/thunar-preferences-dialog.c:378
 msgid "Compact View"
 msgstr "Compacte weergave"
 
-#: thunar/thunar-preferences-dialog.c:378
+#: thunar/thunar-preferences-dialog.c:379
 msgid "Last Active View"
 msgstr "Vorige weergavemodus"
 
-#: thunar/thunar-preferences-dialog.c:394
+#: thunar/thunar-preferences-dialog.c:395
 msgid "_Remember view settings for each folder"
 msgstr "_Onthoud de weergave-instellingen voor elke map"
 
-#: thunar/thunar-preferences-dialog.c:401
+#: thunar/thunar-preferences-dialog.c:402
 msgid ""
 "Select this option to remember view type, zoom level, sort column, and sort "
 "order individually for each folder"
 msgstr "Kies deze optie om voor elke individuele map de volgende zaken te onthouden: soort weergave, vergrotingsniveau, kolomrangschikking en rangschikkingsvolgorde."
 
-#: thunar/thunar-preferences-dialog.c:409
+#: thunar/thunar-preferences-dialog.c:410
 msgid "gvfs metadata support is required"
 msgstr "Ondersteuning voor gvfs-metagegevens is vereist"
 
-#: thunar/thunar-preferences-dialog.c:415
+#: thunar/thunar-preferences-dialog.c:416
 msgid "Sort _folders before files"
 msgstr "Sorteer _mappen vóór bestanden"
 
-#: thunar/thunar-preferences-dialog.c:421
+#: thunar/thunar-preferences-dialog.c:422
 msgid ""
 "Select this option to list folders before files when you sort a folder."
 msgstr "Kies deze optie om mappen vóór bestanden weer te geven wanneer u een map sorteert."
 
-#: thunar/thunar-preferences-dialog.c:429
+#: thunar/thunar-preferences-dialog.c:430
 msgid "Show file size in binary format"
 msgstr "Toon bestandgrootte in binaire opmaak"
 
-#: thunar/thunar-preferences-dialog.c:435
+#: thunar/thunar-preferences-dialog.c:436
 msgid ""
 "Select this option to show file size in binary format instead of decimal."
 msgstr "Kies deze optie om bestandgrootte te tonen in binaire opmaak in plaats van decimaal."
 
-#: thunar/thunar-preferences-dialog.c:444
+#: thunar/thunar-preferences-dialog.c:445
 msgid "Thumbnails"
 msgstr "Miniaturen"
 
-#: thunar/thunar-preferences-dialog.c:460
+#: thunar/thunar-preferences-dialog.c:461
 msgid "Show thumbnails:"
 msgstr "Miniaturen weergeven:"
 
-#: thunar/thunar-preferences-dialog.c:467
-#: thunar/thunar-preferences-dialog.c:1119
-#: thunar/thunar-preferences-dialog.c:1229
+#: thunar/thunar-preferences-dialog.c:468
+#: thunar/thunar-preferences-dialog.c:1118
+#: thunar/thunar-preferences-dialog.c:1228
 msgid "Local Files Only"
 msgstr "Alleen plaatselijke bestanden"
 
-#: thunar/thunar-preferences-dialog.c:486
+#: thunar/thunar-preferences-dialog.c:487
 msgid "Only show thumbnails for files smaller than:"
 msgstr "Toon alleen miniaturen voor bestanden kleiner dan:"
 
-#: thunar/thunar-preferences-dialog.c:492
+#: thunar/thunar-preferences-dialog.c:493
 msgid "512KiB"
 msgstr "512 KB"
 
-#: thunar/thunar-preferences-dialog.c:493
+#: thunar/thunar-preferences-dialog.c:494
 msgid "1MiB"
 msgstr "1 MB"
 
-#: thunar/thunar-preferences-dialog.c:494
+#: thunar/thunar-preferences-dialog.c:495
 msgid "10MiB"
 msgstr "10 MB"
 
-#: thunar/thunar-preferences-dialog.c:495
+#: thunar/thunar-preferences-dialog.c:496
 msgid "100MiB"
 msgstr "100 MB"
 
-#: thunar/thunar-preferences-dialog.c:496
+#: thunar/thunar-preferences-dialog.c:497
 msgid "1GiB"
 msgstr "1 GB"
 
-#: thunar/thunar-preferences-dialog.c:497
+#: thunar/thunar-preferences-dialog.c:498
 msgid "10GiB"
 msgstr "10 GB"
 
-#: thunar/thunar-preferences-dialog.c:498
+#: thunar/thunar-preferences-dialog.c:499
 msgid "Unlimited"
 msgstr "Onbeperkt"
 
-#: thunar/thunar-preferences-dialog.c:516
+#: thunar/thunar-preferences-dialog.c:517
 msgid "Draw frames around thumbnails"
 msgstr "Teken lijsten rond miniaturen"
 
-#: thunar/thunar-preferences-dialog.c:522
+#: thunar/thunar-preferences-dialog.c:523
 msgid "Select this option to draw black frames around thumbnails."
 msgstr "Kies deze optie om zwarte lijsten te tekenen rond miniaturen."
 
-#: thunar/thunar-preferences-dialog.c:547
+#: thunar/thunar-preferences-dialog.c:548
 msgid "_Text beside icons"
 msgstr "_Tekst naast pictogrammen"
 
-#: thunar/thunar-preferences-dialog.c:553
+#: thunar/thunar-preferences-dialog.c:554
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
 msgstr "Kies deze optie om beschrijvingen van elementen naast de pictogrammen weer te geven in plaats van eronder."
 
-#: thunar/thunar-preferences-dialog.c:563
+#: thunar/thunar-preferences-dialog.c:564
 msgid "Date"
 msgstr "Datum"
 
-#: thunar/thunar-preferences-dialog.c:576
+#: thunar/thunar-preferences-dialog.c:577
 #: plugins/thunar-sbr/thunar-sbr-date-renamer.c:223
 msgid "_Format:"
 msgstr "_Opmaak:"
 
 #. TRANSLATORS: custom date format
-#: thunar/thunar-preferences-dialog.c:589
+#: thunar/thunar-preferences-dialog.c:590
 msgid "Custom"
 msgstr "Aangepast"
 
-#: thunar/thunar-preferences-dialog.c:590
+#: thunar/thunar-preferences-dialog.c:591
 msgid "Today / Custom"
 msgstr "Vandaag / Aangepast"
 
 #. TRANSLATORS: Please do not translate the first column (specifiers),
 #. 'strftime' and of course '\n'
-#: thunar/thunar-preferences-dialog.c:607
+#: thunar/thunar-preferences-dialog.c:608
 msgid ""
 "Custom date format to apply.\n"
 "\n"
@@ -2323,129 +2323,129 @@ msgid ""
 msgstr "Toe te passen aangepaste datumopmaak.\n\nDe gebruikelijkste aanduidingen zijn:\n%d dag van maand\n%m maand\n%Y jaar inclusief eeuw\n%H uur\n%M minuut\n%S seconde\n\nVoor een volledige lijst verwijzen wij u naar 'Glib.DateTime.format'."
 
 #. Side Pane
-#: thunar/thunar-preferences-dialog.c:629
+#: thunar/thunar-preferences-dialog.c:630
 msgid "Side Pane"
 msgstr "Zijbalk"
 
-#: thunar/thunar-preferences-dialog.c:639
+#: thunar/thunar-preferences-dialog.c:640
 msgid "Shortcuts Pane"
 msgstr "Snelkoppelingenbalk"
 
-#: thunar/thunar-preferences-dialog.c:655
+#: thunar/thunar-preferences-dialog.c:656
 msgid "_Icon Size:"
 msgstr "_Pictogramgrootte:"
 
-#: thunar/thunar-preferences-dialog.c:660
-#: thunar/thunar-preferences-dialog.c:726
+#: thunar/thunar-preferences-dialog.c:661
+#: thunar/thunar-preferences-dialog.c:727
 msgid "16px"
 msgstr "16px"
 
-#: thunar/thunar-preferences-dialog.c:661
-#: thunar/thunar-preferences-dialog.c:727
+#: thunar/thunar-preferences-dialog.c:662
+#: thunar/thunar-preferences-dialog.c:728
 msgid "24px"
 msgstr "24px"
 
-#: thunar/thunar-preferences-dialog.c:662
-#: thunar/thunar-preferences-dialog.c:728
+#: thunar/thunar-preferences-dialog.c:663
+#: thunar/thunar-preferences-dialog.c:729
 msgid "32px"
 msgstr "32px"
 
-#: thunar/thunar-preferences-dialog.c:663
-#: thunar/thunar-preferences-dialog.c:729
+#: thunar/thunar-preferences-dialog.c:664
+#: thunar/thunar-preferences-dialog.c:730
 msgid "48px"
 msgstr "48px"
 
-#: thunar/thunar-preferences-dialog.c:664
-#: thunar/thunar-preferences-dialog.c:730
+#: thunar/thunar-preferences-dialog.c:665
+#: thunar/thunar-preferences-dialog.c:731
 msgid "64px"
 msgstr "64px"
 
-#: thunar/thunar-preferences-dialog.c:665
-#: thunar/thunar-preferences-dialog.c:731
+#: thunar/thunar-preferences-dialog.c:666
+#: thunar/thunar-preferences-dialog.c:732
 msgid "96px"
 msgstr "96px"
 
-#: thunar/thunar-preferences-dialog.c:666
-#: thunar/thunar-preferences-dialog.c:732
+#: thunar/thunar-preferences-dialog.c:667
+#: thunar/thunar-preferences-dialog.c:733
 msgid "128px"
 msgstr "128px"
 
-#: thunar/thunar-preferences-dialog.c:667
-#: thunar/thunar-preferences-dialog.c:733
+#: thunar/thunar-preferences-dialog.c:668
+#: thunar/thunar-preferences-dialog.c:734
 msgid "160px"
 msgstr "160px"
 
-#: thunar/thunar-preferences-dialog.c:668
-#: thunar/thunar-preferences-dialog.c:734
+#: thunar/thunar-preferences-dialog.c:669
+#: thunar/thunar-preferences-dialog.c:735
 msgid "192px"
 msgstr "192px"
 
-#: thunar/thunar-preferences-dialog.c:669
-#: thunar/thunar-preferences-dialog.c:735
+#: thunar/thunar-preferences-dialog.c:670
+#: thunar/thunar-preferences-dialog.c:736
 msgid "256px"
 msgstr "256px"
 
-#: thunar/thunar-preferences-dialog.c:670
-#: thunar/thunar-preferences-dialog.c:736
+#: thunar/thunar-preferences-dialog.c:671
+#: thunar/thunar-preferences-dialog.c:737
 msgid "512px"
 msgstr "512bp"
 
-#: thunar/thunar-preferences-dialog.c:671
-#: thunar/thunar-preferences-dialog.c:737
+#: thunar/thunar-preferences-dialog.c:672
+#: thunar/thunar-preferences-dialog.c:738
 msgid "1024px"
 msgstr "1024bp"
 
-#: thunar/thunar-preferences-dialog.c:689
+#: thunar/thunar-preferences-dialog.c:690
 msgid "Show Icon _Emblems"
 msgstr "Toon pictogramemblemen"
 
-#: thunar/thunar-preferences-dialog.c:695
+#: thunar/thunar-preferences-dialog.c:696
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties "
 "dialog."
 msgstr "Kies deze optie om pictogramemblemen in het snelkoppelingenpaneel weer te geven, voor alle mappen waarvoor emblemen zijn ingesteld in het dialoogvenster voor mapeigenschappen."
 
-#: thunar/thunar-preferences-dialog.c:705
+#: thunar/thunar-preferences-dialog.c:706
 msgid "Tree Pane"
 msgstr "Boomstructuurpaneel"
 
-#: thunar/thunar-preferences-dialog.c:721
+#: thunar/thunar-preferences-dialog.c:722
 msgid "Icon _Size:"
 msgstr "Pictogram_grootte:"
 
-#: thunar/thunar-preferences-dialog.c:755
+#: thunar/thunar-preferences-dialog.c:756
 msgid "Show Icon E_mblems"
 msgstr "Toon pictograme_mblemen"
 
-#: thunar/thunar-preferences-dialog.c:761
+#: thunar/thunar-preferences-dialog.c:762
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
 msgstr "Kies deze optie om pictogramemblemen weer te geven in het boomstructuurpaneel, voor alle mappen waarvoor emblemen zijn ingesteld in het dialoogvenster voor mapeigenschappen."
 
-#: thunar/thunar-preferences-dialog.c:771
+#: thunar/thunar-preferences-dialog.c:772
 msgid "Icon Style"
 msgstr "Pictogramstijl"
 
-#: thunar/thunar-preferences-dialog.c:787
+#: thunar/thunar-preferences-dialog.c:788
 msgid "Use symbolic folder icons"
 msgstr "Gebruik symbolische mappictogrammen"
 
-#: thunar/thunar-preferences-dialog.c:793
+#: thunar/thunar-preferences-dialog.c:794
 msgid ""
 "Select this option to use symbolic folder icons instead of regular ones."
 msgstr "Kies deze optie om symbolische mappictogrammen te gebruiken in plaats van gewone."
 
-#: thunar/thunar-preferences-dialog.c:802
+#: thunar/thunar-preferences-dialog.c:803
 msgid "Image Preview"
 msgstr "Voorbeeldweergave afbeelding"
 
-#: thunar/thunar-preferences-dialog.c:818
+#: thunar/thunar-preferences-dialog.c:819
 msgid "Image Preview Mode:"
 msgstr "Modus voor voorbeeldweergave afbeelding:"
 
-#: thunar/thunar-preferences-dialog.c:820
+#: thunar/thunar-preferences-dialog.c:821
 msgid ""
 "- Standalone: Image Preview uses a separate pane\n"
 "- Embedded: Image Preview is embedded in the left sidepane\n"
@@ -2551,19 +2551,19 @@ msgid "Select this option to show the 'Delete' action in the context menu"
 msgstr "Kies deze optie om de 'Verwijderen'-actie te tonen in het contextmenu"
 
 #. Advanced
-#: thunar/thunar-preferences-dialog.c:1077
+#: thunar/thunar-preferences-dialog.c:1076
 msgid "Advanced"
 msgstr "Geavanceerd"
 
-#: thunar/thunar-preferences-dialog.c:1087
+#: thunar/thunar-preferences-dialog.c:1086
 msgid "File Transfer"
 msgstr "Bestandoverdracht"
 
-#: thunar/thunar-preferences-dialog.c:1104
+#: thunar/thunar-preferences-dialog.c:1103
 msgid "Transfer files in parallel:"
 msgstr "Bestanden parallel overbrengen:"
 
-#: thunar/thunar-preferences-dialog.c:1106
+#: thunar/thunar-preferences-dialog.c:1105
 msgid ""
 "Indicates the behavior during multiple copies:\n"
 "- Always: all copies are done simultaneously\n"
@@ -2573,30 +2573,30 @@ msgid ""
 "- Never: all copies are done sequentially"
 msgstr "Geeft het gedrag aan bij meerdere kopieeracties:\n- Altijd: alle kopieeracties worden gelijktijdig gedaan\n- Alleen plaatselijke bestanden: alleen gelijktijdige kopieeracties voor plaatselijke bestanden (niet op afstand, niet bijgevoegd)\n- Alleen plaatselijke bestanden (zelfde apparaten): als alle bestanden plaatselijk zijn maar op verschillende apparaten (schijven, koppelpunten) staan, zullen kopieeracties volgtijdelijk worden uitgevoerd\n- Nooit: alle kopieeracties zullen volgtijdelijk worden uitgevoerd"
 
-#: thunar/thunar-preferences-dialog.c:1120
+#: thunar/thunar-preferences-dialog.c:1119
 msgid "Local Files Only (Same Devices)"
 msgstr "Alleen plaatselijke bestanden (zelfde apparaten)"
 
-#: thunar/thunar-preferences-dialog.c:1121
+#: thunar/thunar-preferences-dialog.c:1120
 msgid "Local Files Only (Idle Devices)"
 msgstr "Alleen plaatselijke bestanden (apparaten die niet bezig zijn)"
 
-#: thunar/thunar-preferences-dialog.c:1140
+#: thunar/thunar-preferences-dialog.c:1139
 msgid "Use intermediate file on copy:"
 msgstr "Tussenbestand gebruiken bij kopiëren:"
 
-#: thunar/thunar-preferences-dialog.c:1144
+#: thunar/thunar-preferences-dialog.c:1143
 msgid ""
 "Use intermediate file '*.partial~' to copy files. This will prevent "
 "fragmented files. The new file will only be shown after the copy was "
 "successfully finished."
 msgstr "Gebruik tussenbestand  '*.partial~' om bestanden te kopiëren. Dit voorkomt gefragmenteerde bestanden. Het nieuwe bestand zal pas worden getoond nadat de kopie met succes werd voltooid."
 
-#: thunar/thunar-preferences-dialog.c:1171
+#: thunar/thunar-preferences-dialog.c:1170
 msgid "Verify file contents on copy:"
 msgstr "Verifieer de bestandinhoud bij kopiëren:"
 
-#: thunar/thunar-preferences-dialog.c:1175
+#: thunar/thunar-preferences-dialog.c:1174
 msgid ""
 "Compare contents of original file and copy in order to detect corruption. "
 "While this will attempt to compare the actual contents that are on the "
@@ -2605,67 +2605,67 @@ msgid ""
 " will increase copy time."
 msgstr "Vergelijk de inhoud van het oorspronkelijke bestand met die van de kopie om corruptie te voorkomen. Hoewel dit poogt om de feitelijke inhoud op het bestemmingsmedium te verifiëren, zou het kunnen dat Thunar niet in staat is om tijdelijke opslag van het bestandssysteem te omzeilen, dus deze vergelijking zou mogelijk niet alle vormen van corruptie kunnen bespeuren. Het inschakelen van deze optie zal de kopieertijd doen toenemen."
 
-#: thunar/thunar-preferences-dialog.c:1205
+#: thunar/thunar-preferences-dialog.c:1204
 msgid "Search"
 msgstr "Zoeken"
 
-#: thunar/thunar-preferences-dialog.c:1222
+#: thunar/thunar-preferences-dialog.c:1221
 msgid "Include subfolders:"
 msgstr "Submappen opnemen:"
 
-#: thunar/thunar-preferences-dialog.c:1246
+#: thunar/thunar-preferences-dialog.c:1245
 msgid "Folder Permissions"
 msgstr "Maprechten"
 
-#: thunar/thunar-preferences-dialog.c:1262
+#: thunar/thunar-preferences-dialog.c:1261
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "Wanneer u de rechten van een map verandert, kunt\nu die veranderingen ook op de inhoud van die map\ntoepassen. Kies hieronder het standaardgedrag:"
 
-#: thunar/thunar-preferences-dialog.c:1274
-#: thunar/thunar-preferences-dialog.c:1320
+#: thunar/thunar-preferences-dialog.c:1273
+#: thunar/thunar-preferences-dialog.c:1319
 msgid "Ask every time"
 msgstr "Telkens vragen"
 
-#: thunar/thunar-preferences-dialog.c:1275
+#: thunar/thunar-preferences-dialog.c:1274
 msgid "Apply to Folder and Contents"
 msgstr "Toepassen op map en inhoud"
 
-#: thunar/thunar-preferences-dialog.c:1276
+#: thunar/thunar-preferences-dialog.c:1275
 msgid "Apply to Folder Only"
 msgstr "Alleen op map toepassen"
 
-#: thunar/thunar-preferences-dialog.c:1291
+#: thunar/thunar-preferences-dialog.c:1290
 msgid "Security"
 msgstr "Veiligheid"
 
-#: thunar/thunar-preferences-dialog.c:1308
+#: thunar/thunar-preferences-dialog.c:1307
 msgid "Execute shell scripts:"
 msgstr "Shellscripts uitvoeren:"
 
-#: thunar/thunar-preferences-dialog.c:1343
+#: thunar/thunar-preferences-dialog.c:1342
 msgid "Volume Management"
 msgstr "Opslagmediumbeheer"
 
 #. add check button to enable/disable auto mounting
-#: thunar/thunar-preferences-dialog.c:1360
+#: thunar/thunar-preferences-dialog.c:1359
 msgid "Enable _Volume Management"
 msgstr "Schakel opslag_mediumbeheer in"
 
-#: thunar/thunar-preferences-dialog.c:1379
+#: thunar/thunar-preferences-dialog.c:1378
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">Configureer</a> het beheer van verwijderbare stations,\napparaten en media."
 
-#: thunar/thunar-preferences-dialog.c:1393
+#: thunar/thunar-preferences-dialog.c:1392
 #: thunar/thunar-properties-dialog.c:821
 msgid "Missing dependencies"
 msgstr "Ontbrekende afhankelijkheden"
 
-#: thunar/thunar-preferences-dialog.c:1401
+#: thunar/thunar-preferences-dialog.c:1400
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2674,30 +2674,34 @@ msgid ""
 msgstr "Het ziet ernaar uit dat <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> niet beschikbaar is.\nBelangrijke functies zoals prullenbakondersteuning,\nverwijderbare media en het verkennen van locaties\nop afstand, zullen niet werken. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Lees meer]</a>"
 
 #. Shortcuts
-#: thunar/thunar-preferences-dialog.c:1416
+#: thunar/thunar-preferences-dialog.c:1415
 msgid "Shortcuts"
 msgstr "Sneltoetsen"
 
-#: thunar/thunar-preferences-dialog.c:1427
+#: thunar/thunar-preferences-dialog.c:1430
 msgid "Window"
 msgstr "Venster"
 
-#: thunar/thunar-preferences-dialog.c:1428
+#: thunar/thunar-preferences-dialog.c:1431
 msgid "View"
 msgstr "Tonen"
 
-#: thunar/thunar-preferences-dialog.c:1430
+#: thunar/thunar-preferences-dialog.c:1433
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:550
 msgid "Launcher"
 msgstr "Starter"
 
-#: thunar/thunar-preferences-dialog.c:1431
+#: thunar/thunar-preferences-dialog.c:1434
 msgid "Status Bar"
 msgstr "Statusbalk"
 
+#: thunar/thunar-preferences-dialog.c:1442
+msgid "The Shortcuts Editor requires a Thunar window to be present."
+msgstr "De snelkoppelingbewerker vereist de aanwezigheid van een Thunarvenster."
+
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: thunar/thunar-preferences-dialog.c:1494
+#: thunar/thunar-preferences-dialog.c:1506
 msgid "Failed to display the volume management settings"
 msgstr "Kon de instellingen voor opslagmediumbeheer niet weergeven"
 
@@ -2770,7 +2774,7 @@ msgstr "Doel van koppeling:"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: thunar/thunar-properties-dialog.c:497 thunar/thunar-util.c:1475
+#: thunar/thunar-properties-dialog.c:497 thunar/thunar-util.c:1478
 msgid "Original Path:"
 msgstr "Oorspronkelijk pad:"
 
@@ -2917,7 +2921,7 @@ msgid "Display information about Thunar Bulk Rename"
 msgstr "Toon informatie over 'Thunar massaal hernoemen'"
 
 #: thunar/thunar-renamer-dialog.c:412 thunar/thunar-renamer-dialog.c:1840
-#: thunar-bulk-rename.desktop.in.in:4
+#: thunar-bulk-rename.desktop.in:4
 msgid "Rename Multiple Files"
 msgstr "Hernoem meerdere bestanden"
 
@@ -2984,8 +2988,8 @@ msgid "Video Files"
 msgstr "Videobestanden"
 
 #. just popup the about dialog
-#: thunar/thunar-renamer-dialog.c:1266 thunar-bulk-rename.desktop.in.in:3
-#: thunar-bulk-rename.desktop.in.in:5
+#: thunar/thunar-renamer-dialog.c:1266 thunar-bulk-rename.desktop.in:3
+#: thunar-bulk-rename.desktop.in:5
 msgid "Bulk Rename"
 msgstr "Massaal hernoemen"
 
@@ -3074,7 +3078,7 @@ msgstr "Open de thuismap"
 msgid "Open the desktop folder"
 msgstr "Open de bureaubladmap"
 
-#: thunar/thunar-shortcuts-model.c:1177 thunar.desktop.in.in:21
+#: thunar/thunar-shortcuts-model.c:1177 thunar.desktop.in:21
 msgid "Computer"
 msgstr "Computer"
 
@@ -3129,7 +3133,7 @@ msgstr "Berekening afgebroken"
 msgid "unreadable"
 msgstr "onleesbaar"
 
-#: thunar/thunar-size-label.c:485 thunar/thunar-util.c:1358
+#: thunar/thunar-size-label.c:485 thunar/thunar-util.c:1361
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -3337,16 +3341,16 @@ msgid "Invalid filename provided by XDS drag site"
 msgstr "Ongeldige bestandnaam verkregen van XDS-sleepbron"
 
 #. display an error dialog to the user
-#: thunar/thunar-standard-view.c:3364
+#: thunar/thunar-standard-view.c:3366
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Kon geen koppeling voor het webadres '%s' maken"
 
-#: thunar/thunar-standard-view.c:3411
+#: thunar/thunar-standard-view.c:3413
 msgid "Untitled document"
 msgstr "Naamloos document"
 
-#: thunar/thunar-standard-view.c:3895 thunar/thunar-window.c:4584
+#: thunar/thunar-standard-view.c:3897 thunar/thunar-window.c:4584
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Kon map '%s' niet openen"
@@ -3420,7 +3424,7 @@ msgstr "_Symbolische pictogrammen"
 msgid "Use symbolic icons instead of regular ones (if available)."
 msgstr "Gebruik symbolische pictogrammen in plaats van gewone (indien beschikbaar)."
 
-#: thunar/thunar-toolbar-editor.c:630
+#: thunar/thunar-toolbar-editor.c:627
 msgid "Only visible when the menubar is hidden"
 msgstr "Alleen zichtbaar wanneer de menubalk verborgen is"
 
@@ -3500,121 +3504,121 @@ msgstr[1] "%lu seconden te gaan (%s/sec)"
 msgid "Loading..."
 msgstr "Laden..."
 
-#: thunar/thunar-util.c:305
+#: thunar/thunar-util.c:308
 msgid "Invalid path"
 msgstr "Ongeldig pad"
 
-#: thunar/thunar-util.c:340
+#: thunar/thunar-util.c:343
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "Onbekende gebruiker '%s'"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: thunar/thunar-util.c:452
+#: thunar/thunar-util.c:455
 msgid "Today"
 msgstr "Vandaag"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: thunar/thunar-util.c:457
+#: thunar/thunar-util.c:460
 #, c-format
 msgid "Today at %X"
 msgstr "Vandaag om %X"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: thunar/thunar-util.c:465
+#: thunar/thunar-util.c:468
 msgid "Yesterday"
 msgstr "Gisteren"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: thunar/thunar-util.c:470
+#: thunar/thunar-util.c:473
 #, c-format
 msgid "Yesterday at %X"
 msgstr "Gisteren om %X"
 
 #. Days from last week
-#: thunar/thunar-util.c:488
+#: thunar/thunar-util.c:491
 #, c-format
 msgid "%A at %X"
 msgstr "%A om %X"
 
 #. Any other date
-#: thunar/thunar-util.c:493
+#: thunar/thunar-util.c:496
 #, c-format
 msgid "%x at %X"
 msgstr "%x om %X"
 
-#: thunar/thunar-util.c:804
+#: thunar/thunar-util.c:807
 #, c-format
 msgid "%.*s %u%s"
 msgstr "%.*s %u%s"
 
-#: thunar/thunar-util.c:806
+#: thunar/thunar-util.c:809
 #, c-format
 msgid "%.*s (copy %u)%s"
 msgstr "%.*s (kopie %u)%s"
 
-#: thunar/thunar-util.c:811
+#: thunar/thunar-util.c:814
 #, c-format
 msgid "link to %.*s%s"
 msgstr "koppeling naar %.*s%s"
 
-#: thunar/thunar-util.c:816
+#: thunar/thunar-util.c:819
 #, c-format
 msgid "link %u to %.*s%s"
 msgstr "koppel %u aan %.*s%s"
 
-#: thunar/thunar-util.c:836
+#: thunar/thunar-util.c:839
 msgid "Search: "
 msgstr "Zoeken:"
 
-#: thunar/thunar-util.c:1332 thunar/thunar-util.c:1365
+#: thunar/thunar-util.c:1335 thunar/thunar-util.c:1368
 #, c-format
 msgid "%s (%d hidden)"
 msgstr "%s (%d verborgen)"
 
-#: thunar/thunar-util.c:1349
+#: thunar/thunar-util.c:1352
 #, c-format
 msgid "%s: %s"
 msgstr "%s: %s"
 
-#: thunar/thunar-util.c:1372
+#: thunar/thunar-util.c:1375
 msgid "0 items"
 msgstr "0 elementen"
 
-#: thunar/thunar-util.c:1381 thunar/thunar-util.c:1503
+#: thunar/thunar-util.c:1384 thunar/thunar-util.c:1506
 #, c-format
 msgid "Last Modified: %s"
 msgstr "Laatst aangepast: %s"
 
-#: thunar/thunar-util.c:1430
+#: thunar/thunar-util.c:1433
 #, c-format
 msgid "\"%s\" (%s)"
 msgstr "'%s' (%s)"
 
-#: thunar/thunar-util.c:1432
+#: thunar/thunar-util.c:1435
 #, c-format
 msgid "\"%s\""
 msgstr "'%s'"
 
-#: thunar/thunar-util.c:1453
+#: thunar/thunar-util.c:1456
 #, c-format
 msgid "link to %s"
 msgstr "koppeling naar %s"
 
-#: thunar/thunar-util.c:1455
+#: thunar/thunar-util.c:1458
 msgid "shortcut"
 msgstr "sneltoets"
 
-#: thunar/thunar-util.c:1457
+#: thunar/thunar-util.c:1460
 msgid "mountable"
 msgstr "aankoppelbaar"
 
-#: thunar/thunar-util.c:1459
+#: thunar/thunar-util.c:1462
 msgid "mount point"
 msgstr "Aankoppelpunt"
 
 #. append the image dimensions to the statusbar text
-#: thunar/thunar-util.c:1493 plugins/thunar-apr/thunar-apr-image-page.c:158
+#: thunar/thunar-util.c:1496 plugins/thunar-apr/thunar-apr-image-page.c:158
 msgid "Image Size:"
 msgstr "Afbeeldingsgrootte:"
 
@@ -4120,39 +4124,39 @@ msgstr "Weergavewisselaar"
 msgid "Location Bar"
 msgstr "Locatiebalk"
 
-#: thunarx/thunarx-property-page.c:114
+#: thunarx/thunarx-property-page.c:115
 msgid "Label"
 msgstr "Etiket"
 
-#: thunarx/thunarx-property-page.c:115
+#: thunarx/thunarx-property-page.c:116
 msgid "Text of the page's label"
 msgstr "Tekst van het pagina-etiket"
 
-#: thunarx/thunarx-property-page.c:127
+#: thunarx/thunarx-property-page.c:128
 msgid "Label widget"
 msgstr "Etiket-widget"
 
-#: thunarx/thunarx-property-page.c:128
+#: thunarx/thunarx-property-page.c:129
 msgid "A widget to display in place of the usual page label"
 msgstr "Een widget om weer te geven in plaats van het gebruikelijke pagina-etiket"
 
-#: thunarx/thunarx-provider-plugin.c:83
+#: thunarx/thunarx-provider-plugin.c:84
 msgid "Resident"
 msgstr "Resident"
 
-#: thunarx/thunarx-provider-plugin.c:84
+#: thunarx/thunarx-provider-plugin.c:85
 msgid "Don't unload the plugin from memory"
 msgstr "Verwijder het invoegsel niet uit het geheugen"
 
-#: thunarx/thunarx-renamer.c:158
+#: thunarx/thunarx-renamer.c:159
 msgid "Help URL"
 msgstr "Hulp-webadres"
 
-#: thunarx/thunarx-renamer.c:159
+#: thunarx/thunarx-renamer.c:160
 msgid "The URL to the documentation of the renamer"
 msgstr "Het webadres van de documentatie van de hernoemer"
 
-#: thunarx/thunarx-renamer.c:174
+#: thunarx/thunarx-renamer.c:175
 msgid "The user visible name of the renamer"
 msgstr "De voor gebruikers zichtbare naam van de hernoemer"
 
@@ -4678,7 +4682,7 @@ msgstr "Onbekend afsluitend element <%s>"
 msgid "Failed to determine save location for uca.xml"
 msgstr "Kan opslaglocatie voor uca.xml niet bepalen"
 
-#: plugins/thunar-uca/thunar-uca-model.c:1642
+#: plugins/thunar-uca/thunar-uca-model.c:1647
 msgid "Command not configured"
 msgstr "Opdracht niet ingesteld"
 
@@ -4904,33 +4908,33 @@ msgstr "Verplaats de thans gekozen actie een rij hoger."
 msgid "Move the currently selected action down by one row."
 msgstr "Verplaats de thans gekozen actie een rij lager."
 
-#: plugins/thunar-wallpaper/twp-provider.c:154
+#: plugins/thunar-wallpaper/twp-provider.c:157
 msgid "Set as wallpaper"
 msgstr "Stel in als bureaubladachtergrond"
 
-#: thunar.desktop.in.in:3
+#: thunar.desktop.in:3
 msgid "Thunar File Manager"
 msgstr "Thunar bestandbeheerder"
 
-#: thunar.desktop.in.in:4
+#: thunar.desktop.in:4
 msgid "Browse the filesystem with the file manager"
 msgstr "Met de bestandbeheerder door het bestandssysteem bladeren"
 
-#: thunar.desktop.in.in:5
+#: thunar.desktop.in:5
 msgid "File Manager"
 msgstr "Bestandbeheerder"
 
-#: thunar.desktop.in.in:6
+#: thunar.desktop.in:6
 msgid ""
 "file "
 "manager;explorer;finder;browser;folders;directory;directories;partitions;drives;network;devices;rename;move;copy;delete;permissions;home;trash;"
 msgstr "bestandbeheer;verkenner;zoeker;mappen;map;partities;schijven;apparaten;netwerk;hernoemen;verplaatsen;kopiëren;wissen;rechten;verwijderen;thuismap;prullenbak;"
 
-#: thunar.desktop.in.in:17
+#: thunar.desktop.in:17
 msgid "Home"
 msgstr "Persoonlijke map"
 
-#: thunar-bulk-rename.desktop.in.in:6
+#: thunar-bulk-rename.desktop.in:6
 msgid "bulk;renamer;renaming;thunar;files;folders;directory;directories;"
 msgstr "massa;hernoemer;hernoemen;thunar;bestanden;mappen;map;"
 
