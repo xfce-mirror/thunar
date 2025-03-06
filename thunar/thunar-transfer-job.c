@@ -1018,7 +1018,8 @@ retry_remove:
                   else
                     {
                       /* ask the user to retry */
-                      response = thunar_job_ask_skip (THUNAR_JOB (job), "%s",
+                      response = thunar_job_ask_skip (THUNAR_JOB (job), "Failed to move file \"%s\": %s",
+                                                      g_file_info_get_display_name (info),
                                                       err->message);
 
                       /* reset the error */
@@ -1039,7 +1040,8 @@ retry_remove:
           if (err->domain != G_IO_ERROR || err->code != G_IO_ERROR_NO_SPACE)
             {
               /* ask the user to skip this node and all subnodes */
-              response = thunar_job_ask_skip (THUNAR_JOB (job), "%s", err->message);
+              response = thunar_job_ask_skip (THUNAR_JOB (job),"Failed to copy file \"%s\": %s",
+                                              g_file_info_get_display_name (info), err->message);
 
               /* reset the error */
               g_clear_error (&err);
