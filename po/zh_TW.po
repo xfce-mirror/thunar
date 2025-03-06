@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-03-04 00:46+0100\n"
+"POT-Creation-Date: 2025-03-06 00:45+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: 黃柏諺 <s8321414@gmail.com>, 2019-2025\n"
 "Language-Team: Chinese (Taiwan) (http://app.transifex.com/xfce/thunar/language/zh_TW/)\n"
@@ -33,13 +33,13 @@ msgstr "Thunar 檔案管理員"
 
 #. change the accept button label text
 #: thunar/thunar-action-manager.c:322 thunar/thunar-chooser-dialog.c:907
-#: thunar/thunar-chooser-dialog.c:1318 thunar/thunar-dialogs.c:1282
+#: thunar/thunar-chooser-dialog.c:1318 thunar/thunar-dialogs.c:1285
 #: thunar/thunar-renamer-dialog.c:1108
 #: plugins/thunar-uca/thunar-uca-editor.c:203
 msgid "_Open"
 msgstr "開啟(_O)"
 
-#: thunar/thunar-action-manager.c:323 thunar/thunar-dialogs.c:1276
+#: thunar/thunar-action-manager.c:323 thunar/thunar-dialogs.c:1279
 msgid "_Execute"
 msgstr "執行(_E)"
 
@@ -128,7 +128,7 @@ msgid "_Rename..."
 msgstr "重新命名(_R)..."
 
 #. prepare the menu item
-#: thunar/thunar-action-manager.c:340 thunar/thunar-application.c:2790
+#: thunar/thunar-action-manager.c:340 thunar/thunar-application.c:2793
 #: plugins/thunar-tpa/thunar-tpa.c:191
 msgid "_Empty Trash"
 msgstr "倒垃圾(_E)"
@@ -173,7 +173,7 @@ msgstr "還原並顯示(_H)"
 msgid "Mo_ve to Trash"
 msgstr "移至垃圾桶(_V)"
 
-#: thunar/thunar-action-manager.c:350 thunar/thunar-application.c:2530
+#: thunar/thunar-action-manager.c:350 thunar/thunar-application.c:2533
 #: plugins/thunar-uca/thunar-uca-chooser.c:383
 msgid "_Delete"
 msgstr "刪除(_D)"
@@ -272,15 +272,15 @@ msgstr[0] "開啟 %d 個新視窗"
 
 #. add the "Cancel" button
 #. configure the dialog properties
-#: thunar/thunar-action-manager.c:1064 thunar/thunar-application.c:2529
-#: thunar/thunar-application.c:2601 thunar/thunar-application.c:2789
+#: thunar/thunar-action-manager.c:1064 thunar/thunar-application.c:2532
+#: thunar/thunar-application.c:2604 thunar/thunar-application.c:2792
 #: thunar/thunar-chooser-dialog.c:315 thunar/thunar-chooser-dialog.c:781
 #: thunar/thunar-chooser-dialog.c:856 thunar/thunar-chooser-dialog.c:906
-#: thunar/thunar-dialogs.c:114 thunar/thunar-dialogs.c:262
-#: thunar/thunar-dialogs.c:695 thunar/thunar-dialogs.c:805
-#: thunar/thunar-dialogs.c:1096 thunar/thunar-dialogs.c:1190
-#: thunar/thunar-dnd.c:172 thunar/thunar-permissions-chooser.c:580
-#: thunar/thunar-permissions-chooser.c:1194
+#: thunar/thunar-dialogs.c:117 thunar/thunar-dialogs.c:265
+#: thunar/thunar-dialogs.c:698 thunar/thunar-dialogs.c:808
+#: thunar/thunar-dialogs.c:1099 thunar/thunar-dialogs.c:1193
+#: thunar/thunar-dnd.c:172 thunar/thunar-permissions-chooser.c:573
+#: thunar/thunar-permissions-chooser.c:1188
 #: thunar/thunar-properties-dialog.c:1210 thunar/thunar-renamer-dialog.c:1107
 #: thunar/thunar-renamer-progress.c:188 thunar/thunar-renamer-progress.c:198
 #: plugins/thunar-sendto-email/main.c:220
@@ -299,8 +299,8 @@ msgid "Failed to mount \"%s\""
 msgstr "無法掛載「%s」"
 
 #. tell the user that we were unable to launch the file specified
-#: thunar/thunar-action-manager.c:1203 thunar/thunar-application.c:1704
-#: thunar/thunar-application.c:1866 thunar/thunar-location-entry.c:368
+#: thunar/thunar-action-manager.c:1203 thunar/thunar-application.c:1707
+#: thunar/thunar-application.c:1869 thunar/thunar-location-entry.c:368
 #: thunar/thunar-location-entry.c:401
 #, c-format
 msgid "Failed to open \"%s\""
@@ -416,16 +416,16 @@ msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "傳送所選的檔案至「%s」"
 
 #. ask the user to enter a name for the new folder
-#: thunar/thunar-action-manager.c:2737 thunar/thunar-application.c:2058
+#: thunar/thunar-action-manager.c:2737 thunar/thunar-application.c:2061
 msgid "New Folder"
 msgstr "新資料夾"
 
-#: thunar/thunar-action-manager.c:2741 thunar/thunar-application.c:2059
+#: thunar/thunar-action-manager.c:2741 thunar/thunar-application.c:2062
 msgid "Create New Folder"
 msgstr "建立新資料夾"
 
 #. generate a title for the create dialog
-#: thunar/thunar-action-manager.c:2793 thunar/thunar-application.c:2123
+#: thunar/thunar-action-manager.c:2793 thunar/thunar-application.c:2126
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "從「%s」模板建立文件"
@@ -484,141 +484,141 @@ msgstr "以預設的應用程式開啟所選的檔案"
 msgid "Ope_n With"
 msgstr "開啟程式(_N)"
 
-#: thunar/thunar-application.c:84
+#: thunar/thunar-application.c:87
 msgid "Open the bulk rename dialog"
 msgstr "開啟批次重命名對話框"
 
-#: thunar/thunar-application.c:85
+#: thunar/thunar-application.c:88
 msgid "Force open in a new window"
 msgstr "強制在新視窗中開啟"
 
-#: thunar/thunar-application.c:86
+#: thunar/thunar-application.c:89
 msgid "Run in daemon mode"
 msgstr "以幕後模式執行"
 
-#: thunar/thunar-application.c:88
+#: thunar/thunar-application.c:91
 msgid "Quit a running Thunar instance"
 msgstr "退出一執行中的 Thunar 實體"
 
-#: thunar/thunar-application.c:89
+#: thunar/thunar-application.c:92
 msgid "Print version information and exit"
 msgstr "列印版本資訊後離開"
 
-#: thunar/thunar-application.c:337
+#: thunar/thunar-application.c:340
 #, c-format
 msgid "Acquired the session message bus '%s'\n"
 msgstr "取得工作階段訊息匯流排 '%s'\n"
 
-#: thunar/thunar-application.c:347
+#: thunar/thunar-application.c:350
 #, c-format
 msgid "Acquired the name '%s' on the session message bus\n"
 msgstr "在工作階段匯流排取得名稱 '%s'\n"
 
-#: thunar/thunar-application.c:357
+#: thunar/thunar-application.c:360
 #, c-format
 msgid "Name '%s' lost on the message dbus."
 msgstr "在訊息 dbus 遺失名稱 '%s'。"
 
-#: thunar/thunar-application.c:505
+#: thunar/thunar-application.c:508
 msgid "The Thunar development team. All rights reserved."
 msgstr "Thunar 開發團隊。保留所有權利。"
 
-#: thunar/thunar-application.c:506
+#: thunar/thunar-application.c:509
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
 msgstr "由 Benedikt Meurer 編寫 <benny@xfce.org>。"
 
-#: thunar/thunar-application.c:507
+#: thunar/thunar-application.c:510
 #, c-format
 msgid "Please report bugs to <%s>."
 msgstr "請將程式錯誤回報至 <%s>。"
 
 #. display an error message to the user
-#: thunar/thunar-application.c:907
+#: thunar/thunar-application.c:910
 msgid "Failed to launch operation"
 msgstr "操作無法啟動"
 
-#: thunar/thunar-application.c:1700
+#: thunar/thunar-application.c:1703
 #, c-format
 msgid "Failed to open \"%s\" (%s)"
 msgstr "開啟「%s」失敗（%s）"
 
-#: thunar/thunar-application.c:1870
+#: thunar/thunar-application.c:1873
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "無法開啟「%s」：%s"
 
-#: thunar/thunar-application.c:1929 thunar/thunar-properties-dialog.c:1110
+#: thunar/thunar-application.c:1932 thunar/thunar-properties-dialog.c:1110
 #, c-format
 msgid "Failed to rename \"%s\" (%s)"
 msgstr "重新命名「%s」失敗（%s）"
 
-#: thunar/thunar-application.c:1933 thunar/thunar-properties-dialog.c:1114
+#: thunar/thunar-application.c:1936 thunar/thunar-properties-dialog.c:1114
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "無法重新命名「%s」"
 
-#: thunar/thunar-application.c:1982
+#: thunar/thunar-application.c:1985
 msgid "Rename Launcher Options"
 msgstr "重新命名啟動器選項"
 
-#: thunar/thunar-application.c:1985
+#: thunar/thunar-application.c:1988
 msgid "Do you want to rename the launcher, or the file itself?"
 msgstr "您想要重新命名啟動器，或是檔案本身嗎？"
 
-#: thunar/thunar-application.c:1986
+#: thunar/thunar-application.c:1989
 msgid "Rename _Launcher"
 msgstr "重新命名啟動器(_L)"
 
-#: thunar/thunar-application.c:1987
+#: thunar/thunar-application.c:1990
 msgid "Rename _File"
 msgstr "重新命名檔案(_F)"
 
-#: thunar/thunar-application.c:2063
+#: thunar/thunar-application.c:2066
 msgid "New File"
 msgstr "新檔案"
 
-#: thunar/thunar-application.c:2064
+#: thunar/thunar-application.c:2067
 msgid "Create New File"
 msgstr "建立新檔案"
 
-#: thunar/thunar-application.c:2189
+#: thunar/thunar-application.c:2192
 msgid "Copying files..."
 msgstr "正在複製檔案..."
 
-#: thunar/thunar-application.c:2249
+#: thunar/thunar-application.c:2252
 #, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "正在複製檔案至「%s」..."
 
-#: thunar/thunar-application.c:2305
+#: thunar/thunar-application.c:2308
 #, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "正在於「%s」內建立符號連結..."
 
-#: thunar/thunar-application.c:2374
+#: thunar/thunar-application.c:2377
 #, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "正在將檔案移動至「%s」..."
 
-#: thunar/thunar-application.c:2419
+#: thunar/thunar-application.c:2422
 msgid "Moving files ..."
 msgstr "正在移動檔案……"
 
-#: thunar/thunar-application.c:2504
+#: thunar/thunar-application.c:2507
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\" (%s)?"
 msgstr "您確定要\n永久刪除「%s」（%s）嗎？"
 
-#: thunar/thunar-application.c:2508
+#: thunar/thunar-application.c:2511
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr "確定要永久刪除\n所選的「%s」檔案嗎？"
 
-#: thunar/thunar-application.c:2513
+#: thunar/thunar-application.c:2516
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -628,34 +628,34 @@ msgid_plural ""
 "delete the %u selected files?"
 msgstr[0] "確定要永久刪除\n所選的 %u 個檔案嗎？"
 
-#: thunar/thunar-application.c:2527 thunar/thunar-application.c:2599
-#: thunar/thunar-dialogs.c:613 thunar/thunar-dialogs.c:1092
+#: thunar/thunar-application.c:2530 thunar/thunar-application.c:2602
+#: thunar/thunar-dialogs.c:616 thunar/thunar-dialogs.c:1095
 msgid "Attention"
 msgstr "注意"
 
-#: thunar/thunar-application.c:2534
+#: thunar/thunar-application.c:2537
 msgid "If you delete a file, it is permanently lost."
 msgstr "如果刪除了檔案，將再也找不回來。"
 
-#: thunar/thunar-application.c:2555 thunar/thunar-application.c:2564
+#: thunar/thunar-application.c:2558 thunar/thunar-application.c:2567
 msgid "Deleting files..."
 msgstr "刪除檔案中..."
 
-#: thunar/thunar-application.c:2576
+#: thunar/thunar-application.c:2579
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "move \"%s\" (%s) to trash ?"
 msgstr "您確定要移動\n「%s」（%s）到回收桶嗎？"
 
-#: thunar/thunar-application.c:2580
+#: thunar/thunar-application.c:2583
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "move \"%s\" to trash ?"
 msgstr "您確定要移動\n「%s」到回收桶嗎？"
 
-#: thunar/thunar-application.c:2585
+#: thunar/thunar-application.c:2588
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -665,61 +665,61 @@ msgid_plural ""
 "move the %u selected files to trash?"
 msgstr[0] "您確定要移動 %u 個\n選定的檔案到回收桶嗎？"
 
-#: thunar/thunar-application.c:2602
+#: thunar/thunar-application.c:2605
 msgid "Move to Trash"
 msgstr "移動到回收桶"
 
-#: thunar/thunar-application.c:2655
+#: thunar/thunar-application.c:2658
 msgid "Moving files into the trash..."
 msgstr "正在將檔案移動至垃圾桶..."
 
-#: thunar/thunar-application.c:2703
+#: thunar/thunar-application.c:2706
 msgid "Creating files..."
 msgstr "建立檔案中..."
 
-#: thunar/thunar-application.c:2744
+#: thunar/thunar-application.c:2747
 msgid "Creating directories..."
 msgstr "建立目錄中..."
 
-#: thunar/thunar-application.c:2783
+#: thunar/thunar-application.c:2786
 msgid "Remove all files and folders from the Trash?"
 msgstr "將垃圾桶中所有檔案和資料夾清除？"
 
-#: thunar/thunar-application.c:2787 thunar/thunar-window.c:1259
+#: thunar/thunar-application.c:2790 thunar/thunar-window.c:1259
 msgid "Empty Trash"
 msgstr "清空回收筒"
 
-#: thunar/thunar-application.c:2794
+#: thunar/thunar-application.c:2797
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr "如果倒垃圾，所有垃圾桶中的東西會永遠失去。提提您：可以將它們個別刪除。"
 
-#: thunar/thunar-application.c:2811
+#: thunar/thunar-application.c:2814
 msgid "Emptying the Trash..."
 msgstr "正在倒垃圾..."
 
-#: thunar/thunar-application.c:2858
+#: thunar/thunar-application.c:2861
 #, c-format
 msgid "Failed to determine the original path for \"%s\" (%s)"
 msgstr "無法得知「%s」（%s）的原始路徑"
 
-#: thunar/thunar-application.c:2863
+#: thunar/thunar-application.c:2866
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "無法得知「%s」的原始路徑"
 
-#: thunar/thunar-application.c:2881
+#: thunar/thunar-application.c:2884
 #, c-format
 msgid "Could not restore \"%s\" (%s)"
 msgstr "無法還原「%s」（%s）"
 
-#: thunar/thunar-application.c:2885
+#: thunar/thunar-application.c:2888
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "無法還原「%s」"
 
-#: thunar/thunar-application.c:2893
+#: thunar/thunar-application.c:2896
 msgid "Restoring files..."
 msgstr "正在還原檔案..."
 
@@ -952,7 +952,7 @@ msgstr "剪貼簿中沒有東西可以貼上"
 #. tooltip
 #. setup the dialog
 #. add a regular close button, the header bar already provides one
-#: thunar/thunar-column-editor.c:130 thunar/thunar-preferences-dialog.c:278
+#: thunar/thunar-column-editor.c:130 thunar/thunar-preferences-dialog.c:279
 #: thunar/thunar-properties-dialog.c:347 thunar/thunar-renamer-dialog.c:415
 #: thunar/thunar-renamer-progress.c:205 thunar/thunar-toolbar-editor.c:148
 #: plugins/thunar-uca/thunar-uca-chooser.c:141
@@ -964,7 +964,7 @@ msgid "Configure Columns in the Detailed List View"
 msgstr "設定詳細清單檢視中的欄位"
 
 #. add the "Help" button
-#: thunar/thunar-column-editor.c:136 thunar/thunar-preferences-dialog.c:286
+#: thunar/thunar-column-editor.c:136 thunar/thunar-preferences-dialog.c:287
 #: thunar/thunar-properties-dialog.c:346 thunar/thunar-toolbar-editor.c:155
 #: thunar/thunar-window.c:709
 msgid "_Help"
@@ -1040,8 +1040,8 @@ msgstr "此欄位是為特殊位置保留的"
 #. reset page title
 #. tell the user that we're unable to determine the file info
 #: thunar/thunar-column-model.c:913 thunar/thunar-list-model.c:991
-#: thunar/thunar-list-model.c:1027 thunar/thunar-permissions-chooser.c:253
-#: thunar/thunar-util.c:431 thunar/thunar-util.c:434
+#: thunar/thunar-list-model.c:1027 thunar/thunar-permissions-chooser.c:246
+#: thunar/thunar-util.c:434 thunar/thunar-util.c:437
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:729
 #: plugins/thunar-apr/thunar-apr-image-page.c:305
 #: plugins/thunar-apr/thunar-apr-image-page.c:306
@@ -1124,40 +1124,40 @@ msgstr "停止多碟片磁碟機"
 msgid "_Lock"
 msgstr "鎖定(_L)"
 
-#: thunar/thunar-dialogs.c:115
+#: thunar/thunar-dialogs.c:118
 msgid "C_reate"
 msgstr "建立(_R)"
 
-#: thunar/thunar-dialogs.c:144
+#: thunar/thunar-dialogs.c:147
 msgid "Enter the name:"
 msgstr "輸入名字："
 
 #. display an error message
-#: thunar/thunar-dialogs.c:193
+#: thunar/thunar-dialogs.c:196
 #, c-format
 msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "無法將檔名「%s」轉成本地編碼"
 
 #. create a new dialog window
-#: thunar/thunar-dialogs.c:257
+#: thunar/thunar-dialogs.c:260
 #, c-format
 msgid "Rename \"%s\""
 msgstr "重新命名「%s」"
 
 #. add the "Rename" button
-#: thunar/thunar-dialogs.c:263 thunar/thunar-renamer-dialog.c:419
+#: thunar/thunar-dialogs.c:266 thunar/thunar-renamer-dialog.c:419
 msgid "_Rename"
 msgstr "重新命名(_R)"
 
-#: thunar/thunar-dialogs.c:301
+#: thunar/thunar-dialogs.c:304
 msgid "Enter the new name:"
 msgstr "輸入新名稱："
 
-#: thunar/thunar-dialogs.c:452
+#: thunar/thunar-dialogs.c:455
 msgid "translator-credits"
 msgstr "Hydonsingore Cia <hydonsingore@educities.edu.tw>, 2006.\nCosmo Chene <cosmolax@gmail.com>, 2006.\nCheng-Chia Tseng <pswo10680@gmail.com>, 2010.\nWalter Cheuk <wwycheuk@gmail.com>, 2019."
 
-#: thunar/thunar-dialogs.c:514 thunar/thunar-renamer-progress.c:175
+#: thunar/thunar-dialogs.c:517 thunar/thunar-renamer-progress.c:175
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:844
 #: plugins/thunar-sendto-email/main.c:141
 #: plugins/thunar-uca/thunar-uca-chooser.c:329
@@ -1165,124 +1165,124 @@ msgstr "Hydonsingore Cia <hydonsingore@educities.edu.tw>, 2006.\nCosmo Chene <co
 msgid "Error"
 msgstr "錯誤"
 
-#: thunar/thunar-dialogs.c:628 thunar/thunar-permissions-chooser.c:582
+#: thunar/thunar-dialogs.c:631 thunar/thunar-permissions-chooser.c:575
 msgid "_Yes"
 msgstr "是(_Y)"
 
-#: thunar/thunar-dialogs.c:632
+#: thunar/thunar-dialogs.c:635
 msgid "Yes to _all"
 msgstr "全部皆是(_A)"
 
-#: thunar/thunar-dialogs.c:636 thunar/thunar-dialogs.c:808
+#: thunar/thunar-dialogs.c:639 thunar/thunar-dialogs.c:811
 msgid "_Replace"
 msgstr "取代(_R)"
 
-#: thunar/thunar-dialogs.c:640
+#: thunar/thunar-dialogs.c:643
 msgid "Replace _All"
 msgstr "全部取代(_A)"
 
-#: thunar/thunar-dialogs.c:644 thunar/thunar-dialogs.c:806
+#: thunar/thunar-dialogs.c:647 thunar/thunar-dialogs.c:809
 msgid "_Skip"
 msgstr "略過(_S)"
 
-#: thunar/thunar-dialogs.c:648
+#: thunar/thunar-dialogs.c:651
 msgid "S_kip All"
 msgstr "全部略過(_K)"
 
-#: thunar/thunar-dialogs.c:652 thunar/thunar-dialogs.c:807
+#: thunar/thunar-dialogs.c:655 thunar/thunar-dialogs.c:810
 msgid "Re_name"
 msgstr "重新命名(_N)"
 
-#: thunar/thunar-dialogs.c:656
+#: thunar/thunar-dialogs.c:659
 msgid "Rena_me All"
 msgstr "重新命名全部(_M)"
 
-#: thunar/thunar-dialogs.c:660 thunar/thunar-permissions-chooser.c:581
+#: thunar/thunar-dialogs.c:663 thunar/thunar-permissions-chooser.c:574
 msgid "_No"
 msgstr "否(_N)"
 
-#: thunar/thunar-dialogs.c:664
+#: thunar/thunar-dialogs.c:667
 msgid "N_o to all"
 msgstr "全部皆否(_O)"
 
-#: thunar/thunar-dialogs.c:668
+#: thunar/thunar-dialogs.c:671
 msgid "_Retry"
 msgstr "重試(_R)"
 
-#: thunar/thunar-dialogs.c:672
+#: thunar/thunar-dialogs.c:675
 msgid "Copy _Anyway"
 msgstr "無論如何都要複製(_A)"
 
 #. setup the confirmation dialog
-#: thunar/thunar-dialogs.c:802
+#: thunar/thunar-dialogs.c:805
 msgid "Confirm to replace files"
 msgstr "確認取代檔案"
 
-#: thunar/thunar-dialogs.c:849
+#: thunar/thunar-dialogs.c:852
 #, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
 msgstr "此資料夾已經包含符號連結「%s」。"
 
-#: thunar/thunar-dialogs.c:854
+#: thunar/thunar-dialogs.c:857
 #, c-format
 msgid "This folder already contains a folder \"%s\"."
 msgstr "此資料夾已經包含資料夾「%s」。"
 
-#: thunar/thunar-dialogs.c:860
+#: thunar/thunar-dialogs.c:863
 #, c-format
 msgid "This folder already contains a file \"%s\" (%s)."
 msgstr "此資料夾已經包含檔案「%s」（%s）。"
 
-#: thunar/thunar-dialogs.c:864
+#: thunar/thunar-dialogs.c:867
 #, c-format
 msgid "This folder already contains a file \"%s\"."
 msgstr "此資料夾已經包含「%s」檔案"
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: thunar/thunar-dialogs.c:886
+#: thunar/thunar-dialogs.c:889
 #, c-format
 msgid "Replace the link in \"%s\""
 msgstr "取代「%s」中的連結"
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: thunar/thunar-dialogs.c:889
+#: thunar/thunar-dialogs.c:892
 #, c-format
 msgid "Replace the existing folder in \"%s\""
 msgstr "取代「%s」中現有的資料夾"
 
 #. TRANSLATORS: First part of replace dialog sentence
-#: thunar/thunar-dialogs.c:892
+#: thunar/thunar-dialogs.c:895
 #, c-format
 msgid "Replace the existing file in \"%s\""
 msgstr "取代「%s」中現有的檔案"
 
 #. Fourth box (size)
-#: thunar/thunar-dialogs.c:928 thunar/thunar-dialogs.c:978
+#: thunar/thunar-dialogs.c:931 thunar/thunar-dialogs.c:981
 #: thunar/thunar-properties-dialog.c:655
 msgid "Size:"
 msgstr "大小："
 
-#: thunar/thunar-dialogs.c:928 thunar/thunar-dialogs.c:978
+#: thunar/thunar-dialogs.c:931 thunar/thunar-dialogs.c:981
 #: thunar/thunar-properties-dialog.c:591
 msgid "Modified:"
 msgstr "最後修改日期："
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: thunar/thunar-dialogs.c:940
+#: thunar/thunar-dialogs.c:943
 msgid "with the following link?"
 msgstr "用以下連結？"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: thunar/thunar-dialogs.c:943
+#: thunar/thunar-dialogs.c:946
 msgid "with the following folder?"
 msgstr "用以下資料夾？"
 
 #. TRANSLATORS: Second part of replace dialog sentence
-#: thunar/thunar-dialogs.c:946
+#: thunar/thunar-dialogs.c:949
 msgid "with the following file?"
 msgstr "用以下檔案？"
 
-#: thunar/thunar-dialogs.c:994
+#: thunar/thunar-dialogs.c:997
 msgid "_Apply the action to all files and folders"
 msgstr "套用動作到所有檔案與資料夾"
 
@@ -1290,66 +1290,66 @@ msgstr "套用動作到所有檔案與資料夾"
 #. second appearance of %s:
 #. * "The desktop file %s is in an insecure location and not marked as
 #. secure%s."
-#: thunar/thunar-dialogs.c:1067
+#: thunar/thunar-dialogs.c:1070
 msgid "/executable"
 msgstr "/可執行檔"
 
-#: thunar/thunar-dialogs.c:1073
+#: thunar/thunar-dialogs.c:1076
 #, c-format
 msgid ""
 "The desktop file %s is in an insecure location and not marked as secure%s. If you do not trust this program, click Cancel.\n"
 "\n"
 msgstr "桌面檔 %s 位於不安全的位置上，且未標記為安全的 %s。若您不信任此程式，請點擊取消。\n\n"
 
-#: thunar/thunar-dialogs.c:1093
+#: thunar/thunar-dialogs.c:1096
 msgid "_Launch Anyway"
 msgstr "無論如何都要啟動(_L)"
 
-#: thunar/thunar-dialogs.c:1095
+#: thunar/thunar-dialogs.c:1098
 msgid "Mark As _Secure And Launch"
 msgstr "標記為安全並啟動(_S)"
 
-#: thunar/thunar-dialogs.c:1179
+#: thunar/thunar-dialogs.c:1182
 msgid "Close split pane with multiple tabs?"
 msgstr "關閉有多個分頁的分離面板？"
 
-#: thunar/thunar-dialogs.c:1180
+#: thunar/thunar-dialogs.c:1183
 msgid ""
 "The other split pane has multiple open tabs. Closing it will close all these"
 " tabs."
 msgstr "其他分離面板有多個開啟的分頁。關閉它將會關閉這些分頁。"
 
-#: thunar/thunar-dialogs.c:1186
+#: thunar/thunar-dialogs.c:1189
 msgid "Warning"
 msgstr "警告"
 
-#: thunar/thunar-dialogs.c:1191
+#: thunar/thunar-dialogs.c:1194
 msgid "Close Pane"
 msgstr "關閉面板"
 
-#: thunar/thunar-dialogs.c:1194 thunar/thunar-permissions-chooser.c:612
+#: thunar/thunar-dialogs.c:1197 thunar/thunar-permissions-chooser.c:605
 msgid "Do _not ask me again"
 msgstr "不用再問我(_N)"
 
-#: thunar/thunar-dialogs.c:1254
+#: thunar/thunar-dialogs.c:1257
 #, c-format
 msgid "The file \"%s\" seems to be executable. What do you want to do with it?"
 msgstr "檔案「%s」似乎是可執行檔。您想要用它做什麼？"
 
-#: thunar/thunar-dialogs.c:1259
+#: thunar/thunar-dialogs.c:1262
 msgid ""
 "The selected files seem to be executable. What do you want to do with them?"
 msgstr "選定的檔案似乎是可執行檔。您想要用它做什麼？"
 
-#: thunar/thunar-dialogs.c:1268
+#: thunar/thunar-dialogs.c:1271
 msgid "Open Shell Script"
 msgstr "開啟 Shell 指令稿"
 
-#: thunar/thunar-dialogs.c:1272
+#: thunar/thunar-dialogs.c:1275
 msgid "Run In _Terminal"
 msgstr "在終端機中執行(_T)"
 
-#: thunar/thunar-dialogs.c:1333
+#: thunar/thunar-dialogs.c:1336
 #, c-format
 msgid "Failed to edit launcher via command \"%s\""
 msgstr "透過命令「%s」編輯啟動器失敗"
@@ -1422,7 +1422,7 @@ msgid "MIME Type"
 msgstr "MIME 類型"
 
 #: thunar/thunar-enum-types.c:156 thunar/thunar-renamer-dialog.c:476
-#: thunarx/thunarx-renamer.c:173
+#: thunarx/thunarx-renamer.c:174
 msgid "Name"
 msgstr "名稱"
 
@@ -1456,10 +1456,10 @@ msgid "File Name"
 msgstr "檔案名稱"
 
 #: thunar/thunar-enum-types.c:700 thunar/thunar-enum-types.c:725
-#: thunar/thunar-enum-types.c:860 thunar/thunar-preferences-dialog.c:466
-#: thunar/thunar-preferences-dialog.c:1122
-#: thunar/thunar-preferences-dialog.c:1230
-#: thunar/thunar-preferences-dialog.c:1318
+#: thunar/thunar-enum-types.c:860 thunar/thunar-preferences-dialog.c:467
+#: thunar/thunar-preferences-dialog.c:1121
+#: thunar/thunar-preferences-dialog.c:1229
+#: thunar/thunar-preferences-dialog.c:1317
 msgid "Never"
 msgstr "永不"
 
@@ -1468,10 +1468,10 @@ msgid "Only For Remote Location"
 msgstr "僅用於遠端位置"
 
 #: thunar/thunar-enum-types.c:702 thunar/thunar-enum-types.c:727
-#: thunar/thunar-enum-types.c:862 thunar/thunar-preferences-dialog.c:468
-#: thunar/thunar-preferences-dialog.c:1118
-#: thunar/thunar-preferences-dialog.c:1228
-#: thunar/thunar-preferences-dialog.c:1319
+#: thunar/thunar-enum-types.c:862 thunar/thunar-preferences-dialog.c:469
+#: thunar/thunar-preferences-dialog.c:1117
+#: thunar/thunar-preferences-dialog.c:1227
+#: thunar/thunar-preferences-dialog.c:1318
 msgid "Always"
 msgstr "總是"
 
@@ -1499,9 +1499,9 @@ msgstr "建立資料夾"
 msgid "Delete (opposite of create)"
 msgstr "刪除（建立的相反）"
 
-#: thunar/thunar-enum-types.c:791 thunar/thunar-file.c:1078
+#: thunar/thunar-enum-types.c:791 thunar/thunar-file.c:1081
 #: thunar/thunar-gio-extensions.c:510 thunar/thunar-shortcuts-model.c:1150
-#: thunar.desktop.in.in:25
+#: thunar.desktop.in:25
 msgid "Trash"
 msgstr "垃圾"
 
@@ -1542,57 +1542,57 @@ msgstr "嵌入"
 msgid "Only for local files"
 msgstr "僅本機檔案"
 
-#: thunar/thunar-file.c:1085 thunar/thunar-gio-extensions.c:508
+#: thunar/thunar-file.c:1088 thunar/thunar-gio-extensions.c:508
 #: thunar/thunar-shortcuts-model.c:1032
 msgid "File System"
 msgstr "檔案系統"
 
-#: thunar/thunar-file.c:1554
+#: thunar/thunar-file.c:1557
 msgid "The root folder has no parent"
 msgstr "沒有比根目錄更上層的目錄"
 
-#: thunar/thunar-file.c:1652
+#: thunar/thunar-file.c:1655
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "無法解析桌面檔案：%s"
 
 #. if the .desktop file is not secure, ask user what to do
-#: thunar/thunar-file.c:1665
+#: thunar/thunar-file.c:1668
 msgid "Untrusted application launcher"
 msgstr "未得信任的應用程式啟動器"
 
-#: thunar/thunar-file.c:1696
+#: thunar/thunar-file.c:1699
 msgid "No Exec field specified"
 msgstr "Exec 欄並未指定"
 
 #. if the .desktop file is not secure, ask user what to do
-#: thunar/thunar-file.c:1705
+#: thunar/thunar-file.c:1708
 msgid "Untrusted link launcher"
 msgstr "未得信任的連結啟動器"
 
-#: thunar/thunar-file.c:1721
+#: thunar/thunar-file.c:1724
 msgid "No URL field specified"
 msgstr "URL 欄並未指定"
 
-#: thunar/thunar-file.c:1726
+#: thunar/thunar-file.c:1729
 msgid "Invalid desktop file"
 msgstr "無效的桌面檔案"
 
-#: thunar/thunar-file.c:2551 thunar/thunar-util.c:1451
+#: thunar/thunar-file.c:2554 thunar/thunar-util.c:1454
 msgid "broken link"
 msgstr "連結失效"
 
-#: thunar/thunar-file.c:2558
+#: thunar/thunar-file.c:2561
 #, c-format
 msgid "%s (link to %s)"
 msgstr "%s（連結至 %s）"
 
-#: thunar/thunar-file.c:2560
+#: thunar/thunar-file.c:2563
 #, c-format
 msgid "%s (link)"
 msgstr "%s（連結）"
 
-#: thunar/thunar-file.c:2569
+#: thunar/thunar-file.c:2572
 #, c-format
 msgid "%s (mount point)"
 msgstr "%s（掛載點）"
@@ -1802,7 +1802,7 @@ msgid ""
 msgstr "目的地空間不足。請試著移除些檔案以挪出空間。"
 
 #: thunar/thunar-job-operation.c:789 thunar/thunar-size-label.c:486
-#: thunar/thunar-util.c:1328
+#: thunar/thunar-util.c:1331
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -1977,134 +1977,134 @@ msgstr "圖示大小"
 msgid "The icon size for the path entry"
 msgstr "此路徑內的圖示大小"
 
-#: thunar/thunar-permissions-chooser.c:242
+#: thunar/thunar-permissions-chooser.c:235
 msgid "Owner:"
 msgstr "擁有者："
 
-#: thunar/thunar-permissions-chooser.c:261
+#: thunar/thunar-permissions-chooser.c:254
 msgid "_Access:"
 msgstr "存取權限(_A)："
 
-#: thunar/thunar-permissions-chooser.c:289
+#: thunar/thunar-permissions-chooser.c:282
 msgid "Gro_up:"
 msgstr "群組(_U)："
 
-#: thunar/thunar-permissions-chooser.c:311
+#: thunar/thunar-permissions-chooser.c:304
 msgid "Acc_ess:"
 msgstr "存取權限(_E)："
 
-#: thunar/thunar-permissions-chooser.c:339
+#: thunar/thunar-permissions-chooser.c:332
 msgid "Others"
 msgstr "其他"
 
-#: thunar/thunar-permissions-chooser.c:347
+#: thunar/thunar-permissions-chooser.c:340
 msgid "Acce_ss:"
 msgstr "存取權限(_S)："
 
-#: thunar/thunar-permissions-chooser.c:375
+#: thunar/thunar-permissions-chooser.c:368
 msgid "Program:"
 msgstr "程式："
 
-#: thunar/thunar-permissions-chooser.c:381
+#: thunar/thunar-permissions-chooser.c:374
 msgid "Allow this file to _run as a program"
 msgstr "允許此檔案作為程式來執行(_R)"
 
-#: thunar/thunar-permissions-chooser.c:409
-#: thunar/thunar-preferences-dialog.c:1333
+#: thunar/thunar-permissions-chooser.c:402
+#: thunar/thunar-preferences-dialog.c:1332
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "允許執行不受信任的程式，可能會對您的系統造成危害。"
 
-#: thunar/thunar-permissions-chooser.c:427
+#: thunar/thunar-permissions-chooser.c:420
 msgid ""
 "The folder permissions are inconsistent, you may not be able to work with "
 "files in this folder."
 msgstr "資料夾權限不一致，您可能無法使用此資料夾中的檔案。"
 
-#: thunar/thunar-permissions-chooser.c:443
+#: thunar/thunar-permissions-chooser.c:436
 msgid "Correct _folder permissions..."
 msgstr "更正資料夾權限(_F)..."
 
-#: thunar/thunar-permissions-chooser.c:444
+#: thunar/thunar-permissions-chooser.c:437
 msgid "Click here to automatically fix the folder permissions."
 msgstr "按這裡以自動修正資料夾權限的問題。"
 
-#: thunar/thunar-permissions-chooser.c:457
+#: thunar/thunar-permissions-chooser.c:450
 msgid "Please wait..."
 msgstr "請稍候..."
 
-#: thunar/thunar-permissions-chooser.c:464
+#: thunar/thunar-permissions-chooser.c:457
 msgid "Stop applying permissions recursively."
 msgstr "停止遞迴套用權限的動作。"
 
 #. allocate the question dialog
-#: thunar/thunar-permissions-chooser.c:577
+#: thunar/thunar-permissions-chooser.c:570
 msgid "Question"
 msgstr "警告"
 
-#: thunar/thunar-permissions-chooser.c:601
+#: thunar/thunar-permissions-chooser.c:594
 msgid "Apply recursively?"
 msgstr "要遞迴套用？"
 
-#: thunar/thunar-permissions-chooser.c:607
+#: thunar/thunar-permissions-chooser.c:600
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolders below the selected folder?"
 msgstr "要將變更套用到所選的資料夾內含的\n所有檔案以及子目錄嗎？"
 
-#: thunar/thunar-permissions-chooser.c:613
+#: thunar/thunar-permissions-chooser.c:606
 msgid ""
 "If you select this option your choice will be remembered and you won't be "
 "asked again. You can use the preferences dialog to alter your choice "
 "afterwards."
 msgstr "若選擇此項，您的設定將被記住並不再顯示提示訊息。之後您可以在偏好設定對話框中變更別的設定方式。"
 
-#: thunar/thunar-permissions-chooser.c:980
+#: thunar/thunar-permissions-chooser.c:974
 msgid "Mixed file owners"
 msgstr "混合的檔案擁有者"
 
-#: thunar/thunar-permissions-chooser.c:980
+#: thunar/thunar-permissions-chooser.c:974
 msgid "Unknown file owner"
 msgstr "未知檔案擁有者"
 
-#: thunar/thunar-permissions-chooser.c:1060
+#: thunar/thunar-permissions-chooser.c:1054
 #: plugins/thunar-uca/thunar-uca-editor.c:432
 #: plugins/thunar-uca/thunar-uca-editor.c:644
 msgid "None"
 msgstr "無"
 
 #. 0000
-#: thunar/thunar-permissions-chooser.c:1061
+#: thunar/thunar-permissions-chooser.c:1055
 msgid "Write only"
 msgstr "唯寫"
 
 #. 0002
-#: thunar/thunar-permissions-chooser.c:1062
+#: thunar/thunar-permissions-chooser.c:1056
 msgid "Read only"
 msgstr "唯讀"
 
 #. 0004
-#: thunar/thunar-permissions-chooser.c:1063
+#: thunar/thunar-permissions-chooser.c:1057
 msgid "Read & Write"
 msgstr "讀寫"
 
-#: thunar/thunar-permissions-chooser.c:1065
+#: thunar/thunar-permissions-chooser.c:1059
 msgid "Varying (no change)"
 msgstr "多樣 (無改變)"
 
-#: thunar/thunar-permissions-chooser.c:1192
+#: thunar/thunar-permissions-chooser.c:1186
 msgid "Correct folder permissions automatically?"
 msgstr "要自動更正資料夾權限嗎？"
 
-#: thunar/thunar-permissions-chooser.c:1193
+#: thunar/thunar-permissions-chooser.c:1187
 msgid "Folder permissions"
 msgstr "資料夾權限"
 
-#: thunar/thunar-permissions-chooser.c:1195
+#: thunar/thunar-permissions-chooser.c:1189
 msgid "Correct _folder permissions"
 msgstr "更正資料夾權限(_F)"
 
-#: thunar/thunar-permissions-chooser.c:1197
+#: thunar/thunar-permissions-chooser.c:1191
 msgid ""
 "The folder permissions will be reset to a consistent state. Only users "
 "allowed to read the contents of this folder will be allowed to enter the "
@@ -2112,184 +2112,184 @@ msgid ""
 msgstr "資料夾權限會重設為一致狀態。之後只有可讀取本資料夾內容的使用者可進入本資料夾。"
 
 #. popup the error message dialog
-#: thunar/thunar-permissions-chooser.c:1312
+#: thunar/thunar-permissions-chooser.c:1306
 msgid "Error while changing file permissions"
 msgstr "變更檔案權限時發生錯誤"
 
-#: thunar/thunar-preferences-dialog.c:271 thunar/thunar-settings.desktop.in:4
+#: thunar/thunar-preferences-dialog.c:272 thunar/thunar-settings.desktop.in:4
 msgid "Thunar Preferences"
 msgstr "Thunar 偏好設定"
 
 #. Display
-#: thunar/thunar-preferences-dialog.c:301
+#: thunar/thunar-preferences-dialog.c:302
 msgid "Display"
 msgstr "顯示"
 
-#: thunar/thunar-preferences-dialog.c:311
+#: thunar/thunar-preferences-dialog.c:312
 msgid "Window Settings"
 msgstr "視窗設定"
 
-#: thunar/thunar-preferences-dialog.c:330
+#: thunar/thunar-preferences-dialog.c:331
 msgid "Use custom window decorations (only applied to new windows)"
 msgstr "使用自訂視窗裝飾（僅套用於新視窗）"
 
-#: thunar/thunar-preferences-dialog.c:337
+#: thunar/thunar-preferences-dialog.c:338
 msgid ""
 "Use custom, client-side window decorations instead of global, server-side "
 "ones. - Only applied to new Thunar windows"
 msgstr "使用自訂、客戶端視窗裝飾而非全域的伺服器端裝飾。僅套用於新的 Thunar 視窗"
 
-#: thunar/thunar-preferences-dialog.c:345
+#: thunar/thunar-preferences-dialog.c:346
 msgid "Use current folder icon as window icon"
 msgstr "使用目前的資料夾圖示作為視窗圖示"
 
-#: thunar/thunar-preferences-dialog.c:351
+#: thunar/thunar-preferences-dialog.c:352
 msgid "Select this option to use the current folder icon as window icon"
 msgstr "選取此選項以使用目前資料夾圖示為視窗圖示"
 
-#: thunar/thunar-preferences-dialog.c:356
+#: thunar/thunar-preferences-dialog.c:357
 msgid "View Settings"
 msgstr "檢視設定"
 
-#: thunar/thunar-preferences-dialog.c:369
+#: thunar/thunar-preferences-dialog.c:370
 msgid "View _new folders using:"
 msgstr "檢視新資料夾的設定(_N)："
 
-#: thunar/thunar-preferences-dialog.c:375
-#: thunar/thunar-preferences-dialog.c:531
+#: thunar/thunar-preferences-dialog.c:376
+#: thunar/thunar-preferences-dialog.c:532
 msgid "Icon View"
 msgstr "檢視圖示"
 
-#: thunar/thunar-preferences-dialog.c:376
-#: thunar/thunar-preferences-dialog.c:1429
+#: thunar/thunar-preferences-dialog.c:377
+#: thunar/thunar-preferences-dialog.c:1432
 msgid "List View"
 msgstr "清單檢視"
 
-#: thunar/thunar-preferences-dialog.c:377
+#: thunar/thunar-preferences-dialog.c:378
 msgid "Compact View"
 msgstr "簡潔檢視"
 
-#: thunar/thunar-preferences-dialog.c:378
+#: thunar/thunar-preferences-dialog.c:379
 msgid "Last Active View"
 msgstr "上次的檢視狀態"
 
-#: thunar/thunar-preferences-dialog.c:394
+#: thunar/thunar-preferences-dialog.c:395
 msgid "_Remember view settings for each folder"
 msgstr "記住每個資料夾的檢視設定(_R)"
 
-#: thunar/thunar-preferences-dialog.c:401
+#: thunar/thunar-preferences-dialog.c:402
 msgid ""
 "Select this option to remember view type, zoom level, sort column, and sort "
 "order individually for each folder"
 msgstr "選取此選項以每個資料夾分開記住檢視類型、縮放等級、排序欄位與排序順序。"
 
-#: thunar/thunar-preferences-dialog.c:409
+#: thunar/thunar-preferences-dialog.c:410
 msgid "gvfs metadata support is required"
 msgstr "需要 gvfs 銓釋資料支援"
 
-#: thunar/thunar-preferences-dialog.c:415
+#: thunar/thunar-preferences-dialog.c:416
 msgid "Sort _folders before files"
 msgstr "將資料夾排在檔案前面(_F)"
 
-#: thunar/thunar-preferences-dialog.c:421
+#: thunar/thunar-preferences-dialog.c:422
 msgid ""
 "Select this option to list folders before files when you sort a folder."
 msgstr "選擇此選項會令資料夾先列出，然後才列出檔案。"
 
-#: thunar/thunar-preferences-dialog.c:429
+#: thunar/thunar-preferences-dialog.c:430
 msgid "Show file size in binary format"
 msgstr "以二進位格式顯示檔案大小"
 
-#: thunar/thunar-preferences-dialog.c:435
+#: thunar/thunar-preferences-dialog.c:436
 msgid ""
 "Select this option to show file size in binary format instead of decimal."
 msgstr "選取此選項以使用二進位而非十進位格式顯示檔案大小。"
 
-#: thunar/thunar-preferences-dialog.c:444
+#: thunar/thunar-preferences-dialog.c:445
 msgid "Thumbnails"
 msgstr "縮圖"
 
-#: thunar/thunar-preferences-dialog.c:460
+#: thunar/thunar-preferences-dialog.c:461
 msgid "Show thumbnails:"
 msgstr "顯示縮圖："
 
-#: thunar/thunar-preferences-dialog.c:467
-#: thunar/thunar-preferences-dialog.c:1119
-#: thunar/thunar-preferences-dialog.c:1229
+#: thunar/thunar-preferences-dialog.c:468
+#: thunar/thunar-preferences-dialog.c:1118
+#: thunar/thunar-preferences-dialog.c:1228
 msgid "Local Files Only"
 msgstr "只本機檔案"
 
-#: thunar/thunar-preferences-dialog.c:486
+#: thunar/thunar-preferences-dialog.c:487
 msgid "Only show thumbnails for files smaller than:"
 msgstr "僅顯示小於此大小的檔案的縮圖："
 
-#: thunar/thunar-preferences-dialog.c:492
+#: thunar/thunar-preferences-dialog.c:493
 msgid "512KiB"
 msgstr "512KiB"
 
-#: thunar/thunar-preferences-dialog.c:493
+#: thunar/thunar-preferences-dialog.c:494
 msgid "1MiB"
 msgstr "1MiB"
 
-#: thunar/thunar-preferences-dialog.c:494
+#: thunar/thunar-preferences-dialog.c:495
 msgid "10MiB"
 msgstr "10MiB"
 
-#: thunar/thunar-preferences-dialog.c:495
+#: thunar/thunar-preferences-dialog.c:496
 msgid "100MiB"
 msgstr "100MiB"
 
-#: thunar/thunar-preferences-dialog.c:496
+#: thunar/thunar-preferences-dialog.c:497
 msgid "1GiB"
 msgstr "1GiB"
 
-#: thunar/thunar-preferences-dialog.c:497
+#: thunar/thunar-preferences-dialog.c:498
 msgid "10GiB"
 msgstr "10GiB"
 
-#: thunar/thunar-preferences-dialog.c:498
+#: thunar/thunar-preferences-dialog.c:499
 msgid "Unlimited"
 msgstr "無限制"
 
-#: thunar/thunar-preferences-dialog.c:516
+#: thunar/thunar-preferences-dialog.c:517
 msgid "Draw frames around thumbnails"
 msgstr "在縮圖週邊繪製框線"
 
-#: thunar/thunar-preferences-dialog.c:522
+#: thunar/thunar-preferences-dialog.c:523
 msgid "Select this option to draw black frames around thumbnails."
 msgstr "選取這個選項以在縮圖週邊繪製黑色框線"
 
-#: thunar/thunar-preferences-dialog.c:547
+#: thunar/thunar-preferences-dialog.c:548
 msgid "_Text beside icons"
 msgstr "文字位於圖示旁(_T)"
 
-#: thunar/thunar-preferences-dialog.c:553
+#: thunar/thunar-preferences-dialog.c:554
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
 msgstr "選擇此選項會令圖示說明放在圖示旁而不是位於圖示底下。"
 
-#: thunar/thunar-preferences-dialog.c:563
+#: thunar/thunar-preferences-dialog.c:564
 msgid "Date"
 msgstr "日期"
 
-#: thunar/thunar-preferences-dialog.c:576
+#: thunar/thunar-preferences-dialog.c:577
 #: plugins/thunar-sbr/thunar-sbr-date-renamer.c:223
 msgid "_Format:"
 msgstr "格式(_F)："
 
 #. TRANSLATORS: custom date format
-#: thunar/thunar-preferences-dialog.c:589
+#: thunar/thunar-preferences-dialog.c:590
 msgid "Custom"
 msgstr "自訂"
 
-#: thunar/thunar-preferences-dialog.c:590
+#: thunar/thunar-preferences-dialog.c:591
 msgid "Today / Custom"
 msgstr "今天／自訂"
 
 #. TRANSLATORS: Please do not translate the first column (specifiers),
 #. 'strftime' and of course '\n'
-#: thunar/thunar-preferences-dialog.c:607
+#: thunar/thunar-preferences-dialog.c:608
 msgid ""
 "Custom date format to apply.\n"
 "\n"
@@ -2305,129 +2305,129 @@ msgid ""
 msgstr "自訂要套用的日期格式。\n\n最常見的代表符號：\n%d 每月第幾天\n%m 月\n%Y 包含世紀的年\n%H 小時\n%M 分鐘\n%S 秒\n\n要檢視完整清單，請搜尋「Glib.DateTime.format」。"
 
 #. Side Pane
-#: thunar/thunar-preferences-dialog.c:629
+#: thunar/thunar-preferences-dialog.c:630
 msgid "Side Pane"
 msgstr "側窗格"
 
-#: thunar/thunar-preferences-dialog.c:639
+#: thunar/thunar-preferences-dialog.c:640
 msgid "Shortcuts Pane"
 msgstr "捷徑窗格"
 
-#: thunar/thunar-preferences-dialog.c:655
+#: thunar/thunar-preferences-dialog.c:656
 msgid "_Icon Size:"
 msgstr "圖示大小(_I)："
 
-#: thunar/thunar-preferences-dialog.c:660
-#: thunar/thunar-preferences-dialog.c:726
+#: thunar/thunar-preferences-dialog.c:661
+#: thunar/thunar-preferences-dialog.c:727
 msgid "16px"
 msgstr "16px"
 
-#: thunar/thunar-preferences-dialog.c:661
-#: thunar/thunar-preferences-dialog.c:727
+#: thunar/thunar-preferences-dialog.c:662
+#: thunar/thunar-preferences-dialog.c:728
 msgid "24px"
 msgstr "24px"
 
-#: thunar/thunar-preferences-dialog.c:662
-#: thunar/thunar-preferences-dialog.c:728
+#: thunar/thunar-preferences-dialog.c:663
+#: thunar/thunar-preferences-dialog.c:729
 msgid "32px"
 msgstr "32px"
 
-#: thunar/thunar-preferences-dialog.c:663
-#: thunar/thunar-preferences-dialog.c:729
+#: thunar/thunar-preferences-dialog.c:664
+#: thunar/thunar-preferences-dialog.c:730
 msgid "48px"
 msgstr "48px"
 
-#: thunar/thunar-preferences-dialog.c:664
-#: thunar/thunar-preferences-dialog.c:730
+#: thunar/thunar-preferences-dialog.c:665
+#: thunar/thunar-preferences-dialog.c:731
 msgid "64px"
 msgstr "64px"
 
-#: thunar/thunar-preferences-dialog.c:665
-#: thunar/thunar-preferences-dialog.c:731
+#: thunar/thunar-preferences-dialog.c:666
+#: thunar/thunar-preferences-dialog.c:732
 msgid "96px"
 msgstr "96px"
 
-#: thunar/thunar-preferences-dialog.c:666
-#: thunar/thunar-preferences-dialog.c:732
+#: thunar/thunar-preferences-dialog.c:667
+#: thunar/thunar-preferences-dialog.c:733
 msgid "128px"
 msgstr "128px"
 
-#: thunar/thunar-preferences-dialog.c:667
-#: thunar/thunar-preferences-dialog.c:733
+#: thunar/thunar-preferences-dialog.c:668
+#: thunar/thunar-preferences-dialog.c:734
 msgid "160px"
 msgstr "160px"
 
-#: thunar/thunar-preferences-dialog.c:668
-#: thunar/thunar-preferences-dialog.c:734
+#: thunar/thunar-preferences-dialog.c:669
+#: thunar/thunar-preferences-dialog.c:735
 msgid "192px"
 msgstr "192px"
 
-#: thunar/thunar-preferences-dialog.c:669
-#: thunar/thunar-preferences-dialog.c:735
+#: thunar/thunar-preferences-dialog.c:670
+#: thunar/thunar-preferences-dialog.c:736
 msgid "256px"
 msgstr "256px"
 
-#: thunar/thunar-preferences-dialog.c:670
-#: thunar/thunar-preferences-dialog.c:736
+#: thunar/thunar-preferences-dialog.c:671
+#: thunar/thunar-preferences-dialog.c:737
 msgid "512px"
 msgstr "512px"
 
-#: thunar/thunar-preferences-dialog.c:671
-#: thunar/thunar-preferences-dialog.c:737
+#: thunar/thunar-preferences-dialog.c:672
+#: thunar/thunar-preferences-dialog.c:738
 msgid "1024px"
 msgstr "1024px"
 
-#: thunar/thunar-preferences-dialog.c:689
+#: thunar/thunar-preferences-dialog.c:690
 msgid "Show Icon _Emblems"
 msgstr "顯示圖示標記(_E)"
 
-#: thunar/thunar-preferences-dialog.c:695
+#: thunar/thunar-preferences-dialog.c:696
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties "
 "dialog."
 msgstr "選擇此選項會令捷徑窗格顯示在資料夾屬性對話窗已有定義標記的資料夾其所有的圖示標記。"
 
-#: thunar/thunar-preferences-dialog.c:705
+#: thunar/thunar-preferences-dialog.c:706
 msgid "Tree Pane"
 msgstr "樹狀圖窗格"
 
-#: thunar/thunar-preferences-dialog.c:721
+#: thunar/thunar-preferences-dialog.c:722
 msgid "Icon _Size:"
 msgstr "圖示大小(_S)："
 
-#: thunar/thunar-preferences-dialog.c:755
+#: thunar/thunar-preferences-dialog.c:756
 msgid "Show Icon E_mblems"
 msgstr "顯示圖示標記(_M)"
 
-#: thunar/thunar-preferences-dialog.c:761
+#: thunar/thunar-preferences-dialog.c:762
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
 msgstr "選擇此選項會令樹狀圖窗格顯示在資料夾屬性對話窗已有定義標記的資料夾其所有的圖示標記。"
 
-#: thunar/thunar-preferences-dialog.c:771
+#: thunar/thunar-preferences-dialog.c:772
 msgid "Icon Style"
 msgstr "圖示風格"
 
-#: thunar/thunar-preferences-dialog.c:787
+#: thunar/thunar-preferences-dialog.c:788
 msgid "Use symbolic folder icons"
 msgstr "使用符號資料夾圖示"
 
-#: thunar/thunar-preferences-dialog.c:793
+#: thunar/thunar-preferences-dialog.c:794
 msgid ""
 "Select this option to use symbolic folder icons instead of regular ones."
 msgstr "選取此選項以使用符號資料夾圖示而非一般圖示。"
 
-#: thunar/thunar-preferences-dialog.c:802
+#: thunar/thunar-preferences-dialog.c:803
 msgid "Image Preview"
 msgstr "圖片預覽"
 
-#: thunar/thunar-preferences-dialog.c:818
+#: thunar/thunar-preferences-dialog.c:819
 msgid "Image Preview Mode:"
 msgstr "圖片預覽模式："
 
-#: thunar/thunar-preferences-dialog.c:820
+#: thunar/thunar-preferences-dialog.c:821
 msgid ""
 "- Standalone: Image Preview uses a separate pane\n"
 "- Embedded: Image Preview is embedded in the left sidepane\n"
@@ -2533,19 +2533,19 @@ msgid "Select this option to show the 'Delete' action in the context menu"
 msgstr "選取此選項以在右鍵選單中顯示「刪除」"
 
 #. Advanced
-#: thunar/thunar-preferences-dialog.c:1077
+#: thunar/thunar-preferences-dialog.c:1076
 msgid "Advanced"
 msgstr "進階"
 
-#: thunar/thunar-preferences-dialog.c:1087
+#: thunar/thunar-preferences-dialog.c:1086
 msgid "File Transfer"
 msgstr "檔案傳輸"
 
-#: thunar/thunar-preferences-dialog.c:1104
+#: thunar/thunar-preferences-dialog.c:1103
 msgid "Transfer files in parallel:"
 msgstr "平行傳輸檔案："
 
-#: thunar/thunar-preferences-dialog.c:1106
+#: thunar/thunar-preferences-dialog.c:1105
 msgid ""
 "Indicates the behavior during multiple copies:\n"
 "- Always: all copies are done simultaneously\n"
@@ -2555,30 +2555,30 @@ msgid ""
 "- Never: all copies are done sequentially"
 msgstr "指示多重複製時的行為：\n- 總是：所有複製同時完成\n- 僅本機檔案：同時複製本機（非遠端、非附加）檔案\n- 僅本機檔案（相同裝置）：如果所有檔案都在本機，但位於不同的裝置（磁碟、掛載點）上，則複製將按順序進行\n- 僅本機檔案（閒置裝置）：如果所有檔案都在本機，但位於繁忙的裝置（磁碟、掛載點）上，則複製將按順序進行\n- 從不：所有複製都是按順序進行"
 
-#: thunar/thunar-preferences-dialog.c:1120
+#: thunar/thunar-preferences-dialog.c:1119
 msgid "Local Files Only (Same Devices)"
 msgstr "僅本機檔案（相同裝置）"
 
-#: thunar/thunar-preferences-dialog.c:1121
+#: thunar/thunar-preferences-dialog.c:1120
 msgid "Local Files Only (Idle Devices)"
 msgstr "僅本機檔案（閒置裝置）"
 
-#: thunar/thunar-preferences-dialog.c:1140
+#: thunar/thunar-preferences-dialog.c:1139
 msgid "Use intermediate file on copy:"
 msgstr "複製時使用中繼檔案："
 
-#: thunar/thunar-preferences-dialog.c:1144
+#: thunar/thunar-preferences-dialog.c:1143
 msgid ""
 "Use intermediate file '*.partial~' to copy files. This will prevent "
 "fragmented files. The new file will only be shown after the copy was "
 "successfully finished."
 msgstr "使用中繼檔案「*.partial~」複製檔案。這可以防止檔案碎片化。新檔案只會在成功複製後顯示。"
 
-#: thunar/thunar-preferences-dialog.c:1171
+#: thunar/thunar-preferences-dialog.c:1170
 msgid "Verify file contents on copy:"
 msgstr "複製時驗證檔案內容："
 
-#: thunar/thunar-preferences-dialog.c:1175
+#: thunar/thunar-preferences-dialog.c:1174
 msgid ""
 "Compare contents of original file and copy in order to detect corruption. "
 "While this will attempt to compare the actual contents that are on the "
@@ -2587,67 +2587,67 @@ msgid ""
 " will increase copy time."
 msgstr "比較原始檔案和複製檔的內容以偵測毀損。雖然這會嘗試比較目的地媒體上的實際內容，但 Thunar 可能無法繞過檔案系統快取記憶體，因此此比較可能無法偵測到所有毀損情況。啟用此選項將會增加複製時間。"
 
-#: thunar/thunar-preferences-dialog.c:1205
+#: thunar/thunar-preferences-dialog.c:1204
 msgid "Search"
 msgstr "搜尋"
 
-#: thunar/thunar-preferences-dialog.c:1222
+#: thunar/thunar-preferences-dialog.c:1221
 msgid "Include subfolders:"
 msgstr "包含子資料夾："
 
-#: thunar/thunar-preferences-dialog.c:1246
+#: thunar/thunar-preferences-dialog.c:1245
 msgid "Folder Permissions"
 msgstr "資料夾權限"
 
-#: thunar/thunar-preferences-dialog.c:1262
+#: thunar/thunar-preferences-dialog.c:1261
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "當您變更資料夾權限時，您也可以一併\n套用到資料夾中的內容權限。請在底下\n選擇預設的行為："
 
-#: thunar/thunar-preferences-dialog.c:1274
-#: thunar/thunar-preferences-dialog.c:1320
+#: thunar/thunar-preferences-dialog.c:1273
+#: thunar/thunar-preferences-dialog.c:1319
 msgid "Ask every time"
 msgstr "每次都詢問"
 
-#: thunar/thunar-preferences-dialog.c:1275
+#: thunar/thunar-preferences-dialog.c:1274
 msgid "Apply to Folder and Contents"
 msgstr "套用到資料夾及其所含內容"
 
-#: thunar/thunar-preferences-dialog.c:1276
+#: thunar/thunar-preferences-dialog.c:1275
 msgid "Apply to Folder Only"
 msgstr "只套用到資料夾本身"
 
-#: thunar/thunar-preferences-dialog.c:1291
+#: thunar/thunar-preferences-dialog.c:1290
 msgid "Security"
 msgstr "安全性"
 
-#: thunar/thunar-preferences-dialog.c:1308
+#: thunar/thunar-preferences-dialog.c:1307
 msgid "Execute shell scripts:"
 msgstr "執行 Shell 指令稿："
 
-#: thunar/thunar-preferences-dialog.c:1343
+#: thunar/thunar-preferences-dialog.c:1342
 msgid "Volume Management"
 msgstr "儲存裝置管理"
 
 #. add check button to enable/disable auto mounting
-#: thunar/thunar-preferences-dialog.c:1360
+#: thunar/thunar-preferences-dialog.c:1359
 msgid "Enable _Volume Management"
 msgstr "啟用儲存裝置管理(_V)"
 
-#: thunar/thunar-preferences-dialog.c:1379
+#: thunar/thunar-preferences-dialog.c:1378
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">設定</a>可移除式磁碟、\n裝置與媒體的管理方式。"
 
-#: thunar/thunar-preferences-dialog.c:1393
+#: thunar/thunar-preferences-dialog.c:1392
 #: thunar/thunar-properties-dialog.c:821
 msgid "Missing dependencies"
 msgstr "遺失相依性"
 
-#: thunar/thunar-preferences-dialog.c:1401
+#: thunar/thunar-preferences-dialog.c:1400
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2656,30 +2656,34 @@ msgid ""
 msgstr "似乎無法提供<a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a>。\n重要的功能，包括垃圾桶支援、\n移除式媒體與遠端位置瀏覽，\n將無法運作。<a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[閱讀更多]</a>"
 
 #. Shortcuts
-#: thunar/thunar-preferences-dialog.c:1416
+#: thunar/thunar-preferences-dialog.c:1415
 msgid "Shortcuts"
 msgstr "快捷鍵"
 
-#: thunar/thunar-preferences-dialog.c:1427
+#: thunar/thunar-preferences-dialog.c:1430
 msgid "Window"
 msgstr "視窗"
 
-#: thunar/thunar-preferences-dialog.c:1428
+#: thunar/thunar-preferences-dialog.c:1431
 msgid "View"
 msgstr "檢視"
 
-#: thunar/thunar-preferences-dialog.c:1430
+#: thunar/thunar-preferences-dialog.c:1433
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:550
 msgid "Launcher"
 msgstr "啟動器"
 
-#: thunar/thunar-preferences-dialog.c:1431
+#: thunar/thunar-preferences-dialog.c:1434
 msgid "Status Bar"
 msgstr "狀態列"
 
+#: thunar/thunar-preferences-dialog.c:1442
+msgid "The Shorcuts Editor requires a Thunar window to be present."
+msgstr "捷徑編輯器需要有 Thunar 視窗存在。"
+
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: thunar/thunar-preferences-dialog.c:1494
+#: thunar/thunar-preferences-dialog.c:1506
 msgid "Failed to display the volume management settings"
 msgstr "無法顯示儲存裝置管理設定值"
 
@@ -2752,7 +2756,7 @@ msgstr "連結目標："
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: thunar/thunar-properties-dialog.c:497 thunar/thunar-util.c:1475
+#: thunar/thunar-properties-dialog.c:497 thunar/thunar-util.c:1478
 msgid "Original Path:"
 msgstr "原始路徑："
 
@@ -2899,7 +2903,7 @@ msgid "Display information about Thunar Bulk Rename"
 msgstr "顯示 Thunar 批次重新命名工具的資訊"
 
 #: thunar/thunar-renamer-dialog.c:412 thunar/thunar-renamer-dialog.c:1840
-#: thunar-bulk-rename.desktop.in.in:4
+#: thunar-bulk-rename.desktop.in:4
 msgid "Rename Multiple Files"
 msgstr "重新命名多個檔案"
 
@@ -2964,8 +2968,8 @@ msgid "Video Files"
 msgstr "影片檔"
 
 #. just popup the about dialog
-#: thunar/thunar-renamer-dialog.c:1266 thunar-bulk-rename.desktop.in.in:3
-#: thunar-bulk-rename.desktop.in.in:5
+#: thunar/thunar-renamer-dialog.c:1266 thunar-bulk-rename.desktop.in:3
+#: thunar-bulk-rename.desktop.in:5
 msgid "Bulk Rename"
 msgstr "批次重新命名"
 
@@ -3053,7 +3057,7 @@ msgstr "開啟家資料夾"
 msgid "Open the desktop folder"
 msgstr "開啟桌面資料夾"
 
-#: thunar/thunar-shortcuts-model.c:1177 thunar.desktop.in.in:21
+#: thunar/thunar-shortcuts-model.c:1177 thunar.desktop.in:21
 msgid "Computer"
 msgstr "電腦"
 
@@ -3108,7 +3112,7 @@ msgstr "計算過程中斷"
 msgid "unreadable"
 msgstr "無法讀取"
 
-#: thunar/thunar-size-label.c:485 thunar/thunar-util.c:1358
+#: thunar/thunar-size-label.c:485 thunar/thunar-util.c:1361
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -3313,16 +3317,16 @@ msgid "Invalid filename provided by XDS drag site"
 msgstr "由 XDS 拖曳所提供的檔名無效"
 
 #. display an error dialog to the user
-#: thunar/thunar-standard-view.c:3364
+#: thunar/thunar-standard-view.c:3366
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "無法為 URL「%s」建立連結"
 
-#: thunar/thunar-standard-view.c:3411
+#: thunar/thunar-standard-view.c:3413
 msgid "Untitled document"
 msgstr "未命名的文件"
 
-#: thunar/thunar-standard-view.c:3895 thunar/thunar-window.c:4584
+#: thunar/thunar-standard-view.c:3897 thunar/thunar-window.c:4584
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "無法開啟目錄「%s」"
@@ -3396,7 +3400,7 @@ msgstr "符號圖示(_S)"
 msgid "Use symbolic icons instead of regular ones (if available)."
 msgstr "使用符號圖示而非一般圖示（若可用）"
 
-#: thunar/thunar-toolbar-editor.c:630
+#: thunar/thunar-toolbar-editor.c:627
 msgid "Only visible when the menubar is hidden"
 msgstr "僅當選單列隱藏時可見"
 
@@ -3473,121 +3477,121 @@ msgstr[0] "剩餘 %lu 秒 (%s/秒)"
 msgid "Loading..."
 msgstr "載入中..."
 
-#: thunar/thunar-util.c:305
+#: thunar/thunar-util.c:308
 msgid "Invalid path"
 msgstr "無效的路徑"
 
-#: thunar/thunar-util.c:340
+#: thunar/thunar-util.c:343
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "未知的使用者「%s」"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: thunar/thunar-util.c:452
+#: thunar/thunar-util.c:455
 msgid "Today"
 msgstr "今天"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: thunar/thunar-util.c:457
+#: thunar/thunar-util.c:460
 #, c-format
 msgid "Today at %X"
 msgstr "今天 %X"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: thunar/thunar-util.c:465
+#: thunar/thunar-util.c:468
 msgid "Yesterday"
 msgstr "昨天"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: thunar/thunar-util.c:470
+#: thunar/thunar-util.c:473
 #, c-format
 msgid "Yesterday at %X"
 msgstr "昨天 %X"
 
 #. Days from last week
-#: thunar/thunar-util.c:488
+#: thunar/thunar-util.c:491
 #, c-format
 msgid "%A at %X"
 msgstr "%A 於 %X"
 
 #. Any other date
-#: thunar/thunar-util.c:493
+#: thunar/thunar-util.c:496
 #, c-format
 msgid "%x at %X"
 msgstr "%x 於 %X"
 
-#: thunar/thunar-util.c:804
+#: thunar/thunar-util.c:807
 #, c-format
 msgid "%.*s %u%s"
 msgstr "%.*s %u%s"
 
-#: thunar/thunar-util.c:806
+#: thunar/thunar-util.c:809
 #, c-format
 msgid "%.*s (copy %u)%s"
 msgstr "%.*s (複製 %u)%s"
 
-#: thunar/thunar-util.c:811
+#: thunar/thunar-util.c:814
 #, c-format
 msgid "link to %.*s%s"
 msgstr "連結至 %.*s%s"
 
-#: thunar/thunar-util.c:816
+#: thunar/thunar-util.c:819
 #, c-format
 msgid "link %u to %.*s%s"
 msgstr "連結 %u 至 %.*s%s"
 
-#: thunar/thunar-util.c:836
+#: thunar/thunar-util.c:839
 msgid "Search: "
 msgstr "搜尋："
 
-#: thunar/thunar-util.c:1332 thunar/thunar-util.c:1365
+#: thunar/thunar-util.c:1335 thunar/thunar-util.c:1368
 #, c-format
 msgid "%s (%d hidden)"
 msgstr "%s（%d 個隱藏）"
 
-#: thunar/thunar-util.c:1349
+#: thunar/thunar-util.c:1352
 #, c-format
 msgid "%s: %s"
 msgstr "%s：%s"
 
-#: thunar/thunar-util.c:1372
+#: thunar/thunar-util.c:1375
 msgid "0 items"
 msgstr "0 個項目"
 
-#: thunar/thunar-util.c:1381 thunar/thunar-util.c:1503
+#: thunar/thunar-util.c:1384 thunar/thunar-util.c:1506
 #, c-format
 msgid "Last Modified: %s"
 msgstr "最後修改：%s"
 
-#: thunar/thunar-util.c:1430
+#: thunar/thunar-util.c:1433
 #, c-format
 msgid "\"%s\" (%s)"
 msgstr "「%s」 (%s)"
 
-#: thunar/thunar-util.c:1432
+#: thunar/thunar-util.c:1435
 #, c-format
 msgid "\"%s\""
 msgstr "「%s」"
 
-#: thunar/thunar-util.c:1453
+#: thunar/thunar-util.c:1456
 #, c-format
 msgid "link to %s"
 msgstr "%s 的連結"
 
-#: thunar/thunar-util.c:1455
+#: thunar/thunar-util.c:1458
 msgid "shortcut"
 msgstr "捷徑"
 
-#: thunar/thunar-util.c:1457
+#: thunar/thunar-util.c:1460
 msgid "mountable"
 msgstr "可供掛載"
 
-#: thunar/thunar-util.c:1459
+#: thunar/thunar-util.c:1462
 msgid "mount point"
 msgstr "掛載點"
 
 #. append the image dimensions to the statusbar text
-#: thunar/thunar-util.c:1493 plugins/thunar-apr/thunar-apr-image-page.c:158
+#: thunar/thunar-util.c:1496 plugins/thunar-apr/thunar-apr-image-page.c:158
 msgid "Image Size:"
 msgstr "影像大小："
 
@@ -4093,39 +4097,39 @@ msgstr "檢視切換器"
 msgid "Location Bar"
 msgstr "位置列"
 
-#: thunarx/thunarx-property-page.c:114
+#: thunarx/thunarx-property-page.c:115
 msgid "Label"
 msgstr "標籤"
 
-#: thunarx/thunarx-property-page.c:115
+#: thunarx/thunarx-property-page.c:116
 msgid "Text of the page's label"
 msgstr "關於頁面標籤的文字"
 
-#: thunarx/thunarx-property-page.c:127
+#: thunarx/thunarx-property-page.c:128
 msgid "Label widget"
 msgstr "標籤器件"
 
-#: thunarx/thunarx-property-page.c:128
+#: thunarx/thunarx-property-page.c:129
 msgid "A widget to display in place of the usual page label"
 msgstr "在通常顯示頁面標籤的地方改用的標籤器件"
 
-#: thunarx/thunarx-provider-plugin.c:83
+#: thunarx/thunarx-provider-plugin.c:84
 msgid "Resident"
 msgstr "常駐"
 
-#: thunarx/thunarx-provider-plugin.c:84
+#: thunarx/thunarx-provider-plugin.c:85
 msgid "Don't unload the plugin from memory"
 msgstr "不要從記憶體中卸除插件"
 
-#: thunarx/thunarx-renamer.c:158
+#: thunarx/thunarx-renamer.c:159
 msgid "Help URL"
 msgstr "求助連結"
 
-#: thunarx/thunarx-renamer.c:159
+#: thunarx/thunarx-renamer.c:160
 msgid "The URL to the documentation of the renamer"
 msgstr "改名程式說明文件的網址"
 
-#: thunarx/thunarx-renamer.c:174
+#: thunarx/thunarx-renamer.c:175
 msgid "The user visible name of the renamer"
 msgstr "改名程式使用者可見的名稱"
 
@@ -4648,7 +4652,7 @@ msgstr "未知的終結元素 <%s>"
 msgid "Failed to determine save location for uca.xml"
 msgstr "無法偵測儲存 uca.xml 的檔案位置"
 
-#: plugins/thunar-uca/thunar-uca-model.c:1642
+#: plugins/thunar-uca/thunar-uca-model.c:1647
 msgid "Command not configured"
 msgstr "未設定好指令"
 
@@ -4874,33 +4878,33 @@ msgstr "將目前所選的動作往上移一行"
 msgid "Move the currently selected action down by one row."
 msgstr "將目前所選的動作往下移一行"
 
-#: plugins/thunar-wallpaper/twp-provider.c:154
+#: plugins/thunar-wallpaper/twp-provider.c:157
 msgid "Set as wallpaper"
 msgstr "設為桌布"
 
-#: thunar.desktop.in.in:3
+#: thunar.desktop.in:3
 msgid "Thunar File Manager"
 msgstr "Thunar 檔案管理員"
 
-#: thunar.desktop.in.in:4
+#: thunar.desktop.in:4
 msgid "Browse the filesystem with the file manager"
 msgstr "使用檔案管理員瀏覽檔案系統"
 
-#: thunar.desktop.in.in:5
+#: thunar.desktop.in:5
 msgid "File Manager"
 msgstr "檔案管理員"
 
-#: thunar.desktop.in.in:6
+#: thunar.desktop.in:6
 msgid ""
 "file "
 "manager;explorer;finder;browser;folders;directory;directories;partitions;drives;network;devices;rename;move;copy;delete;permissions;home;trash;"
 msgstr "file manager;explorer;finder;browser;folders;directory;directories;partitions;drives;network;devices;rename;move;copy;delete;permissions;home;trash;"
 
-#: thunar.desktop.in.in:17
+#: thunar.desktop.in:17
 msgid "Home"
 msgstr "家"
 
-#: thunar-bulk-rename.desktop.in.in:6
+#: thunar-bulk-rename.desktop.in:6
 msgid "bulk;renamer;renaming;thunar;files;folders;directory;directories;"
 msgstr "bulk;renamer;renaming;thunar;files;folders;directory;directories;"
 
