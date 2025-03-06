@@ -868,6 +868,7 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
       use_fat_name_scheme =
         !g_strcmp0 (fs_type, "fat")   ||
         !g_strcmp0 (fs_type, "vfat")  ||
+        !g_strcmp0 (fs_type, "exfat") ||
         !g_strcmp0 (fs_type, "fuse")  ||
         !g_strcmp0 (fs_type, "ntfs")  ||
         !g_strcmp0 (fs_type, "msdos") ||
