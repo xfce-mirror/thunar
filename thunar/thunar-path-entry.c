@@ -437,11 +437,11 @@ thunar_path_entry_icon_press_event (GtkEntry            *entry,
   gint             size;
   gint             scale_factor;
 
-  if (path_entry->current_file == NULL)
-    return FALSE;
-
   if (event->button == 1 && icon_pos == GTK_ENTRY_ICON_PRIMARY)
     {
+      if (path_entry->current_file == NULL)
+        return FALSE;
+
       /* save the drag button state */
       path_entry->drag_button = event->button;
 
@@ -473,6 +473,13 @@ thunar_path_entry_icon_press_event (GtkEntry            *entry,
       return TRUE;
     }
 
+  if (event->button == 1 && icon_pos == GTK_ENTRY_ICON_SECONDARY)
+    {
+      GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (entry));
+      thunar_window_action_stop_search (THUNAR_WINDOW (window));
+      return TRUE;
+    }
+
   return FALSE;
 }
 
@@ -500,11 +507,11 @@ thunar_path_entry_key_press_event (GtkWidget   *widget,
       /* we handled the event */
       return TRUE;
     }
-  /* cancel search with `Escape` */
+  /* stop search with `Escape` */
   if (G_UNLIKELY (path_entry->search_mode == TRUE && event->keyval == GDK_KEY_Escape && (event->state & GDK_CONTROL_MASK) == 0))
     {
       GtkWidget *window = gtk_widget_get_toplevel (widget);
-      thunar_window_action_cancel_search (THUNAR_WINDOW (window));
+      thunar_window_action_stop_search (THUNAR_WINDOW (window));
       return TRUE;
     }
 
@@ -1396,11 +1403,29 @@ thunar_path_entry_set_working_directory (ThunarPathEntry *path_entry,
 
 
 /**
- * thunar_path_entry_get_search_query:
- * @path_entry        : a #ThunarPathEntry.
+ * thunar_path_entry_cancel_search:
+ * @path_entry : a #ThunarPathEntry.
  *
- * Returns a copy of the search query in the text field of the @path_entry or "" if the path_entry doesn't contain
- * a search query.
+ * Cancels the search for the path entry.
+ */
+void
+thunar_path_entry_cancel_search (ThunarPathEntry *path_entry)
+{
+  _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
+
+  path_entry->search_mode = FALSE;
+
+  gtk_widget_grab_focus (gtk_widget_get_parent (GTK_WIDGET (path_entry)));
+}
+
+
+
+/**
+ * thunar_path_entry_get_search_query:
+ * @path_entry : a #ThunarPathEntry.
+ *
+ * Returns a copy of the search query in the text field of the @path_entry or an empty string
+ * if the @path_entry doesn't contain a search query.
  *
  * It's the responsibility of the caller to free the returned string using `g_free`.
  **/
@@ -1419,12 +1444,32 @@ thunar_path_entry_get_search_query (ThunarPathEntry *path_entry)
 
 
 
+// TODO
 void
-thunar_path_entry_cancel_search (ThunarPathEntry *path_entry)
+thunar_path_entry_set_searching (ThunarPathEntry *path_entry,
+                                 gboolean         searching)
 {
+  ThunarPreferences *preferences;
+  gboolean           use_symbolic_icons;
+
   _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
 
-  path_entry->search_mode = FALSE;
+  preferences = thunar_preferences_get ();
+  g_object_get (G_OBJECT (preferences), "misc-symbolic-icons-in-toolbar", &use_symbolic_icons, NULL);
+  g_object_unref (G_OBJECT (preferences));
 
-  gtk_widget_grab_focus (gtk_widget_get_parent (GTK_WIDGET (path_entry)));
+  /* setup the path entry to indicate an ongoing search */
+  if (searching)
+    {
+      gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_SECONDARY,
+                                         use_symbolic_icons ? "process-stop-symbolic" : "process-stop");
+      gtk_entry_set_icon_tooltip_text (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_SECONDARY, _("Stop Search"));
+      gtk_widget_set_tooltip_text (GTK_WIDGET (path_entry), _("Search is in progress...\nPress the cancel button or the Escape key to stop."));
+    }
+  else
+    {
+      gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
+      gtk_entry_set_icon_tooltip_text (GTK_ENTRY (path_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
+      gtk_widget_set_tooltip_text (GTK_WIDGET (path_entry), NULL);
+    }
 }
