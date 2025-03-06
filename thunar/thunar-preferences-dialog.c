@@ -1440,7 +1440,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
     }
   else
     {
-      label = gtk_label_new (_("The Shorcuts Editor requires a Thunar window to be present."));
+      label = gtk_label_new (_("The Shortcuts Editor requires a Thunar window to be present."));
       gtk_container_add (GTK_CONTAINER (frame), label);
       gtk_widget_show (label);
     }
