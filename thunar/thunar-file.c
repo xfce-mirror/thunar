@@ -1062,7 +1062,7 @@ thunar_file_info_reload (ThunarFile   *file,
                                                                  NULL, NULL);
 
               /* drop the name if it's empty or has invalid encoding */
-              if (exo_str_is_empty (file->display_name) || !g_utf8_validate (file->display_name, -1, NULL))
+              if (xfce_str_is_empty (file->display_name) || !g_utf8_validate (file->display_name, -1, NULL))
                 {
                   g_free (file->display_name);
                   file->display_name = NULL;
