@@ -376,7 +376,7 @@ thunar_properties_dialog_constructed (GObject *object)
 
   dialog->icon_image = thunar_image_new ();
   gtk_box_pack_start (GTK_BOX (dialog->single_box), dialog->icon_image, FALSE, TRUE, 0);
-  gtk_widget_set_valign (GTK_WIDGET (dialog->icon_image), GTK_ALIGN_START);
+  gtk_widget_set_valign (GTK_WIDGET (dialog->icon_image), GTK_ALIGN_CENTER);
   gtk_widget_show (dialog->icon_image);
 
   label = gtk_label_new_with_mnemonic (_("_Name:"));
@@ -386,21 +386,27 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_widget_show (label);
 
   /* set up the widget for entering the filename */
+  box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+  gtk_grid_attach (GTK_GRID (grid), box, 1, row, 1, 1);
+  g_object_bind_property (G_OBJECT (dialog->single_box), "visible",
+                          G_OBJECT (box), "visible",
+                          G_BINDING_SYNC_CREATE);
+
+  label = gtk_label_new (NULL); /* empty label to vertically align the filename input widget */
+  gtk_box_pack_start (GTK_BOX (box), label, TRUE, TRUE, 0);
+  gtk_widget_show (label);
+
   dialog->name_entry = g_object_new (XFCE_TYPE_FILENAME_INPUT, NULL);
   gtk_widget_set_hexpand (GTK_WIDGET (dialog->name_entry), TRUE);
   gtk_widget_set_valign (GTK_WIDGET (dialog->name_entry), GTK_ALIGN_CENTER);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), GTK_WIDGET (xfce_filename_input_get_entry (dialog->name_entry)));
+  gtk_box_pack_end (GTK_BOX (box), GTK_WIDGET (dialog->name_entry), TRUE, TRUE, 0);
   gtk_widget_show_all (GTK_WIDGET (dialog->name_entry));
 
   g_signal_connect (G_OBJECT (xfce_filename_input_get_entry (dialog->name_entry)),
                     "activate", G_CALLBACK (thunar_properties_dialog_name_activate), dialog);
   g_signal_connect (G_OBJECT (xfce_filename_input_get_entry (dialog->name_entry)),
                     "focus-out-event", G_CALLBACK (thunar_properties_dialog_name_focus_out_event), dialog);
-
-  gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (dialog->name_entry), 1, row, 1, 1);
-  g_object_bind_property (G_OBJECT (dialog->single_box), "visible",
-                          G_OBJECT (dialog->name_entry), "visible",
-                          G_BINDING_SYNC_CREATE);
 
   ++row;
 
@@ -409,6 +415,7 @@ thunar_properties_dialog_constructed (GObject *object)
      First box (icon, name) for multiple files
    */
   box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+  gtk_widget_set_margin_top (GTK_WIDGET (box), 6);
   gtk_grid_attach (GTK_GRID (grid), box, 0, row, 1, 1);
   g_object_bind_property (G_OBJECT (dialog->single_box), "visible",
                           G_OBJECT (box), "visible",
@@ -425,11 +432,12 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_widget_show (label);
 
   dialog->names_label = gtk_label_new ("");
-  gtk_label_set_xalign (GTK_LABEL (dialog->names_label), 0.0f);
-  gtk_widget_set_hexpand (dialog->names_label, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), dialog->names_label, 1, row, 1, 1);
   gtk_label_set_ellipsize (GTK_LABEL (dialog->names_label), PANGO_ELLIPSIZE_END);
   gtk_label_set_selectable (GTK_LABEL (dialog->names_label), TRUE);
+  gtk_label_set_xalign (GTK_LABEL (dialog->names_label), 0.0f);
+  gtk_widget_set_margin_top (dialog->names_label, 6);
+  gtk_widget_set_hexpand (dialog->names_label, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->names_label, 1, row, 1, 1);
   g_object_bind_property (G_OBJECT (box), "visible",
                           G_OBJECT (dialog->names_label), "visible",
                           G_BINDING_SYNC_CREATE);
