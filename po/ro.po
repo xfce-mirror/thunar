@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-03-06 12:46+0100\n"
+"POT-Creation-Date: 2025-03-08 00:46+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Yupy <yupy_17y@yahoo.com>, 2017\n"
 "Language-Team: Romanian (http://app.transifex.com/xfce/thunar/language/ro/)\n"
@@ -3471,7 +3471,19 @@ msgstr "Vizibil numai atunci când bara de meniu este ascunsă"
 msgid "Verifying file contents..."
 msgstr "Se verifică conținutul fișierului..."
 
-#: thunar/thunar-transfer-job.c:1139
+#. ask the user to retry
+#: thunar/thunar-transfer-job.c:1021
+#, c-format
+msgid "Failed to move file \"%s\": %s"
+msgstr "Mutarea fișierului „%s” a eșuat: %s"
+
+#. ask the user to skip this node and all subnodes
+#: thunar/thunar-transfer-job.c:1043
+#, c-format
+msgid "Failed to copy file \"%s\": %s"
+msgstr "Copierea fișierului „%s” a eșuat: %s"
+
+#: thunar/thunar-transfer-job.c:1142
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
@@ -3479,45 +3491,45 @@ msgid ""
 msgstr "Eroare în timpul copierii către „%s”: se necesită încă %s de spațiu liber pentru a copia la destinație"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1173
+#: thunar/thunar-transfer-job.c:1176
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Se încearcă restaurarea „%s”"
 
-#: thunar/thunar-transfer-job.c:1202
+#: thunar/thunar-transfer-job.c:1205
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "Dosarul „%s” nu mai există, dar este necesar pentru a restaura fișierul „%s” din coșul de gunoi"
 
-#: thunar/thunar-transfer-job.c:1229
+#: thunar/thunar-transfer-job.c:1232
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Nu s-a putut restaura dosarul „%s”"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1314
+#: thunar/thunar-transfer-job.c:1317
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Se încearcă mutarea „%s”"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1397
+#: thunar/thunar-transfer-job.c:1400
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "Nu s-a putut muta „%s” direct. Se colectează fișierele pentru copiere…"
 
-#: thunar/thunar-transfer-job.c:1634
+#: thunar/thunar-transfer-job.c:1637
 msgid "Collecting files..."
 msgstr "Se colectează fișierele…"
 
-#: thunar/thunar-transfer-job.c:1859
+#: thunar/thunar-transfer-job.c:1862
 #, c-format
 msgid "%s of %s"
 msgstr "%s din %s"
 
-#: thunar/thunar-transfer-job.c:1879
+#: thunar/thunar-transfer-job.c:1882
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
@@ -3525,7 +3537,7 @@ msgstr[0] "încă %lu oră (%s/sec)"
 msgstr[1] "încă %lu ore (%s/sec)"
 msgstr[2] "încă %lu de ore (%s/sec)"
 
-#: thunar/thunar-transfer-job.c:1885
+#: thunar/thunar-transfer-job.c:1888
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
@@ -3533,7 +3545,7 @@ msgstr[0] "încă %lu minut (%s/sec)"
 msgstr[1] "încă %lu minute (%s/sec)"
 msgstr[2] "încă %lu de minute (%s/sec)"
 
-#: thunar/thunar-transfer-job.c:1890
+#: thunar/thunar-transfer-job.c:1893
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
