@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-03-06 12:46+0100\n"
+"POT-Creation-Date: 2025-03-08 00:46+0100\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Michal Várady <miko.vaji@gmail.com>, 2013-2015,2017-2022,2024-2025\n"
 "Language-Team: Czech (http://app.transifex.com/xfce/thunar/language/cs/)\n"
@@ -859,7 +859,7 @@ msgstr "_OK"
 #: thunar/thunar-chooser-dialog.c:460
 #, c-format
 msgid "Failed to add new application \"%s\""
-msgstr "Přidání nové aplikace \"%s\" se nezdařilo"
+msgstr "Nepodařilo se přidat novou aplikaci \"%s\""
 
 #: thunar/thunar-chooser-dialog.c:551
 #, c-format
@@ -1787,7 +1787,7 @@ msgstr "Nepodařilo se vytvořit prázdný soubor \"%s\": %s"
 #: thunar/thunar-io-jobs.c:425
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
-msgstr "Nezdařilo se vytvořit adresář \"%s\": %s"
+msgstr "Nepodařilo se vytvořit adresář \"%s\": %s"
 
 #. tell the user that we're preparing to unlink the files
 #: thunar/thunar-io-jobs.c:509
@@ -1803,17 +1803,17 @@ msgstr "Nelze smazat soubor \"%s\": %s"
 #: thunar/thunar-io-jobs.c:1062
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
-msgstr "Nelze změnit vlastníka souboru \"%s\": %s"
+msgstr "Nepodařilo se změnit vlastníka souboru \"%s\": %s"
 
 #: thunar/thunar-io-jobs.c:1063
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
-msgstr "Nelze změnit skupinu souboru \"%s\": %s"
+msgstr "Nepodařilo se změnit skupinu souboru \"%s\": %s"
 
 #: thunar/thunar-io-jobs.c:1216
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
-msgstr "Nelze změnit oprávnění k souboru \"%s\": %s"
+msgstr "Nepodařilo se změnit oprávnění k souboru \"%s\": %s"
 
 #: thunar/thunar-io-jobs.c:1977
 #, c-format
@@ -3506,7 +3506,19 @@ msgstr "Viditelné pouze v případě, že je panel nabídek skrytý"
 msgid "Verifying file contents..."
 msgstr "Ověřování obsahu souboru..."
 
-#: thunar/thunar-transfer-job.c:1139
+#. ask the user to retry
+#: thunar/thunar-transfer-job.c:1021
+#, c-format
+msgid "Failed to move file \"%s\": %s"
+msgstr "Nepodařilo se přesunout soubor \"%s\": %s"
+
+#. ask the user to skip this node and all subnodes
+#: thunar/thunar-transfer-job.c:1043
+#, c-format
+msgid "Failed to copy file \"%s\": %s"
+msgstr "Nepodařilo se zkopírovat soubor \"%s\": %s"
+
+#: thunar/thunar-transfer-job.c:1142
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
@@ -3514,45 +3526,45 @@ msgid ""
 msgstr "Při kopírování do složky %s došlo k chybě: Pro zkopírování souboru do cílové složky je potřeba o %s více místa"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1173
+#: thunar/thunar-transfer-job.c:1176
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Pokus o obnovení %s"
 
-#: thunar/thunar-transfer-job.c:1202
+#: thunar/thunar-transfer-job.c:1205
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "Složka %s již neexistuje, ale je vyžadována pro obnovení souboru \"%s\" z koše"
 
-#: thunar/thunar-transfer-job.c:1229
+#: thunar/thunar-transfer-job.c:1232
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Nepodařilo se obnovit složku %s"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1314
+#: thunar/thunar-transfer-job.c:1317
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Pokus o přesunutí %s"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1397
+#: thunar/thunar-transfer-job.c:1400
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "Položku %s nelze přesunout přímo. Shromažďování souborů ke kopírování..."
 
-#: thunar/thunar-transfer-job.c:1634
+#: thunar/thunar-transfer-job.c:1637
 msgid "Collecting files..."
 msgstr "Shromažďování souborů..."
 
-#: thunar/thunar-transfer-job.c:1859
+#: thunar/thunar-transfer-job.c:1862
 #, c-format
 msgid "%s of %s"
 msgstr "%s z %s"
 
-#: thunar/thunar-transfer-job.c:1879
+#: thunar/thunar-transfer-job.c:1882
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
@@ -3561,7 +3573,7 @@ msgstr[1] "zbývají %lu hodiny  (%s za sekundu)"
 msgstr[2] "zbývá %lu hodin  (%s za sekundu)"
 msgstr[3] "zbývá %lu hodin  (%s za sekundu)"
 
-#: thunar/thunar-transfer-job.c:1885
+#: thunar/thunar-transfer-job.c:1888
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
@@ -3570,7 +3582,7 @@ msgstr[1] "zbývají %lu minuty  (%s za sekundu)"
 msgstr[2] "zbývá %lu minut  (%s za sekundu)"
 msgstr[3] "zbývá %lu minut  (%s za sekundu)"
 
-#: thunar/thunar-transfer-job.c:1890
+#: thunar/thunar-transfer-job.c:1893
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
@@ -4665,7 +4677,7 @@ msgstr "Příkaz ZIP byl ukončen s chybovým hlášením %d"
 
 #: plugins/thunar-sendto-email/main.c:442
 msgid "Failed to create temporary directory"
-msgstr "Vytvoření dočasného adresáře se nezdařilo"
+msgstr "Nepodařilo se vytvořit dočasný adresář"
 
 #: plugins/thunar-sendto-email/main.c:504
 #: plugins/thunar-sendto-email/main.c:515
