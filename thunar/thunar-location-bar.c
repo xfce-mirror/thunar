@@ -51,8 +51,6 @@ struct _ThunarLocationBar
 
   GtkWidget *locationEntry;
   GtkWidget *locationButtons;
-
-  gboolean is_searching;
 };
 
 
@@ -398,8 +396,8 @@ thunar_location_bar_settings_changed (ThunarLocationBar *bar)
 
 
 /**
- * thunar_location_bar_cancel_search
- * @bar          : The #ThunarLocationBar
+ * thunar_location_bar_cancel_search:
+ * @bar : a #ThunarLocationBar.
  *
  * Cancels the search for the location bar and its children.
  */
@@ -417,15 +415,26 @@ thunar_location_bar_cancel_search (ThunarLocationBar *bar)
 
 /**
  * thunar_location_bar_get_search_query:
- * @entry        : a #ThunarLocationBar.
+ * @bar : a #ThunarLocationBar.
  *
- * Returns a copy of the search query in the text field of @entry or "" if the path_entry doesn't contain
- * a search query.
+ * Returns a copy of the search query in the text field of location_entry of @bar or an empty string
+ * if the location_entry doesn't contain a search query.
  *
  * It's the responsibility of the caller to free the returned string using `g_free`.
  **/
 gchar *
-thunar_location_bar_get_search_query (ThunarLocationBar *entry)
+thunar_location_bar_get_search_query (ThunarLocationBar *bar)
 {
-  return (entry->locationEntry != NULL) ? thunar_location_entry_get_search_query (THUNAR_LOCATION_ENTRY (entry->locationEntry)) : g_strdup ("");
+  return (bar->locationEntry != NULL) ? thunar_location_entry_get_search_query (THUNAR_LOCATION_ENTRY (bar->locationEntry)) : g_strdup ("");
+}
+
+
+
+// TODO
+void
+thunar_location_bar_set_searching (ThunarLocationBar *bar,
+                                   gboolean           searching)
+{
+  if (bar->locationEntry != NULL)
+    thunar_location_entry_set_searching (THUNAR_LOCATION_ENTRY (bar->locationEntry), searching);
 }
