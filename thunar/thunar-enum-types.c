@@ -473,6 +473,27 @@ thunar_thumbnail_size_get_nick (ThunarThumbnailSize thumbnail_size)
   return thumbnail_size_enum_value->value_nick;
 }
 
+GType
+thunar_thumbnail_purpose_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      /* clang-format off */
+      static const GEnumValue values[] = 
+      {
+        {THUNAR_THUMBNAIL_PURPOSE_DEFAULT,  "THUNAR_THUMBNAIL_PURPOSE_DEFAULT",  "default"},
+        {THUNAR_THUMBNAIL_PURPOSE_DIALOG,   "THUNAR_THUMBNAIL_PURPOSE_DIALOG",   "dialog"},
+        {THUNAR_THUMBNAIL_PURPOSE_PREVIEW,  "THUNAR_THUMBNAIL_PURPOSE_PREVIEW",  "preview"},
+        {0,                                 NULL,                                NULL}
+      };
+      /* clang-format on */
+
+      type = g_enum_register_static (I_ ("ThunarThumbnailPurpose"), values);
+    }
+  return type;
+}
 
 
 GType
