@@ -346,6 +346,10 @@ thunar_window_notify_loading (ThunarView   *view,
                               GParamSpec   *pspec,
                               ThunarWindow *window);
 static void
+thunar_window_notify_searching (ThunarView   *view,
+                                GParamSpec   *pspec,
+                                ThunarWindow *window);
+static void
 thunar_window_device_pre_unmount (ThunarDeviceMonitor *device_monitor,
                                   ThunarDevice        *device,
                                   GFile               *root_file,
@@ -2520,6 +2524,9 @@ thunar_window_switch_current_view (ThunarWindow *window,
   else if (window->search_query != NULL)
     thunar_window_action_cancel_search (window);
 
+  /* (un)set the visual indicators of an ongoing search */
+  thunar_window_notify_searching (THUNAR_VIEW (window->view), NULL, window);
+
   /* switch to the new view */
   thunar_window_notebook_set_current_tab (window, gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), window->view));
 
@@ -2613,6 +2620,7 @@ thunar_window_notebook_page_added (GtkWidget    *notebook,
 
   /* connect signals */
   g_signal_connect (G_OBJECT (page), "notify::loading", G_CALLBACK (thunar_window_notify_loading), window);
+  g_signal_connect (G_OBJECT (page), "notify::searching", G_CALLBACK (thunar_window_notify_searching), window);
   g_signal_connect_swapped (G_OBJECT (page), "start-open-location", G_CALLBACK (thunar_window_start_open_location), window);
   g_signal_connect_swapped (G_OBJECT (page), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
   g_signal_connect_swapped (G_OBJECT (page), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
@@ -3662,6 +3670,26 @@ thunar_window_reset_view_type_idle_destroyed (gpointer data)
   _thunar_return_if_fail (THUNAR_IS_WINDOW (data));
 
   THUNAR_WINDOW (data)->reset_view_type_idle_id = 0;
+}
+
+
+
+gboolean
+thunar_window_action_stop_search (ThunarWindow *window)
+{
+  gboolean searching;
+
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  g_object_get (G_OBJECT (window->view), "searching", &searching, NULL); // TODO thunar_view_get_searching?
+
+  if (searching)
+    thunar_standard_view_stop_search (THUNAR_STANDARD_VIEW (window->view));
+  else
+    thunar_window_action_cancel_search (window);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
 }
 
 
@@ -5243,6 +5271,41 @@ thunar_window_notify_loading (ThunarView   *view,
       /* Set trash infobar's `empty trash` button sensitivity, if required */
       if (thunar_file_is_trash (window->current_directory))
         gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_item_count (window->current_directory) > 0);
+    }
+}
+
+
+
+static void
+thunar_window_notify_searching (ThunarView   *view,
+                                GParamSpec   *pspec,
+                                ThunarWindow *window)
+{
+  GdkCursor *cursor;
+  gboolean   searching;
+
+  _thunar_return_if_fail (THUNAR_IS_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  if (gtk_widget_get_realized (GTK_WIDGET (window))
+      && window->view == GTK_WIDGET (view))
+    {
+      g_object_get (G_OBJECT (view), "searching", &searching, NULL); // TODO add thunar_view_get_searching?
+
+      /* setup the location bar to indicate an ongoing search */
+      thunar_location_bar_set_searching (THUNAR_LOCATION_BAR (window->location_bar), searching);
+
+      /* setup the proper cursor */
+      if (searching)
+        {
+          cursor = gdk_cursor_new_for_display (gtk_widget_get_display (GTK_WIDGET (view)), GDK_WATCH);
+          gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (window)), cursor);
+          g_object_unref (cursor);
+        }
+      else
+        {
+          gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (window)), NULL);
+        }
     }
 }
 

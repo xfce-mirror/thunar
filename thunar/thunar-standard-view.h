@@ -212,6 +212,8 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
                                     gchar              *search_query);
 gchar *
 thunar_standard_view_get_search_query (ThunarStandardView *standard_view);
+void
+thunar_standard_view_stop_search (ThunarStandardView *standard_view);
 
 void
 thunar_standard_view_update_statusbar_text (ThunarStandardView *standard_view);

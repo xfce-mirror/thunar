@@ -496,8 +496,8 @@ thunar_location_entry_emit_edit_done (ThunarLocationEntry *entry)
 
 
 /**
- * thunar_location_entry_cancel_search
- * @entry          : The #ThunarLocationEntry
+ * thunar_location_entry_cancel_search:
+ * @entry : a #ThunarLocationEntry.
  *
  * Cancels the search for the location entry and its path entry.
  */
@@ -515,10 +515,10 @@ thunar_location_entry_cancel_search (ThunarLocationEntry *entry)
 
 /**
  * thunar_location_entry_get_search_query:
- * @entry        : a #ThunarLocationEntry.
+ * @entry : a #ThunarLocationEntry.
  *
- * Returns a copy of the search query in the text field of the path_entry of @entry "" if the path_entry doesn't contain
- * a search query.
+ * Returns a copy of the search query in the text field of the path_entry of @entry or an empty string
+ * if the path_entry doesn't contain a search query.
  *
  * It's the responsibility of the caller to free the returned string using `g_free`.
  **/
@@ -526,4 +526,14 @@ gchar *
 thunar_location_entry_get_search_query (ThunarLocationEntry *entry)
 {
   return thunar_path_entry_get_search_query (THUNAR_PATH_ENTRY (entry->path_entry));
+}
+
+
+
+// TODO
+void
+thunar_location_entry_set_searching (ThunarLocationEntry *entry,
+                                     gboolean             searching)
+{
+  thunar_path_entry_set_searching (THUNAR_PATH_ENTRY (entry->path_entry), searching);
 }
