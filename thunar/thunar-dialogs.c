@@ -295,7 +295,7 @@ thunar_dialogs_show_rename_file (gpointer               parent,
   gtk_widget_set_margin_end (GTK_WIDGET (image), 6);
   gtk_widget_set_margin_top (GTK_WIDGET (image), 6);
   gtk_widget_set_margin_bottom (GTK_WIDGET (image), 6);
-  gtk_widget_set_valign (GTK_WIDGET (image), GTK_ALIGN_START);
+  gtk_widget_set_size_request (GTK_WIDGET (image), 48, 48);
   gtk_grid_attach (GTK_GRID (grid), image, 0, row, 1, 2);
   g_object_unref (G_OBJECT (icon));
   cairo_surface_destroy (surface);
@@ -307,11 +307,14 @@ thunar_dialogs_show_rename_file (gpointer               parent,
   gtk_grid_attach (GTK_GRID (grid), label, 1, row, 1, 1);
   gtk_widget_show (label);
 
+  /* next row */
+  row++;
+
   /* set up the widget for entering the filename */
   filename_input = g_object_new (XFCE_TYPE_FILENAME_INPUT, "original-filename", filename, NULL);
   filename_input_entry = xfce_filename_input_get_entry (filename_input);
   gtk_widget_set_hexpand (GTK_WIDGET (filename_input), TRUE);
-  gtk_widget_set_valign (GTK_WIDGET (filename_input), GTK_ALIGN_CENTER);
+  gtk_widget_set_valign (GTK_WIDGET (filename_input), GTK_ALIGN_START);
 
   /* connect to signals so that the sensitivity of the Create button is updated according to whether there
    * is a valid file name entered */
@@ -319,9 +322,6 @@ thunar_dialogs_show_rename_file (gpointer               parent,
                             gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
   g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (xfce_filename_input_sensitise_widget),
                             gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
-
-  /* next row */
-  row++;
 
   gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (filename_input), 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), GTK_WIDGET (filename_input_entry));
