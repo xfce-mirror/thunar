@@ -375,8 +375,8 @@ thunar_properties_dialog_constructed (GObject *object)
   gtk_widget_show (dialog->icon_button);
 
   dialog->icon_image = thunar_image_new ();
+  gtk_widget_set_size_request (dialog->icon_image, 48, 48);
   gtk_box_pack_start (GTK_BOX (dialog->single_box), dialog->icon_image, FALSE, TRUE, 0);
-  gtk_widget_set_valign (GTK_WIDGET (dialog->icon_image), GTK_ALIGN_START);
   gtk_widget_show (dialog->icon_image);
 
   label = gtk_label_new_with_mnemonic (_("_Name:"));
@@ -415,6 +415,7 @@ thunar_properties_dialog_constructed (GObject *object)
                           G_BINDING_INVERT_BOOLEAN | G_BINDING_SYNC_CREATE);
 
   image = gtk_image_new_from_icon_name ("text-x-generic", GTK_ICON_SIZE_DIALOG);
+  gtk_widget_set_size_request (image, 48, 48);
   gtk_box_pack_start (GTK_BOX (box), image, FALSE, TRUE, 0);
   gtk_widget_show (image);
 
