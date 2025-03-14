@@ -203,7 +203,8 @@ thunar_image_update (ThunarImage *image)
 
       scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (image));
       icon = thunar_icon_factory_load_file_icon (icon_factory, image->priv->file,
-                                                 THUNAR_FILE_ICON_STATE_DEFAULT, 48,
+                                                 THUNAR_FILE_ICON_STATE_DEFAULT,
+                                                 THUNAR_ICON_SIZE_DIALOG,
                                                  scale_factor, FALSE, NULL);
 
       surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, gtk_widget_get_window (GTK_WIDGET (image)));

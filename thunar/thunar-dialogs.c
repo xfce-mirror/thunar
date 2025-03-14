@@ -138,8 +138,8 @@ thunar_dialogs_show_create (gpointer     parent,
     {
       image = g_object_new (GTK_TYPE_IMAGE, "xpad", 6, "ypad", 6, NULL);
       gtk_image_set_from_gicon (GTK_IMAGE (image), icon, GTK_ICON_SIZE_DIALOG);
+      gtk_widget_set_size_request (GTK_WIDGET (image), THUNAR_ICON_SIZE_DIALOG, THUNAR_ICON_SIZE_DIALOG);
       gtk_grid_attach (GTK_GRID (grid), image, 0, row, 1, 2);
-      gtk_widget_set_valign (GTK_WIDGET (image), GTK_ALIGN_START);
       g_object_unref (icon);
       gtk_widget_show (image);
     }
@@ -151,7 +151,7 @@ thunar_dialogs_show_create (gpointer     parent,
   /* set up the widget for entering the filename */
   filename_input = g_object_new (XFCE_TYPE_FILENAME_INPUT, "original-filename", filename, NULL);
   gtk_widget_set_hexpand (GTK_WIDGET (filename_input), TRUE);
-  gtk_widget_set_valign (GTK_WIDGET (filename_input), GTK_ALIGN_CENTER);
+  gtk_widget_set_valign (GTK_WIDGET (filename_input), GTK_ALIGN_START);
 
   /* connect to signals so that the sensitivity of the Create button is updated according to whether there
    * is a valid file name entered */
@@ -286,7 +286,7 @@ thunar_dialogs_show_rename_file (gpointer               parent,
 
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (dialog));
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-  icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, 48, scale_factor, FALSE, NULL);
+  icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, THUNAR_ICON_SIZE_DIALOG, scale_factor, FALSE, NULL);
   surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, NULL);
   g_object_unref (G_OBJECT (icon_factory));
 
@@ -295,7 +295,7 @@ thunar_dialogs_show_rename_file (gpointer               parent,
   gtk_widget_set_margin_end (GTK_WIDGET (image), 6);
   gtk_widget_set_margin_top (GTK_WIDGET (image), 6);
   gtk_widget_set_margin_bottom (GTK_WIDGET (image), 6);
-  gtk_widget_set_valign (GTK_WIDGET (image), GTK_ALIGN_START);
+  gtk_widget_set_size_request (GTK_WIDGET (image), THUNAR_ICON_SIZE_DIALOG, THUNAR_ICON_SIZE_DIALOG);
   gtk_grid_attach (GTK_GRID (grid), image, 0, row, 1, 2);
   g_object_unref (G_OBJECT (icon));
   cairo_surface_destroy (surface);
@@ -307,11 +307,14 @@ thunar_dialogs_show_rename_file (gpointer               parent,
   gtk_grid_attach (GTK_GRID (grid), label, 1, row, 1, 1);
   gtk_widget_show (label);
 
+  /* next row */
+  row++;
+
   /* set up the widget for entering the filename */
   filename_input = g_object_new (XFCE_TYPE_FILENAME_INPUT, "original-filename", filename, NULL);
   filename_input_entry = xfce_filename_input_get_entry (filename_input);
   gtk_widget_set_hexpand (GTK_WIDGET (filename_input), TRUE);
-  gtk_widget_set_valign (GTK_WIDGET (filename_input), GTK_ALIGN_CENTER);
+  gtk_widget_set_valign (GTK_WIDGET (filename_input), GTK_ALIGN_START);
 
   /* connect to signals so that the sensitivity of the Create button is updated according to whether there
    * is a valid file name entered */
@@ -319,9 +322,6 @@ thunar_dialogs_show_rename_file (gpointer               parent,
                             gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
   g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (xfce_filename_input_sensitise_widget),
                             gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
-
-  /* next row */
-  row++;
 
   gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (filename_input), 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), GTK_WIDGET (filename_input_entry));
@@ -735,7 +735,7 @@ thunar_dialog_image_redraw (GtkWidget          *image,
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
 
   scale_factor = gtk_widget_get_scale_factor (image);
-  icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, 48, scale_factor, FALSE, NULL);
+  icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, THUNAR_ICON_SIZE_DIALOG, scale_factor, FALSE, NULL);
   surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, NULL);
   gtk_image_set_from_surface (GTK_IMAGE (image), surface);
 
@@ -911,7 +911,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   /* next row */
   row++;
 
-  icon = thunar_icon_factory_load_file_icon (icon_factory, dst_file, THUNAR_FILE_ICON_STATE_DEFAULT, 48, scale_factor, FALSE, NULL);
+  icon = thunar_icon_factory_load_file_icon (icon_factory, dst_file, THUNAR_FILE_ICON_STATE_DEFAULT, THUNAR_ICON_SIZE_DIALOG, scale_factor, FALSE, NULL);
   surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, NULL);
   dst_image = gtk_image_new_from_surface (surface);
   gtk_widget_set_margin_start (GTK_WIDGET (dst_image), 6);
@@ -924,7 +924,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_widget_show (dst_image);
 
   g_signal_connect_swapped (G_OBJECT (dst_file), "thumbnail-updated", G_CALLBACK (thunar_dialog_image_redraw), dst_image);
-  thunar_file_request_thumbnail (dst_file, thunar_icon_size_to_thumbnail_size (48 * scale_factor));
+  thunar_file_request_thumbnail (dst_file, thunar_icon_size_to_thumbnail_size (THUNAR_ICON_SIZE_DIALOG * scale_factor));
 
   size_string = thunar_file_get_size_string_long (dst_file, file_size_binary);
   date_string = thunar_file_get_date_string (dst_file, THUNAR_FILE_DATE_MODIFIED, date_style, date_custom_style);
@@ -961,7 +961,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   /* next row */
   row++;
 
-  icon = thunar_icon_factory_load_file_icon (icon_factory, src_file, THUNAR_FILE_ICON_STATE_DEFAULT, 48, scale_factor, FALSE, NULL);
+  icon = thunar_icon_factory_load_file_icon (icon_factory, src_file, THUNAR_FILE_ICON_STATE_DEFAULT, THUNAR_ICON_SIZE_DIALOG, scale_factor, FALSE, NULL);
   surface = gdk_cairo_surface_create_from_pixbuf (icon, scale_factor, NULL);
   src_image = gtk_image_new_from_surface (surface);
   gtk_widget_set_margin_start (GTK_WIDGET (src_image), 6);
@@ -974,7 +974,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_widget_show (src_image);
 
   g_signal_connect_swapped (G_OBJECT (src_file), "thumbnail-updated", G_CALLBACK (thunar_dialog_image_redraw), src_image);
-  thunar_file_request_thumbnail (src_file, thunar_icon_size_to_thumbnail_size (48 * scale_factor));
+  thunar_file_request_thumbnail (src_file, thunar_icon_size_to_thumbnail_size (THUNAR_ICON_SIZE_DIALOG * scale_factor));
 
   size_string = thunar_file_get_size_string_long (src_file, file_size_binary);
   date_string = thunar_file_get_date_string (src_file, THUNAR_FILE_DATE_MODIFIED, date_style, date_custom_style);
