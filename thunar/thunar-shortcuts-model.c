@@ -709,7 +709,7 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
         }
       else if ((shortcut->group & THUNAR_SHORTCUT_GROUP_PLACES_TRASH) != 0)
         {
-          trash_items = thunar_file_get_item_count (shortcut->file);
+          trash_items = thunar_file_get_trash_item_count (shortcut->file);
           if (trash_items == 0)
             {
               g_value_set_static_string (value, _("Trash is empty"));
