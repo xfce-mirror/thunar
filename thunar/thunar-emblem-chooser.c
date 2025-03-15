@@ -136,7 +136,7 @@ thunar_emblem_chooser_class_init (ThunarEmblemChooserClass *klass)
                                    PROP_FILES,
                                    g_param_spec_boxed ("files", "files", "files",
                                                        THUNARX_TYPE_FILE_INFO_LIST,
-                                                       EXO_PARAM_READWRITE));
+                                                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 

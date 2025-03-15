@@ -38,6 +38,8 @@
 #include "thunar/thunar-tree-model.h"
 #include "thunar/thunar-util.h"
 
+#include <libxfce4util/libxfce4util.h>
+
 
 
 /* convenience macros */
@@ -300,7 +302,7 @@ thunar_tree_model_class_init (ThunarTreeModelClass *klass)
                                                          "case-sensitive",
                                                          "case-sensitive",
                                                          TRUE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 

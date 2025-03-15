@@ -27,6 +27,8 @@
 #include "thunar/thunar-standard-view-model.h"
 #include "thunar/thunar-util.h"
 
+#include <libxfce4util/libxfce4util.h>
+
 static void
 thunar_standard_view_model_class_init (gpointer klass);
 
@@ -83,7 +85,7 @@ thunar_standard_view_model_class_init (gpointer klass)
                                                                  "case-sensitive",
                                                                  "case-sensitive",
                                                                  TRUE,
-                                                                 EXO_PARAM_READWRITE));
+                                                                 G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
       /**
        * ThunarStandardViewModel:date-style:
@@ -96,7 +98,7 @@ thunar_standard_view_model_class_init (gpointer klass)
                                                               "date-style",
                                                               THUNAR_TYPE_DATE_STYLE,
                                                               THUNAR_DATE_STYLE_SIMPLE,
-                                                              EXO_PARAM_READWRITE));
+                                                              G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
       /**
        * ThunarStandardViewModel:date-custom-style:
@@ -108,7 +110,7 @@ thunar_standard_view_model_class_init (gpointer klass)
                                                                 "DateCustomStyle",
                                                                 NULL,
                                                                 "%Y-%m-%d %H:%M:%S",
-                                                                EXO_PARAM_READWRITE));
+                                                                G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
       /**
        * ThunarStandardViewModel:folder:
@@ -120,7 +122,7 @@ thunar_standard_view_model_class_init (gpointer klass)
                                                                 "folder",
                                                                 "folder",
                                                                 THUNAR_TYPE_FOLDER,
-                                                                EXO_PARAM_READWRITE));
+                                                                G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
       /**
        * ThunarStandardViewModel::folders-first:
@@ -132,7 +134,7 @@ thunar_standard_view_model_class_init (gpointer klass)
                                                                  "folders-first",
                                                                  "folders-first",
                                                                  TRUE,
-                                                                 EXO_PARAM_READWRITE));
+                                                                 G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
       /**
        * ThunarStandardViewModel::hidden-last:
        *
@@ -143,7 +145,7 @@ thunar_standard_view_model_class_init (gpointer klass)
                                                                  "hidden-last",
                                                                  "hidden-last",
                                                                  FALSE,
-                                                                 EXO_PARAM_READWRITE));
+                                                                 G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
       /**
        * ThunarStandardViewModel::num-files:
@@ -155,7 +157,7 @@ thunar_standard_view_model_class_init (gpointer klass)
                                                               "num-files",
                                                               "num-files",
                                                               0, G_MAXUINT, 0,
-                                                              EXO_PARAM_READABLE));
+                                                              G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
       /**
        * ThunarStandardViewModel::show-hidden:
@@ -167,7 +169,7 @@ thunar_standard_view_model_class_init (gpointer klass)
                                                                  "show-hidden",
                                                                  "show-hidden",
                                                                  FALSE,
-                                                                 EXO_PARAM_READWRITE));
+                                                                 G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
       /**
        * ThunarStandardViewModel::misc-file-size-binary:
@@ -179,7 +181,7 @@ thunar_standard_view_model_class_init (gpointer klass)
                                                                  "file-size-binary",
                                                                  "file-size-binary",
                                                                  TRUE,
-                                                                 EXO_PARAM_READWRITE));
+                                                                 G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
       /**
        * ThunarStandardViewModel:folder-item-count:
@@ -192,7 +194,7 @@ thunar_standard_view_model_class_init (gpointer klass)
                                                               "folder-item-count",
                                                               THUNAR_TYPE_FOLDER_ITEM_COUNT,
                                                               TRUE,
-                                                              EXO_PARAM_READWRITE));
+                                                              G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
       /**
        * ThunarStandardViewModel:loading:
@@ -204,7 +206,7 @@ thunar_standard_view_model_class_init (gpointer klass)
                                                                  "loading",
                                                                  "loading",
                                                                  FALSE,
-                                                                 EXO_PARAM_READABLE));
+                                                                 G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
       /**
        * ThunarStandardViewModel::error:

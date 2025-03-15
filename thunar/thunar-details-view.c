@@ -194,7 +194,7 @@ struct _ThunarDetailsView
 
   GtkCellRenderer *renderers[THUNAR_N_VISIBLE_COLUMNS];
 
-  ExoTreeView *tree_view;
+  XfceTreeView *tree_view;
 
   gboolean expandable_folders;
 };
@@ -264,7 +264,7 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
                                                          "fixed-columns",
                                                          "fixed-columns",
                                                          FALSE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarDetailsView:tree-view:
@@ -277,7 +277,7 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
                                                          "expandable-folders",
                                                          "expandable-folders",
                                                          FALSE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 
@@ -297,7 +297,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   g_signal_connect (G_OBJECT (details_view), "notify::zoom-level", G_CALLBACK (thunar_details_view_zoom_level_changed), NULL);
 
   /* create the tree view to embed */
-  details_view->tree_view = EXO_TREE_VIEW (exo_tree_view_new ());
+  details_view->tree_view = XFCE_TREE_VIEW (xfce_tree_view_new ());
   g_signal_connect (G_OBJECT (details_view->tree_view), "notify::model",
                     G_CALLBACK (thunar_details_view_notify_model), details_view);
   g_signal_connect (G_OBJECT (details_view->tree_view), "button-press-event",
@@ -1284,7 +1284,7 @@ thunar_details_view_select_cursor_row (GtkTreeView       *tree_view,
    * the "select-cursor-row" signal changes the selection to just the cursor row,
    * which prevents multiple file selections being opened. Thus we bypass the gtk
    * signal handler with g_signal_stop_emission_by_name, and emit the "open" action
-   * directly. A better long-term solution would be to fix exo to avoid using the
+   * directly. A better long-term solution would be to fix libxfce4ui to avoid using the
    * default gtk signal handler there.
    */
 
