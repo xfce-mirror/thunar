@@ -68,11 +68,11 @@ thunar_size_label_button_press_event (GtkWidget       *ebox,
 static void
 thunar_size_label_files_changed (ThunarSizeLabel *size_label);
 static void
-thunar_size_label_error (ExoJob          *job,
+thunar_size_label_error (ThunarJob       *job,
                          const GError    *error,
                          ThunarSizeLabel *size_label);
 static void
-thunar_size_label_finished (ExoJob          *job,
+thunar_size_label_finished (ThunarJob       *job,
                             ThunarSizeLabel *size_label);
 static void
 thunar_size_label_status_update (ThunarDeepCountJob *job,
@@ -223,7 +223,7 @@ thunar_size_label_finalize (GObject *object)
   if (G_UNLIKELY (size_label->job != NULL))
     {
       g_signal_handlers_disconnect_by_data (G_OBJECT (size_label->job), size_label);
-      exo_job_cancel (EXO_JOB (size_label->job));
+      thunar_job_cancel (THUNAR_JOB (size_label->job));
       g_object_unref (size_label->job);
     }
 
@@ -310,7 +310,7 @@ thunar_size_label_button_press_event (GtkWidget       *ebox,
       if (G_UNLIKELY (size_label->job != NULL))
         {
           g_signal_handlers_disconnect_by_data (size_label->job, size_label);
-          exo_job_cancel (EXO_JOB (size_label->job));
+          thunar_job_cancel (THUNAR_JOB (size_label->job));
           g_object_unref (size_label->job);
           size_label->job = NULL;
         }
@@ -345,7 +345,7 @@ thunar_size_label_files_changed (ThunarSizeLabel *size_label)
   if (G_UNLIKELY (size_label->job != NULL))
     {
       g_signal_handlers_disconnect_by_data (size_label->job, size_label);
-      exo_job_cancel (EXO_JOB (size_label->job));
+      thunar_job_cancel (THUNAR_JOB (size_label->job));
       g_object_unref (size_label->job);
       size_label->job = NULL;
     }
@@ -366,7 +366,7 @@ thunar_size_label_files_changed (ThunarSizeLabel *size_label)
       gtk_widget_show (size_label->spinner);
 
       /* launch the job */
-      exo_job_launch (EXO_JOB (size_label->job));
+      thunar_job_launch (THUNAR_JOB (size_label->job));
     }
   else
     {
@@ -401,7 +401,7 @@ thunar_size_label_files_changed (ThunarSizeLabel *size_label)
 
 
 static void
-thunar_size_label_error (ExoJob          *job,
+thunar_size_label_error (ThunarJob       *job,
                          const GError    *error,
                          ThunarSizeLabel *size_label)
 {
@@ -417,7 +417,7 @@ thunar_size_label_error (ExoJob          *job,
 
 
 static void
-thunar_size_label_finished (ExoJob          *job,
+thunar_size_label_finished (ThunarJob       *job,
                             ThunarSizeLabel *size_label)
 {
   _thunar_return_if_fail (THUNAR_IS_JOB (job));

@@ -1193,7 +1193,7 @@ thunar_standard_view_finalize (GObject *object)
   if (standard_view->priv->statusbar_job != NULL)
     {
       g_signal_handlers_disconnect_by_data (standard_view->priv->statusbar_job, standard_view);
-      exo_job_cancel (EXO_JOB (standard_view->priv->statusbar_job));
+      thunar_job_cancel (THUNAR_JOB (standard_view->priv->statusbar_job));
       g_object_unref (standard_view->priv->statusbar_job);
       standard_view->priv->statusbar_job = NULL;
     }
@@ -2466,7 +2466,7 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
   if (standard_view->priv->statusbar_job != NULL)
     {
       g_signal_handlers_disconnect_by_data (standard_view->priv->statusbar_job, standard_view);
-      exo_job_cancel (EXO_JOB (standard_view->priv->statusbar_job));
+      thunar_job_cancel (THUNAR_JOB (standard_view->priv->statusbar_job));
       g_object_unref (standard_view->priv->statusbar_job);
       standard_view->priv->statusbar_job = NULL;
     }
@@ -2500,7 +2500,7 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
       g_signal_connect (standard_view->priv->statusbar_job, "error", G_CALLBACK (thunar_standard_view_update_statusbar_text_error), standard_view);
       g_signal_connect (standard_view->priv->statusbar_job, "finished", G_CALLBACK (thunar_standard_view_load_statusbar_text_finished), standard_view);
 
-      exo_job_launch (EXO_JOB (standard_view->priv->statusbar_job));
+      thunar_job_launch (THUNAR_JOB (standard_view->priv->statusbar_job));
     }
   else if (selected_items_tree_path_list->next == NULL) /* only one item selected */
     {
@@ -2544,7 +2544,7 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
       g_signal_connect (standard_view->priv->statusbar_job, "finished", G_CALLBACK (thunar_standard_view_load_statusbar_text_finished), standard_view);
       g_hash_table_destroy (selected_g_files);
 
-      exo_job_launch (EXO_JOB (standard_view->priv->statusbar_job));
+      thunar_job_launch (THUNAR_JOB (standard_view->priv->statusbar_job));
     }
 
   g_list_free_full (selected_items_tree_path_list, (GDestroyNotify) gtk_tree_path_free);
