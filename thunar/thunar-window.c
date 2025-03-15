@@ -5542,12 +5542,6 @@ thunar_window_set_current_directory (ThunarWindow *window,
   thunar_window_update_title (window);
   thunar_window_update_window_icon (window);
 
-  if (G_LIKELY (window->view != NULL))
-    {
-      /* grab the focus to the main view */
-      gtk_widget_grab_focus (window->view);
-    }
-
   thunar_window_history_changed (window);
   gtk_widget_set_sensitive (window->location_toolbar_item_parent, !thunar_g_file_is_root (thunar_file_get_file (current_directory)));
 
@@ -5561,6 +5555,10 @@ thunar_window_set_current_directory (ThunarWindow *window,
   /* change the view type if necessary */
   if (window->view != NULL && window->view_type != type)
     thunar_window_replace_view (window, window->view, type);
+
+  /* grab the focus to the main view */
+  if (window->view != NULL)
+    gtk_widget_grab_focus (window->view);
 
   is_trashed = thunar_file_is_trashed (current_directory);
   is_recent = thunar_file_is_recent (current_directory);
