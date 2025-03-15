@@ -27,6 +27,8 @@
 #include "thunar/thunar-thumbnail-cache.h"
 #include "thunar/thunar-window.h"
 
+#include <gio/gio.h>
+
 G_BEGIN_DECLS;
 
 typedef struct _ThunarApplicationClass ThunarApplicationClass;

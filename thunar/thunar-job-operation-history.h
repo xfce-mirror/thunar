@@ -21,7 +21,7 @@
 
 #include "thunar-job-operation.h"
 
-#include <glib.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 

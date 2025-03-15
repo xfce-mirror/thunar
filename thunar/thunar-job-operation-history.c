@@ -93,7 +93,7 @@ thunar_job_operation_history_class_init (ThunarJobOperationHistoryClass *klass)
                                                          "can-undo",
                                                          "can-undo",
                                                          FALSE,
-                                                         EXO_PARAM_READABLE));
+                                                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_property (gobject_class,
                                    PROP_CAN_REDO,
@@ -101,7 +101,7 @@ thunar_job_operation_history_class_init (ThunarJobOperationHistoryClass *klass)
                                                          "can-redo",
                                                          "can-redo",
                                                          FALSE,
-                                                         EXO_PARAM_READABLE));
+                                                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 }
 
 
