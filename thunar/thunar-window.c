@@ -6086,13 +6086,6 @@ thunar_window_preview_file_destroyed (ThunarWindow *window)
 
 
 
-/**
- * thunar_window_selection_changed:
- * @window      : a #ThunarWindow instance.
- *
- * Used to set the `sensitive` value of the `Restore` button in the trash infobar and to
- * update the image previews.
- **/
 static void
 thunar_window_selection_changed (ThunarWindow *window)
 {
@@ -6107,24 +6100,25 @@ thunar_window_selection_changed (ThunarWindow *window)
         gtk_widget_set_sensitive (window->trash_infobar_restore_button, FALSE);
     }
 
-  /* Disconnect from previous file */
-  if (window->preview_image_file != NULL)
-    {
-      g_signal_handlers_disconnect_by_data (window->preview_image_file, window);
-      g_object_unref (window->preview_image_file);
-      window->preview_image_file = NULL;
-    }
-
-  /* clear image previews */
-  if (window->preview_image_pixbuf != NULL)
-    {
-      g_object_unref (window->preview_image_pixbuf);
-      window->preview_image_pixbuf = NULL;
-    }
-
-  /* get or request a thumbnail */
+  /* update the image preview */
   if (window->image_preview_visible == TRUE)
     {
+      /* disconnect from previous file */
+      if (window->preview_image_file != NULL)
+        {
+          g_signal_handlers_disconnect_by_data (window->preview_image_file, window);
+          g_object_unref (window->preview_image_file);
+          window->preview_image_file = NULL;
+        }
+
+      /* clear image preview */
+      if (window->preview_image_pixbuf != NULL)
+        {
+          g_object_unref (window->preview_image_pixbuf);
+          window->preview_image_pixbuf = NULL;
+        }
+
+      /* get or request a thumbnail */
       if (g_list_length (selected_files) >= 1)
         {
           ThunarFileThumbState state;
