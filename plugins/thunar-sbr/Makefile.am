@@ -31,8 +31,8 @@ thunar_sbr_la_SOURCES =							\
 
 thunar_sbr_la_CFLAGS =							\
 	$(EXIF_CFLAGS)							\
-	$(EXO_CFLAGS)							\
 	$(GLIB_CFLAGS)							\
+	$(LIBXFCE4UTIL_CFLAGS)							\
 	$(PCRE2_CFLAGS)							\
 	$(PLATFORM_CFLAGS)
 
@@ -47,7 +47,7 @@ thunar_sbr_la_LDFLAGS =							\
 thunar_sbr_la_LIBADD =							\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la	\
 	$(EXIF_LIBS)							\
-	$(EXO_LIBS)							\
+	$(LIBXFCE4UTIL_LIBS)							\
 	$(GLIB_LIBS)							\
 	$(PCRE2_LIBS)
 

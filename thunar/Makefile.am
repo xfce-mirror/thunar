@@ -5,7 +5,6 @@ AM_CPPFLAGS =								\
 	-I$(top_srcdir)							\
 	-DBINDIR=\"$(bindir)\"						\
 	-DDATADIR=\"$(datadir)\"					\
-	-DEXO_DISABLE_DEPRECATED					\
 	-DG_LOG_DOMAIN=\"thunar\"					\
 	-DLIBDIR=\"$(libdir)\"						\
 	-DHELPERDIR=\"$(HELPER_PATH_PREFIX)\"				\
@@ -214,7 +213,6 @@ thunar_SOURCES =							\
 	thunar-window.h
 
 thunar_CFLAGS =								\
-	$(EXO_CFLAGS)							\
 	$(GIO_CFLAGS)							\
 	$(GTHREAD_CFLAGS)						\
 	$(GUDEV_CFLAGS)							\
@@ -234,7 +232,6 @@ thunar_LDFLAGS =							\
 
 thunar_LDADD =								\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la	\
-	$(EXO_LIBS)							\
 	$(GIO_LIBS)							\
 	$(GTHREAD_LIBS)							\
 	$(GUDEV_LIBS)							\
