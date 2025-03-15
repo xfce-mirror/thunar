@@ -1711,7 +1711,7 @@ thunar_window_update_go_menu (ThunarWindow *window,
               action_entry = get_action_entry (THUNAR_WINDOW_ACTION_OPEN_TRASH);
               if (action_entry != NULL)
                 {
-                  if (thunar_file_get_item_count (trash_folder) > 0)
+                  if (thunar_file_get_trash_item_count (trash_folder) > 0)
                     icon_name = "user-trash-full";
                   else
                     icon_name = "user-trash";
@@ -2508,7 +2508,7 @@ thunar_window_switch_current_view (ThunarWindow *window,
 
   /* Set trash infobar's `empty trash` button sensitivity, if required */
   if (thunar_file_is_trash (window->current_directory))
-    gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_item_count (window->current_directory) > 0);
+    gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_trash_item_count (window->current_directory) > 0);
 
   /* if the view has an ongoing search operation take that into account, otherwise cancel the current search (if there is one) */
   if (thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (window->view)) != NULL)
@@ -5242,7 +5242,7 @@ thunar_window_notify_loading (ThunarView   *view,
 
       /* Set trash infobar's `empty trash` button sensitivity, if required */
       if (thunar_file_is_trash (window->current_directory))
-        gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_item_count (window->current_directory) > 0);
+        gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_trash_item_count (window->current_directory) > 0);
     }
 }
 
