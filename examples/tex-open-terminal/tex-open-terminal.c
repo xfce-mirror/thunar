@@ -157,7 +157,7 @@ tex_open_terminal_activated (ThunarxMenuItem *item,
     return;
 
   /* build up the command line for the terminal */
-  command = g_strdup_printf ("exo-open --launch TerminalEmulator --working-directory \"%s\"", path);
+  command = g_strdup_printf ("xfce-open --launch TerminalEmulator --working-directory \"%s\"", path);
 
   /* try to run the terminal command */
   if (!xfce_spawn_command_line (NULL, command, FALSE, FALSE, TRUE, &error))

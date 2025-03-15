@@ -72,13 +72,13 @@ static void
 thunar_simple_job_class_init (ThunarSimpleJobClass *klass)
 {
   GObjectClass *gobject_class;
-  ThunarJobClass *exojob_class;
+  ThunarJobClass *xfcejob_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_simple_job_finalize;
 
-  exojob_class = THUNAR_JOB_CLASS (klass);
-  exojob_class->execute = thunar_simple_job_execute;
+  xfcejob_class = THUNAR_JOB_CLASS (klass);
+  xfcejob_class->execute = thunar_simple_job_execute;
 }
 
 

@@ -24,8 +24,6 @@
 #include "thunar/thunar-job.h"
 #include "thunar/thunar-private.h"
 
-#include <exo/exo.h>
-
 G_BEGIN_DECLS
 
 GList *
