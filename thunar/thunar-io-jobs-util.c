@@ -73,7 +73,7 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob             *job,
   _thunar_return_val_if_fail (!thunar_g_file_is_root (file), NULL);
 
   /* abort on cancellation */
-  if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
+  if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
     return NULL;
 
   parent_file = g_file_get_parent (file);
@@ -150,13 +150,13 @@ thunar_io_jobs_util_next_renamed_file (ThunarJob *job,
   _thunar_return_val_if_fail (!thunar_g_file_is_root (tgt_file), NULL);
 
   /* abort on cancellation */
-  if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
+  if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
     return NULL;
 
   /* query the source file info / display name */
   info = g_file_query_info (src_file, G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
                             G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                            exo_job_get_cancellable (EXO_JOB (job)), &err);
+                            thunar_job_get_cancellable (THUNAR_JOB (job)), &err);
 
   /* abort on error */
   if (info == NULL)

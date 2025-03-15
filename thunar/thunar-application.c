@@ -1911,14 +1911,14 @@ thunar_application_process_filenames (ThunarApplication             *application
 
 
 static void
-thunar_application_rename_file_error (ExoJob            *job,
+thunar_application_rename_file_error (ThunarJob         *job,
                                       GError            *error,
                                       ThunarApplication *application)
 {
   ThunarFile *file;
   GdkScreen  *screen;
 
-  _thunar_return_if_fail (EXO_IS_JOB (job));
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (error != NULL);
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
@@ -1940,10 +1940,10 @@ thunar_application_rename_file_error (ExoJob            *job,
 
 
 static void
-thunar_application_rename_file_finished (ExoJob  *job,
-                                         gpointer user_data)
+thunar_application_rename_file_finished (ThunarJob *job,
+                                         gpointer   user_data)
 {
-  _thunar_return_if_fail (EXO_IS_JOB (job));
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
 
   /* destroy the job object */
   g_object_unref (job);

@@ -336,7 +336,7 @@ thunar_progress_dialog_list_jobs (ThunarProgressDialog *dialog)
     {
       view = THUNAR_PROGRESS_VIEW (l->data);
       job = thunar_progress_view_get_job (view);
-      if (job != NULL && !exo_job_is_cancelled (EXO_JOB (job)))
+      if (job != NULL && !thunar_job_is_cancelled (THUNAR_JOB (job)))
         {
           jobs = g_list_append (jobs, job);
         }

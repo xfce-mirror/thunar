@@ -73,7 +73,7 @@ thunar_io_scan_directory (ThunarJob          *job,
   _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* abort if the job was cancelled */
-  if (job != NULL && exo_job_set_error_if_cancelled (EXO_JOB (job), error))
+  if (job != NULL && thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
     return NULL;
 
   /* don't recurse when we are scanning prior to unlinking and the current
@@ -89,13 +89,13 @@ thunar_io_scan_directory (ThunarJob          *job,
     }
 
   if (job != NULL)
-    cancellable = exo_job_get_cancellable (EXO_JOB (job));
+    cancellable = thunar_job_get_cancellable (THUNAR_JOB (job));
 
   /* query the file type */
   type = g_file_query_file_type (file, flags, cancellable);
 
   /* abort if the job was cancelled */
-  if (job != NULL && exo_job_set_error_if_cancelled (EXO_JOB (job), error))
+  if (job != NULL && thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
     return NULL;
 
   /* ignore non-directory nodes */
@@ -119,7 +119,7 @@ thunar_io_scan_directory (ThunarJob          *job,
     }
 
   /* iterate over children one by one */
-  while (job == NULL || !exo_job_is_cancelled (EXO_JOB (job)))
+  while (job == NULL || !thunar_job_is_cancelled (THUNAR_JOB (job)))
     {
       /* query info of the child */
       info = g_file_enumerator_next_file (enumerator, cancellable, &err);
@@ -228,7 +228,7 @@ thunar_io_scan_directory (ThunarJob          *job,
       thunar_g_list_free_full (files);
       return NULL;
     }
-  else if (job != NULL && exo_job_set_error_if_cancelled (EXO_JOB (job), &err))
+  else if (job != NULL && thunar_job_set_error_if_cancelled (THUNAR_JOB (job), &err))
     {
       g_propagate_error (error, err);
       thunar_g_list_free_full (files);

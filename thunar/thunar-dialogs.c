@@ -375,7 +375,7 @@ thunar_dialogs_show_rename_file (gpointer               parent,
         {
           /* try to rename the file */
           job = thunar_io_jobs_rename_file (file, text, log_mode);
-          exo_job_launch (EXO_JOB (job));
+          thunar_job_launch (THUNAR_JOB (job));
         }
     }
 

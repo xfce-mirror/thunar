@@ -79,24 +79,24 @@ thunar_progress_view_ask_replace (ThunarProgressView *view,
 static void
 thunar_progress_view_error (ThunarProgressView *view,
                             GError             *error,
-                            ExoJob             *job);
+                            ThunarJob          *job);
 static void
 thunar_progress_view_finished (ThunarProgressView *view,
-                               ExoJob             *job);
+                               ThunarJob          *job);
 static void
 thunar_progress_view_info_message (ThunarProgressView *view,
                                    const gchar        *message,
-                                   ExoJob             *job);
+                                   ThunarJob          *job);
 static void
 thunar_progress_view_percent (ThunarProgressView *view,
                               gdouble             percent,
-                              ExoJob             *job);
+                              ThunarJob          *job);
 static void
 thunar_progress_view_frozen (ThunarProgressView *view,
-                             ExoJob             *job);
+                             ThunarJob          *job);
 static void
 thunar_progress_view_unfrozen (ThunarProgressView *view,
-                               ExoJob             *job);
+                               ThunarJob          *job);
 static void
 thunar_progress_view_set_job (ThunarProgressView *view,
                               ThunarJob          *job);
@@ -318,7 +318,7 @@ thunar_progress_view_dispose (GObject *object)
   /* disconnect from the job (if any) */
   if (view->job != NULL)
     {
-      exo_job_cancel (EXO_JOB (view->job));
+      thunar_job_cancel (THUNAR_JOB (view->job));
       thunar_progress_view_set_job (view, NULL);
     }
 
@@ -444,7 +444,7 @@ thunar_progress_view_cancel_job (ThunarProgressView *view)
   if (view->job != NULL)
     {
       /* cancel the job */
-      exo_job_cancel (EXO_JOB (view->job));
+      thunar_job_cancel (THUNAR_JOB (view->job));
 
       /* don't listen to frozen/unfrozen states updates any more */
       g_signal_handlers_disconnect_matched (view->job, G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
@@ -527,7 +527,7 @@ thunar_progress_view_ask_replace (ThunarProgressView *view,
 static void
 thunar_progress_view_error (ThunarProgressView *view,
                             GError             *error,
-                            ExoJob             *job)
+                            ThunarJob          *job)
 {
   GtkWidget *window;
 
@@ -550,7 +550,7 @@ thunar_progress_view_error (ThunarProgressView *view,
 
 static void
 thunar_progress_view_finished (ThunarProgressView *view,
-                               ExoJob             *job)
+                               ThunarJob          *job)
 {
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_VIEW (view));
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
@@ -565,7 +565,7 @@ thunar_progress_view_finished (ThunarProgressView *view,
 static void
 thunar_progress_view_info_message (ThunarProgressView *view,
                                    const gchar        *message,
-                                   ExoJob             *job)
+                                   ThunarJob          *job)
 {
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_VIEW (view));
   _thunar_return_if_fail (g_utf8_validate (message, -1, NULL));
@@ -580,7 +580,7 @@ thunar_progress_view_info_message (ThunarProgressView *view,
 static void
 thunar_progress_view_percent (ThunarProgressView *view,
                               gdouble             percent,
-                              ExoJob             *job)
+                              ThunarJob          *job)
 {
   gchar *text;
 
@@ -606,7 +606,7 @@ thunar_progress_view_percent (ThunarProgressView *view,
 
 static void
 thunar_progress_view_frozen (ThunarProgressView *view,
-                             ExoJob             *job)
+                             ThunarJob          *job)
 {
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_VIEW (view));
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
@@ -625,7 +625,7 @@ thunar_progress_view_frozen (ThunarProgressView *view,
 
 static void
 thunar_progress_view_unfrozen (ThunarProgressView *view,
-                               ExoJob             *job)
+                               ThunarJob          *job)
 {
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_VIEW (view));
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
@@ -776,7 +776,7 @@ thunar_progress_view_launch_job (ThunarProgressView *view)
 {
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_VIEW (view));
 
-  exo_job_launch (EXO_JOB (view->job));
+  thunar_job_launch (THUNAR_JOB (view->job));
 
   view->launched = TRUE;
 

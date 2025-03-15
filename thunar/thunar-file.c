@@ -3680,9 +3680,9 @@ thunar_file_get_file_count (ThunarFile *file,
   if (G_LIKELY (last_modified < file->file_count_timestamp))
     {
       /* For consistent behavior we might as well call the callback;
-       * Although the ExoJob parameter will be NULL which should be
+       * Although the ThunarJob parameter will be NULL which should be
        * dealt with accordingly by the callback */
-      ((void (*) (ExoJob *, gpointer)) (*callback)) (NULL, data);
+      ((void (*) (ThunarJob *, gpointer)) (*callback)) (NULL, data);
       return file->file_count;
     }
 
@@ -3705,7 +3705,7 @@ thunar_file_get_file_count (ThunarFile *file,
                              G_CONNECT_AFTER);
     }
 
-  exo_job_launch (EXO_JOB (job));
+  thunar_job_launch (THUNAR_JOB (job));
 
   /* release our reference on the job (a ref is hold by itself, once it is launched) */
   g_object_unref (job);
