@@ -44,7 +44,6 @@
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-user.h"
 
-#include <exo/exo.h>
 #include <libxfce4ui/libxfce4ui.h>
 
 
@@ -188,7 +187,7 @@ thunar_permissions_chooser_class_init (ThunarPermissionsChooserClass *klass)
                                    PROP_FILES,
                                    g_param_spec_boxed ("files", "files", "files",
                                                        THUNARX_TYPE_FILE_INFO_LIST,
-                                                       EXO_PARAM_READWRITE));
+                                                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarPermissionsChooser:mutable:
@@ -202,7 +201,7 @@ thunar_permissions_chooser_class_init (ThunarPermissionsChooserClass *klass)
                                                          "mutable",
                                                          "mutable",
                                                          FALSE,
-                                                         EXO_PARAM_READABLE));
+                                                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 }
 
 

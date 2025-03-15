@@ -45,6 +45,10 @@
 #include "thunar/thunar-private.h"
 #include "xfconf/xfconf.h"
 
+#include <gtk/gtk.h>
+#include <libxfce4util/libxfce4util.h>
+
+
 
 /* Property identifiers */
 enum
@@ -222,7 +226,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                        "DefaultView",
                        NULL,
                        "void",
-                       EXO_PARAM_READWRITE);
+                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:hidden-bookmarks:
@@ -235,7 +239,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                       NULL,
                       NULL,
                       G_TYPE_STRV,
-                      EXO_PARAM_READWRITE);
+                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:hidden-devices:
@@ -249,7 +253,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                       NULL,
                       NULL,
                       G_TYPE_STRV,
-                      EXO_PARAM_READWRITE);
+                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-restore-tabs:
@@ -261,7 +265,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "LastRestoreTabs",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-tabs-left:
@@ -274,7 +278,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                       NULL,
                       NULL,
                       G_TYPE_STRV,
-                      EXO_PARAM_READWRITE);
+                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-tabs-right:
@@ -287,7 +291,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                       NULL,
                       NULL,
                       G_TYPE_STRV,
-                      EXO_PARAM_READWRITE);
+                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-focused-tab-left:
@@ -299,7 +303,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                     "LastFocusedTabLeft",
                     NULL,
                     0, G_MAXINT, 0,
-                    EXO_PARAM_READWRITE);
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-focused-tab-right:
@@ -311,7 +315,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                     "LastFocusedTabRight",
                     NULL,
                     0, G_MAXINT, 0,
-                    EXO_PARAM_READWRITE);
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-compact-view-zoom-level:
@@ -324,7 +328,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      THUNAR_TYPE_ZOOM_LEVEL,
                      THUNAR_ZOOM_LEVEL_25_PERCENT,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
 
   /**
@@ -338,7 +342,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                        "LastDetailsViewColumnOrder",
                        NULL,
                        "THUNAR_COLUMN_NAME,THUNAR_COLUMN_SIZE,THUNAR_COLUMN_SIZE_IN_BYTES,THUNAR_COLUMN_TYPE,THUNAR_COLUMN_DATE_MODIFIED",
-                       EXO_PARAM_READWRITE);
+                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-details-view-column-widths:
@@ -351,7 +355,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                        "LastDetailsViewColumnWidths",
                        NULL,
                        "",
-                       EXO_PARAM_READWRITE);
+                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-details-view-fixed-columns:
@@ -364,7 +368,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "LastDetailsViewFixedColumns",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-details-view-visible-columns:
@@ -376,7 +380,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                        "LastDetailsViewVisibleColumns",
                        NULL,
                        "THUNAR_COLUMN_DATE_MODIFIED,THUNAR_COLUMN_NAME,THUNAR_COLUMN_SIZE,THUNAR_COLUMN_TYPE",
-                       EXO_PARAM_READWRITE);
+                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-details-view-zoom-level:
@@ -389,7 +393,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      THUNAR_TYPE_ZOOM_LEVEL,
                      THUNAR_ZOOM_LEVEL_38_PERCENT,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-icon-view-zoom-level:
@@ -402,7 +406,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      THUNAR_TYPE_ZOOM_LEVEL,
                      THUNAR_ZOOM_LEVEL_100_PERCENT,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-location-bar:
@@ -416,7 +420,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                        "LastLocationBar",
                        NULL,
                        "ThunarLocationEntry",
-                       EXO_PARAM_READWRITE);
+                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-menubar-visible:
@@ -428,7 +432,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "LastMenubarVisible",
                         NULL,
                         TRUE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-separator-position:
@@ -441,7 +445,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                     "LastSeparatorPosition",
                     NULL,
                     0, G_MAXINT, 170,
-                    EXO_PARAM_READWRITE);
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-splitview-separator-position:
@@ -454,7 +458,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                     "LastSplitviewSeparatorPosition",
                     NULL,
                     -1, G_MAXINT, -1,
-                    EXO_PARAM_READWRITE);
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-show-hidden:
@@ -466,7 +470,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "LastShowHidden",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-toolbar-visible-buttons:
@@ -482,7 +486,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                        "LastToolbarVisibleButtons",
                        NULL,
                        NULL,
-                       EXO_PARAM_READABLE);
+                       G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-toolbar-item-order:
@@ -496,7 +500,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                        "LastToolbarItemOrder",
                        NULL,
                        NULL,
-                       EXO_PARAM_READABLE);
+                       G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-directory-specific-settings:
@@ -508,7 +512,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscDirectorySpecificSettings",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-side-pane:
@@ -521,7 +525,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      THUNAR_TYPE_SIDEPANE_TYPE,
                      THUNAR_SIDEPANE_TYPE_SHORTCUTS,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-sort-column:
@@ -534,7 +538,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      THUNAR_TYPE_COLUMN,
                      THUNAR_COLUMN_NAME,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-sort-order:
@@ -547,7 +551,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      GTK_TYPE_SORT_TYPE,
                      GTK_SORT_ASCENDING,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
   /**
    * ThunarPreferences:last-statusbar-visible:
    *
@@ -558,7 +562,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "LastStatusbarVisible",
                         NULL,
                         TRUE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-image-preview-visible:
@@ -570,7 +574,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "LastImagePreviewVisible",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-view:
@@ -583,7 +587,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                        "LastView",
                        NULL,
                        "ThunarIconView",
-                       EXO_PARAM_READWRITE);
+                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-window-height:
@@ -596,7 +600,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                     "LastWindowHeight",
                     NULL,
                     1, G_MAXINT, 480,
-                    EXO_PARAM_READWRITE);
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-window-width:
@@ -609,7 +613,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                     "LastWindowWidth",
                     NULL,
                     1, G_MAXINT, 640,
-                    EXO_PARAM_READWRITE);
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-window-maximized:
@@ -622,7 +626,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "LastWindowMaximized",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-renamer-dialog-height:
@@ -635,7 +639,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                     "LastRenamerDialogHeight",
                     NULL,
                     1, G_MAXINT, 490,
-                    EXO_PARAM_READWRITE);
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-renamer-dialog-width:
@@ -648,7 +652,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                     "LastRenamerDialogWidth",
                     NULL,
                     1, G_MAXINT, 510,
-                    EXO_PARAM_READWRITE);
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-renamer-dialog-maximized:
@@ -661,7 +665,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "LastRenamerDialogMaximized",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-toolbar-items:
@@ -677,7 +681,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                        "undo:0,redo:0,zoom-out:0,zoom-in:0,zoom-reset:0,"
                        "view-as-icons:0,view-as-detailed-list:0,view-as-compact-list:0,view-switcher:0,"
                        "location-bar:1,reload:0,search:1",
-                       EXO_PARAM_READWRITE);
+                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-always-show-tabs:
@@ -689,7 +693,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         NULL,
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-volume-management:
@@ -702,7 +706,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscVolumeManagement",
                         NULL,
                         TRUE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-case-sensitive:
@@ -714,7 +718,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscCaseSensitive",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-date-style:
@@ -727,7 +731,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      THUNAR_TYPE_DATE_STYLE,
                      THUNAR_DATE_STYLE_SIMPLE,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-date-custom-style:
@@ -739,7 +743,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                        "MiscDateCustomStyle",
                        NULL,
                        "%Y-%m-%d %H:%M:%S",
-                       EXO_PARAM_READWRITE);
+                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-execute-shell-scripts-by-default:
@@ -756,7 +760,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      THUNAR_TYPE_EXECUTE_SHELL_SCRIPT,
                      THUNAR_EXECUTE_SHELL_SCRIPT_NEVER,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-folders-first:
@@ -768,7 +772,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscFoldersFirst",
                         NULL,
                         TRUE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
 
   /**
@@ -781,7 +785,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscHiddenLast",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
 
   /**
@@ -795,7 +799,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      THUNAR_TYPE_FOLDER_ITEM_COUNT,
                      THUNAR_FOLDER_ITEM_COUNT_NEVER,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-full-path-in-tab-title:
@@ -808,7 +812,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscFullPathInTabTitle",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-window-title-style:
@@ -822,7 +826,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      THUNAR_TYPE_WINDOW_TITLE_STYLE,
                      THUNAR_WINDOW_TITLE_STYLE_FOLDER_NAME_WITH_THUNAR_SUFFIX,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-horizontal-wheel-navigates:
@@ -835,7 +839,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscHorizontalWheelNavigates",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-image-size-in-statusbar:
@@ -849,7 +853,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscImageSizeInStatusbar",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-middle-click-in-tab:
@@ -861,7 +865,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         NULL,
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-open-new-window-as_tab:
@@ -874,7 +878,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscOpenNewWindowAsTab",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-recursive-permissions:
@@ -888,7 +892,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      THUNAR_TYPE_RECURSIVE_PERMISSIONS,
                      THUNAR_RECURSIVE_PERMISSIONS_ASK,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-recursive-search:
@@ -901,7 +905,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      THUNAR_TYPE_RECURSIVE_SEARCH,
                      THUNAR_RECURSIVE_SEARCH_ALWAYS,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-remember-geometry:
@@ -917,7 +921,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscRememberGeometry",
                         NULL,
                         TRUE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-show-about-templates:
@@ -930,7 +934,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscShowAboutTemplates",
                         NULL,
                         TRUE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-show-delete-action:
@@ -943,7 +947,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscShowDeleteAction",
                         NULL,
                         !thunar_g_vfs_is_uri_scheme_supported ("trash"),
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-single-click:
@@ -955,7 +959,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscSingleClick",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-single-click-timeout:
@@ -970,7 +974,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      "MiscSingleClickTimeout",
                      NULL,
                      0u, G_MAXUINT, 500u,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-small-toolbar-icons:
@@ -982,7 +986,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         NULL,
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-tab-close-middle-click:
@@ -995,7 +999,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         NULL,
                         NULL,
                         TRUE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-text-beside-icons:
@@ -1008,7 +1012,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscTextBesideIcons",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-thumbnail-mode:
@@ -1021,7 +1025,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      THUNAR_TYPE_THUMBNAIL_MODE,
                      THUNAR_THUMBNAIL_MODE_ONLY_LOCAL,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-thumbnail-draw-frames:
@@ -1035,7 +1039,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         NULL,
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-thumbnail-max-file-size:
@@ -1048,7 +1052,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                        NULL,
                        NULL,
                        0, G_MAXUINT64, 0,
-                       EXO_PARAM_READWRITE);
+                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-file-size-binary:
@@ -1060,7 +1064,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscFileSizeBinary",
                         NULL,
                         TRUE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-parallel-copy-mode:
@@ -1073,7 +1077,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      THUNAR_TYPE_PARALLEL_COPY_MODE,
                      THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_IDLE_DEVICE,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-change-window-icon:
@@ -1085,7 +1089,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscChangeWindowIcon",
                         NULL,
                         TRUE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-transfer-use-partial:
@@ -1098,7 +1102,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      THUNAR_TYPE_USE_PARTIAL_MODE,
                      THUNAR_USE_PARTIAL_MODE_DISABLED,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-transfer-verify-file:
@@ -1111,7 +1115,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      THUNAR_TYPE_VERIFY_FILE_MODE,
                      THUNAR_VERIFY_FILE_MODE_DISABLED,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-image-preview-mode:
@@ -1125,7 +1129,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      THUNAR_TYPE_IMAGE_PREVIEW_MODE,
                      THUNAR_IMAGE_PREVIEW_MODE_EMBEDDED,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-confirm-close-multiple-tabs:
@@ -1138,7 +1142,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "ConfirmCloseMultipleTabs",
                         NULL,
                         TRUE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-status-bar-active-info:
@@ -1152,7 +1156,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      0, G_MAXUINT,
                      THUNAR_STATUS_BAR_INFO_DISPLAY_NAME | THUNAR_STATUS_BAR_INFO_FILETYPE | THUNAR_STATUS_BAR_INFO_SIZE
                      | THUNAR_STATUS_BAR_INFO_SIZE_IN_BYTES,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:shortcuts-icon-emblems:
@@ -1165,7 +1169,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "ShortcutsIconEmblems",
                         NULL,
                         TRUE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:shortcuts-icon-size:
@@ -1179,7 +1183,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      THUNAR_TYPE_ICON_SIZE,
                      THUNAR_ICON_SIZE_24,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:tree-icon-emblems:
@@ -1192,7 +1196,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "TreeIconEmblems",
                         NULL,
                         TRUE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:tree-icon-size:
@@ -1206,7 +1210,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      THUNAR_TYPE_ICON_SIZE,
                      THUNAR_ICON_SIZE_16,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-tree-lines-in-tree-sidepane:
@@ -1218,7 +1222,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "TreeLines",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-switch-to-new-tab:
@@ -1230,7 +1234,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "SwitchToNewTab",
                         NULL,
                         TRUE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
 
 
@@ -1245,7 +1249,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscVerticalSplitPane",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-open-new-windows-in-split-view:
@@ -1260,7 +1264,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscOpenNewWindowsInSplitView",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-always-enable-split-view:
@@ -1272,7 +1276,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscAlwaysEnableSplitView",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:compact-view-max-chars:
@@ -1285,7 +1289,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                     NULL,
                     G_MININT, G_MAXINT,
                     100,
-                    EXO_PARAM_READWRITE);
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-highlighting-enabled:
@@ -1298,7 +1302,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscHighlightingEnabled",
                         NULL,
                         thunar_g_vfs_metadata_is_supported (),
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-undo-redo-history-size:
@@ -1312,7 +1316,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                     NULL,
                     -1, G_MAXINT,
                     10,
-                    EXO_PARAM_READWRITE);
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-confirm-move-to-trash:
@@ -1324,7 +1328,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscConfirmMoveToTrash",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-max-number-of-templates:
@@ -1338,7 +1342,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      NULL,
                      0, G_MAXUINT,
                      100,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-expandable-folders:
@@ -1350,7 +1354,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscEnableExpandableFolders",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-display-launcher-name-as-filename:
@@ -1362,7 +1366,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscDisplayLauncherNameAsFilename",
                         NULL,
                         TRUE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-symbolic-icons-in-toolbar:
@@ -1374,7 +1378,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscSymbolicIconsInToolbar",
                         NULL,
                         TRUE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-symbolic-icons-in-sidepane:
@@ -1386,7 +1390,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscSymbolicIconsInSidepane",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-ctrl-scroll-wheel-to-zoom:
@@ -1398,7 +1402,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscCtrlScrollWheelToZoom",
                         NULL,
                         TRUE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:misc-use-csd:
@@ -1410,7 +1414,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscUseCSD",
                         NULL,
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);

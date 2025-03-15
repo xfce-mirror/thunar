@@ -29,6 +29,8 @@
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-util.h"
 
+#include <libxfce4ui/libxfce4ui.h>
+
 
 
 enum
@@ -112,7 +114,7 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                                         "drop-file",
                                                         "drop-file",
                                                         THUNAR_TYPE_FILE,
-                                                        EXO_PARAM_READWRITE));
+                                                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarIconRenderer:file:
@@ -123,7 +125,7 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                    PROP_FILE,
                                    g_param_spec_object ("file", "file", "file",
                                                         THUNAR_TYPE_FILE,
-                                                        EXO_PARAM_READWRITE));
+                                                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarIconRenderer:emblems:
@@ -136,14 +138,14 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                                          "emblems",
                                                          "emblems",
                                                          TRUE,
-                                                         G_PARAM_CONSTRUCT | EXO_PARAM_READWRITE));
+                                                         G_PARAM_CONSTRUCT | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarIconRenderer:follow-state:
    *
    * Specifies whether the icon renderer should render icons
    * based on the selection state of the items. This is necessary
-   * for #ExoIconView, which doesn't draw any item state indicators
+   * for #XfceIconView, which doesn't draw any item state indicators
    * itself.
    **/
   g_object_class_install_property (gobject_class,
@@ -152,7 +154,7 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                                          "follow-state",
                                                          "follow-state",
                                                          FALSE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarIconRenderer:size:
@@ -165,7 +167,7 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                    g_param_spec_enum ("size", "size", "size",
                                                       THUNAR_TYPE_ICON_SIZE,
                                                       THUNAR_ICON_SIZE_32,
-                                                      G_PARAM_CONSTRUCT | EXO_PARAM_READWRITE));
+                                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 
 
@@ -178,7 +180,7 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                    PROP_HIGHLIGHT_COLOR,
                                    g_param_spec_string ("highlight-color", "highlight-color", "highlight-color",
                                                         NULL,
-                                                        EXO_PARAM_READWRITE));
+                                                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 
 
@@ -192,7 +194,7 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                    PROP_ROUNDED_CORNERS,
                                    g_param_spec_boolean ("rounded-corners", "rounded-corners", "rounded-corners",
                                                          FALSE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 
 
@@ -205,7 +207,7 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                    PROP_HIGHLIGHTING_ENABLED,
                                    g_param_spec_boolean ("highlighting-enabled", "highlighting-enabled", "highlighting-enabled",
                                                          FALSE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarIconRenderer:image-preview-enabled:
@@ -216,7 +218,7 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                    PROP_IMAGE_PREVIEW_ENABLED,
                                    g_param_spec_boolean ("image-preview-enabled", "image-preview-enabled", "image-preview-enabled",
                                                          FALSE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarIconRenderer:use_symbolic_icons:
@@ -229,7 +231,7 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                                          "use-symbolic-icons",
                                                          "use-symbolic-icons",
                                                          FALSE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 
@@ -576,7 +578,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   if (G_UNLIKELY (icon_area.width > cell_area->width || icon_area.height > cell_area->height))
     {
       /* scale down to fit */
-      temp = exo_gdk_pixbuf_scale_down (icon, TRUE, MAX (1, cell_area->width * scale_factor), MAX (1, cell_area->height * scale_factor));
+      temp = xfce_gdk_pixbuf_scale_down (icon, TRUE, MAX (1, cell_area->width * scale_factor), MAX (1, cell_area->height * scale_factor));
       g_object_unref (G_OBJECT (icon));
       icon = temp;
 
@@ -660,7 +662,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
               if (G_UNLIKELY (MAX (emblem_area.width, emblem_area.height) > emblem_size))
                 {
                   /* scale down the emblem */
-                  temp = exo_gdk_pixbuf_scale_ratio (emblem, emblem_size * scale_factor);
+                  temp = xfce_gdk_pixbuf_scale_ratio (emblem, emblem_size * scale_factor);
                   g_object_unref (G_OBJECT (emblem));
                   emblem = temp;
 
