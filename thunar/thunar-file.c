@@ -3530,7 +3530,7 @@ thunar_file_get_original_path (const ThunarFile *file)
 
 
 /**
- * thunar_file_get_item_count:
+ * thunar_file_get_trash_item_count:
  * @file : a #ThunarFile instance.
  *
  * Returns the number of items in the trash, if @file refers to the
@@ -3540,7 +3540,7 @@ thunar_file_get_original_path (const ThunarFile *file)
  *               root dir, 0 otherwise.
  **/
 guint32
-thunar_file_get_item_count (const ThunarFile *file)
+thunar_file_get_trash_item_count (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), 0);
 
@@ -4156,7 +4156,7 @@ thunar_file_get_icon_name (ThunarFile         *file,
         {
           if (g_file_has_uri_scheme (file->gfile, "trash"))
             {
-              special_names[0] = thunar_file_get_item_count (file) > 0 ? "user-trash-full" : "user-trash";
+              special_names[0] = thunar_file_get_trash_item_count (file) > 0 ? "user-trash-full" : "user-trash";
               special_names[1] = "user-trash";
             }
           else if (g_file_has_uri_scheme (file->gfile, "network"))
