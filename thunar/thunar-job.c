@@ -873,7 +873,7 @@ _thunar_job_ask_valist (ThunarJob        *job,
                         const gchar      *question,
                         ThunarJobResponse choices)
 {
-  ThunarJobResponse response;
+  ThunarJobResponse response = THUNAR_JOB_RESPONSE_CANCEL;
   gchar            *text;
   gchar            *message;
 
