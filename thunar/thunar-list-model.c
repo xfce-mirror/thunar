@@ -238,7 +238,7 @@ thunar_list_model_set_loading (ThunarListModel *store,
                                gboolean         loading);
 
 static void
-thunar_list_model_file_count_callback (ExoJob  *job,
+thunar_list_model_file_count_callback (ThunarJob  *job,
                                        gpointer model);
 static ThunarFolder *
 thunar_list_model_get_folder (ThunarStandardViewModel *store);
@@ -2107,7 +2107,7 @@ thunar_list_model_cancel_search_job (ThunarListModel *model)
   /* cancel the ongoing search if there is one */
   if (model->recursive_search_job)
     {
-      exo_job_cancel (EXO_JOB (model->recursive_search_job));
+      thunar_job_cancel (THUNAR_JOB (model->recursive_search_job));
 
       g_signal_handlers_disconnect_by_data (model->recursive_search_job, model);
       g_object_unref (model->recursive_search_job);
@@ -2283,7 +2283,7 @@ thunar_list_model_set_folder (ThunarStandardViewModel *model,
               /* search the current folder
                * start a new recursive_search_job */
               store->recursive_search_job = thunar_io_jobs_search_directory (THUNAR_STANDARD_VIEW_MODEL (store), search_query_c, thunar_folder_get_corresponding_file (folder));
-              exo_job_launch (EXO_JOB (store->recursive_search_job));
+              thunar_job_launch (THUNAR_JOB (store->recursive_search_job));
 
               g_signal_connect (store->recursive_search_job, "error", G_CALLBACK (thunar_list_model_search_error), NULL);
               g_signal_connect (store->recursive_search_job, "finished", G_CALLBACK (thunar_list_model_search_finished), store);
@@ -2763,7 +2763,7 @@ thunar_list_model_get_paths_for_files (ThunarStandardViewModel *model,
 
 
 static void
-thunar_list_model_file_count_callback (ExoJob  *job,
+thunar_list_model_file_count_callback (ThunarJob  *job,
                                        gpointer model)
 {
   ThunarListModel *store = THUNAR_LIST_MODEL (model);

@@ -44,7 +44,7 @@
 static void
 thunar_simple_job_finalize (GObject *object);
 static gboolean
-thunar_simple_job_execute (ExoJob  *job,
+thunar_simple_job_execute (ThunarJob  *job,
                            GError **error);
 
 
@@ -72,12 +72,12 @@ static void
 thunar_simple_job_class_init (ThunarSimpleJobClass *klass)
 {
   GObjectClass *gobject_class;
-  ExoJobClass  *exojob_class;
+  ThunarJobClass  *exojob_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_simple_job_finalize;
 
-  exojob_class = EXO_JOB_CLASS (klass);
+  exojob_class = THUNAR_JOB_CLASS (klass);
   exojob_class->execute = thunar_simple_job_execute;
 }
 
@@ -107,7 +107,7 @@ thunar_simple_job_finalize (GObject *object)
 
 
 static gboolean
-thunar_simple_job_execute (ExoJob  *job,
+thunar_simple_job_execute (ThunarJob  *job,
                            GError **error)
 {
   ThunarSimpleJob *simple_job = THUNAR_SIMPLE_JOB (job);
@@ -122,11 +122,11 @@ thunar_simple_job_execute (ExoJob  *job,
 
   if (!success)
     {
-      g_assert (err != NULL || exo_job_is_cancelled (job));
+      g_assert (err != NULL || thunar_job_is_cancelled (job));
 
       /* set error if the job was cancelled. otherwise just propagate
        * the results of the processing function */
-      if (exo_job_set_error_if_cancelled (job, error))
+      if (thunar_job_set_error_if_cancelled (job, error))
         {
           g_clear_error (&err);
         }
@@ -154,7 +154,7 @@ thunar_simple_job_execute (ExoJob  *job,
  * Allocates a new #ThunarSimpleJob, which executes the specified
  * @func with the specified parameters.
  *
- * Use exo_job_launch() to launch the returned job..
+ * Use thunar_job_launch() to launch the returned job..
  *
  * For example the listdir @func expects a #ThunarPath for the
  * folder to list, so the call to thunar_simple_job_new()
@@ -163,7 +163,7 @@ thunar_simple_job_execute (ExoJob  *job,
  * <informalexample><programlisting>
  * job = thunar_simple_job_new (_thunar_io_jobs_listdir, 1,
  *                              THUNAR_TYPE_PATH, path);
- * exo_job_launch (EXO_JOB (job));
+ * thunar_job_launch (THUNAR_JOB (job));
  * </programlisting></informalexample>
  *
  * The caller is responsible to release the returned object using

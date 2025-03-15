@@ -49,8 +49,8 @@ enum
 static void
 thunar_deep_count_job_finalize (GObject *object);
 static gboolean
-thunar_deep_count_job_execute (ExoJob  *job,
-                               GError **error);
+thunar_deep_count_job_execute (ThunarJob  *job,
+                               GError    **error);
 
 
 
@@ -98,13 +98,13 @@ G_DEFINE_TYPE (ThunarDeepCountJob, thunar_deep_count_job, THUNAR_TYPE_JOB)
 static void
 thunar_deep_count_job_class_init (ThunarDeepCountJobClass *klass)
 {
-  ExoJobClass  *job_class;
-  GObjectClass *gobject_class;
+  ThunarJobClass *job_class;
+  GObjectClass   *gobject_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_deep_count_job_finalize;
 
-  job_class = EXO_JOB_CLASS (klass);
+  job_class = THUNAR_JOB_CLASS (klass);
   job_class->execute = thunar_deep_count_job_execute;
 
   /**
@@ -161,7 +161,7 @@ thunar_deep_count_job_status_update (ThunarDeepCountJob *job)
 {
   _thunar_return_if_fail (THUNAR_IS_DEEP_COUNT_JOB (job));
 
-  exo_job_emit (EXO_JOB (job),
+  thunar_job_emit (THUNAR_JOB (job),
                 deep_count_signals[STATUS_UPDATE],
                 0,
                 job->total_size,
@@ -174,7 +174,7 @@ thunar_deep_count_job_status_update (ThunarDeepCountJob *job)
 
 
 static gboolean
-thunar_deep_count_job_process (ExoJob      *job,
+thunar_deep_count_job_process (ThunarJob   *job,
                                GFile       *file,
                                GFileInfo   *file_info,
                                const gchar *toplevel_fs_id,
@@ -196,7 +196,7 @@ thunar_deep_count_job_process (ExoJob      *job,
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* abort if job was already cancelled */
-  if (exo_job_is_cancelled (job))
+  if (thunar_job_is_cancelled (job))
     return FALSE;
 
   if (file_info != NULL)
@@ -210,7 +210,7 @@ thunar_deep_count_job_process (ExoJob      *job,
       info = g_file_query_info (file,
                                 DEEP_COUNT_FILE_INFO_NAMESPACE,
                                 count_job->query_flags,
-                                exo_job_get_cancellable (job),
+                                thunar_job_get_cancellable (job),
                                 error);
     }
 
@@ -219,7 +219,7 @@ thunar_deep_count_job_process (ExoJob      *job,
     return FALSE;
 
   /* abort on cancellation */
-  if (exo_job_is_cancelled (job))
+  if (thunar_job_is_cancelled (job))
     {
       g_object_unref (info);
       return FALSE;
@@ -252,10 +252,10 @@ thunar_deep_count_job_process (ExoJob      *job,
       enumerator = g_file_enumerate_children (file,
                                               DEEP_COUNT_FILE_INFO_NAMESPACE "," G_FILE_ATTRIBUTE_STANDARD_NAME,
                                               count_job->query_flags,
-                                              exo_job_get_cancellable (job),
+                                              thunar_job_get_cancellable (job),
                                               error);
 
-      if (!exo_job_is_cancelled (job))
+      if (!thunar_job_is_cancelled (job))
         {
           if (enumerator == NULL)
             {
@@ -279,18 +279,18 @@ thunar_deep_count_job_process (ExoJob      *job,
               /* directory was readable */
               count_job->directory_count++;
 
-              while (!exo_job_is_cancelled (job))
+              while (!thunar_job_is_cancelled (job))
                 {
                   /* query next child info */
                   child_info = g_file_enumerator_next_file (enumerator,
-                                                            exo_job_get_cancellable (job),
+                                                            thunar_job_get_cancellable (job),
                                                             error);
 
                   /* abort on invalid child info (iteration ends) or cancellation */
                   if (child_info == NULL)
                     break;
 
-                  if (!exo_job_is_cancelled (job))
+                  if (!thunar_job_is_cancelled (job))
                     {
                       /* generate a GFile for the child */
                       child = g_file_resolve_relative_path (file, g_file_info_get_name (child_info));
@@ -344,14 +344,14 @@ thunar_deep_count_job_process (ExoJob      *job,
 
   /* we've succeeded if there was no error when loading information
    * about the job file itself and the job was not cancelled */
-  return !exo_job_is_cancelled (job) && success;
+  return !thunar_job_is_cancelled (job) && success;
 }
 
 
 
 static gboolean
-thunar_deep_count_job_execute (ExoJob  *job,
-                               GError **error)
+thunar_deep_count_job_execute (ThunarJob  *job,
+                               GError    **error)
 {
   ThunarDeepCountJob *count_job = THUNAR_DEEP_COUNT_JOB (job);
   gboolean            success = TRUE;
@@ -363,7 +363,7 @@ thunar_deep_count_job_execute (ExoJob  *job,
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* don't start the job if it was already cancelled */
-  if (exo_job_set_error_if_cancelled (job, error))
+  if (thunar_job_set_error_if_cancelled (job, error))
     return FALSE;
 
   /* reset counters */
@@ -385,11 +385,11 @@ thunar_deep_count_job_execute (ExoJob  *job,
 
   if (!success)
     {
-      g_assert (err != NULL || exo_job_is_cancelled (job));
+      g_assert (err != NULL || thunar_job_is_cancelled (job));
 
       /* set error if the job was cancelled. otherwise just propagate
        * the results of the processing function */
-      if (exo_job_set_error_if_cancelled (job, error))
+      if (thunar_job_set_error_if_cancelled (job, error))
         {
           if (err != NULL)
             g_error_free (err);
@@ -400,7 +400,7 @@ thunar_deep_count_job_execute (ExoJob  *job,
             g_propagate_error (error, err);
         }
     }
-  else if (!exo_job_is_cancelled (job))
+  else if (!thunar_job_is_cancelled (job))
     {
       /* emit final status update at the very end of the computation */
       thunar_deep_count_job_status_update (count_job);

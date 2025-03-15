@@ -498,7 +498,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
             }
 
           job = thunar_io_jobs_rename_file (thunar_file, display_name, THUNAR_OPERATION_LOG_NO_OPERATIONS);
-          exo_job_launch (EXO_JOB (job));
+          thunar_job_launch (THUNAR_JOB (job));
 
           /* release our reference on the job (a ref is hold by itself, once it is launched) */
           g_object_unref (job);

@@ -1086,13 +1086,13 @@ thunar_properties_dialog_reload (ThunarPropertiesDialog *dialog)
 
 
 static void
-thunar_properties_dialog_rename_error (ExoJob                 *job,
+thunar_properties_dialog_rename_error (ThunarJob                 *job,
                                        GError                 *error,
                                        ThunarPropertiesDialog *dialog)
 {
   ThunarFile *file;
 
-  _thunar_return_if_fail (EXO_IS_JOB (job));
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (error != NULL);
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) == 1);
@@ -1118,10 +1118,10 @@ thunar_properties_dialog_rename_error (ExoJob                 *job,
 
 
 static void
-thunar_properties_dialog_rename_finished (ExoJob                 *job,
+thunar_properties_dialog_rename_finished (ThunarJob                 *job,
                                           ThunarPropertiesDialog *dialog)
 {
-  _thunar_return_if_fail (EXO_IS_JOB (job));
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) == 1);
 
@@ -1160,7 +1160,7 @@ thunar_properties_dialog_name_activate (GtkWidget              *entry,
 
       if (dialog->rename_job != NULL)
         {
-          exo_job_launch (EXO_JOB (dialog->rename_job));
+          thunar_job_launch (THUNAR_JOB (dialog->rename_job));
           g_signal_connect (dialog->rename_job, "error", G_CALLBACK (thunar_properties_dialog_rename_error), dialog);
           g_signal_connect (dialog->rename_job, "finished", G_CALLBACK (thunar_properties_dialog_rename_finished), dialog);
         }
@@ -2019,7 +2019,7 @@ thunar_properties_dialog_reset_highlight (ThunarPropertiesDialog *dialog)
   dialog->highlight_change_job_finish_signal =
   g_signal_connect_swapped (dialog->highlight_change_job, "finished",
                             G_CALLBACK (_make_highlight_buttons_sensitive), dialog);
-  exo_job_launch (EXO_JOB (dialog->highlight_change_job));
+  thunar_job_launch (THUNAR_JOB (dialog->highlight_change_job));
 
   /* clear previouly set colors */
   g_free (dialog->foreground_color);
@@ -2076,7 +2076,7 @@ thunar_properties_dialog_apply_highlight (ThunarPropertiesDialog *dialog)
   dialog->highlight_change_job_finish_signal =
   g_signal_connect_swapped (dialog->highlight_change_job, "finished",
                             G_CALLBACK (_make_highlight_buttons_sensitive), dialog);
-  exo_job_launch (EXO_JOB (dialog->highlight_change_job));
+  thunar_job_launch (THUNAR_JOB (dialog->highlight_change_job));
 
   /* update the dialog & apply btn after the job is done i.e in the callback */
 }
