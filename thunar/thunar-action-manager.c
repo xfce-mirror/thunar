@@ -1829,7 +1829,7 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
         parent = action_mgr->single_folder;
       else
         parent = action_mgr->current_directory;
-      if (thunar_file_is_trash (parent))
+      if (thunar_file_is_trashed (parent))
         return NULL;
       item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
       gtk_widget_set_sensitive (item, thunar_file_is_writable (parent) && !action_mgr->is_searching);
@@ -1840,7 +1840,7 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
         parent = action_mgr->single_folder;
       else
         parent = action_mgr->current_directory;
-      if (thunar_file_is_trash (parent))
+      if (thunar_file_is_trashed (parent))
         return NULL;
       item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
       submenu = thunar_action_manager_create_document_submenu_new (action_mgr);
@@ -2730,7 +2730,7 @@ thunar_action_manager_action_create_folder (ThunarActionManager *action_mgr)
 
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
-  if (thunar_file_is_trash (action_mgr->current_directory) || action_mgr->is_searching)
+  if (thunar_file_is_trashed (action_mgr->current_directory) || action_mgr->is_searching)
     return TRUE;
 
   /* ask the user to enter a name for the new folder */
@@ -2781,7 +2781,7 @@ thunar_action_manager_action_create_document (ThunarActionManager *action_mgr,
 
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
-  if (thunar_file_is_trash (action_mgr->current_directory) || action_mgr->is_searching)
+  if (thunar_file_is_trashed (action_mgr->current_directory) || action_mgr->is_searching)
     return TRUE;
 
   template_file = g_object_get_qdata (G_OBJECT (menu_item), thunar_action_manager_file_quark);
