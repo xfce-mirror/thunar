@@ -1344,7 +1344,7 @@ thunar_details_view_columns_changed (ThunarColumnModel *column_model,
       if (current_directory != NULL)
         {
           if (column == THUNAR_COLUMN_DATE_DELETED)
-            visible = thunar_file_is_trash (current_directory);
+            visible = thunar_file_is_trashed (current_directory);
           else if (column == THUNAR_COLUMN_RECENCY)
             visible = thunar_file_is_recent (current_directory);
           else if (column == THUNAR_COLUMN_LOCATION)
