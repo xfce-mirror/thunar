@@ -932,7 +932,7 @@ thunar_dbus_service_query_trash (ThunarDBusTrash       *object,
   if (thunar_dbus_service_connect_trash_bin (dbus_service, &error))
     {
       /* check whether the trash bin is not empty */
-      full = (thunar_file_get_item_count (dbus_service->trash_bin) > 0);
+      full = (thunar_file_get_trash_item_count (dbus_service->trash_bin) > 0);
     }
 
   if (error)
