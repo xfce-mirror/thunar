@@ -25,6 +25,8 @@
 #include "thunar/thunar-renamer-progress.h"
 #include "thunar/thunar-util.h"
 
+#include <libxfce4util/libxfce4util.h>
+
 
 
 /* Signal identifiers */

@@ -52,7 +52,6 @@
 #include "thunar/thunar-size-label.h"
 #include "thunar/thunar-util.h"
 
-#include <exo/exo.h>
 #include <gdk/gdkkeysyms.h>
 #include <libxfce4ui/libxfce4ui.h>
 #include <libxfce4util/libxfce4util.h>
@@ -247,7 +246,7 @@ thunar_properties_dialog_class_init (ThunarPropertiesDialogClass *klass)
                                    PROP_FILES,
                                    g_param_spec_boxed ("files", "files", "files",
                                                        THUNARX_TYPE_FILE_INFO_LIST,
-                                                       EXO_PARAM_READWRITE));
+                                                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarPropertiesDialog:file_size_binary:
@@ -260,7 +259,7 @@ thunar_properties_dialog_class_init (ThunarPropertiesDialogClass *klass)
                                                          "FileSizeBinary",
                                                          NULL,
                                                          TRUE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarPropertiesDialog:show_file_highlight_tab:
@@ -273,7 +272,7 @@ thunar_properties_dialog_class_init (ThunarPropertiesDialogClass *klass)
                                                          "ShowFileHighlightTab",
                                                          NULL,
                                                          TRUE,
-                                                         EXO_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT));
 
   /**
    * ThunarPropertiesDialog::reload:
@@ -1207,23 +1206,23 @@ thunar_properties_dialog_icon_button_clicked (GtkWidget              *button,
     title = g_strdup_printf (_("Select an Icon for \"%s\" (%s)"), thunar_file_get_display_name (file), thunar_file_get_basename (file));
   else
     title = g_strdup_printf (_("Select an Icon for \"%s\""), thunar_file_get_display_name (file));
-  chooser = exo_icon_chooser_dialog_new (title, GTK_WINDOW (dialog),
-                                         _("_Cancel"), GTK_RESPONSE_CANCEL,
-                                           _("_OK"), GTK_RESPONSE_ACCEPT,
-                                         NULL);
+  chooser = xfce_icon_chooser_dialog_new (title, GTK_WINDOW (dialog),
+                                          _("_Cancel"), GTK_RESPONSE_CANCEL,
+                                            _("_OK"), GTK_RESPONSE_ACCEPT,
+                                          NULL);
   gtk_dialog_set_default_response (GTK_DIALOG (chooser), GTK_RESPONSE_ACCEPT);
   g_free (title);
 
   /* use the custom_icon of the file as default */
   custom_icon = thunar_file_get_custom_icon (file);
   if (G_LIKELY (custom_icon != NULL && *custom_icon != '\0'))
-    exo_icon_chooser_dialog_set_icon (EXO_ICON_CHOOSER_DIALOG (chooser), custom_icon);
+    xfce_icon_chooser_dialog_set_icon (XFCE_ICON_CHOOSER_DIALOG (chooser), custom_icon);
 
   /* run the icon chooser dialog and make sure the dialog still has a file */
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT && file != NULL)
     {
       /* determine the selected icon and use it for the file */
-      icon = exo_icon_chooser_dialog_get_icon (EXO_ICON_CHOOSER_DIALOG (chooser));
+      icon = xfce_icon_chooser_dialog_get_icon (XFCE_ICON_CHOOSER_DIALOG (chooser));
       if (!thunar_file_set_custom_icon (file, icon, &err))
         {
           /* hide the icon chooser dialog first */

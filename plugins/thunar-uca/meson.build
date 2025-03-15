@@ -34,7 +34,6 @@ shared_module(
   dependencies: [
     glib,
     gtk,
-    exo,
     libxfce4ui,
     libxfce4kbd,
     libxfce4util,

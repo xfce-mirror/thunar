@@ -231,7 +231,7 @@ thunar_renamer_model_class_init (ThunarRenamerModelClass *klass)
                                                          "can-rename",
                                                          "can-rename",
                                                          FALSE,
-                                                         EXO_PARAM_READABLE));
+                                                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarRenamerModel:frozen:
@@ -246,7 +246,7 @@ thunar_renamer_model_class_init (ThunarRenamerModelClass *klass)
                                                          "frozen",
                                                          "frozen",
                                                          FALSE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarRenamerModel:mode:
@@ -259,7 +259,7 @@ thunar_renamer_model_class_init (ThunarRenamerModelClass *klass)
                                    g_param_spec_enum ("mode", "mode", "mode",
                                                       THUNAR_TYPE_RENAMER_MODE,
                                                       THUNAR_RENAMER_MODE_NAME,
-                                                      EXO_PARAM_READWRITE));
+                                                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarRenamerModel:renamer:
@@ -273,7 +273,7 @@ thunar_renamer_model_class_init (ThunarRenamerModelClass *klass)
                                                         "renamer",
                                                         "renamer",
                                                         THUNARX_TYPE_RENAMER,
-                                                        EXO_PARAM_READWRITE));
+                                                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 

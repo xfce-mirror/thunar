@@ -176,7 +176,7 @@ thunar_chooser_dialog_class_init (ThunarChooserDialogClass *klass)
                                    PROP_FILE,
                                    g_param_spec_object ("file", "file", "file",
                                                         THUNAR_TYPE_FILE,
-                                                        EXO_PARAM_READWRITE));
+                                                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarChooserDialog::open:
@@ -187,7 +187,7 @@ thunar_chooser_dialog_class_init (ThunarChooserDialogClass *klass)
                                    PROP_OPEN,
                                    g_param_spec_boolean ("open", "open", "open",
                                                          FALSE,
-                                                         G_PARAM_CONSTRUCT | EXO_PARAM_READWRITE));
+                                                         G_PARAM_CONSTRUCT | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 
@@ -254,7 +254,7 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
 
   /* append the tree view column */
   column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN, "expand", TRUE, NULL);
-  renderer = g_object_new (EXO_TYPE_CELL_RENDERER_ICON, "follow-state", FALSE, "size", 24, NULL);
+  renderer = g_object_new (XFCE_TYPE_CELL_RENDERER_ICON, "follow-state", FALSE, "size", 24, NULL);
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "gicon", THUNAR_CHOOSER_MODEL_COLUMN_ICON,

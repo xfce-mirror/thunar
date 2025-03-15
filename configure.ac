@@ -156,7 +156,6 @@ GTK_DOC_CHECK([1.9])
 dnl ***********************************
 dnl *** Check for required packages ***
 dnl ***********************************
-XDT_CHECK_PACKAGE([EXO], [exo-2], [4.19.0])
 XDT_CHECK_PACKAGE([GLIB], [glib-2.0], [2.72.0])
 XDT_CHECK_PACKAGE([GIO], [gio-2.0], [2.72.0])
 XDT_CHECK_PACKAGE([GTHREAD], [gthread-2.0], [2.72.0])
@@ -164,7 +163,7 @@ XDT_CHECK_PACKAGE([GMODULE], [gmodule-2.0], [2.72.0])
 XDT_CHECK_PACKAGE([GTK], [gtk+-3.0], [3.24.0])
 XDT_CHECK_PACKAGE([GDK_PIXBUF], [gdk-pixbuf-2.0], [2.42.8])
 XDT_CHECK_PACKAGE([LIBXFCE4UTIL], [libxfce4util-1.0], [4.17.2])
-XDT_CHECK_PACKAGE([LIBXFCE4UI], [libxfce4ui-2], [4.17.6])
+XDT_CHECK_PACKAGE([LIBXFCE4UI], [libxfce4ui-2], [4.21.0])
 XDT_CHECK_PACKAGE([LIBXFCE4KBD_PRIVATE], [libxfce4kbd-private-3], [4.17.2])
 XDT_CHECK_PACKAGE([XFCONF], [libxfconf-0], [4.12.0])
 XDT_CHECK_PACKAGE([PANGO], [pango], [1.38.0])
