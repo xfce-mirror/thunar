@@ -27,7 +27,6 @@
 #include "thunar/thunar-job.h"
 #include "thunar/thunar-private.h"
 
-#include <exo/exo.h>
 #include <gio/gio.h>
 
 

@@ -74,7 +74,7 @@ thunar_side_pane_class_init (gpointer klass)
                                                              "show-hidden",
                                                              "show-hidden",
                                                              FALSE,
-                                                             EXO_PARAM_READWRITE));
+                                                             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 

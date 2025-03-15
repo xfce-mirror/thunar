@@ -165,7 +165,7 @@ thunar_clipboard_manager_class_init (ThunarClipboardManagerClass *klass)
                                    PROP_CAN_PASTE,
                                    g_param_spec_boolean ("can-paste", "can-paste", "can-paste",
                                                          FALSE,
-                                                         EXO_PARAM_READABLE));
+                                                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarClipboardManager::changed:
