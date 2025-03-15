@@ -1174,7 +1174,7 @@ thunar_transfer_job_prepare_untrash_file (ThunarJob *job,
 
   /* update progress information */
   thunar_job_info_message (job, _("Trying to restore \"%s\""),
-                                   g_file_info_get_display_name (info));
+                           g_file_info_get_display_name (info));
 
   /* determine the parent file */
   target_parent = g_file_get_parent (file);
@@ -1315,7 +1315,7 @@ thunar_transfer_job_move_file (ThunarJob            *job,
 
   /* update progress information */
   thunar_job_info_message (job, _("Trying to move \"%s\""),
-                                   g_file_info_get_display_name (info));
+                           g_file_info_get_display_name (info));
 
   move_successful = g_file_move (node->source_file,
                                  tp->data,
@@ -1399,7 +1399,7 @@ thunar_transfer_job_move_file (ThunarJob            *job,
       /* update progress information */
       thunar_job_info_message (job, _("Could not move \"%s\" directly. "
                                    "Collecting files for copying..."),
-                                       g_file_info_get_display_name (info));
+                               g_file_info_get_display_name (info));
 
       /* if this call fails to collect the node, err will be non-NULL and the loop will exit */
       thunar_transfer_job_collect_node (transfer_job, node, error);
