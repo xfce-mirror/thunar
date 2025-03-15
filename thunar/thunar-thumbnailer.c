@@ -268,7 +268,7 @@ thunar_thumbnailer_class_init (ThunarThumbnailerClass *klass)
                                                       "thumbnail-size",
                                                       THUNAR_TYPE_THUMBNAIL_SIZE,
                                                       THUNAR_THUMBNAIL_SIZE_NORMAL,
-                                                      EXO_PARAM_READWRITE));
+                                                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarThumbnailer:thumbnail-max-file-size:
@@ -281,7 +281,7 @@ thunar_thumbnailer_class_init (ThunarThumbnailerClass *klass)
                                                         "thumbnail-max-file-size",
                                                         "thumbnail-max-file-size",
                                                         0, G_MAXUINT64, 0,
-                                                        EXO_PARAM_READWRITE));
+                                                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 

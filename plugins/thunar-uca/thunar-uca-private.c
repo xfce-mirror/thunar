@@ -29,7 +29,6 @@
 #include <locale.h>
 #endif
 
-#include <exo/exo.h>
 #include <thunar-uca/thunar-uca-private.h>
 
 

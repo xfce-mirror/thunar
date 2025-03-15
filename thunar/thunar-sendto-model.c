@@ -36,6 +36,8 @@
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-sendto-model.h"
 
+#include <libxfce4util/libxfce4util.h>
+
 
 
 static void
