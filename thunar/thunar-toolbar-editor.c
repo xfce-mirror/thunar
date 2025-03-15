@@ -30,7 +30,6 @@
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-toolbar-editor.h"
 
-#include <exo/exo.h>
 #include <libxfce4ui/libxfce4ui.h>
 
 
@@ -154,8 +153,8 @@ thunar_toolbar_editor_init (ThunarToolbarEditor *toolbar_editor)
   /* add the "Help" button */
   button = gtk_button_new_with_mnemonic (_("_Help"));
   g_signal_connect_swapped (G_OBJECT (button), "clicked", G_CALLBACK (thunar_toolbar_editor_help_clicked), toolbar_editor);
-  gtk_box_pack_start (GTK_BOX (exo_gtk_dialog_get_action_area (GTK_DIALOG (toolbar_editor))), button, FALSE, FALSE, 0);
-  gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (exo_gtk_dialog_get_action_area (GTK_DIALOG (toolbar_editor))), button, TRUE);
+  gtk_box_pack_start (GTK_BOX (xfce_gtk_dialog_get_action_area (GTK_DIALOG (toolbar_editor))), button, FALSE, FALSE, 0);
+  gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (xfce_gtk_dialog_get_action_area (GTK_DIALOG (toolbar_editor))), button, TRUE);
   gtk_widget_show (button);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);

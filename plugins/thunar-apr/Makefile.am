@@ -26,7 +26,6 @@ thunar_apr_la_SOURCES =							\
 
 thunar_apr_la_CFLAGS =							\
 	$(EXIF_CFLAGS)							\
-	$(EXO_CFLAGS)							\
 	$(LIBXFCE4UTIL_CFLAGS)						\
 	$(LIBXFCE4UI_CFLAGS)						\
 	$(GLIB_CFLAGS)							\
@@ -44,7 +43,6 @@ thunar_apr_la_LDFLAGS =							\
 thunar_apr_la_LIBADD =							\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la	\
 	$(EXIF_LIBS)							\
-	$(EXO_LIBS)							\
 	$(LIBXFCE4UTIL_LIBS)						\
 	$(LIBXFCE4UI_LIBS)							\
 	$(GLIB_LIBS)							\

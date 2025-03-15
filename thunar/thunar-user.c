@@ -49,7 +49,6 @@
 #include "thunar/thunar-user.h"
 #include "thunar/thunar-util.h"
 
-#include <exo/exo.h>
 #include <glib-object.h>
 #include <libxfce4util/libxfce4util.h>
 

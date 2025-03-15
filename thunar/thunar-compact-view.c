@@ -23,6 +23,8 @@
 
 #include "thunar/thunar-compact-view.h"
 
+#include <libxfce4ui/libxfce4ui.h>
+
 
 
 static AtkObject *
@@ -77,9 +79,9 @@ thunar_compact_view_init (ThunarCompactView *compact_view)
   gboolean max_chars;
 
   /* initialize the icon view properties */
-  exo_icon_view_set_margin (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (compact_view))), 3);
-  exo_icon_view_set_layout_mode (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (compact_view))), EXO_ICON_VIEW_LAYOUT_COLS);
-  exo_icon_view_set_orientation (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (compact_view))), GTK_ORIENTATION_HORIZONTAL);
+  xfce_icon_view_set_margin (XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (compact_view))), 3);
+  xfce_icon_view_set_layout_mode (XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (compact_view))), XFCE_ICON_VIEW_LAYOUT_COLS);
+  xfce_icon_view_set_orientation (XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (compact_view))), GTK_ORIENTATION_HORIZONTAL);
 
   /* setup the icon renderer */
   g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (compact_view)->icon_renderer),
