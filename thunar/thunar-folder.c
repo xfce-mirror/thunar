@@ -72,7 +72,7 @@ thunar_folder_set_property (GObject      *object,
 static void
 thunar_folder_real_destroy (ThunarFolder *folder);
 static void
-thunar_folder_error (ExoJob       *job,
+thunar_folder_error (ThunarJob    *job,
                      GError       *error,
                      ThunarFolder *folder);
 static gboolean
@@ -80,7 +80,7 @@ thunar_folder_files_ready (ThunarJob    *job,
                            GList        *files,
                            ThunarFolder *folder);
 static void
-thunar_folder_finished (ExoJob       *job,
+thunar_folder_finished (ThunarJob    *job,
                         ThunarFolder *folder);
 static void
 thunar_folder_changed (ThunarFile   *file,
@@ -395,7 +395,7 @@ thunar_folder_finalize (GObject *object)
   /* stop content type loading */
   if (G_UNLIKELY (folder->content_type_job != NULL))
     {
-      exo_job_cancel (EXO_JOB (folder->content_type_job));
+      thunar_job_cancel (THUNAR_JOB (folder->content_type_job));
       g_object_unref (folder->content_type_job);
       folder->content_type_job = NULL;
     }
@@ -678,7 +678,7 @@ thunar_folder_real_destroy (ThunarFolder *folder)
 
 
 static void
-thunar_folder_error (ExoJob       *job,
+thunar_folder_error (ThunarJob    *job,
                      GError       *error,
                      ThunarFolder *folder)
 {
@@ -740,19 +740,19 @@ thunar_folder_load_content_types (ThunarFolder *folder,
 
   /* check if we are currently connect to a job */
   if (G_UNLIKELY (folder->content_type_job != NULL))
-    exo_job_cancel (EXO_JOB (folder->content_type_job));
+    thunar_job_cancel (THUNAR_JOB (folder->content_type_job));
 
   /* start a new content_type_job */
   folder->content_type_job = thunar_io_jobs_load_content_types (files);
   g_signal_connect_object (folder->content_type_job, "finished", G_CALLBACK (_thunar_folder_load_content_types_finished), folder, G_CONNECT_SWAPPED);
 
-  exo_job_launch (EXO_JOB (folder->content_type_job));
+  thunar_job_launch (THUNAR_JOB (folder->content_type_job));
 }
 
 
 
 static void
-thunar_folder_finished (ExoJob       *job,
+thunar_folder_finished (ThunarJob    *job,
                         ThunarFolder *folder)
 {
   GHashTableIter iter;
@@ -1249,7 +1249,7 @@ thunar_folder_reload (ThunarFolder *folder,
 
   /* stop content type loading */
   if (G_UNLIKELY (folder->content_type_job != NULL))
-    exo_job_cancel (EXO_JOB (folder->content_type_job));
+    thunar_job_cancel (THUNAR_JOB (folder->content_type_job));
 
   /* check if we are currently connect to a job */
   if (G_UNLIKELY (folder->job != NULL))
@@ -1271,7 +1271,7 @@ thunar_folder_reload (ThunarFolder *folder,
   g_signal_connect (folder->job, "error", G_CALLBACK (thunar_folder_error), folder);
   g_signal_connect (folder->job, "finished", G_CALLBACK (thunar_folder_finished), folder);
   g_signal_connect (folder->job, "files-ready", G_CALLBACK (thunar_folder_files_ready), folder);
-  exo_job_launch (EXO_JOB (folder->job));
+  thunar_job_launch (THUNAR_JOB (folder->job));
 }
 
 

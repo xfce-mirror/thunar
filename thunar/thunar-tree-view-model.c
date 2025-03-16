@@ -326,7 +326,7 @@ thunar_tree_view_model_load_dir (Node *node);
 static void
 thunar_tree_view_model_cleanup_model (ThunarTreeViewModel *model);
 static void
-thunar_tree_view_model_file_count_callback (ExoJob              *job,
+thunar_tree_view_model_file_count_callback (ThunarJob           *job,
                                             ThunarTreeViewModel *model);
 static void
 thunar_tree_view_model_node_destroy (Node *node);
@@ -1738,7 +1738,7 @@ _thunar_tree_view_model_cancel_search_job (ThunarTreeViewModel *model)
   /* cancel the ongoing search if there is one */
   if (model->search_job)
     {
-      exo_job_cancel (EXO_JOB (model->search_job));
+      thunar_job_cancel (THUNAR_JOB (model->search_job));
 
       g_signal_handlers_disconnect_by_data (model->search_job, model);
       g_object_unref (model->search_job);
@@ -1810,7 +1810,7 @@ thunar_tree_view_model_set_folder (ThunarStandardViewModel *model,
           _model->search_job = thunar_io_jobs_search_directory (THUNAR_STANDARD_VIEW_MODEL (_model), search_query_normalized, thunar_folder_get_corresponding_file (folder));
           g_signal_connect (_model->search_job, "error", G_CALLBACK (_thunar_tree_view_model_search_error), NULL);
           g_signal_connect (_model->search_job, "finished", G_CALLBACK (_thunar_tree_view_model_search_finished), _model);
-          exo_job_launch (EXO_JOB (_model->search_job));
+          thunar_job_launch (THUNAR_JOB (_model->search_job));
 
           /* add new results to the model every X ms */
           _model->update_search_results_timeout_id = g_timeout_add (500, G_SOURCE_FUNC (thunar_tree_view_model_update_search_files), _model);
@@ -2798,7 +2798,7 @@ thunar_tree_view_model_cleanup_model (ThunarTreeViewModel *model)
 
 
 static void
-thunar_tree_view_model_file_count_callback (ExoJob              *job,
+thunar_tree_view_model_file_count_callback (ThunarJob           *job,
                                             ThunarTreeViewModel *model)
 {
   GArray     *param_values;

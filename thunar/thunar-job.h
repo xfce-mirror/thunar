@@ -26,7 +26,6 @@
 #include "thunar/thunar-file.h"
 #include "thunar/thunar-job-operation-history.h"
 
-#include <exo/exo.h>
 #include <gio/gio.h>
 
 G_BEGIN_DECLS
@@ -45,11 +44,20 @@ typedef struct _ThunarJob        ThunarJob;
 struct _ThunarJobClass
 {
   /*< private >*/
-  ExoJobClass __parent__;
+  GObjectClass __parent__;
 
   /*< public >*/
+  gboolean (*execute) (ThunarJob *job,
+                       GError   **error);
 
   /* signals */
+  void (*error) (ThunarJob *job,
+                 GError    *error);
+  void (*finished) (ThunarJob *job);
+  void (*info_message) (ThunarJob   *job,
+                        const gchar *message);
+  void (*percent) (ThunarJob *job,
+                   gdouble    percent);
   ThunarJobResponse (*ask) (ThunarJob        *job,
                             const gchar      *message,
                             ThunarJobResponse choices);
@@ -61,12 +69,41 @@ struct _ThunarJobClass
 struct _ThunarJob
 {
   /*< private >*/
-  ExoJob            __parent__;
+  GObject           __parent__;
   ThunarJobPrivate *priv;
 };
 
 GType
 thunar_job_get_type (void) G_GNUC_CONST;
+
+ThunarJob *
+thunar_job_launch (ThunarJob *job);
+void
+thunar_job_cancel (ThunarJob *job);
+gboolean
+thunar_job_is_cancelled (const ThunarJob *job);
+GCancellable *
+thunar_job_get_cancellable (const ThunarJob *job);
+gboolean
+thunar_job_set_error_if_cancelled (ThunarJob *job,
+                                   GError   **error);
+void
+thunar_job_emit (ThunarJob *job,
+                 guint      signal_id,
+                 GQuark     signal_detail,
+                 ...);
+void
+thunar_job_info_message (ThunarJob   *job,
+                         const gchar *format,
+                         ...);
+void
+thunar_job_percent (ThunarJob *job,
+                    gdouble    percent);
+gboolean
+thunar_job_send_to_mainloop (ThunarJob     *job,
+                             GSourceFunc    func,
+                             gpointer       user_data,
+                             GDestroyNotify destroy_notify);
 guint
 thunar_job_get_n_total_files (ThunarJob *job);
 void

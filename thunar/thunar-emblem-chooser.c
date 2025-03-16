@@ -393,7 +393,7 @@ thunar_emblem_chooser_button_toggled (GtkToggleButton     *button,
   g_signal_connect_swapped (chooser->emblem_change_job, "finished",
                             G_CALLBACK (emblem_change_job_finished), chooser);
 
-  exo_job_launch (EXO_JOB (chooser->emblem_change_job));
+  thunar_job_launch (THUNAR_JOB (chooser->emblem_change_job));
 
   g_list_free (emblem_names);
 
