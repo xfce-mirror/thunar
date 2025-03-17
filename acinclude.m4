@@ -55,7 +55,7 @@ AC_DEFUN([BM_THUNAR_PLUGIN_TPA],
 AC_ARG_ENABLE([tpa-plugin], AS_HELP_STRING([--disable-tpa-plugin], [Don't build the thunar-tpa plugin, see plugins/thunar-tpa/README.md]),
   [ac_bm_thunar_plugin_tpa=$enableval], [ac_bm_thunar_plugin_tpa=yes])
 if test x"$ac_bm_thunar_plugin_tpa" = x"yes"; then
-  XDT_CHECK_PACKAGE([LIBXFCE4PANEL], [libxfce4panel-2.0], [4.12.0],
+  XDT_CHECK_PACKAGE([LIBXFCE4PANEL], [libxfce4panel-2.0], [4.14.0],
   [
     ac_bm_thunar_plugin_tpa=yes
   ],

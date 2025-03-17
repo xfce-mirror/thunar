@@ -211,7 +211,7 @@ XDT_CHECK_OPTIONAL_PACKAGE([GUDEV], [gudev-1.0], [145], [gudev],
 dnl **************************************
 dnl *** Optional support for libnotify ***
 dnl **************************************
-XDT_CHECK_OPTIONAL_PACKAGE([LIBNOTIFY], [libnotify], [0.4.0], [notifications],
+XDT_CHECK_OPTIONAL_PACKAGE([LIBNOTIFY], [libnotify], [0.7.0], [notifications],
                            [Mount notification support], [yes])
 
 dnl ***********************************

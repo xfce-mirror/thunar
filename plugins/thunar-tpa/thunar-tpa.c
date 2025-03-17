@@ -269,11 +269,7 @@ thunar_tpa_size_changed (XfcePanelPlugin *panel_plugin,
   size /= xfce_panel_plugin_get_nrows (panel_plugin);
   gtk_widget_set_size_request (GTK_WIDGET (panel_plugin), size, size);
 
-#if LIBXFCE4PANEL_CHECK_VERSION(4, 13, 0)
   image_size = xfce_panel_plugin_get_icon_size (panel_plugin);
-#else
-  image_size = size - 2; // fall-back for older panel versions
-#endif
   gtk_image_set_pixel_size (GTK_IMAGE (plugin->image), image_size);
 
   return TRUE;

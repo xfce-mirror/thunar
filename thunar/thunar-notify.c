@@ -123,15 +123,7 @@ thunar_notify_show (ThunarDevice *device,
   icon_name = thunar_get_device_icon (device);
 
   /* create notification */
-#ifdef NOTIFY_CHECK_VERSION
-#if NOTIFY_CHECK_VERSION(0, 7, 0)
   notification = notify_notification_new (summary, message, icon_name);
-#else
-  notification = notify_notification_new (summary, message, icon_name, NULL);
-#endif
-#else
-  notification = notify_notification_new (summary, message, icon_name, NULL);
-#endif
 
   notify_notification_set_urgency (notification, NOTIFY_URGENCY_CRITICAL);
   notify_notification_set_timeout (notification, NOTIFY_EXPIRES_NEVER);
@@ -202,16 +194,8 @@ thunar_notify_undo_or_redo (ThunarJobOperation *operation,
     }
 
 
-    /* create notification */
-#ifdef NOTIFY_CHECK_VERSION
-#if NOTIFY_CHECK_VERSION(0, 7, 0)
+  /* create notification */
   notification = notify_notification_new (summary, message, icon_name);
-#else
-  notification = notify_notification_new (summary, message, icon_name, NULL);
-#endif
-#else
-  notification = notify_notification_new (summary, message, icon_name, NULL);
-#endif
 
   notify_notification_set_urgency (notification, NOTIFY_URGENCY_LOW);
   notify_notification_set_timeout (notification, NOTIFY_EXPIRES_DEFAULT);
