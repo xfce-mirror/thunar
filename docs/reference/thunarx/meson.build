@@ -23,6 +23,7 @@ gnome.gtkdoc(
   thunarx_doc_name,
   src_dir: 'thunarx',
   ignore_headers: [
+    'thunarx-private.h',
     'thunarx-visibility.h',
   ],
   main_xml: meson.project_build_root() / 'docs' / 'reference' / 'thunarx' / 'thunarx-docs.xml',
