@@ -34,11 +34,11 @@ dependency_versions = {
 
   'gir': '>= 1.72.0',
   'gudev': '>= 145',
-  'libnotify': '>= 0.4.0',
+  'libnotify': '>= 0.7.0',
 
   'exif': '>= 0.6.0',
   'pcre2': '>= 10.0',
-  'libxfce4panel': '>= 4.12.0',
+  'libxfce4panel': '>= 4.14.0',
 }
 
 exo = dependency('exo-2', version: dependency_versions['exo'])
