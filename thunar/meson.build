@@ -217,7 +217,6 @@ executable(
     gio_unix,
     gthread,
     gtk,
-    exo,
     libxfce4ui,
     libxfce4kbd,
     libxfce4util,

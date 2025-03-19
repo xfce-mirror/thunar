@@ -30,7 +30,6 @@
     <UML:DataType stereotype="62" isSpecification="false" isLeaf="false" visibility="public" xmi.id="183" isRoot="false" isAbstract="false" name="ino_t" />
     <UML:DataType stereotype="62" isSpecification="false" isLeaf="false" visibility="public" xmi.id="185" isRoot="false" isAbstract="false" name="dev_t" />
     <UML:DataType stereotype="62" isSpecification="false" isLeaf="false" visibility="public" xmi.id="422" isRoot="false" isAbstract="false" name="ThunarVfsURI" />
-    <UML:DataType stereotype="62" isSpecification="false" isLeaf="false" visibility="public" xmi.id="744" isRoot="false" isAbstract="false" name="ExoMimeInfo" />
     <UML:DataType stereotype="62" isSpecification="false" isLeaf="false" visibility="public" xmi.id="767" isRoot="false" isAbstract="false" name="ThunarVfsFileSize" />
     <UML:DataType stereotype="62" isSpecification="false" isLeaf="false" visibility="public" xmi.id="768" isRoot="false" isAbstract="false" name="ThunarVfsFileTime" />
     <UML:DataType stereotype="62" isSpecification="false" isLeaf="false" visibility="public" xmi.id="769" isRoot="false" isAbstract="false" name="ThunarVfsFileInode" />
@@ -212,11 +211,6 @@
      <UML:EnumerationLiteral isSpecification="false" isLeaf="false" visibility="public" xmi.id="155" isRoot="false" isAbstract="false" name="NONE" />
      <UML:EnumerationLiteral isSpecification="false" isLeaf="false" visibility="public" xmi.id="156" isRoot="false" isAbstract="false" name="SYMLINK" />
     </UML:Enumeration>
-    <UML:Package isSpecification="false" isLeaf="false" visibility="public" xmi.id="162" isRoot="false" isAbstract="false" name="exo" >
-     <UML:Namespace.ownedElement>
-      <UML:Class isSpecification="false" isLeaf="false" visibility="public" xmi.id="163" isRoot="false" isAbstract="false" name="ExoMimeInfo" />
-     </UML:Namespace.ownedElement>
-    </UML:Package>
     <UML:Class isSpecification="false" isLeaf="false" visibility="public" xmi.id="195" isRoot="false" isAbstract="false" name="ThunarListModel" />
     <UML:Package isSpecification="false" isLeaf="false" visibility="public" xmi.id="198" isRoot="false" isAbstract="false" name="gobject" >
      <UML:Namespace.ownedElement>
@@ -1419,7 +1413,6 @@ fixed, better use ThunarListModel here." font="helvetica,12,-1,5,50,0,0,0,0,0" /
    <diagram snapgrid="1" showattsig="1" fillcolor="#ffffc0" linewidth="0" zoom="100" showgrid="1" showopsig="1" usefillcolor="1" snapx="10" canvaswidth="966" snapy="10" showatts="1" xmi.id="534" documentation="" type="402" showops="1" showpackage="0" name="MIME actions" localid="30000" showstereotype="0" showscope="1" snapcsgrid="1" font="helvetica,12,-1,5,50,0,0,0,0,0" linecolor="#ff0000" canvasheight="796" >
     <widgets>
      <classwidget usesdiagramfillcolour="0" width="160" showattsigs="601" usesdiagramusefillcolour="0" x="220" linecolour="#ff0000" y="200" showopsigs="601" linewidth="none" usesdiagramlinewidth="1" usesdiagramlinecolour="0" fillcolour="#ffffc0" height="40" usefillcolor="1" showpubliconly="0" showattributes="1" isinstance="0" xmi.id="535" showoperations="0" showpackage="0" showscope="1" showstereotype="0" font="helvetica,12,-1,5,75,0,0,0,0,0" />
-     <notewidget usesdiagramfillcolour="1" width="190" usesdiagramusefillcolour="1" x="445" linecolour="none" y="185" linewidth="none" usesdiagramlinewidth="1" usesdiagramlinecolour="1" fillcolour="none" height="50" usefillcolor="1" isinstance="0" xmi.id="537" text="This should probably be handled in exo as well." font="helvetica,12,-1,5,50,0,0,0,0,0" />
     </widgets>
     <messages/>
     <associations>
@@ -3103,31 +3096,6 @@ In addition, kqueue() and FAM can be used. dnotify is not thread-safe." font="he
      </textblocks>
      <header>
       <codecomment tag="" text="/************************************************************************&amp;#010;  			thunarvfsfileflags.cpp - Copyright bmeurer&amp;#010;&amp;#010;Here you can write a license for your code, some comments or any other&amp;#010;information you want to have in your generated code. To to this simply&amp;#010;configure the &quot;headings&quot; directory in uml to point to a directory&amp;#010;where you have your heading files.&amp;#010;&amp;#010;or you can just replace the contents of this file with your own.&amp;#010;If you want to do this, this file is located at&amp;#010;&amp;#010;/usr/local/share/apps/umbrello/headings/heading.cpp&amp;#010;&amp;#010;-->Code Generators searches for heading files based on the file extension&amp;#010;   i.e. it will look for a file name ending in &quot;.h&quot; to include in C++ header&amp;#010;   files, and for a file name ending in &quot;.java&quot; to include in all generated&amp;#010;   java code.&amp;#010;   If you name the file &quot;heading.&lt;extension>&quot;, Code Generator will always&amp;#010;   choose this file even if there are other files with the same extension in the&amp;#010;   directory. If you name the file something else, it must be the only one with that&amp;#010;   extension in the directory to guarantee that Code Generator will choose it.&amp;#010;&amp;#010;you can use variables in your heading files which are replaced at generation&amp;#010;time. possible variables are : author, date, time, filename and filepath.&amp;#010;just write %variable_name%&amp;#010;&amp;#010;This file was generated on Tue Jun 14 2005 at 22:14:17&amp;#010;The original location of this file is &amp;#010;**************************************************************************/&amp;#010;" />
-     </header>
-     <classfields/>
-    </classifiercodedocument>
-    <classifiercodedocument writeOutCode="true" package="exo" id="163" parent_class="163" fileExt=".cpp" fileName="exomimeinfo" >
-     <textblocks>
-      <codeblockwithcomments tag="includes" text="#include &quot;exomimeinfo.h&quot;&amp;#010;" >
-       <header>
-        <cppcodedocumentation tag="" writeOutText="false" />
-       </header>
-      </codeblockwithcomments>
-      <hierarchicalcodeblock tag="constructionMethodsBlock" canDelete="false" >
-       <header>
-        <cppcodedocumentation tag="" text="Constructors/Destructors" />
-       </header>
-       <textblocks/>
-      </hierarchicalcodeblock>
-      <hierarchicalcodeblock tag="otherMethodsBlock" canDelete="false" >
-       <header>
-        <cppcodedocumentation tag="" text="Methods" />
-       </header>
-       <textblocks/>
-      </hierarchicalcodeblock>
-     </textblocks>
-     <header>
-      <codecomment tag="" text="/************************************************************************&amp;#010;  			exomimeinfo.cpp - Copyright bmeurer&amp;#010;&amp;#010;Here you can write a license for your code, some comments or any other&amp;#010;information you want to have in your generated code. To to this simply&amp;#010;configure the &quot;headings&quot; directory in uml to point to a directory&amp;#010;where you have your heading files.&amp;#010;&amp;#010;or you can just replace the contents of this file with your own.&amp;#010;If you want to do this, this file is located at&amp;#010;&amp;#010;/usr/local/share/apps/umbrello/headings/heading.cpp&amp;#010;&amp;#010;-->Code Generators searches for heading files based on the file extension&amp;#010;   i.e. it will look for a file name ending in &quot;.h&quot; to include in C++ header&amp;#010;   files, and for a file name ending in &quot;.java&quot; to include in all generated&amp;#010;   java code.&amp;#010;   If you name the file &quot;heading.&lt;extension>&quot;, Code Generator will always&amp;#010;   choose this file even if there are other files with the same extension in the&amp;#010;   directory. If you name the file something else, it must be the only one with that&amp;#010;   extension in the directory to guarantee that Code Generator will choose it.&amp;#010;&amp;#010;you can use variables in your heading files which are replaced at generation&amp;#010;time. possible variables are : author, date, time, filename and filepath.&amp;#010;just write %variable_name%&amp;#010;&amp;#010;This file was generated on Tue Jun 14 2005 at 22:14:17&amp;#010;The original location of this file is exo&amp;#010;**************************************************************************/&amp;#010;" />
      </header>
      <classfields/>
     </classifiercodedocument>
@@ -4885,11 +4853,6 @@ In addition, kqueue() and FAM can be used. dnotify is not thread-safe." font="he
                 <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" />
                </header>
               </ccfdeclarationcodeblock>
-              <ccfdeclarationcodeblock parent_id="743" tag="tblock_3" canDelete="false" indentLevel="1" text=" ExoMimeInfo mime_info;" >
-               <header>
-                <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" />
-               </header>
-              </ccfdeclarationcodeblock>
               <ccfdeclarationcodeblock parent_id="772" tag="tblock_32" canDelete="false" indentLevel="1" role_id="0" text=" ThunarVfsInfo info;" >
                <header>
                 <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" />
@@ -5021,11 +4984,6 @@ In addition, kqueue() and FAM can be used. dnotify is not thread-safe." font="he
        <header>
         <cppcodedocumentation tag="" />
        </header>
-       <ccfdeclarationcodeblock parent_id="743" tag="tblock_3" canDelete="false" indentLevel="1" text=" ExoMimeInfo mime_info;" >
-        <header>
-         <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" />
-        </header>
-       </ccfdeclarationcodeblock>
        <codeaccessormethod accessType="0" parent_id="743" tag="hblock_tag_16" canDelete="false" indentLevel="1" classfield_id="743" >
         <header>
          <cppcodedocumentation tag="" indentLevel="1" />
@@ -7839,212 +7797,6 @@ In addition, kqueue() and FAM can be used. dnotify is not thread-safe." font="he
      </textblocks>
      <header>
       <codecomment tag="" text="/************************************************************************&amp;#010;  			thunarvfsfileflags.h - Copyright bmeurer&amp;#010;&amp;#010;Here you can write a license for your code, some comments or any other&amp;#010;information you want to have in your generated code. To to this simply&amp;#010;configure the &quot;headings&quot; directory in uml to point to a directory&amp;#010;where you have your heading files.&amp;#010;&amp;#010;or you can just replace the contents of this file with your own.&amp;#010;If you want to do this, this file is located at&amp;#010;&amp;#010;/usr/local/share/apps/umbrello/headings/heading.h&amp;#010;&amp;#010;-->Code Generators searches for heading files based on the file extension&amp;#010;   i.e. it will look for a file name ending in &quot;.h&quot; to include in C++ header&amp;#010;   files, and for a file name ending in &quot;.java&quot; to include in all generated&amp;#010;   java code.&amp;#010;   If you name the file &quot;heading.&lt;extension>&quot;, Code Generator will always&amp;#010;   choose this file even if there are other files with the same extension in the&amp;#010;   directory. If you name the file something else, it must be the only one with that&amp;#010;   extension in the directory to guarantee that Code Generator will choose it.&amp;#010;&amp;#010;you can use variables in your heading files which are replaced at generation&amp;#010;time. possible variables are : author, date, time, filename and filepath.&amp;#010;just write %variable_name%&amp;#010;&amp;#010;This file was generated on Tue Jun 14 2005 at 22:14:17&amp;#010;The original location of this file is &amp;#010;**************************************************************************/&amp;#010;" />
-     </header>
-     <classfields/>
-    </classifiercodedocument>
-    <classifiercodedocument writeOutCode="true" package="exo" id="cppheader163" parent_class="163" fileExt=".h" fileName="exomimeinfo" >
-     <textblocks>
-      <codeblockwithcomments tag="hashDefBlock" text="#ifndef EXOMIMEINFO_H&amp;#010;#define EXOMIMEINFO_H" >
-       <header>
-        <cppcodedocumentation tag="" writeOutText="false" />
-       </header>
-      </codeblockwithcomments>
-      <codeblockwithcomments tag="includes" text="#include &lt;string>&amp;#010;" >
-       <header>
-        <cppcodedocumentation tag="" writeOutText="false" />
-       </header>
-      </codeblockwithcomments>
-      <codeblockwithcomments tag="using" writeOutText="false" >
-       <header>
-        <cppcodedocumentation tag="" writeOutText="false" />
-       </header>
-      </codeblockwithcomments>
-      <hierarchicalcodeblock tag="namespace" canDelete="false" >
-       <header>
-        <cppcodedocumentation tag="" writeOutText="false" text="Namespace" />
-       </header>
-       <textblocks>
-        <codeblockwithcomments tag="enums" writeOutText="false" >
-         <header>
-          <cppcodedocumentation tag="" writeOutText="false" />
-         </header>
-        </codeblockwithcomments>
-        <cppheaderclassdeclarationblock parent_id="163" tag="classDeclarationBlock" canDelete="false" >
-         <header>
-          <cppcodedocumentation tag="" text="Class ExoMimeInfo&amp;#010;" />
-         </header>
-         <textblocks>
-          <hierarchicalcodeblock tag="publicBlock" canDelete="false" >
-           <header>
-            <cppcodedocumentation tag="" text="Public stuff" />
-           </header>
-           <textblocks>
-            <hierarchicalcodeblock tag="publicFieldsDecl" canDelete="false" indentLevel="1" >
-             <header>
-              <cppcodedocumentation tag="" indentLevel="1" text="Fields" />
-             </header>
-             <textblocks/>
-            </hierarchicalcodeblock>
-            <hierarchicalcodeblock tag="pubMethodsBlock" canDelete="false" indentLevel="1" >
-             <header>
-              <cppcodedocumentation tag="" indentLevel="1" />
-             </header>
-             <textblocks>
-              <hierarchicalcodeblock tag="constructionMethods" canDelete="false" indentLevel="1" >
-               <header>
-                <cppcodedocumentation tag="" indentLevel="1" text="Constructors" />
-               </header>
-               <textblocks>
-                <codeblockwithcomments tag="emptyconstructor" writeOutText="false" indentLevel="1" text="ExoMimeInfo ( ) { }" >
-                 <header>
-                  <cppcodedocumentation tag="" indentLevel="1" text="Empty Constructor" />
-                 </header>
-                </codeblockwithcomments>
-               </textblocks>
-              </hierarchicalcodeblock>
-              <hierarchicalcodeblock tag="accessorMethods" canDelete="false" indentLevel="1" >
-               <header>
-                <cppcodedocumentation tag="" indentLevel="1" text="Accessor Methods" />
-               </header>
-               <textblocks>
-                <hierarchicalcodeblock tag="pubStaticAccessorMethods" canDelete="false" indentLevel="1" >
-                 <header>
-                  <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" />
-                 </header>
-                 <textblocks/>
-                </hierarchicalcodeblock>
-                <hierarchicalcodeblock tag="pubRegularAccessorMethods" canDelete="false" indentLevel="1" >
-                 <header>
-                  <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" />
-                 </header>
-                 <textblocks/>
-                </hierarchicalcodeblock>
-               </textblocks>
-              </hierarchicalcodeblock>
-              <hierarchicalcodeblock tag="operationMethods" canDelete="false" indentLevel="1" >
-               <header>
-                <cppcodedocumentation tag="" indentLevel="1" text="Operations" />
-               </header>
-               <textblocks/>
-              </hierarchicalcodeblock>
-             </textblocks>
-            </hierarchicalcodeblock>
-           </textblocks>
-          </hierarchicalcodeblock>
-          <hierarchicalcodeblock tag="protectedBlock" canDelete="false" >
-           <header>
-            <cppcodedocumentation tag="" text="Protected stuff" />
-           </header>
-           <textblocks>
-            <hierarchicalcodeblock tag="protectedFieldsDecl" canDelete="false" indentLevel="1" >
-             <header>
-              <cppcodedocumentation tag="" indentLevel="1" text="Fields" />
-             </header>
-             <textblocks/>
-            </hierarchicalcodeblock>
-            <hierarchicalcodeblock tag="protMethodsBlock" canDelete="false" indentLevel="1" >
-             <header>
-              <cppcodedocumentation tag="" indentLevel="1" />
-             </header>
-             <textblocks>
-              <hierarchicalcodeblock tag="constructionMethods" canDelete="false" indentLevel="1" >
-               <header>
-                <cppcodedocumentation tag="" indentLevel="1" text="Constructors" />
-               </header>
-               <textblocks/>
-              </hierarchicalcodeblock>
-              <hierarchicalcodeblock tag="accessorMethods" canDelete="false" indentLevel="1" >
-               <header>
-                <cppcodedocumentation tag="" indentLevel="1" text="Accessor Methods" />
-               </header>
-               <textblocks>
-                <hierarchicalcodeblock tag="protStaticAccessorMethods" canDelete="false" indentLevel="1" >
-                 <header>
-                  <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" />
-                 </header>
-                 <textblocks/>
-                </hierarchicalcodeblock>
-                <hierarchicalcodeblock tag="protRegularAccessorMethods" canDelete="false" indentLevel="1" >
-                 <header>
-                  <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" />
-                 </header>
-                 <textblocks/>
-                </hierarchicalcodeblock>
-               </textblocks>
-              </hierarchicalcodeblock>
-              <hierarchicalcodeblock tag="operationMethods" canDelete="false" indentLevel="1" >
-               <header>
-                <cppcodedocumentation tag="" indentLevel="1" text="Operations" />
-               </header>
-               <textblocks/>
-              </hierarchicalcodeblock>
-             </textblocks>
-            </hierarchicalcodeblock>
-           </textblocks>
-          </hierarchicalcodeblock>
-          <hierarchicalcodeblock tag="privateBlock" canDelete="false" >
-           <header>
-            <cppcodedocumentation tag="" text="Private stuff" />
-           </header>
-           <textblocks>
-            <hierarchicalcodeblock tag="privateFieldsDecl" canDelete="false" indentLevel="1" >
-             <header>
-              <cppcodedocumentation tag="" indentLevel="1" text="Fields" />
-             </header>
-             <textblocks/>
-            </hierarchicalcodeblock>
-            <hierarchicalcodeblock tag="privMethodsBlock" canDelete="false" indentLevel="1" >
-             <header>
-              <cppcodedocumentation tag="" indentLevel="1" />
-             </header>
-             <textblocks>
-              <hierarchicalcodeblock tag="constructionMethods" canDelete="false" indentLevel="1" >
-               <header>
-                <cppcodedocumentation tag="" indentLevel="1" text="Constructors" />
-               </header>
-               <textblocks/>
-              </hierarchicalcodeblock>
-              <hierarchicalcodeblock tag="accessorMethods" canDelete="false" indentLevel="1" >
-               <header>
-                <cppcodedocumentation tag="" indentLevel="1" text="Accessor Methods" />
-               </header>
-               <textblocks>
-                <hierarchicalcodeblock tag="privStaticAccessorMethods" canDelete="false" indentLevel="1" >
-                 <header>
-                  <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" />
-                 </header>
-                 <textblocks/>
-                </hierarchicalcodeblock>
-                <hierarchicalcodeblock tag="privRegularAccessorMethods" canDelete="false" indentLevel="1" >
-                 <header>
-                  <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" />
-                 </header>
-                 <textblocks/>
-                </hierarchicalcodeblock>
-               </textblocks>
-              </hierarchicalcodeblock>
-              <hierarchicalcodeblock tag="operationMethods" canDelete="false" indentLevel="1" >
-               <header>
-                <cppcodedocumentation tag="" indentLevel="1" text="Operations" />
-               </header>
-               <textblocks/>
-              </hierarchicalcodeblock>
-             </textblocks>
-            </hierarchicalcodeblock>
-           </textblocks>
-          </hierarchicalcodeblock>
-         </textblocks>
-        </cppheaderclassdeclarationblock>
-       </textblocks>
-      </hierarchicalcodeblock>
-      <codeblockwithcomments tag="hashDefBlockEnd" text="#endif //EXOMIMEINFO_H" >
-       <header>
-        <cppcodedocumentation tag="" writeOutText="false" />
-       </header>
-      </codeblockwithcomments>
-     </textblocks>
-     <header>
-      <codecomment tag="" text="/************************************************************************&amp;#010;  			exomimeinfo.h - Copyright bmeurer&amp;#010;&amp;#010;Here you can write a license for your code, some comments or any other&amp;#010;information you want to have in your generated code. To to this simply&amp;#010;configure the &quot;headings&quot; directory in uml to point to a directory&amp;#010;where you have your heading files.&amp;#010;&amp;#010;or you can just replace the contents of this file with your own.&amp;#010;If you want to do this, this file is located at&amp;#010;&amp;#010;/usr/local/share/apps/umbrello/headings/heading.h&amp;#010;&amp;#010;-->Code Generators searches for heading files based on the file extension&amp;#010;   i.e. it will look for a file name ending in &quot;.h&quot; to include in C++ header&amp;#010;   files, and for a file name ending in &quot;.java&quot; to include in all generated&amp;#010;   java code.&amp;#010;   If you name the file &quot;heading.&lt;extension>&quot;, Code Generator will always&amp;#010;   choose this file even if there are other files with the same extension in the&amp;#010;   directory. If you name the file something else, it must be the only one with that&amp;#010;   extension in the directory to guarantee that Code Generator will choose it.&amp;#010;&amp;#010;you can use variables in your heading files which are replaced at generation&amp;#010;time. possible variables are : author, date, time, filename and filepath.&amp;#010;just write %variable_name%&amp;#010;&amp;#010;This file was generated on Tue Jun 14 2005 at 22:14:17&amp;#010;The original location of this file is exo&amp;#010;**************************************************************************/&amp;#010;" />
      </header>
      <classfields/>
     </classifiercodedocument>

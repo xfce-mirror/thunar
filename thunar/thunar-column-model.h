@@ -22,6 +22,8 @@
 
 #include "thunar/thunar-enum-types.h"
 
+#include <gtk/gtk.h>
+
 G_BEGIN_DECLS;
 
 typedef struct _ThunarColumnModelClass ThunarColumnModelClass;

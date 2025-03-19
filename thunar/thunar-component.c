@@ -24,7 +24,7 @@
 #include "thunar/thunar-component.h"
 #include "thunar/thunar-private.h"
 
-#include <exo/exo.h>
+#include <libxfce4util/libxfce4util.h>
 
 
 
@@ -71,7 +71,7 @@ thunar_component_class_init (gpointer klass)
    * The exact semantics of this property depend on the implementor
    * of this interface. For example, #ThunarComponent<!---->s will update
    * the property depending on the users selection with the
-   * #GtkTreeComponent or #ExoIconComponent. While other components in a window,
+   * #GtkTreeComponent. While other components in a window,
    * like the #ThunarShortcutsPane, will not update this property on
    * their own, but rely on #ThunarWindow to synchronize the selected
    * files list with the selected files list from the active #ThunarComponent.
@@ -85,7 +85,7 @@ thunar_component_class_init (gpointer klass)
                                                            "selected-files",
                                                            "selected-files",
                                                            THUNARX_TYPE_FILE_INFO_LIST,
-                                                           EXO_PARAM_READWRITE));
+                                                           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 

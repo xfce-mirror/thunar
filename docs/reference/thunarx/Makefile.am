@@ -5,7 +5,7 @@ DOC_MODULE=thunarx
 DOC_MAIN_SGML_FILE=$(DOC_MODULE)-docs.xml
 
 # Extra options to supply to gtkdoc-scan
-SCAN_OPTIONS=--deprecated-guards="EXO_DISABLE_DEPRECATED"
+SCAN_OPTIONS=
 
 # The directory containing the source code. Relative to $(srcdir)
 DOC_SOURCE_DIR=$(top_srcdir)/thunarx
