@@ -75,6 +75,7 @@ enum
 {
   PROP_0,
   PROP_CURRENT_DIRECTORY,
+  PROP_SEARCHING,
   PROP_ZOOM_LEVEL,
   PROP_DIRECTORY_SPECIFIC_SETTINGS,
 };
@@ -579,7 +580,8 @@ struct _ThunarWindow
   /* search */
   GtkWidget *catfish_search_button;
   gchar     *search_query;
-  gboolean   is_searching;
+  gboolean   search_mode;
+  gboolean   searching;
   gboolean   ignore_next_search_update;
 
   /* trash */
@@ -781,6 +783,19 @@ thunar_window_class_init (ThunarWindowClass *klass)
                                                         "current-directory",
                                                         THUNAR_TYPE_FILE,
                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  /**
+   * ThunarWindow:searching:
+   *
+   * Whether the active view is currently searching files.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_SEARCHING,
+                                   g_param_spec_boolean ("searching",
+                                                         "searching",
+                                                         "searching",
+                                                         FALSE,
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarWindow:zoom-level:
@@ -1651,13 +1666,13 @@ thunar_window_update_view_menu (ThunarWindow *window,
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
   item = xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_ICONS),
                                                           G_OBJECT (window), window->view_type == THUNAR_TYPE_ICON_VIEW, GTK_MENU_SHELL (menu));
-  if (window->is_searching == TRUE)
+  if (window->search_mode == TRUE)
     gtk_widget_set_sensitive (item, FALSE);
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST),
                                                    G_OBJECT (window), window->view_type == THUNAR_TYPE_DETAILS_VIEW, GTK_MENU_SHELL (menu));
   item = xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST),
                                                           G_OBJECT (window), window->view_type == THUNAR_TYPE_COMPACT_VIEW, GTK_MENU_SHELL (menu));
-  if (window->is_searching == TRUE)
+  if (window->search_mode == TRUE)
     gtk_widget_set_sensitive (item, FALSE);
 
   gtk_widget_show_all (GTK_WIDGET (menu));
@@ -1881,7 +1896,7 @@ thunar_window_delete (GtkWidget *widget,
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (widget), FALSE);
 
-  if (window->is_searching == TRUE)
+  if (window->search_mode == TRUE)
     thunar_window_action_cancel_search (window);
 
   if (window->reset_view_type_idle_id != 0)
@@ -1988,6 +2003,10 @@ thunar_window_get_property (GObject    *object,
       g_value_set_object (value, thunar_window_get_current_directory (window));
       break;
 
+    case PROP_SEARCHING:
+      g_value_set_boolean (value, window->searching);
+      break;
+
     case PROP_ZOOM_LEVEL:
       g_value_set_enum (value, window->zoom_level);
       break;
@@ -2012,6 +2031,10 @@ thunar_window_set_property (GObject      *object,
     {
     case PROP_CURRENT_DIRECTORY:
       thunar_window_set_current_directory (window, g_value_get_object (value));
+      break;
+
+    case PROP_SEARCHING:
+      window->searching = g_value_get_boolean (value);
       break;
 
     case PROP_ZOOM_LEVEL:
@@ -2443,6 +2466,7 @@ thunar_window_switch_current_view (ThunarWindow *window,
   thunar_window_binding_create (window, window, "current-directory", new_view, "current-directory", G_BINDING_DEFAULT);
   thunar_window_binding_create (window, new_view, "loading", window->spinner, "active", G_BINDING_SYNC_CREATE);
   thunar_window_binding_create (window, new_view, "searching", window->spinner, "active", G_BINDING_SYNC_CREATE);
+  thunar_window_binding_create (window, new_view, "searching", window, "searching", G_BINDING_SYNC_CREATE);
   thunar_window_binding_create (window, new_view, "search-mode-active", window->location_toolbar_item_icon_view, "sensitive", G_BINDING_SYNC_CREATE | G_BINDING_INVERT_BOOLEAN);
   thunar_window_binding_create (window, new_view, "search-mode-active", window->location_toolbar_item_compact_view, "sensitive", G_BINDING_SYNC_CREATE | G_BINDING_INVERT_BOOLEAN);
   thunar_window_binding_create (window, new_view, "search-mode-active", window->location_toolbar_item_view_switcher, "sensitive", G_BINDING_SYNC_CREATE | G_BINDING_INVERT_BOOLEAN);
@@ -2495,7 +2519,7 @@ thunar_window_switch_current_view (ThunarWindow *window,
                             G_CALLBACK (thunar_window_selection_changed), window);
 
   /* remember the last view type if directory specific settings are not enabled */
-  if (!window->directory_specific_settings && !window->is_searching && window->view_type != G_TYPE_NONE)
+  if (!window->directory_specific_settings && !window->search_mode && window->view_type != G_TYPE_NONE)
     g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (window->view_type), NULL);
 
   /* connect to the new history */
@@ -2519,6 +2543,10 @@ thunar_window_switch_current_view (ThunarWindow *window,
     }
   else if (window->search_query != NULL)
     thunar_window_action_cancel_search (window);
+
+  /* (un)set the visual indicators of an ongoing search */
+  thunar_window_notify_loading (THUNAR_VIEW (window->view), NULL, window);
+  g_object_notify (G_OBJECT (window), "searching");
 
   /* switch to the new view */
   thunar_window_notebook_set_current_tab (window, gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), window->view));
@@ -2613,6 +2641,7 @@ thunar_window_notebook_page_added (GtkWidget    *notebook,
 
   /* connect signals */
   g_signal_connect (G_OBJECT (page), "notify::loading", G_CALLBACK (thunar_window_notify_loading), window);
+  g_signal_connect (G_OBJECT (page), "notify::searching", G_CALLBACK (thunar_window_notify_loading), window);
   g_signal_connect_swapped (G_OBJECT (page), "start-open-location", G_CALLBACK (thunar_window_start_open_location), window);
   g_signal_connect_swapped (G_OBJECT (page), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
   g_signal_connect_swapped (G_OBJECT (page), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
@@ -3544,7 +3573,7 @@ thunar_window_start_open_location (ThunarWindow *window,
     {
       GType view_type;
 
-      window->is_searching = TRUE;
+      window->search_mode = TRUE;
 
       /* workaround the slowness of XfceIconView */
       view_type = window->view_type;
@@ -3594,7 +3623,7 @@ thunar_window_resume_search (ThunarWindow *window,
   window->ignore_next_search_update = TRUE;
 
   /* continue searching */
-  window->is_searching = TRUE;
+  window->search_mode = TRUE;
 
   /* temporary show the location toolbar, even if it is normally hidden */
   gtk_widget_show (window->location_toolbar);
@@ -3667,6 +3696,22 @@ thunar_window_reset_view_type_idle_destroyed (gpointer data)
 
 
 gboolean
+thunar_window_action_stop_search (ThunarWindow *window)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  if (thunar_standard_view_get_searching (THUNAR_STANDARD_VIEW (window->view)))
+    thunar_standard_view_stop_search (THUNAR_STANDARD_VIEW (window->view));
+  else
+    thunar_window_action_cancel_search (window);
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
+}
+
+
+
+gboolean
 thunar_window_action_cancel_search (ThunarWindow *window)
 {
   ThunarApplication *application;
@@ -3674,7 +3719,7 @@ thunar_window_action_cancel_search (ThunarWindow *window)
   _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BAR (window->location_bar), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  if (window->is_searching == FALSE)
+  if (window->search_mode == FALSE)
     return FALSE;
 
   thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar));
@@ -3694,7 +3739,7 @@ thunar_window_action_cancel_search (ThunarWindow *window)
       thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
     }
 
-  window->is_searching = FALSE;
+  window->search_mode = FALSE;
 
   if (window->reset_view_type_idle_id == 0)
     {
@@ -4296,7 +4341,7 @@ thunar_window_action_detailed_view (ThunarWindow *window)
 static gboolean
 thunar_window_action_icon_view (ThunarWindow *window)
 {
-  if (window->is_searching == FALSE)
+  if (window->search_mode == FALSE)
     thunar_window_action_view_changed (window, THUNAR_TYPE_ICON_VIEW);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
@@ -4308,7 +4353,7 @@ thunar_window_action_icon_view (ThunarWindow *window)
 static gboolean
 thunar_window_action_compact_view (ThunarWindow *window)
 {
-  if (window->is_searching == FALSE)
+  if (window->search_mode == FALSE)
     thunar_window_action_view_changed (window, THUNAR_TYPE_COMPACT_VIEW);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
@@ -4401,7 +4446,7 @@ thunar_window_action_view_changed (ThunarWindow *window,
   thunar_window_view_switcher_update (window);
 
   /* if directory specific settings are enabled, save the view type for this directory */
-  if (window->directory_specific_settings && !window->is_searching)
+  if (window->directory_specific_settings && !window->search_mode)
     thunar_file_set_metadata_setting (window->current_directory, "thunar-view-type", g_type_name (view_type), TRUE);
 }
 
@@ -5018,7 +5063,7 @@ thunar_window_action_show_hidden (ThunarWindow *window)
   g_object_set (G_OBJECT (window->preferences), "last-show-hidden", window->show_hidden, NULL);
 
   /* restart any active search */
-  if (G_UNLIKELY (window->is_searching))
+  if (G_UNLIKELY (window->search_mode))
     thunar_window_update_search (window);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
@@ -5050,7 +5095,7 @@ thunar_window_action_search (ThunarWindow *window)
 {
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  if (window->is_searching == FALSE)
+  if (window->search_mode == FALSE)
     {
       /* initiate search */
       thunar_window_start_open_location (window, thunar_util_get_search_prefix ());
@@ -5229,7 +5274,7 @@ thunar_window_notify_loading (ThunarView   *view,
       && window->view == GTK_WIDGET (view))
     {
       /* setup the proper cursor */
-      if (thunar_view_get_loading (view))
+      if (thunar_view_get_loading (view) || thunar_standard_view_get_searching (THUNAR_STANDARD_VIEW (view)))
         {
           cursor = gdk_cursor_new_for_display (gtk_widget_get_display (GTK_WIDGET (view)), GDK_WATCH);
           gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (window)), cursor);
@@ -5424,7 +5469,7 @@ thunar_window_set_directory_specific_settings (ThunarWindow *window,
       g_free (type_name);
 
       /* set the last view type */
-      if (!g_type_is_a (view_type, G_TYPE_NONE) && !g_type_is_a (view_type, G_TYPE_INVALID) && !window->is_searching)
+      if (!g_type_is_a (view_type, G_TYPE_NONE) && !g_type_is_a (view_type, G_TYPE_INVALID) && !window->search_mode)
         g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (view_type), NULL);
     }
 
@@ -5526,7 +5571,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
       g_free (type_name);
 
       /* set the last view type to the default view type if there is a default view type */
-      if (!g_type_is_a (type, G_TYPE_NONE) && !g_type_is_a (type, G_TYPE_INVALID) && !window->is_searching)
+      if (!g_type_is_a (type, G_TYPE_NONE) && !g_type_is_a (type, G_TYPE_INVALID) && !window->search_mode)
         g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (type), NULL);
     }
 
@@ -6740,7 +6785,7 @@ thunar_window_location_toolbar_create (ThunarWindow *window)
 
   /* add remaining toolbar items */
   thunar_window_create_toolbar_item_from_action (window, THUNAR_WINDOW_ACTION_RELOAD, item_order++);
-  window->location_toolbar_item_search = thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_SEARCH, window->is_searching, item_order++);
+  window->location_toolbar_item_search = thunar_window_create_toolbar_toggle_item_from_action (window, THUNAR_WINDOW_ACTION_SEARCH, window->search_mode, item_order++);
 
   /* add custom actions to the toolbar */
   thunar_window_location_toolbar_add_ucas (window);
