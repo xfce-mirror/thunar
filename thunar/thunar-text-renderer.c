@@ -108,7 +108,7 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
                                    PROP_HIGHLIGHT_COLOR,
                                    g_param_spec_string ("highlight-color", "highlight-color", "highlight-color",
                                                         NULL,
-                                                        EXO_PARAM_READWRITE));
+                                                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 
 
@@ -122,7 +122,7 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
                                    PROP_ROUNDED_CORNERS,
                                    g_param_spec_boolean ("rounded-corners", "rounded-corners", "rounded-corners",
                                                          FALSE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 
 
@@ -135,7 +135,7 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
                                    PROP_HIGHLIGHTING_ENABLED,
                                    g_param_spec_boolean ("highlighting-enabled", "highlighting-enabled", "highlighting-enabled",
                                                          FALSE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 

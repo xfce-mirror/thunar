@@ -1710,7 +1710,7 @@ thunar_file_execute (ThunarFile  *file,
                   /* pass the URL to the webbrowser, this could be a bit strange,
                    * but then at least we are on the secure side */
                   argv = g_new (gchar *, 3);
-                  argv[0] = g_strdup ("exo-open");
+                  argv[0] = g_strdup ("xfce-open");
                   argv[1] = url;
                   argv[2] = NULL;
                 }
@@ -1737,7 +1737,7 @@ thunar_file_execute (ThunarFile  *file,
       /* fake the Exec line */
       escaped_location = g_shell_quote (location);
       if (in_terminal)
-        exec = g_strconcat ("exo-open --launch TerminalEmulator ", escaped_location, " %F", NULL);
+        exec = g_strconcat ("xfce-open --launch TerminalEmulator ", escaped_location, " %F", NULL);
       else
         exec = g_strconcat (escaped_location, " %F", NULL);
       command = xfce_expand_desktop_entry_field_codes (exec, uri_list, NULL, NULL, NULL, FALSE);
@@ -1909,9 +1909,9 @@ thunar_file_launch (ThunarFile  *file,
 
   /* HACK: check if we're not trying to launch another file manager again, possibly
    * ourselfs which will end in a loop */
-  if (g_strcmp0 (g_app_info_get_id (app_info), "exo-file-manager.desktop") == 0
+  if (g_strcmp0 (g_app_info_get_id (app_info), "xfce-file-manager.desktop") == 0
       || g_strcmp0 (g_app_info_get_id (app_info), "thunar.desktop") == 0
-      || g_strcmp0 (g_app_info_get_name (app_info), "exo-file-manager") == 0)
+      || g_strcmp0 (g_app_info_get_name (app_info), "xfce-file-manager") == 0)
     {
       g_object_unref (G_OBJECT (app_info));
       thunar_show_chooser_dialog (parent, file, TRUE, FALSE);

@@ -30,7 +30,6 @@
 #include "thunar/thunar-util.h"
 #include "thunarx/thunarx.h"
 
-#include <exo/exo.h>
 #include <libxfce4ui/libxfce4ui.h>
 
 

@@ -12,7 +12,7 @@ executable(
   dependencies: [
     glib,
     gtk,
-    exo,
+    libxfce4ui,
     libxfce4util,
   ],
   install: true,

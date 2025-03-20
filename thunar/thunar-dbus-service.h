@@ -20,8 +20,6 @@
 #ifndef __THUNAR_DBUS_SERVICE_H__
 #define __THUNAR_DBUS_SERVICE_H__
 
-#include <exo/exo.h>
-
 G_BEGIN_DECLS;
 
 typedef struct _ThunarDBusServiceClass ThunarDBusServiceClass;

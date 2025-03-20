@@ -29,7 +29,7 @@
 #include <locale.h>
 #endif
 
-#include <exo/exo.h>
+#include <libxfce4util/libxfce4util.h>
 #include <thunar-apr/thunar-apr-private.h>
 
 

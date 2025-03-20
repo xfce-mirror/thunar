@@ -30,7 +30,6 @@ thunar_uca_la_SOURCES =							\
 	thunar-uca.gresource.c
 
 thunar_uca_la_CFLAGS =							\
-	$(EXO_CFLAGS)							\
 	$(LIBXFCE4UTIL_CFLAGS)						\
 	$(LIBXFCE4UI_CFLAGS)						\
 	$(LIBXFCE4KBD_PRIVATE_CFLAGS) 			    \
@@ -46,7 +45,6 @@ thunar_uca_la_LDFLAGS =							\
 
 thunar_uca_la_LIBADD =							\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la	\
-	$(EXO_LIBS)							\
 	$(LIBXFCE4UTIL_LIBS)						\
 	$(LIBXFCE4UI_LIBS)							\
 	$(LIBXFCE4KBD_PRIVATE_LIBS)

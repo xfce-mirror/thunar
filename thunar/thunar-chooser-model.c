@@ -34,6 +34,8 @@
 #include "thunar/thunar-icon-factory.h"
 #include "thunar/thunar-private.h"
 
+#include <libxfce4util/libxfce4util.h>
+
 
 
 /* Property identifiers */
@@ -104,7 +106,7 @@ thunar_chooser_model_class_init (ThunarChooserModelClass *klass)
                                                         "content-type",
                                                         "content-type",
                                                         NULL,
-                                                        G_PARAM_CONSTRUCT_ONLY | EXO_PARAM_READWRITE));
+                                                        G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 

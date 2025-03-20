@@ -220,7 +220,7 @@ thunar_path_entry_class_init (ThunarPathEntryClass *klass)
                                                         "current-file",
                                                         "current-file",
                                                         THUNAR_TYPE_FILE,
-                                                        EXO_PARAM_READWRITE));
+                                                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarPathEntry:icon-size:
@@ -231,7 +231,7 @@ thunar_path_entry_class_init (ThunarPathEntryClass *klass)
                                            g_param_spec_int ("icon-size",
                                                              _("Icon size"),
                                                                _("The icon size for the path entry"),
-                                                             1, G_MAXINT, 16, EXO_PARAM_READABLE));
+                                                             1, G_MAXINT, 16, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 }
 
 

@@ -310,7 +310,7 @@ thunar_application_class_init (ThunarApplicationClass *klass)
                                                          "daemon",
                                                          "daemon",
                                                          FALSE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 

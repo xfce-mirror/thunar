@@ -31,7 +31,6 @@
 #include "thunar/thunar-transfer-job.h"
 #include "thunar/thunar-util.h"
 
-#include <exo/exo.h>
 #include <libxfce4ui/libxfce4ui.h>
 
 
@@ -153,7 +152,7 @@ thunar_progress_view_class_init (ThunarProgressViewClass *klass)
                                    PROP_JOB,
                                    g_param_spec_object ("job", "job", "job",
                                                         THUNAR_TYPE_JOB,
-                                                        EXO_PARAM_READWRITE));
+                                                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_property (gobject_class,
                                    PROP_ICON_NAME,
@@ -161,7 +160,7 @@ thunar_progress_view_class_init (ThunarProgressViewClass *klass)
                                                         "icon-name",
                                                         "icon-name",
                                                         NULL,
-                                                        EXO_PARAM_READWRITE));
+                                                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_property (gobject_class,
                                    PROP_TITLE,
@@ -169,7 +168,7 @@ thunar_progress_view_class_init (ThunarProgressViewClass *klass)
                                                         "title",
                                                         "title",
                                                         NULL,
-                                                        EXO_PARAM_READWRITE));
+                                                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_signal_new ("need-attention",
                 THUNAR_TYPE_PROGRESS_VIEW,

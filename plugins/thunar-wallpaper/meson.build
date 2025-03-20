@@ -16,7 +16,7 @@ shared_module(
   dependencies: [
     glib,
     gtk,
-    exo,
+    libxfce4util,
     xfconf,
     x11_deps,
     libintl,

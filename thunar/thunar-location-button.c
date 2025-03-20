@@ -205,7 +205,7 @@ thunar_location_button_class_init (ThunarLocationButtonClass *klass)
                                                         "file",
                                                         "file",
                                                         THUNAR_TYPE_FILE,
-                                                        EXO_PARAM_READWRITE));
+                                                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarLocationButton:max-width:
@@ -220,7 +220,7 @@ thunar_location_button_class_init (ThunarLocationButtonClass *klass)
                                                      "max-width",
                                                      -1, G_MAXINT,
                                                      -1,
-                                                     EXO_PARAM_READWRITE));
+                                                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarLocationButton::location-button-clicked:

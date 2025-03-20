@@ -24,6 +24,8 @@
 #include "thunar/thunar-icon-view.h"
 #include "thunar/thunar-private.h"
 
+#include <libxfce4ui/libxfce4ui.h>
+
 
 
 /* Property identifiers */
@@ -97,7 +99,7 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
                                                          "text-beside-icons",
                                                          "text-beside-icons",
                                                          FALSE,
-                                                         EXO_PARAM_WRITABLE));
+                                                         G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS));
 }
 
 
@@ -138,7 +140,7 @@ thunar_icon_view_set_property (GObject      *object,
     case PROP_TEXT_BESIDE_ICONS:
       if (G_UNLIKELY (g_value_get_boolean (value)))
         {
-          exo_icon_view_set_orientation (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), GTK_ORIENTATION_HORIZONTAL);
+          xfce_icon_view_set_orientation (XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), GTK_ORIENTATION_HORIZONTAL);
           g_object_set (G_OBJECT (standard_view->name_renderer), "wrap-width", 128, "yalign", 0.5f, "xalign", 0.0f, "alignment", PANGO_ALIGN_LEFT, NULL);
 
           /* disconnect the "zoom-level" signal handler, since we're using a fixed wrap-width here */
@@ -149,7 +151,7 @@ thunar_icon_view_set_property (GObject      *object,
         }
       else
         {
-          exo_icon_view_set_orientation (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), GTK_ORIENTATION_VERTICAL);
+          xfce_icon_view_set_orientation (XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), GTK_ORIENTATION_VERTICAL);
           g_object_set (G_OBJECT (standard_view->name_renderer), "yalign", 0.0f, "xalign", 0.5f, "alignment", PANGO_ALIGN_CENTER, NULL);
 
           /* connect the "zoom-level" signal handler as the wrap-width is now synced with the "zoom-level" */
@@ -204,25 +206,25 @@ static void
 thunar_icon_view_set_consistent_horizontal_spacing (ThunarIconView *icon_view)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (icon_view);
-  ExoIconView        *exo_icon_view = EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view)));
+  XfceIconView       *xfce_icon_view = XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view)));
   gint                wrap_width;
   gint                xpad;
   gint                column_spacing;
 
-  if (exo_icon_view_get_orientation (exo_icon_view) == GTK_ORIENTATION_HORIZONTAL)
+  if (xfce_icon_view_get_orientation (xfce_icon_view) == GTK_ORIENTATION_HORIZONTAL)
     {
       /* reset consistent horizontal spacing if text is beside icon */
-      exo_icon_view_set_item_width (exo_icon_view, -1);
+      xfce_icon_view_set_item_width (xfce_icon_view, -1);
       return;
     }
 
   g_object_get (G_OBJECT (standard_view->name_renderer), "wrap-width", &wrap_width, NULL);
   gtk_cell_renderer_get_padding (standard_view->name_renderer, &xpad, NULL);
 
-  column_spacing = exo_icon_view_get_column_spacing (exo_icon_view);
+  column_spacing = xfce_icon_view_get_column_spacing (xfce_icon_view);
 
   /* set consistent horizontal spacing */
-  exo_icon_view_set_item_width (exo_icon_view, wrap_width + MAX (0, xpad * 2 - column_spacing));
+  xfce_icon_view_set_item_width (xfce_icon_view, wrap_width + MAX (0, xpad * 2 - column_spacing));
 }
 
 
@@ -231,12 +233,12 @@ static void
 thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view)
 {
   gint            wrap_width;
-  ExoIconView    *exo_icon_view;
+  XfceIconView   *xfce_icon_view;
   ThunarZoomLevel zoom_level;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-  exo_icon_view = EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view)));
+  xfce_icon_view = XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view)));
   zoom_level = thunar_view_get_zoom_level (THUNAR_VIEW (standard_view));
 
   /* determine the "wrap-width" depending on the "zoom-level" */
@@ -271,5 +273,5 @@ thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view)
 
   /* Like that rubber band selection can be done properly on high zoom levels */
   /* Without margin adjustment it would be almost impossible to start the selection on the left */
-  exo_icon_view_set_margin (exo_icon_view, thunar_zoom_level_to_view_margin (zoom_level));
+  xfce_icon_view_set_margin (xfce_icon_view, thunar_zoom_level_to_view_margin (zoom_level));
 }

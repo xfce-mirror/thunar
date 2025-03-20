@@ -448,7 +448,7 @@ thunar_action_manager_class_init (ThunarActionManagerClass *klass)
                        "widget",
                        "widget",
                        GTK_TYPE_WIDGET,
-                       EXO_PARAM_WRITABLE);
+                       G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarActionManager:select-device:

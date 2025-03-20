@@ -24,7 +24,7 @@
 
 #include "twp-provider.h"
 
-#include <exo/exo.h>
+#include <libxfce4util/libxfce4util.h>
 
 
 

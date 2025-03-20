@@ -28,6 +28,8 @@
 #include "thunar/thunar-job.h"
 #include "thunar/thunar-private.h"
 
+#include <libxfce4util/libxfce4util.h>
+
 #define DEBUG_FILE_CHANGES FALSE
 
 /* The maximum throttle interval (in ms) in which files will be added, removed or notified to be changed */
@@ -251,7 +253,7 @@ thunar_folder_class_init (ThunarFolderClass *klass)
                                                          "loading",
                                                          "loading",
                                                          FALSE,
-                                                         EXO_PARAM_READABLE));
+                                                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
   /**
    * ThunarFolder::destroy:
    * @folder : a #ThunarFolder.

@@ -153,7 +153,7 @@ thunar_navigator_class_init (gpointer klass)
                                                             "current-directory",
                                                             "current-directory",
                                                             THUNAR_TYPE_FILE,
-                                                            EXO_PARAM_READWRITE));
+                                                            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 

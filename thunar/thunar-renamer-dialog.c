@@ -292,7 +292,7 @@ thunar_renamer_dialog_class_init (ThunarRenamerDialogClass *klass)
                                                         "current-directory",
                                                         "current-directory",
                                                         THUNAR_TYPE_FILE,
-                                                        EXO_PARAM_READWRITE));
+                                                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarRenamerDialog:selected-files:
@@ -306,7 +306,7 @@ thunar_renamer_dialog_class_init (ThunarRenamerDialogClass *klass)
                                                        "selected-files",
                                                        "selected-files",
                                                        THUNARX_TYPE_FILE_INFO_LIST,
-                                                       EXO_PARAM_READABLE));
+                                                       G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarRenamerDialog:standalone:
@@ -324,7 +324,7 @@ thunar_renamer_dialog_class_init (ThunarRenamerDialogClass *klass)
                                                          "standalone",
                                                          "standalone",
                                                          FALSE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 

@@ -913,9 +913,9 @@ thunar_util_determine_corner_properties (GtkWidget       *widget,
   GtkTextDirection text_direction;
 
   /* only have rounded corners for icon view. */
-  if (G_LIKELY (EXO_IS_ICON_VIEW (widget)))
+  if (G_LIKELY (XFCE_IS_ICON_VIEW (widget)))
     {
-      if (exo_icon_view_get_orientation (EXO_ICON_VIEW (widget)) == GTK_ORIENTATION_HORIZONTAL)
+      if (xfce_icon_view_get_orientation (XFCE_ICON_VIEW (widget)) == GTK_ORIENTATION_HORIZONTAL)
         {
           /* Compact View */
           /* determine the radius proportional to either height or width (depens on the view) */

@@ -780,7 +780,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
                                                         "current-directory",
                                                         "current-directory",
                                                         THUNAR_TYPE_FILE,
-                                                        EXO_PARAM_READWRITE));
+                                                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarWindow:zoom-level:
@@ -795,7 +795,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
                                                       "zoom-level",
                                                       THUNAR_TYPE_ZOOM_LEVEL,
                                                       THUNAR_ZOOM_LEVEL_100_PERCENT,
-                                                      EXO_PARAM_READWRITE));
+                                                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarWindow:directory-specific-settings:
@@ -808,7 +808,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
                                                          "directory-specific-settings",
                                                          "directory-specific-settings",
                                                          FALSE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarWindow::reload:
@@ -3546,7 +3546,7 @@ thunar_window_start_open_location (ThunarWindow *window,
 
       window->is_searching = TRUE;
 
-      /* workaround the slowness of ExoIconView */
+      /* workaround the slowness of XfceIconView */
       view_type = window->view_type;
       thunar_window_action_detailed_view (window);
       thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), view_type); /* save it in the new view */
@@ -4185,7 +4185,7 @@ image_preview_update (GtkWidget     *parent,
     }
 
   scale_factor = gtk_widget_get_scale_factor (parent);
-  scaled_preview = exo_gdk_pixbuf_scale_ratio (window->preview_image_pixbuf, new_size * scale_factor);
+  scaled_preview = xfce_gdk_pixbuf_scale_ratio (window->preview_image_pixbuf, new_size * scale_factor);
   surface = gdk_cairo_surface_create_from_pixbuf (scaled_preview, scale_factor, gtk_widget_get_window (parent));
   gtk_image_set_from_surface (GTK_IMAGE (image), surface);
 
@@ -4898,7 +4898,7 @@ thunar_window_propagate_key_event (GtkWindow *window,
   /* Turn the accelerator priority around globally,
    * so that the focused widget always gets the accels first.
    * Implementing this cleanly while maintaining some wanted accels
-   * (like Ctrl+N and exo accels) is a lot of work. So we resort to
+   * (like Ctrl+N and xfce accels) is a lot of work. So we resort to
    * only priorize GtkEditable, because that is the easiest way to
    * fix the right-ahead problem. */
   if (focused_widget != NULL && GTK_IS_EDITABLE (focused_widget))

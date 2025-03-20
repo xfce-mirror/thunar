@@ -30,7 +30,6 @@
 #include <string.h>
 #endif
 
-#include <exo/exo.h>
 #include <libxfce4kbd-private/xfce-shortcut-dialog.h>
 #include <libxfce4ui/libxfce4ui.h>
 #include <thunar-uca/thunar-uca-editor.h>
@@ -451,23 +450,23 @@ thunar_uca_editor_icon_clicked (ThunarUcaEditor *uca_editor)
 
   /* allocate the chooser dialog */
   title = g_strdup_printf (_("Select an Icon for \"%s\""), name);
-  chooser = exo_icon_chooser_dialog_new (title, GTK_WINDOW (uca_editor),
-                                         _("_Cancel"), GTK_RESPONSE_CANCEL,
-                                           _("_OK"), GTK_RESPONSE_ACCEPT,
-                                         NULL);
+  chooser = xfce_icon_chooser_dialog_new (title, GTK_WINDOW (uca_editor),
+                                          _("_Cancel"), GTK_RESPONSE_CANCEL,
+                                            _("_OK"), GTK_RESPONSE_ACCEPT,
+                                          NULL);
   gtk_dialog_set_default_response (GTK_DIALOG (chooser), GTK_RESPONSE_ACCEPT);
   g_free (title);
 
   /* setup the currently selected icon */
   icon = g_object_get_data (G_OBJECT (uca_editor->icon_button), "thunar-uca-icon-name");
   if (G_LIKELY (icon != NULL && *icon != '\0'))
-    exo_icon_chooser_dialog_set_icon (EXO_ICON_CHOOSER_DIALOG (chooser), icon);
+    xfce_icon_chooser_dialog_set_icon (XFCE_ICON_CHOOSER_DIALOG (chooser), icon);
 
   /* run the icon chooser dialog */
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
     {
       /* remember the selected icon from the chooser */
-      icon = exo_icon_chooser_dialog_get_icon (EXO_ICON_CHOOSER_DIALOG (chooser));
+      icon = xfce_icon_chooser_dialog_get_icon (XFCE_ICON_CHOOSER_DIALOG (chooser));
       thunar_uca_editor_set_icon_name (uca_editor, icon);
       g_free (icon);
     }

@@ -30,6 +30,7 @@
 #include "thunar/thunar-util.h"
 
 #include <gio/gio.h>
+#include <libxfce4util/libxfce4util.h>
 
 
 

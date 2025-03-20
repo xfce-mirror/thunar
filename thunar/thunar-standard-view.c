@@ -672,7 +672,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                                                "loading",
                                                "loading",
                                                FALSE,
-                                               EXO_PARAM_READWRITE));
+                                               G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarStandardView:searching:
@@ -686,7 +686,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                                                "searching",
                                                "searching",
                                                FALSE,
-                                               EXO_PARAM_READABLE));
+                                               G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarStandardView:search-mode-active:
@@ -699,7 +699,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                                                "search-mode-active",
                                                "search-mode-active",
                                                FALSE,
-                                               EXO_PARAM_READABLE));
+                                               G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarStandardView:display-name:
@@ -711,7 +711,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                        "display-name",
                        "display-name",
                        NULL,
-                       EXO_PARAM_READABLE);
+                       G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarStandardView:full-parsed-path
@@ -723,7 +723,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                        "full-parsed-path",
                        "full-parsed-path",
                        NULL,
-                       EXO_PARAM_READABLE);
+                       G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarStandardView:directory-specific-settings:
@@ -735,7 +735,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                         "directory-specific-settings",
                         "directory-specific-settings",
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarStandardView:thumbnail-draw-frames:
@@ -749,7 +749,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                         "thumbnail-draw-frames",
                         "thumbnail-draw-frames",
                         FALSE,
-                        EXO_PARAM_READWRITE);
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarStandardView:sort-column:
@@ -762,7 +762,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                      NULL,
                      THUNAR_TYPE_COLUMN,
                      THUNAR_COLUMN_NAME,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarStandardView:sort-column-default:
@@ -776,7 +776,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                      NULL,
                      THUNAR_TYPE_COLUMN,
                      THUNAR_COLUMN_NAME,
-                     EXO_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY);
+                     G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT_ONLY);
 
   /**
    * ThunarStandardView:sort-order:
@@ -789,7 +789,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                      NULL,
                      GTK_TYPE_SORT_TYPE,
                      GTK_SORT_ASCENDING,
-                     EXO_PARAM_READWRITE);
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarStandardView:sort-order-default:
@@ -803,7 +803,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                      NULL,
                      GTK_TYPE_SORT_TYPE,
                      GTK_SORT_ASCENDING,
-                     EXO_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY);
+                     G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT_ONLY);
 
   /**
    * ThunarStandardView:model-type:
@@ -816,7 +816,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                       "ModelType",
                       NULL,
                       G_TYPE_NONE,
-                      EXO_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT_ONLY);
 
   /* override ThunarComponent's properties */
   g_iface = g_type_default_interface_peek (THUNAR_TYPE_COMPONENT);
@@ -858,7 +858,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                        "statusbar-text",
                        "statusbar-text",
                        NULL,
-                       EXO_PARAM_READABLE);
+                       G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
 
   /* install all properties */
@@ -3318,7 +3318,7 @@ thunar_standard_view_receive_netscape_url (GtkWidget          *view,
       if (G_LIKELY (working_directory != NULL))
         {
           /* prepare the basic part of the command */
-          argv[n++] = "exo-desktop-item-edit";
+          argv[n++] = "xfce-desktop-item-edit";
           argv[n++] = "--type=Link";
           argv[n++] = "--url";
           argv[n++] = bits[0];
@@ -3350,7 +3350,7 @@ thunar_standard_view_receive_netscape_url (GtkWidget          *view,
           if (screen != NULL)
             display = g_strdup (gdk_display_get_name (gdk_screen_get_display (screen)));
 
-          /* try to run exo-desktop-item-edit */
+          /* try to run xfce-desktop-item-edit */
           succeed = g_spawn_async (working_directory, argv, NULL,
                                    G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
                                    thunar_setup_display_cb, display, &pid, &error);
@@ -3770,7 +3770,7 @@ thunar_standard_view_drag_data_delete (GtkWidget          *view,
                                        GdkDragContext     *context,
                                        ThunarStandardView *standard_view)
 {
-  /* make sure the default handler of ExoIconView/GtkTreeView is never run */
+  /* make sure the default handler of XfceIconView/GtkTreeView is never run */
   g_signal_stop_emission_by_name (G_OBJECT (view), "drag-data-delete");
 }
 

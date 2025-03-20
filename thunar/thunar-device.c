@@ -27,6 +27,8 @@
 #include "thunar/thunar-notify.h"
 #include "thunar/thunar-private.h"
 
+#include <libxfce4util/libxfce4util.h>
+
 
 
 typedef gboolean (*AsyncCallbackFinish) (GObject      *object,
@@ -122,7 +124,7 @@ thunar_device_class_init (ThunarDeviceClass *klass)
                                                         "device",
                                                         "device",
                                                         G_TYPE_OBJECT,
-                                                        EXO_PARAM_READWRITE
+                                                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
                                                         | G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (gobject_class,
@@ -131,7 +133,7 @@ thunar_device_class_init (ThunarDeviceClass *klass)
                                                          "hidden",
                                                          "hidden",
                                                          FALSE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_property (gobject_class,
                                    PROP_KIND,
@@ -141,7 +143,7 @@ thunar_device_class_init (ThunarDeviceClass *klass)
                                                       THUNAR_DEVICE_KIND_VOLUME,
                                                       THUNAR_DEVICE_KIND_MOUNT_REMOTE,
                                                       THUNAR_DEVICE_KIND_VOLUME,
-                                                      EXO_PARAM_READWRITE
+                                                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
                                                       | G_PARAM_CONSTRUCT_ONLY));
 }
 

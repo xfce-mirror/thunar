@@ -31,7 +31,6 @@
 #include "thunar/thunar-statusbar.h"
 #include "thunar/thunar-window.h"
 
-#include <exo/exo.h>
 #include <libxfce4ui/libxfce4ui.h>
 
 
@@ -131,7 +130,7 @@ thunar_statusbar_class_init (ThunarStatusbarClass *klass)
                                                         "text",
                                                         "text",
                                                         NULL,
-                                                        EXO_PARAM_WRITABLE));
+                                                        G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS));
 
   if (!style_initialized)
     {

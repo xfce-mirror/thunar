@@ -133,15 +133,15 @@ static void
 thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
 {
   GObjectClass *gobject_class;
-  ThunarJobClass *exojob_class;
+  ThunarJobClass *xfcejob_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_transfer_job_finalize;
   gobject_class->get_property = thunar_transfer_job_get_property;
   gobject_class->set_property = thunar_transfer_job_set_property;
 
-  exojob_class = THUNAR_JOB_CLASS (klass);
-  exojob_class->execute = thunar_transfer_job_execute;
+  xfcejob_class = THUNAR_JOB_CLASS (klass);
+  xfcejob_class->execute = thunar_transfer_job_execute;
 
   /**
    * ThunarPropertiesDialog:file_size_binary:
@@ -154,7 +154,7 @@ thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
                                                          "FileSizeBinary",
                                                          NULL,
                                                          TRUE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarPropertiesDialog:parallel_copy_mode:
@@ -169,7 +169,7 @@ thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
                                                       NULL,
                                                       THUNAR_TYPE_PARALLEL_COPY_MODE,
                                                       THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL,
-                                                      EXO_PARAM_READWRITE));
+                                                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarPropertiesdialog:transfer_use_partial:
@@ -183,7 +183,7 @@ thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
                                                       NULL,
                                                       THUNAR_TYPE_USE_PARTIAL_MODE,
                                                       THUNAR_USE_PARTIAL_MODE_DISABLED,
-                                                      EXO_PARAM_READWRITE));
+                                                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarPropertiesdialog:transfer_verify_file:
@@ -197,7 +197,7 @@ thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
                                                       NULL,
                                                       THUNAR_TYPE_VERIFY_FILE_MODE,
                                                       THUNAR_VERIFY_FILE_MODE_DISABLED,
-                                                      EXO_PARAM_READWRITE));
+                                                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 

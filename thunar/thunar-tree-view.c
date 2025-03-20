@@ -337,7 +337,7 @@ thunar_tree_view_class_init (ThunarTreeViewClass *klass)
                                                          "show-hidden",
                                                          "show-hidden",
                                                          FALSE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarTreeView::delete-selected-files:

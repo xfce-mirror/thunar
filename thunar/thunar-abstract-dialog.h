@@ -20,7 +20,7 @@
 #ifndef __THUNAR_ABSTRACT_DIALOG_H__
 #define __THUNAR_ABSTRACT_DIALOG_H__
 
-#include <exo/exo.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS;
 

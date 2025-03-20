@@ -45,6 +45,7 @@
 
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <libxfce4util/libxfce4util.h>
 
 #define SPINNER_CYCLE_DURATION 1000
 #define SPINNER_NUM_STEPS 12
@@ -262,7 +263,7 @@ thunar_shortcuts_model_class_init (ThunarShortcutsModelClass *klass)
                                                        NULL,
                                                        NULL,
                                                        G_TYPE_STRV,
-                                                       EXO_PARAM_READWRITE));
+                                                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarPropertiesDialog:file_size_binary:
@@ -275,7 +276,7 @@ thunar_shortcuts_model_class_init (ThunarShortcutsModelClass *klass)
                                                          "FileSizeBinary",
                                                          NULL,
                                                          TRUE,
-                                                         EXO_PARAM_READWRITE));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 

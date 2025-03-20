@@ -80,7 +80,7 @@ thunar_view_class_init (gpointer klass)
                                                              "loading",
                                                              "loading",
                                                              FALSE,
-                                                             EXO_PARAM_READABLE));
+                                                             G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
 
   /**
@@ -94,7 +94,7 @@ thunar_view_class_init (gpointer klass)
                                                              "show-hidden",
                                                              "show-hidden",
                                                              FALSE,
-                                                             EXO_PARAM_READWRITE));
+                                                             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarView:zoom-level:
@@ -108,7 +108,7 @@ thunar_view_class_init (gpointer klass)
                                                           "zoom-level",
                                                           THUNAR_TYPE_ZOOM_LEVEL,
                                                           THUNAR_ZOOM_LEVEL_100_PERCENT,
-                                                          EXO_PARAM_READWRITE));
+                                                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 

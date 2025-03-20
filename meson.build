@@ -19,11 +19,10 @@ i18n = import('i18n')
 fs = import('fs')
 
 dependency_versions = {
-  'exo': '>= 4.19.0',
   'glib': '>= 2.72.0',
   'gtk': '>= 3.24.0',
   'gdk-pixbuf': '>= 2.42.8',
-  'libxfce4ui': '>= 4.17.6',
+  'libxfce4ui': '>= 4.21.0',
   'libxfce4util': '>= 4.17.2',
   'xfconf': '>= 4.12.0',
   'pango': '>= 1.38.0',
@@ -41,7 +40,6 @@ dependency_versions = {
   'libxfce4panel': '>= 4.14.0',
 }
 
-exo = dependency('exo-2', version: dependency_versions['exo'])
 glib = dependency('glib-2.0', version: dependency_versions['glib'])
 gio = dependency('gio-2.0', version: dependency_versions['glib'])
 gthread = dependency('gthread-2.0', version: dependency_versions['glib'])

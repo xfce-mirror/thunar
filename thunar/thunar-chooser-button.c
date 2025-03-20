@@ -33,6 +33,8 @@
 #include "thunar/thunar-pango-extensions.h"
 #include "thunar/thunar-private.h"
 
+#include <libxfce4util/libxfce4util.h>
+
 
 
 /* Property identifiers */
@@ -134,7 +136,7 @@ thunar_chooser_button_class_init (ThunarChooserButtonClass *klass)
                                    PROP_FILE,
                                    g_param_spec_object ("file", "file", "file",
                                                         THUNAR_TYPE_FILE,
-                                                        EXO_PARAM_READWRITE));
+                                                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 

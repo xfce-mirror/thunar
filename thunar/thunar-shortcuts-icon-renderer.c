@@ -30,6 +30,7 @@
 #include "thunar/thunar-shortcuts-icon-renderer.h"
 
 #include <gio/gio.h>
+#include <libxfce4ui/libxfce4ui.h>
 
 
 
@@ -108,7 +109,7 @@ thunar_shortcuts_icon_renderer_class_init (ThunarShortcutsIconRendererClass *kla
                                    PROP_DEVICE,
                                    g_param_spec_object ("device", "device", "device",
                                                         THUNAR_TYPE_DEVICE,
-                                                        EXO_PARAM_READWRITE));
+                                                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * ThunarIconRenderer:gicon:
@@ -120,7 +121,7 @@ thunar_shortcuts_icon_renderer_class_init (ThunarShortcutsIconRendererClass *kla
                                    PROP_GICON,
                                    g_param_spec_object ("gicon", "gicon", "gicon",
                                                         G_TYPE_ICON,
-                                                        EXO_PARAM_READWRITE));
+                                                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 
@@ -283,7 +284,7 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
           if (G_UNLIKELY (icon_area.width > cell_area->width || icon_area.height > cell_area->height))
             {
               /* scale down to fit */
-              temp = exo_gdk_pixbuf_scale_down (icon, TRUE, MAX (1, cell_area->width * scale_factor), MAX (1, cell_area->height * scale_factor));
+              temp = xfce_gdk_pixbuf_scale_down (icon, TRUE, MAX (1, cell_area->width * scale_factor), MAX (1, cell_area->height * scale_factor));
               g_object_unref (G_OBJECT (icon));
               icon = temp;
 

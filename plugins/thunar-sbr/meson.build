@@ -32,7 +32,7 @@ shared_module(
   dependencies: [
     glib,
     gtk,
-    exo,
+    libxfce4util,
     exif,
     pcre2,
   ],

@@ -54,11 +54,11 @@
 #include <unistd.h>
 #endif
 
-#include <exo/exo.h>
 #include <gio/gio.h>
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <gtk/gtk.h>
+#include <libxfce4ui/libxfce4ui.h>
 #include <libxfce4util/libxfce4util.h>
 
 
@@ -680,7 +680,7 @@ main (int argc, char **argv)
       g_strfreev (attachments);
 
       /* open the mail composer */
-      if (!exo_execute_preferred_application ("MailReader", mailto->str, NULL, NULL, &error))
+      if (!xfce_execute_preferred_application ("MailReader", mailto->str, NULL, NULL, &error))
         {
           /* tell the user that we failed */
           tse_error (error, _("Failed to compose new email"));
