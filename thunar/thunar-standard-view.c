@@ -159,8 +159,6 @@ thunar_standard_view_get_loading (ThunarView *view);
 static void
 thunar_standard_view_set_loading (ThunarStandardView *standard_view,
                                   gboolean            loading);
-static gboolean
-thunar_standard_view_get_searching (ThunarView *view);
 static gchar *
 thunar_standard_view_get_statusbar_text (ThunarView *view);
 static gboolean
@@ -1231,7 +1229,7 @@ thunar_standard_view_get_property (GObject    *object,
       break;
 
     case PROP_SEARCHING:
-      g_value_set_boolean (value, thunar_standard_view_get_searching (THUNAR_VIEW (object)));
+      g_value_set_boolean (value, thunar_standard_view_get_searching (THUNAR_STANDARD_VIEW (object)));
       break;
 
     case PROP_SEARCH_MODE_ACTIVE:
@@ -1782,14 +1780,6 @@ static gboolean
 thunar_standard_view_get_loading (ThunarView *view)
 {
   return THUNAR_STANDARD_VIEW (view)->loading;
-}
-
-
-
-static gboolean
-thunar_standard_view_get_searching (ThunarView *view)
-{
-  return THUNAR_STANDARD_VIEW (view)->priv->active_search;
 }
 
 
@@ -4617,6 +4607,14 @@ _thunar_standard_view_open_on_middle_click (ThunarStandardView *standard_view,
 
 
 
+gboolean
+thunar_standard_view_get_searching (ThunarStandardView *standard_view)
+{
+  return standard_view->priv->active_search;
+}
+
+
+
 /**
  * thunar_standard_view_set_searching:
  * @standard_view : a #ThunarStandardView.
@@ -4695,6 +4693,30 @@ gchar *
 thunar_standard_view_get_search_query (ThunarStandardView *standard_view)
 {
   return standard_view->priv->search_query;
+}
+
+
+
+/**
+ * thunar_standard_view_stop_search:
+ * @standard_view : a #ThunarStandardView.
+ *
+ * Stops an ongoing search operation.
+ **/
+void
+thunar_standard_view_stop_search (ThunarStandardView *standard_view)
+{
+  ThunarJob *search_job;
+
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  if (standard_view->priv->active_search == FALSE)
+    return;
+
+  /* stop the ongoing search */
+  search_job = thunar_standard_view_model_get_job (standard_view->model);
+  if (search_job != NULL)
+    thunar_job_cancel (THUNAR_JOB (search_job)); // TODO is this sufficient?
 }
 
 
