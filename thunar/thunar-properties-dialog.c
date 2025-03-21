@@ -1705,12 +1705,14 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
         }
       else if (tmp_parent != NULL)
         {
-          /* we only display the location if they are all equal */
-          if (!g_file_equal (thunar_file_get_file (parent_file), thunar_file_get_file (tmp_parent)))
+          if (parent_file != NULL)
             {
-              if (parent_file != NULL)
-                g_object_unref (G_OBJECT (parent_file));
-              parent_file = NULL;
+              /* we only display the location if they are all equal */
+              if (!g_file_equal (thunar_file_get_file (parent_file), thunar_file_get_file (tmp_parent)))
+                {
+                  g_object_unref (G_OBJECT (parent_file));
+                  parent_file = NULL;
+                }
             }
 
           g_object_unref (G_OBJECT (tmp_parent));
