@@ -1711,7 +1711,7 @@ thunar_window_update_go_menu (ThunarWindow *window,
               action_entry = get_action_entry (THUNAR_WINDOW_ACTION_OPEN_TRASH);
               if (action_entry != NULL)
                 {
-                  if (thunar_file_get_item_count (trash_folder) > 0)
+                  if (thunar_file_get_trash_item_count (trash_folder) > 0)
                     icon_name = "user-trash-full";
                   else
                     icon_name = "user-trash";
@@ -2508,7 +2508,7 @@ thunar_window_switch_current_view (ThunarWindow *window,
 
   /* Set trash infobar's `empty trash` button sensitivity, if required */
   if (thunar_file_is_trash (window->current_directory))
-    gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_item_count (window->current_directory) > 0);
+    gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_trash_item_count (window->current_directory) > 0);
 
   /* if the view has an ongoing search operation take that into account, otherwise cancel the current search (if there is one) */
   if (thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (window->view)) != NULL)
@@ -4283,7 +4283,7 @@ thunar_window_action_detailed_view (ThunarWindow *window)
 {
   thunar_window_action_view_changed (window, THUNAR_TYPE_DETAILS_VIEW);
   thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view),
-                                                       thunar_file_is_trash (window->current_directory));
+                                                       thunar_file_is_trashed (window->current_directory));
   thunar_details_view_set_recency_column_visible (THUNAR_DETAILS_VIEW (window->view),
                                                   thunar_file_is_recent (window->current_directory));
 
@@ -5242,7 +5242,7 @@ thunar_window_notify_loading (ThunarView   *view,
 
       /* Set trash infobar's `empty trash` button sensitivity, if required */
       if (thunar_file_is_trash (window->current_directory))
-        gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_item_count (window->current_directory) > 0);
+        gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_trash_item_count (window->current_directory) > 0);
     }
 }
 
@@ -5485,11 +5485,11 @@ void
 thunar_window_set_current_directory (ThunarWindow *window,
                                      ThunarFile   *current_directory)
 {
-  gboolean is_trash;
-  gboolean is_recent;
   GType    type;
   gchar   *type_name;
   gint     num_pages;
+  gboolean is_trashed;
+  gboolean is_recent;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
@@ -5542,12 +5542,6 @@ thunar_window_set_current_directory (ThunarWindow *window,
   thunar_window_update_title (window);
   thunar_window_update_window_icon (window);
 
-  if (G_LIKELY (window->view != NULL))
-    {
-      /* grab the focus to the main view */
-      gtk_widget_grab_focus (window->view);
-    }
-
   thunar_window_history_changed (window);
   gtk_widget_set_sensitive (window->location_toolbar_item_parent, !thunar_g_file_is_root (thunar_file_get_file (current_directory)));
 
@@ -5562,20 +5556,23 @@ thunar_window_set_current_directory (ThunarWindow *window,
   if (window->view != NULL && window->view_type != type)
     thunar_window_replace_view (window, window->view, type);
 
-  is_trash = thunar_file_is_trash (current_directory);
+  /* grab the focus to the main view */
+  if (window->view != NULL)
+    gtk_widget_grab_focus (window->view);
+
+  is_trashed = thunar_file_is_trashed (current_directory);
   is_recent = thunar_file_is_recent (current_directory);
-  if (is_trash)
-    gtk_widget_show (window->trash_infobar);
-  else
-    gtk_widget_hide (window->trash_infobar);
 
-  if (THUNAR_IS_DETAILS_VIEW (window->view) == FALSE)
-    return;
+  /* show/hide trash infobar */
+  gtk_widget_set_visible (window->trash_infobar, is_trashed);
 
-  /* show/hide date_deleted column/sortBy in the trash directory */
-  thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), is_trash);
-  thunar_details_view_set_recency_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
-  thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
+  /* show/hide special columns */
+  if (THUNAR_IS_DETAILS_VIEW (window->view))
+    {
+      thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), is_trashed);
+      thunar_details_view_set_recency_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
+      thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
+    }
 }
 
 
@@ -6087,42 +6084,39 @@ thunar_window_preview_file_destroyed (ThunarWindow *window)
 
 
 
-/**
- * thunar_window_selection_changed:
- * @window      : a #ThunarWindow instance.
- *
- * Used to set the `sensitive` value of the `Restore` button in the trash infobar and to
- * update the image previews.
- **/
 static void
 thunar_window_selection_changed (ThunarWindow *window)
 {
   GList *selected_files = thunar_view_get_selected_files (THUNAR_VIEW (window->view));
 
-  /* butttons specific to the Trash location */
-  if (g_list_length (selected_files) > 0)
-    gtk_widget_set_sensitive (window->trash_infobar_restore_button, TRUE);
-  else
-    gtk_widget_set_sensitive (window->trash_infobar_restore_button, FALSE);
-
-  /* Disconnect from previous file */
-  if (window->preview_image_file != NULL)
+  /* update the `Restore` button specific to the trash location */
+  if (thunar_file_is_trashed (window->current_directory))
     {
-      g_signal_handlers_disconnect_by_data (window->preview_image_file, window);
-      g_object_unref (window->preview_image_file);
-      window->preview_image_file = NULL;
+      if (thunar_file_is_trash (window->current_directory) && g_list_length (selected_files) > 0)
+        gtk_widget_set_sensitive (window->trash_infobar_restore_button, TRUE);
+      else
+        gtk_widget_set_sensitive (window->trash_infobar_restore_button, FALSE);
     }
 
-  /* clear image previews */
-  if (window->preview_image_pixbuf != NULL)
-    {
-      g_object_unref (window->preview_image_pixbuf);
-      window->preview_image_pixbuf = NULL;
-    }
-
-  /* get or request a thumbnail */
+  /* update the image preview */
   if (window->image_preview_visible == TRUE)
     {
+      /* disconnect from previous file */
+      if (window->preview_image_file != NULL)
+        {
+          g_signal_handlers_disconnect_by_data (window->preview_image_file, window);
+          g_object_unref (window->preview_image_file);
+          window->preview_image_file = NULL;
+        }
+
+      /* clear image preview */
+      if (window->preview_image_pixbuf != NULL)
+        {
+          g_object_unref (window->preview_image_pixbuf);
+          window->preview_image_pixbuf = NULL;
+        }
+
+      /* get or request a thumbnail */
       if (g_list_length (selected_files) >= 1)
         {
           ThunarFileThumbState state;
