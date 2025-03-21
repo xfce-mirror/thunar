@@ -1,5 +1,4 @@
 SUBDIRS =								\
-	papers								\
 	reference
 
 doc_DATA =								\

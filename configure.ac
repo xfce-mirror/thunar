@@ -287,7 +287,6 @@ BM_THUNAR_PLUGIN_WALLPAPER()
 AC_CONFIG_FILES([
 Makefile
 docs/Makefile
-docs/papers/Makefile
 docs/reference/Makefile
 docs/reference/thunarx/Makefile
 examples/Makefile
