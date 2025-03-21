@@ -1,5 +1,4 @@
 SUBDIRS =								\
-	design								\
 	papers								\
 	reference
 
