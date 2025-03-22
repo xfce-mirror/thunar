@@ -462,7 +462,7 @@ struct _ThunarStandardViewPrivate
 
   /* if you are wondering why we don't check if search_query is NULL instead of adding a new variable,
    * we don't want to show the spinner when the search query is empty (i.e. "") */
-  gboolean active_search;
+  gboolean searching;
 
   /* used to restore the view type after a search is completed */
   GType type;
@@ -986,7 +986,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->accel_group = NULL;
 
   standard_view->priv->search_query = NULL;
-  standard_view->priv->active_search = FALSE;
+  standard_view->priv->searching = FALSE;
   standard_view->priv->type = 0;
 
   standard_view->priv->css_provider = NULL;
@@ -1789,7 +1789,7 @@ thunar_standard_view_get_loading (ThunarView *view)
 static gboolean
 thunar_standard_view_get_searching (ThunarView *view)
 {
-  return THUNAR_STANDARD_VIEW (view)->priv->active_search;
+  return THUNAR_STANDARD_VIEW (view)->priv->searching;
 }
 
 
@@ -3838,7 +3838,7 @@ thunar_standard_view_rows_reordered (ThunarStandardViewModel *model,
   _thunar_return_if_fail (standard_view->model == model);
 
   /* ignore while searching */
-  if (standard_view->priv->active_search == TRUE)
+  if (standard_view->priv->searching == TRUE)
     return;
 
   /* the order of the paths might have changed, but the selection
@@ -3860,7 +3860,7 @@ thunar_standard_view_select_after_row_deleted (ThunarStandardViewModel *model,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* ignore while searching */
-  if (standard_view->priv->active_search == TRUE)
+  if (standard_view->priv->searching == TRUE)
     return;
 
   /* ignore if we have selected files */
@@ -3908,7 +3908,7 @@ thunar_standard_view_search_done (ThunarStandardViewModel *model,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (standard_view->model == model);
 
-  standard_view->priv->active_search = FALSE;
+  standard_view->priv->searching = FALSE;
 
   /* notify listeners */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_SEARCHING]);
@@ -4668,7 +4668,7 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
 
   if (search_query != NULL && g_strcmp0 (search_query, "") != 0)
     {
-      standard_view->priv->active_search = TRUE;
+      standard_view->priv->searching = TRUE;
       /* disable expandable folders when searching */
       if (tree_view != NULL)
         {
@@ -4679,7 +4679,7 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
     }
   else
     {
-      standard_view->priv->active_search = FALSE;
+      standard_view->priv->searching = FALSE;
       if (tree_view != NULL)
         g_object_notify (G_OBJECT (standard_view->preferences), "misc-expandable-folders");
     }
