@@ -4699,6 +4699,30 @@ thunar_standard_view_get_search_query (ThunarStandardView *standard_view)
 
 
 
+/**
+ * thunar_standard_view_stop_search:
+ * @standard_view : a #ThunarStandardView.
+ *
+ * Stops an ongoing search operation.
+ **/
+void
+thunar_standard_view_stop_search (ThunarStandardView *standard_view)
+{
+  ThunarJob *search_job;
+
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  if (standard_view->priv->searching == FALSE)
+    return;
+
+  /* stop the ongoing search */
+  search_job = thunar_standard_view_model_get_job (standard_view->model);
+  if (search_job != NULL)
+    thunar_job_cancel (THUNAR_JOB (search_job));
+}
+
+
+
 void
 thunar_standard_view_save_view_type (ThunarStandardView *standard_view,
                                      GType               type)
