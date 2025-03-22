@@ -293,7 +293,7 @@ struct _ThunarActionManager
   GtkWidget *widget;
 
   /* TRUE if the active view is displaying search results or actively searching for files */
-  gboolean is_searching;
+  gboolean search_mode;
 };
 
 static GQuark thunar_action_manager_appinfo_quark;
@@ -524,7 +524,7 @@ thunar_action_manager_init (ThunarActionManager *action_mgr)
   g_closure_ref (action_mgr->new_files_created_closure);
   g_closure_sink (action_mgr->new_files_created_closure);
 
-  action_mgr->is_searching = FALSE;
+  action_mgr->search_mode = FALSE;
 }
 
 
@@ -1505,10 +1505,10 @@ thunar_action_manager_action_open_in_new_windows (ThunarActionManager *action_mg
 
 
 void
-thunar_action_manager_set_searching (ThunarActionManager *action_mgr,
-                                     gboolean             b)
+thunar_action_manager_set_search_mode (ThunarActionManager *action_mgr,
+                                       gboolean             b)
 {
-  action_mgr->is_searching = b;
+  action_mgr->search_mode = b;
 }
 
 
@@ -1715,7 +1715,7 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
       gtk_widget_set_sensitive (item, show_item
                                       && action_mgr->parent_folder != NULL
                                       && thunar_file_is_writable (action_mgr->parent_folder)
-                                      && !action_mgr->is_searching);
+                                      && !action_mgr->search_mode);
       return item;
 
     case THUNAR_ACTION_MANAGER_ACTION_DUPLICATE:
@@ -1727,7 +1727,7 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
       gtk_widget_set_sensitive (item, show_item
                                       && action_mgr->parent_folder != NULL
                                       && thunar_file_is_writable (action_mgr->parent_folder)
-                                      && !action_mgr->is_searching);
+                                      && !action_mgr->search_mode);
       return item;
 
     case THUNAR_ACTION_MANAGER_ACTION_RENAME:
@@ -1832,7 +1832,7 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
       if (thunar_file_is_trash (parent))
         return NULL;
       item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
-      gtk_widget_set_sensitive (item, thunar_file_is_writable (parent) && !action_mgr->is_searching);
+      gtk_widget_set_sensitive (item, thunar_file_is_writable (parent) && !action_mgr->search_mode);
       return item;
 
     case THUNAR_ACTION_MANAGER_ACTION_CREATE_DOCUMENT:
@@ -1845,7 +1845,7 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
       item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
       submenu = thunar_action_manager_create_document_submenu_new (action_mgr);
       gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
-      gtk_widget_set_sensitive (item, thunar_file_is_writable (parent) && !action_mgr->is_searching);
+      gtk_widget_set_sensitive (item, thunar_file_is_writable (parent) && !action_mgr->search_mode);
       return item;
 
     case THUNAR_ACTION_MANAGER_ACTION_CUT:
@@ -1914,7 +1914,7 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
           N_ ("Paste the clipboard"),
           action_entry->accel_path, G_CALLBACK (gtk_editable_paste_clipboard),
           G_OBJECT (focused_widget), action_entry->menu_item_icon_name, menu);
-          gtk_widget_set_sensitive (item, thunar_gtk_editable_can_paste (GTK_EDITABLE (focused_widget)) && !action_mgr->is_searching);
+          gtk_widget_set_sensitive (item, thunar_gtk_editable_can_paste (GTK_EDITABLE (focused_widget)) && !action_mgr->search_mode);
         }
       else
         {
@@ -1922,7 +1922,7 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
           item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
           gtk_widget_set_sensitive (item, thunar_clipboard_manager_get_can_paste (clipboard)
                                           && thunar_file_is_writable (action_mgr->current_directory)
-                                          && !action_mgr->is_searching);
+                                          && !action_mgr->search_mode);
           g_object_unref (clipboard);
         }
       return item;
@@ -2307,7 +2307,7 @@ thunar_action_manager_action_make_link (ThunarActionManager *action_mgr)
 
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
-  if (G_UNLIKELY (action_mgr->current_directory == NULL) || G_UNLIKELY (action_mgr->is_searching))
+  if (G_UNLIKELY (action_mgr->current_directory == NULL) || G_UNLIKELY (action_mgr->search_mode))
     return TRUE;
   if (action_mgr->files_are_selected == FALSE || thunar_file_is_trash (action_mgr->current_directory))
     return TRUE;
@@ -2339,7 +2339,7 @@ thunar_action_manager_action_duplicate (ThunarActionManager *action_mgr)
 
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
-  if (G_UNLIKELY (action_mgr->current_directory == NULL) || G_UNLIKELY (action_mgr->is_searching))
+  if (G_UNLIKELY (action_mgr->current_directory == NULL) || G_UNLIKELY (action_mgr->search_mode))
     return TRUE;
   if (action_mgr->files_are_selected == FALSE || thunar_file_is_trash (action_mgr->current_directory))
     return TRUE;
@@ -2730,7 +2730,7 @@ thunar_action_manager_action_create_folder (ThunarActionManager *action_mgr)
 
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
-  if (thunar_file_is_trash (action_mgr->current_directory) || action_mgr->is_searching)
+  if (thunar_file_is_trash (action_mgr->current_directory) || action_mgr->search_mode)
     return TRUE;
 
   /* ask the user to enter a name for the new folder */
@@ -2781,7 +2781,7 @@ thunar_action_manager_action_create_document (ThunarActionManager *action_mgr,
 
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
-  if (thunar_file_is_trash (action_mgr->current_directory) || action_mgr->is_searching)
+  if (thunar_file_is_trash (action_mgr->current_directory) || action_mgr->search_mode)
     return TRUE;
 
   template_file = g_object_get_qdata (G_OBJECT (menu_item), thunar_action_manager_file_quark);
@@ -3112,7 +3112,7 @@ thunar_action_manager_action_paste (ThunarActionManager *action_mgr)
 
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
-  if (action_mgr->is_searching)
+  if (action_mgr->search_mode)
     return TRUE;
 
   clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (action_mgr->widget));
@@ -3446,7 +3446,7 @@ thunar_action_manager_append_open_section (ThunarActionManager *action_mgr,
     }
 
   /* active while searching and while inside the 'recent:///' folder */
-  if (action_mgr->n_files_to_process > 0 && (action_mgr->is_searching || thunar_file_is_recent (action_mgr->current_directory)))
+  if (action_mgr->n_files_to_process > 0 && (action_mgr->search_mode || thunar_file_is_recent (action_mgr->current_directory)))
     {
       /* Dont show 'open location' on the recent folder shortcut itself */
       if (!thunar_file_is_recent (action_mgr->files_to_process->data) && !THUNAR_IS_TREE_VIEW (action_mgr->widget))
