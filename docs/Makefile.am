@@ -1,6 +1,4 @@
 SUBDIRS =								\
-	design								\
-	papers								\
 	reference
 
 doc_DATA =								\
