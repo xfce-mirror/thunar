@@ -483,11 +483,22 @@ thunar_location_entry_emit_edit_done (ThunarLocationEntry *entry)
   /**
    * - do not emit the signal if the context menu was opened
    * - only emit the signal if we are the toplevel window (no reset on a window backdrop)
+   * - do not emit if we are in search mode
    */
   if (entry->right_click_occurred == FALSE && GTK_IS_WINDOW (window) && gtk_window_has_toplevel_focus (GTK_WINDOW (window)) == TRUE)
     {
+      /* Always disconnect the signal handler to prevent further calls */
       g_signal_handlers_disconnect_by_func (entry->path_entry, G_CALLBACK (thunar_location_entry_emit_edit_done), entry);
-      g_signal_emit_by_name (entry, "edit-done");
+
+      /* Check if we're in search mode (text starts with "Search: ") */
+      const gchar *text = gtk_entry_get_text (GTK_ENTRY (entry->path_entry));
+      gboolean     in_search_mode = (text != NULL && g_str_has_prefix (text, "Search: "));
+
+      /* Only emit edit-done if we're not in search mode */
+      if (!in_search_mode)
+        {
+          g_signal_emit_by_name (entry, "edit-done");
+        }
     }
 
   entry->right_click_occurred = FALSE;
