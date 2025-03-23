@@ -1,3 +1,94 @@
+4.21.0 (2025-03-23)
+======
+- Fix crash in properties dialog (#1585)
+- Replace deprecated exo with libxfce4ui 4.21.0
+- docs: Fix unused declarations warning
+- build: Bump some min versions and remove #ifdefs
+- Set minimum size of filename input image
+- Merge ExoJob Into ThunarJob
+- file: Don't use deprecated exo_str_is_empty
+- Improve error message on copy fail (#1570)
+- Fix invalid filenames when copying to exFAT FS (#1570)
+- Fix typo in preferences dialog
+- Hide shortcuts editor when accel map uninitialized (#1488)
+- scan-build: Add false positive file
+- scan-build: Fix core.uninitialized.Assign
+- scan-build: Fix core.NullDereference
+- scan-build: Fix deadcode.DeadStores
+- gcc-analyzer: Add false positive file
+- gcc-analyzer: Fix -Wanalyzer-possible-null-argument
+- gcc-analyzer: Fix -Wanalyzer-null-dereference
+- gcc-analyzer: Fix -Wanalyzer-use-of-uninitialized-value
+- gcc-analyzer: Fix -Wanalyzer-possible-null-dereference
+- build: Automate copyright year management
+- Add meson build
+- docs: Remove thunar directory
+- build: Migrate to xdt-gen-visibility and xdt-check-abi
+- build: Make libx11 optional and use XDT_CHECK_OPTIONAL_FEATURE
+- build: Preliminary cleanup
+- properties-dialog: Improve size label strings
+- properties-dialog: Add tooltip to "Original Path"
+- properties-dialog: Relocate "Deleted" line
+- properties-dialog: Remove link target from type description
+- Update statusbar when searching (#1560)
+- image-preview: Use italics for the size label
+- image-preview: Do not rely on xfconf value for visibility toggle
+- image-preview: Properly initialize the preview on startup
+- I18n: Update po/LINGUAS list
+- Always update statusbar on file changes in list view (#1560)
+- Add List view hotkeys to shortcuts editor tab (#1556)
+- Fix item activation on double-click in list view (#1567)
+- Use 'malloc_trim' after search (#1552)
+- Fix missing dialog for folder errors in list view (#1538)
+- Fix leak on search update
+- Fix leaks on "cancel search"
+- Update file permission related emblem names
+- properties-dialog: Use file type icon as window icon
+- Fix missing dialog window icon (#1506)
+- Properly check if a file can be trashed (#1554)
+- Improve widgets in properties dialog (#1537)
+- Fix wrong selection after rename in list view (#1415)
+- build: Get rid of maintainer mode where gdbus-codegen is used
+- Prevent location bar crash (#1539)
+- Reallow sorting in search mode (#1528)
+- drop = in -export-symbols-regex arg
+- Hide the launcher for thunar-settings (#1530)
+- Fix signal emitting (#1533)
+- Fix GMount leak in thunar_file_get_emblem_names
+- Remove superfluous mutex
+- Store g_files separately in jobs (#1542)
+- thunar-tpa: Fix libxfce4panel include
+- Pass g_files into jobs instead of ThunarFiles (#1542)
+- Store g_files separately in jobs (#1542)
+- Ask for confirmation when deleting trashed files (#1545)
+- Proper renaming of XDG user dirs (#1436)
+- Prevent files from vanishing after save (#1535)
+- Fix selection after toggling hidden files visibility (#1505)
+- Clean up location button context menu (#1441)
+- Fix wrong selection after rename (#1415)
+- build: Dist thunar-{thumbnailer,thumbnail-cache}-dbus.xml
+- thunarx.symbols: Add missing thunarx_provider_module_*
+- Do not save view settings when searching (#1502)
+- Select instead activate on DnD into toolbar (#1492)
+- Prevent crash when removing location button (#1507)
+- Fix throttling of selection updates (#1508) (#1515)
+- Make toolbar inside header-bar transparent (#1514)
+- Add setting to show non hidden folders/files first (#263)
+- Fix appstream metainfo (#1512)
+- Prevent crash when loading mount point emblem (#1511)
+- remove superflous spaces in strings (#1501)
+- Translation Updates:
+  Albanian, Arabic, Armenian, Armenian (Armenia), Asturian, Basque,
+  Belarusian, Bulgarian, Catalan, Chinese (China), Chinese (Hong Kong),
+  Chinese (Taiwan), Czech, Danish, Dutch, Eastern Armenian, English
+  (Australia), English (United Kingdom), Esperanto, Estonian, Finnish,
+  French, Galician, German, Greek, Hebrew, Hungarian, Icelandic,
+  Indonesian, Interlingue, Italian, Japanese, Kazakh, Malay, Norwegian
+  Bokmål, Norwegian Nynorsk, Occitan (post 1500), Persian (Iran),
+  Polish, Portuguese, Portuguese (Brazil), Romanian, Serbian, Slovak,
+  Slovenian, Spanish, Swedish, Thai, Turkish, Uyghur, Venetian,
+  Vietnamese
+
 4.20.0 (2024-12-15)
 ======
 
