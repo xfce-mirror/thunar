@@ -149,8 +149,11 @@ twp_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
           mime_type = thunarx_file_info_get_mime_type (files->data);
 
           if (g_str_has_prefix (mime_type, "image/")
-              && (thunarx_file_info_has_mime_type (files->data, "image/jpeg")
+              && (thunarx_file_info_has_mime_type (files->data, "image/avif")
+                  || thunarx_file_info_has_mime_type (files->data, "image/jpeg")
+                  || thunarx_file_info_has_mime_type (files->data, "image/jxl")
                   || thunarx_file_info_has_mime_type (files->data, "image/png")
+                  || thunarx_file_info_has_mime_type (files->data, "image/webp")
                   || thunarx_file_info_has_mime_type (files->data, "image/svg+xml")
                   || thunarx_file_info_has_mime_type (files->data, "image/svg+xml-compressed")))
             {
