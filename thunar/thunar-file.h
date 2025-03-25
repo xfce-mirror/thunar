@@ -314,7 +314,7 @@ thunar_file_get_recency (const ThunarFile *file,
 const gchar *
 thunar_file_get_original_path (const ThunarFile *file);
 guint32
-thunar_file_get_item_count (const ThunarFile *file);
+thunar_file_get_trash_item_count (const ThunarFile *file);
 
 gboolean
 thunar_file_is_chmodable (const ThunarFile *file);
