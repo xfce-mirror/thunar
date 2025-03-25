@@ -2405,6 +2405,7 @@ thunar_window_switch_current_view (ThunarWindow *window,
   GSList        *view_bindings;
   ThunarFile    *current_directory;
   ThunarHistory *history;
+  gchar         *search_query;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_VIEW (new_view));
@@ -2435,6 +2436,11 @@ thunar_window_switch_current_view (ThunarWindow *window,
   view_bindings = window->view_bindings;
   window->view_bindings = NULL;
   g_slist_free_full (view_bindings, g_object_unref);
+
+  /* exit search mode (if the view has no ongoing search operation) */
+  search_query = thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (new_view));
+  if (search_query == NULL && window->search_query != NULL)
+    thunar_window_action_cancel_search (window);
 
   /* update the directory of the current window */
   current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (new_view));
@@ -2511,15 +2517,13 @@ thunar_window_switch_current_view (ThunarWindow *window,
   if (thunar_file_is_trash (window->current_directory))
     gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_item_count (window->current_directory) > 0);
 
-  /* if the view has an ongoing search operation take that into account, otherwise cancel the current search (if there is one) */
-  if (thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (window->view)) != NULL)
+  /* if the view has an ongoing search operation, take that into account */
+  if (search_query != NULL)
     {
-      gchar *str = g_strjoin (NULL, thunar_util_get_search_prefix (), thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (window->view)), NULL);
+      gchar *str = g_strjoin (NULL, thunar_util_get_search_prefix (), search_query, NULL);
       thunar_window_resume_search (window, str);
       g_free (str);
     }
-  else if (window->search_query != NULL)
-    thunar_window_action_cancel_search (window);
 
   /* switch to the new view */
   thunar_window_notebook_set_current_tab (window, gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), window->view));
