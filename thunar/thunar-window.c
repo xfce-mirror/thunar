@@ -3566,12 +3566,12 @@ thunar_window_start_open_location (ThunarWindow *window,
   else /* location edit */
     {
       gchar   *last_location_bar = NULL;
-      gboolean temporary_till_focus_lost = FALSE;
+      gboolean temporary_till_focus_lost = TRUE;
 
       /* If the style is already 'location entry', we dont need to care about 'focus-lost' */
       g_object_get (window->preferences, "last-location-bar", &last_location_bar, NULL);
       if (g_strcmp0 (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_ENTRY)) != 0)
-        temporary_till_focus_lost = TRUE;
+        temporary_till_focus_lost = FALSE;
       g_free (last_location_bar);
 
       thunar_window_action_cancel_search (window);
