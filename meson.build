@@ -34,6 +34,7 @@ dependency_versions = {
   'gir': '>= 1.72.0',
   'gudev': '>= 145',
   'libnotify': '>= 0.7.0',
+  'polkit': '>= 0.102',
 
   'exif': '>= 0.6.0',
   'pcre2': '>= 10.0',
@@ -93,6 +94,7 @@ if libnotify.found()
   feature_cflags += '-DHAVE_LIBNOTIFY=1'
 endif
 
+polkit = dependency('polkit-gobject-1', version: dependency_versions['polkit'], required: get_option('polkit'))
 gir = dependency('gobject-introspection-1.0', version: dependency_versions['gir'], required: get_option('introspection'))
 
 exif = dependency('libexif', version: dependency_versions['exif'], required: get_option('exif'))
@@ -306,22 +308,24 @@ foreach file : desktop_files
   )
 endforeach
 
-thunar_policy_in = configure_file(
-  configuration: configuration_data({
-    'bindir': get_option('prefix') / get_option('bindir'),
-  }),
-  input: 'org.xfce.thunar.policy.in.in',
-  output: 'org.xfce.thunar.policy.in',
-  install: false,
-)
-i18n.merge_file(
-  input: thunar_policy_in,
-  output: 'org.xfce.thunar.policy',
-  po_dir: 'po',
-  type: 'xml',
-  install: true,
-  install_dir: get_option('prefix') / get_option('datadir') / 'polkit-1' / 'actions',
-)
+if polkit.found()
+  thunar_policy_in = configure_file(
+    configuration: configuration_data({
+      'bindir': get_option('prefix') / get_option('bindir'),
+    }),
+    input: 'org.xfce.thunar.policy.in.in',
+    output: 'org.xfce.thunar.policy.in',
+    install: false,
+  )
+  i18n.merge_file(
+    input: thunar_policy_in,
+    output: 'org.xfce.thunar.policy',
+    po_dir: 'po',
+    type: 'xml',
+    install: true,
+    install_dir: get_option('prefix') / get_option('datadir') / 'polkit-1' / 'actions',
+  )
+endif
 
 i18n.merge_file(
   input: 'org.xfce.thunar.appdata.xml.in',
