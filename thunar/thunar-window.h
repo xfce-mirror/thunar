@@ -109,7 +109,7 @@ typedef enum
   THUNAR_WINDOW_ACTION_SWITCH_NEXT_TAB_ALT,
   THUNAR_WINDOW_ACTION_SEARCH,
   THUNAR_WINDOW_ACTION_SEARCH_ALT,
-  THUNAR_WINDOW_ACTION_CANCEL_SEARCH,
+  THUNAR_WINDOW_ACTION_STOP_SEARCH,
   THUNAR_WINDOW_ACTION_MENU,
 
   THUNAR_WINDOW_N_ACTIONS
@@ -176,10 +176,12 @@ thunar_window_show_and_select_files (ThunarWindow *window,
                                      GList        *files_to_select);
 void
 thunar_window_update_search (ThunarWindow *window);
-gboolean
-thunar_window_action_cancel_search (ThunarWindow *window);
+void
+thunar_window_cancel_search (ThunarWindow *window);
 gboolean
 thunar_window_action_search (ThunarWindow *window);
+gboolean
+thunar_window_action_stop_search (ThunarWindow *window);
 void
 thunar_window_update_statusbar (ThunarWindow *window);
 void
