@@ -323,7 +323,7 @@ static void
 thunar_location_bar_request_temp_entry (ThunarLocationBar *bar,
                                         const gchar       *initial_text)
 {
-  thunar_location_bar_request_entry (bar, initial_text, TRUE);
+  thunar_location_bar_request_entry (bar, initial_text, FALSE);
 }
 
 
