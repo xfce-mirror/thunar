@@ -563,8 +563,9 @@ thunar_util_parse_parent (gpointer    parent,
     }
   else if (GDK_IS_SCREEN (parent))
     {
-      /* yep, that's a screen */
+      /* A specific screen was requested. Just return it, without filling 'window_return' */
       screen = GDK_SCREEN (parent);
+      return screen;
     }
   else
     {
