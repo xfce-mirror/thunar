@@ -93,7 +93,7 @@ thunar_dialogs_show_create (gpointer     parent,
                             const gchar *title)
 {
   GtkWidget         *dialog;
-  GtkWindow         *window;
+  GtkWindow         *window = NULL;
   GdkScreen         *screen;
   GError            *error = NULL;
   gchar             *name = NULL;
@@ -237,7 +237,7 @@ thunar_dialogs_show_rename_file (gpointer               parent,
   GtkWidget         *grid;
   XfceFilenameInput *filename_input;
   GtkEntry          *filename_input_entry;
-  GtkWindow         *window;
+  GtkWindow         *window = NULL;
   GdkScreen         *screen;
   GdkPixbuf         *icon;
   cairo_surface_t   *surface;
@@ -485,7 +485,7 @@ thunar_dialogs_show_error (gpointer      parent,
                            ...)
 {
   GtkWidget *dialog;
-  GtkWindow *window;
+  GtkWindow *window = NULL;
   GdkScreen *screen;
   va_list    args;
   gchar     *primary_text;
@@ -1044,7 +1044,7 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
                                       const gchar *command)
 {
   GdkScreen *screen;
-  GtkWindow *window;
+  GtkWindow *window = NULL;
   gint       response;
   GtkWidget *dialog;
   GString   *secondary;
@@ -1239,7 +1239,7 @@ thunar_dialog_ask_execute (const ThunarFile *file,
                            gboolean          single_file)
 {
   GtkWidget *dialog;
-  GtkWindow *window;
+  GtkWindow *window = NULL;
   GdkScreen *screen;
   gint       response;
   gchar     *dialog_text;
