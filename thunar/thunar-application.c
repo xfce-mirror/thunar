@@ -2462,7 +2462,7 @@ thunar_application_unlink_files (ThunarApplication           *application,
 {
   GtkWidget *dialog;
   GtkWidget *message_area;
-  GtkWindow *window;
+  GtkWindow *window = NULL;
   GdkScreen *screen;
   GList     *path_list = NULL;
   GList     *lp;
@@ -2763,7 +2763,7 @@ thunar_application_empty_trash (ThunarApplication *application,
                                 const gchar       *startup_id)
 {
   GtkWidget *dialog;
-  GtkWindow *window;
+  GtkWindow *window = NULL;
   GdkScreen *screen;
   GList      file_list;
   gint       response;
