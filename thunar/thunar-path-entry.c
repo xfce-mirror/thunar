@@ -1515,20 +1515,23 @@ thunar_path_entry_cancel_search (ThunarPathEntry *path_entry)
  * thunar_path_entry_get_search_query:
  * @path_entry : a #ThunarPathEntry.
  *
- * Returns a copy of the search query in the text field of the @path_entry or an empty string
- * if the @path_entry doesn't contain a search query.
+ * Returns a copy of the search query in the text field of the @path_entry, an empty string
+ * if the @path_entry doesn't contain a search query or %NULL if not in search mode.
  *
  * It's the responsibility of the caller to free the returned string using `g_free`.
  **/
 gchar *
 thunar_path_entry_get_search_query (ThunarPathEntry *path_entry)
 {
-  unsigned long search_prefix_length;
-  const gchar  *text = gtk_entry_get_text (GTK_ENTRY (path_entry));
-  search_prefix_length = strlen (thunar_util_get_search_prefix ());
+  const gchar  *text;
+  unsigned long search_prefix_length = strlen (thunar_util_get_search_prefix ());
 
   _thunar_return_val_if_fail (THUNAR_IS_PATH_ENTRY (path_entry), NULL);
-  _thunar_return_val_if_fail (strncmp (text, thunar_util_get_search_prefix (), search_prefix_length) == 0, NULL);
+
+  text = gtk_entry_get_text (GTK_ENTRY (path_entry));
+
+  if (strncmp (text, thunar_util_get_search_prefix (), search_prefix_length) != 0)
+    return NULL;
 
   return strlen (text) > search_prefix_length ? g_strdup (&text[search_prefix_length]) : g_strdup ("");
 }
