@@ -1350,7 +1350,7 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   gtk_widget_show_all (GTK_WIDGET (context_menu));
   window = gtk_widget_get_toplevel (GTK_WIDGET (view));
   thunar_window_redirect_menu_tooltips_to_statusbar (THUNAR_WINDOW (window), GTK_MENU (context_menu));
-  thunar_gtk_menu_run (GTK_MENU (context_menu));
+  thunar_gtk_menu_run (GTK_MENU (context_menu), NULL);
 
   /* cleanup */
   if (G_UNLIKELY (device != NULL))

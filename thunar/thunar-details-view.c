@@ -787,7 +787,7 @@ thunar_details_view_column_header_clicked (ThunarDetailsView *details_view,
       gtk_widget_show_all (menu);
 
       /* run the menu (takes over the floating of menu) */
-      thunar_gtk_menu_run (GTK_MENU (menu));
+      thunar_gtk_menu_run (GTK_MENU (menu), NULL);
       return TRUE;
     }
 

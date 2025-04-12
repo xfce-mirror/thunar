@@ -636,7 +636,7 @@ thunar_chooser_dialog_context_menu (ThunarChooserDialog *dialog)
   gtk_widget_show (item);
 
   /* run the menu (takes over the floating of menu) */
-  thunar_gtk_menu_run (GTK_MENU (menu));
+  thunar_gtk_menu_run (GTK_MENU (menu), NULL);
 
   /* clean up */
   g_object_unref (app_info);

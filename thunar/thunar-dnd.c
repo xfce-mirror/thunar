@@ -176,7 +176,7 @@ thunar_dnd_ask (GtkWidget    *widget,
   gtk_widget_show (item);
 
   /* run the menu (takes over the floating of menu) */
-  thunar_gtk_menu_run (GTK_MENU (menu));
+  thunar_gtk_menu_run (GTK_MENU (menu), NULL);
 
   /* cleanup */
   g_object_unref (G_OBJECT (factory));
