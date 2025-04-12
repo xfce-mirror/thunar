@@ -40,6 +40,7 @@
 #include "thunar/thunar-simple-job.h"
 #include "thunar/thunar-thumbnail-cache.h"
 #include "thunar/thunar-transfer-job.h"
+#include "thunar/thunar-logger.h"
 
 #include <gio/gio.h>
 #include <glib/gstdio.h>
@@ -98,6 +99,7 @@ _tij_delete_file (GFile        *file,
 {
   gchar *path;
 
+  thunar_logger_println ("delete %s", g_file_get_uri (file));
   if (!g_file_is_native (file))
     return g_file_delete (file, cancellable, error);
 
@@ -260,6 +262,7 @@ again:
           /* remember the file for possible undo */
           if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
             thunar_job_operation_add (operation, template_file, lp->data);
+          thunar_logger_println ("create %s", g_file_get_uri (lp->data));
 
           if (template_stream != NULL)
             {
@@ -438,6 +441,7 @@ again:
       /* remember the file for possible undo */
       if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
         thunar_job_operation_add (operation, NULL, lp->data);
+      thunar_logger_println ("mkdir %s", g_file_get_uri (lp->data));
 
     } /* end for all files */
 
@@ -811,6 +815,7 @@ _thunar_io_jobs_link (ThunarJob *job,
               /* remember the file for possible undo */
               if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
                 thunar_job_operation_add (operation, sp->data, real_target_file);
+              thunar_logger_println ("link %s => %s", g_file_get_uri (sp->data), g_file_get_uri (real_target_file));
             }
 
           /* release the real target file */
@@ -912,8 +917,11 @@ _thunar_io_jobs_trash (ThunarJob *job,
             _tij_delete_file (lp->data, thunar_job_get_cancellable (THUNAR_JOB (job)), &err);
         }
 
-      if (err == NULL && log_mode != THUNAR_OPERATION_LOG_NO_OPERATIONS)
-        thunar_job_operation_add (operation, lp->data, NULL);
+      if (err == NULL) {
+        if (log_mode != THUNAR_OPERATION_LOG_NO_OPERATIONS)
+          thunar_job_operation_add (operation, lp->data, NULL);
+        thunar_logger_println ("trash %s", g_file_get_uri (lp->data));
+      }
 
       /* update the thumbnail cache */
       thunar_thumbnail_cache_cleanup_file (thumbnail_cache, lp->data);
@@ -1407,6 +1415,7 @@ _thunar_io_jobs_rename (ThunarJob *job,
           thunar_job_operation_history_commit (operation);
           g_object_unref (operation);
         }
+      thunar_logger_println ("rename %s => %s", old_file_uri, g_file_get_uri (thunar_file_get_file (file)));
     }
 
   g_free (old_file_uri);

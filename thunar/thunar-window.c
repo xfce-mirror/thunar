@@ -46,6 +46,7 @@
 #include "thunar/thunar-job-operation-history.h"
 #include "thunar/thunar-location-buttons.h"
 #include "thunar/thunar-location-entry.h"
+#include "thunar/thunar-logger.h"
 #include "thunar/thunar-marshal.h"
 #include "thunar/thunar-menu.h"
 #include "thunar/thunar-pango-extensions.h"
@@ -642,6 +643,9 @@ struct _ThunarWindow
 
   /* Reference to the global job operation history */
   ThunarJobOperationHistory *job_operation_history;
+
+  /* Reference to the global logger */
+  ThunarLogger *logger;
 };
 
 
@@ -1195,6 +1199,9 @@ thunar_window_init (ThunarWindow *window)
 
   /* get a reference of the global job operation history */
   window->job_operation_history = thunar_job_operation_history_get_default ();
+
+  /* get a reference of the global logger */
+  window->logger = thunar_logger_get_default ();
 
   /* add location toolbar */
   window->location_toolbar = NULL;
