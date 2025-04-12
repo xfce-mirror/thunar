@@ -1883,17 +1883,19 @@ thunar_window_delete (GtkWidget *widget,
                       GdkEvent  *event,
                       gpointer   data)
 {
-  gboolean      confirm_close_multiple_tabs, do_not_ask_again, restore_tabs;
-  gint          response, n_tabs, n_tabsl = 0, n_tabsr = 0;
-  gint          current_page_left = 0, current_page_right = 0;
   ThunarWindow *window = THUNAR_WINDOW (widget);
+  gboolean      confirm_close_multiple_tabs, do_not_ask_again, restore_tabs;
+  gint          response = -1, n_tabs, n_tabsl = 0, n_tabsr = 0;
+  gint          current_page_left = 0, current_page_right = 0;
   gchar       **tab_uris_left;
   gchar       **tab_uris_right;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (widget), FALSE);
 
-  if (window->search_mode == TRUE)
-    thunar_window_cancel_search (window);
+  g_object_get (G_OBJECT (window->preferences),
+                "misc-confirm-close-multiple-tabs", &confirm_close_multiple_tabs,
+                "last-restore-tabs", &restore_tabs,
+                NULL);
 
   if (window->notebook_left)
     n_tabsl = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_left));
@@ -1901,8 +1903,41 @@ thunar_window_delete (GtkWidget *widget,
     n_tabsr = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_right));
   n_tabs = n_tabsl + n_tabsr;
 
+  /* count tabs while taking split view mode into account */
+  if ((thunar_window_split_view_is_active (window) && n_tabs < 3) || n_tabs < 2)
+    confirm_close_multiple_tabs = FALSE;
+
+  /* check if the user has enabled confirmation of closing multiple tabs */
+  if (confirm_close_multiple_tabs)
+    {
+      /* ask the user for confirmation */
+      do_not_ask_again = FALSE;
+      response = xfce_dialog_confirm_close_tabs (GTK_WINDOW (widget), n_tabs, TRUE, &do_not_ask_again);
+
+      if (response == GTK_RESPONSE_YES || response == GTK_RESPONSE_CLOSE)
+        {
+          /* if the user requested not to be asked again, store this preference */
+          if (do_not_ask_again)
+            g_object_set (G_OBJECT (window->preferences), "misc-confirm-close-multiple-tabs", FALSE, NULL);
+        }
+      else
+        {
+          /* dialog has been canceled or destroyed */
+          return TRUE;
+        }
+    }
+
+  if (window->search_mode == TRUE)
+    thunar_window_cancel_search (window);
+
+  /* close active tab in active notebook */
+  if (response == GTK_RESPONSE_CLOSE)
+    {
+      gtk_notebook_remove_page (GTK_NOTEBOOK (window->notebook_selected), gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected)));
+      return TRUE;
+    }
+
   /* save open tabs */
-  g_object_get (G_OBJECT (window->preferences), "last-restore-tabs", &restore_tabs, NULL);
   if (restore_tabs)
     {
       tab_uris_left = g_new0 (gchar *, n_tabsl + 1);
@@ -1940,41 +1975,7 @@ thunar_window_delete (GtkWidget *widget,
       g_strfreev (tab_uris_right);
     }
 
-  /* if we don't have muliple tabs in one of the notebooks then just exit */
-  if (thunar_window_split_view_is_active (window))
-    {
-      if (n_tabs < 3)
-        return FALSE;
-    }
-  else
-    {
-      if (n_tabs < 2)
-        return FALSE;
-    }
-
-  /* check if the user has disabled confirmation of closing multiple tabs, and just exit if so */
-  g_object_get (G_OBJECT (window->preferences),
-                "misc-confirm-close-multiple-tabs", &confirm_close_multiple_tabs,
-                NULL);
-  if (!confirm_close_multiple_tabs)
-    return FALSE;
-
-  /* ask the user for confirmation */
-  do_not_ask_again = FALSE;
-  response = xfce_dialog_confirm_close_tabs (GTK_WINDOW (widget), n_tabs, TRUE, &do_not_ask_again);
-
-  /* if the user requested not to be asked again, store this preference */
-  if (response != GTK_RESPONSE_CANCEL && do_not_ask_again)
-    g_object_set (G_OBJECT (window->preferences), "misc-confirm-close-multiple-tabs", FALSE, NULL);
-
-  if (response == GTK_RESPONSE_YES)
-    return FALSE;
-
-  /* close active tab in active notebook */
-  if (response == GTK_RESPONSE_CLOSE)
-    gtk_notebook_remove_page (GTK_NOTEBOOK (window->notebook_selected), gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected)));
-
-  return TRUE;
+  return FALSE;
 }
 
 
