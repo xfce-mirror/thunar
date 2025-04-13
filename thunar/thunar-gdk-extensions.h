@@ -25,7 +25,8 @@
 
 G_BEGIN_DECLS
 
-gboolean thunar_gdk_is_wayland (void);
+gboolean
+thunar_gdk_is_wayland (void);
 
 GdkScreen *
 thunar_gdk_screen_open (const gchar *display_name,
