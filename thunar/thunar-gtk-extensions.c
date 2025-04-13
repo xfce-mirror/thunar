@@ -189,7 +189,7 @@ thunar_gtk_menu_clean (GtkMenu *menu)
  * Conveniance wrapper for thunar_gtk_menu_run_at_event_pointer, to run a menu for the current event
  **/
 void
-thunar_gtk_menu_run (GtkMenu *menu, GtkWidget *widget)
+thunar_gtk_menu_run (GtkMenu *menu)
 {
   GdkEvent *event = gtk_get_current_event ();
 
@@ -200,34 +200,11 @@ thunar_gtk_menu_run (GtkMenu *menu, GtkWidget *widget)
       event->button.button = 3;
     }
 
-  thunar_gtk_menu_run_at_event (menu, event, widget);
+  thunar_gtk_menu_run_at_event (menu, event);
   gdk_event_free (event);
 }
 
-static void
-thunar_create_popup_rect (GdkWindow *window, GdkRectangle *rect)
-{
-    GdkSeat *seat;
-    GdkDevice *device;
 
-    seat = gdk_display_get_default_seat (gdk_display_get_default ());
-
-    if (!seat)
-        return;
-
-    device = gdk_seat_get_pointer (seat);
-
-    if (!device)
-        return;
-
-    gint x, y;
-
-    gdk_window_get_device_position (window, device, &x, &y, NULL);
-    rect->x = x;
-    rect->y = y;
-    rect->width = 2;
-    rect->height = 2;
-}
 
 /**
  * thunar_gtk_menu_run_at_event:
@@ -243,7 +220,63 @@ thunar_create_popup_rect (GdkWindow *window, GdkRectangle *rect)
  *
  **/
 void
-thunar_gtk_menu_run_at_event (GtkMenu *menu, GdkEvent *event, GtkWidget *widget)
+thunar_gtk_menu_run_at_event (GtkMenu *menu, GdkEvent *event)
+{
+  GMainLoop *loop;
+  gulong     signal_id;
+
+  _thunar_return_if_fail (GTK_IS_MENU (menu));
+
+  /* take over the floating reference on the menu */
+  g_object_ref_sink (G_OBJECT (menu));
+
+  /* run an internal main loop */
+  loop = g_main_loop_new (NULL, FALSE);
+  signal_id = g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
+  gtk_menu_popup_at_pointer (menu, event);
+  gtk_menu_reposition (menu);
+  gtk_grab_add (GTK_WIDGET (menu));
+  g_main_loop_run (loop);
+  g_main_loop_unref (loop);
+  gtk_grab_remove (GTK_WIDGET (menu));
+
+  g_signal_handler_disconnect (G_OBJECT (menu), signal_id);
+
+  /* release the menu reference */
+  g_object_unref (G_OBJECT (menu));
+}
+
+
+
+static void
+thunar_create_popup_rect (GdkWindow *window, GdkRectangle *rect)
+{
+    GdkSeat *seat;
+    GdkDevice *device;
+
+    seat = gdk_display_get_default_seat (gdk_display_get_default ());
+
+    if (seat != NULL)
+        return;
+
+    device = gdk_seat_get_pointer (seat);
+
+    if (device != NULL)
+        return;
+
+    gint x, y;
+
+    gdk_window_get_device_position (window, device, &x, &y, NULL);
+    rect->x = x;
+    rect->y = y;
+    rect->width = 2;
+    rect->height = 2;
+}
+
+
+
+void
+thunar_gtk_menu_run_at_rect (GtkMenu *menu, GtkWidget *widget)
 {
   GMainLoop *loop;
   gulong     signal_id;
@@ -257,25 +290,17 @@ thunar_gtk_menu_run_at_event (GtkMenu *menu, GdkEvent *event, GtkWidget *widget)
   loop = g_main_loop_new (NULL, FALSE);
   signal_id = g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
   
-  if (widget)
-    {
-        GdkWindow *window = gtk_widget_get_window (
-                                        gtk_widget_get_toplevel (widget));
+  GdkWindow *window = gtk_widget_get_window (
+                                    gtk_widget_get_toplevel (widget));
 
-        GdkRectangle rect;
-        thunar_create_popup_rect (window, &rect);
-        gtk_menu_popup_at_rect (menu,
-                                window,
-                                &rect,
-                                GDK_GRAVITY_NORTH_WEST,
-                                GDK_GRAVITY_NORTH_WEST,
-                                NULL);
-    }
-  else
-    {
-      gtk_menu_popup_at_pointer (menu, event);
-      gtk_menu_reposition (menu);
-    }
+  GdkRectangle rect;
+  thunar_create_popup_rect (window, &rect);
+  gtk_menu_popup_at_rect (menu,
+                          window,
+                          &rect,
+                          GDK_GRAVITY_NORTH_WEST,
+                          GDK_GRAVITY_NORTH_WEST,
+                          NULL);
   
   gtk_grab_add (GTK_WIDGET (menu));
   g_main_loop_run (loop);

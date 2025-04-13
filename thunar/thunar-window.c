@@ -2792,7 +2792,7 @@ thunar_window_notebook_popup_menu (GtkWidget    *notebook,
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CLOSE_TAB), G_OBJECT (window), GTK_MENU_SHELL (menu));
   gtk_widget_show_all (menu);
-  thunar_gtk_menu_run (GTK_MENU (menu), NULL);
+  thunar_gtk_menu_run (GTK_MENU (menu));
   return TRUE;
 }
 
@@ -5989,7 +5989,7 @@ thunar_window_toolbar_button_press_event (GtkWidget      *toolbar,
       gtk_widget_show_all (menu);
 
       /* run the menu (takes over the floating of menu) */
-      thunar_gtk_menu_run (GTK_MENU (menu), NULL);
+      thunar_gtk_menu_run (GTK_MENU (menu));
 
       return TRUE;
     }

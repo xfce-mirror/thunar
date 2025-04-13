@@ -1327,6 +1327,6 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
   window = gtk_widget_get_toplevel (GTK_WIDGET (buttons));
   thunar_window_redirect_menu_tooltips_to_statusbar (THUNAR_WINDOW (window), GTK_MENU (context_menu));
 
-  thunar_gtk_menu_run (GTK_MENU (context_menu), NULL);
+  thunar_gtk_menu_run (GTK_MENU (context_menu));
   return TRUE;
 }

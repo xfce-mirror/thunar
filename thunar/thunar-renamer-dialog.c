@@ -958,7 +958,7 @@ thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog)
   thunar_gtk_menu_hide_accel_labels (GTK_MENU (menu));
   gtk_widget_show_all (GTK_WIDGET (menu));
 
-  thunar_gtk_menu_run (GTK_MENU (menu), NULL);
+  thunar_gtk_menu_run (GTK_MENU (menu));
 
   /* release the additional reference on the dialog */
   g_object_unref (G_OBJECT (renamer_dialog));
