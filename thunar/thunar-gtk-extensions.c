@@ -208,9 +208,10 @@ thunar_gtk_menu_run (GtkMenu *menu)
 
 /**
  * thunar_gtk_menu_run_at_rect:
- * @menu : a #GtkMenu.
+ * @menu   : a #GtkMenu.
+ * @widget : a #GtkWidget which can be NULL.
  *
- * Conveniance wrapper for thunar_gtk_menu_run_at_event_pointer, to run a menu for the current event
+ * Conveniance wrapper for thunar_gtk_menu_run_at_event_pointer which fixes a dead zone under wayland
  **/
 void
 thunar_gtk_menu_run_at_rect (GtkMenu *menu, GtkWidget *widget)
@@ -238,12 +239,12 @@ thunar_create_popup_rect (GdkWindow *window, GdkRectangle *rect)
 
   seat = gdk_display_get_default_seat (gdk_display_get_default ());
 
-  if (seat != NULL)
+  if (seat == NULL)
     return;
 
   device = gdk_seat_get_pointer (seat);
 
-  if (device != NULL)
+  if (device == NULL)
     return;
 
   gint x, y;
@@ -259,8 +260,9 @@ thunar_create_popup_rect (GdkWindow *window, GdkRectangle *rect)
 
 /**
  * thunar_gtk_menu_run_at_event:
- * @menu  : a #GtkMenu.
- * @event : a #GdkEvent which may be NULL if no previous event was stored.
+ * @menu   : a #GtkMenu.
+ * @event  : a #GdkEvent which may be NULL if no previous event was stored.
+ * @widget : a #GtkWidget which can be NULL.
  *
  * A simple wrapper around gtk_menu_popup_at_pointer(), which runs the @menu in a separate
  * main loop and returns only after the @menu was deactivated.
@@ -285,12 +287,9 @@ thunar_gtk_menu_run_at_event (GtkMenu *menu, GdkEvent *event, GtkWidget *widget)
   loop = g_main_loop_new (NULL, FALSE);
   signal_id = g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
 
-  if (widget)
+  if (widget != NULL)
     {
-      printf("thunar_gtk_menu_run_at_event\n");
-      fflush(stdout);
-
-      // fixes a popup non-clickable zone under wayland
+      /* fixes a popup non-clickable zone under wayland */
       GdkWindow *window = gtk_widget_get_window (gtk_widget_get_toplevel (widget));
 
       GdkRectangle rect;
@@ -301,7 +300,6 @@ thunar_gtk_menu_run_at_event (GtkMenu *menu, GdkEvent *event, GtkWidget *widget)
                               GDK_GRAVITY_NORTH_WEST,
                               GDK_GRAVITY_NORTH_WEST,
                               event);
-      gtk_menu_reposition (menu);
     }
   else
     {
