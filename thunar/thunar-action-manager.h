@@ -143,8 +143,8 @@ thunar_action_manager_action_restore (ThunarActionManager *action_mgr);
 gboolean
 thunar_action_manager_action_restore_and_show (ThunarActionManager *action_mgr);
 void
-thunar_action_manager_set_searching (ThunarActionManager *action_mgr,
-                                     gboolean             b);
+thunar_action_manager_set_search_mode (ThunarActionManager *action_mgr,
+                                       gboolean             b);
 XfceGtkActionEntry *
 thunar_action_manager_get_action_entries (void);
 
