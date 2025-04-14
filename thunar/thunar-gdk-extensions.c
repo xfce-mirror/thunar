@@ -37,9 +37,40 @@
 #include "thunar/thunar-gdk-extensions.h"
 #include "thunar/thunar-private.h"
 
+#include <gdk/gdkwayland.h>
+#include <gdk/gdkx.h>
 
 
 static const cairo_user_data_key_t cairo_key;
+
+
+static gint
+thunar_gdk_get_display_type (void)
+{
+  /* must be called after gtk_init or g_option_context_parse */
+
+  static gint displaytype = -1;
+
+  if (displaytype != -1)
+    return displaytype;
+
+  GdkDisplay *display = gdk_display_get_default ();
+
+  if (GDK_IS_X11_DISPLAY (display))
+    displaytype = 0;
+  else if (GDK_IS_WAYLAND_DISPLAY (display))
+    displaytype = 1;
+  else
+    displaytype = -2;
+
+  return displaytype;
+}
+
+gboolean
+thunar_gdk_is_wayland (void)
+{
+  return (thunar_gdk_get_display_type () == 1);
+}
 
 
 

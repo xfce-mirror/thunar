@@ -23,7 +23,10 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk/gdk.h>
 
-G_BEGIN_DECLS;
+G_BEGIN_DECLS
+
+gboolean
+thunar_gdk_is_wayland (void);
 
 GdkScreen *
 thunar_gdk_screen_open (const gchar *display_name,
@@ -36,6 +39,6 @@ thunar_gdk_cairo_set_source_pixbuf (cairo_t   *cr,
                                     gdouble    pixbuf_y,
                                     gint       scale_factor);
 
-G_END_DECLS;
+G_END_DECLS
 
 #endif /* !__THUNAR_GDK_EXTENSIONS_H__ */
