@@ -234,7 +234,7 @@ thunar_gtk_menu_run_at_rect (GtkMenu *menu, GtkWidget *widget)
 static void
 thunar_create_popup_rect (GdkWindow *window, GdkRectangle *rect)
 {
-  GdkSeat *seat;
+  GdkSeat   *seat;
   GdkDevice *device;
 
   seat = gdk_display_get_default_seat (gdk_display_get_default ());
