@@ -36,7 +36,6 @@
 #include "thunar/thunar-dialogs.h"
 #include "thunar/thunar-dnd.h"
 #include "thunar/thunar-enum-types.h"
-#include "thunar/thunar-gdk-extensions.h"
 #include "thunar/thunar-gio-extensions.h"
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-gtk-extensions.h"
@@ -55,6 +54,7 @@
 #include "thunar/thunar-util.h"
 
 #include <gdk/gdkkeysyms.h>
+#include <gdk/gdkwayland.h>
 #include <libxfce4util/libxfce4util.h>
 
 #ifdef ENABLE_X11
@@ -4202,7 +4202,7 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view)
     }
   else
     {
-      if (thunar_gdk_is_wayland () == TRUE)
+      if (GDK_IS_WAYLAND_DISPLAY (gdk_display_get_default ()))
         thunar_gtk_menu_run_at_rect (GTK_MENU (context_menu), GTK_WIDGET (standard_view));
       else
         thunar_gtk_menu_run (GTK_MENU (context_menu));

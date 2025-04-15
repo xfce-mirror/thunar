@@ -234,6 +234,8 @@ thunar_gtk_menu_run_at_rect (GtkMenu *menu, GtkWidget *widget)
 static void
 thunar_create_popup_rect (GdkWindow *window, GdkRectangle *rect)
 {
+  // inspired by https://github.com/linuxmint/nemo/pull/3281
+
   GdkSeat   *seat;
   GdkDevice *device;
 
