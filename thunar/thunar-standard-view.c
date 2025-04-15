@@ -4202,7 +4202,7 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view)
     }
   else
     {
-      if (thunar_gdk_is_wayland() == TRUE)
+      if (thunar_gdk_is_wayland () == TRUE)
         thunar_gtk_menu_run_at_rect (GTK_MENU (context_menu), GTK_WIDGET (standard_view));
       else
         thunar_gtk_menu_run (GTK_MENU (context_menu));
