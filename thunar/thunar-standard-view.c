@@ -1242,7 +1242,11 @@ thunar_standard_view_get_property (GObject    *object,
       current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (object));
       if (THUNAR_STANDARD_VIEW (object)->priv->search_query != NULL)
         {
-          gchar *label = g_strjoin (NULL, "Search for '", THUNAR_STANDARD_VIEW (object)->priv->search_query, "' in ", thunar_file_get_display_name (current_directory), NULL);
+          gchar *label;
+          if (g_strcmp0 (THUNAR_STANDARD_VIEW (object)->priv->search_query, "") != 0)
+            label = g_strdup_printf (_("Search for '%s' in %s"), THUNAR_STANDARD_VIEW (object)->priv->search_query, thunar_file_get_display_name (current_directory));
+          else
+            label = g_strdup_printf (_("Search in %s"), thunar_file_get_display_name (current_directory));
           g_value_take_string (value, label);
         }
       else
