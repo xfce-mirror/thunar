@@ -836,7 +836,12 @@ thunar_util_next_new_file_name_raw (GList                 *file_list,
 const char *
 thunar_util_get_search_prefix (void)
 {
-  return _("Search: ");
+  static gchar *prefix = NULL;
+
+  if (prefix == NULL)
+    prefix = g_strconcat (_("Search:"), " ", NULL);
+
+  return prefix;
 }
 
 
