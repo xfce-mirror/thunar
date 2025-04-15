@@ -32,3 +32,6 @@ thunar-window.c:[0-9]+:[0-9]+: warning: Declared variable-length array \(VLA\) h
 
 # item_count = g_list_length (toolbar_items) so current_order[j] is initialized for all j
 thunar-window.c:[0-9]+:[0-9]+: warning: Assigned value is garbage or undefined \[core.uninitialized.Assign\]
+
+# 'prefix' can't be NULL
+thunar-util.c:[0-9]+:[0-9]+: warning: Null pointer passed to 2nd parameter expecting 'nonnull' \[core.NonNullParamChecker\]
