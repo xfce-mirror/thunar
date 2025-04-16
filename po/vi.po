@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-04-12 00:46+0200\n"
+"POT-Creation-Date: 2025-04-16 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Cas Pascal <casboi86@gmail.com>, 2024-2025\n"
 "Language-Team: Vietnamese (http://app.transifex.com/xfce/thunar/language/vi/)\n"
@@ -1575,7 +1575,7 @@ msgstr "URL không xác định"
 msgid "Invalid desktop file"
 msgstr "Desktop file không hợp lệ"
 
-#: thunar/thunar-file.c:2554 thunar/thunar-util.c:1454
+#: thunar/thunar-file.c:2554 thunar/thunar-util.c:1459
 msgid "broken link"
 msgstr "liên kết hỏng"
 
@@ -1799,7 +1799,7 @@ msgid ""
 msgstr "Không đủ dung lượng trống trên địa điểm đích. Thử xóa vài thứ để có thêm khoảng trống."
 
 #: thunar/thunar-job-operation.c:789 thunar/thunar-size-label.c:488
-#: thunar/thunar-util.c:1331
+#: thunar/thunar-util.c:1336
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -2764,7 +2764,7 @@ msgstr "Liên kết đích:"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: thunar/thunar-properties-dialog.c:497 thunar/thunar-util.c:1478
+#: thunar/thunar-properties-dialog.c:497 thunar/thunar-util.c:1483
 msgid "Original Path:"
 msgstr "Đường dẫn gốc:"
 
@@ -3120,7 +3120,7 @@ msgstr "Đã ngừng tính toán"
 msgid "unreadable"
 msgstr "không đọc được"
 
-#: thunar/thunar-size-label.c:487 thunar/thunar-util.c:1361
+#: thunar/thunar-size-label.c:487 thunar/thunar-util.c:1366
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -3238,42 +3238,52 @@ msgstr "Giảm dần"
 msgid "Sort items in descending order"
 msgstr "Sắp xếp theo thứ tự giảm dần"
 
-#: thunar/thunar-standard-view.c:1843
+#: thunar/thunar-standard-view.c:1247
+#, c-format
+msgid "Search for '%s' in %s"
+msgstr ""
+
+#: thunar/thunar-standard-view.c:1249
+#, c-format
+msgid "Search in %s"
+msgstr ""
+
+#: thunar/thunar-standard-view.c:1847
 msgid "Loading folder contents..."
 msgstr "Đang đọc nội dung thư mục..."
 
-#: thunar/thunar-standard-view.c:2489
+#: thunar/thunar-standard-view.c:2493
 #, c-format
 msgid "%d file found"
 msgid_plural "%d files found"
 msgstr[0] "%d tập tin đã tìm thấy"
 
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2657 thunar/thunar-window.c:4521
+#: thunar/thunar-standard-view.c:2661 thunar/thunar-window.c:4521
 msgid "Failed to open the home folder"
 msgstr "Không thể mở thư mục home"
 
-#: thunar/thunar-standard-view.c:2735
+#: thunar/thunar-standard-view.c:2739
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "Chọn bằng mẫu"
 
-#: thunar/thunar-standard-view.c:2740
+#: thunar/thunar-standard-view.c:2744
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "_Huỷ bỏ"
 
-#: thunar/thunar-standard-view.c:2743
+#: thunar/thunar-standard-view.c:2747
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "Chọn"
 
-#: thunar/thunar-standard-view.c:2757
+#: thunar/thunar-standard-view.c:2761
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "Mẫu:"
 
-#: thunar/thunar-standard-view.c:2758
+#: thunar/thunar-standard-view.c:2762
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3283,7 +3293,7 @@ msgstr "Các tập tin có tên khớp với biểu thức mà bạn đã nhập
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: thunar/thunar-standard-view.c:2772
+#: thunar/thunar-standard-view.c:2776
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3294,24 +3304,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr "? ghép mới đúng một kí tự bất kì.\n* ghép với không, một hoặc nhiều kí tự bất kì.\n\nVí dụ: *.txt file??.png,\n\nNếu không có * hay ?, biểu thức sẽ ghép ở mọi chỗ trong tên. Với *, ?, biểu thức phải ghép vào cả đầu và cuối của tên."
 
-#: thunar/thunar-standard-view.c:2776
+#: thunar/thunar-standard-view.c:2780
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr "Phân biệt chữ hoa thường"
 
-#: thunar/thunar-standard-view.c:2777
+#: thunar/thunar-standard-view.c:2781
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr "Khi bật, các kí tự in hoa/thường phải ghép đúng với biểu thức.\nExamp* sẽ ghép với Example.txt nhưng không ghép với example.txt"
 
-#: thunar/thunar-standard-view.c:2782
+#: thunar/thunar-standard-view.c:2786
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr "Ghép dấu phụ"
 
-#: thunar/thunar-standard-view.c:2783
+#: thunar/thunar-standard-view.c:2787
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3320,21 +3330,21 @@ msgstr "Khi bật, bắt buộc ghép dấu phụ trong kí tự với biểu th
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: thunar/thunar-standard-view.c:3170
+#: thunar/thunar-standard-view.c:3174
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Tên tập tin từ X Direct Save không hợp lệ"
 
 #. display an error dialog to the user
-#: thunar/thunar-standard-view.c:3366
+#: thunar/thunar-standard-view.c:3370
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Không tạo được liên kết cho URL \"%s\""
 
-#: thunar/thunar-standard-view.c:3413
+#: thunar/thunar-standard-view.c:3417
 msgid "Untitled document"
 msgstr "Tài liệu không tên"
 
-#: thunar/thunar-standard-view.c:3897 thunar/thunar-window.c:4618
+#: thunar/thunar-standard-view.c:3901 thunar/thunar-window.c:4618
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Không mở được thư mục \"%s\""
@@ -3560,58 +3570,58 @@ msgstr "liên kết đến %.*s%s"
 msgid "link %u to %.*s%s"
 msgstr "liên kết %u đến %.*s%s"
 
-#: thunar/thunar-util.c:839
-msgid "Search: "
-msgstr "Tìm kiếm:"
+#: thunar/thunar-util.c:842
+msgid "Search:"
+msgstr ""
 
-#: thunar/thunar-util.c:1335 thunar/thunar-util.c:1368
+#: thunar/thunar-util.c:1340 thunar/thunar-util.c:1373
 #, c-format
 msgid "%s (%d hidden)"
 msgstr "%s (%d ẩn)"
 
-#: thunar/thunar-util.c:1352
+#: thunar/thunar-util.c:1357
 #, c-format
 msgid "%s: %s"
 msgstr "%s: %s"
 
-#: thunar/thunar-util.c:1375
+#: thunar/thunar-util.c:1380
 msgid "0 items"
 msgstr "0 "
 
-#: thunar/thunar-util.c:1384 thunar/thunar-util.c:1506
+#: thunar/thunar-util.c:1389 thunar/thunar-util.c:1511
 #, c-format
 msgid "Last Modified: %s"
 msgstr "Sửa đổi mới nhất: %s"
 
-#: thunar/thunar-util.c:1433
+#: thunar/thunar-util.c:1438
 #, c-format
 msgid "\"%s\" (%s)"
 msgstr "\"%s\" (%s)"
 
-#: thunar/thunar-util.c:1435
+#: thunar/thunar-util.c:1440
 #, c-format
 msgid "\"%s\""
 msgstr "\"%s\""
 
-#: thunar/thunar-util.c:1456
+#: thunar/thunar-util.c:1461
 #, c-format
 msgid "link to %s"
 msgstr "Liên kết tới %s"
 
-#: thunar/thunar-util.c:1458
+#: thunar/thunar-util.c:1463
 msgid "shortcut"
 msgstr "lối tắt"
 
-#: thunar/thunar-util.c:1460
+#: thunar/thunar-util.c:1465
 msgid "mountable"
 msgstr "có thể gắn kết"
 
-#: thunar/thunar-util.c:1462
+#: thunar/thunar-util.c:1467
 msgid "mount point"
 msgstr "điểm gắn kết"
 
 #. append the image dimensions to the statusbar text
-#: thunar/thunar-util.c:1496 plugins/thunar-apr/thunar-apr-image-page.c:158
+#: thunar/thunar-util.c:1501 plugins/thunar-apr/thunar-apr-image-page.c:158
 msgid "Image Size:"
 msgstr "Kích thước ảnh"
 
