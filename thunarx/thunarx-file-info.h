@@ -50,6 +50,7 @@ G_BEGIN_DECLS
   "unix::gid,unix::uid,unix::mode," \
   "unix::is-mountpoint," \
   "metadata::emblems," \
+  "metadata::thunar-custom-icon-name," \
   "metadata::thunar-view-type," \
   "metadata::thunar-sort-column,metadata::thunar-sort-order," \
   "metadata::thunar-zoom-level," \

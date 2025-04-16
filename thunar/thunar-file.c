@@ -1073,6 +1073,16 @@ thunar_file_info_reload (ThunarFile   *file,
           g_key_file_free (key_file);
         }
     }
+  else if (!thunar_file_is_desktop_file (file))
+    {
+      /* Check if a custom icon is defined for this file */
+      gchar *custom_icon_name = thunar_file_get_metadata_setting (file, "thunar-custom-icon-name");
+      if (!xfce_str_is_empty (custom_icon_name))
+        {
+          g_free (file->custom_icon_name);
+          file->custom_icon_name = custom_icon_name;
+        }
+    }
 
   /* determine the display name */
   if (file->display_name == NULL)
@@ -3831,9 +3841,8 @@ thunar_file_get_emblem_names (ThunarFile *file)
  * @custom_icon : the new custom icon for the @file.
  * @error       : return location for errors or %NULL.
  *
- * Tries to change the custom icon of the .desktop file referred
- * to by @file. If that fails, %FALSE is returned and the
- * @error is set accordingly.
+ * Tries to change the custom icon of @file.
+ * If that fails, %FALSE is returned and the @error is set accordingly.
  *
  * Return value: %TRUE if the icon of @file was changed, %FALSE otherwise.
  **/
@@ -3842,32 +3851,42 @@ thunar_file_set_custom_icon (ThunarFile  *file,
                              const gchar *custom_icon,
                              GError     **error)
 {
-  GKeyFile *key_file;
-
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  _thunar_return_val_if_fail (custom_icon != NULL, FALSE);
 
-  key_file = thunar_g_file_query_key_file (file->gfile, NULL, error);
-
-  if (key_file == NULL)
-    return FALSE;
-
-  g_key_file_set_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
-                         G_KEY_FILE_DESKTOP_KEY_ICON, custom_icon);
-
-  if (thunar_g_file_write_key_file (file->gfile, key_file, NULL, error))
+  if (thunar_file_is_desktop_file (file))
     {
-      /* tell everybody that we have changed */
-      thunar_file_changed (file);
+      GKeyFile *key_file = thunar_g_file_query_key_file (file->gfile, NULL, error);
 
-      g_key_file_free (key_file);
-      return TRUE;
+      if (key_file == NULL)
+        return FALSE;
+
+      g_key_file_set_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
+                             G_KEY_FILE_DESKTOP_KEY_ICON, custom_icon);
+
+      if (thunar_g_file_write_key_file (file->gfile, key_file, NULL, error))
+        {
+          /* tell everybody that we have changed */
+          thunar_file_changed (file);
+
+          g_key_file_free (key_file);
+          return TRUE;
+        }
+      else
+        {
+          g_key_file_free (key_file);
+          return FALSE;
+        }
     }
   else
     {
-      g_key_file_free (key_file);
-      return FALSE;
+      if (xfce_str_is_empty (custom_icon))
+        thunar_file_clear_metadata_setting (file, "thunar-custom-icon-name");
+      else
+        thunar_file_set_metadata_setting (file, "thunar-custom-icon-name", custom_icon, FALSE);
+
+      thunar_file_reload (file);
+      return TRUE;
     }
 }
 
