@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-04-12 00:46+0200\n"
+"POT-Creation-Date: 2025-04-16 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Slavko <linux@slavino.sk>, 2013-2015,2017,2019,2024-2025\n"
 "Language-Team: Slovak (http://app.transifex.com/xfce/thunar/language/sk/)\n"
@@ -1646,7 +1646,7 @@ msgstr "Nie je vyplnené pole \"Adresa\""
 msgid "Invalid desktop file"
 msgstr "Neplatný .desktop súbor"
 
-#: thunar/thunar-file.c:2554 thunar/thunar-util.c:1454
+#: thunar/thunar-file.c:2554 thunar/thunar-util.c:1459
 msgid "broken link"
 msgstr "poškodený odkaz"
 
@@ -1870,7 +1870,7 @@ msgid ""
 msgstr "V cieli nie je dostatok miesta. Na uvoľnenie miesta skúste odstrániť súbory."
 
 #: thunar/thunar-job-operation.c:789 thunar/thunar-size-label.c:488
-#: thunar/thunar-util.c:1331
+#: thunar/thunar-util.c:1336
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -2841,7 +2841,7 @@ msgstr "Cieľ odkazu:"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: thunar/thunar-properties-dialog.c:497 thunar/thunar-util.c:1478
+#: thunar/thunar-properties-dialog.c:497 thunar/thunar-util.c:1483
 msgid "Original Path:"
 msgstr "Originálna cesta:"
 
@@ -3206,7 +3206,7 @@ msgstr "Výpočet prerušený"
 msgid "unreadable"
 msgstr ""
 
-#: thunar/thunar-size-label.c:487 thunar/thunar-util.c:1361
+#: thunar/thunar-size-label.c:487 thunar/thunar-util.c:1366
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -3330,11 +3330,21 @@ msgstr "_Zostupne"
 msgid "Sort items in descending order"
 msgstr "Zoradiť položky v zostupnom poradí"
 
-#: thunar/thunar-standard-view.c:1843
+#: thunar/thunar-standard-view.c:1247
+#, c-format
+msgid "Search for '%s' in %s"
+msgstr ""
+
+#: thunar/thunar-standard-view.c:1249
+#, c-format
+msgid "Search in %s"
+msgstr ""
+
+#: thunar/thunar-standard-view.c:1847
 msgid "Loading folder contents..."
 msgstr "Načítavanie obsahu priečinka…"
 
-#: thunar/thunar-standard-view.c:2489
+#: thunar/thunar-standard-view.c:2493
 #, c-format
 msgid "%d file found"
 msgid_plural "%d files found"
@@ -3344,31 +3354,31 @@ msgstr[2] ""
 msgstr[3] ""
 
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2657 thunar/thunar-window.c:4521
+#: thunar/thunar-standard-view.c:2661 thunar/thunar-window.c:4521
 msgid "Failed to open the home folder"
 msgstr "Nepodarilo sa otvoriť domovský priečinok"
 
-#: thunar/thunar-standard-view.c:2735
+#: thunar/thunar-standard-view.c:2739
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "Vybrať podľa vzorky"
 
-#: thunar/thunar-standard-view.c:2740
+#: thunar/thunar-standard-view.c:2744
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "_Zrušiť"
 
-#: thunar/thunar-standard-view.c:2743
+#: thunar/thunar-standard-view.c:2747
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "_Vybrať"
 
-#: thunar/thunar-standard-view.c:2757
+#: thunar/thunar-standard-view.c:2761
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "Vz_orka:"
 
-#: thunar/thunar-standard-view.c:2758
+#: thunar/thunar-standard-view.c:2762
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3378,7 +3388,7 @@ msgstr "Súbory, ktorých meno zodpovedá zadanému žolíkovému vzoru budú vy
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: thunar/thunar-standard-view.c:2772
+#: thunar/thunar-standard-view.c:2776
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3389,24 +3399,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr "? zodpovedá práve jednému znaku,\n* zodpovedá ľubovoľnému počtu znakov, vrátane žiadneho.\n\nNapríklad: *.txt, súbor??.png, obr\n\nBez žolíkov * a ?, bude vzor vyhovovať kdekoľvek v mene. So žolíkmi musí vzor vyhovovať obom, začiatku a koncu mena."
 
-#: thunar/thunar-standard-view.c:2776
+#: thunar/thunar-standard-view.c:2780
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr "Rozlišovať _veľkosť písmen"
 
-#: thunar/thunar-standard-view.c:2777
+#: thunar/thunar-standard-view.c:2781
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr "Ak je zapnuté, vzor musí vyhovovať aj veľkosti písmen.\nExamp* nájde Example.txt, ale nie example.txt"
 
-#: thunar/thunar-standard-view.c:2782
+#: thunar/thunar-standard-view.c:2786
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr "Rozlišovať _diakritiku"
 
-#: thunar/thunar-standard-view.c:2783
+#: thunar/thunar-standard-view.c:2787
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3415,21 +3425,21 @@ msgstr "Ak je zapnuté, vzor musí vyhovovať aj diakritike písmen.\nŽltý* n�
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: thunar/thunar-standard-view.c:3170
+#: thunar/thunar-standard-view.c:3174
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Lokalita XDS drag poskytla neplatný názov súboru."
 
 #. display an error dialog to the user
-#: thunar/thunar-standard-view.c:3366
+#: thunar/thunar-standard-view.c:3370
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Nepodarilo sa vytvoriť odkaz na URL „%s”"
 
-#: thunar/thunar-standard-view.c:3413
+#: thunar/thunar-standard-view.c:3417
 msgid "Untitled document"
 msgstr "Nepomenovaný dokument"
 
-#: thunar/thunar-standard-view.c:3897 thunar/thunar-window.c:4618
+#: thunar/thunar-standard-view.c:3901 thunar/thunar-window.c:4618
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Nepodarilo sa otvoriť priečinok „%s”"
@@ -3664,58 +3674,58 @@ msgstr "odkaz na %.*s%s"
 msgid "link %u to %.*s%s"
 msgstr "odkaz %u na %.*s%s"
 
-#: thunar/thunar-util.c:839
-msgid "Search: "
-msgstr "Hľadať:"
+#: thunar/thunar-util.c:842
+msgid "Search:"
+msgstr ""
 
-#: thunar/thunar-util.c:1335 thunar/thunar-util.c:1368
+#: thunar/thunar-util.c:1340 thunar/thunar-util.c:1373
 #, c-format
 msgid "%s (%d hidden)"
 msgstr "%s (%d skryté)"
 
-#: thunar/thunar-util.c:1352
+#: thunar/thunar-util.c:1357
 #, c-format
 msgid "%s: %s"
 msgstr "%s: %s"
 
-#: thunar/thunar-util.c:1375
+#: thunar/thunar-util.c:1380
 msgid "0 items"
 msgstr "0 položiek"
 
-#: thunar/thunar-util.c:1384 thunar/thunar-util.c:1506
+#: thunar/thunar-util.c:1389 thunar/thunar-util.c:1511
 #, c-format
 msgid "Last Modified: %s"
 msgstr "Naposledy zmenené: %s"
 
-#: thunar/thunar-util.c:1433
+#: thunar/thunar-util.c:1438
 #, c-format
 msgid "\"%s\" (%s)"
 msgstr "„%s” (%s)"
 
-#: thunar/thunar-util.c:1435
+#: thunar/thunar-util.c:1440
 #, c-format
 msgid "\"%s\""
 msgstr "„%s”"
 
-#: thunar/thunar-util.c:1456
+#: thunar/thunar-util.c:1461
 #, c-format
 msgid "link to %s"
 msgstr "odkaz na %s"
 
-#: thunar/thunar-util.c:1458
+#: thunar/thunar-util.c:1463
 msgid "shortcut"
 msgstr "skratka"
 
-#: thunar/thunar-util.c:1460
+#: thunar/thunar-util.c:1465
 msgid "mountable"
 msgstr "pripojiteľné"
 
-#: thunar/thunar-util.c:1462
+#: thunar/thunar-util.c:1467
 msgid "mount point"
 msgstr "prípojný bod"
 
 #. append the image dimensions to the statusbar text
-#: thunar/thunar-util.c:1496 plugins/thunar-apr/thunar-apr-image-page.c:158
+#: thunar/thunar-util.c:1501 plugins/thunar-apr/thunar-apr-image-page.c:158
 msgid "Image Size:"
 msgstr "Veľkosť obrázku:"
 
