@@ -3866,6 +3866,9 @@ thunar_file_set_custom_icon (ThunarFile  *file,
 
       if (thunar_g_file_write_key_file (file->gfile, key_file, NULL, error))
         {
+          /* Make sure to update the trusted checksum */
+          xfce_g_file_set_trusted (file->gfile, TRUE, NULL, NULL);
+
           /* tell everybody that we have changed */
           thunar_file_changed (file);
 
