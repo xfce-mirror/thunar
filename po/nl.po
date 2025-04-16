@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-04-12 00:46+0200\n"
+"POT-Creation-Date: 2025-04-16 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Pjotr <pjotrvertaalt@gmail.com>, 2013-2015,2017-2025\n"
 "Language-Team: Dutch (http://app.transifex.com/xfce/thunar/language/nl/)\n"
@@ -1594,7 +1594,7 @@ msgstr "Geen URL-veld opgegeven"
 msgid "Invalid desktop file"
 msgstr "Ongeldig bureaubladbestand"
 
-#: thunar/thunar-file.c:2554 thunar/thunar-util.c:1454
+#: thunar/thunar-file.c:2554 thunar/thunar-util.c:1459
 msgid "broken link"
 msgstr "kapotte koppeling"
 
@@ -1818,7 +1818,7 @@ msgid ""
 msgstr "Er is niet genoeg ruimte op de bestemming. Probeer bestanden te verwijderen om plek te maken."
 
 #: thunar/thunar-job-operation.c:789 thunar/thunar-size-label.c:488
-#: thunar/thunar-util.c:1331
+#: thunar/thunar-util.c:1336
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -2785,7 +2785,7 @@ msgstr "Doel van koppeling:"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: thunar/thunar-properties-dialog.c:497 thunar/thunar-util.c:1478
+#: thunar/thunar-properties-dialog.c:497 thunar/thunar-util.c:1483
 msgid "Original Path:"
 msgstr "Oorspronkelijk pad:"
 
@@ -3144,7 +3144,7 @@ msgstr "Berekening afgebroken"
 msgid "unreadable"
 msgstr "onleesbaar"
 
-#: thunar/thunar-size-label.c:487 thunar/thunar-util.c:1361
+#: thunar/thunar-size-label.c:487 thunar/thunar-util.c:1366
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -3264,11 +3264,21 @@ msgstr "A_flopend"
 msgid "Sort items in descending order"
 msgstr "Sorteer elementen in aflopende volgorde"
 
-#: thunar/thunar-standard-view.c:1843
+#: thunar/thunar-standard-view.c:1247
+#, c-format
+msgid "Search for '%s' in %s"
+msgstr ""
+
+#: thunar/thunar-standard-view.c:1249
+#, c-format
+msgid "Search in %s"
+msgstr ""
+
+#: thunar/thunar-standard-view.c:1847
 msgid "Loading folder contents..."
 msgstr "Mapinhoud laden..."
 
-#: thunar/thunar-standard-view.c:2489
+#: thunar/thunar-standard-view.c:2493
 #, c-format
 msgid "%d file found"
 msgid_plural "%d files found"
@@ -3276,31 +3286,31 @@ msgstr[0] "%d bestand gevonden"
 msgstr[1] "%d bestanden gevonden"
 
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2657 thunar/thunar-window.c:4521
+#: thunar/thunar-standard-view.c:2661 thunar/thunar-window.c:4521
 msgid "Failed to open the home folder"
 msgstr "Kon persoonlijke map niet openen"
 
-#: thunar/thunar-standard-view.c:2735
+#: thunar/thunar-standard-view.c:2739
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "Op patroon kiezen"
 
-#: thunar/thunar-standard-view.c:2740
+#: thunar/thunar-standard-view.c:2744
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "_Afbreken"
 
-#: thunar/thunar-standard-view.c:2743
+#: thunar/thunar-standard-view.c:2747
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "_Kiezen"
 
-#: thunar/thunar-standard-view.c:2757
+#: thunar/thunar-standard-view.c:2761
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "_Patroon:"
 
-#: thunar/thunar-standard-view.c:2758
+#: thunar/thunar-standard-view.c:2762
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3310,7 +3320,7 @@ msgstr "Bestanden waarvan de namen overeenkomen met het jokertekenpatroon dat u 
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: thunar/thunar-standard-view.c:2772
+#: thunar/thunar-standard-view.c:2776
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3321,24 +3331,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr "? komt overeen met precies één teken,\n* komt overeen met elk aantal tekens, inclusief nul.\n\nBijvoorbeeld: *.txt, bestand??.png, pict\n\nZonder enige jokertekens als * of ?, wordt er gezocht naar een overeenkomst met het patroon op elke willekeurige plek in een naam. Met jokertekens moet het patroon zowel aan het begin als aan het eind van een naam overeenkomen."
 
-#: thunar/thunar-standard-view.c:2776
+#: thunar/thunar-standard-view.c:2780
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr "Hoofdletter_gevoelig"
 
-#: thunar/thunar-standard-view.c:2777
+#: thunar/thunar-standard-view.c:2781
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr "Indien ingeschakeld, moeten hoofd- en kleine letters overeenkomen met het patroon.\nVoorbeel* komt dan dus overeen met Voorbeeld.txt en niet met voorbeeld.txt"
 
-#: thunar/thunar-standard-view.c:2782
+#: thunar/thunar-standard-view.c:2786
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr "Overeenkomstige accenten"
 
-#: thunar/thunar-standard-view.c:2783
+#: thunar/thunar-standard-view.c:2787
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3347,21 +3357,21 @@ msgstr "Indien ingeschakeld, vereist dit dat accenten overeenkomen met het patro
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: thunar/thunar-standard-view.c:3170
+#: thunar/thunar-standard-view.c:3174
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Ongeldige bestandnaam verkregen van XDS-sleepbron"
 
 #. display an error dialog to the user
-#: thunar/thunar-standard-view.c:3366
+#: thunar/thunar-standard-view.c:3370
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Kon geen koppeling voor het webadres '%s' maken"
 
-#: thunar/thunar-standard-view.c:3413
+#: thunar/thunar-standard-view.c:3417
 msgid "Untitled document"
 msgstr "Naamloos document"
 
-#: thunar/thunar-standard-view.c:3897 thunar/thunar-window.c:4618
+#: thunar/thunar-standard-view.c:3901 thunar/thunar-window.c:4618
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Kon map '%s' niet openen"
@@ -3590,58 +3600,58 @@ msgstr "koppeling naar %.*s%s"
 msgid "link %u to %.*s%s"
 msgstr "koppel %u aan %.*s%s"
 
-#: thunar/thunar-util.c:839
-msgid "Search: "
-msgstr "Zoeken:"
+#: thunar/thunar-util.c:842
+msgid "Search:"
+msgstr ""
 
-#: thunar/thunar-util.c:1335 thunar/thunar-util.c:1368
+#: thunar/thunar-util.c:1340 thunar/thunar-util.c:1373
 #, c-format
 msgid "%s (%d hidden)"
 msgstr "%s (%d verborgen)"
 
-#: thunar/thunar-util.c:1352
+#: thunar/thunar-util.c:1357
 #, c-format
 msgid "%s: %s"
 msgstr "%s: %s"
 
-#: thunar/thunar-util.c:1375
+#: thunar/thunar-util.c:1380
 msgid "0 items"
 msgstr "0 elementen"
 
-#: thunar/thunar-util.c:1384 thunar/thunar-util.c:1506
+#: thunar/thunar-util.c:1389 thunar/thunar-util.c:1511
 #, c-format
 msgid "Last Modified: %s"
 msgstr "Laatst aangepast: %s"
 
-#: thunar/thunar-util.c:1433
+#: thunar/thunar-util.c:1438
 #, c-format
 msgid "\"%s\" (%s)"
 msgstr "'%s' (%s)"
 
-#: thunar/thunar-util.c:1435
+#: thunar/thunar-util.c:1440
 #, c-format
 msgid "\"%s\""
 msgstr "'%s'"
 
-#: thunar/thunar-util.c:1456
+#: thunar/thunar-util.c:1461
 #, c-format
 msgid "link to %s"
 msgstr "koppeling naar %s"
 
-#: thunar/thunar-util.c:1458
+#: thunar/thunar-util.c:1463
 msgid "shortcut"
 msgstr "sneltoets"
 
-#: thunar/thunar-util.c:1460
+#: thunar/thunar-util.c:1465
 msgid "mountable"
 msgstr "aankoppelbaar"
 
-#: thunar/thunar-util.c:1462
+#: thunar/thunar-util.c:1467
 msgid "mount point"
 msgstr "Aankoppelpunt"
 
 #. append the image dimensions to the statusbar text
-#: thunar/thunar-util.c:1496 plugins/thunar-apr/thunar-apr-image-page.c:158
+#: thunar/thunar-util.c:1501 plugins/thunar-apr/thunar-apr-image-page.c:158
 msgid "Image Size:"
 msgstr "Afbeeldingsgrootte:"
 
