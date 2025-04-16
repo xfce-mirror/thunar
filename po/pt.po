@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-04-12 00:46+0200\n"
+"POT-Creation-Date: 2025-04-16 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>, 2019-2025\n"
 "Language-Team: Portuguese (http://app.transifex.com/xfce/thunar/language/pt/)\n"
@@ -1620,7 +1620,7 @@ msgstr "Nenhum campo URL especificado"
 msgid "Invalid desktop file"
 msgstr "Ficheiro .desktop inválido"
 
-#: thunar/thunar-file.c:2554 thunar/thunar-util.c:1454
+#: thunar/thunar-file.c:2554 thunar/thunar-util.c:1459
 msgid "broken link"
 msgstr "ligação corrompida"
 
@@ -1844,7 +1844,7 @@ msgid ""
 msgstr "Não existe espaço livre suficiente no destino. Tente remover alguns ficheiros para criar espaço."
 
 #: thunar/thunar-job-operation.c:789 thunar/thunar-size-label.c:488
-#: thunar/thunar-util.c:1331
+#: thunar/thunar-util.c:1336
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -2813,7 +2813,7 @@ msgstr "Destino da ligação:"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: thunar/thunar-properties-dialog.c:497 thunar/thunar-util.c:1478
+#: thunar/thunar-properties-dialog.c:497 thunar/thunar-util.c:1483
 msgid "Original Path:"
 msgstr "Localização original:"
 
@@ -3175,7 +3175,7 @@ msgstr "Cálculo interrompido"
 msgid "unreadable"
 msgstr "ilegível"
 
-#: thunar/thunar-size-label.c:487 thunar/thunar-util.c:1361
+#: thunar/thunar-size-label.c:487 thunar/thunar-util.c:1366
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -3297,11 +3297,21 @@ msgstr "_Descendente"
 msgid "Sort items in descending order"
 msgstr "Ordenar itens em ordem descendente"
 
-#: thunar/thunar-standard-view.c:1843
+#: thunar/thunar-standard-view.c:1247
+#, c-format
+msgid "Search for '%s' in %s"
+msgstr ""
+
+#: thunar/thunar-standard-view.c:1249
+#, c-format
+msgid "Search in %s"
+msgstr ""
+
+#: thunar/thunar-standard-view.c:1847
 msgid "Loading folder contents..."
 msgstr "A carregar conteúdo da pasta..."
 
-#: thunar/thunar-standard-view.c:2489
+#: thunar/thunar-standard-view.c:2493
 #, c-format
 msgid "%d file found"
 msgid_plural "%d files found"
@@ -3310,31 +3320,31 @@ msgstr[1] "%d ficheiros encontrados"
 msgstr[2] "%d ficheiros encontrados"
 
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2657 thunar/thunar-window.c:4521
+#: thunar/thunar-standard-view.c:2661 thunar/thunar-window.c:4521
 msgid "Failed to open the home folder"
 msgstr "Ocorreu um erro ao abrir a pasta pessoal"
 
-#: thunar/thunar-standard-view.c:2735
+#: thunar/thunar-standard-view.c:2739
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "Selecionar por Padrão"
 
-#: thunar/thunar-standard-view.c:2740
+#: thunar/thunar-standard-view.c:2744
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "_Cancelar"
 
-#: thunar/thunar-standard-view.c:2743
+#: thunar/thunar-standard-view.c:2747
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "_Selecionar"
 
-#: thunar/thunar-standard-view.c:2757
+#: thunar/thunar-standard-view.c:2761
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "_Padrão:"
 
-#: thunar/thunar-standard-view.c:2758
+#: thunar/thunar-standard-view.c:2762
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3344,7 +3354,7 @@ msgstr "Os ficheiros cujo nome corresponda ao asterisco padrão que introduzir s
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: thunar/thunar-standard-view.c:2772
+#: thunar/thunar-standard-view.c:2776
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3355,24 +3365,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr "? corresponde exatamente a um carácter,\n* corresponde a qualquer número de caracteres, incluindo o zero.\n\nPor exemplo: *.txt, file???.png, pict\n\nSem quaisquer * ou ? imprevisíveis, o padrão irá coincidir em qualquer lugar num nome. Com asteriscos, o padrão deve coincidir tanto no início como no fim de um nome."
 
-#: thunar/thunar-standard-view.c:2776
+#: thunar/thunar-standard-view.c:2780
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr "Maiúsculas/Minúsculas"
 
-#: thunar/thunar-standard-view.c:2777
+#: thunar/thunar-standard-view.c:2781
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr "Se ativada, a capitalização da letra deve corresponder ao padrão.\nExemp* coincidiria com Exemplo.txt e não com exemplo.txt"
 
-#: thunar/thunar-standard-view.c:2782
+#: thunar/thunar-standard-view.c:2786
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr "Diacríticos correspondentes"
 
-#: thunar/thunar-standard-view.c:2783
+#: thunar/thunar-standard-view.c:2787
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3381,21 +3391,21 @@ msgstr "Se ativado, requer acentos que correspondam ao padrão.\nRés* correspon
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: thunar/thunar-standard-view.c:3170
+#: thunar/thunar-standard-view.c:3174
 msgid "Invalid filename provided by XDS drag site"
 msgstr "O nome de ficheiro disponibilizado pelo sítio XDS é inválido"
 
 #. display an error dialog to the user
-#: thunar/thunar-standard-view.c:3366
+#: thunar/thunar-standard-view.c:3370
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Ocorreu um erro ao criar a ligação para o URL \"%s\""
 
-#: thunar/thunar-standard-view.c:3413
+#: thunar/thunar-standard-view.c:3417
 msgid "Untitled document"
 msgstr "Documento sem título"
 
-#: thunar/thunar-standard-view.c:3897 thunar/thunar-window.c:4618
+#: thunar/thunar-standard-view.c:3901 thunar/thunar-window.c:4618
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Ocorreu um erro ao abrir a pasta \"%s\""
@@ -3627,58 +3637,58 @@ msgstr "ligar a %.*s%s"
 msgid "link %u to %.*s%s"
 msgstr "ligar %u a %.*s%s"
 
-#: thunar/thunar-util.c:839
-msgid "Search: "
-msgstr "Procurar: "
+#: thunar/thunar-util.c:842
+msgid "Search:"
+msgstr ""
 
-#: thunar/thunar-util.c:1335 thunar/thunar-util.c:1368
+#: thunar/thunar-util.c:1340 thunar/thunar-util.c:1373
 #, c-format
 msgid "%s (%d hidden)"
 msgstr "%s (oculto: %d)"
 
-#: thunar/thunar-util.c:1352
+#: thunar/thunar-util.c:1357
 #, c-format
 msgid "%s: %s"
 msgstr "%s: %s"
 
-#: thunar/thunar-util.c:1375
+#: thunar/thunar-util.c:1380
 msgid "0 items"
 msgstr "0 itens"
 
-#: thunar/thunar-util.c:1384 thunar/thunar-util.c:1506
+#: thunar/thunar-util.c:1389 thunar/thunar-util.c:1511
 #, c-format
 msgid "Last Modified: %s"
 msgstr "Última modificação: %s"
 
-#: thunar/thunar-util.c:1433
+#: thunar/thunar-util.c:1438
 #, c-format
 msgid "\"%s\" (%s)"
 msgstr "\"%s\" (%s)"
 
-#: thunar/thunar-util.c:1435
+#: thunar/thunar-util.c:1440
 #, c-format
 msgid "\"%s\""
 msgstr "\"%s\""
 
-#: thunar/thunar-util.c:1456
+#: thunar/thunar-util.c:1461
 #, c-format
 msgid "link to %s"
 msgstr "ligação a %s"
 
-#: thunar/thunar-util.c:1458
+#: thunar/thunar-util.c:1463
 msgid "shortcut"
 msgstr "atalho"
 
-#: thunar/thunar-util.c:1460
+#: thunar/thunar-util.c:1465
 msgid "mountable"
 msgstr "pode ser montado"
 
-#: thunar/thunar-util.c:1462
+#: thunar/thunar-util.c:1467
 msgid "mount point"
 msgstr "ponto de montagem"
 
 #. append the image dimensions to the statusbar text
-#: thunar/thunar-util.c:1496 plugins/thunar-apr/thunar-apr-image-page.c:158
+#: thunar/thunar-util.c:1501 plugins/thunar-apr/thunar-apr-image-page.c:158
 msgid "Image Size:"
 msgstr "Tamanho da imagem:"
 
