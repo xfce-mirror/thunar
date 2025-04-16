@@ -29,6 +29,7 @@
 #include "thunar/thunar-io-scan-directory.h"
 #include "thunar/thunar-job-operation-history.h"
 #include "thunar/thunar-job.h"
+#include "thunar/thunar-logger.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-thumbnail-cache.h"
@@ -668,6 +669,7 @@ ttj_copy_file (ThunarTransferJob  *job,
 
           thunar_job_operation_add (operation, source_file, target_file);
         }
+      thunar_logger_println ("copy %s => %s", g_file_get_uri (source_file), g_file_get_uri (target_file));
       return TRUE;
     }
 }
@@ -1290,6 +1292,7 @@ thunar_transfer_job_move_file_with_rename (ThunarJob          *job,
       /* Log the operation if the move and rename were successful and logging is enabled */
       if (operation != NULL)
         thunar_job_operation_add (operation, node->source_file, renamed_file);
+      thunar_logger_println ("move %s => %s", g_file_get_uri (node->source_file), g_file_get_uri (renamed_file));
 
       g_object_unref (renamed_file);
       return move_rename_successful;
@@ -1343,6 +1346,7 @@ thunar_transfer_job_move_file (ThunarJob            *job,
               thunar_job_operation_overwrite (operation, tp->data);
               thunar_job_operation_add (operation, node->source_file, tp->data);
             }
+          thunar_logger_println ("move %s => %s", g_file_get_uri (node->source_file), g_file_get_uri (tp->data));
         }
       /* if the user chose to rename then try to do so */
       else if (response == THUNAR_JOB_RESPONSE_RENAME)
@@ -1368,6 +1372,7 @@ thunar_transfer_job_move_file (ThunarJob            *job,
     {
       if (operation != NULL)
         thunar_job_operation_add (operation, node->source_file, tp->data);
+      thunar_logger_println ("move %s => %s", g_file_get_uri (node->source_file), g_file_get_uri (tp->data));
     }
 
   if (*error == NULL)

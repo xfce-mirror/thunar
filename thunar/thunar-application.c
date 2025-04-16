@@ -57,6 +57,7 @@
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-gtk-extensions.h"
 #include "thunar/thunar-io-jobs.h"
+#include "thunar/thunar-logger.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-progress-dialog.h"

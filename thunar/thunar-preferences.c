@@ -92,6 +92,7 @@ enum
   PROP_MISC_DIRECTORY_SPECIFIC_SETTINGS,
   PROP_MISC_ALWAYS_SHOW_TABS,
   PROP_MISC_VOLUME_MANAGEMENT,
+  PROP_MISC_LOGGER,
   PROP_MISC_CASE_SENSITIVE,
   PROP_MISC_DATE_STYLE,
   PROP_MISC_DATE_CUSTOM_STYLE,
@@ -706,6 +707,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "MiscVolumeManagement",
                         NULL,
                         TRUE,
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:misc-logger:
+   *
+   * Whether to enable a debug log in ~/.cache/Thunar
+   **/
+  preferences_props[PROP_MISC_LOGGER] =
+  g_param_spec_boolean ("misc-logger",
+                        "MiscLogger",
+                        NULL,
+                        FALSE,
                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
