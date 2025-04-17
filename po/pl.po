@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-04-16 00:45+0200\n"
+"POT-Creation-Date: 2025-04-17 12:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Marek Adamski, 2021-2025\n"
 "Language-Team: Polish (http://app.transifex.com/xfce/thunar/language/pl/)\n"
@@ -1573,7 +1573,7 @@ msgstr "Utwórz katalog"
 msgid "Delete (opposite of create)"
 msgstr "Usuń (przeciwieństwo tworzenia)"
 
-#: thunar/thunar-enum-types.c:791 thunar/thunar-file.c:1081
+#: thunar/thunar-enum-types.c:791 thunar/thunar-file.c:1091
 #: thunar/thunar-gio-extensions.c:510 thunar/thunar-shortcuts-model.c:1151
 #: thunar.desktop.in:25
 msgid "Trash"
@@ -1616,57 +1616,57 @@ msgstr "Osadzony"
 msgid "Only for local files"
 msgstr "Tylko dla plików lokalnych"
 
-#: thunar/thunar-file.c:1088 thunar/thunar-gio-extensions.c:508
+#: thunar/thunar-file.c:1098 thunar/thunar-gio-extensions.c:508
 #: thunar/thunar-shortcuts-model.c:1033
 msgid "File System"
 msgstr "System plików"
 
-#: thunar/thunar-file.c:1557
+#: thunar/thunar-file.c:1567
 msgid "The root folder has no parent"
 msgstr "Katalog główny nie ma katalogu nadrzędnego"
 
-#: thunar/thunar-file.c:1655
+#: thunar/thunar-file.c:1665
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "Nie udało się przetworzyć pliku aktywatora: %s"
 
 #. if the .desktop file is not secure, ask user what to do
-#: thunar/thunar-file.c:1668
+#: thunar/thunar-file.c:1678
 msgid "Untrusted application launcher"
 msgstr "Niezaufany aktywator programu"
 
-#: thunar/thunar-file.c:1699
+#: thunar/thunar-file.c:1709
 msgid "No Exec field specified"
 msgstr "Nie określono pola Exec"
 
 #. if the .desktop file is not secure, ask user what to do
-#: thunar/thunar-file.c:1708
+#: thunar/thunar-file.c:1718
 msgid "Untrusted link launcher"
 msgstr "Niezaufany aktywator dowiązania"
 
-#: thunar/thunar-file.c:1724
+#: thunar/thunar-file.c:1734
 msgid "No URL field specified"
 msgstr "Nie określono pola URL"
 
-#: thunar/thunar-file.c:1729
+#: thunar/thunar-file.c:1739
 msgid "Invalid desktop file"
 msgstr "Nieprawidłowy plik aktywatora"
 
-#: thunar/thunar-file.c:2554 thunar/thunar-util.c:1459
+#: thunar/thunar-file.c:2564 thunar/thunar-util.c:1459
 msgid "broken link"
 msgstr "nieprawidłowe dowiązanie"
 
-#: thunar/thunar-file.c:2561
+#: thunar/thunar-file.c:2571
 #, c-format
 msgid "%s (link to %s)"
 msgstr "%s (dowiązanie do %s)"
 
-#: thunar/thunar-file.c:2563
+#: thunar/thunar-file.c:2573
 #, c-format
 msgid "%s (link)"
 msgstr "%s (dowiązanie)"
 
-#: thunar/thunar-file.c:2572
+#: thunar/thunar-file.c:2582
 #, c-format
 msgid "%s (mount point)"
 msgstr "%s (punkt montowania)"
@@ -1980,7 +1980,7 @@ msgid "Redo the latest operation"
 msgstr "Ponawia ostatnią operację"
 
 #: thunar/thunar-list-model.c:1055 thunar/thunar-list-model.c:1068
-#: thunar/thunar-properties-dialog.c:1408 thunar/thunar-size-label.c:394
+#: thunar/thunar-properties-dialog.c:1394 thunar/thunar-size-label.c:394
 #: thunar/thunar-size-label.c:479 thunar/thunar-tree-view-model.c:1379
 #: thunar/thunar-tree-view-model.c:1392
 msgid "unknown"
@@ -2957,15 +2957,15 @@ msgid "%s - Properties"
 msgstr "%s – właściwości"
 
 #. update the properties dialog title
-#: thunar/thunar-properties-dialog.c:1619
+#: thunar/thunar-properties-dialog.c:1605
 msgid "Properties"
 msgstr "Właściwości"
 
-#: thunar/thunar-properties-dialog.c:1646
+#: thunar/thunar-properties-dialog.c:1632
 msgid "Link Targets:"
 msgstr "Cele dowiązań:"
 
-#: thunar/thunar-properties-dialog.c:1740
+#: thunar/thunar-properties-dialog.c:1726
 msgid "mixed"
 msgstr "różne"
 
@@ -3336,21 +3336,22 @@ msgstr "M_alejąco"
 msgid "Sort items in descending order"
 msgstr "Sortuje elementy w porządku malejącym"
 
-#: thunar/thunar-standard-view.c:1247
+#. TRANSLATORS: You can swap the order of the arguments if required.
+#: thunar/thunar-standard-view.c:1248
 #, c-format
-msgid "Search for '%s' in %s"
-msgstr "Szukaj „%s” w %s"
+msgid "Search for '%1$s' in %2$s"
+msgstr "Szukaj „%1$s” w %2$s"
 
-#: thunar/thunar-standard-view.c:1249
+#: thunar/thunar-standard-view.c:1250
 #, c-format
 msgid "Search in %s"
 msgstr "Szukaj w %s"
 
-#: thunar/thunar-standard-view.c:1847
+#: thunar/thunar-standard-view.c:1848
 msgid "Loading folder contents..."
 msgstr "Wczytywanie zawartości katalogu..."
 
-#: thunar/thunar-standard-view.c:2493
+#: thunar/thunar-standard-view.c:2494
 #, c-format
 msgid "%d file found"
 msgid_plural "%d files found"
@@ -3360,31 +3361,31 @@ msgstr[2] "Znaleziono %d plików"
 msgstr[3] "Znaleziono %d plików"
 
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2661 thunar/thunar-window.c:4521
+#: thunar/thunar-standard-view.c:2662 thunar/thunar-window.c:4521
 msgid "Failed to open the home folder"
 msgstr "Nie udało się otworzyć katalogu domowego"
 
-#: thunar/thunar-standard-view.c:2739
+#: thunar/thunar-standard-view.c:2740
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "Wprowadzanie wzoru"
 
-#: thunar/thunar-standard-view.c:2744
+#: thunar/thunar-standard-view.c:2745
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "_Anuluj"
 
-#: thunar/thunar-standard-view.c:2747
+#: thunar/thunar-standard-view.c:2748
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "_Zaznacz"
 
-#: thunar/thunar-standard-view.c:2761
+#: thunar/thunar-standard-view.c:2762
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "_Wzór:"
 
-#: thunar/thunar-standard-view.c:2762
+#: thunar/thunar-standard-view.c:2763
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3394,7 +3395,7 @@ msgstr "Pliki, których nazwa odpowiada wprowadzonemu wzorcowi wieloznacznemu, z
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: thunar/thunar-standard-view.c:2776
+#: thunar/thunar-standard-view.c:2777
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3405,24 +3406,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr "? pasuje do dokładnie jednego znaku,\n* pasuje do dowolnej liczby znaków, w tym do zera.\n\nNa przykład: *.txt, file??.png, pict\n\nBez symboli wieloznacznych * lub ? wzorzec będzie pasował do dowolnego miejsca w nazwie. Z symbolami wieloznacznymi wzorzec musi pasować zarówno na początku, jak i na końcu nazwy."
 
-#: thunar/thunar-standard-view.c:2780
+#: thunar/thunar-standard-view.c:2781
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr "Rozróżnianie wielkości _liter"
 
-#: thunar/thunar-standard-view.c:2781
+#: thunar/thunar-standard-view.c:2782
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr "Jeśli ta opcja jest włączona, wielkość liter musi być zgodna z wzorcem.\nTest* będzie pasować do Testowy.txt, a nie do testowy.txt"
 
-#: thunar/thunar-standard-view.c:2786
+#: thunar/thunar-standard-view.c:2787
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr "_Dopasowanie znaków diakrytycznych"
 
-#: thunar/thunar-standard-view.c:2787
+#: thunar/thunar-standard-view.c:2788
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3431,21 +3432,21 @@ msgstr "Jeśli ta opcja jest włączona, do dopasowania wzorca wymagane są akce
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: thunar/thunar-standard-view.c:3174
+#: thunar/thunar-standard-view.c:3175
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Nieprawidłowa nazwa pliku dostarczona przez źródło XDS"
 
 #. display an error dialog to the user
-#: thunar/thunar-standard-view.c:3370
+#: thunar/thunar-standard-view.c:3371
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Nie udało się utworzyć dowiązania do adresu URL „%s”"
 
-#: thunar/thunar-standard-view.c:3417
+#: thunar/thunar-standard-view.c:3418
 msgid "Untitled document"
 msgstr "Dokument bez tytułu"
 
-#: thunar/thunar-standard-view.c:3901 thunar/thunar-window.c:4618
+#: thunar/thunar-standard-view.c:3902 thunar/thunar-window.c:4618
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Nie udało się otworzyć katalogu „%s”"
