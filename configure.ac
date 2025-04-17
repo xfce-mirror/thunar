@@ -23,7 +23,7 @@ dnl ***************************
 dnl *** Version information ***
 dnl ***************************
 m4_define([thunarx_verinfo], [0:0:0])
-m4_define([thunarx_version_api], [3])
+m4_define([thunarx_version_api], [4])
 m4_define([copyright_year], [2025])
 
 XDT_VERSION_INIT([4.21.0], [git])
