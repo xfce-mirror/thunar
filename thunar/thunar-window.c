@@ -2549,6 +2549,8 @@ thunar_window_switch_current_view (ThunarWindow *window,
     }
 
   /* (un)set the visual indicators of an ongoing search */
+  thunar_window_notify_loading (THUNAR_VIEW (window->view), NULL, window);
+  g_signal_connect (G_OBJECT (window->view), "notify::searching", G_CALLBACK (thunar_window_notify_loading), window);
   g_object_notify (G_OBJECT (window), "searching");
 
   /* switch to the new view */
@@ -3593,9 +3595,6 @@ thunar_window_start_open_location (ThunarWindow *window,
       /* the check is useless as long as the workaround is in place */
       if (THUNAR_IS_DETAILS_VIEW (window->view))
         thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), TRUE);
-
-      /* update the window whenever there is an ongoing search */
-      g_signal_connect_swapped (G_OBJECT (window), "notify::searching", G_CALLBACK (thunar_window_notify_loading), window->view);
     }
   else /* location edit */
     {
@@ -3637,9 +3636,9 @@ thunar_window_resume_search (ThunarWindow *window,
   /* change to search UI and options */
   g_free (window->search_query);
   window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
+  thunar_action_manager_set_search_mode (window->action_mgr, TRUE);
   if (window->catfish_search_button != NULL)
     gtk_widget_show (window->catfish_search_button);
-  thunar_action_manager_set_search_mode (window->action_mgr, TRUE);
 
   /* the check is useless as long as the workaround is in place */
   if (THUNAR_IS_DETAILS_VIEW (window->view))
@@ -3713,14 +3712,11 @@ thunar_window_cancel_search (ThunarWindow *window)
 
   window->search_mode = FALSE;
 
+  thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar));
+
   g_free (window->search_query);
   window->search_query = NULL;
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), NULL);
-
-  /* disconnect the "notify::searching" signal handler */
-  g_signal_handlers_disconnect_by_func (G_OBJECT (window), thunar_window_notify_loading, window->view);
-
-  thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_action_manager_set_search_mode (window->action_mgr, FALSE);
   if (window->catfish_search_button != NULL)
     gtk_widget_hide (window->catfish_search_button);
