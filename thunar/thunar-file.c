@@ -118,6 +118,9 @@ static GFileInfo *
 thunar_file_info_get_filesystem_info (ThunarxFileInfo *file_info);
 static GFile *
 thunar_file_info_get_location (ThunarxFileInfo *file_info);
+void
+thunar_file_info_add_emblem (ThunarxFileInfo *file_info,
+                             const gchar     *emblem_name);
 static void
 thunar_file_info_changed (ThunarxFileInfo *file_info);
 static gboolean
@@ -473,6 +476,7 @@ thunar_file_info_init (ThunarxFileInfoIface *iface)
   iface->get_file_info = thunar_file_info_get_file_info;
   iface->get_filesystem_info = thunar_file_info_get_filesystem_info;
   iface->get_location = thunar_file_info_get_location;
+  iface->add_emblem = thunar_file_info_add_emblem;
   iface->changed = thunar_file_info_changed;
 }
 
@@ -681,6 +685,50 @@ thunar_file_info_changed (ThunarxFileInfo *file_info)
    * changed once */
   for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
     thunar_file_reset_thumbnail (file, i);
+}
+
+
+
+void
+thunar_file_info_add_emblem (ThunarxFileInfo *file_info,
+                             const gchar     *emblem_name)
+{
+  ThunarFile *file = THUNAR_FILE (file_info);
+
+  _thunar_return_if_fail (THUNAR_IS_FILE (file_info));
+
+  if (xfce_str_is_empty (emblem_name))
+    {
+      /* passing an empty string will clear all emblems */
+      thunar_file_clear_metadata_setting (file, "emblems");
+    }
+  else
+    {
+      gchar *emblem_names_old;
+      gchar *emblem_names_new;
+
+      emblem_names_old = thunar_g_file_get_metadata_setting (file->gfile, file->info, THUNAR_GTYPE_STRINGV, "emblems");
+      if (emblem_names_old != NULL)
+        {
+          /* each emblem is only allowed to show once on a file */
+          if (strstr (emblem_names_old, emblem_name) != NULL)
+            {
+              g_free (emblem_names_old);
+              return;
+            }
+
+          emblem_names_new = g_strjoin (THUNAR_METADATA_STRING_DELIMETER, emblem_names_old, emblem_name, NULL);
+        }
+      else
+        {
+          emblem_names_new = g_strdup (emblem_name);
+        }
+
+      thunar_g_file_set_metadata_setting (file->gfile, file->info, THUNAR_GTYPE_STRINGV, "emblems", emblem_names_new, TRUE);
+
+      g_free (emblem_names_old);
+      g_free (emblem_names_new);
+    }
 }
 
 

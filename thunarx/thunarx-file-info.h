@@ -85,6 +85,7 @@ typedef struct _ThunarxFileInfo      ThunarxFileInfo;
  * @get_file_info: See thunarx_file_info_get_file_info().
  * @get_filesystem_info: See thunarx_filesystem_info_get_filesystem_info().
  * @get_location: See thunarx_location_get_location().
+ * @get_emblem: See thunarx_file_info_get_emblem().
  * @changed: See thunarx_file_info_changed().
  * @renamed: See thunarx_file_info_renamed().
  *
@@ -115,6 +116,8 @@ struct _ThunarxFileInfoIface
   GFileInfo *(*get_file_info) (ThunarxFileInfo *file_info);
   GFileInfo *(*get_filesystem_info) (ThunarxFileInfo *file_info);
   GFile *(*get_location) (ThunarxFileInfo *file_info);
+  void (*add_emblem) (ThunarxFileInfo *file_info,
+                      const gchar     *emblem_name);
 
   /*< private >*/
   void (*reserved0) (void);
@@ -170,6 +173,9 @@ thunarx_file_info_changed (ThunarxFileInfo *file_info);
 void
 thunarx_file_info_renamed (ThunarxFileInfo *file_info);
 
+void
+thunarx_file_info_add_emblem (ThunarxFileInfo *file_info,
+                              const gchar     *emblem_name);
 
 #define THUNARX_TYPE_FILE_INFO_LIST (thunarx_file_info_list_get_type ())
 
@@ -180,7 +186,6 @@ GList *
 thunarx_file_info_list_copy (GList *file_infos);
 void
 thunarx_file_info_list_free (GList *file_infos);
-
 G_END_DECLS
 
 #endif /* !__THUNARX_FILE_INFO_H__ */
