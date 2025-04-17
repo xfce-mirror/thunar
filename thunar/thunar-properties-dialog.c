@@ -375,7 +375,7 @@ thunar_properties_dialog_constructed (GObject *object)
 
   dialog->icon_image = thunar_image_new ();
   gtk_widget_set_size_request (dialog->icon_image, THUNAR_ICON_SIZE_DIALOG, THUNAR_ICON_SIZE_DIALOG);
-  gtk_box_pack_start (GTK_BOX (dialog->single_box), dialog->icon_image, FALSE, TRUE, 0);
+  gtk_container_add (GTK_CONTAINER (dialog->icon_button), dialog->icon_image);
   gtk_widget_show (dialog->icon_image);
 
   label = gtk_label_new_with_mnemonic (_("_Name:"));
@@ -1228,7 +1228,7 @@ thunar_properties_dialog_icon_button_clicked (GtkWidget              *button,
           /* hide the icon chooser dialog first */
           gtk_widget_hide (chooser);
 
-          /* tell the user that we failed to change the icon of the .desktop file */
+          /* tell the user that we failed to change the file icon */
           if (g_strcmp0 (thunar_file_get_display_name (file), thunar_file_get_basename (file)) != 0)
             thunar_dialogs_show_error (GTK_WIDGET (dialog), err,
                                        _("Failed to change icon of \"%s\" (%s)"),
@@ -1355,20 +1355,6 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   /* update the preview image */
   thunar_image_set_file (THUNAR_IMAGE (dialog->icon_image), file);
 
-  /* check if the icon may be changed (only for writable .desktop files) */
-  g_object_ref (G_OBJECT (dialog->icon_image));
-  gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (dialog->icon_image)), dialog->icon_image);
-  if (thunar_file_is_writable (file) && thunar_file_is_desktop_file (file))
-    {
-      gtk_container_add (GTK_CONTAINER (dialog->icon_button), dialog->icon_image);
-      gtk_widget_show (dialog->icon_button);
-    }
-  else
-    {
-      gtk_box_pack_start (GTK_BOX (gtk_widget_get_parent (dialog->icon_button)), dialog->icon_image, FALSE, TRUE, 0);
-      gtk_widget_hide (dialog->icon_button);
-    }
-  g_object_unref (G_OBJECT (dialog->icon_image));
 
   /* update the name (if it differs) */
   gtk_editable_set_editable (GTK_EDITABLE (xfce_filename_input_get_entry (dialog->name_entry)),
