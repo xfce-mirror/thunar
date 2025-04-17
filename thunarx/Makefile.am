@@ -33,9 +33,9 @@ libthunarx_include_HEADERS =						\
 	$(libthunarx_headers)
 
 lib_LTLIBRARIES =							\
-	libthunarx-3.la
+	libthunarx-4.la
 
-libthunarx_3_la_SOURCES =						\
+libthunarx_4_la_SOURCES =						\
 	$(libthunarx_headers)						\
 	$(thunarx_built_sources)						\
 	thunarx-config.c						\
@@ -54,7 +54,7 @@ libthunarx_3_la_SOURCES =						\
 	thunarx-renamer.c						\
 	thunarx-renamer-provider.c
 
-libthunarx_3_la_CFLAGS =						\
+libthunarx_4_la_CFLAGS =						\
 	$(GLIB_CFLAGS)							\
 	$(GIO_CFLAGS)							\
 	$(GTK_CFLAGS)							\
@@ -62,14 +62,14 @@ libthunarx_3_la_CFLAGS =						\
 	$(LIBXFCE4UTIL_CFLAGS)						\
 	$(PLATFORM_CFLAGS)
 
-libthunarx_3_la_LDFLAGS =						\
+libthunarx_4_la_LDFLAGS =						\
 	-export-dynamic							\
 	-export-symbols-regex "^[^_].*"					\
 	-no-undefined							\
 	-version-info $(THUNARX_VERINFO)				\
 	$(PLATFORM_LDFLAGS)
 
-libthunarx_3_la_LIBADD =						\
+libthunarx_4_la_LIBADD =						\
 	$(GLIB_LIBS)							\
 	$(GMODULE_LIBS)							\
 	$(GIO_LIBS)							\
@@ -77,7 +77,7 @@ libthunarx_3_la_LIBADD =						\
 	$(LIBXFCE4UTIL_LIBS)
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = thunarx-3.pc
+pkgconfig_DATA = thunarx-4.pc
 
 EXTRA_DIST =								\
 	thunarx.symbols \
@@ -130,14 +130,14 @@ INTROSPECTION_COMPILER_ARGS = \
 	--includedir=.
 
 if HAVE_INTROSPECTION
-introspection_sources = $(filter-out %private.h %private.c, $(libthunarx_3_la_SOURCES))
+introspection_sources = $(filter-out %private.h %private.c, $(libthunarx_4_la_SOURCES))
 
-Thunarx-3.0.gir: libthunarx-3.la
-Thunarx_3_0_gir_INCLUDES = GObject-2.0 Gtk-3.0
-Thunarx_3_0_gir_CFLAGS = $(INCLUDES)
-Thunarx_3_0_gir_LIBS = libthunarx-3.la
-Thunarx_3_0_gir_FILES = $(introspection_sources)
-INTROSPECTION_GIRS += Thunarx-3.0.gir
+Thunarx-4.0.gir: libthunarx-4.la
+Thunarx_4_0_gir_INCLUDES = GObject-2.0 Gtk-3.0
+Thunarx_4_0_gir_CFLAGS = $(INCLUDES)
+Thunarx_4_0_gir_LIBS = libthunarx-4.la
+Thunarx_4_0_gir_FILES = $(introspection_sources)
+INTROSPECTION_GIRS += Thunarx-4.0.gir
 
 girdir = $(datadir)/gir-1.0/
 gir_DATA = $(INTROSPECTION_GIRS)
