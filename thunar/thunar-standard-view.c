@@ -1244,7 +1244,8 @@ thunar_standard_view_get_property (GObject    *object,
         {
           gchar *label;
           if (g_strcmp0 (THUNAR_STANDARD_VIEW (object)->priv->search_query, "") != 0)
-            label = g_strdup_printf (_("Search for '%s' in %s"), THUNAR_STANDARD_VIEW (object)->priv->search_query, thunar_file_get_display_name (current_directory));
+            /* TRANSLATORS: You can swap the order of the arguments if required. */
+            label = g_strdup_printf (_("Search for '%1$s' in %2$s"), THUNAR_STANDARD_VIEW (object)->priv->search_query, thunar_file_get_display_name (current_directory));
           else
             label = g_strdup_printf (_("Search in %s"), thunar_file_get_display_name (current_directory));
           g_value_take_string (value, label);
