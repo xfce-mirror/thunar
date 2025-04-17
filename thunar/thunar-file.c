@@ -118,6 +118,12 @@ static GFileInfo *
 thunar_file_info_get_filesystem_info (ThunarxFileInfo *file_info);
 static GFile *
 thunar_file_info_get_location (ThunarxFileInfo *file_info);
+void
+thunar_file_info_add_emblem (ThunarxFileInfo *file_info,
+                             const gchar     *emblem_name);
+void
+thunar_file_info_remove_emblem (ThunarxFileInfo *file_info,
+                                const gchar     *emblem_name);
 static void
 thunar_file_info_changed (ThunarxFileInfo *file_info);
 static gboolean
@@ -239,6 +245,9 @@ struct _ThunarFile
    * there were > 10.000 files in a folder (Creation of #ThunarFolder seems to be slow) */
   guint   file_count;
   guint64 file_count_timestamp;
+
+  /* list of emblem names added via thunarx */
+  GList *plugin_emblems;
 };
 
 typedef struct
@@ -456,6 +465,7 @@ thunar_file_init (ThunarFile *file)
   file->thumbnailer = thunar_thumbnailer_get ();
 
   file->thumbnail_finished_handler_id = g_signal_connect_swapped (file->thumbnailer, "request-finished", G_CALLBACK (thunar_file_thumbnailing_finished), file);
+  file->plugin_emblems = NULL;
 }
 
 
@@ -473,6 +483,8 @@ thunar_file_info_init (ThunarxFileInfoIface *iface)
   iface->get_file_info = thunar_file_info_get_file_info;
   iface->get_filesystem_info = thunar_file_info_get_filesystem_info;
   iface->get_location = thunar_file_info_get_location;
+  iface->add_emblem = thunar_file_info_add_emblem;
+  iface->remove_emblem = thunar_file_info_remove_emblem;
   iface->changed = thunar_file_info_changed;
 }
 
@@ -560,6 +572,8 @@ thunar_file_finalize (GObject *object)
 
   /* release file */
   g_object_unref (file->gfile);
+
+  g_list_free_full (file->plugin_emblems, g_free);
 
   (*G_OBJECT_CLASS (thunar_file_parent_class)->finalize) (object);
 }
@@ -681,6 +695,55 @@ thunar_file_info_changed (ThunarxFileInfo *file_info)
    * changed once */
   for (gint i = 0; i < N_THUMBNAIL_SIZES; i++)
     thunar_file_reset_thumbnail (file, i);
+}
+
+
+
+void
+thunar_file_info_add_emblem (ThunarxFileInfo *file_info,
+                             const gchar     *emblem_name)
+{
+  ThunarFile *file = THUNAR_FILE (file_info);
+
+  _thunar_return_if_fail (THUNAR_IS_FILE (file_info));
+
+  if (!xfce_str_is_empty (emblem_name))
+    {
+      file->plugin_emblems = g_list_append (file->plugin_emblems, g_strdup (emblem_name));
+      thunar_file_changed (file);
+    }
+}
+
+
+
+void
+thunar_file_info_remove_emblem (ThunarxFileInfo *file_info,
+                                const gchar     *emblem_name)
+{
+  ThunarFile *file = THUNAR_FILE (file_info);
+
+  _thunar_return_if_fail (THUNAR_IS_FILE (file_info));
+
+  if (xfce_str_is_empty (emblem_name))
+    {
+      /* passing an empty string will clear the whole list */
+      g_list_free_full (file->plugin_emblems, g_free);
+      file->plugin_emblems = NULL;
+    }
+  else
+    {
+      for (GList *lp = file->plugin_emblems; lp != NULL; lp = lp->next)
+        {
+          if (g_strcmp0 (lp->data, emblem_name) == 0)
+            {
+              file->plugin_emblems = g_list_remove_link (file->plugin_emblems, lp);
+              g_list_free_full (lp, g_free);
+              break;
+            }
+        }
+    }
+
+  thunar_file_changed (file);
 }
 
 
@@ -3780,6 +3843,10 @@ thunar_file_get_emblem_names (ThunarFile *file)
         }
       g_strfreev (emblem_names);
     }
+
+  /* Prepend emblems added via thunarx API */
+  for (GList *lp = file->plugin_emblems; lp != NULL; lp = lp->next)
+    emblems = g_list_prepend (emblems, g_strdup (lp->data) );
 
   if (thunar_file_is_symlink (file))
     emblems = g_list_prepend (emblems, g_strdup (THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK));

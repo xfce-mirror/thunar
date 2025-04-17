@@ -400,6 +400,26 @@ thunarx_file_info_renamed (ThunarxFileInfo *file_info)
 
 
 
+void
+thunarx_file_info_add_emblem (ThunarxFileInfo *file_info,
+                              const gchar     *emblem_name)
+{
+  g_return_if_fail (THUNARX_IS_FILE_INFO (file_info));
+  (*THUNARX_FILE_INFO_GET_IFACE (file_info)->add_emblem) (file_info, emblem_name);
+}
+
+
+
+void
+thunarx_file_info_remove_emblem (ThunarxFileInfo *file_info,
+                                 const gchar     *emblem_name)
+{
+  g_return_if_fail (THUNARX_IS_FILE_INFO (file_info));
+  (*THUNARX_FILE_INFO_GET_IFACE (file_info)->remove_emblem) (file_info, emblem_name);
+}
+
+
+
 GType
 thunarx_file_info_list_get_type (void)
 {
