@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-04-16 00:45+0200\n"
+"POT-Creation-Date: 2025-04-17 12:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>, 2019-2025\n"
 "Language-Team: Portuguese (http://app.transifex.com/xfce/thunar/language/pt/)\n"
@@ -1541,7 +1541,7 @@ msgstr "Criar pasta"
 msgid "Delete (opposite of create)"
 msgstr "Eliminar (oposto de criar)"
 
-#: thunar/thunar-enum-types.c:791 thunar/thunar-file.c:1081
+#: thunar/thunar-enum-types.c:791 thunar/thunar-file.c:1091
 #: thunar/thunar-gio-extensions.c:510 thunar/thunar-shortcuts-model.c:1151
 #: thunar.desktop.in:25
 msgid "Trash"
@@ -1584,57 +1584,57 @@ msgstr "Embutido"
 msgid "Only for local files"
 msgstr "Apenas para ficheiros locais"
 
-#: thunar/thunar-file.c:1088 thunar/thunar-gio-extensions.c:508
+#: thunar/thunar-file.c:1098 thunar/thunar-gio-extensions.c:508
 #: thunar/thunar-shortcuts-model.c:1033
 msgid "File System"
 msgstr "Sistema de ficheiros"
 
-#: thunar/thunar-file.c:1557
+#: thunar/thunar-file.c:1567
 msgid "The root folder has no parent"
 msgstr "A pasta \"root\" não tem ascendente"
 
-#: thunar/thunar-file.c:1655
+#: thunar/thunar-file.c:1665
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "Ocorreu um erro ao processar o ficheiro: %s"
 
 #. if the .desktop file is not secure, ask user what to do
-#: thunar/thunar-file.c:1668
+#: thunar/thunar-file.c:1678
 msgid "Untrusted application launcher"
 msgstr "Lançador de aplicação não fiável"
 
-#: thunar/thunar-file.c:1699
+#: thunar/thunar-file.c:1709
 msgid "No Exec field specified"
 msgstr "Nenhum campo Exec especificado"
 
 #. if the .desktop file is not secure, ask user what to do
-#: thunar/thunar-file.c:1708
+#: thunar/thunar-file.c:1718
 msgid "Untrusted link launcher"
 msgstr "Lançador de ligação não fiável"
 
-#: thunar/thunar-file.c:1724
+#: thunar/thunar-file.c:1734
 msgid "No URL field specified"
 msgstr "Nenhum campo URL especificado"
 
-#: thunar/thunar-file.c:1729
+#: thunar/thunar-file.c:1739
 msgid "Invalid desktop file"
 msgstr "Ficheiro .desktop inválido"
 
-#: thunar/thunar-file.c:2554 thunar/thunar-util.c:1459
+#: thunar/thunar-file.c:2564 thunar/thunar-util.c:1459
 msgid "broken link"
 msgstr "ligação corrompida"
 
-#: thunar/thunar-file.c:2561
+#: thunar/thunar-file.c:2571
 #, c-format
 msgid "%s (link to %s)"
 msgstr "%s (ligação a %s)"
 
-#: thunar/thunar-file.c:2563
+#: thunar/thunar-file.c:2573
 #, c-format
 msgid "%s (link)"
 msgstr "%s (ligação)"
 
-#: thunar/thunar-file.c:2572
+#: thunar/thunar-file.c:2582
 #, c-format
 msgid "%s (mount point)"
 msgstr "%s (ponto de montagem)"
@@ -1947,7 +1947,7 @@ msgid "Redo the latest operation"
 msgstr "Refazer a última operação"
 
 #: thunar/thunar-list-model.c:1055 thunar/thunar-list-model.c:1068
-#: thunar/thunar-properties-dialog.c:1408 thunar/thunar-size-label.c:394
+#: thunar/thunar-properties-dialog.c:1394 thunar/thunar-size-label.c:394
 #: thunar/thunar-size-label.c:479 thunar/thunar-tree-view-model.c:1379
 #: thunar/thunar-tree-view-model.c:1392
 msgid "unknown"
@@ -2923,15 +2923,15 @@ msgid "%s - Properties"
 msgstr "%s - Propriedades"
 
 #. update the properties dialog title
-#: thunar/thunar-properties-dialog.c:1619
+#: thunar/thunar-properties-dialog.c:1605
 msgid "Properties"
 msgstr "Propriedades"
 
-#: thunar/thunar-properties-dialog.c:1646
+#: thunar/thunar-properties-dialog.c:1632
 msgid "Link Targets:"
 msgstr "Destinos da ligação:"
 
-#: thunar/thunar-properties-dialog.c:1740
+#: thunar/thunar-properties-dialog.c:1726
 msgid "mixed"
 msgstr "misto"
 
@@ -3297,21 +3297,22 @@ msgstr "_Descendente"
 msgid "Sort items in descending order"
 msgstr "Ordenar itens em ordem descendente"
 
-#: thunar/thunar-standard-view.c:1247
+#. TRANSLATORS: You can swap the order of the arguments if required.
+#: thunar/thunar-standard-view.c:1248
 #, c-format
-msgid "Search for '%s' in %s"
-msgstr ""
+msgid "Search for '%1$s' in %2$s"
+msgstr "Pesquisar por '%1$s' em %2$s"
 
-#: thunar/thunar-standard-view.c:1249
+#: thunar/thunar-standard-view.c:1250
 #, c-format
 msgid "Search in %s"
-msgstr ""
+msgstr "Pesquisar em %s"
 
-#: thunar/thunar-standard-view.c:1847
+#: thunar/thunar-standard-view.c:1848
 msgid "Loading folder contents..."
 msgstr "A carregar conteúdo da pasta..."
 
-#: thunar/thunar-standard-view.c:2493
+#: thunar/thunar-standard-view.c:2494
 #, c-format
 msgid "%d file found"
 msgid_plural "%d files found"
@@ -3320,31 +3321,31 @@ msgstr[1] "%d ficheiros encontrados"
 msgstr[2] "%d ficheiros encontrados"
 
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2661 thunar/thunar-window.c:4521
+#: thunar/thunar-standard-view.c:2662 thunar/thunar-window.c:4521
 msgid "Failed to open the home folder"
 msgstr "Ocorreu um erro ao abrir a pasta pessoal"
 
-#: thunar/thunar-standard-view.c:2739
+#: thunar/thunar-standard-view.c:2740
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "Selecionar por Padrão"
 
-#: thunar/thunar-standard-view.c:2744
+#: thunar/thunar-standard-view.c:2745
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "_Cancelar"
 
-#: thunar/thunar-standard-view.c:2747
+#: thunar/thunar-standard-view.c:2748
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "_Selecionar"
 
-#: thunar/thunar-standard-view.c:2761
+#: thunar/thunar-standard-view.c:2762
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "_Padrão:"
 
-#: thunar/thunar-standard-view.c:2762
+#: thunar/thunar-standard-view.c:2763
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3354,7 +3355,7 @@ msgstr "Os ficheiros cujo nome corresponda ao asterisco padrão que introduzir s
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: thunar/thunar-standard-view.c:2776
+#: thunar/thunar-standard-view.c:2777
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3365,24 +3366,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr "? corresponde exatamente a um carácter,\n* corresponde a qualquer número de caracteres, incluindo o zero.\n\nPor exemplo: *.txt, file???.png, pict\n\nSem quaisquer * ou ? imprevisíveis, o padrão irá coincidir em qualquer lugar num nome. Com asteriscos, o padrão deve coincidir tanto no início como no fim de um nome."
 
-#: thunar/thunar-standard-view.c:2780
+#: thunar/thunar-standard-view.c:2781
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr "Maiúsculas/Minúsculas"
 
-#: thunar/thunar-standard-view.c:2781
+#: thunar/thunar-standard-view.c:2782
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr "Se ativada, a capitalização da letra deve corresponder ao padrão.\nExemp* coincidiria com Exemplo.txt e não com exemplo.txt"
 
-#: thunar/thunar-standard-view.c:2786
+#: thunar/thunar-standard-view.c:2787
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr "Diacríticos correspondentes"
 
-#: thunar/thunar-standard-view.c:2787
+#: thunar/thunar-standard-view.c:2788
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3391,21 +3392,21 @@ msgstr "Se ativado, requer acentos que correspondam ao padrão.\nRés* correspon
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: thunar/thunar-standard-view.c:3174
+#: thunar/thunar-standard-view.c:3175
 msgid "Invalid filename provided by XDS drag site"
 msgstr "O nome de ficheiro disponibilizado pelo sítio XDS é inválido"
 
 #. display an error dialog to the user
-#: thunar/thunar-standard-view.c:3370
+#: thunar/thunar-standard-view.c:3371
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Ocorreu um erro ao criar a ligação para o URL \"%s\""
 
-#: thunar/thunar-standard-view.c:3417
+#: thunar/thunar-standard-view.c:3418
 msgid "Untitled document"
 msgstr "Documento sem título"
 
-#: thunar/thunar-standard-view.c:3901 thunar/thunar-window.c:4618
+#: thunar/thunar-standard-view.c:3902 thunar/thunar-window.c:4618
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Ocorreu um erro ao abrir a pasta \"%s\""
@@ -3639,7 +3640,7 @@ msgstr "ligar %u a %.*s%s"
 
 #: thunar/thunar-util.c:842
 msgid "Search:"
-msgstr ""
+msgstr "Pesquisar:"
 
 #: thunar/thunar-util.c:1340 thunar/thunar-util.c:1373
 #, c-format
@@ -4061,11 +4062,11 @@ msgstr "Mudar para separador seguinte"
 
 #: thunar/thunar-window.c:725
 msgid "_Search for Files..."
-msgstr "Procura por ficheiros..."
+msgstr "_Pesquisar por ficheiros..."
 
 #: thunar/thunar-window.c:725
 msgid "Search for a specific file in the current folder and Recent"
-msgstr "Procurar por um ficheiro específico na pasta atual e Recentes"
+msgstr "Pesquisar por um ficheiro específico na pasta atual e Recentes"
 
 #: thunar/thunar-window.c:727
 msgid "Stop search for files"
@@ -4091,7 +4092,7 @@ msgstr "Tamanho: "
 #. TRANSLATORS: `Catfish' is a software package, please don't translate it.
 #: thunar/thunar-window.c:1261
 msgid "Search with Catfish..."
-msgstr "Procurar com o Catfish..."
+msgstr "Pesquisar com o Catfish..."
 
 #: thunar/thunar-window.c:1273
 msgid "Restore Selected Items"
@@ -4580,7 +4581,7 @@ msgstr "Pesquisa sensível a c_apitalização"
 msgid ""
 "If you enable this option, the pattern will be searched in a case-sensitive "
 "manner. The default is to use a case-insensitive search."
-msgstr "Se ativar esta opção, o padrão será procurado diferenciando a capitalização. A predefinição é realizar a procura sem diferenciar a capitalização."
+msgstr "Se ativar esta opção, o padrão será pesquisado de forma sensível a maiúsculas e minúsculas. A predefinição é utilizar uma pesquisa sem distinção entre maiúsculas e minúsculas."
 
 #. setup a tooltip with the error message
 #: plugins/thunar-sbr/thunar-sbr-replace-renamer.c:558
@@ -4590,7 +4591,7 @@ msgstr "Expressão regular inválida na posição do carácter %ld: %s"
 
 #: plugins/thunar-sbr/thunar-sbr-replace-renamer.c:599
 msgid "Search & Replace"
-msgstr "Procurar & Substituir"
+msgstr "Pesquisar e Substituir"
 
 #: plugins/thunar-sendto-email/main.c:217
 #, c-format
