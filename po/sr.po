@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-04-16 00:45+0200\n"
+"POT-Creation-Date: 2025-04-17 12:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>, 2012-2014,2017-2019,2021-2024\n"
 "Language-Team: Serbian (http://app.transifex.com/xfce/thunar/language/sr/)\n"
@@ -1546,7 +1546,7 @@ msgstr "Направи фасциклу"
 msgid "Delete (opposite of create)"
 msgstr "Избриши (обрнуто од стварања)"
 
-#: thunar/thunar-enum-types.c:791 thunar/thunar-file.c:1081
+#: thunar/thunar-enum-types.c:791 thunar/thunar-file.c:1091
 #: thunar/thunar-gio-extensions.c:510 thunar/thunar-shortcuts-model.c:1151
 #: thunar.desktop.in:25
 msgid "Trash"
@@ -1583,63 +1583,63 @@ msgstr "Самостално"
 
 #: thunar/thunar-enum-types.c:839
 msgid "Embedded"
-msgstr "Угњеждено"
+msgstr "Угњежђено"
 
 #: thunar/thunar-enum-types.c:861
 msgid "Only for local files"
 msgstr "Само за местне датотеке"
 
-#: thunar/thunar-file.c:1088 thunar/thunar-gio-extensions.c:508
+#: thunar/thunar-file.c:1098 thunar/thunar-gio-extensions.c:508
 #: thunar/thunar-shortcuts-model.c:1033
 msgid "File System"
 msgstr "Систем датотека"
 
-#: thunar/thunar-file.c:1557
+#: thunar/thunar-file.c:1567
 msgid "The root folder has no parent"
 msgstr "Корена фасцикла нема родитељску"
 
-#: thunar/thunar-file.c:1655
+#: thunar/thunar-file.c:1665
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "Нисам успео да рашчланим датотеку радне површи: %s"
 
 #. if the .desktop file is not secure, ask user what to do
-#: thunar/thunar-file.c:1668
+#: thunar/thunar-file.c:1678
 msgid "Untrusted application launcher"
 msgstr "Неповерљив покретач програма"
 
-#: thunar/thunar-file.c:1699
+#: thunar/thunar-file.c:1709
 msgid "No Exec field specified"
 msgstr "Није одређено извршно поље"
 
 #. if the .desktop file is not secure, ask user what to do
-#: thunar/thunar-file.c:1708
+#: thunar/thunar-file.c:1718
 msgid "Untrusted link launcher"
 msgstr "Неповерљив покретач веза"
 
-#: thunar/thunar-file.c:1724
+#: thunar/thunar-file.c:1734
 msgid "No URL field specified"
 msgstr "Није унето „URL“ поље"
 
-#: thunar/thunar-file.c:1729
+#: thunar/thunar-file.c:1739
 msgid "Invalid desktop file"
 msgstr "Неисправна датотека радне површи"
 
-#: thunar/thunar-file.c:2554 thunar/thunar-util.c:1459
+#: thunar/thunar-file.c:2564 thunar/thunar-util.c:1459
 msgid "broken link"
 msgstr "неисправна веза"
 
-#: thunar/thunar-file.c:2561
+#: thunar/thunar-file.c:2571
 #, c-format
 msgid "%s (link to %s)"
 msgstr "%s (веза до %s)"
 
-#: thunar/thunar-file.c:2563
+#: thunar/thunar-file.c:2573
 #, c-format
 msgid "%s (link)"
 msgstr "%s (веза)"
 
-#: thunar/thunar-file.c:2572
+#: thunar/thunar-file.c:2582
 #, c-format
 msgid "%s (mount point)"
 msgstr "%s (тачка качења)"
@@ -1952,7 +1952,7 @@ msgid "Redo the latest operation"
 msgstr "_Опозови последњу радњу"
 
 #: thunar/thunar-list-model.c:1055 thunar/thunar-list-model.c:1068
-#: thunar/thunar-properties-dialog.c:1408 thunar/thunar-size-label.c:394
+#: thunar/thunar-properties-dialog.c:1394 thunar/thunar-size-label.c:394
 #: thunar/thunar-size-label.c:479 thunar/thunar-tree-view-model.c:1379
 #: thunar/thunar-tree-view-model.c:1392
 msgid "unknown"
@@ -2030,14 +2030,14 @@ msgstr "Величина сличице у траци путање"
 
 #: thunar/thunar-path-entry.c:886
 msgid "Stop Search"
-msgstr ""
+msgstr "Заустави претрагу "
 
 #. add a tooltip
 #: thunar/thunar-path-entry.c:889
 msgid ""
 "Search is in progress...\n"
 "Press the cancel button or the Escape key to stop."
-msgstr ""
+msgstr "Претрага је у току...\nПритисните дугме Откажи или Излаз за заустављање."
 
 #: thunar/thunar-permissions-chooser.c:234
 msgid "Owner:"
@@ -2928,15 +2928,15 @@ msgid "%s - Properties"
 msgstr "%s — Особине"
 
 #. update the properties dialog title
-#: thunar/thunar-properties-dialog.c:1619
+#: thunar/thunar-properties-dialog.c:1605
 msgid "Properties"
 msgstr "Особине"
 
-#: thunar/thunar-properties-dialog.c:1646
+#: thunar/thunar-properties-dialog.c:1632
 msgid "Link Targets:"
 msgstr "Повежи циљеве:"
 
-#: thunar/thunar-properties-dialog.c:1740
+#: thunar/thunar-properties-dialog.c:1726
 msgid "mixed"
 msgstr "мешано"
 
@@ -3302,21 +3302,22 @@ msgstr "_Опадајуће"
 msgid "Sort items in descending order"
 msgstr "Ређа ставке у опадајућем редоследу"
 
-#: thunar/thunar-standard-view.c:1247
+#. TRANSLATORS: You can swap the order of the arguments if required.
+#: thunar/thunar-standard-view.c:1248
 #, c-format
-msgid "Search for '%s' in %s"
-msgstr ""
+msgid "Search for '%1$s' in %2$s"
+msgstr "Тражи „%1$s“ у %2$s"
 
-#: thunar/thunar-standard-view.c:1249
+#: thunar/thunar-standard-view.c:1250
 #, c-format
 msgid "Search in %s"
-msgstr ""
+msgstr "Тражи у %s"
 
-#: thunar/thunar-standard-view.c:1847
+#: thunar/thunar-standard-view.c:1848
 msgid "Loading folder contents..."
 msgstr "Учитавам садржај фасцикле..."
 
-#: thunar/thunar-standard-view.c:2493
+#: thunar/thunar-standard-view.c:2494
 #, c-format
 msgid "%d file found"
 msgid_plural "%d files found"
@@ -3325,31 +3326,31 @@ msgstr[1] "%d датотеке су пронађене"
 msgstr[2] "%d датотека је пронађено"
 
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2661 thunar/thunar-window.c:4521
+#: thunar/thunar-standard-view.c:2662 thunar/thunar-window.c:4521
 msgid "Failed to open the home folder"
 msgstr "Нисам успео да отворим личну фасциклу"
 
-#: thunar/thunar-standard-view.c:2739
+#: thunar/thunar-standard-view.c:2740
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "Изабери по обрасцу"
 
-#: thunar/thunar-standard-view.c:2744
+#: thunar/thunar-standard-view.c:2745
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "_Откажи"
 
-#: thunar/thunar-standard-view.c:2747
+#: thunar/thunar-standard-view.c:2748
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "_Изабери"
 
-#: thunar/thunar-standard-view.c:2761
+#: thunar/thunar-standard-view.c:2762
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "_Образац:"
 
-#: thunar/thunar-standard-view.c:2762
+#: thunar/thunar-standard-view.c:2763
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3359,7 +3360,7 @@ msgstr "Датотеке чија имена се поклапају са обр
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: thunar/thunar-standard-view.c:2776
+#: thunar/thunar-standard-view.c:2777
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3370,24 +3371,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr "? је поклапање са тачно са једним знаком,\n* је поклапање са било којим бројем знакова, укључујући нулу.\n\nНа пример: *.txt, датотека??.png, слика\n\nБез заменских знакова * или ?, образац ће се поклапати било где у имену. Са заменским знаковима, образац се мора поклапати са почетком и крајем имена."
 
-#: thunar/thunar-standard-view.c:2780
+#: thunar/thunar-standard-view.c:2781
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr "Осетљиво на в_еличину слова"
 
-#: thunar/thunar-standard-view.c:2781
+#: thunar/thunar-standard-view.c:2782
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr "Уколико је омогућено, величина слова се мора поклапати са обрасцем.\nПрим* се поклапа са Пример.txt а не са пример.txt"
 
-#: thunar/thunar-standard-view.c:2786
+#: thunar/thunar-standard-view.c:2787
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr "_Поклапање дијакритичких знакова"
 
-#: thunar/thunar-standard-view.c:2787
+#: thunar/thunar-standard-view.c:2788
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3396,21 +3397,21 @@ msgstr "Уколико је омогућено, захтева да се наг�
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: thunar/thunar-standard-view.c:3174
+#: thunar/thunar-standard-view.c:3175
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Неисправно име датотеке од стране ИксДС сајта"
 
 #. display an error dialog to the user
-#: thunar/thunar-standard-view.c:3370
+#: thunar/thunar-standard-view.c:3371
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Нисам успео да направим везу до адресе „%s“"
 
-#: thunar/thunar-standard-view.c:3417
+#: thunar/thunar-standard-view.c:3418
 msgid "Untitled document"
 msgstr "Безимени докуменат"
 
-#: thunar/thunar-standard-view.c:3901 thunar/thunar-window.c:4618
+#: thunar/thunar-standard-view.c:3902 thunar/thunar-window.c:4618
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Нисам успео да отворим фасциклу „%s“"
@@ -3644,7 +3645,7 @@ msgstr "веза %u са %.*s%s"
 
 #: thunar/thunar-util.c:842
 msgid "Search:"
-msgstr ""
+msgstr "Тражи:"
 
 #: thunar/thunar-util.c:1340 thunar/thunar-util.c:1373
 #, c-format
@@ -4074,7 +4075,7 @@ msgstr "Тражи одређену датотеку на тренутном п�
 
 #: thunar/thunar-window.c:727
 msgid "Stop search for files"
-msgstr ""
+msgstr "Заустави претрагу датотека"
 
 #: thunar/thunar-window.c:729
 msgid "Menu"
