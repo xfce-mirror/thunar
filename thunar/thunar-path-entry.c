@@ -533,11 +533,23 @@ thunar_path_entry_key_press_event (GtkWidget   *widget,
       /* we handled the event */
       return TRUE;
     }
-  /* stop search with `Escape` */
-  if (G_UNLIKELY (path_entry->search_mode == TRUE && event->keyval == GDK_KEY_Escape && (event->state & GDK_CONTROL_MASK) == 0))
+
+  /* check if we are in search mode */
+  if (G_UNLIKELY (path_entry->search_mode == TRUE))
     {
-      thunar_window_action_stop_search (THUNAR_WINDOW (path_entry->window));
-      return TRUE;
+      /* stop search with `Escape` */
+      if (event->keyval == GDK_KEY_Escape)
+        {
+          thunar_window_action_stop_search (THUNAR_WINDOW (path_entry->window));
+          return TRUE;
+        }
+
+      /* restart search with `Return` or `Enter` */
+      if (event->keyval == GDK_KEY_Return || event->keyval == GDK_KEY_KP_Enter)
+        {
+          thunar_window_update_search (THUNAR_WINDOW (path_entry->window));
+          return TRUE;
+        }
     }
 
   return FALSE;
