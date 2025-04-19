@@ -3811,17 +3811,20 @@ thunar_file_set_file_count (ThunarFile *file,
  * @file : a #ThunarFile instance.
  *
  * Determines the names of the emblems that should be displayed for
- * @file. Sfter usage the returned list must released with g_list_free_full (list,g_free)
+ * @file. After usage, the returned hashtable must released with 'g_hash_table_destroy'
  *
- * Return value: the names of the emblems for @file.
+ * Return value: A hashtable with the names of the emblems for @file.
  **/
-GList *
+GHashTable *
 thunar_file_get_emblem_names (ThunarFile *file)
 {
   guint32 uid;
   gchar  *emblem_names_joined;
   gchar **emblem_names;
-  GList  *emblems = NULL;
+  GHashTable *emblems;
+
+  /* use a hashtable as set to prevent duplicate emblem names */
+  emblems = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
@@ -3839,17 +3842,26 @@ thunar_file_get_emblem_names (ThunarFile *file)
       if (G_LIKELY (emblem_names != NULL))
         {
           for (gchar **lp = emblem_names; *lp != NULL; ++lp)
-            emblems = g_list_append (emblems, g_strdup (*lp));
+            {
+              if (!g_hash_table_contains (emblems, *lp))
+                g_hash_table_add (emblems, g_strdup (*lp));
+            }
         }
       g_strfreev (emblem_names);
     }
 
   /* Prepend emblems added via thunarx API */
   for (GList *lp = file->plugin_emblems; lp != NULL; lp = lp->next)
-    emblems = g_list_prepend (emblems, g_strdup (lp->data) );
+    {
+      if (!g_hash_table_contains (emblems, lp->data))
+        g_hash_table_add (emblems, g_strdup (lp->data));
+    }
 
   if (thunar_file_is_symlink (file))
-    emblems = g_list_prepend (emblems, g_strdup (THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK));
+    {
+      if (!g_hash_table_contains (emblems, THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK))
+        g_hash_table_add (emblems, g_strdup (THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK));
+    }
 
   /* determine the user ID of the file owner */
   /* TODO what are we going to do here on non-UNIX systems? */
@@ -3866,14 +3878,16 @@ thunar_file_get_emblem_names (ThunarFile *file)
                                                    THUNAR_FILE_MODE_GRP_EXEC,
                                                    THUNAR_FILE_MODE_OTH_EXEC)))
     {
-      emblems = g_list_prepend (emblems, g_strdup (THUNAR_FILE_EMBLEM_NAME_CANT_READ));
+      if (!g_hash_table_contains (emblems, THUNAR_FILE_EMBLEM_NAME_CANT_READ))
+        g_hash_table_add (emblems, g_strdup (THUNAR_FILE_EMBLEM_NAME_CANT_READ));
     }
   else if (G_UNLIKELY (uid == effective_user_id && !thunar_file_is_writable (file) && !thunar_file_is_trashed (file) && !thunar_file_is_in_recent (file)))
     {
       /* we own the file, but we cannot write to it, that's why we mark it as "cant-write", so
        * users won't be surprised when opening the file in a text editor, but are unable to save.
        */
-      emblems = g_list_prepend (emblems, g_strdup (THUNAR_FILE_EMBLEM_NAME_CANT_WRITE));
+      if (!g_hash_table_contains (emblems, THUNAR_FILE_EMBLEM_NAME_CANT_WRITE))
+        g_hash_table_add (emblems, g_strdup (THUNAR_FILE_EMBLEM_NAME_CANT_WRITE));
     }
 
   /* add mount icon as emblem to mount points */
@@ -3888,8 +3902,8 @@ thunar_file_get_emblem_names (ThunarFile *file)
               if (G_IS_THEMED_ICON (icon))
                 {
                   const gchar *icon_name = g_themed_icon_get_names (G_THEMED_ICON (icon))[0];
-                  if (icon_name != NULL)
-                    emblems = g_list_prepend (emblems, g_strdup (icon_name));
+                  if (icon_name != NULL && !g_hash_table_contains (emblems, icon_name))
+                    g_hash_table_add (emblems, g_strdup (icon_name));
                 }
               g_object_unref (icon);
             }
