@@ -1,0 +1,16 @@
+diff --git a/plugins/thunar-wallpaper/twp-provider.c b/plugins/thunar-wallpaper/twp-provider.c
+index 3b6f81489..f257f344e 100644
+--- a/plugins/thunar-wallpaper/twp-provider.c
++++ b/plugins/thunar-wallpaper/twp-provider.c
+@@ -195,6 +195,11 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
+   gint             current_image_style;
+   const gchar     *desktop_type = NULL;
+ 
++  thunarx_file_info_add_emblem (file_info, "emblem-heart");
++  thunarx_file_info_add_emblem (file_info, "emblem-shared");
++ // thunarx_file_info_add_emblem (file_info, NULL);
++  return;
++
+   screen = gdk_display_get_default_screen (display);
+ 
+   desktop_type = g_getenv ("XDG_CURRENT_DESKTOP");

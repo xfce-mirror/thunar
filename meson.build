@@ -10,7 +10,7 @@ version : '4.21.0-dev',
 project_namespace = 'xfce'
 pkgdatadir = get_option('prefix') / get_option('datadir') / meson.project_name()
 copyright_year = '2025'
-thunarx_version_api = '3'
+thunarx_version_api = '4'
 
 cc = meson.get_compiler('c')
 pkgconfig = import('pkgconfig')
