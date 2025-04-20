@@ -413,13 +413,15 @@ thunar_emblem_chooser_file_changed (ThunarEmblemChooser *chooser)
 {
   const gchar *emblem_name;
   GHashTable  *emblem_names;
-  GList       *file_emblems;
+  GHashTable    *file_emblems;
   GList       *children;
-  GList       *lp, *li;
+  GList         *lp;
   GObject     *child;
   guint       *count;
   guint        n_files = 0;
   guint        n_emblems = 0;
+  GHashTableIter file_emblems_iter;
+  gpointer       file_emblem;
 
   _thunar_return_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser));
 
@@ -429,22 +431,23 @@ thunar_emblem_chooser_file_changed (ThunarEmblemChooser *chooser)
   for (lp = chooser->files; lp != NULL; lp = lp->next)
     {
       file_emblems = thunar_file_get_emblem_names (THUNAR_FILE (lp->data));
-      for (n_emblems = 0, li = file_emblems; li != NULL; li = li->next, n_emblems++)
+      g_hash_table_iter_init (&file_emblems_iter, file_emblems);
+      for (n_emblems = 0; g_hash_table_iter_next (&file_emblems_iter, &file_emblem, NULL) != FALSE; n_emblems++)
         {
           /* dont load more emblems than we can display */
           if (n_emblems >= MAX_EMBLEMS_PER_FILE)
             break;
 
-          count = g_hash_table_lookup (emblem_names, li->data);
+          count = g_hash_table_lookup (emblem_names, file_emblem);
           if (count == NULL)
             {
               count = g_new0 (guint, 1);
-              g_hash_table_insert (emblem_names, g_strdup (li->data), count);
+              g_hash_table_insert (emblem_names, g_strdup (file_emblem), count);
             }
 
           *count = *count + 1;
         }
-      g_list_free_full (file_emblems, g_free);
+      g_hash_table_destroy (file_emblems);
 
       n_files++;
     }
