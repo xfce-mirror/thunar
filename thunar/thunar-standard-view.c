@@ -2037,13 +2037,13 @@ static void
 thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *standard_view,
                                                         ThunarFile         *directory)
 {
-  gchar       *sort_column_name;
-  gchar       *sort_order_name;
-  gchar       *zoom_level_name;
-  ThunarColumn sort_column;
-  GtkSortType  sort_order;
-  gint         zoom_level;
-  gchar       *zoom_level_attribute_name;
+  gchar          *sort_column_name;
+  gchar          *sort_order_name;
+  gchar          *zoom_level_name;
+  ThunarColumn    sort_column;
+  GtkSortType     sort_order;
+  ThunarZoomLevel zoom_level;
+  gchar          *zoom_level_attribute_name;
 
   /* get the default sort column and sort order */
   g_object_get (G_OBJECT (standard_view->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
