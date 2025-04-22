@@ -187,7 +187,7 @@ thunar_gtk_menu_clean (GtkMenu *menu)
  * thunar_gtk_menu_run:
  * @menu : a #GtkMenu.
  *
- * Conveniance wrapper for thunar_gtk_menu_run_at_event_pointer, to run a menu for the current event
+ * Convenience wrapper for thunar_gtk_menu_run_at_event() to run a menu for the current event
  **/
 void
 thunar_gtk_menu_run (GtkMenu *menu)
@@ -207,6 +207,51 @@ thunar_gtk_menu_run (GtkMenu *menu)
 
 
 
+static void
+thunar_gtk_menu_popup_at_pointer (GtkMenu  *menu,
+                                  GdkEvent *event)
+{
+  GdkWindow   *window;
+  GdkWindow   *toplevel = NULL;
+  GdkDevice   *device;
+  GdkRectangle rect = { 0, 0, 1, 1 };
+
+  /* fallback if event not set */
+  if (event == NULL)
+    {
+      gtk_menu_popup_at_pointer (menu, event);
+      return;
+    }
+
+  /* create popup rect */
+  window = gdk_event_get_window (event);
+  if (window != NULL)
+    {
+      /* Ensure that we have the toplevel window to work around a GTK3 Wayland bug
+       * that prevents the user from dismissing the menu via click in some cases.
+       * See: https://gitlab.xfce.org/xfce/thunar/-/issues/1592 */
+      toplevel = gdk_window_get_toplevel (window);
+
+      device = gdk_event_get_device (event);
+
+      if (device != NULL && gdk_device_get_source (device) == GDK_SOURCE_KEYBOARD)
+        device = gdk_device_get_associated_device (device);
+
+      if (device != NULL)
+        gdk_window_get_device_position (toplevel, device, &rect.x, &rect.y, NULL);
+    }
+
+  /* pop up the menu at the rectangle below the mouse cursor */
+  gtk_menu_popup_at_rect (menu,
+                          toplevel,
+                          &rect,
+                          GDK_GRAVITY_NORTH_WEST,
+                          GDK_GRAVITY_NORTH_WEST,
+                          event);
+}
+
+
+
 /**
  * thunar_gtk_menu_run_at_event:
  * @menu  : a #GtkMenu.
@@ -221,7 +266,8 @@ thunar_gtk_menu_run (GtkMenu *menu)
  *
  **/
 void
-thunar_gtk_menu_run_at_event (GtkMenu *menu, GdkEvent *event)
+thunar_gtk_menu_run_at_event (GtkMenu  *menu,
+                              GdkEvent *event)
 {
   GMainLoop *loop;
   gulong     signal_id;
@@ -234,7 +280,7 @@ thunar_gtk_menu_run_at_event (GtkMenu *menu, GdkEvent *event)
   /* run an internal main loop */
   loop = g_main_loop_new (NULL, FALSE);
   signal_id = g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
-  gtk_menu_popup_at_pointer (menu, event);
+  thunar_gtk_menu_popup_at_pointer (menu, event);
   gtk_menu_reposition (menu);
   gtk_grab_add (GTK_WIDGET (menu));
   g_main_loop_run (loop);
