@@ -62,6 +62,7 @@
 
 #include <gdk/gdkkeysyms.h>
 #include <glib.h>
+#include <libxfce4ui/libxfce4ui.h>
 #include <libxfce4util/libxfce4util.h>
 
 
@@ -3021,7 +3022,7 @@ thunar_window_paned_notebooks_add (ThunarWindow *window)
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), NULL);
   _thunar_return_val_if_fail (!thunar_window_split_view_is_active (window), NULL);
 
-  notebook = gtk_notebook_new ();
+  notebook = xfce_notebook_new ();
   gtk_widget_set_hexpand (notebook, TRUE);
   gtk_widget_set_vexpand (notebook, TRUE);
   g_signal_connect (G_OBJECT (notebook), "switch-page", G_CALLBACK (thunar_window_notebook_switch_page), window);
