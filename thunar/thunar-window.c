@@ -62,8 +62,8 @@
 
 #include <gdk/gdkkeysyms.h>
 #include <glib.h>
+#include <libxfce4ui/libxfce4ui.h>
 #include <libxfce4util/libxfce4util.h>
-
 
 
 #define DEFAULT_LOCATION_BAR_MARGIN 5
@@ -943,23 +943,23 @@ thunar_window_paned_notebooks_destroy (GtkWidget    *paned_notebooks,
 static void
 thunar_window_init (ThunarWindow *window)
 {
-  GtkWidget             *label;
-  GtkWidget             *infobar;
-  GtkWidget             *item;
-  GtkWidget             *event_box;
-  gboolean               last_menubar_visible;
-  ThunarSidepaneType     last_side_pane;
-  gchar                 *uca_path;
-  gchar                 *catfish_path;
-  gint                   last_separator_position;
-  gint                   last_window_width;
-  gint                   last_window_height;
-  gboolean               last_window_maximized;
-  gboolean               last_statusbar_visible;
-  gboolean               last_image_preview_visible;
-  gint                   max_paned_position;
-  GtkStyleContext       *context;
-  gboolean               misc_use_csd;
+  GtkWidget         *label;
+  GtkWidget         *infobar;
+  GtkWidget         *item;
+  GtkWidget         *event_box;
+  gboolean           last_menubar_visible;
+  ThunarSidepaneType last_side_pane;
+  gchar             *uca_path;
+  gchar             *catfish_path;
+  gint               last_separator_position;
+  gint               last_window_width;
+  gint               last_window_height;
+  gboolean           last_window_maximized;
+  gboolean           last_statusbar_visible;
+  gboolean           last_image_preview_visible;
+  gint               max_paned_position;
+  GtkStyleContext   *context;
+  gboolean           misc_use_csd;
 
   /* unset the view type */
   window->view_type = G_TYPE_NONE;
@@ -3023,7 +3023,7 @@ thunar_window_paned_notebooks_add (ThunarWindow *window)
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), NULL);
   _thunar_return_val_if_fail (!thunar_window_split_view_is_active (window), NULL);
 
-  notebook = gtk_notebook_new ();
+  notebook = xfce_notebook_new ();
   gtk_widget_set_hexpand (notebook, TRUE);
   gtk_widget_set_vexpand (notebook, TRUE);
   g_signal_connect (G_OBJECT (notebook), "switch-page", G_CALLBACK (thunar_window_notebook_switch_page), window);
