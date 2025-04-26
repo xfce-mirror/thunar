@@ -2510,14 +2510,14 @@ thunar_action_manager_check_uca_key_activation (ThunarActionManager *action_mgr,
   /* load the menu items offered by the menu providers */
   for (lp_provider = providers; lp_provider != NULL; lp_provider = lp_provider->next)
     {
-      thunarx_file_menu_items = thunarx_menu_provider_get_folder_menu_items (lp_provider->data, window, THUNARX_FILE_INFO (action_mgr->current_directory));
-      thunarx_folder_menu_items = thunarx_menu_provider_get_file_menu_items (lp_provider->data, window, action_mgr->files_to_process);
+      thunarx_file_menu_items = thunarx_menu_provider_get_file_menu_items (lp_provider->data, window, action_mgr->files_to_process);
+      thunarx_folder_menu_items = thunarx_menu_provider_get_folder_menu_items (lp_provider->data, window, THUNARX_FILE_INFO (action_mgr->current_directory));
 
-      /* Check if we processed the shortcut sucesfully */
+      /* check if we processed the shortcut successfully */
       matching_uca_shortcut_found |= _thunar_action_manager_check_uca_key_activation_for_menu_items (thunarx_file_menu_items, key_event, FALSE);
       matching_uca_shortcut_found |= _thunar_action_manager_check_uca_key_activation_for_menu_items (thunarx_folder_menu_items, key_event, FALSE);
 
-      if (action_mgr->files_are_selected == FALSE)
+      if (action_mgr->files_are_selected)
         _thunar_action_manager_check_uca_key_activation_for_menu_items (thunarx_file_menu_items, key_event, TRUE);
       else
         _thunar_action_manager_check_uca_key_activation_for_menu_items (thunarx_folder_menu_items, key_event, TRUE);
