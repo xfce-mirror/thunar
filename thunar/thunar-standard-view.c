@@ -3864,6 +3864,10 @@ thunar_standard_view_rows_reordered (ThunarStandardViewModel *model,
   if (standard_view->priv->searching == TRUE)
     return;
 
+  /* le workaround */
+  if (THUNAR_IS_DETAILS_VIEW (standard_view))
+    thunar_standard_view_queue_redraw (standard_view);
+
   /* the order of the paths might have changed, but the selection
    * stayed the same, so restore the selection of the proper files
    * after letting row changes accumulate a bit */

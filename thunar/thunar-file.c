@@ -5371,6 +5371,7 @@ thunar_file_update_thumbnail (ThunarFile          *file,
     {
       g_free (file->thumbnail_path[size]);
       file->thumbnail_path[size] = NULL;
+      return; // TODO we skip clearing the cache and emitting the signal (no refresh)
     }
 
   if (state == THUNAR_FILE_THUMB_STATE_READY)
