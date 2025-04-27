@@ -1312,7 +1312,8 @@ thunar_details_view_row_changed (GtkTreeView       *tree_view,
 {
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
-  gtk_widget_queue_draw (GTK_WIDGET (details_view));
+  gtk_widget_queue_draw (GTK_WIDGET (details_view->tree_view));
+  // TODO alternative: thunar_details_view_queue_redraw (THUNAR_STANDARD_VIEW (details_view));
 }
 
 
