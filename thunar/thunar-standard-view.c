@@ -3629,7 +3629,10 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
       /* check if we can handle that drag data (yet?) */
       target = gtk_drag_dest_find_target (view, context, NULL);
 
-      if (target == gdk_atom_intern_static_string ("XdndDirectSave0") || target == gdk_atom_intern_static_string ("_NETSCAPE_URL") || target == gdk_atom_intern_static_string ("application/octet-stream"))
+      if (target == gdk_atom_intern_static_string ("XdndDirectSave0")
+          || target == gdk_atom_intern_static_string ("_NETSCAPE_URL")
+          || target == gdk_atom_intern_static_string ("application/octet-stream")
+          || target == gdk_atom_intern_static_string ("text/uri-list"))
         {
           /* determine the file for the given coordinates */
           file = thunar_standard_view_get_drop_file (standard_view, x, y, &path);
