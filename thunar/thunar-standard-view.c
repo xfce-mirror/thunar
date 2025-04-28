@@ -348,6 +348,8 @@ static gboolean
 thunar_standard_view_action_sort_ascending (ThunarStandardView *standard_view);
 static gboolean
 thunar_standard_view_action_sort_descending (ThunarStandardView *standard_view);
+static gboolean
+thunar_standard_view_action_sort_folders_first (ThunarStandardView *standard_view);
 static void
 thunar_standard_view_set_sort_column (ThunarStandardView *standard_view,
                                       ThunarColumn        column);
@@ -495,6 +497,7 @@ static XfceGtkActionEntry thunar_standard_view_action_entries[] =
     { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_DTIME,      "<Actions>/ThunarStandardView/sort-by-dtime",      "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("By D_eletion Date"),     N_ ("Keep items sorted by their deletion date"),          NULL, G_CALLBACK (thunar_standard_view_action_sort_by_date_deleted), },
     { THUNAR_STANDARD_VIEW_ACTION_SORT_ASCENDING,     "<Actions>/ThunarStandardView/sort-ascending",     "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Ascending"),            N_ ("Sort items in ascending order"),                     NULL, G_CALLBACK (thunar_standard_view_action_sort_ascending),       },
     { THUNAR_STANDARD_VIEW_ACTION_SORT_DESCENDING,    "<Actions>/ThunarStandardView/sort-descending",    "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Descending"),           N_ ("Sort items in descending order"),                    NULL, G_CALLBACK (thunar_standard_view_action_sort_descending),      },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_FOLDERS_FIRST, "<Actions>/ThunarStandardView/sort-folders-first", "",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Folders First"),        N_ ("Sort folders before files"),                         NULL, G_CALLBACK (thunar_standard_view_action_sort_folders_first),   },
 };
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_standard_view_action_entries,G_N_ELEMENTS(thunar_standard_view_action_entries),id)
@@ -618,6 +621,17 @@ static gboolean
 thunar_standard_view_action_sort_by_date_deleted (ThunarStandardView *standard_view)
 {
   thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_DATE_DELETED);
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_standard_view_action_sort_folders_first (ThunarStandardView *standard_view)
+{
+  gboolean folders_first;
+  g_object_get (standard_view->model, "folders-first", &folders_first, NULL);
+  g_object_set (standard_view->model, "folders-first", !folders_first, NULL);
   return TRUE;
 }
 
@@ -4446,6 +4460,9 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
   GtkWidget *item;
   GtkWidget *submenu;
 
+  gboolean folders_first;
+  g_object_get (standard_view->model, "folders-first", &folders_first, NULL);
+
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU), NULL, GTK_MENU_SHELL (menu));
@@ -4469,6 +4486,8 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (submenu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_ORDER_TOGGLE), G_OBJECT (standard_view),
                                                    standard_view->priv->sort_order == GTK_SORT_DESCENDING, GTK_MENU_SHELL (submenu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_FOLDERS_FIRST), G_OBJECT (standard_view),
+                                                   folders_first, GTK_MENU_SHELL (submenu));
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (submenu));
   gtk_widget_show (item);
 
