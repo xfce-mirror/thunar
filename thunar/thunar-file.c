@@ -156,7 +156,9 @@ thunar_file_reset_thumbnail (ThunarFile         *file,
 
 static GRecMutex G_LOCK_NAME (file_cache_mutex);
 
-
+/* In order to limit the number of total file watches */
+#define THUNAR_FILE_WATCH_MAX 5000
+static gint thunar_file_watch_total_count = 0;
 
 #define G_REC_LOCK(name) g_rec_mutex_lock (&G_LOCK_NAME (name))
 #define G_REC_UNLOCK(name) g_rec_mutex_unlock (&G_LOCK_NAME (name))
@@ -868,6 +870,7 @@ thunar_file_watch_destroyed (gpointer data)
     {
       g_file_monitor_cancel (file_watch->monitor);
       g_object_unref (file_watch->monitor);
+      thunar_file_watch_total_count--;
     }
 
   g_slice_free (ThunarFileWatch, file_watch);
@@ -4330,20 +4333,27 @@ thunar_file_watch (ThunarFile *file)
   if (file_watch == NULL)
     {
       file_watch = g_slice_new (ThunarFileWatch);
-
-      /* try to create a file or directory monitor */
-      file_watch->monitor = g_file_monitor (file->gfile, G_FILE_MONITOR_WATCH_MOUNTS, NULL, &error);
+      file_watch->monitor = NULL;
       file_watch->watch_count = 0;
 
-      if (G_UNLIKELY (file_watch->monitor == NULL))
+      if (thunar_file_watch_total_count < THUNAR_FILE_WATCH_MAX)
         {
-          g_debug ("Failed to create file monitor: %s", error->message);
-          g_error_free (error);
-        }
-      else
-        {
-          /* watch monitor for file changes */
-          g_signal_connect (file_watch->monitor, "changed", G_CALLBACK (thunar_file_monitor), file);
+          /* try to create a file or directory monitor */
+          file_watch->monitor = g_file_monitor (file->gfile, G_FILE_MONITOR_WATCH_MOUNTS, NULL, &error);
+
+          if (G_UNLIKELY (file_watch->monitor == NULL))
+            {
+              g_debug ("Failed to create file monitor: %s", error->message);
+              g_error_free (error);
+            }
+          else
+            {
+              /* watch monitor for file changes */
+              g_signal_connect (file_watch->monitor, "changed", G_CALLBACK (thunar_file_monitor), file);
+              thunar_file_watch_total_count++;
+              if (thunar_file_watch_total_count == THUNAR_FILE_WATCH_MAX)
+                g_message ("Maximum number of monitored ThunarFiles reached. Creation of additional FileMonitors will be skipped.");
+            }
         }
 
       /* attach to file */
