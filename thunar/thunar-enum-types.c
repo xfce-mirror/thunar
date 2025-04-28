@@ -395,8 +395,8 @@ thunar_zoom_level_string_from_value (ThunarZoomLevel zoom_level)
 
 
 gboolean
-thunar_zoom_level_value_from_string (const gchar *value_string,
-                                     gint        *value)
+thunar_zoom_level_value_from_string (const gchar     *value_string,
+                                     ThunarZoomLevel *value)
 {
   GEnumClass *enum_class;
   GEnumValue *enum_value;
