@@ -1525,7 +1525,17 @@ thunar_action_manager_action_open_location (ThunarActionManager *action_mgr)
     return TRUE;
 
   for (lp = action_mgr->files_to_process; lp != NULL; lp = lp->next)
-    gfiles = g_list_prepend (gfiles, thunar_file_get_file (THUNAR_FILE (lp->data)));
+    {
+      ThunarFile *file = lp->data;
+      if (thunar_file_exists (file))
+        gfiles = g_list_prepend (gfiles, thunar_file_get_file (file));
+      else
+        {
+          GError *error = g_error_new (G_FILE_ERROR, G_FILE_ERROR_NOENT, _("File does not exist anymore"));
+          thunar_dialogs_show_error (action_mgr->widget, error, _("Failed to open location for \"%s\""), thunar_file_get_display_name (file));
+          g_error_free (error);
+        }
+    }
 
   thunar_window_open_files_in_location (THUNAR_WINDOW (action_mgr->widget), gfiles);
 
