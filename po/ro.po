@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thunar.xfce-4-20\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-03-06 12:47+0100\n"
+"POT-Creation-Date: 2025-04-29 12:46+0200\n"
 "PO-Revision-Date: 2024-12-30 16:00+0000\n"
 "Last-Translator: Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>, 2025\n"
 "Language-Team: Romanian (https://app.transifex.com/xfce/teams/16840/ro/)\n"
@@ -67,7 +67,7 @@ msgstr "Navigați la dosarul în care se află fișierul selectat"
 msgid "Ope_n With Other Application..."
 msgstr "_Deschide cu o altă aplicație..."
 
-#: thunar/thunar-action-manager.c:328 thunar/thunar-action-manager.c:3433
+#: thunar/thunar-action-manager.c:328 thunar/thunar-action-manager.c:3443
 msgid "Choose another application with which to open the selected file"
 msgstr "Alegeți o altă aplicație pentru deschiderea fișierului selectat"
 
@@ -129,7 +129,7 @@ msgstr "Rede_numește…"
 
 #. prepare the menu item
 #: thunar/thunar-action-manager.c:340 thunar/thunar-application.c:2790
-#: plugins/thunar-tpa/thunar-tpa.c:192
+#: plugins/thunar-tpa/thunar-tpa.c:191
 msgid "_Empty Trash"
 msgstr "_Golește coșul de gunoi"
 
@@ -307,7 +307,7 @@ msgstr[2] "Deschide %d de ferestre noi"
 msgid "_Cancel"
 msgstr "_Renunță"
 
-#: thunar/thunar-action-manager.c:1152 thunar/thunar-action-manager.c:2047
+#: thunar/thunar-action-manager.c:1152 thunar/thunar-action-manager.c:2057
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Nu s-a putut monta „%s”"
@@ -320,22 +320,31 @@ msgstr "Nu s-a putut monta „%s”"
 msgid "Failed to open \"%s\""
 msgstr "Nu s-a putut deschide „%s”"
 
+#: thunar/thunar-action-manager.c:1534
+msgid "File does not exist anymore"
+msgstr "Fișierul nu mai există"
+
+#: thunar/thunar-action-manager.c:1535
+#, c-format
+msgid "Failed to open location for \"%s\""
+msgstr "Deschiderea locației pentru „%s” a eșuat"
+
 #. aka "activate"
-#: thunar/thunar-action-manager.c:1649
+#: thunar/thunar-action-manager.c:1659
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "Deschide fișierul selectat"
 msgstr[1] "Deschide fișierele selectate"
 msgstr[2] "Deschide fișierele selectate"
 
-#: thunar/thunar-action-manager.c:1653
+#: thunar/thunar-action-manager.c:1663
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "Execută fișierul selectat"
 msgstr[1] "Execută fișierele selectate"
 msgstr[2] "Execută fișierele selectate"
 
-#: thunar/thunar-action-manager.c:1662
+#: thunar/thunar-action-manager.c:1672
 #, c-format
 msgid "Open the selected directory in new tab"
 msgid_plural "Open the selected directories in %d new tabs"
@@ -343,7 +352,7 @@ msgstr[0] "Deschide directorul selectat într-o filă nouă"
 msgstr[1] "Deschide directoarele selectate în %d file noi"
 msgstr[2] "Deschide directoarele selectate în %d de file noi"
 
-#: thunar/thunar-action-manager.c:1673
+#: thunar/thunar-action-manager.c:1683
 #, c-format
 msgid "Open the selected directory in new window"
 msgid_plural "Open the selected directories in %d new windows"
@@ -351,32 +360,32 @@ msgstr[0] "Deschide directorul selectat într-o fereastră nouă"
 msgstr[1] "Deschide directoarele selectate în %d ferestre noi"
 msgstr[2] "Deschide directoarele selectate în %d de ferestre noi"
 
-#: thunar/thunar-action-manager.c:1711
+#: thunar/thunar-action-manager.c:1721
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Creează o legătură simbolică pentru fișierul selectat"
 msgstr[1] "Creează o legătură simbolică pentru fiecare fișier selectat"
 msgstr[2] "Creează o legătură simbolică pentru fiecare fișier selectat"
 
-#: thunar/thunar-action-manager.c:1737
+#: thunar/thunar-action-manager.c:1747
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Redenumește fișierul selectat"
 msgstr[1] "Redenumește fișierele selectate"
 msgstr[2] "Redenumește fișierele selectate"
 
-#: thunar/thunar-action-manager.c:1742
+#: thunar/thunar-action-manager.c:1752
 msgid "Bulk _Rename..."
 msgstr "_Redenumește în masă multiple fișiere..."
 
-#: thunar/thunar-action-manager.c:1752
+#: thunar/thunar-action-manager.c:1762
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
 msgstr[0] "Restaurează fișierul selectat în locația sa inițială"
 msgstr[1] "Restaurează fișierele selectate în locația lor inițială"
 msgstr[2] "Restaurează fișierele selectate în locația lor inițială"
 
-#: thunar/thunar-action-manager.c:1764
+#: thunar/thunar-action-manager.c:1774
 msgid ""
 "Restore the selected file to its original location and open the location in "
 "a new window/tab"
@@ -393,25 +402,25 @@ msgstr[2] ""
 "Restaurează fișierele selectat în locația lor originală și deschide "
 "locațiile într-o fereastră/filă nouă"
 
-#: thunar/thunar-action-manager.c:1781
+#: thunar/thunar-action-manager.c:1791
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "Trimite fișierul selectat la coșul de gunoi"
 msgstr[1] "Trimite fișierele selectate la coșul de gunoi"
 msgstr[2] "Trimite fișierele selectate la coșul de gunoi"
 
-#: thunar/thunar-action-manager.c:1798
+#: thunar/thunar-action-manager.c:1808
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "Șterge irevocabil fișierul selectat"
 msgstr[1] "Șterge irevocabil fișierele selectate"
 msgstr[2] "Șterge irevocabil fișierele selectate"
 
-#: thunar/thunar-action-manager.c:1857
+#: thunar/thunar-action-manager.c:1867
 msgid "Cut the selection"
 msgstr "Taie selecția"
 
-#: thunar/thunar-action-manager.c:1867
+#: thunar/thunar-action-manager.c:1877
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] ""
@@ -421,11 +430,11 @@ msgstr[1] ""
 msgstr[2] ""
 "Pregătește fișierele selectate pentru a fi mutate cu comanda „Lipește”"
 
-#: thunar/thunar-action-manager.c:1881
+#: thunar/thunar-action-manager.c:1891
 msgid "Copy the selection"
 msgstr "Copiază selecția"
 
-#: thunar/thunar-action-manager.c:1891
+#: thunar/thunar-action-manager.c:1901
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] ""
@@ -435,39 +444,39 @@ msgstr[1] ""
 msgstr[2] ""
 "Pregătește fișierele selectate pentru a fi copiate cu comanda „Lipește”"
 
-#: thunar/thunar-action-manager.c:1914
+#: thunar/thunar-action-manager.c:1924
 msgid "Paste the clipboard"
 msgstr "Lipește din clipboard"
 
-#: thunar/thunar-action-manager.c:2158
+#: thunar/thunar-action-manager.c:2168
 msgid "Side Pane (Add Bookmark)"
 msgid_plural "Side Pane (Add Bookmarks)"
 msgstr[0] "Panoul lateral (Adaugă semn de carte)"
 msgstr[1] "Panoul lateral (Adaugă semne de carte)"
 msgstr[2] "Panoul lateral (Adaugă semne de carte)"
 
-#: thunar/thunar-action-manager.c:2159
+#: thunar/thunar-action-manager.c:2169
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "Adaugă dosarul selectat la accesele directe din panoul lateral"
 msgstr[1] "Adaugă dosarele selectate la accesele directe din panoul lateral"
 msgstr[2] "Adaugă dosarele selectate la accesele directe din panoul lateral"
 
-#: thunar/thunar-action-manager.c:2178
+#: thunar/thunar-action-manager.c:2188
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "Birou (creează legătură)"
 msgstr[1] "Birou (creează legături)"
 msgstr[2] "Birou (creează legături)"
 
-#: thunar/thunar-action-manager.c:2179
+#: thunar/thunar-action-manager.c:2189
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "Creează o legătură simbolică pe birou pentru fișierul selectat"
 msgstr[1] "Creează legături simbolice pe birou pentru fișierele selectate"
 msgstr[2] "Creează legături simbolice pe birou pentru fișierele selectate"
 
-#: thunar/thunar-action-manager.c:2200 thunar/thunar-action-manager.c:2239
+#: thunar/thunar-action-manager.c:2210 thunar/thunar-action-manager.c:2249
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
@@ -476,30 +485,30 @@ msgstr[1] "Trimite fișierele selectate către „%s”"
 msgstr[2] "Trimite fișierele selectate către „%s”"
 
 #. ask the user to enter a name for the new folder
-#: thunar/thunar-action-manager.c:2737 thunar/thunar-application.c:2058
+#: thunar/thunar-action-manager.c:2747 thunar/thunar-application.c:2058
 msgid "New Folder"
 msgstr "Dosar nou"
 
-#: thunar/thunar-action-manager.c:2741 thunar/thunar-application.c:2059
+#: thunar/thunar-action-manager.c:2751 thunar/thunar-application.c:2059
 msgid "Create New Folder"
 msgstr "Creează un dosar nou"
 
 #. generate a title for the create dialog
-#: thunar/thunar-action-manager.c:2793 thunar/thunar-application.c:2123
+#: thunar/thunar-action-manager.c:2803 thunar/thunar-application.c:2123
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Creează un document utilizând șablonul „%s”"
 
 #. ask the user to enter a name for the new empty file
-#: thunar/thunar-action-manager.c:2809
+#: thunar/thunar-action-manager.c:2819
 msgid "New Empty File"
 msgstr "Nou fișier gol"
 
-#: thunar/thunar-action-manager.c:2813
+#: thunar/thunar-action-manager.c:2823
 msgid "New Empty File..."
 msgstr "Nou fișier gol…"
 
-#: thunar/thunar-action-manager.c:3034
+#: thunar/thunar-action-manager.c:3044
 #, c-format
 msgid ""
 "No templates installed in\n"
@@ -508,21 +517,21 @@ msgstr ""
 "Nu există șabloane instalate în\n"
 "„%s”"
 
-#: thunar/thunar-action-manager.c:3047
+#: thunar/thunar-action-manager.c:3057
 msgid "_Empty File"
 msgstr "Fiși_er gol"
 
-#: thunar/thunar-action-manager.c:3188
+#: thunar/thunar-action-manager.c:3198
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Nu s-a putut ejecta „%s”"
 
-#: thunar/thunar-action-manager.c:3250
+#: thunar/thunar-action-manager.c:3260
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Nu s-a putut demonta „%s”"
 
-#: thunar/thunar-action-manager.c:3313 thunar/thunar-action-manager.c:3395
+#: thunar/thunar-action-manager.c:3323 thunar/thunar-action-manager.c:3405
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
@@ -530,21 +539,21 @@ msgstr[0] "Utilizează „%s” pentru a deschide fișierul selectat"
 msgstr[1] "Utilizează „%s” pentru a deschide fișierele selectate"
 msgstr[2] "Utilizează „%s” pentru a deschide fișierele selectate"
 
-#: thunar/thunar-action-manager.c:3394
+#: thunar/thunar-action-manager.c:3404
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "_Deschide cu „%s”"
 
 #. we can only show a generic "Open" action
-#: thunar/thunar-action-manager.c:3415
+#: thunar/thunar-action-manager.c:3425
 msgid "_Open With Default Applications"
 msgstr "_Deschide cu aplicațiile implicite"
 
-#: thunar/thunar-action-manager.c:3416
+#: thunar/thunar-action-manager.c:3426
 msgid "Open the selected files with the default applications"
 msgstr "Deschide fișierele selectate cu aplicațiile asociate implicit"
 
-#: thunar/thunar-action-manager.c:3432
+#: thunar/thunar-action-manager.c:3442
 msgid "Ope_n With"
 msgstr "_Deschide cu"
 
@@ -869,7 +878,7 @@ msgstr "Utilizează ca _implicit pentru acest tip de fișier"
 
 #. add the "Ok"/"Open" button
 #: thunar/thunar-chooser-dialog.c:318 thunar/thunar-chooser-dialog.c:1318
-#: thunar/thunar-properties-dialog.c:1221 thunar/thunar-window.c:4693
+#: thunar/thunar-properties-dialog.c:1221 thunar/thunar-window.c:4697
 #: plugins/thunar-uca/thunar-uca-editor.c:158
 #: plugins/thunar-uca/thunar-uca-editor.c:456
 msgid "_OK"
@@ -3113,7 +3122,7 @@ msgstr "Proprietăți"
 msgid "Link Targets:"
 msgstr "Ținte de legătură:"
 
-#: thunar/thunar-properties-dialog.c:1744
+#: thunar/thunar-properties-dialog.c:1746
 msgid "mixed"
 msgstr "amestecate"
 
@@ -3276,7 +3285,7 @@ msgstr "Răsfoiți sistemul de fișiere"
 msgid "Mount and open %s (%s)"
 msgstr "Montează și deschide %s (%s)"
 
-#: thunar/thunar-shortcuts-model.c:715 plugins/thunar-tpa/thunar-tpa.c:313
+#: thunar/thunar-shortcuts-model.c:715 plugins/thunar-tpa/thunar-tpa.c:312
 msgid "Trash is empty"
 msgstr "Coșul de gunoi este gol"
 
@@ -3506,7 +3515,7 @@ msgstr[1] "%d fișiere găsite"
 msgstr[2] "%d de fișiere găsite"
 
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2657 thunar/thunar-window.c:4506
+#: thunar/thunar-standard-view.c:2657 thunar/thunar-window.c:4510
 msgid "Failed to open the home folder"
 msgstr "Nu s-a putut deschide dosarul Acasă"
 
@@ -3603,7 +3612,7 @@ msgstr "Nu s-a putut crea o legătură pentru adresa URL „%s”"
 msgid "Untitled document"
 msgstr "Document fără titlu"
 
-#: thunar/thunar-standard-view.c:3895 thunar/thunar-window.c:4603
+#: thunar/thunar-standard-view.c:3895 thunar/thunar-window.c:4607
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Nu s-a putut deschide directorul „%s”"
@@ -3689,7 +3698,7 @@ msgstr "Vizibil numai atunci când bara de meniu este ascunsă"
 msgid "Verifying file contents..."
 msgstr "Se verifică conținutul fișierului..."
 
-#: thunar/thunar-transfer-job.c:1139
+#: thunar/thunar-transfer-job.c:1140
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
@@ -3699,12 +3708,12 @@ msgstr ""
 "pentru a copia la destinație"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1173
+#: thunar/thunar-transfer-job.c:1174
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Se încearcă restaurarea „%s”"
 
-#: thunar/thunar-transfer-job.c:1202
+#: thunar/thunar-transfer-job.c:1203
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
@@ -3713,34 +3722,34 @@ msgstr ""
 "Dosarul „%s” nu mai există, dar este necesar pentru a restaura fișierul „%s”"
 " din coșul de gunoi"
 
-#: thunar/thunar-transfer-job.c:1229
+#: thunar/thunar-transfer-job.c:1230
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Nu s-a putut restaura dosarul „%s”"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1314
+#: thunar/thunar-transfer-job.c:1315
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Se încearcă mutarea „%s”"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1397
+#: thunar/thunar-transfer-job.c:1398
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr ""
 "Nu s-a putut muta „%s” direct. Se colectează fișierele pentru copiere…"
 
-#: thunar/thunar-transfer-job.c:1634
+#: thunar/thunar-transfer-job.c:1635
 msgid "Collecting files..."
 msgstr "Se colectează fișierele…"
 
-#: thunar/thunar-transfer-job.c:1859
+#: thunar/thunar-transfer-job.c:1860
 #, c-format
 msgid "%s of %s"
 msgstr "%s din %s"
 
-#: thunar/thunar-transfer-job.c:1879
+#: thunar/thunar-transfer-job.c:1880
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
@@ -3748,7 +3757,7 @@ msgstr[0] "încă %lu oră (%s/sec)"
 msgstr[1] "încă %lu ore (%s/sec)"
 msgstr[2] "încă %lu de ore (%s/sec)"
 
-#: thunar/thunar-transfer-job.c:1885
+#: thunar/thunar-transfer-job.c:1886
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
@@ -3756,7 +3765,7 @@ msgstr[0] "încă %lu minut (%s/sec)"
 msgstr[1] "încă %lu minute (%s/sec)"
 msgstr[2] "încă %lu de minute (%s/sec)"
 
-#: thunar/thunar-transfer-job.c:1890
+#: thunar/thunar-transfer-job.c:1891
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
@@ -4299,44 +4308,44 @@ msgstr "Căutare cu Catfish..."
 msgid "Restore Selected Items"
 msgstr "Restaurează elementele selectate"
 
-#: thunar/thunar-window.c:2951
+#: thunar/thunar-window.c:2955
 msgid "Close tab"
 msgstr "Închide fila"
 
-#: thunar/thunar-window.c:3410
+#: thunar/thunar-window.c:3414
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Deschide locația „%s”"
 
-#: thunar/thunar-window.c:4446
+#: thunar/thunar-window.c:4450
 msgid "Failed to open parent folder"
 msgstr "Nu s-a putut deschide dosarul părinte"
 
-#: thunar/thunar-window.c:4577
+#: thunar/thunar-window.c:4581
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Directorul „%s” nu există. Doriți să-l creați?"
 
-#: thunar/thunar-window.c:4579
+#: thunar/thunar-window.c:4583
 msgid "Create directory"
 msgstr "Creează director"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4648
+#: thunar/thunar-window.c:4652
 msgid "Failed to browse the computer"
 msgstr "Explorarea calculatorului a eșuat"
 
 #. display the "About Templates" dialog
-#: thunar/thunar-window.c:4691
+#: thunar/thunar-window.c:4695
 msgid "About Templates"
 msgstr "Despre șabloane"
 
-#: thunar/thunar-window.c:4713
+#: thunar/thunar-window.c:4717
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 "Toate fișierele din acest dosar vor apărea în meniul «Creează un document»."
 
-#: thunar/thunar-window.c:4720
+#: thunar/thunar-window.c:4724
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
@@ -4346,31 +4355,31 @@ msgstr ""
 "\n"
 "Apoi, prin selectarea noii intrări din meniul «Creează un document», o copie a documentului va fi creată în directorul curent."
 
-#: thunar/thunar-window.c:4732
+#: thunar/thunar-window.c:4736
 msgid "Do _not display this message again"
 msgstr "_Nu arăta din nou acest mesaj"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4766
+#: thunar/thunar-window.c:4770
 msgid "Failed to open the file system root folder"
 msgstr "Nu s-a putut deschide dosarul rădăcină al sistemului"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4802
+#: thunar/thunar-window.c:4806
 msgid "Failed to display `Recent`"
 msgstr "Afișarea elementelor «Recente» a eșuat"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4838
+#: thunar/thunar-window.c:4842
 msgid "Failed to display the contents of the trash can"
 msgstr "Afișarea conținutului coșului de gunoi a eșuat"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4874
+#: thunar/thunar-window.c:4878
 msgid "Failed to browse the network"
 msgstr "Explorarea rețelei a eșuat"
 
-#: thunar/thunar-window.c:5017
+#: thunar/thunar-window.c:5021
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -4378,27 +4387,27 @@ msgstr ""
 "Acesta este un gestionar de fișiere rapid și\n"
 "ușor de utilizat pentru mediul grafic de birou Xfce."
 
-#: thunar/thunar-window.c:6091
+#: thunar/thunar-window.c:6095
 msgid "Select an image to preview"
 msgstr "Selectați o imagine pentru previzualizare"
 
-#: thunar/thunar-window.c:6238
+#: thunar/thunar-window.c:6242
 msgid "Failed to launch search with Catfish"
 msgstr "Lansarea căutării cu Catfish a eșuat"
 
-#: thunar/thunar-window.c:6569
+#: thunar/thunar-window.c:6573
 msgid "Change the active view type"
 msgstr "Schimbă tipul de vizualizare activă"
 
 #. add a proxy menu item for the view switcher to be represent in the overflow
 #. menu
-#: thunar/thunar-window.c:6572 thunar/thunar-window.c:6597
+#: thunar/thunar-window.c:6576 thunar/thunar-window.c:6601
 msgid "View Switcher"
 msgstr "Comutator vizualizare"
 
 #. add a proxy menu item for the location bar to represent the bar in the
 #. overflow menu
-#: thunar/thunar-window.c:6762 thunar/thunar-window.c:6767
+#: thunar/thunar-window.c:6766 thunar/thunar-window.c:6771
 msgid "Location Bar"
 msgstr "Bara de locație"
 
@@ -4920,13 +4929,13 @@ msgid "Mail Recipient"
 msgstr "Destinatarul mesajului"
 
 #. tell the user that we failed to connect to the trash
-#: plugins/thunar-tpa/thunar-tpa.c:298 plugins/thunar-tpa/thunar-tpa.c:338
-#: plugins/thunar-tpa/thunar-tpa.c:365 plugins/thunar-tpa/thunar-tpa.c:392
+#: plugins/thunar-tpa/thunar-tpa.c:297 plugins/thunar-tpa/thunar-tpa.c:337
+#: plugins/thunar-tpa/thunar-tpa.c:364 plugins/thunar-tpa/thunar-tpa.c:391
 msgid "Failed to connect to the Trash"
 msgstr "Conectarea la coșul de gunoi a eșuat"
 
 #. tell the user whether the trash is full or empty
-#: plugins/thunar-tpa/thunar-tpa.c:313
+#: plugins/thunar-tpa/thunar-tpa.c:312
 msgid "Trash contains files"
 msgstr "Coșul de gunoi conține fișiere"
 
