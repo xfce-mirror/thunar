@@ -941,23 +941,23 @@ thunar_window_paned_notebooks_destroy (GtkWidget    *paned_notebooks,
 static void
 thunar_window_init (ThunarWindow *window)
 {
-  GtkWidget             *label;
-  GtkWidget             *infobar;
-  GtkWidget             *item;
-  GtkWidget             *event_box;
-  gboolean               last_menubar_visible;
-  ThunarSidepaneType     last_side_pane;
-  gchar                 *uca_path;
-  gchar                 *catfish_path;
-  gint                   last_separator_position;
-  gint                   last_window_width;
-  gint                   last_window_height;
-  gboolean               last_window_maximized;
-  gboolean               last_statusbar_visible;
-  gboolean               last_image_preview_visible;
-  gint                   max_paned_position;
-  GtkStyleContext       *context;
-  gboolean               misc_use_csd;
+  GtkWidget         *label;
+  GtkWidget         *infobar;
+  GtkWidget         *item;
+  GtkWidget         *event_box;
+  gboolean           last_menubar_visible;
+  ThunarSidepaneType last_side_pane;
+  gchar             *uca_path;
+  gchar             *catfish_path;
+  gint               last_separator_position;
+  gint               last_window_width;
+  gint               last_window_height;
+  gboolean           last_window_maximized;
+  gboolean           last_statusbar_visible;
+  gboolean           last_image_preview_visible;
+  gint               max_paned_position;
+  GtkStyleContext   *context;
+  gboolean           misc_use_csd;
 
   /* unset the view type */
   window->view_type = G_TYPE_NONE;
