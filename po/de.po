@@ -25,7 +25,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-04-17 12:45+0200\n"
+"POT-Creation-Date: 2025-04-29 12:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: Andreas Eitel <github-aneitel@online.de>, 2018-2025\n"
 "Language-Team: German (http://app.transifex.com/xfce/thunar/language/de/)\n"
@@ -80,7 +80,7 @@ msgstr "Navigieren Sie zu dem Ordner, in dem sich die ausgewählte Datei befinde
 msgid "Ope_n With Other Application..."
 msgstr "Mit anderer A_nwendung öffnen …"
 
-#: thunar/thunar-action-manager.c:328 thunar/thunar-action-manager.c:3433
+#: thunar/thunar-action-manager.c:328 thunar/thunar-action-manager.c:3443
 msgid "Choose another application with which to open the selected file"
 msgstr "Eine andere Anwendung wählen, mit der die ausgewählte Datei geöffnet werden soll"
 
@@ -305,7 +305,7 @@ msgstr[1] "%d neue Fenster öffnen"
 msgid "_Cancel"
 msgstr "_Abbrechen"
 
-#: thunar/thunar-action-manager.c:1152 thunar/thunar-action-manager.c:2047
+#: thunar/thunar-action-manager.c:1152 thunar/thunar-action-manager.c:2057
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Der Datenträger »%s« konnte nicht eingehängt werden"
@@ -318,56 +318,65 @@ msgstr "Der Datenträger »%s« konnte nicht eingehängt werden"
 msgid "Failed to open \"%s\""
 msgstr "»%s« konnte nicht geöffnet werden"
 
+#: thunar/thunar-action-manager.c:1534
+msgid "File does not exist anymore"
+msgstr ""
+
+#: thunar/thunar-action-manager.c:1535
+#, c-format
+msgid "Failed to open location for \"%s\""
+msgstr ""
+
 #. aka "activate"
-#: thunar/thunar-action-manager.c:1649
+#: thunar/thunar-action-manager.c:1659
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "Die ausgewählte Datei öffnen"
 msgstr[1] "Die ausgewählten Dateien öffnen"
 
-#: thunar/thunar-action-manager.c:1653
+#: thunar/thunar-action-manager.c:1663
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "Die ausgewählte Datei ausführen"
 msgstr[1] "Die ausgewählten Dateien ausführen"
 
-#: thunar/thunar-action-manager.c:1662
+#: thunar/thunar-action-manager.c:1672
 #, c-format
 msgid "Open the selected directory in new tab"
 msgid_plural "Open the selected directories in %d new tabs"
 msgstr[0] "Den ausgewählten Ordner in neuem Reiter anzeigen"
 msgstr[1] "Die ausgewählten Ordner in %d neuen Reitern anzeigen"
 
-#: thunar/thunar-action-manager.c:1673
+#: thunar/thunar-action-manager.c:1683
 #, c-format
 msgid "Open the selected directory in new window"
 msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "Den ausgewählten Ordner in neuem Fenster anzeigen"
 msgstr[1] "Die ausgewählten Ordner in %d neuen Fenstern anzeigen"
 
-#: thunar/thunar-action-manager.c:1711
+#: thunar/thunar-action-manager.c:1721
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Eine symbolische Verknüpfung für die ausgewählte Datei erstellen"
 msgstr[1] "Eine symbolische Verknüpfung für jede ausgewählte Datei erstellen"
 
-#: thunar/thunar-action-manager.c:1737
+#: thunar/thunar-action-manager.c:1747
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Die ausgewählte Datei umbenennen"
 msgstr[1] "Die ausgewählten Dateien umbenennen"
 
-#: thunar/thunar-action-manager.c:1742
+#: thunar/thunar-action-manager.c:1752
 msgid "Bulk _Rename..."
 msgstr "_Massenumbenennen …"
 
-#: thunar/thunar-action-manager.c:1752
+#: thunar/thunar-action-manager.c:1762
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
 msgstr[0] "Wiederherstellen der ausgewählten Datei an ihrem ursprünglichen Speicherort"
 msgstr[1] "Wiederherstellen der ausgewählten Dateien an ihrem ursprünglichen Speicherort"
 
-#: thunar/thunar-action-manager.c:1764
+#: thunar/thunar-action-manager.c:1774
 msgid ""
 "Restore the selected file to its original location and open the location in "
 "a new window/tab"
@@ -377,67 +386,67 @@ msgid_plural ""
 msgstr[0] "Die ausgewählte Datei an ihrem ursprünglichen Speicherort wiederherstellen und den Speicherort in einem neuen Fenster/Reiter öffnen"
 msgstr[1] "Wiederherstellen der ausgewählten Dateien an ihren ursprünglichen Speicherorten und Öffnen der Speicherorte in einem neuen Fenster/Reiter"
 
-#: thunar/thunar-action-manager.c:1781
+#: thunar/thunar-action-manager.c:1791
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "Die ausgewählte Datei in den Papierkorb verschieben"
 msgstr[1] "Die ausgewählten Dateien in den Papierkorb verschieben"
 
-#: thunar/thunar-action-manager.c:1798
+#: thunar/thunar-action-manager.c:1808
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "Die ausgewählte Datei dauerhaft löschen"
 msgstr[1] "Die ausgewählten Dateien dauerhaft löschen"
 
-#: thunar/thunar-action-manager.c:1857
+#: thunar/thunar-action-manager.c:1867
 msgid "Cut the selection"
 msgstr "Auswahl ausschneiden"
 
-#: thunar/thunar-action-manager.c:1867
+#: thunar/thunar-action-manager.c:1877
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Die ausgewählte Datei beim nächsten »Einfügen« an neuen Ort verschieben"
 msgstr[1] "Die ausgewählten Dateien beim nächsten »Einfügen« an neuen Ort verschieben"
 
-#: thunar/thunar-action-manager.c:1881
+#: thunar/thunar-action-manager.c:1891
 msgid "Copy the selection"
 msgstr "Auswahl kopieren"
 
-#: thunar/thunar-action-manager.c:1891
+#: thunar/thunar-action-manager.c:1901
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Die ausgewählte Datei beim nächsten »Einfügen« an neuen Ort kopieren"
 msgstr[1] "Die ausgewählten Dateien beim nächsten »Einfügen« an neuen Ort kopieren"
 
-#: thunar/thunar-action-manager.c:1914
+#: thunar/thunar-action-manager.c:1924
 msgid "Paste the clipboard"
 msgstr "Einfügen der Zwischenablage"
 
-#: thunar/thunar-action-manager.c:2158
+#: thunar/thunar-action-manager.c:2168
 msgid "Side Pane (Add Bookmark)"
 msgid_plural "Side Pane (Add Bookmarks)"
 msgstr[0] "Seitenleiste (Lesezeichen hinzufügen)"
 msgstr[1] "Seitenleiste (Lesezeichen hinzufügen)"
 
-#: thunar/thunar-action-manager.c:2159
+#: thunar/thunar-action-manager.c:2169
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "Neues Lesezeichen für den ausgewählten Ordner erstellen"
 msgstr[1] "Neue Lesezeichen für die ausgewählten Ordner erstellen"
 
-#: thunar/thunar-action-manager.c:2178
+#: thunar/thunar-action-manager.c:2188
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "Schreibtisch (Verknüpfung erstellen)"
 msgstr[1] "Schreibtisch (Verknüpfungen erstellen)"
 
-#: thunar/thunar-action-manager.c:2179
+#: thunar/thunar-action-manager.c:2189
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "Eine symbolische Verknüpfung für die ausgewählte Datei auf dem Schreibtisch erstellen"
 msgstr[1] "Eine symbolische Verknüpfung für jede ausgewählte Datei auf dem Schreibtisch erstellen"
 
-#: thunar/thunar-action-manager.c:2200 thunar/thunar-action-manager.c:2239
+#: thunar/thunar-action-manager.c:2210 thunar/thunar-action-manager.c:2249
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
@@ -445,72 +454,72 @@ msgstr[0] "Die ausgewählte Datei an »%s« senden"
 msgstr[1] "Die ausgewählten Dateien an »%s« senden"
 
 #. ask the user to enter a name for the new folder
-#: thunar/thunar-action-manager.c:2737 thunar/thunar-application.c:2061
+#: thunar/thunar-action-manager.c:2747 thunar/thunar-application.c:2061
 msgid "New Folder"
 msgstr "Neuer Ordner"
 
-#: thunar/thunar-action-manager.c:2741 thunar/thunar-application.c:2062
+#: thunar/thunar-action-manager.c:2751 thunar/thunar-application.c:2062
 msgid "Create New Folder"
 msgstr "Neuen Ordner erstellen"
 
 #. generate a title for the create dialog
-#: thunar/thunar-action-manager.c:2793 thunar/thunar-application.c:2126
+#: thunar/thunar-action-manager.c:2803 thunar/thunar-application.c:2126
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Dokument aus Vorlage »%s« erstellen"
 
 #. ask the user to enter a name for the new empty file
-#: thunar/thunar-action-manager.c:2809
+#: thunar/thunar-action-manager.c:2819
 msgid "New Empty File"
 msgstr "Leere Datei"
 
-#: thunar/thunar-action-manager.c:2813
+#: thunar/thunar-action-manager.c:2823
 msgid "New Empty File..."
 msgstr "Neue leere Datei …"
 
-#: thunar/thunar-action-manager.c:3034
+#: thunar/thunar-action-manager.c:3044
 #, c-format
 msgid ""
 "No templates installed in\n"
 "\"%s\""
 msgstr "Keine Vorlagen in \"%s\" installiert"
 
-#: thunar/thunar-action-manager.c:3047
+#: thunar/thunar-action-manager.c:3057
 msgid "_Empty File"
 msgstr "_Leere Datei"
 
-#: thunar/thunar-action-manager.c:3188
+#: thunar/thunar-action-manager.c:3198
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Der Datenträger »%s« konnte nicht ausgeworfen werden"
 
-#: thunar/thunar-action-manager.c:3250
+#: thunar/thunar-action-manager.c:3260
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Der Datenträger »%s« konnte nicht ausgehangen werden"
 
-#: thunar/thunar-action-manager.c:3313 thunar/thunar-action-manager.c:3395
+#: thunar/thunar-action-manager.c:3323 thunar/thunar-action-manager.c:3405
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "»%s« verwenden, um die ausgewählte Datei zu öffnen"
 msgstr[1] "»%s« verwenden, um die ausgewählten Dateien zu öffnen"
 
-#: thunar/thunar-action-manager.c:3394
+#: thunar/thunar-action-manager.c:3404
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "_Mit »%s« öffnen"
 
 #. we can only show a generic "Open" action
-#: thunar/thunar-action-manager.c:3415
+#: thunar/thunar-action-manager.c:3425
 msgid "_Open With Default Applications"
 msgstr "Mit der Standardanwendung ö_ffnen"
 
-#: thunar/thunar-action-manager.c:3416
+#: thunar/thunar-action-manager.c:3426
 msgid "Open the selected files with the default applications"
 msgstr "Die ausgewählten Dateien mit den Standardanwendungen öffnen"
 
-#: thunar/thunar-action-manager.c:3432
+#: thunar/thunar-action-manager.c:3442
 msgid "Ope_n With"
 msgstr "Öffne_n mit"
 
@@ -807,7 +816,7 @@ msgstr "Stan_dardmäßig für Dateien dieses Typs benutzen"
 
 #. add the "Ok"/"Open" button
 #: thunar/thunar-chooser-dialog.c:318 thunar/thunar-chooser-dialog.c:1318
-#: thunar/thunar-properties-dialog.c:1211 thunar/thunar-window.c:4708
+#: thunar/thunar-properties-dialog.c:1211 thunar/thunar-window.c:4704
 #: plugins/thunar-uca/thunar-uca-editor.c:157
 #: plugins/thunar-uca/thunar-uca-editor.c:455
 msgid "_OK"
@@ -1488,10 +1497,10 @@ msgid "File Name"
 msgstr "Dateiname"
 
 #: thunar/thunar-enum-types.c:700 thunar/thunar-enum-types.c:725
-#: thunar/thunar-enum-types.c:860 thunar/thunar-preferences-dialog.c:463
-#: thunar/thunar-preferences-dialog.c:1117
-#: thunar/thunar-preferences-dialog.c:1225
-#: thunar/thunar-preferences-dialog.c:1313
+#: thunar/thunar-enum-types.c:860 thunar/thunar-preferences-dialog.c:449
+#: thunar/thunar-preferences-dialog.c:1103
+#: thunar/thunar-preferences-dialog.c:1211
+#: thunar/thunar-preferences-dialog.c:1299
 msgid "Never"
 msgstr "Nie"
 
@@ -1500,10 +1509,10 @@ msgid "Only For Remote Location"
 msgstr "Nur für entfernte Standorte"
 
 #: thunar/thunar-enum-types.c:702 thunar/thunar-enum-types.c:727
-#: thunar/thunar-enum-types.c:862 thunar/thunar-preferences-dialog.c:465
-#: thunar/thunar-preferences-dialog.c:1113
-#: thunar/thunar-preferences-dialog.c:1223
-#: thunar/thunar-preferences-dialog.c:1314
+#: thunar/thunar-enum-types.c:862 thunar/thunar-preferences-dialog.c:451
+#: thunar/thunar-preferences-dialog.c:1099
+#: thunar/thunar-preferences-dialog.c:1209
+#: thunar/thunar-preferences-dialog.c:1300
 msgid "Always"
 msgstr "Immer"
 
@@ -2011,12 +2020,12 @@ msgstr "Symbolgröße"
 msgid "The icon size for the path entry"
 msgstr "Die Symbolgröße für das Pfadfeld"
 
-#: thunar/thunar-path-entry.c:886
+#: thunar/thunar-path-entry.c:898
 msgid "Stop Search"
 msgstr "Suche beenden"
 
 #. add a tooltip
-#: thunar/thunar-path-entry.c:889
+#: thunar/thunar-path-entry.c:901
 msgid ""
 "Search is in progress...\n"
 "Press the cancel button or the Escape key to stop."
@@ -2055,7 +2064,7 @@ msgid "Allow this file to _run as a program"
 msgstr "Datei darf als Programm _gestartet werden"
 
 #: thunar/thunar-permissions-chooser.c:401
-#: thunar/thunar-preferences-dialog.c:1328
+#: thunar/thunar-preferences-dialog.c:1314
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "Die Ausführung nicht vertrauenswürdiger Programme stellt ein Sicherheitsrisiko für Ihr System dar."
@@ -2201,12 +2210,12 @@ msgid "View _new folders using:"
 msgstr "_Neue Fenster öffnen mit:"
 
 #: thunar/thunar-preferences-dialog.c:372
-#: thunar/thunar-preferences-dialog.c:528
+#: thunar/thunar-preferences-dialog.c:514
 msgid "Icon View"
 msgstr "Symbolansicht"
 
 #: thunar/thunar-preferences-dialog.c:373
-#: thunar/thunar-preferences-dialog.c:1428
+#: thunar/thunar-preferences-dialog.c:1414
 msgid "List View"
 msgstr "Listenansicht"
 
@@ -2233,108 +2242,99 @@ msgid "gvfs metadata support is required"
 msgstr "gvfs Metadaten-Unterstützung ist erforderlich"
 
 #: thunar/thunar-preferences-dialog.c:412
-msgid "Sort _folders before files"
-msgstr "_Ordner vor Dateien anzeigen"
-
-#: thunar/thunar-preferences-dialog.c:418
-msgid ""
-"Select this option to list folders before files when you sort a folder."
-msgstr "Wird diese Einstellung ausgewählt, werden Ordner grundsätzlich vor allen anderen Dateien angezeigt."
-
-#: thunar/thunar-preferences-dialog.c:426
 msgid "Show file size in binary format"
 msgstr "Dateigröße im Binärformat anzeigen"
 
-#: thunar/thunar-preferences-dialog.c:432
+#: thunar/thunar-preferences-dialog.c:418
 msgid ""
 "Select this option to show file size in binary format instead of decimal."
 msgstr "Diese Option auswählen, um die Dateigröße im Binärformat anstatt im Dezimalformat anzuzeigen"
 
-#: thunar/thunar-preferences-dialog.c:441
+#: thunar/thunar-preferences-dialog.c:427
 msgid "Thumbnails"
 msgstr "Vorschaubild"
 
-#: thunar/thunar-preferences-dialog.c:457
+#: thunar/thunar-preferences-dialog.c:443
 msgid "Show thumbnails:"
 msgstr "_Vorschaubilder anzeigen:"
 
-#: thunar/thunar-preferences-dialog.c:464
-#: thunar/thunar-preferences-dialog.c:1114
-#: thunar/thunar-preferences-dialog.c:1224
+#: thunar/thunar-preferences-dialog.c:450
+#: thunar/thunar-preferences-dialog.c:1100
+#: thunar/thunar-preferences-dialog.c:1210
 msgid "Local Files Only"
 msgstr "Nur für lokale Dateien"
 
-#: thunar/thunar-preferences-dialog.c:483
+#: thunar/thunar-preferences-dialog.c:469
 msgid "Only show thumbnails for files smaller than:"
 msgstr "Nur Vorschaubilder für Dateien anzeigen, die kleiner sind als:"
 
-#: thunar/thunar-preferences-dialog.c:489
+#: thunar/thunar-preferences-dialog.c:475
 msgid "512KiB"
 msgstr "512KiB"
 
-#: thunar/thunar-preferences-dialog.c:490
+#: thunar/thunar-preferences-dialog.c:476
 msgid "1MiB"
 msgstr "1MiB"
 
-#: thunar/thunar-preferences-dialog.c:491
+#: thunar/thunar-preferences-dialog.c:477
 msgid "10MiB"
 msgstr "10MiB"
 
-#: thunar/thunar-preferences-dialog.c:492
+#: thunar/thunar-preferences-dialog.c:478
 msgid "100MiB"
 msgstr "100MiB"
 
-#: thunar/thunar-preferences-dialog.c:493
+#: thunar/thunar-preferences-dialog.c:479
 msgid "1GiB"
 msgstr "1GiB"
 
-#: thunar/thunar-preferences-dialog.c:494
+#: thunar/thunar-preferences-dialog.c:480
 msgid "10GiB"
 msgstr "10GiB"
 
-#: thunar/thunar-preferences-dialog.c:495
+#: thunar/thunar-preferences-dialog.c:481
 msgid "Unlimited"
 msgstr "Unbegrenzt"
 
-#: thunar/thunar-preferences-dialog.c:513
+#: thunar/thunar-preferences-dialog.c:499
 msgid "Draw frames around thumbnails"
 msgstr "Rahmen um Vorschaubilder zeichnen"
 
-#: thunar/thunar-preferences-dialog.c:519
+#: thunar/thunar-preferences-dialog.c:505
 msgid "Select this option to draw black frames around thumbnails."
 msgstr "Wähle diese Option, für schwarze Rahmen bei Vorschaubildern."
 
-#: thunar/thunar-preferences-dialog.c:544
+#: thunar/thunar-preferences-dialog.c:530
 msgid "_Text beside icons"
 msgstr "_Text neben Symbolen"
 
-#: thunar/thunar-preferences-dialog.c:550
+#: thunar/thunar-preferences-dialog.c:536
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
 msgstr "Wird diese Einstellung ausgewählt, werden in der Symbolansicht die Dateinamen neben den Dateisymbolen angezeigt, statt darunter."
 
-#: thunar/thunar-preferences-dialog.c:560
+#: thunar/thunar-preferences-dialog.c:546
 msgid "Date"
 msgstr "Datum"
 
-#: thunar/thunar-preferences-dialog.c:573
+#: thunar/thunar-preferences-dialog.c:559
 #: plugins/thunar-sbr/thunar-sbr-date-renamer.c:223
 msgid "_Format:"
 msgstr "_Format:"
 
 #. TRANSLATORS: custom date format
-#: thunar/thunar-preferences-dialog.c:586
+#: thunar/thunar-preferences-dialog.c:572
 msgid "Custom"
 msgstr "Benutzerdefiniert"
 
-#: thunar/thunar-preferences-dialog.c:587
+#: thunar/thunar-preferences-dialog.c:573
 msgid "Today / Custom"
 msgstr "Heute / Benutzerdefiniert"
 
 #. TRANSLATORS: Please do not translate the first column (specifiers),
 #. 'strftime' and of course '\n'
-#: thunar/thunar-preferences-dialog.c:604
+#: thunar/thunar-preferences-dialog.c:590
 msgid ""
 "Custom date format to apply.\n"
 "\n"
@@ -2350,154 +2350,154 @@ msgid ""
 msgstr "Benutzerdefiniertes Datumsformat zum Anwenden.\n\nDie gebräuchlichsten Parameter sind:\n%d Tag des Monats\n%m Monat\n%Y Jahr inklusive Jahrhundert\n%H Stunde\n%M Minute\n%S Sekunde\n\nFür eine vollständige Liste können Sie nach 'Glib.DateTime.format' suchen."
 
 #. Side Pane
-#: thunar/thunar-preferences-dialog.c:626
+#: thunar/thunar-preferences-dialog.c:612
 msgid "Side Pane"
 msgstr "Seitenleiste"
 
-#: thunar/thunar-preferences-dialog.c:636
+#: thunar/thunar-preferences-dialog.c:622
 msgid "Shortcuts Pane"
 msgstr "Lesezeichenliste"
 
-#: thunar/thunar-preferences-dialog.c:652
+#: thunar/thunar-preferences-dialog.c:638
 msgid "_Icon Size:"
 msgstr "_Symbolgröße"
 
-#: thunar/thunar-preferences-dialog.c:657
-#: thunar/thunar-preferences-dialog.c:723
+#: thunar/thunar-preferences-dialog.c:643
+#: thunar/thunar-preferences-dialog.c:709
 msgid "16px"
 msgstr "16px"
 
-#: thunar/thunar-preferences-dialog.c:658
-#: thunar/thunar-preferences-dialog.c:724
+#: thunar/thunar-preferences-dialog.c:644
+#: thunar/thunar-preferences-dialog.c:710
 msgid "24px"
 msgstr "24px"
 
-#: thunar/thunar-preferences-dialog.c:659
-#: thunar/thunar-preferences-dialog.c:725
+#: thunar/thunar-preferences-dialog.c:645
+#: thunar/thunar-preferences-dialog.c:711
 msgid "32px"
 msgstr "32px"
 
-#: thunar/thunar-preferences-dialog.c:660
-#: thunar/thunar-preferences-dialog.c:726
+#: thunar/thunar-preferences-dialog.c:646
+#: thunar/thunar-preferences-dialog.c:712
 msgid "48px"
 msgstr "48px"
 
-#: thunar/thunar-preferences-dialog.c:661
-#: thunar/thunar-preferences-dialog.c:727
+#: thunar/thunar-preferences-dialog.c:647
+#: thunar/thunar-preferences-dialog.c:713
 msgid "64px"
 msgstr "64px"
 
-#: thunar/thunar-preferences-dialog.c:662
-#: thunar/thunar-preferences-dialog.c:728
+#: thunar/thunar-preferences-dialog.c:648
+#: thunar/thunar-preferences-dialog.c:714
 msgid "96px"
 msgstr "96px"
 
-#: thunar/thunar-preferences-dialog.c:663
-#: thunar/thunar-preferences-dialog.c:729
+#: thunar/thunar-preferences-dialog.c:649
+#: thunar/thunar-preferences-dialog.c:715
 msgid "128px"
 msgstr "128px"
 
-#: thunar/thunar-preferences-dialog.c:664
-#: thunar/thunar-preferences-dialog.c:730
+#: thunar/thunar-preferences-dialog.c:650
+#: thunar/thunar-preferences-dialog.c:716
 msgid "160px"
 msgstr "160px"
 
-#: thunar/thunar-preferences-dialog.c:665
-#: thunar/thunar-preferences-dialog.c:731
+#: thunar/thunar-preferences-dialog.c:651
+#: thunar/thunar-preferences-dialog.c:717
 msgid "192px"
 msgstr "192px"
 
-#: thunar/thunar-preferences-dialog.c:666
-#: thunar/thunar-preferences-dialog.c:732
+#: thunar/thunar-preferences-dialog.c:652
+#: thunar/thunar-preferences-dialog.c:718
 msgid "256px"
 msgstr "256px"
 
-#: thunar/thunar-preferences-dialog.c:667
-#: thunar/thunar-preferences-dialog.c:733
+#: thunar/thunar-preferences-dialog.c:653
+#: thunar/thunar-preferences-dialog.c:719
 msgid "512px"
 msgstr "512px"
 
-#: thunar/thunar-preferences-dialog.c:668
-#: thunar/thunar-preferences-dialog.c:734
+#: thunar/thunar-preferences-dialog.c:654
+#: thunar/thunar-preferences-dialog.c:720
 msgid "1024px"
 msgstr "1024px"
 
-#: thunar/thunar-preferences-dialog.c:686
+#: thunar/thunar-preferences-dialog.c:672
 msgid "Show Icon _Emblems"
 msgstr "_Embleme für Lesezeichen anzeigen"
 
-#: thunar/thunar-preferences-dialog.c:692
+#: thunar/thunar-preferences-dialog.c:678
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties "
 "dialog."
 msgstr "Embleme in der Lesezeichenliste für alle Ordner anzeigen, für die im Dateieigenschaftendialog die Option »Embleme« ausgewählt wurde."
 
-#: thunar/thunar-preferences-dialog.c:702
+#: thunar/thunar-preferences-dialog.c:688
 msgid "Tree Pane"
 msgstr "Baumansicht"
 
-#: thunar/thunar-preferences-dialog.c:718
+#: thunar/thunar-preferences-dialog.c:704
 msgid "Icon _Size:"
 msgstr "Symbol_größe"
 
-#: thunar/thunar-preferences-dialog.c:752
+#: thunar/thunar-preferences-dialog.c:738
 msgid "Show Icon E_mblems"
 msgstr "Embleme für _Ordner anzeigen"
 
-#: thunar/thunar-preferences-dialog.c:758
+#: thunar/thunar-preferences-dialog.c:744
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
 msgstr "Embleme in der Baumansicht für alle Ordner anzeigen, für die im Dateieigenschaftendialog die Option »Embleme« ausgewählt wurde."
 
-#: thunar/thunar-preferences-dialog.c:768
+#: thunar/thunar-preferences-dialog.c:754
 msgid "Icon Style"
 msgstr "Icon Stil"
 
-#: thunar/thunar-preferences-dialog.c:784
+#: thunar/thunar-preferences-dialog.c:770
 msgid "Use symbolic folder icons"
 msgstr "Symbolische Ordnersymbole verwenden"
 
-#: thunar/thunar-preferences-dialog.c:790
+#: thunar/thunar-preferences-dialog.c:776
 msgid ""
 "Select this option to use symbolic folder icons instead of regular ones."
 msgstr "Wählen Sie diese Option, um symbolische Ordnersymbole anstelle von regulären Symbolen zu verwenden."
 
-#: thunar/thunar-preferences-dialog.c:799
+#: thunar/thunar-preferences-dialog.c:785
 msgid "Image Preview"
 msgstr "Bildvorschau"
 
-#: thunar/thunar-preferences-dialog.c:815
+#: thunar/thunar-preferences-dialog.c:801
 msgid "Image Preview Mode:"
 msgstr "Bildvorschaumodus:"
 
-#: thunar/thunar-preferences-dialog.c:817
+#: thunar/thunar-preferences-dialog.c:803
 msgid ""
 "- Standalone: Image Preview uses a separate pane\n"
 "- Embedded: Image Preview is embedded in the left sidepane\n"
 msgstr "- Eigenständig: Die Bildvorschau verwendet ein separates Fenster\n- Eingebettet: Die Bildvorschau ist in das linke Seitenfenster eingebettet\n"
 
 #. Behavior
-#: thunar/thunar-preferences-dialog.c:846
+#: thunar/thunar-preferences-dialog.c:832
 msgid "Behavior"
 msgstr "Verhalten"
 
-#: thunar/thunar-preferences-dialog.c:856
+#: thunar/thunar-preferences-dialog.c:842
 msgid "Navigation"
 msgstr "Navigation"
 
-#: thunar/thunar-preferences-dialog.c:872
+#: thunar/thunar-preferences-dialog.c:858
 msgid "_Single click to activate items"
 msgstr "_Einfacher Klick zum Aktivieren von Objekten"
 
-#: thunar/thunar-preferences-dialog.c:897
+#: thunar/thunar-preferences-dialog.c:883
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
 msgstr "Die _Verzögerung auswählen, nach der das Objekt, über dem\nsich der Mauszeiger befindet, automatisch ausgewählt wird:"
 
-#: thunar/thunar-preferences-dialog.c:910
+#: thunar/thunar-preferences-dialog.c:896
 msgid ""
 "When single-click activation is enabled, pausing the mouse pointer over an "
 "item will automatically select that item after the chosen delay. You can "
@@ -2506,91 +2506,91 @@ msgid ""
 "to select the item without activating it."
 msgstr "Hierdurch wird automatisch ein Eintrag ausgewählt, wenn sich der Mauszeiger für die angegebene Dauer über ihm befindet. Sie können dieses Verhalten abstellen, indem Sie den Schieber ganz nach links bewegen. Dieses Verhalten ist nützlich, um Einträge nur auszuwählen anstatt sie zu aktivieren."
 
-#: thunar/thunar-preferences-dialog.c:933
+#: thunar/thunar-preferences-dialog.c:919
 msgid "Disabled"
 msgstr "Deaktiviert"
 
-#: thunar/thunar-preferences-dialog.c:939
+#: thunar/thunar-preferences-dialog.c:925
 msgid "Medium"
 msgstr "Mittel"
 
-#: thunar/thunar-preferences-dialog.c:944
+#: thunar/thunar-preferences-dialog.c:930
 msgid "Long"
 msgstr "Lang"
 
-#: thunar/thunar-preferences-dialog.c:953
+#: thunar/thunar-preferences-dialog.c:939
 msgid "_Double click to activate items"
 msgstr "_Doppelklick zum Aktivieren von Objekten"
 
-#: thunar/thunar-preferences-dialog.c:968
+#: thunar/thunar-preferences-dialog.c:954
 msgid "Tabs and Windows"
 msgstr "Reiter und Fenster"
 
-#: thunar/thunar-preferences-dialog.c:984
+#: thunar/thunar-preferences-dialog.c:970
 msgid "Open folders in new tabs on middle click"
 msgstr "Ordner in neuen Reitern öffnen mit mittlerem Mausklick"
 
-#: thunar/thunar-preferences-dialog.c:990
+#: thunar/thunar-preferences-dialog.c:976
 msgid ""
 "Select this option to open a new tab on middle click instead of a new window"
 msgstr "Wählen Sie diese Option, um einen neuen Reiter beim mittleren Klick anstelle eines neuen Fensters zu öffnen"
 
-#: thunar/thunar-preferences-dialog.c:997
+#: thunar/thunar-preferences-dialog.c:983
 msgid "Open new thunar instances as tabs"
 msgstr "Neue Thunar-Instanzen als Reiter öffnen"
 
-#: thunar/thunar-preferences-dialog.c:1003
+#: thunar/thunar-preferences-dialog.c:989
 msgid ""
 "Select this option to open new thunar instances as tabs in an existing "
 "thunar window"
 msgstr "Wählen Sie diese Option, um neue Thunar-Instanzen als Reiter in einem bestehenden Thunar-Fenster zu öffnen"
 
-#: thunar/thunar-preferences-dialog.c:1011
+#: thunar/thunar-preferences-dialog.c:997
 msgid "Show full directory paths in tab titles"
 msgstr "Vollständige Verzeichnispfade in Reiter-Titeln anzeigen"
 
-#: thunar/thunar-preferences-dialog.c:1017
+#: thunar/thunar-preferences-dialog.c:1003
 msgid ""
 "Select this option to show the full directory path in the tab title instead "
 "of only the directory name"
 msgstr "Wählen Sie diese Option, um den vollständigen Verzeichnispfad im Registerkartentitel anzuzeigen, anstatt nur den Verzeichnisnamen"
 
-#: thunar/thunar-preferences-dialog.c:1024
+#: thunar/thunar-preferences-dialog.c:1010
 msgid "Restore tabs on startup"
 msgstr "Reiter beim Starten wiederherstellen"
 
-#: thunar/thunar-preferences-dialog.c:1030
+#: thunar/thunar-preferences-dialog.c:1016
 msgid ""
 "Select this option to restore your tabs as they were last time you used "
 "Thunar"
 msgstr "Wählen Sie diese Option, um Ihre Reiter so wiederherzustellen, wie sie bei der letzten Verwendung von Thunar waren"
 
-#: thunar/thunar-preferences-dialog.c:1041
+#: thunar/thunar-preferences-dialog.c:1027
 msgid "Context Menu"
 msgstr "Kontextmenü"
 
-#: thunar/thunar-preferences-dialog.c:1057
+#: thunar/thunar-preferences-dialog.c:1043
 msgid "Show action to permanently delete files and folders"
 msgstr "Aktion zum dauerhaften Löschen von Dateien und Ordnern anzeigen"
 
-#: thunar/thunar-preferences-dialog.c:1063
+#: thunar/thunar-preferences-dialog.c:1049
 msgid "Select this option to show the 'Delete' action in the context menu"
 msgstr "Wählen Sie diese Option, um die Aktion 'Löschen' im Kontextmenü anzuzeigen"
 
 #. Advanced
-#: thunar/thunar-preferences-dialog.c:1072
+#: thunar/thunar-preferences-dialog.c:1058
 msgid "Advanced"
 msgstr "Fortgeschritten"
 
-#: thunar/thunar-preferences-dialog.c:1082
+#: thunar/thunar-preferences-dialog.c:1068
 msgid "File Transfer"
 msgstr "Dateiübertragung"
 
-#: thunar/thunar-preferences-dialog.c:1099
+#: thunar/thunar-preferences-dialog.c:1085
 msgid "Transfer files in parallel:"
 msgstr "Dateien gleichzeitig übertragen:"
 
-#: thunar/thunar-preferences-dialog.c:1101
+#: thunar/thunar-preferences-dialog.c:1087
 msgid ""
 "Indicates the behavior during multiple copies:\n"
 "- Always: all copies are done simultaneously\n"
@@ -2600,30 +2600,30 @@ msgid ""
 "- Never: all copies are done sequentially"
 msgstr "Zeigt das Verhalten bei mehreren Kopien an:\n- Immer: alle Kopien werden gleichzeitig durchgeführt\n- Nur lokale Dateien: gleichzeitige Kopien für lokale (nicht entfernte, nicht eingehängte) Dateien\n- Nur lokale Dateien (auf denselben Geräten): Sind alles lokale Dateien, aber auf verschiedenen Geräten (Datenträger, Einhängepunkte) gespeichert, werden die Kopien der Reihe nach gemacht\n- Nur lokale Dateien (Geräte im Leerlauf): Wenn alle Dateien lokal, aber auf ausgelasteten Geräten (Festplatten, Einhängepunkte) liegen, werden die Kopien sequentiell erstellt\n- Niemals: Alle Kopien werden der Reihe nach gemacht"
 
-#: thunar/thunar-preferences-dialog.c:1115
+#: thunar/thunar-preferences-dialog.c:1101
 msgid "Local Files Only (Same Devices)"
 msgstr "Nur lokale Dateien (auf denselben Geräten)"
 
-#: thunar/thunar-preferences-dialog.c:1116
+#: thunar/thunar-preferences-dialog.c:1102
 msgid "Local Files Only (Idle Devices)"
 msgstr "Nur lokale Dateien (Geräte im Leerlauf)"
 
-#: thunar/thunar-preferences-dialog.c:1135
+#: thunar/thunar-preferences-dialog.c:1121
 msgid "Use intermediate file on copy:"
 msgstr "Zwischendatei beim Kopieren verwenden:"
 
-#: thunar/thunar-preferences-dialog.c:1139
+#: thunar/thunar-preferences-dialog.c:1125
 msgid ""
 "Use intermediate file '*.partial~' to copy files. This will prevent "
 "fragmented files. The new file will only be shown after the copy was "
 "successfully finished."
 msgstr "Verwenden Sie zum Kopieren von Dateien die Zwischendatei '*.partial~'. Dies verhindert fragmentierte Dateien. Die neue Datei wird erst angezeigt, wenn der Kopiervorgang erfolgreich abgeschlossen wurde."
 
-#: thunar/thunar-preferences-dialog.c:1166
+#: thunar/thunar-preferences-dialog.c:1152
 msgid "Verify file contents on copy:"
 msgstr "Dateinhalt beim Kopieren überprüfen:"
 
-#: thunar/thunar-preferences-dialog.c:1170
+#: thunar/thunar-preferences-dialog.c:1156
 msgid ""
 "Compare contents of original file and copy in order to detect corruption. "
 "While this will attempt to compare the actual contents that are on the "
@@ -2632,67 +2632,67 @@ msgid ""
 " will increase copy time."
 msgstr "Vergleicht den Inhalt der Originaldatei und der Kopie, um Beschädigungen zu erkennen. Dabei wird zwar versucht, die tatsächlichen Inhalte auf dem Zielmedium zu vergleichen, aber Thunar ist möglicherweise nicht in der Lage, die Zwischenspeicher des Dateisystems zu umgehen, so dass dieser Vergleich möglicherweise nicht alle Fälle von Beschädigungen erkennt. Wenn diese Option aktiviert wird, verlängert sich die Kopierzeit."
 
-#: thunar/thunar-preferences-dialog.c:1200
+#: thunar/thunar-preferences-dialog.c:1186
 msgid "Search"
 msgstr "Suche"
 
-#: thunar/thunar-preferences-dialog.c:1217
+#: thunar/thunar-preferences-dialog.c:1203
 msgid "Include subfolders:"
 msgstr "Unterordner einbeziehen:"
 
-#: thunar/thunar-preferences-dialog.c:1241
+#: thunar/thunar-preferences-dialog.c:1227
 msgid "Folder Permissions"
 msgstr "Ordnerzugriffsrechte"
 
-#: thunar/thunar-preferences-dialog.c:1257
+#: thunar/thunar-preferences-dialog.c:1243
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "Beim Ändern der Ordnerzugriffsrechte kann\ndiese Änderung auch auf den Inhalt des Ordners\nangewandt werden. Das Standardverhalten kann\nhier festgelegt werden:"
 
-#: thunar/thunar-preferences-dialog.c:1269
-#: thunar/thunar-preferences-dialog.c:1315
+#: thunar/thunar-preferences-dialog.c:1255
+#: thunar/thunar-preferences-dialog.c:1301
 msgid "Ask every time"
 msgstr "Jedes Mal fragen"
 
-#: thunar/thunar-preferences-dialog.c:1270
+#: thunar/thunar-preferences-dialog.c:1256
 msgid "Apply to Folder and Contents"
 msgstr "Auf Ordner und Inhalt anwenden"
 
-#: thunar/thunar-preferences-dialog.c:1271
+#: thunar/thunar-preferences-dialog.c:1257
 msgid "Apply to Folder Only"
 msgstr "Nur auf Ordner anwenden"
 
-#: thunar/thunar-preferences-dialog.c:1286
+#: thunar/thunar-preferences-dialog.c:1272
 msgid "Security"
 msgstr "Sicherheit"
 
-#: thunar/thunar-preferences-dialog.c:1303
+#: thunar/thunar-preferences-dialog.c:1289
 msgid "Execute shell scripts:"
 msgstr "Shell-Skripte ausführen:"
 
-#: thunar/thunar-preferences-dialog.c:1338
+#: thunar/thunar-preferences-dialog.c:1324
 msgid "Volume Management"
 msgstr "Datenträgerverwaltung"
 
 #. add check button to enable/disable auto mounting
-#: thunar/thunar-preferences-dialog.c:1355
+#: thunar/thunar-preferences-dialog.c:1341
 msgid "Enable _Volume Management"
 msgstr "Datenträger_verwaltung aktivieren"
 
-#: thunar/thunar-preferences-dialog.c:1374
+#: thunar/thunar-preferences-dialog.c:1360
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">Konfigurieren</a> Sie die Verwaltung von Wechsellaufwerken,\nGeräte und Medien."
 
-#: thunar/thunar-preferences-dialog.c:1388
+#: thunar/thunar-preferences-dialog.c:1374
 #: thunar/thunar-properties-dialog.c:821
 msgid "Missing dependencies"
 msgstr "Fehlende Abhängigkeiten"
 
-#: thunar/thunar-preferences-dialog.c:1396
+#: thunar/thunar-preferences-dialog.c:1382
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2701,34 +2701,34 @@ msgid ""
 msgstr "Es sieht so aus, als ob <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> nicht verfügbar ist.\nWichtige Funktionen wie z.B. die Unterstützung des Papierkorbs,\nWechselmedien und Durchsuchen von entfernten Standorten\nwerden nicht funktionieren. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Weiterlesen]</a>"
 
 #. Shortcuts
-#: thunar/thunar-preferences-dialog.c:1411
+#: thunar/thunar-preferences-dialog.c:1397
 msgid "Shortcuts"
 msgstr "Tastenkürzel"
 
-#: thunar/thunar-preferences-dialog.c:1426
+#: thunar/thunar-preferences-dialog.c:1412
 msgid "Window"
 msgstr "Fenster"
 
-#: thunar/thunar-preferences-dialog.c:1427
+#: thunar/thunar-preferences-dialog.c:1413
 msgid "View"
 msgstr "Ansicht"
 
-#: thunar/thunar-preferences-dialog.c:1429
+#: thunar/thunar-preferences-dialog.c:1415
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:550
 msgid "Launcher"
 msgstr "Starter"
 
-#: thunar/thunar-preferences-dialog.c:1430
+#: thunar/thunar-preferences-dialog.c:1416
 msgid "Status Bar"
 msgstr "Statusleiste"
 
-#: thunar/thunar-preferences-dialog.c:1438
+#: thunar/thunar-preferences-dialog.c:1424
 msgid "The Shortcuts Editor requires a Thunar window to be present."
 msgstr "Für den Lesezeichen-Editor muss ein Thunar-Fenster geöffnet sein."
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: thunar/thunar-preferences-dialog.c:1502
+#: thunar/thunar-preferences-dialog.c:1488
 msgid "Failed to display the volume management settings"
 msgstr "Die Einstellungen der Datenträgerverwaltung konnten nicht geöffnet werden"
 
@@ -3180,122 +3180,130 @@ msgstr[1] "%u Elemente (%s, %s)"
 msgid "(some contents unreadable)"
 msgstr "(einige Inhalte unleserlich)"
 
-#: thunar/thunar-standard-view.c:485
+#: thunar/thunar-standard-view.c:487
 msgid "Select _all Files"
 msgstr "Alles au_swählen"
 
-#: thunar/thunar-standard-view.c:485
+#: thunar/thunar-standard-view.c:487
 msgid "Select all files in this window"
 msgstr "Alle Dateien in diesem Fenster auswählen"
 
-#: thunar/thunar-standard-view.c:486
+#: thunar/thunar-standard-view.c:488
 msgid "Select _by Pattern..."
 msgstr "_Muster auswählen …"
 
-#: thunar/thunar-standard-view.c:486
+#: thunar/thunar-standard-view.c:488
 msgid "Select all files that match a certain pattern"
 msgstr "Alle Dateien auswählen, die einem bestimmten Muster entsprechen"
 
-#: thunar/thunar-standard-view.c:487
+#: thunar/thunar-standard-view.c:489
 msgid "_Invert Selection"
 msgstr "Aus_wahl umkehren"
 
-#: thunar/thunar-standard-view.c:487
+#: thunar/thunar-standard-view.c:489
 msgid "Select all files but not those currently selected"
 msgstr "Alle Dateien auswählen, aber nicht die aktuell ausgewählten"
 
-#: thunar/thunar-standard-view.c:488
+#: thunar/thunar-standard-view.c:490
 msgid "U_nselect all Files"
 msgstr "Auswahl aller Dateie_n aufheben"
 
-#: thunar/thunar-standard-view.c:488
+#: thunar/thunar-standard-view.c:490
 msgid "Unselect all files in this window"
 msgstr "Auswahl aller Dateien in diesem Fenster aufheben"
 
-#: thunar/thunar-standard-view.c:489
+#: thunar/thunar-standard-view.c:491
 msgid "Arran_ge Items"
 msgstr "An_ordnen"
 
-#: thunar/thunar-standard-view.c:490
+#: thunar/thunar-standard-view.c:492
 msgid "_Reversed Order"
 msgstr "Umgekehrte _Reihenfolge"
 
-#: thunar/thunar-standard-view.c:490
+#: thunar/thunar-standard-view.c:492
 msgid "Reverse the sort order"
 msgstr "Umkehrung der Sortierreihenfolge"
 
-#: thunar/thunar-standard-view.c:491
+#: thunar/thunar-standard-view.c:493
 msgid "By _Name"
 msgstr "Nach _Name"
 
-#: thunar/thunar-standard-view.c:491
+#: thunar/thunar-standard-view.c:493
 msgid "Keep items sorted by their name"
 msgstr "Objekte nach Name sortieren"
 
-#: thunar/thunar-standard-view.c:492
+#: thunar/thunar-standard-view.c:494
 msgid "By _Size"
 msgstr "Nach _Größe"
 
-#: thunar/thunar-standard-view.c:492
+#: thunar/thunar-standard-view.c:494
 msgid "Keep items sorted by their size"
 msgstr "Objekte nach Größe sortieren"
 
-#: thunar/thunar-standard-view.c:493
+#: thunar/thunar-standard-view.c:495
 msgid "By _Type"
 msgstr "Nach Datei_typ"
 
-#: thunar/thunar-standard-view.c:493
+#: thunar/thunar-standard-view.c:495
 msgid "Keep items sorted by their type"
 msgstr "Objekte nach Typ in Zeilen sortieren"
 
-#: thunar/thunar-standard-view.c:494
+#: thunar/thunar-standard-view.c:496
 msgid "By _Modification Date"
 msgstr "Nach Änderungsdatu_m"
 
-#: thunar/thunar-standard-view.c:494
+#: thunar/thunar-standard-view.c:496
 msgid "Keep items sorted by their modification date"
 msgstr "Objekte nach Änderungsdatum in Zeilen sortieren"
 
-#: thunar/thunar-standard-view.c:495
+#: thunar/thunar-standard-view.c:497
 msgid "By D_eletion Date"
 msgstr "Nach Lösch_datum"
 
-#: thunar/thunar-standard-view.c:495
+#: thunar/thunar-standard-view.c:497
 msgid "Keep items sorted by their deletion date"
 msgstr "Elemente nach ihrem Löschdatum sortiert halten"
 
-#: thunar/thunar-standard-view.c:496
+#: thunar/thunar-standard-view.c:498
 msgid "_Ascending"
 msgstr "A_ufsteigend"
 
-#: thunar/thunar-standard-view.c:496
+#: thunar/thunar-standard-view.c:498
 msgid "Sort items in ascending order"
 msgstr "Objekte in aufsteigender Richtung sortieren"
 
-#: thunar/thunar-standard-view.c:497
+#: thunar/thunar-standard-view.c:499
 msgid "_Descending"
 msgstr "_Absteigend"
 
-#: thunar/thunar-standard-view.c:497
+#: thunar/thunar-standard-view.c:499
 msgid "Sort items in descending order"
 msgstr "Objekte in absteigender Richtung sortieren"
 
+#: thunar/thunar-standard-view.c:500
+msgid "_Folders First"
+msgstr ""
+
+#: thunar/thunar-standard-view.c:500
+msgid "Sort folders before files"
+msgstr ""
+
 #. TRANSLATORS: You can swap the order of the arguments if required.
-#: thunar/thunar-standard-view.c:1248
+#: thunar/thunar-standard-view.c:1263
 #, c-format
 msgid "Search for '%1$s' in %2$s"
 msgstr "Suche nach '%1$s' in %2$s"
 
-#: thunar/thunar-standard-view.c:1250
+#: thunar/thunar-standard-view.c:1265
 #, c-format
 msgid "Search in %s"
 msgstr "Suchen in %s"
 
-#: thunar/thunar-standard-view.c:1848
+#: thunar/thunar-standard-view.c:1863
 msgid "Loading folder contents..."
 msgstr "Ordnerinhalt wird geladen …"
 
-#: thunar/thunar-standard-view.c:2494
+#: thunar/thunar-standard-view.c:2509
 #, c-format
 msgid "%d file found"
 msgid_plural "%d files found"
@@ -3303,31 +3311,31 @@ msgstr[0] "%d Datei gefunden"
 msgstr[1] "%d Dateien gefunden"
 
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2662 thunar/thunar-window.c:4521
+#: thunar/thunar-standard-view.c:2677 thunar/thunar-window.c:4517
 msgid "Failed to open the home folder"
 msgstr "Der persönliche Ordner konnte nicht geöffnet werden"
 
-#: thunar/thunar-standard-view.c:2740
+#: thunar/thunar-standard-view.c:2755
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "Muster auswählen"
 
-#: thunar/thunar-standard-view.c:2745
+#: thunar/thunar-standard-view.c:2760
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "_Abbrechen"
 
-#: thunar/thunar-standard-view.c:2748
+#: thunar/thunar-standard-view.c:2763
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "Aus_wählen"
 
-#: thunar/thunar-standard-view.c:2762
+#: thunar/thunar-standard-view.c:2777
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "_Muster:"
 
-#: thunar/thunar-standard-view.c:2763
+#: thunar/thunar-standard-view.c:2778
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3337,7 +3345,7 @@ msgstr "Dateien, deren Name mit dem von Ihnen eingegebenen Platzhaltermuster üb
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: thunar/thunar-standard-view.c:2777
+#: thunar/thunar-standard-view.c:2792
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3348,24 +3356,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr "? entspricht genau einem Zeichen,\n* entspricht einer beliebigen Anzahl von Zeichen, einschließlich Null.\n\nZum Beispiel: *.txt, file??.png, pict\n\nOhne die Platzhalter * oder ? passt das Muster an jeder Stelle eines Namens. Mit Platzhaltern muss das Muster sowohl am Anfang als auch am Ende eines Namens übereinstimmen."
 
-#: thunar/thunar-standard-view.c:2781
+#: thunar/thunar-standard-view.c:2796
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr "_Groß-/Kleinschreibung beachten"
 
-#: thunar/thunar-standard-view.c:2782
+#: thunar/thunar-standard-view.c:2797
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr "Wenn diese Option aktiviert ist, muss die Groß- und Kleinschreibung mit dem Muster übereinstimmen.\nBeisp* würde Beispiel.txt entsprechen und nicht beispiel.txt"
 
-#: thunar/thunar-standard-view.c:2787
+#: thunar/thunar-standard-view.c:2802
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr "_Diakritische Zeichen abgleichen"
 
-#: thunar/thunar-standard-view.c:2788
+#: thunar/thunar-standard-view.c:2803
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3374,21 +3382,21 @@ msgstr "Falls aktiviert, sind Akzente erforderlich, um dem Muster zu entsprechen
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: thunar/thunar-standard-view.c:3175
+#: thunar/thunar-standard-view.c:3190
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Ungültiger Dateiname seitens der Quelle"
 
 #. display an error dialog to the user
-#: thunar/thunar-standard-view.c:3371
+#: thunar/thunar-standard-view.c:3386
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Eine Verknüpfung für die Adresse »%s« konnte nicht erzeugt werden"
 
-#: thunar/thunar-standard-view.c:3418
+#: thunar/thunar-standard-view.c:3433
 msgid "Untitled document"
 msgstr "Unbenanntes Dokument"
 
-#: thunar/thunar-standard-view.c:3902 thunar/thunar-window.c:4618
+#: thunar/thunar-standard-view.c:3917 thunar/thunar-window.c:4614
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Der Ordner »%s« konnte nicht geöffnet werden"
@@ -4077,100 +4085,100 @@ msgstr "Suchen mit Catfish …"
 msgid "Restore Selected Items"
 msgstr "Die ausgewählten Elemente wiederherstellen"
 
-#: thunar/thunar-window.c:2981
+#: thunar/thunar-window.c:2983
 msgid "Close tab"
 msgstr "Reiter schließen"
 
-#: thunar/thunar-window.c:3440
+#: thunar/thunar-window.c:3442
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Ort »%s« öffnen"
 
-#: thunar/thunar-window.c:4461
+#: thunar/thunar-window.c:4457
 msgid "Failed to open parent folder"
 msgstr "Der Elternordner konnte nicht geöffnet werden"
 
-#: thunar/thunar-window.c:4592
+#: thunar/thunar-window.c:4588
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Das Verzeichnis »%s« ist nicht vorhanden. Soll es erstellt werden?"
 
-#: thunar/thunar-window.c:4594
+#: thunar/thunar-window.c:4590
 msgid "Create directory"
 msgstr "Neuen Ordner anlegen"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4663
+#: thunar/thunar-window.c:4659
 msgid "Failed to browse the computer"
 msgstr "Der Computer konnte nicht durchsucht werden"
 
 #. display the "About Templates" dialog
-#: thunar/thunar-window.c:4706
+#: thunar/thunar-window.c:4702
 msgid "About Templates"
 msgstr "Über Vorlagen"
 
-#: thunar/thunar-window.c:4728
+#: thunar/thunar-window.c:4724
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Alle Dateien in diesem Ordner erscheinen im Menü »Neues Dokument erstellen«."
 
-#: thunar/thunar-window.c:4735
+#: thunar/thunar-window.c:4731
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Falls Sie häufig eine bestimmte Art von Dokument erstellen, legen Sie eine Kopie davon in diesem Ordner ab. Thunar erstellt einen Eintrag für dieses Dokument in dem Menü »Neues Dokument erstellen«.\n\nSie können diesen Eintrag in dem Menü »Neues Dokument erstellen« wählen, und eine Kopie dieses Dokuments wird im gerade angezeigten Ordner angelegt."
 
-#: thunar/thunar-window.c:4747
+#: thunar/thunar-window.c:4743
 msgid "Do _not display this message again"
 msgstr "Diese Meldung in Zukunft _nicht mehr anzeigen"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4781
+#: thunar/thunar-window.c:4777
 msgid "Failed to open the file system root folder"
 msgstr "Das Basisverzeichnis konnte nicht geöffnet werden"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4817
+#: thunar/thunar-window.c:4813
 msgid "Failed to display `Recent`"
 msgstr "Fehler bei der Anzeige von `Zuletzt verwendet`"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4853
+#: thunar/thunar-window.c:4849
 msgid "Failed to display the contents of the trash can"
 msgstr "Inhalt des Papierkorbs konnte nicht angezeigt werden"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4889
+#: thunar/thunar-window.c:4885
 msgid "Failed to browse the network"
 msgstr "Das Netzwerk konnte nicht durchsucht werden"
 
-#: thunar/thunar-window.c:5032
+#: thunar/thunar-window.c:5028
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar ist eine schnelle und einfach zu bedienende\nDateiverwaltung, für die Xfce-Arbeitsumgebung."
 
-#: thunar/thunar-window.c:6115
+#: thunar/thunar-window.c:6111
 msgid "Select an image to preview"
 msgstr "Wählen Sie ein Bild für die Vorschau aus"
 
-#: thunar/thunar-window.c:6252
+#: thunar/thunar-window.c:6248
 msgid "Failed to launch search with Catfish"
 msgstr "Suche mit Catfish konnte nicht gestartet werden"
 
-#: thunar/thunar-window.c:6583
+#: thunar/thunar-window.c:6579
 msgid "Change the active view type"
 msgstr " Ändern des aktiven Ansichtstyps"
 
 #. add a proxy menu item for the view switcher to be represent in the overflow
 #. menu
-#: thunar/thunar-window.c:6586 thunar/thunar-window.c:6611
+#: thunar/thunar-window.c:6582 thunar/thunar-window.c:6607
 msgid "View Switcher"
 msgstr "Ansichtsschalter"
 
 #. add a proxy menu item for the location bar to represent the bar in the
 #. overflow menu
-#: thunar/thunar-window.c:6776 thunar/thunar-window.c:6781
+#: thunar/thunar-window.c:6772 thunar/thunar-window.c:6777
 msgid "Location Bar"
 msgstr "Pfadleiste"
 
