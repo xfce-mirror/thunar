@@ -6,18 +6,18 @@
 # Translators:
 # Xfce Bot <transifex@xfce.org>, 2024
 # Vincenzo Reale <vinx.reale@gmail.com>, 2024
-# Emanuele Petriglia <inbox@emanuelepetriglia.com>, 2025
 # Dmytro Tokayev, 2025
 # Italang, 2025
+# Emanuele Petriglia <inbox@emanuelepetriglia.com>, 2025
 # 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: thunar.xfce-4-20\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-03-06 12:47+0100\n"
+"POT-Creation-Date: 2025-04-29 12:46+0200\n"
 "PO-Revision-Date: 2024-12-30 16:00+0000\n"
-"Last-Translator: Italang, 2025\n"
+"Last-Translator: Emanuele Petriglia <inbox@emanuelepetriglia.com>, 2025\n"
 "Language-Team: Italian (https://app.transifex.com/xfce/teams/16840/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -70,7 +70,7 @@ msgstr "Naviga alla cartella in cui si trova il file selezionato"
 msgid "Ope_n With Other Application..."
 msgstr "Apri con un'altra applicazio_ne…"
 
-#: thunar/thunar-action-manager.c:328 thunar/thunar-action-manager.c:3433
+#: thunar/thunar-action-manager.c:328 thunar/thunar-action-manager.c:3443
 msgid "Choose another application with which to open the selected file"
 msgstr ""
 "Permette di scegliere un'altra applicazione con cui aprire il file "
@@ -134,7 +134,7 @@ msgstr "_Rinomina…"
 
 #. prepare the menu item
 #: thunar/thunar-action-manager.c:340 thunar/thunar-application.c:2790
-#: plugins/thunar-tpa/thunar-tpa.c:192
+#: plugins/thunar-tpa/thunar-tpa.c:191
 msgid "_Empty Trash"
 msgstr "_Svuota il cestino"
 
@@ -308,7 +308,7 @@ msgstr[2] "Apri %d nuove finestre"
 msgid "_Cancel"
 msgstr "A_nnulla"
 
-#: thunar/thunar-action-manager.c:1152 thunar/thunar-action-manager.c:2047
+#: thunar/thunar-action-manager.c:1152 thunar/thunar-action-manager.c:2057
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Impossibile montare \"%s\""
@@ -321,22 +321,31 @@ msgstr "Impossibile montare \"%s\""
 msgid "Failed to open \"%s\""
 msgstr "Impossibile aprire \"%s\""
 
+#: thunar/thunar-action-manager.c:1534
+msgid "File does not exist anymore"
+msgstr "Il file non esiste più"
+
+#: thunar/thunar-action-manager.c:1535
+#, c-format
+msgid "Failed to open location for \"%s\""
+msgstr "Impossibile aprire la posizione per \"%s\""
+
 #. aka "activate"
-#: thunar/thunar-action-manager.c:1649
+#: thunar/thunar-action-manager.c:1659
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "Apre il file selezionato"
 msgstr[1] "Apre i file selezionati"
 msgstr[2] "Apre i file selezionati"
 
-#: thunar/thunar-action-manager.c:1653
+#: thunar/thunar-action-manager.c:1663
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "Eseguire il file selezionato"
 msgstr[1] "Eseguire i file selezionati"
 msgstr[2] "Eseguire i file selezionati"
 
-#: thunar/thunar-action-manager.c:1662
+#: thunar/thunar-action-manager.c:1672
 #, c-format
 msgid "Open the selected directory in new tab"
 msgid_plural "Open the selected directories in %d new tabs"
@@ -344,7 +353,7 @@ msgstr[0] "Apri la cartella selezionata in una nuova scheda"
 msgstr[1] "Apri le cartelle selezionate in %d nuove schede"
 msgstr[2] "Apri le cartelle selezionate in %d nuove schede"
 
-#: thunar/thunar-action-manager.c:1673
+#: thunar/thunar-action-manager.c:1683
 #, c-format
 msgid "Open the selected directory in new window"
 msgid_plural "Open the selected directories in %d new windows"
@@ -352,32 +361,32 @@ msgstr[0] "Apre la cartella selezionata in nuova finestra"
 msgstr[1] "Apre le cartelle selezionate in %d nuove finestre"
 msgstr[2] "Apre le cartelle selezionate in %d nuove finestre"
 
-#: thunar/thunar-action-manager.c:1711
+#: thunar/thunar-action-manager.c:1721
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Crea un collegamento simbolico per il file selezionato"
 msgstr[1] "Crea un collegamento simbolico per ogni file selezionato"
 msgstr[2] "Crea un collegamento simbolico per ogni file selezionato"
 
-#: thunar/thunar-action-manager.c:1737
+#: thunar/thunar-action-manager.c:1747
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Rinomina il file selezionato"
 msgstr[1] "Rinomina i file selezionati"
 msgstr[2] "Rinomina i file selezionati"
 
-#: thunar/thunar-action-manager.c:1742
+#: thunar/thunar-action-manager.c:1752
 msgid "Bulk _Rename..."
 msgstr "_Rinomina in massa…"
 
-#: thunar/thunar-action-manager.c:1752
+#: thunar/thunar-action-manager.c:1762
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
 msgstr[0] "Ripristina il file selezionato dalla posizione originale"
 msgstr[1] "Ripristina i file selezionati dalla posizione originale"
 msgstr[2] "Ripristina i file selezionati dalla posizione originale"
 
-#: thunar/thunar-action-manager.c:1764
+#: thunar/thunar-action-manager.c:1774
 msgid ""
 "Restore the selected file to its original location and open the location in "
 "a new window/tab"
@@ -394,25 +403,25 @@ msgstr[2] ""
 "Ripristina i file selezionati alle loro posizioni originali e apri le "
 "posizioni in una nuova finestra/scheda"
 
-#: thunar/thunar-action-manager.c:1781
+#: thunar/thunar-action-manager.c:1791
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "Sposta il file selezionato nel cestino"
 msgstr[1] "Sposta i file selezionati nel cestino"
 msgstr[2] "Sposta i file selezionati nel cestino"
 
-#: thunar/thunar-action-manager.c:1798
+#: thunar/thunar-action-manager.c:1808
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "Cancella definitivamente il file selezionato"
 msgstr[1] "Cancella definitivamente i file selezionati"
 msgstr[2] "Cancella definitivamente i file selezionati"
 
-#: thunar/thunar-action-manager.c:1857
+#: thunar/thunar-action-manager.c:1867
 msgid "Cut the selection"
 msgstr "Taglia la selezione"
 
-#: thunar/thunar-action-manager.c:1867
+#: thunar/thunar-action-manager.c:1877
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] ""
@@ -422,11 +431,11 @@ msgstr[1] ""
 msgstr[2] ""
 "Prepara i file selezionati per essere spostati con il comando incolla"
 
-#: thunar/thunar-action-manager.c:1881
+#: thunar/thunar-action-manager.c:1891
 msgid "Copy the selection"
 msgstr "Copia la selezione"
 
-#: thunar/thunar-action-manager.c:1891
+#: thunar/thunar-action-manager.c:1901
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] ""
@@ -436,18 +445,18 @@ msgstr[1] ""
 msgstr[2] ""
 "Prepara i file selezionati per essere copiati con il comando incolla"
 
-#: thunar/thunar-action-manager.c:1914
+#: thunar/thunar-action-manager.c:1924
 msgid "Paste the clipboard"
 msgstr "Incolla gli appunti"
 
-#: thunar/thunar-action-manager.c:2158
+#: thunar/thunar-action-manager.c:2168
 msgid "Side Pane (Add Bookmark)"
 msgid_plural "Side Pane (Add Bookmarks)"
 msgstr[0] "Pannello laterale (aggiungi segnalibro)"
 msgstr[1] "Pannello laterale (aggiungi segnalibri)"
 msgstr[2] "Pannello laterale (aggiungi segnalibri)"
 
-#: thunar/thunar-action-manager.c:2159
+#: thunar/thunar-action-manager.c:2169
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] ""
@@ -457,21 +466,21 @@ msgstr[1] ""
 msgstr[2] ""
 "Aggiungi le cartelle selezionate al pannello laterale delle scorciatoie"
 
-#: thunar/thunar-action-manager.c:2178
+#: thunar/thunar-action-manager.c:2188
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "Scrivania (crea collegamento)"
 msgstr[1] "Scrivania (crea collegamenti)"
 msgstr[2] "Scrivania (crea collegamenti)"
 
-#: thunar/thunar-action-manager.c:2179
+#: thunar/thunar-action-manager.c:2189
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "Crea nella scrivania un collegamento al file selezionato"
 msgstr[1] "Crea nella scrivania dei collegamenti ai file selezionati"
 msgstr[2] "Crea nella scrivania dei collegamenti ai file selezionati"
 
-#: thunar/thunar-action-manager.c:2200 thunar/thunar-action-manager.c:2239
+#: thunar/thunar-action-manager.c:2210 thunar/thunar-action-manager.c:2249
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
@@ -480,30 +489,30 @@ msgstr[1] "Invia i file selezionati a \"%s\""
 msgstr[2] "Invia i file selezionati a \"%s\""
 
 #. ask the user to enter a name for the new folder
-#: thunar/thunar-action-manager.c:2737 thunar/thunar-application.c:2058
+#: thunar/thunar-action-manager.c:2747 thunar/thunar-application.c:2058
 msgid "New Folder"
 msgstr "Nuova cartella"
 
-#: thunar/thunar-action-manager.c:2741 thunar/thunar-application.c:2059
+#: thunar/thunar-action-manager.c:2751 thunar/thunar-application.c:2059
 msgid "Create New Folder"
 msgstr "Crea una nuova cartella"
 
 #. generate a title for the create dialog
-#: thunar/thunar-action-manager.c:2793 thunar/thunar-application.c:2123
+#: thunar/thunar-action-manager.c:2803 thunar/thunar-application.c:2123
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Crea documento dal modello \"%s\""
 
 #. ask the user to enter a name for the new empty file
-#: thunar/thunar-action-manager.c:2809
+#: thunar/thunar-action-manager.c:2819
 msgid "New Empty File"
 msgstr "Nuovo file vuoto"
 
-#: thunar/thunar-action-manager.c:2813
+#: thunar/thunar-action-manager.c:2823
 msgid "New Empty File..."
 msgstr "Nuovo file vuoto…"
 
-#: thunar/thunar-action-manager.c:3034
+#: thunar/thunar-action-manager.c:3044
 #, c-format
 msgid ""
 "No templates installed in\n"
@@ -512,21 +521,21 @@ msgstr ""
 "Nessun modello installato in\n"
 "\"%s\""
 
-#: thunar/thunar-action-manager.c:3047
+#: thunar/thunar-action-manager.c:3057
 msgid "_Empty File"
 msgstr "Fil_e vuoto"
 
-#: thunar/thunar-action-manager.c:3188
+#: thunar/thunar-action-manager.c:3198
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Impossibile espellere \"%s\""
 
-#: thunar/thunar-action-manager.c:3250
+#: thunar/thunar-action-manager.c:3260
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Impossibile smontare \"%s\""
 
-#: thunar/thunar-action-manager.c:3313 thunar/thunar-action-manager.c:3395
+#: thunar/thunar-action-manager.c:3323 thunar/thunar-action-manager.c:3405
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
@@ -534,21 +543,21 @@ msgstr[0] "Usare\"%s\" per aprire il file selezionato"
 msgstr[1] "Usare \"%s\" per aprire i file selezionati"
 msgstr[2] "Usare \"%s\" per aprire i file selezionati"
 
-#: thunar/thunar-action-manager.c:3394
+#: thunar/thunar-action-manager.c:3404
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "Aprire co_n \"%s\""
 
 #. we can only show a generic "Open" action
-#: thunar/thunar-action-manager.c:3415
+#: thunar/thunar-action-manager.c:3425
 msgid "_Open With Default Applications"
 msgstr "Aprire con l'applicazione pre_definita"
 
-#: thunar/thunar-action-manager.c:3416
+#: thunar/thunar-action-manager.c:3426
 msgid "Open the selected files with the default applications"
 msgstr "Apre i file selezionati con l'applicazione predefinita"
 
-#: thunar/thunar-action-manager.c:3432
+#: thunar/thunar-action-manager.c:3442
 msgid "Ope_n With"
 msgstr "Apri co_n"
 
@@ -873,7 +882,7 @@ msgstr "Usa come _predefinita per questo tipo di file"
 
 #. add the "Ok"/"Open" button
 #: thunar/thunar-chooser-dialog.c:318 thunar/thunar-chooser-dialog.c:1318
-#: thunar/thunar-properties-dialog.c:1221 thunar/thunar-window.c:4693
+#: thunar/thunar-properties-dialog.c:1221 thunar/thunar-window.c:4697
 #: plugins/thunar-uca/thunar-uca-editor.c:158
 #: plugins/thunar-uca/thunar-uca-editor.c:456
 msgid "_OK"
@@ -3111,7 +3120,7 @@ msgstr "Proprietà"
 msgid "Link Targets:"
 msgstr "Collegamenti a:"
 
-#: thunar/thunar-properties-dialog.c:1744
+#: thunar/thunar-properties-dialog.c:1746
 msgid "mixed"
 msgstr "vari"
 
@@ -3273,7 +3282,7 @@ msgstr "Esplora il file system"
 msgid "Mount and open %s (%s)"
 msgstr "Monta e apri %s (%s)"
 
-#: thunar/thunar-shortcuts-model.c:715 plugins/thunar-tpa/thunar-tpa.c:313
+#: thunar/thunar-shortcuts-model.c:715 plugins/thunar-tpa/thunar-tpa.c:312
 msgid "Trash is empty"
 msgstr "Cestino vuoto"
 
@@ -3505,7 +3514,7 @@ msgstr[1] "%d file trovati"
 msgstr[2] "%d file trovati"
 
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2657 thunar/thunar-window.c:4506
+#: thunar/thunar-standard-view.c:2657 thunar/thunar-window.c:4510
 msgid "Failed to open the home folder"
 msgstr "Impossibile aprire la cartella home dell'utente"
 
@@ -3602,7 +3611,7 @@ msgstr "Impossibile creare un collegamento per l'URL \"%s\""
 msgid "Untitled document"
 msgstr "Documento senza titolo"
 
-#: thunar/thunar-standard-view.c:3895 thunar/thunar-window.c:4603
+#: thunar/thunar-standard-view.c:3895 thunar/thunar-window.c:4607
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Impossibile aprire la cartella \"%s\""
@@ -3686,7 +3695,7 @@ msgstr "Visibile solo se la barra del menu è nascosta"
 msgid "Verifying file contents..."
 msgstr "Verifica del contenuto del file in corso…"
 
-#: thunar/thunar-transfer-job.c:1139
+#: thunar/thunar-transfer-job.c:1140
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
@@ -3696,12 +3705,12 @@ msgstr ""
 "destinazione per completare l'operazione"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1173
+#: thunar/thunar-transfer-job.c:1174
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Tentativo di ripristino di \"%s\" in corso…"
 
-#: thunar/thunar-transfer-job.c:1202
+#: thunar/thunar-transfer-job.c:1203
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
@@ -3710,35 +3719,35 @@ msgstr ""
 "La cartella \"%s\" non esiste più, ma è necessaria per ripristinare il file "
 "\"%s\" dal cestino"
 
-#: thunar/thunar-transfer-job.c:1229
+#: thunar/thunar-transfer-job.c:1230
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Impossibile ripristinare la cartella \"%s\""
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1314
+#: thunar/thunar-transfer-job.c:1315
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Tentativo di spostamento di \"%s\" in corso…"
 
 #. update progress information
-#: thunar/thunar-transfer-job.c:1397
+#: thunar/thunar-transfer-job.c:1398
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr ""
 "Impossibile spostare \"%s\" direttamente. Raccolta dei file per la copia in "
 "corso…"
 
-#: thunar/thunar-transfer-job.c:1634
+#: thunar/thunar-transfer-job.c:1635
 msgid "Collecting files..."
 msgstr "Raccolta dei file in corso…"
 
-#: thunar/thunar-transfer-job.c:1859
+#: thunar/thunar-transfer-job.c:1860
 #, c-format
 msgid "%s of %s"
 msgstr "%s di %s"
 
-#: thunar/thunar-transfer-job.c:1879
+#: thunar/thunar-transfer-job.c:1880
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
@@ -3746,7 +3755,7 @@ msgstr[0] "%lu ora rimanente (%s/sec)"
 msgstr[1] "%lu ore rimanenti (%s/sec)"
 msgstr[2] "%lu ore rimanenti (%s/sec)"
 
-#: thunar/thunar-transfer-job.c:1885
+#: thunar/thunar-transfer-job.c:1886
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
@@ -3754,7 +3763,7 @@ msgstr[0] "%lu minuto rimanente (%s/sec)"
 msgstr[1] "%lu minuti rimanenti (%s/sec)"
 msgstr[2] "%lu minuti rimanenti (%s/sec)"
 
-#: thunar/thunar-transfer-job.c:1890
+#: thunar/thunar-transfer-job.c:1891
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
@@ -4301,43 +4310,43 @@ msgstr "Cerca con Catfish…"
 msgid "Restore Selected Items"
 msgstr "Ripristina gli elementi selezionati"
 
-#: thunar/thunar-window.c:2951
+#: thunar/thunar-window.c:2955
 msgid "Close tab"
 msgstr "Chiude la scheda"
 
-#: thunar/thunar-window.c:3410
+#: thunar/thunar-window.c:3414
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Apre la posizione \"%s\""
 
-#: thunar/thunar-window.c:4446
+#: thunar/thunar-window.c:4450
 msgid "Failed to open parent folder"
 msgstr "Impossibile aprire la cartella superiore"
 
-#: thunar/thunar-window.c:4577
+#: thunar/thunar-window.c:4581
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "La cartella \"%s\" non esiste. Crearla?"
 
-#: thunar/thunar-window.c:4579
+#: thunar/thunar-window.c:4583
 msgid "Create directory"
 msgstr "Crea cartella"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4648
+#: thunar/thunar-window.c:4652
 msgid "Failed to browse the computer"
 msgstr "Impossibile esplorare il computer"
 
 #. display the "About Templates" dialog
-#: thunar/thunar-window.c:4691
+#: thunar/thunar-window.c:4695
 msgid "About Templates"
 msgstr "Informazioni sui modelli"
 
-#: thunar/thunar-window.c:4713
+#: thunar/thunar-window.c:4717
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Tutti i file in questa cartella appariranno nel menu \"Crea documento\"."
 
-#: thunar/thunar-window.c:4720
+#: thunar/thunar-window.c:4724
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
@@ -4347,31 +4356,31 @@ msgstr ""
 "\n"
 "Selezionando tale voce dal menu \"Crea Documento\", verrà creata una copia del documento nella cartella visualizzata."
 
-#: thunar/thunar-window.c:4732
+#: thunar/thunar-window.c:4736
 msgid "Do _not display this message again"
 msgstr "_Non visualizzare più questo messaggio"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4766
+#: thunar/thunar-window.c:4770
 msgid "Failed to open the file system root folder"
 msgstr "Impossibile aprire la cartella root del file system"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4802
+#: thunar/thunar-window.c:4806
 msgid "Failed to display `Recent`"
 msgstr "Impossibile mostrare `Recenti`"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4838
+#: thunar/thunar-window.c:4842
 msgid "Failed to display the contents of the trash can"
 msgstr "Impossibile mostrare il contenuto del cestino"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4874
+#: thunar/thunar-window.c:4878
 msgid "Failed to browse the network"
 msgstr "Impossibile esplorare la rete"
 
-#: thunar/thunar-window.c:5017
+#: thunar/thunar-window.c:5021
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -4379,27 +4388,27 @@ msgstr ""
 "Thunar è un gestore dei file veloce e facile\n"
 "da usare per l'ambiente grafico Xfce."
 
-#: thunar/thunar-window.c:6091
+#: thunar/thunar-window.c:6095
 msgid "Select an image to preview"
 msgstr "Selezionare un'immagine da vedere in anteprima"
 
-#: thunar/thunar-window.c:6238
+#: thunar/thunar-window.c:6242
 msgid "Failed to launch search with Catfish"
 msgstr "Impossibile avviare la ricerca con Catfish"
 
-#: thunar/thunar-window.c:6569
+#: thunar/thunar-window.c:6573
 msgid "Change the active view type"
 msgstr "Cambia il tipo di visualizzazione attiva"
 
 #. add a proxy menu item for the view switcher to be represent in the overflow
 #. menu
-#: thunar/thunar-window.c:6572 thunar/thunar-window.c:6597
+#: thunar/thunar-window.c:6576 thunar/thunar-window.c:6601
 msgid "View Switcher"
 msgstr "Cambia vista"
 
 #. add a proxy menu item for the location bar to represent the bar in the
 #. overflow menu
-#: thunar/thunar-window.c:6762 thunar/thunar-window.c:6767
+#: thunar/thunar-window.c:6766 thunar/thunar-window.c:6771
 msgid "Location Bar"
 msgstr "Barra della posizione"
 
@@ -4924,13 +4933,13 @@ msgid "Mail Recipient"
 msgstr "Destinatario"
 
 #. tell the user that we failed to connect to the trash
-#: plugins/thunar-tpa/thunar-tpa.c:298 plugins/thunar-tpa/thunar-tpa.c:338
-#: plugins/thunar-tpa/thunar-tpa.c:365 plugins/thunar-tpa/thunar-tpa.c:392
+#: plugins/thunar-tpa/thunar-tpa.c:297 plugins/thunar-tpa/thunar-tpa.c:337
+#: plugins/thunar-tpa/thunar-tpa.c:364 plugins/thunar-tpa/thunar-tpa.c:391
 msgid "Failed to connect to the Trash"
 msgstr "Impossibile connettersi al cestino"
 
 #. tell the user whether the trash is full or empty
-#: plugins/thunar-tpa/thunar-tpa.c:313
+#: plugins/thunar-tpa/thunar-tpa.c:312
 msgid "Trash contains files"
 msgstr "Cestino pieno"
 
