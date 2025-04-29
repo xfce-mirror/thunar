@@ -286,7 +286,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   xfce_titled_dialog_add_action_widget (XFCE_TITLED_DIALOG (dialog), button, GTK_RESPONSE_HELP);
   gtk_widget_show (button);
 
-  notebook = gtk_notebook_new ();
+  notebook = xfce_notebook_new ();
   gtk_container_set_border_width (GTK_CONTAINER (notebook), 6);
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), notebook, TRUE, TRUE, 0);
   gtk_widget_show (notebook);
