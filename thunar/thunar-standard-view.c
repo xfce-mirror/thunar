@@ -100,9 +100,9 @@ enum
 enum
 {
   TARGET_TEXT_URI_LIST,
+  TARGET_APPLICATION_OCTET_STREAM,
   TARGET_XDND_DIRECT_SAVE0,
   TARGET_NETSCAPE_URL,
-  TARGET_APPLICATION_OCTET_STREAM,
 };
 
 
@@ -3574,7 +3574,7 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
       /* reset the state */
       standard_view->priv->drop_occurred = FALSE;
 
-      /* check if we're doing XdndDirectSave */
+      /* try to handle the drop */
       if (G_UNLIKELY (info == TARGET_XDND_DIRECT_SAVE0))
         succeed = thunar_standard_view_receive_xdnd_direct_save (context, x, y, selection_data, standard_view);
       else if (G_UNLIKELY (info == TARGET_NETSCAPE_URL))
@@ -3651,7 +3651,10 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
       /* check if we can handle that drag data (yet?) */
       target = gtk_drag_dest_find_target (view, context, NULL);
 
-      if (target == gdk_atom_intern_static_string ("XdndDirectSave0") || target == gdk_atom_intern_static_string ("_NETSCAPE_URL") || target == gdk_atom_intern_static_string ("application/octet-stream"))
+      if (target == gdk_atom_intern_static_string ("XdndDirectSave0")
+          || target == gdk_atom_intern_static_string ("_NETSCAPE_URL")
+          || target == gdk_atom_intern_static_string ("application/octet-stream")
+          || target == gdk_atom_intern_static_string ("text/uri-list"))
         {
           /* determine the file for the given coordinates */
           file = thunar_standard_view_get_drop_file (standard_view, x, y, &path);
