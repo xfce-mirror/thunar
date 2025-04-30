@@ -219,8 +219,6 @@ thunar_window_start_open_location (ThunarWindow *window,
 static void
 thunar_window_resume_search (ThunarWindow *window,
                              const gchar  *initial_text);
-static gint
-thunar_window_reset_view_type_idle (gpointer window_ptr);
 static gboolean
 thunar_window_action_open_new_tab (ThunarWindow *window,
                                    GtkWidget    *menu_item);
@@ -591,7 +589,6 @@ struct _ThunarWindow
 
   GType   view_type;
   GSList *view_bindings;
-  guint   reset_view_type_idle_id;
 
   /* support for two different styles of location bars */
   GtkWidget    *location_bar;
@@ -1306,7 +1303,6 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect (G_OBJECT (gtk_recent_manager_get_default ()), "changed", G_CALLBACK (thunar_window_recent_reload), window);
 
   window->search_query = NULL;
-  window->reset_view_type_idle_id = 0;
 }
 
 
@@ -1898,12 +1894,6 @@ thunar_window_delete (GtkWidget *widget,
 
   if (window->search_mode == TRUE)
     thunar_window_cancel_search (window);
-
-  if (window->reset_view_type_idle_id != 0)
-    {
-      thunar_window_reset_view_type_idle (window);
-      g_source_remove (window->reset_view_type_idle_id);
-    }
 
   if (window->notebook_left)
     n_tabsl = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_left));
@@ -3671,34 +3661,6 @@ thunar_window_update_search (ThunarWindow *window)
 
 
 
-static gint
-thunar_window_reset_view_type_idle (gpointer window_ptr)
-{
-  ThunarWindow *window = window_ptr;
-  /* null check for the same reason as thunar_standard_view_set_searching */
-  if (window->view != NULL)
-    {
-      if (thunar_standard_view_get_saved_view_type (THUNAR_STANDARD_VIEW (window->view)) != 0)
-        thunar_window_action_view_changed (window, thunar_standard_view_get_saved_view_type (THUNAR_STANDARD_VIEW (window->view)));
-
-      thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), 0);
-    }
-
-  return G_SOURCE_REMOVE;
-}
-
-
-
-static void
-thunar_window_reset_view_type_idle_destroyed (gpointer data)
-{
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (data));
-
-  THUNAR_WINDOW (data)->reset_view_type_idle_id = 0;
-}
-
-
-
 void
 thunar_window_cancel_search (ThunarWindow *window)
 {
@@ -3729,10 +3691,13 @@ thunar_window_cancel_search (ThunarWindow *window)
       thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
     }
 
-  if (window->reset_view_type_idle_id == 0)
+  /* null check for the same reason as thunar_standard_view_set_searching */
+  if (window->view != NULL)
     {
-      window->reset_view_type_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_window_reset_view_type_idle, window,
-                                                         thunar_window_reset_view_type_idle_destroyed);
+      if (thunar_standard_view_get_saved_view_type (THUNAR_STANDARD_VIEW (window->view)) != 0)
+        thunar_window_action_view_changed (window, thunar_standard_view_get_saved_view_type (THUNAR_STANDARD_VIEW (window->view)));
+
+      thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), 0);
     }
 
   g_signal_handlers_block_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
@@ -5555,6 +5520,10 @@ thunar_window_set_current_directory (ThunarWindow *window,
   /* check if we already display the requested directory */
   if (G_UNLIKELY (window->current_directory == current_directory))
     return;
+
+  /* exit search mode if currently enabled */
+  if (window->search_mode == TRUE)
+    thunar_window_cancel_search (window);
 
   /* disconnect from the previously active directory */
   if (G_LIKELY (window->current_directory != NULL))
