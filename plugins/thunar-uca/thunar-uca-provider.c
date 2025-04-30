@@ -381,6 +381,36 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
 
 
 
+static void
+set_folder_quarks_recursive (GList *items)
+{
+  GList *lp;
+  GList *thunarx_menu_items;
+
+  for (lp = g_list_first (items); lp != NULL; lp = lp->next)
+    {
+      ThunarxMenu *item_menu = NULL;
+      g_object_get (G_OBJECT (lp->data), "menu", &item_menu, NULL);
+
+      if (item_menu != NULL)
+        {
+          /* Some submenu found .. lets walk through it recursively */
+          thunarx_menu_items = thunarx_menu_get_items (item_menu);
+          g_object_unref (item_menu);
+
+          if (thunarx_menu_items != NULL)
+            {
+              set_folder_quarks_recursive (thunarx_menu_items);
+              thunarx_menu_item_list_free (thunarx_menu_items);
+            }
+        }
+      else
+        g_object_set_qdata (G_OBJECT (lp->data), thunar_uca_folder_quark, GUINT_TO_POINTER (TRUE));
+    }
+}
+
+
+
 static GList *
 thunar_uca_provider_get_folder_menu_items (ThunarxMenuProvider *menu_provider,
                                            GtkWidget           *window,
@@ -388,7 +418,6 @@ thunar_uca_provider_get_folder_menu_items (ThunarxMenuProvider *menu_provider,
 {
   GList *items;
   GList  files;
-  GList *lp;
 
   /* fake a file list... */
   files.data = folder;
@@ -398,9 +427,8 @@ thunar_uca_provider_get_folder_menu_items (ThunarxMenuProvider *menu_provider,
   /* ...and use the get_file_menu_items() method */
   items = thunarx_menu_provider_get_file_menu_items (menu_provider, window, &files);
 
-  /* mark the menu items, so we can properly detect the working directory */
-  for (lp = items; lp != NULL; lp = lp->next)
-    g_object_set_qdata (G_OBJECT (lp->data), thunar_uca_folder_quark, GUINT_TO_POINTER (TRUE));
+  /* mark the menu items as folder menu items, so we can properly detect the working directory */
+  set_folder_quarks_recursive (items);
 
   return items;
 }
