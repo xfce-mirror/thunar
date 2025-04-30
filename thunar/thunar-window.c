@@ -2625,10 +2625,10 @@ thunar_window_history_changed (ThunarWindow *window)
     return;
 
   if (window->location_toolbar_item_back != NULL)
-    gtk_widget_set_sensitive (window->location_toolbar_item_back, thunar_history_has_back (history));
+    gtk_widget_set_sensitive (window->location_toolbar_item_back, thunar_history_has_back (history) || window->search_mode);
 
   if (window->location_toolbar_item_forward != NULL)
-    gtk_widget_set_sensitive (window->location_toolbar_item_forward, thunar_history_has_forward (history));
+    gtk_widget_set_sensitive (window->location_toolbar_item_forward, thunar_history_has_forward (history) && !window->search_mode);
 }
 
 
@@ -4472,6 +4472,12 @@ thunar_window_action_back (ThunarWindow *window)
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
+  if (window->search_mode)
+    {
+      thunar_window_cancel_search (window);
+      return TRUE;
+    }
+
   history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (window->view));
   thunar_history_action_back (history);
 
@@ -4487,6 +4493,12 @@ thunar_window_action_forward (ThunarWindow *window)
   ThunarHistory *history;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  if (window->search_mode)
+    {
+      thunar_window_cancel_search (window);
+      return TRUE;
+    }
 
   history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (window->view));
   thunar_history_action_forward (history);
@@ -5849,6 +5861,9 @@ thunar_window_history_clicked (GtkWidget      *button,
   gboolean       open_in_tab;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  if (window->search_mode)
+    return FALSE;
 
   history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (window->view));
   if (event->button == 3)
