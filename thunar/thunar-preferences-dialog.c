@@ -395,7 +395,12 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button,
-                               _("Select this option to remember view type, zoom level, sort column, and sort order individually for each folder"));
+                               _("Select this option to remember settings individually for each folder. The following settings are supported:\n"
+                                 "- view type\n"
+                                 "- zoom level\n"
+                                 "- sort column\n"
+                                 "- sort order\n"
+                                 "- sort folders first\n"));
   gtk_widget_set_hexpand (button, TRUE);
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
