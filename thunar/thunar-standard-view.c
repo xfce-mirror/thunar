@@ -115,6 +115,8 @@ thunar_standard_view_constructor (GType                  type,
                                   guint                  n_construct_properties,
                                   GObjectConstructParam *construct_properties);
 static void
+thunar_standard_view_constructed (GObject *object);
+static void
 thunar_standard_view_dispose (GObject *object);
 static void
 thunar_standard_view_finalize (GObject *object);
@@ -671,6 +673,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->constructor = thunar_standard_view_constructor;
+  gobject_class->constructed = thunar_standard_view_constructed;
   gobject_class->dispose = thunar_standard_view_dispose;
   gobject_class->finalize = thunar_standard_view_finalize;
   gobject_class->get_property = thunar_standard_view_get_property;
@@ -1126,6 +1129,39 @@ thunar_standard_view_constructor (GType                  type,
 
   /* done, we have a working object */
   return object;
+}
+
+
+
+static void
+thunar_standard_view_constructed (GObject *object)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (object);
+
+  standard_view->priv->row_deleted_id = g_signal_connect_after (G_OBJECT (standard_view->model), "row-deleted", G_CALLBACK (thunar_standard_view_select_after_row_deleted), standard_view);
+  g_signal_connect (G_OBJECT (standard_view->model), "rows-reordered", G_CALLBACK (thunar_standard_view_rows_reordered), standard_view);
+  g_signal_connect (G_OBJECT (standard_view->model), "error", G_CALLBACK (thunar_standard_view_error), standard_view);
+  g_signal_connect (G_OBJECT (standard_view->model), "search-done", G_CALLBACK (thunar_standard_view_search_done), standard_view);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-case-sensitive", G_OBJECT (standard_view->model), "case-sensitive", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-style", G_OBJECT (standard_view->model), "date-style", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-custom-style", G_OBJECT (standard_view->model), "date-custom-style", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-hidden-last", G_OBJECT (standard_view->model), "hidden-last", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-file-size-binary", G_OBJECT (standard_view->model), "file-size-binary", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-folder-item-count", G_OBJECT (standard_view->model), "folder-item-count", G_BINDING_SYNC_CREATE);
+
+  /* be sure to update the selection whenever the folder changes */
+  g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::folder", G_CALLBACK (thunar_standard_view_selection_changed), standard_view);
+
+  /* be sure to update the statusbar text whenever the number of files in our model changes. */
+  g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::num-files", G_CALLBACK (thunar_standard_view_update_statusbar_text), standard_view);
+
+  /* be sure to update the statusbar text whenever the file-size-binary property changes */
+  g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::file-size-binary", G_CALLBACK (thunar_standard_view_update_statusbar_text), standard_view);
+
+  /* pass down the "loading" property into the new model */
+  g_object_bind_property (standard_view->model, "loading",
+                          standard_view, "loading",
+                          G_BINDING_SYNC_CREATE);
 }
 
 
@@ -5000,30 +5036,6 @@ thunar_standard_view_set_model (ThunarStandardView *standard_view)
     }
 
   standard_view->model = g_object_new (standard_view->priv->model_type, NULL);
-  standard_view->priv->row_deleted_id = g_signal_connect_after (G_OBJECT (standard_view->model), "row-deleted", G_CALLBACK (thunar_standard_view_select_after_row_deleted), standard_view);
-  g_signal_connect (G_OBJECT (standard_view->model), "rows-reordered", G_CALLBACK (thunar_standard_view_rows_reordered), standard_view);
-  g_signal_connect (G_OBJECT (standard_view->model), "error", G_CALLBACK (thunar_standard_view_error), standard_view);
-  g_signal_connect (G_OBJECT (standard_view->model), "search-done", G_CALLBACK (thunar_standard_view_search_done), standard_view);
-  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-case-sensitive", G_OBJECT (standard_view->model), "case-sensitive", G_BINDING_SYNC_CREATE);
-  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-style", G_OBJECT (standard_view->model), "date-style", G_BINDING_SYNC_CREATE);
-  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-custom-style", G_OBJECT (standard_view->model), "date-custom-style", G_BINDING_SYNC_CREATE);
-  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-hidden-last", G_OBJECT (standard_view->model), "hidden-last", G_BINDING_SYNC_CREATE);
-  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-file-size-binary", G_OBJECT (standard_view->model), "file-size-binary", G_BINDING_SYNC_CREATE);
-  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-folder-item-count", G_OBJECT (standard_view->model), "folder-item-count", G_BINDING_SYNC_CREATE);
-
-  /* be sure to update the selection whenever the folder changes */
-  g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::folder", G_CALLBACK (thunar_standard_view_selection_changed), standard_view);
-
-  /* be sure to update the statusbar text whenever the number of files in our model changes. */
-  g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::num-files", G_CALLBACK (thunar_standard_view_update_statusbar_text), standard_view);
-
-  /* be sure to update the statusbar text whenever the file-size-binary property changes */
-  g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::file-size-binary", G_CALLBACK (thunar_standard_view_update_statusbar_text), standard_view);
-
-  /* pass down the "loading" property into the new model */
-  g_object_bind_property (standard_view->model, "loading",
-                          standard_view, "loading",
-                          G_BINDING_SYNC_CREATE);
 }
 
 
