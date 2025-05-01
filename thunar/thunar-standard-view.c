@@ -633,6 +633,13 @@ thunar_standard_view_action_sort_folders_first (ThunarStandardView *standard_vie
 
   g_object_get (standard_view->model, "folders-first", &folders_first, NULL);
   g_object_set (standard_view->model, "folders-first", !folders_first, NULL);
+  if (standard_view->priv->directory_specific_settings)
+    {
+      if (folders_first)
+        thunar_file_set_metadata_setting (standard_view->priv->current_directory, "thunar-sort-folders-first", "FALSE", TRUE);
+      else
+        thunar_file_set_metadata_setting (standard_view->priv->current_directory, "thunar-sort-folders-first", "TRUE", TRUE);
+    }
   return TRUE;
 }
 
@@ -2054,6 +2061,7 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
 {
   gchar          *sort_column_name;
   gchar          *sort_order_name;
+  gchar          *sort_folders_first_name;
   gchar          *zoom_level_name;
   ThunarColumn    sort_column;
   GtkSortType     sort_order;
@@ -2066,6 +2074,7 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
   /* get the stored directory specific settings (if any) */
   sort_column_name = thunar_file_get_metadata_setting (directory, "thunar-sort-column");
   sort_order_name = thunar_file_get_metadata_setting (directory, "thunar-sort-order");
+  sort_folders_first_name = thunar_file_get_metadata_setting (directory, "thunar-sort-folders-first");
 
   zoom_level_attribute_name = g_strdup_printf ("thunar-zoom-level-%s", G_OBJECT_TYPE_NAME (standard_view));
   zoom_level_name = thunar_file_get_metadata_setting (directory, zoom_level_attribute_name);
@@ -2074,6 +2083,17 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
   /* View specific zoom level was added later on .. fall back to shared zoom-level if not found */
   if (zoom_level_name == NULL)
     zoom_level_name = thunar_file_get_metadata_setting (directory, "thunar-zoom-level");
+
+  /* apply the "sort-folders-first" preference, if found */
+  if (sort_folders_first_name != NULL)
+    {
+      if (g_strcmp0 (sort_folders_first_name, "TRUE") == 0)
+        g_object_set (G_OBJECT (standard_view->model), "folders-first", TRUE, NULL);
+      else
+        g_object_set (G_OBJECT (standard_view->model), "folders-first", FALSE, NULL);
+
+      g_free (sort_folders_first_name);
+    }
 
   /* convert the sort column name to a value */
   if (sort_column_name != NULL)
@@ -2114,7 +2134,6 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), sort_column, sort_order);
   standard_view->priv->sort_column = sort_column;
   standard_view->priv->sort_order = sort_order;
-
   /* request a selection update */
   thunar_standard_view_selection_changed (standard_view);
 
