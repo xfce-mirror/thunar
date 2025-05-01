@@ -215,8 +215,8 @@ thunar_gtk_menu_popup_at_pointer (GtkMenu  *menu,
   GdkDevice   *device;
   GdkRectangle rect = { 0, 0, 1, 1 };
 
-  /* fallback if event not set */
-  if (event == NULL)
+  /* fallback if event not set or event not holding a GdkSeat */
+  if (event == NULL || gdk_event_get_seat (event) == NULL)
     {
       gtk_menu_popup_at_pointer (menu, event);
       return;
