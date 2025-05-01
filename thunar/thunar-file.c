@@ -157,7 +157,8 @@ thunar_file_reset_thumbnail (ThunarFile         *file,
 static GRecMutex G_LOCK_NAME (file_cache_mutex);
 
 /* In order to limit the number of total file watches */
-#define THUNAR_FILE_WATCH_MAX 5000
+/* Note that a global, system-wide limit is defined in '/proc/sys/fs/inotify/max_user_watches' */
+#define THUNAR_FILE_WATCH_MAX 10000
 static gint thunar_file_watch_total_count = 0;
 
 #define G_REC_LOCK(name) g_rec_mutex_lock (&G_LOCK_NAME (name))
