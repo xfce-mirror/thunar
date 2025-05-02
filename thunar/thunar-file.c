@@ -2148,7 +2148,8 @@ thunar_file_accepts_drop (ThunarFile     *file,
                 {
                   /* default to copy and get outta here */
                   suggested_action = GDK_ACTION_COPY;
-                  g_object_unref (parent_thunar_file);
+                  if (parent_thunar_file != NULL)
+                    g_object_unref (parent_thunar_file);
                   break;
                 }
               if (parent_thunar_file != NULL)
