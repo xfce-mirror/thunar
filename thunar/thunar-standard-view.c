@@ -2146,6 +2146,7 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), sort_column, sort_order);
   standard_view->priv->sort_column = sort_column;
   standard_view->priv->sort_order = sort_order;
+
   /* request a selection update */
   thunar_standard_view_selection_changed (standard_view);
 
