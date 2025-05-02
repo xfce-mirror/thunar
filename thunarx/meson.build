@@ -49,14 +49,12 @@ libthunarx_sources = [
   'thunarx-renamer.c',
 ]
 
-libthunarx_sources += custom_target(
-  'thunarx-visibility.h',
+libthunarx_sources += configure_file(
   input: 'thunarx.symbols',
   output: 'thunarx-visibility.h',
   command: [xdt_gen_visibility, '--kind=header', '@INPUT@', '@OUTPUT@'],
 )
-libthunarx_sources += custom_target(
-  'thunarx-visibility.c',
+libthunarx_sources += configure_file(
   input: 'thunarx.symbols',
   output: 'thunarx-visibility.c',
   command: [xdt_gen_visibility, '--kind=source', '@INPUT@', '@OUTPUT@'],
