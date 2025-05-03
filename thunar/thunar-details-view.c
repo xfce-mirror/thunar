@@ -32,6 +32,9 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#define CURSOR_UP -1
+#define CURSOR_DOWN 1
+
 
 
 /* Property identifiers */
@@ -997,133 +1000,27 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
 
 
 static gboolean
-tree_view_set_cursor_if_file_not_null (GtkTreeView  *tree_view,
-                                       GtkTreeModel *model,
-                                       GtkTreePath  *path)
+tree_view_move_cursor (GtkTreeView  *tree_view,
+                       GtkTreeModel *model,
+                       gint          count)
 {
-  ThunarFile *file;
-  GtkTreeIter iter;
-
+  gboolean    ret;
+  gboolean    loading;
   /* sets the cursor if file != NULL for the iter;
    * if cursor set then TRUE is returned; FALSE otherwise */
 
   _thunar_return_val_if_fail (GTK_IS_TREE_VIEW (tree_view), FALSE);
   _thunar_return_val_if_fail (GTK_IS_TREE_MODEL (model), FALSE);
-  _thunar_return_val_if_fail (path != NULL, FALSE);
 
-  if (!gtk_tree_model_get_iter (model, &iter, path))
+  g_object_get (model, "loading", &loading, NULL);
+
+  /* Only possible to navigate if the view is fully loaded */
+  if (loading)
     return FALSE;
 
-  file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &iter);
+  g_signal_emit_by_name (tree_view, "move-cursor", GTK_MOVEMENT_DISPLAY_LINES, count, &ret);
 
-  if (file == NULL)
-    return FALSE;
-
-  g_object_unref (file);
-  gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
-  return TRUE;
-}
-
-
-
-static void
-thunar_details_view_key_up_set_cursor (GtkTreeView  *tree_view,
-                                       GtkTreeModel *model,
-                                       GtkTreePath  *cursor)
-{
-  GtkTreeIter iter;
-  gint       *indices;
-  gint        depth;
-
-  _thunar_return_if_fail (GTK_IS_TREE_VIEW (tree_view));
-  _thunar_return_if_fail (GTK_IS_TREE_MODEL (model));
-  _thunar_return_if_fail (cursor != NULL);
-
-  if (!gtk_tree_path_prev (cursor))
-    {
-      /* if we are at the first most toplevel node we have nothing do */
-      if (gtk_tree_path_get_depth (cursor) <= 1)
-        return;
-
-      /* it might be the first child of an expanded node;
-       * in this case we want to point to the parent */
-      gtk_tree_path_up (cursor);
-
-      /* the parent path we got now should be perfectly fine;
-       * but just in case setting the cursor fails
-       * we go and set the prev node of the parent */
-      if (G_UNLIKELY (!tree_view_set_cursor_if_file_not_null (tree_view, model, cursor)))
-        thunar_details_view_key_up_set_cursor (tree_view, model, cursor);
-
-      return;
-    }
-
-  /* set cursor if no child visible */
-  if (!gtk_tree_view_row_expanded (tree_view, cursor))
-    {
-      /* If we are at a row that is loading set cursor will fail;
-       * try the previous node */
-      if (G_UNLIKELY (!tree_view_set_cursor_if_file_not_null (tree_view, model, cursor)))
-        thunar_details_view_key_up_set_cursor (tree_view, model, cursor);
-      return;
-    }
-
-  /* get the iter for the cursor */
-  if (G_UNLIKELY (!gtk_tree_model_get_iter (model, &iter, cursor)))
-    return;
-
-  /* set cursor to the last visible child;
-   * Works recursively to point to the truly last child */
-  gtk_tree_path_down (cursor);
-  indices = gtk_tree_path_get_indices_with_depth (cursor, &depth);
-
-  /* point to the last child */
-  if (depth > 0)
-    indices[depth - 1] = gtk_tree_model_iter_n_children (model, &iter);
-
-  /* If we are at a row that is loading set cursor will fail;
-   * try the previous node */
-  if (G_UNLIKELY (!tree_view_set_cursor_if_file_not_null (tree_view, model, cursor)))
-    thunar_details_view_key_up_set_cursor (tree_view, model, cursor);
-}
-
-
-
-static void
-thunar_details_view_key_down_set_cursor (GtkTreeView  *tree_view,
-                                         GtkTreeModel *model,
-                                         GtkTreePath  *cursor)
-{
-  _thunar_return_if_fail (GTK_IS_TREE_VIEW (tree_view));
-  _thunar_return_if_fail (GTK_IS_TREE_MODEL (model));
-  _thunar_return_if_fail (cursor != NULL);
-
-  if (!gtk_tree_view_row_expanded (tree_view, cursor))
-    {
-      gtk_tree_path_next (cursor);
-
-      if (tree_view_set_cursor_if_file_not_null (tree_view, model, cursor)
-          || gtk_tree_path_get_depth (cursor) <= 1)
-        return;
-
-      if (!gtk_tree_path_up (cursor))
-        return;
-
-      gtk_tree_path_next (cursor);
-
-      /* If we are at a row that is loading set cursor will fail;
-       * try the next node */
-      if (G_UNLIKELY (!tree_view_set_cursor_if_file_not_null (tree_view, model, cursor)))
-        thunar_details_view_key_down_set_cursor (tree_view, model, cursor);
-
-      return;
-    }
-  gtk_tree_path_down (cursor);
-
-  /* If we are at a row that is loading set cursor will fail;
-   * try the next node */
-  if (G_UNLIKELY (!tree_view_set_cursor_if_file_not_null (tree_view, model, cursor)))
-    thunar_details_view_key_down_set_cursor (tree_view, model, cursor);
+  return ret;
 }
 
 
@@ -1160,13 +1057,13 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
     {
     case GDK_KEY_Up:
     case GDK_KEY_KP_Up:
-      thunar_details_view_key_up_set_cursor (tree_view, model, path);
+      tree_view_move_cursor (tree_view, model, CURSOR_UP);
       stopPropagation = TRUE;
       break;
 
     case GDK_KEY_Down:
     case GDK_KEY_KP_Down:
-      thunar_details_view_key_down_set_cursor (tree_view, model, path);
+      tree_view_move_cursor (tree_view, model, CURSOR_DOWN);
       stopPropagation = TRUE;
       break;
 
