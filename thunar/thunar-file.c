@@ -5383,6 +5383,9 @@ thunar_file_update_thumbnail (ThunarFile          *file,
     {
       g_free (file->thumbnail_path[size]);
       file->thumbnail_path[size] = NULL;
+      // TODO Skip clearing the cache and emitting the signal (to avoid unneccessary refresh).
+      // TODO Does this have any negative side effect?
+      return;
     }
 
   if (state == THUNAR_FILE_THUMB_STATE_READY)
