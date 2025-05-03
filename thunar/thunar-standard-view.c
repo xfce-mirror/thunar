@@ -3644,17 +3644,19 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
   GtkTreePath  *path;
   ThunarFile   *file = NULL;
   GdkAtom       target;
+  GdkWindow    *source_window;
 
   /* request the drop data on-demand (if we don't have it already) */
   if (G_UNLIKELY (!standard_view->priv->drop_data_ready))
     {
       /* check if we can handle that drag data (yet?) */
       target = gtk_drag_dest_find_target (view, context, NULL);
+      source_window = gdk_drag_context_get_source_window (context);
 
       if (target == gdk_atom_intern_static_string ("XdndDirectSave0")
           || target == gdk_atom_intern_static_string ("_NETSCAPE_URL")
           || target == gdk_atom_intern_static_string ("application/octet-stream")
-          || target == gdk_atom_intern_static_string ("text/uri-list"))
+          || (target != GDK_NONE && source_window != NULL && !gdk_window_is_visible (source_window))) /* VBox DnD detection */
         {
           /* determine the file for the given coordinates */
           file = thunar_standard_view_get_drop_file (standard_view, x, y, &path);
