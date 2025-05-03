@@ -384,6 +384,7 @@ struct _ThunarStandardViewPrivate
 
   /* zoom-level support */
   ThunarZoomLevel zoom_level;
+  GBinding       *zoom_level_binding;
 
   /* directory specific settings */
   gboolean directory_specific_settings;
@@ -945,6 +946,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
 
   standard_view->priv->selection_changed_timeout_source = 0;
   standard_view->priv->selection_changed_requested = FALSE;
+  standard_view->priv->zoom_level_binding = NULL;
 
   /* allocate the scroll_to_files mapping (directory GFile -> first visible child GFile) */
   standard_view->priv->scroll_to_files = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, g_object_unref, g_object_unref);
@@ -1039,13 +1041,6 @@ thunar_standard_view_constructor (GType                  type,
   /* cast to standard_view for convenience */
   standard_view = THUNAR_STANDARD_VIEW (object);
 
-  /* setup the default zoom-level, determined from the "last-<view>-zoom-level" preference */
-  g_object_get (G_OBJECT (standard_view->preferences), THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->zoom_level_property_name, &zoom_level, NULL);
-  thunar_view_set_zoom_level (THUNAR_VIEW (standard_view), zoom_level);
-
-  /* save the "zoom-level" as "last-<view>-zoom-level" whenever the user changes the zoom level */
-  g_object_bind_property (object, "zoom-level", G_OBJECT (standard_view->preferences), THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->zoom_level_property_name, G_BINDING_DEFAULT);
-
   /* determine the real view widget (treeview or iconview) */
   view = gtk_bin_get_child (GTK_BIN (object));
 
@@ -1088,6 +1083,16 @@ thunar_standard_view_constructor (GType                  type,
   g_object_bind_property (standard_view->preferences, "misc-directory-specific-settings",
                           standard_view, "directory-specific-settings",
                           G_BINDING_SYNC_CREATE);
+
+  if (!standard_view->priv->directory_specific_settings)
+    {
+      /* setup the default zoom-level, determined from the "last-<view>-zoom-level" preference */
+      g_object_get (G_OBJECT (standard_view->preferences), THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->zoom_level_property_name, &zoom_level, NULL);
+      thunar_view_set_zoom_level (THUNAR_VIEW (standard_view), zoom_level);
+
+      /* save the "zoom-level" as "last-<view>-zoom-level" whenever the user changes the zoom level */
+      standard_view->priv->zoom_level_binding = g_object_bind_property (object, "zoom-level", G_OBJECT (standard_view->preferences), THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->zoom_level_property_name, G_BINDING_DEFAULT);
+    }
 
   /* done, we have a working object */
   return object;
@@ -2096,12 +2101,19 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
       g_free (sort_order_name);
     }
 
-  /* convert the zoom level name to a value */
   if (zoom_level_name != NULL)
     {
+      /* apply directory specific zoom level, if available */
       if (thunar_zoom_level_value_from_string (zoom_level_name, &zoom_level) == TRUE)
         thunar_standard_view_set_zoom_level (THUNAR_VIEW (standard_view), zoom_level);
       g_free (zoom_level_name);
+    }
+  else
+    {
+      /* use view specific default zoom level otherwise */
+      g_object_get (G_OBJECT (standard_view->preferences), THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->zoom_level_property_name, &zoom_level, NULL);
+      standard_view->priv->zoom_level = zoom_level;
+      g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_ZOOM_LEVEL]);
     }
 
   /* thunar_standard_view_sort_column_changed saves the directory specific settings to the directory, but we do not
@@ -2143,11 +2155,16 @@ thunar_standard_view_set_directory_specific_settings (ThunarStandardView *standa
     {
       /* apply the directory specific settings (if any) */
       thunar_standard_view_apply_directory_specific_settings (standard_view, standard_view->priv->current_directory);
+
+      if (standard_view->priv->zoom_level_binding != NULL)
+        g_binding_unbind (standard_view->priv->zoom_level_binding);
+      standard_view->priv->zoom_level_binding = NULL;
     }
   else /* apply the shared settings to the current view */
     {
-      ThunarColumn sort_column;
-      GtkSortType  sort_order;
+      ThunarColumn    sort_column;
+      GtkSortType     sort_order;
+      ThunarZoomLevel zoom_level;
 
       /* apply the last sort column and sort order */
       g_object_get (G_OBJECT (standard_view->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
@@ -2156,6 +2173,13 @@ thunar_standard_view_set_directory_specific_settings (ThunarStandardView *standa
       gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), sort_column, sort_order);
       standard_view->priv->sort_column = sort_column;
       standard_view->priv->sort_order = sort_order;
+
+      /* use view specific default zoom level otherwise */
+      g_object_get (G_OBJECT (standard_view->preferences), THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->zoom_level_property_name, &zoom_level, NULL);
+      thunar_standard_view_set_zoom_level (THUNAR_VIEW (standard_view), zoom_level);
+
+      /* save the "zoom-level" as "last-<view>-zoom-level" whenever the user changes the zoom level */
+      standard_view->priv->zoom_level_binding = g_object_bind_property (G_OBJECT (standard_view), "zoom-level", G_OBJECT (standard_view->preferences), THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->zoom_level_property_name, G_BINDING_DEFAULT);
     }
 }
 
