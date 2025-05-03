@@ -219,8 +219,6 @@ thunar_window_start_open_location (ThunarWindow *window,
 static void
 thunar_window_resume_search (ThunarWindow *window,
                              const gchar  *initial_text);
-static gint
-thunar_window_reset_view_type_idle (gpointer window_ptr);
 static gboolean
 thunar_window_action_open_new_tab (ThunarWindow *window,
                                    GtkWidget    *menu_item);
@@ -591,7 +589,6 @@ struct _ThunarWindow
 
   GType   view_type;
   GSList *view_bindings;
-  guint   reset_view_type_idle_id;
 
   /* support for two different styles of location bars */
   GtkWidget    *location_bar;
@@ -1306,7 +1303,6 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect (G_OBJECT (gtk_recent_manager_get_default ()), "changed", G_CALLBACK (thunar_window_recent_reload), window);
 
   window->search_query = NULL;
-  window->reset_view_type_idle_id = 0;
 }
 
 
@@ -1887,23 +1883,19 @@ thunar_window_delete (GtkWidget *widget,
                       GdkEvent  *event,
                       gpointer   data)
 {
-  gboolean      confirm_close_multiple_tabs, do_not_ask_again, restore_tabs;
-  gint          response, n_tabs, n_tabsl = 0, n_tabsr = 0;
-  gint          current_page_left = 0, current_page_right = 0;
   ThunarWindow *window = THUNAR_WINDOW (widget);
+  gboolean      confirm_close_multiple_tabs, do_not_ask_again, restore_tabs;
+  gint          response = -1, n_tabs, n_tabsl = 0, n_tabsr = 0;
+  gint          current_page_left = 0, current_page_right = 0;
   gchar       **tab_uris_left;
   gchar       **tab_uris_right;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (widget), FALSE);
 
-  if (window->search_mode == TRUE)
-    thunar_window_cancel_search (window);
-
-  if (window->reset_view_type_idle_id != 0)
-    {
-      thunar_window_reset_view_type_idle (window);
-      g_source_remove (window->reset_view_type_idle_id);
-    }
+  g_object_get (G_OBJECT (window->preferences),
+                "misc-confirm-close-multiple-tabs", &confirm_close_multiple_tabs,
+                "last-restore-tabs", &restore_tabs,
+                NULL);
 
   if (window->notebook_left)
     n_tabsl = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_left));
@@ -1911,8 +1903,41 @@ thunar_window_delete (GtkWidget *widget,
     n_tabsr = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_right));
   n_tabs = n_tabsl + n_tabsr;
 
+  /* count tabs while taking split view mode into account */
+  if ((thunar_window_split_view_is_active (window) && n_tabs < 3) || n_tabs < 2)
+    confirm_close_multiple_tabs = FALSE;
+
+  /* check if the user has enabled confirmation of closing multiple tabs */
+  if (confirm_close_multiple_tabs)
+    {
+      /* ask the user for confirmation */
+      do_not_ask_again = FALSE;
+      response = xfce_dialog_confirm_close_tabs (GTK_WINDOW (widget), n_tabs, TRUE, &do_not_ask_again);
+
+      if (response == GTK_RESPONSE_YES || response == GTK_RESPONSE_CLOSE)
+        {
+          /* if the user requested not to be asked again, store this preference */
+          if (do_not_ask_again)
+            g_object_set (G_OBJECT (window->preferences), "misc-confirm-close-multiple-tabs", FALSE, NULL);
+        }
+      else
+        {
+          /* dialog has been canceled or destroyed */
+          return TRUE;
+        }
+    }
+
+  if (window->search_mode == TRUE)
+    thunar_window_cancel_search (window);
+
+  /* close active tab in active notebook */
+  if (response == GTK_RESPONSE_CLOSE)
+    {
+      gtk_notebook_remove_page (GTK_NOTEBOOK (window->notebook_selected), gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected)));
+      return TRUE;
+    }
+
   /* save open tabs */
-  g_object_get (G_OBJECT (window->preferences), "last-restore-tabs", &restore_tabs, NULL);
   if (restore_tabs)
     {
       tab_uris_left = g_new0 (gchar *, n_tabsl + 1);
@@ -1950,41 +1975,7 @@ thunar_window_delete (GtkWidget *widget,
       g_strfreev (tab_uris_right);
     }
 
-  /* if we don't have muliple tabs in one of the notebooks then just exit */
-  if (thunar_window_split_view_is_active (window))
-    {
-      if (n_tabs < 3)
-        return FALSE;
-    }
-  else
-    {
-      if (n_tabs < 2)
-        return FALSE;
-    }
-
-  /* check if the user has disabled confirmation of closing multiple tabs, and just exit if so */
-  g_object_get (G_OBJECT (window->preferences),
-                "misc-confirm-close-multiple-tabs", &confirm_close_multiple_tabs,
-                NULL);
-  if (!confirm_close_multiple_tabs)
-    return FALSE;
-
-  /* ask the user for confirmation */
-  do_not_ask_again = FALSE;
-  response = xfce_dialog_confirm_close_tabs (GTK_WINDOW (widget), n_tabs, TRUE, &do_not_ask_again);
-
-  /* if the user requested not to be asked again, store this preference */
-  if (response != GTK_RESPONSE_CANCEL && do_not_ask_again)
-    g_object_set (G_OBJECT (window->preferences), "misc-confirm-close-multiple-tabs", FALSE, NULL);
-
-  if (response == GTK_RESPONSE_YES)
-    return FALSE;
-
-  /* close active tab in active notebook */
-  if (response == GTK_RESPONSE_CLOSE)
-    gtk_notebook_remove_page (GTK_NOTEBOOK (window->notebook_selected), gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected)));
-
-  return TRUE;
+  return FALSE;
 }
 
 
@@ -3671,34 +3662,6 @@ thunar_window_update_search (ThunarWindow *window)
 
 
 
-static gint
-thunar_window_reset_view_type_idle (gpointer window_ptr)
-{
-  ThunarWindow *window = window_ptr;
-  /* null check for the same reason as thunar_standard_view_set_searching */
-  if (window->view != NULL)
-    {
-      if (thunar_standard_view_get_saved_view_type (THUNAR_STANDARD_VIEW (window->view)) != 0)
-        thunar_window_action_view_changed (window, thunar_standard_view_get_saved_view_type (THUNAR_STANDARD_VIEW (window->view)));
-
-      thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), 0);
-    }
-
-  return G_SOURCE_REMOVE;
-}
-
-
-
-static void
-thunar_window_reset_view_type_idle_destroyed (gpointer data)
-{
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (data));
-
-  THUNAR_WINDOW (data)->reset_view_type_idle_id = 0;
-}
-
-
-
 void
 thunar_window_cancel_search (ThunarWindow *window)
 {
@@ -3729,10 +3692,13 @@ thunar_window_cancel_search (ThunarWindow *window)
       thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
     }
 
-  if (window->reset_view_type_idle_id == 0)
+  /* null check for the same reason as thunar_standard_view_set_searching */
+  if (window->view != NULL)
     {
-      window->reset_view_type_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_window_reset_view_type_idle, window,
-                                                         thunar_window_reset_view_type_idle_destroyed);
+      if (thunar_standard_view_get_saved_view_type (THUNAR_STANDARD_VIEW (window->view)) != 0)
+        thunar_window_action_view_changed (window, thunar_standard_view_get_saved_view_type (THUNAR_STANDARD_VIEW (window->view)));
+
+      thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), 0);
     }
 
   g_signal_handlers_block_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
@@ -5555,6 +5521,10 @@ thunar_window_set_current_directory (ThunarWindow *window,
   /* check if we already display the requested directory */
   if (G_UNLIKELY (window->current_directory == current_directory))
     return;
+
+  /* exit search mode if currently enabled */
+  if (window->search_mode == TRUE)
+    thunar_window_cancel_search (window);
 
   /* disconnect from the previously active directory */
   if (G_LIKELY (window->current_directory != NULL))
