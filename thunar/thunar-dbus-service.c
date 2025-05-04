@@ -898,7 +898,7 @@ thunar_dbus_service_move_to_trash (ThunarDBusTrash       *object,
           preferences = thunar_preferences_get ();
           g_object_get (G_OBJECT (preferences), "misc-confirm-move-to-trash", &confirm_trash, NULL);
           g_object_unref (G_OBJECT (preferences));
-	  warn_mode = confirm_trash ? THUNAR_UNLINK_FILES_WARN_ALWAYS : THUNAR_UNLINK_FILES_WARN_PERMANENT;
+          warn_mode = confirm_trash ? THUNAR_UNLINK_FILES_WARN_ALWAYS : THUNAR_UNLINK_FILES_WARN_PERMANENT;
 
           /* tell the application to move the specified files to the trash */
           application = thunar_application_get ();

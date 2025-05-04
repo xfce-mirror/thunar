@@ -1516,14 +1516,14 @@ thunar_tree_view_action_unlink_selected_folder (ThunarTreeView *view,
 
           /* delete the file */
           if (permanently)
-	    {
-	      warn_mode = THUNAR_UNLINK_FILES_WARN_ALWAYS;
-	    }
+            {
+              warn_mode = THUNAR_UNLINK_FILES_WARN_ALWAYS;
+            }
           else
-	    {
+            {
               g_object_get (G_OBJECT (view->preferences), "misc-confirm-move-to-trash", &confirm_trash, NULL);
-	      warn_mode = confirm_trash ? THUNAR_UNLINK_FILES_WARN_ALWAYS : THUNAR_UNLINK_FILES_WARN_PERMANENT;
-	    }
+              warn_mode = confirm_trash ? THUNAR_UNLINK_FILES_WARN_ALWAYS : THUNAR_UNLINK_FILES_WARN_PERMANENT;
+            }
           application = thunar_application_get ();
           thunar_application_unlink_files (application, GTK_WIDGET (view), &file_list, permanently, warn_mode, THUNAR_OPERATION_LOG_OPERATIONS);
           g_object_unref (G_OBJECT (application));
