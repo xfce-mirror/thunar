@@ -162,12 +162,12 @@ thunar_application_move_files (ThunarApplication     *application,
                                GClosure              *new_files_closure);
 
 gboolean
-thunar_application_unlink_files (ThunarApplication           *application,
-                                 gpointer                     parent,
-                                 GList                       *file_list,
-                                 gboolean                     permanently,
-                                 gboolean                     warn,
-                                 const ThunarOperationLogMode log_mode);
+thunar_application_unlink_files (ThunarApplication              *application,
+                                 gpointer                        parent,
+                                 GList                          *file_list,
+                                 gboolean                        permanently,
+                                 const ThunarUnlinkFilesWarnMode warn_mode,
+                                 const ThunarOperationLogMode    log_mode);
 
 void
 thunar_application_trash (ThunarApplication     *application,

@@ -2629,8 +2629,9 @@ thunar_action_manager_action_restore_and_show (ThunarActionManager *action_mgr)
 static void
 thunar_action_manager_action_move_to_trash (ThunarActionManager *action_mgr)
 {
-  ThunarApplication *application;
-  gboolean           warn;
+  ThunarApplication        *application;
+  gboolean                  confirm_trash;
+  ThunarUnlinkFilesWarnMode warn_mode;
 
   _thunar_return_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr));
 
@@ -2638,9 +2639,10 @@ thunar_action_manager_action_move_to_trash (ThunarActionManager *action_mgr)
     return;
 
   /* check if the user wants a confirmation before moving to trash */
-  g_object_get (G_OBJECT (action_mgr->preferences), "misc-confirm-move-to-trash", &warn, NULL);
+  g_object_get (G_OBJECT (action_mgr->preferences), "misc-confirm-move-to-trash", &confirm_trash, NULL);
+  warn_mode = confirm_trash ? THUNAR_UNLINK_FILES_WARN_ALWAYS : THUNAR_UNLINK_FILES_WARN_PERMANENT;
   application = thunar_application_get ();
-  thunar_application_unlink_files (application, action_mgr->widget, action_mgr->files_to_process, FALSE, warn, THUNAR_OPERATION_LOG_OPERATIONS);
+  thunar_application_unlink_files (application, action_mgr->widget, action_mgr->files_to_process, FALSE, warn_mode, THUNAR_OPERATION_LOG_OPERATIONS);
   g_object_unref (G_OBJECT (application));
 }
 
@@ -2657,7 +2659,7 @@ thunar_action_manager_action_delete (ThunarActionManager *action_mgr)
     return TRUE;
 
   application = thunar_application_get ();
-  thunar_application_unlink_files (application, action_mgr->widget, action_mgr->files_to_process, TRUE, TRUE, THUNAR_OPERATION_LOG_OPERATIONS);
+  thunar_application_unlink_files (application, action_mgr->widget, action_mgr->files_to_process, TRUE, THUNAR_UNLINK_FILES_WARN_ALWAYS, THUNAR_OPERATION_LOG_OPERATIONS);
   g_object_unref (G_OBJECT (application));
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
