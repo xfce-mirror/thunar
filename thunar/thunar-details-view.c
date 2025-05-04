@@ -1000,32 +1000,6 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
 
 
 static gboolean
-tree_view_move_cursor (GtkTreeView  *tree_view,
-                       GtkTreeModel *model,
-                       gint          count)
-{
-  gboolean    ret;
-  gboolean    loading;
-  /* sets the cursor if file != NULL for the iter;
-   * if cursor set then TRUE is returned; FALSE otherwise */
-
-  _thunar_return_val_if_fail (GTK_IS_TREE_VIEW (tree_view), FALSE);
-  _thunar_return_val_if_fail (GTK_IS_TREE_MODEL (model), FALSE);
-
-  g_object_get (model, "loading", &loading, NULL);
-
-  /* Only possible to navigate if the view is fully loaded */
-  if (loading)
-    return FALSE;
-
-  g_signal_emit_by_name (tree_view, "move-cursor", GTK_MOVEMENT_DISPLAY_LINES, count, &ret);
-
-  return ret;
-}
-
-
-
-static gboolean
 thunar_details_view_key_press_event (GtkTreeView       *tree_view,
                                      GdkEventKey       *event,
                                      ThunarDetailsView *details_view)
@@ -1035,6 +1009,7 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
   GtkTreeModel *model = gtk_tree_view_get_model (tree_view);
   GtkTreeIter   iter;
   ThunarFile   *file = NULL;
+  gboolean      loading;
 
   /* popup context menu if "Menu" or "<Shift>F10" is pressed */
   if (event->keyval == GDK_KEY_Menu || ((event->state & GDK_SHIFT_MASK) != 0 && event->keyval == GDK_KEY_F10))
@@ -1057,14 +1032,15 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
     {
     case GDK_KEY_Up:
     case GDK_KEY_KP_Up:
-      tree_view_move_cursor (tree_view, model, CURSOR_UP);
-      stopPropagation = TRUE;
-      break;
-
     case GDK_KEY_Down:
     case GDK_KEY_KP_Down:
-      tree_view_move_cursor (tree_view, model, CURSOR_DOWN);
-      stopPropagation = TRUE;
+      /* Only possible to navigate into expanded folders if the view is fully loaded */
+      if (gtk_tree_view_row_expanded (tree_view, path))
+        {
+          g_object_get (model, "loading", &loading, NULL);
+          if (loading)
+            stopPropagation = TRUE;
+        }
       break;
 
     case GDK_KEY_Left:
