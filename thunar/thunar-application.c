@@ -2444,7 +2444,7 @@ unlink_stub (GList *source_path_list,
  * @parent      : a #GdkScreen, a #GtkWidget or %NULL.
  * @file_list   : the list of #ThunarFile<!---->s that should be deleted.
  * @permanently : whether to unlink the files permanently.
- * @warn        : whether to warn the user if deleting permanently.
+ * @warn_mode   : if/when to warn the user about file deletion.
  * @log_mode    : log mode
  *
  * Deletes all files in the @file_list and takes care of all user interaction.
@@ -2453,15 +2453,15 @@ unlink_stub (GList *source_path_list,
  * the files will be deleted permanently (after confirming the action),
  * otherwise the files will be moved to the trash.
  *
- * Return value: TRUE if the trash/delete operation was canceled, FALSE otehrwise
+ * Return value: TRUE if the trash/delete operation was canceled, FALSE otherwise
  **/
 gboolean
-thunar_application_unlink_files (ThunarApplication           *application,
-                                 gpointer                     parent,
-                                 GList                       *file_list,
-                                 gboolean                     permanently,
-                                 gboolean                     warn,
-                                 const ThunarOperationLogMode log_mode)
+thunar_application_unlink_files (ThunarApplication              *application,
+                                 gpointer                        parent,
+                                 GList                          *file_list,
+                                 gboolean                        permanently,
+                                 const ThunarUnlinkFilesWarnMode warn_mode,
+                                 const ThunarOperationLogMode    log_mode)
 {
   GtkWidget *dialog;
   GtkWidget *message_area;
@@ -2495,7 +2495,7 @@ thunar_application_unlink_files (ThunarApplication           *application,
     return FALSE;
 
   /* ask the user to confirm if deleting permanently */
-  if (G_UNLIKELY (permanently) && warn)
+  if (G_UNLIKELY (permanently) && (warn_mode & THUNAR_UNLINK_FILES_WARN_PERMANENT) != 0)
     {
       /* parse the parent pointer */
       screen = thunar_util_parse_parent (parent, &window);
@@ -2567,7 +2567,7 @@ thunar_application_unlink_files (ThunarApplication           *application,
                                  _("Deleting files..."), unlink_stub,
                                  path_list, path_list, TRUE, FALSE, log_mode, NULL);
     }
-  else if (G_LIKELY (!permanently) && warn)
+  else if (G_LIKELY (!permanently) && (warn_mode & THUNAR_UNLINK_FILES_WARN_TRASH) != 0)
     {
       /* parse the parent pointer */
       screen = thunar_util_parse_parent (parent, &window);

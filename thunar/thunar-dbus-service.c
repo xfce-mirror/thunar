@@ -854,16 +854,17 @@ thunar_dbus_service_move_to_trash (ThunarDBusTrash       *object,
                                    const gchar           *startup_id,
                                    ThunarDBusService     *dbus_service)
 {
-  ThunarApplication *application;
-  ThunarPreferences *preferences;
-  ThunarFile        *thunar_file;
-  GFile             *file;
-  GdkScreen         *screen;
-  GError            *err = NULL;
-  GList             *file_list = NULL;
-  gchar             *filename;
-  guint              n;
-  gboolean           warn;
+  ThunarApplication        *application;
+  ThunarPreferences        *preferences;
+  ThunarFile               *thunar_file;
+  GFile                    *file;
+  GdkScreen                *screen;
+  GError                   *err = NULL;
+  GList                    *file_list = NULL;
+  gchar                    *filename;
+  guint                     n;
+  gboolean                  confirm_trash;
+  ThunarUnlinkFilesWarnMode warn_mode;
 
   /* try to open the screen for the display name */
   screen = thunar_gdk_screen_open (display, &err);
@@ -895,12 +896,13 @@ thunar_dbus_service_move_to_trash (ThunarDBusTrash       *object,
         {
           /* check if the user wants a confirmation before moving to trash */
           preferences = thunar_preferences_get ();
-          g_object_get (G_OBJECT (preferences), "misc-confirm-move-to-trash", &warn, NULL);
+          g_object_get (G_OBJECT (preferences), "misc-confirm-move-to-trash", &confirm_trash, NULL);
           g_object_unref (G_OBJECT (preferences));
+	  warn_mode = confirm_trash ? THUNAR_UNLINK_FILES_WARN_ALWAYS : THUNAR_UNLINK_FILES_WARN_PERMANENT;
 
           /* tell the application to move the specified files to the trash */
           application = thunar_application_get ();
-          thunar_application_unlink_files (application, screen, file_list, FALSE, warn, THUNAR_OPERATION_LOG_NO_OPERATIONS);
+          thunar_application_unlink_files (application, screen, file_list, FALSE, warn_mode, THUNAR_OPERATION_LOG_NO_OPERATIONS);
           g_object_unref (application);
         }
 

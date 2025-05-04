@@ -639,6 +639,20 @@ typedef enum
 GType
 thunar_execute_shell_script_get_type (void) G_GNUC_CONST;
 
+/**
+ * ThunarUnlinkFilesWarnMode:
+ * @THUNAR_UNLINK_FILES_WARN_NEVER              : never prompt the user with a warning when deleting files
+ * @THUNAR_UNLINK_FILES_WARN_ONLY_PERMANENT     : only warn the user if file deletion is permanent
+ * @THUNAR_NEW_TAB_BEHAVIOR_STAY                : always warn the user before deleting files
+ **/
+typedef enum
+{
+  THUNAR_UNLINK_FILES_WARN_NEVER = 0,
+  THUNAR_UNLINK_FILES_WARN_PERMANENT = 1 << 0,
+  THUNAR_UNLINK_FILES_WARN_TRASH = 1 << 1,
+  THUNAR_UNLINK_FILES_WARN_ALWAYS = THUNAR_UNLINK_FILES_WARN_PERMANENT | THUNAR_UNLINK_FILES_WARN_TRASH,
+} ThunarUnlinkFilesWarnMode;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_ENUM_TYPES_H__ */
