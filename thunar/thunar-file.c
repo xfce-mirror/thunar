@@ -5383,6 +5383,7 @@ thunar_file_update_thumbnail (ThunarFile          *file,
     {
       g_free (file->thumbnail_path[size]);
       file->thumbnail_path[size] = NULL;
+      return;
     }
 
   if (state == THUNAR_FILE_THUMB_STATE_READY)
