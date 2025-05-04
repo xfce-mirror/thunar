@@ -1512,6 +1512,22 @@ thunar_path_entry_cancel_search (ThunarPathEntry *path_entry)
 
 
 /**
+ * thunar_path_entry_get_search_mode:
+ * @path_entry : a #ThunarPathEntry.
+ *
+ * Return value: %TRUE if search mode is active, %FALSE otherwise.
+ **/
+gboolean
+thunar_path_entry_get_search_mode (ThunarPathEntry *path_entry)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_PATH_ENTRY (path_entry), FALSE);
+
+  return path_entry->search_mode;
+}
+
+
+
+/**
  * thunar_path_entry_get_search_query:
  * @path_entry : a #ThunarPathEntry.
  *

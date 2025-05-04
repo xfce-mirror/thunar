@@ -490,7 +490,7 @@ thunar_location_entry_emit_edit_done (ThunarLocationEntry *entry)
     {
       g_signal_handlers_disconnect_by_func (entry->path_entry, G_CALLBACK (thunar_location_entry_emit_edit_done), entry);
 
-      if (thunar_location_entry_get_search_query (entry) == NULL)
+      if (!thunar_path_entry_get_search_mode (THUNAR_PATH_ENTRY (entry->path_entry)))
         g_signal_emit_by_name (entry, "edit-done");
     }
 
