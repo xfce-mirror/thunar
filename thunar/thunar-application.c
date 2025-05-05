@@ -2444,7 +2444,6 @@ unlink_stub (GList *source_path_list,
  * @parent      : a #GdkScreen, a #GtkWidget or %NULL.
  * @file_list   : the list of #ThunarFile<!---->s that should be deleted.
  * @permanently : whether to unlink the files permanently.
- * @warn        : whether to warn the user if moving files to trash.
  * @log_mode    : log mode
  *
  * Deletes all files in the @file_list and takes care of all user interaction.
@@ -2453,14 +2452,13 @@ unlink_stub (GList *source_path_list,
  * the files will be deleted permanently (after confirming the action),
  * otherwise the files will be moved to the trash.
  *
- * Return value: TRUE if the trash/delete operation was canceled, FALSE otehrwise
+ * Return value: TRUE if the trash/delete operation was canceled, FALSE otherwise
  **/
 gboolean
 thunar_application_unlink_files (ThunarApplication           *application,
                                  gpointer                     parent,
                                  GList                       *file_list,
                                  gboolean                     permanently,
-                                 gboolean                     warn,
                                  const ThunarOperationLogMode log_mode)
 {
   GtkWidget *dialog;
@@ -2474,6 +2472,7 @@ thunar_application_unlink_files (ThunarApplication           *application,
   guint      n_path_list = 0;
   gint       response;
   gboolean   operation_canceled = FALSE;
+  gboolean   warn_trash;
 
   _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), TRUE);
   _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), TRUE);
@@ -2561,56 +2560,61 @@ thunar_application_unlink_files (ThunarApplication           *application,
       else
         operation_canceled = TRUE;
     }
-  else if (G_LIKELY (!permanently) && warn)
-    {
-      /* parse the parent pointer */
-      screen = thunar_util_parse_parent (parent, &window);
-
-      /* generate the question to confirm the move to trash operation */
-      if (G_LIKELY (n_path_list == 1))
-        {
-          if (g_strcmp0 (thunar_file_get_display_name (file_list->data), thunar_file_get_basename (file_list->data)) != 0)
-            message = g_strdup_printf (_("Are you sure that you want to\nmove \"%s\" (%s) to trash ?"),
-                                       thunar_file_get_display_name (THUNAR_FILE (file_list->data)),
-                                       thunar_file_get_basename (THUNAR_FILE (file_list->data)));
-          else
-            message = g_strdup_printf (_("Are you sure that you want to\nmove \"%s\" to trash ?"),
-                                       thunar_file_get_display_name (THUNAR_FILE (file_list->data)));
-        }
-      else
-        {
-          message = g_strdup_printf (ngettext ("Are you sure that you want to\nmove the selected file to trash?",
-                                               "Are you sure that you want to\nmove the %u selected files to trash?",
-                                               n_path_list),
-                                     n_path_list);
-        }
-
-      /* ask the user to confirm the move to trash operation */
-      dialog = gtk_message_dialog_new (window,
-                                       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                       GTK_MESSAGE_QUESTION,
-                                       GTK_BUTTONS_NONE,
-                                       "%s", message);
-      if (G_UNLIKELY (window == NULL && screen != NULL))
-        gtk_window_set_screen (GTK_WINDOW (dialog), screen);
-      gtk_window_set_title (GTK_WINDOW (dialog), _("Attention"));
-      gtk_dialog_add_buttons (GTK_DIALOG (dialog),
-                              _("_Cancel"), GTK_RESPONSE_CANCEL,
-                                _("Move to Trash"), GTK_RESPONSE_YES, NULL);
-      gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
-      response = gtk_dialog_run (GTK_DIALOG (dialog));
-      gtk_widget_destroy (dialog);
-      g_free (message);
-
-      if (G_LIKELY (response == GTK_RESPONSE_YES))
-        thunar_application_trash (application, parent, path_list, log_mode);
-      else
-        operation_canceled = TRUE;
-    }
   else
     {
-      /* launch the "Move to Trash" operation */
-      thunar_application_trash (application, parent, path_list, log_mode);
+      /* check if the user wants a confirmation before moving to trash */
+      g_object_get (G_OBJECT (application->preferences), "misc-confirm-move-to-trash", &warn_trash, NULL);
+      if (warn_trash)
+        {
+          /* parse the parent pointer */
+          screen = thunar_util_parse_parent (parent, &window);
+
+          /* generate the question to confirm the move to trash operation */
+          if (G_LIKELY (n_path_list == 1))
+            {
+              if (g_strcmp0 (thunar_file_get_display_name (file_list->data), thunar_file_get_basename (file_list->data)) != 0)
+                message = g_strdup_printf (_("Are you sure that you want to\nmove \"%s\" (%s) to trash ?"),
+                                           thunar_file_get_display_name (THUNAR_FILE (file_list->data)),
+                                           thunar_file_get_basename (THUNAR_FILE (file_list->data)));
+              else
+                message = g_strdup_printf (_("Are you sure that you want to\nmove \"%s\" to trash ?"),
+                                           thunar_file_get_display_name (THUNAR_FILE (file_list->data)));
+            }
+          else
+            {
+              message = g_strdup_printf (ngettext ("Are you sure that you want to\nmove the selected file to trash?",
+                                                   "Are you sure that you want to\nmove the %u selected files to trash?",
+                                                   n_path_list),
+                                         n_path_list);
+            }
+
+          /* ask the user to confirm the move to trash operation */
+          dialog = gtk_message_dialog_new (window,
+                                           GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                           GTK_MESSAGE_QUESTION,
+                                           GTK_BUTTONS_NONE,
+                                           "%s", message);
+          if (G_UNLIKELY (window == NULL && screen != NULL))
+            gtk_window_set_screen (GTK_WINDOW (dialog), screen);
+          gtk_window_set_title (GTK_WINDOW (dialog), _("Attention"));
+          gtk_dialog_add_buttons (GTK_DIALOG (dialog),
+                                  _("_Cancel"), GTK_RESPONSE_CANCEL,
+                                    _("Move to Trash"), GTK_RESPONSE_YES, NULL);
+          gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
+          response = gtk_dialog_run (GTK_DIALOG (dialog));
+          gtk_widget_destroy (dialog);
+          g_free (message);
+
+          if (G_LIKELY (response == GTK_RESPONSE_YES))
+            thunar_application_trash (application, parent, path_list, log_mode);
+          else
+            operation_canceled = TRUE;
+        }
+      else
+        {
+          /* launch the "Move to Trash" operation */
+          thunar_application_trash (application, parent, path_list, log_mode);
+        }
     }
 
   /* release the path list */
