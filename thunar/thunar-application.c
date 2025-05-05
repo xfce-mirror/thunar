@@ -2441,7 +2441,7 @@ unlink_stub (GList *source_path_list,
  * @parent      : a #GdkScreen, a #GtkWidget or %NULL.
  * @file_list   : the list of #ThunarFile<!---->s that should be deleted.
  * @permanently : whether to unlink the files permanently.
- * @warn        : whether to warn the user if deleting permanently.
+ * @warn        : whether to warn the user if moving files to trash.
  * @log_mode    : log mode
  *
  * Deletes all files in the @file_list and takes care of all user interaction.
@@ -2492,7 +2492,7 @@ thunar_application_unlink_files (ThunarApplication           *application,
     return FALSE;
 
   /* ask the user to confirm if deleting permanently */
-  if (G_UNLIKELY (permanently) && warn)
+  if (G_UNLIKELY (permanently))
     {
       /* parse the parent pointer */
       screen = thunar_util_parse_parent (parent, &window);
@@ -2557,12 +2557,6 @@ thunar_application_unlink_files (ThunarApplication           *application,
         }
       else
         operation_canceled = TRUE;
-    }
-  else if (G_UNLIKELY (permanently))
-    {
-      thunar_application_launch (application, parent, "edit-delete",
-                                 _("Deleting files..."), unlink_stub,
-                                 path_list, path_list, TRUE, FALSE, log_mode, NULL);
     }
   else if (G_LIKELY (!permanently) && warn)
     {
