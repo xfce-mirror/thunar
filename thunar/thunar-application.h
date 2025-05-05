@@ -166,7 +166,6 @@ thunar_application_unlink_files (ThunarApplication           *application,
                                  gpointer                     parent,
                                  GList                       *file_list,
                                  gboolean                     permanently,
-                                 gboolean                     warn,
                                  const ThunarOperationLogMode log_mode);
 
 void
