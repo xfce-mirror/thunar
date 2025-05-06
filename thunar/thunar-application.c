@@ -2599,7 +2599,7 @@ thunar_application_unlink_files (ThunarApplication           *application,
           gtk_window_set_title (GTK_WINDOW (dialog), _("Attention"));
           gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                                   _("_Cancel"), GTK_RESPONSE_CANCEL,
-                                  _("Move to Trash"), GTK_RESPONSE_YES, NULL);
+                                    _("Move to Trash"), GTK_RESPONSE_YES, NULL);
           gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
           response = gtk_dialog_run (GTK_DIALOG (dialog));
           gtk_widget_destroy (dialog);
