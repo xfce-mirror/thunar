@@ -439,7 +439,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
         }
       else
         {
-          operation_canceled = thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE, TRUE, THUNAR_OPERATION_LOG_OPERATIONS);
+          operation_canceled = thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE, THUNAR_OPERATION_LOG_OPERATIONS);
           g_list_free_full (thunar_file_list, g_object_unref);
         }
 
