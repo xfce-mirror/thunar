@@ -1513,7 +1513,10 @@ thunar_tree_view_action_unlink_selected_folder (ThunarTreeView *view,
           file_list.prev = NULL;
 
           application = thunar_application_get ();
-          thunar_application_unlink_files (application, GTK_WIDGET (view), &file_list, permanently, THUNAR_OPERATION_LOG_OPERATIONS);
+          if (permanently)
+            thunar_application_unlink_files (application, GTK_WIDGET (view), &file_list, THUNAR_OPERATION_LOG_OPERATIONS);
+          else
+            thunar_application_trash_files (application, GTK_WIDGET (view), &file_list, THUNAR_OPERATION_LOG_OPERATIONS);
           g_object_unref (G_OBJECT (application));
         }
 
