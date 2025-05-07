@@ -406,6 +406,7 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
     {
     case THUNAR_JOB_OPERATION_KIND_DELETE:
     case THUNAR_JOB_OPERATION_KIND_UNLINK:
+    case THUNAR_JOB_OPERATION_KIND_TRASH:
       for (GList *lp = job_operation->source_file_list; lp != NULL; lp = lp->next)
         {
           if (!G_IS_FILE (lp->data))
@@ -435,11 +436,21 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
         {
           *error = g_error_new (G_FILE_ERROR,
                                 G_FILE_ERROR_NOENT,
-                                "No files for deletion found.");
+                                "No files for delete/trash operation found.");
         }
       else
         {
-          operation_canceled = thunar_application_unlink_files (application, NULL, thunar_file_list, TRUE, THUNAR_OPERATION_LOG_OPERATIONS);
+          if (job_operation->operation_kind == THUNAR_JOB_OPERATION_KIND_TRASH)
+            {
+              /* Special case: 'THUNAR_JOB_OPERATION_KIND_TRASH' only can be triggered by redo */
+              /* Since we as well need to update the timestamps, we have to use THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS */
+              /* 'thunar_job_operation_history_update_trash_timestamps' will then take care on update the existing job operation instead of adding a new one */
+              thunar_application_trash_files (application, NULL,
+                                              thunar_file_list,
+                                              THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS);
+            }
+          else
+            operation_canceled = thunar_application_unlink_files (application, NULL, thunar_file_list, THUNAR_OPERATION_LOG_OPERATIONS);
           g_list_free_full (thunar_file_list, g_object_unref);
         }
 
@@ -538,15 +549,6 @@ thunar_job_operation_execute (ThunarJobOperation *job_operation,
       thunar_application_mkdir (application, NULL,
                                 job_operation->target_file_list,
                                 NULL, THUNAR_OPERATION_LOG_NO_OPERATIONS);
-      break;
-
-    case THUNAR_JOB_OPERATION_KIND_TRASH:
-      /* Special case: 'THUNAR_JOB_OPERATION_KIND_TRASH' only can be triggered by redo */
-      /* Since we as well need to update the timestamps, we have to use THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS */
-      /* 'thunar_job_operation_history_update_trash_timestamps' will then take care on update the existing job operation instead of adding a new one */
-      thunar_application_trash (application, NULL,
-                                job_operation->source_file_list,
-                                THUNAR_OPERATION_LOG_ONLY_TIMESTAMPS);
       break;
 
     case THUNAR_JOB_OPERATION_KIND_LINK:

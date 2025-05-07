@@ -893,7 +893,7 @@ thunar_dbus_service_move_to_trash (ThunarDBusTrash       *object,
         {
           /* tell the application to move the specified files to the trash */
           application = thunar_application_get ();
-          thunar_application_unlink_files (application, screen, file_list, FALSE, THUNAR_OPERATION_LOG_NO_OPERATIONS);
+          thunar_application_trash_files (application, screen, file_list, THUNAR_OPERATION_LOG_NO_OPERATIONS);
           g_object_unref (application);
         }
 
@@ -1495,7 +1495,7 @@ thunar_dbus_service_unlink_files (ThunarDBusFileManager *object,
         {
           /* tell the application to permanently delete the specified files */
           application = thunar_application_get ();
-          thunar_application_unlink_files (application, screen, file_list, TRUE, THUNAR_OPERATION_LOG_NO_OPERATIONS);
+          thunar_application_unlink_files (application, screen, file_list, THUNAR_OPERATION_LOG_NO_OPERATIONS);
           g_object_unref (application);
         }
 
