@@ -165,14 +165,13 @@ gboolean
 thunar_application_unlink_files (ThunarApplication           *application,
                                  gpointer                     parent,
                                  GList                       *file_list,
-                                 gboolean                     permanently,
                                  const ThunarOperationLogMode log_mode);
 
-void
-thunar_application_trash (ThunarApplication     *application,
-                          gpointer               parent,
-                          GList                 *file_list,
-                          ThunarOperationLogMode log_mode);
+gboolean
+thunar_application_trash_files (ThunarApplication     *application,
+                                gpointer               parent,
+                                GList                 *file_list,
+                                ThunarOperationLogMode log_mode);
 
 void
 thunar_application_creat (ThunarApplication     *application,
