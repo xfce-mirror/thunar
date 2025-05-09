@@ -151,6 +151,8 @@ thunar_gtk_menu_thunarx_menu_item_new (GObject      *thunarx_menu_item,
   g_free (icon_name);
   if (icon != NULL)
     g_object_unref (icon);
+  if (thunarx_menu != NULL)
+    g_object_unref (thunarx_menu);
 
   return gtk_menu_item;
 }
