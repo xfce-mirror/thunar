@@ -1806,7 +1806,11 @@ thunar_window_dispose (GObject *object)
     g_source_remove (window->save_geometry_timer_id);
 
   /* disconnect from the current-directory */
-  thunar_window_set_current_directory (window, NULL);
+  if (window->current_directory != NULL)
+    {
+      g_object_unref (window->current_directory);
+      window->current_directory = NULL;
+    }
 
   (*G_OBJECT_CLASS (thunar_window_parent_class)->dispose) (object);
 }
