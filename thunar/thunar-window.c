@@ -5522,10 +5522,6 @@ thunar_window_set_current_directory (ThunarWindow *window,
   if (G_UNLIKELY (window->current_directory == current_directory))
     return;
 
-  /* exit search mode if currently enabled */
-  if (window->search_mode == TRUE)
-    thunar_window_cancel_search (window);
-
   /* disconnect from the previously active directory */
   if (G_LIKELY (window->current_directory != NULL))
     {
@@ -5541,6 +5537,10 @@ thunar_window_set_current_directory (ThunarWindow *window,
   /* take a reference on the file */
   g_object_ref (G_OBJECT (current_directory));
   window->current_directory = current_directory;
+
+  /* exit search mode if currently enabled */
+  if (window->search_mode == TRUE)
+    thunar_window_cancel_search (window);
 
   num_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_selected));
 
