@@ -213,12 +213,13 @@ thunar_gtk_menu_popup_at_pointer (GtkMenu  *menu,
                                   GdkEvent *event)
 {
   GdkWindow   *window;
-  GdkWindow   *toplevel = NULL;
   GdkDevice   *device;
+  GdkDisplay  *display;
+  GdkSeat     *seat;
   GdkRectangle rect = { 0, 0, 1, 1 };
 
-  /* fallback if event not set or event not holding a GdkSeat */
-  if (event == NULL || gdk_event_get_seat (event) == NULL)
+  /* fallback if event not set */
+  if (event == NULL)
     {
       gtk_menu_popup_at_pointer (menu, event);
       return;
@@ -228,25 +229,38 @@ thunar_gtk_menu_popup_at_pointer (GtkMenu  *menu,
   window = gdk_event_get_window (event);
   if (window != NULL)
     {
-      /* Ensure that we have the toplevel window to work around a GTK3 Wayland bug
-       * that prevents the user from dismissing the menu via click in some cases.
-       * See: https://gitlab.xfce.org/xfce/thunar/-/issues/1592 */
-      toplevel = gdk_window_get_toplevel (window);
-
       device = gdk_event_get_device (event);
 
       if (device != NULL && gdk_device_get_source (device) == GDK_SOURCE_KEYBOARD)
         device = gdk_device_get_associated_device (device);
 
       if (device != NULL)
-        gdk_window_get_device_position (toplevel, device, &rect.x, &rect.y, NULL);
+        {
+          /* Ensure that we have the toplevel window to work around a GTK3 Wayland bug
+           * that prevents the user from dismissing the menu via click in some cases.
+           * See: https://gitlab.xfce.org/xfce/thunar/-/issues/1592 */
+          window = gdk_window_get_toplevel (window);
+
+          gdk_window_get_device_position (window, device, &rect.x, &rect.y, NULL);
+        }
+
+      /* fallback needed for right-click DnD from xfdesktop to Thunar */
+      if (device == NULL)
+        {
+          display = gdk_window_get_display (window);
+          seat = gdk_display_get_default_seat (display);
+          device = gdk_seat_get_pointer (seat);
+
+          gdk_device_get_position (device, NULL, &rect.x, &rect.y);
+          window = gdk_device_get_window_at_position (device, &rect.x, &rect.y);
+        }
     }
 
   /* pop up the menu at the rectangle below the mouse cursor */
   gtk_menu_popup_at_rect (menu,
-                          toplevel,
+                          window,
                           &rect,
-                          GDK_GRAVITY_NORTH_WEST,
+                          GDK_GRAVITY_SOUTH_EAST,
                           GDK_GRAVITY_NORTH_WEST,
                           event);
 }
