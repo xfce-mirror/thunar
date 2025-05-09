@@ -2391,7 +2391,6 @@ thunar_action_manager_append_custom_actions (ThunarActionManager *action_mgr,
 {
   gboolean                uca_added = FALSE;
   GtkWidget              *window;
-  GtkWidget              *gtk_menu_item;
   ThunarxProviderFactory *provider_factory;
   GList                  *providers;
   GList                  *thunarx_menu_items = NULL;
@@ -2426,10 +2425,7 @@ thunar_action_manager_append_custom_actions (ThunarActionManager *action_mgr,
 
       for (lp_item = thunarx_menu_items; lp_item != NULL; lp_item = lp_item->next)
         {
-          gtk_menu_item = thunar_gtk_menu_thunarx_menu_item_new (lp_item->data, menu);
-
-          /* Each thunarx_menu_item will be destroyed together with its related gtk_menu_item*/
-          g_signal_connect_swapped (G_OBJECT (gtk_menu_item), "destroy", G_CALLBACK (g_object_unref), lp_item->data);
+          thunar_gtk_menu_thunarx_menu_item_new (lp_item->data, menu);
           uca_added = TRUE;
         }
       g_list_free (thunarx_menu_items);
