@@ -1009,7 +1009,7 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
   GtkTreeModel *model = gtk_tree_view_get_model (tree_view);
   GtkTreeIter   iter;
   ThunarFile   *file = NULL;
-  gboolean      loading;
+  ThunarFolder *folder;
 
   /* popup context menu if "Menu" or "<Shift>F10" is pressed */
   if (event->keyval == GDK_KEY_Menu || ((event->state & GDK_SHIFT_MASK) != 0 && event->keyval == GDK_KEY_F10))
@@ -1032,15 +1032,56 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
     {
     case GDK_KEY_Up:
     case GDK_KEY_KP_Up:
+      if (!gtk_tree_model_get_iter (model, &iter, path))
+        break;
+
+      gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE, &file, -1);
+      if (file == NULL || !thunar_file_is_directory (file))
+        break;
+      folder = thunar_folder_get_for_file (file);
+      if (folder != NULL)
+        {
+          if (thunar_folder_get_loading (folder))
+            {
+              /* Just skip that folder for cursor navigation */
+              gtk_tree_path_prev (path);
+              gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
+
+              stopPropagation = TRUE;
+              break;
+            }
+          g_object_unref (folder);
+        }
+
+      break;
+
     case GDK_KEY_Down:
     case GDK_KEY_KP_Down:
-      /* Only possible to navigate into expanded folders if the view is fully loaded */
-      if (gtk_tree_view_row_expanded (tree_view, path))
+      /* If it is a expanded folder which is still loading, we need to skip it to prevent a crash */
+      if (!gtk_tree_view_row_expanded (tree_view, path))
+        break;
+
+      if (!gtk_tree_model_get_iter (model, &iter, path))
+        break;
+
+      gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE, &file, -1);
+      if (file == NULL || !thunar_file_is_directory (file))
+        break;
+      folder = thunar_folder_get_for_file (file);
+      if (folder != NULL)
         {
-          g_object_get (model, "loading", &loading, NULL);
-          if (loading)
-            stopPropagation = TRUE;
+          if (thunar_folder_get_loading (folder))
+            {
+              /* Just skip that folder for cursor navigation */
+              gtk_tree_path_next (path);
+              gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
+
+              stopPropagation = TRUE;
+              break;
+            }
+          g_object_unref (folder);
         }
+
       break;
 
     case GDK_KEY_Left:
