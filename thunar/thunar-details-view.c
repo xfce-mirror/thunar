@@ -1029,6 +1029,8 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
     {
     case GDK_KEY_Up:
     case GDK_KEY_KP_Up:
+    case GDK_KEY_Page_Up:
+    case GDK_KEY_Begin:
       if (!gtk_tree_model_get_iter (model, &iter, path))
         break;
 
@@ -1054,6 +1056,8 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
 
     case GDK_KEY_Down:
     case GDK_KEY_KP_Down:
+    case GDK_KEY_Page_Down:
+    case GDK_KEY_End:
       /* If it is a expanded folder which is still loading, we need to skip it to prevent a crash */
       if (!gtk_tree_view_row_expanded (tree_view, path))
         break;
