@@ -32,9 +32,6 @@
 
 #include <gdk/gdkkeysyms.h>
 
-#define CURSOR_UP -1
-#define CURSOR_DOWN 1
-
 
 
 /* Property identifiers */
