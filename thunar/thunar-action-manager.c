@@ -2414,7 +2414,10 @@ thunar_action_manager_append_custom_actions (ThunarActionManager *action_mgr,
 
   /* This may occur when the thunar-window is build */
   if (G_UNLIKELY (action_mgr->files_to_process == NULL))
-    return FALSE;
+    {
+      g_list_free_full (providers, g_object_unref);
+      return FALSE;
+    }
 
   /* load the menu items offered by the menu providers */
   for (lp_provider = providers; lp_provider != NULL; lp_provider = lp_provider->next)
