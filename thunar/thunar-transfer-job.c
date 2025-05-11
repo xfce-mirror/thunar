@@ -391,6 +391,7 @@ thunar_transfer_job_collect_node (ThunarTransferJob  *job,
                                   ThunarTransferNode *node,
                                   GError            **error)
 {
+  guint               n_total_files;
   ThunarTransferNode *child_node;
   GFileInfo          *info;
   GError             *err = NULL;
@@ -422,6 +423,12 @@ thunar_transfer_job_collect_node (ThunarTransferJob  *job,
       file_list = thunar_io_scan_directory (THUNAR_JOB (job), node->source_file,
                                             G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                                             FALSE, FALSE, FALSE, NULL, &err);
+
+      /* append Children to number of total files */
+      n_total_files = thunar_job_get_n_total_files (THUNAR_JOB (job));
+      n_total_files = thunar_job_get_n_total_files (THUNAR_JOB (job)) + g_list_length (file_list);
+
+      thunar_job_set_n_total_files (THUNAR_JOB (job), n_total_files);
 
       /* add children to the transfer node */
       for (lp = file_list; err == NULL && lp != NULL; lp = lp->next)
