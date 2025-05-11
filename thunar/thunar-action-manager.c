@@ -2401,6 +2401,10 @@ thunar_action_manager_append_custom_actions (ThunarActionManager *action_mgr,
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
   _thunar_return_val_if_fail (GTK_IS_MENU (menu), FALSE);
 
+  /* This may occur when the thunar-window is build */
+  if (G_UNLIKELY (action_mgr->files_to_process == NULL))
+    return FALSE;
+
   /* determine the toplevel window we belong to */
   window = gtk_widget_get_toplevel (action_mgr->widget);
 
@@ -2410,10 +2414,6 @@ thunar_action_manager_append_custom_actions (ThunarActionManager *action_mgr,
   g_object_unref (provider_factory);
 
   if (G_UNLIKELY (providers == NULL))
-    return FALSE;
-
-  /* This may occur when the thunar-window is build */
-  if (G_UNLIKELY (action_mgr->files_to_process == NULL))
     return FALSE;
 
   /* load the menu items offered by the menu providers */
