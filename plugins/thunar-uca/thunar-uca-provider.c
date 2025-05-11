@@ -222,12 +222,13 @@ find_submenu_by_name (gchar *name, GList *items)
           if (thunarx_menu_items != NULL)
             {
               ThunarxMenu *submenu = find_submenu_by_name (name, thunarx_menu_items);
+              thunarx_menu_item_list_free (thunarx_menu_items);
+
               if (submenu != NULL)
                 {
                   g_free (item_name);
                   return submenu;
                 }
-              thunarx_menu_item_list_free (thunarx_menu_items);
             }
         }
       g_free (item_name);
