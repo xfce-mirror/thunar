@@ -298,7 +298,11 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
               gchar *sub_menu_path = g_strdup (sub_menus_as_array[0]);
 
               for (int j = 1; j <= i; j++)
-                sub_menu_path = g_strconcat (sub_menu_path, "/", sub_menus_as_array[j], NULL);
+                {
+                  gchar *prev_path = sub_menu_path;
+                  sub_menu_path = g_strconcat (prev_path, "/", sub_menus_as_array[j], NULL);
+                  g_free (prev_path);
+                }
 
               /* Check if the full path already exists */
               submenu = find_submenu_by_name (sub_menu_path, items);
