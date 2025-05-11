@@ -1498,7 +1498,6 @@ thunar_tree_view_action_unlink_selected_folder (ThunarTreeView *view,
   ThunarApplication *application;
   ThunarFile        *file;
   GList              file_list;
-  gboolean           warn;
 
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
@@ -1513,13 +1512,11 @@ thunar_tree_view_action_unlink_selected_folder (ThunarTreeView *view,
           file_list.next = NULL;
           file_list.prev = NULL;
 
-          /* delete the file */
-          if (permanently)
-            warn = TRUE;
-          else
-            g_object_get (G_OBJECT (view->preferences), "misc-confirm-move-to-trash", &warn, NULL);
           application = thunar_application_get ();
-          thunar_application_unlink_files (application, GTK_WIDGET (view), &file_list, permanently, warn, THUNAR_OPERATION_LOG_OPERATIONS);
+          if (permanently)
+            thunar_application_unlink_files (application, GTK_WIDGET (view), &file_list, THUNAR_OPERATION_LOG_OPERATIONS);
+          else
+            thunar_application_trash_files (application, GTK_WIDGET (view), &file_list, THUNAR_OPERATION_LOG_OPERATIONS);
           g_object_unref (G_OBJECT (application));
         }
 

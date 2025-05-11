@@ -855,7 +855,6 @@ thunar_dbus_service_move_to_trash (ThunarDBusTrash       *object,
                                    ThunarDBusService     *dbus_service)
 {
   ThunarApplication *application;
-  ThunarPreferences *preferences;
   ThunarFile        *thunar_file;
   GFile             *file;
   GdkScreen         *screen;
@@ -863,7 +862,6 @@ thunar_dbus_service_move_to_trash (ThunarDBusTrash       *object,
   GList             *file_list = NULL;
   gchar             *filename;
   guint              n;
-  gboolean           warn;
 
   /* try to open the screen for the display name */
   screen = thunar_gdk_screen_open (display, &err);
@@ -893,14 +891,9 @@ thunar_dbus_service_move_to_trash (ThunarDBusTrash       *object,
       /* check if we succeed */
       if (G_LIKELY (err == NULL))
         {
-          /* check if the user wants a confirmation before moving to trash */
-          preferences = thunar_preferences_get ();
-          g_object_get (G_OBJECT (preferences), "misc-confirm-move-to-trash", &warn, NULL);
-          g_object_unref (G_OBJECT (preferences));
-
           /* tell the application to move the specified files to the trash */
           application = thunar_application_get ();
-          thunar_application_unlink_files (application, screen, file_list, FALSE, warn, THUNAR_OPERATION_LOG_NO_OPERATIONS);
+          thunar_application_trash_files (application, screen, file_list, THUNAR_OPERATION_LOG_NO_OPERATIONS);
           g_object_unref (application);
         }
 
@@ -1500,9 +1493,9 @@ thunar_dbus_service_unlink_files (ThunarDBusFileManager *object,
       /* check if we succeeded */
       if (err == NULL && file_list != NULL)
         {
-          /* tell the application to move the specified files to the trash */
+          /* tell the application to permanently delete the specified files */
           application = thunar_application_get ();
-          thunar_application_unlink_files (application, screen, file_list, TRUE, TRUE, THUNAR_OPERATION_LOG_NO_OPERATIONS);
+          thunar_application_unlink_files (application, screen, file_list, THUNAR_OPERATION_LOG_NO_OPERATIONS);
           g_object_unref (application);
         }
 
