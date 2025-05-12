@@ -35,8 +35,8 @@
  * @job                 : a #ThunarJob instance
  * @file                : The folder to scan
  * @flags               : @GFileQueryInfoFlags to consider during scan
- * @recursively         : Wheather as well subfolders should be scanned
- * @unlinking           : ???
+ * @recursively         : Whether as well subfolders should be scanned
+ * @unlinking           : TRUE if within an unlinking job's call stack, FALSE otherwise
  * @return_thunar_files : TRUE in order to return the result as a list of #ThunarFile's, FALSE to return a list of #GFile's
  * @n_files_max         : Maximum number of files to scan, NULL for unlimited
  * @error               : Will be se on any error

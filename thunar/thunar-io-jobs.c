@@ -492,9 +492,12 @@ _thunar_io_jobs_unlink (ThunarJob *job,
   GFileInfo            *info;
   GError               *err = NULL;
   GList                *file_list;
+  GList                *stage_file_list = NULL;
   GList                *lp;
+  GFile                *parent;
   gchar                *base_name;
   gchar                *display_name;
+  gboolean              retry;
   guint                 n_processed = 0;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
@@ -508,8 +511,72 @@ _thunar_io_jobs_unlink (ThunarJob *job,
   /* tell the user that we're preparing to unlink the files */
   thunar_job_info_message (THUNAR_JOB (job), _("Preparing..."));
 
+  /* handle and exclude any files that cannot be written to */
+  for (lp = file_list; lp != NULL && !thunar_job_is_cancelled (THUNAR_JOB (job)); lp = lp->next)
+    {
+      /* if file is in trash we don't need to query the parent directory for
+         write permissions */
+      if (thunar_g_file_is_trashed (lp->data))
+        {
+          stage_file_list = thunar_g_list_prepend_deep (stage_file_list, lp->data);
+          continue;
+        }
+
+      parent = g_file_get_parent (lp->data);
+      if (parent == NULL)
+        continue;
+
+      do
+        {
+          retry = FALSE;
+          info = g_file_query_info (parent,
+                                    G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME "," G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE,
+                                    G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                    thunar_job_get_cancellable (THUNAR_JOB (job)),
+                                    &err);
+
+          if (err != NULL)
+            {
+              g_propagate_error (error, err);
+              thunar_g_list_free_full (stage_file_list);
+              g_object_unref (parent);
+              return FALSE;
+            }
+
+          if (thunar_job_is_cancelled (THUNAR_JOB (job)))
+            {
+              thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error);
+              thunar_g_list_free_full (stage_file_list);
+              g_object_unref (parent);
+              return FALSE;
+            }
+
+          if (g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE)
+              && !g_file_info_get_attribute_boolean (info, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE))
+            {
+              response = thunar_job_ask_skip (THUNAR_JOB (job),
+                                              _("You do not have permission to delete the file \"%s\""),
+                                              g_file_info_get_display_name (info));
+              g_object_unref (info);
+              retry = response == THUNAR_JOB_RESPONSE_RETRY;
+            }
+          else
+            {
+              stage_file_list = thunar_g_list_prepend_deep (stage_file_list, lp->data);
+              g_object_unref (info);
+            }
+        }
+      while (retry);
+
+      g_object_unref (parent);
+    }
+
+  if (stage_file_list == NULL)
+    return TRUE;
+
   /* recursively collect files for removal, not following any symlinks */
-  file_list = _tij_collect_nofollow (job, file_list, TRUE, &err);
+  file_list = _tij_collect_nofollow (job, stage_file_list, TRUE, &err);
+  thunar_g_list_free_full (stage_file_list);
 
   /* free the file list and fail if there was an error or the job was cancelled */
   if (err != NULL || thunar_job_is_cancelled (THUNAR_JOB (job)))
