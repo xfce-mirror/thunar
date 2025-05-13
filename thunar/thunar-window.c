@@ -2616,10 +2616,10 @@ thunar_window_history_changed (ThunarWindow *window)
     return;
 
   if (window->location_toolbar_item_back != NULL)
-    gtk_widget_set_sensitive (window->location_toolbar_item_back, thunar_history_has_back (history) || window->search_mode);
+    gtk_widget_set_sensitive (window->location_toolbar_item_back, thunar_history_has_back (history));
 
   if (window->location_toolbar_item_forward != NULL)
-    gtk_widget_set_sensitive (window->location_toolbar_item_forward, thunar_history_has_forward (history) && !window->search_mode);
+    gtk_widget_set_sensitive (window->location_toolbar_item_forward, thunar_history_has_forward (history));
 }
 
 
@@ -3586,6 +3586,10 @@ thunar_window_start_open_location (ThunarWindow *window,
       /* the check is useless as long as the workaround is in place */
       if (THUNAR_IS_DETAILS_VIEW (window->view))
         thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), TRUE);
+
+      /* set up the back/forward toolbar buttons */
+      gtk_widget_set_sensitive (window->location_toolbar_item_back, TRUE);
+      gtk_widget_set_sensitive (window->location_toolbar_item_forward, FALSE);
     }
   else /* location edit */
     {
@@ -3635,9 +3639,14 @@ thunar_window_resume_search (ThunarWindow *window,
   if (THUNAR_IS_DETAILS_VIEW (window->view))
     thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), TRUE);
 
+  /* set the status of the search toolbar button */
   g_signal_handlers_block_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_search), TRUE);
   g_signal_handlers_unblock_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
+
+  /* set up the back/forward toolbar buttons */
+  gtk_widget_set_sensitive (window->location_toolbar_item_back, TRUE);
+  gtk_widget_set_sensitive (window->location_toolbar_item_forward, FALSE);
 }
 
 
@@ -3701,9 +3710,13 @@ thunar_window_cancel_search (ThunarWindow *window)
       thunar_standard_view_save_view_type (THUNAR_STANDARD_VIEW (window->view), 0);
     }
 
+  /* set the status of the search toolbar button */
   g_signal_handlers_block_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (window->location_toolbar_item_search), FALSE);
   g_signal_handlers_unblock_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
+
+  /* reset the back/forward toolbar buttons */
+  thunar_window_history_changed (window);
 
   /* bring back the original location bar style (relevant if the bar is hidden) */
   thunar_window_update_location_bar_visible (window);
