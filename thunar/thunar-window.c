@@ -1806,7 +1806,11 @@ thunar_window_dispose (GObject *object)
     g_source_remove (window->save_geometry_timer_id);
 
   /* disconnect from the current-directory */
-  thunar_window_set_current_directory (window, NULL);
+  if (window->current_directory != NULL)
+    {
+      g_object_unref (window->current_directory);
+      window->current_directory = NULL;
+    }
 
   (*G_OBJECT_CLASS (thunar_window_parent_class)->dispose) (object);
 }
@@ -2515,10 +2519,6 @@ thunar_window_switch_current_view (ThunarWindow *window,
   g_signal_connect_swapped (G_OBJECT (window->view), "notify::selected-files",
                             G_CALLBACK (thunar_window_selection_changed), window);
 
-  /* remember the last view type if directory specific settings are not enabled */
-  if (!window->directory_specific_settings && !window->search_mode && window->view_type != G_TYPE_NONE)
-    g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (window->view_type), NULL);
-
   /* connect to the new history */
   history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (window->view));
   if (history != NULL)
@@ -2543,6 +2543,10 @@ thunar_window_switch_current_view (ThunarWindow *window,
   thunar_window_notify_loading (THUNAR_VIEW (window->view), NULL, window);
   g_signal_connect (G_OBJECT (window->view), "notify::searching", G_CALLBACK (thunar_window_notify_loading), window);
   g_object_notify (G_OBJECT (window), "searching");
+
+  /* remember the last view type if directory specific settings are not enabled */
+  if (!window->directory_specific_settings && !window->search_mode && window->view_type != G_TYPE_NONE)
+    g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (window->view_type), NULL);
 
   /* switch to the new view */
   thunar_window_notebook_set_current_tab (window, gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), window->view));
@@ -3633,7 +3637,7 @@ thunar_window_resume_search (ThunarWindow *window,
   window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_action_manager_set_search_mode (window->action_mgr, TRUE);
   if (window->catfish_search_button != NULL)
-    gtk_widget_show (window->catfish_search_button);
+    gtk_widget_set_visible (window->catfish_search_button, window->search_query != NULL && g_strcmp0 (window->search_query, "") != 0);
 
   /* the check is useless as long as the workaround is in place */
   if (THUNAR_IS_DETAILS_VIEW (window->view))
@@ -3663,10 +3667,8 @@ thunar_window_update_search (ThunarWindow *window)
   g_free (window->search_query);
   window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), window->search_query);
-  if (window->search_query != NULL && g_strcmp0 (window->search_query, "") != 0 && window->catfish_search_button != NULL)
-    gtk_widget_show (window->catfish_search_button);
-  else if (window->catfish_search_button != NULL)
-    gtk_widget_hide (window->catfish_search_button);
+  if (window->catfish_search_button != NULL)
+    gtk_widget_set_visible (window->catfish_search_button, window->search_query != NULL && g_strcmp0 (window->search_query, "") != 0);
 }
 
 
