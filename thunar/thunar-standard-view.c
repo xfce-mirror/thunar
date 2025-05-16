@@ -3586,10 +3586,12 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
     {
       /* extract the URI list from the selection data (if valid) */
       if (info == TARGET_TEXT_URI_LIST && gtk_selection_data_get_format (selection_data) == 8 && gtk_selection_data_get_length (selection_data) > 0)
-        standard_view->priv->drop_file_list = thunar_g_file_list_new_from_string ((gchar *) gtk_selection_data_get_data (selection_data));
+        {
+          standard_view->priv->drop_file_list = thunar_g_file_list_new_from_string ((gchar *) gtk_selection_data_get_data (selection_data));
 
-      /* reset the state */
-      standard_view->priv->drop_data_ready = TRUE;
+          /* reset the state */
+          standard_view->priv->drop_data_ready = TRUE;
+        }
     }
 
   /* check if the data was dropped */
@@ -3668,19 +3670,22 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
   GtkTreePath  *path;
   ThunarFile   *file = NULL;
   GdkAtom       target;
-  GdkWindow    *source_window;
 
   /* request the drop data on-demand (if we don't have it already) */
   if (G_UNLIKELY (!standard_view->priv->drop_data_ready))
     {
       /* check if we can handle that drag data (yet?) */
       target = gtk_drag_dest_find_target (view, context, NULL);
-      source_window = gdk_drag_context_get_source_window (context);
 
-      if (target == gdk_atom_intern_static_string ("XdndDirectSave0")
-          || target == gdk_atom_intern_static_string ("_NETSCAPE_URL")
-          || target == gdk_atom_intern_static_string ("application/octet-stream")
-          || (target != GDK_NONE && source_window != NULL && !gdk_window_is_visible (source_window))) /* VBox DnD detection */
+      /* case 1: text/uri-list */
+      if (target == gdk_atom_intern_static_string ("text/uri-list"))
+        {
+          /* request the drag data from the source */
+          gtk_drag_get_data (view, context, target, timestamp);
+        }
+
+      /* case 2: remaining target types + fallback for case 1 */
+      if (target != GDK_NONE && !standard_view->priv->drop_data_ready)
         {
           /* determine the file for the given coordinates */
           file = thunar_standard_view_get_drop_file (standard_view, x, y, &path);
@@ -3719,12 +3724,6 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
             g_object_unref (G_OBJECT (file));
           if (G_LIKELY (path != NULL))
             gtk_tree_path_free (path);
-        }
-      else
-        {
-          /* request the drag data from the source */
-          if (target != GDK_NONE)
-            gtk_drag_get_data (view, context, target, timestamp);
         }
 
       /* tell Gdk whether we can drop here */
