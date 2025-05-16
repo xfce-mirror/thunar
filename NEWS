@@ -1,3 +1,41 @@
+4.20.3 (2025-05-16)
+======
+- Always warn user before permanent deleting files
+- Fix string leaks when UCAs use a submenu
+- Fix a potential leak in thunar_action_manager_append_custom_actions
+- Fix leaks with ThunarMenuX objects
+- Fix thunarx_menu_get_items leak when multiple UCAs share a submenu
+- Fix refresh on row-changed in list view (#1584)
+- Add missing NULL check before unref call
+- Fix popup position of DnD menu
+- UCA: Correct PWD for submenu folder items (#1615)
+- wayland: Fix popup menu not closing (#1592)
+- Check if file exists before opening its location (#1257)
+- Prevent popups on wrong window (#1591)
+- thunar-tpa: Fix libxfce4panel include
+- Prevent criticals when switching current view (#1344)
+- Fix crash when destroying folder in list view (#1330) (#1568)
+- Fix crash in properties dialog (#1585)
+- Fix invalid filenames when copying to exFAT FS (#1570)
+- Fix typo in preferences dialog
+- Hide shortcuts editor when accel map uninitialized (#1488)
+- Update statusbar when searching (#1560)
+- Always update statusbar on file changes in list view (#1560)
+- Fix item activation on double-click in list view (#1567)
+- Use 'malloc_trim' after search (#1552)
+- Fix missing dialog for folder errors in list view (#1538)
+- Fix leak on search update
+- Fix missing dialog window icon (#1506)
+- Fix leaks on "cancel search"
+- Properly check if a file can be trashed (#1554)
+- Translation Updates:
+  Albanian, Bulgarian, Catalan, Chinese (China), Chinese (Taiwan),
+  Czech, Danish, Dutch, English (United Kingdom), Estonian, Finnish,
+  French, Georgian, German, Greek, Hebrew, Hungarian, Italian,
+  Japanese, Norwegian Bokmål, Occitan (post 1500), Polish, Portuguese,
+  Portuguese (Brazil), Romanian, Serbian, Slovenian, Swedish, Turkish,
+  Venetian, Vietnamese
+
 4.20.2 (2025-02-10)
 ======
 - Fix wrong selection after rename in list view (#1415)
