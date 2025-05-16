@@ -1,3 +1,69 @@
+4.21.1 (2025-05-16)
+======
+- search: Avoid saving last view type when closing tab
+- search: Fix Catfish button visibility
+- search: Fix critical when closing tabs
+- search: Fix Back/Forward button functionality
+- Decouple trash and unlinking interfaces
+- Refactor thunar_application_unlink_files
+- Do not recursively delete dirs in unwritable PWD
+- Always warn user before permanent deleting files
+- Fix string leaks when UCAs use a submenu
+- Fix a potential leak in thunar_action_manager_append_custom_actions
+- Fix leaks with ThunarMenuX objects
+- Fix thunarx_menu_get_items leak when multiple UCAs share a submenu
+- Fix leak in thunar_location_entry_emit_edit_done (#1622)
+- Avoid unneccessary refresh of the view
+- Fix refresh on row-changed in list view (#1584)
+- Use default zoom level if no dir specific zoom level is set (#1104)
+- Fix VirtualBox DnD detection (#113)
+- Rework thunar_window_delete
+- Fix initiating location edit while in search mode (#1577)
+- Fix location bar wrongly leaving search mode (#1577)
+- Add missing NULL check before unref call
+- meson-build: Use configure_file() to generate GNU visibility files
+- Fix popup position of DnD menu
+- Limit maximum number of file watches (#1552)
+- UCA: Correct PWD for submenu folder items (#1615)
+- search: Exit search mode with Back button (#786)
+- Allow DnD from host to guest VM (#113)
+- wayland: Fix popup menu not closing (#1592)
+- Check if file exists before opening its location (#1257)
+- Move "folder first" setting into "arrange items" menu (#967)
+- Use ThunarZoomLevel enum instead of gint
+- search: Restart search when pressing Enter
+- search: Clean up signal handling
+- Trust launchers after icon modification
+- Add possibility to set custom file icons
+- Translations: Allow to swap string arguments (#1609)
+- Tweak "Search for" string
+- search: Add space at end of prefix outside translation
+- Add ability to stop a search (#1373)
+- Rename search related variables
+- Prevent popups on wrong window (#1591)
+- meson-build: Add polkit option
+- meson-build: Fix manpage install dir
+- Prevent criticals when switching current view (#1344)
+- Fix crash when destroying folder in list view (#1330) (#1568)
+- Move focus grab in thunar_window_set_current_directory
+- Clean up thunar_window_selection_changed
+- Use thunar_file_is_trashed instead
+- Rename thunar_file_get_item_count
+- twp: Add support for mime types 'jxl', 'avif', and 'webp'
+- Remove outdated "Hacking" document
+- Remove outdated xmi UML diagrams
+- Translation Updates:
+  Albanian, Arabic, Armenian, Armenian (Armenia), Asturian, Basque,
+  Belarusian, Bengali, Bulgarian, Catalan, Chinese (China), Chinese
+  (Hong Kong), Chinese (Taiwan), Czech, Danish, Dutch, Eastern
+  Armenian, English (Australia), English (United Kingdom), Esperanto,
+  Estonian, Finnish, French, Galician, Georgian, German, Greek, Hebrew,
+  Hungarian, Icelandic, Indonesian, Interlingue, Italian, Japanese,
+  Kazakh, Latvian, Malay, Norwegian Bokmål, Norwegian Nynorsk, Occitan
+  (post 1500), Persian (Iran), Polish, Portuguese, Portuguese (Brazil),
+  Romanian, Serbian, Slovak, Slovenian, Spanish, Swedish, Thai,
+  Turkish, Uyghur, Venetian, Vietnamese
+
 4.21.0 (2025-03-23)
 ======
 - Fix crash in properties dialog (#1585)
