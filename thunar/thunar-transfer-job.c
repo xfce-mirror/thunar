@@ -429,7 +429,7 @@ thunar_transfer_job_collect_node (ThunarTransferJob  *job,
       thunar_job = THUNAR_JOB (job);
 
       n_total_files = thunar_job_get_n_total_files (thunar_job);
-      n_total_files += g_list_length (file_list);
+      n_total_files = thunar_job_get_n_total_files (THUNAR_JOB (job)) + g_list_length (file_list);
 
       thunar_job_set_n_total_files (thunar_job, n_total_files);
 
