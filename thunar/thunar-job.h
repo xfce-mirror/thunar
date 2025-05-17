@@ -106,6 +106,10 @@ thunar_job_send_to_mainloop (ThunarJob     *job,
                              GDestroyNotify destroy_notify);
 guint
 thunar_job_get_n_total_files (ThunarJob *job);
+
+void
+thunar_job_set_n_total_files (ThunarJob *job, guint total_files);
+
 void
 thunar_job_set_total_files (ThunarJob *job,
                             GList     *total_files);
