@@ -83,7 +83,7 @@ thunarx_menu_finalize (GObject *object)
   ThunarxMenu *menu = THUNARX_MENU (object);
 
   if (menu->priv->items)
-    g_list_free (menu->priv->items);
+    g_list_free_full (menu->priv->items, g_object_unref);
 
   (*G_OBJECT_CLASS (thunarx_menu_parent_class)->finalize) (object);
 }
