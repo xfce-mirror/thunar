@@ -103,6 +103,7 @@ thunar_gtk_menu_thunarx_menu_item_new (GObject      *thunarx_menu_item,
   gchar       *name, *label_text, *tooltip_text, *icon_name, *accel_path;
   gboolean     sensitive;
   GtkWidget   *gtk_menu_item;
+  GtkWidget   *gtk_submenu_item;
   ThunarxMenu *thunarx_menu;
   GList       *children;
   GList       *lp;
@@ -138,9 +139,14 @@ thunar_gtk_menu_thunarx_menu_item_new (GObject      *thunarx_menu_item,
       children = thunarx_menu_get_items (thunarx_menu);
       submenu = gtk_menu_new ();
       for (lp = children; lp != NULL; lp = lp->next)
-        thunar_gtk_menu_thunarx_menu_item_new (lp->data, GTK_MENU_SHELL (submenu));
+        {
+          gtk_submenu_item = thunar_gtk_menu_thunarx_menu_item_new (lp->data, GTK_MENU_SHELL (submenu));
+
+          /* Each thunarx_menu_item will be destroyed together with its related gtk_menu_item */
+          g_signal_connect_swapped (G_OBJECT (gtk_submenu_item), "destroy", G_CALLBACK (g_object_unref), lp->data);
+        }
       gtk_menu_item_set_submenu (GTK_MENU_ITEM (gtk_menu_item), submenu);
-      thunarx_menu_item_list_free (children);
+      g_list_free (children);
     }
 
   g_free (name);
