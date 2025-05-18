@@ -360,6 +360,9 @@ thunar_location_buttons_finalize (GObject *object)
   /* release from the current_directory */
   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (buttons), NULL);
 
+  /* release reference on the action manager */
+  g_object_unref (buttons->action_mgr);
+
   (*G_OBJECT_CLASS (thunar_location_buttons_parent_class)->finalize) (object);
 }
 
