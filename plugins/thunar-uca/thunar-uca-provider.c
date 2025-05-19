@@ -322,12 +322,15 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
                   /* Only add base-submenus to the returned list */
                   if (parent_menu == NULL)
                     items = g_list_prepend (items, menu_item);
-                  else
+                  else {
                     thunarx_menu_prepend_item (parent_menu, menu_item);
+                    g_object_unref (menu_item);
+                  }
 
                   /* This sublevel becomes the new parent */
                   parent_menu = thunarx_menu_new ();
                   thunarx_menu_item_set_menu (menu_item, parent_menu);
+                  g_object_unref (parent_menu);
                 }
               g_free (sub_menu_path);
             }
@@ -361,8 +364,10 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
           /* add only base menu items to the return list */
           if (parent_menu == NULL)
             items = g_list_prepend (items, item);
-          else
+          else {
             thunarx_menu_prepend_item (parent_menu, item);
+            g_object_unref (item);
+          }
 
           /* cleanup */
           g_free (tooltip);
