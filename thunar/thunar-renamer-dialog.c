@@ -853,8 +853,9 @@ thunar_renamer_dialog_response (GtkDialog *dialog,
       /* perform the rename (returns when done) */
       thunar_renamer_progress_run (THUNAR_RENAMER_PROGRESS (renamer_dialog->progress), pair_list);
 
-      /* hide the rename progress bar */
-      gtk_widget_hide (renamer_dialog->progress);
+      /* hide the rename progress bar (unless the dialog has been destroyed) */
+      if (gtk_widget_get_realized (GTK_WIDGET (renamer_dialog)))
+        gtk_widget_hide (renamer_dialog->progress);
 
       /* release the pairs */
       thunar_renamer_pair_list_free (pair_list);
