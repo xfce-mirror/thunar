@@ -2670,6 +2670,10 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
   /* drop connected signals */
   g_signal_handlers_disconnect_by_data (page, window);
 
+  /* skip selecting another page when the window is being destroyed */
+  if (gtk_widget_in_destruction (GTK_WIDGET (window)))
+    return;
+
   n_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook));
   if (n_pages == 0)
     {
@@ -2692,8 +2696,7 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
       /* page from the other notebook was removed */
       if (notebook != window->notebook_selected)
         thunar_window_paned_notebooks_switch (window);
-      else
-        /* this page removed -> select next page */
+      else /* this page removed -> select next page */
         thunar_window_notebook_select_current_page (window);
 
       /* update tab visibility */
