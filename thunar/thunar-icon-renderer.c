@@ -511,8 +511,9 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   GdkPixbuf              *emblem;
   GdkPixbuf              *icon;
   GdkPixbuf              *temp;
-  GList                  *emblems;
-  GList                  *lp;
+  GHashTable             *emblems;
+  GHashTableIter          emblems_iter;
+  gpointer                emblem_name;
   gint                    scale_factor;
   gint                    position;
   gdouble                 alpha;
@@ -643,13 +644,14 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       if (G_UNLIKELY (emblems != NULL))
         {
           /* render up to MAX_EMBLEMS_PER_FILE emblems */
-          for (lp = emblems, position = 0; lp != NULL && position < MAX_EMBLEMS_PER_FILE; lp = lp->next)
+          g_hash_table_iter_init (&emblems_iter, emblems);
+          for (position = 0; g_hash_table_iter_next (&emblems_iter, &emblem_name, NULL) != FALSE && position < MAX_EMBLEMS_PER_FILE;)
             {
               /* calculate the emblem size */
               emblem_size = MIN ((2 * icon_renderer->size) / 4, 32);
 
               /* check if we have the emblem in the icon theme */
-              emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, emblem_size, scale_factor, FALSE,
+              emblem = thunar_icon_factory_load_icon (icon_factory, emblem_name, emblem_size, scale_factor, FALSE,
                                                       icon_renderer->use_symbolic_icons, context);
               if (G_UNLIKELY (emblem == NULL))
                 continue;
@@ -730,7 +732,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
             }
 
           /* release the emblem name list */
-          g_list_free_full (emblems, g_free);
+          g_hash_table_destroy (emblems);
         }
     }
 
