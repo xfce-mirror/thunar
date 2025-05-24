@@ -986,7 +986,7 @@ thunar_application_launch (ThunarApplication     *application,
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
 
   /* parse the parent pointer */
-  screen = thunar_util_parse_parent (parent, NULL);
+  screen = thunar_util_parse_parent (parent);
 
   /* try to allocate a new job for the operation */
   job = (*launcher) (source_file_list, target_file_list);
@@ -2477,7 +2477,7 @@ _thunar_application_confirm_file_removal (gpointer parent,
 {
   GtkWidget   *dialog;
   GtkWidget   *message_area;
-  GtkWindow   *window = NULL;
+  GtkWindow   *window;
   GdkScreen   *screen;
   GList       *children;
   const gchar *file_basename;
@@ -2486,7 +2486,8 @@ _thunar_application_confirm_file_removal (gpointer parent,
   gchar       *message;
   gint         response;
 
-  screen = thunar_util_parse_parent (parent, &window);
+  screen = thunar_util_parse_parent (parent);
+  window = thunar_util_find_associated_window (parent);
 
   /* generate the question for the given operation */
   if (G_LIKELY (n_file_list == 1))
@@ -2772,7 +2773,7 @@ thunar_application_empty_trash (ThunarApplication *application,
                                 const gchar       *startup_id)
 {
   GtkWidget *dialog;
-  GtkWindow *window = NULL;
+  GtkWindow *window;
   GdkScreen *screen;
   GList      file_list;
   gint       response;
@@ -2781,7 +2782,8 @@ thunar_application_empty_trash (ThunarApplication *application,
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
 
   /* parse the parent pointer */
-  screen = thunar_util_parse_parent (parent, &window);
+  screen = thunar_util_parse_parent (parent);
+  window = thunar_util_find_associated_window (parent);
 
   /* ask the user to confirm the operation */
   dialog = gtk_message_dialog_new (window,

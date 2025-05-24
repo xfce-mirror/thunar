@@ -2559,7 +2559,7 @@ thunar_action_manager_action_rename (ThunarActionManager *action_mgr)
 
   /* get the window and the screen */
   window = gtk_widget_get_toplevel (action_mgr->widget);
-  screen = thunar_util_parse_parent (window, NULL);
+  screen = thunar_util_parse_parent (window);
 
   /* start renaming if we have exactly one selected file */
   if (g_list_length (action_mgr->files_to_process) == 1)
