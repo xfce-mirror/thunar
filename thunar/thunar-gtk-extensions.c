@@ -408,9 +408,10 @@ thunar_gtk_mount_operation_new (gpointer parent)
 {
   GMountOperation *operation;
   GdkScreen       *screen;
-  GtkWindow       *window = NULL;
+  GtkWindow       *window;
 
-  screen = thunar_util_parse_parent (parent, &window);
+  screen = thunar_util_parse_parent (parent);
+  window = thunar_util_find_associated_window (parent);
 
   operation = gtk_mount_operation_new (window);
   g_mount_operation_set_password_save (G_MOUNT_OPERATION (operation), G_PASSWORD_SAVE_FOR_SESSION);
