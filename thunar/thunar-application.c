@@ -979,14 +979,10 @@ thunar_application_launch (ThunarApplication     *application,
                            GClosure              *new_files_closure)
 {
   GtkWidget *dialog;
-  GdkScreen *screen;
   ThunarJob *job;
   GList     *parent_folder_list = NULL;
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
-
-  /* parse the parent pointer */
-  screen = thunar_util_parse_parent (parent);
 
   /* try to allocate a new job for the operation */
   job = (*launcher) (source_file_list, target_file_list);
@@ -1010,9 +1006,9 @@ thunar_application_launch (ThunarApplication     *application,
   /* get the shared progress dialog */
   dialog = thunar_application_get_progress_dialog (application);
 
-  /* place the dialog on the given screen */
-  if (screen != NULL)
-    gtk_window_set_screen (GTK_WINDOW (dialog), screen);
+  /* If a specific screen is requested, we spawn the dialog on that screen */
+  if (G_UNLIKELY (parent != NULL && GDK_IS_SCREEN (parent)))
+    thunar_gtk_window_set_screen (GTK_WINDOW (dialog), GDK_SCREEN (parent));
 
   application->show_progress_dialog_n_jobs_before = thunar_progress_dialog_n_jobs (THUNAR_PROGRESS_DIALOG (dialog));
 
@@ -2478,7 +2474,6 @@ _thunar_application_confirm_file_removal (gpointer parent,
   GtkWidget   *dialog;
   GtkWidget   *message_area;
   GtkWindow   *window;
-  GdkScreen   *screen;
   GList       *children;
   const gchar *file_basename;
   const gchar *file_display_name;
@@ -2486,7 +2481,6 @@ _thunar_application_confirm_file_removal (gpointer parent,
   gchar       *message;
   gint         response;
 
-  screen = thunar_util_parse_parent (parent);
   window = thunar_util_find_associated_window (parent);
 
   /* generate the question for the given operation */
@@ -2535,8 +2529,11 @@ _thunar_application_confirm_file_removal (gpointer parent,
                                    GTK_MESSAGE_QUESTION,
                                    GTK_BUTTONS_NONE,
                                    "%s", message);
-  if (G_UNLIKELY (window == NULL && screen != NULL))
-    gtk_window_set_screen (GTK_WINDOW (dialog), screen);
+
+  /* If a specific screen is requested, we spawn the dialog on that screen */
+  if (G_UNLIKELY (parent != NULL && GDK_IS_SCREEN (parent)))
+    thunar_gtk_window_set_screen (GTK_WINDOW (dialog), GDK_SCREEN (parent));
+
   gtk_window_set_title (GTK_WINDOW (dialog), _("Attention"));
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                           _("_Cancel"), GTK_RESPONSE_CANCEL,
@@ -2774,7 +2771,6 @@ thunar_application_empty_trash (ThunarApplication *application,
 {
   GtkWidget *dialog;
   GtkWindow *window;
-  GdkScreen *screen;
   GList      file_list;
   gint       response;
 
@@ -2782,7 +2778,6 @@ thunar_application_empty_trash (ThunarApplication *application,
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
 
   /* parse the parent pointer */
-  screen = thunar_util_parse_parent (parent);
   window = thunar_util_find_associated_window (parent);
 
   /* ask the user to confirm the operation */
@@ -2792,8 +2787,11 @@ thunar_application_empty_trash (ThunarApplication *application,
                                    GTK_MESSAGE_QUESTION,
                                    GTK_BUTTONS_NONE,
                                    _("Remove all files and folders from the Trash?"));
-  if (G_UNLIKELY (window == NULL && screen != NULL))
-    gtk_window_set_screen (GTK_WINDOW (dialog), screen);
+
+  /* If a specific screen is requested, we spawn the dialog on that screen */
+  if (G_UNLIKELY (parent != NULL && GDK_IS_SCREEN (parent)))
+    thunar_gtk_window_set_screen (GTK_WINDOW (dialog), GDK_SCREEN (parent));
+
   gtk_window_set_startup_id (GTK_WINDOW (dialog), startup_id);
   gtk_window_set_title (GTK_WINDOW (dialog), _("Empty Trash"));
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
