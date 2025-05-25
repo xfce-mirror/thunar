@@ -1178,17 +1178,53 @@ thunar_standard_view_dispose (GObject *object)
       standard_view->loading_binding = NULL;
     }
 
-  /* be sure to cancel any pending drag autoscroll timer */
   if (G_UNLIKELY (standard_view->priv->drag_scroll_timer_id != 0))
-    g_source_remove (standard_view->priv->drag_scroll_timer_id);
+    {
+      g_source_remove (standard_view->priv->drag_scroll_timer_id);
+      standard_view->priv->drag_scroll_timer_id = 0;
+    }
 
-  /* be sure to cancel any pending drag enter timer */
   if (G_UNLIKELY (standard_view->priv->drag_enter_timer_id != 0))
-    g_source_remove (standard_view->priv->drag_enter_timer_id);
+    {
+      g_source_remove (standard_view->priv->drag_enter_timer_id);
+      standard_view->priv->drag_enter_timer_id = 0;
+    }
 
-  /* be sure to cancel any pending drag timer */
   if (G_UNLIKELY (standard_view->priv->drag_timer_id != 0))
-    g_source_remove (standard_view->priv->drag_timer_id);
+    {
+      g_source_remove (standard_view->priv->drag_timer_id);
+      standard_view->priv->drag_timer_id = 0;
+    }
+
+  /* disconnect from the list model */
+  g_signal_handlers_disconnect_by_data (G_OBJECT (standard_view->model), standard_view);
+
+  if (standard_view->priv->selection_changed_timeout_source != 0)
+    {
+      g_source_remove (standard_view->priv->selection_changed_timeout_source);
+      standard_view->priv->selection_changed_timeout_source = 0;
+    }
+
+  if (standard_view->priv->restore_selection_idle_id != 0)
+    {
+      g_source_remove (standard_view->priv->restore_selection_idle_id);
+      standard_view->priv->restore_selection_idle_id = 0;
+    }
+
+  if (standard_view->priv->statusbar_text_idle_id != 0)
+    {
+      g_source_remove (standard_view->priv->statusbar_text_idle_id);
+      standard_view->priv->statusbar_text_idle_id = 0;
+    }
+
+  /* cancel pending statusbar job, if any */
+  if (standard_view->priv->statusbar_job != NULL)
+    {
+      g_signal_handlers_disconnect_by_data (standard_view->priv->statusbar_job, standard_view);
+      thunar_job_cancel (THUNAR_JOB (standard_view->priv->statusbar_job));
+      g_object_unref (standard_view->priv->statusbar_job);
+      standard_view->priv->statusbar_job = NULL;
+    }
 
   /* disconnect from file */
   if (standard_view->priv->current_directory != NULL)
@@ -1218,9 +1254,6 @@ thunar_standard_view_finalize (GObject *object)
 
   /* disconnect accelerators */
   thunar_standard_view_disconnect_accelerators (standard_view);
-
-  if (standard_view->priv->selection_changed_timeout_source != 0)
-    g_source_remove (standard_view->priv->selection_changed_timeout_source);
 
   /* release the scroll_to_file reference (if any) */
   if (G_UNLIKELY (standard_view->priv->scroll_to_file != NULL))
@@ -1263,30 +1296,14 @@ thunar_standard_view_finalize (GObject *object)
   /* release our reference on the preferences */
   g_object_unref (G_OBJECT (standard_view->preferences));
 
-  /* disconnect from the list model */
-  g_signal_handlers_disconnect_by_data (G_OBJECT (standard_view->model), standard_view);
+  /* release our reference on the list model */
   g_object_unref (G_OBJECT (standard_view->model));
 
-  /* remove selection restore timeout */
-  if (standard_view->priv->restore_selection_idle_id != 0)
-    g_source_remove (standard_view->priv->restore_selection_idle_id);
-
-  /* free the statusbar text (if any) */
-  if (standard_view->priv->statusbar_text_idle_id != 0)
-    g_source_remove (standard_view->priv->statusbar_text_idle_id);
+  /* free the statusbar text */
   g_free (standard_view->priv->statusbar_text);
-
-  if (standard_view->priv->statusbar_job != NULL)
-    {
-      g_signal_handlers_disconnect_by_data (standard_view->priv->statusbar_job, standard_view);
-      thunar_job_cancel (THUNAR_JOB (standard_view->priv->statusbar_job));
-      g_object_unref (standard_view->priv->statusbar_job);
-      standard_view->priv->statusbar_job = NULL;
-    }
+  g_mutex_clear (&standard_view->priv->statusbar_text_mutex);
 
   g_free (standard_view->priv->search_query);
-
-  g_mutex_clear (&standard_view->priv->statusbar_text_mutex);
 
   /* release the scroll_to_files hash table */
   g_hash_table_destroy (standard_view->priv->scroll_to_files);
