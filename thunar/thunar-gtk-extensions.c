@@ -407,16 +407,16 @@ GMountOperation *
 thunar_gtk_mount_operation_new (gpointer parent)
 {
   GMountOperation *operation;
-  GdkScreen       *screen;
   GtkWindow       *window;
 
-  screen = thunar_util_parse_parent (parent);
   window = thunar_util_find_associated_window (parent);
 
   operation = gtk_mount_operation_new (window);
   g_mount_operation_set_password_save (G_MOUNT_OPERATION (operation), G_PASSWORD_SAVE_FOR_SESSION);
-  if (window == NULL && screen != NULL)
-    gtk_mount_operation_set_screen (GTK_MOUNT_OPERATION (operation), screen);
+
+  /* If a specific screen is requested, we spawn the dialog on that screen */
+  if (G_UNLIKELY (parent != NULL && GDK_IS_SCREEN (parent)))
+    gtk_mount_operation_set_screen (GTK_MOUNT_OPERATION (operation), GDK_SCREEN (parent));
 
   return operation;
 }
@@ -480,4 +480,16 @@ thunar_gtk_orientable_get_center_pos (GtkOrientable *orientable)
     return (gint) (allocation.width / 2);
   else
     return (gint) (allocation.height / 2);
+}
+
+
+
+void
+thunar_gtk_window_set_screen (GtkWindow *window,
+                              GdkScreen *screen)
+{
+  /* If we want to run the dialog on a specific screen, we need to wipe the transient parent */
+  /* That is, because the window cannot be transient for a window on a different screen (workspace on that screen) */
+  gtk_window_set_transient_for (window, NULL);
+  gtk_window_set_screen (window, screen);
 }

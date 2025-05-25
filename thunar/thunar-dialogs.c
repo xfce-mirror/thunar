@@ -94,7 +94,6 @@ thunar_dialogs_show_create (gpointer     parent,
 {
   GtkWidget         *dialog;
   GtkWindow         *window;
-  GdkScreen         *screen;
   GError            *error = NULL;
   gchar             *name = NULL;
   GtkWidget         *label;
@@ -106,8 +105,7 @@ thunar_dialogs_show_create (gpointer     parent,
 
   _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), NULL);
 
-  /* parse the parent window and screen */
-  screen = thunar_util_parse_parent (parent);
+  /* parse the parent window */
   window = thunar_util_find_associated_window (parent);
 
   /* create a new dialog window */
@@ -118,6 +116,10 @@ thunar_dialogs_show_create (gpointer     parent,
                                         _("_Cancel"), GTK_RESPONSE_CANCEL,
                                           _("C_reate"), GTK_RESPONSE_OK,
                                         NULL);
+
+  /* If a specific screen is requested, we spawn the dialog on that screen */
+  if (G_UNLIKELY (parent != NULL && GDK_IS_SCREEN (parent)))
+    thunar_gtk_window_set_screen (GTK_WINDOW (dialog), GDK_SCREEN (parent));
 
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
   gtk_dialog_set_response_sensitive (GTK_DIALOG (dialog), GTK_RESPONSE_OK, FALSE);
@@ -174,12 +176,6 @@ thunar_dialogs_show_create (gpointer     parent,
 
   /* select the filename without the extension */
   thunar_dialogs_select_filename (GTK_WIDGET (xfce_filename_input_get_entry (filename_input)));
-
-  if (screen != NULL)
-    gtk_window_set_screen (GTK_WINDOW (dialog), screen);
-
-  if (window != NULL)
-    gtk_window_set_transient_for (GTK_WINDOW (dialog), window);
 
   /* shrink the dialog again, after some filename error was fixed */
   g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (thunar_dialogs_shrink_height), dialog);
@@ -239,7 +235,6 @@ thunar_dialogs_show_rename_file (gpointer               parent,
   XfceFilenameInput *filename_input;
   GtkEntry          *filename_input_entry;
   GtkWindow         *window;
-  GdkScreen         *screen;
   GdkPixbuf         *icon;
   cairo_surface_t   *surface;
   gchar             *title;
@@ -251,8 +246,7 @@ thunar_dialogs_show_rename_file (gpointer               parent,
   _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WINDOW (parent), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
-  /* parse the parent window and screen */
-  screen = thunar_util_parse_parent (parent);
+  /* parse the parent window */
   window = thunar_util_find_associated_window (parent);
 
   /* get the filename of the file */
@@ -270,9 +264,9 @@ thunar_dialogs_show_rename_file (gpointer               parent,
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
   g_free (title);
 
-  /* move the dialog to the appropriate screen */
-  if (G_UNLIKELY (window == NULL && screen != NULL))
-    gtk_window_set_screen (GTK_WINDOW (dialog), screen);
+  /* If a specific screen is requested, we spawn the dialog on that screen */
+  if (G_UNLIKELY (parent != NULL && GDK_IS_SCREEN (parent)))
+    thunar_gtk_window_set_screen (GTK_WINDOW (dialog), GDK_SCREEN (parent));
 
   if (window != NULL)
     scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (window));
@@ -490,7 +484,6 @@ thunar_dialogs_show_error (gpointer      parent,
 {
   GtkWidget *dialog;
   GtkWindow *window;
-  GdkScreen *screen;
   va_list    args;
   gchar     *primary_text;
   GList     *children;
@@ -503,7 +496,6 @@ thunar_dialogs_show_error (gpointer      parent,
     return;
 
   /* parse the parent pointer */
-  screen = thunar_util_parse_parent (parent);
   window = thunar_util_find_associated_window (parent);
 
   /* determine the primary error text */
@@ -521,9 +513,9 @@ thunar_dialogs_show_error (gpointer      parent,
 
   gtk_window_set_title (GTK_WINDOW (dialog), _("Error"));
 
-  /* move the dialog to the appropriate screen */
-  if (G_UNLIKELY (window == NULL && screen != NULL))
-    gtk_window_set_screen (GTK_WINDOW (dialog), screen);
+  /* If a specific screen is requested, we spawn the dialog on that screen */
+  if (G_UNLIKELY (parent != NULL && GDK_IS_SCREEN (parent)))
+    thunar_gtk_window_set_screen (GTK_WINDOW (dialog), GDK_SCREEN (parent));
 
   /* set secondary text if an error is provided */
   if (G_LIKELY (error != NULL))
@@ -566,7 +558,8 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
 {
   const gchar *separator;
   const gchar *mnemonic;
-  GtkWidget   *message;
+  GtkWindow   *window;
+  GtkWidget   *dialog;
   GtkWidget   *button;
   GString     *secondary = g_string_sized_new (256);
   GString     *primary = g_string_sized_new (256);
@@ -576,6 +569,9 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
 
   _thunar_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), THUNAR_JOB_RESPONSE_CANCEL);
   _thunar_return_val_if_fail (g_utf8_validate (question, -1, NULL), THUNAR_JOB_RESPONSE_CANCEL);
+
+  /* parse the parent pointer */
+  window = thunar_util_find_associated_window (parent);
 
   /* try to separate the question into primary and secondary parts */
   separator = strstr (question, ": ");
@@ -613,14 +609,19 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
     }
 
   /* allocate the question message dialog */
-  message = gtk_message_dialog_new (parent,
-                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                    GTK_MESSAGE_QUESTION,
-                                    GTK_BUTTONS_NONE,
-                                    "%s", primary->str);
-  gtk_window_set_title (GTK_WINDOW (message), _("Attention"));
+  dialog = gtk_message_dialog_new (window,
+                                   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                   GTK_MESSAGE_QUESTION,
+                                   GTK_BUTTONS_NONE,
+                                   "%s", primary->str);
+
+  /* If a specific screen is requested, we spawn the dialog on that screen */
+  if (G_UNLIKELY (parent != NULL && GDK_IS_SCREEN (parent)))
+    thunar_gtk_window_set_screen (GTK_WINDOW (dialog), GDK_SCREEN (parent));
+
+  gtk_window_set_title (GTK_WINDOW (dialog), _("Attention"));
   if (G_LIKELY (*secondary->str != '\0'))
-    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s", secondary->str);
+    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", secondary->str);
 
   /* add the buttons based on the possible choices */
   for (n = THUNAR_JOB_RESPONSE_MAX_INT; n >= 0; --n)
@@ -692,24 +693,24 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
 
       button = gtk_button_new_with_mnemonic (mnemonic);
       gtk_widget_set_can_default (button, TRUE);
-      gtk_dialog_add_action_widget (GTK_DIALOG (message), button, response);
+      gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, response);
       gtk_widget_show (button);
 
-      gtk_dialog_set_default_response (GTK_DIALOG (message), response);
+      gtk_dialog_set_default_response (GTK_DIALOG (dialog), response);
     }
 
   if (has_cancel)
     {
       button = gtk_button_new_with_mnemonic (_("_Cancel"));
       gtk_widget_set_can_default (button, TRUE);
-      gtk_dialog_add_action_widget (GTK_DIALOG (message), button, GTK_RESPONSE_CANCEL);
+      gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, GTK_RESPONSE_CANCEL);
       gtk_widget_show (button);
-      gtk_dialog_set_default_response (GTK_DIALOG (message), GTK_RESPONSE_CANCEL);
+      gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);
     }
 
   /* run the question dialog */
-  response = gtk_dialog_run (GTK_DIALOG (message));
-  gtk_widget_destroy (message);
+  response = gtk_dialog_run (GTK_DIALOG (dialog));
+  gtk_widget_destroy (dialog);
 
   /* transform the result as required */
   if (G_UNLIKELY (response <= 0))
@@ -1048,7 +1049,6 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
                                       ThunarFile  *file,
                                       const gchar *command)
 {
-  GdkScreen *screen;
   GtkWindow *window;
   gint       response;
   GtkWidget *dialog;
@@ -1060,8 +1060,7 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (g_utf8_validate (command, -1, NULL), FALSE);
 
-  /* parse the parent window and screen */
-  screen = thunar_util_parse_parent (parent);
+  /* parse the parent window */
   window = thunar_util_find_associated_window (parent);
 
   /* create the secondary text */
@@ -1098,14 +1097,17 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
                                    GTK_MESSAGE_WARNING,
                                    GTK_BUTTONS_NONE,
                                    "%s", primary);
+
+  /* If a specific screen is requested, we spawn the dialog on that screen */
+  if (G_UNLIKELY (parent != NULL && GDK_IS_SCREEN (parent)))
+    thunar_gtk_window_set_screen (GTK_WINDOW (dialog), GDK_SCREEN (parent));
+
   gtk_window_set_title (GTK_WINDOW (dialog), _("Attention"));
   gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Launch Anyway"), GTK_RESPONSE_OK);
   if (thunar_file_is_chmodable (file))
     gtk_dialog_add_button (GTK_DIALOG (dialog), _("Mark As _Secure And Launch"), GTK_RESPONSE_APPLY);
   gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Cancel"), GTK_RESPONSE_CANCEL);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);
-  if (screen != NULL && window == NULL)
-    gtk_window_set_screen (GTK_WINDOW (dialog), screen);
   gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", secondary->str);
   g_string_free (secondary, TRUE);
   response = gtk_dialog_run (GTK_DIALOG (dialog));
@@ -1246,7 +1248,6 @@ thunar_dialog_ask_execute (const ThunarFile *file,
 {
   GtkWidget *dialog;
   GtkWindow *window;
-  GdkScreen *screen;
   gint       response;
   gchar     *dialog_text;
   GtkWidget *button;
@@ -1254,8 +1255,7 @@ thunar_dialog_ask_execute (const ThunarFile *file,
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), THUNAR_FILE_ASK_EXECUTE_RESPONSE_OPEN);
 
-  /* parse the parent window and screen */
-  screen = thunar_util_parse_parent (parent);
+  /* parse the parent window */
   window = thunar_util_find_associated_window (parent);
 
   if (single_file)
@@ -1274,6 +1274,10 @@ thunar_dialog_ask_execute (const ThunarFile *file,
                                    GTK_MESSAGE_QUESTION,
                                    GTK_BUTTONS_NONE,
                                    "%s", dialog_text);
+
+  /* If a specific screen is requested, we spawn the dialog on that screen */
+  if (G_UNLIKELY (parent != NULL && GDK_IS_SCREEN (parent)))
+    thunar_gtk_window_set_screen (GTK_WINDOW (dialog), GDK_SCREEN (parent));
 
   gtk_window_set_title (GTK_WINDOW (dialog), _("Open Shell Script"));
 
@@ -1301,9 +1305,6 @@ thunar_dialog_ask_execute (const ThunarFile *file,
       gtk_widget_set_can_default (button, TRUE);
       gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_FILE_ASK_EXECUTE_RESPONSE_RUN);
     }
-
-  if (G_UNLIKELY (window == NULL && screen != NULL))
-    gtk_window_set_screen (GTK_WINDOW (dialog), screen);
 
   response = gtk_dialog_run (GTK_DIALOG (dialog));
   gtk_widget_destroy (dialog);
