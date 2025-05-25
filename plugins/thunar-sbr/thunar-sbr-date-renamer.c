@@ -39,8 +39,8 @@
 
 
 
-#ifdef HAVE_EXIF
-#include <libexif/exif-data.h>
+#ifdef HAVE_GEXIV2
+#include <gexiv2/gexiv2.h>
 #endif
 
 
@@ -72,7 +72,7 @@ thunar_sbr_date_renamer_set_property (GObject      *object,
 static gchar *
 thunar_sbr_get_time_string (guint64      file_time,
                             const gchar *custom_format);
-#ifdef HAVE_EXIF
+#ifdef HAVE_GEXIV2
 static guint64
 thunar_sbr_get_time_from_string (const gchar *string);
 #endif
@@ -394,7 +394,7 @@ thunar_sbr_get_time_string (guint64      file_time,
 
 
 
-#ifdef HAVE_EXIF
+#ifdef HAVE_GEXIV2
 static guint64
 thunar_sbr_get_time_from_string (const gchar *string)
 {
@@ -443,11 +443,9 @@ thunar_sbr_get_time (ThunarxFileInfo  *file,
 {
   GFileInfo *file_info;
   guint64    file_time = 0;
-#ifdef HAVE_EXIF
-  gchar     *uri, *filename;
-  ExifEntry *exif_entry;
-  ExifData  *exif_data;
-  gchar      exif_buffer[128];
+#ifdef HAVE_GEXIV2
+  GExiv2Metadata *metadata;
+  gchar          *uri, *filename, *exif_value;
 #endif
 
   switch (mode)
@@ -478,7 +476,7 @@ thunar_sbr_get_time (ThunarxFileInfo  *file,
       g_object_unref (file_info);
       break;
 
-#ifdef HAVE_EXIF
+#ifdef HAVE_GEXIV2
     case THUNAR_SBR_DATE_MODE_TAKEN:
       /* get the uri */
       uri = thunarx_file_info_get_uri (file);
@@ -489,27 +487,27 @@ thunar_sbr_get_time (ThunarxFileInfo  *file,
           if (G_LIKELY (filename != NULL))
             {
               /* try to load the exif data for the file */
-              exif_data = exif_data_new_from_file (filename);
-              if (G_LIKELY (exif_data != NULL))
+              metadata = gexiv2_metadata_new ();
+              if (G_LIKELY (gexiv2_metadata_open_path (metadata, filename, NULL)))
                 {
                   /* lookup the entry for the tag, fallback on less common ones */
-                  exif_entry = exif_data_get_entry (exif_data, EXIF_TAG_DATE_TIME);
+                  exif_value = gexiv2_metadata_try_get_tag_string (metadata, "Exif.Image.DateTime", NULL);
 
-                  if (exif_entry == NULL)
-                    exif_entry = exif_data_get_entry (exif_data, EXIF_TAG_DATE_TIME_ORIGINAL);
+                  if (exif_value == NULL)
+                    exif_value = gexiv2_metadata_try_get_tag_string (metadata, "Exif.Image.DateTimeOriginal", NULL);
 
-                  if (exif_entry == NULL)
-                    exif_entry = exif_data_get_entry (exif_data, EXIF_TAG_DATE_TIME_DIGITIZED);
+                  if (exif_value == NULL)
+                    exif_value = gexiv2_metadata_try_get_tag_string (metadata, "Exif.Photo.DateTimeDigitized", NULL);
 
-                  if (G_LIKELY (exif_entry != NULL))
+                  if (G_LIKELY (exif_value != NULL))
                     {
                       /* determine the value */
-                      if (exif_entry_get_value (exif_entry, exif_buffer, sizeof (exif_buffer)) != NULL)
-                        file_time = thunar_sbr_get_time_from_string (exif_buffer);
+                      file_time = thunar_sbr_get_time_from_string (exif_value);
+                      g_free (exif_value);
                     }
 
                   /* cleanup */
-                  exif_data_free (exif_data);
+                  g_object_unref (metadata);
                 }
 
               /* cleanup */

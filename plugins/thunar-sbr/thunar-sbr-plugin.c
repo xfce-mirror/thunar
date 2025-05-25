@@ -30,6 +30,9 @@
 #include <thunar-sbr/thunar-sbr-remove-renamer.h>
 #include <thunar-sbr/thunar-sbr-replace-renamer.h>
 
+#ifdef HAVE_GEXIV2
+#include <gexiv2/gexiv2.h>
+#endif
 
 
 G_MODULE_EXPORT void
@@ -77,6 +80,11 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
 
   /* setup the plugin provider type list */
   type_list[0] = THUNAR_SBR_TYPE_PROVIDER;
+
+#ifdef HAVE_GEXIV2
+  if (!gexiv2_initialize ())
+    g_warning ("gexiv2 failed to initialize, it may not work correctly");
+#endif
 }
 
 
