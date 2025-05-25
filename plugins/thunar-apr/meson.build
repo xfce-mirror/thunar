@@ -23,12 +23,12 @@ shared_module(
     include_directories('..' / '..'),
   ],
   dependencies: [
+    gexiv2,
     glib,
     gtk,
+    libintl,
     libxfce4ui,
     libxfce4util,
-    exif,
-    libintl,
   ],
   link_with: [
     libthunarx,
