@@ -30,7 +30,7 @@ thunar_sbr_la_SOURCES =							\
 	thunar-sbr-replace-renamer.h
 
 thunar_sbr_la_CFLAGS =							\
-	$(EXIF_CFLAGS)							\
+	$(GEXIV2_CFLAGS)							\
 	$(GLIB_CFLAGS)							\
 	$(GTK_CFLAGS)							\
 	$(LIBXFCE4UTIL_CFLAGS)							\
@@ -47,7 +47,7 @@ thunar_sbr_la_LDFLAGS =							\
 
 thunar_sbr_la_LIBADD =							\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la	\
-	$(EXIF_LIBS)							\
+	$(GEXIV2_LIBS)							\
 	$(LIBXFCE4UTIL_LIBS)							\
 	$(GLIB_LIBS)							\
 	$(GTK_LIBS)							\

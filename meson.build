@@ -36,7 +36,6 @@ dependency_versions = {
   'libnotify': '>= 0.7.0',
   'polkit': '>= 0.102',
 
-  'exif': '>= 0.6.0',
   'gexiv2': '>= 0.14.0',
   'pcre2': '>= 10.0',
   'libxfce4panel': '>= 4.14.0',
@@ -97,11 +96,6 @@ endif
 
 polkit = dependency('polkit-gobject-1', version: dependency_versions['polkit'], required: get_option('polkit'))
 gir = dependency('gobject-introspection-1.0', version: dependency_versions['gir'], required: get_option('introspection'))
-
-exif = dependency('libexif', version: dependency_versions['exif'], required: get_option('exif'))
-if exif.found()
-  feature_cflags += '-DHAVE_EXIF=1'
-endif
 
 gexiv2 = dependency('gexiv2', version: dependency_versions['gexiv2'], required: get_option('gexiv2'))
 if gexiv2.found()
