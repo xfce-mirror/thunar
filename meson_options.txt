@@ -79,7 +79,14 @@ option(
   'exif',
   type: 'feature',
   value: 'auto',
-  description: 'Exif support (optional for thunar-apr and thunar-sbr plugins)',
+  description: 'Exif support (optional for the thunar-sbr plugin)',
+)
+
+option(
+  'gexiv2',
+  type: 'feature',
+  value: 'auto',
+  description: 'Exiv2 support (optional for the thunar-apr plugin)',
 )
 
 option(

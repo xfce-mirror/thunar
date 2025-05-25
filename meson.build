@@ -37,6 +37,7 @@ dependency_versions = {
   'polkit': '>= 0.102',
 
   'exif': '>= 0.6.0',
+  'gexiv2': '>= 0.14.0',
   'pcre2': '>= 10.0',
   'libxfce4panel': '>= 4.14.0',
 }
@@ -100,6 +101,11 @@ gir = dependency('gobject-introspection-1.0', version: dependency_versions['gir'
 exif = dependency('libexif', version: dependency_versions['exif'], required: get_option('exif'))
 if exif.found()
   feature_cflags += '-DHAVE_EXIF=1'
+endif
+
+gexiv2 = dependency('gexiv2', version: dependency_versions['gexiv2'], required: get_option('gexiv2'))
+if gexiv2.found()
+  feature_cflags += '-DHAVE_GEXIV2=1'
 endif
 
 pcre2 = dependency('libpcre2-8', version: dependency_versions['pcre2'], required: get_option('pcre2'))
