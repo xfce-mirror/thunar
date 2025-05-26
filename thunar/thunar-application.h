@@ -85,7 +85,7 @@ thunar_application_bulk_rename (ThunarApplication *application,
                                 const gchar       *working_directory,
                                 gchar            **filenames,
                                 gboolean           standalone,
-                                GdkScreen         *screen,
+                                gpointer           parent,
                                 const gchar       *startup_id,
                                 GError           **error);
 
@@ -93,7 +93,7 @@ gboolean
 thunar_application_process_filenames (ThunarApplication             *application,
                                       const gchar                   *working_directory,
                                       gchar                        **filenames,
-                                      GdkScreen                     *screen,
+                                      gpointer                       parent,
                                       const gchar                   *startup_id,
                                       GError                       **error,
                                       ThunarApplicationProcessAction action);
@@ -101,7 +101,7 @@ thunar_application_process_filenames (ThunarApplication             *application
 void
 thunar_application_rename_file (ThunarApplication     *application,
                                 ThunarFile            *file,
-                                GdkScreen             *screen,
+                                gpointer               parent,
                                 const gchar           *startup_id,
                                 ThunarOperationLogMode log_mode);
 
@@ -109,7 +109,7 @@ void
 thunar_application_create_file (ThunarApplication     *application,
                                 ThunarFile            *parent_directory,
                                 const gchar           *content_type,
-                                GdkScreen             *screen,
+                                gpointer               parent,
                                 const gchar           *startup_id,
                                 ThunarOperationLogMode log_mode);
 
@@ -117,7 +117,7 @@ void
 thunar_application_create_file_from_template (ThunarApplication     *application,
                                               ThunarFile            *parent_directory,
                                               ThunarFile            *template_file,
-                                              GdkScreen             *screen,
+                                              gpointer               parent,
                                               const gchar           *startup_id,
                                               ThunarOperationLogMode log_mode);
 
