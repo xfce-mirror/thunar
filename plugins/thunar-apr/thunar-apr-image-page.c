@@ -44,6 +44,7 @@ static const struct
   const gchar *tag;
 }
 
+/* clang-format off */
 TAGS_GEXIV2[] =
 {
   { N_ ("Date Taken:"),        "Exif.Image.DateTimeOriginal",  },
@@ -61,6 +62,7 @@ TAGS_GEXIV2[] =
   { N_ ("Description:"),       "Exif.Image.ImageDescription",  },
   { N_ ("Comment:"),           "Exif.Photo.UserComment",       },
 };
+/* clang-format on */
 #endif
 
 
@@ -228,8 +230,8 @@ thunar_apr_image_page_file_changed (ThunarAprAbstractPage *abstract_page,
   gint                height;
   gint                width;
 #ifdef HAVE_GEXIV2
-  GExiv2Metadata     *metadata;
-  guint               n;
+  GExiv2Metadata *metadata;
+  guint           n;
 #endif
 
   /* determine the URI for the file */
