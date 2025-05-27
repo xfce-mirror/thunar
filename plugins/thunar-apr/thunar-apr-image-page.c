@@ -25,8 +25,8 @@
 #include <libxfce4util/libxfce4util.h>
 #include <thunar-apr/thunar-apr-image-page.h>
 
-#ifdef HAVE_EXIF
-#include <libexif/exif-data.h>
+#ifdef HAVE_GEXIV2
+#include <gexiv2/gexiv2.h>
 #endif
 
 
@@ -37,30 +37,30 @@ thunar_apr_image_page_file_changed (ThunarAprAbstractPage *abstract_page,
 
 
 
-#ifdef HAVE_EXIF
+#ifdef HAVE_GEXIV2
 static const struct
 {
   const gchar *name;
-  ExifTag      tag;
+  const gchar *tag;
 }
 
 /* clang-format off */
-TAIP_EXIF[] =
+TAGS_GEXIV2[] =
 {
-  { N_ ("Date Taken:"),        EXIF_TAG_DATE_TIME_ORIGINAL,  },
-  { N_ ("Camera Brand:"),      EXIF_TAG_MAKE,                },
-  { N_ ("Camera Model:"),      EXIF_TAG_MODEL,               },
-  { N_ ("Exposure Time:"),     EXIF_TAG_EXPOSURE_TIME,       },
-  { N_ ("Exposure Program:"),  EXIF_TAG_EXPOSURE_PROGRAM,    },
-  { N_ ("Aperture Value:"),    EXIF_TAG_APERTURE_VALUE,      },
-  { N_ ("Metering Mode:"),     EXIF_TAG_METERING_MODE,       },
-  { N_ ("Flash Fired:"),       EXIF_TAG_FLASH,               },
-  { N_ ("Focal Length:"),      EXIF_TAG_FOCAL_LENGTH,        },
-  { N_ ("Shutter Speed:"),     EXIF_TAG_SHUTTER_SPEED_VALUE, },
-  { N_ ("ISO Speed Ratings:"), EXIF_TAG_ISO_SPEED_RATINGS,   },
-  { N_ ("Software:"),          EXIF_TAG_SOFTWARE,            },
-  { N_ ("Description:"),       EXIF_TAG_IMAGE_DESCRIPTION,   },
-  { N_ ("Comment:"),           EXIF_TAG_USER_COMMENT,        },
+  { N_ ("Date Taken:"),        "Exif.Image.DateTimeOriginal",  },
+  { N_ ("Camera Brand:"),      "Exif.Image.Make",              },
+  { N_ ("Camera Model:"),      "Exif.Image.Model",             },
+  { N_ ("Exposure Time:"),     "Exif.Photo.ExposureTime",      },
+  { N_ ("Exposure Program:"),  "Exif.Photo.ExposureProgram",   },
+  { N_ ("Aperture Value:"),    "Exif.Photo.ApertureValue",     },
+  { N_ ("Metering Mode:"),     "Exif.Photo.MeteringMode",      },
+  { N_ ("Flash Fired:"),       "Exif.Photo.Flash",             },
+  { N_ ("Focal Length:"),      "Exif.Photo.FocalLength",       },
+  { N_ ("Shutter Speed:"),     "Exif.Image.ShutterSpeedValue", },
+  { N_ ("ISO Speed Ratings:"), "Exif.Photo.ISOSpeedRatings",   },
+  { N_ ("Software:"),          "Exif.Image.Software",          },
+  { N_ ("Description:"),       "Exif.Image.ImageDescription",  },
+  { N_ ("Comment:"),           "Exif.Photo.UserComment",       },
 };
 /* clang-format on */
 #endif
@@ -78,8 +78,8 @@ struct _ThunarAprImagePage
   GtkWidget            *type_label;
   GtkWidget            *dimensions_label;
 
-#ifdef HAVE_EXIF
-  GtkWidget *exif_labels[G_N_ELEMENTS (TAIP_EXIF)];
+#ifdef HAVE_GEXIV2
+  GtkWidget *gexiv2_labels[G_N_ELEMENTS (TAGS_GEXIV2)];
 #endif
 };
 
@@ -112,7 +112,7 @@ thunar_apr_image_page_init (ThunarAprImagePage *image_page)
   AtkObject      *object;
   GtkWidget      *label;
   GtkWidget      *grid;
-#ifdef HAVE_EXIF
+#ifdef HAVE_GEXIV2
   GtkWidget *spacer;
   guint      n;
 #endif
@@ -177,33 +177,33 @@ thunar_apr_image_page_init (ThunarAprImagePage *image_page)
   g_object_unref (G_OBJECT (relation));
   g_object_unref (relations);
 
-#ifdef HAVE_EXIF
-  /* some spacing between the General info and the Exif info */
+#ifdef HAVE_GEXIV2
+  /* some spacing between the General info and the gexiv2 info */
   spacer = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "height-request", 6, NULL);
   gtk_grid_attach (GTK_GRID (grid), spacer, 0, 2, 2, 1);
   gtk_widget_show (spacer);
 
-  /* add labels for the Exif info */
-  for (n = 0; n < G_N_ELEMENTS (TAIP_EXIF); ++n)
+  /* add labels for the gexiv2 info */
+  for (n = 0; n < G_N_ELEMENTS (TAGS_GEXIV2); ++n)
     {
-      label = gtk_label_new (_(TAIP_EXIF[n].name));
+      label = gtk_label_new (_(TAGS_GEXIV2[n].name));
       gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
       gtk_label_set_attributes (GTK_LABEL (label), attr_list);
       gtk_grid_attach (GTK_GRID (grid), label, 0, n + 3, 1, 1);
       gtk_widget_show (label);
 
-      image_page->exif_labels[n] = gtk_label_new ("");
-      gtk_label_set_selectable (GTK_LABEL (image_page->exif_labels[n]), TRUE);
-      gtk_label_set_xalign (GTK_LABEL (image_page->exif_labels[n]), 0.0f);
-      gtk_label_set_ellipsize (GTK_LABEL (image_page->exif_labels[n]), PANGO_ELLIPSIZE_END);
-      gtk_widget_set_hexpand (image_page->exif_labels[n], TRUE);
-      gtk_grid_attach (GTK_GRID (grid), image_page->exif_labels[n], 1, n + 3, 1, 1);
-      gtk_widget_show (image_page->exif_labels[n]);
+      image_page->gexiv2_labels[n] = gtk_label_new ("");
+      gtk_label_set_selectable (GTK_LABEL (image_page->gexiv2_labels[n]), TRUE);
+      gtk_label_set_xalign (GTK_LABEL (image_page->gexiv2_labels[n]), 0.0f);
+      gtk_label_set_ellipsize (GTK_LABEL (image_page->gexiv2_labels[n]), PANGO_ELLIPSIZE_END);
+      gtk_widget_set_hexpand (image_page->gexiv2_labels[n], TRUE);
+      gtk_grid_attach (GTK_GRID (grid), image_page->gexiv2_labels[n], 1, n + 3, 1, 1);
+      gtk_widget_show (image_page->gexiv2_labels[n]);
 
-      g_object_bind_property (G_OBJECT (image_page->exif_labels[n]), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
+      g_object_bind_property (G_OBJECT (image_page->gexiv2_labels[n]), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
 
       /* set Atk label relation for the label */
-      object = gtk_widget_get_accessible (image_page->exif_labels[n]);
+      object = gtk_widget_get_accessible (image_page->gexiv2_labels[n]);
       relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
       relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
       atk_relation_set_add (relations, relation);
@@ -229,11 +229,9 @@ thunar_apr_image_page_file_changed (ThunarAprAbstractPage *abstract_page,
   gchar              *uri;
   gint                height;
   gint                width;
-#ifdef HAVE_EXIF
-  ExifEntry *exif_entry;
-  ExifData  *exif_data;
-  gchar      exif_buffer[1024];
-  guint      n;
+#ifdef HAVE_GEXIV2
+  GExiv2Metadata *metadata;
+  guint           n;
 #endif
 
   /* determine the URI for the file */
@@ -264,39 +262,27 @@ thunar_apr_image_page_file_changed (ThunarAprAbstractPage *abstract_page,
           gtk_label_set_text (GTK_LABEL (image_page->dimensions_label), text);
           g_free (text);
 
-#ifdef HAVE_EXIF
-          /* hide all Exif labels (will be shown again if data is available) */
-          for (n = 0; n < G_N_ELEMENTS (TAIP_EXIF); ++n)
-            gtk_widget_hide (image_page->exif_labels[n]);
+#ifdef HAVE_GEXIV2
+          /* hide all gexiv2 labels (will be shown again if data is available) */
+          for (n = 0; n < G_N_ELEMENTS (TAGS_GEXIV2); ++n)
+            gtk_widget_hide (image_page->gexiv2_labels[n]);
 
-          /* try to load the Exif data for the file */
-          exif_data = exif_data_new_from_file (filename);
-          if (G_LIKELY (exif_data != NULL))
+          metadata = gexiv2_metadata_new ();
+          if (G_LIKELY (gexiv2_metadata_open_path (metadata, filename, NULL)))
             {
-              /* update all Exif labels */
-              for (n = 0; n < G_N_ELEMENTS (TAIP_EXIF); ++n)
+              for (n = 0; n < G_N_ELEMENTS (TAGS_GEXIV2); ++n)
                 {
-                  /* lookup the entry for the tag */
-                  exif_entry = exif_data_get_entry (exif_data, TAIP_EXIF[n].tag);
-                  if (G_LIKELY (exif_entry != NULL))
+                  gchar *value = gexiv2_metadata_try_get_tag_interpreted_string (metadata, TAGS_GEXIV2[n].tag, NULL);
+                  if (value)
                     {
-                      /* determine the value */
-                      if (exif_entry_get_value (exif_entry, exif_buffer, sizeof (exif_buffer)) != NULL)
-                        {
-                          /* setup the label text */
-                          text = (g_utf8_validate (exif_buffer, -1, NULL)) ? g_strdup (exif_buffer) : g_filename_display_name (exif_buffer);
-                          gtk_label_set_text (GTK_LABEL (image_page->exif_labels[n]), text);
-                          g_free (text);
-
-                          /* show the label */
-                          gtk_widget_show (image_page->exif_labels[n]);
-                        }
+                      gtk_label_set_text (GTK_LABEL (image_page->gexiv2_labels[n]), value);
+                      gtk_widget_show (image_page->gexiv2_labels[n]);
+                      g_free (value);
                     }
                 }
-
-              /* cleanup */
-              exif_data_free (exif_data);
             }
+
+          g_object_unref (metadata);
 #endif
         }
       else
@@ -305,10 +291,10 @@ thunar_apr_image_page_file_changed (ThunarAprAbstractPage *abstract_page,
           gtk_label_set_text (GTK_LABEL (image_page->type_label), _("Unknown"));
           gtk_label_set_text (GTK_LABEL (image_page->dimensions_label), _("Unknown"));
 
-#ifdef HAVE_EXIF
-          /* hide all Exif labels */
-          for (n = 0; n < G_N_ELEMENTS (TAIP_EXIF); ++n)
-            gtk_widget_hide (image_page->exif_labels[n]);
+#ifdef HAVE_GEXIV2
+          /* hide all gexiv2 labels */
+          for (n = 0; n < G_N_ELEMENTS (TAGS_GEXIV2); ++n)
+            gtk_widget_hide (image_page->gexiv2_labels[n]);
 #endif
         }
     }

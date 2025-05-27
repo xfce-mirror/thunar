@@ -137,7 +137,7 @@ thunar_sbr_register_enum_types (ThunarxProviderPlugin *plugin)
     { THUNAR_SBR_DATE_MODE_NOW,    "THUNAR_SBR_DATE_MODE_NOW",   N_ ("Current"),            },
     { THUNAR_SBR_DATE_MODE_ATIME,  "THUNAR_SBR_DATE_MODE_ATIME", N_ ("Date Accessed"),      },
     { THUNAR_SBR_DATE_MODE_MTIME,  "THUNAR_SBR_DATE_MODE_MTIME", N_ ("Date Modified"),      },
-#ifdef HAVE_EXIF
+#ifdef HAVE_GEXIV2
     { THUNAR_SBR_DATE_MODE_TAKEN,  "THUNAR_SBR_DATE_MODE_TAKEN", N_ ("Date Picture Taken"), },
 #endif
     { 0,                           NULL,                         NULL,                      },

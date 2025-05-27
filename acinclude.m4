@@ -19,8 +19,8 @@ AC_MSG_CHECKING([whether to build the thunar-apr plugin])
 AM_CONDITIONAL([THUNAR_PLUGIN_APR], [test x"$ac_bm_thunar_plugin_apr" = x"yes"])
 AC_MSG_RESULT([$ac_bm_thunar_plugin_apr])
 
-dnl Check for libexif (for the "Image" properties page)
-XDT_CHECK_OPTIONAL_PACKAGE([EXIF], [libexif], [0.6.0], [exif], [Exif support])
+dnl Check for gexiv2 (for the "Image" properties page)
+XDT_CHECK_OPTIONAL_PACKAGE([GEXIV2], [gexiv2], [0.14.0], [gexiv2], [gexiv2 support])
 ])
 
 

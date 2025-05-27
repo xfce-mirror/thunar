@@ -30,10 +30,10 @@ shared_module(
     include_directories('..' / '..'),
   ],
   dependencies: [
+    gexiv2,
     glib,
     gtk,
     libxfce4util,
-    exif,
     pcre2,
   ],
   link_with: [
