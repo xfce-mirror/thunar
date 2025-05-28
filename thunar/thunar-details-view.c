@@ -762,6 +762,10 @@ thunar_details_view_notify_width (GtkTreeViewColumn *tree_view_column,
   /* for some reason gtk forgets the auto-expand state of the name column */
   gtk_tree_view_column_set_expand (details_view->columns[THUNAR_COLUMN_NAME], !details_view->fixed_columns);
 
+  /* skip saving the column width when not in fixed column mode */
+  if (!details_view->fixed_columns)
+    return;
+
   /* lookup the column no for the given tree view column */
   for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; ++column)
     if (details_view->columns[column] == tree_view_column)
