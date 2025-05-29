@@ -75,6 +75,8 @@ thunar_dialogs_shrink_height (GtkWidget *dialog)
  * @content_type : the content type of the file or folder to create.
  * @filename     : the suggested filename or %NULL.
  * @title        : the dialog title.
+ * @startup_id   : startup id from startup notification passed along
+ *                 with dbus to make focus stealing work properly. Ignored if NULL.
  *
  * Displays a Thunar create dialog  with the specified
  * parameters that asks the user to enter a name for a new file or
@@ -90,7 +92,8 @@ gchar *
 thunar_dialogs_show_create (gpointer     parent,
                             const gchar *content_type,
                             const gchar *filename,
-                            const gchar *title)
+                            const gchar *title,
+                            const gchar *startup_id)
 {
   GtkWidget         *dialog;
   GtkWindow         *window;
@@ -120,6 +123,10 @@ thunar_dialogs_show_create (gpointer     parent,
   /* If a specific screen is requested, we spawn the dialog on that screen */
   if (G_UNLIKELY (parent != NULL && GDK_IS_SCREEN (parent)))
     thunar_gtk_window_set_screen (GTK_WINDOW (dialog), GDK_SCREEN (parent));
+
+  /* set the startup id */
+  if (startup_id != NULL)
+    gtk_window_set_startup_id (GTK_WINDOW (dialog), startup_id);
 
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
   gtk_dialog_set_response_sensitive (GTK_DIALOG (dialog), GTK_RESPONSE_OK, FALSE);
@@ -207,10 +214,12 @@ thunar_dialogs_show_create (gpointer     parent,
 
 /**
  * thunar_dialogs_show_rename_file:
- * @parent : a #GtkWidget on which the error dialog should be shown, or a #GdkScreen
- *           if no #GtkWidget is known. May also be %NULL, in which case the default
- *           #GdkScreen will be used.
- * @file   : the #ThunarFile we're going to rename.
+ * @parent      : a #GtkWidget on which the error dialog should be shown, or a #GdkScreen
+ *                if no #GtkWidget is known. May also be %NULL, in which case the default
+ *                #GdkScreen will be used.
+ * @file        : the #ThunarFile we're going to rename.
+ * @startup_id  : startup id from startup notification passed along
+ *                with dbus to make focus stealing work properly. Ignored if NULL.
  *
  * Displays the Thunar rename dialog for a single file rename.
  *
@@ -220,6 +229,7 @@ thunar_dialogs_show_create (gpointer     parent,
 ThunarJob *
 thunar_dialogs_show_rename_file (gpointer               parent,
                                  ThunarFile            *file,
+                                 const gchar           *startup_id,
                                  ThunarOperationLogMode log_mode)
 {
   ThunarIconFactory *icon_factory;
@@ -267,6 +277,10 @@ thunar_dialogs_show_rename_file (gpointer               parent,
   /* If a specific screen is requested, we spawn the dialog on that screen */
   if (G_UNLIKELY (parent != NULL && GDK_IS_SCREEN (parent)))
     thunar_gtk_window_set_screen (GTK_WINDOW (dialog), GDK_SCREEN (parent));
+
+  /* set the startup id */
+  if (startup_id != NULL)
+    gtk_window_set_startup_id (GTK_WINDOW (dialog), startup_id);
 
   if (window != NULL)
     scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (window));

@@ -945,7 +945,7 @@ thunar_action_manager_open_files (ThunarActionManager *action_mgr,
       else
         {
           /* display a chooser dialog for the file and stop */
-          thunar_show_chooser_dialog (action_mgr->widget, lp->data, TRUE, TRUE);
+          thunar_show_chooser_dialog (action_mgr->widget, lp->data, TRUE, TRUE, NULL);
           break;
         }
     }
@@ -1553,7 +1553,7 @@ thunar_action_manager_action_open_with_other (ThunarActionManager *action_mgr)
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
   if (action_mgr->n_files_to_process == 1)
-    thunar_show_chooser_dialog (action_mgr->widget, action_mgr->files_to_process->data, TRUE, FALSE);
+    thunar_show_chooser_dialog (action_mgr->widget, action_mgr->files_to_process->data, TRUE, FALSE, NULL);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -1573,7 +1573,7 @@ thunar_action_manager_action_set_default_app (ThunarActionManager *action_mgr)
   _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
 
   if (action_mgr->n_files_to_process == 1)
-    thunar_show_chooser_dialog (action_mgr->widget, action_mgr->files_to_process->data, TRUE, TRUE);
+    thunar_show_chooser_dialog (action_mgr->widget, action_mgr->files_to_process->data, TRUE, TRUE, NULL);
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -2739,7 +2739,8 @@ thunar_action_manager_action_create_folder (ThunarActionManager *action_mgr)
   name = thunar_dialogs_show_create (action_mgr->widget,
                                      "inode/directory",
                                      generated_name,
-                                     _("Create New Folder"));
+                                     _("Create New Folder"),
+                                     NULL);
   g_free (generated_name);
 
   if (G_LIKELY (name != NULL))
@@ -2800,7 +2801,8 @@ thunar_action_manager_action_create_document (ThunarActionManager *action_mgr,
       name = thunar_dialogs_show_create (action_mgr->widget,
                                          thunar_file_get_content_type (THUNAR_FILE (template_file)),
                                          generated_name,
-                                         title);
+                                         title,
+                                         NULL);
       /* cleanup */
       g_free (title);
     }
@@ -2811,7 +2813,8 @@ thunar_action_manager_action_create_document (ThunarActionManager *action_mgr,
       name = thunar_dialogs_show_create (action_mgr->widget,
                                          "text/plain",
                                          generated_name,
-                                         _("New Empty File..."));
+                                         _("New Empty File..."),
+                                         NULL);
     }
   g_free (generated_name);
 

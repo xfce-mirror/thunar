@@ -1966,8 +1966,6 @@ thunar_application_rename_file (ThunarApplication     *application,
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  /* TODO pass the startup ID to the rename dialog */
-
   if (thunar_file_is_desktop_file (file))
     {
       response = xfce_message_dialog (NULL,
@@ -1988,7 +1986,7 @@ thunar_application_rename_file (ThunarApplication     *application,
     }
 
   /* run the rename dialog */
-  job = thunar_dialogs_show_rename_file (parent, file, log_mode);
+  job = thunar_dialogs_show_rename_file (parent, file, startup_id, log_mode);
   if (G_LIKELY (job != NULL))
     {
       /* remember the screen and file */
@@ -2055,10 +2053,8 @@ thunar_application_create_file (ThunarApplication     *application,
       title = _("Create New File");
     }
 
-  /* TODO pass the startup ID to the rename dialog */
-
   /* ask the user to enter a name for the new folder */
-  name = thunar_dialogs_show_create (parent, content_type, dialog_title, title);
+  name = thunar_dialogs_show_create (parent, content_type, dialog_title, title, startup_id);
   if (G_LIKELY (name != NULL))
     {
       path_list.data = g_file_get_child (thunar_file_get_file (parent_directory), name);
@@ -2113,13 +2109,12 @@ thunar_application_create_file_from_template (ThunarApplication     *application
   title = g_strdup_printf (_("Create Document from template \"%s\""),
                            thunar_file_get_display_name (template_file));
 
-  /* TODO pass the startup ID to the rename dialog */
-
   /* ask the user to enter a name for the new document */
   name = thunar_dialogs_show_create (parent,
                                      thunar_file_get_content_type (template_file),
                                      thunar_file_get_display_name (template_file),
-                                     title);
+                                     title,
+                                     startup_id);
   if (G_LIKELY (name != NULL))
     {
       /* fake the target path list */

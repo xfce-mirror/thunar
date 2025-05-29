@@ -1332,6 +1332,8 @@ thunar_chooser_dialog_set_open (ThunarChooserDialog *dialog,
  * @open                        : whether to also open the @file.
  * @preselect_default_checkbox  : Check the checkbox by default and
  *                                set the title "Set Default Application" of chooser dialog box.
+ * @startup_id                  : startup id from startup notification passed along
+ *                                with dbus to make focus stealing work properly. Ignored if NULL.
  *
  * Convenience function to display a #ThunarChooserDialog with the
  * given parameters.
@@ -1342,10 +1344,11 @@ thunar_chooser_dialog_set_open (ThunarChooserDialog *dialog,
  * be modal and it will simply popup on the specified screen.
  **/
 void
-thunar_show_chooser_dialog (gpointer    parent,
-                            ThunarFile *file,
-                            gboolean    open,
-                            gboolean    preselect_default_checkbox)
+thunar_show_chooser_dialog (gpointer     parent,
+                            ThunarFile  *file,
+                            gboolean     open,
+                            gboolean     preselect_default_checkbox,
+                            const gchar *startup_id)
 {
   ThunarApplication *application;
   GdkScreen         *screen;
@@ -1379,6 +1382,10 @@ thunar_show_chooser_dialog (gpointer    parent,
                          "open", open,
                          "screen", screen,
                          NULL);
+
+  /* set the startup id */
+  if (startup_id != NULL)
+    gtk_window_set_startup_id (GTK_WINDOW (window), startup_id);
 
   /* change title of chooser dialog box and checked the checkbox when it is used for select default application */
   if (preselect_default_checkbox)

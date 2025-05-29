@@ -483,8 +483,7 @@ thunar_dbus_service_display_app_chooser_dialog (ThunarDBusFileManager *object,
     goto out;
 
   /* popup the chooser dialog */
-  /* TODO use the startup id! */
-  thunar_show_chooser_dialog (screen, file, open, preselect_default_checkbox);
+  thunar_show_chooser_dialog (screen, file, open, preselect_default_checkbox, startup_id);
 
   /* cleanup */
   g_object_unref (G_OBJECT (screen));
