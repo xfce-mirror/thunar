@@ -169,9 +169,15 @@ thunar_location_bar_finalize (GObject *object)
   g_object_unref (bar->preferences);
 
   if (bar->locationEntry)
-    g_object_unref (bar->locationEntry);
+    {
+      gtk_widget_destroy (bar->locationEntry);
+      g_object_unref (bar->locationEntry);
+    }
   if (bar->locationButtons)
-    g_object_unref (bar->locationButtons);
+    {
+      gtk_widget_destroy (bar->locationButtons);
+      g_object_unref (bar->locationButtons);
+    }
 
   /* release from the current_directory */
   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (bar), NULL);
