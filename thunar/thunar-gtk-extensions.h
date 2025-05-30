@@ -64,6 +64,10 @@ thunar_gtk_editable_can_paste (GtkEditable *editable);
 gint
 thunar_gtk_orientable_get_center_pos (GtkOrientable *orientable);
 
+void
+thunar_gtk_window_set_screen (GtkWindow *window,
+                              GdkScreen *screen);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_GTK_EXTENSIONS_H__ */

@@ -1825,7 +1825,7 @@ thunar_file_execute (ThunarFile  *file,
         }
 
       /* execute the command */
-      result = xfce_spawn (thunar_util_parse_parent (parent, NULL),
+      result = xfce_spawn (thunar_util_parse_parent (parent),
                            directory, argv, envp, G_SPAWN_SEARCH_PATH,
                            snotify, stimestamp, icon_name, TRUE, error);
     }
@@ -1882,7 +1882,7 @@ thunar_file_launch (ThunarFile  *file,
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
   _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), FALSE);
 
-  screen = thunar_util_parse_parent (parent, NULL);
+  screen = thunar_util_parse_parent (parent);
 
   /* check if we have a folder here */
   if (thunar_file_is_directory (file))

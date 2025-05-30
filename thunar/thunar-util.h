@@ -73,9 +73,11 @@ thunar_util_humanize_file_time (guint64         file_time,
                                 ThunarDateStyle date_style,
                                 const gchar    *date_custom_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
+GtkWindow *
+thunar_util_find_associated_window (gpointer parent) G_GNUC_WARN_UNUSED_RESULT;
+
 GdkScreen *
-thunar_util_parse_parent (gpointer    parent,
-                          GtkWindow **window_return) G_GNUC_WARN_UNUSED_RESULT;
+thunar_util_parse_parent (gpointer parent) G_GNUC_WARN_UNUSED_RESULT;
 
 time_t
 thunar_util_time_from_rfc3339 (const gchar *date_string) G_GNUC_WARN_UNUSED_RESULT;

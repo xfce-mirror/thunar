@@ -535,23 +535,57 @@ thunar_util_humanize_file_time (guint64         file_time,
 
 
 /**
+ * thunar_util_find_associated_window:
+ * @parent : a #GtkWidget, a #GdkScreen or %NULL.
+ *
+ * Determines the toplevel window for the @parent and returns that #GtkWindow.
+ *
+ * Return value: the #GtkWindow for the @parent or %NULL if no window was found
+ **/
+GtkWindow *
+thunar_util_find_associated_window (gpointer parent)
+{
+  ThunarApplication *application;
+  GList             *window_list;
+  GtkWidget         *window = NULL;
+
+  _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), NULL);
+
+  /* If it is a widget, try to get it's toplevel */
+  if (parent != NULL && GTK_IS_WIDGET (parent))
+    {
+      window = gtk_widget_get_toplevel (GTK_WIDGET (parent));
+      if (window != NULL)
+        return (GtkWindow *) window;
+    }
+
+  /* If no widget was provided, try to return the topmost thunar window */
+  application = thunar_application_get ();
+  window_list = thunar_application_get_windows (application);
+  if (window_list != NULL)
+    {
+      window = g_list_last (window_list)->data; /* this will be the topmost Window */
+      g_list_free (window_list);
+    }
+  g_object_unref (G_OBJECT (application));
+
+  return (GtkWindow *) window;
+}
+
+
+
+/**
  * thunar_util_parse_parent:
- * @parent        : a #GtkWidget, a #GdkScreen or %NULL.
- * @window_return : return location for the toplevel #GtkWindow or
- *                  %NULL.
+ * @parent : a #GtkWidget, a #GdkScreen or %NULL.
  *
  * Determines the screen for the @parent and returns that #GdkScreen.
- * If @window_return is not %NULL, the pointer to the #GtkWindow is
- * placed into it, or %NULL if the window could not be determined.
  *
  * Return value: the #GdkScreen for the @parent.
  **/
 GdkScreen *
-thunar_util_parse_parent (gpointer    parent,
-                          GtkWindow **window_return)
+thunar_util_parse_parent (gpointer parent)
 {
   GdkScreen *screen;
-  GtkWidget *window = NULL;
 
   _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), NULL);
 
@@ -563,49 +597,13 @@ thunar_util_parse_parent (gpointer    parent,
     }
   else if (GDK_IS_SCREEN (parent))
     {
-      /* A specific screen was requested. Just return it, without filling 'window_return' */
+      /* A specific screen was requested. */
       return GDK_SCREEN (parent);
     }
   else
     {
-      /* parent is a widget, so let's determine the toplevel window */
-      window = gtk_widget_get_toplevel (GTK_WIDGET (parent));
-      if (window != NULL
-          && gtk_widget_is_toplevel (window))
-        {
-          /* make sure the toplevel window is shown */
-          gtk_widget_show_now (window);
-        }
-      else
-        {
-          /* no toplevel, not usable then */
-          window = NULL;
-        }
-
       /* determine the screen for the widget */
       screen = gtk_widget_get_screen (GTK_WIDGET (parent));
-    }
-
-  /* check if we should return the window */
-  if (G_LIKELY (window_return != NULL))
-    {
-      /* If we dont know the toplevel window, try to return the topmost thunar window */
-      if (window == NULL)
-        {
-          ThunarApplication *application;
-          GList             *window_list;
-
-          application = thunar_application_get ();
-          window_list = thunar_application_get_windows (application);
-          if (window_list != NULL)
-            {
-              window = g_list_last (window_list)->data; /* this will be the topmost Window */
-              g_list_free (window_list);
-            }
-          g_object_unref (G_OBJECT (application));
-        }
-
-      *window_return = (GtkWindow *) window;
     }
 
   return screen;
