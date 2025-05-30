@@ -332,7 +332,7 @@ void
 thunar_file_set_file_count (ThunarFile *file,
                             const guint count);
 
-GList *
+GHashTable *
 thunar_file_get_emblem_names (ThunarFile *file);
 
 const gchar *
