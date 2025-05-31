@@ -18,7 +18,7 @@
 # e49097353bae6e06d169bea93a448e3e, 2018
 # Edwin Pujols <edwinpm5@gmail.com>, 2014
 # e49097353bae6e06d169bea93a448e3e, 2018
-# Ignacio Poggi <ignaciop.3@gmail.com>, 2020,2023-2024
+# Ignacio Poggi <ignaciop.3@gmail.com>, 2020,2023-2025
 # Jaime Marquínez Ferrándiz, 2018
 # Jaime Marquínez Ferrándiz, 2018
 # Joel Barrios <darkshram@gmail.com>, 2022
@@ -37,7 +37,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
 "POT-Creation-Date: 2025-05-13 00:46+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
-"Last-Translator: Ignacio Poggi <ignaciop.3@gmail.com>, 2020,2023-2024\n"
+"Last-Translator: Ignacio Poggi <ignaciop.3@gmail.com>, 2020,2023-2025\n"
 "Language-Team: Spanish (http://app.transifex.com/xfce/thunar/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -333,12 +333,12 @@ msgstr "No se ha podido abrir «%s»"
 
 #: thunar/thunar-action-manager.c:1534
 msgid "File does not exist anymore"
-msgstr ""
+msgstr "El archivo ya no existe"
 
 #: thunar/thunar-action-manager.c:1535
 #, c-format
 msgid "Failed to open location for \"%s\""
-msgstr ""
+msgstr "No se ha podido abrir la ubicación para \"%s\""
 
 #. aka "activate"
 #: thunar/thunar-action-manager.c:1659
@@ -1660,7 +1660,7 @@ msgstr "%s (enlace a %s)"
 #: thunar/thunar-file.c:2578
 #, c-format
 msgid "%s (link)"
-msgstr ""
+msgstr "%s (enlace)"
 
 #: thunar/thunar-file.c:2587
 #, c-format
@@ -1793,7 +1793,7 @@ msgstr "Preparando..."
 #: thunar/thunar-io-jobs.c:558
 #, c-format
 msgid "You do not have permission to delete the file \"%s\""
-msgstr ""
+msgstr "No tiene permiso para borrar el archivo \"%s\""
 
 #: thunar/thunar-io-jobs.c:654
 #, c-format
@@ -2058,14 +2058,14 @@ msgstr "Tamaño del icono para el campo de la ruta"
 
 #: thunar/thunar-path-entry.c:898
 msgid "Stop Search"
-msgstr ""
+msgstr "Detener búsqueda"
 
 #. add a tooltip
 #: thunar/thunar-path-entry.c:901
 msgid ""
 "Search is in progress...\n"
 "Press the cancel button or the Escape key to stop."
-msgstr ""
+msgstr "La búsqueda está en curso...\nPresione el botón cancelar o la tecla Escape para detenerla."
 
 #: thunar/thunar-permissions-chooser.c:234
 msgid "Owner:"
@@ -2760,7 +2760,7 @@ msgstr "Barra de estado"
 
 #: thunar/thunar-preferences-dialog.c:1424
 msgid "The Shortcuts Editor requires a Thunar window to be present."
-msgstr ""
+msgstr "El editor de accesos directos requiere que haya una ventana de Thunar presente."
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
@@ -3197,7 +3197,7 @@ msgstr "Cálculo interrumpido"
 #. nothing was readable
 #: thunar/thunar-size-label.c:415 thunar/thunar-size-label.c:510
 msgid "unreadable"
-msgstr ""
+msgstr "ilegible"
 
 #: thunar/thunar-size-label.c:487 thunar/thunar-util.c:1366
 #, c-format
@@ -3323,22 +3323,22 @@ msgstr "Organizar los elementos en orden descendente"
 
 #: thunar/thunar-standard-view.c:501
 msgid "_Folders First"
-msgstr ""
+msgstr "_Carpetas primero"
 
 #: thunar/thunar-standard-view.c:501
 msgid "Sort folders before files"
-msgstr ""
+msgstr "Ordenar las carpetas antes que los archivos"
 
 #. TRANSLATORS: You can swap the order of the arguments if required.
 #: thunar/thunar-standard-view.c:1268
 #, c-format
 msgid "Search for '%1$s' in %2$s"
-msgstr ""
+msgstr "Buscar '%1$s' en %2$s"
 
 #: thunar/thunar-standard-view.c:1270
 #, c-format
 msgid "Search in %s"
-msgstr ""
+msgstr "Buscar en %s"
 
 #: thunar/thunar-standard-view.c:1868
 msgid "Loading folder contents..."
@@ -3348,9 +3348,9 @@ msgstr "Cargando el contenido de la carpeta..."
 #, c-format
 msgid "%d file found"
 msgid_plural "%d files found"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%d archivo encontrado"
+msgstr[1] "%d archivos encontrados"
+msgstr[2] "%d archivos encontrados"
 
 #. display an error to the user
 #: thunar/thunar-standard-view.c:2701 thunar/thunar-window.c:4495
@@ -3524,13 +3524,13 @@ msgstr "Verificando los contenidos del archivo..."
 #: thunar/thunar-transfer-job.c:1021
 #, c-format
 msgid "Failed to move file \"%s\": %s"
-msgstr ""
+msgstr "No se pudo mover el archivo \"%s\": %s"
 
 #. ask the user to skip this node and all subnodes
 #: thunar/thunar-transfer-job.c:1043
 #, c-format
 msgid "Failed to copy file \"%s\": %s"
-msgstr ""
+msgstr "No se pudo copiar el archivo \"%s\": %s"
 
 #: thunar/thunar-transfer-job.c:1142
 #, c-format
@@ -3672,7 +3672,7 @@ msgstr "enlace %u a %.*s%s"
 
 #: thunar/thunar-util.c:842
 msgid "Search:"
-msgstr ""
+msgstr "Buscar:"
 
 #: thunar/thunar-util.c:1340 thunar/thunar-util.c:1373
 #, c-format
@@ -4102,7 +4102,7 @@ msgstr "Buscar un archivo específico en la carpeta actual y en las recientes"
 
 #: thunar/thunar-window.c:724
 msgid "Stop search for files"
-msgstr ""
+msgstr "Detener la búsqueda de archivos"
 
 #: thunar/thunar-window.c:726
 msgid "Menu"
