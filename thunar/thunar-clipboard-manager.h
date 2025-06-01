@@ -58,7 +58,8 @@ void
 thunar_clipboard_manager_paste_files (ThunarClipboardManager *manager,
                                       GFile                  *target_file,
                                       GtkWidget              *widget,
-                                      GClosure               *new_files_closure);
+                                      GClosure               *new_files_closure,
+                                      gboolean                as_links);
 
 G_END_DECLS;
 
