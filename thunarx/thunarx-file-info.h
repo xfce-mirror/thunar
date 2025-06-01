@@ -52,7 +52,7 @@ G_BEGIN_DECLS
   "metadata::emblems," \
   "metadata::thunar-custom-icon-name," \
   "metadata::thunar-view-type," \
-  "metadata::thunar-sort-column,metadata::thunar-sort-order," \
+  "metadata::thunar-sort-column,metadata::thunar-sort-folders-first,metadata::thunar-sort-order," \
   "metadata::thunar-zoom-level," \
   "metadata::thunar-zoom-level-ThunarDetailsView,metadata::thunar-zoom-level-ThunarIconView,metadata::thunar-zoom-level-ThunarCompactView," \
   "metadata::thunar-highlight-color-background,metadata::thunar-highlight-color-foreground"
