@@ -231,6 +231,8 @@ static gboolean
 thunar_action_manager_action_paste (ThunarActionManager *action_mgr);
 static gboolean
 thunar_action_manager_action_paste_into_folder (ThunarActionManager *action_mgr);
+static gboolean
+thunar_action_manager_action_paste_link (ThunarActionManager *action_mgr);
 static void
 thunar_action_manager_action_edit_launcher (ThunarActionManager *action_mgr);
 static void
@@ -342,6 +344,7 @@ static XfceGtkActionEntry thunar_action_manager_action_entries[] =
     { THUNAR_ACTION_MANAGER_ACTION_CREATE_FOLDER,      "<Actions>/ThunarStandardView/create-folder",       "<Primary><shift>N", XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Create _Folder..."),               N_ ("Create an empty folder within the current folder"),                                                     "folder-new",          G_CALLBACK (thunar_action_manager_action_create_folder),       },
     { THUNAR_ACTION_MANAGER_ACTION_CREATE_DOCUMENT,    "<Actions>/ThunarStandardView/create-document",     "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Create _Document"),                N_ ("Create a new document from a template"),                                                                "document-new",        G_CALLBACK (NULL),                                             },
 
+<<<<<<< HEAD
     { THUNAR_ACTION_MANAGER_ACTION_RESTORE,            "<Actions>/ThunarActionManager/restore",            "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Restore"),                        NULL,                                                                                                        NULL,                  G_CALLBACK (thunar_action_manager_action_restore),             },
     { THUNAR_ACTION_MANAGER_ACTION_RESTORE_SHOW,       "<Actions>/ThunarActionManager/restore-show",       "",                  XFCE_GTK_MENU_ITEM,       N_ ("Restore and S_how"),               NULL,                                                                                                        NULL,                  G_CALLBACK (thunar_action_manager_action_restore_and_show),    },
     { THUNAR_ACTION_MANAGER_ACTION_MOVE_TO_TRASH,      "<Actions>/ThunarActionManager/move-to-trash",      "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Mo_ve to Trash"),                  NULL,                                                                                                        "user-trash",          G_CALLBACK (thunar_action_manager_action_trash_delete),        },
@@ -353,6 +356,7 @@ static XfceGtkActionEntry thunar_action_manager_action_entries[] =
     { THUNAR_ACTION_MANAGER_ACTION_PASTE,              "<Actions>/ThunarActionManager/paste",              "<Primary>V",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Paste"),                          N_ ("Move or copy files previously selected by a Cut or Copy command"),                                      "edit-paste",          G_CALLBACK (thunar_action_manager_action_paste),               },
     { THUNAR_ACTION_MANAGER_ACTION_PASTE_ALT,          "<Actions>/ThunarActionManager/paste-2",            "<Shift>Insert",     XFCE_GTK_IMAGE_MENU_ITEM, NULL,                                   NULL,                                                                                                        NULL,                  G_CALLBACK (thunar_action_manager_action_paste),               },
     { THUNAR_ACTION_MANAGER_ACTION_PASTE_INTO_FOLDER,  NULL,                                               "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Paste Into Folder"),              N_ ("Move or copy files previously selected by a Cut or Copy command into the selected folder"),             "edit-paste",          G_CALLBACK (thunar_action_manager_action_paste_into_folder),   },
+    { THUNAR_ACTION_MANAGER_ACTION_PASTE_LINK,         "<Actions>/ThunarActionManager/paste-link",         "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Paste Link"),                     N_ ("Create link to files previously selected by a Cut or Copy command"),                                    "edit-paste",          G_CALLBACK (thunar_action_manager_action_paste_link),          },
     { THUNAR_ACTION_MANAGER_ACTION_COPY,               "<Actions>/ThunarActionManager/copy",               "<Primary>C",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Copy"),                           NULL,                                                                                                        "edit-copy",           G_CALLBACK (thunar_action_manager_action_copy),                },
     { THUNAR_ACTION_MANAGER_ACTION_COPY_ALT,           "<Actions>/ThunarActionManager/copy-2",             "<Primary>Insert",   XFCE_GTK_IMAGE_MENU_ITEM, NULL,                                   NULL,                                                                                                        NULL,                  G_CALLBACK (thunar_action_manager_action_copy),                },
     { THUNAR_ACTION_MANAGER_ACTION_CUT,                "<Actions>/ThunarActionManager/cut",                "<Primary>X",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Cu_t"),                            NULL,                                                                                                        "edit-cut",            G_CALLBACK (thunar_action_manager_action_cut),                 },
@@ -1937,6 +1941,28 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
         }
       return item;
 
+    case THUNAR_ACTION_MANAGER_ACTION_PASTE_LINK:
+      focused_widget = thunar_gtk_get_focused_widget ();
+      if (focused_widget && GTK_IS_EDITABLE (focused_widget))
+        {
+          item = xfce_gtk_image_menu_item_new_from_icon_name (
+          action_entry->menu_item_label_text,
+          N_ ("Paste the clipboard"),
+          action_entry->accel_path, G_CALLBACK (gtk_editable_paste_clipboard),
+          G_OBJECT (focused_widget), action_entry->menu_item_icon_name, menu);
+          gtk_widget_set_sensitive (item, thunar_gtk_editable_can_paste (GTK_EDITABLE (focused_widget)) && !action_mgr->search_mode);
+        }
+      else
+        {
+          clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (action_mgr->widget));
+          item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
+          gtk_widget_set_sensitive (item, thunar_clipboard_manager_get_can_paste (clipboard)
+                                          && thunar_file_is_writable (action_mgr->current_directory)
+                                          && !action_mgr->search_mode);
+          g_object_unref (clipboard);
+        }
+      return item;
+
     case THUNAR_ACTION_MANAGER_ACTION_MOUNT:
       if (action_mgr->device_to_process == NULL || thunar_device_is_mounted (action_mgr->device_to_process) == TRUE)
         return NULL;
@@ -3120,7 +3146,7 @@ thunar_action_manager_action_paste (ThunarActionManager *action_mgr)
     return TRUE;
 
   clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (action_mgr->widget));
-  thunar_clipboard_manager_paste_files (clipboard, thunar_file_get_file (action_mgr->current_directory), action_mgr->widget, action_mgr->new_files_created_closure);
+  thunar_clipboard_manager_paste_files (clipboard, thunar_file_get_file (action_mgr->current_directory), action_mgr->widget, action_mgr->new_files_created_closure, FALSE);
   g_object_unref (G_OBJECT (clipboard));
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
@@ -3140,7 +3166,31 @@ thunar_action_manager_action_paste_into_folder (ThunarActionManager *action_mgr)
     return TRUE;
 
   clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (action_mgr->widget));
-  thunar_clipboard_manager_paste_files (clipboard, thunar_file_get_file (action_mgr->single_folder), action_mgr->widget, action_mgr->new_files_created_closure);
+  thunar_clipboard_manager_paste_files (clipboard, thunar_file_get_file (action_mgr->single_folder), action_mgr->widget, action_mgr->new_files_created_closure, FALSE);
+  g_object_unref (G_OBJECT (clipboard));
+
+  /* required in case of shortcut activation, in order to signal that the accel key got handled */
+  return TRUE;
+}
+
+
+static gboolean
+thunar_action_manager_action_paste_link (ThunarActionManager *action_mgr)
+{
+  ThunarClipboardManager *clipboard;
+
+  _thunar_return_val_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr), FALSE);
+
+  if (G_UNLIKELY (action_mgr->current_directory == NULL) || G_UNLIKELY (action_mgr->search_mode))
+    return TRUE;
+  if (thunar_file_is_trash (action_mgr->current_directory))
+    return TRUE;
+
+  if (action_mgr->search_mode)
+    return TRUE;
+
+  clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (action_mgr->widget));
+  thunar_clipboard_manager_paste_files (clipboard, thunar_file_get_file (action_mgr->current_directory), action_mgr->widget, action_mgr->new_files_created_closure, TRUE);
   g_object_unref (G_OBJECT (clipboard));
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
