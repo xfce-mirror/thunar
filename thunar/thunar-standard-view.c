@@ -84,6 +84,7 @@ enum
   PROP_SORT_COLUMN_DEFAULT,
   PROP_SORT_ORDER,
   PROP_SORT_ORDER_DEFAULT,
+  PROP_SORT_FOLDERS_FIRST_DEFAULT,
   PROP_ACCEL_GROUP,
   PROP_MODEL_TYPE,
   N_PROPERTIES
@@ -460,6 +461,10 @@ struct _ThunarStandardViewPrivate
   GtkSortType sort_order;
   GtkSortType sort_order_default;
 
+  /* default value for the 'folders-first' setting of the model */
+  /* required for directory specific settings */
+  gboolean sort_folders_first_default;
+
   /* current search query, used to allow switching between views with different (or NULL) search queries */
   gchar *search_query;
 
@@ -634,12 +639,18 @@ thunar_standard_view_action_sort_folders_first (ThunarStandardView *standard_vie
 
   g_object_get (standard_view->model, "folders-first", &folders_first, NULL);
   g_object_set (standard_view->model, "folders-first", !folders_first, NULL);
+
   if (standard_view->priv->directory_specific_settings)
     {
       if (folders_first)
         thunar_file_set_metadata_setting (standard_view->priv->current_directory, "thunar-sort-folders-first", "FALSE", TRUE);
       else
         thunar_file_set_metadata_setting (standard_view->priv->current_directory, "thunar-sort-folders-first", "TRUE", TRUE);
+    }
+  else
+    {
+      /* store the new global value in the preferences */
+      g_object_set (standard_view->preferences, "misc-folders-first", !folders_first, NULL);
     }
   return TRUE;
 }
@@ -827,6 +838,19 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                      GTK_TYPE_SORT_TYPE,
                      GTK_SORT_ASCENDING,
                      G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT_ONLY);
+
+  /**
+   * ThunarStandardView::sort-folders-first-default:
+   *
+   * Only relevant for directory specific settings
+   * The setting to use if no directory specific settings are found for a directory
+   **/
+  standard_view_props[PROP_SORT_FOLDERS_FIRST_DEFAULT] =
+  g_param_spec_boolean ("sort-folders-first-default",
+                        "sort-folders-first-default",
+                        "sort-folders-first-default",
+                        TRUE,
+                        G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarStandardView:model-type:
@@ -1062,6 +1086,9 @@ thunar_standard_view_constructor (GType                  type,
 
   /* apply the default sort column and sort order */
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), standard_view->priv->sort_column_default, standard_view->priv->sort_order_default);
+
+  /* sync with global default for 'sort-folder-first' setting */
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-folders-first", G_OBJECT (standard_view), "sort-folders-first-default", G_BINDING_SYNC_CREATE);
 
   /* stay informed about changes to the sort column/order */
   g_signal_connect (G_OBJECT (standard_view->model), "sort-column-changed", G_CALLBACK (thunar_standard_view_sort_column_changed), standard_view);
@@ -1385,6 +1412,12 @@ thunar_standard_view_set_property (GObject      *object,
 
     case PROP_SORT_ORDER_DEFAULT:
       standard_view->priv->sort_order_default = g_value_get_enum (value);
+      break;
+
+    case PROP_SORT_FOLDERS_FIRST_DEFAULT:
+      standard_view->priv->sort_folders_first_default = g_value_get_boolean (value);
+      if (!standard_view->priv->directory_specific_settings)
+        g_object_set (G_OBJECT (standard_view->model), "folders-first", g_value_get_boolean (value), NULL);
       break;
 
     case PROP_ACCEL_GROUP:
@@ -2089,15 +2122,20 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
   if (zoom_level_name == NULL)
     zoom_level_name = thunar_file_get_metadata_setting (directory, "thunar-zoom-level");
 
-  /* apply the "sort-folders-first" preference, if found */
   if (sort_folders_first_name != NULL)
     {
+      /* apply the directory specific "sort-folders-first" setting, if found */
       if (g_strcmp0 (sort_folders_first_name, "TRUE") == 0)
         g_object_set (G_OBJECT (standard_view->model), "folders-first", TRUE, NULL);
       else
         g_object_set (G_OBJECT (standard_view->model), "folders-first", FALSE, NULL);
 
       g_free (sort_folders_first_name);
+    }
+  else
+    {
+      /* not found? --> apply the default */
+      g_object_set (G_OBJECT (standard_view->model), "folders-first", standard_view->priv->sort_folders_first_default, NULL);
     }
 
   /* convert the sort column name to a value */
@@ -2193,6 +2231,7 @@ thunar_standard_view_set_directory_specific_settings (ThunarStandardView *standa
       gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), sort_column, sort_order);
       standard_view->priv->sort_column = sort_column;
       standard_view->priv->sort_order = sort_order;
+      g_object_set (G_OBJECT (standard_view->model), "folders-first", standard_view->priv->sort_folders_first_default, NULL);
 
       /* use view specific default zoom level otherwise */
       g_object_get (G_OBJECT (standard_view->preferences), THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->zoom_level_property_name, &zoom_level, NULL);
@@ -4972,7 +5011,6 @@ thunar_standard_view_set_model (ThunarStandardView *standard_view)
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-case-sensitive", G_OBJECT (standard_view->model), "case-sensitive", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-style", G_OBJECT (standard_view->model), "date-style", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-custom-style", G_OBJECT (standard_view->model), "date-custom-style", G_BINDING_SYNC_CREATE);
-  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-folders-first", G_OBJECT (standard_view->model), "folders-first", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-hidden-last", G_OBJECT (standard_view->model), "hidden-last", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-file-size-binary", G_OBJECT (standard_view->model), "file-size-binary", G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-folder-item-count", G_OBJECT (standard_view->model), "folder-item-count", G_BINDING_SYNC_CREATE);
