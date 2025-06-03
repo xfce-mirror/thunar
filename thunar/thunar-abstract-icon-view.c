@@ -218,7 +218,7 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
                                  "text", THUNAR_COLUMN_NAME);
 
   /* Set the type of model to be used by the view */
-  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_icon_view)), "model-type", THUNAR_TYPE_LIST_MODEL, NULL);
+  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_icon_view)), "model-type", THUNAR_TYPE_TREE_VIEW_MODEL, NULL);
 
   /* update the icon view on size-allocate events */
   /* TODO: issue not reproducible anymore as of gtk 3.24.18
