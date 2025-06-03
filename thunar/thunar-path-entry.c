@@ -35,10 +35,10 @@
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-icon-factory.h"
 #include "thunar/thunar-icon-renderer.h"
-#include "thunar/thunar-list-model.h"
 #include "thunar/thunar-path-entry.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
+#include "thunar/thunar-tree-view-model.h"
 #include "thunar/thunar-util.h"
 #include "thunar/thunar-window.h"
 
@@ -256,9 +256,9 @@ thunar_path_entry_editable_init (GtkEditableInterface *iface)
 static void
 thunar_path_entry_init (ThunarPathEntry *path_entry)
 {
-  GtkEntryCompletion      *completion;
-  GtkCellRenderer         *renderer;
-  ThunarStandardViewModel *store;
+  GtkEntryCompletion  *completion;
+  GtkCellRenderer     *renderer;
+  ThunarTreeViewModel *store;
 
   path_entry->check_completion_idle_id = 0;
   path_entry->working_directory = NULL;
@@ -280,8 +280,7 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (completion), renderer, "text", THUNAR_COLUMN_NAME);
 
   /* allocate a new list mode for the completion */
-  store = thunar_list_model_new ();
-  thunar_list_model_check_file_in_model_before_use (THUNAR_LIST_MODEL (store));
+  store = g_object_new (THUNAR_TYPE_TREE_VIEW_MODEL, NULL);
   thunar_standard_view_model_set_show_hidden (store, TRUE);
   thunar_standard_view_model_set_folders_first (store, TRUE);
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store), THUNAR_COLUMN_FILE_NAME, GTK_SORT_ASCENDING);
@@ -1124,6 +1123,10 @@ thunar_path_entry_match_func (GtkEntryCompletion *completion,
 
   /* determine the model from the completion */
   model = gtk_entry_completion_get_model (completion);
+
+  GtkTreePath *p = gtk_tree_model_get_path (model, iter);
+  if (gtk_tree_path_get_depth (p) > 1)
+    return FALSE;
 
   /* leave if the model is null, we do this in thunar_path_entry_changed() to speed
    * things up, but that causes https://bugzilla.xfce.org/show_bug.cgi?id=4847. */
