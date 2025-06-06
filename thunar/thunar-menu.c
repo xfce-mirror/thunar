@@ -285,9 +285,15 @@ thunar_menu_add_sections (ThunarMenu        *menu,
     {
       item_added |= (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_COPY, force) != NULL);
       if (!(item_added |= (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_PASTE_INTO_FOLDER, force) != NULL)))
-        item_added |= (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_PASTE, force) != NULL);
+        {
+          item_added |= (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_PASTE, force) != NULL);
+          item_added |= (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_PASTE_LINK, force) != NULL);
+        }
       if (menu->type == THUNAR_MENU_TYPE_WINDOW)
-        item_added |= (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_PASTE, force) != NULL);
+        {
+          item_added |= (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_PASTE, force) != NULL);
+          item_added |= (thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_PASTE_LINK, force) != NULL);
+        }
     }
   if (item_added)
     xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));

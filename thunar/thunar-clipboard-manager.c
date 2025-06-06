@@ -125,6 +125,7 @@ typedef struct
   GFile                  *target_file;
   GtkWidget              *widget;
   GClosure               *new_files_closure;
+  gboolean                paste_as_link;
 } ThunarClipboardPasteRequest;
 
 
@@ -338,7 +339,10 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
   if (G_LIKELY (file_list != NULL))
     {
       application = thunar_application_get ();
-      if (G_LIKELY (path_copy))
+      if (G_UNLIKELY (request->paste_as_link))
+        thunar_application_link_into (application, request->widget, file_list,
+                                      request->target_file, THUNAR_OPERATION_LOG_OPERATIONS, request->new_files_closure);
+      else if (G_LIKELY (path_copy))
         thunar_application_copy_into (application, request->widget, file_list, request->target_file, THUNAR_OPERATION_LOG_OPERATIONS, request->new_files_closure);
       else
         thunar_application_move_into (application, request->widget, file_list, request->target_file, THUNAR_OPERATION_LOG_OPERATIONS, request->new_files_closure);
@@ -709,6 +713,8 @@ thunar_clipboard_manager_cut_files (ThunarClipboardManager *manager,
  *                      which will be emitted when the job finishes with the
  *                      list of #GFile<!---->s created by the job, or
  *                      %NULL if you're not interested in the signal.
+ * @as_links          : specifies whether to paste the files as symbolic links rather
+ *                      than moving/copying the actual files
  *
  * Pastes the contents from the clipboard associated with @manager to the directory
  * referenced by @target_file.
@@ -717,7 +723,8 @@ void
 thunar_clipboard_manager_paste_files (ThunarClipboardManager *manager,
                                       GFile                  *target_file,
                                       GtkWidget              *widget,
-                                      GClosure               *new_files_closure)
+                                      GClosure               *new_files_closure,
+                                      gboolean                as_links)
 {
   ThunarClipboardPasteRequest *request;
 
@@ -729,6 +736,7 @@ thunar_clipboard_manager_paste_files (ThunarClipboardManager *manager,
   request->manager = THUNAR_CLIPBOARD_MANAGER (g_object_ref (G_OBJECT (manager)));
   request->target_file = g_object_ref (target_file);
   request->widget = widget;
+  request->paste_as_link = as_links;
 
   /* take a reference on the closure (if any) */
   if (G_LIKELY (new_files_closure != NULL))
