@@ -306,8 +306,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                     G_CALLBACK (thunar_details_view_key_press_event), details_view);
   g_signal_connect (G_OBJECT (details_view->tree_view), "row-activated",
                     G_CALLBACK (thunar_details_view_row_activated), details_view);
-  g_signal_connect (G_OBJECT (details_view->tree_view), "select-cursor-row",
-                    G_CALLBACK (thunar_details_view_select_cursor_row), details_view);
   g_signal_connect (G_OBJECT (details_view->tree_view), "row-expanded",
                     G_CALLBACK (thunar_details_view_row_expanded), details_view);
   g_signal_connect (G_OBJECT (details_view->tree_view), "row-collapsed",
