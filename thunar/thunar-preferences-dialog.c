@@ -301,51 +301,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
 
-  label = gtk_label_new (_("Window Settings"));
-  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
-  gtk_widget_show (label);
-
-  grid = gtk_grid_new ();
-  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
-  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
-  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
-  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
-  gtk_container_add (GTK_CONTAINER (frame), grid);
-  gtk_widget_show (grid);
-
-  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
-  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
-  gtk_widget_show (frame);
-
-  row = 0;
-
-  button = gtk_check_button_new_with_mnemonic (_("Use custom window decorations (only applied to new windows)"));
-  g_object_bind_property (G_OBJECT (dialog->preferences),
-                          "misc-use-csd",
-                          G_OBJECT (button),
-                          "active",
-                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
-  gtk_widget_set_tooltip_text (button,
-                               _("Use custom, client-side window decorations instead of global, server-side ones. - Only applied to new Thunar windows"));
-
-  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
-  gtk_widget_show (button);
-
-  /* next row */
-  row++;
-
-  button = gtk_check_button_new_with_mnemonic (_("Use current folder icon as window icon"));
-  g_object_bind_property (G_OBJECT (dialog->preferences),
-                          "misc-change-window-icon",
-                          G_OBJECT (button),
-                          "active",
-                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
-  gtk_widget_set_tooltip_text (button, _("Select this option to use the current folder icon as window icon"));
-
-  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
-  gtk_widget_show (button);
-
   label = gtk_label_new (_("View Settings"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
@@ -412,6 +367,53 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button, _("Select this option to show file size in binary format instead of decimal."));
+  gtk_widget_set_hexpand (button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
+  gtk_widget_show (button);
+
+  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
+  gtk_widget_show (frame);
+
+  label = gtk_label_new (_("Icon View"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
+  gtk_widget_show (label);
+
+  /* new grid */
+  row = 0;
+
+  grid = gtk_grid_new ();
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
+  gtk_container_add (GTK_CONTAINER (frame), grid);
+  gtk_widget_show (grid);
+
+  button = gtk_check_button_new_with_mnemonic (_("_Text beside icons"));
+  g_object_bind_property (G_OBJECT (dialog->preferences),
+                          "misc-text-beside-icons",
+                          G_OBJECT (button),
+                          "active",
+                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  gtk_widget_set_tooltip_text (button, _("Select this option to place the icon captions for items "
+                                         "beside the icon rather than below the icon."));
+  gtk_widget_set_hexpand (button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
+  gtk_widget_show (button);
+
+  /* next row */
+  row++;
+
+  button = gtk_check_button_new_with_mnemonic (_("C_ompact layout"));
+  g_object_bind_property (G_OBJECT (dialog->preferences),
+                          "misc-compact-layout",
+                          G_OBJECT (button),
+                          "active",
+                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  gtk_widget_set_tooltip_text (button, _("Select this option to use a tighter layout scheme "
+                                         "(only applied when text placed below icons)."));
   gtk_widget_set_hexpand (button, TRUE);
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
@@ -499,53 +501,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button, _("Select this option to draw black frames around thumbnails."));
-  gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
-  gtk_widget_show (button);
-
-  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
-  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
-  gtk_widget_show (frame);
-
-  label = gtk_label_new (_("Icon View"));
-  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
-  gtk_widget_show (label);
-
-  /* new grid */
-  row = 0;
-
-  grid = gtk_grid_new ();
-  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
-  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
-  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
-  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
-  gtk_container_add (GTK_CONTAINER (frame), grid);
-  gtk_widget_show (grid);
-
-  button = gtk_check_button_new_with_mnemonic (_("_Text beside icons"));
-  g_object_bind_property (G_OBJECT (dialog->preferences),
-                          "misc-text-beside-icons",
-                          G_OBJECT (button),
-                          "active",
-                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
-  gtk_widget_set_tooltip_text (button, _("Select this option to place the icon captions for items "
-                                         "beside the icon rather than below the icon."));
-  gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
-  gtk_widget_show (button);
-
-  /* next row */
-  row++;
-
-  button = gtk_check_button_new_with_mnemonic (_("C_ompact layout"));
-  g_object_bind_property (G_OBJECT (dialog->preferences),
-                          "misc-compact-layout",
-                          G_OBJECT (button),
-                          "active",
-                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
-  gtk_widget_set_tooltip_text (button, _("Select this option to use a tighter layout scheme "
-                                         "(only applied when text placed below icons)."));
   gtk_widget_set_hexpand (button, TRUE);
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
@@ -976,7 +931,52 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
 
-  label = gtk_label_new (_("Tabs and Windows"));
+  label = gtk_label_new (_("Window"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
+  gtk_widget_show (label);
+
+  /* new grid */
+  row = 0;
+
+  grid = gtk_grid_new ();
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
+  gtk_container_add (GTK_CONTAINER (frame), grid);
+  gtk_widget_show (grid);
+
+  button = gtk_check_button_new_with_mnemonic (_("Use custom window decorations (only applied to new windows)"));
+  g_object_bind_property (G_OBJECT (dialog->preferences),
+                          "misc-use-csd",
+                          G_OBJECT (button),
+                          "active",
+                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  gtk_widget_set_tooltip_text (button, _("Use custom, client-side window decorations instead of global, server-side ones. - Only applied to new Thunar windows"));
+  gtk_widget_set_hexpand (button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
+  gtk_widget_show (button);
+
+  /* next row */
+  row++;
+
+  button = gtk_check_button_new_with_mnemonic (_("Use current folder icon as window icon"));
+  g_object_bind_property (G_OBJECT (dialog->preferences),
+                          "misc-change-window-icon",
+                          G_OBJECT (button),
+                          "active",
+                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  gtk_widget_set_tooltip_text (button, _("Select this option to use the current folder icon as window icon"));
+  gtk_widget_set_hexpand (button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
+  gtk_widget_show (button);
+
+  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
+  gtk_widget_show (frame);
+
+  label = gtk_label_new (_("Tabs"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
@@ -1026,6 +1026,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button, _("Select this option to show the full directory path in the tab title instead of only the directory name"));
+  gtk_widget_set_hexpand (button, TRUE);
   gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
 
