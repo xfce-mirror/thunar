@@ -1371,6 +1371,7 @@ _thunar_io_jobs_rename (ThunarJob *job,
   const gchar           *display_name;
   ThunarFile            *file;
   GError                *err = NULL;
+  GFile                 *old_file;
   gchar                 *old_file_uri;
   ThunarOperationLogMode log_mode;
   ThunarJobOperation    *operation;
@@ -1403,8 +1404,10 @@ _thunar_io_jobs_rename (ThunarJob *job,
       if (log_mode == THUNAR_OPERATION_LOG_OPERATIONS)
         {
           operation = thunar_job_operation_new (THUNAR_JOB_OPERATION_KIND_RENAME);
-          thunar_job_operation_add (operation, g_file_new_for_uri (old_file_uri), thunar_file_get_file (file));
+          old_file = g_file_new_for_uri (old_file_uri);
+          thunar_job_operation_add (operation, old_file, thunar_file_get_file (file));
           thunar_job_operation_history_commit (operation);
+          g_object_unref (old_file);
           g_object_unref (operation);
         }
     }
