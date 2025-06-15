@@ -224,6 +224,9 @@ again:
                                                    _("The file \"%s\" already exists"),
                                                    display_name);
 
+              /* clean up */
+              g_free (display_name);
+
               /* check if we should overwrite */
               if (response == THUNAR_JOB_RESPONSE_REPLACE)
                 {
@@ -231,9 +234,6 @@ again:
                   if (_tij_delete_file (lp->data, thunar_job_get_cancellable (THUNAR_JOB (job)), &err))
                     goto again;
                 }
-
-              /* clean up */
-              g_free (display_name);
             }
           else
             {
@@ -402,6 +402,9 @@ again:
                                                    _("The file \"%s\" already exists"),
                                                    display_name);
 
+              /* clean up */
+              g_free (display_name);
+
               /* check if we should overwrite it */
               if (response == THUNAR_JOB_RESPONSE_REPLACE)
                 {
@@ -409,9 +412,6 @@ again:
                   if (_tij_delete_file (lp->data, thunar_job_get_cancellable (THUNAR_JOB (job)), &err))
                     goto again;
                 }
-
-              /* clean up */
-              g_free (display_name);
             }
           else
             {
