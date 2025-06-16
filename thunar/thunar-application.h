@@ -208,6 +208,9 @@ thunar_application_accel_map_init (ThunarApplication *application);
 void
 thunar_application_malloc_trim_on_idle (ThunarApplication *application);
 
+void
+thunar_application_posix_signal_init (ThunarApplication *application);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_APPLICATION_H__ */
