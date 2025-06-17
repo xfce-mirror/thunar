@@ -82,6 +82,9 @@ main (int argc, char **argv)
   /* use the Thunar icon as default for new windows */
   gtk_window_set_default_icon_name ("org.xfce.thunar");
 
+  /* override default handler for some common signals */
+  thunar_application_posix_signal_init (application);
+
   /* do further processing inside gapplication */
   g_application_run (G_APPLICATION (application), argc, argv);
 
