@@ -103,6 +103,8 @@ thunar_folder_monitor (GFileMonitor     *monitor,
                        GFileMonitorEvent event_type,
                        gpointer          user_data);
 static void
+thunar_folder_reset_monitor (ThunarFolder *folder);
+static void
 thunar_folder_load_content_types (ThunarFolder *folder,
                                   GHashTable   *files);
 static void
@@ -194,18 +196,8 @@ static void
 thunar_folder_constructed (GObject *object)
 {
   ThunarFolder *folder = THUNAR_FOLDER (object);
-  GError       *error = NULL;
 
-  folder->monitor = g_file_monitor_directory (thunar_file_get_file (folder->corresponding_file),
-                                              G_FILE_MONITOR_WATCH_MOVES, NULL, &error);
-
-  if (G_LIKELY (folder->monitor != NULL))
-    g_signal_connect (folder->monitor, "changed", G_CALLBACK (thunar_folder_monitor), folder);
-  else
-    {
-      g_debug ("Could not create folder monitor: %s", error->message);
-      g_error_free (error);
-    }
+  thunar_folder_reset_monitor (folder);
 
   G_OBJECT_CLASS (thunar_folder_parent_class)->constructed (object);
 }
@@ -1100,6 +1092,32 @@ thunar_folder_monitor (GFileMonitor     *monitor,
 
 
 
+static void
+thunar_folder_reset_monitor (ThunarFolder *folder)
+{
+  GError *error = NULL;
+
+  if (folder->monitor != NULL)
+    {
+      g_signal_handlers_disconnect_by_data (folder->monitor, folder);
+      g_file_monitor_cancel (folder->monitor);
+      g_object_unref (folder->monitor);
+    }
+
+  folder->monitor = g_file_monitor_directory (thunar_file_get_file (folder->corresponding_file),
+                                              G_FILE_MONITOR_WATCH_MOVES, NULL, &error);
+
+  if (G_LIKELY (folder->monitor != NULL))
+    g_signal_connect (folder->monitor, "changed", G_CALLBACK (thunar_folder_monitor), folder);
+  else
+    {
+      g_debug ("Could not create folder monitor: %s", error->message);
+      g_error_free (error);
+    }
+}
+
+
+
 /**
  * thunar_folder_get_for_file:
  * @file : a #ThunarFile.
@@ -1274,6 +1292,9 @@ thunar_folder_reload (ThunarFolder *folder,
   g_signal_connect (folder->job, "finished", G_CALLBACK (thunar_folder_finished), folder);
   g_signal_connect (folder->job, "files-ready", G_CALLBACK (thunar_folder_files_ready), folder);
   thunar_job_launch (THUNAR_JOB (folder->job));
+
+  /* reset the monitoring */
+  thunar_folder_reset_monitor (folder);
 }
 
 
