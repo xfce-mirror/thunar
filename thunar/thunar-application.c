@@ -69,6 +69,7 @@
 #include "thunar/thunar-view.h"
 
 #include <libxfce4ui/libxfce4ui.h>
+#include <libxfce4util/libxfce4util.h>
 
 #define ACCEL_MAP_PATH "Thunar/accels.scm"
 
@@ -2930,4 +2931,43 @@ thunar_application_malloc_trim_on_idle (ThunarApplication *application)
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   g_idle_add (thunar_application_malloc_trim_idle, application);
+}
+
+
+
+G_NORETURN
+static void
+handle_exit (gint     sig,
+             gpointer application_ptr)
+{
+  exit ((int) sig + 128);
+}
+
+
+
+void
+thunar_application_posix_signal_init (ThunarApplication *application)
+{
+  static const int signals[] = { SIGHUP, SIGINT, SIGTERM };
+
+  GError *error = NULL;
+  guint   n;
+
+  if (xfce_posix_signal_handler_init (&error))
+    {
+      for (n = 0; n < G_N_ELEMENTS (signals); ++n)
+        {
+          if (!xfce_posix_signal_handler_set_handler (signals[n], handle_exit, application, &error))
+            {
+              g_warning ("Unable to set POSIX signal handler for signal %d: %s", signals[n], error->message);
+              break;
+            }
+        }
+    }
+  else
+    {
+      g_warning ("Unable to initialize POSIX signal handler system: %s", error->message);
+    }
+
+  g_clear_error (&error);
 }
