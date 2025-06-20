@@ -837,7 +837,7 @@ thunar_file_monitor (GFileMonitor     *monitor,
         case G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
           break;
         case G_FILE_MONITOR_EVENT_DELETED:
-          thunar_file_destroy (file);
+          thunar_file_signal_destroy (file);
           return;
         case G_FILE_MONITOR_EVENT_CREATED:
         case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
@@ -4404,8 +4404,8 @@ thunar_file_unwatch (ThunarFile *file)
  * Tells @file to reload its internal state, e.g. by reacquiring
  * the file info from the underlying media.
  *
- * You must be able to handle the case that @file is
- * destroyed during the reload call.
+ * If no fail information can be obtained, a destroy signal will be send,
+ * so that reference holders can release it
  *
  * Return value: TRUE on success, FALSE otherwise
  **/
@@ -4419,8 +4419,8 @@ thunar_file_reload (ThunarFile *file)
 
   if (!thunar_file_load (file, NULL, NULL))
     {
-      /* destroy the file if we cannot query any file information */
-      thunar_file_destroy (file);
+      /* send destroy signal for the file if we cannot query any file information */
+      thunar_file_signal_destroy (file);
       return FALSE;
     }
 
@@ -4484,15 +4484,15 @@ thunar_file_reload_idle_unref (ThunarFile *file)
 
 
 /**
- * thunar_file_destroy:
+ * thunar_file_signal_destroy:
  * @file : a #ThunarFile instance.
  *
  * Emits the ::destroy signal notifying all reference holders
- * that they should release their references to the @file.
+ * that they should release their references to the @file, so that it can be finallized.
  *
  **/
 void
-thunar_file_destroy (ThunarFile *file)
+thunar_file_signal_destroy (ThunarFile *file)
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 

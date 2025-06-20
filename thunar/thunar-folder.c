@@ -959,9 +959,9 @@ thunar_folder_monitor (GFileMonitor     *monitor,
 
   if (g_file_equal (event_file, thunar_file_get_file (folder->corresponding_file)))
     {
-      /* update/destroy the corresponding file */
+      /* update the corresponding file or signal destruction */
       if (event_type == G_FILE_MONITOR_EVENT_DELETED)
-        thunar_file_destroy (folder->corresponding_file);
+        thunar_file_signal_destroy (folder->corresponding_file);
       else
         thunar_file_reload (folder->corresponding_file);
       return;
@@ -1009,8 +1009,8 @@ thunar_folder_monitor (GFileMonitor     *monitor,
       /* Drop it from the map, if we still have it */
       thunar_folder_remove_file (folder, event_file_thunar);
 
-      /* destroy the old file */
-      thunar_file_destroy (event_file_thunar);
+      /* signal destruction of the old file */
+      thunar_file_signal_destroy (event_file_thunar);
 
       break;
 
@@ -1052,9 +1052,9 @@ thunar_folder_monitor (GFileMonitor     *monitor,
       /* re-add the renamed file into our internal map (this time we can use the timeout source) */
       thunar_folder_add_file (folder, renamed_file);
 
-      /* destroy the old ThunarFile, if we have two of them */
+      /* Signal destruction for the old ThunarFile, if we have two of them */
       if (event_file_thunar != NULL && other_file_thunar != NULL)
-        thunar_file_destroy (event_file_thunar);
+        thunar_file_signal_destroy (event_file_thunar);
 
       /* reload the renamed file */
       if (thunar_file_reload (renamed_file))

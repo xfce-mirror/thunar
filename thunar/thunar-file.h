@@ -373,7 +373,7 @@ void
 thunar_file_reload_idle_unref (ThunarFile *file);
 
 void
-thunar_file_destroy (ThunarFile *file);
+thunar_file_signal_destroy (ThunarFile *file);
 
 gint
 thunar_file_compare_by_type (ThunarFile *file_a,
