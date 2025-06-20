@@ -25,6 +25,7 @@
 #include "thunar/thunar-folder.h"
 
 #include <libxfce4ui/libxfce4ui.h>
+#include "thunar/thunar-terminal-widget.h"
 
 G_BEGIN_DECLS;
 
@@ -68,6 +69,7 @@ typedef enum
   THUNAR_WINDOW_ACTION_TOGGLE_IMAGE_PREVIEW,
   THUNAR_WINDOW_ACTION_VIEW_STATUSBAR,
   THUNAR_WINDOW_ACTION_VIEW_MENUBAR,
+  THUNAR_WINDOW_ACTION_VIEW_TERMINAL,
   THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR,
   THUNAR_WINDOW_ACTION_SHOW_HIDDEN,
   THUNAR_WINDOW_ACTION_SHOW_HIGHLIGHT,
@@ -203,6 +205,11 @@ thunar_window_focus_view (ThunarWindow *window,
 void
 thunar_window_queue_redraw (ThunarWindow *window);
 
+void thunar_window_set_split_terminal_enabled(ThunarWindow *window, gboolean enabled);
+gboolean thunar_window_get_split_terminal_enabled(ThunarWindow *window);
+
+/* Switches the active terminal pointer to the one associated with the given view's pane. */
+void thunar_window_switch_to_view_terminal(ThunarWindow *window, GtkWidget *view);
 
 G_END_DECLS;
 
