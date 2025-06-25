@@ -146,6 +146,12 @@ enum
   PROP_MISC_SYMBOLIC_ICONS_IN_SIDEPANE,
   PROP_MISC_CTRL_SCROLL_WHEEL_TO_ZOOM,
   PROP_MISC_USE_CSD,
+  PROP_TERMINAL_HEIGHT,
+  PROP_TERMINAL_VISIBLE,
+  PROP_TERMINAL_COLOR_SCHEME,
+  PROP_TERMINAL_LOCAL_SYNC_MODE,
+  PROP_TERMINAL_SSH_AUTO_CONNECT_MODE,
+  PROP_TERMINAL_FONT_SIZE,
   N_PROPERTIES
 };
 
@@ -1415,6 +1421,86 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         NULL,
                         FALSE,
                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:terminal-height:
+   *
+   * Height of the terminal widget in pixels.
+   **/
+  preferences_props[PROP_TERMINAL_HEIGHT] =
+  g_param_spec_int ("terminal-height",
+                    "TerminalHeight",
+                    NULL,
+                    50,     /* min height */
+                    1000,   /* max height */
+                    200,    /* default height */
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:terminal-visible:
+   *
+   * %TRUE to show the terminal widget by default.
+   **/
+  preferences_props[PROP_TERMINAL_VISIBLE] =
+  g_param_spec_boolean ("terminal-visible",
+                        "TerminalVisible",
+                        NULL,
+                        FALSE,
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:terminal-color-scheme:
+   *
+   * Color scheme name for the terminal widget.
+   **/
+  preferences_props[PROP_TERMINAL_COLOR_SCHEME] =
+  g_param_spec_string ("terminal-color-scheme",
+                       "TerminalColorScheme",
+                       NULL,
+                       "system",
+                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:terminal-local-sync-mode:
+   *
+   * Synchronization mode between terminal and file manager for local directories.
+   **/
+  preferences_props[PROP_TERMINAL_LOCAL_SYNC_MODE] =
+  g_param_spec_int ("terminal-local-sync-mode",
+                    "TerminalLocalSyncMode",
+                    NULL,
+                    0,  /* THUNAR_TERMINAL_SYNC_NONE */
+                    3,  /* THUNAR_TERMINAL_SYNC_BOTH */
+                    0,  /* default: THUNAR_TERMINAL_SYNC_NONE */
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:terminal-ssh-auto-connect-mode:
+   *
+   * SSH auto-connect mode for terminal widget.
+   **/
+  preferences_props[PROP_TERMINAL_SSH_AUTO_CONNECT_MODE] =
+  g_param_spec_int ("terminal-ssh-auto-connect-mode",
+                    "TerminalSshAutoConnectMode",
+                    NULL,
+                    0,  /* THUNAR_TERMINAL_SSH_AUTOCONNECT_OFF */
+                    4,  /* THUNAR_TERMINAL_SSH_AUTOCONNECT_SYNC_NONE */
+                    0,  /* default: THUNAR_TERMINAL_SSH_AUTOCONNECT_OFF */
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:terminal-font-size:
+   *
+   * Font size for the terminal widget in points.
+   **/
+  preferences_props[PROP_TERMINAL_FONT_SIZE] =
+  g_param_spec_int ("terminal-font-size",
+                    "TerminalFontSize",
+                    NULL,
+                    6,    /* min font size */
+                    72,   /* max font size */
+                    10,   /* default font size */
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
