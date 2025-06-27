@@ -234,8 +234,9 @@ struct _ThunarFile
   /* flags for thumbnail state etc */
   ThunarFileFlags flags;
 
-  /* event source id used to rate-limit file-changed signals */
-  guint signal_changed_source_id;
+  /* event source id and variable to rate-limit file-changed signals */
+  guint    signal_changed_source_id;
+  gboolean signal_change_requested;
 
   /* Number of files in this directory (only used if this #Thunarfile is a directory) */
   /* Note that this feature was added into #ThunarFile on purpose, because having inside #ThunarFolder caused lag when
@@ -5473,20 +5474,19 @@ thunar_file_reset_thumbnail (ThunarFile         *file,
 
 
 static gboolean
-thunar_file_changed_signal_emit (gpointer data)
+thunar_file_changed_signal_timeout (gpointer data)
 {
-  /* emit the changed signal on thunarx level */
-  thunarx_file_info_changed (THUNARX_FILE_INFO (data));
+  ThunarFile *file = THUNAR_FILE (data);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), G_SOURCE_REMOVE);
+
+  /* emit the changed signal on thunarx level, if required */
+  if (file->signal_change_requested)
+      thunarx_file_info_changed (THUNARX_FILE_INFO (file));
+
+  file->signal_change_requested = FALSE;
+  file->signal_changed_source_id = 0;
 
   return G_SOURCE_REMOVE;
-}
-
-
-
-static void
-thunar_file_changed_signal_destroy (gpointer data)
-{
-  THUNAR_FILE (data)->signal_changed_source_id = 0;
 }
 
 
@@ -5501,10 +5501,17 @@ thunar_file_changed_signal_destroy (gpointer data)
 void
 thunar_file_changed (ThunarFile *file)
 {
-  if (file->signal_changed_source_id == 0)
+  /* in case a timeout is running, the change-signal will be delayed (performance) */
+  if (file->signal_changed_source_id != 0)
     {
-      file->signal_changed_source_id = g_timeout_add_full (G_PRIORITY_DEFAULT, FILE_CHANGED_SIGNAL_RATE_LIMIT,
-                                                           thunar_file_changed_signal_emit,
-                                                           file, thunar_file_changed_signal_destroy);
+      file->signal_change_requested = TRUE;
+      return;
     }
+
+  /* handle the first request directly */
+  thunarx_file_info_changed (THUNARX_FILE_INFO (file));
+
+  /* start a timer to throttle consecutive calls */
+  file->signal_changed_source_id = g_timeout_add (FILE_CHANGED_SIGNAL_RATE_LIMIT,
+                                                  thunar_file_changed_signal_timeout, file);
 }
