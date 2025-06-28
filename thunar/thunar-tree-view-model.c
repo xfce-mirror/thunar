@@ -2926,8 +2926,8 @@ thunar_tree_view_model_dir_files_changed (Node       *node_parent,
         {
           if (!model->show_hidden)
             thunar_tree_view_model_dir_remove_file (node_parent, file);
+
           g_hash_table_add (node_parent->hidden_files, g_object_ref (file));
-          continue;
         }
 
       node = thunar_tree_view_model_locate_file (model, file);
