@@ -153,10 +153,10 @@ struct _ThunarFolder
   /* Files which were changed recently. The key is a ThunarFile; value is NULL (unimportant)*/
   GHashTable *changed_files_map;
 
-  /* Files which were changed recently. The key is a ThunarFile; value is NULL (unimportant)*/
+  /* Files which were added recently. The key is a ThunarFile; value is NULL (unimportant)*/
   GHashTable *added_files_map;
 
-  /* Files which were changed recently. The key is a ThunarFile; value is NULL (unimportant)*/
+  /* Files which were removed recently. The key is a ThunarFile; value is NULL (unimportant)*/
   GHashTable *removed_files_map;
 
   /* Files inside this folder. The key is a ThunarFile; value is NULL (unimportant)*/
@@ -588,17 +588,22 @@ _thunar_folder_files_update_timeout (gpointer data)
   g_hash_table_remove_all (files);
   g_hash_table_remove_all (folder->added_files_map);
 
-  /* send a 'changed' signal for all files which changed */
+  /* reload files which were changed and send a 'changed' signal for them, if required */
   g_hash_table_iter_init (&iter, folder->changed_files_map);
   while (g_hash_table_iter_next (&iter, &key, NULL))
     {
+      thunar_file_reload (THUNAR_FILE (key));
+
+      /* only send the 'changed' signal for files which are already part of this folder */
       if (!g_hash_table_contains (folder->files_map, key))
         continue;
 
       g_hash_table_add (files, g_object_ref (key));
     }
 
-  g_signal_emit (G_OBJECT (folder), folder_signals[FILES_CHANGED], 0, files);
+  if (g_hash_table_size (files) > 0)
+    g_signal_emit (G_OBJECT (folder), folder_signals[FILES_CHANGED], 0, files);
+
   g_hash_table_destroy (files);
   g_hash_table_remove_all (folder->changed_files_map);
 
@@ -1062,16 +1067,12 @@ thunar_folder_monitor (GFileMonitor     *monitor,
     case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
       if (event_file_thunar != NULL)
         {
-          /* If we have that file in our internal map, reload it and send a file-changed signal */
-          if (g_hash_table_lookup (folder->files_map, event_file_thunar) != NULL)
-            {
-              thunar_folder_file_changed (folder, event_file_thunar);
+          /* this will trigger a reload if the file and send a 'file-changed' signal */
+          thunar_folder_file_changed (folder, event_file_thunar);
 
 #if DEBUG_FILE_CHANGES
-              thunar_file_infos_equal (event_file_thunar, event_file);
+          thunar_file_infos_equal (event_file_thunar, event_file);
 #endif
-              thunar_file_reload (event_file_thunar);
-            }
         }
 
     default:
