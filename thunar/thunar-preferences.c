@@ -115,6 +115,7 @@ enum
   PROP_MISC_SMALL_TOOLBAR_ICONS,
   PROP_MISC_TAB_CLOSE_MIDDLE_CLICK,
   PROP_MISC_TEXT_BESIDE_ICONS,
+  PROP_MISC_COMPACT_LAYOUT,
   PROP_MISC_THUMBNAIL_MODE,
   PROP_MISC_THUMBNAIL_DRAW_FRAMES,
   PROP_MISC_THUMBNAIL_MAX_FILE_SIZE,
@@ -1010,6 +1011,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   preferences_props[PROP_MISC_TEXT_BESIDE_ICONS] =
   g_param_spec_boolean ("misc-text-beside-icons",
                         "MiscTextBesideIcons",
+                        NULL,
+                        FALSE,
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:misc-compact-layout:
+   *
+   * Whether the icon view should use a tighter layout scheme.
+   **/
+  preferences_props[PROP_MISC_COMPACT_LAYOUT] =
+  g_param_spec_boolean ("misc-compact-layout",
+                        "MiscCompactLayout",
                         NULL,
                         FALSE,
                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
