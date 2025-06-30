@@ -647,6 +647,10 @@ thunar_folder_add_file (ThunarFolder *folder,
   if (g_hash_table_remove (folder->removed_files_map, file))
     return;
 
+  /* Do nothing if we already have the file in our internal map */
+  if (g_hash_table_lookup (folder->files_map, file) != NULL)
+    return;
+
   g_hash_table_add (folder->added_files_map, g_object_ref (file));
 
   if (folder->files_update_timeout_source_id == 0)
@@ -661,6 +665,10 @@ thunar_folder_remove_file (ThunarFolder *folder,
 {
   /* If it possibly was added shortly before, just undo the "add" */
   if (g_hash_table_remove (folder->added_files_map, file))
+    return;
+
+  /* Do nothing if we dont have the file yet in our internal map */
+  if (g_hash_table_lookup (folder->files_map, file) == NULL)
     return;
 
   g_hash_table_add (folder->removed_files_map, g_object_ref (file));
