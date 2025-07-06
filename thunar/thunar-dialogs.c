@@ -225,7 +225,7 @@ thunar_dialogs_show_rename_file (gpointer               parent,
   ThunarIconFactory *icon_factory;
   GtkIconTheme      *icon_theme;
   gint               scale_factor;
-  const gchar       *filename;
+  gchar             *filename;
   const gchar       *text;
   ThunarJob         *job = NULL;
   GtkWidget         *dialog;
@@ -250,8 +250,9 @@ thunar_dialogs_show_rename_file (gpointer               parent,
   /* parse the parent window and screen */
   screen = thunar_util_parse_parent (parent, &window);
 
-  /* get the filename of the file */
-  filename = thunar_file_get_basename (file);
+  /* Get the filename of the file. We create our own copy of the string because the file
+   * can be modified by another process while the rename is in progress (issue #1639). */
+  filename = g_strdup (thunar_file_get_basename (file));
 
   /* create a new dialog window */
   title = g_strdup_printf (_("Rename \"%s\""), filename);
@@ -384,6 +385,8 @@ thunar_dialogs_show_rename_file (gpointer               parent,
 
       gtk_widget_destroy (dialog);
     }
+
+  g_free (filename);
 
   return job;
 }
