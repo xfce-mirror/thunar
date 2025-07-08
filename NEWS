@@ -1,3 +1,49 @@
+4.21.2 (2025-07-08)
+======
+- Fix quoting when running shell scripts in a terminal (#)
+- Avoid use-after-free in rename dialog when file is changed underneath
+- Improve file add/remove checks for ThunarFolder (#1649)
+- Properly update view after hidden file rename
+- Always reload ThunarFiles on change notice (#1650)
+- Directly notify after file reload (#1650)
+- Reset folder monitor on folder rename (#1644)
+- Rename "thunar_file_destroy" to "thunar_file_signal_destroy"
+- Add basic signal handling (#1633)
+- Fix leaks when replacing existing file with new file or directory
+- Fix a GFile leak in _thunar_io_jobs_rename
+- Remove duplicated signal connect
+- Add menu action to paste links (#34)
+- Add .git-blame-ignore-revs file
+- New directory specific setting: "sort-folder-first" (#1580)
+- Remove outdated code
+- location-bar: Properly destroy child widgets (#573)
+- Make use of 'startup ID' when available
+- Consistently use parent pointer instead of screen (#1632)
+- Wipe transient parent when setting screen (#1632)
+- Split 'thunar_util_parse_parent' in two methods (#1632)
+- Only save column width when in fixed column mode
+- Use XfceNotebook from libxfce4ui (#1562)
+- sbr: Replace libexif with gexiv2
+- apr: Replace libexif with gexiv2
+- wayland: Fix popup position of DnD menu
+- Fix use-after-free in thunar_renamer_dialog_response (#1458)
+- Fix use-after-free on exit with search tabs open (#1593)
+- Close rename dialog if file renamed outside dialog (#1323)
+- Fix leaks in thunar_uca_provider_get_file_menu_items
+- Fix ThunarFile leaks in location-buttons (#573)
+- Fix GtkImageMenuItem leaks with UCA submenus
+- Fix ThunarxMenuItem leaks when finalizing ThunarxMenu
+- Rework VirtualBox DnD detection (#113)
+- Thunar transfer job - count items in subfolders
+- Translation Updates:
+  Albanian, Arabic, Asturian, Basque, Belarusian, Bulgarian, Catalan,
+  Chinese (China), Chinese (Taiwan), Czech, Danish, Dutch, English
+  (United Kingdom), Esperanto, Estonian, Finnish, French, Galician,
+  Georgian, German, Greek, Hebrew, Hungarian, Indonesian, Interlingue,
+  Italian, Japanese, Kazakh, Malay, Norwegian Bokmål, Polish,
+  Portuguese, Portuguese (Brazil), Romanian, Serbian, Slovak,
+  Slovenian, Spanish, Swedish, Thai, Turkish, Vietnamese
+
 4.21.1 (2025-05-16)
 ======
 - search: Avoid saving last view type when closing tab
