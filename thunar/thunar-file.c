@@ -1741,11 +1741,15 @@ thunar_file_execute (ThunarFile  *file,
     {
       /* fake the Exec line */
       escaped_location = g_shell_quote (location);
-      if (in_terminal)
-        exec = g_strconcat ("exo-open --launch TerminalEmulator ", escaped_location, " %F", NULL);
-      else
-        exec = g_strconcat (escaped_location, " %F", NULL);
+      exec = g_strconcat (escaped_location, " %F", NULL);
       command = xfce_expand_desktop_entry_field_codes (exec, uri_list, NULL, NULL, NULL, FALSE);
+      if (in_terminal)
+        {
+          gchar *escaped = g_shell_quote (command);
+          g_free (command);
+          command = g_strconcat ("exo-open --launch TerminalEmulator ", escaped, NULL);
+          g_free (escaped);
+        }
       result = g_shell_parse_argv (command, NULL, &argv, error);
       g_free (escaped_location);
       g_free (exec);
