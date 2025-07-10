@@ -429,6 +429,23 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
 
+  /* next row */
+  row++;
+
+  button = gtk_check_button_new_with_mnemonic (_("Use smart/natural sorting for filenames"));
+  g_object_bind_property (G_OBJECT (dialog->preferences),
+                          "sorting-smart-filenames",
+                          G_OBJECT (button),
+                          "active",
+                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  gtk_widget_set_tooltip_text (button,
+                               _("If enabled, files will be sorted so numbers are ordered naturally (e.g., file2 before file10). "
+      "If disabled, sorting is plain ASCII/byte order, like 'ls'."));
+  gtk_widget_set_hexpand (button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
+  gtk_widget_show (button);
+
+
   /* new grid */
   row = 0;
 

@@ -969,6 +969,29 @@ thunar_file_info_clear (ThunarFile *file)
     thunar_file_reset_thumbnail (file, i);
 }
 
+gchar *
+thunar_collate_key_for_filename (const gchar *str, gssize len)
+{
+  /* Read the user's preference from xfconf (or ThunarPreferences) */
+  gboolean smart_sorting = TRUE;
+
+  ThunarPreferences *preferences = thunar_preferences_get ();
+  g_object_get (preferences, "sorting-smart-filenames", &smart_sorting, NULL);
+  g_object_unref (preferences);
+
+  if (!smart_sorting)
+    {
+      /* Plain sorting: just return a copy of the string */
+      if (len < 0)
+        len = strlen (str);
+      return g_strndup (str, len);
+    }
+  else
+    {
+      /* Smart sorting: use the existing function */
+      return g_utf8_collate_key_for_filename (str, len);
+    }
+}
 
 
 static void
@@ -1112,14 +1135,14 @@ thunar_file_info_reload (ThunarFile   *file,
     }
 
   /* create case sensitive collation key */
-  file->collate_key = g_utf8_collate_key_for_filename (file->display_name, -1);
+  file->collate_key = thunar_collate_key_for_filename (file->display_name, -1);
 
   /* lowercase the display name */
   casefold = g_utf8_casefold (file->display_name, -1);
 
   /* if the lowercase name is equal, only peek the already hash key */
   if (casefold != NULL && strcmp (casefold, file->display_name) != 0)
-    file->collate_key_nocase = g_utf8_collate_key_for_filename (casefold, -1);
+    file->collate_key_nocase = thunar_collate_key_for_filename (casefold, -1);
   else
     file->collate_key_nocase = file->collate_key;
 
