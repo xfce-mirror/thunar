@@ -33,6 +33,7 @@ typedef struct _ThunarPreferences      ThunarPreferences;
 #define THUNAR_IS_PREFERENCES(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_PREFERENCES))
 #define THUNAR_IS_PREFERENCES_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_PREFERENCES))
 #define THUNAR_PREFERENCES_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_PREFERENCES, ThunarPreferencesClass))
+#define THUNAR_PREFERENCES_SORTING_SMART_FILENAMES "sorting-smart-filenames"
 
 GType
 thunar_preferences_get_type (void) G_GNUC_CONST;
