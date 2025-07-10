@@ -71,6 +71,7 @@
 #include <gio/gio.h>
 #include <libxfce4ui/libxfce4ui.h>
 #include <libxfce4util/libxfce4util.h>
+#include <xfconf/xfconf.h>
 
 
 
@@ -969,6 +970,21 @@ thunar_file_info_clear (ThunarFile *file)
     thunar_file_reset_thumbnail (file, i);
 }
 
+gchar *
+thunar_collate_key_for_filename (const gchar *str)
+{
+  gboolean smart_sorting = xfconf_channel_get_bool (
+  xfconf_channel_get ("thunar"), "/smart-sort", TRUE);
+
+  if (!smart_sorting)
+    {
+      return g_strdup (str);
+    }
+  else
+    {
+      return g_utf8_collate_key_for_filename (str, -1);
+    }
+}
 
 
 static void
@@ -1112,14 +1128,14 @@ thunar_file_info_reload (ThunarFile   *file,
     }
 
   /* create case sensitive collation key */
-  file->collate_key = g_utf8_collate_key_for_filename (file->display_name, -1);
+  file->collate_key = thunar_collate_key_for_filename (file->display_name);
 
   /* lowercase the display name */
   casefold = g_utf8_casefold (file->display_name, -1);
 
   /* if the lowercase name is equal, only peek the already hash key */
   if (casefold != NULL && strcmp (casefold, file->display_name) != 0)
-    file->collate_key_nocase = g_utf8_collate_key_for_filename (casefold, -1);
+    file->collate_key_nocase = thunar_collate_key_for_filename (casefold);
   else
     file->collate_key_nocase = file->collate_key;
 

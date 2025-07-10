@@ -55,6 +55,7 @@
 
 #include <gdk/gdkkeysyms.h>
 #include <libxfce4util/libxfce4util.h>
+#include <xfconf/xfconf.h>
 
 #ifdef ENABLE_X11
 #include <gdk/gdkx.h>
@@ -351,6 +352,8 @@ static gboolean
 thunar_standard_view_action_sort_descending (ThunarStandardView *standard_view);
 static gboolean
 thunar_standard_view_action_sort_folders_first (ThunarStandardView *standard_view);
+static gboolean
+thunar_standard_view_action_smart_sort (ThunarStandardView *standard_view);
 static void
 thunar_standard_view_set_sort_column (ThunarStandardView *standard_view,
                                       ThunarColumn        column);
@@ -465,6 +468,9 @@ struct _ThunarStandardViewPrivate
   /* required for directory specific settings */
   gboolean sort_folders_first_default;
 
+  /* current smart-sort setting */
+  gboolean smart_sort;
+
   /* current search query, used to allow switching between views with different (or NULL) search queries */
   gchar *search_query;
 
@@ -504,6 +510,7 @@ static XfceGtkActionEntry thunar_standard_view_action_entries[] =
     { THUNAR_STANDARD_VIEW_ACTION_SORT_ASCENDING,     "<Actions>/ThunarStandardView/sort-ascending",     "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Ascending"),            N_ ("Sort items in ascending order"),                     NULL, G_CALLBACK (thunar_standard_view_action_sort_ascending),       },
     { THUNAR_STANDARD_VIEW_ACTION_SORT_DESCENDING,    "<Actions>/ThunarStandardView/sort-descending",    "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Descending"),           N_ ("Sort items in descending order"),                    NULL, G_CALLBACK (thunar_standard_view_action_sort_descending),      },
     { THUNAR_STANDARD_VIEW_ACTION_SORT_FOLDERS_FIRST, "<Actions>/ThunarStandardView/sort-folders-first", "",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Folders First"),        N_ ("Sort folders before files"),                         NULL, G_CALLBACK (thunar_standard_view_action_sort_folders_first),   },
+    { THUNAR_STANDARD_VIEW_ACTION_SMART_SORT,         "<Actions>/ThunarStandardView/smart-sort",         "",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Smart Sort"),           N_ ("Sort numbers in filenames smartly (e.g., file2 before file10)"),                          NULL, G_CALLBACK (thunar_standard_view_action_smart_sort),           },
 };
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_standard_view_action_entries,G_N_ELEMENTS(thunar_standard_view_action_entries),id)
@@ -652,6 +659,22 @@ thunar_standard_view_action_sort_folders_first (ThunarStandardView *standard_vie
       /* store the new global value in the preferences */
       g_object_set (standard_view->preferences, "misc-folders-first", !folders_first, NULL);
     }
+  return TRUE;
+}
+
+static gboolean
+thunar_standard_view_action_smart_sort (ThunarStandardView *standard_view)
+{
+  /* Toggle the cached smart sort setting */
+  standard_view->priv->smart_sort = !standard_view->priv->smart_sort;
+
+  /* Save the new setting to xfconf */
+  xfconf_channel_set_bool (xfconf_channel_get ("thunar"), "/smart-sort", standard_view->priv->smart_sort);
+
+  /* Force a reload of the current directory to apply the new sorting */
+  if (standard_view->priv->current_directory != NULL)
+    thunar_standard_view_reload (THUNAR_VIEW (standard_view), TRUE);
+
   return TRUE;
 }
 
@@ -1038,6 +1061,9 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->type = 0;
 
   standard_view->priv->css_provider = NULL;
+
+  /* initialize smart sort setting from xfconf */
+  standard_view->priv->smart_sort = xfconf_channel_get_bool (xfconf_channel_get ("thunar"), "/smart-sort", TRUE);
 
   g_mutex_init (&standard_view->priv->statusbar_text_mutex);
 }
@@ -4549,11 +4575,13 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
   GtkWidget *item;
   GtkWidget *submenu;
   gboolean   folders_first;
+  gboolean   smart_sort;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   g_object_get (standard_view->model, "folders-first", &folders_first, NULL);
-  
+  smart_sort = standard_view->priv->smart_sort;
+
   item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU), NULL, GTK_MENU_SHELL (menu));
   submenu = gtk_menu_new ();
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_BY_NAME), G_OBJECT (standard_view),
@@ -4577,6 +4605,8 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (submenu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_FOLDERS_FIRST), G_OBJECT (standard_view),
                                                    folders_first, GTK_MENU_SHELL (submenu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SMART_SORT), G_OBJECT (standard_view),
+                                                   smart_sort, GTK_MENU_SHELL (submenu));
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (submenu));
   gtk_widget_show (item);
 
