@@ -1256,6 +1256,7 @@ thunar_window_init (ThunarWindow *window)
   window->trash_infobar = gtk_info_bar_new ();
   gtk_grid_attach (GTK_GRID (window->view_box), window->trash_infobar, 0, 2, 1, 1);
   window->trash_infobar_restore_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), _("Restore Selected Items"), RESTORE);
+  gtk_widget_set_sensitive (window->trash_infobar_restore_button, FALSE);
   window->trash_infobar_empty_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), _("Empty Trash"), EMPTY);
   g_signal_connect (window->trash_infobar,
                     "response",
