@@ -923,8 +923,7 @@ thunar_file_info_clear (ThunarFile *file)
   g_free (file->custom_icon_name);
   file->custom_icon_name = NULL;
 
-  /* free display n
-ame and basename */
+  /* free display name and basename */
   g_free (file->display_name);
   file->display_name = NULL;
 
