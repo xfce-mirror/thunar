@@ -923,7 +923,8 @@ thunar_file_info_clear (ThunarFile *file)
   g_free (file->custom_icon_name);
   file->custom_icon_name = NULL;
 
-  /* free display name and basename */
+  /* free display n
+ame and basename */
   g_free (file->display_name);
   file->display_name = NULL;
 
@@ -965,6 +966,8 @@ thunar_file_info_clear (ThunarFile *file)
     thunar_file_reset_thumbnail (file, i);
 }
 
+
+
 gchar *
 thunar_collate_key_for_filename (const gchar *str)
 {
@@ -982,6 +985,8 @@ thunar_collate_key_for_filename (const gchar *str)
   else
     return g_strdup (str);
 }
+
+
 
 static void
 thunar_file_info_reload (ThunarFile   *file,
