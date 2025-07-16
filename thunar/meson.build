@@ -170,6 +170,7 @@ thunar_sources = [
   'thunar-view.c',
   'thunar-view.h',
   'thunar-window.c',
+  'thunar-terminal-widget.c',
   'thunar-window.h',
 ]
 
@@ -225,6 +226,7 @@ executable(
     gudev,
     libnotify,
     pango,
+    vte_dep
   ],
   link_with: [
     libthunarx,
