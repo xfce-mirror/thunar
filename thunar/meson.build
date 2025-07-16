@@ -170,6 +170,7 @@ thunar_sources = [
   'thunar-view.c',
   'thunar-view.h',
   'thunar-window.c',
+  'thunar-terminal-widget.c',
   'thunar-window.h',
 ]
 
@@ -201,6 +202,9 @@ thunar_sources += gnome.compile_resources(
   'thunar.gresource.xml',
 )
 
+# VTE terminal widget dependency
+vte_dep = dependency('vte-2.91', required: true)
+
 executable(
   'thunar',
   thunar_sources,
@@ -225,6 +229,7 @@ executable(
     gudev,
     libnotify,
     pango,
+    vte_dep,
   ],
   link_with: [
     libthunarx,
