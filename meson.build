@@ -41,6 +41,9 @@ dependency_versions = {
   'libxfce4panel': '>= 4.14.0',
 }
 
+# VTE terminal widget dependency
+vte_dep = dependency('vte-2.91', required: true)
+
 glib = dependency('glib-2.0', version: dependency_versions['glib'])
 gio = dependency('gio-2.0', version: dependency_versions['glib'])
 gthread = dependency('gthread-2.0', version: dependency_versions['glib'])
