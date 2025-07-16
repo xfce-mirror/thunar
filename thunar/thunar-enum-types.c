@@ -956,12 +956,60 @@ thunar_file_drag_mode_get_type (void)
         { THUNAR_FILE_DRAG_MODE_DISABLED,         "THUNAR_FILE_DRAG_MODE_DISABLED",         "dnd disabled for files" },
         { THUNAR_FILE_DRAG_MODE_MENU_CONDITIONAL, "THUNAR_FILE_DRAG_MODE_MENU_CONDITIONAL", "dnd menu only on file right clicks" },
         { THUNAR_FILE_DRAG_MODE_MENU_ALWAYS,      "THUNAR_FILE_DRAG_MODE_MENU_ALWAYS",      "dnd menu for files always shown" },
-
-        { 0,                                  NULL,                                 NULL }
+        { 0,                                       NULL,                                    NULL }
       };
       /* clang-format on */
 
       type = g_enum_register_static ("ThunarFileDragMode", values);
+    }
+
+  return type;
+}
+
+GType
+thunar_terminal_sync_mode_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      /* clang-format off */
+      static const GEnumValue values[] =
+      {
+        { THUNAR_TERMINAL_SYNC_NONE,       "THUNAR_TERMINAL_SYNC_NONE",       "none" },
+        { THUNAR_TERMINAL_SYNC_FM_TO_TERM, "THUNAR_TERMINAL_SYNC_FM_TO_TERM", "fm-to-term" },
+        { THUNAR_TERMINAL_SYNC_TERM_TO_FM, "THUNAR_TERMINAL_SYNC_TERM_TO_FM", "term-to-fm" },
+        { THUNAR_TERMINAL_SYNC_BOTH,       "THUNAR_TERMINAL_SYNC_BOTH",       "both" },
+        { 0,                               NULL,                                NULL },
+      };
+      /* clang-format on */
+
+      type = g_enum_register_static (I_ ("ThunarTerminalSyncMode"), values);
+    }
+
+  return type;
+}
+
+GType
+thunar_terminal_ssh_auto_connect_mode_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      /* clang-format off */
+      static const GEnumValue values[] =
+      {
+        { THUNAR_TERMINAL_SSH_AUTOCONNECT_OFF,             "THUNAR_TERMINAL_SSH_AUTOCONNECT_OFF",             "off" },
+        { THUNAR_TERMINAL_SSH_AUTOCONNECT_SYNC_BOTH,       "THUNAR_TERMINAL_SSH_AUTOCONNECT_SYNC_BOTH",       "sync-both" },
+        { THUNAR_TERMINAL_SSH_AUTOCONNECT_SYNC_FM_TO_TERM, "THUNAR_TERMINAL_SSH_AUTOCONNECT_SYNC_FM_TO_TERM", "sync-fm-to-term" },
+        { THUNAR_TERMINAL_SSH_AUTOCONNECT_SYNC_TERM_TO_FM, "THUNAR_TERMINAL_SSH_AUTOCONNECT_SYNC_TERM_TO_FM", "sync-term-to-fm" },
+        { THUNAR_TERMINAL_SSH_AUTOCONNECT_SYNC_NONE,       "THUNAR_TERMINAL_SSH_AUTOCONNECT_SYNC_NONE",       "sync-none" },
+        { 0,                                               NULL,                                                NULL },
+      };
+      /* clang-format on */
+
+      type = g_enum_register_static (I_ ("ThunarTerminalSshAutoConnectMode"), values);
     }
 
   return type;
