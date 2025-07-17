@@ -19,10 +19,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "thunar/thunar-marshal.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
