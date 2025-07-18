@@ -255,7 +255,16 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   /**
    * ThunarPreferences:smart-sort:
    *
-   * Whether to use smart (natural) sorting for filenames.
+   * %TRUE to use smart sorting to sort files by name.
+   *
+   * If enabled, filenames are split into collatable substrings and e.g. numbers are compared separately,
+   * in a numeric way instead of comparing them digit-by-digit.
+   * 
+   * Sort order example with smart sorting enabled:
+   * - file1 file5 file10
+   *
+   * Sort order example with smart sorting disabled (plain ASCII sorting):
+   * - file1 file10 file5
    **/
   preferences_props[PROP_SMART_SORT] =
   g_param_spec_boolean ("smart-sort",
