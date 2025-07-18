@@ -142,6 +142,7 @@ enum
   PROP_MISC_SYMBOLIC_ICONS_IN_SIDEPANE,
   PROP_MISC_CTRL_SCROLL_WHEEL_TO_ZOOM,
   PROP_MISC_USE_CSD,
+  PROP_SMART_SORT,
   N_PROPERTIES
 };
 
@@ -250,6 +251,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                       NULL,
                       G_TYPE_STRV,
                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:smart-sort:
+   *
+   * Whether to use smart (natural) sorting for filenames.
+   **/
+  preferences_props[PROP_SMART_SORT] =
+  g_param_spec_boolean ("smart-sort",
+                        "SortingSmartFilenames",
+                        NULL,
+                        TRUE, /* Default: smart sorting enabled */
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-restore-tabs:
