@@ -32,19 +32,19 @@ From source:
     % git clone https://gitlab.xfce.org/xfce/thunar
     % git checkout <branch|tag>  #optional step. Per default master is checked out
     % cd thunar
-    % ./autogen.sh
-    % make
-    # make install
+    % meson setup build
+    % meson compile -C build
+    # meson install -C build
 
 From release tarball:
 
-    % tar xf thunar-<version>.tar.bz2
+    % tar xf thunar-<version>.tar.xz
     % cd thunar-<version>
-    % ./configure
-    % make
-    # make install
+    % meson setup build
+    % meson compile -C build
+    # meson install -C build
 
- Both autogen.sh and configure will list missing dependencies. 
+ Meson will list all missing dependencies.
  If your distribution provides development versions of the related packages, 
  install them. Otherwise you will need to build and install the missing dependencies from source.
 

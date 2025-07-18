@@ -20,10 +20,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "thunar/thunar-chooser-button.h"
 #include "thunar/thunar-chooser-dialog.h"
 #include "thunar/thunar-dialogs.h"

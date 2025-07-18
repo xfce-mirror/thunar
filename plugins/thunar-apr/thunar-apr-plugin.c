@@ -18,10 +18,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <thunar-apr/thunar-apr-abstract-page.h>
 #include <thunar-apr/thunar-apr-desktop-page.h>
 #include <thunar-apr/thunar-apr-image-page.h>

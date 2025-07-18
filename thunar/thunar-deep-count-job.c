@@ -19,10 +19,6 @@
  * MA  02111-1307  USA
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "thunar/thunar-deep-count-job.h"
 #include "thunar/thunar-job.h"
 #include "thunar/thunar-marshal.h"

@@ -18,10 +18,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-progress-dialog.h"
 #include "thunar/thunar-progress-view.h"

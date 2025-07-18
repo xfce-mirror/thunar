@@ -21,10 +21,6 @@
  * Red Hat, Inc.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-clipboard-manager.h"
 #include "thunar/thunar-dialogs.h"

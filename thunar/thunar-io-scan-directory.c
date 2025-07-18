@@ -18,10 +18,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "thunar/thunar-gio-extensions.h"
 #include "thunar/thunar-io-scan-directory.h"
 #include "thunar/thunar-job.h"
