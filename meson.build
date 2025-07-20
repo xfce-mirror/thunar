@@ -42,7 +42,7 @@ dependency_versions = {
 }
 
 # VTE terminal widget dependency
-vte_dep = dependency('vte-2.91', required: true)
+vte_dep = dependency('vte-2.91', version: '>= 0.70', required: true)
 
 glib = dependency('glib-2.0', version: dependency_versions['glib'])
 gio = dependency('gio-2.0', version: dependency_versions['glib'])
