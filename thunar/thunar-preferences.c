@@ -18,10 +18,6 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif
@@ -146,6 +142,7 @@ enum
   PROP_MISC_SYMBOLIC_ICONS_IN_SIDEPANE,
   PROP_MISC_CTRL_SCROLL_WHEEL_TO_ZOOM,
   PROP_MISC_USE_CSD,
+  PROP_SMART_SORT,
   PROP_TERMINAL_HEIGHT,
   PROP_TERMINAL_VISIBLE,
   PROP_TERMINAL_COLOR_SCHEME,
@@ -260,6 +257,27 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                       NULL,
                       G_TYPE_STRV,
                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:smart-sort:
+   *
+   * %TRUE to use smart sorting to sort files by name.
+   *
+   * If enabled, filenames are split into collatable substrings and e.g. numbers are compared separately,
+   * in a numeric way instead of comparing them digit-by-digit.
+   * 
+   * Sort order example with smart sorting enabled:
+   * - file1 file5 file10
+   *
+   * Sort order example with smart sorting disabled (plain ASCII sorting):
+   * - file1 file10 file5
+   **/
+  preferences_props[PROP_SMART_SORT] =
+  g_param_spec_boolean ("smart-sort",
+                        "SortingSmartFilenames",
+                        NULL,
+                        TRUE, /* Default: smart sorting enabled */
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:last-restore-tabs:

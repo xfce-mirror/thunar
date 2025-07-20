@@ -18,10 +18,6 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "thunar/thunar-folder.h"
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-io-jobs.h"

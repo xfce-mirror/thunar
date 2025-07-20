@@ -18,10 +18,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <gdk/gdkkeysyms.h>
 #include <glib/gi18n-lib.h>
 #include <thunar-uca/thunar-uca-chooser.h>

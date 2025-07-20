@@ -19,10 +19,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
@@ -971,6 +967,26 @@ thunar_file_info_clear (ThunarFile *file)
 
 
 
+gchar *
+thunar_collate_key_for_filename (const gchar *str)
+{
+  /* Read the user's preference */
+  gboolean smart_sorting = TRUE;
+
+  ThunarPreferences *preferences = thunar_preferences_get ();
+  g_object_get (preferences, "smart-sort", &smart_sorting, NULL);
+  g_object_unref (preferences);
+
+  /* If enabled, 'g_utf8_collate_key_for_filename' will be used for sorting,
+   instead of plain ASCII comparison. */
+  if (smart_sorting)
+    return g_utf8_collate_key_for_filename (str, -1);
+  else
+    return g_strdup (str);
+}
+
+
+
 static void
 thunar_file_info_reload (ThunarFile   *file,
                          GCancellable *cancellable)
@@ -1112,14 +1128,14 @@ thunar_file_info_reload (ThunarFile   *file,
     }
 
   /* create case sensitive collation key */
-  file->collate_key = g_utf8_collate_key_for_filename (file->display_name, -1);
+  file->collate_key = thunar_collate_key_for_filename (file->display_name);
 
   /* lowercase the display name */
   casefold = g_utf8_casefold (file->display_name, -1);
 
   /* if the lowercase name is equal, only peek the already hash key */
   if (casefold != NULL && strcmp (casefold, file->display_name) != 0)
-    file->collate_key_nocase = g_utf8_collate_key_for_filename (casefold, -1);
+    file->collate_key_nocase = thunar_collate_key_for_filename (casefold);
   else
     file->collate_key_nocase = file->collate_key;
 

@@ -18,10 +18,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <thunar-uca/thunar-uca-context.h>
 #include <thunarx/thunarx.h>
 
