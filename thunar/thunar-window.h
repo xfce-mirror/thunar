@@ -206,7 +206,7 @@ void
 thunar_window_queue_redraw (ThunarWindow *window);
 
 void
-thunar_window_switch_to_view_terminal(ThunarWindow *window, GtkWidget *view);
+thunar_window_switch_to_view_terminal (ThunarWindow *window, GtkWidget *view);
 
 G_END_DECLS;
 
