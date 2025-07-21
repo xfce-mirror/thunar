@@ -740,10 +740,19 @@ static gboolean
 on_terminal_button_press (GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 static gboolean
 on_terminal_key_press (GtkWidget *widget, GdkEventKey *event, gpointer user_data);
-static void
-on_terminal_termprop_changed (VteTerminal *terminal, const gchar *prop, gpointer user_data);
 static int
 get_terminal_font_size (void);
+
+#if VTE_CHECK_VERSION(0, 78, 0)
+/* Modern VTE uses termprop-changed signal */
+static void
+on_directory_changed (VteTerminal *terminal, const gchar *prop, gpointer user_data);
+#else
+/* Legacy VTE uses current-directory-uri-changed signal */
+static void
+on_legacy_directory_changed (VteTerminal *terminal, gpointer user_data);
+#endif
+
 
 static void
 setup_terminal_font (VteTerminal *terminal)
@@ -832,8 +841,11 @@ thunar_terminal_widget_init (ThunarTerminalWidget *self)
   g_signal_connect (priv->terminal, "button-press-event", G_CALLBACK (on_terminal_button_press), self);
   g_signal_connect (priv->terminal, "key-press-event", G_CALLBACK (on_terminal_key_press), self);
 
-  /* Connect to the property notification signal for directory changes. */
-  g_signal_connect (priv->terminal, "termprop-changed", G_CALLBACK (on_terminal_termprop_changed), self);
+#if VTE_CHECK_VERSION(0, 78, 0)
+  g_signal_connect (priv->terminal, "termprop-changed", G_CALLBACK (on_directory_changed), self);
+#else
+  g_signal_connect (priv->terminal, "current-directory-uri-changed", G_CALLBACK (on_legacy_directory_changed), self);
+#endif
 
   gtk_widget_show_all (GTK_WIDGET (self));
   gtk_widget_hide (GTK_WIDGET (self));
@@ -1117,31 +1129,18 @@ on_terminal_preference_changed (ThunarPreferences *prefs,
 }
 
 static void
-on_terminal_termprop_changed (VteTerminal *terminal,
-                              const gchar *prop,
-                              gpointer     user_data)
+_sync_terminal_to_fm (ThunarTerminalWidget *self, const gchar *cwd_uri)
 {
-  ThunarTerminalWidget        *self = THUNAR_TERMINAL_WIDGET (user_data);
   ThunarTerminalWidgetPrivate *priv = self->priv;
   g_autoptr (GFile) new_gfile_location = NULL;
   gboolean should_sync_to_fm = FALSE;
-  g_autoptr (GUri) cwd_guri = NULL;
-  g_autofree gchar *cwd_uri = NULL;
 
-  if (g_strcmp0 (prop, VTE_TERMPROP_CURRENT_DIRECTORY_URI) != 0)
+  if (!cwd_uri)
     {
       return;
     }
 
-  cwd_guri = vte_terminal_ref_termprop_uri (terminal, VTE_TERMPROP_CURRENT_DIRECTORY_URI);
-  if (!cwd_guri)
-    {
-      return;
-    }
-  cwd_uri = g_uri_to_string (cwd_guri);
-
-  /* When the FM changes the terminal's directory, the terminal emits this
-   * signal back. This flag prevents an infinite loop of updates. */
+  /* When the FM changes the terminal's directory, we must ignore the signal. */
   if (priv->ignore_next_terminal_cd_signal)
     {
       priv->ignore_next_terminal_cd_signal = FALSE;
@@ -1194,6 +1193,37 @@ on_terminal_termprop_changed (VteTerminal *terminal,
         }
     }
 }
+
+#if VTE_CHECK_VERSION(0, 78, 0)
+static void
+on_directory_changed (VteTerminal *terminal,
+                      const gchar *prop,
+                      gpointer     user_data)
+{
+  ThunarTerminalWidget *self = THUNAR_TERMINAL_WIDGET (user_data);
+
+  /* We only care about the property for the current directory URI */
+  if (g_strcmp0 (prop, VTE_TERMPROP_CURRENT_DIRECTORY_URI) == 0)
+    {
+      g_autoptr (GUri) cwd_uri = vte_terminal_ref_termprop_uri (terminal, VTE_TERMPROP_CURRENT_DIRECTORY_URI);
+      if (cwd_uri)
+        {
+          g_autofree gchar *cwd_uri_str = g_uri_to_string (cwd_uri);
+          _sync_terminal_to_fm (self, cwd_uri_str);
+        }
+    }
+}
+#else
+static void
+on_legacy_directory_changed (VteTerminal *terminal,
+                             gpointer     user_data)
+{
+  ThunarTerminalWidget *self = THUNAR_TERMINAL_WIDGET (user_data);
+  const gchar          *cwd_uri_str = vte_terminal_get_current_directory_uri (terminal);
+  _sync_terminal_to_fm (self, cwd_uri_str);
+}
+#endif
+
 
 static void
 feed_cd_command (VteTerminal *terminal, const char *path)
@@ -1529,8 +1559,24 @@ change_directory_in_terminal (ThunarTerminalWidget *self,
 
   if (should_sync && target_path)
     {
-      g_autoptr (GUri) term_guri = vte_terminal_ref_termprop_uri (priv->terminal, VTE_TERMPROP_CURRENT_DIRECTORY_URI);
-      g_autoptr (GFile) term_gfile = term_guri ? g_file_new_for_uri (g_uri_to_string (term_guri)) : NULL;
+      g_autofree gchar *term_uri_str = NULL;
+
+/* Conditionally get the current directory using the appropriate VTE function. */
+#if VTE_CHECK_VERSION(0, 78, 0)
+      g_autoptr (GUri) term_uri = vte_terminal_ref_termprop_uri (priv->terminal, VTE_TERMPROP_CURRENT_DIRECTORY_URI);
+      if (term_uri)
+        {
+          term_uri_str = g_uri_to_string (term_uri);
+        }
+#else
+      const gchar *temp_uri_str = vte_terminal_get_current_directory_uri (priv->terminal);
+      if (temp_uri_str)
+        {
+          term_uri_str = g_strdup (temp_uri_str);
+        }
+#endif
+
+      g_autoptr (GFile) term_gfile = term_uri_str ? g_file_new_for_uri (term_uri_str) : NULL;
       g_autofree gchar *term_path = term_gfile ? g_file_get_path (term_gfile) : NULL;
 
       /* Only issue a 'cd' command if the terminal is not already in the target directory. */
