@@ -265,7 +265,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    *
    * If enabled, filenames are split into collatable substrings and e.g. numbers are compared separately,
    * in a numeric way instead of comparing them digit-by-digit.
-   * 
+   *
    * Sort order example with smart sorting enabled:
    * - file1 file5 file10
    *
@@ -1449,9 +1449,9 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_param_spec_int ("terminal-height",
                     "TerminalHeight",
                     NULL,
-                    50,     /* min height */
-                    1000,   /* max height */
-                    200,    /* default height */
+                    50,   /* min height */
+                    1000, /* max height */
+                    200,  /* default height */
                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
@@ -1485,11 +1485,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    **/
   preferences_props[PROP_TERMINAL_LOCAL_SYNC_MODE] =
   g_param_spec_enum ("terminal-local-sync-mode",
-                    "TerminalLocalSyncMode",
-                    NULL,
-                    THUNAR_TYPE_TERMINAL_SYNC_MODE,
-                    THUNAR_TERMINAL_SYNC_BOTH,
-                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+                     "TerminalLocalSyncMode",
+                     NULL,
+                     THUNAR_TYPE_TERMINAL_SYNC_MODE,
+                     THUNAR_TERMINAL_SYNC_BOTH,
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:terminal-ssh-auto-connect-mode:
@@ -1498,11 +1498,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    **/
   preferences_props[PROP_TERMINAL_SSH_AUTO_CONNECT_MODE] =
   g_param_spec_enum ("terminal-ssh-auto-connect-mode",
-                    "TerminalSshAutoConnectMode",
-                    NULL,
-                    THUNAR_TYPE_TERMINAL_SSH_AUTO_CONNECT_MODE,
-                    THUNAR_TERMINAL_SSH_AUTOCONNECT_OFF,
-                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+                     "TerminalSshAutoConnectMode",
+                     NULL,
+                     THUNAR_TYPE_TERMINAL_SSH_AUTO_CONNECT_MODE,
+                     THUNAR_TERMINAL_SSH_AUTOCONNECT_OFF,
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:terminal-font-size:
@@ -1513,9 +1513,9 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_param_spec_int ("terminal-font-size",
                     "TerminalFontSize",
                     NULL,
-                    6,    /* min font size */
-                    72,   /* max font size */
-                    12,   /* default font size */
+                    6,  /* min font size */
+                    72, /* max font size */
+                    12, /* default font size */
                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /* install all properties */
