@@ -1500,6 +1500,10 @@ thunar_standard_view_update_selected_files (ThunarStandardView *standard_view,
 
   /* determine the tree paths for the given files */
   paths = thunar_standard_view_model_get_paths_for_files (standard_view->model, files_to_select);
+
+  /* unselect all previously selected files - this may free the "files_to_select" list */
+  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unselect_all) (standard_view);
+
   if (G_LIKELY (paths != NULL))
     {
       /* determine the first path */
