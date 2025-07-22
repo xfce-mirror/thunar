@@ -3,7 +3,7 @@ Thunar User Customizable Actions (thunar-uca)
 
 Thunar-uca is an extension to Thunar, which enables sophisticated users to add additional actions to the file managers context menus, without having to write their own extensions for each and every action they want to use.
 
-By default the thunar-uca extension will be installed, but as with every extension, it will slightly increase the resource usage of Thunar (this shouldn't be a real problem unless you're targeting an embedded system), and so can you pass `--disable-uca-plugin` to configure and the plugin won't be built and installed. Since it is an extension, you can also easily uninstall it
+By default the thunar-uca extension will be installed, but as with every extension, it will slightly increase the resource usage of Thunar (this shouldn't be a real problem unless you're targeting an embedded system), and so can you pass `-Dthunar-uca=disabled` to `meson setup` and the plugin won't be built and installed. Since it is an extension, you can also easily uninstall it
 afterwards by removing the thunar-uca.so file from the lib/thunarx-2/ directory of your installation (be sure to quit Thunar before removing files though).
 
 To actually manage the actions open the "Edit" menu in the menu bar of a Thunar window and select "Configure Custom Actions...". A dialog will appear which lists the currently configured actions.
