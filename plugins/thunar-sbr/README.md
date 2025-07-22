@@ -10,7 +10,7 @@ Thunar-sbr is an extension to Thunar, which includes a bunch of simple renamers 
  * Search & Replace
  * Uppercase / Lowercase
 
-By default the thunar-sbr extension will be installed, but as with every extension, it will slightly increase the resource usage of Thunar (this shouldn't be a real problem unless you're targeting an embedded system), and so you can pass `--disable-sbr-plugin` to configure and the plugin won't be built and installed. Since it is an extension, you can also easily uninstall it afterwards by removing the thunar-sbr.so file from the lib/thunarx-2/ directory of your installation (be sure to quit Thunar before removing files though).
+By default the thunar-sbr extension will be installed, but as with every extension, it will slightly increase the resource usage of Thunar (this shouldn't be a real problem unless you're targeting an embedded system), and so you can pass `-Dthunar-sbr=disabled` to `meson setup` and the plugin won't be built and installed. Since it is an extension, you can also easily uninstall it afterwards by removing the thunar-sbr.so file from the lib/thunarx-2/ directory of your installation (be sure to quit Thunar before removing files though).
 
 
 Regular Expressions
