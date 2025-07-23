@@ -1320,6 +1320,26 @@ on_copy_activate (GtkMenuItem *menuitem,
 }
 
 static void
+on_paste_activate (GtkMenuItem *menuitem,
+                   gpointer     user_data)
+{
+  ThunarTerminalWidget        *self = THUNAR_TERMINAL_WIDGET (user_data);
+  ThunarTerminalWidgetPrivate *priv = self->priv;
+
+  vte_terminal_paste_clipboard (priv->terminal);
+}
+
+static void
+on_select_all_activate (GtkMenuItem *menuitem,
+                        gpointer     user_data)
+{
+  ThunarTerminalWidget        *self = THUNAR_TERMINAL_WIDGET (user_data);
+  ThunarTerminalWidgetPrivate *priv = self->priv;
+
+  vte_terminal_select_all (priv->terminal);
+}
+
+static void
 on_ssh_exit_activate (GtkMenuItem *menuitem,
                       gpointer     user_data)
 {
@@ -1495,11 +1515,11 @@ create_terminal_popup_menu (ThunarTerminalWidget *self)
   gtk_widget_set_sensitive (item, vte_terminal_get_has_selection (priv->terminal));
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 
-  _append_menu_item (GTK_MENU_SHELL (menu), _("_Paste"), G_CALLBACK (vte_terminal_paste_clipboard), priv->terminal);
+  _append_menu_item (GTK_MENU_SHELL (menu), _("_Paste"), G_CALLBACK (on_paste_activate), self);
 
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), gtk_separator_menu_item_new ());
 
-  _append_menu_item (GTK_MENU_SHELL (menu), _("Select _All"), G_CALLBACK (vte_terminal_select_all), priv->terminal);
+  _append_menu_item (GTK_MENU_SHELL (menu), _("Select _All"), G_CALLBACK (on_select_all_activate), self);
 
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), gtk_separator_menu_item_new ());
 
