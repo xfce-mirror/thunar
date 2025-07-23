@@ -19,7 +19,6 @@
  */
 
 #include "thunar-terminal-widget.h"
-
 #include "thunar-navigator.h"
 #include "thunar-preferences.h"
 #include "thunar-private.h"
@@ -302,6 +301,10 @@ static void
 on_font_size_changed (GtkCheckMenuItem *menuitem, gpointer user_data);
 static void
 on_enum_pref_changed (GtkCheckMenuItem *menuitem, gpointer user_data);
+static void
+on_ssh_exit_activate (GtkMenuItem *menuitem, gpointer user_data);
+static void
+on_ssh_connect_activate (GtkMenuItem *menuitem, gpointer user_data);
 
 static GParamSpec *properties[N_PROPS];
 static guint       signals[LAST_SIGNAL];
@@ -352,6 +355,25 @@ static void
 _clear_ssh_connection_data (ThunarTerminalWidgetPrivate *priv);
 static void
 _reset_to_local_state (ThunarTerminalWidget *self);
+static GtkWidget *
+_build_color_scheme_submenu (ThunarTerminalWidget *self);
+static GtkWidget *
+_build_font_size_submenu (ThunarTerminalWidget *self);
+static GtkWidget *
+_build_sftp_auto_connect_submenu (ThunarTerminalWidget *self);
+static GtkWidget *
+_build_local_sync_submenu (ThunarTerminalWidget *self);
+static GtkWidget *
+_build_manual_ssh_connect_submenu (ThunarTerminalWidget *self,
+                                   const gchar          *hostname,
+                                   const gchar          *username,
+                                   const gchar          *port);
+static void
+_append_menu_item_with_submenu (GtkMenuShell *menu, const gchar *label, GtkWidget *submenu);
+static GtkWidget *
+create_terminal_popup_menu (ThunarTerminalWidget *self);
+static gboolean
+on_terminal_button_release (GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 
 
 /******************************************************************
@@ -585,15 +607,6 @@ thunar_terminal_widget_apply_new_size (ThunarTerminalWidget *self)
 }
 
 static gboolean
-reset_toggling_flag (gpointer user_data)
-{
-  ThunarTerminalWidget        *self = THUNAR_TERMINAL_WIDGET (user_data);
-  ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);
-  priv->in_toggling = FALSE;
-  return G_SOURCE_REMOVE;
-}
-
-static gboolean
 focus_once_and_remove (gpointer user_data)
 {
   GtkWidget            *widget_to_focus = GTK_WIDGET (user_data);
@@ -656,7 +669,7 @@ thunar_terminal_widget_toggle_visible (ThunarTerminalWidget *self)
 
   g_object_set (thunar_preferences_get (), "terminal-visible", priv->is_visible, NULL);
   g_signal_emit (self, signals[TOGGLE_VISIBILITY], 0, priv->is_visible);
-  reset_toggling_flag (self);
+  priv->in_toggling = FALSE;
 }
 
 void
@@ -736,10 +749,6 @@ thunar_terminal_widget_class_init (ThunarTerminalWidgetClass *klass)
 
 static void
 on_terminal_child_exited (VteTerminal *terminal, gint status, gpointer user_data);
-static gboolean
-on_terminal_button_press (GtkWidget *widget, GdkEventButton *event, gpointer user_data);
-static gboolean
-on_terminal_key_press (GtkWidget *widget, GdkEventKey *event, gpointer user_data);
 static int
 get_terminal_font_size (void);
 
@@ -805,6 +814,7 @@ thunar_terminal_widget_init (ThunarTerminalWidget *self)
 
   priv->ssh_indicator = gtk_label_new ("SSH");
   gtk_widget_set_name (priv->ssh_indicator, "ssh-indicator");
+  gtk_widget_set_tooltip_text (priv->ssh_indicator, _("The terminal is in an active SSH session."));
   gtk_widget_set_no_show_all (priv->ssh_indicator, TRUE);
   gtk_widget_hide (priv->ssh_indicator);
   gtk_widget_set_vexpand (priv->ssh_indicator, FALSE);
@@ -812,7 +822,8 @@ thunar_terminal_widget_init (ThunarTerminalWidget *self)
   gtk_label_set_xalign (GTK_LABEL (priv->ssh_indicator), 0.5);
 
   provider = gtk_css_provider_new ();
-  gtk_css_provider_load_from_data (provider, "label#ssh-indicator { background-color: #3465a4; color: white; padding: 2px 5px; margin: 0; font-weight: bold; }", -1, NULL);
+  /* Use theme colors for better visual integration instead of hardcoded values. */
+  gtk_css_provider_load_from_data (provider, "label#ssh-indicator { background-color: @theme_selected_bg_color; color: @theme_selected_fg_color; padding: 2px 5px; margin: 0; font-weight: bold; }", -1, NULL);
   context = gtk_widget_get_style_context (priv->ssh_indicator);
   gtk_style_context_add_provider (context, GTK_STYLE_PROVIDER (provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
 
@@ -838,8 +849,7 @@ thunar_terminal_widget_init (ThunarTerminalWidget *self)
 
   /* Connect signals */
   g_signal_connect (priv->terminal, "child-exited", G_CALLBACK (on_terminal_child_exited), self);
-  g_signal_connect (priv->terminal, "button-press-event", G_CALLBACK (on_terminal_button_press), self);
-  g_signal_connect (priv->terminal, "key-press-event", G_CALLBACK (on_terminal_key_press), self);
+  g_signal_connect (priv->terminal, "button-release-event", G_CALLBACK (on_terminal_button_release), self);
 
 #if VTE_CHECK_VERSION(0, 78, 0)
   g_signal_connect (priv->terminal, "termprop-changed", G_CALLBACK (on_directory_changed), self);
@@ -940,7 +950,13 @@ spawn_async_callback (VteTerminal *terminal,
                       gpointer     user_data)
 {
   ThunarTerminalWidget        *self = THUNAR_TERMINAL_WIDGET (user_data);
-  ThunarTerminalWidgetPrivate *priv = self->priv;
+  ThunarTerminalWidgetPrivate *priv;
+
+  if (G_UNLIKELY (gtk_widget_in_destruction (GTK_WIDGET (self))))
+    {
+      return;
+    }
+  priv = self->priv;
 
   if (pid == -1)
     {
@@ -969,13 +985,8 @@ spawn_terminal_async (ThunarTerminalWidget *self)
   ThunarTerminalWidgetPrivate *priv = self->priv;
   g_autofree gchar            *working_directory = NULL;
   const gchar                 *shell_executable;
-  gchar                       *argv[2];
-  gchar                       *envp[] = {
-    "TERM=xterm-256color",
-    "LC_ALL=C.UTF-8",
-    "COLORTERM=truecolor",
-    NULL
-  };
+  gchar                      **argv = NULL;
+  gchar                      **envp = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_TERMINAL_WIDGET (self));
 
@@ -992,9 +1003,6 @@ spawn_terminal_async (ThunarTerminalWidget *self)
   if (!shell_executable || *shell_executable == '\0')
     shell_executable = "/bin/sh";
 
-  argv[0] = (gchar *) shell_executable;
-  argv[1] = NULL;
-
   if (priv->pending_ssh_hostname != NULL)
     {
       working_directory = NULL; /* Force start in $HOME for a fast SSH connection */
@@ -1002,6 +1010,49 @@ spawn_terminal_async (ThunarTerminalWidget *self)
   else if (priv->current_location && g_file_query_exists (priv->current_location, NULL))
     {
       working_directory = g_file_get_path (priv->current_location);
+    }
+
+  if (g_str_has_suffix (shell_executable, "zsh"))
+    {
+      g_autofree gchar *config_dir = g_build_filename (g_get_user_config_dir (), "Thunar", NULL);
+      g_autofree gchar *zshrc_path = g_build_filename (config_dir, ".zshrc", NULL);
+      g_autofree gchar *zshrc_content = NULL;
+      g_autofree gchar *zdotdir_env = NULL;
+
+      /* Ensure the ~/.config/Thunar directory exists. */
+      g_mkdir_with_parents (config_dir, 0700);
+
+      /*
+       * Create a .zshrc in Thunar's config dir that defines our hook and
+       * then sources the user's real .zshrc. This is persistent and clean.
+       * The hook emits an OSC 7 escape sequence to inform VTE of the CWD.
+       */
+      zshrc_content = g_strdup_printf ("_thunar_vte_update_cwd() { echo -en \"\\033]7;file://$PWD\\007\"; };\n"
+                                       "typeset -a precmd_functions;\n"
+                                       "precmd_functions+=(_thunar_vte_update_cwd);\n"
+                                       "[ -f \"$HOME/.zshrc\" ] && . \"$HOME/.zshrc\";\n");
+
+      g_file_set_contents (zshrc_path, zshrc_content, -1, NULL);
+
+      zdotdir_env = g_strdup_printf ("ZDOTDIR=%s", config_dir);
+      gchar *zsh_envp[] = { "TERM=xterm-256color", "COLORTERM=truecolor", zdotdir_env, NULL };
+      envp = g_strdupv (zsh_envp);
+      argv = g_strsplit (shell_executable, " ", -1);
+    }
+  else /* Assume bash or other compatible shells */
+    {
+      argv = g_strsplit (shell_executable, " ", -1);
+      /*
+       * For bash-compatible shells, inject PROMPT_COMMAND to emit an OSC 7
+       * escape sequence before each prompt, informing VTE of the CWD.
+       */
+      gchar *bash_envp[] = {
+        "TERM=xterm-256color",
+        "PROMPT_COMMAND=echo -en \"\\033]7;file://$PWD\\007\"",
+        "COLORTERM=truecolor",
+        NULL
+      };
+      envp = g_strdupv (bash_envp);
     }
 
   vte_terminal_spawn_async (priv->terminal,
@@ -1017,6 +1068,9 @@ spawn_terminal_async (ThunarTerminalWidget *self)
                             priv->spawn_cancellable,
                             (VteTerminalSpawnAsyncCallback) spawn_async_callback,
                             self);
+
+  g_strfreev (argv);
+  g_strfreev (envp);
 }
 
 /* Helper function to clear all data related to an active or pending SSH connection. */
@@ -1084,17 +1138,25 @@ on_terminal_child_exited (VteTerminal *terminal,
    * the terminal for respawning a new local shell below. */
   if (priv->state == THUNAR_TERMINAL_STATE_IN_SSH)
     {
-      _reset_to_local_state (self);
-    }
-
-  /* Ensure a new local shell is spawned if the widget is visible,
-   * or mark it for respawn if it's hidden. */
-  if (gtk_widget_get_ancestor (GTK_WIDGET (self), GTK_TYPE_WINDOW))
-    {
+      _reset_to_local_state (self); /* This sets needs_respawn = TRUE */
       if (priv->is_visible)
-        spawn_terminal_async (self);
-      else
-        priv->needs_respawn = TRUE;
+        {
+          spawn_terminal_async (self);
+        }
+    }
+  /*
+   * If the local shell exits (e.g., user types 'exit'), we hide the
+   * terminal widget and ensure it's marked for a full respawn on next show.
+   */
+  else if (priv->state == THUNAR_TERMINAL_STATE_LOCAL)
+    {
+      priv->needs_respawn = TRUE;
+
+      /* If the user saw it exit, hide the pane. */
+      if (priv->is_visible)
+        {
+          thunar_terminal_widget_toggle_visible (self);
+        }
     }
 }
 
@@ -1246,30 +1308,14 @@ feed_cd_command (VteTerminal *terminal, const char *path)
   vte_terminal_feed_child (terminal, SHELL_CTRL_E, -1);
 }
 
-static gboolean
-on_terminal_key_press (GtkWidget   *widget,
-                       GdkEventKey *event,
-                       gpointer     user_data)
+static void
+on_copy_activate (GtkMenuItem *menuitem,
+                  gpointer     user_data)
 {
   ThunarTerminalWidget        *self = THUNAR_TERMINAL_WIDGET (user_data);
   ThunarTerminalWidgetPrivate *priv = self->priv;
 
-  /* Handle Ctrl+Shift+C/V for copy/paste, as VTE doesn't handle these by default. */
-  if ((event->state & GDK_CONTROL_MASK) && (event->state & GDK_SHIFT_MASK))
-    {
-      switch (event->keyval)
-        {
-        case GDK_KEY_C:
-        case GDK_KEY_c:
-          vte_terminal_copy_clipboard_format (priv->terminal, VTE_FORMAT_TEXT);
-          return TRUE;
-        case GDK_KEY_V:
-        case GDK_KEY_v:
-          vte_terminal_paste_clipboard (priv->terminal);
-          return TRUE;
-        }
-    }
-  return FALSE;
+  vte_terminal_copy_clipboard_format (priv->terminal, VTE_FORMAT_TEXT);
 }
 
 static void
@@ -1306,9 +1352,6 @@ _create_radio_menu_item (GSList     **group,
 
   return item;
 }
-
-static void
-on_ssh_connect_activate (GtkMenuItem *menuitem, gpointer user_data);
 
 static GtkWidget *
 _build_color_scheme_submenu (ThunarTerminalWidget *self)
@@ -1425,7 +1468,7 @@ _build_manual_ssh_connect_submenu (ThunarTerminalWidget *self,
 static void
 _append_menu_item (GtkMenuShell *menu, const gchar *label, GCallback callback, gpointer user_data)
 {
-  GtkWidget *item = gtk_menu_item_new_with_label (label);
+  GtkWidget *item = gtk_menu_item_new_with_mnemonic (label);
   g_signal_connect (item, "activate", callback, user_data);
   gtk_menu_shell_append (menu, item);
 }
@@ -1444,13 +1487,18 @@ create_terminal_popup_menu (ThunarTerminalWidget *self)
   ThunarTerminalWidgetPrivate *priv = self->priv;
   GtkWidget                   *menu = gtk_menu_new ();
   gboolean                     is_sftp_location = FALSE;
+  GtkWidget                   *item;
 
-  _append_menu_item (GTK_MENU_SHELL (menu), _("Copy"), G_CALLBACK (vte_terminal_copy_clipboard_format), priv->terminal);
-  _append_menu_item (GTK_MENU_SHELL (menu), _("Paste"), G_CALLBACK (vte_terminal_paste_clipboard), priv->terminal);
+  item = gtk_menu_item_new_with_mnemonic (_("_Copy"));
+  g_signal_connect (item, "activate", G_CALLBACK (on_copy_activate), self);
+  gtk_widget_set_sensitive (item, vte_terminal_get_has_selection (priv->terminal));
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+  _append_menu_item (GTK_MENU_SHELL (menu), _("_Paste"), G_CALLBACK (vte_terminal_paste_clipboard), priv->terminal);
 
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), gtk_separator_menu_item_new ());
 
-  _append_menu_item (GTK_MENU_SHELL (menu), _("Select All"), G_CALLBACK (vte_terminal_select_all), priv->terminal);
+  _append_menu_item (GTK_MENU_SHELL (menu), _("Select _All"), G_CALLBACK (vte_terminal_select_all), priv->terminal);
 
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), gtk_separator_menu_item_new ());
 
@@ -1492,13 +1540,13 @@ create_terminal_popup_menu (ThunarTerminalWidget *self)
 }
 
 static gboolean
-on_terminal_button_press (GtkWidget      *widget,
-                          GdkEventButton *event,
-                          gpointer        user_data)
+on_terminal_button_release (GtkWidget      *widget,
+                            GdkEventButton *event,
+                            gpointer        user_data)
 {
   ThunarTerminalWidget *self = THUNAR_TERMINAL_WIDGET (user_data);
 
-  if (event->button == GDK_BUTTON_SECONDARY && event->type == GDK_BUTTON_PRESS)
+  if (event->button == GDK_BUTTON_SECONDARY)
     {
       GtkWidget *menu = create_terminal_popup_menu (self);
       gtk_menu_popup_at_pointer (GTK_MENU (menu), (GdkEvent *) event);
@@ -1664,6 +1712,7 @@ _initiate_ssh_connection (ThunarTerminalWidget  *self,
   remote_cmd_builder = g_string_new ("");
   if (priv->ssh_remote_path && *priv->ssh_remote_path)
     {
+      /* Always quote shell arguments to prevent command injection. */
       g_autofree gchar *quoted_remote_path = g_shell_quote (priv->ssh_remote_path);
       /* Use ';' to ensure the shell starts even if 'cd' fails. */
       g_string_append_printf (remote_cmd_builder, " cd %s; ", quoted_remote_path);
