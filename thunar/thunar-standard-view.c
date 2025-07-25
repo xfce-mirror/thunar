@@ -4145,7 +4145,6 @@ thunar_standard_view_loading_unbound (gpointer user_data)
       standard_view->loading = FALSE;
       g_object_freeze_notify (G_OBJECT (standard_view));
       g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_LOADING]);
-      thunar_standard_view_update_statusbar_text (standard_view);
       g_object_thaw_notify (G_OBJECT (standard_view));
     }
 }
