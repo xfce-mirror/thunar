@@ -1865,6 +1865,10 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   folder = thunar_folder_get_for_file (current_directory);
   g_signal_connect_swapped (folder, "thumbnails-updated", G_CALLBACK (thunar_standard_view_queue_redraw), standard_view);
 
+  /* disconnect any old bindings */
+  if (G_UNLIKELY (standard_view->loading_binding != NULL))
+      g_object_unref (standard_view->loading_binding);
+
   /* connect to the loading property of the new directory */
   standard_view->loading_binding =
   g_object_bind_property_full (folder, "loading",
