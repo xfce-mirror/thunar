@@ -441,7 +441,7 @@ struct _ThunarStandardViewPrivate
 
   /* #GHashTable of currently selected #ThunarFile<!---->s */
   GHashTable *selected_files;
-  guint  restore_selection_idle_id;
+  guint       restore_selection_idle_id;
 
   /* #GList of #ThunarFile<!---->s which are to select when loading the folder finished */
   GList *files_to_select;
@@ -1591,9 +1591,9 @@ thunar_standard_view_draw (GtkWidget *widget,
 static GList *
 thunar_standard_view_get_selected_files_component (ThunarComponent *component)
 {
-  GList *selected_files = NULL;
+  GList         *selected_files = NULL;
   GHashTableIter iter;
-  gpointer file;
+  gpointer       file;
 
   g_hash_table_iter_init (&iter, THUNAR_STANDARD_VIEW (component)->priv->selected_files);
   while (g_hash_table_iter_next (&iter, &file, NULL))
@@ -1607,9 +1607,9 @@ thunar_standard_view_get_selected_files_component (ThunarComponent *component)
 static GList *
 thunar_standard_view_get_selected_files_view (ThunarView *view)
 {
-  GList *selected_files = NULL;
+  GList         *selected_files = NULL;
   GHashTableIter iter;
-  gpointer file;
+  gpointer       file;
 
   g_hash_table_iter_init (&iter, THUNAR_STANDARD_VIEW (view)->priv->selected_files);
   while (g_hash_table_iter_next (&iter, &file, NULL))
@@ -1885,7 +1885,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 
   /* disconnect any old bindings */
   if (G_UNLIKELY (standard_view->loading_binding != NULL))
-      g_object_unref (standard_view->loading_binding);
+    g_object_unref (standard_view->loading_binding);
 
   /* connect to the loading property of the new directory */
   standard_view->loading_binding =
@@ -2681,8 +2681,8 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
   else if (num_selected == 1) /* only one item selected */
     {
       GHashTableIter hash_iter;
-      gpointer file_ptr;
-      
+      gpointer       file_ptr;
+
       /* get the single selected file from our hash table */
       g_hash_table_iter_init (&hash_iter, standard_view->priv->selected_files);
       if (g_hash_table_iter_next (&hash_iter, &file_ptr, NULL))
@@ -2700,9 +2700,9 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
     }
   else /* more than one item selected */
     {
-      GHashTable *selected_g_files = g_hash_table_new (g_direct_hash, NULL);
+      GHashTable    *selected_g_files = g_hash_table_new (g_direct_hash, NULL);
       GHashTableIter hash_iter;
-      gpointer file_ptr;
+      gpointer       file_ptr;
 
       /* build GHashTable of files directly from our selected_files hash table */
       g_hash_table_iter_init (&hash_iter, standard_view->priv->selected_files);
@@ -3894,8 +3894,8 @@ thunar_standard_view_drag_begin (GtkWidget          *view,
   if (g_hash_table_size (standard_view->priv->selected_files) > 0)
     {
       GHashTableIter iter;
-      gpointer file_ptr;
-      
+      gpointer       file_ptr;
+
       g_hash_table_iter_init (&iter, standard_view->priv->selected_files);
       while (g_hash_table_iter_next (&iter, &file_ptr, NULL))
         {
@@ -4635,7 +4635,7 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   g_object_get (standard_view->model, "folders-first", &folders_first, NULL);
-  
+
   item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU), NULL, GTK_MENU_SHELL (menu));
   submenu = gtk_menu_new ();
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_BY_NAME), G_OBJECT (standard_view),
@@ -5095,7 +5095,7 @@ thunar_standard_view_transfer_selection (ThunarStandardView *standard_view,
                                          ThunarStandardView *old_view)
 {
   GHashTableIter iter;
-  gpointer file;
+  gpointer       file;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (old_view));
