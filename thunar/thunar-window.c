@@ -218,6 +218,10 @@ static void
 thunar_window_terminal_directory_changed (ThunarTerminalWidget *terminal,
                                           ThunarFile           *thunar_file,
                                           ThunarWindow         *window);
+
+static void
+thunar_window_switch_to_view_terminal (ThunarWindow *window, GtkWidget *view);
+
 static void
 on_tab_paned_size_allocated (GtkWidget *paned, GtkAllocation *allocation, gpointer user_data);
 static gboolean
