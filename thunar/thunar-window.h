@@ -23,6 +23,7 @@
 #include "thunar/thunar-action-manager.h"
 #include "thunar/thunar-enum-types.h"
 #include "thunar/thunar-folder.h"
+#include "thunar/thunar-terminal-widget.h"
 
 #include <libxfce4ui/libxfce4ui.h>
 
@@ -68,6 +69,7 @@ typedef enum
   THUNAR_WINDOW_ACTION_TOGGLE_IMAGE_PREVIEW,
   THUNAR_WINDOW_ACTION_VIEW_STATUSBAR,
   THUNAR_WINDOW_ACTION_VIEW_MENUBAR,
+  THUNAR_WINDOW_ACTION_VIEW_TERMINAL,
   THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR,
   THUNAR_WINDOW_ACTION_SHOW_HIDDEN,
   THUNAR_WINDOW_ACTION_SHOW_HIGHLIGHT,
@@ -203,6 +205,8 @@ thunar_window_focus_view (ThunarWindow *window,
 void
 thunar_window_queue_redraw (ThunarWindow *window);
 
+void
+thunar_window_switch_to_view_terminal (ThunarWindow *window, GtkWidget *view);
 
 G_END_DECLS;
 
