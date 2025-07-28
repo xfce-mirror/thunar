@@ -67,7 +67,6 @@ struct _ThunarTerminalWidgetPrivate
   guint               focus_timeout_id;               /* The ID for a timeout used to ensure the terminal gets focus after certain operations. */
   GPid                child_pid;                      /* The process ID of the shell or SSH client running in the terminal. -1 if no process is running. */
   GCancellable       *spawn_cancellable;              /* A GCancellable object to allow cancelling an asynchronous terminal spawn operation. */
-  GWeakRef            paned_weak_ref;                 /* A weak reference to the parent GtkPaned to avoid circular references and allow size adjustments. */
 
   /* Preferences */
   gchar                           *color_scheme;          /* The name of the current color scheme (e.g., "dark", "solarized-light"). */
@@ -560,53 +559,6 @@ thunar_terminal_widget_set_color_scheme (ThunarTerminalWidget *self,
   thunar_terminal_widget_apply_color_scheme (self);
 }
 
-void
-thunar_terminal_widget_set_container_paned (ThunarTerminalWidget *self,
-                                            GtkWidget            *paned)
-{
-  ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);
-  g_autoptr (GtkWidget) old_paned = NULL;
-
-  _thunar_return_if_fail (THUNAR_IS_TERMINAL_WIDGET (self));
-
-  old_paned = g_weak_ref_get (&priv->paned_weak_ref);
-
-  if (old_paned == paned)
-    {
-      return;
-    }
-
-  g_weak_ref_set (&priv->paned_weak_ref, G_OBJECT (paned));
-}
-
-void
-thunar_terminal_widget_apply_new_size (ThunarTerminalWidget *self)
-{
-  ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);
-  g_autoptr (GtkWidget) paned = NULL;
-
-  _thunar_return_if_fail (THUNAR_IS_TERMINAL_WIDGET (self));
-
-  paned = g_weak_ref_get (&priv->paned_weak_ref);
-
-  if (paned && gtk_widget_get_realized (paned))
-    {
-      const int total_height = gtk_widget_get_allocated_height (paned);
-      int       saved_height = 0;
-      g_object_get (thunar_preferences_get (), "terminal-height", &saved_height, NULL);
-      if (saved_height <= MIN_TERMINAL_HEIGHT)
-        {
-          saved_height = MIN_TERMINAL_HEIGHT;
-        }
-
-      const int max_allowed_height = MAX (total_height - MIN_MAIN_VIEW_HEIGHT, MIN_TERMINAL_HEIGHT);
-      const int terminal_height = CLAMP (saved_height, MIN_TERMINAL_HEIGHT, max_allowed_height);
-      const int new_pos = total_height - terminal_height;
-
-      gtk_paned_set_position (GTK_PANED (paned), new_pos);
-    }
-}
-
 static gboolean
 focus_once_and_remove (gpointer user_data)
 {
@@ -660,7 +612,6 @@ thunar_terminal_widget_toggle_visible (ThunarTerminalWidget *self)
           change_directory_in_terminal (self, priv->current_location);
         }
 
-      thunar_terminal_widget_apply_new_size (self);
       thunar_terminal_widget_ensure_terminal_focus (self);
     }
   else
@@ -800,7 +751,6 @@ thunar_terminal_widget_init (ThunarTerminalWidget *self)
   priv->needs_respawn = TRUE;
   priv->child_pid = -1;
   priv->spawn_cancellable = g_cancellable_new ();
-  g_weak_ref_init (&priv->paned_weak_ref, NULL);
 
   /* Build UI */
   priv->scrolled_window = gtk_scrolled_window_new (NULL, NULL);
@@ -867,17 +817,10 @@ thunar_terminal_widget_finalize (GObject *object)
 {
   ThunarTerminalWidget        *self = THUNAR_TERMINAL_WIDGET (object);
   ThunarTerminalWidgetPrivate *priv = self->priv;
-  g_autoptr (GtkWidget) paned = g_weak_ref_get (&priv->paned_weak_ref);
   g_autoptr (ThunarPreferences) prefs = thunar_preferences_get ();
 
   /* Disconnect from all signals to prevent use-after-free during destruction. */
   g_signal_handlers_disconnect_by_data (prefs, self);
-
-  if (paned)
-    {
-      g_signal_handlers_disconnect_by_data (paned, self);
-    }
-  g_weak_ref_clear (&priv->paned_weak_ref);
 
   if (priv->focus_timeout_id > 0)
     g_source_remove (priv->focus_timeout_id);
