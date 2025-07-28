@@ -3078,16 +3078,11 @@ thunar_window_notebook_select_current_page (ThunarWindow *window)
 {
   gint       current_page_n;
   GtkWidget *current_page;
-  GtkWidget *view;
 
   _thunar_return_if_fail (window->notebook_selected != NULL);
 
   current_page_n = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
   current_page = gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), current_page_n);
-
-  view = g_object_get_data (G_OBJECT (current_page), "thunar-view");
-  _thunar_return_if_fail (THUNAR_IS_VIEW (view));
-
   thunar_window_notebook_switch_page (window->notebook_selected, current_page, current_page_n, window);
 }
 
