@@ -3246,12 +3246,8 @@ thunar_window_notebook_add_new_tab (ThunarWindow        *window,
   if ((behavior == THUNAR_NEW_TAB_BEHAVIOR_FOLLOW_PREFERENCE && switch_to_new_tab == TRUE)
       || behavior == THUNAR_NEW_TAB_BEHAVIOR_SWITCH)
     {
-      GtkWidget *new_page = gtk_widget_get_parent (view);
-      page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), new_page);
+      page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), view);
       thunar_window_notebook_set_current_tab (window, page_num);
-
-      /* explicitly update the current directory to ensure the new tab's directory is set */
-      thunar_window_set_current_directory (window, directory);
     }
 
   /* take focus on the new view */
