@@ -5722,36 +5722,38 @@ void
 thunar_window_set_current_directory (ThunarWindow *window,
                                      ThunarFile   *current_directory)
 {
-  GType                 type;
-  gchar                *type_name;
-  gint                  num_pages;
-  gboolean              is_trashed;
-  gboolean              is_recent;
-  ThunarTerminalWidget *terminal;
+  GType    type;
+  gchar   *type_name;
+  gint     num_pages;
+  gboolean is_trashed;
+  gboolean is_recent;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
 
   /* check if we already display the requested directory */
   if (G_UNLIKELY (window->current_directory == current_directory))
-    {
-      /* Even if it's the same directory, we might need to update UI state
-       * that became stale after a tab switch (e.g. trash infobar). */
-      is_trashed = thunar_file_is_trashed (current_directory);
-      gtk_widget_set_visible (window->trash_infobar, is_trashed);
-      if (THUNAR_IS_DETAILS_VIEW (window->view))
-        thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), is_trashed);
-
-      return;
-    }
+    return;
 
   /* exit search mode if currently enabled */
   if (window->search_mode == TRUE)
     thunar_window_cancel_search (window);
 
-  g_clear_object (&window->current_directory);
+  /* disconnect from the previously active directory */
+  if (G_LIKELY (window->current_directory != NULL))
+    {
+      /* release reference */
+      g_object_unref (G_OBJECT (window->current_directory));
+      window->current_directory = NULL;
+    }
+
+  /* not much to do in this case */
+  if (current_directory == NULL)
+    return;
+
+  /* take a reference on the file */
+  g_object_ref (G_OBJECT (current_directory));
   window->current_directory = current_directory;
-  g_object_ref (window->current_directory);
 
   num_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_selected));
 
@@ -5811,13 +5813,6 @@ thunar_window_set_current_directory (ThunarWindow *window,
       thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), is_trashed);
       thunar_details_view_set_recency_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
       thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
-    }
-
-  terminal = thunar_window_get_view_terminal (window->view);
-  if (terminal != NULL && !is_trashed && !is_recent)
-    {
-      GFile *location = thunar_file_get_file (current_directory);
-      thunar_terminal_widget_set_current_location (terminal, location);
     }
 }
 
