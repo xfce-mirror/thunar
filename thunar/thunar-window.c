@@ -3037,24 +3037,13 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
 
   /* Associate terminal with the view directly */
   thunar_standard_view_set_terminal_widget (THUNAR_STANDARD_VIEW (view), terminal);
-
   g_signal_connect (terminal, "change-directory", G_CALLBACK (thunar_window_terminal_directory_changed), window);
-
-  ThunarFile *current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (view));
-  if (current_directory != NULL && !thunar_file_is_trashed (current_directory) && !thunar_file_is_recent (current_directory))
-    {
-      GFile *location = thunar_file_get_file (current_directory);
-      thunar_terminal_widget_set_current_location (terminal, location);
-    }
-
   gtk_notebook_insert_page (GTK_NOTEBOOK (window->notebook_selected), tab_content_paned, label_box, position);
-
   gtk_container_child_set (GTK_CONTAINER (window->notebook_selected), tab_content_paned, "tab-expand", TRUE, NULL);
   gtk_notebook_set_tab_reorderable (GTK_NOTEBOOK (window->notebook_selected), tab_content_paned, TRUE);
   gtk_notebook_set_tab_detachable (GTK_NOTEBOOK (window->notebook_selected), tab_content_paned, TRUE);
-
   gtk_widget_show_all (tab_content_paned);
-  
+
   /* Initialize terminal visibility based on preferences */
   gboolean terminal_visible;
   g_object_get (window->preferences, "terminal-visible", &terminal_visible, NULL);
@@ -5848,7 +5837,6 @@ thunar_window_set_current_directory (ThunarWindow *window,
       thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
     }
 
-  /* Sync the directory change to the active terminal if available, unless suppressed */
   terminal = thunar_window_get_view_terminal (window->view);
   if (terminal != NULL && !is_trashed && !is_recent)
     {
