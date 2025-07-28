@@ -76,14 +76,10 @@ thunar_terminal_widget_set_current_location (ThunarTerminalWidget *self,
                                              GFile                *location);
 
 void
-thunar_terminal_widget_toggle_visible (ThunarTerminalWidget *self);
-void
-thunar_terminal_widget_ensure_state (ThunarTerminalWidget *self);
-void
 thunar_terminal_widget_ensure_terminal_focus (ThunarTerminalWidget *self);
 
-gboolean
-thunar_terminal_widget_get_visible (ThunarTerminalWidget *self);
+void
+thunar_terminal_widget_handle_show (ThunarTerminalWidget *self);
 
 G_END_DECLS
 
