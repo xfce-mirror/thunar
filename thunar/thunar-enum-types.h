@@ -173,6 +173,8 @@ typedef enum
   THUNAR_ICON_SIZE_1024 = 1024,
 } ThunarIconSize;
 #define THUNAR_ICON_SIZE_DIALOG 48
+#define THUNAR_TERMINAL_MIN_MAIN_VIEW_HEIGHT 200
+#define THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT 50
 
 GType
 thunar_icon_size_get_type (void) G_GNUC_CONST;
