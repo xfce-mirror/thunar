@@ -1652,7 +1652,7 @@ thunar_window_update_view_menu (ThunarWindow *window,
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_MENUBAR), G_OBJECT (window),
                                                    window->menubar_visible, GTK_MENU_SHELL (menu));
   ThunarTerminalWidget *curr = thunar_window_get_view_terminal (window->view);
-  gboolean              active = (curr != NULL && thunar_terminal_widget_get_visible (curr));
+  gboolean              active = (curr != NULL && gtk_widget_get_visible (GTK_WIDGET (curr)));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_TERMINAL),
                                                    G_OBJECT (window), active, GTK_MENU_SHELL (menu));
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR), G_OBJECT (window), GTK_MENU_SHELL (menu));
@@ -3054,7 +3054,19 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   gtk_notebook_set_tab_detachable (GTK_NOTEBOOK (window->notebook_selected), tab_content_paned, TRUE);
 
   gtk_widget_show_all (tab_content_paned);
-  thunar_terminal_widget_ensure_state (terminal);
+  
+  /* Initialize terminal visibility based on preferences */
+  gboolean terminal_visible;
+  g_object_get (window->preferences, "terminal-visible", &terminal_visible, NULL);
+  if (terminal_visible)
+    {
+      gtk_widget_show (GTK_WIDGET (terminal));
+      thunar_terminal_widget_handle_show (terminal);
+    }
+  else
+    {
+      gtk_widget_hide (GTK_WIDGET (terminal));
+    }
 }
 
 
@@ -4002,12 +4014,32 @@ static gboolean
 thunar_window_action_view_terminal (ThunarWindow *window,
                                     GtkWidget    *menu_item)
 {
+  ThunarTerminalWidget *current_terminal;
+  gboolean              is_visible, should_be_visible;
+
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
-  ThunarTerminalWidget *current_terminal = thunar_window_get_view_terminal (window->view);
-  if (current_terminal != NULL)
+
+  current_terminal = thunar_window_get_view_terminal (window->view);
+  if (current_terminal == NULL)
+    return FALSE;
+
+  is_visible = gtk_widget_get_visible (GTK_WIDGET (current_terminal));
+  should_be_visible = !is_visible;
+
+  /* Update preferences to persist the visibility state */
+  g_object_set (window->preferences, "terminal-visible", should_be_visible, NULL);
+
+  /* Actually show/hide the terminal widget */
+  if (should_be_visible)
     {
-      thunar_terminal_widget_toggle_visible (current_terminal);
+      gtk_widget_show (GTK_WIDGET (current_terminal));
+      thunar_terminal_widget_handle_show (current_terminal);
     }
+  else
+    {
+      gtk_widget_hide (GTK_WIDGET (current_terminal));
+    }
+
   return TRUE;
 }
 

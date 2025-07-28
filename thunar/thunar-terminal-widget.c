@@ -47,7 +47,6 @@ enum
 /* GObject signals */
 enum
 {
-  TOGGLE_VISIBILITY,
   LAST_SIGNAL
 };
 
@@ -60,8 +59,6 @@ struct _ThunarTerminalWidgetPrivate
 
   /* State management */
   ThunarTerminalState state;                          /* The current operational state (local shell or remote SSH session). */
-  gboolean            is_visible;                     /* Tracks if the terminal widget is currently shown to the user. */
-  gboolean            in_toggling;                    /* A re-entrancy guard for the visibility toggle function to prevent rapid, repeated calls. */
   gboolean            needs_respawn;                  /* Flag indicating if the terminal's child process needs to be respawned (e.g., after being hidden and shown again). */
   gboolean            ignore_next_terminal_cd_signal; /* A flag to prevent feedback loops when the file manager programmatically changes the terminal's directory. */
   guint               focus_timeout_id;               /* The ID for a timeout used to ensure the terminal gets focus after certain operations. */
@@ -307,7 +304,6 @@ static void
 on_ssh_connect_activate (GtkMenuItem *menuitem, gpointer user_data);
 
 static GParamSpec *properties[N_PROPS];
-static guint       signals[LAST_SIGNAL];
 
 static void
 thunar_terminal_widget_navigator_init (ThunarNavigatorIface *iface);
@@ -589,74 +585,19 @@ thunar_terminal_widget_ensure_terminal_focus (ThunarTerminalWidget *self)
 }
 
 void
-thunar_terminal_widget_toggle_visible (ThunarTerminalWidget *self)
+thunar_terminal_widget_handle_show (ThunarTerminalWidget *self)
 {
   ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);
   _thunar_return_if_fail (THUNAR_IS_TERMINAL_WIDGET (self));
 
-  if (priv->in_toggling)
-    return;
-  priv->in_toggling = TRUE;
+  if (priv->needs_respawn)
+    spawn_terminal_async (self);
 
-  priv->is_visible = !priv->is_visible;
+  /* Sync to the current location upon becoming visible */
+  if (priv->current_location)
+    change_directory_in_terminal (self, priv->current_location);
 
-  if (priv->is_visible)
-    {
-      gtk_widget_show (GTK_WIDGET (self));
-      if (priv->needs_respawn)
-        spawn_terminal_async (self);
-
-      /* Sync to the current location upon becoming visible */
-      if (priv->current_location)
-        {
-          change_directory_in_terminal (self, priv->current_location);
-        }
-
-      thunar_terminal_widget_ensure_terminal_focus (self);
-    }
-  else
-    {
-      gtk_widget_hide (GTK_WIDGET (self));
-    }
-
-  g_object_set (thunar_preferences_get (), "terminal-visible", priv->is_visible, NULL);
-  g_signal_emit (self, signals[TOGGLE_VISIBILITY], 0, priv->is_visible);
-  priv->in_toggling = FALSE;
-}
-
-void
-thunar_terminal_widget_ensure_state (ThunarTerminalWidget *self)
-{
-  ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);
-  gboolean                     should_be_visible;
-  _thunar_return_if_fail (THUNAR_IS_TERMINAL_WIDGET (self));
-
-  g_object_get (thunar_preferences_get (), "terminal-visible", &should_be_visible, NULL);
-
-  if (priv->is_visible != should_be_visible)
-    {
-      priv->is_visible = should_be_visible;
-      g_signal_emit (self, signals[TOGGLE_VISIBILITY], 0, priv->is_visible);
-    }
-
-  if (should_be_visible)
-    {
-      gtk_widget_show (GTK_WIDGET (self));
-      if (priv->needs_respawn)
-        spawn_terminal_async (self);
-    }
-  else
-    {
-      gtk_widget_hide (GTK_WIDGET (self));
-    }
-}
-
-gboolean
-thunar_terminal_widget_get_visible (ThunarTerminalWidget *self)
-{
-  ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);
-  _thunar_return_val_if_fail (THUNAR_IS_TERMINAL_WIDGET (self), FALSE);
-  return priv->is_visible;
+  thunar_terminal_widget_ensure_terminal_focus (self);
 }
 
 
@@ -687,16 +628,6 @@ thunar_terminal_widget_class_init (ThunarTerminalWidgetClass *klass)
                          g_object_interface_find_property (navigator_iface, "current-directory"));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
-
-  signals[TOGGLE_VISIBILITY] =
-  g_signal_new ("toggle-visibility",
-                G_TYPE_FROM_CLASS (klass),
-                G_SIGNAL_RUN_LAST,
-                0, NULL, NULL,
-                g_cclosure_marshal_VOID__BOOLEAN,
-                G_TYPE_NONE,
-                1,
-                G_TYPE_BOOLEAN);
 }
 
 static void
@@ -1083,7 +1014,7 @@ on_terminal_child_exited (VteTerminal *terminal,
   if (priv->state == THUNAR_TERMINAL_STATE_IN_SSH)
     {
       _reset_to_local_state (self); /* This sets needs_respawn = TRUE */
-      if (priv->is_visible)
+      if (gtk_widget_get_visible (GTK_WIDGET (self)))
         {
           spawn_terminal_async (self);
         }
@@ -1095,12 +1026,6 @@ on_terminal_child_exited (VteTerminal *terminal,
   else if (priv->state == THUNAR_TERMINAL_STATE_LOCAL)
     {
       priv->needs_respawn = TRUE;
-
-      /* If the user saw it exit, hide the pane. */
-      if (priv->is_visible)
-        {
-          thunar_terminal_widget_toggle_visible (self);
-        }
     }
 }
 
@@ -1543,7 +1468,7 @@ change_directory_in_terminal (ThunarTerminalWidget *self,
   gboolean                     should_sync = FALSE;
 
   /* Do not sync directory if the terminal is not visible or has no child process */
-  if (!priv->is_visible || priv->child_pid == -1)
+  if (!gtk_widget_get_visible (GTK_WIDGET (self)) || priv->child_pid == -1)
     return;
 
   if (priv->state == THUNAR_TERMINAL_STATE_IN_SSH)
