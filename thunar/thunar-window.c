@@ -3028,8 +3028,6 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   g_signal_connect_swapped (G_OBJECT (button), "clicked", G_CALLBACK (gtk_widget_destroy), tab_content_paned);
   gtk_widget_show (button);
 
-  thunar_terminal_widget_set_container_paned (terminal, tab_content_paned);
-
   /* Connect to size-allocate to set the initial terminal height correctly.
    * This signal is only connected once and then disconnects itself. */
   g_signal_connect (tab_content_paned, "size-allocate", G_CALLBACK (on_tab_paned_size_allocated), terminal);
@@ -3497,7 +3495,24 @@ static void
 on_tab_paned_size_allocated (GtkWidget *paned, GtkAllocation *allocation, gpointer user_data)
 {
   ThunarTerminalWidget *terminal = THUNAR_TERMINAL_WIDGET (user_data);
-  thunar_terminal_widget_apply_new_size (terminal);
+
+  if (gtk_widget_get_realized (paned))
+    {
+      const int total_height = gtk_widget_get_allocated_height (paned);
+      int       saved_height = 0;
+      g_object_get (thunar_preferences_get (), "terminal-height", &saved_height, NULL);
+      if (saved_height <= 150) /* MIN_TERMINAL_HEIGHT */
+        {
+          saved_height = 150;
+        }
+
+      const int max_allowed_height = MAX (total_height - 200, 150); /* MIN_MAIN_VIEW_HEIGHT = 200, MIN_TERMINAL_HEIGHT = 150 */
+      const int terminal_height = CLAMP (saved_height, 150, max_allowed_height);
+      const int new_pos = total_height - terminal_height;
+
+      gtk_paned_set_position (GTK_PANED (paned), new_pos);
+    }
+
   g_signal_handlers_disconnect_by_func (paned, on_tab_paned_size_allocated, terminal);
 }
 
