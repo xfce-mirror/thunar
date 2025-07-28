@@ -1964,7 +1964,7 @@ thunar_window_delete (GtkWidget *widget,
       tab_uris_left = g_new0 (gchar *, n_tabsl + 1);
       for (int i = 0; i < n_tabsl; i++)
         {
-          ThunarNavigator *view = THUNAR_NAVIGATOR (g_object_get_data (G_OBJECT (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_left), i)), "thunar-view"));
+          ThunarNavigator *view = THUNAR_NAVIGATOR (gtk_paned_get_child1 (GTK_PANED (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_left), i))));
           gchar           *uri = g_file_get_uri (thunar_file_get_file (thunar_navigator_get_current_directory (view)));
           tab_uris_left[i] = g_strdup (uri);
           g_free (uri);
@@ -1973,7 +1973,7 @@ thunar_window_delete (GtkWidget *widget,
       tab_uris_right = g_new0 (gchar *, n_tabsr + 1);
       for (int i = 0; i < n_tabsr; i++)
         {
-          ThunarNavigator *view = THUNAR_NAVIGATOR (g_object_get_data (G_OBJECT (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_right), i)), "thunar-view"));
+          ThunarNavigator *view = THUNAR_NAVIGATOR (gtk_paned_get_child1 (GTK_PANED (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_right), i))));
           gchar           *uri = g_file_get_uri (thunar_file_get_file (thunar_navigator_get_current_directory (view)));
           tab_uris_right[i] = g_strdup (uri);
           g_free (uri);
@@ -2586,7 +2586,7 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
 
   /* The page is now the container (a GtkPaned) holding the paned view/terminal */
-  view = g_object_get_data (G_OBJECT (page), "thunar-view");
+  view = gtk_paned_get_child1 (GTK_PANED (page));
   _thunar_return_if_fail (THUNAR_IS_VIEW (view));
 
   /* leave if nothing changed or tab from other split-view is selected as
@@ -2660,7 +2660,7 @@ thunar_window_notebook_page_added (GtkWidget    *notebook,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
 
-  view = g_object_get_data (G_OBJECT (page), "thunar-view");
+  view = gtk_paned_get_child1 (GTK_PANED (page));
   _thunar_return_if_fail (THUNAR_IS_VIEW (view));
   _thunar_return_if_fail (window->notebook_selected == notebook);
 
@@ -2691,8 +2691,8 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
 
-  /* The 'page' is now the GtkPaned container. Get the view from its data. */
-  view = g_object_get_data (G_OBJECT (page), "thunar-view");
+  /* The 'page' is now the GtkPaned container. Get the view from its first child. */
+  view = gtk_paned_get_child1 (GTK_PANED (page));
   _thunar_return_if_fail (THUNAR_IS_VIEW (view));
   _thunar_return_if_fail (window->notebook_left == notebook || window->notebook_right == notebook);
 
@@ -2847,7 +2847,7 @@ thunar_window_notebook_create_window (GtkWidget    *notebook,
   _thunar_return_val_if_fail (window->notebook_selected == notebook, NULL);
 
   /* The 'page' is now the GtkPaned container */
-  view = g_object_get_data (G_OBJECT (page), "thunar-view");
+  view = gtk_paned_get_child1 (GTK_PANED (page));
   _thunar_return_val_if_fail (THUNAR_IS_VIEW (view), NULL);
 
   /* do nothing if this window has only 1 tab */
@@ -3046,8 +3046,6 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
       GFile *location = thunar_file_get_file (current_directory);
       thunar_terminal_widget_set_current_location (terminal, location);
     }
-
-  g_object_set_data (G_OBJECT (tab_content_paned), "thunar-view", view);
 
   gtk_notebook_insert_page (GTK_NOTEBOOK (window->notebook_selected), tab_content_paned, label_box, position);
 
@@ -3333,7 +3331,6 @@ thunar_window_update_directories (ThunarWindow *window,
                                   ThunarFile   *old_directory,
                                   ThunarFile   *new_directory)
 {
-  GtkWidget  *tab_page;
   GtkWidget  *view;
   ThunarFile *directory;
   gint        n;
@@ -3352,9 +3349,8 @@ thunar_window_update_directories (ThunarWindow *window,
 
   for (n = 0; n < n_pages; n++)
     {
-      /* get the tab's container and then the view */
-      tab_page = gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), n);
-      view = g_object_get_data (G_OBJECT (tab_page), "thunar-view");
+      /* get the view from the tab */
+      view = gtk_paned_get_child1 (GTK_PANED (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), n)));
       if (!THUNAR_IS_NAVIGATOR (view))
         continue;
 
@@ -4609,8 +4605,6 @@ thunar_window_replace_view (ThunarWindow *window,
   /* Transfer terminal from old view to new view directly */
   thunar_standard_view_set_terminal_widget (THUNAR_STANDARD_VIEW (new_view), terminal_to_reuse);
   
-  g_object_set_data (G_OBJECT (paned_container), "thunar-view", new_view);
-
   /* If the replaced view was the active one, update the main window view pointer. */
   if (view_to_replace == window->view)
     thunar_window_switch_current_view (window, new_view);
@@ -5872,7 +5866,6 @@ thunar_window_get_directories (ThunarWindow *window,
   gint        n;
   gint        n_pages;
   GList      *uris = NULL;
-  GtkWidget  *tab_page;
   GtkWidget  *view;
   ThunarFile *directory;
 
@@ -5884,9 +5877,8 @@ thunar_window_get_directories (ThunarWindow *window,
 
   for (n = 0; n < n_pages; n++)
     {
-      /* get the view from its container */
-      tab_page = gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), n);
-      view = g_object_get_data (G_OBJECT (tab_page), "thunar-view");
+      /* get the view from the tab */
+      view = gtk_paned_get_child1 (GTK_PANED (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), n)));
       if (THUNAR_IS_NAVIGATOR (view) == FALSE)
         continue;
 
