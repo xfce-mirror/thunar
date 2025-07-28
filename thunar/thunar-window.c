@@ -212,15 +212,11 @@ static void
 thunar_window_install_sidepane (ThunarWindow      *window,
                                 ThunarSidepaneType type);
 static ThunarTerminalWidget *
-thunar_window_get_terminal_for_view (ThunarWindow *window,
-                                     GtkWidget    *view);
+thunar_window_get_view_terminal (GtkWidget *view);
 static void
 thunar_window_terminal_directory_changed (ThunarTerminalWidget *terminal,
                                           ThunarFile           *thunar_file,
                                           ThunarWindow         *window);
-
-static void
-thunar_window_switch_to_view_terminal (ThunarWindow *window, GtkWidget *view);
 
 static void
 on_tab_paned_size_allocated (GtkWidget *paned, GtkAllocation *allocation, gpointer user_data);
@@ -574,10 +570,6 @@ struct _ThunarWindow
   GtkWidget *view_box;
   GtkWidget *view;
 
-  /* Currently active terminal for the focused tab */
-  ThunarTerminalWidget *terminal_widget;
-  /* Maps ThunarView widgets to their terminal widgets */
-  GHashTable *view_terminals;
   /* Prevent terminal sync on tab switch */
   gboolean suppress_terminal_sync;
 
@@ -992,9 +984,6 @@ thunar_window_init (ThunarWindow *window)
 
   /* grab a reference on the preferences */
   window->preferences = thunar_preferences_get ();
-
-  /* initialize the view-terminal mapping hash table */
-  window->view_terminals = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, g_object_unref);
 
   window->accel_group = gtk_accel_group_new ();
   xfce_gtk_accel_map_add_entries (thunar_window_action_entries, G_N_ELEMENTS (thunar_window_action_entries));
@@ -1665,7 +1654,7 @@ thunar_window_update_view_menu (ThunarWindow *window,
                                                    gtk_widget_get_visible (window->statusbar), GTK_MENU_SHELL (menu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_MENUBAR), G_OBJECT (window),
                                                    window->menubar_visible, GTK_MENU_SHELL (menu));
-  ThunarTerminalWidget *curr = thunar_window_get_terminal_for_view (window, window->view);
+  ThunarTerminalWidget *curr = thunar_window_get_view_terminal (window->view);
   gboolean              active = (curr != NULL && thunar_terminal_widget_get_visible (curr));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_TERMINAL),
                                                    G_OBJECT (window), active, GTK_MENU_SHELL (menu));
@@ -1904,13 +1893,6 @@ thunar_window_finalize (GObject *object)
   /* release the preferences reference */
   g_signal_handlers_disconnect_by_data (window->preferences, window);
   g_object_unref (window->preferences);
-
-  /* cleanup the view-terminal mapping hash table */
-  if (window->view_terminals != NULL)
-    {
-      g_hash_table_destroy (window->view_terminals);
-      window->view_terminals = NULL;
-    }
 
   /* disconnect signal from GtkRecentManager */
   g_signal_handlers_disconnect_by_data (G_OBJECT (gtk_recent_manager_get_default ()), window);
@@ -2618,9 +2600,6 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
     return;
 
   thunar_window_switch_current_view (window, view);
-
-  /* Switch the active terminal to the one associated with this view */
-  thunar_window_switch_to_view_terminal (window, view);
 }
 
 
@@ -3059,8 +3038,9 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   g_signal_connect (tab_content_paned, "size-allocate", G_CALLBACK (on_tab_paned_size_allocated), terminal);
   g_signal_connect (tab_content_paned, "button-release-event", G_CALLBACK (on_tab_paned_drag_finished), NULL);
 
-  g_hash_table_insert (window->view_terminals, view, g_object_ref (terminal));
-  g_signal_connect_swapped (view, "destroy", G_CALLBACK (g_hash_table_remove), window->view_terminals);
+  /* Associate terminal with the view directly */
+  thunar_standard_view_set_terminal_widget (THUNAR_STANDARD_VIEW (view), terminal);
+  
   g_signal_connect (terminal, "change-directory", G_CALLBACK (thunar_window_terminal_directory_changed), window);
 
   ThunarFile *current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (view));
@@ -3485,33 +3465,11 @@ thunar_window_install_sidepane (ThunarWindow      *window,
     g_object_set (G_OBJECT (window->preferences), "last-side-pane", type, NULL);
 }
 
-/* Per-tab terminal management */
 static ThunarTerminalWidget *
-thunar_window_get_terminal_for_view (ThunarWindow *window,
-                                     GtkWidget    *view)
+thunar_window_get_view_terminal (GtkWidget *view)
 {
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), NULL);
-
-  if (view == NULL || !GTK_IS_WIDGET (view))
-    return NULL;
-
-  if (window->view_terminals == NULL)
-    return NULL;
-
-  return g_hash_table_lookup (window->view_terminals, view);
-}
-
-void
-thunar_window_switch_to_view_terminal (ThunarWindow *window,
-                                       GtkWidget    *view)
-{
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
-
-  if (view == NULL || gtk_widget_in_destruction (view) || gtk_widget_in_destruction (GTK_WIDGET (window)))
-    return;
-
-  /* Set the new active terminal for focus/command purposes */
-  window->terminal_widget = thunar_window_get_terminal_for_view (window, view);
+  return THUNAR_IS_STANDARD_VIEW (view) ? 
+    thunar_standard_view_get_terminal_widget (THUNAR_STANDARD_VIEW (view)) : NULL;
 }
 
 static void
@@ -3523,19 +3481,19 @@ thunar_window_terminal_directory_changed (ThunarTerminalWidget *terminal,
   _thunar_return_if_fail (THUNAR_IS_FILE (thunar_file));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  /* Only sync if this is the currently active terminal */
-  if (window->terminal_widget != terminal)
-    return;
-
   /* Don't sync if the window is being destroyed */
   if (gtk_widget_in_destruction (GTK_WIDGET (window)))
     return;
 
-  /* Update the view */
-  thunar_window_set_current_directory (window, thunar_file);
+  /* Only sync if this terminal belongs to the currently active view */
+  if (window->view != NULL && thunar_window_get_view_terminal (window->view) == terminal)
+    {
+      /* Update the view */
+      thunar_window_set_current_directory (window, thunar_file);
 
-  /* After the directory change, ensure focus returns to the terminal. */
-  thunar_terminal_widget_ensure_terminal_focus (terminal);
+      /* After the directory change, ensure focus returns to the terminal. */
+      thunar_terminal_widget_ensure_terminal_focus (terminal);
+    }
 }
 
 static void
@@ -3988,12 +3946,11 @@ thunar_window_action_detach_tab (ThunarWindow *window,
   ThunarWindow *new_thunar_window = THUNAR_WINDOW (gtk_widget_get_toplevel (new_notebook));
 
   // 1. Get the terminal associated with the view being moved.
-  terminal_to_move = thunar_window_get_terminal_for_view (window, view_to_move);
+  terminal_to_move = thunar_window_get_view_terminal (view_to_move);
   _thunar_return_val_if_fail (THUNAR_IS_TERMINAL_WIDGET (terminal_to_move), FALSE);
 
-  // 2. Transfer the view->terminal mapping from the old window's hash table to the new one.
-  g_hash_table_steal (window->view_terminals, view_to_move);
-  g_hash_table_insert (new_thunar_window->view_terminals, view_to_move, terminal_to_move);
+  // 2. The terminal is already associated with the view, no need to transfer mappings.
+  // The view maintains its own terminal reference.
 
   // 3. Reconnect the terminal's "change-directory" signal to the new window.
   g_signal_handlers_disconnect_by_func (terminal_to_move, G_CALLBACK (thunar_window_terminal_directory_changed), window);
@@ -4034,7 +3991,7 @@ thunar_window_action_view_terminal (ThunarWindow *window,
                                     GtkWidget    *menu_item)
 {
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
-  ThunarTerminalWidget *current_terminal = thunar_window_get_terminal_for_view (window, window->view);
+  ThunarTerminalWidget *current_terminal = thunar_window_get_view_terminal (window->view);
   if (current_terminal != NULL)
     {
       thunar_terminal_widget_toggle_visible (current_terminal);
@@ -4605,7 +4562,7 @@ thunar_window_replace_view (ThunarWindow *window,
 
   // Get the paned container and the terminal to reuse.
   GtkWidget            *paned_container = gtk_widget_get_parent (view_to_replace);
-  ThunarTerminalWidget *terminal_to_reuse = thunar_window_get_terminal_for_view (window, view_to_replace);
+  ThunarTerminalWidget *terminal_to_reuse = thunar_window_get_view_terminal (view_to_replace);
 
   // Ensure the widget hierarchy is as expected.
   if (!GTK_IS_PANED (paned_container) || !THUNAR_IS_TERMINAL_WIDGET (terminal_to_reuse))
@@ -4633,9 +4590,9 @@ thunar_window_replace_view (ThunarWindow *window,
   if (new_view != NULL)
     thunar_standard_view_transfer_selection (THUNAR_STANDARD_VIEW (new_view), THUNAR_STANDARD_VIEW (view_to_replace));
 
-  // Update internal data structures to map the new view to the existing terminal.
-  g_hash_table_remove (window->view_terminals, view_to_replace);
-  g_hash_table_insert (window->view_terminals, new_view, terminal_to_reuse); // Terminal is now owned by the hash table.
+  /* Transfer terminal from old view to new view directly */
+  thunar_standard_view_set_terminal_widget (THUNAR_STANDARD_VIEW (new_view), terminal_to_reuse);
+  
   g_object_set_data (G_OBJECT (paned_container), "thunar-view", new_view);
 
   /* If the replaced view was the active one, update the main window view pointer. */
@@ -5863,10 +5820,6 @@ thunar_window_set_current_directory (ThunarWindow *window,
   if (window->view != NULL && window->view_type != type)
     thunar_window_replace_view (window, window->view, type);
 
-  /* switch to the terminal associated with this view */
-  if (window->view != NULL)
-    thunar_window_switch_to_view_terminal (window, window->view);
-
   /* grab the focus to the main view */
   if (window->view != NULL)
     gtk_widget_grab_focus (window->view);
@@ -5886,7 +5839,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
     }
 
   /* Sync the directory change to the active terminal if available, unless suppressed */
-  terminal = thunar_window_get_terminal_for_view (window, window->view);
+  terminal = thunar_window_get_view_terminal (window->view);
   if (!window->suppress_terminal_sync && terminal != NULL && !is_trashed && !is_recent)
     {
       GFile *location = thunar_file_get_file (current_directory);

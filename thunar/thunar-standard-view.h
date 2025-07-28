@@ -25,6 +25,7 @@
 #include "thunar/thunar-icon-factory.h"
 #include "thunar/thunar-list-model.h"
 #include "thunar/thunar-preferences.h"
+#include "thunar/thunar-terminal-widget.h"
 #include "thunar/thunar-thumbnailer.h"
 #include "thunar/thunar-tree-view-model.h"
 #include "thunar/thunar-view.h"
@@ -175,6 +176,7 @@ struct _ThunarStandardView
   gboolean       loading;
   GtkAccelGroup *accel_group;
 
+  ThunarTerminalWidget *terminal_widget;
   ThunarStandardViewPrivate *priv;
 };
 
@@ -236,6 +238,13 @@ thunar_standard_view_set_statusbar_text (ThunarStandardView *standard_view,
 void
 thunar_standard_view_transfer_selection (ThunarStandardView *standard_view,
                                          ThunarStandardView *old_view);
+
+/* Terminal widget management */
+ThunarTerminalWidget *
+thunar_standard_view_get_terminal_widget (ThunarStandardView *standard_view);
+void
+thunar_standard_view_set_terminal_widget (ThunarStandardView   *standard_view,
+                                          ThunarTerminalWidget *terminal_widget);
 
 
 G_END_DECLS;
