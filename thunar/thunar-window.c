@@ -218,8 +218,6 @@ thunar_window_terminal_directory_changed (ThunarTerminalWidget *terminal,
                                           ThunarFile           *thunar_file,
                                           ThunarWindow         *window);
 
-static void
-on_tab_paned_size_allocated (GtkWidget *paned, GtkAllocation *allocation, gpointer user_data);
 static gboolean
 on_tab_paned_drag_finished (GtkWidget *paned, GdkEventButton *event, gpointer user_data);
 static gboolean
@@ -3021,6 +3019,13 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
 
   /* --- Build the GtkPaned for the tab content --- */
   terminal = thunar_terminal_widget_new ();
+
+  int saved_height = THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT; /* Default fallback */
+  g_object_get (thunar_preferences_get (), "terminal-height", &saved_height, NULL);
+  if (saved_height <= THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT)
+    saved_height = THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT;
+  gtk_widget_set_size_request (GTK_WIDGET (terminal), -1, saved_height);
+
   tab_content_paned = gtk_paned_new (GTK_ORIENTATION_VERTICAL);
   gtk_paned_pack1 (GTK_PANED (tab_content_paned), view, TRUE, TRUE);
   gtk_paned_pack2 (GTK_PANED (tab_content_paned), GTK_WIDGET (terminal), FALSE, TRUE);
@@ -3028,14 +3033,11 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   g_signal_connect_swapped (G_OBJECT (button), "clicked", G_CALLBACK (gtk_widget_destroy), tab_content_paned);
   gtk_widget_show (button);
 
-  /* Connect to size-allocate to set the initial terminal height correctly.
-   * This signal is only connected once and then disconnects itself. */
-  g_signal_connect (tab_content_paned, "size-allocate", G_CALLBACK (on_tab_paned_size_allocated), terminal);
   g_signal_connect (tab_content_paned, "button-release-event", G_CALLBACK (on_tab_paned_drag_finished), NULL);
 
   /* Associate terminal with the view directly */
   thunar_standard_view_set_terminal_widget (THUNAR_STANDARD_VIEW (view), terminal);
-  
+
   g_signal_connect (terminal, "change-directory", G_CALLBACK (thunar_window_terminal_directory_changed), window);
 
   ThunarFile *current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (view));
@@ -3501,31 +3503,6 @@ thunar_window_terminal_directory_changed (ThunarTerminalWidget *terminal,
       /* After the directory change, ensure focus returns to the terminal. */
       thunar_terminal_widget_ensure_terminal_focus (terminal);
     }
-}
-
-static void
-on_tab_paned_size_allocated (GtkWidget *paned, GtkAllocation *allocation, gpointer user_data)
-{
-  ThunarTerminalWidget *terminal = THUNAR_TERMINAL_WIDGET (user_data);
-
-  if (gtk_widget_get_realized (paned))
-    {
-      const int total_height = gtk_widget_get_allocated_height (paned);
-      int       saved_height = 0;
-      g_object_get (thunar_preferences_get (), "terminal-height", &saved_height, NULL);
-      if (saved_height <= 150) /* MIN_TERMINAL_HEIGHT */
-        {
-          saved_height = 150;
-        }
-
-      const int max_allowed_height = MAX (total_height - 200, 150); /* MIN_MAIN_VIEW_HEIGHT = 200, MIN_TERMINAL_HEIGHT = 150 */
-      const int terminal_height = CLAMP (saved_height, 150, max_allowed_height);
-      const int new_pos = total_height - terminal_height;
-
-      gtk_paned_set_position (GTK_PANED (paned), new_pos);
-    }
-
-  g_signal_handlers_disconnect_by_func (paned, on_tab_paned_size_allocated, terminal);
 }
 
 static gboolean
