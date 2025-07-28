@@ -1203,6 +1203,13 @@ thunar_standard_view_dispose (GObject *object)
   /* disconnect from the list model */
   g_signal_handlers_disconnect_by_data (G_OBJECT (standard_view->model), standard_view);
 
+  /* cleanup terminal widget */
+  if (standard_view->terminal_widget != NULL)
+    {
+      g_object_unref (standard_view->terminal_widget);
+      standard_view->terminal_widget = NULL;
+    }
+
   if (standard_view->priv->selection_changed_timeout_source != 0)
     {
       g_source_remove (standard_view->priv->selection_changed_timeout_source);
@@ -5111,4 +5118,33 @@ thunar_standard_view_update_file_drag_mode (ThunarStandardView *standard_view)
     gtk_drag_source_set (view, GDK_BUTTON1_MASK, drag_targets, G_N_ELEMENTS (drag_targets), 0);
   else
     g_warning ("Unsupported value received for thunar property misc-file-drag-mode");
+}
+
+
+
+ThunarTerminalWidget *
+thunar_standard_view_get_terminal_widget (ThunarStandardView *standard_view)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), NULL);
+  return standard_view->terminal_widget;
+}
+
+
+
+void
+thunar_standard_view_set_terminal_widget (ThunarStandardView   *standard_view,
+                                          ThunarTerminalWidget *terminal_widget)
+{
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  
+  if (standard_view->terminal_widget != terminal_widget)
+    {
+      if (standard_view->terminal_widget != NULL)
+        g_object_unref (standard_view->terminal_widget);
+      
+      standard_view->terminal_widget = terminal_widget;
+      
+      if (terminal_widget != NULL)
+        g_object_ref (terminal_widget);
+    }
 }
