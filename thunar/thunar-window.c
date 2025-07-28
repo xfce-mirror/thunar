@@ -5154,27 +5154,18 @@ thunar_window_after_propagate_key_event (GtkWindow *window,
 
   focused_widget = gtk_window_get_focus (window);
 
-  /*
-   * Add a guard to ensure the focused widget is valid.
-   * It's possible for the focused widget to be destroyed or hidden
-   * during the event propagation (e.g., hiding the terminal with F4),
-   * which would cause gtk_window_get_focus() to return NULL.
-   */
-  if (G_LIKELY (focused_widget != NULL))
+  /* After 'tab' was preassed, we might need to update the selected notebook */
+  if (thunar_window_split_view_is_active (thunar_window))
     {
-      /* After 'tab' was preassed, we might need to update the selected notebook */
-      if (thunar_window_split_view_is_active (thunar_window))
+      if (thunar_window->notebook_left != NULL && gtk_widget_is_ancestor (focused_widget, thunar_window->notebook_left))
         {
-          if (thunar_window->notebook_left != NULL && gtk_widget_is_ancestor (focused_widget, thunar_window->notebook_left))
-            {
-              thunar_window->notebook_selected = thunar_window->notebook_left;
-              thunar_window_notebook_select_current_page (thunar_window);
-            }
-          if (thunar_window->notebook_right != NULL && gtk_widget_is_ancestor (focused_widget, thunar_window->notebook_right))
-            {
-              thunar_window->notebook_selected = thunar_window->notebook_right;
-              thunar_window_notebook_select_current_page (thunar_window);
-            }
+          thunar_window->notebook_selected = thunar_window->notebook_left;
+          thunar_window_notebook_select_current_page (thunar_window);
+        }
+      if (thunar_window->notebook_right != NULL && gtk_widget_is_ancestor (focused_widget, thunar_window->notebook_right))
+        {
+          thunar_window->notebook_selected = thunar_window->notebook_right;
+          thunar_window_notebook_select_current_page (thunar_window);
         }
     }
 
