@@ -4158,15 +4158,8 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
 
   if (thunar_window_split_view_is_active (window))
     {
-      GtkWidget *notebook_to_close;
-      gint       tabs_to_close;
-
-      /* Determine which notebook to close. We close the one that is NOT currently selected. */
-      notebook_to_close = (window->notebook_selected == window->notebook_left)
-                          ? window->notebook_right
-                          : window->notebook_left;
-
-      tabs_to_close = gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook_to_close));
+      GtkWidget *notebook_to_close = window->notebook_selected == window->notebook_left ? window->notebook_right : window->notebook_left;
+      gint       tabs_to_close = gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook_to_close));
 
       if (tabs_to_close > 1)
         {
@@ -4178,21 +4171,17 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
             return TRUE;
         }
 
-      /* This prevents the "page-removed" handler from being called during destruction,
-       * which would fail an assertion because the window's notebook pointer would have
-       * already been nulled out.
-       */
-      g_signal_handlers_disconnect_by_data (notebook_to_close, window);
-
       gtk_widget_destroy (notebook_to_close);
-
-      if (notebook_to_close == window->notebook_left)
-        window->notebook_left = NULL;
-      else
+      if (window->notebook_selected == window->notebook_left)
         window->notebook_right = NULL;
-
+      else if (window->notebook_selected == window->notebook_right)
+        window->notebook_left = NULL;
       gtk_notebook_set_show_border (GTK_NOTEBOOK (window->notebook_selected), FALSE);
+
+      g_signal_handlers_disconnect_by_func (window->paned_notebooks, thunar_window_save_paned_notebooks, window);
+      g_signal_handlers_disconnect_by_func (window->paned_notebooks, thunar_window_paned_notebooks_button_press_event, NULL);
     }
+
   else
     {
       window->notebook_selected = thunar_window_paned_notebooks_add (window);
