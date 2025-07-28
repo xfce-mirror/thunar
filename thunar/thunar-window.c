@@ -570,9 +570,6 @@ struct _ThunarWindow
   GtkWidget *view_box;
   GtkWidget *view;
 
-  /* Prevent terminal sync on tab switch */
-  gboolean suppress_terminal_sync;
-
   GtkWidget *statusbar;
 
   /* image preview pane */
@@ -5840,7 +5837,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
 
   /* Sync the directory change to the active terminal if available, unless suppressed */
   terminal = thunar_window_get_view_terminal (window->view);
-  if (!window->suppress_terminal_sync && terminal != NULL && !is_trashed && !is_recent)
+  if (terminal != NULL && !is_trashed && !is_recent)
     {
       GFile *location = thunar_file_get_file (current_directory);
       thunar_terminal_widget_set_current_location (terminal, location);
