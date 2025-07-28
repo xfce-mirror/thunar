@@ -30,8 +30,6 @@
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (ThunarPreferences, g_object_unref)
 
 /* UI constants */
-#define MIN_MAIN_VIEW_HEIGHT 200
-#define MIN_TERMINAL_HEIGHT 50
 #define MIN_FONT_SIZE 6
 #define MAX_FONT_SIZE 72
 
