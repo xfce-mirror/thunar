@@ -5111,7 +5111,11 @@ thunar_window_propagate_key_event (GtkWindow *window,
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), GDK_EVENT_PROPAGATE);
 
-  if (key_event->type == GDK_KEY_PRESS && ((GdkEventKey *) key_event)->keyval == GDK_KEY_F4)
+  /* It’s necessary to disable Thunar’s keyboard shortcuts inside the terminal to avoid
+  interference,and then add a shortcut to hide the terminal to keep usage consistent.*/
+  GtkAccelKey key;
+  gtk_accel_map_lookup_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_TERMINAL)->accel_path, &key);
+  if (key_event->type == GDK_KEY_PRESS && ((GdkEventKey *) key_event)->keyval == key.accel_key)
     return thunar_window_action_view_terminal (thunar_window, NULL) ? GDK_EVENT_STOP : GDK_EVENT_PROPAGATE;
 
   focused_widget = gtk_window_get_focus (window);
