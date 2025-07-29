@@ -2990,6 +2990,25 @@ thunar_window_create_view (ThunarWindow *window,
   return view;
 }
 
+#ifdef HAVE_VTE
+/* VTE, when initialized, treats the initial size as the minimum,so when resizing
+ * to a smaller size, the bottom part of the terminal becomes hidden. It is necessary
+ * to start with the minimum size and then resize to the correct dimensions. */
+static void
+set_paned_position_once (GtkWidget *paned, GtkAllocation *allocation, gpointer data)
+{
+  int saved_height = GPOINTER_TO_INT (data);
+  if (allocation->height > saved_height && saved_height > 0)
+    {
+      int position = allocation->height - saved_height;
+      gtk_paned_set_position (GTK_PANED (paned), position);
+
+      /* Disconnect the signal to avoid further calls */
+      g_signal_handlers_disconnect_by_func (paned, set_paned_position_once, data);
+    }
+}
+#endif
+
 static void
 thunar_window_notebook_insert_page (ThunarWindow *window,
                                     gint          position,
@@ -3003,6 +3022,8 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   GtkWidget *tab_content_paned;
 #ifdef HAVE_VTE
   ThunarTerminalWidget *terminal;
+  int                   saved_height;
+  gboolean              terminal_visible;
 #endif
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
@@ -3011,7 +3032,6 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   label_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
   label = gtk_label_new (NULL);
-
   g_object_set_data (G_OBJECT (label), "window", window);
   g_object_set_data (G_OBJECT (label), "view", view);
   g_object_set_data (G_OBJECT (label), "binding", NULL);
@@ -3051,34 +3071,30 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   gtk_container_add (GTK_CONTAINER (button), icon);
   gtk_widget_show (icon);
 
-/* --- Build the GtkPaned for the tab content --- */
+  /* Create tab content - with or without terminal */
 #ifdef HAVE_VTE
+  /* With VTE: Create paned container with terminal */
   terminal = thunar_terminal_widget_new ();
-
-  int saved_height = THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT; /* Default fallback */
-  g_object_get (thunar_preferences_get (), "terminal-height", &saved_height, NULL);
-  if (saved_height <= THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT)
-    saved_height = THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT;
-  gtk_widget_set_size_request (GTK_WIDGET (terminal), -1, saved_height);
-
   tab_content_paned = gtk_paned_new (GTK_ORIENTATION_VERTICAL);
   gtk_paned_pack1 (GTK_PANED (tab_content_paned), view, TRUE, TRUE);
   gtk_paned_pack2 (GTK_PANED (tab_content_paned), GTK_WIDGET (terminal), FALSE, TRUE);
+
+  /* Read saved height for initial positioning */
+  saved_height = THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT;
+  g_object_get (thunar_preferences_get (), "terminal-height", &saved_height, NULL);
+  if (saved_height <= THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT)
+    saved_height = THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT;
 #else
-  /* Without VTE, just use the view directly as the tab content */
+  /* Without VTE: Use view directly as tab content */
   tab_content_paned = view;
 #endif
 
+  /* Connect signals */
   g_signal_connect_swapped (G_OBJECT (button), "clicked", G_CALLBACK (gtk_widget_destroy), tab_content_paned);
   gtk_widget_show (button);
-
   g_signal_connect (tab_content_paned, "button-release-event", G_CALLBACK (on_tab_paned_drag_finished), NULL);
 
-#ifdef HAVE_VTE
-  /* Associate terminal with the view directly */
-  thunar_standard_view_set_terminal_widget (THUNAR_STANDARD_VIEW (view), terminal);
-  g_signal_connect (terminal, "change-directory", G_CALLBACK (thunar_window_terminal_directory_changed), window);
-#endif
+  /* Insert page into notebook */
   gtk_notebook_insert_page (GTK_NOTEBOOK (window->notebook_selected), tab_content_paned, label_box, position);
   gtk_container_child_set (GTK_CONTAINER (window->notebook_selected), tab_content_paned, "tab-expand", TRUE, NULL);
   gtk_notebook_set_tab_reorderable (GTK_NOTEBOOK (window->notebook_selected), tab_content_paned, TRUE);
@@ -3086,8 +3102,14 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   gtk_widget_show_all (tab_content_paned);
 
 #ifdef HAVE_VTE
+  /* VTE-specific setup after page insertion */
+  g_signal_connect_after (tab_content_paned, "size-allocate",
+                          G_CALLBACK (set_paned_position_once), GINT_TO_POINTER (saved_height));
+
+  thunar_standard_view_set_terminal_widget (THUNAR_STANDARD_VIEW (view), terminal);
+  g_signal_connect (terminal, "change-directory", G_CALLBACK (thunar_window_terminal_directory_changed), window);
+
   /* Initialize terminal visibility based on preferences */
-  gboolean terminal_visible;
   g_object_get (window->preferences, "terminal-visible", &terminal_visible, NULL);
   if (terminal_visible)
     {
