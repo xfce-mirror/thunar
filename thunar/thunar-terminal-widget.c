@@ -18,6 +18,7 @@
  *
  */
 
+
 #include "thunar-terminal-widget.h"
 
 #include "thunar-navigator.h"

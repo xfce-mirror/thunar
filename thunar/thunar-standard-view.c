@@ -1199,12 +1199,14 @@ thunar_standard_view_dispose (GObject *object)
   /* disconnect from the list model */
   g_signal_handlers_disconnect_by_data (G_OBJECT (standard_view->model), standard_view);
 
-  /* cleanup terminal widget */
+/* cleanup terminal widget */
+#ifdef HAVE_VTE
   if (standard_view->terminal_widget != NULL)
     {
       g_object_unref (standard_view->terminal_widget);
       standard_view->terminal_widget = NULL;
     }
+#endif
 
   if (standard_view->priv->selection_changed_timeout_source != 0)
     {
@@ -1874,7 +1876,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 
   /* disconnect any old bindings */
   if (G_UNLIKELY (standard_view->loading_binding != NULL))
-      g_object_unref (standard_view->loading_binding);
+    g_object_unref (standard_view->loading_binding);
 
   /* connect to the loading property of the new directory */
   standard_view->loading_binding =
@@ -4616,7 +4618,7 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   g_object_get (standard_view->model, "folders-first", &folders_first, NULL);
-  
+
   item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU), NULL, GTK_MENU_SHELL (menu));
   submenu = gtk_menu_new ();
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_BY_NAME), G_OBJECT (standard_view),
@@ -5092,6 +5094,7 @@ thunar_standard_view_transfer_selection (ThunarStandardView *standard_view,
 }
 
 
+#ifdef HAVE_VTE
 ThunarTerminalWidget *
 thunar_standard_view_get_terminal_widget (ThunarStandardView *standard_view)
 {
@@ -5104,15 +5107,16 @@ thunar_standard_view_set_terminal_widget (ThunarStandardView   *standard_view,
                                           ThunarTerminalWidget *terminal_widget)
 {
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-  
+
   if (standard_view->terminal_widget != terminal_widget)
     {
       if (standard_view->terminal_widget != NULL)
         g_object_unref (standard_view->terminal_widget);
-      
+
       standard_view->terminal_widget = terminal_widget;
-      
+
       if (terminal_widget != NULL)
         g_object_ref (terminal_widget);
     }
 }
+#endif /* HAVE_VTE */

@@ -50,7 +50,9 @@
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-shortcuts-pane.h"
 #include "thunar/thunar-statusbar.h"
+#ifdef HAVE_VTE
 #include "thunar/thunar-terminal-widget.h"
+#endif
 #include "thunar/thunar-thumbnailer.h"
 #include "thunar/thunar-toolbar-editor.h"
 #include "thunar/thunar-tree-pane.h"
@@ -211,18 +213,20 @@ thunar_window_update_location_bar_visible (ThunarWindow *window);
 static void
 thunar_window_install_sidepane (ThunarWindow      *window,
                                 ThunarSidepaneType type);
+#ifdef HAVE_VTE
 static ThunarTerminalWidget *
 thunar_window_get_view_terminal (GtkWidget *view);
 static void
 thunar_window_terminal_directory_changed (ThunarTerminalWidget *terminal,
                                           ThunarFile           *thunar_file,
                                           ThunarWindow         *window);
-
-static gboolean
-on_tab_paned_drag_finished (GtkWidget *paned, GdkEventButton *event, gpointer user_data);
 static gboolean
 thunar_window_action_view_terminal (ThunarWindow *window,
                                     GtkWidget    *menu_item);
+#endif
+
+static gboolean
+on_tab_paned_drag_finished (GtkWidget *paned, GdkEventButton *event, gpointer user_data);
 static void
 thunar_window_start_open_location (ThunarWindow *window,
                                    const gchar  *initial_text);
@@ -686,7 +690,9 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_TOGGLE_IMAGE_PREVIEW,           "<Actions>/ThunarWindow/toggle-image-preview",            "",                     XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Image Preview"),          N_ ("Change the visibility of this window's image preview"),                         NULL,                     G_CALLBACK (thunar_window_action_image_preview),  },
     { THUNAR_WINDOW_ACTION_VIEW_STATUSBAR,                 "<Actions>/ThunarWindow/view-statusbar",                  "",                     XFCE_GTK_CHECK_MENU_ITEM, N_ ("St_atusbar"),             N_ ("Change the visibility of this window's statusbar"),                             NULL,                      G_CALLBACK (thunar_window_action_statusbar_changed),  },
     { THUNAR_WINDOW_ACTION_VIEW_MENUBAR,                   "<Actions>/ThunarWindow/view-menubar",                    "<Primary>m",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Menubar"),               N_ ("Change the visibility of this window's menubar"),                               "open-menu",               G_CALLBACK (thunar_window_action_menubar_changed),    },
-    { THUNAR_WINDOW_ACTION_VIEW_TERMINAL,                  "<Actions>/ThunarWindow/view-terminal",                   "F4",                   XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Terminal"),              N_ ("Toggle the visibility of the terminal emulator"),                               "utilities-terminal",      G_CALLBACK (thunar_window_action_view_terminal),      },
+    #ifdef HAVE_VTE
+      { THUNAR_WINDOW_ACTION_VIEW_TERMINAL,                  "<Actions>/ThunarWindow/view-terminal",                   "F4",                   XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Terminal"),              N_ ("Toggle the visibility of the terminal emulator"),                               "utilities-terminal",      G_CALLBACK (thunar_window_action_view_terminal),      },
+    #endif
     { THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR,              "<Actions>/ThunarWindow/view-configure-toolbar",          "",                     XFCE_GTK_MENU_ITEM ,      N_ ("Configure _Toolbar..."),  N_ ("Configure the toolbar"),                                                        NULL,                      G_CALLBACK (thunar_window_action_show_toolbar_editor),},
     { THUNAR_WINDOW_ACTION_CLEAR_DIRECTORY_SPECIFIC_SETTINGS,"<Actions>/ThunarWindow/clear-directory-specific-settings","",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Cl_ear Saved Folder View Settings"), N_ ("Delete saved view settings for this folder"),                        NULL,                      G_CALLBACK (thunar_window_action_clear_directory_specific_settings), },
     { THUNAR_WINDOW_ACTION_SHOW_HIDDEN,                    "<Actions>/ThunarWindow/show-hidden",                     "<Primary>h",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("Show _Hidden Files"),     N_ ("Toggles the display of hidden files in the current window"),                    NULL,                      G_CALLBACK (thunar_window_action_show_hidden),        },
@@ -1649,10 +1655,12 @@ thunar_window_update_view_menu (ThunarWindow *window,
                                                    gtk_widget_get_visible (window->statusbar), GTK_MENU_SHELL (menu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_MENUBAR), G_OBJECT (window),
                                                    window->menubar_visible, GTK_MENU_SHELL (menu));
+#ifdef HAVE_VTE
   ThunarTerminalWidget *curr = thunar_window_get_view_terminal (window->view);
   gboolean              active = (curr != NULL && gtk_widget_get_visible (GTK_WIDGET (curr)));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_TERMINAL),
                                                    G_OBJECT (window), active, GTK_MENU_SHELL (menu));
+#endif
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR), G_OBJECT (window), GTK_MENU_SHELL (menu));
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
   if (window->directory_specific_settings)
@@ -1964,8 +1972,12 @@ thunar_window_delete (GtkWidget *widget,
       tab_uris_left = g_new0 (gchar *, n_tabsl + 1);
       for (int i = 0; i < n_tabsl; i++)
         {
+#ifdef HAVE_VTE
           ThunarNavigator *view = THUNAR_NAVIGATOR (gtk_paned_get_child1 (GTK_PANED (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_left), i))));
-          gchar           *uri = g_file_get_uri (thunar_file_get_file (thunar_navigator_get_current_directory (view)));
+#else
+          ThunarNavigator *view = THUNAR_NAVIGATOR (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_left), i));
+#endif
+          gchar *uri = g_file_get_uri (thunar_file_get_file (thunar_navigator_get_current_directory (view)));
           tab_uris_left[i] = g_strdup (uri);
           g_free (uri);
         }
@@ -1973,8 +1985,12 @@ thunar_window_delete (GtkWidget *widget,
       tab_uris_right = g_new0 (gchar *, n_tabsr + 1);
       for (int i = 0; i < n_tabsr; i++)
         {
+#ifdef HAVE_VTE
           ThunarNavigator *view = THUNAR_NAVIGATOR (gtk_paned_get_child1 (GTK_PANED (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_right), i))));
-          gchar           *uri = g_file_get_uri (thunar_file_get_file (thunar_navigator_get_current_directory (view)));
+#else
+          ThunarNavigator *view = THUNAR_NAVIGATOR (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_right), i));
+#endif
+          gchar *uri = g_file_get_uri (thunar_file_get_file (thunar_navigator_get_current_directory (view)));
           tab_uris_right[i] = g_strdup (uri);
           g_free (uri);
         }
@@ -2585,8 +2601,12 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
 
+#ifdef HAVE_VTE
   /* The page is now the container (a GtkPaned) holding the paned view/terminal */
   view = gtk_paned_get_child1 (GTK_PANED (page));
+#else
+  view = page;
+#endif
   _thunar_return_if_fail (THUNAR_IS_VIEW (view));
 
   /* leave if nothing changed or tab from other split-view is selected as
@@ -2660,7 +2680,11 @@ thunar_window_notebook_page_added (GtkWidget    *notebook,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
 
+#ifdef HAVE_VTE
   view = gtk_paned_get_child1 (GTK_PANED (page));
+#else
+  view = page;
+#endif
   _thunar_return_if_fail (THUNAR_IS_VIEW (view));
   _thunar_return_if_fail (window->notebook_selected == notebook);
 
@@ -2691,8 +2715,12 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
 
+#ifdef HAVE_VTE
   /* The 'page' is now the GtkPaned container. Get the view from its first child. */
   view = gtk_paned_get_child1 (GTK_PANED (page));
+#else
+  view = page;
+#endif
   _thunar_return_if_fail (THUNAR_IS_VIEW (view));
   _thunar_return_if_fail (window->notebook_left == notebook || window->notebook_right == notebook);
 
@@ -2846,8 +2874,12 @@ thunar_window_notebook_create_window (GtkWidget    *notebook,
   _thunar_return_val_if_fail (GTK_IS_NOTEBOOK (notebook), NULL);
   _thunar_return_val_if_fail (window->notebook_selected == notebook, NULL);
 
+#ifdef HAVE_VTE
   /* The 'page' is now the GtkPaned container */
   view = gtk_paned_get_child1 (GTK_PANED (page));
+#else
+  view = page;
+#endif
   _thunar_return_val_if_fail (THUNAR_IS_VIEW (view), NULL);
 
   /* do nothing if this window has only 1 tab */
@@ -2963,13 +2995,15 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
                                     gint          position,
                                     GtkWidget    *view)
 {
-  GtkWidget            *label;
-  GtkWidget            *label_box;
-  GtkWidget            *button;
-  GtkWidget            *spinner;
-  GtkWidget            *icon;
-  GtkWidget            *tab_content_paned;
+  GtkWidget *label;
+  GtkWidget *label_box;
+  GtkWidget *button;
+  GtkWidget *spinner;
+  GtkWidget *icon;
+  GtkWidget *tab_content_paned;
+#ifdef HAVE_VTE
   ThunarTerminalWidget *terminal;
+#endif
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_VIEW (view));
@@ -3017,7 +3051,8 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   gtk_container_add (GTK_CONTAINER (button), icon);
   gtk_widget_show (icon);
 
-  /* --- Build the GtkPaned for the tab content --- */
+/* --- Build the GtkPaned for the tab content --- */
+#ifdef HAVE_VTE
   terminal = thunar_terminal_widget_new ();
 
   int saved_height = THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT; /* Default fallback */
@@ -3029,21 +3064,28 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   tab_content_paned = gtk_paned_new (GTK_ORIENTATION_VERTICAL);
   gtk_paned_pack1 (GTK_PANED (tab_content_paned), view, TRUE, TRUE);
   gtk_paned_pack2 (GTK_PANED (tab_content_paned), GTK_WIDGET (terminal), FALSE, TRUE);
+#else
+  /* Without VTE, just use the view directly as the tab content */
+  tab_content_paned = view;
+#endif
 
   g_signal_connect_swapped (G_OBJECT (button), "clicked", G_CALLBACK (gtk_widget_destroy), tab_content_paned);
   gtk_widget_show (button);
 
   g_signal_connect (tab_content_paned, "button-release-event", G_CALLBACK (on_tab_paned_drag_finished), NULL);
 
+#ifdef HAVE_VTE
   /* Associate terminal with the view directly */
   thunar_standard_view_set_terminal_widget (THUNAR_STANDARD_VIEW (view), terminal);
   g_signal_connect (terminal, "change-directory", G_CALLBACK (thunar_window_terminal_directory_changed), window);
+#endif
   gtk_notebook_insert_page (GTK_NOTEBOOK (window->notebook_selected), tab_content_paned, label_box, position);
   gtk_container_child_set (GTK_CONTAINER (window->notebook_selected), tab_content_paned, "tab-expand", TRUE, NULL);
   gtk_notebook_set_tab_reorderable (GTK_NOTEBOOK (window->notebook_selected), tab_content_paned, TRUE);
   gtk_notebook_set_tab_detachable (GTK_NOTEBOOK (window->notebook_selected), tab_content_paned, TRUE);
   gtk_widget_show_all (tab_content_paned);
 
+#ifdef HAVE_VTE
   /* Initialize terminal visibility based on preferences */
   gboolean terminal_visible;
   g_object_get (window->preferences, "terminal-visible", &terminal_visible, NULL);
@@ -3056,6 +3098,7 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
     {
       gtk_widget_hide (GTK_WIDGET (terminal));
     }
+#endif
 }
 
 
@@ -3335,7 +3378,11 @@ thunar_window_update_directories (ThunarWindow *window,
   for (n = 0; n < n_pages; n++)
     {
       /* get the view from the tab */
+#ifdef HAVE_VTE
       view = gtk_paned_get_child1 (GTK_PANED (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), n)));
+#else
+      view = gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), n);
+#endif
       if (!THUNAR_IS_NAVIGATOR (view))
         continue;
 
@@ -3450,11 +3497,11 @@ thunar_window_install_sidepane (ThunarWindow      *window,
     g_object_set (G_OBJECT (window->preferences), "last-side-pane", type, NULL);
 }
 
+#ifdef HAVE_VTE
 static ThunarTerminalWidget *
 thunar_window_get_view_terminal (GtkWidget *view)
 {
-  return THUNAR_IS_STANDARD_VIEW (view) ? 
-    thunar_standard_view_get_terminal_widget (THUNAR_STANDARD_VIEW (view)) : NULL;
+  return THUNAR_IS_STANDARD_VIEW (view) ? thunar_standard_view_get_terminal_widget (THUNAR_STANDARD_VIEW (view)) : NULL;
 }
 
 static void
@@ -3480,6 +3527,7 @@ thunar_window_terminal_directory_changed (ThunarTerminalWidget *terminal,
       thunar_terminal_widget_ensure_terminal_focus (terminal);
     }
 }
+#endif /* HAVE_VTE */
 
 static gboolean
 on_tab_paned_drag_finished (GtkWidget *paned, GdkEventButton *event, gpointer user_data)
@@ -3902,11 +3950,10 @@ static gboolean
 thunar_window_action_detach_tab (ThunarWindow *window,
                                  GtkWidget    *menu_item)
 {
-  GtkWidget            *new_notebook;
-  GtkWidget            *view_to_move = window->view;
-  GtkWidget            *tab_page_container;
-  GtkWidget            *label;
-  ThunarTerminalWidget *terminal_to_move;
+  GtkWidget *new_notebook;
+  GtkWidget *view_to_move = window->view;
+  GtkWidget *tab_page_container;
+  GtkWidget *label;
 
   _thunar_return_val_if_fail (THUNAR_IS_VIEW (view_to_move), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
@@ -3922,16 +3969,16 @@ thunar_window_action_detach_tab (ThunarWindow *window,
 
   ThunarWindow *new_thunar_window = THUNAR_WINDOW (gtk_widget_get_toplevel (new_notebook));
 
-  // 1. Get the terminal associated with the view being moved.
+#ifdef HAVE_VTE
+  ThunarTerminalWidget *terminal_to_move;
+  // Get the terminal associated with the view being moved.
   terminal_to_move = thunar_window_get_view_terminal (view_to_move);
   _thunar_return_val_if_fail (THUNAR_IS_TERMINAL_WIDGET (terminal_to_move), FALSE);
 
-  // 2. The terminal is already associated with the view, no need to transfer mappings.
-  // The view maintains its own terminal reference.
-
-  // 3. Reconnect the terminal's "change-directory" signal to the new window.
+  // Reconnect the terminal's "change-directory" signal to the new window.
   g_signal_handlers_disconnect_by_func (terminal_to_move, G_CALLBACK (thunar_window_terminal_directory_changed), window);
   g_signal_connect (terminal_to_move, "change-directory", G_CALLBACK (thunar_window_terminal_directory_changed), new_thunar_window);
+#endif
 
   // get the current label
   label = gtk_notebook_get_tab_label (GTK_NOTEBOOK (window->notebook_selected), tab_page_container);
@@ -3963,6 +4010,7 @@ thunar_window_action_detach_tab (ThunarWindow *window,
 }
 
 
+#ifdef HAVE_VTE
 static gboolean
 thunar_window_action_view_terminal (ThunarWindow *window,
                                     GtkWidget    *menu_item)
@@ -3995,6 +4043,7 @@ thunar_window_action_view_terminal (ThunarWindow *window,
 
   return TRUE;
 }
+#endif /* HAVE_VTE */
 
 
 static gboolean
@@ -4546,6 +4595,7 @@ thunar_window_replace_view (ThunarWindow *window,
 
   /*** START OF MODIFICATION - Non-destructive view replacement ***/
 
+#ifdef HAVE_VTE
   // Get the paned container and the terminal to reuse.
   GtkWidget            *paned_container = gtk_widget_get_parent (view_to_replace);
   ThunarTerminalWidget *terminal_to_reuse = thunar_window_get_view_terminal (view_to_replace);
@@ -4560,8 +4610,14 @@ thunar_window_replace_view (ThunarWindow *window,
         g_object_unref (current_directory);
       return;
     }
+#else
+  // Without VTE, just get the parent container
+  GtkWidget *paned_container = gtk_widget_get_parent (view_to_replace);
+#endif
 
+#ifdef HAVE_VTE
   g_object_ref (terminal_to_reuse); // Keep terminal alive during the swap.
+#endif
 
   // Create the new view.
   new_view = thunar_window_create_view (window, current_directory, view_type);
@@ -4576,9 +4632,10 @@ thunar_window_replace_view (ThunarWindow *window,
   if (new_view != NULL)
     thunar_standard_view_transfer_selection (THUNAR_STANDARD_VIEW (new_view), THUNAR_STANDARD_VIEW (view_to_replace));
 
+#ifdef HAVE_VTE
   /* Transfer terminal from old view to new view directly */
   thunar_standard_view_set_terminal_widget (THUNAR_STANDARD_VIEW (new_view), terminal_to_reuse);
-  
+#endif
   /* If the replaced view was the active one, update the main window view pointer. */
   if (view_to_replace == window->view)
     thunar_window_switch_current_view (window, new_view);
@@ -5111,22 +5168,28 @@ thunar_window_propagate_key_event (GtkWindow *window,
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), GDK_EVENT_PROPAGATE);
 
-  /* It’s necessary to disable Thunar’s keyboard shortcuts inside the terminal to avoid
-  interference,and then add a shortcut to hide the terminal to keep usage consistent.*/
+/* It’s necessary to disable Thunar’s keyboard shortcuts inside the terminal to avoid
+interference,and then add a shortcut to hide the terminal to keep usage consistent.*/
+#ifdef HAVE_VTE
   GtkAccelKey key;
   gtk_accel_map_lookup_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_TERMINAL)->accel_path, &key);
   if (key_event->type == GDK_KEY_PRESS && ((GdkEventKey *) key_event)->keyval == key.accel_key)
     return thunar_window_action_view_terminal (thunar_window, NULL) ? GDK_EVENT_STOP : GDK_EVENT_PROPAGATE;
+#endif
 
   focused_widget = gtk_window_get_focus (window);
 
-  /* Turn the accelerator priority around globally,
-   * so that the focused widget always gets the accels first.
-   * Implementing this cleanly while maintaining some wanted accels
-   * (like Ctrl+N and xfce accels) is a lot of work. So we resort to
-   * only priorize GtkEditable and VteTerminal, because that is the easiest way to
-   * fix the right-ahead problem. */
+/* Turn the accelerator priority around globally,
+ * so that the focused widget always gets the accels first.
+ * Implementing this cleanly while maintaining some wanted accels
+ * (like Ctrl+N and xfce accels) is a lot of work. So we resort to
+ * only priorize GtkEditable and VteTerminal, because that is the easiest way to
+ * fix the right-ahead problem. */
+#ifdef HAVE_VTE
   if (focused_widget != NULL && (GTK_IS_EDITABLE (focused_widget) || VTE_IS_TERMINAL (focused_widget)))
+#else
+  if (focused_widget != NULL && GTK_IS_EDITABLE (focused_widget))
+#endif
     return gtk_window_propagate_key_event (window, (GdkEventKey *) key_event);
 
   /* GTK ignores the Tab accelerator by default, handle it manually */
@@ -5735,12 +5798,11 @@ void
 thunar_window_set_current_directory (ThunarWindow *window,
                                      ThunarFile   *current_directory)
 {
-  GType                 type;
-  gchar                *type_name;
-  gint                  num_pages;
-  gboolean              is_trashed;
-  gboolean              is_recent;
-  ThunarTerminalWidget *terminal;
+  GType    type;
+  gchar   *type_name;
+  gint     num_pages;
+  gboolean is_trashed;
+  gboolean is_recent;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
@@ -5826,12 +5888,14 @@ thunar_window_set_current_directory (ThunarWindow *window,
       thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
     }
 
-  terminal = thunar_window_get_view_terminal (window->view);
+#ifdef HAVE_VTE
+  ThunarTerminalWidget *terminal = thunar_window_get_view_terminal (window->view);
   if (terminal != NULL && !is_trashed && !is_recent)
     {
       GFile *location = thunar_file_get_file (current_directory);
       thunar_terminal_widget_set_current_location (terminal, location);
     }
+#endif
 }
 
 
@@ -5854,8 +5918,12 @@ thunar_window_get_directories (ThunarWindow *window,
 
   for (n = 0; n < n_pages; n++)
     {
-      /* get the view from the tab */
+/* get the view from the tab */
+#ifdef HAVE_VTE
       view = gtk_paned_get_child1 (GTK_PANED (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), n)));
+#else
+      view = gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), n);
+#endif
       if (THUNAR_IS_NAVIGATOR (view) == FALSE)
         continue;
 
