@@ -24,7 +24,10 @@
 
 #include <gio/gio.h>
 #include <gtk/gtk.h>
+
+#ifdef HAVE_VTE
 #include <vte/vte.h>
+#endif
 
 G_BEGIN_DECLS
 
