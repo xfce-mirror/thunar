@@ -144,12 +144,14 @@ enum
   PROP_MISC_USE_CSD,
   PROP_SMART_SORT,
   PROP_MISC_FILE_DRAG_MODE,
+#ifdef HAVE_VTE
   PROP_TERMINAL_HEIGHT,
   PROP_TERMINAL_VISIBLE,
   PROP_TERMINAL_COLOR_SCHEME,
   PROP_TERMINAL_LOCAL_SYNC_MODE,
   PROP_TERMINAL_SSH_AUTO_CONNECT_MODE,
   PROP_TERMINAL_FONT_SIZE,
+#endif
   N_PROPERTIES
 };
 
@@ -1518,6 +1520,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      THUNAR_TERMINAL_SSH_AUTOCONNECT_OFF,
                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
+#ifdef HAVE_VTE
   /**
    * ThunarPreferences:terminal-font-size:
    *
@@ -1531,6 +1534,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                     72, /* max font size */
                     12, /* default font size */
                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+#endif
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
