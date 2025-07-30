@@ -661,27 +661,6 @@ typedef enum
 GType
 thunar_terminal_sync_mode_get_type (void) G_GNUC_CONST;
 
-#define THUNAR_TYPE_TERMINAL_SSH_AUTO_CONNECT_MODE (thunar_terminal_ssh_auto_connect_mode_get_type ())
-
-/**
- * ThunarTerminalSshAutoConnectMode:
- * @THUNAR_TERMINAL_SSH_AUTOCONNECT_OFF: Do not connect automatically.
- * @THUNAR_TERMINAL_SSH_AUTOCONNECT_SYNC_BOTH: Automatically connect and sync both ways.
- * @THUNAR_TERMINAL_SSH_AUTOCONNECT_SYNC_FM_TO_TERM: Automatically connect and sync from file manager to terminal.
- * @THUNAR_TERMINAL_SSH_AUTOCONNECT_SYNC_TERM_TO_FM: Automatically connect and sync from terminal to file manager.
- * @THUNAR_TERMINAL_SSH_AUTOCONNECT_SYNC_NONE: Automatically connect without syncing.
- **/
-typedef enum
-{
-  THUNAR_TERMINAL_SSH_AUTOCONNECT_OFF,
-  THUNAR_TERMINAL_SSH_AUTOCONNECT_SYNC_BOTH,
-  THUNAR_TERMINAL_SSH_AUTOCONNECT_SYNC_FM_TO_TERM,
-  THUNAR_TERMINAL_SSH_AUTOCONNECT_SYNC_TERM_TO_FM,
-  THUNAR_TERMINAL_SSH_AUTOCONNECT_SYNC_NONE,
-} ThunarTerminalSshAutoConnectMode;
-
-GType
-thunar_terminal_ssh_auto_connect_mode_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS;
 

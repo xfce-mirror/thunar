@@ -147,8 +147,9 @@ enum
   PROP_TERMINAL_HEIGHT,
   PROP_TERMINAL_VISIBLE,
   PROP_TERMINAL_COLOR_SCHEME,
-  PROP_TERMINAL_LOCAL_SYNC_MODE,
-  PROP_TERMINAL_SSH_AUTO_CONNECT_MODE,
+  PROP_TERMINAL_TERMINAL_SYNC_MODE,
+  PROP_TERMINAL_SSH_AUTO_CONNECT,
+  PROP_TERMINAL_SSH_AUTO_DISCONNECT,
   PROP_TERMINAL_FONT_SIZE,
 #endif
   N_PROPERTIES
@@ -1482,30 +1483,41 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
-   * ThunarPreferences:terminal-local-sync-mode:
+   * ThunarPreferences:terminal-sync-mode:
    *
-   * Synchronization mode between terminal and file manager for local directories.
+   * Synchronization mode between terminal and file manager for both local and SSH sessions.
    **/
-  preferences_props[PROP_TERMINAL_LOCAL_SYNC_MODE] =
-  g_param_spec_enum ("terminal-local-sync-mode",
-                     "TerminalLocalSyncMode",
+  preferences_props[PROP_TERMINAL_TERMINAL_SYNC_MODE] =
+  g_param_spec_enum ("terminal-sync-mode",
+                     "TerminalSyncMode",
                      NULL,
                      THUNAR_TYPE_TERMINAL_SYNC_MODE,
                      THUNAR_TERMINAL_SYNC_BOTH,
                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
-   * ThunarPreferences:terminal-ssh-auto-connect-mode:
+   * ThunarPreferences:terminal-ssh-auto-connect:
    *
-   * SSH auto-connect mode for terminal widget.
+   * Automatically connect SSH when navigating to SFTP locations.
    **/
-  preferences_props[PROP_TERMINAL_SSH_AUTO_CONNECT_MODE] =
-  g_param_spec_enum ("terminal-ssh-auto-connect-mode",
-                     "TerminalSshAutoConnectMode",
-                     NULL,
-                     THUNAR_TYPE_TERMINAL_SSH_AUTO_CONNECT_MODE,
-                     THUNAR_TERMINAL_SSH_AUTOCONNECT_OFF,
-                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+  preferences_props[PROP_TERMINAL_SSH_AUTO_CONNECT] =
+  g_param_spec_boolean ("terminal-ssh-auto-connect",
+                        "TerminalSshAutoConnect",
+                        NULL,
+                        FALSE,
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:terminal-ssh-auto-disconnect:
+   *
+   * Automatically disconnect SSH when leaving folder.
+   **/
+  preferences_props[PROP_TERMINAL_SSH_AUTO_DISCONNECT] =
+  g_param_spec_boolean ("terminal-ssh-auto-disconnect",
+                        "TerminalSshAutoDisconnect",
+                        NULL,
+                        FALSE,
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:terminal-font-size:
