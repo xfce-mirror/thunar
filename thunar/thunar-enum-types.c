@@ -966,4 +966,3 @@ thunar_terminal_sync_mode_get_type (void)
 
   return type;
 }
-
