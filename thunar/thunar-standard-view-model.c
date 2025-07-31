@@ -241,7 +241,7 @@ thunar_standard_view_model_class_init (gpointer klass)
 
 
 
-/* TODO: Make more detailed documentation for this. */
+// TODO: Make more detailed documentation for this.
 
 /**
  * thunar_standard_view_model_get_folder:
