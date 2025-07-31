@@ -2968,25 +2968,6 @@ thunar_window_create_view (ThunarWindow *window,
   return view;
 }
 
-#ifdef HAVE_VTE
-/* VTE, when initialized, treats the initial size as the minimum,so when resizing
- * to a smaller size, the bottom part of the terminal becomes hidden. It is necessary
- * to start with the minimum size and then resize to the correct dimensions. */
-static void
-set_paned_position_once (GtkWidget *paned, GtkAllocation *allocation, gpointer data)
-{
-  int saved_height = GPOINTER_TO_INT (data);
-  if (allocation->height > saved_height && saved_height > 0)
-    {
-      int position = allocation->height - saved_height;
-      gtk_paned_set_position (GTK_PANED (paned), position);
-
-      /* Disconnect the signal to avoid further calls */
-      g_signal_handlers_disconnect_by_func (paned, set_paned_position_once, data);
-    }
-}
-#endif
-
 static void
 thunar_window_notebook_insert_page (ThunarWindow *window,
                                     gint          position,
@@ -3086,9 +3067,8 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   gtk_widget_show_all (tab_content_paned);
 
 #ifdef HAVE_VTE
-  /* VTE-specific setup after page insertion */
-  g_signal_connect_after (tab_content_paned, "size-allocate",
-                          G_CALLBACK (set_paned_position_once), GINT_TO_POINTER (saved_height));
+  /* Set the initial terminal height directly */
+  gtk_widget_set_size_request (GTK_WIDGET (terminal), -1, saved_height);
 
   thunar_standard_view_set_terminal_widget (THUNAR_STANDARD_VIEW (view), terminal);
   g_signal_connect (terminal, "change-directory", G_CALLBACK (thunar_window_terminal_directory_changed), window);
