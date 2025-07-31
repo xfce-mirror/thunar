@@ -571,7 +571,6 @@ struct _ThunarWindow
   GtkWidget *sidepane_preview_image;
   GtkWidget *view_box;
   GtkWidget *view;
-
   GtkWidget *statusbar;
 
   /* image preview pane */
@@ -1390,7 +1389,9 @@ thunar_window_show_and_select_files (ThunarWindow *window,
       thunar_window_open_files_in_location (window, files_to_select);
     }
   else
-    thunar_window_select_files (window, files_to_select);
+    {
+      thunar_window_select_files (window, files_to_select);
+    }
 
   /* scroll to first file */
   if (files_to_select != NULL)
@@ -2724,8 +2725,10 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
           thunar_window_action_toggle_split_view (window);
         }
       else
-        /* destroy the window */
-        gtk_widget_destroy (GTK_WIDGET (window));
+        {
+          /* destroy the window */
+          gtk_widget_destroy (GTK_WIDGET (window));
+        }
     }
   else
     {
@@ -2943,7 +2946,9 @@ thunar_window_create_view (ThunarWindow *window,
 
   /* If there is already an active view, inherit settings and history from that */
   if (window->view == NULL)
-    g_object_get (G_OBJECT (window->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
+    {
+      g_object_get (G_OBJECT (window->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
+    }
   else
     {
       g_object_get (window->view, "sort-column", &sort_column, "sort-order", &sort_order, NULL);
@@ -4402,7 +4407,9 @@ image_preview_update (GtkWidget     *parent,
 
 
   if (allocation != NULL)
-    new_size = allocation->width < allocation->height ? allocation->width - 50 : allocation->height - 50;
+    {
+      new_size = allocation->width < allocation->height ? allocation->width - 50 : allocation->height - 50;
+    }
   else
     {
       GtkAllocation alloc;
@@ -4629,14 +4636,14 @@ thunar_window_replace_view (ThunarWindow *window,
   if (view_to_replace == window->view)
     thunar_window_switch_current_view (window, new_view);
 
-  /* Scroll to the previously visible file in the old view. */
+  /* scroll to the previously visible file in the old view */
   if (G_UNLIKELY (file != NULL))
     thunar_view_scroll_to_file (THUNAR_VIEW (new_view), file, FALSE, TRUE, 0.0f, 0.0f);
 
   /* Now it's safe to destroy the old view. */
   g_object_unref (view_to_replace);
 
-  /* release the file and directory references */
+  /* release the file references */
   if (G_UNLIKELY (file != NULL))
     g_object_unref (G_OBJECT (file));
   if (G_UNLIKELY (current_directory != NULL))
@@ -7243,9 +7250,9 @@ thunar_window_location_toolbar_load_items (ThunarWindow *window)
   guint   items_length;
   gchar  *tmp;
 
-  /* read and migrate old settings
-   * TODO: drop this code block and the called functions
-   * after the 4.20 release, or later if desired */
+  /* read and migrate old settings */
+  // TODO: drop this code block and the called functions
+  //       after the 4.20 release, or later if desired
   if (!thunar_preferences_has_property (window->preferences, "/last-toolbar-items")
       && thunar_preferences_has_property (window->preferences, "/last-toolbar-item-order"))
     {
@@ -7603,5 +7610,5 @@ thunar_window_queue_redraw (ThunarWindow *window)
   if (G_LIKELY (window->view != NULL))
     thunar_standard_view_queue_redraw (THUNAR_STANDARD_VIEW (window->view));
 
-  /* TODO: Redraw as well all other parts of the window */
+  // TODO: Redraw as well all other parts of the window
 }
