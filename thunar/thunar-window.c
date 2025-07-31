@@ -1386,9 +1386,7 @@ thunar_window_show_and_select_files (ThunarWindow *window,
 
   restore_and_show_in_progress = thunar_file_is_trash (window->current_directory) && thunar_g_file_is_trashed (files_to_select->data) == FALSE;
   if (restore_and_show_in_progress)
-    {
-      thunar_window_open_files_in_location (window, files_to_select);
-    }
+    thunar_window_open_files_in_location (window, files_to_select);
   else
     {
       thunar_window_select_files (window, files_to_select);
@@ -3298,8 +3296,8 @@ thunar_window_notebook_add_new_tab (ThunarWindow        *window,
   page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
   view = thunar_window_create_view (window, directory, view_type);
 
-  /* history is updated only on 'change-directory' signal. */
-  /* For inserting a new tab, we need to update it manually */
+  /* history is updated only on 'change-directory' signal.
+   * For inserting a new tab, we need to update it manually */
   history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (view));
   if (G_LIKELY (history))
     thunar_history_add (history, directory);
@@ -3980,52 +3978,52 @@ thunar_window_action_detach_tab (ThunarWindow *window,
   _thunar_return_val_if_fail (THUNAR_IS_VIEW (view_to_move), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  // Get the top-level container for the tab page, which is the GtkPaned.
+  /* Get the top-level container for the tab page, which is the GtkPaned. */
   tab_page_container = gtk_widget_get_parent (view_to_move);
   _thunar_return_val_if_fail (GTK_IS_PANED (tab_page_container), FALSE);
 
-  // Create a new window and get its notebook.
+  /* Create a new window and get its notebook. */
   new_notebook = thunar_window_notebook_create_window (window->notebook_selected, tab_page_container, -1, -1, window);
-  if (new_notebook == NULL)
-    return TRUE; // Nothing to do if window creation failed or was aborted.
+  if (new_notebook == NULL) /* Nothing to do if window creation failed or was aborted. */
+    return TRUE;
 
   ThunarWindow *new_thunar_window = THUNAR_WINDOW (gtk_widget_get_toplevel (new_notebook));
 
 #ifdef HAVE_VTE
   ThunarTerminalWidget *terminal_to_move;
-  // Get the terminal associated with the view being moved.
+  /* Get the terminal associated with the view being moved. */
   terminal_to_move = thunar_window_get_view_terminal (view_to_move);
   _thunar_return_val_if_fail (THUNAR_IS_TERMINAL_WIDGET (terminal_to_move), FALSE);
 
-  // Reconnect the terminal's "change-directory" signal to the new window.
+  /* Reconnect the terminal's "change-directory" signal to the new window. */
   g_signal_handlers_disconnect_by_func (terminal_to_move, G_CALLBACK (thunar_window_terminal_directory_changed), window);
   g_signal_connect (terminal_to_move, "change-directory", G_CALLBACK (thunar_window_terminal_directory_changed), new_thunar_window);
 #endif
 
-  // get the current label
+  /* get the current label */
   label = gtk_notebook_get_tab_label (GTK_NOTEBOOK (window->notebook_selected), tab_page_container);
   _thunar_return_val_if_fail (GTK_IS_WIDGET (label), FALSE);
 
-  // ref objects so they don't destroy when removed from the container
+  /* ref objects so they don't destroy when removed from the container */
   g_object_ref (label);
   g_object_ref (tab_page_container);
 
-  // remove tab page container from the current notebook
+  /* remove tab page container from the current notebook */
   gtk_container_remove (GTK_CONTAINER (window->notebook_selected), tab_page_container);
 
-  // insert in the new notebook
+  /* insert in the new notebook */
   gtk_notebook_insert_page (GTK_NOTEBOOK (new_notebook), tab_page_container, label, 0);
 
-  // set tab child properties
+  /* set tab child properties */
   gtk_container_child_set (GTK_CONTAINER (new_notebook), tab_page_container, "tab-expand", TRUE, NULL);
   gtk_notebook_set_tab_reorderable (GTK_NOTEBOOK (new_notebook), tab_page_container, TRUE);
   gtk_notebook_set_tab_detachable (GTK_NOTEBOOK (new_notebook), tab_page_container, TRUE);
 
-  // release
+  /* release */
   g_object_unref (label);
   g_object_unref (tab_page_container);
 
-  // Explicitly set the new window's current view and active terminal.
+  /* Explicitly set the new window's current view and active terminal. */
   thunar_window_switch_current_view (new_thunar_window, view_to_move);
 
   return TRUE;
@@ -4180,7 +4178,7 @@ thunar_window_action_preferences (ThunarWindow *window,
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  /* allocate and display a preferences dialog */;
+  /* allocate and display a preferences dialog */
   dialog = thunar_preferences_dialog_new (GTK_WINDOW (window));
   gtk_widget_show (dialog);
 
@@ -4618,11 +4616,11 @@ thunar_window_replace_view (ThunarWindow *window,
   /*** START OF MODIFICATION - Non-destructive view replacement ***/
 
 #ifdef HAVE_VTE
-  // Get the paned container and the terminal to reuse.
+  /* Get the paned container and the terminal to reuse. */
   GtkWidget            *paned_container = gtk_widget_get_parent (view_to_replace);
   ThunarTerminalWidget *terminal_to_reuse = thunar_window_get_view_terminal (view_to_replace);
 
-  // Ensure the widget hierarchy is as expected.
+  /* Ensure the widget hierarchy is as expected. */
   if (!GTK_IS_PANED (paned_container) || !THUNAR_IS_TERMINAL_WIDGET (terminal_to_reuse))
     {
       g_warning ("Could not replace view in-place: view is not in a recognized paned container with a terminal.");
@@ -4633,24 +4631,25 @@ thunar_window_replace_view (ThunarWindow *window,
       return;
     }
 #else
-  // Without VTE, just get the parent container
+  /* Without VTE, just get the parent container */
   GtkWidget *paned_container = gtk_widget_get_parent (view_to_replace);
 #endif
 
 #ifdef HAVE_VTE
-  g_object_ref (terminal_to_reuse); // Keep terminal alive during the swap.
+  /* Keep terminal alive during the swap. */
+  g_object_ref (terminal_to_reuse);
 #endif
 
-  // Create the new view.
+  /* Create the new view. */
   new_view = thunar_window_create_view (window, current_directory, view_type);
 
-  // Swap the view widgets inside the paned container.
-  g_object_ref (view_to_replace); // Keep old view alive for selection transfer.
+  /* Swap the view widgets inside the paned container. */
+  g_object_ref (view_to_replace); /* Keep old view alive for selection transfer. */
   gtk_container_remove (GTK_CONTAINER (paned_container), view_to_replace);
   gtk_paned_pack1 (GTK_PANED (paned_container), new_view, TRUE, TRUE);
   gtk_widget_show (new_view);
 
-  // Transfer the file selection from the old view to the new one.
+  /* Transfer the file selection from the old view to the new one. */
   if (new_view != NULL)
     thunar_standard_view_transfer_selection (THUNAR_STANDARD_VIEW (new_view), THUNAR_STANDARD_VIEW (view_to_replace));
 
@@ -4662,13 +4661,14 @@ thunar_window_replace_view (ThunarWindow *window,
   if (view_to_replace == window->view)
     thunar_window_switch_current_view (window, new_view);
 
-  // Scroll to the previously visible file in the old view.
+  /* Scroll to the previously visible file in the old view. */
   if (G_UNLIKELY (file != NULL))
     thunar_view_scroll_to_file (THUNAR_VIEW (new_view), file, FALSE, TRUE, 0.0f, 0.0f);
 
-  g_object_unref (view_to_replace); // Now it's safe to destroy the old view.
+  /* Now it's safe to destroy the old view. */
+  g_object_unref (view_to_replace);
 
-  // release the file and directory references
+  /* release the file and directory references */
   if (G_UNLIKELY (file != NULL))
     g_object_unref (G_OBJECT (file));
   if (G_UNLIKELY (current_directory != NULL))
@@ -7279,9 +7279,9 @@ thunar_window_location_toolbar_load_items (ThunarWindow *window)
   guint   items_length;
   gchar  *tmp;
 
-  /* read and migrate old settings */
-  // TODO: drop this code block and the called functions
-  //       after the 4.20 release, or later if desired
+  /* read and migrate old settings
+   * TODO: drop this code block and the called functions
+   * after the 4.20 release, or later if desired */
   if (!thunar_preferences_has_property (window->preferences, "/last-toolbar-items")
       && thunar_preferences_has_property (window->preferences, "/last-toolbar-item-order"))
     {
@@ -7639,5 +7639,5 @@ thunar_window_queue_redraw (ThunarWindow *window)
   if (G_LIKELY (window->view != NULL))
     thunar_standard_view_queue_redraw (THUNAR_STANDARD_VIEW (window->view));
 
-  // TODO: Redraw as well all other parts of the window
+  /* TODO: Redraw as well all other parts of the window */
 }
