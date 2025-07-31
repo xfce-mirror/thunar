@@ -268,7 +268,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    *
    * If enabled, filenames are split into collatable substrings and e.g. numbers are compared separately,
    * in a numeric way instead of comparing them digit-by-digit.
-   *
+   * 
    * Sort order example with smart sorting enabled:
    * - file1 file5 file10
    *
