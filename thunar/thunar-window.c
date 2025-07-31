@@ -1386,11 +1386,11 @@ thunar_window_show_and_select_files (ThunarWindow *window,
 
   restore_and_show_in_progress = thunar_file_is_trash (window->current_directory) && thunar_g_file_is_trashed (files_to_select->data) == FALSE;
   if (restore_and_show_in_progress)
-    thunar_window_open_files_in_location (window, files_to_select);
-  else
     {
-      thunar_window_select_files (window, files_to_select);
+      thunar_window_open_files_in_location (window, files_to_select);
     }
+  else
+    thunar_window_select_files (window, files_to_select);
 
   /* scroll to first file */
   if (files_to_select != NULL)
@@ -2608,7 +2608,7 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   _thunar_return_if_fail (THUNAR_IS_VIEW (view));
 
   /* leave if nothing changed or tab from other split-view is selected as
-   thunar_window_notebook_select_current_page() is going to take care of that */
+   * thunar_window_notebook_select_current_page() is going to take care of that */
   if ((window->view == view) || (window->notebook_selected != notebook))
     return;
 
@@ -2741,10 +2741,8 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
           thunar_window_action_toggle_split_view (window);
         }
       else
-        {
-          /* destroy the window */
-          gtk_widget_destroy (GTK_WIDGET (window));
-        }
+        /* destroy the window */
+        gtk_widget_destroy (GTK_WIDGET (window));
     }
   else
     {
@@ -2966,9 +2964,7 @@ thunar_window_create_view (ThunarWindow *window,
 
   /* If there is already an active view, inherit settings and history from that */
   if (window->view == NULL)
-    {
-      g_object_get (G_OBJECT (window->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
-    }
+    g_object_get (G_OBJECT (window->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
   else
     {
       g_object_get (window->view, "sort-column", &sort_column, "sort-order", &sort_order, NULL);
@@ -3030,6 +3026,7 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   label_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
   label = gtk_label_new (NULL);
+
   g_object_set_data (G_OBJECT (label), "window", window);
   g_object_set_data (G_OBJECT (label), "view", view);
   g_object_set_data (G_OBJECT (label), "binding", NULL);
@@ -3115,9 +3112,7 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
       thunar_terminal_widget_handle_show (terminal);
     }
   else
-    {
-      gtk_widget_hide (GTK_WIDGET (terminal));
-    }
+    gtk_widget_hide (GTK_WIDGET (terminal));
 #endif
 }
 
@@ -3296,8 +3291,8 @@ thunar_window_notebook_add_new_tab (ThunarWindow        *window,
   page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
   view = thunar_window_create_view (window, directory, view_type);
 
-  /* history is updated only on 'change-directory' signal.
-   * For inserting a new tab, we need to update it manually */
+  /* history is updated only on 'change-directory' signal. */
+  /* For inserting a new tab, we need to update it manually */
   history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (view));
   if (G_LIKELY (history))
     thunar_history_add (history, directory);
@@ -4057,9 +4052,7 @@ thunar_window_action_view_terminal (ThunarWindow *window,
       thunar_terminal_widget_handle_show (current_terminal);
     }
   else
-    {
-      gtk_widget_hide (GTK_WIDGET (current_terminal));
-    }
+    gtk_widget_hide (GTK_WIDGET (current_terminal));
 
   return TRUE;
 }
@@ -4122,9 +4115,7 @@ thunar_window_action_close_tab (ThunarWindow *window,
             gtk_widget_destroy (GTK_WIDGET (window));
         }
       else if (tab_page_to_destroy != NULL)
-        {
-          gtk_widget_destroy (tab_page_to_destroy);
-        }
+        gtk_widget_destroy (tab_page_to_destroy);
     }
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
@@ -4432,9 +4423,7 @@ image_preview_update (GtkWidget     *parent,
 
 
   if (allocation != NULL)
-    {
-      new_size = allocation->width < allocation->height ? allocation->width - 50 : allocation->height - 50;
-    }
+    new_size = allocation->width < allocation->height ? allocation->width - 50 : allocation->height - 50;
   else
     {
       GtkAllocation alloc;
