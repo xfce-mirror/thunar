@@ -81,9 +81,6 @@ thunar_terminal_widget_set_current_location (ThunarTerminalWidget *self,
 void
 thunar_terminal_widget_ensure_terminal_focus (ThunarTerminalWidget *self);
 
-void
-thunar_terminal_widget_handle_show (ThunarTerminalWidget *self);
-
 G_END_DECLS
 
 #endif /* !__THUNAR_TERMINAL_WIDGET_H__ */

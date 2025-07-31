@@ -3096,10 +3096,7 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   /* Initialize terminal visibility based on preferences */
   g_object_get (window->preferences, "terminal-visible", &terminal_visible, NULL);
   if (terminal_visible)
-    {
-      gtk_widget_show (GTK_WIDGET (terminal));
-      thunar_terminal_widget_handle_show (terminal);
-    }
+    gtk_widget_show (GTK_WIDGET (terminal));
   else
     gtk_widget_hide (GTK_WIDGET (terminal));
 #endif
@@ -4032,10 +4029,7 @@ thunar_window_action_view_terminal (ThunarWindow *window,
 
   /* Actually show/hide the terminal widget */
   if (should_be_visible)
-    {
-      gtk_widget_show (GTK_WIDGET (current_terminal));
-      thunar_terminal_widget_handle_show (current_terminal);
-    }
+    gtk_widget_show (GTK_WIDGET (current_terminal));
   else
     gtk_widget_hide (GTK_WIDGET (current_terminal));
 
