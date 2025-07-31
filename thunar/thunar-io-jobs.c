@@ -1889,7 +1889,7 @@ thunar_io_jobs_set_metadata_for_files (GList      *files,
       val = va_arg (list, gchar *);
       if (val == NULL)
         break;
-      // Needs to be null terminated for use in g_strfreev
+      /* Needs to be null terminated for use in g_strfreev */
       sn_val_pair = (gchar **) g_malloc0 (sizeof (gchar *) * 3);
       sn_val_pair[0] = g_strdup (str);
       sn_val_pair[1] = g_strdup (val);
