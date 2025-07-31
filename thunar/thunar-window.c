@@ -4241,7 +4241,6 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
       g_signal_handlers_disconnect_by_func (window->paned_notebooks, thunar_window_save_paned_notebooks, window);
       g_signal_handlers_disconnect_by_func (window->paned_notebooks, thunar_window_paned_notebooks_button_press_event, NULL);
     }
-
   else
     {
       window->notebook_selected = thunar_window_paned_notebooks_add (window);
