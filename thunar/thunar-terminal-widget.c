@@ -111,7 +111,7 @@ typedef struct
 } ThunarTerminalColorPalette;
 
 /* Helper macro to reduce verbosity when defining GdkRGBA colors. Alpha is assumed to be 1.0. */
-#define RGB(r, g, b) ((GdkRGBA) { .red = (r), .green = (g), .blue = (b), .alpha = 1.0 })
+#define RGB(r, g, b) ((GdkRGBA){ .red = (r), .green = (g), .blue = (b), .alpha = 1.0 })
 
 /* Struct to map a color scheme ID to its UI label and its embedded palette data. */
 typedef struct
