@@ -540,7 +540,7 @@ thunar_terminal_widget_ensure_terminal_focus (ThunarTerminalWidget *self)
   priv->focus_timeout_id = g_timeout_add (50, focus_once_and_remove, priv->terminal);
 }
 
-void
+static void
 thunar_terminal_widget_handle_show (ThunarTerminalWidget *self)
 {
   ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);
@@ -690,6 +690,7 @@ thunar_terminal_widget_init (ThunarTerminalWidget *self)
   /* Connect signals */
   g_signal_connect (priv->terminal, "child-exited", G_CALLBACK (on_terminal_child_exited), self);
   g_signal_connect (priv->terminal, "button-release-event", G_CALLBACK (on_terminal_button_release), self);
+  g_signal_connect (self, "show", G_CALLBACK (thunar_terminal_widget_handle_show), NULL);
 
 #if VTE_CHECK_VERSION(0, 78, 0)
   g_signal_connect (priv->terminal, "termprop-changed", G_CALLBACK (on_directory_changed), self);
