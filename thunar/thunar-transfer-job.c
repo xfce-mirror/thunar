@@ -1446,6 +1446,7 @@ thunar_transfer_job_fill_source_device_info (ThunarTransferJob *transfer_job,
                                             NULL);
   if (file_info != NULL)
     {
+      g_free (transfer_job->source_device_fs_id);
       transfer_job->source_device_fs_id = g_strdup (g_file_info_get_attribute_string (file_info, G_FILE_ATTRIBUTE_ID_FILESYSTEM));
       g_object_unref (file_info);
     }
@@ -1476,6 +1477,7 @@ thunar_transfer_job_fill_target_device_info (ThunarTransferJob *transfer_job,
                                      NULL);
       if (file_info != NULL)
         {
+          g_free (transfer_job->target_device_fs_id);
           transfer_job->target_device_fs_id = g_strdup (g_file_info_get_attribute_string (file_info, G_FILE_ATTRIBUTE_ID_FILESYSTEM));
           g_object_unref (file_info);
           break;
