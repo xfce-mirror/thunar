@@ -3071,6 +3071,11 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   gtk_widget_set_size_request (GTK_WIDGET (terminal), -1, saved_height);
 
   thunar_standard_view_set_terminal_widget (THUNAR_STANDARD_VIEW (view), terminal);
+
+  /* Use unidirectional binding for view -> terminal synchronization */
+  thunar_window_binding_create (window, view, "current-directory", terminal, "current-directory", G_BINDING_DEFAULT);
+
+  /* Use signal for terminal -> window synchronization (only active tab will affect window) */
   g_signal_connect (terminal, "change-directory", G_CALLBACK (thunar_window_terminal_directory_changed), window);
 
   /* Initialize terminal visibility based on preferences */
