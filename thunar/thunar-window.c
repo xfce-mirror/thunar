@@ -1972,7 +1972,7 @@ thunar_window_delete (GtkWidget *widget,
         {
           /* Always get view from paned widget's first child */
           ThunarNavigator *view = THUNAR_NAVIGATOR (gtk_paned_get_child1 (GTK_PANED (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_left), i))));
-          gchar *uri = g_file_get_uri (thunar_file_get_file (thunar_navigator_get_current_directory (view)));
+          gchar           *uri = g_file_get_uri (thunar_file_get_file (thunar_navigator_get_current_directory (view)));
           tab_uris_left[i] = g_strdup (uri);
           g_free (uri);
         }
@@ -1982,7 +1982,7 @@ thunar_window_delete (GtkWidget *widget,
         {
           /* Always get view from paned widget's first child */
           ThunarNavigator *view = THUNAR_NAVIGATOR (gtk_paned_get_child1 (GTK_PANED (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_right), i))));
-          gchar *uri = g_file_get_uri (thunar_file_get_file (thunar_navigator_get_current_directory (view)));
+          gchar           *uri = g_file_get_uri (thunar_file_get_file (thunar_navigator_get_current_directory (view)));
           tab_uris_right[i] = g_strdup (uri);
           g_free (uri);
         }
