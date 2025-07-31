@@ -511,33 +511,27 @@ thunar_terminal_widget_set_color_scheme (ThunarTerminalWidget *self,
   thunar_terminal_widget_apply_color_scheme (self);
 }
 
-static gboolean
-focus_once_and_remove (gpointer user_data)
-{
-  GtkWidget            *widget_to_focus = GTK_WIDGET (user_data);
-  ThunarTerminalWidget *self = THUNAR_TERMINAL_WIDGET (gtk_widget_get_ancestor (widget_to_focus, THUNAR_TYPE_TERMINAL_WIDGET));
-
-  if (self)
-    {
-      ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);
-      if (gtk_widget_get_window (widget_to_focus))
-        {
-          gtk_widget_grab_focus (widget_to_focus);
-          priv->focus_timeout_id = 0;
-        }
-    }
-
-  return G_SOURCE_REMOVE;
-}
-
 void
 thunar_terminal_widget_ensure_terminal_focus (ThunarTerminalWidget *self)
 {
   ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);
   _thunar_return_if_fail (THUNAR_IS_TERMINAL_WIDGET (self));
+
+  /* Cancel any pending focus timeout */
   if (priv->focus_timeout_id > 0)
-    g_source_remove (priv->focus_timeout_id);
-  priv->focus_timeout_id = g_timeout_add (50, focus_once_and_remove, priv->terminal);
+    {
+      g_source_remove (priv->focus_timeout_id);
+      priv->focus_timeout_id = 0;
+    }
+
+  /* Focus the terminal directly if it's realized, otherwise use a simple idle callback */
+  if (gtk_widget_get_realized (GTK_WIDGET (priv->terminal)))
+    gtk_widget_grab_focus (GTK_WIDGET (priv->terminal));
+  else
+    priv->focus_timeout_id = g_idle_add_full (G_PRIORITY_DEFAULT_IDLE, 
+                                              (GSourceFunc) gtk_widget_grab_focus, 
+                                              g_object_ref (priv->terminal), 
+                                              g_object_unref);
 }
 
 static void
