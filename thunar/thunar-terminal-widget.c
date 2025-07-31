@@ -524,14 +524,10 @@ thunar_terminal_widget_ensure_terminal_focus (ThunarTerminalWidget *self)
       priv->focus_timeout_id = 0;
     }
 
-  /* Focus the terminal directly if it's realized, otherwise use a simple idle callback */
+  /* Focus the terminal directly if it's realized, otherwise just wait for the next show event */
   if (gtk_widget_get_realized (GTK_WIDGET (priv->terminal)))
     gtk_widget_grab_focus (GTK_WIDGET (priv->terminal));
-  else
-    priv->focus_timeout_id = g_idle_add_full (G_PRIORITY_DEFAULT_IDLE, 
-                                              (GSourceFunc) gtk_widget_grab_focus, 
-                                              g_object_ref (priv->terminal), 
-                                              g_object_unref);
+  /* Don't schedule any callback - let the show handler deal with focusing when ready */
 }
 
 static void
@@ -707,7 +703,10 @@ thunar_terminal_widget_finalize (GObject *object)
   g_signal_handlers_disconnect_by_data (prefs, self);
 
   if (priv->focus_timeout_id > 0)
-    g_source_remove (priv->focus_timeout_id);
+    {
+      g_source_remove (priv->focus_timeout_id);
+      priv->focus_timeout_id = 0;
+    }
 
   /* Cancel any pending async operations and free all allocated resources. */
   g_cancellable_cancel (priv->spawn_cancellable);
