@@ -65,23 +65,23 @@ struct _ThunarTerminalWidgetPrivate
   GCancellable       *spawn_cancellable;              /* A GCancellable object to allow cancelling an asynchronous terminal spawn operation. */
 
   /* Preferences */
-  gchar                  *color_scheme;          /* The name of the current color scheme (e.g., "dark", "solarized-light"). */
-  ThunarTerminalSyncMode  terminal_sync_mode;       /* The directory synchronization mode for both local shell and SSH sessions. */
-  gboolean                ssh_auto_connect;      /* Automatically connect SSH when navigating to SFTP locations. */
-  gboolean                ssh_auto_disconnect;   /* Automatically disconnect SSH when leaving folder. */
+  gchar                 *color_scheme;        /* The name of the current color scheme (e.g., "dark", "solarized-light"). */
+  ThunarTerminalSyncMode terminal_sync_mode;  /* The directory synchronization mode for both local shell and SSH sessions. */
+  gboolean               ssh_auto_connect;    /* Automatically connect SSH when navigating to SFTP locations. */
+  gboolean               ssh_auto_disconnect; /* Automatically disconnect SSH when leaving folder. */
 
   /* Location and SSH details */
   GFile *current_location; /* The GFile representing the current directory displayed in the file manager view. */
 
-  gchar                 *ssh_hostname;    /* The hostname for the current SSH connection. */
-  gchar                 *ssh_username;    /* The username for the current SSH connection. */
-  gchar                 *ssh_port;        /* The port for the current SSH connection. */
-  gchar                 *ssh_remote_path; /* The remote path to change to after an SSH connection is established. */
+  gchar *ssh_hostname;    /* The hostname for the current SSH connection. */
+  gchar *ssh_username;    /* The username for the current SSH connection. */
+  gchar *ssh_port;        /* The port for the current SSH connection. */
+  gchar *ssh_remote_path; /* The remote path to change to after an SSH connection is established. */
 
   /* Pending SSH connection details, used when a location is set before the terminal is spawned */
-  gchar                 *pending_ssh_hostname;  /* The hostname for a pending SSH connection, to be used after the local shell spawns. */
-  gchar                 *pending_ssh_username;  /* The username for a pending SSH connection. */
-  gchar                 *pending_ssh_port;      /* The port for a pending SSH connection. */
+  gchar *pending_ssh_hostname; /* The hostname for a pending SSH connection, to be used after the local shell spawns. */
+  gchar *pending_ssh_username; /* The username for a pending SSH connection. */
+  gchar *pending_ssh_port;     /* The port for a pending SSH connection. */
 };
 
 /* SSH mode
@@ -111,7 +111,7 @@ typedef struct
 } ThunarTerminalColorPalette;
 
 /* Helper macro to reduce verbosity when defining GdkRGBA colors. Alpha is assumed to be 1.0. */
-#define RGB(r, g, b) ((GdkRGBA){ .red = (r), .green = (g), .blue = (b), .alpha = 1.0 })
+#define RGB(r, g, b) ((GdkRGBA) { .red = (r), .green = (g), .blue = (b), .alpha = 1.0 })
 
 /* Struct to map a color scheme ID to its UI label and its embedded palette data. */
 typedef struct
@@ -370,9 +370,7 @@ thunar_terminal_widget_set_current_location (ThunarTerminalWidget *self,
 
   /* Do nothing if the location hasn't changed. This handles all NULL cases correctly. */
   if ((priv->current_location == location) || (priv->current_location && location && g_file_equal (priv->current_location, location)))
-    {
-      return;
-    }
+    return;
 
   g_set_object (&priv->current_location, location);
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CURRENT_LOCATION]);
@@ -415,9 +413,7 @@ thunar_terminal_widget_set_current_location (ThunarTerminalWidget *self,
 
   /* If we have reached this point and the new location is NULL, there's nothing left to sync. */
   if (location == NULL)
-    {
-      return;
-    }
+    return;
 
   /*
    * If we are already in an SSH session, we check for disconnection or directory sync.
@@ -454,9 +450,7 @@ thunar_terminal_widget_set_current_location (ThunarTerminalWidget *self,
     /*
      * If we are in a local shell and the new location is not an SSH auto-connect trigger, simply change the directory.
      */
-    {
-      change_directory_in_terminal (self, location);
-    }
+    change_directory_in_terminal (self, location);
 }
 
 static const gchar *
@@ -466,9 +460,7 @@ thunar_terminal_widget_get_color_scheme (ThunarTerminalWidget *self)
   _thunar_return_val_if_fail (THUNAR_IS_TERMINAL_WIDGET (self), "system");
 
   if (priv->color_scheme == NULL)
-    {
-      g_object_get (thunar_preferences_get (), "terminal-color-scheme", &priv->color_scheme, NULL);
-    }
+    g_object_get (thunar_preferences_get (), "terminal-color-scheme", &priv->color_scheme, NULL);
   return priv->color_scheme;
 }
 
@@ -494,9 +486,7 @@ thunar_terminal_widget_apply_color_scheme (ThunarTerminalWidget *self)
     }
 
   if (palette_to_apply->use_system_colors)
-    {
-      vte_terminal_set_colors (priv->terminal, NULL, NULL, NULL, 0);
-    }
+    vte_terminal_set_colors (priv->terminal, NULL, NULL, NULL, 0);
   else
     {
       vte_terminal_set_colors (priv->terminal,
@@ -796,9 +786,7 @@ spawn_async_callback (VteTerminal *terminal,
   ThunarTerminalWidgetPrivate *priv;
 
   if (G_UNLIKELY (gtk_widget_in_destruction (GTK_WIDGET (self))))
-    {
-      return;
-    }
+    return;
   priv = self->priv;
 
   if (pid == -1)
@@ -982,18 +970,14 @@ on_terminal_child_exited (VteTerminal *terminal,
     {
       _reset_to_local_state (self); /* This sets needs_respawn = TRUE */
       if (gtk_widget_get_visible (GTK_WIDGET (self)))
-        {
-          spawn_terminal_async (self);
-        }
+        spawn_terminal_async (self);
     }
   /*
    * If the local shell exits (e.g., user types 'exit'), we hide the
    * terminal widget and ensure it's marked for a full respawn on next show.
    */
   else if (priv->state == THUNAR_TERMINAL_STATE_LOCAL)
-    {
-      priv->needs_respawn = TRUE;
-    }
+    priv->needs_respawn = TRUE;
 }
 
 /*
@@ -1017,17 +1001,11 @@ on_terminal_preference_changed (ThunarPreferences *prefs,
   const gchar                 *name = g_param_spec_get_name (pspec);
 
   if (g_strcmp0 (name, "terminal-sync-mode") == 0)
-    {
-      g_object_get (prefs, "terminal-sync-mode", &priv->terminal_sync_mode, NULL);
-    }
+    g_object_get (prefs, "terminal-sync-mode", &priv->terminal_sync_mode, NULL);
   else if (g_strcmp0 (name, "terminal-ssh-auto-connect") == 0)
-    {
-      g_object_get (prefs, "terminal-ssh-auto-connect", &priv->ssh_auto_connect, NULL);
-    }
+    g_object_get (prefs, "terminal-ssh-auto-connect", &priv->ssh_auto_connect, NULL);
   else if (g_strcmp0 (name, "terminal-ssh-auto-disconnect") == 0)
-    {
-      g_object_get (prefs, "terminal-ssh-auto-disconnect", &priv->ssh_auto_disconnect, NULL);
-    }
+    g_object_get (prefs, "terminal-ssh-auto-disconnect", &priv->ssh_auto_disconnect, NULL);
 }
 
 static void
@@ -1038,9 +1016,7 @@ _sync_terminal_to_fm (ThunarTerminalWidget *self, const gchar *cwd_uri)
   gboolean should_sync_to_fm = FALSE;
 
   if (!cwd_uri)
-    {
-      return;
-    }
+    return;
 
   /* When the FM changes the terminal's directory, we must ignore the signal. */
   if (priv->ignore_next_terminal_cd_signal)
@@ -1378,7 +1354,7 @@ create_terminal_popup_menu (ThunarTerminalWidget *self)
             {
               gtk_menu_shell_append (GTK_MENU_SHELL (menu), gtk_separator_menu_item_new ());
               g_autofree gchar *label = g_strdup_printf (_("Connect SSH to %s"), hostname);
-              GtkWidget *ssh_connect_item = gtk_menu_item_new_with_label (label);
+              GtkWidget        *ssh_connect_item = gtk_menu_item_new_with_label (label);
 
               /* Store connection details and use global sync mode */
               g_object_set_data_full (G_OBJECT (ssh_connect_item), DATA_KEY_SSH_HOSTNAME, g_strdup (hostname), g_free);
@@ -1454,9 +1430,7 @@ change_directory_in_terminal (ThunarTerminalWidget *self,
             {
               target_path = g_file_get_path (location);
               if (target_path != NULL)
-                {
-                  should_sync = TRUE;
-                }
+                should_sync = TRUE;
             }
         }
     }
