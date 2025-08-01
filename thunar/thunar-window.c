@@ -216,10 +216,6 @@ thunar_window_install_sidepane (ThunarWindow      *window,
 #ifdef HAVE_VTE
 static ThunarTerminalWidget *
 thunar_window_get_view_terminal (GtkWidget *view);
-static void
-thunar_window_terminal_directory_changed (ThunarTerminalWidget *terminal,
-                                          ThunarFile           *thunar_file,
-                                          ThunarWindow         *window);
 static gboolean
 thunar_window_action_view_terminal (ThunarWindow *window,
                                     GtkWidget    *menu_item);
@@ -2590,6 +2586,9 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
                                     ThunarWindow *window)
 {
   GtkWidget *view;
+#ifdef HAVE_VTE
+  ThunarTerminalWidget *terminal;
+#endif
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
@@ -2602,6 +2601,16 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
    * thunar_window_notebook_select_current_page() is going to take care of that */
   if ((window->view == view) || (window->notebook_selected != notebook))
     return;
+
+#ifdef HAVE_VTE
+  /* Check if the newly active tab has a terminal that needs spawning */
+  terminal = thunar_window_get_view_terminal (view);
+  if (terminal != NULL && gtk_widget_get_visible (GTK_WIDGET (terminal)))
+    {
+      /* Check if terminal needs to be spawned now that tab is active */
+      thunar_terminal_widget_check_spawn_needed (terminal);
+    }
+#endif
 
   thunar_window_switch_current_view (window, view);
 }
@@ -3072,11 +3081,21 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
 
   thunar_standard_view_set_terminal_widget (THUNAR_STANDARD_VIEW (view), terminal);
 
-  /* Use unidirectional binding for view -> terminal synchronization */
-  thunar_window_binding_create (window, view, "current-directory", terminal, "current-directory", G_BINDING_DEFAULT);
+  /* Set terminal directory to match view BEFORE creating the binding
+   * to avoid race conditions during initialization */
+  if (THUNAR_IS_NAVIGATOR (view))
+    {
+      ThunarFile *current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (view));
+      if (current_directory)
+        thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (terminal), current_directory);
+    }
 
-  /* Use signal for terminal -> window synchronization (only active tab will affect window) */
-  g_signal_connect (terminal, "change-directory", G_CALLBACK (thunar_window_terminal_directory_changed), window);
+  /* Create persistent bidirectional binding between terminal and view
+   * This binding should NOT be managed by the window's view binding system
+   * because it needs to persist even when the tab is not active */
+  g_object_bind_property (G_OBJECT (view), "current-directory",
+                          G_OBJECT (terminal), "current-directory",
+                          G_BINDING_BIDIRECTIONAL);
 
   /* Initialize terminal visibility based on preferences */
   g_object_get (window->preferences, "terminal-visible", &terminal_visible, NULL);
@@ -3084,6 +3103,9 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
     gtk_widget_show (GTK_WIDGET (terminal));
   else
     gtk_widget_hide (GTK_WIDGET (terminal));
+
+  /* Check if the terminal needs to be spawned right after creation */
+  thunar_terminal_widget_check_spawn_needed (terminal);
 #endif
 }
 
@@ -3486,29 +3508,6 @@ thunar_window_get_view_terminal (GtkWidget *view)
   return THUNAR_IS_STANDARD_VIEW (view) ? thunar_standard_view_get_terminal_widget (THUNAR_STANDARD_VIEW (view)) : NULL;
 }
 
-static void
-thunar_window_terminal_directory_changed (ThunarTerminalWidget *terminal,
-                                          ThunarFile           *thunar_file,
-                                          ThunarWindow         *window)
-{
-  _thunar_return_if_fail (THUNAR_IS_TERMINAL_WIDGET (terminal));
-  _thunar_return_if_fail (THUNAR_IS_FILE (thunar_file));
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
-
-  /* Don't sync if the window is being destroyed */
-  if (gtk_widget_in_destruction (GTK_WIDGET (window)))
-    return;
-
-  /* Only sync if this terminal belongs to the currently active view */
-  if (window->view != NULL && thunar_window_get_view_terminal (window->view) == terminal)
-    {
-      /* Update the view */
-      thunar_window_set_current_directory (window, thunar_file);
-
-      /* After the directory change, ensure focus returns to the terminal. */
-      thunar_terminal_widget_ensure_terminal_focus (terminal);
-    }
-}
 #endif /* HAVE_VTE */
 
 static gboolean
@@ -3951,17 +3950,6 @@ thunar_window_action_detach_tab (ThunarWindow *window,
 
   ThunarWindow *new_thunar_window = THUNAR_WINDOW (gtk_widget_get_toplevel (new_notebook));
 
-#ifdef HAVE_VTE
-  ThunarTerminalWidget *terminal_to_move;
-  /* Get the terminal associated with the view being moved. */
-  terminal_to_move = thunar_window_get_view_terminal (view_to_move);
-  _thunar_return_val_if_fail (THUNAR_IS_TERMINAL_WIDGET (terminal_to_move), FALSE);
-
-  /* Reconnect the terminal's "change-directory" signal to the new window. */
-  g_signal_handlers_disconnect_by_func (terminal_to_move, G_CALLBACK (thunar_window_terminal_directory_changed), window);
-  g_signal_connect (terminal_to_move, "change-directory", G_CALLBACK (thunar_window_terminal_directory_changed), new_thunar_window);
-#endif
-
   /* get the current label */
   label = gtk_notebook_get_tab_label (GTK_NOTEBOOK (window->notebook_selected), tab_page_container);
   _thunar_return_val_if_fail (GTK_IS_WIDGET (label), FALSE);
@@ -4012,9 +4000,11 @@ thunar_window_action_view_terminal (ThunarWindow *window,
   /* Update preferences to persist the visibility state */
   g_object_set (window->preferences, "terminal-visible", should_be_visible, NULL);
 
-  /* Actually show/hide the terminal widget */
   if (should_be_visible)
-    gtk_widget_show (GTK_WIDGET (current_terminal));
+    {
+      gtk_widget_show (GTK_WIDGET (current_terminal));
+      thunar_terminal_widget_check_spawn_needed (current_terminal);
+    }
   else
     gtk_widget_hide (GTK_WIDGET (current_terminal));
 

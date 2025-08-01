@@ -20,8 +20,6 @@
 #ifndef __THUNAR_TERMINAL_WIDGET_H__
 #define __THUNAR_TERMINAL_WIDGET_H__
 
-#include "thunar-enum-types.h"
-
 #include <gio/gio.h>
 #include <gtk/gtk.h>
 
@@ -80,6 +78,9 @@ thunar_terminal_widget_set_current_location (ThunarTerminalWidget *self,
 
 void
 thunar_terminal_widget_ensure_terminal_focus (ThunarTerminalWidget *self);
+
+void
+thunar_terminal_widget_check_spawn_needed (ThunarTerminalWidget *self);
 
 G_END_DECLS
 
