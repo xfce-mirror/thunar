@@ -130,3 +130,10 @@ option(
   value: false,
   description: 'Enables the posibillity to set custom thunarx directories by using the environment variable THUNARX_DIRS',
 )
+
+option(
+  'terminal',
+  type: 'feature',
+  value: 'auto',
+  description: 'Enable integrated terminal support (requires VTE)',
+)
