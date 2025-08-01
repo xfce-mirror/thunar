@@ -374,6 +374,7 @@ thunar_terminal_widget_set_current_location (ThunarTerminalWidget *self,
 
   g_set_object (&priv->current_location, location);
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CURRENT_LOCATION]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_NAVIGATOR_CURRENT_DIRECTORY]);
 
   /*
    * If the terminal is running a local shell, we first check if the new location
@@ -536,11 +537,8 @@ thunar_terminal_widget_handle_show (ThunarTerminalWidget *self)
   ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);
   _thunar_return_if_fail (THUNAR_IS_TERMINAL_WIDGET (self));
 
-  if (priv->needs_respawn)
-    spawn_terminal_async (self);
-
-  /* Sync to the current location upon becoming visible */
-  if (priv->current_location)
+  /* Sync to the current location upon becoming visible, but only if terminal is not in SSH */
+  if (priv->current_location && priv->state != THUNAR_TERMINAL_STATE_IN_SSH)
     change_directory_in_terminal (self, priv->current_location);
 
   thunar_terminal_widget_ensure_terminal_focus (self);
@@ -1054,13 +1052,10 @@ _sync_terminal_to_fm (ThunarTerminalWidget *self, const gchar *cwd_uri)
     {
       ThunarFile *thunar_file;
 
-      g_set_object (&priv->current_location, new_gfile_location);
-      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CURRENT_LOCATION]);
-
       thunar_file = thunar_file_get (new_gfile_location, NULL);
       if (G_LIKELY (thunar_file))
         {
-          thunar_navigator_change_directory (THUNAR_NAVIGATOR (self), thunar_file);
+          thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (self), thunar_file);
           g_object_unref (thunar_file);
         }
     }
@@ -1683,4 +1678,18 @@ thunar_terminal_widget_navigator_init (ThunarNavigatorIface *iface)
 {
   iface->get_current_directory = thunar_terminal_widget_get_current_directory;
   iface->set_current_directory = thunar_terminal_widget_set_current_directory;
+}
+
+void
+thunar_terminal_widget_check_spawn_needed (ThunarTerminalWidget *self)
+{
+  ThunarTerminalWidgetPrivate *priv;
+
+  _thunar_return_if_fail (THUNAR_IS_TERMINAL_WIDGET (self));
+
+  priv = thunar_terminal_widget_get_instance_private (self);
+
+  /* When called explicitly (like from F4 action), always spawn if needed and visible */
+  if (priv->needs_respawn && gtk_widget_get_visible (GTK_WIDGET (self)))
+    spawn_terminal_async (self);
 }
