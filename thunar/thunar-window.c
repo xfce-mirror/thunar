@@ -5187,12 +5187,6 @@ thunar_window_after_propagate_key_event (GtkWindow *window,
 
   focused_widget = gtk_window_get_focus (window);
 
-  /*
-   * Add a guard to ensure the focused widget is valid.
-   * It's possible for the focused widget to be destroyed or hidden
-   * during the event propagation (e.g., hiding the terminal with F4),
-   * which would cause gtk_window_get_focus() to return NULL.
-   */
   if (G_LIKELY (focused_widget != NULL))
     {
       /* After 'tab' was preassed, we might need to update the selected notebook */
