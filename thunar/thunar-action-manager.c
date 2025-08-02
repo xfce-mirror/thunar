@@ -1667,7 +1667,7 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
 
     case THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB:
       n = action_mgr->n_files_to_process > 0 ? action_mgr->n_files_to_process : 1;
-      label_text = g_strdup_printf (ngettext (action_entry->menu_item_label_text, "Open in %d New _Tabs", n), n);
+      label_text = g_strdup_printf (ngettext ("Open in new _Tab", "Open in %d New _Tabs", n), n);
       tooltip_text = g_strdup_printf (ngettext ("Open the selected directory in new tab",
                                                 "Open the selected directories in %d new tabs", n),
                                       n);
@@ -1678,7 +1678,7 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
 
     case THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW:
       n = action_mgr->n_files_to_process > 0 ? action_mgr->n_files_to_process : 1;
-      label_text = g_strdup_printf (ngettext (action_entry->menu_item_label_text, "Open in %d New _Windows", n), n);
+      label_text = g_strdup_printf (ngettext ("Open in new _Window", "Open in %d New _Windows", n), n);
       tooltip_text = g_strdup_printf (ngettext ("Open the selected directory in new window",
                                                 "Open the selected directories in %d new windows", n),
                                       n);
@@ -1716,7 +1716,7 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
       if (!show_item && !force)
         return NULL;
 
-      label_text = ngettext (action_entry->menu_item_label_text, "Ma_ke Links", action_mgr->n_files_to_process);
+      label_text = ngettext ("Ma_ke Link", "Ma_ke Links", action_mgr->n_files_to_process);
       tooltip_text = ngettext ("Create a symbolic link for the selected file",
                                "Create a symbolic link for each selected file", action_mgr->n_files_to_process);
       item = xfce_gtk_menu_item_new (label_text, tooltip_text, action_entry->accel_path, action_entry->callback,
