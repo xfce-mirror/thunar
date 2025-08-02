@@ -173,6 +173,8 @@ typedef enum
   THUNAR_ICON_SIZE_1024 = 1024,
 } ThunarIconSize;
 #define THUNAR_ICON_SIZE_DIALOG 48
+#define THUNAR_TERMINAL_MIN_MAIN_VIEW_HEIGHT 200
+#define THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT 50
 
 GType
 thunar_icon_size_get_type (void) G_GNUC_CONST;
@@ -638,6 +640,27 @@ typedef enum
 
 GType
 thunar_execute_shell_script_get_type (void) G_GNUC_CONST;
+
+#define THUNAR_TYPE_TERMINAL_SYNC_MODE (thunar_terminal_sync_mode_get_type ())
+
+/**
+ * ThunarTerminalSyncMode:
+ * @THUNAR_TERMINAL_SYNC_NONE: No synchronization.
+ * @THUNAR_TERMINAL_SYNC_FM_TO_TERM: File manager changes directory in terminal.
+ * @THUNAR_TERMINAL_SYNC_TERM_TO_FM: Terminal changes directory in file manager.
+ * @THUNAR_TERMINAL_SYNC_BOTH: Bidirectional synchronization.
+ **/
+typedef enum
+{
+  THUNAR_TERMINAL_SYNC_NONE,
+  THUNAR_TERMINAL_SYNC_FM_TO_TERM,
+  THUNAR_TERMINAL_SYNC_TERM_TO_FM,
+  THUNAR_TERMINAL_SYNC_BOTH,
+} ThunarTerminalSyncMode;
+
+GType
+thunar_terminal_sync_mode_get_type (void) G_GNUC_CONST;
+
 
 G_END_DECLS;
 
