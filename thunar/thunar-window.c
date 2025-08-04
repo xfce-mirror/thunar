@@ -5769,16 +5769,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
 
   /* check if we already display the requested directory */
   if (G_UNLIKELY (window->current_directory == current_directory))
-    {
-      /* Even if it's the same directory, we might need to update UI state
-       * that became stale after a tab switch (e.g. trash infobar). */
-      is_trashed = thunar_file_is_trashed (current_directory);
-      gtk_widget_set_visible (window->trash_infobar, is_trashed);
-      if (THUNAR_IS_DETAILS_VIEW (window->view))
-        thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), is_trashed);
-
-      return;
-    }
+    return;
 
   /* exit search mode if currently enabled */
   if (window->search_mode == TRUE)
