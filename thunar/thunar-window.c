@@ -4532,10 +4532,6 @@ thunar_window_replace_view (ThunarWindow *window,
 
   _thunar_return_if_fail (view_type != G_TYPE_NONE);
 
-  /* if the view already has the correct type then just return */
-  if (view_to_replace != NULL && G_TYPE_FROM_INSTANCE (view_to_replace) == view_type)
-    return;
-
   /* This new logic requires an existing view to replace in-place. If one doesn't
    * exist, which can happen in some edge cases, we shouldn't proceed. */
   if (view_to_replace == NULL)
@@ -4543,6 +4539,10 @@ thunar_window_replace_view (ThunarWindow *window,
       g_warning ("thunar_window_replace_view called with NULL view, cannot replace in-place.");
       return;
     }
+
+  /* if the view already has the correct type then just return */
+  if (G_TYPE_FROM_INSTANCE (view_to_replace) == view_type)
+    return;
 
   /* save some settings from the old view for the new view */
   if (!thunar_view_get_visible_range (THUNAR_VIEW (view_to_replace), &file, NULL))
