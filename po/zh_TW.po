@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-07-26 00:46+0200\n"
+"POT-Creation-Date: 2025-08-03 00:45+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: 黃柏諺 <s8321414@gmail.com>, 2019-2025\n"
 "Language-Team: Chinese (Taiwan) (http://app.transifex.com/xfce/thunar/language/zh_TW/)\n"
@@ -51,13 +51,17 @@ msgstr "編輯啟動器(_L)"
 msgid "Edit the selected launcher"
 msgstr "編輯選定的啟動器"
 
-#: thunar/thunar-action-manager.c:323
+#: thunar/thunar-action-manager.c:323 thunar/thunar-action-manager.c:1670
+#, c-format
 msgid "Open in new _Tab"
-msgstr "在新分頁中開啟(_T)"
+msgid_plural "Open in %d New _Tabs"
+msgstr[0] "在 %d 個新分頁中開啟(_T)"
 
-#: thunar/thunar-action-manager.c:324
+#: thunar/thunar-action-manager.c:324 thunar/thunar-action-manager.c:1681
+#, c-format
 msgid "Open in new _Window"
-msgstr "在新視窗中開啟(_W)"
+msgid_plural "Open in %d New _Windows"
+msgstr[0] "在 %d 個新視窗中開啟(_W)"
 
 #: thunar/thunar-action-manager.c:325
 msgid "Open Item _Location"
@@ -115,9 +119,10 @@ msgstr "屬性(_P)..."
 msgid "View the properties of the selected file"
 msgstr "檢視所選檔案的屬性"
 
-#: thunar/thunar-action-manager.c:335
+#: thunar/thunar-action-manager.c:335 thunar/thunar-action-manager.c:1719
 msgid "Ma_ke Link"
-msgstr "建立連結(_K)"
+msgid_plural "Ma_ke Links"
+msgstr[0] "建立連結(_K)"
 
 #: thunar/thunar-action-manager.c:336
 msgid "Dup_licate"
@@ -3269,42 +3274,42 @@ msgstr "在 %2$s 中搜尋「%1$s」"
 msgid "Search in %s"
 msgstr "在 %s 中搜尋"
 
-#: thunar/thunar-standard-view.c:1961
+#: thunar/thunar-standard-view.c:1965
 msgid "Loading folder contents..."
 msgstr "正在載入資料夾內容..."
 
-#: thunar/thunar-standard-view.c:2645
+#: thunar/thunar-standard-view.c:2649
 #, c-format
 msgid "%d file found"
 msgid_plural "%d files found"
 msgstr[0] "找到 %d 個檔案"
 
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2813 thunar/thunar-window.c:4511
+#: thunar/thunar-standard-view.c:2817 thunar/thunar-window.c:4511
 msgid "Failed to open the home folder"
 msgstr "未能開啟家目錄"
 
-#: thunar/thunar-standard-view.c:2891
+#: thunar/thunar-standard-view.c:2895
 msgctxt "Select by Pattern dialog: title"
 msgid "Select by Pattern"
 msgstr "依關鍵字選取"
 
-#: thunar/thunar-standard-view.c:2896
+#: thunar/thunar-standard-view.c:2900
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Cancel"
 msgstr "取消(_C)"
 
-#: thunar/thunar-standard-view.c:2899
+#: thunar/thunar-standard-view.c:2903
 msgctxt "Select by Pattern dialog: buttons"
 msgid "_Select"
 msgstr "選取(_S)"
 
-#: thunar/thunar-standard-view.c:2913
+#: thunar/thunar-standard-view.c:2917
 msgctxt "Select by Pattern dialog: labels: pattern entry textbox"
 msgid "_Pattern:"
 msgstr "關鍵字(_P)："
 
-#: thunar/thunar-standard-view.c:2914
+#: thunar/thunar-standard-view.c:2918
 msgctxt ""
 "Select by Pattern dialog: tooltips on label for pattern entry textbox"
 msgid ""
@@ -3314,7 +3319,7 @@ msgstr "名稱與您輸入的萬用字元模式相符的檔案將會在主視窗
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
-#: thunar/thunar-standard-view.c:2928
+#: thunar/thunar-standard-view.c:2932
 msgctxt "Select by Pattern dialog: tooltips: pattern entry text box"
 msgid ""
 "? matches exactly one character,\n"
@@ -3325,24 +3330,24 @@ msgid ""
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr "? 只會僅會符合一個字元。\n* 可符合任意數量的字元，包含零。\n\n舉例來說：*.txt, file??.png, pict\n\n若無任何 * 或 ? 萬用字元，模式將會符合名稱中的任意位置。使用萬用字元時，模式必須在名稱的開頭與結尾都符合。"
 
-#: thunar/thunar-standard-view.c:2932
+#: thunar/thunar-standard-view.c:2936
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
 msgid "C_ase sensitive"
 msgstr "區分大小寫(_A)"
 
-#: thunar/thunar-standard-view.c:2933
+#: thunar/thunar-standard-view.c:2937
 msgctxt "Select by Pattern dialog: tooltips: case sensitive checkbox"
 msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr "若啟用，字母的大小寫必須與模式相符。\nExamp* 將會找到 Example.txt，但不會有 example.txt"
 
-#: thunar/thunar-standard-view.c:2938
+#: thunar/thunar-standard-view.c:2942
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
 msgid "_Match diacritics"
 msgstr "符合變音符號(_M)"
 
-#: thunar/thunar-standard-view.c:2939
+#: thunar/thunar-standard-view.c:2943
 msgctxt "Select by Pattern dialog: tooltips: match diacritics checkbox"
 msgid ""
 "If enabled, require accents to match the pattern.\n"
@@ -3351,21 +3356,21 @@ msgstr "若啟用，則變音符號也必須和模式相符。\nRés* 將會找�
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: thunar/thunar-standard-view.c:3326
+#: thunar/thunar-standard-view.c:3330
 msgid "Invalid filename provided by XDS drag site"
 msgstr "由 XDS 拖曳所提供的檔名無效"
 
 #. display an error dialog to the user
-#: thunar/thunar-standard-view.c:3522
+#: thunar/thunar-standard-view.c:3526
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "無法為 URL「%s」建立連結"
 
-#: thunar/thunar-standard-view.c:3569
+#: thunar/thunar-standard-view.c:3573
 msgid "Untitled document"
 msgstr "未命名的文件"
 
-#: thunar/thunar-standard-view.c:4058 thunar/thunar-window.c:4608
+#: thunar/thunar-standard-view.c:4062 thunar/thunar-window.c:4608
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "無法開啟目錄「%s」"
