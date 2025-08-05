@@ -488,6 +488,8 @@ thunar_terminal_widget_handle_show (ThunarTerminalWidget *self)
       GFile *location = thunar_file_get_file (priv->current_directory);
       change_directory_in_terminal (self, location);
     }
+
+  gtk_widget_grab_focus (GTK_WIDGET (priv->terminal));
 }
 
 
