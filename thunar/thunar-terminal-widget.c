@@ -38,7 +38,6 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (ThunarPreferences, g_object_unref)
 enum
 {
   PROP_0,
-  PROP_CURRENT_LOCATION,
   PROP_NAVIGATOR_CURRENT_DIRECTORY,
   N_PROPS
 };
@@ -59,8 +58,6 @@ struct _ThunarTerminalWidgetPrivate
   /* State management */
   ThunarTerminalState state;                          /* The current operational state (local shell or remote SSH session). */
   gboolean            needs_respawn;                  /* Flag indicating if the terminal's child process needs to be respawned (e.g., after being hidden and shown again). */
-  gboolean            ignore_next_terminal_cd_signal; /* A flag to prevent feedback loops when the file manager programmatically changes the terminal's directory. */
-  guint               focus_timeout_id;               /* The ID for a timeout used to ensure the terminal gets focus after certain operations. */
   GPid                child_pid;                      /* The process ID of the shell or SSH client running in the terminal. -1 if no process is running. */
   GCancellable       *spawn_cancellable;              /* A GCancellable object to allow cancelling an asynchronous terminal spawn operation. */
 
@@ -68,32 +65,18 @@ struct _ThunarTerminalWidgetPrivate
   gchar                 *color_scheme;        /* The name of the current color scheme (e.g., "dark", "solarized-light"). */
   ThunarTerminalSyncMode terminal_sync_mode;  /* The directory synchronization mode for both local shell and SSH sessions. */
   gboolean               ssh_auto_connect;    /* Automatically connect SSH when navigating to SFTP locations. */
-  gboolean               ssh_auto_disconnect; /* Automatically disconnect SSH when leaving folder. */
+  gboolean               ssh_auto_disconnect; /* Automatically disconnect SSH when navigating out of SFTP location. */
 
   /* Location and SSH details */
-  GFile *current_location; /* The GFile representing the current directory displayed in the file manager view. */
-
+  ThunarFile *current_directory;  /* Current directory as ThunarFile */
   gchar *ssh_hostname;    /* The hostname for the current SSH connection. */
   gchar *ssh_username;    /* The username for the current SSH connection. */
   gchar *ssh_port;        /* The port for the current SSH connection. */
   gchar *ssh_remote_path; /* The remote path to change to after an SSH connection is established. */
-
-  /* Pending SSH connection details, used when a location is set before the terminal is spawned */
-  gchar *pending_ssh_hostname; /* The hostname for a pending SSH connection, to be used after the local shell spawns. */
-  gchar *pending_ssh_username; /* The username for a pending SSH connection. */
-  gchar *pending_ssh_port;     /* The port for a pending SSH connection. */
 };
 
-/* SSH mode
- * GVFS automatically creates an address that allows us to access the server's files connected via SFTP
- * through the terminal,but it behaves like a remote disk. In contrast, an SSH connection actually logs
- * you into the server, enabling direct terminal access to the server. This allows tasks like installing
- * packages or restarting services, which is particularly useful for those working in DevOps, as it enables
- * editing configuration files through a graphical interface while managing processes via the terminal.
- * Keys for g_object_set_data() */
-static const gchar *const DATA_KEY_SSH_HOSTNAME = "ttw-ssh-hostname";
-static const gchar *const DATA_KEY_SSH_USERNAME = "ttw-ssh-username";
-static const gchar *const DATA_KEY_SSH_PORT = "ttw-ssh-port";
+/* Keys for g_object_set_data() */
+static const gchar *const DATA_KEY_VALUE = "ttw-value";
 
 /* Shell control sequences for preserving user input during programmatic 'cd' */
 static const gchar *const SHELL_CTRL_A = "\x01";    /* Move cursor to beginning of line */
@@ -250,25 +233,15 @@ static const MenuFontSizeEntry FONT_SIZE_ENTRIES[] = {
   { 48 }
 };
 
-/* Struct to map a sync mode enum to its UI label. */
-typedef struct
-{
-  ThunarTerminalSyncMode mode;
-  const gchar           *label_pot;
-} MenuSyncModeEntry;
-
-static const MenuSyncModeEntry TERMINAL_SYNC_MODE_ENTRIES[] = {
-  { THUNAR_TERMINAL_SYNC_BOTH, N_ ("Both Ways") },
-  { THUNAR_TERMINAL_SYNC_FM_TO_TERM, N_ ("File Manager → Terminal") },
-  { THUNAR_TERMINAL_SYNC_TERM_TO_FM, N_ ("Terminal → File Manager") },
-  { THUNAR_TERMINAL_SYNC_NONE, N_ ("Disabled") }
+/* Sync mode labels for menu creation */
+static const gchar *sync_mode_labels[] = {
+  [THUNAR_TERMINAL_SYNC_NONE]        = N_("Disabled"),
+  [THUNAR_TERMINAL_SYNC_FM_TO_TERM]  = N_("File Manager → Terminal"),
+  [THUNAR_TERMINAL_SYNC_TERM_TO_FM]  = N_("Terminal → File Manager"),
+  [THUNAR_TERMINAL_SYNC_BOTH]        = N_("Both Ways"),
 };
 
-
-
-/* Generic data key for attaching a value to a menu widget. */
-static const gchar *const DATA_KEY_VALUE = "ttw-value";
-
+/* SSH connection data keys */
 static void
 on_color_scheme_changed (GtkCheckMenuItem *menuitem, gpointer user_data);
 static void
@@ -279,6 +252,8 @@ static void
 on_ssh_exit_activate (GtkMenuItem *menuitem, gpointer user_data);
 static void
 on_ssh_connect_activate (GtkMenuItem *menuitem, gpointer user_data);
+static void
+thunar_terminal_widget_set_current_location (ThunarTerminalWidget *self, GFile *location);
 
 static GParamSpec *properties[N_PROPS];
 
@@ -351,29 +326,34 @@ on_terminal_button_release (GtkWidget *widget, GdkEventButton *event, gpointer u
 ThunarTerminalWidget *
 thunar_terminal_widget_new (void)
 {
-  return thunar_terminal_widget_new_with_location (NULL);
+  return g_object_new (THUNAR_TYPE_TERMINAL_WIDGET, NULL);
 }
 
-ThunarTerminalWidget *
-thunar_terminal_widget_new_with_location (GFile *location)
-{
-  return g_object_new (THUNAR_TYPE_TERMINAL_WIDGET, "current-location", location, NULL);
-}
-
-void
+static void
 thunar_terminal_widget_set_current_location (ThunarTerminalWidget *self,
                                              GFile                *location)
 {
   ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);
+  ThunarFile                  *directory = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_TERMINAL_WIDGET (self));
 
-  /* Do nothing if the location hasn't changed. This handles all NULL cases correctly. */
-  if ((priv->current_location == location) || (priv->current_location && location && g_file_equal (priv->current_location, location)))
-    return;
+  /* Convert GFile to ThunarFile if provided */
+  if (location)
+    directory = thunar_file_get (location, NULL);
 
-  g_set_object (&priv->current_location, location);
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CURRENT_LOCATION]);
+  /* Do nothing if the directory hasn't changed. This handles all NULL cases correctly. */
+  if (priv->current_directory == directory)
+    {
+      if (directory)
+        g_object_unref (directory);
+      return;
+    }
+
+  g_set_object (&priv->current_directory, directory);
+  if (directory)
+    g_object_unref (directory);
+
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_NAVIGATOR_CURRENT_DIRECTORY]);
 
   /*
@@ -399,16 +379,6 @@ thunar_terminal_widget_set_current_location (ThunarTerminalWidget *self,
               _initiate_ssh_connection (self, hostname, username, port, sync_mode);
               return; /* The SSH connection logic takes over from here. */
             }
-          else
-            {
-              /*
-               * If there's no shell running, we queue the connection details. The connection
-               * will be established right after the local shell has finished spawning.
-               */
-              priv->pending_ssh_hostname = g_strdup (hostname);
-              priv->pending_ssh_username = g_strdup (username);
-              priv->pending_ssh_port = g_strdup (port);
-            }
         }
     }
 
@@ -421,20 +391,11 @@ thunar_terminal_widget_set_current_location (ThunarTerminalWidget *self,
    */
   if (priv->state == THUNAR_TERMINAL_STATE_IN_SSH)
     {
-      g_autofree gchar *scheme = location ? g_file_get_uri_scheme (location) : NULL;
+      g_autofree gchar *scheme = g_file_get_uri_scheme (location);
 
-      /* If navigating to a local (non-SFTP) folder and auto-disconnect is enabled, disconnect */
-      if (location && (!scheme || g_strcmp0 (scheme, "sftp") != 0))
+      if (scheme && g_strcmp0 (scheme, "sftp") == 0)
         {
-          if (priv->ssh_auto_disconnect)
-            {
-              /* Send exit command to gracefully close SSH session */
-              vte_terminal_feed_child (priv->terminal, " exit\n", -1);
-              return; /* Let the child-exited handler manage the state transition */
-            }
-        }
-      else if (scheme && g_strcmp0 (scheme, "sftp") == 0)
-        {
+          /* Still on SFTP - check if we need to change directories within SSH */
           g_autofree gchar *new_hostname = NULL, *new_username = NULL, *new_port = NULL;
           if (parse_gvfs_ssh_path (location, &new_hostname, &new_username, &new_port))
             {
@@ -444,6 +405,16 @@ thunar_terminal_widget_set_current_location (ThunarTerminalWidget *self,
                   /* If hosts match, just change the directory within the existing session. */
                   change_directory_in_terminal (self, location);
                 }
+            }
+        }
+      else
+        {
+          /* Navigating to a local (non-SFTP) folder - disconnect if auto-disconnect is enabled */
+          if (priv->ssh_auto_disconnect)
+            {
+              /* Send exit command to gracefully close SSH session */
+              vte_terminal_feed_child (priv->terminal, " exit\n", -1);
+              return; /* Let the child-exited handler manage the state transition */
             }
         }
     }
@@ -512,25 +483,6 @@ thunar_terminal_widget_set_color_scheme (ThunarTerminalWidget *self,
   thunar_terminal_widget_apply_color_scheme (self);
 }
 
-void
-thunar_terminal_widget_ensure_terminal_focus (ThunarTerminalWidget *self)
-{
-  ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);
-  _thunar_return_if_fail (THUNAR_IS_TERMINAL_WIDGET (self));
-
-  /* Cancel any pending focus timeout */
-  if (priv->focus_timeout_id > 0)
-    {
-      g_source_remove (priv->focus_timeout_id);
-      priv->focus_timeout_id = 0;
-    }
-
-  /* Focus the terminal directly if it's realized, otherwise just wait for the next show event */
-  if (gtk_widget_get_realized (GTK_WIDGET (priv->terminal)))
-    gtk_widget_grab_focus (GTK_WIDGET (priv->terminal));
-  /* Don't schedule any callback - let the show handler deal with focusing when ready */
-}
-
 static void
 thunar_terminal_widget_handle_show (ThunarTerminalWidget *self)
 {
@@ -538,10 +490,11 @@ thunar_terminal_widget_handle_show (ThunarTerminalWidget *self)
   _thunar_return_if_fail (THUNAR_IS_TERMINAL_WIDGET (self));
 
   /* Sync to the current location upon becoming visible, but only if terminal is not in SSH */
-  if (priv->current_location && priv->state != THUNAR_TERMINAL_STATE_IN_SSH)
-    change_directory_in_terminal (self, priv->current_location);
-
-  thunar_terminal_widget_ensure_terminal_focus (self);
+  if (priv->current_directory && priv->state != THUNAR_TERMINAL_STATE_IN_SSH)
+    {
+      GFile *location = thunar_file_get_file (priv->current_directory);
+      change_directory_in_terminal (self, location);
+    }
 }
 
 
@@ -558,13 +511,6 @@ thunar_terminal_widget_class_init (ThunarTerminalWidgetClass *klass)
   object_class->set_property = thunar_terminal_widget_set_property;
   object_class->get_property = thunar_terminal_widget_get_property;
   object_class->finalize = thunar_terminal_widget_finalize;
-
-  properties[PROP_CURRENT_LOCATION] =
-  g_param_spec_object ("current-location",
-                       "Current Location",
-                       "The GFile representing the current directory.",
-                       G_TYPE_FILE,
-                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY);
 
   navigator_iface = g_type_default_interface_peek (THUNAR_TYPE_NAVIGATOR);
   properties[PROP_NAVIGATOR_CURRENT_DIRECTORY] =
@@ -700,17 +646,11 @@ thunar_terminal_widget_finalize (GObject *object)
   /* Disconnect from all signals to prevent use-after-free during destruction. */
   g_signal_handlers_disconnect_by_data (prefs, self);
 
-  if (priv->focus_timeout_id > 0)
-    {
-      g_source_remove (priv->focus_timeout_id);
-      priv->focus_timeout_id = 0;
-    }
-
   /* Cancel any pending async operations and free all allocated resources. */
   g_cancellable_cancel (priv->spawn_cancellable);
   g_clear_object (&priv->spawn_cancellable);
-  g_clear_object (&priv->current_location);
   g_clear_pointer (&priv->color_scheme, g_free);
+  g_clear_object (&priv->current_directory);
 
   /* Use the helper to clean up all SSH-related pointers. */
   _clear_ssh_connection_data (priv);
@@ -724,13 +664,8 @@ thunar_terminal_widget_set_property (GObject      *object,
                                      const GValue *value,
                                      GParamSpec   *pspec)
 {
-  ThunarTerminalWidget *self = THUNAR_TERMINAL_WIDGET (object);
-
   switch (prop_id)
     {
-    case PROP_CURRENT_LOCATION:
-      thunar_terminal_widget_set_current_location (self, g_value_get_object (value));
-      break;
     case PROP_NAVIGATOR_CURRENT_DIRECTORY:
       thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
       break;
@@ -746,14 +681,8 @@ thunar_terminal_widget_get_property (GObject    *object,
                                      GValue     *value,
                                      GParamSpec *pspec)
 {
-  ThunarTerminalWidget        *self = THUNAR_TERMINAL_WIDGET (object);
-  ThunarTerminalWidgetPrivate *priv = self->priv;
-
   switch (prop_id)
     {
-    case PROP_CURRENT_LOCATION:
-      g_value_set_object (value, priv->current_location);
-      break;
     case PROP_NAVIGATOR_CURRENT_DIRECTORY:
       g_value_set_object (value, thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (object)));
       break;
@@ -791,14 +720,6 @@ spawn_async_callback (VteTerminal *terminal,
     {
       priv->child_pid = pid;
       priv->needs_respawn = FALSE;
-      /* If an SSH connection was pending, initiate it now that the shell is ready. */
-      if (priv->pending_ssh_hostname)
-        {
-          _initiate_ssh_connection (self, priv->pending_ssh_hostname, priv->pending_ssh_username, priv->pending_ssh_port, priv->terminal_sync_mode);
-          g_clear_pointer (&priv->pending_ssh_hostname, g_free);
-          g_clear_pointer (&priv->pending_ssh_username, g_free);
-          g_clear_pointer (&priv->pending_ssh_port, g_free);
-        }
     }
 }
 
@@ -826,45 +747,47 @@ spawn_terminal_async (ThunarTerminalWidget *self)
   if (!shell_executable || *shell_executable == '\0')
     shell_executable = "/bin/sh";
 
-  if (priv->pending_ssh_hostname != NULL)
+  if (priv->current_directory)
     {
-      working_directory = NULL; /* Force start in $HOME for a fast SSH connection */
-    }
-  else if (priv->current_location && g_file_query_exists (priv->current_location, NULL))
-    {
-      working_directory = g_file_get_path (priv->current_location);
+      GFile *location = thunar_file_get_file (priv->current_directory);
+      if (g_file_query_exists (location, NULL))
+        working_directory = g_file_get_path (location);
     }
 
   if (g_str_has_suffix (shell_executable, "zsh"))
     {
-      g_autofree gchar *config_dir = g_build_filename (g_get_user_config_dir (), "Thunar", NULL);
-      g_autofree gchar *zshrc_path = g_build_filename (config_dir, ".zshrc", NULL);
+      g_autofree gchar *temp_zshrc_path = NULL;
       g_autofree gchar *zshrc_content = NULL;
       g_autofree gchar *zdotdir_env = NULL;
+      g_autofree gchar *temp_dir = NULL;
 
-      /* Ensure the ~/.config/Thunar directory exists. */
-      g_mkdir_with_parents (config_dir, 0700);
+      /* Create a temporary directory in /tmp for the zsh configuration */
+      temp_dir = g_build_filename (g_get_tmp_dir (), "thunar-terminal-XXXXXX", NULL);
+      temp_dir = g_mkdtemp (temp_dir);
+      
+      if (temp_dir)
+        {
+          temp_zshrc_path = g_build_filename (temp_dir, ".zshrc", NULL);
 
-      /*
-       * Create a .zshrc in Thunar's config dir that defines our hook and
-       * then sources the user's real .zshrc. This is persistent and clean.
-       * The hook emits an OSC 7 escape sequence to inform VTE of the CWD.
-       */
-      zshrc_content = g_strdup_printf ("_thunar_vte_update_cwd() { echo -en \"\\033]7;file://$PWD\\007\"; };\n"
-                                       "typeset -a precmd_functions;\n"
-                                       "precmd_functions+=(_thunar_vte_update_cwd);\n"
-                                       "[ -f \"$HOME/.zshrc\" ] && . \"$HOME/.zshrc\";\n");
+          /*
+           * Create a temporary .zshrc that defines our hook and
+           * then sources the user's real .zshrc. This provides directory tracking.
+           * The hook emits an OSC 7 escape sequence to inform VTE of the CWD.
+           */
+          zshrc_content = g_strdup_printf ("_thunar_vte_update_cwd() { echo -en \"\\033]7;file://$PWD\\007\"; };\n"
+                                           "typeset -a precmd_functions;\n"
+                                           "precmd_functions+=(_thunar_vte_update_cwd);\n"
+                                           "[ -f \"$HOME/.zshrc\" ] && . \"$HOME/.zshrc\";\n");
 
-      g_file_set_contents (zshrc_path, zshrc_content, -1, NULL);
+          g_file_set_contents (temp_zshrc_path, zshrc_content, -1, NULL);
 
-      zdotdir_env = g_strdup_printf ("ZDOTDIR=%s", config_dir);
-      gchar *zsh_envp[] = { "TERM=xterm-256color", "COLORTERM=truecolor", zdotdir_env, NULL };
-      envp = g_strdupv (zsh_envp);
-      argv = g_strsplit (shell_executable, " ", -1);
+          zdotdir_env = g_strdup_printf ("ZDOTDIR=%s", temp_dir);
+          gchar *zsh_envp[] = { "TERM=xterm-256color", "COLORTERM=truecolor", zdotdir_env, NULL };
+          envp = g_strdupv (zsh_envp);
+        }
     }
   else /* Assume bash or other compatible shells */
     {
-      argv = g_strsplit (shell_executable, " ", -1);
       /*
        * For bash-compatible shells, inject PROMPT_COMMAND to emit an OSC 7
        * escape sequence before each prompt, informing VTE of the CWD.
@@ -877,6 +800,8 @@ spawn_terminal_async (ThunarTerminalWidget *self)
       };
       envp = g_strdupv (bash_envp);
     }
+
+  argv = g_strsplit (shell_executable, " ", -1);
 
   vte_terminal_spawn_async (priv->terminal,
                             VTE_PTY_DEFAULT,
@@ -904,9 +829,6 @@ _clear_ssh_connection_data (ThunarTerminalWidgetPrivate *priv)
   g_clear_pointer (&priv->ssh_username, g_free);
   g_clear_pointer (&priv->ssh_port, g_free);
   g_clear_pointer (&priv->ssh_remote_path, g_free);
-  g_clear_pointer (&priv->pending_ssh_hostname, g_free);
-  g_clear_pointer (&priv->pending_ssh_username, g_free);
-  g_clear_pointer (&priv->pending_ssh_port, g_free);
 }
 
 static void
@@ -969,7 +891,10 @@ on_terminal_child_exited (VteTerminal *terminal,
    * terminal widget and ensure it's marked for a full respawn on next show.
    */
   else if (priv->state == THUNAR_TERMINAL_STATE_LOCAL)
-    priv->needs_respawn = TRUE;
+    {
+      gtk_widget_hide (GTK_WIDGET (self));
+      priv->needs_respawn = TRUE; /* Mark for respawn on next show */
+    }
 }
 
 /*
@@ -1005,50 +930,35 @@ _sync_terminal_to_fm (ThunarTerminalWidget *self, const gchar *cwd_uri)
 {
   ThunarTerminalWidgetPrivate *priv = self->priv;
   g_autoptr (GFile) new_gfile_location = NULL;
-  gboolean should_sync_to_fm = FALSE;
 
   if (!cwd_uri)
     return;
 
-  /* When the FM changes the terminal's directory, we must ignore the signal. */
-  if (priv->ignore_next_terminal_cd_signal)
-    {
-      priv->ignore_next_terminal_cd_signal = FALSE;
-      return;
-    }
-
   if (priv->state == THUNAR_TERMINAL_STATE_IN_SSH)
     {
-      if (priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_BOTH || priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_TERM_TO_FM)
+      if (g_str_has_prefix (cwd_uri, "file://"))
         {
-          should_sync_to_fm = TRUE;
-          if (g_str_has_prefix (cwd_uri, "file://"))
+          g_autofree gchar *local_path = g_filename_from_uri (cwd_uri, NULL, NULL);
+          if (local_path && priv->ssh_hostname)
             {
-              g_autofree gchar *local_path = g_filename_from_uri (cwd_uri, NULL, NULL);
-              if (local_path && priv->ssh_hostname)
-                {
-                  g_autoptr (GString) sftp_uri = g_string_new ("sftp://");
-                  if (priv->ssh_username && *priv->ssh_username)
-                    g_string_append_printf (sftp_uri, "%s@", priv->ssh_username);
-                  g_string_append (sftp_uri, priv->ssh_hostname);
-                  if (priv->ssh_port && *priv->ssh_port)
-                    g_string_append_printf (sftp_uri, ":%s", priv->ssh_port);
-                  g_string_append (sftp_uri, local_path);
-                  new_gfile_location = g_file_new_for_uri (sftp_uri->str);
-                }
+              g_autoptr (GString) sftp_uri = g_string_new ("sftp://");
+              if (priv->ssh_username && *priv->ssh_username)
+                g_string_append_printf (sftp_uri, "%s@", priv->ssh_username);
+              g_string_append (sftp_uri, priv->ssh_hostname);
+              if (priv->ssh_port && *priv->ssh_port)
+                g_string_append_printf (sftp_uri, ":%s", priv->ssh_port);
+              g_string_append (sftp_uri, local_path);
+              new_gfile_location = g_file_new_for_uri (sftp_uri->str);
             }
         }
     }
   else /* Local state */
     {
-      if (priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_BOTH || priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_TERM_TO_FM)
-        {
-          should_sync_to_fm = TRUE;
-          new_gfile_location = g_file_new_for_uri (cwd_uri);
-        }
+      new_gfile_location = g_file_new_for_uri (cwd_uri);
     }
 
-  if (should_sync_to_fm && new_gfile_location && (priv->current_location == NULL || !g_file_equal (new_gfile_location, priv->current_location)))
+  if (new_gfile_location && (priv->current_directory == NULL || 
+      !g_file_equal (new_gfile_location, thunar_file_get_file (priv->current_directory))))
     {
       ThunarFile *thunar_file;
 
@@ -1068,15 +978,20 @@ on_directory_changed (VteTerminal *terminal,
                       gpointer     user_data)
 {
   ThunarTerminalWidget *self = THUNAR_TERMINAL_WIDGET (user_data);
+  ThunarTerminalWidgetPrivate *priv = self->priv;
 
   /* We only care about the property for the current directory URI */
   if (g_strcmp0 (prop, VTE_TERMPROP_CURRENT_DIRECTORY_URI) == 0)
     {
-      g_autoptr (GUri) cwd_uri = vte_terminal_ref_termprop_uri (terminal, VTE_TERMPROP_CURRENT_DIRECTORY_URI);
-      if (cwd_uri)
+      /* Check if we should sync terminal changes to file manager */
+      if (priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_BOTH || priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_TERM_TO_FM)
         {
-          g_autofree gchar *cwd_uri_str = g_uri_to_string (cwd_uri);
-          _sync_terminal_to_fm (self, cwd_uri_str);
+          g_autoptr (GUri) cwd_uri = vte_terminal_ref_termprop_uri (terminal, VTE_TERMPROP_CURRENT_DIRECTORY_URI);
+          if (cwd_uri)
+            {
+              g_autofree gchar *cwd_uri_str = g_uri_to_string (cwd_uri);
+              _sync_terminal_to_fm (self, cwd_uri_str);
+            }
         }
     }
 }
@@ -1086,8 +1001,14 @@ on_legacy_directory_changed (VteTerminal *terminal,
                              gpointer     user_data)
 {
   ThunarTerminalWidget *self = THUNAR_TERMINAL_WIDGET (user_data);
-  const gchar          *cwd_uri_str = vte_terminal_get_current_directory_uri (terminal);
-  _sync_terminal_to_fm (self, cwd_uri_str);
+  ThunarTerminalWidgetPrivate *priv = self->priv;
+  
+  /* Check if we should sync terminal changes to file manager */
+  if (priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_BOTH || priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_TERM_TO_FM)
+    {
+      const gchar *cwd_uri_str = vte_terminal_get_current_directory_uri (terminal);
+      _sync_terminal_to_fm (self, cwd_uri_str);
+    }
 }
 #endif
 
@@ -1247,7 +1168,7 @@ _build_ssh_options_submenu (ThunarTerminalWidget *self)
   gtk_menu_shell_append (GTK_MENU_SHELL (submenu), auto_connect_item);
 
   /* Auto Disconnect checkbox */
-  auto_disconnect_item = gtk_check_menu_item_new_with_label (_("Disconnect when leaving folder"));
+  auto_disconnect_item = gtk_check_menu_item_new_with_label (_("Auto Disconnect"));
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (auto_disconnect_item), priv->ssh_auto_disconnect);
   g_object_bind_property (prefs, "terminal-ssh-auto-disconnect",
                           auto_disconnect_item, "active",
@@ -1263,17 +1184,21 @@ _build_terminal_sync_submenu (ThunarTerminalWidget *self)
   ThunarTerminalWidgetPrivate *priv = self->priv;
   GtkWidget                   *submenu = gtk_menu_new ();
   GSList                      *radio_group = NULL;
-  for (gsize i = 0; i < G_N_ELEMENTS (TERMINAL_SYNC_MODE_ENTRIES); ++i)
+  guint                        i;
+
+  /* Create menu items from the sync mode labels array */
+  for (i = 0; i < G_N_ELEMENTS (sync_mode_labels); i++)
     {
       GtkWidget *item = _create_radio_menu_item (&radio_group,
-                                                 _(TERMINAL_SYNC_MODE_ENTRIES[i].label_pot),
-                                                 priv->terminal_sync_mode == TERMINAL_SYNC_MODE_ENTRIES[i].mode,
+                                                 _(sync_mode_labels[i]),
+                                                 priv->terminal_sync_mode == i,
                                                  G_CALLBACK (on_enum_pref_changed),
                                                  (gpointer) "terminal-sync-mode",
                                                  DATA_KEY_VALUE,
-                                                 GINT_TO_POINTER (TERMINAL_SYNC_MODE_ENTRIES[i].mode));
+                                                 GINT_TO_POINTER (i));
       gtk_menu_shell_append (GTK_MENU_SHELL (submenu), item);
     }
+
   return submenu;
 }
 
@@ -1321,9 +1246,10 @@ create_terminal_popup_menu (ThunarTerminalWidget *self)
 
   _append_menu_item_with_submenu (GTK_MENU_SHELL (menu), _("SSH Options"), _build_ssh_options_submenu (self));
 
-  if (priv->current_location)
+  if (priv->current_directory)
     {
-      g_autofree gchar *scheme = g_file_get_uri_scheme (priv->current_location);
+      GFile *location = thunar_file_get_file (priv->current_directory);
+      g_autofree gchar *scheme = g_file_get_uri_scheme (location);
       if (scheme && g_strcmp0 (scheme, "sftp") == 0)
         is_sftp_location = TRUE;
     }
@@ -1339,16 +1265,12 @@ create_terminal_popup_menu (ThunarTerminalWidget *self)
       if (is_sftp_location)
         {
           g_autofree gchar *hostname = NULL, *username = NULL, *port = NULL;
-          if (parse_gvfs_ssh_path (priv->current_location, &hostname, &username, &port))
+          GFile *location = thunar_file_get_file (priv->current_directory);
+          if (parse_gvfs_ssh_path (location, &hostname, &username, &port))
             {
               gtk_menu_shell_append (GTK_MENU_SHELL (menu), gtk_separator_menu_item_new ());
               g_autofree gchar *label = g_strdup_printf (_("Connect SSH to %s"), hostname);
               GtkWidget        *ssh_connect_item = gtk_menu_item_new_with_label (label);
-
-              /* Store connection details and use global sync mode */
-              g_object_set_data_full (G_OBJECT (ssh_connect_item), DATA_KEY_SSH_HOSTNAME, g_strdup (hostname), g_free);
-              g_object_set_data_full (G_OBJECT (ssh_connect_item), DATA_KEY_SSH_USERNAME, g_strdup (username), g_free);
-              g_object_set_data_full (G_OBJECT (ssh_connect_item), DATA_KEY_SSH_PORT, g_strdup (port), g_free);
 
               g_signal_connect (ssh_connect_item, "activate", G_CALLBACK (on_ssh_connect_activate), self);
               gtk_menu_shell_append (GTK_MENU_SHELL (menu), ssh_connect_item);
@@ -1403,17 +1325,16 @@ change_directory_in_terminal (ThunarTerminalWidget *self,
   if (!gtk_widget_get_visible (GTK_WIDGET (self)) || priv->child_pid == -1)
     return;
 
-  if (priv->state == THUNAR_TERMINAL_STATE_IN_SSH)
+  if (priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_BOTH || priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_FM_TO_TERM)
     {
-      if (priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_BOTH || priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_FM_TO_TERM)
+      if (priv->state == THUNAR_TERMINAL_STATE_IN_SSH)
         {
-          should_sync = TRUE;
-          target_path = get_remote_path_from_sftp_gfile (location);
+          {
+            should_sync = TRUE;
+            target_path = get_remote_path_from_sftp_gfile (location);
+          }
         }
-    }
-  else /* Local state */
-    {
-      if (priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_BOTH || priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_FM_TO_TERM)
+      else /* Local state */
         {
           if (g_file_query_exists (location, NULL))
             {
@@ -1449,8 +1370,18 @@ change_directory_in_terminal (ThunarTerminalWidget *self,
       /* Only issue a 'cd' command if the terminal is not already in the target directory. */
       if (term_path == NULL || g_strcmp0 (term_path, target_path) != 0)
         {
-          priv->ignore_next_terminal_cd_signal = TRUE;
+          /* Block signals to prevent feedback loop when we programmatically change directory */
+#if VTE_CHECK_VERSION(0, 78, 0)
+          g_signal_handlers_block_by_func (priv->terminal, on_directory_changed, self);
+#else
+          g_signal_handlers_block_by_func (priv->terminal, on_legacy_directory_changed, self);
+#endif
           feed_cd_command (priv->terminal, target_path);
+#if VTE_CHECK_VERSION(0, 78, 0)
+          g_signal_handlers_unblock_by_func (priv->terminal, on_directory_changed, self);
+#else
+          g_signal_handlers_unblock_by_func (priv->terminal, on_legacy_directory_changed, self);
+#endif
         }
     }
 }
@@ -1523,8 +1454,11 @@ _initiate_ssh_connection (ThunarTerminalWidget  *self,
   priv->ssh_username = g_strdup (username);
   priv->ssh_port = g_strdup (port);
 
-  if (priv->current_location)
-    priv->ssh_remote_path = get_remote_path_from_sftp_gfile (priv->current_location);
+  if (priv->current_directory)
+    {
+      GFile *location = thunar_file_get_file (priv->current_directory);
+      priv->ssh_remote_path = get_remote_path_from_sftp_gfile (location);
+    }
 
   /* Build the command to be executed on the remote side. */
   remote_cmd_builder = g_string_new ("");
@@ -1561,12 +1495,6 @@ _initiate_ssh_connection (ThunarTerminalWidget  *self,
 
   gtk_widget_show (priv->ssh_indicator);
 
-  /*
-   * Set a flag so that the first 'directory-changed' emission from VTE
-   * (which happens automatically upon connection) is ignored, preventing a redundant 'cd'.
-   */
-  priv->ignore_next_terminal_cd_signal = TRUE;
-
   vte_terminal_spawn_async (priv->terminal,
                             VTE_PTY_DEFAULT,
                             NULL, /* working_directory (user's home) */
@@ -1580,7 +1508,6 @@ _initiate_ssh_connection (ThunarTerminalWidget  *self,
                             priv->spawn_cancellable,
                             (VteTerminalSpawnAsyncCallback) spawn_async_callback,
                             self);
-  thunar_terminal_widget_ensure_terminal_focus (self);
 }
 
 static void
@@ -1636,14 +1563,16 @@ on_ssh_connect_activate (GtkMenuItem *menuitem,
 {
   ThunarTerminalWidget        *self = THUNAR_TERMINAL_WIDGET (user_data);
   ThunarTerminalWidgetPrivate *priv = self->priv;
-  const gchar                 *hostname = g_object_get_data (G_OBJECT (menuitem), DATA_KEY_SSH_HOSTNAME);
-  const gchar                 *username = g_object_get_data (G_OBJECT (menuitem), DATA_KEY_SSH_USERNAME);
-  const gchar                 *port = g_object_get_data (G_OBJECT (menuitem), DATA_KEY_SSH_PORT);
+  g_autofree gchar *hostname = NULL, *username = NULL, *port = NULL;
 
-  if (hostname)
+  /* Extract SSH connection details from the current SFTP location */
+  if (priv->current_directory)
     {
-      /* Use the globally configured sync mode instead of menu-specific data */
-      _initiate_ssh_connection (self, hostname, username, port, priv->terminal_sync_mode);
+      GFile *location = thunar_file_get_file (priv->current_directory);
+      if (parse_gvfs_ssh_path (location, &hostname, &username, &port))
+        {
+          _initiate_ssh_connection (self, hostname, username, port, priv->terminal_sync_mode);
+        }
     }
 }
 
@@ -1652,12 +1581,11 @@ thunar_terminal_widget_get_current_directory (ThunarNavigator *navigator)
 {
   ThunarTerminalWidget        *self = THUNAR_TERMINAL_WIDGET (navigator);
   ThunarTerminalWidgetPrivate *priv = self->priv;
-  ThunarFile                  *current_directory = NULL;
 
-  if (priv->current_location)
-    current_directory = thunar_file_get (priv->current_location, NULL);
+  if (priv->current_directory)
+    return g_object_ref (priv->current_directory);
 
-  return current_directory;
+  return NULL;
 }
 
 static void
