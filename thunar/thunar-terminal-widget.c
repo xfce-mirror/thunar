@@ -481,7 +481,8 @@ thunar_terminal_widget_handle_show (ThunarTerminalWidget *self)
   ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);
   _thunar_return_if_fail (THUNAR_IS_TERMINAL_WIDGET (self));
 
-  /* On show: if not in SSH mode, sync terminal dir to file manager. Prevent local 'cd' during SSH. */
+  if (priv->needs_respawn)
+    spawn_terminal_async (self);
   if (priv->current_directory && priv->state != THUNAR_TERMINAL_STATE_IN_SSH)
     {
       GFile *location = thunar_file_get_file (priv->current_directory);
@@ -1609,18 +1610,4 @@ thunar_terminal_widget_navigator_init (ThunarNavigatorIface *iface)
 {
   iface->get_current_directory = thunar_terminal_widget_get_current_directory;
   iface->set_current_directory = thunar_terminal_widget_set_current_directory;
-}
-
-void
-thunar_terminal_widget_check_spawn_needed (ThunarTerminalWidget *self)
-{
-  ThunarTerminalWidgetPrivate *priv;
-
-  _thunar_return_if_fail (THUNAR_IS_TERMINAL_WIDGET (self));
-
-  priv = thunar_terminal_widget_get_instance_private (self);
-
-  /* When called explicitly (like from F4 action), always spawn if needed and visible */
-  if (priv->needs_respawn && gtk_widget_get_visible (GTK_WIDGET (self)))
-    spawn_terminal_async (self);
 }
