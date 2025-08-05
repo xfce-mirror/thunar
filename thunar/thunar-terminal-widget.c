@@ -233,14 +233,6 @@ static const MenuFontSizeEntry FONT_SIZE_ENTRIES[] = {
   { 48 }
 };
 
-/* Sync mode labels for menu creation */
-static const gchar *sync_mode_labels[] = {
-  [THUNAR_TERMINAL_SYNC_NONE]        = N_("Disabled"),
-  [THUNAR_TERMINAL_SYNC_FM_TO_TERM]  = N_("File Manager → Terminal"),
-  [THUNAR_TERMINAL_SYNC_TERM_TO_FM]  = N_("Terminal → File Manager"),
-  [THUNAR_TERMINAL_SYNC_BOTH]        = N_("Both Ways"),
-};
-
 /* SSH connection data keys */
 static void
 on_color_scheme_changed (GtkCheckMenuItem *menuitem, gpointer user_data);
@@ -489,7 +481,7 @@ thunar_terminal_widget_handle_show (ThunarTerminalWidget *self)
   ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);
   _thunar_return_if_fail (THUNAR_IS_TERMINAL_WIDGET (self));
 
-  /* Sync to the current location upon becoming visible, but only if terminal is not in SSH */
+  /* On show: if not in SSH mode, sync terminal dir to file manager. Prevent local 'cd' during SSH. */
   if (priv->current_directory && priv->state != THUNAR_TERMINAL_STATE_IN_SSH)
     {
       GFile *location = thunar_file_get_file (priv->current_directory);
@@ -1184,20 +1176,28 @@ _build_terminal_sync_submenu (ThunarTerminalWidget *self)
   ThunarTerminalWidgetPrivate *priv = self->priv;
   GtkWidget                   *submenu = gtk_menu_new ();
   GSList                      *radio_group = NULL;
+  GEnumClass                  *enum_class;
   guint                        i;
 
-  /* Create menu items from the sync mode labels array */
-  for (i = 0; i < G_N_ELEMENTS (sync_mode_labels); i++)
+  /* Get the class structure for our enum from the GType system */
+  enum_class = g_type_class_ref (THUNAR_TYPE_TERMINAL_SYNC_MODE);
+
+  /* Iterate over all registered values in the enum class */
+  for (i = 0; i < enum_class->n_values; i++)
     {
-      GtkWidget *item = _create_radio_menu_item (&radio_group,
-                                                 _(sync_mode_labels[i]),
-                                                 priv->terminal_sync_mode == i,
-                                                 G_CALLBACK (on_enum_pref_changed),
-                                                 (gpointer) "terminal-sync-mode",
-                                                 DATA_KEY_VALUE,
-                                                 GINT_TO_POINTER (i));
+      const GEnumValue *value = &enum_class->values[i];
+      GtkWidget        *item = _create_radio_menu_item (&radio_group,
+                                                        _(value->value_nick),
+                                                        (priv->terminal_sync_mode == (ThunarTerminalSyncMode) value->value),
+                                                        G_CALLBACK (on_enum_pref_changed),
+                                                        (gpointer) "terminal-sync-mode",
+                                                        DATA_KEY_VALUE,
+                                                        GINT_TO_POINTER (value->value));
       gtk_menu_shell_append (GTK_MENU_SHELL (submenu), item);
     }
+
+  /* Prevent memory leaks */
+  g_type_class_unref (enum_class);
 
   return submenu;
 }
