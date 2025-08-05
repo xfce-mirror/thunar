@@ -1199,8 +1199,8 @@ thunar_standard_view_dispose (GObject *object)
   /* disconnect from the list model */
   g_signal_handlers_disconnect_by_data (G_OBJECT (standard_view->model), standard_view);
 
-/* cleanup terminal widget */
 #ifdef HAVE_VTE
+  /* cleanup terminal widget */
   if (standard_view->terminal_widget != NULL)
     {
       g_object_unref (standard_view->terminal_widget);
