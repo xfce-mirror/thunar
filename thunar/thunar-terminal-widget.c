@@ -56,10 +56,10 @@ struct _ThunarTerminalWidgetPrivate
   GtkWidget   *ssh_indicator;   /* A label shown at the top to indicate an active SSH session. */
 
   /* State management */
-  ThunarTerminalState state;                          /* The current operational state (local shell or remote SSH session). */
-  gboolean            needs_respawn;                  /* Flag indicating if the terminal's child process needs to be respawned (e.g., after being hidden and shown again). */
-  GPid                child_pid;                      /* The process ID of the shell or SSH client running in the terminal. -1 if no process is running. */
-  GCancellable       *spawn_cancellable;              /* A GCancellable object to allow cancelling an asynchronous terminal spawn operation. */
+  ThunarTerminalState state;             /* The current operational state (local shell or remote SSH session). */
+  gboolean            needs_respawn;     /* Flag indicating if the terminal's child process needs to be respawned (e.g., after being hidden and shown again). */
+  GPid                child_pid;         /* The process ID of the shell or SSH client running in the terminal. -1 if no process is running. */
+  GCancellable       *spawn_cancellable; /* A GCancellable object to allow cancelling an asynchronous terminal spawn operation. */
 
   /* Preferences */
   gchar                 *color_scheme;        /* The name of the current color scheme (e.g., "dark", "solarized-light"). */
@@ -68,11 +68,11 @@ struct _ThunarTerminalWidgetPrivate
   gboolean               ssh_auto_disconnect; /* Automatically disconnect SSH when navigating out of SFTP location. */
 
   /* Location and SSH details */
-  ThunarFile *current_directory;  /* Current directory as ThunarFile */
-  gchar *ssh_hostname;    /* The hostname for the current SSH connection. */
-  gchar *ssh_username;    /* The username for the current SSH connection. */
-  gchar *ssh_port;        /* The port for the current SSH connection. */
-  gchar *ssh_remote_path; /* The remote path to change to after an SSH connection is established. */
+  ThunarFile *current_directory; /* Current directory as ThunarFile */
+  gchar      *ssh_hostname;      /* The hostname for the current SSH connection. */
+  gchar      *ssh_username;      /* The username for the current SSH connection. */
+  gchar      *ssh_port;          /* The port for the current SSH connection. */
+  gchar      *ssh_remote_path;   /* The remote path to change to after an SSH connection is established. */
 };
 
 /* Keys for g_object_set_data() */
@@ -785,7 +785,7 @@ spawn_terminal_async (ThunarTerminalWidget *self)
       /* Create a temporary directory in /tmp for the zsh configuration */
       temp_dir = g_build_filename (g_get_tmp_dir (), "thunar-terminal-XXXXXX", NULL);
       temp_dir = g_mkdtemp (temp_dir);
-      
+
       if (temp_dir)
         {
           temp_zshrc_path = g_build_filename (temp_dir, ".zshrc", NULL);
@@ -972,8 +972,7 @@ _sync_terminal_to_fm (ThunarTerminalWidget *self, const gchar *cwd_uri)
       new_gfile_location = g_file_new_for_uri (cwd_uri);
     }
 
-  if (new_gfile_location && (priv->current_directory == NULL || 
-      !g_file_equal (new_gfile_location, thunar_file_get_file (priv->current_directory))))
+  if (new_gfile_location && (priv->current_directory == NULL || !g_file_equal (new_gfile_location, thunar_file_get_file (priv->current_directory))))
     {
       ThunarFile *thunar_file;
 
@@ -992,7 +991,7 @@ on_directory_changed (VteTerminal *terminal,
                       const gchar *prop,
                       gpointer     user_data)
 {
-  ThunarTerminalWidget *self = THUNAR_TERMINAL_WIDGET (user_data);
+  ThunarTerminalWidget        *self = THUNAR_TERMINAL_WIDGET (user_data);
   ThunarTerminalWidgetPrivate *priv = self->priv;
 
   /* Check sync mode before syncing terminal to file manager. */
@@ -1014,7 +1013,7 @@ static void
 on_legacy_directory_changed (VteTerminal *terminal,
                              gpointer     user_data)
 {
-  ThunarTerminalWidget *self = THUNAR_TERMINAL_WIDGET (user_data);
+  ThunarTerminalWidget        *self = THUNAR_TERMINAL_WIDGET (user_data);
   ThunarTerminalWidgetPrivate *priv = self->priv;
 
   /* Check sync mode before syncing terminal to file manager. */
@@ -1209,7 +1208,7 @@ _build_terminal_sync_submenu (ThunarTerminalWidget *self)
     {
       const GEnumValue *value = &enum_class->values[i];
       GtkWidget        *item = _create_radio_menu_item (&radio_group,
-                                                        _(value->value_nick),
+                                                 _(value->value_nick),
                                                         (priv->terminal_sync_mode == (ThunarTerminalSyncMode) value->value),
                                                         G_CALLBACK (on_enum_pref_changed),
                                                         (gpointer) "terminal-sync-mode",
@@ -1270,7 +1269,7 @@ create_terminal_popup_menu (ThunarTerminalWidget *self)
 
   if (priv->current_directory)
     {
-      GFile *location = thunar_file_get_file (priv->current_directory);
+      GFile            *location = thunar_file_get_file (priv->current_directory);
       g_autofree gchar *scheme = g_file_get_uri_scheme (location);
       if (scheme && g_strcmp0 (scheme, "sftp") == 0)
         is_sftp_location = TRUE;
@@ -1287,7 +1286,7 @@ create_terminal_popup_menu (ThunarTerminalWidget *self)
       if (is_sftp_location)
         {
           g_autofree gchar *hostname = NULL, *username = NULL, *port = NULL;
-          GFile *location = thunar_file_get_file (priv->current_directory);
+          GFile            *location = thunar_file_get_file (priv->current_directory);
           if (parse_gvfs_ssh_path (location, &hostname, &username, &port))
             {
               gtk_menu_shell_append (GTK_MENU_SHELL (menu), gtk_separator_menu_item_new ());
@@ -1571,7 +1570,7 @@ on_ssh_connect_activate (GtkMenuItem *menuitem,
 {
   ThunarTerminalWidget        *self = THUNAR_TERMINAL_WIDGET (user_data);
   ThunarTerminalWidgetPrivate *priv = self->priv;
-  g_autofree gchar *hostname = NULL, *username = NULL, *port = NULL;
+  g_autofree gchar            *hostname = NULL, *username = NULL, *port = NULL;
 
   /* Extract SSH connection details from the current SFTP location */
   if (priv->current_directory)
