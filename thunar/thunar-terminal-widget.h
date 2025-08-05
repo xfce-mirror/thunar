@@ -70,9 +70,6 @@ thunar_terminal_widget_get_type (void) G_GNUC_CONST;
 ThunarTerminalWidget *
 thunar_terminal_widget_new (void);
 
-void
-thunar_terminal_widget_check_spawn_needed (ThunarTerminalWidget *self);
-
 G_END_DECLS
 
 #endif /* !__THUNAR_TERMINAL_WIDGET_H__ */
