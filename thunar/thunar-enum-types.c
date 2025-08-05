@@ -953,10 +953,10 @@ thunar_terminal_sync_mode_get_type (void)
       /* clang-format off */
       static const GEnumValue values[] =
       {
-        { THUNAR_TERMINAL_SYNC_NONE,       "THUNAR_TERMINAL_SYNC_NONE",       "none" },
-        { THUNAR_TERMINAL_SYNC_FM_TO_TERM, "THUNAR_TERMINAL_SYNC_FM_TO_TERM", "fm-to-term" },
-        { THUNAR_TERMINAL_SYNC_TERM_TO_FM, "THUNAR_TERMINAL_SYNC_TERM_TO_FM", "term-to-fm" },
-        { THUNAR_TERMINAL_SYNC_BOTH,       "THUNAR_TERMINAL_SYNC_BOTH",       "both" },
+        { THUNAR_TERMINAL_SYNC_NONE,       "THUNAR_TERMINAL_SYNC_NONE",       N_("Disabled") },
+        { THUNAR_TERMINAL_SYNC_FM_TO_TERM, "THUNAR_TERMINAL_SYNC_FM_TO_TERM", N_("File Manager → Terminal") },
+        { THUNAR_TERMINAL_SYNC_TERM_TO_FM, "THUNAR_TERMINAL_SYNC_TERM_TO_FM", N_("Terminal → File Manager") },
+        { THUNAR_TERMINAL_SYNC_BOTH,       "THUNAR_TERMINAL_SYNC_BOTH",       N_("Both Ways") },
         { 0,                               NULL,                                NULL },
       };
       /* clang-format on */
