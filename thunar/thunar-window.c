@@ -2965,6 +2965,29 @@ thunar_window_create_view (ThunarWindow *window,
 }
 
 
+#ifdef HAVE_VTE
+ /* VTE widgets treat their initial size as their minimum size. To allow resizing to
+ * a smaller height, we must let VTE initialize with its natural minimum height and then
+ * programmatically set the paned position to the user's saved height. */
+static void
+_set_initial_terminal_height (GtkWidget *paned, GtkAllocation *allocation, gpointer user_data)
+{
+  int saved_height = GPOINTER_TO_INT (user_data);
+  int position;
+
+  /* Ensure we only set the position if the allocated space is sufficient. */
+  if (allocation->height > saved_height)
+    {
+      /* Calculate the separator position from the top of the paned widget. */
+      position = allocation->height - saved_height;
+      gtk_paned_set_position (GTK_PANED (paned), position);
+
+      /* Disconnect this handler to ensure it only runs once. */
+      g_signal_handlers_disconnect_by_func (paned, G_CALLBACK (_set_initial_terminal_height), user_data);
+    }
+}
+#endif
+
 
 static void
 thunar_window_notebook_insert_page (ThunarWindow *window,
@@ -3036,7 +3059,7 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
 #ifdef HAVE_VTE
   /* With VTE: Add terminal widget */
   terminal = thunar_terminal_widget_new ();
-  /* Prevent the terminal process from starting if it has never been shown. */
+  /* Prevent the terminal from being shown by gtk_widget_show_all() */
   gtk_widget_set_no_show_all (GTK_WIDGET (terminal), TRUE);
   gtk_paned_pack2 (GTK_PANED (tab_content_paned), GTK_WIDGET (terminal), FALSE, TRUE);
 
@@ -3068,8 +3091,9 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   gtk_widget_show_all (tab_content_paned);
 
 #ifdef HAVE_VTE
-  /* Set the initial terminal height directly */
-  gtk_widget_set_size_request (GTK_WIDGET (terminal), -1, saved_height);
+  /* Connect the one-shot handler to set the initial terminal height after layout. */
+  g_signal_connect (tab_content_paned, "size-allocate",
+                    G_CALLBACK (_set_initial_terminal_height), GINT_TO_POINTER (saved_height));
 
   thunar_standard_view_set_terminal_widget (THUNAR_STANDARD_VIEW (view), terminal);
 
