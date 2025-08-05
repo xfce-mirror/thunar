@@ -2966,7 +2966,7 @@ thunar_window_create_view (ThunarWindow *window,
 
 
 #ifdef HAVE_VTE
- /* VTE widgets treat their initial size as their minimum size. To allow resizing to
+/* VTE widgets treat their initial size as their minimum size. To allow resizing to
  * a smaller height, we must let VTE initialize with its natural minimum height and then
  * programmatically set the paned position to the user's saved height. */
 static void
