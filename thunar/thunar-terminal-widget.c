@@ -748,6 +748,33 @@ spawn_terminal_async (ThunarTerminalWidget *self)
 
   if (g_str_has_suffix (shell_executable, "zsh"))
     {
+      /*
+       * ZSH integration to track current working directory (CWD).
+       *
+       * Unlike bash, zsh doesn't use PROMPT_COMMAND.
+       * We need use 'precmd' hook, which runs just before a prompt is displayed.
+       *
+       * 1. A temporary directory is created in /tmp using g_mkdtemp().
+       *
+       * 2. A temporary .zshrc file is placed in this directory.
+       *
+       * 3. This .zshrc defines a shell function (_thunar_vte_update_cwd) that
+       *    emits an OSC 7 (Operating System Command) escape sequence. This
+       *    sequence is a standard way to inform a terminal emulator about
+       *    the CWD URI (e.g., "file:///path/to/dir").
+       *
+       * 4. The function is added to the 'precmd_functions' array, ensuring
+       *    it runs before each prompt.
+       *
+       * 5. Critically, it then sources the user's real ~/.zshrc, so their
+       *    personal configuration is not lost.
+       *
+       * 6. The ZDOTDIR environment variable is set to our temporary directory,
+       *    telling zsh to look there for its rc file upon startup.
+       *
+       * This ensures CWD tracking for "Terminal -> File Manager" sync
+       * without permanently modifying user configuration files.
+       */
       g_autofree gchar *temp_zshrc_path = NULL;
       g_autofree gchar *zshrc_content = NULL;
       g_autofree gchar *zdotdir_env = NULL;
@@ -760,12 +787,6 @@ spawn_terminal_async (ThunarTerminalWidget *self)
       if (temp_dir)
         {
           temp_zshrc_path = g_build_filename (temp_dir, ".zshrc", NULL);
-
-          /*
-           * Create a temporary .zshrc that defines our hook and
-           * then sources the user's real .zshrc. This provides directory tracking.
-           * The hook emits an OSC 7 escape sequence to inform VTE of the CWD.
-           */
           zshrc_content = g_strdup_printf ("_thunar_vte_update_cwd() { echo -en \"\\033]7;file://$PWD\\007\"; };\n"
                                            "typeset -a precmd_functions;\n"
                                            "precmd_functions+=(_thunar_vte_update_cwd);\n"
@@ -972,18 +993,17 @@ on_directory_changed (VteTerminal *terminal,
   ThunarTerminalWidget *self = THUNAR_TERMINAL_WIDGET (user_data);
   ThunarTerminalWidgetPrivate *priv = self->priv;
 
-  /* We only care about the property for the current directory URI */
+  /* Check sync mode before syncing terminal to file manager. */
+  if (priv->terminal_sync_mode != THUNAR_TERMINAL_SYNC_BOTH && priv->terminal_sync_mode != THUNAR_TERMINAL_SYNC_TERM_TO_FM)
+    return;
+
   if (g_strcmp0 (prop, VTE_TERMPROP_CURRENT_DIRECTORY_URI) == 0)
     {
-      /* Check if we should sync terminal changes to file manager */
-      if (priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_BOTH || priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_TERM_TO_FM)
+      g_autoptr (GUri) cwd_uri = vte_terminal_ref_termprop_uri (terminal, VTE_TERMPROP_CURRENT_DIRECTORY_URI);
+      if (cwd_uri)
         {
-          g_autoptr (GUri) cwd_uri = vte_terminal_ref_termprop_uri (terminal, VTE_TERMPROP_CURRENT_DIRECTORY_URI);
-          if (cwd_uri)
-            {
-              g_autofree gchar *cwd_uri_str = g_uri_to_string (cwd_uri);
-              _sync_terminal_to_fm (self, cwd_uri_str);
-            }
+          g_autofree gchar *cwd_uri_str = g_uri_to_string (cwd_uri);
+          _sync_terminal_to_fm (self, cwd_uri_str);
         }
     }
 }
@@ -994,13 +1014,13 @@ on_legacy_directory_changed (VteTerminal *terminal,
 {
   ThunarTerminalWidget *self = THUNAR_TERMINAL_WIDGET (user_data);
   ThunarTerminalWidgetPrivate *priv = self->priv;
-  
-  /* Check if we should sync terminal changes to file manager */
-  if (priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_BOTH || priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_TERM_TO_FM)
-    {
-      const gchar *cwd_uri_str = vte_terminal_get_current_directory_uri (terminal);
-      _sync_terminal_to_fm (self, cwd_uri_str);
-    }
+
+  /* Check sync mode before syncing terminal to file manager. */
+  if (priv->terminal_sync_mode != THUNAR_TERMINAL_SYNC_BOTH && priv->terminal_sync_mode != THUNAR_TERMINAL_SYNC_TERM_TO_FM)
+    return;
+
+  const gchar *cwd_uri_str = vte_terminal_get_current_directory_uri (terminal);
+  _sync_terminal_to_fm (self, cwd_uri_str);
 }
 #endif
 
@@ -1319,69 +1339,52 @@ change_directory_in_terminal (ThunarTerminalWidget *self,
 {
   ThunarTerminalWidgetPrivate *priv = self->priv;
   g_autofree gchar            *target_path = NULL;
-  gboolean                     should_sync = FALSE;
 
-  /* Do not sync directory if the terminal is not visible or has no child process */
   if (!gtk_widget_get_visible (GTK_WIDGET (self)) || priv->child_pid == -1)
     return;
 
-  if (priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_BOTH || priv->terminal_sync_mode == THUNAR_TERMINAL_SYNC_FM_TO_TERM)
+  if (priv->state == THUNAR_TERMINAL_STATE_IN_SSH)
     {
-      if (priv->state == THUNAR_TERMINAL_STATE_IN_SSH)
+      target_path = get_remote_path_from_sftp_gfile (location);
+    }
+  else /* Local state */
+    {
+      if (g_file_query_exists (location, NULL))
         {
-          {
-            should_sync = TRUE;
-            target_path = get_remote_path_from_sftp_gfile (location);
-          }
-        }
-      else /* Local state */
-        {
-          if (g_file_query_exists (location, NULL))
-            {
-              target_path = g_file_get_path (location);
-              if (target_path != NULL)
-                should_sync = TRUE;
-            }
+          target_path = g_file_get_path (location);
         }
     }
 
-  if (should_sync && target_path)
+  if (target_path)
     {
       g_autofree gchar *term_uri_str = NULL;
+      GCallback         signal_handler_to_block;
 
-/* Conditionally get the current directory using the appropriate VTE function. */
+/* Set version-specific variables for current directory URI and signal handler. */
 #if VTE_CHECK_VERSION(0, 78, 0)
       g_autoptr (GUri) term_uri = vte_terminal_ref_termprop_uri (priv->terminal, VTE_TERMPROP_CURRENT_DIRECTORY_URI);
       if (term_uri)
-        {
-          term_uri_str = g_uri_to_string (term_uri);
-        }
+        term_uri_str = g_uri_to_string (term_uri);
+      signal_handler_to_block = G_CALLBACK (on_directory_changed);
 #else
       const gchar *temp_uri_str = vte_terminal_get_current_directory_uri (priv->terminal);
       if (temp_uri_str)
-        {
-          term_uri_str = g_strdup (temp_uri_str);
-        }
+        term_uri_str = g_strdup (temp_uri_str);
+      signal_handler_to_block = G_CALLBACK (on_legacy_directory_changed);
 #endif
 
       g_autoptr (GFile) term_gfile = term_uri_str ? g_file_new_for_uri (term_uri_str) : NULL;
       g_autofree gchar *term_path = term_gfile ? g_file_get_path (term_gfile) : NULL;
 
-      /* Only issue a 'cd' command if the terminal is not already in the target directory. */
       if (term_path == NULL || g_strcmp0 (term_path, target_path) != 0)
         {
-          /* Block signals to prevent feedback loop when we programmatically change directory */
-#if VTE_CHECK_VERSION(0, 78, 0)
-          g_signal_handlers_block_by_func (priv->terminal, on_directory_changed, self);
-#else
-          g_signal_handlers_block_by_func (priv->terminal, on_legacy_directory_changed, self);
-#endif
+          /*
+           * Now we use the function pointer to block the correct signal,
+           * feed the command, and unblock it, without further version checks.
+           */
+          g_signal_handlers_block_by_func (priv->terminal, signal_handler_to_block, self);
           feed_cd_command (priv->terminal, target_path);
-#if VTE_CHECK_VERSION(0, 78, 0)
-          g_signal_handlers_unblock_by_func (priv->terminal, on_directory_changed, self);
-#else
-          g_signal_handlers_unblock_by_func (priv->terminal, on_legacy_directory_changed, self);
-#endif
+          g_signal_handlers_unblock_by_func (priv->terminal, signal_handler_to_block, self);
         }
     }
 }
