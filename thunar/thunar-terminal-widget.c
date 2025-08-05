@@ -625,8 +625,7 @@ thunar_terminal_widget_init (ThunarTerminalWidget *self)
   g_signal_connect (priv->terminal, "current-directory-uri-changed", G_CALLBACK (on_legacy_directory_changed), self);
 #endif
 
-  gtk_widget_show_all (GTK_WIDGET (self));
-  gtk_widget_hide (GTK_WIDGET (self));
+  gtk_widget_show_all (vbox);
 }
 
 static void
