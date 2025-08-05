@@ -3036,6 +3036,8 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
 #ifdef HAVE_VTE
   /* With VTE: Add terminal widget */
   terminal = thunar_terminal_widget_new ();
+  /* Prevent the terminal process from starting if it has never been shown. */
+  gtk_widget_set_no_show_all (GTK_WIDGET (terminal), TRUE);
   gtk_paned_pack2 (GTK_PANED (tab_content_paned), GTK_WIDGET (terminal), FALSE, TRUE);
 
   /* Read saved height for initial positioning */
