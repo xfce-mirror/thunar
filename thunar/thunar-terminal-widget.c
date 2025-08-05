@@ -1343,6 +1343,9 @@ change_directory_in_terminal (ThunarTerminalWidget *self,
   if (!gtk_widget_get_visible (GTK_WIDGET (self)) || priv->child_pid == -1)
     return;
 
+  if (priv->terminal_sync_mode != THUNAR_TERMINAL_SYNC_BOTH && priv->terminal_sync_mode != THUNAR_TERMINAL_SYNC_FM_TO_TERM)
+    return;
+
   if (priv->state == THUNAR_TERMINAL_STATE_IN_SSH)
     {
       target_path = get_remote_path_from_sftp_gfile (location);
