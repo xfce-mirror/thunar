@@ -219,10 +219,10 @@ thunar_window_get_view_terminal (GtkWidget *view);
 static gboolean
 thunar_window_action_view_terminal (ThunarWindow *window,
                                     GtkWidget    *menu_item);
-#endif
-
 static gboolean
 on_tab_paned_drag_finished (GtkWidget *paned, GdkEventButton *event, gpointer user_data);
+#endif
+
 static void
 thunar_window_start_open_location (ThunarWindow *window,
                                    const gchar  *initial_text);
@@ -2586,9 +2586,6 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
                                     ThunarWindow *window)
 {
   GtkWidget *view;
-#ifdef HAVE_VTE
-  ThunarTerminalWidget *terminal;
-#endif
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
@@ -2601,16 +2598,6 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
    * thunar_window_notebook_select_current_page() is going to take care of that */
   if ((window->view == view) || (window->notebook_selected != notebook))
     return;
-
-#ifdef HAVE_VTE
-  /* Check if the newly active tab has a terminal that needs spawning */
-  terminal = thunar_window_get_view_terminal (view);
-  if (terminal != NULL && gtk_widget_get_visible (GTK_WIDGET (terminal)))
-    {
-      /* Check if terminal needs to be spawned now that tab is active */
-      thunar_terminal_widget_check_spawn_needed (terminal);
-    }
-#endif
 
   thunar_window_switch_current_view (window, view);
 }
@@ -3068,8 +3055,9 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   /* Connect signals */
   g_signal_connect_swapped (G_OBJECT (button), "clicked", G_CALLBACK (gtk_widget_destroy), tab_content_paned);
   gtk_widget_show (button);
+#ifdef HAVE_VTE
   g_signal_connect (tab_content_paned, "button-release-event", G_CALLBACK (on_tab_paned_drag_finished), NULL);
-
+#endif
   /* Insert page into notebook */
   gtk_notebook_insert_page (GTK_NOTEBOOK (window->notebook_selected), tab_content_paned, label_box, position);
   gtk_container_child_set (GTK_CONTAINER (window->notebook_selected), tab_content_paned, "tab-expand", TRUE, NULL);
@@ -3105,9 +3093,6 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
     gtk_widget_show (GTK_WIDGET (terminal));
   else
     gtk_widget_hide (GTK_WIDGET (terminal));
-
-  /* Check if the terminal needs to be spawned right after creation */
-  thunar_terminal_widget_check_spawn_needed (terminal);
 #endif
 }
 
@@ -3510,8 +3495,6 @@ thunar_window_get_view_terminal (GtkWidget *view)
   return THUNAR_IS_STANDARD_VIEW (view) ? thunar_standard_view_get_terminal_widget (THUNAR_STANDARD_VIEW (view)) : NULL;
 }
 
-#endif /* HAVE_VTE */
-
 static gboolean
 on_tab_paned_drag_finished (GtkWidget *paned, GdkEventButton *event, gpointer user_data)
 {
@@ -3526,6 +3509,7 @@ on_tab_paned_drag_finished (GtkWidget *paned, GdkEventButton *event, gpointer us
 
   return FALSE;
 }
+#endif /* HAVE_VTE */
 
 static gchar *
 thunar_window_bookmark_get_accel_path (GFile *bookmark_file)
@@ -4003,10 +3987,7 @@ thunar_window_action_view_terminal (ThunarWindow *window,
   g_object_set (window->preferences, "terminal-visible", should_be_visible, NULL);
 
   if (should_be_visible)
-    {
-      gtk_widget_show (GTK_WIDGET (current_terminal));
-      thunar_terminal_widget_check_spawn_needed (current_terminal);
-    }
+    gtk_widget_show (GTK_WIDGET (current_terminal));
   else
     gtk_widget_hide (GTK_WIDGET (current_terminal));
 
@@ -4559,8 +4540,7 @@ thunar_window_replace_view (ThunarWindow *window,
 
   _thunar_assert (current_directory != NULL);
 
-  /*** START OF MODIFICATION - Non-destructive view replacement ***/
-  /* Get the paned container and the terminal to reuse. */
+  /* Replace the view in-place, preserving the paned container and terminal widget. */
   GtkWidget *paned_container = gtk_widget_get_parent (view_to_replace);
 
 #ifdef HAVE_VTE
