@@ -4015,7 +4015,13 @@ thunar_window_action_view_terminal (ThunarWindow *window,
   if (should_be_visible)
     gtk_widget_show (GTK_WIDGET (current_terminal));
   else
-    gtk_widget_hide (GTK_WIDGET (current_terminal));
+    {
+      gtk_widget_hide (GTK_WIDGET (current_terminal));
+
+      /* Return focus to the file view when the terminal is hidden. */
+      if (G_LIKELY (window->view != NULL))
+        gtk_widget_grab_focus (window->view);
+    }
 
   return TRUE;
 }
