@@ -2977,6 +2977,8 @@ thunar_window_create_view (ThunarWindow *window,
   return view;
 }
 
+
+
 static void
 thunar_window_notebook_insert_page (ThunarWindow *window,
                                     gint          position,
@@ -4558,10 +4560,10 @@ thunar_window_replace_view (ThunarWindow *window,
   _thunar_assert (current_directory != NULL);
 
   /*** START OF MODIFICATION - Non-destructive view replacement ***/
+  /* Get the paned container and the terminal to reuse. */
+  GtkWidget *paned_container = gtk_widget_get_parent (view_to_replace);
 
 #ifdef HAVE_VTE
-  /* Get the paned container and the terminal to reuse. */
-  GtkWidget            *paned_container = gtk_widget_get_parent (view_to_replace);
   ThunarTerminalWidget *terminal_to_reuse = thunar_window_get_view_terminal (view_to_replace);
 
   /* Ensure the widget hierarchy is as expected. */
@@ -4574,9 +4576,6 @@ thunar_window_replace_view (ThunarWindow *window,
         g_object_unref (current_directory);
       return;
     }
-#else
-  /* Without VTE, just get the parent container */
-  GtkWidget *paned_container = gtk_widget_get_parent (view_to_replace);
 #endif
 
 #ifdef HAVE_VTE

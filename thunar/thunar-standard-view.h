@@ -243,7 +243,6 @@ void
 thunar_standard_view_transfer_selection (ThunarStandardView *standard_view,
                                          ThunarStandardView *old_view);
 
-/* Terminal widget management */
 #ifdef HAVE_VTE
 ThunarTerminalWidget *
 thunar_standard_view_get_terminal_widget (ThunarStandardView *standard_view);
