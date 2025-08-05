@@ -69,15 +69,6 @@ thunar_terminal_widget_get_type (void) G_GNUC_CONST;
 
 ThunarTerminalWidget *
 thunar_terminal_widget_new (void);
-ThunarTerminalWidget *
-thunar_terminal_widget_new_with_location (GFile *location);
-
-void
-thunar_terminal_widget_set_current_location (ThunarTerminalWidget *self,
-                                             GFile                *location);
-
-void
-thunar_terminal_widget_ensure_terminal_focus (ThunarTerminalWidget *self);
 
 void
 thunar_terminal_widget_check_spawn_needed (ThunarTerminalWidget *self);
