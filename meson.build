@@ -35,6 +35,7 @@ dependency_versions = {
   'gudev': '>= 145',
   'libnotify': '>= 0.7.0',
   'polkit': '>= 0.102',
+  'vte': '>= 0.70',
 
   'gexiv2': '>= 0.14.0',
   'pcre2': '>= 10.0',
@@ -82,6 +83,11 @@ endif
 gio_unix = dependency('gio-unix-2.0', version: dependency_versions['glib'], required: get_option('gio-unix'))
 if gio_unix.found()
   feature_cflags += '-DHAVE_GIO_UNIX=1'
+endif
+
+vte = dependency('vte-2.91', required: false)
+if vte.found()
+  feature_cflags += '-DHAVE_VTE=1'
 endif
 
 gudev = dependency('gudev-1.0', version: dependency_versions['gudev'], required: get_option('gudev'))
