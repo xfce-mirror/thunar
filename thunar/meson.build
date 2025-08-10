@@ -80,8 +80,6 @@ thunar_sources = [
   'thunar-job-operation.h',
   'thunar-job.c',
   'thunar-job.h',
-  'thunar-list-model.c',
-  'thunar-list-model.h',
   'thunar-location-bar.c',
   'thunar-location-bar.h',
   'thunar-location-button.c',
