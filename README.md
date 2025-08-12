@@ -34,7 +34,7 @@ From source:
     % cd thunar
     % meson setup build
     % meson compile -C build
-    # meson install -C build
+    % meson install -C build
 
 From release tarball:
 
@@ -42,11 +42,15 @@ From release tarball:
     % cd thunar-<version>
     % meson setup build
     % meson compile -C build
-    # meson install -C build
+    % meson install -C build
 
  Meson will list all missing dependencies.
  If your distribution provides development versions of the related packages, 
  install them. Otherwise you will need to build and install the missing dependencies from source.
+
+### Uninstallation
+
+    % ninja uninstall -C build
 
 For additional build & debug hints, check the [Thunar wiki pages](https://wiki.xfce.org/thunar/dev) and the [detailed building wiki manual](https://docs.xfce.org/xfce/building).
 
