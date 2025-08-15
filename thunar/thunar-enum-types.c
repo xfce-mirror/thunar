@@ -942,3 +942,27 @@ thunar_execute_shell_script_get_type (void)
 
   return type;
 }
+
+GType
+thunar_drag_mode_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      /* clang-format off */
+      static const GEnumValue values[] =
+      {
+        { THUNAR_DRAG_MODE_DISABLED,         "THUNAR_DRAG_MODE_DISABLED",         "dnd disabled" },
+        { THUNAR_DRAG_MODE_MENU_CONDITIONAL, "THUNAR_DRAG_MODE_MENU_CONDITIONAL", "dnd menu only on right clicks" },
+        { THUNAR_DRAG_MODE_MENU_ALWAYS,      "THUNAR_DRAG_MODE_MENU_ALWAYS",      "dnd menu alwways shown" },
+
+        { 0,                                  NULL,                                 NULL }
+      };
+      /* clang-format on */
+
+      type = g_enum_register_static ("ThunarDragMode", values);
+    }
+
+  return type;
+}

@@ -143,6 +143,7 @@ enum
   PROP_MISC_CTRL_SCROLL_WHEEL_TO_ZOOM,
   PROP_MISC_USE_CSD,
   PROP_SMART_SORT,
+  PROP_MISC_DRAG_MODE,
   N_PROPERTIES
 };
 
@@ -1433,6 +1434,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         NULL,
                         FALSE,
                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:misc-drag-mode:
+   *
+   * Controls what is done for drag and drop actions
+   **/
+  preferences_props[PROP_MISC_DRAG_MODE] =
+  g_param_spec_enum ("misc-drag-mode",
+                     "misc-drag-mode",
+                     NULL,
+                     THUNAR_TYPE_DRAG_MODE,
+                     THUNAR_DRAG_MODE_MENU_CONDITIONAL,
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
