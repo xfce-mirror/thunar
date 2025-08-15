@@ -942,3 +942,27 @@ thunar_execute_shell_script_get_type (void)
 
   return type;
 }
+
+GType
+thunar_file_drag_mode_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      /* clang-format off */
+      static const GEnumValue values[] =
+      {
+        { THUNAR_FILE_DRAG_MODE_DISABLED,         "THUNAR_FILE_DRAG_MODE_DISABLED",         "dnd disabled for files" },
+        { THUNAR_FILE_DRAG_MODE_MENU_CONDITIONAL, "THUNAR_FILE_DRAG_MODE_MENU_CONDITIONAL", "dnd menu only on file right clicks" },
+        { THUNAR_FILE_DRAG_MODE_MENU_ALWAYS,      "THUNAR_FILE_DRAG_MODE_MENU_ALWAYS",      "dnd menu for files alwways shown" },
+
+        { 0,                                  NULL,                                 NULL }
+      };
+      /* clang-format on */
+
+      type = g_enum_register_static ("ThunarFileDragMode", values);
+    }
+
+  return type;
+}
