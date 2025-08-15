@@ -639,6 +639,28 @@ typedef enum
 GType
 thunar_execute_shell_script_get_type (void) G_GNUC_CONST;
 
+/**
+ * ThunarDragMode
+ *
+ * Controls what is done for drag and drop actions
+ **/
+#define THUNAR_TYPE_DRAG_MODE (thunar_drag_mode_get_type ())
+
+/**
+ * ThunarDragMode:
+ * @THUNAR_DRAG_MODE_DISABLED,          : dnd is disabled
+ * @THUNAR_DRAG_MODE_MENU_CONDITIONAL,  : only use DND menu for right click DND
+ * @THUNAR_DRAG_MODE_MENU_ALWAYS,       : always show the DND menu
+ **/
+typedef enum
+{
+  THUNAR_DRAG_MODE_DISABLED,
+  THUNAR_DRAG_MODE_MENU_CONDITIONAL,
+  THUNAR_DRAG_MODE_MENU_ALWAYS,
+} ThunarDragMode;
+
+GType
+thunar_drag_mode_get_type (void) G_GNUC_CONST;
 G_END_DECLS;
 
 #endif /* !__THUNAR_ENUM_TYPES_H__ */

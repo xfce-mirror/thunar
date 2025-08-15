@@ -372,6 +372,8 @@ thunar_standard_view_set_model (ThunarStandardView *standard_view);
 static void
 thunar_standard_view_update_selected_files (ThunarStandardView *standard_view,
                                             GList              *files_to_select);
+static void
+thunar_standard_view_update_drag_mode (ThunarStandardView *standard_view);
 
 struct _ThunarStandardViewPrivate
 {
@@ -1106,7 +1108,9 @@ thunar_standard_view_constructor (GType                  type,
   g_signal_connect (G_OBJECT (view), "drag-motion", G_CALLBACK (thunar_standard_view_drag_motion), object);
 
   /* setup the real view as drag source */
-  gtk_drag_source_set (view, GDK_BUTTON1_MASK, drag_targets, G_N_ELEMENTS (drag_targets), GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK);
+  thunar_standard_view_update_drag_mode (standard_view);
+  g_signal_connect_swapped (G_OBJECT (standard_view->preferences), "notify::misc-drag-mode", G_CALLBACK (thunar_standard_view_update_drag_mode), standard_view);
+
   g_signal_connect (G_OBJECT (view), "drag-begin", G_CALLBACK (thunar_standard_view_drag_begin), object);
   g_signal_connect (G_OBJECT (view), "drag-data-get", G_CALLBACK (thunar_standard_view_drag_data_get), object);
   g_signal_connect (G_OBJECT (view), "drag-data-delete", G_CALLBACK (thunar_standard_view_drag_data_delete), object);
@@ -1294,6 +1298,7 @@ thunar_standard_view_finalize (GObject *object)
   thunar_g_list_free_full (standard_view->priv->new_files_path_list);
 
   /* release our reference on the preferences */
+  g_signal_handlers_disconnect_by_data (standard_view->preferences, standard_view);
   g_object_unref (G_OBJECT (standard_view->preferences));
 
   /* release our reference on the list model */
@@ -5082,4 +5087,28 @@ thunar_standard_view_transfer_selection (ThunarStandardView *standard_view,
   files = thunar_component_get_selected_files (THUNAR_COMPONENT (old_view));
   if (files != NULL)
     thunar_component_set_selected_files (THUNAR_COMPONENT (standard_view), files);
+}
+
+
+
+static void
+thunar_standard_view_update_drag_mode (ThunarStandardView *standard_view)
+{
+  ThunarDragMode drag_mode;
+  GtkWidget     *view;
+
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  /* determine the real view widget (treeview or iconview) */
+  view = gtk_bin_get_child (GTK_BIN (standard_view));
+
+  g_object_get (G_OBJECT (standard_view->preferences), "misc-drag-mode", &drag_mode, NULL);
+  if (drag_mode == THUNAR_DRAG_MODE_MENU_ALWAYS)
+    gtk_drag_source_set (view, GDK_BUTTON1_MASK, drag_targets, G_N_ELEMENTS (drag_targets), GDK_ACTION_ASK | GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK);
+  else if (drag_mode == THUNAR_DRAG_MODE_MENU_CONDITIONAL)
+    gtk_drag_source_set (view, GDK_BUTTON1_MASK, drag_targets, G_N_ELEMENTS (drag_targets), GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK);
+  else if (drag_mode == THUNAR_DRAG_MODE_DISABLED)
+    gtk_drag_source_set (view, GDK_BUTTON1_MASK, drag_targets, G_N_ELEMENTS (drag_targets), 0);
+  else
+    g_warning ("Unsupported value received for thunar property misc-drag-mode");
 }
