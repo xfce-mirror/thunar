@@ -23,7 +23,6 @@
 #include "thunar/thunar-clipboard-manager.h"
 #include "thunar/thunar-history.h"
 #include "thunar/thunar-icon-factory.h"
-#include "thunar/thunar-list-model.h"
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-thumbnailer.h"
 #include "thunar/thunar-tree-view-model.h"
