@@ -1445,7 +1445,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      "misc-file-drag-mode",
                      NULL,
                      THUNAR_TYPE_FILE_DRAG_MODE,
-                     THUNAR_FILE_DRAG_MODE_MENU_CONDITIONAL,
+                     THUNAR_FILE_DRAG_MODE_MENU_ALWAYS,
                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /* install all properties */
