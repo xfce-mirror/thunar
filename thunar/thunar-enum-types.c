@@ -955,7 +955,7 @@ thunar_file_drag_mode_get_type (void)
       {
         { THUNAR_FILE_DRAG_MODE_DISABLED,         "THUNAR_FILE_DRAG_MODE_DISABLED",         "dnd disabled for files" },
         { THUNAR_FILE_DRAG_MODE_MENU_CONDITIONAL, "THUNAR_FILE_DRAG_MODE_MENU_CONDITIONAL", "dnd menu only on file right clicks" },
-        { THUNAR_FILE_DRAG_MODE_MENU_ALWAYS,      "THUNAR_FILE_DRAG_MODE_MENU_ALWAYS",      "dnd menu for files alwways shown" },
+        { THUNAR_FILE_DRAG_MODE_MENU_ALWAYS,      "THUNAR_FILE_DRAG_MODE_MENU_ALWAYS",      "dnd menu for files always shown" },
 
         { 0,                                  NULL,                                 NULL }
       };
