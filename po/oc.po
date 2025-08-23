@@ -2586,6 +2586,8 @@ msgid ""
 "- Standalone: Image Preview uses a separate pane\n"
 "- Embedded: Image Preview is embedded in the left sidepane\n"
 msgstr ""
+"- Independent : l’apercebut d’imatge utiliza un panèl separat\n"
+"- Integrat : l’apercebut d’imatge es embarcat dins lo panèl esquèr\n"
 
 #. Behavior
 #: thunar/thunar-preferences-dialog.c:851
@@ -2730,6 +2732,12 @@ msgid ""
 "- Local Files Only (Idle Devices): if all files are local but on busy devices (disks, mount points), copies will be sequential\n"
 "- Never: all copies are done sequentially"
 msgstr ""
+"Indica lo compòrtament pendent de còpias multiplas :\n"
+"- Totjorn : totas las còpias se realizan simultanèament\n"
+"- Fichièrs locals solament: còpias simultanèas pels fichièrs locals (pas a distància, pas junts)\n"
+"- Fichièrs locals solament (Meteisses periferics) : se totes los fichièrs son locals mas sus de periferics diferents (disques, punts de montatge), las còpias seràn sequencialas\n"
+"- Fichièrs locals solament (periferics en velha) : se totes los fichièrs son locals mas sus de periferics ocupats (disques, punts de montatge), las còpias seràn sequencialas\n"
+"- Jamai : totas las còpias se fan sequencialament"
 
 #: thunar/thunar-preferences-dialog.c:1121
 msgid "Local Files Only (Same Devices)"
@@ -2844,6 +2852,10 @@ msgid ""
 "removable media and remote location browsing\n"
 "will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
+"Sembla que <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> es pas disponible.\n"
+"De foncionalitats importantas, coma la presa en carga del bordilhièr,\n"
+"los supòrts amovibles e la navigacion a distància\n"
+"foncionaràn pas. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Ne saber mai]</a>"
 
 #. Shortcuts
 #: thunar/thunar-preferences-dialog.c:1417
@@ -2869,7 +2881,7 @@ msgstr "Barra d’estat"
 
 #: thunar/thunar-preferences-dialog.c:1443
 msgid "The Shortcuts Editor requires a Thunar window to be present."
-msgstr ""
+msgstr "L’editor d’acorchis requerís la preséncia d’una fenèstra Thunar."
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
@@ -3002,6 +3014,8 @@ msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "This feature will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
+"Sembla que <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> es pas disponible.\n"
+"De foncionalitats importantas foncionaràn pas. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Ne saber mai]</a>"
 
 #: thunar/thunar-properties-dialog.c:867
 msgid "Example.txt"
@@ -3105,7 +3119,7 @@ msgstr "Tampar aquesta fenèstra, anullar modificacions ulterioras."
 
 #: thunar/thunar-renamer-dialog.c:424
 msgid "Rename items listed above, keep this window open."
-msgstr ""
+msgstr "Renomenar los elements listats dessús, gardar la fenèstra dobèrta."
 
 #: thunar/thunar-renamer-dialog.c:494
 msgid "New Name"
@@ -3483,6 +3497,8 @@ msgid ""
 "Files whose name matches the wildcard pattern you enter will be selected in "
 "the main window."
 msgstr ""
+"Los fichièrs que lo nom correspond al motiu de caractèrs especials que "
+"dintratz seràn seleccionats dins la fenèstra principala."
 
 #. TRANSLATORS: the * and ? characters are the ASCII wildcard special symbols,
 #. and they must not be localized.
@@ -3496,6 +3512,12 @@ msgid ""
 "\n"
 "Without any * or ? wildcards, the pattern will match anywhere in a name. With wildcards, the pattern must match at both the start and the end of a name."
 msgstr ""
+"? correspond exactament a un caractèr,\n"
+"* correspond a un nombre quin que siá de caractèrs, inclús zèro.\n"
+"\n"
+"Per exemple: *.txt, fichièr??.png, imatge\n"
+"\n"
+"Sens cap de caractèr * o motiu amb ?, lo modèl correspondra a quin que siá lòc dins un nom. Amb de caractèrs de remplaçament, lo modèl deu correspondre al començament e a la fin d'un nom."
 
 #: thunar/thunar-standard-view.c:2776
 msgctxt "Select by Pattern dialog: labels: case sensitive checkbox"
@@ -3508,6 +3530,8 @@ msgid ""
 "If enabled, letter case must match the pattern.\n"
 "Examp* would match Example.txt and not example.txt"
 msgstr ""
+"S'es activat, la cassa de letras deu correspondre al motiu.\n"
+"Examp* correspondriá a Example.txt e non a example.txt"
 
 #: thunar/thunar-standard-view.c:2782
 msgctxt "Select by Pattern dialog: labels: match diacritics checkbox"
@@ -3598,6 +3622,8 @@ msgid ""
 "Configure the order and visibility of toolbar items.\n"
 "Note that toolbar items are always executed for the current directory."
 msgstr ""
+"Configuratz l'òrdre e la visibilitat dels elements de la barra d'espleches.\n"
+"Notatz que los elements de la barra d'espleches son totjorn executats per lo repertòri actual."
 
 #. create the "Use Default" button
 #: thunar/thunar-toolbar-editor.c:260
@@ -3909,11 +3935,11 @@ msgstr ""
 
 #: thunar/thunar-window.c:665
 msgid "Open/Close Split View"
-msgstr ""
+msgstr "Dobrir/Tampar vista separada"
 
 #: thunar/thunar-window.c:666
 msgid "Switch Focused Split View Pane"
-msgstr ""
+msgstr "Bascular lo panèl de la vista separada en fòcus"
 
 #: thunar/thunar-window.c:667
 msgid "Locatio_n Selector"
@@ -3925,7 +3951,7 @@ msgstr "_Estil de tèxt"
 
 #: thunar/thunar-window.c:668
 msgid "Traditional text box showing the current path"
-msgstr ""
+msgstr "Bóstia de tèxte tradicionala que mòstra l’emplaçament actual"
 
 #: thunar/thunar-window.c:669
 msgid "_Buttons Style"
@@ -3962,6 +3988,7 @@ msgstr "_Apercebut imatge"
 #: thunar/thunar-window.c:674
 msgid "Change the visibility of this window's image preview"
 msgstr ""
+"Cambiar la visibilitat de la previsualizacion d'imatge d'aquesta fenèstra"
 
 #: thunar/thunar-window.c:675
 msgid "St_atusbar"
@@ -4459,6 +4486,8 @@ msgid ""
 "Select this to enable executable permission bit(+x). Thunar will not launch "
 "the .desktop file if not set."
 msgstr ""
+"Seleccionatz aquò per activar lo bit de permission d'execucion (+x). Thunar "
+"lançarà pas lo fichièr .desktop s'es pas definit."
 
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:473
 msgid "Set this file as trusted"
@@ -4471,6 +4500,10 @@ msgid ""
 "protect from malicious launchers which e.g. pretend to be a picture, having "
 "the executable flag pre-set"
 msgstr ""
+"Seleccionatz aquesta opcion per fisar aqueste fichièr .desktop. Aquò "
+"generarà una soma de contraròtle del fichièr e l'enregistrarà via gvfs. La "
+"verificacion addicionala protegirà dels aviadors malvolents que, per "
+"exemple, se fan passar per un imatge, amb lo drapèl executable predefinit."
 
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:843
 #, c-format
@@ -4964,6 +4997,8 @@ msgid ""
 "The submenu in which the action will be displayed. Leave empty for no menu. "
 "Use '/' for nested menus."
 msgstr ""
+"Lo sosmenú ont l'accion serà afichada. Daissatz void per cap de menú. "
+"Utilizatz « / » pels menús imbricats."
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:136
 msgid "_Command:"
@@ -5035,6 +5070,8 @@ msgid ""
 "The following command parameters will be substituted when launching the "
 "action:"
 msgstr ""
+"Los paramètres de comanda seguent seràn remplaçats al moment de l'aviada de "
+"l'accion :"
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:461
 msgid "file name of the selected file"
@@ -5098,6 +5135,8 @@ msgid ""
 "If the command should operate on say two or three files, enter the numerical"
 " range 2-3. If there are no limits, this string should be empty."
 msgstr ""
+"Se la comanda deu operar sus dos o tres fichièrs, picatz l'interval numeric "
+"2-3. S'i a pas cap de limits, aquesta cadena deu èsser voida."
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:689
 msgid "Appears if selection contains:"
@@ -5133,6 +5172,9 @@ msgid ""
 "\n"
 "** The custom action will be eligible to appear in the toolbar."
 msgstr ""
+"Aquesta pagina lista las condicions jos las qualas las accions apareisseràn dins los menús contextuals del gestionari de fichièrs. Los motius de fichièrs son especificats per una lista de motius simples separats per un punt virgula (i.e. *.txt;*.doc). Per far aparéisser una accion dins lo menú contextual d'un fichièr o d'un dorsièr, al mens un d'aqueles motius deu correspondre al nom del fichièr o del dorsièr. Amai, podètz especificar qu'aquesta accion pòsca solament aparéisser per d'unes tipes de fichièrs.\n"
+"\n"
+"**L’accion personalizada serà elegibla per aparéisser dins la barra d’espleches."
 
 #: plugins/thunar-uca/thunar-uca-editor.ui:899
 msgid "Appearance Conditions"
@@ -5149,6 +5191,10 @@ msgid ""
 "\n"
 "Check the <a href=\"https://docs.xfce.org/xfce/thunar/custom-actions\">documentation</a> for a collection of custom action examples."
 msgstr ""
+"Configuratz d'accions personalizadas que s'aficharàn dins los menús contextuels e/o la barra d'espleches del gestionari de fichièrs.\n"
+"Aquelas accions son aplicablas als dorsièrs o a cèrtas menas de fichièrs.\n"
+"\n"
+"Consultatz la <a href=\"https://docs.xfce.org/xfce/thunar/custom-actions\">documentacion</a> per una colleccion d'exemples d'accions personalizadas."
 
 #: plugins/thunar-uca/thunar-uca-chooser.ui:88
 msgid "Add a new custom action."
