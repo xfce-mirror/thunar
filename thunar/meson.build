@@ -172,6 +172,10 @@ thunar_sources = [
   'thunar-window.c',
   'thunar-window.h',
 ]
+# Add terminal widget sources conditionally
+if vte.found()
+  thunar_sources += ['thunar-terminal-widget.c', 'thunar-terminal-widget.h']
+endif
 
 thunar_sources += gnome.genmarshal(
   'thunar-marshal',
@@ -225,6 +229,7 @@ executable(
     gudev,
     libnotify,
     pango,
+    vte
   ],
   link_with: [
     libthunarx,
