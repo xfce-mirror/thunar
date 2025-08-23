@@ -1881,7 +1881,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 
   /* disconnect any old bindings */
   if (G_UNLIKELY (standard_view->loading_binding != NULL))
-      g_object_unref (standard_view->loading_binding);
+    g_object_unref (standard_view->loading_binding);
 
   /* connect to the loading property of the new directory */
   standard_view->loading_binding =
@@ -4060,7 +4060,8 @@ thunar_standard_view_error (ThunarStandardViewModel *model,
                             const GError            *error,
                             ThunarStandardView      *standard_view)
 {
-  ThunarFile *file;
+  ThunarFile    *file;
+  ThunarHistory *history;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW_MODEL (model));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
@@ -4070,6 +4071,16 @@ thunar_standard_view_error (ThunarStandardViewModel *model,
   file = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
   if (G_UNLIKELY (file == NULL))
     return;
+
+  /* go back to previous directory if it exists */
+  history = thunar_standard_view_get_history (standard_view);
+  if (history != NULL)
+    {
+      if (thunar_history_has_back (history))
+        {
+          thunar_history_action_back (history);
+        }
+    }
 
   /* inform the user about the problem */
   thunar_dialogs_show_error (GTK_WIDGET (standard_view), error,
@@ -4623,7 +4634,7 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   g_object_get (standard_view->model, "folders-first", &folders_first, NULL);
-  
+
   item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU), NULL, GTK_MENU_SHELL (menu));
   submenu = gtk_menu_new ();
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_BY_NAME), G_OBJECT (standard_view),
