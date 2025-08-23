@@ -2445,6 +2445,7 @@ thunar_window_switch_current_view (ThunarWindow *window,
   ThunarFile    *current_directory;
   ThunarHistory *history;
   gchar         *search_query;
+  GtkWidget     *terminal;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_VIEW (new_view));
@@ -2579,6 +2580,17 @@ thunar_window_switch_current_view (ThunarWindow *window,
 
   /* switch to the new view */
   thunar_window_notebook_set_current_tab (window, gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), window->view));
+
+#ifdef HAVE_VTE
+  terminal = GTK_WIDGET (thunar_window_get_view_terminal (window->view));
+  if (terminal != NULL)
+    {
+      /* Create persistent bidirectional binding between terminal and view */
+      g_object_bind_property (G_OBJECT (window->view), "current-directory",
+                              G_OBJECT (terminal), "current-directory",
+                              G_BINDING_BIDIRECTIONAL);
+    }
+#endif
 
   /* take focus on the new view */
   gtk_widget_grab_focus (window->view);
