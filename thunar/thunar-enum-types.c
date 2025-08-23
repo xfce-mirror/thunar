@@ -956,12 +956,35 @@ thunar_file_drag_mode_get_type (void)
         { THUNAR_FILE_DRAG_MODE_DISABLED,         "THUNAR_FILE_DRAG_MODE_DISABLED",         "dnd disabled for files" },
         { THUNAR_FILE_DRAG_MODE_MENU_CONDITIONAL, "THUNAR_FILE_DRAG_MODE_MENU_CONDITIONAL", "dnd menu only on file right clicks" },
         { THUNAR_FILE_DRAG_MODE_MENU_ALWAYS,      "THUNAR_FILE_DRAG_MODE_MENU_ALWAYS",      "dnd menu for files always shown" },
-
-        { 0,                                  NULL,                                 NULL }
+        { 0,                                       NULL,                                    NULL }
       };
       /* clang-format on */
 
       type = g_enum_register_static ("ThunarFileDragMode", values);
+    }
+
+  return type;
+}
+
+GType
+thunar_terminal_sync_mode_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      /* clang-format off */
+      static const GEnumValue values[] =
+      {
+        { THUNAR_TERMINAL_SYNC_NONE,       "THUNAR_TERMINAL_SYNC_NONE",       N_("Disabled") },
+        { THUNAR_TERMINAL_SYNC_FM_TO_TERM, "THUNAR_TERMINAL_SYNC_FM_TO_TERM", N_("File Manager → Terminal") },
+        { THUNAR_TERMINAL_SYNC_TERM_TO_FM, "THUNAR_TERMINAL_SYNC_TERM_TO_FM", N_("Terminal → File Manager") },
+        { THUNAR_TERMINAL_SYNC_BOTH,       "THUNAR_TERMINAL_SYNC_BOTH",       N_("Both Ways") },
+        { 0,                               NULL,                                NULL },
+      };
+      /* clang-format on */
+
+      type = g_enum_register_static (I_ ("ThunarTerminalSyncMode"), values);
     }
 
   return type;

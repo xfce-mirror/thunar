@@ -144,6 +144,15 @@ enum
   PROP_MISC_USE_CSD,
   PROP_SMART_SORT,
   PROP_MISC_FILE_DRAG_MODE,
+#ifdef HAVE_VTE
+  PROP_TERMINAL_HEIGHT,
+  PROP_TERMINAL_VISIBLE,
+  PROP_TERMINAL_COLOR_SCHEME,
+  PROP_TERMINAL_TERMINAL_SYNC_MODE,
+  PROP_TERMINAL_SSH_AUTO_CONNECT,
+  PROP_TERMINAL_SSH_AUTO_DISCONNECT,
+  PROP_TERMINAL_FONT_SIZE,
+#endif
   N_PROPERTIES
 };
 
@@ -1447,6 +1456,97 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      THUNAR_TYPE_FILE_DRAG_MODE,
                      THUNAR_FILE_DRAG_MODE_MENU_ALWAYS,
                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**              
+   * ThunarPreferences:terminal-height:
+   *
+   * Height of the terminal widget in pixels.
+   **/
+  preferences_props[PROP_TERMINAL_HEIGHT] =
+  g_param_spec_int ("terminal-height",
+                    "TerminalHeight",
+                    NULL,
+                    50,   /* min height */
+                    1000, /* max height */
+                    200,  /* default height */
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:terminal-visible:
+   *
+   * %TRUE to show the terminal widget by default.
+   **/
+  preferences_props[PROP_TERMINAL_VISIBLE] =
+  g_param_spec_boolean ("terminal-visible",
+                        "TerminalVisible",
+                        NULL,
+                        FALSE,
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:terminal-color-scheme:
+   *
+   * Color scheme name for the terminal widget.
+   **/
+  preferences_props[PROP_TERMINAL_COLOR_SCHEME] =
+  g_param_spec_string ("terminal-color-scheme",
+                       "TerminalColorScheme",
+                       NULL,
+                       "system",
+                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:terminal-sync-mode:
+   *
+   * Synchronization mode between terminal and file manager for both local and SSH sessions.
+   **/
+  preferences_props[PROP_TERMINAL_TERMINAL_SYNC_MODE] =
+  g_param_spec_enum ("terminal-sync-mode",
+                     "TerminalSyncMode",
+                     NULL,
+                     THUNAR_TYPE_TERMINAL_SYNC_MODE,
+                     THUNAR_TERMINAL_SYNC_BOTH,
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:terminal-ssh-auto-connect:
+   *
+   * Automatically connect SSH when navigating to SFTP locations.
+   **/
+  preferences_props[PROP_TERMINAL_SSH_AUTO_CONNECT] =
+  g_param_spec_boolean ("terminal-ssh-auto-connect",
+                        "TerminalSshAutoConnect",
+                        NULL,
+                        FALSE,
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:terminal-ssh-auto-disconnect:
+   *
+   * Automatically disconnect SSH when leaving folder.
+   **/
+  preferences_props[PROP_TERMINAL_SSH_AUTO_DISCONNECT] =
+  g_param_spec_boolean ("terminal-ssh-auto-disconnect",
+                        "TerminalSshAutoDisconnect",
+                        NULL,
+                        FALSE,
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+#ifdef HAVE_VTE
+  /**
+   * ThunarPreferences:terminal-font-size:
+   *
+   * Font size for the terminal widget in points.
+   **/
+  preferences_props[PROP_TERMINAL_FONT_SIZE] =
+  g_param_spec_int ("terminal-font-size",
+                    "TerminalFontSize",
+                    NULL,
+                    6,  /* min font size */
+                    72, /* max font size */
+                    12, /* default font size */
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+#endif
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
