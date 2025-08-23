@@ -2465,7 +2465,8 @@ thunar_window_switch_current_view (ThunarWindow *window,
           window->signal_handler_id_history_changed = 0;
         }
 
-      g_signal_handlers_disconnect_by_func (window->view, thunar_window_selection_changed, window);
+      /* disconnect all signal handlers on the old view */
+      g_signal_handlers_disconnect_by_data (window->view, window);
 
       /* unset view during switch */
       window->view = NULL;
@@ -2495,6 +2496,12 @@ thunar_window_switch_current_view (ThunarWindow *window,
   thunar_window_binding_create (window, new_view, "search-mode-active", window->location_toolbar_item_view_switcher, "sensitive", G_BINDING_SYNC_CREATE | G_BINDING_INVERT_BOOLEAN);
   thunar_window_binding_create (window, new_view, "selected-files", window->action_mgr, "selected-files", G_BINDING_SYNC_CREATE);
   thunar_window_binding_create (window, new_view, "zoom-level", window, "zoom-level", G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
+
+  /* connect signals to the new view */
+  g_signal_connect (G_OBJECT (new_view), "notify::loading", G_CALLBACK (thunar_window_notify_loading), window);
+  g_signal_connect_swapped (G_OBJECT (new_view), "start-open-location", G_CALLBACK (thunar_window_start_open_location), window);
+  g_signal_connect_swapped (G_OBJECT (new_view), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
+  g_signal_connect_swapped (G_OBJECT (new_view), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
 
   /* connect to the sidepane (if any) */
   if (G_LIKELY (window->sidepane != NULL))
