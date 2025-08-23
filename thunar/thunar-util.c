@@ -547,11 +547,11 @@ thunar_util_find_associated_window (gpointer parent)
 
   _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), NULL);
 
-  /* If it is a widget, try to get it's toplevel */
+  /* If it is a widget, try to get it's toplevel window */
   if (parent != NULL && GTK_IS_WIDGET (parent))
     {
       window = gtk_widget_get_toplevel (GTK_WIDGET (parent));
-      if (window != NULL)
+      if (window != NULL && GTK_IS_WINDOW (window))
         return (GtkWindow *) window;
     }
 
