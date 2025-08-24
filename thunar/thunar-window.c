@@ -2520,6 +2520,17 @@ thunar_window_switch_current_view (ThunarWindow *window,
                                     G_BINDING_SYNC_CREATE);
     }
 
+#ifdef HAVE_VTE
+  /* connect to the terminal (if any) */
+  terminal = GTK_WIDGET (thunar_standard_view_get_terminal_widget (THUNAR_STANDARD_VIEW (new_view)));
+  if (terminal != NULL)
+    {
+      thunar_window_binding_create (window, G_OBJECT (new_view), "current-directory",
+                                    G_OBJECT (terminal), "current-directory",
+                                    G_BINDING_BIDIRECTIONAL);
+    }
+#endif
+
   /* activate new view */
   window->view = new_view;
   window->view_type = G_TYPE_FROM_INSTANCE (new_view);
@@ -2580,17 +2591,6 @@ thunar_window_switch_current_view (ThunarWindow *window,
 
   /* switch to the new view */
   thunar_window_notebook_set_current_tab (window, gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), window->view));
-
-#ifdef HAVE_VTE
-  terminal = GTK_WIDGET (thunar_window_get_view_terminal (window->view));
-  if (terminal != NULL)
-    {
-      /* Create persistent bidirectional binding between terminal and view */
-      g_object_bind_property (G_OBJECT (window->view), "current-directory",
-                              G_OBJECT (terminal), "current-directory",
-                              G_BINDING_BIDIRECTIONAL);
-    }
-#endif
 
   /* take focus on the new view */
   gtk_widget_grab_focus (window->view);
@@ -3125,12 +3125,10 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
         thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (terminal), current_directory);
     }
 
-  /* Create persistent bidirectional binding between terminal and view
-   * This binding should NOT be managed by the window's view binding system
-   * because it needs to persist even when the tab is not active */
-  g_object_bind_property (G_OBJECT (view), "current-directory",
-                          G_OBJECT (terminal), "current-directory",
-                          G_BINDING_BIDIRECTIONAL);
+  /* Create bidirectional binding between terminal and view */
+  thunar_window_binding_create (window, G_OBJECT (view), "current-directory",
+                                G_OBJECT (terminal), "current-directory",
+                                G_BINDING_BIDIRECTIONAL);
 
   /* Initialize terminal visibility based on preferences */
   g_object_get (window->preferences, "terminal-visible", &terminal_visible, NULL);
