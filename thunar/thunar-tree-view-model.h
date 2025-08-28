@@ -45,6 +45,9 @@ thunar_tree_view_model_load_subdir (ThunarTreeViewModel *model,
 void
 thunar_tree_view_model_schedule_unload (ThunarTreeViewModel *model,
                                         GtkTreeIter         *iter);
+void
+thunar_tree_view_model_check_file_in_model_before_use (ThunarTreeViewModel *model)
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_TREE_VIEW_MODEL_H__ */
