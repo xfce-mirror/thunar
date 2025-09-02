@@ -137,8 +137,6 @@ thunar_sources = [
   'thunar-simple-job.h',
   'thunar-size-label.c',
   'thunar-size-label.h',
-  'thunar-standard-view-model.c',
-  'thunar-standard-view-model.h',
   'thunar-standard-view.c',
   'thunar-standard-view.h',
   'thunar-statusbar.c',

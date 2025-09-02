@@ -23,8 +23,8 @@
 
 #include "thunar/thunar-enum-types.h"
 #include "thunar/thunar-job.h"
-#include "thunar/thunar-standard-view-model.h"
 #include "thunar/thunar-standard-view.h"
+#include "thunar/thunar-tree-view-model.h"
 
 G_BEGIN_DECLS
 
@@ -69,9 +69,9 @@ thunar_io_jobs_rename_file (ThunarFile            *file,
 ThunarJob *
 thunar_io_jobs_count_files (ThunarFile *file);
 ThunarJob *
-thunar_io_jobs_search_directory (ThunarStandardViewModel *model,
-                                 const gchar             *search_query,
-                                 ThunarFile              *directory);
+thunar_io_jobs_search_directory (ThunarTreeViewModel *model,
+                                 const gchar         *search_query,
+                                 ThunarFile          *directory);
 ThunarJob *
 thunar_io_jobs_clear_metadata_for_files (GList *files,
                                          ...);

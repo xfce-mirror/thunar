@@ -24,7 +24,7 @@
 
 #include "thunar/thunar-enum-types.h"
 #include "thunar/thunar-file.h"
-#include "thunar/thunar-standard-view-model.h"
+#include "thunar/thunar-tree-view-model.h"
 
 G_BEGIN_DECLS;
 
