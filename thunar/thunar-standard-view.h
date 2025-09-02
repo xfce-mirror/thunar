@@ -164,7 +164,7 @@ struct _ThunarStandardView
 
   ThunarPreferences *preferences;
 
-  ThunarStandardViewModel *model;
+  ThunarTreeViewModel *model;
 
   ThunarIconFactory *icon_factory;
   GtkCellRenderer   *icon_renderer;
