@@ -1571,11 +1571,11 @@ thunar_io_jobs_count_files (ThunarFile *file)
 
 
 static void
-_thunar_search_folder (ThunarStandardViewModel           *model,
+_thunar_search_folder (ThunarTreeViewModel           *model,
                        ThunarJob                         *job,
                        gchar                             *uri,
                        gchar                            **search_query_c_terms,
-                       enum ThunarStandardViewModelSearch search_type,
+                       enum ThunarTreeViewModelSearch search_type,
                        gboolean                           show_hidden)
 {
   GCancellable    *cancellable;
@@ -1645,7 +1645,7 @@ _thunar_search_folder (ThunarStandardViewModel           *model,
       type = g_file_info_get_file_type (info);
 
       /* handle directories */
-      if (type == G_FILE_TYPE_DIRECTORY && search_type == THUNAR_STANDARD_VIEW_MODEL_SEARCH_RECURSIVE)
+      if (type == G_FILE_TYPE_DIRECTORY && search_type == THUNAR_TREE_VIEW_MODEL_SEARCH_RECURSIVE)
         {
           gchar *file_uri = g_file_get_uri (file);
           _thunar_search_folder (model, job, file_uri, search_query_c_terms, search_type, show_hidden);
@@ -1675,7 +1675,7 @@ _thunar_search_folder (ThunarStandardViewModel           *model,
       return;
     }
 
-  thunar_standard_view_model_add_search_files (model, files_found);
+  thunar_tree_view_model_add_search_files (model, files_found);
 }
 
 
@@ -1685,17 +1685,17 @@ _thunar_job_search_directory (ThunarJob *job,
                               GArray    *param_values,
                               GError   **error)
 {
-  ThunarStandardViewModel           *model;
+  ThunarTreeViewModel           *model;
   ThunarFile                        *directory;
   const char                        *search_query_c;
   gchar                            **search_query_c_terms;
   gboolean                           is_source_device_local;
   ThunarRecursiveSearchMode          mode;
   gboolean                           show_hidden;
-  enum ThunarStandardViewModelSearch search_type;
+  enum ThunarTreeViewModelSearch search_type;
   gchar                             *directory_uri;
 
-  search_type = THUNAR_STANDARD_VIEW_MODEL_SEARCH_NON_RECURSIVE;
+  search_type = THUNAR_TREE_VIEW_MODEL_SEARCH_NON_RECURSIVE;
 
   if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
     return FALSE;
@@ -1712,7 +1712,7 @@ _thunar_job_search_directory (ThunarJob *job,
 
   is_source_device_local = thunar_g_file_is_on_local_device (thunar_file_get_file (directory));
   if (mode == THUNAR_RECURSIVE_SEARCH_ALWAYS || (mode == THUNAR_RECURSIVE_SEARCH_LOCAL && is_source_device_local))
-    search_type = THUNAR_STANDARD_VIEW_MODEL_SEARCH_RECURSIVE;
+    search_type = THUNAR_TREE_VIEW_MODEL_SEARCH_RECURSIVE;
 
   directory_uri = thunar_file_dup_uri (directory);
 
@@ -1727,7 +1727,7 @@ _thunar_job_search_directory (ThunarJob *job,
 
 
 ThunarJob *
-thunar_io_jobs_search_directory (ThunarStandardViewModel *model,
+thunar_io_jobs_search_directory (ThunarTreeViewModel *model,
                                  const gchar             *search_query,
                                  ThunarFile              *directory)
 {
@@ -1743,7 +1743,7 @@ thunar_io_jobs_search_directory (ThunarStandardViewModel *model,
 
   g_object_unref (preferences);
   return thunar_simple_job_new (_thunar_job_search_directory, 5,
-                                THUNAR_TYPE_STANDARD_VIEW_MODEL, model,
+                                THUNAR_TYPE_TREE_VIEW_MODEL, model,
                                 G_TYPE_STRING, search_query,
                                 THUNAR_TYPE_FILE, directory,
                                 G_TYPE_ENUM, mode,

@@ -896,7 +896,7 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
               gtk_tree_selection_unselect_all (selection);
               if (gtk_tree_model_get_iter (model, &iter, path))
                 {
-                  file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &iter);
+                  file = thunar_tree_view_model_get_file (THUNAR_TREE_VIEW_MODEL (model), &iter);
                   if (file != NULL)
                     {
                       row_selected = TRUE;
@@ -942,7 +942,7 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
                   gtk_tree_selection_unselect_all (selection);
                   if (gtk_tree_model_get_iter (model, &iter, path))
                     {
-                      file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &iter);
+                      file = thunar_tree_view_model_get_file (THUNAR_TREE_VIEW_MODEL (model), &iter);
                       if (file != NULL)
                         {
                           g_object_unref (file);
@@ -970,7 +970,7 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
           gtk_tree_selection_unselect_all (selection);
           if (gtk_tree_model_get_iter (model, &iter, mc_path))
             {
-              file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &iter);
+              file = thunar_tree_view_model_get_file (THUNAR_TREE_VIEW_MODEL (model), &iter);
               if (file != NULL)
                 {
                   g_object_unref (file);
@@ -1012,7 +1012,7 @@ tree_view_set_cursor_if_file_not_null (GtkTreeView  *tree_view,
   if (!gtk_tree_model_get_iter (model, &iter, path))
     return FALSE;
 
-  file = thunar_standard_view_model_get_file (THUNAR_STANDARD_VIEW_MODEL (model), &iter);
+  file = thunar_tree_view_model_get_file (THUNAR_TREE_VIEW_MODEL (model), &iter);
 
   if (file == NULL)
     return FALSE;
