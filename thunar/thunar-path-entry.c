@@ -281,8 +281,8 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
 
   /* allocate a new list mode for the completion */
   store = g_object_new (THUNAR_TYPE_TREE_VIEW_MODEL, NULL);
-  thunar_standard_view_model_set_show_hidden (store, TRUE);
-  thunar_standard_view_model_set_folders_first (store, TRUE);
+  thunar_tree_view_model_set_show_hidden (store, TRUE);
+  thunar_tree_view_model_set_folders_first (store, TRUE);
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store), THUNAR_COLUMN_FILE_NAME, GTK_SORT_ASCENDING);
   gtk_entry_completion_set_model (completion, GTK_TREE_MODEL (store));
   g_object_unref (G_OBJECT (store));
@@ -754,7 +754,7 @@ thunar_path_entry_changed (GtkEditable *editable)
       model = gtk_entry_completion_get_model (completion);
       g_object_ref (G_OBJECT (model));
       gtk_entry_completion_set_model (completion, NULL);
-      thunar_standard_view_model_set_folder (THUNAR_STANDARD_VIEW_MODEL (model), folder, NULL);
+      thunar_tree_view_model_set_folder (THUNAR_TREE_VIEW_MODEL (model), folder, NULL);
       gtk_entry_completion_set_model (completion, model);
       g_object_unref (G_OBJECT (model));
 
