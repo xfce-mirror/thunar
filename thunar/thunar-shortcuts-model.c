@@ -235,7 +235,11 @@ struct _ThunarShortcut
   guint hidden : 1;
 };
 
-
+typedef struct
+{
+  ThunarShortcutsModel *model;
+  ThunarShortcut       *shortcut;
+} ThunarShortcutFileGetData;
 
 G_DEFINE_TYPE_WITH_CODE (ThunarShortcutsModel, thunar_shortcuts_model, G_TYPE_OBJECT,
     G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL, thunar_shortcuts_model_tree_model_init)
@@ -1542,15 +1546,36 @@ thunar_shortcuts_model_save_bookmarks (ThunarShortcutsModel *model)
   model->bookmarks_time = g_get_real_time ();
 }
 
+static void
+thunar_shortcuts_model_device_added_callback (GFile      *location,
+                                              ThunarFile *file,
+                                              GError     *error,
+                                              gpointer    user_data)
+{
+  ThunarShortcutFileGetData *data = user_data;
+  ThunarShortcut            *shortcut = data->shortcut;
+  ThunarShortcutsModel      *model = data->model;
 
+  if (error == NULL)
+  {
+    g_object_ref (file);
+    shortcut->file = file;
+  }
+
+  g_object_unref (location);
+
+  /* insert in the model */
+  thunar_shortcuts_model_add_shortcut (model, shortcut);
+}
 
 static void
 thunar_shortcuts_model_device_added (ThunarDeviceMonitor  *device_monitor,
                                      ThunarDevice         *device,
                                      ThunarShortcutsModel *model)
 {
-  ThunarShortcut *shortcut;
-  GFile          *mount_point;
+  ThunarShortcut            *shortcut;
+  ThunarShortcutFileGetData *data;
+  GFile                     *mount_point;
 
   _thunar_return_if_fail (device_monitor == NULL || THUNAR_DEVICE_MONITOR (device_monitor));
   _thunar_return_if_fail (device_monitor == NULL || model->device_monitor == device_monitor);
@@ -1565,8 +1590,10 @@ thunar_shortcuts_model_device_added (ThunarDeviceMonitor  *device_monitor,
   mount_point = thunar_device_get_root (device);
   if (mount_point != NULL)
     {
-      shortcut->file = thunar_file_get (mount_point, NULL);
-      g_object_unref (mount_point);
+      data = g_slice_new0 (ThunarShortcutFileGetData);
+      data->model = model;
+      data->shortcut = shortcut;
+      thunar_file_get_async (mount_point,  NULL, &thunar_shortcuts_model_device_added_callback, data);
     }
 
   switch (thunar_device_get_kind (device))
@@ -1583,9 +1610,6 @@ thunar_shortcuts_model_device_added (ThunarDeviceMonitor  *device_monitor,
       shortcut->group = THUNAR_SHORTCUT_GROUP_NETWORK_MOUNTS;
       break;
     }
-
-  /* insert in the model */
-  thunar_shortcuts_model_add_shortcut (model, shortcut);
 
   /* header visibility if call is from monitor */
   if (device_monitor != NULL
