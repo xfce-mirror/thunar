@@ -1556,8 +1556,12 @@ thunar_shortcuts_model_device_added_callback (GFile      *location,
   ThunarShortcut            *shortcut = data->shortcut;
   ThunarShortcutsModel      *model = data->model;
 
-  g_object_ref (file);
-  shortcut->file = file;
+  if (error == NULL)
+  {
+    g_object_ref (file);
+    shortcut->file = file;
+  }
+
   g_object_unref (location);
 
   /* insert in the model */
