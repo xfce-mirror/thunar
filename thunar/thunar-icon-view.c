@@ -29,6 +29,7 @@ enum
 {
   PROP_0,
   PROP_TEXT_BESIDE_ICONS,
+  PROP_COMPACT_LAYOUT,
 };
 
 
@@ -41,12 +42,10 @@ thunar_icon_view_set_property (GObject      *object,
 static AtkObject *
 thunar_icon_view_get_accessible (GtkWidget *widget);
 static void
-thunar_icon_view_style_set (GtkWidget *widget,
-                            GtkStyle  *previous_style);
+thunar_icon_view_set_consistent_horizontal_spacing (ThunarIconView *icon_view,
+                                                    gboolean        consistent_horizontal_spacing);
 static void
-thunar_icon_view_set_consistent_horizontal_spacing (ThunarIconView *icon_view);
-static void
-thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view);
+thunar_icon_view_zoom_level_changed (ThunarIconView *icon_view);
 
 
 
@@ -77,7 +76,6 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
   gobject_class->set_property = thunar_icon_view_set_property;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
-  gtkwidget_class->style_set = thunar_icon_view_style_set;
   gtkwidget_class->get_accessible = thunar_icon_view_get_accessible;
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
@@ -94,6 +92,19 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
                                    g_param_spec_boolean ("text-beside-icons",
                                                          "text-beside-icons",
                                                          "text-beside-icons",
+                                                         FALSE,
+                                                         G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS));
+
+  /**
+   * ThunarIconView::compact-layout:
+   *
+   * Write-only property to specify whether to use a tighter layout scheme.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_COMPACT_LAYOUT,
+                                   g_param_spec_boolean ("compact-layout",
+                                                         "compact-layout",
+                                                         "compact-layout",
                                                          FALSE,
                                                          G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS));
 }
@@ -119,6 +130,13 @@ thunar_icon_view_init (ThunarIconView *icon_view)
                           G_OBJECT (icon_view),
                           "text-beside-icons",
                           G_BINDING_SYNC_CREATE);
+
+  /* synchronize the "compact-layout" property with the global preference */
+  g_object_bind_property (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->preferences),
+                          "misc-compact-layout",
+                          G_OBJECT (icon_view),
+                          "compact-layout",
+                          G_BINDING_SYNC_CREATE);
 }
 
 
@@ -129,31 +147,35 @@ thunar_icon_view_set_property (GObject      *object,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (object);
+  ThunarIconView *icon_view = THUNAR_ICON_VIEW (object);
 
   switch (prop_id)
     {
     case PROP_TEXT_BESIDE_ICONS:
       if (G_UNLIKELY (g_value_get_boolean (value)))
         {
-          xfce_icon_view_set_orientation (XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), GTK_ORIENTATION_HORIZONTAL);
-          g_object_set (G_OBJECT (standard_view->name_renderer), "wrap-width", 128, "yalign", 0.5f, "xalign", 0.0f, "alignment", PANGO_ALIGN_LEFT, NULL);
+          xfce_icon_view_set_orientation (XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (icon_view))), GTK_ORIENTATION_HORIZONTAL);
+          g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->name_renderer), "wrap-width", 128, "yalign", 0.5f, "xalign", 0.0f, "alignment", PANGO_ALIGN_LEFT, NULL);
 
           /* disconnect the "zoom-level" signal handler, since we're using a fixed wrap-width here */
           g_signal_handlers_disconnect_by_func (object, thunar_icon_view_zoom_level_changed, NULL);
 
           /* reset consistent horizontal spacing */
-          thunar_icon_view_set_consistent_horizontal_spacing (THUNAR_ICON_VIEW (standard_view));
+          thunar_icon_view_set_consistent_horizontal_spacing (icon_view, FALSE);
         }
       else
         {
-          xfce_icon_view_set_orientation (XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), GTK_ORIENTATION_VERTICAL);
-          g_object_set (G_OBJECT (standard_view->name_renderer), "yalign", 0.0f, "xalign", 0.5f, "alignment", PANGO_ALIGN_CENTER, NULL);
+          xfce_icon_view_set_orientation (XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (icon_view))), GTK_ORIENTATION_VERTICAL);
+          g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->name_renderer), "yalign", 0.0f, "xalign", 0.5f, "alignment", PANGO_ALIGN_CENTER, NULL);
 
           /* connect the "zoom-level" signal handler as the wrap-width is now synced with the "zoom-level" */
           g_signal_connect (object, "notify::zoom-level", G_CALLBACK (thunar_icon_view_zoom_level_changed), NULL);
-          thunar_icon_view_zoom_level_changed (standard_view);
+          thunar_icon_view_zoom_level_changed (icon_view);
         }
+      break;
+
+    case PROP_COMPACT_LAYOUT:
+      thunar_icon_view_set_consistent_horizontal_spacing (icon_view, !g_value_get_boolean (value));
       break;
 
     default:
@@ -186,36 +208,27 @@ thunar_icon_view_get_accessible (GtkWidget *widget)
 
 
 static void
-thunar_icon_view_style_set (GtkWidget *widget,
-                            GtkStyle  *previous_style)
+thunar_icon_view_set_consistent_horizontal_spacing (ThunarIconView *icon_view,
+                                                    gboolean        consistent_horizontal_spacing)
 {
-  /* call the parent handler */
-  (*GTK_WIDGET_CLASS (thunar_icon_view_parent_class)->style_set) (widget, previous_style);
+  XfceIconView *xfce_icon_view;
+  gint          wrap_width;
+  gint          xpad;
+  gint          column_spacing;
 
-  /* (re)set consistent horizontal spacing */
-  thunar_icon_view_set_consistent_horizontal_spacing (THUNAR_ICON_VIEW (widget));
-}
+  _thunar_return_if_fail (THUNAR_IS_ICON_VIEW (icon_view));
 
+  xfce_icon_view = XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (icon_view)));
 
-
-static void
-thunar_icon_view_set_consistent_horizontal_spacing (ThunarIconView *icon_view)
-{
-  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (icon_view);
-  XfceIconView       *xfce_icon_view = XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view)));
-  gint                wrap_width;
-  gint                xpad;
-  gint                column_spacing;
-
-  if (xfce_icon_view_get_orientation (xfce_icon_view) == GTK_ORIENTATION_HORIZONTAL)
+  /* reset consistent horizontal spacing if requested or if text is beside icons */
+  if (!consistent_horizontal_spacing || xfce_icon_view_get_orientation (xfce_icon_view) == GTK_ORIENTATION_HORIZONTAL)
     {
-      /* reset consistent horizontal spacing if text is beside icon */
       xfce_icon_view_set_item_width (xfce_icon_view, -1);
       return;
     }
 
-  g_object_get (G_OBJECT (standard_view->name_renderer), "wrap-width", &wrap_width, NULL);
-  gtk_cell_renderer_get_padding (standard_view->name_renderer, &xpad, NULL);
+  g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->name_renderer), "wrap-width", &wrap_width, NULL);
+  gtk_cell_renderer_get_padding (THUNAR_STANDARD_VIEW (icon_view)->name_renderer, &xpad, NULL);
 
   column_spacing = xfce_icon_view_get_column_spacing (xfce_icon_view);
 
@@ -226,16 +239,16 @@ thunar_icon_view_set_consistent_horizontal_spacing (ThunarIconView *icon_view)
 
 
 static void
-thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view)
+thunar_icon_view_zoom_level_changed (ThunarIconView *icon_view)
 {
-  gint            wrap_width;
   XfceIconView   *xfce_icon_view;
   ThunarZoomLevel zoom_level;
+  gint            wrap_width;
 
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (THUNAR_IS_ICON_VIEW (icon_view));
 
-  xfce_icon_view = XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view)));
-  zoom_level = thunar_view_get_zoom_level (THUNAR_VIEW (standard_view));
+  xfce_icon_view = XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (icon_view)));
+  zoom_level = thunar_view_get_zoom_level (THUNAR_VIEW (icon_view));
 
   /* determine the "wrap-width" depending on the "zoom-level" */
   switch (zoom_level)
@@ -262,10 +275,11 @@ thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view)
     }
 
   /* set the new "wrap-width" for the text renderer */
-  g_object_set (G_OBJECT (standard_view->name_renderer), "wrap-width", wrap_width, NULL);
+  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->name_renderer), "wrap-width", wrap_width, NULL);
 
-  /* set consistent horizontal spacing */
-  thunar_icon_view_set_consistent_horizontal_spacing (THUNAR_ICON_VIEW (standard_view));
+  /* update the horizontal spacing if not in compact layout mode */
+  if (xfce_icon_view_get_item_width (xfce_icon_view) != -1)
+    thunar_icon_view_set_consistent_horizontal_spacing (icon_view, TRUE);
 
   /* Like that rubber band selection can be done properly on high zoom levels */
   /* Without margin adjustment it would be almost impossible to start the selection on the left */
