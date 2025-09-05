@@ -239,7 +239,10 @@ typedef struct
 {
   ThunarShortcutsModel *model;
   ThunarShortcut       *shortcut;
+  gboolean              update_visibility;
 } ThunarShortcutFileGetData;
+
+
 
 G_DEFINE_TYPE_WITH_CODE (ThunarShortcutsModel, thunar_shortcuts_model, G_TYPE_OBJECT,
     G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL, thunar_shortcuts_model_tree_model_init)
@@ -1557,15 +1560,20 @@ thunar_shortcuts_model_device_added_callback (GFile      *location,
   ThunarShortcutsModel      *model = data->model;
 
   if (error == NULL)
-  {
-    g_object_ref (file);
-    shortcut->file = file;
-  }
+    {
+      g_object_ref (file);
+      shortcut->file = file;
+
+      /* insert in the model */
+      thunar_shortcuts_model_add_shortcut (model, shortcut);
+
+      if (data->update_visibility)
+        thunar_shortcuts_model_header_visibility (model);
+    }
 
   g_object_unref (location);
-
-  /* insert in the model */
-  thunar_shortcuts_model_add_shortcut (model, shortcut);
+  g_object_unref (model);
+  g_slice_free (ThunarShortcutFileGetData, data);
 }
 
 static void
@@ -1587,15 +1595,6 @@ thunar_shortcuts_model_device_added (ThunarDeviceMonitor  *device_monitor,
   shortcut->device = g_object_ref (device);
   shortcut->hidden = thunar_device_get_hidden (device);
 
-  mount_point = thunar_device_get_root (device);
-  if (mount_point != NULL)
-    {
-      data = g_slice_new0 (ThunarShortcutFileGetData);
-      data->model = model;
-      data->shortcut = shortcut;
-      thunar_file_get_async (mount_point,  NULL, &thunar_shortcuts_model_device_added_callback, data);
-    }
-
   switch (thunar_device_get_kind (device))
     {
     case THUNAR_DEVICE_KIND_VOLUME:
@@ -1611,10 +1610,20 @@ thunar_shortcuts_model_device_added (ThunarDeviceMonitor  *device_monitor,
       break;
     }
 
-  /* header visibility if call is from monitor */
-  if (device_monitor != NULL
-      && !shortcut->hidden)
-    thunar_shortcuts_model_header_visibility (model);
+  mount_point = thunar_device_get_root (device);
+  if (mount_point != NULL)
+    {
+      data = g_slice_new0 (ThunarShortcutFileGetData);
+      data->shortcut = shortcut;
+
+      g_object_ref (model);
+      data->model = model;
+
+      /* header visibility if call is from monitor */
+      data->update_visibility = (device_monitor != NULL && !shortcut->hidden);
+
+      thunar_file_get_async (mount_point, NULL, &thunar_shortcuts_model_device_added_callback, data);
+    }
 }
 
 
