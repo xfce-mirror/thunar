@@ -1615,8 +1615,7 @@ thunar_shortcuts_model_device_added (ThunarDeviceMonitor  *device_monitor,
       data = g_slice_new0 (ThunarShortcutFileGetData);
       data->shortcut = shortcut;
 
-      g_object_ref (model);
-      data->model = model;
+      data->model = g_object_ref (model);
 
       /* header visibility if call is from monitor */
       data->update_visibility = (device_monitor != NULL && !shortcut->hidden);
