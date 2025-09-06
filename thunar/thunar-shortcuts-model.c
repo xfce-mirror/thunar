@@ -1561,8 +1561,7 @@ thunar_shortcuts_model_device_added_callback (GFile      *location,
 
   if (error == NULL)
     {
-      g_object_ref (file);
-      shortcut->file = file;
+      shortcut->file = g_object_ref (file);
 
       /* insert in the model */
       thunar_shortcuts_model_add_shortcut (model, shortcut);
