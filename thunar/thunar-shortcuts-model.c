@@ -1549,6 +1549,8 @@ thunar_shortcuts_model_save_bookmarks (ThunarShortcutsModel *model)
   model->bookmarks_time = g_get_real_time ();
 }
 
+
+
 static void
 thunar_shortcuts_model_device_added_callback (GFile      *location,
                                               ThunarFile *file,
@@ -1609,18 +1611,26 @@ thunar_shortcuts_model_device_added (ThunarDeviceMonitor  *device_monitor,
       break;
     }
 
+  /* header visibility if call is from monitor */
+  gboolean update_visibility = (device_monitor != NULL && !shortcut->hidden);
+
   mount_point = thunar_device_get_root (device);
   if (mount_point != NULL)
     {
       data = g_slice_new0 (ThunarShortcutFileGetData);
       data->shortcut = shortcut;
-
       data->model = g_object_ref (model);
-
-      /* header visibility if call is from monitor */
-      data->update_visibility = (device_monitor != NULL && !shortcut->hidden);
+      data->update_visibility = update_visibility;
 
       thunar_file_get_async (mount_point, NULL, &thunar_shortcuts_model_device_added_callback, data);
+    }
+  else
+    {
+      /* insert in the model */
+      thunar_shortcuts_model_add_shortcut (model, shortcut);
+
+      if (update_visibility)
+        thunar_shortcuts_model_header_visibility (model);
     }
 }
 
