@@ -1624,7 +1624,7 @@ thunar_shortcuts_model_device_added (ThunarDeviceMonitor  *device_monitor,
 
       thunar_file_get_async (mount_point, NULL, &thunar_shortcuts_model_device_added_callback, data);
     }
-  else
+  else /* some devices (e.g. usb flashdrives) do not have a mountpoint */
     {
       /* insert in the model */
       thunar_shortcuts_model_add_shortcut (model, shortcut);
@@ -1654,7 +1654,12 @@ thunar_shortcuts_model_device_removed (ThunarDeviceMonitor  *device_monitor,
       break;
 
   /* something is broken if we don't have a shortcut here */
-  _thunar_assert (lp != NULL);
+  if (lp == NULL)
+    {
+      g_warning ("No shortcut found for device '%s'", thunar_device_get_name (device));
+      return;
+    }
+
   _thunar_assert (THUNAR_SHORTCUT (lp->data)->device == device);
 
   /* drop the shortcut from the model */
@@ -1688,7 +1693,12 @@ thunar_shortcuts_model_device_changed (ThunarDeviceMonitor  *device_monitor,
       break;
 
   /* something is broken if we don't have a shortcut here */
-  _thunar_assert (lp != NULL);
+  if (lp == NULL)
+    {
+      g_warning ("No shortcut found for device '%s'", thunar_device_get_name (device));
+      return;
+    }
+
   _thunar_assert (THUNAR_SHORTCUT (lp->data)->device == device);
 
   if (G_LIKELY (lp != NULL))
