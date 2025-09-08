@@ -238,6 +238,13 @@ struct _ThunarShortcut
   guint hidden : 1;
 };
 
+typedef struct
+{
+  ThunarShortcutsModel *model;
+  ThunarShortcut       *shortcut;
+  gboolean              update_visibility;
+} ThunarShortcutFileGetData;
+
 
 
 G_DEFINE_TYPE_WITH_CODE (ThunarShortcutsModel, thunar_shortcuts_model, G_TYPE_OBJECT,
@@ -1548,12 +1555,39 @@ thunar_shortcuts_model_save_bookmarks (ThunarShortcutsModel *model)
 
 
 static void
+thunar_shortcuts_model_device_added_callback (GFile      *location,
+                                              ThunarFile *file,
+                                              GError     *error,
+                                              gpointer    user_data)
+{
+  ThunarShortcutFileGetData *data = user_data;
+  ThunarShortcut            *shortcut = data->shortcut;
+  ThunarShortcutsModel      *model = data->model;
+
+  if (error == NULL)
+    {
+      shortcut->file = g_object_ref (file);
+
+      /* insert in the model */
+      thunar_shortcuts_model_add_shortcut (model, shortcut);
+
+      if (data->update_visibility)
+        thunar_shortcuts_model_header_visibility (model);
+    }
+
+  g_object_unref (location);
+  g_object_unref (model);
+  g_slice_free (ThunarShortcutFileGetData, data);
+}
+
+static void
 thunar_shortcuts_model_device_added (ThunarDeviceMonitor  *device_monitor,
                                      ThunarDevice         *device,
                                      ThunarShortcutsModel *model)
 {
-  ThunarShortcut *shortcut;
-  GFile          *mount_point;
+  ThunarShortcut            *shortcut;
+  ThunarShortcutFileGetData *data;
+  GFile                     *mount_point;
 
   _thunar_return_if_fail (device_monitor == NULL || THUNAR_DEVICE_MONITOR (device_monitor));
   _thunar_return_if_fail (device_monitor == NULL || model->device_monitor == device_monitor);
@@ -1564,13 +1598,6 @@ thunar_shortcuts_model_device_added (ThunarDeviceMonitor  *device_monitor,
   shortcut = g_slice_new0 (ThunarShortcut);
   shortcut->device = g_object_ref (device);
   shortcut->hidden = thunar_device_get_hidden (device);
-
-  mount_point = thunar_device_get_root (device);
-  if (mount_point != NULL)
-    {
-      shortcut->file = thunar_file_get (mount_point, NULL);
-      g_object_unref (mount_point);
-    }
 
   switch (thunar_device_get_kind (device))
     {
@@ -1587,13 +1614,27 @@ thunar_shortcuts_model_device_added (ThunarDeviceMonitor  *device_monitor,
       break;
     }
 
-  /* insert in the model */
-  thunar_shortcuts_model_add_shortcut (model, shortcut);
-
   /* header visibility if call is from monitor */
-  if (device_monitor != NULL
-      && !shortcut->hidden)
-    thunar_shortcuts_model_header_visibility (model);
+  gboolean update_visibility = (device_monitor != NULL && !shortcut->hidden);
+
+  mount_point = thunar_device_get_root (device);
+  if (mount_point != NULL)
+    {
+      data = g_slice_new0 (ThunarShortcutFileGetData);
+      data->shortcut = shortcut;
+      data->model = g_object_ref (model);
+      data->update_visibility = update_visibility;
+
+      thunar_file_get_async (mount_point, NULL, &thunar_shortcuts_model_device_added_callback, data);
+    }
+  else /* some devices (e.g. usb flashdrives) do not have a mountpoint */
+    {
+      /* insert in the model */
+      thunar_shortcuts_model_add_shortcut (model, shortcut);
+
+      if (update_visibility)
+        thunar_shortcuts_model_header_visibility (model);
+    }
 }
 
 
@@ -1616,7 +1657,12 @@ thunar_shortcuts_model_device_removed (ThunarDeviceMonitor  *device_monitor,
       break;
 
   /* something is broken if we don't have a shortcut here */
-  _thunar_assert (lp != NULL);
+  if (lp == NULL)
+    {
+      g_warning ("No shortcut found for device '%s'", thunar_device_get_name (device));
+      return;
+    }
+
   _thunar_assert (THUNAR_SHORTCUT (lp->data)->device == device);
 
   /* drop the shortcut from the model */
@@ -1650,7 +1696,12 @@ thunar_shortcuts_model_device_changed (ThunarDeviceMonitor  *device_monitor,
       break;
 
   /* something is broken if we don't have a shortcut here */
-  _thunar_assert (lp != NULL);
+  if (lp == NULL)
+    {
+      g_warning ("No shortcut found for device '%s'", thunar_device_get_name (device));
+      return;
+    }
+
   _thunar_assert (THUNAR_SHORTCUT (lp->data)->device == device);
 
   if (G_LIKELY (lp != NULL))
