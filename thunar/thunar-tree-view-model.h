@@ -20,9 +20,29 @@
 #ifndef __THUNAR_TREE_VIEW_MODEL_H__
 #define __THUNAR_TREE_VIEW_MODEL_H__
 
-#include "thunar/thunar-standard-view-model.h"
+#include "thunar/thunar-folder.h"
+#include "thunar/thunar-job.h"
 
 G_BEGIN_DECLS;
+
+typedef enum ThunarTreeViewModelSearch
+{
+  THUNAR_TREE_VIEW_MODEL_SEARCH_RECURSIVE,
+  THUNAR_TREE_VIEW_MODEL_SEARCH_NON_RECURSIVE
+} ThunarTreeViewModelSearch;
+
+/* Signal identifiers */
+typedef enum ThunarTreeViewModelSignals
+{
+  THUNAR_TREE_VIEW_MODEL_ERROR,
+  THUNAR_TREE_VIEW_MODEL_SEARCH_DONE,
+  THUNAR_TREE_VIEW_MODEL_LAST_SIGNAL,
+} ThunarTreeViewModelSignals;
+
+typedef gint (*ThunarSortFunc) (const ThunarFile *a,
+                                const ThunarFile *b,
+                                gboolean          case_sensitive);
+
 
 typedef struct _ThunarTreeViewModelClass ThunarTreeViewModelClass;
 typedef struct _ThunarTreeViewModel      ThunarTreeViewModel;
@@ -37,8 +57,56 @@ typedef struct _ThunarTreeViewModel      ThunarTreeViewModel;
 GType
 thunar_tree_view_model_get_type (void) G_GNUC_CONST;
 
-ThunarStandardViewModel *
+ThunarTreeViewModel *
 thunar_tree_view_model_new (void);
+
+ThunarFolder *
+thunar_tree_view_model_get_folder (ThunarTreeViewModel *model);
+void
+thunar_tree_view_model_set_folder (ThunarTreeViewModel *model,
+                                   ThunarFolder        *folder,
+                                   gchar               *search_query);
+
+void
+thunar_tree_view_model_set_folders_first (ThunarTreeViewModel *model,
+                                          gboolean             folders_first);
+void
+thunar_tree_view_model_set_hidden_last (ThunarTreeViewModel *model,
+                                        gboolean             hidden_last);
+gboolean
+thunar_tree_view_model_get_show_hidden (ThunarTreeViewModel *model);
+void
+thunar_tree_view_model_set_show_hidden (ThunarTreeViewModel *model,
+                                        gboolean             show_hidden);
+
+gboolean
+thunar_tree_view_model_get_file_size_binary (ThunarTreeViewModel *model);
+void
+thunar_tree_view_model_set_file_size_binary (ThunarTreeViewModel *model,
+                                             gboolean             file_size_binary);
+
+ThunarFile *
+thunar_tree_view_model_get_file (ThunarTreeViewModel *model,
+                                 GtkTreeIter         *iter);
+
+
+GList *
+thunar_tree_view_model_get_paths_for_files (ThunarTreeViewModel *model,
+                                            GList               *files);
+GList *
+thunar_tree_view_model_get_paths_for_pattern (ThunarTreeViewModel *model,
+                                              const gchar         *pattern,
+                                              gboolean             case_sensitive,
+                                              gboolean             match_diacritics);
+ThunarJob *
+thunar_tree_view_model_get_job (ThunarTreeViewModel *model);
+void
+thunar_tree_view_model_set_job (ThunarTreeViewModel *model,
+                                ThunarJob           *job);
+void
+thunar_tree_view_model_add_search_files (ThunarTreeViewModel *model,
+                                         GList               *files);
+
 void
 thunar_tree_view_model_load_subdir (ThunarTreeViewModel *model,
                                     GtkTreeIter         *iter);
