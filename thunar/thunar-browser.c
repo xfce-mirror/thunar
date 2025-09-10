@@ -318,41 +318,22 @@ thunar_browser_poke_file_finish (GObject      *object,
         }
     }
 
+  ThunarFile *file = error ? NULL : poke_data->file;
+
   if (poke_data->location_func != NULL)
-    {
-      if (error == NULL)
-        {
-          (poke_data->location_func) (poke_data->browser,
-                                      poke_data->location,
-                                      poke_data->source,
-                                      poke_data->file,
-                                      NULL,
-                                      poke_data->user_data);
-        }
-      else
-        {
-          (poke_data->location_func) (poke_data->browser,
-                                      poke_data->location,
-                                      poke_data->source,
-                                      NULL,
-                                      error,
-                                      poke_data->user_data);
-        }
-    }
+    (poke_data->location_func) (poke_data->browser,
+                                poke_data->location,
+                                poke_data->source,
+                                file,
+                                error,
+                                poke_data->user_data);
 
   if (poke_data->func != NULL)
-    {
-      if (error == NULL)
-        {
-          (poke_data->func) (poke_data->browser, poke_data->source, poke_data->file,
-                             NULL, poke_data->user_data);
-        }
-      else
-        {
-          (poke_data->func) (poke_data->browser, poke_data->source, NULL, error,
-                             poke_data->user_data);
-        }
-    }
+    (poke_data->func) (poke_data->browser,
+                       poke_data->source,
+                       file,
+                       error,
+                       poke_data->user_data);
 
   g_clear_error (&error);
 
