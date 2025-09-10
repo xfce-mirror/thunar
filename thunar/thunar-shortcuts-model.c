@@ -1552,10 +1552,10 @@ thunar_shortcuts_model_save_bookmarks (ThunarShortcutsModel *model)
 
 
 static void
-thunar_shortcuts_model_device_added_callback (GFile      *location,
-                                              ThunarFile *file,
-                                              GError     *error,
-                                              gpointer    user_data)
+thunar_shortcuts_model_device_added_finish (GFile      *location,
+                                            ThunarFile *file,
+                                            GError     *error,
+                                            gpointer    user_data)
 {
   ThunarShortcutFileGetData *data = user_data;
   ThunarShortcut            *shortcut = data->shortcut;
@@ -1576,6 +1576,8 @@ thunar_shortcuts_model_device_added_callback (GFile      *location,
   g_object_unref (model);
   g_slice_free (ThunarShortcutFileGetData, data);
 }
+
+
 
 static void
 thunar_shortcuts_model_device_added (ThunarDeviceMonitor  *device_monitor,
@@ -1622,7 +1624,7 @@ thunar_shortcuts_model_device_added (ThunarDeviceMonitor  *device_monitor,
       data->model = g_object_ref (model);
       data->update_visibility = update_visibility;
 
-      thunar_file_get_async (mount_point, NULL, &thunar_shortcuts_model_device_added_callback, data);
+      thunar_file_get_async (mount_point, NULL, &thunar_shortcuts_model_device_added_finish, data);
     }
   else /* some devices (e.g. usb flashdrives) do not have a mountpoint */
     {
