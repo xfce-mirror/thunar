@@ -293,6 +293,7 @@ thunar_browser_poke_file_finish (GObject      *object,
 {
   PokeFileData *poke_data = user_data;
   GError       *error = NULL;
+  ThunarFile   *file;
 
   _thunar_return_if_fail (G_IS_FILE (object));
   _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
@@ -318,7 +319,7 @@ thunar_browser_poke_file_finish (GObject      *object,
         }
     }
 
-  ThunarFile *file = error ? NULL : poke_data->file;
+  file = error ? NULL : poke_data->file;
 
   if (poke_data->location_func != NULL)
     (poke_data->location_func) (poke_data->browser,
