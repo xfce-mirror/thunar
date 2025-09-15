@@ -2488,7 +2488,7 @@ thunar_window_switch_current_view (ThunarWindow *window,
   thunar_window_set_current_directory (window, current_directory);
 
   /* add stock bindings */
-  thunar_window_create_view_binding (window, window, "current-directory", new_view, "current-directory", G_BINDING_DEFAULT);
+  thunar_window_create_view_binding (window, window, "current-directory", new_view, "current-directory", G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
   thunar_window_create_view_binding (window, new_view, "loading", window->spinner, "active", G_BINDING_SYNC_CREATE);
   thunar_window_create_view_binding (window, new_view, "searching", window->spinner, "active", G_BINDING_SYNC_CREATE);
   thunar_window_create_view_binding (window, new_view, "searching", window, "searching", G_BINDING_SYNC_CREATE);
