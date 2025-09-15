@@ -3116,19 +3116,10 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
 
   thunar_standard_view_set_terminal_widget (THUNAR_STANDARD_VIEW (view), terminal);
 
-  /* Set terminal directory to match view BEFORE creating the binding
-   * to avoid race conditions during initialization */
-  if (THUNAR_IS_NAVIGATOR (view))
-    {
-      ThunarFile *current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (view));
-      if (current_directory)
-        thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (terminal), current_directory);
-    }
-
-  /* Create bidirectional binding between terminal and view */
-  thunar_window_create_view_binding (window, G_OBJECT (view), "current-directory",
-                                     G_OBJECT (terminal), "current-directory",
-                                     G_BINDING_BIDIRECTIONAL);
+   /* Create bidirectional binding between terminal and view */
+   thunar_window_create_view_binding (window, G_OBJECT (view), "current-directory",
+                                 G_OBJECT (terminal), "current-directory",
+                                 G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
 
   /* Initialize terminal visibility based on preferences */
   g_object_get (window->preferences, "terminal-visible", &terminal_visible, NULL);
