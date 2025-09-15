@@ -404,12 +404,12 @@ static void
 thunar_window_update_help_menu (ThunarWindow *window,
                                 GtkWidget    *menu);
 static void
-thunar_window_binding_create (ThunarWindow *window,
-                              gpointer      src_object,
-                              const gchar  *src_prop,
-                              gpointer      dst_object,
-                              const gchar  *dst_prop,
-                              GBindingFlags flags);
+thunar_window_create_view_binding (ThunarWindow *window,
+                                   gpointer      src_object,
+                                   const gchar  *src_prop,
+                                   gpointer      dst_object,
+                                   const gchar  *dst_prop,
+                                   GBindingFlags flags);
 static gboolean
 thunar_window_history_clicked (GtkWidget      *button,
                                GdkEventButton *event,
@@ -1301,7 +1301,7 @@ thunar_window_init (ThunarWindow *window)
 
   thunar_statusbar_setup_event (THUNAR_STATUSBAR (window->statusbar), event_box);
   if (G_LIKELY (window->view != NULL))
-    thunar_window_binding_create (window, THUNAR_STANDARD_VIEW (window->view), "statusbar-text", window->statusbar, "text", G_BINDING_SYNC_CREATE);
+    thunar_window_create_view_binding (window, THUNAR_STANDARD_VIEW (window->view), "statusbar-text", window->statusbar, "text", G_BINDING_SYNC_CREATE);
 
   /* load the bookmarks file and monitor */
   window->bookmarks = NULL;
@@ -2403,8 +2403,8 @@ thunar_window_configure_event (GtkWidget         *widget,
 
 
 static void
-thunar_window_binding_destroyed (gpointer data,
-                                 GObject *binding)
+thunar_window_destroy_view_binding (gpointer data,
+                                    GObject *binding)
 {
   ThunarWindow *window = THUNAR_WINDOW (data);
 
@@ -2415,12 +2415,12 @@ thunar_window_binding_destroyed (gpointer data,
 
 
 static void
-thunar_window_binding_create (ThunarWindow *window,
-                              gpointer      src_object,
-                              const gchar  *src_prop,
-                              gpointer      dst_object,
-                              const gchar  *dst_prop,
-                              GBindingFlags flags)
+thunar_window_create_view_binding (ThunarWindow *window,
+                                   gpointer      src_object,
+                                   const gchar  *src_prop,
+                                   gpointer      dst_object,
+                                   const gchar  *dst_prop,
+                                   GBindingFlags flags)
 {
   GBinding *binding;
 
@@ -2431,7 +2431,7 @@ thunar_window_binding_create (ThunarWindow *window,
                                     G_OBJECT (dst_object), dst_prop,
                                     flags);
 
-  g_object_weak_ref (G_OBJECT (binding), thunar_window_binding_destroyed, window);
+  g_object_weak_ref (G_OBJECT (binding), thunar_window_destroy_view_binding, window);
   window->view_bindings = g_slist_prepend (window->view_bindings, binding);
 }
 
@@ -2488,15 +2488,15 @@ thunar_window_switch_current_view (ThunarWindow *window,
   thunar_window_set_current_directory (window, current_directory);
 
   /* add stock bindings */
-  thunar_window_binding_create (window, window, "current-directory", new_view, "current-directory", G_BINDING_DEFAULT);
-  thunar_window_binding_create (window, new_view, "loading", window->spinner, "active", G_BINDING_SYNC_CREATE);
-  thunar_window_binding_create (window, new_view, "searching", window->spinner, "active", G_BINDING_SYNC_CREATE);
-  thunar_window_binding_create (window, new_view, "searching", window, "searching", G_BINDING_SYNC_CREATE);
-  thunar_window_binding_create (window, new_view, "search-mode-active", window->location_toolbar_item_icon_view, "sensitive", G_BINDING_SYNC_CREATE | G_BINDING_INVERT_BOOLEAN);
-  thunar_window_binding_create (window, new_view, "search-mode-active", window->location_toolbar_item_compact_view, "sensitive", G_BINDING_SYNC_CREATE | G_BINDING_INVERT_BOOLEAN);
-  thunar_window_binding_create (window, new_view, "search-mode-active", window->location_toolbar_item_view_switcher, "sensitive", G_BINDING_SYNC_CREATE | G_BINDING_INVERT_BOOLEAN);
-  thunar_window_binding_create (window, new_view, "selected-files", window->action_mgr, "selected-files", G_BINDING_SYNC_CREATE);
-  thunar_window_binding_create (window, new_view, "zoom-level", window, "zoom-level", G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
+  thunar_window_create_view_binding (window, window, "current-directory", new_view, "current-directory", G_BINDING_DEFAULT);
+  thunar_window_create_view_binding (window, new_view, "loading", window->spinner, "active", G_BINDING_SYNC_CREATE);
+  thunar_window_create_view_binding (window, new_view, "searching", window->spinner, "active", G_BINDING_SYNC_CREATE);
+  thunar_window_create_view_binding (window, new_view, "searching", window, "searching", G_BINDING_SYNC_CREATE);
+  thunar_window_create_view_binding (window, new_view, "search-mode-active", window->location_toolbar_item_icon_view, "sensitive", G_BINDING_SYNC_CREATE | G_BINDING_INVERT_BOOLEAN);
+  thunar_window_create_view_binding (window, new_view, "search-mode-active", window->location_toolbar_item_compact_view, "sensitive", G_BINDING_SYNC_CREATE | G_BINDING_INVERT_BOOLEAN);
+  thunar_window_create_view_binding (window, new_view, "search-mode-active", window->location_toolbar_item_view_switcher, "sensitive", G_BINDING_SYNC_CREATE | G_BINDING_INVERT_BOOLEAN);
+  thunar_window_create_view_binding (window, new_view, "selected-files", window->action_mgr, "selected-files", G_BINDING_SYNC_CREATE);
+  thunar_window_create_view_binding (window, new_view, "zoom-level", window, "zoom-level", G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
 
   /* connect signals to the new view */
   g_signal_connect (G_OBJECT (new_view), "notify::loading", G_CALLBACK (thunar_window_notify_loading), window);
@@ -2507,17 +2507,17 @@ thunar_window_switch_current_view (ThunarWindow *window,
   /* connect to the sidepane (if any) */
   if (G_LIKELY (window->sidepane != NULL))
     {
-      thunar_window_binding_create (window, new_view, "selected-files",
-                                    window->sidepane, "selected-files",
-                                    G_BINDING_SYNC_CREATE);
+      thunar_window_create_view_binding (window, new_view, "selected-files",
+                                         window->sidepane, "selected-files",
+                                         G_BINDING_SYNC_CREATE);
     }
 
   /* connect to the statusbar (if any) */
   if (G_LIKELY (window->statusbar != NULL))
     {
-      thunar_window_binding_create (window, THUNAR_STANDARD_VIEW (new_view), "statusbar-text",
-                                    window->statusbar, "text",
-                                    G_BINDING_SYNC_CREATE);
+      thunar_window_create_view_binding (window, THUNAR_STANDARD_VIEW (new_view), "statusbar-text",
+                                         window->statusbar, "text",
+                                         G_BINDING_SYNC_CREATE);
     }
 
 #ifdef HAVE_VTE
@@ -2525,9 +2525,9 @@ thunar_window_switch_current_view (ThunarWindow *window,
   terminal = GTK_WIDGET (thunar_standard_view_get_terminal_widget (THUNAR_STANDARD_VIEW (new_view)));
   if (terminal != NULL)
     {
-      thunar_window_binding_create (window, G_OBJECT (new_view), "current-directory",
-                                    G_OBJECT (terminal), "current-directory",
-                                    G_BINDING_BIDIRECTIONAL);
+      thunar_window_create_view_binding (window, G_OBJECT (new_view), "current-directory",
+                                         G_OBJECT (terminal), "current-directory",
+                                         G_BINDING_BIDIRECTIONAL);
     }
 #endif
 
@@ -3126,9 +3126,9 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
     }
 
   /* Create bidirectional binding between terminal and view */
-  thunar_window_binding_create (window, G_OBJECT (view), "current-directory",
-                                G_OBJECT (terminal), "current-directory",
-                                G_BINDING_BIDIRECTIONAL);
+  thunar_window_create_view_binding (window, G_OBJECT (view), "current-directory",
+                                     G_OBJECT (terminal), "current-directory",
+                                     G_BINDING_BIDIRECTIONAL);
 
   /* Initialize terminal visibility based on preferences */
   g_object_get (window->preferences, "terminal-visible", &terminal_visible, NULL);
@@ -3516,7 +3516,7 @@ thunar_window_install_sidepane (ThunarWindow      *window,
 
       /* connect the side pane widget to the view (if any) */
       if (G_LIKELY (window->view != NULL))
-        thunar_window_binding_create (window, window->view, "selected-files", window->sidepane, "selected-files", G_BINDING_SYNC_CREATE);
+        thunar_window_create_view_binding (window, window->view, "selected-files", window->sidepane, "selected-files", G_BINDING_SYNC_CREATE);
 
       /* apply show_hidden config to tree pane */
       if (type == THUNAR_SIDEPANE_TYPE_TREE)
