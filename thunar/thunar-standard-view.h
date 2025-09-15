@@ -23,7 +23,6 @@
 #include "thunar/thunar-clipboard-manager.h"
 #include "thunar/thunar-history.h"
 #include "thunar/thunar-icon-factory.h"
-#include "thunar/thunar-list-model.h"
 #include "thunar/thunar-preferences.h"
 #ifdef HAVE_VTE
 #include "thunar/thunar-terminal-widget.h"
@@ -168,7 +167,7 @@ struct _ThunarStandardView
 
   ThunarPreferences *preferences;
 
-  ThunarStandardViewModel *model;
+  ThunarTreeViewModel *model;
 
   ThunarIconFactory *icon_factory;
   GtkCellRenderer   *icon_renderer;
