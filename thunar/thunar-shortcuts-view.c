@@ -39,8 +39,8 @@
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-shortcuts-icon-renderer.h"
-#include "thunar/thunar-shortcuts-name-renderer.h"
 #include "thunar/thunar-shortcuts-model.h"
+#include "thunar/thunar-shortcuts-name-renderer.h"
 #include "thunar/thunar-shortcuts-view.h"
 
 #include <gdk/gdkkeysyms.h>
