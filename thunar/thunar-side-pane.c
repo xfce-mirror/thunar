@@ -17,8 +17,9 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "thunar/thunar-private.h"
 #include "thunar/thunar-side-pane.h"
+
+#include "thunar/thunar-private.h"
 
 #include <libxfce4util/libxfce4util.h>
 
@@ -112,4 +113,12 @@ thunar_side_pane_set_show_hidden (ThunarSidePane *side_pane,
   _thunar_return_if_fail (THUNAR_IS_SIDE_PANE (side_pane));
   if (THUNAR_SIDE_PANE_GET_IFACE (side_pane)->set_show_hidden != NULL)
     (*THUNAR_SIDE_PANE_GET_IFACE (side_pane)->set_show_hidden) (side_pane, show_hidden);
+}
+
+void
+thunar_side_pane_reload (ThunarSidePane *side_pane)
+{
+  _thunar_return_if_fail (THUNAR_IS_SIDE_PANE (side_pane));
+  if (THUNAR_SIDE_PANE_GET_IFACE (side_pane)->reload != NULL)
+    THUNAR_SIDE_PANE_GET_IFACE (side_pane)->reload (side_pane);
 }

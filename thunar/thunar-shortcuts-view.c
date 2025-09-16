@@ -40,6 +40,7 @@
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-shortcuts-icon-renderer.h"
 #include "thunar/thunar-shortcuts-model.h"
+#include "thunar/thunar-shortcuts-name-renderer.h"
 #include "thunar/thunar-shortcuts-view.h"
 
 #include <gdk/gdkkeysyms.h>
@@ -204,6 +205,7 @@ struct _ThunarShortcutsView
 
   ThunarPreferences *preferences;
   GtkCellRenderer   *icon_renderer;
+  GtkCellRenderer   *name_renderer;
   GtkCellRenderer   *padding_renderer;
   GtkTreeViewColumn *column;
   gboolean           padding_enabled;
@@ -334,7 +336,12 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
    * whenever the "shortcuts-icon-emblems" preference changes.
    */
   view->preferences = thunar_preferences_get ();
-  g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::shortcuts-icon-emblems", G_CALLBACK (gtk_widget_queue_draw), view);
+
+  g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::shortcuts-icon-emblems",
+                            G_CALLBACK (gtk_widget_queue_draw), view);
+
+  g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::shortcuts-disk-space-usage-bar",
+                            G_CALLBACK (gtk_tree_view_columns_autosize), view);
 
   /* allocate a single column for our renderers */
   column = view->column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
@@ -391,16 +398,21 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   g_object_bind_property (G_OBJECT (view->preferences), "misc-symbolic-icons-in-sidepane", G_OBJECT (view->icon_renderer), "use-symbolic-icons", G_BINDING_SYNC_CREATE);
   g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::misc-symbolic-icons-in-sidepane", G_CALLBACK (gtk_widget_queue_draw), view);
 
-  /* allocate the text renderer (ellipsizing as required, but "File System" must fit) */
-  renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
-                           "ellipsize", PANGO_ELLIPSIZE_END,
-                           NULL);
-  g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (thunar_shortcuts_view_renamed), view);
-  gtk_tree_view_column_pack_start (column, renderer, TRUE);
-  gtk_tree_view_column_set_attributes (column, renderer,
+  /* allocate the name renderer (ellipsizing as required, but "File System" must fit) */
+  view->name_renderer = g_object_new (THUNAR_TYPE_SHORTCUTS_NAME_RENDERER,
+                                      "ellipsize", PANGO_ELLIPSIZE_END,
+                                      NULL);
+  g_signal_connect (G_OBJECT (view->name_renderer), "edited", G_CALLBACK (thunar_shortcuts_view_renamed), view);
+  gtk_tree_view_column_pack_start (column, view->name_renderer, TRUE);
+  gtk_tree_view_column_set_attributes (column, view->name_renderer,
                                        "text", THUNAR_SHORTCUTS_MODEL_COLUMN_NAME,
                                        "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_IS_ITEM,
+                                       "disk-space-usage", THUNAR_SHORTCUTS_MODEL_COLUMN_DISK_SPACE_USAGE,
                                        NULL);
+
+  g_object_bind_property (G_OBJECT (view->preferences), "shortcuts-disk-space-usage-bar",
+                          G_OBJECT (view->name_renderer), "disk-space-usage-bar",
+                          G_BINDING_SYNC_CREATE);
 
   /* spinner to indicate (un)mount/eject delay */
   renderer = gtk_cell_renderer_spinner_new ();
@@ -1928,6 +1940,15 @@ thunar_shortcuts_view_toggle_padding (ThunarShortcutsView *view,
                                        NULL);
 
   view->padding_enabled = enable;
+}
+
+
+
+void
+thunar_shortcuts_view_reload (ThunarShortcutsView *view)
+{
+  thunar_shortcuts_model_reload (view->model);
+  gtk_widget_queue_draw (GTK_WIDGET (view));
 }
 
 

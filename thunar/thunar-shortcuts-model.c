@@ -177,6 +177,9 @@ thunar_shortcuts_model_file_changed (ThunarFile           *file,
 static void
 thunar_shortcuts_model_file_destroyed (ThunarFile           *file,
                                        ThunarShortcutsModel *model);
+
+static GFile *
+thunar_shortcut_get_file (ThunarShortcut *shortcut);
 static void
 thunar_shortcut_free (ThunarShortcut       *shortcut,
                       ThunarShortcutsModel *model);
@@ -539,6 +542,9 @@ thunar_shortcuts_model_get_column_type (GtkTreeModel *tree_model,
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_HIDDEN:
       return G_TYPE_BOOLEAN;
+
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_DISK_SPACE_USAGE:
+      return G_TYPE_INT;
     }
 
   _thunar_assert_not_reached ();
@@ -608,6 +614,8 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
   gchar          *tooltip;
   guint32         trash_items;
   gchar          *parse_name;
+  guint64         fs_free;
+  guint64         fs_size;
 
   _thunar_return_if_fail (iter->stamp == THUNAR_SHORTCUTS_MODEL (tree_model)->stamp);
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (tree_model));
@@ -659,12 +667,7 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
             device_id = NULL;
 
           /* get device root directory */
-          if (shortcut->device != NULL)
-            file = thunar_device_get_root (shortcut->device);
-          else if (shortcut->file != NULL)
-            file = g_object_ref (thunar_file_get_file (shortcut->file));
-          else
-            file = NULL;
+          file = thunar_shortcut_get_file (shortcut);
 
           if (file != NULL)
             {
@@ -817,6 +820,24 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
     case THUNAR_SHORTCUTS_MODEL_COLUMN_HIDDEN:
       g_value_init (value, G_TYPE_BOOLEAN);
       g_value_set_boolean (value, FALSE);
+      break;
+
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_DISK_SPACE_USAGE:
+      g_value_init (value, G_TYPE_INT);
+      g_value_set_int (value, -1);
+      if ((shortcut->group & THUNAR_SHORTCUT_GROUP_DEVICES) != 0)
+        {
+          file = thunar_shortcut_get_file (shortcut);
+
+          /* Disk space usage as a percentage */
+          if (file != NULL)
+            {
+              if (thunar_g_file_get_free_space (file, &fs_free, &fs_size))
+                g_value_set_int (value, (gint) ((gdouble) (fs_size - fs_free) / ((gdouble) fs_size / 100.0)));
+
+              g_object_unref (file);
+            }
+        }
       break;
 
     default:
@@ -1843,6 +1864,19 @@ thunar_shortcuts_model_file_changed (ThunarFile           *file,
 
 
 
+static GFile *
+thunar_shortcut_get_file (ThunarShortcut *shortcut)
+{
+  if (shortcut->device != NULL)
+    return thunar_device_get_root (shortcut->device);
+  else if (shortcut->file != NULL)
+    return g_object_ref (thunar_file_get_file (shortcut->file));
+
+  return NULL;
+}
+
+
+
 static void
 thunar_shortcut_free (ThunarShortcut       *shortcut,
                       ThunarShortcutsModel *model)
@@ -2463,4 +2497,23 @@ thunar_shortcuts_model_set_hidden (ThunarShortcutsModel *model,
 
   /* header visibility */
   thunar_shortcuts_model_header_visibility (model);
+}
+
+
+
+void
+thunar_shortcuts_model_reload (ThunarShortcutsModel *model)
+{
+  GList          *l;
+  ThunarShortcut *shortcut;
+
+  for (l = model->shortcuts; l != NULL; l = l->next)
+    {
+      shortcut = l->data;
+
+      if (shortcut->device != NULL)
+        thunar_device_reload_file (shortcut->device);
+    }
+
+  thunar_shortcuts_model_reload_bookmarks (model);
 }

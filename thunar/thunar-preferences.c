@@ -124,6 +124,7 @@ enum
   PROP_MISC_IMAGE_PREVIEW_FULL,
   PROP_SHORTCUTS_ICON_EMBLEMS,
   PROP_SHORTCUTS_ICON_SIZE,
+  PROP_SHORTCUTS_DISK_SPACE_USAGE_BAR,
   PROP_TREE_ICON_EMBLEMS,
   PROP_TREE_ICON_SIZE,
   PROP_TREE_LINES,
@@ -269,7 +270,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    *
    * If enabled, filenames are split into collatable substrings and e.g. numbers are compared separately,
    * in a numeric way instead of comparing them digit-by-digit.
-   * 
+   *
    * Sort order example with smart sorting enabled:
    * - file1 file5 file10
    *
@@ -1214,6 +1215,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
+   * ThunarPreferences:disk-space-usage-bar:
+   *
+   * Progressbar that displays disk space usage
+   **/
+  preferences_props[PROP_SHORTCUTS_DISK_SPACE_USAGE_BAR] =
+  g_param_spec_boolean ("shortcuts-disk-space-usage-bar",
+                        "ShortcutsDiskSpaceUsageBar",
+                        NULL,
+                        TRUE,
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
    * ThunarPreferences:tree-icon-emblems:
    *
    * Whether to display emblems for file icons (if defined) in the
@@ -1457,7 +1470,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      THUNAR_FILE_DRAG_MODE_MENU_ALWAYS,
                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-  /**              
+  /**
    * ThunarPreferences:terminal-height:
    *
    * Height of the terminal widget in pixels.

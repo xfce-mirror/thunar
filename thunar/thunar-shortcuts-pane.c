@@ -17,10 +17,11 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "thunar/thunar-shortcuts-pane.h"
+
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-shortcuts-model.h"
-#include "thunar/thunar-shortcuts-pane.h"
 #include "thunar/thunar-shortcuts-view.h"
 #include "thunar/thunar-side-pane.h"
 
@@ -70,7 +71,8 @@ static void
 thunar_shortcuts_pane_show_shortcuts_view_padding (GtkWidget *widget);
 static void
 thunar_shortcuts_pane_hide_shortcuts_view_padding (GtkWidget *widget);
-
+static void
+thunar_shortcuts_pane_side_pane_reload (ThunarSidePane *side_pane);
 
 
 struct _ThunarShortcutsPaneClass
@@ -147,6 +149,7 @@ thunar_shortcuts_pane_side_pane_init (ThunarSidePaneIface *iface)
 {
   iface->get_show_hidden = NULL;
   iface->set_show_hidden = NULL;
+  iface->reload = thunar_shortcuts_pane_side_pane_reload;
 }
 
 
@@ -399,4 +402,14 @@ static void
 thunar_shortcuts_pane_hide_shortcuts_view_padding (GtkWidget *widget)
 {
   thunar_shortcuts_view_toggle_padding (THUNAR_SHORTCUTS_VIEW (widget), FALSE);
+}
+
+
+
+static void
+thunar_shortcuts_pane_side_pane_reload (ThunarSidePane *side_pane)
+{
+  ThunarShortcutsPane *self = THUNAR_SHORTCUTS_PANE (side_pane);
+
+  thunar_shortcuts_view_reload (THUNAR_SHORTCUTS_VIEW (self->view));
 }
