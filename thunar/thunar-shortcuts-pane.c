@@ -17,10 +17,11 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "thunar/thunar-shortcuts-pane.h"
+
 #include "thunar/thunar-gobject-extensions.h"
 #include "thunar/thunar-private.h"
 #include "thunar/thunar-shortcuts-model.h"
-#include "thunar/thunar-shortcuts-pane.h"
 #include "thunar/thunar-shortcuts-view.h"
 #include "thunar/thunar-side-pane.h"
 

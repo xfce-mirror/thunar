@@ -270,7 +270,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    *
    * If enabled, filenames are split into collatable substrings and e.g. numbers are compared separately,
    * in a numeric way instead of comparing them digit-by-digit.
-   * 
+   *
    * Sort order example with smart sorting enabled:
    * - file1 file5 file10
    *
@@ -1470,7 +1470,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      THUNAR_FILE_DRAG_MODE_MENU_ALWAYS,
                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-  /**              
+  /**
    * ThunarPreferences:terminal-height:
    *
    * Height of the terminal widget in pixels.
