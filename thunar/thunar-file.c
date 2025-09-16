@@ -1241,6 +1241,9 @@ thunar_file_load (ThunarFile   *file,
   /* remove the file from cache */
   g_hash_table_remove (file_cache, file->gfile);
 
+  /* reset the file */
+  thunar_file_info_clear (file);
+
   /* query a new file info */
   info = g_file_query_info (file->gfile,
                             THUNARX_FILE_INFO_NAMESPACE,
@@ -1270,9 +1273,6 @@ thunar_file_load (ThunarFile   *file,
       G_REC_UNLOCK (file_cache_mutex);
       return FALSE;
     }
-
-  /* reset the file */
-  thunar_file_info_clear (file);
 
   /* update the file with the new info */
   file->info = info;
