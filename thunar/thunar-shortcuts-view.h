@@ -48,6 +48,9 @@ void
 thunar_shortcuts_view_toggle_padding (ThunarShortcutsView *view,
                                       gboolean             enable);
 
+void
+thunar_shortcuts_view_reload (ThunarShortcutsView *view);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_SHORTCUTS_VIEW_H__ */

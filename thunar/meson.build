@@ -127,6 +127,8 @@ thunar_sources = [
   'thunar-shortcuts-icon-renderer.h',
   'thunar-shortcuts-model.c',
   'thunar-shortcuts-model.h',
+  'thunar-shortcuts-name-renderer.c',
+  'thunar-shortcuts-name-renderer.h',
   'thunar-shortcuts-pane.c',
   'thunar-shortcuts-pane.h',
   'thunar-shortcuts-view.c',
