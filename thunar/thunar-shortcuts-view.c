@@ -407,11 +407,11 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   gtk_tree_view_column_set_attributes (column, view->name_renderer,
                                        "text", THUNAR_SHORTCUTS_MODEL_COLUMN_NAME,
                                        "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_IS_ITEM,
-                                       "disk-space-usage", THUNAR_SHORTCUTS_MODEL_COLUMN_DISK_SPACE_USAGE,
+                                       "disk-space-usage-percent", THUNAR_SHORTCUTS_MODEL_COLUMN_DISK_SPACE_USAGE_PERCENT,
                                        NULL);
 
   g_object_bind_property (G_OBJECT (view->preferences), "shortcuts-disk-space-usage-bar",
-                          G_OBJECT (view->name_renderer), "disk-space-usage-bar",
+                          G_OBJECT (view->name_renderer), "disk-space-usage-bar-enabled",
                           G_BINDING_SYNC_CREATE);
 
   /* spinner to indicate (un)mount/eject delay */
