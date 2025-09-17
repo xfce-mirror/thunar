@@ -261,7 +261,7 @@ thunar_shortcuts_name_renderer_render_disk_space_usage_bar (GtkCellRenderer     
   gtk_style_context_save (context);
   gtk_style_context_add_class (context, GTK_STYLE_CLASS_PROGRESSBAR);
   gtk_render_background (context, cr, bar_area.x, bar_area.y, progress_width, bar_area.height);
-  gtk_render_frame (context, cr, bar_area.x, bar_area.y, bar_area.width, bar_area.height);
+  gtk_render_frame (context, cr, bar_area.x, bar_area.y, progress_width, bar_area.height);
   gtk_style_context_restore (context);
 
   cairo_restore (cr);
