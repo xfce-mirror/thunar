@@ -186,6 +186,8 @@ thunar_shortcuts_name_renderer_render (GtkCellRenderer     *cell,
   GdkRectangle                 aligned_area;
   gdouble                      extra_height, extra_name_ratio, content_cell_ratio, yalign;
   gint                         ypad;
+  gint                         text_height;
+  gint                         cell_height;
 
   /* Render name */
   if (thunar_shortcuts_name_renderer_should_show_disk_space_usage_bar (self))
@@ -193,9 +195,15 @@ thunar_shortcuts_name_renderer_render (GtkCellRenderer     *cell,
       gtk_cell_renderer_get_aligned_area (GTK_CELL_RENDERER (self), widget, flags, cell_area, &aligned_area);
       gtk_cell_renderer_get_padding (cell, NULL, &ypad);
 
+      /* Preventing division by zero */
+      text_height = MAX(1, aligned_area.height);
+      cell_height = MAX(1, cell_area->height);
+
+      /* By default, yalign is 0.5, which means center. Set yalign so that the center
+       * corresponds not to the text, but to the text plus the bar. */
       extra_height = DRIVE_FULLNESS_BAR_HEIGHT + DRIVE_FULLNESS_BAR_YPAD;
-      extra_name_ratio = (gdouble) extra_height / (gdouble) aligned_area.height;
-      content_cell_ratio = (gdouble) (aligned_area.height + extra_height) / (gdouble) cell_area->height;
+      extra_name_ratio = (gdouble) extra_height / (gdouble) text_height;
+      content_cell_ratio = (gdouble) (aligned_area.height + extra_height) / (gdouble) cell_height;
       yalign = MAX (0.0, 0.5 - (extra_name_ratio * content_cell_ratio));
       g_object_set (cell,
                     "yalign", yalign,
