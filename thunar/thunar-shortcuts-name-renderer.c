@@ -196,8 +196,8 @@ thunar_shortcuts_name_renderer_render (GtkCellRenderer     *cell,
       gtk_cell_renderer_get_padding (cell, NULL, &ypad);
 
       /* Preventing division by zero */
-      text_height = MAX(1, aligned_area.height);
-      cell_height = MAX(1, cell_area->height);
+      text_height = MAX (1, aligned_area.height);
+      cell_height = MAX (1, cell_area->height);
 
       /* By default, yalign is 0.5, which means center. Set yalign so that the center
        * corresponds not to the text, but to the text plus the bar. */
