@@ -22,6 +22,23 @@
 #define DRIVE_FULLNESS_BAR_HEIGHT 7
 #define DRIVE_FULLNESS_BAR_YPAD 4
 
+/*
+ * In addition to the standard capabilities of GtkCellRendererText, this renderer
+ * can display a progress bar beneath the text, which is used to indicate disk usage.
+ * Despite the existence of GtkCellRendererProgress, it cannot be used as a replacement
+ * for this renderer, as GtkCellRendererProgress always displays the progress bar at the
+ * full height of the cell and offers no way to modify or override this behavior.
+ *
+ * In addition to the standard properties inherited from GtkCellRendererText,
+ * this renderer has the following additional properties:
+ *
+ *   disk-space-usage-bar-enabled - boolean, controls whether the progress bar is displayed
+ *
+ *   disk-space-usage-percent - integer, accepts values (-1, 0-100); when set to -1, the progress bar is not displayed
+ *
+ * CAUTION: This class uses the yalign property for positioning the text, so you cannot
+ * set this property yourself.
+ */
 struct _ThunarShortcutsNameRendererClass
 {
   GtkCellRendererTextClass __parent__;
@@ -239,6 +256,10 @@ thunar_shortcuts_name_renderer_render_disk_space_usage_bar (GtkCellRenderer     
   gint                         xpad;
   gint                         progress_width;
 
+  /*
+   * This code is based on gtk_cell_renderer_progress_render:
+   * https://gitlab.gnome.org/GNOME/gtk/-/blob/503e8f40b9559ce921e9330b71ec6f2bb99c8923/gtk/gtkcellrendererprogress.c#L557
+   */
   gtk_cell_renderer_get_aligned_area (cell, widget, flags, cell_area, &aligned_area);
   gtk_cell_renderer_get_padding (cell, &xpad, NULL);
 

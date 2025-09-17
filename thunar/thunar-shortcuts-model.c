@@ -823,15 +823,15 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
       break;
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_DISK_SPACE_USAGE_PERCENT:
+      /* This property can take values (-1, 0..100), where -1 indicates no value. */
       g_value_init (value, G_TYPE_INT);
       g_value_set_int (value, -1);
       if ((shortcut->group & THUNAR_SHORTCUT_GROUP_DEVICES) != 0)
         {
           file = thunar_shortcut_get_file (shortcut);
-
-          /* Disk space usage as a percentage */
           if (file != NULL)
             {
+              /* If the file system size is 0, assume that it could not be retrieved. */
               if (thunar_g_file_get_free_space (file, &fs_free, &fs_size) && fs_size > 0)
                 g_value_set_int (value, (gint) ((gdouble) (fs_size - fs_free) / ((gdouble) fs_size / 100.0)));
 
