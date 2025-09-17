@@ -178,7 +178,7 @@ static void
 thunar_shortcuts_model_file_destroyed (ThunarFile           *file,
                                        ThunarShortcutsModel *model);
 
-static GFile*
+static GFile *
 thunar_shortcut_get_file (ThunarShortcut *shortcut);
 static void
 thunar_shortcut_free (ThunarShortcut       *shortcut,
@@ -1864,7 +1864,7 @@ thunar_shortcuts_model_file_changed (ThunarFile           *file,
 
 
 
-static GFile*
+static GFile *
 thunar_shortcut_get_file (ThunarShortcut *shortcut)
 {
   if (shortcut->device != NULL)
@@ -2504,7 +2504,7 @@ thunar_shortcuts_model_set_hidden (ThunarShortcutsModel *model,
 void
 thunar_shortcuts_model_reload (ThunarShortcutsModel *model)
 {
-  GList *l;
+  GList          *l;
   ThunarShortcut *shortcut;
 
   for (l = model->shortcuts; l != NULL; l = l->next)
