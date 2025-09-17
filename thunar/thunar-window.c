@@ -2130,14 +2130,13 @@ thunar_window_reload (ThunarWindow *window,
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  /* force the view to reload */
+  /* forced reload */
   if (G_LIKELY (window->view != NULL))
     {
       thunar_view_reload (THUNAR_VIEW (window->view), reload_info);
       reloaded = TRUE;
     }
-
-  if (G_LIKELY (window->sidepane) != NULL)
+  if (G_LIKELY (window->sidepane != NULL))
     {
       thunar_side_pane_reload (THUNAR_SIDE_PANE (window->sidepane));
       reloaded = TRUE;
