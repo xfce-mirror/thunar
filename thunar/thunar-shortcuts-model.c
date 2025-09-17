@@ -543,7 +543,7 @@ thunar_shortcuts_model_get_column_type (GtkTreeModel *tree_model,
     case THUNAR_SHORTCUTS_MODEL_COLUMN_HIDDEN:
       return G_TYPE_BOOLEAN;
 
-    case THUNAR_SHORTCUTS_MODEL_COLUMN_DISK_SPACE_USAGE:
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_DISK_SPACE_USAGE_PERCENT:
       return G_TYPE_INT;
     }
 
@@ -822,7 +822,7 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
       g_value_set_boolean (value, FALSE);
       break;
 
-    case THUNAR_SHORTCUTS_MODEL_COLUMN_DISK_SPACE_USAGE:
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_DISK_SPACE_USAGE_PERCENT:
       g_value_init (value, G_TYPE_INT);
       g_value_set_int (value, -1);
       if ((shortcut->group & THUNAR_SHORTCUT_GROUP_DEVICES) != 0)

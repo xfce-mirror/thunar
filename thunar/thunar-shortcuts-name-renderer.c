@@ -31,15 +31,15 @@ struct _ThunarShortcutsNameRenderer
 {
   GtkCellRendererText __parent__;
 
-  gboolean disk_space_usage_bar;
-  gint     disk_space_usage;
+  gboolean disk_space_usage_bar_enabled;
+  gint     disk_space_usage_percent;
 };
 
 enum
 {
   PROP_0,
-  PROP_DISK_SPACE_USAGE_BAR,
-  PROP_DISK_SPACE_USAGE,
+  PROP_DISK_SPACE_USAGE_BAR_ENABLED,
+  PROP_DISK_SPACE_USAGE_PERCENT,
 };
 
 
@@ -97,15 +97,15 @@ thunar_shortcuts_name_renderer_class_init (ThunarShortcutsNameRendererClass *kla
   object_class->get_property = thunar_shortcuts_name_renderer_get_property;
   object_class->set_property = thunar_shortcuts_name_renderer_set_property;
 
-  g_object_class_install_property (object_class, PROP_DISK_SPACE_USAGE_BAR,
-                                   g_param_spec_boolean ("disk-space-usage-bar",
+  g_object_class_install_property (object_class, PROP_DISK_SPACE_USAGE_BAR_ENABLED,
+                                   g_param_spec_boolean ("disk-space-usage-bar-enabled",
                                                          "Show disk space usage bar",
                                                          NULL,
                                                          TRUE,
                                                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
-  g_object_class_install_property (object_class, PROP_DISK_SPACE_USAGE,
-                                   g_param_spec_int ("disk-space-usage",
+  g_object_class_install_property (object_class, PROP_DISK_SPACE_USAGE_PERCENT,
+                                   g_param_spec_int ("disk-space-usage-percent",
                                                      "Disk space usage percentage",
                                                      NULL,
                                                      -1, 100,
@@ -135,12 +135,12 @@ thunar_shortcuts_name_renderer_get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_DISK_SPACE_USAGE_BAR:
-      g_value_set_boolean (value, self->disk_space_usage_bar);
+    case PROP_DISK_SPACE_USAGE_BAR_ENABLED:
+      g_value_set_boolean (value, self->disk_space_usage_bar_enabled);
       break;
 
-    case PROP_DISK_SPACE_USAGE:
-      g_value_set_int (value, self->disk_space_usage);
+    case PROP_DISK_SPACE_USAGE_PERCENT:
+      g_value_set_int (value, self->disk_space_usage_percent);
       break;
 
     default:
@@ -160,11 +160,11 @@ thunar_shortcuts_name_renderer_set_property (GObject      *object,
 
   switch (prop_id)
     {
-    case PROP_DISK_SPACE_USAGE_BAR:
-      self->disk_space_usage_bar = g_value_get_boolean (value);
+    case PROP_DISK_SPACE_USAGE_BAR_ENABLED:
+      self->disk_space_usage_bar_enabled = g_value_get_boolean (value);
       break;
-    case PROP_DISK_SPACE_USAGE:
-      self->disk_space_usage = g_value_get_int (value);
+    case PROP_DISK_SPACE_USAGE_PERCENT:
+      self->disk_space_usage_percent = g_value_get_int (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -238,7 +238,7 @@ thunar_shortcuts_name_renderer_render_disk_space_usage_bar (GtkCellRenderer     
   bar_area.y = aligned_area.y + aligned_area.height;
   bar_area.width = MIN (175, cell_area->width - MAX (6, xpad * 2));
   bar_area.height = DRIVE_FULLNESS_BAR_HEIGHT;
-  progress_width = (bar_area.width / 100.0) * self->disk_space_usage;
+  progress_width = (bar_area.width / 100.0) * self->disk_space_usage_percent;
 
   cairo_save (cr);
 
@@ -285,5 +285,5 @@ thunar_shortcuts_name_renderer_get_preferred_height_for_width (GtkCellRenderer *
 static gboolean
 thunar_shortcuts_name_renderer_should_show_disk_space_usage_bar (const ThunarShortcutsNameRenderer *self)
 {
-  return self->disk_space_usage_bar && self->disk_space_usage >= 0;
+  return self->disk_space_usage_bar_enabled && self->disk_space_usage_percent >= 0;
 }
