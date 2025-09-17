@@ -832,7 +832,7 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
           /* Disk space usage as a percentage */
           if (file != NULL)
             {
-              if (thunar_g_file_get_free_space (file, &fs_free, &fs_size))
+              if (thunar_g_file_get_free_space (file, &fs_free, &fs_size) && fs_size > 0)
                 g_value_set_int (value, (gint) ((gdouble) (fs_size - fs_free) / ((gdouble) fs_size / 100.0)));
 
               g_object_unref (file);
