@@ -256,6 +256,8 @@ thunar_shortcuts_name_renderer_render_disk_space_usage_bar (GtkCellRenderer     
   gint                         xpad;
   gint                         progress_width;
   gboolean                     is_rtl;
+  gdouble                      dpi_scale;
+  gint                         width_max;
 
   /*
    * This code is based on gtk_cell_renderer_progress_render:
@@ -265,7 +267,11 @@ thunar_shortcuts_name_renderer_render_disk_space_usage_bar (GtkCellRenderer     
   gtk_cell_renderer_get_padding (cell, &xpad, NULL);
   is_rtl = gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL;
 
-  bar_area.width = MIN (175, cell_area->width - MAX (6, xpad * 2));
+  /* 96.0 is considered the base value, as specified in the description of gdk_screen_set_resolution */
+  dpi_scale = gdk_screen_get_resolution (gtk_widget_get_screen (widget)) / 96.0;
+  width_max = 125 * dpi_scale;
+
+  bar_area.width = MIN (width_max, cell_area->width - MAX (6, xpad * 2));
   bar_area.height = DRIVE_FULLNESS_BAR_HEIGHT;
 
   if (is_rtl)
