@@ -1205,6 +1205,7 @@ thunar_file_load (ThunarFile   *file,
 {
   GError    *err = NULL;
   GFileInfo *info = NULL;
+  gboolean   mounted = TRUE;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -1222,12 +1223,12 @@ thunar_file_load (ThunarFile   *file,
                             G_FILE_QUERY_INFO_NONE,
                             cancellable, &err);
 
-  /* update the mounted info */
+  /* check if mounted (but do not update the file until after it has been cleared) */
   if (err != NULL
       && err->domain == G_IO_ERROR
       && err->code == G_IO_ERROR_NOT_MOUNTED)
     {
-      FLAG_UNSET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
+      mounted = FALSE;
       g_clear_error (&err);
     }
 
@@ -1254,6 +1255,10 @@ thunar_file_load (ThunarFile   *file,
 
   /* update the file from the information */
   thunar_file_info_reload (file, cancellable);
+
+  /* update the mounted info */
+  if (mounted == FALSE)
+    FLAG_UNSET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
 
   /* (re)insert the file into the cache */
   if (file->kind != G_FILE_TYPE_UNKNOWN)
