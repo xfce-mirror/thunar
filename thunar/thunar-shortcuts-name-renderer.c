@@ -119,7 +119,7 @@ thunar_shortcuts_name_renderer_class_init (ThunarShortcutsNameRendererClass *kla
                                                          "Show disk space usage bar",
                                                          NULL,
                                                          TRUE,
-                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+                                                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (object_class, PROP_DISK_SPACE_USAGE_PERCENT,
                                    g_param_spec_int ("disk-space-usage-percent",
@@ -127,7 +127,7 @@ thunar_shortcuts_name_renderer_class_init (ThunarShortcutsNameRendererClass *kla
                                                      NULL,
                                                      -1, 100,
                                                      -1,
-                                                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+                                                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT));
 
   renderer_class->render = thunar_shortcuts_name_renderer_render;
   renderer_class->get_preferred_height_for_width = thunar_shortcuts_name_renderer_get_preferred_height_for_width;
