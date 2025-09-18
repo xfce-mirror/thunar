@@ -255,6 +255,7 @@ thunar_shortcuts_name_renderer_render_disk_space_usage_bar (GtkCellRenderer     
   GdkRectangle                 bar_area;
   gint                         xpad;
   gint                         progress_width;
+  gboolean                     is_rtl;
 
   /*
    * This code is based on gtk_cell_renderer_progress_render:
@@ -262,11 +263,18 @@ thunar_shortcuts_name_renderer_render_disk_space_usage_bar (GtkCellRenderer     
    */
   gtk_cell_renderer_get_aligned_area (cell, widget, flags, cell_area, &aligned_area);
   gtk_cell_renderer_get_padding (cell, &xpad, NULL);
+  is_rtl = gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL;
 
-  bar_area.x = cell_area->x + xpad;
-  bar_area.y = aligned_area.y + aligned_area.height;
   bar_area.width = MIN (175, cell_area->width - MAX (6, xpad * 2));
   bar_area.height = DRIVE_FULLNESS_BAR_HEIGHT;
+
+  if (is_rtl)
+    bar_area.x = cell_area->x + cell_area->width - xpad - bar_area.width;
+  else
+    bar_area.x = cell_area->x + xpad;
+
+  bar_area.y = aligned_area.y + aligned_area.height;
+
   progress_width = (bar_area.width / 100.0) * self->disk_space_usage_percent;
 
   cairo_save (cr);
