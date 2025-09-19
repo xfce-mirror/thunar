@@ -1603,35 +1603,22 @@ thunar_details_view_set_expandable_folders (ThunarDetailsView *details_view,
 
 
 /**
- * thunar_details_view_set_date_deleted_column_visible:
+ * thunar_details_view_update_special_column_visibility:
  * @details_view  : a #ThunarDetailsView.
- * @visible : %TRUE to show the Date Deleted column.
  *
- * Shows/hides the Date Deleted column.
+ * Shows/hides the Date Deleted, recency and location column.
  **/
 void
-thunar_details_view_set_date_deleted_column_visible (ThunarDetailsView *details_view,
-                                                     gboolean           visible)
+thunar_details_view_update_special_column_visibility (ThunarDetailsView *details_view)
 {
-  thunar_column_model_set_column_visible (details_view->column_model, THUNAR_COLUMN_DATE_DELETED, visible);
-}
+  ThunarFile *current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (details_view));
+  gboolean    is_trashed = thunar_file_is_trashed (current_directory);
+  gboolean    is_recent = thunar_file_is_recent (current_directory);
+  gboolean    searching = thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (details_view)) != NULL;
 
-
-
-void
-thunar_details_view_set_recency_column_visible (ThunarDetailsView *details_view,
-                                                gboolean           visible)
-{
-  thunar_column_model_set_column_visible (details_view->column_model, THUNAR_COLUMN_RECENCY, visible);
-}
-
-
-
-void
-thunar_details_view_set_location_column_visible (ThunarDetailsView *details_view,
-                                                 gboolean           visible)
-{
-  thunar_column_model_set_column_visible (details_view->column_model, THUNAR_COLUMN_LOCATION, visible);
+  thunar_column_model_set_column_visible (details_view->column_model, THUNAR_COLUMN_DATE_DELETED, is_trashed);
+  thunar_column_model_set_column_visible (details_view->column_model, THUNAR_COLUMN_RECENCY, is_recent);
+  thunar_column_model_set_column_visible (details_view->column_model, THUNAR_COLUMN_LOCATION, is_recent || searching);
 }
 
 

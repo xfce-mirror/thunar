@@ -46,11 +46,7 @@ typedef enum
 GType
 thunar_details_view_get_type (void) G_GNUC_CONST;
 void
-thunar_details_view_set_date_deleted_column_visible (ThunarDetailsView *, gboolean);
-void
-thunar_details_view_set_recency_column_visible (ThunarDetailsView *, gboolean);
-void
-thunar_details_view_set_location_column_visible (ThunarDetailsView *, gboolean);
+thunar_details_view_update_special_column_visibility (ThunarDetailsView *);
 XfceGtkActionEntry *
 thunar_details_view_get_action_entries (void);
 G_END_DECLS;

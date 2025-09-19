@@ -2592,6 +2592,10 @@ thunar_window_switch_current_view_idle (gpointer user_data)
   /* switch to the new view */
   thunar_window_notebook_set_current_tab (window, gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), window->view));
 
+  /* show/hide special columns */
+  if (THUNAR_IS_DETAILS_VIEW (window->view))
+    thunar_details_view_update_special_column_visibility (THUNAR_DETAILS_VIEW (window->view));
+
   /* take focus on the new view */
   gtk_widget_grab_focus (window->view);
 
@@ -3768,7 +3772,7 @@ thunar_window_start_open_location (ThunarWindow *window,
 
       /* the check is useless as long as the workaround is in place */
       if (THUNAR_IS_DETAILS_VIEW (window->view))
-        thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), TRUE);
+        thunar_details_view_update_special_column_visibility (THUNAR_DETAILS_VIEW (window->view));
 
       /* set up the back/forward toolbar buttons */
       gtk_widget_set_sensitive (window->location_toolbar_item_back, TRUE);
@@ -3820,7 +3824,7 @@ thunar_window_resume_search (ThunarWindow *window,
 
   /* the check is useless as long as the workaround is in place */
   if (THUNAR_IS_DETAILS_VIEW (window->view))
-    thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), TRUE);
+    thunar_details_view_update_special_column_visibility (THUNAR_DETAILS_VIEW (window->view));
 
   /* set the status of the search toolbar button */
   g_signal_handlers_block_by_func (G_OBJECT (window->location_toolbar_item_search), thunar_window_action_search, window);
@@ -3875,12 +3879,7 @@ thunar_window_cancel_search (ThunarWindow *window)
     gtk_widget_hide (window->catfish_search_button);
 
   if (THUNAR_IS_DETAILS_VIEW (window->view))
-    {
-      gboolean is_recent = thunar_file_is_recent (window->current_directory);
-
-      thunar_details_view_set_recency_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
-      thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
-    }
+    thunar_details_view_update_special_column_visibility (THUNAR_DETAILS_VIEW (window->view));
 
   /* null check for the same reason as thunar_standard_view_set_searching */
   if (window->view != NULL)
@@ -4531,10 +4530,6 @@ static gboolean
 thunar_window_action_detailed_view (ThunarWindow *window)
 {
   thunar_window_action_view_changed (window, THUNAR_TYPE_DETAILS_VIEW);
-  thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view),
-                                                       thunar_file_is_trashed (window->current_directory));
-  thunar_details_view_set_recency_column_visible (THUNAR_DETAILS_VIEW (window->view),
-                                                  thunar_file_is_recent (window->current_directory));
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
@@ -5802,8 +5797,6 @@ thunar_window_set_current_directory (ThunarWindow *window,
   GType    type;
   gchar   *type_name;
   gint     num_pages;
-  gboolean is_trashed;
-  gboolean is_recent;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
@@ -5872,25 +5865,22 @@ thunar_window_set_current_directory (ThunarWindow *window,
 
   /* change the view type if necessary */
   if (window->view != NULL && window->view_type != type)
-    thunar_window_replace_view (window, window->view, type);
+    {
+      thunar_window_replace_view (window, window->view, type);
+    }
+  else
+    {
+      /* If we keep the view-type, we possibly need to update some columns */
+      if (THUNAR_IS_DETAILS_VIEW (window->view))
+        thunar_details_view_update_special_column_visibility (THUNAR_DETAILS_VIEW (window->view));
+    }
 
   /* grab the focus to the main view */
   if (window->view != NULL)
     gtk_widget_grab_focus (window->view);
 
-  is_trashed = thunar_file_is_trashed (current_directory);
-  is_recent = thunar_file_is_recent (current_directory);
-
   /* show/hide trash infobar */
-  gtk_widget_set_visible (window->trash_infobar, is_trashed);
-
-  /* show/hide special columns */
-  if (THUNAR_IS_DETAILS_VIEW (window->view))
-    {
-      thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), is_trashed);
-      thunar_details_view_set_recency_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
-      thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
-    }
+  gtk_widget_set_visible (window->trash_infobar, thunar_file_is_trashed (current_directory));
 }
 
 
