@@ -2437,21 +2437,21 @@ thunar_window_create_view_binding (ThunarWindow *window,
 
 
 
-static void
-thunar_window_switch_current_view (ThunarWindow *window,
-                                   GtkWidget    *new_view)
+static gboolean
+thunar_window_switch_current_view_idle (gpointer user_data)
 {
   GSList        *view_bindings;
   ThunarFile    *current_directory;
   ThunarHistory *history;
   gchar         *search_query;
   GtkWidget     *terminal;
+  ThunarWindow  *window = THUNAR_WINDOW (user_data);
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
-  _thunar_return_if_fail (THUNAR_IS_VIEW (new_view));
+  GtkWidget *new_view = g_object_get_data (user_data, "THUNAR_WINDOW_NEW_VIEW");
+  GtkWidget *old_view = g_object_get_data (user_data, "THUNAR_WINDOW_OLD_VIEW");
 
-  if (window->view == new_view)
-    return;
+  if (window->view == new_view || window->view != old_view)
+    return FALSE;
 
   if (G_LIKELY (window->view != NULL))
     {
@@ -2594,6 +2594,28 @@ thunar_window_switch_current_view (ThunarWindow *window,
 
   /* take focus on the new view */
   gtk_widget_grab_focus (window->view);
+
+  return FALSE;
+}
+
+
+static void
+thunar_window_switch_current_view (ThunarWindow *window,
+                                   GtkWidget    *new_view)
+{
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (THUNAR_IS_VIEW (new_view));
+
+  if (window->view == new_view)
+    return;
+
+  if (window->view != NULL)
+    g_object_set_data_full (G_OBJECT (window), "THUNAR_WINDOW_OLD_VIEW", g_object_ref (window->view), g_object_unref);
+
+  g_object_set_data_full (G_OBJECT (window), "THUNAR_WINDOW_NEW_VIEW", g_object_ref (new_view), g_object_unref);
+
+  /* Switch the view on idle, because otherwise there is the risk that a bind to "current-directory" needs to release itself while active, leading to a crash */
+  g_idle_add_full (G_PRIORITY_DEFAULT_IDLE, thunar_window_switch_current_view_idle, g_object_ref (window), g_object_unref);
 }
 
 
