@@ -532,7 +532,7 @@ thunar_thumbnail_cache_move_file (ThunarThumbnailCache *cache,
   _thunar_return_if_fail (G_IS_FILE (source_file));
   _thunar_return_if_fail (G_IS_FILE (target_file));
 
-  /* For some weird reason, gio will spam criticals, when we dont query is-hidden/is-backup. So lets just querry all standard attributes */
+  /* For some weird reason, gio will spam criticals, when we dont query is-hidden/is-backup. So lets just query all standard attributes */
   file_info = g_file_query_info (target_file, "standard::*", G_FILE_QUERY_INFO_NONE, NULL, NULL);
 
   if (file_info != NULL)
@@ -595,7 +595,7 @@ thunar_thumbnail_cache_copy_file (ThunarThumbnailCache *cache,
   _thunar_return_if_fail (G_IS_FILE (source_file));
   _thunar_return_if_fail (G_IS_FILE (target_file));
 
-  /* For some weird reason, gio will spam criticals, when we dont query is-hidden/is-backup. So lets just querry all standard attributes */
+  /* For some weird reason, gio will spam criticals, when we dont query is-hidden/is-backup. So lets just query all standard attributes */
   file_info = g_file_query_info (target_file, "standard::*", G_FILE_QUERY_INFO_NONE, NULL, NULL);
 
   if (file_info != NULL)
