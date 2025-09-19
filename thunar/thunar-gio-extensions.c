@@ -111,8 +111,8 @@ device_icon_name [] =
 static const gchar *
 guess_device_type_from_icon_name (const gchar *icon_name);
 static GFileInfo *
-thunar_g_file_get_content_type_querry_info (GFile  *gfile,
-                                            GError *err);
+thunar_g_file_get_content_type_query_info (GFile  *gfile,
+                                           GError *err);
 static void
 thunar_g_file_info_set_attribute (GFileInfo   *info,
                                   ThunarGType  type,
@@ -1713,8 +1713,8 @@ thunar_g_file_get_link_path_for_symlink (GFile *file_to_link,
 
 
 static GFileInfo *
-thunar_g_file_get_content_type_querry_info (GFile  *gfile,
-                                            GError *err)
+thunar_g_file_get_content_type_query_info (GFile  *gfile,
+                                           GError *err)
 {
   GFileInfo *info = NULL;
 
@@ -1744,7 +1744,7 @@ thunar_g_file_get_content_type (GFile *gfile)
   GError    *err = NULL;
   gchar     *content_type = NULL;
 
-  info = thunar_g_file_get_content_type_querry_info (gfile, err);
+  info = thunar_g_file_get_content_type_query_info (gfile, err);
 
   /* follow symlink, if found */
   if (G_LIKELY (info != NULL))
@@ -1756,7 +1756,7 @@ thunar_g_file_get_content_type (GFile *gfile)
           g_object_unref (info);
           info = NULL;
           if (link_target != NULL)
-            info = thunar_g_file_get_content_type_querry_info (link_target, err);
+            info = thunar_g_file_get_content_type_query_info (link_target, err);
           g_object_unref (link_target);
         }
     }
