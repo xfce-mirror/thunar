@@ -4670,23 +4670,13 @@ thunar_window_action_view_changed (ThunarWindow *window,
 static gboolean
 thunar_window_action_go_up (ThunarWindow *window)
 {
-  ThunarFile *parent;
-  GError     *error = NULL;
+  GFile *parent;
 
-  parent = thunar_file_get_parent (window->current_directory, &error);
+  parent = g_file_get_parent (thunar_file_get_file (window->current_directory));
   if (G_LIKELY (parent != NULL))
     {
-      thunar_window_set_current_directory (window, parent);
+      thunar_window_change_directory_gfile_async (window, parent);
       g_object_unref (G_OBJECT (parent));
-    }
-  else
-    {
-      /* the root folder '/' has no parent. In this special case we do not need a dialog */
-      if (error->code != G_FILE_ERROR_NOENT)
-        {
-          thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to open parent folder"));
-        }
-      g_error_free (error);
     }
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
@@ -6027,6 +6017,78 @@ thunar_window_change_directory_async (ThunarWindow *window,
                             NULL,
                             thunar_window_change_directory_finish,
                             window);
+}
+
+
+
+static void
+thunar_window_change_directory_gfile_finish (GFile      *location,
+                                             ThunarFile *directory,
+                                             GError     *error,
+                                             gpointer    user_data)
+{
+  ThunarWindow *window = user_data;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (directory == NULL || THUNAR_IS_FILE (directory));
+
+  /* only continue of nothing else has is loading */
+  if (window->loading_directory == location)
+    {
+      if (error)
+        {
+          /* we are no longer loading the directory */
+          window->loading_directory = NULL;
+          thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to open directory \"%s\""), thunar_file_get_display_name (directory));
+        }
+
+      /* display the directory */
+      else
+        thunar_window_set_current_directory (window, g_object_ref (directory));
+    }
+
+  g_object_unref (directory);
+}
+
+
+
+/**
+ * thunar_window_change_directory_gfile_async:
+ * @window            : a #ThunarWindow instance.
+ * @directory         : the new directory GFile or %NULL.
+ **/
+void
+thunar_window_change_directory_gfile_async (ThunarWindow *window,
+                                            GFile        *location)
+{
+  ThunarFile *directory = NULL;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (location == NULL || G_IS_FILE (location));
+
+  /* not much to do in this case */
+  if (location == NULL)
+    return;
+
+  /* record which directory we are loading */
+  window->loading_directory = location;
+
+  /* if the directory is in the cache, we don't need to load it again */
+  directory = thunar_file_cache_lookup (location);
+  if (directory != NULL)
+    thunar_window_change_directory_async (window, directory);
+
+  /* If the directory is not in the cache, load it asynchronously */
+  else
+    {
+      /* record which directory we are loading */
+      window->loading_directory = location;
+
+      thunar_file_get_async (location,
+                             NULL,
+                             thunar_window_change_directory_gfile_finish,
+                             window);
+    }
 }
 
 
