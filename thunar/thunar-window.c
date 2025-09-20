@@ -3060,6 +3060,9 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   g_object_bind_property (G_OBJECT (view), "searching",
                           G_OBJECT (spinner), "active",
                           G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (view), "loading",
+                          G_OBJECT (spinner), "active",
+                          G_BINDING_SYNC_CREATE);
 
   button = gtk_button_new ();
   gtk_box_pack_start (GTK_BOX (label_box), button, FALSE, FALSE, 0);
