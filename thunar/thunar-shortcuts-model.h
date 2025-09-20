@@ -53,6 +53,7 @@ typedef enum
   THUNAR_SHORTCUTS_MODEL_COLUMN_BUSY,
   THUNAR_SHORTCUTS_MODEL_COLUMN_BUSY_PULSE,
   THUNAR_SHORTCUTS_MODEL_COLUMN_HIDDEN,
+  THUNAR_SHORTCUTS_MODEL_COLUMN_DISK_SPACE_USAGE_PERCENT,
   THUNAR_SHORTCUTS_MODEL_N_COLUMNS,
 } ThunarShortcutsModelColumn;
 
@@ -139,6 +140,9 @@ void
 thunar_shortcuts_model_set_hidden (ThunarShortcutsModel *model,
                                    GtkTreePath          *path,
                                    gboolean              hidden);
+
+void
+thunar_shortcuts_model_reload (ThunarShortcutsModel *model);
 
 G_END_DECLS;
 
