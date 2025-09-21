@@ -68,6 +68,20 @@ typedef enum
   THUNAR_STANDARD_VIEW_N_ACTIONS
 } ThunarStandardViewAction;
 
+
+
+/**
+ * ThunarSVCDFunc:
+ *
+ * Callback type for changing a #ThunarStandardView<!---->'s
+ * current_directory asynchronously.
+ **/
+typedef void (*ThunarSVCDFunc) (ThunarFile         *directory,
+                                ThunarStandardView *view,
+                                gpointer            user_data);
+
+
+
 struct _ThunarStandardViewClass
 {
   GtkScrolledWindowClass __parent__;
@@ -173,8 +187,12 @@ struct _ThunarStandardView
   GtkCellRenderer   *icon_renderer;
   GtkCellRenderer   *name_renderer;
 
+  /* the directory being asynchronously loaded */
+  GFile *loading_directory;
+
   GBinding      *loading_binding;
   gboolean       loading;
+  gboolean       busy;
   GtkAccelGroup *accel_group;
 
 #ifdef HAVE_VTE
@@ -186,6 +204,16 @@ struct _ThunarStandardView
 GType
 thunar_standard_view_get_type (void) G_GNUC_CONST;
 
+void
+thunar_standard_view_change_directory_async (ThunarStandardView *standard_view,
+                                             ThunarFile         *directory,
+                                             ThunarSVCDFunc      func,
+                                             gpointer            user_data);
+void
+thunar_standard_view_change_directory_gfile_async (ThunarStandardView *standard_view,
+                                                   GFile              *location,
+                                                   ThunarSVCDFunc      func,
+                                                   gpointer            user_data);
 void
 thunar_standard_view_context_menu (ThunarStandardView *standard_view);
 void

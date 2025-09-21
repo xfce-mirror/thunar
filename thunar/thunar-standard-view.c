@@ -65,6 +65,7 @@ enum
 {
   PROP_0,
   PROP_CURRENT_DIRECTORY,
+  PROP_BUSY,
   PROP_LOADING,
   PROP_SEARCHING,
   PROP_SEARCH_MODE_ACTIVE,
@@ -101,6 +102,16 @@ enum
   TARGET_XDND_DIRECT_SAVE0,
   TARGET_NETSCAPE_URL,
 };
+
+
+
+/* Data for changing directory asynchronously */
+typedef struct
+{
+  ThunarStandardView *standard_view;
+  ThunarSVCDFunc      func;
+  gpointer            user_data;
+} ThunarSVCDData;
 
 
 
@@ -158,6 +169,11 @@ thunar_standard_view_get_loading (ThunarView *view);
 static void
 thunar_standard_view_set_loading (ThunarStandardView *standard_view,
                                   gboolean            loading);
+static gboolean
+thunar_standard_view_get_busy (ThunarView *view);
+static void
+thunar_standard_view_set_busy (ThunarView *view,
+                               gboolean    busy);
 static gboolean
 thunar_standard_view_get_searching (ThunarView *view);
 static gchar *
@@ -881,6 +897,10 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   /* override ThunarView's properties */
   g_iface = g_type_default_interface_peek (THUNAR_TYPE_VIEW);
 
+  standard_view_props[PROP_BUSY] =
+  g_param_spec_override ("busy",
+                         g_object_interface_find_property (g_iface, "busy"));
+
   standard_view_props[PROP_SHOW_HIDDEN] =
   g_param_spec_override ("show-hidden",
                          g_object_interface_find_property (g_iface, "show-hidden"));
@@ -957,6 +977,8 @@ static void
 thunar_standard_view_view_init (ThunarViewIface *iface)
 {
   iface->get_loading = thunar_standard_view_get_loading;
+  iface->get_busy = thunar_standard_view_get_busy;
+  iface->set_busy = thunar_standard_view_set_busy;
   iface->get_show_hidden = thunar_standard_view_get_show_hidden;
   iface->set_show_hidden = thunar_standard_view_set_show_hidden;
   iface->get_zoom_level = thunar_standard_view_get_zoom_level;
@@ -1347,6 +1369,10 @@ thunar_standard_view_get_property (GObject    *object,
       g_value_set_boolean (value, thunar_view_get_loading (THUNAR_VIEW (object)));
       break;
 
+    case PROP_BUSY:
+      g_value_set_boolean (value, thunar_view_get_busy (THUNAR_VIEW (object)));
+      break;
+
     case PROP_SEARCHING:
       g_value_set_boolean (value, thunar_standard_view_get_searching (THUNAR_VIEW (object)));
       break;
@@ -1439,6 +1465,10 @@ thunar_standard_view_set_property (GObject      *object,
 
     case PROP_LOADING:
       thunar_standard_view_set_loading (standard_view, g_value_get_boolean (value));
+      break;
+
+    case PROP_BUSY:
+      thunar_view_set_busy (THUNAR_VIEW (object), g_value_get_boolean (value));
       break;
 
     case PROP_SELECTED_FILES:
@@ -1814,6 +1844,13 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
 
+  /* unset the directory being loaded */
+  if (standard_view->loading_directory)
+    {
+      standard_view->loading_directory = NULL;
+      g_object_set (G_OBJECT (standard_view), "busy", FALSE, NULL);
+    }
+
   /* get the current directory */
   if (standard_view->priv->current_directory == current_directory)
     return;
@@ -1910,6 +1947,190 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 
   /* restore the selection from the history */
   thunar_standard_view_restore_selection_from_history (standard_view);
+}
+
+
+
+static void
+thunar_standard_view_change_directory_finish (ThunarFile *directory,
+                                              GError     *error,
+                                              gpointer    user_data)
+{
+  ThunarSVCDData     *data = user_data;
+  ThunarStandardView *standard_view = data->standard_view;
+
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (directory == NULL || THUNAR_IS_FILE (directory));
+
+  /* only continue of nothing else has is loading */
+  if (standard_view->loading_directory == thunar_file_get_file (directory))
+    {
+      if (error)
+        {
+          /* we are no longer loading the directory */
+          standard_view->loading_directory = NULL;
+          g_object_set (G_OBJECT (standard_view), "busy", FALSE, NULL);
+          thunar_dialogs_show_error (GTK_WIDGET (standard_view),
+                                     error,
+                                     _("Failed to open directory \"%s\""),
+                                     thunar_file_get_display_name (directory));
+        }
+
+      else
+        {
+          /* set the current directory */
+          g_object_set (G_OBJECT (standard_view), "current-directory", directory, NULL);
+
+          (data->func) (directory, standard_view, data->user_data);
+        }
+    }
+
+  g_object_unref (directory);
+
+  /* release the change directory data */
+  g_slice_free (ThunarSVCDData, data);
+}
+
+
+
+/**
+ * thunar_standard_view_change_directory_async:
+ * @navigator         : a #ThunarNavigator instance.
+ * @directory         : the new directory or %NULL.
+ * @func              : a user callback.
+ * @user_data         : callback user data.
+ **/
+void
+thunar_standard_view_change_directory_async (ThunarStandardView *standard_view,
+                                             ThunarFile         *directory,
+                                             ThunarSVCDFunc      func,
+                                             gpointer            user_data)
+
+{
+  ThunarSVCDData *data;
+
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (directory == NULL || THUNAR_IS_FILE (directory));
+
+  /* not much to do in this case */
+  if (directory == NULL)
+    return;
+
+  /* record which directory we are loading */
+  g_object_set (G_OBJECT (standard_view), "busy", TRUE, NULL);
+  standard_view->loading_directory = thunar_file_get_file (directory);
+
+  /* allocate change directory data */
+  data = g_slice_new0 (ThunarSVCDData);
+  data->standard_view = standard_view;
+  data->func = func;
+  data->user_data = user_data;
+
+  /* Check if the directory still exists. We want to trigger any
+   * timeouts it here, asynchronously. */
+  thunar_file_exists_async (g_object_ref (directory),
+                            NULL,
+                            thunar_standard_view_change_directory_finish,
+                            data);
+}
+
+
+
+static void
+thunar_standard_view_change_directory_gfile_finish (GFile      *location,
+                                                    ThunarFile *directory,
+                                                    GError     *error,
+                                                    gpointer    user_data)
+{
+  ThunarSVCDData     *data = user_data;
+  ThunarStandardView *standard_view = data->standard_view;
+
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (directory == NULL || THUNAR_IS_FILE (directory));
+
+  /* only continue of nothing else has is loading */
+  if (standard_view->loading_directory == location)
+    {
+      if (error)
+        {
+          /* we are no longer loading the directory */
+          standard_view->loading_directory = NULL;
+          g_object_set (G_OBJECT (standard_view), "busy", FALSE, NULL);
+          char *basename = g_file_get_basename (location);
+          thunar_dialogs_show_error (GTK_WIDGET (standard_view),
+                                     error,
+                                     _("Failed to open directory \"%s\""),
+                                     basename);
+          g_free (basename);
+        }
+
+      else
+        {
+          /* set the current directory */
+          g_object_set (G_OBJECT (standard_view), "current-directory", directory, NULL);
+
+          (data->func) (directory, standard_view, data->user_data);
+
+          g_object_unref (directory);
+        }
+    }
+
+  /* release the change directory data */
+  g_slice_free (ThunarSVCDData, data);
+}
+
+
+
+/**
+ * thunar_standard_view_change_directory_gfile_async:
+ * @navigator         : a #ThunarStandardView instance.
+ * @directory         : the new directory GFile or %NULL.
+ * @func              : a user callback.
+ * @user_data         : callback user data.
+ **/
+void
+thunar_standard_view_change_directory_gfile_async (ThunarStandardView *standard_view,
+                                                   GFile              *location,
+                                                   ThunarSVCDFunc      func,
+                                                   gpointer            user_data)
+{
+  ThunarFile     *directory;
+  ThunarSVCDData *data;
+
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (location == NULL || G_IS_FILE (location));
+
+  /* not much to do in this case */
+  if (location == NULL)
+    return;
+
+  /* if the directory is in the cache, we don't need to load it again */
+  directory = thunar_file_cache_lookup (location);
+  if (directory != NULL)
+    {
+      thunar_standard_view_change_directory_async (standard_view, directory, func, user_data);
+      /* the above call refs the directory for itself */
+      g_object_unref (directory);
+    }
+
+  /* If the directory is not in the cache, load it asynchronously */
+  else
+    {
+      /* record which directory we are loading */
+      g_object_set (G_OBJECT (standard_view), "busy", TRUE, NULL);
+      standard_view->loading_directory = location;
+
+      /* allocate change directory data */
+      data = g_slice_new0 (ThunarSVCDData);
+      data->standard_view = standard_view;
+      data->func = func;
+      data->user_data = user_data;
+
+      thunar_file_get_async (location,
+                             NULL,
+                             thunar_standard_view_change_directory_gfile_finish,
+                             data);
+    }
 }
 
 
@@ -2027,6 +2248,25 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
   g_object_freeze_notify (G_OBJECT (standard_view));
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_LOADING]);
   g_object_thaw_notify (G_OBJECT (standard_view));
+}
+
+
+
+static gboolean
+thunar_standard_view_get_busy (ThunarView *view)
+{
+  return THUNAR_STANDARD_VIEW (view)->busy;
+}
+
+
+
+static void
+thunar_standard_view_set_busy (ThunarView *view,
+                               gboolean    busy)
+{
+  THUNAR_STANDARD_VIEW (view)->busy = busy;
+
+  gtk_widget_set_visible (GTK_WIDGET (view), !busy);
 }
 
 

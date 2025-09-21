@@ -135,6 +135,12 @@ thunar_window_update_directories (ThunarWindow *window,
                                   ThunarFile   *old_directory,
                                   ThunarFile   *new_directory);
 void
+thunar_window_change_directory_async (ThunarWindow *window,
+                                      ThunarFile   *directory);
+void
+thunar_window_change_directory_gfile_async (ThunarWindow *window,
+                                            GFile        *directory);
+void
 thunar_window_notebook_toggle_split_view (ThunarWindow *window);
 void
 thunar_window_notebook_open_new_tab (ThunarWindow *window,

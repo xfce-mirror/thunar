@@ -133,6 +133,16 @@ typedef void (*ThunarFileGetFunc) (GFile      *location,
                                    GError     *error,
                                    gpointer    user_data);
 
+/**
+ * ThunarFileExistsFunc:
+ *
+ * Callback type for checking if #ThunarFile<!---->s exists
+ * asynchronously.  The file exists if error is NULL.
+ **/
+typedef void (*ThunarFileExistsFunc) (ThunarFile *file,
+                                      GError     *error,
+                                      gpointer    user_data);
+
 
 
 GType
@@ -256,6 +266,11 @@ gboolean
 thunar_file_is_mounted (const ThunarFile *file);
 gboolean
 thunar_file_exists (const ThunarFile *file);
+void
+thunar_file_exists_async (ThunarFile          *file,
+                          GCancellable        *cancellable,
+                          ThunarFileExistsFunc func,
+                          gpointer             user_data);
 gboolean
 thunar_file_is_directory (const ThunarFile *file) G_GNUC_PURE;
 gboolean

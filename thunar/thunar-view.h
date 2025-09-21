@@ -40,6 +40,9 @@ struct _ThunarViewIface
 
   /* virtual methods */
   gboolean (*get_loading) (ThunarView *view);
+  gboolean (*get_busy) (ThunarView *view);
+  void (*set_busy) (ThunarView *view,
+                    gboolean    busy);
   gboolean (*get_show_hidden) (ThunarView *view);
   void (*set_show_hidden) (ThunarView *view,
                            gboolean    show_hidden);
@@ -72,6 +75,13 @@ thunar_view_get_type (void) G_GNUC_CONST;
 
 gboolean
 thunar_view_get_loading (ThunarView *view);
+
+gboolean
+thunar_view_get_busy (ThunarView *view);
+
+void
+thunar_view_set_busy (ThunarView *view,
+                      gboolean    busy);
 
 gboolean
 thunar_view_get_show_hidden (ThunarView *view);

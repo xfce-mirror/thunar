@@ -1027,7 +1027,7 @@ thunar_window_init (ThunarWindow *window)
   window->action_mgr = g_object_new (THUNAR_TYPE_ACTION_MANAGER, "widget", GTK_WIDGET (window), NULL);
 
   g_object_bind_property (G_OBJECT (window), "current-directory", G_OBJECT (window->action_mgr), "current-directory", G_BINDING_SYNC_CREATE);
-  g_signal_connect_swapped (G_OBJECT (window->action_mgr), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
+  g_signal_connect_swapped (G_OBJECT (window->action_mgr), "change-directory", G_CALLBACK (thunar_window_change_directory_async), window);
   g_signal_connect_swapped (G_OBJECT (window->action_mgr), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
   g_signal_connect_swapped (G_OBJECT (window->action_mgr), "new-files-created", G_CALLBACK (thunar_window_show_and_select_files), window);
   thunar_action_manager_append_accelerators (window->action_mgr, window->accel_group);
@@ -2497,6 +2497,7 @@ thunar_window_switch_current_view (ThunarWindow *window,
   /* add stock bindings */
   thunar_window_create_view_binding (window, window, "current-directory", new_view, "current-directory", G_BINDING_DEFAULT);
   thunar_window_create_view_binding (window, new_view, "loading", window->spinner, "active", G_BINDING_SYNC_CREATE);
+  thunar_window_create_view_binding (window, new_view, "busy", window->spinner, "active", G_BINDING_SYNC_CREATE);
   thunar_window_create_view_binding (window, new_view, "searching", window->spinner, "active", G_BINDING_SYNC_CREATE);
   thunar_window_create_view_binding (window, new_view, "searching", window, "searching", G_BINDING_SYNC_CREATE);
   thunar_window_create_view_binding (window, new_view, "search-mode-active", window->location_toolbar_item_icon_view, "sensitive", G_BINDING_SYNC_CREATE | G_BINDING_INVERT_BOOLEAN);
@@ -2508,7 +2509,7 @@ thunar_window_switch_current_view (ThunarWindow *window,
   /* connect signals to the new view */
   g_signal_connect (G_OBJECT (new_view), "notify::loading", G_CALLBACK (thunar_window_notify_loading), window);
   g_signal_connect_swapped (G_OBJECT (new_view), "start-open-location", G_CALLBACK (thunar_window_start_open_location), window);
-  g_signal_connect_swapped (G_OBJECT (new_view), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
+  g_signal_connect_swapped (G_OBJECT (new_view), "change-directory", G_CALLBACK (thunar_window_change_directory_async), window);
   g_signal_connect_swapped (G_OBJECT (new_view), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
 
   /* connect to the sidepane (if any) */
@@ -2699,7 +2700,7 @@ thunar_window_notebook_page_added (GtkWidget    *notebook,
   /* connect signals */
   g_signal_connect (G_OBJECT (view), "notify::loading", G_CALLBACK (thunar_window_notify_loading), window);
   g_signal_connect_swapped (G_OBJECT (view), "start-open-location", G_CALLBACK (thunar_window_start_open_location), window);
-  g_signal_connect_swapped (G_OBJECT (view), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
+  g_signal_connect_swapped (G_OBJECT (view), "change-directory", G_CALLBACK (thunar_window_change_directory_async), window);
   g_signal_connect_swapped (G_OBJECT (view), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
 
   /* update tab visibility */
@@ -3067,6 +3068,11 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   g_object_bind_property (G_OBJECT (view), "searching",
                           G_OBJECT (spinner), "active",
                           G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (view), "busy",
+                          G_OBJECT (spinner), "active",
+                          G_BINDING_SYNC_CREATE);
+
+
 
   button = gtk_button_new ();
   gtk_box_pack_start (GTK_BOX (label_box), button, FALSE, FALSE, 0);
@@ -3513,7 +3519,7 @@ thunar_window_install_sidepane (ThunarWindow      *window,
         window->sidepane = g_object_new (THUNAR_TYPE_TREE_PANE, NULL);
       gtk_widget_set_size_request (window->sidepane, 0, -1);
       g_object_bind_property (G_OBJECT (window), "current-directory", G_OBJECT (window->sidepane), "current-directory", G_BINDING_SYNC_CREATE);
-      g_signal_connect_swapped (G_OBJECT (window->sidepane), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
+      g_signal_connect_swapped (G_OBJECT (window->sidepane), "change-directory", G_CALLBACK (thunar_window_change_directory_async), window);
       g_signal_connect_swapped (G_OBJECT (window->sidepane), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
       context = gtk_widget_get_style_context (window->sidepane);
       gtk_style_context_add_class (context, "sidebar");
@@ -4674,23 +4680,13 @@ thunar_window_action_view_changed (ThunarWindow *window,
 static gboolean
 thunar_window_action_go_up (ThunarWindow *window)
 {
-  ThunarFile *parent;
-  GError     *error = NULL;
+  GFile *parent;
 
-  parent = thunar_file_get_parent (window->current_directory, &error);
+  parent = g_file_get_parent (thunar_file_get_file (window->current_directory));
   if (G_LIKELY (parent != NULL))
     {
-      thunar_window_set_current_directory (window, parent);
+      thunar_window_change_directory_gfile_async (window, parent);
       g_object_unref (G_OBJECT (parent));
-    }
-  else
-    {
-      /* the root folder '/' has no parent. In this special case we do not need a dialog */
-      if (error->code != G_FILE_ERROR_NOENT)
-        {
-          thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to open parent folder"));
-        }
-      g_error_free (error);
     }
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
@@ -5972,6 +5968,63 @@ thunar_window_set_directories (ThunarWindow *window,
 
 
 
+static void
+thunar_window_change_directory_finish (ThunarFile         *directory,
+                                       ThunarStandardView *view,
+                                       gpointer            user_data)
+{
+  ThunarWindow *window = user_data;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  if (GTK_WIDGET (view) == window->view)
+    thunar_window_set_current_directory (window, directory);
+
+  g_object_unref (window);
+}
+
+
+
+/**
+ * thunar_window_change_directory_async:
+ * @window            : a #ThunarWindow instance.
+ * @directory         : the new directory or %NULL.
+ **/
+void
+thunar_window_change_directory_async (ThunarWindow *window,
+                                      ThunarFile   *directory)
+{
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (directory == NULL || THUNAR_IS_FILE (directory));
+
+  thunar_standard_view_change_directory_async (THUNAR_STANDARD_VIEW (window->view),
+                                               directory,
+                                               &thunar_window_change_directory_finish,
+                                               g_object_ref (window));
+}
+
+
+
+/**
+ * thunar_window_change_directory_gfile_async:
+ * @window            : a #ThunarWindow instance.
+ * @directory         : the new directory GFile or %NULL.
+ **/
+void
+thunar_window_change_directory_gfile_async (ThunarWindow *window,
+                                            GFile        *location)
+{
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (location == NULL || G_IS_FILE (location));
+
+  thunar_standard_view_change_directory_gfile_async (THUNAR_STANDARD_VIEW (window->view),
+                                                     location,
+                                                     &thunar_window_change_directory_finish,
+                                                     g_object_ref (window));
+}
+
+
+
 /**
  * thunar_window_get_action_entry:
  * @window  : Instance of a  #ThunarWindow
@@ -6970,7 +7023,7 @@ thunar_window_location_bar_create (ThunarWindow *window)
   gtk_widget_set_margin_start (window->location_bar, DEFAULT_LOCATION_BAR_MARGIN);
   gtk_widget_set_margin_end (window->location_bar, DEFAULT_LOCATION_BAR_MARGIN);
   g_object_bind_property (G_OBJECT (window), "current-directory", G_OBJECT (window->location_bar), "current-directory", G_BINDING_SYNC_CREATE);
-  g_signal_connect_swapped (G_OBJECT (window->location_bar), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
+  g_signal_connect_swapped (G_OBJECT (window->location_bar), "change-directory", G_CALLBACK (thunar_window_change_directory_async), window);
   g_signal_connect_swapped (G_OBJECT (window->location_bar), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
   g_signal_connect_swapped (G_OBJECT (window->location_bar), "entry-done", G_CALLBACK (thunar_window_update_location_bar_visible), window);
   gtk_widget_show (window->location_bar);
