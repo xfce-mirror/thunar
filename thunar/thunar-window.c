@@ -627,9 +627,6 @@ struct _ThunarWindow
 
   gulong signal_handler_id_history_changed;
 
-  /* directory being loaded */
-  GFile *loading_directory;
-
   ThunarFile    *current_directory;
   GtkAccelGroup *accel_group;
 
@@ -2500,6 +2497,7 @@ thunar_window_switch_current_view (ThunarWindow *window,
   /* add stock bindings */
   thunar_window_create_view_binding (window, window, "current-directory", new_view, "current-directory", G_BINDING_DEFAULT);
   thunar_window_create_view_binding (window, new_view, "loading", window->spinner, "active", G_BINDING_SYNC_CREATE);
+  thunar_window_create_view_binding (window, new_view, "busy", window->spinner, "active", G_BINDING_SYNC_CREATE);
   thunar_window_create_view_binding (window, new_view, "searching", window->spinner, "active", G_BINDING_SYNC_CREATE);
   thunar_window_create_view_binding (window, new_view, "searching", window, "searching", G_BINDING_SYNC_CREATE);
   thunar_window_create_view_binding (window, new_view, "search-mode-active", window->location_toolbar_item_icon_view, "sensitive", G_BINDING_SYNC_CREATE | G_BINDING_INVERT_BOOLEAN);
@@ -3070,6 +3068,11 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   g_object_bind_property (G_OBJECT (view), "searching",
                           G_OBJECT (spinner), "active",
                           G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (view), "busy",
+                          G_OBJECT (spinner), "active",
+                          G_BINDING_SYNC_CREATE);
+
+
 
   button = gtk_button_new ();
   gtk_box_pack_start (GTK_BOX (label_box), button, FALSE, FALSE, 0);
@@ -5795,9 +5798,6 @@ thunar_window_set_current_directory (ThunarWindow *window,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
 
-  /* unset the directory being loaded */
-  window->loading_directory = NULL;
-
   /* check if we already display the requested directory */
   if (G_UNLIKELY (window->current_directory == current_directory))
     return;
@@ -5969,32 +5969,18 @@ thunar_window_set_directories (ThunarWindow *window,
 
 
 static void
-thunar_window_change_directory_finish (ThunarFile *directory,
-                                       GError     *error,
-                                       gpointer    user_data)
+thunar_window_change_directory_finish (ThunarFile         *directory,
+                                       ThunarStandardView *view,
+                                       gpointer            user_data)
 {
   ThunarWindow *window = user_data;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
-  _thunar_return_if_fail (directory == NULL || THUNAR_IS_FILE (directory));
 
-  /* only continue of nothing else has is loading */
-  if (window->loading_directory == thunar_file_get_file (directory))
-    {
+  if (GTK_WIDGET (view) == window->view)
+    thunar_window_set_current_directory (window, directory);
 
-      if (error)
-        {
-          /* we are no longer loading the directory */
-          window->loading_directory = NULL;
-          thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to open directory \"%s\""), thunar_file_get_display_name (directory));
-        }
-
-      /* display the directory */
-      else
-        thunar_window_set_current_directory (window, directory);
-    }
-
-  g_object_unref (directory);
+  g_object_unref (window);
 }
 
 
@@ -6011,50 +5997,10 @@ thunar_window_change_directory_async (ThunarWindow *window,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (directory == NULL || THUNAR_IS_FILE (directory));
 
-  /* not much to do in this case */
-  if (directory == NULL)
-    return;
-
-  /* record which directory we are loading */
-  window->loading_directory = thunar_file_get_file(directory);
-
-  /* If the directory is in the cache, check if it still exists. We want
-   * to trigger any timeouts it here, asynchronously. */
-  thunar_file_exists_async (g_object_ref(directory),
-                            NULL,
-                            thunar_window_change_directory_finish,
-                            window);
-}
-
-
-
-static void
-thunar_window_change_directory_gfile_finish (GFile      *location,
-                                             ThunarFile *directory,
-                                             GError     *error,
-                                             gpointer    user_data)
-{
-  ThunarWindow *window = user_data;
-
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
-  _thunar_return_if_fail (directory == NULL || THUNAR_IS_FILE (directory));
-
-  /* only continue of nothing else has is loading */
-  if (window->loading_directory == location)
-    {
-      if (error)
-        {
-          /* we are no longer loading the directory */
-          window->loading_directory = NULL;
-          thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to open directory \"%s\""), thunar_file_get_display_name (directory));
-        }
-
-      /* display the directory */
-      else
-        thunar_window_set_current_directory (window, g_object_ref (directory));
-    }
-
-  g_object_unref (directory);
+  thunar_standard_view_change_directory_async (THUNAR_STANDARD_VIEW (window->view),
+                                               directory,
+                                               &thunar_window_change_directory_finish,
+                                               g_object_ref (window));
 }
 
 
@@ -6068,34 +6014,13 @@ void
 thunar_window_change_directory_gfile_async (ThunarWindow *window,
                                             GFile        *location)
 {
-  ThunarFile *directory = NULL;
-
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (location == NULL || G_IS_FILE (location));
 
-  /* not much to do in this case */
-  if (location == NULL)
-    return;
-
-  /* record which directory we are loading */
-  window->loading_directory = location;
-
-  /* if the directory is in the cache, we don't need to load it again */
-  directory = thunar_file_cache_lookup (location);
-  if (directory != NULL)
-    thunar_window_change_directory_async (window, directory);
-
-  /* If the directory is not in the cache, load it asynchronously */
-  else
-    {
-      /* record which directory we are loading */
-      window->loading_directory = location;
-
-      thunar_file_get_async (location,
-                             NULL,
-                             thunar_window_change_directory_gfile_finish,
-                             window);
-    }
+  thunar_standard_view_change_directory_gfile_async (THUNAR_STANDARD_VIEW (window->view),
+                                                     location,
+                                                     &thunar_window_change_directory_finish,
+                                                     g_object_ref (window));
 }
 
 

@@ -80,6 +80,23 @@ thunar_view_class_init (gpointer klass)
 
 
   /**
+   * ThunarView:busy:
+   *
+   * Indicates whether the given #ThunarView should indicate an ongoing
+   * process.
+   *
+   * Other modules can use this property to display some kind of
+   * user visible notification about the busy state.
+   **/
+  g_object_interface_install_property (klass,
+                                       g_param_spec_boolean ("busy",
+                                                             "busy",
+                                                             "busy",
+                                                             FALSE,
+                                                             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+
+  /**
    * ThunarView:show-hidden:
    *
    * Tells whether to display hidden and backup files in the
@@ -123,6 +140,39 @@ thunar_view_get_loading (ThunarView *view)
 {
   _thunar_return_val_if_fail (THUNAR_IS_VIEW (view), FALSE);
   return (*THUNAR_VIEW_GET_IFACE (view)->get_loading) (view);
+}
+
+
+
+/**
+ * thunar_view_get_busy:
+ * @view : a #ThunarView instance.
+ *
+ * Whether the given #ThunarView should indicate an ongoing process.
+ *
+ * Return value: %TRUE if @view is currently busy, else %FALSE.
+ **/
+gboolean
+thunar_view_get_busy (ThunarView *view)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_VIEW (view), FALSE);
+  return (*THUNAR_VIEW_GET_IFACE (view)->get_busy) (view);
+}
+
+
+
+/**
+ * thunar_view_set_busy:
+ * @view : a #ThunarView instance.
+ *
+ * Whether the given #ThunarView should indicate an ongoing process.
+ **/
+void
+thunar_view_set_busy (ThunarView *view,
+                      gboolean    busy)
+{
+  _thunar_return_if_fail (THUNAR_IS_VIEW (view));
+  (*THUNAR_VIEW_GET_IFACE (view)->set_busy) (view, busy);
 }
 
 
