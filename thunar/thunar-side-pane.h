@@ -40,6 +40,8 @@ struct _ThunarSidePaneIface
   gboolean (*get_show_hidden) (ThunarSidePane *side_pane);
   void (*set_show_hidden) (ThunarSidePane *side_pane,
                            gboolean        show_hidden);
+
+  void (*reload) (ThunarSidePane *side_pane);
 };
 
 GType
@@ -50,6 +52,9 @@ thunar_side_pane_get_show_hidden (ThunarSidePane *side_pane);
 void
 thunar_side_pane_set_show_hidden (ThunarSidePane *side_pane,
                                   gboolean        show_hidden);
+
+void
+thunar_side_pane_reload (ThunarSidePane *side_pane);
 
 G_END_DECLS;
 
