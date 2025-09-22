@@ -2590,7 +2590,7 @@ thunar_window_switch_current_view_idle (gpointer user_data)
     g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (window->view_type), NULL);
 
   /* switch to the new view */
-  thunar_window_notebook_set_current_tab (window, gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), window->view));
+  //thunar_window_notebook_set_current_tab (window, gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), window->view));
 
   /* show/hide special columns */
   if (THUNAR_IS_DETAILS_VIEW (window->view))
