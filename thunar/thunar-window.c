@@ -2599,6 +2599,9 @@ thunar_window_switch_current_view (ThunarWindow *window,
   /* switch to the new view */
   thunar_window_notebook_set_current_tab (window, gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), window->view));
 
+  /* update the selection (relevant, in case a tab switch triggered the view-switch) */
+  thunar_window_selection_changed (window);
+
   /* take focus on the new view */
   gtk_widget_grab_focus (window->view);
 }
