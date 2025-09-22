@@ -665,7 +665,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /* next row */
   row++;
 
-  button = gtk_check_button_new_with_mnemonic (_("Show Icon _Emblems"));
+  button = gtk_check_button_new_with_mnemonic (_("Show icon _emblems"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "shortcuts-icon-emblems",
                           G_OBJECT (button),
@@ -680,7 +680,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /* next row */
   row++;
 
-  button = gtk_check_button_new_with_mnemonic (_("Show Disk Space _Usage Bar"));
+  button = gtk_check_button_new_with_mnemonic (_("Show disk space _usage bar"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "shortcuts-disk-space-usage-bar",
                           G_OBJECT (button),
@@ -745,7 +745,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /* next row */
   row++;
 
-  button = gtk_check_button_new_with_mnemonic (_("Show Icon E_mblems"));
+  button = gtk_check_button_new_with_mnemonic (_("Show icon e_mblems"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "tree-icon-emblems",
                           G_OBJECT (button),
@@ -1348,7 +1348,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_show (grid);
 
   /* add check button to enable/disable auto mounting */
-  button = gtk_check_button_new_with_mnemonic (_("Enable _Volume Management"));
+  button = gtk_check_button_new_with_mnemonic (_("Enable _volume management"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "misc-volume-management",
                           G_OBJECT (button),
