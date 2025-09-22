@@ -683,6 +683,25 @@ typedef enum
 GType
 thunar_terminal_sync_mode_get_type (void) G_GNUC_CONST;
 
+#define THUNAR_TYPE_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT (thunar_shortcuts_disk_space_usage_bar_height_get_type ())
+
+/**
+ * ThunarShortcutsDiskSpaceUsageBarHeight
+ **/
+typedef enum
+{
+  THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_2 = 2,
+  THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_4 = 4,
+  THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_8 = 8,
+  THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_16 = 16,
+  THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_32 = 32,
+  THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_64 = 64,
+  THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_128 = 128,
+  THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_256 = 256,
+} ThunarShortcutsDiskSpaceUsageBarHeight;
+
+GType
+thunar_shortcuts_disk_space_usage_bar_height_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS;
 

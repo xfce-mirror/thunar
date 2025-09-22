@@ -989,3 +989,31 @@ thunar_terminal_sync_mode_get_type (void)
 
   return type;
 }
+
+GType
+thunar_shortcuts_disk_space_usage_bar_height_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      /* clang-format off */
+      static const GEnumValue values[] =
+      {
+        { THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_2,    "THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_2",   "2px" },
+        { THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_4,    "THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_4",   "4px" },
+        { THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_8,    "THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_8",   "8px" },
+        { THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_16,   "THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_16",  "16px" },
+        { THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_32,   "THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_32",  "32px" },
+        { THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_64,   "THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_64",  "64px" },
+        { THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_128,  "THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_128", "128px" },
+        { THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_256,  "THUNAR_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT_256", "256px" },
+        { 0,                                                 NULL,                                               NULL },
+      };
+      /* clang-format on */
+
+      type = g_enum_register_static (I_ ("ThunarShortcutsDiskSpaceUsageBarHeight"), values);
+    }
+
+  return type;
+}

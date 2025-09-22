@@ -125,6 +125,11 @@ enum
   PROP_SHORTCUTS_ICON_EMBLEMS,
   PROP_SHORTCUTS_ICON_SIZE,
   PROP_SHORTCUTS_DISK_SPACE_USAGE_BAR,
+  PROP_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT,
+  PROP_SHORTCUTS_DISK_SPACE_USAGE_BAR_ENABLE_ATTENTION_THRESHOLD,
+  PROP_SHORTCUTS_DISK_SPACE_USAGE_BAR_ATTENTION_PERCENT,
+  PROP_SHORTCUTS_DISK_SPACE_USAGE_BAR_ENABLE_DANGER_THRESHOLD,
+  PROP_SHORTCUTS_DISK_SPACE_USAGE_BAR_DANGER_PERCENT,
   PROP_TREE_ICON_EMBLEMS,
   PROP_TREE_ICON_SIZE,
   PROP_TREE_LINES,
@@ -1225,6 +1230,69 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         NULL,
                         TRUE,
                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:shortcuts-disk-space-usage-bar-height:
+   *
+   * Specifies the height in pixels
+   **/
+  preferences_props[PROP_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT] =
+  g_param_spec_enum ("shortcuts-disk-space-usage-bar-height",
+                     "ShortcutsDiskSpaceUsageBarHeight",
+                     NULL,
+                     THUNAR_TYPE_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT,
+                     8,
+                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:shortcuts-disk-space-usage-bar-enable-attention-threshold:
+   *
+   * Will the progressbar change its style when it reaches a threshold?
+   **/
+  preferences_props[PROP_SHORTCUTS_DISK_SPACE_USAGE_BAR_ENABLE_ATTENTION_THRESHOLD] =
+  g_param_spec_boolean ("shortcuts-disk-space-usage-bar-enable-attention-threshold",
+                        "ShortcutsDiskSpaceUsageBarEnableAttentionThreshold",
+                        NULL,
+                        TRUE,
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:shortcuts-disk-space-usage-bar-attention-percent:
+   *
+   * Sets the threshold at which the progressbar changes its style
+   **/
+  preferences_props[PROP_SHORTCUTS_DISK_SPACE_USAGE_BAR_ATTENTION_PERCENT] =
+  g_param_spec_int ("shortcuts-disk-space-usage-bar-attention-percent",
+                    "ShortcutsDiskSpaceUsageBarAttentionPercent",
+                    NULL,
+                    0, 100,
+                    90,
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:shortcuts-disk-space-usage-bar-enable-danger-threshold:
+   *
+   * Will the progressbar change its style when it reaches a threshold?
+   **/
+  preferences_props[PROP_SHORTCUTS_DISK_SPACE_USAGE_BAR_ENABLE_DANGER_THRESHOLD] =
+  g_param_spec_boolean ("shortcuts-disk-space-usage-bar-enable-danger-threshold",
+                        "ShortcutsDiskSpaceUsageBarEnableDangerThreshold",
+                        NULL,
+                        TRUE,
+                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:shortcuts-disk-space-usage-bar-danger-percent:
+   *
+   * Sets the threshold at which the progressbar changes its style
+   **/
+  preferences_props[PROP_SHORTCUTS_DISK_SPACE_USAGE_BAR_DANGER_PERCENT] =
+  g_param_spec_int ("shortcuts-disk-space-usage-bar-danger-percent",
+                    "ShortcutsDiskSpaceUsageBarDangerPercent",
+                    NULL,
+                    0, 100,
+                    95,
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:tree-icon-emblems:
