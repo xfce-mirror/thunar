@@ -2020,7 +2020,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 
   /* disconnect any old bindings */
   if (G_UNLIKELY (standard_view->loading_binding != NULL))
-    g_object_unref (standard_view->loading_binding);
+      g_object_unref (standard_view->loading_binding);
 
   /* connect to the loading property of the new directory */
   standard_view->loading_binding =
