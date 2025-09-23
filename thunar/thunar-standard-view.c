@@ -376,9 +376,11 @@ thunar_standard_view_cell_layout_data_func (GtkCellLayout   *layout,
                                             gpointer         data);
 static void
 thunar_standard_view_set_model (ThunarStandardView *standard_view);
+static GHashTable *
+thunar_standard_view_list_to_hashtable (GList *file_list);
 static void
 thunar_standard_view_update_selected_files (ThunarStandardView *standard_view,
-                                            GList              *files_to_select);
+                                            GHashTable         *files_to_select);
 
 struct _ThunarStandardViewPrivate
 {
@@ -1648,23 +1650,59 @@ thunar_standard_view_get_selected_files_view (ThunarView *view)
 }
 
 
+static GHashTable *
+thunar_standard_view_list_to_hashtable (GList *file_list)
+{
+  GHashTable *hashtable;
+  GList      *lp;
+
+  if (file_list == NULL)
+    return NULL;
+
+  hashtable = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, NULL);
+  for (lp = file_list; lp != NULL; lp = lp->next)
+    g_hash_table_insert (hashtable, lp->data, GINT_TO_POINTER (1));
+
+  return hashtable;
+}
+
+
 void
 thunar_standard_view_update_selected_files (ThunarStandardView *standard_view,
-                                            GList              *files_to_select)
+                                            GHashTable         *files_to_select)
 {
-  GtkTreePath *first_path = NULL;
-  GList       *paths;
-  GList       *lp;
-  guint        count = 0;
-  guint        file_count = 0;
-  gboolean     use_batching = FALSE;
+  GtkTreePath    *first_path = NULL;
+  GList          *paths;
+  GList          *files_list = NULL;
+  GList          *lp;
+  GHashTableIter  iter;
+  gpointer        file;
+  guint           count = 0;
+  guint           file_count = 0;
+  gboolean        use_batching = FALSE;
 
   /* verify that we have a valid model */
   if (G_UNLIKELY (standard_view->model == NULL))
     return;
 
+  /* handle NULL hashtable (no selection) */
+  if (files_to_select == NULL)
+    {
+      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unselect_all) (standard_view);
+      return;
+    }
+
+  /* convert hashtable to list for thunar_standard_view_model_get_paths_for_files */
+  g_hash_table_iter_init (&iter, files_to_select);
+  while (g_hash_table_iter_next (&iter, &file, NULL))
+    files_list = g_list_prepend (files_list, file);
+  files_list = g_list_reverse (files_list);
+
   /* determine the tree paths for the given files */
-  paths = thunar_standard_view_model_get_paths_for_files (standard_view->model, files_to_select);
+  paths = thunar_standard_view_model_get_paths_for_files (standard_view->model, files_list);
+
+  /* clean up the temporary list (don't unref files, they belong to hashtable) */
+  g_list_free (files_list);
 
   /* unselect all previously selected files - this may free the "files_to_select" list */
   (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unselect_all) (standard_view);
@@ -1758,7 +1796,11 @@ thunar_standard_view_set_selected_files_component (ThunarComponent *component,
     }
   else
     {
-      thunar_standard_view_update_selected_files (standard_view, selected_files);
+      /* Convert GList to hashtable for the new hashtable-based update function */
+      GHashTable *hashtable = thunar_standard_view_list_to_hashtable (selected_files);
+      thunar_standard_view_update_selected_files (standard_view, hashtable);
+      if (hashtable != NULL)
+        g_hash_table_destroy (hashtable);
     }
 }
 
@@ -1798,14 +1840,7 @@ thunar_standard_view_set_selected_files_hashtable_component (ThunarComponent *co
     }
   else
     {
-      /* convert hashtable to list for thunar_standard_view_update_selected_files */
-      g_hash_table_iter_init (&iter, selected_files);
-      while (g_hash_table_iter_next (&iter, &file, NULL))
-        file_list = g_list_prepend (file_list, g_object_ref (file));
-      file_list = g_list_reverse (file_list);
-      
-      thunar_standard_view_update_selected_files (standard_view, file_list);
-      thunar_g_list_free_full (file_list);
+      thunar_standard_view_update_selected_files (standard_view, selected_files);
     }
 }
 
@@ -2069,7 +2104,12 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
   /* when  loading is finished, update the selection if required */
   if (!loading && standard_view->priv->files_to_select != NULL)
     {
-      thunar_standard_view_update_selected_files (standard_view, standard_view->priv->files_to_select);
+      /* Convert GList to hashtable for the hashtable-based update function */
+      GHashTable *hashtable = thunar_standard_view_list_to_hashtable (standard_view->priv->files_to_select);
+      thunar_standard_view_update_selected_files (standard_view, hashtable);
+      if (hashtable != NULL)
+        g_hash_table_destroy (hashtable);
+      
       thunar_g_list_free_full (standard_view->priv->files_to_select);
       standard_view->priv->files_to_select = NULL;
     }
@@ -4130,7 +4170,12 @@ thunar_standard_view_restore_selection_idle (gpointer user_data)
 
   /* restore the selected files */
   GList *selected_files_list = thunar_standard_view_get_selected_files_view (THUNAR_VIEW (standard_view));
-  thunar_standard_view_update_selected_files (standard_view, selected_files_list);
+  
+  /* Convert GList to hashtable for the hashtable-based update function */
+  GHashTable *hashtable = thunar_standard_view_list_to_hashtable (selected_files_list);
+  thunar_standard_view_update_selected_files (standard_view, hashtable);
+  if (hashtable != NULL)
+    g_hash_table_destroy (hashtable);
   thunar_g_list_free_full (selected_files_list);
 
   standard_view->priv->restore_selection_idle_id = 0;
