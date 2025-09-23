@@ -2006,10 +2006,14 @@ thunar_standard_view_change_directory_gfile_exists (GObject      *object,
 
   thunar_g_file_exists_finish (file, result, &error);
 
-  thunar_file_get_async (file,
-                         NULL,
-                         thunar_standard_view_change_directory_gfile_finish,
-                         user_data);
+  if (error == NULL)
+    thunar_file_get_async (file,
+                           NULL,
+                           thunar_standard_view_change_directory_gfile_finish,
+                           user_data);
+
+  else
+    thunar_standard_view_change_directory_gfile_finish (file, NULL, error, user_data);
 }
 
 
