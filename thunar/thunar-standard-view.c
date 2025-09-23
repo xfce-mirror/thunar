@@ -180,6 +180,8 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
 static void
 thunar_standard_view_set_directory_specific_settings (ThunarStandardView *standard_view,
                                                       gboolean            directory_specific_settings);
+static gboolean
+thunar_standard_view_selection_changed_timeout (ThunarStandardView *standard_view);
 static void
 thunar_standard_view_reload (ThunarView *view,
                              gboolean    reload_info);
@@ -439,7 +441,7 @@ struct _ThunarStandardViewPrivate
   gfloat      scroll_to_row_align;
   gfloat      scroll_to_col_align;
 
-  /* #GHashTable of currently selected #ThunarFile<!---->s */
+  /* #GHashTable of currently selected #ThunarFile */
   GHashTable *selected_files;
   guint       restore_selection_idle_id;
 
@@ -1267,7 +1269,7 @@ thunar_standard_view_finalize (GObject *object)
     g_object_unref (G_OBJECT (standard_view->priv->css_provider));
 
   /* release the selected_files hash table and the files to select (if any) */
-  g_hash_table_unref (standard_view->priv->selected_files);
+  g_hash_table_destroy (standard_view->priv->selected_files);
   thunar_g_list_free_full (standard_view->priv->files_to_select);
 
   /* release the drag path list (just in case the drag-end wasn't fired before) */
@@ -1626,6 +1628,9 @@ thunar_standard_view_update_selected_files (ThunarStandardView *standard_view,
   GtkTreePath *first_path = NULL;
   GList       *paths;
   GList       *lp;
+  guint        count = 0;
+  guint        file_count = 0;
+  gboolean     use_batching = FALSE;
 
   /* verify that we have a valid model */
   if (G_UNLIKELY (standard_view->model == NULL))
@@ -1639,6 +1644,12 @@ thunar_standard_view_update_selected_files (ThunarStandardView *standard_view,
 
   if (G_LIKELY (paths != NULL))
     {
+      /* Initialize batching variables based on selection size */
+      file_count = g_list_length (paths);
+
+      /* Enable batching for large selections */
+      use_batching = (file_count > 100);
+
       /* determine the first path */
       for (first_path = paths->data, lp = paths; lp != NULL; lp = lp->next)
         {
@@ -1663,7 +1674,22 @@ thunar_standard_view_update_selected_files (ThunarStandardView *standard_view,
         {
           /* select the path */
           (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->select_path) (standard_view, lp->data);
+          count++;
+
+          /* for large selections, yield to main loop more frequently to keep UI responsive */
+          if (use_batching && count >= (file_count > 5000 ? 25 : 50))
+            {
+              count = 0;
+              /* process pending events to keep UI responsive */
+              while (gtk_events_pending ())
+                gtk_main_iteration ();
+                
+              /* Add small delay for very large selections */
+              if (file_count > 10000)
+                g_usleep (1000); 
+            }
         }
+
 
       (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unblock_selection) (standard_view);
 
@@ -2326,6 +2352,23 @@ thunar_standard_view_reload (ThunarView *view,
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
   ThunarFolder       *folder;
   ThunarFile         *file;
+  guint               selected_count;
+
+  /* temporarily disable selection changed processing for large selections during reload */
+  selected_count = (standard_view->priv->selected_files != NULL) ? 
+                   g_hash_table_size (standard_view->priv->selected_files) : 0;
+  
+  gboolean was_blocked = FALSE;
+  if (selected_count > 50)
+    {
+      /* Cancel any pending selection changed timeout */
+      if (standard_view->priv->selection_changed_timeout_source != 0)
+        {
+          g_source_remove (standard_view->priv->selection_changed_timeout_source);
+          standard_view->priv->selection_changed_timeout_source = 0;
+        }
+      was_blocked = TRUE;
+    }
 
   /* determine the folder for the view model */
   folder = thunar_standard_view_model_get_folder (standard_view->model);
@@ -2337,6 +2380,15 @@ thunar_standard_view_reload (ThunarView *view,
         thunar_folder_reload (folder, reload_info);
       else
         thunar_standard_view_current_directory_destroy (file, standard_view);
+    }
+
+  /* Re-enable selection processing and trigger update if we blocked it */
+  if (was_blocked)
+    {
+      /* Trigger a delayed selection changed to update the UI */
+      standard_view->priv->selection_changed_requested = TRUE;
+      standard_view->priv->selection_changed_timeout_source =
+        g_timeout_add (100, (GSourceFunc) thunar_standard_view_selection_changed_timeout, standard_view);
     }
 
   /* if directory specific settings are enabled, apply them. the reload might have been triggered */
@@ -2734,7 +2786,7 @@ thunar_standard_view_update_statusbar_text (ThunarStandardView *standard_view)
   /* restart a new one, this way we avoid multiple update when
    * the user is pressing a key to scroll */
   standard_view->priv->statusbar_text_idle_id =
-  g_timeout_add_full (G_PRIORITY_DEFAULT, 50, thunar_standard_view_update_statusbar_text_idle,
+  g_timeout_add_full (G_PRIORITY_DEFAULT, 200, thunar_standard_view_update_statusbar_text_idle,
                       standard_view, NULL);
 }
 
@@ -4460,6 +4512,7 @@ _thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   GtkTreeIter iter;
   GList      *lp, *selected_thunar_files;
   ThunarFile *file;
+  guint       processed_count = 0;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
@@ -4492,6 +4545,13 @@ _thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
         {
           /* add the file to the hash table */
           g_hash_table_insert (standard_view->priv->selected_files, g_object_ref (file), GINT_TO_POINTER (1));
+        }
+        
+      /* UI responsiveness: yield to main loop every 50 selected files */
+      if (++processed_count % 50 == 0)
+        {
+          while (gtk_events_pending ())
+            gtk_main_iteration ();
         }
     }
 

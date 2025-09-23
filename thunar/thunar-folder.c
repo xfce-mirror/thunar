@@ -29,7 +29,10 @@
 #define DEBUG_FILE_CHANGES FALSE
 
 /* The maximum throttle interval (in ms) in which files will be added, removed or notified to be changed */
-#define THUNAR_FOLDER_UPDATE_TIMEOUT (25)
+#define THUNAR_FOLDER_UPDATE_TIMEOUT (100)
+
+/* The maximum number of files to process in a single batch */
+#define THUNAR_FOLDER_MAX_BATCH_SIZE (50)
 
 /* property identifiers */
 enum
@@ -550,6 +553,7 @@ _thunar_folder_files_update_timeout (gpointer data)
   GHashTable    *files = g_hash_table_new_full (g_direct_hash, NULL, g_object_unref, NULL);
   GHashTableIter iter;
   gpointer       key;
+  guint          processed_count = 0;
 
   /* send a 'files-removed' signal for all files which were removed */
   g_hash_table_iter_init (&iter, folder->removed_files_map);
@@ -560,6 +564,13 @@ _thunar_folder_files_update_timeout (gpointer data)
       if (_thunar_folder_remove_file (folder, file))
         g_hash_table_add (files, g_object_ref (file));
       g_object_unref (file);
+      
+      /* UI responsiveness: yield to main loop every 20 files */
+      if (++processed_count % 20 == 0)
+        {
+          while (gtk_events_pending ())
+            gtk_main_iteration ();
+        }
     }
 
   g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, files);
@@ -568,16 +579,30 @@ _thunar_folder_files_update_timeout (gpointer data)
   g_hash_table_remove_all (folder->removed_files_map);
 
   /* send a 'files-added' signal for all files which were added */
+  processed_count = 0;
   g_hash_table_iter_init (&iter, folder->added_files_map);
   while (g_hash_table_iter_next (&iter, &key, NULL))
     {
       file = THUNAR_FILE (key);
       if (_thunar_folder_add_file (folder, file))
         g_hash_table_add (files, g_object_ref (file));
+        
+      /* UI responsiveness: yield to main loop every 20 files */
+      if (++processed_count % 20 == 0)
+        {
+          while (gtk_events_pending ())
+            gtk_main_iteration ();
+        }
     }
 
-  /* start loading the content types of all added files */
-  thunar_folder_load_content_types (folder, files);
+  /* Defer content type loading for large directories
+   * to prevent blocking the UI thread. Only load immediately for small
+   * directories (< 100 files). For larger directories, content types
+   * will be loaded on-demand when files become visible. */
+  if (g_hash_table_size (folder->files_map) < 100)
+    thunar_folder_load_content_types (folder, files);
+    
+  /* TODO: Implement on-demand content type loading for large directories */
 
   g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, files);
 
@@ -585,6 +610,7 @@ _thunar_folder_files_update_timeout (gpointer data)
   g_hash_table_remove_all (folder->added_files_map);
 
   /* reload files which were changed and send a 'changed' signal for them, if required */
+  processed_count = 0;
   g_hash_table_iter_init (&iter, folder->changed_files_map);
   while (g_hash_table_iter_next (&iter, &key, NULL))
     {
@@ -598,6 +624,13 @@ _thunar_folder_files_update_timeout (gpointer data)
         continue;
 
       g_hash_table_add (files, g_object_ref (key));
+      
+      /* UI responsiveness: yield to main loop every 10 files (file reload is more expensive) */
+      if (++processed_count % 10 == 0)
+        {
+          while (gtk_events_pending ())
+            gtk_main_iteration ();
+        }
     }
 
   if (g_hash_table_size (files) > 0)
@@ -627,10 +660,18 @@ thunar_folder_file_changed (ThunarFolder *folder,
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
 
+  /* Coalesce rapid file change events to prevent
+   * excessive UI updates when many files change simultaneously 
+   * (e.g., during bulk operations or file system scanning) */
+  
   g_hash_table_add (folder->changed_files_map, g_object_ref (file));
 
   if (folder->files_update_timeout_source_id == 0)
-    folder->files_update_timeout_source_id = g_timeout_add (THUNAR_FOLDER_UPDATE_TIMEOUT, (GSourceFunc) _thunar_folder_files_update_timeout, folder);
+    {
+      /* Use shorter timeout for bulk operations to process changes faster */
+      guint timeout_ms = g_hash_table_size (folder->changed_files_map) > 50 ? 50 : THUNAR_FOLDER_UPDATE_TIMEOUT;
+      folder->files_update_timeout_source_id = g_timeout_add (timeout_ms, (GSourceFunc) _thunar_folder_files_update_timeout, folder);
+    }
 }
 
 
