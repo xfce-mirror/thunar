@@ -5997,10 +5997,10 @@ thunar_window_change_directory_async (ThunarWindow *window,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (directory == NULL || THUNAR_IS_FILE (directory));
 
-  thunar_standard_view_change_directory_async (THUNAR_STANDARD_VIEW (window->view),
-                                               directory,
-                                               &thunar_window_change_directory_finish,
-                                               g_object_ref (window));
+  thunar_standard_view_change_directory_gfile_async (THUNAR_STANDARD_VIEW (window->view),
+                                                     thunar_file_get_file (directory),
+                                                     &thunar_window_change_directory_finish,
+                                                     g_object_ref (window));
 }
 
 

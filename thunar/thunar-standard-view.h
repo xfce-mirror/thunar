@@ -205,11 +205,6 @@ GType
 thunar_standard_view_get_type (void) G_GNUC_CONST;
 
 void
-thunar_standard_view_change_directory_async (ThunarStandardView *standard_view,
-                                             ThunarFile         *directory,
-                                             ThunarSVCDFunc      func,
-                                             gpointer            user_data);
-void
 thunar_standard_view_change_directory_gfile_async (ThunarStandardView *standard_view,
                                                    GFile              *location,
                                                    ThunarSVCDFunc      func,

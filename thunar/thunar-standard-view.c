@@ -1952,91 +1952,6 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 
 
 static void
-thunar_standard_view_change_directory_finish (ThunarFile *directory,
-                                              GError     *error,
-                                              gpointer    user_data)
-{
-  ThunarSVCDData     *data = user_data;
-  ThunarStandardView *standard_view = data->standard_view;
-
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-  _thunar_return_if_fail (directory == NULL || THUNAR_IS_FILE (directory));
-
-  /* only continue of nothing else has is loading */
-  if (standard_view->loading_directory == thunar_file_get_file (directory))
-    {
-      if (error)
-        {
-          /* we are no longer loading the directory */
-          standard_view->loading_directory = NULL;
-          g_object_set (G_OBJECT (standard_view), "busy", FALSE, NULL);
-          thunar_dialogs_show_error (GTK_WIDGET (standard_view),
-                                     error,
-                                     _("Failed to open directory \"%s\""),
-                                     thunar_file_get_display_name (directory));
-        }
-
-      else
-        {
-          /* set the current directory */
-          g_object_set (G_OBJECT (standard_view), "current-directory", directory, NULL);
-
-          (data->func) (directory, standard_view, data->user_data);
-        }
-    }
-
-  g_object_unref (directory);
-
-  /* release the change directory data */
-  g_slice_free (ThunarSVCDData, data);
-}
-
-
-
-/**
- * thunar_standard_view_change_directory_async:
- * @navigator         : a #ThunarNavigator instance.
- * @directory         : the new directory or %NULL.
- * @func              : a user callback.
- * @user_data         : callback user data.
- **/
-void
-thunar_standard_view_change_directory_async (ThunarStandardView *standard_view,
-                                             ThunarFile         *directory,
-                                             ThunarSVCDFunc      func,
-                                             gpointer            user_data)
-
-{
-  ThunarSVCDData *data;
-
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-  _thunar_return_if_fail (directory == NULL || THUNAR_IS_FILE (directory));
-
-  /* not much to do in this case */
-  if (directory == NULL)
-    return;
-
-  /* record which directory we are loading */
-  g_object_set (G_OBJECT (standard_view), "busy", TRUE, NULL);
-  standard_view->loading_directory = thunar_file_get_file (directory);
-
-  /* allocate change directory data */
-  data = g_slice_new0 (ThunarSVCDData);
-  data->standard_view = standard_view;
-  data->func = func;
-  data->user_data = user_data;
-
-  /* Check if the directory still exists. We want to trigger any
-   * timeouts it here, asynchronously. */
-  thunar_file_exists_async (g_object_ref (directory),
-                            NULL,
-                            thunar_standard_view_change_directory_finish,
-                            data);
-}
-
-
-
-static void
 thunar_standard_view_change_directory_gfile_finish (GFile      *location,
                                                     ThunarFile *directory,
                                                     GError     *error,
@@ -2081,6 +1996,24 @@ thunar_standard_view_change_directory_gfile_finish (GFile      *location,
 
 
 
+static void
+thunar_standard_view_change_directory_gfile_exists (GObject      *object,
+                                                    GAsyncResult *result,
+                                                    gpointer      user_data)
+{
+  GFile  *file = G_FILE (object);
+  GError *error = NULL;
+
+  thunar_g_file_exists_finish (file, result, &error);
+
+  thunar_file_get_async (file,
+                         NULL,
+                         thunar_standard_view_change_directory_gfile_finish,
+                         user_data);
+}
+
+
+
 /**
  * thunar_standard_view_change_directory_gfile_async:
  * @navigator         : a #ThunarStandardView instance.
@@ -2104,33 +2037,32 @@ thunar_standard_view_change_directory_gfile_async (ThunarStandardView *standard_
   if (location == NULL)
     return;
 
-  /* if the directory is in the cache, we don't need to load it again */
+  /* record which directory we are loading */
+  g_object_set (G_OBJECT (standard_view), "busy", TRUE, NULL);
+  standard_view->loading_directory = location;
+
+
+  /* allocate change directory data */
+  data = g_slice_new0 (ThunarSVCDData);
+  data->standard_view = standard_view;
+  data->func = func;
+  data->user_data = user_data;
+
+  /* if the directory is in the cache, check if it exists. We want
+   * to trigger any timeouts it here, asynchronously. */
   directory = thunar_file_cache_lookup (location);
   if (directory != NULL)
-    {
-      thunar_standard_view_change_directory_async (standard_view, directory, func, user_data);
-      /* the above call refs the directory for itself */
-      g_object_unref (directory);
-    }
+    thunar_g_file_exists_async (location,
+                                thunar_standard_view_change_directory_gfile_exists,
+                                data);
 
-  /* If the directory is not in the cache, load it asynchronously */
+  /* If the directory is not in the cache, load it asynchronously.
+   * thunar_file_get_async will unref the file when we are done.*/
   else
-    {
-      /* record which directory we are loading */
-      g_object_set (G_OBJECT (standard_view), "busy", TRUE, NULL);
-      standard_view->loading_directory = location;
-
-      /* allocate change directory data */
-      data = g_slice_new0 (ThunarSVCDData);
-      data->standard_view = standard_view;
-      data->func = func;
-      data->user_data = user_data;
-
-      thunar_file_get_async (location,
-                             NULL,
-                             thunar_standard_view_change_directory_gfile_finish,
-                             data);
-    }
+    thunar_file_get_async (location,
+                           NULL,
+                           thunar_standard_view_change_directory_gfile_finish,
+                           data);
 }
 
 

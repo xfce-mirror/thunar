@@ -254,14 +254,6 @@ typedef struct
   GCancellable     *cancellable;
 } ThunarFileGetData;
 
-typedef struct
-{
-  ThunarFileExistsFunc func;
-  ThunarFile          *file;
-  gpointer             user_data;
-  GCancellable        *cancellable;
-} ThunarFileExistsData;
-
 static struct
 {
   GUserDirectory type;
@@ -2874,65 +2866,6 @@ thunar_file_exists (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   return g_file_query_exists (file->gfile, NULL);
-}
-
-
-
-static void
-thunar_file_exists_finish (GObject      *object,
-                           GAsyncResult *result,
-                           gpointer      user_data)
-{
-  ThunarFileExistsData *data = user_data;
-  GFileInfo            *file_info;
-  GError               *error = NULL;
-  GFile                *location = G_FILE (object);
-
-  /* finish querying the file information */
-  file_info = g_file_query_info_finish (location, result, &error);
-
-  if (file_info)
-    g_object_unref (file_info);
-
-  /* pass the file and possible errors to the return function */
-  (data->func) (data->file, error, data->user_data);
-
-  /* free the error, if there is any */
-  if (error != NULL)
-    g_error_free (error);
-
-  /* release the exists data */
-  if (data->cancellable != NULL)
-    g_object_unref (data->cancellable);
-  g_slice_free (ThunarFileExistsData, data);
-}
-
-
-
-void
-thunar_file_exists_async (ThunarFile          *file,
-                          GCancellable        *cancellable,
-                          ThunarFileExistsFunc func,
-                          gpointer             user_data)
-{
-  ThunarFileExistsData *data;
-
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
-
-  data = g_slice_new0 (ThunarFileExistsData);
-  data->file = file;
-  data->func = func;
-  data->user_data = user_data;
-  if (cancellable != NULL)
-    data->cancellable = g_object_ref (cancellable);
-
-  g_file_query_info_async (file->gfile,
-                           "",
-                           G_FILE_QUERY_INFO_NONE,
-                           G_PRIORITY_DEFAULT,
-                           cancellable,
-                           thunar_file_exists_finish,
-                           data);
 }
 
 

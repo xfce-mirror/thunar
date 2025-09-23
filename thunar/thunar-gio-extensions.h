@@ -70,6 +70,19 @@ thunar_g_file_is_computer (GFile *file);
 gboolean
 thunar_g_file_is_network (GFile *file);
 
+
+
+gboolean
+thunar_g_file_exists_finish (GFile        *file,
+                             GAsyncResult *result,
+                             GError      **error);
+void
+thunar_g_file_exists_async (GFile              *file,
+                            GAsyncReadyCallback func,
+                            gpointer            data);
+
+
+
 GKeyFile *
 thunar_g_file_query_key_file (GFile        *file,
                               GCancellable *cancellable,

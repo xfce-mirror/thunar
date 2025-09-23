@@ -348,6 +348,40 @@ thunar_g_file_is_network (GFile *file)
 
 
 
+gboolean
+thunar_g_file_exists_finish (GFile        *file,
+                             GAsyncResult *result,
+                             GError      **error)
+{
+  GFileInfo *file_info;
+
+  /* finish querying the file information */
+  file_info = g_file_query_info_finish (file, result, error);
+
+  if (file_info)
+    g_object_unref (file_info);
+
+  return (*error == NULL);
+}
+
+
+
+void
+thunar_g_file_exists_async (GFile              *file,
+                            GAsyncReadyCallback callback,
+                            gpointer            data)
+{
+  g_file_query_info_async (file,
+                           "",
+                           G_FILE_QUERY_INFO_NONE,
+                           G_PRIORITY_DEFAULT,
+                           NULL,
+                           callback,
+                           data);
+}
+
+
+
 GKeyFile *
 thunar_g_file_query_key_file (GFile        *file,
                               GCancellable *cancellable,
