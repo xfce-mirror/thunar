@@ -19,6 +19,7 @@
 
 #include "thunar/thunar-component.h"
 #include "thunar/thunar-private.h"
+#include "thunar/thunar-file.h"
 
 #include <libxfce4util/libxfce4util.h>
 
@@ -65,7 +66,7 @@ thunar_component_class_init (gpointer klass)
    * which this #ThunarComponent belongs.
    *
    * The exact semantics of this property depend on the implementor
-   * of this interface. For example, #ThunarComponent<!---->s will update
+   * of this interface. For example, #ThunarComponents will update
    * the property depending on the users selection with the
    * #GtkTreeComponent. While other components in a window,
    * like the #ThunarShortcutsPane, will not update this property on
@@ -90,10 +91,10 @@ thunar_component_class_init (gpointer klass)
  * thunar_component_get_selected_files:
  * @component : a #ThunarComponent instance.
  *
- * Returns the set of selected #ThunarFile<!---->s. Check the description
+ * Returns the set of selected #ThunarFiles. Check the description
  * of the :selected-files property for details.
  *
- * Return value: the set of selected #ThunarFile<!---->s.
+ * Return value: the set of selected #ThunarFiles.
  **/
 GList *
 thunar_component_get_selected_files (ThunarComponent *component)
@@ -110,7 +111,7 @@ thunar_component_get_selected_files (ThunarComponent *component)
 /**
  * thunar_component_set_selected_files:
  * @component      : a #ThunarComponent instance.
- * @selected_files : a #GList of #ThunarFile<!---->s.
+ * @selected_files : a #GList of #ThunarFiles.
  *
  * Sets the selected files for @component to @selected_files.
  * Check the description of the :selected-files property for
@@ -123,4 +124,121 @@ thunar_component_set_selected_files (ThunarComponent *component,
   _thunar_return_if_fail (THUNAR_IS_COMPONENT (component));
   if (THUNAR_COMPONENT_GET_IFACE (component)->set_selected_files != NULL)
     (*THUNAR_COMPONENT_GET_IFACE (component)->set_selected_files) (component, selected_files);
+}
+
+
+
+/**
+ * thunar_component_get_selected_files_hashtable:
+ * @component : a #ThunarComponent instance.
+ *
+ * Returns the set of selected #ThunarFiles as a hashtable for 
+ * better performance. If the component doesn't implement hashtable 
+ * methods, falls back to GList method and converts to hashtable.
+ *
+ * Return value: (transfer full): hashtable of selected #ThunarFiles.
+ **/
+GHashTable *
+thunar_component_get_selected_files_hashtable (ThunarComponent *component)
+{
+  GHashTable *hashtable;
+  GList      *list, *lp;
+
+  _thunar_return_val_if_fail (THUNAR_IS_COMPONENT (component), NULL);
+  
+  /* try the hashtable method first for better performance */
+  if (THUNAR_COMPONENT_GET_IFACE (component)->get_selected_files_hashtable != NULL)
+    {
+      return (*THUNAR_COMPONENT_GET_IFACE (component)->get_selected_files_hashtable) (component);
+    }
+  
+  /* fallback: convert GList to hashtable for backward compatibility */
+  list = thunar_component_get_selected_files (component);
+  if (list == NULL)
+    return NULL;
+    
+  hashtable = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, NULL);
+  for (lp = list; lp != NULL; lp = lp->next)
+    g_hash_table_insert (hashtable, g_object_ref (lp->data), GINT_TO_POINTER (1));
+    
+  thunar_g_list_free_full (list);
+  return hashtable;
+}
+
+
+
+/**
+ * thunar_component_set_selected_files_hashtable:
+ * @component      : a #ThunarComponent instance.
+ * @selected_files : a #GHashTable of #ThunarFiles.
+ *
+ * Sets the selected files for @component using hashtable format.
+ * If the component doesn't implement hashtable methods, converts 
+ * to GList and uses the traditional method.
+ **/
+void
+thunar_component_set_selected_files_hashtable (ThunarComponent *component,
+                                               GHashTable      *selected_files)
+{
+  GHashTableIter iter;
+  GList         *list = NULL;
+  gpointer       file;
+
+  _thunar_return_if_fail (THUNAR_IS_COMPONENT (component));
+  
+  /* try the hashtable method first for better performance */
+  if (THUNAR_COMPONENT_GET_IFACE (component)->set_selected_files_hashtable != NULL)
+    {
+      (*THUNAR_COMPONENT_GET_IFACE (component)->set_selected_files_hashtable) (component, selected_files);
+      return;
+    }
+  
+  /* fallback: convert hashtable to GList for backward compatibility */
+  if (selected_files != NULL)
+    {
+      g_hash_table_iter_init (&iter, selected_files);
+      while (g_hash_table_iter_next (&iter, &file, NULL))
+        list = g_list_prepend (list, g_object_ref (file));
+      list = g_list_reverse (list);
+    }
+    
+  thunar_component_set_selected_files (component, list);
+  thunar_g_list_free_full (list);
+}
+
+
+
+/**
+ * thunar_component_get_selected_files_count:
+ * @component : a #ThunarComponent instance.
+ *
+ * Returns the number of selected files efficiently.
+ *
+ * Return value: number of selected files.
+ **/
+guint
+thunar_component_get_selected_files_count (ThunarComponent *component)
+{
+  GHashTable *hashtable;
+  GList      *list;
+  guint       count;
+
+  _thunar_return_val_if_fail (THUNAR_IS_COMPONENT (component), 0);
+  
+  /* try the hashtable method first for O(1) performance */
+  if (THUNAR_COMPONENT_GET_IFACE (component)->get_selected_files_hashtable != NULL)
+    {
+      hashtable = (*THUNAR_COMPONENT_GET_IFACE (component)->get_selected_files_hashtable) (component);
+      if (hashtable == NULL)
+        return 0;
+      count = g_hash_table_size (hashtable);
+      g_hash_table_unref (hashtable);
+      return count;
+    }
+  
+  /* fallback: count GList elements (O(n) performance) */
+  list = thunar_component_get_selected_files (component);
+  count = g_list_length (list);
+  thunar_g_list_free_full (list);
+  return count;
 }

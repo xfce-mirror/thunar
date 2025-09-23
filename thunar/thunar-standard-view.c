@@ -148,6 +148,11 @@ thunar_standard_view_get_selected_files_component (ThunarComponent *component);
 static void
 thunar_standard_view_set_selected_files_component (ThunarComponent *component,
                                                    GList           *selected_files);
+static GHashTable *
+thunar_standard_view_get_selected_files_hashtable_component (ThunarComponent *component);
+static void
+thunar_standard_view_set_selected_files_hashtable_component (ThunarComponent *component,
+                                                             GHashTable      *selected_files);
 static ThunarFile *
 thunar_standard_view_get_current_directory (ThunarNavigator *navigator);
 static void
@@ -940,6 +945,8 @@ thunar_standard_view_component_init (ThunarComponentIface *iface)
 {
   iface->get_selected_files = thunar_standard_view_get_selected_files_component;
   iface->set_selected_files = thunar_standard_view_set_selected_files_component;
+  iface->get_selected_files_hashtable = thunar_standard_view_get_selected_files_hashtable_component;
+  iface->set_selected_files_hashtable = thunar_standard_view_set_selected_files_hashtable_component;
 }
 
 
@@ -1606,6 +1613,26 @@ thunar_standard_view_get_selected_files_component (ThunarComponent *component)
 
 
 
+static GHashTable *
+thunar_standard_view_get_selected_files_hashtable_component (ThunarComponent *component)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (component);
+  GHashTable         *result;
+  GHashTableIter      iter;
+  gpointer            file;
+
+  /* create a new hashtable with the same files but new references */
+  result = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, NULL);
+  
+  g_hash_table_iter_init (&iter, standard_view->priv->selected_files);
+  while (g_hash_table_iter_next (&iter, &file, NULL))
+    g_hash_table_insert (result, g_object_ref (file), GINT_TO_POINTER (1));
+
+  return result;
+}
+
+
+
 static GList *
 thunar_standard_view_get_selected_files_view (ThunarView *view)
 {
@@ -1732,6 +1759,53 @@ thunar_standard_view_set_selected_files_component (ThunarComponent *component,
   else
     {
       thunar_standard_view_update_selected_files (standard_view, selected_files);
+    }
+}
+
+
+
+static void
+thunar_standard_view_set_selected_files_hashtable_component (ThunarComponent *component,
+                                                             GHashTable      *selected_files)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (component);
+  GHashTableIter      iter;
+  gpointer            file;
+  GList              *file_list = NULL;
+
+  /* unselect only done via unselect all */
+  if (selected_files == NULL)
+    return;
+
+  /* clear the current selection */
+  if (standard_view->priv->selected_files != NULL)
+    {
+      g_hash_table_remove_all (standard_view->priv->selected_files);
+    }
+
+  /* The selection will either be updated directly, or after loading the folder got finished */
+  if (thunar_view_get_loading (THUNAR_VIEW (standard_view)))
+    {
+      /* convert hashtable to list for files_to_select */
+      g_hash_table_iter_init (&iter, selected_files);
+      while (g_hash_table_iter_next (&iter, &file, NULL))
+        file_list = g_list_prepend (file_list, g_object_ref (file));
+      file_list = g_list_reverse (file_list);
+      
+      /* update the files which are to select */
+      thunar_g_list_free_full (standard_view->priv->files_to_select);
+      standard_view->priv->files_to_select = file_list;
+    }
+  else
+    {
+      /* convert hashtable to list for thunar_standard_view_update_selected_files */
+      g_hash_table_iter_init (&iter, selected_files);
+      while (g_hash_table_iter_next (&iter, &file, NULL))
+        file_list = g_list_prepend (file_list, g_object_ref (file));
+      file_list = g_list_reverse (file_list);
+      
+      thunar_standard_view_update_selected_files (standard_view, file_list);
+      thunar_g_list_free_full (file_list);
     }
 }
 

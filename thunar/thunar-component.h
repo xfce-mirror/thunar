@@ -40,6 +40,11 @@ struct _ThunarComponentIface
   GList *(*get_selected_files) (ThunarComponent *component);
   void (*set_selected_files) (ThunarComponent *component,
                               GList           *selected_files);
+
+  /* hashtable-based methods for performance (optional) */
+  GHashTable *(*get_selected_files_hashtable) (ThunarComponent *component);
+  void (*set_selected_files_hashtable) (ThunarComponent *component,
+                                        GHashTable      *selected_files);
 };
 
 GType
@@ -50,6 +55,15 @@ thunar_component_get_selected_files (ThunarComponent *component);
 void
 thunar_component_set_selected_files (ThunarComponent *component,
                                      GList           *selected_files);
+
+/* hashtable-based methods for performance */
+GHashTable *
+thunar_component_get_selected_files_hashtable (ThunarComponent *component);
+void
+thunar_component_set_selected_files_hashtable (ThunarComponent *component,
+                                               GHashTable      *selected_files);
+guint
+thunar_component_get_selected_files_count (ThunarComponent *component);
 
 G_END_DECLS;
 
