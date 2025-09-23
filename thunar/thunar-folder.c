@@ -744,13 +744,23 @@ thunar_folder_files_ready (ThunarJob    *job,
                            ThunarFolder *folder)
 {
   GList *lp;
+  guint  processed_count = 0;
 
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
 
   /* merge the list with the existing list of new files */
   for (lp = files; lp != NULL; lp = lp->next)
-    g_hash_table_add (folder->loaded_files_map, g_object_ref (lp->data));
+    {
+      g_hash_table_add (folder->loaded_files_map, g_object_ref (lp->data));
+      
+      /* UI responsiveness: yield to main loop every 25 files during batch processing */
+      if (++processed_count % 25 == 0)
+        {
+          while (gtk_events_pending ())
+            gtk_main_iteration ();
+        }
+    }
 
   thunar_g_list_free_full (files);
 
@@ -805,6 +815,7 @@ thunar_folder_finished (ThunarJob    *job,
   GHashTableIter iter;
   gpointer       key;
   gboolean       file_list_changed = FALSE;
+  guint          processed_count = 0;
 
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
@@ -819,10 +830,18 @@ thunar_folder_finished (ThunarJob    *job,
 
       thunar_folder_add_file (folder, key);
       file_list_changed = TRUE;
+      
+      /* UI responsiveness: yield to main loop every 15 files during initial load */
+      if (++processed_count % 15 == 0)
+        {
+          while (gtk_events_pending ())
+            gtk_main_iteration ();
+        }
     }
 
   /* this is to handle removed files after a folder reload */
   /* determine all removed files (files on files, but not on new_files) */
+  processed_count = 0;  /* Reset counter for removal processing */
   g_hash_table_iter_init (&iter, folder->files_map);
   while (g_hash_table_iter_next (&iter, &key, NULL))
     {
@@ -832,6 +851,13 @@ thunar_folder_finished (ThunarJob    *job,
       /* will mark them to be removed on next timeout */
       thunar_folder_remove_file (folder, THUNAR_FILE (key));
       file_list_changed = TRUE;
+      
+      /* UI responsiveness: yield to main loop every 20 files during removal */
+      if (++processed_count % 20 == 0)
+        {
+          while (gtk_events_pending ())
+            gtk_main_iteration ();
+        }
     }
 
   /* drop all mappings for new_files list too */
