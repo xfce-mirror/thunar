@@ -441,7 +441,7 @@ struct _ThunarStandardViewPrivate
   gfloat      scroll_to_row_align;
   gfloat      scroll_to_col_align;
 
-  /* #GHashTable of currently selected #ThunarFile */
+  /* #GHashTable of currently selected #ThunarFile. The key is a ThunarFile; value is NULL (unimportant) */
   GHashTable *selected_files;
   guint       restore_selection_idle_id;
 
@@ -2685,6 +2685,7 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (data);
   ThunarFile         *file;
   gchar              *statusbar_text;
+  guint               num_selected;
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
@@ -2700,7 +2701,7 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
     }
 
   /* check the number of selected items using our hash table */
-  guint num_selected = g_hash_table_size (standard_view->priv->selected_files);
+  num_selected = g_hash_table_size (standard_view->priv->selected_files);
 
   if (num_selected == 0) /* nothing selected */
     {
