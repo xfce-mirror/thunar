@@ -1845,11 +1845,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
 
   /* unset the directory being changed */
-  if (standard_view->changing_directory)
-    {
-      standard_view->changing_directory = NULL;
-      g_object_set (G_OBJECT (standard_view), "busy", FALSE, NULL);
-    }
+  thunar_standard_view_change_directory_stop (standard_view);
 
   /* get the current directory */
   if (standard_view->priv->current_directory == current_directory)
@@ -1951,6 +1947,24 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 
 
 
+/**
+ * thunar_standard_view_change_directory_stop:
+ * @standard_view     : a #ThunarStandardView instance.
+ **/
+void
+thunar_standard_view_change_directory_stop (ThunarStandardView *standard_view)
+{
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  if (standard_view->changing_directory)
+    {
+      standard_view->changing_directory = NULL;
+      g_object_set (G_OBJECT (standard_view), "busy", FALSE, NULL);
+    }
+}
+
+
+
 static void
 thunar_standard_view_change_directory_gfile_finish (GFile      *location,
                                                     ThunarFile *directory,
@@ -1969,8 +1983,7 @@ thunar_standard_view_change_directory_gfile_finish (GFile      *location,
       if (error)
         {
           /* we are no longer changing the directory */
-          standard_view->changing_directory = NULL;
-          g_object_set (G_OBJECT (standard_view), "busy", FALSE, NULL);
+          thunar_standard_view_change_directory_stop (standard_view);
           char *basename = g_file_get_basename (location);
           thunar_dialogs_show_error (GTK_WIDGET (standard_view),
                                      error,
@@ -2020,7 +2033,7 @@ thunar_standard_view_change_directory_gfile_exists (GObject      *object,
 
 /**
  * thunar_standard_view_change_directory_gfile_async:
- * @navigator         : a #ThunarStandardView instance.
+ * @standard_view     : a #ThunarStandardView instance.
  * @directory         : the new directory GFile or %NULL.
  * @func              : a user callback.
  * @user_data         : callback user data.
