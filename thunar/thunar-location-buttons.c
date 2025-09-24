@@ -71,6 +71,10 @@ static void
 thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
                                                ThunarFile      *current_directory);
 static void
+thunar_location_buttons_set_current_directory_present (ThunarNavigator      *navigator,
+                                                       ThunarFile           *directory,
+                                                       ThunarLocationButton *button);
+static void
 thunar_location_buttons_unmap (GtkWidget *widget);
 static void
 thunar_location_buttons_on_filler_clicked (ThunarLocationButtons *buttons);
@@ -444,8 +448,9 @@ thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
     {
       if (thunar_location_button_get_file (lp->data) == current_directory && gtk_widget_get_child_visible (GTK_WIDGET (lp->data)))
         {
-          /* fake a "clicked" event for that button */
-          gtk_button_clicked (GTK_BUTTON (lp->data));
+          /* We don't need to regenerate all buttons if we already have
+           * a button path for this directory */
+          thunar_location_buttons_set_current_directory_present (navigator, current_directory, THUNAR_LOCATION_BUTTON (lp->data));
           return;
         }
     }
@@ -492,6 +497,58 @@ thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
     }
 
   g_object_notify (G_OBJECT (buttons), "current-directory");
+}
+
+
+
+/**
+ * thunar_location_buttons_set_current_directory_present:
+ *
+ * Called by thunar_location_buttons_set_current_directory if the
+ * required button is already present in the location bar.
+ **/
+static void
+thunar_location_buttons_set_current_directory_present (ThunarNavigator      *navigator,
+                                                       ThunarFile           *directory,
+                                                       ThunarLocationButton *button)
+{
+  ThunarLocationButtons *buttons = THUNAR_LOCATION_BUTTONS (navigator);
+  GList                 *lp;
+
+  /* disconnect from previous current directory (if any) */
+  if (G_LIKELY (buttons->current_directory != NULL))
+    g_object_unref (G_OBJECT (buttons->current_directory));
+
+  /* setup the new current directory */
+  buttons->current_directory = directory;
+
+  /* take a reference on the new directory (if any) */
+  if (G_LIKELY (directory != NULL))
+    g_object_ref (G_OBJECT (directory));
+
+  /* check if the button is visible on the button bar */
+  if (!gtk_widget_get_child_visible (GTK_WIDGET (button)))
+    {
+      for (lp = buttons->list; lp != NULL; lp = lp->next)
+        {
+          if (lp->data == button)
+            buttons->first_visible_button = lp;
+        }
+      buttons->last_visible_button = NULL;
+    }
+
+  /* update all buttons */
+  for (lp = buttons->list; lp != NULL; lp = lp->next)
+    {
+      /* determine the directory for this button */
+      button = THUNAR_LOCATION_BUTTON (lp->data);
+      directory = thunar_location_button_get_file (button);
+
+      /* update the location button state (making sure to not recurse with the "clicked" handler) */
+      g_signal_handlers_block_by_func (G_OBJECT (button), thunar_location_buttons_clicked, buttons);
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), directory == buttons->current_directory);
+      g_signal_handlers_unblock_by_func (G_OBJECT (button), thunar_location_buttons_clicked, buttons);
+    }
 }
 
 
@@ -1196,7 +1253,6 @@ thunar_location_buttons_clicked (ThunarLocationButton  *button,
                                  ThunarLocationButtons *buttons)
 {
   ThunarFile *directory;
-  GList      *lp;
 
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (button));
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
@@ -1206,48 +1262,17 @@ thunar_location_buttons_clicked (ThunarLocationButton  *button,
 
   /* open in tab */
   if (open_in_tab)
-    {
-      thunar_navigator_open_new_tab (THUNAR_NAVIGATOR (buttons), directory);
-      return;
-    }
-
-  /* disconnect from previous current directory (if any) */
-  if (G_LIKELY (buttons->current_directory != NULL))
-    g_object_unref (G_OBJECT (buttons->current_directory));
-
-  /* setup the new current directory */
-  buttons->current_directory = directory;
-
-  /* take a reference on the new directory (if any) */
-  if (G_LIKELY (directory != NULL))
-    g_object_ref (G_OBJECT (directory));
-
-  /* check if the button is visible on the button bar */
-  if (!gtk_widget_get_child_visible (GTK_WIDGET (button)))
-    {
-      for (lp = buttons->list; lp != NULL; lp = lp->next)
-        {
-          if (lp->data == button)
-            buttons->first_visible_button = lp;
-        }
-      buttons->last_visible_button = NULL;
-    }
-
-  /* update all buttons */
-  for (lp = buttons->list; lp != NULL; lp = lp->next)
-    {
-      /* determine the directory for this button */
-      button = THUNAR_LOCATION_BUTTON (lp->data);
-      directory = thunar_location_button_get_file (button);
-
-      /* update the location button state (making sure to not recurse with the "clicked" handler) */
-      g_signal_handlers_block_by_func (G_OBJECT (button), thunar_location_buttons_clicked, buttons);
-      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), directory == buttons->current_directory);
-      g_signal_handlers_unblock_by_func (G_OBJECT (button), thunar_location_buttons_clicked, buttons);
-    }
+    thunar_navigator_open_new_tab (THUNAR_NAVIGATOR (buttons), directory);
 
   /* notify the surrounding module that we want to change to a different directory.  */
-  thunar_navigator_change_directory (THUNAR_NAVIGATOR (buttons), buttons->current_directory);
+  else
+    thunar_navigator_change_directory (THUNAR_NAVIGATOR (buttons), directory);
+
+  /* undo the change to the location button state
+   * (the location buttons will be updated if the directory successfully changes) */
+  g_signal_handlers_block_by_func (G_OBJECT (button), thunar_location_buttons_clicked, buttons);
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), directory == buttons->current_directory);
+  g_signal_handlers_unblock_by_func (G_OBJECT (button), thunar_location_buttons_clicked, buttons);
 }
 
 
