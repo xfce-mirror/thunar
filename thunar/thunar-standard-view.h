@@ -187,8 +187,8 @@ struct _ThunarStandardView
   GtkCellRenderer   *icon_renderer;
   GtkCellRenderer   *name_renderer;
 
-  /* the directory being asynchronously loaded */
-  GFile *loading_directory;
+  /* the directory being changed asynchronously */
+  GFile *changing_directory;
 
   GBinding      *loading_binding;
   gboolean       loading;

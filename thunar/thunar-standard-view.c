@@ -1844,10 +1844,10 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
 
-  /* unset the directory being loaded */
-  if (standard_view->loading_directory)
+  /* unset the directory being changed */
+  if (standard_view->changing_directory)
     {
-      standard_view->loading_directory = NULL;
+      standard_view->changing_directory = NULL;
       g_object_set (G_OBJECT (standard_view), "busy", FALSE, NULL);
     }
 
@@ -1963,13 +1963,13 @@ thunar_standard_view_change_directory_gfile_finish (GFile      *location,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (directory == NULL || THUNAR_IS_FILE (directory));
 
-  /* only continue of nothing else has is loading */
-  if (standard_view->loading_directory == location)
+  /* only continue of nothing else has is changing */
+  if (standard_view->changing_directory == location)
     {
       if (error)
         {
-          /* we are no longer loading the directory */
-          standard_view->loading_directory = NULL;
+          /* we are no longer changing the directory */
+          standard_view->changing_directory = NULL;
           g_object_set (G_OBJECT (standard_view), "busy", FALSE, NULL);
           char *basename = g_file_get_basename (location);
           thunar_dialogs_show_error (GTK_WIDGET (standard_view),
@@ -2041,9 +2041,9 @@ thunar_standard_view_change_directory_gfile_async (ThunarStandardView *standard_
   if (location == NULL)
     return;
 
-  /* record which directory we are loading */
+  /* record which directory we are changing to */
   g_object_set (G_OBJECT (standard_view), "busy", TRUE, NULL);
-  standard_view->loading_directory = location;
+  standard_view->changing_directory = location;
 
 
   /* allocate change directory data */
@@ -2060,7 +2060,7 @@ thunar_standard_view_change_directory_gfile_async (ThunarStandardView *standard_
                                 thunar_standard_view_change_directory_gfile_exists,
                                 data);
 
-  /* If the directory is not in the cache, load it asynchronously.
+  /* If the directory is not in the cache, get it asynchronously.
    * thunar_file_get_async will unref the file when we are done.*/
   else
     thunar_file_get_async (location,
