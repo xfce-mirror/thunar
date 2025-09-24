@@ -705,7 +705,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /* next row */
   row++;
 
-
   label = gtk_label_new_with_mnemonic (_("Percentage to show 'Storage space low' color"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "shortcuts-disk-space-usage-bar",
@@ -727,6 +726,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           G_OBJECT (button),
                           "value",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  gtk_widget_set_tooltip_text (button, _("Set the value to 0 to disable progress bar color changing"));
   gtk_grid_attach (GTK_GRID (grid), button, 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), button);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), button);
@@ -758,6 +758,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           G_OBJECT (button),
                           "value",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  gtk_widget_set_tooltip_text (button, _("Set the value to 0 to disable progress bar color changing"));
   gtk_grid_attach (GTK_GRID (grid), button, 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), button);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), button);
