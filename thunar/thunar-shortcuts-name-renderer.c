@@ -212,6 +212,7 @@ thunar_shortcuts_name_renderer_get_property (GObject    *object,
 
     case PROP_DISK_SPACE_USAGE_BAR_HEIGHT:
       g_value_set_int (value, self->disk_space_usage_bar_height);
+      break;
 
     case PROP_DISK_SPACE_USAGE_PERCENT:
       g_value_set_int (value, self->disk_space_usage_percent);
