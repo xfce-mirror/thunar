@@ -2508,6 +2508,7 @@ thunar_window_switch_current_view (ThunarWindow *window,
 
   /* connect signals to the new view */
   g_signal_connect (G_OBJECT (new_view), "notify::loading", G_CALLBACK (thunar_window_notify_loading), window);
+  g_signal_connect (G_OBJECT (new_view), "notify::busy", G_CALLBACK (thunar_window_notify_loading), window);
   g_signal_connect_swapped (G_OBJECT (new_view), "start-open-location", G_CALLBACK (thunar_window_start_open_location), window);
   g_signal_connect_swapped (G_OBJECT (new_view), "change-directory", G_CALLBACK (thunar_window_change_directory_async), window);
   g_signal_connect_swapped (G_OBJECT (new_view), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
@@ -2699,6 +2700,7 @@ thunar_window_notebook_page_added (GtkWidget    *notebook,
 
   /* connect signals */
   g_signal_connect (G_OBJECT (view), "notify::loading", G_CALLBACK (thunar_window_notify_loading), window);
+  g_signal_connect (G_OBJECT (view), "notify::busy", G_CALLBACK (thunar_window_notify_loading), window);
   g_signal_connect_swapped (G_OBJECT (view), "start-open-location", G_CALLBACK (thunar_window_start_open_location), window);
   g_signal_connect_swapped (G_OBJECT (view), "change-directory", G_CALLBACK (thunar_window_change_directory_async), window);
   g_signal_connect_swapped (G_OBJECT (view), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
@@ -5533,7 +5535,7 @@ thunar_window_notify_loading (ThunarView   *view,
       && window->view == GTK_WIDGET (view))
     {
       /* setup the proper cursor */
-      if (thunar_view_get_loading (view) || window->searching)
+      if (thunar_view_get_busy (view) || thunar_view_get_loading (view) || window->searching)
         {
           cursor = gdk_cursor_new_for_display (gtk_widget_get_display (GTK_WIDGET (view)), GDK_WATCH);
           gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (window)), cursor);
