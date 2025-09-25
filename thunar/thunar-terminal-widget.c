@@ -60,6 +60,7 @@ struct _ThunarTerminalWidgetPrivate
   gboolean            needs_respawn;     /* Flag indicating if the terminal's child process needs to be respawned (e.g., after being hidden and shown again). */
   GPid                child_pid;         /* The process ID of the shell or SSH client running in the terminal. -1 if no process is running. */
   GCancellable       *spawn_cancellable; /* A GCancellable object to allow cancelling an asynchronous terminal spawn operation. */
+  gboolean            block_cd_notify;   /* In order to ignore updates of the "current-directory" signal which we initiated ourself */
 
   /* Preferences */
   gchar                 *color_scheme;        /* The name of the current color scheme (e.g., "dark", "solarized-light"). */
@@ -346,7 +347,10 @@ thunar_terminal_widget_set_current_location (ThunarTerminalWidget *self,
   if (directory)
     g_object_unref (directory);
 
+  /* block "current-directory" updates during notify to prevent update loops */
+  priv->block_cd_notify = TRUE;
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_NAVIGATOR_CURRENT_DIRECTORY]);
+  priv->block_cd_notify = FALSE;
 
   /*
    * If the terminal is running a local shell, we first check if the new location
@@ -558,6 +562,7 @@ thunar_terminal_widget_init (ThunarTerminalWidget *self)
   GtkWidget *vbox;
 
   self->priv = priv;
+  priv->block_cd_notify = FALSE;
 
   /*
    * Initialize state to non-zero default values. All other members
@@ -658,9 +663,13 @@ thunar_terminal_widget_set_property (GObject      *object,
                                      const GValue *value,
                                      GParamSpec   *pspec)
 {
+  ThunarTerminalWidget *self = THUNAR_TERMINAL_WIDGET (object);
+
   switch (prop_id)
     {
     case PROP_NAVIGATOR_CURRENT_DIRECTORY:
+      if (self->priv->block_cd_notify)
+        return;
       thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
       break;
     default:
