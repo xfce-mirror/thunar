@@ -24,6 +24,7 @@
 #include "thunar-navigator.h"
 #include "thunar-preferences.h"
 #include "thunar-private.h"
+#include "thunar-window.h"
 
 #include <libxfce4ui/libxfce4ui.h>
 
@@ -882,11 +883,20 @@ _sync_terminal_to_fm (ThunarTerminalWidget *self, const gchar *cwd_uri)
       thunar_file = thunar_file_get (new_gfile_location, NULL);
       if (G_LIKELY (thunar_file))
         {
+          GtkWidget *window;
+
           if (priv->current_directory != NULL)
             g_object_unref (priv->current_directory);
 
           priv->current_directory = thunar_file;
 
+          /* determine the toplevel window we belong to */
+          window = gtk_widget_get_toplevel (GTK_WIDGET (self));
+
+          if (THUNAR_IS_WINDOW (window))
+            thunar_window_set_current_directory (THUNAR_WINDOW (window), priv->current_directory);
+
+          /* Inform potential subscribers */
           g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_NAVIGATOR_CURRENT_DIRECTORY]);
         }
     }
