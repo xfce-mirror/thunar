@@ -24,6 +24,7 @@
 #include "thunar-navigator.h"
 #include "thunar-preferences.h"
 #include "thunar-private.h"
+#include "thunar-window.h"
 
 #include <libxfce4ui/libxfce4ui.h>
 
@@ -328,6 +329,7 @@ thunar_terminal_widget_set_current_location (ThunarTerminalWidget *self,
 {
   ThunarTerminalWidgetPrivate *priv = thunar_terminal_widget_get_instance_private (self);
   ThunarFile                  *directory = NULL;
+  GtkWidget                   *window;
 
   _thunar_return_if_fail (THUNAR_IS_TERMINAL_WIDGET (self));
 
@@ -347,10 +349,19 @@ thunar_terminal_widget_set_current_location (ThunarTerminalWidget *self,
   if (directory)
     g_object_unref (directory);
 
-  /* block "current-directory" updates during notify to prevent update loops */
-  priv->block_cd_notify = TRUE;
+  /* determine the toplevel window we belong to */
+  window = gtk_widget_get_toplevel (GTK_WIDGET (self));
+
+  if (THUNAR_IS_WINDOW (window))
+    {
+      /* block "current-directory" updates during directory change to prevent update loops */
+      priv->block_cd_notify = TRUE;
+      thunar_window_set_current_directory (THUNAR_WINDOW (window), directory);
+      priv->block_cd_notify = FALSE;
+    }
+
+  /* Inform potential subscribers */
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_NAVIGATOR_CURRENT_DIRECTORY]);
-  priv->block_cd_notify = FALSE;
 
   /*
    * If the terminal is running a local shell, we first check if the new location

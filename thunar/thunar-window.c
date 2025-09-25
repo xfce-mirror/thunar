@@ -2534,7 +2534,7 @@ thunar_window_switch_current_view (ThunarWindow *window,
     {
       thunar_window_create_view_binding (window, G_OBJECT (new_view), "current-directory",
                                          G_OBJECT (terminal), "current-directory",
-                                         G_BINDING_BIDIRECTIONAL);
+                                         G_BINDING_DEFAULT);
     }
 #endif
 
@@ -3126,10 +3126,10 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
 
   thunar_standard_view_set_terminal_widget (THUNAR_STANDARD_VIEW (view), terminal);
 
-  /* Create bidirectional binding between terminal and view */
+  /* Create binding between terminal and view */
   thunar_window_create_view_binding (window, G_OBJECT (view), "current-directory",
-                                 G_OBJECT (terminal), "current-directory",
-                                 G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
+                                     G_OBJECT (terminal), "current-directory",
+                                     G_BINDING_SYNC_CREATE | G_BINDING_DEFAULT);
 
   /* Initialize terminal visibility based on preferences */
   g_object_get (window->preferences, "terminal-visible", &terminal_visible, NULL);
