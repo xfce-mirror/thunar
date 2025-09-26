@@ -2036,7 +2036,7 @@ thunar_standard_view_change_directory_gfile_async (ThunarStandardView *standard_
                                                    ThunarSVCDFunc      func,
                                                    gpointer            user_data)
 {
-  ThunarFile     *directory;
+  ThunarFile *directory;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (location == NULL || G_IS_FILE (location));
@@ -5010,6 +5010,10 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
 
   if (standard_view->priv->search_query != NULL && search_query == NULL)
     thunar_standard_view_search_done (standard_view->model, standard_view);
+
+  /* ignore the search if we are changing directory */
+  if (search_query && standard_view->changing_directory)
+    return;
 
   /* save the new query (used for switching between views) */
   g_free (standard_view->priv->search_query);
