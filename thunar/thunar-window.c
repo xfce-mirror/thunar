@@ -5551,9 +5551,14 @@ thunar_window_notify_loading (ThunarView   *view,
           gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (window)), NULL);
         }
 
-      /* Set trash infobar's `empty trash` button sensitivity, if required */
       if (thunar_file_is_trashed (window->current_directory))
-        gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_trash_item_count (window->current_directory) > 0);
+        {
+          /* Set trash infobar's `empty trash` button sensitivity, if required */
+          gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_trash_item_count (window->current_directory) > 0);
+
+          /* Possibly the window-icon needs to be redrawn ('trash-full vs 'trash-empty') */
+          thunar_window_update_window_icon (window);
+        }
     }
 }
 
