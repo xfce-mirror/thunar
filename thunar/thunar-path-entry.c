@@ -1126,7 +1126,12 @@ thunar_path_entry_match_func (GtkEntryCompletion *completion,
 
   GtkTreePath *p = gtk_tree_model_get_path (model, iter);
   if (gtk_tree_path_get_depth (p) > 1)
-    return FALSE;
+    {
+      gtk_tree_path_free (p);
+      return FALSE;
+    }
+
+  gtk_tree_path_free (p);
 
   /* leave if the model is null, we do this in thunar_path_entry_changed() to speed
    * things up, but that causes https://bugzilla.xfce.org/show_bug.cgi?id=4847. */
