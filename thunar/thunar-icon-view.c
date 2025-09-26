@@ -214,7 +214,6 @@ thunar_icon_view_set_consistent_horizontal_spacing (ThunarIconView *icon_view,
   XfceIconView *xfce_icon_view;
   gint          wrap_width;
   gint          xpad;
-  gint          column_spacing;
 
   _thunar_return_if_fail (THUNAR_IS_ICON_VIEW (icon_view));
 
@@ -230,10 +229,8 @@ thunar_icon_view_set_consistent_horizontal_spacing (ThunarIconView *icon_view,
   g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->name_renderer), "wrap-width", &wrap_width, NULL);
   gtk_cell_renderer_get_padding (THUNAR_STANDARD_VIEW (icon_view)->name_renderer, &xpad, NULL);
 
-  column_spacing = xfce_icon_view_get_column_spacing (xfce_icon_view);
-
   /* set consistent horizontal spacing */
-  xfce_icon_view_set_item_width (xfce_icon_view, wrap_width + MAX (0, xpad * 2 - column_spacing));
+  xfce_icon_view_set_item_width (xfce_icon_view, wrap_width + xpad * 2);
 }
 
 
