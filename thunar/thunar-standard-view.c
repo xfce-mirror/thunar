@@ -105,16 +105,6 @@ enum
 
 
 
-/* Data for changing directory asynchronously */
-typedef struct
-{
-  ThunarStandardView *standard_view;
-  ThunarSVCDFunc      func;
-  gpointer            user_data;
-} ThunarSVCDData;
-
-
-
 static void
 thunar_standard_view_component_init (ThunarComponentIface *iface);
 static void
@@ -1971,11 +1961,15 @@ thunar_standard_view_change_directory_gfile_finish (GFile      *location,
                                                     GError     *error,
                                                     gpointer    user_data)
 {
-  ThunarSVCDData     *data = user_data;
-  ThunarStandardView *standard_view = data->standard_view;
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (user_data);
+  ThunarSVCDFunc      func;
+  gpointer            data;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (directory == NULL || THUNAR_IS_FILE (directory));
+
+  func = g_object_get_data (G_OBJECT (standard_view), "change-directory-callback");
+  data = g_object_get_data (G_OBJECT (standard_view), "change-directory-callback-data");
 
   /* only continue of nothing else has is changing */
   if (standard_view->changing_directory == location)
@@ -1997,14 +1991,12 @@ thunar_standard_view_change_directory_gfile_finish (GFile      *location,
           /* set the current directory */
           g_object_set (G_OBJECT (standard_view), "current-directory", directory, NULL);
 
-          (data->func) (directory, standard_view, data->user_data);
+          if (func)
+            (func) (directory, standard_view, data);
 
           g_object_unref (directory);
         }
     }
-
-  /* release the change directory data */
-  g_slice_free (ThunarSVCDData, data);
 }
 
 
@@ -2045,7 +2037,6 @@ thunar_standard_view_change_directory_gfile_async (ThunarStandardView *standard_
                                                    gpointer            user_data)
 {
   ThunarFile     *directory;
-  ThunarSVCDData *data;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (location == NULL || G_IS_FILE (location));
@@ -2060,10 +2051,8 @@ thunar_standard_view_change_directory_gfile_async (ThunarStandardView *standard_
 
 
   /* allocate change directory data */
-  data = g_slice_new0 (ThunarSVCDData);
-  data->standard_view = standard_view;
-  data->func = func;
-  data->user_data = user_data;
+  g_object_set_data (G_OBJECT (standard_view), "change-directory-callback", func);
+  g_object_set_data (G_OBJECT (standard_view), "change-directory-callback-data", user_data);
 
   /* if the directory is in the cache, check if it exists. We want
    * to trigger any timeouts it here, asynchronously. */
@@ -2071,7 +2060,7 @@ thunar_standard_view_change_directory_gfile_async (ThunarStandardView *standard_
   if (directory != NULL)
     thunar_g_file_exists_async (location,
                                 thunar_standard_view_change_directory_gfile_exists,
-                                data);
+                                standard_view);
 
   /* If the directory is not in the cache, get it asynchronously.
    * thunar_file_get_async will unref the file when we are done.*/
@@ -2079,7 +2068,7 @@ thunar_standard_view_change_directory_gfile_async (ThunarStandardView *standard_
     thunar_file_get_async (location,
                            NULL,
                            thunar_standard_view_change_directory_gfile_finish,
-                           data);
+                           standard_view);
 }
 
 
