@@ -321,7 +321,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_widget_show (grid);
 
   /* explain what it does */
-  label = gtk_label_new (_("Show number of containing items"));
+  label = gtk_label_new (_("Show number of contained items:"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
   gtk_widget_show (label);
