@@ -343,6 +343,15 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::shortcuts-disk-space-usage-bar",
                             G_CALLBACK (gtk_tree_view_columns_autosize), view);
 
+  g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::shortcuts-disk-space-usage-bar-height",
+                            G_CALLBACK (gtk_tree_view_columns_autosize), view);
+
+  g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::shortcuts-disk-space-usage-orange-percent",
+                            G_CALLBACK (gtk_widget_queue_draw), view);
+
+  g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::shortcuts-disk-space-usage-red-percent",
+                            G_CALLBACK (gtk_widget_queue_draw), view);
+
   /* allocate a single column for our renderers */
   column = view->column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
                                         "reorderable", FALSE,
@@ -412,6 +421,18 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
 
   g_object_bind_property (G_OBJECT (view->preferences), "shortcuts-disk-space-usage-bar",
                           G_OBJECT (view->name_renderer), "disk-space-usage-bar-enabled",
+                          G_BINDING_SYNC_CREATE);
+
+  g_object_bind_property (G_OBJECT (view->preferences), "shortcuts-disk-space-usage-bar-height",
+                          G_OBJECT (view->name_renderer), "disk-space-usage-bar-height",
+                          G_BINDING_SYNC_CREATE);
+
+  g_object_bind_property (G_OBJECT (view->preferences), "shortcuts-disk-space-usage-orange-percent",
+                          G_OBJECT (view->name_renderer), "disk-space-usage-orange-percent",
+                          G_BINDING_SYNC_CREATE);
+
+  g_object_bind_property (G_OBJECT (view->preferences), "shortcuts-disk-space-usage-red-percent",
+                          G_OBJECT (view->name_renderer), "disk-space-usage-red-percent",
                           G_BINDING_SYNC_CREATE);
 
   /* spinner to indicate (un)mount/eject delay */
