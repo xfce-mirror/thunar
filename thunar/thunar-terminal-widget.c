@@ -60,6 +60,7 @@ struct _ThunarTerminalWidgetPrivate
   gboolean            needs_respawn;     /* Flag indicating if the terminal's child process needs to be respawned (e.g., after being hidden and shown again). */
   GPid                child_pid;         /* The process ID of the shell or SSH client running in the terminal. -1 if no process is running. */
   GCancellable       *spawn_cancellable; /* A GCancellable object to allow cancelling an asynchronous terminal spawn operation. */
+  gboolean            ignore_next_directory_change;
 
   /* Preferences */
   gchar                 *color_scheme;        /* The name of the current color scheme (e.g., "dark", "solarized-light"). */
@@ -881,8 +882,12 @@ _sync_terminal_to_fm (ThunarTerminalWidget *self, const gchar *cwd_uri)
       thunar_file = thunar_file_get (new_gfile_location, NULL);
       if (G_LIKELY (thunar_file))
         {
-          thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (self), thunar_file);
-          g_object_unref (thunar_file);
+          if (priv->current_directory != NULL)
+            g_object_unref (priv->current_directory);
+
+          priv->current_directory = thunar_file;
+
+          g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_NAVIGATOR_CURRENT_DIRECTORY]);
         }
     }
 }
@@ -895,6 +900,12 @@ on_directory_changed (VteTerminal *terminal,
 {
   ThunarTerminalWidget        *self = THUNAR_TERMINAL_WIDGET (user_data);
   ThunarTerminalWidgetPrivate *priv = self->priv;
+
+  if (priv->ignore_next_directory_change)
+    {
+      priv->ignore_next_directory_change = FALSE;
+      return;
+    }
 
   /* Check sync mode before syncing terminal to file manager. */
   if (priv->terminal_sync_mode != THUNAR_TERMINAL_SYNC_BOTH && priv->terminal_sync_mode != THUNAR_TERMINAL_SYNC_TERM_TO_FM)
@@ -917,6 +928,12 @@ on_legacy_directory_changed (VteTerminal *terminal,
 {
   ThunarTerminalWidget        *self = THUNAR_TERMINAL_WIDGET (user_data);
   ThunarTerminalWidgetPrivate *priv = self->priv;
+
+  if (priv->ignore_next_directory_change)
+    {
+      priv->ignore_next_directory_change = FALSE;
+      return;
+    }
 
   /* Check sync mode before syncing terminal to file manager. */
   if (priv->terminal_sync_mode != THUNAR_TERMINAL_SYNC_BOTH && priv->terminal_sync_mode != THUNAR_TERMINAL_SYNC_TERM_TO_FM)
@@ -1264,19 +1281,16 @@ change_directory_in_terminal (ThunarTerminalWidget *self,
   if (target_path)
     {
       g_autofree gchar *term_uri_str = NULL;
-      GCallback         signal_handler_to_block;
 
 /* Set version-specific variables for current directory URI and signal handler. */
 #if VTE_CHECK_VERSION(0, 78, 0)
       g_autoptr (GUri) term_uri = vte_terminal_ref_termprop_uri (priv->terminal, VTE_TERMPROP_CURRENT_DIRECTORY_URI);
       if (term_uri)
         term_uri_str = g_uri_to_string (term_uri);
-      signal_handler_to_block = G_CALLBACK (on_directory_changed);
 #else
       const gchar *temp_uri_str = vte_terminal_get_current_directory_uri (priv->terminal);
       if (temp_uri_str)
         term_uri_str = g_strdup (temp_uri_str);
-      signal_handler_to_block = G_CALLBACK (on_legacy_directory_changed);
 #endif
 
       g_autoptr (GFile) term_gfile = term_uri_str ? g_file_new_for_uri (term_uri_str) : NULL;
@@ -1284,13 +1298,9 @@ change_directory_in_terminal (ThunarTerminalWidget *self,
 
       if (term_path == NULL || g_strcmp0 (term_path, target_path) != 0)
         {
-          /*
-           * Now we use the function pointer to block the correct signal,
-           * feed the command, and unblock it, without further version checks.
-           */
-          g_signal_handlers_block_by_func (priv->terminal, signal_handler_to_block, self);
+          /* blockung/unblocking the handlers wont work here, since the VTE terminal reaction will be delayed */
+          priv->ignore_next_directory_change = TRUE;
           feed_cd_command (priv->terminal, target_path);
-          g_signal_handlers_unblock_by_func (priv->terminal, signal_handler_to_block, self);
         }
     }
 }
@@ -1511,7 +1521,10 @@ thunar_terminal_widget_set_current_directory (ThunarNavigator *navigator,
   if (priv->current_directory == current_directory)
     return;
 
-  g_set_object (&priv->current_directory, current_directory);
+  if (priv->current_directory != NULL)
+    g_object_unref (priv->current_directory);
+
+  priv->current_directory = g_object_ref (current_directory);
 
   /*
    * If the terminal is running a local shell, we first check if the new location
