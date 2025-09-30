@@ -54,7 +54,7 @@
 #include "thunar/thunar-terminal-widget.h"
 #endif
 #include "thunar/thunar-thumbnailer.h"
-#include "thunar/thunar-toolbar-editor.h"
+#include "thunar/thunar-toolbar-order-editor.h"
 #include "thunar/thunar-tree-pane.h"
 #include "thunar/thunar-util.h"
 #include "thunar/thunar-window.h"
@@ -485,10 +485,6 @@ thunar_window_location_toolbar_add_uca (ThunarWindow *window,
                                         GObject      *thunarx_menu_item);
 static void
 thunar_window_location_toolbar_load_items (ThunarWindow *window);
-static void
-thunar_window_location_toolbar_load_last_order (ThunarWindow *window);
-static gboolean
-thunar_window_location_toolbar_load_visibility (ThunarWindow *window);
 static guint
 thunar_window_toolbar_item_count (ThunarWindow *window);
 static gchar *
@@ -4490,7 +4486,7 @@ thunar_window_action_menubar_changed (ThunarWindow *window)
 static gboolean
 thunar_window_action_show_toolbar_editor (ThunarWindow *window)
 {
-  thunar_show_toolbar_editor (GTK_WIDGET (window), window->location_toolbar);
+  thunar_toolbar_order_editor_show (GTK_WIDGET (window), window->location_toolbar);
   return TRUE;
 }
 
@@ -7266,24 +7262,6 @@ thunar_window_location_toolbar_load_items (ThunarWindow *window)
   guint   items_length;
   gchar  *tmp;
 
-  /* read and migrate old settings */
-  // TODO: drop this code block and the called functions
-  //       after the 4.20 release, or later if desired
-  if (!thunar_preferences_has_property (window->preferences, "/last-toolbar-items")
-      && thunar_preferences_has_property (window->preferences, "/last-toolbar-item-order"))
-    {
-      /* load the correct order of items in the toolbar */
-      thunar_window_location_toolbar_load_last_order (window);
-
-      /* load the correct visibility of items in the toolbar */
-      thunar_window_location_toolbar_load_visibility (window);
-
-      /* save configuration */
-      thunar_save_toolbar_configuration (window->location_toolbar);
-
-      return;
-    }
-
   if (thunar_window_toolbar_item_count (window) == 0)
     return;
 
@@ -7340,173 +7318,6 @@ thunar_window_location_toolbar_load_items (ThunarWindow *window)
 
   g_strfreev (items);
 }
-
-
-
-/**
- * thunar_window_location_toolbar_load_last_order:
- * @window            : a #ThunarWindow instance.
- *
- * Load the order of toolbar items stored in `last-toolbar-button-order`.
- **/
-static void
-thunar_window_location_toolbar_load_last_order (ThunarWindow *window)
-{
-  gchar **item_order;
-  guint   item_order_length;
-  gchar  *tmp;
-  guint   item_count = thunar_window_toolbar_item_count (window);
-  guint   target_order[item_count]; /* item_order converted to guint and without invalid entries (i.e. entries >= item_count */
-  guint   current_order[item_count];
-
-  /* determine the column order from the preferences */
-  g_object_get (G_OBJECT (window->preferences), "last-toolbar-item-order", &tmp, NULL);
-  item_order = g_strsplit (tmp, ",", -1);
-  item_order_length = g_strv_length (item_order);
-  g_free (tmp);
-
-  /* restore the default toolbar item order from version 4.18 to make this work */
-  if (item_count > 0)
-    {
-      GList *toolbar_items = gtk_container_get_children (GTK_CONTAINER (window->location_toolbar));
-      GList *lp;
-      gchar *old_default_order[17] = { "menu", "back", "forward", "open-parent", "open-home",
-                                       "undo", "redo", "zoom-in", "zoom-out", "zoom-reset",
-                                       "view-as-icons", "view-as-detailed-list", "view-as-compact-list",
-                                       "toggle-split-view", "location-bar", "reload", "search" };
-      guint  uca_count = 0;  /* custom actions count */
-      guint  uca_index = 17; /* custom actions will be added after the default items */
-      guint  new_index;      /* toolbar items added after 4.18 will be appended */
-
-      for (lp = toolbar_items; lp != NULL; lp = lp->next)
-        {
-          gchar *id = g_object_get_data (G_OBJECT (lp->data), "id");
-          if (g_str_has_prefix (id, "uca-action"))
-            uca_count++;
-        }
-
-      new_index = uca_index + uca_count;
-
-      for (lp = toolbar_items; lp != NULL; lp = lp->next)
-        {
-          gchar *id = g_object_get_data (G_OBJECT (lp->data), "id");
-          guint *pos = g_object_get_data (G_OBJECT (lp->data), "default-order");
-          guint  i = 0;
-
-          for (; i < 17; i++)
-            {
-              if (g_strcmp0 (old_default_order[i], id) == 0)
-                break;
-            }
-
-          if (i < 17)
-            current_order[*pos] = i; /* old default item */
-          else if (g_str_has_prefix (id, "uca-action"))
-            current_order[*pos] = uca_index++; /* custom action */
-          else
-            current_order[*pos] = new_index++; /* new toolbar item */
-        }
-
-      g_list_free (toolbar_items);
-    }
-
-  for (guint i = 0; i < item_count; i++)
-    target_order[i] = i;
-
-  /* convert strings to guints for convenience */
-  for (guint i = 0, j = 0; i < item_order_length; i++)
-    {
-      guint64 n;
-
-      if (g_ascii_string_to_unsigned (item_order[i], 10, 0, UINT_MAX, &n, NULL) == FALSE)
-        g_error ("Invalid entry in \"last-toolbar-button-order\"");
-
-      /* the entry is invalid, it is likely that a custom action was removed and the preference hasn't been updated */
-      if (n >= item_count)
-        continue;
-
-      target_order[j] = n;
-      j++;
-    }
-
-  /* now rearrange the toolbar items, the goal is to make the current_order like the target_order */
-  for (guint i = 0; i < item_count; i++)
-    {
-      guint x = target_order[i];
-      for (guint j = i; j < item_count; j++)
-        {
-          guint y = current_order[j];
-          if (x == y && i != j)
-            {
-              /* swap the positions of the toolbar items */
-              thunar_window_toolbar_swap_items (window, i, j);
-              y = current_order[i];
-              current_order[i] = target_order[i];
-              current_order[j] = y;
-              break;
-            }
-        }
-    }
-
-  /* release the column order */
-  g_strfreev (item_order);
-}
-
-
-
-/**
- * thunar_window_location_toolbar_load_visibility:
- * @window            : a #ThunarWindow instance.
- *
- * Load the visibility of toolbar items. This should run after thunar_window_location_toolbar_load_last_order because
- * it depends on the the saved order instead of the default.
- *
- * returns FALSE so it can be used as an idle function
- **/
-static gboolean
-thunar_window_location_toolbar_load_visibility (ThunarWindow *window)
-{
-  gchar **item_visibility;
-  guint   item_visibility_length;
-  gchar  *item_visibility_string;
-  guint   item_count = thunar_window_toolbar_item_count (window);
-  guint   target_order[item_count];
-
-  /* determine the column order from the preferences */
-  g_object_get (G_OBJECT (window->preferences), "last-toolbar-visible-buttons", &item_visibility_string, NULL);
-  item_visibility = g_strsplit (item_visibility_string, ",", -1);
-  item_visibility_length = g_strv_length (item_visibility);
-  g_free (item_visibility_string);
-
-  for (guint i = 0; i < item_count; i++)
-    target_order[i] = 0; /* default to invisible */
-
-  /* convert strings to guints for convenience */
-  for (guint i = 0, j = 0; i < item_visibility_length; i++)
-    {
-      guint64 n;
-
-      if (g_ascii_string_to_unsigned (item_visibility[i], 10, 0, UINT_MAX, &n, NULL) == FALSE)
-        g_error ("Invalid entry in \"last-toolbar-visible-buttons\"");
-
-      target_order[j] = n;
-      j++;
-    }
-
-  for (guint i = 0; i < item_count; i++)
-    {
-      guint visible = target_order[i];
-
-      if (visible == 0)
-        thunar_window_toolbar_toggle_item_visibility (window, i);
-    }
-
-  /* release the column order */
-  g_strfreev (item_visibility);
-
-  return FALSE;
-}
-
 
 
 static guint
