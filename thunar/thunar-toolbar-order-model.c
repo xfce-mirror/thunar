@@ -28,6 +28,8 @@ struct _ThunarToolbarOrderModelClass
   ThunarOrderModelClass __parent__;
 };
 
+
+
 struct _ThunarToolbarOrderModel
 {
   ThunarOrderModel __parent__;
@@ -36,6 +38,8 @@ struct _ThunarToolbarOrderModel
   GtkWidget         *toolbar;
   GList             *children;
 };
+
+
 
 static void
 thunar_toolbar_order_model_finalize (GObject *object);
@@ -69,7 +73,11 @@ thunar_toolbar_order_model_set_toolbar (ThunarToolbarOrderModel *toolbar_model,
 static void
 thunar_toolbar_order_model_save (ThunarToolbarOrderModel *toolbar_model);
 
+
+
 G_DEFINE_TYPE (ThunarToolbarOrderModel, thunar_toolbar_order_model, THUNAR_TYPE_ORDER_MODEL)
+
+
 
 static void
 thunar_toolbar_order_model_class_init (ThunarToolbarOrderModelClass *klass)
@@ -86,10 +94,14 @@ thunar_toolbar_order_model_class_init (ThunarToolbarOrderModelClass *klass)
   order_model_class->reset = thunar_toolbar_order_model_reset;
 }
 
+
+
 static void
 thunar_toolbar_order_model_init (ThunarToolbarOrderModel *toolbar_model)
 {
 }
+
+
 
 static void
 thunar_toolbar_order_model_finalize (GObject *object)
@@ -105,6 +117,8 @@ thunar_toolbar_order_model_finalize (GObject *object)
   G_OBJECT_CLASS (thunar_toolbar_order_model_parent_class)->finalize (object);
 }
 
+
+
 static gint
 thunar_toolbar_order_model_get_n_items (ThunarOrderModel *order_model)
 {
@@ -112,6 +126,8 @@ thunar_toolbar_order_model_get_n_items (ThunarOrderModel *order_model)
 
   return g_list_length (toolbar_model->children);
 }
+
+
 
 static void
 thunar_toolbar_order_model_get_value (ThunarOrderModel      *order_model,
@@ -163,6 +179,8 @@ thunar_toolbar_order_model_get_value (ThunarOrderModel      *order_model,
     }
 }
 
+
+
 static void
 thunar_toolbar_order_model_set_activity (ThunarOrderModel *order_model,
                                          gint              position,
@@ -177,6 +195,8 @@ thunar_toolbar_order_model_set_activity (ThunarOrderModel *order_model,
   g_object_unref (application);
   g_list_free (windows);
 }
+
+
 
 static void
 thunar_toolbar_order_model_swap_items (ThunarOrderModel *order_model,
@@ -197,6 +217,8 @@ thunar_toolbar_order_model_swap_items (ThunarOrderModel *order_model,
   for (GList *lp = windows; lp != NULL; lp = lp->next)
     thunar_window_toolbar_swap_items (THUNAR_WINDOW (lp->data), a_position, b_position);
 }
+
+
 
 static void
 thunar_toolbar_order_model_reset (ThunarOrderModel *order_model)
@@ -238,6 +260,8 @@ thunar_toolbar_order_model_reset (ThunarOrderModel *order_model)
     }
 }
 
+
+
 static void
 thunar_toolbar_order_model_set_toolbar (ThunarToolbarOrderModel *toolbar_model,
                                         GtkWidget               *toolbar)
@@ -248,6 +272,8 @@ thunar_toolbar_order_model_set_toolbar (ThunarToolbarOrderModel *toolbar_model,
   g_signal_connect_swapped (toolbar_model->preferences, "notify::misc-symbolic-icons-in-toolbar",
                             G_CALLBACK (thunar_order_model_reload), toolbar_model);
 }
+
+
 
 static void
 thunar_toolbar_order_model_save (ThunarToolbarOrderModel *toolbar_model)
@@ -286,6 +312,8 @@ thunar_toolbar_order_model_save (ThunarToolbarOrderModel *toolbar_model)
   /* release the string */
   g_string_free (items, TRUE);
 }
+
+
 
 ThunarOrderModel *
 thunar_toolbar_order_model_new (GtkWidget *toolbar)
