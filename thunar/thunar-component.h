@@ -36,15 +36,10 @@ struct _ThunarComponentIface
 {
   GTypeInterface __parent__;
 
-  /* methods to be deleted after migration */
+  /* methods */
   GList *(*get_selected_files) (ThunarComponent *component);
   void (*set_selected_files) (ThunarComponent *component,
-                              GList      *selected_files);
-  
-  /* new hashtable-based methods for performance */
-  GHashTable *(*get_selected_files_hashtable) (ThunarComponent *component);
-  void (*set_selected_files_hashtable) (ThunarComponent *component,
-                                        GHashTable      *selected_files);
+                              GList           *selected_files);
 };
 
 GType

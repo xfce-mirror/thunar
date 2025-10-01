@@ -290,7 +290,7 @@ thunar_view_scroll_to_file (ThunarView *view,
 
 
 
-GHashTable *
+GList *
 thunar_view_get_selected_files (ThunarView *view)
 {
   _thunar_return_val_if_fail (THUNAR_IS_VIEW (view), NULL);
@@ -301,8 +301,8 @@ thunar_view_get_selected_files (ThunarView *view)
 
 void
 thunar_view_set_selected_files (ThunarView *view,
-                                GHashTable *selected_files)
+                                GList      *path_list)
 {
   _thunar_return_if_fail (THUNAR_IS_VIEW (view));
-  (*THUNAR_VIEW_GET_IFACE (view)->set_selected_files) (view, selected_files);
+  (*THUNAR_VIEW_GET_IFACE (view)->set_selected_files) (view, path_list);
 }

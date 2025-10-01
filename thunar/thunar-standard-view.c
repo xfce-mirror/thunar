@@ -143,12 +143,11 @@ thunar_standard_view_grab_focus (GtkWidget *widget);
 static gboolean
 thunar_standard_view_draw (GtkWidget *widget,
                            cairo_t   *cr);
-static GHashTable *
+static GList *
 thunar_standard_view_get_selected_files_component (ThunarComponent *component);
 static void
 thunar_standard_view_set_selected_files_component (ThunarComponent *component,
-                                                   GHashTable      *selected_files);
-
+                                                   GList           *selected_files);
 static ThunarFile *
 thunar_standard_view_get_current_directory (ThunarNavigator *navigator);
 static void
@@ -213,11 +212,11 @@ thunar_standard_view_current_directory_destroy (ThunarFile         *current_dire
 static void
 thunar_standard_view_current_directory_changed (ThunarFile         *current_directory,
                                                 ThunarStandardView *standard_view);
-static GHashTable *
+static GList *
 thunar_standard_view_get_selected_files_view (ThunarView *view);
 static void
 thunar_standard_view_set_selected_files_view (ThunarView *view,
-                                              GHashTable *selected_files);
+                                              GList      *selected_files);
 static gboolean
 thunar_standard_view_select_all_files (ThunarView *view);
 static gboolean
@@ -372,7 +371,7 @@ static void
 thunar_standard_view_set_model (ThunarStandardView *standard_view);
 static void
 thunar_standard_view_update_selected_files (ThunarStandardView *standard_view,
-                                            GHashTable         *files_to_select);
+                                            GList              *files_to_select);
 static void
 thunar_standard_view_update_file_drag_mode (ThunarStandardView *standard_view);
 
@@ -442,12 +441,12 @@ struct _ThunarStandardViewPrivate
   gfloat      scroll_to_row_align;
   gfloat      scroll_to_col_align;
 
-  /* #GHashTable of currently selected #ThunarFile<!---->s */
-  GHashTable *selected_files;
-  guint       restore_selection_idle_id;
+  /* #GList of currently selected #ThunarFile<!---->s */
+  GList *selected_files;
+  guint  restore_selection_idle_id;
 
   /* #GList of #ThunarFile<!---->s which are to select when loading the folder finished */
-  GHashTable *files_to_select;
+  GList *files_to_select;
 
   /* row insert and delete signal IDs, for blocking/unblocking */
   gulong row_deleted_id;
@@ -939,8 +938,8 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
 static void
 thunar_standard_view_component_init (ThunarComponentIface *iface)
 {
-  iface->get_selected_files_hashtable = thunar_standard_view_get_selected_files_component;
-  iface->set_selected_files_hashtable = thunar_standard_view_set_selected_files_component;
+  iface->get_selected_files = thunar_standard_view_get_selected_files_component;
+  iface->set_selected_files = thunar_standard_view_set_selected_files_component;
 }
 
 
@@ -984,9 +983,6 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* allocate the scroll_to_files mapping (directory GFile -> first visible child GFile) */
   standard_view->priv->scroll_to_files = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, g_object_unref, g_object_unref);
 
-  /* allocate the selected_files hash table */
-  standard_view->priv->selected_files = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, NULL);
-
   /* grab a reference on the preferences */
   standard_view->preferences = thunar_preferences_get ();
 
@@ -1005,7 +1001,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* The model will be set by the derived views.
    * i.e Abstract icon view or Details view */
   standard_view->model = NULL;
-  standard_view->priv->files_to_select = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, NULL);
+  standard_view->priv->files_to_select = NULL;
 
   /* setup the icon renderer */
   standard_view->icon_renderer = thunar_icon_renderer_new ();
@@ -1281,8 +1277,8 @@ thunar_standard_view_finalize (GObject *object)
     g_object_unref (G_OBJECT (standard_view->priv->css_provider));
 
   /* release the selected_files list and the files to select (if any) */
-  g_hash_table_destroy (standard_view->priv->selected_files);
-  g_hash_table_destroy (standard_view->priv->files_to_select);
+  thunar_g_list_free_full (standard_view->priv->selected_files);
+  thunar_g_list_free_full (standard_view->priv->files_to_select);
 
   /* release the drag path list (just in case the drag-end wasn't fired before) */
   thunar_g_list_free_full (standard_view->priv->drag_g_file_list);
@@ -1603,7 +1599,7 @@ thunar_standard_view_draw (GtkWidget *widget,
 
 
 
-static GHashTable *
+static GList *
 thunar_standard_view_get_selected_files_component (ThunarComponent *component)
 {
   return THUNAR_STANDARD_VIEW (component)->priv->selected_files;
@@ -1611,7 +1607,7 @@ thunar_standard_view_get_selected_files_component (ThunarComponent *component)
 
 
 
-static GHashTable *
+static GList *
 thunar_standard_view_get_selected_files_view (ThunarView *view)
 {
   return THUNAR_STANDARD_VIEW (view)->priv->selected_files;
@@ -1620,7 +1616,7 @@ thunar_standard_view_get_selected_files_view (ThunarView *view)
 
 void
 thunar_standard_view_update_selected_files (ThunarStandardView *standard_view,
-                                            GHashTable         *files_to_select)
+                                            GList              *files_to_select)
 {
   GtkTreePath *first_path = NULL;
   GList       *paths;
@@ -1633,7 +1629,7 @@ thunar_standard_view_update_selected_files (ThunarStandardView *standard_view,
   /* determine the tree paths for the given files */
   paths = thunar_tree_view_model_get_paths_for_files (standard_view->model, files_to_select);
 
-  /* unselect all previously selected files - this may free the "files_to_select" hashtable */
+  /* unselect all previously selected files - this may free the "files_to_select" list */
   (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unselect_all) (standard_view);
 
   if (G_LIKELY (paths != NULL))
@@ -1681,7 +1677,7 @@ thunar_standard_view_update_selected_files (ThunarStandardView *standard_view,
 
 static void
 thunar_standard_view_set_selected_files_component (ThunarComponent *component,
-                                                   GHashTable      *selected_files)
+                                                   GList           *selected_files)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (component);
 
@@ -1692,37 +1688,16 @@ thunar_standard_view_set_selected_files_component (ThunarComponent *component,
   /* clear the current selection */
   if (standard_view->priv->selected_files != NULL)
     {
-      g_hash_table_destroy (standard_view->priv->selected_files);
-      standard_view->priv->selected_files = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, NULL);
-    }
-
-  /* copy the new selection */
-  if (selected_files != NULL)
-    {
-      GHashTableIter iter;
-      gpointer       file;
-      
-      g_hash_table_iter_init (&iter, selected_files);
-      while (g_hash_table_iter_next (&iter, &file, NULL))
-        g_hash_table_add (standard_view->priv->selected_files, g_object_ref (file));
+      thunar_g_list_free_full (standard_view->priv->selected_files);
+      standard_view->priv->selected_files = NULL;
     }
 
   /* The selection will either be updated directly, or after loading the folder got finished */
   if (thunar_view_get_loading (THUNAR_VIEW (standard_view)))
     {
-      /* copy hashtable to files_to_select for later processing when loading is finished */
-      if (standard_view->priv->files_to_select != NULL)
-        g_hash_table_destroy (standard_view->priv->files_to_select);
-      standard_view->priv->files_to_select = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, NULL);
-      if (selected_files != NULL)
-        {
-          GHashTableIter iter;
-          gpointer       file;
-          
-          g_hash_table_iter_init (&iter, selected_files);
-          while (g_hash_table_iter_next (&iter, &file, NULL))
-            g_hash_table_add (standard_view->priv->files_to_select, g_object_ref (file));
-        }
+      /* update the files which are to select */
+      thunar_g_list_free_full (standard_view->priv->files_to_select);
+      standard_view->priv->files_to_select = thunar_g_list_copy_deep (selected_files);
     }
   else
     {
@@ -1734,7 +1709,7 @@ thunar_standard_view_set_selected_files_component (ThunarComponent *component,
 
 static void
 thunar_standard_view_set_selected_files_view (ThunarView *view,
-                                              GHashTable *selected_files)
+                                              GList      *selected_files)
 {
   thunar_standard_view_set_selected_files_component (THUNAR_COMPONENT (view), selected_files);
 }
@@ -1822,8 +1797,7 @@ thunar_standard_view_restore_selection_from_history (ThunarStandardView *standar
    * new current directory */
   if (selected_files.data != NULL)
     {
-      GList single_file_list = { .data = selected_files.data, .next = NULL, .prev = NULL };
-      thunar_component_set_selected_files (THUNAR_COMPONENT (standard_view), &single_file_list);
+      thunar_component_set_selected_files (THUNAR_COMPONENT (standard_view), &selected_files);
       g_object_unref (G_OBJECT (selected_files.data));
     }
 }
@@ -1992,7 +1966,7 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
   if (!loading && standard_view->priv->files_to_select != NULL)
     {
       thunar_standard_view_update_selected_files (standard_view, standard_view->priv->files_to_select);
-      g_hash_table_destroy (standard_view->priv->files_to_select);
+      thunar_g_list_free_full (standard_view->priv->files_to_select);
       standard_view->priv->files_to_select = NULL;
     }
 
@@ -2421,6 +2395,7 @@ thunar_standard_view_scroll_to_file (ThunarView *view,
                                      gfloat      col_align)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
+  GList               files;
   GList              *paths;
 
   /* release the previous scroll_to_file reference (if any) */
@@ -2442,13 +2417,13 @@ thunar_standard_view_scroll_to_file (ThunarView *view,
     }
   else
     {
-      /* create temporary hashtable for single file */
-      GHashTable *temp_hashtable = g_hash_table_new (g_direct_hash, g_direct_equal);
-      g_hash_table_add (temp_hashtable, file);
+      /* fake a file list */
+      files.data = file;
+      files.next = NULL;
+      files.prev = NULL;
 
       /* determine the path for the file */
-      paths = thunar_tree_view_model_get_paths_for_files (standard_view->model, temp_hashtable);
-      g_hash_table_destroy (temp_hashtable);
+      paths = thunar_tree_view_model_get_paths_for_files (standard_view->model, &files);
       if (G_LIKELY (paths != NULL))
         {
           /* scroll to the path */
@@ -2576,6 +2551,7 @@ thunar_standard_view_get_drop_file (ThunarStandardView *standard_view,
   GtkTreePath *path = NULL;
   GtkTreeIter  iter;
   ThunarFile  *file = NULL, *parent = NULL;
+  GList        list;
   GList       *path_list;
 
   /* determine the path for the given coordinates */
@@ -2602,11 +2578,11 @@ thunar_standard_view_get_drop_file (ThunarStandardView *standard_view,
 
           if (file != NULL)
             {
-              /* create temporary hashtable for single file */
-              GHashTable *temp_hashtable = g_hash_table_new (g_direct_hash, g_direct_equal);
-              g_hash_table_add (temp_hashtable, file);
-              path_list = thunar_tree_view_model_get_paths_for_files (standard_view->model, temp_hashtable);
-              g_hash_table_destroy (temp_hashtable);
+              /* get the path of the parent */
+              list.data = file;
+              list.next = NULL;
+              list.prev = NULL;
+              path_list = thunar_tree_view_model_get_paths_for_files (standard_view->model, &list);
               if (path_list != NULL)
                 {
                   path = path_list->data;
@@ -3918,16 +3894,7 @@ thunar_standard_view_drag_begin (GtkWidget          *view,
   thunar_g_list_free_full (standard_view->priv->drag_g_file_list);
 
   /* query the list of selected URIs */
-  GHashTableIter iter;
-  gpointer       selected_file;
-  GList         *temp_file_list = NULL;
-  
-  g_hash_table_iter_init (&iter, standard_view->priv->selected_files);
-  while (g_hash_table_iter_next (&iter, &selected_file, NULL))
-    temp_file_list = g_list_prepend (temp_file_list, selected_file);
-  
-  standard_view->priv->drag_g_file_list = thunar_file_list_to_thunar_g_file_list (temp_file_list);
-  g_list_free (temp_file_list);
+  standard_view->priv->drag_g_file_list = thunar_file_list_to_thunar_g_file_list (standard_view->priv->selected_files);
   if (G_LIKELY (standard_view->priv->drag_g_file_list != NULL))
     {
       /* determine the first selected file */
@@ -4490,7 +4457,7 @@ static void
 _thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 {
   GtkTreeIter iter;
-  GList      *lp, *selected_paths;
+  GList      *lp, *selected_thunar_files;
   ThunarFile *file;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
@@ -4504,14 +4471,11 @@ _thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
     }
 
   /* release the previously selected files */
-  g_hash_table_destroy (standard_view->priv->selected_files);
-  
-  /* create new hashtable for selected files */
-  standard_view->priv->selected_files = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, NULL);
+  thunar_g_list_free_full (standard_view->priv->selected_files);
 
-  /* get the selected tree paths */
-  selected_paths = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
-  for (lp = selected_paths; lp != NULL; lp = lp->next)
+  /* determine the new list of selected files (replacing GtkTreePath's with ThunarFile's) */
+  selected_thunar_files = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
+  for (lp = selected_thunar_files; lp != NULL; lp = lp->next)
     {
       /* determine the iterator for the path */
       if (!gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, lp->data))
@@ -4522,12 +4486,16 @@ _thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
       gtk_tree_path_free (lp->data);
 
       file = thunar_tree_view_model_get_file (standard_view->model, &iter);
-      /* add file directly to hashtable */
-      g_hash_table_add (standard_view->priv->selected_files, g_object_ref (file));
+
+      if (file != NULL)
+        {
+          /* ...and replace it with the file */
+          lp->data = file;
+        }
     }
 
-  /* free the paths list */
-  g_list_free (selected_paths);
+  /* and setup the new selected files list */
+  standard_view->priv->selected_files = selected_thunar_files;
 
   /* update the statusbar text */
   thunar_standard_view_update_statusbar_text (standard_view);
@@ -4577,7 +4545,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   _thunar_standard_view_selection_changed (standard_view);
 
   /* throttle consecutive requests if multiple files are selected */
-  if (standard_view->priv->selected_files != NULL && g_hash_table_size (standard_view->priv->selected_files) > 1)
+  if (standard_view->priv->selected_files != NULL && g_list_length (standard_view->priv->selected_files) > 1)
     {
       standard_view->priv->selection_changed_timeout_source =
       g_timeout_add (THUNAR_STANDARD_VIEW_SELECTION_CHANGED_DELAY_MS, (GSourceFunc) thunar_standard_view_selection_changed_timeout, standard_view);
@@ -5131,21 +5099,10 @@ thunar_standard_view_transfer_selection (ThunarStandardView *standard_view,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (old_view));
 
   if (standard_view->priv->files_to_select != NULL)
-    {
-      g_hash_table_destroy (standard_view->priv->files_to_select);
-      standard_view->priv->files_to_select = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, NULL);
-    }
+    g_list_free_full (standard_view->priv->files_to_select, g_object_unref);
 
   if (old_view->priv->files_to_select != NULL)
-    {
-      GHashTableIter iter;
-      gpointer       file;
-      
-      standard_view->priv->files_to_select = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, NULL);
-      g_hash_table_iter_init (&iter, old_view->priv->files_to_select);
-      while (g_hash_table_iter_next (&iter, &file, NULL))
-        g_hash_table_add (standard_view->priv->files_to_select, g_object_ref (file));
-    }
+    standard_view->priv->files_to_select = thunar_g_list_copy_deep (old_view->priv->files_to_select);
 
   files = thunar_component_get_selected_files (THUNAR_COMPONENT (old_view));
   if (files != NULL)
