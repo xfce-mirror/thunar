@@ -28,6 +28,8 @@ struct _ThunarColumnOrderModelClass
   ThunarOrderModelClass __parent__;
 };
 
+
+
 struct _ThunarColumnOrderModel
 {
   ThunarOrderModel __parent__;
@@ -35,6 +37,8 @@ struct _ThunarColumnOrderModel
   ThunarPreferences *preferences;
   ThunarColumnModel *model;
 };
+
+
 
 static void
 thunar_column_order_model_finalize (GObject *object);
@@ -61,7 +65,11 @@ thunar_column_order_model_swap_items (ThunarOrderModel *order_model,
 static void
 thunar_column_order_model_reset (ThunarOrderModel *order_model);
 
+
+
 G_DEFINE_TYPE (ThunarColumnOrderModel, thunar_column_order_model, THUNAR_TYPE_ORDER_MODEL)
+
+
 
 static void
 thunar_column_order_model_class_init (ThunarColumnOrderModelClass *klass)
@@ -78,12 +86,16 @@ thunar_column_order_model_class_init (ThunarColumnOrderModelClass *klass)
   order_model_class->reset = thunar_column_order_model_reset;
 }
 
+
+
 static void
 thunar_column_order_model_init (ThunarColumnOrderModel *column_model)
 {
   column_model->preferences = thunar_preferences_get ();
   column_model->model = thunar_column_model_get_default ();
 }
+
+
 
 static void
 thunar_column_order_model_finalize (GObject *object)
@@ -96,11 +108,15 @@ thunar_column_order_model_finalize (GObject *object)
   G_OBJECT_CLASS (thunar_column_order_model_parent_class)->finalize (object);
 }
 
+
+
 static gint
 thunar_column_order_model_get_n_items (ThunarOrderModel *order_model)
 {
   return THUNAR_N_VISIBLE_COLUMNS;
 }
+
+
 
 static void
 thunar_column_order_model_get_value (ThunarOrderModel      *order_model,
@@ -137,6 +153,8 @@ thunar_column_order_model_get_value (ThunarOrderModel      *order_model,
     }
 }
 
+
+
 static void
 thunar_column_order_model_set_activity (ThunarOrderModel *order_model,
                                         gint              position,
@@ -146,6 +164,8 @@ thunar_column_order_model_set_activity (ThunarOrderModel *order_model,
 
   thunar_column_model_set_column_visible (column_model->model, position, activity);
 }
+
+
 
 static void
 thunar_column_order_model_swap_items (ThunarOrderModel *order_model,
@@ -160,6 +180,8 @@ thunar_column_order_model_swap_items (ThunarOrderModel *order_model,
   gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (column_model->model), &b_iter, NULL, b_position);
   thunar_column_model_exchange (column_model->model, &a_iter, &b_iter);
 }
+
+
 
 static void
 thunar_column_order_model_reset (ThunarOrderModel *order_model)
@@ -183,6 +205,8 @@ thunar_column_order_model_reset (ThunarOrderModel *order_model)
       g_value_unset (&value);
     }
 }
+
+
 
 ThunarOrderModel *
 thunar_column_order_model_new (void)

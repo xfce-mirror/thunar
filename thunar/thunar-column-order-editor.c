@@ -13,6 +13,8 @@ struct _ThunarColumnOrderEditorClass
   ThunarOrderEditorClass __parent__;
 };
 
+
+
 struct _ThunarColumnOrderEditor
 {
   ThunarOrderEditor __parent__;
@@ -20,13 +22,19 @@ struct _ThunarColumnOrderEditor
   ThunarPreferences *preferences;
 };
 
+
+
 static void
 thunar_column_order_editor_finalize (GObject *object);
 
 static void
 thunar_column_order_editor_help (ThunarColumnOrderEditor *column_editor);
 
+
+
 G_DEFINE_TYPE (ThunarColumnOrderEditor, thunar_column_order_editor, THUNAR_TYPE_ORDER_EDITOR)
+
+
 
 static void
 thunar_column_order_editor_class_init (ThunarColumnOrderEditorClass *klass)
@@ -35,6 +43,8 @@ thunar_column_order_editor_class_init (ThunarColumnOrderEditorClass *klass)
 
   object_class->finalize = thunar_column_order_editor_finalize;
 }
+
+
 
 static void
 thunar_column_order_editor_init (ThunarColumnOrderEditor *column_editor)
@@ -155,6 +165,8 @@ thunar_column_order_editor_init (ThunarColumnOrderEditor *column_editor)
                 NULL);
 }
 
+
+
 static void
 thunar_column_order_editor_finalize (GObject *object)
 {
@@ -165,6 +177,8 @@ thunar_column_order_editor_finalize (GObject *object)
   G_OBJECT_CLASS (thunar_column_order_editor_parent_class)->finalize (object);
 }
 
+
+
 static void
 thunar_column_order_editor_help (ThunarColumnOrderEditor *column_editor)
 {
@@ -174,6 +188,8 @@ thunar_column_order_editor_help (ThunarColumnOrderEditor *column_editor)
                          "the-file-manager-window",
                          "customizing_the_appearance");
 }
+
+
 
 void
 thunar_column_order_editor_show (GtkWidget *window)
