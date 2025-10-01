@@ -898,6 +898,9 @@ _sync_terminal_to_fm (ThunarTerminalWidget *self, const gchar *cwd_uri)
 
           /* Inform potential subscribers */
           g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_NAVIGATOR_CURRENT_DIRECTORY]);
+
+          /* Make sure we still have focus */
+          gtk_widget_grab_focus (GTK_WIDGET (priv->terminal));
         }
     }
 }
