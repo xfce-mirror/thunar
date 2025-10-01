@@ -111,6 +111,8 @@ thunar_toolbar_order_model_finalize (GObject *object)
   thunar_toolbar_order_model_save (toolbar_model);
 
   g_signal_handlers_disconnect_by_data (toolbar_model->preferences, toolbar_model);
+  g_clear_object (&toolbar_model->preferences);
+
   g_list_free (toolbar_model->children);
   g_object_unref (toolbar_model->toolbar);
 
