@@ -19,6 +19,19 @@
 
 #include "thunar/thunar-order-model.h"
 
+#include "thunar/thunar-private.h"
+
+typedef struct _ThunarOrderModelPrivate ThunarOrderModelPrivate;
+
+
+
+struct _ThunarOrderModelPrivate
+{
+  gint dnd_format;
+};
+
+
+
 static void
 thunar_order_model_tree_model_interface_init (GtkTreeModelIface *iface);
 
@@ -115,20 +128,33 @@ thunar_order_model_get_value (GtkTreeModel *tree_model,
                               gint          column,
                               GValue       *value);
 
+
+
 G_DEFINE_TYPE_WITH_CODE (ThunarOrderModel, thunar_order_model, G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (ThunarOrderModel)
                          G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL, thunar_order_model_tree_model_interface_init)
                          G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_DRAG_SOURCE, thunar_order_model_tree_drag_source_interface_init)
                          G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_DRAG_DEST, thunar_order_model_tree_drag_dest_interface_init))
+
+
 
 static void
 thunar_order_model_class_init (ThunarOrderModelClass *klass)
 {
 }
 
+
+
 static void
 thunar_order_model_init (ThunarOrderModel *order_model)
 {
+  ThunarOrderModelPrivate *priv = thunar_order_model_get_instance_private (order_model);
+
+  /* Each model has its own format */
+  priv->dnd_format = g_random_int ();
 }
+
+
 
 static void
 thunar_order_model_tree_model_interface_init (GtkTreeModelIface *iface)
@@ -146,6 +172,8 @@ thunar_order_model_tree_model_interface_init (GtkTreeModelIface *iface)
   iface->get_value = thunar_order_model_get_value;
 }
 
+
+
 static void
 thunar_order_model_tree_drag_source_interface_init (GtkTreeDragSourceIface *iface)
 {
@@ -154,6 +182,8 @@ thunar_order_model_tree_drag_source_interface_init (GtkTreeDragSourceIface *ifac
   iface->row_draggable = thunar_order_model_row_draggable;
 }
 
+
+
 static void
 thunar_order_model_tree_drag_dest_interface_init (GtkTreeDragDestIface *iface)
 {
@@ -161,12 +191,20 @@ thunar_order_model_tree_drag_dest_interface_init (GtkTreeDragDestIface *iface)
   iface->row_drop_possible = thunar_order_model_row_drop_possible;
 }
 
+
+
 static gboolean
 thunar_order_model_drag_data_delete (GtkTreeDragSource *drag_source,
                                      GtkTreePath       *path)
 {
+  /*
+   * Gtk expects the code to do Delete+Insert, but instead ThunarOrderModel
+   * only does thunar_order_model_swap_items at the end of DnD
+   */
   return TRUE;
 }
+
+
 
 static gboolean
 thunar_order_model_drag_data_get (GtkTreeDragSource *drag_source,
@@ -188,12 +226,16 @@ thunar_order_model_drag_data_get (GtkTreeDragSource *drag_source,
   return TRUE;
 }
 
+
+
 static gboolean
 thunar_order_model_row_draggable (GtkTreeDragSource *drag_source,
                                   GtkTreePath       *path)
 {
   return TRUE;
 }
+
+
 
 static gboolean
 thunar_order_model_drag_data_received (GtkTreeDragDest  *drag_dest,
@@ -213,6 +255,8 @@ thunar_order_model_drag_data_received (GtkTreeDragDest  *drag_dest,
   return TRUE;
 }
 
+
+
 static gboolean
 thunar_order_model_row_drop_possible (GtkTreeDragDest  *drag_dest,
                                       GtkTreePath      *dest_path,
@@ -226,27 +270,37 @@ thunar_order_model_row_drop_possible (GtkTreeDragDest  *drag_dest,
          && format == thunar_order_model_get_dnd_format (order_model);
 }
 
+
+
 static GdkAtom
 thunar_order_model_get_dnd_atom (ThunarOrderModel *order_model)
 {
   return gdk_atom_intern_static_string (G_OBJECT_TYPE_NAME (order_model));
 }
 
+
+
 static gint
 thunar_order_model_get_dnd_format (ThunarOrderModel *order_model)
 {
-  /* Each object has its own format */
-  return (gint) (uintptr_t) order_model;
+  ThunarOrderModelPrivate *priv = thunar_order_model_get_instance_private (order_model);
+
+  return priv->dnd_format;
 }
+
+
 
 static gint
 thunar_order_model_get_n_items (ThunarOrderModel *order_model)
 {
   ThunarOrderModelClass *order_model_class = THUNAR_ORDER_MODEL_GET_CLASS (order_model);
 
-  g_return_val_if_fail (order_model_class->get_n_items != NULL, 0);
+  _thunar_return_val_if_fail (order_model_class->get_n_items != NULL, 0);
+
   return order_model_class->get_n_items (order_model);
 }
+
+
 
 static void
 thunar_order_model_init_iter (GtkTreeIter *iter,
@@ -256,17 +310,23 @@ thunar_order_model_init_iter (GtkTreeIter *iter,
   iter->user_data = (gpointer) (uintptr_t) (position);
 }
 
+
+
 static gint
 thunar_order_model_get_iter_position (GtkTreeIter *iter)
 {
   return (gint) (uintptr_t) iter->user_data;
 }
 
+
+
 static gint
 thunar_order_model_get_n_columns (GtkTreeModel *tree_model)
 {
   return THUNAR_ORDER_MODEL_N_COLUMNS;
 }
+
+
 
 static GType
 thunar_order_model_get_column_type (GtkTreeModel *tree_model,
@@ -294,11 +354,15 @@ thunar_order_model_get_column_type (GtkTreeModel *tree_model,
     }
 }
 
+
+
 static GtkTreeModelFlags
 thunar_order_model_get_flags (GtkTreeModel *tree_model)
 {
   return GTK_TREE_MODEL_LIST_ONLY;
 }
+
+
 
 static gboolean
 thunar_order_model_get_iter (GtkTreeModel *tree_model,
@@ -309,6 +373,8 @@ thunar_order_model_get_iter (GtkTreeModel *tree_model,
   gint              n_items = thunar_order_model_get_n_items (order_model);
   gint              position = *gtk_tree_path_get_indices (path);
 
+  _thunar_return_val_if_fail (iter != NULL, FALSE);
+
   if (position < 0 || position >= n_items)
     return FALSE;
 
@@ -316,14 +382,21 @@ thunar_order_model_get_iter (GtkTreeModel *tree_model,
   return TRUE;
 }
 
+
+
 static GtkTreePath *
 thunar_order_model_get_path (GtkTreeModel *tree_model,
                              GtkTreeIter  *iter)
 {
-  gint position = thunar_order_model_get_iter_position (iter);
+  gint position;
 
+  _thunar_return_val_if_fail (iter != NULL, NULL);
+
+  position = thunar_order_model_get_iter_position (iter);
   return gtk_tree_path_new_from_indices (position, -1);
 }
+
+
 
 static gint
 thunar_order_model_iter_n_children (GtkTreeModel *tree_model,
@@ -337,6 +410,8 @@ thunar_order_model_iter_n_children (GtkTreeModel *tree_model,
   return 0;
 }
 
+
+
 static gboolean
 thunar_order_model_iter_children (GtkTreeModel *tree_model,
                                   GtkTreeIter  *iter,
@@ -344,12 +419,17 @@ thunar_order_model_iter_children (GtkTreeModel *tree_model,
 {
   ThunarOrderModel *order_model = THUNAR_ORDER_MODEL (tree_model);
 
+  _thunar_return_val_if_fail (iter != NULL, FALSE);
+  _thunar_return_val_if_fail (parent == NULL, FALSE);
+
   if (thunar_order_model_get_n_items (order_model) <= 0)
     return FALSE;
 
   thunar_order_model_init_iter (iter, 0);
   return TRUE;
 }
+
+
 
 static gboolean
 thunar_order_model_iter_nth_child (GtkTreeModel *tree_model,
@@ -359,6 +439,9 @@ thunar_order_model_iter_nth_child (GtkTreeModel *tree_model,
 {
   ThunarOrderModel *order_model = THUNAR_ORDER_MODEL (tree_model);
 
+  _thunar_return_val_if_fail (iter != NULL, FALSE);
+  _thunar_return_val_if_fail (parent == NULL, FALSE);
+
   if (n < 0 || n >= thunar_order_model_get_n_items (order_model))
     return FALSE;
 
@@ -366,14 +449,21 @@ thunar_order_model_iter_nth_child (GtkTreeModel *tree_model,
   return TRUE;
 }
 
+
+
 static gboolean
 thunar_order_model_iter_next (GtkTreeModel *tree_model,
                               GtkTreeIter  *iter)
 {
   ThunarOrderModel *order_model = THUNAR_ORDER_MODEL (tree_model);
   gint              n_items = thunar_order_model_get_n_items (order_model);
-  gint              position = thunar_order_model_get_iter_position (iter);
-  gboolean          status = (position + 1) < n_items;
+  gint              position;
+  gboolean          status = FALSE;
+
+  _thunar_return_val_if_fail (iter != NULL, FALSE);
+
+  position = thunar_order_model_get_iter_position (iter);
+  status = (position + 1) < n_items;
 
   if (status)
     thunar_order_model_init_iter (iter, position + 1);
@@ -381,20 +471,29 @@ thunar_order_model_iter_next (GtkTreeModel *tree_model,
   return status;
 }
 
+
+
 static gboolean
 thunar_order_model_iter_previous (GtkTreeModel *tree_model,
                                   GtkTreeIter  *iter)
 {
   ThunarOrderModel *order_model = THUNAR_ORDER_MODEL (tree_model);
   gint              n_items = thunar_order_model_get_n_items (order_model);
-  gint              position = thunar_order_model_get_iter_position (iter);
-  gboolean          status = (position - 1) >= 0 && (position - 1) < n_items;
+  gint              position;
+  gboolean          status = FALSE;
+
+  _thunar_return_val_if_fail (iter != NULL, FALSE);
+
+  position = thunar_order_model_get_iter_position (iter);
+  status = (position - 1) >= 0 && (position - 1) < n_items;
 
   if (status)
     thunar_order_model_init_iter (iter, position - 1);
 
   return status;
 }
+
+
 
 static void
 thunar_order_model_get_value (GtkTreeModel *tree_model,
@@ -404,12 +503,18 @@ thunar_order_model_get_value (GtkTreeModel *tree_model,
 {
   ThunarOrderModel      *order_model = THUNAR_ORDER_MODEL (tree_model);
   ThunarOrderModelClass *order_model_class = THUNAR_ORDER_MODEL_GET_CLASS (order_model);
-  gint                   position = thunar_order_model_get_iter_position (iter);
+  gint                   position;
 
-  g_return_if_fail (order_model_class->get_value != NULL);
+  _thunar_return_if_fail (iter != NULL);
+  _thunar_return_if_fail (column >= 0 || column < THUNAR_ORDER_MODEL_N_COLUMNS);
+  _thunar_return_if_fail (order_model_class->get_value != NULL);
+
+  position = thunar_order_model_get_iter_position (iter);
   g_value_init (value, thunar_order_model_get_column_type (tree_model, column));
   order_model_class->get_value (order_model, position, column, value);
 }
+
+
 
 void
 thunar_order_model_set_activity (ThunarOrderModel *order_model,
@@ -420,9 +525,11 @@ thunar_order_model_set_activity (ThunarOrderModel *order_model,
   gint                   position;
   GtkTreePath           *path;
 
-  g_return_if_fail (THUNAR_IS_ORDER_MODEL (order_model));
+  _thunar_return_if_fail (THUNAR_IS_ORDER_MODEL (order_model));
+  _thunar_return_if_fail (iter != NULL);
+
   order_model_class = THUNAR_ORDER_MODEL_GET_CLASS (order_model);
-  g_return_if_fail (order_model_class->set_activity != NULL);
+  _thunar_return_if_fail (order_model_class->set_activity != NULL);
 
   position = thunar_order_model_get_iter_position (iter);
   order_model_class->set_activity (order_model, position, activity);
@@ -431,6 +538,8 @@ thunar_order_model_set_activity (ThunarOrderModel *order_model,
   g_signal_emit_by_name (order_model, "row-changed", path, iter);
   gtk_tree_path_free (path);
 }
+
+
 
 void
 thunar_order_model_swap_items (ThunarOrderModel *order_model,
@@ -443,9 +552,12 @@ thunar_order_model_swap_items (ThunarOrderModel *order_model,
   GtkTreePath           *a_path;
   GtkTreePath           *b_path;
 
-  g_return_if_fail (THUNAR_IS_ORDER_MODEL (order_model));
+  _thunar_return_if_fail (THUNAR_IS_ORDER_MODEL (order_model));
+  _thunar_return_if_fail (a_iter != NULL);
+  _thunar_return_if_fail (b_iter != NULL);
+
   order_model_class = THUNAR_ORDER_MODEL_GET_CLASS (order_model);
-  g_return_if_fail (order_model_class->swap_items != NULL);
+  _thunar_return_if_fail (order_model_class->swap_items != NULL);
 
   a_position = thunar_order_model_get_iter_position (a_iter);
   b_position = thunar_order_model_get_iter_position (b_iter);
@@ -461,16 +573,21 @@ thunar_order_model_swap_items (ThunarOrderModel *order_model,
   gtk_tree_path_free (b_path);
 }
 
+
+
 void
 thunar_order_model_reset (ThunarOrderModel *order_model)
 {
   ThunarOrderModelClass *order_model_class;
 
-  g_return_if_fail (THUNAR_IS_ORDER_MODEL (order_model));
+  _thunar_return_if_fail (THUNAR_IS_ORDER_MODEL (order_model));
+
   order_model_class = THUNAR_ORDER_MODEL_GET_CLASS (order_model);
-  g_return_if_fail (order_model_class->reset != NULL);
+  _thunar_return_if_fail (order_model_class->reset != NULL);
   order_model_class->reset (order_model);
 }
+
+
 
 void
 thunar_order_model_reload (ThunarOrderModel *order_model)
@@ -480,7 +597,8 @@ thunar_order_model_reload (ThunarOrderModel *order_model)
   GtkTreeIter  iter;
   GtkTreePath *path;
 
-  g_return_if_fail (THUNAR_IS_ORDER_MODEL (order_model));
+  _thunar_return_if_fail (THUNAR_IS_ORDER_MODEL (order_model));
+
   n_items = thunar_order_model_get_n_items (order_model);
 
   thunar_order_model_init_iter (&iter, 0);
