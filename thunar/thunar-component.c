@@ -98,11 +98,35 @@ thunar_component_class_init (gpointer klass)
 GList *
 thunar_component_get_selected_files (ThunarComponent *component)
 {
+  GHashTable     *hashtable;
+  GList          *list = NULL;
+  GHashTableIter  iter;
+  gpointer        file;
+
   _thunar_return_val_if_fail (THUNAR_IS_COMPONENT (component), NULL);
+  
+
+  /* try the hashtable method first for better performance */
+  if (THUNAR_COMPONENT_GET_IFACE (component)->get_selected_files_hashtable != NULL)
+    {
+      hashtable = (*THUNAR_COMPONENT_GET_IFACE (component)->get_selected_files_hashtable) (component);
+      if (hashtable == NULL)
+        return NULL;
+        
+      g_hash_table_iter_init (&iter, hashtable);
+      while (g_hash_table_iter_next (&iter, &file, NULL))
+        list = g_list_prepend (list, file);
+        
+      return g_list_reverse (list);
+    }
+  
+  /* fallback: use GList method directly */
   if (THUNAR_COMPONENT_GET_IFACE (component)->get_selected_files != NULL)
-    return (*THUNAR_COMPONENT_GET_IFACE (component)->get_selected_files) (component);
-  else
-    return NULL;
+    {
+      return (*THUNAR_COMPONENT_GET_IFACE (component)->get_selected_files) (component);
+    }
+  
+  return NULL;
 }
 
 
@@ -120,7 +144,32 @@ void
 thunar_component_set_selected_files (ThunarComponent *component,
                                      GList           *selected_files)
 {
+  GHashTable *hashtable = NULL;
+  GList      *lp;
+
   _thunar_return_if_fail (THUNAR_IS_COMPONENT (component));
+  
+
+  /* try the hashtable method first for better performance */
+  if (THUNAR_COMPONENT_GET_IFACE (component)->set_selected_files_hashtable != NULL)
+    {
+      if (selected_files != NULL)
+        {
+          hashtable = g_hash_table_new (g_direct_hash, g_direct_equal);
+          for (lp = selected_files; lp != NULL; lp = lp->next)
+            g_hash_table_add (hashtable, lp->data);
+        }
+      
+      (*THUNAR_COMPONENT_GET_IFACE (component)->set_selected_files_hashtable) (component, hashtable);
+      
+      if (hashtable != NULL)
+        g_hash_table_destroy (hashtable);
+      return;
+    }
+  
+  /* fallback: use GList method directly */
   if (THUNAR_COMPONENT_GET_IFACE (component)->set_selected_files != NULL)
-    (*THUNAR_COMPONENT_GET_IFACE (component)->set_selected_files) (component, selected_files);
+    {
+      (*THUNAR_COMPONENT_GET_IFACE (component)->set_selected_files) (component, selected_files);
+    }
 }

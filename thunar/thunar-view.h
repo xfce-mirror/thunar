@@ -62,9 +62,9 @@ struct _ThunarViewIface
                           gboolean    use_align,
                           gfloat      row_align,
                           gfloat      col_align);
-  GList *(*get_selected_files) (ThunarView *view);
+  GHashTable *(*get_selected_files) (ThunarView *view);
   void (*set_selected_files) (ThunarView *view,
-                              GList      *path_list);
+                              GHashTable *selected_files);
 };
 
 GType
@@ -103,11 +103,11 @@ thunar_view_scroll_to_file (ThunarView *view,
                             gboolean    use_align,
                             gfloat      row_align,
                             gfloat      col_align);
-GList *
+GHashTable *
 thunar_view_get_selected_files (ThunarView *view);
 void
 thunar_view_set_selected_files (ThunarView *view,
-                                GList      *path_list);
+                                GHashTable *selected_files);
 
 G_END_DECLS;
 

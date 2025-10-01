@@ -92,7 +92,7 @@ thunar_tree_view_model_get_file (ThunarTreeViewModel *model,
 
 GList *
 thunar_tree_view_model_get_paths_for_files (ThunarTreeViewModel *model,
-                                            GList               *files);
+                                            GHashTable          *files);
 GList *
 thunar_tree_view_model_get_paths_for_pattern (ThunarTreeViewModel *model,
                                               const gchar         *pattern,
