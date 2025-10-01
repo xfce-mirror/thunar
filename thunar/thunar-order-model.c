@@ -22,6 +22,41 @@
 static void
 thunar_order_model_tree_model_interface_init (GtkTreeModelIface *iface);
 
+static void
+thunar_order_model_tree_drag_source_interface_init (GtkTreeDragSourceIface *iface);
+
+static void
+thunar_order_model_tree_drag_dest_interface_init (GtkTreeDragDestIface *iface);
+
+static gboolean
+thunar_order_model_drag_data_delete (GtkTreeDragSource *drag_source,
+                                     GtkTreePath       *path);
+
+static gboolean
+thunar_order_model_drag_data_get (GtkTreeDragSource *drag_source,
+                                  GtkTreePath       *path,
+                                  GtkSelectionData  *selection_data);
+
+static gboolean
+thunar_order_model_row_draggable (GtkTreeDragSource *drag_source,
+                                  GtkTreePath       *path);
+
+static gboolean
+thunar_order_model_drag_data_received (GtkTreeDragDest  *drag_dest,
+                                       GtkTreePath      *dest,
+                                       GtkSelectionData *selection_data);
+
+static gboolean
+thunar_order_model_row_drop_possible (GtkTreeDragDest  *drag_dest,
+                                      GtkTreePath      *dest_path,
+                                      GtkSelectionData *selection_data);
+
+static GdkAtom
+thunar_order_model_get_dnd_atom (ThunarOrderModel *order_model);
+
+static gint
+thunar_order_model_get_dnd_format (ThunarOrderModel *order_model);
+
 static gint
 thunar_order_model_get_n_items (ThunarOrderModel *order_model);
 
@@ -81,7 +116,9 @@ thunar_order_model_get_value (GtkTreeModel *tree_model,
                               GValue       *value);
 
 G_DEFINE_TYPE_WITH_CODE (ThunarOrderModel, thunar_order_model, G_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL, thunar_order_model_tree_model_interface_init))
+                         G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL, thunar_order_model_tree_model_interface_init)
+                         G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_DRAG_SOURCE, thunar_order_model_tree_drag_source_interface_init)
+                         G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_DRAG_DEST, thunar_order_model_tree_drag_dest_interface_init))
 
 static void
 thunar_order_model_class_init (ThunarOrderModelClass *klass)
@@ -107,6 +144,99 @@ thunar_order_model_tree_model_interface_init (GtkTreeModelIface *iface)
   iface->iter_next = thunar_order_model_iter_next;
   iface->iter_previous = thunar_order_model_iter_previous;
   iface->get_value = thunar_order_model_get_value;
+}
+
+static void
+thunar_order_model_tree_drag_source_interface_init (GtkTreeDragSourceIface *iface)
+{
+  iface->drag_data_delete = thunar_order_model_drag_data_delete;
+  iface->drag_data_get = thunar_order_model_drag_data_get;
+  iface->row_draggable = thunar_order_model_row_draggable;
+}
+
+static void
+thunar_order_model_tree_drag_dest_interface_init (GtkTreeDragDestIface *iface)
+{
+  iface->drag_data_received = thunar_order_model_drag_data_received;
+  iface->row_drop_possible = thunar_order_model_row_drop_possible;
+}
+
+static gboolean
+thunar_order_model_drag_data_delete (GtkTreeDragSource *drag_source,
+                                     GtkTreePath       *path)
+{
+  return TRUE;
+}
+
+static gboolean
+thunar_order_model_drag_data_get (GtkTreeDragSource *drag_source,
+                                  GtkTreePath       *path,
+                                  GtkSelectionData  *selection_data)
+{
+  ThunarOrderModel *order_model = THUNAR_ORDER_MODEL (drag_source);
+  gchar            *path_string = gtk_tree_path_to_string (path);
+  guint             path_length = strlen (path_string);
+
+  gtk_selection_data_set (selection_data,
+                          thunar_order_model_get_dnd_atom (order_model),
+                          thunar_order_model_get_dnd_format (order_model),
+                          (const guchar *) path_string,
+                          path_length + 1);
+
+  g_free (path_string);
+
+  return TRUE;
+}
+
+static gboolean
+thunar_order_model_row_draggable (GtkTreeDragSource *drag_source,
+                                  GtkTreePath       *path)
+{
+  return TRUE;
+}
+
+static gboolean
+thunar_order_model_drag_data_received (GtkTreeDragDest  *drag_dest,
+                                       GtkTreePath      *dest,
+                                       GtkSelectionData *selection_data)
+{
+  const gchar *data = (const gchar *) gtk_selection_data_get_data (selection_data);
+  GtkTreePath *source = gtk_tree_path_new_from_string (data);
+  GtkTreeIter  a_iter;
+  GtkTreeIter  b_iter;
+
+  thunar_order_model_get_iter (GTK_TREE_MODEL (drag_dest), &a_iter, source);
+  thunar_order_model_get_iter (GTK_TREE_MODEL (drag_dest), &b_iter, dest);
+  thunar_order_model_swap_items (THUNAR_ORDER_MODEL (drag_dest), &a_iter, &b_iter);
+  gtk_tree_path_free (source);
+
+  return TRUE;
+}
+
+static gboolean
+thunar_order_model_row_drop_possible (GtkTreeDragDest  *drag_dest,
+                                      GtkTreePath      *dest_path,
+                                      GtkSelectionData *selection_data)
+{
+  ThunarOrderModel *order_model = THUNAR_ORDER_MODEL (drag_dest);
+  GdkAtom           atom = gtk_selection_data_get_data_type (selection_data);
+  gint              format = gtk_selection_data_get_format (selection_data);
+
+  return atom == thunar_order_model_get_dnd_atom (order_model)
+         && format == thunar_order_model_get_dnd_format (order_model);
+}
+
+static GdkAtom
+thunar_order_model_get_dnd_atom (ThunarOrderModel *order_model)
+{
+  return gdk_atom_intern_static_string (G_OBJECT_TYPE_NAME (order_model));
+}
+
+static gint
+thunar_order_model_get_dnd_format (ThunarOrderModel *order_model)
+{
+  /* Each object has its own format */
+  return (gint) (uintptr_t) order_model;
 }
 
 static gint

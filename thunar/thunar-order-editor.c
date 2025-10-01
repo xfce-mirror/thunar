@@ -32,9 +32,6 @@ struct _ThunarOrderEditorPrivate
   GtkWidget        *settings_area;
   GtkWidget        *up_button;
   GtkWidget        *down_button;
-  GtkWidget        *show_button;
-  GtkWidget        *hide_button;
-  GtkWidget        *reset_separator;
   GtkWidget        *reset_button;
   GtkWidget        *help_button;
 };
@@ -71,9 +68,6 @@ thunar_order_editor_reset_clicked (ThunarOrderEditor *order_editor);
 static void
 thunar_order_editor_toggle_activity (ThunarOrderEditor *order_editor,
                                      const gchar       *path_string);
-
-static void
-thunar_order_editor_selected_toggle_activity (ThunarOrderEditor *order_editor);
 
 static void
 thunar_order_editor_move_up (ThunarOrderEditor *order_editor);
@@ -139,8 +133,12 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
   GtkWidget                *vbox;
   GtkWidget                *hbox;
   GtkWidget                *swin;
+  GtkWidget                *vbox_tree;
+  GtkWidget                *vbox_right;
   GtkWidget                *vbox_buttons;
   GtkWidget                *image;
+  GtkWidget                *button_box;
+  GtkStyleContext          *style_context;
 
   gtk_dialog_add_button (GTK_DIALOG (order_editor), _("_Close"), GTK_RESPONSE_CLOSE);
   gtk_dialog_set_default_response (GTK_DIALOG (order_editor), GTK_RESPONSE_CLOSE);
@@ -175,13 +173,19 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
   gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 6);
   gtk_widget_show (hbox);
 
+  /* create vbox_tree */
+  vbox_tree = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+  gtk_box_pack_start (GTK_BOX (hbox), vbox_tree, TRUE, TRUE, 0);
+  gtk_widget_show (vbox_tree);
+
   /* create the scrolled window for the tree view */
   swin = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (swin), GTK_SHADOW_IN);
   gtk_widget_set_hexpand (swin, TRUE);
   gtk_widget_set_vexpand (swin, TRUE);
-  gtk_box_pack_start (GTK_BOX (hbox), swin, TRUE, TRUE, 0);
+  gtk_widget_set_size_request (swin, 100, 200);
+  gtk_box_pack_start (GTK_BOX (vbox_tree), swin, TRUE, TRUE, 0);
   gtk_widget_show (swin);
 
   /* create the tree view */
@@ -191,6 +195,7 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (priv->tree_view), FALSE);
   gtk_tree_view_set_search_column (GTK_TREE_VIEW (priv->tree_view), THUNAR_ORDER_MODEL_COLUMN_NAME);
   gtk_tree_view_set_tooltip_column (GTK_TREE_VIEW (priv->tree_view), THUNAR_ORDER_MODEL_COLUMN_TOOLTIP);
+  gtk_tree_view_set_reorderable (GTK_TREE_VIEW (priv->tree_view), TRUE);
   gtk_container_add (GTK_CONTAINER (swin), priv->tree_view);
   gtk_widget_show (priv->tree_view);
 
@@ -226,16 +231,24 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
                                                "sensitive", THUNAR_ORDER_MODEL_COLUMN_ACTIVE,
                                                NULL);
 
+  /* right vbox */
+  vbox_right = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
+  gtk_box_pack_start (GTK_BOX (hbox), vbox_right, FALSE, FALSE, 0);
+  gtk_widget_set_vexpand (vbox_right, FALSE);
+  gtk_widget_show (vbox_right);
 
   /* Create the buttons vbox container */
-  vbox_buttons = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
-  gtk_box_pack_start (GTK_BOX (hbox), vbox_buttons, FALSE, FALSE, 0);
+  vbox_buttons = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+  style_context = gtk_widget_get_style_context (vbox_buttons);
+  gtk_style_context_add_class (style_context, GTK_STYLE_CLASS_LINKED);
+  gtk_box_pack_start (GTK_BOX (vbox_right), vbox_buttons, FALSE, FALSE, 0);
   gtk_widget_set_vexpand (vbox_buttons, FALSE);
   gtk_widget_show (vbox_buttons);
 
   /* create the "Move Up" button */
-  priv->up_button = gtk_button_new_with_mnemonic (_("Move _Up"));
+  priv->up_button = gtk_button_new ();
   g_signal_connect_swapped (priv->up_button, "clicked", G_CALLBACK (thunar_order_editor_move_up), order_editor);
+  gtk_widget_set_tooltip_text (priv->up_button, _("Move currently selected item up by one row"));
   gtk_box_pack_start (GTK_BOX (vbox_buttons), priv->up_button, FALSE, FALSE, 0);
   gtk_widget_show (priv->up_button);
 
@@ -245,8 +258,9 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
   gtk_widget_show (image);
 
   /* create the "Move Down" button */
-  priv->down_button = gtk_button_new_with_mnemonic (_("Move Dow_n"));
+  priv->down_button = gtk_button_new ();
   g_signal_connect_swapped (priv->down_button, "clicked", G_CALLBACK (thunar_order_editor_move_down), order_editor);
+  gtk_widget_set_tooltip_text (priv->down_button, _("Move currently selected item down by one row"));
   gtk_box_pack_start (GTK_BOX (vbox_buttons), priv->down_button, FALSE, FALSE, 0);
   gtk_widget_show (priv->down_button);
 
@@ -255,27 +269,19 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
   gtk_button_set_image (GTK_BUTTON (priv->down_button), image);
   gtk_widget_show (image);
 
-  /* create the "Show" button */
-  priv->show_button = gtk_button_new_with_mnemonic (_("_Show"));
-  g_signal_connect_swapped (priv->show_button, "clicked", G_CALLBACK (thunar_order_editor_selected_toggle_activity), order_editor);
-  gtk_box_pack_start (GTK_BOX (vbox_buttons), priv->show_button, FALSE, FALSE, 0);
-  gtk_widget_show (priv->show_button);
-
-  /* create the "Hide" button */
-  priv->hide_button = gtk_button_new_with_mnemonic (_("Hi_de"));
-  g_signal_connect_swapped (priv->hide_button, "clicked", G_CALLBACK (thunar_order_editor_selected_toggle_activity), order_editor);
-  gtk_box_pack_start (GTK_BOX (vbox_buttons), priv->hide_button, FALSE, FALSE, 0);
-  gtk_widget_show (priv->hide_button);
-
-  /* add separator */
-  priv->reset_separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
-  gtk_box_pack_start (GTK_BOX (vbox_buttons), priv->reset_separator, FALSE, FALSE, 0);
+  /* button box */
+  button_box = gtk_button_box_new (GTK_ORIENTATION_HORIZONTAL);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (button_box), GTK_BUTTONBOX_START);
+  style_context = gtk_widget_get_style_context (button_box);
+  gtk_style_context_add_class (style_context, GTK_STYLE_CLASS_INLINE_TOOLBAR);
+  gtk_box_pack_start (GTK_BOX (vbox_tree), button_box, FALSE, FALSE, 0);
+  gtk_widget_show (button_box);
 
   /* create the "Use Default" button */
   priv->reset_button = gtk_button_new_with_mnemonic (_("De_fault Order"));
   g_signal_connect_swapped (G_OBJECT (priv->reset_button), "clicked",
                             G_CALLBACK (thunar_order_editor_reset_clicked), order_editor);
-  gtk_box_pack_start (GTK_BOX (vbox_buttons), priv->reset_button, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (button_box), priv->reset_button, FALSE, FALSE, 0);
 
   /* settings area */
   priv->settings_area = gtk_widget_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
@@ -311,15 +317,9 @@ thunar_order_editor_set_property (GObject      *object,
 
     case PROP_RESET_ENABLED:
       if (g_value_get_boolean (value))
-        {
-          gtk_widget_show (priv->reset_separator);
-          gtk_widget_show (priv->reset_button);
-        }
+        gtk_widget_show (priv->reset_button);
       else
-        {
-          gtk_widget_hide (priv->reset_separator);
-          gtk_widget_hide (priv->reset_button);
-        }
+        gtk_widget_hide (priv->reset_button);
       break;
 
     default:
@@ -361,25 +361,6 @@ thunar_order_editor_toggle_activity (ThunarOrderEditor *order_editor,
     }
   gtk_tree_path_free (path);
 }
-
-static void
-thunar_order_editor_selected_toggle_activity (ThunarOrderEditor *order_editor)
-{
-  ThunarOrderEditorPrivate *priv = thunar_order_editor_get_instance_private (order_editor);
-  GtkTreeModel             *tree_model = NULL;
-  GtkTreeSelection         *selection;
-  GtkTreeIter               iter;
-  gboolean                  activity;
-
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (priv->tree_view));
-  if (gtk_tree_selection_get_selected (selection, &tree_model, &iter))
-    {
-      gtk_tree_model_get (tree_model, &iter, THUNAR_ORDER_MODEL_COLUMN_ACTIVE, &activity, -1);
-      thunar_order_model_set_activity (priv->model, &iter, !activity);
-      thunar_order_editor_update_buttons (order_editor);
-    }
-}
-
 
 static void
 thunar_order_editor_move_up (ThunarOrderEditor *order_editor)
@@ -430,28 +411,14 @@ thunar_order_editor_update_buttons (ThunarOrderEditor *order_editor)
   GtkTreeIter               iter1;
   GtkTreeIter              *iter2;
   gboolean                  is_active;
-  gboolean                  is_mutable;
 
-  gtk_widget_set_sensitive (priv->show_button, FALSE);
-  gtk_widget_set_sensitive (priv->hide_button, FALSE);
   gtk_widget_set_sensitive (priv->up_button, FALSE);
   gtk_widget_set_sensitive (priv->down_button, FALSE);
 
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (priv->tree_view));
   if (gtk_tree_selection_get_selected (selection, &tree_model, &iter1))
     {
-      gtk_tree_model_get (tree_model, &iter1,
-                          THUNAR_ORDER_MODEL_COLUMN_ACTIVE, &is_active,
-                          THUNAR_ORDER_MODEL_COLUMN_MUTABLE, &is_mutable,
-                          -1);
-
-      if (is_mutable)
-        {
-          if (is_active)
-            gtk_widget_set_sensitive (priv->hide_button, TRUE);
-          else
-            gtk_widget_set_sensitive (priv->show_button, TRUE);
-        }
+      gtk_tree_model_get (tree_model, &iter1, THUNAR_ORDER_MODEL_COLUMN_ACTIVE, &is_active, -1);
 
       iter2 = gtk_tree_iter_copy (&iter1);
       if (gtk_tree_model_iter_previous (tree_model, iter2))
