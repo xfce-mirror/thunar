@@ -19,10 +19,14 @@
 
 #include "thunar/thunar-order-editor.h"
 
+#include "thunar/thunar-private.h"
+
 #include <libxfce4ui/libxfce4ui.h>
 #include <libxfce4util/libxfce4util.h>
 
 typedef struct _ThunarOrderEditorPrivate ThunarOrderEditorPrivate;
+
+
 
 struct _ThunarOrderEditorPrivate
 {
@@ -36,6 +40,8 @@ struct _ThunarOrderEditorPrivate
   GtkWidget        *help_button;
 };
 
+
+
 enum
 {
   PROP_0,
@@ -45,13 +51,19 @@ enum
   N_PROPS,
 };
 
+
+
 enum
 {
   HELP,
   N_SIGNALS,
 };
 
+
+
 static gint signals[N_SIGNALS];
+
+
 
 static void
 thunar_order_editor_set_property (GObject      *object,
@@ -78,8 +90,12 @@ thunar_order_editor_move_down (ThunarOrderEditor *order_editor);
 static void
 thunar_order_editor_update_buttons (ThunarOrderEditor *order_editor);
 
+
+
 G_DEFINE_TYPE_WITH_CODE (ThunarOrderEditor, thunar_order_editor, THUNAR_TYPE_ABSTRACT_DIALOG,
                          G_ADD_PRIVATE (ThunarOrderEditor))
+
+
 
 static void
 thunar_order_editor_class_init (ThunarOrderEditorClass *klass)
@@ -123,6 +139,8 @@ thunar_order_editor_class_init (ThunarOrderEditorClass *klass)
                                 0);
 }
 
+
+
 static void
 thunar_order_editor_init (ThunarOrderEditor *order_editor)
 {
@@ -140,6 +158,7 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
   GtkWidget                *button_box;
   GtkStyleContext          *style_context;
 
+  /* create dialog buttons */
   gtk_dialog_add_button (GTK_DIALOG (order_editor), _("_Close"), GTK_RESPONSE_CLOSE);
   gtk_dialog_set_default_response (GTK_DIALOG (order_editor), GTK_RESPONSE_CLOSE);
   gtk_window_set_default_size (GTK_WINDOW (order_editor), 700, 500);
@@ -156,7 +175,7 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
   gtk_box_pack_start (GTK_BOX (content_area), vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
-  /* description area */
+  /* create description area */
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 10);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
@@ -283,13 +302,15 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
                             G_CALLBACK (thunar_order_editor_reset_clicked), order_editor);
   gtk_box_pack_start (GTK_BOX (button_box), priv->reset_button, FALSE, FALSE, 0);
 
-  /* settings area */
+  /* create settings area */
   priv->settings_area = gtk_widget_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), priv->settings_area, FALSE, FALSE, 0);
   gtk_widget_show (priv->settings_area);
 
   thunar_order_editor_update_buttons (order_editor);
 }
+
+
 
 static void
 thunar_order_editor_set_property (GObject      *object,
@@ -327,11 +348,15 @@ thunar_order_editor_set_property (GObject      *object,
     }
 }
 
+
+
 static void
 thunar_order_editor_help_clicked (ThunarOrderEditor *order_editor)
 {
   g_signal_emit (order_editor, signals[HELP], 0);
 }
+
+
 
 static void
 thunar_order_editor_reset_clicked (ThunarOrderEditor *order_editor)
@@ -342,6 +367,8 @@ thunar_order_editor_reset_clicked (ThunarOrderEditor *order_editor)
   thunar_order_model_reload (THUNAR_ORDER_MODEL (priv->model));
   thunar_order_editor_update_buttons (order_editor);
 }
+
+
 
 static void
 thunar_order_editor_toggle_activity (ThunarOrderEditor *order_editor,
@@ -361,6 +388,8 @@ thunar_order_editor_toggle_activity (ThunarOrderEditor *order_editor,
     }
   gtk_tree_path_free (path);
 }
+
+
 
 static void
 thunar_order_editor_move_up (ThunarOrderEditor *order_editor)
@@ -382,6 +411,8 @@ thunar_order_editor_move_up (ThunarOrderEditor *order_editor)
     }
 }
 
+
+
 static void
 thunar_order_editor_move_down (ThunarOrderEditor *order_editor)
 {
@@ -401,6 +432,8 @@ thunar_order_editor_move_down (ThunarOrderEditor *order_editor)
       thunar_order_editor_update_buttons (order_editor);
     }
 }
+
+
 
 static void
 thunar_order_editor_update_buttons (ThunarOrderEditor *order_editor)
@@ -433,40 +466,54 @@ thunar_order_editor_update_buttons (ThunarOrderEditor *order_editor)
 }
 
 
+
 GtkContainer *
 thunar_order_editor_get_description_area (ThunarOrderEditor *order_editor)
 {
   ThunarOrderEditorPrivate *priv;
 
-  g_return_val_if_fail (THUNAR_IS_ORDER_EDITOR (order_editor), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_ORDER_EDITOR (order_editor), NULL);
+
+
   priv = thunar_order_editor_get_instance_private (order_editor);
   return GTK_CONTAINER (priv->description_area);
 }
+
+
 
 GtkContainer *
 thunar_order_editor_get_settings_area (ThunarOrderEditor *order_editor)
 {
   ThunarOrderEditorPrivate *priv;
 
-  g_return_val_if_fail (THUNAR_IS_ORDER_EDITOR (order_editor), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_ORDER_EDITOR (order_editor), NULL);
+
   priv = thunar_order_editor_get_instance_private (order_editor);
   return GTK_CONTAINER (priv->settings_area);
 }
+
+
 
 void
 thunar_order_editor_set_model (ThunarOrderEditor *order_editor,
                                ThunarOrderModel  *model)
 {
-  g_return_if_fail (THUNAR_IS_ORDER_EDITOR (order_editor));
-  g_return_if_fail (THUNAR_IS_ORDER_MODEL (model));
+  _thunar_return_if_fail (THUNAR_IS_ORDER_EDITOR (order_editor));
+  _thunar_return_if_fail (THUNAR_IS_ORDER_MODEL (model));
+
   g_object_set (order_editor, "model", model, NULL);
 }
+
+
 
 void
 thunar_order_editor_show (ThunarOrderEditor *order_editor,
                           GtkWidget         *window)
 {
   GdkScreen *screen = NULL;
+
+  _thunar_return_if_fail (THUNAR_IS_ORDER_EDITOR (order_editor));
+  _thunar_return_if_fail (GTK_IS_WIDGET (window));
 
   if (window == NULL)
     {
