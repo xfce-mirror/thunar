@@ -30,6 +30,8 @@ struct _ThunarToolbarOrderEditorClass
   ThunarOrderEditorClass __parent__;
 };
 
+
+
 struct _ThunarToolbarOrderEditor
 {
   ThunarOrderEditor __parent__;
@@ -37,13 +39,19 @@ struct _ThunarToolbarOrderEditor
   ThunarPreferences *preferences;
 };
 
+
+
 static void
 thunar_toolbar_order_editor_finalize (GObject *object);
 
 static void
 thunar_toolbar_order_editor_help (ThunarOrderEditor *order_editor);
 
+
+
 G_DEFINE_TYPE (ThunarToolbarOrderEditor, thunar_toolbar_order_editor, THUNAR_TYPE_ORDER_EDITOR)
+
+
 
 static void
 thunar_toolbar_order_editor_class_init (ThunarToolbarOrderEditorClass *klass)
@@ -52,6 +60,8 @@ thunar_toolbar_order_editor_class_init (ThunarToolbarOrderEditorClass *klass)
 
   object_class->finalize = thunar_toolbar_order_editor_finalize;
 }
+
+
 
 static void
 thunar_toolbar_order_editor_init (ThunarToolbarOrderEditor *toolbar_editor)
@@ -89,6 +99,8 @@ thunar_toolbar_order_editor_init (ThunarToolbarOrderEditor *toolbar_editor)
                 NULL);
 }
 
+
+
 static void
 thunar_toolbar_order_editor_finalize (GObject *object)
 {
@@ -99,6 +111,8 @@ thunar_toolbar_order_editor_finalize (GObject *object)
   G_OBJECT_CLASS (thunar_toolbar_order_editor_parent_class)->finalize (object);
 }
 
+
+
 static void
 thunar_toolbar_order_editor_help (ThunarOrderEditor *order_editor)
 {
@@ -107,6 +121,8 @@ thunar_toolbar_order_editor_help (ThunarOrderEditor *order_editor)
                          "the-file-manager-window",
                          "toolbar_customization");
 }
+
+
 
 void
 thunar_toolbar_order_editor_show (GtkWidget *window,
