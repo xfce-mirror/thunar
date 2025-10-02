@@ -93,6 +93,11 @@ thunar_column_order_model_init (ThunarColumnOrderModel *column_model)
 {
   column_model->preferences = thunar_preferences_get ();
   column_model->model = thunar_column_model_get_default ();
+
+  g_signal_connect_swapped (G_OBJECT (column_model->preferences), "notify::last-details-view-column-order",
+                            G_CALLBACK (thunar_order_model_reload), column_model);
+  g_signal_connect_swapped (G_OBJECT (column_model->preferences), "notify::last-details-view-visible-columns",
+                            G_CALLBACK (thunar_order_model_reload), column_model);
 }
 
 
@@ -102,6 +107,7 @@ thunar_column_order_model_finalize (GObject *object)
 {
   ThunarColumnOrderModel *column_model = THUNAR_COLUMN_ORDER_MODEL (object);
 
+  g_signal_handlers_disconnect_by_data (column_model->preferences, column_model);
   g_clear_object (&column_model->preferences);
   g_clear_object (&column_model->model);
 
