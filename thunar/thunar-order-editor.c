@@ -302,6 +302,11 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
                             G_CALLBACK (thunar_order_editor_reset_clicked), order_editor);
   gtk_box_pack_start (GTK_BOX (button_box), priv->reset_button, FALSE, FALSE, 0);
 
+  image = gtk_image_new_from_icon_name ("document-revert-symbolic", GTK_ICON_SIZE_BUTTON);
+  gtk_button_set_always_show_image (GTK_BUTTON (priv->reset_button), TRUE);
+  gtk_button_set_image (GTK_BUTTON (priv->reset_button), image);
+  gtk_widget_show (image);
+
   /* create settings area */
   priv->settings_area = gtk_widget_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), priv->settings_area, FALSE, FALSE, 0);
