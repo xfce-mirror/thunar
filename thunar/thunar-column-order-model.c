@@ -168,7 +168,9 @@ thunar_column_order_model_set_activity (ThunarOrderModel *order_model,
 {
   ThunarColumnOrderModel *column_model = THUNAR_COLUMN_ORDER_MODEL (order_model);
 
+  g_signal_handlers_block_by_func (G_OBJECT (column_model->preferences), thunar_order_model_reload, column_model);
   thunar_column_model_set_column_visible (column_model->model, position, activity);
+  g_signal_handlers_unblock_by_func (G_OBJECT (column_model->preferences), thunar_order_model_reload, column_model);
 }
 
 
@@ -184,7 +186,10 @@ thunar_column_order_model_swap_items (ThunarOrderModel *order_model,
 
   gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (column_model->model), &a_iter, NULL, a_position);
   gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (column_model->model), &b_iter, NULL, b_position);
+
+  g_signal_handlers_block_by_func (G_OBJECT (column_model->preferences), thunar_order_model_reload, column_model);
   thunar_column_model_exchange (column_model->model, &a_iter, &b_iter);
+  g_signal_handlers_unblock_by_func (G_OBJECT (column_model->preferences), thunar_order_model_reload, column_model);
 }
 
 
