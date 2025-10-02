@@ -153,17 +153,13 @@ thunar_component_set_selected_files (ThunarComponent *component,
   /* try the hashtable method first for better performance */
   if (THUNAR_COMPONENT_GET_IFACE (component)->set_selected_files_hashtable != NULL)
     {
-      if (selected_files != NULL)
-        {
-          hashtable = g_hash_table_new (g_direct_hash, g_direct_equal);
-          for (lp = selected_files; lp != NULL; lp = lp->next)
-            g_hash_table_add (hashtable, lp->data);
-        }
+      hashtable = g_hash_table_new (g_direct_hash, g_direct_equal);
+      for (lp = selected_files; lp != NULL; lp = lp->next)
+        g_hash_table_add (hashtable, lp->data);
       
       (*THUNAR_COMPONENT_GET_IFACE (component)->set_selected_files_hashtable) (component, hashtable);
       
-      if (hashtable != NULL)
-        g_hash_table_destroy (hashtable);
+      g_hash_table_destroy (hashtable);
       return;
     }
   
