@@ -20,6 +20,7 @@
 #include "thunar/thunar-column-order-model.h"
 
 #include "thunar/thunar-preferences.h"
+#include "thunar/thunar-private.h"
 
 #include <libxfce4util/libxfce4util.h>
 
@@ -64,6 +65,10 @@ thunar_column_order_model_swap_items (ThunarOrderModel *order_model,
 
 static void
 thunar_column_order_model_reset (ThunarOrderModel *order_model);
+
+static ThunarColumn
+thunar_column_order_model_get_model_column_nth (ThunarColumnOrderModel *column_model,
+                                                gint                    position);
 
 
 
@@ -131,26 +136,27 @@ thunar_column_order_model_get_value (ThunarOrderModel      *order_model,
                                      GValue                *value)
 {
   ThunarColumnOrderModel *column_model = THUNAR_COLUMN_ORDER_MODEL (order_model);
+  ThunarColumn            model_column = thunar_column_order_model_get_model_column_nth (column_model, position);
 
   switch (column)
     {
     case THUNAR_ORDER_MODEL_COLUMN_ACTIVE:
-      g_value_set_boolean (value, thunar_column_model_get_column_visible (column_model->model, position));
+      g_value_set_boolean (value, thunar_column_model_get_column_visible (column_model->model, model_column));
       break;
 
     case THUNAR_ORDER_MODEL_COLUMN_MUTABLE:
-      g_value_set_boolean (value, position != THUNAR_COLUMN_NAME && !thunar_column_is_special (position));
+      g_value_set_boolean (value, model_column != THUNAR_COLUMN_NAME && !thunar_column_is_special (model_column));
       break;
 
     case THUNAR_ORDER_MODEL_COLUMN_ICON:
       break;
 
     case THUNAR_ORDER_MODEL_COLUMN_NAME:
-      g_value_set_string (value, thunar_column_model_get_column_name (column_model->model, position));
+      g_value_set_string (value, thunar_column_model_get_column_name (column_model->model, model_column));
       break;
 
     case THUNAR_ORDER_MODEL_COLUMN_TOOLTIP:
-      if (thunar_column_is_special (position))
+      if (thunar_column_is_special (model_column))
         g_value_set_string (value, _("This column is reserved for special locations"));
       break;
 
@@ -215,6 +221,18 @@ thunar_column_order_model_reset (ThunarOrderModel *order_model)
       g_object_set_property (G_OBJECT (column_model->preferences), property_names[n], &value);
       g_value_unset (&value);
     }
+}
+
+
+
+static ThunarColumn
+thunar_column_order_model_get_model_column_nth (ThunarColumnOrderModel *column_model,
+                                                gint                    position)
+{
+  const ThunarColumn *order = thunar_column_model_get_column_order (column_model->model);
+
+  g_assert (position >= 0 && position < THUNAR_N_VISIBLE_COLUMNS);
+  return order[position];
 }
 
 
