@@ -399,7 +399,10 @@ thunar_folder_finalize (GObject *object)
     g_source_remove (folder->files_update_timeout_source_id);
 
   if (folder->monitor != NULL)
-    g_signal_handlers_disconnect_by_data (folder->monitor, folder);
+    {
+      g_signal_handlers_disconnect_by_data (folder->monitor, folder);
+      g_object_unref (folder->monitor);
+    }
 
   if (folder->corresponding_file)
     {
