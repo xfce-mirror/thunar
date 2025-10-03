@@ -803,54 +803,35 @@ thunar_column_model_get_default (void)
 
 
 
-/**
- * thunar_column_model_exchange:
- * @column_model : a #ThunarColumnModel.
- * @iter1        : first #GtkTreeIter.
- * @iter2        : second #GtkTreeIter.
- *
- * Exchanges the columns at @iter1 and @iter2
- * in @column_model.
- **/
 void
-thunar_column_model_exchange (ThunarColumnModel *column_model,
-                              GtkTreeIter       *iter1,
-                              GtkTreeIter       *iter2)
+thunar_column_model_move_before (ThunarColumnModel *column_model,
+                                 GtkTreeIter       *iter1,
+                                 GtkTreeIter       *iter2)
 {
-  ThunarColumn column;
-  GtkTreePath *path;
-  gint         new_order[THUNAR_N_VISIBLE_COLUMNS];
-  gint         n;
+  gint         source = GPOINTER_TO_INT (iter1->user_data);
+  gint         target = GPOINTER_TO_INT (iter2->user_data);
+  ThunarColumn source_column = column_model->order[source];
+  ThunarColumn saved_order[THUNAR_N_VISIBLE_COLUMNS];
+  gint         i, j;
 
   _thunar_return_if_fail (THUNAR_IS_COLUMN_MODEL (column_model));
   _thunar_return_if_fail (iter1->stamp == column_model->stamp);
   _thunar_return_if_fail (iter2->stamp == column_model->stamp);
 
-  /* swap the columns */
-  column = column_model->order[GPOINTER_TO_INT (iter1->user_data)];
-  column_model->order[GPOINTER_TO_INT (iter1->user_data)] = column_model->order[GPOINTER_TO_INT (iter2->user_data)];
-  column_model->order[GPOINTER_TO_INT (iter2->user_data)] = column;
+  memcpy (saved_order, column_model->order, sizeof (saved_order));
+  for (i = 0, j = 0; i < THUNAR_N_VISIBLE_COLUMNS; ++i)
+    {
+      if (j == source)
+        ++j;
 
-  /* initialize the new order array */
-  for (n = 0; n < THUNAR_N_VISIBLE_COLUMNS; ++n)
-    new_order[n] = n;
+      if (i == target)
+        column_model->order[i] = source_column;
+      else
+        column_model->order[i] = saved_order[j++];
+    }
 
-  /* perform the swapping on the new order array */
-  new_order[GPOINTER_TO_INT (iter1->user_data)] = GPOINTER_TO_INT (iter2->user_data);
-  new_order[GPOINTER_TO_INT (iter2->user_data)] = GPOINTER_TO_INT (iter1->user_data);
-
-  /* emit "rows-reordered" */
-  path = gtk_tree_path_new ();
-  gtk_tree_model_rows_reordered (GTK_TREE_MODEL (column_model), path, NULL, new_order);
-  gtk_tree_path_free (path);
-
-  /* emit "columns-changed" */
-  g_signal_emit (G_OBJECT (column_model), column_model_signals[COLUMNS_CHANGED], 0);
-
-  /* save the new column order */
   thunar_column_model_save_column_order (column_model);
 }
-
 
 
 /**

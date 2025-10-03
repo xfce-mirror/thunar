@@ -7360,49 +7360,21 @@ thunar_window_toolbar_toggle_item_visibility (ThunarWindow *window,
 
 
 void
-thunar_window_toolbar_swap_items (ThunarWindow *window,
-                                  gint          index_a,
-                                  gint          index_b)
+thunar_window_toolbar_move_item_before (ThunarWindow *window,
+                                        gint          a_position,
+                                        gint          b_position)
 {
-  GList     *toolbar_items, *lp;
-  GtkWidget *item_a = NULL;
-  GtkWidget *item_b = NULL;
+  GList     *items = gtk_container_get_children (GTK_CONTAINER (window->location_toolbar));
+  GtkWidget *item = g_list_nth_data (items, a_position);
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
-  _thunar_return_if_fail (index_a >= 0);
-  _thunar_return_if_fail (index_b >= 0);
-
-  if (window->location_toolbar == NULL)
-    return;
-
-  toolbar_items = gtk_container_get_children (GTK_CONTAINER (window->location_toolbar));
-  lp = toolbar_items;
-
-  for (gint i = 0; lp != NULL; lp = lp->next, i++)
+  if (item != NULL)
     {
-      if (index_a == i)
-        item_a = lp->data;
-      if (index_b == i)
-        item_b = lp->data;
+      g_object_ref (item);
+      gtk_container_remove (GTK_CONTAINER (window->location_toolbar), item);
+      gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), GTK_TOOL_ITEM (item), b_position);
     }
 
-  if (item_a == NULL || item_b == NULL)
-    {
-      g_error ("Unable to swap toolbar items.\n");
-      return;
-    }
-
-  g_object_ref (item_a);
-  gtk_container_remove (GTK_CONTAINER (window->location_toolbar), item_a);
-  gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), GTK_TOOL_ITEM (item_a), index_b);
-  g_object_unref (item_a);
-
-  g_object_ref (item_b);
-  gtk_container_remove (GTK_CONTAINER (window->location_toolbar), item_b);
-  gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), GTK_TOOL_ITEM (item_b), index_a);
-  g_object_unref (item_b);
-
-  g_list_free (toolbar_items);
+  g_list_free (items);
 }
 
 
