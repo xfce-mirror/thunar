@@ -618,6 +618,10 @@ spawn_async_callback (VteTerminal *terminal,
     {
       priv->child_pid = pid;
       priv->needs_respawn = FALSE;
+
+      /* spawning a new terminal will trigger an even further delayed 'directory-changed' signal */
+      /* Ignore that, since we dont want to force a directory change on ThunarWindow on terminal spawn */
+      priv->ignore_next_directory_change = TRUE;
     }
 }
 
