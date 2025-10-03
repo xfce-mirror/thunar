@@ -52,9 +52,9 @@ struct _ThunarOrderModelClass
                         gint              position,
                         gboolean          activity);
 
-  void (*swap_items) (ThunarOrderModel *order_model,
-                      gint              a_position,
-                      gint              b_position);
+  void (*move_before) (ThunarOrderModel *order_model,
+                       gint              a_position,
+                       gint              b_position);
 
   void (*reset) (ThunarOrderModel *order_model);
 };
@@ -68,6 +68,11 @@ void
 thunar_order_model_swap_items (ThunarOrderModel *order_model,
                                GtkTreeIter      *a_iter,
                                GtkTreeIter      *b_iter);
+
+void
+thunar_order_model_move_before (ThunarOrderModel *order_model,
+                                GtkTreeIter      *a_iter,
+                                GtkTreeIter      *b_iter);
 
 void
 thunar_order_model_reset (ThunarOrderModel *order_model);
