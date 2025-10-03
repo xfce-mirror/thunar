@@ -58,10 +58,16 @@ thunar_toolbar_order_model_set_activity (ThunarOrderModel *order_model,
                                          gint              position,
                                          gboolean          activity);
 
+
 static void
-thunar_toolbar_order_model_swap_items (ThunarOrderModel *order_model,
-                                       gint              a_position,
-                                       gint              b_position);
+thunar_toolbar_order_model_move_before (ThunarOrderModel *order_model,
+                                        gint              a_position,
+                                        gint              b_position);
+
+static void
+thunar_toolbar_order_model_swap (ThunarToolbarOrderModel *toolbar_model,
+                                 gint                     a_position,
+                                 gint                     b_position);
 
 static void
 thunar_toolbar_order_model_reset (ThunarOrderModel *order_model);
@@ -90,7 +96,7 @@ thunar_toolbar_order_model_class_init (ThunarToolbarOrderModelClass *klass)
   order_model_class->get_n_items = thunar_toolbar_order_model_get_n_items;
   order_model_class->get_value = thunar_toolbar_order_model_get_value;
   order_model_class->set_activity = thunar_toolbar_order_model_set_activity;
-  order_model_class->swap_items = thunar_toolbar_order_model_swap_items;
+  order_model_class->move_before = thunar_toolbar_order_model_move_before;
   order_model_class->reset = thunar_toolbar_order_model_reset;
 }
 
@@ -201,23 +207,40 @@ thunar_toolbar_order_model_set_activity (ThunarOrderModel *order_model,
 
 
 static void
-thunar_toolbar_order_model_swap_items (ThunarOrderModel *order_model,
-                                       gint              a_position,
-                                       gint              b_position)
+thunar_toolbar_order_model_move_before (ThunarOrderModel *order_model,
+                                        gint              a_position,
+                                        gint              b_position)
 {
   ThunarToolbarOrderModel *toolbar_model = THUNAR_TOOLBAR_ORDER_MODEL (order_model);
   ThunarApplication       *application = thunar_application_get ();
-  GList                   *windows = thunar_application_get_windows (application);
-  GList                   *la = g_list_nth (toolbar_model->children, a_position);
-  GList                   *lb = g_list_nth (toolbar_model->children, b_position);
-  gpointer                 tmp;
+  GList                   *list_item = g_list_nth (toolbar_model->children, a_position);
+  GList                   *windows;
 
-  tmp = la->data;
-  la->data = lb->data;
-  lb->data = tmp;
+  g_return_if_fail (list_item != NULL);
 
+  /* Changing the local list */
+  toolbar_model->children = g_list_remove_link (toolbar_model->children, list_item);
+  toolbar_model->children = g_list_insert_before_link (toolbar_model->children,
+                                                       g_list_nth (toolbar_model->children, b_position),
+                                                       list_item);
+
+  /* Changes the order for all windows */
+  windows = thunar_application_get_windows (application);
   for (GList *lp = windows; lp != NULL; lp = lp->next)
-    thunar_window_toolbar_swap_items (THUNAR_WINDOW (lp->data), a_position, b_position);
+    thunar_window_toolbar_move_item_before (THUNAR_WINDOW (lp->data), a_position, b_position);
+}
+
+
+
+static void
+thunar_toolbar_order_model_swap (ThunarToolbarOrderModel *toolbar_model,
+                                 gint                     a_position,
+                                 gint                     b_position)
+{
+  if (a_position > b_position)
+    thunar_toolbar_order_model_move_before (THUNAR_ORDER_MODEL (toolbar_model), a_position, b_position);
+  else
+    thunar_toolbar_order_model_move_before (THUNAR_ORDER_MODEL (toolbar_model), b_position, a_position);
 }
 
 
@@ -251,8 +274,7 @@ thunar_toolbar_order_model_reset (ThunarOrderModel *order_model)
           guint y = current_order[j];
           if (x == y && i != j)
             {
-              thunar_toolbar_order_model_swap_items (order_model, i, j);
-
+              thunar_toolbar_order_model_swap (toolbar_model, i, j);
               y = current_order[i];
               current_order[i] = target_order[i];
               current_order[j] = y;
