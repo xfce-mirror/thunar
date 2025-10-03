@@ -61,9 +61,9 @@ ThunarColumnModel *
 thunar_column_model_get_default (void);
 
 void
-thunar_column_model_exchange (ThunarColumnModel *column_model,
-                              GtkTreeIter       *iter1,
-                              GtkTreeIter       *iter2);
+thunar_column_model_move_before (ThunarColumnModel *column_model,
+                                 GtkTreeIter       *iter1,
+                                 GtkTreeIter       *iter2);
 
 ThunarColumn
 thunar_column_model_get_column_for_iter (ThunarColumnModel *column_model,
