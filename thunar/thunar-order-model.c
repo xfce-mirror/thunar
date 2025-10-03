@@ -552,8 +552,8 @@ thunar_order_model_swap_items (ThunarOrderModel *order_model,
                                GtkTreeIter      *a_iter,
                                GtkTreeIter      *b_iter)
 {
-  gint                   a_position;
-  gint                   b_position;
+  gint a_position;
+  gint b_position;
 
   _thunar_return_if_fail (THUNAR_IS_ORDER_MODEL (order_model));
   _thunar_return_if_fail (a_iter != NULL);
