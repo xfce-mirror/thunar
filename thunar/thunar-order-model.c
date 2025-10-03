@@ -197,11 +197,8 @@ static gboolean
 thunar_order_model_drag_data_delete (GtkTreeDragSource *drag_source,
                                      GtkTreePath       *path)
 {
-  /*
-   * Gtk expects the code to do Delete+Insert, but instead ThunarOrderModel
-   * only does thunar_order_model_swap_items at the end of DnD
-   */
-  return TRUE;
+  /* No removal occurs, instead thunar_order_model_move_before is called at the end of DnD */
+  return FALSE;
 }
 
 
@@ -246,13 +243,22 @@ thunar_order_model_drag_data_received (GtkTreeDragDest  *drag_dest,
   GtkTreePath *source = gtk_tree_path_new_from_string (data);
   GtkTreeIter  a_iter;
   GtkTreeIter  b_iter;
+  gint         a_position;
+  gint         b_position;
 
-  thunar_order_model_get_iter (GTK_TREE_MODEL (drag_dest), &a_iter, source);
-  thunar_order_model_get_iter (GTK_TREE_MODEL (drag_dest), &b_iter, dest);
-  thunar_order_model_swap_items (THUNAR_ORDER_MODEL (drag_dest), &a_iter, &b_iter);
+  a_position = *gtk_tree_path_get_indices (source);
+  b_position = *gtk_tree_path_get_indices (dest);
+
+  /* Gtk thinks we deleted the row */
+  if (b_position > a_position)
+    --b_position;
+
+  thunar_order_model_init_iter (&a_iter, a_position);
+  thunar_order_model_init_iter (&b_iter, b_position);
+  thunar_order_model_move_before (THUNAR_ORDER_MODEL (drag_dest), &a_iter, &b_iter);
   gtk_tree_path_free (source);
 
-  return TRUE;
+  return FALSE;
 }
 
 
@@ -307,7 +313,7 @@ thunar_order_model_init_iter (GtkTreeIter *iter,
                               gint         position)
 {
   memset (iter, 0, sizeof (GtkTreeIter));
-  iter->user_data = (gpointer) (uintptr_t) (position);
+  iter->user_data = GINT_TO_POINTER (position);
 }
 
 
@@ -315,7 +321,7 @@ thunar_order_model_init_iter (GtkTreeIter *iter,
 static gint
 thunar_order_model_get_iter_position (GtkTreeIter *iter)
 {
-  return (gint) (uintptr_t) iter->user_data;
+  return GPOINTER_TO_INT (iter->user_data);
 }
 
 
@@ -535,7 +541,7 @@ thunar_order_model_set_activity (ThunarOrderModel *order_model,
   order_model_class->set_activity (order_model, position, activity);
 
   path = thunar_order_model_get_path (GTK_TREE_MODEL (order_model), iter);
-  g_signal_emit_by_name (order_model, "row-changed", path, iter);
+  gtk_tree_model_row_changed (GTK_TREE_MODEL (order_model), path, iter);
   gtk_tree_path_free (path);
 }
 
@@ -546,31 +552,63 @@ thunar_order_model_swap_items (ThunarOrderModel *order_model,
                                GtkTreeIter      *a_iter,
                                GtkTreeIter      *b_iter)
 {
+  gint                   a_position;
+  gint                   b_position;
+
+  _thunar_return_if_fail (THUNAR_IS_ORDER_MODEL (order_model));
+  _thunar_return_if_fail (a_iter != NULL);
+  _thunar_return_if_fail (b_iter != NULL);
+
+  a_position = thunar_order_model_get_iter_position (a_iter);
+  b_position = thunar_order_model_get_iter_position (b_iter);
+
+  if (a_position > b_position)
+    thunar_order_model_move_before (order_model, a_iter, b_iter);
+  else
+    thunar_order_model_move_before (order_model, b_iter, a_iter);
+}
+
+
+
+void
+thunar_order_model_move_before (ThunarOrderModel *order_model,
+                                GtkTreeIter      *a_iter,
+                                GtkTreeIter      *b_iter)
+{
   ThunarOrderModelClass *order_model_class;
   gint                   a_position;
   gint                   b_position;
-  GtkTreePath           *a_path;
-  GtkTreePath           *b_path;
+  gint                   n_items = thunar_order_model_get_n_items (order_model);
+  gint                  *new_order;
+  gint                   i, j;
 
   _thunar_return_if_fail (THUNAR_IS_ORDER_MODEL (order_model));
   _thunar_return_if_fail (a_iter != NULL);
   _thunar_return_if_fail (b_iter != NULL);
 
   order_model_class = THUNAR_ORDER_MODEL_GET_CLASS (order_model);
-  _thunar_return_if_fail (order_model_class->swap_items != NULL);
+  _thunar_return_if_fail (order_model_class->move_before != NULL);
 
   a_position = thunar_order_model_get_iter_position (a_iter);
   b_position = thunar_order_model_get_iter_position (b_iter);
-  order_model_class->swap_items (order_model, a_position, b_position);
+  order_model_class->move_before (order_model, a_position, b_position);
 
-  a_path = thunar_order_model_get_path (GTK_TREE_MODEL (order_model), a_iter);
-  b_path = thunar_order_model_get_path (GTK_TREE_MODEL (order_model), b_iter);
+  /* Let's notify gtk about the changes */
+  new_order = g_new (gint, n_items);
+  for (i = 0, j = 0; i < n_items; ++i)
+    {
+      if (j == a_position)
+        ++j;
 
-  g_signal_emit_by_name (order_model, "row-changed", a_path, a_iter);
-  g_signal_emit_by_name (order_model, "row-changed", b_path, b_iter);
-
-  gtk_tree_path_free (a_path);
-  gtk_tree_path_free (b_path);
+      if (i == b_position)
+        new_order[i] = a_position;
+      else
+        new_order[i] = j++;
+    }
+  gtk_tree_model_rows_reordered_with_length (GTK_TREE_MODEL (order_model),
+                                             gtk_tree_path_new (), NULL,
+                                             new_order, n_items);
+  g_free (new_order);
 }
 
 
@@ -604,8 +642,8 @@ thunar_order_model_reload (ThunarOrderModel *order_model)
   thunar_order_model_init_iter (&iter, 0);
   path = gtk_tree_path_new_from_indices (0, -1);
   for (i = 0; i < n_items; ++i)
-    g_signal_emit_by_name (order_model, "row-deleted", path);
+    gtk_tree_model_row_deleted (GTK_TREE_MODEL (order_model), path);
   for (i = 0; i < n_items; ++i)
-    g_signal_emit_by_name (order_model, "row-inserted", path, &iter);
+    gtk_tree_model_row_inserted (GTK_TREE_MODEL (order_model), path, &iter);
   gtk_tree_path_free (path);
 }
