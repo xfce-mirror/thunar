@@ -694,7 +694,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /* next row */
   row++;
 
-  label = gtk_label_new_with_mnemonic (_("Color progress bar orange when used disk space exceeds:"));
+  label = gtk_label_new_with_mnemonic (_("Use warning color when used disk space exceeds:"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "shortcuts-disk-space-usage-bar",
                           G_OBJECT (label),
@@ -716,7 +716,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           "sensitive",
                           G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (dialog->preferences),
-                          "shortcuts-disk-space-usage-orange-percent",
+                          "shortcuts-disk-space-usage-warning-percent",
                           G_OBJECT (button),
                           "value",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
@@ -740,7 +740,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /* next row */
   row++;
 
-  label = gtk_label_new_with_mnemonic (_("Color progress bar red when used disk space exceeds:"));
+  label = gtk_label_new_with_mnemonic (_("Use error color when used disk space exceeds:"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "shortcuts-disk-space-usage-bar",
                           G_OBJECT (label),
@@ -762,7 +762,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           "sensitive",
                           G_BINDING_SYNC_CREATE);
   g_object_bind_property (G_OBJECT (dialog->preferences),
-                          "shortcuts-disk-space-usage-red-percent",
+                          "shortcuts-disk-space-usage-error-percent",
                           G_OBJECT (button),
                           "value",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);

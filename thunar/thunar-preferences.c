@@ -125,9 +125,8 @@ enum
   PROP_SHORTCUTS_ICON_EMBLEMS,
   PROP_SHORTCUTS_ICON_SIZE,
   PROP_SHORTCUTS_DISK_SPACE_USAGE_BAR,
-  PROP_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT,
-  PROP_SHORTCUTS_DISK_SPACE_USAGE_ORANGE_PERCENT,
-  PROP_SHORTCUTS_DISK_SPACE_USAGE_RED_PERCENT,
+  PROP_SHORTCUTS_DISK_SPACE_USAGE_WARNING_PERCENT,
+  PROP_SHORTCUTS_DISK_SPACE_USAGE_ERROR_PERCENT,
   PROP_TREE_ICON_EMBLEMS,
   PROP_TREE_ICON_SIZE,
   PROP_TREE_LINES,
@@ -1232,24 +1231,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   /**
    * ThunarPreferences:disk-space-usage-bar:
    *
-   * Just the height of the progressbar
+   * Threshold value
    **/
-  preferences_props[PROP_SHORTCUTS_DISK_SPACE_USAGE_BAR_HEIGHT] =
-  g_param_spec_int ("shortcuts-disk-space-usage-bar-height",
-                    "ShortcutsDiskSpaceUsageBarHeight",
-                    NULL,
-                    1, 256,
-                    4,
-                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-
-  /**
-   * ThunarPreferences:disk-space-usage-bar:
-   *
-   * At what percentage should the progress bar be repainted?
-   **/
-  preferences_props[PROP_SHORTCUTS_DISK_SPACE_USAGE_ORANGE_PERCENT] =
-  g_param_spec_int ("shortcuts-disk-space-usage-orange-percent",
-                    "ShortcutsDiskSpaceUsageOrangePercent",
+  preferences_props[PROP_SHORTCUTS_DISK_SPACE_USAGE_WARNING_PERCENT] =
+  g_param_spec_int ("shortcuts-disk-space-usage-warning-percent",
+                    "ShortcutsDiskSpaceUsageWarningPercent",
                     NULL,
                     0, 100,
                     90,
@@ -1258,11 +1244,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   /**
    * ThunarPreferences:disk-space-usage-bar:
    *
-   * At what percentage should the progress bar be repainted?
+   * Threshold value
    **/
-  preferences_props[PROP_SHORTCUTS_DISK_SPACE_USAGE_RED_PERCENT] =
-  g_param_spec_int ("shortcuts-disk-space-usage-red-percent",
-                    "ShortcutsDiskSpaceUsageRedPercent",
+  preferences_props[PROP_SHORTCUTS_DISK_SPACE_USAGE_ERROR_PERCENT] =
+  g_param_spec_int ("shortcuts-disk-space-usage-error-percent",
+                    "ShortcutsDiskSpaceUsageErrorPercent",
                     NULL,
                     0, 100,
                     95,
