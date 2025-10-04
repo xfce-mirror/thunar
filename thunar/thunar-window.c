@@ -1469,8 +1469,9 @@ thunar_window_select_files (ThunarWindow *window,
 
   for (GList *lp = files_to_select; lp != NULL; lp = lp->next)
     thunar_files = g_list_append (thunar_files, thunar_file_get (G_FILE (lp->data), NULL));
-  if (thunar_files != NULL)
-    thunar_view_set_selected_files (THUNAR_VIEW (window->view), thunar_files);
+  
+  /* let ThunarComponent fallback handle the GList->GHashTable conversion */
+  thunar_component_set_selected_files (THUNAR_COMPONENT (window->view), thunar_files);
   g_list_free_full (thunar_files, g_object_unref);
 }
 
@@ -6364,7 +6365,7 @@ thunar_window_update_image_preview (ThunarWindow *window)
     {
       if (window->preview_image_pixbuf != NULL)
         {
-          GList       *selected_files = thunar_view_get_selected_files (THUNAR_VIEW (window->view));
+          GList *selected_files = thunar_component_get_selected_files (THUNAR_COMPONENT (window->view));
           const gchar *display_name = thunar_file_get_display_name (selected_files->data);
           gchar       *file_size;
           gboolean     file_size_binary;
@@ -6410,7 +6411,7 @@ thunar_window_preview_file_destroyed (ThunarWindow *window)
 static void
 thunar_window_selection_changed (ThunarWindow *window)
 {
-  GList *selected_files = thunar_view_get_selected_files (THUNAR_VIEW (window->view));
+  GList *selected_files = thunar_component_get_selected_files (THUNAR_COMPONENT (window->view));
 
   /* update the `Restore` button specific to the trash location */
   if (thunar_file_is_trashed (window->current_directory))
