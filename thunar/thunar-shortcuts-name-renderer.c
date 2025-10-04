@@ -35,8 +35,6 @@
  *
  *   disk-space-usage-bar-enabled - boolean, controls whether the progress bar is displayed
  *
- *   disk-space-usage-bar-height - integer, accept values (1, 256)
- *
  *   disk-space-usage-percent - integer, accepts values (-1, 0-100); when set to -1, the progress bar is not displayed
  *
  *   disk-space-warning-percent - integer, accept values (0-100); color is not displayed if value is 0
@@ -65,7 +63,6 @@ enum
 {
   PROP_0,
   PROP_DISK_SPACE_USAGE_BAR_ENABLED,
-  PROP_DISK_SPACE_USAGE_BAR_HEIGHT,
   PROP_DISK_SPACE_USAGE_PERCENT,
   PROP_DISK_SPACE_USAGE_WARNING_PERCENT,
   PROP_DISK_SPACE_USAGE_ERROR_PERCENT
