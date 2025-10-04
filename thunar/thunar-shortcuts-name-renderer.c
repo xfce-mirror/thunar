@@ -21,6 +21,8 @@
 
 #define SPACE_USAGE_BAR_YPAD 4
 
+#define SPACE_USAGE_BAR_HEIGHT 4
+
 /*
  * In addition to the standard capabilities of GtkCellRendererText, this renderer
  * can display a progress bar beneath the text, which is used to indicate disk usage.
@@ -37,9 +39,9 @@
  *
  *   disk-space-usage-percent - integer, accepts values (-1, 0-100); when set to -1, the progress bar is not displayed
  *
- *   disk-space-orange-percent - integer, accept values (0-100); color is not displayed if value is 0
+ *   disk-space-warning-percent - integer, accept values (0-100); color is not displayed if value is 0
  *
- *   disk-space-red-percent - integer, accepts value (0-100); color is not displayed if value is 0
+ *   disk-space-error-percent - integer, accepts value (0-100); color is not displayed if value is 0
  *
  * CAUTION: This class uses the yalign property for positioning the text, so you cannot
  * set this property yourself.
@@ -54,10 +56,9 @@ struct _ThunarShortcutsNameRenderer
   GtkCellRendererText __parent__;
 
   gboolean disk_space_usage_bar_enabled;
-  gint     disk_space_usage_bar_height;
   gint     disk_space_usage_percent;
-  gint     disk_space_usage_orange_percent;
-  gint     disk_space_usage_red_percent;
+  gint     disk_space_usage_warning_percent;
+  gint     disk_space_usage_error_percent;
 };
 
 enum
@@ -66,8 +67,8 @@ enum
   PROP_DISK_SPACE_USAGE_BAR_ENABLED,
   PROP_DISK_SPACE_USAGE_BAR_HEIGHT,
   PROP_DISK_SPACE_USAGE_PERCENT,
-  PROP_DISK_SPACE_USAGE_ORANGE_PERCENT,
-  PROP_DISK_SPACE_USAGE_RED_PERCENT
+  PROP_DISK_SPACE_USAGE_WARNING_PERCENT,
+  PROP_DISK_SPACE_USAGE_ERROR_PERCENT
 };
 
 
@@ -130,6 +131,10 @@ static gboolean
 thunar_shortcuts_name_renderer_disk_space_usage_bar_styled (GtkWidget *widget);
 
 
+static gint
+thunar_shortcuts_name_renderer_get_disk_space_usage_bar_height (GtkWidget *widget);
+
+
 
 G_DEFINE_TYPE (ThunarShortcutsNameRenderer, thunar_shortcuts_name_renderer, GTK_TYPE_CELL_RENDERER_TEXT)
 
@@ -151,14 +156,6 @@ thunar_shortcuts_name_renderer_class_init (ThunarShortcutsNameRendererClass *kla
                                                          TRUE,
                                                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT));
 
-  g_object_class_install_property (object_class, PROP_DISK_SPACE_USAGE_BAR_HEIGHT,
-                                   g_param_spec_int ("disk-space-usage-bar-height",
-                                                     "Disk space usage bar height",
-                                                     NULL,
-                                                     1, 256,
-                                                     5,
-                                                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT));
-
   g_object_class_install_property (object_class, PROP_DISK_SPACE_USAGE_PERCENT,
                                    g_param_spec_int ("disk-space-usage-percent",
                                                      "Disk space usage percentage",
@@ -167,17 +164,17 @@ thunar_shortcuts_name_renderer_class_init (ThunarShortcutsNameRendererClass *kla
                                                      -1,
                                                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT));
 
-  g_object_class_install_property (object_class, PROP_DISK_SPACE_USAGE_ORANGE_PERCENT,
-                                   g_param_spec_int ("disk-space-usage-orange-percent",
-                                                     "At what percentage should the progress bar be repainted?",
+  g_object_class_install_property (object_class, PROP_DISK_SPACE_USAGE_WARNING_PERCENT,
+                                   g_param_spec_int ("disk-space-usage-warning-percent",
+                                                     NULL,
                                                      NULL,
                                                      0, 100,
                                                      0,
                                                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT));
 
-  g_object_class_install_property (object_class, PROP_DISK_SPACE_USAGE_RED_PERCENT,
-                                   g_param_spec_int ("disk-space-usage-red-percent",
-                                                     "At what percentage should the progress bar be repainted?",
+  g_object_class_install_property (object_class, PROP_DISK_SPACE_USAGE_ERROR_PERCENT,
+                                   g_param_spec_int ("disk-space-usage-error-percent",
+                                                     NULL,
                                                      NULL,
                                                      0, 100,
                                                      0,
@@ -210,20 +207,16 @@ thunar_shortcuts_name_renderer_get_property (GObject    *object,
       g_value_set_boolean (value, self->disk_space_usage_bar_enabled);
       break;
 
-    case PROP_DISK_SPACE_USAGE_BAR_HEIGHT:
-      g_value_set_int (value, self->disk_space_usage_bar_height);
-      break;
-
     case PROP_DISK_SPACE_USAGE_PERCENT:
       g_value_set_int (value, self->disk_space_usage_percent);
       break;
 
-    case PROP_DISK_SPACE_USAGE_ORANGE_PERCENT:
-      g_value_set_int (value, self->disk_space_usage_orange_percent);
+    case PROP_DISK_SPACE_USAGE_WARNING_PERCENT:
+      g_value_set_int (value, self->disk_space_usage_warning_percent);
       break;
 
-    case PROP_DISK_SPACE_USAGE_RED_PERCENT:
-      g_value_set_int (value, self->disk_space_usage_red_percent);
+    case PROP_DISK_SPACE_USAGE_ERROR_PERCENT:
+      g_value_set_int (value, self->disk_space_usage_error_percent);
       break;
 
     default:
@@ -247,20 +240,16 @@ thunar_shortcuts_name_renderer_set_property (GObject      *object,
       self->disk_space_usage_bar_enabled = g_value_get_boolean (value);
       break;
 
-    case PROP_DISK_SPACE_USAGE_BAR_HEIGHT:
-      self->disk_space_usage_bar_height = g_value_get_int (value);
-      break;
-
     case PROP_DISK_SPACE_USAGE_PERCENT:
       self->disk_space_usage_percent = g_value_get_int (value);
       break;
 
-    case PROP_DISK_SPACE_USAGE_ORANGE_PERCENT:
-      self->disk_space_usage_orange_percent = g_value_get_int (value);
+    case PROP_DISK_SPACE_USAGE_WARNING_PERCENT:
+      self->disk_space_usage_warning_percent = g_value_get_int (value);
       break;
 
-    case PROP_DISK_SPACE_USAGE_RED_PERCENT:
-      self->disk_space_usage_red_percent = g_value_get_int (value);
+    case PROP_DISK_SPACE_USAGE_ERROR_PERCENT:
+      self->disk_space_usage_error_percent = g_value_get_int (value);
       break;
 
     default:
@@ -285,6 +274,8 @@ thunar_shortcuts_name_renderer_render (GtkCellRenderer     *cell,
   gint                         ypad;
   gint                         text_height;
   gint                         cell_height;
+  gint                         bar_height = thunar_shortcuts_name_renderer_get_disk_space_usage_bar_height (widget);
+
 
   /* Render name */
   if (thunar_shortcuts_name_renderer_should_show_disk_space_usage_bar (self))
@@ -298,8 +289,7 @@ thunar_shortcuts_name_renderer_render (GtkCellRenderer     *cell,
 
       /* By default, yalign is 0.5, which means center. Set yalign so that the center
        * corresponds not to the text, but to the text plus the bar. */
-      extra_height = thunar_shortcuts_name_renderer_scale_for_dpi (widget, self->disk_space_usage_bar_height);
-      extra_height += SPACE_USAGE_BAR_YPAD;
+      extra_height = bar_height + SPACE_USAGE_BAR_YPAD;
       extra_name_ratio = (gdouble) extra_height / (gdouble) text_height;
       content_cell_ratio = (gdouble) (aligned_area.height + extra_height) / (gdouble) cell_height;
       yalign = MAX (0.0, 0.5 - (extra_name_ratio * content_cell_ratio));
@@ -332,13 +322,14 @@ thunar_shortcuts_name_renderer_render_disk_space_usage_bar (GtkCellRenderer     
 {
   ThunarShortcutsNameRenderer *self = THUNAR_SHORTCUTS_NAME_RENDERER (cell);
   GtkStyleContext             *context = gtk_widget_get_style_context (widget);
+  gboolean                     is_rtl = gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL;
+  gint                         bar_width_max = thunar_shortcuts_name_renderer_scale_for_dpi (widget, 125);
+  const gchar                 *bar_additonal_class = thunar_shortcuts_name_renderer_get_disk_space_usage_bar_additional_class (self);
+  gint                         bar_height = thunar_shortcuts_name_renderer_get_disk_space_usage_bar_height (widget);
   GdkRectangle                 aligned_area;
   GdkRectangle                 bar_area;
   gint                         xpad;
   gint                         progress_width;
-  gboolean                     is_rtl;
-  gint                         width_max;
-  const gchar                 *bar_additonal_class;
 
   thunar_shortcuts_name_renderer_install_disk_space_usage_bar_style (widget);
 
@@ -348,13 +339,8 @@ thunar_shortcuts_name_renderer_render_disk_space_usage_bar (GtkCellRenderer     
    */
   gtk_cell_renderer_get_aligned_area (cell, widget, flags, cell_area, &aligned_area);
   gtk_cell_renderer_get_padding (cell, &xpad, NULL);
-  is_rtl = gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL;
-  bar_additonal_class = thunar_shortcuts_name_renderer_get_disk_space_usage_bar_additional_class (self);
-
-  width_max = thunar_shortcuts_name_renderer_scale_for_dpi (widget, 125);
-
-  bar_area.width = MIN (width_max, cell_area->width - MAX (6, xpad * 2));
-  bar_area.height = thunar_shortcuts_name_renderer_scale_for_dpi (widget, self->disk_space_usage_bar_height);
+  bar_area.width = MIN (bar_width_max, cell_area->width - MAX (6, xpad * 2));
+  bar_area.height = bar_height;
 
   if (is_rtl)
     bar_area.x = cell_area->x + cell_area->width - xpad - bar_area.width;
@@ -397,16 +383,14 @@ thunar_shortcuts_name_renderer_get_preferred_height_for_width (GtkCellRenderer *
 {
   ThunarShortcutsNameRenderer *self = THUNAR_SHORTCUTS_NAME_RENDERER (cell);
   const GtkCellRendererClass  *renderer_class = GTK_CELL_RENDERER_CLASS (thunar_shortcuts_name_renderer_parent_class);
+  gint                         bar_height = thunar_shortcuts_name_renderer_get_disk_space_usage_bar_height (widget);
 
   renderer_class->get_preferred_height_for_width (cell, widget, width, minimum_height, natural_height);
 
   if (thunar_shortcuts_name_renderer_should_show_disk_space_usage_bar (self))
     {
-      *minimum_height += thunar_shortcuts_name_renderer_scale_for_dpi (widget, self->disk_space_usage_bar_height);
-      *minimum_height += SPACE_USAGE_BAR_YPAD;
-
-      *natural_height += thunar_shortcuts_name_renderer_scale_for_dpi (widget, self->disk_space_usage_bar_height);
-      *natural_height += SPACE_USAGE_BAR_YPAD;
+      *minimum_height += bar_height + SPACE_USAGE_BAR_YPAD;
+      *natural_height += bar_height + SPACE_USAGE_BAR_YPAD;
     }
 }
 
@@ -434,11 +418,11 @@ thunar_shortcuts_name_renderer_scale_for_dpi (GtkWidget *widget,
 static const gchar *
 thunar_shortcuts_name_renderer_get_disk_space_usage_bar_additional_class (const ThunarShortcutsNameRenderer *self)
 {
-  if (self->disk_space_usage_red_percent > 0 && self->disk_space_usage_percent >= self->disk_space_usage_red_percent)
-    return "disk-space-usage-bar--red";
+  if (self->disk_space_usage_error_percent > 0 && self->disk_space_usage_percent >= self->disk_space_usage_error_percent)
+    return "disk-space-usage-bar--error";
 
-  if (self->disk_space_usage_orange_percent > 0 && self->disk_space_usage_percent >= self->disk_space_usage_orange_percent)
-    return "disk-space-usage-bar--orange";
+  if (self->disk_space_usage_warning_percent > 0 && self->disk_space_usage_percent >= self->disk_space_usage_warning_percent)
+    return "disk-space-usage-bar--warning";
 
   return "disk-space-usage-bar--normal";
 }
@@ -456,8 +440,8 @@ thunar_shortcuts_name_renderer_install_disk_space_usage_bar_style (GtkWidget *wi
     {
       provider = gtk_css_provider_new ();
       gtk_css_provider_load_from_data (provider,
-                                       ".disk-space-usage-bar--orange { background: none; background-color: @warning_color; }"
-                                       ".disk-space-usage-bar--red { background: none; background-color: @error_color; }",
+                                       ".disk-space-usage-bar--warning { background: none; background-color: @warning_color; }"
+                                       ".disk-space-usage-bar--error { background: none; background-color: @error_color; }",
                                        -1, NULL);
 
       gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
@@ -486,8 +470,9 @@ thunar_shortcuts_name_renderer_disk_space_usage_bar_styled (GtkWidget *widget)
     }
   g_list_free (classes);
 
-  gtk_style_context_add_class (context, "disk-space-usage-bar--orange");
-  gtk_style_context_add_class (context, "disk-space-usage-bar--red");
+  gtk_style_context_add_class (context, "disk-space-usage-bar--normal");
+  gtk_style_context_add_class (context, "disk-space-usage-bar--warning");
+  gtk_style_context_add_class (context, "disk-space-usage-bar--error");
   gtk_style_context_get (context, GTK_STATE_FLAG_NORMAL,
                          GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &background_color,
                          NULL);
@@ -499,4 +484,25 @@ thunar_shortcuts_name_renderer_disk_space_usage_bar_styled (GtkWidget *widget)
   g_free (background_color);
 
   return status;
+}
+
+
+
+static gint
+thunar_shortcuts_name_renderer_get_disk_space_usage_bar_height (GtkWidget *widget)
+{
+  GtkStyleContext *context = gtk_widget_get_style_context (widget);
+  gint             min_height;
+
+  gtk_style_context_save (context);
+  gtk_style_context_add_class (context, "disk-space-usage-bar");
+  gtk_style_context_get (context, GTK_STATE_FLAG_NORMAL,
+                         "min-height", &min_height,
+                         NULL);
+  gtk_style_context_restore (context);
+
+  if (min_height <= 0)
+    min_height = SPACE_USAGE_BAR_HEIGHT;
+
+  return thunar_shortcuts_name_renderer_scale_for_dpi (widget, min_height);
 }
