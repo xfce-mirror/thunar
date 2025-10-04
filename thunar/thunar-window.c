@@ -2623,6 +2623,9 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
     return;
 
   thunar_window_switch_current_view (window, view);
+
+  /* update the selection (will as well update the preview image) */
+  thunar_window_selection_changed (window);
 }
 
 
