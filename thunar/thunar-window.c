@@ -2534,7 +2534,7 @@ thunar_window_switch_current_view (ThunarWindow *window,
     {
       thunar_window_create_view_binding (window, G_OBJECT (new_view), "current-directory",
                                          G_OBJECT (terminal), "current-directory",
-                                         G_BINDING_BIDIRECTIONAL);
+                                         G_BINDING_DEFAULT);
     }
 #endif
 
@@ -2595,9 +2595,6 @@ thunar_window_switch_current_view (ThunarWindow *window,
   /* remember the last view type if directory specific settings are not enabled */
   if (!window->directory_specific_settings && !window->search_mode && window->view_type != G_TYPE_NONE)
     g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (window->view_type), NULL);
-
-  /* switch to the new view */
-  thunar_window_notebook_set_current_tab (window, gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), window->view));
 
   /* take focus on the new view */
   gtk_widget_grab_focus (window->view);
@@ -3126,19 +3123,10 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
 
   thunar_standard_view_set_terminal_widget (THUNAR_STANDARD_VIEW (view), terminal);
 
-  /* Set terminal directory to match view BEFORE creating the binding
-   * to avoid race conditions during initialization */
-  if (THUNAR_IS_NAVIGATOR (view))
-    {
-      ThunarFile *current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (view));
-      if (current_directory)
-        thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (terminal), current_directory);
-    }
-
-  /* Create bidirectional binding between terminal and view */
+  /* Create binding between terminal and view */
   thunar_window_create_view_binding (window, G_OBJECT (view), "current-directory",
                                      G_OBJECT (terminal), "current-directory",
-                                     G_BINDING_BIDIRECTIONAL);
+                                     G_BINDING_SYNC_CREATE | G_BINDING_DEFAULT);
 
   /* Initialize terminal visibility based on preferences */
   g_object_get (window->preferences, "terminal-visible", &terminal_visible, NULL);
