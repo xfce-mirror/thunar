@@ -444,6 +444,7 @@ thunar_shortcuts_name_renderer_install_disk_space_usage_bar_style (GtkWidget *wi
       gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
                                                  GTK_STYLE_PROVIDER (provider),
                                                  GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+      g_object_unref (provider);
     }
 }
 
