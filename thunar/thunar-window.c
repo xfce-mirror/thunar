@@ -3090,7 +3090,7 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   terminal = thunar_terminal_widget_new ();
   /* Prevent the terminal from being shown by gtk_widget_show_all() */
   gtk_widget_set_no_show_all (GTK_WIDGET (terminal), TRUE);
-  gtk_paned_pack2 (GTK_PANED (tab_content_paned), GTK_WIDGET (terminal), FALSE, TRUE);
+  gtk_paned_pack2 (GTK_PANED (tab_content_paned), GTK_WIDGET (terminal), FALSE, FALSE);
 
   /* Read saved height for initial positioning */
   saved_height = THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT;
@@ -3548,7 +3548,8 @@ on_tab_paned_drag_finished (GtkWidget *paned, GdkEventButton *event, gpointer us
   if (total_height > 0)
     {
       int height = total_height - position;
-      g_object_set (thunar_preferences_get (), "terminal-height", height, NULL);
+      if (height >= THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT)
+        g_object_set (thunar_preferences_get (), "terminal-height", height, NULL);
     }
 
   return FALSE;

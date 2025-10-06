@@ -531,6 +531,8 @@ thunar_terminal_widget_init (ThunarTerminalWidget *self)
   g_signal_connect (priv->terminal, "current-directory-uri-changed", G_CALLBACK (on_legacy_directory_changed), self);
 #endif
 
+  gtk_widget_set_size_request (GTK_WIDGET (self), -1, THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT);
+
   gtk_widget_show_all (vbox);
 }
 

@@ -1479,9 +1479,9 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_param_spec_int ("terminal-height",
                     "TerminalHeight",
                     NULL,
-                    50,   /* min height */
-                    1000, /* max height */
-                    200,  /* default height */
+                    THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT, /* min height */
+                    G_MAXINT,                            /* max height */
+                    200,                                 /* default height */
                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
