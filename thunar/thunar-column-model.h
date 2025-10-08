@@ -48,9 +48,7 @@ typedef struct _ThunarColumnModel      ThunarColumnModel;
 typedef enum
 {
   THUNAR_COLUMN_MODEL_COLUMN_NAME,
-  THUNAR_COLUMN_MODEL_COLUMN_MUTABLE,
   THUNAR_COLUMN_MODEL_COLUMN_VISIBLE,
-  THUNAR_COLUMN_MODEL_COLUMN_TOOLTIP,
   THUNAR_COLUMN_MODEL_N_COLUMNS,
 } ThunarColumnModelColumn;
 
@@ -91,6 +89,9 @@ void
 thunar_column_model_set_column_width (ThunarColumnModel *column_model,
                                       ThunarColumn       column,
                                       gint               width);
+
+void
+thunar_column_model_reset (ThunarColumnModel *column_model);
 
 G_END_DECLS;
 
