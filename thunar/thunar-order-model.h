@@ -21,64 +21,22 @@
 #define __THUNAR_ORDER_MODEL_H__
 
 #include <gtk/gtk.h>
+#include <libxfce4ui/libxfce4ui.h>
 
 G_BEGIN_DECLS
-
-typedef enum
-{
-  THUNAR_ORDER_MODEL_COLUMN_ACTIVE,
-  THUNAR_ORDER_MODEL_COLUMN_MUTABLE,
-  THUNAR_ORDER_MODEL_COLUMN_ICON,
-  THUNAR_ORDER_MODEL_COLUMN_NAME,
-  THUNAR_ORDER_MODEL_COLUMN_TOOLTIP,
-  THUNAR_ORDER_MODEL_N_COLUMNS,
-} ThunarOrderModelColumn;
 
 #define THUNAR_TYPE_ORDER_MODEL (thunar_order_model_get_type ())
 G_DECLARE_DERIVABLE_TYPE (ThunarOrderModel, thunar_order_model, THUNAR, ORDER_MODEL, GObject)
 
 struct _ThunarOrderModelClass
 {
-  GObjectClass __parent__;
-
-  gint (*get_n_items) (ThunarOrderModel *order_model);
-
-  void (*get_value) (ThunarOrderModel      *order_model,
-                     gint                   position,
-                     ThunarOrderModelColumn column,
-                     GValue                *value);
-
-  void (*set_activity) (ThunarOrderModel *order_model,
-                        gint              position,
-                        gboolean          activity);
-
-  void (*move_before) (ThunarOrderModel *order_model,
-                       gint              a_position,
-                       gint              b_position);
+  XfceItemListModelClass __parent__;
 
   void (*reset) (ThunarOrderModel *order_model);
 };
 
 void
-thunar_order_model_set_activity (ThunarOrderModel *order_model,
-                                 GtkTreeIter      *iter,
-                                 gboolean          activity);
-
-void
-thunar_order_model_swap_items (ThunarOrderModel *order_model,
-                               GtkTreeIter      *a_iter,
-                               GtkTreeIter      *b_iter);
-
-void
-thunar_order_model_move_before (ThunarOrderModel *order_model,
-                                GtkTreeIter      *a_iter,
-                                GtkTreeIter      *b_iter);
-
-void
 thunar_order_model_reset (ThunarOrderModel *order_model);
-
-void
-thunar_order_model_reload (ThunarOrderModel *order_model);
 
 G_END_DECLS
 
