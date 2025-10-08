@@ -226,23 +226,8 @@ static void
 thunar_column_order_model_reset (ThunarOrderModel *order_model)
 {
   ThunarColumnOrderModel *column_model = THUNAR_COLUMN_ORDER_MODEL (order_model);
-  static const gchar     *property_names[] = {
-    "last-details-view-column-order",
-    "last-details-view-visible-columns",
-  };
-  guint       n;
-  GParamSpec *pspec;
-  GValue      value = G_VALUE_INIT;
 
-  /* reset the given properties to its default values */
-  for (n = 0; n < G_N_ELEMENTS (property_names); ++n)
-    {
-      pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (column_model->preferences), property_names[n]);
-      g_value_init (&value, pspec->value_type);
-      g_param_value_set_default (pspec, &value);
-      g_object_set_property (G_OBJECT (column_model->preferences), property_names[n], &value);
-      g_value_unset (&value);
-    }
+  thunar_column_model_reset (column_model->model);
 }
 
 
