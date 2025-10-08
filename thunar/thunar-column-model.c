@@ -804,9 +804,9 @@ thunar_column_model_get_default (void)
 
 
 void
-thunar_column_model_move_before (ThunarColumnModel *column_model,
-                                 GtkTreeIter       *iter1,
-                                 GtkTreeIter       *iter2)
+thunar_column_model_move (ThunarColumnModel *column_model,
+                          GtkTreeIter       *iter1,
+                          GtkTreeIter       *iter2)
 {
   gint         source = GPOINTER_TO_INT (iter1->user_data);
   gint         target = GPOINTER_TO_INT (iter2->user_data);
@@ -831,6 +831,7 @@ thunar_column_model_move_before (ThunarColumnModel *column_model,
     }
 
   thunar_column_model_save_column_order (column_model);
+  g_signal_emit (G_OBJECT (column_model), column_model_signals[COLUMNS_CHANGED], 0);
 }
 
 
