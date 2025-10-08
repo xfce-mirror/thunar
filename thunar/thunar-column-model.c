@@ -271,14 +271,8 @@ thunar_column_model_get_column_type (GtkTreeModel *tree_model,
     case THUNAR_COLUMN_MODEL_COLUMN_NAME:
       return G_TYPE_STRING;
 
-    case THUNAR_COLUMN_MODEL_COLUMN_MUTABLE:
-      return G_TYPE_BOOLEAN;
-
     case THUNAR_COLUMN_MODEL_COLUMN_VISIBLE:
       return G_TYPE_BOOLEAN;
-
-    case THUNAR_COLUMN_MODEL_COLUMN_TOOLTIP:
-      return G_TYPE_STRING;
     }
 
   _thunar_assert_not_reached ();
@@ -348,20 +342,9 @@ thunar_column_model_get_value (GtkTreeModel *tree_model,
       g_value_set_static_string (value, thunar_column_model_get_column_name (column_model, column));
       break;
 
-    case THUNAR_COLUMN_MODEL_COLUMN_MUTABLE:
-      g_value_init (value, G_TYPE_BOOLEAN);
-      g_value_set_boolean (value, (column != THUNAR_COLUMN_NAME && !thunar_column_is_special (column)));
-      break;
-
     case THUNAR_COLUMN_MODEL_COLUMN_VISIBLE:
       g_value_init (value, G_TYPE_BOOLEAN);
       g_value_set_boolean (value, thunar_column_model_get_column_visible (column_model, column));
-      break;
-
-    case THUNAR_COLUMN_MODEL_COLUMN_TOOLTIP:
-      g_value_init (value, G_TYPE_STRING);
-      if (thunar_column_is_special (column))
-        g_value_set_static_string (value, _("This column is reserved for special locations"));
       break;
 
     default:
@@ -1045,4 +1028,30 @@ thunar_column_model_set_column_width (ThunarColumnModel *column_model,
                                                          thunar_column_model_set_column_width_timer,
                                                          column_model);
     }
+}
+
+
+
+void
+thunar_column_model_reset (ThunarColumnModel *column_model)
+{
+  static const gchar     *property_names[] = {
+    "last-details-view-column-order",
+    "last-details-view-visible-columns",
+  };
+  guint       n;
+  GParamSpec *pspec;
+  GValue      value = G_VALUE_INIT;
+
+  /* reset the given properties to its default values */
+  for (n = 0; n < G_N_ELEMENTS (property_names); ++n)
+    {
+      pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (column_model->preferences), property_names[n]);
+      g_value_init (&value, pspec->value_type);
+      g_param_value_set_default (pspec, &value);
+      g_object_set_property (G_OBJECT (column_model->preferences), property_names[n], &value);
+      g_value_unset (&value);
+    }
+
+  g_signal_emit (G_OBJECT (column_model), column_model_signals[COLUMNS_CHANGED], 0);
 }
