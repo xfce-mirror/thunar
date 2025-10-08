@@ -44,24 +44,27 @@ struct _ThunarColumnOrderModel
 static void
 thunar_column_order_model_finalize (GObject *object);
 
+static XfceItemListModelFlags
+thunar_column_order_model_get_list_flags (XfceItemListModel *item_model);
+
 static gint
-thunar_column_order_model_get_n_items (ThunarOrderModel *order_model);
+thunar_column_order_model_get_n_items (XfceItemListModel *item_model);
 
 static void
-thunar_column_order_model_get_value (ThunarOrderModel      *order_model,
-                                     gint                   position,
-                                     ThunarOrderModelColumn column,
-                                     GValue                *value);
+thunar_column_order_model_get_value (XfceItemListModel      *item_model,
+                                     gint                    position,
+                                     XfceItemListModelColumn column,
+                                     GValue                 *value);
 
 static void
-thunar_column_order_model_set_activity (ThunarOrderModel *order_model,
-                                        gint              position,
-                                        gboolean          activity);
+thunar_column_order_model_set_activity (XfceItemListModel *item_model,
+                                        gint               position,
+                                        gboolean           activity);
 
 static void
-thunar_column_order_model_move_before (ThunarOrderModel *order_model,
-                                       gint              a_position,
-                                       gint              b_position);
+thunar_column_order_model_move (XfceItemListModel *item_model,
+                                gint               a_position,
+                                gint               b_position);
 
 static void
 thunar_column_order_model_reset (ThunarOrderModel *order_model);
@@ -79,15 +82,18 @@ G_DEFINE_TYPE (ThunarColumnOrderModel, thunar_column_order_model, THUNAR_TYPE_OR
 static void
 thunar_column_order_model_class_init (ThunarColumnOrderModelClass *klass)
 {
-  GObjectClass          *object_class = G_OBJECT_CLASS (klass);
-  ThunarOrderModelClass *order_model_class = THUNAR_ORDER_MODEL_CLASS (klass);
+  GObjectClass           *object_class = G_OBJECT_CLASS (klass);
+  XfceItemListModelClass *item_model_class = XFCE_ITEM_LIST_MODEL_CLASS (klass);
+  ThunarOrderModelClass  *order_model_class = THUNAR_ORDER_MODEL_CLASS (klass);
+
 
   object_class->finalize = thunar_column_order_model_finalize;
 
-  order_model_class->get_n_items = thunar_column_order_model_get_n_items;
-  order_model_class->get_value = thunar_column_order_model_get_value;
-  order_model_class->set_activity = thunar_column_order_model_set_activity;
-  order_model_class->move_before = thunar_column_order_model_move_before;
+  item_model_class->get_list_flags = thunar_column_order_model_get_list_flags;
+  item_model_class->get_n_items = thunar_column_order_model_get_n_items;
+  item_model_class->get_item_value = thunar_column_order_model_get_value;
+  item_model_class->set_activity = thunar_column_order_model_set_activity;
+  item_model_class->move = thunar_column_order_model_move;
   order_model_class->reset = thunar_column_order_model_reset;
 }
 
@@ -100,9 +106,9 @@ thunar_column_order_model_init (ThunarColumnOrderModel *column_model)
   column_model->model = thunar_column_model_get_default ();
 
   g_signal_connect_swapped (G_OBJECT (column_model->preferences), "notify::last-details-view-column-order",
-                            G_CALLBACK (thunar_order_model_reload), column_model);
+                            G_CALLBACK (xfce_item_list_model_changed), XFCE_ITEM_LIST_MODEL (column_model));
   g_signal_connect_swapped (G_OBJECT (column_model->preferences), "notify::last-details-view-visible-columns",
-                            G_CALLBACK (thunar_order_model_reload), column_model);
+                            G_CALLBACK (xfce_item_list_model_changed), XFCE_ITEM_LIST_MODEL (column_model));
 }
 
 
@@ -112,7 +118,7 @@ thunar_column_order_model_finalize (GObject *object)
 {
   ThunarColumnOrderModel *column_model = THUNAR_COLUMN_ORDER_MODEL (object);
 
-  g_signal_handlers_disconnect_by_data (column_model->preferences, column_model);
+  g_signal_handlers_disconnect_by_data (column_model->preferences, XFCE_ITEM_LIST_MODEL (column_model));
   g_clear_object (&column_model->preferences);
   g_clear_object (&column_model->model);
 
@@ -121,8 +127,16 @@ thunar_column_order_model_finalize (GObject *object)
 
 
 
+static XfceItemListModelFlags
+thunar_column_order_model_get_list_flags (XfceItemListModel *item_model)
+{
+  return XFCE_ITEM_LIST_MODEL_REORDERABLE;
+}
+
+
+
 static gint
-thunar_column_order_model_get_n_items (ThunarOrderModel *order_model)
+thunar_column_order_model_get_n_items (XfceItemListModel *item_model)
 {
   return THUNAR_N_VISIBLE_COLUMNS;
 }
@@ -130,34 +144,41 @@ thunar_column_order_model_get_n_items (ThunarOrderModel *order_model)
 
 
 static void
-thunar_column_order_model_get_value (ThunarOrderModel      *order_model,
-                                     gint                   position,
-                                     ThunarOrderModelColumn column,
-                                     GValue                *value)
+thunar_column_order_model_get_value (XfceItemListModel      *item_model,
+                                     gint                    position,
+                                     XfceItemListModelColumn column,
+                                     GValue                 *value)
 {
-  ThunarColumnOrderModel *column_model = THUNAR_COLUMN_ORDER_MODEL (order_model);
+  ThunarColumnOrderModel *column_model = THUNAR_COLUMN_ORDER_MODEL (item_model);
   ThunarColumn            model_column = thunar_column_order_model_get_model_column_nth (column_model, position);
 
   switch (column)
     {
-    case THUNAR_ORDER_MODEL_COLUMN_ACTIVE:
-      g_value_set_boolean (value, thunar_column_model_get_column_visible (column_model->model, model_column));
+    case XFCE_ITEM_LIST_MODEL_COLUMN_ACTIVE:
+      g_value_set_boolean (value, thunar_column_model_get_column_visible (column_model->model, model_column)
+                                  || (model_column == THUNAR_COLUMN_NAME && thunar_column_is_special (model_column)));
       break;
 
-    case THUNAR_ORDER_MODEL_COLUMN_MUTABLE:
+    case XFCE_ITEM_LIST_MODEL_COLUMN_ACTIVABLE:
       g_value_set_boolean (value, model_column != THUNAR_COLUMN_NAME && !thunar_column_is_special (model_column));
       break;
 
-    case THUNAR_ORDER_MODEL_COLUMN_ICON:
+    case XFCE_ITEM_LIST_MODEL_COLUMN_ICON:
       break;
 
-    case THUNAR_ORDER_MODEL_COLUMN_NAME:
+    case XFCE_ITEM_LIST_MODEL_COLUMN_NAME:
       g_value_set_string (value, thunar_column_model_get_column_name (column_model->model, model_column));
       break;
 
-    case THUNAR_ORDER_MODEL_COLUMN_TOOLTIP:
+    case XFCE_ITEM_LIST_MODEL_COLUMN_TOOLTIP:
       if (thunar_column_is_special (model_column))
         g_value_set_string (value, _("This column is reserved for special locations"));
+      break;
+
+    case XFCE_ITEM_LIST_MODEL_COLUMN_EDITABLE:
+      break;
+
+    case XFCE_ITEM_LIST_MODEL_COLUMN_REMOVABLE:
       break;
 
     default:
@@ -168,34 +189,35 @@ thunar_column_order_model_get_value (ThunarOrderModel      *order_model,
 
 
 static void
-thunar_column_order_model_set_activity (ThunarOrderModel *order_model,
-                                        gint              position,
-                                        gboolean          activity)
+thunar_column_order_model_set_activity (XfceItemListModel *item_model,
+                                        gint               position,
+                                        gboolean           activity)
 {
-  ThunarColumnOrderModel *column_model = THUNAR_COLUMN_ORDER_MODEL (order_model);
+  ThunarColumnOrderModel *column_model = THUNAR_COLUMN_ORDER_MODEL (item_model);
+  ThunarColumn            model_column = thunar_column_order_model_get_model_column_nth (column_model, position);
 
-  g_signal_handlers_block_by_func (G_OBJECT (column_model->preferences), thunar_order_model_reload, column_model);
-  thunar_column_model_set_column_visible (column_model->model, position, activity);
-  g_signal_handlers_unblock_by_func (G_OBJECT (column_model->preferences), thunar_order_model_reload, column_model);
+  g_signal_handlers_block_by_func (G_OBJECT (column_model->preferences), G_CALLBACK (xfce_item_list_model_changed), item_model);
+  thunar_column_model_set_column_visible (column_model->model, model_column, activity);
+  g_signal_handlers_unblock_by_func (G_OBJECT (column_model->preferences), G_CALLBACK (xfce_item_list_model_changed), item_model);
 }
 
 
 
 static void
-thunar_column_order_model_move_before (ThunarOrderModel *order_model,
-                                       gint              a_position,
-                                       gint              b_position)
+thunar_column_order_model_move (XfceItemListModel *item_model,
+                                gint               a_position,
+                                gint               b_position)
 {
-  ThunarColumnOrderModel *column_model = THUNAR_COLUMN_ORDER_MODEL (order_model);
+  ThunarColumnOrderModel *column_model = THUNAR_COLUMN_ORDER_MODEL (item_model);
   GtkTreeIter             a_iter;
   GtkTreeIter             b_iter;
 
   gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (column_model->model), &a_iter, NULL, a_position);
   gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (column_model->model), &b_iter, NULL, b_position);
 
-  g_signal_handlers_block_by_func (G_OBJECT (column_model->preferences), thunar_order_model_reload, column_model);
-  thunar_column_model_move_before (column_model->model, &a_iter, &b_iter);
-  g_signal_handlers_unblock_by_func (G_OBJECT (column_model->preferences), thunar_order_model_reload, column_model);
+  g_signal_handlers_block_by_func (G_OBJECT (column_model->preferences), G_CALLBACK (xfce_item_list_model_changed), item_model);
+  thunar_column_model_move (column_model->model, &a_iter, &b_iter);
+  g_signal_handlers_unblock_by_func (G_OBJECT (column_model->preferences), G_CALLBACK (xfce_item_list_model_changed), item_model);
 }
 
 
