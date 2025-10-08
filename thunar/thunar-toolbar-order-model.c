@@ -44,25 +44,28 @@ struct _ThunarToolbarOrderModel
 static void
 thunar_toolbar_order_model_finalize (GObject *object);
 
+static XfceItemListModelFlags
+thunar_toolbar_order_model_get_list_flags (XfceItemListModel *item_model);
+
 static gint
-thunar_toolbar_order_model_get_n_items (ThunarOrderModel *order_model);
+thunar_toolbar_order_model_get_n_items (XfceItemListModel *item_model);
 
 static void
-thunar_toolbar_order_model_get_value (ThunarOrderModel      *order_model,
-                                      gint                   position,
-                                      ThunarOrderModelColumn column,
-                                      GValue                *value);
+thunar_toolbar_order_model_get_value (XfceItemListModel      *item_model,
+                                      gint                    position,
+                                      XfceItemListModelColumn column,
+                                      GValue                 *value);
 
 static void
-thunar_toolbar_order_model_set_activity (ThunarOrderModel *order_model,
-                                         gint              position,
-                                         gboolean          activity);
+thunar_toolbar_order_model_set_activity (XfceItemListModel *item_model,
+                                         gint               position,
+                                         gboolean           activity);
 
 
 static void
-thunar_toolbar_order_model_move_before (ThunarOrderModel *order_model,
-                                        gint              a_position,
-                                        gint              b_position);
+thunar_toolbar_order_model_move (XfceItemListModel *item_model,
+                                 gint               a_position,
+                                 gint               b_position);
 
 static void
 thunar_toolbar_order_model_swap (ThunarToolbarOrderModel *toolbar_model,
@@ -88,15 +91,17 @@ G_DEFINE_TYPE (ThunarToolbarOrderModel, thunar_toolbar_order_model, THUNAR_TYPE_
 static void
 thunar_toolbar_order_model_class_init (ThunarToolbarOrderModelClass *klass)
 {
-  GObjectClass          *object_class = G_OBJECT_CLASS (klass);
-  ThunarOrderModelClass *order_model_class = THUNAR_ORDER_MODEL_CLASS (klass);
+  GObjectClass           *object_class = G_OBJECT_CLASS (klass);
+  XfceItemListModelClass *item_model_class = XFCE_ITEM_LIST_MODEL_CLASS (klass);
+  ThunarOrderModelClass  *order_model_class = THUNAR_ORDER_MODEL_CLASS (klass);
 
   object_class->finalize = thunar_toolbar_order_model_finalize;
 
-  order_model_class->get_n_items = thunar_toolbar_order_model_get_n_items;
-  order_model_class->get_value = thunar_toolbar_order_model_get_value;
-  order_model_class->set_activity = thunar_toolbar_order_model_set_activity;
-  order_model_class->move_before = thunar_toolbar_order_model_move_before;
+  item_model_class->get_list_flags = thunar_toolbar_order_model_get_list_flags;
+  item_model_class->get_n_items = thunar_toolbar_order_model_get_n_items;
+  item_model_class->get_item_value = thunar_toolbar_order_model_get_value;
+  item_model_class->set_activity = thunar_toolbar_order_model_set_activity;
+  item_model_class->move = thunar_toolbar_order_model_move;
   order_model_class->reset = thunar_toolbar_order_model_reset;
 }
 
@@ -127,10 +132,18 @@ thunar_toolbar_order_model_finalize (GObject *object)
 
 
 
-static gint
-thunar_toolbar_order_model_get_n_items (ThunarOrderModel *order_model)
+static XfceItemListModelFlags
+thunar_toolbar_order_model_get_list_flags (XfceItemListModel *item_model)
 {
-  ThunarToolbarOrderModel *toolbar_model = THUNAR_TOOLBAR_ORDER_MODEL (order_model);
+  return XFCE_ITEM_LIST_MODEL_REORDERABLE;
+}
+
+
+
+static gint
+thunar_toolbar_order_model_get_n_items (XfceItemListModel *item_model)
+{
+  ThunarToolbarOrderModel *toolbar_model = THUNAR_TOOLBAR_ORDER_MODEL (item_model);
 
   return g_list_length (toolbar_model->children);
 }
@@ -138,12 +151,12 @@ thunar_toolbar_order_model_get_n_items (ThunarOrderModel *order_model)
 
 
 static void
-thunar_toolbar_order_model_get_value (ThunarOrderModel      *order_model,
-                                      gint                   position,
-                                      ThunarOrderModelColumn column,
-                                      GValue                *value)
+thunar_toolbar_order_model_get_value (XfceItemListModel      *item_model,
+                                      gint                    position,
+                                      XfceItemListModelColumn column,
+                                      GValue                 *value)
 {
-  ThunarToolbarOrderModel *toolbar_model = THUNAR_TOOLBAR_ORDER_MODEL (order_model);
+  ThunarToolbarOrderModel *toolbar_model = THUNAR_TOOLBAR_ORDER_MODEL (item_model);
   GtkWidget               *item = g_list_nth_data (toolbar_model->children, position);
   const gchar             *id;
   const gchar             *icon;
@@ -152,21 +165,22 @@ thunar_toolbar_order_model_get_value (ThunarOrderModel      *order_model,
 
   switch (column)
     {
-    case THUNAR_ORDER_MODEL_COLUMN_ACTIVE:
+    case XFCE_ITEM_LIST_MODEL_COLUMN_ACTIVE:
       g_value_set_boolean (value, gtk_widget_is_visible (item));
       break;
 
-    case THUNAR_ORDER_MODEL_COLUMN_MUTABLE:
+    case XFCE_ITEM_LIST_MODEL_COLUMN_ACTIVABLE:
       id = g_object_get_data (G_OBJECT (item), "id");
       g_value_set_boolean (value, g_strcmp0 (id, "menu") != 0);
       break;
 
-    case THUNAR_ORDER_MODEL_COLUMN_ICON:
+    case XFCE_ITEM_LIST_MODEL_COLUMN_ICON:
       icon = g_object_get_data (G_OBJECT (item), "icon");
-      g_value_set_string (value, icon);
+      if (icon != NULL && *icon != '\0') 
+        g_value_set_object (value, g_themed_icon_new (icon));
       break;
 
-    case THUNAR_ORDER_MODEL_COLUMN_NAME:
+    case XFCE_ITEM_LIST_MODEL_COLUMN_NAME:
       name = g_object_get_data (G_OBJECT (item), "label");
       label = gtk_label_new_with_mnemonic (name);
       g_object_ref_sink (label);
@@ -174,12 +188,18 @@ thunar_toolbar_order_model_get_value (ThunarOrderModel      *order_model,
       g_object_unref (label);
       break;
 
-    case THUNAR_ORDER_MODEL_COLUMN_TOOLTIP:
+    case XFCE_ITEM_LIST_MODEL_COLUMN_TOOLTIP:
       id = g_object_get_data (G_OBJECT (item), "id");
       if (g_strcmp0 (id, "menu") == 0)
         g_value_set_string (value, _("Only visible when the menubar is hidden"));
       else
         g_value_set_string (value, NULL);
+      break;
+
+    case XFCE_ITEM_LIST_MODEL_COLUMN_EDITABLE:
+      break;
+
+    case XFCE_ITEM_LIST_MODEL_COLUMN_REMOVABLE:
       break;
 
     default:
@@ -190,9 +210,9 @@ thunar_toolbar_order_model_get_value (ThunarOrderModel      *order_model,
 
 
 static void
-thunar_toolbar_order_model_set_activity (ThunarOrderModel *order_model,
-                                         gint              position,
-                                         gboolean          activity)
+thunar_toolbar_order_model_set_activity (XfceItemListModel *item_model,
+                                         gint               position,
+                                         gboolean           activity)
 {
   ThunarApplication *application = thunar_application_get ();
   GList             *windows = thunar_application_get_windows (application);
@@ -207,11 +227,11 @@ thunar_toolbar_order_model_set_activity (ThunarOrderModel *order_model,
 
 
 static void
-thunar_toolbar_order_model_move_before (ThunarOrderModel *order_model,
-                                        gint              a_position,
-                                        gint              b_position)
+thunar_toolbar_order_model_move (XfceItemListModel *item_model,
+                                 gint               a_position,
+                                 gint               b_position)
 {
-  ThunarToolbarOrderModel *toolbar_model = THUNAR_TOOLBAR_ORDER_MODEL (order_model);
+  ThunarToolbarOrderModel *toolbar_model = THUNAR_TOOLBAR_ORDER_MODEL (item_model);
   ThunarApplication       *application = thunar_application_get ();
   GList                   *list_item = g_list_nth (toolbar_model->children, a_position);
   GList                   *windows;
@@ -238,9 +258,9 @@ thunar_toolbar_order_model_swap (ThunarToolbarOrderModel *toolbar_model,
                                  gint                     b_position)
 {
   if (a_position > b_position)
-    thunar_toolbar_order_model_move_before (THUNAR_ORDER_MODEL (toolbar_model), a_position, b_position);
+    thunar_toolbar_order_model_move (XFCE_ITEM_LIST_MODEL (toolbar_model), a_position, b_position);
   else
-    thunar_toolbar_order_model_move_before (THUNAR_ORDER_MODEL (toolbar_model), b_position, a_position);
+    thunar_toolbar_order_model_move (XFCE_ITEM_LIST_MODEL (toolbar_model), b_position, a_position);
 }
 
 
@@ -294,7 +314,7 @@ thunar_toolbar_order_model_set_toolbar (ThunarToolbarOrderModel *toolbar_model,
   toolbar_model->children = gtk_container_get_children (GTK_CONTAINER (toolbar));
   toolbar_model->preferences = thunar_preferences_get ();
   g_signal_connect_swapped (toolbar_model->preferences, "notify::misc-symbolic-icons-in-toolbar",
-                            G_CALLBACK (thunar_order_model_reload), toolbar_model);
+                            G_CALLBACK (xfce_item_list_model_changed), XFCE_ITEM_LIST_MODEL (toolbar_model));
 }
 
 
