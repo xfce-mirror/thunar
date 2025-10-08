@@ -169,6 +169,7 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
 
   /* create item_view */
   priv->item_view = xfce_item_list_view_new (NULL);
+  gtk_widget_set_size_request (priv->item_view, 100, 250);
   gtk_box_pack_start (GTK_BOX (hbox), priv->item_view, TRUE, TRUE, 0);
   gtk_widget_show (priv->item_view);
 
