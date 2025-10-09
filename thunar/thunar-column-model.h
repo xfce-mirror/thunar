@@ -60,12 +60,8 @@ thunar_column_model_get_default (void);
 
 void
 thunar_column_model_move (ThunarColumnModel *column_model,
-                          GtkTreeIter       *iter1,
-                          GtkTreeIter       *iter2);
-
-ThunarColumn
-thunar_column_model_get_column_for_iter (ThunarColumnModel *column_model,
-                                         GtkTreeIter       *iter);
+                          gint source_index,
+                          gint dest_index);
 
 const ThunarColumn *
 thunar_column_model_get_column_order (ThunarColumnModel *column_model);
