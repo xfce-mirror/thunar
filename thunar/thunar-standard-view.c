@@ -1579,7 +1579,7 @@ thunar_standard_view_grab_focus (GtkWidget *widget)
       tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW (child));
 
       if (gtk_tree_selection_count_selected_rows (selection) == 0 && gtk_tree_model_get_iter_first (tree_model, &iter))
-          gtk_tree_selection_select_iter (selection, &iter);
+        gtk_tree_selection_select_iter (selection, &iter);
     }
 }
 
