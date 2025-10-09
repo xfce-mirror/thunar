@@ -21,7 +21,6 @@
 
 #include "thunar/thunar-private.h"
 
-#include <libxfce4ui/libxfce4ui.h>
 #include <libxfce4util/libxfce4util.h>
 
 
@@ -30,12 +29,12 @@ typedef struct _ThunarOrderEditorPrivate ThunarOrderEditorPrivate;
 
 struct _ThunarOrderEditorPrivate
 {
-  ThunarOrderModel *model;
-  GtkWidget        *item_view;
-  GtkWidget        *description_area;
-  GtkWidget        *settings_area;
-  GtkWidget        *help_button;
-  GSimpleAction    *reset_action;
+  XfceItemListModel *model;
+  GtkWidget         *item_view;
+  GtkWidget         *description_area;
+  GtkWidget         *settings_area;
+  GtkWidget         *help_button;
+  GSimpleAction     *reset_action;
 };
 
 enum
@@ -43,7 +42,6 @@ enum
   PROP_0,
   PROP_MODEL,
   PROP_HELP_ENABLED,
-  PROP_RESET_ENABLED,
   N_PROPS,
 };
 
@@ -66,9 +64,6 @@ thunar_order_editor_set_property (GObject      *object,
 static void
 thunar_order_editor_help_clicked (ThunarOrderEditor *order_editor);
 
-static void
-thunar_order_editor_reset_clicked (ThunarOrderEditor *order_editor);
-
 
 
 G_DEFINE_TYPE_WITH_CODE (ThunarOrderEditor, thunar_order_editor, THUNAR_TYPE_ABSTRACT_DIALOG,
@@ -88,20 +83,12 @@ thunar_order_editor_class_init (ThunarOrderEditorClass *klass)
                                    g_param_spec_object ("model",
                                                         NULL,
                                                         NULL,
-                                                        THUNAR_TYPE_ORDER_MODEL,
+                                                        XFCE_TYPE_ITEM_LIST_MODEL,
                                                         G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_property (object_class,
                                    PROP_HELP_ENABLED,
                                    g_param_spec_boolean ("help-enabled",
-                                                         NULL,
-                                                         NULL,
-                                                         FALSE,
-                                                         G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS));
-
-  g_object_class_install_property (object_class,
-                                   PROP_RESET_ENABLED,
-                                   g_param_spec_boolean ("reset-enabled",
                                                          NULL,
                                                          NULL,
                                                          FALSE,
@@ -129,14 +116,11 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
   GtkWidget                *vbox;
   GtkWidget                *hbox;
   GtkWidget                *image;
-  GMenu                    *menu;
-  GMenuItem                *menu_item;
-  GSimpleActionGroup       *action_group;
 
   /* create dialog buttons */
   gtk_dialog_add_button (GTK_DIALOG (order_editor), _("_Close"), GTK_RESPONSE_CLOSE);
   gtk_dialog_set_default_response (GTK_DIALOG (order_editor), GTK_RESPONSE_CLOSE);
-  gtk_window_set_default_size (GTK_WINDOW (order_editor), 700, 500);
+  gtk_window_set_default_size (GTK_WINDOW (order_editor), 600, 500);
   gtk_window_set_resizable (GTK_WINDOW (order_editor), TRUE);
 
   priv->help_button = gtk_button_new_with_mnemonic (_("_Help"));
@@ -173,20 +157,6 @@ thunar_order_editor_init (ThunarOrderEditor *order_editor)
   gtk_box_pack_start (GTK_BOX (hbox), priv->item_view, TRUE, TRUE, 0);
   gtk_widget_show (priv->item_view);
 
-  /* create the "Use Default" button */
-  menu = xfce_item_list_view_get_menu (XFCE_ITEM_LIST_VIEW (priv->item_view));
-  menu_item = g_menu_item_new (_("Default order"), "thunar.reset-order");
-  g_menu_item_set_attribute_value (menu_item, G_MENU_ATTRIBUTE_ICON, g_variant_new_string ("document-revert-symbolic"));
-  g_menu_item_set_attribute_value (menu_item, XFCE_MENU_ATTRIBUTE_MNEMONIC, g_variant_new_string (_("De_fault order")));
-  g_menu_append_item (menu, menu_item);
-
-  action_group = g_simple_action_group_new ();
-  priv->reset_action = g_simple_action_new ("reset-order", NULL);
-  g_simple_action_set_enabled (priv->reset_action, FALSE);
-  g_signal_connect_swapped (priv->reset_action, "activate", G_CALLBACK (thunar_order_editor_reset_clicked), order_editor);
-  g_action_map_add_action (G_ACTION_MAP (action_group), G_ACTION (priv->reset_action));
-  gtk_widget_insert_action_group (GTK_WIDGET (order_editor), "thunar", G_ACTION_GROUP (action_group));
-
   /* create settings area */
   priv->settings_area = gtk_widget_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), priv->settings_area, FALSE, FALSE, 0);
@@ -218,10 +188,6 @@ thunar_order_editor_set_property (GObject      *object,
         gtk_widget_hide (priv->help_button);
       break;
 
-    case PROP_RESET_ENABLED:
-      g_simple_action_set_enabled (priv->reset_action, g_value_get_boolean (value));
-      break;
-
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -233,16 +199,6 @@ static void
 thunar_order_editor_help_clicked (ThunarOrderEditor *order_editor)
 {
   g_signal_emit (order_editor, signals[HELP], 0);
-}
-
-
-
-static void
-thunar_order_editor_reset_clicked (ThunarOrderEditor *order_editor)
-{
-  ThunarOrderEditorPrivate *priv = thunar_order_editor_get_instance_private (order_editor);
-
-  thunar_order_model_reset (THUNAR_ORDER_MODEL (priv->model));
 }
 
 
@@ -276,10 +232,10 @@ thunar_order_editor_get_settings_area (ThunarOrderEditor *order_editor)
 
 void
 thunar_order_editor_set_model (ThunarOrderEditor *order_editor,
-                               ThunarOrderModel  *model)
+                               XfceItemListModel *model)
 {
   _thunar_return_if_fail (THUNAR_IS_ORDER_EDITOR (order_editor));
-  _thunar_return_if_fail (THUNAR_IS_ORDER_MODEL (model));
+  _thunar_return_if_fail (XFCE_IS_ITEM_LIST_MODEL (model));
 
   g_object_set (order_editor, "model", model, NULL);
 }
