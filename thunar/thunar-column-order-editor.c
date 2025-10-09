@@ -32,8 +32,6 @@ struct _ThunarColumnOrderEditorClass
   ThunarOrderEditorClass __parent__;
 };
 
-
-
 struct _ThunarColumnOrderEditor
 {
   ThunarOrderEditor __parent__;
@@ -180,7 +178,6 @@ thunar_column_order_editor_init (ThunarColumnOrderEditor *column_editor)
   g_object_set (column_editor,
                 "title", _("Configure Columns in the Detailed List View"),
                 "help-enabled", TRUE,
-                "reset-enabled", TRUE,
                 NULL);
 }
 
@@ -213,12 +210,9 @@ thunar_column_order_editor_help (ThunarColumnOrderEditor *column_editor)
 void
 thunar_column_order_editor_show (GtkWidget *window)
 {
-  ThunarColumnOrderEditor *column_editor;
-  ThunarOrderModel        *model = thunar_column_order_model_new ();
+  XfceItemListModel       *model = thunar_column_order_model_new ();
+  ThunarColumnOrderEditor *column_editor = g_object_new (THUNAR_TYPE_COLUMN_ORDER_EDITOR, "model", model, NULL);
 
-  column_editor = g_object_new (THUNAR_TYPE_COLUMN_ORDER_EDITOR,
-                                "model", model,
-                                NULL);
   g_object_unref (model);
   thunar_order_editor_show (THUNAR_ORDER_EDITOR (column_editor), window);
 }

@@ -98,8 +98,6 @@ thunar_sources = [
   'thunar-notify.h',
   'thunar-order-editor.c',
   'thunar-order-editor.h',
-  'thunar-order-model.c',
-  'thunar-order-model.h',
   'thunar-pango-extensions.c',
   'thunar-pango-extensions.h',
   'thunar-path-entry.c',

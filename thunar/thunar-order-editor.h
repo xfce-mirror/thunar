@@ -21,7 +21,8 @@
 #define __THUNAR_ORDER_EDITOR_H__
 
 #include "thunar/thunar-abstract-dialog.h"
-#include "thunar/thunar-order-model.h"
+
+#include <libxfce4ui/libxfce4ui.h>
 
 G_BEGIN_DECLS
 
@@ -56,7 +57,7 @@ thunar_order_editor_get_settings_area (ThunarOrderEditor *order_editor);
 
 void
 thunar_order_editor_set_model (ThunarOrderEditor *order_editor,
-                               ThunarOrderModel  *model);
+                               XfceItemListModel *model);
 
 void
 thunar_order_editor_show (ThunarOrderEditor *order_editor,

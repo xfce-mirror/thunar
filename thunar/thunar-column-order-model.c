@@ -26,14 +26,14 @@
 
 struct _ThunarColumnOrderModelClass
 {
-  ThunarOrderModelClass __parent__;
+  XfceItemListModelClass __parent__;
 };
 
 
 
 struct _ThunarColumnOrderModel
 {
-  ThunarOrderModel __parent__;
+  XfceItemListModel __parent__;
 
   ThunarPreferences *preferences;
   ThunarColumnModel *model;
@@ -67,7 +67,7 @@ thunar_column_order_model_move (XfceItemListModel *item_model,
                                 gint               b_position);
 
 static void
-thunar_column_order_model_reset (ThunarOrderModel *order_model);
+thunar_column_order_model_reset (XfceItemListModel *item_model);
 
 static ThunarColumn
 thunar_column_order_model_get_model_column_nth (ThunarColumnOrderModel *column_model,
@@ -75,7 +75,7 @@ thunar_column_order_model_get_model_column_nth (ThunarColumnOrderModel *column_m
 
 
 
-G_DEFINE_TYPE (ThunarColumnOrderModel, thunar_column_order_model, THUNAR_TYPE_ORDER_MODEL)
+G_DEFINE_TYPE (ThunarColumnOrderModel, thunar_column_order_model, XFCE_TYPE_ITEM_LIST_MODEL)
 
 
 
@@ -84,8 +84,6 @@ thunar_column_order_model_class_init (ThunarColumnOrderModelClass *klass)
 {
   GObjectClass           *object_class = G_OBJECT_CLASS (klass);
   XfceItemListModelClass *item_model_class = XFCE_ITEM_LIST_MODEL_CLASS (klass);
-  ThunarOrderModelClass  *order_model_class = THUNAR_ORDER_MODEL_CLASS (klass);
-
 
   object_class->finalize = thunar_column_order_model_finalize;
 
@@ -94,7 +92,7 @@ thunar_column_order_model_class_init (ThunarColumnOrderModelClass *klass)
   item_model_class->get_item_value = thunar_column_order_model_get_value;
   item_model_class->set_activity = thunar_column_order_model_set_activity;
   item_model_class->move = thunar_column_order_model_move;
-  order_model_class->reset = thunar_column_order_model_reset;
+  item_model_class->reset = thunar_column_order_model_reset;
 }
 
 
@@ -130,7 +128,7 @@ thunar_column_order_model_finalize (GObject *object)
 static XfceItemListModelFlags
 thunar_column_order_model_get_list_flags (XfceItemListModel *item_model)
 {
-  return XFCE_ITEM_LIST_MODEL_REORDERABLE;
+  return XFCE_ITEM_LIST_MODEL_REORDERABLE | XFCE_ITEM_LIST_MODEL_RESETTABLE;
 }
 
 
@@ -223,9 +221,9 @@ thunar_column_order_model_move (XfceItemListModel *item_model,
 
 
 static void
-thunar_column_order_model_reset (ThunarOrderModel *order_model)
+thunar_column_order_model_reset (XfceItemListModel *item_model)
 {
-  ThunarColumnOrderModel *column_model = THUNAR_COLUMN_ORDER_MODEL (order_model);
+  ThunarColumnOrderModel *column_model = THUNAR_COLUMN_ORDER_MODEL (item_model);
 
   thunar_column_model_reset (column_model->model);
 }
@@ -244,7 +242,7 @@ thunar_column_order_model_get_model_column_nth (ThunarColumnOrderModel *column_m
 
 
 
-ThunarOrderModel *
+XfceItemListModel *
 thunar_column_order_model_new (void)
 {
   return g_object_new (THUNAR_TYPE_COLUMN_ORDER_MODEL, NULL);
