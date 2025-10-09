@@ -23,6 +23,8 @@
 
 #define SPACE_USAGE_BAR_HEIGHT 4
 
+#define ROUNDI(x) ((gint) ((x) + 0.5f))
+
 /*
  * In addition to the standard capabilities of GtkCellRendererText, this renderer
  * can display a progress bar beneath the text, which is used to indicate disk usage.
@@ -407,7 +409,7 @@ thunar_shortcuts_name_renderer_scale_for_dpi (GtkWidget *widget,
 {
   /* 96.0 is considered the base value, as specified in the description of gdk_screen_set_resolution */
   gdouble dpi_scale = gdk_screen_get_resolution (gtk_widget_get_screen (widget)) / 96.0;
-  return (value * dpi_scale) + 0.5;
+  return ROUNDI (value * dpi_scale);
 }
 
 
