@@ -154,7 +154,8 @@ thunar_column_order_model_get_value (XfceItemListModel      *item_model,
     {
     case XFCE_ITEM_LIST_MODEL_COLUMN_ACTIVE:
       g_value_set_boolean (value, thunar_column_model_get_column_visible (column_model->model, model_column)
-                                  || (model_column == THUNAR_COLUMN_NAME && thunar_column_is_special (model_column)));
+                                  || model_column == THUNAR_COLUMN_NAME
+                                  || thunar_column_is_special (model_column));
       break;
 
     case XFCE_ITEM_LIST_MODEL_COLUMN_ACTIVABLE:
