@@ -207,14 +207,9 @@ thunar_column_order_model_move (XfceItemListModel *item_model,
                                 gint               b_position)
 {
   ThunarColumnOrderModel *column_model = THUNAR_COLUMN_ORDER_MODEL (item_model);
-  GtkTreeIter             a_iter;
-  GtkTreeIter             b_iter;
-
-  gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (column_model->model), &a_iter, NULL, a_position);
-  gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (column_model->model), &b_iter, NULL, b_position);
 
   g_signal_handlers_block_by_func (G_OBJECT (column_model->preferences), G_CALLBACK (xfce_item_list_model_changed), item_model);
-  thunar_column_model_move (column_model->model, &a_iter, &b_iter);
+  thunar_column_model_move (column_model->model, a_position, b_position);
   g_signal_handlers_unblock_by_func (G_OBJECT (column_model->preferences), G_CALLBACK (xfce_item_list_model_changed), item_model);
 }
 
