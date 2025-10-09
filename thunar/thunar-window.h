@@ -203,6 +203,8 @@ thunar_window_focus_view (ThunarWindow *window,
                           GtkWidget    *view);
 void
 thunar_window_queue_redraw (ThunarWindow *window);
+void
+thunar_window_current_view_grab_focus (ThunarWindow *window);
 
 
 G_END_DECLS;
