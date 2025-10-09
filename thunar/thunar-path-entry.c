@@ -547,10 +547,10 @@ thunar_path_entry_key_press_event (GtkWidget   *widget,
         }
 
       if (event->keyval == GDK_KEY_Down)
-      {
-        thunar_window_current_view_grab_focus (THUNAR_WINDOW (path_entry->window));
-        return TRUE;
-      }
+        {
+          thunar_window_current_view_grab_focus (THUNAR_WINDOW (path_entry->window));
+          return TRUE;
+        }
     }
 
   return FALSE;
