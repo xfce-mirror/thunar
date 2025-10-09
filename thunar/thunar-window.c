@@ -7612,3 +7612,14 @@ thunar_window_queue_redraw (ThunarWindow *window)
 
   // TODO: Redraw as well all other parts of the window
 }
+
+
+
+void
+thunar_window_current_view_grab_focus (ThunarWindow *window)
+{
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  if (window->view != NULL)
+    gtk_widget_grab_focus (window->view);
+}
