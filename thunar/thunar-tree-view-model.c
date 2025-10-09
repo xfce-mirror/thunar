@@ -349,6 +349,13 @@ struct _ThunarTreeViewModel
   GMutex     mutex_add_search_files;
 
   guint update_search_results_timeout_id;
+
+  /* indicates that file was removed or sorted */
+  gboolean       file_was_removed;
+  gboolean       file_was_sorted;
+
+  /* tells if workaround for removed file should be used */
+  gboolean check_file_in_model_before_use;
 };
 
 
@@ -1193,6 +1200,33 @@ thunar_tree_view_model_get_value (GtkTreeModel *model,
   _thunar_return_if_fail (THUNAR_TREE_VIEW_MODEL (model));
   _thunar_return_if_fail (iter->stamp == (THUNAR_TREE_VIEW_MODEL (model))->stamp);
 
+  /* WORKAROUND: if file was removed from the completion model and files was sorted in
+   * "thunar_list_model_file_changed", sometimes the view is trying to access the removed
+   * data, so check if the requested item is in the model. */
+  if (THUNAR_TREE_VIEW_MODEL (model)->check_file_in_model_before_use && THUNAR_TREE_VIEW_MODEL (model)->file_was_removed && THUNAR_TREE_VIEW_MODEL (model)->file_was_sorted)
+    {
+      GSequenceIter *row = g_sequence_get_begin_iter (THUNAR_TREE_VIEW_MODEL (model)->root->children);
+      GSequenceIter *end = g_sequence_get_end_iter (THUNAR_TREE_VIEW_MODEL (model)->root->children);
+      GSequenceIter *next;
+      gboolean       found = FALSE;
+
+      while (row != end)
+        {
+          next = g_sequence_iter_next (row);
+          if (row == iter->user_data)
+            {
+              found = TRUE;
+              break;
+            }
+          row = next;
+        }
+      if (!found)
+        {
+          g_warning ("Requested file doesn't exist in the list model!");
+          return;
+        }
+    }
+
   node = g_sequence_get (iter->user_data);
   file = node->file;
   if (file != NULL)
@@ -1842,6 +1876,10 @@ thunar_tree_view_model_set_folder (ThunarTreeViewModel *model,
       g_free (search_query_normalized);
     }
 
+  /* reset the information that file was removed or sorted */
+  _model->file_was_removed = FALSE;
+  _model->file_was_sorted = FALSE;
+
   /* notify listeners that we have a new folder */
   g_object_notify_by_pspec (G_OBJECT (model), tree_model_props[PROP_FOLDER]);
   g_object_notify_by_pspec (G_OBJECT (model), tree_model_props[PROP_NUM_FILES]);
@@ -2425,6 +2463,9 @@ thunar_tree_view_model_dir_remove_file (Node       *node,
 
   thunar_tree_view_model_node_destroy (g_sequence_get (iter));
 
+  /* workaround: indicate that file was removed from this model */
+  node->model->file_was_removed = TRUE;
+
   g_sequence_remove (iter);
   g_hash_table_remove (node->set, file);
   node->n_children--;
@@ -2998,7 +3039,7 @@ thunar_tree_view_model_dir_files_changed (Node       *node_parent,
               gtk_tree_model_rows_reordered (GTK_TREE_MODEL (model), path, NULL, new_order);
               gtk_tree_path_free (path);
             }
-
+          model->file_was_sorted = TRUE;
           g_free (new_order);
         }
 
@@ -3327,4 +3368,16 @@ thunar_tree_view_model_get_paths_for_pattern (ThunarTreeViewModel *model,
   g_pattern_spec_free (mf.pspec);
 
   return mf.paths;
+}
+
+
+/**
+ * thunar_tree_view_model_check_file_in_model_before_use:
+ *
+ * Enables file removed workaround to prevent crash.
+ **/
+void
+thunar_tree_view_model_check_file_in_model_before_use (ThunarTreeViewModel *model)
+{
+  model->check_file_in_model_before_use = TRUE;
 }
