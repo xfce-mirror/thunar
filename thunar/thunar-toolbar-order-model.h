@@ -20,7 +20,7 @@
 #ifndef __THUNAR_TOOLBAR_ORDER_MODEL_H__
 #define __THUNAR_TOOLBAR_ORDER_MODEL_H__
 
-#include "thunar/thunar-order-model.h"
+#include <libxfce4ui/libxfce4ui.h>
 
 G_BEGIN_DECLS
 
@@ -37,7 +37,7 @@ typedef struct _ThunarToolbarOrderModelClass ThunarToolbarOrderModelClass;
 GType
 thunar_toolbar_order_model_get_type (void) G_GNUC_CONST;
 
-ThunarOrderModel *
+XfceItemListModel *
 thunar_toolbar_order_model_new (GtkWidget *toolbar);
 
 G_END_DECLS

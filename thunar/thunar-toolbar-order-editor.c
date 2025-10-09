@@ -95,7 +95,6 @@ thunar_toolbar_order_editor_init (ThunarToolbarOrderEditor *toolbar_editor)
   g_object_set (toolbar_editor,
                 "title", _("Configure the Toolbar"),
                 "help-enabled", TRUE,
-                "reset-enabled", TRUE,
                 NULL);
 }
 
@@ -128,12 +127,9 @@ void
 thunar_toolbar_order_editor_show (GtkWidget *window,
                                   GtkWidget *window_toolbar)
 {
-  ThunarToolbarOrderEditor *toolbar_editor;
-  ThunarOrderModel         *model = thunar_toolbar_order_model_new (window_toolbar);
+  XfceItemListModel        *model = thunar_toolbar_order_model_new (window_toolbar);
+  ThunarToolbarOrderEditor *toolbar_editor = g_object_new (THUNAR_TYPE_TOOLBAR_ORDER_EDITOR, "model", model, NULL);
 
-  toolbar_editor = g_object_new (THUNAR_TYPE_TOOLBAR_ORDER_EDITOR,
-                                 "model", model,
-                                 NULL);
   g_object_unref (model);
   thunar_order_editor_show (THUNAR_ORDER_EDITOR (toolbar_editor), window);
 }
