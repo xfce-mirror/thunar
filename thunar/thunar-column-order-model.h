@@ -21,7 +21,8 @@
 #define __THUNAR_COLUMN_ORDER_MODEL_H__
 
 #include "thunar/thunar-column-model.h"
-#include "thunar/thunar-order-model.h"
+
+#include <libxfce4ui/libxfce4ui.h>
 
 G_BEGIN_DECLS
 
@@ -38,7 +39,7 @@ typedef struct _ThunarColumnOrderModelClass ThunarColumnOrderModelClass;
 GType
 thunar_column_order_model_get_type (void) G_GNUC_CONST;
 
-ThunarOrderModel *
+XfceItemListModel *
 thunar_column_order_model_new (void);
 
 G_END_DECLS
