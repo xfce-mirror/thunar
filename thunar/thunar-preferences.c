@@ -125,6 +125,8 @@ enum
   PROP_SHORTCUTS_ICON_EMBLEMS,
   PROP_SHORTCUTS_ICON_SIZE,
   PROP_SHORTCUTS_DISK_SPACE_USAGE_BAR,
+  PROP_SHORTCUTS_DISK_SPACE_USAGE_WARNING_PERCENT,
+  PROP_SHORTCUTS_DISK_SPACE_USAGE_ERROR_PERCENT,
   PROP_TREE_ICON_EMBLEMS,
   PROP_TREE_ICON_SIZE,
   PROP_TREE_LINES,
@@ -1225,6 +1227,32 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         NULL,
                         TRUE,
                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:disk-space-usage-bar:
+   *
+   * Threshold value
+   **/
+  preferences_props[PROP_SHORTCUTS_DISK_SPACE_USAGE_WARNING_PERCENT] =
+  g_param_spec_int ("shortcuts-disk-space-usage-warning-percent",
+                    "ShortcutsDiskSpaceUsageWarningPercent",
+                    NULL,
+                    0, 100,
+                    90,
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:disk-space-usage-bar:
+   *
+   * Threshold value
+   **/
+  preferences_props[PROP_SHORTCUTS_DISK_SPACE_USAGE_ERROR_PERCENT] =
+  g_param_spec_int ("shortcuts-disk-space-usage-error-percent",
+                    "ShortcutsDiskSpaceUsageErrorPercent",
+                    NULL,
+                    0, 100,
+                    95,
+                    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * ThunarPreferences:tree-icon-emblems:
