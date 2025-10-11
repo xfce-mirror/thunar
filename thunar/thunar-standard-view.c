@@ -5163,3 +5163,17 @@ thunar_standard_view_set_terminal_widget (ThunarStandardView   *standard_view,
     }
 }
 #endif /* HAVE_VTE */
+
+
+
+void
+thunar_standard_view_select_first_if_none_selected (ThunarStandardView *standard_view)
+{
+  GtkWidget        *child = gtk_bin_get_child (GTK_BIN (standard_view));
+  GtkTreeModel     *tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW (child));
+  GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (child));
+  GtkTreeIter       iter;
+
+  if (gtk_tree_selection_count_selected_rows (selection) == 0 && gtk_tree_model_get_iter_first (tree_model, &iter))
+    gtk_tree_selection_select_iter (selection, &iter);
+}
