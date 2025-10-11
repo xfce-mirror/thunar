@@ -1562,8 +1562,25 @@ thunar_standard_view_unrealize (GtkWidget *widget)
 static void
 thunar_standard_view_grab_focus (GtkWidget *widget)
 {
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (widget);
+  GtkWidget          *child;
+  GtkTreeModel       *tree_model;
+  GtkTreeSelection   *selection;
+  GtkTreeIter         iter;
+
   /* forward the focus grab to the real view */
-  gtk_widget_grab_focus (gtk_bin_get_child (GTK_BIN (widget)));
+  child = gtk_bin_get_child (GTK_BIN (widget));
+  gtk_widget_grab_focus (child);
+
+  /* If a search was called, then go to the first result */
+  if (standard_view->priv->search_query != NULL)
+    {
+      selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (child));
+      tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW (child));
+
+      if (gtk_tree_selection_count_selected_rows (selection) == 0 && gtk_tree_model_get_iter_first (tree_model, &iter))
+        gtk_tree_selection_select_iter (selection, &iter);
+    }
 }
 
 
