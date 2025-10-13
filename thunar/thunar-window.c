@@ -5370,6 +5370,20 @@ thunar_window_action_stop_search (ThunarWindow *window)
 
 
 
+void
+thunar_window_select_search_result (ThunarWindow *window)
+{
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  if (window->search_mode && THUNAR_IS_STANDARD_VIEW (window->view))
+    {
+      gtk_widget_grab_focus (window->view);
+      thunar_standard_view_select_first_if_none_selected (THUNAR_STANDARD_VIEW (window->view));
+    }
+}
+
+
+
 static gboolean
 thunar_window_action_menu_deactivate (ThunarWindow *window,
                                       GtkWidget    *menu)
