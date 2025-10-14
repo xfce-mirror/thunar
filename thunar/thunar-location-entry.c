@@ -322,8 +322,13 @@ thunar_location_entry_open_or_select (ThunarLocationEntry *location_entry,
       /* check if we have a new directory or a file to select */
       if (thunar_file_is_directory (file))
         {
-          /* open the new directory */
+          GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (location_entry));
+
+          /* open the directory */
           thunar_navigator_change_directory (THUNAR_NAVIGATOR (location_entry), file);
+
+          /* Make sure the view gets focus (even if the directory is already open) */
+          thunar_window_show_and_select_files (THUNAR_WINDOW (window), NULL);
         }
       else
         {

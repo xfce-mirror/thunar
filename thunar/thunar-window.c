@@ -1396,6 +1396,10 @@ thunar_window_show_and_select_files (ThunarWindow *window,
       thunar_view_scroll_to_file (THUNAR_VIEW (window->view), first_file, FALSE, TRUE, 0.1f, 0.1f);
       g_object_unref (first_file);
     }
+
+  /* Make sure to focus the current view */
+  if (G_LIKELY (window->view != NULL))
+    gtk_widget_grab_focus (window->view);
 }
 
 
