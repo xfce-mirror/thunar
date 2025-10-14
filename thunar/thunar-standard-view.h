@@ -250,6 +250,8 @@ thunar_standard_view_set_terminal_widget (ThunarStandardView   *standard_view,
                                           ThunarTerminalWidget *terminal_widget);
 #endif
 
+void
+thunar_standard_view_select_first_file (ThunarStandardView *standard_view);
 
 G_END_DECLS;
 

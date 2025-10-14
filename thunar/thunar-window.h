@@ -184,6 +184,8 @@ thunar_window_action_search (ThunarWindow *window);
 gboolean
 thunar_window_action_stop_search (ThunarWindow *window);
 void
+thunar_window_select_search_result (ThunarWindow *window);
+void
 thunar_window_update_statusbar (ThunarWindow *window);
 void
 thunar_window_toolbar_toggle_item_visibility (ThunarWindow *window,

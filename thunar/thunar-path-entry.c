@@ -545,6 +545,12 @@ thunar_path_entry_key_press_event (GtkWidget   *widget,
           thunar_window_update_search (THUNAR_WINDOW (path_entry->window));
           return TRUE;
         }
+
+      if (event->keyval == GDK_KEY_Down)
+        {
+          thunar_window_select_search_result (THUNAR_WINDOW (path_entry->window));
+          return TRUE;
+        }
     }
 
   return FALSE;
