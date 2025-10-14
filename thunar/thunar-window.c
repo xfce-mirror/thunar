@@ -5373,12 +5373,18 @@ thunar_window_action_stop_search (ThunarWindow *window)
 void
 thunar_window_select_search_result (ThunarWindow *window)
 {
+  GList *selected_files;
+
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   if (window->search_mode && THUNAR_IS_STANDARD_VIEW (window->view))
     {
       gtk_widget_grab_focus (window->view);
-      thunar_standard_view_select_first_if_none_selected (THUNAR_STANDARD_VIEW (window->view));
+
+      /* selecting the first file if nothing is already selected */
+      selected_files = thunar_view_get_selected_files (THUNAR_VIEW (window->view));
+      if (g_list_length (selected_files) == 0)
+        thunar_standard_view_select_first_file (THUNAR_STANDARD_VIEW (window->view));
     }
 }
 
