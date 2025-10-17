@@ -25,12 +25,11 @@
 #include <libxfce4ui/libxfce4ui.h>
 
 
+
 struct _ThunarToolbarOrderEditorClass
 {
   ThunarOrderEditorClass __parent__;
 };
-
-
 
 struct _ThunarToolbarOrderEditor
 {
