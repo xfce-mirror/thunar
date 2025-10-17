@@ -170,8 +170,9 @@ thunar_sources = [
   'thunar-window.c',
   'thunar-window.h',
 ]
+
 # Add terminal widget sources conditionally
-if vte.found()
+if not get_option('terminal').disabled() and vte.found()
   thunar_sources += ['thunar-terminal-widget.c', 'thunar-terminal-widget.h']
 endif
 
