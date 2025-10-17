@@ -1498,6 +1498,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                      THUNAR_FILE_DRAG_MODE_MENU_ALWAYS,
                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
+#ifdef HAVE_VTE
   /**              
    * ThunarPreferences:terminal-height:
    *
@@ -1573,7 +1574,6 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         FALSE,
                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-#ifdef HAVE_VTE
   /**
    * ThunarPreferences:terminal-font-size:
    *
