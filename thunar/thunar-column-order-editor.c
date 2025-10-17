@@ -27,6 +27,8 @@
 
 #include <libxfce4ui/libxfce4ui.h>
 
+
+
 struct _ThunarColumnOrderEditorClass
 {
   ThunarOrderEditorClass __parent__;

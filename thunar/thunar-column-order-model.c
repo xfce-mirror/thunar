@@ -24,12 +24,12 @@
 
 #include <libxfce4util/libxfce4util.h>
 
+
+
 struct _ThunarColumnOrderModelClass
 {
   XfceItemListModelClass __parent__;
 };
-
-
 
 struct _ThunarColumnOrderModel
 {
@@ -51,10 +51,10 @@ static gint
 thunar_column_order_model_get_n_items (XfceItemListModel *item_model);
 
 static void
-thunar_column_order_model_get_value (XfceItemListModel      *item_model,
-                                     gint                    position,
-                                     XfceItemListModelColumn column,
-                                     GValue                 *value);
+thunar_column_order_model_get_value (XfceItemListModel *item_model,
+                                     gint               position,
+                                     gint               column,
+                                     GValue            *value);
 
 static void
 thunar_column_order_model_set_activity (XfceItemListModel *item_model,
@@ -142,10 +142,10 @@ thunar_column_order_model_get_n_items (XfceItemListModel *item_model)
 
 
 static void
-thunar_column_order_model_get_value (XfceItemListModel      *item_model,
-                                     gint                    position,
-                                     XfceItemListModelColumn column,
-                                     GValue                 *value)
+thunar_column_order_model_get_value (XfceItemListModel *item_model,
+                                     gint               position,
+                                     gint               column,
+                                     GValue            *value)
 {
   ThunarColumnOrderModel *column_model = THUNAR_COLUMN_ORDER_MODEL (item_model);
   ThunarColumn            model_column = thunar_column_order_model_get_model_column_nth (column_model, position);
@@ -172,12 +172,6 @@ thunar_column_order_model_get_value (XfceItemListModel      *item_model,
     case XFCE_ITEM_LIST_MODEL_COLUMN_TOOLTIP:
       if (thunar_column_is_special (model_column))
         g_value_set_string (value, _("This column is reserved for special locations"));
-      break;
-
-    case XFCE_ITEM_LIST_MODEL_COLUMN_EDITABLE:
-      break;
-
-    case XFCE_ITEM_LIST_MODEL_COLUMN_REMOVABLE:
       break;
 
     default:
