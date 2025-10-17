@@ -85,7 +85,7 @@ if gio_unix.found()
   feature_cflags += '-DHAVE_GIO_UNIX=1'
 endif
 
-vte = dependency('vte-2.91', required: false)
+vte = dependency('vte-2.91', required: get_option('terminal'))
 if vte.found()
   feature_cflags += '-DHAVE_VTE=1'
 endif
