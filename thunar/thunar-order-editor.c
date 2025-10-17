@@ -210,7 +210,6 @@ thunar_order_editor_get_description_area (ThunarOrderEditor *order_editor)
 
   _thunar_return_val_if_fail (THUNAR_IS_ORDER_EDITOR (order_editor), NULL);
 
-
   priv = thunar_order_editor_get_instance_private (order_editor);
   return GTK_CONTAINER (priv->description_area);
 }

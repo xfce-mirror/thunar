@@ -23,12 +23,12 @@
 #include "thunar/thunar-preferences.h"
 #include "thunar/thunar-window.h"
 
+
+
 struct _ThunarToolbarOrderModelClass
 {
   XfceItemListModelClass __parent__;
 };
-
-
 
 struct _ThunarToolbarOrderModel
 {
@@ -51,10 +51,10 @@ static gint
 thunar_toolbar_order_model_get_n_items (XfceItemListModel *item_model);
 
 static void
-thunar_toolbar_order_model_get_value (XfceItemListModel      *item_model,
-                                      gint                    position,
-                                      XfceItemListModelColumn column,
-                                      GValue                 *value);
+thunar_toolbar_order_model_get_value (XfceItemListModel *item_model,
+                                      gint               position,
+                                      gint               column,
+                                      GValue            *value);
 
 static void
 thunar_toolbar_order_model_set_activity (XfceItemListModel *item_model,
@@ -150,10 +150,10 @@ thunar_toolbar_order_model_get_n_items (XfceItemListModel *item_model)
 
 
 static void
-thunar_toolbar_order_model_get_value (XfceItemListModel      *item_model,
-                                      gint                    position,
-                                      XfceItemListModelColumn column,
-                                      GValue                 *value)
+thunar_toolbar_order_model_get_value (XfceItemListModel *item_model,
+                                      gint               position,
+                                      gint               column,
+                                      GValue            *value)
 {
   ThunarToolbarOrderModel *toolbar_model = THUNAR_TOOLBAR_ORDER_MODEL (item_model);
   GtkWidget               *item = g_list_nth_data (toolbar_model->children, position);
@@ -193,12 +193,6 @@ thunar_toolbar_order_model_get_value (XfceItemListModel      *item_model,
         g_value_set_string (value, _("Only visible when the menubar is hidden"));
       else
         g_value_set_string (value, NULL);
-      break;
-
-    case XFCE_ITEM_LIST_MODEL_COLUMN_EDITABLE:
-      break;
-
-    case XFCE_ITEM_LIST_MODEL_COLUMN_REMOVABLE:
       break;
 
     default:
