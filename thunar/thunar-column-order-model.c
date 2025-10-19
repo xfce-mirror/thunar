@@ -44,9 +44,6 @@ struct _ThunarColumnOrderModel
 static void
 thunar_column_order_model_finalize (GObject *object);
 
-static XfceItemListModelFlags
-thunar_column_order_model_get_list_flags (XfceItemListModel *item_model);
-
 static gint
 thunar_column_order_model_get_n_items (XfceItemListModel *item_model);
 
@@ -87,7 +84,6 @@ thunar_column_order_model_class_init (ThunarColumnOrderModelClass *klass)
 
   object_class->finalize = thunar_column_order_model_finalize;
 
-  item_model_class->get_list_flags = thunar_column_order_model_get_list_flags;
   item_model_class->get_n_items = thunar_column_order_model_get_n_items;
   item_model_class->get_item_value = thunar_column_order_model_get_value;
   item_model_class->set_activity = thunar_column_order_model_set_activity;
@@ -100,6 +96,8 @@ thunar_column_order_model_class_init (ThunarColumnOrderModelClass *klass)
 static void
 thunar_column_order_model_init (ThunarColumnOrderModel *column_model)
 {
+  g_object_set (column_model, "list-flags", XFCE_ITEM_LIST_MODEL_REORDERABLE | XFCE_ITEM_LIST_MODEL_RESETTABLE, NULL);
+
   column_model->preferences = thunar_preferences_get ();
   column_model->model = thunar_column_model_get_default ();
 
@@ -121,14 +119,6 @@ thunar_column_order_model_finalize (GObject *object)
   g_clear_object (&column_model->model);
 
   G_OBJECT_CLASS (thunar_column_order_model_parent_class)->finalize (object);
-}
-
-
-
-static XfceItemListModelFlags
-thunar_column_order_model_get_list_flags (XfceItemListModel *item_model)
-{
-  return XFCE_ITEM_LIST_MODEL_REORDERABLE | XFCE_ITEM_LIST_MODEL_RESETTABLE;
 }
 
 
