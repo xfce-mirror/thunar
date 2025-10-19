@@ -44,9 +44,6 @@ struct _ThunarToolbarOrderModel
 static void
 thunar_toolbar_order_model_finalize (GObject *object);
 
-static XfceItemListModelFlags
-thunar_toolbar_order_model_get_list_flags (XfceItemListModel *item_model);
-
 static gint
 thunar_toolbar_order_model_get_n_items (XfceItemListModel *item_model);
 
@@ -96,7 +93,6 @@ thunar_toolbar_order_model_class_init (ThunarToolbarOrderModelClass *klass)
 
   object_class->finalize = thunar_toolbar_order_model_finalize;
 
-  item_model_class->get_list_flags = thunar_toolbar_order_model_get_list_flags;
   item_model_class->get_n_items = thunar_toolbar_order_model_get_n_items;
   item_model_class->get_item_value = thunar_toolbar_order_model_get_value;
   item_model_class->set_activity = thunar_toolbar_order_model_set_activity;
@@ -109,6 +105,7 @@ thunar_toolbar_order_model_class_init (ThunarToolbarOrderModelClass *klass)
 static void
 thunar_toolbar_order_model_init (ThunarToolbarOrderModel *toolbar_model)
 {
+  g_object_set (toolbar_model, "list-flags", XFCE_ITEM_LIST_MODEL_REORDERABLE | XFCE_ITEM_LIST_MODEL_RESETTABLE, NULL);
 }
 
 
@@ -127,14 +124,6 @@ thunar_toolbar_order_model_finalize (GObject *object)
   g_object_unref (toolbar_model->toolbar);
 
   G_OBJECT_CLASS (thunar_toolbar_order_model_parent_class)->finalize (object);
-}
-
-
-
-static XfceItemListModelFlags
-thunar_toolbar_order_model_get_list_flags (XfceItemListModel *item_model)
-{
-  return XFCE_ITEM_LIST_MODEL_REORDERABLE | XFCE_ITEM_LIST_MODEL_RESETTABLE;
 }
 
 
