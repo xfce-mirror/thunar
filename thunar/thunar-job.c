@@ -462,15 +462,15 @@ thunar_job_scheduler_job_func (GIOSchedulerJob *scheduler_job,
   job->priv->scheduler_job = scheduler_job;
 
 #if HAVE_PTHREAD_H && HAVE_SCHED_H
-	pthread_setschedprio(pthread_self(), sched_get_priority_min(
-			sched_getscheduler(0)));
+  pthread_setschedprio (pthread_self (), sched_get_priority_min (
+                                         sched_getscheduler (0)));
 #endif
-	
+
 #if HAVE_SYS_SYSCALL_H && HAVE_LINUX_IOPRIO_H
-	syscall(SYS_ioprio_set, IOPRIO_WHO_PROCESS, 0,
-		IOPRIO_PRIO_VALUE(IOPRIO_CLASS_IDLE, 0));
+  syscall (SYS_ioprio_set, IOPRIO_WHO_PROCESS, 0,
+           IOPRIO_PRIO_VALUE (IOPRIO_CLASS_IDLE, 0));
 #endif
-	
+
   success = (*THUNAR_JOB_GET_CLASS (job)->execute) (job, &error);
 
   if (!success)
