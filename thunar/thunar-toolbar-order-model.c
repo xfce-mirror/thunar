@@ -146,10 +146,7 @@ thunar_toolbar_order_model_get_value (XfceItemListModel *item_model,
 {
   ThunarToolbarOrderModel *toolbar_model = THUNAR_TOOLBAR_ORDER_MODEL (item_model);
   GtkWidget               *item = g_list_nth_data (toolbar_model->children, position);
-  const gchar             *id;
-  const gchar             *icon;
-  const gchar             *name;
-  GtkWidget               *label;
+  const gchar             *id = g_object_get_data (G_OBJECT (item), "id");
 
   switch (column)
     {
@@ -158,26 +155,26 @@ thunar_toolbar_order_model_get_value (XfceItemListModel *item_model,
       break;
 
     case XFCE_ITEM_LIST_MODEL_COLUMN_ACTIVABLE:
-      id = g_object_get_data (G_OBJECT (item), "id");
       g_value_set_boolean (value, g_strcmp0 (id, "menu") != 0);
       break;
 
     case XFCE_ITEM_LIST_MODEL_COLUMN_ICON:
-      icon = g_object_get_data (G_OBJECT (item), "icon");
-      if (icon != NULL && *icon != '\0')
-        g_value_set_object (value, g_themed_icon_new (icon));
+      const gchar *icon_name = g_object_get_data (G_OBJECT (item), "icon");
+
+      if (!xfce_str_is_empty (icon_name))
+        g_value_take_object (value, g_themed_icon_new (icon_name));
       break;
 
     case XFCE_ITEM_LIST_MODEL_COLUMN_NAME:
-      name = g_object_get_data (G_OBJECT (item), "label");
-      label = gtk_label_new_with_mnemonic (name);
+      const gchar *name = g_object_get_data (G_OBJECT (item), "label");
+      GtkWidget   *label = gtk_label_new_with_mnemonic (name);
+
       g_object_ref_sink (label);
       g_value_set_string (value, gtk_label_get_text (GTK_LABEL (label)));
       g_object_unref (label);
       break;
 
     case XFCE_ITEM_LIST_MODEL_COLUMN_TOOLTIP:
-      id = g_object_get_data (G_OBJECT (item), "id");
       if (g_strcmp0 (id, "menu") == 0)
         g_value_set_string (value, _("Only visible when the menubar is hidden"));
       else
