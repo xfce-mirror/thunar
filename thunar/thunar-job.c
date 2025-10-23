@@ -18,6 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
+/* this unlocks the definition of `syscall` in unistd.h */
 #define _DEFAULT_SOURCE
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
@@ -462,11 +463,13 @@ thunar_job_scheduler_job_func (GIOSchedulerJob *scheduler_job,
   job->priv->scheduler_job = scheduler_job;
 
 #if HAVE_PTHREAD_H && HAVE_SCHED_H
+	/* set CPU priority of this thread to least possible */
   pthread_setschedprio (pthread_self (), sched_get_priority_min (
                                          sched_getscheduler (0)));
 #endif
 
 #if HAVE_SYS_SYSCALL_H && HAVE_LINUX_IOPRIO_H
+	/* this sets IO priority of the calling thread to minimum */
   syscall (SYS_ioprio_set, IOPRIO_WHO_PROCESS, 0,
            IOPRIO_PRIO_VALUE (IOPRIO_CLASS_IDLE, 0));
 #endif
