@@ -60,8 +60,8 @@ thunar_column_model_get_default (void);
 
 void
 thunar_column_model_move (ThunarColumnModel *column_model,
-                          gint source_index,
-                          gint dest_index);
+                          gint               source_index,
+                          gint               dest_index);
 
 const ThunarColumn *
 thunar_column_model_get_column_order (ThunarColumnModel *column_model);
