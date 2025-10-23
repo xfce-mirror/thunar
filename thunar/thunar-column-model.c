@@ -512,7 +512,7 @@ thunar_column_model_move (ThunarColumnModel *column_model,
   gint         i, j;
 
   _thunar_return_if_fail (THUNAR_IS_COLUMN_MODEL (column_model));
-  
+
   source_column = column_model->order[source_index];
   memcpy (saved_order, column_model->order, sizeof (saved_order));
   for (i = 0, j = 0; i < THUNAR_N_VISIBLE_COLUMNS; ++i)
