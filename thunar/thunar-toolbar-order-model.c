@@ -34,6 +34,7 @@ struct _ThunarToolbarOrderModel
 {
   XfceItemListModel __parent__;
 
+  ThunarApplication *application;
   ThunarPreferences *preferences;
   GtkWidget         *toolbar;
   GList             *children;
@@ -105,6 +106,8 @@ static void
 thunar_toolbar_order_model_init (ThunarToolbarOrderModel *toolbar_model)
 {
   g_object_set (toolbar_model, "list-flags", XFCE_ITEM_LIST_MODEL_REORDERABLE | XFCE_ITEM_LIST_MODEL_RESETTABLE, NULL);
+
+  toolbar_model->application = thunar_application_get ();
 }
 
 
@@ -115,6 +118,8 @@ thunar_toolbar_order_model_finalize (GObject *object)
   ThunarToolbarOrderModel *toolbar_model = THUNAR_TOOLBAR_ORDER_MODEL (object);
 
   thunar_toolbar_order_model_save (toolbar_model);
+
+  g_object_unref (toolbar_model->application);
 
   g_signal_handlers_disconnect_by_data (toolbar_model->preferences, toolbar_model);
   g_clear_object (&toolbar_model->preferences);
@@ -192,13 +197,12 @@ thunar_toolbar_order_model_set_activity (XfceItemListModel *item_model,
                                          gint               position,
                                          gboolean           activity)
 {
-  ThunarApplication *application = thunar_application_get ();
-  GList             *windows = thunar_application_get_windows (application);
+  ThunarToolbarOrderModel *toolbar_model = THUNAR_TOOLBAR_ORDER_MODEL (item_model);
+  GList                   *windows = thunar_application_get_windows (toolbar_model->application);
 
   for (GList *lp = windows; lp != NULL; lp = lp->next)
     thunar_window_toolbar_toggle_item_visibility (THUNAR_WINDOW (lp->data), position);
 
-  g_object_unref (application);
   g_list_free (windows);
 }
 
@@ -210,7 +214,6 @@ thunar_toolbar_order_model_move (XfceItemListModel *item_model,
                                  gint               b_position)
 {
   ThunarToolbarOrderModel *toolbar_model = THUNAR_TOOLBAR_ORDER_MODEL (item_model);
-  ThunarApplication       *application = thunar_application_get ();
   GList                   *list_item = g_list_nth (toolbar_model->children, a_position);
   GList                   *windows;
 
@@ -223,9 +226,11 @@ thunar_toolbar_order_model_move (XfceItemListModel *item_model,
                                                        list_item);
 
   /* Changes the order for all windows */
-  windows = thunar_application_get_windows (application);
+  windows = thunar_application_get_windows (toolbar_model->application);
   for (GList *lp = windows; lp != NULL; lp = lp->next)
     thunar_window_toolbar_move_item_before (THUNAR_WINDOW (lp->data), a_position, b_position);
+
+  g_list_free (windows);
 }
 
 
@@ -253,7 +258,7 @@ thunar_toolbar_order_model_reset (XfceItemListModel *item_model)
     new_order = g_list_insert_sorted (new_order, l->data, (GCompareFunc) thunar_toolbar_order_model_compare_order);
 
   for (GList *l = new_order; l != NULL; l = l->next, ++index)
-    thunar_toolbar_order_model_move (item_model, g_list_index (toolbar_model->children, l->data), index);
+    xfce_item_list_model_move (item_model, g_list_index (toolbar_model->children, l->data), index);
 
   g_list_free (new_order);
 }
