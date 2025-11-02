@@ -64,10 +64,9 @@ thunar_toolbar_order_model_move (XfceItemListModel *item_model,
                                  gint               a_position,
                                  gint               b_position);
 
-static void
-thunar_toolbar_order_model_swap (ThunarToolbarOrderModel *toolbar_model,
-                                 gint                     a_position,
-                                 gint                     b_position);
+static gint
+thunar_toolbar_order_model_compare_order (GObject *a,
+                                          GObject *b);
 
 static void
 thunar_toolbar_order_model_reset (XfceItemListModel *item_model);
@@ -231,15 +230,14 @@ thunar_toolbar_order_model_move (XfceItemListModel *item_model,
 
 
 
-static void
-thunar_toolbar_order_model_swap (ThunarToolbarOrderModel *toolbar_model,
-                                 gint                     a_position,
-                                 gint                     b_position)
+static gint
+thunar_toolbar_order_model_compare_order (GObject *a,
+                                          GObject *b)
 {
-  if (a_position > b_position)
-    thunar_toolbar_order_model_move (XFCE_ITEM_LIST_MODEL (toolbar_model), a_position, b_position);
-  else
-    thunar_toolbar_order_model_move (XFCE_ITEM_LIST_MODEL (toolbar_model), b_position, a_position);
+  gint a_order = *(const gint *) g_object_get_data (a, "default-order");
+  gint b_order = *(const gint *) g_object_get_data (b, "default-order");
+
+  return (a_order > b_order) - (a_order < b_order);
 }
 
 
@@ -248,39 +246,16 @@ static void
 thunar_toolbar_order_model_reset (XfceItemListModel *item_model)
 {
   ThunarToolbarOrderModel *toolbar_model = THUNAR_TOOLBAR_ORDER_MODEL (item_model);
-  guint                    item_count = g_list_length (toolbar_model->children);
-  guint                    target_order[item_count];
-  guint                    current_order[item_count];
-  guint                    index = 0;
+  GList                   *new_order = NULL;
+  gint                     index = 0;
 
-  for (GList *lp = toolbar_model->children; lp != NULL; lp = lp->next)
-    {
-      GtkWidget *item = lp->data;
-      gint      *order = NULL;
+  for (GList *l = toolbar_model->children; l != NULL; l = l->next)
+    new_order = g_list_insert_sorted (new_order, l->data, (GCompareFunc) thunar_toolbar_order_model_compare_order);
 
-      order = g_object_get_data (G_OBJECT (item), "default-order");
-      current_order[index] = *order;
-      target_order[index] = index;
-      index++;
-    }
+  for (GList *l = new_order; l != NULL; l = l->next, ++index)
+    thunar_toolbar_order_model_move (item_model, g_list_index (toolbar_model->children, l->data), index);
 
-  /* now rearrange the toolbar items, the goal is to make the current_order like the target_order */
-  for (guint i = 0; i < item_count; i++)
-    {
-      guint x = target_order[i];
-      for (guint j = 0; j < item_count; j++)
-        {
-          guint y = current_order[j];
-          if (x == y && i != j)
-            {
-              thunar_toolbar_order_model_swap (toolbar_model, i, j);
-              y = current_order[i];
-              current_order[i] = target_order[i];
-              current_order[j] = y;
-              break;
-            }
-        }
-    }
+  g_list_free (new_order);
 }
 
 
