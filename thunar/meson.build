@@ -155,8 +155,6 @@ thunar_sources = [
   'thunar-thumbnailer.h',
   'thunar-toolbar-order-editor.c',
   'thunar-toolbar-order-editor.h',
-  'thunar-toolbar-order-model.c',
-  'thunar-toolbar-order-model.h',
   'thunar-transfer-job.c',
   'thunar-transfer-job.h',
   'thunar-tree-model.c',
