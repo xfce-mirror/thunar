@@ -7360,18 +7360,18 @@ thunar_window_toolbar_toggle_item_visibility (ThunarWindow *window,
 
 
 void
-thunar_window_toolbar_move_item_before (ThunarWindow *window,
-                                        gint          a_position,
-                                        gint          b_position)
+thunar_window_toolbar_move_item (ThunarWindow *window,
+                                 gint          source_index,
+                                 gint          dest_index)
 {
   GList     *items = gtk_container_get_children (GTK_CONTAINER (window->location_toolbar));
-  GtkWidget *item = g_list_nth_data (items, a_position);
+  GtkWidget *item = g_list_nth_data (items, source_index);
 
   if (item != NULL)
     {
       g_object_ref (item);
       gtk_container_remove (GTK_CONTAINER (window->location_toolbar), item);
-      gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), GTK_TOOL_ITEM (item), b_position);
+      gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), GTK_TOOL_ITEM (item), dest_index);
     }
 
   g_list_free (items);

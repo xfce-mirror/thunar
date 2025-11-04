@@ -190,9 +190,9 @@ thunar_window_toolbar_toggle_item_visibility (ThunarWindow *window,
                                               gint          index);
 
 void
-thunar_window_toolbar_move_item_before (ThunarWindow *window,
-                                        gint          a_position,
-                                        gint          b_position);
+thunar_window_toolbar_move_item (ThunarWindow *window,
+                                 gint          source_index,
+                                 gint          dest_index);
 
 XfceGtkActionEntry *
 thunar_window_get_action_entries (void);
