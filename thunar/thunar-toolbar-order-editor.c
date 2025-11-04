@@ -132,8 +132,6 @@ thunar_toolbar_order_editor_finalize (GObject *object)
 {
   ThunarToolbarOrderEditor *toolbar_editor = THUNAR_TOOLBAR_ORDER_EDITOR (object);
 
-  thunar_toolbar_order_editor_save (toolbar_editor);
-
   g_signal_handlers_disconnect_by_data (toolbar_editor->preferences, toolbar_editor);
   g_clear_object (&toolbar_editor->application);
   g_clear_object (&toolbar_editor->preferences);
@@ -200,7 +198,7 @@ thunar_toolbar_order_editor_move (ThunarToolbarOrderEditor *toolbar_editor,
 
   /* Changes the order for all windows */
   for (GList *l = windows; l != NULL; l = l->next)
-    thunar_window_toolbar_move_item_before (THUNAR_WINDOW (l->data), source_index, dest_index);
+    thunar_window_toolbar_move_item (THUNAR_WINDOW (l->data), source_index, dest_index);
 
   g_list_free (windows);
 
@@ -262,7 +260,7 @@ thunar_toolbar_order_editor_save (ThunarToolbarOrderEditor *toolbar_editor)
   GString *items = g_string_sized_new (1024);
 
   /* block signal */
-  g_signal_handlers_block_by_func (toolbar_editor->preferences, thunar_toolbar_order_editor_reset, toolbar_editor);
+  g_signal_handlers_block_by_func (toolbar_editor->preferences, thunar_toolbar_order_editor_save, toolbar_editor);
 
   /* read the internal id and visibility column values and store them */
   for (GList *l = toolbar_editor->children; l != NULL; l = l->next)
@@ -297,7 +295,7 @@ thunar_toolbar_order_editor_save (ThunarToolbarOrderEditor *toolbar_editor)
   g_string_free (items, TRUE);
 
   /* unblock signal */
-  g_signal_handlers_unblock_by_func (toolbar_editor->preferences, thunar_toolbar_order_editor_reset, toolbar_editor);
+  g_signal_handlers_unblock_by_func (toolbar_editor->preferences, thunar_toolbar_order_editor_save, toolbar_editor);
 }
 
 
@@ -319,6 +317,8 @@ thunar_toolbar_order_editor_show (GtkWidget *window,
   g_signal_connect_swapped (toolbar_editor->preferences, "notify::last-toolbar-items", G_CALLBACK (thunar_toolbar_order_editor_populate), toolbar_editor);
   thunar_toolbar_order_editor_populate (toolbar_editor);
   g_object_unref (store);
+
+  g_signal_connect (toolbar_editor, "close", G_CALLBACK (thunar_toolbar_order_editor_save), NULL);
 
   thunar_order_editor_show (THUNAR_ORDER_EDITOR (toolbar_editor), window);
 }
