@@ -213,6 +213,7 @@ thunar_column_order_editor_finalize (GObject *object)
 {
   ThunarColumnOrderEditor *column_editor = THUNAR_COLUMN_ORDER_EDITOR (object);
 
+  g_signal_handlers_disconnect_by_data (column_editor->preferences, column_editor);
   g_clear_object (&column_editor->preferences);
   g_clear_object (&column_editor->column_model);
 
