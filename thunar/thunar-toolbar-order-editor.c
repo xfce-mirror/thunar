@@ -316,7 +316,7 @@ thunar_toolbar_order_editor_show (GtkWidget *window,
   g_signal_connect_swapped (store, "before-move-item", G_CALLBACK (thunar_toolbar_order_editor_move), toolbar_editor);
   g_signal_connect_swapped (store, "before-set-activity", G_CALLBACK (thunar_toolbar_order_editor_set_activity), toolbar_editor);
   g_signal_connect_swapped (store, "reset", G_CALLBACK (thunar_toolbar_order_editor_reset), toolbar_editor);
-  g_signal_connect_swapped (toolbar_editor->preferences, "notify::last-toolbar-items", G_CALLBACK (thunar_toolbar_order_editor_reset), toolbar_editor);
+  g_signal_connect_swapped (toolbar_editor->preferences, "notify::last-toolbar-items", G_CALLBACK (thunar_toolbar_order_editor_populate), toolbar_editor);
   thunar_toolbar_order_editor_populate (toolbar_editor);
   g_object_unref (store);
 
