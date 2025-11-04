@@ -22,8 +22,6 @@ thunar_sources = [
   'thunar-column-model.h',
   'thunar-column-order-editor.c',
   'thunar-column-order-editor.h',
-  'thunar-column-order-model.c',
-  'thunar-column-order-model.h',
   'thunar-compact-view.c',
   'thunar-compact-view.h',
   'thunar-component.c',
