@@ -265,7 +265,7 @@ thunar_toolbar_order_editor_save (ThunarToolbarOrderEditor *toolbar_editor)
   GString *items = g_string_sized_new (1024);
 
   /* block signal */
-  g_signal_handlers_block_by_func (toolbar_editor->preferences, thunar_toolbar_order_editor_save, toolbar_editor);
+  g_signal_handlers_block_by_func (toolbar_editor->preferences, thunar_toolbar_order_editor_populate, toolbar_editor);
 
   /* read the internal id and visibility column values and store them */
   for (GList *l = toolbar_editor->children; l != NULL; l = l->next)
@@ -300,7 +300,7 @@ thunar_toolbar_order_editor_save (ThunarToolbarOrderEditor *toolbar_editor)
   g_string_free (items, TRUE);
 
   /* unblock signal */
-  g_signal_handlers_unblock_by_func (toolbar_editor->preferences, thunar_toolbar_order_editor_save, toolbar_editor);
+  g_signal_handlers_unblock_by_func (toolbar_editor->preferences, thunar_toolbar_order_editor_populate, toolbar_editor);
 }
 
 
