@@ -204,6 +204,8 @@ thunar_toolbar_order_editor_move (ThunarToolbarOrderEditor *toolbar_editor,
 
   g_clear_pointer (&toolbar_editor->children, g_list_free);
   toolbar_editor->children = gtk_container_get_children (GTK_CONTAINER (toolbar_editor->toolbar));
+
+  thunar_toolbar_order_editor_save (toolbar_editor);
 }
 
 
@@ -219,6 +221,8 @@ thunar_toolbar_order_editor_set_activity (ThunarToolbarOrderEditor *toolbar_edit
     thunar_window_toolbar_toggle_item_visibility (THUNAR_WINDOW (l->data), index);
 
   g_list_free (windows);
+
+  thunar_toolbar_order_editor_save (toolbar_editor);
 }
 
 
@@ -249,6 +253,7 @@ thunar_toolbar_order_editor_reset (ThunarToolbarOrderEditor *toolbar_editor)
 
   g_list_free (new_order);
 
+  thunar_toolbar_order_editor_save (toolbar_editor);
   thunar_toolbar_order_editor_populate (toolbar_editor);
 }
 
@@ -317,8 +322,6 @@ thunar_toolbar_order_editor_show (GtkWidget *window,
   g_signal_connect_swapped (toolbar_editor->preferences, "notify::last-toolbar-items", G_CALLBACK (thunar_toolbar_order_editor_populate), toolbar_editor);
   thunar_toolbar_order_editor_populate (toolbar_editor);
   g_object_unref (store);
-
-  g_signal_connect (toolbar_editor, "close", G_CALLBACK (thunar_toolbar_order_editor_save), NULL);
 
   thunar_order_editor_show (THUNAR_ORDER_EDITOR (toolbar_editor), window);
 }
