@@ -38,6 +38,8 @@ G_BEGIN_DECLS;
 /* Maximum number of emblems which can be used per file */
 #define MAX_EMBLEMS_PER_FILE 4
 
+#define BIT64(n) ((guint64) 1 << (n))
+
 typedef enum
 {
   THUNAR_NEXT_FILE_NAME_MODE_NEW,
