@@ -31,6 +31,8 @@
 #include "thunar/thunar-browser.h"
 #include "thunar/thunar-clipboard-manager.h"
 #include "thunar/thunar-compact-view.h"
+#include "thunar/thunar-context-menu-order-editor.h"
+#include "thunar/thunar-context-menu-order-model.h"
 #include "thunar/thunar-details-view.h"
 #include "thunar/thunar-device-monitor.h"
 #include "thunar/thunar-dialogs.h"
@@ -516,6 +518,8 @@ static void
 image_preview_update (GtkWidget     *parent,
                       GtkAllocation *allocation,
                       GtkWidget     *image);
+static gboolean
+thunar_window_action_show_context_menu_order_editor (ThunarWindow *window);
 
 
 
@@ -685,6 +689,7 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
       { THUNAR_WINDOW_ACTION_VIEW_TERMINAL,                  "<Actions>/ThunarWindow/view-terminal",                   "F4",                   XFCE_GTK_CHECK_MENU_ITEM, N_ ("_Terminal"),              N_ ("Toggle the visibility of the terminal emulator"),                               "utilities-terminal",      G_CALLBACK (thunar_window_action_view_terminal),      },
     #endif
     { THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR,              "<Actions>/ThunarWindow/view-configure-toolbar",          "",                     XFCE_GTK_MENU_ITEM ,      N_ ("Configure _Toolbar..."),  N_ ("Configure the toolbar"),                                                        NULL,                      G_CALLBACK (thunar_window_action_show_toolbar_editor),},
+    { THUNAR_WINDOW_ACTION_CONFIGURE_CONTEXT_MENU,         "<Actions>/ThunarWindow/view-configure-context-menu",     "",                     XFCE_GTK_MENU_ITEM ,      N_ ("Configure context _menu..."),  N_ ("Configure the context menu"),                                              NULL,                      G_CALLBACK (thunar_window_action_show_context_menu_order_editor),},
     { THUNAR_WINDOW_ACTION_CLEAR_DIRECTORY_SPECIFIC_SETTINGS,"<Actions>/ThunarWindow/clear-directory-specific-settings","",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Cl_ear Saved Folder View Settings"), N_ ("Delete saved view settings for this folder"),                        NULL,                      G_CALLBACK (thunar_window_action_clear_directory_specific_settings), },
     { THUNAR_WINDOW_ACTION_SHOW_HIDDEN,                    "<Actions>/ThunarWindow/show-hidden",                     "<Primary>h",           XFCE_GTK_CHECK_MENU_ITEM, N_ ("Show _Hidden Files"),     N_ ("Toggles the display of hidden files in the current window"),                    NULL,                      G_CALLBACK (thunar_window_action_show_hidden),        },
     { THUNAR_WINDOW_ACTION_SHOW_HIGHLIGHT,                 "<Actions>/ThunarWindow/show-highlight",                  "",                     XFCE_GTK_CHECK_MENU_ITEM, N_ ("Show _File Highlight"),   N_ ("Toggles the display of file highlight which can be configured in the file specific property dialog"), NULL,G_CALLBACK (thunar_window_action_show_highlight),     },
@@ -1653,6 +1658,7 @@ thunar_window_update_view_menu (ThunarWindow *window,
                                                    G_OBJECT (window), active, GTK_MENU_SHELL (menu));
 #endif
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CONFIGURE_TOOLBAR), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CONFIGURE_CONTEXT_MENU), G_OBJECT (window), GTK_MENU_SHELL (menu));
   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
   if (window->directory_specific_settings)
     {
@@ -4438,6 +4444,15 @@ image_preview_update (GtkWidget     *parent,
 
 
 static gboolean
+thunar_window_action_show_context_menu_order_editor (ThunarWindow *window)
+{
+  thunar_context_menu_order_editor_show (GTK_WIDGET (window));
+  return TRUE;
+}
+
+
+
+static gboolean
 thunar_window_action_statusbar_changed (ThunarWindow *window)
 {
   gboolean statusbar_visible;
@@ -6017,6 +6032,25 @@ thunar_window_append_menu_item (ThunarWindow      *window,
     gtk_widget_set_sensitive (item, G_LIKELY (window->zoom_level < THUNAR_ZOOM_N_LEVELS - 1));
   if (action == THUNAR_WINDOW_ACTION_ZOOM_OUT)
     gtk_widget_set_sensitive (item, G_LIKELY (window->zoom_level > 0));
+
+  switch (action)
+    {
+    case THUNAR_WINDOW_ACTION_ZOOM_IN:
+      thunar_context_menu_item_set_id (item, THUNAR_CONTEXT_MENU_ITEM_ZOOM_IN);
+      break;
+
+    case THUNAR_WINDOW_ACTION_ZOOM_OUT:
+      thunar_context_menu_item_set_id (item, THUNAR_CONTEXT_MENU_ITEM_ZOOM_OUT);
+      break;
+
+    case THUNAR_WINDOW_ACTION_ZOOM_RESET:
+      thunar_context_menu_item_set_id (item, THUNAR_CONTEXT_MENU_ITEM_ZOOM_RESET);
+      break;
+
+    default:
+      g_warn_if_reached ();
+      break;
+    }
 }
 
 

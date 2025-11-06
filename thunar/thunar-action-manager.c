@@ -31,6 +31,7 @@
 #include "thunar/thunar-browser.h"
 #include "thunar/thunar-chooser-dialog.h"
 #include "thunar/thunar-clipboard-manager.h"
+#include "thunar/thunar-context-menu-order-model.h"
 #include "thunar/thunar-device-monitor.h"
 #include "thunar/thunar-dialogs.h"
 #include "thunar/thunar-gio-extensions.h"
@@ -253,6 +254,8 @@ thunar_action_manager_create_document_submenu_new (ThunarActionManager *action_m
 static void
 thunar_action_manager_new_files_created (ThunarActionManager *action_mgr,
                                          GList               *new_thunar_files);
+static ThunarContextMenuItem
+thunar_action_manager_get_context_menu_item_from_action (ThunarActionManagerAction action);
 
 
 
@@ -1615,22 +1618,11 @@ thunar_action_manager_can_trash_selection (ThunarActionManager *action_mgr)
 
 
 
-/**
- * thunar_action_manager_append_menu_item:
- * @action_mgr: Instance of a  #ThunarActionManager
- * @menu      : #GtkMenuShell to which the item should be added
- * @action    : #ThunarActionManagerAction to select which item should be added
- * @force     : force to generate the item. If it cannot be used, it will be shown as insensitive
- *
- * Adds the selected, widget specific #GtkMenuItem to the passed #GtkMenuShell
- *
- * Return value: (transfer none): The added #GtkMenuItem
- **/
-GtkWidget *
-thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
-                                        GtkMenuShell             *menu,
-                                        ThunarActionManagerAction action,
-                                        gboolean                  force)
+static GtkWidget *
+thunar_action_manager_do_append_menu_item (ThunarActionManager      *action_mgr,
+                                           GtkMenuShell             *menu,
+                                           ThunarActionManagerAction action,
+                                           gboolean                  force)
 {
   GtkWidget                *item = NULL;
   GtkWidget                *submenu;
@@ -1980,6 +1972,33 @@ thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
       return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (action_mgr), GTK_MENU_SHELL (menu));
     }
   return NULL;
+}
+
+
+
+/**
+ * thunar_action_manager_append_menu_item:
+ * @action_mgr: Instance of a  #ThunarActionManager
+ * @menu      : #GtkMenuShell to which the item should be added
+ * @action    : #ThunarActionManagerAction to select which item should be added
+ * @force     : force to generate the item. If it cannot be used, it will be shown as insensitive
+ *
+ * Adds the selected, widget specific #GtkMenuItem to the passed #GtkMenuShell
+ *
+ * Return value: (transfer none): The added #GtkMenuItem
+ **/
+GtkWidget *
+thunar_action_manager_append_menu_item (ThunarActionManager      *action_mgr,
+                                        GtkMenuShell             *menu,
+                                        ThunarActionManagerAction action,
+                                        gboolean                  force)
+{
+  GtkWidget *item = thunar_action_manager_do_append_menu_item (action_mgr, menu, action, force);
+
+  if (item != NULL)
+    thunar_context_menu_item_set_id (item, thunar_action_manager_get_context_menu_item_from_action (action));
+
+  return item;
 }
 
 
@@ -2440,10 +2459,17 @@ thunar_action_manager_append_custom_actions (ThunarActionManager *action_mgr,
 
       for (lp_item = thunarx_menu_items; lp_item != NULL; lp_item = lp_item->next)
         {
+          gchar *name;
+
           gtk_menu_item = thunar_gtk_menu_thunarx_menu_item_new (lp_item->data, menu);
+          thunar_context_menu_item_set_id (gtk_menu_item, THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION);
+
+          g_object_get (lp_item->data, "name", &name, NULL);
+          g_object_set_data (G_OBJECT (gtk_menu_item), "secondary-id", (gpointer) name);
 
           /* Each thunarx_menu_item will be destroyed together with its related gtk_menu_item*/
           g_signal_connect_swapped (G_OBJECT (gtk_menu_item), "destroy", G_CALLBACK (g_object_unref), lp_item->data);
+          g_signal_connect_swapped (G_OBJECT (gtk_menu_item), "destroy", G_CALLBACK (g_free), name);
           uca_added = TRUE;
         }
       g_list_free (thunarx_menu_items);
@@ -3442,6 +3468,7 @@ thunar_action_manager_append_open_section (ThunarActionManager *action_mgr,
       image = gtk_image_new_from_gicon (g_app_info_get_icon (applications->data), GTK_ICON_SIZE_MENU);
       menu_item = xfce_gtk_image_menu_item_new (label_text, tooltip_text, action_entry->accel_path, G_CALLBACK (thunar_action_manager_menu_item_activated),
                                                 G_OBJECT (action_mgr), image, menu);
+      thunar_context_menu_item_set_id (menu_item, THUNAR_CONTEXT_MENU_ITEM_OPEN);
 
       /* remember the default application for the "Open" action as quark */
       g_object_set_qdata_full (G_OBJECT (menu_item), thunar_action_manager_appinfo_quark, applications->data, g_object_unref);
@@ -3456,7 +3483,8 @@ thunar_action_manager_append_open_section (ThunarActionManager *action_mgr,
       /* we can only show a generic "Open" action */
       label_text = g_strdup (_("_Open With Default Applications"));
       tooltip_text = g_strdup (_("Open the selected files with the default applications"));
-      xfce_gtk_menu_item_new (label_text, tooltip_text, NULL, G_CALLBACK (thunar_action_manager_menu_item_activated), G_OBJECT (action_mgr), menu);
+      menu_item = xfce_gtk_menu_item_new (label_text, tooltip_text, NULL, G_CALLBACK (thunar_action_manager_menu_item_activated), G_OBJECT (action_mgr), menu);
+      thunar_context_menu_item_set_id (menu_item, THUNAR_CONTEXT_MENU_ITEM_OPEN);
       g_free (tooltip_text);
       g_free (label_text);
     }
@@ -3474,6 +3502,7 @@ thunar_action_manager_append_open_section (ThunarActionManager *action_mgr,
       menu_item = xfce_gtk_menu_item_new (_("Ope_n With"),
                                             _("Choose another application with which to open the selected file"),
                                           NULL, NULL, NULL, menu);
+      thunar_context_menu_item_set_id (menu_item, THUNAR_CONTEXT_MENU_ITEM_OPEN_WITH_OTHER);
       submenu = thunar_action_manager_build_application_submenu (action_mgr, applications);
       gtk_menu_item_set_submenu (GTK_MENU_ITEM (menu_item), submenu);
     }
@@ -3570,6 +3599,108 @@ thunar_action_manager_new_files_created (ThunarActionManager *action_mgr,
   _thunar_return_if_fail (THUNAR_IS_ACTION_MANAGER (action_mgr));
 
   g_signal_emit (action_mgr, action_manager_signals[NEW_FILES_CREATED], 0, new_thunar_files);
+}
+
+
+
+static ThunarContextMenuItem
+thunar_action_manager_get_context_menu_item_from_action (ThunarActionManagerAction action)
+{
+  switch (action)
+    {
+    case THUNAR_ACTION_MANAGER_ACTION_OPEN:
+      return THUNAR_CONTEXT_MENU_ITEM_OPEN;
+
+    case THUNAR_ACTION_MANAGER_ACTION_EXECUTE:
+      return THUNAR_CONTEXT_MENU_ITEM_EXECUTE;
+
+    case THUNAR_ACTION_MANAGER_ACTION_EDIT_LAUNCHER:
+      return THUNAR_CONTEXT_MENU_ITEM_EDIT_LAUNCHER;
+
+    case THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB:
+      return THUNAR_CONTEXT_MENU_ITEM_OPEN_IN_TAB;
+
+    case THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW:
+      return THUNAR_CONTEXT_MENU_ITEM_OPEN_IN_WINDOW;
+
+    case THUNAR_ACTION_MANAGER_ACTION_OPEN_LOCATION:
+      return THUNAR_CONTEXT_MENU_ITEM_OPEN_LOCATION;
+
+    case THUNAR_ACTION_MANAGER_ACTION_OPEN_WITH_OTHER:
+      return THUNAR_CONTEXT_MENU_ITEM_OPEN_WITH_OTHER;
+
+    case THUNAR_ACTION_MANAGER_ACTION_SET_DEFAULT_APP:
+      return THUNAR_CONTEXT_MENU_ITEM_SET_DEFAULT_APP;
+
+    case THUNAR_ACTION_MANAGER_ACTION_SENDTO_MENU:
+      return THUNAR_CONTEXT_MENU_ITEM_SENDTO_MENU;
+
+    case THUNAR_ACTION_MANAGER_ACTION_SENDTO_SHORTCUTS:
+      return THUNAR_CONTEXT_MENU_ITEM_SENDTO_SHORTCUTS;
+
+    case THUNAR_ACTION_MANAGER_ACTION_SENDTO_DESKTOP:
+      return THUNAR_CONTEXT_MENU_ITEM_SENDTO_DESKTOP;
+
+    case THUNAR_ACTION_MANAGER_ACTION_PROPERTIES:
+      return THUNAR_CONTEXT_MENU_ITEM_PROPERTIES;
+
+    case THUNAR_ACTION_MANAGER_ACTION_MAKE_LINK:
+      return THUNAR_CONTEXT_MENU_ITEM_MAKE_LINK;
+
+    case THUNAR_ACTION_MANAGER_ACTION_DUPLICATE:
+      return THUNAR_CONTEXT_MENU_ITEM_DUPLICATE;
+
+    case THUNAR_ACTION_MANAGER_ACTION_RENAME:
+      return THUNAR_CONTEXT_MENU_ITEM_RENAME;
+
+    case THUNAR_ACTION_MANAGER_ACTION_EMPTY_TRASH:
+      return THUNAR_CONTEXT_MENU_ITEM_EMPTY_TRASH;
+
+    case THUNAR_ACTION_MANAGER_ACTION_REMOVE_FROM_RECENT:
+      return THUNAR_CONTEXT_MENU_ITEM_REMOVE_FROM_RECENT;
+
+    case THUNAR_ACTION_MANAGER_ACTION_CREATE_FOLDER:
+      return THUNAR_CONTEXT_MENU_ITEM_CREATE_FOLDER;
+
+    case THUNAR_ACTION_MANAGER_ACTION_CREATE_DOCUMENT:
+      return THUNAR_CONTEXT_MENU_ITEM_CREATE_DOCUMENT;
+
+    case THUNAR_ACTION_MANAGER_ACTION_RESTORE:
+      return THUNAR_CONTEXT_MENU_ITEM_RESTORE;
+
+    case THUNAR_ACTION_MANAGER_ACTION_RESTORE_SHOW:
+      return THUNAR_CONTEXT_MENU_ITEM_RESTORE_SHOW;
+
+    case THUNAR_ACTION_MANAGER_ACTION_MOVE_TO_TRASH:
+      return THUNAR_CONTEXT_MENU_ITEM_MOVE_TO_TRASH;
+
+    case THUNAR_ACTION_MANAGER_ACTION_PASTE:
+      return THUNAR_CONTEXT_MENU_ITEM_PASTE;
+
+    case THUNAR_ACTION_MANAGER_ACTION_PASTE_INTO_FOLDER:
+      return THUNAR_CONTEXT_MENU_ITEM_PASTE_INTO_FOLDER;
+
+    case THUNAR_ACTION_MANAGER_ACTION_PASTE_LINK:
+      return THUNAR_CONTEXT_MENU_ITEM_PASTE_LINK;
+
+    case THUNAR_ACTION_MANAGER_ACTION_COPY:
+      return THUNAR_CONTEXT_MENU_ITEM_COPY;
+
+    case THUNAR_ACTION_MANAGER_ACTION_CUT:
+      return THUNAR_CONTEXT_MENU_ITEM_CUT;
+
+    case THUNAR_ACTION_MANAGER_ACTION_MOUNT:
+      return THUNAR_CONTEXT_MENU_ITEM_MOUNT;
+
+    case THUNAR_ACTION_MANAGER_ACTION_UNMOUNT:
+      return THUNAR_CONTEXT_MENU_ITEM_UNMOUNT;
+
+    case THUNAR_ACTION_MANAGER_ACTION_EJECT:
+      return THUNAR_CONTEXT_MENU_ITEM_EJECT;
+
+    default:
+      g_return_val_if_reached (-1);
+    }
 }
 
 

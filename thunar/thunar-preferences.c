@@ -154,6 +154,8 @@ enum
   PROP_TERMINAL_SSH_AUTO_DISCONNECT,
   PROP_TERMINAL_FONT_SIZE,
 #endif
+  PROP_CONTEXT_MENU_ITEM_ORDER,
+  PROP_CONTEXT_MENU_ITEM_VISIBILITY,
   N_PROPERTIES
 };
 
@@ -1560,6 +1562,30 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                     12, /* default font size */
                     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 #endif
+
+  /**
+   * ThunarPreferences:context-menu-item-order:
+   *
+   * Order of context menu items, only values ​​that differ from the default are stored.
+   **/
+  preferences_props[PROP_CONTEXT_MENU_ITEM_ORDER] =
+  g_param_spec_string ("context-menu-item-order",
+                       "ContextMenuItemOrder",
+                       NULL,
+                       NULL,
+                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:context-menu-item-visibility:
+   *
+   * Visibility of context menu items, only values ​​that differ from the default are stored.
+   **/
+  preferences_props[PROP_CONTEXT_MENU_ITEM_VISIBILITY] =
+  g_param_spec_string ("context-menu-item-visibility",
+                       "ContextMenuItemVisibility",
+                       NULL,
+                       NULL,
+                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);

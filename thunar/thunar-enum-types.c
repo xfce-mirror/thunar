@@ -989,3 +989,61 @@ thunar_terminal_sync_mode_get_type (void)
 
   return type;
 }
+
+GType
+thunar_context_menu_item_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      /* clang-format off */
+      static const GEnumValue values[] =
+      {
+        { THUNAR_CONTEXT_MENU_ITEM_OPEN,                      "THUNAR_CONTEXT_MENU_ITEM_OPEN",                      N_("Open") },
+        { THUNAR_CONTEXT_MENU_ITEM_EXECUTE,                   "THUNAR_CONTEXT_MENU_ITEM_EXECUTE",                   N_("Execute") },
+        { THUNAR_CONTEXT_MENU_ITEM_EDIT_LAUNCHER,             "THUNAR_CONTEXT_MENU_ITEM_EDIT_LAUNCHER",             N_("Edit Launcher") },
+        { THUNAR_CONTEXT_MENU_ITEM_OPEN_IN_TAB,               "THUNAR_CONTEXT_MENU_ITEM_OPEN_IN_TAB",               N_("Open in new Tab") },
+        { THUNAR_CONTEXT_MENU_ITEM_OPEN_IN_WINDOW,            "THUNAR_CONTEXT_MENU_ITEM_OPEN_IN_WINDOW",            N_("Open in new Window") },
+        { THUNAR_CONTEXT_MENU_ITEM_OPEN_LOCATION,             "THUNAR_CONTEXT_MENU_ITEM_OPEN_LOCATION",             N_("Open Item Location") },
+        { THUNAR_CONTEXT_MENU_ITEM_OPEN_WITH_OTHER,           "THUNAR_CONTEXT_MENU_ITEM_OPEN_WITH_OTHER",           N_("Open With Other Application...") },
+        { THUNAR_CONTEXT_MENU_ITEM_SET_DEFAULT_APP,           "THUNAR_CONTEXT_MENU_ITEM_SET_DEFAULT_APP",           N_("Set Default Application...") },
+        { THUNAR_CONTEXT_MENU_ITEM_SENDTO_MENU,               "THUNAR_CONTEXT_MENU_ITEM_SENDTO_MENU",               N_("Send To") },
+        { THUNAR_CONTEXT_MENU_ITEM_SENDTO_SHORTCUTS,          "THUNAR_CONTEXT_MENU_ITEM_SENDTO_SHORTCUTS",          N_("Add Bookmark") },
+        { THUNAR_CONTEXT_MENU_ITEM_SENDTO_DESKTOP,            "THUNAR_CONTEXT_MENU_ITEM_SENDTO_DESKTOP",            N_("Send to Desktop") },
+        { THUNAR_CONTEXT_MENU_ITEM_PROPERTIES,                "THUNAR_CONTEXT_MENU_ITEM_PROPERTIES",                N_("Properties...") },
+        { THUNAR_CONTEXT_MENU_ITEM_MAKE_LINK,                 "THUNAR_CONTEXT_MENU_ITEM_MAKE_LINK",                 N_("Make Link") },
+        { THUNAR_CONTEXT_MENU_ITEM_DUPLICATE,                 "THUNAR_CONTEXT_MENU_ITEM_DUPLICATE",                 N_("Duplicate") },
+        { THUNAR_CONTEXT_MENU_ITEM_RENAME,                    "THUNAR_CONTEXT_MENU_ITEM_RENAME",                    N_("Rename...") },
+        { THUNAR_CONTEXT_MENU_ITEM_EMPTY_TRASH,               "THUNAR_CONTEXT_MENU_ITEM_EMPTY_TRASH",               N_("Empty Trash") },
+        { THUNAR_CONTEXT_MENU_ITEM_REMOVE_FROM_RECENT,        "THUNAR_CONTEXT_MENU_ITEM_REMOVE_FROM_RECENT",        N_("Remove from Recent") },
+        { THUNAR_CONTEXT_MENU_ITEM_CREATE_FOLDER,             "THUNAR_CONTEXT_MENU_ITEM_CREATE_FOLDER",             N_("Create Folder...") },
+        { THUNAR_CONTEXT_MENU_ITEM_CREATE_DOCUMENT,           "THUNAR_CONTEXT_MENU_ITEM_CREATE_DOCUMENT",           N_("Create Document") },
+        { THUNAR_CONTEXT_MENU_ITEM_RESTORE,                   "THUNAR_CONTEXT_MENU_ITEM_RESTORE",                   N_("Restore") },
+        { THUNAR_CONTEXT_MENU_ITEM_RESTORE_SHOW,              "THUNAR_CONTEXT_MENU_ITEM_RESTORE_SHOW",              N_("Restore and Show") },
+        { THUNAR_CONTEXT_MENU_ITEM_MOVE_TO_TRASH,             "THUNAR_CONTEXT_MENU_ITEM_MOVE_TO_TRASH",             N_("Move to Trash") },
+        { THUNAR_CONTEXT_MENU_ITEM_DELETE,                    "THUNAR_CONTEXT_MENU_ITEM_DELETE",                    N_("Delete") },
+        { THUNAR_CONTEXT_MENU_ITEM_PASTE,                     "THUNAR_CONTEXT_MENU_ITEM_PASTE",                     N_("Paste") },
+        { THUNAR_CONTEXT_MENU_ITEM_PASTE_INTO_FOLDER,         "THUNAR_CONTEXT_MENU_ITEM_PASTE_INTO_FOLDER",         N_("Paste Into Folder") },
+        { THUNAR_CONTEXT_MENU_ITEM_PASTE_LINK,                "THUNAR_CONTEXT_MENU_ITEM_PASTE_LINK",                N_("Paste Link") },
+        { THUNAR_CONTEXT_MENU_ITEM_COPY,                      "THUNAR_CONTEXT_MENU_ITEM_COPY",                      N_("Copy") },
+        { THUNAR_CONTEXT_MENU_ITEM_CUT,                       "THUNAR_CONTEXT_MENU_ITEM_CUT",                       N_("Cut") },
+        { THUNAR_CONTEXT_MENU_ITEM_MOUNT,                     "THUNAR_CONTEXT_MENU_ITEM_MOUNT",                     N_("Mount") },
+        { THUNAR_CONTEXT_MENU_ITEM_UNMOUNT,                   "THUNAR_CONTEXT_MENU_ITEM_UNMOUNT",                   N_("Unmount") },
+        { THUNAR_CONTEXT_MENU_ITEM_EJECT,                     "THUNAR_CONTEXT_MENU_ITEM_EJECT",                     N_("Eject") },
+        { THUNAR_CONTEXT_MENU_ITEM_ZOOM_IN,                   "THUNAR_CONTEXT_MENU_ITEM_ZOOM_IN",                   N_("Zoom In") },
+        { THUNAR_CONTEXT_MENU_ITEM_ZOOM_OUT,                  "THUNAR_CONTEXT_MENU_ITEM_ZOOM_OUT",                  N_("Zoom Out") },
+        { THUNAR_CONTEXT_MENU_ITEM_ZOOM_RESET,                "THUNAR_CONTEXT_MENU_ITEM_ZOOM_RESET",                N_("Normal Size") },
+        { THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION,             "THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION",             N_("Custom actions") },
+        { THUNAR_CONTEXT_MENU_ITEM_ARRANGE_ITEMS,             "THUNAR_CONTEXT_MENU_ITEM_ARRANGE_ITEMS",             N_("Arrange Items") },
+        { THUNAR_CONTEXT_MENU_ITEM_CONFIGURE_COLUMNS,         "THUNAR_CONTEXT_MENU_ITEM_CONFIGURE_COLUMNS",         N_("Configure Columns...") },
+        { THUNAR_CONTEXT_MENU_ITEM_TOGGLE_EXPANDABLE_FOLDERS, "THUNAR_CONTEXT_MENU_ITEM_TOGGLE_EXPANDABLE_FOLDERS", N_("Expandable Folders") },
+        { 0,                                                  NULL,                                                 NULL },
+      };
+      /* clang-format on */
+
+      type = g_enum_register_static (I_ ("ThunarContextMenuItem"), values);
+    }
+
+  return type;
+}
