@@ -165,6 +165,7 @@ static gint thunar_file_watch_total_count = 0;
 static ThunarUserManager *user_manager;
 static GHashTable        *file_cache;
 static guint32            effective_user_id;
+static gboolean           enable_smart_sort;
 static GQuark             thunar_file_watch_quark;
 static guint              file_signals[LAST_SIGNAL];
 
@@ -402,6 +403,11 @@ thunar_file_class_init (ThunarFileClass *klass)
 
   /* grab a reference on the user manager */
   user_manager = thunar_user_manager_get_default ();
+
+  /* cache the smart-sort preference */
+  ThunarPreferences *preferences = thunar_preferences_get ();
+  g_object_get (preferences, "smart-sort", &enable_smart_sort, NULL);
+  g_object_unref (preferences);
 
   /* determine the effective user id of the process */
   effective_user_id = geteuid ();
@@ -970,16 +976,9 @@ thunar_file_info_clear (ThunarFile *file)
 gchar *
 thunar_collate_key_for_filename (const gchar *str)
 {
-  /* Read the user's preference */
-  gboolean smart_sorting = TRUE;
-
-  ThunarPreferences *preferences = thunar_preferences_get ();
-  g_object_get (preferences, "smart-sort", &smart_sorting, NULL);
-  g_object_unref (preferences);
-
   /* If enabled, 'g_utf8_collate_key_for_filename' will be used for sorting,
    instead of plain ASCII comparison. */
-  if (smart_sorting)
+  if (enable_smart_sort)
     return g_utf8_collate_key_for_filename (str, -1);
   else
     return g_strdup (str);
