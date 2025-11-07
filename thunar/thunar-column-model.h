@@ -48,9 +48,7 @@ typedef struct _ThunarColumnModel      ThunarColumnModel;
 typedef enum
 {
   THUNAR_COLUMN_MODEL_COLUMN_NAME,
-  THUNAR_COLUMN_MODEL_COLUMN_MUTABLE,
   THUNAR_COLUMN_MODEL_COLUMN_VISIBLE,
-  THUNAR_COLUMN_MODEL_COLUMN_TOOLTIP,
   THUNAR_COLUMN_MODEL_N_COLUMNS,
 } ThunarColumnModelColumn;
 
@@ -61,13 +59,9 @@ ThunarColumnModel *
 thunar_column_model_get_default (void);
 
 void
-thunar_column_model_exchange (ThunarColumnModel *column_model,
-                              GtkTreeIter       *iter1,
-                              GtkTreeIter       *iter2);
-
-ThunarColumn
-thunar_column_model_get_column_for_iter (ThunarColumnModel *column_model,
-                                         GtkTreeIter       *iter);
+thunar_column_model_move (ThunarColumnModel *column_model,
+                          gint               source_index,
+                          gint               dest_index);
 
 const ThunarColumn *
 thunar_column_model_get_column_order (ThunarColumnModel *column_model);
@@ -91,6 +85,9 @@ void
 thunar_column_model_set_column_width (ThunarColumnModel *column_model,
                                       ThunarColumn       column,
                                       gint               width);
+
+void
+thunar_column_model_reset (ThunarColumnModel *column_model);
 
 G_END_DECLS;
 
