@@ -3674,6 +3674,9 @@ thunar_action_manager_get_context_menu_item_from_action (ThunarActionManagerActi
     case THUNAR_ACTION_MANAGER_ACTION_MOVE_TO_TRASH:
       return THUNAR_CONTEXT_MENU_ITEM_MOVE_TO_TRASH;
 
+    case THUNAR_ACTION_MANAGER_ACTION_DELETE:
+      return THUNAR_CONTEXT_MENU_ITEM_DELETE;
+
     case THUNAR_ACTION_MANAGER_ACTION_PASTE:
       return THUNAR_CONTEXT_MENU_ITEM_PASTE;
 
