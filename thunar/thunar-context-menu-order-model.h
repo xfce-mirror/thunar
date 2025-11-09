@@ -42,12 +42,14 @@ struct _ThunarContextMenuOrderModelItem
 {
   ThunarContextMenuItem id;
   gchar                *secondary_id;
-  gchar                *icon;
-  gchar                *name;
-  gchar                *tooltip;
-  gboolean              visibility;
-  gboolean              default_visibility;
-  gint                  default_order;
+
+  /* id:secondary_id */
+  gchar *config_id;
+
+  gchar   *icon;
+  gchar   *name;
+  gchar   *tooltip;
+  gboolean visibility;
 };
 
 GType
@@ -78,6 +80,9 @@ thunar_context_menu_item_set_id (GtkWidget            *menu_item,
 
 ThunarContextMenuItem
 thunar_context_menu_item_get_id (GtkWidget *menu_item);
+
+gboolean
+thunar_context_menu_has_custom_action (const gchar *secondary_id);
 
 G_END_DECLS
 

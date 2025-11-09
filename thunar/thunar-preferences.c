@@ -158,6 +158,7 @@ enum
 #endif
   PROP_CONTEXT_MENU_ITEM_ORDER,
   PROP_CONTEXT_MENU_ITEM_VISIBILITY,
+  PROP_CONTEXT_MENU_ITEM_DELETED,
   N_PROPERTIES
 };
 
@@ -1593,8 +1594,6 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
 
   /**
    * ThunarPreferences:context-menu-item-order:
-   *
-   * Order of context menu items, only values ​​that differ from the default are stored.
    **/
   preferences_props[PROP_CONTEXT_MENU_ITEM_ORDER] =
   g_param_spec_string ("context-menu-item-order",
@@ -1605,12 +1604,20 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
 
   /**
    * ThunarPreferences:context-menu-item-visibility:
-   *
-   * Visibility of context menu items, only values ​​that differ from the default are stored.
    **/
   preferences_props[PROP_CONTEXT_MENU_ITEM_VISIBILITY] =
   g_param_spec_string ("context-menu-item-visibility",
                        "ContextMenuItemVisibility",
+                       NULL,
+                       NULL,
+                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * ThunarPreferences:context-menu-item-visibility:
+   **/
+  preferences_props[PROP_CONTEXT_MENU_ITEM_DELETED] =
+  g_param_spec_string ("context-menu-item-deleted",
+                       "ContextMenuItemDeleted",
                        NULL,
                        NULL,
                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
