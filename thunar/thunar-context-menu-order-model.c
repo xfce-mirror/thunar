@@ -36,6 +36,7 @@ struct _ThunarContextMenuOrderModel
   GObject __parent__;
 
   ThunarPreferences *preferences;
+  GList             *deleted_items;
   GList             *items;
 };
 
@@ -58,27 +59,24 @@ static void
 thunar_context_menu_order_model_save (ThunarContextMenuOrderModel *order_model);
 
 static void
-thunar_context_menu_order_model_load_property (ThunarContextMenuOrderModel *order_model,
-                                               const gchar                 *property_name);
-
-static void
 thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model);
 
-static gint
-thunar_context_menu_order_model_get_item_index_by_id (ThunarContextMenuOrderModel *order_model,
-                                                      ThunarContextMenuItem        id,
-                                                      const gchar                 *secondary_id);
+static GList *
+thunar_context_menu_order_model_get_custom_actions (void);
+
+static GList *
+thunar_context_menu_order_model_get_default_items (void);
 
 static ThunarContextMenuOrderModelItem *
-thunar_context_menu_order_model_append_item (ThunarContextMenuOrderModel *order_model,
-                                             ThunarContextMenuItem        id,
-                                             gboolean                     visibility);
-
-static void
-thunar_context_menu_order_model_append_custom_actions (ThunarContextMenuOrderModel *order_model);
+thunar_context_menu_order_model_item_new (ThunarContextMenuItem id,
+                                          const gchar          *secondary_id,
+                                          gboolean              visibility);
 
 static void
 thunar_context_menu_order_model_item_free (ThunarContextMenuOrderModelItem *item);
+
+static ThunarContextMenuOrderModelItem *
+thunar_context_menu_order_model_item_copy (const ThunarContextMenuOrderModelItem *source);
 
 
 
@@ -122,6 +120,9 @@ thunar_context_menu_order_model_finalize (GObject *object)
 
   g_object_unref (order_model->preferences);
 
+  if (order_model->deleted_items != NULL)
+    g_list_free_full (order_model->deleted_items, (GDestroyNotify) thunar_context_menu_order_model_item_free);
+
   if (order_model->items != NULL)
     g_list_free_full (order_model->items, (GDestroyNotify) thunar_context_menu_order_model_item_free);
 
@@ -133,111 +134,34 @@ thunar_context_menu_order_model_finalize (GObject *object)
 static void
 thunar_context_menu_order_model_save (ThunarContextMenuOrderModel *order_model)
 {
-  GEnumClass *enum_class = g_type_class_ref (THUNAR_TYPE_CONTEXT_MENU_ITEM);
-  GString    *order_content = g_string_new (NULL);
-  GString    *visibility_content = g_string_new (NULL);
-  gint        order = 0;
+  GString *order_content = g_string_new (NULL);
+  GString *visibility_content = g_string_new (NULL);
+  GString *deleted_content = g_string_new (NULL);
 
-  for (GList *l = order_model->items; l != NULL; l = l->next, ++order)
+  for (GList *l = order_model->items; l != NULL; l = l->next)
     {
       ThunarContextMenuOrderModelItem *item = l->data;
-      GEnumValue                      *enum_value = g_enum_get_value (enum_class, item->id);
 
-      if (item->default_order != order)
-        g_string_append_printf (order_content, "%s:%s=%d;",
-                                enum_value->value_name,
-                                item->secondary_id != NULL ? item->secondary_id : "",
-                                order);
+      g_string_append_printf (order_content, "%s;", item->config_id);
+      g_string_append_printf (visibility_content, "%s=%d;", item->config_id, item->visibility);
+    }
 
-      if (item->default_visibility != item->visibility)
-        g_string_append_printf (visibility_content, "%s:%s=%d;",
-                                enum_value->value_name,
-                                item->secondary_id != NULL ? item->secondary_id : "",
-                                item->visibility);
+  for (GList *l = order_model->deleted_items; l != NULL; l = l->next)
+    {
+      ThunarContextMenuOrderModelItem *item = l->data;
+
+      g_string_append_printf (order_content, "%s;", item->config_id);
     }
 
   g_object_set (order_model->preferences,
                 "context-menu-item-order", order_content->str,
                 "context-menu-item-visibility", visibility_content->str,
+                "context-menu-item-deleted", deleted_content->str,
                 NULL);
 
   g_string_free (order_content, TRUE);
   g_string_free (visibility_content, TRUE);
-  g_type_class_unref (enum_class);
-}
-
-
-
-static void
-thunar_context_menu_order_model_load_property (ThunarContextMenuOrderModel *order_model,
-                                               const gchar                 *property_name)
-{
-  GEnumClass *enum_class = g_type_class_ref (THUNAR_TYPE_CONTEXT_MENU_ITEM);
-  gchar      *content = NULL;
-  gchar     **pairs;
-
-  g_signal_handlers_block_by_func (order_model, thunar_context_menu_order_model_save, NULL);
-
-  g_object_get (order_model->preferences, property_name, &content, NULL);
-  if (content != NULL)
-    {
-      pairs = g_strsplit (content, ";", -1);
-      for (gint i = 0; pairs[i] != NULL; ++i)
-        {
-          gchar    name[128];
-          gchar    secondary_id[128];
-          gint     value;
-          gboolean parsed;
-
-          if (xfce_str_is_empty (pairs[i]))
-            continue;
-
-          parsed = sscanf (pairs[i], "%127[^:]:%127[^=]=%d", name, secondary_id, &value) == 3;
-          if (!parsed)
-            {
-              secondary_id[0] = 0;
-              parsed = sscanf (pairs[i], "%127[^:]:=%d", name, &value) == 2;
-            }
-
-          if (parsed)
-            {
-              GEnumValue *enum_value = g_enum_get_value_by_name (enum_class, name);
-
-              if (enum_value != NULL)
-                {
-                  gint index = thunar_context_menu_order_model_get_item_index_by_id (order_model, enum_value->value, !xfce_str_is_empty (secondary_id) ? secondary_id : NULL);
-
-                  if (index != -1)
-                    {
-                      if (g_strcmp0 (property_name, "context-menu-item-order") == 0)
-                        thunar_context_menu_order_model_move (order_model, index, value);
-                      else if (g_strcmp0 (property_name, "context-menu-item-visibility") == 0)
-                        thunar_context_menu_order_model_set_visibility (order_model, index, value);
-                      else
-                        _thunar_assert_not_reached ();
-                    }
-                  else
-                    {
-                      g_warning ("Unknown context menu item: %s:%s", name, secondary_id);
-                    }
-                }
-              else
-                {
-                  g_warning ("Unknown context menu item: %s", name);
-                }
-            }
-          else
-            {
-              g_warning ("Option parsing error: %s", property_name);
-            }
-        }
-      g_free (content);
-      g_strfreev (pairs);
-    }
-
-  g_signal_handlers_unblock_by_func (order_model, thunar_context_menu_order_model_save, NULL);
-
-  g_type_class_unref (enum_class);
+  g_string_free (deleted_content, TRUE);
 }
 
 
@@ -245,65 +169,162 @@ thunar_context_menu_order_model_load_property (ThunarContextMenuOrderModel *orde
 static void
 thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
 {
-  thunar_context_menu_order_model_reset (order_model);
-  thunar_context_menu_order_model_load_property (order_model, "context-menu-item-order");
-  thunar_context_menu_order_model_load_property (order_model, "context-menu-item-visibility");
-}
+  GList *default_items = thunar_context_menu_order_model_get_default_items ();
+  gchar *content = NULL;
+  gint   index;
 
-
-
-static gint
-thunar_context_menu_order_model_get_item_index_by_id (ThunarContextMenuOrderModel *order_model,
-                                                      ThunarContextMenuItem        id,
-                                                      const gchar                 *secondary_id)
-{
-  gint index = 0;
-
-  for (GList *l = order_model->items; l != NULL; l = l->next, ++index)
+  /* clear fields */
+  if (order_model->items != NULL)
     {
-      ThunarContextMenuOrderModelItem *item = l->data;
-
-      if (item->id == id && g_strcmp0 (item->secondary_id, secondary_id) == 0)
-        return index;
+      g_list_free_full (order_model->items, (GDestroyNotify) thunar_context_menu_order_model_item_free);
+      order_model->items = NULL;
     }
 
-  g_return_val_if_reached (-1);
+  if (order_model->deleted_items != NULL)
+    {
+      g_list_free_full (order_model->deleted_items, (GDestroyNotify) thunar_context_menu_order_model_item_free);
+      order_model->deleted_items = NULL;
+    }
+
+  /* load deleted items */
+  g_object_get (order_model->preferences, "context-menu-item-deleted", &content, NULL);
+  if (content != NULL)
+    {
+      gchar **names = g_strsplit (content, ";", -1);
+
+      for (gint i = 0; names[i] != NULL; ++i)
+        {
+          for (GList *l = default_items; l != NULL; l = l->next)
+            {
+              ThunarContextMenuOrderModelItem *item = l->data;
+
+              if (g_strcmp0 (item->config_id, names[i]) == 0)
+                {
+                  order_model->deleted_items = g_list_append (order_model->deleted_items,
+                                                              thunar_context_menu_order_model_item_copy (item));
+                  break;
+                }
+            }
+        }
+
+      g_free (content);
+      g_strfreev (names);
+    }
+
+  /* load user order */
+  g_object_get (order_model->preferences, "context-menu-item-order", &content, NULL);
+  if (content != NULL)
+    {
+      gchar **names = g_strsplit (content, ";", -1);
+
+      for (gint i = 0; names[i] != NULL; ++i)
+        {
+          gboolean deleted = FALSE;
+
+          for (GList *l = order_model->deleted_items; l != NULL; l = l->next)
+            {
+              ThunarContextMenuOrderModelItem *item = l->data;
+
+              if (g_strcmp0 (item->config_id, names[i]) == 0)
+                {
+                  deleted = TRUE;
+                  break;
+                }
+            }
+
+          if (!deleted)
+            {
+              for (GList *l = default_items; l != NULL; l = l->next)
+                {
+                  ThunarContextMenuOrderModelItem *item = l->data;
+
+                  if (g_strcmp0 (item->config_id, names[i]) == 0)
+                    {
+                      order_model->items = g_list_append (order_model->items,
+                                                          thunar_context_menu_order_model_item_copy (item));
+                      break;
+                    }
+                }
+            }
+        }
+
+      g_free (content);
+      g_strfreev (names);
+    }
+
+  /* insert new items */
+  index = 0;
+  for (GList *li = default_items; li != NULL; li = li->next, ++index)
+    {
+      ThunarContextMenuOrderModelItem *li_item = li->data;
+      gboolean                         inserted = FALSE;
+
+      for (GList *lj = order_model->items; lj != NULL; lj = lj->next)
+        {
+          ThunarContextMenuOrderModelItem *lj_item = lj->data;
+
+          if (g_strcmp0 (li_item->config_id, lj_item->config_id) == 0)
+            {
+              inserted = TRUE;
+              break;
+            }
+        }
+
+      if (!inserted)
+        {
+          order_model->items = g_list_insert (order_model->items,
+                                              thunar_context_menu_order_model_item_copy (li_item),
+                                              index);
+        }
+    }
+
+  /* load visibility */
+  g_object_get (order_model->preferences, "context-menu-item-visibility", &content, NULL);
+  if (content != NULL)
+    {
+      gchar **names = g_strsplit (content, ";", -1);
+
+      for (gint i = 0; names[i] != NULL; ++i)
+        {
+          gchar name[256];
+          gint  is_visible;
+
+          if (sscanf (names[i], "%255[^=]=%d", name, &is_visible) == 2)
+            {
+              for (GList *l = order_model->items; l != NULL; l = l->next)
+                {
+                  ThunarContextMenuOrderModelItem *item = l->data;
+
+                  if (g_strcmp0 (item->config_id, name) == 0)
+                    {
+                      item->visibility = is_visible;
+                      break;
+                    }
+                }
+            }
+        }
+
+      g_free (content);
+      g_strfreev (names);
+    }
+
+  /* signal */
+  g_signal_handlers_block_by_func (order_model, thunar_context_menu_order_model_save, NULL);
+  g_signal_emit (order_model, signals[CHANGED], 0);
+  g_signal_handlers_unblock_by_func (order_model, thunar_context_menu_order_model_save, NULL);
+
+  /* cleanup */
+  g_list_free_full (default_items, (GDestroyNotify) thunar_context_menu_order_model_item_free);
 }
 
 
 
-static ThunarContextMenuOrderModelItem *
-thunar_context_menu_order_model_append_item (ThunarContextMenuOrderModel *order_model,
-                                             ThunarContextMenuItem        id,
-                                             gboolean                     visibility)
-{
-  ThunarContextMenuOrderModelItem *item = g_new0 (ThunarContextMenuOrderModelItem, 1);
-  gint                             current_order = g_list_length (order_model->items);
-  GEnumClass                      *enum_class = g_type_class_ref (THUNAR_TYPE_CONTEXT_MENU_ITEM);
-  GEnumValue                      *enum_value = g_enum_get_value (enum_class, id);
-
-  g_assert (enum_value->value_nick != NULL);
-
-  item->id = id;
-  item->name = g_strdup (enum_value->value_nick);
-  item->visibility = visibility;
-  item->default_visibility = visibility;
-  item->default_order = current_order;
-
-  order_model->items = g_list_append (order_model->items, item);
-
-  g_type_class_unref (enum_class);
-
-  return item;
-}
-
-
-
-static void
-thunar_context_menu_order_model_append_custom_actions (ThunarContextMenuOrderModel *order_model)
+static GList *
+thunar_context_menu_order_model_get_custom_actions (void)
 {
   ThunarxProviderFactory *provider_factory = thunarx_provider_factory_get_default ();
   GList                  *providers = thunarx_provider_factory_list_providers (provider_factory, THUNARX_TYPE_MENU_PROVIDER);
+  GList                  *custom_actions = NULL;
 
   g_object_unref (provider_factory);
   for (GList *provider = providers; provider != NULL; provider = provider->next)
@@ -312,19 +333,153 @@ thunar_context_menu_order_model_append_custom_actions (ThunarContextMenuOrderMod
       for (GList *provider_item = provider_items; provider_item != NULL; provider_item = provider_item->next)
         {
           ThunarxMenuItem                 *provider_menu_item = provider_item->data;
-          ThunarContextMenuOrderModelItem *item = thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION, TRUE);
+          gchar                           *secondary_id = NULL;
+          gchar                           *name = NULL;
+          gchar                           *icon = NULL;
+          gchar                           *tooltip = NULL;
+          ThunarContextMenuOrderModelItem *item = NULL;
 
-          g_clear_pointer (&item->name, g_free);
           g_object_get (provider_menu_item,
-                        "name", &item->secondary_id,
-                        "label", &item->name,
-                        "icon", &item->icon,
-                        "tooltip", &item->tooltip,
+                        "name", &secondary_id,
+                        "label", &name,
+                        "icon", &icon,
+                        "tooltip", &tooltip,
                         NULL);
+
+          item = thunar_context_menu_order_model_item_new (THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION, secondary_id, TRUE);
+          g_free (secondary_id);
+          g_free (item->name);
+          item->name = name;
+          item->icon = icon;
+          item->tooltip = tooltip;
+
+          custom_actions = g_list_append (custom_actions, item);
         }
       g_list_free_full (provider_items, g_object_unref);
     }
   g_list_free_full (providers, g_object_unref);
+
+  return custom_actions;
+}
+
+
+
+static GList *
+thunar_context_menu_order_model_get_default_items (void)
+{
+  GList *default_items = NULL;
+
+#define ITEM(id) default_items = g_list_append (default_items, thunar_context_menu_order_model_item_new (id, NULL, TRUE))
+#define SEPARATOR
+
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_CREATE_FOLDER);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_CREATE_DOCUMENT);
+
+  SEPARATOR;
+
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_EXECUTE);
+
+  SEPARATOR;
+
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_EDIT_LAUNCHER);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_OPEN);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_OPEN_IN_TAB);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_OPEN_IN_WINDOW);
+
+  SEPARATOR;
+
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_OPEN_WITH_OTHER);
+
+  SEPARATOR;
+
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_SET_DEFAULT_APP);
+
+  SEPARATOR;
+
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_OPEN_LOCATION);
+
+  SEPARATOR;
+
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_SENDTO_MENU);
+
+  SEPARATOR;
+
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_CUT);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_COPY);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_PASTE_INTO_FOLDER);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_PASTE);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_PASTE_LINK);
+
+  SEPARATOR;
+
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_MOVE_TO_TRASH);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_DELETE);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_EMPTY_TRASH);
+
+  SEPARATOR;
+
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_DUPLICATE);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_MAKE_LINK);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_RENAME);
+
+  SEPARATOR;
+
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_RESTORE);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_RESTORE_SHOW);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_REMOVE_FROM_RECENT);
+
+  SEPARATOR;
+
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION);
+  default_items = g_list_concat (default_items, thunar_context_menu_order_model_get_custom_actions ());
+
+  SEPARATOR;
+
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_ARRANGE_ITEMS);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_CONFIGURE_COLUMNS);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_TOGGLE_EXPANDABLE_FOLDERS);
+
+  SEPARATOR;
+
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_MOUNT);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_UNMOUNT);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_EJECT);
+
+  SEPARATOR;
+
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_ZOOM_IN);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_ZOOM_OUT);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_ZOOM_RESET);
+  ITEM (THUNAR_CONTEXT_MENU_ITEM_PROPERTIES);
+
+#undef ITEM
+#undef SEPARATOR
+
+  return default_items;
+}
+
+
+
+static ThunarContextMenuOrderModelItem *
+thunar_context_menu_order_model_item_new (ThunarContextMenuItem id,
+                                          const gchar          *secondary_id,
+                                          gboolean              visibility)
+{
+  ThunarContextMenuOrderModelItem *item = g_new0 (ThunarContextMenuOrderModelItem, 1);
+  GEnumClass                      *enum_class = g_type_class_ref (THUNAR_TYPE_CONTEXT_MENU_ITEM);
+  GEnumValue                      *enum_value = g_enum_get_value (enum_class, id);
+
+  g_assert (enum_value->value_nick != NULL);
+
+  item->id = id;
+  item->secondary_id = g_strdup (secondary_id);
+  item->config_id = g_strdup_printf ("%s:%s", enum_value->value_nick, secondary_id != NULL ? secondary_id : "");
+  item->name = g_strdup (enum_value->value_nick);
+  item->visibility = visibility;
+
+  g_type_class_unref (enum_class);
+
+  return item;
 }
 
 
@@ -336,10 +491,29 @@ thunar_context_menu_order_model_item_free (ThunarContextMenuOrderModelItem *item
     return;
 
   g_free (item->secondary_id);
+  g_free (item->config_id);
   g_free (item->icon);
   g_free (item->name);
   g_free (item->tooltip);
   g_free (item);
+}
+
+
+
+static ThunarContextMenuOrderModelItem *
+thunar_context_menu_order_model_item_copy (const ThunarContextMenuOrderModelItem *source)
+{
+  ThunarContextMenuOrderModelItem *item = g_new0 (ThunarContextMenuOrderModelItem, 1);
+
+  item->id = source->id;
+  item->secondary_id = g_strdup (source->secondary_id);
+  item->config_id = g_strdup (source->config_id);
+  item->icon = g_strdup (source->icon);
+  item->name = g_strdup (source->name);
+  item->tooltip = g_strdup (source->tooltip);
+  item->visibility = source->visibility;
+
+  return item;
 }
 
 
@@ -425,52 +599,13 @@ thunar_context_menu_order_model_reset (ThunarContextMenuOrderModel *order_model)
       order_model->items = NULL;
     }
 
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_CREATE_FOLDER, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_CREATE_DOCUMENT, TRUE);
+  if (order_model->deleted_items != NULL)
+    {
+      g_list_free_full (order_model->deleted_items, (GDestroyNotify) thunar_context_menu_order_model_item_free);
+      order_model->deleted_items = NULL;
+    }
 
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_EXECUTE, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_EDIT_LAUNCHER, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_OPEN, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_OPEN_IN_TAB, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_OPEN_IN_WINDOW, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_OPEN_WITH_OTHER, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_SET_DEFAULT_APP, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_OPEN_LOCATION, TRUE);
-
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_SENDTO_MENU, TRUE);
-
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_CUT, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_COPY, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_PASTE_INTO_FOLDER, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_PASTE, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_PASTE_LINK, TRUE);
-
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_MOVE_TO_TRASH, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_DELETE, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_EMPTY_TRASH, TRUE);
-
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_DUPLICATE, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_MAKE_LINK, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_RENAME, TRUE);
-
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_RESTORE, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_RESTORE_SHOW, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_REMOVE_FROM_RECENT, TRUE);
-
-  thunar_context_menu_order_model_append_custom_actions (order_model);
-
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_ARRANGE_ITEMS, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_CONFIGURE_COLUMNS, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_TOGGLE_EXPANDABLE_FOLDERS, TRUE);
-
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_MOUNT, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_UNMOUNT, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_EJECT, TRUE);
-
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_ZOOM_IN, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_ZOOM_OUT, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_ZOOM_RESET, TRUE);
-  thunar_context_menu_order_model_append_item (order_model, THUNAR_CONTEXT_MENU_ITEM_PROPERTIES, TRUE);
+  order_model->items = thunar_context_menu_order_model_get_default_items ();
 
   g_signal_emit (order_model, signals[CHANGED], 0);
 }
@@ -537,4 +672,28 @@ thunar_context_menu_item_get_id (GtkWidget *menu_item)
     }
 
   return item_id;
+}
+
+
+
+gboolean
+thunar_context_menu_has_custom_action (const gchar *secondary_id)
+{
+  ThunarContextMenuOrderModel *order_model = thunar_context_menu_order_model_get_default ();
+  gboolean                     has_action = FALSE;
+
+  for (GList *l = order_model->items; l != NULL; l = l->next)
+    {
+      ThunarContextMenuOrderModelItem *item = l->data;
+
+      if (item->id == THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION && g_strcmp0 (item->secondary_id, secondary_id) == 0)
+        {
+          has_action = TRUE;
+          break;
+        }
+    }
+
+  g_object_unref (order_model);
+
+  return has_action;
 }
