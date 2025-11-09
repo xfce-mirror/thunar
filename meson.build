@@ -1,7 +1,7 @@
 project(
   'thunar',
   'c',
-version : '4.21.2-dev',
+version : '4.21.3-dev',
   license : 'GPL-2.0-or-later',
   meson_version : '>= 0.61.0',
   default_options : ['c_std=gnu11', 'buildtype=debugoptimized', 'warning_level=2']
@@ -85,7 +85,7 @@ if gio_unix.found()
   feature_cflags += '-DHAVE_GIO_UNIX=1'
 endif
 
-vte = dependency('vte-2.91', required: false)
+vte = dependency('vte-2.91', required: get_option('terminal'))
 if vte.found()
   feature_cflags += '-DHAVE_VTE=1'
 endif

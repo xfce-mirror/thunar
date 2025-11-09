@@ -28,7 +28,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2025-09-27 00:48+0200\n"
+"POT-Creation-Date: 2025-10-12 00:48+0200\n"
 "PO-Revision-Date: 2013-07-02 20:11+0000\n"
 "Last-Translator: 玉堂白鹤 <yjwork@qq.com>, 2014-2015,2017-2025\n"
 "Language-Team: Chinese (China) (http://app.transifex.com/xfce/thunar/language/zh_CN/)\n"
@@ -805,7 +805,7 @@ msgstr "设为此种类文件的默认(_D)"
 
 #. add the "Ok"/"Open" button
 #: thunar/thunar-chooser-dialog.c:314 thunar/thunar-chooser-dialog.c:1314
-#: thunar/thunar-properties-dialog.c:1207 thunar/thunar-window.c:4953
+#: thunar/thunar-properties-dialog.c:1207 thunar/thunar-window.c:4945
 #: plugins/thunar-uca/thunar-uca-editor.c:153
 #: plugins/thunar-uca/thunar-uca-editor.c:451
 msgid "_OK"
@@ -1061,7 +1061,7 @@ msgstr "文件夹大小栏位"
 #. explain what it does
 #: thunar/thunar-column-editor.c:324
 msgid "Show number of contained items:"
-msgstr ""
+msgstr "显示包含的项目数量："
 
 #: thunar/thunar-column-model.c:364
 msgid "This column is reserved for special locations"
@@ -1486,9 +1486,9 @@ msgstr "文件名"
 
 #: thunar/thunar-enum-types.c:696 thunar/thunar-enum-types.c:721
 #: thunar/thunar-enum-types.c:856 thunar/thunar-preferences-dialog.c:445
-#: thunar/thunar-preferences-dialog.c:1113
-#: thunar/thunar-preferences-dialog.c:1221
-#: thunar/thunar-preferences-dialog.c:1309
+#: thunar/thunar-preferences-dialog.c:1206
+#: thunar/thunar-preferences-dialog.c:1314
+#: thunar/thunar-preferences-dialog.c:1402
 msgid "Never"
 msgstr "从不"
 
@@ -1498,9 +1498,9 @@ msgstr "仅用于远程位置"
 
 #: thunar/thunar-enum-types.c:698 thunar/thunar-enum-types.c:723
 #: thunar/thunar-enum-types.c:858 thunar/thunar-preferences-dialog.c:447
-#: thunar/thunar-preferences-dialog.c:1109
-#: thunar/thunar-preferences-dialog.c:1219
-#: thunar/thunar-preferences-dialog.c:1310
+#: thunar/thunar-preferences-dialog.c:1202
+#: thunar/thunar-preferences-dialog.c:1312
+#: thunar/thunar-preferences-dialog.c:1403
 msgid "Always"
 msgstr "总是"
 
@@ -1571,7 +1571,7 @@ msgstr "嵌入"
 msgid "Only for local files"
 msgstr "仅本地文件"
 
-#: thunar/thunar-enum-types.c:979 thunar/thunar-preferences-dialog.c:929
+#: thunar/thunar-enum-types.c:979 thunar/thunar-preferences-dialog.c:1022
 msgid "Disabled"
 msgstr "已禁用"
 
@@ -2057,7 +2057,7 @@ msgid "Allow this file to _run as a program"
 msgstr "允许此文件作为程序运行(_R)"
 
 #: thunar/thunar-permissions-chooser.c:397
-#: thunar/thunar-preferences-dialog.c:1324
+#: thunar/thunar-preferences-dialog.c:1417
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "允许未认证的程序运行会给您的系统带来安全风险。"
@@ -2208,7 +2208,7 @@ msgid "Icon View"
 msgstr "图标视图"
 
 #: thunar/thunar-preferences-dialog.c:369
-#: thunar/thunar-preferences-dialog.c:1424
+#: thunar/thunar-preferences-dialog.c:1517
 msgid "List View"
 msgstr "列表视图"
 
@@ -2252,8 +2252,8 @@ msgid "Show thumbnails:"
 msgstr "显示缩略图:"
 
 #: thunar/thunar-preferences-dialog.c:446
-#: thunar/thunar-preferences-dialog.c:1110
-#: thunar/thunar-preferences-dialog.c:1220
+#: thunar/thunar-preferences-dialog.c:1203
+#: thunar/thunar-preferences-dialog.c:1313
 msgid "Local Files Only"
 msgstr "只显示本地文件"
 
@@ -2355,146 +2355,159 @@ msgstr "快捷方式栏"
 msgid "_Icon Size:"
 msgstr "图标大小(_I):"
 
-#: thunar/thunar-preferences-dialog.c:639
-#: thunar/thunar-preferences-dialog.c:719
+#: thunar/thunar-preferences-dialog.c:640
+#: thunar/thunar-preferences-dialog.c:812
 msgid "16px"
 msgstr "16px"
 
-#: thunar/thunar-preferences-dialog.c:640
-#: thunar/thunar-preferences-dialog.c:720
+#: thunar/thunar-preferences-dialog.c:641
+#: thunar/thunar-preferences-dialog.c:813
 msgid "24px"
 msgstr "24px"
 
-#: thunar/thunar-preferences-dialog.c:641
-#: thunar/thunar-preferences-dialog.c:721
+#: thunar/thunar-preferences-dialog.c:642
+#: thunar/thunar-preferences-dialog.c:814
 msgid "32px"
 msgstr "32px"
 
-#: thunar/thunar-preferences-dialog.c:642
-#: thunar/thunar-preferences-dialog.c:722
+#: thunar/thunar-preferences-dialog.c:643
+#: thunar/thunar-preferences-dialog.c:815
 msgid "48px"
 msgstr "48px"
 
-#: thunar/thunar-preferences-dialog.c:643
-#: thunar/thunar-preferences-dialog.c:723
+#: thunar/thunar-preferences-dialog.c:644
+#: thunar/thunar-preferences-dialog.c:816
 msgid "64px"
 msgstr "64px"
 
-#: thunar/thunar-preferences-dialog.c:644
-#: thunar/thunar-preferences-dialog.c:724
+#: thunar/thunar-preferences-dialog.c:645
+#: thunar/thunar-preferences-dialog.c:817
 msgid "96px"
 msgstr "96px"
 
-#: thunar/thunar-preferences-dialog.c:645
-#: thunar/thunar-preferences-dialog.c:725
+#: thunar/thunar-preferences-dialog.c:646
+#: thunar/thunar-preferences-dialog.c:818
 msgid "128px"
 msgstr "128px"
 
-#: thunar/thunar-preferences-dialog.c:646
-#: thunar/thunar-preferences-dialog.c:726
+#: thunar/thunar-preferences-dialog.c:647
+#: thunar/thunar-preferences-dialog.c:819
 msgid "160px"
 msgstr "160px"
 
-#: thunar/thunar-preferences-dialog.c:647
-#: thunar/thunar-preferences-dialog.c:727
+#: thunar/thunar-preferences-dialog.c:648
+#: thunar/thunar-preferences-dialog.c:820
 msgid "192px"
 msgstr "192px"
 
-#: thunar/thunar-preferences-dialog.c:648
-#: thunar/thunar-preferences-dialog.c:728
+#: thunar/thunar-preferences-dialog.c:649
+#: thunar/thunar-preferences-dialog.c:821
 msgid "256px"
 msgstr "256px"
 
-#: thunar/thunar-preferences-dialog.c:649
-#: thunar/thunar-preferences-dialog.c:729
+#: thunar/thunar-preferences-dialog.c:650
+#: thunar/thunar-preferences-dialog.c:822
 msgid "512px"
 msgstr "512px"
 
-#: thunar/thunar-preferences-dialog.c:650
-#: thunar/thunar-preferences-dialog.c:730
+#: thunar/thunar-preferences-dialog.c:651
+#: thunar/thunar-preferences-dialog.c:823
 msgid "1024px"
 msgstr "1024px"
 
-#: thunar/thunar-preferences-dialog.c:668
+#: thunar/thunar-preferences-dialog.c:669
 msgid "Show icon _emblems"
-msgstr ""
+msgstr "显示图标徽标(_E)"
 
-#: thunar/thunar-preferences-dialog.c:674
+#: thunar/thunar-preferences-dialog.c:675
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties "
 "dialog."
 msgstr "选择此项后，如果在文件夹属性对话框中已定义了文件夹的徽标，则这些图标徽标会在快捷方式栏里显示。"
 
-#: thunar/thunar-preferences-dialog.c:683
+#: thunar/thunar-preferences-dialog.c:684
 msgid "Show disk space _usage bar"
-msgstr ""
+msgstr "显示显示磁盘空间使用栏(_U)"
 
-#: thunar/thunar-preferences-dialog.c:698
+#: thunar/thunar-preferences-dialog.c:697
+msgid "Use warning color when used disk space exceeds:"
+msgstr "当已用磁盘空间超过时使用警告颜色："
+
+#: thunar/thunar-preferences-dialog.c:723
+#: thunar/thunar-preferences-dialog.c:769
+msgid "Set the value to 0 to disable progress bar color changing"
+msgstr "将值设置为 0 以禁用进度条颜色变化"
+
+#: thunar/thunar-preferences-dialog.c:743
+msgid "Use error color when used disk space exceeds:"
+msgstr "当使用磁盘空间超过时使用错误颜色："
+
+#: thunar/thunar-preferences-dialog.c:791
 msgid "Tree Pane"
 msgstr "树形栏"
 
-#: thunar/thunar-preferences-dialog.c:714
+#: thunar/thunar-preferences-dialog.c:807
 msgid "Icon _Size:"
 msgstr "图标大小(_S):"
 
-#: thunar/thunar-preferences-dialog.c:748
+#: thunar/thunar-preferences-dialog.c:841
 msgid "Show icon e_mblems"
-msgstr ""
+msgstr "显示图标徽标(_M)"
 
-#: thunar/thunar-preferences-dialog.c:754
+#: thunar/thunar-preferences-dialog.c:847
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
 msgstr "选择此项后，如果在文件夹属性对话框中已定义了文件夹的徽标，则这些图标徽标会在树形栏里显示。"
 
-#: thunar/thunar-preferences-dialog.c:764
+#: thunar/thunar-preferences-dialog.c:857
 msgid "Icon Style"
 msgstr "图标样式"
 
-#: thunar/thunar-preferences-dialog.c:780
+#: thunar/thunar-preferences-dialog.c:873
 msgid "Use symbolic folder icons"
 msgstr "使用符号文件夹图标"
 
-#: thunar/thunar-preferences-dialog.c:786
+#: thunar/thunar-preferences-dialog.c:879
 msgid ""
 "Select this option to use symbolic folder icons instead of regular ones."
 msgstr "选择此选项将使用符号文件夹图标，而不是常规图标。"
 
-#: thunar/thunar-preferences-dialog.c:795
+#: thunar/thunar-preferences-dialog.c:888
 msgid "Image Preview"
 msgstr "图像预览"
 
-#: thunar/thunar-preferences-dialog.c:811
+#: thunar/thunar-preferences-dialog.c:904
 msgid "Image Preview Mode:"
 msgstr "图像预览模式:"
 
-#: thunar/thunar-preferences-dialog.c:813
+#: thunar/thunar-preferences-dialog.c:906
 msgid ""
 "- Standalone: Image Preview uses a separate pane\n"
 "- Embedded: Image Preview is embedded in the left sidepane\n"
 msgstr "-独立：图像预览使用独立的面板\n-嵌入：图像预览嵌入在左侧面板中\n"
 
 #. Behavior
-#: thunar/thunar-preferences-dialog.c:842
+#: thunar/thunar-preferences-dialog.c:935
 msgid "Behavior"
 msgstr "行为"
 
-#: thunar/thunar-preferences-dialog.c:852
+#: thunar/thunar-preferences-dialog.c:945
 msgid "Navigation"
 msgstr "导航"
 
-#: thunar/thunar-preferences-dialog.c:868
+#: thunar/thunar-preferences-dialog.c:961
 msgid "_Single click to activate items"
 msgstr "单击激活项目(_S)"
 
-#: thunar/thunar-preferences-dialog.c:893
+#: thunar/thunar-preferences-dialog.c:986
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
 msgstr "指定鼠标从停在项目上开始到选中项目为止的延时(_E):"
 
-#: thunar/thunar-preferences-dialog.c:906
+#: thunar/thunar-preferences-dialog.c:999
 msgid ""
 "When single-click activation is enabled, pausing the mouse pointer over an "
 "item will automatically select that item after the chosen delay. You can "
@@ -2503,87 +2516,87 @@ msgid ""
 "to select the item without activating it."
 msgstr "启用单击激活后，鼠标指针在项目上停留的时间超过指定的延时后，会自动选中此项目。您可以通过把滑块移动至最左端来禁用此行为。此行为在单击激活项目，且您只想选中项目而不想激活时可能有用。"
 
-#: thunar/thunar-preferences-dialog.c:935
+#: thunar/thunar-preferences-dialog.c:1028
 msgid "Medium"
 msgstr "中"
 
-#: thunar/thunar-preferences-dialog.c:940
+#: thunar/thunar-preferences-dialog.c:1033
 msgid "Long"
 msgstr "长"
 
-#: thunar/thunar-preferences-dialog.c:949
+#: thunar/thunar-preferences-dialog.c:1042
 msgid "_Double click to activate items"
 msgstr "双击激活项目(_D)"
 
-#: thunar/thunar-preferences-dialog.c:964
+#: thunar/thunar-preferences-dialog.c:1057
 msgid "Tabs and Windows"
 msgstr "标签页和窗口"
 
-#: thunar/thunar-preferences-dialog.c:980
+#: thunar/thunar-preferences-dialog.c:1073
 msgid "Open folders in new tabs on middle click"
 msgstr "使用鼠标中键在新标签页中打开文件夹"
 
-#: thunar/thunar-preferences-dialog.c:986
+#: thunar/thunar-preferences-dialog.c:1079
 msgid ""
 "Select this option to open a new tab on middle click instead of a new window"
 msgstr "使用鼠标中键选择该选项打开新标签页以代替新窗口"
 
-#: thunar/thunar-preferences-dialog.c:993
+#: thunar/thunar-preferences-dialog.c:1086
 msgid "Open new thunar instances as tabs"
 msgstr "在标签页中打开新的thunar实例"
 
-#: thunar/thunar-preferences-dialog.c:999
+#: thunar/thunar-preferences-dialog.c:1092
 msgid ""
 "Select this option to open new thunar instances as tabs in an existing "
 "thunar window"
 msgstr "选择该选项以在现有的窗口中作为标签页打开新的thunar实例"
 
-#: thunar/thunar-preferences-dialog.c:1007
+#: thunar/thunar-preferences-dialog.c:1100
 msgid "Show full directory paths in tab titles"
 msgstr "在标签页标题中显示完整的目录路径"
 
-#: thunar/thunar-preferences-dialog.c:1013
+#: thunar/thunar-preferences-dialog.c:1106
 msgid ""
 "Select this option to show the full directory path in the tab title instead "
 "of only the directory name"
 msgstr "选择此选项可在标签页标题中显示完整的目录路径，而不仅仅是目录名"
 
-#: thunar/thunar-preferences-dialog.c:1020
+#: thunar/thunar-preferences-dialog.c:1113
 msgid "Restore tabs on startup"
 msgstr "启动时恢复标签页"
 
-#: thunar/thunar-preferences-dialog.c:1026
+#: thunar/thunar-preferences-dialog.c:1119
 msgid ""
 "Select this option to restore your tabs as they were last time you used "
 "Thunar"
 msgstr "选择此选项可将标签页还原为上次使用 Thunar 时的状态"
 
-#: thunar/thunar-preferences-dialog.c:1037
+#: thunar/thunar-preferences-dialog.c:1130
 msgid "Context Menu"
 msgstr "交互菜单"
 
-#: thunar/thunar-preferences-dialog.c:1053
+#: thunar/thunar-preferences-dialog.c:1146
 msgid "Show action to permanently delete files and folders"
 msgstr "显示永久删除文件和文件夹的操作"
 
-#: thunar/thunar-preferences-dialog.c:1059
+#: thunar/thunar-preferences-dialog.c:1152
 msgid "Select this option to show the 'Delete' action in the context menu"
 msgstr "选择此项将在交互菜单中显示“删除”操作"
 
 #. Advanced
-#: thunar/thunar-preferences-dialog.c:1068
+#: thunar/thunar-preferences-dialog.c:1161
 msgid "Advanced"
 msgstr "高级"
 
-#: thunar/thunar-preferences-dialog.c:1078
+#: thunar/thunar-preferences-dialog.c:1171
 msgid "File Transfer"
 msgstr "文件传输"
 
-#: thunar/thunar-preferences-dialog.c:1095
+#: thunar/thunar-preferences-dialog.c:1188
 msgid "Transfer files in parallel:"
 msgstr "并行传输文件:"
 
-#: thunar/thunar-preferences-dialog.c:1097
+#: thunar/thunar-preferences-dialog.c:1190
 msgid ""
 "Indicates the behavior during multiple copies:\n"
 "- Always: all copies are done simultaneously\n"
@@ -2593,30 +2606,30 @@ msgid ""
 "- Never: all copies are done sequentially"
 msgstr "指示多重复制时的行为：\n- 始终：所有复制都同时进行\n- 仅本地文件：本地文件同时复制 (非远端，非附加) \n- 仅限本地文件(同一设备上的)：如果所有文件都是本地文件，但在不同的设备 (磁盘，装载点) 上，则按顺序复制\n- 仅本地文件(空闲设备)：如果所有文件都在本地，但位于正忙设备(磁盘、挂载点)上，则按顺序复制\n- 从不： 所有复制均按顺序进行"
 
-#: thunar/thunar-preferences-dialog.c:1111
+#: thunar/thunar-preferences-dialog.c:1204
 msgid "Local Files Only (Same Devices)"
 msgstr "仅本地文件 (同一设备上的)"
 
-#: thunar/thunar-preferences-dialog.c:1112
+#: thunar/thunar-preferences-dialog.c:1205
 msgid "Local Files Only (Idle Devices)"
 msgstr "仅本地文件 (空闲设备)"
 
-#: thunar/thunar-preferences-dialog.c:1131
+#: thunar/thunar-preferences-dialog.c:1224
 msgid "Use intermediate file on copy:"
 msgstr "复制时使用中继文件:"
 
-#: thunar/thunar-preferences-dialog.c:1135
+#: thunar/thunar-preferences-dialog.c:1228
 msgid ""
 "Use intermediate file '*.partial~' to copy files. This will prevent "
 "fragmented files. The new file will only be shown after the copy was "
 "successfully finished."
 msgstr "使用中继文件 \"*.partial~“ 进行复制，这将防止文件碎片化，新文件只会在复制成功后才显示。"
 
-#: thunar/thunar-preferences-dialog.c:1162
+#: thunar/thunar-preferences-dialog.c:1255
 msgid "Verify file contents on copy:"
 msgstr "在复制时校验文件内容:"
 
-#: thunar/thunar-preferences-dialog.c:1166
+#: thunar/thunar-preferences-dialog.c:1259
 msgid ""
 "Compare contents of original file and copy in order to detect corruption. "
 "While this will attempt to compare the actual contents that are on the "
@@ -2625,67 +2638,67 @@ msgid ""
 " will increase copy time."
 msgstr "比较原始文件和副本的内容，以检测损坏。虽然这将尝试比较目标媒体上的实际内容，但 Thunar 可能无法绕过文件系统缓存，因此这种比较可能无法检测到所有损坏的实例。启用此选项将增加复制时间。"
 
-#: thunar/thunar-preferences-dialog.c:1196
+#: thunar/thunar-preferences-dialog.c:1289
 msgid "Search"
 msgstr "搜索"
 
-#: thunar/thunar-preferences-dialog.c:1213
+#: thunar/thunar-preferences-dialog.c:1306
 msgid "Include subfolders:"
 msgstr "包含子文件夹:"
 
-#: thunar/thunar-preferences-dialog.c:1237
+#: thunar/thunar-preferences-dialog.c:1330
 msgid "Folder Permissions"
 msgstr "文件夹权限"
 
-#: thunar/thunar-preferences-dialog.c:1253
+#: thunar/thunar-preferences-dialog.c:1346
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "更改文件夹权限时，您也可以把更改应用于\n文件夹的内容。选择以下默认行为:"
 
-#: thunar/thunar-preferences-dialog.c:1265
-#: thunar/thunar-preferences-dialog.c:1311
+#: thunar/thunar-preferences-dialog.c:1358
+#: thunar/thunar-preferences-dialog.c:1404
 msgid "Ask every time"
 msgstr "每次都询问"
 
-#: thunar/thunar-preferences-dialog.c:1266
+#: thunar/thunar-preferences-dialog.c:1359
 msgid "Apply to Folder and Contents"
 msgstr "应用于文件夹及其内容"
 
-#: thunar/thunar-preferences-dialog.c:1267
+#: thunar/thunar-preferences-dialog.c:1360
 msgid "Apply to Folder Only"
 msgstr "仅应用于文件夹"
 
-#: thunar/thunar-preferences-dialog.c:1282
+#: thunar/thunar-preferences-dialog.c:1375
 msgid "Security"
 msgstr "安全性"
 
-#: thunar/thunar-preferences-dialog.c:1299
+#: thunar/thunar-preferences-dialog.c:1392
 msgid "Execute shell scripts:"
 msgstr "执行 Shell 脚本："
 
-#: thunar/thunar-preferences-dialog.c:1334
+#: thunar/thunar-preferences-dialog.c:1427
 msgid "Volume Management"
 msgstr "卷管理"
 
 #. add check button to enable/disable auto mounting
-#: thunar/thunar-preferences-dialog.c:1351
+#: thunar/thunar-preferences-dialog.c:1444
 msgid "Enable _volume management"
-msgstr ""
+msgstr "启用卷管理(_V)"
 
-#: thunar/thunar-preferences-dialog.c:1370
+#: thunar/thunar-preferences-dialog.c:1463
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">配置</a> 可移动驱动器和介质的管理。"
 
-#: thunar/thunar-preferences-dialog.c:1384
+#: thunar/thunar-preferences-dialog.c:1477
 #: thunar/thunar-properties-dialog.c:817
 msgid "Missing dependencies"
 msgstr "缺少依赖项"
 
-#: thunar/thunar-preferences-dialog.c:1392
+#: thunar/thunar-preferences-dialog.c:1485
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2694,34 +2707,34 @@ msgid ""
 msgstr "看起来 <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> 不可用。\n包括回收站支持，可移动媒体\n和远程位置浏览等重要功能将\n无法正常工作。<a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[阅读更多]</a>"
 
 #. Shortcuts
-#: thunar/thunar-preferences-dialog.c:1407
+#: thunar/thunar-preferences-dialog.c:1500
 msgid "Shortcuts"
 msgstr "快捷键"
 
-#: thunar/thunar-preferences-dialog.c:1422
+#: thunar/thunar-preferences-dialog.c:1515
 msgid "Window"
 msgstr "窗口"
 
-#: thunar/thunar-preferences-dialog.c:1423
+#: thunar/thunar-preferences-dialog.c:1516
 msgid "View"
 msgstr "视图"
 
-#: thunar/thunar-preferences-dialog.c:1425
+#: thunar/thunar-preferences-dialog.c:1518
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:546
 msgid "Launcher"
 msgstr "启动器"
 
-#: thunar/thunar-preferences-dialog.c:1426
+#: thunar/thunar-preferences-dialog.c:1519
 msgid "Status Bar"
 msgstr "状态栏"
 
-#: thunar/thunar-preferences-dialog.c:1434
+#: thunar/thunar-preferences-dialog.c:1527
 msgid "The Shortcuts Editor requires a Thunar window to be present."
 msgstr "快捷方式编辑器要求存在 Thunar 窗口。"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: thunar/thunar-preferences-dialog.c:1498
+#: thunar/thunar-preferences-dialog.c:1591
 msgid "Failed to display the volume management settings"
 msgstr "无法显示卷管理设置"
 
@@ -3125,13 +3138,13 @@ msgstr "重命名快捷方式(_N)"
 msgid "_Remove Shortcut"
 msgstr "移除快捷方式(_R)"
 
-#: thunar/thunar-shortcuts-view.c:1701
+#: thunar/thunar-shortcuts-view.c:1718
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "路径 “%s” 没有指向某个目录"
 
 #. display an error message to the user
-#: thunar/thunar-shortcuts-view.c:1721
+#: thunar/thunar-shortcuts-view.c:1738
 msgid "Failed to add new shortcut"
 msgstr "无法添加新的快捷方式"
 
@@ -3304,7 +3317,7 @@ msgid_plural "%d files found"
 msgstr[0] "找到了 %d个文件"
 
 #. display an error to the user
-#: thunar/thunar-standard-view.c:2831 thunar/thunar-window.c:4766
+#: thunar/thunar-standard-view.c:2831 thunar/thunar-window.c:4758
 msgid "Failed to open the home folder"
 msgstr "无法打开主文件夹"
 
@@ -3389,7 +3402,7 @@ msgstr "无法为 URL “%s” 创建链接"
 msgid "Untitled document"
 msgstr "无标题文档"
 
-#: thunar/thunar-standard-view.c:4087 thunar/thunar-window.c:4863
+#: thunar/thunar-standard-view.c:4087 thunar/thunar-window.c:4855
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "无法打开目录 “%s”"
@@ -4093,96 +4106,96 @@ msgstr "还原选定项目"
 msgid "Close tab"
 msgstr "关闭标签"
 
-#: thunar/thunar-window.c:3613
+#: thunar/thunar-window.c:3605
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "打开位置 \"%s\""
 
-#: thunar/thunar-window.c:4694
+#: thunar/thunar-window.c:4686
 msgid "Failed to open parent folder"
 msgstr "无法打开父文件夹"
 
-#: thunar/thunar-window.c:4837
+#: thunar/thunar-window.c:4829
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "目录 \"%s\" 不存在。您是否希望创建它？"
 
-#: thunar/thunar-window.c:4839
+#: thunar/thunar-window.c:4831
 msgid "Create directory"
 msgstr "创建目录"
 
 #. display an error to the user
-#: thunar/thunar-window.c:4908
+#: thunar/thunar-window.c:4900
 msgid "Failed to browse the computer"
 msgstr "无法浏览此计算机"
 
 #. display the "About Templates" dialog
-#: thunar/thunar-window.c:4951
+#: thunar/thunar-window.c:4943
 msgid "About Templates"
 msgstr "关于模板"
 
-#: thunar/thunar-window.c:4973
+#: thunar/thunar-window.c:4965
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "此文件夹下的所有文件都会在 “创建文档” 菜单中出现。"
 
-#: thunar/thunar-window.c:4980
+#: thunar/thunar-window.c:4972
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "如果您经常创建特定种类的文档，复制一份并放入此文件夹中。Thunar 会在 “创建文档” 菜单中为此文档添加一个条目。\n\n然后您从 “创建文档” 菜单中选择此条目，就会在您正在浏览的目录中创建此文档的一个副本。"
 
-#: thunar/thunar-window.c:4992
+#: thunar/thunar-window.c:4984
 msgid "Do _not display this message again"
 msgstr "不再显示此信息(_N)"
 
 #. display an error to the user
-#: thunar/thunar-window.c:5026
+#: thunar/thunar-window.c:5018
 msgid "Failed to open the file system root folder"
 msgstr "无法打开文件系统根目录"
 
 #. display an error to the user
-#: thunar/thunar-window.c:5062
+#: thunar/thunar-window.c:5054
 msgid "Failed to display `Recent`"
 msgstr "无法显示“最近访问” "
 
 #. display an error to the user
-#: thunar/thunar-window.c:5098
+#: thunar/thunar-window.c:5090
 msgid "Failed to display the contents of the trash can"
 msgstr "无法显示回收站的内容"
 
 #. display an error to the user
-#: thunar/thunar-window.c:5134
+#: thunar/thunar-window.c:5126
 msgid "Failed to browse the network"
 msgstr "无法浏览网络"
 
-#: thunar/thunar-window.c:5293
+#: thunar/thunar-window.c:5285
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar 是 Xfce 桌面环境内一款快速易用的\n文件管理器。"
 
-#: thunar/thunar-window.c:6383
+#: thunar/thunar-window.c:6380
 msgid "Select an image to preview"
 msgstr "选择要预览的图像"
 
-#: thunar/thunar-window.c:6520
+#: thunar/thunar-window.c:6517
 msgid "Failed to launch search with Catfish"
 msgstr "无法使用 Catfish 进行搜索 "
 
-#: thunar/thunar-window.c:6851
+#: thunar/thunar-window.c:6848
 msgid "Change the active view type"
 msgstr "更改活动视图类型"
 
 #. add a proxy menu item for the view switcher to be represent in the overflow
 #. menu
-#: thunar/thunar-window.c:6854 thunar/thunar-window.c:6879
+#: thunar/thunar-window.c:6851 thunar/thunar-window.c:6876
 msgid "View Switcher"
 msgstr "视图切换"
 
 #. add a proxy menu item for the location bar to represent the bar in the
 #. overflow menu
-#: thunar/thunar-window.c:7044 thunar/thunar-window.c:7049
+#: thunar/thunar-window.c:7041 thunar/thunar-window.c:7046
 msgid "Location Bar"
 msgstr "地址栏"
 

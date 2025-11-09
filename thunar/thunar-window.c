@@ -1396,6 +1396,10 @@ thunar_window_show_and_select_files (ThunarWindow *window,
       thunar_view_scroll_to_file (THUNAR_VIEW (window->view), first_file, FALSE, TRUE, 0.1f, 0.1f);
       g_object_unref (first_file);
     }
+
+  /* Make sure to focus the current view */
+  if (G_LIKELY (window->view != NULL))
+    gtk_widget_grab_focus (window->view);
 }
 
 
@@ -2535,7 +2539,7 @@ thunar_window_switch_current_view (ThunarWindow *window,
     {
       thunar_window_create_view_binding (window, G_OBJECT (new_view), "current-directory",
                                          G_OBJECT (terminal), "current-directory",
-                                         G_BINDING_BIDIRECTIONAL);
+                                         G_BINDING_DEFAULT);
     }
 #endif
 
@@ -2597,9 +2601,6 @@ thunar_window_switch_current_view (ThunarWindow *window,
   if (!window->directory_specific_settings && !window->search_mode && window->view_type != G_TYPE_NONE)
     g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (window->view_type), NULL);
 
-  /* switch to the new view */
-  thunar_window_notebook_set_current_tab (window, gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), window->view));
-
   /* take focus on the new view */
   gtk_widget_grab_focus (window->view);
 }
@@ -2627,6 +2628,9 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
     return;
 
   thunar_window_switch_current_view (window, view);
+
+  /* update the selection (will as well update the preview image) */
+  thunar_window_selection_changed (window);
 }
 
 
@@ -3091,7 +3095,7 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
   terminal = thunar_terminal_widget_new ();
   /* Prevent the terminal from being shown by gtk_widget_show_all() */
   gtk_widget_set_no_show_all (GTK_WIDGET (terminal), TRUE);
-  gtk_paned_pack2 (GTK_PANED (tab_content_paned), GTK_WIDGET (terminal), FALSE, TRUE);
+  gtk_paned_pack2 (GTK_PANED (tab_content_paned), GTK_WIDGET (terminal), FALSE, FALSE);
 
   /* Read saved height for initial positioning */
   saved_height = THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT;
@@ -3127,19 +3131,10 @@ thunar_window_notebook_insert_page (ThunarWindow *window,
 
   thunar_standard_view_set_terminal_widget (THUNAR_STANDARD_VIEW (view), terminal);
 
-  /* Set terminal directory to match view BEFORE creating the binding
-   * to avoid race conditions during initialization */
-  if (THUNAR_IS_NAVIGATOR (view))
-    {
-      ThunarFile *current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (view));
-      if (current_directory)
-        thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (terminal), current_directory);
-    }
-
-  /* Create bidirectional binding between terminal and view */
+  /* Create binding between terminal and view */
   thunar_window_create_view_binding (window, G_OBJECT (view), "current-directory",
                                      G_OBJECT (terminal), "current-directory",
-                                     G_BINDING_BIDIRECTIONAL);
+                                     G_BINDING_SYNC_CREATE | G_BINDING_DEFAULT);
 
   /* Initialize terminal visibility based on preferences */
   g_object_get (window->preferences, "terminal-visible", &terminal_visible, NULL);
@@ -3558,7 +3553,8 @@ on_tab_paned_drag_finished (GtkWidget *paned, GdkEventButton *event, gpointer us
   if (total_height > 0)
     {
       int height = total_height - position;
-      g_object_set (thunar_preferences_get (), "terminal-height", height, NULL);
+      if (height >= THUNAR_TERMINAL_MIN_TERMINAL_HEIGHT)
+        g_object_set (thunar_preferences_get (), "terminal-height", height, NULL);
     }
 
   return FALSE;
@@ -5375,6 +5371,26 @@ thunar_window_action_stop_search (ThunarWindow *window)
 
   /* required in case of shortcut activation, in order to signal that the accel key got handled */
   return TRUE;
+}
+
+
+
+void
+thunar_window_select_search_result (ThunarWindow *window)
+{
+  GList *selected_files;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  if (window->search_mode && THUNAR_IS_STANDARD_VIEW (window->view))
+    {
+      gtk_widget_grab_focus (window->view);
+
+      /* selecting the first file if nothing is already selected */
+      selected_files = thunar_view_get_selected_files (THUNAR_VIEW (window->view));
+      if (g_list_length (selected_files) == 0)
+        thunar_standard_view_select_first_file (THUNAR_STANDARD_VIEW (window->view));
+    }
 }
 
 

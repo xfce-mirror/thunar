@@ -1,3 +1,77 @@
+4.21.3 (2025-10-16)
+======
+- Location Selector: Force focus view on Activate (#1732)
+- Search: Go to search results using the down key (#915)
+- DiskSpaceUsageBar: Change colors when disk is full, adjustable size
+- Respect minimum terminal height on resize (#1727)
+- Fix rename via tree-view side-pane (#1726)
+- Update selection on view switch (#1717) ()
+- terminal: Ignore directory change during spawn
+- Terminal: Make sure to keep focus after cd
+- Do not switch the active tab when switching the view
+- Don't use bidirectional binding (#1695)
+- Terminal: Properly update "current_directory" state
+- Simplify "thunar_terminal_widget_set_current_directory"
+- Simplify terminal binding creation
+- Prevent GFileMonitor leak for folders (#1724)
+- Update window icon when loading finished (#1719)
+- Fix string in column editor
+- Slightly reduce size of emblems in emblem chooser
+- Fix GtkTreePath leak in thunar_path_entry_match_func
+- Don't use camel-case for preferences strings
+- Show spinner on tab when tab view is "loading"
+- Show disc space progressbar in sidepane (#19)
+- Fix typo 'querry' --> 'query'
+- Remove superfluous gvfs workaround
+- Fix 'MOUNTED' state on file reload when unmounted
+- Bump libxfce4ui dependency to 4.21.2
+- Drop deleted files from POTFILES.in
+- Remove unused standard-view-model
+- Consolidate standard-view-model interface into tree-view-model
+- Remove thunar-list-model
+- Use thunar-tree-view-model for path-entry
+- Use thunar-tree-view-model for abstract-icon-view
+- Rename thunar_window_binding_create
+- Remove duplicated code in `thunar_browser_poke_file_finish`
+- Style: Renamed a callback method for consistency
+- Update shortcut model asynchronously (#1022)
+- Fix regression to toggle hidden file visibility
+- Fix regression introduced with terminal binding (#1694) (Closes #1694)
+- Prevent crash when using wrong toplevel widget as Window
+- Go back in history when opening a directory signals error (#1538)
+- TerminalWidget: Re-bind "current-directory" on view switch
+- Properly (re)connect view signals on view-switch
+- Add an integrated, feature-rich terminal panel
+- Fix always typo in thunar_file_drag_mode_get_type
+- By default always show the DnD menu (#1648)
+- Provide DnD mode options (#1648)
+- README.md: Add uninstall info ()
+- Fix string leaks when transfer jobs are queued
+- Don't use variables for strings in ngettext (#1683)
+- Don't reload Statusbar when Binding is removed
+- Prevent Leak of Property Binding
+- UCA: Improve parameter info banner (#1676)
+- Update plugin READMEs after switchover to meson
+- Clear selection before updating selection (#1672)
+- Add hidden setting to toggle smart sorting (#1657)
+- Cancel pending sources and disconnect signals in dispose()
+- Use constructed method for model signal connects
+- Remove remaining autotools documentation
+- Update README after switchover to meson
+- Remove autotools build
+- Set initial state of "Restore" button (#1663)
+- Translation Updates:
+  Albanian, Arabic, Armenian, Armenian (Armenia), Asturian, Basque,
+  Belarusian, Bengali, Bulgarian, Catalan, Chinese (China), Chinese
+  (Hong Kong), Chinese (Taiwan), Czech, Danish, Dutch, Eastern
+  Armenian, English (Australia), English (United Kingdom), Esperanto,
+  Estonian, Finnish, French, Galician, Georgian, German, Greek, Hebrew,
+  Hungarian, Icelandic, Indonesian, Interlingue, Italian, Japanese,
+  Kazakh, Latvian, Malay, Norwegian Bokmål, Norwegian Nynorsk, Occitan
+  (post 1500), Persian (Iran), Polish, Portuguese, Portuguese (Brazil),
+  Romanian, Serbian, Slovak, Slovenian, Spanish, Swedish, Thai,
+  Turkish, Uyghur, Venetian, Vietnamese
+
 4.21.2 (2025-07-08)
 ======
 - Fix quoting when running shell scripts in a terminal (#)
