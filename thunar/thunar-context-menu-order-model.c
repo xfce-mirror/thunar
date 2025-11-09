@@ -368,9 +368,15 @@ static GList *
 thunar_context_menu_order_model_get_default_items (void)
 {
   GList *default_items = NULL;
+  gint   n_separators = 0;
 
 #define ITEM(id) default_items = g_list_append (default_items, thunar_context_menu_order_model_item_new (id, NULL, TRUE))
-#define SEPARATOR
+#define SEPARATOR \
+  { \
+    gchar *secondary_id = g_strdup_printf ("thunar-%d", n_separators++); \
+    default_items = g_list_append (default_items, thunar_context_menu_order_model_item_new (THUNAR_CONTEXT_MENU_ITEM_SEPARATOR, secondary_id, TRUE)); \
+    g_free (secondary_id); \
+  }
 
   ITEM (THUNAR_CONTEXT_MENU_ITEM_CREATE_FOLDER);
   ITEM (THUNAR_CONTEXT_MENU_ITEM_CREATE_DOCUMENT);

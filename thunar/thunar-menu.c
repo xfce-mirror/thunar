@@ -255,51 +255,49 @@ thunar_menu_clear_separators (ThunarMenu *menu)
 static void
 thunar_menu_insert_separators (ThunarMenu *menu)
 {
-  static const guint64 groups[] = {
-    BIT64 (THUNAR_ACTION_MANAGER_ACTION_OPEN) | BIT64 (THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_WINDOW) | BIT64 (THUNAR_ACTION_MANAGER_ACTION_OPEN_IN_TAB),
-    BIT64 (THUNAR_CONTEXT_MENU_ITEM_CREATE_DOCUMENT) | BIT64 (THUNAR_CONTEXT_MENU_ITEM_CREATE_FOLDER),
-    BIT64 (THUNAR_CONTEXT_MENU_ITEM_CUT) | BIT64 (THUNAR_CONTEXT_MENU_ITEM_COPY) | BIT64 (THUNAR_CONTEXT_MENU_ITEM_PASTE) | BIT64 (THUNAR_CONTEXT_MENU_ITEM_PASTE_INTO_FOLDER) | BIT64 (THUNAR_CONTEXT_MENU_ITEM_PASTE_LINK),
-    BIT64 (THUNAR_CONTEXT_MENU_ITEM_DUPLICATE) | BIT64 (THUNAR_CONTEXT_MENU_ITEM_MAKE_LINK) | BIT64 (THUNAR_CONTEXT_MENU_ITEM_RENAME),
-    BIT64 (THUNAR_CONTEXT_MENU_ITEM_ZOOM_IN) | BIT64 (THUNAR_CONTEXT_MENU_ITEM_ZOOM_OUT) | BIT64 (THUNAR_CONTEXT_MENU_ITEM_ZOOM_RESET) | BIT64 (THUNAR_CONTEXT_MENU_ITEM_PROPERTIES),
-    BIT64 (THUNAR_CONTEXT_MENU_ITEM_ARRANGE_ITEMS) | BIT64 (THUNAR_CONTEXT_MENU_ITEM_CONFIGURE_COLUMNS) | BIT64 (THUNAR_CONTEXT_MENU_ITEM_TOGGLE_EXPANDABLE_FOLDERS),
-  };
-  GList  *children = gtk_container_get_children (GTK_CONTAINER (menu));
-  guint64 current_group = 0;
-  gint    index = 0;
+  ThunarContextMenuOrderModel *order_model = thunar_context_menu_order_model_get_default ();
+  GList                       *children = gtk_container_get_children (GTK_CONTAINER (menu));
+  GList                       *items = thunar_context_menu_order_model_get_items (order_model);
+  gboolean                     allow_separator = FALSE;
+  gint                         index = 0;
 
-  /* loop inserting separators between groups */
-  for (GList *l = children; l != NULL; l = l->next, ++index)
+  for (GList *li = children, *lj = items; li != NULL && lj != NULL; lj = lj->next)
     {
-      GtkWidget            *item = GTK_WIDGET (l->data);
-      ThunarContextMenuItem item_id;
+      GtkWidget                       *child = GTK_WIDGET (li->data);
+      ThunarContextMenuItem            child_id;
+      const gchar                     *child_secondary_id;
+      ThunarContextMenuOrderModelItem *item = lj->data;
 
-      if (g_object_get_data (G_OBJECT (item), "id") == NULL)
-        continue;
-
-      item_id = thunar_context_menu_item_get_id (item);
-      if ((current_group & BIT64 (item_id)) == 0)
+      if (item->id == THUNAR_CONTEXT_MENU_ITEM_SEPARATOR && item->visibility)
         {
-          if (l != g_list_first (children))
+          if (allow_separator)
             {
               GtkWidget *separator = gtk_separator_menu_item_new ();
 
-              gtk_menu_shell_insert (GTK_MENU_SHELL (menu), separator, index);
-              ++index;
+              gtk_menu_shell_insert (GTK_MENU_SHELL (menu), separator, index++);
+              allow_separator = FALSE;
             }
+        }
+      else
+        {
+          if (g_object_get_data (G_OBJECT (child), "id") == NULL)
+            continue;
 
-          current_group = 0;
-          for (guint i = 0; i < G_N_ELEMENTS (groups); ++i)
+          child_id = thunar_context_menu_item_get_id (child);
+          child_secondary_id = g_object_get_data (G_OBJECT (child), "secondary-id");
+
+          if (item->id == child_id && g_strcmp0 (item->secondary_id, child_secondary_id) == 0)
             {
-              if (groups[i] & BIT64 (item_id))
-                {
-                  current_group = groups[i];
-                  break;
-                }
+              allow_separator = TRUE;
+              li = li->next;
+              ++index;
             }
         }
     }
 
   g_list_free (children);
+  g_list_free (items);
+  g_object_unref (order_model);
 }
 
 
