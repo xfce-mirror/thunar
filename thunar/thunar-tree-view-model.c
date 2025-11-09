@@ -1688,16 +1688,19 @@ thunar_tree_view_model_get_file (ThunarTreeViewModel *model,
 
 GList *
 thunar_tree_view_model_get_paths_for_files (ThunarTreeViewModel *model,
-                                            GList               *files)
+                                            GHashTable          *files)
 {
-  GtkTreePath *path;
-  GtkTreeIter  tree_iter;
-  Node        *node;
-  GList       *paths = NULL;
+  GtkTreePath    *path;
+  GtkTreeIter     tree_iter;
+  Node           *node;
+  GList          *paths = NULL;
+  GHashTableIter  iter;
+  gpointer        file;
 
-  for (GList *lp = files; lp != NULL; lp = lp->next)
+  g_hash_table_iter_init (&iter, files);
+  while (g_hash_table_iter_next (&iter, &file, NULL))
     {
-      node = thunar_tree_view_model_locate_file (THUNAR_TREE_VIEW_MODEL (model), THUNAR_FILE (lp->data));
+      node = thunar_tree_view_model_locate_file (THUNAR_TREE_VIEW_MODEL (model), THUNAR_FILE (file));
 
       if (node == NULL)
         continue;
