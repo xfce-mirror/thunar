@@ -105,6 +105,11 @@ thunar_context_menu_order_editor_populate (ThunarContextMenuOrderEditor *menu_ed
     {
       const ThunarContextMenuOrderModelItem *item = l->data;
       GIcon                                 *icon = item->icon != NULL ? g_themed_icon_new (item->icon) : NULL;
+      gboolean                               is_special = (item->id == THUNAR_CONTEXT_MENU_ITEM_SEPARATOR)
+                            || (item->id == THUNAR_CONTEXT_MENU_ITEM_CUSTOM_ACTION && item->secondary_id == NULL);
+
+      if (icon == NULL && !is_special)
+        icon = g_themed_icon_new ("open-menu");
 
       xfce_item_list_store_insert_with_values (menu_editor->store, -1,
                                                XFCE_ITEM_LIST_MODEL_COLUMN_ACTIVE, item->visibility,
@@ -113,7 +118,6 @@ thunar_context_menu_order_editor_populate (ThunarContextMenuOrderEditor *menu_ed
                                                XFCE_ITEM_LIST_MODEL_COLUMN_NAME, gettext (item->name),
                                                XFCE_ITEM_LIST_MODEL_COLUMN_TOOLTIP, item->tooltip,
                                                -1);
-
       g_clear_object (&icon);
     }
 

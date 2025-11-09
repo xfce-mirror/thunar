@@ -1038,6 +1038,7 @@ thunar_context_menu_item_get_type (void)
         { THUNAR_CONTEXT_MENU_ITEM_ARRANGE_ITEMS,             "THUNAR_CONTEXT_MENU_ITEM_ARRANGE_ITEMS",             N_("Arrange Items") },
         { THUNAR_CONTEXT_MENU_ITEM_CONFIGURE_COLUMNS,         "THUNAR_CONTEXT_MENU_ITEM_CONFIGURE_COLUMNS",         N_("Configure Columns...") },
         { THUNAR_CONTEXT_MENU_ITEM_TOGGLE_EXPANDABLE_FOLDERS, "THUNAR_CONTEXT_MENU_ITEM_TOGGLE_EXPANDABLE_FOLDERS", N_("Expandable Folders") },
+        { THUNAR_CONTEXT_MENU_ITEM_SEPARATOR,                 "THUNAR_CONTEXT_MENU_ITEM_SEPARATOR",                 N_("--- Separator ---") },
         { 0,                                                  NULL,                                                 NULL },
       };
       /* clang-format on */
