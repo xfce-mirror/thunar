@@ -128,6 +128,12 @@ void
 thunarx_menu_item_set_menu (ThunarxMenuItem *item,
                             ThunarxMenu     *menu);
 
+gboolean
+thunarx_menu_item_get_configurable (ThunarxMenuItem *item);
+
+gboolean
+thunarx_menu_item_get_removable (ThunarxMenuItem *item);
+
 G_END_DECLS
 
 #endif /* !__THUNARX_MENU_H__ */

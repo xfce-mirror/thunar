@@ -50,6 +50,10 @@ struct _ThunarContextMenuOrderModelItem
   gchar   *name;
   gchar   *tooltip;
   gboolean visibility;
+  gboolean removable;
+  gboolean editable;
+
+  ThunarxMenuItem *thunarx_item;
 };
 
 GType
@@ -73,6 +77,15 @@ thunar_context_menu_order_model_set_visibility (ThunarContextMenuOrderModel *ord
 
 void
 thunar_context_menu_order_model_reset (ThunarContextMenuOrderModel *order_model);
+
+void
+thunar_context_menu_order_model_remove (ThunarContextMenuOrderModel *order_model,
+                                        gint                         index);
+
+void
+thunar_context_menu_order_model_edit (ThunarContextMenuOrderModel *order_model,
+                                      gint                         index,
+                                      GtkWidget                   *window);
 
 void
 thunar_context_menu_item_set_id (GtkWidget            *menu_item,

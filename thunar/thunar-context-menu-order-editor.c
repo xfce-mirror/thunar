@@ -45,6 +45,10 @@ struct _ThunarContextMenuOrderEditor
 static void
 thunar_context_menu_order_editor_finalize (GObject *object);
 
+static void
+thunar_context_menu_order_editor_remove (ThunarContextMenuOrderEditor *menu_editor,
+                                         gint                          index);
+
 
 
 G_DEFINE_TYPE (ThunarContextMenuOrderEditor, thunar_context_menu_order_editor, THUNAR_TYPE_ORDER_EDITOR)
@@ -99,6 +103,8 @@ thunar_context_menu_order_editor_populate (ThunarContextMenuOrderEditor *menu_ed
 {
   GList *items = thunar_context_menu_order_model_get_items (menu_editor->order_model);
 
+  g_signal_handlers_block_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
+  g_signal_handlers_block_by_func (menu_editor->store, thunar_context_menu_order_editor_remove, menu_editor);
   xfce_item_list_store_clear (menu_editor->store);
 
   for (GList *l = items; l != NULL; l = l->next)
@@ -117,11 +123,15 @@ thunar_context_menu_order_editor_populate (ThunarContextMenuOrderEditor *menu_ed
                                                XFCE_ITEM_LIST_MODEL_COLUMN_ICON, icon,
                                                XFCE_ITEM_LIST_MODEL_COLUMN_NAME, gettext (item->name),
                                                XFCE_ITEM_LIST_MODEL_COLUMN_TOOLTIP, item->tooltip,
+                                               XFCE_ITEM_LIST_MODEL_COLUMN_REMOVABLE, item->removable,
+                                               XFCE_ITEM_LIST_MODEL_COLUMN_EDITABLE, item->editable,
                                                -1);
       g_clear_object (&icon);
     }
 
   g_list_free (items);
+  g_signal_handlers_unblock_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
+  g_signal_handlers_unblock_by_func (menu_editor->store, thunar_context_menu_order_editor_remove, menu_editor);
 }
 
 
@@ -149,6 +159,25 @@ thunar_context_menu_order_editor_set_visibility (ThunarContextMenuOrderEditor *m
 }
 
 
+static void
+thunar_context_menu_order_editor_remove (ThunarContextMenuOrderEditor *menu_editor,
+                                         gint                          index)
+{
+  g_signal_handlers_block_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
+  thunar_context_menu_order_model_remove (menu_editor->order_model, index);
+  g_signal_handlers_unblock_by_func (menu_editor->order_model, thunar_context_menu_order_editor_populate, menu_editor);
+}
+
+
+
+static gboolean
+thunar_context_menu_order_editor_edit (ThunarContextMenuOrderEditor *menu_editor,
+                                       gint                          index)
+{
+  thunar_context_menu_order_model_edit (menu_editor->order_model, index, GTK_WIDGET (menu_editor));
+  return FALSE;
+}
+
 
 static void
 thunar_context_menu_order_editor_reset (ThunarContextMenuOrderEditor *menu_editor)
@@ -163,12 +192,21 @@ thunar_context_menu_order_editor_show (GtkWidget *window)
 {
   XfceItemListStore            *store = xfce_item_list_store_new (-1);
   ThunarContextMenuOrderEditor *menu_editor = g_object_new (THUNAR_TYPE_CONTEXT_MENU_ORDER_EDITOR, "model", store, NULL);
+  XfceItemListView             *item_view = thunar_order_editor_get_item_view (THUNAR_ORDER_EDITOR (menu_editor));
 
   menu_editor->store = store;
 
-  g_object_set (store, "list-flags", XFCE_ITEM_LIST_MODEL_REORDERABLE | XFCE_ITEM_LIST_MODEL_RESETTABLE, NULL);
+  g_object_set (store, "list-flags",
+                XFCE_ITEM_LIST_MODEL_REORDERABLE
+                | XFCE_ITEM_LIST_MODEL_REMOVABLE
+                | XFCE_ITEM_LIST_MODEL_ADDABLE
+                | XFCE_ITEM_LIST_MODEL_EDITABLE
+                | XFCE_ITEM_LIST_MODEL_RESETTABLE,
+                NULL);
   g_signal_connect_swapped (store, "before-move-item", G_CALLBACK (thunar_context_menu_order_editor_move), menu_editor);
   g_signal_connect_swapped (store, "before-set-activity", G_CALLBACK (thunar_context_menu_order_editor_set_visibility), menu_editor);
+  g_signal_connect_swapped (store, "before-remove-item", G_CALLBACK (thunar_context_menu_order_editor_remove), menu_editor);
+  g_signal_connect_swapped (item_view, "edit-item", G_CALLBACK (thunar_context_menu_order_editor_edit), menu_editor);
   g_signal_connect_swapped (store, "reset", G_CALLBACK (thunar_context_menu_order_editor_reset), menu_editor);
   g_signal_connect_swapped (menu_editor->order_model, "changed", G_CALLBACK (thunar_context_menu_order_editor_populate), menu_editor);
   thunar_context_menu_order_editor_populate (menu_editor);

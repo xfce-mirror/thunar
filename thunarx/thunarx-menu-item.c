@@ -21,6 +21,7 @@
 #include "thunarx/thunarx-visibility.h"
 
 #include <glib/gi18n-lib.h>
+#include <gtk/gtk.h>
 
 
 
@@ -40,6 +41,8 @@
 enum
 {
   ACTIVATE,
+  CONFIGURE,
+  REMOVE,
   LAST_SIGNAL
 };
 
@@ -113,6 +116,24 @@ thunarx_menu_item_class_init (ThunarxMenuItemClass *klass)
                                  activate),
                 NULL, NULL,
                 g_cclosure_marshal_VOID__VOID,
+                G_TYPE_NONE, 0);
+
+  signals[CONFIGURE] =
+  g_signal_new ("configure",
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST,
+                0,
+                NULL, NULL,
+                NULL,
+                G_TYPE_NONE, 1, GTK_TYPE_WIDGET);
+
+  signals[REMOVE] =
+  g_signal_new ("remove",
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST,
+                0,
+                NULL, NULL,
+                NULL,
                 G_TYPE_NONE, 0);
 
   g_object_class_install_property (gobject_class,
@@ -413,6 +434,36 @@ thunarx_menu_item_list_free (GList *items)
   g_list_foreach (items, (GFunc) (void (*) (void)) g_object_unref, NULL);
   g_list_free (items);
 }
+
+
+
+/**
+ * thunarx_menu_item_get_configurable:
+ * @item: pointer to a #ThunarxMenuItem instance
+ *
+ * Returns: If %TRUE, then the #ThunarxMenuItem::configure signal can be called
+ **/
+gboolean
+thunarx_menu_item_get_configurable (ThunarxMenuItem *item)
+{
+  return g_signal_handler_find (item, G_SIGNAL_MATCH_ID, signals[CONFIGURE], 0, NULL, NULL, NULL) != 0;
+}
+
+
+
+/**
+ * thunarx_menu_item_get_removable:
+ * @item: pointer to a #ThunarxMenuItem instance
+ *
+ * Returns: If %TRUE, then the #ThunarxMenuItem::configure signal can be called
+ **/
+gboolean
+thunarx_menu_item_get_removable (ThunarxMenuItem *item)
+{
+  return g_signal_handler_find (item, G_SIGNAL_MATCH_ID, signals[REMOVE], 0, NULL, NULL, NULL) != 0;
+}
+
+
 
 #define __THUNARX_MENU_ITEM_C__
 #include "thunarx-visibility.c"

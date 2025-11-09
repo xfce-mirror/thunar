@@ -24,6 +24,7 @@
 #include <libxfce4util/libxfce4util.h>
 #include <thunar-uca/thunar-uca-chooser.h>
 #include <thunar-uca/thunar-uca-context.h>
+#include <thunar-uca/thunar-uca-editor.h>
 #include <thunar-uca/thunar-uca-model.h>
 #include <thunar-uca/thunar-uca-private.h>
 #include <thunar-uca/thunar-uca-provider.h>
@@ -58,8 +59,13 @@ thunar_uca_provider_child_watch (ThunarUcaProvider *uca_provider,
 static void
 thunar_uca_provider_child_watch_destroy (gpointer  user_data,
                                          GClosure *closure);
-
-
+static void
+thunar_uca_provider_remove_menu_item (ThunarUcaProvider *uca_provider,
+                                      ThunarxMenuItem *item);
+static void
+thunar_uca_provider_configure_menu_item (ThunarUcaProvider *uca_provider,
+                                         GtkWidget         *window,
+                                         ThunarxMenuItem   *item);
 
 struct _ThunarUcaProviderClass
 {
@@ -454,12 +460,14 @@ thunar_uca_provider_get_all_menu_items (ThunarxMenuProvider *menu_provider)
     {
       do
         {
-          ThunarxMenuItem *menu_item;
-          gchar           *unique_id;
-          gchar           *label;
-          gchar           *tooltip;
-          gchar           *icon;
-          gchar           *name;
+          ThunarxMenuItem     *menu_item;
+          gchar               *unique_id;
+          gchar               *label;
+          gchar               *tooltip;
+          gchar               *icon;
+          gchar               *name;
+          GtkTreePath         *path;
+          GtkTreeRowReference *row;
 
           gtk_tree_model_get (GTK_TREE_MODEL (uca_provider->model), &iter,
                               THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, &unique_id,
@@ -476,6 +484,15 @@ thunar_uca_provider_get_all_menu_items (ThunarxMenuProvider *menu_provider)
           g_free (tooltip);
           g_free (icon);
           g_free (name);
+
+          path = gtk_tree_model_get_path (GTK_TREE_MODEL (uca_provider->model), &iter);
+          row = gtk_tree_row_reference_new (GTK_TREE_MODEL (uca_provider->model), path);
+          g_object_set_qdata_full (G_OBJECT (menu_item), thunar_uca_row_quark, row,
+                                   (GDestroyNotify) gtk_tree_row_reference_free);
+
+          g_signal_connect_swapped (menu_item, "remove", G_CALLBACK (thunar_uca_provider_remove_menu_item), uca_provider);
+          g_signal_connect_swapped (menu_item, "configure", G_CALLBACK (thunar_uca_provider_configure_menu_item), uca_provider);
+
           items = g_list_append (items, menu_item);
         }
       while (gtk_tree_model_iter_next (GTK_TREE_MODEL (uca_provider->model), &iter));
@@ -680,4 +697,71 @@ thunar_uca_provider_child_watch_destroy (gpointer  user_data,
       g_free (uca_provider->child_watch_path);
       uca_provider->child_watch_path = NULL;
     }
+}
+
+
+
+static void
+thunar_uca_provider_remove_menu_item (ThunarUcaProvider *uca_provider,
+                                      ThunarxMenuItem *item)
+{
+  GtkTreeRowReference *row;
+  GtkTreeIter          iter;
+  GtkTreePath         *path;
+
+  g_return_if_fail (THUNAR_UCA_IS_PROVIDER (uca_provider));
+  g_return_if_fail (THUNARX_IS_MENU_ITEM (item));
+
+  /* check if the row reference is still valid */
+  row = g_object_get_qdata (G_OBJECT (item), thunar_uca_row_quark);
+  if (G_UNLIKELY (!gtk_tree_row_reference_valid (row)))
+    return;
+
+  /* determine the iterator for the item */
+  path = gtk_tree_row_reference_get_path (row);
+  gtk_tree_model_get_iter (GTK_TREE_MODEL (uca_provider->model), &iter, path);
+  gtk_tree_path_free (path);
+
+  thunar_uca_model_remove (uca_provider->model, &iter);
+}
+
+
+
+static void
+thunar_uca_provider_configure_menu_item (ThunarUcaProvider *uca_provider,
+                                         GtkWidget         *window,
+                                         ThunarxMenuItem   *item)
+{
+  GtkTreeRowReference *row;
+  GtkTreeIter          iter;
+  GtkTreePath         *path;
+  ThunarUcaEditor     *editor;
+
+  g_return_if_fail (THUNAR_UCA_IS_PROVIDER (uca_provider));
+  g_return_if_fail (THUNARX_IS_MENU_ITEM (item));
+
+  /* check if the row reference is still valid */
+  row = g_object_get_qdata (G_OBJECT (item), thunar_uca_row_quark);
+  if (G_UNLIKELY (!gtk_tree_row_reference_valid (row)))
+    return;
+
+  /* determine the iterator for the item */
+  path = gtk_tree_row_reference_get_path (row);
+  gtk_tree_model_get_iter (GTK_TREE_MODEL (uca_provider->model), &iter, path);
+  gtk_tree_path_free (path);
+
+  editor = g_object_new (THUNAR_UCA_TYPE_EDITOR, NULL);
+  thunar_uca_editor_load (editor, uca_provider->model, &iter);
+
+  if (gtk_dialog_run (GTK_DIALOG (editor)) == GTK_RESPONSE_OK)
+    {
+      /* save the editor values to the model */
+      thunar_uca_editor_save (THUNAR_UCA_EDITOR (editor), uca_provider->model, &iter);
+
+      /* hide the editor window */
+      gtk_widget_hide (GTK_WIDGET (editor));
+    }
+
+  /* destroy the editor */
+  gtk_widget_destroy (GTK_WIDGET (editor));
 }
