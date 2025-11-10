@@ -239,7 +239,7 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
 
       for (gint i = 0; names[i] != NULL; ++i)
         {
-          if (g_str_has_prefix (names[i], "THUNAR_CONTEXT_MENU_ITEM_SEPARATOR:user-"))
+          if (g_str_has_prefix (names[i], "THUNAR_CONTEXT_MENU_ITEM_SEPARATOR\\user-"))
             {
               thunar_context_menu_order_model_insert_separator (order_model, -1);
               continue;
@@ -486,7 +486,7 @@ thunar_context_menu_order_model_item_new (ThunarContextMenuItem id,
 
   item->id = id;
   item->secondary_id = g_strdup (secondary_id);
-  item->config_id = g_strdup_printf ("%s:%s", enum_value->value_name, secondary_id != NULL ? secondary_id : "");
+  item->config_id = g_strdup_printf ("%s\\%s", enum_value->value_name, secondary_id != NULL ? secondary_id : "");
   item->name = g_strdup (enum_value->value_nick);
   item->visibility = visibility;
 
