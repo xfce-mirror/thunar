@@ -342,7 +342,7 @@ thunar_context_menu_order_model_get_custom_actions (void)
   g_object_unref (provider_factory);
   for (GList *provider = providers; provider != NULL; provider = provider->next)
     {
-      GList *provider_items = thunarx_menu_provider_get_all_menu_items (provider->data);
+      GList *provider_items = thunarx_menu_provider_get_all_right_click_menu_items (provider->data);
       for (GList *provider_item = provider_items; provider_item != NULL; provider_item = provider_item->next)
         {
           ThunarxMenuItem                 *provider_menu_item = provider_item->data;
