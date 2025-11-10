@@ -235,7 +235,7 @@ thunar_menu_set_property (GObject      *object,
 
 
 static void
-thunar_menu_clear_separators (ThunarMenu *menu)
+thunar_menu_remove_all_separators (ThunarMenu *menu)
 {
   GList *children = gtk_container_get_children (GTK_CONTAINER (menu));
 
@@ -261,6 +261,9 @@ thunar_menu_insert_separators (ThunarMenu *menu)
   gboolean                     allow_separator = FALSE;
   gint                         index = 0;
 
+  /* Inserts separators as in ThunarContextMenuOrderModel. If several consecutive separators
+   * are encountered, only one is inserted. If the elements above and below the separator do
+   * not exist in this menu, the separator will still be inserted. */
   for (GList *li = children, *lj = items; li != NULL && lj != NULL; lj = lj->next)
     {
       GtkWidget                       *child = GTK_WIDGET (li->data);
@@ -310,6 +313,8 @@ thunar_menu_reorder (ThunarMenu *menu)
   GList                       *children = gtk_container_get_children (GTK_CONTAINER (menu));
   gint                         index = 0;
 
+  /* Changes the order of elements to the one specified in ThunarContextMenuOrderModel. It also removes
+   * elements that should be invisible. */
   for (GList *l = new_order; l != NULL; l = l->next, ++index)
     {
       const ThunarContextMenuOrderModelItem *item = l->data;
@@ -489,9 +494,10 @@ thunar_menu_add_sections (ThunarMenu        *menu,
   if (menu_sections & THUNAR_MENU_SECTION_PROPERTIES)
     thunar_action_manager_append_menu_item (menu->action_mgr, GTK_MENU_SHELL (menu), THUNAR_ACTION_MANAGER_ACTION_PROPERTIES, FALSE);
 
+  /* if this is a right-click context menu, then change the order and visibility of the elements to custom ones */
   if (menu->type == THUNAR_MENU_TYPE_CONTEXT_STANDARD_VIEW || menu->type == THUNAR_MENU_TYPE_CONTEXT_TREE_VIEW || menu->type == THUNAR_MENU_TYPE_CONTEXT_SHORTCUTS_VIEW)
     {
-      thunar_menu_clear_separators (menu);
+      thunar_menu_remove_all_separators (menu);
       thunar_menu_reorder (menu);
       thunar_menu_insert_separators (menu);
     }

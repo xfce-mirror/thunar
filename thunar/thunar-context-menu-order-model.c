@@ -36,9 +36,15 @@ struct _ThunarContextMenuOrderModel
   GObject __parent__;
 
   ThunarPreferences *preferences;
-  GList             *deleted_items;
   GList             *items;
-  gint               n_user_separators;
+
+  /* list of remote separators that were created by default by Thunar. It is necessary to remember
+   * such deleted separators, otherwise it is impossible to determine which separators were
+   * deleted by the user and which appeared in the new version of Thunar */
+  GList *deleted_items;
+
+  /* counter for assigning each user separator a unique ID */
+  gint n_user_separators;
 };
 
 enum
@@ -139,6 +145,7 @@ thunar_context_menu_order_model_save (ThunarContextMenuOrderModel *order_model)
   GString *visibility_content = g_string_new (NULL);
   GString *deleted_content = g_string_new (NULL);
 
+  /* context-menu-item-order & context-menu-item-visibility */
   for (GList *l = order_model->items; l != NULL; l = l->next)
     {
       ThunarContextMenuOrderModelItem *item = l->data;
@@ -147,6 +154,7 @@ thunar_context_menu_order_model_save (ThunarContextMenuOrderModel *order_model)
       g_string_append_printf (visibility_content, "%s=%d;", item->config_id, item->visibility);
     }
 
+  /* context-menu-item-deleted */
   for (GList *l = order_model->deleted_items; l != NULL; l = l->next)
     {
       ThunarContextMenuOrderModelItem *item = l->data;
@@ -193,7 +201,7 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
   gchar *content = NULL;
   gint   index;
 
-  /* clear fields */
+  /* clearing previous data */
   if (order_model->items != NULL)
     {
       g_list_free_full (order_model->items, (GDestroyNotify) thunar_context_menu_order_model_item_free);
@@ -206,7 +214,7 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
       order_model->deleted_items = NULL;
     }
 
-  /* load deleted items */
+  /* loading a list of deleted default elements */
   g_object_get (order_model->preferences, "context-menu-item-deleted", &content, NULL);
   if (content != NULL)
     {
@@ -231,7 +239,7 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
       g_strfreev (names);
     }
 
-  /* load user order */
+  /* loading a list of custom item order */
   g_object_get (order_model->preferences, "context-menu-item-order", &content, NULL);
   if (content != NULL)
     {
@@ -265,7 +273,8 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
       g_strfreev (names);
     }
 
-  /* insert new items */
+  /* inserting default elements that appeared in the new version of Thunar. The insertion is
+   * carried out using the same indexes that the elements had in the default order. */
   index = 0;
   for (GList *li = default_items; li != NULL; li = li->next, ++index)
     {
@@ -291,7 +300,7 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
         }
     }
 
-  /* load visibility */
+  /* loading custom element visibility */
   g_object_get (order_model->preferences, "context-menu-item-visibility", &content, NULL);
   if (content != NULL)
     {
@@ -314,6 +323,10 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
                       break;
                     }
                 }
+            }
+          else
+            {
+              g_warn_if_reached ();
             }
         }
 
@@ -383,7 +396,10 @@ thunar_context_menu_order_model_get_default_items (void)
   GList *default_items = NULL;
 
 #define ITEM(id) default_items = g_list_append (default_items, thunar_context_menu_order_model_item_new (id, NULL, TRUE))
-#define SEPARATOR(n) default_items = g_list_append (default_items, thunar_context_menu_order_model_item_new (THUNAR_CONTEXT_MENU_ITEM_SEPARATOR, "thunar-" #n, TRUE));
+#define SEPARATOR(id) default_items = g_list_append (default_items, thunar_context_menu_order_model_item_new (THUNAR_CONTEXT_MENU_ITEM_SEPARATOR, "thunar-" #id, TRUE));
+
+  /* you can add a new element anywhere, but do not change the IDs of the previous separators; if you
+   * want to add a new separator, select an ID that is greater than all the others. */
 
   ITEM (THUNAR_CONTEXT_MENU_ITEM_CREATE_FOLDER);
   ITEM (THUNAR_CONTEXT_MENU_ITEM_CREATE_DOCUMENT);
@@ -623,6 +639,7 @@ thunar_context_menu_order_model_reset (ThunarContextMenuOrderModel *order_model)
     }
 
   order_model->items = thunar_context_menu_order_model_get_default_items ();
+  order_model->n_user_separators = 0;
 
   g_signal_emit (order_model, signals[CHANGED], 0);
 }
@@ -645,6 +662,7 @@ thunar_context_menu_order_model_remove (ThunarContextMenuOrderModel *order_model
 
   if (item->id == THUNAR_CONTEXT_MENU_ITEM_SEPARATOR)
     {
+      /* custom separators can simply be removed, and default separators must be moved to a special list */
       if (g_str_has_prefix (item->secondary_id, "thunar-"))
         {
           order_model->items = g_list_remove_link (order_model->items, link);
