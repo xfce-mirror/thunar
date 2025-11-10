@@ -71,7 +71,7 @@ struct _ThunarxMenuProviderIface
                                 ThunarxFileInfo     *folder,
                                 GList               *files);
 
-  GList *(*get_all_menu_items) (ThunarxMenuProvider *provider);
+  GList *(*get_all_right_click_menu_items) (ThunarxMenuProvider *provider);
 
   /*< private >*/
   void (*reserved1) (void);
@@ -98,7 +98,7 @@ thunarx_menu_provider_get_dnd_menu_items (ThunarxMenuProvider *provider,
                                           GList               *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 GList *
-thunarx_menu_provider_get_all_menu_items (ThunarxMenuProvider *provider);
+thunarx_menu_provider_get_all_right_click_menu_items (ThunarxMenuProvider *provider);
 
 G_END_DECLS
 
