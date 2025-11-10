@@ -79,6 +79,10 @@ void
 thunar_context_menu_order_model_remove (ThunarContextMenuOrderModel *order_model,
                                         gint                         index);
 
+gint
+thunar_context_menu_order_model_insert_separator (ThunarContextMenuOrderModel *order_model,
+                                                  gint                         index);
+
 void
 thunar_context_menu_item_set_id (GtkWidget            *menu_item,
                                  ThunarContextMenuItem menu_item_id);
