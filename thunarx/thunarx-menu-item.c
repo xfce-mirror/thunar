@@ -116,7 +116,7 @@ thunarx_menu_item_class_init (ThunarxMenuItemClass *klass)
                 G_TYPE_NONE, 0);
 
   /**
-   * ThunarxMenuItem::name:
+   * ThunarxMenuItem:name:
    *
    * Unique name of the item. The name should not overlap with names from other plugins.
    * Allowed characters are [A-Z][a-z]:_-.
