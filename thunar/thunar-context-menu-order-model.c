@@ -38,6 +38,7 @@ struct _ThunarContextMenuOrderModel
   ThunarPreferences *preferences;
   GList             *deleted_items;
   GList             *items;
+  gint               n_user_separators;
 };
 
 enum
@@ -150,7 +151,7 @@ thunar_context_menu_order_model_save (ThunarContextMenuOrderModel *order_model)
     {
       ThunarContextMenuOrderModelItem *item = l->data;
 
-      g_string_append_printf (order_content, "%s;", item->config_id);
+      g_string_append_printf (deleted_content, "%s;", item->config_id);
     }
 
   g_object_set (order_model->preferences,
@@ -162,6 +163,25 @@ thunar_context_menu_order_model_save (ThunarContextMenuOrderModel *order_model)
   g_string_free (order_content, TRUE);
   g_string_free (visibility_content, TRUE);
   g_string_free (deleted_content, TRUE);
+}
+
+
+
+static gboolean
+thunar_context_menu_order_model_item_deleted (ThunarContextMenuOrderModel *order_model,
+                                              const gchar                 *config_id)
+{
+  for (GList *l = order_model->deleted_items; l != NULL; l = l->next)
+    {
+      ThunarContextMenuOrderModelItem *item = l->data;
+
+      if (g_strcmp0 (item->config_id, config_id) == 0)
+        {
+          return TRUE;
+        }
+    }
+
+  return FALSE;
 }
 
 
@@ -219,20 +239,13 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
 
       for (gint i = 0; names[i] != NULL; ++i)
         {
-          gboolean deleted = FALSE;
-
-          for (GList *l = order_model->deleted_items; l != NULL; l = l->next)
+          if (g_str_has_prefix (names[i], "THUNAR_CONTEXT_MENU_ITEM_SEPARATOR:user-"))
             {
-              ThunarContextMenuOrderModelItem *item = l->data;
-
-              if (g_strcmp0 (item->config_id, names[i]) == 0)
-                {
-                  deleted = TRUE;
-                  break;
-                }
+              thunar_context_menu_order_model_insert_separator (order_model, -1);
+              continue;
             }
 
-          if (!deleted)
+          if (!thunar_context_menu_order_model_item_deleted (order_model, names[i]))
             {
               for (GList *l = default_items; l != NULL; l = l->next)
                 {
@@ -270,7 +283,7 @@ thunar_context_menu_order_model_load (ThunarContextMenuOrderModel *order_model)
             }
         }
 
-      if (!inserted)
+      if (!inserted && !thunar_context_menu_order_model_item_deleted (order_model, li_item->config_id))
         {
           order_model->items = g_list_insert (order_model->items,
                                               thunar_context_menu_order_model_item_copy (li_item),
@@ -473,7 +486,7 @@ thunar_context_menu_order_model_item_new (ThunarContextMenuItem id,
 
   item->id = id;
   item->secondary_id = g_strdup (secondary_id);
-  item->config_id = g_strdup_printf ("%s:%s", enum_value->value_nick, secondary_id != NULL ? secondary_id : "");
+  item->config_id = g_strdup_printf ("%s:%s", enum_value->value_name, secondary_id != NULL ? secondary_id : "");
   item->name = g_strdup (enum_value->value_nick);
   item->visibility = visibility;
 
@@ -645,6 +658,31 @@ thunar_context_menu_order_model_remove (ThunarContextMenuOrderModel *order_model
     }
 
   g_signal_emit (order_model, signals[CHANGED], 0);
+}
+
+
+
+gint
+thunar_context_menu_order_model_insert_separator (ThunarContextMenuOrderModel *order_model,
+                                                  gint                         index)
+{
+  gchar                           *name;
+  ThunarContextMenuOrderModelItem *item;
+
+  _thunar_return_val_if_fail (THUNAR_IS_CONTEXT_MENU_ORDER_MODEL (order_model), -1);
+
+  if (index < 0 || index >= (gint) g_list_length (order_model->items))
+    index = g_list_length (order_model->items);
+
+  name = g_strdup_printf ("user-%d", order_model->n_user_separators++);
+  item = thunar_context_menu_order_model_item_new (THUNAR_CONTEXT_MENU_ITEM_SEPARATOR, name, TRUE);
+  g_free (name);
+
+  order_model->items = g_list_insert (order_model->items, item, index);
+
+  g_signal_emit (order_model, signals[CHANGED], 0);
+
+  return index;
 }
 
 
