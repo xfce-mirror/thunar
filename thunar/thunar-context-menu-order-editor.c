@@ -206,6 +206,8 @@ thunar_context_menu_order_editor_add (ThunarContextMenuOrderEditor *menu_editor)
   gtk_tree_selection_select_path (selection, path);
   gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
   gtk_tree_path_free (path);
+
+  g_free (sel_items);
 }
 
 
