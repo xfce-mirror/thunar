@@ -230,6 +230,19 @@ thunar_order_editor_get_settings_area (ThunarOrderEditor *order_editor)
 
 
 
+XfceItemListView *
+thunar_order_editor_get_item_view (ThunarOrderEditor *order_editor)
+{
+  ThunarOrderEditorPrivate *priv;
+
+  _thunar_return_val_if_fail (THUNAR_IS_ORDER_EDITOR (order_editor), NULL);
+
+  priv = thunar_order_editor_get_instance_private (order_editor);
+  return XFCE_ITEM_LIST_VIEW (priv->item_view);
+}
+
+
+
 void
 thunar_order_editor_set_model (ThunarOrderEditor *order_editor,
                                XfceItemListModel *model)

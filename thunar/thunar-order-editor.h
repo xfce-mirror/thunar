@@ -55,6 +55,9 @@ thunar_order_editor_get_description_area (ThunarOrderEditor *order_editor);
 GtkContainer *
 thunar_order_editor_get_settings_area (ThunarOrderEditor *order_editor);
 
+XfceItemListView *
+thunar_order_editor_get_item_view (ThunarOrderEditor *order_editor);
+
 void
 thunar_order_editor_set_model (ThunarOrderEditor *order_editor,
                                XfceItemListModel *model);
