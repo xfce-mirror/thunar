@@ -170,7 +170,6 @@ twp_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
 
 
 
-
 static GList *
 twp_provider_get_all_right_click_menu_items (ThunarxMenuProvider *menu_provider)
 {
@@ -179,7 +178,6 @@ twp_provider_get_all_right_click_menu_items (ThunarxMenuProvider *menu_provider)
 
   return items;
 }
-
 
 
 
