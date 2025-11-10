@@ -48,7 +48,7 @@ thunar_uca_provider_get_folder_menu_items (ThunarxMenuProvider *menu_provider,
                                            GtkWidget           *window,
                                            ThunarxFileInfo     *folder);
 static GList *
-thunar_uca_provider_get_all_menu_items (ThunarxMenuProvider *menu_provider);
+thunar_uca_provider_get_all_right_click_menu_items (ThunarxMenuProvider *menu_provider);
 static void
 thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
                                ThunarxMenuItem   *item);
@@ -120,7 +120,7 @@ thunar_uca_provider_menu_provider_init (ThunarxMenuProviderIface *iface)
 {
   iface->get_file_menu_items = thunar_uca_provider_get_file_menu_items;
   iface->get_folder_menu_items = thunar_uca_provider_get_folder_menu_items;
-  iface->get_all_menu_items = thunar_uca_provider_get_all_menu_items;
+  iface->get_all_right_click_menu_items = thunar_uca_provider_get_all_right_click_menu_items;
 }
 
 
@@ -444,7 +444,7 @@ thunar_uca_provider_get_folder_menu_items (ThunarxMenuProvider *menu_provider,
 
 
 static GList *
-thunar_uca_provider_get_all_menu_items (ThunarxMenuProvider *menu_provider)
+thunar_uca_provider_get_all_right_click_menu_items (ThunarxMenuProvider *menu_provider)
 {
   ThunarUcaProvider *uca_provider = THUNAR_UCA_PROVIDER (menu_provider);
   GtkTreeIter        iter;

@@ -255,11 +255,11 @@ thunarx_menu_provider_get_dnd_menu_items (ThunarxMenuProvider *provider,
 
 
 /**
- * thunarx_menu_provider_get_all_menu_items: (skip)
+ * thunarx_menu_provider_get_all_right_click_menu_items: (skip)
  * @provider: a #ThunarxMenuProvider.
  *
  * Returns the list of #ThunarxMenuItem<!---->s that @provider has to offer.
- * This method is used in Thunar to get all possible menu items.
+ * This method is used in Thunar to get ALL possible context menu items.
  *
  * The caller is responsible to free the returned list of menu items using
  * something like this when no longer needed:
@@ -273,16 +273,16 @@ thunarx_menu_provider_get_dnd_menu_items (ThunarxMenuProvider *provider,
  * Since: 4.21.3
  **/
 GList *
-thunarx_menu_provider_get_all_menu_items (ThunarxMenuProvider *provider)
+thunarx_menu_provider_get_all_right_click_menu_items (ThunarxMenuProvider *provider)
 {
   GList *items;
 
   g_return_val_if_fail (THUNARX_IS_MENU_PROVIDER (provider), NULL);
 
-  if (THUNARX_MENU_PROVIDER_GET_IFACE (provider)->get_all_menu_items != NULL)
+  if (THUNARX_MENU_PROVIDER_GET_IFACE (provider)->get_all_right_click_menu_items != NULL)
     {
       /* query the menu items from the implementation */
-      items = (*THUNARX_MENU_PROVIDER_GET_IFACE (provider)->get_all_menu_items) (provider);
+      items = (*THUNARX_MENU_PROVIDER_GET_IFACE (provider)->get_all_right_click_menu_items) (provider);
 
       /* take a reference on the provider for each menu item */
       thunarx_object_list_take_reference (items, provider);
