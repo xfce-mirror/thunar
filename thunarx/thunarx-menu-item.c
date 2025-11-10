@@ -115,6 +115,12 @@ thunarx_menu_item_class_init (ThunarxMenuItemClass *klass)
                 g_cclosure_marshal_VOID__VOID,
                 G_TYPE_NONE, 0);
 
+  /**
+   * ThunarxMenuItem::name:
+   *
+   * Unique name of the item. The name should not overlap with names from other plugins.
+   * Allowed characters are [A-Z][a-z]:_-.
+   **/
   g_object_class_install_property (gobject_class,
                                    PROP_NAME,
                                    g_param_spec_string ("name",
