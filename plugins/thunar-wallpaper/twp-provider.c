@@ -45,6 +45,8 @@ static GList *
 twp_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
                                   GtkWidget           *window,
                                   GList               *files);
+static GList *
+twp_provider_get_all_right_click_menu_items (ThunarxMenuProvider *menu_provider);
 static void
 twp_action_set_wallpaper (ThunarxMenuItem *item,
                           gpointer         user_data);
@@ -75,6 +77,7 @@ static void
 twp_menu_provider_init (ThunarxMenuProviderIface *iface)
 {
   iface->get_file_menu_items = twp_provider_get_file_menu_items;
+  iface->get_all_right_click_menu_items = twp_provider_get_all_right_click_menu_items;
 }
 
 
@@ -164,6 +167,21 @@ twp_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
 
   return items;
 }
+
+
+
+
+static GList *
+twp_provider_get_all_right_click_menu_items (ThunarxMenuProvider *menu_provider)
+{
+  ThunarxMenuItem *item = thunarx_menu_item_new ("Twp::setwallpaper", _("Set as wallpaper"), NULL, "preferences-desktop-wallpaper");
+  GList           *items = g_list_append (NULL, item);
+
+  return items;
+}
+
+
+
 
 static void
 twp_action_set_wallpaper (ThunarxMenuItem *item,
