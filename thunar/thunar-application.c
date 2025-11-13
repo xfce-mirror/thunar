@@ -855,7 +855,46 @@ thunar_application_accel_map_changed (ThunarApplication *application)
   g_list_free (windows);
 }
 
-
+/**
+ * thunar_application_delete_descendants:
+ * @list          : a #GList of #GFile or #ThunarFile
+ * @of_thunarfile : %TRUE if list is of #ThunarFile
+ *
+ * Delete from list (and unref) all files which are contained in
+ * any directory that is also on the list
+ */
+static GList *
+thunar_application_delete_descendants (GList *list, gboolean of_thunarfile)
+{
+  GList *lp1, *lp2, *next2;
+  GFile *f1, *f2;
+  for (lp1 = list; lp1 != NULL; lp1 = lp1->next)
+    {
+      for (lp2 = list; lp2 != NULL; lp2 = next2)
+        {
+          next2 = lp2->next;
+          if (lp1 != lp2)
+            {
+              if (of_thunarfile)
+                {
+                  f1 = thunar_file_get_file (THUNAR_FILE (lp1->data));
+                  f2 = thunar_file_get_file (THUNAR_FILE (lp2->data));
+                }
+              else
+                {
+                  f1 = G_FILE (lp1->data);
+                  f2 = G_FILE (lp2->data);
+                }
+              if (thunar_g_file_is_descendant (f2, f1))
+                {
+                  g_object_unref (f2);
+                  list = g_list_delete_link (list, lp2);
+                }
+            }
+        }
+    }
+  return list;
+}
 
 static void
 thunar_application_collect_and_launch (ThunarApplication     *application,
@@ -2367,6 +2406,7 @@ thunar_application_move_into (ThunarApplication     *application,
     }
   else
     {
+      source_file_list = thunar_application_delete_descendants (source_file_list, FALSE);
       /* generate a title for the progress dialog */
       display_name = thunar_file_cached_display_name (target_file);
       title = g_strdup_printf (_("Moving files into \"%s\"..."), display_name);
@@ -2576,6 +2616,8 @@ thunar_application_unlink_files (ThunarApplication     *application,
   _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), TRUE);
   _thunar_return_val_if_fail (file_list != NULL, TRUE);
 
+  file_list = thunar_application_delete_descendants (file_list, TRUE);
+
   for (lp = g_list_last (file_list); lp != NULL; lp = lp->prev, ++n_path_list)
     path_list = thunar_g_list_prepend_deep (path_list, thunar_file_get_file (lp->data));
 
@@ -2628,6 +2670,8 @@ thunar_application_trash_files (ThunarApplication     *application,
   _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), TRUE);
   _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), TRUE);
   _thunar_return_val_if_fail (file_list != NULL, TRUE);
+
+  file_list = thunar_application_delete_descendants (file_list, TRUE);
 
   for (lp = g_list_last (file_list); lp != NULL; lp = lp->prev, ++n_path_list)
     path_list = thunar_g_list_prepend_deep (path_list, thunar_file_get_file (lp->data));
@@ -2839,6 +2883,8 @@ thunar_application_restore_files (ThunarApplication *application,
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+
+  trash_file_list = thunar_application_delete_descendants (trash_file_list, TRUE);
 
   for (lp = trash_file_list; lp != NULL; lp = lp->next)
     {
