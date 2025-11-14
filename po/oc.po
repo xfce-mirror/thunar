@@ -358,8 +358,8 @@ msgstr[1] "Executar los fichièrs seleccionats"
 #, c-format
 msgid "Open in New _Tab"
 msgid_plural "Open in %d New _Tabs"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Dobrir dins un _onglet novèl"
+msgstr[1] "Dobrir dins %d _onglets novèls"
 
 #: ../thunar/thunar-action-manager.c:1559
 #, c-format
@@ -372,8 +372,8 @@ msgstr[1] "Dobrir los repertòris seleccionats dins %d onglets novèls"
 #, c-format
 msgid "Open in New _Window"
 msgid_plural "Open in %d New _Windows"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Dobrir dins una _fenèstra novèla"
+msgstr[1] "Dobrir dins %d _fenèstras novèlas"
 
 #: ../thunar/thunar-action-manager.c:1569
 #, c-format
@@ -2583,10 +2583,15 @@ msgid ""
 "- Local Files On Same Devices Only: if all files are locals but on different devices (disks, mount points), copies will be sequential\n"
 "- Never: all copies are done sequentially"
 msgstr ""
+"Indica lo compòrtament pendent las còpias multiplas :\n"
+"- Totjorn : totas las còpias se fan simultanèament\n"
+"- Fichièrs locals solament : còpias simultanèas pels fichièrs locals (pas distants, pas jonches)\n"
+"- Fichièrs locals sul meteis periferic solament : se totes los fichièrs son locals mas sus de periferics diferents (disques, punts de montatge), las còpias seràn sequencialas\n"
+"- Jamai : totas las còpias se fan sequencialament"
 
 #: ../thunar/thunar-preferences-dialog.c:1052
 msgid "Local Files On Same Devices Only"
-msgstr ""
+msgstr "Fichièrs locals sul meteis periferic solament"
 
 #: ../thunar/thunar-preferences-dialog.c:1071
 msgid "Use intermediate file on copy:"
@@ -2611,6 +2616,9 @@ msgid ""
 "Compare original file and copy with checksum. This will prevent corrupted "
 "files. Enabling this option will largely increase copy time."
 msgstr ""
+"Comparar lo fichièr original e la còpia amb la soma de contraròtle. Aquò "
+"empacharà los fichièrs corromputs. L'activacion d'aquesta opcion aumentarà "
+"considerablament lo temps de còpia."
 
 #: ../thunar/thunar-preferences-dialog.c:1134
 msgid "Search"
@@ -2921,12 +2929,16 @@ msgid ""
 "Click here to actually rename the files listed above to their new names and "
 "close the window."
 msgstr ""
+"Clicatz aicí per tornar nomenar efectivament los fichièrs listats dessús amb"
+" lors noms novèls e tampar la fenèstra."
 
 #: ../thunar/thunar-renamer-dialog.c:376
 msgid ""
 "Click here to actually rename the files listed above to their new names and "
 "keep the window open."
 msgstr ""
+"Clicatz aicí per tornar nomenar efectivament los fichièrs listats dessús amb"
+" lors noms novèls e gardar la fenèstra dobèrta."
 
 #: ../thunar/thunar-renamer-dialog.c:446
 msgid "New Name"
@@ -3195,11 +3207,11 @@ msgstr "Or_ganizar los elements"
 
 #: ../thunar/thunar-standard-view.c:400
 msgid "T_oggle Sort Order"
-msgstr ""
+msgstr "_Alternar l’òrdre de triada"
 
 #: ../thunar/thunar-standard-view.c:400
 msgid "Toggle ascending/descending sort order"
-msgstr ""
+msgstr "Alternar l’òrdre de triada ascendent/descendent"
 
 #: ../thunar/thunar-standard-view.c:401
 msgid "By _Name"
@@ -3408,6 +3420,7 @@ msgstr "Configurar la barra d’aisinas"
 #: ../thunar/thunar-toolbar-editor.c:140
 msgid "Configure the order and visibility of toolbar items."
 msgstr ""
+"Configurar l’òrdre e la visibilitat dels elements de la barra d’aisina."
 
 #. create the "Use Default" button
 #: ../thunar/thunar-toolbar-editor.c:230
@@ -3665,11 +3678,11 @@ msgstr "Selector d'emplaçament"
 
 #: ../thunar/thunar-window.c:507
 msgid "_Entry Style"
-msgstr ""
+msgstr "_Estil d’entrada"
 
 #: ../thunar/thunar-window.c:507
 msgid "Traditional entry showing the current path"
-msgstr ""
+msgstr "Entrada tradicionala qu'aficha l’emplaçament actual"
 
 #: ../thunar/thunar-window.c:508
 msgid "_Buttons Style"
@@ -3730,7 +3743,7 @@ msgstr "Configurar la barra d’aisinas"
 
 #: ../thunar/thunar-window.c:517
 msgid "Clear Saved _Folder View Settings"
-msgstr ""
+msgstr "Escafar los paramètres d'afichatge dels _dossièrs enregistrats"
 
 #: ../thunar/thunar-window.c:517
 msgid "Delete saved view settings for this folder"
@@ -3746,7 +3759,7 @@ msgstr "Far veire/amagar los fichièrs amagats dins la fenèstra correnta"
 
 #: ../thunar/thunar-window.c:519
 msgid "Show File Hi_ghlight"
-msgstr ""
+msgstr "Afichar la mesa en evidéncia del fichièr"
 
 #: ../thunar/thunar-window.c:519
 msgid ""
@@ -4773,11 +4786,11 @@ msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:21
 msgid "the path to the first selected file or directory"
-msgstr ""
+msgstr "l’emplaçament del primièr fichièr o repertòri seleccionat"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:22
 msgid "the paths to all selected files and directories"
-msgstr ""
+msgstr "los emplaçaments de totes los fichièrs e repertòris seleccionats"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:24
 #, no-c-format
@@ -4885,6 +4898,9 @@ msgid ""
 "\n"
 "Check the <a href=\"https://docs.xfce.org/xfce/thunar/custom-actions\">documentation</a> for a collection of custom action samples."
 msgstr ""
+"Podètz configurar d'accions personalizadas que apareisseràn dins los menús contextuals del gestionari de fichièrs per certans tipes de fichièrs.\n"
+"\n"
+"Consultatz la <a href=\"https://docs.xfce.org/xfce/thunar/custom-actions\">documentacion</a> per una colleccion d'exemples d'accions personalizadas."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.ui.h:5
 msgid "Add a new custom action."
