@@ -579,13 +579,6 @@ main (int argc, char **argv)
   /* setup translation domain */
   xfce_textdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR, "UTF-8");
 
-#ifdef G_ENABLE_DEBUG
-  /* Do NOT remove this line for now, If something doesn't work,
-   * fix your code instead!
-   */
-  g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_WARNING);
-#endif
-
   /* initialize Gtk+ */
   gtk_init (&argc, &argv);
 
