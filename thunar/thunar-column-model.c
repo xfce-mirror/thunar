@@ -507,7 +507,6 @@ thunar_column_model_move (ThunarColumnModel *column_model,
                           gint               source_index,
                           gint               dest_index)
 {
-  ThunarColumn source_column;
   ThunarColumn saved_order[THUNAR_N_VISIBLE_COLUMNS];
   gint         i, j;
 
@@ -515,17 +514,19 @@ thunar_column_model_move (ThunarColumnModel *column_model,
   _thunar_return_if_fail (source_index >= 0 && source_index < THUNAR_N_VISIBLE_COLUMNS);
   _thunar_return_if_fail (dest_index >= 0 && dest_index < THUNAR_N_VISIBLE_COLUMNS);
 
-  source_column = column_model->order[source_index];
+  /* the code below does the same thing as:
+   * tmp = order.remove(source_index)
+   * order.insert(dest_index, tmp) */
   memcpy (saved_order, column_model->order, sizeof (saved_order));
+  /* i - destination index (column_model->order), j - source index (saved_order) */
   for (i = 0, j = 0; i < THUNAR_N_VISIBLE_COLUMNS; ++i)
     {
+      /* skip "removed" element */
       if (j == source_index)
         ++j;
 
-      if (i == dest_index)
-        column_model->order[i] = source_column;
-      else
-        column_model->order[i] = saved_order[j++];
+      /* put the next element from the previous order into the destination, or "insert" the element from source_index */
+      column_model->order[i] = i != dest_index ? saved_order[j++] : saved_order[source_index];
     }
 
   thunar_column_model_save_column_order (column_model);

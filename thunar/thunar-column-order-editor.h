@@ -38,7 +38,7 @@ GType
 thunar_column_order_editor_get_type (void) G_GNUC_CONST;
 
 void
-thunar_column_order_editor_show (GtkWidget *window);
+thunar_column_order_editor_new_and_show (GtkWidget *window);
 
 G_END_DECLS
 
