@@ -73,7 +73,7 @@ thunar_toolbar_order_editor_move (ThunarToolbarOrderEditor *toolbar_editor,
                                   gint                      dest_index);
 
 static void
-thunar_toolbar_order_editor_set_tool_visibility (ThunarToolbarOrderEditor *toolbar_editor,
+thunar_toolbar_order_editor_set_item_visibility (ThunarToolbarOrderEditor *toolbar_editor,
                                                  gint                      index,
                                                  gboolean                  value);
 
@@ -149,7 +149,7 @@ thunar_toolbar_order_editor_init (ThunarToolbarOrderEditor *toolbar_editor)
   g_object_set (toolbar_editor, "model", toolbar_editor->store, NULL);
   g_object_set (toolbar_editor->store, "list-flags", XFCE_ITEM_LIST_MODEL_REORDERABLE | XFCE_ITEM_LIST_MODEL_RESETTABLE, NULL);
   g_signal_connect_swapped (toolbar_editor->store, "before-move-item", G_CALLBACK (thunar_toolbar_order_editor_move), toolbar_editor);
-  g_signal_connect_swapped (toolbar_editor->store, "activity-changed", G_CALLBACK (thunar_toolbar_order_editor_set_tool_visibility), toolbar_editor);
+  g_signal_connect_swapped (toolbar_editor->store, "activity-changed", G_CALLBACK (thunar_toolbar_order_editor_set_item_visibility), toolbar_editor);
   g_signal_connect_swapped (toolbar_editor->store, "reset", G_CALLBACK (thunar_toolbar_order_editor_reset), toolbar_editor);
   g_signal_connect_swapped (toolbar_editor->preferences, "notify::last-toolbar-items", G_CALLBACK (thunar_toolbar_order_editor_refresh), toolbar_editor);
   g_object_unref (toolbar_editor->store);
@@ -268,7 +268,7 @@ thunar_toolbar_order_editor_move (ThunarToolbarOrderEditor *toolbar_editor,
 
 
 static void
-thunar_toolbar_order_editor_set_tool_visibility (ThunarToolbarOrderEditor *toolbar_editor,
+thunar_toolbar_order_editor_set_item_visibility (ThunarToolbarOrderEditor *toolbar_editor,
                                                  gint                      index,
                                                  gboolean                  value)
 {
