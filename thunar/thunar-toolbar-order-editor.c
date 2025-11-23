@@ -21,6 +21,7 @@
 
 #include "thunar/thunar-application.h"
 #include "thunar/thunar-preferences.h"
+#include "thunar/thunar-private.h"
 #include "thunar/thunar-window.h"
 
 #include <libxfce4ui/libxfce4ui.h>
@@ -43,16 +44,28 @@ struct _ThunarToolbarOrderEditor
   XfceItemListStore *store;
 };
 
+enum
+{
+  PROP_0,
+  PROP_TOOLBAR,
+};
+
 
 
 static void
 thunar_toolbar_order_editor_finalize (GObject *object);
 
 static void
+thunar_toolbar_order_editor_set_property (GObject      *object,
+                                          guint         prop_id,
+                                          const GValue *value,
+                                          GParamSpec   *pspec);
+
+static void
 thunar_toolbar_order_editor_help (ThunarOrderEditor *order_editor);
 
 static void
-thunar_toolbar_order_editor_populate (ThunarToolbarOrderEditor *toolbar_editor);
+thunar_toolbar_order_editor_refresh (ThunarToolbarOrderEditor *toolbar_editor);
 
 static void
 thunar_toolbar_order_editor_move (ThunarToolbarOrderEditor *toolbar_editor,
@@ -60,9 +73,9 @@ thunar_toolbar_order_editor_move (ThunarToolbarOrderEditor *toolbar_editor,
                                   gint                      dest_index);
 
 static void
-thunar_toolbar_order_editor_set_activity (ThunarToolbarOrderEditor *toolbar_editor,
-                                          gint                      index,
-                                          gboolean                  value);
+thunar_toolbar_order_editor_set_tool_visibility (ThunarToolbarOrderEditor *toolbar_editor,
+                                                 gint                      index,
+                                                 gboolean                  value);
 
 static gint
 thunar_toolbar_order_editor_compare_order (GObject *a,
@@ -85,6 +98,13 @@ thunar_toolbar_order_editor_class_init (ThunarToolbarOrderEditorClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->finalize = thunar_toolbar_order_editor_finalize;
+  object_class->set_property = thunar_toolbar_order_editor_set_property;
+
+  g_object_class_install_property (object_class,
+                                   PROP_TOOLBAR,
+                                   g_param_spec_object ("toolbar", NULL, NULL,
+                                                        GTK_TYPE_WIDGET,
+                                                        G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS));
 }
 
 
@@ -123,6 +143,16 @@ thunar_toolbar_order_editor_init (ThunarToolbarOrderEditor *toolbar_editor)
                 "title", _("Configure the Toolbar"),
                 "help-enabled", TRUE,
                 NULL);
+
+  /* store */
+  toolbar_editor->store = xfce_item_list_store_new (-1);
+  g_object_set (toolbar_editor, "model", toolbar_editor->store, NULL);
+  g_object_set (toolbar_editor->store, "list-flags", XFCE_ITEM_LIST_MODEL_REORDERABLE | XFCE_ITEM_LIST_MODEL_RESETTABLE, NULL);
+  g_signal_connect_swapped (toolbar_editor->store, "before-move-item", G_CALLBACK (thunar_toolbar_order_editor_move), toolbar_editor);
+  g_signal_connect_swapped (toolbar_editor->store, "activity-changed", G_CALLBACK (thunar_toolbar_order_editor_set_tool_visibility), toolbar_editor);
+  g_signal_connect_swapped (toolbar_editor->store, "reset", G_CALLBACK (thunar_toolbar_order_editor_reset), toolbar_editor);
+  g_signal_connect_swapped (toolbar_editor->preferences, "notify::last-toolbar-items", G_CALLBACK (thunar_toolbar_order_editor_refresh), toolbar_editor);
+  g_object_unref (toolbar_editor->store);
 }
 
 
@@ -135,9 +165,34 @@ thunar_toolbar_order_editor_finalize (GObject *object)
   g_signal_handlers_disconnect_by_data (toolbar_editor->preferences, toolbar_editor);
   g_clear_object (&toolbar_editor->application);
   g_clear_object (&toolbar_editor->preferences);
+  g_clear_object (&toolbar_editor->toolbar);
   g_clear_pointer (&toolbar_editor->children, g_list_free);
 
   G_OBJECT_CLASS (thunar_toolbar_order_editor_parent_class)->finalize (object);
+}
+
+
+
+static void
+thunar_toolbar_order_editor_set_property (GObject      *object,
+                                          guint         prop_id,
+                                          const GValue *value,
+                                          GParamSpec   *pspec)
+{
+  ThunarToolbarOrderEditor *toolbar_editor = THUNAR_TOOLBAR_ORDER_EDITOR (object);
+
+  switch (prop_id)
+    {
+    case PROP_TOOLBAR:
+      g_clear_object (&toolbar_editor->toolbar);
+      toolbar_editor->toolbar = g_value_dup_object (value);
+      thunar_toolbar_order_editor_refresh (toolbar_editor);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
 }
 
 
@@ -154,10 +209,12 @@ thunar_toolbar_order_editor_help (ThunarOrderEditor *order_editor)
 
 
 static void
-thunar_toolbar_order_editor_populate (ThunarToolbarOrderEditor *toolbar_editor)
+thunar_toolbar_order_editor_refresh (ThunarToolbarOrderEditor *toolbar_editor)
 
 {
   xfce_item_list_store_clear (toolbar_editor->store);
+
+  _thunar_return_if_fail (toolbar_editor->toolbar != NULL);
 
   g_clear_pointer (&toolbar_editor->children, g_list_free);
   toolbar_editor->children = gtk_container_get_children (GTK_CONTAINER (toolbar_editor->toolbar));
@@ -211,9 +268,9 @@ thunar_toolbar_order_editor_move (ThunarToolbarOrderEditor *toolbar_editor,
 
 
 static void
-thunar_toolbar_order_editor_set_activity (ThunarToolbarOrderEditor *toolbar_editor,
-                                          gint                      index,
-                                          gboolean                  value)
+thunar_toolbar_order_editor_set_tool_visibility (ThunarToolbarOrderEditor *toolbar_editor,
+                                                 gint                      index,
+                                                 gboolean                  value)
 {
   GList *windows = thunar_application_get_windows (toolbar_editor->application);
 
@@ -254,7 +311,7 @@ thunar_toolbar_order_editor_reset (ThunarToolbarOrderEditor *toolbar_editor)
   g_list_free (new_order);
 
   thunar_toolbar_order_editor_save (toolbar_editor);
-  thunar_toolbar_order_editor_populate (toolbar_editor);
+  thunar_toolbar_order_editor_refresh (toolbar_editor);
 }
 
 
@@ -265,7 +322,7 @@ thunar_toolbar_order_editor_save (ThunarToolbarOrderEditor *toolbar_editor)
   GString *items = g_string_sized_new (1024);
 
   /* block signal */
-  g_signal_handlers_block_by_func (toolbar_editor->preferences, thunar_toolbar_order_editor_populate, toolbar_editor);
+  g_signal_handlers_block_by_func (toolbar_editor->preferences, thunar_toolbar_order_editor_refresh, toolbar_editor);
 
   /* read the internal id and visibility column values and store them */
   for (GList *l = toolbar_editor->children; l != NULL; l = l->next)
@@ -300,28 +357,16 @@ thunar_toolbar_order_editor_save (ThunarToolbarOrderEditor *toolbar_editor)
   g_string_free (items, TRUE);
 
   /* unblock signal */
-  g_signal_handlers_unblock_by_func (toolbar_editor->preferences, thunar_toolbar_order_editor_populate, toolbar_editor);
+  g_signal_handlers_unblock_by_func (toolbar_editor->preferences, thunar_toolbar_order_editor_refresh, toolbar_editor);
 }
 
 
 
 void
-thunar_toolbar_order_editor_show (GtkWidget *window,
-                                  GtkWidget *window_toolbar)
+thunar_toolbar_order_editor_new_and_show (GtkWidget *window,
+                                          GtkWidget *toolbar)
 {
-  XfceItemListStore        *store = xfce_item_list_store_new (-1);
-  ThunarToolbarOrderEditor *toolbar_editor = g_object_new (THUNAR_TYPE_TOOLBAR_ORDER_EDITOR, "model", store, NULL);
-
-  toolbar_editor->toolbar = window_toolbar;
-  toolbar_editor->store = store;
-
-  g_object_set (store, "list-flags", XFCE_ITEM_LIST_MODEL_REORDERABLE | XFCE_ITEM_LIST_MODEL_RESETTABLE, NULL);
-  g_signal_connect_swapped (store, "before-move-item", G_CALLBACK (thunar_toolbar_order_editor_move), toolbar_editor);
-  g_signal_connect_swapped (store, "before-set-activity", G_CALLBACK (thunar_toolbar_order_editor_set_activity), toolbar_editor);
-  g_signal_connect_swapped (store, "reset", G_CALLBACK (thunar_toolbar_order_editor_reset), toolbar_editor);
-  g_signal_connect_swapped (toolbar_editor->preferences, "notify::last-toolbar-items", G_CALLBACK (thunar_toolbar_order_editor_populate), toolbar_editor);
-  thunar_toolbar_order_editor_populate (toolbar_editor);
-  g_object_unref (store);
+  ThunarToolbarOrderEditor *toolbar_editor = g_object_new (THUNAR_TYPE_TOOLBAR_ORDER_EDITOR, "toolbar", toolbar, NULL);
 
   thunar_order_editor_show (THUNAR_ORDER_EDITOR (toolbar_editor), window);
 }

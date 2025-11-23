@@ -4490,7 +4490,7 @@ thunar_window_action_menubar_changed (ThunarWindow *window)
 static gboolean
 thunar_window_action_show_toolbar_editor (ThunarWindow *window)
 {
-  thunar_toolbar_order_editor_show (GTK_WIDGET (window), window->location_toolbar);
+  thunar_toolbar_order_editor_new_and_show (GTK_WIDGET (window), window->location_toolbar);
   return TRUE;
 }
 
