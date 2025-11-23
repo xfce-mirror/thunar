@@ -38,8 +38,8 @@ GType
 thunar_toolbar_order_editor_get_type (void) G_GNUC_CONST;
 
 void
-thunar_toolbar_order_editor_show (GtkWidget *window,
-                                  GtkWidget *window_toolbar);
+thunar_toolbar_order_editor_new_and_show (GtkWidget *window,
+                                          GtkWidget *toolbar);
 
 G_END_DECLS
 

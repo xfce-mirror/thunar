@@ -39,7 +39,11 @@ struct _ThunarColumnOrderEditor
   ThunarOrderEditor __parent__;
 
   ThunarPreferences *preferences;
+
+  /* External model for managing columns. The internal model is populated with data from the external model. */
   ThunarColumnModel *column_model;
+
+  /* Internal model for XfceItemListView */
   XfceItemListStore *store;
 };
 
@@ -56,7 +60,7 @@ thunar_column_order_editor_get_model_column_nth (ThunarColumnOrderEditor *column
                                                  gint                     index);
 
 static void
-thunar_column_order_editor_populate (ThunarColumnOrderEditor *column_editor);
+thunar_column_order_editor_refresh (ThunarColumnOrderEditor *column_editor);
 
 static void
 thunar_column_order_editor_move (ThunarColumnOrderEditor *column_editor,
@@ -64,9 +68,9 @@ thunar_column_order_editor_move (ThunarColumnOrderEditor *column_editor,
                                  gint                     dest_index);
 
 static void
-thunar_column_order_editor_set_activity (ThunarColumnOrderEditor *column_editor,
-                                         gint                     index,
-                                         gboolean                 value);
+thunar_column_order_editor_set_column_visibility (ThunarColumnOrderEditor *column_editor,
+                                                  gint                     index,
+                                                  gboolean                 value);
 
 static void
 thunar_column_order_editor_reset (ThunarColumnOrderEditor *column_editor);
@@ -204,6 +208,22 @@ thunar_column_order_editor_init (ThunarColumnOrderEditor *column_editor)
                 "title", _("Configure Columns in the Detailed List View"),
                 "help-enabled", TRUE,
                 NULL);
+
+  /* store */
+  column_editor->store = xfce_item_list_store_new (-1);
+  g_object_set (column_editor, "model", column_editor->store, NULL);
+  g_object_set (column_editor->store, "list-flags", XFCE_ITEM_LIST_MODEL_REORDERABLE | XFCE_ITEM_LIST_MODEL_RESETTABLE, NULL);
+  g_signal_connect_swapped (column_editor->store, "before-move-item", G_CALLBACK (thunar_column_order_editor_move), column_editor);
+  g_signal_connect_swapped (column_editor->store, "activity-changed", G_CALLBACK (thunar_column_order_editor_set_column_visibility), column_editor);
+  g_signal_connect_swapped (column_editor->store, "reset", G_CALLBACK (thunar_column_order_editor_reset), column_editor);
+
+  g_signal_connect_swapped (column_editor->preferences, "notify::last-details-view-column-order",
+                            G_CALLBACK (thunar_column_order_editor_refresh), column_editor);
+  g_signal_connect_swapped (column_editor->preferences, "notify::last-details-view-visible-columns",
+                            G_CALLBACK (thunar_column_order_editor_refresh), column_editor);
+
+  thunar_column_order_editor_refresh (column_editor);
+  g_object_unref (column_editor->store);
 }
 
 
@@ -247,7 +267,7 @@ thunar_column_order_editor_get_model_column_nth (ThunarColumnOrderEditor *column
 
 
 static void
-thunar_column_order_editor_populate (ThunarColumnOrderEditor *column_editor)
+thunar_column_order_editor_refresh (ThunarColumnOrderEditor *column_editor)
 {
   xfce_item_list_store_clear (column_editor->store);
 
@@ -277,23 +297,23 @@ thunar_column_order_editor_move (ThunarColumnOrderEditor *column_editor,
                                  gint                     source_index,
                                  gint                     dest_index)
 {
-  g_signal_handlers_block_by_func (column_editor->preferences, thunar_column_order_editor_populate, column_editor);
+  g_signal_handlers_block_by_func (column_editor->preferences, thunar_column_order_editor_refresh, column_editor);
   thunar_column_model_move (column_editor->column_model, source_index, dest_index);
-  g_signal_handlers_unblock_by_func (column_editor->preferences, thunar_column_order_editor_populate, column_editor);
+  g_signal_handlers_unblock_by_func (column_editor->preferences, thunar_column_order_editor_refresh, column_editor);
 }
 
 
 
 static void
-thunar_column_order_editor_set_activity (ThunarColumnOrderEditor *column_editor,
-                                         gint                     index,
-                                         gboolean                 value)
+thunar_column_order_editor_set_column_visibility (ThunarColumnOrderEditor *column_editor,
+                                                  gint                     index,
+                                                  gboolean                 value)
 {
   ThunarColumn model_column = thunar_column_order_editor_get_model_column_nth (column_editor, index);
 
-  g_signal_handlers_block_by_func (column_editor->preferences, thunar_column_order_editor_populate, column_editor);
+  g_signal_handlers_block_by_func (column_editor->preferences, thunar_column_order_editor_refresh, column_editor);
   thunar_column_model_set_column_visible (column_editor->column_model, model_column, value);
-  g_signal_handlers_unblock_by_func (column_editor->preferences, thunar_column_order_editor_populate, column_editor);
+  g_signal_handlers_unblock_by_func (column_editor->preferences, thunar_column_order_editor_refresh, column_editor);
 }
 
 
@@ -307,25 +327,9 @@ thunar_column_order_editor_reset (ThunarColumnOrderEditor *column_editor)
 
 
 void
-thunar_column_order_editor_show (GtkWidget *window)
+thunar_column_order_editor_new_and_show (GtkWidget *window)
 {
-  XfceItemListStore       *store = xfce_item_list_store_new (-1);
-  ThunarColumnOrderEditor *column_editor = g_object_new (THUNAR_TYPE_COLUMN_ORDER_EDITOR, "model", store, NULL);
-
-  column_editor->store = store;
-
-  g_object_set (store, "list-flags", XFCE_ITEM_LIST_MODEL_REORDERABLE | XFCE_ITEM_LIST_MODEL_RESETTABLE, NULL);
-  g_signal_connect_swapped (store, "before-move-item", G_CALLBACK (thunar_column_order_editor_move), column_editor);
-  g_signal_connect_swapped (store, "before-set-activity", G_CALLBACK (thunar_column_order_editor_set_activity), column_editor);
-  g_signal_connect_swapped (store, "reset", G_CALLBACK (thunar_column_order_editor_reset), column_editor);
-
-  g_signal_connect_swapped (column_editor->preferences, "notify::last-details-view-column-order",
-                            G_CALLBACK (thunar_column_order_editor_populate), column_editor);
-  g_signal_connect_swapped (column_editor->preferences, "notify::last-details-view-visible-columns",
-                            G_CALLBACK (thunar_column_order_editor_populate), column_editor);
-
-  thunar_column_order_editor_populate (column_editor);
-  g_object_unref (store);
+  ThunarColumnOrderEditor *column_editor = g_object_new (THUNAR_TYPE_COLUMN_ORDER_EDITOR, NULL);
 
   thunar_order_editor_show (THUNAR_ORDER_EDITOR (column_editor), window);
 }
