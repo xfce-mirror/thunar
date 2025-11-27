@@ -26,6 +26,9 @@
 
 G_BEGIN_DECLS
 
+/* An abstract dialog class for setting the order and visibility of elements, such as menu items. The code using this
+ * dialog must set the model property, and call the thunar_order_editor_show() method. Optionally, you can place widgets
+ * in the "description" or "settings" areas. */
 typedef struct _ThunarOrderEditor      ThunarOrderEditor;
 typedef struct _ThunarOrderEditorClass ThunarOrderEditorClass;
 
