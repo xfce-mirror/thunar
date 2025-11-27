@@ -24,6 +24,8 @@
 
 G_BEGIN_DECLS
 
+/* Dialog for setting the order and visibility of toolbar elements, as well as other properties. Also supports
+ * resetting settings to default. */
 typedef struct _ThunarToolbarOrderEditor      ThunarToolbarOrderEditor;
 typedef struct _ThunarToolbarOrderEditorClass ThunarToolbarOrderEditorClass;
 
