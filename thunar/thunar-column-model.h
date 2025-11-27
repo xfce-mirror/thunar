@@ -26,6 +26,7 @@
 
 G_BEGIN_DECLS;
 
+/* Model for columns that are displayed in ThunarDetailsView */
 typedef struct _ThunarColumnModelClass ThunarColumnModelClass;
 typedef struct _ThunarColumnModel      ThunarColumnModel;
 
