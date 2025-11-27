@@ -24,6 +24,9 @@
 
 G_BEGIN_DECLS
 
+/* Dialog for setting the order and visibility of columns in ThunarDetailsView, and other properties. Also supports
+ * resetting settings to default. This class does not work directly with settings,
+ * but changes them through ThunarColumnModel. */
 typedef struct _ThunarColumnOrderEditorClass ThunarColumnOrderEditorClass;
 typedef struct _ThunarColumnOrderEditor      ThunarColumnOrderEditor;
 
