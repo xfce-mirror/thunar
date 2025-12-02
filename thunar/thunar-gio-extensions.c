@@ -190,9 +190,88 @@ thunar_g_file_new_for_bookmarks (void)
 
 
 
+/* internal version, for recursive execution. Uses a lookup table to detect loops */
+static GFile *
+_thunar_g_file_resolve_symlink_internal (GFile *file, GHashTable *lookup_table)
+{
+  g_autoptr (GHashTable) lookup_history = NULL;
+  g_autoptr (GFileInfo) info = NULL;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+
+  if (lookup_table == NULL)
+    lookup_history = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+  else
+    lookup_history = g_hash_table_ref (lookup_table);
+
+  /* Resolve the link target recursively, until the target we found a file which is not a symlink */
+
+  /* Detect loops: if target already was seen, return NULL */
+  char *target_path_abs = g_file_get_path (file);
+  if (g_hash_table_contains (lookup_history, target_path_abs))
+    {
+      g_info ("Symlink loop detected - resolve symlink aborted");
+      g_free (target_path_abs);
+      return NULL;
+    }
+  g_hash_table_add (lookup_history, target_path_abs);
+
+  info = g_file_query_info (file,
+                            G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET "," G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK,
+                            G_FILE_QUERY_INFO_NONE, NULL, NULL);
+  if (info == NULL)
+    return NULL;
+
+  /* Not a symlink: return that file */
+  if (!g_file_info_get_attribute_boolean (info, G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK))
+    return g_object_ref (file);
+
+  /* It's a symlink, get the target */
+  const char *target_path = g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET);
+  if (target_path == NULL)
+    {
+      g_info ("Failed to read target path from symlink: %s", g_file_get_path (file));
+      return NULL;
+    }
+
+  /* The target is as well a symlink ... so lets use recursion */
+  if (g_path_is_absolute (target_path))
+    {
+      g_autoptr (GFile) target = g_file_new_for_path (target_path);
+      return _thunar_g_file_resolve_symlink_internal (target, lookup_history);
+    }
+  else
+    {
+      /* Resolve a possible relative path */
+      g_autoptr (GFile) target = NULL;
+      g_autoptr (GFile) parent = NULL;
+      g_autoptr (GFile) parent_resolved = NULL;
+
+      parent = g_file_get_parent (file);
+      if (parent == NULL)
+        return NULL;
+
+      /* Resolve parent, if required */
+      parent_resolved = _thunar_g_file_resolve_symlink_internal (parent, lookup_history);
+
+      if (parent_resolved == NULL)
+        {
+          g_info ("Failed to resolve parent of symlink");
+          return NULL;
+        }
+
+      target = g_file_resolve_relative_path (parent_resolved, target_path);
+
+      /* Sicne as well that file might be a symlink, we need to use recursion */
+      return _thunar_g_file_resolve_symlink_internal (target, lookup_history);
+    }
+}
+
+
+
 /**
  * thunar_g_file_resolve_symlink:
- * @file : a #GFile.
+ * @file : a #GFile
  *
  * Returns the resolved symlink target of @file as a new #GFile.
  * If @file is not a symlink, @file will just be returned
@@ -202,27 +281,7 @@ thunar_g_file_new_for_bookmarks (void)
 GFile *
 thunar_g_file_resolve_symlink (GFile *file)
 {
-  gchar *basename;
-  GFile *parent = NULL;
-  GFile *target = NULL;
-
-  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
-
-  parent = g_file_get_parent (file);
-  if (parent == NULL)
-    return NULL;
-
-  basename = g_file_get_basename (file);
-  if (basename == NULL)
-    {
-      g_object_unref (parent);
-      return NULL;
-    }
-
-  target = g_file_resolve_relative_path (parent, basename);
-  g_object_unref (parent);
-  g_free (basename);
-  return target;
+  return _thunar_g_file_resolve_symlink_internal (file, NULL);
 }
 
 
