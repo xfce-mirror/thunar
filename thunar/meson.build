@@ -1,5 +1,4 @@
 thunar_sources = [
-  'main.c',
   'thunar-abstract-dialog.c',
   'thunar-abstract-dialog.h',
   'thunar-abstract-icon-view.c',
@@ -203,18 +202,7 @@ thunar_sources += gnome.compile_resources(
   'thunar.gresource.xml',
 )
 
-executable(
-  'thunar',
-  thunar_sources,
-  sources: xfce_revision_h,
-  c_args: [
-    '-DG_LOG_DOMAIN="@0@"'.format('thunar'),
-    '-D_XOPEN_SOURCE=700', # for strptime in time.h
-  ],
-  include_directories: [
-    include_directories('..'),
-  ],
-  dependencies: [
+thunar_dependencies = [
     gio,
     gio_unix,
     gthread,
@@ -228,9 +216,38 @@ executable(
     libnotify,
     pango,
     vte
+]
+
+thunar_c_args = [
+    '-DG_LOG_DOMAIN="@0@"'.format('thunar'),
+    '-D_XOPEN_SOURCE=700', # for strptime in time.h
+]
+
+libthunar = static_library(
+  'libthunar',
+  thunar_sources,
+  sources: xfce_revision_h,
+  c_args: thunar_c_args,
+  include_directories: [
+    include_directories('..'),
   ],
+  dependencies: thunar_dependencies,
   link_with: [
     libthunarx,
+  ],
+  install: false,
+)
+
+executable(
+  'thunar',
+  'main.c',
+  c_args: thunar_c_args,
+  include_directories: [
+    include_directories('..'),
+  ],
+  dependencies: thunar_dependencies,
+  link_with: [
+    libthunar, libthunarx,
   ],
   install: true,
   install_dir: get_option('prefix') / get_option('bindir'),
