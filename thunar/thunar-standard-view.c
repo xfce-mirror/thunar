@@ -4457,7 +4457,7 @@ static void
 _thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 {
   GtkTreeIter iter;
-  GList      *lp, *selected_thunar_files;
+  GList      *lp, *selected_thunar_files, *next;
   ThunarFile *file;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
@@ -4475,8 +4475,9 @@ _thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 
   /* determine the new list of selected files (replacing GtkTreePath's with ThunarFile's) */
   selected_thunar_files = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
-  for (lp = selected_thunar_files; lp != NULL; lp = lp->next)
+  for (lp = selected_thunar_files; lp != NULL; lp = next)
     {
+			next = lp->next;
       /* determine the iterator for the path */
       if (!gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, lp->data))
         {
@@ -4492,6 +4493,11 @@ _thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
           /* ...and replace it with the file */
           lp->data = file;
         }
+			else
+				{
+					/* If item is not a file, remove from list */
+					selected_thunar_files = g_list_delete_link (selected_thunar_files, lp);
+				}
     }
 
   /* and setup the new selected files list */
