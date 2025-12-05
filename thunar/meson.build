@@ -1,4 +1,4 @@
-thunar_sources = [
+thunar_sources_base = [
   'main.c',
   'thunar-abstract-dialog.c',
   'thunar-abstract-dialog.h',
@@ -170,18 +170,22 @@ thunar_sources = [
   'thunar-window.c',
   'thunar-window.h',
 ]
+
 # Add terminal widget sources conditionally
 if vte.found()
-  thunar_sources += ['thunar-terminal-widget.c', 'thunar-terminal-widget.h']
+  thunar_sources_base += ['thunar-terminal-widget.c', 'thunar-terminal-widget.h']
 endif
 
-thunar_sources += gnome.genmarshal(
+thunar_sources = thunar_sources_base
+
+gnome_marshal_sources = gnome.genmarshal(
   'thunar-marshal',
   sources: 'thunar-marshal.list',
   prefix: '_thunar_marshal',
   internal: true,
   install_header: false,
 )
+thunar_sources += gnome_marshal_sources
 
 services = {
   'thunar-dbus-freedesktop-interfaces.xml': 'thunar-dbus-freedesktop-interfaces',
@@ -189,32 +193,25 @@ services = {
   'thunar-thumbnail-cache-dbus.xml': 'thunar-thumbnail-cache-proxy',
   'thunar-thumbnailer-dbus.xml': 'thunar-thumbnailer-proxy',
 }
+
+gnome_gdbus_sources = []
 foreach xml_file, basename : services
-  thunar_sources += gnome.gdbus_codegen(
+  gnome_gdbus_sources += gnome.gdbus_codegen(
     basename,
     sources: xml_file,
     namespace: 'Thunar',
     install_header: false,
   )
 endforeach
+thunar_sources += gnome_gdbus_sources
 
-thunar_sources += gnome.compile_resources(
+gnome_compile_sources = gnome.compile_resources(
   'thunar.gresource',
   'thunar.gresource.xml',
 )
+thunar_sources += gnome_compile_sources
 
-executable(
-  'thunar',
-  thunar_sources,
-  sources: xfce_revision_h,
-  c_args: [
-    '-DG_LOG_DOMAIN="@0@"'.format('thunar'),
-    '-D_XOPEN_SOURCE=700', # for strptime in time.h
-  ],
-  include_directories: [
-    include_directories('..'),
-  ],
-  dependencies: [
+thunar_dependencies = [
     gio,
     gio_unix,
     gthread,
@@ -228,7 +225,22 @@ executable(
     libnotify,
     pango,
     vte
+]
+
+thunar_c_args = [
+    '-DG_LOG_DOMAIN="@0@"'.format('thunar'),
+    '-D_XOPEN_SOURCE=700', # for strptime in time.h
+]
+
+executable(
+  'thunar',
+  thunar_sources,
+  sources: xfce_revision_h,
+  c_args: thunar_c_args,
+  include_directories: [
+    include_directories('..'),
   ],
+  dependencies: thunar_dependencies,
   link_with: [
     libthunarx,
   ],
@@ -256,3 +268,7 @@ install_data(
   install_dir: get_option('prefix') / get_option('bindir'),
   install_mode: 'rwxr-xr-x',
 )
+
+if get_option('tests')
+  subdir('tests')
+endif
