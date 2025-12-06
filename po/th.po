@@ -45,27 +45,27 @@ msgstr "แก้ไขตัวเ_รียกโปรแกรม"
 
 #: thunar/thunar-action-manager.c:324
 msgid "Edit the selected launcher"
-msgstr ""
+msgstr "แก้ไขตัวเรียกโปรแกรมที่เลือก"
 
 #: thunar/thunar-action-manager.c:325 thunar/thunar-action-manager.c:1671
 #, c-format
 msgid "Open in new _Tab"
 msgid_plural "Open in %d New _Tabs"
-msgstr[0] ""
+msgstr[0] "เปิดในแ_ท็บใหม่ %d แท็บ"
 
 #: thunar/thunar-action-manager.c:326 thunar/thunar-action-manager.c:1682
 #, c-format
 msgid "Open in new _Window"
 msgid_plural "Open in %d New _Windows"
-msgstr[0] ""
+msgstr[0] "เปิดใน_หน้าต่างใหม่ %d บาน"
 
 #: thunar/thunar-action-manager.c:327
 msgid "Open Item _Location"
-msgstr ""
+msgstr "เปิด_ตำแหน่งรายการ"
 
 #: thunar/thunar-action-manager.c:327
 msgid "Navigate to the folder in which the selected file is located"
-msgstr ""
+msgstr "นำทางไปยังโฟลเดอร์ของแฟ้มที่เลือกอยู่"
 
 #: thunar/thunar-action-manager.c:328
 msgid "Ope_n With Other Application..."
@@ -102,10 +102,12 @@ msgid ""
 "Create bookmarks for all selected folders. If nothing is selected, the "
 "current folder is bookmarked."
 msgstr ""
+"สร้างที่คั่นสำหรับทุกโฟลเดอร์ที่เลือก ถ้าไม่ได้เลือกรายการใดไว้ "
+"ก็จะคั่นหน้าโฟลเดอร์ปัจจุบัน"
 
 #: thunar/thunar-action-manager.c:335
 msgid "Send to _Desktop"
-msgstr ""
+msgstr "ส่งไปที่_พื้นโต๊ะ"
 
 #: thunar/thunar-action-manager.c:336
 msgid "_Properties..."
@@ -122,7 +124,7 @@ msgstr[0] "สร้างลิ_งก์"
 
 #: thunar/thunar-action-manager.c:338
 msgid "Dup_licate"
-msgstr ""
+msgstr "ทำ_สำเนา"
 
 #: thunar/thunar-action-manager.c:339
 msgid "_Rename..."
@@ -140,11 +142,11 @@ msgstr "ลบแฟ้มและโฟลเดอร์ทั้งหมด
 
 #: thunar/thunar-action-manager.c:341
 msgid "_Remove from Recent"
-msgstr ""
+msgstr "_ลบจากรายการใช้ล่าสุด"
 
 #: thunar/thunar-action-manager.c:341
 msgid "Remove the selected files from Recent"
-msgstr ""
+msgstr "ลบแฟ้มที่เลือกออกจากรายการใช้ล่าสุด"
 
 #: thunar/thunar-action-manager.c:342
 msgid "Create _Folder..."
@@ -168,7 +170,7 @@ msgstr "กู้_คืน"
 
 #: thunar/thunar-action-manager.c:346
 msgid "Restore and S_how"
-msgstr ""
+msgstr "คืนค่าและแ_สดง"
 
 #: thunar/thunar-action-manager.c:347
 msgid "Mo_ve to Trash"
@@ -234,7 +236,7 @@ msgstr "ดันสื่อในอุปกรณ์ที่เลือก
 #: thunar/thunar-action-manager.c:854 thunar/thunar-dnd.c:270
 #, c-format
 msgid "Failed to execute file \"%s\" (%s)"
-msgstr ""
+msgstr "เรียกทำงานแฟ้ม \"%s\" (%s) ไม่สำเร็จ"
 
 #: thunar/thunar-action-manager.c:856 thunar/thunar-dnd.c:272
 #, c-format
@@ -259,7 +261,7 @@ msgstr "คุณแน่ใจหรือไม่ว่าต้องกา
 
 #: thunar/thunar-action-manager.c:1057
 msgid "Open folders"
-msgstr ""
+msgstr "เปิดโฟลเดอร์"
 
 #: thunar/thunar-action-manager.c:1059
 #, c-format
@@ -311,12 +313,12 @@ msgstr "เปิด \"%s\" ไม่สำเร็จ"
 
 #: thunar/thunar-action-manager.c:1534
 msgid "File does not exist anymore"
-msgstr ""
+msgstr "ไม่มีแฟ้มอยู่อีกแล้ว"
 
 #: thunar/thunar-action-manager.c:1535
 #, c-format
 msgid "Failed to open location for \"%s\""
-msgstr ""
+msgstr "เปิดตำแหน่งของ \"%s\" ไม่สำเร็จ"
 
 #. aka "activate"
 #: thunar/thunar-action-manager.c:1659
@@ -353,7 +355,7 @@ msgstr[0] "เปลี่ยนชื่อแฟ้มที่เลือก
 
 #: thunar/thunar-action-manager.c:1752
 msgid "Bulk _Rename..."
-msgstr ""
+msgstr "เปลี่ยนชื่อ_กลุ่มแฟ้ม..."
 
 #: thunar/thunar-action-manager.c:1762
 msgid "Restore the selected file to its original location"
@@ -368,6 +370,7 @@ msgid_plural ""
 "Restore the selected files to their original locations and open the "
 "locations in a new window/tab"
 msgstr[0] ""
+"กู้คืนแฟ้มที่เลือกไปยังตำแหน่งเดิมและเปิดตำแหน่งในหน้าต่าง/แท็บใหม่"
 
 #: thunar/thunar-action-manager.c:1791
 msgid "Move the selected file to the Trash"
@@ -457,6 +460,8 @@ msgid ""
 "No templates installed in\n"
 "\"%s\""
 msgstr ""
+"ไม่มีเทมเพลตติดตั้งอยู่ใน\n"
+"\"%s\""
 
 #: thunar/thunar-action-manager.c:3057
 msgid "_Empty File"
@@ -502,7 +507,7 @@ msgstr "เปิดกล่องโต้ตอบเปลี่ยนชื
 
 #: thunar/thunar-application.c:85
 msgid "Force open in a new window"
-msgstr ""
+msgstr "บังคับเปิดในหน้าต่างใหม่"
 
 #: thunar/thunar-application.c:86
 msgid "Run in daemon mode"
@@ -552,7 +557,7 @@ msgstr "เรียกทำงานการกระทำไม่สำเ
 #: thunar/thunar-application.c:1700
 #, c-format
 msgid "Failed to open \"%s\" (%s)"
-msgstr ""
+msgstr "เปิด \"%s\" ไม่สำเร็จ (%s)"
 
 #: thunar/thunar-application.c:1870
 #, c-format
@@ -562,7 +567,7 @@ msgstr "เปิด \"%s\" ไม่สำเร็จ: %s"
 #: thunar/thunar-application.c:1929 thunar/thunar-properties-dialog.c:1120
 #, c-format
 msgid "Failed to rename \"%s\" (%s)"
-msgstr ""
+msgstr "เปลี่ยนชื่อ (%s) เป็น \"%s\" ไม่สำเร็จ"
 
 #: thunar/thunar-application.c:1933 thunar/thunar-properties-dialog.c:1124
 #, c-format
@@ -571,19 +576,19 @@ msgstr "เปลี่ยนชื่อ \"%s\" ไม่สำเร็จ"
 
 #: thunar/thunar-application.c:1982
 msgid "Rename Launcher Options"
-msgstr ""
+msgstr "เปลี่ยนชื่อตัวเลือกตัวเรียกโปรแกรม"
 
 #: thunar/thunar-application.c:1985
 msgid "Do you want to rename the launcher, or the file itself?"
-msgstr ""
+msgstr "คุณต้องการเปลี่ยนชื่อตัวเรียกโปรแกรมหรือตัวแฟ้มเอง"
 
 #: thunar/thunar-application.c:1986
 msgid "Rename _Launcher"
-msgstr ""
+msgstr "เปลี่ยนชื่อ_ตัวเรียกโปรแกรม"
 
 #: thunar/thunar-application.c:1987
 msgid "Rename _File"
-msgstr ""
+msgstr "เปลี่ยนชื่อแ_ฟ้ม"
 
 #: thunar/thunar-application.c:2063
 msgid "New File"
@@ -614,7 +619,7 @@ msgstr "กำลังย้ายแฟ้มไปยัง \"%s\"..."
 
 #: thunar/thunar-application.c:2419
 msgid "Moving files ..."
-msgstr ""
+msgstr "กำลังย้ายแฟ้ม..."
 
 #: thunar/thunar-application.c:2504
 #, c-format
@@ -622,6 +627,8 @@ msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\" (%s)?"
 msgstr ""
+"คุณแน่ใจหรือไม่ว่าต้องการลบ \"%s\" (%s)\n"
+"ทิ้งอย่างถาวร?"
 
 #: thunar/thunar-application.c:2508
 #, c-format
@@ -647,7 +654,7 @@ msgstr[0] ""
 #: thunar/thunar-application.c:2527 thunar/thunar-application.c:2593
 #: thunar/thunar-dialogs.c:616 thunar/thunar-dialogs.c:1095
 msgid "Attention"
-msgstr ""
+msgstr "คำเตือน"
 
 #: thunar/thunar-application.c:2534
 msgid "If you delete a file, it is permanently lost."
@@ -663,6 +670,8 @@ msgid ""
 "Are you sure that you want to\n"
 "move \"%s\" (%s) to trash ?"
 msgstr ""
+"คุณแน่ใจหรือไม่ว่าต้องการย้าย \"%s\" (%s)\n"
+"ไปยังถังขยะ?"
 
 #: thunar/thunar-application.c:2574
 #, c-format
@@ -670,6 +679,8 @@ msgid ""
 "Are you sure that you want to\n"
 "move \"%s\" to trash ?"
 msgstr ""
+"คุณแน่ใจหรือไม่ว่าต้องการย้าย \"%s\"\n"
+"ไปยังถังขยะ?"
 
 #: thunar/thunar-application.c:2579
 #, c-format
@@ -679,7 +690,7 @@ msgid ""
 msgid_plural ""
 "Are you sure that you want to\n"
 "move the %u selected files to trash?"
-msgstr[0] ""
+msgstr[0] "คุณแน่ใจหรือว่าต้องการย้ายแฟ้ม %u ที่เลือกไปยังถังขยะ?"
 
 #: thunar/thunar-application.c:2596
 msgid "Move to Trash"
@@ -703,7 +714,7 @@ msgstr "จะลบแฟ้มและโฟลเดอร์ทั้งห
 
 #: thunar/thunar-application.c:2781 thunar/thunar-window.c:1260
 msgid "Empty Trash"
-msgstr ""
+msgstr "เทถังขยะ"
 
 #: thunar/thunar-application.c:2788
 msgid ""
@@ -720,7 +731,7 @@ msgstr "กำลังเทถังขยะ..."
 #: thunar/thunar-application.c:2852
 #, c-format
 msgid "Failed to determine the original path for \"%s\" (%s)"
-msgstr ""
+msgstr "พิจารณาพาธเดิมของ \"%s\" (%s) ไม่สำเร็จ"
 
 #: thunar/thunar-application.c:2857
 #, c-format
@@ -730,7 +741,7 @@ msgstr "พิจารณาพาธเดิมของ \"%s\" ไม่ส�
 #: thunar/thunar-application.c:2875
 #, c-format
 msgid "Could not restore \"%s\" (%s)"
-msgstr ""
+msgstr "ไม่สามารถกู้คืน \"%s\" (%s)"
 
 #: thunar/thunar-application.c:2879
 #, c-format
@@ -744,7 +755,7 @@ msgstr "กำลังกู้แฟ้มคืน..."
 #: thunar/thunar-chooser-button.c:320 thunar/thunar-chooser-dialog.c:503
 #, c-format
 msgid "Failed to set default application for \"%s\" (%s)"
-msgstr ""
+msgstr "กำหนดแอปพลิเคชันปริยายสำหรับ \"%s\" (%s) ไม่สำเร็จ"
 
 #: thunar/thunar-chooser-button.c:325 thunar/thunar-chooser-dialog.c:509
 #, c-format
@@ -823,7 +834,7 @@ msgstr "_ทิ้งการเชื่อมโยง"
 #: thunar/thunar-chooser-dialog.c:713
 #, c-format
 msgid "Open <i>%s (%s)</i> and other files of type \"%s\" with:"
-msgstr ""
+msgstr "เปิด <i>%s(%s)</i> และแฟ้มอื่น ๆ ที่เป็นชนิด \"%s\" ด้วย:"
 
 #: thunar/thunar-chooser-dialog.c:718
 #, c-format
@@ -852,7 +863,7 @@ msgstr "คุณแน่ใจหรือไม่ว่าต้องกา
 
 #: thunar/thunar-chooser-dialog.c:779
 msgid "Remove application launcher"
-msgstr ""
+msgstr "ลบตัวเรียกโปรแกรมออก"
 
 #: thunar/thunar-chooser-dialog.c:782
 msgid "_Remove"
@@ -881,7 +892,7 @@ msgstr "ยืนยันหรือไม่ที่จะทิ้ง \"%s\
 
 #: thunar/thunar-chooser-dialog.c:854
 msgid "Forget application launcher"
-msgstr ""
+msgstr "ละตัวเรียกโปรแกรมไว้"
 
 #: thunar/thunar-chooser-dialog.c:857
 msgid "_Forget"
@@ -1053,7 +1064,7 @@ msgstr "ขยาย_คอลัมน์ตามความต้องก�
 
 #: thunar/thunar-column-editor.c:316
 msgid "Size Column of Folders"
-msgstr ""
+msgstr "ขนาดคอลัมน์โฟลเดอร์"
 
 #. explain what it does
 #: thunar/thunar-column-editor.c:329
@@ -1062,7 +1073,7 @@ msgstr ""
 
 #: thunar/thunar-column-model.c:368
 msgid "This column is reserved for special locations"
-msgstr ""
+msgstr "คอลัมน์นี้สงวนไว้สำหรับตำแหน่งพิเศษ"
 
 #. reset page title
 #. tell the user that we're unable to determine the file info
@@ -1122,11 +1133,11 @@ msgstr "ตั้งค่าคอลัมน์ต่างๆ ในมุ�
 
 #: thunar/thunar-details-view.c:208
 msgid "E_xpandable Folders"
-msgstr ""
+msgstr "โฟลเดอร์ที่_ขยายได้"
 
 #: thunar/thunar-details-view.c:208
 msgid "Allow tree like expansion of folders"
-msgstr ""
+msgstr "อนุญาตให้มีการขยายโฟลเดอร์แบบต้นไม้"
 
 #: thunar/thunar-details-view.c:539
 msgid "Detailed directory listing"
@@ -1138,7 +1149,7 @@ msgstr "มุมมองแบบละเอียด"
 
 #: thunar/thunar-device.c:542
 msgid "Safely _Remove"
-msgstr ""
+msgstr "_ปลดออกอย่างปลอดภัย"
 
 #: thunar/thunar-device.c:544
 msgid "_Disconnect"
@@ -1259,7 +1270,7 @@ msgstr "โฟลเดอร์นี้มีโฟลเดอร์ \"%s\" �
 #: thunar/thunar-dialogs.c:863
 #, c-format
 msgid "This folder already contains a file \"%s\" (%s)."
-msgstr ""
+msgstr "โฟลเดอร์นี้มีแฟ้ม \"%s\" (%s) อยู่ก่อนแล้ว"
 
 #: thunar/thunar-dialogs.c:867
 #, c-format
@@ -1270,19 +1281,19 @@ msgstr "โฟลเดอร์นี้มีแฟ้ม \"%s\" อยู่�
 #: thunar/thunar-dialogs.c:889
 #, c-format
 msgid "Replace the link in \"%s\""
-msgstr ""
+msgstr "แทนที่จุดเชื่อมใน \"%s\""
 
 #. TRANSLATORS: First part of replace dialog sentence
 #: thunar/thunar-dialogs.c:892
 #, c-format
 msgid "Replace the existing folder in \"%s\""
-msgstr ""
+msgstr "แทนที่โฟลเดอร์ที่มีอยู่ใน \"%s\""
 
 #. TRANSLATORS: First part of replace dialog sentence
 #: thunar/thunar-dialogs.c:895
 #, c-format
 msgid "Replace the existing file in \"%s\""
-msgstr ""
+msgstr "แทนที่แฟ้มที่มีอยู่ใน \"%s\""
 
 #. Fourth box (size)
 #: thunar/thunar-dialogs.c:931 thunar/thunar-dialogs.c:981
@@ -1312,7 +1323,7 @@ msgstr "ด้วยแฟ้มต่อไปนี้หรือไม่?"
 
 #: thunar/thunar-dialogs.c:997
 msgid "_Apply the action to all files and folders"
-msgstr ""
+msgstr "เ_ริ่มใช้การการะทำสำหรับลบแฟ้มและโฟลเดอร์ทั้งหมด"
 
 #. TRANSLATORS: This string will be inserted in the following sentence in the
 #. second appearance of %s:
@@ -1320,7 +1331,7 @@ msgstr ""
 #. secure%s."
 #: thunar/thunar-dialogs.c:1070
 msgid "/executable"
-msgstr ""
+msgstr "/executable"
 
 #: thunar/thunar-dialogs.c:1076
 #, c-format
@@ -1328,6 +1339,8 @@ msgid ""
 "The desktop file %s is in an insecure location and not marked as secure%s. If you do not trust this program, click Cancel.\n"
 "\n"
 msgstr ""
+"แฟ้มพื้นโต๊ะ %s อยู่ในตำแหน่งที่ไม่ปลอดภัยและไม่ได้ทำเครื่องหมายว่าปลอดภัย %s  หากคุณไม่เชื่อถือโปรแกรมนี้ โปรดคลิกยกเลิก\n"
+"\n"
 
 #: thunar/thunar-dialogs.c:1096
 msgid "_Launch Anyway"
@@ -1335,17 +1348,19 @@ msgstr "ยืนยันเ_รียกทำงาน"
 
 #: thunar/thunar-dialogs.c:1098
 msgid "Mark As _Secure And Launch"
-msgstr ""
+msgstr "ทำเครื่องหมายว่า_ปลอดภัยและเรียกใช้งาน"
 
 #: thunar/thunar-dialogs.c:1182
 msgid "Close split pane with multiple tabs?"
-msgstr ""
+msgstr "ปิดบานหน้าต่างแยกที่มีหลายแท็บใช่ไหม"
 
 #: thunar/thunar-dialogs.c:1183
 msgid ""
 "The other split pane has multiple open tabs. Closing it will close all these"
 " tabs."
 msgstr ""
+"บานหน้าต่างแยกอีกบานหนึ่งมีหลายแท็บที่เปิดอยู่ "
+"การปิดจะเป็นการปิดแท็บเหล่านี้ทั้งหมด"
 
 #: thunar/thunar-dialogs.c:1189
 msgid "Warning"
@@ -1353,7 +1368,7 @@ msgstr "คำเตือน"
 
 #: thunar/thunar-dialogs.c:1194
 msgid "Close Pane"
-msgstr ""
+msgstr "ปิดช่อง"
 
 #: thunar/thunar-dialogs.c:1197 thunar/thunar-permissions-chooser.c:612
 msgid "Do _not ask me again"
@@ -1362,25 +1377,25 @@ msgstr "ไ_ม่ต้องถามอีก"
 #: thunar/thunar-dialogs.c:1257
 #, c-format
 msgid "The file \"%s\" seems to be executable. What do you want to do with it?"
-msgstr ""
+msgstr "ไม่มีแฟ้ม \"%s\" นี้ที่สามารถเปิดทำงานได้ คุณต้องการทำอย่างไรกับแฟ้มนี้"
 
 #: thunar/thunar-dialogs.c:1262
 msgid ""
 "The selected files seem to be executable. What do you want to do with them?"
-msgstr ""
+msgstr "แฟ้มที่เลือกนี้ที่สามารถเปิดทำงานได้ คุณต้องการทำอย่างไรกับแฟ้มนี้"
 
 #: thunar/thunar-dialogs.c:1271
 msgid "Open Shell Script"
-msgstr ""
+msgstr "เปิดเชลล์สคริปต์"
 
 #: thunar/thunar-dialogs.c:1275
 msgid "Run In _Terminal"
-msgstr ""
+msgstr "ทำงานในเ_ทอร์มินัล"
 
 #: thunar/thunar-dialogs.c:1336
 #, c-format
 msgid "Failed to edit launcher via command \"%s\""
-msgstr ""
+msgstr "แก้ไขตัวเรียกโปรแกรมผ่านการเรียกทำงานคำสั่ง \"%s\" ไม่สำเร็จ"
 
 #: thunar/thunar-dnd.c:71
 msgid "Copy _Here"
@@ -1397,11 +1412,11 @@ msgstr "เ_ชื่อมโยงมาที่นี่"
 #: thunar/thunar-emblem-chooser.c:367
 #, c-format
 msgid "A maximum of %u emblems is supported per file."
-msgstr ""
+msgstr "รองรับสัญลักษณ์สูงสุด %u ต่อแฟ้ม"
 
 #: thunar/thunar-emblem-chooser.c:368
 msgid "Too many emblems selected"
-msgstr ""
+msgstr "เลือกตรามากเกินไป"
 
 #: thunar/thunar-enum-types.c:91
 msgid "Name only"
@@ -1409,11 +1424,11 @@ msgstr "ชื่อเท่านั้น"
 
 #: thunar/thunar-enum-types.c:92
 msgid "Extension only"
-msgstr ""
+msgstr "นามสกุลเท่านั้น"
 
 #: thunar/thunar-enum-types.c:93
 msgid "Name and Extension"
-msgstr ""
+msgstr "ชื่อและนามสกุล"
 
 #: thunar/thunar-enum-types.c:148
 msgid "Date Created"
@@ -1435,11 +1450,11 @@ msgstr "เวลาที่ลบ"
 
 #: thunar/thunar-enum-types.c:152
 msgid "Recency"
-msgstr ""
+msgstr "ความใหม่"
 
 #: thunar/thunar-enum-types.c:153
 msgid "Location"
-msgstr ""
+msgstr "ตำแหน่ง"
 
 #: thunar/thunar-enum-types.c:154
 msgid "Group"
@@ -1493,7 +1508,7 @@ msgstr "ไม่เลย"
 
 #: thunar/thunar-enum-types.c:701 thunar/thunar-enum-types.c:726
 msgid "Only For Remote Location"
-msgstr ""
+msgstr "สำหรับตำแหน่งภายนอกเท่านั้น"
 
 #: thunar/thunar-enum-types.c:702 thunar/thunar-enum-types.c:727
 #: thunar/thunar-enum-types.c:862 thunar/thunar-preferences-dialog.c:469
@@ -1505,27 +1520,27 @@ msgstr "เสมอ"
 
 #: thunar/thunar-enum-types.c:785
 msgid "Copy"
-msgstr ""
+msgstr "คัดลอก"
 
 #: thunar/thunar-enum-types.c:786
 msgid "Move"
-msgstr ""
+msgstr "ย้าย"
 
 #: thunar/thunar-enum-types.c:787
 msgid "Rename"
-msgstr ""
+msgstr "เปลี่ยนชื่อ"
 
 #: thunar/thunar-enum-types.c:788
 msgid "Create File"
-msgstr ""
+msgstr "สร้างแฟ้ม"
 
 #: thunar/thunar-enum-types.c:789
 msgid "Create Folder"
-msgstr ""
+msgstr "สร้างโฟลเดอร์"
 
 #: thunar/thunar-enum-types.c:790
 msgid "Delete (opposite of create)"
-msgstr ""
+msgstr "ลบ (ตรงข้ามกับสร้าง)"
 
 #: thunar/thunar-enum-types.c:791 thunar/thunar-file.c:1087
 #: thunar/thunar-gio-extensions.c:510 thunar/thunar-shortcuts-model.c:1157
@@ -1535,7 +1550,7 @@ msgstr "ถังขยะ"
 
 #: thunar/thunar-enum-types.c:792
 msgid "Restore (opposite of trash)"
-msgstr ""
+msgstr "คืนค่า (ตรงข้ามถังขยะ)"
 
 #: thunar/thunar-enum-types.c:793
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:552
@@ -1544,31 +1559,31 @@ msgstr "ลิงก์"
 
 #: thunar/thunar-enum-types.c:794
 msgid "Unlink"
-msgstr ""
+msgstr "ยกเลิกจุดเชื่อม"
 
 #: thunar/thunar-enum-types.c:815
 msgid "Log operations"
-msgstr ""
+msgstr "บันทึกปูมการดำเนินการ"
 
 #: thunar/thunar-enum-types.c:816
 msgid "Log no operations"
-msgstr ""
+msgstr "บันทึกปูมการไม่ดำเนินการ"
 
 #: thunar/thunar-enum-types.c:817
 msgid "Log only timestamps"
-msgstr ""
+msgstr "บันทึกปูมเวลาเท่านั้น"
 
 #: thunar/thunar-enum-types.c:838
 msgid "Standalone"
-msgstr ""
+msgstr "แบบสแตนด์อโลน"
 
 #: thunar/thunar-enum-types.c:839
 msgid "Embedded"
-msgstr ""
+msgstr "ฝัง"
 
 #: thunar/thunar-enum-types.c:861
 msgid "Only for local files"
-msgstr ""
+msgstr "สำหรับแฟ้มท้องถิ่นเท่านั้น"
 
 #: thunar/thunar-file.c:1094 thunar/thunar-gio-extensions.c:508
 #: thunar/thunar-shortcuts-model.c:1039
@@ -1613,12 +1628,12 @@ msgstr "จุดเชื่อมเสีย"
 #: thunar/thunar-file.c:2551
 #, c-format
 msgid "%s (link to %s)"
-msgstr ""
+msgstr "%s (จุดเชื่อมไปยัง %s)"
 
 #: thunar/thunar-file.c:2560
 #, c-format
 msgid "%s (mount point)"
-msgstr ""
+msgstr "%s (จุดเมานท์)"
 
 #. Implementation specific
 #: thunar/thunar-gio-extensions.c:89
@@ -1699,7 +1714,7 @@ msgstr "%s ที่ %s"
 #: thunar/thunar-gio-extensions.c:701
 #, c-format
 msgid "%s used (%.0f%%)  |  %s free (%.0f%%)"
-msgstr ""
+msgstr "%s ใช้ไป (%.0f%%)  |  %s คงเหลือ  (%.0f%%)"
 
 #: thunar/thunar-history.c:309
 msgid "The item will be removed from the history"
@@ -1772,7 +1787,7 @@ msgstr "รายการที่เลือก: %s"
 #: thunar/thunar-io-jobs.c:1993
 #, c-format
 msgid "Free space: %s"
-msgstr ""
+msgstr "พื้นที่ว่าง: %s"
 
 #. I18N: put " (copy #)" between basename and extension
 #: thunar/thunar-io-jobs-util.c:177
@@ -1793,6 +1808,9 @@ msgid ""
 "\n"
 "If you replace an existing file, its contents will be overwritten."
 msgstr ""
+"แฟ้ม \"%s\" (%s) มีอยู่ก่อนแล้ว คุณต้องการแทนที่หรือไม่?\n"
+"\n"
+"ถ้าคุณแทนที่แฟ้มที่มีอยู่ก่อน เนื้อหาเดิมก็จะถูกเขียนทับ"
 
 #: thunar/thunar-job.c:298
 #, c-format
@@ -1833,28 +1851,32 @@ msgstr ""
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
-msgstr[0] ""
+msgstr[0] "%d แฟ้ม"
 
 #: thunar/thunar-job-operation-history.c:323
 msgid ""
 "No operation which can be undone has been performed yet.\n"
 "(For some operations undo is not supported)"
 msgstr ""
+"ยังไม่มีการดำเนินการใดที่สามารถยกเลิกได้\n"
+"(สำหรับการดำเนินการบางอย่างไม่รองรับการเลิกทำ)"
 
 #: thunar/thunar-job-operation-history.c:325
 msgid "There is no operation to undo"
-msgstr ""
+msgstr "ไม่มีการดำเนินการที่จะเลิกทำ"
 
 #: thunar/thunar-job-operation-history.c:341
 msgid ""
 "The operation you are trying to undo does not have any files associated with"
 " it, and thus cannot be undone."
 msgstr ""
+"การดำเนินการที่คุณพยายามเลิกทำไม่มีแฟ้มใด ๆ ที่เกี่ยวข้อง "
+"จึงไม่สามารถยกเลิกได้"
 
 #: thunar/thunar-job-operation-history.c:343
 #, c-format
 msgid "%s operation cannot be undone"
-msgstr ""
+msgstr "การดำเนินการ%s ไม่สามารถยกเลิกได้"
 
 #. one indexed for the dialog
 #: thunar/thunar-job-operation-history.c:355
@@ -1862,35 +1884,38 @@ msgid ""
 "The following files were overwritten in the operation you are trying to undo"
 " and cannot be restored:\n"
 msgstr ""
+"แฟ้มต่อไปนี้ถูกเขียนทับในการดำเนินการที่คุณพยายามเลิกทำและไม่สามารถกู้คืนได้:\n"
 
 #: thunar/thunar-job-operation-history.c:367
 #, c-format
 msgid "%s operation can only be partially undone"
-msgstr ""
+msgstr "การดำเนินการ%s สามารถยกเลิกได้บางส่วนเท่านั้น"
 
 #: thunar/thunar-job-operation-history.c:384
 #, c-format
 msgid "Failed to undo operation '%s'"
-msgstr ""
+msgstr "การเลิกทำ '%s' ไม่สำเร็จ"
 
 #: thunar/thunar-job-operation-history.c:420
 msgid "No operation which can be redone available.\n"
-msgstr ""
+msgstr "ไม่มีการดำเนินการที่สามารถทำซ้ำได้\n"
 
 #: thunar/thunar-job-operation-history.c:421
 msgid "There is no operation to redo"
-msgstr ""
+msgstr "ไม่มีการดำเนินการที่จะทำซ้ำ"
 
 #: thunar/thunar-job-operation-history.c:437
 msgid ""
 "The operation you are trying to redo does not have any files associated with"
 " it, and thus cannot be redone."
 msgstr ""
+"การดำเนินการที่คุณพยายามทำซ้ำไม่มีแฟ้มใด ๆ ที่เกี่ยวข้อง "
+"จึงไม่สามารถทำซ้ำได้"
 
 #: thunar/thunar-job-operation-history.c:439
 #, c-format
 msgid "%s operation cannot be redone"
-msgstr ""
+msgstr "การดำเนินการ%s ไม่สามารถทำซ้ำได้"
 
 #. one indexed for the dialog
 #: thunar/thunar-job-operation-history.c:451
@@ -1898,36 +1923,37 @@ msgid ""
 "The following files were overwritten in the operation you are trying to redo"
 " and cannot be restored:\n"
 msgstr ""
+"แฟ้มต่อไปนี้ถูกเขียนทับในการดำเนินการที่คุณพยายามทำซ้ำและไม่สามารถกู้คืนได้:\n"
 
 #: thunar/thunar-job-operation-history.c:463
 #, c-format
 msgid "%s operation can only be partially redone"
-msgstr ""
+msgstr "การดำเนินการ%s สามารถทำซ้ำได้บางส่วนเท่านั้น"
 
 #: thunar/thunar-job-operation-history.c:478
 #, c-format
 msgid "Failed to redo operation '%s'"
-msgstr ""
+msgstr "การทำซ้ำ '%s' ไม่สำเร็จ"
 
 #. TRANSLATORS: An example: 'Undo the latest 'copy' operation (2 files)
 #: thunar/thunar-job-operation-history.c:565
 #, c-format
 msgid "Undo the latest '%s' operation (%s)"
-msgstr ""
+msgstr "เลิกทำล่าสุด '%s' การดำเนินการ (%s)"
 
 #: thunar/thunar-job-operation-history.c:570 thunar/thunar-window.c:657
 msgid "Undo the latest operation"
-msgstr ""
+msgstr "เลิกทำการดำเนินการล่าสุด"
 
 #. TRANSLATORS: An example: 'Redo the latest 'copy' operation (2 files)
 #: thunar/thunar-job-operation-history.c:590
 #, c-format
 msgid "Redo the latest '%s' operation (%s)"
-msgstr ""
+msgstr "ทำซ้ำการ '%s' ล่าสุด จำนวน (%s)"
 
 #: thunar/thunar-job-operation-history.c:595 thunar/thunar-window.c:658
 msgid "Redo the latest operation"
-msgstr ""
+msgstr "ทำซ้ำการดำเนินการล่าสุด"
 
 #: thunar/thunar-list-model.c:1027 thunar/thunar-list-model.c:1040
 #: thunar/thunar-properties-dialog.c:1415 thunar/thunar-tree-view-model.c:1352
@@ -1948,21 +1974,21 @@ msgstr "แฟ้มไม่มีอยู่"
 
 #: thunar/thunar-notify.c:193
 msgid "Undo performed"
-msgstr ""
+msgstr "เลิกทำแล้ว"
 
 #: thunar/thunar-notify.c:194
 #, c-format
 msgid "%s operation was undone"
-msgstr ""
+msgstr "การดำเนินการ %sเลิกทำแล้ว"
 
 #: thunar/thunar-notify.c:199
 msgid "Redo performed"
-msgstr ""
+msgstr "ทำซ้ำแล้ว"
 
 #: thunar/thunar-notify.c:200
 #, c-format
 msgid "%s operation was redone"
-msgstr ""
+msgstr "การดำเนินการ %s ทำซ้ำแล้ว"
 
 #: thunar/thunar-notify.c:284
 msgid "Unmounting device"
@@ -2134,7 +2160,7 @@ msgstr "แก้ไขการกำหนดสิทธิ์ของโฟ
 
 #: thunar/thunar-permissions-chooser.c:1193
 msgid "Folder permissions"
-msgstr ""
+msgstr "การกำหนดสิทธิ์ของโฟลเดอร์"
 
 #: thunar/thunar-permissions-chooser.c:1195
 msgid "Correct _folder permissions"
@@ -2153,11 +2179,11 @@ msgstr ""
 #. popup the error message dialog
 #: thunar/thunar-permissions-chooser.c:1312
 msgid "Error while changing file permissions"
-msgstr ""
+msgstr "เกิดข้อผิดพลาดขณะเปลี่ยนการกำหนดสิทธิ์ของแฟ้ม"
 
 #: thunar/thunar-preferences-dialog.c:272 thunar/thunar-settings.desktop.in:4
 msgid "Thunar Preferences"
-msgstr ""
+msgstr "การปรับแต่ง Thunar"
 
 #. Display
 #: thunar/thunar-preferences-dialog.c:302
@@ -2166,21 +2192,23 @@ msgstr "การแสดงผล"
 
 #: thunar/thunar-preferences-dialog.c:312
 msgid "Window Settings"
-msgstr ""
+msgstr "การตั้งค่าหน้าต่าง"
 
 #: thunar/thunar-preferences-dialog.c:331
 msgid "Use custom window decorations (only applied to new windows)"
-msgstr ""
+msgstr "ใช้การตกแต่งหน้าต่างแบบกำหนดเอง (ใช้กับหน้าต่างใหม่เท่านั้น)"
 
 #: thunar/thunar-preferences-dialog.c:338
 msgid ""
 "Use custom, client-side window decorations instead of global, server-side "
 "ones. - Only applied to new Thunar windows"
 msgstr ""
+"ใช้การตกแต่งหน้าต่างฝั่งไคลเอ็นต์แบบกำหนดเองแทนการตกแต่งแบบโกลบอลหรือฝั่งเซิร์ฟเวอร์"
+"  และใช้ได้กับหน้าต่าง Thunar ใหม่เท่านั้น"
 
 #: thunar/thunar-preferences-dialog.c:346
 msgid "Use current folder icon as window icon"
-msgstr ""
+msgstr "ใช้ไอคอนโฟลเดอร์ปัจจุบันเป็นไอคอนหน้าต่าง"
 
 #: thunar/thunar-preferences-dialog.c:352
 msgid "Select this option to use the current folder icon as window icon"
@@ -2249,7 +2277,7 @@ msgstr "เลือกตัวเลือกนี้หากต้องก
 
 #: thunar/thunar-preferences-dialog.c:445
 msgid "Thumbnails"
-msgstr ""
+msgstr "ภาพย่อ"
 
 #: thunar/thunar-preferences-dialog.c:461
 msgid "Show thumbnails:"
@@ -2263,35 +2291,35 @@ msgstr "แฟ้มในเครื่องเท่านั้น"
 
 #: thunar/thunar-preferences-dialog.c:487
 msgid "Only show thumbnails for files smaller than:"
-msgstr ""
+msgstr "แสดงเฉพาะภาพย่อสำหรับแฟ้มที่มีขนาดเล็กกว่า:"
 
 #: thunar/thunar-preferences-dialog.c:493
 msgid "512KiB"
-msgstr ""
+msgstr "512KiB"
 
 #: thunar/thunar-preferences-dialog.c:494
 msgid "1MiB"
-msgstr ""
+msgstr "1MiB"
 
 #: thunar/thunar-preferences-dialog.c:495
 msgid "10MiB"
-msgstr ""
+msgstr "10MiB"
 
 #: thunar/thunar-preferences-dialog.c:496
 msgid "100MiB"
-msgstr ""
+msgstr "100MiB"
 
 #: thunar/thunar-preferences-dialog.c:497
 msgid "1GiB"
-msgstr ""
+msgstr "1GiB"
 
 #: thunar/thunar-preferences-dialog.c:498
 msgid "10GiB"
-msgstr ""
+msgstr "10GiB"
 
 #: thunar/thunar-preferences-dialog.c:499
 msgid "Unlimited"
-msgstr ""
+msgstr "ไม่มีขีดจำกัด"
 
 #: thunar/thunar-preferences-dialog.c:517
 msgid "Draw frames around thumbnails"
@@ -2346,6 +2374,16 @@ msgid ""
 "\n"
 "For a complete list, search 'Glib.DateTime.format'."
 msgstr ""
+"รูปแบบวันที่ที่กำหนดเอง\n"
+"\n"
+"ตัวระบุที่พบบ่อยที่สุดคือ:\n"
+"%dวันที่\n"
+"%mเดือน\n"
+"%y ปีรวมศตวรรษ\n"
+"%H ชั่วโมง\n"
+"%m นาที\n"
+"%S วินาที\n"
+"หากต้องการดูรายการทั้งหมด ให้ค้นหา 'glib.datetime.format'"
 
 #. Side Pane
 #: thunar/thunar-preferences-dialog.c:630
@@ -2413,12 +2451,12 @@ msgstr "256px"
 #: thunar/thunar-preferences-dialog.c:671
 #: thunar/thunar-preferences-dialog.c:737
 msgid "512px"
-msgstr ""
+msgstr "512px"
 
 #: thunar/thunar-preferences-dialog.c:672
 #: thunar/thunar-preferences-dialog.c:738
 msgid "1024px"
-msgstr ""
+msgstr "1024px"
 
 #: thunar/thunar-preferences-dialog.c:690
 msgid "Show Icon _Emblems"
@@ -2455,24 +2493,24 @@ msgstr ""
 
 #: thunar/thunar-preferences-dialog.c:772
 msgid "Icon Style"
-msgstr ""
+msgstr "ชนิดไอคอน:"
 
 #: thunar/thunar-preferences-dialog.c:788
 msgid "Use symbolic folder icons"
-msgstr ""
+msgstr "ใช้ไอคอนโฟลเดอร์สัญลักษณ์"
 
 #: thunar/thunar-preferences-dialog.c:794
 msgid ""
 "Select this option to use symbolic folder icons instead of regular ones."
-msgstr ""
+msgstr "เลือกตัวเลือกนี้เพื่อใช้ไอคอนตราโฟลเดอร์แทนไอคอนปกติ"
 
 #: thunar/thunar-preferences-dialog.c:803
 msgid "Image Preview"
-msgstr ""
+msgstr "ดูรูปภาพ"
 
 #: thunar/thunar-preferences-dialog.c:819
 msgid "Image Preview Mode:"
-msgstr ""
+msgstr "โหมดดูรูปภาพ:"
 
 #: thunar/thunar-preferences-dialog.c:821
 msgid ""
@@ -2533,7 +2571,7 @@ msgstr "ใช้ดับเ_บิลคลิกเพื่อเรีย�
 
 #: thunar/thunar-preferences-dialog.c:973
 msgid "Tabs and Windows"
-msgstr ""
+msgstr "แท็บและหน้าต่าง"
 
 #: thunar/thunar-preferences-dialog.c:989
 msgid "Open folders in new tabs on middle click"
@@ -2560,23 +2598,26 @@ msgstr ""
 
 #: thunar/thunar-preferences-dialog.c:1016
 msgid "Show full directory paths in tab titles"
-msgstr ""
+msgstr "แสดงพาธไดเรกทอรีแบบเต็มในชื่อของแท็บ"
 
 #: thunar/thunar-preferences-dialog.c:1022
 msgid ""
 "Select this option to show the full directory path in the tab title instead "
 "of only the directory name"
 msgstr ""
+"เลือกตัวเลือกนี้เพื่อแสดงพาธไดเรกทอรีแบบเต็มในชื่อของแท็บ "
+"แทนที่จะแสดงเฉพาะชื่อไดเรกทอรี"
 
 #: thunar/thunar-preferences-dialog.c:1029
 msgid "Restore tabs on startup"
-msgstr ""
+msgstr "เรียกคืนแท็บเมื่อเข้าระบบ"
 
 #: thunar/thunar-preferences-dialog.c:1035
 msgid ""
 "Select this option to restore your tabs as they were last time you used "
 "Thunar"
 msgstr ""
+"เลือกตัวเลือกนี้เพื่อเรียกคืนค่าแท็บของคุณเหมือนครั้งล่าสุดที่คุณใช้ Thunar"
 
 #: thunar/thunar-preferences-dialog.c:1046
 msgid "Context Menu"
@@ -2597,7 +2638,7 @@ msgstr "ขั้นสูง"
 
 #: thunar/thunar-preferences-dialog.c:1088
 msgid "File Transfer"
-msgstr ""
+msgstr "การถ่ายโอนแฟ้ม"
 
 #: thunar/thunar-preferences-dialog.c:1105
 msgid "Transfer files in parallel:"
@@ -2612,18 +2653,24 @@ msgid ""
 "- Local Files Only (Idle Devices): if all files are local but on busy devices (disks, mount points), copies will be sequential\n"
 "- Never: all copies are done sequentially"
 msgstr ""
+"ระบุลักษณะการทำงานระหว่างการคัดลอกหลายชุด:\n"
+"- เสมอ: คัดลอกทั้งหมดจะทำพร้อมกัน\n"
+"- แฟ้มในเครื่องเท่านั้น: คัดลอกพร้อมกันสำหรับแฟ้มในเครื่อง (ไม่ใช่ระยะไกล ไม่ได้แนบ)\n"
+"- แฟ้มในเครื่องเท่านั้น (อุปกรณ์เดียวกัน): หากไฟล์ทั้งหมดอยู่ในเครื่อง แต่อยู่บนอุปกรณ์ต่างกัน (ดิสก์ จุดเมานท์) การคัดลอกจะทำเป็นตามลำดับ\n"
+"- ไฟล์ในเครื่องเท่านั้น (อุปกรณ์ที่ไม่ได้ใช้งาน): หากแฟ้มทั้งหมดอยู่ในเครื่อง แต่อยู่ในอุปกรณ์ที่ไม่ว่าง (ดิสก์ จุดเมานท์) การคัดลอกจะเป็นตามลำดับ\n"
+"- ไม่เลย:  การคัดลอกทั้งหมดจะทำตามลำดับ"
 
 #: thunar/thunar-preferences-dialog.c:1121
 msgid "Local Files Only (Same Devices)"
-msgstr ""
+msgstr "แฟ้มในเครื่องเท่านั้น (อุปกรณ์เดียวกัน)"
 
 #: thunar/thunar-preferences-dialog.c:1122
 msgid "Local Files Only (Idle Devices)"
-msgstr ""
+msgstr "แฟ้มในเครื่องเท่านั้น (อุปกรณ์ที่ไม่ได้ใช้งาน)"
 
 #: thunar/thunar-preferences-dialog.c:1141
 msgid "Use intermediate file on copy:"
-msgstr ""
+msgstr "ใช้แฟ้มระดับกลางในการคัดลอก:"
 
 #: thunar/thunar-preferences-dialog.c:1145
 msgid ""
@@ -2631,10 +2678,12 @@ msgid ""
 "fragmented files. The new file will only be shown after the copy was "
 "successfully finished."
 msgstr ""
+"ใช้แฟ้มชั่วคราว '*.partial~' เพื่อคัดลอก วิธีนี้จะป้องกันแฟ้มที่กระจัดกระจาย"
+" แฟ้มใหม่จะแสดงเฉพาะหลังจากที่คัดลอกเสร็จสิ้นแล้วเท่านั้น"
 
 #: thunar/thunar-preferences-dialog.c:1172
 msgid "Verify file contents on copy:"
-msgstr ""
+msgstr "ตรวจสอบเนื้อหาของแฟ้มในการคัดลอก:"
 
 #: thunar/thunar-preferences-dialog.c:1176
 msgid ""
@@ -2644,14 +2693,19 @@ msgid ""
 " comparison may not detect all instances of corruption. Enabling this option"
 " will increase copy time."
 msgstr ""
+"เปรียบเทียบเนื้อหาของแฟ้มต้นฉบับและคัดลอกเพื่อตรวจจับความเสียหาย "
+"แม้ว่าการดำเนินการนี้จะพยายามเปรียบเทียบเนื้อหาจริงที่อยู่ในสื่อปลายทาง แต่ "
+"Thunar อาจไม่สามารถข้ามแคชของระบบแฟ้มได้ "
+"ดังนั้นการเปรียบเทียบนี้อาจตรวจไม่พบความเสียหายในทุกกรณี "
+"และการเปิดใช้งานตัวเลือกนี้จะทำให้เวลาในการคัดลอกเพิ่มขึ้น"
 
 #: thunar/thunar-preferences-dialog.c:1206
 msgid "Search"
-msgstr ""
+msgstr "ค้นหา"
 
 #: thunar/thunar-preferences-dialog.c:1223
 msgid "Include subfolders:"
-msgstr ""
+msgstr "รวมโฟลเดอร์ย่อย:"
 
 #: thunar/thunar-preferences-dialog.c:1247
 msgid "Folder Permissions"
@@ -2686,7 +2740,7 @@ msgstr "การรักษาความปลอดภัย"
 
 #: thunar/thunar-preferences-dialog.c:1309
 msgid "Execute shell scripts:"
-msgstr ""
+msgstr "เรียกทำงานเชลล์สคริปต์"
 
 #: thunar/thunar-preferences-dialog.c:1344
 msgid "Volume Management"
@@ -2725,15 +2779,15 @@ msgstr ""
 #. Shortcuts
 #: thunar/thunar-preferences-dialog.c:1417
 msgid "Shortcuts"
-msgstr ""
+msgstr "ปุ่มลัด"
 
 #: thunar/thunar-preferences-dialog.c:1432
 msgid "Window"
-msgstr ""
+msgstr "หน้าต่าง"
 
 #: thunar/thunar-preferences-dialog.c:1433
 msgid "View"
-msgstr ""
+msgstr "มุมมอง"
 
 #: thunar/thunar-preferences-dialog.c:1434
 #: plugins/thunar-apr/thunar-apr-desktop-page.c:550
@@ -2742,11 +2796,11 @@ msgstr "ตัวเรียกแอปพลิเคชัน"
 
 #: thunar/thunar-preferences-dialog.c:1435
 msgid "Status Bar"
-msgstr ""
+msgstr "แถบสถานะ"
 
 #: thunar/thunar-preferences-dialog.c:1443
 msgid "The Shortcuts Editor requires a Thunar window to be present."
-msgstr ""
+msgstr "ตัวแก้ไขทางลัดจำเป็นต้องมีหน้าต่าง Thunar"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
@@ -2778,7 +2832,7 @@ msgstr "กำลังยกเลิก..."
 #. display the error message
 #: thunar/thunar-progress-view.c:546
 msgid "Error while processing file operation"
-msgstr ""
+msgstr "เกิดข้อผิดพลาดขณะประมวลผลการทำงานของแฟ้ม"
 
 #: thunar/thunar-progress-view.c:620
 msgid "Job queued"
@@ -2850,16 +2904,16 @@ msgstr "เข้าถึง:"
 
 #: thunar/thunar-properties-dialog.c:681
 msgid "Size on Disk:"
-msgstr ""
+msgstr "ขนาดบนดิสก์:"
 
 #. Fifth box (content, capacity, free space)
 #: thunar/thunar-properties-dialog.c:708
 msgid "Content:"
-msgstr ""
+msgstr "เนื้อหา:"
 
 #: thunar/thunar-properties-dialog.c:726
 msgid "Capacity:"
-msgstr ""
+msgstr "ความจุ:"
 
 #: thunar/thunar-properties-dialog.c:748
 msgid "Usage:"
@@ -2872,17 +2926,19 @@ msgstr "ตรา"
 
 #: thunar/thunar-properties-dialog.c:800
 msgid "Highlight"
-msgstr ""
+msgstr "ไฮไลต์"
 
 #: thunar/thunar-properties-dialog.c:839
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "This feature will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
+"ดูเหมือน <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> จะไม่ได้ติดตั้งไว้\n"
+"ฟีเจอร์นี้จะไม่สามารถใช้งานได้ <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[อ่านเพิ่มเติม]</a>"
 
 #: thunar/thunar-properties-dialog.c:867
 msgid "Example.txt"
-msgstr ""
+msgstr "ตัวอย่าง.txt"
 
 #: thunar/thunar-properties-dialog.c:884
 msgid "_Apply"
@@ -2894,16 +2950,16 @@ msgstr "_ล้างค่า"
 
 #: thunar/thunar-properties-dialog.c:907
 msgid "Set _Foreground"
-msgstr ""
+msgstr "ตั้งค่า _พื้นหน้า"
 
 #: thunar/thunar-properties-dialog.c:915
 msgid "Set _Background"
-msgstr ""
+msgstr "ตั้งค่าพื้น_หลัง"
 
 #: thunar/thunar-properties-dialog.c:1216
 #, c-format
 msgid "Select an Icon for \"%s\" (%s)"
-msgstr ""
+msgstr "เลือกไอคอนสำหรับ \"%s\" (%s)"
 
 #. allocate the chooser dialog
 #: thunar/thunar-properties-dialog.c:1218
@@ -2915,7 +2971,7 @@ msgstr "เลือกไอคอนสำหรับ \"%s\""
 #: thunar/thunar-properties-dialog.c:1244
 #, c-format
 msgid "Failed to change icon of \"%s\" (%s)"
-msgstr ""
+msgstr "เปลี่ยนไอคอนของ \"%s\" (%s) ไม่สำเร็จ"
 
 #: thunar/thunar-properties-dialog.c:1248
 #, c-format
@@ -2925,7 +2981,7 @@ msgstr "เปลี่ยนไอคอนของ \"%s\" ไม่สำเ�
 #: thunar/thunar-properties-dialog.c:1356
 #, c-format
 msgid "%s (%s) - Properties"
-msgstr ""
+msgstr "%s (%s) - คุณสมบัติ"
 
 #: thunar/thunar-properties-dialog.c:1358
 #, c-format
@@ -2939,7 +2995,7 @@ msgstr "คุณสมบัติ"
 
 #: thunar/thunar-properties-dialog.c:1652
 msgid "Link Targets:"
-msgstr ""
+msgstr "ปลายทางจุดเชื่อม:"
 
 #: thunar/thunar-properties-dialog.c:1746
 msgid "mixed"
