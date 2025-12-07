@@ -1815,8 +1815,10 @@ thunar_g_file_get_content_type (GFile *gfile)
           g_object_unref (info);
           info = NULL;
           if (link_target != NULL)
-            info = thunar_g_file_get_content_type_query_info (link_target, err);
-          g_object_unref (link_target);
+            {
+              info = thunar_g_file_get_content_type_query_info (link_target, err);
+              g_object_unref (link_target);
+            }
         }
     }
 
