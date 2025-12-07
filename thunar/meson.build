@@ -273,7 +273,3 @@ install_data(
   install_dir: get_option('prefix') / get_option('bindir'),
   install_mode: 'rwxr-xr-x',
 )
-
-if get_option('tests')
-  subdir('tests')
-endif
