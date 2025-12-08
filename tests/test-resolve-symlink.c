@@ -33,7 +33,8 @@ test_relative_link (void)
 
   file_target = fopen (target, "w");
   g_assert_nonnull (file_target);
-  fclose (file_target);
+  if (file_target)
+    fclose (file_target);
 
   g_assert_cmpint (symlink ("d1/d2", link_d2), ==, 0);
   g_assert_cmpint (symlink ("../file", link_d1_d2_file), ==, 0);
@@ -74,14 +75,17 @@ test_desktop_link (void)
   /* Create some basic .desktop file */
   file = fopen (target, "w");
   g_assert_nonnull (file);
-  fprintf (file,
-           "[Desktop Entry]\n"
-           "Version=1.0\n"
-           "Type=Application\n"
-           "Name=My App\n"
-           "Exec=/full/path/to/my-app-binary\n"
-           "Terminal=false\n");
-  fclose (file);
+  if (file)
+    {
+      fprintf (file,
+              "[Desktop Entry]\n"
+              "Version=1.0\n"
+              "Type=Application\n"
+              "Name=My App\n"
+              "Exec=/full/path/to/my-app-binary\n"
+              "Terminal=false\n");
+      fclose (file);
+    }
 
   g_assert_cmpint (symlink (target, link), ==, 0);
 
@@ -117,7 +121,8 @@ test_multi_level_link (void)
 
   file = fopen (target, "w");
   g_assert_nonnull (file);
-  fclose (file);
+  if (file)
+    fclose (file);
 
   g_assert_cmpint (symlink (target, link1), ==, 0);
   g_assert_cmpint (symlink (link1, link2), ==, 0);
