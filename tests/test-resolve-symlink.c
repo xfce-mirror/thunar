@@ -78,12 +78,12 @@ test_desktop_link (void)
   if (file)
     {
       fprintf (file,
-              "[Desktop Entry]\n"
-              "Version=1.0\n"
-              "Type=Application\n"
-              "Name=My App\n"
-              "Exec=/full/path/to/my-app-binary\n"
-              "Terminal=false\n");
+               "[Desktop Entry]\n"
+               "Version=1.0\n"
+               "Type=Application\n"
+               "Name=My App\n"
+               "Exec=/full/path/to/my-app-binary\n"
+               "Terminal=false\n");
       fclose (file);
     }
 
