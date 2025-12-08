@@ -224,7 +224,7 @@ thunar_c_args = [
 ]
 
 libthunar = static_library(
-  'libthunar',
+  'thunar',
   thunar_sources,
   sources: xfce_revision_h,
   c_args: thunar_c_args,
