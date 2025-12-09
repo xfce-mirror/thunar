@@ -2884,7 +2884,8 @@ thunar_window_notebook_create_window (GtkWidget    *notebook,
 
   /* Always get view from paned widget's first child */
   view = gtk_paned_get_child1 (GTK_PANED (page));
-  _thunar_return_val_if_fail (THUNAR_IS_VIEW (view), NULL);
+  if (!THUNAR_IS_VIEW (view))
+    return NULL;
 
   /* do nothing if this window has only 1 tab */
   if (gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook)) < 2)
