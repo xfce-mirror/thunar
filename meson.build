@@ -367,3 +367,6 @@ if not get_option('thunar-wallpaper').disabled()
 endif
 subdir('po')
 subdir('thunar')
+if get_option('tests')
+  subdir('tests')
+endif
