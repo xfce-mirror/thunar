@@ -208,17 +208,20 @@ _thunar_g_file_resolve_symlink_internal (GFile *file, GHashTable *lookup_table)
   else
     lookup_history = g_hash_table_ref (lookup_table);
 
-  /* Resolve the link target recursively, until the target we found a file which is not a symlink */
+  /* Resolve the link target recursively, until the target we found is not a symlink */
+  char *file_uri = g_file_get_uri (file);
 
-  /* Detect loops: if target already was seen, return NULL */
-  char *target_path_abs = g_file_get_path (file);
-  if (g_hash_table_contains (lookup_history, target_path_abs))
+  if (file_uri == NULL)
+    return NULL;
+
+  /* Detect loops: if the file already was seen, return NULL */
+  if (g_hash_table_contains (lookup_history, file_uri))
     {
       g_info ("Symlink loop detected - resolve symlink aborted");
-      g_free (target_path_abs);
+      g_free (file_uri);
       return NULL;
     }
-  g_hash_table_add (lookup_history, target_path_abs);
+  g_hash_table_add (lookup_history, file_uri);
 
   info = g_file_query_info (file,
                             G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET "," G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK,
