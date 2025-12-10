@@ -855,7 +855,39 @@ thunar_application_accel_map_changed (ThunarApplication *application)
   g_list_free (windows);
 }
 
-
+/**
+ * thunar_application_drop_descendant_files_from_list:
+ * @list : a #GList of #GFile<!---->s
+ *
+ * Delete all #GFile<!---->s from the list, which are contained in any directory that is also on the list (and unref them)
+ *
+ * Returns: the (possibly changed) start of the #GList.
+ */
+static GList *
+thunar_application_drop_descendant_files_from_list (GList *list)
+{
+  GList *lp1, *lp2, *next2;
+  GFile *f1, *f2;
+  for (lp1 = list; lp1 != NULL; lp1 = lp1->next)
+    {
+      for (lp2 = list; lp2 != NULL; lp2 = next2)
+        {
+          next2 = lp2->next;
+          if (G_LIKELY (lp1 != lp2))
+            {
+              f1 = G_FILE (lp1->data);
+              f2 = G_FILE (lp2->data);
+              if (G_UNLIKELY (thunar_g_file_is_descendant (f2, f1)))
+                {
+                  g_info ("The file '%s' was droped from the file operation, because it is located in the directory '%s', which anyhow is part of the operation.", g_file_get_basename (f2), g_file_get_basename (f1));
+                  g_object_unref (lp2->data);
+                  list = g_list_delete_link (list, lp2);
+                }
+            }
+        }
+    }
+  return list;
+}
 
 static void
 thunar_application_collect_and_launch (ThunarApplication     *application,
@@ -2232,6 +2264,9 @@ thunar_application_copy_into (ThunarApplication     *application,
   title = g_strdup_printf (_("Copying files to \"%s\"..."), use_display_name ? display_name : volume_name);
   g_free (display_name);
 
+  /* Duplicates will be created when the parent of a file is copied in the same operation. Sort out such files. */
+  source_file_list = thunar_application_drop_descendant_files_from_list (source_file_list);
+
   /* collect the target files and launch the job */
   thunar_application_collect_and_launch (application, parent, "edit-copy",
                                          title, thunar_io_jobs_copy_files,
@@ -2287,6 +2322,9 @@ thunar_application_link_into (ThunarApplication     *application,
   display_name = thunar_file_cached_display_name (target_file);
   title = g_strdup_printf (_("Creating symbolic links in \"%s\"..."), display_name);
   g_free (display_name);
+
+  /* Duplicates will be created when the parent of a file is linked in the same operation. Sort out such files. */
+  source_file_list = thunar_application_drop_descendant_files_from_list (source_file_list);
 
   /* collect the target files and launch the job */
   thunar_application_collect_and_launch (application, parent, "insert-link",
@@ -2367,6 +2405,9 @@ thunar_application_move_into (ThunarApplication     *application,
     }
   else
     {
+      /* Errors will occur if the parent of a file is moved in the same operation. Sort out such files. */
+      source_file_list = thunar_application_drop_descendant_files_from_list (source_file_list);
+
       /* generate a title for the progress dialog */
       display_name = thunar_file_cached_display_name (target_file);
       title = g_strdup_printf (_("Moving files into \"%s\"..."), display_name);
@@ -2438,7 +2479,7 @@ unlink_stub (GList *source_path_list,
 /* _thunar_application_confirm_file_removal:
  * @application       : a #ThunarApplication.
  * @parent            : a #GdkScreen, a #GtkWidget or %NULL.
- * @file_list         : the list of #ThunarFile<!---->s to confirm removal for.
+ * @file_list         : the list of #GFile<!---->s to confirm removal for.
  * @n_file_list       : the length of file_list.
  * @will_unlink       : true if the files in file_list will be unlinked after confirmation
  *
@@ -2470,8 +2511,13 @@ _thunar_application_confirm_file_removal (gpointer parent,
   /* generate the question for the given operation */
   if (G_LIKELY (n_file_list == 1))
     {
-      file_basename = thunar_file_get_basename (file_list->data);
-      file_display_name = thunar_file_get_display_name (file_list->data);
+      ThunarFile *thunar_file = thunar_file_get (file_list->data, NULL);
+
+      if (thunar_file == NULL)
+        return FALSE;
+
+      file_basename = thunar_file_get_basename (thunar_file);
+      file_display_name = thunar_file_get_display_name (thunar_file);
       file_names_match = g_strcmp0 (file_basename, file_display_name) == 0;
 
       if (G_UNLIKELY (will_unlink) && file_names_match)
@@ -2488,6 +2534,7 @@ _thunar_application_confirm_file_removal (gpointer parent,
         message = g_strdup_printf (_("Are you sure that you want to\nmove \"%s\" (%s) to trash ?"),
                                    file_display_name,
                                    file_basename);
+      g_object_unref (thunar_file);
     }
   else
     {
@@ -2582,7 +2629,10 @@ thunar_application_unlink_files (ThunarApplication     *application,
   if (G_UNLIKELY (n_path_list == 0))
     return FALSE;
 
-  operation_canceled = !_thunar_application_confirm_file_removal (parent, file_list, n_path_list, TRUE);
+  /* Errors will occur if the parent of a file is deleted in the same operation. Sort out such files. */
+  path_list = thunar_application_drop_descendant_files_from_list (path_list);
+
+  operation_canceled = !_thunar_application_confirm_file_removal (parent, path_list, n_path_list, TRUE);
   if (G_LIKELY (!operation_canceled))
     /* launch the "unlink" operation */
     thunar_application_launch (application, parent, "edit-delete",
@@ -2635,9 +2685,12 @@ thunar_application_trash_files (ThunarApplication     *application,
   if (G_UNLIKELY (n_path_list) == 0)
     return FALSE;
 
+  /* Errors will occur if the parent of a file is trashed in the same operation. Sort out such files. */
+  path_list = thunar_application_drop_descendant_files_from_list (path_list);
+
   g_object_get (G_OBJECT (application->preferences), "misc-confirm-move-to-trash", &warn, NULL);
   if (G_UNLIKELY (warn))
-    operation_canceled = !_thunar_application_confirm_file_removal (parent, file_list, n_path_list, FALSE);
+    operation_canceled = !_thunar_application_confirm_file_removal (parent, path_list, n_path_list, FALSE);
 
   if (G_LIKELY (!operation_canceled))
     thunar_application_launch (application, parent, "user-trash-full",

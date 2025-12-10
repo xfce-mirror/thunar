@@ -216,7 +216,7 @@ if get_option('debug') and optimization in ['0', 'g']
     '-DDEBUG_TRACE=1',
     '-DG_ENABLE_DEBUG',
   ]
-elif optimization in ['3', 'minsize']
+elif optimization in ['3', 's']
   extra_cflags += [
     '-DNDEBUG',
     '-DG_DISABLE_CAST_CHECKS',
@@ -367,3 +367,6 @@ if not get_option('thunar-wallpaper').disabled()
 endif
 subdir('po')
 subdir('thunar')
+if get_option('tests')
+  subdir('tests')
+endif

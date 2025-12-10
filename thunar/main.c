@@ -52,13 +52,6 @@ main (int argc, char **argv)
   /* setup application name */
   g_set_application_name (_("Thunar"));
 
-#ifdef G_ENABLE_DEBUG
-  /* Do NOT remove this line for now, If something doesn't work,
-   * fix your code instead!
-   */
-  g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_WARNING);
-#endif
-
   /* initialize xfconf */
   if (!xfconf_init (&error))
     {
