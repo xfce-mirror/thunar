@@ -653,7 +653,10 @@ thunar_progress_view_new_with_job (ThunarJob *job)
   _thunar_return_val_if_fail (job == NULL || THUNAR_IS_JOB (job), NULL);
 
   view = g_object_new (THUNAR_TYPE_PROGRESS_VIEW, "job", job, NULL);
-  gtk_label_set_text (GTK_LABEL (view->progress_label), _("Queued"));
+
+  /* 'thunar_progress_dialog_add_job' will instantly overwrite with "queued", if required */
+  thunar_progress_view_percent (view, 0.0, job);
+
   return GTK_WIDGET (view);
 }
 
