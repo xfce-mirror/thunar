@@ -7,6 +7,7 @@
 # Duy Truong Nguyen <truongap.ars@gmail.com>, 2022
 # Xfce Bot <transifex@xfce.org>, 2022
 # Cas Pascal <casboi86@gmail.com>, 2025
+# Loc Huynh, 2025
 # 
 #, fuzzy
 msgid ""
@@ -15,7 +16,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-30 00:47+0200\n"
 "PO-Revision-Date: 2022-12-22 11:28+0000\n"
-"Last-Translator: Cas Pascal <casboi86@gmail.com>, 2025\n"
+"Last-Translator: Loc Huynh, 2025\n"
 "Language-Team: Vietnamese (https://app.transifex.com/xfce/teams/16840/vi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -254,7 +255,7 @@ msgstr "Không thể mở tập tin \"%s\""
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
-msgstr[0] ""
+msgstr[0] "Không mở được %d tệp"
 
 #: ../thunar/thunar-action-manager.c:979
 msgid "Are you sure you want to open all folders?"
@@ -268,7 +269,7 @@ msgstr "Mở các thư mục"
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
-msgstr[0] ""
+msgstr[0] "Mở %d cửa sổ quản lí tệp tách biệt."
 
 #: ../thunar/thunar-action-manager.c:985
 #, c-format
@@ -330,7 +331,7 @@ msgstr "_Mở"
 #: ../thunar/thunar-action-manager.c:1549
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
-msgstr[0] ""
+msgstr[0] "Mở các tệp đã chọn"
 
 #: ../thunar/thunar-action-manager.c:1553
 msgid "_Execute"
@@ -339,7 +340,7 @@ msgstr "_Chạy"
 #: ../thunar/thunar-action-manager.c:1553
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
-msgstr[0] ""
+msgstr[0] "Thực thi các tệp đã chọn"
 
 #: ../thunar/thunar-action-manager.c:1558
 #, c-format
@@ -368,12 +369,12 @@ msgstr[0] "Mở các thư mục được chọn trong %d vào các cửa sổm�
 #: ../thunar/thunar-action-manager.c:1614
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
-msgstr[0] ""
+msgstr[0] "Tạo liên kết cho mỗi tệp đã chọn"
 
 #: ../thunar/thunar-action-manager.c:1644
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
-msgstr[0] ""
+msgstr[0] "Đổi tên tệp đã chọn"
 
 #: ../thunar/thunar-action-manager.c:1654
 msgid "Restore the selected file to its original location"
@@ -394,12 +395,12 @@ msgstr[0] ""
 #: ../thunar/thunar-action-manager.c:1683
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
-msgstr[0] ""
+msgstr[0] "Đưa các tệp đã chọn vào thùng rác"
 
 #: ../thunar/thunar-action-manager.c:1700
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
-msgstr[0] ""
+msgstr[0] "Xóa vĩnh viễn các tệp đã chọn"
 
 #: ../thunar/thunar-action-manager.c:1759
 msgid "Cut the selection"
@@ -408,7 +409,7 @@ msgstr "Cắt mục chọn"
 #: ../thunar/thunar-action-manager.c:1769
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
-msgstr[0] ""
+msgstr[0] "Đọc các tệp đã chọn để di chuyển"
 
 #: ../thunar/thunar-action-manager.c:1783
 msgid "Copy the selection"
@@ -417,7 +418,7 @@ msgstr "Sao chép mục chọn"
 #: ../thunar/thunar-action-manager.c:1793
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
-msgstr[0] ""
+msgstr[0] "Đọc các tệp đã chọn để sao chép"
 
 #: ../thunar/thunar-action-manager.c:1816
 msgid "Paste the clipboard"
@@ -441,14 +442,14 @@ msgstr[0] "Desktop (Tạo Liên kết)"
 #: ../thunar/thunar-action-manager.c:2078
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
-msgstr[0] ""
+msgstr[0] "Tạo liên kết đến các tệp đã chọn trên desktop"
 
 #: ../thunar/thunar-action-manager.c:2099
 #: ../thunar/thunar-action-manager.c:2137
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
-msgstr[0] ""
+msgstr[0] "Gửi các tệp đã chọn đến \"%s\""
 
 #. display an error message
 #: ../thunar/thunar-action-manager.c:2405 ../thunar/thunar-application.c:1855
@@ -514,7 +515,7 @@ msgstr "Không thể gắn kết \"%s\""
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
-msgstr[0] ""
+msgstr[0] "Sử dụng \"%s\" để mở tệp đã chọn"
 
 #: ../thunar/thunar-action-manager.c:3252
 #, c-format
@@ -2874,12 +2875,12 @@ msgstr ""
 #: ../thunar/thunar-renamer-dialog.c:872
 msgid "Remove File"
 msgid_plural "Remove Files"
-msgstr[0] ""
+msgstr[0] "Bỏ tệp"
 
 #: ../thunar/thunar-renamer-dialog.c:873
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
-msgstr[0] ""
+msgstr[0] "Bỏ những tệp đã chọn khỏi danh sách sẽ đổi tên"
 
 #. tell the user that we failed
 #: ../thunar/thunar-renamer-dialog.c:969
@@ -2970,7 +2971,7 @@ msgstr "Thùng rác rỗng"
 #, c-format
 msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
-msgstr[0] ""
+msgstr[0] "Thùng rác có %d tệp"
 
 #: ../thunar/thunar-shortcuts-model.c:1003
 msgid "Devices"
@@ -4388,7 +4389,7 @@ msgstr ""
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
-msgstr[0] ""
+msgstr[0] "Gửi %d tệp theo kiểu tệp nén?"
 
 #: ../plugins/thunar-sendto-email/main.c:245
 msgid "Send as _archive"
@@ -4434,7 +4435,7 @@ msgstr "Không thể tạo liên kết cho \"%s\""
 #, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
-msgstr[0] ""
+msgstr[0] "Không thể nén %d tệp"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:693
@@ -4802,6 +4803,10 @@ msgid ""
 "file "
 "manager;explorer;finder;browser;folders;directory;directories;partitions;drives;network;devices;rename;move;copy;delete;permissions;home;trash;"
 msgstr ""
+"file "
+"manager;explorer;finder;browser;folders;directory;directories;partitions;drives;network;devices;rename;move;copy;delete;permissions;home;trash;quản"
+" lý tệp;trình khám phá;công cụ tìm;trình duyệt;thư mục;phân vùng;ổ "
+"đĩa;mạng;thiết bị;đổi tên;di chuyển;sao chép;xóa;quyền;nhà;thùng rác;"
 
 #: ../thunar.desktop.in.in.h:5
 msgid "Home"
@@ -4809,7 +4814,7 @@ msgstr "Cá nhân"
 
 #: ../thunar-bulk-rename.desktop.in.in.h:3
 msgid "bulk;renamer;renaming;thunar;files;folders;directory;directories;"
-msgstr ""
+msgstr "bulk;renamer;đổi tên;thunar;tệp;thư mục;thư mục;thư mục;"
 
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager Settings"
@@ -4824,6 +4829,8 @@ msgid ""
 "thunar;settings;preferences;configure;thumbnails;file size;date "
 "format;shortcuts pane;tree view;tabs;"
 msgstr ""
+"thunar;thiết lập;tuỳ chỉnh;cấu hình;hình thu nhỏ;kích thước tệp;định dạng "
+"ngày;ngăn lối tắt;chế độ xem dạng cây;thẻ;"
 
 #: ../org.xfce.thunar.appdata.xml.in.h:1
 msgid ""
