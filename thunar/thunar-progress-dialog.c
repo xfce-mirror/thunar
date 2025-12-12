@@ -381,6 +381,7 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
   else
     {
       dialog->views_waiting = g_list_append (dialog->views_waiting, view);
+      thunar_job_freeze (job);
     }
   g_list_free (job_list);
 
