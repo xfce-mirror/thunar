@@ -282,7 +282,7 @@ thunar_details_view_row_may_be_selected (GtkTreeSelection *selection,
                                          GtkTreeModel     *model,
                                          GtkTreePath      *path,
                                          gboolean          is_currently_selected,
-                                         gpointer)
+                                         gpointer          unused)
 {
   GtkTreeIter iter;
   ThunarFile *file = NULL;
@@ -1082,7 +1082,7 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
           break;
         }
       /* If we skip upward there must be at least 1 folder there.
-               If we need to skip downward but there is no next row, go back */
+       * If we need to skip downward but there is no next row, go back */
       while (direction > 0)
         {
           if (gtk_tree_path_up (path))
@@ -1115,9 +1115,9 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
       g_list_free (selected);
       path = NULL;
       /* Imitate Mac here: move to parent if
-               1. Selection is not multiple
-               2. Shift is not pressed
-      */
+       * 1. Selection is not multiple
+       * 2. Shift is not pressed
+       */
       if (stopPropagation || num_sel > 1 || thunar_details_view_is_shift_pressed (GTK_WIDGET (tree_view)))
         break;
       gtk_tree_view_get_cursor (tree_view, &path, NULL);
@@ -1158,7 +1158,7 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
       g_list_free (selected);
       path = NULL;
       /* If all selected folders were expanded, move cursor to the first
-               child (unless it's a dummy) */
+       *  child (unless it's a dummy) */
       if (stopPropagation)
         break;
 
