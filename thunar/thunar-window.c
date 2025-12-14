@@ -3317,7 +3317,7 @@ thunar_window_notebook_add_new_tab (ThunarWindow        *window,
   view_type = thunar_window_view_type_for_directory (window, directory);
 
   /* insert the new view */
-  page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
+  page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected)) + 1;
   view = thunar_window_create_view (window, directory, view_type);
 
   /* history is updated only on 'change-directory' signal. */
@@ -3326,14 +3326,13 @@ thunar_window_notebook_add_new_tab (ThunarWindow        *window,
   if (G_LIKELY (history))
     thunar_history_add (history, directory);
 
-  thunar_window_notebook_insert_page (window, page_num + 1, view);
+  thunar_window_notebook_insert_page (window, page_num, view);
 
   /* switch to the new view */
   g_object_get (G_OBJECT (window->preferences), "misc-switch-to-new-tab", &switch_to_new_tab, NULL);
   if ((behavior == THUNAR_NEW_TAB_BEHAVIOR_FOLLOW_PREFERENCE && switch_to_new_tab == TRUE)
       || behavior == THUNAR_NEW_TAB_BEHAVIOR_SWITCH)
     {
-      page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), view);
       thunar_window_notebook_set_current_tab (window, page_num);
     }
 
