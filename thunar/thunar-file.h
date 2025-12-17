@@ -39,6 +39,7 @@ typedef struct _ThunarFile      ThunarFile;
 #define THUNAR_IS_FILE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_FILE))
 #define THUNAR_IS_FILE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_FILE))
 #define THUNAR_FILE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_FILE, ThunarFileClass))
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (ThunarFile, g_object_unref)
 
 /**
  * ThunarFileDateType:

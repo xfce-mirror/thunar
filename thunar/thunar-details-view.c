@@ -39,7 +39,8 @@ enum
   PROP_EXPANDABLE_FOLDERS,
 };
 
-
+#define GTK_MOVE_DIRECTION_FORWARD 1
+#define GTK_MOVE_DIRECTION_BACKWARD -1
 
 static void
 thunar_details_view_finalize (GObject *object);
@@ -277,20 +278,23 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
                                                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
+/**
+ * thunar_details_view_tree_selection_cb
+ * A filter function to prevent "Loading..." rows from being selected
+ * See #GtkTreeSelectionFunc for arguments
+ */
 static gboolean
-thunar_details_view_row_may_be_selected (GtkTreeSelection *selection,
-                                         GtkTreeModel     *model,
-                                         GtkTreePath      *path,
-                                         gboolean          is_currently_selected,
-                                         gpointer          unused)
+thunar_details_view_tree_selection_cb (GtkTreeSelection *selection,
+                                       GtkTreeModel     *model,
+                                       GtkTreePath      *path,
+                                       gboolean          is_currently_selected,
+                                       gpointer          unused)
 {
   GtkTreeIter iter;
-  ThunarFile *file = NULL;
+  g_autoptr (ThunarFile) file = NULL;
   if (gtk_tree_model_get_iter (model, &iter, path))
     {
       file = thunar_tree_view_model_get_file (THUNAR_TREE_VIEW_MODEL (model), &iter);
-      if (file)
-        g_object_unref (file);
     }
   return file != NULL || is_currently_selected;
 }
@@ -311,9 +315,9 @@ thunar_details_view_init (ThunarDetailsView *details_view)
 
   /* create the tree view to embed */
   details_view->tree_view = XFCE_TREE_VIEW (xfce_tree_view_new ());
-  gtk_tree_selection_set_select_function (
-  gtk_tree_view_get_selection (GTK_TREE_VIEW (details_view->tree_view)),
-  thunar_details_view_row_may_be_selected, NULL, NULL);
+  gtk_tree_selection_set_select_function (gtk_tree_view_get_selection (GTK_TREE_VIEW (details_view->tree_view)),
+                                          thunar_details_view_tree_selection_cb,
+                                          NULL, NULL);
   g_signal_connect (G_OBJECT (details_view->tree_view), "notify::model",
                     G_CALLBACK (thunar_details_view_notify_model), details_view);
   g_signal_connect (G_OBJECT (details_view->tree_view), "button-press-event",
@@ -1036,7 +1040,7 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
   GtkTreeModel *model = gtk_tree_view_get_model (tree_view);
   GtkTreeIter   iter;
   ThunarFile   *file = NULL;
-  gint          direction = 1, num_sel;
+  gint          direction = GTK_MOVE_DIRECTION_FORWARD, num_sel;
   GList        *selected, *lp;
 
   /* popup context menu if "Menu" or "<Shift>F10" is pressed */
@@ -1052,12 +1056,16 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
 
   switch (event->keyval)
     {
-      /* Skip the "Loading..." rows */
+      /* Skip the "Loading..." rows. To do that we call `key_press_event`
+       * of the parent widget class first. That makes the appropriate
+       * movement defined in GtkTreeView class while handling Shift and
+       * Ctrl in the right way. Then if the cursor is on such row we
+       * move it once again */
     case GDK_KEY_Up:
     case GDK_KEY_KP_Up:
     case GDK_KEY_Page_Up:
     case GDK_KEY_Begin:
-      direction = -1;
+      direction = GTK_MOVE_DIRECTION_BACKWARD;
       /* Fall through */
 
     case GDK_KEY_Down:
@@ -1083,7 +1091,7 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
         }
       /* If we skip upward there must be at least 1 folder there.
        * If we need to skip downward but there is no next row, go back */
-      while (direction > 0)
+      while (direction == GTK_MOVE_DIRECTION_FORWARD)
         {
           if (gtk_tree_path_up (path))
             {
@@ -1093,7 +1101,7 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
                 break;
             }
           else
-            direction = -1;
+            direction = GTK_MOVE_DIRECTION_BACKWARD;
         }
       g_signal_emit_by_name (tree_view, "move-cursor", GTK_MOVEMENT_DISPLAY_LINES, direction, &signal_ret);
       break;
@@ -1101,8 +1109,7 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
     case GDK_KEY_Left:
     case GDK_KEY_KP_Left:
       /* If some selected rown are expanded folders, collapse them */
-      selected = gtk_tree_selection_get_selected_rows (
-      gtk_tree_view_get_selection (tree_view), NULL);
+      selected = gtk_tree_selection_get_selected_rows (gtk_tree_view_get_selection (tree_view), NULL);
       for (lp = selected, num_sel = 0; lp != NULL; lp = lp->next, num_sel++)
         {
           path = lp->data;
@@ -1134,8 +1141,7 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
     case GDK_KEY_Right:
     case GDK_KEY_KP_Right:
       /* If some selected folders are not expanded, expand them */
-      selected = gtk_tree_selection_get_selected_rows (
-      gtk_tree_view_get_selection (tree_view), NULL);
+      selected = gtk_tree_selection_get_selected_rows (gtk_tree_view_get_selection (tree_view), NULL);
       for (lp = selected; lp != NULL; lp = lp->next)
         {
           path = lp->data;
@@ -1162,9 +1168,12 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
       if (stopPropagation)
         break;
 
+      /* If we propagate this event, it will scroll the view to the right
+       * Only do that if cursor is not on anything */
       gtk_tree_view_get_cursor (tree_view, &path, NULL);
       if (path == NULL)
         break;
+      stopPropagation = TRUE;
       gtk_tree_path_down (path);
       if (!gtk_tree_model_get_iter (model, &iter, path))
         break;
@@ -1173,7 +1182,6 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
         break;
       g_object_unref (file);
       g_signal_emit_by_name (tree_view, "move-cursor", GTK_MOVEMENT_DISPLAY_LINES, 1, &signal_ret);
-      stopPropagation = TRUE;
       break;
 
     case GDK_KEY_space:
