@@ -1148,8 +1148,7 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
           if (!gtk_tree_view_row_expanded (tree_view, path))
             {
               gtk_tree_model_get_iter (model, &iter, path);
-              gtk_tree_model_get (
-              model, &iter, THUNAR_COLUMN_FILE, &file, -1);
+              gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE, &file, -1);
               if (file)
                 {
                   if (thunar_file_is_directory (file))
