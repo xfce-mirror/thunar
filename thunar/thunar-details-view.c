@@ -1060,7 +1060,7 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
        * of the parent widget class first. That makes the appropriate
        * movement defined in GtkTreeView class while handling Shift and
        * Ctrl in the right way. Then if the cursor is on such row we
-       * move it once again */
+       * move it up or down 1 line again */
     case GDK_KEY_Up:
     case GDK_KEY_KP_Up:
     case GDK_KEY_Page_Up:
