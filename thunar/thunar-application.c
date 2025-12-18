@@ -879,7 +879,12 @@ thunar_application_drop_descendant_files_from_list (GList *list)
               f2 = G_FILE (lp2->data);
               if (G_UNLIKELY (thunar_g_file_is_descendant (f2, f1)))
                 {
-                  g_info ("The file '%s' was droped from the file operation, because it is located in the directory '%s', which anyhow is part of the operation.", g_file_get_basename (f2), g_file_get_basename (f1));
+                  gchar *f1_basename = g_file_get_basename (f1);
+                  gchar *f2_basename = g_file_get_basename (f2);
+                  g_info ("The file '%s' was dropped from the file operation, because it is located in the directory '%s', which is already part of the operation.", f2_basename, f1_basename);
+                  g_free (f1_basename);
+                  g_free (f2_basename);
+
                   g_object_unref (lp2->data);
                   list = g_list_delete_link (list, lp2);
                 }
