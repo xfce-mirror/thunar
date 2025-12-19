@@ -1119,7 +1119,7 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
               stopPropagation = TRUE;
             }
         }
-      g_list_free (selected);
+      g_list_free_full (selected, (GDestroyNotify) gtk_tree_path_free);
       path = NULL;
       /* Imitate Mac here: move to parent if
        * 1. Selection is not multiple
@@ -1160,7 +1160,7 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
                 }
             }
         }
-      g_list_free (selected);
+      g_list_free_full (selected, (GDestroyNotify) gtk_tree_path_free);
       path = NULL;
       /* If all selected folders were expanded, move cursor to the first
        *  child (unless it's a dummy) */
