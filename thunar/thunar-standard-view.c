@@ -3252,22 +3252,18 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
 
 /* Preload next/prev preview images in order to allow a responsive navigation */
 void
-thunar_standard_view_preload_neighboring_preview_images (ThunarStandardView *standard_view)
+thunar_standard_view_preload_neighboring_preview_images (ThunarStandardView *standard_view,
+                                                         GtkTreeModel       *model,
+                                                         GtkTreePath        *path)
 {
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-  GtkTreeView *tree_view = GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view)));
-  GtkTreeModel *model = gtk_tree_view_get_model (tree_view);
-  GtkTreePath  *path = NULL;
   GtkTreeIter   iter;
   ThunarFile   *file = NULL;
 
-  gtk_tree_view_get_cursor (tree_view, &path, NULL);
-  if (path == NULL)
-    return;
-
   if (gtk_tree_model_get_iter (model, &iter, path) && gtk_tree_model_iter_previous (model, &iter))
     {
+      printf("preload prev1\n");
       gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE, &file, -1);
       if (file != NULL)
         thunar_file_request_thumbnail (file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
@@ -3275,9 +3271,13 @@ thunar_standard_view_preload_neighboring_preview_images (ThunarStandardView *sta
 
   if (gtk_tree_model_get_iter (model, &iter, path) && gtk_tree_model_iter_next (model, &iter))
     {
+      printf("preload next1\n");
       gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE, &file, -1);
       if (file != NULL)
+      {
+        printf("preload next2 %s \n", thunar_file_get_display_name (file));
         thunar_file_request_thumbnail (file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
+      }
     }
 
 }

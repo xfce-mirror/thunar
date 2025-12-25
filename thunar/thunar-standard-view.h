@@ -254,7 +254,9 @@ void
 thunar_standard_view_select_first_file (ThunarStandardView *standard_view);
 
 void
-thunar_standard_view_preload_neighboring_preview_images (ThunarStandardView *standard_view);
+thunar_standard_view_preload_neighboring_preview_images (ThunarStandardView *standard_view,
+                                                         GtkTreeModel       *model,
+                                                         GtkTreePath        *path);
 G_END_DECLS;
 
 #endif /* !__THUNAR_STANDARD_VIEW_H__ */

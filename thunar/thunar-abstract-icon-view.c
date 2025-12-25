@@ -86,6 +86,8 @@ thunar_abstract_icon_view_key_press_event (XfceIconView           *view,
                                            GdkEventKey            *event,
                                            ThunarAbstractIconView *abstract_icon_view);
 static gboolean
+thunar_abstract_icon_view_key_press_event_after (ThunarAbstractIconView *abstract_icon_view);
+static gboolean
 thunar_abstract_icon_view_motion_notify_event (XfceIconView           *view,
                                                GdkEventMotion         *event,
                                                ThunarAbstractIconView *abstract_icon_view);
@@ -185,11 +187,13 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   /* stay informed about zoom-level changes, so we can force a re-layout on the abstract_icon view */
   g_signal_connect (G_OBJECT (abstract_icon_view), "notify::zoom-level", G_CALLBACK (thunar_abstract_icon_view_zoom_level_changed), NULL);
 
+  printf("thunar_abstract_icon_view_init\n");
   /* create the real view */
   view = xfce_icon_view_new ();
   g_signal_connect (G_OBJECT (view), "notify::model", G_CALLBACK (thunar_abstract_icon_view_notify_model), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "button-press-event", G_CALLBACK (thunar_abstract_icon_view_button_press_event), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "key-press-event", G_CALLBACK (thunar_abstract_icon_view_key_press_event), abstract_icon_view);
+ // g_signal_connect (G_OBJECT (view), "move-cursor", G_CALLBACK (thunar_abstract_icon_view_key_press_event_after), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "item-activated", G_CALLBACK (thunar_abstract_icon_view_item_activated), abstract_icon_view);
   g_signal_connect_swapped (G_OBJECT (view), "selection-changed", G_CALLBACK (thunar_standard_view_selection_changed), abstract_icon_view);
   gtk_container_add (GTK_CONTAINER (abstract_icon_view), view);
@@ -286,6 +290,8 @@ thunar_abstract_icon_view_select_path (ThunarStandardView *standard_view,
 {
   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
   xfce_icon_view_select_path (XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), path);
+
+  printf("thunar_abstract_icon_view_select_path\n");
 }
 
 
@@ -299,6 +305,8 @@ thunar_abstract_icon_view_set_cursor (ThunarStandardView *standard_view,
 
   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
 
+  printf("thunar_abstract_icon_view_set_cursor\n");
+
   /* make sure the name renderer is editable */
   g_object_get (G_OBJECT (standard_view->name_renderer), "mode", &mode, NULL);
   g_object_set (G_OBJECT (standard_view->name_renderer), "mode", GTK_CELL_RENDERER_MODE_EDITABLE, NULL);
@@ -308,6 +316,7 @@ thunar_abstract_icon_view_set_cursor (ThunarStandardView *standard_view,
 
   /* reset the name renderer mode */
   g_object_set (G_OBJECT (standard_view->name_renderer), "mode", mode, NULL);
+  
 }
 
 
@@ -419,7 +428,15 @@ thunar_abstract_icon_view_button_press_event (XfceIconView           *view,
   window = gtk_widget_get_toplevel (GTK_WIDGET (abstract_icon_view));
   thunar_window_focus_view (THUNAR_WINDOW (window), GTK_WIDGET (abstract_icon_view));
 
-  if (event->type == GDK_BUTTON_PRESS && event->button == 3)
+  if (event->type == GDK_BUTTON_PRESS && event->button == 1)
+    {
+      if (xfce_icon_view_get_item_at_pos (view, event->x, event->y, &path, NULL))
+      {
+        thunar_standard_view_preload_neighboring_preview_images (THUNAR_STANDARD_VIEW (abstract_icon_view), xfce_icon_view_get_model (view), path);
+        gtk_tree_path_free (path);
+      }
+    }
+  else if (event->type == GDK_BUTTON_PRESS && event->button == 3)
     {
       /* open the context menu on right clicks */
       if (xfce_icon_view_get_item_at_pos (view, event->x, event->y, &path, NULL))
@@ -606,10 +623,29 @@ thunar_abstract_icon_view_key_press_event (XfceIconView           *view,
       return TRUE;
     }
 
+  /* connect_after wont work here, so lets use g_idle_add */
+  g_idle_add(G_SOURCE_FUNC (thunar_abstract_icon_view_key_press_event_after), abstract_icon_view);
+
   return FALSE;
 }
 
 
+static gboolean
+thunar_abstract_icon_view_key_press_event_after (ThunarAbstractIconView *abstract_icon_view)
+{
+  GtkTreePath  *path;
+
+  XfceIconView *view = XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (abstract_icon_view)));
+
+  xfce_icon_view_get_cursor (view, &path, NULL);
+  if (path != NULL)
+    {
+      thunar_standard_view_preload_neighboring_preview_images (THUNAR_STANDARD_VIEW (abstract_icon_view), xfce_icon_view_get_model (view), path);
+      gtk_tree_path_free (path);
+    }
+
+  return FALSE;
+}
 
 static gboolean
 thunar_abstract_icon_view_motion_notify_event (XfceIconView           *view,

@@ -884,8 +884,7 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
       /* grab the tree view */
       gtk_widget_grab_focus (GTK_WIDGET (tree_view));
 
-      // TODO: Pass "path" as parameter (possibly as well the model)
-      thunar_standard_view_preload_neighboring_preview_images (THUNAR_STANDARD_VIEW (details_view));
+      thunar_standard_view_preload_neighboring_preview_images (THUNAR_STANDARD_VIEW (details_view), model, path);
 
       gtk_tree_view_get_cursor (tree_view, &cursor_path, NULL);
       if (cursor_path != NULL)
@@ -1195,11 +1194,11 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
       break;
     }
 
+  thunar_standard_view_preload_neighboring_preview_images (THUNAR_STANDARD_VIEW (details_view), model, path);
+
   gtk_tree_path_free (path);
   if (stopPropagation)
     gtk_widget_grab_focus (GTK_WIDGET (tree_view));
-
-  thunar_standard_view_preload_neighboring_preview_images (THUNAR_STANDARD_VIEW (details_view));
 
   return stopPropagation;
 }
