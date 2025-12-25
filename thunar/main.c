@@ -19,6 +19,10 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#ifdef HAVE_MIMALLOC
+#include <mimalloc.h>
+#endif
+
 #include <stdio.h>
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>

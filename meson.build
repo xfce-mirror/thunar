@@ -113,6 +113,11 @@ if pcre2.found()
   feature_cflags += '-DHAVE_PCRE2=1'
 endif
 
+mimalloc = dependency('mimalloc', required: get_option('mimalloc'))
+if mimalloc.found()
+  feature_cflags += '-DHAVE_MIMALLOC=1'
+endif
+
 libxfce4panel = dependency('libxfce4panel-2.0', version: dependency_versions['libxfce4panel'], required: get_option('thunar-tpa'))
 
 gnu_symbol_visibility = 'default'

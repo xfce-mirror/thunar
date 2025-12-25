@@ -215,7 +215,8 @@ thunar_dependencies = [
     gudev,
     libnotify,
     pango,
-    vte
+    vte,
+    mimalloc
 ]
 
 thunar_c_args = [

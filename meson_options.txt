@@ -144,3 +144,10 @@ option(
   value: true,
   description: 'Whether or not to build test programs',
 )
+
+option(
+  'mimalloc',
+  type: 'feature',
+  value: 'auto',
+  description: 'Use mimalloc memory allocator (auto-detects if available)',
+)
