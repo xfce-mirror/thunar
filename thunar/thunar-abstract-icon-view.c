@@ -86,7 +86,9 @@ thunar_abstract_icon_view_key_press_event (XfceIconView           *view,
                                            GdkEventKey            *event,
                                            ThunarAbstractIconView *abstract_icon_view);
 static gboolean
-thunar_abstract_icon_view_key_press_event_after (ThunarAbstractIconView *abstract_icon_view);
+thunar_abstract_icon_view_key_release_event (XfceIconView           *view,
+                                             GdkEventKey            *event,
+                                             ThunarAbstractIconView *abstract_icon_view);
 static gboolean
 thunar_abstract_icon_view_motion_notify_event (XfceIconView           *view,
                                                GdkEventMotion         *event,
@@ -187,13 +189,12 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   /* stay informed about zoom-level changes, so we can force a re-layout on the abstract_icon view */
   g_signal_connect (G_OBJECT (abstract_icon_view), "notify::zoom-level", G_CALLBACK (thunar_abstract_icon_view_zoom_level_changed), NULL);
 
-  printf("thunar_abstract_icon_view_init\n");
   /* create the real view */
   view = xfce_icon_view_new ();
   g_signal_connect (G_OBJECT (view), "notify::model", G_CALLBACK (thunar_abstract_icon_view_notify_model), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "button-press-event", G_CALLBACK (thunar_abstract_icon_view_button_press_event), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "key-press-event", G_CALLBACK (thunar_abstract_icon_view_key_press_event), abstract_icon_view);
- // g_signal_connect (G_OBJECT (view), "move-cursor", G_CALLBACK (thunar_abstract_icon_view_key_press_event_after), abstract_icon_view);
+  g_signal_connect (G_OBJECT (view), "key-release-event", G_CALLBACK (thunar_abstract_icon_view_key_release_event), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "item-activated", G_CALLBACK (thunar_abstract_icon_view_item_activated), abstract_icon_view);
   g_signal_connect_swapped (G_OBJECT (view), "selection-changed", G_CALLBACK (thunar_standard_view_selection_changed), abstract_icon_view);
   gtk_container_add (GTK_CONTAINER (abstract_icon_view), view);
@@ -623,19 +624,17 @@ thunar_abstract_icon_view_key_press_event (XfceIconView           *view,
       return TRUE;
     }
 
-  /* connect_after wont work here, so lets use g_idle_add */
-  g_idle_add(G_SOURCE_FUNC (thunar_abstract_icon_view_key_press_event_after), abstract_icon_view);
-
   return FALSE;
 }
 
 
+
 static gboolean
-thunar_abstract_icon_view_key_press_event_after (ThunarAbstractIconView *abstract_icon_view)
+thunar_abstract_icon_view_key_release_event (XfceIconView           *view,
+                                             GdkEventKey            *event,
+                                             ThunarAbstractIconView *abstract_icon_view)
 {
   GtkTreePath  *path;
-
-  XfceIconView *view = XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (abstract_icon_view)));
 
   xfce_icon_view_get_cursor (view, &path, NULL);
   if (path != NULL)
@@ -646,6 +645,8 @@ thunar_abstract_icon_view_key_press_event_after (ThunarAbstractIconView *abstrac
 
   return FALSE;
 }
+
+
 
 static gboolean
 thunar_abstract_icon_view_motion_notify_event (XfceIconView           *view,
