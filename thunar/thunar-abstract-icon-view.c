@@ -86,6 +86,10 @@ thunar_abstract_icon_view_key_press_event (XfceIconView           *view,
                                            GdkEventKey            *event,
                                            ThunarAbstractIconView *abstract_icon_view);
 static gboolean
+thunar_abstract_icon_view_key_release_event (XfceIconView           *view,
+                                             GdkEventKey            *event,
+                                             ThunarAbstractIconView *abstract_icon_view);
+static gboolean
 thunar_abstract_icon_view_motion_notify_event (XfceIconView           *view,
                                                GdkEventMotion         *event,
                                                ThunarAbstractIconView *abstract_icon_view);
@@ -190,6 +194,7 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   g_signal_connect (G_OBJECT (view), "notify::model", G_CALLBACK (thunar_abstract_icon_view_notify_model), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "button-press-event", G_CALLBACK (thunar_abstract_icon_view_button_press_event), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "key-press-event", G_CALLBACK (thunar_abstract_icon_view_key_press_event), abstract_icon_view);
+  g_signal_connect (G_OBJECT (view), "key-release-event", G_CALLBACK (thunar_abstract_icon_view_key_release_event), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "item-activated", G_CALLBACK (thunar_abstract_icon_view_item_activated), abstract_icon_view);
   g_signal_connect_swapped (G_OBJECT (view), "selection-changed", G_CALLBACK (thunar_standard_view_selection_changed), abstract_icon_view);
   gtk_container_add (GTK_CONTAINER (abstract_icon_view), view);
@@ -419,7 +424,15 @@ thunar_abstract_icon_view_button_press_event (XfceIconView           *view,
   window = gtk_widget_get_toplevel (GTK_WIDGET (abstract_icon_view));
   thunar_window_focus_view (THUNAR_WINDOW (window), GTK_WIDGET (abstract_icon_view));
 
-  if (event->type == GDK_BUTTON_PRESS && event->button == 3)
+  if (event->type == GDK_BUTTON_PRESS && event->button == 1)
+    {
+      if (xfce_icon_view_get_item_at_pos (view, event->x, event->y, &path, NULL))
+        {
+          thunar_standard_view_preload_neighboring_preview_images (THUNAR_STANDARD_VIEW (abstract_icon_view), xfce_icon_view_get_model (view), path);
+          gtk_tree_path_free (path);
+        }
+    }
+  else if (event->type == GDK_BUTTON_PRESS && event->button == 3)
     {
       /* open the context menu on right clicks */
       if (xfce_icon_view_get_item_at_pos (view, event->x, event->y, &path, NULL))
@@ -604,6 +617,25 @@ thunar_abstract_icon_view_key_press_event (XfceIconView           *view,
     {
       thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (abstract_icon_view));
       return TRUE;
+    }
+
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_abstract_icon_view_key_release_event (XfceIconView           *view,
+                                             GdkEventKey            *event,
+                                             ThunarAbstractIconView *abstract_icon_view)
+{
+  GtkTreePath *path;
+
+  xfce_icon_view_get_cursor (view, &path, NULL);
+  if (path != NULL)
+    {
+      thunar_standard_view_preload_neighboring_preview_images (THUNAR_STANDARD_VIEW (abstract_icon_view), xfce_icon_view_get_model (view), path);
+      gtk_tree_path_free (path);
     }
 
   return FALSE;

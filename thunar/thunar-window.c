@@ -2985,7 +2985,9 @@ thunar_window_create_view (ThunarWindow *window,
   /* allocate and setup a new view */
   view = g_object_new (view_type, "current-directory", directory,
                        "sort-column-default", sort_column,
-                       "sort-order-default", sort_order, NULL);
+                       "sort-order-default", sort_order,
+                       "preload-preview-images", window->image_preview_visible,
+                       NULL);
   thunar_view_set_show_hidden (THUNAR_VIEW (view), window->show_hidden);
 
   /* set the history of the view if a history is provided */
@@ -4367,6 +4369,7 @@ thunar_window_action_image_preview (ThunarWindow *window)
   thunar_window_image_preview_mode_changed (window);
 
   g_object_set (G_OBJECT (window->preferences), "last-image-preview-visible", window->image_preview_visible, NULL);
+  g_object_set (G_OBJECT (window->view), "preload-preview-images", window->image_preview_visible, NULL);
 
   /* directly trigger a preview, in case an image currently is selected */
   thunar_window_selection_changed (window);
