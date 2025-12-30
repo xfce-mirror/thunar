@@ -291,8 +291,6 @@ thunar_abstract_icon_view_select_path (ThunarStandardView *standard_view,
 {
   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
   xfce_icon_view_select_path (XFCE_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), path);
-
-  printf("thunar_abstract_icon_view_select_path\n");
 }
 
 
@@ -305,8 +303,6 @@ thunar_abstract_icon_view_set_cursor (ThunarStandardView *standard_view,
   GtkCellRendererMode mode;
 
   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
-
-  printf("thunar_abstract_icon_view_set_cursor\n");
 
   /* make sure the name renderer is editable */
   g_object_get (G_OBJECT (standard_view->name_renderer), "mode", &mode, NULL);

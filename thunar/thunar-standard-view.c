@@ -83,6 +83,7 @@ enum
   PROP_SORT_FOLDERS_FIRST_DEFAULT,
   PROP_ACCEL_GROUP,
   PROP_MODEL_TYPE,
+  PROP_PRELOAD_PREVIEW_IMAGES,
   N_PROPERTIES
 };
 
@@ -485,6 +486,9 @@ struct _ThunarStandardViewPrivate
   /* Used in order to throttle selection changes to prevent lag */
   gboolean selection_changed_requested;
   guint    selection_changed_timeout_source;
+
+  /* waether XXL thumbnails near the selection should be requested */
+  gboolean preload_preview_images;
 };
 
 /* clang-format off */
@@ -908,6 +912,17 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                        NULL,
                        G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
+  /**
+    * ThunarStandardView:preload-preview-images:
+    *
+    * Determines if xxl-thumbnails near the current selection should be preloaded
+    **/
+  standard_view_props[PROP_PRELOAD_PREVIEW_IMAGES] =
+  g_param_spec_boolean ("preload-preview-images",
+                        "preload-preview-images",
+                        "preload-preview-images",
+                        FALSE,
+                        G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, standard_view_props);
@@ -1491,6 +1506,10 @@ thunar_standard_view_set_property (GObject      *object,
     case PROP_MODEL_TYPE:
       standard_view->priv->model_type = g_value_get_gtype (value);
       (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->set_model) (standard_view);
+      break;
+
+    case PROP_PRELOAD_PREVIEW_IMAGES:
+      standard_view->priv->preload_preview_images = g_value_get_boolean (value);
       break;
 
     default:
@@ -3250,7 +3269,15 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
 
 
 
-/* Preload next/prev preview images in order to allow a responsive navigation */
+/**
+ * thunar_standard_view_preload_neighboring_preview_images:
+ * @standard_view : a #ThunarStandardView.
+ * @model : the used #GtkTreeModel (simplification)
+ * @path : the #GtkTreePath which currently is selected
+ *
+ * If image preview is enabled, this method will preload XXL thumbnails for the previous and next files,
+ * in order to allow responsive thumbnail previews.
+ **/
 void
 thunar_standard_view_preload_neighboring_preview_images (ThunarStandardView *standard_view,
                                                          GtkTreeModel       *model,
@@ -3263,10 +3290,14 @@ thunar_standard_view_preload_neighboring_preview_images (ThunarStandardView *sta
   gint         *indices;
   gint          depth;
 
+  if (standard_view->priv->preload_preview_images == FALSE)
+    return;
+
+  /* If no path is given, we cannot do anything */
   if (path == NULL)
     return;
 
-  /* Check if there is a previous element at all to prevent warnings */
+  /* Check if there is a previous element at all, to prevent warnings */
   indices = gtk_tree_path_get_indices_with_depth(path, &depth);
   if (indices[depth - 1] > 0)
     {
@@ -3284,7 +3315,6 @@ thunar_standard_view_preload_neighboring_preview_images (ThunarStandardView *sta
       if (file != NULL)
         thunar_file_request_thumbnail (file, THUNAR_THUMBNAIL_SIZE_XX_LARGE);
     }
-
 }
 
 
