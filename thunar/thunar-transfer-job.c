@@ -992,10 +992,6 @@ retry_copy:
                 {
                   /* copy all children of this node */
                   thunar_transfer_job_copy_node (job, operation, node->children, real_target_file, NULL, &err);
-
-                  /* free resources allocted for the children */
-                  thunar_transfer_node_free (node->children);
-                  node->children = NULL;
                 }
 
               /* check if the child copy failed */
@@ -1353,9 +1349,6 @@ thunar_transfer_job_move_file (ThunarJob            *job,
       /* if the user chose to cancel then abort all remaining file moves */
       else if (response == THUNAR_JOB_RESPONSE_CANCEL)
         {
-          /* release all the remaining source and target files, and free the lists */
-          g_list_free_full (transfer_job->transfer_node_list, thunar_transfer_node_free);
-          transfer_job->transfer_node_list = NULL;
           return FALSE;
         }
       /* if the user chose not to replace nor rename the file, so that response == THUNAR_JOB_RESPONSE_SKIP,
