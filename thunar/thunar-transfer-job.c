@@ -1086,8 +1086,8 @@ retry_remove:
 
 
 static gboolean
-thunar_transfer_job_verify_destination (ThunarTransferJob *transfer_job,
-                                        GError           **error)
+thunar_transfer_job_check_free_space (ThunarTransferJob *transfer_job,
+                                      GError           **error)
 {
   GFileInfo *filesystem_info;
   guint64    free_space;
@@ -1627,6 +1627,16 @@ thunar_transfer_job_execute (ThunarJob *job,
   if (thunar_job_set_error_if_cancelled (job, error))
     return FALSE;
 
+  /* Check if the target filesystem has enough free space */
+  if (!thunar_transfer_job_check_free_space (transfer_job, &err))
+    {
+      if (err != NULL)
+        {
+          g_propagate_error (error, err);
+          return FALSE;
+        }
+    }
+
   /* transfer starts now */
   transfer_job->start_time = g_get_real_time ();
 
@@ -1701,29 +1711,6 @@ thunar_transfer_job_execute (ThunarJob *job,
 
   /* release the thumbnail cache */
   g_object_unref (thumbnail_cache);
-
-  /* continue if there were no errors yet */
-  if (G_LIKELY (err == NULL))
-    {
-      /* check destination */
-      if (!thunar_transfer_job_verify_destination (transfer_job, &err))
-        {
-          if (err != NULL)
-            {
-              g_propagate_error (error, err);
-              if (operation != NULL)
-                g_object_unref (operation);
-              return FALSE;
-            }
-          else
-            {
-              /* pretend nothing happened */
-              if (operation != NULL)
-                g_object_unref (operation);
-              return TRUE;
-            }
-        }
-    }
 
   /* check if we failed */
   if (G_UNLIKELY (err != NULL))
