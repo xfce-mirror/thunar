@@ -437,9 +437,9 @@ thunar_transfer_job_create_new_node (ThunarTransferJob *job,
 
 
 static gboolean
-thunar_transfer_job_collect_node (ThunarTransferJob  *job,
-                                  ThunarTransferNode *node,
-                                  GError            **error)
+thunar_transfer_job_collect_subfiles_recursively (ThunarTransferJob  *job,
+                                                  ThunarTransferNode *node,
+                                                  GError            **error)
 {
   guint               n_total_files;
   GFileInfo          *info;
@@ -522,7 +522,7 @@ thunar_transfer_job_collect_node (ThunarTransferJob  *job,
           node->children = child_node;
 
           /* collect the child node */
-          thunar_transfer_job_collect_node (job, child_node, &err);
+          thunar_transfer_job_collect_subfiles_recursively (job, child_node, &err);
         }
 
       /* release the child files */
@@ -1335,7 +1335,7 @@ thunar_transfer_job_move_file (ThunarJob            *job,
                                    "Collecting files for copying..."),
                                thunar_g_file_get_display_name (node->source_file));
 
-      if (!thunar_transfer_job_collect_node (transfer_job, node, error))
+      if (!thunar_transfer_job_collect_subfiles_recursively (transfer_job, node, error))
         return FALSE;
 
       /* removal will be done by copy operation after copy was sucessfull */
@@ -1643,7 +1643,7 @@ thunar_transfer_job_execute (ThunarJob *job,
       else if (transfer_job->type == THUNAR_TRANSFER_JOB_COPY)
         {
           /* For copy, always collect all subnodes recursively */
-          if (!thunar_transfer_job_collect_node (THUNAR_TRANSFER_JOB (job), node, &err))
+          if (!thunar_transfer_job_collect_subfiles_recursively (THUNAR_TRANSFER_JOB (job), node, &err))
             break;
 
           thunar_transfer_job_copy_node (transfer_job, operation, node, &new_files_list, &err);
