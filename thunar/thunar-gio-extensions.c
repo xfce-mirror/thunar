@@ -2138,3 +2138,111 @@ thunar_g_update_user_special_dir (GFile       *file,
   g_free (command);
   g_free (path);
 }
+
+
+
+/**
+ * thunar_g_file_fs_uses_fat_name_scheme:
+ * @file     : a #GFile.
+ *
+ * Returns TRUE, if the filesystem of this file requires usage of FAT naming scheme, FALSE otherwise
+ */
+gboolean
+thunar_g_file_fs_uses_fat_name_scheme (GFile *gfile)
+{
+  gboolean use_fat_name_scheme = FALSE; /* default */
+  g_autoptr (GFile) parent = NULL;
+  g_autoptr (GFileInfo) info = NULL;
+
+  _thunar_return_val_if_fail (G_IS_FILE (gfile), FALSE);
+
+  parent = g_file_get_parent (gfile);
+  if (parent == NULL)
+    {
+      g_warning ("Failed to get parent of %s", g_file_get_uri (gfile));
+      return FALSE;
+    }
+
+  info = g_file_query_filesystem_info (parent,
+                                       G_FILE_ATTRIBUTE_FILESYSTEM_TYPE,
+                                       NULL, NULL);
+  if (info != NULL)
+    {
+      const char *fs_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE);
+
+      /* clang-format off */
+      use_fat_name_scheme =
+        !g_strcmp0 (fs_type, "fat")   ||
+        !g_strcmp0 (fs_type, "vfat")  ||
+        !g_strcmp0 (fs_type, "exfat") ||
+        !g_strcmp0 (fs_type, "fuse")  ||
+        !g_strcmp0 (fs_type, "ntfs")  ||
+        !g_strcmp0 (fs_type, "msdos") ||
+        !g_strcmp0 (fs_type, "msdosfs");
+      /* clang-format on */
+    }
+
+  return use_fat_name_scheme;
+}
+
+
+
+/**
+ * thunar_g_file_transform_to_fat_name_scheme:
+ * @file     : a #GFile.
+ *
+ * Creates a new GFile which has the same URI as @file, but a basename which fulfills the FAT32 naming scheme.
+ * The returned file neds to be released with g_object_unref after usage.
+ *
+ * Return value: (transfer full): A new, possibly renamed GFile, which fulfills the fat naming scheme, or %NULL
+ */
+GFile *
+thunar_g_file_transform_to_fat_name_scheme (GFile *gfile)
+{
+  static const GRegex *windows_reserved_name = NULL;
+  g_autoptr (GFile) parent = NULL;
+  g_autofree gchar *base_name = NULL;
+
+  _thunar_return_val_if_fail (G_IS_FILE (gfile), NULL);
+
+  /* if regex pattern is not initialized, do it */
+  if (G_UNLIKELY (windows_reserved_name == NULL))
+    {
+      /* COM#, LPT#, CON, PRN, AUX, and NUL are not allowed */
+      /* FAT is case-insensitive by default */
+      windows_reserved_name = g_regex_new ("^((COM\\d)|(LPT\\d)|(CON)|(PRN)|(AUX)|(NUL))(\\..*)?$", G_REGEX_CASELESS, 0, NULL);
+    }
+
+  parent = g_file_get_parent (gfile);
+
+  if (parent == NULL)
+    return NULL;
+
+  base_name = g_file_get_basename (gfile);
+
+  /* replace character which are invalid for FAT filenames */
+  g_strdelimit (g_strchomp (base_name), "/:*?\"<>\\|", '_');
+
+  /* ASCII characters 0~31 are as well invalid for FAT filenames */
+  for (int i = 0; base_name[i] != '\0'; i++)
+    {
+      if (base_name[i] >= 0 && base_name[i] < 32)
+        base_name[i] = '_';
+    }
+
+  /* avoid FAT reserved names */
+  if (g_regex_match (windows_reserved_name, base_name, 0, NULL))
+    {
+      g_autofree gchar *tmp = base_name;
+      base_name = g_strconcat ("__", tmp, NULL);
+    }
+
+  /* avoid filename that ends with '.' */
+  if (g_str_has_suffix (base_name, "."))
+    {
+      g_autofree gchar *tmp = base_name;
+      base_name = g_strconcat (tmp, "___", NULL);
+    }
+
+  return g_file_get_child (parent, base_name);
+}
