@@ -1106,7 +1106,6 @@ thunar_transfer_job_check_free_space (ThunarTransferJob *transfer_job,
 static gboolean
 thunar_transfer_job_prepare_untrash_file (ThunarJob          *job,
                                           ThunarTransferNode *node,
-                                          GFile              *file,
                                           GError            **error)
 {
   ThunarJobResponse response;
@@ -1120,7 +1119,7 @@ thunar_transfer_job_prepare_untrash_file (ThunarJob          *job,
                            g_file_info_get_display_name (node->source_file_info));
 
   /* determine the parent file */
-  target_parent = g_file_get_parent (file);
+  target_parent = g_file_get_parent (node->target_file);
   /* check if the parent exists */
   if (target_parent != NULL)
     parent_exists = g_file_query_exists (target_parent, thunar_job_get_cancellable (job));
@@ -1618,7 +1617,7 @@ thunar_transfer_job_execute (ThunarJob *job,
       if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE
           && thunar_g_file_is_trashed (node->source_file))
         {
-          if (!thunar_transfer_job_prepare_untrash_file (job, node, lp->data, &err))
+          if (!thunar_transfer_job_prepare_untrash_file (job, node, &err))
             break;
           if (!thunar_transfer_job_move_file (job, operation, node,
                                               G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA,
