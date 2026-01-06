@@ -119,12 +119,13 @@ struct _ThunarTransferJob
 
 struct _ThunarTransferNode
 {
-  ThunarTransferNode *next;
-  ThunarTransferNode *children;
-  GFile              *source_file;
-  GFile              *target_file;
-  gboolean            replace_confirmed;
-  gboolean            rename_confirmed;
+  GFile   *source_file;
+  GFile   *target_file;
+  gboolean replace_confirmed;
+  gboolean rename_confirmed;
+
+  /* List of type <ThunarTransferNode> */
+  GList *child_nodes;
 };
 
 
@@ -416,6 +417,7 @@ thunar_transfer_job_create_new_node (ThunarTransferJob *job,
   new_node->target_file = NULL;
   new_node->replace_confirmed = FALSE;
   new_node->rename_confirmed = FALSE;
+  new_node->child_nodes = NULL;
 
   /* Update the total size of the file operation */
   job->total_size += g_file_info_get_attribute_uint64 (source_file_info, G_FILE_ATTRIBUTE_STANDARD_SIZE);
@@ -456,11 +458,18 @@ thunar_transfer_job_collect_subfiles_recursively (ThunarTransferJob  *job,
   if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
     return FALSE;
 
+  if (node->child_nodes != NULL)
+    {
+      g_warning ("subfiles for the directory %s already got collected ... skipping", thunar_g_file_get_display_name (node->source_file));
+      return FALSE;
+    }
+
   info = g_file_query_info (node->source_file,
                             G_FILE_ATTRIBUTE_STANDARD_TYPE,
                             G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                             thunar_job_get_cancellable (THUNAR_JOB (job)),
                             &err);
+
 
   /* check if we have a directory here */
   if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
@@ -519,9 +528,8 @@ thunar_transfer_job_collect_subfiles_recursively (ThunarTransferJob  *job,
           child_node = thunar_transfer_job_create_new_node (job, lp->data, target_file, error);
           child_node->replace_confirmed = node->replace_confirmed;
 
-          /* hook the child node into the child list */
-          child_node->next = node->children;
-          node->children = child_node;
+          /* add the child node into the list of child nodes */
+          node->child_nodes = g_list_append (node->child_nodes, child_node);
 
           /* collect the child node */
           thunar_transfer_job_collect_subfiles_recursively (job, child_node, &err);
@@ -893,12 +901,12 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
                                GList             **target_file_list_return,
                                GError            **error)
 {
-  ThunarThumbnailCache *thumbnail_cache;
-  ThunarApplication    *application;
-  ThunarJobResponse     response;
-  GFileInfo            *info;
-  GError               *err = NULL;
-  GFile                *real_target_file = NULL;
+  g_autoptr (ThunarThumbnailCache) thumbnail_cache = NULL;
+  g_autoptr (ThunarApplication) application = NULL;
+  ThunarJobResponse response;
+  g_autoptr (GFileInfo) info = NULL;
+  GError *err = NULL;
+  GFile  *real_target_file = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (job));
   _thunar_return_if_fail (node != NULL && G_IS_FILE (node->source_file));
@@ -907,124 +915,119 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
   /* take a reference on the thumbnail cache */
   application = thunar_application_get ();
   thumbnail_cache = thunar_application_get_thumbnail_cache (application);
-  g_object_unref (application);
 
-  for (; err == NULL && node != NULL; node = node->next)
+  /* query file info */
+  info = g_file_query_info (node->source_file,
+                            G_FILE_ATTRIBUTE_STANDARD_COPY_NAME "," G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
+                            G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                            thunar_job_get_cancellable (THUNAR_JOB (job)),
+                            &err);
+
+  /* abort on error or cancellation */
+  if (info == NULL)
     {
-      /* query file info */
-      info = g_file_query_info (node->source_file,
-                                G_FILE_ATTRIBUTE_STANDARD_COPY_NAME "," G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
-                                G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                thunar_job_get_cancellable (THUNAR_JOB (job)),
-                                &err);
-
-      /* abort on error or cancellation */
-      if (info == NULL)
-        break;
-
-      /* update progress information */
-      thunar_job_info_message (THUNAR_JOB (job), "%s", g_file_info_get_display_name (info));
-
-retry_copy:
-      thunar_transfer_job_check_pause (job);
-
-      /* copy the item specified by this node (not recursively) */
-      real_target_file = thunar_transfer_job_copy_file (job, operation,
-                                                        node->source_file,
-                                                        node->target_file,
-                                                        node->replace_confirmed,
-                                                        node->rename_confirmed,
-                                                        &err);
-      if (G_LIKELY (real_target_file != NULL))
-        {
-          /* node->source_file == real_target_file means to skip the file */
-          if (G_LIKELY (node->source_file != real_target_file))
-            {
-              /* notify the thumbnail cache of the copy operation */
-              thunar_thumbnail_cache_copy_file (thumbnail_cache,
-                                                node->source_file,
-                                                real_target_file);
-
-              /* check if we have children to copy */
-              if (node->children != NULL)
-                {
-                  /* copy all children of this node */
-                  thunar_transfer_job_copy_node (job, operation, node->children, NULL, &err);
-                }
-
-              /* check if the child copy failed */
-              if (G_UNLIKELY (err != NULL))
-                {
-                  /* outa here, freeing the target paths */
-                  g_object_unref (real_target_file);
-                  break;
-                }
-
-              /* add the real target file to the return list */
-              if (G_LIKELY (target_file_list_return != NULL))
-                {
-                  *target_file_list_return =
-                  thunar_g_list_prepend_deep (*target_file_list_return,
-                                              real_target_file);
-                }
-
-retry_remove:
-              thunar_transfer_job_check_pause (job);
-
-              /* try to remove the source directory if we are on copy+remove fallback for move */
-              if (job->type == THUNAR_TRANSFER_JOB_MOVE)
-                {
-                  if (g_file_delete (node->source_file,
-                                     thunar_job_get_cancellable (THUNAR_JOB (job)),
-                                     &err))
-                    {
-                      /* notify the thumbnail cache of the delete operation */
-                      thunar_thumbnail_cache_delete_file (thumbnail_cache,
-                                                          node->source_file);
-                    }
-                  else
-                    {
-                      /* ask the user to retry */
-                      response = thunar_job_ask_skip (THUNAR_JOB (job), _("Failed to move file \"%s\": %s"),
-                                                      g_file_info_get_display_name (info),
-                                                      err->message);
-
-                      /* reset the error */
-                      g_clear_error (&err);
-
-                      /* check whether to retry */
-                      if (G_UNLIKELY (response == THUNAR_JOB_RESPONSE_RETRY))
-                        goto retry_remove;
-                    }
-                }
-            }
-
-          g_object_unref (real_target_file);
-        }
-      else if (err != NULL)
-        {
-          /* we can only skip if there is space left on the device */
-          if (err->domain != G_IO_ERROR || err->code != G_IO_ERROR_NO_SPACE)
-            {
-              /* ask the user to skip this node and all subnodes */
-              response = thunar_job_ask_skip (THUNAR_JOB (job), _("Failed to copy file \"%s\": %s"),
-                                              g_file_info_get_display_name (info), err->message);
-
-              /* reset the error */
-              g_clear_error (&err);
-
-              /* check whether to retry */
-              if (G_UNLIKELY (response == THUNAR_JOB_RESPONSE_RETRY))
-                goto retry_copy;
-            }
-        }
-
-      /* release file info */
-      g_object_unref (info);
+      g_propagate_error (error, err);
+      return;
     }
 
-  /* release the thumbnail cache */
-  g_object_unref (thumbnail_cache);
+  /* update progress information */
+  thunar_job_info_message (THUNAR_JOB (job), "%s", g_file_info_get_display_name (info));
+
+retry_copy:
+  thunar_transfer_job_check_pause (job);
+
+  /* copy the item specified by this node (not recursively) */
+  real_target_file = thunar_transfer_job_copy_file (job, operation,
+                                                    node->source_file,
+                                                    node->target_file,
+                                                    node->replace_confirmed,
+                                                    node->rename_confirmed,
+                                                    &err);
+  if (G_LIKELY (real_target_file != NULL))
+    {
+      /* node->source_file == real_target_file means to skip the file */
+      if (G_LIKELY (node->source_file != real_target_file))
+        {
+          /* notify the thumbnail cache of the copy operation */
+          thunar_thumbnail_cache_copy_file (thumbnail_cache,
+                                            node->source_file,
+                                            real_target_file);
+
+          /* check if we have children to copy */
+          if (node->child_nodes != NULL)
+            {
+              /* copy all children of this node */
+              for (GList *lp = node->child_nodes; lp != NULL; lp = lp->next)
+                thunar_transfer_job_copy_node (job, operation, lp->data, NULL, &err);
+            }
+
+          /* check if the child copy failed */
+          if (G_UNLIKELY (err != NULL))
+            {
+              /* outa here, freeing the target paths */
+              g_object_unref (real_target_file);
+              g_propagate_error (error, err);
+              return;
+            }
+
+          /* add the real target file to the return list */
+          if (G_LIKELY (target_file_list_return != NULL))
+            {
+              *target_file_list_return =
+              thunar_g_list_prepend_deep (*target_file_list_return,
+                                          real_target_file);
+            }
+
+retry_remove:
+          thunar_transfer_job_check_pause (job);
+
+          /* try to remove the source directory if we are on copy+remove fallback for move */
+          if (job->type == THUNAR_TRANSFER_JOB_MOVE)
+            {
+              if (g_file_delete (node->source_file,
+                                 thunar_job_get_cancellable (THUNAR_JOB (job)),
+                                 &err))
+                {
+                  /* notify the thumbnail cache of the delete operation */
+                  thunar_thumbnail_cache_delete_file (thumbnail_cache,
+                                                      node->source_file);
+                }
+              else
+                {
+                  /* ask the user to retry */
+                  response = thunar_job_ask_skip (THUNAR_JOB (job), _("Failed to move file \"%s\": %s"),
+                                                  g_file_info_get_display_name (info),
+                                                  err->message);
+
+                  /* reset the error */
+                  g_clear_error (&err);
+
+                  /* check whether to retry */
+                  if (G_UNLIKELY (response == THUNAR_JOB_RESPONSE_RETRY))
+                    goto retry_remove;
+                }
+            }
+        }
+
+      g_object_unref (real_target_file);
+    }
+  else if (err != NULL)
+    {
+      /* we can only skip if there is space left on the device */
+      if (err->domain != G_IO_ERROR || err->code != G_IO_ERROR_NO_SPACE)
+        {
+          /* ask the user to skip this node and all subnodes */
+          response = thunar_job_ask_skip (THUNAR_JOB (job), _("Failed to copy file \"%s\": %s"),
+                                          g_file_info_get_display_name (info), err->message);
+
+          /* reset the error */
+          g_clear_error (&err);
+
+          /* check whether to retry */
+          if (G_UNLIKELY (response == THUNAR_JOB_RESPONSE_RETRY))
+            goto retry_copy;
+        }
+    }
 
   /* propagate error if we failed or the job was cancelled */
   if (G_UNLIKELY (err != NULL))
@@ -1691,27 +1694,16 @@ static void
 thunar_transfer_node_free (gpointer data)
 {
   ThunarTransferNode *node = data;
-  ThunarTransferNode *next;
 
-  /* free all nodes in a row */
-  while (node != NULL)
-    {
-      /* free all children of this node */
-      thunar_transfer_node_free (node->children);
+  /* free all child nodes of this node */
+  g_list_free_full (node->child_nodes, thunar_transfer_node_free);
 
-      /* determine the next node */
-      next = node->next;
+  /* drop source and target file of this node */
+  g_object_unref (node->source_file);
+  g_object_unref (node->target_file);
 
-      /* drop source and target file of this node */
-      g_object_unref (node->source_file);
-      g_object_unref (node->target_file);
-
-      /* release the resources of this node */
-      g_slice_free (ThunarTransferNode, node);
-
-      /* continue with the next node */
-      node = next;
-    }
+  /* release the resources of this node */
+  g_slice_free (ThunarTransferNode, node);
 }
 
 
