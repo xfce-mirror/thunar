@@ -658,6 +658,14 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
           mnemonic = _("Rena_me All");
           break;
 
+        case THUNAR_JOB_RESPONSE_MERGE:
+          mnemonic = _("_Merge");
+          break;
+
+        case THUNAR_JOB_RESPONSE_MERGE_ALL:
+          mnemonic = _("_Merge All");
+          break;
+
         case THUNAR_JOB_RESPONSE_NO:
           mnemonic = _("_No");
           break;
@@ -800,15 +808,30 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   g_object_get (G_OBJECT (preferences), "misc-file-size-binary", &file_size_binary, NULL);
   g_object_unref (G_OBJECT (preferences));
 
-  /* setup the confirmation dialog */
-  dialog = gtk_dialog_new_with_buttons (_("Confirm to replace files"),
-                                        parent,
-                                        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                          _("_Cancel"), THUNAR_JOB_RESPONSE_CANCEL,
-                                            _("_Skip"), THUNAR_JOB_RESPONSE_SKIP,
-                                              _("Re_name"), THUNAR_JOB_RESPONSE_RENAME,
-                                                _("_Replace"), THUNAR_JOB_RESPONSE_REPLACE,
-                                        NULL);
+  /* setup the confirmation dialog, show merge only for directories */
+  if (thunar_file_is_directory (src_file))
+    {
+      dialog = gtk_dialog_new_with_buttons (_("Confirm to replace files"),
+                                            parent,
+                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                              _("_Cancel"), THUNAR_JOB_RESPONSE_CANCEL,
+                                                _("_Skip"), THUNAR_JOB_RESPONSE_SKIP,
+                                                  _("Re_name"), THUNAR_JOB_RESPONSE_RENAME,
+                                                    _("_Merge"), THUNAR_JOB_RESPONSE_MERGE,
+                                            NULL);
+    }
+  else
+    {
+      dialog = gtk_dialog_new_with_buttons (_("Confirm to replace files"),
+                                            parent,
+                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                              _("_Cancel"), THUNAR_JOB_RESPONSE_CANCEL,
+                                                _("_Skip"), THUNAR_JOB_RESPONSE_SKIP,
+                                                  _("Re_name"), THUNAR_JOB_RESPONSE_RENAME,
+                                                    _("_Replace"), THUNAR_JOB_RESPONSE_REPLACE,
+                                            NULL);
+    }
+
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_JOB_RESPONSE_REPLACE);
 
   content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
@@ -888,7 +911,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
     text = g_strdup_printf (_("Replace the link in \"%s\""), parent_string);
   else if (thunar_file_is_directory (dst_file))
     /* TRANSLATORS: First part of replace dialog sentence */
-    text = g_strdup_printf (_("Replace the existing folder in \"%s\""), parent_string);
+    text = g_strdup_printf (_("Merge the existing folder in \"%s\""), parent_string);
   else
     /* TRANSLATORS: First part of replace dialog sentence */
     text = g_strdup_printf (_("Replace the existing file in \"%s\""), parent_string);
@@ -993,7 +1016,10 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
       /* next row */
       row++;
 
-      check_button = gtk_check_button_new_with_mnemonic (_("_Apply the action to all files and folders"));
+      if (thunar_file_is_directory (src_file))
+        check_button = gtk_check_button_new_with_mnemonic (_("_Apply the action to all folders"));
+      else
+        check_button = gtk_check_button_new_with_mnemonic (_("_Apply the action to all files"));
       gtk_widget_set_margin_top (check_button, 6);
       gtk_grid_attach (GTK_GRID (grid), check_button, 0, row, 3, 1);
       gtk_widget_show (check_button);
@@ -1021,6 +1047,8 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
             response = THUNAR_JOB_RESPONSE_REPLACE_ALL;
           else if (response == THUNAR_JOB_RESPONSE_RENAME)
             response = THUNAR_JOB_RESPONSE_RENAME_ALL;
+          else if (response == THUNAR_JOB_RESPONSE_MERGE)
+            response = THUNAR_JOB_RESPONSE_MERGE_ALL;
         }
     }
 
